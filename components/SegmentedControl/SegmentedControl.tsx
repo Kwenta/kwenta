@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, memo } from 'react';
 import styled from 'styled-components';
 
 type StyleType = 'tab' | 'check' | 'button';
@@ -13,31 +13,26 @@ interface SegmentedControlProps {
 	onChange(index: number): void;
 }
 
-function SegmentedControl({
-	values,
-	selectedIndex,
-	suffix,
-	onChange,
-	styleType = 'tab',
-	...props
-}: SegmentedControlProps) {
-	return (
-		<SegmentedControlContainer $length={values.length} styleType={styleType} {...props}>
-			{values.map((value, index) => (
-				<SegmentedControlOption
-					styleType={styleType}
-					key={value}
-					isSelected={selectedIndex === index}
-					onClick={() => onChange(index)}
-				>
-					{styleType === 'check' && <CheckBox selected={selectedIndex === index} />}
-					{value}
-					{suffix}
-				</SegmentedControlOption>
-			))}
-		</SegmentedControlContainer>
-	);
-}
+const SegmentedControl: FC<SegmentedControlProps> = memo(
+	({ values, selectedIndex, suffix, onChange, styleType = 'tab', ...props }) => {
+		return (
+			<SegmentedControlContainer $length={values.length} styleType={styleType} {...props}>
+				{values.map((value, index) => (
+					<SegmentedControlOption
+						styleType={styleType}
+						key={value}
+						isSelected={selectedIndex === index}
+						onClick={() => onChange(index)}
+					>
+						{styleType === 'check' && <CheckBox selected={selectedIndex === index} />}
+						{value}
+						{suffix}
+					</SegmentedControlOption>
+				))}
+			</SegmentedControlContainer>
+		);
+	}
+);
 
 const SegmentedControlContainer = styled.div<{ $length: number; styleType: StyleType }>`
 	${(props) =>

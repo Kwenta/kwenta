@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import LinkIcon from 'assets/svg/app/link.svg';
 import Currency from 'components/Currency';
 import Table, { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -28,7 +29,7 @@ type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> &
 };
 
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
-	!prop ? <p>{NO_VALUE}</p> : children;
+	!prop ? <Body>{NO_VALUE}</Body> : children;
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();

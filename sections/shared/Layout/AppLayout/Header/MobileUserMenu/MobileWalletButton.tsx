@@ -22,7 +22,7 @@ const MobileConnectButton = () => {
 
 	return (
 		<ConnectButton
-			size="sm"
+			size="small"
 			variant="flat"
 			noOutline
 			onClick={connectWallet}
@@ -41,7 +41,7 @@ const MobileUnsupportedButton = () => {
 
 	return (
 		<ConnectButton
-			size="sm"
+			size="small"
 			variant="flat"
 			data-testid="unsupported-network"
 			mono

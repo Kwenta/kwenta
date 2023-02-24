@@ -1,20 +1,31 @@
-import React from 'react';
+import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
 import { FlexDivCentered } from 'components/layout/flex';
+import { NO_VALUE } from 'constants/placeholder';
+import {
+	selectMarketAsset,
+	selectMarketInfo,
+	selectMarketPriceInfo,
+	selectSkewAdjustedPriceInfo,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { selectPreviousDayPrices } from 'state/prices/selectors';
 import media from 'styles/media';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
 
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import MarketDetail from './MarketDetail';
-import useGetMarketData from './useGetMarketData';
+import { MarketDataKey } from './utils';
 
 type MarketDetailsProps = {
 	mobile?: boolean;
 };
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
-	const marketData = useGetMarketData(mobile);
-
 	return (
 		<FlexDivCentered>
 			{!mobile && (
@@ -24,21 +35,119 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			)}
 
 			<MarketDetailsContainer mobile={mobile}>
-				{Object.entries(marketData).map(([marketKey, data]) => (
-					<MarketDetail
-						color={data.color}
-						value={data.value}
-						key={marketKey}
-						marketKey={marketKey}
-						mobile={Boolean(mobile)}
-					/>
-				))}
+				<MarketPriceDetail />
+				<IndexPriceDetail />
+				<DailyChangeDetail />
+				<HourlyFundingDetail />
+				<OpenInterestLongDetail />
+				<OpenInterestShortDetail />
 			</MarketDetailsContainer>
 		</FlexDivCentered>
 	);
 };
 
-const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
+const MarketPriceDetail = memo(() => {
+	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo);
+
+	return (
+		<MarketDetail
+			color={getColorFromPriceInfo(markPrice)}
+			value={markPrice ? formatDollars(markPrice.price) : NO_VALUE}
+			dataKey={MarketDataKey.marketPrice}
+		/>
+	);
+});
+
+const IndexPriceDetail = memo(() => {
+	const indexPrice = useAppSelector(selectMarketPriceInfo);
+
+	return (
+		<MarketDetail
+			dataKey={MarketDataKey.indexPrice}
+			value={indexPrice ? formatDollars(indexPrice.price) : NO_VALUE}
+		/>
+	);
+});
+
+const DailyChangeDetail = memo(() => {
+	const indexPrice = useAppSelector(selectMarketPriceInfo);
+	const indexPriceWei = indexPrice?.price ?? zeroBN;
+	const pastRates = useAppSelector(selectPreviousDayPrices);
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(marketAsset));
+
+	return (
+		<MarketDetail
+			dataKey={MarketDataKey.dailyChange}
+			value={
+				indexPriceWei.gt(0) && pastPrice?.rate
+					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? zeroBN)
+					: NO_VALUE
+			}
+			color={
+				pastPrice?.rate
+					? indexPriceWei.sub(pastPrice.rate).gt(zeroBN)
+						? 'green'
+						: indexPriceWei.sub(pastPrice.rate).lt(zeroBN)
+						? 'red'
+						: ''
+					: undefined
+			}
+		/>
+	);
+});
+
+const HourlyFundingDetail = memo(() => {
+	const { t } = useTranslation();
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const fundingValue = marketInfo?.currentFundingRate;
+
+	return (
+		<MarketDetail
+			dataKey={t('futures.market.info.hourly-funding')}
+			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
+			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
+		/>
+	);
+});
+
+const OpenInterestLongDetail = memo(() => {
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const oiCap = marketInfo?.marketLimit
+		? formatDollars(marketInfo?.marketLimit, { truncate: true })
+		: null;
+
+	return (
+		<MarketDetail
+			dataKey={MarketDataKey.openInterestLong}
+			value={
+				marketInfo?.openInterest.longUSD
+					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })} / ${oiCap}`
+					: NO_VALUE
+			}
+		/>
+	);
+});
+
+const OpenInterestShortDetail = memo(() => {
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const oiCap = marketInfo?.marketLimit
+		? formatDollars(marketInfo?.marketLimit, { truncate: true })
+		: null;
+
+	return (
+		<MarketDetail
+			dataKey={MarketDataKey.openInterestShort}
+			value={
+				marketInfo?.openInterest.shortUSD
+					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })} / ${oiCap}`
+					: NO_VALUE
+			}
+		/>
+	);
+});
+
+export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
 	height: 55px;
@@ -52,7 +161,6 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	justify-content: space-between;
 	align-items: start;
 
-	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
 	box-sizing: border-box;
 
@@ -62,38 +170,32 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		}
 	`}
 
-	p,
-	span {
-		margin: 0;
-		text-align: left;
-	}
+	${(props) => css`
+		border: ${props.theme.colors.selectedTheme.border};
 
-	.heading,
-	.value {
+		.heading {
+			color: ${props.theme.colors.selectedTheme.text.label};
+		}
+
+		.value {
+			color: ${props.theme.colors.selectedTheme.text.value};
+		}
+
+		.green {
+			color: ${props.theme.colors.selectedTheme.green};
+		}
+
+		.red {
+			color: ${props.theme.colors.selectedTheme.red};
+		}
+
+		.paused {
+			color: ${props.theme.colors.selectedTheme.gray};
+		}
+	`}
+
+	.heading, .value {
 		white-space: nowrap;
-	}
-
-	.heading {
-		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.text.label};
-	}
-
-	.value {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	}
-
-	.green {
-		color: ${(props) => props.theme.colors.selectedTheme.green};
-	}
-
-	.red {
-		color: ${(props) => props.theme.colors.selectedTheme.red};
-	}
-
-	.paused {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 
 	${(props) =>

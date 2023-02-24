@@ -33,7 +33,7 @@ const SwapButton: FC = () => {
 		<Button
 			disabled={!!submissionDisabledReason}
 			onClick={handleSubmit}
-			size="md"
+			size="medium"
 			data-testid="submit-order"
 			fullWidth
 		>
@@ -44,7 +44,7 @@ const SwapButton: FC = () => {
 				: t('exchange.summary-info.button.submit-order')}
 		</Button>
 	) : (
-		<Button onClick={connectWallet} size="md" fullWidth noOutline>
+		<Button onClick={connectWallet} size="medium" fullWidth noOutline>
 			{t('common.wallet.connect-wallet')}
 		</Button>
 	);

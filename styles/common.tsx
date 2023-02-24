@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import { border } from 'components/Button';
 import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
-import * as Text from 'components/Text';
+import { Body } from 'components/Text';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
@@ -32,10 +32,6 @@ export const resetButtonCSS = css`
 
 export const numericValueCSS = css`
 	font-family: ${(props) => props.theme.fonts.mono};
-`;
-
-export const NumericValue = styled.span`
-	${numericValueCSS};
 `;
 
 export const NoTextTransform = styled.span`
@@ -185,8 +181,7 @@ export const SwapCurrenciesButton = styled.button`
 	}
 `;
 
-export const SmallGoldenHeader = styled(Text.Body).attrs({ variant: 'bold' })`
-	font-family: ${(props) => props.theme.fonts.bold};
+export const SmallGoldenHeader = styled(Body).attrs({ weight: 'bold' })`
 	font-size: 14px;
 	line-height: 100%;
 	color: ${(props) => props.theme.colors.common.primaryYellow};
@@ -271,9 +266,4 @@ export const YellowIconButton = styled.div`
 	transition: all 0.1s ease-in-out;
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-	/* svg {
-		path {
-			fill: ${(props) => props.theme.colors.selectedTheme.yellow};
-		}
-	} */
 `;

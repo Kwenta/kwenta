@@ -88,7 +88,7 @@ const SettleTransactionsCard: FC = memo(() => {
 							variant="primary"
 							disabled={!!settlementDisabledReason}
 							onClick={handleSettle}
-							size="lg"
+							size="large"
 							data-testid="settle"
 						>
 							{settlementDisabledReason ?? t('exchange.summary-info.button.settle')}

@@ -18,7 +18,7 @@ const StyledBtn = styled(Button)`
 	height: 24px;
 	border: 0.669444px solid rgba(255, 255, 255, 0.1);
 	border-color: ${(props) =>
-		props.isActive ? props.theme.colors.common.primaryGold : 'rgba(255, 255, 255, 0.1)'};
+		props.active ? props.theme.colors.common.primaryGold : 'rgba(255, 255, 255, 0.1)'};
 	border-radius: 7px;
 	box-shadow: 0px 1.33889px 1.33889px rgba(0, 0, 0, 0.25),
 		inset 0px 0px 13.3889px rgba(255, 255, 255, 0.03);
@@ -49,7 +49,7 @@ export const TimeframeSwitcher: FC = () => {
 				<StyledBtn
 					key={timeframe}
 					onClick={() => dispatch(setSelectedTimeframe(timeframe))}
-					isActive={selectedTimeframe === timeframe}
+					active={selectedTimeframe === timeframe}
 				>
 					{timeframe}
 				</StyledBtn>

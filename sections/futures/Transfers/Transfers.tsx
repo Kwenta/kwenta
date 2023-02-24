@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import ColoredPrice from 'components/ColoredPrice';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
@@ -36,7 +37,7 @@ const Transfers: FC = () => {
 				{
 					Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
 					accessor: 'action',
-					Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
+					Cell: (cellProps) => <ActionCell>{cellProps.value}</ActionCell>,
 					width: 50,
 				},
 				{
@@ -66,9 +67,7 @@ const Transfers: FC = () => {
 				{
 					Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
 					accessor: 'timestamp',
-					Cell: (cellProps: any) => (
-						<DefaultCell>{timePresentation(cellProps.value, t)}</DefaultCell>
-					),
+					Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
 					width: 50,
 				},
 				{
@@ -76,11 +75,11 @@ const Transfers: FC = () => {
 					accessor: 'txHash',
 					Cell: (cellProps: any) => {
 						return (
-							<DefaultCell>
+							<Body>
 								<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
 									{truncateAddress(cellProps.value)}
 								</StyledExternalLink>
-							</DefaultCell>
+							</Body>
 						);
 					},
 					width: 50,
@@ -109,18 +108,13 @@ const Transfers: FC = () => {
 
 export default Transfers;
 
-const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
-
-const StyledActionCell = styled(DefaultCell)`
+const ActionCell = styled(Body)`
 	text-transform: capitalize;
 `;
 
-const StyledTitle = styled.p`
+const StyledTitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
-	margin: 0;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`

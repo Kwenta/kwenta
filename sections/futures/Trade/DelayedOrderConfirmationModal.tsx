@@ -10,7 +10,6 @@ import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Tooltip from 'components/Tooltip/Tooltip';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'sdk/types/futures';
 import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
@@ -45,7 +44,6 @@ import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 const DelayedOrderConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const dispatch = useAppDispatch();
 
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
@@ -126,16 +124,14 @@ const DelayedOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
-				value: formatCurrency(selectedPriceCurrency.name, potentialTradeDetails?.fee ?? zeroBN, {
+				value: formatDollars(potentialTradeDetails?.fee ?? zeroBN, {
 					minDecimals: 2,
-					sign: selectedPriceCurrency.sign,
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.keeper-deposit'),
-				value: formatCurrency(selectedPriceCurrency.name, marketInfo?.keeperDeposit ?? zeroBN, {
+				value: formatDollars(marketInfo?.keeperDeposit ?? zeroBN, {
 					minDecimals: 2,
-					sign: selectedPriceCurrency.sign,
 				}),
 			},
 			{
@@ -154,8 +150,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 			totalDeposit,
 			marketInfo?.keeperDeposit,
 			marketInfo?.settings.offchainDelayedOrderMinAge,
-			selectedPriceCurrency.name,
-			selectedPriceCurrency.sign,
 		]
 	);
 

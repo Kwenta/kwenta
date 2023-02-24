@@ -35,12 +35,8 @@ export const Message = styled.div`
 `;
 
 export const MessageButton = styled(Button).attrs({
-	size: 'lg',
+	size: 'large',
 	noOutline: true,
 	isRounded: true,
 	fullWidth: true,
-})`
-	font-size: 17px;
-	height: 55px;
-	width: 100%;
-`;
+})``;

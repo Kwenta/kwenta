@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import MarketBadge from 'components/Badge/MarketBadge';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FlexDivCentered } from 'components/layout/flex';
+import { Body } from 'components/Text';
 import { MarketKeyByAsset } from 'utils/futures';
 
 import { MarketsCurrencyOption } from './MarketsDropdown';
@@ -22,13 +23,13 @@ const MarketsDropdownSingleValue: React.FC<SingleValueProps<MarketsCurrencyOptio
 						futuresClosureReason={props.data.closureReason}
 					/>
 				</CurrencyLabel>
-				<p className="name">{props.data.description}</p>
+				<Body className="name">{props.data.description}</Body>
 			</div>
 			<div style={{ marginRight: 15 }}>
-				<p className="price">{props.data.price}</p>
-				<p className={props.data.negativeChange ? `change red` : 'change green'}>
+				<Body className="price">{props.data.price}</Body>
+				<Body className={props.data.negativeChange ? `change red` : 'change green'}>
 					{props.data.change}
-				</p>
+				</Body>
 			</div>
 		</SingleValueContainer>
 	</SingleValueWrapper>
