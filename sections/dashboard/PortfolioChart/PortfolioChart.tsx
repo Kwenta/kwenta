@@ -116,13 +116,14 @@ const Chart = styled.div`
 
 const StyledPriceChart = styled(PriceChart)`
 	z-index: 3;
-	position: fixed;
+	position: relative;
 `;
 
 const ChartOverlay = styled.div`
-	display: block;
-	z-index: 5;
-	position: fixed;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
 `;
 
 const PortfolioTitle = styled(Text.Body).attrs({ variant: 'bold' })`
