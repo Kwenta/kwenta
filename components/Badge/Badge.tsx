@@ -1,21 +1,44 @@
-import styled from 'styled-components';
+import { FC } from 'react';
+import styled, { css } from 'styled-components';
 
-const Badge = styled.span<{ color: 'yellow' | 'red' | 'gray' }>`
+type BadgeProps = {
+	color?: 'yellow' | 'red' | 'gray';
+	size?: 'small' | 'regular';
+	dark?: boolean;
+};
+
+const Badge: FC<BadgeProps> = ({ color = 'yellow', size = 'regular', dark, ...props }) => {
+	return <BaseBadge $color={color} $dark={dark} $size={size} {...props} />;
+};
+
+const BaseBadge = styled.span<{
+	$color: 'yellow' | 'red' | 'gray';
+	$dark?: boolean;
+	$size: 'small' | 'regular';
+}>`
 	text-transform: uppercase;
-	padding: 1.6px 3px 1px 3px;
 	text-align: center;
-	font-family: ${(props) => props.theme.fonts.black};
-	color: ${(props) => props.theme.colors.selectedTheme.badge[props.color].text};
-	background: ${(props) => props.theme.colors.selectedTheme.badge[props.color].background};
+	${(props) => css`
+		padding: 2px 6px;
+		padding: ${props.$size === 'small' ? '2px 4px' : '2px 6px'};
+		font-size: ${props.$size === 'small' ? 10 : 12}px;
+		font-family: ${props.theme.fonts.black};
+		color: ${props.theme.colors.selectedTheme.newTheme.badge[props.$color].text};
+		background: ${props.theme.colors.selectedTheme.newTheme.badge[props.$color].background};
+		${props.$dark &&
+		css`
+			color: ${props.theme.colors.selectedTheme.newTheme.badge[props.$color].dark.text};
+			background: ${props.theme.colors.selectedTheme.newTheme.badge[props.$color].dark.background};
+			border: 1px solid ${props.theme.colors.selectedTheme.newTheme.badge[props.$color].dark.border};
+		`}
+	`}
 	border-radius: 100px;
-	margin-left: 5px;
 	line-height: unset;
-	font-size: 10px;
 	font-variant: all-small-caps;
 	opacity: 1;
 	user-select: none;
+	display: flex;
+	align-items: center;
 `;
-
-Badge.displayName = 'Badge';
 
 export default Badge;

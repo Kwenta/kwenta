@@ -1,5 +1,8 @@
+import { memo, useCallback } from 'react';
+
 import Error from 'components/ErrorView';
 import Spacer from 'components/Spacer';
+import { PositionSide } from 'sdk/types/futures';
 import { changeLeverageSide } from 'state/futures/actions';
 import {
 	selectFuturesAccount,
@@ -10,7 +13,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
 
-import FeeInfoBox from '../FeeInfoBox';
+import { IsolatedMarginFeeInfoBox } from '../FeeInfoBox/FeeInfoBox';
 import LeverageInput from '../LeverageInput';
 import MarginInput from '../MarginInput';
 import MarketInfoBox from '../MarketInfoBox';
@@ -26,7 +29,7 @@ type Props = {
 	isMobile?: boolean;
 };
 
-const TradeIsolatedMargin = ({ isMobile }: Props) => {
+const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
@@ -34,6 +37,13 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const orderType = useAppSelector(selectOrderType);
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
 	const account = useAppSelector(selectFuturesAccount);
+
+	const handleChangeSide = useCallback(
+		(side: PositionSide) => {
+			dispatch(changeLeverageSide(side));
+		},
+		[dispatch]
+	);
 
 	if (accountType === 'cross_margin' && !account) return <CreateAccount />;
 
@@ -46,12 +56,7 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 			{!isMobile &&
 				(accountType === 'isolated_margin' ? <MarketInfoBox /> : <CrossMarginInfoBox />)}
 
-			<PositionButtons
-				selected={leverageSide}
-				onSelect={(side) => {
-					dispatch(changeLeverageSide(side));
-				}}
-			/>
+			<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
 
 			<Spacer height={8} />
 			{accountType === 'cross_margin' && <OrderTypeSelector />}
@@ -71,9 +76,9 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 			<ManagePosition />
 
-			<FeeInfoBox />
+			<IsolatedMarginFeeInfoBox />
 		</div>
 	);
-};
+});
 
 export default TradeIsolatedMargin;

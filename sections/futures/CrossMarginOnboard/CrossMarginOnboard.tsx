@@ -9,7 +9,6 @@ import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
 import InputBalanceLabel from 'components/Input/InputBalanceLabel';
 import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import ProgressSteps from 'components/ProgressSteps';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
@@ -207,20 +206,6 @@ const ProgressContainer = styled.div`
 
 const Intro = styled.div`
 	margin-bottom: 30px;
-`;
-
-export const BalanceContainer = styled(FlexDivRowCentered)`
-	margin-bottom: 8px;
-	p {
-		margin: 0;
-	}
-`;
-
-export const BalanceText = styled.p`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	}
 `;
 
 const Complete = styled.div`

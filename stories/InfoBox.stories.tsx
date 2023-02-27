@@ -1,10 +1,9 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { ComponentMeta } from '@storybook/react';
 
-import InfoBox from 'components/InfoBox';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 
 export default {
 	title: 'Components/InfoBox',
-	component: InfoBox,
 	decorators: [
 		(Story) => (
 			<div style={{ width: 334 }}>
@@ -12,36 +11,23 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof InfoBox>;
+} as ComponentMeta<any>;
 
-const Template: ComponentStory<typeof InfoBox> = (args) => <InfoBox {...args} />;
-
-export const Default = Template.bind({});
-
-Default.args = {
-	details: {
-		'First key': {
-			value: 'First value',
-		},
-		'Second key': {
-			value: 'Second value',
-		},
-	},
+export const Default = () => {
+	return (
+		<InfoBoxContainer>
+			<InfoBoxRow title="First key" value="First value" />
+			<InfoBoxRow title="Second key" value="Second value" />
+		</InfoBoxContainer>
+	);
 };
 
-export const Spaced = Template.bind({});
-
-Spaced.args = {
-	details: {
-		'First key': {
-			value: 'First value',
-		},
-		'Second key': {
-			value: 'Second value',
-			spaceBeneath: true,
-		},
-		'Third key': {
-			value: 'Third value',
-		},
-	},
+export const Spaced = () => {
+	return (
+		<InfoBoxContainer>
+			<InfoBoxRow title="First key" value="First value" />
+			<InfoBoxRow title="Second key" value="Second value" spaceBeneath />
+			<InfoBoxRow title="Third key" value="Third value" />
+		</InfoBoxContainer>
+	);
 };

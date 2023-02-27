@@ -43,6 +43,9 @@ const CreateAccountContainer = styled(BorderedPanel)`
 	color: white;
 	padding: 50px 30px;
 	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 `;
 
 const FAQContainer = styled(BorderedPanel)`

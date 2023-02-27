@@ -17,24 +17,24 @@ interface BaseTooltipProps {
 
 export const BaseTooltip = styled.div<BaseTooltipProps>`
 	width: max-content;
-	max-width: ${(props) => props.width || '472.5px'};
-	background: ${(props) => props.theme.colors.selectedTheme.button.fill};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
 	border-radius: 8px;
 	padding: 10px;
 	margin: 0;
-	position: ${(props) => props.position || 'absolute'};
-	top: ${(props) => props.top};
-	bottom: ${(props) => props.bottom};
-	left: ${(props) => props.left};
-	right: ${(props) => props.right};
 	z-index: 2;
 
+	${(props) => css`
+		max-width: ${props.width ?? '472.5px'};
+		background: ${props.theme.colors.selectedTheme.button.fill};
+		border: ${props.theme.colors.selectedTheme.border};
+		position: ${props.position ?? 'absolute'};
+		top: ${props.top};
+		bottom: ${props.bottom};
+		left: ${props.left};
+		right: ${props.right};
+	`}
+
 	p, span {
-		margin: 0;
-		font-size: 13px;
-		font-family: ${(props) => props.theme.fonts.regular};
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 

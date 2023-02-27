@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg';
-import * as Text from 'components/Text';
+import { Body } from 'components/Text';
 import { COMPETITION_DATES, COMPETITION_ENABLED } from 'constants/competition';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { ExternalLink } from 'styles/common';
@@ -56,12 +56,9 @@ const BannerContainer = styled.div<{ compact?: boolean; hideBanner?: boolean }>`
 	gap: 10px;
 `;
 
-const CompetitionPeriod = styled(Text.Body).attrs({ mono: true, variant: 'bold' })`
+const CompetitionPeriod = styled(Body).attrs({ mono: true, weight: 'bold' })`
 	font-style: normal;
-	font-size: 13px;
-	line-height: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	margin: 0;
 `;
 
 const CTA = styled(ExternalLink)`

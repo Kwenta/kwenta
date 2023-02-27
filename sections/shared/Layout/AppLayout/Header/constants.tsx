@@ -88,16 +88,6 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 					{
 						link: ROUTES.Markets.Home('cross_margin'),
 						i18nLabel: 'header.nav.cross-margin',
-						badge: [
-							{
-								i18nLabel: 'header.nav.beta-badge',
-								color: 'gray',
-							},
-							{
-								i18nLabel: 'header.nav.reward-badge',
-								color: 'yellow',
-							},
-						],
 						Icon: CrossMarginIcon,
 					},
 			  ]

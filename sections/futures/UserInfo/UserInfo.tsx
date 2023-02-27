@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, memo } from 'react';
 import styled from 'styled-components';
 
 import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
@@ -19,11 +19,8 @@ import {
 	selectOpenConditionalOrders,
 	selectOpenDelayedOrders,
 	selectPosition,
-	selectQueryStatuses,
-	selectUsersTradesForMarket,
 } from 'state/futures/selectors';
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
-import { FetchStatus } from 'state/types';
 import { selectWallet } from 'state/wallet/selectors';
 
 import PositionCard from '../PositionCard';
@@ -46,19 +43,17 @@ enum FuturesTab {
 
 const FutureTabs = Object.values(FuturesTab);
 
-const UserInfo: React.FC = () => {
+const UserInfo: React.FC = memo(() => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
 	const walletAddress = useAppSelector(selectWallet);
-	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const openOrders = useAppSelector(selectOpenDelayedOrders);
 	const conditionalOrders = useAppSelector(selectOpenConditionalOrders);
 	const accountType = useAppSelector(selectFuturesType);
-	const trades = useAppSelector(selectUsersTradesForMarket);
 
 	useFetchAction(fetchTradesForSelectedMarket, {
 		dependencies: [walletAddress, accountType, marketAsset, position?.position?.size.toString()],
@@ -82,12 +77,12 @@ const UserInfo: React.FC = () => {
 	const activeTab = tabQuery ?? FuturesTab.POSITION;
 
 	const handleOpenProfitCalc = useCallback(() => {
-		setOpenProfitCalcModal(!openProfitCalcModal);
-	}, [openProfitCalcModal]);
+		setOpenProfitCalcModal((s) => !s);
+	}, []);
 
 	const handleOpenShareModal = useCallback(() => {
-		setShowShareModal(!showShareModal);
-	}, [showShareModal]);
+		setShowShareModal((s) => !s);
+	}, []);
 
 	const refetchTrades = useCallback(() => {
 		dispatch(fetchTradesForSelectedMarket);
@@ -160,7 +155,7 @@ const UserInfo: React.FC = () => {
 	);
 
 	useEffect(() => {
-		setHasOpenPosition(!!position && !!position.position);
+		setHasOpenPosition(!!position?.position);
 	}, [position]);
 
 	return (
@@ -171,7 +166,7 @@ const UserInfo: React.FC = () => {
 						<TabButton
 							key={name}
 							title={label}
-							badge={badge}
+							badgeCount={badge}
 							active={active}
 							disabled={disabled}
 							onClick={onClick}
@@ -208,27 +203,17 @@ const UserInfo: React.FC = () => {
 				<ConditionalOrdersTable />
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
-				<Trades
-					history={trades}
-					isLoading={!trades.length && tradesQuery.status === FetchStatus.Loading}
-					isLoaded={tradesQuery.status === FetchStatus.Success}
-					marketAsset={marketAsset}
-				/>
+				<Trades />
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
 				<Transfers />
 			</TabPanel>
 
-			{openProfitCalcModal && (
-				<ProfitCalculator
-					marketAsset={marketAsset}
-					setOpenProfitCalcModal={setOpenProfitCalcModal}
-				/>
-			)}
+			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}
 			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
 		</>
 	);
-};
+});
 
 const TabButtonsContainer = styled.div`
 	display: grid;

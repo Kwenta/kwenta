@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import ErrorView from 'components/ErrorView';
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
-import CustomInput from 'components/Input/CustomInput';
+import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
@@ -118,7 +118,7 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 				</BalanceText>
 			</BalanceContainer>
 
-			<CustomInput
+			<NumericInput
 				dataTestId="futures-market-trade-withdraw-margin-input"
 				placeholder={'0.0'}
 				value={amount}

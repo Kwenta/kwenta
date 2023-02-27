@@ -14,29 +14,30 @@ import media from 'styles/media';
 const TradeNow = () => {
 	const { t } = useTranslation();
 
-	const title = (
-		<TransparentCard>
-			<SmallGoldenHeader>{t('homepage.tradenow.title')}</SmallGoldenHeader>
-			<BigWhiteHeader>{t('homepage.tradenow.description')}</BigWhiteHeader>
-			<GrayDescription>{t('homepage.tradenow.categories')}</GrayDescription>
-			<CTAContainer>
-				<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-					<Button variant="flat" textColor="yellow" size="md">
-						{t('homepage.nav.trade-now')}
-					</Button>
-				</Link>
-			</CTAContainer>
-		</TransparentCard>
-	);
-
 	return (
 		<Container>
-			<FlexDivColCentered>{title}</FlexDivColCentered>
+			<FlexDivColCentered>
+				<TransparentCard>
+					<SmallGoldenHeader>{t('homepage.tradenow.title')}</SmallGoldenHeader>
+					<BigWhiteHeader>{t('homepage.tradenow.description')}</BigWhiteHeader>
+					<GrayDescription>{t('homepage.tradenow.categories')}</GrayDescription>
+					<CTAContainer>
+						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
+							<Button variant="flat" textColor="yellow" size="medium">
+								{t('homepage.nav.trade-now')}
+							</Button>
+						</Link>
+					</CTAContainer>
+				</TransparentCard>
+			</FlexDivColCentered>
 		</Container>
 	);
 };
 
 const TransparentCard = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	padding: 140px 303px;
 	box-sizing: border-box;
 	text-align: center;
@@ -83,7 +84,7 @@ const GrayDescription = styled(Text.Body)`
 `;
 
 const CTAContainer = styled.div`
-	margin: 50px 0px 0px 0;
+	margin-top: 50px;
 	z-index: 1;
 `;
 

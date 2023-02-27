@@ -1,24 +1,28 @@
-import React, { ChangeEvent } from 'react';
+import { memo, ChangeEvent, FC, useCallback } from 'react';
 import styled from 'styled-components';
 
 import SearchIconPath from 'assets/svg/app/search.svg';
-import SearchInput from 'components/Input/SearchInput';
+import Input from 'components/Input/Input';
 import media from 'styles/media';
 
-type Props = {
+type SearchProps = {
 	value: string | undefined;
-	onChange: (text: string) => any;
+	onChange: (text: string) => void;
 	disabled: boolean;
 };
 
-export default function Search({ value, onChange, disabled }: Props) {
-	const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-		onChange(event.target.value);
-	};
+const Search: FC<SearchProps> = memo(({ value, onChange, disabled }) => {
+	const handleOnChange = useCallback(
+		(event: ChangeEvent<HTMLInputElement>) => {
+			onChange(event.target.value);
+		},
+		[onChange]
+	);
+
 	return (
 		<SearchBar>
 			<StyledSvg />
-			<StyledSearchInput
+			<SearchInput
 				value={value}
 				onChange={handleOnChange}
 				placeholder="Search..."
@@ -26,14 +30,14 @@ export default function Search({ value, onChange, disabled }: Props) {
 			/>
 		</SearchBar>
 	);
-}
+});
 
 const StyledSvg = styled(SearchIconPath)`
 	position: absolute;
 	left: 12px;
 `;
 
-const StyledSearchInput = styled(SearchInput)`
+const SearchInput = styled(Input).attrs({ type: 'search' })`
 	position: relative;
 	height: 100%;
 	text-indent: 16px;
@@ -52,3 +56,5 @@ const SearchBar = styled.div`
 	display: flex;
 	align-items: center;
 `;
+
+export default Search;

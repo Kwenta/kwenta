@@ -1,6 +1,7 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import SwitchAssetArrows from 'assets/svg/futures/deposit-withdraw-arrows.svg';
@@ -20,11 +21,41 @@ import { selectWallet } from 'state/wallet/selectors';
 import { BorderedPanel, YellowIconButton, PillButtonSpan } from 'styles/common';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
+const ConnectDepositButton = memo(() => {
+	const { t } = useTranslation();
+	const { openConnectModal } = useConnectModal();
+
+	return (
+		<DepositButton onClick={openConnectModal}>
+			<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>
+		</DepositButton>
+	);
+});
+
+const DepositMarginButton = memo(() => {
+	const dispatch = useAppDispatch();
+	const accountType = useAppSelector(selectFuturesType);
+
+	const handleOpenModal = useCallback(() => {
+		dispatch(
+			setOpenModal(
+				accountType === 'isolated_margin' ? 'futures_isolated_transfer' : 'futures_cross_deposit'
+			)
+		);
+	}, [dispatch, accountType]);
+
+	return (
+		<DepositButton onClick={handleOpenModal}>
+			<ButtonContent>
+				Deposit Margin <SwitchAssetArrows />
+			</ButtonContent>
+		</DepositButton>
+	);
+});
+
 export default function TradePanelHeader() {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const theme = useTheme();
-	const { openConnectModal } = useConnectModal();
 
 	const position = useAppSelector(selectPosition);
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
@@ -42,32 +73,11 @@ export default function TradePanelHeader() {
 	};
 
 	if (!wallet) {
-		return (
-			<DepositButton variant="yellow" onClick={openConnectModal}>
-				<ButtonContent>{t('common.wallet.connect-wallet')}</ButtonContent>
-			</DepositButton>
-		);
+		return <ConnectDepositButton />;
 	}
 
 	if (!hasMargin) {
-		return (
-			<DepositButton
-				variant="yellow"
-				onClick={() =>
-					dispatch(
-						setOpenModal(
-							accountType === 'isolated_margin'
-								? 'futures_isolated_transfer'
-								: 'futures_cross_deposit'
-						)
-					)
-				}
-			>
-				<ButtonContent>
-					Deposit Margin <SwitchAssetArrows fill={theme.colors.selectedTheme.button.yellow.text} />
-				</ButtonContent>
-			</DepositButton>
-		);
+		return <DepositMarginButton />;
 	}
 
 	return (
@@ -75,9 +85,9 @@ export default function TradePanelHeader() {
 			<Title>
 				<StyledFuturesIcon type={accountType} />
 				{t(
-					accountType === 'cross_margin'
-						? 'futures.market.trade.cross-margin.title'
-						: 'futures.market.trade.isolated-margin.title'
+					`futures.market.trade.${
+						accountType === 'cross_margin' ? 'cross' : 'isolated'
+					}-margin.title`
 				)}
 				{accountType === 'cross_margin' && (
 					<FAQLink onClick={() => window.open(EXTERNAL_LINKS.Docs.CrossMarginFaq)}>
@@ -106,10 +116,13 @@ const StyledPillButtonSpan = styled(PillButtonSpan)`
 	margin-left: 0;
 `;
 
-const DepositButton = styled(Button)`
+const DepositButton = styled(Button).attrs({ fullWidth: true, variant: 'yellow' })`
 	height: 55px;
-	width: 100%;
 	margin-bottom: 16px;
+
+	svg {
+		fill: ${(props) => props.theme.colors.selectedTheme.button.yellow.text};
+	}
 `;
 
 const Container = styled(BorderedPanel)`

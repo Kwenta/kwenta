@@ -1,9 +1,16 @@
+import { ComponentStory } from '@storybook/react';
+import { wei } from '@synthetixio/wei';
+
 import Spacer from 'components/Spacer';
 import * as Text from 'components/Text';
 
 export default {
 	title: 'Components/Text',
 	component: Text.Body,
+};
+
+export const Default: ComponentStory<typeof Text.Body> = (args) => {
+	return <Text.Body {...args}>Sample text</Text.Body>;
 };
 
 export const LogoText = () => {
@@ -34,11 +41,11 @@ export const Body = () => {
 			<Text.Body size="medium">This is regular body text</Text.Body>
 			<Text.Body size="large">This is regular body text</Text.Body>
 			<Spacer height={8} />
-			<Text.Body variant="bold">This is bold body text</Text.Body>
-			<Text.Body size="medium" variant="bold">
+			<Text.Body weight="bold">This is bold body text</Text.Body>
+			<Text.Body size="medium" weight="bold">
 				This is bold body text
 			</Text.Body>
-			<Text.Body size="large" variant="bold">
+			<Text.Body size="large" weight="bold">
 				This is bold body text
 			</Text.Body>
 			<Spacer height={8} />
@@ -50,15 +57,19 @@ export const Body = () => {
 				This is monospaced body text
 			</Text.Body>
 			<Spacer height={8} />
-			<Text.Body mono variant="bold">
+			<Text.Body mono weight="bold">
 				This is bold monospaced body text
 			</Text.Body>
-			<Text.Body size="medium" mono variant="bold">
+			<Text.Body size="medium" mono weight="bold">
 				This is bold monospaced body text
 			</Text.Body>
-			<Text.Body size="large" mono variant="bold">
+			<Text.Body size="large" mono weight="bold">
 				This is bold monospaced body text
 			</Text.Body>
 		</div>
 	);
+};
+
+export const NumericValue = () => {
+	return <Text.NumericValue colored value={wei(10)} />;
 };

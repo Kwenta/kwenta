@@ -10,6 +10,7 @@ import Currency from 'components/Currency';
 import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Table, { TableHeader } from 'components/Table';
+import { Body } from 'components/Text';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
@@ -116,7 +117,7 @@ const ShortList = () => {
 								),
 								accessor: 'totalTrades',
 								Cell: (cellProps: CellProps<any>) => (
-									<DefaultCell>{cellProps.row.original.totalTrades}</DefaultCell>
+									<Body size="large">{cellProps.row.original.totalTrades}</Body>
 								),
 								width: 100,
 							},
@@ -126,7 +127,7 @@ const ShortList = () => {
 								),
 								accessor: 'liquidations',
 								Cell: (cellProps: CellProps<any>) => (
-									<DefaultCell>{cellProps.row.original.liquidations}</DefaultCell>
+									<Body size="large">{cellProps.row.original.liquidations}</Body>
 								),
 								width: 100,
 							},
@@ -321,10 +322,6 @@ const StyledTable = styled(Table)`
 `;
 
 const Medal = styled.span`
-	font-size: 15px;
-`;
-
-const DefaultCell = styled.p`
 	font-size: 15px;
 `;
 

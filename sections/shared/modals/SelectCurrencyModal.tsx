@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import styled from 'styled-components';
 
-import SearchInput from 'components/Input/SearchInput';
+import Input from 'components/Input/Input';
 import { FlexDivCentered } from 'components/layout/flex';
 import { RowsHeader, CenteredModal } from 'components/layout/modals';
 import Loader from 'components/Loader';
@@ -265,7 +265,7 @@ const SearchContainer = styled.div`
 	margin: 0 16px 12px 16px;
 `;
 
-const AssetSearchInput = styled(SearchInput)`
+const AssetSearchInput = styled(Input).attrs({ type: 'search' })`
 	font-size: 16px;
 	height: 40px;
 	font-family: ${(props) => props.theme.fonts.regular};

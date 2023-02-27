@@ -1,8 +1,8 @@
 import { ChangeEvent, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
-import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
+import NumericInput from 'components/Input/NumericInput';
 import { OrderNameByType } from 'sdk/utils/futures';
 import { editTradeOrderPrice } from 'state/futures/actions';
 import {
@@ -43,7 +43,7 @@ export default function OrderPriceInput() {
 					</>
 				)}
 			</StyledInputTitle>
-			<CustomInput
+			<NumericInput
 				invalid={!!minMaxLabelString}
 				dataTestId="order-price-input"
 				right="sUSD"

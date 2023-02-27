@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useMemo, memo } from 'react';
 import styled from 'styled-components';
 
-import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
+import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import { setCrossMarginMarginDelta } from 'state/futures/reducer';
 import {
@@ -62,7 +62,7 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ disabled, isMobile }) =>
 					</InputHelpers>
 				</OrderSizingRow>
 
-				<CustomInput
+				<NumericInput
 					invalid={invalid}
 					dataTestId={'set-order-margin-susd' + (isMobile ? '-mobile' : '-desktop')}
 					disabled={isDisabled}
