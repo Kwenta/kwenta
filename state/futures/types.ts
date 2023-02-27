@@ -48,8 +48,9 @@ export type FuturesAction = {
 	account: string;
 	timestamp: number;
 	asset: FuturesMarketAsset;
-	margin: Wei;
+	margin: number;
 	size: number;
+	action: 'trade' | 'deposit' | 'withdraw';
 };
 
 export type FuturesPortfolio = {

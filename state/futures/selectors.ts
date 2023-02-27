@@ -623,6 +623,18 @@ export const selectMarginTransfers = createSelector(
 	}
 );
 
+export const selectAllUserMarginTransfers = createSelector(
+	selectWallet,
+	selectNetwork,
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(wallet, network, type, futures) => {
+		if (!wallet) return [];
+		const account = futures[accountType(type)].accounts[network][wallet];
+		return account?.marginTransfers ?? [];
+	}
+);
+
 export const selectCrossMarginOpenOrders = createSelector(
 	selectMarketAsset,
 	selectCrossMarginAccountData,
@@ -833,13 +845,13 @@ export const selectAllUsersTrades = createSelector(
 
 export const selectUserPortfolioValues = createSelector(
 	selectAllUsersTrades,
-	selectMarginTransfers,
+	selectAllUserMarginTransfers,
 	(trades, transfers) => {
 		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
 			account,
 			timestamp: timestamp,
 			asset,
-			margin,
+			margin: margin.div(ETH_UNIT).toNumber(),
 			size: 0,
 		}));
 
@@ -848,7 +860,7 @@ export const selectUserPortfolioValues = createSelector(
 			timestamp,
 			asset,
 			size,
-			margin: zeroBN,
+			margin: 0,
 		}));
 
 		const actions = [...tradeActions, ...transferActions]
@@ -857,7 +869,7 @@ export const selectUserPortfolioValues = createSelector(
 
 		const accountHistory = actions.reduce((acc, action) => {
 			if (acc.length === 0) {
-				const newTotal = action.margin.gt(0) ? action.margin.div(ETH_UNIT).toNumber() : action.size;
+				const newTotal = action.size !== 0 ? action.size : action.margin;
 				const lastAction = {
 					account: action.account,
 					timestamp: action.timestamp,
@@ -871,9 +883,8 @@ export const selectUserPortfolioValues = createSelector(
 				const lastAction = acc[acc.length - 1];
 				const newAssets = {
 					...lastAction.assets,
-					[action.asset]: action.margin.gt(0)
-						? action.margin.div(ETH_UNIT).toNumber()
-						: lastAction.assets[action.asset] + action.size,
+					[action.asset]:
+						action.size !== 0 ? lastAction.assets[action.asset] + action.size : action.margin,
 				};
 				const newTotal = Object.entries(newAssets).reduce((acc, asset) => acc + asset[1], 0);
 
