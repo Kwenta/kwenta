@@ -27,7 +27,7 @@ import {
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
-	FuturesOrder,
+	ConditionalOrder,
 	FuturesOrderType,
 	FuturesOrderTypeDisplay,
 	FuturesPosition,
@@ -454,9 +454,9 @@ export const calculateCrossMarginFee = (
 	feeRates: CrossMarginSettings
 ) => {
 	if (orderType !== 'limit' && orderType !== 'stop_market') return zeroBN;
-	const advancedOrderFeeRate =
+	const conditionalOrderFeeRate =
 		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
-	return susdSize.mul(advancedOrderFeeRate);
+	return susdSize.mul(conditionalOrderFeeRate);
 };
 
 export const getPythNetworkUrl = (networkId: NetworkId) => {
@@ -464,6 +464,7 @@ export const getPythNetworkUrl = (networkId: NetworkId) => {
 };
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
+
 export const mapFuturesOrderFromEvent = (
 	orderDetails: {
 		id: number;
@@ -474,7 +475,7 @@ export const mapFuturesOrderFromEvent = (
 		marginDelta: BigNumber;
 	},
 	account: string
-): FuturesOrder => {
+): ConditionalOrder => {
 	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey;
 	const asset = MarketAssetByKey[marketKey];
 	const sizeDelta = wei(orderDetails.sizeDelta);

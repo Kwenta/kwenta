@@ -42,6 +42,8 @@ export const ROUTES = {
 			}),
 		Orders: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
 			formatUrl('/market', { asset, accountType, tab: 'orders' }),
+		ConditionalOrders: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType, tab: 'conditional_orders' }),
 		Trades: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
 			formatUrl('/market', { asset, accountType, tab: 'trades' }),
 		Transfers: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>

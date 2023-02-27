@@ -16,7 +16,7 @@ import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
 	selectFuturesType,
 	selectMarketAsset,
-	selectOpenAdvancedOrders,
+	selectOpenConditionalOrders,
 	selectOpenDelayedOrders,
 	selectPosition,
 	selectQueryStatuses,
@@ -31,11 +31,13 @@ import ProfitCalculator from '../ProfitCalculator';
 import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
+import ConditionalOrdersTable from './ConditionalOrdersTable';
 import OpenOrdersTable from './OpenOrdersTable';
 
 enum FuturesTab {
 	POSITION = 'position',
 	ORDERS = 'orders',
+	CONDITIONAL_ORDERS = 'conditional_orders',
 	TRADES = 'trades',
 	CALCULATOR = 'calculator',
 	TRANSFERS = 'transfers',
@@ -54,7 +56,7 @@ const UserInfo: React.FC = () => {
 	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const openOrders = useAppSelector(selectOpenDelayedOrders);
-	const advancedOrders = useAppSelector(selectOpenAdvancedOrders);
+	const conditionalOrders = useAppSelector(selectOpenConditionalOrders);
 	const accountType = useAppSelector(selectFuturesType);
 	const trades = useAppSelector(selectUsersTradesForMarket);
 
@@ -110,12 +112,23 @@ const UserInfo: React.FC = () => {
 			},
 			{
 				name: FuturesTab.ORDERS,
-				label: 'Orders',
-				badge: openOrders?.length + advancedOrders.length,
+				label: 'Pending',
+				badge: openOrders?.length,
 				active: activeTab === FuturesTab.ORDERS,
 				icon: <OpenPositionsIcon />,
 				onClick: () =>
 					router.push(ROUTES.Markets.Orders(marketAsset, accountType), undefined, {
+						scroll: false,
+					}),
+			},
+			{
+				name: FuturesTab.CONDITIONAL_ORDERS,
+				label: 'S/L Orders',
+				badge: conditionalOrders.length,
+				active: activeTab === FuturesTab.CONDITIONAL_ORDERS,
+				icon: <OpenPositionsIcon />,
+				onClick: () =>
+					router.push(ROUTES.Markets.ConditionalOrders(marketAsset, accountType), undefined, {
 						scroll: false,
 					}),
 			},
@@ -143,7 +156,7 @@ const UserInfo: React.FC = () => {
 					}),
 			},
 		],
-		[activeTab, router, marketAsset, openOrders?.length, advancedOrders?.length, accountType]
+		[activeTab, router, marketAsset, openOrders?.length, conditionalOrders?.length, accountType]
 	);
 
 	useEffect(() => {
@@ -190,6 +203,9 @@ const UserInfo: React.FC = () => {
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
 				<OpenOrdersTable />
+			</TabPanel>
+			<TabPanel name={FuturesTab.CONDITIONAL_ORDERS} activeTab={activeTab}>
+				<ConditionalOrdersTable />
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades

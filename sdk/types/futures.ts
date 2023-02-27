@@ -254,7 +254,7 @@ export type FuturesOrderTypeDisplay =
 	| 'Delayed'
 	| 'Delayed Offchain';
 
-export type FuturesOrder<T = Wei> = {
+export type ConditionalOrder<T = Wei> = {
 	id: string; // formatted subgraph id
 	contractId: number;
 	account: string;

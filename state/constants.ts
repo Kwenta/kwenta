@@ -23,7 +23,7 @@ export const ZERO_STATE_ACCOUNT = {
 	trades: [],
 	positions: [],
 	delayedOrders: [],
-	advancedOrders: [],
+	conditionalOrders: [],
 	positionHistory: [],
 };
 

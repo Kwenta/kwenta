@@ -5,7 +5,7 @@ type StyleType = 'tab' | 'check' | 'button';
 
 interface SegmentedControlProps {
 	values: string[];
-	selectedIndex: number;
+	selectedIndex?: number;
 	style?: React.CSSProperties;
 	className?: string;
 	styleType?: StyleType;

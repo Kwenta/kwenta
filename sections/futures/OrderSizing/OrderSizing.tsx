@@ -10,7 +10,6 @@ import { editTradeSizeInput } from 'state/futures/actions';
 import { setSelectedInputDenomination } from 'state/futures/reducer';
 import {
 	selectMarketPrice,
-	selectCrossMarginBalanceInfo,
 	selectPosition,
 	selectTradeSizeInputs,
 	selectCrossMarginOrderPrice,
@@ -20,6 +19,7 @@ import {
 	selectMarketAsset,
 	selectSelectedInputDenomination,
 	selectMaxUsdInputAmount,
+	selectCrossMarginMarginDelta,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
@@ -37,7 +37,6 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 
 	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs);
 
-	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const position = useAppSelector(selectPosition);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const orderType = useAppSelector(selectOrderType);
@@ -46,7 +45,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
-
+	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
 	const marketAsset = useAppSelector(selectMarketAsset);
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
@@ -80,11 +79,9 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 
 	const isDisabled = useMemo(() => {
 		const remaining =
-			selectedAccountType === 'isolated_margin'
-				? position?.remainingMargin || zeroBN
-				: freeCrossMargin;
+			selectedAccountType === 'isolated_margin' ? position?.remainingMargin || zeroBN : marginDelta;
 		return remaining.lte(0) || disabled;
-	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
+	}, [position?.remainingMargin, disabled, selectedAccountType, marginDelta]);
 
 	const showPosSizeHelper =
 		position?.position?.size &&
@@ -139,7 +136,6 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 });
 
 const OrderSizingContainer = styled.div`
-	margin-top: 18px;
 	margin-bottom: 16px;
 `;
 

@@ -5,7 +5,7 @@ import { ThemeContext } from 'styled-components';
 
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
-import { FuturesOrder } from 'sdk/types/futures';
+import { ConditionalOrder } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';
@@ -26,7 +26,7 @@ import { ChartPosition } from './types';
 export type ChartProps = {
 	activePosition?: ChartPosition | null;
 	potentialTrade?: ChartPosition | null;
-	openOrders: FuturesOrder[];
+	openOrders: ConditionalOrder[];
 	showOrderLines: boolean;
 	onChartReady?: () => void;
 	onToggleShowOrderLines?: () => void;

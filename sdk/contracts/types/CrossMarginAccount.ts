@@ -28,6 +28,39 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export declare namespace IAccount {
+  export type ConditionalOrderStruct = {
+    marketKey: PromiseOrValue<BytesLike>;
+    marginDelta: PromiseOrValue<BigNumberish>;
+    sizeDelta: PromiseOrValue<BigNumberish>;
+    targetPrice: PromiseOrValue<BigNumberish>;
+    gelatoTaskId: PromiseOrValue<BytesLike>;
+    conditionalOrderType: PromiseOrValue<BigNumberish>;
+    priceImpactDelta: PromiseOrValue<BigNumberish>;
+    reduceOnly: PromiseOrValue<boolean>;
+  };
+
+  export type ConditionalOrderStructOutput = [
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    number,
+    BigNumber,
+    boolean
+  ] & {
+    marketKey: string;
+    marginDelta: BigNumber;
+    sizeDelta: BigNumber;
+    targetPrice: BigNumber;
+    gelatoTaskId: string;
+    conditionalOrderType: number;
+    priceImpactDelta: BigNumber;
+    reduceOnly: boolean;
+  };
+}
+
 export declare namespace IPerpsV2MarketConsolidated {
   export type DelayedOrderStruct = {
     isOffchain: PromiseOrValue<boolean>;
@@ -86,128 +119,70 @@ export declare namespace IPerpsV2MarketConsolidated {
   };
 }
 
-export declare namespace IAccount {
-  export type OrderStruct = {
-    marketKey: PromiseOrValue<BytesLike>;
-    marginDelta: PromiseOrValue<BigNumberish>;
-    sizeDelta: PromiseOrValue<BigNumberish>;
-    targetPrice: PromiseOrValue<BigNumberish>;
-    gelatoTaskId: PromiseOrValue<BytesLike>;
-    orderType: PromiseOrValue<BigNumberish>;
-    maxDynamicFee: PromiseOrValue<BigNumberish>;
-    priceImpactDelta: PromiseOrValue<BigNumberish>;
-  };
-
-  export type OrderStructOutput = [
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    string,
-    number,
-    BigNumber,
-    BigNumber
-  ] & {
-    marketKey: string;
-    marginDelta: BigNumber;
-    sizeDelta: BigNumber;
-    targetPrice: BigNumber;
-    gelatoTaskId: string;
-    orderType: number;
-    maxDynamicFee: BigNumber;
-    priceImpactDelta: BigNumber;
-  };
-}
-
 export interface CrossMarginAccountInterface extends utils.Interface {
   functions: {
-    "ADDRESS_RESOLVER()": FunctionFragment;
     "ETH()": FunctionFragment;
-    "MARGIN_ASSET()": FunctionFragment;
+    "GELATO()": FunctionFragment;
     "OPS()": FunctionFragment;
     "VERSION()": FunctionFragment;
-    "calculateTradeFee(int256,address,uint256)": FunctionFragment;
-    "cancelOrder(uint256)": FunctionFragment;
+    "cancelConditionalOrder(uint256)": FunctionFragment;
     "checker(uint256)": FunctionFragment;
     "committedMargin()": FunctionFragment;
+    "conditionalOrderId()": FunctionFragment;
     "deposit(uint256)": FunctionFragment;
     "events()": FunctionFragment;
     "execute(uint8[],bytes[])": FunctionFragment;
-    "executeOrder(uint256)": FunctionFragment;
+    "executeConditionalOrder(uint256)": FunctionFragment;
     "factory()": FunctionFragment;
     "freeMargin()": FunctionFragment;
     "futuresMarketManager()": FunctionFragment;
-    "gelato()": FunctionFragment;
+    "getConditionalOrder(uint256)": FunctionFragment;
     "getDelayedOrder(bytes32)": FunctionFragment;
-    "getOrder(uint256)": FunctionFragment;
     "getPosition(bytes32)": FunctionFragment;
     "initialize(address,address,address,address)": FunctionFragment;
-    "orderId()": FunctionFragment;
     "owner()": FunctionFragment;
-    "placeOrder(bytes32,int256,int256,uint256,uint8,uint128)": FunctionFragment;
-    "placeOrderWithFeeCap(bytes32,int256,int256,uint256,uint8,uint128,uint256)": FunctionFragment;
+    "placeConditionalOrder(bytes32,int256,int256,uint256,uint8,uint128,bool)": FunctionFragment;
     "settings()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "validOrder(uint256)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
     "withdrawEth(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "ADDRESS_RESOLVER"
       | "ETH"
-      | "MARGIN_ASSET"
+      | "GELATO"
       | "OPS"
       | "VERSION"
-      | "calculateTradeFee"
-      | "cancelOrder"
+      | "cancelConditionalOrder"
       | "checker"
       | "committedMargin"
+      | "conditionalOrderId"
       | "deposit"
       | "events"
       | "execute"
-      | "executeOrder"
+      | "executeConditionalOrder"
       | "factory"
       | "freeMargin"
       | "futuresMarketManager"
-      | "gelato"
+      | "getConditionalOrder"
       | "getDelayedOrder"
-      | "getOrder"
       | "getPosition"
       | "initialize"
-      | "orderId"
       | "owner"
-      | "placeOrder"
-      | "placeOrderWithFeeCap"
+      | "placeConditionalOrder"
       | "settings"
       | "transferOwnership"
-      | "validOrder"
       | "withdraw"
       | "withdrawEth"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "ADDRESS_RESOLVER",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "ETH", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "MARGIN_ASSET",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "GELATO", values?: undefined): string;
   encodeFunctionData(functionFragment: "OPS", values?: undefined): string;
   encodeFunctionData(functionFragment: "VERSION", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "calculateTradeFee",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "cancelOrder",
+    functionFragment: "cancelConditionalOrder",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -216,6 +191,10 @@ export interface CrossMarginAccountInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "committedMargin",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "conditionalOrderId",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -228,7 +207,7 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "executeOrder",
+    functionFragment: "executeConditionalOrder",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "factory", values?: undefined): string;
@@ -240,14 +219,13 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "futuresMarketManager",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "gelato", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getConditionalOrder",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getDelayedOrder",
     values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getOrder",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPosition",
@@ -262,21 +240,9 @@ export interface CrossMarginAccountInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "orderId", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "placeOrder",
-    values: [
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "placeOrderWithFeeCap",
+    functionFragment: "placeConditionalOrder",
     values: [
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>,
@@ -284,17 +250,13 @@ export interface CrossMarginAccountInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<boolean>
     ]
   ): string;
   encodeFunctionData(functionFragment: "settings", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "validOrder",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
@@ -305,23 +267,12 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "ADDRESS_RESOLVER",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "ETH", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "MARGIN_ASSET",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "GELATO", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "OPS", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "VERSION", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "calculateTradeFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "cancelOrder",
+    functionFragment: "cancelConditionalOrder",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "checker", data: BytesLike): Result;
@@ -329,11 +280,15 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "committedMargin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "conditionalOrderId",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "events", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "executeOrder",
+    functionFragment: "executeConditionalOrder",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
@@ -342,22 +297,22 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "futuresMarketManager",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "gelato", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getConditionalOrder",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getDelayedOrder",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getOrder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "orderId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "placeOrder", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "placeOrderWithFeeCap",
+    functionFragment: "placeConditionalOrder",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "settings", data: BytesLike): Result;
@@ -365,7 +320,6 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "validOrder", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "withdrawEth",
@@ -373,42 +327,103 @@ export interface CrossMarginAccountInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "Deposit(address,uint256)": EventFragment;
-    "EthWithdraw(address,uint256)": EventFragment;
+    "ConditionalOrderCancelled(address,uint256,uint8)": EventFragment;
+    "ConditionalOrderFilled(address,uint256,uint256,uint256)": EventFragment;
+    "ConditionalOrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8,uint128,bool)": EventFragment;
+    "Deposit(address,address,uint256)": EventFragment;
+    "EthWithdraw(address,address,uint256)": EventFragment;
     "FeeImposed(address,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
-    "OrderCancelled(address,uint256)": EventFragment;
-    "OrderFilled(address,uint256,uint256,uint256)": EventFragment;
-    "OrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8,uint128,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Withdraw(address,uint256)": EventFragment;
+    "Withdraw(address,address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ConditionalOrderCancelled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ConditionalOrderFilled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ConditionalOrderPlaced"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EthWithdraw"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeeImposed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OrderCancelled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OrderFilled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OrderPlaced"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
 
+export interface ConditionalOrderCancelledEventObject {
+  account: string;
+  conditionalOrderId: BigNumber;
+  reason: number;
+}
+export type ConditionalOrderCancelledEvent = TypedEvent<
+  [string, BigNumber, number],
+  ConditionalOrderCancelledEventObject
+>;
+
+export type ConditionalOrderCancelledEventFilter =
+  TypedEventFilter<ConditionalOrderCancelledEvent>;
+
+export interface ConditionalOrderFilledEventObject {
+  account: string;
+  conditionalOrderId: BigNumber;
+  fillPrice: BigNumber;
+  keeperFee: BigNumber;
+}
+export type ConditionalOrderFilledEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  ConditionalOrderFilledEventObject
+>;
+
+export type ConditionalOrderFilledEventFilter =
+  TypedEventFilter<ConditionalOrderFilledEvent>;
+
+export interface ConditionalOrderPlacedEventObject {
+  account: string;
+  conditionalOrderId: BigNumber;
+  marketKey: string;
+  marginDelta: BigNumber;
+  sizeDelta: BigNumber;
+  targetPrice: BigNumber;
+  conditionalOrderType: number;
+  priceImpactDelta: BigNumber;
+  reduceOnly: boolean;
+}
+export type ConditionalOrderPlacedEvent = TypedEvent<
+  [
+    string,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    number,
+    BigNumber,
+    boolean
+  ],
+  ConditionalOrderPlacedEventObject
+>;
+
+export type ConditionalOrderPlacedEventFilter =
+  TypedEventFilter<ConditionalOrderPlacedEvent>;
+
 export interface DepositEventObject {
   user: string;
+  account: string;
   amount: BigNumber;
 }
-export type DepositEvent = TypedEvent<[string, BigNumber], DepositEventObject>;
+export type DepositEvent = TypedEvent<
+  [string, string, BigNumber],
+  DepositEventObject
+>;
 
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
 
 export interface EthWithdrawEventObject {
   user: string;
+  account: string;
   amount: BigNumber;
 }
 export type EthWithdrawEvent = TypedEvent<
-  [string, BigNumber],
+  [string, string, BigNumber],
   EthWithdrawEventObject
 >;
 
@@ -432,58 +447,6 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface OrderCancelledEventObject {
-  account: string;
-  orderId: BigNumber;
-}
-export type OrderCancelledEvent = TypedEvent<
-  [string, BigNumber],
-  OrderCancelledEventObject
->;
-
-export type OrderCancelledEventFilter = TypedEventFilter<OrderCancelledEvent>;
-
-export interface OrderFilledEventObject {
-  account: string;
-  orderId: BigNumber;
-  fillPrice: BigNumber;
-  keeperFee: BigNumber;
-}
-export type OrderFilledEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  OrderFilledEventObject
->;
-
-export type OrderFilledEventFilter = TypedEventFilter<OrderFilledEvent>;
-
-export interface OrderPlacedEventObject {
-  account: string;
-  orderId: BigNumber;
-  marketKey: string;
-  marginDelta: BigNumber;
-  sizeDelta: BigNumber;
-  targetPrice: BigNumber;
-  orderType: number;
-  priceImpactDelta: BigNumber;
-  maxDynamicFee: BigNumber;
-}
-export type OrderPlacedEvent = TypedEvent<
-  [
-    string,
-    BigNumber,
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    number,
-    BigNumber,
-    BigNumber
-  ],
-  OrderPlacedEventObject
->;
-
-export type OrderPlacedEventFilter = TypedEventFilter<OrderPlacedEvent>;
-
 export interface OwnershipTransferredEventObject {
   user: string;
   newOwner: string;
@@ -498,10 +461,11 @@ export type OwnershipTransferredEventFilter =
 
 export interface WithdrawEventObject {
   user: string;
+  account: string;
   amount: BigNumber;
 }
 export type WithdrawEvent = TypedEvent<
-  [string, BigNumber],
+  [string, string, BigNumber],
   WithdrawEventObject
 >;
 
@@ -534,34 +498,27 @@ export interface CrossMarginAccount extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<[string]>;
-
     ETH(overrides?: CallOverrides): Promise<[string]>;
 
-    MARGIN_ASSET(overrides?: CallOverrides): Promise<[string]>;
+    GELATO(overrides?: CallOverrides): Promise<[string]>;
 
     OPS(overrides?: CallOverrides): Promise<[string]>;
 
     VERSION(overrides?: CallOverrides): Promise<[string]>;
 
-    calculateTradeFee(
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _market: PromiseOrValue<string>,
-      _advancedOrderFee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { fee: BigNumber }>;
-
-    cancelOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    cancelConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     checker(
-      _orderId: PromiseOrValue<BigNumberish>,
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
     committedMargin(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    conditionalOrderId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     deposit(
       _amount: PromiseOrValue<BigNumberish>,
@@ -571,13 +528,13 @@ export interface CrossMarginAccount extends BaseContract {
     events(overrides?: CallOverrides): Promise<[string]>;
 
     execute(
-      commands: PromiseOrValue<BigNumberish>[],
-      inputs: PromiseOrValue<BytesLike>[],
+      _commands: PromiseOrValue<BigNumberish>[],
+      _inputs: PromiseOrValue<BytesLike>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    executeOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    executeConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -587,7 +544,10 @@ export interface CrossMarginAccount extends BaseContract {
 
     futuresMarketManager(overrides?: CallOverrides): Promise<[string]>;
 
-    gelato(overrides?: CallOverrides): Promise<[string]>;
+    getConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[IAccount.ConditionalOrderStructOutput]>;
 
     getDelayedOrder(
       _marketKey: PromiseOrValue<BytesLike>,
@@ -597,11 +557,6 @@ export interface CrossMarginAccount extends BaseContract {
         order: IPerpsV2MarketConsolidated.DelayedOrderStructOutput;
       }
     >;
-
-    getOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[IAccount.OrderStructOutput]>;
 
     getPosition(
       _marketKey: PromiseOrValue<BytesLike>,
@@ -620,28 +575,16 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    orderId(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    placeOrder(
+    placeConditionalOrder(
       _marketKey: PromiseOrValue<BytesLike>,
       _marginDelta: PromiseOrValue<BigNumberish>,
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
-      _orderType: PromiseOrValue<BigNumberish>,
+      _conditionalOrderType: PromiseOrValue<BigNumberish>,
       _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    placeOrderWithFeeCap(
-      _marketKey: PromiseOrValue<BytesLike>,
-      _marginDelta: PromiseOrValue<BigNumberish>,
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _targetPrice: PromiseOrValue<BigNumberish>,
-      _orderType: PromiseOrValue<BigNumberish>,
-      _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      _maxDynamicFee: PromiseOrValue<BigNumberish>,
+      _reduceOnly: PromiseOrValue<boolean>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -651,11 +594,6 @@ export interface CrossMarginAccount extends BaseContract {
       _newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    validOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber]>;
 
     withdraw(
       _amount: PromiseOrValue<BigNumberish>,
@@ -668,34 +606,27 @@ export interface CrossMarginAccount extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<string>;
-
   ETH(overrides?: CallOverrides): Promise<string>;
 
-  MARGIN_ASSET(overrides?: CallOverrides): Promise<string>;
+  GELATO(overrides?: CallOverrides): Promise<string>;
 
   OPS(overrides?: CallOverrides): Promise<string>;
 
   VERSION(overrides?: CallOverrides): Promise<string>;
 
-  calculateTradeFee(
-    _sizeDelta: PromiseOrValue<BigNumberish>,
-    _market: PromiseOrValue<string>,
-    _advancedOrderFee: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  cancelOrder(
-    _orderId: PromiseOrValue<BigNumberish>,
+  cancelConditionalOrder(
+    _conditionalOrderId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   checker(
-    _orderId: PromiseOrValue<BigNumberish>,
+    _conditionalOrderId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
   committedMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+  conditionalOrderId(overrides?: CallOverrides): Promise<BigNumber>;
 
   deposit(
     _amount: PromiseOrValue<BigNumberish>,
@@ -705,13 +636,13 @@ export interface CrossMarginAccount extends BaseContract {
   events(overrides?: CallOverrides): Promise<string>;
 
   execute(
-    commands: PromiseOrValue<BigNumberish>[],
-    inputs: PromiseOrValue<BytesLike>[],
+    _commands: PromiseOrValue<BigNumberish>[],
+    _inputs: PromiseOrValue<BytesLike>[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  executeOrder(
-    _orderId: PromiseOrValue<BigNumberish>,
+  executeConditionalOrder(
+    _conditionalOrderId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -721,17 +652,15 @@ export interface CrossMarginAccount extends BaseContract {
 
   futuresMarketManager(overrides?: CallOverrides): Promise<string>;
 
-  gelato(overrides?: CallOverrides): Promise<string>;
+  getConditionalOrder(
+    _conditionalOrderId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IAccount.ConditionalOrderStructOutput>;
 
   getDelayedOrder(
     _marketKey: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<IPerpsV2MarketConsolidated.DelayedOrderStructOutput>;
-
-  getOrder(
-    _orderId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<IAccount.OrderStructOutput>;
 
   getPosition(
     _marketKey: PromiseOrValue<BytesLike>,
@@ -746,28 +675,16 @@ export interface CrossMarginAccount extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  orderId(overrides?: CallOverrides): Promise<BigNumber>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
-  placeOrder(
+  placeConditionalOrder(
     _marketKey: PromiseOrValue<BytesLike>,
     _marginDelta: PromiseOrValue<BigNumberish>,
     _sizeDelta: PromiseOrValue<BigNumberish>,
     _targetPrice: PromiseOrValue<BigNumberish>,
-    _orderType: PromiseOrValue<BigNumberish>,
+    _conditionalOrderType: PromiseOrValue<BigNumberish>,
     _priceImpactDelta: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  placeOrderWithFeeCap(
-    _marketKey: PromiseOrValue<BytesLike>,
-    _marginDelta: PromiseOrValue<BigNumberish>,
-    _sizeDelta: PromiseOrValue<BigNumberish>,
-    _targetPrice: PromiseOrValue<BigNumberish>,
-    _orderType: PromiseOrValue<BigNumberish>,
-    _priceImpactDelta: PromiseOrValue<BigNumberish>,
-    _maxDynamicFee: PromiseOrValue<BigNumberish>,
+    _reduceOnly: PromiseOrValue<boolean>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -777,11 +694,6 @@ export interface CrossMarginAccount extends BaseContract {
     _newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  validOrder(
-    _orderId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<[boolean, BigNumber]>;
 
   withdraw(
     _amount: PromiseOrValue<BigNumberish>,
@@ -794,34 +706,27 @@ export interface CrossMarginAccount extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<string>;
-
     ETH(overrides?: CallOverrides): Promise<string>;
 
-    MARGIN_ASSET(overrides?: CallOverrides): Promise<string>;
+    GELATO(overrides?: CallOverrides): Promise<string>;
 
     OPS(overrides?: CallOverrides): Promise<string>;
 
     VERSION(overrides?: CallOverrides): Promise<string>;
 
-    calculateTradeFee(
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _market: PromiseOrValue<string>,
-      _advancedOrderFee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    cancelOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    cancelConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     checker(
-      _orderId: PromiseOrValue<BigNumberish>,
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { canExec: boolean; execPayload: string }>;
 
     committedMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    conditionalOrderId(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
       _amount: PromiseOrValue<BigNumberish>,
@@ -831,13 +736,13 @@ export interface CrossMarginAccount extends BaseContract {
     events(overrides?: CallOverrides): Promise<string>;
 
     execute(
-      commands: PromiseOrValue<BigNumberish>[],
-      inputs: PromiseOrValue<BytesLike>[],
+      _commands: PromiseOrValue<BigNumberish>[],
+      _inputs: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    executeOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    executeConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -847,17 +752,15 @@ export interface CrossMarginAccount extends BaseContract {
 
     futuresMarketManager(overrides?: CallOverrides): Promise<string>;
 
-    gelato(overrides?: CallOverrides): Promise<string>;
+    getConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IAccount.ConditionalOrderStructOutput>;
 
     getDelayedOrder(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<IPerpsV2MarketConsolidated.DelayedOrderStructOutput>;
-
-    getOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<IAccount.OrderStructOutput>;
 
     getPosition(
       _marketKey: PromiseOrValue<BytesLike>,
@@ -872,28 +775,16 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    orderId(overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
-    placeOrder(
+    placeConditionalOrder(
       _marketKey: PromiseOrValue<BytesLike>,
       _marginDelta: PromiseOrValue<BigNumberish>,
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
-      _orderType: PromiseOrValue<BigNumberish>,
+      _conditionalOrderType: PromiseOrValue<BigNumberish>,
       _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    placeOrderWithFeeCap(
-      _marketKey: PromiseOrValue<BytesLike>,
-      _marginDelta: PromiseOrValue<BigNumberish>,
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _targetPrice: PromiseOrValue<BigNumberish>,
-      _orderType: PromiseOrValue<BigNumberish>,
-      _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      _maxDynamicFee: PromiseOrValue<BigNumberish>,
+      _reduceOnly: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -903,11 +794,6 @@ export interface CrossMarginAccount extends BaseContract {
       _newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    validOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean, BigNumber]>;
 
     withdraw(
       _amount: PromiseOrValue<BigNumberish>,
@@ -921,21 +807,72 @@ export interface CrossMarginAccount extends BaseContract {
   };
 
   filters: {
-    "Deposit(address,uint256)"(
+    "ConditionalOrderCancelled(address,uint256,uint8)"(
+      account?: PromiseOrValue<string> | null,
+      conditionalOrderId?: null,
+      reason?: null
+    ): ConditionalOrderCancelledEventFilter;
+    ConditionalOrderCancelled(
+      account?: PromiseOrValue<string> | null,
+      conditionalOrderId?: null,
+      reason?: null
+    ): ConditionalOrderCancelledEventFilter;
+
+    "ConditionalOrderFilled(address,uint256,uint256,uint256)"(
+      account?: PromiseOrValue<string> | null,
+      conditionalOrderId?: null,
+      fillPrice?: null,
+      keeperFee?: null
+    ): ConditionalOrderFilledEventFilter;
+    ConditionalOrderFilled(
+      account?: PromiseOrValue<string> | null,
+      conditionalOrderId?: null,
+      fillPrice?: null,
+      keeperFee?: null
+    ): ConditionalOrderFilledEventFilter;
+
+    "ConditionalOrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8,uint128,bool)"(
+      account?: PromiseOrValue<string> | null,
+      conditionalOrderId?: null,
+      marketKey?: null,
+      marginDelta?: null,
+      sizeDelta?: null,
+      targetPrice?: null,
+      conditionalOrderType?: null,
+      priceImpactDelta?: null,
+      reduceOnly?: null
+    ): ConditionalOrderPlacedEventFilter;
+    ConditionalOrderPlaced(
+      account?: PromiseOrValue<string> | null,
+      conditionalOrderId?: null,
+      marketKey?: null,
+      marginDelta?: null,
+      sizeDelta?: null,
+      targetPrice?: null,
+      conditionalOrderType?: null,
+      priceImpactDelta?: null,
+      reduceOnly?: null
+    ): ConditionalOrderPlacedEventFilter;
+
+    "Deposit(address,address,uint256)"(
       user?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
       amount?: null
     ): DepositEventFilter;
     Deposit(
       user?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
       amount?: null
     ): DepositEventFilter;
 
-    "EthWithdraw(address,uint256)"(
+    "EthWithdraw(address,address,uint256)"(
       user?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
       amount?: null
     ): EthWithdrawEventFilter;
     EthWithdraw(
       user?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
       amount?: null
     ): EthWithdrawEventFilter;
 
@@ -951,51 +888,6 @@ export interface CrossMarginAccount extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "OrderCancelled(address,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      orderId?: null
-    ): OrderCancelledEventFilter;
-    OrderCancelled(
-      account?: PromiseOrValue<string> | null,
-      orderId?: null
-    ): OrderCancelledEventFilter;
-
-    "OrderFilled(address,uint256,uint256,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      orderId?: null,
-      fillPrice?: null,
-      keeperFee?: null
-    ): OrderFilledEventFilter;
-    OrderFilled(
-      account?: PromiseOrValue<string> | null,
-      orderId?: null,
-      fillPrice?: null,
-      keeperFee?: null
-    ): OrderFilledEventFilter;
-
-    "OrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8,uint128,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      orderId?: null,
-      marketKey?: null,
-      marginDelta?: null,
-      sizeDelta?: null,
-      targetPrice?: null,
-      orderType?: null,
-      priceImpactDelta?: null,
-      maxDynamicFee?: null
-    ): OrderPlacedEventFilter;
-    OrderPlaced(
-      account?: PromiseOrValue<string> | null,
-      orderId?: null,
-      marketKey?: null,
-      marginDelta?: null,
-      sizeDelta?: null,
-      targetPrice?: null,
-      orderType?: null,
-      priceImpactDelta?: null,
-      maxDynamicFee?: null
-    ): OrderPlacedEventFilter;
-
     "OwnershipTransferred(address,address)"(
       user?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
@@ -1005,45 +897,40 @@ export interface CrossMarginAccount extends BaseContract {
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
 
-    "Withdraw(address,uint256)"(
+    "Withdraw(address,address,uint256)"(
       user?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
       amount?: null
     ): WithdrawEventFilter;
     Withdraw(
       user?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
       amount?: null
     ): WithdrawEventFilter;
   };
 
   estimateGas: {
-    ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<BigNumber>;
-
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
 
-    MARGIN_ASSET(overrides?: CallOverrides): Promise<BigNumber>;
+    GELATO(overrides?: CallOverrides): Promise<BigNumber>;
 
     OPS(overrides?: CallOverrides): Promise<BigNumber>;
 
     VERSION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    calculateTradeFee(
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _market: PromiseOrValue<string>,
-      _advancedOrderFee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    cancelOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    cancelConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     checker(
-      _orderId: PromiseOrValue<BigNumberish>,
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     committedMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    conditionalOrderId(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
       _amount: PromiseOrValue<BigNumberish>,
@@ -1053,13 +940,13 @@ export interface CrossMarginAccount extends BaseContract {
     events(overrides?: CallOverrides): Promise<BigNumber>;
 
     execute(
-      commands: PromiseOrValue<BigNumberish>[],
-      inputs: PromiseOrValue<BytesLike>[],
+      _commands: PromiseOrValue<BigNumberish>[],
+      _inputs: PromiseOrValue<BytesLike>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    executeOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    executeConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1069,15 +956,13 @@ export interface CrossMarginAccount extends BaseContract {
 
     futuresMarketManager(overrides?: CallOverrides): Promise<BigNumber>;
 
-    gelato(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getDelayedOrder(
-      _marketKey: PromiseOrValue<BytesLike>,
+    getConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    getDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1094,28 +979,16 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    orderId(overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    placeOrder(
+    placeConditionalOrder(
       _marketKey: PromiseOrValue<BytesLike>,
       _marginDelta: PromiseOrValue<BigNumberish>,
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
-      _orderType: PromiseOrValue<BigNumberish>,
+      _conditionalOrderType: PromiseOrValue<BigNumberish>,
       _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    placeOrderWithFeeCap(
-      _marketKey: PromiseOrValue<BytesLike>,
-      _marginDelta: PromiseOrValue<BigNumberish>,
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _targetPrice: PromiseOrValue<BigNumberish>,
-      _orderType: PromiseOrValue<BigNumberish>,
-      _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      _maxDynamicFee: PromiseOrValue<BigNumberish>,
+      _reduceOnly: PromiseOrValue<boolean>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1124,11 +997,6 @@ export interface CrossMarginAccount extends BaseContract {
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    validOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     withdraw(
@@ -1143,34 +1011,29 @@ export interface CrossMarginAccount extends BaseContract {
   };
 
   populateTransaction: {
-    ADDRESS_RESOLVER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     ETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    MARGIN_ASSET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    GELATO(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     OPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     VERSION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    calculateTradeFee(
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _market: PromiseOrValue<string>,
-      _advancedOrderFee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    cancelOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    cancelConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     checker(
-      _orderId: PromiseOrValue<BigNumberish>,
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     committedMargin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    conditionalOrderId(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     deposit(
       _amount: PromiseOrValue<BigNumberish>,
@@ -1180,13 +1043,13 @@ export interface CrossMarginAccount extends BaseContract {
     events(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     execute(
-      commands: PromiseOrValue<BigNumberish>[],
-      inputs: PromiseOrValue<BytesLike>[],
+      _commands: PromiseOrValue<BigNumberish>[],
+      _inputs: PromiseOrValue<BytesLike>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    executeOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    executeConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1198,15 +1061,13 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    gelato(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getDelayedOrder(
-      _marketKey: PromiseOrValue<BytesLike>,
+    getConditionalOrder(
+      _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
+    getDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1223,28 +1084,16 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    orderId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    placeOrder(
+    placeConditionalOrder(
       _marketKey: PromiseOrValue<BytesLike>,
       _marginDelta: PromiseOrValue<BigNumberish>,
       _sizeDelta: PromiseOrValue<BigNumberish>,
       _targetPrice: PromiseOrValue<BigNumberish>,
-      _orderType: PromiseOrValue<BigNumberish>,
+      _conditionalOrderType: PromiseOrValue<BigNumberish>,
       _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    placeOrderWithFeeCap(
-      _marketKey: PromiseOrValue<BytesLike>,
-      _marginDelta: PromiseOrValue<BigNumberish>,
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _targetPrice: PromiseOrValue<BigNumberish>,
-      _orderType: PromiseOrValue<BigNumberish>,
-      _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      _maxDynamicFee: PromiseOrValue<BigNumberish>,
+      _reduceOnly: PromiseOrValue<boolean>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1253,11 +1102,6 @@ export interface CrossMarginAccount extends BaseContract {
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    validOrder(
-      _orderId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     withdraw(

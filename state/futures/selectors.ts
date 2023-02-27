@@ -7,6 +7,7 @@ import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
+import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
@@ -442,6 +443,31 @@ export const selectAboveMaxLeverage = createSelector(
 	}
 );
 
+export const selectCrossMarginBalanceInfo = createSelector(
+	selectCrossMarginAccountData,
+	(account) => {
+		return account
+			? unserializeCmBalanceInfo(account.balanceInfo)
+			: {
+					freeMargin: wei(0),
+					keeperEthBal: wei(0),
+					allowance: wei(0),
+			  };
+	}
+);
+
+export const selectIdleMargin = createSelector(
+	selectCrossMarginPositions,
+	selectCrossMarginBalanceInfo,
+	selectSusdBalance,
+	(positions, { freeMargin }, balance) => {
+		const idleInMarkets = positions
+			.filter((p) => !p.position?.size.abs().gt(0))
+			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
+		return balance.add(idleInMarkets).add(freeMargin);
+	}
+);
+
 export const selectAvailableMargin = createSelector(
 	selectMarketInfo,
 	selectPosition,
@@ -552,19 +578,6 @@ export const selectIsolatedMarginLeverage = createSelector(
 	}
 );
 
-export const selectCrossMarginBalanceInfo = createSelector(
-	selectCrossMarginAccountData,
-	(account) => {
-		return account
-			? unserializeCmBalanceInfo(account.balanceInfo)
-			: {
-					freeMargin: wei(0),
-					keeperEthBal: wei(0),
-					allowance: wei(0),
-			  };
-	}
-);
-
 export const selectNextPriceDisclaimer = createSelector(
 	selectMaxLeverage,
 	selectLeverageInput,
@@ -642,7 +655,7 @@ export const selectCrossMarginOpenOrders = createSelector(
 	selectMarketAsset,
 	selectCrossMarginAccountData,
 	(asset, account) => {
-		const orders = account ? unserializeFuturesOrders(account.advancedOrders) : [];
+		const orders = account ? unserializeFuturesOrders(account.conditionalOrders) : [];
 		return orders.filter((o) => o.asset === asset);
 	}
 );
@@ -699,7 +712,7 @@ export const selectPositionStatus = createSelector(
 	}
 );
 
-export const selectOpenAdvancedOrders = createSelector(
+export const selectOpenConditionalOrders = createSelector(
 	selectCrossMarginOpenOrders,
 	selectFuturesType,
 	(crossOrders, futuresType) => {
@@ -725,7 +738,7 @@ export const selectCrossMarginSettings = createSelector(
 	(settings) => unserializeCrossMarginSettings(settings)
 );
 
-export const selectIsAdvancedOrder = createSelector(
+export const selectIsConditionalOrder = createSelector(
 	(state: RootState) => state.futures.crossMargin.orderType,
 	(type) => type === 'limit' || type === 'stop_market'
 );
@@ -829,7 +842,7 @@ export const selectAllUsersTrades = createSelector(selectAccountData, (accountDa
 	unserializeTrades(accountData?.trades ?? [])
 );
 
-export const selectCancellingOrder = (state: RootState) =>
+export const selectCancellingConditionalOrder = (state: RootState) =>
 	state.futures.crossMargin.cancellingOrder;
 
 export const selectHasRemainingMargin = createSelector(

@@ -6,7 +6,7 @@ import { formatBytes32String } from 'ethers/lib/utils';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import PerpsV2Market from 'sdk/contracts/abis/PerpsV2Market.json';
 import { PerpsV2Market__factory } from 'sdk/contracts/types';
-import { FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
+import { FuturesMarketAsset, FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
 import { sdk } from 'state/config';
 import {
 	zeroBN,
@@ -43,6 +43,33 @@ type Position = {
 };
 
 const ethcallProvider = new Provider();
+
+// TODO: Delete once fundingRateLastRecomputed is added to proxy
+const MARKET_ADDRESSES = {
+	AAVE: '0x794AFd9B432DE16450fF118f6402cf591E7226b6',
+	APE: '0xabE0b70033Da709a1a2ECF78CcbB6649A997199b',
+	ATOM: '0xbd352Bd6D6f81395EB94ba3778Aa3c7c523B1D97',
+	AUD: '0xf84312375eb2BBBdE43D6069CAcc4a0a156d6d9b',
+	AVAX: '0x7d470b2c680Df1299e181E6a2Ec00A97fA5b3a2c',
+	AXS: '0xf1F58f5aAA20D1556e6C55C340Bc2fb6af9f1f91',
+	BNB: '0xDb1bee7A74a3E9B4da83799F85Aa3A8f9A40786c',
+	sBTC: '0xb82C1c9491A529F7AB9B4A6d42537eDDe28d83F3',
+	DOGE: '0xD51d38F95d590E8aC327740439Cc914394076E70',
+	DYDX: '0x55B85653DF3e5fba20c314d37ED2aA135E47A174',
+	sETH: '0x3ad86e158377264F5d4C7625798496D279e7E33a',
+	EUR: '0xEB6a3a7d38Cd37Cf8ef2158c247249e6809ede2c',
+	FLOW: '0x1eD0E066cFB00FdfB62f98EBE1E450053f7D304c',
+	FTM: '0x201fbc5DF6A12e7ED013cf2A4272643578e9B660',
+	GBP: '0xD4B5e6fD9D5E2C192CF0DA5B56702A5F12459Bc8',
+	LINK: '0xd079A9622ECFa67eAA4072b86DE84A9f0574dBbe',
+	MATIC: '0xe184b90580D61c1D48d4eE7D4583e37871d4117c',
+	NEAR: '0xEFEd528e5161fE26632fa1195A4a6d692cCb66D7',
+	OP: '0x6bb821777814C5ac99A663B58e816479a4dca6e7',
+	SOL: '0x2fe08C69D8ab826b4E08c47F0EEa9090255f2840',
+	UNI: '0x9dD3D55Be18D138E304A6191D78baf62ec12044e',
+	XAG: '0xa394e42D93a8B9EB4F758566b79dA150CA5B7Fa0',
+	XAU: '0xc9951483d3f8370BCb9617805Ce3B7873B5aDA08',
+};
 
 class FuturesMarketInternal {
 	_provider: ethers.providers.Provider;
@@ -85,6 +112,7 @@ class FuturesMarketInternal {
 	}
 
 	getTradePreview = async (
+		marketAsset: FuturesMarketAsset,
 		account: string,
 		sizeDelta: BigNumber,
 		marginDelta: BigNumber,
@@ -97,7 +125,7 @@ class FuturesMarketInternal {
 		const stateMultiCallContract = new MultiCallContract(
 			// TODO: Waiting for fundingRateLastRecomputed to be added to proxy
 			// (ETH PERPS state address for now)
-			'0x3ad86e158377264F5d4C7625798496D279e7E33a',
+			MARKET_ADDRESSES[marketAsset],
 			PerpsV2Market
 		);
 		await ethcallProvider.init(this._provider as any);

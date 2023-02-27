@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import CustomInput from 'components/Input/CustomInput';
 import InputTitle from 'components/Input/InputTitle';
 import { FlexDivRow } from 'components/layout/flex';
-import { selectSusdBalance } from 'state/balances/selectors';
 import { setCrossMarginMarginDelta } from 'state/futures/reducer';
 import {
 	selectCrossMarginBalanceInfo,
@@ -12,9 +11,12 @@ import {
 	selectFuturesType,
 	selectSelectedInputDenomination,
 	selectMarginDeltaInputValue,
+	selectIdleMargin,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { zeroBN } from 'utils/formatters/number';
+
+import MarginPercentSelector from './Trade/MarginPercentSelector';
 
 type MarginInputProps = {
 	isMobile?: boolean;
@@ -28,15 +30,8 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ disabled, isMobile }) =>
 	const position = useAppSelector(selectPosition);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
-	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
-	const walletBalance = useAppSelector(selectSusdBalance);
 	const marginDeltaInputValue = useAppSelector(selectMarginDeltaInputValue);
-
-	const maxMargin = selectedAccountType === 'cross_margin' ? freeMargin : walletBalance;
-
-	const handleSetMax = () => {
-		dispatch(setCrossMarginMarginDelta(maxMargin.toString()));
-	};
+	const maxMargin = useAppSelector(selectIdleMargin);
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
 		dispatch(setCrossMarginMarginDelta(v));
@@ -60,10 +55,10 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ disabled, isMobile }) =>
 			<Container>
 				<OrderSizingRow>
 					<InputTitle>
-						Margin&nbsp; —<span>&nbsp; Set collateral to use</span>
+						Margin&nbsp; —<span>&nbsp; Set collateral</span>
 					</InputTitle>
 					<InputHelpers>
-						<MaxButton onClick={handleSetMax}>Max</MaxButton>
+						<MarginPercentSelector />
 					</InputHelpers>
 				</OrderSizingRow>
 
@@ -90,18 +85,6 @@ const OrderSizingRow = styled(FlexDivRow)`
 	align-items: center;
 	margin-bottom: 8px;
 	cursor: default;
-`;
-
-const MaxButton = styled.button`
-	text-decoration: underline;
-	font-variant: small-caps;
-	text-transform: lowercase;
-	font-size: 13px;
-	line-height: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	background-color: transparent;
-	border: none;
-	cursor: pointer;
 `;
 
 const InputHelpers = styled.div`

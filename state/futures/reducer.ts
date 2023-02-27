@@ -250,8 +250,8 @@ const futuresSlice = createSlice({
 		) => {
 			state.crossMargin.tradePreview = action.payload;
 		},
-		setCrossMarginOrderCancelling: (state, action: PayloadAction<string | undefined>) => {
-			state.crossMargin.cancellingOrder = action.payload;
+		setCrossMarginOrderCancelling: (state, { payload }: PayloadAction<number | undefined>) => {
+			state.crossMargin.cancellingOrder = payload;
 		},
 		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
 			state.leaderboard.selectedTrader = action.payload;
@@ -394,10 +394,10 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchCrossMarginOpenOrders.fulfilled, (futuresState, action) => {
 			futuresState.queryStatuses.openOrders = SUCCESS_STATUS;
 			if (!action.payload) return;
-			const { network, account, delayedOrders, advancedOrders } = action.payload;
+			const { network, account, delayedOrders, conditionalOrders } = action.payload;
 			const wallet = findWalletForAccount(futuresState.crossMargin, account, network);
 			if (wallet) {
-				futuresState.crossMargin.accounts[network][wallet].advancedOrders = advancedOrders;
+				futuresState.crossMargin.accounts[network][wallet].conditionalOrders = conditionalOrders;
 				futuresState.crossMargin.accounts[network][wallet].delayedOrders = delayedOrders;
 			}
 		});

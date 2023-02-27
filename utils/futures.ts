@@ -8,7 +8,7 @@ import {
 	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
-	FuturesOrder,
+	ConditionalOrder,
 	FuturesOrderType,
 	FuturesPosition,
 	FuturesPositionHistory,
@@ -218,8 +218,9 @@ export const orderPriceInvalidLabel = (
 	if (
 		((isLong && orderType === 'limit') || (!isLong && orderType === 'stop_market')) &&
 		wei(orderPrice).gt(currentPrice)
-	)
+	) {
 		return 'max ' + formatNumber(currentPrice);
+	}
 	if (
 		((!isLong && orderType === 'limit') || (isLong && orderType === 'stop_market')) &&
 		wei(orderPrice).lt(currentPrice)
@@ -445,7 +446,7 @@ export const unserializeTradeInputs = (tradeInputs: TradeSizeInputs<string>): Tr
 	};
 };
 
-export const serializeFuturesOrders = (orders: FuturesOrder[]): FuturesOrder<string>[] => {
+export const serializeFuturesOrders = (orders: ConditionalOrder[]): ConditionalOrder<string>[] => {
 	return orders.map((o) => ({
 		...o,
 		size: o.size.toString(),
@@ -485,7 +486,9 @@ export const unserializeDelayedOrders = (
 	orders: DelayedOrderWithDetails<string>[]
 ): DelayedOrderWithDetails[] => orders.map((o) => unserializeDelayedOrder(o));
 
-export const unserializeFuturesOrders = (orders: FuturesOrder<string>[]): FuturesOrder[] => {
+export const unserializeFuturesOrders = (
+	orders: ConditionalOrder<string>[]
+): ConditionalOrder[] => {
 	return orders.map((o) => ({
 		...o,
 		size: wei(o.size),

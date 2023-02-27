@@ -24,7 +24,7 @@ import {
 	selectIsolatedMarginLeverage,
 	selectCrossMarginOrderPrice,
 	selectOrderType,
-	selectIsAdvancedOrder,
+	selectIsConditionalOrder,
 	selectFuturesType,
 	selectCrossMarginMarginDelta,
 	selectLeverageSide,
@@ -62,7 +62,7 @@ const ManagePosition: React.FC = () => {
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
-	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
+	const isConditionalOrder = useAppSelector(selectIsConditionalOrder);
 	const openModal = useAppSelector(selectOpenModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
@@ -171,7 +171,7 @@ const ManagePosition: React.FC = () => {
 								dispatch(setOpenModal('futures_close_position_confirm'));
 							}
 						}}
-						disabled={!positionDetails || marketInfo?.isSuspended || isAdvancedOrder}
+						disabled={!positionDetails || marketInfo?.isSuspended || isConditionalOrder}
 					>
 						{t('futures.market.user.position.close-position')}
 					</CloseOrderButton>

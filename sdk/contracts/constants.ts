@@ -70,16 +70,16 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		10: '0x6d6273f52b0C8eaB388141393c1e8cfDB3311De6',
 	},
 	CrossMarginAccount: {
-		420: '0xD67Db3cc05f626A3B7ac59A161589e2Bb2Bfd1E0',
+		420: '0x3026c03EEA11204b8dC77969fa36E546f8DC82C9',
 	},
 	CrossMarginAccountFactory: {
-		420: '0xF84CcAD694ad8F37495b25D3Dd11edAd33d69Fb2',
+		420: '0xB502070B4EC27d6809A32fd15D0F635b2F20d595',
 	},
 	CrossMarginEvents: {
-		420: '0x769A0246AFECba504389D0D295CaE4bC951daa8e',
+		420: '0xD85cDfBEc9d2c4243E8Eb1066D87ec7496052223',
 	},
 	CrossMarginSettings: {
-		420: '0xa5Aac6b5De821E631C7Ad01f978e32e80a8461c7',
+		420: '0x9dc88774AbDFba9EB7B4BB2026C6C250a1ad52CB',
 	},
 	KwentaArrakisVault: {
 		10: '0x56dEa47c40877c2aaC2a689aC56aa56cAE4938d2',

@@ -22,6 +22,16 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "ConditionalOrderInvalid",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "EthTransferFailed",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "EthWithdrawalFailed",
     type: "error",
   },
@@ -90,7 +100,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "OrderInvalid",
+    name: "OnlyOps",
     type: "error",
   },
   {
@@ -110,7 +120,130 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "conditionalOrderId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "enum IAccount.ConditionalOrderCancelledReason",
+        name: "reason",
+        type: "uint8",
+      },
+    ],
+    name: "ConditionalOrderCancelled",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "conditionalOrderId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "fillPrice",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "keeperFee",
+        type: "uint256",
+      },
+    ],
+    name: "ConditionalOrderFilled",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "conditionalOrderId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "marketKey",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "int256",
+        name: "marginDelta",
+        type: "int256",
+      },
+      {
+        indexed: false,
+        internalType: "int256",
+        name: "sizeDelta",
+        type: "int256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "targetPrice",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "enum IAccount.ConditionalOrderTypes",
+        name: "conditionalOrderType",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "uint128",
+        name: "priceImpactDelta",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "reduceOnly",
+        type: "bool",
+      },
+    ],
+    name: "ConditionalOrderPlaced",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "user",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
         type: "address",
       },
       {
@@ -130,6 +263,12 @@ const _abi = [
         indexed: true,
         internalType: "address",
         name: "user",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
         type: "address",
       },
       {
@@ -180,117 +319,6 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "orderId",
-        type: "uint256",
-      },
-    ],
-    name: "OrderCancelled",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "orderId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "fillPrice",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "keeperFee",
-        type: "uint256",
-      },
-    ],
-    name: "OrderFilled",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "orderId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "marketKey",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "marginDelta",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "targetPrice",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "enum IAccount.OrderTypes",
-        name: "orderType",
-        type: "uint8",
-      },
-      {
-        indexed: false,
-        internalType: "uint128",
-        name: "priceImpactDelta",
-        type: "uint128",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "maxDynamicFee",
-        type: "uint256",
-      },
-    ],
-    name: "OrderPlaced",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
         name: "user",
         type: "address",
       },
@@ -314,6 +342,12 @@ const _abi = [
         type: "address",
       },
       {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
         indexed: false,
         internalType: "uint256",
         name: "amount",
@@ -322,19 +356,6 @@ const _abi = [
     ],
     name: "Withdraw",
     type: "event",
-  },
-  {
-    inputs: [],
-    name: "ADDRESS_RESOLVER",
-    outputs: [
-      {
-        internalType: "contract IAddressResolver",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
   },
   {
     inputs: [],
@@ -351,10 +372,10 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "MARGIN_ASSET",
+    name: "GELATO",
     outputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "address",
         name: "",
         type: "address",
       },
@@ -391,41 +412,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "int256",
-        name: "_sizeDelta",
-        type: "int256",
-      },
-      {
-        internalType: "contract IPerpsV2MarketConsolidated",
-        name: "_market",
-        type: "address",
-      },
-      {
         internalType: "uint256",
-        name: "_advancedOrderFee",
+        name: "_conditionalOrderId",
         type: "uint256",
       },
     ],
-    name: "calculateTradeFee",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "fee",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_orderId",
-        type: "uint256",
-      },
-    ],
-    name: "cancelOrder",
+    name: "cancelConditionalOrder",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -434,7 +426,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_orderId",
+        name: "_conditionalOrderId",
         type: "uint256",
       },
     ],
@@ -457,6 +449,19 @@ const _abi = [
   {
     inputs: [],
     name: "committedMargin",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "conditionalOrderId",
     outputs: [
       {
         internalType: "uint256",
@@ -497,12 +502,12 @@ const _abi = [
     inputs: [
       {
         internalType: "enum IAccount.Command[]",
-        name: "commands",
+        name: "_commands",
         type: "uint8[]",
       },
       {
         internalType: "bytes[]",
-        name: "inputs",
+        name: "_inputs",
         type: "bytes[]",
       },
     ],
@@ -515,11 +520,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_orderId",
+        name: "_conditionalOrderId",
         type: "uint256",
       },
     ],
-    name: "executeOrder",
+    name: "executeConditionalOrder",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -564,13 +569,61 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "gelato",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_conditionalOrderId",
+        type: "uint256",
+      },
+    ],
+    name: "getConditionalOrder",
     outputs: [
       {
-        internalType: "address payable",
+        components: [
+          {
+            internalType: "bytes32",
+            name: "marketKey",
+            type: "bytes32",
+          },
+          {
+            internalType: "int256",
+            name: "marginDelta",
+            type: "int256",
+          },
+          {
+            internalType: "int256",
+            name: "sizeDelta",
+            type: "int256",
+          },
+          {
+            internalType: "uint256",
+            name: "targetPrice",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "gelatoTaskId",
+            type: "bytes32",
+          },
+          {
+            internalType: "enum IAccount.ConditionalOrderTypes",
+            name: "conditionalOrderType",
+            type: "uint8",
+          },
+          {
+            internalType: "uint128",
+            name: "priceImpactDelta",
+            type: "uint128",
+          },
+          {
+            internalType: "bool",
+            name: "reduceOnly",
+            type: "bool",
+          },
+        ],
+        internalType: "struct IAccount.ConditionalOrder",
         name: "",
-        type: "address",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -636,67 +689,6 @@ const _abi = [
         ],
         internalType: "struct IPerpsV2MarketConsolidated.DelayedOrder",
         name: "order",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_orderId",
-        type: "uint256",
-      },
-    ],
-    name: "getOrder",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "bytes32",
-            name: "marketKey",
-            type: "bytes32",
-          },
-          {
-            internalType: "int256",
-            name: "marginDelta",
-            type: "int256",
-          },
-          {
-            internalType: "int256",
-            name: "sizeDelta",
-            type: "int256",
-          },
-          {
-            internalType: "uint256",
-            name: "targetPrice",
-            type: "uint256",
-          },
-          {
-            internalType: "bytes32",
-            name: "gelatoTaskId",
-            type: "bytes32",
-          },
-          {
-            internalType: "enum IAccount.OrderTypes",
-            name: "orderType",
-            type: "uint8",
-          },
-          {
-            internalType: "uint256",
-            name: "maxDynamicFee",
-            type: "uint256",
-          },
-          {
-            internalType: "uint128",
-            name: "priceImpactDelta",
-            type: "uint128",
-          },
-        ],
-        internalType: "struct IAccount.Order",
-        name: "",
         type: "tuple",
       },
     ],
@@ -779,19 +771,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "orderId",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "owner",
     outputs: [
       {
@@ -826,52 +805,8 @@ const _abi = [
         type: "uint256",
       },
       {
-        internalType: "enum IAccount.OrderTypes",
-        name: "_orderType",
-        type: "uint8",
-      },
-      {
-        internalType: "uint128",
-        name: "_priceImpactDelta",
-        type: "uint128",
-      },
-    ],
-    name: "placeOrder",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "int256",
-        name: "_marginDelta",
-        type: "int256",
-      },
-      {
-        internalType: "int256",
-        name: "_sizeDelta",
-        type: "int256",
-      },
-      {
-        internalType: "uint256",
-        name: "_targetPrice",
-        type: "uint256",
-      },
-      {
-        internalType: "enum IAccount.OrderTypes",
-        name: "_orderType",
+        internalType: "enum IAccount.ConditionalOrderTypes",
+        name: "_conditionalOrderType",
         type: "uint8",
       },
       {
@@ -880,12 +815,12 @@ const _abi = [
         type: "uint128",
       },
       {
-        internalType: "uint256",
-        name: "_maxDynamicFee",
-        type: "uint256",
+        internalType: "bool",
+        name: "_reduceOnly",
+        type: "bool",
       },
     ],
-    name: "placeOrderWithFeeCap",
+    name: "placeConditionalOrder",
     outputs: [
       {
         internalType: "uint256",
@@ -920,30 +855,6 @@ const _abi = [
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_orderId",
-        type: "uint256",
-      },
-    ],
-    name: "validOrder",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {

@@ -5,118 +5,38 @@ import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
-import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
-import {
-	DEFAULT_DELAYED_CANCEL_BUFFER,
-	DEFAULT_DELAYED_EXECUTION_BUFFER,
-} from 'constants/defaults';
-import useInterval from 'hooks/useInterval';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
-import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
+import { ConditionalOrder, PositionSide } from 'sdk/types/futures';
+import { cancelConditionalOrder } from 'state/futures/actions';
 import {
-	selectIsCancellingOrder,
-	selectIsExecutingOrder,
-	selectOpenDelayedOrders,
+	selectCancellingConditionalOrder,
 	selectMarketAsset,
-	selectMarkets,
+	selectOpenConditionalOrders,
 } from 'state/futures/selectors';
-import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatCurrency, suggestedDecimals } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
+import { formatDollars } from 'utils/formatters/number';
 
-import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
+import ConditionalOrderDrawer from '../MobileTrade/drawers/ConditionalOrder';
 import PositionType from '../PositionType';
 
-type CountdownTimers = Record<
-	FuturesMarketKey,
-	{
-		timeToExecution: number;
-		timePastExecution: number;
-	}
->;
-
-const OpenOrdersTable: React.FC = () => {
+export default function ConditionalOrdersTable() {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { switchToL2 } = useNetworkSwitcher();
 	const isL2 = useIsL2();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-	// TODO: Requires changes to bring back support for cross margin
-	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders);
-	const futuresMarkets = useAppSelector(selectMarkets);
-	const isCancelling = useAppSelector(selectIsCancellingOrder);
-	const isExecuting = useAppSelector(selectIsExecutingOrder);
+	const openConditionalOrders = useAppSelector(selectOpenConditionalOrders);
+	const isCancellingOrder = useAppSelector(selectCancellingConditionalOrder);
 
-	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
-	const [selectedOrder, setSelectedOrder] = useState<DelayedOrderWithDetails | undefined>();
+	const [selectedOrder, setSelectedOrder] = useState<ConditionalOrder | undefined>();
 
-	const rowsData = useMemo(() => {
-		const ordersWithCancel = openDelayedOrders
-			.map((o) => {
-				const market = futuresMarkets.find((m) => m.market === o.marketAddress);
-				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
-				const order = {
-					...o,
-					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
-						currencyKey: getDisplayAsset(o.asset) ?? '',
-						minDecimals: suggestedDecimals(o.size),
-					}),
-					timeToExecution: timer?.timeToExecution,
-					timePastExecution: timer?.timePastExecution,
-					show: !!timer,
-					isStale:
-						timer &&
-						market?.settings &&
-						timer.timeToExecution === 0 &&
-						timer.timePastExecution >
-							DEFAULT_DELAYED_CANCEL_BUFFER +
-								(o.isOffchain
-									? market.settings.offchainDelayedOrderMaxAge
-									: market.settings.maxDelayTimeDelta),
-					isFailed:
-						timer &&
-						market?.settings &&
-						timer.timeToExecution === 0 &&
-						timer.timePastExecution >
-							DEFAULT_DELAYED_EXECUTION_BUFFER +
-								(o.isOffchain
-									? market.settings.offchainDelayedOrderMinAge
-									: market.settings.minDelayTimeDelta),
-					isExecutable:
-						timer &&
-						market?.settings &&
-						timer.timeToExecution === 0 &&
-						timer.timePastExecution <=
-							(o.isOffchain
-								? market.settings.offchainDelayedOrderMaxAge
-								: market.settings.maxDelayTimeDelta),
-					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
-					onCancel: () => {
-						dispatch(
-							cancelDelayedOrder({
-								marketAddress: o.marketAddress,
-								isOffchain: o.isOffchain,
-							})
-						);
-					},
-					onExecute: () => {
-						dispatch(
-							executeDelayedOrder({
-								marketKey: o.marketKey,
-								marketAddress: o.marketAddress,
-								isOffchain: o.isOffchain,
-							})
-						);
-					},
-				};
-				return order;
-			})
+	const rows = useMemo(() => {
+		const ordersWithCancel = openConditionalOrders
+			.map((o) => ({ ...o, cancel: () => dispatch(cancelConditionalOrder(o.contractId)) }))
 			.sort((a, b) => {
 				return b.asset === marketAsset && a.asset !== marketAsset
 					? 1
@@ -124,34 +44,19 @@ const OpenOrdersTable: React.FC = () => {
 					? 0
 					: -1;
 			});
+		const cancellingIndex = ordersWithCancel.findIndex((o) => o.contractId === isCancellingOrder);
+		ordersWithCancel[cancellingIndex] = {
+			...ordersWithCancel[cancellingIndex],
+			isCancelling: true,
+		};
 		return ordersWithCancel;
-	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
-
-	useInterval(
-		() => {
-			const newCountdownTimers = rowsData.reduce((acc, order) => {
-				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000);
-				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
-
-				// Only updated delayed orders
-				acc[order.marketKey] = {
-					timeToExecution: Math.max(timeToExecution, 0),
-					timePastExecution: Math.max(timePastExecution, 0),
-				};
-				return acc;
-			}, {} as CountdownTimers);
-			setCountdownTimers(newCountdownTimers);
-		},
-		1000,
-		[rowsData]
-	);
+	}, [openConditionalOrders, isCancellingOrder, marketAsset, dispatch]);
 
 	return (
 		<>
 			<DesktopOnlyView>
 				<StyledTable
-					data={rowsData}
-					columnsDeps={[isCancelling, isExecuting]}
+					data={rows}
 					highlightRowsOnHover
 					showPagination
 					noResultsMessage={
@@ -191,28 +96,47 @@ const OpenOrdersTable: React.FC = () => {
 								);
 							},
 							sortable: true,
-							width: 60,
+							width: 70,
 						},
 						{
 							Header: <TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>,
 							accessor: 'side',
 							Cell: (cellProps: CellProps<any>) => {
-								return (
-									<div>
-										<PositionType side={cellProps.row.original.side} />
-									</div>
-								);
+								return <PositionType side={cellProps.row.original.side} />;
 							},
 							sortable: true,
 							width: 40,
 						},
 						{
+							Header: <TableHeader>{t('futures.market.user.open-orders.table.type')}</TableHeader>,
+							accessor: 'type',
+							Cell: (cellProps: CellProps<any>) => {
+								return <div>{cellProps.row.original.orderType}</div>;
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
 							Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
 							accessor: 'size',
 							Cell: (cellProps: CellProps<any>) => {
+								return <div>{cellProps.row.original.sizeTxt}</div>;
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: <TableHeader>{t('futures.market.user.open-orders.table.price')}</TableHeader>,
+							accessor: 'price',
+							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div>
-										<div>{cellProps.row.original.sizeTxt}</div>
+										<Currency.Price
+											currencyKey={'sUSD'}
+											price={cellProps.row.original.targetPrice}
+											sign={'$'}
+											conversionRate={1}
+										/>
 									</div>
 								);
 							},
@@ -221,22 +145,14 @@ const OpenOrdersTable: React.FC = () => {
 						},
 						{
 							Header: (
-								<TableHeader>{t('futures.market.user.open-orders.table.status')}</TableHeader>
+								<TableHeader>
+									{t('futures.market.user.open-orders.table.reserved-margin')}
+								</TableHeader>
 							),
-							accessor: 'status',
+							accessor: 'marginDelta',
 							Cell: (cellProps: CellProps<any>) => {
-								return (
-									<div>
-										{cellProps.row.original.show &&
-											(cellProps.row.original.isStale ? (
-												<div>{t('futures.market.user.open-orders.status.expired')}</div>
-											) : cellProps.row.original.isFailed ? (
-												<div>{t('futures.market.user.open-orders.status.failed')}</div>
-											) : (
-												<div>{t('futures.market.user.open-orders.status.pending')}</div>
-											))}
-									</div>
-								);
+								const { marginDelta } = cellProps.row.original;
+								return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>;
 							},
 							sortable: true,
 							width: 50,
@@ -247,27 +163,12 @@ const OpenOrdersTable: React.FC = () => {
 							),
 							accessor: 'actions',
 							Cell: (cellProps: CellProps<any>) => {
+								const cancellingRow = cellProps.row.original.isCancelling;
 								return (
-									<div>
-										{cellProps.row.original.show &&
-											cellProps.row.original.isStale &&
-											(isCancelling ? (
-												<ButtonLoader />
-											) : (
-												<CancelButton onClick={cellProps.row.original.onCancel}>
-													{t('futures.market.user.open-orders.actions.cancel')}
-												</CancelButton>
-											))}
-										{cellProps.row.original.show &&
-											!cellProps.row.original.isStale &&
-											cellProps.row.original.isFailed &&
-											(isExecuting ? (
-												<ButtonLoader />
-											) : (
-												<EditButton onClick={cellProps.row.original.onExecute}>
-													{t('futures.market.user.open-orders.actions.execute')}
-												</EditButton>
-											))}
+									<div style={{ display: 'flex' }}>
+										<CancelButton disabled={cancellingRow} onClick={cellProps.row.original.cancel}>
+											{t('futures.market.user.open-orders.actions.cancel')}
+										</CancelButton>
 									</div>
 								);
 							},
@@ -278,7 +179,7 @@ const OpenOrdersTable: React.FC = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<StyledTable
-					data={rowsData}
+					data={openConditionalOrders}
 					noResultsMessage={
 						!isL2 ? (
 							<TableNoResults>
@@ -309,21 +210,30 @@ const OpenOrdersTable: React.FC = () => {
 							width: 100,
 						},
 						{
-							Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
+							Header: (
+								<TableHeader>{t('futures.market.user.open-orders.table.size-price')}</TableHeader>
+							),
 							accessor: 'size',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div>
 										<div>{cellProps.row.original.sizeTxt}</div>
+										{cellProps.row.original.targetPrice && (
+											<Currency.Price
+												currencyKey={'sUSD'}
+												price={cellProps.row.original.targetPrice}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										)}
 									</div>
 								);
 							},
 						},
 					]}
 				/>
-
 				{selectedOrder && (
-					<OrderDrawer
+					<ConditionalOrderDrawer
 						open={!!selectedOrder}
 						order={selectedOrder}
 						closeDrawer={() => setSelectedOrder(undefined)}
@@ -332,7 +242,7 @@ const OpenOrdersTable: React.FC = () => {
 			</MobileOrTabletView>
 		</>
 	);
-};
+}
 
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
@@ -428,5 +338,3 @@ const MobilePositionSide = styled.div<{ $side: PositionSide }>`
 			color: ${(props) => props.theme.colors.selectedTheme.red};
 		`};
 `;
-
-export default OpenOrdersTable;

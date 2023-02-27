@@ -14,7 +14,7 @@ import {
 	FuturesVolumes,
 	IsolatedMarginOrderType,
 	PositionSide,
-	FuturesOrder as CrossMarginOrder,
+	ConditionalOrder as CrossMarginOrder,
 	FuturesMarketKey,
 	FuturesMarketAsset,
 	MarginTransfer,
@@ -148,7 +148,7 @@ export type CrossMarginAccountData = FuturesAccountData & {
 	account: string;
 	balanceInfo: CrossMarginBalanceInfo<string>;
 	delayedOrders: DelayedOrderWithDetails<string>[];
-	advancedOrders: CrossMarginOrder<string>[];
+	conditionalOrders: CrossMarginOrder<string>[];
 };
 
 // TODO: Separate in some way by network and wallet
@@ -197,7 +197,7 @@ export type CrossMarginState = {
 	settings: CrossMarginSettings<string>;
 	fees: CrossMarginTradeFees<string>;
 	depositApproved: boolean;
-	cancellingOrder: string | undefined;
+	cancellingOrder: number | undefined;
 	showOnboard: boolean;
 	accounts: Record<
 		FuturesNetwork,

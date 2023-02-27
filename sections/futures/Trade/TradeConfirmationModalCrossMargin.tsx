@@ -4,7 +4,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { submitCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectCrossMarginTradeFees,
-	selectIsAdvancedOrder,
+	selectIsConditionalOrder,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -14,7 +14,7 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 export default function TradeConfirmationModalCrossMargin() {
 	const dispatch = useAppDispatch();
 
-	const isAdvancedOrder = useAppSelector(selectIsAdvancedOrder);
+	const isConditionalOrder = useAppSelector(selectIsConditionalOrder);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const tradeFees = useAppSelector(selectCrossMarginTradeFees);
 
@@ -32,7 +32,7 @@ export default function TradeConfirmationModalCrossMargin() {
 			onConfirmOrder={handleConfirmOrder}
 			isSubmitting={isSubmitting}
 			tradeFee={tradeFees.total}
-			keeperFee={isAdvancedOrder ? tradeFees.keeperEthDeposit : null}
+			keeperFee={isConditionalOrder ? tradeFees.keeperEthDeposit : null}
 		/>
 	);
 }

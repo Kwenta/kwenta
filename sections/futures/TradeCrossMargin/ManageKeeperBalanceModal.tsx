@@ -14,7 +14,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { withdrawAccountKeeperBalance } from 'state/futures/actions';
 import {
 	selectCrossMarginBalanceInfo,
-	selectOpenAdvancedOrders,
+	selectOpenConditionalOrders,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -43,7 +43,7 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 	const { provider, walletAddress } = Connector.useContainer();
 
 	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
-	const openOrders = useAppSelector(selectOpenAdvancedOrders);
+	const openOrders = useAppSelector(selectOpenConditionalOrders);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 
 	const [amount, setAmount] = useState('');
