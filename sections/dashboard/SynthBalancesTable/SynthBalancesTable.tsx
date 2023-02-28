@@ -1,4 +1,3 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { SynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactElement, useMemo } from 'react';
@@ -11,6 +10,7 @@ import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
+import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { getDisplayAsset } from 'sdk/utils/futures';

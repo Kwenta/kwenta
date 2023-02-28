@@ -2,7 +2,6 @@ import React, { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { CurrencyKey } from 'constants/currency';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
 import { FuturesMarketAsset } from 'sdk/types/futures';
@@ -11,7 +10,7 @@ import { marketIsOpen, marketNextOpen, marketNextTransition } from 'utils/market
 import Badge from './Badge';
 
 type MarketBadgeProps = {
-	currencyKey: FuturesMarketAsset | null;
+	currencyKey: FuturesMarketAsset;
 	isFuturesMarketClosed: boolean;
 	futuresClosureReason: FuturesClosureReason;
 };
@@ -33,10 +32,9 @@ export const TransitionBadge: FC<TransitionBadgeProps> = memo(({ isOpen }) => {
 export const MarketBadge: FC<MarketBadgeProps> = memo(
 	({ currencyKey, isFuturesMarketClosed, futuresClosureReason }) => {
 		const { t } = useTranslation();
-		const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
-
-		const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
-		const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
+		const isOpen = marketIsOpen(currencyKey);
+		const nextOpen = marketNextOpen(currencyKey);
+		const nextTransition = marketNextTransition(currencyKey);
 
 		const timerSetting = isOpen === null ? null : isOpen ? nextTransition : nextOpen;
 		const isMarketTransitioning = useIsMarketTransitioning(timerSetting ?? null);

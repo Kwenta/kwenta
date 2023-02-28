@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 
@@ -7,6 +6,7 @@ import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsL2 from 'hooks/useIsL2';
 import { getReasonFromCode } from 'queries/futures/utils';
+import { NetworkId } from 'sdk/types/common';
 
 interface FuturesMarketClosure {
 	isSuspended: boolean;

@@ -40,7 +40,7 @@ const FuturesMarketsTable: FC = () => {
 
 	let data = useMemo(() => {
 		return futuresMarkets.map((market) => {
-			const description = getSynthDescription(market.asset, synthsMap, t);
+			const description = getSynthDescription(market.asset, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const assetPriceInfo = pricesInfo[market.asset];
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));

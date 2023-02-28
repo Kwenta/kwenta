@@ -1,10 +1,10 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery, UseQueryOptions } from 'react-query';
 
 import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import { NetworkId } from 'sdk/types/common';
 import { truncateAddress } from 'utils/formatters/string';
 import logError from 'utils/logError';
 

@@ -1,4 +1,3 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -36,9 +35,7 @@ const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 
 	const currencyKey = token.symbol;
 
-	const { marketClosureReason } = useMarketClosed(
-		token.isSynth ? (currencyKey as CurrencyKey) : null
-	);
+	const { marketClosureReason } = useMarketClosed(token.isSynth ? currencyKey : null);
 
 	return (
 		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable>

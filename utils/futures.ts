@@ -1,7 +1,5 @@
-import { Synth } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
-import { Dictionary } from 'lodash';
 
 import {
 	FuturesMarket,
@@ -40,11 +38,7 @@ export const getDisplayAsset = (asset: string | null) => {
 	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
 };
 
-export const getSynthDescription = (
-	synth: FuturesMarketAsset,
-	synthsMap: Dictionary<Synth>,
-	t: TFunction
-) => {
+export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => {
 	const assetDisplayName = AssetDisplayByAsset[synth];
 	return t('common.currency.futures-market-short-name', {
 		currencyName: assetDisplayName,

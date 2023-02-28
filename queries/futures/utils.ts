@@ -1,11 +1,12 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { ContractsMap, NetworkId } from '@synthetixio/contracts-interface';
+import { ContractsMap } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { ETH_UNIT } from 'constants/network';
 import { chain } from 'containers/Connector/config';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { NetworkId } from 'sdk/types/common';
 
 import { SECONDS_PER_DAY, FUTURES_ENDPOINTS, MAIN_ENDPOINTS } from './constants';
 import { FuturesOpenInterest, FuturesOneMinuteStat, FundingRateUpdate } from './types';

@@ -1,5 +1,4 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import loadProvider from '@synthetixio/providers';
 import { GasPrice } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
@@ -13,6 +12,7 @@ import {
 	SUPPORTED_NETWORKS,
 	BLAST_NETWORK_LOOKUP,
 } from 'constants/network';
+import { NetworkId } from 'sdk/types/common';
 
 import logError from './logError';
 

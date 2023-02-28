@@ -1,6 +1,5 @@
 // @ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
-import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { DeprecatedSynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
@@ -10,6 +9,7 @@ import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
+import { CurrencyKey } from 'constants/currency';
 import {
 	ATOMIC_EXCHANGES_L1,
 	CRYPTO_CURRENCY_MAP,
@@ -24,6 +24,7 @@ import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
+import { NetworkId } from 'sdk/types/common';
 import { Token, TokenBalances } from 'sdk/types/tokens';
 import {
 	newGetCoinGeckoPricesForCurrencies,

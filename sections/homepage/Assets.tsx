@@ -147,7 +147,7 @@ const Assets = () => {
 	const PERPS = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
-			const description = getSynthDescription(market.asset, l2SynthsMap, t);
+			const description = getSynthDescription(market.asset, t);
 			const volume = futuresVolumes[market.marketKey]?.volume?.toNumber() ?? 0;
 			const pastPrice = pastRates.find(
 				(price) => price.synth === market.asset || price.synth === market.asset.slice(1)

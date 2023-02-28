@@ -1,4 +1,3 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
@@ -66,7 +65,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		formatCurrency(baseCurrencyKey!, baseAmount, {
 			minDecimals: decimals,
 		});
-	const priceUSD = useCurrencyPrice((quoteCurrencyKey ?? '') as CurrencyKey);
+	const priceUSD = useCurrencyPrice(quoteCurrencyKey ?? '');
 
 	const onDismiss = () => {
 		dispatch(closeModal());

@@ -6,7 +6,6 @@ import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
@@ -73,7 +72,6 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	);
 
 	const router = useRouter();
-	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
 	const getBasePriceRate = React.useCallback(
@@ -99,7 +97,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			return assetToCurrencyOption({
 				asset: market.asset,
 				key: market.marketKey,
-				description: getSynthDescription(market.asset, synthsMap, t),
+				description: getSynthDescription(market.asset, t),
 				price: formatDollars(basePriceRate, { suggestDecimals: true }),
 				change: formatPercent(
 					basePriceRate && pastPrice?.rate
@@ -112,7 +110,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				closureReason: market.marketClosureReason,
 			});
 		});
-	}, [futuresMarkets, synthsMap, t, getBasePriceRate, getPastPrice]);
+	}, [futuresMarkets, t, getBasePriceRate, getPastPrice]);
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
@@ -132,7 +130,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				value={assetToCurrencyOption({
 					asset: marketAsset,
 					key: MarketKeyByAsset[marketAsset],
-					description: getSynthDescription(marketAsset, synthsMap, t),
+					description: getSynthDescription(marketAsset, t),
 					price: mobile
 						? formatDollars(selectedBasePriceRate, { suggestDecimals: true })
 						: undefined,

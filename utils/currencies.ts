@@ -3,7 +3,7 @@ import { wei } from '@synthetixio/wei';
 
 import {
 	CurrencyKey,
-	Synths,
+	// Synths,
 	CRYPTO_CURRENCY_MAP,
 	FIAT_SYNTHS,
 	ETH_ADDRESS,
@@ -14,7 +14,7 @@ import { Price, Prices } from 'sdk/types/prices';
 
 import { PriceResponse } from '../queries/coingecko/types';
 
-export const isSynth = (currencyKey: CurrencyKey) => !!Synths[currencyKey];
+// export const isSynth = (currencyKey: CurrencyKey) => !!Synths[currencyKey];
 export const isCryptoCurrency = (currencyKey: CurrencyKey) => !!CRYPTO_CURRENCY_MAP[currencyKey];
 export const isFiatCurrency = (currencyKey: CurrencyKey) => FIAT_SYNTHS.has(currencyKey);
 
@@ -43,7 +43,7 @@ export const getExchangeRatesForCurrencies = (
 
 export const newGetExchangeRatesForCurrencies = (
 	rates: Rates | null,
-	base: CurrencyKey | FuturesMarketKey | string | null,
+	base: CurrencyKey | FuturesMarketKey | string,
 	quote: CurrencyKey | FuturesMarketKey | null
 ) => {
 	base = new Set([
@@ -52,7 +52,7 @@ export const newGetExchangeRatesForCurrencies = (
 		FuturesMarketKey.sXAUPERP,
 		FuturesMarketKey.sXAGPERP,
 	]).has(base as FuturesMarketKey)
-		? synthToAsset(base as CurrencyKey)
+		? synthToAsset(base)
 		: base;
 	return rates == null ||
 		base == null ||
@@ -65,7 +65,7 @@ export const newGetExchangeRatesForCurrencies = (
 
 export const getPricesForCurrencies = (
 	rates: Prices | null,
-	base: CurrencyKey | FuturesMarketKey | string | null,
+	base: CurrencyKey | FuturesMarketKey | string,
 	quote: CurrencyKey | FuturesMarketKey | null
 ): Price => {
 	base = new Set([
@@ -74,7 +74,7 @@ export const getPricesForCurrencies = (
 		FuturesMarketKey.sXAUPERP,
 		FuturesMarketKey.sXAGPERP,
 	]).has(base as FuturesMarketKey)
-		? synthToAsset(base as CurrencyKey)
+		? synthToAsset(base)
 		: base;
 	if (!rates || !base || !quote || !rates[base] || !rates[quote]) {
 		return {
@@ -93,7 +93,7 @@ export const getPricesForCurrencies = (
 
 export const newGetExchangeRatesTupleForCurrencies = (
 	rates: Rates | null,
-	base: CurrencyKey | FuturesMarketKey | string | null,
+	base: CurrencyKey | FuturesMarketKey | string,
 	quote: CurrencyKey | FuturesMarketKey | null
 ) => {
 	base = new Set([
@@ -102,7 +102,7 @@ export const newGetExchangeRatesTupleForCurrencies = (
 		FuturesMarketKey.sXAUPERP,
 		FuturesMarketKey.sXAGPERP,
 	]).has(base as FuturesMarketKey)
-		? synthToAsset(base as CurrencyKey)
+		? synthToAsset(base)
 		: base;
 	const baseRate =
 		rates == null || base == null || rates[base] === undefined ? wei(0) : rates[base];

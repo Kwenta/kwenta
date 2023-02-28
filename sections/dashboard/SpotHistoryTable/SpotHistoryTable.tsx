@@ -48,7 +48,7 @@ const SpotHistoryTable: FC = () => {
 		() =>
 			trades.filter((trade: any) => {
 				const activeSynths = synths.map((synth) => synth.name);
-				return activeSynths.includes(trade.fromSynth?.symbol as CurrencyKey);
+				return activeSynths.includes(trade.fromSynth?.symbol);
 			}),
 		[trades, synths]
 	);
@@ -147,11 +147,11 @@ const SpotHistoryTable: FC = () => {
 						Header: <div>{t('dashboard.history.spot-history-table.usd-value')}</div>,
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
-							const currencyKey = cellProps.row.original.toSynth?.symbol as CurrencyKey;
+							const currencyKey = cellProps.row.original.toSynth?.symbol;
 							return conditionalRender(
 								currencyKey,
 								<Currency.Price
-									currencyKey={currencyKey}
+									currencyKey={currencyKey as CurrencyKey}
 									price={cellProps.row.original.toAmountInUSD}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}

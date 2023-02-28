@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import mockRouter from 'next-router-mock';
 import { ReactNode } from 'react';
@@ -8,6 +7,7 @@ import { WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { wagmiClient } from 'containers/Connector/config';
+import { NetworkId } from 'sdk/types/common';
 import { themes } from 'styles/theme';
 
 import { DEFAULT_NETWORK } from '../constants';

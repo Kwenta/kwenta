@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils.js';
@@ -21,6 +20,7 @@ import {
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
+import { NetworkId } from 'sdk/types/common';
 import {
 	DelayedOrder,
 	CrossMarginOrderType,

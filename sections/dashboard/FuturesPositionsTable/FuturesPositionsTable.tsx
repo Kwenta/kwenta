@@ -16,7 +16,6 @@ import { Body } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
@@ -65,7 +64,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	showCurrentMarket = true,
 }) => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
 
@@ -82,7 +80,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
-				const description = getSynthDescription(position.asset, synthsMap, t);
+				const description = getSynthDescription(position.asset, t);
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
@@ -107,7 +105,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
-		synthsMap,
 		t,
 		showCurrentMarket,
 	]);

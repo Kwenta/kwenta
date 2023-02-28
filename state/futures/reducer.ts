@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { NetworkId } from '@synthetixio/contracts-interface';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_PRICE_IMPACT_DELTA } from 'constants/defaults';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
+import { NetworkId } from 'sdk/types/common';
 import {
 	FuturesMarket,
 	FuturesMarketAsset,

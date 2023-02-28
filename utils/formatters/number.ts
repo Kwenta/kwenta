@@ -167,7 +167,7 @@ export const formatCurrency = (
 	value: WeiSource,
 	options?: FormatCurrencyOptions
 ) =>
-	isFiatCurrency(currencyKey as CurrencyKey)
+	isFiatCurrency(currencyKey)
 		? formatFiatCurrency(value, options)
 		: formatCryptoCurrency(value, options);
 

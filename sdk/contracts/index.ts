@@ -1,6 +1,7 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { Contract as EthCallContract } from 'ethcall';
 import { Contract, ethers } from 'ethers';
+
+import { NetworkId } from 'sdk/types/common';
 
 import ERC20ABI from '../contracts/abis/ERC20.json';
 import MultipleMerkleDistributorABI from '../contracts/abis/MultipleMerkleDistributor.json';

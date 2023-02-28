@@ -1,4 +1,4 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId } from 'sdk/types/common';
 
 export const GWEI_UNIT = 1000000000;
 

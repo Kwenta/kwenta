@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
@@ -31,6 +30,7 @@ import {
 	queryPositionHistory,
 	queryTrades,
 } from 'sdk/queries/futures';
+import { NetworkId } from 'sdk/types/common';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,

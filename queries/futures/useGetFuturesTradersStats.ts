@@ -1,7 +1,7 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery } from 'react-query';
 
 import { chain } from 'containers/Connector/config';
+import { NetworkId } from 'sdk/types/common';
 import { useAppSelector } from 'state/hooks';
 import { selectMinTimestamp } from 'state/stats/selectors';
 import logError from 'utils/logError';

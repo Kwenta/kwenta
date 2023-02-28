@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
@@ -15,6 +14,7 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { getSynthsListForNetwork, SynthSymbol } from 'sdk/data/synths';
+import { NetworkId } from 'sdk/types/common';
 import {
 	selectBalances,
 	selectBalancesFetchStatus,
@@ -85,7 +85,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			synthsList,
 			[
 				(synth) => {
-					const synthBalance = synthBalancesMap[synth.name as CurrencyKey];
+					const synthBalance = synthBalancesMap[synth.name];
 					return !!synthBalance ? Number(synthBalance.usdBalance) : 0;
 				},
 				(synth) => synth.name.toLowerCase(),
@@ -200,7 +200,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 												onSelect(currencyKey, false);
 												onDismiss();
 											}}
-											balance={synthBalancesMap[currencyKey as CurrencyKey]}
+											balance={synthBalancesMap[currencyKey]}
 											token={{
 												name: synth.description,
 												symbol: synth.name,
