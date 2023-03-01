@@ -7,6 +7,7 @@ import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { TabPanel } from 'components/Tab';
+import * as Text from 'components/Text';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
@@ -186,7 +187,7 @@ const Overview: FC = () => {
 				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
 					<SynthBalancesTable exchangeTokens={exchangeTokens} />
 				</TabPanel>
-
+				<SubHeading>{t('dashboard.overview.markets-tabs.futures')}</SubHeading>
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<FuturesMarketsTable />
 				</TabPanel>
@@ -208,6 +209,14 @@ const TabButtonsContainer = styled.div`
 			margin-right: 14px;
 		}
 	}
+`;
+
+const SubHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 21px;
+	margin-top: 20px;
+	font-variant: all-small-caps;
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
 export default Overview;
