@@ -108,6 +108,7 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 190,
+								sortable: true,
 							},
 							{
 								Header: (
