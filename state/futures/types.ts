@@ -1,5 +1,6 @@
 import Wei from '@synthetixio/wei';
 
+import { StatsTimeframe } from 'hooks/useStatsData';
 import { FuturesAccountType } from 'queries/futures/types';
 import { TransactionStatus } from 'sdk/types/common';
 import {
@@ -180,6 +181,9 @@ export type FuturesState = {
 	transactionEstimations: TransactionEstimations;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
+	dashboard: {
+		selectedPortfolioTimeframe: StatsTimeframe;
+	};
 	leaderboard: {
 		selectedTrader: string | undefined;
 		selectedTraderPositionHistory: Record<

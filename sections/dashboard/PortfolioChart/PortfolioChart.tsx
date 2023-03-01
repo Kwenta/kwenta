@@ -10,6 +10,8 @@ import { selectBalances } from 'state/balances/selectors';
 import { selectFuturesPortfolio, selectUserPortfolioValues } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
+import { Timeframe } from './Timeframe';
+
 type PortfolioChartProps = {
 	exchangeTokenBalances: Wei;
 };
@@ -91,6 +93,9 @@ const PortfolioChart: FC<PortfolioChartProps> = ({ exchangeTokenBalances }) => {
 						<PortfolioTitle>Portfolio Value</PortfolioTitle>
 						<PortfolioText currencyKey="sUSD" price={total} sign="$" />
 					</ChartOverlay>
+					<TimeframeOverlay>
+						<Timeframe />
+					</TimeframeOverlay>
 					<StyledPriceChart />
 				</ChartContainer>
 			</MobileHiddenView>
@@ -124,6 +129,14 @@ const ChartOverlay = styled.div`
 	top: 0;
 	left: 0;
 	z-index: 1;
+`;
+
+const TimeframeOverlay = styled.div`
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 4;
+	margin: 12px 12px 0 0;
 `;
 
 const PortfolioTitle = styled(Text.Body).attrs({ variant: 'bold' })`

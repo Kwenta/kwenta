@@ -843,10 +843,16 @@ export const selectAllUsersTrades = createSelector(
 	}
 );
 
+export const selectSelectedPortfolioTimeframe = (state: RootState) =>
+	state.futures.dashboard.selectedPortfolioTimeframe;
+
 export const selectUserPortfolioValues = createSelector(
 	selectAllUsersTrades,
 	selectAllUserMarginTransfers,
-	(trades, transfers) => {
+	selectSelectedPortfolioTimeframe,
+	(trades, transfers, timeframe) => {
+		// TODO: add min timestamp based on timeframe
+
 		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
 			account,
 			timestamp: timestamp,

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { NetworkId } from '@synthetixio/contracts-interface';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_PRICE_IMPACT_DELTA } from 'constants/defaults';
+import { StatsTimeframe } from 'hooks/useStatsData';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import {
 	FuturesMarket,
@@ -63,6 +64,9 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	errors: {},
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
+	dashboard: {
+		selectedPortfolioTimeframe: '4H',
+	},
 	leaderboard: {
 		selectedTrader: undefined,
 		selectedTraderPositionHistory: DEFAULT_MAP_BY_NETWORK,
@@ -261,6 +265,9 @@ const futuresSlice = createSlice({
 		},
 		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
 			state.leaderboard.selectedTrader = action.payload;
+		},
+		setSelectedPortfolioTimeframe: (state, action: PayloadAction<StatsTimeframe>) => {
+			state.dashboard.selectedPortfolioTimeframe = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -657,6 +664,7 @@ export const {
 	setShowCrossMarginOnboard,
 	setSelectedTrader,
 	setSelectedInputDenomination,
+	setSelectedPortfolioTimeframe,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (
