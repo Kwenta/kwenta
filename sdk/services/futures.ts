@@ -26,6 +26,7 @@ import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
 import {
 	queryCrossMarginAccounts,
 	queryCrossMarginTransfers,
+	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
 	queryTrades,
@@ -836,5 +837,31 @@ export default class FuturesService {
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'withdrawEth', [
 			amount.toBN(),
 		]);
+	}
+
+	public async getFuturesSuspensionStatus(marketKey: FuturesMarketKey) {
+		const { SystemStatus } = this.sdk.context.contracts;
+
+		if (!SystemStatus) {
+			throw new Error(UNSUPPORTED_NETWORK);
+		}
+
+		type FuturesClosureReason =
+			| 'system-upgrade'
+			| 'market-closure'
+			| 'circuit-breaker'
+			| 'emergency';
+
+		const marketKeyBytes32 = ethers.utils.formatBytes32String(marketKey);
+		const [isSuspended, reasonCode] = await SystemStatus.futuresMarketSuspension(marketKeyBytes32);
+		const reason = (isSuspended ? getReasonFromCode(reasonCode) : null) as FuturesClosureReason;
+
+		return { isSuspended, reasonCode, reason };
+	}
+
+	// This is on an interval of 15 seconds.
+	public async getFuturesTrades(marketKey: FuturesMarketKey, minTs: number, maxTs: number) {
+		const response = await queryFuturesTrades(this.sdk, marketKey, minTs, maxTs);
+		return response ? mapTrades(response) : null;
 	}
 }

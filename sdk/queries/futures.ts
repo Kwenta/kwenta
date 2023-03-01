@@ -7,7 +7,9 @@ import {
 	getFuturesPositions,
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
+import { DEFAULT_NUMBER_OF_TRADES } from 'sdk/constants/defaults';
 import { CROSS_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
+import { FuturesMarketKey } from 'sdk/types/futures';
 import { mapCrossMarginTransfers, mapMarginTransfers } from 'sdk/utils/futures';
 
 export const queryAccountsFromSubgraph = async (
@@ -153,4 +155,43 @@ export const queryCrossMarginTransfers = async (sdk: KwentaSDK, account: string)
 		walletAddress: account,
 	});
 	return response ? mapCrossMarginTransfers(response.crossMarginAccountTransfers) : [];
+};
+
+export const queryFuturesTrades = (
+	sdk: KwentaSDK,
+	marketKey: FuturesMarketKey,
+	minTs: number,
+	maxTs: number
+) => {
+	return getFuturesTrades(
+		sdk.futures.futuresGqlEndpoint,
+		{
+			first: DEFAULT_NUMBER_OF_TRADES,
+			where: {
+				marketKey: formatBytes32String(marketKey),
+				timestamp_gt: minTs,
+				timestamp_lt: maxTs,
+			},
+			orderDirection: 'desc',
+			orderBy: 'timestamp',
+		},
+		{
+			id: true,
+			timestamp: true,
+			account: true,
+			abstractAccount: true,
+			accountType: true,
+			margin: true,
+			size: true,
+			asset: true,
+			marketKey: true,
+			price: true,
+			positionId: true,
+			positionSize: true,
+			positionClosed: true,
+			pnl: true,
+			feesPaid: true,
+			orderType: true,
+		}
+	);
 };

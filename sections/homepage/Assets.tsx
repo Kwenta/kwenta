@@ -135,7 +135,7 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 
 const Assets = () => {
 	const { t } = useTranslation();
-	const { l2SynthsMap, l2Provider } = Connector.useContainer();
+	const { l2Provider } = Connector.useContainer();
 	const activeMarketsTab = MarketsTab.FUTURES;
 
 	const prices = useAppSelector(selectPrices);
@@ -168,8 +168,7 @@ const Assets = () => {
 				),
 			};
 		});
-		// eslint-disable-next-line
-	}, [futuresMarkets, l2SynthsMap, pastRates, futuresVolumes, t]);
+	}, [futuresMarkets, pastRates, futuresVolumes, t, prices]);
 
 	const title = (
 		<>

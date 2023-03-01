@@ -98,8 +98,8 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 	const combinedTokenList = useMemo(() => {
 		const withSynthTokensCombined = [
-			...tokenList?.filter((i) => !synthKeys.includes(i.symbol as SynthSymbol)),
-			...synthsResults?.map((synthToken) => ({ symbol: synthToken?.name, ...synthToken })),
+			...tokenList.filter((i) => !synthKeys.includes(i.symbol as SynthSymbol)),
+			...synthsResults.map((synthToken) => ({ symbol: synthToken?.name, ...synthToken })),
 		];
 		return withSynthTokensCombined;
 	}, [synthKeys, synthsResults, tokenList]);
@@ -108,7 +108,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		() =>
 			assetSearch
 				? combinedTokenList
-						.filter(({ name, symbol }: any) => {
+						.filter(({ name, symbol }) => {
 							const assetSearchLC = assetSearch.toLowerCase();
 							return (
 								name.toLowerCase().includes(assetSearchLC) ||
@@ -142,10 +142,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							}
 							return token;
 						}),
-						[
-							({ usdBalance }) => (usdBalance ? usdBalance.toNumber() : 0),
-							({ symbol }) => symbol.toLowerCase(),
-						],
+						[({ usdBalance }) => usdBalance?.toNumber() ?? 0, ({ symbol }) => symbol.toLowerCase()],
 						['desc', 'asc']
 				  )
 				: searchFilteredTokens;
@@ -201,11 +198,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 												onDismiss();
 											}}
 											balance={synthBalancesMap[currencyKey]}
-											token={{
-												name: synth.description,
-												symbol: synth.name,
-												isSynth: true,
-											}}
+											token={{ name: synth.description, symbol: synth.name, isSynth: true }}
 										/>
 									);
 								})
@@ -223,15 +216,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 										onSelect(currencyKey, true);
 										onDismiss();
 									}}
-									balance={
-										balance && usdBalance
-											? {
-													currencyKey,
-													balance,
-													usdBalance,
-											  }
-											: undefined
-									}
+									balance={balance && usdBalance ? { currencyKey, balance, usdBalance } : undefined}
 									token={{ ...token, isSynth: false }}
 								/>
 							);
@@ -268,7 +253,6 @@ const SearchContainer = styled.div`
 const AssetSearchInput = styled(Input).attrs({ type: 'search' })`
 	font-size: 16px;
 	height: 40px;
-	font-family: ${(props) => props.theme.fonts.regular};
 	::placeholder {
 		text-transform: capitalize;
 		color: ${(props) => props.theme.colors.selectedTheme.button.secondary};

@@ -497,7 +497,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 
 export const fetchCrossMarginTradePreview = createAsyncThunk<
 	FuturesPotentialTradeDetails<string> | null,
-	{ price?: Wei | undefined; sizeDelta: Wei; marginDelta: Wei },
+	{ price?: Wei; sizeDelta: Wei; marginDelta: Wei },
 	ThunkConfig
 >(
 	'futures/fetchCrossMarginTradePreview',

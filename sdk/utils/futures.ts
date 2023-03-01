@@ -522,7 +522,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 };
 
 export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
-	return futuresTrades?.map(
+	return futuresTrades.map(
 		({
 			id,
 			timestamp,
@@ -535,7 +535,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			feesPaid,
 			orderType,
 			accountType,
-		}: FuturesTradeResult) => {
+		}) => {
 			return {
 				asset,
 				accountType,
@@ -557,15 +557,8 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
-	return marginTransfers?.map(
-		({
-			timestamp,
-			account,
-			market,
-			size,
-			asset,
-			txHash,
-		}: FuturesMarginTransferResult): MarginTransfer => {
+	return marginTransfers.map(
+		({ timestamp, account, market, size, asset, txHash }): MarginTransfer => {
 			const sizeWei = new Wei(size);
 			const numTimestamp = wei(timestamp).toNumber();
 
@@ -585,8 +578,8 @@ export const mapMarginTransfers = (
 export const mapCrossMarginTransfers = (
 	marginTransfers: CrossMarginAccountTransferResult[]
 ): MarginTransfer[] => {
-	return marginTransfers?.map(
-		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
+	return marginTransfers.map(
+		({ timestamp, account, size, txHash }): MarginTransfer => {
 			const sizeWei = new Wei(size);
 			const numTimestamp = wei(timestamp).toNumber();
 
