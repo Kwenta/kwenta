@@ -306,6 +306,7 @@ const FuturesMarketsTable: FC = () => {
 								);
 							},
 							width: 145,
+							sortable: true,
 						},
 						{
 							Header: () => (
