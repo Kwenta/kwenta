@@ -47,7 +47,7 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
 		PositionsTab.ISOLATED_MARGIN
 	);
-	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+	const [activeMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const { network, synthsMap } = Connector.useContainer();
 
@@ -158,18 +158,6 @@ const Overview: FC = () => {
 		setActivePositionsTab,
 	]);
 
-	const MARKETS_TABS = useMemo(
-		() => [
-			{
-				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.markets-tabs.futures'),
-				active: activeMarketsTab === MarketsTab.FUTURES,
-				onClick: () => setActiveMarketsTab(MarketsTab.FUTURES),
-			},
-		],
-		[activeMarketsTab, setActiveMarketsTab, t]
-	);
-
 	return (
 		<>
 			<DesktopOnlyView>
@@ -199,11 +187,6 @@ const Overview: FC = () => {
 					<SynthBalancesTable exchangeTokens={exchangeTokens} />
 				</TabPanel>
 
-				<TabButtonsContainer>
-					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-						<TabButton key={name} title={label} active={active} onClick={onClick} />
-					))}
-				</TabButtonsContainer>
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<FuturesMarketsTable />
 				</TabPanel>
