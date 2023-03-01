@@ -33,7 +33,7 @@ const useGetFuturesFee = (
 				},
 				{
 					timestamp: true,
-					feesSynthetix: true,
+					feesKwenta: true,
 				}
 			);
 			return response;
