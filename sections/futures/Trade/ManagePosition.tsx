@@ -143,6 +143,7 @@ const ManagePosition: React.FC = () => {
 						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth
+						className={leverageSide}
 						disabled={!!placeOrderDisabledReason}
 						onClick={() => dispatch(setOpenModal('futures_modify_position_confirm'))}
 					>

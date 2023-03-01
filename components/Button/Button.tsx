@@ -114,6 +114,24 @@ const BaseButton = styled.button<BaseButtonProps>`
 			&::before {
 				display: none;
 			}
+
+			&.long {
+				color: ${(props) => props.theme.colors.selectedTheme.black};
+				background: ${(props) => props.theme.colors.selectedTheme.green};
+			}
+			&.long:hover {
+				color: ${(props) => props.theme.colors.selectedTheme.green};
+				background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+			}
+
+			&.short {
+				color: ${(props) => props.theme.colors.selectedTheme.black};
+				background: ${(props) => props.theme.colors.selectedTheme.red};
+			}
+			&.short:hover {
+				color: ${(props) => props.theme.colors.selectedTheme.red};
+				background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+			}
 		`}
 
 	${(props) =>
