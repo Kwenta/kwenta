@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react';
 
 import LinkIconLight from 'assets/svg/app/link-light.svg';
+import LyraIcon from 'assets/svg/partners/lyra.svg';
 import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
 import { COMPETITION_ENABLED } from 'constants/competition';
 import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
@@ -115,6 +116,33 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 					},
 			  ]
 			: null,
+	},
+	{
+		i18nLabel: 'header.nav.options.title',
+		link: EXTERNAL_LINKS.Options.Portfolio,
+		links:
+			[
+				{
+					link: EXTERNAL_LINKS.Options.Portfolio,
+					i18nLabel: 'header.nav.options.portfolio',
+					Icon: LyraIcon,
+				},
+				{
+					link: EXTERNAL_LINKS.Options.Trade,
+					i18nLabel: 'header.nav.options.trade',
+					Icon: LyraIcon,
+				},
+				{
+					link: EXTERNAL_LINKS.Options.Vaults,
+					i18nLabel: 'header.nav.options.vaults',
+					Icon: LyraIcon,
+				},
+				{
+					link: EXTERNAL_LINKS.Options.Rewards,
+					i18nLabel: 'header.nav.options.rewards',
+					Icon: LyraIcon,
+				},
+			] ?? null,
 	},
 	{
 		i18nLabel: 'header.nav.exchange',
