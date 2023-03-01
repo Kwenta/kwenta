@@ -174,9 +174,16 @@ const DropDownSelect = styled(Select)`
 		width: 170px;
 		text-transform: capitalize;
 		left: 0;
+	}
+
+	.react-select__option {
 		svg {
 			width: 14px;
 			height: 14px;
+
+			> path {
+				fill: #69d8bd;
+			}
 		}
 	}
 

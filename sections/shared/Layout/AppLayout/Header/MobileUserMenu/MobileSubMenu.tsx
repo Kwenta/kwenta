@@ -152,6 +152,10 @@ const SubMenuItem = styled.div<{ currentTheme: ThemeName; active?: boolean; sele
 	svg {
 		height: 22px;
 		width: 22px;
+
+		> path {
+			fill: #69d8bd;
+		}
 	}
 
 	${(props) =>
