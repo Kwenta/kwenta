@@ -120,29 +120,28 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 	{
 		i18nLabel: 'header.nav.options.title',
 		link: EXTERNAL_LINKS.Options.Portfolio,
-		links:
-			[
-				{
-					link: EXTERNAL_LINKS.Options.Portfolio,
-					i18nLabel: 'header.nav.options.portfolio',
-					Icon: LyraIcon,
-				},
-				{
-					link: EXTERNAL_LINKS.Options.Trade,
-					i18nLabel: 'header.nav.options.trade',
-					Icon: LyraIcon,
-				},
-				{
-					link: EXTERNAL_LINKS.Options.Vaults,
-					i18nLabel: 'header.nav.options.vaults',
-					Icon: LyraIcon,
-				},
-				{
-					link: EXTERNAL_LINKS.Options.Rewards,
-					i18nLabel: 'header.nav.options.rewards',
-					Icon: LyraIcon,
-				},
-			] ?? null,
+		links: [
+			{
+				link: EXTERNAL_LINKS.Options.Portfolio,
+				i18nLabel: 'header.nav.options.portfolio',
+				Icon: LyraIcon,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Trade,
+				i18nLabel: 'header.nav.options.trade',
+				Icon: LyraIcon,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Vaults,
+				i18nLabel: 'header.nav.options.vaults',
+				Icon: LyraIcon,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Rewards,
+				i18nLabel: 'header.nav.options.rewards',
+				Icon: LyraIcon,
+			},
+		],
 	},
 	{
 		i18nLabel: 'header.nav.exchange',
