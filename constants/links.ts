@@ -17,10 +17,10 @@ export const EXTERNAL_LINKS = {
 		OptimismTokenBridge: 'https://gateway.optimism.io',
 	},
 	Options: {
-		Portfolio: 'https://kwenta-options.on.fleek.co/#/portfolio',
-		Trade: 'https://kwenta-options.on.fleek.co/#/trade',
-		Vaults: 'https://kwenta-options.on.fleek.co/#/vaults',
-		Rewards: 'https://kwenta-options.on.fleek.co/#/rewards',
+		Portfolio: 'https://options.kwenta.eth.limo/#/portfolio',
+		Trade: 'https://options.kwenta.eth.limo/#/trade',
+		Vaults: 'https://options.kwenta.eth.limo/#/vaults',
+		Rewards: 'https://options.kwenta.eth.limo/#/rewards',
 	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',
