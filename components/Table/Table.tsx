@@ -68,6 +68,7 @@ type TableProps = {
 	showShortList?: boolean;
 	lastRef?: any;
 	compactPagination?: boolean;
+	rowStyle?: Record<string, any>;
 };
 
 export const Table: FC<TableProps> = memo(
@@ -90,6 +91,7 @@ export const Table: FC<TableProps> = memo(
 		sortBy = [],
 		lastRef = null,
 		compactPagination = false,
+		rowStyle = {},
 	}) => {
 		const memoizedColumns = useMemo(
 			() => columns,
@@ -197,6 +199,7 @@ export const Table: FC<TableProps> = memo(
 										const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
 										return (
 											<TableBodyRow
+												rowStyle={rowStyle}
 												localRef={localRef}
 												highlightRowsOnHover={highlightRowsOnHover}
 												row={row}

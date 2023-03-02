@@ -117,6 +117,32 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 			: null,
 	},
 	{
+		i18nLabel: 'header.nav.options.title',
+		link: EXTERNAL_LINKS.Options.Portfolio,
+		links: [
+			{
+				link: EXTERNAL_LINKS.Options.Portfolio,
+				i18nLabel: 'header.nav.options.portfolio',
+				Icon: LinkIconLight,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Trade,
+				i18nLabel: 'header.nav.options.trade',
+				Icon: LinkIconLight,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Vaults,
+				i18nLabel: 'header.nav.options.vaults',
+				Icon: LinkIconLight,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Rewards,
+				i18nLabel: 'header.nav.options.rewards',
+				Icon: LinkIconLight,
+			},
+		],
+	},
+	{
 		i18nLabel: 'header.nav.exchange',
 		link: ROUTES.Exchange.Home,
 	},
