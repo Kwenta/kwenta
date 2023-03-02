@@ -153,7 +153,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 												isFuturesMarketClosed={row.original.isMarketClosed}
 												futuresClosureReason={row.original.closureReason}
 											/>
-											<Body>{row.original.asset}</Body>
+											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
 									width: 50,
@@ -161,6 +161,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 								{
 									Header: <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
 									accessor: 'price',
+									sortType: 'basic',
+									sortable: true,
 									Cell: (cellProps: any) => {
 										return (
 											<ColoredPrice
