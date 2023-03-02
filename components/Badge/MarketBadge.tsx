@@ -13,7 +13,7 @@ import Badge from './Badge';
 type MarketBadgeProps = {
 	currencyKey: FuturesMarketAsset | null;
 	isFuturesMarketClosed: boolean;
-	futuresClosureReason: FuturesClosureReason;
+	futuresClosureReason?: FuturesClosureReason;
 };
 
 type TransitionBadgeProps = {

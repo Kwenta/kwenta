@@ -30,7 +30,7 @@ import {
 	unserializeFuturesOrders,
 } from 'utils/futures';
 
-import { MarkPrices, futuresPositionKeys } from './types';
+import { MarkPrices, futuresPositionKeys, MarkPriceInfos } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -212,6 +212,24 @@ export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (mar
 		};
 	}, markPrices);
 });
+
+export const selectMarkPriceInfos = createSelector(
+	selectMarkets,
+	selectOffchainPricesInfo,
+	(markets, prices) => {
+		const markPrices: MarkPriceInfos = {};
+		return markets.reduce((acc, market) => {
+			const price = prices[market.asset]?.price ?? wei(0);
+			return {
+				...acc,
+				[market.marketKey]: {
+					price: wei(price).mul(wei(market.marketSkew).div(market.settings.skewScale).add(1)),
+					change: prices[market.asset]?.change ?? null,
+				},
+			};
+		}, markPrices);
+	}
+);
 
 export const selectFuturesAccount = createSelector(
 	selectFuturesType,
