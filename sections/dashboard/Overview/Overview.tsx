@@ -213,7 +213,7 @@ const TabButtonsContainer = styled.div`
 
 const SubHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 21px;
+	font-size: 16px;
 	margin-top: 20px;
 	font-variant: all-small-caps;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
