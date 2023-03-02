@@ -1,104 +1,92 @@
-import { wei } from '@synthetixio/wei';
-import React, { useMemo } from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 
-import InfoBox from 'components/InfoBox';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
-import { PositionSide } from 'sdk/types/futures';
 import {
 	selectAvailableMargin,
-	selectMarketInfo,
-	selectMaxLeverage,
-	selectPosition,
-	selectPreviewAvailableMargin,
+	selectBuyingPower,
+	selectMarginUsage,
+	selectMarketSuspended,
+	selectPreviewTradeData,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent } from 'utils/formatters/number';
 
-const MarketInfoBox: React.FC = () => {
-	const potentialTrade = useAppSelector(selectTradePreview);
-
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const position = useAppSelector(selectPosition);
-	const maxLeverage = useAppSelector(selectMaxLeverage);
+const AvailableMarginRow = memo(() => {
 	const availableMargin = useAppSelector(selectAvailableMargin);
-	const previewAvailableMargin = useAppSelector(selectPreviewAvailableMargin);
-
-	const totalMargin = position?.remainingMargin ?? zeroBN;
-	const buyingPower = totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
-
-	const marginUsage = useMemo(
-		() =>
-			availableMargin.gt(zeroBN)
-				? totalMargin.sub(availableMargin).div(totalMargin)
-				: totalMargin.gt(zeroBN)
-				? wei(1)
-				: zeroBN,
-		[availableMargin, totalMargin]
-	);
-
-	const previewTradeData = useMemo(() => {
-		const potentialMarginUsage = potentialTrade?.margin.gt(0)
-			? potentialTrade!.margin.sub(previewAvailableMargin).div(potentialTrade!.margin).abs() ??
-			  zeroBN
-			: zeroBN;
-
-		const maxPositionSize =
-			!!potentialTrade && !!marketInfo
-				? potentialTrade.margin
-						.mul(marketInfo.maxLeverage)
-						.mul(potentialTrade.side === PositionSide.LONG ? 1 : -1)
-				: null;
-
-		const potentialBuyingPower = !!maxPositionSize
-			? maxPositionSize.sub(potentialTrade?.notionalValue).abs()
-			: zeroBN;
-
-		return {
-			showPreview: !!potentialTrade && potentialTrade.sizeDelta.abs().gt(0),
-			totalMargin: potentialTrade?.margin || zeroBN,
-			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
-			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
-			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
-		};
-	}, [potentialTrade, previewAvailableMargin, marketInfo]);
+	const potentialTrade = useAppSelector(selectTradePreview);
+	const previewTradeData = useAppSelector(selectPreviewTradeData);
+	const marketSuspended = useAppSelector(selectMarketSuspended);
 
 	return (
-		<StyledInfoBox
-			dataTestId="market-info-box"
-			details={{
-				'Available Margin': {
-					value: formatDollars(availableMargin, { currencyKey: undefined }),
-					valueNode: (
-						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
-							{formatDollars(previewTradeData?.availableMargin)}
-						</PreviewArrow>
-					),
-				},
-				'Buying Power': {
-					value: formatDollars(buyingPower, { currencyKey: undefined }),
-					valueNode: previewTradeData?.buyingPower && (
-						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
-							{formatDollars(previewTradeData?.buyingPower)}
-						</PreviewArrow>
-					),
-				},
-				'Margin Usage': {
-					value: formatPercent(marginUsage),
-					valueNode: (
-						<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
-							{formatPercent(previewTradeData?.marginUsage)}
-						</PreviewArrow>
-					),
-				},
-			}}
-			disabled={marketInfo?.isSuspended}
+		<InfoBoxRow
+			title="Available Margin"
+			value={formatDollars(availableMargin, { currencyKey: undefined })}
+			valueNode={
+				<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
+					{formatDollars(previewTradeData?.availableMargin)}
+				</PreviewArrow>
+			}
+			disabled={marketSuspended}
 		/>
 	);
-};
+});
 
-const StyledInfoBox = styled(InfoBox)`
+const BuyingPowerRow = memo(() => {
+	const potentialTrade = useAppSelector(selectTradePreview);
+	const previewTradeData = useAppSelector(selectPreviewTradeData);
+	const buyingPower = useAppSelector(selectBuyingPower);
+	const marketSuspended = useAppSelector(selectMarketSuspended);
+
+	return (
+		<InfoBoxRow
+			title="Buying Power"
+			value={formatDollars(buyingPower)}
+			valueNode={
+				previewTradeData?.buyingPower && (
+					<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
+						{formatDollars(previewTradeData?.buyingPower)}
+					</PreviewArrow>
+				)
+			}
+			disabled={marketSuspended}
+		/>
+	);
+});
+
+const MarginUsageRow = memo(() => {
+	const previewTradeData = useAppSelector(selectPreviewTradeData);
+	const potentialTrade = useAppSelector(selectTradePreview);
+	const marginUsage = useAppSelector(selectMarginUsage);
+	const marketSuspended = useAppSelector(selectMarketSuspended);
+
+	return (
+		<InfoBoxRow
+			title="Margin Usage"
+			value={formatPercent(marginUsage)}
+			valueNode={
+				<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
+					{formatPercent(previewTradeData?.marginUsage)}
+				</PreviewArrow>
+			}
+			disabled={marketSuspended}
+		/>
+	);
+});
+
+const MarketInfoBox: React.FC = memo(() => {
+	return (
+		<MarketInfoBoxContainer>
+			<AvailableMarginRow />
+			<BuyingPowerRow />
+			<MarginUsageRow />
+		</MarketInfoBoxContainer>
+	);
+});
+
+const MarketInfoBoxContainer = styled(InfoBoxContainer)`
 	margin-bottom: 16px;
 
 	.value {

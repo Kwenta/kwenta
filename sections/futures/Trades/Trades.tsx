@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
@@ -12,22 +12,28 @@ import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade, PositionSide } from 'sdk/types/futures';
+import {
+	selectMarketAsset,
+	selectQueryStatuses,
+	selectUsersTradesForMarket,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
 import { TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
 
-type TradesProps = {
-	history: FuturesTrade[];
-	isLoading: boolean;
-	isLoaded: boolean;
-	marketAsset: string;
-};
-
-const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAsset }) => {
+const Trades: React.FC = memo(() => {
 	const { t } = useTranslation();
 	const { switchToL2 } = useNetworkSwitcher();
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const history = useAppSelector(selectUsersTradesForMarket);
+	const { trades } = useAppSelector(selectQueryStatuses);
+
+	const isLoading = !history.length && trades.status === FetchStatus.Loading;
+	const isLoaded = trades.status === FetchStatus.Success;
 
 	const isL2 = useIsL2();
 
@@ -145,7 +151,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 			/>
 		</Card>
 	);
-};
+});
 
 export default Trades;
 

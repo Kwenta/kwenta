@@ -24,7 +24,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { selectWallet } from 'state/wallet/selectors';
 
-import FeeInfoBox from '../FeeInfoBox';
+import { CrossMarginFeeInfoBox } from '../FeeInfoBox/FeeInfoBox';
 import OrderPriceInput from '../OrderPriceInput/OrderPriceInput';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
@@ -114,7 +114,7 @@ export default function TradeCrossMargin({ isMobile }: Props) {
 						}}
 					/>
 					<ManagePosition />
-					<FeeInfoBox />
+					<CrossMarginFeeInfoBox />
 					{openTransferModal && (
 						<DepositWithdrawCrossMargin
 							defaultTab={'deposit'}

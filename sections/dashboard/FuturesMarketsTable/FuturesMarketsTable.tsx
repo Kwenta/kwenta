@@ -108,6 +108,7 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 190,
+								sortable: true,
 							},
 							{
 								Header: (
@@ -202,17 +203,19 @@ const FuturesMarketsTable: FC = () => {
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<OpenInterestContainer>
-											<StyledLongPrice
+											<Currency.Price
 												currencyKey="sUSD"
 												price={cellProps.row.original.longInterest}
 												sign="$"
 												truncate
+												side="positive"
 											/>
-											<StyledShortPrice
+											<Currency.Price
 												currencyKey="sUSD"
 												price={cellProps.row.original.shortInterest}
 												sign="$"
 												truncate
+												side="negative"
 											/>
 										</OpenInterestContainer>
 									);
@@ -303,6 +306,7 @@ const FuturesMarketsTable: FC = () => {
 								);
 							},
 							width: 145,
+							sortable: true,
 						},
 						{
 							Header: () => (
@@ -388,14 +392,6 @@ const FuturesMarketsTable: FC = () => {
 		</>
 	);
 };
-
-const StyledLongPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.green};
-`;
-
-const StyledShortPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.red};
-`;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;

@@ -29,7 +29,7 @@ const BasicSwap: FC = memo(() => {
 
 export default BasicSwap;
 
-const ExchangeTitle = styled(Text.Body).attrs({ variant: 'bold' })`
+const ExchangeTitle = styled(Text.Body).attrs({ weight: 'bold' })`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 30px;
 	margin-bottom: 1.5em;

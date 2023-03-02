@@ -45,7 +45,7 @@ export const ErrorView: FC<ErrorProps> = memo(
 				{retryButton && (
 					<>
 						<Spacer height={10} />
-						<Button variant="danger" size="xs" onClick={retryButton.onClick}>
+						<Button variant="danger" size="small" onClick={retryButton.onClick}>
 							{retryButton.label}
 						</Button>
 					</>

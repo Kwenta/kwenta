@@ -139,13 +139,8 @@ const SwapTextInput = styled(NumericInput)`
 	background-color: transparent;
 	border: none;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	font-size: 18px;
 	margin-bottom: 10px;
 	height: initial;
-
-	&:focus {
-		outline: none;
-	}
 `;
 
 const SwapCurrencyPrice = styled.div`

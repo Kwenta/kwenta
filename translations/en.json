@@ -14,6 +14,13 @@
 			"exchange": "exchange",
 			"dashboard": "dashboard",
 			"markets": "futures",
+			"options": {
+				"title": "options",
+				"portfolio": "portfolio",
+				"trade": "trade",
+				"vaults": "vaults",
+				"rewards": "rewards"
+			},
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
 			"v2-alpha": "Try Futures V2 Alpha",
@@ -647,6 +654,12 @@
 				"liquidation": "liquidation price",
 				"roi": "ROI"
 			}
+		},
+		"markets-drop-down": {
+			"price": "price",
+			"market": "market",
+			"change": "24H +/-",
+			"no-results": "No markets found"
 		},
 		"market": {
 			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",

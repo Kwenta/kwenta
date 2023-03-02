@@ -11,6 +11,7 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -38,7 +39,7 @@ import { getDisplayAsset, getMarketName, MarketKeyByAsset } from 'utils/futures'
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
-	_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
+	_.isNil(prop) ? <Body>{NO_VALUE}</Body> : children;
 
 const FuturesHistoryTable: FC = () => {
 	const [selectedTrade, setSelectedTrade] = useState<FuturesTrade>();
@@ -357,8 +358,7 @@ const MobileStyledCurrencyIcon = styled(Currency.Icon)`
 
 const TableContainer = styled.div`
 	margin-top: 16px;
-	margin-bottom: '40px';
-	font-family: ${(props) => props.theme.fonts.regular};
+	margin-bottom: 40px;
 	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}

@@ -68,7 +68,6 @@ const EarnContent = styled(MainContent)`
 `;
 
 const StyledBody = styled(Text.Body).attrs({ size: 'large' })`
-	font-size: 15px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 

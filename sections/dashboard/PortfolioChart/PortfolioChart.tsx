@@ -46,7 +46,7 @@ const Chart = styled.div`
 	height: 200px;
 `;
 
-const PortfolioTitle = styled(Text.Body).attrs({ variant: 'bold' })`
+const PortfolioTitle = styled(Text.Body).attrs({ weight: 'bold' })`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 16px;
 	margin: 26px 0 10px 26px;

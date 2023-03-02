@@ -633,8 +633,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	const assetRate = selectMarketPrice(getState());
 	const position = selectPosition(getState());
 	if (
-		!size ||
-		Number(size) === 0 ||
+		size === '' ||
 		assetRate.eq(0) ||
 		!position?.remainingMargin ||
 		position?.remainingMargin.eq(0)

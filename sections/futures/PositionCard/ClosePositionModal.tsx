@@ -109,7 +109,7 @@ function ClosePositionModal({
 				<StyledButton
 					data-testid="trade-close-position-confirm-order-button"
 					variant="flat"
-					size="lg"
+					size="large"
 					onClick={onClosePosition}
 					disabled={!!error || disabled || isClosing}
 				>
