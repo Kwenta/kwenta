@@ -8,6 +8,7 @@ type TableBodyRowProps = TableRowProps & {
 	row: Row;
 	localRef: any;
 	highlightRowsOnHover?: boolean;
+	rowStyle: Record<string, any>;
 	onClick?: () => void;
 };
 
@@ -29,11 +30,13 @@ const TableBodyRow: React.FC<TableBodyRowProps> = React.memo(
 	)
 );
 
-const BaseTableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
+const BaseTableBodyRow = styled.div<{
+	$highlightRowsOnHover?: boolean;
+	rowStyle?: Record<string, any>;
+}>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 6px 0;
-
 	&:last-child {
 		border: none;
 	}

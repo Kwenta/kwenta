@@ -648,6 +648,12 @@
 				"roi": "ROI"
 			}
 		},
+		"markets-drop-down": {
+			"price": "price",
+			"market": "market",
+			"change": "24H +/-",
+			"no-results": "No markets found"
+		},
 		"market": {
 			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",
 			"page-title-rate": "{{marketName}} - {{rate}} Futures | Kwenta",
