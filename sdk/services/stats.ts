@@ -6,4 +6,10 @@ export default class StatsService {
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
 	}
+
+	public async getStatsVolumes() {}
+
+	public async getFuturesTradersStats() {}
+
+	public async getFuturesCumulativeStats() {}
 }

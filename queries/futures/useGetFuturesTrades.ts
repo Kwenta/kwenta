@@ -66,7 +66,7 @@ const useGetFuturesTrades = (
 		{
 			...options,
 			refetchInterval: 15000,
-			getNextPageParam: (lastPage, _) => {
+			getNextPageParam: (lastPage) => {
 				return notNill(lastPage) && lastPage?.length > 0
 					? {
 							minTs: 0,
@@ -74,7 +74,7 @@ const useGetFuturesTrades = (
 					  }
 					: null;
 			},
-			getPreviousPageParam: (firstPage, _) => {
+			getPreviousPageParam: (firstPage) => {
 				return notNill(firstPage) && firstPage?.length > 0
 					? {
 							minTs: firstPage[0].timestamp.toNumber(),

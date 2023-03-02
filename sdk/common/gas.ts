@@ -2,11 +2,12 @@
 // https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
 
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';
-import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { ethers, BigNumber } from 'ethers';
 import { omit } from 'lodash';
 
+import { NetworkId } from 'sdk/types/common';
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
 
 const MULTIPLIER = wei(2);
@@ -85,13 +86,10 @@ export const getEthGasPrice = async (networkId: NetworkId, provider: ethers.prov
 					fast: computeGasFee(block.baseFeePerGas, 4),
 					average: computeGasFee(block.baseFeePerGas, 2),
 				};
-			} else {
-				return getGasPriceFromProvider(provider);
 			}
-			// If not (Testnet or Optimism network), we get the Gas Price through the provider
-		} else {
-			return getGasPriceFromProvider(provider);
 		}
+
+		return getGasPriceFromProvider(provider);
 	} catch (e) {
 		throw new Error(`Could not fetch and compute network fee. ${e}`);
 	}

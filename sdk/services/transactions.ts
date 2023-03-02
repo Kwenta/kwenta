@@ -5,6 +5,8 @@ import { ethers } from 'ethers';
 import { omit, clone } from 'lodash';
 import KwentaSDK from 'sdk';
 
+import { getEthGasPrice } from 'sdk/common/gas';
+
 import * as sdkErrors from '../common/errors';
 import { ContractName } from '../contracts';
 
@@ -104,5 +106,9 @@ export default class TransactionsService {
 		);
 
 		return wei(await OptimismGasPriceOracleContract.getL1Fee(serializedTxn));
+	}
+
+	public getGasPrice() {
+		return getEthGasPrice(this.sdk.context.networkId, this.sdk.context.provider);
 	}
 }
