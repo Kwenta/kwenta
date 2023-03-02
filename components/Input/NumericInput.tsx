@@ -3,7 +3,10 @@ import styled, { css } from 'styled-components';
 
 import Spacer from 'components/Spacer';
 
-type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
+type NumericInputProps = Omit<
+	React.InputHTMLAttributes<HTMLInputElement>,
+	'onChange' | 'maxLength'
+> & {
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
 	left?: React.ReactNode;
@@ -14,7 +17,7 @@ type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onCh
 	textAlign?: string;
 	suffix?: string;
 	max?: number;
-	maxDecimals?: number | 'none';
+	maxLength?: number | 'none';
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -32,7 +35,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 		bold,
 		textAlign,
 		max = 0,
-		maxDecimals = 4,
+		maxLength = 'none',
 		className,
 		...props
 	}) => {
@@ -40,8 +43,8 @@ const NumericInput: FC<NumericInputProps> = memo(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
 				let standardizedNum = e.target.value.replace(/[^0-9.,]/g, '').replace(/,/g, '.');
 
-				if (maxDecimals !== 'none') {
-					standardizedNum = standardizedNum.substring(0, maxDecimals);
+				if (maxLength !== 'none') {
+					standardizedNum = standardizedNum.substring(0, maxLength);
 				}
 				// TODO: make regex only accept valid numbers, so we don't need to check again.
 				if (isNaN(Number(standardizedNum))) return;
@@ -50,7 +53,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 					onChange(e, standardizedNum);
 				}
 			},
-			[onChange, max, maxDecimals]
+			[onChange, max, maxLength]
 		);
 
 		return (
