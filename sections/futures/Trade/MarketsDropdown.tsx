@@ -88,6 +88,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				asset: market.asset,
 				key: market.marketKey,
 				description: getSynthDescription(market.asset, synthsMap, t),
+				priceNum: basePriceRate?.price.toNumber() ?? 0,
 				price: formatDollars(basePriceRate?.price ?? '0', { suggestDecimals: true }),
 				change:
 					basePriceRate && pastPrice?.rate
@@ -141,7 +142,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							columns={[
 								{
 									Header: <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
-									accessor: 'asset',
+									accessor: 'label',
 									sortType: 'basic',
 									sortable: true,
 									Cell: ({ row }: any) => (
@@ -160,7 +161,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 								},
 								{
 									Header: <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
-									accessor: 'price',
+									accessor: 'priceNum',
 									sortType: 'basic',
 									sortable: true,
 									Cell: (cellProps: any) => {
