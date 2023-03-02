@@ -13,7 +13,9 @@ export type ButtonVariant =
 	| 'danger'
 	| 'text'
 	| 'select'
-	| 'yellow';
+	| 'yellow'
+	| 'long'
+	| 'short';
 
 type BaseButtonProps = {
 	$size: 'small' | 'medium' | 'large';
@@ -29,7 +31,6 @@ type BaseButtonProps = {
 };
 
 export const border = css`
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	border: none;
 
@@ -107,32 +108,40 @@ const BaseButton = styled.button<BaseButtonProps>`
 		css`
 			background: ${props.theme.colors.selectedTheme.button.fill};
 			border: ${props.theme.colors.selectedTheme.border};
-			box-shadow: none;
 			&:hover {
 				background: ${props.theme.colors.selectedTheme.button.fillHover};
 			}
 			&::before {
 				display: none;
 			}
+		`}
 
-			&.long {
-				color: ${(props) => props.theme.colors.selectedTheme.black};
-				background: ${(props) => props.theme.colors.selectedTheme.green};
-			}
-			&.long:hover {
-				color: ${(props) => props.theme.colors.selectedTheme.green};
-				background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
-			}
-
-			&.short {
-				color: ${(props) => props.theme.colors.selectedTheme.black};
-				background: ${(props) => props.theme.colors.selectedTheme.red};
-			}
-			&.short:hover {
-				color: ${(props) => props.theme.colors.selectedTheme.red};
-				background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+	${(props) =>
+		props.$variant === 'long' &&
+		css`
+			color: ${(props) =>
+				props.theme.colors.selectedTheme.newTheme.button.position.long.active.color};
+			background: ${(props) =>
+				props.theme.colors.selectedTheme.newTheme.button.position.long.active.background};
+			&:hover {
+				background: ${(props) =>
+					props.theme.colors.selectedTheme.newTheme.button.position.long.hover.background};
 			}
 		`}
+
+	${(props) =>
+		props.$variant === 'short' &&
+		css`
+			color: ${(props) =>
+				props.theme.colors.selectedTheme.newTheme.button.position.short.active.color};
+			background: ${(props) =>
+				props.theme.colors.selectedTheme.newTheme.button.position.short.active.background};
+			&:hover {
+				background: ${(props) =>
+					props.theme.colors.selectedTheme.newTheme.button.position.short.hover.background};
+			}
+		`}
+	
 
 	${(props) =>
 		props.$variant === 'yellow' &&

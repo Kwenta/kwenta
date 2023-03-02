@@ -32,7 +32,6 @@ import {
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FetchStatus } from 'state/types';
 import { getKnownError } from 'utils/formatters/error';
 import {
 	zeroBN,
@@ -44,7 +43,6 @@ import {
 } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
-import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
 const DelayedOrderConfirmationModal: FC = () => {
 	const { t } = useTranslation();
@@ -59,7 +57,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
-	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
 
 	const positionSize = useMemo(() => {
@@ -138,8 +135,32 @@ const DelayedOrderConfirmationModal: FC = () => {
 		]
 	);
 
+	const mobileRows = useMemo(() => {
+		return [
+			{
+				label: t('futures.market.user.position.modal.size'),
+				value: formatCurrency(
+					getDisplayAsset(marketAsset) || '',
+					orderDetails.nativeSizeDelta.abs() ?? zeroBN,
+					{
+						currencyKey: getDisplayAsset(marketAsset) ?? '',
+					}
+				),
+			},
+			{
+				label: t('futures.market.user.position.modal.side'),
+				value: (leverageSide ?? PositionSide.LONG).toUpperCase(),
+			},
+			{
+				label: t('futures.market.user.position.modal.order-type'),
+				value: OrderNameByType[orderType],
+			},
+			...dataRows,
+		];
+	}, [dataRows, marketAsset, leverageSide, orderType, orderDetails.nativeSizeDelta, t]);
+
 	const leverageValue = useMemo(
-		() => truncateNumbers(wei(Number(potentialTradeDetails?.leverage) ?? 0), DEFAULT_FIAT_DECIMALS),
+		() => truncateNumbers(wei(Number(potentialTradeDetails?.leverage ?? 0)), DEFAULT_FIAT_DECIMALS),
 		[potentialTradeDetails?.leverage]
 	);
 
@@ -165,6 +186,41 @@ const DelayedOrderConfirmationModal: FC = () => {
 		);
 	};
 
+	const orderSummary = () => {
+		<OrderSummaryLine>
+			<InfoBoxContainer>
+				<InfoBoxRow
+					title={t('futures.market.user.position.modal.size')}
+					value={
+						<OrderSummaryValue>
+							{formatCurrency(
+								getDisplayAsset(marketAsset) || '',
+								orderDetails.nativeSizeDelta.abs() ?? zeroBN,
+								{
+									currencyKey: getDisplayAsset(marketAsset) ?? '',
+								}
+							)}
+						</OrderSummaryValue>
+					}
+				/>
+				<InfoBoxRow
+					title={t('futures.market.user.position.modal.side')}
+					value={<OrderSideLabel className={leverageSide}>{leverageSide}</OrderSideLabel>}
+				/>
+			</InfoBoxContainer>
+			<InfoBoxContainer>
+				<InfoBoxRow
+					title={t('futures.market.user.position.modal.leverage')}
+					value={<OrderSideLabel>{leverageValue}</OrderSideLabel>}
+				/>
+				<InfoBoxRow
+					title={t('futures.market.user.position.modal.order-type')}
+					value={<OrderSummaryValue>{orderTypeValue}</OrderSummaryValue>}
+				/>
+			</InfoBoxContainer>
+		</OrderSummaryLine>;
+	};
+
 	return (
 		<>
 			<DesktopOnlyView>
@@ -177,41 +233,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 							: t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
 					}
 				>
-					<OrderSummaryLine>
-						<InfoBoxContainer>
-							<InfoBoxRow
-								title={t('futures.market.user.position.modal.size')}
-								value={
-									<OrderSummaryValue>
-										{formatCurrency(
-											getDisplayAsset(marketAsset) || '',
-											orderDetails.nativeSizeDelta.abs() ?? zeroBN,
-											{
-												currencyKey: getDisplayAsset(marketAsset) ?? '',
-											}
-										)}
-									</OrderSummaryValue>
-								}
-							/>
-							<InfoBoxRow
-								title={t('futures.market.user.position.modal.side')}
-								value={<OrderSideLabel className={leverageSide}>{leverageSide}</OrderSideLabel>}
-							/>
-						</InfoBoxContainer>
-						<InfoBoxContainer>
-							<InfoBoxRow
-								title={t('futures.market.user.position.modal.leverage')}
-								value={<OrderSideLabel>{leverageValue}</OrderSideLabel>}
-							/>
-							<InfoBoxRow
-								title={t('futures.market.user.position.modal.order-type')}
-								value={<OrderSummaryValue>{orderTypeValue}</OrderSummaryValue>}
-							/>
-						</InfoBoxContainer>
-					</OrderSummaryLine>
-
 					<Spacer height={12} />
-
+					{orderSummary}
 					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`} className={i === 0 ? '' : 'border'}>
 							{row.tooltipContent ? (
@@ -241,9 +264,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 					)}
 					<ConfirmTradeButton
 						disabled={submitting}
-						variant="flat"
+						variant={isClosing ? 'flat' : leverageSide}
 						onClick={handleConfirmOrder}
-						className={leverageSide}
 					>
 						{submitting ? (
 							<ButtonLoader />
@@ -257,16 +279,17 @@ const DelayedOrderConfirmationModal: FC = () => {
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
+				{orderSummary}
+
 				<BaseDrawer
 					open
-					items={dataRows}
+					items={mobileRows}
 					closeDrawer={onDismiss}
 					buttons={
-						<MobileConfirmTradeButton
-							disabled={submitting || previewStatus.status !== FetchStatus.Success}
-							variant="primary"
+						<ConfirmTradeButtonMobile
+							disabled={submitting}
+							variant={isClosing ? 'flat' : leverageSide}
 							onClick={handleConfirmOrder}
-							className={leverageSide}
 						>
 							{submitting ? (
 								<ButtonLoader />
@@ -275,7 +298,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 							) : (
 								t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
 							)}
-						</MobileConfirmTradeButton>
+						</ConfirmTradeButtonMobile>
 					}
 				/>
 			</MobileOrTabletView>
@@ -292,7 +315,7 @@ const StyledBaseModal = styled(BaseModal)`
 const Row = styled(FlexDivCentered)`
 	justify-content: space-between;
 
-	padding: 6px 0;
+	padding: 8px 0;
 	&.border {
 		border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	}
@@ -312,7 +335,6 @@ const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
-	margin-top: 6px;
 	text-transform: capitalize;
 
 	.value {
@@ -336,6 +358,10 @@ const ConfirmTradeButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 55px;
+`;
+
+const ConfirmTradeButtonMobile = styled(ConfirmTradeButton)`
+	width: 100%;
 `;
 
 const Disclaimer = styled.div`
