@@ -14,7 +14,7 @@ type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onCh
 	textAlign?: string;
 	suffix?: string;
 	max?: number;
-	maxDecimals?: number;
+	maxDecimals?: number | 'none';
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -40,7 +40,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
 				let standardizedNum = e.target.value.replace(/[^0-9.,]/g, '').replace(/,/g, '.');
 
-				if (maxDecimals) {
+				if (maxDecimals !== 'none') {
 					standardizedNum = standardizedNum.substring(0, maxDecimals);
 				}
 				// TODO: make regex only accept valid numbers, so we don't need to check again.
@@ -50,7 +50,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 					onChange(e, standardizedNum);
 				}
 			},
-			[onChange, max]
+			[onChange, max, maxDecimals]
 		);
 
 		return (

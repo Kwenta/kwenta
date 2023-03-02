@@ -165,7 +165,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 				right={
 					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
 				}
-				maxDecimals={undefined}
+				maxDecimals="none"
 			/>
 			{transferType === 0 ? (
 				<MinimumAmountDisclaimer>
