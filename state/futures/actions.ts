@@ -640,7 +640,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	) {
 		dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_CM_TRADE_INPUTS));
 		dispatch(setIsolatedTradePreview(null));
-		dispatch(setIsolatedMarginLeverageInput('0'));
+		dispatch(setIsolatedMarginLeverageInput(''));
 		return;
 	}
 
@@ -1276,13 +1276,6 @@ export const estimateGasInteralAction = async (
 		);
 		throw err;
 	}
-};
-
-// TODO: Finish
-export const resetFuturesState = (): AppThunk => (dispatch) => {
-	dispatch({
-		type: 'futures/resetFuturesState',
-	});
 };
 
 const submitCMTransferTransaction = async (
