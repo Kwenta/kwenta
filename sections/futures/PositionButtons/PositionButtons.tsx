@@ -30,6 +30,7 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 				data-testid="position-side-short-button"
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
+				$right={true}
 				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
@@ -42,22 +43,22 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 type PositionButtonProps = {
 	$position: PositionSide;
 	$isActive: boolean;
+	$right?: boolean;
 };
 
 const PositionButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	grid-gap: 15px;
 	margin-bottom: 16px;
 	margin-top: 8px;
 `;
 
 const PositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonProps>`
 	font-size: 16px;
-	height: 57px;
+	height: 40px;
 	font-variant: all-small-caps;
 	text-transform: uppercase;
-	border-radius: 8px;
+	border-radius: ${(props) => (props.$right ? '0 8px 8px 0' : '8px 0 0 8px')};
 
 	&:active {
 		transform: scale(0.96);
@@ -69,11 +70,11 @@ const PositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonP
 
 	${(props) => css`
 		font-family: ${props.theme.fonts.bold};
-		color: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].color};
-		background: ${props.theme.colors.selectedTheme.newTheme.button.position.background};
+		color: ${props.theme.colors.selectedTheme.newTheme.button.default.color};
+		background: ${props.theme.colors.selectedTheme.newTheme.button.default.background};
 
 		&:hover {
-			background: ${props.theme.colors.selectedTheme.newTheme.button.position.hover.background};
+			background: ${props.theme.colors.selectedTheme.newTheme.button.default.hover.background};
 		}
 	`}
 
@@ -83,9 +84,6 @@ const PositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonP
 			&::before {
 				display: none;
 			}
-
-			border: 1px solid
-				${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].active.border};
 			background: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position]
 				.active.background};
 			color: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].active
