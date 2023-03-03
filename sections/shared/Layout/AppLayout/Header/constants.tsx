@@ -24,6 +24,7 @@ export type MenuLink = {
 	i18nLabel: string;
 	link: string;
 	links?: SubMenuLink[] | null;
+	hidden?: boolean;
 };
 
 export type MenuLinks = MenuLink[];
@@ -141,6 +142,7 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 				Icon: LinkIconLight,
 			},
 		],
+		hidden: true,
 	},
 	{
 		i18nLabel: 'header.nav.exchange',
@@ -168,7 +170,7 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 	},
 ];
 
-export const DESKTOP_NAV_LINKS = getMenuLinks(false);
-export const MOBILE_NAV_LINKS = getMenuLinks(true);
+export const DESKTOP_NAV_LINKS = getMenuLinks(false).filter((m) => !m.hidden);
+export const MOBILE_NAV_LINKS = getMenuLinks(true).filter((m) => !m.hidden);
 
 export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];
