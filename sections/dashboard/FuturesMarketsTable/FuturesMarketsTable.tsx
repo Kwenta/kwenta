@@ -25,6 +25,7 @@ import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
 import { formatDollars } from 'utils/formatters/number';
 import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
+import Spacer from 'components/Spacer';
 
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
@@ -97,6 +98,7 @@ const FuturesMarketsTable: FC = () => {
 											</IconContainer>
 											<StyledText>
 												{cellProps.row.original.market}
+												<Spacer width={8} />
 												<MarketBadge
 													currencyKey={cellProps.row.original.asset}
 													isFuturesMarketClosed={cellProps.row.original.isSuspended}
