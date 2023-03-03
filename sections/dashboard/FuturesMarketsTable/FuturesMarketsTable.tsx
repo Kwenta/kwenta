@@ -10,6 +10,7 @@ import ChangePercent from 'components/ChangePercent';
 import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Spacer from 'components/Spacer';
 import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -25,7 +26,6 @@ import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
 import { formatDollars } from 'utils/formatters/number';
 import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
-import Spacer from 'components/Spacer';
 
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
