@@ -46,7 +46,6 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
 
-process.env.GIT_HASH_ID!.toString();
 Sentry.init({
 	dsn:
 		'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',

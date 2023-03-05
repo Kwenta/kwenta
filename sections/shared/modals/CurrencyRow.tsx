@@ -1,5 +1,5 @@
 import Wei from '@synthetixio/wei';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -28,7 +28,8 @@ type SynthRowProps = {
 	balance?: TokenBalance;
 	onClick: () => void;
 };
-const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
+
+const CurrencyRow: FC<SynthRowProps> = memo(({ token, onClick, balance }) => {
 	const { t } = useTranslation();
 	const { isWalletConnected } = Connector.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -70,7 +71,7 @@ const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 			)}
 		</StyledSelectableCurrencyRow>
 	);
-};
+});
 
 const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
 	padding: 5px 16px;

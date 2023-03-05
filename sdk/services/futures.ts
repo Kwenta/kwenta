@@ -58,13 +58,13 @@ import {
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
-	getReasonFromCode,
 	mapFuturesOrderFromEvent,
 	mapFuturesPosition,
 	mapFuturesPositions,
 	mapTrades,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
+import { getReasonFromCode } from 'sdk/utils/synths';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
 

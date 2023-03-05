@@ -5,8 +5,8 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsL2 from 'hooks/useIsL2';
-import { getReasonFromCode } from 'queries/futures/utils';
 import { NetworkId } from 'sdk/types/common';
+import { getReasonFromCode } from 'sdk/utils/synths';
 
 interface FuturesMarketClosure {
 	isSuspended: boolean;

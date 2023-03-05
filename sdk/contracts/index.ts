@@ -9,6 +9,7 @@ import MultipleMerkleDistributorPerpsV2ABI from '../contracts/abis/MultipleMerkl
 import RewardEscrowABI from '../contracts/abis/RewardEscrow.json';
 import SupplyScheduleABI from '../contracts/abis/SupplySchedule.json';
 import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
+import DappMaintenanceABI from './abis/DappMaintenance.json';
 import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
@@ -19,6 +20,7 @@ import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
 import StakingRewardsABI from './abis/StakingRewards.json';
 import SynthRedeemerABI from './abis/SynthRedeemer.json';
+import SystemStatusABI from './abis/SystemStatus.json';
 import { ADDRESSES } from './constants';
 import {
 	CrossMarginAccountFactory__factory,
@@ -223,6 +225,12 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		SupplySchedule: ADDRESSES.SupplySchedule[networkId]
 			? new EthCallContract(ADDRESSES.SupplySchedule[networkId], SupplyScheduleABI)
+			: undefined,
+		SystemStatus: ADDRESSES.SystemStatus[networkId]
+			? new EthCallContract(ADDRESSES.SystemStatus[networkId], SystemStatusABI)
+			: undefined,
+		DappMaintenance: ADDRESSES.DappMaintenance[networkId]
+			? new EthCallContract(ADDRESSES.DappMaintenance[networkId], DappMaintenanceABI)
 			: undefined,
 	};
 };

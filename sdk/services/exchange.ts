@@ -28,14 +28,15 @@ import { NetworkId } from 'sdk/types/common';
 import { Token, TokenBalances } from 'sdk/types/tokens';
 import {
 	newGetCoinGeckoPricesForCurrencies,
-	newGetExchangeRatesForCurrencies,
-	newGetExchangeRatesTupleForCurrencies,
+	getExchangeRatesForCurrencies,
+	getExchangeRatesTupleForCurrencies,
 } from 'utils/currencies';
 import { UNIT_BIG_NUM, zeroBN } from 'utils/formatters/number';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import * as sdkErrors from '../common/errors';
 import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
+import { queryPriceAdjustmentData } from '../queries/exchange';
 import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
@@ -490,7 +491,7 @@ export default class ExchangeService {
 	) {
 		const gasPrices = await getEthGasPrice(this.sdk.context.networkId, this.sdk.context.provider);
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const ethPriceRate = newGetExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD');
+		const ethPriceRate = getExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD');
 		const gasPrice = gasPrices.fast;
 
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
@@ -656,7 +657,7 @@ export default class ExchangeService {
 		} else {
 			return this.checkIsAtomic(currencyKey, 'sUSD')
 				? await this.getAtomicRates(currencyKey)
-				: newGetExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
+				: getExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
 		}
 	}
 
@@ -787,6 +788,15 @@ export default class ExchangeService {
 		return { tokensMap: this.tokensMap, tokenList: this.tokenList };
 	}
 
+	public async getPriceAdjustment() {
+		const { rebate, reclaim } = await queryPriceAdjustmentData(
+			this.sdk,
+			this.sdk.context.walletAddress
+		);
+
+		return { rebate: wei(rebate), reclaim: wei(reclaim) };
+	}
+
 	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		if (this.sdk.context.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
 			return false;
@@ -894,7 +904,7 @@ export default class ExchangeService {
 					this.getAtomicRates(quoteCurrencyKey),
 					this.getAtomicRates(baseCurrencyKey),
 			  ])
-			: newGetExchangeRatesTupleForCurrencies(
+			: getExchangeRatesTupleForCurrencies(
 					this.sdk.prices.currentPrices.onChain,
 					quoteCurrencyKey,
 					baseCurrencyKey

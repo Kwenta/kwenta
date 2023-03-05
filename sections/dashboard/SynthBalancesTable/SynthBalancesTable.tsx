@@ -1,4 +1,3 @@
-import { SynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,7 +51,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 	const { synthBalances } = useAppSelector(selectBalances);
 
 	const synthTokens = useMemo(() => {
-		return synthBalances.map((synthBalance: SynthBalance) => {
+		return synthBalances.map((synthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 			const price = prices[currencyKey].onChain;
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(currencyKey));

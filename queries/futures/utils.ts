@@ -4,7 +4,6 @@ import Wei, { wei } from '@synthetixio/wei';
 
 import { ETH_UNIT } from 'constants/network';
 import { chain } from 'containers/Connector/config';
-import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 import { NetworkId } from 'sdk/types/common';
 
@@ -150,24 +149,4 @@ export const calculateFundingRate = (
 
 	const fundingRate = fundingPaid.div(assetPrice);
 	return fundingRate;
-};
-
-export const getReasonFromCode = (
-	reasonCode?: BigNumber
-): MarketClosureReason | 'unknown' | null => {
-	switch (Number(reasonCode)) {
-		case 1:
-			return 'system-upgrade';
-		case 2:
-			return 'market-closure';
-		case 3:
-		case 55:
-		case 65:
-		case 231:
-			return 'circuit-breaker';
-		case 99999:
-			return 'emergency';
-		default:
-			return 'unknown';
-	}
 };

@@ -1,6 +1,6 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -14,7 +14,6 @@ import { FlexDivRowCentered, FlexDivColCentered } from 'components/layout/flex';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import useCurrencyPrice from 'hooks/useCurrencyPrice';
 import useIsL2 from 'hooks/useIsL2';
 import { MessageButton } from 'sections/exchange/message';
 import { closeModal } from 'state/exchange/reducer';
@@ -49,6 +48,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		baseAmount,
 		quoteAmount,
 		txError,
+		quotePriceRate,
 	} = useAppSelector(({ exchange }) => ({
 		baseCurrencyKey: exchange.baseCurrencyKey,
 		quoteCurrencyKey: exchange.quoteCurrencyKey,
@@ -57,6 +57,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		baseAmount: exchange.baseAmount,
 		quoteAmount: exchange.quoteAmount,
 		txError: exchange.txError,
+		quotePriceRate: exchange.quotePriceRate,
 	}));
 
 	const totalTradePrice = useAppSelector(selectEstimatedBaseTradePrice);
@@ -65,11 +66,10 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		formatCurrency(baseCurrencyKey!, baseAmount, {
 			minDecimals: decimals,
 		});
-	const priceUSD = useCurrencyPrice(quoteCurrencyKey ?? '');
 
-	const onDismiss = () => {
+	const onDismiss = useCallback(() => {
 		dispatch(closeModal());
-	};
+	}, [dispatch]);
 
 	const priceAdjustmentQuery = subgraph.useGetExchangeEntrySettleds(
 		{ where: { from: walletAddress } },
@@ -88,8 +88,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 	);
 
 	const priceAdjustmentFeeUSD = useMemo(
-		() => priceAdjustment.rebate.sub(priceAdjustment.reclaim).mul(priceUSD),
-		[priceAdjustment, priceUSD]
+		() => priceAdjustment.rebate.sub(priceAdjustment.reclaim).mul(quotePriceRate),
+		[priceAdjustment, quotePriceRate]
 	);
 
 	return (

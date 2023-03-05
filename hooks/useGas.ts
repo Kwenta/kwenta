@@ -1,13 +1,5 @@
-import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
+import { GasPrice } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { BigNumber } from 'ethers';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { selectGasPrice, selectGasSpeed } from 'state/app/selectors';
-import { useAppSelector } from 'state/hooks';
-import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
-
-import useIsL1 from './useIsL1';
 
 export const parseGasPriceObject = (gasPriceObject: GasPrice) => {
 	const { gasPrice, maxFeePerGas } = gasPriceObject;
@@ -19,83 +11,3 @@ export const parseGasPriceObject = (gasPriceObject: GasPrice) => {
 		return null;
 	}
 };
-
-type GasConfigL1 = {
-	maxPriorityFeePerGas?: BigNumber;
-	maxFeePerGas?: BigNumber;
-};
-
-type GasConfigL2 = {
-	gasPrice?: BigNumber;
-};
-
-type GasConfig = GasConfigL1 | GasConfigL2;
-
-const useGas = () => {
-	const isMainnet = useIsL1();
-	const { useEthGasPriceQuery } = useSynthetixQueries();
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const gasSpeed = useAppSelector(selectGasSpeed);
-	const customGasPrice = useAppSelector(selectGasPrice);
-
-	const [gasConfig, setGasConfig] = useState({} as GasConfig);
-	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
-	const isCustomGasPrice: boolean = useMemo(() => customGasPrice !== '', [customGasPrice]);
-
-	const selectedGas: GasPrice = useMemo(() => gasPrices?.[gasSpeed] ?? {}, [gasPrices, gasSpeed]);
-
-	const gasPrice = useMemo(() => {
-		return isCustomGasPrice
-			? Number(customGasPrice)
-			: gasPrices != null
-			? parseGasPriceObject(gasPrices[gasSpeed])
-			: null;
-	}, [customGasPrice, isCustomGasPrice, gasPrices, gasSpeed]);
-
-	const gasPriceWei = useMemo(() => {
-		return !gasPrice ? 0 : gasPriceInWei(gasPrice);
-	}, [gasPrice]);
-
-	const getGasLimitEstimate = useCallback(async (getGasEstimate: () => Promise<BigNumber>): Promise<
-		number | null
-	> => {
-		try {
-			const gasEstimate = await getGasEstimate();
-			return normalizeGasLimit(Number(gasEstimate));
-		} catch (e) {
-			return null;
-		}
-	}, []);
-
-	useEffect(() => {
-		const maxPriorityFeePerGas = selectedGas.maxPriorityFeePerGas;
-		const maxFeePerGasValue = isCustomGasPrice ? gasPriceWei : selectedGas.maxFeePerGas;
-
-		const l1GasConfig = { maxPriorityFeePerGas, maxFeePerGas: maxFeePerGasValue };
-		const l2GasConfig = { gasPrice: gasPriceWei };
-
-		const config = isMainnet ? l1GasConfig : l2GasConfig;
-
-		setGasConfig(config as GasPrice);
-	}, [
-		gasPriceWei,
-		isCustomGasPrice,
-		isMainnet,
-		selectedGas.baseFeePerGas,
-		selectedGas.maxFeePerGas,
-		selectedGas.maxPriorityFeePerGas,
-	]);
-
-	return {
-		gasPrice,
-		gasPriceWei,
-		getGasLimitEstimate,
-		gasPrices,
-		gasSpeed,
-		isCustomGasPrice,
-		customGasPrice,
-		gasConfig,
-	};
-};
-
-export default useGas;

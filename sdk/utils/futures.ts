@@ -36,7 +36,6 @@ import {
 	FuturesTrade,
 	FuturesVolumes,
 	IsolatedMarginOrderType,
-	MarketClosureReason,
 	PositionDetail,
 	PositionSide,
 	PostTradeDetailsResponse,
@@ -120,26 +119,6 @@ export const getMarketName = (asset: FuturesMarketAsset | null) => {
 
 export const getDisplayAsset = (asset: string | null) => {
 	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
-};
-
-export const getReasonFromCode = (
-	reasonCode?: BigNumber
-): MarketClosureReason | 'unknown' | null => {
-	switch (Number(reasonCode)) {
-		case 1:
-			return 'system-upgrade';
-		case 2:
-			return 'market-closure';
-		case 3:
-		case 55:
-		case 65:
-		case 231:
-			return 'circuit-breaker';
-		case 99999:
-			return 'emergency';
-		default:
-			return 'unknown';
-	}
 };
 
 export const calculateVolumes = (
