@@ -1,4 +1,4 @@
-import React, { FC, memo } from 'react';
+import React, { FC, memo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -14,6 +14,7 @@ type MarketBadgeProps = {
 	currencyKey: FuturesMarketAsset | null;
 	isFuturesMarketClosed: boolean;
 	futuresClosureReason?: FuturesClosureReason;
+	fallbackComponent?: ReactElement;
 };
 
 type TransitionBadgeProps = {
@@ -31,7 +32,7 @@ export const TransitionBadge: FC<TransitionBadgeProps> = memo(({ isOpen }) => {
 });
 
 export const MarketBadge: FC<MarketBadgeProps> = memo(
-	({ currencyKey, isFuturesMarketClosed, futuresClosureReason }) => {
+	({ currencyKey, isFuturesMarketClosed, futuresClosureReason, fallbackComponent }) => {
 		const { t } = useTranslation();
 		const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
 
@@ -54,7 +55,7 @@ export const MarketBadge: FC<MarketBadgeProps> = memo(
 			return <TransitionBadge isOpen={isOpen} />;
 		}
 
-		return null;
+		return fallbackComponent ? fallbackComponent : null;
 	}
 );
 

@@ -703,8 +703,8 @@
 				"explore-markets": "Explore available Markets"
 			},
 			"state": {
-				"opens-soon": "opens soon",
-				"closes-soon": "closes soon",
+				"opens-soon": "opening",
+				"closes-soon": "closing",
 				"frozen": "paused",
 				"market-closure": "paused",
 				"system-upgrade": "paused",

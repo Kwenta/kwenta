@@ -28,7 +28,6 @@ import {
 	selectOrderType,
 	selectPosition,
 	selectTradePreview,
-	selectTradePreviewStatus,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -186,7 +185,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 		);
 	};
 
-	const orderSummary = () => {
+	const orderSummary = () => (
 		<OrderSummaryLine>
 			<InfoBoxContainer>
 				<InfoBoxRow
@@ -218,8 +217,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 					value={<OrderSummaryValue>{orderTypeValue}</OrderSummaryValue>}
 				/>
 			</InfoBoxContainer>
-		</OrderSummaryLine>;
-	};
+		</OrderSummaryLine>
+	);
 
 	return (
 		<>
@@ -234,7 +233,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 					}
 				>
 					<Spacer height={12} />
-					{orderSummary}
+					{orderSummary()}
 					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`} className={i === 0 ? '' : 'border'}>
 							{row.tooltipContent ? (
