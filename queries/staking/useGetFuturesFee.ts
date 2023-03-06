@@ -4,7 +4,8 @@ import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
-import { FUTURES_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
+import { AGGREGATE_ASSET_KEY, FUTURES_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
+import { SECONDS_PER_DAY } from 'sdk/constants/period';
 
 const useGetFuturesFee = (
 	start: number,
@@ -21,7 +22,9 @@ const useGetFuturesFee = (
 				{
 					first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 					where: {
-						timestamp_gt: start,
+						asset: AGGREGATE_ASSET_KEY,
+						period: SECONDS_PER_DAY,
+						timestamp_gte: start,
 						timestamp_lt: end,
 					},
 					orderDirection: 'desc',
@@ -29,7 +32,7 @@ const useGetFuturesFee = (
 				},
 				{
 					timestamp: true,
-					feesSynthetix: true,
+					feesKwenta: true,
 				}
 			);
 			return response;
