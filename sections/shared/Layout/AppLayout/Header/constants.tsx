@@ -24,6 +24,7 @@ export type MenuLink = {
 	i18nLabel: string;
 	link: string;
 	links?: SubMenuLink[] | null;
+	hidden?: boolean;
 };
 
 export type MenuLinks = MenuLink[];
@@ -117,6 +118,33 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 			: null,
 	},
 	{
+		i18nLabel: 'header.nav.options.title',
+		link: EXTERNAL_LINKS.Options.Portfolio,
+		links: [
+			{
+				link: EXTERNAL_LINKS.Options.Portfolio,
+				i18nLabel: 'header.nav.options.portfolio',
+				Icon: LinkIconLight,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Trade,
+				i18nLabel: 'header.nav.options.trade',
+				Icon: LinkIconLight,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Vaults,
+				i18nLabel: 'header.nav.options.vaults',
+				Icon: LinkIconLight,
+			},
+			{
+				link: EXTERNAL_LINKS.Options.Rewards,
+				i18nLabel: 'header.nav.options.rewards',
+				Icon: LinkIconLight,
+			},
+		],
+		hidden: true,
+	},
+	{
 		i18nLabel: 'header.nav.exchange',
 		link: ROUTES.Exchange.Home,
 	},
@@ -142,7 +170,7 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 	},
 ];
 
-export const DESKTOP_NAV_LINKS = getMenuLinks(false);
-export const MOBILE_NAV_LINKS = getMenuLinks(true);
+export const DESKTOP_NAV_LINKS = getMenuLinks(false).filter((m) => !m.hidden);
+export const MOBILE_NAV_LINKS = getMenuLinks(true).filter((m) => !m.hidden);
 
 export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];

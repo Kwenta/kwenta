@@ -1,7 +1,8 @@
-import { ReactElement, memo, FC } from 'react';
+import { ReactElement, memo, FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -9,51 +10,41 @@ import { useAppSelector } from 'state/hooks';
 import { isMarketDataKey, marketDataKeyMap } from './utils';
 
 type MarketDetailProps = {
-	mobile: boolean;
-	marketKey: string;
+	mobile?: boolean;
+	dataKey: string;
 	color?: string;
 	value: string | ReactElement;
 };
 
-const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, marketKey, color, value }) => {
+const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, value }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
-
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
-	const children = (
-		<WithCursor cursor="help" key={marketKey}>
-			<div key={marketKey}>
-				<p className="heading">{marketKey}</p>
-				<span className={`value ${color || ''} ${pausedClass}`}>{value}</span>
-			</div>
-		</WithCursor>
+
+	const contentSuffix = useMemo(() => {
+		if (dataKey === marketInfo?.marketName) {
+			return 'market-key';
+		} else if (isMarketDataKey(dataKey)) {
+			return marketDataKeyMap[dataKey];
+		} else {
+			return '';
+		}
+	}, [dataKey, marketInfo]);
+
+	return (
+		<MarketDetailsTooltip
+			key={dataKey}
+			mobile={mobile}
+			content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
+		>
+			<WithCursor cursor="help">
+				<Body className="heading">{dataKey}</Body>
+				<Body as="span" mono className={`value ${color || ''} ${pausedClass}`}>
+					{value}
+				</Body>
+			</WithCursor>
+		</MarketDetailsTooltip>
 	);
-
-	if (marketKey === marketInfo?.marketName) {
-		return (
-			<MarketDetailsTooltip
-				key={marketKey}
-				mobile={mobile}
-				content={t(`exchange.market-details-card.tooltips.market-key`)}
-			>
-				{children}
-			</MarketDetailsTooltip>
-		);
-	}
-
-	if (isMarketDataKey(marketKey)) {
-		return (
-			<MarketDetailsTooltip
-				key={marketKey}
-				mobile={mobile}
-				content={t(`exchange.market-details-card.tooltips.${marketDataKeyMap[marketKey]}`)}
-			>
-				{children}
-			</MarketDetailsTooltip>
-		);
-	}
-
-	return children;
 });
 
 export default MarketDetail;

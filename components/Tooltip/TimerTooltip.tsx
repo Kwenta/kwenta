@@ -30,7 +30,7 @@ const TimerTooltip: FC<TooltipProps> = (props) => {
 	const [position, setPosition] = useState({});
 	const myRef = useRef<HTMLDivElement>(null);
 
-	const setFixedPosition = () => {
+	const setFixedPosition = useCallback(() => {
 		const isFirefox = /firefox/i.test(navigator.userAgent);
 		if (myRef.current !== null) {
 			const { left, bottom, top } = myRef.current.getBoundingClientRect();
@@ -40,18 +40,18 @@ const TimerTooltip: FC<TooltipProps> = (props) => {
 				setPosition({ left: `${left}px`, top: `${bottom + 20}px` });
 			}
 		}
-	};
+	}, []);
 
-	const openToolTip = () => {
+	const openToolTip = useCallback(() => {
 		setActiveMouse(true);
 		if (props.position === 'fixed') {
 			setFixedPosition();
 		}
-	};
+	}, [setFixedPosition, props.position]);
 
-	const closeToolTip = () => {
+	const closeToolTip = useCallback(() => {
 		setActiveMouse(false);
-	};
+	}, []);
 
 	const startTimeDate = props.startTimeDate;
 

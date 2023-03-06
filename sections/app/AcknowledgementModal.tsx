@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import { Body } from 'components/Text';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import localStore from 'utils/localStore';
@@ -60,7 +61,7 @@ export default function AcknowledgementModal() {
 				<br />
 				<br />
 			</BodyText>
-			<Button variant="flat" size="md" onClick={onAccept}>
+			<Button variant="flat" size="medium" onClick={onAccept}>
 				Accept & Continue
 			</Button>
 		</StyledBaseModal>
@@ -73,7 +74,6 @@ const StyledBaseModal = styled(BaseModal)`
 	}
 `;
 
-const BodyText = styled.div`
-	font-size: 13px;
+const BodyText = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.body};
 `;

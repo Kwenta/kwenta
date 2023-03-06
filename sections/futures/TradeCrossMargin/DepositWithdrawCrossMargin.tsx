@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
-import CustomInput from 'components/Input/CustomInput';
+import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
@@ -204,6 +204,6 @@ const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;
 `;
 
-const InputContainer = styled(CustomInput)`
+const InputContainer = styled(NumericInput)`
 	margin-bottom: 10px;
 `;

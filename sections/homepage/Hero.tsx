@@ -30,7 +30,7 @@ const Hero = () => {
 				</SynthetixContainer>
 				<CTAContainer>
 					<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-						<Button variant="flat" textColor="yellow" size="md">
+						<Button variant="flat" textColor="yellow" size="large">
 							{t('homepage.nav.trade-now')}
 						</Button>
 					</Link>
@@ -54,7 +54,7 @@ const Emphasis = styled.b`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 `;
 
-const Header = styled(Text.Body).attrs({ variant: 'bold', mono: true })`
+const Header = styled(Text.Body).attrs({ weight: 'bold', mono: true })`
 	max-width: 636px;
 	font-size: 80px;
 	line-height: 85%;

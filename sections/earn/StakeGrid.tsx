@@ -38,7 +38,7 @@ const StakeGrid = () => {
 				<Button
 					fullWidth
 					variant="flat"
-					size="sm"
+					size="small"
 					style={{ marginTop: 10 }}
 					disabled={earnedRewards.lte(0)}
 					onClick={handleClaim}

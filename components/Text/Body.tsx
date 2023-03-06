@@ -1,85 +1,73 @@
-import { memo } from 'react';
+import { ComponentType, memo } from 'react';
 import styled, { css } from 'styled-components';
 
-type BodyProps = {
-	size?: 'small' | 'medium' | 'large';
-	variant?: 'regular' | 'bold';
+export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
+	size?: 'xsmall' | 'small' | 'medium' | 'large';
+	weight?: 'regular' | 'bold' | 'black';
+	color?: 'primary' | 'secondary' | 'tertiary';
 	className?: string;
 	fontSize?: number;
 	mono?: boolean;
-	color?: 'title' | 'value' | 'body';
+	capitalized?: boolean;
 	inline?: boolean;
+	as?: keyof JSX.IntrinsicElements | ComponentType<any>;
 };
 
 const Body: React.FC<BodyProps> = memo(
-	({ size = 'small', variant = 'regular', fontSize, mono, inline, ...props }) => {
-		return (
-			<StyledBody
-				$size={size}
-				$variant={variant}
-				$fontSize={fontSize}
-				$mono={mono}
-				$inline={inline}
-				{...props}
-			/>
-		);
-	}
+	({
+		size = 'medium',
+		weight = 'regular',
+		color = 'primary',
+		fontSize,
+		mono,
+		capitalized,
+		inline,
+		...props
+	}) => (
+		<StyledBody
+			$size={size}
+			$weight={weight}
+			$fontSize={fontSize}
+			$mono={mono}
+			$capitalized={capitalized}
+			$inline={inline}
+			$color={color}
+			{...props}
+		/>
+	)
 );
 
+const sizeMap = { xsmall: 10, small: 12, medium: 13, large: 15 } as const;
+
+const getFontFamily = (weight: NonNullable<BodyProps['weight']>, mono?: boolean) => {
+	return mono ? (weight !== 'regular' ? 'monoBold' : 'mono') : weight;
+};
+
 const StyledBody = styled.p<{
-	$size?: BodyProps['size'];
-	$variant?: BodyProps['variant'];
+	$size: NonNullable<BodyProps['size']>;
+	$weight: NonNullable<BodyProps['weight']>;
+	$color: NonNullable<BodyProps['color']>;
 	$fontSize?: number;
 	$mono?: boolean;
+	$capitalized?: boolean;
 	$inline?: boolean;
 }>`
-	line-height: 1.4;
+	line-height: 1.2;
 	margin: 0;
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 
-	${(props) =>
-		props.$size === 'small' &&
+	${(props) => css`
+		color: ${props.theme.colors.selectedTheme.newTheme.text[props.$color]};
+		font-size: ${props.$fontSize ?? sizeMap[props.$size]}px;
+		font-family: ${props.theme.fonts[getFontFamily(props.$weight, props.$mono)]};
+		${props.$capitalized &&
 		css`
-			font-size: 13px;
-		`};
-
-	${(props) =>
-		props.$size === 'medium' &&
-		css`
-			font-size: 15px;
-		`};
-
-	${(props) =>
-		props.$size === 'large' &&
-		css`
-			font-size: 18px;
-		`};
-
-	${(props) =>
-		props.$variant === 'bold' &&
-		css`
-			font-family: ${props.theme.fonts.bold};
+			font-variant: all-small-caps;
 		`}
-
-		${(props) =>
-			props.$mono &&
-			css`
-				font-family: ${props.$variant === 'bold'
-					? props.theme.fonts.monoBold
-					: props.theme.fonts.mono};
-			`}
-
-	${(props) =>
-		props.$fontSize &&
-		css`
-			font-size: ${props.$fontSize}px;
-		`}
-	
-	${(props) =>
-		props.$inline &&
+		${props.$inline &&
 		css`
 			display: inline;
 		`}
+	`}
 `;
 
 export default Body;
