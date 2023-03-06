@@ -126,6 +126,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		const realizedPnl =
 			thisPositionHistory?.pnl
 				.add(thisPositionHistory?.netFunding)
+				.add(positionDetails?.accruedFunding)
 				.sub(thisPositionHistory?.feesPaid) ?? zeroBN;
 		const realizedPnlPct = realizedPnl.abs().gt(0)
 			? realizedPnl.div(thisPositionHistory?.initialMargin.add(thisPositionHistory?.totalDeposits))
