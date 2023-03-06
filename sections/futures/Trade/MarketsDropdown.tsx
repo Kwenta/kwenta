@@ -1,211 +1,263 @@
 import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
-import Select from 'components/Select';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import MarketBadge from 'components/Badge/MarketBadge';
+import ColoredPrice from 'components/ColoredPrice';
+import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { FlexDivRowCentered } from 'components/layout/flex';
+import Spacer from 'components/Spacer';
+import Table, { TableHeader, TableNoResults } from 'components/Table';
+import Search from 'components/Table/Search';
+import { Body } from 'components/Text';
+import NumericValue from 'components/Text/NumericValue';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
+import useClickOutside from 'hooks/useClickOutside';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectMarketAsset,
 	selectMarkets,
 	selectMarketsQueryStatus,
 	selectFuturesType,
-	selectMarkPrices,
+	selectMarkPriceInfos,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { getMarketName, getSynthDescription, isDecimalFour, MarketKeyByAsset } from 'utils/futures';
+import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
+import { getMarketName, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
-import MarketsDropdownIndicator, { DropdownLoadingIndicator } from './MarketsDropdownIndicator';
-import MarketsDropdownOption from './MarketsDropdownOption';
-import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
-
-export type MarketsCurrencyOption = {
-	value: FuturesMarketAsset;
-	key: FuturesMarketKey;
-	label: string;
-	description: string;
-	price?: string | JSX.Element;
-	change?: string;
-	negativeChange: boolean;
-	isMarketClosed: boolean;
-	closureReason: FuturesClosureReason;
-};
-
-type AssetToCurrencyOptionArgs = {
-	asset: FuturesMarketAsset;
-	key: FuturesMarketKey;
-	description: string;
-	price?: string | JSX.Element;
-	change?: string;
-	negativeChange: boolean;
-	isMarketClosed: boolean;
-	closureReason: FuturesClosureReason;
-};
-
-const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs): MarketsCurrencyOption => ({
-	value: args.asset,
-	label: getMarketName(args.asset),
-	...args,
-});
+import MarketsDropdownSelector from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {
 	mobile?: boolean;
 };
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
-	const markPrices = useAppSelector(selectMarkPrices);
+	const markPrices = useAppSelector(selectMarkPriceInfos);
 	const pastPrices = useAppSelector(selectPreviousDayPrices);
 	const accountType = useAppSelector(selectFuturesType);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const marketsQueryStatus = useAppSelector(selectMarketsQueryStatus);
 
+	const [open, setOpen] = useState(false);
+	const [search, setSearch] = useState('');
+
+	const { ref } = useClickOutside(() => setOpen(false));
+
 	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
 		MarketKeyByAsset[marketAsset]
 	);
 
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
-	const getBasePriceRate = React.useCallback(
+	const getBasePriceRateInfo = useCallback(
 		(asset: FuturesMarketAsset) => {
-			return Number(markPrices[MarketKeyByAsset[asset]]);
+			return markPrices[MarketKeyByAsset[asset]];
 		},
 		[markPrices]
 	);
 
-	const getPastPrice = React.useCallback(
+	const getPastPrice = useCallback(
 		(asset: string) => pastPrices.find((price) => price.synth === getDisplayAsset(asset)),
 		[pastPrices]
 	);
 
-	const selectedBasePriceRate = getBasePriceRate(marketAsset);
+	const selectedBasePriceRate = getBasePriceRateInfo(marketAsset);
 	const selectedPastPrice = getPastPrice(marketAsset);
 
-	const getMinDecimals = React.useCallback(
-		(asset: string) => (isDecimalFour(asset) ? DEFAULT_CRYPTO_DECIMALS : undefined),
-		[]
-	);
+	const options = useMemo(() => {
+		const markets = search
+			? futuresMarkets.filter((m) => m.asset.toLowerCase().includes(search.toLowerCase()))
+			: futuresMarkets;
+		return markets.map((market) => {
+			const pastPrice = getPastPrice(market.asset);
+			const basePriceRate = getBasePriceRateInfo(market.asset);
 
-	const options = React.useMemo(() => {
-		return (
-			futuresMarkets?.map((market) => {
-				const pastPrice = getPastPrice(market.asset);
-				const basePriceRate = getBasePriceRate(market.asset);
-
-				return assetToCurrencyOption({
-					asset: market.asset,
-					key: market.marketKey,
-					description: getSynthDescription(market.asset, synthsMap, t),
-					price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
-						sign: '$',
-						minDecimals: getMinDecimals(market.asset),
-						suggestDecimals: true,
-					}),
-					change: formatPercent(
-						basePriceRate && pastPrice?.rate
-							? wei(basePriceRate).sub(pastPrice?.rate).div(basePriceRate)
-							: zeroBN
-					),
-					negativeChange:
-						basePriceRate && pastPrice?.rate ? wei(basePriceRate).lt(pastPrice?.rate) : false,
-					isMarketClosed: market.isSuspended,
-					closureReason: market.marketClosureReason,
-				});
-			}) ?? []
-		);
-	}, [
-		futuresMarkets,
-		selectedPriceCurrency.name,
-		synthsMap,
-		t,
-		getBasePriceRate,
-		getPastPrice,
-		getMinDecimals,
-	]);
+			return {
+				value: market.asset,
+				label: getMarketName(market.asset),
+				asset: market.asset,
+				key: market.marketKey,
+				description: getSynthDescription(market.asset, synthsMap, t),
+				priceNum: basePriceRate?.price.toNumber() ?? 0,
+				price: formatDollars(basePriceRate?.price ?? '0', { suggestDecimals: true }),
+				change:
+					basePriceRate && pastPrice?.rate
+						? wei(basePriceRate.price).sub(pastPrice?.rate).div(basePriceRate.price)
+						: zeroBN,
+				priceDirection: basePriceRate?.change ?? null,
+				isMarketClosed: market.isSuspended,
+				closureReason: market.marketClosureReason,
+			};
+		});
+	}, [futuresMarkets, search, synthsMap, t, getBasePriceRateInfo, getPastPrice]);
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
 	return (
-		<SelectContainer mobile={mobile}>
-			<Select
-				maxMenuHeight={Math.max(window.innerHeight - (mobile ? 135 : 250), 300)}
-				instanceId={`markets-dropdown-${marketAsset}`}
-				controlHeight={55}
-				menuWidth={'100%'}
-				onChange={(x) => {
-					// Types are not perfect from react-select, this should always be true (just helping typescript)
-					if (x && 'value' in x) {
-						router.push(ROUTES.Markets.MarketPair(x.value, accountType));
-					}
-				}}
-				value={assetToCurrencyOption({
-					asset: marketAsset,
-					key: MarketKeyByAsset[marketAsset],
-					description: getSynthDescription(marketAsset, synthsMap, t),
-					price: mobile
-						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
-								sign: '$',
-								minDecimals: getMinDecimals(marketAsset),
-								suggestDecimals: true,
-						  })
-						: undefined,
-					change: mobile
-						? formatPercent(
-								selectedBasePriceRate && selectedPastPrice?.rate
-									? wei(selectedBasePriceRate)
-											.sub(selectedPastPrice?.rate)
-											.div(selectedBasePriceRate)
-									: zeroBN
-						  )
-						: undefined,
-					negativeChange: mobile
-						? selectedBasePriceRate && selectedPastPrice?.rate
-							? wei(selectedBasePriceRate).lt(selectedPastPrice?.rate)
-							: false
-						: false,
-					isMarketClosed: isFuturesMarketClosed,
-					closureReason: futuresClosureReason,
-				})}
-				options={options}
-				isSearchable={false}
-				variant="flat"
-				components={{
-					SingleValue: MarketsDropdownSingleValue,
-					Option: MarketsDropdownOption,
-					DropdownIndicator: !mobile
-						? isFetching
-							? DropdownLoadingIndicator
-							: MarketsDropdownIndicator
-						: undefined,
+		<SelectContainer mobile={mobile} ref={ref}>
+			<MarketsDropdownSelector
+				onClick={() => setOpen(!open)}
+				mobile={mobile}
+				asset={marketAsset}
+				label={getMarketName(marketAsset)}
+				description={getSynthDescription(marketAsset, synthsMap, t)}
+				isMarketClosed={isFuturesMarketClosed}
+				closureReason={futuresClosureReason}
+				priceDetails={{
+					oneDayChange:
+						selectedBasePriceRate?.price && selectedPastPrice?.rate
+							? wei(selectedBasePriceRate.price)
+									.sub(selectedPastPrice.rate)
+									.div(selectedBasePriceRate.price)
+							: zeroBN,
+					priceInfo: selectedBasePriceRate,
 				}}
 			/>
+			{open && (
+				<MarketsList
+					mobile={mobile}
+					height={Math.max(window.innerHeight - (mobile ? 135 : 250), 300)}
+				>
+					<SearchBarContainer>
+						<Search autoFocus onChange={setSearch} value={search} border={false} />
+					</SearchBarContainer>
+					<TableContainer>
+						<StyledTable
+							highlightRowsOnHover
+							rowStyle={{ padding: '0' }}
+							onTableRowClick={(row) => {
+								router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
+								setOpen(false);
+							}}
+							columns={[
+								{
+									Header: <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
+									accessor: 'label',
+									sortType: 'basic',
+									sortable: true,
+									Cell: ({ row }: any) => (
+										<FlexDivRowCentered>
+											<CurrencyIcon currencyKey={row.original.key} width="18px" height="18px" />
+											<Spacer width={10} />
+											<Body>{getDisplayAsset(row.original.asset)}</Body>
+										</FlexDivRowCentered>
+									),
+									width: 50,
+								},
+								{
+									Header: <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
+									accessor: 'priceNum',
+									sortType: 'basic',
+									sortable: true,
+									Cell: (cellProps: any) => {
+										return (
+											<ColoredPrice
+												priceInfo={{
+													price: cellProps.row.original.price,
+													change: cellProps.row.original.priceDirection,
+												}}
+											>
+												{cellProps.row.original.price}
+											</ColoredPrice>
+										);
+									},
+									width: 50,
+								},
+								{
+									Header: <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
+									Cell: ({ row }: any) => {
+										return (
+											<MarketBadge
+												currencyKey={row.original.asset}
+												isFuturesMarketClosed={row.original.isMarketClosed}
+												futuresClosureReason={row.original.closureReason}
+												fallbackComponent={
+													<NumericValue
+														percent
+														colored
+														value={floorNumber(row.original.change?.mul(100) ?? '0', 2)}
+													/>
+												}
+											/>
+										);
+									},
+									accessor: 'change',
+									sortType: 'basic',
+									sortable: true,
+									width: 40,
+								},
+							]}
+							data={options}
+							isLoading={isFetching}
+							noResultsMessage={
+								options?.length === 0 ? (
+									<TableNoResults>
+										<Body color="secondary" size="large">
+											{t('futures.markets-drop-down.no-results')}
+										</Body>
+									</TableNoResults>
+								) : undefined
+							}
+						/>
+					</TableContainer>
+				</MarketsList>
+			)}
 		</SelectContainer>
 	);
 };
 
-const SelectContainer = styled.div<{ mobile?: boolean }>`
-	margin-bottom: 16px;
+const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
+	position: absolute;
+	top: 60px;
+	z-index: 100;
+	height: ${(props) => props.height}px;
+	width: 320px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: ${(props) => (props.mobile ? 0 : '10px')};
+	background-color: ${(props) => props.theme.colors.selectedTheme.background};
+	padding-top: 38px;
+	${(props) =>
+		props.mobile &&
+		css`
+			width: 100%;
+		`}
+`;
 
-	.react-select__dropdown-indicator {
-		margin-right: 10px;
-	}
+const TableContainer = styled.div`
+	height: 100%;
+	overflow: scroll;
+`;
 
-	.react-select__option {
+const StyledTable = styled(Table)<{ mobile?: boolean }>`
+	border: none;
+	.table-body-row {
 		padding: 0;
 	}
+	.table-body-cell {
+		height: 32px;
+	}
+`;
+
+const SearchBarContainer = styled.div`
+	font-size: 13px;
+	position: absolute;
+	width: 100%;
+	top: 0;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+`;
+
+const SelectContainer = styled.div<{ mobile?: boolean }>`
+	margin-bottom: 16px;
 
 	${(props) =>
 		props.mobile &&
@@ -214,16 +266,6 @@ const SelectContainer = styled.div<{ mobile?: boolean }>`
 			width: 100%;
 			top: 0;
 			z-index: 5;
-
-			.react-select__control {
-				border-radius: 0;
-			}
-
-			.react-select__control::before,
-			.react-select__menu,
-			.react-select__menu-list {
-				border-radius: 0;
-			}
 		`}
 `;
 

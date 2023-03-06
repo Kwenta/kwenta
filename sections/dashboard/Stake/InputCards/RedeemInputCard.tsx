@@ -69,7 +69,7 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 					</StyledFlexDivRowCentered>
 				</StakeInputHeader>
 			</div>
-			<Button fullWidth variant="flat" size="sm" disabled={balance.eq(0)} onClick={submitRedeem}>
+			<Button fullWidth variant="flat" size="small" disabled={balance.eq(0)} onClick={submitRedeem}>
 				{t(buttonTranslationKey)}
 			</Button>
 		</StakingInputCardContainer>

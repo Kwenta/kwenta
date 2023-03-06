@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -6,11 +7,13 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { PositionSide } from 'sdk/types/futures';
 import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
@@ -25,11 +28,9 @@ import {
 	selectOrderType,
 	selectPosition,
 	selectTradePreview,
-	selectTradePreviewStatus,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FetchStatus } from 'state/types';
 import { getKnownError } from 'utils/formatters/error';
 import {
 	zeroBN,
@@ -37,15 +38,14 @@ import {
 	formatDollars,
 	formatPercent,
 	formatNumber,
+	truncateNumbers,
 } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
-import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
 const DelayedOrderConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const dispatch = useAppDispatch();
 
 	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
@@ -56,7 +56,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
-	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const orderType = useAppSelector(selectOrderType);
 
 	const positionSize = useMemo(() => {
@@ -81,29 +80,18 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const dataRows = useMemo(
 		() => [
 			{
-				label: t('futures.market.user.position.modal.order-type'),
-				value: OrderNameByType[orderType],
-			},
-			{
-				label: t('futures.market.user.position.modal.side'),
-				value: (leverageSide ?? PositionSide.LONG).toUpperCase(),
-			},
-			{
-				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(
-					getDisplayAsset(marketAsset) || '',
-					orderDetails.nativeSizeDelta.abs() ?? zeroBN,
-					{
-						currencyKey: getDisplayAsset(marketAsset) ?? '',
-					}
-				),
-			},
-			{
 				label: t('futures.market.user.position.modal.estimated-fill'),
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
 				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, {
 					suggestDecimals: true,
 				}),
+			},
+			{
+				label: t('futures.market.user.position.modal.estimated-price-impact'),
+				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
+				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
+					? 'red'
+					: '',
 			},
 			{
 				label: t('futures.market.user.position.modal.liquidation-price'),
@@ -118,24 +106,17 @@ const DelayedOrderConfirmationModal: FC = () => {
 				})} sec`,
 			},
 			{
-				label: t('futures.market.user.position.modal.estimated-price-impact'),
-				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
-				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
-					? 'red'
-					: '',
-			},
-			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
-				value: formatCurrency(selectedPriceCurrency.name, potentialTradeDetails?.fee ?? zeroBN, {
+				tooltipContent: t('futures.market.trade.fees.tooltip'),
+				value: formatDollars(potentialTradeDetails?.fee ?? zeroBN, {
 					minDecimals: 2,
-					sign: selectedPriceCurrency.sign,
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.keeper-deposit'),
-				value: formatCurrency(selectedPriceCurrency.name, marketInfo?.keeperDeposit ?? zeroBN, {
+				tooltipContent: t('futures.market.trade.fees.keeper-tooltip'),
+				value: formatDollars(marketInfo?.keeperDeposit ?? zeroBN, {
 					minDecimals: 2,
-					sign: selectedPriceCurrency.sign,
 				}),
 			},
 			{
@@ -146,17 +127,52 @@ const DelayedOrderConfirmationModal: FC = () => {
 		],
 		[
 			t,
-			orderDetails,
-			orderType,
 			potentialTradeDetails,
-			marketAsset,
-			leverageSide,
 			totalDeposit,
 			marketInfo?.keeperDeposit,
 			marketInfo?.settings.offchainDelayedOrderMinAge,
-			selectedPriceCurrency.name,
-			selectedPriceCurrency.sign,
 		]
+	);
+
+	const mobileRows = useMemo(() => {
+		return [
+			{
+				label: t('futures.market.user.position.modal.size'),
+				value: formatCurrency(
+					getDisplayAsset(marketAsset) || '',
+					orderDetails.nativeSizeDelta.abs() ?? zeroBN,
+					{
+						currencyKey: getDisplayAsset(marketAsset) ?? '',
+					}
+				),
+			},
+			{
+				label: t('futures.market.user.position.modal.side'),
+				value: (leverageSide ?? PositionSide.LONG).toUpperCase(),
+			},
+			{
+				label: t('futures.market.user.position.modal.order-type'),
+				value: OrderNameByType[orderType],
+			},
+			...dataRows,
+		];
+	}, [dataRows, marketAsset, leverageSide, orderType, orderDetails.nativeSizeDelta, t]);
+
+	const leverageValue = useMemo(
+		() =>
+			truncateNumbers(
+				wei(Number(potentialTradeDetails?.leverage.abs() ?? 0)),
+				DEFAULT_FIAT_DECIMALS
+			),
+		[potentialTradeDetails?.leverage]
+	);
+
+	const orderTypeValue = useMemo(
+		() =>
+			OrderNameByType[orderType] === 'Delayed Offchain'
+				? 'Delayed Market'
+				: OrderNameByType[orderType],
+		[orderType]
 	);
 
 	const onDismiss = useCallback(() => {
@@ -173,6 +189,41 @@ const DelayedOrderConfirmationModal: FC = () => {
 		);
 	};
 
+	const orderSummary = () => (
+		<OrderSummaryLine>
+			<InfoBoxContainer>
+				<InfoBoxRow
+					title={t('futures.market.user.position.modal.size')}
+					value={
+						<OrderSummaryValue>
+							{formatCurrency(
+								getDisplayAsset(marketAsset) || '',
+								orderDetails.nativeSizeDelta.abs() ?? zeroBN,
+								{
+									currencyKey: getDisplayAsset(marketAsset) ?? '',
+								}
+							)}
+						</OrderSummaryValue>
+					}
+				/>
+				<InfoBoxRow
+					title={t('futures.market.user.position.modal.side')}
+					value={<OrderSideLabel className={leverageSide}>{leverageSide}</OrderSideLabel>}
+				/>
+			</InfoBoxContainer>
+			<InfoBoxContainer>
+				<InfoBoxRow
+					title={t('futures.market.user.position.modal.leverage')}
+					value={<OrderSummaryValue>{leverageValue}</OrderSummaryValue>}
+				/>
+				<InfoBoxRow
+					title={t('futures.market.user.position.modal.order-type')}
+					value={<OrderSummaryValue>{orderTypeValue}</OrderSummaryValue>}
+				/>
+			</InfoBoxContainer>
+		</OrderSummaryLine>
+	);
+
 	return (
 		<>
 			<DesktopOnlyView>
@@ -182,11 +233,13 @@ const DelayedOrderConfirmationModal: FC = () => {
 					title={
 						isClosing
 							? t('futures.market.trade.confirmation.modal.close-order')
-							: t('futures.market.trade.confirmation.modal.confirm-order')
+							: t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
 					}
 				>
+					<Spacer height={12} />
+					{orderSummary()}
 					{dataRows.map((row, i) => (
-						<Row key={`datarow-${i}`}>
+						<Row key={`datarow-${i}`} className={i === 0 ? '' : 'border'}>
 							{row.tooltipContent ? (
 								<Tooltip
 									height="auto"
@@ -212,27 +265,33 @@ const DelayedOrderConfirmationModal: FC = () => {
 							{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
 						</Disclaimer>
 					)}
-					<ConfirmTradeButton disabled={submitting} variant="flat" onClick={handleConfirmOrder}>
+					<ConfirmTradeButton
+						disabled={submitting}
+						variant={isClosing ? 'flat' : leverageSide}
+						onClick={handleConfirmOrder}
+					>
 						{submitting ? (
 							<ButtonLoader />
 						) : isClosing ? (
 							t('futures.market.trade.confirmation.modal.close-order')
 						) : (
-							t('futures.market.trade.confirmation.modal.confirm-order')
+							t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
 						)}
 					</ConfirmTradeButton>
 					{txError && <Error message={getKnownError(txError)} formatter="revert" />}
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
+				{orderSummary}
+
 				<BaseDrawer
 					open
-					items={dataRows}
+					items={mobileRows}
 					closeDrawer={onDismiss}
 					buttons={
-						<MobileConfirmTradeButton
-							disabled={submitting || previewStatus.status !== FetchStatus.Success}
-							variant="primary"
+						<ConfirmTradeButtonMobile
+							disabled={submitting}
+							variant={isClosing ? 'flat' : leverageSide}
 							onClick={handleConfirmOrder}
 						>
 							{submitting ? (
@@ -240,9 +299,9 @@ const DelayedOrderConfirmationModal: FC = () => {
 							) : isClosing ? (
 								t('futures.market.trade.confirmation.modal.close-order')
 							) : (
-								t('futures.market.trade.confirmation.modal.confirm-order')
+								t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
 							)}
-						</MobileConfirmTradeButton>
+						</ConfirmTradeButtonMobile>
 					}
 				/>
 			</MobileOrTabletView>
@@ -258,20 +317,27 @@ const StyledBaseModal = styled(BaseModal)`
 
 const Row = styled(FlexDivCentered)`
 	justify-content: space-between;
+
+	padding: 8px 0;
+	&.border {
+		border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	}
 `;
 
 const Label = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
-	margin-top: 6px;
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	align-items: center;
 `;
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 12px;
-	margin-top: 6px;
 	text-transform: capitalize;
 
 	.value {
@@ -297,6 +363,10 @@ const ConfirmTradeButton = styled(Button)`
 	height: 55px;
 `;
 
+const ConfirmTradeButtonMobile = styled(ConfirmTradeButton)`
+	width: 100%;
+`;
+
 const Disclaimer = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -306,7 +376,28 @@ const Disclaimer = styled.div`
 
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-bottom: -1px;
-	margin-left: 8px;
+`;
+
+const OrderSummaryLine = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	gap: 12px;
+`;
+
+const OrderSummaryValue = styled(Value)`
+	text-transform: none;
+`;
+
+const OrderSideLabel = styled(Label)`
+	margin: 0;
+	text-transform: uppercase;
+	&.long {
+		color: ${(props) => props.theme.colors.selectedTheme.green};
+	}
+	&.short {
+		color: ${(props) => props.theme.colors.selectedTheme.red};
+	}
 `;
 
 export default DelayedOrderConfirmationModal;

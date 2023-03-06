@@ -1,7 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-import CustomInput from '../components/Input/CustomInput';
 import Input from '../components/Input/Input';
 import NumericInput from '../components/Input/NumericInput';
 
@@ -23,10 +22,6 @@ export const Numeric: ComponentStory<typeof NumericInput> = (args) => {
 	return <NumericInput {...args} />;
 };
 
-export const Custom: ComponentStory<typeof CustomInput> = (args) => {
-	return <CustomInput {...args} />;
-};
-
-Custom.args = {
+Numeric.args = {
 	right: 'sUSD',
 };

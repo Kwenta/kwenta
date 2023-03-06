@@ -1,17 +1,15 @@
-import Wei from '@synthetixio/wei';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
+import { selectFeeCostWei } from 'state/exchange/selectors';
+import { useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
-type FeeRateSummaryItemProps = {
-	feeCost?: Wei;
-};
-
-const FeeCostSummary: FC<FeeRateSummaryItemProps> = memo(({ feeCost, ...rest }) => {
+const FeeCostSummary: FC = memo(({ ...rest }) => {
 	const { t } = useTranslation();
+	const feeCost = useAppSelector(selectFeeCostWei);
 
 	return (
 		<SummaryItem {...rest}>

@@ -81,17 +81,17 @@ const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
 		<>
 			<DesktopOnlyView>
 				<ButtonContainer>
-					<Button variant="primary" onClick={handleDownloadImage} size="sm" disabled={false}>
+					<Button variant="primary" onClick={handleDownloadImage} size="small" disabled={false}>
 						{t('futures.modals.share.buttons.download')}
 					</Button>
 				</ButtonContainer>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<ButtonContainer>
-					<Button variant="secondary" onClick={handleDownloadImage} size="sm" disabled={false}>
+					<Button variant="secondary" onClick={handleDownloadImage} size="small" disabled={false}>
 						{t('futures.modals.share.buttons.download')}
 					</Button>
-					<Button variant="primary" onClick={handleTweet} size="sm" disabled={false}>
+					<Button variant="primary" onClick={handleTweet} size="small" disabled={false}>
 						<InnerButtonContainer>
 							<span>{t('futures.modals.share.buttons.twitter')}</span>
 							<StyledTwitterIcon />

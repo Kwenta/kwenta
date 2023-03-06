@@ -1,1 +1,1 @@
-export { default } from './FeeInfoBox';
+export { IsolatedMarginFeeInfoBox, CrossMarginFeeInfoBox } from './FeeInfoBox';

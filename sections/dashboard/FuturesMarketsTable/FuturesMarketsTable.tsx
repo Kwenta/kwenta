@@ -10,6 +10,7 @@ import ChangePercent from 'components/ChangePercent';
 import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Spacer from 'components/Spacer';
 import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -97,6 +98,7 @@ const FuturesMarketsTable: FC = () => {
 											</IconContainer>
 											<StyledText>
 												{cellProps.row.original.market}
+												<Spacer width={8} />
 												<MarketBadge
 													currencyKey={cellProps.row.original.asset}
 													isFuturesMarketClosed={cellProps.row.original.isSuspended}
@@ -108,6 +110,7 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 190,
+								sortable: true,
 							},
 							{
 								Header: (
@@ -202,17 +205,19 @@ const FuturesMarketsTable: FC = () => {
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<OpenInterestContainer>
-											<StyledLongPrice
+											<Currency.Price
 												currencyKey="sUSD"
 												price={cellProps.row.original.longInterest}
 												sign="$"
 												truncate
+												side="positive"
 											/>
-											<StyledShortPrice
+											<Currency.Price
 												currencyKey="sUSD"
 												price={cellProps.row.original.shortInterest}
 												sign="$"
 												truncate
+												side="negative"
 											/>
 										</OpenInterestContainer>
 									);
@@ -303,6 +308,7 @@ const FuturesMarketsTable: FC = () => {
 								);
 							},
 							width: 145,
+							sortable: true,
 						},
 						{
 							Header: () => (
@@ -388,14 +394,6 @@ const FuturesMarketsTable: FC = () => {
 		</>
 	);
 };
-
-const StyledLongPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.green};
-`;
-
-const StyledShortPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.red};
-`;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;

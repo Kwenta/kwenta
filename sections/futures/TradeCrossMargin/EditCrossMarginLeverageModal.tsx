@@ -7,11 +7,12 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
-import CustomInput from 'components/Input/CustomInput';
+import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import Spacer from 'components/Spacer';
-import { NumberSpan } from 'components/Text/NumberLabel';
+import { Body } from 'components/Text';
+import { NumberDiv } from 'components/Text/NumberLabel';
 import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
 import {
@@ -37,7 +38,7 @@ import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
-import FeeInfoBox from '../FeeInfoBox';
+import { CrossMarginFeeInfoBox } from '../FeeInfoBox';
 import LeverageSlider from '../LeverageSlider';
 import MarginInfoBox from './CrossMarginInfoBox';
 
@@ -67,7 +68,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 	const submitting = useAppSelector(selectSubmittingFuturesTx);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 
-	const [leverage, setLeverage] = useState<number>(
+	const [leverage, setLeverage] = useState(
 		editMode === 'existing_position' && position?.position
 			? Number(position.position.leverage.toNumber().toFixed(2))
 			: Number(Number(selectedLeverage).toFixed(2))
@@ -186,7 +187,10 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 				<MaxPosContainer>
 					<Label>{t('futures.market.trade.leverage.modal.max-pos')}</Label>
 					<Label>
-						<NumberSpan fontWeight="bold">{formatDollars(maxPositionUsd)}</NumberSpan> sUSD
+						<NumberDiv as="span" fontWeight="bold">
+							{formatDollars(maxPositionUsd)}
+						</NumberDiv>{' '}
+						sUSD
 					</Label>
 				</MaxPosContainer>
 			)}
@@ -195,7 +199,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 				<>
 					<Spacer height={15} />
 					<MarginInfoBox editingLeverage />
-					{tradeFees.total.gt(0) && <FeeInfoBox />}
+					{tradeFees.total.gt(0) && <CrossMarginFeeInfoBox />}
 				</>
 			)}
 
@@ -250,8 +254,7 @@ const MaxPosContainer = styled(FlexDivRowCentered)`
 	}
 `;
 
-const Label = styled.p`
-	font-size: 13px;
+const Label = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
@@ -270,7 +273,7 @@ const MaxButton = styled.div`
 	cursor: pointer;
 `;
 
-const InputContainer = styled(CustomInput)`
+const InputContainer = styled(NumericInput)`
 	margin-bottom: 15px;
 `;
 

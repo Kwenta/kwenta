@@ -38,7 +38,7 @@ const WalletButtons: React.FC = () => {
 	const walletIsNotConnected = (
 		<>
 			<ConnectButton
-				size="sm"
+				size="small"
 				variant="flat"
 				noOutline
 				onClick={openConnectModal}
@@ -53,10 +53,10 @@ const WalletButtons: React.FC = () => {
 
 	const walletIsConnectedButNotSupported = (
 		<>
-			<SwitchNetworkButton size="sm" variant="flat" onClick={openChainModal}>
+			<SwitchNetworkButton size="small" variant="flat" onClick={openChainModal}>
 				{t('homepage.l2.cta-buttons.switch-networks')}
 			</SwitchNetworkButton>
-			<ConnectButton size="sm" variant="flat" data-testid="unsupported-network" mono>
+			<ConnectButton size="small" variant="flat" data-testid="unsupported-network" mono>
 				<ConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>

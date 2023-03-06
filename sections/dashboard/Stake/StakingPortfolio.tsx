@@ -112,9 +112,6 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 };
 
 const StyledTabButton = styled(TabButton)`
-	p {
-		font-size: 12px;
-	}
 	margin-bottom: 9px;
 `;
 

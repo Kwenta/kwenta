@@ -12,6 +12,7 @@ import Button from 'components/Button';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { GridDivCenteredCol } from 'components/layout/grid';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { Body } from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
@@ -124,7 +125,7 @@ const Header = memo(() => {
 					</Links>
 					<MenuContainer>
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-							<Button noOutline size="sm">
+							<Button noOutline size="medium">
 								{t('homepage.nav.start-trade')}
 							</Button>
 						</Link>
@@ -179,8 +180,7 @@ const StyledMenu = styled.div`
 	}
 `;
 
-const StyledMenuItem = styled.p`
-	font-family: ${(props) => props.theme.fonts.bold};
+const StyledMenuItem = styled(Body).attrs({ weight: 'bold' })`
 	cursor: pointer;
 	width: 100%;
 	font-size: 15px;

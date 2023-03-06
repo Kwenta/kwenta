@@ -1,12 +1,12 @@
 import { wei } from '@synthetixio/wei';
-import { useCallback, useEffect, useState, FC } from 'react';
+import { useCallback, useEffect, useState, FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
-import { FuturesMarketAsset, PositionSide } from 'sdk/types/futures';
+import { PositionSide } from 'sdk/types/futures';
 import PositionButtons from 'sections/futures/PositionButtons';
-import { selectMarketPrice } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketPrice } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { getMarketName } from 'utils/futures';
 
@@ -15,11 +15,11 @@ import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';
 
 type ProfitCalculatorProps = {
-	marketAsset: FuturesMarketAsset;
 	setOpenProfitCalcModal(val: boolean): void;
 };
 
-const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfitCalcModal }) => {
+const ProfitCalculator: FC<ProfitCalculatorProps> = memo(({ setOpenProfitCalcModal }) => {
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketName = getMarketName(marketAsset);
 	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
 	const { t } = useTranslation();
@@ -226,7 +226,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ marketAsset, setOpenProfi
 			</StyledBaseModal>
 		</>
 	);
-};
+});
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {

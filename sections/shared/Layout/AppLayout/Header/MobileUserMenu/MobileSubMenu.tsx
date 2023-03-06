@@ -48,7 +48,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = memo(
 				{active && (
 					<SubMenuContainer onClick={onDismiss}>
 						{links
-							? links.map(({ i18nLabel, link: subLink, badge }) => (
+							? links.map(({ i18nLabel, link: subLink, badge, Icon }) => (
 									<SubMenuItemContainer key={i18nLabel}>
 										<SubMenuIcon>·</SubMenuIcon>
 										<StyledLink href={subLink}>
@@ -58,6 +58,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = memo(
 													{badge?.map(({ i18nLabel, color }) => (
 														<StyledBadge color={color}>{t(i18nLabel)}</StyledBadge>
 													))}
+													{Icon && <Icon />}
 												</div>
 											</SubMenuItem>
 										</StyledLink>
@@ -140,6 +141,22 @@ const SubMenuItem = styled.div<{ currentTheme: ThemeName; active?: boolean; sele
 			: 'rgb(232, 232, 232)'};
 	border-radius: 8px;
 	width: 100%;
+	text-transform: capitalize;
+
+	div {
+		display: flex;
+		justify-content: space-between;
+		padding-right: 12px;
+	}
+
+	svg {
+		height: 22px;
+		width: 22px;
+
+		> path {
+			fill: #69d8bd;
+		}
+	}
 
 	${(props) =>
 		props.active &&
