@@ -159,7 +159,11 @@ const DelayedOrderConfirmationModal: FC = () => {
 	}, [dataRows, marketAsset, leverageSide, orderType, orderDetails.nativeSizeDelta, t]);
 
 	const leverageValue = useMemo(
-		() => truncateNumbers(wei(Number(potentialTradeDetails?.leverage ?? 0)), DEFAULT_FIAT_DECIMALS),
+		() =>
+			truncateNumbers(
+				wei(Number(potentialTradeDetails?.leverage.abs() ?? 0)),
+				DEFAULT_FIAT_DECIMALS
+			),
 		[potentialTradeDetails?.leverage]
 	);
 
@@ -210,7 +214,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			<InfoBoxContainer>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.leverage')}
-					value={<OrderSideLabel>{leverageValue}</OrderSideLabel>}
+					value={<OrderSummaryValue>{leverageValue}</OrderSummaryValue>}
 				/>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.order-type')}
@@ -372,7 +376,6 @@ const Disclaimer = styled.div`
 
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-bottom: -1px;
-	margin-left: 8px;
 `;
 
 const OrderSummaryLine = styled.div`
