@@ -1,11 +1,11 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { omit, clone } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { getEthGasPrice } from 'sdk/common/gas';
+import { NetworkIdByName } from 'sdk/types/common';
 
 import * as sdkErrors from '../common/errors';
 import { ContractName } from '../contracts';

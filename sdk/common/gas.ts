@@ -2,12 +2,11 @@
 // https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
 
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { ethers, BigNumber } from 'ethers';
 import { omit } from 'lodash';
 
-import { NetworkId } from 'sdk/types/common';
+import { NetworkId, NetworkIdByName } from 'sdk/types/common';
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
 
 const MULTIPLIER = wei(2);

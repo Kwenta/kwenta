@@ -1,4 +1,3 @@
-import { SynthExchangeResult } from '@synthetixio/queries';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,24 +15,20 @@ import Connector from 'containers/Connector';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
+import { useAppSelector } from 'state/hooks';
+import { selectSynthsMap } from 'state/wallet/selectors';
 import { ExternalLink } from 'styles/common';
+import { WalletTradesExchangeResult } from 'utils/exchange';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
-
-interface SynthTradesExchangeResult extends SynthExchangeResult {
-	hash: string;
-}
-
-type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> & {
-	timestamp: number;
-};
 
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
 	!prop ? <Body>{NO_VALUE}</Body> : children;
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
-	const { network, walletAddress, synthsMap } = Connector.useContainer();
+	const { network, walletAddress } = Connector.useContainer();
+	const synthsMap = useAppSelector(selectSynthsMap);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 

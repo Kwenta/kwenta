@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { ContractsMap } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 
 import { ETH_UNIT } from 'constants/network';
 import { chain } from 'containers/Connector/config';
@@ -30,6 +30,8 @@ type MarketSizes = {
 	short: BigNumber;
 	long: BigNumber;
 };
+
+type ContractsMap = Record<string, ethers.Contract>;
 
 export const mapOpenInterest = async (
 	keys: string[],

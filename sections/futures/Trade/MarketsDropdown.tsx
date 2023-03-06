@@ -6,8 +6,8 @@ import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
 import ROUTES from 'constants/routes';
-import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import { FuturesMarketAsset, FuturesMarketKey, SynthSuspensionReason } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
 	selectMarketAsset,
@@ -35,7 +35,7 @@ export type MarketsCurrencyOption = {
 	change?: string;
 	negativeChange: boolean;
 	isMarketClosed: boolean;
-	closureReason: FuturesClosureReason;
+	closureReason: SynthSuspensionReason;
 };
 
 type AssetToCurrencyOptionArgs = {
@@ -46,7 +46,7 @@ type AssetToCurrencyOptionArgs = {
 	change?: string;
 	negativeChange: boolean;
 	isMarketClosed: boolean;
-	closureReason: FuturesClosureReason;
+	closureReason: SynthSuspensionReason;
 };
 
 const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs): MarketsCurrencyOption => ({

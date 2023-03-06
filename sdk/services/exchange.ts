@@ -1,6 +1,5 @@
 // @ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
-import { DeprecatedSynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Contract as EthCallContract } from 'ethcall';
@@ -49,6 +48,13 @@ const PROTOCOLS =
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 const DEFAULT_BUFFER = 0.2;
+
+export type DeprecatedSynthBalance = {
+	currencyKey: CurrencyKey;
+	proxyAddress: string;
+	balance: Wei;
+	usdBalance: Wei;
+};
 
 export default class ExchangeService {
 	private tokensMap: any = {};

@@ -1,12 +1,12 @@
-import { GasPrice } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
-export const parseGasPriceObject = (gasPriceObject: GasPrice) => {
-	const { gasPrice, maxFeePerGas } = gasPriceObject;
+import { GasPrice } from 'state/app/types';
+
+export const parseGasPriceObject = ({ gasPrice, maxFeePerGas }: GasPrice) => {
 	if (gasPrice) {
-		return wei(gasPriceObject.gasPrice, 9).toNumber();
+		return wei(gasPrice, 9).toNumber();
 	} else if (maxFeePerGas) {
-		return wei(gasPriceObject.maxFeePerGas, 9).toNumber();
+		return wei(maxFeePerGas, 9).toNumber();
 	} else {
 		return null;
 	}

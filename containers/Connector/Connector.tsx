@@ -1,11 +1,10 @@
-import { NetworkId, synthetix } from '@synthetixio/contracts-interface';
+import { synthetix } from '@synthetixio/contracts-interface';
 import { TransactionNotifier as BaseTN } from '@synthetixio/transaction-notifier';
-import { ethers } from 'ethers';
-import { keyBy } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createContainer } from 'unstated-next';
 import { useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
 
+import { NetworkId } from 'sdk/types/common';
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
 import { resetNetwork, setSigner } from 'state/wallet/actions';
@@ -36,17 +35,9 @@ const useConnector = () => {
 	const l2Provider = useProvider({ chainId: chain.optimism.id });
 	const { data: signer } = useSigner();
 
-	// Provides a default mainnet provider, irrespective of the current network
-	const staticMainnetProvider = new ethers.providers.InfuraProvider();
-
 	const defaultSynthetixjs = useMemo(
 		() => synthetix({ provider, networkId: network.id as NetworkId }),
 		[provider, network.id]
-	);
-
-	const l2Synthetixjs = useMemo(
-		() => synthetix({ provider: l2Provider, networkId: chain.optimism.id as NetworkId }),
-		[l2Provider]
 	);
 
 	const handleNetworkChange = useCallback(
@@ -75,18 +66,6 @@ const useConnector = () => {
 		dispatch(setSigner(signer));
 	}, [signer, dispatch]);
 
-	const [synthsMap, tokensMap] = useMemo(() => {
-		if (defaultSynthetixjs == null) return [{}, {}];
-
-		return [keyBy(defaultSynthetixjs.synths, 'name'), keyBy(defaultSynthetixjs.tokens, 'symbol')];
-	}, [defaultSynthetixjs]);
-
-	const l2SynthsMap = useMemo(() => {
-		if (l2Synthetixjs == null) return {};
-
-		return keyBy(l2Synthetixjs.synths, 'name');
-	}, [l2Synthetixjs]);
-
 	return {
 		activeChain,
 		isWalletConnected,
@@ -95,11 +74,7 @@ const useConnector = () => {
 		l2Provider,
 		signer,
 		network,
-		synthsMap,
-		tokensMap,
-		staticMainnetProvider,
 		defaultSynthetixjs,
-		l2SynthsMap,
 		providerReady,
 	};
 };

@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
+import { getSynthsForNetwork } from 'sdk/data/synths';
 import type { RootState } from 'state/store';
 
 const SUPPORTED_NETWORKS = [1, 10, 5, 420];
@@ -37,4 +38,9 @@ export const selectIsTestnet = createSelector(
 export const selectIsMainnet = createSelector(
 	(state: RootState) => state.wallet.networkId,
 	(networkId) => networkId && (networkId === 5 || networkId === 420)
+);
+
+export const selectSynthsMap = createSelector(
+	(state: RootState) => state.wallet.networkId,
+	(networkId) => (networkId ? getSynthsForNetwork(networkId) : {})
 );

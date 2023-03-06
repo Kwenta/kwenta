@@ -3,15 +3,15 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsL2 from 'hooks/useIsL2';
 import { NetworkId } from 'sdk/types/common';
+import { SynthSuspensionReason } from 'sdk/types/futures';
 import { getReasonFromCode } from 'sdk/utils/synths';
 
 interface FuturesMarketClosure {
 	isSuspended: boolean;
 	reasonCode: ethers.BigNumber;
-	reason: FuturesClosureReason;
+	reason: SynthSuspensionReason;
 }
 
 const useFuturesSuspensionQuery = (
@@ -37,7 +37,9 @@ const useFuturesSuspensionQuery = (
 					marketKeyBytes32
 				);
 
-				const reason = (isSuspended ? getReasonFromCode(reasonCode) : null) as FuturesClosureReason;
+				const reason = (isSuspended
+					? getReasonFromCode(reasonCode)
+					: null) as SynthSuspensionReason;
 				return {
 					isFuturesMarketClosed: isSuspended,
 					reasonCode,

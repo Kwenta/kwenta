@@ -32,7 +32,7 @@ function ClosePositionModal({
 	onClosePosition,
 }: ClosePositionModalProps) {
 	const { t } = useTranslation();
-	const { defaultSynthetixjs: synthetixjs, synthsMap } = Connector.useContainer();
+	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const isClosing = useAppSelector(selectIsClosingPosition);
@@ -72,9 +72,7 @@ function ClosePositionModal({
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(marketAsset || '', positionDetails?.size ?? zeroBN, {
-					sign: marketAsset ? synthsMap[marketAsset]?.sign : '',
-				}),
+				value: formatCurrency(marketAsset, positionDetails?.size ?? zeroBN),
 			},
 			{
 				label: t('futures.market.user.position.modal.leverage'),
@@ -89,7 +87,7 @@ function ClosePositionModal({
 				value: formatDollars(orderFee),
 			},
 		];
-	}, [positionDetails, marketAsset, t, orderFee, synthsMap]);
+	}, [positionDetails, marketAsset, t, orderFee]);
 
 	return (
 		<StyledBaseModal

@@ -1,6 +1,6 @@
-import { NetworkNameById, NetworkIdByName } from '@synthetixio/contracts-interface';
 import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
 
+import { NetworkNameById, NetworkIdByName } from 'sdk/types/common';
 import { NetworkId } from 'sdk/types/common';
 
 export const getBaseUrl = (networkId: NetworkId) => {

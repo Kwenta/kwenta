@@ -49,13 +49,7 @@ const CurrencyRow: FC<SynthRowProps> = memo(({ token, onClick, balance }) => {
 						: token.name
 				}
 				showIcon
-				iconProps={
-					!token.isSynth
-						? {
-								url: token.logoURI,
-						  }
-						: undefined
-				}
+				iconProps={!token.isSynth ? { url: token.logoURI } : undefined}
 				{...{ currencyKey, marketClosureReason }}
 			/>
 			{isWalletConnected ? (

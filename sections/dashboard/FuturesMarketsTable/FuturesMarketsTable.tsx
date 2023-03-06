@@ -12,7 +12,6 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
@@ -29,7 +28,6 @@ import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { synthsMap } = Connector.useContainer();
 
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const pastRates = useAppSelector(selectPreviousDayPrices);
@@ -49,7 +47,6 @@ const FuturesMarketsTable: FC = () => {
 			return {
 				asset: market.asset,
 				market: market.marketName,
-				synth: synthsMap[market.asset],
 				description,
 				price: marketPrice,
 				priceInfo: assetPriceInfo,
@@ -67,7 +64,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [synthsMap, futuresMarkets, pastRates, futuresVolumes, markPrices, pricesInfo, t]);
+	}, [futuresMarkets, pastRates, futuresVolumes, markPrices, pricesInfo, t]);
 
 	return (
 		<>

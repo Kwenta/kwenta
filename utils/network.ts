@@ -1,8 +1,7 @@
 import detectEthereumProvider from '@metamask/detect-provider';
 import loadProvider from '@synthetixio/providers';
-import { GasPrice } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import { providers } from 'ethers';
+import { ethers, providers } from 'ethers';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import {
@@ -13,6 +12,7 @@ import {
 	BLAST_NETWORK_LOOKUP,
 } from 'constants/network';
 import { NetworkId } from 'sdk/types/common';
+import { GasPrice } from 'state/app/types';
 
 import logError from './logError';
 
@@ -20,6 +20,8 @@ type EthereumProvider = {
 	isMetaMask: boolean;
 	chainId: string;
 };
+
+export const staticMainnetProvider = new ethers.providers.InfuraProvider();
 
 export function isSupportedNetworkId(id: NetworkId): boolean {
 	return SUPPORTED_NETWORKS.includes(id);
