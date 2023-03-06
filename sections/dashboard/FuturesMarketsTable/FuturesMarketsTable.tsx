@@ -10,6 +10,7 @@ import ChangePercent from 'components/ChangePercent';
 import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Spacer from 'components/Spacer';
 import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -97,6 +98,7 @@ const FuturesMarketsTable: FC = () => {
 											</IconContainer>
 											<StyledText>
 												{cellProps.row.original.market}
+												<Spacer width={8} />
 												<MarketBadge
 													currencyKey={cellProps.row.original.asset}
 													isFuturesMarketClosed={cellProps.row.original.isSuspended}

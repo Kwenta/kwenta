@@ -171,7 +171,7 @@ export default function TradeConfirmationModal({
 				<StyledBaseModal
 					onDismiss={onDismiss}
 					isOpen
-					title={t('futures.market.trade.confirmation.modal.confirm-order')}
+					title={t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)}
 				>
 					{dataRows.map((row, i) => {
 						if (!row) return null;
@@ -204,12 +204,14 @@ export default function TradeConfirmationModal({
 						data-testid="trade-open-position-confirm-order-button"
 						variant="flat"
 						onClick={onConfirmOrder}
+						className={leverageSide}
 						disabled={!positionDetails || isSubmitting || !!disabledReason}
 					>
 						{isSubmitting ? (
 							<ButtonLoader />
 						) : (
-							disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')
+							disabledReason ||
+							t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
 						)}
 					</ConfirmTradeButton>
 					{errorMessage && (
@@ -227,13 +229,15 @@ export default function TradeConfirmationModal({
 					buttons={
 						<MobileConfirmTradeButton
 							variant="flat"
+							className={leverageSide}
 							onClick={onConfirmOrder}
 							disabled={!positionDetails || isSubmitting || !!disabledReason}
 						>
 							{isSubmitting ? (
 								<ButtonLoader />
 							) : (
-								disabledReason || t('futures.market.trade.confirmation.modal.confirm-order')
+								disabledReason ||
+								t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
 							)}
 						</MobileConfirmTradeButton>
 					}

@@ -4,6 +4,7 @@ import { useQuery } from 'react-query';
 
 import { chain } from 'containers/Connector/config';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import { getFuturesEndpoint } from 'sdk/utils/futures';
 import { useAppSelector } from 'state/hooks';
 import { selectMinTimestamp } from 'state/stats/selectors';
 import { weiFromWei } from 'utils/formatters/number';
@@ -11,7 +12,6 @@ import logError from 'utils/logError';
 
 import { AGGREGATE_ASSET_KEY } from './constants';
 import { getFuturesAggregateStats } from './subgraph';
-import { getFuturesEndpoint } from './utils';
 
 type VolumeStat = {
 	date: string;

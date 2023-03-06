@@ -2,27 +2,38 @@ import common from './common';
 
 const newTheme = {
 	button: {
-		position: {
+		default: {
 			border: common.palette.neutral.n700,
+			background: common.palette.neutral.n800,
+			color: common.palette.neutral.n0,
+			hover: {
+				background: common.palette.neutral.n700,
+			},
+		},
+		position: {
 			long: {
-				color: common.palette.green.g500,
 				active: {
-					background: common.palette.green.g900,
+					background: common.palette.green.g500,
+					border: common.palette.green.g600,
+					color: common.palette.neutral.n900,
+				},
+				hover: {
+					background: common.palette.green.g600,
 					border: common.palette.green.g700,
-					color: common.palette.neutral.n0,
+					color: common.palette.neutral.n900,
 				},
 			},
 			short: {
-				color: common.palette.red.r300,
 				active: {
-					background: common.palette.red.r900,
-					border: common.palette.red.r700,
-					color: common.palette.neutral.n0,
+					background: common.palette.red.r300,
+					border: common.palette.red.r300,
+					color: common.palette.neutral.n900,
 				},
-			},
-			background: common.palette.alpha.darkButton,
-			hover: {
-				background: common.palette.alpha.darkButtonHover,
+				hover: {
+					background: common.palette.red.r400,
+					border: common.palette.red.r400,
+					color: common.palette.neutral.n900,
+				},
 			},
 		},
 	},

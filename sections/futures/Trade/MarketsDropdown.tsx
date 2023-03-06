@@ -149,11 +149,6 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 										<FlexDivRowCentered>
 											<CurrencyIcon currencyKey={row.original.key} width="18px" height="18px" />
 											<Spacer width={10} />
-											<MarketBadge
-												currencyKey={row.original.asset}
-												isFuturesMarketClosed={row.original.isMarketClosed}
-												futuresClosureReason={row.original.closureReason}
-											/>
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
@@ -180,13 +175,22 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 								},
 								{
 									Header: <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
-									Cell: (cellProps: any) => (
-										<NumericValue
-											percent
-											colored
-											value={floorNumber(cellProps.row.original.change?.mul(100) ?? '0', 2)}
-										/>
-									),
+									Cell: ({ row }: any) => {
+										return (
+											<MarketBadge
+												currencyKey={row.original.asset}
+												isFuturesMarketClosed={row.original.isMarketClosed}
+												futuresClosureReason={row.original.closureReason}
+												fallbackComponent={
+													<NumericValue
+														percent
+														colored
+														value={floorNumber(row.original.change?.mul(100) ?? '0', 2)}
+													/>
+												}
+											/>
+										);
+									},
 									accessor: 'change',
 									sortType: 'basic',
 									sortable: true,

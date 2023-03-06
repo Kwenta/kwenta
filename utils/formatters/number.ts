@@ -95,7 +95,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	try {
 		weiValue = wei(value);
 	} catch (e) {
-		logError(e);
+		logError(e, true);
 	}
 
 	const isNegative = weiValue.lt(wei(0));
