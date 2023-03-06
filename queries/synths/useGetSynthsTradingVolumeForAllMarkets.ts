@@ -6,8 +6,9 @@ import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
-import { MAIN_ENDPOINT_OP_MAINNET } from 'queries/futures/constants';
-import { calculateTradeVolumeForAllSynths, getMainEndpoint } from 'queries/futures/utils';
+import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
+import { MAIN_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
+import { getMainEndpoint } from 'sdk/utils/futures';
 import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';

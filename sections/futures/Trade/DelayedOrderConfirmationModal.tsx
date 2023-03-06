@@ -169,7 +169,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 
 	const orderTypeValue = useMemo(
 		() =>
-			OrderNameByType[orderType] === 'Delayed Offchain'
+			OrderNameByType[orderType] === 'Delayed Market'
 				? 'Delayed Market'
 				: OrderNameByType[orderType],
 		[orderType]
