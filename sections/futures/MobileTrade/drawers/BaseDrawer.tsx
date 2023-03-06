@@ -102,7 +102,7 @@ const Row = styled.div`
 	}
 
 	&:not(:last-of-type) {
-		border-bottom: 1px solid #a7a7a7;
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}
 `;
 

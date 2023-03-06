@@ -7,11 +7,13 @@ import media from 'styles/media';
 
 type SearchProps = {
 	value: string | undefined;
+	disabled?: boolean;
+	border?: boolean;
+	autoFocus?: boolean;
 	onChange: (text: string) => void;
-	disabled: boolean;
 };
 
-const Search: FC<SearchProps> = memo(({ value, onChange, disabled }) => {
+const Search: FC<SearchProps> = memo(({ value, disabled, border = true, autoFocus, onChange }) => {
 	const handleOnChange = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
 			onChange(event.target.value);
@@ -23,6 +25,8 @@ const Search: FC<SearchProps> = memo(({ value, onChange, disabled }) => {
 		<SearchBar>
 			<StyledSvg />
 			<SearchInput
+				autoFocus={autoFocus}
+				border={border}
 				value={value}
 				onChange={handleOnChange}
 				placeholder="Search..."
@@ -37,12 +41,17 @@ const StyledSvg = styled(SearchIconPath)`
 	left: 12px;
 `;
 
-const SearchInput = styled(Input).attrs({ type: 'search' })`
+const SearchInput = styled(Input)<{ border: boolean }>`
 	position: relative;
 	height: 100%;
 	text-indent: 16px;
 	border-radius: 8px;
 	padding: 10px 15px;
+	font-size: 14px;
+	background: ${(props) =>
+		props.border ? props.theme.colors.selectedTheme.input.secondary.background : 'none'};
+
+	border: ${(props) => (props.border ? props.theme.colors.selectedTheme.border : 'none')};
 
 	${media.lessThan('sm')`
 		font-size: 13px;

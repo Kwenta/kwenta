@@ -3,7 +3,10 @@ import styled, { css } from 'styled-components';
 
 import Spacer from 'components/Spacer';
 
-type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
+type NumericInputProps = Omit<
+	React.InputHTMLAttributes<HTMLInputElement>,
+	'onChange' | 'maxLength'
+> & {
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
 	left?: React.ReactNode;
@@ -14,6 +17,7 @@ type NumericInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onCh
 	textAlign?: string;
 	suffix?: string;
 	max?: number;
+	maxLength?: number | 'none';
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -31,15 +35,17 @@ const NumericInput: FC<NumericInputProps> = memo(
 		bold,
 		textAlign,
 		max = 0,
+		maxLength = 'none',
 		className,
 		...props
 	}) => {
 		const handleChange = useCallback(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
-				const standardizedNum = e.target.value
-					.replace(/[^0-9.,]/g, '')
-					.replace(/,/g, '.')
-					.substring(0, 4);
+				let standardizedNum = e.target.value.replace(/[^0-9.,]/g, '').replace(/,/g, '.');
+
+				if (maxLength !== 'none') {
+					standardizedNum = standardizedNum.substring(0, maxLength);
+				}
 				// TODO: make regex only accept valid numbers, so we don't need to check again.
 				if (isNaN(Number(standardizedNum))) return;
 				const valueIsAboveMax = max !== 0 && Number(standardizedNum) > max;
@@ -47,7 +53,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 					onChange(e, standardizedNum);
 				}
 			},
-			[onChange, max]
+			[onChange, max, maxLength]
 		);
 
 		return (
