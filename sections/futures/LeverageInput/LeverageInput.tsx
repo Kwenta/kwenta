@@ -113,6 +113,7 @@ const LeverageInput: FC = memo(() => {
 							onLeverageChange(newValue);
 						}}
 						disabled={isDisabled}
+						maxLength={4}
 					/>
 					{leverageButtons.map((l) => (
 						<LeverageButton

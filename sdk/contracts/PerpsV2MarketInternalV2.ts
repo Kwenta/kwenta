@@ -184,7 +184,7 @@ class FuturesMarketInternal {
 	): Promise<{ newPos: Position; status: PotentialTradeStatus; fee: BigNumber }> => {
 		if (!sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
 		// Reverts if the user is trying to submit a size-zero order.
-		if (tradeParams.sizeDelta.eq(0) && tradeParams.sizeDelta.eq(0)) {
+		if (tradeParams.sizeDelta.eq(0) && marginDelta.eq(0)) {
 			return { newPos: oldPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.NIL_ORDER };
 		}
 

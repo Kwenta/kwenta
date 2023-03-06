@@ -19,6 +19,7 @@ import {
 	FuturesMarketAsset,
 	MarginTransfer,
 } from 'sdk/types/futures';
+import { PricesInfo } from 'state/prices/types';
 import { QueryStatus } from 'state/types';
 
 export type TradeSizeInputs<T = Wei> = {
@@ -32,6 +33,8 @@ export type CrossMarginTradeInputsWithDelta<T = Wei> = TradeSizeInputs<T> & {
 };
 
 export type MarkPrices<T = Wei> = Partial<Record<FuturesMarketKey, T>>;
+
+export type MarkPriceInfos<T = Wei> = Partial<Record<FuturesMarketKey, PricesInfo<T>>>;
 
 export type FundingRate<T = Wei> = {
 	asset: FuturesMarketKey;

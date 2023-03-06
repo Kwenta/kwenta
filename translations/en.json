@@ -14,6 +14,13 @@
 			"exchange": "exchange",
 			"dashboard": "dashboard",
 			"markets": "futures",
+			"options": {
+				"title": "options",
+				"portfolio": "portfolio",
+				"trade": "trade",
+				"vaults": "vaults",
+				"rewards": "rewards"
+			},
 			"isolated-margin": "Isolated Margin",
 			"cross-margin": "Cross Margin",
 			"leaderboard-alltime": "All Time",
@@ -647,6 +654,12 @@
 				"roi": "ROI"
 			}
 		},
+		"markets-drop-down": {
+			"price": "price",
+			"market": "market",
+			"change": "24H +/-",
+			"no-results": "No markets found"
+		},
 		"market": {
 			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",
 			"page-title-rate": "{{marketName}} - {{rate}} Futures | Kwenta",
@@ -689,8 +702,8 @@
 				"explore-markets": "Explore available Markets"
 			},
 			"state": {
-				"opens-soon": "opens soon",
-				"closes-soon": "closes soon",
+				"opens-soon": "opening",
+				"closes-soon": "closing",
 				"frozen": "paused",
 				"market-closure": "paused",
 				"system-upgrade": "paused",
@@ -818,7 +831,10 @@
 				},
 				"confirmation": {
 					"modal": {
-						"confirm-order": "Confirm order",
+						"confirm-order": {
+							"long": "Confirm Long order",
+							"short": "Confirm Short order"
+						},
 						"close-order": "Close position",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
 						"disabled-min-margin": "Minimum market margin of $50 required",
@@ -852,7 +868,6 @@
 				"fees": {
 					"tooltip": "Fees are displayed as maker / taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew.",
 					"keeper-tooltip": "Fixed fee to cover automated order execution"
-
 				},
 				"orders": {
 					"manage-keeper-deposit": {
@@ -908,12 +923,12 @@
 						"fee-total": "Total Fees",
 						"estimated-fill": "Estimated Fill Price",
 						"estimated-price-impact": "Estimated Price Impact",
-						"fee-estimated": "Estimated Trade Fee",
+						"fee-estimated": "Est. Trade Fees",
 						"liquidation-price": "Liquidation Price",
 						"time-delay": "Delay Until Executable",
 						"keeper-deposit": "Execution Fee",
 						"gas-fee": "Network Gas Fee",
-						"order-type": "Order Type",
+						"order-type": "Type",
 						"market-order": "Market",
 						"next-price-order": "Next Price",
 						"delayed-order": "Delayed",
