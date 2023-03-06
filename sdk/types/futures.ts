@@ -254,6 +254,11 @@ export type FuturesOrderTypeDisplay =
 	| 'Delayed'
 	| 'Delayed Offchain';
 
+export enum ConditionalOrderTypeEnum {
+	LIMIT = 0,
+	STOP = 1,
+}
+
 export type ConditionalOrder<T = Wei> = {
 	id: string; // formatted subgraph id
 	contractId: number;
@@ -264,7 +269,6 @@ export type ConditionalOrder<T = Wei> = {
 	size: T;
 	targetPrice: T | null;
 	marginDelta: T;
-	targetRoundId: T | null;
 	orderType: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;
@@ -358,14 +362,18 @@ export type FuturesTrade<T = Wei> = {
 };
 
 export enum AccountExecuteFunctions {
-	PERPS_V2_MODIFY_MARGIN = 0,
-	PERPS_V2_WITHDRAW_ALL_MARGIN = 1,
-	PERPS_V2_SUBMIT_ATOMIC_ORDER = 2,
-	PERPS_V2_SUBMIT_DELAYED_ORDER = 3,
-	PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER = 4,
-	PERPS_V2_CANCEL_DELAYED_ORDER = 5,
-	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 6,
-	PERPS_V2_CLOSE_POSITION = 7,
+	ACCOUNT_MODIFY_MARGIN = 0,
+	ACCOUNT_WITHDRAW_ETH = 1,
+	PERPS_V2_MODIFY_MARGIN = 2,
+	PERPS_V2_WITHDRAW_ALL_MARGIN = 3,
+	PERPS_V2_SUBMIT_ATOMIC_ORDER = 4,
+	PERPS_V2_SUBMIT_DELAYED_ORDER = 5,
+	PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER = 6,
+	PERPS_V2_CANCEL_DELAYED_ORDER = 7,
+	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 8,
+	PERPS_V2_CLOSE_POSITION = 9,
+	GELATO_PLACE_CONDITIONAL_ORDER = 10,
+	GELATO_CANCEL_CONDITIONAL_ORDER = 11,
 }
 export type MarginTransfer = {
 	timestamp: number;
@@ -375,4 +383,26 @@ export type MarginTransfer = {
 	action: string;
 	market?: string;
 	asset?: FuturesMarketAsset;
+};
+
+export type MarketWithIdleMargin = {
+	marketAddress: string;
+	marketKey: FuturesMarketKey;
+	position: FuturesPosition;
+};
+
+export type SmartMarginOrderInputs = {
+	sizeDelta: Wei;
+	marginDelta: Wei;
+	priceImpactDelta: Wei;
+	timeDelta?: Wei;
+	conditionalOrderInputs?: {
+		orderType: ConditionalOrderTypeEnum;
+		price: Wei;
+		feeCap: Wei;
+		keeperEthDeposit: Wei;
+		reduceOnly: boolean;
+	};
+	stopLossPrice?: Wei;
+	TakeProfitPrice?: Wei;
 };

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
-import { setCrossMarginMarginDelta } from 'state/futures/reducer';
+import { editCrossMarginMarginDelta } from 'state/futures/actions';
 import { selectIdleMargin } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber } from 'utils/formatters/number';
@@ -16,7 +16,7 @@ export default function MarginPercentSelector() {
 		const percent = PERCENT_OPTIONS[index].replace('%', '');
 		const margin = idleMargin.div(100).mul(percent);
 
-		dispatch(setCrossMarginMarginDelta(floorNumber(margin).toString()));
+		dispatch(editCrossMarginMarginDelta(floorNumber(margin).toString()));
 	};
 
 	return (

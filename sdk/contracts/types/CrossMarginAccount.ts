@@ -125,11 +125,9 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     "GELATO()": FunctionFragment;
     "OPS()": FunctionFragment;
     "VERSION()": FunctionFragment;
-    "cancelConditionalOrder(uint256)": FunctionFragment;
     "checker(uint256)": FunctionFragment;
     "committedMargin()": FunctionFragment;
     "conditionalOrderId()": FunctionFragment;
-    "deposit(uint256)": FunctionFragment;
     "events()": FunctionFragment;
     "execute(uint8[],bytes[])": FunctionFragment;
     "executeConditionalOrder(uint256)": FunctionFragment;
@@ -141,11 +139,8 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     "getPosition(bytes32)": FunctionFragment;
     "initialize(address,address,address,address)": FunctionFragment;
     "owner()": FunctionFragment;
-    "placeConditionalOrder(bytes32,int256,int256,uint256,uint8,uint128,bool)": FunctionFragment;
     "settings()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "withdraw(uint256)": FunctionFragment;
-    "withdrawEth(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -154,11 +149,9 @@ export interface CrossMarginAccountInterface extends utils.Interface {
       | "GELATO"
       | "OPS"
       | "VERSION"
-      | "cancelConditionalOrder"
       | "checker"
       | "committedMargin"
       | "conditionalOrderId"
-      | "deposit"
       | "events"
       | "execute"
       | "executeConditionalOrder"
@@ -170,21 +163,14 @@ export interface CrossMarginAccountInterface extends utils.Interface {
       | "getPosition"
       | "initialize"
       | "owner"
-      | "placeConditionalOrder"
       | "settings"
       | "transferOwnership"
-      | "withdraw"
-      | "withdrawEth"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "ETH", values?: undefined): string;
   encodeFunctionData(functionFragment: "GELATO", values?: undefined): string;
   encodeFunctionData(functionFragment: "OPS", values?: undefined): string;
   encodeFunctionData(functionFragment: "VERSION", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "cancelConditionalOrder",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "checker",
     values: [PromiseOrValue<BigNumberish>]
@@ -196,10 +182,6 @@ export interface CrossMarginAccountInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "conditionalOrderId",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deposit",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "events", values?: undefined): string;
   encodeFunctionData(
@@ -241,40 +223,16 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "placeConditionalOrder",
-    values: [
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>
-    ]
-  ): string;
   encodeFunctionData(functionFragment: "settings", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawEth",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(functionFragment: "ETH", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "GELATO", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "OPS", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "VERSION", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "cancelConditionalOrder",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "checker", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "committedMargin",
@@ -284,7 +242,6 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "conditionalOrderId",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "events", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
@@ -311,134 +268,20 @@ export interface CrossMarginAccountInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "placeConditionalOrder",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "settings", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawEth",
-    data: BytesLike
-  ): Result;
 
   events: {
-    "ConditionalOrderCancelled(address,uint256,uint8)": EventFragment;
-    "ConditionalOrderFilled(address,uint256,uint256,uint256)": EventFragment;
-    "ConditionalOrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8,uint128,bool)": EventFragment;
-    "Deposit(address,address,uint256)": EventFragment;
-    "EthWithdraw(address,address,uint256)": EventFragment;
-    "FeeImposed(address,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Withdraw(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ConditionalOrderCancelled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ConditionalOrderFilled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ConditionalOrderPlaced"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EthWithdraw"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeeImposed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
 }
-
-export interface ConditionalOrderCancelledEventObject {
-  account: string;
-  conditionalOrderId: BigNumber;
-  reason: number;
-}
-export type ConditionalOrderCancelledEvent = TypedEvent<
-  [string, BigNumber, number],
-  ConditionalOrderCancelledEventObject
->;
-
-export type ConditionalOrderCancelledEventFilter =
-  TypedEventFilter<ConditionalOrderCancelledEvent>;
-
-export interface ConditionalOrderFilledEventObject {
-  account: string;
-  conditionalOrderId: BigNumber;
-  fillPrice: BigNumber;
-  keeperFee: BigNumber;
-}
-export type ConditionalOrderFilledEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  ConditionalOrderFilledEventObject
->;
-
-export type ConditionalOrderFilledEventFilter =
-  TypedEventFilter<ConditionalOrderFilledEvent>;
-
-export interface ConditionalOrderPlacedEventObject {
-  account: string;
-  conditionalOrderId: BigNumber;
-  marketKey: string;
-  marginDelta: BigNumber;
-  sizeDelta: BigNumber;
-  targetPrice: BigNumber;
-  conditionalOrderType: number;
-  priceImpactDelta: BigNumber;
-  reduceOnly: boolean;
-}
-export type ConditionalOrderPlacedEvent = TypedEvent<
-  [
-    string,
-    BigNumber,
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    number,
-    BigNumber,
-    boolean
-  ],
-  ConditionalOrderPlacedEventObject
->;
-
-export type ConditionalOrderPlacedEventFilter =
-  TypedEventFilter<ConditionalOrderPlacedEvent>;
-
-export interface DepositEventObject {
-  user: string;
-  account: string;
-  amount: BigNumber;
-}
-export type DepositEvent = TypedEvent<
-  [string, string, BigNumber],
-  DepositEventObject
->;
-
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
-
-export interface EthWithdrawEventObject {
-  user: string;
-  account: string;
-  amount: BigNumber;
-}
-export type EthWithdrawEvent = TypedEvent<
-  [string, string, BigNumber],
-  EthWithdrawEventObject
->;
-
-export type EthWithdrawEventFilter = TypedEventFilter<EthWithdrawEvent>;
-
-export interface FeeImposedEventObject {
-  account: string;
-  amount: BigNumber;
-}
-export type FeeImposedEvent = TypedEvent<
-  [string, BigNumber],
-  FeeImposedEventObject
->;
-
-export type FeeImposedEventFilter = TypedEventFilter<FeeImposedEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -458,18 +301,6 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface WithdrawEventObject {
-  user: string;
-  account: string;
-  amount: BigNumber;
-}
-export type WithdrawEvent = TypedEvent<
-  [string, string, BigNumber],
-  WithdrawEventObject
->;
-
-export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
 
 export interface CrossMarginAccount extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -506,11 +337,6 @@ export interface CrossMarginAccount extends BaseContract {
 
     VERSION(overrides?: CallOverrides): Promise<[string]>;
 
-    cancelConditionalOrder(
-      _conditionalOrderId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     checker(
       _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -519,11 +345,6 @@ export interface CrossMarginAccount extends BaseContract {
     committedMargin(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     conditionalOrderId(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    deposit(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     events(overrides?: CallOverrides): Promise<[string]>;
 
@@ -577,31 +398,10 @@ export interface CrossMarginAccount extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    placeConditionalOrder(
-      _marketKey: PromiseOrValue<BytesLike>,
-      _marginDelta: PromiseOrValue<BigNumberish>,
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _targetPrice: PromiseOrValue<BigNumberish>,
-      _conditionalOrderType: PromiseOrValue<BigNumberish>,
-      _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      _reduceOnly: PromiseOrValue<boolean>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     settings(overrides?: CallOverrides): Promise<[string]>;
 
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    withdraw(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    withdrawEth(
-      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -614,11 +414,6 @@ export interface CrossMarginAccount extends BaseContract {
 
   VERSION(overrides?: CallOverrides): Promise<string>;
 
-  cancelConditionalOrder(
-    _conditionalOrderId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   checker(
     _conditionalOrderId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -627,11 +422,6 @@ export interface CrossMarginAccount extends BaseContract {
   committedMargin(overrides?: CallOverrides): Promise<BigNumber>;
 
   conditionalOrderId(overrides?: CallOverrides): Promise<BigNumber>;
-
-  deposit(
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   events(overrides?: CallOverrides): Promise<string>;
 
@@ -677,31 +467,10 @@ export interface CrossMarginAccount extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  placeConditionalOrder(
-    _marketKey: PromiseOrValue<BytesLike>,
-    _marginDelta: PromiseOrValue<BigNumberish>,
-    _sizeDelta: PromiseOrValue<BigNumberish>,
-    _targetPrice: PromiseOrValue<BigNumberish>,
-    _conditionalOrderType: PromiseOrValue<BigNumberish>,
-    _priceImpactDelta: PromiseOrValue<BigNumberish>,
-    _reduceOnly: PromiseOrValue<boolean>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   settings(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
     _newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  withdraw(
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  withdrawEth(
-    _amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -714,11 +483,6 @@ export interface CrossMarginAccount extends BaseContract {
 
     VERSION(overrides?: CallOverrides): Promise<string>;
 
-    cancelConditionalOrder(
-      _conditionalOrderId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     checker(
       _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -727,11 +491,6 @@ export interface CrossMarginAccount extends BaseContract {
     committedMargin(overrides?: CallOverrides): Promise<BigNumber>;
 
     conditionalOrderId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deposit(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     events(overrides?: CallOverrides): Promise<string>;
 
@@ -777,114 +536,15 @@ export interface CrossMarginAccount extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    placeConditionalOrder(
-      _marketKey: PromiseOrValue<BytesLike>,
-      _marginDelta: PromiseOrValue<BigNumberish>,
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _targetPrice: PromiseOrValue<BigNumberish>,
-      _conditionalOrderType: PromiseOrValue<BigNumberish>,
-      _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      _reduceOnly: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     settings(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    withdraw(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawEth(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
-    "ConditionalOrderCancelled(address,uint256,uint8)"(
-      account?: PromiseOrValue<string> | null,
-      conditionalOrderId?: null,
-      reason?: null
-    ): ConditionalOrderCancelledEventFilter;
-    ConditionalOrderCancelled(
-      account?: PromiseOrValue<string> | null,
-      conditionalOrderId?: null,
-      reason?: null
-    ): ConditionalOrderCancelledEventFilter;
-
-    "ConditionalOrderFilled(address,uint256,uint256,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      conditionalOrderId?: null,
-      fillPrice?: null,
-      keeperFee?: null
-    ): ConditionalOrderFilledEventFilter;
-    ConditionalOrderFilled(
-      account?: PromiseOrValue<string> | null,
-      conditionalOrderId?: null,
-      fillPrice?: null,
-      keeperFee?: null
-    ): ConditionalOrderFilledEventFilter;
-
-    "ConditionalOrderPlaced(address,uint256,bytes32,int256,int256,uint256,uint8,uint128,bool)"(
-      account?: PromiseOrValue<string> | null,
-      conditionalOrderId?: null,
-      marketKey?: null,
-      marginDelta?: null,
-      sizeDelta?: null,
-      targetPrice?: null,
-      conditionalOrderType?: null,
-      priceImpactDelta?: null,
-      reduceOnly?: null
-    ): ConditionalOrderPlacedEventFilter;
-    ConditionalOrderPlaced(
-      account?: PromiseOrValue<string> | null,
-      conditionalOrderId?: null,
-      marketKey?: null,
-      marginDelta?: null,
-      sizeDelta?: null,
-      targetPrice?: null,
-      conditionalOrderType?: null,
-      priceImpactDelta?: null,
-      reduceOnly?: null
-    ): ConditionalOrderPlacedEventFilter;
-
-    "Deposit(address,address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      account?: PromiseOrValue<string> | null,
-      amount?: null
-    ): DepositEventFilter;
-    Deposit(
-      user?: PromiseOrValue<string> | null,
-      account?: PromiseOrValue<string> | null,
-      amount?: null
-    ): DepositEventFilter;
-
-    "EthWithdraw(address,address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      account?: PromiseOrValue<string> | null,
-      amount?: null
-    ): EthWithdrawEventFilter;
-    EthWithdraw(
-      user?: PromiseOrValue<string> | null,
-      account?: PromiseOrValue<string> | null,
-      amount?: null
-    ): EthWithdrawEventFilter;
-
-    "FeeImposed(address,uint256)"(
-      account?: PromiseOrValue<string> | null,
-      amount?: null
-    ): FeeImposedEventFilter;
-    FeeImposed(
-      account?: PromiseOrValue<string> | null,
-      amount?: null
-    ): FeeImposedEventFilter;
-
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
@@ -896,17 +556,6 @@ export interface CrossMarginAccount extends BaseContract {
       user?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
-
-    "Withdraw(address,address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      account?: PromiseOrValue<string> | null,
-      amount?: null
-    ): WithdrawEventFilter;
-    Withdraw(
-      user?: PromiseOrValue<string> | null,
-      account?: PromiseOrValue<string> | null,
-      amount?: null
-    ): WithdrawEventFilter;
   };
 
   estimateGas: {
@@ -918,11 +567,6 @@ export interface CrossMarginAccount extends BaseContract {
 
     VERSION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    cancelConditionalOrder(
-      _conditionalOrderId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     checker(
       _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -931,11 +575,6 @@ export interface CrossMarginAccount extends BaseContract {
     committedMargin(overrides?: CallOverrides): Promise<BigNumber>;
 
     conditionalOrderId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deposit(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     events(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -981,31 +620,10 @@ export interface CrossMarginAccount extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    placeConditionalOrder(
-      _marketKey: PromiseOrValue<BytesLike>,
-      _marginDelta: PromiseOrValue<BigNumberish>,
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _targetPrice: PromiseOrValue<BigNumberish>,
-      _conditionalOrderType: PromiseOrValue<BigNumberish>,
-      _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      _reduceOnly: PromiseOrValue<boolean>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     settings(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdraw(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdrawEth(
-      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1019,11 +637,6 @@ export interface CrossMarginAccount extends BaseContract {
 
     VERSION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    cancelConditionalOrder(
-      _conditionalOrderId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     checker(
       _conditionalOrderId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1033,11 +646,6 @@ export interface CrossMarginAccount extends BaseContract {
 
     conditionalOrderId(
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    deposit(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     events(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1086,31 +694,10 @@ export interface CrossMarginAccount extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    placeConditionalOrder(
-      _marketKey: PromiseOrValue<BytesLike>,
-      _marginDelta: PromiseOrValue<BigNumberish>,
-      _sizeDelta: PromiseOrValue<BigNumberish>,
-      _targetPrice: PromiseOrValue<BigNumberish>,
-      _conditionalOrderType: PromiseOrValue<BigNumberish>,
-      _priceImpactDelta: PromiseOrValue<BigNumberish>,
-      _reduceOnly: PromiseOrValue<boolean>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     settings(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdraw(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawEth(
-      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

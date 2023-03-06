@@ -4,9 +4,8 @@ import styled from 'styled-components';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
-import { setCrossMarginMarginDelta } from 'state/futures/reducer';
+import { editCrossMarginMarginDelta } from 'state/futures/actions';
 import {
-	selectCrossMarginBalanceInfo,
 	selectPosition,
 	selectFuturesType,
 	selectSelectedInputDenomination,
@@ -26,7 +25,7 @@ type MarginInputProps = {
 const MarginInput: React.FC<MarginInputProps> = memo(({ disabled, isMobile }) => {
 	const dispatch = useAppDispatch();
 
-	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+	const idleMargin = useAppSelector(selectIdleMargin);
 	const position = useAppSelector(selectPosition);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
@@ -34,16 +33,14 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ disabled, isMobile }) =>
 	const maxMargin = useAppSelector(selectIdleMargin);
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		dispatch(setCrossMarginMarginDelta(v));
+		dispatch(editCrossMarginMarginDelta(v));
 	};
 
 	const isDisabled = useMemo(() => {
 		const remaining =
-			selectedAccountType === 'isolated_margin'
-				? position?.remainingMargin || zeroBN
-				: freeCrossMargin;
+			selectedAccountType === 'isolated_margin' ? position?.remainingMargin || zeroBN : idleMargin;
 		return remaining.lte(0) || disabled;
-	}, [position?.remainingMargin, disabled, selectedAccountType, freeCrossMargin]);
+	}, [position?.remainingMargin, disabled, selectedAccountType, idleMargin]);
 
 	const invalid =
 		assetInputType === 'usd' &&

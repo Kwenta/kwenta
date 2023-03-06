@@ -606,17 +606,17 @@ export const selectNextPriceDisclaimer = createSelector(
 
 export const selectPlaceOrderTranslationKey = createSelector(
 	selectPosition,
+	selectCrossMarginMarginDelta,
+	selectCrossMarginBalanceInfo,
 	selectFuturesType,
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].orderType,
-	selectCrossMarginBalanceInfo,
 	selectIsMarketCapReached,
-	(position, selectedType, orderType, { freeMargin }, isMarketCapReached) => {
+	(position, marginDelta, { freeMargin }, selectedType, orderType, isMarketCapReached) => {
 		let remainingMargin;
 		if (selectedType === 'isolated_margin') {
 			remainingMargin = position?.remainingMargin || zeroBN;
 		} else {
-			const positionMargin = position?.remainingMargin || zeroBN;
-			remainingMargin = positionMargin.add(freeMargin);
+			remainingMargin = marginDelta;
 		}
 
 		if (orderType === 'delayed' || orderType === 'delayed_offchain')
@@ -624,7 +624,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return remainingMargin.lt('50')
+		return remainingMargin.add(freeMargin).lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
 			: isMarketCapReached
 			? 'futures.market.trade.button.oi-caps-reached'

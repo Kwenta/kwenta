@@ -13,7 +13,6 @@ export default function OrderTypeSelector() {
 
 	return (
 		<SegmentedControl
-			styleType="check"
 			values={CROSS_MARGIN_ORDER_TYPES.map((o) => OrderNameByType[o])}
 			selectedIndex={CROSS_MARGIN_ORDER_TYPES.indexOf(orderType)}
 			onChange={(index: number) => {

@@ -109,9 +109,11 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 			invalidLabel: undefined,
 		},
 		settings: {
-			tradeFee: '0',
-			limitOrderFee: '0',
-			stopOrderFee: '0',
+			fees: {
+				base: '0',
+				limit: '0',
+				stop: '0',
+			},
 		},
 	},
 	isolatedMargin: {

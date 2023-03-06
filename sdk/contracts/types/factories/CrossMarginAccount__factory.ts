@@ -11,18 +11,24 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "addressResolver",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "marginAsset",
+        type: "address",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "constructor",
   },
   {
     inputs: [],
     name: "CannotPayFee",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ConditionalOrderInvalid",
     type: "error",
   },
   {
@@ -38,22 +44,6 @@ const _abi = [
   {
     inputs: [],
     name: "FailedMarginTransfer",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "balance",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "minimum",
-        type: "uint256",
-      },
-    ],
-    name: "InsufficientEthBalance",
     type: "error",
   },
   {
@@ -81,11 +71,6 @@ const _abi = [
       },
     ],
     name: "InvalidCommandType",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidMarginDelta",
     type: "error",
   },
   {
@@ -118,192 +103,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "conditionalOrderId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "enum IAccount.ConditionalOrderCancelledReason",
-        name: "reason",
-        type: "uint8",
-      },
-    ],
-    name: "ConditionalOrderCancelled",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "conditionalOrderId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "fillPrice",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "keeperFee",
-        type: "uint256",
-      },
-    ],
-    name: "ConditionalOrderFilled",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "conditionalOrderId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "marketKey",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "marginDelta",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "sizeDelta",
-        type: "int256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "targetPrice",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "enum IAccount.ConditionalOrderTypes",
-        name: "conditionalOrderType",
-        type: "uint8",
-      },
-      {
-        indexed: false,
-        internalType: "uint128",
-        name: "priceImpactDelta",
-        type: "uint128",
-      },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "reduceOnly",
-        type: "bool",
-      },
-    ],
-    name: "ConditionalOrderPlaced",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "Deposit",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "EthWithdraw",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "FeeImposed",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: false,
         internalType: "uint8",
         name: "version",
@@ -330,31 +129,6 @@ const _abi = [
       },
     ],
     name: "OwnershipTransferred",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "Withdraw",
     type: "event",
   },
   {
@@ -417,19 +191,6 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "cancelConditionalOrder",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_conditionalOrderId",
-        type: "uint256",
-      },
-    ],
     name: "checker",
     outputs: [
       {
@@ -470,19 +231,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "deposit",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -783,55 +531,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "int256",
-        name: "_marginDelta",
-        type: "int256",
-      },
-      {
-        internalType: "int256",
-        name: "_sizeDelta",
-        type: "int256",
-      },
-      {
-        internalType: "uint256",
-        name: "_targetPrice",
-        type: "uint256",
-      },
-      {
-        internalType: "enum IAccount.ConditionalOrderTypes",
-        name: "_conditionalOrderType",
-        type: "uint8",
-      },
-      {
-        internalType: "uint128",
-        name: "_priceImpactDelta",
-        type: "uint128",
-      },
-      {
-        internalType: "bool",
-        name: "_reduceOnly",
-        type: "bool",
-      },
-    ],
-    name: "placeConditionalOrder",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "settings",
     outputs: [
@@ -853,32 +552,6 @@ const _abi = [
       },
     ],
     name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "withdraw",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "withdrawEth",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

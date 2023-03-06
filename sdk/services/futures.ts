@@ -48,6 +48,9 @@ import {
 	ModifyPositionOptions,
 	AccountExecuteFunctions,
 	MarginTransfer,
+	MarketWithIdleMargin,
+	SmartMarginOrderInputs,
+	ConditionalOrderTypeEnum,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -236,6 +239,7 @@ export default class FuturesService {
 	}
 
 	// TODO: types
+	// TODO: Improve the API for fetching positions
 	public async getFuturesPositions(
 		address: string, // Cross margin or EOA address
 		futuresMarkets: { asset: FuturesMarketAsset; marketKey: FuturesMarketKey; address: string }[]
@@ -496,9 +500,11 @@ export default class FuturesService {
 		};
 
 		return {
-			tradeFee: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : wei(0),
-			limitOrderFee: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
-			stopOrderFee: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
+			fees: {
+				base: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : wei(0),
+				limit: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
+				stop: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
+			},
 		};
 	}
 
@@ -611,6 +617,55 @@ export default class FuturesService {
 		return response ? mapTrades(response) : [];
 	}
 
+	public async getIdleMargin(eoa: string, account?: string) {
+		const markets = this.markets ?? (await this.getMarkets());
+		const marketParams =
+			markets?.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market })) ?? [];
+		const positions = await this.getFuturesPositions(account ?? eoa, marketParams);
+		const positionsWithIdleMargin = positions.filter(
+			(p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0)
+		);
+		const idleInMarkets = positionsWithIdleMargin.reduce(
+			(acc, p) => acc.add(p.remainingMargin),
+			wei(0)
+		);
+		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(eoa);
+		return {
+			total: idleInMarkets.add(susdWalletBalance),
+			marketsTotal: idleInMarkets,
+			walletTotal: susdWalletBalance,
+			marketsWithMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
+				const market = markets.find((m) => m.marketKey === p.marketKey);
+				if (market) {
+					acc.push({
+						marketAddress: market.market,
+						marketKey: market.marketKey,
+						position: p,
+					});
+				}
+				return acc;
+			}, []),
+		};
+	}
+
+	public async calculateSmartMarginFee(
+		marketKey: FuturesMarketKey,
+		sizeDelta: Wei,
+		orderType?: ConditionalOrderTypeEnum
+	) {
+		const settings = await this.getCrossMarginSettings();
+		const baseRate = settings.fees.base;
+		const rate = this.sdk.prices.getOffchainPrice(marketKey);
+		const conditional =
+			orderType === ConditionalOrderTypeEnum.STOP
+				? settings.fees.stop
+				: ConditionalOrderTypeEnum.LIMIT
+				? settings.fees.limit
+				: wei(0);
+		const fee = sizeDelta.mul(baseRate.add(conditional));
+		return fee.mul(rate);
+	}
+
 	// Contract mutations
 
 	public async approveCrossMarginDeposit(
@@ -625,21 +680,27 @@ export default class FuturesService {
 	}
 
 	public async depositCrossMargin(crossMarginAddress: string, amount: Wei) {
-		// TODO: Store on instance
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
-		return crossMarginAccountContract.deposit(amount.toBN());
+
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
+			[defaultAbiCoder.encode(['int256'], [amount.toBN()])],
+		]);
 	}
 
 	public async withdrawCrossMargin(crossMarginAddress: string, amount: Wei) {
-		// TODO: Store on instance
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
-		return crossMarginAccountContract.withdraw(amount.toBN());
+
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
+			[defaultAbiCoder.encode(['int256'], [amount.neg().toBN()])],
+		]);
 	}
 
 	public async depositIsolatedMargin(marketAddress: string, amount: Wei) {
@@ -733,20 +794,9 @@ export default class FuturesService {
 			key: FuturesMarketKey;
 			address: string;
 		},
+		walletAddress: string,
 		crossMarginAddress: string,
-		order: {
-			type: CrossMarginOrderType;
-			sizeDelta: Wei;
-			marginDelta: Wei;
-			priceImpactDelta: Wei;
-			timeDelta?: Wei;
-			conditionalOrderInputs?: {
-				price: Wei;
-				feeCap: Wei;
-				keeperEthDeposit: Wei;
-				reduceOnly: boolean;
-			};
-		}
+		order: SmartMarginOrderInputs
 	) {
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
@@ -754,49 +804,80 @@ export default class FuturesService {
 		);
 		const commands = [];
 		const inputs = [];
-		if (order.marginDelta.gt(0)) {
-			commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
-			inputs.push(
-				defaultAbiCoder.encode(['address', 'uint256'], [market.address, order.marginDelta.toBN()])
-			);
+
+		const idleMargin = await this.getIdleMargin(walletAddress, crossMarginAddress);
+
+		// Sweep idle margin from markets to account
+		if (idleMargin.marketsTotal.gt(0)) {
+			idleMargin.marketsWithMargin.forEach((m) => {
+				commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
+				inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
+			});
 		}
 
-		if (order.type === 'market') {
-			if (order.sizeDelta.abs().gt(0)) {
-				commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
+		// TODO: Work out how best to subtract fee, do we just let the client manage this instead?
+		const fee = await this.calculateSmartMarginFee(
+			market.key,
+			order.sizeDelta.abs(),
+			order.conditionalOrderInputs?.orderType
+		);
+		// Add a 2% buffer because the price could change
+		const feeWithBuffer = fee.add(fee.mul(0.02));
+		// Need to subtract the fee so we leave enough in the accoun to pay it
+		const marginDeltaMinusFees = order.marginDelta.sub(feeWithBuffer);
 
+		if (order.marginDelta.gt(0)) {
+			const depositAmount = order.marginDelta.gt(idleMargin.marketsTotal)
+				? order.marginDelta.sub(idleMargin.marketsTotal).abs()
+				: wei(0);
+			if (depositAmount.gt(0)) {
+				commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
+				inputs.push(defaultAbiCoder.encode(['int256'], [depositAmount.toBN()]));
+			}
+		}
+
+		if (order.sizeDelta.abs().gt(0)) {
+			if (!order.conditionalOrderInputs) {
+				commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
+				inputs.push(
+					defaultAbiCoder.encode(
+						['address', 'int256'],
+						[market.address, marginDeltaMinusFees.toBN()]
+					)
+				);
+				commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
 				inputs.push(
 					defaultAbiCoder.encode(
 						['address', 'int256', 'uint256'],
 						[market.address, order.sizeDelta.toBN(), order.priceImpactDelta.toBN()]
 					)
 				);
+			} else {
+				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+				inputs.push(
+					defaultAbiCoder.encode(
+						['bytes32', 'int256', 'int256', 'uint256', 'uint256', 'uint128', 'bool'],
+						[
+							formatBytes32String(market.key),
+							marginDeltaMinusFees.sub(5).toBN(),
+							order.sizeDelta.toBN(),
+							order.conditionalOrderInputs!.price.toBN(),
+							order.conditionalOrderInputs.orderType,
+							order.priceImpactDelta.toBN(),
+							order.conditionalOrderInputs!.reduceOnly,
+						]
+					)
+				);
 			}
-
-			return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-				commands,
-				inputs,
-			]);
 		}
-		if ((order.type === 'limit' || order.type === 'stop_market') && !order.conditionalOrderInputs) {
-			throw new Error('Missing inputs for advanced order');
-		}
-
-		const enumType = order.type === 'limit' ? 0 : 1;
 
 		return this.sdk.transactions.createContractTxn(
 			crossMarginAccountContract,
-			'placeConditionalOrder',
-			[
-				formatBytes32String(market.key),
-				order.marginDelta.toBN(),
-				order.sizeDelta.toBN(),
-				order.conditionalOrderInputs?.price.toBN() ?? '0',
-				enumType,
-				order.conditionalOrderInputs?.feeCap.toBN() ?? '0',
-				order.conditionalOrderInputs?.reduceOnly,
-			],
-			{ value: order.conditionalOrderInputs?.keeperEthDeposit.toBN() ?? '0' }
+			'execute',
+			[commands, inputs],
+			{
+				value: order.conditionalOrderInputs?.keeperEthDeposit.toBN() ?? '0',
+			}
 		);
 	}
 

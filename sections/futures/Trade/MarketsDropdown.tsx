@@ -91,7 +91,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				priceNum: basePriceRate?.price.toNumber() ?? 0,
 				price: formatDollars(basePriceRate?.price ?? '0', { suggestDecimals: true }),
 				change:
-					basePriceRate && pastPrice?.rate
+					basePriceRate && pastPrice?.rate && basePriceRate.price.gt(0)
 						? wei(basePriceRate.price).sub(pastPrice?.rate).div(basePriceRate.price)
 						: zeroBN,
 				priceDirection: basePriceRate?.change ?? null,
@@ -115,7 +115,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				closureReason={futuresClosureReason}
 				priceDetails={{
 					oneDayChange:
-						selectedBasePriceRate?.price && selectedPastPrice?.rate
+						selectedBasePriceRate?.price &&
+						selectedPastPrice?.rate &&
+						selectedBasePriceRate.price.gt(0)
 							? wei(selectedBasePriceRate.price)
 									.sub(selectedPastPrice.rate)
 									.div(selectedBasePriceRate.price)

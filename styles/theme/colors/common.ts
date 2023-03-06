@@ -68,6 +68,7 @@ export const palette = {
 		n700: '#2b2924',
 		n800: '#1d1a15',
 		n900: '#110e09',
+		n1000: '#0D0B08',
 	},
 	gradient: {
 		gold: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',

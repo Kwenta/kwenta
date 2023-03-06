@@ -120,12 +120,11 @@ const ProtocolFeeRow = memo(() => {
 const LimitStopFeeRow = memo(() => {
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
 	const orderType = useAppSelector(selectOrderType);
-	const { limitOrderFee, stopOrderFee } = useAppSelector(selectCrossMarginSettings);
+	const { fees } = useAppSelector(selectCrossMarginSettings);
 
 	const orderFeeRate = useMemo(
-		() =>
-			orderType === 'limit' ? limitOrderFee : orderType === 'stop_market' ? stopOrderFee : null,
-		[orderType, stopOrderFee, limitOrderFee]
+		() => (orderType === 'limit' ? fees.limit : orderType === 'stop_market' ? fees.stop : null),
+		[orderType, fees]
 	);
 
 	return (
@@ -144,7 +143,9 @@ const LimitStopFeeRow = memo(() => {
 
 const CrossMarginFeeRow = memo(() => {
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
-	const { tradeFee: crossMarginTradeFeeRate } = useAppSelector(selectCrossMarginSettings);
+	const {
+		fees: { base: crossMarginTradeFeeRate },
+	} = useAppSelector(selectCrossMarginSettings);
 
 	return (
 		<InfoBoxRow

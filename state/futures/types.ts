@@ -107,9 +107,11 @@ export type CrossMarginBalanceInfo<T = Wei> = {
 };
 
 export type CrossMarginSettings<T = Wei> = {
-	tradeFee: T;
-	limitOrderFee: T;
-	stopOrderFee: T;
+	fees: {
+		base: T;
+		limit: T;
+		stop: T;
+	};
 };
 
 export type CrossMarginTradeFees<T = Wei> = {

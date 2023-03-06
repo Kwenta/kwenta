@@ -10,7 +10,6 @@ import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { FuturesAccountType } from 'queries/futures/types';
 import { TransactionStatus } from 'sdk/types/common';
 import {
-	CrossMarginOrderType,
 	DelayedOrder,
 	FuturesMarket,
 	ConditionalOrder,
@@ -23,6 +22,8 @@ import {
 	OrderEnumByType,
 	PositionSide,
 	PotentialTradeStatus,
+	SmartMarginOrderInputs,
+	ConditionalOrderTypeEnum,
 } from 'sdk/types/futures';
 import {
 	calculateCrossMarginFee,
@@ -45,7 +46,7 @@ import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeMarketFee } from 'utils/costCalculations';
-import { stipZeros } from 'utils/formatters/number';
+import { floorNumber, stipZeros } from 'utils/formatters/number';
 import {
 	calculateMarginDelta,
 	formatDelayedOrders,
@@ -525,6 +526,27 @@ export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	}
 );
 
+export const editCrossMarginMarginDelta = (marginDelta: string): AppThunk => (
+	dispatch,
+	getState
+) => {
+	const { susdSize } = selectCrossMarginTradeInputs(getState());
+	if (!marginDelta || Number(marginDelta) === 0) {
+		dispatch(setCrossMarginMarginDelta(marginDelta));
+		dispatch(setCrossMarginTradePreview(null));
+		return;
+	}
+
+	const marginDelatWei = wei(marginDelta);
+	const leverage = wei(susdSize).div(marginDelatWei.abs());
+
+	dispatch(setCrossMarginMarginDelta(marginDelta));
+	if (!leverage.eq(0)) {
+		dispatch(setLeverageInput(leverage.toString(2)));
+	}
+	dispatch(stageCrossMarginSizeChange());
+};
+
 export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'): AppThunk => (
 	dispatch,
 	getState
@@ -543,8 +565,9 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 		dispatch(setCrossMarginTradePreview(null));
 		return;
 	}
-	const nativeSize = currencyType === 'native' ? size : wei(size).div(price).toString();
-	const usdSize = currencyType === 'native' ? price.mul(size).toString() : size;
+	const nativeSize =
+		currencyType === 'native' ? size : String(floorNumber(wei(size).div(price), 4));
+	const usdSize = currencyType === 'native' ? String(floorNumber(price.mul(size), 4)) : size;
 	const leverage = marginDelta?.gt(0) ? wei(usdSize).div(marginDelta.abs()) : '0';
 
 	dispatch(
@@ -795,7 +818,7 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 		? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
 		: wei(0);
 
-	const crossMarginFee = susdSize.mul(settings.tradeFee);
+	const crossMarginFee = susdSize.mul(settings.fees.base);
 	const limitStopOrderFee = calculateCrossMarginFee(orderType, susdSize, settings);
 
 	const fees = {
@@ -1122,10 +1145,12 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const orderPrice = selectCrossMarginOrderPrice(getState());
 		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
 		const priceImpact = selectIsolatedPriceImpact(getState());
+		const wallet = selectWallet(getState());
 
 		try {
 			if (!marketInfo) throw new Error('Market info not found');
 			if (!account) throw new Error('No cross margin account found');
+			if (!wallet) throw new Error('No wallet connected');
 
 			dispatch(
 				setTransaction({
@@ -1134,21 +1159,28 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 					hash: null,
 				})
 			);
+
+			const orderInputs: SmartMarginOrderInputs = {
+				sizeDelta: tradeInputs.nativeSizeDelta,
+				marginDelta: marginDelta,
+				priceImpactDelta: priceImpact,
+			};
+
+			if (orderType !== 'market') {
+				orderInputs['conditionalOrderInputs'] = {
+					orderType:
+						orderType === 'limit' ? ConditionalOrderTypeEnum.LIMIT : ConditionalOrderTypeEnum.STOP,
+					keeperEthDeposit,
+					feeCap,
+					price: wei(orderPrice || '0'),
+					reduceOnly: false,
+				};
+			}
 			const tx = await sdk.futures.submitCrossMarginOrder(
 				{ address: marketInfo.market, key: marketInfo.marketKey },
+				wallet,
 				account,
-				{
-					type: orderType as CrossMarginOrderType, // TODO: A better way handle isolated and cross margin order types
-					sizeDelta: tradeInputs.nativeSizeDelta,
-					marginDelta: marginDelta,
-					priceImpactDelta: priceImpact,
-					conditionalOrderInputs: {
-						keeperEthDeposit,
-						feeCap,
-						price: wei(orderPrice || '0'),
-						reduceOnly: false,
-					},
-				}
+				orderInputs
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));

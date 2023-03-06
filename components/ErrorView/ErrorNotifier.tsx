@@ -5,26 +5,26 @@ import styled, { useTheme } from 'styled-components';
 import ErrorIcon from 'assets/svg/app/error.svg';
 import { truncateString } from 'utils/formatters/string';
 
-function ToastContent({ message, error }: { message: string; error?: Error }) {
+function ToastContent({ message, errorDetails }: { message: string; errorDetails?: string }) {
 	const [expanded, setExpanded] = useState(false);
-	if (!error) return <>{message}</>;
+	if (!errorDetails) return <>{message}</>;
 	return (
 		<div>
 			<div>{message}</div>
 			<TextButton onClick={() => setExpanded(!expanded)}>
 				{expanded ? 'Hide' : 'Show'} Details
 			</TextButton>
-			{expanded ? <ErrorDetails>{error.message}</ErrorDetails> : null}
+			{expanded ? <ErrorDetails>{errorDetails}</ErrorDetails> : null}
 		</div>
 	);
 }
 
 export const notifyError = (message: string, error?: Error) => {
-	const formatted = formatError(message);
-	const truncated = truncateString(formatted);
-	toast.error(<ToastContent message={truncated} error={error} />, {
+	const friendlyError = formatError(error?.message);
+	const truncated = truncateString(message);
+	toast.error(<ToastContent message={truncated} errorDetails={friendlyError} />, {
 		position: toast.POSITION.TOP_RIGHT,
-		toastId: truncated,
+		toastId: message,
 		containerId: 'errors',
 	});
 };
@@ -49,10 +49,11 @@ export default function ErrorNotifier() {
 }
 
 // TODO: Format more errors, especially transaction failures
-const formatError = (message: string) => {
+const formatError = (message?: string) => {
 	if (!message) return '';
 	if (message.includes('insufficient funds for intrinsic transaction cost'))
 		return 'Insufficient ETH balance for gas cost';
+	if (message.includes('execution reverted: previous order')) return 'Previous order still pending';
 	return message;
 };
 

@@ -25,8 +25,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
-import OrderSizeSlider from './OrderSizeSlider';
-
 type OrderSizingProps = {
 	isMobile?: boolean;
 	disabled?: boolean;
@@ -144,7 +142,6 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 					onChange={onChangeValue}
 				/>
 			</OrderSizingContainer>
-			{selectedAccountType === 'cross_margin' && <OrderSizeSlider />}
 		</>
 	);
 });

@@ -100,6 +100,10 @@ const ManagePosition: React.FC = () => {
 		if (susdSize.gt(maxUsdInputAmount)) return 'max_size_exceeded';
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
 			return 'min_margin_required';
+
+		if (isZero(susdSize)) {
+			return 'size_required';
+		}
 		if (selectedAccountType === 'cross_margin') {
 			if ((isZero(marginDelta) && isZero(susdSize)) || previewStatus.status !== FetchStatus.Success)
 				return 'awaiting_preview';
@@ -107,8 +111,6 @@ const ManagePosition: React.FC = () => {
 		} else if (selectedAccountType === 'isolated_margin') {
 			if ((orderType === 'delayed' || orderType === 'delayed_offchain') && !!openOrder)
 				return 'order_open';
-		} else if (isZero(susdSize)) {
-			return 'size_required';
 		}
 
 		return null;

@@ -126,6 +126,22 @@ const newTheme = {
 			},
 		},
 	},
+	tabs: {
+		position: {
+			background: common.palette.neutral.n900,
+			border: common.palette.neutral.n900,
+			color: common.palette.neutral.n900,
+			hover: {
+				background: common.palette.neutral.n800,
+			},
+			long: {
+				color: common.palette.green.g600,
+			},
+			short: {
+				color: common.palette.red.r300,
+			},
+		},
+	},
 };
 
 const lightTheme = {

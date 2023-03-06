@@ -452,7 +452,6 @@ export const serializeFuturesOrders = (orders: ConditionalOrder[]): ConditionalO
 		size: o.size.toString(),
 		targetPrice: o.targetPrice?.toString() ?? null,
 		marginDelta: o.marginDelta.toString(),
-		targetRoundId: o.targetRoundId?.toString() ?? null,
 	}));
 };
 
@@ -494,24 +493,27 @@ export const unserializeFuturesOrders = (
 		size: wei(o.size),
 		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
 		marginDelta: wei(o.marginDelta),
-		targetRoundId: o.targetRoundId ? wei(o.targetRoundId) : null,
 	}));
 };
 
 export const serializeCrossMarginSettings = (
 	settings: CrossMarginSettings
 ): CrossMarginSettings<string> => ({
-	tradeFee: settings.tradeFee.toString(),
-	limitOrderFee: settings.limitOrderFee.toString(),
-	stopOrderFee: settings.stopOrderFee.toString(),
+	fees: {
+		base: settings.fees.base.toString(),
+		limit: settings.fees.limit.toString(),
+		stop: settings.fees.stop.toString(),
+	},
 });
 
 export const unserializeCrossMarginSettings = (
 	settings: CrossMarginSettings<string>
 ): CrossMarginSettings => ({
-	tradeFee: wei(settings.tradeFee),
-	limitOrderFee: wei(settings.limitOrderFee),
-	stopOrderFee: wei(settings.stopOrderFee),
+	fees: {
+		base: wei(settings.fees.base),
+		limit: wei(settings.fees.limit),
+		stop: wei(settings.fees.stop),
+	},
 });
 
 export const unserializeGasEstimate = (

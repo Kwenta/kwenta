@@ -58,7 +58,6 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 
 			<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
 
-			<Spacer height={8} />
 			{accountType === 'cross_margin' && <OrderTypeSelector />}
 
 			{accountType === 'cross_margin' && <MarginInput />}

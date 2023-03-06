@@ -454,8 +454,7 @@ export const calculateCrossMarginFee = (
 	feeRates: CrossMarginSettings
 ) => {
 	if (orderType !== 'limit' && orderType !== 'stop_market') return zeroBN;
-	const conditionalOrderFeeRate =
-		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
+	const conditionalOrderFeeRate = orderType === 'limit' ? feeRates.fees.limit : feeRates.fees.stop;
 	return susdSize.mul(conditionalOrderFeeRate);
 };
 
@@ -496,7 +495,6 @@ export const mapFuturesOrderFromEvent = (
 		marketKey: marketKey,
 		market: getMarketName(asset),
 		asset: asset,
-		targetRoundId: wei(0), // Only used for next price which is no longer supported
 		side: sizeDelta.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 		isStale: false,
 		isExecutable: false,
