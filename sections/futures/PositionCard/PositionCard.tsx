@@ -1,9 +1,10 @@
 import Wei from '@synthetixio/wei';
-import React from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import ColoredPrice from 'components/ColoredPrice';
+import InfoBox, { DetailedInfo } from 'components/InfoBox/InfoBox';
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
 import { Body } from 'components/Text';
@@ -71,7 +72,7 @@ type PositionPreviewData = {
 	showStatus: boolean;
 };
 
-const PositionCard: React.FC<PositionCardProps> = () => {
+const PositionCard: FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -97,7 +98,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 
 	const modifiedAverage = useAverageEntryPrice(thisPositionHistory);
 
-	const previewData: PositionPreviewData = React.useMemo(() => {
+	const previewData: PositionPreviewData = useMemo(() => {
 		if (positionDetails === null || previewTradeData === null) {
 			return {} as PositionPreviewData;
 		}
@@ -126,6 +127,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		const realizedPnl =
 			thisPositionHistory?.pnl
 				.add(thisPositionHistory?.netFunding)
+				.add(positionDetails?.accruedFunding)
 				.sub(thisPositionHistory?.feesPaid) ?? zeroBN;
 		const realizedPnlPct = realizedPnl.abs().gt(0)
 			? realizedPnl.div(thisPositionHistory?.initialMargin.add(thisPositionHistory?.totalDeposits))
@@ -275,6 +277,38 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		minDecimals,
 	]);
 
+	const rpnlTooltipContent = useMemo(() => {
+		const feesPaid = thisPositionHistory?.feesPaid.neg() ?? zeroBN;
+		const fundingPaid =
+			thisPositionHistory?.netFunding.add(positionDetails?.accruedFunding) ?? zeroBN;
+		const priceAction = thisPositionHistory?.pnl ?? zeroBN;
+
+		const infoBoxDetails: Record<string, DetailedInfo> = {
+			'Price Action': {
+				value: formatDollars(priceAction, {
+					minDecimals: 2,
+				}),
+			},
+			Fees: {
+				value: formatDollars(feesPaid, {
+					minDecimals: 2,
+				}),
+			},
+			Funding: {
+				value: formatDollars(fundingPaid, {
+					minDecimals: 2,
+				}),
+			},
+		};
+
+		return (
+			<div>
+				<Body>{t('futures.market.position-card.tooltips.r-pnl')}</Body>
+				<StyledInfoBox details={infoBoxDetails} />
+			</div>
+		);
+	}, [t, thisPositionHistory, positionDetails]);
+
 	return (
 		<>
 			{openModal === 'futures_cross_leverage' && <EditLeverageModal editMode="existing_position" />}
@@ -335,7 +369,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 						)}
 					</InfoRow>
 					<InfoRow>
-						<PositionCardTooltip content={t('futures.market.position-card.tooltips.r-pnl')}>
+						<PositionCardTooltip content={rpnlTooltipContent}>
 							<SubtitleWithCursor>{t('futures.market.position-card.r-pnl')}</SubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
@@ -466,6 +500,10 @@ const StyledValue = styled(Body).attrs({ mono: true })`
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
+`;
+
+const StyledInfoBox = styled(InfoBox)`
+	margin-top: 4px;
 `;
 
 const PositionValue = styled.span<{ side?: PositionSide }>`
