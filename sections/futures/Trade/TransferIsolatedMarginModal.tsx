@@ -10,7 +10,7 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import { CardHeader } from 'components/Card';
 import Error from 'components/ErrorView';
-import CustomInput from 'components/Input/CustomInput';
+import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
@@ -157,7 +157,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 					<span>{formatDollars(susdBal)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
-			<CustomInput
+			<NumericInput
 				dataTestId="futures-market-trade-deposit-margin-input"
 				placeholder={PLACEHOLDER}
 				value={amount}

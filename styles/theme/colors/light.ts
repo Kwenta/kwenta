@@ -1,5 +1,133 @@
 import common from './common';
 
+const newTheme = {
+	button: {
+		default: {
+			border: common.palette.neutral.n80,
+			background: common.palette.neutral.n40,
+			color: common.palette.neutral.n900,
+			hover: {
+				background: common.palette.neutral.n30,
+			},
+		},
+		position: {
+			long: {
+				color: common.palette.green.g900,
+				active: {
+					background: common.palette.green.g500,
+					border: common.palette.green.g600,
+					color: common.palette.neutral.n900,
+				},
+				hover: {
+					background: common.palette.green.g600,
+					border: common.palette.green.g700,
+					color: common.palette.neutral.n0,
+				},
+			},
+			short: {
+				color: common.palette.red.r800,
+				active: {
+					background: common.palette.red.r400,
+					border: common.palette.red.r500,
+					color: common.palette.neutral.n900,
+				},
+				hover: {
+					background: common.palette.red.r300,
+					border: common.palette.red.r500,
+					color: common.palette.neutral.n900,
+				},
+			},
+		},
+	},
+	text: {
+		primary: common.palette.neutral.n900,
+		secondary: common.palette.neutral.n600,
+		tertiary: common.palette.neutral,
+		number: {
+			positive: common.palette.green.g800,
+			negative: common.palette.red.r700,
+			neutral: common.palette.neutral.n900,
+			preview: common.palette.yellow.y800,
+		},
+	},
+	pill: {
+		yellow: {
+			text: common.palette.yellow.y500,
+			background: common.palette.yellow.y1000,
+			border: common.palette.alpha.white10,
+			outline: {
+				background: 'transparent',
+				text: common.palette.yellow.y500,
+				border: common.palette.yellow.y500,
+			},
+			hover: {
+				background: common.palette.yellow.y500,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
+			},
+		},
+		gray: {
+			text: common.palette.neutral.n70,
+			background: common.palette.neutral.n700,
+			border: common.palette.neutral.n70,
+			outline: {
+				text: common.palette.neutral.n900,
+				background: common.palette.neutral.n20,
+				border: common.palette.neutral.n20,
+			},
+			hover: {
+				background: common.palette.neutral.n70,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
+			},
+		},
+		red: {
+			text: common.palette.red.r300,
+			background: common.palette.alpha.red10,
+			border: common.palette.red.r300,
+			outline: {
+				background: 'transparent',
+				text: common.palette.red.r300,
+				border: common.palette.red.r300,
+			},
+			hover: {
+				background: common.palette.red.r500,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
+			},
+		},
+	},
+	badge: {
+		yellow: {
+			text: common.palette.neutral.n900,
+			background: common.palette.yellow.y500,
+			dark: {
+				background: common.palette.yellow.y1000,
+				text: common.palette.yellow.y500,
+				border: common.palette.alpha.white10,
+			},
+		},
+		gray: {
+			text: common.palette.neutral.n900,
+			background: common.palette.neutral.n50,
+			dark: {
+				background: common.palette.neutral.n100,
+				text: common.palette.neutral.n900,
+				border: common.palette.alpha.white10,
+			},
+		},
+		red: {
+			text: common.palette.neutral.n900,
+			background: common.palette.red.r300,
+			dark: {
+				background: common.palette.alpha.red10,
+				text: common.palette.red.r300,
+				border: common.palette.alpha.white10,
+			},
+		},
+	},
+};
+
 const lightTheme = {
 	...common.light,
 	table: { fill: '#EEE', hover: '#E6E6E6' },
@@ -134,6 +262,7 @@ const lightTheme = {
 	socket: {
 		accent: `#d5d5d5`,
 	},
+	newTheme,
 };
 
 export default lightTheme;

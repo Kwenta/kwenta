@@ -7,6 +7,7 @@ import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
 import { FlexDivCentered } from 'components/layout/flex';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
+import { Body } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { GridContainer } from 'sections/homepage/section';
 import { ExternalLink } from 'styles/common';
@@ -120,7 +121,7 @@ const Footer = memo(() => {
 							<ListTitle>{title}</ListTitle>
 							{links.map(({ key, title, link }) => (
 								<StyledLink key={key} href={link} target="_blank">
-									<p>{title}</p>
+									<Body fontSize={18}>{title}</Body>
 								</StyledLink>
 							))}
 						</ListContainer>
@@ -137,7 +138,13 @@ const Footer = memo(() => {
 
 const StyledLink = styled.a`
 	cursor: pointer;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	p {
+		line-height: 1.5;
+		margin: 18px 0;
+		${media.lessThan('sm')`
+			font-size: 15px;
+		`};
+	}
 `;
 
 const CopyRight = styled.div`

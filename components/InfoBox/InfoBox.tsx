@@ -1,121 +1,75 @@
-import { memo, FC, useState, useCallback } from 'react';
+import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
-import * as Text from 'components/Text';
+import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 
-export type DetailedInfo = {
-	value: string | React.ReactNode;
+type InfoBoxRowProps = {
+	title: string;
+	value: React.ReactNode;
 	keyNode?: React.ReactNode;
 	valueNode?: React.ReactNode;
-	color?: 'green' | 'red' | 'gold' | undefined;
 	spaceBeneath?: boolean;
 	compactBox?: boolean;
-	expandable?: boolean;
-	subItems?: Record<string, DetailedInfo>;
-};
-
-type InfoBoxProps = {
-	details: Record<string, DetailedInfo | null | undefined>;
-	style?: React.CSSProperties;
-	className?: string;
+	color?: 'green' | 'red' | 'gold' | undefined;
 	disabled?: boolean;
 	dataTestId?: string;
-};
-
-const InfoBox: FC<InfoBoxProps> = memo(({ details, disabled, dataTestId, ...props }) => {
-	const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-
-	const onToggleExpand = useCallback(
-		(key: string) => {
-			expandedRows.has(key) ? expandedRows.delete(key) : expandedRows.add(key);
-			setExpandedRows(new Set([...expandedRows]));
-		},
-		[expandedRows]
-	);
-
-	return (
-		<InfoBoxContainer {...props}>
-			{Object.entries(details).map(([key, value], index) => (
-				<>
-					<InfoBoxValue
-						key={key}
-						title={key}
-						value={value}
-						disabled={disabled}
-						dataTestId={`${dataTestId}-${index}`}
-						expandable={!!value?.subItems}
-						expanded={expandedRows.has(key)}
-						onToggleExpand={onToggleExpand}
-					/>
-					{value?.subItems && expandedRows.has(key)
-						? Object.entries(value.subItems).map(([key, value], index) => (
-								<InfoBoxValue
-									key={key}
-									title={key}
-									value={value}
-									disabled={disabled}
-									dataTestId={`${dataTestId}-${index}`}
-									isSubtItem
-								/>
-						  ))
-						: null}
-				</>
-			))}
-		</InfoBoxContainer>
-	);
-});
-
-type InfoBoxValueProps = {
-	title: string;
-	value?: DetailedInfo | null;
-	disabled?: boolean;
-	dataTestId: string;
 	expandable?: boolean;
 	expanded?: boolean;
-	isSubtItem?: boolean;
+	isSubItem?: boolean;
 	onToggleExpand?: (key: string) => void;
 };
 
-const InfoBoxValue: FC<InfoBoxValueProps> = memo(
-	({ title, value, disabled, dataTestId, expandable, expanded, isSubtItem, onToggleExpand }) => {
-		if (!value) return null;
-
-		return (
-			<>
-				{value.compactBox ? (
-					value.keyNode
-				) : (
-					<Row
-						isSubtItem={isSubtItem}
-						onClick={expandable ? () => onToggleExpand?.(title) : undefined}
+export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
+	({
+		title,
+		value,
+		keyNode,
+		compactBox,
+		disabled,
+		dataTestId,
+		expandable,
+		expanded,
+		isSubItem,
+		onToggleExpand,
+		children,
+		color,
+		valueNode,
+		spaceBeneath,
+	}) => (
+		<>
+			{compactBox ? (
+				keyNode
+			) : (
+				<Row
+					$isSubItem={isSubItem}
+					onClick={expandable ? () => onToggleExpand?.(title) : undefined}
+				>
+					<InfoBoxKey>
+						{title}: {keyNode} {expandable ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
+					</InfoBoxKey>
+					<ValueText
+						$isSubItem={isSubItem}
+						data-testid={dataTestId}
+						$disabled={disabled}
+						$color={color}
 					>
-						<InfoBoxKey>
-							{title}: {value.keyNode}{' '}
-							{expandable ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
-						</InfoBoxKey>
-						<ValueText
-							isSubtItem={isSubtItem}
-							data-testid={dataTestId}
-							$disabled={disabled}
-							$color={value.color}
-						>
-							{disabled ? NO_VALUE : value.value}
-							{value.valueNode}
-						</ValueText>
-					</Row>
-				)}
-				{value?.spaceBeneath && <br />}
-			</>
-		);
-	}
+						{disabled ? NO_VALUE : value}
+						{valueNode}
+					</ValueText>
+				</Row>
+			)}
+			{spaceBeneath && <br />}
+			{expandable && expanded && children}
+		</>
+	)
 );
 
-const Row = styled.div<{ onClick?: (title: string) => void; isSubtItem?: boolean }>`
+const Row = styled.div<{ $isSubItem?: boolean }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
-	padding-left: ${(props) => (props.isSubtItem ? '10px' : '0')};
-	border-left: ${(props) => (props.isSubtItem ? props.theme.colors.selectedTheme.border : '0')};
+	padding-left: ${(props) => (props.$isSubItem ? '10px' : '0')};
+	border-left: ${(props) => (props.$isSubItem ? props.theme.colors.selectedTheme.border : '0')};
 	border-width: 2px;
 	display: flex;
 	justify-content: space-between;
@@ -125,7 +79,7 @@ const Row = styled.div<{ onClick?: (title: string) => void; isSubtItem?: boolean
 	}
 `;
 
-const InfoBoxContainer = styled.div`
+export const InfoBoxContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
 	padding: 14px;
@@ -133,23 +87,18 @@ const InfoBoxContainer = styled.div`
 	width: 100%;
 `;
 
-const InfoBoxKey = styled(Text.Body)`
+const InfoBoxKey = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
-	font-size: 13px;
 	text-transform: capitalize;
 `;
 
-const ValueText = styled(Text.Body)<{
+const ValueText = styled(Body).attrs({ mono: true })<{
 	$disabled?: boolean;
-	$color?: DetailedInfo['color'];
-	isSubtItem?: boolean;
+	$color?: InfoBoxRowProps['color'];
+	$isSubItem?: boolean;
 }>`
-	color: ${(props) =>
-		props.isSubtItem
-			? props.theme.colors.selectedTheme.text.label
-			: props.theme.colors.selectedTheme.text.value};
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
+	color: ${(props) => props.theme.colors.selectedTheme.text[props.$isSubItem ? 'label' : 'value']};
+	cursor: default;
 
 	${(props) =>
 		props.$color === 'red' &&
@@ -184,5 +133,3 @@ const HideIcon = styled(ExpandIcon)`
 	transform: rotate(180deg);
 	margin-bottom: -4px;
 `;
-
-export default InfoBox;

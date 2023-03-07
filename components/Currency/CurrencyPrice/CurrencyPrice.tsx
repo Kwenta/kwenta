@@ -1,14 +1,11 @@
-import Wei, { wei } from '@synthetixio/wei';
-import { ethers } from 'ethers';
+import { wei, WeiSource } from '@synthetixio/wei';
 import React, { FC, memo } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
 import { ContainerRowMixin } from 'components/layout/grid';
 import { CurrencyKey } from 'constants/currency';
 import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
-
-type WeiSource = Wei | number | string | ethers.BigNumber;
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
@@ -16,9 +13,10 @@ type CurrencyPriceProps = {
 	price: WeiSource;
 	sign?: string;
 	change?: number;
-	conversionRate?: WeiSource | null;
+	conversionRate?: WeiSource;
 	formatOptions?: FormatCurrencyOptions;
 	truncate?: boolean;
+	side?: 'positive' | 'negative';
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
@@ -30,6 +28,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		conversionRate,
 		showCurrencyKey,
 		formatOptions,
+		side,
 		truncate = false,
 		...rest
 	}) => {
@@ -41,7 +40,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		}
 
 		return (
-			<Container {...rest}>
+			<Container $side={side} {...rest}>
 				<span className="price">
 					{formatCurrency(
 						currencyKey,
@@ -59,10 +58,15 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 	}
 );
 
-const Container = styled.span`
+const Container = styled.span<{ $side?: 'positive' | 'negative' }>`
 	${ContainerRowMixin};
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	${(props) =>
+		!!props.$side &&
+		css`
+			color: ${props.theme.colors.selectedTheme.newTheme.text.number[props.$side]};
+		`}
 `;
 
 export default CurrencyPrice;

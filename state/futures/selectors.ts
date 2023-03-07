@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
@@ -11,7 +11,7 @@ import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
-import { sameSide } from 'utils/costCalculations';
+import { computeOrderFee, sameSide } from 'utils/costCalculations';
 import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import {
@@ -30,7 +30,13 @@ import {
 	unserializeFuturesOrders,
 } from 'utils/futures';
 
-import { FuturesAction, FuturesPortfolio, MarkPrices, futuresPositionKeys } from './types';
+import {
+	FuturesAction,
+	FuturesPortfolio,
+	MarkPrices,
+	futuresPositionKeys,
+	MarkPriceInfos,
+} from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -213,6 +219,24 @@ export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (mar
 	}, markPrices);
 });
 
+export const selectMarkPriceInfos = createSelector(
+	selectMarkets,
+	selectOffchainPricesInfo,
+	(markets, prices) => {
+		const markPrices: MarkPriceInfos = {};
+		return markets.reduce((acc, market) => {
+			const price = prices[market.asset]?.price ?? wei(0);
+			return {
+				...acc,
+				[market.marketKey]: {
+					price: wei(price).mul(wei(market.marketSkew).div(market.settings.skewScale).add(1)),
+					change: prices[market.asset]?.change ?? null,
+				},
+			};
+		}, markPrices);
+	}
+);
+
 export const selectFuturesAccount = createSelector(
 	selectFuturesType,
 	selectWallet,
@@ -234,11 +258,45 @@ export const selectCrossMarginPositions = createSelector(
 	}
 );
 
+export const selectPositionHistory = createSelector(
+	selectFuturesType,
+	selectCrossMarginAccountData,
+	selectIsolatedAccountData,
+	(type, crossAccountData, isolatedAccountData) => {
+		if (type === 'cross_margin') {
+			return unserializePositionHistory(crossAccountData?.positionHistory ?? []);
+		} else {
+			return unserializePositionHistory(isolatedAccountData?.positionHistory ?? []);
+		}
+	}
+);
+
+export const selectSelectedMarketPositionHistory = createSelector(
+	selectMarketAsset,
+	selectPositionHistory,
+	(marketAsset, positionHistory) => {
+		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
+	}
+);
+
+export const selectPositionHistoryForSelectedTrader = createSelector(
+	selectNetwork,
+	(state: RootState) => state.futures,
+	(networkId, futures) => {
+		const { selectedTrader } = futures.leaderboard;
+		if (!selectedTrader) return [];
+		const history =
+			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? [];
+		return unserializePositionHistory(history);
+	}
+);
+
 export const selectIsolatedMarginPositions = createSelector(
 	selectMarkPrices,
 	selectIsolatedAccountData,
-	(prices, account) => {
-		return account?.positions?.map((p) => updatePositionUpnl(p, prices)) ?? [];
+	selectPositionHistory,
+	(prices, account, positionHistory) => {
+		return account?.positions?.map((p) => updatePositionUpnl(p, prices, positionHistory)) ?? [];
 	}
 );
 
@@ -780,38 +838,6 @@ export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets)
 		wei(0)
 	)
 );
-export const selectPositionHistory = createSelector(
-	selectFuturesType,
-	selectCrossMarginAccountData,
-	selectIsolatedAccountData,
-	(type, crossAccountData, isolatedAccountData) => {
-		if (type === 'cross_margin') {
-			return unserializePositionHistory(crossAccountData?.positionHistory ?? []);
-		} else {
-			return unserializePositionHistory(isolatedAccountData?.positionHistory ?? []);
-		}
-	}
-);
-
-export const selectSelectedMarketPositionHistory = createSelector(
-	selectMarketAsset,
-	selectPositionHistory,
-	(marketAsset, positionHistory) => {
-		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
-	}
-);
-
-export const selectPositionHistoryForSelectedTrader = createSelector(
-	selectNetwork,
-	(state: RootState) => state.futures,
-	(networkId, futures) => {
-		const { selectedTrader } = futures.leaderboard;
-		if (!selectedTrader) return [];
-		const history =
-			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? [];
-		return unserializePositionHistory(history);
-	}
-);
 
 export const selectUsersTradesForMarket = createSelector(
 	selectFuturesType,
@@ -924,6 +950,15 @@ export const selectHasRemainingMargin = createSelector(
 	}
 );
 
+export const selectOrderFee = createSelector(
+	selectMarketInfo,
+	selectTradeSizeInputs,
+	selectOrderType,
+	(marketInfo, { susdSizeDelta }, orderType) => {
+		return computeOrderFee(marketInfo, susdSizeDelta, orderType);
+	}
+);
+
 export const selectMaxUsdInputAmount = createSelector(
 	selectFuturesType,
 	selectPosition,
@@ -961,4 +996,122 @@ export const selectPreviewAvailableMargin = createSelector(
 			? tradePreview.margin.sub(inaccessible).sub(totalDeposit).abs()
 			: zeroBN;
 	}
+);
+
+export const selectAverageEntryPrice = createSelector(
+	selectTradePreview,
+	selectSelectedMarketPositionHistory,
+	(tradePreview, positionHistory) => {
+		if (positionHistory && tradePreview) {
+			const { avgEntryPrice, side, size } = positionHistory;
+			const currentSize = side === PositionSide.SHORT ? size.neg() : size;
+
+			// If the trade switched sides (long -> short or short -> long), use oracle price
+			if (currentSize.mul(tradePreview.size).lt(0)) return tradePreview.price;
+
+			// If the trade reduced position size on the same side, average entry remains the same
+			if (tradePreview.size.abs().lt(size)) return avgEntryPrice;
+
+			// If the trade increased position size on the same side, calculate new average
+			const existingValue = avgEntryPrice.mul(size);
+			const newValue = tradePreview.price.mul(tradePreview.sizeDelta.abs());
+			const totalValue = existingValue.add(newValue);
+			return totalValue.div(tradePreview.size.abs());
+		}
+		return null;
+	}
+);
+
+type PositionPreviewData = {
+	fillPrice: Wei;
+	sizeIsNotZero: boolean;
+	positionSide: string;
+	positionSize: Wei;
+	leverage: Wei;
+	liquidationPrice: Wei;
+	avgEntryPrice: Wei;
+	notionalValue: Wei;
+	showStatus: boolean;
+};
+
+export const selectPreviewData = createSelector(
+	selectTradePreview,
+	selectPosition,
+	selectAverageEntryPrice,
+	(tradePreview, position, modifiedAverage) => {
+		if (!position?.position || tradePreview === null) {
+			return {} as PositionPreviewData;
+		}
+
+		return {
+			fillPrice: tradePreview.price,
+			sizeIsNotZero: tradePreview.size && !tradePreview.size?.eq(0),
+			positionSide: tradePreview.size?.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+			positionSize: tradePreview.size?.abs(),
+			notionalValue: tradePreview.notionalValue,
+			leverage: tradePreview.margin.gt(0)
+				? tradePreview.notionalValue.div(tradePreview.margin).abs()
+				: zeroBN,
+			liquidationPrice: tradePreview.liqPrice,
+			avgEntryPrice: modifiedAverage || zeroBN,
+			showStatus: tradePreview.showStatus,
+		} as PositionPreviewData;
+	}
+);
+
+export const selectPreviewTradeData = createSelector(
+	selectTradePreview,
+	selectPreviewAvailableMargin,
+	selectMarketInfo,
+	(tradePreview, previewAvailableMargin, marketInfo) => {
+		const potentialMarginUsage = tradePreview?.margin.gt(0)
+			? tradePreview!.margin.sub(previewAvailableMargin).div(tradePreview!.margin).abs() ?? zeroBN
+			: zeroBN;
+
+		const maxPositionSize =
+			!!tradePreview && !!marketInfo
+				? tradePreview.margin
+						.mul(marketInfo.maxLeverage)
+						.mul(tradePreview.side === PositionSide.LONG ? 1 : -1)
+				: null;
+
+		const potentialBuyingPower = !!maxPositionSize
+			? maxPositionSize.sub(tradePreview?.notionalValue).abs()
+			: zeroBN;
+
+		return {
+			showPreview: !!tradePreview && tradePreview.sizeDelta.abs().gt(0),
+			totalMargin: tradePreview?.margin || zeroBN,
+			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
+			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
+			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
+		};
+	}
+);
+
+export const selectBuyingPower = createSelector(
+	selectPosition,
+	selectMaxLeverage,
+	(position, maxLeverage) => {
+		const totalMargin = position?.remainingMargin ?? zeroBN;
+		return totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
+	}
+);
+
+export const selectMarginUsage = createSelector(
+	selectAvailableMargin,
+	selectPosition,
+	(availableMargin, position) => {
+		const totalMargin = position?.remainingMargin ?? zeroBN;
+		return availableMargin.gt(zeroBN)
+			? totalMargin.sub(availableMargin).div(totalMargin)
+			: totalMargin.gt(zeroBN)
+			? wei(1)
+			: zeroBN;
+	}
+);
+
+export const selectMarketSuspended = createSelector(
+	selectMarketInfo,
+	(marketInfo) => marketInfo?.isSuspended
 );

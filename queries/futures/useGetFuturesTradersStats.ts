@@ -2,12 +2,12 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery } from 'react-query';
 
 import { chain } from 'containers/Connector/config';
+import { getFuturesEndpoint } from 'sdk/utils/futures';
 import { useAppSelector } from 'state/hooks';
 import { selectMinTimestamp } from 'state/stats/selectors';
 import logError from 'utils/logError';
 
 import { getFuturesPositions } from './subgraph';
-import { getFuturesEndpoint } from './utils';
 
 type TradersStatMap = Record<
 	string,

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { FlexDivRowCentered } from 'components/layout/flex';
+import { Body } from 'components/Text';
 import { formatCurrency } from 'utils/formatters/number';
 
 type Props = {
@@ -34,12 +35,9 @@ export default function InputBalanceLabel({ balance, currencyKey, onSetAmount }:
 
 export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
-	p {
-		margin: 0;
-	}
 `;
 
-export const BalanceText = styled.p`
+export const BalanceText = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};

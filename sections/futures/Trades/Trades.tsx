@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
+import ColoredPrice from 'components/ColoredPrice';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
@@ -12,38 +13,50 @@ import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade, PositionSide } from 'sdk/types/futures';
+import {
+	selectMarketAsset,
+	selectQueryStatuses,
+	selectUsersTradesForMarket,
+} from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
+import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
 import { TradeStatus } from '../types';
 import TimeDisplay from './TimeDisplay';
 
-type TradesProps = {
-	history: FuturesTrade[];
-	isLoading: boolean;
-	isLoaded: boolean;
-	marketAsset: string;
-};
-
-const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAsset }) => {
+const Trades: React.FC = memo(() => {
 	const { t } = useTranslation();
 	const { switchToL2 } = useNetworkSwitcher();
+	const marketAsset = useAppSelector(selectMarketAsset);
+	const history = useAppSelector(selectUsersTradesForMarket);
+	const { trades } = useAppSelector(selectQueryStatuses);
+
+	const isLoading = !history.length && trades.status === FetchStatus.Loading;
+	const isLoaded = trades.status === FetchStatus.Success;
 
 	const isL2 = useIsL2();
 
 	const historyData = React.useMemo(() => {
-		return history.map((trade) => ({
-			...trade,
-			value: Number(trade?.price?.div(ETH_UNIT)),
-			amount: Number(trade?.size.div(ETH_UNIT).abs()),
-			time: trade?.timestamp * 1000,
-			pnl: trade?.pnl.div(ETH_UNIT),
-			feesPaid: trade?.feesPaid.div(ETH_UNIT),
-			id: trade?.txnHash,
-			asset: marketAsset,
-			type: trade?.orderType,
-			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-		}));
+		return history.map((trade) => {
+			const pnl = trade?.pnl.div(ETH_UNIT);
+			const feesPaid = trade?.feesPaid.div(ETH_UNIT);
+			const netPnl = pnl.sub(feesPaid);
+			return {
+				...trade,
+				pnl,
+				feesPaid,
+				netPnl,
+				value: Number(trade?.price?.div(ETH_UNIT)),
+				amount: Number(trade?.size.div(ETH_UNIT).abs()),
+				time: trade?.timestamp * 1000,
+				id: trade?.txnHash,
+				asset: marketAsset,
+				type: trade?.orderType,
+				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+			};
+		});
 	}, [history, marketAsset]);
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
@@ -100,6 +113,30 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortable: true,
 					},
 					{
+						Header: <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+						accessor: 'netPnl',
+						sortType: 'basic',
+						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = {
+								maxDecimals: 2,
+							};
+							return cellProps.value.eq(0) ? (
+								'--'
+							) : (
+								<ColoredPrice
+									priceInfo={{
+										price: cellProps.value,
+										change: cellProps.value.gt(0) ? 'up' : 'down',
+									}}
+								>
+									{formatDollars(cellProps.value, formatOptions)}
+								</ColoredPrice>
+							);
+						},
+						width: 90,
+						sortable: true,
+					},
+					{
 						Header: <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
 						sortType: 'basic',
 						accessor: 'feesPaid',
@@ -145,7 +182,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 			/>
 		</Card>
 	);
-};
+});
 
 export default Trades;
 

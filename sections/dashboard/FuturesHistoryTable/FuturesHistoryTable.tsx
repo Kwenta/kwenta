@@ -1,4 +1,5 @@
 import { wei } from '@synthetixio/wei';
+import { parseBytes32String } from 'ethers/lib/utils.js';
 import * as _ from 'lodash/fp';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement, useState } from 'react';
@@ -10,6 +11,7 @@ import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -34,7 +36,7 @@ import { getDisplayAsset, getMarketName, MarketKeyByAsset } from 'utils/futures'
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
-	_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
+	_.isNil(prop) ? <Body>{NO_VALUE}</Body> : children;
 
 const FuturesHistoryTable: FC = () => {
 	const [selectedTrade, setSelectedTrade] = useState<FuturesTrade>();
@@ -50,16 +52,22 @@ const FuturesHistoryTable: FC = () => {
 	const mappedHistoricalTrades = useMemo(
 		() =>
 			trades.map((trade) => {
+				const parsedAsset = parseBytes32String(trade.asset) as FuturesMarketAsset;
+				const pnl = trade.pnl.div(ETH_UNIT);
+				const feesPaid = trade.feesPaid.div(ETH_UNIT);
+				const netPnl = pnl.sub(feesPaid);
 				return {
 					...trade,
-					displayAsset: getDisplayAsset(trade.asset),
-					market: getMarketName(trade.asset),
+					pnl,
+					feesPaid,
+					netPnl,
+					asset: parsedAsset,
+					displayAsset: getDisplayAsset(parsedAsset),
+					market: getMarketName(parsedAsset),
 					price: Number(trade.price?.div(ETH_UNIT)),
 					size: Number(trade.size.div(ETH_UNIT).abs()),
 					timestamp: trade.timestamp * 1000,
 					date: formatShortDateWithoutYear(new Date(trade.timestamp * 1000)),
-					pnl: trade.pnl.div(ETH_UNIT),
-					feesPaid: trade.feesPaid.div(ETH_UNIT),
 					id: trade.txnHash,
 					status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 				};
@@ -92,7 +100,6 @@ const FuturesHistoryTable: FC = () => {
 							)
 						}
 						highlightRowsOnHover
-						sortBy={[{ id: 'dateTime', asec: true }]}
 						columns={[
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.date-time')}</div>,
@@ -165,15 +172,15 @@ const FuturesHistoryTable: FC = () => {
 							},
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
-								accessor: 'pnl',
+								accessor: 'netPnl',
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
 									return conditionalRender(
-										cellProps.row.original.pnl,
-										cellProps.row.original.pnl.eq(wei(0)) ? (
+										cellProps.value,
+										cellProps.value.eq(wei(0)) ? (
 											<PNL normal>--</PNL>
 										) : (
 											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value, { suggestDecimals: true })}
+												{formatDollars(cellProps.value, { maxDecimals: 2 })}
 											</PNL>
 										)
 									);
@@ -234,7 +241,6 @@ const FuturesHistoryTable: FC = () => {
 								</TableNoResults>
 							)
 						}
-						sortBy={[{ id: 'dateTime', asc: false }]}
 						columns={[
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.asset')}</div>,
@@ -302,15 +308,15 @@ const FuturesHistoryTable: FC = () => {
 							},
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
-								accessor: 'pnl',
+								accessor: 'netPnl',
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
 									return conditionalRender(
-										cellProps.row.original.pnl,
-										cellProps.row.original.pnl.eq(wei(0)) ? (
+										cellProps.value,
+										cellProps.value.eq(wei(0)) ? (
 											<PNL normal>--</PNL>
 										) : (
 											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value, { suggestDecimals: true })}
+												{formatDollars(cellProps.value, { maxDecimals: 2 })}
 											</PNL>
 										)
 									);
@@ -345,8 +351,7 @@ const MobileStyledCurrencyIcon = styled(Currency.Icon)`
 
 const TableContainer = styled.div`
 	margin-top: 16px;
-	margin-bottom: '40px';
-	font-family: ${(props) => props.theme.fonts.regular};
+	margin-bottom: 40px;
 	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}

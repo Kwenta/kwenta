@@ -28,7 +28,7 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	return (
 		<Container isMobile={isMobile}>
 			<ConnectButton
-				size="sm"
+				size="small"
 				variant="flat"
 				onClick={openAccountModal}
 				data-testid="connect-wallet"

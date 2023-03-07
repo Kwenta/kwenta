@@ -23,6 +23,7 @@ export type FuturesMarket<T = Wei> = {
 	asset: FuturesMarketAsset;
 	assetHex: string;
 	currentFundingRate: T;
+	currentFundingVelocity: T;
 	currentRoundId: T;
 	feeRates: {
 		makerFee: T;
@@ -252,7 +253,7 @@ export type FuturesOrderTypeDisplay =
 	| 'Market'
 	| 'Liquidation'
 	| 'Delayed'
-	| 'Delayed Offchain';
+	| 'Delayed Market';
 
 export type FuturesOrder<T = Wei> = {
 	id: string; // formatted subgraph id

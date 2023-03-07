@@ -122,25 +122,28 @@ const InputLabel = styled.div`
 	margin-left: 16px;
 `;
 
-const MaxButton = styled(Button)`
+const MaxButton = styled(Button).attrs({ mono: true })`
 	width: 40px;
 	height: 21px;
 	font-size: 11px;
-	padding: 0px 10px;
-	margin: 10px 15px 0px 0px;
-	font-family: ${(props) => props.theme.fonts.mono};
+	padding: 0 10px;
+	margin-left: 15px;
 `;
 
 const CurrencyAmount = styled(NumericInput)`
-	margin-top: 10px;
-	padding: 10px 16px;
-	font-size: 16px;
 	border: 0;
+	padding: 0;
 	height: 30px;
-	font-size: 30px;
-	line-height: 2.25em;
-	letter-spacing: -1px;
 	background: transparent;
+	box-shadow: none;
+
+	input {
+		font-size: 30px;
+		line-height: 2.25em;
+		letter-spacing: -1px;
+		height: 30px;
+		width: 100%;
+	}
 `;
 
 const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
@@ -148,8 +151,9 @@ const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
 	border-radius: 8px;
-	height: 84px;
+	min-height: 84px;
 	width: 290px;
+	padding: 13px 16px;
 	position: relative;
 
 	${(props) =>
@@ -165,7 +169,7 @@ const StyledLoader = styled(Loader)`
 
 const CurrencyAmountValue = styled.div`
 	${numericValueCSS};
-	padding: 8px 8px 2px 16px;
+	padding: 8px 8px 2px 0;
 	font-size: 14px;
 	line-height: 1.25em;
 	width: 150px;

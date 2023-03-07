@@ -1,5 +1,131 @@
 import common from './common';
 
+const newTheme = {
+	button: {
+		default: {
+			border: common.palette.neutral.n700,
+			background: common.palette.neutral.n800,
+			color: common.palette.neutral.n0,
+			hover: {
+				background: common.palette.neutral.n700,
+			},
+		},
+		position: {
+			long: {
+				active: {
+					background: common.palette.green.g500,
+					border: common.palette.green.g600,
+					color: common.palette.neutral.n900,
+				},
+				hover: {
+					background: common.palette.green.g600,
+					border: common.palette.green.g700,
+					color: common.palette.neutral.n900,
+				},
+			},
+			short: {
+				active: {
+					background: common.palette.red.r300,
+					border: common.palette.red.r300,
+					color: common.palette.neutral.n900,
+				},
+				hover: {
+					background: common.palette.red.r400,
+					border: common.palette.red.r400,
+					color: common.palette.neutral.n900,
+				},
+			},
+		},
+	},
+	text: {
+		primary: common.palette.neutral.n0,
+		secondary: common.palette.neutral.n70,
+		tertiary: common.palette.neutral,
+		number: {
+			positive: common.palette.green.g500,
+			negative: common.palette.red.r300,
+			neutral: common.palette.neutral.n0,
+			preview: common.palette.yellow.y500,
+		},
+	},
+	badge: {
+		yellow: {
+			text: common.palette.neutral.n900,
+			background: common.palette.yellow.y500,
+			dark: {
+				background: common.palette.yellow.y1000,
+				text: common.palette.yellow.y500,
+				border: common.palette.alpha.white10,
+			},
+		},
+		gray: {
+			text: common.palette.neutral.n900,
+			background: common.palette.neutral.n50,
+			dark: {
+				background: common.palette.neutral.n100,
+				text: common.palette.neutral.n900,
+				border: common.palette.alpha.white10,
+			},
+		},
+		red: {
+			text: common.palette.neutral.n900,
+			background: common.palette.red.r300,
+			dark: {
+				background: common.palette.alpha.red10,
+				text: common.palette.red.r300,
+				border: common.palette.alpha.white10,
+			},
+		},
+	},
+	pill: {
+		yellow: {
+			text: common.palette.yellow.y500,
+			background: common.palette.yellow.y1000,
+			border: common.palette.alpha.white10,
+			outline: {
+				background: 'transparent',
+				text: common.palette.yellow.y500,
+				border: common.palette.yellow.y500,
+			},
+			hover: {
+				background: common.palette.yellow.y500,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
+			},
+		},
+		gray: {
+			text: common.palette.neutral.n70,
+			background: common.palette.neutral.n700,
+			border: common.palette.neutral.n70,
+			outline: {
+				text: common.palette.neutral.n900,
+				background: common.palette.neutral.n20,
+				border: common.palette.neutral.n20,
+			},
+			hover: {
+				background: common.palette.neutral.n70,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
+			},
+		},
+		red: {
+			text: common.palette.red.r300,
+			background: common.palette.alpha.red10,
+			border: common.palette.red.r300,
+			outline: {
+				background: 'transparent',
+				text: common.palette.red.r300,
+				border: common.palette.red.r300,
+			},
+			hover: {
+				background: common.palette.red.r500,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
+			},
+		},
+	},
+};
+
 const darkTheme = {
 	...common.dark,
 	red: common.dark.red,
@@ -137,6 +263,7 @@ const darkTheme = {
 	socket: {
 		accent: `#252525`,
 	},
+	newTheme,
 };
 
 export default darkTheme;

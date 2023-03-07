@@ -1,6 +1,9 @@
+import { memo, useCallback } from 'react';
+
 import Error from 'components/ErrorView';
 import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_DELAYED_LEVERAGE_CAP, ISOLATED_MARGIN_ORDER_TYPES } from 'constants/futures';
+import { PositionSide } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { changeLeverageSide } from 'state/futures/actions';
 import { setOrderType } from 'state/futures/reducer';
@@ -8,7 +11,7 @@ import { selectLeverageSide, selectOrderType, selectPosition } from 'state/futur
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
 
-import FeeInfoBox from '../FeeInfoBox';
+import { IsolatedMarginFeeInfoBox } from '../FeeInfoBox/FeeInfoBox';
 import LeverageInput from '../LeverageInput';
 import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
@@ -20,7 +23,7 @@ type Props = {
 	isMobile?: boolean;
 };
 
-const TradeIsolatedMargin = ({ isMobile }: Props) => {
+const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
@@ -29,12 +32,27 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 	const orderType = useAppSelector(selectOrderType);
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
 
+	const openDepositModal = useCallback(() => {
+		dispatch(setOpenModal('futures_isolated_transfer'));
+	}, [dispatch]);
+
+	const handleChangeSide = useCallback(
+		(side: PositionSide) => {
+			dispatch(changeLeverageSide(side));
+		},
+		[dispatch]
+	);
+
+	const changeOrderType = useCallback(
+		(oType: number) => {
+			dispatch(setOrderType(oType === 1 ? 'market' : 'delayed_offchain'));
+		},
+		[dispatch]
+	);
+
 	return (
 		<div>
-			<TradePanelHeader
-				onManageBalance={() => dispatch(setOpenModal('futures_isolated_transfer'))}
-				accountType={'isolated_margin'}
-			/>
+			<TradePanelHeader onManageBalance={openDepositModal} accountType="isolated_margin" />
 			{pricesConnectionError && (
 				<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 			)}
@@ -46,19 +64,11 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 					styleType="check"
 					values={ISOLATED_MARGIN_ORDER_TYPES}
 					selectedIndex={ISOLATED_MARGIN_ORDER_TYPES.indexOf(orderType)}
-					onChange={(oType: number) => {
-						const newOrderType = oType === 1 ? 'market' : 'delayed_offchain';
-						dispatch(setOrderType(newOrderType));
-					}}
+					onChange={changeOrderType}
 				/>
 			)}
 
-			<PositionButtons
-				selected={leverageSide}
-				onSelect={(side) => {
-					dispatch(changeLeverageSide(side));
-				}}
-			/>
+			<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
 
 			<OrderSizing />
 
@@ -66,9 +76,9 @@ const TradeIsolatedMargin = ({ isMobile }: Props) => {
 
 			<ManagePosition />
 
-			<FeeInfoBox />
+			<IsolatedMarginFeeInfoBox />
 		</div>
 	);
-};
+});
 
 export default TradeIsolatedMargin;

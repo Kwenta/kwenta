@@ -5,12 +5,12 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import { getFuturesEndpoint } from 'sdk/utils/futures';
 import { weiFromWei } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 import logError from 'utils/logError';
 
 import { AccountStat, FuturesStat } from './types';
-import { getFuturesEndpoint } from './utils';
 
 const mapStat = (stat: FuturesStat, i: number) => ({
 	...stat,

@@ -244,7 +244,8 @@ const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
 
 export const updatePositionUpnl = (
 	positionDetails: FuturesPosition<string>,
-	prices: MarkPrices
+	prices: MarkPrices,
+	positionHistory: FuturesPositionHistory[]
 ): FuturesPosition => {
 	const deserializedPositionDetails = deserializeWeiObject(
 		positionDetails,
@@ -252,11 +253,16 @@ export const updatePositionUpnl = (
 	) as FuturesPosition;
 	const offChainPrice = prices[MarketKeyByAsset[deserializedPositionDetails.asset]];
 	const position = deserializedPositionDetails.position;
+	const thisPositionHistory = positionHistory.find(
+		({ isOpen, asset }) => isOpen && asset === positionDetails.asset
+	);
 
 	const pnl =
-		!!position && !!offChainPrice
+		!!thisPositionHistory && !!position && !!offChainPrice
 			? position.size.mul(
-					position.lastPrice.sub(offChainPrice).mul(position.side === PositionSide.LONG ? -1 : 1)
+					thisPositionHistory.avgEntryPrice
+						.sub(offChainPrice)
+						.mul(position.side === PositionSide.LONG ? -1 : 1)
 			  )
 			: undefined;
 	const pnlPct = pnl?.div(position?.initialMargin);
@@ -325,6 +331,7 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 	return {
 		...market,
 		currentFundingRate: market.currentFundingRate.toString(),
+		currentFundingVelocity: market.currentFundingVelocity.toString(),
 		currentRoundId: market.currentRoundId.toString(),
 		feeRates: {
 			makerFee: market.feeRates.makerFee.toString(),
@@ -362,6 +369,7 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 	return markets.map((m) => ({
 		...m,
 		currentFundingRate: wei(m.currentFundingRate),
+		currentFundingVelocity: wei(m.currentFundingVelocity),
 		currentRoundId: wei(m.currentRoundId),
 		feeRates: {
 			makerFee: wei(m.feeRates.makerFee),

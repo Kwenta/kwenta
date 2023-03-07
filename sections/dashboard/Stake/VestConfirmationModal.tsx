@@ -1,12 +1,13 @@
 import Wei from '@synthetixio/wei';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
+import { Body } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { ExternalLink } from 'styles/common';
 import { truncateNumbers } from 'utils/formatters/number';
@@ -43,7 +44,7 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 			<Spacer height={5} />
 
 			<BalanceContainer>
-				<BalanceText $gold>
+				<BalanceText>
 					<Trans
 						i18nKey="dashboard.stake.tabs.escrow.modal.confirm-text"
 						values={{ totalFee: truncateNumbers(totalFee, 4) }}
@@ -75,17 +76,15 @@ const StyledBaseModal = styled(BaseModal)`
 
 const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
-	p {
-		margin: 0;
-	}
 `;
 
-const BalanceText = styled.p<{ $gold?: boolean }>`
-	color: ${(props) =>
-		props.$gold ? props.theme.colors.selectedTheme.yellow : props.theme.colors.selectedTheme.gray};
-	span {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	}
+const BalanceText = styled(Body)`
+	${(props) => css`
+		color: ${props.theme.colors.selectedTheme.yellow};
+		span {
+			color: ${props.theme.colors.selectedTheme.button.text.primary};
+		}
+	`}
 `;
 
 const VestConfirmButton = styled(Button)`

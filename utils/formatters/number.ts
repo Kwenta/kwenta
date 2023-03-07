@@ -95,7 +95,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	try {
 		weiValue = wei(value);
 	} catch (e) {
-		logError(e);
+		logError(e, true);
 	}
 
 	const isNegative = weiValue.lt(wei(0));
@@ -228,7 +228,7 @@ export const weiFromWei = (weiAmount: WeiSource) => {
 };
 
 export const suggestedDecimals = (value: WeiSource) => {
-	value = wei(value).toNumber();
+	value = wei(value).abs().toNumber();
 	if (value >= 100000) return 0;
 	if (value >= 100 || value === 0) return 2;
 	if (value >= 10) return 3;

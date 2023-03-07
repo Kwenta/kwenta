@@ -69,7 +69,7 @@ const History: FC = () => {
 	);
 };
 
-const TabButtonsContainer = styled.div<{ mobile?: boolean }>`
+export const TabButtonsContainer = styled.div<{ mobile?: boolean }>`
 	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;

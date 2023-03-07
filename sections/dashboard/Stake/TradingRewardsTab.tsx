@@ -53,7 +53,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 		const totalFuturesFeePaid = useMemo(() => {
 			const t: FuturesFeeProps[] = totalFuturesFeeQuery.data ?? [];
 			return t
-				.map((trade) => formatEther(trade.feesSynthetix.toString()))
+				.map((trade) => formatEther(trade.feesKwenta.toString()))
 				.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 		}, [totalFuturesFeeQuery.data]);
 
@@ -102,7 +102,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						<Button
 							fullWidth
 							variant="flat"
-							size="sm"
+							size="small"
 							onClick={handleClaim}
 							disabled={claimDisabled}
 						>
@@ -171,7 +171,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						<Button
 							fullWidth
 							variant="flat"
-							size="sm"
+							size="small"
 							onClick={() =>
 								window.open(EXTERNAL_LINKS.Docs.TradingRewardsV2, '_blank', 'noopener noreferrer')
 							}
@@ -237,7 +237,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						<Button
 							fullWidth
 							variant="flat"
-							size="sm"
+							size="small"
 							onClick={() =>
 								window.open(EXTERNAL_LINKS.Docs.TradingRewardsV2, '_blank', 'noopener noreferrer')
 							}
@@ -270,10 +270,9 @@ const CardGridContainer = styled(StakingCard)`
 	height: 240px;
 `;
 
-const Value = styled(Body).attrs({ variant: 'bold', mono: true })`
+const Value = styled(Body).attrs({ weight: 'bold', mono: true })`
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	font-size: 26px;
-	/*margin-top: 5px;*/
 	line-height: initial;
 `;
 
