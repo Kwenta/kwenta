@@ -243,7 +243,8 @@ const RealizedPNLRow = memo(() => {
 
 	const rpnlTooltipContent = useMemo(() => {
 		const feesPaid = positionHistory?.feesPaid.neg() ?? zeroBN;
-		const fundingPaid = positionHistory?.netFunding.add(positionDetails?.accruedFunding) ?? zeroBN;
+		const fundingPaid =
+			positionHistory?.netFunding.add(positionDetails?.accruedFunding ?? zeroBN) ?? zeroBN;
 		const priceAction = positionHistory?.pnl ?? zeroBN;
 
 		return (
