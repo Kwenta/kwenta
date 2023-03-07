@@ -5,7 +5,7 @@ import { CandleResult } from 'queries/futures/subgraph';
 import { FuturesMarketKey } from 'sdk/types/futures';
 
 import { RATES_ENDPOINTS } from './constants';
-import { Candle } from './types';
+import { Candle, PythResponse } from './types';
 
 export const getRatesEndpoint = (networkId: NetworkId) => {
 	return RATES_ENDPOINTS[networkId] || RATES_ENDPOINTS[chain.optimism.id];
@@ -81,6 +81,18 @@ export const mapCandles = (candles: CandleResult[]): Candle[] => {
 			low: low.toNumber(),
 			close: close.toNumber(),
 			timestamp: timestamp.toNumber(),
+		};
+	});
+};
+
+export const mapPythCandles = (candleData: PythResponse): Candle[] => {
+	return candleData.t.map((timestamp, ind) => {
+		return {
+			timestamp,
+			open: candleData.o[ind],
+			high: candleData.h[ind],
+			low: candleData.l[ind],
+			close: candleData.c[ind],
 		};
 	});
 };

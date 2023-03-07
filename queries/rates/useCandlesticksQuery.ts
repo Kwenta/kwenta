@@ -1,48 +1,27 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
+import axios from 'axios';
 
-import { getCandles } from 'queries/futures/subgraph';
-
-import { getRatesEndpoint, mapCandles, mapPriceChart } from './utils';
+import { mapPythCandles } from './utils';
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
-	period: number,
-	networkId: number,
-	limit?: number,
-	orderDirection: 'asc' | 'desc' | undefined = 'asc',
-	priceChart?: boolean | null
+	period: number
 ) => {
-	const ratesEndpoint = getRatesEndpoint(networkId as NetworkId);
+	const endpoint = 'https://pyth-api.vintage-orange-muffin.com/tradingview/history';
 
-	const response = await getCandles(
-		ratesEndpoint,
-		{
-			first: limit ?? 999999,
-			where: {
-				synth: `${currencyKey}`,
-				timestamp_gt: `${minTimestamp}`,
-				timestamp_lt: `${maxTimestamp}`,
-				period: `${period}`,
+	const response = await axios
+		.get(endpoint, {
+			params: {
+				from: minTimestamp,
+				to: maxTimestamp,
+				symbol: `${currencyKey}/USD`,
+				resolution: 1,
 			},
-			orderBy: 'timestamp',
-			orderDirection,
-		},
-		{
-			id: true,
-			synth: true,
-			open: true,
-			high: true,
-			low: true,
-			close: true,
-			timestamp: true,
-			average: true,
-			period: true,
-			aggregatedPrices: true,
-		}
-	).then((response) => {
-		return priceChart ? mapPriceChart(response) : mapCandles(response);
-	});
+		})
+		.then((response) => {
+			return mapPythCandles(response.data);
+		});
+
 	return response;
 };

@@ -14,6 +14,7 @@ import { FlexDiv, FlexDivColCentered, FlexDivRow } from 'components/layout/flex'
 import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
+import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
@@ -80,33 +81,13 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 			},
 		});
 
-		Promise.all([
-			requestCandlesticks(
-				asset,
-				Math.floor(Date.now() / 1000) - 60 * 60 * 24,
-				undefined,
-				60,
-				10,
-				1,
-				'desc',
-				true
-			),
-			requestCandlesticks(
-				asset,
-				Math.floor(Date.now() / 1000) - 60 * 60 * 24,
-				undefined,
-				3600,
-				10,
-				24,
-				'asc',
-				true
-			),
-		])
-			.then(([currentPrice, bars]) => {
+		requestCandlesticks(asset, Math.floor(Date.now() / 1000) - SECONDS_PER_DAY, undefined, 3600)
+			.then((bars) => {
 				let positive = false;
 				if (bars !== undefined) {
 					const first = bars[0]?.average ?? 0;
-					positive = (currentPrice[0]?.average ?? 0) - first >= 0;
+					const last = bars[bars.length - 1]?.average ?? 0;
+					positive = last - first >= 0;
 				}
 				const results = bars.map((b) => ({
 					value: b.average,
