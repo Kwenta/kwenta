@@ -52,7 +52,6 @@ const FuturesHistoryTable: FC = () => {
 	const mappedHistoricalTrades = useMemo(
 		() =>
 			trades.map((trade) => {
-				const parsedAsset = parseBytes32String(trade.asset) as FuturesMarketAsset;
 				const pnl = trade.pnl.div(ETH_UNIT);
 				const feesPaid = trade.feesPaid.div(ETH_UNIT);
 				const netPnl = pnl.sub(feesPaid);
@@ -61,9 +60,8 @@ const FuturesHistoryTable: FC = () => {
 					pnl,
 					feesPaid,
 					netPnl,
-					asset: parsedAsset,
-					displayAsset: getDisplayAsset(parsedAsset),
-					market: getMarketName(parsedAsset),
+					displayAsset: getDisplayAsset(trade.asset),
+					market: getMarketName(trade.asset),
 					price: Number(trade.price?.div(ETH_UNIT)),
 					size: Number(trade.size.div(ETH_UNIT).abs()),
 					timestamp: trade.timestamp * 1000,
