@@ -7,6 +7,15 @@ export enum Period {
 	ONE_YEAR = 'ONE_YEAR',
 }
 
+export const PERIOD_DISPLAY: Record<Period, string> = {
+	ONE_HOUR: '1H',
+	FOUR_HOURS: '4H',
+	ONE_DAY: '1D',
+	ONE_WEEK: '1W',
+	ONE_MONTH: '1M',
+	ONE_YEAR: '1Y',
+};
+
 export const PERIOD_IN_HOURS: Record<Period, number> = {
 	ONE_HOUR: 1,
 	FOUR_HOURS: 4,

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { StatsTimeframe } from 'hooks/useStatsData';
+import { PERIOD_DISPLAY, Period } from 'sdk/constants/period';
 import { setSelectedPortfolioTimeframe } from 'state/futures/reducer';
 import { selectSelectedPortfolioTimeframe } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -44,7 +44,7 @@ const StyledBtn = styled.div<{ isActive: boolean }>`
 	}
 `;
 
-const TIMEFRAMES: StatsTimeframe[] = ['4H', '1D', '1W', '1M'];
+const TIMEFRAMES: Period[] = [Period.ONE_DAY, Period.ONE_WEEK, Period.ONE_YEAR];
 
 export const Timeframe: FC = () => {
 	const dispatch = useAppDispatch();
@@ -54,11 +54,11 @@ export const Timeframe: FC = () => {
 		<Container>
 			{TIMEFRAMES.map((timeframe) => (
 				<StyledBtn
-					key={timeframe}
+					key={PERIOD_DISPLAY[timeframe]}
 					onClick={() => dispatch(setSelectedPortfolioTimeframe(timeframe))}
 					isActive={selectedTimeframe === timeframe}
 				>
-					{timeframe}
+					{PERIOD_DISPLAY[timeframe]}
 				</StyledBtn>
 			))}
 		</Container>

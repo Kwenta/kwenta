@@ -1,22 +1,18 @@
-import Wei from '@synthetixio/wei';
 import { ColorType, UTCTimestamp, createChart } from 'lightweight-charts';
 import { FC, useEffect, useMemo, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import * as Text from 'components/Text';
-import { selectBalances } from 'state/balances/selectors';
 import { selectFuturesPortfolio, selectUserPortfolioValues } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { formatDollars } from 'utils/formatters/number';
 
 import { Timeframe } from './Timeframe';
 
-type PortfolioChartProps = {
-	exchangeTokenBalances: Wei;
-};
-
 const PriceChart = () => {
+	const theme = useTheme();
 	const portfolioValues = useAppSelector(selectUserPortfolioValues);
 	const chartRef = useRef('');
 
@@ -28,9 +24,19 @@ const PriceChart = () => {
 			},
 			layout: {
 				background: { type: ColorType.Solid, color: '#00000000' },
+				textColor: theme.colors.selectedTheme.gray,
+			},
+			crosshair: {
+				vertLine: {
+					labelBackgroundColor: theme.colors.selectedTheme.background,
+				},
+				horzLine: {
+					labelBackgroundColor: theme.colors.selectedTheme.background,
+				},
 			},
 			timeScale: {
 				visible: true,
+				timeVisible: true,
 				fixLeftEdge: true,
 				fixRightEdge: true,
 				borderVisible: false,
@@ -48,6 +54,9 @@ const PriceChart = () => {
 			},
 			handleScale: false,
 			handleScroll: false,
+			localization: {
+				priceFormatter: formatDollars,
+			},
 		});
 
 		const results = portfolioValues.map((b) => ({
@@ -70,97 +79,96 @@ const PriceChart = () => {
 		return () => {
 			chart.remove();
 		};
-	}, [portfolioValues]);
+	}, [portfolioValues, theme]);
 
 	return <Chart ref={(chartRef as unknown) as React.RefObject<HTMLDivElement>}></Chart>;
 };
 
-const PortfolioChart: FC<PortfolioChartProps> = ({ exchangeTokenBalances }) => {
+const PortfolioChart: FC = () => {
 	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const balances = useAppSelector(selectBalances);
 
 	// TODO: Add back cross margin when relevant
-	const total = useMemo(
-		() => portfolio.isolatedMarginFutures.add(balances.totalUSDBalance).add(exchangeTokenBalances),
-		[portfolio.isolatedMarginFutures, balances.totalUSDBalance, exchangeTokenBalances]
-	);
+	const total = useMemo(() => portfolio.isolatedMarginFutures, [portfolio.isolatedMarginFutures]);
 
 	return (
 		<>
 			<MobileHiddenView>
 				<ChartContainer>
-					<ChartOverlay>
-						<PortfolioTitle>Portfolio Value</PortfolioTitle>
-						<PortfolioText currencyKey="sUSD" price={total} sign="$" />
-					</ChartOverlay>
-					<TimeframeOverlay>
-						<Timeframe />
-					</TimeframeOverlay>
+					<TopBar>
+						<ChartOverlay>
+							<PortfolioText currencyKey="sUSD" price={total} sign="$" />
+							<PortfolioTitle>Isolated Margin</PortfolioTitle>
+						</ChartOverlay>
+						<TimeframeOverlay>
+							<Timeframe />
+						</TimeframeOverlay>
+					</TopBar>
 					<StyledPriceChart />
 				</ChartContainer>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<PortfolioText currencyKey="sUSD" price={total} sign="$" />
-				<MobileChartPlaceholder />
+				<ChartContainer mobile>
+					<TopBar mobile>
+						<TimeframeOverlay>
+							<Timeframe />
+						</TimeframeOverlay>
+					</TopBar>
+					<StyledPriceChart />
+				</ChartContainer>
 			</MobileOnlyView>
 		</>
 	);
 };
 
-const ChartContainer = styled.div`
+const ChartContainer = styled.div<{ mobile?: boolean }>`
+	display: flex;
+	flex-direction: column;
 	width: 100%;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 10px;
-	height: 200px;
+	border-radius: ${(props) => (props.mobile ? '0px' : '10px')};
+	height: 260px;
+`;
+
+const TopBar = styled.div<{ mobile?: boolean }>`
+	display: flex;
+	flex-direction: row;
+	justify-content: ${(props) => (props.mobile ? 'end' : 'space-between')};
+	align-items: center;
+	margin: 10px 10px 0 10px;
 `;
 
 const Chart = styled.div`
 	width: 100%;
-	height: 100%;
+	height: 80%;
 `;
 
-const StyledPriceChart = styled(PriceChart)`
-	z-index: 3;
-	position: relative;
-`;
+const StyledPriceChart = styled(PriceChart)``;
 
 const ChartOverlay = styled.div`
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 1;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
 `;
 
 const TimeframeOverlay = styled.div`
-	position: absolute;
-	top: 0;
-	right: 0;
-	z-index: 4;
-	margin: 12px 12px 0 0;
+	max-width: 192px;
 `;
 
 const PortfolioTitle = styled(Text.Body).attrs({ variant: 'bold' })`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	color: rgba(127, 212, 130, 1);
 	font-size: 16px;
-	margin: 26px 0 10px 26px;
 `;
 
 const PortfolioText = styled(Currency.Price)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.monoBold};
 	letter-spacing: -1.2px;
-	font-size: 27px;
-	margin-left: 26px;
-	margin-top: 0;
-	margin-bottom: 26px;
+	font-size: 20px;
 
 	span {
 		line-height: 27px;
 	}
-`;
-
-const MobileChartPlaceholder = styled.div`
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 export default PortfolioChart;

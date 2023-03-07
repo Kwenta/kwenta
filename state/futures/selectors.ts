@@ -4,6 +4,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { ETH_UNIT } from 'constants/network';
+import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
@@ -875,13 +876,14 @@ export const selectSelectedPortfolioTimeframe = (state: RootState) =>
 export const selectUserPortfolioValues = createSelector(
 	selectAllUsersTrades,
 	selectAllUserMarginTransfers,
+	selectFuturesPortfolio,
 	selectSelectedPortfolioTimeframe,
-	(trades, transfers, timeframe) => {
-		// TODO: add min timestamp based on timeframe
+	(trades, transfers, portfolioTotal, timeframe) => {
+		const minTimestamp = Date.now() / 1000 - PERIOD_IN_SECONDS[timeframe];
 
 		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
 			account,
-			timestamp: timestamp,
+			timestamp,
 			asset,
 			margin: margin.div(ETH_UNIT).toNumber(),
 			size: 0,
@@ -896,7 +898,7 @@ export const selectUserPortfolioValues = createSelector(
 		}));
 
 		const actions = [...tradeActions, ...transferActions]
-			.filter((action): action is FuturesAction => !!action)
+			.filter((action): action is FuturesAction => !!action && action.timestamp > minTimestamp)
 			.sort((a, b) => a.timestamp - b.timestamp);
 
 		const accountHistory = actions.reduce((acc, action) => {
@@ -931,7 +933,13 @@ export const selectUserPortfolioValues = createSelector(
 				return [...acc.slice(0, acc.length - (replacePrevious ? 1 : 0)), newAction];
 			}
 		}, [] as FuturesPortfolio[]);
-		return accountHistory.map(({ timestamp, total }) => ({ timestamp, total }));
+		return [
+			...accountHistory.map(({ timestamp, total }) => ({ timestamp, total })),
+			{
+				timestamp: Date.now() / 1000,
+				total: portfolioTotal.isolatedMarginFutures.toNumber(),
+			},
+		];
 	}
 );
 

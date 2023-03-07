@@ -164,12 +164,7 @@ const Overview: FC = () => {
 			<DesktopOnlyView>
 				<CompetitionBanner />
 
-				<PortfolioChart
-					exchangeTokenBalances={exchangeTokens.reduce(
-						(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
-						zeroBN
-					)}
-				/>
+				<PortfolioChart />
 
 				<TabButtonsContainer>
 					{POSITIONS_TABS.map(({ name, label, ...rest }) => (

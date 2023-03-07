@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { NetworkId } from '@synthetixio/contracts-interface';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_PRICE_IMPACT_DELTA } from 'constants/defaults';
-import { StatsTimeframe } from 'hooks/useStatsData';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
+import { Period } from 'sdk/constants/period';
 import {
 	FuturesMarket,
 	FuturesMarketAsset,
@@ -65,7 +65,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
 	dashboard: {
-		selectedPortfolioTimeframe: '4H',
+		selectedPortfolioTimeframe: Period.ONE_WEEK,
 	},
 	leaderboard: {
 		selectedTrader: undefined,
@@ -266,7 +266,7 @@ const futuresSlice = createSlice({
 		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
 			state.leaderboard.selectedTrader = action.payload;
 		},
-		setSelectedPortfolioTimeframe: (state, action: PayloadAction<StatsTimeframe>) => {
+		setSelectedPortfolioTimeframe: (state, action: PayloadAction<Period>) => {
 			state.dashboard.selectedPortfolioTimeframe = action.payload;
 		},
 	},

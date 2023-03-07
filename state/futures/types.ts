@@ -1,7 +1,7 @@
 import Wei from '@synthetixio/wei';
 
-import { StatsTimeframe } from 'hooks/useStatsData';
 import { FuturesAccountType } from 'queries/futures/types';
+import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -185,7 +185,7 @@ export type FuturesState = {
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
 	dashboard: {
-		selectedPortfolioTimeframe: StatsTimeframe;
+		selectedPortfolioTimeframe: Period;
 	};
 	leaderboard: {
 		selectedTrader: string | undefined;

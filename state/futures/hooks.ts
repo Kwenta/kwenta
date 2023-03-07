@@ -84,6 +84,10 @@ export const usePollDashboardFuturesData = () => {
 	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 
+	useFetchAction(fetchMarginTransfers, {
+		dependencies: [networkId, wallet, selectedAccountType],
+		disabled: !wallet,
+	});
 	useFetchAction(fetchAllTradesForAccount, {
 		dependencies: [networkId, wallet],
 		disabled: !wallet,
