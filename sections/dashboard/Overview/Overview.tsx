@@ -7,6 +7,7 @@ import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { TabPanel } from 'components/Tab';
+import * as Text from 'components/Text';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
@@ -49,7 +50,7 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
 		PositionsTab.ISOLATED_MARGIN
 	);
-	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+	const [activeMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
 	const { network } = Connector.useContainer();
 	const synthsMap = useAppSelector(selectSynthsMap);
@@ -161,18 +162,6 @@ const Overview: FC = () => {
 		setActivePositionsTab,
 	]);
 
-	const MARKETS_TABS = useMemo(
-		() => [
-			{
-				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.markets-tabs.futures'),
-				active: activeMarketsTab === MarketsTab.FUTURES,
-				onClick: () => setActiveMarketsTab(MarketsTab.FUTURES),
-			},
-		],
-		[activeMarketsTab, setActiveMarketsTab, t]
-	);
-
 	return (
 		<>
 			<DesktopOnlyView>
@@ -201,12 +190,7 @@ const Overview: FC = () => {
 				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
 					<SynthBalancesTable exchangeTokens={exchangeTokens} />
 				</TabPanel>
-
-				<TabButtonsContainer>
-					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-						<TabButton key={name} title={label} active={active} onClick={onClick} />
-					))}
-				</TabButtonsContainer>
+				<SubHeading>{t('dashboard.overview.markets-tabs.futures')}</SubHeading>
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<FuturesMarketsTable />
 				</TabPanel>
@@ -228,6 +212,14 @@ const TabButtonsContainer = styled.div`
 			margin-right: 14px;
 		}
 	}
+`;
+
+const SubHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 16px;
+	margin-top: 20px;
+	font-variant: all-small-caps;
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
 
 export default Overview;

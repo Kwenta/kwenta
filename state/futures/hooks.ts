@@ -81,10 +81,11 @@ export const usePollDashboardFuturesData = () => {
 	const wallet = useAppSelector(selectWallet);
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount);
 	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork);
+	const selectedAccountType = useAppSelector(selectFuturesType);
 
 	useFetchAction(fetchCrossMarginAccount, {
 		dependencies: [networkId, wallet],
-		disabled: !wallet || !networkSupportsCrossMargin,
+		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
 	});
 
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {

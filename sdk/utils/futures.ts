@@ -324,7 +324,7 @@ export const formatDelayedOrder = (
 		isOffchain: isOffchain,
 		priceImpactDelta: wei(priceImpactDelta),
 		targetRoundId: wei(targetRoundId),
-		orderType: isOffchain ? 'Delayed Offchain' : 'Delayed',
+		orderType: isOffchain ? 'Delayed Market' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 	};
 };
@@ -485,7 +485,7 @@ export const mapFuturesOrderFromEvent = (
 export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> = {
 	market: 'Market',
 	delayed: 'Delayed',
-	delayed_offchain: 'Delayed Offchain',
+	delayed_offchain: 'Delayed Market',
 	stop_market: 'Stop Market',
 	limit: 'Limit',
 };
@@ -496,7 +496,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 		: orderType === 'StopMarket'
 		? 'Stop Market'
 		: orderType === 'DelayedOffchain'
-		? 'Delayed Offchain'
+		? 'Delayed Market'
 		: orderType;
 };
 

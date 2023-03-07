@@ -7,11 +7,10 @@ import Connector from 'containers/Connector';
 import { notNill } from 'queries/synths/utils';
 import { NetworkId } from 'sdk/types/common';
 import { FuturesTrade } from 'sdk/types/futures';
-import { mapTrades } from 'sdk/utils/futures';
+import { getFuturesEndpoint, mapTrades } from 'sdk/utils/futures';
 import logError from 'utils/logError';
 
 import { getFuturesTrades } from './subgraph';
-import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,

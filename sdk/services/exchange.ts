@@ -20,9 +20,9 @@ import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
+import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
 import { NetworkId } from 'sdk/types/common';
 import { SynthSuspensionReason } from 'sdk/types/futures';
@@ -276,31 +276,57 @@ export default class ExchangeService {
 		if (this.tokensMap[toToken.symbol]) {
 			const symbolBytes = ethers.utils.formatBytes32String(toToken.symbol);
 			if (formattedData.functionSelector === 'swap') {
-				return contractFunc.swapInto(symbolBytes, formattedData.data);
+				return metaOnly
+					? contractFunc.swapInto(symbolBytes, formattedData.data)
+					: this.sdk.transactions.createContractTxn(SynthSwap, 'swapInto', [
+							symbolBytes,
+							formattedData.data,
+					  ]);
 			} else {
-				return contractFunc.uniswapSwapInto(
-					symbolBytes,
-					fromToken.address,
-					params.fromTokenAmount,
-					formattedData.data
-				);
+				return metaOnly
+					? contractFunc.uniswapSwapInto(
+							symbolBytes,
+							fromToken.address,
+							params.fromTokenAmount,
+							formattedData.data
+					  )
+					: this.sdk.transactions.createContractTxn(SynthSwap, 'uniswapSwapInto', [
+							symbolBytes,
+							fromToken.address,
+							params.fromTokenAmount,
+							formattedData.data,
+					  ]);
 			}
 		} else {
 			if (formattedData.functionSelector === 'swap') {
-				return contractFunc.swapOutOf(
-					fromSymbolBytes,
-					wei(fromAmount).toString(0, true),
-					formattedData.data
-				);
+				return metaOnly
+					? contractFunc.swapOutOf(
+							fromSymbolBytes,
+							wei(fromAmount).toString(0, true),
+							formattedData.data
+					  )
+					: this.sdk.transactions.createContractTxn(SynthSwap, 'swapOutOf', [
+							fromSymbolBytes,
+							wei(fromAmount).toString(0, true),
+							formattedData.data,
+					  ]);
 			} else {
 				const usdValue = ethers.utils.parseEther(synthAmountEth).toString();
-				return contractFunc.uniswapSwapOutOf(
-					fromSymbolBytes,
-					toToken.address,
-					wei(fromAmount).toString(0, true),
-					usdValue,
-					formattedData.data
-				);
+				return metaOnly
+					? contractFunc.uniswapSwapOutOf(
+							fromSymbolBytes,
+							toToken.address,
+							wei(fromAmount).toString(0, true),
+							usdValue,
+							formattedData.data
+					  )
+					: this.sdk.transactions.createContractTxn(SynthSwap, 'uniswapSwapOutOf', [
+							fromSymbolBytes,
+							toToken.address,
+							wei(fromAmount).toString(0, true),
+							usdValue,
+							formattedData.data,
+					  ]);
 			}
 		}
 	}
@@ -343,12 +369,7 @@ export default class ExchangeService {
 
 		const { from, to, data, value } = params.tx;
 
-		return this.sdk.context.signer.sendTransaction({
-			from,
-			to,
-			data,
-			value: ethers.BigNumber.from(value),
-		});
+		return this.sdk.transactions.createEVMTxn({ from, to, data, value });
 	}
 
 	public async swapOneInchGasEstimate(

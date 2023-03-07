@@ -30,7 +30,7 @@ import {
 	unserializeFuturesOrders,
 } from 'utils/futures';
 
-import { MarkPrices, futuresPositionKeys } from './types';
+import { MarkPrices, futuresPositionKeys, MarkPriceInfos } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -213,6 +213,24 @@ export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (mar
 	}, markPrices);
 });
 
+export const selectMarkPriceInfos = createSelector(
+	selectMarkets,
+	selectOffchainPricesInfo,
+	(markets, prices) => {
+		const markPrices: MarkPriceInfos = {};
+		return markets.reduce((acc, market) => {
+			const price = prices[market.asset]?.price ?? wei(0);
+			return {
+				...acc,
+				[market.marketKey]: {
+					price: wei(price).mul(wei(market.marketSkew).div(market.settings.skewScale).add(1)),
+					change: prices[market.asset]?.change ?? null,
+				},
+			};
+		}, markPrices);
+	}
+);
+
 export const selectFuturesAccount = createSelector(
 	selectFuturesType,
 	selectWallet,
@@ -234,11 +252,45 @@ export const selectCrossMarginPositions = createSelector(
 	}
 );
 
+export const selectPositionHistory = createSelector(
+	selectFuturesType,
+	selectCrossMarginAccountData,
+	selectIsolatedAccountData,
+	(type, crossAccountData, isolatedAccountData) => {
+		if (type === 'cross_margin') {
+			return unserializePositionHistory(crossAccountData?.positionHistory ?? []);
+		} else {
+			return unserializePositionHistory(isolatedAccountData?.positionHistory ?? []);
+		}
+	}
+);
+
+export const selectSelectedMarketPositionHistory = createSelector(
+	selectMarketAsset,
+	selectPositionHistory,
+	(marketAsset, positionHistory) => {
+		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
+	}
+);
+
+export const selectPositionHistoryForSelectedTrader = createSelector(
+	selectNetwork,
+	(state: RootState) => state.futures,
+	(networkId, futures) => {
+		const { selectedTrader } = futures.leaderboard;
+		if (!selectedTrader) return [];
+		const history =
+			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? [];
+		return unserializePositionHistory(history);
+	}
+);
+
 export const selectIsolatedMarginPositions = createSelector(
 	selectMarkPrices,
 	selectIsolatedAccountData,
-	(prices, account) => {
-		return account?.positions?.map((p) => updatePositionUpnl(p, prices)) ?? [];
+	selectPositionHistory,
+	(prices, account, positionHistory) => {
+		return account?.positions?.map((p) => updatePositionUpnl(p, prices, positionHistory)) ?? [];
 	}
 );
 
@@ -767,38 +819,6 @@ export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets)
 		(total, { openInterest }) => total.add(openInterest.shortUSD).add(openInterest.longUSD),
 		wei(0)
 	)
-);
-export const selectPositionHistory = createSelector(
-	selectFuturesType,
-	selectCrossMarginAccountData,
-	selectIsolatedAccountData,
-	(type, crossAccountData, isolatedAccountData) => {
-		if (type === 'cross_margin') {
-			return unserializePositionHistory(crossAccountData?.positionHistory ?? []);
-		} else {
-			return unserializePositionHistory(isolatedAccountData?.positionHistory ?? []);
-		}
-	}
-);
-
-export const selectSelectedMarketPositionHistory = createSelector(
-	selectMarketAsset,
-	selectPositionHistory,
-	(marketAsset, positionHistory) => {
-		return positionHistory.find(({ asset, isOpen }) => isOpen && asset === marketAsset);
-	}
-);
-
-export const selectPositionHistoryForSelectedTrader = createSelector(
-	selectNetwork,
-	(state: RootState) => state.futures,
-	(networkId, futures) => {
-		const { selectedTrader } = futures.leaderboard;
-		if (!selectedTrader) return [];
-		const history =
-			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? [];
-		return unserializePositionHistory(history);
-	}
 );
 
 export const selectUsersTradesForMarket = createSelector(

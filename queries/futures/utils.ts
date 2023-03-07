@@ -3,20 +3,11 @@ import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 
 import { ETH_UNIT } from 'constants/network';
-import { chain } from 'containers/Connector/config';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { NetworkId } from 'sdk/types/common';
+import { SECONDS_PER_DAY } from 'sdk/constants/period';
+import { MarketClosureReason } from 'sdk/types/futures';
 
-import { SECONDS_PER_DAY, FUTURES_ENDPOINTS, MAIN_ENDPOINTS } from './constants';
 import { FuturesOpenInterest, FuturesOneMinuteStat, FundingRateUpdate } from './types';
-
-export const getFuturesEndpoint = (networkId: NetworkId): string => {
-	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[chain.optimism.id];
-};
-
-export const getMainEndpoint = (networkId: NetworkId): string => {
-	return MAIN_ENDPOINTS[networkId] || MAIN_ENDPOINTS[chain.optimism.id];
-};
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
@@ -151,4 +142,24 @@ export const calculateFundingRate = (
 
 	const fundingRate = fundingPaid.div(assetPrice);
 	return fundingRate;
+};
+
+export const getReasonFromCode = (
+	reasonCode?: BigNumber
+): MarketClosureReason | 'unknown' | null => {
+	switch (Number(reasonCode)) {
+		case 1:
+			return 'system-upgrade';
+		case 2:
+			return 'market-closure';
+		case 3:
+		case 55:
+		case 65:
+		case 231:
+			return 'circuit-breaker';
+		case 99999:
+			return 'emergency';
+		default:
+			return 'unknown';
+	}
 };

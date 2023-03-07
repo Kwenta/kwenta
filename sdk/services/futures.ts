@@ -6,12 +6,15 @@ import request, { gql } from 'graphql-request';
 import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { FuturesAccountType } from 'queries/futures/types';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
-import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import {
+	BPS_CONVERSION,
+	DEFAULT_DESIRED_TIMEDELTA,
+	KWENTA_TRACKING_CODE,
+} from 'sdk/constants/futures';
+import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginBaseABI from 'sdk/contracts/abis/CrossMarginBase.json';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
@@ -165,6 +168,7 @@ export default class FuturesService {
 					key,
 					asset,
 					currentFundingRate,
+					currentFundingVelocity,
 					feeRates,
 					marketDebt,
 					marketSkew,
@@ -180,6 +184,7 @@ export default class FuturesService {
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
 				currentFundingRate: wei(currentFundingRate).div(24),
+				currentFundingVelocity: wei(currentFundingVelocity).div(24 * 24),
 				currentRoundId: wei(currentRoundIds[i], 0),
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
@@ -383,7 +388,7 @@ export default class FuturesService {
 	}
 
 	public async getDailyVolumes(): Promise<FuturesVolumes> {
-		const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
+		const minTimestamp = Math.floor(calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY) / 1000);
 		const response = await getFuturesAggregateStats(
 			this.futuresGqlEndpoint,
 			{

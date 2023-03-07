@@ -33,7 +33,7 @@ export default class TransactionsService {
 		method: string,
 		args: any[],
 		txnOptions: Partial<ethers.providers.TransactionRequest> = {},
-		options?: any
+		options?: { gasLimitBuffer?: number }
 	) {
 		const txn = {
 			to: contract.address,

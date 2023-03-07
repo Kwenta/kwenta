@@ -4,14 +4,14 @@ import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import { FUTURES_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
 import { NetworkId } from 'sdk/types/common';
+import { getFuturesEndpoint } from 'sdk/utils/futures';
 import { truncateAddress } from 'utils/formatters/string';
 import logError from 'utils/logError';
 
-import { FUTURES_ENDPOINT_OP_MAINNET } from './constants';
 import { getFuturesStats } from './subgraph';
 import { AccountStat, FuturesStat } from './types';
-import { getFuturesEndpoint } from './utils';
 
 const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 	const { network } = Connector.useContainer();

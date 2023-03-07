@@ -143,6 +143,7 @@ const ManagePosition: React.FC = () => {
 						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth
+						variant={leverageSide}
 						disabled={!!placeOrderDisabledReason}
 						onClick={() => dispatch(setOpenModal('futures_modify_position_confirm'))}
 					>
@@ -153,7 +154,7 @@ const ManagePosition: React.FC = () => {
 						data-testid="trade-close-position-button"
 						fullWidth
 						noOutline
-						variant="danger"
+						variant="flat"
 						onClick={() => {
 							if (
 								(orderType === 'delayed' || orderType === 'delayed_offchain') &&
@@ -217,14 +218,6 @@ const CloseOrderButton = styled(Button)`
 	height: 55px;
 	text-align: center;
 	white-space: normal;
-	background: rgba(239, 104, 104, 0.04);
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
-	transition: all 0s ease-in-out;
-
-	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.red};
-		color: ${(props) => props.theme.colors.selectedTheme.white};
-	}
 
 	&:disabled {
 		display: none;

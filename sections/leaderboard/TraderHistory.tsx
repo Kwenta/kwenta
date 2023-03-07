@@ -13,16 +13,17 @@ import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import ROUTES from 'constants/routes';
-import { FuturesPositionHistory } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { fetchPositionHistoryForTrader } from 'state/futures/actions';
 import {
+	selectFuturesPositions,
 	selectPositionHistoryForSelectedTrader,
 	selectQueryStatuses,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
+import { zeroBN } from 'utils/formatters/number';
 import { getMarketName } from 'utils/futures';
 
 type TraderHistoryProps = {
@@ -37,7 +38,8 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 	({ trader, ensInfo, resetSelection, compact, searchTerm }) => {
 		const { t } = useTranslation();
 		const dispatch = useAppDispatch();
-		const positions = useAppSelector(selectPositionHistoryForSelectedTrader);
+		const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader);
+		const positions = useAppSelector(selectFuturesPositions);
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses);
 		const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo]);
 
@@ -46,19 +48,28 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		}, [trader, dispatch]);
 
 		let data = useMemo(() => {
-			return positions
-				.sort((a: FuturesPositionHistory, b: FuturesPositionHistory) => b.timestamp - a.timestamp)
-				.map((stat: FuturesPositionHistory, i: number) => {
+			return positionHistory
+				.sort((a, b) => b.timestamp - a.timestamp)
+				.map((stat, i) => {
 					const totalDeposit = stat.initialMargin.add(stat.totalDeposits);
+					const thisPosition = stat.isOpen
+						? positions.find((p) => p.marketKey === stat.marketKey)
+						: null;
+
+					const pnlWithFeesPaid = stat.pnl
+						.sub(stat.feesPaid)
+						.add(stat.netFunding)
+						.add(thisPosition?.position?.accruedFunding ?? zeroBN);
+
 					return {
 						...stat,
 						rank: i + 1,
 						currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
 						marketShortName: getMarketName(stat.asset),
 						status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
-						pnl: stat.pnlWithFeesPaid,
+						pnl: pnlWithFeesPaid,
 						pnlPct: totalDeposit.gt(0)
-							? `(${stat.pnlWithFeesPaid
+							? `(${pnlWithFeesPaid
 									.div(stat.initialMargin.add(stat.totalDeposits))
 									.mul(100)
 									.toNumber()
@@ -72,7 +83,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						  i.status.toLowerCase().includes(searchTerm)
 						: true
 				);
-		}, [positions, searchTerm]);
+		}, [positionHistory, positions, searchTerm]);
 
 		return (
 			<>

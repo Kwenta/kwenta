@@ -46,7 +46,7 @@ const Nav: FC = memo(() => {
 		link,
 		isActive,
 	}: ReactSelectOptionProps) => {
-		if (i18nLabel === 'header.nav.leaderboard') {
+		if (i18nLabel === 'header.nav.leaderboard' || i18nLabel === 'header.nav.options.title') {
 			return (
 				<MenuInside isDropDown isActive={isActive}>
 					{t(i18nLabel)}
@@ -171,7 +171,20 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 
 const DropDownSelect = styled(Select)`
 	.react-select__menu {
-		width: 270px;
+		width: 170px;
+		text-transform: capitalize;
+		left: 0;
+	}
+
+	.react-select__option {
+		svg {
+			width: 14px;
+			height: 14px;
+
+			> path {
+				fill: #69d8bd;
+			}
+		}
 	}
 
 	.react-select__control {
@@ -195,12 +208,6 @@ const DropDownSelect = styled(Select)`
 		padding: 0;
 	}
 
-	.react-select__menu-list {
-		.react-select__option:last-child {
-			background-color: ${(props) => props.theme.colors.selectedTheme.button.yellow.fill};
-		}
-	}
-
 	.react-select__value-container {
 		padding: 0px;
 		width: ${(props) => {
@@ -210,6 +217,9 @@ const DropDownSelect = styled(Select)`
 				: //@ts-ignore
 				props.value?.i18nLabel === 'header.nav.leaderboard'
 				? '110px'
+				: //@ts-ignore
+				props.value?.i18nLabel === 'header.nav.options.title'
+				? '80px'
 				: '100%';
 		}};
 	}

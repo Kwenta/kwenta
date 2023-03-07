@@ -3,7 +3,7 @@ import { Provider, Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
 
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 import FuturesMarket from 'sdk/contracts/abis/FuturesMarket.json';
 import { FuturesMarket__factory } from 'sdk/contracts/types';
 import { FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';

@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
+import ColoredPrice from 'components/ColoredPrice';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
@@ -38,18 +39,24 @@ const Trades: React.FC = memo(() => {
 	const isL2 = useIsL2();
 
 	const historyData = React.useMemo(() => {
-		return history.map((trade) => ({
-			...trade,
-			value: Number(trade?.price?.div(ETH_UNIT)),
-			amount: Number(trade?.size.div(ETH_UNIT).abs()),
-			time: Number(trade?.timestamp.mul(1000)),
-			pnl: trade?.pnl.div(ETH_UNIT),
-			feesPaid: trade?.feesPaid.div(ETH_UNIT),
-			id: trade?.txnHash,
-			asset: marketAsset,
-			type: trade?.orderType,
-			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-		}));
+		return history.map((trade) => {
+			const pnl = trade?.pnl.div(ETH_UNIT);
+			const feesPaid = trade?.feesPaid.div(ETH_UNIT);
+			const netPnl = pnl.sub(feesPaid);
+			return {
+				...trade,
+				pnl,
+				feesPaid,
+				netPnl,
+				value: Number(trade?.price?.div(ETH_UNIT)),
+				amount: Number(trade?.size.div(ETH_UNIT).abs()),
+				time: Number(trade?.timestamp.mul(1000)),
+				id: trade?.txnHash,
+				asset: marketAsset,
+				type: trade?.orderType,
+				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+			};
+		});
 	}, [history, marketAsset]);
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
@@ -102,6 +109,30 @@ const Trades: React.FC = memo(() => {
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
 						),
+						width: 90,
+						sortable: true,
+					},
+					{
+						Header: <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+						accessor: 'netPnl',
+						sortType: 'basic',
+						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							const formatOptions = {
+								maxDecimals: 2,
+							};
+							return cellProps.value.eq(0) ? (
+								'--'
+							) : (
+								<ColoredPrice
+									priceInfo={{
+										price: cellProps.value,
+										change: cellProps.value.gt(0) ? 'up' : 'down',
+									}}
+								>
+									{formatDollars(cellProps.value, formatOptions)}
+								</ColoredPrice>
+							);
+						},
 						width: 90,
 						sortable: true,
 					},
