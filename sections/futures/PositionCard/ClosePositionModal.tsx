@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -8,11 +8,10 @@ import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
-import Connector from 'containers/Connector';
-import { getFuturesMarketContract } from 'queries/futures/utils';
 import { FuturesFilledPosition, PositionSide } from 'sdk/types/futures';
+import { getClosePositionOrderFee } from 'state/futures/actions';
 import { selectIsClosingPosition, selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -32,32 +31,28 @@ function ClosePositionModal({
 	onClosePosition,
 }: ClosePositionModalProps) {
 	const { t } = useTranslation();
-	const { defaultSynthetixjs: synthetixjs } = Connector.useContainer();
+	const dispatch = useAppDispatch();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const isClosing = useAppSelector(selectIsClosingPosition);
 
-	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
+	const [orderFee, setOrderFee] = useState(wei(0));
 	const [error, setError] = useState<null | string>(null);
 
 	const positionSize = useMemo(() => positionDetails?.size ?? zeroBN, [positionDetails?.size]);
 
 	useEffect(() => {
-		const getOrderFee = async () => {
+		const getOrderFee = () => {
 			try {
-				if (!synthetixjs || !marketAsset || !positionSize) return;
 				setError(null);
-				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
-				const size = positionSize.neg();
-				const orderFee = await FuturesMarketContract.orderFee(size.toBN());
-				setOrderFee(wei(orderFee.fee));
+				dispatch(getClosePositionOrderFee());
 			} catch (e) {
 				logError(e);
 				setError(e?.data?.message ?? e.message);
 			}
 		};
 		getOrderFee();
-	}, [synthetixjs, marketAsset, positionSize]);
+	}, [marketAsset, positionSize, dispatch]);
 
 	const dataRows = useMemo(() => {
 		if (!positionDetails || !marketAsset) return [];

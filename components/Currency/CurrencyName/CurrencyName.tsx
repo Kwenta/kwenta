@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 
 import { ContainerRowMixin } from 'components/layout/grid';
 import MarketClosureIcon from 'components/MarketClosureIcon';
-import { MarketClosureReason } from 'hooks/useMarketClosed';
+import { MarketClosureReason } from 'sdk/types/futures';
 
 import CurrencyIcon from '../CurrencyIcon';
 import { CurrencyIconProps } from '../CurrencyIcon/CurrencyIcon';

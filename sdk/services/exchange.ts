@@ -4,6 +4,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
+import { formatBytes32String } from 'ethers/lib/utils.js';
 import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
@@ -24,7 +25,9 @@ import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
 import { NetworkId } from 'sdk/types/common';
+import { SynthSuspensionReason } from 'sdk/types/futures';
 import { Token, TokenBalances } from 'sdk/types/tokens';
+import { getReasonFromCode } from 'sdk/utils/synths';
 import {
 	newGetCoinGeckoPricesForCurrencies,
 	getExchangeRatesForCurrencies,
@@ -801,6 +804,48 @@ export default class ExchangeService {
 		);
 
 		return { rebate: wei(rebate), reclaim: wei(reclaim) };
+	}
+
+	public async getSynthSuspensions() {
+		const { SystemStatus } = this.sdk.context.multicallContracts;
+
+		const synthsMap = this.sdk.exchange.getSynthsMap();
+
+		if (!SystemStatus) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		const calls = [];
+
+		for (let synth in synthsMap) {
+			calls.push(SystemStatus.synthExchangeSuspension(formatBytes32String(synth)));
+		}
+
+		const responses = (await this.sdk.context.multicallProvider.all(calls)) as [
+			boolean,
+			BigNumber
+		][];
+
+		let ret: Record<
+			string,
+			{ isSuspended: boolean; reasonCode: number; reason: SynthSuspensionReason | null }
+		> = {};
+		let i = 0;
+
+		for (let synth in synthsMap) {
+			const [isSuspended, reason] = responses[i];
+			const reasonCode = Number(reason);
+
+			ret[synth] = {
+				isSuspended: responses[i][0],
+				reasonCode,
+				reason: isSuspended ? getReasonFromCode(reasonCode) : null,
+			};
+
+			i++;
+		}
+
+		return ret;
 	}
 
 	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {

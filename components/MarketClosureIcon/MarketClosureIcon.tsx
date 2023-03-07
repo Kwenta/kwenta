@@ -4,10 +4,10 @@ import CircuitBreakerIcon from 'assets/svg/app/market-closure/circuit-breaker.sv
 import EmergencyShutdownIcon from 'assets/svg/app/market-closure/emergency-shutdown.svg';
 import FrozenIcon from 'assets/svg/app/market-closure/frozen.svg';
 import MarketPauseIcon from 'assets/svg/app/market-closure/market-pause.svg';
-import { MarketClosureReason } from 'hooks/useMarketClosed';
+import { MarketClosureReason } from 'sdk/types/futures';
 
 type MarketClosureIconProps = {
-	marketClosureReason: MarketClosureReason;
+	marketClosureReason: MarketClosureReason | 'frozen';
 	size?: 'sm' | 'lg';
 };
 

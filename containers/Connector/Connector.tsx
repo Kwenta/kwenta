@@ -1,4 +1,3 @@
-import { synthetix } from '@synthetixio/contracts-interface';
 import { TransactionNotifier as BaseTN } from '@synthetixio/transaction-notifier';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createContainer } from 'unstated-next';
@@ -35,11 +34,6 @@ const useConnector = () => {
 	const l2Provider = useProvider({ chainId: chain.optimism.id });
 	const { data: signer } = useSigner();
 
-	const defaultSynthetixjs = useMemo(
-		() => synthetix({ provider, networkId: network.id as NetworkId }),
-		[provider, network.id]
-	);
-
 	const handleNetworkChange = useCallback(
 		(networkId: NetworkId) => {
 			dispatch(resetNetwork(networkId));
@@ -74,7 +68,6 @@ const useConnector = () => {
 		l2Provider,
 		signer,
 		network,
-		defaultSynthetixjs,
 		providerReady,
 	};
 };

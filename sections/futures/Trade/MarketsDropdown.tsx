@@ -6,7 +6,6 @@ import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
 import ROUTES from 'constants/routes';
-import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import { FuturesMarketAsset, FuturesMarketKey, SynthSuspensionReason } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
@@ -15,6 +14,7 @@ import {
 	selectMarketsQueryStatus,
 	selectFuturesType,
 	selectMarkPrices,
+	selectMarketInfo,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
@@ -26,18 +26,6 @@ import MarketsDropdownIndicator, { DropdownLoadingIndicator } from './MarketsDro
 import MarketsDropdownOption from './MarketsDropdownOption';
 import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 
-export type MarketsCurrencyOption = {
-	value: FuturesMarketAsset;
-	key: FuturesMarketKey;
-	label: string;
-	description: string;
-	price?: string | JSX.Element;
-	change?: string;
-	negativeChange: boolean;
-	isMarketClosed: boolean;
-	closureReason: SynthSuspensionReason;
-};
-
 type AssetToCurrencyOptionArgs = {
 	asset: FuturesMarketAsset;
 	key: FuturesMarketKey;
@@ -46,14 +34,16 @@ type AssetToCurrencyOptionArgs = {
 	change?: string;
 	negativeChange: boolean;
 	isMarketClosed: boolean;
-	closureReason: SynthSuspensionReason;
+	closureReason?: SynthSuspensionReason;
 };
 
-const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs): MarketsCurrencyOption => ({
+const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs) => ({
 	value: args.asset,
 	label: getMarketName(args.asset),
 	...args,
 });
+
+export type MarketsCurrencyOption = ReturnType<typeof assetToCurrencyOption>;
 
 type MarketsDropdownProps = {
 	mobile?: boolean;
@@ -67,9 +57,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const marketsQueryStatus = useAppSelector(selectMarketsQueryStatus);
 
-	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
-		MarketKeyByAsset[marketAsset]
-	);
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	const router = useRouter();
 	const { t } = useTranslation();
@@ -148,8 +136,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							? wei(selectedBasePriceRate).lt(selectedPastPrice?.rate)
 							: false
 						: false,
-					isMarketClosed: isFuturesMarketClosed,
-					closureReason: futuresClosureReason,
+					isMarketClosed: marketInfo?.isSuspended ?? false,
+					closureReason: marketInfo?.marketClosureReason,
 				})}
 				options={options}
 				isSearchable={false}

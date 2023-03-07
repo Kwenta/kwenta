@@ -2,7 +2,6 @@ import { createTheme, MuiThemeProvider } from '@material-ui/core';
 import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
-import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -16,9 +15,8 @@ import { WagmiConfig } from 'wagmi';
 
 import ErrorNotifier from 'components/ErrorView/ErrorNotifier';
 import Connector from 'containers/Connector';
-import { chains, wagmiClient, chain } from 'containers/Connector/config';
+import { chains, wagmiClient } from 'containers/Connector/config';
 import useMonitorTransactions from 'hooks/useMonitorTransactions';
-import { NetworkId } from 'sdk/types/common';
 import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
 import SystemStatus from 'sections/shared/SystemStatus';
@@ -60,14 +58,7 @@ Sentry.init({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
-	const {
-		signer,
-		provider,
-		l2Provider,
-		network,
-		providerReady,
-		defaultSynthetixjs: synthetixjs,
-	} = Connector.useContainer();
+	const { providerReady } = Connector.useContainer();
 
 	useAppData(providerReady);
 	useMonitorTransactions();
@@ -88,29 +79,12 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 			<ThemeProvider theme={theme}>
 				<MuiThemeProvider theme={muiTheme}>
 					<MediaContextProvider>
-						<SynthetixQueryContextProvider
-							value={
-								provider && network && synthetixjs
-									? createQueryContext({
-											provider,
-											signer: signer || undefined,
-											networkId: network.id as NetworkId,
-											synthetixjs,
-									  })
-									: createQueryContext({
-											provider: l2Provider,
-											networkId: chain.optimism.id as NetworkId,
-											synthetixjs,
-									  })
-							}
-						>
-							<Layout>
-								<AcknowledgementModal />
-								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
-							</Layout>
-							<ErrorNotifier />
-							<ReactQueryDevtools position="top-left" />
-						</SynthetixQueryContextProvider>
+						<Layout>
+							<AcknowledgementModal />
+							<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
+						</Layout>
+						<ErrorNotifier />
+						<ReactQueryDevtools position="top-left" />
 					</MediaContextProvider>
 				</MuiThemeProvider>
 			</ThemeProvider>

@@ -46,7 +46,7 @@ import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeMarketFee } from 'utils/costCalculations';
-import { stipZeros } from 'utils/formatters/number';
+import { stipZeros, zeroBN } from 'utils/formatters/number';
 import {
 	calculateMarginDelta,
 	marketOverrides,
@@ -1328,3 +1328,18 @@ const monitorAndAwaitTransaction = async (
 	await tx.wait();
 	dispatch(updateTransactionStatus(TransactionStatus.Confirmed));
 };
+
+export const getClosePositionOrderFee = createAsyncThunk<Wei, void, ThunkConfig>(
+	'futures/getClosePositionOrderFee',
+	async (_, { getState, extra: { sdk } }) => {
+		const state = getState();
+		const position = selectPosition(state);
+		const marketInfo = selectMarketInfo(state);
+
+		if (marketInfo) {
+			return sdk.futures.getOrderFee(marketInfo.market, position?.position?.size.neg() ?? zeroBN);
+		}
+
+		return zeroBN;
+	}
+);

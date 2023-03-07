@@ -11,7 +11,7 @@ import Badge from './Badge';
 type MarketBadgeProps = {
 	currencyKey: FuturesMarketAsset;
 	isFuturesMarketClosed: boolean;
-	futuresClosureReason: SynthSuspensionReason;
+	futuresClosureReason?: SynthSuspensionReason;
 };
 
 type TransitionBadgeProps = {

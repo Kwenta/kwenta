@@ -6,8 +6,9 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { SynthSymbol } from 'sdk/data/synths';
+import { useAppSelector } from 'state/hooks';
 import { SelectableCurrencyRow } from 'styles/common';
 
 type Token = {
@@ -33,24 +34,24 @@ const CurrencyRow: FC<SynthRowProps> = memo(({ token, onClick, balance }) => {
 	const { t } = useTranslation();
 	const { isWalletConnected } = Connector.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-
+	const synthSuspensions = useAppSelector(({ exchange }) => exchange.synthSuspensions);
 	const currencyKey = token.symbol;
 
-	const { marketClosureReason } = useMarketClosed(token.isSynth ? currencyKey : null);
+	const reason = token.isSynth
+		? synthSuspensions?.[token.symbol as SynthSymbol]?.reason
+		: undefined;
 
 	return (
-		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable>
+		<StyledSelectableCurrencyRow key={token.symbol} onClick={onClick} isSelectable>
 			<Currency.Name
 				name={
 					token.isSynth
-						? t('common.currency.synthetic-currency-name', {
-								currencyName: token.name,
-						  })
+						? t('common.currency.synthetic-currency-name', { currencyName: token.name })
 						: token.name
 				}
 				showIcon
 				iconProps={!token.isSynth ? { url: token.logoURI } : undefined}
-				{...{ currencyKey, marketClosureReason }}
+				{...{ currencyKey, marketClosureReason: reason }}
 			/>
 			{isWalletConnected ? (
 				<Currency.Amount

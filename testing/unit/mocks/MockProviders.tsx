@@ -1,4 +1,3 @@
-import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import mockRouter from 'next-router-mock';
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -7,11 +6,7 @@ import { WagmiConfig } from 'wagmi';
 
 import Connector from 'containers/Connector';
 import { wagmiClient } from 'containers/Connector/config';
-import { NetworkId } from 'sdk/types/common';
 import { themes } from 'styles/theme';
-
-import { DEFAULT_NETWORK } from '../constants';
-import { mockProvider, MockEthProvider } from './mockEthersProvider';
 
 jest.mock('@rainbow-me/rainbowkit', () => ({
 	wallet: {
@@ -57,41 +52,21 @@ const queryClient = new QueryClient({
 
 type Props = {
 	children: ReactNode;
-	ethProviderOverrides?: MockEthProvider;
 	route?: string;
 };
 
 process.env.GIT_HASH_ID = '12345';
 
-export const SynthetixProvider = ({ children, ethProviderOverrides }: Props) => {
-	const mockedProvider = mockProvider(ethProviderOverrides);
-
-	return (
-		<SynthetixQueryContextProvider
-			value={createQueryContext({
-				// @ts-ignore
-				provider: mockedProvider,
-				networkId: DEFAULT_NETWORK.id as NetworkId,
-				synthetixjs: null,
-			})}
-		>
-			{children}
-		</SynthetixQueryContextProvider>
-	);
-};
-
-const MockProviders = ({ children, ethProviderOverrides, route }: Props) => {
+const MockProviders = ({ children, route }: Props) => {
 	mockRouter.setCurrentUrl(route || '/');
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<SynthetixProvider ethProviderOverrides={ethProviderOverrides}>
-				<WagmiConfig client={wagmiClient}>
-					<Connector.Provider>
-						<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
-					</Connector.Provider>
-				</WagmiConfig>
-			</SynthetixProvider>
+			<WagmiConfig client={wagmiClient}>
+				<Connector.Provider>
+					<ThemeProvider theme={themes.dark}>{children}</ThemeProvider>
+				</Connector.Provider>
+			</WagmiConfig>
 		</QueryClientProvider>
 	);
 };

@@ -839,29 +839,15 @@ export default class FuturesService {
 		]);
 	}
 
-	public async getFuturesSuspensionStatus(marketKey: FuturesMarketKey) {
-		const { SystemStatus } = this.sdk.context.contracts;
-
-		if (!SystemStatus) {
-			throw new Error(UNSUPPORTED_NETWORK);
-		}
-
-		type FuturesClosureReason =
-			| 'system-upgrade'
-			| 'market-closure'
-			| 'circuit-breaker'
-			| 'emergency';
-
-		const marketKeyBytes32 = ethers.utils.formatBytes32String(marketKey);
-		const [isSuspended, reasonCode] = await SystemStatus.futuresMarketSuspension(marketKeyBytes32);
-		const reason = (isSuspended ? getReasonFromCode(reasonCode) : null) as FuturesClosureReason;
-
-		return { isSuspended, reasonCode, reason };
-	}
-
 	// This is on an interval of 15 seconds.
 	public async getFuturesTrades(marketKey: FuturesMarketKey, minTs: number, maxTs: number) {
 		const response = await queryFuturesTrades(this.sdk, marketKey, minTs, maxTs);
 		return response ? mapTrades(response) : null;
+	}
+
+	public async getOrderFee(marketAddress: string, size: Wei) {
+		const marketContract = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const orderFee = await marketContract.orderFee(size.toBN(), 0);
+		return wei(orderFee.fee);
 	}
 }
