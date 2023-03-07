@@ -1,5 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import { parseBytes32String } from 'ethers/lib/utils.js';
 import * as _ from 'lodash/fp';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement, useState } from 'react';
