@@ -85,12 +85,12 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 			.then((bars) => {
 				let positive = false;
 				if (bars !== undefined) {
-					const first = bars[0]?.average ?? 0;
-					const last = bars[bars.length - 1]?.average ?? 0;
+					const first = bars[0]?.close ?? 0;
+					const last = bars[bars.length - 1]?.close ?? 0;
 					positive = last - first >= 0;
 				}
 				const results = bars.map((b) => ({
-					value: b.average,
+					value: b.close,
 					time: b.timestamp as UTCTimestamp,
 				}));
 				return { results, positive };
@@ -123,7 +123,9 @@ const Assets = () => {
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
 	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
-	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider));
+	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider), {
+		intervalTime: 600,
+	});
 
 	const PERPS = useMemo(() => {
 		return futuresMarkets.map((market) => {
