@@ -2,8 +2,8 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT_OP_MAINNET } from 'queries/futures/constants';
 import { getFuturesTrades } from 'queries/futures/subgraph';
+import { FUTURES_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
 
 const useGetFuturesFeeForAccount = (
 	account: string,

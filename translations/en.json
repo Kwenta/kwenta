@@ -690,7 +690,7 @@
 					"position-side": "Direction of current trade",
 					"position-size": "Notional value of the open position",
 					"u-pnl": "The current unrealized profit or loss on the open position",
-					"r-pnl": "Profit or loss achieved by closing some or all of a position",
+					"r-pnl": "Profit or loss achieved by closing some or all of a position, fees, and all funding applied to this position",
 					"leverage": "Individual position leverage which will vary based on the balance of margin deposited into the market",
 					"liquidation-price": "The estimated oracle price that will trigger a liquidation",
 					"net-funding": "Total funding due at the close of the position",
@@ -703,8 +703,8 @@
 				"explore-markets": "Explore available Markets"
 			},
 			"state": {
-				"opens-soon": "opens soon",
-				"closes-soon": "closes soon",
+				"opens-soon": "opening",
+				"closes-soon": "closing",
 				"frozen": "paused",
 				"market-closure": "paused",
 				"system-upgrade": "paused",

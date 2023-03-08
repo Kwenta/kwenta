@@ -71,7 +71,6 @@ const PositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonP
 	${(props) => css`
 		font-family: ${props.theme.fonts.bold};
 		color: ${props.theme.colors.selectedTheme.newTheme.button.default.color};
-		background: ${props.theme.colors.selectedTheme.newTheme.button.default.background};
 
 		&:hover {
 			background: ${props.theme.colors.selectedTheme.newTheme.button.default.hover.background};
