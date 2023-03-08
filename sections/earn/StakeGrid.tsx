@@ -7,7 +7,7 @@ import { GridContainer } from 'sections/earn/grid';
 import { claimRewards, fetchEarnTokenPrices } from 'state/earn/actions';
 import { selectEarnApy, selectEarnedRewards, selectYieldPerDay } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
-import { formatPercent, truncateNumbers } from 'utils/formatters/number';
+import { formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import GridData from './GridData';
 
@@ -33,7 +33,7 @@ const StakeGrid = () => {
 
 	return (
 		<GridContainer>
-			<GridData title="Your Yield / Day" value={yieldPerDay} hasKwentaLogo />
+			<GridData title="Your Yield / Day" value={truncateNumbers(yieldPerDay, 4)} hasKwentaLogo />
 			<GridData title="Your Rewards" value={truncateNumbers(earnedRewards, 4)} hasKwentaLogo>
 				<Button
 					fullWidth
