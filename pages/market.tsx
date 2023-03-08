@@ -3,6 +3,7 @@ import { useEffect, FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import ChatRoom from 'components/ChatRoom/ChatRoom';
 import Error from 'components/ErrorView';
 import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -92,6 +93,7 @@ const Market: MarketComponent = () => {
 						<MarketInfo />
 						<StyledRightSideContent>
 							<TradePanelDesktop />
+							<ChatRoom />
 						</StyledRightSideContent>
 					</StyledFullHeightContainer>
 					<GitHashID />
@@ -99,6 +101,7 @@ const Market: MarketComponent = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileTrade />
+				<ChatRoom />
 				<GitHashID />
 			</MobileOrTabletView>
 			{openModal === 'futures_isolated_transfer' && (
