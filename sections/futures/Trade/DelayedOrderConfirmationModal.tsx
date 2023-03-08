@@ -28,7 +28,6 @@ import {
 	selectOrderType,
 	selectPosition,
 	selectTradePreview,
-	selectTradePreviewStatus,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -160,13 +159,17 @@ const DelayedOrderConfirmationModal: FC = () => {
 	}, [dataRows, marketAsset, leverageSide, orderType, orderDetails.nativeSizeDelta, t]);
 
 	const leverageValue = useMemo(
-		() => truncateNumbers(wei(Number(potentialTradeDetails?.leverage ?? 0)), DEFAULT_FIAT_DECIMALS),
+		() =>
+			truncateNumbers(
+				wei(Number(potentialTradeDetails?.leverage.abs() ?? 0)),
+				DEFAULT_FIAT_DECIMALS
+			),
 		[potentialTradeDetails?.leverage]
 	);
 
 	const orderTypeValue = useMemo(
 		() =>
-			OrderNameByType[orderType] === 'Delayed Offchain'
+			OrderNameByType[orderType] === 'Delayed Market'
 				? 'Delayed Market'
 				: OrderNameByType[orderType],
 		[orderType]
@@ -186,7 +189,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 		);
 	};
 
-	const orderSummary = () => {
+	const orderSummary = () => (
 		<OrderSummaryLine>
 			<InfoBoxContainer>
 				<InfoBoxRow
@@ -211,15 +214,15 @@ const DelayedOrderConfirmationModal: FC = () => {
 			<InfoBoxContainer>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.leverage')}
-					value={<OrderSideLabel>{leverageValue}</OrderSideLabel>}
+					value={<OrderSummaryValue>{leverageValue}</OrderSummaryValue>}
 				/>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.order-type')}
 					value={<OrderSummaryValue>{orderTypeValue}</OrderSummaryValue>}
 				/>
 			</InfoBoxContainer>
-		</OrderSummaryLine>;
-	};
+		</OrderSummaryLine>
+	);
 
 	return (
 		<>
@@ -234,7 +237,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 					}
 				>
 					<Spacer height={12} />
-					{orderSummary}
+					{orderSummary()}
 					{dataRows.map((row, i) => (
 						<Row key={`datarow-${i}`} className={i === 0 ? '' : 'border'}>
 							{row.tooltipContent ? (
@@ -373,7 +376,6 @@ const Disclaimer = styled.div`
 
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-bottom: -1px;
-	margin-left: 8px;
 `;
 
 const OrderSummaryLine = styled.div`

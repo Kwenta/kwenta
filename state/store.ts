@@ -29,12 +29,12 @@ import stakingReducer from './staking/reducer';
 import statsReducer from './stats/reducer';
 import walletReducer from './wallet/reducer';
 
-const LOG_REDUX = process.env.NODE_ENV !== 'production';
+const LOG_REDUX = false;
 
 const persistConfig = {
 	key: 'root1',
 	storage,
-	version: 7,
+	version: 9,
 	blacklist: ['app', 'wallet'],
 	migrate: createMigrate(migrations, { debug: true }),
 };

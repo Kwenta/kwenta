@@ -53,7 +53,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 		const totalFuturesFeePaid = useMemo(() => {
 			const t: FuturesFeeProps[] = totalFuturesFeeQuery.data ?? [];
 			return t
-				.map((trade) => formatEther(trade.feesSynthetix.toString()))
+				.map((trade) => formatEther(trade.feesKwenta.toString()))
 				.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
 		}, [totalFuturesFeeQuery.data]);
 

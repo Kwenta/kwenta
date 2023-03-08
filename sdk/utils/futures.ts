@@ -345,7 +345,7 @@ export const formatDelayedOrder = (
 		isOffchain: isOffchain,
 		priceImpactDelta: wei(priceImpactDelta),
 		targetRoundId: wei(targetRoundId),
-		orderType: isOffchain ? 'Delayed Offchain' : 'Delayed',
+		orderType: isOffchain ? 'Delayed Market' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 	};
 };
@@ -439,7 +439,7 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	PRICE_OUT_OF_BOUNDS: 'Price out of acceptable range',
 	CAN_LIQUIDATE: 'Position can be liquidated',
 	CANNOT_LIQUIDATE: 'Position cannot be liquidated',
-	MAX_MARKET_SIZE_EXCEEDED: 'Max market size exceeded',
+	MAX_MARKET_SIZE_EXCEEDED: 'Open interest limit exceeded',
 	MAX_LEVERAGE_EXCEEDED: 'Max leverage exceeded',
 	INSUFFICIENT_MARGIN: 'Insufficient margin',
 	NOT_PERMITTED: 'Not permitted by this address',
@@ -506,7 +506,7 @@ export const mapFuturesOrderFromEvent = (
 export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> = {
 	market: 'Market',
 	delayed: 'Delayed',
-	delayed_offchain: 'Delayed Offchain',
+	delayed_offchain: 'Delayed Market',
 	stop_market: 'Stop Market',
 	limit: 'Limit',
 };
@@ -517,7 +517,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 		: orderType === 'StopMarket'
 		? 'Stop Market'
 		: orderType === 'DelayedOffchain'
-		? 'Delayed Offchain'
+		? 'Delayed Market'
 		: orderType;
 };
 

@@ -63,8 +63,14 @@ const FuturesHistoryTable: FC = () => {
 		() =>
 			trades.map((trade) => {
 				const parsedAsset = ethersUtils.parseBytes32String(trade.asset) as FuturesMarketAsset;
+				const pnl = trade.pnl.div(ETH_UNIT);
+				const feesPaid = trade.feesPaid.div(ETH_UNIT);
+				const netPnl = pnl.sub(feesPaid);
 				return {
 					...trade,
+					pnl,
+					feesPaid,
+					netPnl,
 					asset: parsedAsset,
 					displayAsset: getDisplayAsset(parsedAsset),
 					market: getMarketName(parsedAsset),
@@ -72,8 +78,6 @@ const FuturesHistoryTable: FC = () => {
 					size: Number(trade.size.div(ETH_UNIT).abs()),
 					timestamp: Number(trade.timestamp.mul(1000)),
 					date: formatShortDateWithoutYear(new Date(trade.timestamp.mul(1000).toNumber())),
-					pnl: trade.pnl.div(ETH_UNIT),
-					feesPaid: trade.feesPaid.div(ETH_UNIT),
 					id: trade.txnHash,
 					status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 				};
@@ -105,7 +109,6 @@ const FuturesHistoryTable: FC = () => {
 							)
 						}
 						highlightRowsOnHover
-						sortBy={[{ id: 'dateTime', asec: true }]}
 						columns={[
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.date-time')}</div>,
@@ -178,15 +181,15 @@ const FuturesHistoryTable: FC = () => {
 							},
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
-								accessor: 'pnl',
+								accessor: 'netPnl',
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
 									return conditionalRender(
-										cellProps.row.original.pnl,
-										cellProps.row.original.pnl.eq(wei(0)) ? (
+										cellProps.value,
+										cellProps.value.eq(wei(0)) ? (
 											<PNL normal>--</PNL>
 										) : (
 											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value, { suggestDecimals: true })}
+												{formatDollars(cellProps.value, { maxDecimals: 2 })}
 											</PNL>
 										)
 									);
@@ -247,7 +250,6 @@ const FuturesHistoryTable: FC = () => {
 								</TableNoResults>
 							)
 						}
-						sortBy={[{ id: 'dateTime', asc: false }]}
 						columns={[
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.asset')}</div>,
@@ -315,15 +317,15 @@ const FuturesHistoryTable: FC = () => {
 							},
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
-								accessor: 'pnl',
+								accessor: 'netPnl',
 								Cell: (cellProps: CellProps<FuturesTrade>) => {
 									return conditionalRender(
-										cellProps.row.original.pnl,
-										cellProps.row.original.pnl.eq(wei(0)) ? (
+										cellProps.value,
+										cellProps.value.eq(wei(0)) ? (
 											<PNL normal>--</PNL>
 										) : (
 											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value, { suggestDecimals: true })}
+												{formatDollars(cellProps.value, { maxDecimals: 2 })}
 											</PNL>
 										)
 									);

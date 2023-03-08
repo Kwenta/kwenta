@@ -41,10 +41,10 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 			{ label: 'Date/Time', value: <TimeDisplay value={trade.timestamp} horizontal /> },
 			{
 				label: 'PnL',
-				value: trade.pnl.eq(0) ? (
+				value: trade.netPnl.eq(0) ? (
 					<PNL normal>--</PNL>
 				) : (
-					<PNL negative={trade.pnl.lt(0)}>{formatDollars(trade.pnl)}</PNL>
+					<PNL negative={trade.netPnl.lt(0)}>{formatDollars(trade.netPnl)}</PNL>
 				),
 			},
 			{

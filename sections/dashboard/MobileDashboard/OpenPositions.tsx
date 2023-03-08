@@ -94,8 +94,8 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 				</SectionHeader>
 
 				<TabButtonsContainer>
-					{POSITIONS_TABS.map(({ name, label, ...rest }) => (
-						<TabButton key={name} title={label} {...rest} />
+					{POSITIONS_TABS.map(({ name, label, badge, ...rest }) => (
+						<TabButton key={name} title={label} badgeCount={badge} {...rest} />
 					))}
 				</TabButtonsContainer>
 			</div>

@@ -20,9 +20,9 @@ import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
+import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
 import { Token, TokenBalances } from 'sdk/types/tokens';
 import {
