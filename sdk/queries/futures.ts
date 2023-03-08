@@ -195,21 +195,3 @@ export const queryFuturesTrades = (
 		}
 	);
 };
-
-// TODO: Handle homepage state.
-const queryFuturesCumulativeStats = async (sdk: KwentaSDK) => {
-	const response = await request(
-		sdk.futures.futuresGqlEndpoint,
-		gql`
-			query FuturesCumulativeStats {
-				futuresCumulativeStat(id: "0") {
-					totalTrades
-					totalTraders
-					totalVolume
-					totalLiquidations
-					averageTradeSize
-				}
-			}
-		`
-	);
-};

@@ -1,5 +1,4 @@
-import { wei } from '@synthetixio/wei';
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,10 +9,14 @@ import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { FuturesFilledPosition, PositionSide } from 'sdk/types/futures';
 import { getClosePositionOrderFee } from 'state/futures/actions';
-import { selectIsClosingPosition, selectMarketAsset } from 'state/futures/selectors';
+import {
+	selectClosePositionOrderFee,
+	selectClosePositionOrderFeeError,
+	selectIsClosingPosition,
+	selectMarketAsset,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 type ClosePositionModalProps = {
 	positionDetails: FuturesFilledPosition | null | undefined;
@@ -36,22 +39,13 @@ function ClosePositionModal({
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const isClosing = useAppSelector(selectIsClosingPosition);
 
-	const [orderFee, setOrderFee] = useState(wei(0));
-	const [error, setError] = useState<null | string>(null);
+	const orderFee = useAppSelector(selectClosePositionOrderFee);
+	const error = useAppSelector(selectClosePositionOrderFeeError);
 
 	const positionSize = useMemo(() => positionDetails?.size ?? zeroBN, [positionDetails?.size]);
 
 	useEffect(() => {
-		const getOrderFee = () => {
-			try {
-				setError(null);
-				dispatch(getClosePositionOrderFee());
-			} catch (e) {
-				logError(e);
-				setError(e?.data?.message ?? e.message);
-			}
-		};
-		getOrderFee();
+		dispatch(getClosePositionOrderFee());
 	}, [marketAsset, positionSize, dispatch]);
 
 	const dataRows = useMemo(() => {

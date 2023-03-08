@@ -43,6 +43,7 @@ import {
 	fetchAllTradesForAccount,
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
+	getClosePositionOrderFee,
 } from './actions';
 import {
 	CrossMarginState,
@@ -84,6 +85,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
+		closePositionOrderFee: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -124,6 +126,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		tradeFee: '0',
 		leverageInput: '0',
 	},
+	closePositionOrderFee: '0',
 };
 
 const futuresSlice = createSlice({
@@ -624,6 +627,17 @@ const futuresSlice = createSlice({
 				error: 'Failed to fetch trades',
 				status: FetchStatus.Error,
 			};
+		});
+		builder.addCase(getClosePositionOrderFee.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.closePositionOrderFee = SUCCESS_STATUS;
+			futuresState.closePositionOrderFee = payload.toString();
+		});
+		builder.addCase(getClosePositionOrderFee.rejected, (futuresState, { error }) => {
+			futuresState.queryStatuses.closePositionOrderFee = {
+				error: error.message,
+				status: FetchStatus.Error,
+			};
+			futuresState.closePositionOrderFee = '0';
 		});
 	},
 });
