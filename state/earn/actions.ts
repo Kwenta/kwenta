@@ -72,9 +72,7 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 	async (_, { dispatch, extra: { sdk } }) => {
 		const {
 			balance,
-			earned,
 			endDate,
-			rewardRate,
 			totalSupply,
 			lpTokenBalance,
 			allowance,
