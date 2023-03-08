@@ -172,8 +172,8 @@ const Overview: FC = () => {
 				/>
 
 				<TabButtonsContainer>
-					{POSITIONS_TABS.map(({ name, label, ...rest }) => (
-						<TabButton key={name} title={label} {...rest} />
+					{POSITIONS_TABS.map(({ name, label, badge, ...rest }) => (
+						<TabButton key={name} title={label} badgeCount={badge} {...rest} />
 					))}
 				</TabButtonsContainer>
 				<TabPanel name={PositionsTab.CROSS_MARGIN} activeTab={activePositionsTab}>

@@ -76,12 +76,5 @@ export const selectEarnApy = createSelector(
 	selectKwentaPrice,
 	(state: RootState) => state.earn.rewardRate,
 	(state: RootState) => state.earn.totalSupply,
-	(lpTokenValue, kwentaPrice, rewardRate, totalSupply) =>
-		lpTokenValue.gt(0)
-			? toWei(rewardRate)
-					.div(totalSupply)
-					.mul(PERIOD_IN_SECONDS.ONE_YEAR)
-					.mul(kwentaPrice)
-					.div(lpTokenValue)
-			: zeroBN
+	(_lpTokenValue, _kwentaPrice, _rewardRate, _totalSupply) => zeroBN
 );
