@@ -1331,8 +1331,9 @@ export const getClosePositionOrderFee = createAsyncThunk<Wei, void, ThunkConfig>
 
 		if (marketInfo) {
 			return sdk.futures.getOrderFee(marketInfo.market, position?.position?.size.neg() ?? zeroBN);
+		} else {
+			notifyError('marketInfo not populated yet');
+			return zeroBN;
 		}
-
-		return zeroBN;
 	}
 );
