@@ -613,6 +613,18 @@ export default class FuturesService {
 		return response ? mapTrades(response) : [];
 	}
 
+	// This is on an interval of 15 seconds.
+	public async getFuturesTrades(marketKey: FuturesMarketKey, minTs: number, maxTs: number) {
+		const response = await queryFuturesTrades(this.sdk, marketKey, minTs, maxTs);
+		return response ? mapTrades(response) : null;
+	}
+
+	public async getOrderFee(marketAddress: string, size: Wei) {
+		const marketContract = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const orderFee = await marketContract.orderFee(size.toBN(), 0);
+		return wei(orderFee.fee);
+	}
+
 	// Contract mutations
 
 	public async approveCrossMarginDeposit(
@@ -842,17 +854,5 @@ export default class FuturesService {
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'withdrawEth', [
 			amount.toBN(),
 		]);
-	}
-
-	// This is on an interval of 15 seconds.
-	public async getFuturesTrades(marketKey: FuturesMarketKey, minTs: number, maxTs: number) {
-		const response = await queryFuturesTrades(this.sdk, marketKey, minTs, maxTs);
-		return response ? mapTrades(response) : null;
-	}
-
-	public async getOrderFee(marketAddress: string, size: Wei) {
-		const marketContract = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
-		const orderFee = await marketContract.orderFee(size.toBN(), 0);
-		return wei(orderFee.fee);
 	}
 }
