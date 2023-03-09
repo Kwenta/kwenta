@@ -439,7 +439,7 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	PRICE_OUT_OF_BOUNDS: 'Price out of acceptable range',
 	CAN_LIQUIDATE: 'Position can be liquidated',
 	CANNOT_LIQUIDATE: 'Position cannot be liquidated',
-	MAX_MARKET_SIZE_EXCEEDED: 'Max market size exceeded',
+	MAX_MARKET_SIZE_EXCEEDED: 'Open interest limit exceeded',
 	MAX_LEVERAGE_EXCEEDED: 'Max leverage exceeded',
 	INSUFFICIENT_MARGIN: 'Insufficient margin',
 	NOT_PERMITTED: 'Not permitted by this address',
