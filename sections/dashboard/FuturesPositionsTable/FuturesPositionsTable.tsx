@@ -37,6 +37,7 @@ import MobilePositionRow from './MobilePositionRow';
 type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
 	showCurrentMarket?: boolean;
+	showEmptyTable?: boolean;
 };
 
 const LegacyLink = () => {
@@ -62,6 +63,7 @@ const LegacyLink = () => {
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
+	showEmptyTable = true,
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -291,32 +293,38 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<LegacyLink />
-				<OpenPositionsHeader>
-					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
-					<OpenPositionsRightHeader>
-						<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
-						<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
-					</OpenPositionsRightHeader>
-				</OpenPositionsHeader>
-				<div style={{ margin: '0 15px' }}>
-					{data.length === 0 ? (
-						<NoPositionsText>
-							<Link href={ROUTES.Markets.Home(accountType)}>
-								<div>{t('common.perp-cta')}</div>
-							</Link>
-						</NoPositionsText>
-					) : (
-						data.map((row) => (
-							<MobilePositionRow
-								onClick={() =>
-									router.push(ROUTES.Markets.MarketPair(row.market?.asset ?? 'sETH', accountType))
-								}
-								key={row.market?.asset}
-								row={row}
-							/>
-						))
-					)}
-				</div>
+				{(showEmptyTable || data.length) && (
+					<>
+						<OpenPositionsHeader>
+							<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
+							<OpenPositionsRightHeader>
+								<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
+								<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
+							</OpenPositionsRightHeader>
+						</OpenPositionsHeader>
+						<div style={{ margin: '0 15px' }}>
+							{data.length === 0 ? (
+								<NoPositionsText>
+									<Link href={ROUTES.Markets.Home(accountType)}>
+										<div>{t('common.perp-cta')}</div>
+									</Link>
+								</NoPositionsText>
+							) : (
+								data.map((row) => (
+									<MobilePositionRow
+										onClick={() =>
+											router.push(
+												ROUTES.Markets.MarketPair(row.market?.asset ?? 'sETH', accountType)
+											)
+										}
+										key={row.market?.asset}
+										row={row}
+									/>
+								))
+							)}
+						</div>
+					</>
+				)}
 			</MobileOrTabletView>
 		</>
 	);
