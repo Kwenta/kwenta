@@ -4,7 +4,7 @@ import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
-import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
+import { formatShortDateUTC, toJSTimestamp } from 'utils/formatters/date';
 
 import { initChart } from '../initChart';
 import type { EChartsOption } from '../initChart';
@@ -37,7 +37,7 @@ export const Trades = () => {
 			xAxis: {
 				...defaultOptions.xAxis,
 				type: 'category',
-				data: dailyStatsData.map(({ timestamp }) => formatShortDate(toJSTimestamp(timestamp))),
+				data: dailyStatsData.map(({ timestamp }) => formatShortDateUTC(toJSTimestamp(timestamp))),
 			},
 			yAxis: [
 				{
