@@ -118,10 +118,6 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 			: null,
 	},
 	{
-		i18nLabel: 'header.nav.options.title',
-		link: EXTERNAL_LINKS.Options.Portfolio,
-	},
-	{
 		i18nLabel: 'header.nav.exchange',
 		link: ROUTES.Exchange.Home,
 	},
@@ -144,6 +140,10 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 					},
 			  ]
 			: null,
+	},
+	{
+		i18nLabel: 'header.nav.options.title',
+		link: EXTERNAL_LINKS.Options.Portfolio,
 	},
 ];
 
