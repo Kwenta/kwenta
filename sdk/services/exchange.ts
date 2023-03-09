@@ -26,6 +26,7 @@ import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
 import { NetworkId } from 'sdk/types/common';
 import { SynthSuspensionReason } from 'sdk/types/futures';
+import { DeprecatedSynthBalance } from 'sdk/types/synths';
 import { Token, TokenBalances } from 'sdk/types/tokens';
 import { getReasonFromCode } from 'sdk/utils/synths';
 import {
@@ -51,13 +52,6 @@ const PROTOCOLS =
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 const DEFAULT_BUFFER = 0.2;
-
-export type DeprecatedSynthBalance = {
-	currencyKey: CurrencyKey;
-	proxyAddress: string;
-	balance: Wei;
-	usdBalance: Wei;
-};
 
 export default class ExchangeService {
 	private tokensMap: any = {};

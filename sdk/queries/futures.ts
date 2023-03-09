@@ -7,8 +7,11 @@ import {
 	getFuturesPositions,
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
-import { DEFAULT_NUMBER_OF_TRADES } from 'sdk/constants/defaults';
-import { CROSS_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
+import {
+	CROSS_MARGIN_FRAGMENT,
+	ISOLATED_MARGIN_FRAGMENT,
+	DEFAULT_NUMBER_OF_TRADES,
+} from 'sdk/constants/futures';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { mapCrossMarginTransfers, mapMarginTransfers } from 'sdk/utils/futures';
 

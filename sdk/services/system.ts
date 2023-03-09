@@ -2,7 +2,7 @@ import KwentaSDK from 'sdk';
 
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 
-export default class GeneralService {
+export default class SystemService {
 	private sdk: KwentaSDK;
 
 	constructor(sdk: KwentaSDK) {

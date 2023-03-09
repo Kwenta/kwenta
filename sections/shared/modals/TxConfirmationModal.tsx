@@ -57,11 +57,6 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		dispatch(closeModal());
 	}, [dispatch]);
 
-	// const priceAdjustmentFeeUSD = useMemo(
-	// 	() => priceAdjustment.rebate.sub(priceAdjustment.reclaim).mul(quotePriceRate),
-	// 	[priceAdjustment, quotePriceRate]
-	// );
-
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
 			<Currencies>

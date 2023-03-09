@@ -14,7 +14,6 @@ import Search from 'components/Table/Search';
 import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
 import ROUTES from 'constants/routes';
-// import { FuturesMarketAsset, FuturesMarketKey, SynthSuspensionReason } from 'sdk/types/futures';
 import useClickOutside from 'hooks/useClickOutside';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
@@ -32,25 +31,7 @@ import { FetchStatus } from 'state/types';
 import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
 import { getMarketName, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
-// type AssetToCurrencyOptionArgs = {
-// 	asset: FuturesMarketAsset;
-// 	key: FuturesMarketKey;
-// 	description: string;
-// 	price?: string | JSX.Element;
-// 	change?: string;
-// 	negativeChange: boolean;
-// 	isMarketClosed: boolean;
-// 	closureReason?: SynthSuspensionReason;
-// };
-
-// const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs) => ({
-// 	value: args.asset,
-// 	label: getMarketName(args.asset),
-// 	...args,
-// });
 import MarketsDropdownSelector from './MarketsDropdownSelector';
-
-// export type MarketsCurrencyOption = ReturnType<typeof assetToCurrencyOption>;
 
 type MarketsDropdownProps = {
 	mobile?: boolean;

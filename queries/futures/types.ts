@@ -1,22 +1,8 @@
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
-import { CurrencyKey } from 'constants/currency';
 import { FuturesMarketAsset, FuturesPotentialTradeDetails } from 'sdk/types/futures';
-
-export type SynthBalance = {
-	currencyKey: CurrencyKey;
-	balance: Wei;
-	usdBalance: Wei;
-};
-
-export type SynthBalancesMap = Partial<{ [key: string]: SynthBalance }>;
-
-export type Balances = {
-	balancesMap: SynthBalancesMap;
-	balances: SynthBalance[];
-	totalUSDBalance: Wei;
-};
+import { Balances } from 'sdk/types/synths';
 
 export type FuturesOpenInterest = {
 	asset: string;

@@ -3,20 +3,6 @@ import keyBy from 'lodash/keyBy';
 
 export type CurrencyKey = string;
 
-export type Synths = Partial<
-	Record<
-		string,
-		{
-			asset: string;
-			category: string;
-			sign: string;
-			description: string;
-			name: string;
-			subclass?: string;
-		}
-	>
->;
-
 // TODO: standardize this
 export type Category = 'crypto' | 'forex' | 'equities' | 'index' | 'commodity' | 'inverse';
 
