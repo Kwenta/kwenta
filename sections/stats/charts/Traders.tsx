@@ -4,6 +4,7 @@ import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
+import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
 
 import { initChart } from '../initChart';
 import type { EChartsOption } from '../initChart';
@@ -13,7 +14,7 @@ import { TimeframeSwitcher } from '../TimeframeSwitcher';
 export const Traders = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const { tradersData, tradersIsLoading } = useStatsData();
+	const { dailyStatsData, dailyStatsIsLoading } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -24,7 +25,7 @@ export const Traders = () => {
 	}, [ref?.current, theme]);
 
 	useEffect(() => {
-		if (!ref || !chart || !ref.current || !tradersData || !tradersData.length) {
+		if (!ref || !chart || !ref.current || !dailyStatsData || !dailyStatsData.length) {
 			return;
 		}
 
@@ -36,7 +37,7 @@ export const Traders = () => {
 			xAxis: {
 				...defaultOptions.xAxis,
 				type: 'category',
-				data: tradersData?.map((data) => data.date),
+				data: dailyStatsData.map(({ timestamp }) => formatShortDate(toJSTimestamp(timestamp))),
 			},
 			yAxis: [
 				{
@@ -68,7 +69,7 @@ export const Traders = () => {
 			],
 			series: [
 				{
-					data: tradersData?.map((data) => data.uniqueTradersByPeriod),
+					data: dailyStatsData.map((data) => data.uniqueTraders),
 					type: 'bar',
 					name: 'Traders',
 					itemStyle: {
@@ -76,7 +77,7 @@ export const Traders = () => {
 					},
 				},
 				{
-					data: tradersData?.map((data) => data.totalUniqueTraders),
+					data: dailyStatsData.map((data) => data.cumulativeTraders),
 					type: 'line',
 					name: 'Cumulative Traders',
 					lineStyle: {
@@ -90,13 +91,13 @@ export const Traders = () => {
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, tradersData, theme, defaultOptions]);
+	}, [ref, chart, t, dailyStatsData, theme, defaultOptions]);
 
 	return (
 		<ChartContainer width={1}>
 			<ChartHeader>
 				<ChartTitle>
-					{t('stats.traders.title')} {tradersIsLoading && <MiniLoader />}
+					{t('stats.traders.title')} {dailyStatsIsLoading && <MiniLoader />}
 				</ChartTitle>
 				<TimeframeSwitcher />
 			</ChartHeader>
