@@ -111,6 +111,7 @@ import {
 	selectTradeSizeInputs,
 	selectSkewAdjustedPrice,
 	selectIdleMargin,
+	selectSlTpTradeInputs,
 } from './selectors';
 import {
 	AccountContext,
@@ -1146,6 +1147,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
 		const priceImpact = selectIsolatedPriceImpact(getState());
 		const wallet = selectWallet(getState());
+		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
 
 		try {
 			if (!marketInfo) throw new Error('Market info not found');
@@ -1165,6 +1167,13 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 				marginDelta: marginDelta,
 				priceImpactDelta: priceImpact,
 			};
+			if (Number(stopLossPrice) > 0) {
+				orderInputs.stopLossPrice = wei(stopLossPrice);
+			}
+
+			if (Number(takeProfitPrice) > 0) {
+				orderInputs.takeProfitPrice = wei(takeProfitPrice);
+			}
 
 			if (orderType !== 'market') {
 				orderInputs['conditionalOrderInputs'] = {
@@ -1176,6 +1185,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 					reduceOnly: false,
 				};
 			}
+
 			const tx = await sdk.futures.submitCrossMarginOrder(
 				{ address: marketInfo.market, key: marketInfo.marketKey },
 				wallet,

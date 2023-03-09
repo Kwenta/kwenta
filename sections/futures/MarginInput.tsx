@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
+import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import { editCrossMarginMarginDelta } from 'state/futures/actions';
 import {
 	selectPosition,
@@ -13,9 +14,9 @@ import {
 	selectIdleMargin,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { zeroBN } from 'utils/formatters/number';
+import { floorNumber, zeroBN } from 'utils/formatters/number';
 
-import MarginPercentSelector from './Trade/MarginPercentSelector';
+const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%'];
 
 type MarginInputProps = {
 	isMobile?: boolean;
@@ -34,6 +35,13 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ disabled, isMobile }) =>
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
 		dispatch(editCrossMarginMarginDelta(v));
+	};
+
+	const onSelectPercent = (index: number) => {
+		const percent = PERCENT_OPTIONS[index].replace('%', '');
+		const margin = idleMargin.div(100).mul(percent);
+
+		dispatch(editCrossMarginMarginDelta(floorNumber(margin).toString()));
 	};
 
 	const isDisabled = useMemo(() => {
@@ -55,7 +63,7 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ disabled, isMobile }) =>
 						Margin&nbsp; —<span>&nbsp; Set collateral</span>
 					</InputTitle>
 					<InputHelpers>
-						<MarginPercentSelector />
+						<SelectorButtons onSelect={onSelectPercent} options={PERCENT_OPTIONS} />
 					</InputHelpers>
 				</OrderSizingRow>
 

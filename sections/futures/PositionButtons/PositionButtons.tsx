@@ -2,8 +2,6 @@ import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import { PositionSide } from 'sdk/types/futures';
-import { selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 
 interface PositionButtonsProps {
 	selected: PositionSide;
@@ -12,8 +10,6 @@ interface PositionButtonsProps {
 }
 
 const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) => {
-	const marketInfo = useAppSelector(selectMarketInfo);
-
 	return (
 		<PositionButtonsContainer>
 			<PositionButton

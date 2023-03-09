@@ -1,7 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
-import { parseBytes32String } from 'ethers/lib/utils.js';
+import { defaultAbiCoder, formatBytes32String, parseBytes32String } from 'ethers/lib/utils.js';
 
 import { ETH_UNIT } from 'constants/network';
 import {
@@ -42,6 +42,7 @@ import {
 	PostTradeDetailsResponse,
 	PotentialTradeStatus,
 	MarginTransfer,
+	ConditionalOrderTypeEnum,
 } from 'sdk/types/futures';
 import { CrossMarginSettings } from 'state/futures/types';
 import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
@@ -468,7 +469,7 @@ export const mapFuturesOrderFromEvent = (
 	orderDetails: {
 		id: number;
 		marketKey: string;
-		orderType: number;
+		conditionalOrderType: number;
 		targetPrice: BigNumber;
 		sizeDelta: BigNumber;
 		marginDelta: BigNumber;
@@ -485,7 +486,7 @@ export const mapFuturesOrderFromEvent = (
 		account: account,
 		size: sizeDelta,
 		marginDelta: wei(orderDetails.marginDelta),
-		orderType: orderDetails.orderType === 0 ? 'Limit' : 'Stop Market',
+		orderType: orderDetails.conditionalOrderType === 0 ? 'Limit' : 'Stop Market',
 		targetPrice: wei(orderDetails.targetPrice),
 		sizeTxt: formatCurrency(asset, size, {
 			currencyKey: getDisplayAsset(asset) ?? '',
@@ -596,5 +597,32 @@ export const mapCrossMarginTransfers = (
 				txHash,
 			};
 		}
+	);
+};
+
+type TradeInputParams = {
+	marginDelta: Wei;
+	sizeDelta: Wei;
+	price: Wei;
+};
+
+export const encodeConditionalOrderParams = (
+	marketKey: FuturesMarketKey,
+	tradeInputs: TradeInputParams,
+	type: ConditionalOrderTypeEnum,
+	priceImpactDelta: Wei,
+	reduceOnly: boolean
+) => {
+	return defaultAbiCoder.encode(
+		['bytes32', 'int256', 'int256', 'uint256', 'uint256', 'uint128', 'bool'],
+		[
+			formatBytes32String(marketKey),
+			tradeInputs.marginDelta.toBN(),
+			tradeInputs.sizeDelta.toBN(),
+			tradeInputs.price.toBN(),
+			type,
+			priceImpactDelta.toBN(),
+			reduceOnly,
+		]
 	);
 };

@@ -27,9 +27,9 @@ export type TradeSizeInputs<T = Wei> = {
 	susdSize: T;
 };
 
-export type CrossMarginTradeInputsWithDelta<T = Wei> = TradeSizeInputs<T> & {
-	nativeSizeDelta: T;
-	susdSizeDelta: T;
+export type CrossMarginTradeInputs<T = Wei> = TradeSizeInputs<T> & {
+	stopLossPrice?: T;
+	takeProfitPrice?: T;
 };
 
 export type MarkPrices<T = Wei> = Partial<Record<FuturesMarketKey, T>>;
@@ -188,7 +188,7 @@ export type TradePreviewResult = {
 };
 
 export type CrossMarginState = {
-	tradeInputs: TradeSizeInputs<string>;
+	tradeInputs: CrossMarginTradeInputs<string>;
 	marginDelta: string;
 	orderType: CrossMarginOrderType;
 	orderFeeCap: string;

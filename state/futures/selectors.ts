@@ -583,6 +583,14 @@ export const selectTradeSizeInputs = createSelector(
 	}
 );
 
+export const selectSlTpTradeInputs = createSelector(
+	(state: RootState) => state.futures.crossMargin.tradeInputs,
+	(tradeInputs) => ({
+		stopLossPrice: tradeInputs.stopLossPrice || '',
+		takeProfitPrice: tradeInputs.takeProfitPrice || '',
+	})
+);
+
 export const selectCrossMarginOrderPrice = (state: RootState) =>
 	state.futures.crossMargin.orderPrice.price ?? '';
 

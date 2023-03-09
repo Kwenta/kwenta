@@ -404,5 +404,5 @@ export type SmartMarginOrderInputs = {
 		reduceOnly: boolean;
 	};
 	stopLossPrice?: Wei;
-	TakeProfitPrice?: Wei;
+	takeProfitPrice?: Wei;
 };

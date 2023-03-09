@@ -33,7 +33,6 @@ import {
 } from 'sdk/queries/futures';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
-	CrossMarginOrderType,
 	FundingRateInput,
 	FundingRateResponse,
 	FundingRateUpdate,
@@ -56,6 +55,7 @@ import { PricesMap } from 'sdk/types/prices';
 import {
 	calculateFundingRate,
 	calculateVolumes,
+	encodeConditionalOrderParams,
 	formatDelayedOrder,
 	formatPotentialIsolatedTrade,
 	formatPotentialTrade,
@@ -859,7 +859,7 @@ export default class FuturesService {
 						['bytes32', 'int256', 'int256', 'uint256', 'uint256', 'uint128', 'bool'],
 						[
 							formatBytes32String(market.key),
-							marginDeltaMinusFees.sub(5).toBN(),
+							marginDeltaMinusFees.toBN(),
 							order.sizeDelta.toBN(),
 							order.conditionalOrderInputs!.price.toBN(),
 							order.conditionalOrderInputs.orderType,
@@ -869,6 +869,30 @@ export default class FuturesService {
 					)
 				);
 			}
+		}
+
+		if (order.takeProfitPrice) {
+			commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+			const encodedParams = encodeConditionalOrderParams(
+				market.key,
+				{ marginDelta: wei(0), sizeDelta: order.sizeDelta, price: order.takeProfitPrice },
+				ConditionalOrderTypeEnum.LIMIT,
+				order.priceImpactDelta,
+				true
+			);
+			inputs.push(encodedParams);
+		}
+
+		if (order.stopLossPrice) {
+			commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+			const encodedParams = encodeConditionalOrderParams(
+				market.key,
+				{ marginDelta: wei(0), sizeDelta: order.sizeDelta, price: order.stopLossPrice },
+				ConditionalOrderTypeEnum.STOP,
+				order.priceImpactDelta,
+				true
+			);
+			inputs.push(encodedParams);
 		}
 
 		return this.sdk.transactions.createContractTxn(
@@ -918,11 +942,11 @@ export default class FuturesService {
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
-		return this.sdk.transactions.createContractTxn(
-			crossMarginAccountContract,
-			'cancelConditionalOrder',
-			[orderId]
-		);
+
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+			[AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER],
+			[defaultAbiCoder.encode(['uint256'], [orderId])],
+		]);
 	}
 
 	public async withdrawAccountKeeperBalance(crossMarginAddress: string, amount: Wei) {

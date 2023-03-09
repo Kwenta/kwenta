@@ -159,6 +159,12 @@ const futuresSlice = createSlice({
 		setCrossMarginMarginDelta: (state, action: PayloadAction<string>) => {
 			state.crossMargin.marginDelta = action.payload;
 		},
+		setCrossMarginTradeStopLoss: (state, action: PayloadAction<string>) => {
+			state.crossMargin.tradeInputs.stopLossPrice = action.payload;
+		},
+		setCrossMarginTradeTakeProfit: (state, action: PayloadAction<string>) => {
+			state.crossMargin.tradeInputs.takeProfitPrice = action.payload;
+		},
 		setFuturesAccountType: (state, action) => {
 			state.selectedType = action.payload;
 		},
@@ -640,6 +646,8 @@ export const {
 	setCrossMarginTradeInputs,
 	setCrossMarginAccount,
 	setCrossMarginMarginDelta,
+	setCrossMarginTradeStopLoss,
+	setCrossMarginTradeTakeProfit,
 	setCrossMarginFees,
 	setCrossMarginOrderPrice,
 	setCrossMarginOrderPriceInvalidLabel,

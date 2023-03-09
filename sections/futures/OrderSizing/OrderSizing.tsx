@@ -118,31 +118,29 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 			maxNativeValue.lte(nativeSizeString || 0));
 
 	return (
-		<>
-			<OrderSizingContainer>
-				<OrderSizingRow>
-					<InputTitle>
-						Amount&nbsp; —<span>&nbsp; Set order size</span>
-					</InputTitle>
-					<InputHelpers>
-						<MaxButton onClick={handleSetMax}>Max</MaxButton>
-						{showPosSizeHelper && (
-							<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
-						)}
-					</InputHelpers>
-				</OrderSizingRow>
+		<OrderSizingContainer>
+			<OrderSizingRow>
+				<InputTitle>
+					Amount&nbsp; —<span>&nbsp; Set order size</span>
+				</InputTitle>
+				<InputHelpers>
+					<MaxButton onClick={handleSetMax}>Max</MaxButton>
+					{showPosSizeHelper && (
+						<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
+					)}
+				</InputHelpers>
+			</OrderSizingRow>
 
-				<NumericInput
-					invalid={invalid}
-					dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
-					disabled={isDisabled}
-					right={<DenominationToggle />}
-					value={assetInputType === 'usd' ? susdSizeString : nativeSizeString}
-					placeholder="0.00"
-					onChange={onChangeValue}
-				/>
-			</OrderSizingContainer>
-		</>
+			<NumericInput
+				invalid={invalid}
+				dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
+				disabled={isDisabled}
+				right={<DenominationToggle />}
+				value={assetInputType === 'usd' ? susdSizeString : nativeSizeString}
+				placeholder="0.00"
+				onChange={onChangeValue}
+			/>
+		</OrderSizingContainer>
 	);
 });
 

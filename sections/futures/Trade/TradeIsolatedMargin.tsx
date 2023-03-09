@@ -24,6 +24,7 @@ import CreateAccount from '../TradeCrossMargin/CreateAccount';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import ManagePosition from './ManagePosition';
 import OrderTypeSelector from './OrderTypeSelector';
+import SLTPInputs from './SLTPInputs';
 
 type Props = {
 	isMobile?: boolean;
@@ -72,6 +73,8 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 			<OrderSizing />
 
 			<LeverageInput />
+
+			<SLTPInputs />
 
 			<ManagePosition />
 

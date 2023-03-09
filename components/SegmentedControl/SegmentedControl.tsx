@@ -40,7 +40,7 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 			? 'display: flex; justify-content: space-between;'
 			: 'display: grid;'}
 	grid-template-columns: repeat(${(props) => props.$length}, 1fr);
-	grid-gap: 14px;
+	grid-gap: ${(props) => (props.styleType === 'tab' ? '14px' : '6px')};
 	box-sizing: border-box;
 	width: 100%;
 	height: ${(props) => (props.styleType === 'tab' ? '38px' : '24px')};
