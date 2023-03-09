@@ -1,7 +1,7 @@
 import React, { FC, memo } from 'react';
 import styled from 'styled-components';
 
-type StyleType = 'tab' | 'check' | 'button';
+type StyleType = 'tab' | 'check' | 'pill-button';
 
 interface SegmentedControlProps {
 	values: string[];
@@ -43,7 +43,7 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 	grid-gap: ${(props) => (props.styleType === 'tab' ? '14px' : '6px')};
 	box-sizing: border-box;
 	width: 100%;
-	height: ${(props) => (props.styleType === 'tab' ? '38px' : '24px')};
+	height: ${(props) => (props.styleType === 'tab' ? '38px' : '22px')};
 	padding: ${(props) => (props.styleType === 'tab' ? '4px' : '0')};
 	background: ${(props) =>
 		props.styleType === 'tab' ? props.theme.colors.selectedTheme.segmented.background : 'none'};
@@ -53,9 +53,9 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 `;
 
 const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: StyleType }>`
-	font-size: 13px;
+	font-size: ${(props) => (props.styleType === 'pill-button' ? '12px' : '13px')};
 	font-family: ${(props) =>
-		(props.styleType === 'tab' && props.isSelected) || props.styleType === 'button'
+		props.styleType === 'tab' && props.isSelected
 			? props.theme.fonts.bold
 			: props.theme.fonts.regular};
 	cursor: pointer;
@@ -64,17 +64,17 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 	display: ${(props) => (props.styleType === 'check' ? 'flex' : 'inherit')};
 	align-items: center;
 	border: ${(props) => {
-		if ((props.isSelected && props.styleType === 'tab') || props.styleType === 'button')
+		if ((props.isSelected && props.styleType === 'tab') || props.styleType === 'pill-button')
 			return props.theme.colors.selectedTheme.border;
 		return 'none';
 	}};
-	border-radius: ${(props) => (props.styleType === 'button' ? '20px' : '6px')};
+	border-radius: ${(props) => (props.styleType === 'pill-button' ? '20px' : '6px')};
 	border-color: ${(props) =>
-		props.styleType === 'button' && props.isSelected
+		props.styleType === 'pill-button' && props.isSelected
 			? props.theme.colors.selectedTheme.yellow
 			: undefined};
 	color: ${(props) =>
-		props.isSelected && props.styleType === 'button'
+		props.isSelected && props.styleType === 'pill-button'
 			? props.theme.colors.common.primaryYellow
 			: props.isSelected
 			? props.theme.colors.selectedTheme.button.text.primary
@@ -86,7 +86,7 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 			: 'transparent'};
 
 	background-color: ${(props) =>
-		props.isSelected && props.styleType === 'button' && props.theme.colors.common.darkYellow};
+		props.isSelected && props.styleType === 'pill-button' && props.theme.colors.common.darkYellow};
 	transition: all 0.1s ease-in-out;
 	&:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.icon.hover};

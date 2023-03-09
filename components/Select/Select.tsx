@@ -14,8 +14,9 @@ export const DropdownIndicator = (props: any) => {
 	);
 };
 
-export const StyledCaretDownIcon = styled(CaretDownIcon)`
+export const StyledCaretDownIcon = styled(CaretDownIcon)<{ flip?: boolean }>`
 	width: 11px;
+	transform: ${(props) => (props.flip ? 'rotate(180deg)' : 'none')};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 

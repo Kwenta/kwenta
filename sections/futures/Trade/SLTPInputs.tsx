@@ -1,12 +1,15 @@
 import { wei } from '@synthetixio/wei';
-import { ChangeEvent, useCallback, useMemo } from 'react';
+import { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import Button from 'components/Button';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
+import { StyledCaretDownIcon } from 'components/Select/Select';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
+import { Body } from 'components/Text';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
 	selectLeverageSide,
@@ -24,6 +27,8 @@ export default function SLTPInputs() {
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const leverageSide = useAppSelector(selectLeverageSide);
+
+	const [showInputs, setShowInputs] = useState(false);
 
 	const onSelectStopLossPercent = useCallback(
 		(index) => {
@@ -85,43 +90,62 @@ export default function SLTPInputs() {
 
 	return (
 		<Container>
-			<InputHeaderRow>
-				<InputTitle>Stop Loss</InputTitle>
-				<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
-			</InputHeaderRow>
+			<ExpandRow>
+				<Title>Stop Loss / Take Profit</Title>
+				<Button
+					style={{
+						height: '20px',
+						borderRadius: '4px',
+						padding: '3px 5px',
+					}}
+					onClick={() => setShowInputs(!showInputs)}
+				>
+					<StyledCaretDownIcon style={{ transform: [{ rotateY: '180deg' }] }} flip={showInputs} />
+				</Button>
+			</ExpandRow>
+			{showInputs && (
+				<InputsContainer>
+					<Spacer height={6} />
 
-			<NumericInput
-				invalid={slInvalid}
-				dataTestId={'trade-panel-stop-loss-input'}
-				right={'-10%'}
-				value={stopLossPrice}
-				placeholder="0.00"
-				onChange={onChangeStopLoss}
-			/>
+					<InputHeaderRow>
+						<InputTitle>Stop Loss</InputTitle>
+						<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
+					</InputHeaderRow>
 
-			<Spacer height={12} />
+					<NumericInput
+						invalid={slInvalid}
+						dataTestId={'trade-panel-stop-loss-input'}
+						right={'-10%'}
+						value={stopLossPrice}
+						placeholder="0.00"
+						onChange={onChangeStopLoss}
+					/>
 
-			<InputHeaderRow>
-				<InputTitle>Take Profit</InputTitle>
-				<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />
-			</InputHeaderRow>
+					<Spacer height={12} />
 
-			<NumericInput
-				invalid={tpInvalid}
-				dataTestId={'trade-panel-take-profit-input'}
-				right={'-10%'}
-				value={takeProfitPrice}
-				placeholder="0.00"
-				onChange={onChangeTakeProfit}
-			/>
+					<InputHeaderRow>
+						<InputTitle>Take Profit</InputTitle>
+						<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />
+					</InputHeaderRow>
+
+					<NumericInput
+						invalid={tpInvalid}
+						dataTestId={'trade-panel-take-profit-input'}
+						right={'-10%'}
+						value={takeProfitPrice}
+						placeholder="0.00"
+						onChange={onChangeTakeProfit}
+					/>
+				</InputsContainer>
+			)}
 		</Container>
 	);
 }
 
 const Container = styled.div`
-	padding: 12px;
+	padding: 10px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 10px;
+	border-radius: 8px;
 	margin-bottom: 16px;
 `;
 
@@ -131,4 +155,16 @@ const InputHeaderRow = styled(FlexDivRow)`
 	justify-content: space-between;
 	margin-bottom: 8px;
 	cursor: default;
+`;
+
+const Title = styled(Body)`
+	padding-top: 2px;
+`;
+
+const ExpandRow = styled(FlexDivRow)`
+	padding: 0 2px 0 4px;
+`;
+
+const InputsContainer = styled.div`
+	padding: 4px;
 `;

@@ -107,7 +107,7 @@ const InputContainer = styled.div<{
 	background: ${(props) => props.theme.colors.selectedTheme.input.secondary.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 10px;
+	border-radius: 8px;
 	padding: 0 10px;
 	height: 46px;
 	box-sizing: border-box;

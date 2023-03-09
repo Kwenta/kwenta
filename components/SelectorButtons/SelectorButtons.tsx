@@ -10,7 +10,7 @@ type Props = {
 export default function SelectorButtons({ onSelect, options }: Props) {
 	return (
 		<Container>
-			<SegmentedControl onChange={onSelect} styleType="button" values={options} />
+			<SegmentedControl onChange={onSelect} styleType="pill-button" values={options} />
 		</Container>
 	);
 }
