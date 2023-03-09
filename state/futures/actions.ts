@@ -1328,12 +1328,15 @@ export const getClosePositionOrderFee = createAsyncThunk<Wei, void, ThunkConfig>
 		const state = getState();
 		const position = selectPosition(state);
 		const marketInfo = selectMarketInfo(state);
-
-		if (marketInfo) {
-			return sdk.futures.getOrderFee(marketInfo.market, position?.position?.size.neg() ?? zeroBN);
-		} else {
-			notifyError('marketInfo not populated yet');
-			return zeroBN;
+		try {
+			if (marketInfo) {
+				return sdk.futures.getOrderFee(marketInfo.market, position?.position?.size.neg() ?? zeroBN);
+			} else {
+				throw new Error('No market found');
+			}
+		} catch (err) {
+			notifyError('Failed to get order fee', err);
+			throw err;
 		}
 	}
 );
