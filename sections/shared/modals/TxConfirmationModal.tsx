@@ -290,12 +290,6 @@ const ExchangeFeeHintTooltip = styled(Tooltip)`
 	margin: 0px 0px 0px 40px;
 `;
 
-// const PriceAdjustmentTooltip = styled(Tooltip)`
-// 	width: 240px;
-// 	padding: 10px;
-// 	margin: 0px;
-// `;
-
 export const TooltipItem = styled.span`
 	display: inline-flex;
 	align-items: center;

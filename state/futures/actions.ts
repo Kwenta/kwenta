@@ -46,7 +46,7 @@ import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeMarketFee } from 'utils/costCalculations';
-import { stipZeros, zeroBN } from 'utils/formatters/number';
+import { stipZeros } from 'utils/formatters/number';
 import {
 	calculateMarginDelta,
 	marketOverrides,
@@ -1329,10 +1329,12 @@ export const getClosePositionOrderFee = createAsyncThunk<Wei, void, ThunkConfig>
 		const position = selectPosition(state);
 		const marketInfo = selectMarketInfo(state);
 		try {
-			if (marketInfo) {
-				return sdk.futures.getOrderFee(marketInfo.market, position?.position?.size.neg() ?? zeroBN);
-			} else {
+			if (!marketInfo) {
 				throw new Error('No market found');
+			} else if (!position?.position) {
+				throw new Error('No active position in selected market');
+			} else {
+				return sdk.futures.getOrderFee(marketInfo.market, position.position.size.neg());
 			}
 		} catch (err) {
 			notifyError('Failed to get order fee', err);
