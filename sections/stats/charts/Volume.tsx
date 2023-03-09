@@ -5,7 +5,7 @@ import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
-import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
+import { formatShortDateUTC, toJSTimestamp } from 'utils/formatters/date';
 import { formatDollars } from 'utils/formatters/number';
 
 import { initChart } from '../initChart';
@@ -44,7 +44,7 @@ export const Volume = () => {
 			xAxis: {
 				...defaultOptions.xAxis,
 				type: 'category',
-				data: dailyStatsData.map(({ timestamp }) => formatShortDate(toJSTimestamp(timestamp))),
+				data: dailyStatsData.map(({ timestamp }) => formatShortDateUTC(toJSTimestamp(timestamp))),
 			},
 			yAxis: [
 				{
