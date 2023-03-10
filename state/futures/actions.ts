@@ -577,7 +577,7 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 			nativeSize: nativeSize,
 		})
 	);
-	dispatch(setLeverageInput(leverage.toString()));
+	dispatch(setLeverageInput(leverage.toString(2)));
 	dispatch(stageCrossMarginSizeChange());
 };
 

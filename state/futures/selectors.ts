@@ -475,12 +475,13 @@ export const selectCrossMarginBalanceInfo = createSelector(
 );
 
 export const selectIdleMargin = createSelector(
+	selectMarketKey,
 	selectCrossMarginPositions,
 	selectCrossMarginBalanceInfo,
 	selectSusdBalance,
-	(positions, { freeMargin }, balance) => {
+	(selectedMarketKey, positions, { freeMargin }, balance) => {
 		const idleInMarkets = positions
-			.filter((p) => !p.position?.size.abs().gt(0))
+			.filter((p) => !p.position?.size.abs().gt(0) && p.marketKey !== selectedMarketKey)
 			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
 		return balance.add(idleInMarkets).add(freeMargin);
 	}
