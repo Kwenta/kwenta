@@ -1,4 +1,3 @@
-import { wei } from '@synthetixio/wei';
 import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -7,13 +6,10 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
-import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import { PositionSide } from 'sdk/types/futures';
 import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
@@ -38,10 +34,11 @@ import {
 	formatDollars,
 	formatPercent,
 	formatNumber,
-	truncateNumbers,
 } from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
+import TradeConfirmationRow from './TradeConfirmationRow';
+import TradeConfirmationSummary from './TradeConfirmationSummary';
 
 const DelayedOrderConfirmationModal: FC = () => {
 	const { t } = useTranslation();
@@ -158,19 +155,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 		];
 	}, [dataRows, marketAsset, leverageSide, orderType, orderDetails.nativeSizeDelta, t]);
 
-	const leverageValue = useMemo(
-		() => truncateNumbers(wei(Number(potentialTradeDetails?.leverage ?? 0)), DEFAULT_FIAT_DECIMALS),
-		[potentialTradeDetails?.leverage]
-	);
-
-	const orderTypeValue = useMemo(
-		() =>
-			OrderNameByType[orderType] === 'Delayed Offchain'
-				? 'Delayed Market'
-				: OrderNameByType[orderType],
-		[orderType]
-	);
-
 	const onDismiss = useCallback(() => {
 		dispatch(setOpenModal(null));
 	}, [dispatch]);
@@ -185,41 +169,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 		);
 	};
 
-	const orderSummary = () => (
-		<OrderSummaryLine>
-			<InfoBoxContainer>
-				<InfoBoxRow
-					title={t('futures.market.user.position.modal.size')}
-					value={
-						<OrderSummaryValue>
-							{formatCurrency(
-								getDisplayAsset(marketAsset) || '',
-								orderDetails.nativeSizeDelta.abs() ?? zeroBN,
-								{
-									currencyKey: getDisplayAsset(marketAsset) ?? '',
-								}
-							)}
-						</OrderSummaryValue>
-					}
-				/>
-				<InfoBoxRow
-					title={t('futures.market.user.position.modal.side')}
-					value={<OrderSideLabel className={leverageSide}>{leverageSide}</OrderSideLabel>}
-				/>
-			</InfoBoxContainer>
-			<InfoBoxContainer>
-				<InfoBoxRow
-					title={t('futures.market.user.position.modal.leverage')}
-					value={<OrderSideLabel>{leverageValue}</OrderSideLabel>}
-				/>
-				<InfoBoxRow
-					title={t('futures.market.user.position.modal.order-type')}
-					value={<OrderSummaryValue>{orderTypeValue}</OrderSummaryValue>}
-				/>
-			</InfoBoxContainer>
-		</OrderSummaryLine>
-	);
-
 	return (
 		<>
 			<DesktopOnlyView>
@@ -233,9 +182,15 @@ const DelayedOrderConfirmationModal: FC = () => {
 					}
 				>
 					<Spacer height={12} />
-					{orderSummary()}
+					<TradeConfirmationSummary
+						marketAsset={marketAsset}
+						nativeSizeDelta={orderDetails.nativeSizeDelta}
+						leverageSide={leverageSide}
+						orderType={orderType}
+						leverage={potentialTradeDetails?.leverage ?? zeroBN}
+					/>
 					{dataRows.map((row, i) => (
-						<Row key={`datarow-${i}`} className={i === 0 ? '' : 'border'}>
+						<TradeConfirmationRow key={`datarow-${i}`} className={i === 0 ? '' : 'border'}>
 							{row.tooltipContent ? (
 								<Tooltip
 									height="auto"
@@ -254,7 +209,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 							<Value>
 								<span className={`value ${row.color ?? ''}`}>{row.value}</span>
 							</Value>
-						</Row>
+						</TradeConfirmationRow>
 					))}
 					{isDisclaimerDisplayed && (
 						<Disclaimer>
@@ -278,8 +233,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 				</StyledBaseModal>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{orderSummary}
-
 				<BaseDrawer
 					open
 					items={mobileRows}
@@ -308,15 +261,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
-	}
-`;
-
-const Row = styled(FlexDivCentered)`
-	justify-content: space-between;
-
-	padding: 8px 0;
-	&.border {
-		border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	}
 `;
 
@@ -373,28 +317,6 @@ const Disclaimer = styled.div`
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-bottom: -1px;
 	margin-left: 8px;
-`;
-
-const OrderSummaryLine = styled.div`
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	gap: 12px;
-`;
-
-const OrderSummaryValue = styled(Value)`
-	text-transform: none;
-`;
-
-const OrderSideLabel = styled(Label)`
-	margin: 0;
-	text-transform: uppercase;
-	&.long {
-		color: ${(props) => props.theme.colors.selectedTheme.green};
-	}
-	&.short {
-		color: ${(props) => props.theme.colors.selectedTheme.red};
-	}
 `;
 
 export default DelayedOrderConfirmationModal;

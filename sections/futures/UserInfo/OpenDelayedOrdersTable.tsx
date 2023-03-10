@@ -40,7 +40,7 @@ type CountdownTimers = Record<
 	}
 >;
 
-const OpenOrdersTable: React.FC = () => {
+const OpenDelayedOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const { switchToL2 } = useNetworkSwitcher();
@@ -429,4 +429,4 @@ const MobilePositionSide = styled.div<{ $side: PositionSide }>`
 		`};
 `;
 
-export default OpenOrdersTable;
+export default OpenDelayedOrdersTable;

@@ -18,7 +18,7 @@ export type ButtonVariant =
 	| 'short';
 
 type BaseButtonProps = {
-	$size: 'xsmall' | 'small' | 'medium' | 'large';
+	$size: 'small' | 'medium' | 'large';
 	$variant: ButtonVariant;
 	isActive?: boolean;
 	isRounded?: boolean;
@@ -53,12 +53,6 @@ export const border = css`
 `;
 
 const sizeMap = {
-	xsmall: {
-		paddingVertical: 0,
-		paddingHorizontal: 8,
-		height: 26,
-		fontSize: 11,
-	},
 	small: {
 		paddingVertical: 8,
 		paddingHorizontal: 16,
@@ -211,7 +205,7 @@ type ButtonProps = {
 	className?: string;
 	left?: ReactNode;
 	right?: ReactNode;
-	size?: 'xsmall' | 'small' | 'medium' | 'large';
+	size?: 'small' | 'medium' | 'large';
 	variant?: ButtonVariant;
 	fullWidth?: boolean;
 	noOutline?: boolean;

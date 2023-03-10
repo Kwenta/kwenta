@@ -28,7 +28,7 @@ import {
 	selectFuturesType,
 	selectCrossMarginMarginDelta,
 	selectLeverageSide,
-	selectOpenOrder,
+	selectPendingDelayedOrder,
 	selectMaxUsdInputAmount,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -38,9 +38,9 @@ import { orderPriceInvalidLabel } from 'utils/futures';
 
 import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
 import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
-import DelayedOrderConfirmationModal from './DelayedOrderConfirmationModal';
-import TradeConfirmationModalCrossMargin from './TradeConfirmationModalCrossMargin';
-import TradeConfirmationModalIsolatedMargin from './TradeConfirmationModalIsolatedMargin';
+import DelayedOrderConfirmationModal from '../TradeConfirmation/DelayedOrderConfirmationModal';
+import TradeConfirmationModalCrossMargin from '../TradeConfirmation/TradeConfirmationModalCrossMargin';
+import TradeConfirmationModalIsolatedMargin from '../TradeConfirmation/TradeConfirmationModalIsolatedMargin';
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
@@ -55,7 +55,7 @@ const ManagePosition: React.FC = () => {
 	const previewError = useAppSelector(selectTradePreviewError);
 	const leverage = useAppSelector(selectIsolatedMarginLeverage);
 	const orderType = useAppSelector(selectOrderType);
-	const openOrder = useAppSelector(selectOpenOrder);
+	const openOrder = useAppSelector(selectPendingDelayedOrder);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);

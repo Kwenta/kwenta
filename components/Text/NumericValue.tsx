@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Body, { BodyProps } from './Body';
 
 type NumericValueProps = BodyProps & {
-	value: WeiSource;
+	value?: WeiSource;
 	preview?: boolean;
 	colored?: boolean;
 	percent?: boolean;
@@ -16,7 +16,7 @@ const NumericValue: FC<NumericValueProps> = memo(
 		const color = useMemo(() => {
 			if (preview) {
 				return 'preview';
-			} else if (colored) {
+			} else if (colored && value) {
 				if (wei(value).gt(0)) {
 					return 'positive';
 				} else if (wei(value).lt(0)) {
@@ -28,7 +28,7 @@ const NumericValue: FC<NumericValueProps> = memo(
 		}, [preview, colored, value]);
 
 		return (
-			<NumberBody mono $color={color} {...props}>
+			<NumberBody $color={color} {...props}>
 				{props.children ?? value.toString()}
 				{percent && '%'}
 			</NumberBody>
@@ -36,8 +36,11 @@ const NumericValue: FC<NumericValueProps> = memo(
 	}
 );
 
-const NumberBody = styled(Body)<{ $color: 'positive' | 'negative' | 'neutral' | 'preview' }>`
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.number[props.$color]};
+export const NumberBody = styled(Body).attrs({ mono: true })<{
+	$color?: 'positive' | 'negative' | 'neutral' | 'preview';
+}>`
+	color: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.text.number[props.$color ?? 'neutral']};
 `;
 
 export default NumericValue;

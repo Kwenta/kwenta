@@ -19,7 +19,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
-import ConditionalOrderDrawer from '../MobileTrade/drawers/ConditionalOrder';
+import ConditionalOrderDrawer from '../MobileTrade/drawers/ConditionalOrderDrawer';
 import PositionType from '../PositionType';
 
 export default function ConditionalOrdersTable() {
@@ -91,7 +91,7 @@ export default function ConditionalOrdersTable() {
 												</ExpiredBadge>
 											)}
 										</StyledText>
-										<StyledValue>{cellProps.row.original.orderType}</StyledValue>
+										<StyledValue>{cellProps.row.original.orderTypeDisplay}</StyledValue>
 									</MarketContainer>
 								);
 							},
@@ -111,7 +111,7 @@ export default function ConditionalOrdersTable() {
 							Header: <TableHeader>{t('futures.market.user.open-orders.table.type')}</TableHeader>,
 							accessor: 'type',
 							Cell: (cellProps: CellProps<any>) => {
-								return <div>{cellProps.row.original.orderType}</div>;
+								return <div>{cellProps.row.original.orderTypeDisplay}</div>;
 							},
 							sortable: true,
 							width: 50,
@@ -204,7 +204,7 @@ export default function ConditionalOrdersTable() {
 									<MobilePositionSide $side={cellProps.row.original.side}>
 										{cellProps.row.original.side}
 									</MobilePositionSide>
-									<div>{cellProps.row.original.orderType}</div>
+									<div>{cellProps.row.original.orderTypeDisplay}</div>
 								</div>
 							),
 							width: 100,

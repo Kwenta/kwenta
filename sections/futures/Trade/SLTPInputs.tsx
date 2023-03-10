@@ -14,6 +14,8 @@ import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'stat
 import {
 	selectLeverageSide,
 	selectMarketPrice,
+	selectStopLossOrder,
+	selectTakeProfitOrder,
 	selectSlTpTradeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -27,6 +29,8 @@ export default function SLTPInputs() {
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const leverageSide = useAppSelector(selectLeverageSide);
+	const pendingStopLoss = useAppSelector(selectStopLossOrder);
+	const pendingTakeProfit = useAppSelector(selectTakeProfitOrder);
 
 	const [showInputs, setShowInputs] = useState(false);
 
@@ -90,7 +94,7 @@ export default function SLTPInputs() {
 
 	return (
 		<Container>
-			<ExpandRow>
+			<ExpandRow onClick={() => setShowInputs(!showInputs)}>
 				<Title>Stop Loss / Take Profit</Title>
 				<Button
 					style={{
@@ -98,7 +102,6 @@ export default function SLTPInputs() {
 						borderRadius: '4px',
 						padding: '3px 5px',
 					}}
-					onClick={() => setShowInputs(!showInputs)}
 				>
 					<StyledCaretDownIcon style={{ transform: [{ rotateY: '180deg' }] }} flip={showInputs} />
 				</Button>
@@ -117,7 +120,8 @@ export default function SLTPInputs() {
 						dataTestId={'trade-panel-stop-loss-input'}
 						right={'-10%'}
 						value={stopLossPrice}
-						placeholder="0.00"
+						disabled={!!pendingStopLoss}
+						placeholder={pendingStopLoss ? 'Already pending SL' : '0.00'}
 						onChange={onChangeStopLoss}
 					/>
 
@@ -133,7 +137,8 @@ export default function SLTPInputs() {
 						dataTestId={'trade-panel-take-profit-input'}
 						right={'-10%'}
 						value={takeProfitPrice}
-						placeholder="0.00"
+						disabled={!!pendingTakeProfit}
+						placeholder={pendingTakeProfit ? 'Already pending TP' : '0.00'}
 						onChange={onChangeTakeProfit}
 					/>
 				</InputsContainer>
@@ -163,6 +168,7 @@ const Title = styled(Body)`
 
 const ExpandRow = styled(FlexDivRow)`
 	padding: 0 2px 0 4px;
+	cursor: pointer;
 `;
 
 const InputsContainer = styled.div`

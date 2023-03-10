@@ -252,6 +252,8 @@ export type FuturesOrderTypeDisplay =
 	| 'Market'
 	| 'Liquidation'
 	| 'Delayed'
+	| 'Take Profit'
+	| 'Stop Loss'
 	| 'Delayed Offchain';
 
 export enum ConditionalOrderTypeEnum {
@@ -269,9 +271,11 @@ export type ConditionalOrder<T = Wei> = {
 	size: T;
 	targetPrice: T | null;
 	marginDelta: T;
-	orderType: FuturesOrderTypeDisplay;
+	orderType: ConditionalOrderTypeEnum;
+	orderTypeDisplay: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;
+	reduceOnly: boolean;
 	side?: PositionSide;
 	isStale?: boolean;
 	isExecutable?: boolean;

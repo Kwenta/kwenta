@@ -5,7 +5,7 @@ import { formatBytes32String } from 'ethers/lib/utils';
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
-import { FuturesPosition, PositionSide } from 'sdk/types/futures';
+import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
@@ -746,7 +746,29 @@ export const selectOpenConditionalOrders = createSelector(
 	}
 );
 
-export const selectOpenOrder = createSelector(
+export const selectStopLossOrder = createSelector(
+	selectOpenConditionalOrders,
+	selectMarketKey,
+	(selectOpenConditionalOrders, marketKey) => {
+		return selectOpenConditionalOrders.find(
+			(o) =>
+				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT && o.reduceOnly
+		);
+	}
+);
+
+export const selectTakeProfitOrder = createSelector(
+	selectOpenConditionalOrders,
+	selectMarketKey,
+	(selectOpenConditionalOrders, marketKey) => {
+		return selectOpenConditionalOrders.find(
+			(o) =>
+				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
+		);
+	}
+);
+
+export const selectPendingDelayedOrder = createSelector(
 	selectCrossMarginOpenOrders,
 	selectOpenDelayedOrders,
 	selectFuturesType,

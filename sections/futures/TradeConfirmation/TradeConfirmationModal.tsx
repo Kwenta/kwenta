@@ -1,5 +1,4 @@
-import Wei from '@synthetixio/wei';
-import { capitalize } from 'lodash';
+import Wei, { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -8,11 +7,12 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
-import { FlexDivCentered } from 'components/layout/flex';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
 import {
 	selectLeverageSide,
@@ -21,6 +21,8 @@ import {
 	selectOrderType,
 	selectPosition,
 	selectTradePreview,
+	selectLeverageInput,
+	selectSlTpTradeInputs,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
@@ -30,9 +32,10 @@ import {
 	formatNumber,
 	formatPercent,
 } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
+import TradeConfirmationRow from './TradeConfirmationRow';
+import TradeConfirmationSummary from './TradeConfirmationSummary';
 
 type Props = {
 	gasFee?: Wei | null;
@@ -61,6 +64,8 @@ export default function TradeConfirmationModal({
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const position = useAppSelector(selectPosition);
 	const leverageSide = useAppSelector(selectLeverageSide);
+	const leverageInput = useAppSelector(selectLeverageInput);
+	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {
@@ -69,7 +74,7 @@ export default function TradeConfirmationModal({
 				: PositionSide.LONG;
 		}
 		return potentialTradeDetails?.size.gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
-	}, [potentialTradeDetails, position?.position?.side]);
+	}, [potentialTradeDetails?.size, position?.position?.side]);
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
@@ -88,21 +93,26 @@ export default function TradeConfirmationModal({
 
 	const dataRows = useMemo(
 		() => [
-			{ label: 'side', value: leverageSide.toUpperCase() },
-			{ label: 'order Type', value: capitalize(orderType) },
 			{
-				label: 'size',
-				value: formatCurrency(
-					getDisplayAsset(marketAsset) || '',
-					positionDetails?.sizeDelta.abs() ?? zeroBN,
-					{
-						currencyKey: getDisplayAsset(marketAsset) ?? '',
-					}
-				),
+				label: 'stop loss',
+				value: stopLossPrice ? formatDollars(stopLossPrice) : NO_VALUE,
+			},
+			{
+				label: 'take profit',
+				value: takeProfitPrice ? formatDollars(takeProfitPrice) : NO_VALUE,
+			},
+			{
+				label: 'liquidation price',
+				color: 'red',
+				value: formatDollars(positionDetails?.liqPrice ?? zeroBN, { suggestDecimals: true }),
 			},
 			{
 				label: 'resulting leverage',
 				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
+			},
+			{
+				label: 'resulting margin',
+				value: formatDollars(positionDetails?.margin ?? zeroBN),
 			},
 			orderType === 'limit' || orderType === 'stop_market'
 				? {
@@ -113,6 +123,7 @@ export default function TradeConfirmationModal({
 						label: 'fill price',
 						value: formatDollars(positionDetails?.price ?? zeroBN, { suggestDecimals: true }),
 				  },
+
 			{
 				label: 'price impact',
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
@@ -122,15 +133,7 @@ export default function TradeConfirmationModal({
 					: '',
 			},
 			{
-				label: 'liquidation price',
-				value: formatDollars(positionDetails?.liqPrice ?? zeroBN, { suggestDecimals: true }),
-			},
-			{
-				label: 'resulting margin',
-				value: formatDollars(positionDetails?.margin ?? zeroBN),
-			},
-			{
-				label: 'protocol fee',
+				label: 'total fee',
 				value: formatDollars(tradeFee),
 			},
 			keeperFee
@@ -149,14 +152,14 @@ export default function TradeConfirmationModal({
 		[
 			t,
 			positionDetails,
-			marketAsset,
 			keeperFee,
 			gasFee,
 			tradeFee,
 			orderType,
 			orderPrice,
-			leverageSide,
 			potentialTradeDetails,
+			stopLossPrice,
+			takeProfitPrice,
 		]
 	);
 
@@ -173,36 +176,46 @@ export default function TradeConfirmationModal({
 					isOpen
 					title={t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)}
 				>
-					{dataRows.map((row, i) => {
-						if (!row) return null;
-						return (
-							<Row key={`datarow-${i}`}>
-								{row.tooltipContent ? (
-									<Tooltip
-										height="auto"
-										preset="bottom"
-										width="300px"
-										content={row.tooltipContent}
-										style={{ padding: 10, textTransform: 'none' }}
-									>
-										<Label>
-											{row.label}
-											<StyledHelpIcon />
-										</Label>
-									</Tooltip>
-								) : (
-									<Label>{row.label}</Label>
-								)}
+					<Spacer height={8} />
+					<TradeConfirmationSummary
+						marketAsset={marketAsset}
+						nativeSizeDelta={potentialTradeDetails?.sizeDelta ?? zeroBN}
+						leverageSide={leverageSide}
+						orderType={orderType}
+						leverage={wei(leverageInput || '0')}
+					/>
+					<RowsContainer>
+						{dataRows.map((row, i) => {
+							if (!row) return null;
+							return (
+								<TradeConfirmationRow key={`datarow-${i}`}>
+									{row.tooltipContent ? (
+										<Tooltip
+											height="auto"
+											preset="bottom"
+											width="300px"
+											content={row.tooltipContent}
+											style={{ padding: 10, textTransform: 'none' }}
+										>
+											<Label>
+												{row.label}
+												<StyledHelpIcon />
+											</Label>
+										</Tooltip>
+									) : (
+										<Label>{row.label}</Label>
+									)}
 
-								<Value>
-									<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
-								</Value>
-							</Row>
-						);
-					})}
+									<Value>
+										<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
+									</Value>
+								</TradeConfirmationRow>
+							);
+						})}
+					</RowsContainer>
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
-						variant="flat"
+						variant={isSubmitting ? 'flat' : leverageSide}
 						onClick={onConfirmOrder}
 						className={leverageSide}
 						disabled={!positionDetails || isSubmitting || !!disabledReason}
@@ -228,10 +241,10 @@ export default function TradeConfirmationModal({
 					items={dataRows}
 					buttons={
 						<MobileConfirmTradeButton
-							variant="flat"
 							className={leverageSide}
 							onClick={onConfirmOrder}
 							disabled={!positionDetails || isSubmitting || !!disabledReason}
+							variant={isSubmitting ? 'flat' : leverageSide}
 						>
 							{isSubmitting ? (
 								<ButtonLoader />
@@ -258,35 +271,27 @@ const StyledBaseModal = styled(BaseModal)`
 	}
 `;
 
-const Row = styled(FlexDivCentered)`
-	justify-content: space-between;
+const RowsContainer = styled.div`
+	margin-top: 6px;
 `;
 
 const Label = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
-	margin-top: 6px;
 `;
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	font-size: 12px;
-	margin-top: 6px;
-
-	.value {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	}
 
 	.green {
 		color: ${(props) => props.theme.colors.selectedTheme.green};
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.selectedTheme.red};
+		color: ${(props) => props.theme.colors.selectedTheme.orange};
 	}
 `;
 

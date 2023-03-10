@@ -29,7 +29,7 @@ import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
 import ConditionalOrdersTable from './ConditionalOrdersTable';
-import OpenOrdersTable from './OpenOrdersTable';
+import OpenDelayedOrdersTable from './OpenDelayedOrdersTable';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -197,7 +197,7 @@ const UserInfo: React.FC = memo(() => {
 				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
-				<OpenOrdersTable />
+				<OpenDelayedOrdersTable />
 			</TabPanel>
 			<TabPanel name={FuturesTab.CONDITIONAL_ORDERS} activeTab={activeTab}>
 				<ConditionalOrdersTable />

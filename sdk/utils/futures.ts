@@ -465,7 +465,7 @@ export const getPythNetworkUrl = (networkId: NetworkId) => {
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
 
-export const mapFuturesOrderFromEvent = (
+export const mapConditionalOrderFromEvent = (
 	orderDetails: {
 		id: number;
 		marketKey: string;
@@ -473,6 +473,7 @@ export const mapFuturesOrderFromEvent = (
 		targetPrice: BigNumber;
 		sizeDelta: BigNumber;
 		marginDelta: BigNumber;
+		reduceOnly: boolean;
 	},
 	account: string
 ): ConditionalOrder => {
@@ -486,8 +487,13 @@ export const mapFuturesOrderFromEvent = (
 		account: account,
 		size: sizeDelta,
 		marginDelta: wei(orderDetails.marginDelta),
-		orderType: orderDetails.conditionalOrderType === 0 ? 'Limit' : 'Stop Market',
+		orderType: orderDetails.conditionalOrderType,
+		orderTypeDisplay: formatOrderDisplayType(
+			orderDetails.conditionalOrderType,
+			orderDetails.reduceOnly
+		),
 		targetPrice: wei(orderDetails.targetPrice),
+		reduceOnly: orderDetails.reduceOnly,
 		sizeTxt: formatCurrency(asset, size, {
 			currencyKey: getDisplayAsset(asset) ?? '',
 			minDecimals: size.lt(0.01) ? 4 : 2,
@@ -625,4 +631,14 @@ export const encodeConditionalOrderParams = (
 			reduceOnly,
 		]
 	);
+};
+
+export const formatOrderDisplayType = (
+	orderType: ConditionalOrderTypeEnum,
+	reduceOnly: boolean
+) => {
+	if (reduceOnly) {
+		return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Take Profit' : 'Stop Loss';
+	}
+	return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Limit' : 'Stop Market';
 };

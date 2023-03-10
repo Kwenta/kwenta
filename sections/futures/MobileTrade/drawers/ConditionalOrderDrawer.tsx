@@ -53,7 +53,7 @@ export default function ConditionalOrderDrawer({ open, order, closeDrawer }: Ord
 			},
 			{
 				label: t('futures.market.user.open-orders.table.type'),
-				value: order.orderType,
+				value: order.orderTypeDisplay,
 			},
 		];
 	}, [t, order]);

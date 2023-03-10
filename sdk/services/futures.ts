@@ -62,7 +62,7 @@ import {
 	getFuturesEndpoint,
 	getMarketName,
 	getReasonFromCode,
-	mapFuturesOrderFromEvent,
+	mapConditionalOrderFromEvent,
 	mapFuturesPosition,
 	mapFuturesPositions,
 	mapTrades,
@@ -470,12 +470,13 @@ export default class FuturesService {
 			.fill(0)
 			.map((_, i) => crossMarginAccountMultiCall.getConditionalOrder(start + i));
 		const contractOrders = (await this.sdk.context.multicallProvider.all(orderCalls)) as any;
+
 		for (let i = 0; i < orderId; i++) {
 			const contractOrder = contractOrders[i];
 			// Checks if the order is still pending
 			// Orders are never removed but all values set to zero so we check a zero value on price to filter pending
 			if (contractOrder && contractOrder.targetPrice.gt(0)) {
-				const order = mapFuturesOrderFromEvent({ ...contractOrder, id: i }, account);
+				const order = mapConditionalOrderFromEvent({ ...contractOrder, id: i }, account);
 				orders.push(order);
 			}
 		}
@@ -875,7 +876,7 @@ export default class FuturesService {
 			commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 			const encodedParams = encodeConditionalOrderParams(
 				market.key,
-				{ marginDelta: wei(0), sizeDelta: order.sizeDelta, price: order.takeProfitPrice },
+				{ marginDelta: wei(0), sizeDelta: order.sizeDelta.neg(), price: order.takeProfitPrice },
 				ConditionalOrderTypeEnum.LIMIT,
 				order.priceImpactDelta,
 				true
@@ -887,7 +888,7 @@ export default class FuturesService {
 			commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 			const encodedParams = encodeConditionalOrderParams(
 				market.key,
-				{ marginDelta: wei(0), sizeDelta: order.sizeDelta, price: order.stopLossPrice },
+				{ marginDelta: wei(0), sizeDelta: order.sizeDelta.neg(), price: order.stopLossPrice },
 				ConditionalOrderTypeEnum.STOP,
 				order.priceImpactDelta,
 				true
