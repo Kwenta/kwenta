@@ -4,6 +4,7 @@ import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { TransactionStatus } from 'sdk/types/common';
 import { isUserDeniedError } from 'utils/formatters/error';
 
+import { checkSynthetixStatus } from './actions';
 import { AppState, GasPrice, ModalType, Transaction } from './types';
 
 export const APP_INITIAL_STATE: AppState = {
@@ -15,6 +16,7 @@ export const APP_INITIAL_STATE: AppState = {
 		gasPrice: '0',
 	},
 	gasSpeed: 'fast',
+	synthetixOnMaintenance: false,
 };
 
 const appSlice = createSlice({
@@ -51,6 +53,11 @@ const appSlice = createSlice({
 				}
 			}
 		},
+	},
+	extraReducers: (builder) => {
+		builder.addCase(checkSynthetixStatus.fulfilled, (state, action) => {
+			state.synthetixOnMaintenance = action.payload;
+		});
 	},
 });
 

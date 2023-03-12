@@ -14,9 +14,7 @@ import Search from 'components/Table/Search';
 import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
 import useClickOutside from 'hooks/useClickOutside';
-import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
@@ -24,6 +22,7 @@ import {
 	selectMarkets,
 	selectMarketsQueryStatus,
 	selectFuturesType,
+	selectMarketInfo,
 	selectMarkPriceInfos,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -46,17 +45,13 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const marketsQueryStatus = useAppSelector(selectMarketsQueryStatus);
 
+	const marketInfo = useAppSelector(selectMarketInfo);
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
 
 	const { ref } = useClickOutside(() => setOpen(false));
 
-	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
-		MarketKeyByAsset[marketAsset]
-	);
-
 	const router = useRouter();
-	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
 	const getBasePriceRateInfo = useCallback(
@@ -87,7 +82,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				label: getMarketName(market.asset),
 				asset: market.asset,
 				key: market.marketKey,
-				description: getSynthDescription(market.asset, synthsMap, t),
+				description: getSynthDescription(market.asset, t),
 				priceNum: basePriceRate?.price.toNumber() ?? 0,
 				price: formatDollars(basePriceRate?.price ?? '0', { suggestDecimals: true }),
 				change:
@@ -99,7 +94,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				closureReason: market.marketClosureReason,
 			};
 		});
-	}, [futuresMarkets, search, synthsMap, t, getBasePriceRateInfo, getPastPrice]);
+	}, [futuresMarkets, search, t, getBasePriceRateInfo, getPastPrice]);
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
@@ -110,9 +105,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				mobile={mobile}
 				asset={marketAsset}
 				label={getMarketName(marketAsset)}
-				description={getSynthDescription(marketAsset, synthsMap, t)}
-				isMarketClosed={isFuturesMarketClosed}
-				closureReason={futuresClosureReason}
+				description={getSynthDescription(marketAsset, t)}
+				isMarketClosed={marketInfo?.isSuspended}
+				closureReason={marketInfo?.marketClosureReason}
 				priceDetails={{
 					oneDayChange:
 						selectedBasePriceRate?.price && selectedPastPrice?.rate

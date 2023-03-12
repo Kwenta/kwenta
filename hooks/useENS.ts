@@ -1,7 +1,7 @@
 import { isAddress } from 'ethers/lib/utils';
 import { useEffect, useState } from 'react';
 
-import Connector from 'containers/Connector';
+import { staticMainnetProvider } from 'utils/network';
 
 type ENSAccount = { ensAddress: string | null; ensName: string | null; ensAvatar: string | null };
 
@@ -9,7 +9,6 @@ const useENS = (addressOrName: string): ENSAccount => {
 	const [ensAddress, setENSAddress] = useState<string | null>(null);
 	const [ensName, setENSName] = useState<string | null>(null);
 	const [ensAvatar, setENSAvatar] = useState<string | null>(null);
-	const { staticMainnetProvider } = Connector.useContainer();
 
 	useEffect(() => {
 		let mounted = true;
@@ -37,7 +36,7 @@ const useENS = (addressOrName: string): ENSAccount => {
 			setENSAvatar(null);
 			setENSName(null);
 		};
-	}, [addressOrName, staticMainnetProvider]);
+	}, [addressOrName]);
 
 	return { ensAddress, ensName, ensAvatar };
 };

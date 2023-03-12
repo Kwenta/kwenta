@@ -3,8 +3,8 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
 import reverseRecordsAbi from 'sdk/contracts/abis/ReverseRecords.json';
+import { staticMainnetProvider } from 'utils/network';
 
 const ADDRESSES_PER_LOOKUP = 1500;
 
@@ -13,15 +13,12 @@ type EnsInfo = {
 };
 
 const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => {
-	const { staticMainnetProvider } = Connector.useContainer();
-
 	return useQuery<EnsInfo>(
 		QUERY_KEYS.Network.ENSNames(addresses),
 		async () => {
 			const ReverseLookup = new Contract(
 				ENS_REVERSE_LOOKUP,
 				reverseRecordsAbi,
-				// @ts-ignore provider type
 				staticMainnetProvider
 			);
 

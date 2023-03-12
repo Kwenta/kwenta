@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { parseBytes32String } from 'ethers/lib/utils.js';
@@ -21,6 +20,7 @@ import {
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
+import { NetworkId } from 'sdk/types/common';
 import {
 	DelayedOrder,
 	CrossMarginOrderType,
@@ -36,7 +36,6 @@ import {
 	FuturesTrade,
 	FuturesVolumes,
 	IsolatedMarginOrderType,
-	MarketClosureReason,
 	PositionDetail,
 	PositionSide,
 	PostTradeDetailsResponse,
@@ -120,26 +119,6 @@ export const getMarketName = (asset: FuturesMarketAsset | null) => {
 
 export const getDisplayAsset = (asset: string | null) => {
 	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
-};
-
-export const getReasonFromCode = (
-	reasonCode?: BigNumber
-): MarketClosureReason | 'unknown' | null => {
-	switch (Number(reasonCode)) {
-		case 1:
-			return 'system-upgrade';
-		case 2:
-			return 'market-closure';
-		case 3:
-		case 55:
-		case 65:
-		case 231:
-			return 'circuit-breaker';
-		case 99999:
-			return 'emergency';
-		default:
-			return 'unknown';
-	}
 };
 
 export const calculateVolumes = (
@@ -522,7 +501,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 };
 
 export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
-	return futuresTrades?.map(
+	return futuresTrades.map(
 		({
 			id,
 			timestamp,
@@ -535,7 +514,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			feesPaid,
 			orderType,
 			accountType,
-		}: FuturesTradeResult) => {
+		}) => {
 			return {
 				asset,
 				accountType,
@@ -557,15 +536,8 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
-	return marginTransfers?.map(
-		({
-			timestamp,
-			account,
-			market,
-			size,
-			asset,
-			txHash,
-		}: FuturesMarginTransferResult): MarginTransfer => {
+	return marginTransfers.map(
+		({ timestamp, account, market, size, asset, txHash }): MarginTransfer => {
 			const sizeWei = new Wei(size);
 			const numTimestamp = wei(timestamp).toNumber();
 
@@ -585,8 +557,8 @@ export const mapMarginTransfers = (
 export const mapCrossMarginTransfers = (
 	marginTransfers: CrossMarginAccountTransferResult[]
 ): MarginTransfer[] => {
-	return marginTransfers?.map(
-		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
+	return marginTransfers.map(
+		({ timestamp, account, size, txHash }): MarginTransfer => {
 			const sizeWei = new Wei(size);
 			const numTimestamp = wei(timestamp).toNumber();
 

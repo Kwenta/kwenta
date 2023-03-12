@@ -1,10 +1,10 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import { NetworkId } from 'sdk/types/common';
 import { getFuturesEndpoint } from 'sdk/utils/futures';
 import { weiFromWei } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';

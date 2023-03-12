@@ -1,7 +1,6 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
-
 import { chain } from 'containers/Connector/config';
 import { CandleResult } from 'queries/futures/subgraph';
+import { NetworkId } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
 
 import { RATES_ENDPOINTS } from './constants';

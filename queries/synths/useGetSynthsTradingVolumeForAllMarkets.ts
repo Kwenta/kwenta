@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery } from 'react-query';
 
@@ -8,6 +7,7 @@ import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
 import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
 import { MAIN_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
+import { NetworkId } from 'sdk/types/common';
 import { getMainEndpoint } from 'sdk/utils/futures';
 import logError from 'utils/logError';
 
