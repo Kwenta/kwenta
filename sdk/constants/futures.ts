@@ -5,6 +5,8 @@ import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/t
 
 export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
 
+export const DEFAULT_NUMBER_OF_TRADES = 16;
+
 export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/api`;
 
 export const FUTURES_ENDPOINT_OP_GOERLI =

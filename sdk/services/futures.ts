@@ -1,5 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
-import { PERIOD_IN_HOURS } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
@@ -16,7 +14,7 @@ import {
 	DEFAULT_DESIRED_TIMEDELTA,
 	KWENTA_TRACKING_CODE,
 } from 'sdk/constants/futures';
-import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginBaseABI from 'sdk/contracts/abis/CrossMarginBase.json';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
@@ -31,10 +29,12 @@ import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
 import {
 	queryCrossMarginAccounts,
 	queryCrossMarginTransfers,
+	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
 	queryTrades,
 } from 'sdk/queries/futures';
+import { NetworkId } from 'sdk/types/common';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -61,13 +61,13 @@ import {
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
-	getReasonFromCode,
 	mapFuturesOrderFromEvent,
 	mapFuturesPosition,
 	mapFuturesPositions,
 	mapTrades,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
+import { getReasonFromCode } from 'sdk/utils/synths';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
 
@@ -611,6 +611,18 @@ export default class FuturesService {
 			pageLength,
 		});
 		return response ? mapTrades(response) : [];
+	}
+
+	// This is on an interval of 15 seconds.
+	public async getFuturesTrades(marketKey: FuturesMarketKey, minTs: number, maxTs: number) {
+		const response = await queryFuturesTrades(this.sdk, marketKey, minTs, maxTs);
+		return response ? mapTrades(response) : null;
+	}
+
+	public async getOrderFee(marketAddress: string, size: Wei) {
+		const marketContract = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const orderFee = await marketContract.orderFee(size.toBN(), 0);
+		return wei(orderFee.fee);
 	}
 
 	// Contract mutations

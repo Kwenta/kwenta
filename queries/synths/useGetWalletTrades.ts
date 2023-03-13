@@ -1,9 +1,9 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import { NetworkId } from 'sdk/types/common';
 import { getMainEndpoint } from 'sdk/utils/futures';
 import logError from 'utils/logError';
 

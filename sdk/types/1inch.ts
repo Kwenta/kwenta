@@ -1,7 +1,5 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-
 type Token = {
-	symbol: CurrencyKey;
+	symbol: string;
 	name: string;
 	address: string;
 	decimals: number;

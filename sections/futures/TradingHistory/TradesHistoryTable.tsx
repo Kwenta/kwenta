@@ -8,7 +8,6 @@ import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { FuturesTrade } from 'sdk/types/futures';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatNumber } from 'utils/formatters/number';
@@ -39,7 +38,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 				? futuresTradesPages
 						.flat()
 						.filter((value) => !!value)
-						.map((trade: FuturesTrade | null) => {
+						.map((trade) => {
 							return {
 								value: Number(trade?.price),
 								amount: Number(trade?.size),

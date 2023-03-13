@@ -12,6 +12,7 @@ import useENSAvatar from 'hooks/useENSAvatar';
 import { AccountStat } from 'queries/futures/types';
 import { StyledTrader } from 'sections/leaderboard/trader';
 import { getMedal } from 'utils/competition';
+import { staticMainnetProvider } from 'utils/network';
 
 type AllTimeProps = {
 	stats: AccountStat[];
@@ -31,7 +32,7 @@ const AllTime: FC<AllTimeProps> = ({
 	activeTab,
 }) => {
 	const { t } = useTranslation();
-	const { staticMainnetProvider, walletAddress } = Connector.useContainer();
+	const { walletAddress } = Connector.useContainer();
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i) => {

@@ -5,6 +5,7 @@ import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
+import { formatShortDateUTC, toJSTimestamp } from 'utils/formatters/date';
 import { formatDollars } from 'utils/formatters/number';
 
 import { initChart } from '../initChart';
@@ -15,7 +16,7 @@ import { TimeframeSwitcher } from '../TimeframeSwitcher';
 export const Volume = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const { volumeData, volumeIsLoading } = useStatsData();
+	const { dailyStatsData, dailyStatsIsLoading } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -26,16 +27,14 @@ export const Volume = () => {
 	}, [ref?.current, theme]);
 
 	useEffect(() => {
-		if (!chart || !volumeData || !volumeData.length) {
+		if (!chart || !dailyStatsData || !dailyStatsData.length) {
 			return;
 		}
 
-		const totalVolume = volumeData.reduce((acc, curr) => acc + curr.volume, 0);
+		const totalVolume = dailyStatsData.reduce((acc, curr) => acc + curr.volume, 0);
 
 		const subtext = formatDollars(totalVolume, { maxDecimals: 0 });
 
-		const data: any = [];
-		volumeData?.forEach(({ date }) => data.push(date));
 		const option: EChartsOption = {
 			...defaultOptions,
 			title: {
@@ -45,7 +44,7 @@ export const Volume = () => {
 			xAxis: {
 				...defaultOptions.xAxis,
 				type: 'category',
-				data,
+				data: dailyStatsData.map(({ timestamp }) => formatShortDateUTC(toJSTimestamp(timestamp))),
 			},
 			yAxis: [
 				{
@@ -64,7 +63,7 @@ export const Volume = () => {
 			],
 			series: [
 				{
-					data: volumeData?.map((data) => data.volume),
+					data: dailyStatsData.map((data) => data.volume),
 					type: 'bar',
 					name: 'Total Volume',
 					itemStyle: {
@@ -79,13 +78,13 @@ export const Volume = () => {
 			legend: undefined,
 		};
 		chart.setOption(option);
-	}, [chart, t, volumeData, theme, defaultOptions]);
+	}, [chart, t, dailyStatsData, theme, defaultOptions]);
 
 	return (
 		<ChartContainer width={2}>
 			<ChartHeader>
 				<ChartTitle>
-					{t('stats.volume.title')} {volumeIsLoading && <MiniLoader />}
+					{t('stats.volume.title')} {dailyStatsIsLoading && <MiniLoader />}
 				</ChartTitle>
 				<TimeframeSwitcher />
 			</ChartHeader>

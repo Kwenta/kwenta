@@ -1,4 +1,3 @@
-import { SynthExchangeResult } from '@synthetixio/queries';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,24 +15,20 @@ import Connector from 'containers/Connector';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
+import { WalletTradesExchangeResult } from 'sdk/types/synths';
+import { useAppSelector } from 'state/hooks';
+import { selectSynthsMap } from 'state/wallet/selectors';
 import { ExternalLink } from 'styles/common';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
-
-interface SynthTradesExchangeResult extends SynthExchangeResult {
-	hash: string;
-}
-
-type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> & {
-	timestamp: number;
-};
 
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
 	!prop ? <Body>{NO_VALUE}</Body> : children;
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
-	const { network, walletAddress, synthsMap } = Connector.useContainer();
+	const { network, walletAddress } = Connector.useContainer();
+	const synthsMap = useAppSelector(selectSynthsMap);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 
@@ -48,7 +43,7 @@ const SpotHistoryTable: FC = () => {
 		() =>
 			trades.filter((trade: any) => {
 				const activeSynths = synths.map((synth) => synth.name);
-				return activeSynths.includes(trade.fromSynth?.symbol as CurrencyKey);
+				return activeSynths.includes(trade.fromSynth?.symbol);
 			}),
 		[trades, synths]
 	);
@@ -147,11 +142,11 @@ const SpotHistoryTable: FC = () => {
 						Header: <div>{t('dashboard.history.spot-history-table.usd-value')}</div>,
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
-							const currencyKey = cellProps.row.original.toSynth?.symbol as CurrencyKey;
+							const currencyKey = cellProps.row.original.toSynth?.symbol;
 							return conditionalRender(
 								currencyKey,
 								<Currency.Price
-									currencyKey={currencyKey}
+									currencyKey={currencyKey as CurrencyKey}
 									price={cellProps.row.original.toAmountInUSD}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}

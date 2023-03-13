@@ -23,7 +23,7 @@ const useAverageEntryPrice = (positionHistory?: FuturesPositionHistory) => {
 			const existingValue = avgEntryPrice.mul(size);
 			const newValue = previewTrade.price.mul(previewTrade.sizeDelta.abs());
 			const totalValue = existingValue.add(newValue);
-			return totalValue.div(previewTrade.size.abs());
+			return totalValue.div(previewTrade.size.eq(0) ? 1 : previewTrade.size.abs());
 		}
 		return null;
 	}, [positionHistory, previewTrade]);

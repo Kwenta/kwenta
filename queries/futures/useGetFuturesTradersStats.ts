@@ -1,7 +1,7 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { useQuery } from 'react-query';
 
 import { chain } from 'containers/Connector/config';
+import { NetworkId } from 'sdk/types/common';
 import { getFuturesEndpoint } from 'sdk/utils/futures';
 import { useAppSelector } from 'state/hooks';
 import { selectMinTimestamp } from 'state/stats/selectors';
@@ -54,7 +54,7 @@ export const useGetFuturesTradersStats = () => {
 			}, {});
 
 			let cumulativeAccounts = new Set();
-			const result: TradersStat[] = Object.entries(summary)
+			const result = Object.entries(summary)
 				.sort((a, b) => (new Date(a[0]) > new Date(b[0]) ? 1 : -1))
 				.map(([date, accounts]) => {
 					const uniqueAccounts = Object.keys(accounts);

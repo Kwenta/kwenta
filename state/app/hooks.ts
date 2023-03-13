@@ -10,6 +10,8 @@ import { setConnectionError } from 'state/prices/reducer';
 import { selectWallet } from 'state/wallet/selectors';
 import { serializePrices } from 'utils/futures';
 
+import { checkSynthetixStatus } from './actions';
+
 export function useAppData(ready: boolean) {
 	const dispatch = useAppDispatch();
 	const wallet = useAppSelector(selectWallet);
@@ -23,6 +25,10 @@ export function useAppData(ready: boolean) {
 		intervalTime: 60000 * 15,
 		dependencies: [markets.length],
 		disabled: !markets.length,
+	});
+
+	usePollAction('checkSynthetixStatus', checkSynthetixStatus, {
+		intervalTime: 2 * 60 * 1000,
 	});
 
 	useEffect(() => {

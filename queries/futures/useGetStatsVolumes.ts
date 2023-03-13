@@ -1,9 +1,9 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { useQuery } from 'react-query';
 
 import { chain } from 'containers/Connector/config';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import { NetworkId } from 'sdk/types/common';
 import { getFuturesEndpoint } from 'sdk/utils/futures';
 import { useAppSelector } from 'state/hooks';
 import { selectMinTimestamp } from 'state/stats/selectors';

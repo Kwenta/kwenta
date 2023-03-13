@@ -1,5 +1,3 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { SynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,17 +10,18 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
-import Connector from 'containers/Connector';
+import { SynthSymbol } from 'sdk/data/synths';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import { selectBalances } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
+import { selectSynthsMap } from 'state/wallet/selectors';
 import { sortWei } from 'utils/balances';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
 type Cell = {
-	synth: CurrencyKey;
+	synth: SynthSymbol;
 	description: string | undefined;
 	balance: Wei;
 	usdBalance: Wei;
@@ -46,17 +45,17 @@ type SynthBalancesTableProps = {
 
 const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
 	const prices = useAppSelector(selectPrices);
 	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const { synthBalances } = useAppSelector(selectBalances);
+	const synthsMap = useAppSelector(selectSynthsMap);
 
 	const synthTokens = useMemo(() => {
-		return synthBalances.map((synthBalance: SynthBalance) => {
+		return synthBalances.map((synthBalance) => {
 			const { currencyKey, balance, usdBalance } = synthBalance;
 			const price = prices[currencyKey].onChain;
 			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(currencyKey));
-			const description = synthsMap?.[currencyKey]?.description ?? '';
+			const description = synthsMap[currencyKey as SynthSymbol]?.description ?? '';
 
 			return {
 				synth: currencyKey,
