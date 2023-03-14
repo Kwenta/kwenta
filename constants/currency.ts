@@ -1,9 +1,7 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 import keyBy from 'lodash/keyBy';
 
-export type { CurrencyKey } from '@synthetixio/contracts-interface';
-export { Synths } from '@synthetixio/contracts-interface';
+export type CurrencyKey = string;
 
 // TODO: standardize this
 export type Category = 'crypto' | 'forex' | 'equities' | 'index' | 'commodity' | 'inverse';

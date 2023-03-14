@@ -1,11 +1,11 @@
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
+import { NetworkId } from 'sdk/types/common';
 import { isSupportedNetworkId } from 'utils/network';
 
 import ConnectionDot from '../ConnectionDot';

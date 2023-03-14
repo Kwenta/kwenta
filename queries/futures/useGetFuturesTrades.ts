@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { utils as ethersUtils } from 'ethers';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 
@@ -6,6 +5,7 @@ import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { notNill } from 'queries/synths/utils';
+import { NetworkId } from 'sdk/types/common';
 import { FuturesTrade } from 'sdk/types/futures';
 import { getFuturesEndpoint, mapTrades } from 'sdk/utils/futures';
 import logError from 'utils/logError';
@@ -65,7 +65,7 @@ const useGetFuturesTrades = (
 		{
 			...options,
 			refetchInterval: 15000,
-			getNextPageParam: (lastPage, _) => {
+			getNextPageParam: (lastPage) => {
 				return notNill(lastPage) && lastPage?.length > 0
 					? {
 							minTs: 0,
@@ -73,7 +73,7 @@ const useGetFuturesTrades = (
 					  }
 					: null;
 			},
-			getPreviousPageParam: (firstPage, _) => {
+			getPreviousPageParam: (firstPage) => {
 				return notNill(firstPage) && firstPage?.length > 0
 					? {
 							minTs: firstPage[0].timestamp,

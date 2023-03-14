@@ -1,18 +1,33 @@
 import { useMemo } from 'react';
+import { UseQueryResult } from 'react-query';
 
-import { useGetFuturesTradersStats } from 'queries/futures/useGetFuturesTradersStats';
-import { useGetStatsVolumes } from 'queries/futures/useGetStatsVolumes';
+import useGetFile from 'queries/files/useGetFile';
 import { selectMarkPrices, selectMarkets } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { selectMinTimestamp } from 'state/stats/selectors';
 
 export type StatsTimeframe = '4H' | '1D' | '1W' | '1M' | '1Y' | 'MAX';
+
+export type DailyStat = {
+	timestamp: number;
+	volume: number;
+	trades: number;
+	feesSynthetix: number;
+	feesKwenta: number;
+	cumulativeTrades: number;
+	uniqueTraders: number;
+	cumulativeTraders: number;
+};
 
 const useStatsData = () => {
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const prices = useAppSelector(selectMarkPrices);
+	const minTimestamp = useAppSelector(selectMinTimestamp);
 
-	const { data: volumeData, isLoading: volumeIsLoading } = useGetStatsVolumes();
-	const { data: tradersData, isLoading: tradersIsLoading } = useGetFuturesTradersStats();
+	const {
+		data: dailyStatsData,
+		isLoading: dailyStatsIsLoading,
+	}: UseQueryResult<DailyStat[]> = useGetFile('stats/daily_stats.json');
 
 	const openInterestData = useMemo(() => {
 		return futuresMarkets.map(({ marketKey, asset, marketSize }) => {
@@ -24,10 +39,8 @@ const useStatsData = () => {
 	}, [futuresMarkets, prices]);
 
 	return {
-		volumeData,
-		volumeIsLoading,
-		tradersData,
-		tradersIsLoading,
+		dailyStatsData: dailyStatsData?.filter(({ timestamp }) => timestamp > minTimestamp) ?? [],
+		dailyStatsIsLoading,
 		openInterestData,
 	};
 };

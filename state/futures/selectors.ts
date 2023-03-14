@@ -1123,3 +1123,11 @@ export const selectMarketSuspended = createSelector(
 	selectMarketInfo,
 	(marketInfo) => marketInfo?.isSuspended
 );
+
+export const selectClosePositionOrderFee = createSelector(
+	(state: RootState) => state.futures.closePositionOrderFee,
+	wei
+);
+
+export const selectClosePositionOrderFeeError = (state: RootState) =>
+	state.futures.queryStatuses.closePositionOrderFee.error;
