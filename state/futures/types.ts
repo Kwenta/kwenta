@@ -66,6 +66,11 @@ export type FuturesPortfolio = {
 	total: number;
 };
 
+export type PortfolioValues = {
+	timestamp: number;
+	total: number;
+};
+
 export type FuturesQueryStatuses = {
 	markets: QueryStatus;
 	crossMarginBalanceInfo: QueryStatus;

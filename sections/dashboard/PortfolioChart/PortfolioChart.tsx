@@ -1,87 +1,41 @@
-import { ColorType, UTCTimestamp, createChart } from 'lightweight-charts';
-import { FC, useEffect, useMemo, useRef } from 'react';
+import { FC, useMemo } from 'react';
+import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import styled, { useTheme } from 'styled-components';
 
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import * as Text from 'components/Text';
-import { selectFuturesPortfolio, selectUserPortfolioValues } from 'state/futures/selectors';
+import { selectFuturesPortfolio, selectPortfolioChartData } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
+import { formatShortDate } from 'utils/formatters/date';
 
 import { Timeframe } from './Timeframe';
 
 const PriceChart = () => {
 	const theme = useTheme();
-	const portfolioValues = useAppSelector(selectUserPortfolioValues);
-	const chartRef = useRef('');
+	const portfolioData = useAppSelector(selectPortfolioChartData);
 
-	useEffect(() => {
-		const chart = createChart(chartRef.current, {
-			rightPriceScale: {
-				visible: true,
-				borderVisible: false,
-			},
-			layout: {
-				background: { type: ColorType.Solid, color: '#00000000' },
-				textColor: theme.colors.selectedTheme.gray,
-			},
-			crosshair: {
-				vertLine: {
-					labelBackgroundColor: theme.colors.selectedTheme.background,
-				},
-				horzLine: {
-					labelBackgroundColor: theme.colors.selectedTheme.background,
-				},
-			},
-			timeScale: {
-				visible: true,
-				timeVisible: true,
-				fixLeftEdge: true,
-				fixRightEdge: true,
-				borderVisible: false,
-			},
-			grid: {
-				vertLines: {
-					visible: false,
-				},
-				horzLines: {
-					visible: false,
-				},
-			},
-			overlayPriceScales: {
-				ticksVisible: true,
-			},
-			handleScale: false,
-			handleScroll: false,
-			localization: {
-				priceFormatter: formatDollars,
-			},
-		});
-
-		const results = portfolioValues.map((b) => ({
-			value: b.total,
-			time: b.timestamp as UTCTimestamp,
-		}));
-
-		const series = chart.addAreaSeries({
-			topColor: 'rgba(127, 212, 130, 0.1)',
-			bottomColor: 'rgba(0, 0, 0, 0)',
-			lineColor: 'rgba(127, 212, 130, 1)',
-			priceLineVisible: false,
-			crosshairMarkerVisible: true,
-			lineStyle: 0,
-			lineWidth: 2,
-		});
-		series.setData(results);
-		chart.timeScale().fitContent();
-
-		return () => {
-			chart.remove();
-		};
-	}, [portfolioValues, theme]);
-
-	return <Chart ref={(chartRef as unknown) as React.RefObject<HTMLDivElement>}></Chart>;
+	return (
+		<ResponsiveContainer width="100%" height="100%">
+			<LineChart data={portfolioData}>
+				<XAxis
+					dataKey="timestamp"
+					type="number"
+					tickFormatter={formatShortDate}
+					domain={['dataMin', 'dataMax']}
+					tickCount={10}
+				/>
+				<Tooltip />
+				<Line
+					type="monotone"
+					dataKey="total"
+					stroke="#82ca9d"
+					dot={false}
+					isAnimationActive={false}
+				/>
+			</LineChart>
+		</ResponsiveContainer>
+	);
 };
 
 const PortfolioChart: FC = () => {

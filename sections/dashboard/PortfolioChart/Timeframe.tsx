@@ -44,7 +44,7 @@ const StyledBtn = styled.div<{ isActive: boolean }>`
 	}
 `;
 
-const TIMEFRAMES: Period[] = [Period.ONE_DAY, Period.ONE_WEEK, Period.ONE_YEAR];
+const TIMEFRAMES: Period[] = [Period.ONE_WEEK, Period.ONE_MONTH, Period.ONE_YEAR];
 
 export const Timeframe: FC = () => {
 	const dispatch = useAppDispatch();

@@ -83,6 +83,10 @@ export const formatTimer = (seconds: number) => {
 	return `${numMinutes}:${String(numSeconds).padStart(2, '0')}`;
 };
 
+export const truncateTimestamp = (timestamp: number, delta: number): number => {
+	return Math.floor(timestamp / delta) * delta;
+};
+
 export const formatTruncatedDuration = (delta: number): string => {
 	const days = Math.floor(delta / 86400);
 	delta -= days * 86400;

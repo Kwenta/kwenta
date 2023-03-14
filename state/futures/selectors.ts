@@ -4,7 +4,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { ETH_UNIT } from 'constants/network';
-import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
@@ -13,6 +13,7 @@ import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeOrderFee, sameSide } from 'utils/costCalculations';
+import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import {
@@ -37,6 +38,7 @@ import {
 	MarkPrices,
 	futuresPositionKeys,
 	MarkPriceInfos,
+	PortfolioValues,
 } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
@@ -877,10 +879,7 @@ export const selectUserPortfolioValues = createSelector(
 	selectAllUsersTrades,
 	selectAllUserMarginTransfers,
 	selectFuturesPortfolio,
-	selectSelectedPortfolioTimeframe,
-	(trades, transfers, portfolioTotal, timeframe) => {
-		const minTimestamp = Date.now() / 1000 - PERIOD_IN_SECONDS[timeframe];
-
+	(trades, transfers, portfolioTotal) => {
 		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
 			account,
 			timestamp,
@@ -898,7 +897,7 @@ export const selectUserPortfolioValues = createSelector(
 		}));
 
 		const actions = [...tradeActions, ...transferActions]
-			.filter((action): action is FuturesAction => !!action && action.timestamp > minTimestamp)
+			.filter((action): action is FuturesAction => !!action)
 			.sort((a, b) => a.timestamp - b.timestamp);
 
 		const accountHistory = actions.reduce((acc, action) => {
@@ -918,7 +917,9 @@ export const selectUserPortfolioValues = createSelector(
 				const newAssets = {
 					...lastAction.assets,
 					[action.asset]:
-						action.size !== 0 ? lastAction.assets[action.asset] + action.size : action.margin,
+						action.size !== 0
+							? (lastAction.assets[action.asset] ?? 0) + action.size
+							: action.margin,
 				};
 				const newTotal = Object.entries(newAssets).reduce((acc, asset) => acc + asset[1], 0);
 
@@ -934,12 +935,63 @@ export const selectUserPortfolioValues = createSelector(
 			}
 		}, [] as FuturesPortfolio[]);
 		return [
-			...accountHistory.map(({ timestamp, total }) => ({ timestamp, total })),
+			...accountHistory.map(({ timestamp, total }) => ({ timestamp: timestamp * 1000, total })),
 			{
-				timestamp: Date.now() / 1000,
+				timestamp: Date.now(),
 				total: portfolioTotal.isolatedMarginFutures.toNumber(),
 			},
 		];
+	}
+);
+
+export const selectPortfolioChartData = createSelector(
+	selectUserPortfolioValues,
+	selectSelectedPortfolioTimeframe,
+	(portfolioValues, timeframe) => {
+		// get the timeframe for interpolation
+		const interpolationGap =
+			timeframe === Period.ONE_YEAR
+				? PERIOD_IN_SECONDS[Period.ONE_DAY]
+				: PERIOD_IN_SECONDS[Period.ONE_HOUR] * 6;
+		if (portfolioValues.length === 0) return [];
+
+		const minTimestamp = Date.now() - PERIOD_IN_SECONDS[timeframe] * 1000;
+		const filteredPortfolioValues = portfolioValues.filter(
+			({ timestamp }) => timestamp >= minTimestamp
+		);
+
+		const portfolioData: PortfolioValues[] = [];
+		for (let i = 0; i < filteredPortfolioValues.length; i++) {
+			if (i < filteredPortfolioValues.length - 1) {
+				const currentTimestamp = truncateTimestamp(
+					filteredPortfolioValues[i].timestamp,
+					interpolationGap * 1000
+				);
+				const nextTimestamp = truncateTimestamp(
+					filteredPortfolioValues[i + 1].timestamp,
+					interpolationGap * 1000
+				);
+				const timeDiff = nextTimestamp - currentTimestamp;
+
+				if (nextTimestamp !== currentTimestamp) {
+					portfolioData.push({
+						timestamp: currentTimestamp,
+						total: filteredPortfolioValues[i].total,
+					});
+				}
+				if (timeDiff > interpolationGap * 1000) {
+					const gapCount = Math.floor(timeDiff / (interpolationGap * 1000));
+					for (let j = 1; j <= gapCount; j++) {
+						portfolioData.push({
+							timestamp: currentTimestamp + j * interpolationGap * 1000,
+							total: filteredPortfolioValues[i].total,
+						});
+					}
+				}
+			}
+		}
+		portfolioData.push(portfolioValues[portfolioValues.length - 1]);
+		return portfolioData;
 	}
 );
 
