@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { MainContent } from 'styles/common';
-
 import MarketDetails from '../MarketDetails';
 import PositionChart from '../PositionChart';
 import UserInfo from '../UserInfo';
@@ -17,10 +15,9 @@ const MarketInfo: React.FC = React.memo(() => (
 	</Container>
 ));
 
-const Container = styled(MainContent)`
-	margin: unset;
-	max-width: unset;
-	padding-bottom: 20px;
+const Container = styled.div`
+	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+	overflow-y: scroll;
 `;
 
 export default MarketInfo;

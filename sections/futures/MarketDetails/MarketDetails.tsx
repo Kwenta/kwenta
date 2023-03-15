@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
-import { FlexDivCentered } from 'components/layout/flex';
 import { NO_VALUE } from 'constants/placeholder';
 import {
 	selectMarketAsset,
@@ -17,7 +16,6 @@ import media from 'styles/media';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
-import MarketsDropdown from '../Trade/MarketsDropdown';
 import MarketDetail from './MarketDetail';
 import { MarketDataKey } from './utils';
 
@@ -27,22 +25,14 @@ type MarketDetailsProps = {
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
-		<FlexDivCentered>
-			{!mobile && (
-				<MarketDropDownContainer>
-					<MarketsDropdown />
-				</MarketDropDownContainer>
-			)}
-
-			<MarketDetailsContainer mobile={mobile}>
-				<MarketPriceDetail />
-				<IndexPriceDetail />
-				<DailyChangeDetail />
-				<HourlyFundingDetail />
-				<OpenInterestLongDetail />
-				<OpenInterestShortDetail />
-			</MarketDetailsContainer>
-		</FlexDivCentered>
+		<MarketDetailsContainer mobile={mobile}>
+			<MarketPriceDetail />
+			<IndexPriceDetail />
+			<DailyChangeDetail />
+			<HourlyFundingDetail />
+			<OpenInterestLongDetail />
+			<OpenInterestShortDetail />
+		</MarketDetailsContainer>
 	);
 };
 
@@ -152,7 +142,6 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	gap: 26px;
 	height: 55px;
 	padding: 10px 45px 10px 15px;
-	margin-bottom: 16px;
 	box-sizing: border-box;
 	overflow-x: scroll;
 	scrollbar-width: none;
@@ -161,7 +150,6 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	justify-content: space-between;
 	align-items: start;
 
-	border-radius: 10px;
 	box-sizing: border-box;
 
 	${media.lessThan('xl')`
@@ -211,14 +199,6 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 				margin-bottom: 2px;
 			}
 		`}
-`;
-
-const MarketDropDownContainer = styled.div`
-	width: 280px;
-	margin-right: 15px;
-	@media (min-width: 1200px) {
-		display: none;
-	}
 `;
 
 export default MarketDetails;

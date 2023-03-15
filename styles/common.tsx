@@ -69,7 +69,6 @@ export const AbsoluteCenteredDiv = styled.div`
 `;
 
 export const PageContent = styled.section`
-	position: relative;
 	width: 100%;
 	${(props) => props.theme.animations.show};
 `;
@@ -82,12 +81,9 @@ export const FixedFooterMixin = `
 	border-radius: 0;
 `;
 
-export const FullScreenContainer = styled(FlexDiv)`
-	flex-flow: column;
+export const FullScreenContainer = styled.div`
 	width: 100%;
-	height: auto;
-	overflow-y: visible;
-	margin: 0 auto;
+	height: 100vh;
 
 	${media.lessThan('sm')`
 		padding: 20px 15px 0;
@@ -105,8 +101,6 @@ export const FullHeightContainer = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
 	flex-grow: 1;
-	height: auto;
-	position: relative;
 	gap: 10px;
 `;
 

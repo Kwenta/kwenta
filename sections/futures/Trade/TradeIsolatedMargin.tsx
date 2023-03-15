@@ -23,6 +23,7 @@ import PositionButtons from '../PositionButtons';
 import CreateAccount from '../TradeCrossMargin/CreateAccount';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import ManagePosition from './ManagePosition';
+import MarketsDropdown from './MarketsDropdown';
 import OrderTypeSelector from './OrderTypeSelector';
 import SLTPInputs from './SLTPInputs';
 
@@ -53,6 +54,7 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 			{pricesConnectionError && (
 				<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 			)}
+			<MarketsDropdown />
 
 			{!isMobile &&
 				(accountType === 'isolated_margin' ? <MarketInfoBox /> : <CrossMarginInfoBox />)}

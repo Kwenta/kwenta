@@ -60,25 +60,23 @@ const SystemStatus: FC<SystemStatusProps> = memo(({ children }) => {
 			<Head>
 				<title>{t('system-status.page-title')}</title>
 			</Head>
-			<FullScreenContainer>
-				<StyledPageContent>
-					<Header>
-						<Logo />
-					</Header>
-					<Container>
-						<StyledSystemDownIcon />
-						<Title>{t('system-status.title')}</Title>
-						<Subtitle>{t('system-status.subtitle')}</Subtitle>
-						<Links>
-							{SOCIAL_LINKS.map(({ id, href, icon }) => (
-								<StyledExternalLink key={id} href={href}>
-									{icon}
-								</StyledExternalLink>
-							))}
-						</Links>
-					</Container>
-				</StyledPageContent>
-			</FullScreenContainer>
+			<StyledPageContent>
+				<Header>
+					<Logo />
+				</Header>
+				<Container>
+					<StyledSystemDownIcon />
+					<Title>{t('system-status.title')}</Title>
+					<Subtitle>{t('system-status.subtitle')}</Subtitle>
+					<Links>
+						{SOCIAL_LINKS.map(({ id, href, icon }) => (
+							<StyledExternalLink key={id} href={href}>
+								{icon}
+							</StyledExternalLink>
+						))}
+					</Links>
+				</Container>
+			</StyledPageContent>
 		</>
 	) : (
 		<>{children}</>

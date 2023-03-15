@@ -8,7 +8,6 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
-import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
@@ -36,7 +35,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
+import { PageContent } from 'styles/common';
 import { MarketKeyByAsset } from 'utils/futures';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
@@ -101,13 +100,10 @@ const Market: MarketComponent = () => {
 			<DesktopOnlyView>
 				<PageContent>
 					<StyledFullHeightContainer>
-						<LeftSidebar />
+						<TradePanelDesktop />
 						<MarketInfo />
-						<StyledRightSideContent>
-							<TradePanelDesktop />
-						</StyledRightSideContent>
 					</StyledFullHeightContainer>
-					<GitHashID />
+					{/* <GitHashID /> */}
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -159,23 +155,9 @@ Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Market;
 
-const StyledRightSideContent = styled(RightSideContent)`
-	width: 100%;
-`;
-
-const StyledFullHeightContainer = styled(FullHeightContainer)`
+const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: 20% 55% 25%;
-	column-gap: 15px;
-	width: calc(100% - 30px);
-	@media (min-width: 1725px) {
-		display: grid;
-		grid-template-columns: 320px 1fr 370px;
-		column-gap: 15px;
-		width: 100%;
-	}
-	@media (max-width: 1200px) {
-		grid-template-columns: 70% 30%;
-		width: calc(100% - 15px);
-	}
+	grid-template-columns: minmax(350px, 400px) 1fr;
+	grid-gap: 0;
+	width: 100%;
 `;

@@ -21,7 +21,7 @@ export default function CreateAccount() {
 	const onShowOnboard = () => dispatch(setShowCrossMarginOnboard(true));
 
 	return (
-		<>
+		<div>
 			<CreateAccountContainer data-testid="cross-margin-create-account">
 				<Title>{t('futures.market.trade.cross-margin.title')}</Title>
 				<CreateAccountButton variant="flat" onClick={onShowOnboard}>
@@ -35,7 +35,7 @@ export default function CreateAccount() {
 					<CrossMarginFAQ />
 				</Questions>
 			</FAQContainer>
-		</>
+		</div>
 	);
 }
 
