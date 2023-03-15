@@ -24,7 +24,6 @@ const Leader: LeaderComponent = () => {
 					<FullHeightContainer>
 						<MainContent>
 							<Leaderboard />
-							<GitHashID />
 						</MainContent>
 					</FullHeightContainer>
 				</MobileHiddenView>

@@ -51,7 +51,6 @@ const EarnPage: EarnPageProps = () => {
 						</StyledBody>
 						<StepOne />
 						<StepTwo />
-						<GitHashID />
 					</EarnContent>
 				</FullHeightContainer>
 			</PageContent>

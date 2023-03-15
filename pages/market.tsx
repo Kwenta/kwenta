@@ -16,7 +16,6 @@ import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
 import DepositWithdrawCrossMargin from 'sections/futures/TradeCrossMargin/DepositWithdrawCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { clearTradeInputs } from 'state/futures/actions';
@@ -103,12 +102,10 @@ const Market: MarketComponent = () => {
 						<TradePanelDesktop />
 						<MarketInfo />
 					</StyledFullHeightContainer>
-					{/* <GitHashID /> */}
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileTrade />
-				<GitHashID />
 			</MobileOrTabletView>
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal

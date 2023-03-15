@@ -31,7 +31,7 @@ const Exchange: ExchangeComponent = () => {
 	}, [router.query, network, dispatch, walletAddress]);
 
 	return (
-		<>
+		<div>
 			<ExchangeHead />
 			<DesktopOnlyView>
 				<ExchangeContent />
@@ -42,7 +42,7 @@ const Exchange: ExchangeComponent = () => {
 					<ExchangeContent />
 				</MobileScreenContainer>
 			</MobileOrTabletView>
-		</>
+		</div>
 	);
 };
 

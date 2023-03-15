@@ -17,7 +17,7 @@ type AppLayoutProps = {
 const Footer = () => {
 	return (
 		<FooterContainer>
-			<Body>Fully operational</Body>
+			<Body color="secondary">Fully operational</Body>
 			<GitHashID />
 			<div></div>
 		</FooterContainer>
@@ -33,7 +33,7 @@ const FooterContainer = styled.footer`
 `;
 
 const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
-	<>
+	<AppLayoutContainer>
 		<DesktopOnlyView>
 			<STV>
 				<Header />
@@ -48,8 +48,16 @@ const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
 			</MobileScreenContainer>
 		</MobileOrTabletView>
 		<NotificationContainer />
-	</>
+	</AppLayoutContainer>
 ));
+
+const AppLayoutContainer = styled.div`
+	height: 100%;
+
+	> div {
+		height: 100%;
+	}
+`;
 
 const STV = styled(FullScreenContainer)`
 	display: grid;
@@ -59,6 +67,11 @@ const STV = styled(FullScreenContainer)`
 		display: flex;
 		min-height: 0;
 		width: 100%;
+
+		> div {
+			width: 100%;
+			height: 100%;
+		}
 	}
 `;
 
