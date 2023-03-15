@@ -37,7 +37,7 @@ const WalletButtons: React.FC = () => {
 	useAutoConnect();
 	const walletIsNotConnected = (
 		<>
-			<ConnectButton
+			<Button
 				size="small"
 				variant="flat"
 				noOutline
@@ -47,19 +47,19 @@ const WalletButtons: React.FC = () => {
 			>
 				<ConnectionDot />
 				{t('common.wallet.connect-wallet')}
-			</ConnectButton>
+			</Button>
 		</>
 	);
 
 	const walletIsConnectedButNotSupported = (
 		<>
-			<SwitchNetworkButton size="small" variant="flat" onClick={openChainModal}>
+			<Button size="small" mono variant="flat" onClick={openChainModal}>
 				{t('homepage.l2.cta-buttons.switch-networks')}
-			</SwitchNetworkButton>
-			<ConnectButton size="small" variant="flat" data-testid="unsupported-network" mono>
+			</Button>
+			<Button size="small" variant="flat" data-testid="unsupported-network" mono>
 				<ConnectionDot />
 				{t('common.wallet.unsupported-network')}
-			</ConnectButton>
+			</Button>
 		</>
 	);
 
@@ -111,15 +111,6 @@ const MenuButton = styled(Button)`
 			}
 		}
 	}
-`;
-
-const ConnectButton = styled(Button)`
-	font-size: 13px;
-`;
-
-const SwitchNetworkButton = styled(Button)`
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 export default WalletButtons;

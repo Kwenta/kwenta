@@ -86,9 +86,7 @@ export const FullScreenContainer = styled(FlexDiv)`
 	flex-flow: column;
 	width: 100%;
 	height: auto;
-	position: relative;
 	overflow-y: visible;
-	padding: 25px 25px 0;
 	margin: 0 auto;
 
 	${media.lessThan('sm')`
