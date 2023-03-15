@@ -13,7 +13,7 @@ import { GridDivCenteredCol } from 'components/layout/grid';
 import { EXTERNAL_LINKS, PROD_HOSTNAME } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 import Logo from 'sections/shared/Layout/Logo';
-import { PageContent, FullScreenContainer, ExternalLink } from 'styles/common';
+import { PageContent, ExternalLink } from 'styles/common';
 import media from 'styles/media';
 
 type SystemStatusProps = {

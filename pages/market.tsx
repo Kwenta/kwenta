@@ -90,7 +90,7 @@ const Market: MarketComponent = () => {
 	}, [router, setCurrentMarket, dispatch, routerMarketAsset]);
 
 	return (
-		<>
+		<div style={{ width: '100%', height: '100%', overflow: 'scroll' }}>
 			<MarketHead />
 
 			<CrossMarginOnboard
@@ -122,7 +122,7 @@ const Market: MarketComponent = () => {
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
-		</>
+		</div>
 	);
 };
 

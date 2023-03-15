@@ -24,7 +24,7 @@ const Footer = () => {
 	);
 };
 
-const FooterContainer = styled.div`
+const FooterContainer = styled.footer`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -37,7 +37,7 @@ const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
 		<DesktopOnlyView>
 			<STV>
 				<Header />
-				<div className="main-content">{children}</div>
+				<main>{children}</main>
 				<Footer />
 			</STV>
 		</DesktopOnlyView>
@@ -52,12 +52,13 @@ const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
 ));
 
 const STV = styled(FullScreenContainer)`
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template: 'header' auto 'main' 1fr 'footer' auto / 100%;
 
-	.main-content {
-		overflow-y: hidden;
-		flex-grow: 1;
+	> main {
+		display: flex;
+		min-height: 0;
+		width: 100%;
 	}
 `;
 

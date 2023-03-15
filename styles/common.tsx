@@ -83,7 +83,7 @@ export const FixedFooterMixin = `
 
 export const FullScreenContainer = styled.div`
 	width: 100%;
-	height: 100vh;
+	height: 100%;
 
 	${media.lessThan('sm')`
 		padding: 20px 15px 0;
@@ -105,7 +105,6 @@ export const FullHeightContainer = styled(FlexDiv)`
 `;
 
 export const MainContent = styled(FlexDiv)`
-	position: relative;
 	flex-grow: 1;
 	flex-direction: column;
 	margin: 0 auto;
@@ -114,13 +113,11 @@ export const MainContent = styled(FlexDiv)`
 
 export const RightSideContent = styled.div`
 	background-color: transparent;
-	position: relative;
 	height: auto;
 `;
 
 export const LeftSideContent = styled.div`
 	background-color: transparent;
-	position: relative;
 	height: auto;
 `;
 
