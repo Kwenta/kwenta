@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { Body } from 'components/Text';
 import NotificationContainer from 'constants/NotificationContainer';
-import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
+import { MobileScreenContainer } from 'styles/common';
 
 import GitHashID from './GitHashID';
 import Header from './Header';
@@ -35,11 +35,11 @@ const FooterContainer = styled.footer`
 const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
 	<AppLayoutContainer>
 		<DesktopOnlyView>
-			<STV>
+			<DesktopGridContainer>
 				<Header />
 				<main>{children}</main>
 				<Footer />
-			</STV>
+			</DesktopGridContainer>
 		</DesktopOnlyView>
 		<MobileOrTabletView>
 			<MobileScreenContainer>
@@ -59,9 +59,11 @@ const AppLayoutContainer = styled.div`
 	}
 `;
 
-const STV = styled(FullScreenContainer)`
+const DesktopGridContainer = styled.div`
+	width: 100%;
+	height: 100%;
 	display: grid;
-	grid-template: 'header' auto 'main' 1fr 'footer' auto / 100%;
+	grid-template: auto 1fr auto / 100%;
 
 	> main {
 		display: flex;

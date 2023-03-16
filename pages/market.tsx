@@ -8,6 +8,7 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
+import MarketDetails from 'sections/futures/MarketDetails';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
@@ -89,7 +90,7 @@ const Market: MarketComponent = () => {
 	}, [router, setCurrentMarket, dispatch, routerMarketAsset]);
 
 	return (
-		<div style={{ width: '100%', height: '100%', overflow: 'scroll' }}>
+		<>
 			<MarketHead />
 
 			<CrossMarginOnboard
@@ -98,6 +99,7 @@ const Market: MarketComponent = () => {
 			/>
 			<DesktopOnlyView>
 				<PageContent>
+					<MarketDetails />
 					<StyledFullHeightContainer>
 						<TradePanelDesktop />
 						<MarketInfo />
@@ -119,7 +121,7 @@ const Market: MarketComponent = () => {
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
-		</div>
+		</>
 	);
 };
 
@@ -154,7 +156,7 @@ export default Market;
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: minmax(350px, 400px) 1fr;
+	grid-template-columns: 324px 1fr;
 	grid-gap: 0;
-	width: 100%;
+	flex: 1;
 `;

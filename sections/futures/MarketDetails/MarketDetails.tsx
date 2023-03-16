@@ -16,6 +16,7 @@ import media from 'styles/media';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
+import MarketsDropdown from '../Trade/MarketsDropdown';
 import MarketDetail from './MarketDetail';
 import { MarketDataKey } from './utils';
 
@@ -25,14 +26,17 @@ type MarketDetailsProps = {
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
-		<MarketDetailsContainer mobile={mobile}>
-			<MarketPriceDetail />
-			<IndexPriceDetail />
-			<DailyChangeDetail />
-			<HourlyFundingDetail />
-			<OpenInterestLongDetail />
-			<OpenInterestShortDetail />
-		</MarketDetailsContainer>
+		<MainContainer>
+			<MarketsDropdown />
+			<MarketDetailsContainer mobile={mobile}>
+				<MarketPriceDetail />
+				<IndexPriceDetail />
+				<DailyChangeDetail />
+				<HourlyFundingDetail />
+				<OpenInterestLongDetail />
+				<OpenInterestShortDetail />
+			</MarketDetailsContainer>
+		</MainContainer>
 	);
 };
 
@@ -137,10 +141,18 @@ const OpenInterestShortDetail = memo(() => {
 	);
 });
 
+const MainContainer = styled.div`
+	display: flex;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	align-items: center;
+	height: 67px;
+`;
+
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
-	height: 55px;
+	height: 100%;
 	padding: 10px 45px 10px 15px;
 	box-sizing: border-box;
 	overflow-x: scroll;
@@ -148,7 +160,7 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 
 	display: flex;
 	justify-content: space-between;
-	align-items: start;
+	align-items: center;
 
 	box-sizing: border-box;
 
@@ -159,7 +171,7 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	`}
 
 	${(props) => css`
-		border: ${props.theme.colors.selectedTheme.border};
+		border-left: ${props.theme.colors.selectedTheme.border};
 
 		.heading {
 			color: ${props.theme.colors.selectedTheme.text.label};

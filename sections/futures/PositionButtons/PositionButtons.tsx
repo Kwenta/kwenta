@@ -43,7 +43,6 @@ const PositionButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	margin-bottom: 16px;
-	margin-top: 8px;
 `;
 
 const PositionButton = styled.div<PositionButtonProps>`

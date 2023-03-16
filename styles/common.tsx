@@ -69,7 +69,10 @@ export const AbsoluteCenteredDiv = styled.div`
 `;
 
 export const PageContent = styled.section`
+	display: flex;
+	flex-direction: column;
 	width: 100%;
+	height: 100%;
 	${(props) => props.theme.animations.show};
 `;
 

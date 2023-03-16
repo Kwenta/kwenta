@@ -259,8 +259,6 @@ const SearchBarContainer = styled.div`
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
-	margin-bottom: 16px;
-
 	${(props) =>
 		props.mobile &&
 		css`
