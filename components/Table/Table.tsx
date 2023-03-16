@@ -69,6 +69,7 @@ type TableProps = {
 	lastRef?: any;
 	compactPagination?: boolean;
 	rowStyle?: Record<string, any>;
+	rounded?: boolean;
 };
 
 export const Table: FC<TableProps> = memo(
@@ -92,6 +93,7 @@ export const Table: FC<TableProps> = memo(
 		lastRef = null,
 		compactPagination = false,
 		rowStyle = {},
+		rounded = true,
 	}) => {
 		const memoizedColumns = useMemo(
 			() => columns,
@@ -156,7 +158,12 @@ export const Table: FC<TableProps> = memo(
 		return (
 			<>
 				<TableContainer>
-					<ReactTable {...getTableProps()} palette={palette} className={className}>
+					<ReactTable
+						{...getTableProps()}
+						palette={palette}
+						$rounded={rounded}
+						className={className}
+					>
 						{headerGroups.map((headerGroup) => (
 							<div className="table-row" {...headerGroup.getHeaderGroupProps()}>
 								{headerGroup.headers.map((column: any) => (
@@ -275,13 +282,21 @@ const SortIconContainer = styled.span`
 	flex-direction: column;
 `;
 
-const ReactTable = styled.div<{ palette: TablePalette }>`
+const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
 	width: 100%;
 	height: 100%;
 	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 10px;
+	${(props) =>
+		props.$rounded
+			? css`
+					border-radius: 10px;
+			  `
+			: css`
+					border-left: none;
+					border-right: none;
+			  `};
 
 	${(props) =>
 		props.palette === 'primary' &&

@@ -58,6 +58,7 @@ const Trades: React.FC = memo(() => {
 		<Card>
 			<Table
 				highlightRowsOnHover
+				rounded={false}
 				columns={[
 					{
 						Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
@@ -147,7 +148,7 @@ const Trades: React.FC = memo(() => {
 					) : undefined
 				}
 				showPagination
-				pageSize={5}
+				pageSize={3}
 			/>
 		</Card>
 	);

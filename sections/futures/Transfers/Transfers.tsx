@@ -33,6 +33,7 @@ const Transfers: FC = () => {
 	return (
 		<Table
 			highlightRowsOnHover
+			rounded={false}
 			columns={[
 				{
 					Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
@@ -101,7 +102,7 @@ const Transfers: FC = () => {
 				)
 			}
 			showPagination
-			pageSize={5}
+			pageSize={3}
 		/>
 	);
 };

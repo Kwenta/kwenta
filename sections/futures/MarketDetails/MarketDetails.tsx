@@ -159,10 +159,13 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	scrollbar-width: none;
 
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 
 	box-sizing: border-box;
+
+	& > div {
+		margin-right: 30px;
+	}
 
 	${media.lessThan('xl')`
 		& > div {

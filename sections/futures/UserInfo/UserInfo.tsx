@@ -23,7 +23,6 @@ import {
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
 import { selectWallet } from 'state/wallet/selectors';
 
-import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
 import ShareModal from '../ShareModal';
 import Trades from '../Trades';
@@ -159,7 +158,7 @@ const UserInfo: React.FC = memo(() => {
 	}, [position]);
 
 	return (
-		<>
+		<div style={{ flex: 1 }}>
 			<TabButtonsContainer>
 				<TabLeft>
 					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
@@ -193,7 +192,6 @@ const UserInfo: React.FC = memo(() => {
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<PositionCard />
 				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
@@ -211,7 +209,7 @@ const UserInfo: React.FC = memo(() => {
 
 			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}
 			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
-		</>
+		</div>
 	);
 });
 

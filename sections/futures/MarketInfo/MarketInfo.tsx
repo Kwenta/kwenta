@@ -14,9 +14,10 @@ const MarketInfo: React.FC = React.memo(() => (
 ));
 
 const Container = styled.div`
+	display: flex;
+	flex-direction: column;
 	height: 100%;
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
-	overflow-y: scroll;
 `;
 
 export default MarketInfo;
