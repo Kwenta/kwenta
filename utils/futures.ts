@@ -263,7 +263,7 @@ export const updatePositionUpnl = (
 			.sub(offChainPrice)
 			.mul(position.side === PositionSide.LONG ? -1 : 1)
 	);
-	const pnlPct = pnl.div(position.initialMargin.add(thisPositionHistory.totalDeposits));
+	const pnlPct = pnl.div(position.initialMargin.add(thisPositionHistory.netTransfers));
 
 	return {
 		...deserializedPositionDetails,
