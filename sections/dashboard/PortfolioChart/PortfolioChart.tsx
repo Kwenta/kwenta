@@ -83,7 +83,7 @@ const PortfolioChart: FC = () => {
 			};
 		} else {
 			const value = portfolioData[portfolioData.length - 1].total - portfolioData[0].total;
-			const changeValue = total.gt(0) ? value / total.toNumber() : null;
+			const changeValue = portfolioData[0].total > 0 ? value / portfolioData[0].total : null;
 			const text =
 				value && changeValue
 					? `${value > 0 ? '+' : ''}${formatDollars(value, {
