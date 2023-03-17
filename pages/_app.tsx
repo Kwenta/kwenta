@@ -74,6 +74,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	return isReady ? (
 		<RainbowKitProvider
 			chains={chains}
+			initialChain={10}
 			theme={currentTheme === 'dark' ? darkTheme() : lightTheme()}
 		>
 			<ThemeProvider theme={theme}>

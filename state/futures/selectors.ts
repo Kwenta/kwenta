@@ -667,7 +667,7 @@ export const selectMarginTransfers = createSelector(
 	(state: RootState) => state.futures,
 	(wallet, network, type, asset, futures) => {
 		if (!wallet) return [];
-		const account = futures[accountType(type)].accounts[network][wallet];
+		const account = futures[accountType(type)].accounts[network]?.[wallet];
 		const marginTransfers = account?.marginTransfers ?? [];
 		return marginTransfers.filter(
 			(o) => accountType(type) === 'isolatedMargin' && o.asset === asset
