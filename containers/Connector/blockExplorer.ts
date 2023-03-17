@@ -1,10 +1,11 @@
-import { NetworkId, NetworkNameById, NetworkIdByName } from '@synthetixio/contracts-interface';
 import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
+
+import { NetworkId, NetworkNameById, NetworkIdByName } from 'sdk/types/common';
 
 export const getBaseUrl = (networkId: NetworkId) => {
 	if (networkId === 10 || networkId === 420) {
 		return OPTIMISM_NETWORKS[networkId as NetworkId]?.blockExplorerUrls[0];
-	} else if ((networkId as NetworkId) === NetworkIdByName.mainnet) {
+	} else if (networkId === NetworkIdByName.mainnet) {
 		return 'https://etherscan.io';
 	}
 	return `https://${NetworkNameById[networkId]}.etherscan.io`;

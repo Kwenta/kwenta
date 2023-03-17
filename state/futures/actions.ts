@@ -1,5 +1,4 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
 import { debounce } from 'lodash';
@@ -8,6 +7,7 @@ import KwentaSDK from 'sdk';
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { FuturesAccountType } from 'queries/futures/types';
+import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	DelayedOrder,
@@ -480,7 +480,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 
 export const fetchCrossMarginTradePreview = createAsyncThunk<
 	FuturesPotentialTradeDetails<string> | null,
-	{ price?: Wei | undefined; sizeDelta: Wei; marginDelta: Wei },
+	{ price?: Wei; sizeDelta: Wei; marginDelta: Wei },
 	ThunkConfig
 >(
 	'futures/fetchCrossMarginTradePreview',
@@ -620,7 +620,6 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	const position = selectPosition(getState());
 	if (
 		size === '' ||
-		Number(size) === 0 ||
 		assetRate.eq(0) ||
 		!position?.remainingMargin ||
 		position?.remainingMargin.eq(0)
@@ -1381,3 +1380,24 @@ const monitorAndAwaitTransaction = async (
 	await tx.wait();
 	dispatch(updateTransactionStatus(TransactionStatus.Confirmed));
 };
+
+export const getClosePositionOrderFee = createAsyncThunk<Wei, void, ThunkConfig>(
+	'futures/getClosePositionOrderFee',
+	async (_, { getState, extra: { sdk } }) => {
+		const state = getState();
+		const position = selectPosition(state);
+		const marketInfo = selectMarketInfo(state);
+		try {
+			if (!marketInfo) {
+				throw new Error('No market found');
+			} else if (!position?.position) {
+				throw new Error('No active position in selected market');
+			} else {
+				return sdk.futures.getOrderFee(marketInfo.market, position.position.size.neg());
+			}
+		} catch (err) {
+			notifyError('Failed to get order fee', err);
+			throw err;
+		}
+	}
+);

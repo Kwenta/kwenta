@@ -1,5 +1,11 @@
-import { SynthResult } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
+
+type SynthResult = {
+	id: string;
+	name: string;
+	symbol: string;
+	totalSupply: Wei;
+};
 
 export type SynthsVolumes = {
 	[asset: string]: Wei;

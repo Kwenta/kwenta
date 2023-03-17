@@ -1,5 +1,4 @@
 import Wei from '@synthetixio/wei';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -26,14 +25,6 @@ export default function TradeConfirmationSummary({
 	leverage,
 }: Props) {
 	const { t } = useTranslation();
-
-	const orderTypeValue = useMemo(
-		() =>
-			OrderNameByType[orderType] === 'Delayed Offchain'
-				? 'Delayed Market'
-				: OrderNameByType[orderType],
-		[orderType]
-	);
 
 	return (
 		<OrderSummaryLine>
@@ -67,7 +58,7 @@ export default function TradeConfirmationSummary({
 				/>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.order-type')}
-					value={<NumberBody>{orderTypeValue}</NumberBody>}
+					value={<NumberBody>{OrderNameByType[orderType]}</NumberBody>}
 				/>
 			</InfoBoxContainer>
 		</OrderSummaryLine>

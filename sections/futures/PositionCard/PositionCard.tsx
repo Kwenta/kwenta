@@ -1,26 +1,26 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import ColoredPrice from 'components/ColoredPrice';
+import { InfoBoxRow } from 'components/InfoBox';
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
 import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import { PositionSide } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import {
 	selectMarketAsset,
-	selectMarketKey,
 	selectPosition,
 	selectSkewAdjustedPrice,
 	selectMarketPriceInfo,
 	selectSelectedMarketPositionHistory,
 	selectPreviewData,
 	selectFuturesType,
+	selectMarketInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PillButtonDiv } from 'styles/common';
@@ -32,15 +32,14 @@ import { getMarketName } from 'utils/futures';
 import EditLeverageModal from '../TradeCrossMargin/EditCrossMarginLeverageModal';
 
 const PositionCard = memo(() => {
-	const marketKey = useAppSelector(selectMarketKey);
 	const openModal = useAppSelector(selectOpenModal);
-	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	return (
 		<>
 			{openModal === 'futures_cross_leverage' && <EditLeverageModal editMode="existing_position" />}
 
-			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
+			<Container id={marketInfo?.isSuspended ? 'closed' : undefined}>
 				<DataCol>
 					<MarketNameRow />
 					<PositionSideRow />
@@ -180,9 +179,9 @@ const NetFundingRow = memo(() => {
 				<SubtitleWithCursor>{t('futures.market.position-card.net-funding')}</SubtitleWithCursor>
 			</PositionCardTooltip>
 			{positionDetails ? (
-				<NumericValue colored value={netFunding}>
+				<StyledNumericValue colored value={netFunding}>
 					{netFundingText}
-				</NumericValue>
+				</StyledNumericValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			)}
@@ -210,9 +209,9 @@ const UnrealizedPNLRow = memo(() => {
 				<SubtitleWithCursor>{t('futures.market.position-card.u-pnl')}</SubtitleWithCursor>
 			</PositionCardTooltip>
 			{positionDetails ? (
-				<NumericValue colored value={pnl}>
+				<StyledNumericValue colored value={pnl}>
 					{pnlText}
-				</NumericValue>
+				</StyledNumericValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			)}
@@ -226,7 +225,10 @@ const RealizedPNLRow = memo(() => {
 	const position = useAppSelector(selectPosition);
 	const positionDetails = position?.position;
 	const realizedPnl =
-		positionHistory?.pnl.add(positionHistory?.netFunding).sub(positionHistory?.feesPaid) ?? zeroBN;
+		positionHistory?.pnl
+			.add(positionHistory?.netFunding)
+			.add(position?.position?.accruedFunding ?? zeroBN)
+			.sub(positionHistory?.feesPaid) ?? zeroBN;
 	const realizedPnlPct = realizedPnl.abs().gt(0)
 		? realizedPnl.div(positionHistory?.initialMargin.add(positionHistory?.totalDeposits))
 		: zeroBN;
@@ -237,15 +239,50 @@ const RealizedPNLRow = memo(() => {
 			  })} (${formatPercent(realizedPnlPct)})`
 			: NO_VALUE;
 
+	const rpnlTooltipContent = useMemo(() => {
+		const feesPaid = positionHistory?.feesPaid.neg() ?? zeroBN;
+		const fundingPaid =
+			positionHistory?.netFunding.add(positionDetails?.accruedFunding ?? zeroBN) ?? zeroBN;
+		const priceAction = positionHistory?.pnl ?? zeroBN;
+
+		return (
+			<div>
+				<StyledBody>{t('futures.market.position-card.tooltips.r-pnl')}</StyledBody>
+
+				<InfoBoxRow
+					title="Price Action"
+					value={formatDollars(priceAction, {
+						minDecimals: 2,
+					})}
+					isSubItem
+				/>
+				<InfoBoxRow
+					title="Fees"
+					value={formatDollars(feesPaid, {
+						minDecimals: 2,
+					})}
+					isSubItem
+				/>
+				<InfoBoxRow
+					title="Funding"
+					value={formatDollars(fundingPaid, {
+						minDecimals: 2,
+					})}
+					isSubItem
+				/>
+			</div>
+		);
+	}, [t, positionHistory, positionDetails]);
+
 	return (
 		<InfoRow>
-			<PositionCardTooltip content={t('futures.market.position-card.tooltips.r-pnl')}>
+			<PositionCardTooltip content={rpnlTooltipContent}>
 				<SubtitleWithCursor>{t('futures.market.position-card.r-pnl')}</SubtitleWithCursor>
 			</PositionCardTooltip>
 			{positionDetails ? (
-				<NumericValue colored value={realizedPnl}>
+				<StyledNumericValue colored value={realizedPnl}>
 					{realizedPnlText}
-				</NumericValue>
+				</StyledNumericValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			)}
@@ -410,6 +447,14 @@ const SubtitleWithCursor = styled(Subtitle)`
 const PositionCardTooltip = styled(Tooltip).attrs({ preset: 'fixed', height: 'auto' })`
 	z-index: 2;
 	padding: 10px;
+`;
+
+const StyledNumericValue = styled(NumericValue)`
+	text-align: end;
+`;
+
+const StyledBody = styled(Body)`
+	margin-bottom: 8px;
 `;
 
 export const StyledValue = styled(Body).attrs({ mono: true })`

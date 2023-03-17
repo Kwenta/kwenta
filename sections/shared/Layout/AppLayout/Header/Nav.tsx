@@ -4,6 +4,7 @@ import { FC, FunctionComponent, memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import LinkIconLight from 'assets/svg/app/link-light.svg';
 import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
 import Badge from 'components/Badge';
 import { FlexDivRow } from 'components/layout/flex';
@@ -96,6 +97,11 @@ const Nav: FC = memo(() => {
 												</FlexDivRow>
 											</WithCursor>
 										</CustomStyledTooltip>
+									) : i18nLabel === 'header.nav.options.title' ? (
+										<FlexDivRow>
+											{t(i18nLabel)}
+											<LinkIconLight height={18} width={18} style={{ paddingLeft: 5 }} />
+										</FlexDivRow>
 									) : (
 										t(i18nLabel)
 									)}

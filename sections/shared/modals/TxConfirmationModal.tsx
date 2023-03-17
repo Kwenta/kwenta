@@ -1,7 +1,4 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
-import { FC, useMemo } from 'react';
+import { FC, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -14,19 +11,12 @@ import Error from 'components/ErrorView';
 import { FlexDivRowCentered, FlexDivColCentered } from 'components/layout/flex';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
-import Connector from 'containers/Connector';
-import useCurrencyPrice from 'hooks/useCurrencyPrice';
-import useIsL2 from 'hooks/useIsL2';
 import { MessageButton } from 'sections/exchange/message';
 import { closeModal } from 'state/exchange/reducer';
 import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { numericValueCSS, NoTextTransform } from 'styles/common';
-import {
-	formatCurrency,
-	formatDollars,
-	LONG_CRYPTO_CURRENCY_DECIMALS,
-} from 'utils/formatters/number';
+import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 
@@ -36,11 +26,7 @@ type TxConfirmationModalProps = {
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry }) => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
-	const isL2 = useIsL2();
 	const dispatch = useAppDispatch();
-
-	const { subgraph } = useSynthetixQueries();
 
 	const {
 		baseCurrencyKey,
@@ -66,32 +52,10 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		formatCurrency(baseCurrencyKey!, baseAmount, {
 			minDecimals: decimals,
 		});
-	const priceUSD = useCurrencyPrice((quoteCurrencyKey ?? '') as CurrencyKey);
 
-	const onDismiss = () => {
+	const onDismiss = useCallback(() => {
 		dispatch(closeModal());
-	};
-
-	const priceAdjustmentQuery = subgraph.useGetExchangeEntrySettleds(
-		{ where: { from: walletAddress } },
-		{ reclaim: true, rebate: true }
-	);
-
-	const priceAdjustment = useMemo(
-		() =>
-			priceAdjustmentQuery.data?.length
-				? {
-						rebate: priceAdjustmentQuery.data[0].rebate,
-						reclaim: priceAdjustmentQuery.data[0].reclaim,
-				  }
-				: { rebate: wei(0), reclaim: wei(0) },
-		[priceAdjustmentQuery.data]
-	);
-
-	const priceAdjustmentFeeUSD = useMemo(
-		() => priceAdjustment.rebate.sub(priceAdjustment.reclaim).mul(priceUSD),
-		[priceAdjustment, priceUSD]
-	);
+	}, [dispatch]);
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
@@ -197,7 +161,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 						</span>
 					</SummaryItemValue>
 				</SummaryItem>
-				{!isL2 && priceAdjustmentFeeUSD ? (
+				{/* {!isL2 && priceAdjustmentFeeUSD ? (
 					<SummaryItem>
 						<SummaryItemLabel data-testid="price-adjustment-label">
 							<Trans
@@ -223,7 +187,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 							<span>{formatDollars(priceAdjustmentFeeUSD)}</span>
 						</SummaryItemValue>
 					</SummaryItem>
-				) : null}
+				) : null} */}
 			</div>
 			{txProvider === '1inch' && (
 				<TxProviderContainer>
@@ -324,12 +288,6 @@ const ExchangeFeeHintTooltip = styled(Tooltip)`
 	width: 240px;
 	padding: 10px;
 	margin: 0px 0px 0px 40px;
-`;
-
-const PriceAdjustmentTooltip = styled(Tooltip)`
-	width: 240px;
-	padding: 10px;
-	margin: 0px;
 `;
 
 export const TooltipItem = styled.span`

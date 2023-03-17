@@ -31,14 +31,22 @@ const PositionDetails = () => {
 					</IconButton>
 				</SectionHeader>
 				<PositionCard />
-				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
+				<FuturesPositionsTable
+					accountType={accountType}
+					showCurrentMarket={false}
+					showEmptyTable={false}
+				/>
 			</PositionDetailsContainer>
 			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
 		</>
 	) : (
 		<>
 			<SectionSeparator />
-			<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
+			<FuturesPositionsTable
+				accountType={accountType}
+				showCurrentMarket={false}
+				showEmptyTable={false}
+			/>
 		</>
 	);
 };

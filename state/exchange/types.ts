@@ -1,3 +1,5 @@
+import { SynthSymbol } from 'sdk/data/synths';
+import { SynthSuspensionReason } from 'sdk/types/futures';
 import { Token } from 'sdk/types/tokens';
 import { FetchStatus } from 'state/types';
 
@@ -37,4 +39,12 @@ export type ExchangeState = {
 	txError?: string;
 	isApproved?: boolean;
 	allowance?: string;
+	synthSuspensions: Record<
+		SynthSymbol,
+		{
+			isSuspended: boolean;
+			reason: SynthSuspensionReason;
+			reasonCode: number;
+		}
+	>;
 };

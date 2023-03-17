@@ -37,4 +37,5 @@ export type AppState = {
 	gasSpeed: GasSpeed;
 	gasPrice: GasPrice<string>;
 	transaction?: Transaction | undefined;
+	synthetixOnMaintenance: boolean;
 };

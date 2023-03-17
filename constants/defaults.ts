@@ -1,12 +1,10 @@
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
-
 import { Language } from 'translations/constants';
 
 // app defaults
 export const DEFAULT_LANGUAGE: Language = Language.EN;
 
 // network defaults
-export const DEFAULT_NETWORK_ID = NetworkIdByName['mainnet-ovm'];
+export const DEFAULT_NETWORK_ID = 10;
 
 export const DEFAULT_GAS_BUFFER = 5000;
 export const DEFAULT_GAS_LIMIT = 500000;

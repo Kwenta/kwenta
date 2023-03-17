@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder, formatBytes32String, parseBytes32String } from 'ethers/lib/utils.js';
@@ -21,6 +20,7 @@ import {
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
+import { NetworkId } from 'sdk/types/common';
 import {
 	DelayedOrder,
 	CrossMarginOrderType,
@@ -36,7 +36,6 @@ import {
 	FuturesTrade,
 	FuturesVolumes,
 	IsolatedMarginOrderType,
-	MarketClosureReason,
 	PositionDetail,
 	PositionSide,
 	PostTradeDetailsResponse,
@@ -121,26 +120,6 @@ export const getMarketName = (asset: FuturesMarketAsset | null) => {
 
 export const getDisplayAsset = (asset: string | null) => {
 	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
-};
-
-export const getReasonFromCode = (
-	reasonCode?: BigNumber
-): MarketClosureReason | 'unknown' | null => {
-	switch (Number(reasonCode)) {
-		case 1:
-			return 'system-upgrade';
-		case 2:
-			return 'market-closure';
-		case 3:
-		case 55:
-		case 65:
-		case 231:
-			return 'circuit-breaker';
-		case 99999:
-			return 'emergency';
-		default:
-			return 'unknown';
-	}
 };
 
 export const calculateVolumes = (
@@ -346,7 +325,7 @@ export const formatDelayedOrder = (
 		isOffchain: isOffchain,
 		priceImpactDelta: wei(priceImpactDelta),
 		targetRoundId: wei(targetRoundId),
-		orderType: isOffchain ? 'Delayed Offchain' : 'Delayed',
+		orderType: isOffchain ? 'Delayed Market' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 	};
 };
@@ -439,7 +418,7 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	PRICE_OUT_OF_BOUNDS: 'Price out of acceptable range',
 	CAN_LIQUIDATE: 'Position can be liquidated',
 	CANNOT_LIQUIDATE: 'Position cannot be liquidated',
-	MAX_MARKET_SIZE_EXCEEDED: 'Max market size exceeded',
+	MAX_MARKET_SIZE_EXCEEDED: 'Open interest limit exceeded',
 	MAX_LEVERAGE_EXCEEDED: 'Max leverage exceeded',
 	INSUFFICIENT_MARGIN: 'Insufficient margin',
 	NOT_PERMITTED: 'Not permitted by this address',
@@ -511,7 +490,7 @@ export const mapConditionalOrderFromEvent = (
 export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> = {
 	market: 'Market',
 	delayed: 'Delayed',
-	delayed_offchain: 'Delayed Offchain',
+	delayed_offchain: 'Delayed Market',
 	stop_market: 'Stop Market',
 	limit: 'Limit',
 };
@@ -522,12 +501,12 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 		: orderType === 'StopMarket'
 		? 'Stop Market'
 		: orderType === 'DelayedOffchain'
-		? 'Delayed Offchain'
+		? 'Delayed Market'
 		: orderType;
 };
 
 export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
-	return futuresTrades?.map(
+	return futuresTrades.map(
 		({
 			id,
 			timestamp,
@@ -540,7 +519,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			feesPaid,
 			orderType,
 			accountType,
-		}: FuturesTradeResult) => {
+		}) => {
 			return {
 				asset,
 				accountType,
@@ -562,15 +541,8 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
-	return marginTransfers?.map(
-		({
-			timestamp,
-			account,
-			market,
-			size,
-			asset,
-			txHash,
-		}: FuturesMarginTransferResult): MarginTransfer => {
+	return marginTransfers.map(
+		({ timestamp, account, market, size, asset, txHash }): MarginTransfer => {
 			const sizeWei = new Wei(size);
 			const numTimestamp = wei(timestamp).toNumber();
 
@@ -590,8 +562,8 @@ export const mapMarginTransfers = (
 export const mapCrossMarginTransfers = (
 	marginTransfers: CrossMarginAccountTransferResult[]
 ): MarginTransfer[] => {
-	return marginTransfers?.map(
-		({ timestamp, account, size, txHash }: CrossMarginAccountTransferResult): MarginTransfer => {
+	return marginTransfers.map(
+		({ timestamp, account, size, txHash }): MarginTransfer => {
 			const sizeWei = new Wei(size);
 			const numTimestamp = wei(timestamp).toNumber();
 

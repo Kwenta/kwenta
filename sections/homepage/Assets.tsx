@@ -135,7 +135,7 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 
 const Assets = () => {
 	const { t } = useTranslation();
-	const { l2SynthsMap, l2Provider } = Connector.useContainer();
+	const { l2Provider } = Connector.useContainer();
 	const activeMarketsTab = MarketsTab.FUTURES;
 
 	const prices = useAppSelector(selectPrices);
@@ -147,7 +147,7 @@ const Assets = () => {
 	const PERPS = useMemo(() => {
 		return futuresMarkets.map((market) => {
 			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
-			const description = getSynthDescription(market.asset, l2SynthsMap, t);
+			const description = getSynthDescription(market.asset, t);
 			const volume = futuresVolumes[market.marketKey]?.volume?.toNumber() ?? 0;
 			const pastPrice = pastRates.find(
 				(price) => price.synth === market.asset || price.synth === market.asset.slice(1)
@@ -168,8 +168,7 @@ const Assets = () => {
 				),
 			};
 		});
-		// eslint-disable-next-line
-	}, [futuresMarkets, l2SynthsMap, pastRates, futuresVolumes, t]);
+	}, [futuresMarkets, pastRates, futuresVolumes, t, prices]);
 
 	const title = (
 		<>

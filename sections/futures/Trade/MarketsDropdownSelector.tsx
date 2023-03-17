@@ -17,7 +17,7 @@ type Props = {
 	asset: FuturesMarketAsset;
 	label: string;
 	description: string;
-	isMarketClosed: boolean;
+	isMarketClosed?: boolean;
 	closureReason?: SynthSuspensionReason;
 	mobile?: boolean;
 	priceDetails: {

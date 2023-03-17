@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
 import { ThemeContext } from 'styled-components';
@@ -6,6 +5,7 @@ import { ThemeContext } from 'styled-components';
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
 import { ConditionalOrder } from 'sdk/types/futures';
+import { NetworkId } from 'sdk/types/common';
 import { PricesListener } from 'sdk/types/prices';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';

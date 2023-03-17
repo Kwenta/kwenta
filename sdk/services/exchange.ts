@@ -1,15 +1,15 @@
 // @ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
-import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
-import { DeprecatedSynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
+import { formatBytes32String } from 'ethers/lib/utils.js';
 import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
+import { CurrencyKey } from 'constants/currency';
 import {
 	ATOMIC_EXCHANGES_L1,
 	CRYPTO_CURRENCY_MAP,
@@ -20,21 +20,26 @@ import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
 import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
 import { CG_BASE_API_URL } from 'queries/coingecko/constants';
 import { PriceResponse } from 'queries/coingecko/types';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getProxySynthSymbol } from 'queries/synths/utils';
 import { getEthGasPrice } from 'sdk/common/gas';
+import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
+import { NetworkId } from 'sdk/types/common';
+import { SynthSuspensionReason } from 'sdk/types/futures';
+import { DeprecatedSynthBalance } from 'sdk/types/synths';
 import { Token, TokenBalances } from 'sdk/types/tokens';
+import { getReasonFromCode } from 'sdk/utils/synths';
 import {
 	newGetCoinGeckoPricesForCurrencies,
-	newGetExchangeRatesForCurrencies,
-	newGetExchangeRatesTupleForCurrencies,
+	getExchangeRatesForCurrencies,
+	getExchangeRatesTupleForCurrencies,
 } from 'utils/currencies';
 import { UNIT_BIG_NUM, zeroBN } from 'utils/formatters/number';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import * as sdkErrors from '../common/errors';
 import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
+import { queryPriceAdjustmentData } from '../queries/exchange';
 import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
@@ -510,7 +515,7 @@ export default class ExchangeService {
 	) {
 		const gasPrices = await getEthGasPrice(this.sdk.context.networkId, this.sdk.context.provider);
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const ethPriceRate = newGetExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD');
+		const ethPriceRate = getExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD');
 		const gasPrice = gasPrices.fast;
 
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
@@ -676,7 +681,7 @@ export default class ExchangeService {
 		} else {
 			return this.checkIsAtomic(currencyKey, 'sUSD')
 				? await this.getAtomicRates(currencyKey)
-				: newGetExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
+				: getExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
 		}
 	}
 
@@ -807,6 +812,57 @@ export default class ExchangeService {
 		return { tokensMap: this.tokensMap, tokenList: this.tokenList };
 	}
 
+	public async getPriceAdjustment() {
+		const { rebate, reclaim } = await queryPriceAdjustmentData(
+			this.sdk,
+			this.sdk.context.walletAddress
+		);
+
+		return { rebate: wei(rebate), reclaim: wei(reclaim) };
+	}
+
+	public async getSynthSuspensions() {
+		const { SystemStatus } = this.sdk.context.multicallContracts;
+
+		const synthsMap = this.sdk.exchange.getSynthsMap();
+
+		if (!SystemStatus) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		const calls = [];
+
+		for (let synth in synthsMap) {
+			calls.push(SystemStatus.synthExchangeSuspension(formatBytes32String(synth)));
+		}
+
+		const responses = (await this.sdk.context.multicallProvider.all(calls)) as [
+			boolean,
+			BigNumber
+		][];
+
+		let ret: Record<
+			string,
+			{ isSuspended: boolean; reasonCode: number; reason: SynthSuspensionReason | null }
+		> = {};
+		let i = 0;
+
+		for (let synth in synthsMap) {
+			const [isSuspended, reason] = responses[i];
+			const reasonCode = Number(reason);
+
+			ret[synth] = {
+				isSuspended: responses[i][0],
+				reasonCode,
+				reason: isSuspended ? getReasonFromCode(reasonCode) : null,
+			};
+
+			i++;
+		}
+
+		return ret;
+	}
+
 	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		if (this.sdk.context.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
 			return false;
@@ -914,7 +970,7 @@ export default class ExchangeService {
 					this.getAtomicRates(quoteCurrencyKey),
 					this.getAtomicRates(baseCurrencyKey),
 			  ])
-			: newGetExchangeRatesTupleForCurrencies(
+			: getExchangeRatesTupleForCurrencies(
 					this.sdk.prices.currentPrices.onChain,
 					quoteCurrencyKey,
 					baseCurrencyKey

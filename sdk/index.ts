@@ -6,6 +6,7 @@ import FuturesService from './services/futures';
 import KwentaTokenService from './services/kwentaToken';
 import PricesService from './services/prices';
 import SynthsService from './services/synths';
+import SystemService from './services/system';
 import TransactionsService from './services/transactions';
 
 export default class KwentaSDK {
@@ -17,6 +18,7 @@ export default class KwentaSDK {
 	public transactions: TransactionsService;
 	public kwentaToken: KwentaTokenService;
 	public prices: PricesService;
+	public system: SystemService;
 
 	constructor(context: IContext) {
 		this.context = new Context(context);
@@ -26,6 +28,7 @@ export default class KwentaSDK {
 		this.synths = new SynthsService(this);
 		this.transactions = new TransactionsService(this);
 		this.kwentaToken = new KwentaTokenService(this);
+		this.system = new SystemService(this);
 	}
 
 	public setProvider(provider: ethers.providers.Provider) {

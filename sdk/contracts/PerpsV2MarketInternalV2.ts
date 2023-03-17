@@ -2,8 +2,8 @@ import BN from 'bn.js';
 import { Provider, Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
+import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import PerpsV2Market from 'sdk/contracts/abis/PerpsV2Market.json';
 import { PerpsV2Market__factory } from 'sdk/contracts/types';
 import { FuturesMarketAsset, FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
