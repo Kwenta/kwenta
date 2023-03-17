@@ -8,8 +8,8 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, NumericValue } from 'components/Text';
 import { selectFuturesPortfolio, selectPortfolioChartData } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatShortDate, formatShortDateWithTime } from 'utils/formatters/date';
-import { formatDollars, formatPercent } from 'utils/formatters/number';
+import { formatShortDate, formatDateWithTime } from 'utils/formatters/date';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { Timeframe } from './Timeframe';
 
@@ -51,7 +51,7 @@ const PriceChart = () => {
 						textTransform: 'capitalize',
 						color: theme.colors.selectedTheme.text.value,
 					}}
-					labelFormatter={formatShortDateWithTime}
+					labelFormatter={formatDateWithTime}
 					formatter={(value) =>
 						isNumber(value) ? formatDollars(value, { minDecimals: 2 }) : value
 					}
@@ -104,32 +104,50 @@ const PortfolioChart: FC = () => {
 					<ChartOverlay>
 						<PortfolioTitle>Portfolio Value</PortfolioTitle>
 						<PortfolioText currencyKey="sUSD" price={total} sign="$" />
-						{!!changeValue.value && (
-							<NumericValue colored value={changeValue.value}>
-								{' '}
-								{changeValue.text}{' '}
-							</NumericValue>
-						)}
+						<NumericValue colored value={changeValue.value ?? zeroBN}>
+							{changeValue.text}&nbsp;
+						</NumericValue>
 					</ChartOverlay>
 					<ChartContainer>
-						<TopBar>
-							<TimeframeOverlay>
-								<Timeframe />
-							</TimeframeOverlay>
-						</TopBar>
-						<StyledPriceChart />
+						{!!total && portfolioData.length >= 2 ? (
+							<>
+								<TopBar>
+									<TimeframeOverlay>
+										<Timeframe />
+									</TimeframeOverlay>
+								</TopBar>
+								<StyledPriceChart />
+							</>
+						) : (
+							<></>
+						)}
 					</ChartContainer>
 				</ChartGrid>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<ChartContainer>
-					<TopBar mobile>
-						<TimeframeOverlay>
-							<Timeframe />
-						</TimeframeOverlay>
-					</TopBar>
-					<StyledPriceChart />
-				</ChartContainer>
+				<MobileChartGrid>
+					<ChartOverlay>
+						<PortfolioTitle>Portfolio Value</PortfolioTitle>
+						<PortfolioText currencyKey="sUSD" price={total} sign="$" />
+						<NumericValue colored value={changeValue.value ?? zeroBN}>
+							{changeValue.text}&nbsp;
+						</NumericValue>
+					</ChartOverlay>
+					<ChartContainer>
+						{!!total && portfolioData.length >= 2 ? (
+							<>
+								<TopBar>
+									<TimeframeOverlay>
+										<Timeframe />
+									</TimeframeOverlay>
+								</TopBar>
+								<StyledPriceChart />
+							</>
+						) : (
+							<></>
+						)}
+					</ChartContainer>
+				</MobileChartGrid>
 			</MobileOnlyView>
 		</>
 	);
@@ -141,7 +159,7 @@ const ChartContainer = styled.div`
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
-const TopBar = styled.div<{ mobile?: boolean }>`
+const TopBar = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: end;
@@ -179,12 +197,21 @@ const PortfolioText = styled(Currency.Price)`
 	}
 `;
 
-const ChartGrid = styled.div<{ mobile?: boolean }>`
+const MobileChartGrid = styled.div`
+	display: grid;
+	grid-template-rows: 1fr 5fr;
+	width: 100%;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: '0px';
+	height: 360px;
+`;
+
+const ChartGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 3fr;
 	width: 100%;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: ${(props) => (props.mobile ? '0px' : '10px')};
+	border-radius: '10px';
 	height: 260px;
 `;
 

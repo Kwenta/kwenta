@@ -980,7 +980,7 @@ export const selectPortfolioChartData = createSelector(
 					});
 				}
 				if (timeDiff > interpolationGap * 1000) {
-					const gapCount = Math.floor(timeDiff / (interpolationGap * 1000));
+					const gapCount = Math.floor(timeDiff / (interpolationGap * 1000)) - 1;
 					for (let j = 1; j <= gapCount; j++) {
 						portfolioData.push({
 							timestamp: currentTimestamp + j * interpolationGap * 1000,

@@ -20,7 +20,7 @@ export const formatShortDateUTC = (date: Date | number) => {
 };
 
 export const formatShortDateWithTime = (date: Date | number) =>
-	formatDate(date, 'MMM d, yyyy H:mma');
+	formatDate(date, 'MMM d, yyyy hh:mma');
 export const formatDateWithTime = (date: Date | number) => formatDate(date, 'd MMM yyyy H:mm');
 
 export const secondsToTime = (seconds: number) => {
