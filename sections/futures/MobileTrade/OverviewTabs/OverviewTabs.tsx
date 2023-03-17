@@ -70,6 +70,7 @@ const MainTabButtonsContainer = styled.div`
 	grid-column-gap: 15px;
 	overflow: auto;
 	padding: 0 15px;
+	margin-top: 5px;
 `;
 
 export default OverviewTabs;
