@@ -95,7 +95,7 @@ const PortfolioChart: FC = () => {
 				text,
 			};
 		}
-	}, [portfolioData, total]);
+	}, [portfolioData]);
 
 	return (
 		<>
