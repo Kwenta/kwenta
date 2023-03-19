@@ -173,6 +173,10 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		}
 	`}
 
+	.heading, .value {
+		white-space: nowrap;
+	}
+
 	${(props) => css`
 		border-left: ${props.theme.colors.selectedTheme.border};
 
@@ -195,14 +199,8 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		.paused {
 			color: ${props.theme.colors.selectedTheme.gray};
 		}
-	`}
 
-	.heading, .value {
-		white-space: nowrap;
-	}
-
-	${(props) =>
-		props.mobile &&
+		${props.mobile &&
 		css`
 			height: auto;
 			padding: 15px;
@@ -214,6 +212,7 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 				margin-bottom: 2px;
 			}
 		`}
+	`}
 `;
 
 export default MarketDetails;
