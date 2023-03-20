@@ -97,7 +97,7 @@ class FuturesMarketInternal {
 		this._provider = provider;
 
 		this._perpsV2MarketContract = PerpsV2Market__factory.connect(marketAddress, provider);
-		this._perpsV2MarketSettings = sdk.context.contracts.PerpsV2MarketSettings;
+		this._perpsV2MarketSettings = sdk.context.contracts.PerpsV2MarketSettingsUpgraded;
 		this._marketKeyBytes = formatBytes32String(marketKey);
 		this._cache = {};
 		this._onChainData = {

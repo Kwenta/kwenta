@@ -118,21 +118,39 @@ export default class FuturesService {
 			ExchangeRates,
 			PerpsV2MarketData,
 			PerpsV2MarketSettings,
+			PerpsV2MarketDataUpgraded,
+			PerpsV2MarketSettingsUpgraded,
 		} = this.sdk.context.multicallContracts;
 
-		if (!PerpsV2MarketData || !PerpsV2MarketSettings || !SystemStatus || !ExchangeRates) {
+		if (
+			!PerpsV2MarketData ||
+			!PerpsV2MarketSettings ||
+			!SystemStatus ||
+			!ExchangeRates ||
+			!PerpsV2MarketDataUpgraded ||
+			!PerpsV2MarketSettingsUpgraded
+		) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
-		const futuresData: Array<
-			PerpsV2MarketData.MarketSummaryStructOutput[] | PerpsV2MarketData.FuturesGlobalsStructOutput
-		> = await this.sdk.context.multicallProvider.all([
-			PerpsV2MarketData.allProxiedMarketSummaries(),
-			PerpsV2MarketData.globals(),
-		]);
 
-		const { markets, globals } = {
+		// TODO Merge upgraded and original contracts once deployed to mainnet
+		const futuresData =
+			this.sdk.context.networkId === 10
+				? await this.sdk.context.multicallProvider.all([
+						PerpsV2MarketData.allProxiedMarketSummaries(),
+						PerpsV2MarketSettings.minInitialMargin(),
+						PerpsV2MarketSettings.minKeeperFee(),
+				  ])
+				: await this.sdk.context.multicallProvider.all([
+						PerpsV2MarketDataUpgraded.allProxiedMarketSummaries(),
+						PerpsV2MarketSettingsUpgraded.minInitialMargin(),
+						PerpsV2MarketSettingsUpgraded.minKeeperFee(),
+				  ]);
+
+		const { markets, minInitialMargin, minKeeperFee } = {
 			markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
-			globals: futuresData[1] as PerpsV2MarketData.FuturesGlobalsStructOutput,
+			minInitialMargin: futuresData[1] as BigNumber,
+			minKeeperFee: futuresData[2] as BigNumber,
 		};
 
 		const filteredMarkets = markets.filter((m) => {
@@ -147,21 +165,14 @@ export default class FuturesService {
 			return m.key;
 		});
 
-		const currentRoundIdCalls = marketKeys.map((key: string) =>
-			ExchangeRates.getCurrentRoundId(key)
+		const parametersCalls = marketKeys.map((key: string) =>
+			this.sdk.context.networkId === 10
+				? PerpsV2MarketSettings.parameters(key)
+				: PerpsV2MarketSettingsUpgraded.parameters(key)
 		);
 
-		const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key));
-
-		const responses = await this.sdk.context.multicallProvider.all([
-			...currentRoundIdCalls,
-			...parametersCalls,
-		]);
-
-		const currentRoundIds = responses.slice(0, currentRoundIdCalls.length);
-		const marketParameters = responses.slice(
-			currentRoundIdCalls.length
-		) as IPerpsV2MarketSettings.ParametersStructOutput[];
+		const responses = await this.sdk.context.multicallProvider.all([...parametersCalls]);
+		const marketParameters = responses as IPerpsV2MarketSettings.ParametersStructOutput[];
 
 		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys);
 
@@ -189,7 +200,6 @@ export default class FuturesService {
 				assetHex: asset,
 				currentFundingRate: wei(currentFundingRate).div(24),
 				currentFundingVelocity: wei(currentFundingVelocity).div(24 * 24),
-				currentRoundId: wei(currentRoundIds[i], 0),
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
 					takerFee: wei(feeRates.takerFee),
@@ -217,8 +227,8 @@ export default class FuturesService {
 				maxLeverage: wei(maxLeverage),
 				marketSize: wei(marketSize),
 				marketLimit: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
-				minInitialMargin: wei(globals.minInitialMargin),
-				keeperDeposit: wei(globals.minKeeperFee),
+				minInitialMargin: wei(minInitialMargin),
+				keeperDeposit: wei(minKeeperFee),
 				isSuspended: suspensions[i],
 				marketClosureReason: getReasonFromCode(reasons[i]) as MarketClosureReason,
 				settings: {

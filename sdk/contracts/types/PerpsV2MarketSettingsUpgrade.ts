@@ -102,7 +102,7 @@ export declare namespace IPerpsV2MarketSettings {
   };
 }
 
-export interface PerpsV2MarketSettingsInterface extends utils.Interface {
+export interface PerpsV2MarketSettingsUpgradeInterface extends utils.Interface {
   functions: {
     "CONTRACT_NAME()": FunctionFragment;
     "acceptOwnership()": FunctionFragment;
@@ -887,12 +887,12 @@ export type ParameterUpdatedBytes32Event = TypedEvent<
 export type ParameterUpdatedBytes32EventFilter =
   TypedEventFilter<ParameterUpdatedBytes32Event>;
 
-export interface PerpsV2MarketSettings extends BaseContract {
+export interface PerpsV2MarketSettingsUpgrade extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: PerpsV2MarketSettingsInterface;
+  interface: PerpsV2MarketSettingsUpgradeInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

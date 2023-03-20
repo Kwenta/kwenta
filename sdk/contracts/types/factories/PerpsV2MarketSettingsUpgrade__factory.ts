@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  PerpsV2MarketSettings,
-  PerpsV2MarketSettingsInterface,
-} from "../PerpsV2MarketSettings";
+  PerpsV2MarketSettingsUpgrade,
+  PerpsV2MarketSettingsUpgradeInterface,
+} from "../PerpsV2MarketSettingsUpgrade";
 
 const _abi = [
   {
@@ -1648,19 +1648,19 @@ const _abi = [
   },
 ];
 
-export class PerpsV2MarketSettings__factory {
+export class PerpsV2MarketSettingsUpgrade__factory {
   static readonly abi = _abi;
-  static createInterface(): PerpsV2MarketSettingsInterface {
-    return new utils.Interface(_abi) as PerpsV2MarketSettingsInterface;
+  static createInterface(): PerpsV2MarketSettingsUpgradeInterface {
+    return new utils.Interface(_abi) as PerpsV2MarketSettingsUpgradeInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): PerpsV2MarketSettings {
+  ): PerpsV2MarketSettingsUpgrade {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as PerpsV2MarketSettings;
+    ) as PerpsV2MarketSettingsUpgrade;
   }
 }

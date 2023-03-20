@@ -327,7 +327,6 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 		...market,
 		currentFundingRate: market.currentFundingRate.toString(),
 		currentFundingVelocity: market.currentFundingVelocity.toString(),
-		currentRoundId: market.currentRoundId.toString(),
 		feeRates: {
 			makerFee: market.feeRates.makerFee.toString(),
 			takerFee: market.feeRates.takerFee.toString(),
@@ -365,7 +364,6 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 		...m,
 		currentFundingRate: wei(m.currentFundingRate),
 		currentFundingVelocity: wei(m.currentFundingVelocity),
-		currentRoundId: wei(m.currentRoundId),
 		feeRates: {
 			makerFee: wei(m.feeRates.makerFee),
 			takerFee: wei(m.feeRates.takerFee),
