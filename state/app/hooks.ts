@@ -2,27 +2,32 @@ import { useEffect } from 'react';
 
 import { fetchBalances } from 'state/balances/actions';
 import { sdk } from 'state/config';
-import { fetchMarkets } from 'state/futures/actions';
 import { selectMarkets } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
 import { fetchPreviousDayPrices, updatePrices } from 'state/prices/actions';
 import { setConnectionError } from 'state/prices/reducer';
-import { selectWallet } from 'state/wallet/selectors';
+import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { serializePrices } from 'utils/futures';
+
+import { checkSynthetixStatus } from './actions';
 
 export function useAppData(ready: boolean) {
 	const dispatch = useAppDispatch();
 	const wallet = useAppSelector(selectWallet);
 	const markets = useAppSelector(selectMarkets);
+	const network = useAppSelector(selectNetwork);
 
-	usePollAction('fetchMarkets', fetchMarkets, { dependencies: [wallet] });
-
-	usePollAction('fetchBalances', fetchBalances, { dependencies: [wallet] });
+	usePollAction('fetchBalances', fetchBalances, { dependencies: [wallet, network] });
 
 	usePollAction('fetchPreviousDayPrices', fetchPreviousDayPrices, {
 		intervalTime: 60000 * 15,
-		dependencies: [markets.length],
+		dependencies: [markets.length, network],
 		disabled: !markets.length,
+	});
+
+	usePollAction('checkSynthetixStatus', checkSynthetixStatus, {
+		intervalTime: 2 * 60 * 1000,
+		dependencies: [network],
 	});
 
 	useEffect(() => {

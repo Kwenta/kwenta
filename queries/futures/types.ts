@@ -1,8 +1,8 @@
-import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
 import { FuturesMarketAsset, FuturesPotentialTradeDetails } from 'sdk/types/futures';
+import { Balances } from 'sdk/types/synths';
 
 export type FuturesOpenInterest = {
 	asset: string;

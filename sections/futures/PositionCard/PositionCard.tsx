@@ -9,19 +9,18 @@ import PreviewArrow from 'components/PreviewArrow';
 import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import { PositionSide } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import {
 	selectMarketAsset,
-	selectMarketKey,
 	selectPosition,
 	selectSkewAdjustedPrice,
 	selectMarketPriceInfo,
 	selectSelectedMarketPositionHistory,
 	selectPreviewData,
 	selectFuturesType,
+	selectMarketInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PillButtonDiv } from 'styles/common';
@@ -33,15 +32,14 @@ import { getMarketName } from 'utils/futures';
 import EditLeverageModal from '../TradeCrossMargin/EditCrossMarginLeverageModal';
 
 const PositionCard = memo(() => {
-	const marketKey = useAppSelector(selectMarketKey);
 	const openModal = useAppSelector(selectOpenModal);
-	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	return (
 		<>
 			{openModal === 'futures_cross_leverage' && <EditLeverageModal editMode="existing_position" />}
 
-			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
+			<Container id={marketInfo?.isSuspended ? 'closed' : undefined}>
 				<DataCol>
 					<MarketNameRow />
 					<PositionSideRow />

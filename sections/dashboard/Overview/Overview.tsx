@@ -11,6 +11,7 @@ import * as Text from 'components/Text';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
+import { SynthSymbol } from 'sdk/data/synths';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
@@ -21,6 +22,7 @@ import {
 	selectFuturesPortfolio,
 } from 'state/futures/selectors';
 import { useAppSelector, useFetchAction } from 'state/hooks';
+import { selectSynthsMap } from 'state/wallet/selectors';
 import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
@@ -50,7 +52,8 @@ const Overview: FC = () => {
 	);
 	const [activeMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const { network, synthsMap } = Connector.useContainer();
+	const { network } = Connector.useContainer();
+	const synthsMap = useAppSelector(selectSynthsMap);
 
 	const { tokenBalances } = useAppSelector(({ balances }) => balances);
 	// Only available on Optimism mainnet
@@ -65,7 +68,7 @@ const Overview: FC = () => {
 			try {
 				const exchangeBalances = oneInchEnabled
 					? Object.values(tokenBalances)
-							.filter((token) => !synthsMap[token.token.symbol])
+							.filter((token) => !synthsMap[token.token.symbol as SynthSymbol])
 							.map((value) => ({
 								name: value.token.name,
 								currencyKey: value.token.symbol,

@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
@@ -8,6 +7,7 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FUTURES_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
+import { NetworkId } from 'sdk/types/common';
 import { getFuturesEndpoint } from 'sdk/utils/futures';
 import logError from 'utils/logError';
 

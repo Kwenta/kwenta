@@ -1,4 +1,3 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { orderBy } from 'lodash';
@@ -39,7 +38,7 @@ export default class SynthsService {
 			const balance = wei(synthsBalances[idx]);
 
 			if (balance.gt(0)) {
-				const synthName = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
+				const synthName = ethers.utils.parseBytes32String(currencyKeyBytes32);
 				const usdBalance = wei(synthsUSDBalances[idx]);
 
 				balancesMap[synthName] = { currencyKey: synthName, balance, usdBalance };
