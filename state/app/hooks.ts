@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import { fetchBalances } from 'state/balances/actions';
 import { sdk } from 'state/config';
-import { fetchMarkets } from 'state/futures/actions';
 import { selectMarkets } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
 import { fetchPreviousDayPrices, updatePrices } from 'state/prices/actions';
@@ -17,8 +16,6 @@ export function useAppData(ready: boolean) {
 	const wallet = useAppSelector(selectWallet);
 	const markets = useAppSelector(selectMarkets);
 	const network = useAppSelector(selectNetwork);
-
-	usePollAction('fetchMarkets', fetchMarkets, { dependencies: [wallet, network] });
 
 	usePollAction('fetchBalances', fetchBalances, { dependencies: [wallet, network] });
 

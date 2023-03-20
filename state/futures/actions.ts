@@ -359,15 +359,6 @@ export const fetchMarginTransfers = createAsyncThunk<
 	}
 });
 
-export const fetchDashboardFuturesData = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/fetchDashboardFuturesData',
-	async (_, { dispatch }) => {
-		await dispatch(fetchMarkets());
-		dispatch(fetchCrossMarginBalanceInfo());
-		dispatch(fetchCrossMarginOpenOrders());
-	}
-);
-
 export const fetchCrossMarginAccountData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchCrossMarginAccountData',
 	async (_, { dispatch }) => {
