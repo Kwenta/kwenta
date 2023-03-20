@@ -1,5 +1,4 @@
-import { isNumber } from 'lodash';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import styled, { useTheme } from 'styled-components';
 
@@ -8,12 +7,16 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, NumericValue } from 'components/Text';
 import { selectFuturesPortfolio, selectPortfolioChartData } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatShortDate, formatDateWithTime } from 'utils/formatters/date';
+import { formatShortDate } from 'utils/formatters/date';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { Timeframe } from './Timeframe';
 
-const PriceChart = () => {
+type PriceChartProps = {
+	setHoverData: (data: number | null) => void;
+};
+
+const PriceChart: FC<PriceChartProps> = ({ setHoverData }) => {
 	const theme = useTheme();
 	const portfolioData = useAppSelector(selectPortfolioChartData);
 
@@ -27,35 +30,28 @@ const PriceChart = () => {
 
 	return (
 		<ResponsiveContainer width="100%" height="100%">
-			<LineChart data={portfolioData}>
+			<LineChart
+				data={portfolioData}
+				onMouseMove={(payload) => {
+					if (payload.activePayload && payload.activePayload.length > 0) {
+						const newTotal = payload.activePayload[0].payload?.total;
+						if (newTotal) {
+							setHoverData(newTotal);
+						} else {
+							setHoverData(null);
+						}
+					} else {
+						setHoverData(null);
+					}
+				}}
+			>
 				<XAxis
 					dataKey="timestamp"
 					type="number"
 					tickFormatter={formatShortDate}
 					domain={['dataMin', 'dataMax']}
-					tickCount={10}
 				/>
-				<Tooltip
-					wrapperStyle={{
-						border: theme.colors.selectedTheme.border,
-					}}
-					contentStyle={{
-						border: 'none',
-						backgroundColor: theme.colors.selectedTheme.background,
-					}}
-					labelStyle={{
-						textTransform: 'capitalize',
-						color: theme.colors.selectedTheme.text.value,
-					}}
-					itemStyle={{
-						textTransform: 'capitalize',
-						color: theme.colors.selectedTheme.text.value,
-					}}
-					labelFormatter={formatDateWithTime}
-					formatter={(value) =>
-						isNumber(value) ? formatDollars(value, { minDecimals: 2 }) : value
-					}
-				/>
+				<Tooltip content={<></>} />
 				<Line
 					type="monotone"
 					dataKey="total"
@@ -71,6 +67,7 @@ const PriceChart = () => {
 const PortfolioChart: FC = () => {
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const portfolioData = useAppSelector(selectPortfolioChartData);
+	const [hoverData, setHoverData] = useState<number | null>(null);
 
 	// TODO: Add back cross margin when relevant
 	const total = useMemo(() => portfolio.isolatedMarginFutures, [portfolio.isolatedMarginFutures]);
@@ -82,20 +79,18 @@ const PortfolioChart: FC = () => {
 				text: '',
 			};
 		} else {
-			const value = portfolioData[portfolioData.length - 1].total - portfolioData[0].total;
-			const changeValue = portfolioData[0].total > 0 ? value / portfolioData[0].total : null;
-			const text =
-				value && changeValue
-					? `${value > 0 ? '+' : ''}${formatDollars(value, {
-							minDecimals: Math.abs(value) < 0.01 ? 4 : 2,
-					  })} (${formatPercent(changeValue)})`
-					: null;
+			const value =
+				(hoverData ?? portfolioData[portfolioData.length - 1].total) - portfolioData[0].total;
+			const changeValue = portfolioData[0].total > 0 ? value / portfolioData[0].total : 0;
+			const text = `${value >= 0 ? '+' : ''}${formatDollars(value, {
+				minDecimals: value !== 0 && Math.abs(value) < 0.01 ? 4 : 2,
+			})} (${formatPercent(changeValue)})`;
 			return {
 				value,
 				text,
 			};
 		}
-	}, [portfolioData]);
+	}, [portfolioData, hoverData]);
 
 	return (
 		<>
@@ -103,7 +98,7 @@ const PortfolioChart: FC = () => {
 				<ChartGrid>
 					<ChartOverlay>
 						<PortfolioTitle>Portfolio Value</PortfolioTitle>
-						<PortfolioText currencyKey="sUSD" price={total} sign="$" />
+						<PortfolioText currencyKey="sUSD" price={hoverData || total} sign="$" />
 						<NumericValue colored value={changeValue.value ?? zeroBN}>
 							{changeValue.text}&nbsp;
 						</NumericValue>
@@ -116,7 +111,7 @@ const PortfolioChart: FC = () => {
 										<Timeframe />
 									</TimeframeOverlay>
 								</TopBar>
-								<StyledPriceChart />
+								<StyledPriceChart setHoverData={setHoverData} />
 							</>
 						) : (
 							<></>
@@ -128,7 +123,7 @@ const PortfolioChart: FC = () => {
 				<MobileChartGrid>
 					<ChartOverlay>
 						<PortfolioTitle>Portfolio Value</PortfolioTitle>
-						<PortfolioText currencyKey="sUSD" price={total} sign="$" />
+						<PortfolioText currencyKey="sUSD" price={hoverData || total} sign="$" />
 						<NumericValue colored value={changeValue.value ?? zeroBN}>
 							{changeValue.text}&nbsp;
 						</NumericValue>
@@ -141,7 +136,7 @@ const PortfolioChart: FC = () => {
 										<Timeframe />
 									</TimeframeOverlay>
 								</TopBar>
-								<StyledPriceChart />
+								<StyledPriceChart setHoverData={setHoverData} />
 							</>
 						) : (
 							<></>
@@ -202,7 +197,7 @@ const MobileChartGrid = styled.div`
 	grid-template-rows: 1fr 5fr;
 	width: 100%;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: '0px';
+	border-radius: 0px;
 	height: 360px;
 `;
 
@@ -211,7 +206,7 @@ const ChartGrid = styled.div`
 	grid-template-columns: 1fr 3fr;
 	width: 100%;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: '10px';
+	border-radius: 8px;
 	height: 260px;
 `;
 
