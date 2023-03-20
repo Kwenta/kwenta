@@ -1,4 +1,3 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import Head from 'next/head';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +12,7 @@ import { GridDivCenteredCol } from 'components/layout/grid';
 import { EXTERNAL_LINKS, PROD_HOSTNAME } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 import Logo from 'sections/shared/Layout/Logo';
+import { useAppSelector } from 'state/hooks';
 import { PageContent, ExternalLink } from 'styles/common';
 import media from 'styles/media';
 
@@ -43,17 +43,12 @@ export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 const SystemStatus: FC<SystemStatusProps> = memo(({ children }) => {
 	const { t } = useTranslation();
 
-	const { useIsSystemOnMaintenance } = useSynthetixQueries();
-
-	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
-	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({
-		refetchInterval: REFRESH_INTERVAL,
-	});
+	const synthetixOnMaintenance = useAppSelector(({ app }) => app.synthetixOnMaintenance);
 
 	const appOnMaintenance =
 		typeof window !== 'undefined' &&
 		window.location.hostname === PROD_HOSTNAME &&
-		(isSystemOnMaintenanceQuery.isSuccess ? isSystemOnMaintenanceQuery.data : false);
+		synthetixOnMaintenance;
 
 	return appOnMaintenance ? (
 		<>

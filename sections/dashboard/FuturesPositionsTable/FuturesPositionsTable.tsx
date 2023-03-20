@@ -16,7 +16,6 @@ import { Body } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
@@ -38,6 +37,7 @@ import MobilePositionRow from './MobilePositionRow';
 type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
 	showCurrentMarket?: boolean;
+	showEmptyTable?: boolean;
 };
 
 const LegacyLink = () => {
@@ -63,9 +63,9 @@ const LegacyLink = () => {
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
+	showEmptyTable = true,
 }) => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
 
@@ -82,7 +82,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
-				const description = getSynthDescription(position.asset, synthsMap, t);
+				const description = getSynthDescription(position.asset, t);
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
@@ -107,7 +107,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
-		synthsMap,
 		t,
 		showCurrentMarket,
 	]);
@@ -295,32 +294,38 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<LegacyLink />
-				<OpenPositionsHeader>
-					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
-					<OpenPositionsRightHeader>
-						<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
-						<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
-					</OpenPositionsRightHeader>
-				</OpenPositionsHeader>
-				<div style={{ margin: '0 15px' }}>
-					{data.length === 0 ? (
-						<NoPositionsText>
-							<Link href={ROUTES.Markets.Home(accountType)}>
-								<div>{t('common.perp-cta')}</div>
-							</Link>
-						</NoPositionsText>
-					) : (
-						data.map((row) => (
-							<MobilePositionRow
-								onClick={() =>
-									router.push(ROUTES.Markets.MarketPair(row.market?.asset ?? 'sETH', accountType))
-								}
-								key={row.market?.asset}
-								row={row}
-							/>
-						))
-					)}
-				</div>
+				{(showEmptyTable || data.length) && (
+					<>
+						<OpenPositionsHeader>
+							<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
+							<OpenPositionsRightHeader>
+								<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
+								<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
+							</OpenPositionsRightHeader>
+						</OpenPositionsHeader>
+						<div style={{ margin: '0 15px' }}>
+							{data.length === 0 ? (
+								<NoPositionsText>
+									<Link href={ROUTES.Markets.Home(accountType)}>
+										<div>{t('common.perp-cta')}</div>
+									</Link>
+								</NoPositionsText>
+							) : (
+								data.map((row) => (
+									<MobilePositionRow
+										onClick={() =>
+											router.push(
+												ROUTES.Markets.MarketPair(row.market?.asset ?? 'sETH', accountType)
+											)
+										}
+										key={row.market?.asset}
+										row={row}
+									/>
+								))
+							)}
+						</div>
+					</>
+				)}
 			</MobileOrTabletView>
 		</>
 	);

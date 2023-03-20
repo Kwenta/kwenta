@@ -46,7 +46,7 @@ const MarketPriceDetail = memo(() => {
 	return (
 		<MarketDetail
 			color={getColorFromPriceInfo(markPrice)}
-			value={markPrice ? formatDollars(markPrice.price) : NO_VALUE}
+			value={markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
 			dataKey={MarketDataKey.marketPrice}
 		/>
 	);
@@ -58,7 +58,7 @@ const IndexPriceDetail = memo(() => {
 	return (
 		<MarketDetail
 			dataKey={MarketDataKey.indexPrice}
-			value={indexPrice ? formatDollars(indexPrice.price) : NO_VALUE}
+			value={indexPrice ? formatDollars(indexPrice.price, { suggestDecimals: true }) : NO_VALUE}
 		/>
 	);
 });

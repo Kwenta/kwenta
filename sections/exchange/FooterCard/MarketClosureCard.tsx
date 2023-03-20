@@ -2,7 +2,7 @@ import { FC, useMemo, memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import useMarketClosed from 'hooks/useMarketClosed';
+import { SynthSymbol } from 'sdk/data/synths';
 import {
 	MessageContainer,
 	Message,
@@ -13,22 +13,29 @@ import { useAppSelector } from 'state/hooks';
 
 const MarketClosureCard: FC = memo(() => {
 	const { t } = useTranslation();
-	const { quoteCurrencyKey, baseCurrencyKey } = useAppSelector(({ exchange }) => ({
-		quoteCurrencyKey: exchange.quoteCurrencyKey,
-		baseCurrencyKey: exchange.baseCurrencyKey,
-	}));
+	const { quoteCurrencyKey, baseCurrencyKey, synthSuspensions } = useAppSelector(
+		({ exchange }) => ({
+			quoteCurrencyKey: exchange.quoteCurrencyKey,
+			baseCurrencyKey: exchange.baseCurrencyKey,
+			synthSuspensions: exchange.synthSuspensions,
+		})
+	);
 
-	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey ?? null);
-	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey ?? null);
+	const quoteSuspensionData = quoteCurrencyKey
+		? synthSuspensions?.[quoteCurrencyKey as SynthSymbol]
+		: undefined;
+
+	const baseSuspensionData = baseCurrencyKey
+		? synthSuspensions?.[baseCurrencyKey as SynthSymbol]
+		: undefined;
 
 	const getSuspensionReason = useMemo(() => {
-		if (baseCurrencyMarketClosed.isMarketClosed && quoteCurrencyMarketClosed.isMarketClosed) {
+		if (baseSuspensionData?.isSuspended && quoteSuspensionData?.isSuspended) {
 			return 'both-synths-suspended';
 		}
-		return (
-			baseCurrencyMarketClosed.marketClosureReason || quoteCurrencyMarketClosed.marketClosureReason
-		);
-	}, [baseCurrencyMarketClosed, quoteCurrencyMarketClosed]);
+
+		return baseSuspensionData?.reason || quoteSuspensionData?.reason;
+	}, [baseSuspensionData, quoteSuspensionData]);
 
 	return (
 		<>
@@ -41,9 +48,7 @@ const MarketClosureCard: FC = memo(() => {
 						<Trans
 							i18nKey={`exchange.footer-card.market-closure.reasons.${getSuspensionReason}.message`}
 							values={{
-								currencyKey: baseCurrencyMarketClosed.isMarketClosed
-									? baseCurrencyKey
-									: quoteCurrencyKey,
+								currencyKey: baseSuspensionData?.isSuspended ? baseCurrencyKey : quoteCurrencyKey,
 							}}
 						/>
 					</Message>

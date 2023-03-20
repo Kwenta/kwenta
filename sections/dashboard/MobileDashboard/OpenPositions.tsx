@@ -11,7 +11,7 @@ import { selectBalances } from 'state/balances/selectors';
 import {
 	// selectCrossMarginPositions,
 	selectFuturesPortfolio,
-	selectIsolatedMarginPositions,
+	selectActiveIsolatedPositionsCount,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
@@ -36,7 +36,7 @@ export type OpenPositionsProps = {
 const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeTokenBalances }) => {
 	const { t } = useTranslation();
 	// const crossPositions = useAppSelector(selectCrossMarginPositions);
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
+	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useAppSelector(selectBalances);
 
@@ -58,7 +58,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: isolatedPositions.length,
+				badge: isolatedPositionsCount,
 				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
 				detail: formatDollars(portfolio.isolatedMarginFutures),
 				disabled: false,
@@ -75,9 +75,9 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 		],
 		[
 			t,
-			isolatedPositions,
 			// crossPositions,
 			activePositionsTab,
+			isolatedPositionsCount,
 			// portfolio.crossMarginFutures,
 			portfolio.isolatedMarginFutures,
 			balances.totalUSDBalance,
@@ -94,8 +94,8 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 				</SectionHeader>
 
 				<TabButtonsContainer>
-					{POSITIONS_TABS.map(({ name, label, ...rest }) => (
-						<TabButton key={name} title={label} {...rest} />
+					{POSITIONS_TABS.map(({ name, label, badge, ...rest }) => (
+						<TabButton key={name} title={label} badgeCount={badge} {...rest} />
 					))}
 				</TabButtonsContainer>
 			</div>

@@ -504,6 +504,20 @@
 				"open-positions": "Open Positions"
 			}
 		},
+		"earn": {
+			"title": "Earn | Kwenta",
+			"heading": "Kwenta Liquidity Mining",
+			"copy": "The program that rewards liquidity providers for the ETH/KWENTA pair through Arrakis Finance has ended.",
+			"unstake-token": {
+				"title": "Step 1. Unstake the pool tokens",
+				"copy": "You can unstake your pool tokens."
+			},
+			"withdraw-liquidity": {
+				"title": "Step 2. Withdraw Your Liuqidity",
+				"copy": "You can now withdraw your liquidity from the Arrakis ETH/KWENTA vault.",
+				"pool-link": "Arrakis WETH/KWENTA Pool ↗"
+			}
+		},
 		"stake": {
 			"portfolio": {
 				"title": "Staking Dashboard",
@@ -689,7 +703,7 @@
 					"position-side": "Direction of current trade",
 					"position-size": "Notional value of the open position",
 					"u-pnl": "The current unrealized profit or loss on the open position",
-					"r-pnl": "Profit or loss achieved by closing some or all of a position",
+					"r-pnl": "Profit or loss achieved by closing some or all of a position, fees, and all funding applied to this position",
 					"leverage": "Individual position leverage which will vary based on the balance of margin deposited into the market",
 					"liquidation-price": "The estimated oracle price that will trigger a liquidation",
 					"net-funding": "Total funding due at the close of the position",

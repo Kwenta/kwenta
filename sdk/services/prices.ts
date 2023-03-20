@@ -1,5 +1,4 @@
 import { EvmPriceServiceConnection, PriceFeed } from '@pythnetwork/pyth-evm-js';
-import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { formatEther, parseBytes32String } from 'ethers/lib/utils.js';
 import request, { gql } from 'graphql-request';
@@ -9,6 +8,7 @@ import KwentaSDK from 'sdk';
 import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constants/prices';
+import { NetworkId } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import {
 	CurrencyPrice,
@@ -132,11 +132,11 @@ export default class PricesService {
 			this.sdk.context.contracts.ExchangeRates.ratesForCurrencies(ADDITIONAL_SYNTHS),
 		])) as [SynthPricesTuple, CurrencyPrice[]];
 
-		const synths = [...synthsRates[0], ...ADDITIONAL_SYNTHS] as CurrencyKey[];
+		const synths = [...synthsRates[0], ...ADDITIONAL_SYNTHS];
 		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyPrice[];
 
-		synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
-			const currencyKey = parseBytes32String(currencyKeyBytes32) as CurrencyKey;
+		synths.forEach((currencyKeyBytes32, idx: number) => {
+			const currencyKey = parseBytes32String(currencyKeyBytes32);
 			const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey];
 
 			const rate = Number(formatEther(rates[idx]));

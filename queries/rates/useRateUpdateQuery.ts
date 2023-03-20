@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 
@@ -6,6 +5,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
 import useIsL2 from 'hooks/useIsL2';
+import { NetworkId } from 'sdk/types/common';
 import logError from 'utils/logError';
 
 import { getRatesEndpoint } from './utils';

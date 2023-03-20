@@ -4,6 +4,7 @@ import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
+import { formatShortDateUTC, toJSTimestamp } from 'utils/formatters/date';
 
 import { initChart } from '../initChart';
 import type { EChartsOption } from '../initChart';
@@ -13,7 +14,7 @@ import { TimeframeSwitcher } from '../TimeframeSwitcher';
 export const Trades = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
-	const { volumeData, volumeIsLoading } = useStatsData();
+	const { dailyStatsData, dailyStatsIsLoading } = useStatsData();
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
@@ -24,7 +25,7 @@ export const Trades = () => {
 	}, [ref?.current, theme]);
 
 	useEffect(() => {
-		if (!ref || !chart || !ref.current || !volumeData || !volumeData.length) {
+		if (!ref || !chart || !ref.current || !dailyStatsData || !dailyStatsData.length) {
 			return;
 		}
 
@@ -36,7 +37,7 @@ export const Trades = () => {
 			xAxis: {
 				...defaultOptions.xAxis,
 				type: 'category',
-				data: volumeData?.map((data) => data.date),
+				data: dailyStatsData.map(({ timestamp }) => formatShortDateUTC(toJSTimestamp(timestamp))),
 			},
 			yAxis: [
 				{
@@ -68,7 +69,7 @@ export const Trades = () => {
 			],
 			series: [
 				{
-					data: volumeData?.map((data) => data.trades),
+					data: dailyStatsData?.map((data) => data.trades),
 					type: 'bar',
 					name: 'Trades',
 					itemStyle: {
@@ -76,7 +77,7 @@ export const Trades = () => {
 					},
 				},
 				{
-					data: volumeData?.map((data) => data.cumulativeTrades || 0),
+					data: dailyStatsData?.map((data) => data.cumulativeTrades || 0),
 					type: 'line',
 					name: 'Cumulative Trades',
 					lineStyle: {
@@ -89,13 +90,13 @@ export const Trades = () => {
 		};
 
 		chart.setOption(option);
-	}, [ref, chart, t, volumeData, theme, defaultOptions]);
+	}, [ref, chart, t, dailyStatsData, theme, defaultOptions]);
 
 	return (
 		<ChartContainer width={1}>
 			<ChartHeader>
 				<ChartTitle>
-					{t('stats.trades.title')} {volumeIsLoading && <MiniLoader />}
+					{t('stats.trades.title')} {dailyStatsIsLoading && <MiniLoader />}
 				</ChartTitle>
 				<TimeframeSwitcher />
 			</ChartHeader>

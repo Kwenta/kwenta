@@ -1,5 +1,6 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
+
+import { NetworkId } from 'sdk/types/common';
 
 declare global {
 	interface Window {

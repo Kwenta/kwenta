@@ -23,6 +23,7 @@ export type FuturesMarket<T = Wei> = {
 	asset: FuturesMarketAsset;
 	assetHex: string;
 	currentFundingRate: T;
+	currentFundingVelocity: T;
 	currentRoundId: T;
 	feeRates: {
 		makerFee: T;
@@ -254,7 +255,7 @@ export type FuturesOrderTypeDisplay =
 	| 'Delayed'
 	| 'Take Profit'
 	| 'Stop Loss'
-	| 'Delayed Offchain';
+	| 'Delayed Market';
 
 export enum ConditionalOrderTypeEnum {
 	LIMIT = 0,

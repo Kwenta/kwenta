@@ -316,7 +316,6 @@ const Disclaimer = styled.div`
 
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-bottom: -1px;
-	margin-left: 8px;
 `;
 
 export default DelayedOrderConfirmationModal;

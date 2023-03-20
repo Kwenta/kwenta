@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -17,6 +18,8 @@ import media from 'styles/media';
 type EarnPageProps = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
 const EarnPage: EarnPageProps = () => {
+	const { t } = useTranslation();
+
 	const dispatch = useAppDispatch();
 	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
 
@@ -39,16 +42,13 @@ const EarnPage: EarnPageProps = () => {
 	return (
 		<>
 			<Head>
-				<title>Earn | Kwenta</title>
+				<title>{t('dashboard.earn.title')}</title>
 			</Head>
 			<PageContent>
 				<FullHeightContainer>
 					<EarnContent>
-						<Heading>Kwenta Liquidity Mining</Heading>
-						<StyledBody>
-							The ETH/KWENTA program rewards liquidity providers on the Uniswap v3 pool via Arrakis
-							Finance. Liquidity providers can stake their pool tokens to earn KWENTA.
-						</StyledBody>
+						<Heading>{t('dashboard.earn.heading')}</Heading>
+						<StyledBody>{t('dashboard.earn.copy')}</StyledBody>
 						<StepOne />
 						<StepTwo />
 					</EarnContent>

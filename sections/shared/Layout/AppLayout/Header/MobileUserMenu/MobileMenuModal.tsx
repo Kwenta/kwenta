@@ -4,6 +4,7 @@ import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import LinkIconLight from 'assets/svg/app/link-light.svg';
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
 import FullScreenModal from 'components/FullScreenModal';
@@ -79,7 +80,9 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 										<FlexDivRowCentered>
 											{t(i18nLabel)}
 											{i18nLabel === 'header.nav.markets' ? (
-												<KwentaYellowIcon height={18} width={18} style={{ marginLeft: 5 }} />
+												<KwentaYellowIcon height={18} width={18} style={{ marginLeft: 6 }} />
+											) : i18nLabel === 'header.nav.options.title' ? (
+												<LinkIconLight height={16} width={16} style={{ marginLeft: 6 }} />
 											) : null}
 										</FlexDivRowCentered>
 										<MobileMenuArrow />

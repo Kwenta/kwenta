@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/browser';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
+import { NetworkId } from 'sdk/types/common';
 import { fetchBalances } from 'state/balances/actions';
 import type { ThunkConfig } from 'state/types';
 

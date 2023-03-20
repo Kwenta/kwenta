@@ -33,7 +33,7 @@ const StakeGrid = () => {
 
 	return (
 		<GridContainer>
-			<GridData title="Your Yield / Day" value={yieldPerDay} hasKwentaLogo />
+			<GridData title="Your Yield / Day" value={truncateNumbers(yieldPerDay, 4)} hasKwentaLogo />
 			<GridData title="Your Rewards" value={truncateNumbers(earnedRewards, 4)} hasKwentaLogo>
 				<Button
 					fullWidth

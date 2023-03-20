@@ -43,16 +43,20 @@ const TradesTab: React.FC = () => {
 
 	const historyData = React.useMemo(() => {
 		return history.map((trade) => {
+			const pnl = trade?.pnl.div(ETH_UNIT);
+			const feesPaid = trade?.feesPaid.div(ETH_UNIT);
+			const netPnl = pnl.sub(feesPaid);
 			const parsedAsset = ethersUtils.parseBytes32String(trade.asset) as FuturesMarketAsset;
 			return {
 				...trade,
 				asset: parsedAsset,
+				pnl,
+				feesPaid,
+				netPnl,
 				market: getMarketName(parsedAsset),
 				price: Number(trade.price?.div(ETH_UNIT)),
 				size: Number(trade.size.div(ETH_UNIT).abs()),
 				timestamp: Number(trade.timestamp.mul(1000)),
-				pnl: trade.pnl.div(ETH_UNIT),
-				feesPaid: trade.feesPaid.div(ETH_UNIT),
 				id: trade.txnHash,
 				status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 			};

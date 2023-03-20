@@ -1,4 +1,3 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract as EthCallContract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
@@ -7,12 +6,15 @@ import request, { gql } from 'graphql-request';
 import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { DAY_PERIOD, KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { FuturesAccountType } from 'queries/futures/types';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { BPS_CONVERSION, DEFAULT_DESIRED_TIMEDELTA } from 'sdk/constants/futures';
-import { Period, PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import {
+	BPS_CONVERSION,
+	DEFAULT_DESIRED_TIMEDELTA,
+	KWENTA_TRACKING_CODE,
+} from 'sdk/constants/futures';
+import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginAccountABI from 'sdk/contracts/abis/CrossMarginAccount.json';
 import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
@@ -27,10 +29,12 @@ import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
 import {
 	queryCrossMarginAccounts,
 	queryCrossMarginTransfers,
+	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
 	queryTrades,
 } from 'sdk/queries/futures';
+import { NetworkId } from 'sdk/types/common';
 import { NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
@@ -61,7 +65,6 @@ import {
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
-	getReasonFromCode,
 	mapConditionalOrderFromEvent,
 	mapFuturesPosition,
 	mapFuturesPositions,
@@ -70,6 +73,7 @@ import {
 } from 'sdk/utils/futures';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
+import { getReasonFromCode } from 'sdk/utils/synths';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -168,6 +172,7 @@ export default class FuturesService {
 					key,
 					asset,
 					currentFundingRate,
+					currentFundingVelocity,
 					feeRates,
 					marketDebt,
 					marketSkew,
@@ -183,6 +188,7 @@ export default class FuturesService {
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
 				currentFundingRate: wei(currentFundingRate).div(24),
+				currentFundingVelocity: wei(currentFundingVelocity).div(24 * 24),
 				currentRoundId: wei(currentRoundIds[i], 0),
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
@@ -387,7 +393,7 @@ export default class FuturesService {
 	}
 
 	public async getDailyVolumes(): Promise<FuturesVolumes> {
-		const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
+		const minTimestamp = Math.floor(calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY) / 1000);
 		const response = await getFuturesAggregateStats(
 			this.futuresGqlEndpoint,
 			{
@@ -665,6 +671,18 @@ export default class FuturesService {
 				: wei(0);
 		const fee = sizeDelta.mul(baseRate.add(conditional));
 		return fee.mul(rate);
+	}
+
+	// This is on an interval of 15 seconds.
+	public async getFuturesTrades(marketKey: FuturesMarketKey, minTs: number, maxTs: number) {
+		const response = await queryFuturesTrades(this.sdk, marketKey, minTs, maxTs);
+		return response ? mapTrades(response) : null;
+	}
+
+	public async getOrderFee(marketAddress: string, size: Wei) {
+		const marketContract = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
+		const orderFee = await marketContract.orderFee(size.toBN(), 0);
+		return wei(orderFee.fee);
 	}
 
 	// Contract mutations
