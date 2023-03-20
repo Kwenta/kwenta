@@ -31,11 +31,11 @@ export default class KwentaSDK {
 		this.system = new SystemService(this);
 	}
 
-	public async setProvider(provider: ethers.providers.Provider) {
+	public setProvider(provider: ethers.providers.Provider) {
 		return this.context.setProvider(provider);
 	}
 
-	public async setSigner(signer: ethers.Signer) {
+	public setSigner(signer: ethers.Signer) {
 		return this.context.setSigner(signer);
 	}
 }
