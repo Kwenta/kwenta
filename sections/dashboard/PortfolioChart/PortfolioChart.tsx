@@ -12,16 +12,17 @@ import {
 	selectSelectedPortfolioTimeframe,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatChartDate, formatChartTime } from 'utils/formatters/date';
+import { formatChartDate, formatChartTime, formatShortDateWithTime } from 'utils/formatters/date';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { Timeframe } from './Timeframe';
 
 type PriceChartProps = {
-	setHoverData: (data: number | null) => void;
+	setHoverValue: (data: number | null) => void;
+	setHoverTitle: (data: string | null) => void;
 };
 
-const PriceChart: FC<PriceChartProps> = ({ setHoverData }) => {
+const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 	const theme = useTheme();
 	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe);
 	const portfolioData = useAppSelector(selectPortfolioChartData);
@@ -39,18 +40,26 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverData }) => {
 			<LineChart
 				data={portfolioData}
 				onMouseLeave={() => {
-					setHoverData(null);
+					setHoverValue(null);
+					setHoverTitle(null);
 				}}
 				onMouseMove={(payload) => {
 					if (payload.activePayload && payload.activePayload.length > 0) {
 						const newTotal = payload.activePayload[0].payload?.total;
+
+						const formattedDate = formatShortDateWithTime(
+							payload.activePayload[0].payload?.timestamp
+						);
 						if (newTotal) {
-							setHoverData(newTotal);
+							setHoverValue(newTotal);
+							setHoverTitle(formattedDate);
 						} else {
-							setHoverData(null);
+							setHoverValue(null);
+							setHoverTitle(null);
 						}
 					} else {
-						setHoverData(null);
+						setHoverValue(null);
+						setHoverTitle(null);
 					}
 				}}
 			>
@@ -78,7 +87,8 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverData }) => {
 const PortfolioChart: FC = () => {
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const portfolioData = useAppSelector(selectPortfolioChartData);
-	const [hoverData, setHoverData] = useState<number | null>(null);
+	const [hoverValue, setHoverValue] = useState<number | null>(null);
+	const [hoverTitle, setHoverTitle] = useState<string | null>(null);
 
 	// TODO: Add back cross margin when relevant
 	const total = useMemo(() => portfolio.isolatedMarginFutures, [portfolio.isolatedMarginFutures]);
@@ -91,7 +101,7 @@ const PortfolioChart: FC = () => {
 			};
 		} else {
 			const value =
-				(hoverData ?? portfolioData[portfolioData.length - 1].total) - portfolioData[0].total;
+				(hoverValue ?? portfolioData[portfolioData.length - 1].total) - portfolioData[0].total;
 			const changeValue = portfolioData[0].total > 0 ? value / portfolioData[0].total : 0;
 			const text = `${value >= 0 ? '+' : ''}${formatDollars(value, {
 				minDecimals: value !== 0 && Math.abs(value) < 0.01 ? 4 : 2,
@@ -101,15 +111,15 @@ const PortfolioChart: FC = () => {
 				text,
 			};
 		}
-	}, [portfolioData, hoverData]);
+	}, [portfolioData, hoverValue]);
 
 	return (
 		<>
 			<MobileHiddenView>
 				<ChartGrid>
 					<ChartOverlay>
-						<PortfolioTitle>Portfolio Value</PortfolioTitle>
-						<PortfolioText currencyKey="sUSD" price={hoverData || total} sign="$" />
+						<PortfolioTitle>{hoverTitle ? hoverTitle : 'Portfolio Value'}</PortfolioTitle>
+						<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
 						<NumericValue colored value={changeValue.value ?? zeroBN}>
 							{changeValue.text}&nbsp;
 						</NumericValue>
@@ -122,7 +132,7 @@ const PortfolioChart: FC = () => {
 										<Timeframe />
 									</TimeframeOverlay>
 								</TopBar>
-								<StyledPriceChart setHoverData={setHoverData} />
+								<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
 							</>
 						) : (
 							<></>
@@ -134,7 +144,7 @@ const PortfolioChart: FC = () => {
 				<MobileChartGrid>
 					<ChartOverlay>
 						<PortfolioTitle>Portfolio Value</PortfolioTitle>
-						<PortfolioText currencyKey="sUSD" price={hoverData || total} sign="$" />
+						<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
 						<NumericValue colored value={changeValue.value ?? zeroBN}>
 							{changeValue.text}&nbsp;
 						</NumericValue>
@@ -147,7 +157,7 @@ const PortfolioChart: FC = () => {
 										<Timeframe />
 									</TimeframeOverlay>
 								</TopBar>
-								<StyledPriceChart setHoverData={setHoverData} />
+								<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
 							</>
 						) : (
 							<></>
