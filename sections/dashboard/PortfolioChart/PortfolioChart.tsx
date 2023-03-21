@@ -5,9 +5,14 @@ import styled, { useTheme } from 'styled-components';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, NumericValue } from 'components/Text';
-import { selectFuturesPortfolio, selectPortfolioChartData } from 'state/futures/selectors';
+import { Period } from 'sdk/constants/period';
+import {
+	selectFuturesPortfolio,
+	selectPortfolioChartData,
+	selectSelectedPortfolioTimeframe,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatShortDate } from 'utils/formatters/date';
+import { formatChartDate, formatChartTime } from 'utils/formatters/date';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { Timeframe } from './Timeframe';
@@ -18,6 +23,7 @@ type PriceChartProps = {
 
 const PriceChart: FC<PriceChartProps> = ({ setHoverData }) => {
 	const theme = useTheme();
+	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe);
 	const portfolioData = useAppSelector(selectPortfolioChartData);
 
 	const lineColor = useMemo(() => {
@@ -32,6 +38,9 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverData }) => {
 		<ResponsiveContainer width="100%" height="100%">
 			<LineChart
 				data={portfolioData}
+				onMouseLeave={() => {
+					setHoverData(null);
+				}}
 				onMouseMove={(payload) => {
 					if (payload.activePayload && payload.activePayload.length > 0) {
 						const newTotal = payload.activePayload[0].payload?.total;
@@ -48,7 +57,9 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverData }) => {
 				<XAxis
 					dataKey="timestamp"
 					type="number"
-					tickFormatter={formatShortDate}
+					scale="time"
+					minTickGap={75}
+					tickFormatter={portfolioTimeframe === Period.ONE_WEEK ? formatChartTime : formatChartDate}
 					domain={['dataMin', 'dataMax']}
 				/>
 				<Tooltip content={<></>} />

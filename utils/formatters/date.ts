@@ -14,6 +14,10 @@ export const toJSTimestamp = (timestamp: number) => timestamp * 1000;
 
 export const formatShortDate = (date: Date | number) => formatDate(date, 'yyyy-MM-dd');
 
+export const formatChartTime = (date: Date | number) => formatDate(date, 'E, h a');
+
+export const formatChartDate = (date: Date | number) => formatDate(date, 'M/d');
+
 export const formatShortDateUTC = (date: Date | number) => {
 	const dateString = new Date(date).toISOString();
 	return dateString.substring(0, 10);

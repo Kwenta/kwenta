@@ -80,7 +80,7 @@
 		"react-slick": "0.29.0",
 		"react-table": "7.7.0",
 		"react-toastify": "^9.0.4",
-		"recharts": "^2.4.3",
+		"recharts": "^2.5.0",
 		"redux-logger": "^3.0.6",
 		"redux-persist": "^6.0.0",
 		"slick-carousel": "1.8.1",
