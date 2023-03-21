@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { getSupportedResolution } from 'components/TVChart/utils';
+
 import { mapPythCandles } from './utils';
 
 export const requestCandlesticks = async (
@@ -8,7 +10,7 @@ export const requestCandlesticks = async (
 	maxTimestamp = Math.floor(Date.now() / 1000),
 	period: number
 ) => {
-	const endpoint = 'https://pyth-api.vintage-orange-muffin.com/tradingview/history';
+	const endpoint = 'https://pyth-api.vintage-orange-muffin.com/chart-lib/history';
 
 	const response = await axios
 		.get(endpoint, {
@@ -16,11 +18,14 @@ export const requestCandlesticks = async (
 				from: minTimestamp,
 				to: maxTimestamp,
 				symbol: `${currencyKey}/USD`,
-				resolution: 1,
+				resolution: getSupportedResolution(period),
 			},
 		})
 		.then((response) => {
 			return mapPythCandles(response.data);
+		})
+		.catch((err) => {
+			return [];
 		});
 
 	return response;
