@@ -124,7 +124,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					height={Math.max(window.innerHeight - (mobile ? 135 : 250), 300)}
 				>
 					<SearchBarContainer>
-						<Search onChange={setSearch} value={search} border={false} />
+						<Search autoFocus onChange={setSearch} value={search} border={false} />
 					</SearchBarContainer>
 					<TableContainer>
 						<StyledTable
