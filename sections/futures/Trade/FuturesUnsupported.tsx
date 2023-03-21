@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import Button from 'components/Button';
+import { FlexDivCentered } from 'components/layout/flex';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { BorderedPanel } from 'styles/common';
 
@@ -11,9 +13,11 @@ const FuturesUnsupportedNetwork = () => {
 		<MessageContainer>
 			<Title>{t('futures.page-title')}</Title>
 			<UnsupportedMessage>{t('common.l2-cta')}</UnsupportedMessage>
-			<LinkContainer>
-				<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-			</LinkContainer>
+			<ButtonContainer>
+				<Button variant="yellow" onClick={switchToL2}>
+					{t('homepage.l2.cta-buttons.switch-l2')}
+				</Button>
+			</ButtonContainer>
 		</MessageContainer>
 	);
 };
@@ -22,13 +26,10 @@ const UnsupportedMessage = styled.div`
 	margin-top: 12px;
 `;
 
-const LinkContainer = styled.div`
-	margin-top: 12px;
-	div {
-		cursor: pointer;
-		font-size: 12px;
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	}
+const ButtonContainer = styled(FlexDivCentered)`
+	width: 100%;
+	justify-content: center;
+	margin-top: 15px;
 `;
 
 const Title = styled.div`

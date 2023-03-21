@@ -52,19 +52,6 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "keeperFee",
-        type: "uint256",
-      },
-    ],
-    name: "KeeperLiquidationFeeUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
         name: "bps",
         type: "uint256",
       },
@@ -83,19 +70,6 @@ const _abi = [
       },
     ],
     name: "LiquidationFeeRatioUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "sUSD",
-        type: "uint256",
-      },
-    ],
-    name: "MaxKeeperFeeUpdated",
     type: "event",
   },
   {
@@ -207,21 +181,6 @@ const _abi = [
     type: "event",
   },
   {
-    constant: true,
-    inputs: [],
-    name: "CONTRACT_NAME",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     constant: false,
     inputs: [],
     name: "acceptOwnership",
@@ -269,27 +228,6 @@ const _abi = [
   {
     constant: true,
     inputs: [],
-    name: "keeperLiquidationFee",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
     name: "liquidationBufferRatio",
     outputs: [
       {
@@ -306,27 +244,6 @@ const _abi = [
     constant: true,
     inputs: [],
     name: "liquidationFeeRatio",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "liquidationPremiumMultiplier",
     outputs: [
       {
         internalType: "uint256",
@@ -445,21 +362,6 @@ const _abi = [
   },
   {
     constant: true,
-    inputs: [],
-    name: "maxKeeperFee",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
     inputs: [
       {
         internalType: "bytes32",
@@ -488,49 +390,7 @@ const _abi = [
         type: "bytes32",
       },
     ],
-    name: "maxLiquidationDelta",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
     name: "maxMarketValue",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-    ],
-    name: "maxPD",
     outputs: [
       {
         internalType: "uint256",
@@ -730,6 +590,27 @@ const _abi = [
   },
   {
     constant: true,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_marketKey",
+        type: "bytes32",
+      },
+    ],
+    name: "overrideCommitFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
     inputs: [],
     name: "owner",
     outputs: [
@@ -764,6 +645,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "makerFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "overrideCommitFee",
             type: "uint256",
           },
           {
@@ -846,26 +732,6 @@ const _abi = [
             name: "offchainPriceDivergence",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "liquidationPremiumMultiplier",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "liquidationBufferRatio",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxLiquidationDelta",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxPD",
-            type: "uint256",
-          },
         ],
         internalType: "struct IPerpsV2MarketSettings.Parameters",
         name: "",
@@ -940,26 +806,6 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_keeperFee",
-        type: "uint256",
-      },
-    ],
-    name: "setKeeperLiquidationFee",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
         name: "_ratio",
         type: "uint256",
       },
@@ -980,26 +826,6 @@ const _abi = [
       },
     ],
     name: "setLiquidationFeeRatio",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_liquidationPremiumMultiplier",
-        type: "uint256",
-      },
-    ],
-    name: "setLiquidationPremiumMultiplier",
     outputs: [],
     payable: false,
     stateMutability: "nonpayable",
@@ -1109,21 +935,6 @@ const _abi = [
     constant: false,
     inputs: [
       {
-        internalType: "uint256",
-        name: "_sUSD",
-        type: "uint256",
-      },
-    ],
-    name: "setMaxKeeperFee",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
         internalType: "bytes32",
         name: "_marketKey",
         type: "bytes32",
@@ -1150,51 +961,11 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "_maxLiquidationDelta",
-        type: "uint256",
-      },
-    ],
-    name: "setMaxLiquidationDelta",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
         name: "_maxMarketValue",
         type: "uint256",
       },
     ],
     name: "setMaxMarketValue",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: false,
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_marketKey",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxPD",
-        type: "uint256",
-      },
-    ],
-    name: "setMaxPD",
     outputs: [],
     payable: false,
     stateMutability: "nonpayable",
@@ -1359,6 +1130,26 @@ const _abi = [
         type: "bytes32",
       },
       {
+        internalType: "uint256",
+        name: "_overrideCommitFee",
+        type: "uint256",
+      },
+    ],
+    name: "setOverrideCommitFee",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_marketKey",
+        type: "bytes32",
+      },
+      {
         components: [
           {
             internalType: "uint256",
@@ -1368,6 +1159,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "makerFee",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "overrideCommitFee",
             type: "uint256",
           },
           {
@@ -1448,26 +1244,6 @@ const _abi = [
           {
             internalType: "uint256",
             name: "offchainPriceDivergence",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "liquidationPremiumMultiplier",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "liquidationBufferRatio",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxLiquidationDelta",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxPD",
             type: "uint256",
           },
         ],

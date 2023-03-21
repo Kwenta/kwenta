@@ -42,13 +42,9 @@ const BaseDrawer: React.FC<BaseDrawerProps> = ({ open, closeDrawer, items, butto
 );
 
 const StyledModal = styled(FullScreenModal)`
-	top: initial;
+	top: 0;
 	bottom: 74px;
-	height: 100%;
-
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
+	overflow: scroll;
 
 	background-color: transparent;
 
@@ -67,9 +63,6 @@ const StyledModal = styled(FullScreenModal)`
 `;
 
 const Background = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
 	background-color: rgba(0, 0, 0, 0.5);
 	height: 100%;
 	width: 100%;
