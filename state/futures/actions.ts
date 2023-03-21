@@ -526,11 +526,12 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/clearTradeInputs',
 	async (_, { dispatch }) => {
-		dispatch(editCrossMarginSize('0', 'usd'));
-		dispatch(editIsolatedMarginSize('0', 'usd'));
 		dispatch(setCrossMarginMarginDelta('0'));
 		dispatch(setCrossMarginFees(ZERO_CM_FEES));
 		dispatch(setIsolatedMarginFee('0'));
+		dispatch(setIsolatedMarginLeverageInput(''));
+		dispatch(setIsolatedTradePreview(null));
+		dispatch(setCrossMarginTradePreview(null));
 	}
 );
 
@@ -637,9 +638,11 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 
 	const nativeSize = currencyType === 'native' ? size : wei(size).div(assetRate).toString();
 	const usdSize = currencyType === 'native' ? stipZeros(assetRate.mul(size).toString()) : size;
-	const leverage = wei(usdSize).div(position?.remainingMargin);
-	dispatch(setIsolatedMarginLeverageInput(leverage.toNumber().toFixed(2)));
-
+	const leverage =
+		Number(usdSize) > 0 && position?.remainingMargin.gt(0)
+			? wei(usdSize).div(position?.remainingMargin).toString(2)
+			: '';
+	dispatch(setIsolatedMarginLeverageInput(leverage));
 	dispatch(
 		setIsolatedMarginTradeInputs({
 			susdSize: usdSize,
