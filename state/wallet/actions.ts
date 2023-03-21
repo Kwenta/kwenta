@@ -2,19 +2,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/browser';
 import { ethers } from 'ethers';
 
-import { NetworkId } from 'sdk/types/common';
 import { fetchBalances } from 'state/balances/actions';
 import type { ThunkConfig } from 'state/types';
 
 import { setWalletAddress } from './reducer';
-
-export const resetNetwork = createAsyncThunk<any, NetworkId, ThunkConfig>(
-	'wallet/resetNetwork',
-	async (networkId, { dispatch }) => {
-		dispatch(fetchBalances());
-		return networkId;
-	}
-);
 
 export const resetWalletAddress = createAsyncThunk<void, string | undefined, ThunkConfig>(
 	'wallet/resetWalletAddress',

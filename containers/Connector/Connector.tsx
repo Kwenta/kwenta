@@ -6,7 +6,8 @@ import { useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
 import { NetworkId } from 'sdk/types/common';
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
-import { resetNetwork, setSigner } from 'state/wallet/actions';
+import { setSigner } from 'state/wallet/actions';
+import { setNetwork } from 'state/wallet/reducer';
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
 import { activeChainIds, chain, wagmiClient } from './config';
@@ -36,7 +37,7 @@ const useConnector = () => {
 
 	const handleNetworkChange = useCallback(
 		(networkId: NetworkId) => {
-			dispatch(resetNetwork(networkId));
+			dispatch(setNetwork(networkId));
 			blockExplorer = generateExplorerFunctions(getBaseUrl(networkId));
 		},
 		[dispatch]
@@ -51,10 +52,6 @@ const useConnector = () => {
 			transactionNotifier = new BaseTN(provider);
 		}
 	}, [provider, handleNetworkChange]);
-
-	useEffect(() => {
-		handleNetworkChange(network.id as NetworkId);
-	}, [network.id, handleNetworkChange]);
 
 	useEffect(() => {
 		dispatch(setSigner(signer));

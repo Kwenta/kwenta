@@ -123,12 +123,14 @@ export default class FuturesService {
 			PerpsV2MarketData.MarketSummaryStructOutput[] | PerpsV2MarketData.FuturesGlobalsStructOutput
 		> = await this.sdk.context.multicallProvider.all([
 			PerpsV2MarketData.allProxiedMarketSummaries(),
-			PerpsV2MarketData.globals(),
+			PerpsV2MarketSettings.minInitialMargin(),
+			PerpsV2MarketSettings.minKeeperFee(),
 		]);
 
-		const { markets, globals } = {
+		const { markets, minInitialMargin, minKeeperFee } = {
 			markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
-			globals: futuresData[1] as PerpsV2MarketData.FuturesGlobalsStructOutput,
+			minInitialMargin: futuresData[1] as PerpsV2MarketData.FuturesGlobalsStructOutput,
+			minKeeperFee: futuresData[2] as PerpsV2MarketData.FuturesGlobalsStructOutput,
 		};
 
 		const filteredMarkets = markets.filter((m) => {
@@ -213,8 +215,8 @@ export default class FuturesService {
 				maxLeverage: wei(maxLeverage),
 				marketSize: wei(marketSize),
 				marketLimit: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
-				minInitialMargin: wei(globals.minInitialMargin),
-				keeperDeposit: wei(globals.minKeeperFee),
+				minInitialMargin: wei(minInitialMargin),
+				keeperDeposit: wei(minKeeperFee),
 				isSuspended: suspensions[i],
 				marketClosureReason: getReasonFromCode(reasons[i]) as MarketClosureReason,
 				settings: {
