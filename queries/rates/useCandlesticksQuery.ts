@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { getSupportedResolution } from 'components/TVChart/utils';
+import logError from 'utils/logError';
 
 import { mapPythCandles } from './utils';
 
@@ -25,6 +26,7 @@ export const requestCandlesticks = async (
 			return mapPythCandles(response.data);
 		})
 		.catch((err) => {
+			logError(err);
 			return [];
 		});
 
