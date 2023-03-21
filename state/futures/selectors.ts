@@ -4,6 +4,7 @@ import { formatBytes32String } from 'ethers/lib/utils';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
+import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { TransactionStatus } from 'sdk/types/common';
 import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
@@ -27,7 +28,7 @@ import {
 	updatePositionUpnl,
 	unserializePositionHistory,
 	unserializeTrades,
-	unserializeFuturesOrders,
+	unserializeConditionalOrders,
 } from 'utils/futures';
 
 import { MarkPrices, futuresPositionKeys, MarkPriceInfos } from './types';
@@ -254,13 +255,41 @@ export const selectFuturesAccount = createSelector(
 	}
 );
 
-export const selectCrossMarginPositions = createSelector(
+export const selectAllConditionalOrders = createSelector(
 	selectCrossMarginAccountData,
 	(account) => {
+		if (!account) return [];
+		return unserializeConditionalOrders(account.conditionalOrders);
+	}
+);
+
+export const selectCrossMarginPositions = createSelector(
+	selectCrossMarginAccountData,
+	selectAllConditionalOrders,
+	(account, orders) => {
 		return (
 			account?.positions?.map(
 				// TODO: Maybe change to explicit serializing functions to avoid casting
-				(p) => deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition
+				(p) => {
+					const pos = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
+					const stopLoss = orders.find(
+						(o) =>
+							o.size.abs() === SL_TP_MAX_SIZE &&
+							o.reduceOnly &&
+							o.orderType === ConditionalOrderTypeEnum.STOP
+					);
+					const takeProfit = orders.find(
+						(o) =>
+							o.size.abs() === SL_TP_MAX_SIZE &&
+							o.reduceOnly &&
+							o.orderType === ConditionalOrderTypeEnum.LIMIT
+					);
+					return {
+						...pos,
+						stopLoss,
+						takeProfit,
+					};
+				}
 			) ?? []
 		);
 	}
@@ -712,11 +741,11 @@ export const selectMarginTransfers = createSelector(
 	}
 );
 
-export const selectCrossMarginOpenOrders = createSelector(
+export const selectConditionalOrdersForMarket = createSelector(
 	selectMarketAsset,
 	selectCrossMarginAccountData,
 	(asset, account) => {
-		const orders = account ? unserializeFuturesOrders(account.conditionalOrders) : [];
+		const orders = account ? unserializeConditionalOrders(account.conditionalOrders) : [];
 		return orders.filter((o) => o.asset === asset);
 	}
 );
@@ -774,7 +803,7 @@ export const selectPositionStatus = createSelector(
 );
 
 export const selectOpenConditionalOrders = createSelector(
-	selectCrossMarginOpenOrders,
+	selectConditionalOrdersForMarket,
 	selectFuturesType,
 	(crossOrders, futuresType) => {
 		return futuresType === 'cross_margin' ? crossOrders : [];
@@ -804,7 +833,7 @@ export const selectTakeProfitOrder = createSelector(
 );
 
 export const selectPendingDelayedOrder = createSelector(
-	selectCrossMarginOpenOrders,
+	selectConditionalOrdersForMarket,
 	selectOpenDelayedOrders,
 	selectFuturesType,
 	selectMarketKey,

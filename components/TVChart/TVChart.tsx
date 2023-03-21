@@ -4,8 +4,8 @@ import { ThemeContext } from 'styled-components';
 
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
-import { ConditionalOrder } from 'sdk/types/futures';
 import { NetworkId } from 'sdk/types/common';
+import { ConditionalOrder } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';

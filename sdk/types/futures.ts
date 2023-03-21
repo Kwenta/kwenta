@@ -407,6 +407,12 @@ export type SmartMarginOrderInputs = {
 		keeperEthDeposit: Wei;
 		reduceOnly: boolean;
 	};
-	stopLossPrice?: Wei;
-	takeProfitPrice?: Wei;
+	stopLoss?: {
+		price: Wei;
+		sizeDelta: Wei;
+	};
+	takeProfit?: {
+		price: Wei;
+		sizeDelta: Wei;
+	};
 };

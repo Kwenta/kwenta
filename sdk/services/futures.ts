@@ -538,7 +538,6 @@ export default class FuturesService {
 		const orders = (await this.sdk.context.multicallProvider.all(
 			marketContracts.map((market) => market.delayedOrders(account))
 		)) as IPerpsV2MarketConsolidated.DelayedOrderStructOutput[];
-
 		return orders.map((order, ind) => {
 			return formatDelayedOrder(account, marketAddresses[ind], order);
 		});
@@ -900,11 +899,15 @@ export default class FuturesService {
 			}
 		}
 
-		if (order.takeProfitPrice) {
+		if (order.takeProfit) {
 			commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 			const encodedParams = encodeConditionalOrderParams(
 				market.key,
-				{ marginDelta: wei(0), sizeDelta: order.sizeDelta.neg(), price: order.takeProfitPrice },
+				{
+					marginDelta: wei(0),
+					sizeDelta: order.takeProfit.sizeDelta,
+					price: order.takeProfit.price,
+				},
 				ConditionalOrderTypeEnum.LIMIT,
 				order.priceImpactDelta,
 				true
@@ -912,11 +915,15 @@ export default class FuturesService {
 			inputs.push(encodedParams);
 		}
 
-		if (order.stopLossPrice) {
+		if (order.stopLoss) {
 			commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 			const encodedParams = encodeConditionalOrderParams(
 				market.key,
-				{ marginDelta: wei(0), sizeDelta: order.sizeDelta.neg(), price: order.stopLossPrice },
+				{
+					marginDelta: wei(0),
+					sizeDelta: order.stopLoss.sizeDelta,
+					price: order.stopLoss.price,
+				},
 				ConditionalOrderTypeEnum.STOP,
 				order.priceImpactDelta,
 				true

@@ -1,3 +1,5 @@
+import { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils.js';
 import { gql } from 'graphql-request';
 
@@ -19,6 +21,8 @@ export const MAIN_ENDPOINT_OP_MAINNET =
 
 export const MAIN_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
+
+export const SL_TP_MAX_SIZE = wei(ethers.constants.MaxUint256, 0);
 
 export const FUTURES_ENDPOINTS: Record<number, string> = {
 	10: FUTURES_ENDPOINT_OP_MAINNET,

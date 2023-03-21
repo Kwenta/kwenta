@@ -446,12 +446,25 @@ export const unserializeTradeInputs = (tradeInputs: TradeSizeInputs<string>): Tr
 	};
 };
 
-export const serializeFuturesOrders = (orders: ConditionalOrder[]): ConditionalOrder<string>[] => {
+export const serializeConditionalOrders = (
+	orders: ConditionalOrder[]
+): ConditionalOrder<string>[] => {
 	return orders.map((o) => ({
 		...o,
 		size: o.size.toString(),
 		targetPrice: o.targetPrice?.toString() ?? null,
 		marginDelta: o.marginDelta.toString(),
+	}));
+};
+
+export const unserializeConditionalOrders = (
+	orders: ConditionalOrder<string>[]
+): ConditionalOrder[] => {
+	return orders.map((o) => ({
+		...o,
+		size: wei(o.size),
+		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
+		marginDelta: wei(o.marginDelta),
 	}));
 };
 
@@ -484,17 +497,6 @@ export const unserializeDelayedOrder = (
 export const unserializeDelayedOrders = (
 	orders: DelayedOrderWithDetails<string>[]
 ): DelayedOrderWithDetails[] => orders.map((o) => unserializeDelayedOrder(o));
-
-export const unserializeFuturesOrders = (
-	orders: ConditionalOrder<string>[]
-): ConditionalOrder[] => {
-	return orders.map((o) => ({
-		...o,
-		size: wei(o.size),
-		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
-		marginDelta: wei(o.marginDelta),
-	}));
-};
 
 export const serializeCrossMarginSettings = (
 	settings: CrossMarginSettings

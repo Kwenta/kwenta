@@ -7,6 +7,7 @@ import KwentaSDK from 'sdk';
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { FuturesAccountType } from 'queries/futures/types';
+import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
@@ -55,7 +56,7 @@ import {
 	serializeCmBalanceInfo,
 	serializeCrossMarginSettings,
 	serializeDelayedOrders,
-	serializeFuturesOrders,
+	serializeConditionalOrders,
 	serializeFuturesVolumes,
 	serializeMarkets,
 	serializePositionHistory,
@@ -426,7 +427,7 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 			account,
 			network,
 			delayedOrders: serializeDelayedOrders(nonzeroOrders),
-			conditionalOrders: serializeFuturesOrders(orders),
+			conditionalOrders: serializeConditionalOrders(orders),
 		};
 	} catch (err) {
 		notifyError('Failed to fetch open orders', err);
@@ -1157,12 +1158,22 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 				marginDelta: marginDelta,
 				priceImpactDelta: priceImpact,
 			};
+
+			// To separate Stop Loss and Take Profit from other limit / stop orders
+			// we set the size to max big num value.
+
 			if (Number(stopLossPrice) > 0) {
-				orderInputs.stopLossPrice = wei(stopLossPrice);
+				orderInputs.stopLoss = {
+					price: wei(stopLossPrice),
+					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
+				};
 			}
 
 			if (Number(takeProfitPrice) > 0) {
-				orderInputs.takeProfitPrice = wei(takeProfitPrice);
+				orderInputs.takeProfit = {
+					price: wei(takeProfitPrice),
+					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
+				};
 			}
 
 			if (orderType !== 'market') {
