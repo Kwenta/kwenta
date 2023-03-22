@@ -129,7 +129,6 @@ class FuturesMarketInternal {
 			PerpsV2Market
 		);
 		await ethcallProvider.init(this._provider as any);
-
 		const preFetchedData = await ethcallProvider.all([
 			multiCallContract.assetPrice(),
 			multiCallContract.marketSkew(),
@@ -396,7 +395,9 @@ class FuturesMarketInternal {
 	};
 
 	_liquidationMargin = async (positionSize: BigNumber, price: BigNumber) => {
-		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio');
+		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio', [
+			this._marketKeyBytes,
+		]);
 		const liquidationBuffer = multiplyDecimal(
 			multiplyDecimal(positionSize.abs(), price),
 			liquidationBufferRatio

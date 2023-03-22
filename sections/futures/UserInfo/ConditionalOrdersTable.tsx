@@ -36,7 +36,7 @@ export default function ConditionalOrdersTable() {
 
 	const rows = useMemo(() => {
 		const ordersWithCancel = openConditionalOrders
-			.map((o) => ({ ...o, cancel: () => dispatch(cancelConditionalOrder(o.contractId)) }))
+			.map((o) => ({ ...o, cancel: () => dispatch(cancelConditionalOrder(o.id)) }))
 			.sort((a, b) => {
 				return b.asset === marketAsset && a.asset !== marketAsset
 					? 1
@@ -44,7 +44,7 @@ export default function ConditionalOrdersTable() {
 					? 0
 					: -1;
 			});
-		const cancellingIndex = ordersWithCancel.findIndex((o) => o.contractId === isCancellingOrder);
+		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === isCancellingOrder);
 		ordersWithCancel[cancellingIndex] = {
 			...ordersWithCancel[cancellingIndex],
 			isCancelling: true,
@@ -112,6 +112,17 @@ export default function ConditionalOrdersTable() {
 							accessor: 'type',
 							Cell: (cellProps: CellProps<any>) => {
 								return <div>{cellProps.row.original.orderTypeDisplay}</div>;
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<TableHeader>{t('futures.market.user.open-orders.table.reduce-only')}</TableHeader>
+							),
+							accessor: 'reduceOnly',
+							Cell: (cellProps: CellProps<any>) => {
+								return <div>{cellProps.row.original.reduceOnly ? 'yes' : 'no'}</div>;
 							},
 							sortable: true,
 							width: 50,

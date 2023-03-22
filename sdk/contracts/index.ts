@@ -104,7 +104,7 @@ export const getContractsByNetwork = (
 			: undefined,
 		PerpsV2MarketSettingsUpgraded: ADDRESSES.PerpsV2MarketSettings[networkId]
 			? PerpsV2MarketSettingsUpgrade__factory.connect(
-					ADDRESSES.PerpsV2MarketData[networkId],
+					ADDRESSES.PerpsV2MarketSettings[networkId],
 					provider
 			  )
 			: undefined,

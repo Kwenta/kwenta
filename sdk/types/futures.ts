@@ -262,8 +262,8 @@ export enum ConditionalOrderTypeEnum {
 }
 
 export type ConditionalOrder<T = Wei> = {
-	id: string; // formatted subgraph id
-	contractId: number;
+	id: number;
+	subgraphId: string;
 	account: string;
 	asset: FuturesMarketAsset;
 	market: string;

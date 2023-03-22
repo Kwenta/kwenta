@@ -13,6 +13,7 @@ import {
 	BPS_CONVERSION,
 	DEFAULT_DESIRED_TIMEDELTA,
 	KWENTA_TRACKING_CODE,
+	SL_TP_MAX_SIZE,
 } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
@@ -60,20 +61,22 @@ import {
 	calculateFundingRate,
 	calculateVolumes,
 	encodeConditionalOrderParams,
+	encodeModidyMarketMarginParams,
+	encodeSubmitOffchainOrderParams,
 	formatDelayedOrder,
 	formatPotentialIsolatedTrade,
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
-	mapConditionalOrderFromEvent,
+	mapConditionalOrderFromContract,
 	mapFuturesPosition,
 	mapFuturesPositions,
 	mapTrades,
 	marketsForNetwork,
 } from 'sdk/utils/futures';
+import { getReasonFromCode } from 'sdk/utils/synths';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
-import { getReasonFromCode } from 'sdk/utils/synths';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -492,12 +495,12 @@ export default class FuturesService {
 			// Checks if the order is still pending
 			// Orders are never removed but all values set to zero so we check a zero value on price to filter pending
 			if (contractOrder && contractOrder.targetPrice.gt(0)) {
-				const order = mapConditionalOrderFromEvent({ ...contractOrder, id: i }, account);
+				const order = mapConditionalOrderFromContract({ ...contractOrder, id: i }, account);
 				orders.push(order);
 			}
 		}
 
-		return orderBy(orders, ['contractId'], 'desc');
+		return orderBy(orders, ['id'], 'desc');
 	}
 
 	public async getCrossMarginSettings() {
@@ -834,6 +837,7 @@ export default class FuturesService {
 		const inputs = [];
 
 		const idleMargin = await this.getIdleMargin(walletAddress, crossMarginAddress);
+		const { freeMargin } = await this.getCrossMarginBalanceInfo(walletAddress, crossMarginAddress);
 
 		// Sweep idle margin from markets to account
 		if (idleMargin.marketsTotal.gt(0)) {
@@ -851,11 +855,12 @@ export default class FuturesService {
 		);
 		// Add a 2% buffer because the price could change
 		const feeWithBuffer = fee.add(fee.mul(0.02));
-		// Need to subtract the fee so we leave enough in the accoun to pay it
+		// Need to subtract the fee so we leave enough in the account to pay it
 		const marginDeltaMinusFees = order.marginDelta.sub(feeWithBuffer);
 
 		if (order.marginDelta.gt(0)) {
-			const depositAmount = order.marginDelta.gt(idleMargin.marketsTotal)
+			const totalFreeMargin = freeMargin.add(idleMargin.marketsTotal);
+			const depositAmount = order.marginDelta.gt(totalFreeMargin)
 				? order.marginDelta.sub(idleMargin.marketsTotal).abs()
 				: wei(0);
 			if (depositAmount.gt(0)) {
@@ -867,68 +872,87 @@ export default class FuturesService {
 		if (order.sizeDelta.abs().gt(0)) {
 			if (!order.conditionalOrderInputs) {
 				commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
-				inputs.push(
-					defaultAbiCoder.encode(
-						['address', 'int256'],
-						[market.address, marginDeltaMinusFees.toBN()]
-					)
-				);
+				inputs.push(encodeModidyMarketMarginParams(market.address, marginDeltaMinusFees));
 				commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
 				inputs.push(
-					defaultAbiCoder.encode(
-						['address', 'int256', 'uint256'],
-						[market.address, order.sizeDelta.toBN(), order.priceImpactDelta.toBN()]
-					)
+					encodeSubmitOffchainOrderParams(market.address, order.sizeDelta, order.priceImpactDelta)
 				);
 			} else {
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
-				inputs.push(
-					defaultAbiCoder.encode(
-						['bytes32', 'int256', 'int256', 'uint256', 'uint256', 'uint128', 'bool'],
-						[
-							formatBytes32String(market.key),
-							marginDeltaMinusFees.toBN(),
-							order.sizeDelta.toBN(),
-							order.conditionalOrderInputs!.price.toBN(),
-							order.conditionalOrderInputs.orderType,
-							order.priceImpactDelta.toBN(),
-							order.conditionalOrderInputs!.reduceOnly,
-						]
-					)
+				const params = encodeConditionalOrderParams(
+					market.key,
+					{
+						marginDelta: marginDeltaMinusFees,
+						sizeDelta: order.sizeDelta,
+						price: order.conditionalOrderInputs!.price,
+					},
+					order.conditionalOrderInputs.orderType,
+					order.priceImpactDelta,
+					order.conditionalOrderInputs!.reduceOnly
 				);
+				inputs.push(params);
 			}
 		}
 
-		if (order.takeProfit) {
-			commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
-			const encodedParams = encodeConditionalOrderParams(
-				market.key,
-				{
-					marginDelta: wei(0),
-					sizeDelta: order.takeProfit.sizeDelta,
-					price: order.takeProfit.price,
-				},
-				ConditionalOrderTypeEnum.LIMIT,
-				order.priceImpactDelta,
-				true
+		if (order.takeProfit || order.stopLoss) {
+			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
+			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === market.key);
+			const existingStopLosses = existingOrdersForMarket.filter(
+				(o) =>
+					o.size.abs().eq(SL_TP_MAX_SIZE) &&
+					o.reduceOnly &&
+					o.orderType === ConditionalOrderTypeEnum.STOP
 			);
-			inputs.push(encodedParams);
-		}
+			const existingTakeProfits = existingOrdersForMarket.filter(
+				(o) =>
+					o.size.abs().eq(SL_TP_MAX_SIZE) &&
+					o.reduceOnly &&
+					o.orderType === ConditionalOrderTypeEnum.LIMIT
+			);
 
-		if (order.stopLoss) {
-			commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
-			const encodedParams = encodeConditionalOrderParams(
-				market.key,
-				{
-					marginDelta: wei(0),
-					sizeDelta: order.stopLoss.sizeDelta,
-					price: order.stopLoss.price,
-				},
-				ConditionalOrderTypeEnum.STOP,
-				order.priceImpactDelta,
-				true
-			);
-			inputs.push(encodedParams);
+			if (order.takeProfit) {
+				if (existingTakeProfits.length) {
+					existingTakeProfits.forEach((tp) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [tp.id]));
+					});
+				}
+				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+				const encodedParams = encodeConditionalOrderParams(
+					market.key,
+					{
+						marginDelta: wei(0),
+						sizeDelta: order.takeProfit.sizeDelta,
+						price: order.takeProfit.price,
+					},
+					ConditionalOrderTypeEnum.LIMIT,
+					order.priceImpactDelta,
+					true
+				);
+				inputs.push(encodedParams);
+			}
+
+			if (order.stopLoss) {
+				if (existingStopLosses.length) {
+					existingStopLosses.forEach((sl) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [sl.id]));
+					});
+				}
+				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+				const encodedParams = encodeConditionalOrderParams(
+					market.key,
+					{
+						marginDelta: wei(0),
+						sizeDelta: order.stopLoss.sizeDelta,
+						price: order.stopLoss.price,
+					},
+					ConditionalOrderTypeEnum.STOP,
+					order.priceImpactDelta,
+					true
+				);
+				inputs.push(encodedParams);
+			}
 		}
 
 		return this.sdk.transactions.createContractTxn(

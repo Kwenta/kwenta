@@ -56,9 +56,7 @@ const { chains, provider } = configureChains(Object.values(chain), [
 		rpc: (networkChain) => ({
 			http: !BLAST_NETWORK_LOOKUP[networkChain.id]
 				? networkChain.rpcUrls.default.http[0]
-				: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
-						process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
-				  }`,
+				: `https://goerli.optimism.io`,
 		}),
 		stallTimeout: STALL_TIMEOUT,
 		priority: 1,
