@@ -63,7 +63,7 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 
 			{accountType === 'cross_margin' && <MarginInput />}
 
-			{orderType !== 'market' && (
+			{orderType !== 'market' && accountType === 'cross_margin' && (
 				<>
 					<OrderPriceInput />
 					<Spacer height={16} />
