@@ -761,7 +761,7 @@ export const fetchTradesForSelectedMarket = createAsyncThunk<
 		const trades = await sdk.futures.getTradesForMarket(marketAsset, wallet, accountType);
 		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
 	} catch (err) {
-		notifyError('Failed to fetch futures trades', err);
+		notifyError('Failed to fetch futures trades for selected market', err);
 		throw err;
 	}
 });
