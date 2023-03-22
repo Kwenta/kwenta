@@ -861,7 +861,7 @@ export default class FuturesService {
 		if (order.marginDelta.gt(0)) {
 			const totalFreeMargin = freeMargin.add(idleMargin.marketsTotal);
 			const depositAmount = order.marginDelta.gt(totalFreeMargin)
-				? order.marginDelta.sub(idleMargin.marketsTotal).abs()
+				? order.marginDelta.sub(totalFreeMargin).abs()
 				: wei(0);
 			if (depositAmount.gt(0)) {
 				commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
