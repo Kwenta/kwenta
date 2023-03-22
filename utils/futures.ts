@@ -604,6 +604,7 @@ export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] 
 		positionSize: t.positionSize.toString(),
 		pnl: t.pnl.toString(),
 		feesPaid: t.feesPaid.toString(),
+		keeperFeesPaid: t.keeperFeesPaid.toString(),
 	}));
 };
 
@@ -616,6 +617,7 @@ export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<
 		positionSize: wei(t.positionSize),
 		pnl: wei(t.pnl),
 		feesPaid: wei(t.feesPaid),
+		keeperFeesPaid: wei(t.keeperFeesPaid),
 	}));
 };
 

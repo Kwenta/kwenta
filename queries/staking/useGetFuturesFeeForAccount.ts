@@ -35,6 +35,7 @@ const useGetFuturesFeeForAccount = (
 					abstractAccount: true,
 					accountType: true,
 					feesPaid: true,
+					keeperFeesPaid: true,
 				}
 			);
 			return response;
