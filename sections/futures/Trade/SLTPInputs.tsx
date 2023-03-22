@@ -14,8 +14,6 @@ import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'stat
 import {
 	selectLeverageSide,
 	selectMarketPrice,
-	selectStopLossOrder,
-	selectTakeProfitOrder,
 	selectSlTpTradeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -29,8 +27,6 @@ export default function SLTPInputs() {
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const leverageSide = useAppSelector(selectLeverageSide);
-	const pendingStopLoss = useAppSelector(selectStopLossOrder);
-	const pendingTakeProfit = useAppSelector(selectTakeProfitOrder);
 
 	const [showInputs, setShowInputs] = useState(false);
 
@@ -120,8 +116,7 @@ export default function SLTPInputs() {
 						dataTestId={'trade-panel-stop-loss-input'}
 						right={'-10%'}
 						value={stopLossPrice}
-						disabled={!!pendingStopLoss}
-						placeholder={pendingStopLoss ? 'Already pending SL' : '0.00'}
+						placeholder={'0.00'}
 						onChange={onChangeStopLoss}
 					/>
 
@@ -137,8 +132,7 @@ export default function SLTPInputs() {
 						dataTestId={'trade-panel-take-profit-input'}
 						right={'-10%'}
 						value={takeProfitPrice}
-						disabled={!!pendingTakeProfit}
-						placeholder={pendingTakeProfit ? 'Already pending TP' : '0.00'}
+						placeholder={'0.00'}
 						onChange={onChangeTakeProfit}
 					/>
 				</InputsContainer>

@@ -23,7 +23,7 @@ export default function ConditionalOrderDrawer({ open, order, closeDrawer }: Ord
 
 	const onCancel = useCallback(
 		(order: ConditionalOrder) => {
-			dispatch(cancelConditionalOrder(order.contractId));
+			dispatch(cancelConditionalOrder(order.id));
 		},
 		[dispatch]
 	);

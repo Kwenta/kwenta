@@ -24,7 +24,6 @@ export type FuturesMarket<T = Wei> = {
 	assetHex: string;
 	currentFundingRate: T;
 	currentFundingVelocity: T;
-	currentRoundId: T;
 	feeRates: {
 		makerFee: T;
 		takerFee: T;
@@ -263,8 +262,8 @@ export enum ConditionalOrderTypeEnum {
 }
 
 export type ConditionalOrder<T = Wei> = {
-	id: string; // formatted subgraph id
-	contractId: number;
+	id: number;
+	subgraphId: string;
 	account: string;
 	asset: FuturesMarketAsset;
 	market: string;
@@ -408,6 +407,12 @@ export type SmartMarginOrderInputs = {
 		keeperEthDeposit: Wei;
 		reduceOnly: boolean;
 	};
-	stopLossPrice?: Wei;
-	takeProfitPrice?: Wei;
+	stopLoss?: {
+		price: Wei;
+		sizeDelta: Wei;
+	};
+	takeProfit?: {
+		price: Wei;
+		sizeDelta: Wei;
+	};
 };

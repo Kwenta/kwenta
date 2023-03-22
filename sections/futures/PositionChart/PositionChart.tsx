@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import TVChart from 'components/TVChart';
 import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import {
-	selectCrossMarginOpenOrders,
+	selectConditionalOrdersForMarket,
 	selectPosition,
 	selectSelectedMarketPositionHistory,
 	selectTradePreview,
@@ -13,7 +13,7 @@ import { useAppSelector } from 'state/hooks';
 
 export default function PositionChart() {
 	const position = useAppSelector(selectPosition);
-	const openOrders = useAppSelector(selectCrossMarginOpenOrders);
+	const openOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const previewTrade = useAppSelector(selectTradePreview);
 	const subgraphPosition = useAppSelector(selectSelectedMarketPositionHistory);
 

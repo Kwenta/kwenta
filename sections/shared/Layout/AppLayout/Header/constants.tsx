@@ -1,6 +1,5 @@
 import { FunctionComponent } from 'react';
 
-import LinkIconLight from 'assets/svg/app/link-light.svg';
 import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
 import { COMPETITION_ENABLED } from 'constants/competition';
 import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';

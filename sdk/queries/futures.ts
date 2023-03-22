@@ -2,16 +2,16 @@ import { formatBytes32String } from 'ethers/lib/utils.js';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
+import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import {
 	FuturesAccountType,
 	getFuturesPositions,
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
-import { ZERO_ADDRESS } from 'sdk/constants/global';
 import { CROSS_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
+import { ZERO_ADDRESS } from 'sdk/constants/global';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { mapCrossMarginTransfers, mapMarginTransfers } from 'sdk/utils/futures';
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,
@@ -56,7 +56,7 @@ export const queryTrades = async (
 ) => {
 	const filter: Record<string, string> = {
 		account: params.walletAddress,
-		accountType: params.accountType,
+		accountType: params.accountType === 'isolated_margin' ? 'isolated_margin' : 'smart_margin',
 	};
 	if (params.marketAsset) {
 		filter['asset'] = formatBytes32String(params.marketAsset);

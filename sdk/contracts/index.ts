@@ -17,7 +17,9 @@ import KwentaArrakisVaultABI from './abis/KwentaArrakisVault.json';
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
 import PerpsV2MarketABI from './abis/PerpsV2Market.json';
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
+import PerpsV2MarketDataUpgradedABI from './abis/PerpsV2MarketDataUpgrade.json';
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
+import PerpsV2MarketSettingsUpgradedABI from './abis/PerpsV2MarketSettingsUpgrade.json';
 import StakingRewardsABI from './abis/StakingRewards.json';
 import SynthRedeemerABI from './abis/SynthRedeemer.json';
 import SystemStatusABI from './abis/SystemStatus.json';
@@ -49,6 +51,8 @@ import {
 	Pyth__factory,
 	BatchClaimer__factory,
 } from './types';
+import { PerpsV2MarketDataUpgrade__factory } from './types/factories/PerpsV2MarketDataUpgrade__factory';
+import { PerpsV2MarketSettingsUpgrade__factory } from './types/factories/PerpsV2MarketSettingsUpgrade__factory';
 
 type ContractFactory = {
 	connect: (address: string, provider: ethers.providers.Provider) => Contract;
@@ -93,6 +97,16 @@ export const getContractsByNetwork = (
 			: undefined,
 		PerpsV2MarketSettings: ADDRESSES.PerpsV2MarketSettings[networkId]
 			? PerpsV2MarketSettings__factory.connect(ADDRESSES.PerpsV2MarketSettings[networkId], provider)
+			: undefined,
+		// TODO: Merge original and upgraded contracts once deployed to mainnet
+		PerpsV2MarketDataUpgraded: ADDRESSES.PerpsV2MarketData[networkId]
+			? PerpsV2MarketDataUpgrade__factory.connect(ADDRESSES.PerpsV2MarketData[networkId], provider)
+			: undefined,
+		PerpsV2MarketSettingsUpgraded: ADDRESSES.PerpsV2MarketSettings[networkId]
+			? PerpsV2MarketSettingsUpgrade__factory.connect(
+					ADDRESSES.PerpsV2MarketSettings[networkId],
+					provider
+			  )
 			: undefined,
 		Pyth: ADDRESSES.Pyth[networkId]
 			? Pyth__factory.connect(ADDRESSES.Pyth[networkId], provider)
@@ -186,6 +200,16 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		PerpsV2MarketSettings: ADDRESSES.PerpsV2MarketSettings[networkId]
 			? new EthCallContract(ADDRESSES.PerpsV2MarketSettings[networkId], PerpsV2MarketSettingsABI)
+			: undefined,
+		// TODO: Merge original and upgraded contracts once deployed to mainnet
+		PerpsV2MarketDataUpgraded: ADDRESSES.PerpsV2MarketData[networkId]
+			? new EthCallContract(ADDRESSES.PerpsV2MarketData[networkId], PerpsV2MarketDataUpgradedABI)
+			: undefined,
+		PerpsV2MarketSettingsUpgraded: ADDRESSES.PerpsV2MarketSettings[networkId]
+			? new EthCallContract(
+					ADDRESSES.PerpsV2MarketSettings[networkId],
+					PerpsV2MarketSettingsUpgradedABI
+			  )
 			: undefined,
 		StakingRewards: ADDRESSES.StakingRewards[networkId]
 			? new EthCallContract(ADDRESSES.StakingRewards[networkId], StakingRewardsABI)

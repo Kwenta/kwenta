@@ -17,6 +17,7 @@ import {
 	TESTNET_MARKETS,
 	AGGREGATE_ASSET_KEY,
 	MAIN_ENDPOINTS,
+	SL_TP_MAX_SIZE,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
@@ -444,7 +445,7 @@ export const getPythNetworkUrl = (networkId: NetworkId) => {
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
 
-export const mapConditionalOrderFromEvent = (
+export const mapConditionalOrderFromContract = (
 	orderDetails: {
 		id: number;
 		marketKey: string;
@@ -461,8 +462,8 @@ export const mapConditionalOrderFromEvent = (
 	const sizeDelta = wei(orderDetails.sizeDelta);
 	const size = sizeDelta.abs();
 	return {
-		contractId: orderDetails.id,
-		id: `CM-${account}-${orderDetails.id}`,
+		id: orderDetails.id,
+		subgraphId: `CM-${account}-${orderDetails.id}`,
 		account: account,
 		size: sizeDelta,
 		marginDelta: wei(orderDetails.marginDelta),
@@ -473,10 +474,12 @@ export const mapConditionalOrderFromEvent = (
 		),
 		targetPrice: wei(orderDetails.targetPrice),
 		reduceOnly: orderDetails.reduceOnly,
-		sizeTxt: formatCurrency(asset, size, {
-			currencyKey: getDisplayAsset(asset) ?? '',
-			minDecimals: size.lt(0.01) ? 4 : 2,
-		}),
+		sizeTxt: size.abs().eq(SL_TP_MAX_SIZE)
+			? 'Close'
+			: formatCurrency(asset, size, {
+					currencyKey: getDisplayAsset(asset) ?? '',
+					minDecimals: size.lt(0.01) ? 4 : 2,
+			  }),
 		targetPriceTxt: formatDollars(wei(orderDetails.targetPrice)),
 		marketKey: marketKey,
 		market: getMarketName(asset),
@@ -603,6 +606,21 @@ export const encodeConditionalOrderParams = (
 			reduceOnly,
 		]
 	);
+};
+
+export const encodeSubmitOffchainOrderParams = (
+	marketAddress: string,
+	sizeDelta: Wei,
+	priceImpactDelta: Wei
+) => {
+	return defaultAbiCoder.encode(
+		['address', 'int256', 'uint256'],
+		[marketAddress, sizeDelta.toBN(), priceImpactDelta.toBN()]
+	);
+};
+
+export const encodeModidyMarketMarginParams = (marketAddress: string, marginDelta: Wei) => {
+	return defaultAbiCoder.encode(['address', 'int256'], [marketAddress, marginDelta.toBN()]);
 };
 
 export const formatOrderDisplayType = (

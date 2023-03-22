@@ -33,7 +33,7 @@
 		},
 		"networks-switcher": {
 			"chains": "Switch Networks",
-			"l2": "Switch to L2",
+			"l2": "Switch to Optimism",
 			"l1": "Switch to Layer 1",
 			"optimistic-gateway": "Optimistic L2 Gateway",
 			"optimistic-etherscan": "Optimistic Etherscan",
@@ -182,7 +182,7 @@
 			"disclaimer": "* These statistics are approximations. User experience will vary.",
 			"cta-buttons": {
 				"learn-more": "Learn more",
-				"switch-l2": "Switch to L2",
+				"switch-l2": "Switch to Optimism",
 				"switch-networks": "Switch Networks"
 			},
 			"markets": {
@@ -961,6 +961,7 @@
 						"size": "Size",
 						"size-price": "Size/Price",
 						"reserved-margin": "Reserved margin",
+						"reduce-only": "Reduce only",
 						"commit-deposit": "Commit Deposit",
 						"price": "Price",
 						"parameters": "Parameters",

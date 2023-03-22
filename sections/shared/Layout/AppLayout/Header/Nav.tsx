@@ -55,19 +55,22 @@ const Nav: FC = memo(() => {
 			);
 		}
 
-		return (
-			<Link href={link}>
-				<LabelContainer>
-					<NavLabel>
-						{t(i18nLabel)}
-						{badge?.map(({ i18nLabel, color }) => (
-							<Badge color={color}>{t(i18nLabel)}</Badge>
-						))}
-					</NavLabel>
-					{Icon && <Icon />}
-				</LabelContainer>
-			</Link>
+		const option = (
+			<LabelContainer>
+				<NavLabel>
+					{t(i18nLabel)}
+					{badge?.map(({ i18nLabel, color }) => (
+						<Badge color={color}>{t(i18nLabel)}</Badge>
+					))}
+				</NavLabel>
+				{Icon && <Icon />}
+			</LabelContainer>
 		);
+		if (link) {
+			return <Link href={link}>{option}</Link>;
+		}
+
+		return option;
 	};
 
 	return (
@@ -117,7 +120,7 @@ const Nav: FC = memo(() => {
 							formatOptionLabel={formatOptionLabel}
 							controlHeight={34}
 							options={links}
-							value={{ i18nLabel, isActive, link: '' }}
+							value={{ i18nLabel, isActive }}
 							components={{ IndicatorSeparator, DropdownIndicator }}
 							isSearchable={false}
 						/>
@@ -176,7 +179,7 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 
 const DropDownSelect = styled(Select)`
 	.react-select__menu {
-		width: 170px;
+		width: 180px;
 		text-transform: capitalize;
 		left: 0;
 	}

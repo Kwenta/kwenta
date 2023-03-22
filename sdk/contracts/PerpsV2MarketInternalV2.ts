@@ -2,8 +2,8 @@ import BN from 'bn.js';
 import { Provider, Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
-import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 
+import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 import PerpsV2Market from 'sdk/contracts/abis/PerpsV2Market.json';
 import { PerpsV2Market__factory } from 'sdk/contracts/types';
 import { FuturesMarketAsset, FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
@@ -97,7 +97,7 @@ class FuturesMarketInternal {
 		this._provider = provider;
 
 		this._perpsV2MarketContract = PerpsV2Market__factory.connect(marketAddress, provider);
-		this._perpsV2MarketSettings = sdk.context.contracts.PerpsV2MarketSettings;
+		this._perpsV2MarketSettings = sdk.context.contracts.PerpsV2MarketSettingsUpgraded;
 		this._marketKeyBytes = formatBytes32String(marketKey);
 		this._cache = {};
 		this._onChainData = {
@@ -129,7 +129,6 @@ class FuturesMarketInternal {
 			PerpsV2Market
 		);
 		await ethcallProvider.init(this._provider as any);
-
 		const preFetchedData = await ethcallProvider.all([
 			multiCallContract.assetPrice(),
 			multiCallContract.marketSkew(),
@@ -396,7 +395,9 @@ class FuturesMarketInternal {
 	};
 
 	_liquidationMargin = async (positionSize: BigNumber, price: BigNumber) => {
-		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio');
+		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio', [
+			this._marketKeyBytes,
+		]);
 		const liquidationBuffer = multiplyDecimal(
 			multiplyDecimal(positionSize.abs(), price),
 			liquidationBufferRatio
