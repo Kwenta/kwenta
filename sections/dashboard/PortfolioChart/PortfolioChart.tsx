@@ -104,7 +104,7 @@ const PortfolioChart: FC = () => {
 				(hoverValue ?? portfolioData[portfolioData.length - 1].total) - portfolioData[0].total;
 			const changeValue = portfolioData[0].total > 0 ? value / portfolioData[0].total : 0;
 			const text = `${value >= 0 ? '+' : ''}${formatDollars(value, {
-				minDecimals: value !== 0 && Math.abs(value) < 0.01 ? 4 : 2,
+				suggestDecimals: true,
 			})} (${formatPercent(changeValue)})`;
 			return {
 				value,

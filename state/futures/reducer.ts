@@ -53,6 +53,7 @@ import {
 	CrossMarginState,
 	CrossMarginTradeFees,
 	CrossMarginTradeInputs,
+	FuturesAccountData,
 	FuturesState,
 	InputCurrencyDenomination,
 	IsolatedAccountData,
@@ -340,11 +341,15 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS;
 			if (payload) {
 				const { wallet, network, type, marginTransfers } = payload;
-				const account = getFuturesAccount(futuresState, type, network, wallet);
-				futuresState[accountType(type)].accounts[network][wallet] = {
-					...account,
-					marginTransfers: marginTransfers,
-				};
+				futuresState[accountType(type)].accounts[network][wallet] = updateFuturesAccount(
+					futuresState,
+					type,
+					network,
+					wallet,
+					{
+						marginTransfers,
+					}
+				);
 			}
 		});
 		builder.addCase(fetchMarginTransfers.rejected, (futuresState) => {
@@ -545,11 +550,15 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.positionHistory = SUCCESS_STATUS;
 			if (payload) {
 				const { accountType: type, history: positionHistory, networkId, account: wallet } = payload;
-				const account = getFuturesAccount(futuresState, type, networkId, wallet);
-				futuresState[accountType(type)].accounts[networkId][wallet] = {
-					...account,
-					positionHistory,
-				};
+				futuresState[accountType(type)].accounts[networkId][wallet] = updateFuturesAccount(
+					futuresState,
+					type,
+					networkId,
+					wallet,
+					{
+						positionHistory,
+					}
+				);
 			}
 		});
 		builder.addCase(fetchFuturesPositionHistory.rejected, (futuresState) => {
@@ -586,11 +595,15 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
 			if (payload) {
 				const { accountType: type, trades, networkId, account: wallet } = payload;
-				const account = getFuturesAccount(futuresState, type, networkId, wallet);
-				futuresState[accountType(type)].accounts[networkId][wallet] = {
-					...account,
-					trades,
-				};
+				futuresState[accountType(type)].accounts[networkId][wallet] = updateFuturesAccount(
+					futuresState,
+					type,
+					networkId,
+					wallet,
+					{
+						trades,
+					}
+				);
 			}
 		});
 		builder.addCase(fetchTradesForSelectedMarket.rejected, (futuresState) => {
@@ -610,11 +623,15 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
 			if (payload) {
 				const { accountType: type, trades, networkId, account: wallet } = payload;
-				const account = getFuturesAccount(futuresState, type, networkId, wallet);
-				futuresState[accountType(type)].accounts[networkId][wallet] = {
-					...account,
-					trades,
-				};
+				futuresState[accountType(type)].accounts[networkId][wallet] = updateFuturesAccount(
+					futuresState,
+					type,
+					networkId,
+					wallet,
+					{
+						trades,
+					}
+				);
 			}
 		});
 		builder.addCase(fetchAllTradesForAccount.rejected, (futuresState) => {
@@ -680,23 +697,26 @@ const findWalletForAccount = (
 	return entry ? entry[0] : undefined;
 };
 
-const getFuturesAccount = (
+const updateFuturesAccount = (
 	futuresState: FuturesState,
 	type: FuturesAccountType,
 	network: NetworkId,
-	wallet: string
+	wallet: string,
+	newAccountData: Partial<FuturesAccountData>
 ): IsolatedAccountData | CrossMarginAccountData => {
 	if (type === 'isolated_margin') {
 		const account = futuresState.isolatedMargin.accounts[network][wallet];
 		return {
 			...ZERO_STATE_ISOLATED_ACCOUNT,
 			...account,
+			...newAccountData,
 		};
 	} else {
 		const account = futuresState.crossMargin.accounts[network][wallet];
 		return {
 			...ZERO_STATE_CM_ACCOUNT,
 			...account,
+			...newAccountData,
 		};
 	}
 };

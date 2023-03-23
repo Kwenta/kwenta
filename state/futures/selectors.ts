@@ -668,7 +668,7 @@ export const selectFuturesPortfolio = createSelector(
 	}
 );
 
-export const selectMarginTransfers = createSelector(
+export const selectMarketMarginTransfers = createSelector(
 	selectWallet,
 	selectNetwork,
 	selectFuturesType,
@@ -684,14 +684,14 @@ export const selectMarginTransfers = createSelector(
 	}
 );
 
-export const selectAllUserMarginTransfers = createSelector(
+export const selectMarginTransfers = createSelector(
 	selectWallet,
 	selectNetwork,
 	selectFuturesType,
 	(state: RootState) => state.futures,
 	(wallet, network, type, futures) => {
 		if (!wallet) return [];
-		const account = futures[accountType(type)].accounts[network][wallet];
+		const account = futures[accountType(type)].accounts[network]?.[wallet];
 		return account?.marginTransfers ?? [];
 	}
 );
@@ -877,7 +877,7 @@ export const selectSelectedPortfolioTimeframe = (state: RootState) =>
 
 export const selectUserPortfolioValues = createSelector(
 	selectAllUsersTrades,
-	selectAllUserMarginTransfers,
+	selectMarginTransfers,
 	selectFuturesPortfolio,
 	(trades, transfers, portfolioTotal) => {
 		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
