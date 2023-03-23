@@ -300,10 +300,10 @@ export const selectPositionHistory = createSelector(
 	selectCrossMarginAccountData,
 	selectIsolatedAccountData,
 	(type, crossAccountData, isolatedAccountData) => {
-		if (type === 'cross_margin') {
-			return unserializePositionHistory(crossAccountData?.positionHistory ?? []);
-		} else {
+		if (type === 'isolated_margin') {
 			return unserializePositionHistory(isolatedAccountData?.positionHistory ?? []);
+		} else {
+			return unserializePositionHistory(crossAccountData?.positionHistory ?? []);
 		}
 	}
 );
