@@ -151,9 +151,8 @@ const StyledLeftSideContent = styled(LeftSideContent)`
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: auto 1fr;
+	grid-template-columns: 150px 1fr 150px;
 	height: 100%;
-	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 0 15px;
 `;
 
