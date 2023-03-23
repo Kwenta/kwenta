@@ -251,16 +251,14 @@ export const updatePositionUpnl = (
 	const thisPositionHistory = positionHistory.find(
 		({ isOpen, asset }) => isOpen && asset === positionDetails.asset
 	);
+	if (!thisPositionHistory || !position || !offChainPrice) return deserializedPositionDetails;
 
-	const pnl =
-		!!thisPositionHistory && !!position && !!offChainPrice
-			? position.size.mul(
-					thisPositionHistory.avgEntryPrice
-						.sub(offChainPrice)
-						.mul(position.side === PositionSide.LONG ? -1 : 1)
-			  )
-			: undefined;
-	const pnlPct = pnl?.div(position?.initialMargin);
+	const pnl = position.size.mul(
+		thisPositionHistory.avgEntryPrice
+			.sub(offChainPrice)
+			.mul(position.side === PositionSide.LONG ? -1 : 1)
+	);
+	const pnlPct = pnl.div(position.initialMargin.add(thisPositionHistory.netTransfers));
 
 	return {
 		...deserializedPositionDetails,
