@@ -1,5 +1,6 @@
 import { FC, useMemo, useState } from 'react';
-import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from 'react-i18next';
+import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import styled, { useTheme } from 'styled-components';
 
 import Currency from 'components/Currency';
@@ -7,9 +8,11 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, NumericValue } from 'components/Text';
 import { Period } from 'sdk/constants/period';
 import {
+	selectBuyingPower,
 	selectFuturesPortfolio,
 	selectPortfolioChartData,
 	selectSelectedPortfolioTimeframe,
+	selectTotalUnrealizedPnl,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatChartDate, formatChartTime, formatShortDateWithTime } from 'utils/formatters/date';
@@ -72,6 +75,11 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 					domain={['dataMin', 'dataMax']}
 				/>
 				<Tooltip content={<></>} />
+				<Legend
+					verticalAlign="bottom"
+					height={16}
+					formatter={(value) => (value === 'total' ? 'Isolated Margin' : value)}
+				/>
 				<Line
 					type="monotone"
 					dataKey="total"
@@ -85,8 +93,12 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 };
 
 const PortfolioChart: FC = () => {
+	const { t } = useTranslation();
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const portfolioData = useAppSelector(selectPortfolioChartData);
+	const buyingPower = useAppSelector(selectBuyingPower);
+	const upnl = useAppSelector(selectTotalUnrealizedPnl);
+
 	const [hoverValue, setHoverValue] = useState<number | null>(null);
 	const [hoverTitle, setHoverTitle] = useState<string | null>(null);
 
@@ -118,12 +130,27 @@ const PortfolioChart: FC = () => {
 			<MobileHiddenView>
 				<ChartGrid>
 					<ChartOverlay>
-						<PortfolioTitle>{hoverTitle ? hoverTitle : 'Portfolio Value'}</PortfolioTitle>
+						<PortfolioTitle>
+							{hoverTitle ? hoverTitle : t('dashboard.overview.portfolio-chart.portfolio-value')}
+						</PortfolioTitle>
 						<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
 						<NumericValue colored value={changeValue.value ?? zeroBN}>
 							{changeValue.text}&nbsp;
 						</NumericValue>
 					</ChartOverlay>
+					<GridBox>
+						<PortfolioTitle>{t('dashboard.overview.portfolio-chart.upnl')}</PortfolioTitle>
+						<NumericValue colored value={upnl ?? zeroBN}>
+							{upnl.gt(zeroBN) ? '+' : ''}
+							{formatDollars(upnl, { suggestDecimals: true })}
+						</NumericValue>
+					</GridBox>
+					<GridBox>
+						<PortfolioTitle>{t('dashboard.overview.portfolio-chart.buying-power')}</PortfolioTitle>
+						<NumericValue value={buyingPower ?? zeroBN}>
+							{formatDollars(buyingPower, { suggestDecimals: true })}
+						</NumericValue>
+					</GridBox>
 					<ChartContainer>
 						{!!total && portfolioData.length >= 2 ? (
 							<>
@@ -172,7 +199,9 @@ const PortfolioChart: FC = () => {
 const ChartContainer = styled.div`
 	display: flex;
 	flex-direction: column;
+	grid-row-end: span 3;
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+	margin: 0 4px 0 4px;
 `;
 
 const TopBar = styled.div`
@@ -193,6 +222,13 @@ const ChartOverlay = styled.div`
 	padding: 16px;
 `;
 
+const GridBox = styled.div`
+	display: flex;
+	flex-direction: column;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	padding: 16px;
+`;
+
 const TimeframeOverlay = styled.div`
 	max-width: 192px;
 `;
@@ -200,6 +236,7 @@ const TimeframeOverlay = styled.div`
 const PortfolioTitle = styled(Body).attrs({ variant: 'bold' })`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 16px;
+	margin-bottom: 4px;
 `;
 
 const PortfolioText = styled(Currency.Price)`
@@ -209,7 +246,7 @@ const PortfolioText = styled(Currency.Price)`
 	font-size: 20px;
 
 	span {
-		line-height: 27px;
+		line-height: 23px;
 	}
 `;
 
@@ -225,6 +262,8 @@ const MobileChartGrid = styled.div`
 const ChartGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 3fr;
+	grid-template-rows: 1fr 1fr 1fr;
+	grid-auto-flow: column;
 	width: 100%;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;

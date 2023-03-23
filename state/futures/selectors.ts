@@ -326,6 +326,18 @@ export const selectActiveCrossPositionsCount = createSelector(
 	}
 );
 
+export const selectTotalBuyingPower = createSelector(selectFuturesPositions, (positions) => {
+	return positions.reduce((acc, p) => {
+		return acc.add(p.accessibleMargin.mul(APP_MAX_LEVERAGE));
+	}, zeroBN);
+});
+
+export const selectTotalUnrealizedPnl = createSelector(selectFuturesPositions, (positions) => {
+	return positions.reduce((acc, p) => {
+		return acc.add(p.position?.pnl ?? zeroBN);
+	}, zeroBN);
+});
+
 export const selectSubmittingFuturesTx = createSelector(
 	(state: RootState) => state.app,
 	(app) => {

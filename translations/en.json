@@ -503,6 +503,11 @@
 			"mobile": {
 				"portfolio": "Portfolio",
 				"open-positions": "Open Positions"
+			},
+			"portfolio-chart": {
+				"portfolio-value": "Portfolio Value",
+				"buying-power": "Total Buying Power",
+				"upnl": "Unrealized PnL"
 			}
 		},
 		"earn": {
