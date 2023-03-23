@@ -149,8 +149,7 @@ const MainContent = styled.div`
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: 324px 1fr;
-	/*height: calc(100% - 56px);*/
+	grid-template-columns: 180px 1fr;
 	height: 100%;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;

@@ -156,7 +156,7 @@ export default Market;
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: 324px 1fr;
+	grid-template-columns: 380px 1fr;
 	grid-gap: 0;
 	flex: 1;
 	height: calc(100% - 56px);

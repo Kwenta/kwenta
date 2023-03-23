@@ -25,8 +25,8 @@ const Footer = () => {
 };
 
 const FooterContainer = styled.footer`
-	display: flex;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
 	align-items: center;
 	padding: 10px;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
