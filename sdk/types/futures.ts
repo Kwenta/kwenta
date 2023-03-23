@@ -167,7 +167,7 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
-export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+export type FuturesAccountType = 'cross_margin' | 'smart_margin' | 'isolated_margin';
 
 export enum ContractOrderType {
 	MARKET = 0,
@@ -354,6 +354,7 @@ export type FuturesTrade<T = Wei> = {
 	side: PositionSide;
 	pnl: T;
 	feesPaid: T;
+	keeperFeesPaid: T;
 	orderType: FuturesOrderTypeDisplay;
 	accountType: FuturesAccountType;
 };

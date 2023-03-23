@@ -96,7 +96,10 @@ export const queryTrades = async (
 			positionClosed: true,
 			pnl: true,
 			feesPaid: true,
+			keeperFeesPaid: true,
 			orderType: true,
+			trackingCode: true,
+			fundingAccrued: true,
 		}
 	);
 };
@@ -194,7 +197,10 @@ export const queryFuturesTrades = (
 			positionClosed: true,
 			pnl: true,
 			feesPaid: true,
+			keeperFeesPaid: true,
 			orderType: true,
+			fundingAccrued: true,
+			trackingCode: true,
 		}
 	);
 };

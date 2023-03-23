@@ -6,12 +6,12 @@ import KwentaSDK from 'sdk';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
-import { FuturesAccountType } from 'queries/futures/types';
 import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
 	DelayedOrder,
+	FuturesAccountType,
 	FuturesMarket,
 	FuturesOrder,
 	FuturesPosition,

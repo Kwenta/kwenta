@@ -1,6 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 
-import { FuturesAccountType } from 'queries/futures/types';
+import { FuturesAccountType } from 'sdk/types/futures';
 
 // Redux recommends that values stored in state are serializable
 // (Generally for diffing, performance and persistence reasons).
