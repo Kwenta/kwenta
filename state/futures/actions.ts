@@ -1,5 +1,4 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
 import { debounce } from 'lodash';
@@ -7,11 +6,12 @@ import KwentaSDK from 'sdk';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
-import { FuturesAccountType } from 'queries/futures/types';
+import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
 	DelayedOrder,
+	FuturesAccountType,
 	FuturesMarket,
 	FuturesOrder,
 	FuturesPosition,
@@ -359,15 +359,6 @@ export const fetchMarginTransfers = createAsyncThunk<
 	}
 });
 
-export const fetchDashboardFuturesData = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/fetchDashboardFuturesData',
-	async (_, { dispatch }) => {
-		await dispatch(fetchMarkets());
-		dispatch(fetchCrossMarginBalanceInfo());
-		dispatch(fetchCrossMarginOpenOrders());
-	}
-);
-
 export const fetchCrossMarginAccountData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchCrossMarginAccountData',
 	async (_, { dispatch }) => {
@@ -497,7 +488,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 
 export const fetchCrossMarginTradePreview = createAsyncThunk<
 	FuturesPotentialTradeDetails<string> | null,
-	{ price?: Wei | undefined; sizeDelta: Wei; marginDelta: Wei },
+	{ price?: Wei; sizeDelta: Wei; marginDelta: Wei },
 	ThunkConfig
 >(
 	'futures/fetchCrossMarginTradePreview',
@@ -535,11 +526,12 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/clearTradeInputs',
 	async (_, { dispatch }) => {
-		dispatch(editCrossMarginSize('0', 'usd'));
-		dispatch(editIsolatedMarginSize('0', 'usd'));
 		dispatch(setCrossMarginMarginDelta('0'));
 		dispatch(setCrossMarginFees(ZERO_CM_FEES));
 		dispatch(setIsolatedMarginFee('0'));
+		dispatch(setIsolatedMarginLeverageInput(''));
+		dispatch(setIsolatedTradePreview(null));
+		dispatch(setCrossMarginTradePreview(null));
 	}
 );
 
@@ -634,7 +626,6 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	const position = selectPosition(getState());
 	if (
 		size === '' ||
-		Number(size) === 0 ||
 		assetRate.eq(0) ||
 		!position?.remainingMargin ||
 		position?.remainingMargin.eq(0)
@@ -647,9 +638,11 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 
 	const nativeSize = currencyType === 'native' ? size : wei(size).div(assetRate).toString();
 	const usdSize = currencyType === 'native' ? stipZeros(assetRate.mul(size).toString()) : size;
-	const leverage = wei(usdSize).div(position?.remainingMargin);
-	dispatch(setIsolatedMarginLeverageInput(leverage.toNumber().toFixed(2)));
-
+	const leverage =
+		Number(usdSize) > 0 && position?.remainingMargin.gt(0)
+			? wei(usdSize).div(position?.remainingMargin).toString(2)
+			: '';
+	dispatch(setIsolatedMarginLeverageInput(leverage));
 	dispatch(
 		setIsolatedMarginTradeInputs({
 			susdSize: usdSize,
@@ -1321,3 +1314,24 @@ const monitorAndAwaitTransaction = async (
 	await tx.wait();
 	dispatch(updateTransactionStatus(TransactionStatus.Confirmed));
 };
+
+export const getClosePositionOrderFee = createAsyncThunk<Wei, void, ThunkConfig>(
+	'futures/getClosePositionOrderFee',
+	async (_, { getState, extra: { sdk } }) => {
+		const state = getState();
+		const position = selectPosition(state);
+		const marketInfo = selectMarketInfo(state);
+		try {
+			if (!marketInfo) {
+				throw new Error('No market found');
+			} else if (!position?.position) {
+				throw new Error('No active position in selected market');
+			} else {
+				return sdk.futures.getOrderFee(marketInfo.market, position.position.size.neg());
+			}
+		} catch (err) {
+			notifyError('Failed to get order fee', err);
+			throw err;
+		}
+	}
+);

@@ -49,6 +49,7 @@ export const EXCHANGES_INITIAL_STATE: ExchangeState = {
 	txError: undefined,
 	isApproved: undefined,
 	allowance: undefined,
+	synthSuspensions: {} as ExchangeState['synthSuspensions'],
 };
 
 const exchangeSlice = createSlice({
@@ -167,6 +168,7 @@ const exchangeSlice = createSlice({
 			state.synthsMap = action.payload.synthsMap;
 			state.tokensMap = action.payload.tokensMap;
 			state.tokenList = action.payload.tokenList;
+			state.synthSuspensions = action.payload.synthSuspensions;
 		});
 		builder.addCase(fetchTokenList.rejected, (state) => {
 			state.tokenListStatus = FetchStatus.Error;

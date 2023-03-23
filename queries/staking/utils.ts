@@ -1,7 +1,7 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
+import { NetworkId } from 'sdk/types/common';
 import { formatShortDate, toJSTimestamp } from 'utils/formatters/date';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -29,6 +29,7 @@ export type FuturesFeeForAccountProps = {
 	abstractAccount: string;
 	accountType: string;
 	feesPaid: BigNumber;
+	keeperFeesPaid: BigNumber;
 };
 
 export type FuturesFeeProps = {

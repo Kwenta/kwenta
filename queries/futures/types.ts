@@ -1,8 +1,8 @@
-import { Balances } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
 import { FuturesMarketAsset, FuturesPotentialTradeDetails } from 'sdk/types/futures';
+import { Balances } from 'sdk/types/synths';
 
 export type FuturesOpenInterest = {
 	asset: string;
@@ -84,7 +84,6 @@ export type FuturesPotentialTradeDetailsQuery = {
 	status: 'fetching' | 'complete' | 'idle' | 'error';
 };
 
-export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 export enum FuturesAccountTypes {
 	ISOLATED_MARGIN = 'isolated_margin',
 	CROSS_MARGIN = 'cross_margin',

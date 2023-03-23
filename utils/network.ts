@@ -1,9 +1,7 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { NetworkId } from '@synthetixio/contracts-interface';
 import loadProvider from '@synthetixio/providers';
-import { GasPrice } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import { providers } from 'ethers';
+import { ethers, providers } from 'ethers';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import {
@@ -13,6 +11,8 @@ import {
 	SUPPORTED_NETWORKS,
 	BLAST_NETWORK_LOOKUP,
 } from 'constants/network';
+import { NetworkId } from 'sdk/types/common';
+import { GasPrice } from 'state/app/types';
 
 import logError from './logError';
 
@@ -21,11 +21,13 @@ type EthereumProvider = {
 	chainId: string;
 };
 
+export const staticMainnetProvider = new ethers.providers.InfuraProvider();
+
 export function isSupportedNetworkId(id: NetworkId): boolean {
 	return SUPPORTED_NETWORKS.includes(id);
 }
 
-export async function getDefaultNetworkId(walletConnected: boolean = true): Promise<NetworkId> {
+export async function getDefaultNetworkId(walletConnected = true) {
 	try {
 		if (walletConnected && window.ethereum) {
 			const provider = (await detectEthereumProvider()) as EthereumProvider;
@@ -100,15 +102,13 @@ export const getTransactionPrice = (
 ) => {
 	if (!gasPrice || !gasLimit || !ethPrice) return null;
 	const totalGasPrice = getTotalGasPrice(gasPrice);
-	const extraLayer1Fees = optimismLayerOneFee;
 	const gasPriceCost = totalGasPrice.mul(wei(gasLimit, GWEI_DECIMALS)).mul(ethPrice);
-	const l1Cost = ethPrice.mul(extraLayer1Fees || 0);
-	const txPrice = gasPriceCost.add(l1Cost);
-	return txPrice;
+	const l1Cost = ethPrice.mul(optimismLayerOneFee || 0);
+	return gasPriceCost.add(l1Cost);
 };
 
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;
 
 export const gasPriceInWei = (gasPrice: number) => Math.ceil(gasPrice * GWEI_UNIT); // 🤔 sometimes a float on kovan
 
-export const getIsOVM = (networkId: number): boolean => [10, 69, 420].includes(networkId);
+export const getIsOVM = (networkId: number) => [10, 69, 420].includes(networkId);

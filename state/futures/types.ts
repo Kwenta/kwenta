@@ -1,6 +1,5 @@
 import Wei from '@synthetixio/wei';
 
-import { FuturesAccountType } from 'queries/futures/types';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -17,6 +16,7 @@ import {
 	FuturesMarketKey,
 	FuturesMarketAsset,
 	MarginTransfer,
+	FuturesAccountType,
 } from 'sdk/types/futures';
 import { PricesInfo } from 'state/prices/types';
 import { QueryStatus } from 'state/types';
@@ -64,6 +64,7 @@ export type FuturesQueryStatuses = {
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
 	marginTransfers: QueryStatus;
+	closePositionOrderFee: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -174,6 +175,7 @@ export type FuturesState = {
 			}
 		>;
 	};
+	closePositionOrderFee: string;
 };
 
 export type TradePreviewResult = {

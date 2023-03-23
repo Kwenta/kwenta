@@ -1,8 +1,9 @@
 import { EventEmitter } from 'events';
 
-import { NetworkId } from '@synthetixio/contracts-interface';
 import { Provider as EthCallProvider } from 'ethcall';
 import { ethers } from 'ethers';
+
+import { NetworkId } from 'sdk/types/common';
 
 import * as sdkErrors from './common/errors';
 import {

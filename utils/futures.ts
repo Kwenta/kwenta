@@ -1,7 +1,5 @@
-import { Synth } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
 import { TFunction } from 'i18next';
-import { Dictionary } from 'lodash';
 
 import {
 	FuturesMarket,
@@ -40,11 +38,7 @@ export const getDisplayAsset = (asset: string | null) => {
 	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
 };
 
-export const getSynthDescription = (
-	synth: FuturesMarketAsset,
-	synthsMap: Dictionary<Synth>,
-	t: TFunction
-) => {
+export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => {
 	const assetDisplayName = AssetDisplayByAsset[synth];
 	return t('common.currency.futures-market-short-name', {
 		currencyName: assetDisplayName,
@@ -256,16 +250,14 @@ export const updatePositionUpnl = (
 	const thisPositionHistory = positionHistory.find(
 		({ isOpen, asset }) => isOpen && asset === positionDetails.asset
 	);
+	if (!thisPositionHistory || !position || !offChainPrice) return deserializedPositionDetails;
 
-	const pnl =
-		!!thisPositionHistory && !!position && !!offChainPrice
-			? position.size.mul(
-					thisPositionHistory.avgEntryPrice
-						.sub(offChainPrice)
-						.mul(position.side === PositionSide.LONG ? -1 : 1)
-			  )
-			: undefined;
-	const pnlPct = pnl?.div(position?.initialMargin);
+	const pnl = position.size.mul(
+		thisPositionHistory.avgEntryPrice
+			.sub(offChainPrice)
+			.mul(position.side === PositionSide.LONG ? -1 : 1)
+	);
+	const pnlPct = pnl.div(position.initialMargin.add(thisPositionHistory.netTransfers));
 
 	return {
 		...deserializedPositionDetails,
@@ -610,6 +602,7 @@ export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] 
 		positionSize: t.positionSize.toString(),
 		pnl: t.pnl.toString(),
 		feesPaid: t.feesPaid.toString(),
+		keeperFeesPaid: t.keeperFeesPaid.toString(),
 	}));
 };
 
@@ -622,6 +615,7 @@ export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<
 		positionSize: wei(t.positionSize),
 		pnl: wei(t.pnl),
 		feesPaid: wei(t.feesPaid),
+		keeperFeesPaid: wei(t.keeperFeesPaid),
 	}));
 };
 

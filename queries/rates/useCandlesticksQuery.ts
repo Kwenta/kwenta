@@ -1,6 +1,5 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
-
 import { getCandles } from 'queries/futures/subgraph';
+import { NetworkId } from 'sdk/types/common';
 
 import { getRatesEndpoint, mapCandles, mapPriceChart } from './utils';
 

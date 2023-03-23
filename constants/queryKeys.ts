@@ -1,8 +1,6 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
-
-import { FuturesAccountType } from 'queries/futures/types';
 import { Period } from 'sdk/constants/period';
-import { FuturesMarketAsset } from 'sdk/types/futures';
+import { NetworkId } from 'sdk/types/common';
+import { FuturesAccountType, FuturesMarketAsset } from 'sdk/types/futures';
 
 import { CurrencyKey } from './currency';
 

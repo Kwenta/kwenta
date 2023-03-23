@@ -117,9 +117,12 @@ export const fetchTokenList = createAsyncThunk<any, void, ThunkConfig>(
 	'exchange/fetchTokenList',
 	async (_, { extra: { sdk } }) => {
 		const synthsMap = sdk.exchange.getSynthsMap();
-		const { tokensMap, tokenList } = await sdk.exchange.getOneInchTokens();
+		const [{ tokensMap, tokenList }, synthSuspensions] = await Promise.all([
+			sdk.exchange.getOneInchTokens(),
+			sdk.exchange.getSynthSuspensions(),
+		]);
 
-		return { synthsMap, tokensMap, tokenList };
+		return { synthsMap, tokensMap, tokenList, synthSuspensions };
 	}
 );
 

@@ -2,8 +2,6 @@ import { createTheme, MuiThemeProvider } from '@material-ui/core';
 import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
-import { NetworkId } from '@synthetixio/contracts-interface';
-import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -17,7 +15,7 @@ import { WagmiConfig } from 'wagmi';
 
 import ErrorNotifier from 'components/ErrorView/ErrorNotifier';
 import Connector from 'containers/Connector';
-import { chains, wagmiClient, chain } from 'containers/Connector/config';
+import { chains, wagmiClient } from 'containers/Connector/config';
 import useMonitorTransactions from 'hooks/useMonitorTransactions';
 import AcknowledgementModal from 'sections/app/AcknowledgementModal';
 import Layout from 'sections/shared/Layout';
@@ -46,7 +44,6 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
 
-process.env.GIT_HASH_ID!.toString();
 Sentry.init({
 	dsn:
 		'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',
@@ -61,14 +58,7 @@ Sentry.init({
 });
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
-	const {
-		signer,
-		provider,
-		l2Provider,
-		network,
-		providerReady,
-		defaultSynthetixjs: synthetixjs,
-	} = Connector.useContainer();
+	const { providerReady } = Connector.useContainer();
 
 	useAppData(providerReady);
 	useMonitorTransactions();
@@ -89,29 +79,12 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 			<ThemeProvider theme={theme}>
 				<MuiThemeProvider theme={muiTheme}>
 					<MediaContextProvider>
-						<SynthetixQueryContextProvider
-							value={
-								provider && network && synthetixjs
-									? createQueryContext({
-											provider,
-											signer: signer || undefined,
-											networkId: network.id as NetworkId,
-											synthetixjs,
-									  })
-									: createQueryContext({
-											provider: l2Provider,
-											networkId: chain.optimism.id as NetworkId,
-											synthetixjs,
-									  })
-							}
-						>
-							<Layout>
-								<AcknowledgementModal />
-								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
-							</Layout>
-							<ErrorNotifier />
-							<ReactQueryDevtools position="top-left" />
-						</SynthetixQueryContextProvider>
+						<Layout>
+							<AcknowledgementModal />
+							<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
+						</Layout>
+						<ErrorNotifier />
+						<ReactQueryDevtools position="top-left" />
 					</MediaContextProvider>
 				</MuiThemeProvider>
 			</ThemeProvider>
