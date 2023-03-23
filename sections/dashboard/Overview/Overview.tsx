@@ -206,6 +206,7 @@ const TabButtonsContainer = styled.div`
 	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;
+	padding-left: 16px;
 
 	& > button {
 		&:not(:last-of-type) {
@@ -220,6 +221,7 @@ const SubHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
 	margin-top: 20px;
 	font-variant: all-small-caps;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	margin-left: 16px;
 `;
 
 export default Overview;

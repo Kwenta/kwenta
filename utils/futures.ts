@@ -363,7 +363,7 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 	return markets.map((m) => ({
 		...m,
 		currentFundingRate: wei(m.currentFundingRate),
-		currentFundingVelocity: wei(m.currentFundingVelocity),
+		currentFundingVelocity: wei(m.currentFundingVelocity ?? 0),
 		feeRates: {
 			makerFee: wei(m.feeRates.makerFee),
 			takerFee: wei(m.feeRates.takerFee),

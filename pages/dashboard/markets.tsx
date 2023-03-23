@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import Markets from 'sections/dashboard/Markets';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { fetchMarkets } from 'state/futures/actions';
 import { useAppSelector, usePollAction } from 'state/hooks';
 import { selectNetwork } from 'state/wallet/selectors';
@@ -21,7 +20,6 @@ const MarketsPage: MarketsProps = () => {
 				<title>{t('dashboard-markets.page-title')}</title>
 			</Head>
 			<Markets />
-			<GitHashID />
 		</>
 	);
 };

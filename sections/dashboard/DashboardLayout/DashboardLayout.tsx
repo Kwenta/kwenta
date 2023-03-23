@@ -9,7 +9,7 @@ import { TabList, TabPanel } from 'components/Tab';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { MainContent, LeftSideContent, FullHeightContainer, PageContent } from 'styles/common';
+import { LeftSideContent, PageContent } from 'styles/common';
 
 import Links from '../Links';
 
@@ -88,7 +88,7 @@ const DashboardLayout: FC = ({ children }) => {
 			<DesktopOnlyView>
 				<PageContent>
 					<StyledFullHeightContainer>
-						<LeftSideContent>
+						<StyledLeftSideContent>
 							<StyledTabList>
 								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
 								{TABS.slice(0, 3).map(({ name, label, active, ...rest }) => (
@@ -105,7 +105,7 @@ const DashboardLayout: FC = ({ children }) => {
 								))}
 							</StyledTabList>
 							<Links />
-						</LeftSideContent>
+						</StyledLeftSideContent>
 						<MainContent>
 							<TabPanel name={activeTab} activeTab={activeTab}>
 								{children}
@@ -138,8 +138,21 @@ const TabGroupTitle = styled.div`
 	}
 `;
 
-const StyledFullHeightContainer = styled(FullHeightContainer)`
-	padding-top: 14px;
+const StyledLeftSideContent = styled(LeftSideContent)`
+	padding: 15px;
+`;
+
+const MainContent = styled.div`
+	overflow-y: scroll;
+	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+`;
+
+const StyledFullHeightContainer = styled.div`
+	display: grid;
+	grid-template-columns: 324px 1fr;
+	/*height: calc(100% - 56px);*/
+	height: 100%;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 export default DashboardLayout;
