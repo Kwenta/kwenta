@@ -138,15 +138,15 @@ const TabGroupTitle = styled.div`
 	}
 `;
 
-const StyledLeftSideContent = styled(LeftSideContent)`
-	padding: 15px;
-`;
-
 const MainContent = styled.div`
 	overflow-y: scroll;
 	margin: 0 auto;
 	width: 100%;
 	max-width: 1080px;
+`;
+
+const StyledLeftSideContent = styled(LeftSideContent)`
+	padding-top: 15px;
 `;
 
 const StyledFullHeightContainer = styled.div`
