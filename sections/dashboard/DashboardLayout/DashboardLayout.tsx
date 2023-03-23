@@ -144,14 +144,17 @@ const StyledLeftSideContent = styled(LeftSideContent)`
 
 const MainContent = styled.div`
 	overflow-y: scroll;
-	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+	margin: 0 auto;
+	width: 100%;
+	max-width: 1080px;
 `;
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: 180px 1fr;
+	grid-template-columns: auto 1fr;
 	height: 100%;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	padding: 0 15px;
 `;
 
 export default DashboardLayout;

@@ -78,7 +78,6 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 			<MobileHiddenView>
 				<div>
 					<Table
-						rounded={false}
 						data={data}
 						showPagination
 						highlightRowsOnHover

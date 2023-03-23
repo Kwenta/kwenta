@@ -119,7 +119,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					<Table
 						data={data}
 						showPagination
-						rounded={false}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}

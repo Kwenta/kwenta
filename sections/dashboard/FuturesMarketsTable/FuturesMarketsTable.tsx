@@ -72,7 +72,6 @@ const FuturesMarketsTable: FC = () => {
 			<DesktopOnlyView>
 				<TableContainer>
 					<StyledTable
-						rounded={false}
 						data={data}
 						showPagination
 						onTableRowClick={(row) => {
