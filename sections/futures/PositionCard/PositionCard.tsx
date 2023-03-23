@@ -229,14 +229,11 @@ const RealizedPNLRow = memo(() => {
 			.add(positionHistory?.netFunding)
 			.add(position?.position?.accruedFunding ?? zeroBN)
 			.sub(positionHistory?.feesPaid) ?? zeroBN;
-	const realizedPnlPct = realizedPnl.abs().gt(0)
-		? realizedPnl.div(positionHistory?.initialMargin.add(positionHistory?.totalDeposits))
-		: zeroBN;
 	const realizedPnlText =
 		positionHistory && realizedPnl
 			? `${formatDollars(realizedPnl, {
 					minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
-			  })} (${formatPercent(realizedPnlPct)})`
+			  })}`
 			: NO_VALUE;
 
 	const rpnlTooltipContent = useMemo(() => {

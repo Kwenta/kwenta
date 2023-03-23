@@ -18,6 +18,7 @@ import {
 	FuturesMarketKey,
 	FuturesMarketAsset,
 	MarginTransfer,
+	FuturesAccountType,
 } from 'sdk/types/futures';
 import { PricesInfo } from 'state/prices/types';
 import { QueryStatus } from 'state/types';

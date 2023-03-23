@@ -53,7 +53,10 @@ const useGetFuturesTrades = (
 						positionClosed: true,
 						pnl: true,
 						feesPaid: true,
+						keeperFeesPaid: true,
 						orderType: true,
+						fundingAccrued: true,
+						trackingCode: true,
 					}
 				);
 				return response ? mapTrades(response) : null;
