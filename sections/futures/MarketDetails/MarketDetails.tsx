@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
-import { FlexDivCentered } from 'components/layout/flex';
 import { NO_VALUE } from 'constants/placeholder';
 import {
 	selectMarketAsset,
@@ -27,13 +26,8 @@ type MarketDetailsProps = {
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
-		<FlexDivCentered>
-			{!mobile && (
-				<MarketDropDownContainer>
-					<MarketsDropdown />
-				</MarketDropDownContainer>
-			)}
-
+		<MainContainer>
+			<MarketsDropdown />
 			<MarketDetailsContainer mobile={mobile}>
 				<MarketPriceDetail />
 				<IndexPriceDetail />
@@ -42,7 +36,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				<OpenInterestLongDetail />
 				<OpenInterestShortDetail />
 			</MarketDetailsContainer>
-		</FlexDivCentered>
+		</MainContainer>
 	);
 };
 
@@ -147,22 +141,31 @@ const OpenInterestShortDetail = memo(() => {
 	);
 });
 
+const MainContainer = styled.div`
+	display: flex;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	align-items: center;
+	height: 67px;
+`;
+
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
-	height: 55px;
+	height: 100%;
 	padding: 10px 45px 10px 15px;
-	margin-bottom: 16px;
 	box-sizing: border-box;
 	overflow-x: scroll;
 	scrollbar-width: none;
 
 	display: flex;
-	justify-content: space-between;
-	align-items: start;
+	align-items: center;
 
-	border-radius: 10px;
 	box-sizing: border-box;
+
+	& > div {
+		margin-right: 30px;
+	}
 
 	${media.lessThan('xl')`
 		& > div {
@@ -170,8 +173,12 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		}
 	`}
 
+	.heading, .value {
+		white-space: nowrap;
+	}
+
 	${(props) => css`
-		border: ${props.theme.colors.selectedTheme.border};
+		border-left: ${props.theme.colors.selectedTheme.border};
 
 		.heading {
 			color: ${props.theme.colors.selectedTheme.text.label};
@@ -192,14 +199,8 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		.paused {
 			color: ${props.theme.colors.selectedTheme.gray};
 		}
-	`}
 
-	.heading, .value {
-		white-space: nowrap;
-	}
-
-	${(props) =>
-		props.mobile &&
+		${props.mobile &&
 		css`
 			height: auto;
 			padding: 15px;
@@ -211,14 +212,7 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 				margin-bottom: 2px;
 			}
 		`}
-`;
-
-const MarketDropDownContainer = styled.div`
-	width: 280px;
-	margin-right: 15px;
-	@media (min-width: 1200px) {
-		display: none;
-	}
+	`}
 `;
 
 export default MarketDetails;

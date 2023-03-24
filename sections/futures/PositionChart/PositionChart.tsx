@@ -10,7 +10,6 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import media from 'styles/media';
 
 export default function PositionChart() {
 	const position = useAppSelector(selectPosition);
@@ -66,13 +65,8 @@ export default function PositionChart() {
 }
 
 const Container = styled.div<{ visible: boolean }>`
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	${media.lessThan('md')`
-		border: none;
-	`}
-	border-radius: 10px;
-	padding: 3px;
-	min-height: 450px;
+	height: calc(100% - 315px);
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;

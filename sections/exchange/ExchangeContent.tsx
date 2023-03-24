@@ -14,7 +14,6 @@ const ExchangeContent = memo(() => (
 			<StyledFullHeightContainer>
 				<MainContent>
 					<BasicSwap />
-					<GitHashID />
 				</MainContent>
 			</StyledFullHeightContainer>
 		</DesktopOnlyView>

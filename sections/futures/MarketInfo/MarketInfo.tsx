@@ -1,9 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { MainContent } from 'styles/common';
-
-import MarketDetails from '../MarketDetails';
 import PositionChart from '../PositionChart';
 import UserInfo from '../UserInfo';
 import MarketHead from './MarketHead';
@@ -11,16 +8,16 @@ import MarketHead from './MarketHead';
 const MarketInfo: React.FC = React.memo(() => (
 	<Container>
 		<MarketHead />
-		<MarketDetails />
 		<PositionChart />
 		<UserInfo />
 	</Container>
 ));
 
-const Container = styled(MainContent)`
-	margin: unset;
-	max-width: unset;
-	padding-bottom: 20px;
+const Container = styled.div`
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	border-left: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 export default MarketInfo;

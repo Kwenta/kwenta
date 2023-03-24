@@ -68,6 +68,7 @@ export const CurrencyLabel = styled.div`
 
 const Container = styled.div`
 	width: 100%;
+	height: 100%;
 `;
 
 export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
@@ -76,9 +77,10 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		margin-left: 12px;
 	}
 
+	width: 380px;
+	height: 100%;
+
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: ${(props) => (props.mobile ? 0 : '10px')};
 	padding: 10px;
 	cursor: pointer;
 	background: ${(props) => props.theme.colors.selectedTheme.background};

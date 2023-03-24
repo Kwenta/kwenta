@@ -115,7 +115,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<>
 			<DesktopOnlyView>
 				<div>
-					<LegacyLink />
+					{/* <LegacyLink /> */}
 					<Table
 						data={data}
 						showPagination

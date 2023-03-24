@@ -9,7 +9,6 @@ import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import StepOne from 'sections/earn/StepOne';
 import StepTwo from 'sections/earn/StepTwo';
 import { Heading } from 'sections/earn/text';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { getEarnDetails } from 'state/earn/actions';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
@@ -51,7 +50,6 @@ const EarnPage: EarnPageProps = () => {
 						<StyledBody>{t('dashboard.earn.copy')}</StyledBody>
 						<StepOne />
 						<StepTwo />
-						<GitHashID />
 					</EarnContent>
 				</FullHeightContainer>
 			</PageContent>
