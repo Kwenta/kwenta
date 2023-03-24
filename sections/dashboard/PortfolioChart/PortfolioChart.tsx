@@ -1,11 +1,17 @@
+import Link from 'next/link';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import styled, { useTheme } from 'styled-components';
 
+import Logo from 'assets/svg/brand/logo-only.svg';
+import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { Body, NumericValue } from 'components/Text';
+import { TableNoResults } from 'components/Table';
+import { Body, NumericValue, Heading } from 'components/Text';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
+import ROUTES from 'constants/routes';
 import { Period } from 'sdk/constants/period';
 import {
 	selectBuyingPower,
@@ -25,6 +31,22 @@ type PriceChartProps = {
 	setHoverTitle: (data: string | null) => void;
 };
 
+const ChartCTA = () => {
+	const { t } = useTranslation();
+	return (
+		<TableNoResults>
+			<Logo />
+			<Heading variant="h3">{t('dashboard.overview.portfolio-chart.welcome')}</Heading>
+			<Body color={'secondary'}>{t('dashboard.overview.portfolio-chart.hero')}</Body>
+			<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
+				<Button variant="flat" size="medium">
+					{t('homepage.nav.trade-now')}
+				</Button>
+			</Link>
+		</TableNoResults>
+	);
+};
+
 const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 	const theme = useTheme();
 	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe);
@@ -42,6 +64,7 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 		<ResponsiveContainer width="100%" height="100%">
 			<LineChart
 				data={portfolioData}
+				margin={{ top: 12, bottom: 0, left: 8, right: 0 }}
 				onMouseLeave={() => {
 					setHoverValue(null);
 					setHoverTitle(null);
@@ -76,8 +99,8 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 				/>
 				<Tooltip content={<></>} />
 				<Legend
-					verticalAlign="bottom"
-					height={16}
+					verticalAlign="top"
+					align="left"
 					formatter={(value) => (value === 'total' ? 'Isolated Margin' : value)}
 				/>
 				<Line
@@ -151,45 +174,47 @@ const PortfolioChart: FC = () => {
 							{formatDollars(buyingPower, { suggestDecimals: true })}
 						</NumericValue>
 					</GridBox>
-					<ChartContainer>
-						{!!total && portfolioData.length >= 2 ? (
-							<>
-								<TopBar>
-									<TimeframeOverlay>
-										<Timeframe />
-									</TimeframeOverlay>
-								</TopBar>
-								<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
-							</>
-						) : (
-							<></>
-						)}
-					</ChartContainer>
+					{!!total && portfolioData.length >= 2 ? (
+						<ChartContainer>
+							<TopBar>
+								<TimeframeOverlay>
+									<Timeframe />
+								</TimeframeOverlay>
+							</TopBar>
+							<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
+						</ChartContainer>
+					) : (
+						<ChartContainer>
+							<ChartCTA />
+						</ChartContainer>
+					)}
 				</ChartGrid>
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<MobileChartGrid>
-					<ChartOverlay>
-						<PortfolioTitle>Portfolio Value</PortfolioTitle>
-						<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
-						<NumericValue colored value={changeValue.value ?? zeroBN}>
-							{changeValue.text}&nbsp;
-						</NumericValue>
-					</ChartOverlay>
-					<ChartContainer>
-						{!!total && portfolioData.length >= 2 ? (
-							<>
+					{!!total && portfolioData.length >= 2 ? (
+						<>
+							<ChartOverlay>
+								<PortfolioTitle>Portfolio Value</PortfolioTitle>
+								<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
+								<NumericValue colored value={changeValue.value ?? zeroBN}>
+									{changeValue.text}&nbsp;
+								</NumericValue>
+							</ChartOverlay>
+							<ChartContainer>
 								<TopBar>
 									<TimeframeOverlay>
 										<Timeframe />
 									</TimeframeOverlay>
 								</TopBar>
 								<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
-							</>
-						) : (
-							<></>
-						)}
-					</ChartContainer>
+							</ChartContainer>
+						</>
+					) : (
+						<ChartContainer>
+							<ChartCTA />
+						</ChartContainer>
+					)}
 				</MobileChartGrid>
 			</MobileOnlyView>
 		</>
@@ -197,19 +222,22 @@ const PortfolioChart: FC = () => {
 };
 
 const ChartContainer = styled.div`
-	display: flex;
-	flex-direction: column;
+	position: relative;
 	grid-row-end: span 3;
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
-	margin: 0 4px 0 4px;
+	padding: 0 8px 0 8px;
 `;
 
 const TopBar = styled.div`
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 3;
 	display: flex;
 	flex-direction: row;
 	justify-content: end;
 	align-items: center;
-	padding: 10px 10px 0 0;
+	padding: 8px 8px 0 0;
 `;
 
 const StyledPriceChart = styled(PriceChart)``;

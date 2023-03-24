@@ -27,16 +27,16 @@ const StyledBtn = styled.div<{ isActive: boolean }>`
 		props.isActive ? props.theme.colors.selectedTheme.background : ''};
 	color: ${(props) =>
 		props.isActive
-			? props.theme.colors.common.primaryWhite
-			: props.theme.colors.common.secondaryGray};
+			? props.theme.colors.selectedTheme.text.value
+			: props.theme.colors.selectedTheme.gray2};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 11px;
 	text-align: center;
-	text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
 
 	&:hover,
 	&:active {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
+		cursor: pointer;
 	}
 
 	&:before {
