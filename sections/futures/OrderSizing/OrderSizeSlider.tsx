@@ -12,7 +12,7 @@ import {
 	selectCrossMarginMarginDelta,
 	selectLeverageSide,
 	selectMaxLeverage,
-	selectMaxUsdInputAmount,
+	selectMaxUsdSizeInput,
 	selectPosition,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
@@ -26,7 +26,7 @@ export default function OrderSizeSlider() {
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
-	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
 	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
 
 	const [percent, setPercent] = useState(0);

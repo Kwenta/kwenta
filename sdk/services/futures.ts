@@ -710,7 +710,7 @@ export default class FuturesService {
 		]);
 	}
 
-	public async depositCrossMargin(crossMarginAddress: string, amount: Wei) {
+	public async depositCrossMarginAccount(crossMarginAddress: string, amount: Wei) {
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
@@ -722,7 +722,7 @@ export default class FuturesService {
 		]);
 	}
 
-	public async withdrawCrossMargin(crossMarginAddress: string, amount: Wei) {
+	public async withdrawCrossMarginAccount(crossMarginAddress: string, amount: Wei) {
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
@@ -730,7 +730,23 @@ export default class FuturesService {
 
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
 			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
-			[defaultAbiCoder.encode(['int256'], [amount.neg().toBN()])],
+			[defaultAbiCoder.encode(['int256'], [amount.toBN()])],
+		]);
+	}
+
+	public async modifySmartMarginMarketMargin(
+		crossMarginAddress: string,
+		marketAddress: string,
+		marginDelta: Wei
+	) {
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+			[AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN],
+			[encodeModidyMarketMarginParams(marketAddress, marginDelta)],
 		]);
 	}
 
@@ -839,9 +855,10 @@ export default class FuturesService {
 		const idleMargin = await this.getIdleMargin(walletAddress, crossMarginAddress);
 		const { freeMargin } = await this.getCrossMarginBalanceInfo(walletAddress, crossMarginAddress);
 
-		// Sweep idle margin from markets to account
+		// Sweep idle margin from other markets to account
 		if (idleMargin.marketsTotal.gt(0)) {
 			idleMargin.marketsWithMargin.forEach((m) => {
+				if (m.marketKey === market.key) return;
 				commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
 				inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
 			});
@@ -875,7 +892,7 @@ export default class FuturesService {
 				inputs.push(encodeModidyMarketMarginParams(market.address, marginDeltaMinusFees));
 				commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
 				inputs.push(
-					encodeSubmitOffchainOrderParams(market.address, order.sizeDelta, order.priceImpactDelta)
+					encodeSubmitOffchainOrderParams(market.address, order.sizeDelta, order.desiredFillPrice)
 				);
 			} else {
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
@@ -887,7 +904,7 @@ export default class FuturesService {
 						price: order.conditionalOrderInputs!.price,
 					},
 					order.conditionalOrderInputs.orderType,
-					order.priceImpactDelta,
+					order.desiredFillPrice,
 					order.conditionalOrderInputs!.reduceOnly
 				);
 				inputs.push(params);
@@ -926,7 +943,7 @@ export default class FuturesService {
 						price: order.takeProfit.price,
 					},
 					ConditionalOrderTypeEnum.LIMIT,
-					order.priceImpactDelta,
+					order.desiredFillPrice,
 					true
 				);
 				inputs.push(encodedParams);
@@ -948,7 +965,7 @@ export default class FuturesService {
 						price: order.stopLoss.price,
 					},
 					ConditionalOrderTypeEnum.STOP,
-					order.priceImpactDelta,
+					order.desiredFillPrice,
 					true
 				);
 				inputs.push(encodedParams);

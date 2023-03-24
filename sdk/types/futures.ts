@@ -398,7 +398,7 @@ export type MarketWithIdleMargin = {
 export type SmartMarginOrderInputs = {
 	sizeDelta: Wei;
 	marginDelta: Wei;
-	priceImpactDelta: Wei;
+	desiredFillPrice: Wei;
 	timeDelta?: Wei;
 	conditionalOrderInputs?: {
 		orderType: ConditionalOrderTypeEnum;

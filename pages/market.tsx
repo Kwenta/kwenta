@@ -8,6 +8,7 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
+import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
 import MarketDetails from 'sections/futures/MarketDetails';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
@@ -109,6 +110,7 @@ const Market: MarketComponent = () => {
 			<MobileOrTabletView>
 				<MobileTrade />
 			</MobileOrTabletView>
+			{openModal === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"

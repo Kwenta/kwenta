@@ -14,7 +14,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PillButtonSpan } from 'styles/common';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
 
-import EditLeverageModal from './EditCrossMarginLeverageModal';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
 
 function MarginInfoBox() {
@@ -63,9 +62,7 @@ function MarginInfoBox() {
 				/>
 				<InfoBoxRow title="Account margin" value={formatDollars(freeMargin)} />
 				<InfoBoxRow title="Market margin" value={formatDollars(position?.remainingMargin || '0')} />
-				{openModal === 'futures_edit_input_leverage' && (
-					<EditLeverageModal editMode="new_position" />
-				)}
+
 				{openModal === 'futures_withdraw_keeper_balance' && (
 					<ManageKeeperBalanceModal defaultType="withdraw" />
 				)}

@@ -23,6 +23,7 @@ import {
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
 import { selectWallet } from 'state/wallet/selectors';
 
+import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
 import ShareModal from '../ShareModal';
 import Trades from '../Trades';
@@ -192,6 +193,7 @@ const UserInfo: React.FC = memo(() => {
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
+				<PositionCard />
 				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>

@@ -314,7 +314,7 @@ const LeverageRow = memo(() => {
 					)}
 				</StyledValue>
 				{position?.position && futuresAccountType === 'cross_margin' && (
-					<PillButtonDiv onClick={() => dispatch(setOpenModal('futures_cross_leverage'))}>
+					<PillButtonDiv onClick={() => dispatch(setOpenModal('futures_edit_position_margin'))}>
 						Edit
 					</PillButtonDiv>
 				)}

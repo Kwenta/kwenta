@@ -49,6 +49,7 @@ import {
 	CrossMarginAccountData,
 	CrossMarginState,
 	CrossMarginTradeFees,
+	EditPositionInputs,
 	FuturesState,
 	InputCurrencyDenomination,
 	IsolatedAccountData,
@@ -100,6 +101,10 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedLeverageByAsset: {},
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
+		editPositionInputs: {
+			nativeSizeDelta: '',
+			marginDelta: '',
+		},
 		fees: ZERO_CM_FEES,
 		tradePreview: null,
 		marginDelta: '0',
@@ -126,6 +131,10 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		orderType: 'delayed_offchain',
 		tradePreview: null,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
+		editPositionInputs: {
+			nativeSizeDelta: '',
+			marginDelta: '',
+		},
 		priceImpact: DEFAULT_PRICE_IMPACT_DELTA,
 		tradeFee: '0',
 		leverageInput: '0',
@@ -177,6 +186,12 @@ const futuresSlice = createSlice({
 		setCrossMarginTradeInputs: (state, action: PayloadAction<TradeSizeInputs<string>>) => {
 			state.crossMargin.tradeInputs = action.payload;
 		},
+		setCrossMarginEditPositionInputs: (
+			state,
+			action: PayloadAction<EditPositionInputs<string>>
+		) => {
+			state.crossMargin.editPositionInputs = action.payload;
+		},
 		setCrossMarginOrderPrice: (state, action: PayloadAction<string>) => {
 			state.crossMargin.orderPrice.price = action.payload;
 		},
@@ -188,6 +203,12 @@ const futuresSlice = createSlice({
 		},
 		setIsolatedMarginTradeInputs: (state, action: PayloadAction<TradeSizeInputs<string>>) => {
 			state.isolatedMargin.tradeInputs = action.payload;
+		},
+		setIsolatedMarginEditPositionInputs: (
+			state,
+			action: PayloadAction<EditPositionInputs<string>>
+		) => {
+			state.isolatedMargin.editPositionInputs = action.payload;
 		},
 		setSelectedInputDenomination: (state, action: PayloadAction<InputCurrencyDenomination>) => {
 			state.selectedInputDenomination = action.payload;
@@ -677,6 +698,8 @@ export const {
 	setShowCrossMarginOnboard,
 	setSelectedTrader,
 	setSelectedInputDenomination,
+	setCrossMarginEditPositionInputs,
+	setIsolatedMarginEditPositionInputs,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

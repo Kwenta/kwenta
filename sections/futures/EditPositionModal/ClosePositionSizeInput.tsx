@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
-import { editTradeSizeInput } from 'state/futures/actions';
+import { APP_MAX_LEVERAGE } from 'constants/futures';
+import { editCrossMarginPositionSize, editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketPrice,
 	selectPosition,
@@ -13,35 +14,30 @@ import {
 	selectCrossMarginOrderPrice,
 	selectOrderType,
 	selectLeverageSide,
-	selectFuturesType,
 	selectSelectedInputDenomination,
-	selectMaxUsdSizeInput,
-	selectCrossMarginMarginDelta,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
 
-import { DenominationToggle } from './DenominationToggle';
+import { DenominationToggle } from '../OrderSizing/DenominationToggle';
 
 type OrderSizingProps = {
 	isMobile?: boolean;
-	disabled?: boolean;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) => {
+const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 	const dispatch = useAppDispatch();
 
 	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs);
 
 	const position = useAppSelector(selectPosition);
-	const selectedAccountType = useAppSelector(selectFuturesType);
 	const orderType = useAppSelector(selectOrderType);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const selectedLeverageSide = useAppSelector(selectLeverageSide);
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
-	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
-	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
+
+	const maxUsdInputAmount = position?.remainingMargin.mul(APP_MAX_LEVERAGE) ?? zeroBN;
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
@@ -55,7 +51,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 
 	const onSizeChange = useCallback(
 		(value: string, assetType: 'native' | 'usd') => {
-			dispatch(editTradeSizeInput(value, assetType));
+			dispatch(editCrossMarginPositionSize(value, assetType));
 		},
 		[dispatch]
 	);
@@ -79,12 +75,6 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 		[dispatch, assetInputType]
 	);
 
-	const isDisabled = useMemo(() => {
-		const remaining =
-			selectedAccountType === 'isolated_margin' ? position?.remainingMargin || zeroBN : marginDelta;
-		return remaining.lte(0) || disabled;
-	}, [position?.remainingMargin, disabled, selectedAccountType, marginDelta]);
-
 	const showPosSizeHelper =
 		position?.position?.size &&
 		(orderType === 'limit' || orderType === 'stop_market') &&
@@ -101,9 +91,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	return (
 		<OrderSizingContainer>
 			<OrderSizingRow>
-				<InputTitle>
-					Amount&nbsp; —<span>&nbsp; Set order size</span>
-				</InputTitle>
+				<InputTitle>New position size</InputTitle>
 				<InputHelpers>
 					<MaxButton onClick={handleSetMax}>Max</MaxButton>
 					{showPosSizeHelper && (
@@ -114,8 +102,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 
 			<NumericInput
 				invalid={invalid}
-				dataTestId={'set-order-size-amount-susd' + (isMobile ? '-mobile' : '-desktop')}
-				disabled={isDisabled}
+				dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
 				right={<DenominationToggle />}
 				value={assetInputType === 'usd' ? susdSizeString : nativeSizeString}
 				placeholder="0.00"
@@ -152,4 +139,4 @@ const InputHelpers = styled.div`
 	display: flex;
 `;
 
-export default OrderSizing;
+export default ClosePositionSizeInput;

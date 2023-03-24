@@ -29,7 +29,7 @@ import {
 	selectCrossMarginMarginDelta,
 	selectLeverageSide,
 	selectPendingDelayedOrder,
-	selectMaxUsdInputAmount,
+	selectMaxUsdSizeInput,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -57,7 +57,7 @@ const ManagePosition: React.FC = () => {
 	const orderType = useAppSelector(selectOrderType);
 	const openOrder = useAppSelector(selectPendingDelayedOrder);
 	const leverageSide = useAppSelector(selectLeverageSide);
-	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);

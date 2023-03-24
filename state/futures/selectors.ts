@@ -12,6 +12,7 @@ import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
+import { FetchStatus } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeOrderFee, sameSide } from 'utils/costCalculations';
 import { getKnownError } from 'utils/formatters/error';
@@ -149,11 +150,6 @@ export const selectMarketInfo = createSelector(
 	(markets, selectedMarket) => {
 		return markets.find((market) => market.marketKey === selectedMarket);
 	}
-);
-
-export const selectIsolatedPriceImpact = createSelector(
-	(state: RootState) => state.futures.isolatedMargin.priceImpact,
-	(priceImpact) => wei(priceImpact)
 );
 
 export const selectOrderType = createSelector(
@@ -591,9 +587,7 @@ export const selectCrossMarginTradeInputs = createSelector(
 
 export const selectIsolatedMarginTradeInputs = createSelector(
 	selectLeverageSide,
-	(state: RootState) => {
-		return state.futures.isolatedMargin.tradeInputs;
-	},
+	(state: RootState) => state.futures.isolatedMargin.tradeInputs,
 	(side, tradeInputs) => {
 		const inputs = unserializeTradeInputs(tradeInputs);
 		const deltas = {
@@ -606,6 +600,20 @@ export const selectIsolatedMarginTradeInputs = createSelector(
 			susdSizeString: tradeInputs.susdSize,
 			nativeSizeString: tradeInputs.nativeSize,
 		};
+	}
+);
+
+export const selectCrossMarginEditPosInputs = (state: RootState) =>
+	state.futures.crossMargin.editPositionInputs;
+export const selectIsolatedMarginEditPosInputs = (state: RootState) =>
+	state.futures.crossMargin.editPositionInputs;
+
+export const selectEditPositionInputs = createSelector(
+	selectFuturesType,
+	selectCrossMarginEditPosInputs,
+	selectIsolatedMarginEditPosInputs,
+	(type, crossMarginInputs, isolatedInputs) => {
+		return type === 'cross_margin' ? crossMarginInputs : isolatedInputs;
 	}
 );
 
@@ -653,6 +661,22 @@ export const selectSlTpTradeInputs = createSelector(
 		stopLossPrice: tradeInputs.stopLossPrice || '',
 		takeProfitPrice: tradeInputs.takeProfitPrice || '',
 	})
+);
+
+export const selectIsolatedPriceImpact = createSelector(
+	(state: RootState) => state.futures.isolatedMargin.priceImpact,
+	(priceImpact) => wei(priceImpact)
+);
+
+export const selectDesiredFillPrice = createSelector(
+	selectIsolatedPriceImpact,
+	selectTradeSizeInputs,
+	selectMarketPrice,
+	(priceImpact, { nativeSizeDelta }, marketPrice) => {
+		return nativeSizeDelta.lt(0)
+			? marketPrice.mul(wei(1).sub(priceImpact))
+			: marketPrice.mul(priceImpact.add(1));
+	}
 );
 
 export const selectCrossMarginOrderPrice = (state: RootState) =>
@@ -770,6 +794,16 @@ export const selectTradePreviewError = createSelector(
 		return type === 'cross_margin'
 			? futures.queryStatuses.crossMarginTradePreview.error
 			: futures.queryStatuses.isolatedTradePreview.error;
+	}
+);
+
+export const selectIsFetchingTradePreview = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		return type === 'cross_margin'
+			? futures.queryStatuses.crossMarginTradePreview.status === FetchStatus.Loading
+			: futures.queryStatuses.isolatedTradePreview.status === FetchStatus.Loading;
 	}
 );
 
@@ -945,15 +979,18 @@ export const selectOrderFee = createSelector(
 	}
 );
 
-export const selectMaxUsdInputAmount = createSelector(
+export const selectMaxUsdSizeInput = createSelector(
 	selectFuturesType,
 	selectPosition,
 	selectMaxLeverage,
 	selectMarginDeltaInputValue,
 	(futuresType, position, maxLeverage, marginDelta) => {
+		// const margin =
+		// 	futuresType === 'cross_margin'
+		// 		? wei(marginDelta || 0).add(position?.accessibleMargin || 0)
+		// 		: position?.remainingMargin ?? wei(0);
 		const margin =
-			futuresType === 'cross_margin' ? wei(marginDelta || 0) : position?.remainingMargin ?? wei(0);
-
+			futuresType === 'cross_margin' ? marginDelta || 0 : position?.remainingMargin ?? wei(0);
 		return maxLeverage.mul(margin);
 	}
 );

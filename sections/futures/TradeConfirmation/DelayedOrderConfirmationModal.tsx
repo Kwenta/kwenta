@@ -162,7 +162,6 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const handleConfirmOrder = () => {
 		dispatch(
 			modifyIsolatedPosition({
-				sizeDelta: nativeSizeDelta,
 				delayed: true,
 				offchain: orderType === 'delayed_offchain',
 			})
