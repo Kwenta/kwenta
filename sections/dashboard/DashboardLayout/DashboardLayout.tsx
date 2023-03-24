@@ -140,6 +140,7 @@ const TabGroupTitle = styled.div`
 
 const MainContent = styled.div`
 	overflow-y: scroll;
+	scrollbar-width: none;
 	margin: 0 auto;
 	width: 100%;
 	max-width: 1080px;
