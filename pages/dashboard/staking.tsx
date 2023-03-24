@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio';
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions';
 
@@ -40,7 +39,6 @@ const StakingPage: StakingComponent = () => {
 			</Head>
 			<StakingPortfolio setCurrentTab={setCurrentTab} />
 			<StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />
-			<GitHashID />
 		</>
 	);
 };

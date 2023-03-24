@@ -69,8 +69,10 @@ export const AbsoluteCenteredDiv = styled.div`
 `;
 
 export const PageContent = styled.section`
-	position: relative;
+	display: flex;
+	flex-direction: column;
 	width: 100%;
+	height: 100%;
 	${(props) => props.theme.animations.show};
 `;
 
@@ -82,14 +84,9 @@ export const FixedFooterMixin = `
 	border-radius: 0;
 `;
 
-export const FullScreenContainer = styled(FlexDiv)`
-	flex-flow: column;
+export const FullScreenContainer = styled.div`
 	width: 100%;
-	height: auto;
-	position: relative;
-	overflow-y: visible;
-	padding: 25px 25px 0;
-	margin: 0 auto;
+	height: 100%;
 
 	${media.lessThan('sm')`
 		padding: 20px 15px 0;
@@ -107,13 +104,10 @@ export const FullHeightContainer = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
 	flex-grow: 1;
-	height: auto;
-	position: relative;
 	gap: 10px;
 `;
 
 export const MainContent = styled(FlexDiv)`
-	position: relative;
 	flex-grow: 1;
 	flex-direction: column;
 	margin: 0 auto;
@@ -122,13 +116,11 @@ export const MainContent = styled(FlexDiv)`
 
 export const RightSideContent = styled.div`
 	background-color: transparent;
-	position: relative;
 	height: auto;
 `;
 
 export const LeftSideContent = styled.div`
 	background-color: transparent;
-	position: relative;
 	height: auto;
 `;
 

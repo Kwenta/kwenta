@@ -13,7 +13,7 @@ import { EXTERNAL_LINKS, PROD_HOSTNAME } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 import Logo from 'sections/shared/Layout/Logo';
 import { useAppSelector } from 'state/hooks';
-import { PageContent, FullScreenContainer, ExternalLink } from 'styles/common';
+import { PageContent, ExternalLink } from 'styles/common';
 import media from 'styles/media';
 
 type SystemStatusProps = {
@@ -55,25 +55,23 @@ const SystemStatus: FC<SystemStatusProps> = memo(({ children }) => {
 			<Head>
 				<title>{t('system-status.page-title')}</title>
 			</Head>
-			<FullScreenContainer>
-				<StyledPageContent>
-					<Header>
-						<Logo />
-					</Header>
-					<Container>
-						<StyledSystemDownIcon />
-						<Title>{t('system-status.title')}</Title>
-						<Subtitle>{t('system-status.subtitle')}</Subtitle>
-						<Links>
-							{SOCIAL_LINKS.map(({ id, href, icon }) => (
-								<StyledExternalLink key={id} href={href}>
-									{icon}
-								</StyledExternalLink>
-							))}
-						</Links>
-					</Container>
-				</StyledPageContent>
-			</FullScreenContainer>
+			<StyledPageContent>
+				<Header>
+					<Logo />
+				</Header>
+				<Container>
+					<StyledSystemDownIcon />
+					<Title>{t('system-status.title')}</Title>
+					<Subtitle>{t('system-status.subtitle')}</Subtitle>
+					<Links>
+						{SOCIAL_LINKS.map(({ id, href, icon }) => (
+							<StyledExternalLink key={id} href={href}>
+								{icon}
+							</StyledExternalLink>
+						))}
+					</Links>
+				</Container>
+			</StyledPageContent>
 		</>
 	) : (
 		<>{children}</>

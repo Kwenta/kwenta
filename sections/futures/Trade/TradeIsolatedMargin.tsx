@@ -49,36 +49,38 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 	if (accountType === 'cross_margin' && !account) return <CreateAccount />;
 
 	return (
-		<div>
-			{pricesConnectionError && (
-				<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
-			)}
-
-			{!isMobile &&
-				(accountType === 'isolated_margin' ? <MarketInfoBox /> : <CrossMarginInfoBox />)}
-
+		<div style={{ height: '100%', overflowY: 'scroll' }}>
 			<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
 
-			{accountType === 'cross_margin' && <OrderTypeSelector />}
+			<div style={{ padding: '0 15px' }}>
+				{pricesConnectionError && (
+					<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
+				)}
 
-			{accountType === 'cross_margin' && <MarginInput />}
+				{!isMobile &&
+					(accountType === 'isolated_margin' ? <MarketInfoBox /> : <CrossMarginInfoBox />)}
 
-			{orderType !== 'market' && accountType === 'cross_margin' && (
-				<>
-					<OrderPriceInput />
-					<Spacer height={16} />
-				</>
-			)}
+				{accountType === 'cross_margin' && <OrderTypeSelector />}
 
-			<OrderSizing />
+				{accountType === 'cross_margin' && <MarginInput />}
 
-			<LeverageInput />
+				{orderType !== 'market' && accountType === 'cross_margin' && (
+					<>
+						<OrderPriceInput />
+						<Spacer height={16} />
+					</>
+				)}
 
-			<SLTPInputs />
+				<OrderSizing />
 
-			<ManagePosition />
+				<LeverageInput />
 
-			<IsolatedMarginFeeInfoBox />
+				<SLTPInputs />
+
+				<ManagePosition />
+
+				<IsolatedMarginFeeInfoBox />
+			</div>
 		</div>
 	);
 });

@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import CaretLeftXLIcon from 'assets/svg/app/caret-left-xl.svg';
 import CaretRightXLICon from 'assets/svg/app/caret-right-xl.svg';
 import { FlexDivRowCentered } from 'components/layout/flex';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import media from 'styles/media';
 
 const NotFoundPage = () => {
@@ -21,7 +20,6 @@ const NotFoundPage = () => {
 				<Content>
 					<Title>{t('not-found.title')}</Title>
 					<Subtitle>{t('not-found.subtitle')}</Subtitle>
-					<GitHashID />
 				</Content>
 				<CaretRightXLICon />
 			</Container>

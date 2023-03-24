@@ -97,13 +97,13 @@ const NetworksSwitcher: FC = () => {
 
 	return !isL2 ? (
 		<Container onClick={openChainModal}>
-			<StyledButton noOutline size="small">
+			<StyledButton noOutline size="small" mono>
 				{activeChain && <PrefixIcon>{networkIcon(activeChain.name)}</PrefixIcon>}
 				{activeChain?.name}
 			</StyledButton>
 		</Container>
 	) : (
-		<Container>
+		<div>
 			<L2Select
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={41}
@@ -115,20 +115,18 @@ const NetworksSwitcher: FC = () => {
 				isSearchable={false}
 				variant="flat"
 			/>
-		</Container>
+		</div>
 	);
 };
 
 export default NetworksSwitcher;
 
 const Container = styled.div`
-	width: 100%;
+	/*width: 100%;*/
 `;
 
 const StyledButton = styled(Button)`
-	font-size: 13px;
 	min-width: 0px;
-	font-family: ${(props) => props.theme.fonts.mono};
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

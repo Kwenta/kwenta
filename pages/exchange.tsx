@@ -9,7 +9,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import { fetchTokenList, resetCurrencies } from 'state/exchange/actions';
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks';
 import { selectNetwork } from 'state/wallet/selectors';
-import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
+import { MobileScreenContainer } from 'styles/common';
 
 type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -31,20 +31,18 @@ const Exchange: ExchangeComponent = () => {
 	}, [router.query, network, dispatch, walletAddress]);
 
 	return (
-		<>
+		<div>
 			<ExchangeHead />
 			<DesktopOnlyView>
-				<FullScreenContainer>
-					<ExchangeContent />
-					<NotificationContainer />
-				</FullScreenContainer>
+				<ExchangeContent />
+				<NotificationContainer />
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileScreenContainer>
 					<ExchangeContent />
 				</MobileScreenContainer>
 			</MobileOrTabletView>
-		</>
+		</div>
 	);
 };
 
