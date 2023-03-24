@@ -1,6 +1,7 @@
 import { ChangeEvent, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
+import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { OrderNameByType } from 'sdk/utils/futures';
@@ -35,14 +36,18 @@ export default function OrderPriceInput() {
 
 	return (
 		<>
-			<StyledInputTitle margin="10px 0">
-				{OrderNameByType[orderType]} Price{' '}
-				{minMaxLabelString && (
-					<>
-						&nbsp; —<span>&nbsp; {minMaxLabelString}</span>
-					</>
-				)}
-			</StyledInputTitle>
+			<InputHeaderRow
+				label={
+					<StyledInputTitle>
+						{OrderNameByType[orderType]} Price{' '}
+						{minMaxLabelString && (
+							<>
+								&nbsp; —<span>&nbsp; {minMaxLabelString}</span>
+							</>
+						)}
+					</StyledInputTitle>
+				}
+			></InputHeaderRow>
 			<NumericInput
 				invalid={!!minMaxLabelString}
 				dataTestId="order-price-input"
@@ -60,5 +65,4 @@ const StyledInputTitle = styled(InputTitle)`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
-	cursor: default;
 `;

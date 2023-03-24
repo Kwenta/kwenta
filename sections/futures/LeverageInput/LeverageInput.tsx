@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import TextButton from 'components/Button/TextButton';
+import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
@@ -81,13 +83,15 @@ const LeverageInput: FC = memo(() => {
 
 	return (
 		<LeverageInputWrapper>
-			<LeverageRow>
-				<LeverageTitle>
-					{t('futures.market.trade.input.leverage.title')}&nbsp; —
-					<span>&nbsp; Up to {truncateMaxLeverage}x</span>
-				</LeverageTitle>
-				<ModeButton mode={mode} setMode={setMode} />
-			</LeverageRow>
+			<InputHeaderRow
+				label={
+					<LeverageTitle>
+						{t('futures.market.trade.input.leverage.title')}&nbsp; —
+						<span>&nbsp; Up to {truncateMaxLeverage}x</span>
+					</LeverageTitle>
+				}
+				rightElement={<ModeButton mode={mode} setMode={setMode} />}
+			/>
 
 			{mode === 'slider' ? (
 				<SliderRow>
@@ -138,12 +142,6 @@ const LeverageInputWrapper = styled(FlexDivCol)`
 	margin-bottom: 16px;
 `;
 
-const LeverageRow = styled(FlexDivRow)`
-	width: 100%;
-	align-items: center;
-	margin-bottom: 8px;
-`;
-
 const LeverageTitle = styled(InputTitle)`
 	text-transform: capitalize;
 `;
@@ -166,16 +164,6 @@ const LeverageButton = styled(Button)`
 	font-size: 13px;
 	height: 46px;
 	font-family: ${(props) => props.theme.fonts.monoBold};
-`;
-
-const TextButton = styled.button`
-	text-decoration: underline;
-	font-size: 13px;
-	line-height: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	background-color: transparent;
-	border: none;
-	cursor: pointer;
 `;
 
 export default LeverageInput;

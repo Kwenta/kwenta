@@ -3,13 +3,13 @@ import { ChangeEvent, useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
-import { Body } from 'components/Text';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
 	selectLeverageSide,
@@ -91,7 +91,7 @@ export default function SLTPInputs() {
 	return (
 		<Container>
 			<ExpandRow onClick={() => setShowInputs(!showInputs)}>
-				<Title>Stop Loss / Take Profit</Title>
+				<InputTitle>Stop Loss / Take Profit</InputTitle>
 				<Button
 					style={{
 						height: '20px',
@@ -106,11 +106,12 @@ export default function SLTPInputs() {
 				<InputsContainer>
 					<Spacer height={6} />
 
-					<InputHeaderRow>
-						<InputTitle>Stop Loss</InputTitle>
-						<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
-					</InputHeaderRow>
-
+					<InputHeaderRow
+						label="Stop Loss"
+						rightElement={
+							<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
+						}
+					/>
 					<NumericInput
 						invalid={slInvalid}
 						dataTestId={'trade-panel-stop-loss-input'}
@@ -122,10 +123,10 @@ export default function SLTPInputs() {
 
 					<Spacer height={12} />
 
-					<InputHeaderRow>
-						<InputTitle>Take Profit</InputTitle>
-						<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />
-					</InputHeaderRow>
+					<InputHeaderRow
+						label="Take Profit"
+						rightElement={<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />}
+					/>
 
 					<NumericInput
 						invalid={tpInvalid}
@@ -148,20 +149,8 @@ const Container = styled.div`
 	margin-bottom: 16px;
 `;
 
-const InputHeaderRow = styled(FlexDivRow)`
-	width: 100%;
-	align-items: center;
-	justify-content: space-between;
-	margin-bottom: 8px;
-	cursor: default;
-`;
-
-const Title = styled(Body)`
-	padding-top: 2px;
-`;
-
 const ExpandRow = styled(FlexDivRow)`
-	padding: 0 2px 0 4px;
+	padding: 0px 2px 0 4px;
 	cursor: pointer;
 `;
 

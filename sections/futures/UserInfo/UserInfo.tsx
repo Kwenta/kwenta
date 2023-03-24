@@ -118,7 +118,7 @@ const UserInfo: React.FC = memo(() => {
 			},
 			{
 				name: FuturesTab.CONDITIONAL_ORDERS,
-				label: 'S/L Orders',
+				label: 'Orders',
 				badge: conditionalOrders.length,
 				active: activeTab === FuturesTab.CONDITIONAL_ORDERS,
 				icon: <OpenPositionsIcon />,

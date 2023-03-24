@@ -1,10 +1,9 @@
 import { wei } from '@synthetixio/wei';
 import React, { useMemo, memo, useCallback } from 'react';
-import styled from 'styled-components';
 
-import InputTitle from 'components/Input/InputTitle';
+import TextButton from 'components/Button/TextButton';
+import InputHeaderRow from 'components/Input/InputHeaderRow';
 import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRow } from 'components/layout/flex';
 import { editCrossMarginPositionMargin } from 'state/futures/actions';
 import {
 	selectPosition,
@@ -53,12 +52,10 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(({ isMobile, ty
 
 	return (
 		<div>
-			<LabelsContainer>
-				<InputTitle>{type === 'deposit' ? 'Add margin amount' : 'Withdraw amount'}</InputTitle>
-				<InputHelpers>
-					<MaxButton onClick={handleSetMax}>Max</MaxButton>
-				</InputHelpers>
-			</LabelsContainer>
+			<InputHeaderRow
+				label={type === 'deposit' ? 'Add margin amount' : 'Withdraw amount'}
+				rightElement={<TextButton onClick={handleSetMax}>Max</TextButton>}
+			/>
 
 			<NumericInput
 				invalid={invalid}
@@ -70,28 +67,5 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(({ isMobile, ty
 		</div>
 	);
 });
-
-const LabelsContainer = styled(FlexDivRow)`
-	width: 100%;
-	align-items: center;
-	margin-bottom: 8px;
-	cursor: default;
-`;
-
-const MaxButton = styled.button`
-	text-decoration: underline;
-	font-variant: small-caps;
-	text-transform: lowercase;
-	font-size: 13px;
-	line-height: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	background-color: transparent;
-	border: none;
-	cursor: pointer;
-`;
-
-const InputHelpers = styled.div`
-	display: flex;
-`;
 
 export default EditPositionMarginInput;
