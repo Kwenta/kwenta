@@ -53,6 +53,7 @@ const map: Record<FuturesMarketKey, string> = {
 	[FuturesMarketKey.sDOGEPERP]: 'dogecoin',
 	[FuturesMarketKey.sBNBPERP]: 'binancecoin',
 	[FuturesMarketKey.sOPPERP]: 'optimism',
+	[FuturesMarketKey.sARBPERP]: 'arbitrum',
 	[FuturesMarketKey.sATOMPERP]: '',
 	[FuturesMarketKey.sFTMPERP]: '',
 	[FuturesMarketKey.sNEARPERP]: '',
