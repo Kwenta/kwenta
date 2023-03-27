@@ -901,9 +901,12 @@
 				},
 				"edit-position":{
 					"current-size": "Current size",
-					"new-leverage": "New Leverage",
+					"leverage-change": "Leverage change",
+					"margin-change": "Margin change",
+					"liquidation": "Liquidation",
 					"submit-size": "Submit size change",
-					"submit-margin": "Submit margin change",
+					"submit-margin-withdraw": "Withdraw Margin",
+					"submit-margin-deposit": "Deposit Margin",
 					"current-margin": "Current margin"
 
 

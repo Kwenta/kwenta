@@ -1110,6 +1110,12 @@ export const selectPreviewTradeData = createSelector(
 	}
 );
 
+export const selectCrossPreviewCount = (state: RootState) =>
+	state.futures.crossMargin.previewDebounceCount;
+
+export const selectIsolatedPreviewCount = (state: RootState) =>
+	state.futures.isolatedMargin.previewDebounceCount;
+
 export const selectBuyingPower = createSelector(
 	selectPosition,
 	selectMaxLeverage,

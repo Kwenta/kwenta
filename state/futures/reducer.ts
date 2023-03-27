@@ -107,6 +107,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		},
 		fees: ZERO_CM_FEES,
 		tradePreview: null,
+		previewDebounceCount: 0,
 		marginDelta: '0',
 		cancellingOrder: undefined,
 		depositApproved: false,
@@ -130,6 +131,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageSide: PositionSide.LONG,
 		orderType: 'delayed_offchain',
 		tradePreview: null,
+		previewDebounceCount: 0,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		editPositionInputs: {
 			nativeSizeDelta: '',
@@ -287,6 +289,12 @@ const futuresSlice = createSlice({
 		},
 		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
 			state.leaderboard.selectedTrader = action.payload;
+		},
+		incrementIsolatedPreviewCount: (state) => {
+			state.isolatedMargin.previewDebounceCount = state.isolatedMargin.previewDebounceCount + 1;
+		},
+		incrementCrossPreviewCount: (state) => {
+			state.crossMargin.previewDebounceCount = state.crossMargin.previewDebounceCount + 1;
 		},
 	},
 	extraReducers: (builder) => {
@@ -700,6 +708,8 @@ export const {
 	setSelectedInputDenomination,
 	setCrossMarginEditPositionInputs,
 	setIsolatedMarginEditPositionInputs,
+	incrementIsolatedPreviewCount,
+	incrementCrossPreviewCount,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (
