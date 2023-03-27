@@ -107,8 +107,8 @@ const HourlyFundingDetail = memo(() => {
 
 const OpenInterestLongDetail = memo(() => {
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const oiCap = marketInfo?.marketLimit
-		? formatDollars(marketInfo?.marketLimit, { truncate: true })
+	const oiCap = marketInfo?.marketLimitUsd
+		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
 		: null;
 
 	return (
@@ -125,8 +125,8 @@ const OpenInterestLongDetail = memo(() => {
 
 const OpenInterestShortDetail = memo(() => {
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const oiCap = marketInfo?.marketLimit
-		? formatDollars(marketInfo?.marketLimit, { truncate: true })
+	const oiCap = marketInfo?.marketLimitUsd
+		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
 		: null;
 
 	return (

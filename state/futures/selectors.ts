@@ -450,7 +450,7 @@ export const selectIsMarketCapReached = createSelector(
 	selectMarketInfo,
 	selectMarketPrice,
 	(leverageSide, marketInfo, marketAssetRate) => {
-		const maxMarketValueUSD = marketInfo?.marketLimit ?? wei(0);
+		const maxMarketValueUSD = marketInfo?.marketLimitUsd ?? wei(0);
 		const marketSize = marketInfo?.marketSize ?? wei(0);
 		const marketSkew = marketInfo?.marketSkew ?? wei(0);
 

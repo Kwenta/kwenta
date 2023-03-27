@@ -224,12 +224,15 @@ export default class FuturesService {
 					longUSD: wei(marketSize).eq(0)
 						? wei(0)
 						: wei(marketSize).add(marketSkew).div('2').mul(price),
+					long: wei(marketSize).add(marketSkew).div('2'),
+					short: wei(marketSize).sub(marketSkew).div('2'),
 				},
 				marketDebt: wei(marketDebt),
 				marketSkew: wei(marketSkew),
 				maxLeverage: wei(maxLeverage),
 				marketSize: wei(marketSize),
-				marketLimit: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
+				marketLimitUsd: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
+				marketLimitNative: wei(marketParameters[i].maxMarketValue),
 				minInitialMargin: wei(minInitialMargin),
 				keeperDeposit: wei(minKeeperFee),
 				isSuspended: suspensions[i],

@@ -4,8 +4,9 @@ import styled from 'styled-components';
 
 import TextButton from 'components/Button/TextButton';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
-import InputTitle from 'components/Input/InputTitle';
+import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
+import { PositionSide } from 'sdk/types/futures';
 import { editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketPrice,
@@ -16,9 +17,17 @@ import {
 	selectSelectedInputDenomination,
 	selectMaxUsdSizeInput,
 	selectCrossMarginMarginDelta,
+	selectMarketInfo,
+	selectLeverageSide,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, isZero, zeroBN } from 'utils/formatters/number';
+import {
+	floorNumber,
+	formatCryptoCurrency,
+	formatDollars,
+	isZero,
+	zeroBN,
+} from 'utils/formatters/number';
 
 import { DenominationToggle } from './DenominationToggle';
 
@@ -39,6 +48,8 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
 	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const tradeSide = useAppSelector(selectLeverageSide);
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
@@ -78,20 +89,53 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 		return remaining.lte(0) || disabled;
 	}, [position?.remainingMargin, disabled, selectedAccountType, marginDelta]);
 
-	const invalid =
-		(assetInputType === 'usd' &&
-			susdSizeString !== '' &&
-			maxUsdInputAmount.lte(susdSizeString || 0)) ||
-		(assetInputType === 'native' &&
-			nativeSizeString !== '' &&
-			maxNativeValue.lte(nativeSizeString || 0));
+	const availableOiUsd =
+		marketInfo?.marketLimitUsd.sub(
+			tradeSide === PositionSide.SHORT
+				? marketInfo.openInterest.shortUSD
+				: marketInfo.openInterest.longUSD
+		) ?? wei(0);
+
+	const availableOiNative =
+		marketInfo?.marketLimitNative.sub(
+			tradeSide === PositionSide.SHORT
+				? marketInfo.openInterest.short
+				: marketInfo.openInterest.long
+		) ?? wei(0);
+
+	const invalid = useMemo(() => {
+		return (
+			(assetInputType === 'usd' &&
+				susdSizeString !== '' &&
+				maxUsdInputAmount.lte(susdSizeString || 0)) ||
+			(assetInputType === 'native' &&
+				nativeSizeString !== '' &&
+				maxNativeValue.lte(nativeSizeString || 0)) ||
+			availableOiUsd.lt(susdSizeString || 0)
+		);
+	}, [
+		assetInputType,
+		maxNativeValue,
+		nativeSizeString,
+		availableOiUsd,
+		maxUsdInputAmount,
+		susdSizeString,
+	]);
 
 	return (
 		<OrderSizingContainer>
 			<InputHeaderRow
 				label={
 					<InputTitle>
-						Amount&nbsp; —<span>&nbsp; Set order size</span>
+						Size
+						{maxUsdInputAmount.gt(availableOiUsd) && (
+							<InputTitleSpan invalid={availableOiUsd.lt(susdSizeString || 0)}>
+								&nbsp; — &nbsp; Available OI{' '}
+								{assetInputType === 'usd'
+									? formatDollars(availableOiUsd, { suggestDecimals: true })
+									: formatCryptoCurrency(availableOiNative, { suggestDecimals: true })}
+							</InputTitleSpan>
+						)}
 					</InputTitle>
 				}
 				rightElement={

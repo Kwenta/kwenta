@@ -37,6 +37,8 @@ export type FuturesMarket<T = Wei> = {
 		longPct: number;
 		shortUSD: T;
 		longUSD: T;
+		long: T;
+		short: T;
 	};
 	marketDebt: T;
 	marketSkew: T;
@@ -46,7 +48,8 @@ export type FuturesMarket<T = Wei> = {
 	keeperDeposit: T;
 	isSuspended: boolean;
 	marketClosureReason: SynthSuspensionReason;
-	marketLimit: T;
+	marketLimitUsd: T;
+	marketLimitNative: T;
 	settings: {
 		maxMarketValue: T;
 		skewScale: T;
