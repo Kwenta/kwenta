@@ -181,6 +181,9 @@ export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, an
 	[FuturesMarketKey.sOPPERP]: {
 		maxLeverage: wei(25),
 	},
+	[FuturesMarketKey.sARBPERP]: {
+		maxLeverage: wei(25),
+	},
 	[FuturesMarketKey.sATOMPERP]: {
 		maxLeverage: wei(25),
 	},
