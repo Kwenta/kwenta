@@ -2,6 +2,7 @@ import KWENTAIcon from 'assets/png/currencies/KWENTA.png';
 import AAVEIcon from 'assets/png/currencies/sAAVE.png';
 import ADAIcon from 'assets/png/currencies/sADA.png';
 import APEIcon from 'assets/png/currencies/sAPECOIN.png';
+import ARBIcon from 'assets/png/currencies/sARB.png';
 import ATOMIcon from 'assets/png/currencies/sATOM.png';
 import AUDIcon from 'assets/png/currencies/sAUD.png';
 import AVAXIcon from 'assets/png/currencies/sAVAX.png';
@@ -55,6 +56,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sDOGEPERP: DOGEIcon,
 	sXMRPERP: XMRIcon,
 	sOPPERP: OPIcon,
+	sARBPERP: ARBIcon,
 	sATOMPERP: ATOMIcon,
 	sFTMPERP: FTMIcon,
 	sNEARPERP: NEARIcon,
@@ -79,6 +81,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sDOGE: DOGEIcon,
 	sXMR: XMRIcon,
 	sOP: OPIcon,
+	sARB: ARBIcon,
 	sATOM: ATOMIcon,
 	sFTM: FTMIcon,
 	sNEAR: NEARIcon,

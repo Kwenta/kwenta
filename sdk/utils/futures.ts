@@ -512,6 +512,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			positionClosed,
 			pnl,
 			feesPaid,
+			keeperFeesPaid,
 			orderType,
 			accountType,
 		}) => {
@@ -527,6 +528,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 				pnl: new Wei(pnl, 18, true),
 				feesPaid: new Wei(feesPaid, 18, true),
+				keeperFeesPaid: new Wei(keeperFeesPaid, 18, true),
 				orderType: mapOrderType(orderType),
 			};
 		}
