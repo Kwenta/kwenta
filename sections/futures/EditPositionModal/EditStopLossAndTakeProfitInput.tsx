@@ -86,18 +86,22 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(({ isMob
 					value={marginDelta.replace('-', '')}
 					placeholder="0.00"
 					onChange={onChangeValue}
-					style={{ width: '270px' }}
 				/>
 
-				<Button>No TP</Button>
+				<Button style={{ padding: '0 23px' }}>
+					{type === 'take-profit'
+						? t('futures.market.trade.edit-sl-tp.no-tp')
+						: t('futures.market.trade.edit-sl-tp.no-sl')}
+				</Button>
 			</InputHelpers>
 		</div>
 	);
 });
 
 const InputHelpers = styled.div`
-	display: flex;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: 4fr 1fr;
+	column-gap: 13px;
 `;
 
 const StyledInputHeaderRow = styled(InputHeaderRow)`

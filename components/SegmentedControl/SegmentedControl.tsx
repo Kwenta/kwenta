@@ -92,12 +92,12 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 			? props.theme.colors.common.primaryYellow
 			: props.isSelected
 			? props.theme.colors.selectedTheme.button.text.primary
-			: props.theme.colors.selectedTheme.segmented.button.inactive.color};
+			: props.theme.colors.selectedTheme.button.text.primary};
 
 	background: ${(props) =>
-		props.isSelected && props.styleType === 'tab'
+		props.isSelected && (props.styleType === 'tab' || props.styleType === 'pill-button-large')
 			? props.theme.colors.selectedTheme.segmented.button.background
-			: 'transparent'};
+			: props.theme.colors.selectedTheme.segmented.button.background};
 
 	background-color: ${(props) =>
 		props.isSelected &&
