@@ -49,11 +49,14 @@ export default function ErrorNotifier() {
 }
 
 // TODO: Format more errors, especially transaction failures
-const formatError = (message?: string) => {
+export const formatError = (message?: string) => {
 	if (!message) return '';
-	if (message.includes('insufficient funds for intrinsic transaction cost'))
-		return 'Insufficient ETH balance for gas cost';
-	if (message.includes('execution reverted: previous order')) return 'Previous order still pending';
+	const lowerCaseMessage = message.toLowerCase();
+	if (lowerCaseMessage.includes('insufficient funds for intrinsic transaction cost'))
+		return 'Insufficient eth balance for gas cost';
+	if (lowerCaseMessage.includes('insufficient margin')) return 'Insufficient margin for this order';
+	if (lowerCaseMessage.includes('previous order exists'))
+		return 'Previous order is pending, please wait for it to finish processing or delete it.';
 	return message;
 };
 

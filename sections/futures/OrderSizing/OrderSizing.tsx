@@ -6,7 +6,6 @@ import TextButton from 'components/Button/TextButton';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
-import { PositionSide } from 'sdk/types/futures';
 import { editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketPrice,
@@ -17,8 +16,8 @@ import {
 	selectSelectedInputDenomination,
 	selectMaxUsdSizeInput,
 	selectCrossMarginMarginDelta,
-	selectMarketInfo,
 	selectLeverageSide,
+	selectAvailableOi,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
@@ -48,18 +47,21 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
 	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
-	const marketInfo = useAppSelector(selectMarketInfo);
 	const tradeSide = useAppSelector(selectLeverageSide);
+	const availableOi = useAppSelector(selectAvailableOi);
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
 		marketAssetRate,
 	]);
 
-	const maxNativeValue = useMemo(
-		() => (!isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN),
-		[tradePrice, maxUsdInputAmount]
-	);
+	const availableOiUsd = availableOi[tradeSide].usd;
+	const availableOiNative = availableOi[tradeSide].native;
+
+	const maxNativeValue = useMemo(() => {
+		const max = !isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN;
+		return max.lt(availableOiNative) ? max : availableOiNative;
+	}, [tradePrice, maxUsdInputAmount, availableOiNative]);
 
 	const onSizeChange = useCallback(
 		(value: string, assetType: 'native' | 'usd') => {
@@ -69,12 +71,8 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	);
 
 	const handleSetMax = useCallback(() => {
-		if (assetInputType === 'usd') {
-			onSizeChange(String(floorNumber(maxUsdInputAmount)), 'usd');
-		} else {
-			onSizeChange(String(floorNumber(maxNativeValue)), 'native');
-		}
-	}, [onSizeChange, assetInputType, maxUsdInputAmount, maxNativeValue]);
+		onSizeChange(String(floorNumber(maxNativeValue)), 'native');
+	}, [onSizeChange, maxNativeValue]);
 
 	const onChangeValue = useCallback(
 		(_, v: string) => {
@@ -88,20 +86,6 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 			selectedAccountType === 'isolated_margin' ? position?.remainingMargin || zeroBN : marginDelta;
 		return remaining.lte(0) || disabled;
 	}, [position?.remainingMargin, disabled, selectedAccountType, marginDelta]);
-
-	const availableOiUsd =
-		marketInfo?.marketLimitUsd.sub(
-			tradeSide === PositionSide.SHORT
-				? marketInfo.openInterest.shortUSD
-				: marketInfo.openInterest.longUSD
-		) ?? wei(0);
-
-	const availableOiNative =
-		marketInfo?.marketLimitNative.sub(
-			tradeSide === PositionSide.SHORT
-				? marketInfo.openInterest.short
-				: marketInfo.openInterest.long
-		) ?? wei(0);
 
 	const invalid = useMemo(() => {
 		return (
@@ -128,12 +112,19 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 				label={
 					<InputTitle>
 						Size
-						{maxUsdInputAmount.gt(availableOiUsd) && (
+						{maxUsdInputAmount.gt(availableOiUsd) ? (
 							<InputTitleSpan invalid={availableOiUsd.lt(susdSizeString || 0)}>
 								&nbsp; — &nbsp; Available OI{' '}
 								{assetInputType === 'usd'
 									? formatDollars(availableOiUsd, { suggestDecimals: true })
 									: formatCryptoCurrency(availableOiNative, { suggestDecimals: true })}
+							</InputTitleSpan>
+						) : (
+							<InputTitleSpan invalid={maxUsdInputAmount.lt(susdSizeString || 0)}>
+								&nbsp; — &nbsp; Max size{' '}
+								{assetInputType === 'usd'
+									? formatDollars(maxUsdInputAmount, { suggestDecimals: true })
+									: formatCryptoCurrency(maxNativeValue, { suggestDecimals: true })}
 							</InputTitleSpan>
 						)}
 					</InputTitle>

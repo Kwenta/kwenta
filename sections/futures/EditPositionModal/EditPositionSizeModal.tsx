@@ -16,23 +16,23 @@ import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
-	editCrossMarginPositionMargin,
-	submitCrossMarginAdjustMargin,
+	editCrossMarginPositionSize,
+	submitCrossMarginAdjustPositionSize,
 } from 'state/futures/actions';
 import {
 	selectEditPositionInputs,
-	selectIdleMargin,
 	selectIsFetchingTradePreview,
+	selectMarketPrice,
 	selectPosition,
 	selectPreviewData,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
-import EditPositionMarginInput from './EditPositionMarginInput';
+import EditPositionSizeInput from './EditPositionSizeInput';
 
-export default function EditPositionMarginModal() {
+export default function EditPositionSizeModal() {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
@@ -41,16 +41,18 @@ export default function EditPositionMarginModal() {
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
 	const preview = useAppSelector(selectPreviewData);
-	const { marginDelta } = useAppSelector(selectEditPositionInputs);
-	const idleMargin = useAppSelector(selectIdleMargin);
-	const [transferType, setTransferType] = useState(0);
+	const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
+	const marketAssetRate = useAppSelector(selectMarketPrice);
+
+	const [editType, setEditType] = useState(0);
 
 	const onChangeTab = (selection: number) => {
-		setTransferType(selection);
+		dispatch(editCrossMarginPositionSize(''));
+		setEditType(selection);
 	};
 
 	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustMargin());
+		dispatch(submitCrossMarginAdjustPositionSize());
 	}, [dispatch]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
@@ -58,56 +60,54 @@ export default function EditPositionMarginModal() {
 		isFetchingPreview,
 	]);
 
-	const maxWithdraw = useMemo(() => {
-		const maxSize = position?.remainingMargin.mul(APP_MAX_LEVERAGE);
-		const currentSize = position?.position?.notionalValue;
-		const max = maxSize?.sub(currentSize).div(APP_MAX_LEVERAGE) ?? wei(0);
-		return max.lt(0) ? zeroBN : max;
-	}, [position?.remainingMargin, position?.position?.notionalValue]);
+	const maxNativeIncreaseValue = useMemo(() => {
+		if (!marketAssetRate || marketAssetRate.eq(0)) return zeroBN;
+		const totalMax = position?.remainingMargin.mul(APP_MAX_LEVERAGE) ?? zeroBN;
+		let max = totalMax.sub(position?.position?.notionalValue ?? 0);
+		max = max.gt(0) ? max : zeroBN;
+		return max.div(marketAssetRate);
+	}, [marketAssetRate, position?.remainingMargin, position?.position?.notionalValue]);
 
-	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
-		idleMargin,
-		maxWithdraw,
-		transferType,
-	]);
+	const maxNativeValue = useMemo(() => {
+		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? zeroBN;
+	}, [editType, maxNativeIncreaseValue, position?.position?.size]);
 
-	const marginWei = useMemo(
-		() => (!marginDelta || isNaN(Number(marginDelta)) ? wei(0) : wei(marginDelta)),
-		[marginDelta]
+	const sizeWei = useMemo(
+		() => (!nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? wei(0) : wei(nativeSizeDelta)),
+		[nativeSizeDelta]
 	);
 
-	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount]);
+	const maxLeverageExceeded = editType === 0 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
 
-	const maxLeverageExceeded =
-		transferType === 1 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
+	const invalid = useMemo(() => sizeWei.gt(maxNativeValue), [sizeWei, maxNativeValue]);
 
 	const submitDisabled = useMemo(() => {
-		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded;
-	}, [marginWei, invalid, isLoading, maxLeverageExceeded]);
+		return sizeWei.eq(0) || invalid || isLoading || maxLeverageExceeded;
+	}, [sizeWei, invalid, isLoading, maxLeverageExceeded]);
 
 	const onClose = () => {
-		dispatch(editCrossMarginPositionMargin(''));
+		dispatch(editCrossMarginPositionSize(''));
 		dispatch(setOpenModal(null));
 	};
 
 	return (
 		<StyledBaseModal
-			title={transferType === 0 ? 'Increase Position Margin' : 'Withdraw Position Margin'}
+			title={editType === 0 ? 'Increase Position Size' : 'Decrease Position Size'}
 			isOpen
 			onDismiss={onClose}
 		>
 			<Spacer height={10} />
 
 			<SegmentedControl
-				values={['Add Margin', 'Withdraw']}
-				selectedIndex={transferType}
+				values={['Increase', 'Decrease']}
+				selectedIndex={editType}
 				onChange={onChangeTab}
 			/>
 			<Spacer height={20} />
 
-			<EditPositionMarginInput
-				maxUsdInput={maxUsdInputAmount}
-				type={transferType === 0 ? 'deposit' : 'withdraw'}
+			<EditPositionSizeInput
+				maxNativeValue={maxNativeValue}
+				type={editType === 0 ? 'increase' : 'decrease'}
 			/>
 
 			<Spacer height={20} />
@@ -119,20 +119,20 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					value={position?.position?.leverage.toString(2) + 'x'}
+					value={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
 					valueNode={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
-									? formatDollars(position?.remainingMargin.add(marginWei))
+									? formatNumber(preview.positionSize, { suggestDecimals: true })
 									: '-'}
 							</PreviewArrow>
 						)
 					}
-					title={t('futures.market.trade.edit-position.margin-change')}
-					value={formatDollars(position?.remainingMargin || 0)}
+					title={t('futures.market.trade.edit-position.position-size')}
+					value={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
 					valueNode={
@@ -156,9 +156,9 @@ export default function EditPositionMarginModal() {
 				fullWidth
 				onClick={submitMarginChange}
 			>
-				{transferType === 0
-					? t('futures.market.trade.edit-position.submit-margin-deposit')
-					: t('futures.market.trade.edit-position.submit-margin-withdraw')}
+				{editType === 0
+					? t('futures.market.trade.edit-position.submit-size-increase')
+					: t('futures.market.trade.edit-position.submit-size-decrease')}
 			</Button>
 
 			{(transactionState?.error || maxLeverageExceeded) && (

@@ -7,6 +7,8 @@ import Spacer from 'components/Spacer';
 import { formatRevert, isUserDeniedError } from 'utils/formatters/error';
 import { truncateString } from 'utils/formatters/string';
 
+import { formatError } from './ErrorNotifier';
+
 type MessageType = 'error' | 'warn';
 
 type ErrorProps = {
@@ -20,15 +22,12 @@ type ErrorProps = {
 	};
 };
 
-export const FRIENDLY_I18N_MESSAGES: Record<string, string> = {
-	'Insufficient margin': 'futures.market.errors.insufficient-margin',
-};
-
 export const ErrorView: FC<ErrorProps> = memo(
 	({ message, formatter, retryButton, containerStyle, messageType = 'error' }) => {
 		const { t } = useTranslation();
 		const formattedMessage = useMemo(() => {
-			if (FRIENDLY_I18N_MESSAGES[message]) return t(FRIENDLY_I18N_MESSAGES[message]);
+			const formattedError = formatError(message);
+			if (formattedError) return formattedError;
 			switch (formatter) {
 				case 'revert':
 					return formatRevert(message);

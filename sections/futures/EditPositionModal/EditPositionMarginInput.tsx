@@ -4,12 +4,13 @@ import React, { memo, useCallback, useMemo } from 'react';
 import TextButton from 'components/Button/TextButton';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import NumericInput from 'components/Input/NumericInput';
+import { getStep } from 'components/Slider/Slider';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
 import { editCrossMarginPositionMargin } from 'state/futures/actions';
 import { selectEditPositionInputs } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, formatNumber } from 'utils/formatters/number';
+import { floorNumber, formatNumber, zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	isMobile?: boolean;
@@ -39,8 +40,12 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 			onChangeMargin,
 		]);
 
-		const invalid = useMemo(() => wei(marginDelta || 0).gt(maxUsdInput), [
-			marginDelta,
+		const marginDeltaWei = useMemo(() => {
+			return !marginDelta || isNaN(Number(marginDelta)) ? zeroBN : wei(marginDelta);
+		}, [marginDelta]);
+
+		const invalid = useMemo(() => wei(marginDeltaWei || 0).gt(maxUsdInput), [
+			marginDeltaWei,
 			maxUsdInput,
 		]);
 
@@ -62,13 +67,13 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 				<StyledSlider
 					minValue={0}
 					maxValue={Number(maxUsdInput.toString(2))}
-					step={1}
+					step={getStep(maxUsdInput.toNumber())}
 					defaultValue={0}
 					value={Math.abs(Number(marginDelta))}
 					onChange={onChangeSlider}
 					valueLabelDisplay="auto"
 					valueLabelFormat={(v) => formatNumber(v)}
-					$currentMark={Number(marginDelta) ?? 0}
+					$currentMark={Number(marginDelta ?? 0)}
 				/>
 			</div>
 		);

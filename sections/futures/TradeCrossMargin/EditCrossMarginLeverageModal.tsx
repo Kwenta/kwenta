@@ -17,7 +17,7 @@ import { ORDER_PREVIEW_ERRORS_I18N, previewErrorI18n } from 'queries/futures/con
 import { setOpenModal } from 'state/app/reducer';
 import {
 	editExistingPositionLeverage,
-	editCrossMarginSize,
+	editCrossMarginTradeSize,
 	setCrossMarginLeverage,
 	submitCrossMarginOrder,
 	clearTradeInputs,
@@ -53,7 +53,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 	const onLeverageChange = useCallback(
 		(leverage: number) => {
 			dispatch(setCrossMarginLeverage(String(leverage)));
-			dispatch(editCrossMarginSize('', 'usd'));
+			dispatch(editCrossMarginTradeSize('', 'usd'));
 		},
 		[dispatch]
 	);

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import ErrorView from 'components/ErrorView';
 import { FlexDivRow } from 'components/layout/flex';
 import StyledSlider from 'components/Slider/StyledSlider';
-import { editCrossMarginSize } from 'state/futures/actions';
+import { editCrossMarginTradeSize } from 'state/futures/actions';
 import {
 	selectAboveMaxLeverage,
 	selectCrossMarginMarginDelta,
@@ -40,7 +40,7 @@ export default function OrderSizeSlider() {
 			const usdValue = Number(usdAmount).toFixed(0);
 			setUsdValue(usdValue);
 			if (commit) {
-				dispatch(editCrossMarginSize(usdValue, 'usd'));
+				dispatch(editCrossMarginTradeSize(usdValue, 'usd'));
 			}
 		},
 		[maxUsdInputAmount, dispatch]

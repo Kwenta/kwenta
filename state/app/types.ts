@@ -9,6 +9,7 @@ export type ModalType =
 	| 'futures_cross_withdraw'
 	| 'futures_cross_leverage'
 	| 'futures_edit_position_margin'
+	| 'futures_edit_position_size'
 	| 'futures_isolated_transfer'
 	| 'futures_modify_position_confirm'
 	| 'futures_withdraw_keeper_balance'

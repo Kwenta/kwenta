@@ -902,11 +902,14 @@
 				"edit-position":{
 					"current-size": "Current size",
 					"leverage-change": "Leverage change",
+					"position-size": "Position Size",
 					"margin-change": "Margin change",
 					"liquidation": "Liquidation",
 					"submit-size": "Submit size change",
 					"submit-margin-withdraw": "Withdraw Margin",
 					"submit-margin-deposit": "Deposit Margin",
+					"submit-size-increase": "Increase Size",
+					"submit-size-decrease": "Decrease Size",
 					"current-margin": "Current margin"
 
 
