@@ -7,14 +7,16 @@ import Button from 'components/Button';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
+import { NO_VALUE } from 'constants/placeholder';
 import { editCrossMarginPositionMargin } from 'state/futures/actions';
 import {
 	selectPosition,
 	selectIdleMargin,
 	selectEditPositionInputs,
+	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber } from 'utils/formatters/number';
+import { floorNumber, formatDollars } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	isMobile?: boolean;
@@ -28,6 +30,7 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(({ isMob
 	const position = useAppSelector(selectPosition);
 	const { marginDelta } = useAppSelector(selectEditPositionInputs);
 	const idleMargin = useAppSelector(selectIdleMargin);
+	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo);
 
 	const maxWithdraw = useMemo(() => {
 		const max = (position?.remainingMargin ?? wei(0)).sub(50);
@@ -67,7 +70,10 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(({ isMob
 						: 'Withdraw amount'
 				}
 				rightElement={
-					<InputTitle>{t('futures.market.trade.edit-sl-tp.last-price')}: $1600.00</InputTitle>
+					<InputTitle>
+						{t('futures.market.trade.edit-sl-tp.last-price')}:{' '}
+						{markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
+					</InputTitle>
 				}
 			/>
 
