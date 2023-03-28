@@ -133,12 +133,11 @@ const StyledBaseModal = styled(BaseModal)`
 `;
 
 const StyledInfoContainer = styled(InfoContainer)`
-	background: ${(props) => props.theme.colors.selectedTheme.button.yellow.fill};
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.button.yellow.border};
+	background: ${(props) => props.theme.colors.selectedTheme.button.red.fill};
 	padding: 10px 0;
 	border-radius: 8px;
 `;
 
 const StyledBalanceText = styled(BalanceText)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.yellow.text};
+	color: ${(props) => props.theme.colors.selectedTheme.button.red.text};
 `;

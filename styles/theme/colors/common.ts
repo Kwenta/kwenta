@@ -78,6 +78,7 @@ export const palette = {
 		white5: 'rgb(255,255,255,0.5)',
 		white10: 'rgb(255,255,255,0.1)',
 		red10: 'rgb(241,43,43,0.1)',
+		red15: 'rgb(241,43,43,0.15)',
 		green10: 'rgb(127,212,130,0.1)',
 		lightButton: 'linear-gradient(180deg, #EEEEEE 0%, #E0E0E0 100%)',
 		lightButtonHover: 'linear-gradient(180deg, #E6E6E6 0%, #CCCCCC 100%)',

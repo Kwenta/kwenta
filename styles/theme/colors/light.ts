@@ -203,6 +203,10 @@ const lightTheme = {
 			border: '#532800',
 			text: '#fff',
 		},
+		red: {
+			fill: common.palette.alpha.red15,
+			text: common.palette.red.r200,
+		},
 	},
 	input: {
 		background: '#dbdbdb',
