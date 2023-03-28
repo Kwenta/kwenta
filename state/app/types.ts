@@ -11,8 +11,10 @@ export type ModalType =
 	| 'futures_edit_position_margin'
 	| 'futures_edit_position_size'
 	| 'futures_isolated_transfer'
-	| 'futures_modify_position_confirm'
+	| 'futures_confirm_smart_margin_trade'
+	| 'futures_confirm_isolated_margin_trade'
 	| 'futures_withdraw_keeper_balance'
+	| 'futures_smart_margin_onboard'
 	| null;
 
 export type GasSpeed = 'average' | 'fast' | 'fastest';

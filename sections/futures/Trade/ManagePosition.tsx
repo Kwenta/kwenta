@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
+import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
 import InputTitle from 'components/Input/InputTitle';
+import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
@@ -30,6 +32,7 @@ import {
 	selectLeverageSide,
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
+	selectCrossMarginAccount,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -38,9 +41,6 @@ import { orderPriceInvalidLabel } from 'utils/futures';
 
 import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
 import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
-import DelayedOrderConfirmationModal from '../TradeConfirmation/DelayedOrderConfirmationModal';
-import TradeConfirmationModalCrossMargin from '../TradeConfirmation/TradeConfirmationModalCrossMargin';
-import TradeConfirmationModalIsolatedMargin from '../TradeConfirmation/TradeConfirmationModalIsolatedMargin';
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
@@ -66,9 +66,9 @@ const ManagePosition: React.FC = () => {
 	const openModal = useAppSelector(selectOpenModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
+	const smartMarginAccount = useAppSelector(selectCrossMarginAccount);
 
 	const isCancelModalOpen = openModal === 'futures_close_position_confirm';
-	const isConfirmationModalOpen = openModal === 'futures_modify_position_confirm';
 
 	const positionDetails = position?.position;
 
@@ -83,10 +83,40 @@ const ManagePosition: React.FC = () => {
 		return leverage.gt(0) && leverage.lt(maxLeverageValue);
 	}, [selectedAccountType, maxLeverageValue, leverage]);
 
-	const placeOrderDisabledReason = useMemo(() => {
-		if (!leverageValid) return 'invalid_leverage';
-		if (marketInfo?.isSuspended) return 'market_suspended';
-		if (isMarketCapReached) return 'market_cap_reached';
+	const onSubmit = useCallback(() => {
+		if (selectedAccountType === 'cross_margin' && !smartMarginAccount) {
+			dispatch(setOpenModal('futures_smart_margin_onboard'));
+			return;
+		}
+		dispatch(
+			setOpenModal(
+				selectedAccountType === 'cross_margin'
+					? 'futures_confirm_smart_margin_trade'
+					: 'futures_confirm_isolated_margin_trade'
+			)
+		);
+	}, [selectedAccountType, smartMarginAccount, dispatch]);
+
+	const placeOrderDisabledReason = useMemo<{
+		message: string;
+		show?: 'warn' | 'error';
+	} | null>(() => {
+		// TODO: Clean up errors and warnings
+		if (!leverageValid)
+			return {
+				show: 'warn',
+				message: `Max leverage ${APP_MAX_LEVERAGE}x exceeded`,
+			};
+		if (marketInfo?.isSuspended)
+			return {
+				show: 'warn',
+				message: `Market suspended`,
+			};
+		if (isMarketCapReached)
+			return {
+				show: 'warn',
+				message: `OI interest limit exceeded`,
+			};
 
 		const invalidReason = orderPriceInvalidLabel(
 			orderPrice,
@@ -96,21 +126,34 @@ const ManagePosition: React.FC = () => {
 		);
 
 		if ((orderType === 'limit' || orderType === 'stop_market') && !!invalidReason)
-			return invalidReason;
-		if (susdSize.gt(maxUsdInputAmount)) return 'max_size_exceeded';
+			return {
+				show: 'warn',
+				message: invalidReason,
+			};
+		if (susdSize.gt(maxUsdInputAmount))
+			return {
+				show: 'warn',
+				message: 'Max trade size exceeded',
+			};
 		if (placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum')
-			return 'min_margin_required';
+			return {
+				show: 'warn',
+				message: 'Min $50 margin required',
+			};
 
 		if (isZero(susdSize)) {
-			return 'size_required';
+			return { message: 'Trade size required' };
 		}
 		if (selectedAccountType === 'cross_margin') {
 			if ((isZero(marginDelta) && isZero(susdSize)) || previewStatus.status !== FetchStatus.Success)
-				return 'awaiting_preview';
-			if (orderType !== 'market' && isZero(orderPrice)) return 'pricerequired';
+				return { message: 'awaiting_preview' };
+			if (orderType !== 'market' && isZero(orderPrice)) return { message: 'trade price required' };
 		} else if (selectedAccountType === 'isolated_margin') {
 			if ((orderType === 'delayed' || orderType === 'delayed_offchain') && !!openOrder)
-				return 'order_open';
+				return {
+					show: 'warn',
+					message: ERROR_MESSAGES.ORDER_PENDING,
+				};
 		}
 
 		return null;
@@ -131,8 +174,6 @@ const ManagePosition: React.FC = () => {
 		previewStatus,
 	]);
 
-	// TODO: Better user feedback for disabled reasons
-
 	return (
 		<>
 			<div>
@@ -147,7 +188,7 @@ const ManagePosition: React.FC = () => {
 						fullWidth
 						variant={leverageSide}
 						disabled={!!placeOrderDisabledReason}
-						onClick={() => dispatch(setOpenModal('futures_modify_position_confirm'))}
+						onClick={onSubmit}
 					>
 						{t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
@@ -169,7 +210,7 @@ const ManagePosition: React.FC = () => {
 										: PositionSide.LONG;
 								dispatch(changeLeverageSide(newLeverageSide));
 								dispatch(editTradeSizeInput(newTradeSize.toString(), 'native'));
-								dispatch(setOpenModal('futures_modify_position_confirm'));
+								onSubmit();
 							} else {
 								dispatch(setOpenModal('futures_close_position_confirm'));
 							}
@@ -181,22 +222,20 @@ const ManagePosition: React.FC = () => {
 				</ManagePositionContainer>
 			</div>
 
-			{orderError && <Error message={orderError} />}
+			{orderError ? (
+				<Error message={orderError} />
+			) : placeOrderDisabledReason?.show ? (
+				<Error
+					message={placeOrderDisabledReason.message}
+					messageType={placeOrderDisabledReason.show}
+				/>
+			) : null}
 
 			{isCancelModalOpen &&
 				(selectedAccountType === 'cross_margin' ? (
 					<ClosePositionModalCrossMargin onDismiss={() => dispatch(setOpenModal(null))} />
 				) : (
 					<ClosePositionModalIsolatedMargin onDismiss={() => dispatch(setOpenModal(null))} />
-				))}
-
-			{isConfirmationModalOpen &&
-				(selectedAccountType === 'cross_margin' ? (
-					<TradeConfirmationModalCrossMargin />
-				) : orderType === 'delayed' || orderType === 'delayed_offchain' ? (
-					<DelayedOrderConfirmationModal />
-				) : (
-					<TradeConfirmationModalIsolatedMargin />
 				))}
 		</>
 	);

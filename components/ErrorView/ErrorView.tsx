@@ -1,5 +1,4 @@
 import React, { FC, useMemo, memo } from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -24,7 +23,6 @@ type ErrorProps = {
 
 export const ErrorView: FC<ErrorProps> = memo(
 	({ message, formatter, retryButton, containerStyle, messageType = 'error' }) => {
-		const { t } = useTranslation();
 		const formattedMessage = useMemo(() => {
 			const formattedError = formatError(message);
 			if (formattedError) return formattedError;
@@ -34,7 +32,7 @@ export const ErrorView: FC<ErrorProps> = memo(
 				default:
 					return message;
 			}
-		}, [message, formatter, t]);
+		}, [message, formatter]);
 
 		if (isUserDeniedError(message) || !message) return null;
 
