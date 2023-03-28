@@ -29,7 +29,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { formatNumber } from 'utils/formatters/number';
 import { getSynthDescription } from 'utils/futures';
 
 import MobilePositionRow from './MobilePositionRow';
@@ -59,6 +58,17 @@ const LegacyLink = () => {
 		</ButtonContainer>
 	);
 };
+
+// - Market
+// - Side
+// - Size
+// - Average Entry
+// - Liquidation Price
+// - Market Margin
+// - PnL
+// - Funding
+// - TP/SL
+// - Position
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
@@ -95,10 +105,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				};
 			})
 			.filter(
-				(position) =>
-					position.position &&
-					position.market &&
-					(position?.market?.asset !== currentMarket || showCurrentMarket)
+				({ position, market }) =>
+					position && market && (market?.asset !== currentMarket || showCurrentMarket)
 			);
 	}, [
 		isolatedPositions,
@@ -206,42 +214,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							{
 								Header: (
 									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.leverage')}
-									</TableHeader>
-								),
-								accessor: 'leverage',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<Body>{formatNumber(cellProps.row.original.position.leverage ?? 0)}x</Body>
-									);
-								},
-								width: 90,
-							},
-							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
-								),
-								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<PnlContainer>
-											<ChangePercent value={cellProps.row.original.position.pnlPct} />
-											<div>
-												<Currency.Price
-													currencyKey="sUSD"
-													price={cellProps.row.original.position.pnl}
-													sign="$"
-													conversionRate={1}
-												/>
-											</div>
-										</PnlContainer>
-									);
-								},
-								width: 125,
-							},
-							{
-								Header: (
-									<TableHeader>
 										{t('dashboard.overview.futures-positions-table.avg-entry')}
 									</TableHeader>
 								),
@@ -286,6 +258,28 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									);
 								},
 								width: 115,
+							},
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
+								),
+								accessor: 'pnl',
+								Cell: (cellProps: CellProps<any>) => {
+									return (
+										<PnlContainer>
+											<ChangePercent value={cellProps.row.original.position.pnlPct} />
+											<div>
+												<Currency.Price
+													currencyKey="sUSD"
+													price={cellProps.row.original.position.pnl}
+													sign="$"
+													conversionRate={1}
+												/>
+											</div>
+										</PnlContainer>
+									);
+								},
+								width: 125,
 							},
 						]}
 					/>
