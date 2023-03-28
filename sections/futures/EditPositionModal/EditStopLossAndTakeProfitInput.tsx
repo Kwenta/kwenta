@@ -70,12 +70,12 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(({ isMob
 						: 'Withdraw amount'
 				}
 				rightElement={
-					<InputTitle>
-						{t('futures.market.trade.edit-sl-tp.last-price')}:{'  '}
+					<StyledInputTitle>
+						{t('futures.market.trade.edit-sl-tp.last-price')}:{' '}
 						<span>
 							{markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
 						</span>
-					</InputTitle>
+					</StyledInputTitle>
 				}
 			/>
 
@@ -106,6 +106,12 @@ const InputHelpers = styled.div`
 
 const StyledInputHeaderRow = styled(InputHeaderRow)`
 	margin-bottom: 9px;
+`;
+
+const StyledInputTitle = styled(InputTitle)`
+	span {
+		font-family: ${(props) => props.theme.fonts.mono};
+	}
 `;
 
 export default EditStopLossAndTakeProfitInput;
