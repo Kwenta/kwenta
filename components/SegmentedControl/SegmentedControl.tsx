@@ -56,10 +56,13 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 `;
 
 const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: StyleType }>`
-	font-size: ${(props) => (props.styleType === 'pill-button' ? '12px' : '13px')};
+	font-size: ${(props) =>
+		props.styleType === 'pill-button' || props.styleType === 'pill-button-large' ? '12px' : '13px'};
 	font-family: ${(props) =>
 		props.styleType === 'tab' && props.isSelected
 			? props.theme.fonts.bold
+			: props.styleType === 'pill-button-large'
+			? props.theme.fonts.mono
 			: props.theme.fonts.regular};
 	cursor: pointer;
 	text-transform: capitalize;
