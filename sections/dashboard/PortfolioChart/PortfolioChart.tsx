@@ -34,7 +34,7 @@ type PriceChartProps = {
 const ChartCTA = () => {
 	const { t } = useTranslation();
 	return (
-		<TableNoResults>
+		<CTAContainer>
 			<Logo />
 			<Heading variant="h3">{t('dashboard.overview.portfolio-chart.welcome')}</Heading>
 			<Body color={'secondary'}>{t('dashboard.overview.portfolio-chart.hero')}</Body>
@@ -43,7 +43,7 @@ const ChartCTA = () => {
 					{t('homepage.nav.trade-now')}
 				</Button>
 			</Link>
-		</TableNoResults>
+		</CTAContainer>
 	);
 };
 
@@ -191,40 +191,40 @@ const PortfolioChart: FC = () => {
 				</ChartGrid>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<MobileChartGrid>
-					{!!total && portfolioData.length >= 2 ? (
-						<>
-							<ChartOverlay>
-								<PortfolioTitle>Portfolio Value</PortfolioTitle>
-								<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
-								<NumericValue colored value={changeValue.value ?? zeroBN}>
-									{changeValue.text}&nbsp;
-								</NumericValue>
-							</ChartOverlay>
-							<ChartContainer>
-								<TopBar>
-									<TimeframeOverlay>
-										<Timeframe />
-									</TimeframeOverlay>
-								</TopBar>
-								<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
-							</ChartContainer>
-						</>
-					) : (
+				{!!total && portfolioData.length >= 2 ? (
+					<MobileChartGrid>
+						<ChartOverlay>
+							<PortfolioTitle>Portfolio Value</PortfolioTitle>
+							<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
+							<NumericValue colored value={changeValue.value ?? zeroBN}>
+								{changeValue.text}&nbsp;
+							</NumericValue>
+						</ChartOverlay>
 						<ChartContainer>
-							<ChartCTA />
+							<TopBar>
+								<TimeframeOverlay>
+									<Timeframe />
+								</TimeframeOverlay>
+							</TopBar>
+							<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
 						</ChartContainer>
-					)}
-				</MobileChartGrid>
+					</MobileChartGrid>
+				) : (
+					<ChartContainer mobile>
+						<ChartCTA />
+					</ChartContainer>
+				)}
 			</MobileOnlyView>
 		</>
 	);
 };
 
-const ChartContainer = styled.div`
+const ChartContainer = styled.div<{ mobile?: boolean }>`
 	position: relative;
 	grid-row-end: span 3;
-	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+	border-left: ${(props) => (props.mobile ? null : props.theme.colors.selectedTheme.border)};
+	border-top: ${(props) => (props.mobile ? props.theme.colors.selectedTheme.border : null)};
+	border-bottom: ${(props) => (props.mobile ? props.theme.colors.selectedTheme.border : null)};
 	padding: 0 8px 0 8px;
 `;
 
@@ -296,6 +296,10 @@ const ChartGrid = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;
 	height: 260px;
+`;
+
+const CTAContainer = styled(TableNoResults)`
+	height: 100%;
 `;
 
 export default PortfolioChart;
