@@ -207,6 +207,7 @@ export type CrossMarginState = {
 	selectedMarketAsset: FuturesMarketAsset;
 	showCrossMarginOnboard: boolean;
 	tradePreview: FuturesPotentialTradeDetails<string> | null;
+	previewDebounceCount: number;
 	settings: CrossMarginSettings<string>;
 	fees: CrossMarginTradeFees<string>;
 	depositApproved: boolean;
@@ -230,6 +231,7 @@ export type IsolatedMarginState = {
 	editPositionInputs: EditPositionInputs<string>;
 	orderType: IsolatedMarginOrderType;
 	tradePreview: FuturesPotentialTradeDetails<string> | null;
+	previewDebounceCount: number;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;

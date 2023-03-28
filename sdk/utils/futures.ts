@@ -591,7 +591,7 @@ export const encodeConditionalOrderParams = (
 	marketKey: FuturesMarketKey,
 	tradeInputs: TradeInputParams,
 	type: ConditionalOrderTypeEnum,
-	priceImpactDelta: Wei,
+	desiredFillPrice: Wei,
 	reduceOnly: boolean
 ) => {
 	return defaultAbiCoder.encode(
@@ -602,7 +602,7 @@ export const encodeConditionalOrderParams = (
 			tradeInputs.sizeDelta.toBN(),
 			tradeInputs.price.toBN(),
 			type,
-			priceImpactDelta.toBN(),
+			desiredFillPrice.toBN(),
 			reduceOnly,
 		]
 	);
@@ -611,11 +611,11 @@ export const encodeConditionalOrderParams = (
 export const encodeSubmitOffchainOrderParams = (
 	marketAddress: string,
 	sizeDelta: Wei,
-	priceImpactDelta: Wei
+	desiredFillPrice: Wei
 ) => {
 	return defaultAbiCoder.encode(
 		['address', 'int256', 'uint256'],
-		[marketAddress, sizeDelta.toBN(), priceImpactDelta.toBN()]
+		[marketAddress, sizeDelta.toBN(), desiredFillPrice.toBN()]
 	);
 };
 

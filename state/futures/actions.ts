@@ -87,6 +87,8 @@ import {
 	setTransactionEstimate,
 	setCrossMarginEditPositionInputs,
 	setIsolatedMarginEditPositionInputs,
+	incrementIsolatedPreviewCount,
+	incrementCrossPreviewCount,
 } from './reducer';
 import {
 	selectCrossMarginAccount,
@@ -116,6 +118,8 @@ import {
 	selectSlTpTradeInputs,
 	selectCrossMarginEditPosInputs,
 	selectDesiredFillPrice,
+	selectCrossPreviewCount,
+	selectTradePreview,
 } from './selectors';
 import {
 	AccountContext,
@@ -475,15 +479,19 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 
 export const fetchCrossMarginTradePreview = createAsyncThunk<
 	FuturesPotentialTradeDetails<string> | null,
-	{ price?: Wei; sizeDelta: Wei; marginDelta: Wei },
+	{ price?: Wei; sizeDelta: Wei; marginDelta: Wei; debounceCount: number },
 	ThunkConfig
 >(
 	'futures/fetchCrossMarginTradePreview',
-	async (inputs, { dispatch, getState, extra: { sdk } }) => {
+	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
 		const marginDelta = selectCrossMarginMarginDelta(getState());
 		const freeMargin = selectIdleMargin(getState());
+
+		if (params.sizeDelta.eq(0) && params.marginDelta.eq(0)) {
+			return null;
+		}
 		if (!account) throw new Error('No account to fetch orders');
 		if (!marketInfo) throw new Error('No market info');
 		const leverageSide = selectLeverageSide(getState());
@@ -492,8 +500,15 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 				account,
 				marketInfo.marketKey,
 				marketInfo.market,
-				{ ...inputs, leverageSide }
+				{ ...params, leverageSide }
 			);
+
+			// Check the preview hasn't been cleared before query resolves
+			const count = selectCrossPreviewCount(getState());
+			if (count !== params.debounceCount) {
+				const existing = selectTradePreview(getState());
+				return existing ? serializePotentialTrade(existing) : null;
+			}
 
 			if (marginDelta.gt(freeMargin) && preview.status === 0) {
 				// Show insufficient margin message
@@ -552,10 +567,10 @@ export const editCrossMarginMarginDelta = (marginDelta: string): AppThunk => (
 	);
 };
 
-export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'): AppThunk => (
-	dispatch,
-	getState
-) => {
+export const editCrossMarginTradeSize = (
+	size: string,
+	currencyType: 'usd' | 'native'
+): AppThunk => (dispatch, getState) => {
 	const assetRate = selectMarketPrice(getState());
 	const marginDelta = selectCrossMarginMarginDelta(getState());
 	const orderPrice = selectCrossMarginOrderPrice(getState());
@@ -591,58 +606,23 @@ export const editCrossMarginSize = (size: string, currencyType: 'usd' | 'native'
 	);
 };
 
-export const editCrossMarginPositionSize = (
-	size: string,
-	currencyType: 'usd' | 'native'
-): AppThunk => (dispatch, getState) => {
-	const assetRate = selectMarketPrice(getState());
-	const inputs = getState().futures.crossMargin.editPositionInputs;
-	const orderPrice = selectCrossMarginOrderPrice(getState());
-	const marginDelta = selectCrossMarginMarginDelta(getState());
-	const isConditionalOrder = selectIsConditionalOrder(getState());
-	const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : assetRate;
-
-	if (size === '' || assetRate.eq(0)) {
-		dispatch(setCrossMarginEditPositionInputs({ ...inputs, nativeSizeDelta: '' }));
-		dispatch(setCrossMarginTradePreview(null));
-		dispatch(setLeverageInput(''));
-		return;
-	}
-
-	const nativeSize =
-		currencyType === 'native' ? size : String(floorNumber(wei(size).div(price), 4));
-	const usdSize = currencyType === 'native' ? String(floorNumber(price.mul(size), 4)) : size;
-	const leverage = marginDelta?.gt(0) ? wei(usdSize).div(marginDelta.abs()) : '0';
-
-	// TODO: Set delta long / short
-
+export const editCrossMarginPositionSize = (nativeSizeDelta: string): AppThunk => (dispatch) => {
 	dispatch(
 		setCrossMarginEditPositionInputs({
 			marginDelta: '',
-			nativeSizeDelta: nativeSize,
+			nativeSizeDelta: nativeSizeDelta,
 		})
 	);
-	dispatch(setLeverageInput(leverage.toString(2)));
+
 	dispatch(
 		stageCrossMarginTradePreview({
-			marginDelta: marginDelta,
-			nativeSizeDelta: wei(nativeSize),
+			marginDelta: zeroBN,
+			nativeSizeDelta: wei(nativeSizeDelta || 0),
 		})
 	);
 };
 
-export const editCrossMarginPositionMargin = (marginDelta: string): AppThunk => (
-	dispatch,
-	getState
-) => {
-	const inputs = getState().futures.crossMargin.editPositionInputs;
-
-	if (marginDelta === '' || marginDelta === '-') {
-		dispatch(setCrossMarginEditPositionInputs({ ...inputs, marginDelta: '' }));
-		dispatch(setCrossMarginTradePreview(null));
-		return;
-	}
-
+export const editCrossMarginPositionMargin = (marginDelta: string): AppThunk => (dispatch) => {
 	dispatch(
 		setCrossMarginEditPositionInputs({
 			marginDelta: marginDelta,
@@ -652,7 +632,7 @@ export const editCrossMarginPositionMargin = (marginDelta: string): AppThunk => 
 
 	dispatch(
 		stageCrossMarginTradePreview({
-			marginDelta: wei(marginDelta),
+			marginDelta: wei(marginDelta || 0),
 			nativeSizeDelta: zeroBN,
 		})
 	);
@@ -662,9 +642,11 @@ const stageCrossMarginTradePreview = createAsyncThunk<
 	void,
 	{ marginDelta: Wei; nativeSizeDelta: Wei },
 	ThunkConfig
->('futures/stageCrossMarginPositionChange', async (inputs, { dispatch }) => {
+>('futures/stageCrossMarginPositionChange', async (inputs, { dispatch, getState }) => {
 	dispatch(calculateCrossMarginFees());
-	debouncedPrepareCrossMarginTradePreview(dispatch, inputs);
+	dispatch(incrementCrossPreviewCount());
+	const debounceCount = selectCrossPreviewCount(getState());
+	debouncedPrepareCrossMarginTradePreview(dispatch, { ...inputs, debounceCount });
 });
 
 export const editExistingPositionLeverage = createAsyncThunk<void, string, ThunkConfig>(
@@ -686,7 +668,13 @@ export const editExistingPositionLeverage = createAsyncThunk<void, string, Thunk
 			position
 		);
 		dispatch(setCrossMarginMarginDelta(marginDelta.toString()));
-		debouncedPrepareCrossMarginTradePreview(dispatch, { marginDelta, nativeSizeDelta: wei(0) });
+		const debounceCount = selectCrossPreviewCount(getState());
+		dispatch(incrementCrossPreviewCount());
+		debouncedPrepareCrossMarginTradePreview(dispatch, {
+			marginDelta,
+			nativeSizeDelta: wei(0),
+			debounceCount,
+		});
 	}
 );
 
@@ -723,6 +711,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 		})
 	);
 	dispatch(calculateIsolatedMarginFees());
+	dispatch(incrementIsolatedPreviewCount());
 	debouncedPrepareIsolatedMarginTradePreview(dispatch);
 };
 
@@ -732,7 +721,7 @@ export const editTradeSizeInput = (size: string, currencyType: 'usd' | 'native')
 ) => {
 	const type = selectFuturesType(getState());
 	if (type === 'cross_margin') {
-		dispatch(editCrossMarginSize(size, currencyType));
+		dispatch(editCrossMarginTradeSize(size, currencyType));
 	} else {
 		dispatch(editIsolatedMarginSize(size, currencyType));
 	}
@@ -750,7 +739,7 @@ export const setCrossMarginLeverage = (leverage: string): AppThunk => (dispatch,
 };
 
 export const debouncedPrepareCrossMarginTradePreview = debounce(
-	(dispatch, inputs: { nativeSizeDelta: Wei; marginDelta: Wei }) => {
+	(dispatch, inputs: { nativeSizeDelta: Wei; marginDelta: Wei; debounceCount: number }) => {
 		dispatch(prepareCrossMarginTradePreview(inputs));
 	},
 	500
@@ -770,7 +759,7 @@ export const editTradeOrderPrice = (price: string): AppThunk => (dispatch, getSt
 	dispatch(setCrossMarginOrderPriceInvalidLabel(invalidLabel));
 	if (!invalidLabel && price && inputs.susdSize) {
 		// Recalc the trade
-		dispatch(editCrossMarginSize(inputs.susdSizeString, 'usd'));
+		dispatch(editCrossMarginTradeSize(inputs.susdSizeString, 'usd'));
 	}
 };
 
@@ -925,11 +914,11 @@ export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) 
 
 export const prepareCrossMarginTradePreview = createAsyncThunk<
 	void,
-	{ marginDelta: Wei; nativeSizeDelta: Wei },
+	{ marginDelta: Wei; nativeSizeDelta: Wei; debounceCount: number },
 	ThunkConfig
 >(
 	'futures/prepareCrossMarginTradePreview',
-	async ({ nativeSizeDelta, marginDelta }, { getState, dispatch }) => {
+	async ({ nativeSizeDelta, marginDelta, debounceCount }, { getState, dispatch }) => {
 		const assetPrice = selectMarketPrice(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
 		try {
@@ -938,6 +927,7 @@ export const prepareCrossMarginTradePreview = createAsyncThunk<
 					price: orderPrice ? wei(orderPrice) : assetPrice,
 					marginDelta: marginDelta,
 					sizeDelta: nativeSizeDelta,
+					debounceCount,
 				})
 			);
 		} catch (err) {
@@ -1374,6 +1364,45 @@ export const submitCrossMarginAdjustMargin = createAsyncThunk<void, void, ThunkC
 				account,
 				marketInfo.market,
 				wei(marginDelta)
+			);
+			await monitorAndAwaitTransaction(dispatch, tx);
+			dispatch(setOpenModal(null));
+			dispatch(refetchPosition('cross_margin'));
+			dispatch(fetchBalances());
+			dispatch(clearTradeInputs());
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
+
+export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/submitCrossMarginAdjustPositionSize',
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const marketInfo = selectMarketInfo(getState());
+		const account = selectCrossMarginAccount(getState());
+		const desiredFillPrice = selectDesiredFillPrice(getState());
+		const { nativeSizeDelta } = selectCrossMarginEditPosInputs(getState());
+
+		try {
+			if (!marketInfo) throw new Error('Market info not found');
+			if (!account) throw new Error('No cross margin account found');
+			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
+
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'submit_cross_order',
+					hash: null,
+				})
+			);
+
+			const tx = await sdk.futures.modifySmartMarginPositionSize(
+				account,
+				marketInfo.market,
+				wei(nativeSizeDelta),
+				desiredFillPrice
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));

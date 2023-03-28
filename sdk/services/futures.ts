@@ -753,6 +753,22 @@ export default class FuturesService {
 		]);
 	}
 
+	public async modifySmartMarginPositionSize(
+		crossMarginAddress: string,
+		marketAddress: string,
+		sizeDelta: Wei,
+		desiredFillPrice: Wei
+	) {
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+			[AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER],
+			[encodeSubmitOffchainOrderParams(marketAddress, sizeDelta, desiredFillPrice)],
+		]);
+	}
+
 	public async depositIsolatedMargin(marketAddress: string, amount: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [amount.toBN()]);

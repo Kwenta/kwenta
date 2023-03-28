@@ -39,6 +39,15 @@ const SliderComponent: React.FC<SliderProps> = ({
 
 export default SliderComponent;
 
+export const getStep = (maxValue: number) => {
+	if (maxValue < 0.01) return 0.0001;
+	if (maxValue < 0.1) return 0.001;
+	if (maxValue < 10) return 0.01;
+	if (maxValue < 100) return 1;
+	if (maxValue < 10000) return 10;
+	return 100;
+};
+
 const styledMarkLabel = css`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;

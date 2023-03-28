@@ -985,15 +985,36 @@ export const selectMaxUsdSizeInput = createSelector(
 	selectMaxLeverage,
 	selectMarginDeltaInputValue,
 	(futuresType, position, maxLeverage, marginDelta) => {
-		// const margin =
-		// 	futuresType === 'cross_margin'
-		// 		? wei(marginDelta || 0).add(position?.accessibleMargin || 0)
-		// 		: position?.remainingMargin ?? wei(0);
 		const margin =
 			futuresType === 'cross_margin' ? marginDelta || 0 : position?.remainingMargin ?? wei(0);
 		return maxLeverage.mul(margin);
 	}
 );
+
+export const selectAvailableOi = createSelector(selectMarketInfo, (marketInfo) => {
+	const availableOiUsdShort =
+		marketInfo?.marketLimitUsd.sub(marketInfo.openInterest.shortUSD) ?? wei(0);
+
+	const availableOiUsdLong =
+		marketInfo?.marketLimitUsd.sub(marketInfo.openInterest.longUSD) ?? wei(0);
+
+	const availableOiNativeShort =
+		marketInfo?.marketLimitNative.sub(marketInfo.openInterest.short) ?? wei(0);
+
+	const availableOiNativeLong =
+		marketInfo?.marketLimitNative.sub(marketInfo.openInterest.long) ?? wei(0);
+
+	return {
+		short: {
+			usd: availableOiUsdShort,
+			native: availableOiNativeShort,
+		},
+		long: {
+			usd: availableOiUsdLong,
+			native: availableOiNativeLong,
+		},
+	};
+});
 
 export const selectPreviewAvailableMargin = createSelector(
 	selectMarketInfo,
@@ -1109,6 +1130,12 @@ export const selectPreviewTradeData = createSelector(
 		};
 	}
 );
+
+export const selectCrossPreviewCount = (state: RootState) =>
+	state.futures.crossMargin.previewDebounceCount;
+
+export const selectIsolatedPreviewCount = (state: RootState) =>
+	state.futures.isolatedMargin.previewDebounceCount;
 
 export const selectBuyingPower = createSelector(
 	selectPosition,
