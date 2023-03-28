@@ -193,6 +193,16 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0x71334dcd37620ce3c33e3bafef04cc80dec083042e49b734315b36d1aad7991f',
 		},
 	},
+	[FuturesMarketKey.sARBPERP]: {
+		key: FuturesMarketKey.sARBPERP,
+		asset: FuturesMarketAsset.ARB,
+		supports: 'mainnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x3fa4252848f9f0a1480be62745a4629d9eb1322aebab8a791e344b3b9c1adcf5',
+			testnet: '0x37f40d2898159e8f2e52b93cb78f47cc3829a31e525ab975c49cc5c5d9176378',
+		},
+	},
 	[FuturesMarketKey.sATOMPERP]: {
 		key: FuturesMarketKey.sATOMPERP,
 		asset: FuturesMarketAsset.ATOM,

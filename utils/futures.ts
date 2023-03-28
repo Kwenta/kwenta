@@ -68,6 +68,7 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sBNBPERP]: FuturesMarketAsset.BNB,
 	[FuturesMarketKey.sDOGEPERP]: FuturesMarketAsset.DOGE,
 	[FuturesMarketKey.sOPPERP]: FuturesMarketAsset.OP,
+	[FuturesMarketKey.sARBPERP]: FuturesMarketAsset.ARB,
 	[FuturesMarketKey.sATOMPERP]: FuturesMarketAsset.ATOM,
 	[FuturesMarketKey.sFTMPERP]: FuturesMarketAsset.FTM,
 	[FuturesMarketKey.sNEARPERP]: FuturesMarketAsset.NEAR,
@@ -94,6 +95,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNBPERP,
 	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGEPERP,
 	[FuturesMarketAsset.OP]: FuturesMarketKey.sOPPERP,
+	[FuturesMarketAsset.ARB]: FuturesMarketKey.sARBPERP,
 	[FuturesMarketAsset.ATOM]: FuturesMarketKey.sATOMPERP,
 	[FuturesMarketAsset.FTM]: FuturesMarketKey.sFTMPERP,
 	[FuturesMarketAsset.NEAR]: FuturesMarketKey.sNEARPERP,
@@ -120,6 +122,7 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.BNB]: 'Binance Coin',
 	[FuturesMarketAsset.DOGE]: 'Dogecoin',
 	[FuturesMarketAsset.OP]: 'Optimism',
+	[FuturesMarketAsset.ARB]: 'Arbitrum',
 	[FuturesMarketAsset.ATOM]: 'Cosmos',
 	[FuturesMarketAsset.FTM]: 'Fantom',
 	[FuturesMarketAsset.NEAR]: 'Near',
@@ -176,6 +179,9 @@ export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, an
 		maxLeverage: wei(25),
 	},
 	[FuturesMarketKey.sOPPERP]: {
+		maxLeverage: wei(25),
+	},
+	[FuturesMarketKey.sARBPERP]: {
 		maxLeverage: wei(25),
 	},
 	[FuturesMarketKey.sATOMPERP]: {
