@@ -1077,15 +1077,15 @@
 				}
 			},
 			"onboard": {
-				"title": "Cross Margin",
-				"step1-intro": "Start by creating your cross margin account",
+				"title": "Smart Margin",
+				"step1-intro": "Start by creating your smart margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
 				"step3-intro": "Lastly, deposit sUSD to begin trading",
-				"step3-complete": "Your cross margin account has been successfully created!",
-				"faq1": "What is cross margin?",
-				"faq2": "Is cross margin better than isolated margin?",
-				"faq3": "How will a cross margin account affect my trading?",
-				"unsupported-network": "Cross margin is not supported on this network"
+				"step3-complete": "Your smart margin account has been successfully created!",
+				"faq1": "What is smart margin?",
+				"faq2": "Is smart margin better than isolated margin?",
+				"faq3": "How will a smart margin account affect my trading?",
+				"unsupported-network": "Smart margin is not supported on this network"
 			}
 		}
 	},

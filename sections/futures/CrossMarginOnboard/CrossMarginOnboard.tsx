@@ -1,5 +1,4 @@
-import { wei } from '@synthetixio/wei';
-import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -7,57 +6,46 @@ import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
-import InputBalanceLabel from 'components/Input/InputBalanceLabel';
-import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
 import ProgressSteps from 'components/ProgressSteps';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
-import { selectBalances } from 'state/balances/selectors';
-import {
-	approveCrossMargin,
-	createCrossMarginAccount,
-	depositCrossMargin,
-} from 'state/futures/actions';
+import { setOpenModal } from 'state/app/reducer';
+import { approveCrossMargin, createCrossMarginAccount } from 'state/futures/actions';
 import {
 	selectCMAccountQueryStatus,
-	selectCMBalance,
 	selectCMDepositApproved,
 	selectCrossMarginAccount,
 	selectFuturesSupportedNetwork,
 	selectSubmittingFuturesTx,
+	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { zeroBN } from 'utils/formatters/number';
-import logError from 'utils/logError';
 
 import CrossMarginFAQ from './CrossMarginFAQ';
 
 type Props = {
 	isOpen: boolean;
-	onClose: () => any;
 };
 
-export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
+export default function CrossMarginOnboard({ isOpen }: Props) {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const balances = useAppSelector(selectBalances);
 	const crossMarginAvailable = useAppSelector(selectFuturesSupportedNetwork);
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
 	const depositApproved = useAppSelector(selectCMDepositApproved);
 	const txProcessing = useAppSelector(selectSubmittingFuturesTx);
-	const crossMarginBalance = useAppSelector(selectCMBalance);
+	const preview = useAppSelector(selectTradePreview);
 
-	const [depositAmount, setDepositAmount] = useState('');
+	const onClose = () => dispatch(setOpenModal(null));
 
-	const susdBal = balances?.susdWalletBalance;
-
-	const isDepositDisabled = useMemo(() => {
-		if (!depositAmount) return true;
-
-		return wei(depositAmount).lt(MIN_MARGIN_AMOUNT);
-	}, [depositAmount]);
+	const onComplete = () => {
+		if (preview) {
+			dispatch(setOpenModal('futures_confirm_smart_margin_trade'));
+		} else {
+			onClose();
+		}
+	};
 
 	const createAccount = useCallback(async () => {
 		dispatch(createCrossMarginAccount());
@@ -66,19 +54,6 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 	const onClickApprove = useCallback(async () => {
 		dispatch(approveCrossMargin());
 	}, [dispatch]);
-
-	const depositToAccount = useCallback(async () => {
-		try {
-			const weiAmount = wei(depositAmount);
-			dispatch(depositCrossMargin(weiAmount));
-		} catch (err) {
-			logError(err);
-		}
-	}, [depositAmount, dispatch]);
-
-	const onEditAmount = (_: ChangeEvent<HTMLInputElement>, value: string) => {
-		setDepositAmount(value);
-	};
 
 	const renderProgress = (step: number, complete?: boolean) => {
 		return (
@@ -100,7 +75,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			);
 		}
 
-		if (depositApproved && crossMarginBalance.gt(0)) {
+		if (depositApproved) {
 			return (
 				<>
 					<Intro>{t('futures.modals.onboard.step3-complete')}</Intro>
@@ -108,7 +83,7 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 						<CompleteCheck />
 					</Complete>
 					{renderProgress(3, true)}
-					<StyledButton variant="flat" onClick={onClose}>
+					<StyledButton variant="flat" onClick={onComplete}>
 						Done
 					</StyledButton>
 				</>
@@ -131,33 +106,35 @@ export default function CrossMarginOnboard({ onClose, isOpen }: Props) {
 			);
 		}
 
-		if (crossMarginAccount) {
-			return (
-				<>
-					<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
-					<InputBalanceLabel
-						balance={susdBal || zeroBN}
-						currencyKey="sUSD"
-						onSetAmount={setDepositAmount}
-					/>
-					<NumericInput placeholder="0.00" value={depositAmount} onChange={onEditAmount} />
-					{renderProgress(3)}
-					{isDepositDisabled && (
-						<MinimumAmountDisclaimer>
-							{t('futures.market.trade.margin.modal.deposit.disclaimer')}
-						</MinimumAmountDisclaimer>
-					)}
-					<StyledButton
-						disabled={isDepositDisabled || txProcessing}
-						variant="flat"
-						textTransform="none"
-						onClick={depositToAccount}
-					>
-						{txProcessing ? <Loader /> : 'Deposit sUSD'}
-					</StyledButton>
-				</>
-			);
-		}
+		// TODO: Replace with bridge option
+
+		// if (crossMarginAccount) {
+		// 	return (
+		// 		<>
+		// 			<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
+		// 			<InputBalanceLabel
+		// 				balance={susdBal || zeroBN}
+		// 				currencyKey="sUSD"
+		// 				onSetAmount={setDepositAmount}
+		// 			/>
+		// 			<NumericInput placeholder="0.00" value={depositAmount} onChange={onEditAmount} />
+		// 			{renderProgress(3)}
+		// 			{isDepositDisabled && (
+		// 				<MinimumAmountDisclaimer>
+		// 					{t('futures.market.trade.margin.modal.deposit.disclaimer')}
+		// 				</MinimumAmountDisclaimer>
+		// 			)}
+		// 			<StyledButton
+		// 				disabled={isDepositDisabled || txProcessing}
+		// 				variant="flat"
+		// 				textTransform="none"
+		// 				onClick={depositToAccount}
+		// 			>
+		// 				{txProcessing ? <Loader /> : 'Deposit sUSD'}
+		// 			</StyledButton>
+		// 		</>
+		// 	);
+		// }
 
 		return (
 			<>

@@ -17,6 +17,8 @@ import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
+import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal';
+import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin';
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
 import DepositWithdrawCrossMargin from 'sections/futures/TradeCrossMargin/DepositWithdrawCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -24,11 +26,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { clearTradeInputs } from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
-import {
-	setFuturesAccountType,
-	setMarketAsset,
-	setShowCrossMarginOnboard,
-} from 'state/futures/reducer';
+import { setFuturesAccountType, setMarketAsset } from 'state/futures/reducer';
 import {
 	selectCMAccountQueryStatus,
 	selectCrossMarginAccount,
@@ -95,10 +93,7 @@ const Market: MarketComponent = () => {
 	return (
 		<>
 			<MarketHead />
-			<CrossMarginOnboard
-				onClose={() => dispatch(setShowCrossMarginOnboard(false))}
-				isOpen={showOnboard}
-			/>
+			<CrossMarginOnboard isOpen={showOnboard} />
 			<DesktopOnlyView>
 				<PageContent>
 					<MarketDetails />
@@ -126,6 +121,9 @@ const Market: MarketComponent = () => {
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
+
+			{openModal === 'futures_confirm_smart_margin_trade' && <TradeConfirmationModalCrossMargin />}
+			{openModal === 'futures_confirm_isolated_margin_trade' && <DelayedOrderConfirmationModal />}
 		</>
 	);
 };

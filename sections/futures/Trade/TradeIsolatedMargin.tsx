@@ -4,12 +4,7 @@ import Error from 'components/ErrorView';
 import Spacer from 'components/Spacer';
 import { PositionSide } from 'sdk/types/futures';
 import { changeLeverageSide } from 'state/futures/actions';
-import {
-	selectFuturesAccount,
-	selectFuturesType,
-	selectLeverageSide,
-	selectOrderType,
-} from 'state/futures/selectors';
+import { selectFuturesType, selectLeverageSide, selectOrderType } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
 
@@ -20,7 +15,6 @@ import MarketInfoBox from '../MarketInfoBox';
 import OrderPriceInput from '../OrderPriceInput';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
-import CreateAccount from '../TradeCrossMargin/CreateAccount';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import ManagePosition from './ManagePosition';
 import OrderTypeSelector from './OrderTypeSelector';
@@ -37,7 +31,6 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 	const accountType = useAppSelector(selectFuturesType);
 	const orderType = useAppSelector(selectOrderType);
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
-	const account = useAppSelector(selectFuturesAccount);
 
 	const handleChangeSide = useCallback(
 		(side: PositionSide) => {
@@ -45,8 +38,6 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 		},
 		[dispatch]
 	);
-
-	if (accountType === 'cross_margin' && !account) return <CreateAccount />;
 
 	return (
 		<div style={{ height: '100%', overflowY: 'scroll' }}>

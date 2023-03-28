@@ -111,7 +111,6 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		marginDelta: '0',
 		cancellingOrder: undefined,
 		depositApproved: false,
-		showOnboard: false,
 		orderPrice: {
 			price: undefined,
 			invalidLabel: undefined,
@@ -226,9 +225,6 @@ const futuresSlice = createSlice({
 		},
 		setPreviewError: (state, action: PayloadAction<string | null>) => {
 			state.errors.tradePreview = action.payload;
-		},
-		setShowCrossMarginOnboard: (state, action: PayloadAction<boolean>) => {
-			state.crossMargin.showOnboard = action.payload;
 		},
 		handleCrossMarginPreviewError: (futuresState, action: PayloadAction<string>) => {
 			const message = Object.values(ORDER_PREVIEW_ERRORS).includes(action.payload)
@@ -703,7 +699,6 @@ export const {
 	setCrossMarginLeverageForAsset,
 	setPreviewError,
 	setCrossMarginOrderCancelling,
-	setShowCrossMarginOnboard,
 	setSelectedTrader,
 	setSelectedInputDenomination,
 	setCrossMarginEditPositionInputs,

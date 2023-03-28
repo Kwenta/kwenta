@@ -212,7 +212,6 @@ export type CrossMarginState = {
 	fees: CrossMarginTradeFees<string>;
 	depositApproved: boolean;
 	cancellingOrder: number | undefined;
-	showOnboard: boolean;
 	accounts: Record<
 		FuturesNetwork,
 		{

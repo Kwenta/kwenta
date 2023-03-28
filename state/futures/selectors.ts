@@ -72,7 +72,7 @@ export const selectCrossMarginTransferOpen = (state: RootState) =>
 	state.app.openModal === 'futures_cross_withdraw';
 
 export const selectShowCrossMarginOnboard = (state: RootState) =>
-	state.futures.crossMargin.showOnboard;
+	state.app.openModal === 'futures_smart_margin_onboard';
 
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
@@ -821,8 +821,8 @@ export const selectTradePreviewStatus = createSelector(
 	(state: RootState) => state.futures,
 	(type, futures) => {
 		return type === 'cross_margin'
-			? futures.queryStatuses.crossMarginPositions
-			: futures.queryStatuses.isolatedPositions;
+			? futures.queryStatuses.crossMarginTradePreview
+			: futures.queryStatuses.isolatedTradePreview;
 	}
 );
 

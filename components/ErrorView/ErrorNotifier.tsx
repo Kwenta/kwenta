@@ -48,15 +48,21 @@ export default function ErrorNotifier() {
 	);
 }
 
+export const ERROR_MESSAGES = {
+	ORDER_PENDING: 'Previous order is pending, please wait for it to finish processing or delete it.',
+	INSUFFICIENT_MARGIN:
+		'Previous order is pending, please wait for it to finish processing or delete it.',
+	INSUFFICIENT_ETH_BAL: 'Insufficient eth balance for gas cost',
+};
+
 // TODO: Format more errors, especially transaction failures
 export const formatError = (message?: string) => {
 	if (!message) return '';
 	const lowerCaseMessage = message.toLowerCase();
 	if (lowerCaseMessage.includes('insufficient funds for intrinsic transaction cost'))
-		return 'Insufficient eth balance for gas cost';
-	if (lowerCaseMessage.includes('insufficient margin')) return 'Insufficient margin for this order';
-	if (lowerCaseMessage.includes('previous order exists'))
-		return 'Previous order is pending, please wait for it to finish processing or delete it.';
+		return ERROR_MESSAGES.INSUFFICIENT_ETH_BAL;
+	if (lowerCaseMessage.includes('insufficient margin')) return ERROR_MESSAGES.INSUFFICIENT_MARGIN;
+	if (lowerCaseMessage.includes('previous order exists')) return ERROR_MESSAGES.ORDER_PENDING;
 	return message;
 };
 

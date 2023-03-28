@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import CrossMarginIconDark from 'assets/svg/futures/cross-margin-icon-dark.svg';
 import CrossMarginIconLight from 'assets/svg/futures/cross-margin-icon-light.svg';
 import Button from 'components/Button';
-import { setShowCrossMarginOnboard } from 'state/futures/reducer';
+import { setOpenModal } from 'state/app/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 import { BorderedPanel } from 'styles/common';
@@ -18,7 +18,7 @@ export default function CreateAccount() {
 
 	const Icon = currentTheme === 'dark' ? CrossMarginIconDark : CrossMarginIconLight;
 
-	const onShowOnboard = () => dispatch(setShowCrossMarginOnboard(true));
+	const onShowOnboard = () => dispatch(setOpenModal('futures_smart_margin_onboard'));
 
 	return (
 		<Container>

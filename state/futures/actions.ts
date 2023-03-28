@@ -9,6 +9,7 @@ import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { FuturesAccountType } from 'queries/futures/types';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { NetworkId } from 'sdk/types/common';
+import { ZERO_ADDRESS } from 'sdk/constants/global';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	DelayedOrder,
@@ -486,18 +487,17 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
-		const marginDelta = selectCrossMarginMarginDelta(getState());
 		const freeMargin = selectIdleMargin(getState());
 
-		if (params.sizeDelta.eq(0) && params.marginDelta.eq(0)) {
+		if (params.sizeDelta.eq(0) || params.marginDelta.eq(0)) {
 			return null;
 		}
-		if (!account) throw new Error('No account to fetch orders');
-		if (!marketInfo) throw new Error('No market info');
-		const leverageSide = selectLeverageSide(getState());
+
 		try {
+			if (!marketInfo) throw new Error('No market info');
+			const leverageSide = selectLeverageSide(getState());
 			const preview = await sdk.futures.getCrossMarginTradePreview(
-				account,
+				account || ZERO_ADDRESS,
 				marketInfo.marketKey,
 				marketInfo.market,
 				{ ...params, leverageSide }
@@ -510,7 +510,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 				return existing ? serializePotentialTrade(existing) : null;
 			}
 
-			if (marginDelta.gt(freeMargin) && preview.status === 0) {
+			if (params.marginDelta.gt(freeMargin) && preview.status === 0) {
 				// Show insufficient margin message
 				preview.status = PotentialTradeStatus.INSUFFICIENT_FREE_MARGIN;
 				preview.statusMessage = getTradeStatusMessage(
@@ -530,7 +530,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/clearTradeInputs',
 	async (_, { dispatch }) => {
-		dispatch(setCrossMarginMarginDelta('0'));
+		dispatch(setCrossMarginMarginDelta(''));
 		dispatch(setCrossMarginFees(ZERO_CM_FEES));
 		dispatch(setIsolatedMarginFee('0'));
 		dispatch(setLeverageInput(''));
@@ -545,7 +545,7 @@ export const editCrossMarginMarginDelta = (marginDelta: string): AppThunk => (
 	dispatch,
 	getState
 ) => {
-	const { susdSize } = selectCrossMarginTradeInputs(getState());
+	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
 	if (!marginDelta || Number(marginDelta) === 0) {
 		dispatch(setCrossMarginMarginDelta(marginDelta));
 		dispatch(setCrossMarginTradePreview(null));
@@ -562,7 +562,7 @@ export const editCrossMarginMarginDelta = (marginDelta: string): AppThunk => (
 	dispatch(
 		stageCrossMarginTradePreview({
 			marginDelta: wei(marginDelta || 0),
-			nativeSizeDelta: wei(0),
+			nativeSizeDelta: nativeSizeDelta,
 		})
 	);
 };
