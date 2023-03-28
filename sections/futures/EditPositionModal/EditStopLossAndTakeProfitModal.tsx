@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { BalanceText } from './EditPositionMarginModal';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
-const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%'];
+const PERCENT_OPTIONS = ['25%', '50%', '75%', '100%'];
 
 export default function EditStopLossAndTakeProfitModal() {
 	const { t } = useTranslation();
