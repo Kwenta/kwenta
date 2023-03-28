@@ -10,6 +10,7 @@ interface SegmentedControlProps {
 	className?: string;
 	styleType?: StyleType;
 	suffix?: string;
+	isLarge?: boolean | undefined;
 	onChange(index: number): void;
 }
 

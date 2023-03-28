@@ -38,6 +38,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { PageContent } from 'styles/common';
 import { MarketKeyByAsset } from 'utils/futures';
+import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -110,6 +111,7 @@ const Market: MarketComponent = () => {
 			<MobileOrTabletView>
 				<MobileTrade />
 			</MobileOrTabletView>
+			<EditStopLossAndTakeProfitModal />
 			{openModal === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
