@@ -1,9 +1,11 @@
 import { wei } from '@synthetixio/wei';
 import React, { useMemo, memo, useCallback } from 'react';
-
 import { useTranslation } from 'react-i18next';
-import TextButton from 'components/Button/TextButton';
+import styled from 'styled-components';
+
+import Button from 'components/Button';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
+import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { editCrossMarginPositionMargin } from 'state/futures/actions';
 import {
@@ -13,10 +15,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber } from 'utils/formatters/number';
-import InputTitle from 'components/Input/InputTitle';
-import Button from 'components/Button';
-import { FlexDiv, FlexDivRow } from 'components/layout/flex';
-import styled from 'styled-components';
 
 type OrderSizingProps = {
 	isMobile?: boolean;

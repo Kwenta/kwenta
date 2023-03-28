@@ -9,6 +9,7 @@ import useIsL2 from 'hooks/useIsL2';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
+import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal';
 import MarketDetails from 'sections/futures/MarketDetails';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
@@ -38,7 +39,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { PageContent } from 'styles/common';
 import { MarketKeyByAsset } from 'utils/futures';
-import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 

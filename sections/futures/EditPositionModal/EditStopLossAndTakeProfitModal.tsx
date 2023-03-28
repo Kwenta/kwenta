@@ -5,10 +5,8 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
-import { FlexDivRowCentered } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
-import { Body } from 'components/Text';
 import { setOpenModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import { submitCrossMarginAdjustMargin } from 'state/futures/actions';
@@ -20,11 +18,8 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
-import EditPositionMarginInput from './EditPositionMarginInput';
-import InputHeaderRow from 'components/Input/InputHeaderRow';
-import NumericInput from 'components/Input/NumericInput';
-import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 import { BalanceText, InfoContainer } from './EditPositionMarginModal';
+import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
 const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%'];
 
@@ -67,7 +62,11 @@ export default function EditStopLossAndTakeProfitModal() {
 
 			<Spacer height={10} />
 
-			<SelectorButtons onSelect={onSelectPercent} options={PERCENT_OPTIONS} />
+			<SelectorButtons
+				onSelect={onSelectPercent}
+				options={PERCENT_OPTIONS}
+				type={'pill-button-large'}
+			/>
 
 			<InfoContainer>
 				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-pnl')}:</BalanceText>
@@ -83,7 +82,11 @@ export default function EditStopLossAndTakeProfitModal() {
 
 			<Spacer height={10} />
 
-			<SelectorButtons onSelect={onSelectPercent} options={PERCENT_OPTIONS} />
+			<SelectorButtons
+				onSelect={onSelectPercent}
+				options={PERCENT_OPTIONS}
+				type={'pill-button-large'}
+			/>
 
 			<InfoContainer>
 				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-pnl')}:</BalanceText>
