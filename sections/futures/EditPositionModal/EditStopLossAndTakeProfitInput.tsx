@@ -71,8 +71,10 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(({ isMob
 				}
 				rightElement={
 					<InputTitle>
-						{t('futures.market.trade.edit-sl-tp.last-price')}:{' '}
-						{markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
+						{t('futures.market.trade.edit-sl-tp.last-price')}:{'  '}
+						<span>
+							{markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
+						</span>
 					</InputTitle>
 				}
 			/>

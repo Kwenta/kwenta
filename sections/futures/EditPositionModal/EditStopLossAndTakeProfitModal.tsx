@@ -69,14 +69,14 @@ export default function EditStopLossAndTakeProfitModal() {
 			/>
 
 			<InfoContainer>
-				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-pnl')}:</BalanceText>
+				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-pnl')}</BalanceText>
 
 				<BalanceText>
-					<span>{preview?.leverage ? preview.leverage.toString(2) + 'x' : '-'}</span>
+					<span>{'-'}</span>
 				</BalanceText>
 			</InfoContainer>
 
-			<StyledSpacer width={400} />
+			<StyledSpacer />
 
 			<EditStopLossAndTakeProfitInput type={'stop-loss'} />
 
@@ -89,10 +89,10 @@ export default function EditStopLossAndTakeProfitModal() {
 			/>
 
 			<InfoContainer>
-				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-pnl')}:</BalanceText>
+				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-pnl')}</BalanceText>
 
 				<BalanceText>
-					<span>{preview?.leverage ? preview.leverage.toString(2) + 'x' : '-'}</span>
+					<span>{'-'}</span>
 				</BalanceText>
 			</InfoContainer>
 
@@ -123,6 +123,7 @@ export default function EditStopLossAndTakeProfitModal() {
 
 const StyledSpacer = styled(Spacer)`
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	width: 100%;
 	margin: 10px 0px 20px;
 `;
 
