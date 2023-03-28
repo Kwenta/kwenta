@@ -58,8 +58,8 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(({ isMob
 		marginDelta !== '' && (maxUsdInputAmount.lte(marginDelta || 0) || invalidMaxWithdraw);
 
 	return (
-		<div>
-			<InputHeaderRow
+		<div style={{ marginTop: '5px', marginBottom: '10px' }}>
+			<StyledInputHeaderRow
 				label={
 					type === 'take-profit'
 						? 'Take Profit'
@@ -98,6 +98,10 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(({ isMob
 const InputHelpers = styled.div`
 	display: flex;
 	justify-content: space-between;
+`;
+
+const StyledInputHeaderRow = styled(InputHeaderRow)`
+	margin-bottom: 9px;
 `;
 
 export default EditStopLossAndTakeProfitInput;

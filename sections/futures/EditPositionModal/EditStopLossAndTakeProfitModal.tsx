@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { setOpenModal } from 'state/app/reducer';
@@ -18,7 +19,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
-import { BalanceText, InfoContainer } from './EditPositionMarginModal';
+import { BalanceText } from './EditPositionMarginModal';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
 const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%'];
@@ -60,8 +61,6 @@ export default function EditStopLossAndTakeProfitModal() {
 		>
 			<EditStopLossAndTakeProfitInput type={'take-profit'} />
 
-			<Spacer height={10} />
-
 			<SelectorButtons
 				onSelect={onSelectPercent}
 				options={PERCENT_OPTIONS}
@@ -79,8 +78,6 @@ export default function EditStopLossAndTakeProfitModal() {
 			<StyledSpacer />
 
 			<EditStopLossAndTakeProfitInput type={'stop-loss'} />
-
-			<Spacer height={10} />
 
 			<SelectorButtons
 				onSelect={onSelectPercent}
@@ -121,15 +118,19 @@ export default function EditStopLossAndTakeProfitModal() {
 	);
 }
 
+const InfoContainer = styled(FlexDivRowCentered)`
+	margin: 20px 0;
+`;
+
 const StyledSpacer = styled(Spacer)`
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	width: 100%;
-	margin: 10px 0px 20px;
+	margin: 0px 0px 15px;
 `;
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 440px;
+		width: 438px;
 	}
 `;
 
@@ -137,6 +138,7 @@ const StyledInfoContainer = styled(InfoContainer)`
 	background: ${(props) => props.theme.colors.selectedTheme.button.red.fill};
 	padding: 10px 0;
 	border-radius: 8px;
+	margin: 0 0 20px;
 `;
 
 const StyledBalanceText = styled(BalanceText)`
