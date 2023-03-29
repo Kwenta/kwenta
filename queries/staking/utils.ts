@@ -29,6 +29,7 @@ export type FuturesFeeForAccountProps = {
 	abstractAccount: string;
 	accountType: string;
 	feesPaid: BigNumber;
+	keeperFeesPaid: BigNumber;
 };
 
 export type FuturesFeeProps = {

@@ -1,73 +1,305 @@
-import Wei from '@synthetixio/wei';
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
+import Link from 'next/link';
+import { FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import styled, { useTheme } from 'styled-components';
 
+import Logo from 'assets/svg/brand/logo-only.svg';
+import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import * as Text from 'components/Text';
-import { selectBalances } from 'state/balances/selectors';
-import { selectFuturesPortfolio } from 'state/futures/selectors';
+import { TableNoResults } from 'components/Table';
+import { Body, NumericValue, Heading } from 'components/Text';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
+import ROUTES from 'constants/routes';
+import { Period } from 'sdk/constants/period';
+import {
+	selectBuyingPower,
+	selectFuturesPortfolio,
+	selectPortfolioChartData,
+	selectSelectedPortfolioTimeframe,
+	selectTotalUnrealizedPnl,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { formatChartDate, formatChartTime, formatShortDateWithTime } from 'utils/formatters/date';
+import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
-type PortfolioChartProps = {
-	exchangeTokenBalances: Wei;
+import { Timeframe } from './Timeframe';
+
+type PriceChartProps = {
+	setHoverValue: (data: number | null) => void;
+	setHoverTitle: (data: string | null) => void;
 };
 
-const PortfolioChart: FC<PortfolioChartProps> = ({ exchangeTokenBalances }) => {
+const ChartCTA = () => {
+	const { t } = useTranslation();
+	return (
+		<CTAContainer>
+			<Logo />
+			<Heading variant="h3">{t('dashboard.overview.portfolio-chart.welcome')}</Heading>
+			<Body color={'secondary'}>{t('dashboard.overview.portfolio-chart.hero')}</Body>
+			<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
+				<Button variant="flat" size="medium">
+					{t('homepage.nav.trade-now')}
+				</Button>
+			</Link>
+		</CTAContainer>
+	);
+};
+
+const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
+	const theme = useTheme();
+	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe);
+	const portfolioData = useAppSelector(selectPortfolioChartData);
+
+	const lineColor = useMemo(() => {
+		const isNegative =
+			portfolioData.length > 2
+				? portfolioData[portfolioData.length - 1].total - portfolioData[0].total < 0
+				: false;
+		return isNegative ? theme.colors.selectedTheme.red : theme.colors.selectedTheme.green;
+	}, [portfolioData, theme]);
+
+	return (
+		<ResponsiveContainer width="100%" height="100%">
+			<LineChart
+				data={portfolioData}
+				margin={{ top: 12, bottom: 0, left: 8, right: 0 }}
+				onMouseLeave={() => {
+					setHoverValue(null);
+					setHoverTitle(null);
+				}}
+				onMouseMove={(payload) => {
+					if (payload.activePayload && payload.activePayload.length > 0) {
+						const newTotal = payload.activePayload[0].payload?.total;
+
+						const formattedDate = formatShortDateWithTime(
+							payload.activePayload[0].payload?.timestamp
+						);
+						if (newTotal) {
+							setHoverValue(newTotal);
+							setHoverTitle(formattedDate);
+						} else {
+							setHoverValue(null);
+							setHoverTitle(null);
+						}
+					} else {
+						setHoverValue(null);
+						setHoverTitle(null);
+					}
+				}}
+			>
+				<XAxis
+					dataKey="timestamp"
+					type="number"
+					scale="time"
+					minTickGap={75}
+					tickFormatter={portfolioTimeframe === Period.ONE_WEEK ? formatChartTime : formatChartDate}
+					domain={['dataMin', 'dataMax']}
+				/>
+				<Tooltip content={<></>} />
+				<Legend
+					verticalAlign="top"
+					align="left"
+					formatter={(value) => (value === 'total' ? 'Isolated Margin' : value)}
+				/>
+				<Line
+					type="monotone"
+					dataKey="total"
+					stroke={lineColor}
+					dot={false}
+					isAnimationActive={false}
+				/>
+			</LineChart>
+		</ResponsiveContainer>
+	);
+};
+
+const PortfolioChart: FC = () => {
+	const { t } = useTranslation();
 	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const balances = useAppSelector(selectBalances);
+	const portfolioData = useAppSelector(selectPortfolioChartData);
+	const buyingPower = useAppSelector(selectBuyingPower);
+	const upnl = useAppSelector(selectTotalUnrealizedPnl);
+
+	const [hoverValue, setHoverValue] = useState<number | null>(null);
+	const [hoverTitle, setHoverTitle] = useState<string | null>(null);
 
 	// TODO: Add back cross margin when relevant
-	const total = useMemo(
-		() => portfolio.isolatedMarginFutures.add(balances.totalUSDBalance).add(exchangeTokenBalances),
-		[portfolio.isolatedMarginFutures, balances.totalUSDBalance, exchangeTokenBalances]
-	);
+	const total = useMemo(() => portfolio.isolatedMarginFutures, [portfolio.isolatedMarginFutures]);
+
+	const changeValue = useMemo(() => {
+		if (portfolioData.length < 2) {
+			return {
+				value: null,
+				text: '',
+			};
+		} else {
+			const value =
+				(hoverValue ?? portfolioData[portfolioData.length - 1].total) - portfolioData[0].total;
+			const changeValue = portfolioData[0].total > 0 ? value / portfolioData[0].total : 0;
+			const text = `${value >= 0 ? '+' : ''}${formatDollars(value, {
+				suggestDecimals: true,
+			})} (${formatPercent(changeValue)})`;
+			return {
+				value,
+				text,
+			};
+		}
+	}, [portfolioData, hoverValue]);
 
 	return (
 		<>
 			<MobileHiddenView>
-				<Chart>
-					<PortfolioTitle>Portfolio Value</PortfolioTitle>
-					<PortfolioText currencyKey="sUSD" price={total} sign="$" />
-				</Chart>
+				<ChartGrid>
+					<ChartOverlay>
+						<PortfolioTitle>
+							{hoverTitle ? hoverTitle : t('dashboard.overview.portfolio-chart.portfolio-value')}
+						</PortfolioTitle>
+						<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
+						<NumericValue colored value={changeValue.value ?? zeroBN}>
+							{changeValue.text}&nbsp;
+						</NumericValue>
+					</ChartOverlay>
+					<GridBox>
+						<PortfolioTitle>{t('dashboard.overview.portfolio-chart.upnl')}</PortfolioTitle>
+						<NumericValue colored value={upnl ?? zeroBN}>
+							{upnl.gt(zeroBN) ? '+' : ''}
+							{formatDollars(upnl, { suggestDecimals: true })}
+						</NumericValue>
+					</GridBox>
+					<GridBox>
+						<PortfolioTitle>{t('dashboard.overview.portfolio-chart.buying-power')}</PortfolioTitle>
+						<NumericValue value={buyingPower ?? zeroBN}>
+							{formatDollars(buyingPower, { suggestDecimals: true })}
+						</NumericValue>
+					</GridBox>
+					{!!total && portfolioData.length >= 2 ? (
+						<ChartContainer>
+							<TopBar>
+								<TimeframeOverlay>
+									<Timeframe />
+								</TimeframeOverlay>
+							</TopBar>
+							<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
+						</ChartContainer>
+					) : (
+						<ChartContainer>
+							<ChartCTA />
+						</ChartContainer>
+					)}
+				</ChartGrid>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<PortfolioText currencyKey="sUSD" price={total} sign="$" />
-				<MobileChartPlaceholder />
+				{!!total && portfolioData.length >= 2 ? (
+					<MobileChartGrid>
+						<ChartOverlay>
+							<PortfolioTitle>Portfolio Value</PortfolioTitle>
+							<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
+							<NumericValue colored value={changeValue.value ?? zeroBN}>
+								{changeValue.text}&nbsp;
+							</NumericValue>
+						</ChartOverlay>
+						<ChartContainer>
+							<TopBar>
+								<TimeframeOverlay>
+									<Timeframe />
+								</TimeframeOverlay>
+							</TopBar>
+							<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
+						</ChartContainer>
+					</MobileChartGrid>
+				) : (
+					<ChartContainer mobile>
+						<ChartCTA />
+					</ChartContainer>
+				)}
 			</MobileOnlyView>
 		</>
 	);
 };
 
-const Chart = styled.div`
-	width: 100%;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 10px;
-	height: 200px;
+const ChartContainer = styled.div<{ mobile?: boolean }>`
+	position: relative;
+	grid-row-end: span 3;
+	border-left: ${(props) => (props.mobile ? null : props.theme.colors.selectedTheme.border)};
+	border-top: ${(props) => (props.mobile ? props.theme.colors.selectedTheme.border : null)};
+	border-bottom: ${(props) => (props.mobile ? props.theme.colors.selectedTheme.border : null)};
+	padding: 0 8px 0 8px;
 `;
 
-const PortfolioTitle = styled(Text.Body).attrs({ weight: 'bold' })`
+const TopBar = styled.div`
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 3;
+	display: flex;
+	flex-direction: row;
+	justify-content: end;
+	align-items: center;
+	padding: 8px 8px 0 0;
+`;
+
+const StyledPriceChart = styled(PriceChart)``;
+
+const ChartOverlay = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+	gap: 8px;
+	padding: 16px;
+`;
+
+const GridBox = styled.div`
+	display: flex;
+	flex-direction: column;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	padding: 16px;
+`;
+
+const TimeframeOverlay = styled.div`
+	max-width: 192px;
+`;
+
+const PortfolioTitle = styled(Body).attrs({ variant: 'bold' })`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 16px;
-	margin: 26px 0 10px 26px;
+	margin-bottom: 4px;
 `;
 
 const PortfolioText = styled(Currency.Price)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.monoBold};
 	letter-spacing: -1.2px;
-	font-size: 27px;
-	margin-left: 26px;
-	margin-top: 0;
-	margin-bottom: 26px;
+	font-size: 20px;
 
 	span {
-		line-height: 27px;
+		line-height: 23px;
 	}
 `;
 
-const MobileChartPlaceholder = styled.div`
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+const MobileChartGrid = styled.div`
+	display: grid;
+	grid-template-rows: 1fr 5fr;
+	width: 100%;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 0px;
+	height: 360px;
+`;
+
+const ChartGrid = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 3fr;
+	grid-template-rows: 1fr 1fr 1fr;
+	grid-auto-flow: column;
+	width: 100%;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 8px;
+	height: 260px;
+`;
+
+const CTAContainer = styled(TableNoResults)`
+	height: 100%;
 `;
 
 export default PortfolioChart;

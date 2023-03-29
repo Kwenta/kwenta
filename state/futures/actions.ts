@@ -6,13 +6,13 @@ import KwentaSDK from 'sdk';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
-import { FuturesAccountType } from 'queries/futures/types';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { ZERO_ADDRESS } from 'sdk/constants/global';
 import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	DelayedOrder,
+	FuturesAccountType,
 	FuturesMarket,
 	ConditionalOrder,
 	FuturesPosition,
@@ -888,7 +888,7 @@ export const fetchAllTradesForAccount = createAsyncThunk<
 		const account = selectFuturesAccount(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
 		if (!futuresSupported || !wallet || !account) return;
-		const trades = await sdk.futures.getAllTrades(wallet, accountType);
+		const trades = await sdk.futures.getAllTrades(wallet, accountType, 10000);
 		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
 	} catch (err) {
 		notifyError('Failed to fetch futures trades', err);

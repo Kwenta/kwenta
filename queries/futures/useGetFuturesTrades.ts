@@ -53,7 +53,10 @@ const useGetFuturesTrades = (
 						positionClosed: true,
 						pnl: true,
 						feesPaid: true,
+						keeperFeesPaid: true,
 						orderType: true,
+						fundingAccrued: true,
+						trackingCode: true,
 					}
 				);
 				return response ? mapTrades(response) : null;
@@ -69,14 +72,14 @@ const useGetFuturesTrades = (
 				return notNill(lastPage) && lastPage?.length > 0
 					? {
 							minTs: 0,
-							maxTs: lastPage[lastPage.length - 1].timestamp.toNumber(),
+							maxTs: lastPage[lastPage.length - 1].timestamp,
 					  }
 					: null;
 			},
 			getPreviousPageParam: (firstPage) => {
 				return notNill(firstPage) && firstPage?.length > 0
 					? {
-							minTs: firstPage[0].timestamp.toNumber(),
+							minTs: firstPage[0].timestamp,
 							maxTs: MAX_TIMESTAMP,
 					  }
 					: null;

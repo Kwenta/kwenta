@@ -50,6 +50,9 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 					<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 				)}
 
+				{!isMobile &&
+					(accountType === 'isolated_margin' ? <MarketInfoBox /> : <CrossMarginInfoBox />)}
+
 				{accountType === 'cross_margin' && <OrderTypeSelector />}
 
 				{accountType === 'cross_margin' && <MarginInput />}
