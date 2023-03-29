@@ -921,8 +921,7 @@
 					"stop-loss": "Stop Loss",
 					"last-price": "Last Price",
 					"estimated-pnl": "Estimated P&L",
-					"entire-position": "This setting applies to the entire position.",
-					"any-existing-cancelled": "Any existing stop loss or take profit orders will be cancelled."
+					"warning": "This setting applies to the entire position.\nAny existing stop loss or take profit orders will be cancelled."
 				}
 			},
 			"history": {

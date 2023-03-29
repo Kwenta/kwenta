@@ -13,90 +13,88 @@ import {
 	selectPosition,
 	selectIdleMargin,
 	selectEditPositionInputs,
-	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, formatDollars } from 'utils/formatters/number';
+import { floorNumber } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	isMobile?: boolean;
 	type: 'deposit' | 'withdraw' | 'take-profit' | 'stop-loss';
+	value: string;
 };
 
-const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(({ isMobile, type }) => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
+	({ isMobile, type, value }) => {
+		const { t } = useTranslation();
+		const dispatch = useAppDispatch();
 
-	const position = useAppSelector(selectPosition);
-	const { marginDelta } = useAppSelector(selectEditPositionInputs);
-	const idleMargin = useAppSelector(selectIdleMargin);
-	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo);
+		const position = useAppSelector(selectPosition);
+		const { marginDelta } = useAppSelector(selectEditPositionInputs);
+		const idleMargin = useAppSelector(selectIdleMargin);
 
-	const maxWithdraw = useMemo(() => {
-		const max = (position?.remainingMargin ?? wei(0)).sub(50);
-		return wei(Math.max(0, max.toNumber()));
-	}, [position?.remainingMargin]);
+		const maxWithdraw = useMemo(() => {
+			const max = (position?.remainingMargin ?? wei(0)).sub(50);
+			return wei(Math.max(0, max.toNumber()));
+		}, [position?.remainingMargin]);
 
-	const maxUsdInputAmount = type === 'deposit' ? idleMargin : maxWithdraw;
+		const maxUsdInputAmount = type === 'deposit' ? idleMargin : maxWithdraw;
 
-	const onChangeMargin = useCallback(
-		(value: string) => {
-			dispatch(editCrossMarginPositionMargin(type === 'deposit' ? value : '-' + value));
-		},
-		[dispatch, type]
-	);
+		const onChangeMargin = useCallback(
+			(value: string) => {
+				dispatch(editCrossMarginPositionMargin(type === 'deposit' ? value : '-' + value));
+			},
+			[dispatch, type]
+		);
 
-	const handleSetMax = useCallback(() => {
-		onChangeMargin(String(floorNumber(maxUsdInputAmount)));
-	}, [onChangeMargin, maxUsdInputAmount]);
+		const handleSetMax = useCallback(() => {
+			onChangeMargin(String(floorNumber(maxUsdInputAmount)));
+		}, [onChangeMargin, maxUsdInputAmount]);
 
-	const onChangeValue = useCallback((_, v: string) => onChangeMargin(v), [onChangeMargin]);
+		const onChangeValue = useCallback((_, v: string) => onChangeMargin(v), [onChangeMargin]);
 
-	const invalidMaxWithdraw = maxWithdraw.lt(marginDelta || 0);
+		const invalidMaxWithdraw = maxWithdraw.lt(marginDelta || 0);
 
-	const invalid =
-		marginDelta !== '' && (maxUsdInputAmount.lte(marginDelta || 0) || invalidMaxWithdraw);
+		const invalid =
+			marginDelta !== '' && (maxUsdInputAmount.lte(marginDelta || 0) || invalidMaxWithdraw);
 
-	return (
-		<div style={{ marginTop: '5px', marginBottom: '10px' }}>
-			<StyledInputHeaderRow
-				label={
-					type === 'take-profit'
-						? 'Take Profit'
-						: type === 'stop-loss'
-						? 'Stop Loss'
-						: type === 'deposit'
-						? 'Add margin amount'
-						: 'Withdraw amount'
-				}
-				rightElement={
-					<StyledInputTitle>
-						{t('futures.market.trade.edit-sl-tp.last-price')}:{' '}
-						<span>
-							{markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
-						</span>
-					</StyledInputTitle>
-				}
-			/>
-
-			<InputHelpers>
-				<NumericInput
-					invalid={invalid}
-					dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
-					value={marginDelta.replace('-', '')}
-					placeholder="0.00"
-					onChange={onChangeValue}
+		return (
+			<div style={{ marginTop: '5px', marginBottom: '10px' }}>
+				<StyledInputHeaderRow
+					label={
+						type === 'take-profit'
+							? 'Take Profit'
+							: type === 'stop-loss'
+							? 'Stop Loss'
+							: type === 'deposit'
+							? 'Add margin amount'
+							: 'Withdraw amount'
+					}
+					rightElement={
+						<StyledInputTitle>
+							{t('futures.market.trade.edit-sl-tp.last-price')}: <span>{value}</span>
+						</StyledInputTitle>
+					}
 				/>
 
-				<Button style={{ padding: '0 23px' }}>
-					{type === 'take-profit'
-						? t('futures.market.trade.edit-sl-tp.no-tp')
-						: t('futures.market.trade.edit-sl-tp.no-sl')}
-				</Button>
-			</InputHelpers>
-		</div>
-	);
-});
+				<InputHelpers>
+					<NumericInput
+						invalid={invalid}
+						dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
+						value={marginDelta.replace('-', '')}
+						placeholder="0.00"
+						onChange={onChangeValue}
+					/>
+
+					<Button style={{ padding: '0 23px' }}>
+						{type === 'take-profit'
+							? t('futures.market.trade.edit-sl-tp.no-tp')
+							: t('futures.market.trade.edit-sl-tp.no-sl')}
+					</Button>
+				</InputHelpers>
+			</div>
+		);
+	}
+);
 
 const InputHelpers = styled.div`
 	display: grid;
