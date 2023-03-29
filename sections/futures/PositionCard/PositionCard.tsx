@@ -5,7 +5,9 @@ import styled, { css } from 'styled-components';
 import ColoredPrice from 'components/ColoredPrice';
 import { InfoBoxRow } from 'components/InfoBox';
 import { FlexDivCentered, FlexDivCol } from 'components/layout/flex';
+import Pill from 'components/Pill';
 import PreviewArrow from 'components/PreviewArrow';
+import Spacer from 'components/Spacer';
 import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
@@ -23,7 +25,6 @@ import {
 	selectMarketInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { PillButtonDiv } from 'styles/common';
 import media from 'styles/media';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
@@ -314,9 +315,10 @@ const LeverageRow = memo(() => {
 					)}
 				</StyledValue>
 				{position?.position && futuresAccountType === 'cross_margin' && (
-					<PillButtonDiv onClick={() => dispatch(setOpenModal('futures_edit_position_margin'))}>
-						Edit
-					</PillButtonDiv>
+					<>
+						<Spacer width={10} />
+						<Pill onClick={() => dispatch(setOpenModal('futures_edit_position_margin'))}>EDIT</Pill>
+					</>
 				)}
 			</FlexDivCentered>
 		</InfoRow>

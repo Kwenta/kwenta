@@ -66,7 +66,7 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 
 				<LeverageInput />
 
-				<SLTPInputs />
+				{accountType === 'cross_margin' && <SLTPInputs />}
 
 				<ManagePosition />
 

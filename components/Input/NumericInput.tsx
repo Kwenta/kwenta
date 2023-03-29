@@ -104,10 +104,13 @@ const InputContainer = styled.div<{
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	background: ${(props) => props.theme.colors.selectedTheme.input.secondary.background};
+	background: ${(props) => props.theme.colors.selectedTheme.input.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-color: ${(props) => (props.$invalid ? props.theme.colors.selectedTheme.red : undefined)};
+	border-color: ${(props) =>
+		props.$invalid
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.input.borderColor};
 	border-radius: 8px;
 	padding: 0 10px;
 	height: 46px;

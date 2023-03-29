@@ -2,12 +2,12 @@ import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-	size?: 'small' | 'large';
+	size?: 'small';
 	color?: 'yellow' | 'gray' | 'red';
 	outline?: boolean;
 };
 
-const Pill: FC<PillProps> = memo(({ size = 'small', color = 'yellow', outline, ...props }) => {
+const Pill: FC<PillProps> = memo(({ size = 'small', color = 'gray', outline, ...props }) => {
 	return <BasePill $size={size} $color={color} $outline={outline} {...props} />;
 });
 
@@ -18,6 +18,7 @@ const BasePill = styled.button<{
 }>`
 	${(props) => css`
 		padding: ${props.$size === 'small' ? '5px' : '8px'};
+		height: 20px;
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
 		font-family: ${props.theme.fonts.black};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
@@ -38,7 +39,6 @@ const BasePill = styled.button<{
 		&:hover {
 			background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].hover.background};
 			color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].hover.text};
-			border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].hover.border};
 		}
 	`}
 `;

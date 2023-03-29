@@ -250,10 +250,6 @@ export const PillButtonSpan = styled.span<{ padding?: string }>`
 	${PillButtonCss}
 `;
 
-export const PillButtonDiv = styled.div<{ padding?: string }>`
-	${PillButtonCss}
-`;
-
 export const YellowIconButton = styled.div`
 	transition: all 0.1s ease-in-out;
 	cursor: pointer;

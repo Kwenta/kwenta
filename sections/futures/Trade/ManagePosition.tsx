@@ -78,11 +78,6 @@ const ManagePosition: React.FC = () => {
 		return null;
 	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
 
-	const leverageValid = useMemo(() => {
-		if (selectedAccountType === 'cross_margin') return true;
-		return leverage.gt(0) && leverage.lt(maxLeverageValue);
-	}, [selectedAccountType, maxLeverageValue, leverage]);
-
 	const onSubmit = useCallback(() => {
 		if (selectedAccountType === 'cross_margin' && !smartMarginAccount) {
 			dispatch(setOpenModal('futures_smart_margin_onboard'));
@@ -102,10 +97,10 @@ const ManagePosition: React.FC = () => {
 		show?: 'warn' | 'error';
 	} | null>(() => {
 		// TODO: Clean up errors and warnings
-		if (!leverageValid)
+		if (leverage.gt(maxLeverageValue))
 			return {
 				show: 'warn',
-				message: `Max leverage ${APP_MAX_LEVERAGE}x exceeded`,
+				message: `Max leverage ${APP_MAX_LEVERAGE.toString(0)}x exceeded`,
 			};
 		if (marketInfo?.isSuspended)
 			return {
@@ -158,7 +153,6 @@ const ManagePosition: React.FC = () => {
 
 		return null;
 	}, [
-		leverageValid,
 		susdSize,
 		marginDelta,
 		orderType,
@@ -172,6 +166,8 @@ const ManagePosition: React.FC = () => {
 		selectedAccountType,
 		isMarketCapReached,
 		previewStatus,
+		maxLeverageValue,
+		leverage,
 	]);
 
 	return (

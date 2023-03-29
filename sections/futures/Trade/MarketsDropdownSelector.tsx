@@ -83,9 +83,10 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	padding: 10px;
 	cursor: pointer;
-	background: ${(props) => props.theme.colors.selectedTheme.background};
+	transition: all 0.2s ease-in-out;
 	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+		background: ${(props) =>
+			props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
 	}
 	.name {
 		font-family: ${(props) => props.theme.fonts.regular};
