@@ -99,7 +99,10 @@ const App: FC<AppProps> = (props) => {
 		<>
 			<Head>
 				<meta charSet="utf-8" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
+				/>
 				<meta name="description" content={t('meta.description')} />
 				{/* open graph */}
 				<meta property="og:url" content="https://kwenta.eth.limo/" />

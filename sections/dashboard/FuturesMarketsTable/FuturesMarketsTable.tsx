@@ -203,16 +203,12 @@ const FuturesMarketsTable: FC = () => {
 									return (
 										<OpenInterestContainer>
 											<Currency.Price
-												currencyKey="sUSD"
 												price={cellProps.row.original.longInterest}
-												sign="$"
 												truncate
 												side="positive"
 											/>
 											<Currency.Price
-												currencyKey="sUSD"
 												price={cellProps.row.original.shortInterest}
-												sign="$"
 												truncate
 												side="negative"
 											/>
@@ -240,15 +236,7 @@ const FuturesMarketsTable: FC = () => {
 								),
 								accessor: 'dailyVolume',
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
-									return (
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.volume}
-											sign="$"
-											conversionRate={1}
-											truncate
-										/>
-									);
+									return <Currency.Price price={cellProps.row.original.volume} truncate />;
 								},
 								width: 125,
 								sortable: true,
@@ -295,9 +283,7 @@ const FuturesMarketsTable: FC = () => {
 											</IconContainer>
 											<StyledText>{cellProps.row.original.market}</StyledText>
 											<Currency.Price
-												currencyKey="sUSD"
 												price={cellProps.row.original.price}
-												sign="$"
 												formatOptions={{ suggestDecimals: true }}
 											/>
 										</MarketContainer>
@@ -322,12 +308,7 @@ const FuturesMarketsTable: FC = () => {
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.openInterest}
-											sign="$"
-											truncate
-										/>
+										<Currency.Price price={cellProps.row.original.openInterest} truncate />
 										<div>
 											<ChangePercent
 												showArrow={false}
@@ -364,12 +345,7 @@ const FuturesMarketsTable: FC = () => {
 											/>
 										</div>
 										<div>
-											<Currency.Price
-												currencyKey="sUSD"
-												price={cellProps.row.original.volume ?? 0}
-												sign="$"
-												truncate
-											/>
+											<Currency.Price price={cellProps.row.original.volume ?? 0} truncate />
 										</div>
 									</div>
 								);

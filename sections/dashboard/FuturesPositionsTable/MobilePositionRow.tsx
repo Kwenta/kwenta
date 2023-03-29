@@ -47,9 +47,7 @@ const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) =>
 				<div>
 					<div>
 						<Currency.Price
-							currencyKey="sUSD"
 							price={marketPrice}
-							sign="$"
 							formatOptions={
 								isDecimalFour(row.market.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
 							}
@@ -58,9 +56,7 @@ const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) =>
 					<EntryPrice>
 						{row.avgEntryPrice && (
 							<Currency.Price
-								currencyKey="sUSD"
 								price={row.avgEntryPrice}
-								sign="$"
 								formatOptions={
 									isDecimalFour(row.market.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
 								}
@@ -71,7 +67,7 @@ const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) =>
 				<div>
 					<ChangePercent value={row.position.pnlPct ?? 0} />
 					<div>
-						<Currency.Price currencyKey="sUSD" price={row.position.pnl ?? 0} sign="$" />
+						<Currency.Price price={row.position.pnl ?? 0} />
 					</div>
 				</div>
 			</RightColumnsContainer>

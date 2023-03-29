@@ -4,11 +4,12 @@ import styled, { css } from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
 import { ContainerRowMixin } from 'components/layout/grid';
+import { NumericValue } from 'components/Text';
 import { CurrencyKey } from 'constants/currency';
 import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
 
 type CurrencyPriceProps = {
-	currencyKey: CurrencyKey;
+	currencyKey?: CurrencyKey;
 	showCurrencyKey?: boolean;
 	price: WeiSource;
 	sign?: string;
@@ -21,11 +22,11 @@ type CurrencyPriceProps = {
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 	({
-		currencyKey,
+		currencyKey = 'sUSD',
 		price,
-		sign,
+		sign = '$',
 		change,
-		conversionRate,
+		conversionRate = 1,
 		showCurrencyKey,
 		formatOptions,
 		side,
@@ -33,7 +34,6 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		...rest
 	}) => {
 		const cleanPrice = wei(price);
-		const cleanConversionRate = wei(conversionRate ?? 0);
 
 		if (truncate) {
 			formatOptions = { ...formatOptions, truncate: true };
@@ -41,17 +41,13 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 
 		return (
 			<Container $side={side} {...rest}>
-				<span className="price">
-					{formatCurrency(
-						currencyKey,
-						cleanConversionRate.gt(0) ? cleanPrice.div(cleanConversionRate) : cleanPrice,
-						{
-							sign,
-							currencyKey: showCurrencyKey ? currencyKey : undefined,
-							...formatOptions,
-						}
-					)}
-				</span>
+				<NumericValue as="span" className="price">
+					{formatCurrency(currencyKey, cleanPrice.div(conversionRate ?? 1), {
+						sign,
+						currencyKey: showCurrencyKey ? currencyKey : undefined,
+						...formatOptions,
+					})}
+				</NumericValue>
 				{!!change && <ChangePercent className="percent" value={change} />}
 			</Container>
 		);

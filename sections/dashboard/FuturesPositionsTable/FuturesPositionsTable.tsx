@@ -88,7 +88,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
+		const positions = [...crossMarginPositions, ...isolatedPositions];
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -111,7 +111,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	}, [
 		isolatedPositions,
 		crossMarginPositions,
-		accountType,
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
@@ -124,9 +123,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			<DesktopOnlyView>
 				<div>
 					{/* <LegacyLink /> */}
-					<Table
+					<STable
 						data={data}
-						showPagination
+						rounded={false}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}
@@ -175,7 +174,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										</MarketContainer>
 									);
 								},
-								width: 198,
+								width: 180,
 							},
 							{
 								Header: (
@@ -185,7 +184,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Cell: (cellProps: CellProps<any>) => {
 									return <PositionType side={cellProps.row.original.position.side} />;
 								},
-								width: 90,
+								width: 70,
 							},
 							{
 								Header: (
@@ -201,10 +200,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 									return (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.position.notionalValue}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
 									);
@@ -226,10 +222,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<Body>{NO_VALUE}</Body>
 									) : (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.avgEntryPrice}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
 									);
@@ -249,10 +242,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									};
 									return (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.position.liquidationPrice}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
 									);
@@ -269,17 +259,36 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<PnlContainer>
 											<ChangePercent value={cellProps.row.original.position.pnlPct} />
 											<div>
-												<Currency.Price
-													currencyKey="sUSD"
-													price={cellProps.row.original.position.pnl}
-													sign="$"
-													conversionRate={1}
-												/>
+												<Currency.Price price={cellProps.row.original.position.pnl} />
 											</div>
 										</PnlContainer>
 									);
 								},
 								width: 125,
+							},
+							{
+								Header: <TableHeader>Funding</TableHeader>,
+								accessor: 'funding',
+								Cell: () => {
+									return <div></div>;
+								},
+								width: 90,
+							},
+							{
+								Header: <TableHeader>TP/SL</TableHeader>,
+								accessor: 'tp-sl',
+								Cell: () => {
+									return <div></div>;
+								},
+								width: 90,
+							},
+							{
+								Header: <TableHeader>Position</TableHeader>,
+								accessor: 'pos',
+								Cell: () => {
+									return <div></div>;
+								},
+								width: 90,
 							},
 						]}
 					/>
@@ -362,7 +371,7 @@ const StyledValue = styled.div`
 	grid-row: 2;
 `;
 
-const TableHeader = styled.div`
+const TableHeader = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
@@ -411,6 +420,10 @@ const NoPositionsText = styled.div`
 	font-size: 16px;
 	text-align: center;
 	text-decoration: underline;
+`;
+
+const STable = styled(Table)`
+	flex: 1;
 `;
 
 export default FuturesPositionsTable;

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ThemeProvider, createGlobalStyle } from 'styled-components';
+import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 
 import { FullScreenContainer } from 'styles/common';
 import { themes } from 'styles/theme';
@@ -19,12 +19,12 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 		<Background />
 		<Banner />
 
-		<FullScreenContainer>
+		<STV>
 			<GlobalStyle />
 			<Header />
 			{children}
 			<Footer />
-		</FullScreenContainer>
+		</STV>
 	</ThemeProvider>
 );
 
@@ -34,6 +34,10 @@ const GlobalStyle = createGlobalStyle`
 		background-color: ${darkTheme.background};
 		color: ${darkTheme.text.value};
 	}
+`;
+
+const STV = styled(FullScreenContainer)`
+	overflow-y: scroll;
 `;
 
 export default HomeLayout;

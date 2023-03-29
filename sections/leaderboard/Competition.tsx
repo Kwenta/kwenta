@@ -162,12 +162,7 @@ const Competition: FC<CompetitionProps> = ({
 									accessor: 'totalVolume',
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.totalVolume}
-											sign="$"
-											conversionRate={1}
-										/>
+										<Currency.Price price={cellProps.row.original.totalVolume} />
 									),
 									width: compact ? 'auto' : 100,
 									sortable: true,
@@ -178,12 +173,7 @@ const Competition: FC<CompetitionProps> = ({
 									sortType: 'basic',
 									Cell: (cellProps: CellProps<any>) => (
 										<PnlContainer direction="column">
-											<ColorCodedPrice
-												currencyKey="sUSD"
-												price={cellProps.row.original.pnl}
-												sign="$"
-												conversionRate={1}
-											/>
+											<ColorCodedPrice price={cellProps.row.original.pnl} />
 											<StyledValue>{cellProps.row.original.pnlPct}</StyledValue>
 										</PnlContainer>
 									),
