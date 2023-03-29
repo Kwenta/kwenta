@@ -1056,10 +1056,7 @@ export default class FuturesService {
 	}
 
 	public async updateStopLossAndTakeProfit(
-		market: {
-			key: FuturesMarketKey;
-			address: string;
-		},
+		marketKey: FuturesMarketKey,
 		crossMarginAddress: string,
 		order: SmartMarginOrderInputs
 	) {
@@ -1072,7 +1069,7 @@ export default class FuturesService {
 
 		if (order.takeProfit || order.stopLoss) {
 			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
-			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === market.key);
+			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === marketKey);
 			const existingStopLosses = existingOrdersForMarket.filter(
 				(o) =>
 					o.size.abs().eq(SL_TP_MAX_SIZE) &&
@@ -1095,7 +1092,7 @@ export default class FuturesService {
 				}
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 				const encodedParams = encodeConditionalOrderParams(
-					market.key,
+					marketKey,
 					{
 						marginDelta: wei(0),
 						sizeDelta: order.takeProfit.sizeDelta,
@@ -1117,7 +1114,7 @@ export default class FuturesService {
 				}
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 				const encodedParams = encodeConditionalOrderParams(
-					market.key,
+					marketKey,
 					{
 						marginDelta: wei(0),
 						sizeDelta: order.stopLoss.sizeDelta,

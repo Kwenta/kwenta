@@ -103,6 +103,11 @@ export default function EditStopLossAndTakeProfitModal() {
 		}
 	}, [takeProfitPrice, currentPrice, leverageSide]);
 
+	const isDisabled = useMemo(
+		() => slInvalid || tpInvalid || (stopLossPrice === '' && takeProfitPrice === ''),
+		[slInvalid, tpInvalid, stopLossPrice, takeProfitPrice]
+	);
+
 	return (
 		<StyledBaseModal
 			title={t(`futures.market.trade.edit-sl-tp.title`)}
@@ -173,7 +178,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				loading={isSubmitting}
 				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={slInvalid || tpInvalid}
+				disabled={isDisabled}
 				fullWidth
 				onClick={onSetStopLossAndTakeProfit}
 			>

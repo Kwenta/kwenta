@@ -1640,14 +1640,10 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectCrossMarginAccount(getState());
+		const wallet = selectWallet(getState());
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const marginDelta = selectCrossMarginMarginDelta(getState());
-		const feeCap = selectOrderFeeCap(getState());
-		const orderType = selectOrderType(getState());
-		const orderPrice = selectCrossMarginOrderPrice(getState());
-		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
 		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
-		const wallet = selectWallet(getState());
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
 
 		try {
@@ -1686,27 +1682,14 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 				};
 			}
 
-			if (orderType !== 'market') {
-				orderInputs['conditionalOrderInputs'] = {
-					orderType:
-						orderType === 'limit' ? ConditionalOrderTypeEnum.LIMIT : ConditionalOrderTypeEnum.STOP,
-					keeperEthDeposit,
-					feeCap,
-					price: wei(orderPrice || '0'),
-					reduceOnly: false,
-				};
-			}
-
 			const tx = await sdk.futures.updateStopLossAndTakeProfit(
-				{ address: marketInfo.market, key: marketInfo.marketKey },
+				marketInfo.marketKey,
 				account,
 				orderInputs
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
 			dispatch(refetchPosition('cross_margin'));
-			dispatch(fetchBalances());
-			dispatch(clearTradeInputs());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
