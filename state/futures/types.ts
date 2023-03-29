@@ -143,6 +143,8 @@ export type AccountContext = {
 	cmAccount?: string;
 };
 
+export type PreviewAction = 'edit_position' | 'trade';
+
 export type FuturesAccountData = {
 	position?: FuturesPosition<string>;
 	positions?: FuturesPosition<string>[];

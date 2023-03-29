@@ -1093,7 +1093,7 @@ export const selectPreviewData = createSelector(
 	selectAverageEntryPrice,
 	(tradePreview, position, modifiedAverage) => {
 		if (!position?.position || tradePreview === null) {
-			return {} as PositionPreviewData;
+			return null;
 		}
 
 		return {

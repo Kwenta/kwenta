@@ -71,6 +71,7 @@ const PositionButton = styled.div<PositionButtonProps>`
 			border-top: 3px
 				${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color} solid;
 		}
+		border-top: ${props.theme.colors.selectedTheme.border};
 		border-bottom: ${props.theme.colors.selectedTheme.border};
 	`}
 
