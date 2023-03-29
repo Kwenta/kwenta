@@ -1,5 +1,4 @@
-import { wei } from '@synthetixio/wei';
-import React, { useMemo, memo, useCallback } from 'react';
+import React, { memo, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -7,71 +6,27 @@ import Button from 'components/Button';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
-import { NO_VALUE } from 'constants/placeholder';
-import { editCrossMarginPositionMargin } from 'state/futures/actions';
-import {
-	selectPosition,
-	selectIdleMargin,
-	selectEditPositionInputs,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	isMobile?: boolean;
-	type: 'deposit' | 'withdraw' | 'take-profit' | 'stop-loss';
+	type: 'take-profit' | 'stop-loss';
 	value: string;
+	invalid: boolean;
+	currentPrice: string;
+	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void;
 };
 
 const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
-	({ isMobile, type, value }) => {
+	({ isMobile, type, value, invalid, currentPrice, onChange }) => {
 		const { t } = useTranslation();
-		const dispatch = useAppDispatch();
-
-		const position = useAppSelector(selectPosition);
-		const { marginDelta } = useAppSelector(selectEditPositionInputs);
-		const idleMargin = useAppSelector(selectIdleMargin);
-
-		const maxWithdraw = useMemo(() => {
-			const max = (position?.remainingMargin ?? wei(0)).sub(50);
-			return wei(Math.max(0, max.toNumber()));
-		}, [position?.remainingMargin]);
-
-		const maxUsdInputAmount = type === 'deposit' ? idleMargin : maxWithdraw;
-
-		const onChangeMargin = useCallback(
-			(value: string) => {
-				dispatch(editCrossMarginPositionMargin(type === 'deposit' ? value : '-' + value));
-			},
-			[dispatch, type]
-		);
-
-		const handleSetMax = useCallback(() => {
-			onChangeMargin(String(floorNumber(maxUsdInputAmount)));
-		}, [onChangeMargin, maxUsdInputAmount]);
-
-		const onChangeValue = useCallback((_, v: string) => onChangeMargin(v), [onChangeMargin]);
-
-		const invalidMaxWithdraw = maxWithdraw.lt(marginDelta || 0);
-
-		const invalid =
-			marginDelta !== '' && (maxUsdInputAmount.lte(marginDelta || 0) || invalidMaxWithdraw);
 
 		return (
 			<div style={{ marginTop: '5px', marginBottom: '10px' }}>
 				<StyledInputHeaderRow
-					label={
-						type === 'take-profit'
-							? 'Take Profit'
-							: type === 'stop-loss'
-							? 'Stop Loss'
-							: type === 'deposit'
-							? 'Add margin amount'
-							: 'Withdraw amount'
-					}
+					label={type === 'take-profit' ? 'Take Profit' : 'Stop Loss'}
 					rightElement={
 						<StyledInputTitle>
-							{t('futures.market.trade.edit-sl-tp.last-price')}: <span>{value}</span>
+							{t('futures.market.trade.edit-sl-tp.last-price')}: <span>{currentPrice}</span>
 						</StyledInputTitle>
 					}
 				/>
@@ -80,9 +35,9 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 					<NumericInput
 						invalid={invalid}
 						dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
-						value={marginDelta.replace('-', '')}
+						value={value}
 						placeholder="0.00"
-						onChange={onChangeValue}
+						onChange={onChange}
 					/>
 
 					<Button style={{ padding: '0 23px' }}>
