@@ -659,7 +659,7 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(getClosePositionOrderFee.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.closePositionOrderFee = SUCCESS_STATUS;
-			futuresState.closePositionOrderFee = payload.toString();
+			futuresState.closePositionOrderFee = payload;
 		});
 		builder.addCase(getClosePositionOrderFee.rejected, (futuresState, { error }) => {
 			futuresState.queryStatuses.closePositionOrderFee = {

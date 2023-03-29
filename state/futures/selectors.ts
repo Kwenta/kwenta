@@ -668,12 +668,23 @@ export const selectIsolatedPriceImpact = createSelector(
 	(priceImpact) => wei(priceImpact)
 );
 
-export const selectDesiredFillPrice = createSelector(
+export const selectDesiredTradeFillPrice = createSelector(
 	selectIsolatedPriceImpact,
 	selectTradeSizeInputs,
 	selectMarketPrice,
 	(priceImpact, { nativeSizeDelta }, marketPrice) => {
 		return nativeSizeDelta.lt(0)
+			? marketPrice.mul(wei(1).sub(priceImpact))
+			: marketPrice.mul(priceImpact.add(1));
+	}
+);
+
+export const selectDesiredCloseFillPrice = createSelector(
+	selectIsolatedPriceImpact,
+	selectPosition,
+	selectMarketPrice,
+	(priceImpact, position, marketPrice) => {
+		return position?.position?.side === PositionSide.LONG
 			? marketPrice.mul(wei(1).sub(priceImpact))
 			: marketPrice.mul(priceImpact.add(1));
 	}
