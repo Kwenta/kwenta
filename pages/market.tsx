@@ -106,7 +106,7 @@ const Market: MarketComponent = () => {
 			<MobileOrTabletView>
 				<MobileTrade />
 			</MobileOrTabletView>
-			<EditStopLossAndTakeProfitModal />
+			{openModal === 'futures_edit_stop_loss_take_profit' && <EditStopLossAndTakeProfitModal />}
 			{openModal === 'futures_edit_position_size' && <EditPositionSizeModal />}
 			{openModal === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_isolated_transfer' && (

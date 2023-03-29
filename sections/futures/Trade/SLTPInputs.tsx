@@ -18,6 +18,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { suggestedDecimals } from 'utils/formatters/number';
+import { setOpenModal } from 'state/app/reducer';
 
 const TP_OPTIONS = ['5%', '10%', '25%', '50%', '100%'];
 const SL_OPTIONS = ['2%', '5%', '10%', '20%', '50%'];
@@ -91,7 +92,9 @@ export default function SLTPInputs() {
 	return (
 		<Container>
 			<ExpandRow onClick={() => setShowInputs(!showInputs)}>
-				<InputTitle>Stop Loss / Take Profit</InputTitle>
+				<InputTitle onClick={() => dispatch(setOpenModal('futures_edit_stop_loss_take_profit'))}>
+					Stop Loss / Take Profit
+				</InputTitle>
 				<Button
 					style={{
 						height: '20px',
