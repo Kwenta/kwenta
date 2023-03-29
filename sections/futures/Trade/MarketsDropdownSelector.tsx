@@ -32,7 +32,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 		<ContentContainer mobile={props.mobile}>
 			<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width="31px" height="31px" />
 			<div className="currency-meta">
-				<CurrencyLabel>
+				<CurrencyLabel weight="bold">
 					{props.label}
 					<MarketBadge
 						currencyKey={props.asset}
@@ -40,7 +40,6 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 						futuresClosureReason={props.closureReason}
 					/>
 				</CurrencyLabel>
-				<Body className="name">{props.description}</Body>
 			</div>
 			{props.mobile && (
 				<div style={{ marginRight: 15 }}>
@@ -58,8 +57,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 	</Container>
 );
 
-export const CurrencyLabel = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
+export const CurrencyLabel = styled(Body)`
 	font-size: 16px;
 	display: flex;
 	align-items: center;
@@ -81,7 +79,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	height: 100%;
 
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	padding: 10px;
+	padding: 15px;
 	cursor: pointer;
 	transition: all 0.2s ease-in-out;
 	&:hover {

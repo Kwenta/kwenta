@@ -75,8 +75,8 @@ const MarketNameRow = memo(() => {
 			<Subtitle>{marketShortName}</Subtitle>
 			<ColoredPrice priceInfo={marketPriceInfo}>
 				{formatDollars(marketPrice, { suggestDecimals: true })}
-				<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-					{formatDollars(previewData.fillPrice ?? zeroBN, { suggestDecimals: true })}
+				<PreviewArrow showPreview={!!previewData?.sizeIsNotZero && !previewData.showStatus}>
+					{formatDollars(previewData?.fillPrice ?? zeroBN, { suggestDecimals: true })}
 				</PreviewArrow>
 			</ColoredPrice>
 		</InfoRow>
@@ -98,16 +98,16 @@ const PositionSideRow = memo(() => {
 				{positionDetails ? (
 					<PositionValue side={positionDetails.side}>
 						{positionDetails.side}
-						{previewData.positionSide !== positionDetails.side && (
+						{previewData?.positionSide !== positionDetails.side && (
 							<PreviewArrow
 								showPreview={
-									previewData.sizeIsNotZero &&
-									previewData.positionSide !== positionDetails.side &&
-									!previewData.showStatus
+									!!previewData?.sizeIsNotZero &&
+									previewData?.positionSide !== positionDetails.side &&
+									!previewData?.showStatus
 								}
 							>
-								<PositionValue side={previewData.positionSide as PositionSide}>
-									{previewData.positionSide}
+								<PositionValue side={previewData?.positionSide as PositionSide}>
+									{previewData?.positionSide}
 								</PositionValue>
 							</PreviewArrow>
 						)}
@@ -141,12 +141,14 @@ const PositionSizeRow = memo(() => {
 						})})`}
 						<PreviewArrow
 							showPreview={
-								previewData.positionSize && previewData.sizeIsNotZero && !previewData.showStatus
+								!!previewData?.positionSize &&
+								previewData?.sizeIsNotZero &&
+								!previewData?.showStatus
 							}
 						>
-							{`${formatNumber(previewData.positionSize ?? 0, {
+							{`${formatNumber(previewData?.positionSize ?? 0, {
 								minDecimals: 2,
-							})} (${formatDollars(previewData.notionalValue?.abs() ?? zeroBN, {
+							})} (${formatDollars(previewData?.notionalValue?.abs() ?? zeroBN, {
 								minDecimals: 2,
 							})})`}
 						</PreviewArrow>
@@ -306,7 +308,7 @@ const LeverageRow = memo(() => {
 					{positionDetails ? (
 						<>
 							{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}
-							<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							<PreviewArrow showPreview={!!previewData?.sizeIsNotZero && !previewData?.showStatus}>
 								{formatNumber(previewData?.leverage ?? zeroBN) + 'x'}
 							</PreviewArrow>
 						</>
@@ -342,7 +344,7 @@ const LiquidationPriceRow = memo(() => {
 				{positionDetails ? (
 					<>
 						{formatDollars(positionDetails?.liquidationPrice ?? zeroBN, { suggestDecimals: true })}
-						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+						<PreviewArrow showPreview={!!previewData?.sizeIsNotZero && !previewData?.showStatus}>
 							{formatDollars(previewData?.liquidationPrice ?? zeroBN, { suggestDecimals: true })}
 						</PreviewArrow>
 					</>
@@ -370,8 +372,8 @@ const AverageEntryPriceRow = memo(() => {
 				{positionDetails ? (
 					<>
 						{formatDollars(positionHistory?.entryPrice ?? zeroBN, { suggestDecimals: true })}
-						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
-							{formatDollars(previewData.avgEntryPrice ?? zeroBN, { suggestDecimals: true })}
+						<PreviewArrow showPreview={!!previewData?.sizeIsNotZero && !previewData?.showStatus}>
+							{formatDollars(previewData?.avgEntryPrice ?? zeroBN, { suggestDecimals: true })}
 						</PreviewArrow>
 					</>
 				) : (
