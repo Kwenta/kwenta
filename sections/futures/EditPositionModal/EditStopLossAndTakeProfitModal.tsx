@@ -76,6 +76,11 @@ export default function EditStopLossAndTakeProfitModal() {
 		[dispatch]
 	);
 
+	const onClearStopLoss = useCallback(() => dispatch(setCrossMarginTradeStopLoss('')), [dispatch]);
+	const onClearTakeProfit = useCallback(() => dispatch(setCrossMarginTradeTakeProfit('')), [
+		dispatch,
+	]);
+
 	const slInvalid = useMemo(() => {
 		if (leverageSide === 'long') {
 			return !!stopLossPrice && wei(stopLossPrice).gt(currentPrice);
@@ -103,11 +108,11 @@ export default function EditStopLossAndTakeProfitModal() {
 			<EditStopLossAndTakeProfitInput
 				type={'take-profit'}
 				invalid={tpInvalid}
-				value={takeProfitPrice}
 				currentPrice={
 					currentPrice ? formatDollars(currentPrice, { suggestDecimals: true }) : NO_VALUE
 				}
 				onChange={onChangeTakeProfit}
+				onClick={onClearTakeProfit}
 			/>
 
 			<SelectorButtons
@@ -131,11 +136,11 @@ export default function EditStopLossAndTakeProfitModal() {
 			<EditStopLossAndTakeProfitInput
 				type={'stop-loss'}
 				invalid={slInvalid}
-				value={stopLossPrice}
 				currentPrice={
 					currentPrice ? formatDollars(currentPrice, { suggestDecimals: true }) : NO_VALUE
 				}
 				onChange={onChangeStopLoss}
+				onClick={onClearStopLoss}
 			/>
 
 			<SelectorButtons

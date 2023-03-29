@@ -1,4 +1,4 @@
-import React, { memo, ChangeEvent } from 'react';
+import React, { memo, ChangeEvent, MouseEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -6,19 +6,22 @@ import Button from 'components/Button';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
+import { selectSlTpTradeInputs } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 
 type OrderSizingProps = {
 	isMobile?: boolean;
 	type: 'take-profit' | 'stop-loss';
-	value: string;
 	invalid: boolean;
 	currentPrice: string;
 	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void;
+	onClick: MouseEventHandler<HTMLButtonElement>;
 };
 
 const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
-	({ isMobile, type, value, invalid, currentPrice, onChange }) => {
+	({ isMobile, type, invalid, currentPrice, onChange, onClick }) => {
 		const { t } = useTranslation();
+		const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
 
 		return (
 			<div style={{ marginTop: '5px', marginBottom: '10px' }}>
@@ -35,12 +38,16 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 					<NumericInput
 						invalid={invalid}
 						dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
-						value={value}
+						value={type === 'take-profit' ? takeProfitPrice : stopLossPrice}
 						placeholder="0.00"
 						onChange={onChange}
 					/>
 
-					<Button style={{ padding: '0 23px' }}>
+					<Button
+						style={{ padding: '0 23px' }}
+						onClick={onClick}
+						disabled={type === 'take-profit' ? takeProfitPrice === '' : stopLossPrice === ''}
+					>
 						{type === 'take-profit'
 							? t('futures.market.trade.edit-sl-tp.no-tp')
 							: t('futures.market.trade.edit-sl-tp.no-sl')}
