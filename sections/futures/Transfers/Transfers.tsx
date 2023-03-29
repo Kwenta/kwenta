@@ -8,7 +8,7 @@ import { Body } from 'components/Text';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { selectMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
+import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
@@ -21,7 +21,7 @@ const Transfers: FC = () => {
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
-	const marginTransfers = useAppSelector(selectMarginTransfers);
+	const marginTransfers = useAppSelector(selectMarketMarginTransfers);
 	const {
 		marginTransfers: { status: marginTransfersStatus },
 	} = useAppSelector(selectQueryStatuses);
