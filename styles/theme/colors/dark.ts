@@ -1,9 +1,18 @@
 import common from './common';
 
 const newTheme = {
+	containers: {
+		primary: {
+			background: common.palette.neutral.n1000,
+		},
+		secondary: {
+			background: common.palette.neutral.n700,
+		},
+	},
 	button: {
 		default: {
-			border: common.palette.neutral.n700,
+			border: `1px solid ${common.palette.neutral.n700}`,
+			borderColor: common.palette.neutral.n700,
 			background: common.palette.neutral.n800,
 			color: common.palette.neutral.n0,
 			hover: {
@@ -34,6 +43,12 @@ const newTheme = {
 					border: common.palette.red.r400,
 					color: common.palette.neutral.n900,
 				},
+			},
+		},
+		cell: {
+			background: 'transparent',
+			hover: {
+				background: common.palette.neutral.n800,
 			},
 		},
 	},
@@ -95,17 +110,17 @@ const newTheme = {
 		},
 		gray: {
 			text: common.palette.neutral.n70,
-			background: common.palette.neutral.n700,
-			border: common.palette.neutral.n70,
+			background: common.palette.neutral.n800,
+			border: common.palette.neutral.n600,
 			outline: {
 				text: common.palette.neutral.n900,
 				background: common.palette.neutral.n20,
-				border: common.palette.neutral.n20,
+				border: common.palette.alpha.white10,
 			},
 			hover: {
-				background: common.palette.neutral.n70,
+				background: common.palette.neutral.n700,
 				border: common.palette.alpha.white10,
-				text: common.palette.neutral.n900,
+				text: common.palette.neutral.n30,
 			},
 		},
 		red: {
@@ -126,17 +141,15 @@ const newTheme = {
 	},
 	tabs: {
 		position: {
-			background: common.palette.neutral.n900,
-			border: common.palette.neutral.n900,
-			color: common.palette.neutral.n900,
-			hover: {
-				background: common.palette.neutral.n800,
-			},
+			background: common.palette.neutral.n1100,
+			color: common.palette.neutral.n70,
 			long: {
 				color: common.palette.green.g600,
+				background: common.palette.alpha.green5,
 			},
 			short: {
 				color: common.palette.red.r300,
+				background: common.palette.alpha.red5,
 			},
 		},
 	},
@@ -206,7 +219,9 @@ const darkTheme = {
 		},
 	},
 	input: {
-		background: '#151515',
+		background: common.palette.neutral.n1100,
+		border: `1px solid ${common.palette.neutral.n700}`,
+		borderColor: common.palette.neutral.n700,
 		secondary: {
 			background: '#0b0b0b',
 		},
@@ -214,12 +229,10 @@ const darkTheme = {
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
 		hover: common.dark.white,
 	},
-	segmented: {
-		background: '#0b0b0b',
+	segmentedControl: {
+		background: common.palette.neutral.n1100,
 		button: {
-			background: '#1F1E1E',
-			shadow:
-				'0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.5), inset 0px 0px 20px rgba(255, 255, 255, 0.03), inset 0px 1px 0px rgba(255, 255, 255, 0.09)',
+			background: common.palette.neutral.n800,
 			inactive: { color: '#787878' },
 		},
 	},

@@ -105,7 +105,7 @@ const ManagePosition: React.FC = () => {
 		if (!leverageValid)
 			return {
 				show: 'warn',
-				message: `Max leverage ${APP_MAX_LEVERAGE}x exceeded`,
+				message: `Max leverage ${APP_MAX_LEVERAGE.toString(0)}x exceeded`,
 			};
 		if (marketInfo?.isSuspended)
 			return {

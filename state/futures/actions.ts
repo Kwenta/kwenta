@@ -8,8 +8,8 @@ import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { FuturesAccountType } from 'queries/futures/types';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
-import { NetworkId } from 'sdk/types/common';
 import { ZERO_ADDRESS } from 'sdk/constants/global';
+import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	DelayedOrder,

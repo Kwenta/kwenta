@@ -46,7 +46,9 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 	height: ${(props) => (props.styleType === 'tab' ? '38px' : '22px')};
 	padding: ${(props) => (props.styleType === 'tab' ? '4px' : '0')};
 	background: ${(props) =>
-		props.styleType === 'tab' ? props.theme.colors.selectedTheme.segmented.background : 'none'};
+		props.styleType === 'tab'
+			? props.theme.colors.selectedTheme.segmentedControl.background
+			: 'none'};
 	border: ${(props) =>
 		props.styleType === 'tab' ? props.theme.colors.selectedTheme.border : 'none'};
 	border-radius: 8px;
@@ -78,11 +80,11 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 			? props.theme.colors.common.primaryYellow
 			: props.isSelected
 			? props.theme.colors.selectedTheme.button.text.primary
-			: props.theme.colors.selectedTheme.segmented.button.inactive.color};
+			: props.theme.colors.selectedTheme.segmentedControl.button.inactive.color};
 
 	background: ${(props) =>
 		props.isSelected && props.styleType === 'tab'
-			? props.theme.colors.selectedTheme.segmented.button.background
+			? props.theme.colors.selectedTheme.segmentedControl.button.background
 			: 'transparent'};
 
 	background-color: ${(props) =>

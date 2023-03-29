@@ -49,9 +49,9 @@ const SearchInput = styled(Input)<{ border: boolean }>`
 	padding: 10px 15px;
 	font-size: 14px;
 	background: ${(props) =>
-		props.border ? props.theme.colors.selectedTheme.input.secondary.background : 'none'};
+		props.border ? props.theme.colors.selectedTheme.input.background : 'none'};
 
-	border: ${(props) => (props.border ? props.theme.colors.selectedTheme.border : 'none')};
+	border: ${(props) => (props.border ? props.theme.colors.selectedTheme.input.border : 'none')};
 
 	${media.lessThan('sm')`
 		font-size: 13px;

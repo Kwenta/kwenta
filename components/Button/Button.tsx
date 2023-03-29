@@ -43,7 +43,7 @@ export const border = css`
 		bottom: 0;
 		border-radius: 8px;
 		padding: 1px;
-		background: ${(props) => props.theme.colors.selectedTheme.button.border};
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.borderColor};
 		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
 		-webkit-mask-composite: xor;
 		mask-image: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -96,7 +96,7 @@ const BaseButton = styled.button<BaseButtonProps>`
 	${(props) =>
 		props.$variant === 'primary' &&
 		css`
-			background: ${props.theme.colors.selectedTheme.button.primary.background};
+			background: ${props.theme.colors.selectedTheme.newTheme.button.default.background};
 			text-shadow: ${props.theme.colors.selectedTheme.button.primary.textShadow};
 			&:hover {
 				background: ${props.theme.colors.selectedTheme.button.primary.hover};
@@ -106,7 +106,7 @@ const BaseButton = styled.button<BaseButtonProps>`
 	${(props) =>
 		(props.noOutline || props.$variant === 'flat') &&
 		css`
-			background: ${props.theme.colors.selectedTheme.button.fill};
+			background: ${props.theme.colors.selectedTheme.newTheme.button.default.background};
 			border: ${props.theme.colors.selectedTheme.border};
 			&:hover {
 				background: ${props.theme.colors.selectedTheme.button.fillHover};

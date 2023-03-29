@@ -31,7 +31,7 @@ export const socketDefaultChains = [
 ];
 
 export function customizeSocket(theme: DefaultTheme): SocketCustomizationProps {
-	const background = hexToRGB(theme.colors.selectedTheme.input.secondary.background);
+	const background = hexToRGB(theme.colors.selectedTheme.input.background);
 	const text = hexToRGB(theme.colors.selectedTheme.button.text.primary);
 	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.socket.accent);
 
