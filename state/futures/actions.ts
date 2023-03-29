@@ -1635,6 +1635,85 @@ const submitCMTransferTransaction = async (
 	}
 };
 
+export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/updateStopLossAndTakeProfit',
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const marketInfo = selectMarketInfo(getState());
+		const account = selectCrossMarginAccount(getState());
+		const tradeInputs = selectCrossMarginTradeInputs(getState());
+		const marginDelta = selectCrossMarginMarginDelta(getState());
+		const feeCap = selectOrderFeeCap(getState());
+		const orderType = selectOrderType(getState());
+		const orderPrice = selectCrossMarginOrderPrice(getState());
+		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
+		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
+		const wallet = selectWallet(getState());
+		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
+
+		try {
+			if (!marketInfo) throw new Error('Market info not found');
+			if (!account) throw new Error('No cross margin account found');
+			if (!wallet) throw new Error('No wallet connected');
+
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'submit_cross_order',
+					hash: null,
+				})
+			);
+
+			const orderInputs: SmartMarginOrderInputs = {
+				sizeDelta: tradeInputs.nativeSizeDelta,
+				marginDelta: marginDelta,
+				desiredFillPrice: desiredFillPrice,
+			};
+
+			// To separate Stop Loss and Take Profit from other limit / stop orders
+			// we set the size to max big num value.
+
+			if (Number(stopLossPrice) > 0) {
+				orderInputs.stopLoss = {
+					price: wei(stopLossPrice),
+					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
+				};
+			}
+
+			if (Number(takeProfitPrice) > 0) {
+				orderInputs.takeProfit = {
+					price: wei(takeProfitPrice),
+					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
+				};
+			}
+
+			if (orderType !== 'market') {
+				orderInputs['conditionalOrderInputs'] = {
+					orderType:
+						orderType === 'limit' ? ConditionalOrderTypeEnum.LIMIT : ConditionalOrderTypeEnum.STOP,
+					keeperEthDeposit,
+					feeCap,
+					price: wei(orderPrice || '0'),
+					reduceOnly: false,
+				};
+			}
+
+			const tx = await sdk.futures.updateStopLossAndTakeProfit(
+				{ address: marketInfo.market, key: marketInfo.marketKey },
+				account,
+				orderInputs
+			);
+			await monitorAndAwaitTransaction(dispatch, tx);
+			dispatch(setOpenModal(null));
+			dispatch(refetchPosition('cross_margin'));
+			dispatch(fetchBalances());
+			dispatch(clearTradeInputs());
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
+
 const monitorAndAwaitTransaction = async (
 	dispatch: AppDispatch,
 	tx: ethers.providers.TransactionResponse

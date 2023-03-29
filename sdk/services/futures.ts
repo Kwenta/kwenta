@@ -1054,4 +1054,90 @@ export default class FuturesService {
 			amount.toBN(),
 		]);
 	}
+
+	public async updateStopLossAndTakeProfit(
+		market: {
+			key: FuturesMarketKey;
+			address: string;
+		},
+		crossMarginAddress: string,
+		order: SmartMarginOrderInputs
+	) {
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+		const commands = [];
+		const inputs = [];
+
+		if (order.takeProfit || order.stopLoss) {
+			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
+			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === market.key);
+			const existingStopLosses = existingOrdersForMarket.filter(
+				(o) =>
+					o.size.abs().eq(SL_TP_MAX_SIZE) &&
+					o.reduceOnly &&
+					o.orderType === ConditionalOrderTypeEnum.STOP
+			);
+			const existingTakeProfits = existingOrdersForMarket.filter(
+				(o) =>
+					o.size.abs().eq(SL_TP_MAX_SIZE) &&
+					o.reduceOnly &&
+					o.orderType === ConditionalOrderTypeEnum.LIMIT
+			);
+
+			if (order.takeProfit) {
+				if (existingTakeProfits.length) {
+					existingTakeProfits.forEach((tp) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [tp.id]));
+					});
+				}
+				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+				const encodedParams = encodeConditionalOrderParams(
+					market.key,
+					{
+						marginDelta: wei(0),
+						sizeDelta: order.takeProfit.sizeDelta,
+						price: order.takeProfit.price,
+					},
+					ConditionalOrderTypeEnum.LIMIT,
+					order.desiredFillPrice,
+					true
+				);
+				inputs.push(encodedParams);
+			}
+
+			if (order.stopLoss) {
+				if (existingStopLosses.length) {
+					existingStopLosses.forEach((sl) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [sl.id]));
+					});
+				}
+				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+				const encodedParams = encodeConditionalOrderParams(
+					market.key,
+					{
+						marginDelta: wei(0),
+						sizeDelta: order.stopLoss.sizeDelta,
+						price: order.stopLoss.price,
+					},
+					ConditionalOrderTypeEnum.STOP,
+					order.desiredFillPrice,
+					true
+				);
+				inputs.push(encodedParams);
+			}
+		}
+
+		return this.sdk.transactions.createContractTxn(
+			crossMarginAccountContract,
+			'execute',
+			[commands, inputs],
+			{
+				value: order.conditionalOrderInputs?.keeperEthDeposit.toBN() ?? '0',
+			}
+		);
+	}
 }

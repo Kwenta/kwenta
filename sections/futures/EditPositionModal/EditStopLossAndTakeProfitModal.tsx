@@ -11,11 +11,13 @@ import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
 import { setOpenModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
+import { updateStopLossAndTakeProfit } from 'state/futures/actions';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
 	selectLeverageSide,
 	selectMarketPrice,
 	selectSlTpTradeInputs,
+	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, suggestedDecimals } from 'utils/formatters/number';
@@ -33,6 +35,7 @@ export default function EditStopLossAndTakeProfitModal() {
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const transactionState = useAppSelector(selectTransaction);
+	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 
 	const onSelectStopLossPercent = useCallback(
 		(index) => {
@@ -80,6 +83,9 @@ export default function EditStopLossAndTakeProfitModal() {
 	const onClearTakeProfit = useCallback(() => dispatch(setCrossMarginTradeTakeProfit('')), [
 		dispatch,
 	]);
+	const onSetStopLossAndTakeProfit = useCallback(() => dispatch(updateStopLossAndTakeProfit()), [
+		dispatch,
+	]);
 
 	const slInvalid = useMemo(() => {
 		if (leverageSide === 'long') {
@@ -96,8 +102,6 @@ export default function EditStopLossAndTakeProfitModal() {
 			return !!takeProfitPrice && wei(takeProfitPrice).gt(currentPrice);
 		}
 	}, [takeProfitPrice, currentPrice, leverageSide]);
-
-	const isLoading = slInvalid && tpInvalid;
 
 	return (
 		<StyledBaseModal
@@ -166,11 +170,12 @@ export default function EditStopLossAndTakeProfitModal() {
 			<Spacer height={4} />
 
 			<Button
+				loading={isSubmitting}
 				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={isLoading}
+				disabled={slInvalid || tpInvalid}
 				fullWidth
-				onClick={() => {}}
+				onClick={onSetStopLossAndTakeProfit}
 			>
 				{t(`futures.market.trade.edit-sl-tp.set-sl-n-tp`)}
 			</Button>
