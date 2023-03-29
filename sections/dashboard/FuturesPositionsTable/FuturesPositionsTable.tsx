@@ -212,7 +212,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'leverage',
 								Cell: (cellProps: CellProps<any>) => {
 									return (
-										<Body>{formatNumber(cellProps.row.original.position.leverage ?? 0)}x</Body>
+										<Body mono>{formatNumber(cellProps.row.original.position.leverage ?? 0)}x</Body>
 									);
 								},
 								width: 90,

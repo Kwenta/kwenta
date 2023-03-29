@@ -1,10 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import Wei, { wei } from '@synthetixio/wei';
-import { formatBytes32String } from 'ethers/lib/utils';
 
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
+import { ETH_UNIT } from 'constants/network';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
+import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { unserializePotentialTrade } from 'sdk/utils/futures';
@@ -15,6 +16,7 @@ import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeOrderFee, sameSide } from 'utils/costCalculations';
+import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
 import {
@@ -32,7 +34,14 @@ import {
 	unserializeConditionalOrders,
 } from 'utils/futures';
 
-import { MarkPrices, futuresPositionKeys, MarkPriceInfos } from './types';
+import {
+	FuturesAction,
+	FuturesPortfolio,
+	MarkPrices,
+	futuresPositionKeys,
+	MarkPriceInfos,
+	PortfolioValues,
+} from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
 
@@ -356,6 +365,18 @@ export const selectActiveCrossPositionsCount = createSelector(
 	}
 );
 
+export const selectTotalBuyingPower = createSelector(selectFuturesPositions, (positions) => {
+	return positions.reduce((acc, p) => {
+		return acc.add(p.accessibleMargin.mul(APP_MAX_LEVERAGE));
+	}, zeroBN);
+});
+
+export const selectTotalUnrealizedPnl = createSelector(selectFuturesPositions, (positions) => {
+	return positions.reduce((acc, p) => {
+		return acc.add(p.position?.pnl ?? zeroBN);
+	}, zeroBN);
+});
+
 export const selectSubmittingFuturesTx = createSelector(
 	(state: RootState) => state.app,
 	(app) => {
@@ -533,19 +554,6 @@ export const selectCrossMarginBalanceInfo = createSelector(
 	}
 );
 
-export const selectIdleMargin = createSelector(
-	selectMarketKey,
-	selectCrossMarginPositions,
-	selectCrossMarginBalanceInfo,
-	selectSusdBalance,
-	(selectedMarketKey, positions, { freeMargin }, balance) => {
-		const idleInMarkets = positions
-			.filter((p) => !p.position?.size.abs().gt(0) && p.marketKey !== selectedMarketKey)
-			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
-		return balance.add(idleInMarkets).add(freeMargin);
-	}
-);
-
 export const selectAvailableMargin = createSelector(
 	selectMarketInfo,
 	selectPosition,
@@ -564,6 +572,20 @@ export const selectAvailableMargin = createSelector(
 		return position.remainingMargin.sub(inaccessible).gt(0)
 			? position.remainingMargin.sub(inaccessible).abs()
 			: zeroBN;
+	}
+);
+
+export const selectIdleMargin = createSelector(
+	selectMarketKey,
+	selectCrossMarginPositions,
+	selectCrossMarginBalanceInfo,
+	selectAvailableMargin,
+	selectSusdBalance,
+	(selectedMarketKey, positions, { freeMargin }, freeMarketMargin, balance) => {
+		const idleInMarkets = positions
+			.filter((p) => !p.position?.size.abs().gt(0) && p.marketKey !== selectedMarketKey)
+			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
+		return balance.add(idleInMarkets).add(freeMargin).add(freeMarketMargin);
 	}
 );
 
@@ -760,7 +782,7 @@ export const selectFuturesPortfolio = createSelector(
 	}
 );
 
-export const selectMarginTransfers = createSelector(
+export const selectMarketMarginTransfers = createSelector(
 	selectWallet,
 	selectNetwork,
 	selectFuturesType,
@@ -773,6 +795,18 @@ export const selectMarginTransfers = createSelector(
 		return accountType(type) === 'isolatedMargin'
 			? marginTransfers.filter((o) => o.asset === asset)
 			: marginTransfers;
+	}
+);
+
+export const selectMarginTransfers = createSelector(
+	selectWallet,
+	selectNetwork,
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(wallet, network, type, futures) => {
+		if (!wallet) return [];
+		const account = futures[accountType(type)].accounts[network]?.[wallet];
+		return account?.marginTransfers ?? [];
 	}
 );
 
@@ -954,16 +988,147 @@ export const selectOpenInterest = createSelector(selectMarkets, (futuresMarkets)
 );
 
 export const selectUsersTradesForMarket = createSelector(
+	selectFuturesType,
+	selectFuturesAccount,
 	selectMarketAsset,
-	selectAccountData,
-	(asset, accountData) => {
-		const trades = unserializeTrades(accountData?.trades ?? []);
-		return trades?.filter((t) => t.asset === formatBytes32String(asset)) ?? [];
+	selectCrossMarginAccountData,
+	selectIsolatedAccountData,
+	(type, account, asset, crossAccountData, isolatedAccountData) => {
+		let trades;
+		if (type === 'cross_margin') {
+			trades = unserializeTrades(crossAccountData?.trades ?? []);
+		} else if (account) {
+			trades = unserializeTrades(isolatedAccountData?.trades ?? []);
+		}
+		return trades?.filter((t) => t.asset === asset) ?? [];
 	}
 );
 
 export const selectAllUsersTrades = createSelector(selectAccountData, (accountData) =>
 	unserializeTrades(accountData?.trades ?? [])
+);
+
+export const selectSelectedPortfolioTimeframe = (state: RootState) =>
+	state.futures.dashboard.selectedPortfolioTimeframe;
+
+export const selectUserPortfolioValues = createSelector(
+	selectAllUsersTrades,
+	selectMarginTransfers,
+	selectFuturesPortfolio,
+	(trades, transfers, portfolioTotal) => {
+		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
+			account,
+			timestamp,
+			asset,
+			margin: margin.div(ETH_UNIT).toNumber(),
+			size: 0,
+		}));
+
+		const transferActions = transfers.map(({ account, timestamp, asset, size }) => ({
+			account,
+			timestamp,
+			asset,
+			size,
+			margin: 0,
+		}));
+
+		const actions = [...tradeActions, ...transferActions]
+			.filter((action): action is FuturesAction => !!action)
+			.sort((a, b) => a.timestamp - b.timestamp);
+
+		const accountHistory = actions.reduce((acc, action) => {
+			if (acc.length === 0) {
+				const newTotal = action.size !== 0 ? action.size : action.margin;
+				const lastAction = {
+					account: action.account,
+					timestamp: action.timestamp,
+					assets: {
+						[action.asset]: newTotal,
+					},
+					total: newTotal,
+				};
+				return [lastAction];
+			} else {
+				const lastAction = acc[acc.length - 1];
+				const newAssets = {
+					...lastAction.assets,
+					[action.asset]:
+						action.size !== 0
+							? (lastAction.assets[action.asset] ?? 0) + action.size
+							: action.margin,
+				};
+				const newTotal = Object.entries(newAssets).reduce((acc, asset) => acc + asset[1], 0);
+
+				const newAction = {
+					...lastAction,
+					timestamp: action.timestamp,
+					assets: newAssets,
+					total: newTotal,
+				};
+				const replacePrevious = newAction.timestamp === lastAction.timestamp;
+
+				return [...acc.slice(0, acc.length - (replacePrevious ? 1 : 0)), newAction];
+			}
+		}, [] as FuturesPortfolio[]);
+		return [
+			...accountHistory.map(({ timestamp, total }) => ({ timestamp: timestamp * 1000, total })),
+			{
+				timestamp: Date.now(),
+				total: portfolioTotal.isolatedMarginFutures.toNumber(),
+			},
+		];
+	}
+);
+
+export const selectPortfolioChartData = createSelector(
+	selectUserPortfolioValues,
+	selectSelectedPortfolioTimeframe,
+	(portfolioValues, timeframe) => {
+		// get the timeframe for interpolation
+		const interpolationGap =
+			timeframe === Period.ONE_YEAR
+				? PERIOD_IN_SECONDS[Period.ONE_DAY]
+				: PERIOD_IN_SECONDS[Period.ONE_HOUR] * 6;
+		if (portfolioValues.length === 0) return [];
+
+		const minTimestamp = Date.now() - PERIOD_IN_SECONDS[timeframe] * 1000;
+		const filteredPortfolioValues = portfolioValues.filter(
+			({ timestamp }) => timestamp >= minTimestamp
+		);
+
+		const portfolioData: PortfolioValues[] = [];
+		for (let i = 0; i < filteredPortfolioValues.length; i++) {
+			if (i < filteredPortfolioValues.length - 1) {
+				const currentTimestamp = truncateTimestamp(
+					filteredPortfolioValues[i].timestamp,
+					interpolationGap * 1000
+				);
+				const nextTimestamp = truncateTimestamp(
+					filteredPortfolioValues[i + 1].timestamp,
+					interpolationGap * 1000
+				);
+				const timeDiff = nextTimestamp - currentTimestamp;
+
+				if (nextTimestamp !== currentTimestamp) {
+					portfolioData.push({
+						timestamp: currentTimestamp,
+						total: filteredPortfolioValues[i].total,
+					});
+				}
+				if (timeDiff > interpolationGap * 1000) {
+					const gapCount = Math.floor(timeDiff / (interpolationGap * 1000)) - 1;
+					for (let j = 1; j <= gapCount; j++) {
+						portfolioData.push({
+							timestamp: currentTimestamp + j * interpolationGap * 1000,
+							total: filteredPortfolioValues[i].total,
+						});
+					}
+				}
+			}
+		}
+		portfolioData.push(portfolioValues[portfolioValues.length - 1]);
+		return portfolioData;
+	}
 );
 
 export const selectCancellingConditionalOrder = (state: RootState) =>

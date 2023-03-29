@@ -2,8 +2,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_PRICE_IMPACT_DELTA } from 'constants/defaults';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
+import { Period } from 'sdk/constants/period';
 import { NetworkId } from 'sdk/types/common';
 import {
+	FuturesAccountType,
 	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
@@ -16,7 +18,8 @@ import {
 	LOADING_STATUS,
 	SUCCESS_STATUS,
 	ZERO_CM_FEES,
-	ZERO_STATE_ACCOUNT,
+	ZERO_STATE_CM_ACCOUNT,
+	ZERO_STATE_ISOLATED_ACCOUNT,
 	ZERO_STATE_TRADE_INPUTS,
 } from 'state/constants';
 import { accountType } from 'state/helpers';
@@ -45,15 +48,14 @@ import {
 	getClosePositionOrderFee,
 } from './actions';
 import {
-	AccountContext,
 	CrossMarginAccountData,
 	CrossMarginState,
 	CrossMarginTradeFees,
 	EditPositionInputs,
-	FuturesState,
 	InputCurrencyDenomination,
 	IsolatedAccountData,
 	TradeSizeInputs,
+	FuturesState,
 	TransactionEstimationPayload,
 	TransactionEstimations,
 } from './types';
@@ -66,6 +68,9 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	errors: {},
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
+	dashboard: {
+		selectedPortfolioTimeframe: Period.ONE_WEEK,
+	},
 	leaderboard: {
 		selectedTrader: undefined,
 		selectedTraderPositionHistory: DEFAULT_MAP_BY_NETWORK,
@@ -256,7 +261,7 @@ const futuresSlice = createSlice({
 					...state.crossMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_ACCOUNT,
+						...ZERO_STATE_CM_ACCOUNT,
 					},
 				};
 			}
@@ -292,6 +297,9 @@ const futuresSlice = createSlice({
 		incrementCrossPreviewCount: (state) => {
 			state.crossMargin.previewDebounceCount = state.crossMargin.previewDebounceCount + 1;
 		},
+		setSelectedPortfolioTimeframe: (state, action: PayloadAction<Period>) => {
+			state.dashboard.selectedPortfolioTimeframe = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		// TODO: Separate markets by network
@@ -322,7 +330,7 @@ const futuresSlice = createSlice({
 				const { account, network, balanceInfo } = action.payload;
 				const wallet = findWalletForAccount(futuresState.crossMargin, account, network);
 				if (wallet) {
-					futuresState.crossMargin.accounts[network][wallet].balanceInfo = balanceInfo;
+					updateFuturesAccount(futuresState, 'cross_margin', network, wallet, { balanceInfo });
 				}
 			}
 		});
@@ -356,8 +364,9 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS;
 			if (payload) {
 				const { context, marginTransfers } = payload;
-				const account = getOrCreateAccount(futuresState, context);
-				account.marginTransfers = marginTransfers;
+				updateFuturesAccount(futuresState, context.type, context.network, context.wallet, {
+					marginTransfers,
+				});
 			}
 		});
 		builder.addCase(fetchMarginTransfers.rejected, (futuresState) => {
@@ -377,7 +386,7 @@ const futuresSlice = createSlice({
 			const { account, positions, network } = action.payload;
 			const wallet = findWalletForAccount(futuresState.crossMargin, account, network);
 			if (wallet) {
-				futuresState.crossMargin.accounts[network][wallet].positions = positions;
+				updateFuturesAccount(futuresState, 'cross_margin', network, wallet, { positions });
 			}
 		});
 		builder.addCase(fetchCrossMarginPositions.rejected, (futuresState) => {
@@ -393,11 +402,9 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(fetchIsolatedMarginPositions.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.isolatedPositions = SUCCESS_STATUS;
-			if (payload && futuresState.isolatedMargin.accounts[payload.network]) {
-				futuresState.isolatedMargin.accounts[payload.network][payload.wallet] = {
-					...futuresState.isolatedMargin.accounts[payload.network][payload.wallet],
-					positions: payload.positions,
-				};
+			if (payload) {
+				const { positions, wallet, network } = payload;
+				updateFuturesAccount(futuresState, 'isolated_margin', network, wallet, { positions });
 			}
 		});
 		builder.addCase(fetchIsolatedMarginPositions.rejected, (futuresState) => {
@@ -409,15 +416,15 @@ const futuresSlice = createSlice({
 
 		// Refetch selected position
 		builder.addCase(refetchPosition.fulfilled, (futuresState, { payload }) => {
-			if (payload && futuresState.isolatedMargin.accounts[payload.networkId]) {
-				const existingPositions =
-					futuresState.isolatedMargin.accounts[payload.networkId][payload.wallet]?.positions || [];
-				const index = existingPositions.findIndex(
-					(p) => p.marketKey === payload!.position.marketKey
-				);
-				existingPositions[index] = payload.position;
-				futuresState.isolatedMargin.accounts[payload.networkId][payload.wallet] = {
-					...futuresState.isolatedMargin.accounts[payload.networkId][payload.wallet],
+			if (payload) {
+				const { position, wallet, networkId } = payload;
+				const account = futuresState.isolatedMargin.accounts[networkId]?.[wallet];
+
+				const existingPositions = account?.positions ?? [];
+				const index = existingPositions.findIndex((p) => p.marketKey === position.marketKey);
+				existingPositions[index] = position;
+				futuresState.isolatedMargin.accounts[networkId][wallet] = {
+					...account,
 					positions: existingPositions,
 				};
 			}
@@ -433,8 +440,10 @@ const futuresSlice = createSlice({
 			const { network, account, delayedOrders, conditionalOrders } = action.payload;
 			const wallet = findWalletForAccount(futuresState.crossMargin, account, network);
 			if (wallet) {
-				futuresState.crossMargin.accounts[network][wallet].conditionalOrders = conditionalOrders;
-				futuresState.crossMargin.accounts[network][wallet].delayedOrders = delayedOrders;
+				updateFuturesAccount(futuresState, 'cross_margin', network, wallet, {
+					conditionalOrders,
+					delayedOrders,
+				});
 			}
 		});
 		builder.addCase(fetchCrossMarginOpenOrders.rejected, (futuresState) => {
@@ -450,15 +459,11 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(fetchIsolatedOpenOrders.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.openOrders = SUCCESS_STATUS;
-			if (!payload) return;
-			const { wallet, orders } = payload;
-			if (wallet) {
-				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
-					futuresState.isolatedMargin.accounts[payload.networkId][wallet] = {
-						...futuresState.isolatedMargin.accounts[payload.networkId][wallet],
-						delayedOrders: orders,
-					};
-				}
+			if (payload) {
+				const { orders: delayedOrders, wallet, networkId } = payload;
+				updateFuturesAccount(futuresState, 'isolated_margin', networkId, wallet, {
+					delayedOrders,
+				});
 			}
 		});
 		builder.addCase(fetchIsolatedOpenOrders.rejected, (futuresState) => {
@@ -538,7 +543,7 @@ const futuresSlice = createSlice({
 					...futuresState.crossMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_ACCOUNT,
+						...ZERO_STATE_CM_ACCOUNT,
 					},
 				};
 			}
@@ -557,25 +562,11 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(fetchFuturesPositionHistory.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.positionHistory = SUCCESS_STATUS;
-			if (!payload) return;
-			if (payload.accountType === 'isolated_margin') {
-				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
-					futuresState.isolatedMargin.accounts[payload.networkId][payload.account] = {
-						...futuresState.isolatedMargin.accounts[payload.networkId][payload.account],
-						positionHistory: payload.history,
-					};
-				}
-			} else {
-				const wallet = findWalletForAccount(
-					futuresState.crossMargin,
-					payload.account,
-					payload.networkId
-				);
-				if (wallet) {
-					futuresState.crossMargin.accounts[payload.networkId][
-						wallet
-					].positionHistory = payload.history.filter((p) => p.accountType === 'cross_margin');
-				}
+			if (payload) {
+				const { accountType: type, history: positionHistory, networkId, account: wallet } = payload;
+				updateFuturesAccount(futuresState, type, networkId, wallet, {
+					positionHistory,
+				});
 			}
 		});
 		builder.addCase(fetchFuturesPositionHistory.rejected, (futuresState) => {
@@ -610,17 +601,11 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(fetchTradesForSelectedMarket.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
-			if (!payload) return;
-			if (payload.accountType === 'isolated_margin') {
-				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
-					futuresState.isolatedMargin.accounts[payload.networkId][payload.account] = {
-						...futuresState.isolatedMargin.accounts[payload.networkId][payload.account],
-						trades: payload.trades,
-					};
-				}
-			} else {
-				futuresState.crossMargin.accounts[payload.networkId][payload.wallet].trades =
-					payload.trades;
+			if (payload) {
+				const { accountType: type, trades, networkId, account: wallet } = payload;
+				updateFuturesAccount(futuresState, type, networkId, wallet, {
+					trades,
+				});
 			}
 		});
 		builder.addCase(fetchTradesForSelectedMarket.rejected, (futuresState) => {
@@ -638,17 +623,11 @@ const futuresSlice = createSlice({
 		});
 		builder.addCase(fetchAllTradesForAccount.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
-			if (!payload) return;
-			if (payload.accountType === 'isolated_margin') {
-				if (futuresState.isolatedMargin.accounts[payload.networkId]) {
-					futuresState.isolatedMargin.accounts[payload.networkId][payload.account] = {
-						...futuresState.isolatedMargin.accounts[payload.networkId][payload.account],
-						trades: payload.trades,
-					};
-				}
-			} else {
-				futuresState.crossMargin.accounts[payload.networkId][payload.wallet].trades =
-					payload.trades;
+			if (payload) {
+				const { accountType: type, trades, networkId, account: wallet } = payload;
+				updateFuturesAccount(futuresState, type, networkId, wallet, {
+					trades,
+				});
 			}
 		});
 		builder.addCase(fetchAllTradesForAccount.rejected, (futuresState) => {
@@ -705,6 +684,7 @@ export const {
 	setIsolatedMarginEditPositionInputs,
 	incrementIsolatedPreviewCount,
 	incrementCrossPreviewCount,
+	setSelectedPortfolioTimeframe,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (
@@ -718,34 +698,28 @@ const findWalletForAccount = (
 	return entry ? entry[0] : undefined;
 };
 
-// TODO: Use this pattern throughout
-const getOrCreateAccount = (
+const updateFuturesAccount = (
 	futuresState: FuturesState,
-	context: AccountContext
-): IsolatedAccountData | CrossMarginAccountData => {
-	if (context.cmAccount && context.type === 'cross_margin') {
-		if (futuresState.crossMargin.accounts[context.network]?.[context.wallet]) {
-			return futuresState.crossMargin.accounts[context.network][context.wallet];
-		} else {
-			const account = {
-				account: context.cmAccount,
-				...ZERO_STATE_ACCOUNT,
-			};
-			futuresState.crossMargin.accounts[context.network] = {
-				...futuresState.crossMargin.accounts[context.network],
-				[context.wallet]: account,
-			};
-			return futuresState.crossMargin.accounts[context.network][context.wallet];
-		}
-	} else {
-		if (futuresState.isolatedMargin.accounts[context.network]?.[context.wallet]) {
-			return futuresState.isolatedMargin.accounts[context.network][context.wallet];
-		} else {
-			futuresState.isolatedMargin.accounts[context.network] = {
-				...futuresState.isolatedMargin.accounts[context.network],
-				[context.wallet]: { ...ZERO_STATE_ACCOUNT },
-			};
-			return futuresState.isolatedMargin.accounts[context.network][context.wallet];
-		}
-	}
+	type: FuturesAccountType,
+	network: NetworkId,
+	wallet: string,
+	newAccountData: Partial<IsolatedAccountData | CrossMarginAccountData>
+) => {
+	const updatedAccount =
+		type === 'isolated_margin'
+			? {
+					...ZERO_STATE_ISOLATED_ACCOUNT,
+					...futuresState.isolatedMargin.accounts[network]?.[wallet],
+					...newAccountData,
+			  }
+			: {
+					...ZERO_STATE_CM_ACCOUNT,
+					...futuresState.crossMargin.accounts[network]?.[wallet],
+					...newAccountData,
+			  };
+
+	futuresState[accountType(type)].accounts[network] = {
+		...futuresState[accountType(type)].accounts[network],
+		[wallet]: updatedAccount,
+	};
 };

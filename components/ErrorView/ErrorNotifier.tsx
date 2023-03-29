@@ -53,6 +53,7 @@ export const ERROR_MESSAGES = {
 	INSUFFICIENT_MARGIN: 'Insufficient margin for this order.',
 	INSUFFICIENT_ETH_BAL: 'Insufficient eth balance for gas cost',
 	CANNOT_CANCEL_ORDER_YET: 'Cannot cancel the order yet',
+	ORDER_TOO_OLD: 'Order expired, please cancel',
 };
 
 // TODO: Format more errors, especially transaction failures
@@ -64,6 +65,7 @@ export const formatError = (message?: string) => {
 	if (lowerCaseMessage.includes('insufficient margin')) return ERROR_MESSAGES.INSUFFICIENT_MARGIN;
 	if (lowerCaseMessage.includes('previous order exists')) return ERROR_MESSAGES.ORDER_PENDING;
 	if (lowerCaseMessage.includes('cannot cancel yet')) return ERROR_MESSAGES.CANNOT_CANCEL_ORDER_YET;
+	if (lowerCaseMessage.includes('order too old')) return ERROR_MESSAGES.ORDER_TOO_OLD;
 	return message;
 };
 

@@ -56,7 +56,7 @@ const TradesTab: React.FC = () => {
 				market: getMarketName(parsedAsset),
 				price: Number(trade.price?.div(ETH_UNIT)),
 				size: Number(trade.size.div(ETH_UNIT).abs()),
-				timestamp: Number(trade.timestamp.mul(1000)),
+				timestamp: trade.timestamp * 1000,
 				id: trade.txnHash,
 				status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 			};

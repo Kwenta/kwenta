@@ -87,8 +87,8 @@ export const queryTrades = async (
 			feesPaid: true,
 			keeperFeesPaid: true,
 			orderType: true,
-			fundingAccrued: true,
 			trackingCode: true,
+			fundingAccrued: true,
 		}
 	);
 };
