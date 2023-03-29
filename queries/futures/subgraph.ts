@@ -25,262 +25,6 @@ export type MultiQueryOptions<T, R> = {
 	orderDirection?: 'asc' | 'desc';
 };
 const MAX_PAGE = 1000;
-export type AtomicSynthExchangeFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	account?: string | null;
-	account_not?: string | null;
-	account_gt?: string | null;
-	account_lt?: string | null;
-	account_gte?: string | null;
-	account_lte?: string | null;
-	account_in?: string[];
-	account_not_in?: string[];
-	account_contains?: string | null;
-	account_contains_nocase?: string | null;
-	account_not_contains?: string | null;
-	account_not_contains_nocase?: string | null;
-	account_starts_with?: string | null;
-	account_starts_with_nocase?: string | null;
-	account_not_starts_with?: string | null;
-	account_not_starts_with_nocase?: string | null;
-	account_ends_with?: string | null;
-	account_ends_with_nocase?: string | null;
-	account_not_ends_with?: string | null;
-	account_not_ends_with_nocase?: string | null;
-	account_?: ExchangerFilter | null;
-	fromSynth?: string | null;
-	fromSynth_not?: string | null;
-	fromSynth_gt?: string | null;
-	fromSynth_lt?: string | null;
-	fromSynth_gte?: string | null;
-	fromSynth_lte?: string | null;
-	fromSynth_in?: string[];
-	fromSynth_not_in?: string[];
-	fromSynth_contains?: string | null;
-	fromSynth_contains_nocase?: string | null;
-	fromSynth_not_contains?: string | null;
-	fromSynth_not_contains_nocase?: string | null;
-	fromSynth_starts_with?: string | null;
-	fromSynth_starts_with_nocase?: string | null;
-	fromSynth_not_starts_with?: string | null;
-	fromSynth_not_starts_with_nocase?: string | null;
-	fromSynth_ends_with?: string | null;
-	fromSynth_ends_with_nocase?: string | null;
-	fromSynth_not_ends_with?: string | null;
-	fromSynth_not_ends_with_nocase?: string | null;
-	fromSynth_?: SynthFilter | null;
-	toSynth?: string | null;
-	toSynth_not?: string | null;
-	toSynth_gt?: string | null;
-	toSynth_lt?: string | null;
-	toSynth_gte?: string | null;
-	toSynth_lte?: string | null;
-	toSynth_in?: string[];
-	toSynth_not_in?: string[];
-	toSynth_contains?: string | null;
-	toSynth_contains_nocase?: string | null;
-	toSynth_not_contains?: string | null;
-	toSynth_not_contains_nocase?: string | null;
-	toSynth_starts_with?: string | null;
-	toSynth_starts_with_nocase?: string | null;
-	toSynth_not_starts_with?: string | null;
-	toSynth_not_starts_with_nocase?: string | null;
-	toSynth_ends_with?: string | null;
-	toSynth_ends_with_nocase?: string | null;
-	toSynth_not_ends_with?: string | null;
-	toSynth_not_ends_with_nocase?: string | null;
-	toSynth_?: SynthFilter | null;
-	fromAmount?: WeiSource | null;
-	fromAmount_not?: WeiSource | null;
-	fromAmount_gt?: WeiSource | null;
-	fromAmount_lt?: WeiSource | null;
-	fromAmount_gte?: WeiSource | null;
-	fromAmount_lte?: WeiSource | null;
-	fromAmount_in?: WeiSource[];
-	fromAmount_not_in?: WeiSource[];
-	fromAmountInUSD?: WeiSource | null;
-	fromAmountInUSD_not?: WeiSource | null;
-	fromAmountInUSD_gt?: WeiSource | null;
-	fromAmountInUSD_lt?: WeiSource | null;
-	fromAmountInUSD_gte?: WeiSource | null;
-	fromAmountInUSD_lte?: WeiSource | null;
-	fromAmountInUSD_in?: WeiSource[];
-	fromAmountInUSD_not_in?: WeiSource[];
-	toAmount?: WeiSource | null;
-	toAmount_not?: WeiSource | null;
-	toAmount_gt?: WeiSource | null;
-	toAmount_lt?: WeiSource | null;
-	toAmount_gte?: WeiSource | null;
-	toAmount_lte?: WeiSource | null;
-	toAmount_in?: WeiSource[];
-	toAmount_not_in?: WeiSource[];
-	toAmountInUSD?: WeiSource | null;
-	toAmountInUSD_not?: WeiSource | null;
-	toAmountInUSD_gt?: WeiSource | null;
-	toAmountInUSD_lt?: WeiSource | null;
-	toAmountInUSD_gte?: WeiSource | null;
-	toAmountInUSD_lte?: WeiSource | null;
-	toAmountInUSD_in?: WeiSource[];
-	toAmountInUSD_not_in?: WeiSource[];
-	feesInUSD?: WeiSource | null;
-	feesInUSD_not?: WeiSource | null;
-	feesInUSD_gt?: WeiSource | null;
-	feesInUSD_lt?: WeiSource | null;
-	feesInUSD_gte?: WeiSource | null;
-	feesInUSD_lte?: WeiSource | null;
-	feesInUSD_in?: WeiSource[];
-	feesInUSD_not_in?: WeiSource[];
-	toAddress?: string | null;
-	toAddress_not?: string | null;
-	toAddress_in?: string[];
-	toAddress_not_in?: string[];
-	toAddress_contains?: string | null;
-	toAddress_not_contains?: string | null;
-	timestamp?: WeiSource | null;
-	timestamp_not?: WeiSource | null;
-	timestamp_gt?: WeiSource | null;
-	timestamp_lt?: WeiSource | null;
-	timestamp_gte?: WeiSource | null;
-	timestamp_lte?: WeiSource | null;
-	timestamp_in?: WeiSource[];
-	timestamp_not_in?: WeiSource[];
-	gasPrice?: WeiSource | null;
-	gasPrice_not?: WeiSource | null;
-	gasPrice_gt?: WeiSource | null;
-	gasPrice_lt?: WeiSource | null;
-	gasPrice_gte?: WeiSource | null;
-	gasPrice_lte?: WeiSource | null;
-	gasPrice_in?: WeiSource[];
-	gasPrice_not_in?: WeiSource[];
-	_change_block?: any | null;
-};
-export type AtomicSynthExchangeResult = {
-	id: string;
-	account: Partial<ExchangerResult>;
-	fromSynth: Partial<SynthResult> | null;
-	toSynth: Partial<SynthResult> | null;
-	fromAmount: Wei;
-	fromAmountInUSD: Wei;
-	toAmount: Wei;
-	toAmountInUSD: Wei;
-	feesInUSD: Wei;
-	toAddress: string;
-	timestamp: Wei;
-	gasPrice: Wei;
-};
-export type AtomicSynthExchangeFields = {
-	id: true;
-	account: ExchangerFields;
-	fromSynth: SynthFields;
-	toSynth: SynthFields;
-	fromAmount: true;
-	fromAmountInUSD: true;
-	toAmount: true;
-	toAmountInUSD: true;
-	feesInUSD: true;
-	toAddress: true;
-	timestamp: true;
-	gasPrice: true;
-};
-export type AtomicSynthExchangeArgs<K extends keyof AtomicSynthExchangeResult> = {
-	[Property in keyof Pick<AtomicSynthExchangeFields, K>]: AtomicSynthExchangeFields[Property];
-};
-export const getAtomicSynthExchangeById = async function <
-	K extends keyof AtomicSynthExchangeResult
->(
-	url: string,
-	options: SingleQueryOptions,
-	args: AtomicSynthExchangeArgs<K>
-): Promise<Pick<AtomicSynthExchangeResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('atomicSynthExchange', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['account']) formattedObj['account'] = obj['account'];
-	if (obj['fromSynth']) formattedObj['fromSynth'] = obj['fromSynth'];
-	if (obj['toSynth']) formattedObj['toSynth'] = obj['toSynth'];
-	if (obj['fromAmount']) formattedObj['fromAmount'] = wei(obj['fromAmount']);
-	if (obj['fromAmountInUSD']) formattedObj['fromAmountInUSD'] = wei(obj['fromAmountInUSD']);
-	if (obj['toAmount']) formattedObj['toAmount'] = wei(obj['toAmount']);
-	if (obj['toAmountInUSD']) formattedObj['toAmountInUSD'] = wei(obj['toAmountInUSD']);
-	if (obj['feesInUSD']) formattedObj['feesInUSD'] = wei(obj['feesInUSD']);
-	if (obj['toAddress']) formattedObj['toAddress'] = obj['toAddress'];
-	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	if (obj['gasPrice']) formattedObj['gasPrice'] = wei(obj['gasPrice'], 0);
-	return formattedObj as Pick<AtomicSynthExchangeResult, K>;
-};
-export const getAtomicSynthExchanges = async function <K extends keyof AtomicSynthExchangeResult>(
-	url: string,
-	options: MultiQueryOptions<AtomicSynthExchangeFilter, AtomicSynthExchangeResult>,
-	args: AtomicSynthExchangeArgs<K>
-): Promise<Pick<AtomicSynthExchangeResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<
-		AtomicSynthExchangeFilter,
-		AtomicSynthExchangeResult
-	>> = { ...options };
-	let paginationKey: keyof AtomicSynthExchangeFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc'
-				? '_gt'
-				: '_lt')) as keyof AtomicSynthExchangeFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<AtomicSynthExchangeResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('atomicSynthExchanges', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['account']) formattedObj['account'] = obj['account'];
-			if (obj['fromSynth']) formattedObj['fromSynth'] = obj['fromSynth'];
-			if (obj['toSynth']) formattedObj['toSynth'] = obj['toSynth'];
-			if (obj['fromAmount']) formattedObj['fromAmount'] = wei(obj['fromAmount']);
-			if (obj['fromAmountInUSD']) formattedObj['fromAmountInUSD'] = wei(obj['fromAmountInUSD']);
-			if (obj['toAmount']) formattedObj['toAmount'] = wei(obj['toAmount']);
-			if (obj['toAmountInUSD']) formattedObj['toAmountInUSD'] = wei(obj['toAmountInUSD']);
-			if (obj['feesInUSD']) formattedObj['feesInUSD'] = wei(obj['feesInUSD']);
-			if (obj['toAddress']) formattedObj['toAddress'] = obj['toAddress'];
-			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			if (obj['gasPrice']) formattedObj['gasPrice'] = wei(obj['gasPrice'], 0);
-			return formattedObj as Pick<AtomicSynthExchangeResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
 export type CandleFilter = {
 	id?: string | null;
 	id_not?: string | null;
@@ -493,11 +237,17 @@ export type CrossMarginAccountFilter = {
 	id_not_in?: string[];
 	owner?: string | null;
 	owner_not?: string | null;
+	owner_gt?: string | null;
+	owner_lt?: string | null;
+	owner_gte?: string | null;
+	owner_lte?: string | null;
 	owner_in?: string[];
 	owner_not_in?: string[];
 	owner_contains?: string | null;
 	owner_not_contains?: string | null;
 	_change_block?: any | null;
+	and?: (CrossMarginAccountFilter | null)[];
+	or?: (CrossMarginAccountFilter | null)[];
 };
 export type CrossMarginAccountResult = {
 	id: string;
@@ -588,12 +338,20 @@ export type CrossMarginAccountTransferFilter = {
 	id_not_in?: string[];
 	account?: string | null;
 	account_not?: string | null;
+	account_gt?: string | null;
+	account_lt?: string | null;
+	account_gte?: string | null;
+	account_lte?: string | null;
 	account_in?: string[];
 	account_not_in?: string[];
 	account_contains?: string | null;
 	account_not_contains?: string | null;
 	abstractAccount?: string | null;
 	abstractAccount_not?: string | null;
+	abstractAccount_gt?: string | null;
+	abstractAccount_lt?: string | null;
+	abstractAccount_gte?: string | null;
+	abstractAccount_lte?: string | null;
 	abstractAccount_in?: string[];
 	abstractAccount_not_in?: string[];
 	abstractAccount_contains?: string | null;
@@ -635,6 +393,8 @@ export type CrossMarginAccountTransferFilter = {
 	txHash_not_ends_with?: string | null;
 	txHash_not_ends_with_nocase?: string | null;
 	_change_block?: any | null;
+	and?: (CrossMarginAccountTransferFilter | null)[];
+	or?: (CrossMarginAccountTransferFilter | null)[];
 };
 export type CrossMarginAccountTransferResult = {
 	id: string;
@@ -737,7 +497,7 @@ export const getCrossMarginAccountTransfers = async function <
 	} while (paginationKey && options.first && results.length < options.first);
 	return options.first ? results.slice(0, options.first) : results;
 };
-export type ExchangerFilter = {
+export type FundingPaymentFilter = {
 	id?: string | null;
 	id_not?: string | null;
 	id_gt?: string | null;
@@ -754,131 +514,84 @@ export type ExchangerFilter = {
 	timestamp_lte?: WeiSource | null;
 	timestamp_in?: WeiSource[];
 	timestamp_not_in?: WeiSource[];
-	period?: WeiSource | null;
-	period_not?: WeiSource | null;
-	period_gt?: WeiSource | null;
-	period_lt?: WeiSource | null;
-	period_gte?: WeiSource | null;
-	period_lte?: WeiSource | null;
-	period_in?: WeiSource[];
-	period_not_in?: WeiSource[];
-	bucketMagnitude?: WeiSource | null;
-	bucketMagnitude_not?: WeiSource | null;
-	bucketMagnitude_gt?: WeiSource | null;
-	bucketMagnitude_lt?: WeiSource | null;
-	bucketMagnitude_gte?: WeiSource | null;
-	bucketMagnitude_lte?: WeiSource | null;
-	bucketMagnitude_in?: WeiSource[];
-	bucketMagnitude_not_in?: WeiSource[];
-	synth?: string | null;
-	synth_not?: string | null;
-	synth_gt?: string | null;
-	synth_lt?: string | null;
-	synth_gte?: string | null;
-	synth_lte?: string | null;
-	synth_in?: string[];
-	synth_not_in?: string[];
-	synth_contains?: string | null;
-	synth_contains_nocase?: string | null;
-	synth_not_contains?: string | null;
-	synth_not_contains_nocase?: string | null;
-	synth_starts_with?: string | null;
-	synth_starts_with_nocase?: string | null;
-	synth_not_starts_with?: string | null;
-	synth_not_starts_with_nocase?: string | null;
-	synth_ends_with?: string | null;
-	synth_ends_with_nocase?: string | null;
-	synth_not_ends_with?: string | null;
-	synth_not_ends_with_nocase?: string | null;
-	synth_?: SynthFilter | null;
-	firstSeen?: WeiSource | null;
-	firstSeen_not?: WeiSource | null;
-	firstSeen_gt?: WeiSource | null;
-	firstSeen_lt?: WeiSource | null;
-	firstSeen_gte?: WeiSource | null;
-	firstSeen_lte?: WeiSource | null;
-	firstSeen_in?: WeiSource[];
-	firstSeen_not_in?: WeiSource[];
-	lastSeen?: WeiSource | null;
-	lastSeen_not?: WeiSource | null;
-	lastSeen_gt?: WeiSource | null;
-	lastSeen_lt?: WeiSource | null;
-	lastSeen_gte?: WeiSource | null;
-	lastSeen_lte?: WeiSource | null;
-	lastSeen_in?: WeiSource[];
-	lastSeen_not_in?: WeiSource[];
-	trades?: WeiSource | null;
-	trades_not?: WeiSource | null;
-	trades_gt?: WeiSource | null;
-	trades_lt?: WeiSource | null;
-	trades_gte?: WeiSource | null;
-	trades_lte?: WeiSource | null;
-	trades_in?: WeiSource[];
-	trades_not_in?: WeiSource[];
-	exchangeUSDTally?: WeiSource | null;
-	exchangeUSDTally_not?: WeiSource | null;
-	exchangeUSDTally_gt?: WeiSource | null;
-	exchangeUSDTally_lt?: WeiSource | null;
-	exchangeUSDTally_gte?: WeiSource | null;
-	exchangeUSDTally_lte?: WeiSource | null;
-	exchangeUSDTally_in?: WeiSource[];
-	exchangeUSDTally_not_in?: WeiSource[];
-	totalFeesGeneratedInUSD?: WeiSource | null;
-	totalFeesGeneratedInUSD_not?: WeiSource | null;
-	totalFeesGeneratedInUSD_gt?: WeiSource | null;
-	totalFeesGeneratedInUSD_lt?: WeiSource | null;
-	totalFeesGeneratedInUSD_gte?: WeiSource | null;
-	totalFeesGeneratedInUSD_lte?: WeiSource | null;
-	totalFeesGeneratedInUSD_in?: WeiSource[];
-	totalFeesGeneratedInUSD_not_in?: WeiSource[];
-	balances?: string[];
-	balances_not?: string[];
-	balances_contains?: string[];
-	balances_contains_nocase?: string[];
-	balances_not_contains?: string[];
-	balances_not_contains_nocase?: string[];
-	balances_?: LatestSynthBalanceFilter | null;
-	exchanges_?: SynthExchangeFilter | null;
+	account?: string | null;
+	account_not?: string | null;
+	account_gt?: string | null;
+	account_lt?: string | null;
+	account_gte?: string | null;
+	account_lte?: string | null;
+	account_in?: string[];
+	account_not_in?: string[];
+	account_contains?: string | null;
+	account_not_contains?: string | null;
+	positionId?: string | null;
+	positionId_not?: string | null;
+	positionId_gt?: string | null;
+	positionId_lt?: string | null;
+	positionId_gte?: string | null;
+	positionId_lte?: string | null;
+	positionId_in?: string[];
+	positionId_not_in?: string[];
+	marketKey?: string | null;
+	marketKey_not?: string | null;
+	marketKey_gt?: string | null;
+	marketKey_lt?: string | null;
+	marketKey_gte?: string | null;
+	marketKey_lte?: string | null;
+	marketKey_in?: string[];
+	marketKey_not_in?: string[];
+	marketKey_contains?: string | null;
+	marketKey_not_contains?: string | null;
+	asset?: string | null;
+	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
+	asset_in?: string[];
+	asset_not_in?: string[];
+	asset_contains?: string | null;
+	asset_not_contains?: string | null;
+	amount?: WeiSource | null;
+	amount_not?: WeiSource | null;
+	amount_gt?: WeiSource | null;
+	amount_lt?: WeiSource | null;
+	amount_gte?: WeiSource | null;
+	amount_lte?: WeiSource | null;
+	amount_in?: WeiSource[];
+	amount_not_in?: WeiSource[];
 	_change_block?: any | null;
+	and?: (FundingPaymentFilter | null)[];
+	or?: (FundingPaymentFilter | null)[];
 };
-export type ExchangerResult = {
+export type FundingPaymentResult = {
 	id: string;
 	timestamp: Wei;
-	period: Wei;
-	bucketMagnitude: Wei;
-	synth: Partial<SynthResult> | null;
-	firstSeen: Wei;
-	lastSeen: Wei;
-	trades: Wei;
-	exchangeUSDTally: Wei;
-	totalFeesGeneratedInUSD: Wei;
-	balances: Partial<LatestSynthBalanceResult>[];
-	exchanges: Partial<SynthExchangeResult>[];
+	account: string;
+	positionId: string;
+	marketKey: string;
+	asset: string;
+	amount: Wei;
 };
-export type ExchangerFields = {
+export type FundingPaymentFields = {
 	id: true;
 	timestamp: true;
-	period: true;
-	bucketMagnitude: true;
-	synth: SynthFields;
-	firstSeen: true;
-	lastSeen: true;
-	trades: true;
-	exchangeUSDTally: true;
-	totalFeesGeneratedInUSD: true;
-	balances: LatestSynthBalanceFields;
-	exchanges: SynthExchangeFields;
+	account: true;
+	positionId: true;
+	marketKey: true;
+	asset: true;
+	amount: true;
 };
-export type ExchangerArgs<K extends keyof ExchangerResult> = {
-	[Property in keyof Pick<ExchangerFields, K>]: ExchangerFields[Property];
+export type FundingPaymentArgs<K extends keyof FundingPaymentResult> = {
+	[Property in keyof Pick<FundingPaymentFields, K>]: FundingPaymentFields[Property];
 };
-export const getExchangerById = async function <K extends keyof ExchangerResult>(
+export const getFundingPaymentById = async function <K extends keyof FundingPaymentResult>(
 	url: string,
 	options: SingleQueryOptions,
-	args: ExchangerArgs<K>
-): Promise<Pick<ExchangerResult, K>> {
+	args: FundingPaymentArgs<K>
+): Promise<Pick<FundingPaymentResult, K>> {
 	const res = await axios.post(url, {
-		query: generateGql('exchanger', options, args),
+		query: generateGql('fundingPayment', options, args),
 	});
 	const r = res.data as any;
 	if (r.errors && r.errors.length) {
@@ -888,43 +601,37 @@ export const getExchangerById = async function <K extends keyof ExchangerResult>
 	const formattedObj: any = {};
 	if (obj['id']) formattedObj['id'] = obj['id'];
 	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	if (obj['period']) formattedObj['period'] = wei(obj['period'], 0);
-	if (obj['bucketMagnitude']) formattedObj['bucketMagnitude'] = wei(obj['bucketMagnitude'], 0);
-	if (obj['synth']) formattedObj['synth'] = obj['synth'];
-	if (obj['firstSeen']) formattedObj['firstSeen'] = wei(obj['firstSeen'], 0);
-	if (obj['lastSeen']) formattedObj['lastSeen'] = wei(obj['lastSeen'], 0);
-	if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
-	if (obj['exchangeUSDTally']) formattedObj['exchangeUSDTally'] = wei(obj['exchangeUSDTally']);
-	if (obj['totalFeesGeneratedInUSD'])
-		formattedObj['totalFeesGeneratedInUSD'] = wei(obj['totalFeesGeneratedInUSD']);
-	if (obj['balances']) formattedObj['balances'] = obj['balances'];
-	if (obj['exchanges']) formattedObj['exchanges'] = obj['exchanges'];
-	return formattedObj as Pick<ExchangerResult, K>;
+	if (obj['account']) formattedObj['account'] = obj['account'];
+	if (obj['positionId']) formattedObj['positionId'] = obj['positionId'];
+	if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
+	if (obj['asset']) formattedObj['asset'] = obj['asset'];
+	if (obj['amount']) formattedObj['amount'] = wei(obj['amount'], 0);
+	return formattedObj as Pick<FundingPaymentResult, K>;
 };
-export const getExchangers = async function <K extends keyof ExchangerResult>(
+export const getFundingPayments = async function <K extends keyof FundingPaymentResult>(
 	url: string,
-	options: MultiQueryOptions<ExchangerFilter, ExchangerResult>,
-	args: ExchangerArgs<K>
-): Promise<Pick<ExchangerResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<ExchangerFilter, ExchangerResult>> = {
+	options: MultiQueryOptions<FundingPaymentFilter, FundingPaymentResult>,
+	args: FundingPaymentArgs<K>
+): Promise<Pick<FundingPaymentResult, K>[]> {
+	const paginatedOptions: Partial<MultiQueryOptions<FundingPaymentFilter, FundingPaymentResult>> = {
 		...options,
 	};
-	let paginationKey: keyof ExchangerFilter | null = null;
+	let paginationKey: keyof FundingPaymentFilter | null = null;
 	let paginationValue = '';
 	if (options.first && options.first > MAX_PAGE) {
 		paginatedOptions.first = MAX_PAGE;
 		paginatedOptions.orderBy = options.orderBy || 'id';
 		paginatedOptions.orderDirection = options.orderDirection || 'asc';
 		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof ExchangerFilter;
+			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof FundingPaymentFilter;
 		paginatedOptions.where = { ...options.where };
 	}
-	let results: Pick<ExchangerResult, K>[] = [];
+	let results: Pick<FundingPaymentResult, K>[] = [];
 	do {
 		if (paginationKey && paginationValue)
 			paginatedOptions.where![paginationKey] = paginationValue as any;
 		const res = await axios.post(url, {
-			query: generateGql('exchangers', paginatedOptions, args),
+			query: generateGql('fundingPayments', paginatedOptions, args),
 		});
 		const r = res.data as any;
 		if (r.errors && r.errors.length) {
@@ -935,18 +642,12 @@ export const getExchangers = async function <K extends keyof ExchangerResult>(
 			const formattedObj: any = {};
 			if (obj['id']) formattedObj['id'] = obj['id'];
 			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			if (obj['period']) formattedObj['period'] = wei(obj['period'], 0);
-			if (obj['bucketMagnitude']) formattedObj['bucketMagnitude'] = wei(obj['bucketMagnitude'], 0);
-			if (obj['synth']) formattedObj['synth'] = obj['synth'];
-			if (obj['firstSeen']) formattedObj['firstSeen'] = wei(obj['firstSeen'], 0);
-			if (obj['lastSeen']) formattedObj['lastSeen'] = wei(obj['lastSeen'], 0);
-			if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
-			if (obj['exchangeUSDTally']) formattedObj['exchangeUSDTally'] = wei(obj['exchangeUSDTally']);
-			if (obj['totalFeesGeneratedInUSD'])
-				formattedObj['totalFeesGeneratedInUSD'] = wei(obj['totalFeesGeneratedInUSD']);
-			if (obj['balances']) formattedObj['balances'] = obj['balances'];
-			if (obj['exchanges']) formattedObj['exchanges'] = obj['exchanges'];
-			return formattedObj as Pick<ExchangerResult, K>;
+			if (obj['account']) formattedObj['account'] = obj['account'];
+			if (obj['positionId']) formattedObj['positionId'] = obj['positionId'];
+			if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
+			if (obj['asset']) formattedObj['asset'] = obj['asset'];
+			if (obj['amount']) formattedObj['amount'] = wei(obj['amount'], 0);
+			return formattedObj as Pick<FundingPaymentResult, K>;
 		});
 		results = results.concat(newResults);
 		if (newResults.length < 1000) {
@@ -977,10 +678,34 @@ export type FundingRateUpdateFilter = {
 	timestamp_not_in?: WeiSource[];
 	market?: string | null;
 	market_not?: string | null;
+	market_gt?: string | null;
+	market_lt?: string | null;
+	market_gte?: string | null;
+	market_lte?: string | null;
 	market_in?: string[];
 	market_not_in?: string[];
 	market_contains?: string | null;
 	market_not_contains?: string | null;
+	marketKey?: string | null;
+	marketKey_not?: string | null;
+	marketKey_gt?: string | null;
+	marketKey_lt?: string | null;
+	marketKey_gte?: string | null;
+	marketKey_lte?: string | null;
+	marketKey_in?: string[];
+	marketKey_not_in?: string[];
+	marketKey_contains?: string | null;
+	marketKey_not_contains?: string | null;
+	asset?: string | null;
+	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
+	asset_in?: string[];
+	asset_not_in?: string[];
+	asset_contains?: string | null;
+	asset_not_contains?: string | null;
 	sequenceLength?: WeiSource | null;
 	sequenceLength_not?: WeiSource | null;
 	sequenceLength_gt?: WeiSource | null;
@@ -997,21 +722,37 @@ export type FundingRateUpdateFilter = {
 	funding_lte?: WeiSource | null;
 	funding_in?: WeiSource[];
 	funding_not_in?: WeiSource[];
+	fundingRate?: WeiSource | null;
+	fundingRate_not?: WeiSource | null;
+	fundingRate_gt?: WeiSource | null;
+	fundingRate_lt?: WeiSource | null;
+	fundingRate_gte?: WeiSource | null;
+	fundingRate_lte?: WeiSource | null;
+	fundingRate_in?: WeiSource[];
+	fundingRate_not_in?: WeiSource[];
 	_change_block?: any | null;
+	and?: (FundingRateUpdateFilter | null)[];
+	or?: (FundingRateUpdateFilter | null)[];
 };
 export type FundingRateUpdateResult = {
 	id: string;
 	timestamp: Wei;
 	market: string;
+	marketKey: string;
+	asset: string;
 	sequenceLength: Wei;
 	funding: Wei;
+	fundingRate: Wei;
 };
 export type FundingRateUpdateFields = {
 	id: true;
 	timestamp: true;
 	market: true;
+	marketKey: true;
+	asset: true;
 	sequenceLength: true;
 	funding: true;
+	fundingRate: true;
 };
 export type FundingRateUpdateArgs<K extends keyof FundingRateUpdateResult> = {
 	[Property in keyof Pick<FundingRateUpdateFields, K>]: FundingRateUpdateFields[Property];
@@ -1033,8 +774,11 @@ export const getFundingRateUpdateById = async function <K extends keyof FundingR
 	if (obj['id']) formattedObj['id'] = obj['id'];
 	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 	if (obj['market']) formattedObj['market'] = obj['market'];
+	if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
+	if (obj['asset']) formattedObj['asset'] = obj['asset'];
 	if (obj['sequenceLength']) formattedObj['sequenceLength'] = wei(obj['sequenceLength'], 0);
 	if (obj['funding']) formattedObj['funding'] = wei(obj['funding'], 0);
+	if (obj['fundingRate']) formattedObj['fundingRate'] = wei(obj['fundingRate'], 0);
 	return formattedObj as Pick<FundingRateUpdateResult, K>;
 };
 export const getFundingRateUpdates = async function <K extends keyof FundingRateUpdateResult>(
@@ -1073,8 +817,11 @@ export const getFundingRateUpdates = async function <K extends keyof FundingRate
 			if (obj['id']) formattedObj['id'] = obj['id'];
 			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 			if (obj['market']) formattedObj['market'] = obj['market'];
+			if (obj['marketKey']) formattedObj['marketKey'] = obj['marketKey'];
+			if (obj['asset']) formattedObj['asset'] = obj['asset'];
 			if (obj['sequenceLength']) formattedObj['sequenceLength'] = wei(obj['sequenceLength'], 0);
 			if (obj['funding']) formattedObj['funding'] = wei(obj['funding'], 0);
+			if (obj['fundingRate']) formattedObj['fundingRate'] = wei(obj['fundingRate'], 0);
 			return formattedObj as Pick<FundingRateUpdateResult, K>;
 		});
 		results = results.concat(newResults);
@@ -1114,12 +861,20 @@ export type FuturesAggregateStatFilter = {
 	timestamp_not_in?: WeiSource[];
 	marketKey?: string | null;
 	marketKey_not?: string | null;
+	marketKey_gt?: string | null;
+	marketKey_lt?: string | null;
+	marketKey_gte?: string | null;
+	marketKey_lte?: string | null;
 	marketKey_in?: string[];
 	marketKey_not_in?: string[];
 	marketKey_contains?: string | null;
 	marketKey_not_contains?: string | null;
 	asset?: string | null;
 	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
 	asset_in?: string[];
 	asset_not_in?: string[];
 	asset_contains?: string | null;
@@ -1165,6 +920,8 @@ export type FuturesAggregateStatFilter = {
 	feesCrossMarginAccounts_in?: WeiSource[];
 	feesCrossMarginAccounts_not_in?: WeiSource[];
 	_change_block?: any | null;
+	and?: (FuturesAggregateStatFilter | null)[];
+	or?: (FuturesAggregateStatFilter | null)[];
 };
 export type FuturesAggregateStatResult = {
 	id: string;
@@ -1330,6 +1087,8 @@ export type FuturesCumulativeStatFilter = {
 	averageTradeSize_in?: WeiSource[];
 	averageTradeSize_not_in?: WeiSource[];
 	_change_block?: any | null;
+	and?: (FuturesCumulativeStatFilter | null)[];
+	or?: (FuturesCumulativeStatFilter | null)[];
 };
 export type FuturesCumulativeStatResult = {
 	id: string;
@@ -1451,18 +1210,30 @@ export type FuturesMarginAccountFilter = {
 	timestamp_not_in?: WeiSource[];
 	account?: string | null;
 	account_not?: string | null;
+	account_gt?: string | null;
+	account_lt?: string | null;
+	account_gte?: string | null;
+	account_lte?: string | null;
 	account_in?: string[];
 	account_not_in?: string[];
 	account_contains?: string | null;
 	account_not_contains?: string | null;
 	market?: string | null;
 	market_not?: string | null;
+	market_gt?: string | null;
+	market_lt?: string | null;
+	market_gte?: string | null;
+	market_lte?: string | null;
 	market_in?: string[];
 	market_not_in?: string[];
 	market_contains?: string | null;
 	market_not_contains?: string | null;
 	asset?: string | null;
 	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
 	asset_in?: string[];
 	asset_not_in?: string[];
 	asset_contains?: string | null;
@@ -1492,6 +1263,8 @@ export type FuturesMarginAccountFilter = {
 	withdrawals_in?: WeiSource[];
 	withdrawals_not_in?: WeiSource[];
 	_change_block?: any | null;
+	and?: (FuturesMarginAccountFilter | null)[];
+	or?: (FuturesMarginAccountFilter | null)[];
 };
 export type FuturesMarginAccountResult = {
 	id: string;
@@ -1616,24 +1389,40 @@ export type FuturesMarginTransferFilter = {
 	timestamp_not_in?: WeiSource[];
 	account?: string | null;
 	account_not?: string | null;
+	account_gt?: string | null;
+	account_lt?: string | null;
+	account_gte?: string | null;
+	account_lte?: string | null;
 	account_in?: string[];
 	account_not_in?: string[];
 	account_contains?: string | null;
 	account_not_contains?: string | null;
 	market?: string | null;
 	market_not?: string | null;
+	market_gt?: string | null;
+	market_lt?: string | null;
+	market_gte?: string | null;
+	market_lte?: string | null;
 	market_in?: string[];
 	market_not_in?: string[];
 	market_contains?: string | null;
 	market_not_contains?: string | null;
 	asset?: string | null;
 	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
 	asset_in?: string[];
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
 	marketKey?: string | null;
 	marketKey_not?: string | null;
+	marketKey_gt?: string | null;
+	marketKey_lt?: string | null;
+	marketKey_gte?: string | null;
+	marketKey_lte?: string | null;
 	marketKey_in?: string[];
 	marketKey_not_in?: string[];
 	marketKey_contains?: string | null;
@@ -1667,6 +1456,8 @@ export type FuturesMarginTransferFilter = {
 	txHash_not_ends_with?: string | null;
 	txHash_not_ends_with_nocase?: string | null;
 	_change_block?: any | null;
+	and?: (FuturesMarginTransferFilter | null)[];
+	or?: (FuturesMarginTransferFilter | null)[];
 };
 export type FuturesMarginTransferResult = {
 	id: string;
@@ -1785,12 +1576,20 @@ export type FuturesMarketFilter = {
 	id_not_in?: string[];
 	asset?: string | null;
 	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
 	asset_in?: string[];
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
 	marketKey?: string | null;
 	marketKey_not?: string | null;
+	marketKey_gt?: string | null;
+	marketKey_lt?: string | null;
+	marketKey_gte?: string | null;
+	marketKey_lte?: string | null;
 	marketKey_in?: string[];
 	marketKey_not_in?: string[];
 	marketKey_contains?: string | null;
@@ -1817,6 +1616,8 @@ export type FuturesMarketFilter = {
 	marketStats_not_ends_with_nocase?: string | null;
 	marketStats_?: FuturesCumulativeStatFilter | null;
 	_change_block?: any | null;
+	and?: (FuturesMarketFilter | null)[];
+	or?: (FuturesMarketFilter | null)[];
 };
 export type FuturesMarketResult = {
 	id: string;
@@ -1920,30 +1721,50 @@ export type FuturesOrderFilter = {
 	size_not_in?: WeiSource[];
 	asset?: string | null;
 	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
 	asset_in?: string[];
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
 	marketKey?: string | null;
 	marketKey_not?: string | null;
+	marketKey_gt?: string | null;
+	marketKey_lt?: string | null;
+	marketKey_gte?: string | null;
+	marketKey_lte?: string | null;
 	marketKey_in?: string[];
 	marketKey_not_in?: string[];
 	marketKey_contains?: string | null;
 	marketKey_not_contains?: string | null;
 	market?: string | null;
 	market_not?: string | null;
+	market_gt?: string | null;
+	market_lt?: string | null;
+	market_gte?: string | null;
+	market_lte?: string | null;
 	market_in?: string[];
 	market_not_in?: string[];
 	market_contains?: string | null;
 	market_not_contains?: string | null;
 	account?: string | null;
 	account_not?: string | null;
+	account_gt?: string | null;
+	account_lt?: string | null;
+	account_gte?: string | null;
+	account_lte?: string | null;
 	account_in?: string[];
 	account_not_in?: string[];
 	account_contains?: string | null;
 	account_not_contains?: string | null;
 	abstractAccount?: string | null;
 	abstractAccount_not?: string | null;
+	abstractAccount_gt?: string | null;
+	abstractAccount_lt?: string | null;
+	abstractAccount_gte?: string | null;
+	abstractAccount_lte?: string | null;
 	abstractAccount_in?: string[];
 	abstractAccount_not_in?: string[];
 	abstractAccount_contains?: string | null;
@@ -1998,11 +1819,17 @@ export type FuturesOrderFilter = {
 	status_not_in?: FuturesOrderStatus[];
 	keeper?: string | null;
 	keeper_not?: string | null;
+	keeper_gt?: string | null;
+	keeper_lt?: string | null;
+	keeper_gte?: string | null;
+	keeper_lte?: string | null;
 	keeper_in?: string[];
 	keeper_not_in?: string[];
 	keeper_contains?: string | null;
 	keeper_not_contains?: string | null;
 	_change_block?: any | null;
+	and?: (FuturesOrderFilter | null)[];
+	or?: (FuturesOrderFilter | null)[];
 };
 export type FuturesOrderResult = {
 	id: string;
@@ -2142,6 +1969,10 @@ export type FuturesPositionFilter = {
 	id_not_in?: string[];
 	lastTxHash?: string | null;
 	lastTxHash_not?: string | null;
+	lastTxHash_gt?: string | null;
+	lastTxHash_lt?: string | null;
+	lastTxHash_gte?: string | null;
+	lastTxHash_lte?: string | null;
 	lastTxHash_in?: string[];
 	lastTxHash_not_in?: string[];
 	lastTxHash_contains?: string | null;
@@ -2172,30 +2003,50 @@ export type FuturesPositionFilter = {
 	timestamp_not_in?: WeiSource[];
 	market?: string | null;
 	market_not?: string | null;
+	market_gt?: string | null;
+	market_lt?: string | null;
+	market_gte?: string | null;
+	market_lte?: string | null;
 	market_in?: string[];
 	market_not_in?: string[];
 	market_contains?: string | null;
 	market_not_contains?: string | null;
 	asset?: string | null;
 	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
 	asset_in?: string[];
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
 	marketKey?: string | null;
 	marketKey_not?: string | null;
+	marketKey_gt?: string | null;
+	marketKey_lt?: string | null;
+	marketKey_gte?: string | null;
+	marketKey_lte?: string | null;
 	marketKey_in?: string[];
 	marketKey_not_in?: string[];
 	marketKey_contains?: string | null;
 	marketKey_not_contains?: string | null;
 	account?: string | null;
 	account_not?: string | null;
+	account_gt?: string | null;
+	account_lt?: string | null;
+	account_gte?: string | null;
+	account_lte?: string | null;
 	account_in?: string[];
 	account_not_in?: string[];
 	account_contains?: string | null;
 	account_not_contains?: string | null;
 	abstractAccount?: string | null;
 	abstractAccount_not?: string | null;
+	abstractAccount_gt?: string | null;
+	abstractAccount_lt?: string | null;
+	abstractAccount_gte?: string | null;
+	abstractAccount_lte?: string | null;
 	abstractAccount_in?: string[];
 	abstractAccount_not_in?: string[];
 	abstractAccount_contains?: string | null;
@@ -2341,6 +2192,8 @@ export type FuturesPositionFilter = {
 	exitPrice_in?: WeiSource[];
 	exitPrice_not_in?: WeiSource[];
 	_change_block?: any | null;
+	and?: (FuturesPositionFilter | null)[];
+	or?: (FuturesPositionFilter | null)[];
 };
 export type FuturesPositionResult = {
 	id: string;
@@ -2537,6 +2390,10 @@ export type FuturesStatFilter = {
 	id_not_in?: string[];
 	account?: string | null;
 	account_not?: string | null;
+	account_gt?: string | null;
+	account_lt?: string | null;
+	account_gte?: string | null;
+	account_lte?: string | null;
 	account_in?: string[];
 	account_not_in?: string[];
 	account_contains?: string | null;
@@ -2589,15 +2446,17 @@ export type FuturesStatFilter = {
 	totalVolume_lte?: WeiSource | null;
 	totalVolume_in?: WeiSource[];
 	totalVolume_not_in?: WeiSource[];
-	crossMarginVolume?: WeiSource | null;
-	crossMarginVolume_not?: WeiSource | null;
-	crossMarginVolume_gt?: WeiSource | null;
-	crossMarginVolume_lt?: WeiSource | null;
-	crossMarginVolume_gte?: WeiSource | null;
-	crossMarginVolume_lte?: WeiSource | null;
-	crossMarginVolume_in?: WeiSource[];
-	crossMarginVolume_not_in?: WeiSource[];
+	smartMarginVolume?: WeiSource | null;
+	smartMarginVolume_not?: WeiSource | null;
+	smartMarginVolume_gt?: WeiSource | null;
+	smartMarginVolume_lt?: WeiSource | null;
+	smartMarginVolume_gte?: WeiSource | null;
+	smartMarginVolume_lte?: WeiSource | null;
+	smartMarginVolume_in?: WeiSource[];
+	smartMarginVolume_not_in?: WeiSource[];
 	_change_block?: any | null;
+	and?: (FuturesStatFilter | null)[];
+	or?: (FuturesStatFilter | null)[];
 };
 export type FuturesStatResult = {
 	id: string;
@@ -2608,7 +2467,7 @@ export type FuturesStatResult = {
 	liquidations: Wei;
 	totalTrades: Wei;
 	totalVolume: Wei;
-	crossMarginVolume: Wei;
+	smartMarginVolume: Wei;
 };
 export type FuturesStatFields = {
 	id: true;
@@ -2619,7 +2478,7 @@ export type FuturesStatFields = {
 	liquidations: true;
 	totalTrades: true;
 	totalVolume: true;
-	crossMarginVolume: true;
+	smartMarginVolume: true;
 };
 export type FuturesStatArgs<K extends keyof FuturesStatResult> = {
 	[Property in keyof Pick<FuturesStatFields, K>]: FuturesStatFields[Property];
@@ -2646,8 +2505,8 @@ export const getFuturesStatById = async function <K extends keyof FuturesStatRes
 	if (obj['liquidations']) formattedObj['liquidations'] = wei(obj['liquidations'], 0);
 	if (obj['totalTrades']) formattedObj['totalTrades'] = wei(obj['totalTrades'], 0);
 	if (obj['totalVolume']) formattedObj['totalVolume'] = wei(obj['totalVolume'], 0);
-	if (obj['crossMarginVolume'])
-		formattedObj['crossMarginVolume'] = wei(obj['crossMarginVolume'], 0);
+	if (obj['smartMarginVolume'])
+		formattedObj['smartMarginVolume'] = wei(obj['smartMarginVolume'], 0);
 	return formattedObj as Pick<FuturesStatResult, K>;
 };
 export const getFuturesStats = async function <K extends keyof FuturesStatResult>(
@@ -2690,8 +2549,8 @@ export const getFuturesStats = async function <K extends keyof FuturesStatResult
 			if (obj['liquidations']) formattedObj['liquidations'] = wei(obj['liquidations'], 0);
 			if (obj['totalTrades']) formattedObj['totalTrades'] = wei(obj['totalTrades'], 0);
 			if (obj['totalVolume']) formattedObj['totalVolume'] = wei(obj['totalVolume'], 0);
-			if (obj['crossMarginVolume'])
-				formattedObj['crossMarginVolume'] = wei(obj['crossMarginVolume'], 0);
+			if (obj['smartMarginVolume'])
+				formattedObj['smartMarginVolume'] = wei(obj['smartMarginVolume'], 0);
 			return formattedObj as Pick<FuturesStatResult, K>;
 		});
 		results = results.concat(newResults);
@@ -2723,12 +2582,20 @@ export type FuturesTradeFilter = {
 	timestamp_not_in?: WeiSource[];
 	account?: string | null;
 	account_not?: string | null;
+	account_gt?: string | null;
+	account_lt?: string | null;
+	account_gte?: string | null;
+	account_lte?: string | null;
 	account_in?: string[];
 	account_not_in?: string[];
 	account_contains?: string | null;
 	account_not_contains?: string | null;
 	abstractAccount?: string | null;
 	abstractAccount_not?: string | null;
+	abstractAccount_gt?: string | null;
+	abstractAccount_lt?: string | null;
+	abstractAccount_gte?: string | null;
+	abstractAccount_lte?: string | null;
 	abstractAccount_in?: string[];
 	abstractAccount_not_in?: string[];
 	abstractAccount_contains?: string | null;
@@ -2755,12 +2622,20 @@ export type FuturesTradeFilter = {
 	size_not_in?: WeiSource[];
 	asset?: string | null;
 	asset_not?: string | null;
+	asset_gt?: string | null;
+	asset_lt?: string | null;
+	asset_gte?: string | null;
+	asset_lte?: string | null;
 	asset_in?: string[];
 	asset_not_in?: string[];
 	asset_contains?: string | null;
 	asset_not_contains?: string | null;
 	marketKey?: string | null;
 	marketKey_not?: string | null;
+	marketKey_gt?: string | null;
+	marketKey_lt?: string | null;
+	marketKey_gte?: string | null;
+	marketKey_lte?: string | null;
 	marketKey_in?: string[];
 	marketKey_not_in?: string[];
 	marketKey_contains?: string | null;
@@ -2809,11 +2684,39 @@ export type FuturesTradeFilter = {
 	feesPaid_lte?: WeiSource | null;
 	feesPaid_in?: WeiSource[];
 	feesPaid_not_in?: WeiSource[];
+	fundingAccrued?: WeiSource | null;
+	fundingAccrued_not?: WeiSource | null;
+	fundingAccrued_gt?: WeiSource | null;
+	fundingAccrued_lt?: WeiSource | null;
+	fundingAccrued_gte?: WeiSource | null;
+	fundingAccrued_lte?: WeiSource | null;
+	fundingAccrued_in?: WeiSource[];
+	fundingAccrued_not_in?: WeiSource[];
+	keeperFeesPaid?: WeiSource | null;
+	keeperFeesPaid_not?: WeiSource | null;
+	keeperFeesPaid_gt?: WeiSource | null;
+	keeperFeesPaid_lt?: WeiSource | null;
+	keeperFeesPaid_gte?: WeiSource | null;
+	keeperFeesPaid_lte?: WeiSource | null;
+	keeperFeesPaid_in?: WeiSource[];
+	keeperFeesPaid_not_in?: WeiSource[];
 	orderType?: FuturesOrderType | null;
 	orderType_not?: FuturesOrderType | null;
 	orderType_in?: FuturesOrderType[];
 	orderType_not_in?: FuturesOrderType[];
+	trackingCode?: string | null;
+	trackingCode_not?: string | null;
+	trackingCode_gt?: string | null;
+	trackingCode_lt?: string | null;
+	trackingCode_gte?: string | null;
+	trackingCode_lte?: string | null;
+	trackingCode_in?: string[];
+	trackingCode_not_in?: string[];
+	trackingCode_contains?: string | null;
+	trackingCode_not_contains?: string | null;
 	_change_block?: any | null;
+	and?: (FuturesTradeFilter | null)[];
+	or?: (FuturesTradeFilter | null)[];
 };
 export type FuturesTradeResult = {
 	id: string;
@@ -2831,7 +2734,10 @@ export type FuturesTradeResult = {
 	positionClosed: boolean;
 	pnl: Wei;
 	feesPaid: Wei;
+	fundingAccrued: Wei;
+	keeperFeesPaid: Wei;
 	orderType: Partial<FuturesOrderType>;
+	trackingCode: string;
 };
 export type FuturesTradeFields = {
 	id: true;
@@ -2849,7 +2755,10 @@ export type FuturesTradeFields = {
 	positionClosed: true;
 	pnl: true;
 	feesPaid: true;
+	fundingAccrued: true;
+	keeperFeesPaid: true;
 	orderType: true;
+	trackingCode: true;
 };
 export type FuturesTradeArgs<K extends keyof FuturesTradeResult> = {
 	[Property in keyof Pick<FuturesTradeFields, K>]: FuturesTradeFields[Property];
@@ -2883,7 +2792,10 @@ export const getFuturesTradeById = async function <K extends keyof FuturesTradeR
 	if (obj['positionClosed']) formattedObj['positionClosed'] = obj['positionClosed'];
 	if (obj['pnl']) formattedObj['pnl'] = wei(obj['pnl'], 0);
 	if (obj['feesPaid']) formattedObj['feesPaid'] = wei(obj['feesPaid'], 0);
+	if (obj['fundingAccrued']) formattedObj['fundingAccrued'] = wei(obj['fundingAccrued'], 0);
+	if (obj['keeperFeesPaid']) formattedObj['keeperFeesPaid'] = wei(obj['keeperFeesPaid'], 0);
 	if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
+	if (obj['trackingCode']) formattedObj['trackingCode'] = obj['trackingCode'];
 	return formattedObj as Pick<FuturesTradeResult, K>;
 };
 export const getFuturesTrades = async function <K extends keyof FuturesTradeResult>(
@@ -2933,7 +2845,10 @@ export const getFuturesTrades = async function <K extends keyof FuturesTradeResu
 			if (obj['positionClosed']) formattedObj['positionClosed'] = obj['positionClosed'];
 			if (obj['pnl']) formattedObj['pnl'] = wei(obj['pnl'], 0);
 			if (obj['feesPaid']) formattedObj['feesPaid'] = wei(obj['feesPaid'], 0);
+			if (obj['fundingAccrued']) formattedObj['fundingAccrued'] = wei(obj['fundingAccrued'], 0);
+			if (obj['keeperFeesPaid']) formattedObj['keeperFeesPaid'] = wei(obj['keeperFeesPaid'], 0);
 			if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
+			if (obj['trackingCode']) formattedObj['trackingCode'] = obj['trackingCode'];
 			return formattedObj as Pick<FuturesTradeResult, K>;
 		});
 		results = results.concat(newResults);
@@ -2946,7 +2861,7 @@ export const getFuturesTrades = async function <K extends keyof FuturesTradeResu
 	} while (paginationKey && options.first && results.length < options.first);
 	return options.first ? results.slice(0, options.first) : results;
 };
-export type LatestRateFilter = {
+export type SmartMarginAccountFilter = {
 	id?: string | null;
 	id_not?: string | null;
 	id_gt?: string | null;
@@ -2955,52 +2870,50 @@ export type LatestRateFilter = {
 	id_lte?: string | null;
 	id_in?: string[];
 	id_not_in?: string[];
-	rate?: WeiSource | null;
-	rate_not?: WeiSource | null;
-	rate_gt?: WeiSource | null;
-	rate_lt?: WeiSource | null;
-	rate_gte?: WeiSource | null;
-	rate_lte?: WeiSource | null;
-	rate_in?: WeiSource[];
-	rate_not_in?: WeiSource[];
-	aggregator?: string | null;
-	aggregator_not?: string | null;
-	aggregator_in?: string[];
-	aggregator_not_in?: string[];
-	aggregator_contains?: string | null;
-	aggregator_not_contains?: string | null;
-	timestamp?: WeiSource | null;
-	timestamp_not?: WeiSource | null;
-	timestamp_gt?: WeiSource | null;
-	timestamp_lt?: WeiSource | null;
-	timestamp_gte?: WeiSource | null;
-	timestamp_lte?: WeiSource | null;
-	timestamp_in?: WeiSource[];
-	timestamp_not_in?: WeiSource[];
+	owner?: string | null;
+	owner_not?: string | null;
+	owner_gt?: string | null;
+	owner_lt?: string | null;
+	owner_gte?: string | null;
+	owner_lte?: string | null;
+	owner_in?: string[];
+	owner_not_in?: string[];
+	owner_contains?: string | null;
+	owner_not_contains?: string | null;
+	version?: string | null;
+	version_not?: string | null;
+	version_gt?: string | null;
+	version_lt?: string | null;
+	version_gte?: string | null;
+	version_lte?: string | null;
+	version_in?: string[];
+	version_not_in?: string[];
+	version_contains?: string | null;
+	version_not_contains?: string | null;
 	_change_block?: any | null;
+	and?: (SmartMarginAccountFilter | null)[];
+	or?: (SmartMarginAccountFilter | null)[];
 };
-export type LatestRateResult = {
+export type SmartMarginAccountResult = {
 	id: string;
-	rate: Wei;
-	aggregator: string;
-	timestamp: Wei;
+	owner: string;
+	version: string;
 };
-export type LatestRateFields = {
+export type SmartMarginAccountFields = {
 	id: true;
-	rate: true;
-	aggregator: true;
-	timestamp: true;
+	owner: true;
+	version: true;
 };
-export type LatestRateArgs<K extends keyof LatestRateResult> = {
-	[Property in keyof Pick<LatestRateFields, K>]: LatestRateFields[Property];
+export type SmartMarginAccountArgs<K extends keyof SmartMarginAccountResult> = {
+	[Property in keyof Pick<SmartMarginAccountFields, K>]: SmartMarginAccountFields[Property];
 };
-export const getLatestRateById = async function <K extends keyof LatestRateResult>(
+export const getSmartMarginAccountById = async function <K extends keyof SmartMarginAccountResult>(
 	url: string,
 	options: SingleQueryOptions,
-	args: LatestRateArgs<K>
-): Promise<Pick<LatestRateResult, K>> {
+	args: SmartMarginAccountArgs<K>
+): Promise<Pick<SmartMarginAccountResult, K>> {
 	const res = await axios.post(url, {
-		query: generateGql('latestRate', options, args),
+		query: generateGql('smartMarginAccount', options, args),
 	});
 	const r = res.data as any;
 	if (r.errors && r.errors.length) {
@@ -3009,184 +2922,20 @@ export const getLatestRateById = async function <K extends keyof LatestRateResul
 	const obj = r.data[Object.keys(r.data)[0]] as any;
 	const formattedObj: any = {};
 	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['rate']) formattedObj['rate'] = wei(obj['rate']);
-	if (obj['aggregator']) formattedObj['aggregator'] = obj['aggregator'];
-	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	return formattedObj as Pick<LatestRateResult, K>;
+	if (obj['owner']) formattedObj['owner'] = obj['owner'];
+	if (obj['version']) formattedObj['version'] = obj['version'];
+	return formattedObj as Pick<SmartMarginAccountResult, K>;
 };
-export const getLatestRates = async function <K extends keyof LatestRateResult>(
+export const getSmartMarginAccounts = async function <K extends keyof SmartMarginAccountResult>(
 	url: string,
-	options: MultiQueryOptions<LatestRateFilter, LatestRateResult>,
-	args: LatestRateArgs<K>
-): Promise<Pick<LatestRateResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<LatestRateFilter, LatestRateResult>> = {
-		...options,
-	};
-	let paginationKey: keyof LatestRateFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof LatestRateFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<LatestRateResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('latestRates', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['rate']) formattedObj['rate'] = wei(obj['rate']);
-			if (obj['aggregator']) formattedObj['aggregator'] = obj['aggregator'];
-			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			return formattedObj as Pick<LatestRateResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type LatestSynthBalanceFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	amount?: WeiSource | null;
-	amount_not?: WeiSource | null;
-	amount_gt?: WeiSource | null;
-	amount_lt?: WeiSource | null;
-	amount_gte?: WeiSource | null;
-	amount_lte?: WeiSource | null;
-	amount_in?: WeiSource[];
-	amount_not_in?: WeiSource[];
-	address?: string | null;
-	address_not?: string | null;
-	address_in?: string[];
-	address_not_in?: string[];
-	address_contains?: string | null;
-	address_not_contains?: string | null;
-	account?: string | null;
-	account_not?: string | null;
-	account_gt?: string | null;
-	account_lt?: string | null;
-	account_gte?: string | null;
-	account_lte?: string | null;
-	account_in?: string[];
-	account_not_in?: string[];
-	account_contains?: string | null;
-	account_contains_nocase?: string | null;
-	account_not_contains?: string | null;
-	account_not_contains_nocase?: string | null;
-	account_starts_with?: string | null;
-	account_starts_with_nocase?: string | null;
-	account_not_starts_with?: string | null;
-	account_not_starts_with_nocase?: string | null;
-	account_ends_with?: string | null;
-	account_ends_with_nocase?: string | null;
-	account_not_ends_with?: string | null;
-	account_not_ends_with_nocase?: string | null;
-	timestamp?: WeiSource | null;
-	timestamp_not?: WeiSource | null;
-	timestamp_gt?: WeiSource | null;
-	timestamp_lt?: WeiSource | null;
-	timestamp_gte?: WeiSource | null;
-	timestamp_lte?: WeiSource | null;
-	timestamp_in?: WeiSource[];
-	timestamp_not_in?: WeiSource[];
-	synth?: string | null;
-	synth_not?: string | null;
-	synth_gt?: string | null;
-	synth_lt?: string | null;
-	synth_gte?: string | null;
-	synth_lte?: string | null;
-	synth_in?: string[];
-	synth_not_in?: string[];
-	synth_contains?: string | null;
-	synth_contains_nocase?: string | null;
-	synth_not_contains?: string | null;
-	synth_not_contains_nocase?: string | null;
-	synth_starts_with?: string | null;
-	synth_starts_with_nocase?: string | null;
-	synth_not_starts_with?: string | null;
-	synth_not_starts_with_nocase?: string | null;
-	synth_ends_with?: string | null;
-	synth_ends_with_nocase?: string | null;
-	synth_not_ends_with?: string | null;
-	synth_not_ends_with_nocase?: string | null;
-	synth_?: SynthFilter | null;
-	_change_block?: any | null;
-};
-export type LatestSynthBalanceResult = {
-	id: string;
-	amount: Wei;
-	address: string;
-	account: string;
-	timestamp: Wei;
-	synth: Partial<SynthResult> | null;
-};
-export type LatestSynthBalanceFields = {
-	id: true;
-	amount: true;
-	address: true;
-	account: true;
-	timestamp: true;
-	synth: SynthFields;
-};
-export type LatestSynthBalanceArgs<K extends keyof LatestSynthBalanceResult> = {
-	[Property in keyof Pick<LatestSynthBalanceFields, K>]: LatestSynthBalanceFields[Property];
-};
-export const getLatestSynthBalanceById = async function <K extends keyof LatestSynthBalanceResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: LatestSynthBalanceArgs<K>
-): Promise<Pick<LatestSynthBalanceResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('latestSynthBalance', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['amount']) formattedObj['amount'] = wei(obj['amount']);
-	if (obj['address']) formattedObj['address'] = obj['address'];
-	if (obj['account']) formattedObj['account'] = obj['account'];
-	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	if (obj['synth']) formattedObj['synth'] = obj['synth'];
-	return formattedObj as Pick<LatestSynthBalanceResult, K>;
-};
-export const getLatestSynthBalances = async function <K extends keyof LatestSynthBalanceResult>(
-	url: string,
-	options: MultiQueryOptions<LatestSynthBalanceFilter, LatestSynthBalanceResult>,
-	args: LatestSynthBalanceArgs<K>
-): Promise<Pick<LatestSynthBalanceResult, K>[]> {
+	options: MultiQueryOptions<SmartMarginAccountFilter, SmartMarginAccountResult>,
+	args: SmartMarginAccountArgs<K>
+): Promise<Pick<SmartMarginAccountResult, K>[]> {
 	const paginatedOptions: Partial<MultiQueryOptions<
-		LatestSynthBalanceFilter,
-		LatestSynthBalanceResult
+		SmartMarginAccountFilter,
+		SmartMarginAccountResult
 	>> = { ...options };
-	let paginationKey: keyof LatestSynthBalanceFilter | null = null;
+	let paginationKey: keyof SmartMarginAccountFilter | null = null;
 	let paginationValue = '';
 	if (options.first && options.first > MAX_PAGE) {
 		paginatedOptions.first = MAX_PAGE;
@@ -3195,15 +2944,15 @@ export const getLatestSynthBalances = async function <K extends keyof LatestSynt
 		paginationKey = (paginatedOptions.orderBy +
 			(paginatedOptions.orderDirection === 'asc'
 				? '_gt'
-				: '_lt')) as keyof LatestSynthBalanceFilter;
+				: '_lt')) as keyof SmartMarginAccountFilter;
 		paginatedOptions.where = { ...options.where };
 	}
-	let results: Pick<LatestSynthBalanceResult, K>[] = [];
+	let results: Pick<SmartMarginAccountResult, K>[] = [];
 	do {
 		if (paginationKey && paginationValue)
 			paginatedOptions.where![paginationKey] = paginationValue as any;
 		const res = await axios.post(url, {
-			query: generateGql('latestSynthBalances', paginatedOptions, args),
+			query: generateGql('smartMarginAccounts', paginatedOptions, args),
 		});
 		const r = res.data as any;
 		if (r.errors && r.errors.length) {
@@ -3213,1018 +2962,9 @@ export const getLatestSynthBalances = async function <K extends keyof LatestSynt
 		const newResults = rawResults.map((obj) => {
 			const formattedObj: any = {};
 			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['amount']) formattedObj['amount'] = wei(obj['amount']);
-			if (obj['address']) formattedObj['address'] = obj['address'];
-			if (obj['account']) formattedObj['account'] = obj['account'];
-			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			if (obj['synth']) formattedObj['synth'] = obj['synth'];
-			return formattedObj as Pick<LatestSynthBalanceResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type RateUpdateFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	currencyKey?: string | null;
-	currencyKey_not?: string | null;
-	currencyKey_in?: string[];
-	currencyKey_not_in?: string[];
-	currencyKey_contains?: string | null;
-	currencyKey_not_contains?: string | null;
-	synth?: string | null;
-	synth_not?: string | null;
-	synth_gt?: string | null;
-	synth_lt?: string | null;
-	synth_gte?: string | null;
-	synth_lte?: string | null;
-	synth_in?: string[];
-	synth_not_in?: string[];
-	synth_contains?: string | null;
-	synth_contains_nocase?: string | null;
-	synth_not_contains?: string | null;
-	synth_not_contains_nocase?: string | null;
-	synth_starts_with?: string | null;
-	synth_starts_with_nocase?: string | null;
-	synth_not_starts_with?: string | null;
-	synth_not_starts_with_nocase?: string | null;
-	synth_ends_with?: string | null;
-	synth_ends_with_nocase?: string | null;
-	synth_not_ends_with?: string | null;
-	synth_not_ends_with_nocase?: string | null;
-	rate?: WeiSource | null;
-	rate_not?: WeiSource | null;
-	rate_gt?: WeiSource | null;
-	rate_lt?: WeiSource | null;
-	rate_gte?: WeiSource | null;
-	rate_lte?: WeiSource | null;
-	rate_in?: WeiSource[];
-	rate_not_in?: WeiSource[];
-	block?: WeiSource | null;
-	block_not?: WeiSource | null;
-	block_gt?: WeiSource | null;
-	block_lt?: WeiSource | null;
-	block_gte?: WeiSource | null;
-	block_lte?: WeiSource | null;
-	block_in?: WeiSource[];
-	block_not_in?: WeiSource[];
-	timestamp?: WeiSource | null;
-	timestamp_not?: WeiSource | null;
-	timestamp_gt?: WeiSource | null;
-	timestamp_lt?: WeiSource | null;
-	timestamp_gte?: WeiSource | null;
-	timestamp_lte?: WeiSource | null;
-	timestamp_in?: WeiSource[];
-	timestamp_not_in?: WeiSource[];
-	_change_block?: any | null;
-};
-export type RateUpdateResult = {
-	id: string;
-	currencyKey: string;
-	synth: string;
-	rate: Wei;
-	block: Wei;
-	timestamp: Wei;
-};
-export type RateUpdateFields = {
-	id: true;
-	currencyKey: true;
-	synth: true;
-	rate: true;
-	block: true;
-	timestamp: true;
-};
-export type RateUpdateArgs<K extends keyof RateUpdateResult> = {
-	[Property in keyof Pick<RateUpdateFields, K>]: RateUpdateFields[Property];
-};
-export const getRateUpdateById = async function <K extends keyof RateUpdateResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: RateUpdateArgs<K>
-): Promise<Pick<RateUpdateResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('rateUpdate', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['currencyKey']) formattedObj['currencyKey'] = obj['currencyKey'];
-	if (obj['synth']) formattedObj['synth'] = obj['synth'];
-	if (obj['rate']) formattedObj['rate'] = wei(obj['rate']);
-	if (obj['block']) formattedObj['block'] = wei(obj['block'], 0);
-	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	return formattedObj as Pick<RateUpdateResult, K>;
-};
-export const getRateUpdates = async function <K extends keyof RateUpdateResult>(
-	url: string,
-	options: MultiQueryOptions<RateUpdateFilter, RateUpdateResult>,
-	args: RateUpdateArgs<K>
-): Promise<Pick<RateUpdateResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<RateUpdateFilter, RateUpdateResult>> = {
-		...options,
-	};
-	let paginationKey: keyof RateUpdateFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof RateUpdateFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<RateUpdateResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('rateUpdates', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['currencyKey']) formattedObj['currencyKey'] = obj['currencyKey'];
-			if (obj['synth']) formattedObj['synth'] = obj['synth'];
-			if (obj['rate']) formattedObj['rate'] = wei(obj['rate']);
-			if (obj['block']) formattedObj['block'] = wei(obj['block'], 0);
-			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			return formattedObj as Pick<RateUpdateResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type SynthFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	name?: string | null;
-	name_not?: string | null;
-	name_gt?: string | null;
-	name_lt?: string | null;
-	name_gte?: string | null;
-	name_lte?: string | null;
-	name_in?: string[];
-	name_not_in?: string[];
-	name_contains?: string | null;
-	name_contains_nocase?: string | null;
-	name_not_contains?: string | null;
-	name_not_contains_nocase?: string | null;
-	name_starts_with?: string | null;
-	name_starts_with_nocase?: string | null;
-	name_not_starts_with?: string | null;
-	name_not_starts_with_nocase?: string | null;
-	name_ends_with?: string | null;
-	name_ends_with_nocase?: string | null;
-	name_not_ends_with?: string | null;
-	name_not_ends_with_nocase?: string | null;
-	symbol?: string | null;
-	symbol_not?: string | null;
-	symbol_gt?: string | null;
-	symbol_lt?: string | null;
-	symbol_gte?: string | null;
-	symbol_lte?: string | null;
-	symbol_in?: string[];
-	symbol_not_in?: string[];
-	symbol_contains?: string | null;
-	symbol_contains_nocase?: string | null;
-	symbol_not_contains?: string | null;
-	symbol_not_contains_nocase?: string | null;
-	symbol_starts_with?: string | null;
-	symbol_starts_with_nocase?: string | null;
-	symbol_not_starts_with?: string | null;
-	symbol_not_starts_with_nocase?: string | null;
-	symbol_ends_with?: string | null;
-	symbol_ends_with_nocase?: string | null;
-	symbol_not_ends_with?: string | null;
-	symbol_not_ends_with_nocase?: string | null;
-	totalSupply?: WeiSource | null;
-	totalSupply_not?: WeiSource | null;
-	totalSupply_gt?: WeiSource | null;
-	totalSupply_lt?: WeiSource | null;
-	totalSupply_gte?: WeiSource | null;
-	totalSupply_lte?: WeiSource | null;
-	totalSupply_in?: WeiSource[];
-	totalSupply_not_in?: WeiSource[];
-	_change_block?: any | null;
-};
-export type SynthResult = {
-	id: string;
-	name: string;
-	symbol: string;
-	totalSupply: Wei;
-};
-export type SynthFields = {
-	id: true;
-	name: true;
-	symbol: true;
-	totalSupply: true;
-};
-export type SynthArgs<K extends keyof SynthResult> = {
-	[Property in keyof Pick<SynthFields, K>]: SynthFields[Property];
-};
-export const getSynthById = async function <K extends keyof SynthResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: SynthArgs<K>
-): Promise<Pick<SynthResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('synth', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['name']) formattedObj['name'] = obj['name'];
-	if (obj['symbol']) formattedObj['symbol'] = obj['symbol'];
-	if (obj['totalSupply']) formattedObj['totalSupply'] = wei(obj['totalSupply']);
-	return formattedObj as Pick<SynthResult, K>;
-};
-export const getSynths = async function <K extends keyof SynthResult>(
-	url: string,
-	options: MultiQueryOptions<SynthFilter, SynthResult>,
-	args: SynthArgs<K>
-): Promise<Pick<SynthResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<SynthFilter, SynthResult>> = { ...options };
-	let paginationKey: keyof SynthFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof SynthFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<SynthResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('synths', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['name']) formattedObj['name'] = obj['name'];
-			if (obj['symbol']) formattedObj['symbol'] = obj['symbol'];
-			if (obj['totalSupply']) formattedObj['totalSupply'] = wei(obj['totalSupply']);
-			return formattedObj as Pick<SynthResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type SynthBalanceFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	amount?: WeiSource | null;
-	amount_not?: WeiSource | null;
-	amount_gt?: WeiSource | null;
-	amount_lt?: WeiSource | null;
-	amount_gte?: WeiSource | null;
-	amount_lte?: WeiSource | null;
-	amount_in?: WeiSource[];
-	amount_not_in?: WeiSource[];
-	address?: string | null;
-	address_not?: string | null;
-	address_in?: string[];
-	address_not_in?: string[];
-	address_contains?: string | null;
-	address_not_contains?: string | null;
-	account?: string | null;
-	account_not?: string | null;
-	account_gt?: string | null;
-	account_lt?: string | null;
-	account_gte?: string | null;
-	account_lte?: string | null;
-	account_in?: string[];
-	account_not_in?: string[];
-	account_contains?: string | null;
-	account_contains_nocase?: string | null;
-	account_not_contains?: string | null;
-	account_not_contains_nocase?: string | null;
-	account_starts_with?: string | null;
-	account_starts_with_nocase?: string | null;
-	account_not_starts_with?: string | null;
-	account_not_starts_with_nocase?: string | null;
-	account_ends_with?: string | null;
-	account_ends_with_nocase?: string | null;
-	account_not_ends_with?: string | null;
-	account_not_ends_with_nocase?: string | null;
-	timestamp?: WeiSource | null;
-	timestamp_not?: WeiSource | null;
-	timestamp_gt?: WeiSource | null;
-	timestamp_lt?: WeiSource | null;
-	timestamp_gte?: WeiSource | null;
-	timestamp_lte?: WeiSource | null;
-	timestamp_in?: WeiSource[];
-	timestamp_not_in?: WeiSource[];
-	synth?: string | null;
-	synth_not?: string | null;
-	synth_gt?: string | null;
-	synth_lt?: string | null;
-	synth_gte?: string | null;
-	synth_lte?: string | null;
-	synth_in?: string[];
-	synth_not_in?: string[];
-	synth_contains?: string | null;
-	synth_contains_nocase?: string | null;
-	synth_not_contains?: string | null;
-	synth_not_contains_nocase?: string | null;
-	synth_starts_with?: string | null;
-	synth_starts_with_nocase?: string | null;
-	synth_not_starts_with?: string | null;
-	synth_not_starts_with_nocase?: string | null;
-	synth_ends_with?: string | null;
-	synth_ends_with_nocase?: string | null;
-	synth_not_ends_with?: string | null;
-	synth_not_ends_with_nocase?: string | null;
-	synth_?: SynthFilter | null;
-	_change_block?: any | null;
-};
-export type SynthBalanceResult = {
-	id: string;
-	amount: Wei;
-	address: string;
-	account: string;
-	timestamp: Wei;
-	synth: Partial<SynthResult> | null;
-};
-export type SynthBalanceFields = {
-	id: true;
-	amount: true;
-	address: true;
-	account: true;
-	timestamp: true;
-	synth: SynthFields;
-};
-export type SynthBalanceArgs<K extends keyof SynthBalanceResult> = {
-	[Property in keyof Pick<SynthBalanceFields, K>]: SynthBalanceFields[Property];
-};
-export const getSynthBalanceById = async function <K extends keyof SynthBalanceResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: SynthBalanceArgs<K>
-): Promise<Pick<SynthBalanceResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('synthBalance', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['amount']) formattedObj['amount'] = wei(obj['amount']);
-	if (obj['address']) formattedObj['address'] = obj['address'];
-	if (obj['account']) formattedObj['account'] = obj['account'];
-	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	if (obj['synth']) formattedObj['synth'] = obj['synth'];
-	return formattedObj as Pick<SynthBalanceResult, K>;
-};
-export const getSynthBalances = async function <K extends keyof SynthBalanceResult>(
-	url: string,
-	options: MultiQueryOptions<SynthBalanceFilter, SynthBalanceResult>,
-	args: SynthBalanceArgs<K>
-): Promise<Pick<SynthBalanceResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<SynthBalanceFilter, SynthBalanceResult>> = {
-		...options,
-	};
-	let paginationKey: keyof SynthBalanceFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof SynthBalanceFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<SynthBalanceResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('synthBalances', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['amount']) formattedObj['amount'] = wei(obj['amount']);
-			if (obj['address']) formattedObj['address'] = obj['address'];
-			if (obj['account']) formattedObj['account'] = obj['account'];
-			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			if (obj['synth']) formattedObj['synth'] = obj['synth'];
-			return formattedObj as Pick<SynthBalanceResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type SynthByCurrencyKeyFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	proxyAddress?: string | null;
-	proxyAddress_not?: string | null;
-	proxyAddress_in?: string[];
-	proxyAddress_not_in?: string[];
-	proxyAddress_contains?: string | null;
-	proxyAddress_not_contains?: string | null;
-	_change_block?: any | null;
-};
-export type SynthByCurrencyKeyResult = {
-	id: string;
-	proxyAddress: string;
-};
-export type SynthByCurrencyKeyFields = {
-	id: true;
-	proxyAddress: true;
-};
-export type SynthByCurrencyKeyArgs<K extends keyof SynthByCurrencyKeyResult> = {
-	[Property in keyof Pick<SynthByCurrencyKeyFields, K>]: SynthByCurrencyKeyFields[Property];
-};
-export const getSynthByCurrencyKeyById = async function <K extends keyof SynthByCurrencyKeyResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: SynthByCurrencyKeyArgs<K>
-): Promise<Pick<SynthByCurrencyKeyResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('synthByCurrencyKey', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['proxyAddress']) formattedObj['proxyAddress'] = obj['proxyAddress'];
-	return formattedObj as Pick<SynthByCurrencyKeyResult, K>;
-};
-export const getSynthByCurrencyKeys = async function <K extends keyof SynthByCurrencyKeyResult>(
-	url: string,
-	options: MultiQueryOptions<SynthByCurrencyKeyFilter, SynthByCurrencyKeyResult>,
-	args: SynthByCurrencyKeyArgs<K>
-): Promise<Pick<SynthByCurrencyKeyResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<
-		SynthByCurrencyKeyFilter,
-		SynthByCurrencyKeyResult
-	>> = { ...options };
-	let paginationKey: keyof SynthByCurrencyKeyFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc'
-				? '_gt'
-				: '_lt')) as keyof SynthByCurrencyKeyFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<SynthByCurrencyKeyResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('synthByCurrencyKeys', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['proxyAddress']) formattedObj['proxyAddress'] = obj['proxyAddress'];
-			return formattedObj as Pick<SynthByCurrencyKeyResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type SynthExchangeFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	account?: string | null;
-	account_not?: string | null;
-	account_gt?: string | null;
-	account_lt?: string | null;
-	account_gte?: string | null;
-	account_lte?: string | null;
-	account_in?: string[];
-	account_not_in?: string[];
-	account_contains?: string | null;
-	account_contains_nocase?: string | null;
-	account_not_contains?: string | null;
-	account_not_contains_nocase?: string | null;
-	account_starts_with?: string | null;
-	account_starts_with_nocase?: string | null;
-	account_not_starts_with?: string | null;
-	account_not_starts_with_nocase?: string | null;
-	account_ends_with?: string | null;
-	account_ends_with_nocase?: string | null;
-	account_not_ends_with?: string | null;
-	account_not_ends_with_nocase?: string | null;
-	account_?: ExchangerFilter | null;
-	fromSynth?: string | null;
-	fromSynth_not?: string | null;
-	fromSynth_gt?: string | null;
-	fromSynth_lt?: string | null;
-	fromSynth_gte?: string | null;
-	fromSynth_lte?: string | null;
-	fromSynth_in?: string[];
-	fromSynth_not_in?: string[];
-	fromSynth_contains?: string | null;
-	fromSynth_contains_nocase?: string | null;
-	fromSynth_not_contains?: string | null;
-	fromSynth_not_contains_nocase?: string | null;
-	fromSynth_starts_with?: string | null;
-	fromSynth_starts_with_nocase?: string | null;
-	fromSynth_not_starts_with?: string | null;
-	fromSynth_not_starts_with_nocase?: string | null;
-	fromSynth_ends_with?: string | null;
-	fromSynth_ends_with_nocase?: string | null;
-	fromSynth_not_ends_with?: string | null;
-	fromSynth_not_ends_with_nocase?: string | null;
-	fromSynth_?: SynthFilter | null;
-	toSynth?: string | null;
-	toSynth_not?: string | null;
-	toSynth_gt?: string | null;
-	toSynth_lt?: string | null;
-	toSynth_gte?: string | null;
-	toSynth_lte?: string | null;
-	toSynth_in?: string[];
-	toSynth_not_in?: string[];
-	toSynth_contains?: string | null;
-	toSynth_contains_nocase?: string | null;
-	toSynth_not_contains?: string | null;
-	toSynth_not_contains_nocase?: string | null;
-	toSynth_starts_with?: string | null;
-	toSynth_starts_with_nocase?: string | null;
-	toSynth_not_starts_with?: string | null;
-	toSynth_not_starts_with_nocase?: string | null;
-	toSynth_ends_with?: string | null;
-	toSynth_ends_with_nocase?: string | null;
-	toSynth_not_ends_with?: string | null;
-	toSynth_not_ends_with_nocase?: string | null;
-	toSynth_?: SynthFilter | null;
-	fromAmount?: WeiSource | null;
-	fromAmount_not?: WeiSource | null;
-	fromAmount_gt?: WeiSource | null;
-	fromAmount_lt?: WeiSource | null;
-	fromAmount_gte?: WeiSource | null;
-	fromAmount_lte?: WeiSource | null;
-	fromAmount_in?: WeiSource[];
-	fromAmount_not_in?: WeiSource[];
-	fromAmountInUSD?: WeiSource | null;
-	fromAmountInUSD_not?: WeiSource | null;
-	fromAmountInUSD_gt?: WeiSource | null;
-	fromAmountInUSD_lt?: WeiSource | null;
-	fromAmountInUSD_gte?: WeiSource | null;
-	fromAmountInUSD_lte?: WeiSource | null;
-	fromAmountInUSD_in?: WeiSource[];
-	fromAmountInUSD_not_in?: WeiSource[];
-	toAmount?: WeiSource | null;
-	toAmount_not?: WeiSource | null;
-	toAmount_gt?: WeiSource | null;
-	toAmount_lt?: WeiSource | null;
-	toAmount_gte?: WeiSource | null;
-	toAmount_lte?: WeiSource | null;
-	toAmount_in?: WeiSource[];
-	toAmount_not_in?: WeiSource[];
-	toAmountInUSD?: WeiSource | null;
-	toAmountInUSD_not?: WeiSource | null;
-	toAmountInUSD_gt?: WeiSource | null;
-	toAmountInUSD_lt?: WeiSource | null;
-	toAmountInUSD_gte?: WeiSource | null;
-	toAmountInUSD_lte?: WeiSource | null;
-	toAmountInUSD_in?: WeiSource[];
-	toAmountInUSD_not_in?: WeiSource[];
-	feesInUSD?: WeiSource | null;
-	feesInUSD_not?: WeiSource | null;
-	feesInUSD_gt?: WeiSource | null;
-	feesInUSD_lt?: WeiSource | null;
-	feesInUSD_gte?: WeiSource | null;
-	feesInUSD_lte?: WeiSource | null;
-	feesInUSD_in?: WeiSource[];
-	feesInUSD_not_in?: WeiSource[];
-	toAddress?: string | null;
-	toAddress_not?: string | null;
-	toAddress_in?: string[];
-	toAddress_not_in?: string[];
-	toAddress_contains?: string | null;
-	toAddress_not_contains?: string | null;
-	timestamp?: WeiSource | null;
-	timestamp_not?: WeiSource | null;
-	timestamp_gt?: WeiSource | null;
-	timestamp_lt?: WeiSource | null;
-	timestamp_gte?: WeiSource | null;
-	timestamp_lte?: WeiSource | null;
-	timestamp_in?: WeiSource[];
-	timestamp_not_in?: WeiSource[];
-	gasPrice?: WeiSource | null;
-	gasPrice_not?: WeiSource | null;
-	gasPrice_gt?: WeiSource | null;
-	gasPrice_lt?: WeiSource | null;
-	gasPrice_gte?: WeiSource | null;
-	gasPrice_lte?: WeiSource | null;
-	gasPrice_in?: WeiSource[];
-	gasPrice_not_in?: WeiSource[];
-	_change_block?: any | null;
-};
-export type SynthExchangeResult = {
-	id: string;
-	account: Partial<ExchangerResult>;
-	fromSynth: Partial<SynthResult> | null;
-	toSynth: Partial<SynthResult> | null;
-	fromAmount: Wei;
-	fromAmountInUSD: Wei;
-	toAmount: Wei;
-	toAmountInUSD: Wei;
-	feesInUSD: Wei;
-	toAddress: string;
-	timestamp: Wei;
-	gasPrice: Wei;
-};
-export type SynthExchangeFields = {
-	id: true;
-	account: ExchangerFields;
-	fromSynth: SynthFields;
-	toSynth: SynthFields;
-	fromAmount: true;
-	fromAmountInUSD: true;
-	toAmount: true;
-	toAmountInUSD: true;
-	feesInUSD: true;
-	toAddress: true;
-	timestamp: true;
-	gasPrice: true;
-};
-export type SynthExchangeArgs<K extends keyof SynthExchangeResult> = {
-	[Property in keyof Pick<SynthExchangeFields, K>]: SynthExchangeFields[Property];
-};
-export const getSynthExchangeById = async function <K extends keyof SynthExchangeResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: SynthExchangeArgs<K>
-): Promise<Pick<SynthExchangeResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('synthExchange', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['account']) formattedObj['account'] = obj['account'];
-	if (obj['fromSynth']) formattedObj['fromSynth'] = obj['fromSynth'];
-	if (obj['toSynth']) formattedObj['toSynth'] = obj['toSynth'];
-	if (obj['fromAmount']) formattedObj['fromAmount'] = wei(obj['fromAmount']);
-	if (obj['fromAmountInUSD']) formattedObj['fromAmountInUSD'] = wei(obj['fromAmountInUSD']);
-	if (obj['toAmount']) formattedObj['toAmount'] = wei(obj['toAmount']);
-	if (obj['toAmountInUSD']) formattedObj['toAmountInUSD'] = wei(obj['toAmountInUSD']);
-	if (obj['feesInUSD']) formattedObj['feesInUSD'] = wei(obj['feesInUSD']);
-	if (obj['toAddress']) formattedObj['toAddress'] = obj['toAddress'];
-	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	if (obj['gasPrice']) formattedObj['gasPrice'] = wei(obj['gasPrice'], 0);
-	return formattedObj as Pick<SynthExchangeResult, K>;
-};
-export const getSynthExchanges = async function <K extends keyof SynthExchangeResult>(
-	url: string,
-	options: MultiQueryOptions<SynthExchangeFilter, SynthExchangeResult>,
-	args: SynthExchangeArgs<K>
-): Promise<Pick<SynthExchangeResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<SynthExchangeFilter, SynthExchangeResult>> = {
-		...options,
-	};
-	let paginationKey: keyof SynthExchangeFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof SynthExchangeFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<SynthExchangeResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('synthExchanges', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['account']) formattedObj['account'] = obj['account'];
-			if (obj['fromSynth']) formattedObj['fromSynth'] = obj['fromSynth'];
-			if (obj['toSynth']) formattedObj['toSynth'] = obj['toSynth'];
-			if (obj['fromAmount']) formattedObj['fromAmount'] = wei(obj['fromAmount']);
-			if (obj['fromAmountInUSD']) formattedObj['fromAmountInUSD'] = wei(obj['fromAmountInUSD']);
-			if (obj['toAmount']) formattedObj['toAmount'] = wei(obj['toAmount']);
-			if (obj['toAmountInUSD']) formattedObj['toAmountInUSD'] = wei(obj['toAmountInUSD']);
-			if (obj['feesInUSD']) formattedObj['feesInUSD'] = wei(obj['feesInUSD']);
-			if (obj['toAddress']) formattedObj['toAddress'] = obj['toAddress'];
-			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			if (obj['gasPrice']) formattedObj['gasPrice'] = wei(obj['gasPrice'], 0);
-			return formattedObj as Pick<SynthExchangeResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type TotalFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	timestamp?: WeiSource | null;
-	timestamp_not?: WeiSource | null;
-	timestamp_gt?: WeiSource | null;
-	timestamp_lt?: WeiSource | null;
-	timestamp_gte?: WeiSource | null;
-	timestamp_lte?: WeiSource | null;
-	timestamp_in?: WeiSource[];
-	timestamp_not_in?: WeiSource[];
-	period?: WeiSource | null;
-	period_not?: WeiSource | null;
-	period_gt?: WeiSource | null;
-	period_lt?: WeiSource | null;
-	period_gte?: WeiSource | null;
-	period_lte?: WeiSource | null;
-	period_in?: WeiSource[];
-	period_not_in?: WeiSource[];
-	bucketMagnitude?: WeiSource | null;
-	bucketMagnitude_not?: WeiSource | null;
-	bucketMagnitude_gt?: WeiSource | null;
-	bucketMagnitude_lt?: WeiSource | null;
-	bucketMagnitude_gte?: WeiSource | null;
-	bucketMagnitude_lte?: WeiSource | null;
-	bucketMagnitude_in?: WeiSource[];
-	bucketMagnitude_not_in?: WeiSource[];
-	synth?: string | null;
-	synth_not?: string | null;
-	synth_gt?: string | null;
-	synth_lt?: string | null;
-	synth_gte?: string | null;
-	synth_lte?: string | null;
-	synth_in?: string[];
-	synth_not_in?: string[];
-	synth_contains?: string | null;
-	synth_contains_nocase?: string | null;
-	synth_not_contains?: string | null;
-	synth_not_contains_nocase?: string | null;
-	synth_starts_with?: string | null;
-	synth_starts_with_nocase?: string | null;
-	synth_not_starts_with?: string | null;
-	synth_not_starts_with_nocase?: string | null;
-	synth_ends_with?: string | null;
-	synth_ends_with_nocase?: string | null;
-	synth_not_ends_with?: string | null;
-	synth_not_ends_with_nocase?: string | null;
-	synth_?: SynthFilter | null;
-	trades?: WeiSource | null;
-	trades_not?: WeiSource | null;
-	trades_gt?: WeiSource | null;
-	trades_lt?: WeiSource | null;
-	trades_gte?: WeiSource | null;
-	trades_lte?: WeiSource | null;
-	trades_in?: WeiSource[];
-	trades_not_in?: WeiSource[];
-	newExchangers?: WeiSource | null;
-	newExchangers_not?: WeiSource | null;
-	newExchangers_gt?: WeiSource | null;
-	newExchangers_lt?: WeiSource | null;
-	newExchangers_gte?: WeiSource | null;
-	newExchangers_lte?: WeiSource | null;
-	newExchangers_in?: WeiSource[];
-	newExchangers_not_in?: WeiSource[];
-	exchangers?: WeiSource | null;
-	exchangers_not?: WeiSource | null;
-	exchangers_gt?: WeiSource | null;
-	exchangers_lt?: WeiSource | null;
-	exchangers_gte?: WeiSource | null;
-	exchangers_lte?: WeiSource | null;
-	exchangers_in?: WeiSource[];
-	exchangers_not_in?: WeiSource[];
-	exchangeUSDTally?: WeiSource | null;
-	exchangeUSDTally_not?: WeiSource | null;
-	exchangeUSDTally_gt?: WeiSource | null;
-	exchangeUSDTally_lt?: WeiSource | null;
-	exchangeUSDTally_gte?: WeiSource | null;
-	exchangeUSDTally_lte?: WeiSource | null;
-	exchangeUSDTally_in?: WeiSource[];
-	exchangeUSDTally_not_in?: WeiSource[];
-	totalFeesGeneratedInUSD?: WeiSource | null;
-	totalFeesGeneratedInUSD_not?: WeiSource | null;
-	totalFeesGeneratedInUSD_gt?: WeiSource | null;
-	totalFeesGeneratedInUSD_lt?: WeiSource | null;
-	totalFeesGeneratedInUSD_gte?: WeiSource | null;
-	totalFeesGeneratedInUSD_lte?: WeiSource | null;
-	totalFeesGeneratedInUSD_in?: WeiSource[];
-	totalFeesGeneratedInUSD_not_in?: WeiSource[];
-	_change_block?: any | null;
-};
-export type TotalResult = {
-	id: string;
-	timestamp: Wei;
-	period: Wei;
-	bucketMagnitude: Wei;
-	synth: Partial<SynthResult> | null;
-	trades: Wei;
-	newExchangers: Wei;
-	exchangers: Wei;
-	exchangeUSDTally: Wei;
-	totalFeesGeneratedInUSD: Wei;
-};
-export type TotalFields = {
-	id: true;
-	timestamp: true;
-	period: true;
-	bucketMagnitude: true;
-	synth: SynthFields;
-	trades: true;
-	newExchangers: true;
-	exchangers: true;
-	exchangeUSDTally: true;
-	totalFeesGeneratedInUSD: true;
-};
-export type TotalArgs<K extends keyof TotalResult> = {
-	[Property in keyof Pick<TotalFields, K>]: TotalFields[Property];
-};
-export const getTotalById = async function <K extends keyof TotalResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: TotalArgs<K>
-): Promise<Pick<TotalResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('total', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-	if (obj['period']) formattedObj['period'] = wei(obj['period'], 0);
-	if (obj['bucketMagnitude']) formattedObj['bucketMagnitude'] = wei(obj['bucketMagnitude'], 0);
-	if (obj['synth']) formattedObj['synth'] = obj['synth'];
-	if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
-	if (obj['newExchangers']) formattedObj['newExchangers'] = wei(obj['newExchangers'], 0);
-	if (obj['exchangers']) formattedObj['exchangers'] = wei(obj['exchangers'], 0);
-	if (obj['exchangeUSDTally']) formattedObj['exchangeUSDTally'] = wei(obj['exchangeUSDTally']);
-	if (obj['totalFeesGeneratedInUSD'])
-		formattedObj['totalFeesGeneratedInUSD'] = wei(obj['totalFeesGeneratedInUSD']);
-	return formattedObj as Pick<TotalResult, K>;
-};
-export const getTotals = async function <K extends keyof TotalResult>(
-	url: string,
-	options: MultiQueryOptions<TotalFilter, TotalResult>,
-	args: TotalArgs<K>
-): Promise<Pick<TotalResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<TotalFilter, TotalResult>> = { ...options };
-	let paginationKey: keyof TotalFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof TotalFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<TotalResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('totals', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
-			if (obj['period']) formattedObj['period'] = wei(obj['period'], 0);
-			if (obj['bucketMagnitude']) formattedObj['bucketMagnitude'] = wei(obj['bucketMagnitude'], 0);
-			if (obj['synth']) formattedObj['synth'] = obj['synth'];
-			if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
-			if (obj['newExchangers']) formattedObj['newExchangers'] = wei(obj['newExchangers'], 0);
-			if (obj['exchangers']) formattedObj['exchangers'] = wei(obj['exchangers'], 0);
-			if (obj['exchangeUSDTally']) formattedObj['exchangeUSDTally'] = wei(obj['exchangeUSDTally']);
-			if (obj['totalFeesGeneratedInUSD'])
-				formattedObj['totalFeesGeneratedInUSD'] = wei(obj['totalFeesGeneratedInUSD']);
-			return formattedObj as Pick<TotalResult, K>;
+			if (obj['owner']) formattedObj['owner'] = obj['owner'];
+			if (obj['version']) formattedObj['version'] = obj['version'];
+			return formattedObj as Pick<SmartMarginAccountResult, K>;
 		});
 		results = results.concat(newResults);
 		if (newResults.length < 1000) {
@@ -4238,7 +2978,7 @@ export const getTotals = async function <K extends keyof TotalResult>(
 };
 
 // additional types
-export type FuturesAccountType = 'isolated_margin' | 'cross_margin';
+export type FuturesAccountType = 'isolated_margin' | 'cross_margin' | 'smart_margin';
 export type FuturesOrderType =
 	| 'NextPrice'
 	| 'Limit'

@@ -7,7 +7,6 @@ import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
-import { FuturesAccountType } from 'queries/futures/types';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import {
 	BPS_CONVERSION,
@@ -55,6 +54,7 @@ import {
 	MarketWithIdleMargin,
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
+	FuturesAccountType,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {

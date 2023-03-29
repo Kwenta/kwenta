@@ -89,6 +89,7 @@ export enum FuturesMarketKey {
 	sBNBPERP = 'sBNBPERP',
 	sDOGEPERP = 'sDOGEPERP',
 	sOPPERP = 'sOPPERP',
+	sARBPERP = 'sARBPERP',
 	sATOMPERP = 'sATOMPERP',
 	sFTMPERP = 'sFTMPERP',
 	sNEARPERP = 'sNEARPERP',
@@ -115,6 +116,7 @@ export enum FuturesMarketAsset {
 	BNB = 'BNB',
 	DOGE = 'DOGE',
 	OP = 'OP',
+	ARB = 'ARB',
 	ATOM = 'ATOM',
 	FTM = 'FTM',
 	NEAR = 'NEAR',
@@ -169,7 +171,7 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
-export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+export type FuturesAccountType = 'cross_margin' | 'smart_margin' | 'isolated_margin';
 
 export enum ContractOrderType {
 	MARKET = 0,
@@ -353,17 +355,20 @@ export type CrossMarginOrderType = 'market' | 'stop_market' | 'limit';
 export type FuturesOrderType = IsolatedMarginOrderType | CrossMarginOrderType;
 
 export type FuturesTrade<T = Wei> = {
+	account: string;
+	margin: T;
 	size: T;
-	asset: string;
+	asset: FuturesMarketAsset;
 	price: T;
 	txnHash: string;
-	timestamp: T;
-	positionId?: string;
+	timestamp: number;
+	positionId: string;
 	positionSize: T;
 	positionClosed: boolean;
 	side: PositionSide;
 	pnl: T;
 	feesPaid: T;
+	keeperFeesPaid: T;
 	orderType: FuturesOrderTypeDisplay;
 	accountType: FuturesAccountType;
 };

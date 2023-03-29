@@ -84,7 +84,6 @@ export type FuturesPotentialTradeDetailsQuery = {
 	status: 'fetching' | 'complete' | 'idle' | 'error';
 };
 
-export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
 export enum FuturesAccountTypes {
 	ISOLATED_MARGIN = 'isolated_margin',
 	CROSS_MARGIN = 'cross_margin',

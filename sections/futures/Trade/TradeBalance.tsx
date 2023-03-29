@@ -4,14 +4,20 @@ import Button from 'components/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body, NumericValue } from 'components/Text';
 import { setOpenModal } from 'state/app/reducer';
-import { selectFuturesType, selectIdleMargin } from 'state/futures/selectors';
+import {
+	selectAvailableMargin,
+	selectFuturesType,
+	selectIdleMargin,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
 export default function TradeBalance() {
 	const dispatch = useAppDispatch();
-	const margin = useAppSelector(selectIdleMargin);
+	const idleMargin = useAppSelector(selectIdleMargin);
 	const accountType = useAppSelector(selectFuturesType);
+	const availableIsolatedMargin = useAppSelector(selectAvailableMargin);
+
 	return (
 		<Container>
 			<FlexDivRowCentered>
@@ -20,7 +26,9 @@ export default function TradeBalance() {
 						Available Margin
 					</Body>
 					<NumericValue size="large" weight="bold">
-						{formatDollars(margin)}
+						{accountType === 'isolated_margin'
+							? formatDollars(availableIsolatedMargin)
+							: formatDollars(idleMargin)}
 					</NumericValue>
 				</div>
 				<Button
