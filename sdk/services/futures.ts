@@ -29,7 +29,7 @@ import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
 import {
 	queryCrossMarginAccounts,
-	queryCrossMarginTransfers,
+	querySmartMarginTransfers,
 	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
@@ -449,7 +449,7 @@ export default class FuturesService {
 
 	public async getCrossMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress;
-		return queryCrossMarginTransfers(this.sdk, address);
+		return querySmartMarginTransfers(this.sdk, address);
 	}
 
 	public async getCrossMarginBalanceInfo(walletAddress: string, crossMarginAddress: string) {

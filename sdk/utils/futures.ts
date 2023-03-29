@@ -562,7 +562,7 @@ export const mapMarginTransfers = (
 	);
 };
 
-export const mapCrossMarginTransfers = (
+export const mapSmartMarginTransfers = (
 	marginTransfers: CrossMarginAccountTransferResult[]
 ): MarginTransfer[] => {
 	return marginTransfers.map(

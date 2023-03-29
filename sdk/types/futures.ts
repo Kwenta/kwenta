@@ -169,7 +169,7 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
-export type FuturesAccountType = 'cross_margin' | 'isolated_margin';
+export type FuturesAccountType = 'cross_margin' | 'isolated_margin' | 'smart_margin';
 
 export enum ContractOrderType {
 	MARKET = 0,

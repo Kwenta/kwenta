@@ -8,10 +8,10 @@ import {
 	getFuturesPositions,
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
-import { CROSS_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
+import { SMART_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
 import { ZERO_ADDRESS } from 'sdk/constants/global';
 import { FuturesMarketKey } from 'sdk/types/futures';
-import { mapCrossMarginTransfers, mapMarginTransfers } from 'sdk/utils/futures';
+import { mapMarginTransfers, mapSmartMarginTransfers } from 'sdk/utils/futures';
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,
@@ -85,7 +85,10 @@ export const queryTrades = async (
 			positionClosed: true,
 			pnl: true,
 			feesPaid: true,
+			keeperFeesPaid: true,
 			orderType: true,
+			fundingAccrued: true,
+			trackingCode: true,
 		}
 	);
 };
@@ -142,11 +145,11 @@ export const queryIsolatedMarginTransfers = async (sdk: KwentaSDK, account: stri
 	return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
 };
 
-export const queryCrossMarginTransfers = async (sdk: KwentaSDK, account: string) => {
-	const response = await request(sdk.futures.futuresGqlEndpoint, CROSS_MARGIN_FRAGMENT, {
+export const querySmartMarginTransfers = async (sdk: KwentaSDK, account: string) => {
+	const response = await request(sdk.futures.futuresGqlEndpoint, SMART_MARGIN_FRAGMENT, {
 		walletAddress: account,
 	});
-	return response ? mapCrossMarginTransfers(response.crossMarginAccountTransfers) : [];
+	return response ? mapSmartMarginTransfers(response.smartMarginAccountTransfers) : [];
 };
 
 export const queryFuturesTrades = (
@@ -175,15 +178,18 @@ export const queryFuturesTrades = (
 			accountType: true,
 			margin: true,
 			size: true,
-			asset: true,
 			marketKey: true,
+			asset: true,
 			price: true,
 			positionId: true,
 			positionSize: true,
 			positionClosed: true,
 			pnl: true,
 			feesPaid: true,
+			keeperFeesPaid: true,
 			orderType: true,
+			fundingAccrued: true,
+			trackingCode: true,
 		}
 	);
 };
