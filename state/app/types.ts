@@ -5,6 +5,7 @@ import { FuturesTransactionType } from 'state/futures/types';
 
 export type ModalType =
 	| 'futures_cross_deposit'
+	| 'futures_close_position'
 	| 'futures_close_position_confirm'
 	| 'futures_cross_withdraw'
 	| 'futures_cross_leverage'

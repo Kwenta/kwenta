@@ -5,6 +5,7 @@ import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { Period } from 'sdk/constants/period';
 import { NetworkId } from 'sdk/types/common';
 import {
+	CrossMarginOrderType,
 	FuturesAccountType,
 	FuturesMarket,
 	FuturesMarketAsset,
@@ -110,6 +111,11 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 			nativeSizeDelta: '',
 			marginDelta: '',
 		},
+		closePositionOrderInputs: {
+			orderType: 'market',
+			nativeSizeDelta: '',
+			price: '',
+		},
 		fees: ZERO_CM_FEES,
 		tradePreview: null,
 		previewDebounceCount: 0,
@@ -161,6 +167,12 @@ const futuresSlice = createSlice({
 		},
 		setOrderType: (state, action) => {
 			state[accountType(state.selectedType)].orderType = action.payload;
+		},
+		setClosePositionOrderType: (state, action: PayloadAction<CrossMarginOrderType>) => {
+			state.crossMargin.closePositionOrderInputs.orderType = action.payload;
+		},
+		setClosePositionSizeDelta: (state, action: PayloadAction<string>) => {
+			state.crossMargin.closePositionOrderInputs.nativeSizeDelta = action.payload;
 		},
 		setOrderFeeCap: (state, action) => {
 			state.crossMargin.orderFeeCap = action.payload;
@@ -657,6 +669,8 @@ export const {
 	handleIsolatedMarginPreviewError,
 	setMarketAsset,
 	setOrderType,
+	setClosePositionOrderType,
+	setClosePositionSizeDelta,
 	setOrderFeeCap,
 	setLeverageSide,
 	setFuturesAccountType,
