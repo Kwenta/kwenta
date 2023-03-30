@@ -123,7 +123,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<div style={{ height: '100%' }}>
 			<DesktopOnlyView>
 				{/* <LegacyLink /> */}
-				<STable
+				<Table
 					data={data}
 					rounded={false}
 					onTableRowClick={(row) =>
@@ -236,10 +236,26 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									<Currency.Price
 										price={cellProps.row.original.position.liquidationPrice}
 										formatOptions={{ suggestDecimals: true }}
+										side="preview"
 									/>
 								);
 							},
 							width: 115,
+						},
+						{
+							Header: <TableHeader>Market Margin</TableHeader>,
+							accessor: 'margin',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<div style={{ display: 'flex' }}>
+										<div>
+											<NumericValue value={cellProps.row.original.position.initialMargin} />
+											<NumericValue value={cellProps.row.original.position.leverage} />
+										</div>
+										<Pill>Edit</Pill>
+									</div>
+								);
+							},
 						},
 						{
 							Header: (
@@ -249,10 +265,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<PnlContainer>
-										<ChangePercent value={cellProps.row.original.position.pnlPct} />
-										<div>
-											<Currency.Price price={cellProps.row.original.position.pnl} />
-										</div>
+										<Currency.Price price={cellProps.row.original.position.pnl} />
 									</PnlContainer>
 								);
 							},
@@ -261,8 +274,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						{
 							Header: <TableHeader>Funding</TableHeader>,
 							accessor: 'funding',
-							Cell: () => {
-								return <div></div>;
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<div>
+										<Currency.Price price={cellProps.row.original.position.accruedFunding} />
+									</div>
+								);
 							},
 							width: 90,
 						},

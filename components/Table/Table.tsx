@@ -261,6 +261,7 @@ export const TableNoResults = styled.div`
 	height: 100%;
 	display: flex;
 	justify-content: center;
+	flex-direction: column;
 	align-items: center;
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
