@@ -91,7 +91,7 @@
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",
-		"@next/eslint-plugin-next": "12.3.4",
+		"@next/eslint-plugin-next": "13.2.4",
 		"@storybook/addon-actions": "^6.4.13",
 		"@storybook/addon-essentials": "6.5.13",
 		"@storybook/addon-links": "^6.4.13",
