@@ -15,7 +15,7 @@ import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
-import { computeOrderFee, sameSide } from 'utils/costCalculations';
+import { computeDelayedOrderFee, sameSide } from 'utils/costCalculations';
 import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
@@ -1149,9 +1149,8 @@ export const selectHasRemainingMargin = createSelector(
 export const selectOrderFee = createSelector(
 	selectMarketInfo,
 	selectTradeSizeInputs,
-	selectOrderType,
-	(marketInfo, { susdSizeDelta }, orderType) => {
-		return computeOrderFee(marketInfo, susdSizeDelta, orderType);
+	(marketInfo, { susdSizeDelta }) => {
+		return computeDelayedOrderFee(marketInfo, susdSizeDelta, true);
 	}
 );
 

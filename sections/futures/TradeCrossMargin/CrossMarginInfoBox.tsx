@@ -1,8 +1,7 @@
 import React, { memo } from 'react';
-import styled from 'styled-components';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox/InfoBox';
+import { InfoBoxRow } from 'components/InfoBox/InfoBox';
 import { setOpenModal } from 'state/app/reducer';
 import { selectOpenModal } from 'state/app/selectors';
 import { selectCrossMarginBalanceInfo, selectPosition } from 'state/futures/selectors';
@@ -47,9 +46,5 @@ function MarginInfoBox() {
 		</>
 	);
 }
-
-const StyledInfoBox = styled(InfoBoxContainer)`
-	margin-bottom: 16px;
-`;
 
 export default memo(MarginInfoBox);

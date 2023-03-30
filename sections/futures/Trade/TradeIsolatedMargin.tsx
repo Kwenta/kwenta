@@ -8,24 +8,18 @@ import { selectFuturesType, selectLeverageSide, selectOrderType } from 'state/fu
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
 
-import { IsolatedMarginFeeInfoBox } from '../FeeInfoBox/FeeInfoBox';
+import { FeeInfoBox } from '../FeeInfoBox/FeeInfoBox';
 import LeverageInput from '../LeverageInput';
 import MarginInput from '../MarginInput';
-import MarketInfoBox from '../MarketInfoBox';
 import OrderPriceInput from '../OrderPriceInput';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
-import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import ManagePosition from './ManagePosition';
 import OrderTypeSelector from './OrderTypeSelector';
 import SLTPInputs from './SLTPInputs';
 import TradeBalance from './TradeBalance';
 
-type Props = {
-	isMobile?: boolean;
-};
-
-const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
+const TradeIsolatedMargin = memo(() => {
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
@@ -69,7 +63,7 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 
 				<ManagePosition />
 
-				<IsolatedMarginFeeInfoBox />
+				<FeeInfoBox />
 			</div>
 		</div>
 	);

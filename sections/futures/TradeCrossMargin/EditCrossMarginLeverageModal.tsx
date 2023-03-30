@@ -38,7 +38,7 @@ import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { isUserDeniedError } from 'utils/formatters/error';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
-import { CrossMarginFeeInfoBox } from '../FeeInfoBox';
+import { FeeInfoBox } from '../FeeInfoBox/FeeInfoBox';
 import LeverageSlider from '../LeverageSlider';
 import MarginInfoBox from './CrossMarginInfoBox';
 
@@ -199,7 +199,7 @@ export default function EditLeverageModal({ editMode }: DepositMarginModalProps)
 				<>
 					<Spacer height={15} />
 					<MarginInfoBox />
-					{tradeFees.total.gt(0) && <CrossMarginFeeInfoBox />}
+					{tradeFees.total.gt(0) && <FeeInfoBox />}
 				</>
 			)}
 
