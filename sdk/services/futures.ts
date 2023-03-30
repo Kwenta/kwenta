@@ -671,13 +671,12 @@ export default class FuturesService {
 	}
 
 	public async calculateSmartMarginFee(
-		marketKey: FuturesMarketKey,
 		sizeDelta: Wei,
+		price: Wei,
 		orderType?: ConditionalOrderTypeEnum
 	) {
 		const settings = await this.getCrossMarginSettings();
 		const baseRate = settings.fees.base;
-		const rate = this.sdk.prices.getOffchainPrice(marketKey);
 		const conditional =
 			orderType === ConditionalOrderTypeEnum.STOP
 				? settings.fees.stop
@@ -685,7 +684,7 @@ export default class FuturesService {
 				? settings.fees.limit
 				: wei(0);
 		const fee = sizeDelta.mul(baseRate.add(conditional));
-		return fee.mul(rate);
+		return fee.mul(price);
 	}
 
 	// This is on an interval of 15 seconds.
@@ -878,16 +877,19 @@ export default class FuturesService {
 		// Sweep idle margin from other markets to account
 		if (idleMargin.marketsTotal.gt(0)) {
 			idleMargin.marketsWithMargin.forEach((m) => {
-				if (m.marketKey === market.key) return;
 				commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
 				inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
 			});
 		}
 
 		// TODO: Work out how best to subtract fee, do we just let the client manage this instead?
+		const price =
+			order.conditionalOrderInputs?.price ?? (await this.sdk.prices.getOffchainPrice(market.key));
+		if (!price || price.eq(0))
+			throw new Error('No price provided or failed to fetch current price');
 		const fee = await this.calculateSmartMarginFee(
-			market.key,
 			order.sizeDelta.abs(),
+			price,
 			order.conditionalOrderInputs?.orderType
 		);
 		// Add a 2% buffer because the price could change
