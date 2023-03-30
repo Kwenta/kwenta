@@ -50,7 +50,7 @@ const Trades: React.FC = memo(() => {
 				netPnl,
 				value: Number(trade?.price?.div(ETH_UNIT)),
 				amount: Number(trade?.size.div(ETH_UNIT).abs()),
-				time: Number(trade?.timestamp.mul(1000)),
+				time: trade?.timestamp * 1000,
 				id: trade?.txnHash,
 				asset: marketAsset,
 				type: trade?.orderType,

@@ -14,13 +14,17 @@ export const toJSTimestamp = (timestamp: number) => timestamp * 1000;
 
 export const formatShortDate = (date: Date | number) => formatDate(date, 'yyyy-MM-dd');
 
+export const formatChartTime = (date: Date | number) => formatDate(date, 'E, h a');
+
+export const formatChartDate = (date: Date | number) => formatDate(date, 'M/d');
+
 export const formatShortDateUTC = (date: Date | number) => {
 	const dateString = new Date(date).toISOString();
 	return dateString.substring(0, 10);
 };
 
 export const formatShortDateWithTime = (date: Date | number) =>
-	formatDate(date, 'MMM d, yyyy H:mma');
+	formatDate(date, 'MMM d, yyyy h:mm a');
 export const formatDateWithTime = (date: Date | number) => formatDate(date, 'd MMM yyyy H:mm');
 
 export const secondsToTime = (seconds: number) => {
@@ -81,6 +85,10 @@ export const formatTimer = (seconds: number) => {
 	const numMinutes = Math.floor(seconds / 60);
 	const numSeconds = seconds % 60;
 	return `${numMinutes}:${String(numSeconds).padStart(2, '0')}`;
+};
+
+export const truncateTimestamp = (timestamp: number, delta: number): number => {
+	return Math.floor(timestamp / delta) * delta;
 };
 
 export const formatTruncatedDuration = (delta: number): string => {

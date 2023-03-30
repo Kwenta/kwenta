@@ -503,6 +503,13 @@
 			"mobile": {
 				"portfolio": "Portfolio",
 				"open-positions": "Open Positions"
+			},
+			"portfolio-chart": {
+				"welcome": "Welcome to Kwenta",
+				"hero": "Gain exposure to a variety of assets with up to 25x leverage and deep liquidity",
+				"portfolio-value": "Portfolio Value",
+				"buying-power": "Total Buying Power",
+				"upnl": "Unrealized PnL"
 			}
 		},
 		"earn": {
