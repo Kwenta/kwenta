@@ -7,6 +7,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesMarketAsset } from 'sdk/types/futures';
+import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
 import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal';
@@ -107,6 +108,7 @@ const Market: MarketComponent = () => {
 				<MobileTrade />
 			</MobileOrTabletView>
 			{openModal === 'futures_edit_stop_loss_take_profit' && <EditStopLossAndTakeProfitModal />}
+			{openModal === 'futures_close_position' && <ClosePositionModal />}
 			{openModal === 'futures_edit_position_size' && <EditPositionSizeModal />}
 			{openModal === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_isolated_transfer' && (

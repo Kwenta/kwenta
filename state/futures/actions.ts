@@ -90,6 +90,7 @@ import {
 	setIsolatedMarginEditPositionInputs,
 	incrementIsolatedPreviewCount,
 	incrementCrossPreviewCount,
+	setClosePositionSizeDelta,
 } from './reducer';
 import {
 	selectCrossMarginAccount,
@@ -122,6 +123,8 @@ import {
 	selectCrossPreviewCount,
 	selectTradePreview,
 	selectDesiredCloseFillPrice,
+	selectClosePositionOrderInputs,
+	selectRemainingMarketMargin,
 } from './selectors';
 import {
 	AccountContext,
@@ -280,7 +283,7 @@ export const refetchPosition = createAsyncThunk<
 			sdk.futures.getFuturesPositions(account!, [
 				{ asset: marketInfo.asset, marketKey: marketInfo.marketKey, address: marketInfo.market },
 			]),
-		position.remainingMargin,
+		position?.remainingMargin?.toString(),
 		(existing, next) => {
 			return existing === next[0]?.remainingMargin.toString();
 		}
@@ -483,7 +486,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 export const fetchCrossMarginTradePreview = createAsyncThunk<
 	FuturesPotentialTradeDetails<string> | null,
 	{
-		price?: Wei;
+		orderPrice?: Wei;
 		sizeDelta: Wei;
 		marginDelta: Wei;
 		debounceCount: number;
@@ -496,6 +499,8 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectFuturesAccount(getState());
 		const freeMargin = selectIdleMargin(getState());
+		const marketMargin = selectRemainingMarketMargin(getState());
+		const position = selectPosition(getState());
 
 		if (
 			// Require both size and margin for a trade
@@ -506,6 +511,13 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 			return null;
 		}
 
+		// If this is a trade with no existsing position size then we need to subtract
+		// remaining idle market margin to get an accurate previw
+		const marginDelta =
+			position?.position?.size.abs().eq(0) && marketMargin.gt(0)
+				? params.marginDelta.sub(marketMargin)
+				: params.marginDelta;
+
 		try {
 			if (!marketInfo) throw new Error('No market info');
 			const leverageSide = selectLeverageSide(getState());
@@ -513,7 +525,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 				account || ZERO_ADDRESS,
 				marketInfo.marketKey,
 				marketInfo.market,
-				{ ...params, leverageSide }
+				{ ...params, leverageSide, marginDelta }
 			);
 
 			// Check the preview hasn't been cleared before query resolves
@@ -616,6 +628,7 @@ export const editCrossMarginTradeSize = (
 	dispatch(setLeverageInput(leverage.toString(2)));
 	dispatch(
 		stageCrossMarginTradePreview({
+			orderPrice: price,
 			marginDelta: wei(marginDelta),
 			nativeSizeDelta: sizeDeltaWei,
 			action: 'trade',
@@ -633,6 +646,23 @@ export const editCrossMarginPositionSize = (nativeSizeDelta: string): AppThunk =
 
 	dispatch(
 		stageCrossMarginTradePreview({
+			marginDelta: zeroBN,
+			nativeSizeDelta: wei(nativeSizeDelta || 0),
+			action: 'edit_position',
+		})
+	);
+};
+
+export const editClosePositionSizeDelta = (nativeSizeDelta: string): AppThunk => (
+	dispatch,
+	getState
+) => {
+	dispatch(setClosePositionSizeDelta(nativeSizeDelta));
+	const { price } = selectClosePositionOrderInputs(getState());
+
+	dispatch(
+		stageCrossMarginTradePreview({
+			orderPrice: isNaN(Number(price)) || !price ? undefined : wei(price),
 			marginDelta: zeroBN,
 			nativeSizeDelta: wei(nativeSizeDelta || 0),
 			action: 'edit_position',
@@ -659,7 +689,7 @@ export const editCrossMarginPositionMargin = (marginDelta: string): AppThunk => 
 
 const stageCrossMarginTradePreview = createAsyncThunk<
 	void,
-	{ marginDelta: Wei; nativeSizeDelta: Wei; action: PreviewAction },
+	{ marginDelta: Wei; nativeSizeDelta: Wei; orderPrice?: Wei; action: PreviewAction },
 	ThunkConfig
 >('futures/stageCrossMarginPositionChange', async (inputs, { dispatch, getState }) => {
 	dispatch(calculateCrossMarginFees());
@@ -939,19 +969,22 @@ export const prepareCrossMarginTradePreview = createAsyncThunk<
 	{
 		marginDelta: Wei;
 		nativeSizeDelta: Wei;
+		orderPrice?: Wei;
 		debounceCount: number;
 		action: PreviewAction;
 	},
 	ThunkConfig
 >(
 	'futures/prepareCrossMarginTradePreview',
-	async ({ nativeSizeDelta, marginDelta, debounceCount, action }, { getState, dispatch }) => {
+	async (
+		{ nativeSizeDelta, marginDelta, debounceCount, action, orderPrice },
+		{ getState, dispatch }
+	) => {
 		const assetPrice = selectMarketPrice(getState());
-		const orderPrice = selectCrossMarginOrderPrice(getState());
 		try {
 			dispatch(
 				fetchCrossMarginTradePreview({
-					price: orderPrice ? wei(orderPrice) : assetPrice,
+					orderPrice: orderPrice ? orderPrice : assetPrice,
 					marginDelta: marginDelta,
 					sizeDelta: nativeSizeDelta,
 					debounceCount,
@@ -1487,7 +1520,10 @@ export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig
 				})
 			);
 			const tx = await sdk.futures.closeCrossMarginPosition(
-				marketInfo.market,
+				{
+					address: marketInfo.market,
+					key: marketInfo.marketKey,
+				},
 				crossMarginAccount,
 				{
 					size: position.position.size,

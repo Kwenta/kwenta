@@ -166,6 +166,13 @@ export const selectOrderType = createSelector(
 	(futures) => futures[accountType(futures.selectedType)].orderType
 );
 
+export const selectCrossMarginOrderType = (state: RootState) => state.futures.crossMargin.orderType;
+
+export const selectClosePositionOrderInputs = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => futures.crossMargin.closePositionOrderInputs
+);
+
 export const selectMarketPrice = createSelector(
 	selectMarketAsset,
 	selectPrices,
@@ -574,6 +581,11 @@ export const selectAvailableMargin = createSelector(
 			: zeroBN;
 	}
 );
+
+export const selectRemainingMarketMargin = createSelector(selectPosition, (position) => {
+	if (!position) return zeroBN;
+	return position.remainingMargin;
+});
 
 export const selectIdleMargin = createSelector(
 	selectMarketKey,
