@@ -11,7 +11,6 @@ import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
 	selectFuturesType,
@@ -29,6 +28,7 @@ import Trades from '../Trades';
 import Transfers from '../Transfers';
 import ConditionalOrdersTable from './ConditionalOrdersTable';
 import OpenDelayedOrdersTable from './OpenDelayedOrdersTable';
+import PositionsTable from './PositionsTable';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -192,7 +192,7 @@ const UserInfo: React.FC = memo(() => {
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
+				<PositionsTable accountType={accountType} showCurrentMarket={false} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
 				<OpenDelayedOrdersTable />

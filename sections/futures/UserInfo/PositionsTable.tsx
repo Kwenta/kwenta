@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { useTheme } from 'styled-components';
@@ -11,14 +11,16 @@ import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Pill from 'components/Pill';
 import Table, { TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
+import { Body, NumericValue } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
+import MobilePositionRow from 'sections/dashboard/FuturesPositionsTable/MobilePositionRow';
 import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
@@ -30,8 +32,6 @@ import {
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
-
-import MobilePositionRow from './MobilePositionRow';
 
 type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
@@ -63,10 +63,12 @@ const LegacyLink = () => {
 // - Side
 // - Size
 // - Average Entry
-// - Market Margin
-// - Leverage
 // - Liquidation Price
+// - Market Margin
 // - PnL
+// - Funding
+// - TP/SL
+// - Position
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
@@ -76,6 +78,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
+	const [modalMarket, setModalMarket] = useState<string>();
 
 	const isL2 = useIsL2();
 
@@ -121,8 +124,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			<DesktopOnlyView>
 				<div>
 					{/* <LegacyLink /> */}
-					<Table
+					<STable
 						data={data}
+						rounded={false}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}
@@ -275,7 +279,23 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Header: <TableHeader>TP/SL</TableHeader>,
 								accessor: 'tp-sl',
 								Cell: () => {
-									return <div></div>;
+									return (
+										<div>
+											<NumericValue></NumericValue>
+										</div>
+									);
+								},
+								width: 90,
+							},
+							{
+								Header: <TableHeader>Position</TableHeader>,
+								accessor: 'pos',
+								Cell: () => {
+									return (
+										<div>
+											<Pill size="small">Close</Pill>
+										</div>
+									);
 								},
 								width: 90,
 							},
@@ -409,6 +429,10 @@ const NoPositionsText = styled.div`
 	font-size: 16px;
 	text-align: center;
 	text-decoration: underline;
+`;
+
+const STable = styled(Table)`
+	flex: 1;
 `;
 
 export default FuturesPositionsTable;

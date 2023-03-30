@@ -2,6 +2,8 @@ import { wei, WeiSource } from '@synthetixio/wei';
 import { FC, memo, useMemo } from 'react';
 import styled from 'styled-components';
 
+import { formatNumber, FormatNumberOptions } from 'utils/formatters/number';
+
 import Body, { BodyProps } from './Body';
 
 type NumericValueProps = BodyProps & {
@@ -9,12 +11,16 @@ type NumericValueProps = BodyProps & {
 	preview?: boolean;
 	colored?: boolean;
 	percent?: boolean;
+	colorOverride?: 'positive' | 'negative' | 'neutral' | 'preview';
+	options?: FormatNumberOptions;
 };
 
 const NumericValue: FC<NumericValueProps> = memo(
-	({ value, percent, preview, colored, ...props }) => {
+	({ value, percent, preview, colored, colorOverride, options, ...props }) => {
 		const color = useMemo(() => {
-			if (preview) {
+			if (colorOverride) {
+				return colorOverride;
+			} else if (preview) {
 				return 'preview';
 			} else if (colored && value) {
 				if (wei(value).gt(0)) {
@@ -25,11 +31,11 @@ const NumericValue: FC<NumericValueProps> = memo(
 			} else {
 				return 'neutral';
 			}
-		}, [preview, colored, value]);
+		}, [colorOverride, preview, colored, value]);
 
 		return (
 			<NumberBody $color={color} {...props}>
-				{props.children ?? value.toString()}
+				{props.children ?? formatNumber(value, options)}
 				{percent && '%'}
 			</NumberBody>
 		);
