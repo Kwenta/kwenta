@@ -39,14 +39,14 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 						invalid={invalid}
 						dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
 						value={type === 'take-profit' ? takeProfitPrice : stopLossPrice}
-						placeholder="0.00"
 						onChange={onChange}
+						placeholder="0.00"
 					/>
 
 					<Button
 						style={{ padding: '0 23px' }}
 						onClick={onClick}
-						disabled={type === 'take-profit' ? takeProfitPrice === '' : stopLossPrice === ''}
+						disabled={type === 'take-profit' ? takeProfitPrice !== '' : stopLossPrice !== ''}
 					>
 						{type === 'take-profit'
 							? t('futures.market.trade.edit-sl-tp.no-tp')
