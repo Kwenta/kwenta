@@ -47,7 +47,7 @@ import { selectLatestEthPrice } from 'state/prices/selectors';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
-import { computeMarketFee } from 'utils/costCalculations';
+import { computeMarketFee, computeDelayedOrderFee } from 'utils/costCalculations';
 import { floorNumber, stipZeros, zeroBN } from 'utils/formatters/number';
 import {
 	calculateMarginDelta,
@@ -345,8 +345,9 @@ export const fetchMarginTransfers = createAsyncThunk<
 	try {
 		const transfers =
 			futures.selectedType === 'cross_margin'
-				? await sdk.futures.getCrossMarginTransfers()
+				? await sdk.futures.getCrossMarginTransfers(cmAccount)
 				: await sdk.futures.getIsolatedMarginTransfers();
+
 		return {
 			marginTransfers: transfers,
 			context: {
@@ -904,8 +905,7 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 
 	const { susdSize, susdSizeDelta } = selectCrossMarginTradeInputs(getState());
 
-	const staticRate = computeMarketFee(market, susdSizeDelta);
-	const tradeFee = susdSize.mul(staticRate);
+	const { delayedOrderFee } = computeDelayedOrderFee(market, susdSizeDelta, true);
 
 	const currentDeposit =
 		orderType === 'limit' || orderType === 'stop_market' ? keeperBalance : wei(0);
@@ -917,11 +917,11 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 	const limitStopOrderFee = calculateCrossMarginFee(orderType, susdSize, settings);
 
 	const fees = {
-		staticFee: tradeFee.toString(),
+		staticFee: delayedOrderFee.toString(),
 		crossMarginFee: crossMarginFee.toString(),
 		keeperEthDeposit: requiredDeposit.toString(),
 		limitStopOrderFee: limitStopOrderFee.toString(),
-		total: tradeFee.add(crossMarginFee).add(limitStopOrderFee).toString(),
+		total: delayedOrderFee.add(crossMarginFee).add(limitStopOrderFee).toString(),
 	};
 	dispatch(setCrossMarginFees(fees));
 };

@@ -156,8 +156,8 @@ class FuturesMarketInternal {
 		const position = preFetchedData[7] as Position;
 		const price = limitStopPrice || this._onChainData.assetPrice;
 
-		const takerFee = await this._getSetting('takerFee', [this._marketKeyBytes]);
-		const makerFee = await this._getSetting('makerFee', [this._marketKeyBytes]);
+		const takerFee = await this._getSetting('takerFeeOffchainDelayedOrder', [this._marketKeyBytes]);
+		const makerFee = await this._getSetting('makerFeeOffchainDelayedOrder', [this._marketKeyBytes]);
 
 		const tradeParams = {
 			sizeDelta,

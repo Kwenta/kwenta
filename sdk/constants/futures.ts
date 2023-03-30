@@ -330,9 +330,9 @@ export const ISOLATED_MARGIN_FRAGMENT = gql`
 	}
 `;
 
-export const CROSS_MARGIN_FRAGMENT = gql`
-	query userCrossMarginTransfers($walletAddress: String!) {
-		crossMarginAccountTransfers(
+export const SMART_MARGIN_FRAGMENT = gql`
+	query userSmartMarginTransfers($walletAddress: String!) {
+		smartMarginAccountTransfers(
 			where: { abstractAccount: $walletAddress }
 			orderBy: timestamp
 			orderDirection: desc

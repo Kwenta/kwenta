@@ -18,10 +18,12 @@ import Connector from 'containers/Connector';
 import {
 	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
-	selectIsolatedMarginFee,
+	selectFuturesType,
 	selectMarketInfo,
 	selectOrderFee,
 	selectOrderType,
+	selectPreviewData,
+	selectPreviewTradeData,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -63,57 +65,13 @@ const ExecutionFeeTooltip = memo(() => {
 	);
 });
 
-export const CrossMarginFeeInfoBox = memo(() => {
-	const orderType = useAppSelector(selectOrderType);
-
+export const FeeInfoBox = memo(() => {
 	return (
 		<FeeInfoBoxContainer>
-			<ProtocolFeeRow />
-			<LimitStopFeeRow />
-			<CrossMarginFeeRow />
-			<CrossMarginTotalFeeRow />
-			{(orderType === 'limit' || orderType === 'stop_market') && <KeeperDepositRow />}
+			<LiquidationRow />
+			<TotalFeesRow />
+			<TradingRewardRow />
 		</FeeInfoBoxContainer>
-	);
-});
-
-export const IsolatedMarginFeeInfoBox = memo(() => {
-	const orderType = useAppSelector(selectOrderType);
-	return (
-		<FeeInfoBoxContainer>
-			{orderType === 'delayed' || orderType === 'delayed_offchain' ? (
-				<>
-					<TotalFeesRow />
-					<TradingRewardRow />
-				</>
-			) : (
-				<FeeRow />
-			)}
-		</FeeInfoBoxContainer>
-	);
-});
-
-const FeeRow = memo(() => {
-	const isolatedMarginFee = useAppSelector(selectIsolatedMarginFee);
-
-	return (
-		<InfoBoxRow
-			title="Fee"
-			value={formatDollars(isolatedMarginFee, { suggestDecimals: true })}
-			keyNode={<MarketCostTooltip />}
-		/>
-	);
-});
-
-const ProtocolFeeRow = memo(() => {
-	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
-
-	return (
-		<InfoBoxRow
-			title="Protocol Fee"
-			value={formatDollars(crossMarginFees.staticFee, { suggestDecimals: true })}
-			keyNode={<MarketCostTooltip />}
-		/>
 	);
 });
 
@@ -129,29 +87,11 @@ const LimitStopFeeRow = memo(() => {
 
 	return (
 		<InfoBoxRow
+			isSubItem
 			dataTestId="limit-stop"
 			title="Limit / Stop Fee"
-			{...(crossMarginFees.limitStopOrderFee.gt(0) && orderFeeRate
-				? {
-						value: formatDollars(crossMarginFees.limitStopOrderFee, { suggestDecimals: true }),
-						keyNode: formatPercent(orderFeeRate),
-				  }
-				: { value: '' })}
-		/>
-	);
-});
-
-const CrossMarginFeeRow = memo(() => {
-	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
-	const {
-		fees: { base: crossMarginTradeFeeRate },
-	} = useAppSelector(selectCrossMarginSettings);
-
-	return (
-		<InfoBoxRow
-			title="Cross Margin Fee"
-			value={formatDollars(crossMarginFees.crossMarginFee, { suggestDecimals: true })}
-			keyNode={formatPercent(crossMarginTradeFeeRate)}
+			value={formatDollars(crossMarginFees.limitStopOrderFee, { suggestDecimals: true })}
+			keyNode={formatPercent(orderFeeRate ?? 0)}
 		/>
 	);
 });
@@ -206,18 +146,6 @@ const TradingRewardRow = memo(() => {
 	);
 });
 
-const CrossMarginTotalFeeRow = memo(() => {
-	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
-	return (
-		<InfoBoxRow
-			title="Total Fee"
-			value={formatDollars(crossMarginFees.total, {
-				minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
-			})}
-		/>
-	);
-});
-
 const KeeperDepositRow = memo(() => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
@@ -225,10 +153,25 @@ const KeeperDepositRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Keeper Deposit"
+			isSubItem
 			value={
 				!!marketInfo?.keeperDeposit
 					? formatCurrency('ETH', crossMarginFees.keeperEthDeposit, { currencyKey: 'ETH' })
 					: NO_VALUE
+			}
+		/>
+	);
+});
+
+const LiquidationRow = memo(() => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
+
+	return (
+		<InfoBoxRow
+			title="Liquidation price"
+			color="gold"
+			value={
+				potentialTradeDetails?.liqPrice ? formatDollars(potentialTradeDetails.liqPrice) : NO_VALUE
 			}
 		/>
 	);
@@ -239,9 +182,14 @@ const TotalFeesRow = memo(() => {
 	const tradePreview = useAppSelector(selectTradePreview);
 	const commitDeposit = useMemo(() => tradePreview?.fee ?? zeroBN, [tradePreview?.fee]);
 	const marketInfo = useAppSelector(selectMarketInfo);
+	const accountType = useAppSelector(selectFuturesType);
+	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
+	const orderType = useAppSelector(selectOrderType);
+
 	const totalDeposit = useMemo(() => {
-		return commitDeposit.add(marketInfo?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, marketInfo?.keeperDeposit]);
+		let total = commitDeposit.add(marketInfo?.keeperDeposit ?? zeroBN);
+		return accountType === 'isolated_margin' ? total : total.add(crossMarginFees.limitStopOrderFee);
+	}, [commitDeposit, marketInfo?.keeperDeposit, accountType, crossMarginFees.limitStopOrderFee]);
 
 	return (
 		<InfoBoxRow
@@ -252,7 +200,9 @@ const TotalFeesRow = memo(() => {
 			onToggleExpand={toggleExpanded}
 		>
 			<ExecutionFeeRow />
+			{(orderType === 'limit' || orderType === 'stop_market') && <LimitStopFeeRow />}
 			<EstimatedTradeFeeRow />
+			{(orderType === 'limit' || orderType === 'stop_market') && <KeeperDepositRow />}
 		</InfoBoxRow>
 	);
 });
@@ -271,13 +221,13 @@ const ExecutionFeeRow = memo(() => {
 });
 
 const EstimatedTradeFeeRow = memo(() => {
-	const { takerFee, makerFee } = useAppSelector(selectOrderFee);
+	const { takerFeeRate, makerFeeRate } = useAppSelector(selectOrderFee);
 	const tradePreview = useAppSelector(selectTradePreview);
 	const commitDeposit = useMemo(() => tradePreview?.fee ?? zeroBN, [tradePreview?.fee]);
 
 	return (
 		<InfoBoxRow
-			title={`Est. Trade Fee (${formatPercent(makerFee)} / ${formatPercent(takerFee)})`}
+			title={`Est. Trade Fee (${formatPercent(makerFeeRate)} / ${formatPercent(takerFeeRate)})`}
 			value={!!commitDeposit ? formatDollars(commitDeposit, { suggestDecimals: true }) : NO_VALUE}
 			keyNode={<MarketCostTooltip />}
 			isSubItem
