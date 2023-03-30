@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
-import { GridDivCenteredRow } from 'components/layout/grid';
 import Loader from 'components/Loader';
 import { Body } from 'components/Text';
 
@@ -196,29 +195,28 @@ export const Table: FC<TableProps> = memo(
 						))}
 						{isLoading ? (
 							<Loader />
-						) : (
-							page.length > 0 && (
-								<TableBody className="table-body" {...getTableBodyProps()}>
-									{page.map((row: Row, idx: number) => {
-										prepareRow(row);
-										const props = row.getRowProps();
-										const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
-										const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
-										return (
-											<TableBodyRow
-												rowStyle={rowStyle}
-												localRef={localRef}
-												highlightRowsOnHover={highlightRowsOnHover}
-												row={row}
-												onClick={handleClick}
-												{...props}
-											/>
-										);
-									})}
-								</TableBody>
-							)
-						)}
-						{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
+						) : !!noResultsMessage && !isLoading && data.length === 0 ? (
+							noResultsMessage
+						) : page.length > 0 ? (
+							<TableBody className="table-body" {...getTableBodyProps()}>
+								{page.map((row: Row, idx: number) => {
+									prepareRow(row);
+									const props = row.getRowProps();
+									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
+									const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
+									return (
+										<TableBodyRow
+											rowStyle={rowStyle}
+											localRef={localRef}
+											highlightRowsOnHover={highlightRowsOnHover}
+											row={row}
+											onClick={handleClick}
+											{...props}
+										/>
+									);
+								})}
+							</TableBody>
+						) : null}
 					</ReactTable>
 				</TableContainer>
 				{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
@@ -240,6 +238,7 @@ export const Table: FC<TableProps> = memo(
 
 const TableContainer = styled.div`
 	overflow-x: auto;
+	height: 100%;
 `;
 
 const TableBody = styled.div`
@@ -258,13 +257,12 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	${(props) => (props.hideHeaders ? `display: none` : '')}
 `;
 
-export const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 40px;
-	text-align: center;
+export const TableNoResults = styled.div`
+	height: 100%;
+	display: flex;
 	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
+	align-items: center;
+	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.bold};
@@ -283,6 +281,8 @@ const SortIconContainer = styled.span`
 `;
 
 const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
+	display: flex;
+	flex-direction: column;
 	width: 100%;
 	height: 100%;
 	overflow: auto;

@@ -158,7 +158,15 @@ const UserInfo: React.FC = memo(() => {
 	}, [position]);
 
 	return (
-		<div style={{ flex: 1 }}>
+		<div
+			style={{
+				minHeight: 315,
+				maxHeight: 315,
+				height: 315,
+				display: 'flex',
+				flexDirection: 'column',
+			}}
+		>
 			<TabButtonsContainer>
 				<TabLeft>
 					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
@@ -191,19 +199,19 @@ const UserInfo: React.FC = memo(() => {
 				</TabRight>
 			</TabButtonsContainer>
 
-			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab} fullHeight>
 				<PositionsTable accountType={accountType} showCurrentMarket={false} />
 			</TabPanel>
-			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab} fullHeight>
 				<OpenDelayedOrdersTable />
 			</TabPanel>
-			<TabPanel name={FuturesTab.CONDITIONAL_ORDERS} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.CONDITIONAL_ORDERS} activeTab={activeTab} fullHeight>
 				<ConditionalOrdersTable />
 			</TabPanel>
-			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab} fullHeight>
 				<Trades />
 			</TabPanel>
-			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab} fullHeight>
 				<Transfers />
 			</TabPanel>
 

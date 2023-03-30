@@ -99,8 +99,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				});
 
 				return {
-					market,
-					position: position.position,
+					market: market!,
+					position: position.position!,
 					description,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 				};
@@ -120,188 +120,178 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	]);
 
 	return (
-		<>
+		<div style={{ height: '100%' }}>
 			<DesktopOnlyView>
-				<div>
-					{/* <LegacyLink /> */}
-					<STable
-						data={data}
-						rounded={false}
-						onTableRowClick={(row) =>
-							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
-						}
-						noResultsMessage={
-							!isL2 ? (
-								<TableNoResults>
-									{t('common.l2-cta')}
-									<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-								</TableNoResults>
-							) : (
-								<TableNoResults>
-									{!showCurrentMarket ? (
-										t('dashboard.overview.futures-positions-table.no-result')
-									) : (
-										<Link href={ROUTES.Markets.Home(accountType)}>
-											<div>{t('common.perp-cta')}</div>
-										</Link>
-									)}
-								</TableNoResults>
-							)
-						}
-						highlightRowsOnHover
-						columns={[
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.market')}
-									</TableHeader>
-								),
-								accessor: 'market',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<MarketContainer>
-											<IconContainer>
-												<StyledCurrencyIcon currencyKey={cellProps.row.original.market.marketKey} />
-											</IconContainer>
-											<StyledText>
-												{cellProps.row.original.market.marketName}
-												<MarketBadge
-													currencyKey={cellProps.row.original.market.marketKey}
-													isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
-													futuresClosureReason={cellProps.row.original.market.marketClosureReason}
-												/>
-											</StyledText>
-											<StyledValue>{cellProps.row.original.description}</StyledValue>
-										</MarketContainer>
-									);
-								},
-								width: 180,
+				{/* <LegacyLink /> */}
+				<STable
+					data={data}
+					rounded={false}
+					onTableRowClick={(row) =>
+						router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
+					}
+					noResultsMessage={
+						!isL2 ? (
+							<TableNoResults>
+								{t('common.l2-cta')}
+								<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+							</TableNoResults>
+						) : (
+							<TableNoResults>
+								{!showCurrentMarket ? (
+									t('dashboard.overview.futures-positions-table.no-result')
+								) : (
+									<Link href={ROUTES.Markets.Home(accountType)}>
+										<div>{t('common.perp-cta')}</div>
+									</Link>
+								)}
+							</TableNoResults>
+						)
+					}
+					highlightRowsOnHover
+					columns={[
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
+							),
+							accessor: 'market',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<MarketContainer>
+										<IconContainer>
+											<StyledCurrencyIcon currencyKey={cellProps.row.original.market.marketKey} />
+										</IconContainer>
+										<StyledText>
+											{cellProps.row.original.market.marketName}
+											<MarketBadge
+												currencyKey={cellProps.row.original.market.marketKey}
+												isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
+												futuresClosureReason={cellProps.row.original.market.marketClosureReason}
+											/>
+										</StyledText>
+										<StyledValue>{cellProps.row.original.description}</StyledValue>
+									</MarketContainer>
+								);
 							},
-							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
-								),
-								accessor: 'position',
-								Cell: (cellProps: CellProps<any>) => {
-									return <PositionType side={cellProps.row.original.position.side} />;
-								},
-								width: 70,
+							width: 180,
+						},
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
+							),
+							accessor: 'position',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return <PositionType side={cellProps.row.original.position.side} />;
 							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.notionalValue')}
-									</TableHeader>
-								),
-								accessor: 'notionalValue',
-								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-										? { truncate: true }
-										: {};
+							width: 70,
+						},
+						{
+							Header: (
+								<TableHeader>
+									{t('dashboard.overview.futures-positions-table.notionalValue')}
+								</TableHeader>
+							),
+							accessor: 'notionalValue',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
+									? { truncate: true }
+									: {};
 
-									return (
-										<Currency.Price
-											price={cellProps.row.original.position.notionalValue}
-											formatOptions={formatOptions}
-										/>
-									);
-								},
-								width: 90,
+								return (
+									<Currency.Price
+										price={cellProps.row.original.position.notionalValue}
+										formatOptions={formatOptions}
+									/>
+								);
 							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.avg-entry')}
-									</TableHeader>
-								),
-								accessor: 'avgEntryPrice',
-								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = {
-										suggestDecimals: true,
-									};
-									return cellProps.row.original.avgEntryPrice === undefined ? (
-										<Body>{NO_VALUE}</Body>
-									) : (
-										<Currency.Price
-											price={cellProps.row.original.avgEntryPrice}
-											formatOptions={formatOptions}
-										/>
-									);
-								},
-								width: 125,
+							width: 90,
+						},
+						{
+							Header: (
+								<TableHeader>
+									{t('dashboard.overview.futures-positions-table.avg-entry')}
+								</TableHeader>
+							),
+							accessor: 'avgEntryPrice',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return cellProps.row.original.avgEntryPrice === undefined ? (
+									<Body>{NO_VALUE}</Body>
+								) : (
+									<Currency.Price
+										price={cellProps.row.original.avgEntryPrice}
+										formatOptions={{ suggestDecimals: true }}
+									/>
+								);
 							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.liquidationPrice')}
-									</TableHeader>
-								),
-								accessor: 'liquidationPrice',
-								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = {
-										suggestDecimals: true,
-									};
-									return (
-										<Currency.Price
-											price={cellProps.row.original.position.liquidationPrice}
-											formatOptions={formatOptions}
-										/>
-									);
-								},
-								width: 115,
+							width: 125,
+						},
+						{
+							Header: (
+								<TableHeader>
+									{t('dashboard.overview.futures-positions-table.liquidationPrice')}
+								</TableHeader>
+							),
+							accessor: 'liquidationPrice',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<Currency.Price
+										price={cellProps.row.original.position.liquidationPrice}
+										formatOptions={{ suggestDecimals: true }}
+									/>
+								);
 							},
-							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
-								),
-								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<PnlContainer>
-											<ChangePercent value={cellProps.row.original.position.pnlPct} />
-											<div>
-												<Currency.Price price={cellProps.row.original.position.pnl} />
-											</div>
-										</PnlContainer>
-									);
-								},
-								width: 125,
-							},
-							{
-								Header: <TableHeader>Funding</TableHeader>,
-								accessor: 'funding',
-								Cell: () => {
-									return <div></div>;
-								},
-								width: 90,
-							},
-							{
-								Header: <TableHeader>TP/SL</TableHeader>,
-								accessor: 'tp-sl',
-								Cell: () => {
-									return (
+							width: 115,
+						},
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
+							),
+							accessor: 'pnl',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<PnlContainer>
+										<ChangePercent value={cellProps.row.original.position.pnlPct} />
 										<div>
-											<NumericValue></NumericValue>
+											<Currency.Price price={cellProps.row.original.position.pnl} />
 										</div>
-									);
-								},
-								width: 90,
+									</PnlContainer>
+								);
 							},
-							{
-								Header: <TableHeader>Position</TableHeader>,
-								accessor: 'pos',
-								Cell: () => {
-									return (
-										<div>
-											<Pill size="small">Close</Pill>
-										</div>
-									);
-								},
-								width: 90,
+							width: 125,
+						},
+						{
+							Header: <TableHeader>Funding</TableHeader>,
+							accessor: 'funding',
+							Cell: () => {
+								return <div></div>;
 							},
-						]}
-					/>
-				</div>
+							width: 90,
+						},
+						{
+							Header: <TableHeader>TP/SL</TableHeader>,
+							accessor: 'tp-sl',
+							Cell: () => {
+								return (
+									<div>
+										<NumericValue></NumericValue>
+									</div>
+								);
+							},
+							width: 90,
+						},
+						{
+							Header: <TableHeader>Position</TableHeader>,
+							accessor: 'pos',
+							Cell: () => {
+								return (
+									<div>
+										<Pill size="small">Close</Pill>
+									</div>
+								);
+							},
+							width: 90,
+						},
+					]}
+				/>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<LegacyLink />
@@ -338,7 +328,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					</>
 				)}
 			</MobileOrTabletView>
-		</>
+		</div>
 	);
 };
 
