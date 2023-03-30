@@ -1678,7 +1678,6 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 		const account = selectCrossMarginAccount(getState());
 		const wallet = selectWallet(getState());
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
-		const marginDelta = selectCrossMarginMarginDelta(getState());
 		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
 
@@ -1695,24 +1694,28 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 				})
 			);
 
-			const orderInputs: SmartMarginOrderInputs = {
-				sizeDelta: tradeInputs.nativeSizeDelta,
-				marginDelta: marginDelta,
-				desiredFillPrice: desiredFillPrice,
+			let stopLoss = {
+				price: wei(0),
+				sizeDelta: wei(0),
+			};
+
+			let takeProfit = {
+				price: wei(0),
+				sizeDelta: wei(0),
 			};
 
 			// To separate Stop Loss and Take Profit from other limit / stop orders
 			// we set the size to max big num value.
 
 			if (Number(stopLossPrice) > 0) {
-				orderInputs.stopLoss = {
+				stopLoss = {
 					price: wei(stopLossPrice),
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 				};
 			}
 
 			if (Number(takeProfitPrice) > 0) {
-				orderInputs.takeProfit = {
+				takeProfit = {
 					price: wei(takeProfitPrice),
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 				};
@@ -1721,7 +1724,9 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 			const tx = await sdk.futures.updateStopLossAndTakeProfit(
 				marketInfo.marketKey,
 				account,
-				orderInputs
+				desiredFillPrice,
+				stopLoss,
+				takeProfit
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
