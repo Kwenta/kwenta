@@ -424,3 +424,14 @@ export type SmartMarginOrderInputs = {
 		sizeDelta: Wei;
 	};
 };
+
+export type sltpOrderInputs = {
+	stopLoss?: {
+		price: Wei;
+		sizeDelta: Wei;
+	};
+	takeProfit?: {
+		price: Wei;
+		sizeDelta: Wei;
+	};
+};

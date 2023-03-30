@@ -103,10 +103,7 @@ export default function EditStopLossAndTakeProfitModal() {
 		}
 	}, [takeProfitPrice, currentPrice, leverageSide]);
 
-	const isDisabled = useMemo(
-		() => slInvalid || tpInvalid || (stopLossPrice === '' && takeProfitPrice === ''),
-		[slInvalid, tpInvalid, stopLossPrice, takeProfitPrice]
-	);
+	const isDisabled = useMemo(() => slInvalid || tpInvalid, [slInvalid, tpInvalid]);
 
 	return (
 		<StyledBaseModal

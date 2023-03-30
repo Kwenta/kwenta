@@ -55,6 +55,7 @@ import {
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
 	FuturesAccountType,
+	sltpOrderInputs,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -1089,14 +1090,7 @@ export default class FuturesService {
 		marketKey: FuturesMarketKey,
 		crossMarginAddress: string,
 		desiredFillPrice: Wei,
-		stopLoss?: {
-			price: Wei;
-			sizeDelta: Wei;
-		},
-		takeProfit?: {
-			price: Wei;
-			sizeDelta: Wei;
-		}
+		params: sltpOrderInputs
 	) {
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
@@ -1105,7 +1099,7 @@ export default class FuturesService {
 		const commands = [];
 		const inputs = [];
 
-		if (takeProfit || stopLoss) {
+		if (params.takeProfit || params.stopLoss) {
 			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
 			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === marketKey);
 			const existingStopLosses = existingOrdersForMarket.filter(
@@ -1121,7 +1115,7 @@ export default class FuturesService {
 					o.orderType === ConditionalOrderTypeEnum.LIMIT
 			);
 
-			if (takeProfit) {
+			if (params.takeProfit) {
 				if (existingTakeProfits.length) {
 					existingTakeProfits.forEach((tp) => {
 						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
@@ -1133,8 +1127,8 @@ export default class FuturesService {
 					marketKey,
 					{
 						marginDelta: wei(0),
-						sizeDelta: takeProfit.sizeDelta,
-						price: takeProfit.price,
+						sizeDelta: params.takeProfit.sizeDelta,
+						price: params.takeProfit.price,
 					},
 					ConditionalOrderTypeEnum.LIMIT,
 					desiredFillPrice,
@@ -1143,7 +1137,7 @@ export default class FuturesService {
 				inputs.push(encodedParams);
 			}
 
-			if (stopLoss) {
+			if (params.stopLoss) {
 				if (existingStopLosses.length) {
 					existingStopLosses.forEach((sl) => {
 						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
@@ -1155,8 +1149,8 @@ export default class FuturesService {
 					marketKey,
 					{
 						marginDelta: wei(0),
-						sizeDelta: stopLoss.sizeDelta,
-						price: stopLoss.price,
+						sizeDelta: params.stopLoss.sizeDelta,
+						price: params.stopLoss.price,
 					},
 					ConditionalOrderTypeEnum.STOP,
 					desiredFillPrice,

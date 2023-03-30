@@ -26,6 +26,7 @@ import {
 	PotentialTradeStatus,
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
+	sltpOrderInputs,
 } from 'sdk/types/futures';
 import {
 	calculateCrossMarginFee,
@@ -1694,28 +1695,20 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 				})
 			);
 
-			let stopLoss = {
-				price: wei(0),
-				sizeDelta: wei(0),
-			};
-
-			let takeProfit = {
-				price: wei(0),
-				sizeDelta: wei(0),
-			};
+			const params: sltpOrderInputs = {};
 
 			// To separate Stop Loss and Take Profit from other limit / stop orders
 			// we set the size to max big num value.
 
 			if (Number(stopLossPrice) > 0) {
-				stopLoss = {
+				params.stopLoss = {
 					price: wei(stopLossPrice),
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 				};
 			}
 
 			if (Number(takeProfitPrice) > 0) {
-				takeProfit = {
+				params.takeProfit = {
 					price: wei(takeProfitPrice),
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 				};
@@ -1725,8 +1718,7 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 				marketInfo.marketKey,
 				account,
 				desiredFillPrice,
-				stopLoss,
-				takeProfit
+				params
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
