@@ -1088,7 +1088,15 @@ export default class FuturesService {
 	public async updateStopLossAndTakeProfit(
 		marketKey: FuturesMarketKey,
 		crossMarginAddress: string,
-		order: SmartMarginOrderInputs
+		desiredFillPrice: Wei,
+		stopLoss?: {
+			price: Wei;
+			sizeDelta: Wei;
+		},
+		takeProfit?: {
+			price: Wei;
+			sizeDelta: Wei;
+		}
 	) {
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
@@ -1097,7 +1105,7 @@ export default class FuturesService {
 		const commands = [];
 		const inputs = [];
 
-		if (order.takeProfit || order.stopLoss) {
+		if (takeProfit || stopLoss) {
 			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
 			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === marketKey);
 			const existingStopLosses = existingOrdersForMarket.filter(
@@ -1113,7 +1121,7 @@ export default class FuturesService {
 					o.orderType === ConditionalOrderTypeEnum.LIMIT
 			);
 
-			if (order.takeProfit) {
+			if (takeProfit) {
 				if (existingTakeProfits.length) {
 					existingTakeProfits.forEach((tp) => {
 						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
@@ -1125,17 +1133,17 @@ export default class FuturesService {
 					marketKey,
 					{
 						marginDelta: wei(0),
-						sizeDelta: order.takeProfit.sizeDelta,
-						price: order.takeProfit.price,
+						sizeDelta: takeProfit.sizeDelta,
+						price: takeProfit.price,
 					},
 					ConditionalOrderTypeEnum.LIMIT,
-					order.desiredFillPrice,
+					desiredFillPrice,
 					true
 				);
 				inputs.push(encodedParams);
 			}
 
-			if (order.stopLoss) {
+			if (stopLoss) {
 				if (existingStopLosses.length) {
 					existingStopLosses.forEach((sl) => {
 						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
@@ -1147,24 +1155,20 @@ export default class FuturesService {
 					marketKey,
 					{
 						marginDelta: wei(0),
-						sizeDelta: order.stopLoss.sizeDelta,
-						price: order.stopLoss.price,
+						sizeDelta: stopLoss.sizeDelta,
+						price: stopLoss.price,
 					},
 					ConditionalOrderTypeEnum.STOP,
-					order.desiredFillPrice,
+					desiredFillPrice,
 					true
 				);
 				inputs.push(encodedParams);
 			}
 		}
 
-		return this.sdk.transactions.createContractTxn(
-			crossMarginAccountContract,
-			'execute',
-			[commands, inputs],
-			{
-				value: order.conditionalOrderInputs?.keeperEthDeposit.toBN() ?? '0',
-			}
-		);
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+			commands,
+			inputs,
+		]);
 	}
 }
