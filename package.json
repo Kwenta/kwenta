@@ -38,7 +38,7 @@
 		"@reduxjs/toolkit": "^1.8.5",
 		"@sentry/browser": "7.43.0",
 		"@sentry/tracing": "7.43.0",
-		"@socket.tech/plugin": "^1.0.3",
+		"@socket.tech/plugin": "1.0.8",
 		"@synthetixio/optimism-networks": "2.74.6",
 		"@synthetixio/providers": "2.74.10",
 		"@synthetixio/transaction-notifier": "2.74.12",
