@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -12,25 +13,32 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
+import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
+
 export default function TradeBalance() {
 	const dispatch = useAppDispatch();
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const accountType = useAppSelector(selectFuturesType);
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin);
 
+	const [expanded, setExpanded] = useState(false);
+
+	const onClickContainer = () => {
+		if (accountType === 'isolated_margin') return;
+		setExpanded(!expanded);
+	};
+
 	return (
 		<Container>
 			<FlexDivRowCentered>
-				<div>
-					<Body size="small" color="secondary">
-						Available Margin
-					</Body>
+				<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
+					<Body color="secondary">Available Margin</Body>
 					<NumericValue size="large" weight="bold">
 						{accountType === 'isolated_margin'
 							? formatDollars(availableIsolatedMargin)
 							: formatDollars(idleMargin)}
 					</NumericValue>
-				</div>
+				</BalanceContainer>
 				<Button
 					onClick={() =>
 						dispatch(
@@ -46,6 +54,8 @@ export default function TradeBalance() {
 					Manage
 				</Button>
 			</FlexDivRowCentered>
+
+			{expanded && <DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>}
 		</Container>
 	);
 }
@@ -53,4 +63,12 @@ export default function TradeBalance() {
 const Container = styled.div`
 	width: 100%;
 	padding: 15px;
+`;
+
+const BalanceContainer = styled.div<{ clickable: boolean }>`
+	cursor: ${(props) => (props.clickable ? 'pointer' : 'default')};
+`;
+
+const DetailsContainer = styled.div`
+	margin-top: 15px;
 `;
