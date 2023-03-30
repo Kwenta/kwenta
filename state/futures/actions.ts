@@ -345,8 +345,9 @@ export const fetchMarginTransfers = createAsyncThunk<
 	try {
 		const transfers =
 			futures.selectedType === 'cross_margin'
-				? await sdk.futures.getCrossMarginTransfers()
+				? await sdk.futures.getCrossMarginTransfers(cmAccount)
 				: await sdk.futures.getIsolatedMarginTransfers();
+
 		return {
 			marginTransfers: transfers,
 			context: {

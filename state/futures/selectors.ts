@@ -792,9 +792,9 @@ export const selectMarketMarginTransfers = createSelector(
 		if (!wallet) return [];
 		const account = futures[accountType(type)].accounts[network]?.[wallet];
 		const marginTransfers = account?.marginTransfers ?? [];
-		return marginTransfers.filter(
-			(o) => accountType(type) === 'isolatedMargin' && o.asset === asset
-		);
+		return accountType(type) === 'isolatedMargin'
+			? marginTransfers.filter((o) => o.asset === asset)
+			: marginTransfers;
 	}
 );
 
