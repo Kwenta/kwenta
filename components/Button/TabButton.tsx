@@ -67,9 +67,9 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	${(props) => css`
 		flex-direction: ${props.$vertical ? 'column' : 'row'};
 		border-radius: ${props.isRounded ? '100px' : '8px'};
-		background-color: ${props.theme.colors.selectedTheme.tab.background[
-			props.active ? 'active' : 'inactive'
-		]};
+		background-color: ${props.active
+			? props.theme.colors.selectedTheme.newTheme.button.default.background
+			: 'transparent'};
 
 		.title {
 			text-align: center;

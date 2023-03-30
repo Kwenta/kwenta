@@ -19,6 +19,7 @@ import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import ManagePosition from './ManagePosition';
 import OrderTypeSelector from './OrderTypeSelector';
 import SLTPInputs from './SLTPInputs';
+import TradeBalance from './TradeBalance';
 
 type Props = {
 	isMobile?: boolean;
@@ -41,6 +42,7 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 
 	return (
 		<div style={{ height: '100%', overflowY: 'scroll' }}>
+			<TradeBalance />
 			<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
 
 			<div style={{ padding: '0 15px' }}>
@@ -66,7 +68,7 @@ const TradeIsolatedMargin = memo(({ isMobile }: Props) => {
 
 				<LeverageInput />
 
-				<SLTPInputs />
+				{accountType === 'cross_margin' && <SLTPInputs />}
 
 				<ManagePosition />
 

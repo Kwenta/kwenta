@@ -7,7 +7,6 @@ import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
-import { FuturesAccountType } from 'queries/futures/types';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import {
 	BPS_CONVERSION,
@@ -55,6 +54,7 @@ import {
 	MarketWithIdleMargin,
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
+	FuturesAccountType,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -694,6 +694,7 @@ export default class FuturesService {
 		return response ? mapTrades(response) : null;
 	}
 
+	// TODO: Get delayed order fee
 	public async getOrderFee(marketAddress: string, size: Wei) {
 		const marketContract = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 		const orderFee = await marketContract.orderFee(size.toBN(), 0);
@@ -1008,24 +1009,23 @@ export default class FuturesService {
 			size: Wei;
 			side: PositionSide;
 		},
-		priceImpactDelta: Wei
+		desiredFillPrice: Wei
 	) {
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
 
-		const commands = [];
-		const inputs = [];
-
 		// TODO: Change to delayed close when market contracts are upgraded
-		commands.push(AccountExecuteFunctions.PERPS_V2_CLOSE_POSITION);
-		inputs.push(
-			defaultAbiCoder.encode(['address', 'uint256'], [marketAddress, priceImpactDelta.toBN()])
-		);
 
-		commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
-		inputs.push(defaultAbiCoder.encode(['address'], [marketAddress]));
+		const commands = [AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER];
+		const inputs = [
+			encodeSubmitOffchainOrderParams(
+				marketAddress,
+				position.side === PositionSide.LONG ? position.size.neg() : position.size,
+				desiredFillPrice
+			),
+		];
 
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
 			commands,

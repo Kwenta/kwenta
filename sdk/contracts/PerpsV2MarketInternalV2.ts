@@ -45,9 +45,10 @@ type Position = {
 const ethcallProvider = new Provider();
 
 // TODO: Delete once fundingRateLastRecomputed is added to proxy
-const MARKET_ADDRESSES = {
+const MARKET_ADDRESSES: Record<FuturesMarketAsset, string> = {
 	AAVE: '0x794AFd9B432DE16450fF118f6402cf591E7226b6',
 	APE: '0xabE0b70033Da709a1a2ECF78CcbB6649A997199b',
+	ARB: '',
 	ATOM: '0xbd352Bd6D6f81395EB94ba3778Aa3c7c523B1D97',
 	AUD: '0xf84312375eb2BBBdE43D6069CAcc4a0a156d6d9b',
 	AVAX: '0x7d470b2c680Df1299e181E6a2Ec00A97fA5b3a2c',

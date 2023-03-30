@@ -1,10 +1,19 @@
 import common from './common';
 
 const newTheme = {
+	containers: {
+		primary: {
+			background: common.palette.neutral.n0,
+		},
+		secondary: {
+			background: common.palette.neutral.n40,
+		},
+	},
 	button: {
 		default: {
-			border: common.palette.neutral.n80,
-			background: common.palette.neutral.n40,
+			border: `1px solid ${common.palette.neutral.n40}`,
+			borderColor: common.palette.neutral.n40,
+			background: common.palette.neutral.n20,
 			color: common.palette.neutral.n900,
 			hover: {
 				background: common.palette.neutral.n30,
@@ -38,6 +47,12 @@ const newTheme = {
 				},
 			},
 		},
+		cell: {
+			background: 'transparent',
+			hover: {
+				background: common.palette.neutral.n20,
+			},
+		},
 	},
 	text: {
 		primary: common.palette.neutral.n900,
@@ -67,17 +82,16 @@ const newTheme = {
 			},
 		},
 		gray: {
-			text: common.palette.neutral.n70,
-			background: common.palette.neutral.n700,
+			text: common.palette.neutral.n1100,
+			background: common.palette.neutral.n20,
 			border: common.palette.neutral.n70,
 			outline: {
-				text: common.palette.neutral.n900,
+				text: common.palette.neutral.n1100,
 				background: common.palette.neutral.n20,
 				border: common.palette.neutral.n20,
 			},
 			hover: {
-				background: common.palette.neutral.n70,
-				border: common.palette.alpha.white10,
+				background: common.palette.neutral.n30,
 				text: common.palette.neutral.n900,
 			},
 		},
@@ -128,17 +142,15 @@ const newTheme = {
 	},
 	tabs: {
 		position: {
-			background: common.palette.neutral.n900,
-			border: common.palette.neutral.n900,
-			color: common.palette.neutral.n900,
-			hover: {
-				background: common.palette.neutral.n800,
-			},
+			background: common.palette.neutral.n20,
+			color: common.palette.neutral.n100,
 			long: {
 				color: common.palette.green.g600,
+				background: common.palette.green.g100,
 			},
 			short: {
 				color: common.palette.red.r300,
+				background: common.palette.alpha.red5,
 			},
 		},
 	},
@@ -205,20 +217,17 @@ const lightTheme = {
 		},
 	},
 	input: {
-		background: '#dbdbdb',
-		secondary: {
-			background: '#eaeaea',
-		},
+		background: common.palette.neutral.n0,
+		border: `1px solid ${common.palette.neutral.n40}`,
+		borderColor: common.palette.neutral.n40,
 		placeholder: '#686868',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
 		hover: common.black,
 	},
-	segmented: {
-		background: '#eaeaea',
+	segmentedControl: {
+		background: common.palette.neutral.n20,
 		button: {
-			background: '#F2F2F2',
-			shadow:
-				'0px 2px 2px rgb(0 0 0 / 10%), inset 0px 0px 20px rgb(255 255 255 / 30%), inset 0px 1px 0px rgb(255 255 255 / 50%)',
+			background: common.palette.neutral.n0,
 			inactive: { color: '#787878' },
 		},
 	},

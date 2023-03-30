@@ -73,8 +73,8 @@ export function TVChart({
 	const { network } = Connector.useContainer();
 
 	const DEFAULT_OVERRIDES = {
-		'paneProperties.background': colors.selectedTheme.background,
-		'chartProperties.background': colors.selectedTheme.background,
+		'paneProperties.background': colors.selectedTheme.newTheme.containers.primary.background,
+		'chartProperties.background': colors.selectedTheme.newTheme.containers.primary.background,
 		'paneProperties.backgroundType': 'solid',
 	};
 
@@ -182,10 +182,10 @@ export function TVChart({
 			theme: 'dark',
 			custom_css_url: './theme.css',
 			loading_screen: {
-				backgroundColor: colors.selectedTheme.background,
+				backgroundColor: colors.selectedTheme.newTheme.containers.primary.background,
 			},
 			overrides: DEFAULT_OVERRIDES,
-			toolbar_bg: colors.selectedTheme.background,
+			toolbar_bg: colors.selectedTheme.newTheme.containers.primary.background,
 			time_frames: [
 				{ text: '4H', resolution: '5', description: '4 hours' },
 				{ text: '12H', resolution: '5', description: '1 Day' },

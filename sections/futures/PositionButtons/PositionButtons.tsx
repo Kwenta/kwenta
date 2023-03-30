@@ -47,7 +47,7 @@ const PositionButtonsContainer = styled.div`
 
 const PositionButton = styled.div<PositionButtonProps>`
 	font-size: 16px;
-	height: 40px;
+	height: 50px;
 	font-variant: all-small-caps;
 	text-transform: uppercase;
 	text-align: center;
@@ -63,21 +63,27 @@ const PositionButton = styled.div<PositionButtonProps>`
 
 	${(props) => css`
 		font-family: ${props.theme.fonts.bold};
-		color: ${props.theme.colors.selectedTheme.newTheme.button.default.color};
+		color: ${props.theme.colors.selectedTheme.newTheme.tabs.position.color};
 		background: ${props.theme.colors.selectedTheme.newTheme.tabs.position.background};
 
 		&:hover {
-			background: ${props.theme.colors.selectedTheme.newTheme.tabs.position.hover.background};
+			color: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color};
+			border-top: 3px
+				${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color} solid;
 		}
+		border-top: ${props.theme.colors.selectedTheme.border};
+		border-bottom: ${props.theme.colors.selectedTheme.border};
 	`}
 
 	${(props) =>
 		props.$isActive &&
 		css`
 			color: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color};
+			border-bottom-color: transparent;
 			border-top: 3px
 				${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color} solid;
-			background: ${props.theme.colors.selectedTheme.newTheme.tabs.position.hover.background};
+			background: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position]
+				.background};
 		`};
 `;
 
