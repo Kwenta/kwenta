@@ -22,6 +22,8 @@ import {
 	selectMarketInfo,
 	selectOrderFee,
 	selectOrderType,
+	selectPreviewData,
+	selectPreviewTradeData,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -66,6 +68,7 @@ const ExecutionFeeTooltip = memo(() => {
 export const FeeInfoBox = memo(() => {
 	return (
 		<FeeInfoBoxContainer>
+			<LiquidationRow />
 			<TotalFeesRow />
 			<TradingRewardRow />
 		</FeeInfoBoxContainer>
@@ -155,6 +158,20 @@ const KeeperDepositRow = memo(() => {
 				!!marketInfo?.keeperDeposit
 					? formatCurrency('ETH', crossMarginFees.keeperEthDeposit, { currencyKey: 'ETH' })
 					: NO_VALUE
+			}
+		/>
+	);
+});
+
+const LiquidationRow = memo(() => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
+
+	return (
+		<InfoBoxRow
+			title="Liquidation price"
+			color="gold"
+			value={
+				potentialTradeDetails?.liqPrice ? formatDollars(potentialTradeDetails.liqPrice) : NO_VALUE
 			}
 		/>
 	);
