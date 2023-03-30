@@ -87,8 +87,8 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 			? '10px'
 			: '6px'};
 	border-color: ${(props) =>
-		props.styleType === 'pill-button' ||
-		(props.styleType === 'pill-button-large' && props.isSelected)
+		(props.styleType === 'pill-button' || props.styleType === 'pill-button-large') &&
+		props.isSelected
 			? props.theme.colors.selectedTheme.yellow
 			: undefined};
 	color: ${(props) =>
