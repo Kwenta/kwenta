@@ -6,7 +6,7 @@ import { selectMarkPrices, selectMarkets } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectMinTimestamp } from 'state/stats/selectors';
 
-export type StatsTimeframe = '1M' | '1Y' | 'MAX';
+export type StatsTimeframe = '4H' | '1D' | '1W' | '1M' | '1Y' | 'MAX';
 
 export type DailyStat = {
 	timestamp: number;

@@ -18,6 +18,15 @@ export const ZERO_CM_FEES = {
 	total: '0',
 };
 
+export const ZERO_STATE_ISOLATED_ACCOUNT = {
+	position: undefined,
+	trades: [],
+	marginTransfers: [],
+	positions: [],
+	openOrders: [],
+	positionHistory: [],
+};
+
 export const ZERO_STATE_CM_ACCOUNT = {
 	position: undefined,
 	balanceInfo: {

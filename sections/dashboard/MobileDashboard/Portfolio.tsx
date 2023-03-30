@@ -1,16 +1,11 @@
-import Wei from '@synthetixio/wei';
-import React from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 
 import PortfolioChart from '../PortfolioChart';
 
-type PortfolioProps = {
-	exchangeTokenBalances: Wei;
-};
-
-const Portfolio: React.FC<PortfolioProps> = ({ exchangeTokenBalances }) => {
+const Portfolio: FC = () => {
 	const { t } = useTranslation();
 
 	return (
@@ -20,7 +15,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ exchangeTokenBalances }) => {
 					<SectionTitle>{t('dashboard.overview.mobile.portfolio')}</SectionTitle>
 				</SectionHeader>
 			</div>
-			<PortfolioChart exchangeTokenBalances={exchangeTokenBalances} />
+			<PortfolioChart />
 		</div>
 	);
 };

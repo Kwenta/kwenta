@@ -17,7 +17,7 @@ const MobileDashboard: FC<MobileDashboardProps> = ({ exchangeTokens }) => {
 	return (
 		<div>
 			<CompetitionBanner />
-			<Portfolio exchangeTokenBalances={exchangeTokenBalances} />
+			<Portfolio />
 			<OpenPositions
 				exchangeTokens={exchangeTokens}
 				exchangeTokenBalances={exchangeTokenBalances}

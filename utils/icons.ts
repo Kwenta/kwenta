@@ -81,6 +81,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sDOGE: DOGEIcon,
 	sXMR: XMRIcon,
 	sOP: OPIcon,
+	sARB: ARBIcon,
 	sATOM: ATOMIcon,
 	sFTM: FTMIcon,
 	sNEAR: NEARIcon,
