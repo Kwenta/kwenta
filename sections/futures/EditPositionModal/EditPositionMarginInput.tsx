@@ -7,6 +7,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { getStep } from 'components/Slider/Slider';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
+import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionMargin } from 'state/futures/actions';
 import { selectEditPositionInputs } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -23,12 +24,20 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 		const dispatch = useAppDispatch();
 
 		const { marginDelta } = useAppSelector(selectEditPositionInputs);
+		const positionModal = useAppSelector(selectShowPositionModal);
 
 		const onChangeMargin = useCallback(
 			(value: string) => {
-				dispatch(editCrossMarginPositionMargin(type === 'deposit' ? value : '-' + value));
+				if (positionModal?.marketKey) {
+					dispatch(
+						editCrossMarginPositionMargin(
+							positionModal.marketKey,
+							type === 'deposit' ? value : '-' + value
+						)
+					);
+				}
 			},
-			[dispatch, type]
+			[dispatch, type, positionModal?.marketKey]
 		);
 
 		const handleSetMax = useCallback(() => {

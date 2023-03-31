@@ -77,11 +77,11 @@ export const selectFuturesSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420;
 
 export const selectCrossMarginTransferOpen = (state: RootState) =>
-	state.app.openModal === 'futures_cross_deposit' ||
-	state.app.openModal === 'futures_cross_withdraw';
+	state.app.showModal === 'futures_cross_deposit' ||
+	state.app.showModal === 'futures_cross_withdraw';
 
 export const selectShowCrossMarginOnboard = (state: RootState) =>
-	state.app.openModal === 'futures_smart_margin_onboard';
+	state.app.showModal === 'futures_smart_margin_onboard';
 
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
@@ -1263,7 +1263,7 @@ type PositionPreviewData = {
 	showStatus: boolean;
 };
 
-export const selectPreviewData = createSelector(
+export const selectPositionPreviewData = createSelector(
 	selectTradePreview,
 	selectPosition,
 	selectAverageEntryPrice,
@@ -1288,7 +1288,7 @@ export const selectPreviewData = createSelector(
 	}
 );
 
-export const selectPreviewTradeData = createSelector(
+export const selectPreviewMarginChange = createSelector(
 	selectTradePreview,
 	selectPreviewAvailableMargin,
 	selectMarketInfo,

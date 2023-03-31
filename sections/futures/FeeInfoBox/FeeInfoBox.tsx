@@ -22,8 +22,6 @@ import {
 	selectMarketInfo,
 	selectOrderFee,
 	selectOrderType,
-	selectPreviewData,
-	selectPreviewTradeData,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';

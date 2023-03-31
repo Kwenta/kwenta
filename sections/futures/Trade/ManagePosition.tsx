@@ -10,7 +10,7 @@ import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
+import { selectShowModal } from 'state/app/selectors';
 import { changeLeverageSide, editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketInfo,
@@ -63,7 +63,7 @@ const ManagePosition: React.FC = () => {
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const isConditionalOrder = useAppSelector(selectIsConditionalOrder);
-	const openModal = useAppSelector(selectOpenModal);
+	const openModal = useAppSelector(selectShowModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const smartMarginAccount = useAppSelector(selectCrossMarginAccount);

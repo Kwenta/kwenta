@@ -71,7 +71,9 @@ const LeverageInput: FC = memo(() => {
 		return availableMargin?.lte(0) || maxLeverage.lte(0);
 	}, [maxLeverage, availableMargin]);
 
-	const leverageButtons = marketInfo?.maxLeverage.eq(25) ? ['5', '10', '25'] : ['2', '5', '10'];
+	const leverageButtons = marketInfo?.maxLeverage.eq(25)
+		? ['2', '5', '10', '25']
+		: ['2', '5', '10'];
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
 		: 10;
@@ -154,15 +156,15 @@ const SliderRow = styled(FlexDivRow)`
 
 const LeverageInputContainer = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 43px 43px 43px;
-	grid-gap: 15px;
+	grid-template-columns: 1fr 45px 45px 45px 45px;
+	grid-gap: 12px;
 	align-items: center;
 `;
 
 const LeverageButton = styled(Button)`
 	padding: 0;
 	font-size: 13px;
-	height: 46px;
+	height: 42px;
 	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 
