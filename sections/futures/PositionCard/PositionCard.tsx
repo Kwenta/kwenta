@@ -12,15 +12,14 @@ import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
-import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
+import { setShowPositionModal } from 'state/app/reducer';
 import {
 	selectMarketAsset,
 	selectPosition,
 	selectSkewAdjustedPrice,
 	selectMarketPriceInfo,
 	selectSelectedMarketPositionHistory,
-	selectPreviewData,
+	selectPositionPreviewData,
 	selectFuturesType,
 	selectMarketInfo,
 } from 'state/futures/selectors';
@@ -30,16 +29,11 @@ import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
 import { getMarketName } from 'utils/futures';
 
-import EditLeverageModal from '../TradeCrossMargin/EditCrossMarginLeverageModal';
-
 const PositionCard = memo(() => {
-	const openModal = useAppSelector(selectOpenModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	return (
 		<>
-			{openModal === 'futures_cross_leverage' && <EditLeverageModal editMode="existing_position" />}
-
 			<Container id={marketInfo?.isSuspended ? 'closed' : undefined}>
 				<DataCol>
 					<MarketNameRow />
@@ -68,7 +62,7 @@ const MarketNameRow = memo(() => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketPrice = useAppSelector(selectSkewAdjustedPrice);
 	const marketShortName = getMarketName(marketAsset);
-	const previewData = useAppSelector(selectPreviewData);
+	const previewData = useAppSelector(selectPositionPreviewData);
 
 	return (
 		<InfoRow>
@@ -86,7 +80,7 @@ const MarketNameRow = memo(() => {
 const PositionSideRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
-	const previewData = useAppSelector(selectPreviewData);
+	const previewData = useAppSelector(selectPositionPreviewData);
 	const positionDetails = position?.position;
 
 	return (
@@ -123,7 +117,7 @@ const PositionSideRow = memo(() => {
 const PositionSizeRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
-	const previewData = useAppSelector(selectPreviewData);
+	const previewData = useAppSelector(selectPositionPreviewData);
 	const positionDetails = position?.position;
 
 	return (
@@ -295,7 +289,7 @@ const LeverageRow = memo(() => {
 	const futuresAccountType = useAppSelector(selectFuturesType);
 	const dispatch = useAppDispatch();
 	const position = useAppSelector(selectPosition);
-	const previewData = useAppSelector(selectPreviewData);
+	const previewData = useAppSelector(selectPositionPreviewData);
 	const positionDetails = position?.position;
 
 	return (
@@ -319,7 +313,18 @@ const LeverageRow = memo(() => {
 				{position?.position && futuresAccountType === 'cross_margin' && (
 					<>
 						<Spacer width={10} />
-						<Pill onClick={() => dispatch(setOpenModal('futures_edit_position_margin'))}>EDIT</Pill>
+						<Pill
+							onClick={() =>
+								dispatch(
+									setShowPositionModal({
+										type: 'futures_edit_position_margin',
+										marketKey: position.marketKey,
+									})
+								)
+							}
+						>
+							EDIT
+						</Pill>
 					</>
 				)}
 			</FlexDivCentered>
@@ -330,7 +335,7 @@ const LeverageRow = memo(() => {
 const LiquidationPriceRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
-	const previewData = useAppSelector(selectPreviewData);
+	const previewData = useAppSelector(selectPositionPreviewData);
 	const positionDetails = position?.position;
 
 	return (
@@ -359,7 +364,7 @@ const LiquidationPriceRow = memo(() => {
 const AverageEntryPriceRow = memo(() => {
 	const { t } = useTranslation();
 	const position = useAppSelector(selectPosition);
-	const previewData = useAppSelector(selectPreviewData);
+	const previewData = useAppSelector(selectPositionPreviewData);
 	const positionDetails = position?.position;
 	const positionHistory = useAppSelector(selectSelectedMarketPositionHistory);
 

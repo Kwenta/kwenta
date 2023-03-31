@@ -8,7 +8,7 @@ import {
 	selectBuyingPower,
 	selectMarginUsage,
 	selectMarketSuspended,
-	selectPreviewTradeData,
+	selectPreviewMarginChange,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -17,7 +17,7 @@ import { formatDollars, formatPercent } from 'utils/formatters/number';
 const AvailableMarginRow = memo(() => {
 	const availableMargin = useAppSelector(selectAvailableMargin);
 	const potentialTrade = useAppSelector(selectTradePreview);
-	const previewTradeData = useAppSelector(selectPreviewTradeData);
+	const previewTradeData = useAppSelector(selectPreviewMarginChange);
 	const marketSuspended = useAppSelector(selectMarketSuspended);
 
 	return (
@@ -36,7 +36,7 @@ const AvailableMarginRow = memo(() => {
 
 const BuyingPowerRow = memo(() => {
 	const potentialTrade = useAppSelector(selectTradePreview);
-	const previewTradeData = useAppSelector(selectPreviewTradeData);
+	const previewTradeData = useAppSelector(selectPreviewMarginChange);
 	const buyingPower = useAppSelector(selectBuyingPower);
 	const marketSuspended = useAppSelector(selectMarketSuspended);
 
@@ -57,7 +57,7 @@ const BuyingPowerRow = memo(() => {
 });
 
 const MarginUsageRow = memo(() => {
-	const previewTradeData = useAppSelector(selectPreviewTradeData);
+	const previewTradeData = useAppSelector(selectPreviewMarginChange);
 	const potentialTrade = useAppSelector(selectTradePreview);
 	const marginUsage = useAppSelector(selectMarginUsage);
 	const marketSuspended = useAppSelector(selectMarketSuspended);

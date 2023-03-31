@@ -10,6 +10,7 @@ import { FlexDivRow } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
+import { setOpenModal } from 'state/app/reducer';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
 	selectLeverageSide,
@@ -18,7 +19,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { suggestedDecimals } from 'utils/formatters/number';
-import { setOpenModal } from 'state/app/reducer';
 
 const TP_OPTIONS = ['5%', '10%', '25%', '50%', '100%'];
 const SL_OPTIONS = ['2%', '5%', '10%', '20%', '50%'];
@@ -92,7 +92,10 @@ export default function SLTPInputs() {
 	return (
 		<Container>
 			<ExpandRow onClick={() => setShowInputs(!showInputs)}>
-				<InputTitle onClick={() => dispatch(setOpenModal('futures_edit_stop_loss_take_profit'))}>
+				<InputTitle
+					margin="1px 0 0 0"
+					onClick={() => dispatch(setOpenModal('futures_edit_stop_loss_take_profit'))}
+				>
 					Stop Loss / Take Profit
 				</InputTitle>
 				<Button
@@ -147,7 +150,8 @@ export default function SLTPInputs() {
 
 const Container = styled.div`
 	padding: 10px;
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.secondary};
+	background: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.containers.secondary.background};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;
 	margin-bottom: 16px;

@@ -6,90 +6,77 @@ import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
-import { editCrossMarginPositionSize } from 'state/futures/actions';
+import { selectShowPositionModal } from 'state/app/selectors';
+import { editClosePositionSizeDelta } from 'state/futures/actions';
 import {
 	selectPosition,
 	selectOrderType,
 	selectLeverageSide,
-	selectEditPositionInputs,
 	selectClosePositionOrderInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
-	type: 'increase' | 'decrease';
 	maxNativeValue: Wei;
 	isMobile?: boolean;
 };
 
-const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
-	({ isMobile, type, maxNativeValue }) => {
-		const dispatch = useAppDispatch();
+const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, maxNativeValue }) => {
+	const dispatch = useAppDispatch();
 
-		const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs);
+	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs);
+	const position = useAppSelector(selectPosition);
+	const orderType = useAppSelector(selectOrderType);
+	const selectedLeverageSide = useAppSelector(selectLeverageSide);
+	const modal = useAppSelector(selectShowPositionModal);
 
-		const position = useAppSelector(selectPosition);
-		const orderType = useAppSelector(selectOrderType);
-		const selectedLeverageSide = useAppSelector(selectLeverageSide);
+	const onSizeChange = useCallback(
+		(value: string) => {
+			if (modal) {
+				dispatch(editClosePositionSizeDelta(modal.marketKey, value));
+			}
+		},
+		[dispatch, modal]
+	);
 
-		const onSizeChange = useCallback(
-			(value: string) => {
-				dispatch(editCrossMarginPositionSize(type === 'increase' ? value : '-' + value));
-			},
-			[dispatch, type]
-		);
+	const handleSetMax = useCallback(() => {
+		onSizeChange(String(floorNumber(maxNativeValue)));
+	}, [onSizeChange, maxNativeValue]);
 
-		const handleSetMax = useCallback(() => {
-			onSizeChange(String(floorNumber(maxNativeValue)));
-		}, [onSizeChange, maxNativeValue]);
+	const onChangeValue = useCallback(
+		(_, v: string) => {
+			onSizeChange(v);
+		},
+		[onSizeChange]
+	);
 
-		const handleSetPositionSize = () => {
-			onSizeChange(position?.position?.size.toString() ?? '0');
-		};
+	const nativeSizeDeltaWei = useMemo(() => {
+		return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
+	}, [nativeSizeDelta]);
 
-		const onChangeValue = useCallback(
-			(_, v: string) => {
-				onSizeChange(v);
-			},
-			[onSizeChange]
-		);
+	const invalid = nativeSizeDelta !== '' && maxNativeValue.lte(nativeSizeDeltaWei);
 
-		const showPosSizeHelper =
-			position?.position?.size &&
-			(orderType === 'limit' || orderType === 'stop_market') &&
-			position?.position.side !== selectedLeverageSide;
+	return (
+		<OrderSizingContainer>
+			<OrderSizingRow>
+				<InputTitle>Amount to close</InputTitle>
+				<InputHelpers>
+					<MaxButton onClick={handleSetMax}>Max</MaxButton>
+				</InputHelpers>
+			</OrderSizingRow>
 
-		const nativeSizeDeltaWei = useMemo(() => {
-			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
-		}, [nativeSizeDelta]);
-
-		const invalid = nativeSizeDelta !== '' && maxNativeValue.lte(nativeSizeDeltaWei);
-
-		return (
-			<OrderSizingContainer>
-				<OrderSizingRow>
-					<InputTitle>{type ? 'Add' : 'Remove'} position size</InputTitle>
-					<InputHelpers>
-						<MaxButton onClick={handleSetMax}>Max</MaxButton>
-						{showPosSizeHelper && (
-							<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
-						)}
-					</InputHelpers>
-				</OrderSizingRow>
-
-				<NumericInput
-					invalid={invalid}
-					dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
-					value={nativeSizeDelta.replace('-', '')}
-					placeholder="0.00"
-					onChange={onChangeValue}
-				/>
-				<Spacer height={16} />
-			</OrderSizingContainer>
-		);
-	}
-);
+			<NumericInput
+				invalid={invalid}
+				dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
+				value={nativeSizeDelta.replace('-', '')}
+				placeholder="0.00"
+				onChange={onChangeValue}
+			/>
+			<Spacer height={16} />
+		</OrderSizingContainer>
+	);
+});
 
 const OrderSizingContainer = styled.div`
 	margin-bottom: 16px;
@@ -118,4 +105,4 @@ const InputHelpers = styled.div`
 	display: flex;
 `;
 
-export default EditPositionSizeInput;
+export default ClosePositionSizeInput;

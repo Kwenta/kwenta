@@ -303,6 +303,7 @@ export type DelayedOrder<T = Wei> = {
 };
 
 export type FuturesPotentialTradeDetails<T = Wei> = {
+	marketKey: FuturesMarketKey;
 	size: T;
 	sizeDelta: T;
 	liqPrice: T;

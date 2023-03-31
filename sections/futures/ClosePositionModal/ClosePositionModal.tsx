@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -13,11 +13,11 @@ import SegmentedControl from 'components/SegmentedControl';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { APP_MAX_LEVERAGE, CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
+import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
 import { PositionSide } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
-import { setOpenModal } from 'state/app/reducer';
-import { selectTransaction } from 'state/app/selectors';
+import { setShowPositionModal } from 'state/app/reducer';
+import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
 	editCrossMarginPositionSize,
 	submitCrossMarginAdjustPositionSize,
@@ -26,15 +26,14 @@ import { setClosePositionOrderType, setClosePositionSizeDelta } from 'state/futu
 import {
 	selectClosePositionOrderInputs,
 	selectIsFetchingTradePreview,
-	selectMarketPrice,
 	selectPosition,
-	selectPreviewData,
+	selectPositionPreviewData,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
-import EditPositionSizeInput from '../EditPositionModal/EditPositionSizeInput';
+import ClosePositionSizeInput from './ClosePositionSizeInput';
 
 const CLOSE_PERCENT_OPTIONS = ['25%', '50%', '75%', '100%'];
 
@@ -46,16 +45,9 @@ export default function ClosePositionModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
-	const preview = useAppSelector(selectPreviewData);
-	const marketAssetRate = useAppSelector(selectMarketPrice);
+	const preview = useAppSelector(selectPositionPreviewData);
 	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs);
-
-	const [editType, setEditType] = useState(0);
-
-	const onChangeTab = (selection: number) => {
-		dispatch(editCrossMarginPositionSize(''));
-		setEditType(selection);
-	};
+	const showModal = useAppSelector(selectShowPositionModal);
 
 	const submitMarginChange = useCallback(() => {
 		dispatch(submitCrossMarginAdjustPositionSize());
@@ -66,34 +58,26 @@ export default function ClosePositionModal() {
 		isFetchingPreview,
 	]);
 
-	const maxNativeIncreaseValue = useMemo(() => {
-		if (!marketAssetRate || marketAssetRate.eq(0)) return zeroBN;
-		const totalMax = position?.remainingMargin.mul(APP_MAX_LEVERAGE) ?? zeroBN;
-		let max = totalMax.sub(position?.position?.notionalValue ?? 0);
-		max = max.gt(0) ? max : zeroBN;
-		return max.div(marketAssetRate);
-	}, [marketAssetRate, position?.remainingMargin, position?.position?.notionalValue]);
-
 	const maxNativeValue = useMemo(() => {
-		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? zeroBN;
-	}, [editType, maxNativeIncreaseValue, position?.position?.size]);
+		return position?.position?.size ?? zeroBN;
+	}, [position?.position?.size]);
 
 	const sizeWei = useMemo(
 		() => (!nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? wei(0) : wei(nativeSizeDelta)),
 		[nativeSizeDelta]
 	);
 
-	const maxLeverageExceeded = editType === 0 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
-
 	const invalid = useMemo(() => sizeWei.gt(maxNativeValue), [sizeWei, maxNativeValue]);
 
 	const submitDisabled = useMemo(() => {
-		return sizeWei.eq(0) || invalid || isLoading || maxLeverageExceeded;
-	}, [sizeWei, invalid, isLoading, maxLeverageExceeded]);
+		return sizeWei.eq(0) || invalid || isLoading;
+	}, [sizeWei, invalid, isLoading]);
 
 	const onClose = () => {
-		dispatch(editCrossMarginPositionSize(''));
-		dispatch(setOpenModal(null));
+		if (showModal) {
+			dispatch(editCrossMarginPositionSize(showModal.marketKey, ''));
+		}
+		dispatch(setShowPositionModal(null));
 	};
 
 	const onSelectPercent = useCallback(
@@ -114,10 +98,7 @@ export default function ClosePositionModal() {
 			<OrderTypeSelector />
 			<Spacer height={20} />
 
-			<EditPositionSizeInput
-				maxNativeValue={maxNativeValue}
-				type={editType === 0 ? 'increase' : 'decrease'}
-			/>
+			<ClosePositionSizeInput maxNativeValue={maxNativeValue} />
 			<SelectorButtons options={CLOSE_PERCENT_OPTIONS} onSelect={onSelectPercent} />
 
 			<Spacer height={20} />
@@ -166,12 +147,10 @@ export default function ClosePositionModal() {
 				fullWidth
 				onClick={submitMarginChange}
 			>
-				{editType === 0
-					? t('futures.market.trade.edit-position.submit-size-increase')
-					: t('futures.market.trade.edit-position.submit-size-decrease')}
+				{t('futures.market.trade.edit-position.submit-size-increase')}
 			</Button>
 
-			{(transactionState?.error || maxLeverageExceeded) && (
+			{transactionState?.error && (
 				<>
 					<Spacer height={20} />
 					<ErrorView

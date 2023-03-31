@@ -62,7 +62,7 @@ export default function TradeBalance() {
 
 const Container = styled.div`
 	width: 100%;
-	padding: 15px;
+	padding: 13px 15px;
 `;
 
 const BalanceContainer = styled.div<{ clickable: boolean }>`

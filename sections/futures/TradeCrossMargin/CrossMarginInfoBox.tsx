@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import { InfoBoxRow } from 'components/InfoBox/InfoBox';
 import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
+import { selectShowModal } from 'state/app/selectors';
 import { selectCrossMarginBalanceInfo, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PillButtonSpan } from 'styles/common';
@@ -15,7 +15,7 @@ function MarginInfoBox() {
 	const dispatch = useAppDispatch();
 
 	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
-	const openModal = useAppSelector(selectOpenModal);
+	const openModal = useAppSelector(selectShowModal);
 	const position = useAppSelector(selectPosition);
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 

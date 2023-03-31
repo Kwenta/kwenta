@@ -650,11 +650,11 @@ export default class FuturesService {
 		return response ? mapTrades(response) : [];
 	}
 
-	public async getIdleMargin(eoa: string, account?: string) {
+	public async getIdleMarginInMarkets(accountOrEoa: string) {
 		const markets = this.markets ?? (await this.getMarkets());
 		const marketParams =
 			markets?.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market })) ?? [];
-		const positions = await this.getFuturesPositions(account ?? eoa, marketParams);
+		const positions = await this.getFuturesPositions(accountOrEoa, marketParams);
 		const positionsWithIdleMargin = positions.filter(
 			(p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0)
 		);
@@ -662,12 +662,9 @@ export default class FuturesService {
 			(acc, p) => acc.add(p.remainingMargin),
 			wei(0)
 		);
-		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(eoa);
 		return {
-			total: idleInMarkets.add(susdWalletBalance),
-			marketsTotal: idleInMarkets,
-			walletTotal: susdWalletBalance,
-			marketsWithMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
+			totalIdleMargin: idleInMarkets,
+			marketsWithIdleMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
 				const market = markets.find((m) => m.marketKey === p.marketKey);
 				if (market) {
 					acc.push({
@@ -678,6 +675,18 @@ export default class FuturesService {
 				}
 				return acc;
 			}, []),
+		};
+	}
+
+	public async getIdleMargin(eoa: string, account?: string) {
+		const idleMargin = await this.getIdleMarginInMarkets(account || eoa);
+
+		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(eoa);
+		return {
+			total: idleMargin.totalIdleMargin.add(susdWalletBalance),
+			marketsTotal: idleMargin.totalIdleMargin,
+			walletTotal: susdWalletBalance,
+			marketsWithMargin: idleMargin.marketsWithIdleMargin,
 		};
 	}
 
@@ -758,9 +767,42 @@ export default class FuturesService {
 			this.sdk.context.signer
 		);
 
+		const commands = [];
+		const inputs = [];
+
+		if (marginDelta.gt(0)) {
+			const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
+			if (marginDelta.gt(freeMargin)) {
+				// Margin delta bigger than account balance,
+				// need to pull some from the users wallet or idle margin
+
+				const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress);
+
+				// Sweep idle margin from other markets to account
+				if (idleMargin.totalIdleMargin.gt(0)) {
+					idleMargin.marketsWithIdleMargin.forEach((m) => {
+						commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
+						inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
+					});
+				}
+				const totalFreeMargin = idleMargin.totalIdleMargin.add(freeMargin);
+				const depositAmount = marginDelta.gt(totalFreeMargin)
+					? marginDelta.sub(totalFreeMargin).abs()
+					: wei(0);
+				if (depositAmount.gt(0)) {
+					// If we don't have enough from idle market margin then we pull from the wallet
+					commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
+					inputs.push(defaultAbiCoder.encode(['int256'], [depositAmount.toBN()]));
+				}
+			}
+		}
+
+		commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
+		inputs.push(encodeModidyMarketMarginParams(marketAddress, marginDelta));
+
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN],
-			[encodeModidyMarketMarginParams(marketAddress, marginDelta)],
+			commands,
+			inputs,
 		]);
 	}
 
@@ -914,6 +956,7 @@ export default class FuturesService {
 				? order.marginDelta.sub(totalFreeMargin).abs()
 				: wei(0);
 			if (depositAmount.gt(0)) {
+				// If there's not enough idle margin to cover the margin delta we pull it from the wallet
 				commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
 				inputs.push(defaultAbiCoder.encode(['int256'], [depositAmount.toBN()]));
 			}
