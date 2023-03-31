@@ -10,13 +10,13 @@ type NumericValueProps = BodyProps & {
 	value?: WeiSource;
 	preview?: boolean;
 	colored?: boolean;
-	percent?: boolean;
 	colorOverride?: 'positive' | 'negative' | 'neutral' | 'preview';
 	options?: FormatNumberOptions;
+	suffix?: string;
 };
 
 const NumericValue: FC<NumericValueProps> = memo(
-	({ value, percent, preview, colored, colorOverride, options, ...props }) => {
+	({ value, preview, colored, colorOverride, options, suffix, ...props }) => {
 		const color = useMemo(() => {
 			if (colorOverride) {
 				return colorOverride;
@@ -36,7 +36,7 @@ const NumericValue: FC<NumericValueProps> = memo(
 		return (
 			<NumberBody $color={color} {...props}>
 				{props.children ?? formatNumber(value, options)}
-				{percent && '%'}
+				{suffix}
 			</NumberBody>
 		);
 	}

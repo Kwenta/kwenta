@@ -57,7 +57,7 @@ const LegacyLink = () => {
 	);
 };
 
-const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
+const PositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
 	showEmptyTable = true,
@@ -75,7 +75,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	let data = useMemo(() => {
-		const positions = [...crossMarginPositions, ...isolatedPositions];
+		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -89,6 +89,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					position: position.position!,
 					description,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
+					stopLoss: accountType === 'cross_margin' ? (position as any).stopLoss : undefined,
+					takeProfit: accountType === 'cross_margin' ? (position as any).takeProfit : undefined,
 				};
 			})
 			.filter(
@@ -96,6 +98,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					position && market && (market?.asset !== currentMarket || showCurrentMarket)
 			);
 	}, [
+		accountType,
 		isolatedPositions,
 		crossMarginPositions,
 		futuresMarkets,
@@ -162,7 +165,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return <PositionType side={cellProps.row.original.position.side} />;
 							},
-							width: 70,
+							width: 60,
 						},
 						{
 							Header: (
@@ -178,11 +181,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 								return (
 									<div>
-										<NumericValue value={cellProps.row.original.position.size} />
 										<Currency.Price
-											price={cellProps.row.original.position.notionalValue}
-											formatOptions={formatOptions}
+											price={cellProps.row.original.position.size}
+											currencyKey={cellProps.row.original.market.asset}
+											showCurrencyKey
 										/>
+										<div>
+											<Currency.Price
+												price={cellProps.row.original.position.notionalValue}
+												formatOptions={formatOptions}
+											/>
+										</div>
 									</div>
 								);
 							},
@@ -205,7 +214,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									/>
 								);
 							},
-							width: 125,
+							width: 115,
 						},
 						{
 							Header: (
@@ -223,7 +232,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									/>
 								);
 							},
-							width: 115,
+							width: 100,
 						},
 						{
 							Header: <TableHeader>Market Margin</TableHeader>,
@@ -233,15 +242,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									<div style={{ display: 'flex', alignItems: 'center' }}>
 										<div style={{ marginRight: 10 }}>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
-											<NumericValue
-												value={cellProps.row.original.position.leverage}
-												options={{ suffix: 'x' }}
-											/>
+											<NumericValue value={cellProps.row.original.position.leverage} suffix="x" />
 										</div>
 										<Pill>Edit</Pill>
 									</div>
 								);
 							},
+							width: 115,
 						},
 						{
 							Header: (
@@ -255,7 +262,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									</PnlContainer>
 								);
 							},
-							width: 125,
+							width: 100,
 						},
 						{
 							Header: <TableHeader>Funding</TableHeader>,
@@ -279,9 +286,16 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								return (
 									<div style={{ display: 'flex', alignItems: 'center' }}>
 										<div style={{ marginRight: 10 }}>
-											{/* <NumericValue value={cellProps.row.original.position} /> */}
-											<NumericValue />
-											<NumericValue />
+											{cellProps.row.original.takeProfit === undefined ? (
+												<Body>{NO_VALUE}</Body>
+											) : (
+												<NumericValue value={cellProps.row.original.takeProfit} />
+											)}
+											{cellProps.row.original.stopLoss === undefined ? (
+												<Body>{NO_VALUE}</Body>
+											) : (
+												<NumericValue value={cellProps.row.original.stopLoss} />
+											)}
 										</div>
 										<Pill>Edit</Pill>
 									</div>
@@ -413,4 +427,4 @@ const NoPositionsText = styled.div`
 	text-decoration: underline;
 `;
 
-export default FuturesPositionsTable;
+export default PositionsTable;

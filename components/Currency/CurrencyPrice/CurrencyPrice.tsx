@@ -6,7 +6,7 @@ import ChangePercent from 'components/ChangePercent';
 import { ContainerRowMixin } from 'components/layout/grid';
 import { NumericValue } from 'components/Text';
 import { CurrencyKey } from 'constants/currency';
-import { FormatCurrencyOptions } from 'utils/formatters/number';
+import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
 
 type CurrencyPriceProps = {
 	currencyKey?: CurrencyKey;
@@ -27,7 +27,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		change,
 		formatOptions,
 		side,
-		sign = '$',
+		sign,
 		currencyKey = 'sUSD',
 		conversionRate = 1,
 		showCurrencyKey = false,
@@ -42,15 +42,16 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 				<NumericValue
 					value={cleanPrice.div(conversionRate)}
 					as="span"
-					options={{
-						prefix: sign,
+					colored={colored}
+					colorOverride={side}
+				>
+					{formatCurrency(currencyKey, cleanPrice.div(conversionRate), {
+						sign: currencyKey === 'sUSD' ? '$' : sign,
 						currencyKey: showCurrencyKey ? currencyKey : undefined,
 						truncate,
 						...formatOptions,
-					}}
-					colored={colored}
-					colorOverride={side}
-				/>
+					})}
+				</NumericValue>
 				{!!change && <ChangePercent className="percent" value={change} />}
 			</Container>
 		);
