@@ -6,7 +6,7 @@ const newTheme = {
 			background: common.palette.neutral.n0,
 		},
 		secondary: {
-			background: common.palette.neutral.n40,
+			background: common.palette.neutral.n10,
 		},
 	},
 	button: {

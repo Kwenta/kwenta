@@ -28,7 +28,7 @@ import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
 import {
 	queryCrossMarginAccounts,
-	queryCrossMarginTransfers,
+	querySmartMarginTransfers,
 	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
@@ -449,7 +449,17 @@ export default class FuturesService {
 
 	public async getCrossMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress;
-		return queryCrossMarginTransfers(this.sdk, address);
+		return querySmartMarginTransfers(this.sdk, address);
+	}
+
+	public async getCrossMarginAccountBalance(crossMarginAddress: string) {
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.provider
+		);
+
+		const freeMargin = await crossMarginAccountContract.freeMargin();
+		return wei(freeMargin);
 	}
 
 	public async getCrossMarginBalanceInfo(walletAddress: string, crossMarginAddress: string) {
@@ -639,11 +649,11 @@ export default class FuturesService {
 		return response ? mapTrades(response) : [];
 	}
 
-	public async getIdleMargin(eoa: string, account?: string) {
+	public async getIdleMarginInMarkets(accountOrEoa: string) {
 		const markets = this.markets ?? (await this.getMarkets());
 		const marketParams =
 			markets?.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market })) ?? [];
-		const positions = await this.getFuturesPositions(account ?? eoa, marketParams);
+		const positions = await this.getFuturesPositions(accountOrEoa, marketParams);
 		const positionsWithIdleMargin = positions.filter(
 			(p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0)
 		);
@@ -651,12 +661,9 @@ export default class FuturesService {
 			(acc, p) => acc.add(p.remainingMargin),
 			wei(0)
 		);
-		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(eoa);
 		return {
-			total: idleInMarkets.add(susdWalletBalance),
-			marketsTotal: idleInMarkets,
-			walletTotal: susdWalletBalance,
-			marketsWithMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
+			totalIdleMargin: idleInMarkets,
+			marketsWithIdleMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
 				const market = markets.find((m) => m.marketKey === p.marketKey);
 				if (market) {
 					acc.push({
@@ -670,14 +677,25 @@ export default class FuturesService {
 		};
 	}
 
+	public async getIdleMargin(eoa: string, account?: string) {
+		const idleMargin = await this.getIdleMarginInMarkets(account || eoa);
+
+		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(eoa);
+		return {
+			total: idleMargin.totalIdleMargin.add(susdWalletBalance),
+			marketsTotal: idleMargin.totalIdleMargin,
+			walletTotal: susdWalletBalance,
+			marketsWithMargin: idleMargin.marketsWithIdleMargin,
+		};
+	}
+
 	public async calculateSmartMarginFee(
-		marketKey: FuturesMarketKey,
 		sizeDelta: Wei,
+		price: Wei,
 		orderType?: ConditionalOrderTypeEnum
 	) {
 		const settings = await this.getCrossMarginSettings();
 		const baseRate = settings.fees.base;
-		const rate = this.sdk.prices.getOffchainPrice(marketKey);
 		const conditional =
 			orderType === ConditionalOrderTypeEnum.STOP
 				? settings.fees.stop
@@ -685,7 +703,7 @@ export default class FuturesService {
 				? settings.fees.limit
 				: wei(0);
 		const fee = sizeDelta.mul(baseRate.add(conditional));
-		return fee.mul(rate);
+		return fee.mul(price);
 	}
 
 	// This is on an interval of 15 seconds.
@@ -734,7 +752,7 @@ export default class FuturesService {
 
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
 			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
-			[defaultAbiCoder.encode(['int256'], [amount.toBN()])],
+			[defaultAbiCoder.encode(['int256'], [amount.neg().toBN()])],
 		]);
 	}
 
@@ -748,9 +766,42 @@ export default class FuturesService {
 			this.sdk.context.signer
 		);
 
+		const commands = [];
+		const inputs = [];
+
+		if (marginDelta.gt(0)) {
+			const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
+			if (marginDelta.gt(freeMargin)) {
+				// Margin delta bigger than account balance,
+				// need to pull some from the users wallet or idle margin
+
+				const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress);
+
+				// Sweep idle margin from other markets to account
+				if (idleMargin.totalIdleMargin.gt(0)) {
+					idleMargin.marketsWithIdleMargin.forEach((m) => {
+						commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
+						inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
+					});
+				}
+				const totalFreeMargin = idleMargin.totalIdleMargin.add(freeMargin);
+				const depositAmount = marginDelta.gt(totalFreeMargin)
+					? marginDelta.sub(totalFreeMargin).abs()
+					: wei(0);
+				if (depositAmount.gt(0)) {
+					// If we don't have enough from idle market margin then we pull from the wallet
+					commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
+					inputs.push(defaultAbiCoder.encode(['int256'], [depositAmount.toBN()]));
+				}
+			}
+		}
+
+		commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
+		inputs.push(encodeModidyMarketMarginParams(marketAddress, marginDelta));
+
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN],
-			[encodeModidyMarketMarginParams(marketAddress, marginDelta)],
+			commands,
+			inputs,
 		]);
 	}
 
@@ -873,21 +924,24 @@ export default class FuturesService {
 		const inputs = [];
 
 		const idleMargin = await this.getIdleMargin(walletAddress, crossMarginAddress);
-		const { freeMargin } = await this.getCrossMarginBalanceInfo(walletAddress, crossMarginAddress);
+		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
 
 		// Sweep idle margin from other markets to account
 		if (idleMargin.marketsTotal.gt(0)) {
 			idleMargin.marketsWithMargin.forEach((m) => {
-				if (m.marketKey === market.key) return;
 				commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
 				inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
 			});
 		}
 
 		// TODO: Work out how best to subtract fee, do we just let the client manage this instead?
+		const price =
+			order.conditionalOrderInputs?.price ?? (await this.sdk.prices.getOffchainPrice(market.key));
+		if (!price || price.eq(0))
+			throw new Error('No price provided or failed to fetch current price');
 		const fee = await this.calculateSmartMarginFee(
-			market.key,
 			order.sizeDelta.abs(),
+			price,
 			order.conditionalOrderInputs?.orderType
 		);
 		// Add a 2% buffer because the price could change
@@ -901,6 +955,7 @@ export default class FuturesService {
 				? order.marginDelta.sub(totalFreeMargin).abs()
 				: wei(0);
 			if (depositAmount.gt(0)) {
+				// If there's not enough idle margin to cover the margin delta we pull it from the wallet
 				commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
 				inputs.push(defaultAbiCoder.encode(['int256'], [depositAmount.toBN()]));
 			}
@@ -1003,7 +1058,10 @@ export default class FuturesService {
 	}
 
 	public async closeCrossMarginPosition(
-		marketAddress: string,
+		market: {
+			address: string;
+			key: FuturesMarketKey;
+		},
 		crossMarginAddress: string,
 		position: {
 			size: Wei;
@@ -1016,16 +1074,31 @@ export default class FuturesService {
 			this.sdk.context.signer
 		);
 
+		const price = await this.sdk.prices.getOffchainPrice(market.key);
+		const fee = await this.calculateSmartMarginFee(position.size.abs(), price);
+		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
+
+		const feeWithBuffer = fee.add(fee.mul(0.02));
+
+		const commands = [];
+		const inputs = [];
+
+		if (fee.gt(0) && freeMargin.lt(feeWithBuffer)) {
+			// Need to add some account margin to pay fees
+			commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
+			inputs.push(defaultAbiCoder.encode(['int256'], [feeWithBuffer.toBN()]));
+		}
+
 		// TODO: Change to delayed close when market contracts are upgraded
 
-		const commands = [AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER];
-		const inputs = [
+		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
+		inputs.push(
 			encodeSubmitOffchainOrderParams(
-				marketAddress,
+				market.address,
 				position.side === PositionSide.LONG ? position.size.neg() : position.size,
 				desiredFillPrice
-			),
-		];
+			)
+		);
 
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
 			commands,

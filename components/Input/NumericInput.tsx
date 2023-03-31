@@ -113,7 +113,7 @@ const InputContainer = styled.div<{
 			: props.theme.colors.selectedTheme.input.borderColor};
 	border-radius: 8px;
 	padding: 0 10px;
-	height: 46px;
+	height: 42px;
 	box-sizing: border-box;
 
 	& > input {

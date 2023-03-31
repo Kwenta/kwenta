@@ -4,12 +4,12 @@ import { FuturesOrderType } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
 import { editTradeOrderPrice } from 'state/futures/actions';
 import { setOrderType } from 'state/futures/reducer';
-import { selectOrderType } from 'state/futures/selectors';
+import { selectCrossMarginOrderType } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 export default function OrderTypeSelector() {
 	const dispatch = useAppDispatch();
-	const orderType = useAppSelector(selectOrderType);
+	const orderType = useAppSelector(selectCrossMarginOrderType);
 
 	return (
 		<SegmentedControl

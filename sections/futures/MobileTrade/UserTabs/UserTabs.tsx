@@ -11,7 +11,7 @@ import TransfersTab from './TransfersTab';
 const TABS = [
 	{
 		title: 'Position',
-		component: <TradeIsolatedMargin isMobile />,
+		component: <TradeIsolatedMargin />,
 	},
 	{
 		title: 'Orders',

@@ -38,6 +38,12 @@ export type EditPositionInputs<T = Wei> = {
 	marginDelta: T;
 };
 
+export type ClosePositionInputs<T = Wei> = {
+	nativeSizeDelta: T;
+	price?: T;
+	orderType: CrossMarginOrderType;
+};
+
 export type MarkPrices<T = Wei> = Partial<Record<FuturesMarketKey, T>>;
 
 export type MarkPriceInfos<T = Wei> = Partial<Record<FuturesMarketKey, PricesInfo<T>>>;
@@ -228,6 +234,7 @@ export type CrossMarginState = {
 	editPositionInputs: EditPositionInputs<string>;
 	marginDelta: string;
 	orderType: CrossMarginOrderType;
+	closePositionOrderInputs: ClosePositionInputs<string>;
 	orderFeeCap: string;
 	leverageInput: string;
 	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>;
@@ -309,6 +316,21 @@ export type DelayedOrderWithDetails<T = Wei> = {
 	isStale?: boolean;
 	isExecutable?: boolean;
 	isCancelling?: boolean;
+};
+
+export type TradePreviewParams = {
+	market: {
+		key: FuturesMarketKey;
+		address: string;
+	};
+	orderPrice?: Wei;
+	sizeDelta: Wei;
+	marginDelta: Wei;
+	action: PreviewAction;
+};
+
+export type DebouncedPreviewParams = TradePreviewParams & {
+	debounceCount: number;
 };
 
 export const futuresPositionKeys = new Set([

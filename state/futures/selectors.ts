@@ -15,7 +15,7 @@ import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
-import { computeOrderFee, sameSide } from 'utils/costCalculations';
+import { computeDelayedOrderFee, sameSide } from 'utils/costCalculations';
 import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
 import { zeroBN } from 'utils/formatters/number';
@@ -77,11 +77,11 @@ export const selectFuturesSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420;
 
 export const selectCrossMarginTransferOpen = (state: RootState) =>
-	state.app.openModal === 'futures_cross_deposit' ||
-	state.app.openModal === 'futures_cross_withdraw';
+	state.app.showModal === 'futures_cross_deposit' ||
+	state.app.showModal === 'futures_cross_withdraw';
 
 export const selectShowCrossMarginOnboard = (state: RootState) =>
-	state.app.openModal === 'futures_smart_margin_onboard';
+	state.app.showModal === 'futures_smart_margin_onboard';
 
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
@@ -164,6 +164,13 @@ export const selectMarketInfo = createSelector(
 export const selectOrderType = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => futures[accountType(futures.selectedType)].orderType
+);
+
+export const selectCrossMarginOrderType = (state: RootState) => state.futures.crossMargin.orderType;
+
+export const selectClosePositionOrderInputs = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => futures.crossMargin.closePositionOrderInputs
 );
 
 export const selectMarketPrice = createSelector(
@@ -575,6 +582,11 @@ export const selectAvailableMargin = createSelector(
 	}
 );
 
+export const selectRemainingMarketMargin = createSelector(selectPosition, (position) => {
+	if (!position) return zeroBN;
+	return position.remainingMargin;
+});
+
 export const selectIdleMargin = createSelector(
 	selectMarketKey,
 	selectCrossMarginPositions,
@@ -792,9 +804,9 @@ export const selectMarketMarginTransfers = createSelector(
 		if (!wallet) return [];
 		const account = futures[accountType(type)].accounts[network]?.[wallet];
 		const marginTransfers = account?.marginTransfers ?? [];
-		return marginTransfers.filter(
-			(o) => accountType(type) === 'isolatedMargin' && o.asset === asset
-		);
+		return accountType(type) === 'isolatedMargin'
+			? marginTransfers.filter((o) => o.asset === asset)
+			: marginTransfers;
 	}
 );
 
@@ -1149,9 +1161,8 @@ export const selectHasRemainingMargin = createSelector(
 export const selectOrderFee = createSelector(
 	selectMarketInfo,
 	selectTradeSizeInputs,
-	selectOrderType,
-	(marketInfo, { susdSizeDelta }, orderType) => {
-		return computeOrderFee(marketInfo, susdSizeDelta, orderType);
+	(marketInfo, { susdSizeDelta }) => {
+		return computeDelayedOrderFee(marketInfo, susdSizeDelta, true);
 	}
 );
 
@@ -1252,7 +1263,7 @@ type PositionPreviewData = {
 	showStatus: boolean;
 };
 
-export const selectPreviewData = createSelector(
+export const selectPositionPreviewData = createSelector(
 	selectTradePreview,
 	selectPosition,
 	selectAverageEntryPrice,
@@ -1277,7 +1288,7 @@ export const selectPreviewData = createSelector(
 	}
 );
 
-export const selectPreviewTradeData = createSelector(
+export const selectPreviewMarginChange = createSelector(
 	selectTradePreview,
 	selectPreviewAvailableMargin,
 	selectMarketInfo,

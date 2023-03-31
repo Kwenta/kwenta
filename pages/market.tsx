@@ -7,6 +7,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesMarketAsset } from 'sdk/types/futures';
+import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
 import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal';
@@ -22,7 +23,7 @@ import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmatio
 import DepositWithdrawCrossMargin from 'sections/futures/TradeCrossMargin/DepositWithdrawCrossMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
+import { selectShowModal, selectShowPositionModal } from 'state/app/selectors';
 import { clearTradeInputs } from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
 import { setFuturesAccountType, setMarketAsset } from 'state/futures/reducer';
@@ -50,7 +51,8 @@ const Market: MarketComponent = () => {
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
 	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
-	const openModal = useAppSelector(selectOpenModal);
+	const openModal = useAppSelector(selectShowModal);
+	const showPositionModal = useAppSelector(selectShowPositionModal);
 	const accountType = useAppSelector(selectFuturesType);
 
 	const resetTradeState = useCallback(() => {
@@ -105,8 +107,9 @@ const Market: MarketComponent = () => {
 			<MobileOrTabletView>
 				<MobileTrade />
 			</MobileOrTabletView>
-			{openModal === 'futures_edit_position_size' && <EditPositionSizeModal />}
-			{openModal === 'futures_edit_position_margin' && <EditPositionMarginModal />}
+			{showPositionModal?.type === 'futures_close_position' && <ClosePositionModal />}
+			{showPositionModal?.type === 'futures_edit_position_size' && <EditPositionSizeModal />}
+			{showPositionModal?.type === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"

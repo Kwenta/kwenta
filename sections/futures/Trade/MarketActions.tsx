@@ -6,7 +6,7 @@ import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
+import { selectShowModal } from 'state/app/selectors';
 import { selectMarketInfo, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { zeroBN } from 'utils/formatters/number';
@@ -19,7 +19,7 @@ const MarketActions: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const position = useAppSelector(selectPosition);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const openModal = useAppSelector(selectOpenModal);
+	const openModal = useAppSelector(selectShowModal);
 
 	const isL2 = useIsL2();
 

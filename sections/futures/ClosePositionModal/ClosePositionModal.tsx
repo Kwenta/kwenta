@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,30 +10,34 @@ import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
+import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { APP_MAX_LEVERAGE } from 'constants/futures';
+import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
+import { PositionSide } from 'sdk/types/futures';
+import { OrderNameByType } from 'sdk/utils/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
-	clearTradeInputs,
-	editCrossMarginPositionMargin,
-	submitCrossMarginAdjustMargin,
+	editCrossMarginPositionSize,
+	submitCrossMarginAdjustPositionSize,
 } from 'state/futures/actions';
+import { setClosePositionOrderType, setClosePositionSizeDelta } from 'state/futures/reducer';
 import {
-	selectEditPositionInputs,
-	selectIdleMargin,
+	selectClosePositionOrderInputs,
 	selectIsFetchingTradePreview,
 	selectPosition,
 	selectPositionPreviewData,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, zeroBN } from 'utils/formatters/number';
+import { floorNumber, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
-import EditPositionMarginInput from './EditPositionMarginInput';
+import ClosePositionSizeInput from './ClosePositionSizeInput';
 
-export default function EditPositionMarginModal() {
+const CLOSE_PERCENT_OPTIONS = ['25%', '50%', '75%', '100%'];
+
+export default function ClosePositionModal() {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
@@ -42,23 +46,11 @@ export default function EditPositionMarginModal() {
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
 	const preview = useAppSelector(selectPositionPreviewData);
-	const { marginDelta } = useAppSelector(selectEditPositionInputs);
-	const idleMargin = useAppSelector(selectIdleMargin);
-	const modal = useAppSelector(selectShowPositionModal);
-
-	const [transferType, setTransferType] = useState(0);
-
-	useEffect(() => {
-		dispatch(clearTradeInputs());
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const onChangeTab = (selection: number) => {
-		setTransferType(selection);
-	};
+	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs);
+	const showModal = useAppSelector(selectShowPositionModal);
 
 	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustMargin());
+		dispatch(submitCrossMarginAdjustPositionSize());
 	}, [dispatch]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
@@ -66,59 +58,48 @@ export default function EditPositionMarginModal() {
 		isFetchingPreview,
 	]);
 
-	const maxWithdraw = useMemo(() => {
-		const maxSize = position?.remainingMargin.mul(APP_MAX_LEVERAGE);
-		const currentSize = position?.position?.notionalValue;
-		const max = maxSize?.sub(currentSize).div(APP_MAX_LEVERAGE) ?? wei(0);
-		return max.lt(0) ? zeroBN : max;
-	}, [position?.remainingMargin, position?.position?.notionalValue]);
+	const maxNativeValue = useMemo(() => {
+		return position?.position?.size ?? zeroBN;
+	}, [position?.position?.size]);
 
-	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
-		idleMargin,
-		maxWithdraw,
-		transferType,
-	]);
-
-	const marginWei = useMemo(
-		() => (!marginDelta || isNaN(Number(marginDelta)) ? wei(0) : wei(marginDelta)),
-		[marginDelta]
+	const sizeWei = useMemo(
+		() => (!nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? wei(0) : wei(nativeSizeDelta)),
+		[nativeSizeDelta]
 	);
 
-	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount]);
-
-	const maxLeverageExceeded =
-		transferType === 1 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
+	const invalid = useMemo(() => sizeWei.gt(maxNativeValue), [sizeWei, maxNativeValue]);
 
 	const submitDisabled = useMemo(() => {
-		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded;
-	}, [marginWei, invalid, isLoading, maxLeverageExceeded]);
+		return sizeWei.eq(0) || invalid || isLoading;
+	}, [sizeWei, invalid, isLoading]);
 
 	const onClose = () => {
-		if (modal?.marketKey) {
-			dispatch(editCrossMarginPositionMargin(modal.marketKey, ''));
+		if (showModal) {
+			dispatch(editCrossMarginPositionSize(showModal.marketKey, ''));
 		}
 		dispatch(setShowPositionModal(null));
 	};
 
-	return (
-		<StyledBaseModal
-			title={transferType === 0 ? 'Increase Position Margin' : 'Withdraw Position Margin'}
-			isOpen
-			onDismiss={onClose}
-		>
-			<Spacer height={10} />
+	const onSelectPercent = useCallback(
+		(index) => {
+			if (!position?.position?.size) return;
+			const option = CLOSE_PERCENT_OPTIONS[index];
+			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
+			const size = floorNumber(position.position.size.abs().mul(percent));
+			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size);
+			dispatch(setClosePositionSizeDelta(sizeDelta.toString()));
+		},
+		[dispatch, position?.position?.size, position?.position?.side]
+	);
 
-			<SegmentedControl
-				values={['Add Margin', 'Withdraw']}
-				selectedIndex={transferType}
-				onChange={onChangeTab}
-			/>
+	return (
+		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
+			<Spacer height={10} />
+			<OrderTypeSelector />
 			<Spacer height={20} />
 
-			<EditPositionMarginInput
-				maxUsdInput={maxUsdInputAmount}
-				type={transferType === 0 ? 'deposit' : 'withdraw'}
-			/>
+			<ClosePositionSizeInput maxNativeValue={maxNativeValue} />
+			<SelectorButtons options={CLOSE_PERCENT_OPTIONS} onSelect={onSelectPercent} />
 
 			<Spacer height={20} />
 			<InfoBoxContainer>
@@ -129,20 +110,20 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					value={position?.position?.leverage.toString(2) + 'x'}
+					value={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
 					valueNode={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
-									? formatDollars(position?.remainingMargin.add(marginWei))
+									? formatNumber(preview.positionSize, { suggestDecimals: true })
 									: '-'}
 							</PreviewArrow>
 						)
 					}
-					title={t('futures.market.trade.edit-position.margin-change')}
-					value={formatDollars(position?.remainingMargin || 0)}
+					title={t('futures.market.trade.edit-position.position-size')}
+					value={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
 					valueNode={
@@ -166,12 +147,10 @@ export default function EditPositionMarginModal() {
 				fullWidth
 				onClick={submitMarginChange}
 			>
-				{transferType === 0
-					? t('futures.market.trade.edit-position.submit-margin-deposit')
-					: t('futures.market.trade.edit-position.submit-margin-withdraw')}
+				{t('futures.market.trade.edit-position.submit-size-increase')}
 			</Button>
 
-			{(transactionState?.error || maxLeverageExceeded) && (
+			{transactionState?.error && (
 				<>
 					<Spacer height={20} />
 					<ErrorView
@@ -181,6 +160,22 @@ export default function EditPositionMarginModal() {
 				</>
 			)}
 		</StyledBaseModal>
+	);
+}
+
+function OrderTypeSelector() {
+	const dispatch = useAppDispatch();
+	const { orderType } = useAppSelector(selectClosePositionOrderInputs);
+
+	return (
+		<SegmentedControl
+			values={CROSS_MARGIN_ORDER_TYPES.map((o) => OrderNameByType[o])}
+			selectedIndex={CROSS_MARGIN_ORDER_TYPES.indexOf(orderType)}
+			onChange={(index: number) => {
+				const type = CROSS_MARGIN_ORDER_TYPES[index];
+				dispatch(setClosePositionOrderType(type));
+			}}
+		/>
 	);
 }
 

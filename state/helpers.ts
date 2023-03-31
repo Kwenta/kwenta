@@ -50,4 +50,4 @@ export const deserializeWeiObject = (object: object, keys: Set<string>, prefix?:
 };
 
 export const accountType = (type: FuturesAccountType) =>
-	type === 'cross_margin' ? 'crossMargin' : 'isolatedMargin';
+	type === 'cross_margin' || type === 'smart_margin' ? 'crossMargin' : 'isolatedMargin';
