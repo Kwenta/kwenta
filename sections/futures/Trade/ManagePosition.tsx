@@ -173,10 +173,6 @@ const ManagePosition: React.FC = () => {
 	return (
 		<>
 			<div>
-				<ManageOrderTitle>
-					Manage&nbsp; —<span>&nbsp; Adjust your position</span>
-				</ManageOrderTitle>
-
 				<ManagePositionContainer>
 					<PlaceOrderButton
 						data-testid="trade-open-position-button"

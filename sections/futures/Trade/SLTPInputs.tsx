@@ -91,7 +91,7 @@ export default function SLTPInputs() {
 	return (
 		<Container>
 			<ExpandRow onClick={() => setShowInputs(!showInputs)}>
-				<InputTitle>Stop Loss / Take Profit</InputTitle>
+				<InputTitle margin="1px 0 0 0">Stop Loss / Take Profit</InputTitle>
 				<Button
 					style={{
 						height: '20px',
@@ -144,7 +144,8 @@ export default function SLTPInputs() {
 
 const Container = styled.div`
 	padding: 10px;
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.secondary};
+	background: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.containers.secondary.background};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;
 	margin-bottom: 16px;
