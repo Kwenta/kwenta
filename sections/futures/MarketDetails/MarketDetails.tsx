@@ -17,7 +17,7 @@ import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import MarketsDropdown from '../Trade/MarketsDropdown';
-import MarketDetail from './MarketDetail';
+import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
 
 type MarketDetailsProps = {
@@ -35,6 +35,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				<HourlyFundingDetail />
 				<OpenInterestLongDetail />
 				<OpenInterestShortDetail />
+				<MarketSkew />
 			</MarketDetailsContainer>
 		</MainContainer>
 	);
@@ -118,6 +119,33 @@ const OpenInterestLongDetail = memo(() => {
 				marketInfo?.openInterest.longUSD
 					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })} / ${oiCap}`
 					: NO_VALUE
+			}
+		/>
+	);
+});
+
+const MarketSkew = memo(() => {
+	const marketInfo = useAppSelector(selectMarketInfo);
+
+	return (
+		<MarketDetail
+			dataKey={MarketDataKey.skew}
+			value={
+				<>
+					<MarketDetailValue
+						color="red"
+						value={formatPercent(marketInfo ? marketInfo?.openInterest.shortPct : 0, {
+							minDecimals: 0,
+						})}
+					/>
+					{' / '}
+					<MarketDetailValue
+						color="green"
+						value={formatPercent(marketInfo ? marketInfo?.openInterest.longPct : 0, {
+							minDecimals: 0,
+						})}
+					/>
+				</>
 			}
 		/>
 	);

@@ -39,15 +39,7 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 		>
 			<WithCursor cursor="help">
 				<Body className="heading">{dataKey}</Body>
-				<Body
-					as="span"
-					mono
-					weight="bold"
-					size="large"
-					className={`value ${color || ''} ${pausedClass}`}
-				>
-					{value}
-				</Body>
+				<MarketDetailValue value={value} color={color} pausedClass={pausedClass} />
 			</WithCursor>
 		</MarketDetailsTooltip>
 	);
@@ -67,3 +59,17 @@ const MarketDetailsTooltip = styled(Tooltip).attrs({ position: 'fixed', height: 
 	padding: 10px;
 	right: ${(props) => props.mobile && '1px'};
 `;
+
+export const MarketDetailValue = ({
+	value,
+	color,
+	pausedClass = '',
+}: {
+	value: string | ReactElement;
+	color?: string;
+	pausedClass?: 'paused' | '';
+}) => (
+	<Body as="span" mono weight="bold" size="large" className={`value ${color || ''} ${pausedClass}`}>
+		{value}
+	</Body>
+);
