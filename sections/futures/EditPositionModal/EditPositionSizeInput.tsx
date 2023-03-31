@@ -8,6 +8,7 @@ import { FlexDivRow } from 'components/layout/flex';
 import { getStep } from 'components/Slider/Slider';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
+import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionSize } from 'state/futures/actions';
 import {
 	selectPosition,
@@ -33,12 +34,17 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 		const position = useAppSelector(selectPosition);
 		const orderType = useAppSelector(selectOrderType);
 		const selectedLeverageSide = useAppSelector(selectLeverageSide);
+		const modal = useAppSelector(selectShowPositionModal);
 
 		const onSizeChange = useCallback(
 			(value: string) => {
-				dispatch(editCrossMarginPositionSize(type === 'increase' ? value : '-' + value));
+				if (modal) {
+					dispatch(
+						editCrossMarginPositionSize(modal.marketKey, type === 'increase' ? value : '-' + value)
+					);
+				}
 			},
-			[dispatch, type]
+			[dispatch, type, modal]
 		);
 
 		const handleSetMax = useCallback(() => {

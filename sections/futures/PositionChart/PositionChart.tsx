@@ -2,25 +2,27 @@ import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
-import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import {
 	selectConditionalOrdersForMarket,
 	selectPosition,
+	selectPositionPreviewData,
 	selectSelectedMarketPositionHistory,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import { zeroBN } from 'utils/formatters/number';
 
 export default function PositionChart() {
 	const position = useAppSelector(selectPosition);
 	const openOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const previewTrade = useAppSelector(selectTradePreview);
 	const subgraphPosition = useAppSelector(selectSelectedMarketPositionHistory);
+	const positionPreview = useAppSelector(selectPositionPreviewData);
 
 	const [showOrderLines, setShowOrderLines] = useState(true);
 	const [isChartReady, setIsChartReady] = useState(false);
 
-	const modifiedAverage = useAverageEntryPrice(subgraphPosition);
+	const modifiedAverage = positionPreview?.avgEntryPrice ?? zeroBN;
 
 	const activePosition = useMemo(() => {
 		if (!position?.position) {

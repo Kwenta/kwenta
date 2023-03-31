@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -13,9 +13,10 @@ import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { APP_MAX_LEVERAGE } from 'constants/futures';
-import { setOpenModal } from 'state/app/reducer';
-import { selectTransaction } from 'state/app/selectors';
+import { setShowPositionModal } from 'state/app/reducer';
+import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
+	clearTradeInputs,
 	editCrossMarginPositionMargin,
 	submitCrossMarginAdjustMargin,
 } from 'state/futures/actions';
@@ -24,7 +25,7 @@ import {
 	selectIdleMargin,
 	selectIsFetchingTradePreview,
 	selectPosition,
-	selectPreviewData,
+	selectPositionPreviewData,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -40,10 +41,17 @@ export default function EditPositionMarginModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
-	const preview = useAppSelector(selectPreviewData);
+	const preview = useAppSelector(selectPositionPreviewData);
 	const { marginDelta } = useAppSelector(selectEditPositionInputs);
 	const idleMargin = useAppSelector(selectIdleMargin);
+	const modal = useAppSelector(selectShowPositionModal);
+
 	const [transferType, setTransferType] = useState(0);
+
+	useEffect(() => {
+		dispatch(clearTradeInputs());
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const onChangeTab = (selection: number) => {
 		setTransferType(selection);
@@ -86,8 +94,10 @@ export default function EditPositionMarginModal() {
 	}, [marginWei, invalid, isLoading, maxLeverageExceeded]);
 
 	const onClose = () => {
-		dispatch(editCrossMarginPositionMargin(''));
-		dispatch(setOpenModal(null));
+		if (modal?.marketKey) {
+			dispatch(editCrossMarginPositionMargin(modal.marketKey, ''));
+		}
+		dispatch(setShowPositionModal(null));
 	};
 
 	return (

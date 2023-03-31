@@ -318,6 +318,21 @@ export type DelayedOrderWithDetails<T = Wei> = {
 	isCancelling?: boolean;
 };
 
+export type TradePreviewParams = {
+	market: {
+		key: FuturesMarketKey;
+		address: string;
+	};
+	orderPrice?: Wei;
+	sizeDelta: Wei;
+	marginDelta: Wei;
+	action: PreviewAction;
+};
+
+export type DebouncedPreviewParams = TradePreviewParams & {
+	debounceCount: number;
+};
+
 export const futuresPositionKeys = new Set([
 	'remainingMargin',
 	'accessibleMargin',
