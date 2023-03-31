@@ -18,6 +18,7 @@ type CurrencyPriceProps = {
 	formatOptions?: FormatCurrencyOptions;
 	truncate?: boolean;
 	side?: 'positive' | 'negative' | 'preview';
+	colored?: boolean;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
@@ -31,6 +32,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		conversionRate = 1,
 		showCurrencyKey = false,
 		truncate = false,
+		colored = false,
 		...rest
 	}) => {
 		const cleanPrice = wei(price);
@@ -41,11 +43,12 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 					value={cleanPrice.div(conversionRate)}
 					as="span"
 					options={{
-						sign,
+						prefix: sign,
 						currencyKey: showCurrencyKey ? currencyKey : undefined,
 						truncate,
 						...formatOptions,
 					}}
+					colored={colored}
 					colorOverride={side}
 				/>
 				{!!change && <ChangePercent className="percent" value={change} />}

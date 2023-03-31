@@ -164,7 +164,7 @@ export const Table: FC<TableProps> = memo(
 						className={className}
 					>
 						{headerGroups.map((headerGroup) => (
-							<div className="table-row" {...headerGroup.getHeaderGroupProps()}>
+							<div className="table-row" style={{ display: 'flex' }}>
 								{headerGroup.headers.map((column: any) => (
 									<TableCellHead
 										hideHeaders={hideHeaders}
@@ -307,7 +307,7 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
 			}
 			${TableCell} {
 				color: ${(props) => props.theme.colors.selectedTheme.text.value};
-				font-size: 12px;
+				font-size: 13px;
 				height: ${CARD_HEIGHT};
 				font-family: ${(props) => props.theme.fonts.mono};
 			}

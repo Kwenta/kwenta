@@ -1,14 +1,12 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { useTheme } from 'styled-components';
 
 import LinkArrow from 'assets/svg/app/link-arrow.svg';
-import MarketBadge from 'components/Badge/MarketBadge';
 import Button from 'components/Button';
-import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Pill from 'components/Pill';
@@ -59,17 +57,6 @@ const LegacyLink = () => {
 	);
 };
 
-// - Market
-// - Side
-// - Size
-// - Average Entry
-// - Liquidation Price
-// - Market Margin
-// - PnL
-// - Funding
-// - TP/SL
-// - Position
-
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
@@ -78,7 +65,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { switchToL2 } = useNetworkSwitcher();
-	const [modalMarket, setModalMarket] = useState<string>();
 
 	const isL2 = useIsL2();
 
@@ -156,23 +142,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							accessor: 'market',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<MarketContainer>
-										<IconContainer>
-											<StyledCurrencyIcon currencyKey={cellProps.row.original.market.marketKey} />
-										</IconContainer>
-										<StyledText>
-											{cellProps.row.original.market.marketName}
-											<MarketBadge
+									<StyledText>
+										{cellProps.row.original.market.marketName}
+										{/* <MarketBadge
 												currencyKey={cellProps.row.original.market.marketKey}
 												isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
 												futuresClosureReason={cellProps.row.original.market.marketClosureReason}
-											/>
-										</StyledText>
-										<StyledValue>{cellProps.row.original.description}</StyledValue>
-									</MarketContainer>
+											/> */}
+									</StyledText>
 								);
 							},
-							width: 180,
+							width: 120,
 						},
 						{
 							Header: (
@@ -197,10 +177,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									: {};
 
 								return (
-									<Currency.Price
-										price={cellProps.row.original.position.notionalValue}
-										formatOptions={formatOptions}
-									/>
+									<div>
+										<NumericValue value={cellProps.row.original.position.size} />
+										<Currency.Price
+											price={cellProps.row.original.position.notionalValue}
+											formatOptions={formatOptions}
+										/>
+									</div>
 								);
 							},
 							width: 90,
@@ -247,10 +230,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							accessor: 'margin',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<div style={{ display: 'flex' }}>
-										<div>
+									<div style={{ display: 'flex', alignItems: 'center' }}>
+										<div style={{ marginRight: 10 }}>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
-											<NumericValue value={cellProps.row.original.position.leverage} />
+											<NumericValue
+												value={cellProps.row.original.position.leverage}
+												options={{ suffix: 'x' }}
+											/>
 										</div>
 										<Pill>Edit</Pill>
 									</div>
@@ -277,7 +263,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
-										<Currency.Price price={cellProps.row.original.position.accruedFunding} />
+										<Currency.Price
+											price={cellProps.row.original.position.accruedFunding}
+											colored
+										/>
 									</div>
 								);
 							},
@@ -286,10 +275,15 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						{
 							Header: <TableHeader>TP/SL</TableHeader>,
 							accessor: 'tp-sl',
-							Cell: () => {
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<div>
-										<NumericValue></NumericValue>
+									<div style={{ display: 'flex', alignItems: 'center' }}>
+										<div style={{ marginRight: 10 }}>
+											{/* <NumericValue value={cellProps.row.original.position} /> */}
+											<NumericValue />
+											<NumericValue />
+										</div>
+										<Pill>Edit</Pill>
 									</div>
 								);
 							},
@@ -368,25 +362,6 @@ const PnlContainer = styled.div`
 	flex-direction: column;
 `;
 
-const StyledCurrencyIcon = styled(Currency.Icon)`
-	width: 30px;
-	height: 30px;
-	margin-right: 8px;
-`;
-
-const IconContainer = styled.div`
-	grid-column: 1;
-	grid-row: 1 / span 2;
-`;
-
-const StyledValue = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 12px;
-	grid-column: 2;
-	grid-row: 2;
-`;
-
 const TableHeader = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
@@ -436,10 +411,6 @@ const NoPositionsText = styled.div`
 	font-size: 16px;
 	text-align: center;
 	text-decoration: underline;
-`;
-
-const STable = styled(Table)`
-	flex: 1;
 `;
 
 export default FuturesPositionsTable;
