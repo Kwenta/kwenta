@@ -17,7 +17,7 @@ const BasePill = styled.button<{
 	$outline?: boolean;
 }>`
 	${(props) => css`
-		padding: ${props.$size === 'small' ? '5px' : '8px'};
+		padding: ${props.$size === 'small' ? '0px' : '8px'};
 		height: 20px;
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
 		font-family: ${props.theme.fonts.black};

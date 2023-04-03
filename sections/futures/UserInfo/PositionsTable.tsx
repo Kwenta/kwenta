@@ -28,9 +28,11 @@ import {
 	selectMarketAsset,
 	selectMarkets,
 	selectPositionHistory,
+	selectSlTpOrderPrice,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
+import { formatDollars } from 'utils/formatters/number';
 
 type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
@@ -75,7 +77,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
-
+	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpOrderPrice);
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
 		return positions
@@ -84,13 +86,12 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss,
-					takeProfit: position.takeProfit,
+					stopLoss: formatDollars(stopLossPrice),
+					takeProfit: formatDollars(takeProfitPrice),
 				};
 			})
 			.filter(
@@ -99,10 +100,12 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 			);
 	}, [
 		accountType,
-		isolatedPositions,
 		crossMarginPositions,
+		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
+		stopLossPrice,
+		takeProfitPrice,
 		currentMarket,
 		showCurrentMarket,
 	]);
@@ -277,12 +280,12 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 											{cellProps.row.original.takeProfit === undefined ? (
 												<Body>{NO_VALUE}</Body>
 											) : (
-												<NumericValue value={cellProps.row.original.takeProfit} />
+												<div className="value">{cellProps.row.original.takeProfit}</div>
 											)}
 											{cellProps.row.original.stopLoss === undefined ? (
 												<Body>{NO_VALUE}</Body>
 											) : (
-												<NumericValue value={cellProps.row.original.stopLoss} />
+												<div className="value">{cellProps.row.original.stopLoss}</div>
 											)}
 										</div>
 										<Pill
