@@ -15,10 +15,10 @@ type NumericValueProps = BodyProps & {
 };
 
 const NumericValue: FC<NumericValueProps> = memo(
-	({ value, preview, colored, options, suffix, ...props }) => {
-		const color = useMemo(() => {
-			if (props.color) {
-				return props.color;
+	({ value, preview, colored, options, suffix, color, ...props }) => {
+		const numberColor = useMemo(() => {
+			if (color) {
+				return color;
 			} else if (preview) {
 				return 'preview';
 			} else if (colored && value) {
@@ -30,13 +30,13 @@ const NumericValue: FC<NumericValueProps> = memo(
 			} else {
 				return 'primary';
 			}
-		}, [props.color, preview, colored, value]);
+		}, [color, preview, colored, value]);
 
 		return (
-			<NumberBody color={color} {...props}>
+			<Body mono color={numberColor} {...props}>
 				{props.children ?? formatNumber(value, options)}
 				{suffix}
-			</NumberBody>
+			</Body>
 		);
 	}
 );

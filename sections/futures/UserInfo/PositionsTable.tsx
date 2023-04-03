@@ -144,16 +144,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 							),
 							accessor: 'market',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
-								return (
-									<StyledText>
-										{cellProps.row.original.market.marketName}
-										{/* <MarketBadge
-												currencyKey={cellProps.row.original.market.marketKey}
-												isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
-												futuresClosureReason={cellProps.row.original.market.marketClosureReason}
-											/> */}
-									</StyledText>
-								);
+								return <StyledText>{cellProps.row.original.market.marketName}</StyledText>;
 							},
 							width: 120,
 						},
@@ -258,7 +249,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<PnlContainer>
-										<Currency.Price price={cellProps.row.original.position.pnl} />
+										<Currency.Price price={cellProps.row.original.position.pnl} colored />
 									</PnlContainer>
 								);
 							},
@@ -269,12 +260,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 							accessor: 'funding',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<div>
-										<Currency.Price
-											price={cellProps.row.original.position.accruedFunding}
-											colored
-										/>
-									</div>
+									<Currency.Price price={cellProps.row.original.position.accruedFunding} colored />
 								);
 							},
 							width: 90,

@@ -1,6 +1,6 @@
 import { wei, WeiSource } from '@synthetixio/wei';
 import React, { FC, memo } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
 import { ContainerRowMixin } from 'components/layout/grid';
@@ -58,15 +58,8 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 	}
 );
 
-const Container = styled.span<{ $side?: 'positive' | 'negative' }>`
+const Container = styled.span`
 	${ContainerRowMixin};
-	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	${(props) =>
-		!!props.$side &&
-		css`
-			color: ${props.theme.colors.selectedTheme.newTheme.text[props.$side]};
-		`}
 `;
 
 export default CurrencyPrice;

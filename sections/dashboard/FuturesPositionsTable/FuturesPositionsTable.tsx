@@ -59,15 +59,6 @@ const LegacyLink = () => {
 	);
 };
 
-// - Market
-// - Side
-// - Size
-// - Average Entry
-// - Market Margin
-// - Leverage
-// - Liquidation Price
-// - PnL
-
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
