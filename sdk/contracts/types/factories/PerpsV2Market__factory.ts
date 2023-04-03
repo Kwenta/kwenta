@@ -1234,7 +1234,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const;
+];
 
 export class PerpsV2Market__factory {
   static readonly abi = _abi;
