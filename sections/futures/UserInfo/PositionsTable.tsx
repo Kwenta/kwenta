@@ -172,7 +172,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 										<Currency.Price
 											price={cellProps.row.original.position.size}
 											currencyKey={cellProps.row.original.market.asset}
-											showCurrencyKey
 										/>
 										<div>
 											<Currency.Price
