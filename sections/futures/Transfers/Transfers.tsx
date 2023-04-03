@@ -101,7 +101,6 @@ const Transfers: FC = () => {
 					</TableNoResults>
 				)
 			}
-			showPagination
 			pageSize={3}
 		/>
 	);

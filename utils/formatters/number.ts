@@ -3,7 +3,6 @@ import BN from 'bn.js';
 import { BigNumber, ethers, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
-import { CurrencyKey } from 'constants/currency';
 import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
@@ -40,7 +39,6 @@ export type FormatCurrencyOptions = {
 	suggestDecimals?: boolean;
 } & TruncatedOptions;
 
-const DEFAULT_CURRENCY_DECIMALS = 2;
 export const SHORT_CRYPTO_CURRENCY_DECIMALS = 4;
 export const LONG_CRYPTO_CURRENCY_DECIMALS = 8;
 
@@ -179,30 +177,6 @@ export const formatPercent = (value: WeiSource, options?: { minDecimals: number 
 
 	return `${wei(value).mul(100).toString(decimals)}%`;
 };
-
-// TODO: figure out a robust way to get the correct precision.
-const getPrecision = (amount: WeiSource) => {
-	if (amount >= 1) {
-		return DEFAULT_CURRENCY_DECIMALS;
-	}
-	if (amount > 0.01) {
-		return SHORT_CRYPTO_CURRENCY_DECIMALS;
-	}
-	return LONG_CRYPTO_CURRENCY_DECIMALS;
-};
-
-// TODO: use a library for this, because the sign does not always appear on the left. (perhaps something like number.toLocaleString)
-export const formatCurrencyWithSign = (
-	sign: string | null | undefined,
-	value: WeiSource,
-	decimals?: number
-) => `${sign}${formatCurrency(String(value), decimals || getPrecision(value))}`;
-
-export const formatCurrencyWithKey = (
-	currencyKey: CurrencyKey,
-	value: WeiSource,
-	decimals?: number
-) => `${formatCurrency(String(value), decimals || getPrecision(value))} ${currencyKey}`;
 
 export function scale(input: Wei, decimalPlaces: number): Wei {
 	return input.mul(wei(10).pow(decimalPlaces));

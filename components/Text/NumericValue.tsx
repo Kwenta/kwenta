@@ -2,19 +2,24 @@ import { wei, WeiSource } from '@synthetixio/wei';
 import { FC, memo, useMemo } from 'react';
 import styled from 'styled-components';
 
+import { formatNumber, FormatNumberOptions } from 'utils/formatters/number';
+
 import Body, { BodyProps } from './Body';
 
 type NumericValueProps = BodyProps & {
 	value?: WeiSource;
 	preview?: boolean;
 	colored?: boolean;
-	percent?: boolean;
+	options?: FormatNumberOptions;
+	suffix?: string;
 };
 
 const NumericValue: FC<NumericValueProps> = memo(
-	({ value, percent, preview, colored, ...props }) => {
-		const color = useMemo(() => {
-			if (preview) {
+	({ value, preview, colored, options, suffix, color, ...props }) => {
+		const numberColor = useMemo(() => {
+			if (color) {
+				return color;
+			} else if (preview) {
 				return 'preview';
 			} else if (colored && value) {
 				if (wei(value).gt(0)) {
@@ -23,24 +28,19 @@ const NumericValue: FC<NumericValueProps> = memo(
 					return 'negative';
 				}
 			} else {
-				return 'neutral';
+				return 'primary';
 			}
-		}, [preview, colored, value]);
+		}, [color, preview, colored, value]);
 
 		return (
-			<NumberBody $color={color} {...props}>
-				{props.children ?? value.toString()}
-				{percent && '%'}
-			</NumberBody>
+			<Body mono color={numberColor} {...props}>
+				{props.children ?? formatNumber(value, options)}
+				{suffix}
+			</Body>
 		);
 	}
 );
 
-export const NumberBody = styled(Body).attrs({ mono: true })<{
-	$color?: 'positive' | 'negative' | 'neutral' | 'preview';
-}>`
-	color: ${(props) =>
-		props.theme.colors.selectedTheme.newTheme.text.number[props.$color ?? 'neutral']};
-`;
+export const NumberBody = styled(Body).attrs({ mono: true })``;
 
 export default NumericValue;

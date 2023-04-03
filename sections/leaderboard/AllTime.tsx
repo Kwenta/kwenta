@@ -146,12 +146,7 @@ const AllTime: FC<AllTimeProps> = ({
 									),
 									accessor: 'totalVolume',
 									Cell: (cellProps: CellProps<any>) => (
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.totalVolume}
-											sign="$"
-											conversionRate={1}
-										/>
+										<Currency.Price price={cellProps.row.original.totalVolume} />
 									),
 									width: compact ? 'auto' : 100,
 								},

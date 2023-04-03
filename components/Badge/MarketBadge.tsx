@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
-import { FuturesMarketAsset, SynthSuspensionReason } from 'sdk/types/futures';
+import { SynthSuspensionReason } from 'sdk/types/futures';
 import { marketIsOpen, marketNextOpen, marketNextTransition } from 'utils/marketHours';
 
 import Badge from './Badge';
 
 type MarketBadgeProps = {
-	currencyKey: FuturesMarketAsset;
+	currencyKey: string;
 	isFuturesMarketClosed?: boolean;
 	futuresClosureReason?: SynthSuspensionReason;
 	fallbackComponent?: ReactElement;

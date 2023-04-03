@@ -216,12 +216,7 @@ const Assets = () => {
 										</StatsIconContainer>
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
-											<Currency.Price
-												currencyKey="sUSD"
-												price={price}
-												sign="$"
-												conversionRate={1}
-											/>
+											<Currency.Price price={price} />
 										</AssetPrice>
 										<StatsValueContainer>
 											<StatsValue>
@@ -237,13 +232,7 @@ const Assets = () => {
 												{volume === 0 ? (
 													<>-</>
 												) : (
-													<Currency.Price
-														currencyKey="sUSD"
-														price={volume}
-														sign="$"
-														conversionRate={1}
-														formatOptions={{ minDecimals: 0 }}
-													/>
+													<Currency.Price price={volume} formatOptions={{ minDecimals: 0 }} />
 												)}
 											</StatsValue>
 										</StatsValueContainer>
@@ -278,12 +267,7 @@ const Assets = () => {
 										</StatsIconContainer>
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
-											<Currency.Price
-												currencyKey="sUSD"
-												price={price}
-												sign="$"
-												conversionRate={1}
-											/>
+											<Currency.Price price={price} />
 										</AssetPrice>
 										<StatsValueContainer>
 											<StatsValue>
@@ -299,13 +283,7 @@ const Assets = () => {
 												{volume === 0 ? (
 													<>-</>
 												) : (
-													<Currency.Price
-														currencyKey="sUSD"
-														price={volume}
-														sign="$"
-														conversionRate={1}
-														formatOptions={{ minDecimals: 0 }}
-													/>
+													<Currency.Price price={volume} formatOptions={{ minDecimals: 0 }} />
 												)}
 											</StatsValue>
 										</StatsValueContainer>

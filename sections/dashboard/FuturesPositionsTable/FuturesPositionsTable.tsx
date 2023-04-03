@@ -10,9 +10,10 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
+import { Body, NumericValue } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -29,7 +30,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { formatNumber } from 'utils/formatters/number';
 import { getSynthDescription } from 'utils/futures';
 
 import MobilePositionRow from './MobilePositionRow';
@@ -78,7 +78,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
+		const positions = [...crossMarginPositions, ...isolatedPositions];
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -88,22 +88,21 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				});
 
 				return {
-					market,
-					position: position.position,
+					market: market!,
+					position: position.position!,
 					description,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
+					stopLoss: position.stopLoss,
+					takeProfit: position.takeProfit,
 				};
 			})
 			.filter(
-				(position) =>
-					position.position &&
-					position.market &&
-					(position?.market?.asset !== currentMarket || showCurrentMarket)
+				({ position, market }) =>
+					position && market && (market?.asset !== currentMarket || showCurrentMarket)
 			);
 	}, [
 		isolatedPositions,
 		crossMarginPositions,
-		accountType,
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
@@ -118,7 +117,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					{/* <LegacyLink /> */}
 					<Table
 						data={data}
-						showPagination
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}
@@ -167,7 +165,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										</MarketContainer>
 									);
 								},
-								width: 198,
+								width: 180,
 							},
 							{
 								Header: (
@@ -177,7 +175,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Cell: (cellProps: CellProps<any>) => {
 									return <PositionType side={cellProps.row.original.position.side} />;
 								},
-								width: 90,
+								width: 70,
 							},
 							{
 								Header: (
@@ -193,51 +191,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 									return (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.position.notionalValue}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
 									);
 								},
 								width: 90,
-							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.leverage')}
-									</TableHeader>
-								),
-								accessor: 'leverage',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<Body mono>{formatNumber(cellProps.row.original.position.leverage ?? 0)}x</Body>
-									);
-								},
-								width: 90,
-							},
-							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
-								),
-								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<PnlContainer>
-											<ChangePercent value={cellProps.row.original.position.pnlPct} />
-											<div>
-												<Currency.Price
-													currencyKey="sUSD"
-													price={cellProps.row.original.position.pnl}
-													sign="$"
-													conversionRate={1}
-												/>
-											</div>
-										</PnlContainer>
-									);
-								},
-								width: 125,
 							},
 							{
 								Header: (
@@ -254,10 +213,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<Body>{NO_VALUE}</Body>
 									) : (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.avgEntryPrice}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
 									);
@@ -277,12 +233,68 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									};
 									return (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.position.liquidationPrice}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
+									);
+								},
+								width: 115,
+							},
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
+								),
+								accessor: 'pnl',
+								Cell: (cellProps: CellProps<any>) => {
+									return (
+										<PnlContainer>
+											<ChangePercent value={cellProps.row.original.position.pnlPct} />
+											<div>
+												<Currency.Price price={cellProps.row.original.position.pnl} />
+											</div>
+										</PnlContainer>
+									);
+								},
+								width: 125,
+							},
+							{
+								Header: <TableHeader>TP/SL</TableHeader>,
+								accessor: 'tp-sl',
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
+									return (
+										<FlexDivRowCentered>
+											<div style={{ marginRight: 10 }}>
+												{cellProps.row.original.takeProfit === undefined ? (
+													<Body>{NO_VALUE}</Body>
+												) : (
+													<NumericValue value={cellProps.row.original.takeProfit} />
+												)}
+												{cellProps.row.original.stopLoss === undefined ? (
+													<Body>{NO_VALUE}</Body>
+												) : (
+													<NumericValue value={cellProps.row.original.stopLoss} />
+												)}
+											</div>
+										</FlexDivRowCentered>
+									);
+								},
+								width: 90,
+							},
+							{
+								Header: <TableHeader>Market Margin</TableHeader>,
+								accessor: 'margin',
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
+									return (
+										<FlexDivRowCentered>
+											<div style={{ marginRight: 10 }}>
+												<NumericValue value={cellProps.row.original.position.initialMargin} />
+												<NumericValue
+													value={cellProps.row.original.position.leverage}
+													color="secondary"
+													suffix="x"
+												/>
+											</div>
+										</FlexDivRowCentered>
 									);
 								},
 								width: 115,
@@ -368,7 +380,7 @@ const StyledValue = styled.div`
 	grid-row: 2;
 `;
 
-const TableHeader = styled.div`
+const TableHeader = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 

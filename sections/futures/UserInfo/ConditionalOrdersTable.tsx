@@ -58,7 +58,6 @@ export default function ConditionalOrdersTable() {
 				<StyledTable
 					data={rows}
 					highlightRowsOnHover
-					showPagination
 					rounded={false}
 					noResultsMessage={
 						!isL2 ? (
@@ -143,12 +142,7 @@ export default function ConditionalOrdersTable() {
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div>
-										<Currency.Price
-											currencyKey={'sUSD'}
-											price={cellProps.row.original.targetPrice}
-											sign={'$'}
-											conversionRate={1}
-										/>
+										<Currency.Price price={cellProps.row.original.targetPrice} />
 									</div>
 								);
 							},
@@ -231,12 +225,7 @@ export default function ConditionalOrdersTable() {
 									<div>
 										<div>{cellProps.row.original.sizeTxt}</div>
 										{cellProps.row.original.targetPrice && (
-											<Currency.Price
-												currencyKey={'sUSD'}
-												price={cellProps.row.original.targetPrice}
-												sign={'$'}
-												conversionRate={1}
-											/>
+											<Currency.Price price={cellProps.row.original.targetPrice} />
 										)}
 									</div>
 								);

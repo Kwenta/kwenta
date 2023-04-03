@@ -163,5 +163,5 @@ const StyledFullHeightContainer = styled.div`
 	grid-template-columns: 380px 1fr;
 	grid-gap: 0;
 	flex: 1;
-	height: calc(100% - 56px);
+	height: calc(100% - 64px);
 `;

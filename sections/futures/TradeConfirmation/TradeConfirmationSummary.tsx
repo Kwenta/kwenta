@@ -43,7 +43,7 @@ export default function TradeConfirmationSummary({
 					title={t('futures.market.user.position.modal.side')}
 					value={
 						<NumberBody
-							$color={leverageSide === 'short' ? 'negative' : 'positive'}
+							color={leverageSide === 'short' ? 'negative' : 'positive'}
 							className={leverageSide}
 						>
 							{leverageSide.toUpperCase()}
