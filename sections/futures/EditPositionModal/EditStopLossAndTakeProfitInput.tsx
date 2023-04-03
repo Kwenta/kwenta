@@ -26,7 +26,11 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 			selectSlTpOrderPrice
 		);
 		// eslint-disable-next-line no-console
-		console.log(`take profit price: ${tpPrice}, stop loss price: ${slPrice}`);
+		console.log(
+			`take profit price: ${tpPrice} ${takeProfitPrice}, stop loss price: ${slPrice} ${stopLossPrice} ${
+				slPrice !== '0.00' || stopLossPrice !== '0.00'
+			}`
+		);
 		return (
 			<div style={{ marginTop: '5px', marginBottom: '10px' }}>
 				<StyledInputHeaderRow
@@ -44,13 +48,17 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 						dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
 						value={type === 'take-profit' ? takeProfitPrice : stopLossPrice}
 						onChange={onChange}
-						placeholder={type === 'take-profit' ? slPrice : tpPrice}
+						placeholder={type === 'take-profit' ? tpPrice : slPrice}
 					/>
 
 					<Button
 						style={{ padding: '0 23px' }}
 						onClick={onClick}
-						disabled={type === 'take-profit' ? takeProfitPrice !== '' : stopLossPrice !== ''}
+						disabled={
+							type === 'take-profit'
+								? tpPrice !== '0.00' || takeProfitPrice !== '0.00'
+								: slPrice !== '0.00' && stopLossPrice !== '0.00'
+						}
 					>
 						{type === 'take-profit'
 							? t('futures.market.trade.edit-sl-tp.no-tp')

@@ -79,8 +79,10 @@ export default function EditStopLossAndTakeProfitModal() {
 		[dispatch]
 	);
 
-	const onClearStopLoss = useCallback(() => dispatch(setCrossMarginTradeStopLoss('')), [dispatch]);
-	const onClearTakeProfit = useCallback(() => dispatch(setCrossMarginTradeTakeProfit('')), [
+	const onClearStopLoss = useCallback(() => dispatch(setCrossMarginTradeStopLoss('0.00')), [
+		dispatch,
+	]);
+	const onClearTakeProfit = useCallback(() => dispatch(setCrossMarginTradeTakeProfit('0.00')), [
 		dispatch,
 	]);
 	const onSetStopLossAndTakeProfit = useCallback(() => dispatch(updateStopLossAndTakeProfit()), [

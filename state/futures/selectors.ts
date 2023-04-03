@@ -939,7 +939,7 @@ export const selectStopLossOrder = createSelector(
 	(selectOpenConditionalOrders, marketKey) => {
 		return selectOpenConditionalOrders.find(
 			(o) =>
-				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT && o.reduceOnly
+				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
 		);
 	}
 );
@@ -950,7 +950,7 @@ export const selectTakeProfitOrder = createSelector(
 	(selectOpenConditionalOrders, marketKey) => {
 		return selectOpenConditionalOrders.find(
 			(o) =>
-				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
+				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT && o.reduceOnly
 		);
 	}
 );
