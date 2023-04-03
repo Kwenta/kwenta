@@ -111,6 +111,8 @@ import {
 	selectCrossMarginBalanceInfo,
 	selectIsolatedMarginOpenOrders,
 	selectPriceImpactOrDesiredFill,
+	selectIsolatedPriceImpact,
+	selectDesiredTradeFillPrice,
 } from './selectors';
 import {
 	CancelDelayedOrderInputs,
@@ -992,11 +994,17 @@ export const modifyIsolatedPosition = createAsyncThunk<
 >(
 	'futures/modifyIsolatedPosition',
 	async ({ sizeDelta, delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
+		const account = selectFuturesAccount(getState());
 		const marketInfo = selectMarketInfo(getState());
-		const priceImpact = selectPriceImpactOrDesiredFill(getState());
+		const priceImpact = selectIsolatedPriceImpact(getState());
+		const desiredFill = selectDesiredTradeFillPrice(getState());
 		if (!marketInfo) throw new Error('Market info not found');
+		if (!account) throw new Error('Account not connected');
 
 		try {
+			const isFlagged = await sdk.futures.getIsFlagged(account, marketInfo.market);
+			const priceImpactOrFill = !!isFlagged ? desiredFill : priceImpact;
+
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1007,7 +1015,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			const tx = await sdk.futures.modifyIsolatedMarginPosition(
 				marketInfo.market,
 				wei(sizeDelta),
-				priceImpact,
+				priceImpactOrFill,
 				{
 					delayed,
 					offchain,

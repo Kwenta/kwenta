@@ -49,7 +49,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	},
 	PerpsV2MarketSettings: {
 		10: '0xd442Dc2Ac1f3cA1C86C8329246e47Ca0C91D0471',
-		420: '0x14fA3376E2ffa41708A0636009A35CAE8D8E2bc7',
+		420: '0xedf10514EF611e3808622f24e236b83cB9E51dCe',
 	},
 	Pyth: {
 		10: '0xff1a0f4744e8582DF1aE09D5611b887B6a12925C',
