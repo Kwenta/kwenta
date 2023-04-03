@@ -108,7 +108,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 	return (
 		<div style={{ height: '100%' }}>
 			<DesktopOnlyView>
-				{/* <LegacyLink /> */}
 				<Table
 					data={data}
 					rounded={false}
