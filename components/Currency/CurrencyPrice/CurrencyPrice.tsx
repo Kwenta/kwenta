@@ -17,7 +17,7 @@ type CurrencyPriceProps = {
 	conversionRate?: WeiSource;
 	formatOptions?: FormatCurrencyOptions;
 	truncate?: boolean;
-	side?: 'positive' | 'negative' | 'preview';
+	side?: 'secondary' | 'positive' | 'negative' | 'preview';
 	colored?: boolean;
 };
 

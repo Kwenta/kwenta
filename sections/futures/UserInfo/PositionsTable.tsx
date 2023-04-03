@@ -182,6 +182,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 											<Currency.Price
 												price={cellProps.row.original.position.notionalValue}
 												formatOptions={formatOptions}
+												side="secondary"
 											/>
 										</div>
 									</div>
@@ -234,7 +235,11 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 									<FlexDivRowCentered>
 										<div style={{ marginRight: 10 }}>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
-											<NumericValue value={cellProps.row.original.position.leverage} suffix="x" />
+											<NumericValue
+												value={cellProps.row.original.position.leverage}
+												color="secondary"
+												suffix="x"
+											/>
 										</div>
 										<Pill>Edit</Pill>
 									</FlexDivRowCentered>
@@ -292,7 +297,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 						},
 						{
 							Header: <TableHeader>Position</TableHeader>,
-							accessor: 'position',
+							accessor: 'pos',
 							Cell: () => {
 								return (
 									<div>
