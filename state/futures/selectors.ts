@@ -18,7 +18,7 @@ import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeDelayedOrderFee, sameSide } from 'utils/costCalculations';
 import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
-import { zeroBN } from 'utils/formatters/number';
+import { suggestedDecimals, zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
@@ -952,6 +952,19 @@ export const selectTakeProfitOrder = createSelector(
 			(o) =>
 				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
 		);
+	}
+);
+
+export const selectSlTpOrderPrice = createSelector(
+	selectTakeProfitOrder,
+	selectStopLossOrder,
+	(takeProfitOrder, stopLossOrder) => {
+		const tpDecimal = suggestedDecimals(takeProfitOrder?.targetPrice ?? wei(0));
+		const slDecimal = suggestedDecimals(stopLossOrder?.targetPrice ?? wei(0));
+		return {
+			takeProfitPrice: takeProfitOrder?.targetPrice?.toString(tpDecimal) || '0.00',
+			stopLossPrice: stopLossOrder?.targetPrice?.toString(slDecimal) || '0.00',
+		};
 	}
 );
 

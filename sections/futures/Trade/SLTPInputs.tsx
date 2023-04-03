@@ -10,7 +10,6 @@ import { FlexDivRow } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
-import { setOpenModal } from 'state/app/reducer';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
 	selectLeverageSide,
@@ -92,12 +91,7 @@ export default function SLTPInputs() {
 	return (
 		<Container>
 			<ExpandRow onClick={() => setShowInputs(!showInputs)}>
-				<InputTitle
-					margin="1px 0 0 0"
-					onClick={() => dispatch(setOpenModal('futures_edit_stop_loss_take_profit'))}
-				>
-					Stop Loss / Take Profit
-				</InputTitle>
+				<InputTitle margin="1px 0 0 0">Stop Loss / Take Profit</InputTitle>
 				<Button
 					style={{
 						height: '20px',

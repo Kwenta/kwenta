@@ -6,7 +6,7 @@ import Button from 'components/Button';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
-import { selectSlTpTradeInputs } from 'state/futures/selectors';
+import { selectSlTpOrderPrice, selectSlTpTradeInputs } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
 type OrderSizingProps = {
@@ -22,7 +22,11 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 	({ isMobile, type, invalid, currentPrice, onChange, onClick }) => {
 		const { t } = useTranslation();
 		const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
-
+		const { takeProfitPrice: tpPrice, stopLossPrice: slPrice } = useAppSelector(
+			selectSlTpOrderPrice
+		);
+		// eslint-disable-next-line no-console
+		console.log(`take profit price: ${tpPrice}, stop loss price: ${slPrice}`);
 		return (
 			<div style={{ marginTop: '5px', marginBottom: '10px' }}>
 				<StyledInputHeaderRow
@@ -40,7 +44,7 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 						dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
 						value={type === 'take-profit' ? takeProfitPrice : stopLossPrice}
 						onChange={onChange}
-						placeholder="0.00"
+						placeholder={type === 'take-profit' ? slPrice : tpPrice}
 					/>
 
 					<Button

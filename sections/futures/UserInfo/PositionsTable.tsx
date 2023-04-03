@@ -21,6 +21,7 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import MobilePositionRow from 'sections/dashboard/FuturesPositionsTable/MobilePositionRow';
 import PositionType from 'sections/futures/PositionType';
+import { setOpenModal } from 'state/app/reducer';
 import {
 	selectCrossMarginPositions,
 	selectIsolatedMarginPositions,
@@ -28,7 +29,7 @@ import {
 	selectMarkets,
 	selectPositionHistory,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
 type FuturesPositionTableProps = {
@@ -64,6 +65,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const dispatch = useAppDispatch();
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
@@ -283,7 +285,11 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 												<NumericValue value={cellProps.row.original.stopLoss} />
 											)}
 										</div>
-										<Pill>Edit</Pill>
+										<Pill
+											onClick={() => dispatch(setOpenModal('futures_edit_stop_loss_take_profit'))}
+										>
+											Edit
+										</Pill>
 									</FlexDivRowCentered>
 								);
 							},
