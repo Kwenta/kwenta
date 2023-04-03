@@ -241,6 +241,9 @@ export type FuturesPosition<T = Wei> = {
 	remainingMargin: T;
 	accessibleMargin: T;
 	position: FuturesFilledPosition<T> | null;
+	// This prevents TS issues when creating a union with the cross margin position type.
+	stopLoss?: ConditionalOrder<T>;
+	takeProfit?: ConditionalOrder<T>;
 };
 
 export type ModifyPositionOptions<T extends boolean> = {

@@ -87,8 +87,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: accountType === 'cross_margin' ? (position as any).stopLoss : undefined,
-					takeProfit: accountType === 'cross_margin' ? (position as any).takeProfit : undefined,
+					stopLoss: position.stopLoss,
+					takeProfit: position.takeProfit,
 				};
 			})
 			.filter(

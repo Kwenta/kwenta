@@ -10,9 +10,10 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
+import { Body, NumericValue } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -87,10 +88,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				});
 
 				return {
-					market,
-					position: position.position,
+					market: market!,
+					position: position.position!,
 					description,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
+					stopLoss: position.stopLoss,
+					takeProfit: position.takeProfit,
 				};
 			})
 			.filter(
@@ -255,20 +258,46 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								width: 125,
 							},
 							{
-								Header: <TableHeader>Funding</TableHeader>,
-								accessor: 'funding',
-								Cell: () => {
-									return <div></div>;
+								Header: <TableHeader>TP/SL</TableHeader>,
+								accessor: 'tp-sl',
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
+									return (
+										<FlexDivRowCentered>
+											<div style={{ marginRight: 10 }}>
+												{cellProps.row.original.takeProfit === undefined ? (
+													<Body>{NO_VALUE}</Body>
+												) : (
+													<NumericValue value={cellProps.row.original.takeProfit} />
+												)}
+												{cellProps.row.original.stopLoss === undefined ? (
+													<Body>{NO_VALUE}</Body>
+												) : (
+													<NumericValue value={cellProps.row.original.stopLoss} />
+												)}
+											</div>
+										</FlexDivRowCentered>
+									);
 								},
 								width: 90,
 							},
 							{
-								Header: <TableHeader>TP/SL</TableHeader>,
-								accessor: 'tp-sl',
-								Cell: () => {
-									return <div></div>;
+								Header: <TableHeader>Market Margin</TableHeader>,
+								accessor: 'margin',
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
+									return (
+										<FlexDivRowCentered>
+											<div style={{ marginRight: 10 }}>
+												<NumericValue value={cellProps.row.original.position.initialMargin} />
+												<NumericValue
+													value={cellProps.row.original.position.leverage}
+													color="secondary"
+													suffix="x"
+												/>
+											</div>
+										</FlexDivRowCentered>
+									);
 								},
-								width: 90,
+								width: 115,
 							},
 						]}
 					/>
