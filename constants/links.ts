@@ -36,16 +36,14 @@ export const EXTERNAL_LINKS = {
 		DocsRoot: 'https://docs.kwenta.io/',
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
 		HowToTrade: 'https://docs.kwenta.io/products/futures',
-		Governance:
-			'https://kwenta-gov.on.fleek.co/seeds/maple.radicle.garden/rad:git:hnrkq1oex148yz4zi9tm7spfnjaryyuc93yay/tree/master/sections/1.md',
-		DaoRoles:
-			'https://kwenta-gov.on.fleek.co/seeds/maple.radicle.garden/rad:git:hnrkq1oex148yz4zi9tm7spfnjaryyuc93yay/tree/master/sections/2.md',
+		Governance: 'https://github.com/Kwenta/kwenta-state-log',
+		DaoRoles: 'https://github.com/Kwenta/kwenta-state-log/blob/master/sections/2.md',
 		HowToUse: 'https://docs.kwenta.io/onboard/how-to-start-using-kwenta',
 		Perpetuals: 'https://docs.kwenta.io/products/futures',
 		Spot: 'https://docs.kwenta.io/products/swaps ',
 		DevDao: 'https://docs.kwenta.io/dao/contribute/devdao-contribute',
 		MarketingDao:
-			'https://kwenta-gov.on.fleek.co/seeds/maple.radicle.garden/rad:git:hnrkq1oex148yz4zi9tm7spfnjaryyuc93yay/tree/master/sections/2.md#marketingdao-grants-council-trial',
+			'https://github.com/Kwenta/kwenta-state-log/blob/master/sections/2.md#marketingdao-grants-council-trial',
 		Faq: 'https://docs.kwenta.io/resources/faq',
 		CrossMarginFaq: 'https://docs.kwenta.io/products/futures/cross-margin-accounts',
 		Staking: 'https://docs.kwenta.io/using-kwenta/staking-kwenta',
@@ -60,8 +58,7 @@ export const EXTERNAL_LINKS = {
 		V1: 'https://v1.kwenta.eth.limo/dashboard',
 	},
 	Governance: {
-		Kips:
-			'https://kwenta-gov.on.fleek.co/seeds/maple.radicle.garden/rad:git:hnrkq1oex148yz4zi9tm7spfnjaryyuc93yay/tree/master',
+		Kips: 'https://github.com/Kwenta/kwenta-state-log',
 		Vote: 'https://snapshot.org/#/kwenta.eth',
 	},
 	Competition: {
