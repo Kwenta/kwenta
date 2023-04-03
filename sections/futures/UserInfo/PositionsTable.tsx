@@ -292,7 +292,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 						},
 						{
 							Header: <TableHeader>Position</TableHeader>,
-							accessor: 'pos',
+							accessor: 'position',
 							Cell: () => {
 								return (
 									<div>

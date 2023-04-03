@@ -19,12 +19,12 @@ const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 		<Background />
 		<Banner />
 
-		<STV>
+		<ScreenContainer>
 			<GlobalStyle />
 			<Header />
 			{children}
 			<Footer />
-		</STV>
+		</ScreenContainer>
 	</ThemeProvider>
 );
 
@@ -36,7 +36,7 @@ const GlobalStyle = createGlobalStyle`
 	}
 `;
 
-const STV = styled(FullScreenContainer)`
+const ScreenContainer = styled(FullScreenContainer)`
 	overflow-y: scroll;
 `;
 
