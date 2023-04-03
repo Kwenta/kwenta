@@ -158,15 +158,7 @@ const UserInfo: React.FC = memo(() => {
 	}, [position]);
 
 	return (
-		<div
-			style={{
-				minHeight: 315,
-				maxHeight: 315,
-				height: 315,
-				display: 'flex',
-				flexDirection: 'column',
-			}}
-		>
+		<UserInfoContainer>
 			<TabButtonsContainer>
 				<TabLeft>
 					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
@@ -217,9 +209,17 @@ const UserInfo: React.FC = memo(() => {
 
 			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}
 			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
-		</div>
+		</UserInfoContainer>
 	);
 });
+
+const UserInfoContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	height: 315px;
+	min-height: 315px;
+	max-height: 315px;
+`;
 
 const TabButtonsContainer = styled.div`
 	display: grid;
