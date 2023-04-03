@@ -14,6 +14,8 @@ import ROUTES from 'constants/routes';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
+	selectActiveCrossPositionsCount,
+	selectActiveIsolatedPositionsCount,
 	selectFuturesType,
 	selectMarketAsset,
 	selectOpenOrders,
@@ -46,6 +48,8 @@ const UserInfo: React.FC = memo(() => {
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
+	const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
+	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	const walletAddress = useAppSelector(selectWallet);
 
 	const openOrders = useAppSelector(selectOpenOrders);
@@ -94,6 +98,7 @@ const UserInfo: React.FC = memo(() => {
 			{
 				name: FuturesTab.POSITION,
 				label: 'Position',
+				badge: accountType === 'isolated_margin' ? isolatedPositionsCount : crossPositionsCount,
 				active: activeTab === FuturesTab.POSITION,
 				icon: <PositionIcon />,
 				onClick: () =>
@@ -136,7 +141,15 @@ const UserInfo: React.FC = memo(() => {
 					}),
 			},
 		],
-		[activeTab, router, marketAsset, openOrders?.length, accountType]
+		[
+			activeTab,
+			router,
+			marketAsset,
+			openOrders?.length,
+			accountType,
+			isolatedPositionsCount,
+			crossPositionsCount,
+		]
 	);
 
 	useEffect(() => {

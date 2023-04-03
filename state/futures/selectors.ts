@@ -147,7 +147,7 @@ export const selectMarketInfo = createSelector(
 
 export const selectIsolatedPriceImpact = createSelector(
 	(state: RootState) => state.futures.isolatedMargin.priceImpact,
-	(priceImpact) => wei(priceImpact, 0)
+	(priceImpact) => wei(priceImpact)
 );
 
 export const selectOrderType = createSelector(
@@ -594,6 +594,29 @@ export const selectTradeSizeInputs = createSelector(
 	selectIsolatedMarginTradeInputs,
 	(type, crossMarginInputs, isolatedInputs) => {
 		return type === 'cross_margin' ? crossMarginInputs : isolatedInputs;
+	}
+);
+
+export const selectDesiredTradeFillPrice = createSelector(
+	selectIsolatedPriceImpact,
+	selectTradeSizeInputs,
+	selectMarketPrice,
+	(priceImpact, { nativeSizeDelta }, marketPrice) => {
+		const impactDecimalPercent = priceImpact.div(100);
+		return nativeSizeDelta.lt(0)
+			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
+			: marketPrice.mul(impactDecimalPercent.add(1));
+	}
+);
+
+// TODO: Can move to only desired fill once Synthetix upgrade mainnet
+export const selectPriceImpactOrDesiredFill = createSelector(
+	selectIsolatedPriceImpact,
+	selectDesiredTradeFillPrice,
+	selectNetwork,
+	(priceImpact, desiredFill, network) => {
+		if (network === 10) return priceImpact;
+		return desiredFill;
 	}
 );
 
