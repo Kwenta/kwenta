@@ -4,7 +4,11 @@ import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import { InfoBoxRow } from 'components/InfoBox/InfoBox';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
-import { selectCrossMarginBalanceInfo, selectPosition } from 'state/futures/selectors';
+import {
+	selectCrossMarginBalanceInfo,
+	selectIdleMargin,
+	selectPosition,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PillButtonSpan } from 'styles/common';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
@@ -18,6 +22,7 @@ function MarginInfoBox() {
 	const openModal = useAppSelector(selectShowModal);
 	const position = useAppSelector(selectPosition);
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
+	const idleMargin = useAppSelector(selectIdleMargin);
 
 	return (
 		<>
@@ -38,6 +43,7 @@ function MarginInfoBox() {
 				}
 			/>
 			<InfoBoxRow title="Account margin" value={formatDollars(freeMargin)} />
+			<InfoBoxRow title="Idle margin" value={formatDollars(idleMargin)} />
 			<InfoBoxRow title="Market margin" value={formatDollars(position?.remainingMargin || '0')} />
 
 			{openModal === 'futures_withdraw_keeper_balance' && (

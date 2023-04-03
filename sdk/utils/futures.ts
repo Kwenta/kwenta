@@ -640,3 +640,9 @@ export const formatOrderDisplayType = (
 	}
 	return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Limit' : 'Stop Market';
 };
+
+export const calculateDesiredFillPrice = (sizeDelta: Wei, marketPrice: Wei, priceImpact: Wei) => {
+	return sizeDelta.lt(0)
+		? marketPrice.mul(wei(1).sub(priceImpact))
+		: marketPrice.mul(priceImpact.add(1));
+};

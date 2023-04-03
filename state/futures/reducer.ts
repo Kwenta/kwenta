@@ -114,7 +114,10 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		closePositionOrderInputs: {
 			orderType: 'market',
 			nativeSizeDelta: '',
-			price: '',
+			price: {
+				value: '',
+				invalidLabel: undefined,
+			},
 		},
 		fees: ZERO_CM_FEES,
 		tradePreview: null,
@@ -139,7 +142,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedMarketAsset: FuturesMarketAsset.sETH,
 		selectedMarketKey: FuturesMarketKey.sETHPERP,
 		leverageSide: PositionSide.LONG,
-		orderType: 'delayed_offchain',
+		orderType: 'market',
 		tradePreview: null,
 		previewDebounceCount: 0,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
@@ -173,6 +176,12 @@ const futuresSlice = createSlice({
 		},
 		setClosePositionSizeDelta: (state, action: PayloadAction<string>) => {
 			state.crossMargin.closePositionOrderInputs.nativeSizeDelta = action.payload;
+		},
+		setClosePositionPrice: (
+			state,
+			action: PayloadAction<{ value: string; invalidLabel: string | null | undefined }>
+		) => {
+			state.crossMargin.closePositionOrderInputs.price = action.payload;
 		},
 		setOrderFeeCap: (state, action) => {
 			state.crossMargin.orderFeeCap = action.payload;
@@ -671,6 +680,7 @@ export const {
 	setOrderType,
 	setClosePositionOrderType,
 	setClosePositionSizeDelta,
+	setClosePositionPrice,
 	setOrderFeeCap,
 	setLeverageSide,
 	setFuturesAccountType,
