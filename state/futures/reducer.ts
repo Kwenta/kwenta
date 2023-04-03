@@ -584,7 +584,7 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchFuturesPositionHistory.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.positionHistory = SUCCESS_STATUS;
 			if (payload) {
-				const { accountType: type, history: positionHistory, networkId, account: wallet } = payload;
+				const { accountType: type, history: positionHistory, networkId, wallet } = payload;
 				updateFuturesAccount(futuresState, type, networkId, wallet, {
 					positionHistory,
 				});
@@ -623,7 +623,7 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchTradesForSelectedMarket.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
 			if (payload) {
-				const { accountType: type, trades, networkId, account: wallet } = payload;
+				const { accountType: type, trades, networkId, wallet } = payload;
 				updateFuturesAccount(futuresState, type, networkId, wallet, {
 					trades,
 				});
