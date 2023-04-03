@@ -30,7 +30,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { getSynthDescription } from 'utils/futures';
 
 type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
@@ -80,7 +79,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
-				const description = getSynthDescription(position.asset, t);
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
@@ -88,7 +86,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 				return {
 					market: market!,
 					position: position.position!,
-					description,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: accountType === 'cross_margin' ? (position as any).stopLoss : undefined,
 					takeProfit: accountType === 'cross_margin' ? (position as any).takeProfit : undefined,
@@ -105,7 +102,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
-		t,
 		showCurrentMarket,
 	]);
 

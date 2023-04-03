@@ -16,7 +16,6 @@ type MobilePositionRowProps = {
 	row: {
 		market?: FuturesMarket;
 		position: FuturesFilledPosition | null;
-		description: string;
 		avgEntryPrice?: Wei;
 	};
 	onClick(): void;
