@@ -390,13 +390,6 @@ const StyledText = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
-const MarketContainer = styled.div`
-	display: grid;
-	grid-template-rows: auto auto;
-	grid-template-columns: auto auto;
-	align-items: center;
-`;
-
 const OpenPositionsHeader = styled.div`
 	display: flex;
 	justify-content: space-between;

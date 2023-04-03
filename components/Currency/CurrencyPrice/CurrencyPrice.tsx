@@ -43,7 +43,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 					value={cleanPrice.div(conversionRate)}
 					as="span"
 					colored={colored}
-					colorOverride={side}
+					color={side}
 				>
 					{formatCurrency(currencyKey, cleanPrice.div(conversionRate), {
 						sign: currencyKey === 'sUSD' ? '$' : sign,
@@ -65,7 +65,7 @@ const Container = styled.span<{ $side?: 'positive' | 'negative' }>`
 	${(props) =>
 		!!props.$side &&
 		css`
-			color: ${props.theme.colors.selectedTheme.newTheme.text.number[props.$side]};
+			color: ${props.theme.colors.selectedTheme.newTheme.text[props.$side]};
 		`}
 `;
 

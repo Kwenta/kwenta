@@ -10,16 +10,15 @@ type NumericValueProps = BodyProps & {
 	value?: WeiSource;
 	preview?: boolean;
 	colored?: boolean;
-	colorOverride?: 'positive' | 'negative' | 'neutral' | 'preview';
 	options?: FormatNumberOptions;
 	suffix?: string;
 };
 
 const NumericValue: FC<NumericValueProps> = memo(
-	({ value, preview, colored, colorOverride, options, suffix, ...props }) => {
+	({ value, preview, colored, options, suffix, ...props }) => {
 		const color = useMemo(() => {
-			if (colorOverride) {
-				return colorOverride;
+			if (props.color) {
+				return props.color;
 			} else if (preview) {
 				return 'preview';
 			} else if (colored && value) {
@@ -29,12 +28,12 @@ const NumericValue: FC<NumericValueProps> = memo(
 					return 'negative';
 				}
 			} else {
-				return 'neutral';
+				return 'primary';
 			}
-		}, [colorOverride, preview, colored, value]);
+		}, [props.color, preview, colored, value]);
 
 		return (
-			<NumberBody $color={color} {...props}>
+			<NumberBody color={color} {...props}>
 				{props.children ?? formatNumber(value, options)}
 				{suffix}
 			</NumberBody>
@@ -42,11 +41,6 @@ const NumericValue: FC<NumericValueProps> = memo(
 	}
 );
 
-export const NumberBody = styled(Body).attrs({ mono: true })<{
-	$color?: 'positive' | 'negative' | 'neutral' | 'preview';
-}>`
-	color: ${(props) =>
-		props.theme.colors.selectedTheme.newTheme.text.number[props.$color ?? 'neutral']};
-`;
+export const NumberBody = styled(Body).attrs({ mono: true })``;
 
 export default NumericValue;
