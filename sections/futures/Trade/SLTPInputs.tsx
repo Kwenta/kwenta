@@ -160,6 +160,7 @@ const Container = styled.div`
 const ExpandRow = styled(FlexDivRow)`
 	padding: 0px 2px 0 4px;
 	cursor: pointer;
+	align-items: center;
 `;
 
 const InputsContainer = styled.div`

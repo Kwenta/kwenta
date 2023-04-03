@@ -58,12 +58,9 @@ const newTheme = {
 		primary: common.palette.neutral.n900,
 		secondary: common.palette.neutral.n600,
 		tertiary: common.palette.neutral,
-		number: {
-			positive: common.palette.green.g800,
-			negative: common.palette.red.r700,
-			neutral: common.palette.neutral.n900,
-			preview: common.palette.yellow.y800,
-		},
+		positive: common.palette.green.g800,
+		negative: common.palette.red.r700,
+		preview: common.palette.yellow.y800,
 	},
 	pill: {
 		yellow: {

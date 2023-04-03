@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
-import InputTitle from 'components/Input/InputTitle';
 import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide } from 'sdk/types/futures';
@@ -144,7 +143,7 @@ const ManagePosition: React.FC = () => {
 				return { message: 'awaiting_preview' };
 			if (orderType !== 'market' && isZero(orderPrice)) return { message: 'trade price required' };
 		} else if (selectedAccountType === 'isolated_margin') {
-			if ((orderType === 'delayed' || orderType === 'delayed_offchain') && !!openOrder)
+			if (orderType === 'market' && !!openOrder)
 				return {
 					show: 'warn',
 					message: ERROR_MESSAGES.ORDER_PENDING,
@@ -191,10 +190,7 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						variant="flat"
 						onClick={() => {
-							if (
-								(orderType === 'delayed' || orderType === 'delayed_offchain') &&
-								position?.position?.size
-							) {
+							if (selectedAccountType === 'isolated_margin' && position?.position?.size) {
 								const newTradeSize = position.position.size;
 								const newLeverageSide =
 									position.position.side === PositionSide.LONG
@@ -255,10 +251,6 @@ const CloseOrderButton = styled(Button)`
 	&:disabled {
 		display: none;
 	}
-`;
-
-const ManageOrderTitle = styled(InputTitle)`
-	margin-bottom: 8px;
 `;
 
 export default ManagePosition;

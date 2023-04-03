@@ -1,37 +1,32 @@
-import { ChangeEvent, useCallback, useMemo } from 'react';
+import Wei from '@synthetixio/wei';
+import { ChangeEvent, useMemo } from 'react';
 import styled from 'styled-components';
 
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
+import { FuturesOrderType, PositionSide } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
-import { editTradeOrderPrice } from 'state/futures/actions';
-import {
-	selectLeverageSide,
-	selectMarketPrice,
-	selectCrossMarginOrderPrice,
-	selectOrderType,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
-export default function OrderPriceInput() {
-	const dispatch = useAppDispatch();
-	const marketPrice = useAppSelector(selectMarketPrice);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const orderType = useAppSelector(selectOrderType);
+type Props = {
+	orderPrice: string;
+	marketPrice: Wei;
+	orderType: FuturesOrderType;
+	positionSide: PositionSide;
+	onChange: (e: ChangeEvent<HTMLInputElement>, v: string) => any;
+};
 
+export default function OrderPriceInput({
+	orderPrice,
+	orderType,
+	positionSide,
+	marketPrice,
+	onChange,
+}: Props) {
 	const minMaxLabelString = useMemo(
-		() => orderPriceInvalidLabel(orderPrice, leverageSide, marketPrice, orderType),
-		[orderPrice, orderType, leverageSide, marketPrice]
-	);
-
-	const handleOnChange = useCallback(
-		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(editTradeOrderPrice(v));
-		},
-		[dispatch]
+		() => orderPriceInvalidLabel(orderPrice, positionSide, marketPrice, orderType),
+		[orderPrice, orderType, positionSide, marketPrice]
 	);
 
 	return (
@@ -54,7 +49,7 @@ export default function OrderPriceInput() {
 				right="sUSD"
 				value={orderPrice}
 				placeholder="0.0"
-				onChange={handleOnChange}
+				onChange={onChange}
 			/>
 		</>
 	);

@@ -11,7 +11,6 @@ import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import { fetchTradesForSelectedMarket } from 'state/futures/actions';
 import {
 	selectFuturesType,
@@ -23,13 +22,13 @@ import {
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
 import { selectWallet } from 'state/wallet/selectors';
 
-import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
 import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
 import ConditionalOrdersTable from './ConditionalOrdersTable';
 import OpenDelayedOrdersTable from './OpenDelayedOrdersTable';
+import PositionsTable from './PositionsTable';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -159,7 +158,7 @@ const UserInfo: React.FC = memo(() => {
 	}, [position]);
 
 	return (
-		<div style={{ flex: 1 }}>
+		<UserInfoContainer>
 			<TabButtonsContainer>
 				<TabLeft>
 					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
@@ -192,28 +191,35 @@ const UserInfo: React.FC = memo(() => {
 				</TabRight>
 			</TabButtonsContainer>
 
-			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<PositionCard />
-				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
+			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab} fullHeight>
+				<PositionsTable accountType={accountType} />
 			</TabPanel>
-			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab} fullHeight>
 				<OpenDelayedOrdersTable />
 			</TabPanel>
-			<TabPanel name={FuturesTab.CONDITIONAL_ORDERS} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.CONDITIONAL_ORDERS} activeTab={activeTab} fullHeight>
 				<ConditionalOrdersTable />
 			</TabPanel>
-			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab} fullHeight>
 				<Trades />
 			</TabPanel>
-			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab} fullHeight>
 				<Transfers />
 			</TabPanel>
 
 			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}
 			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
-		</div>
+		</UserInfoContainer>
 	);
 });
+
+const UserInfoContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	height: 315px;
+	min-height: 315px;
+	max-height: 315px;
+`;
 
 const TabButtonsContainer = styled.div`
 	display: grid;

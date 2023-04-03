@@ -917,6 +917,7 @@
 					"submit-margin-deposit": "Deposit Margin",
 					"submit-size-increase": "Increase Size",
 					"submit-size-decrease": "Decrease Size",
+					"submit-close": "Submit Close Order",
 					"current-margin": "Current margin"
 				},
 				"edit-sl-tp": {

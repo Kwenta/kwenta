@@ -180,7 +180,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 												futuresClosureReason={row.original.closureReason}
 												fallbackComponent={
 													<NumericValue
-														percent
+														suffix="%"
 														colored
 														value={floorNumber(row.original.change?.mul(100) ?? '0', 2)}
 													/>

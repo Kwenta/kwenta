@@ -56,12 +56,9 @@ const newTheme = {
 		primary: common.palette.neutral.n0,
 		secondary: common.palette.neutral.n70,
 		tertiary: common.palette.neutral,
-		number: {
-			positive: common.palette.green.g500,
-			negative: common.palette.red.r300,
-			neutral: common.palette.neutral.n0,
-			preview: common.palette.yellow.y500,
-		},
+		positive: common.palette.green.g500,
+		negative: common.palette.red.r300,
+		preview: common.palette.yellow.y500,
 	},
 	badge: {
 		yellow: {

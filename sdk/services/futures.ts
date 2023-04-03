@@ -666,6 +666,7 @@ export default class FuturesService {
 			totalIdleMargin: idleInMarkets,
 			marketsWithIdleMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
 				const market = markets.find((m) => m.marketKey === p.marketKey);
+
 				if (market) {
 					acc.push({
 						marketAddress: market.market,

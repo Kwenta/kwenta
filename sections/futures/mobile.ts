@@ -28,12 +28,11 @@ export const SectionSeparator = styled.div`
 export const Pane = styled.div<{ noPadding?: boolean }>`
 	padding: 15px 15px 0;
 	box-sizing: border-box;
+	height: 325px;
 
 	${(props) =>
 		props.noPadding &&
 		css`
 			padding: 15px 0 0;
 		`}
-
-	height: 325px;
 `;

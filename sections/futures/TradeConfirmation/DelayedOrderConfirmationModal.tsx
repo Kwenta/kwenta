@@ -163,7 +163,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 		dispatch(
 			modifyIsolatedPosition({
 				delayed: true,
-				offchain: orderType === 'delayed_offchain',
+				offchain: true,
 			})
 		);
 	};

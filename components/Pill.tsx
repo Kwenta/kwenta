@@ -26,6 +26,7 @@ const BasePill = styled.button<{
 		border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].border};
 		border-radius: 50px;
 		cursor: pointer;
+		font-variant: all-small-caps;
 
 		${props.$outline &&
 		css`

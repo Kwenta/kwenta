@@ -13,6 +13,7 @@ import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { APP_MAX_LEVERAGE } from 'constants/futures';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
@@ -22,6 +23,7 @@ import {
 } from 'state/futures/actions';
 import {
 	selectEditPositionInputs,
+	selectEditPositionModalInfo,
 	selectIdleMargin,
 	selectIsFetchingTradePreview,
 	selectPosition,
@@ -45,6 +47,7 @@ export default function EditPositionMarginModal() {
 	const { marginDelta } = useAppSelector(selectEditPositionInputs);
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const modal = useAppSelector(selectShowPositionModal);
+	const { market } = useAppSelector(selectEditPositionModalInfo);
 
 	const [transferType, setTransferType] = useState(0);
 
@@ -100,9 +103,15 @@ export default function EditPositionMarginModal() {
 		dispatch(setShowPositionModal(null));
 	};
 
+	const marketAsset = market ? getDisplayAsset(market?.asset) : '';
+
 	return (
 		<StyledBaseModal
-			title={transferType === 0 ? 'Increase Position Margin' : 'Withdraw Position Margin'}
+			title={
+				transferType === 0
+					? `Increase ${marketAsset} Position Margin`
+					: `Withdraw ${marketAsset} Position Margin`
+			}
 			isOpen
 			onDismiss={onClose}
 		>

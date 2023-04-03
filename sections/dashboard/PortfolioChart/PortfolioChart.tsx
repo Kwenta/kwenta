@@ -7,8 +7,8 @@ import styled, { useTheme } from 'styled-components';
 import Logo from 'assets/svg/brand/logo-only.svg';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
+import { GridDivCenteredRow } from 'components/layout/grid';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { TableNoResults } from 'components/Table';
 import { Body, NumericValue, Heading } from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -298,8 +298,14 @@ const ChartGrid = styled.div`
 	height: 260px;
 `;
 
-const CTAContainer = styled(TableNoResults)`
+const CTAContainer = styled(GridDivCenteredRow)`
 	height: 100%;
+	text-align: center;
+	justify-content: center;
+	justify-items: center;
+	grid-gap: 10px;
+	padding: 50px 40px;
+	margin-top: -2px;
 `;
 
 export default PortfolioChart;
