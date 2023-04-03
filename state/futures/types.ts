@@ -12,7 +12,6 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
 	FuturesVolumes,
-	IsolatedMarginOrderType,
 	PositionSide,
 	ConditionalOrder as CrossMarginOrder,
 	FuturesMarketKey,
@@ -40,7 +39,10 @@ export type EditPositionInputs<T = Wei> = {
 
 export type ClosePositionInputs<T = Wei> = {
 	nativeSizeDelta: T;
-	price?: T;
+	price?: {
+		value?: string | undefined | null;
+		invalidLabel: string | undefined | null;
+	};
 	orderType: CrossMarginOrderType;
 };
 
@@ -264,7 +266,7 @@ export type CrossMarginState = {
 export type IsolatedMarginState = {
 	tradeInputs: TradeSizeInputs<string>;
 	editPositionInputs: EditPositionInputs<string>;
-	orderType: IsolatedMarginOrderType;
+	orderType: 'market';
 	tradePreview: FuturesPotentialTradeDetails<string> | null;
 	previewDebounceCount: number;
 	leverageSide: PositionSide;

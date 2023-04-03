@@ -83,6 +83,9 @@ export const selectCrossMarginTransferOpen = (state: RootState) =>
 export const selectShowCrossMarginOnboard = (state: RootState) =>
 	state.app.showModal === 'futures_smart_margin_onboard';
 
+export const selectEditPositionModalMarket = (state: RootState) =>
+	state.app.showPositionModal?.marketKey;
+
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
 export const selectCrossMarginAccountData = createSelector(
@@ -522,7 +525,7 @@ export const selectMaxLeverage = createSelector(
 			: marketMaxLeverage;
 
 		adjustedMaxLeverage =
-			orderType === 'delayed' || orderType === 'delayed_offchain'
+			futuresType === 'isolated_margin'
 				? adjustedMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
 				: adjustedMaxLeverage;
 
@@ -588,16 +591,14 @@ export const selectRemainingMarketMargin = createSelector(selectPosition, (posit
 });
 
 export const selectIdleMargin = createSelector(
-	selectMarketKey,
 	selectCrossMarginPositions,
 	selectCrossMarginBalanceInfo,
-	selectAvailableMargin,
 	selectSusdBalance,
-	(selectedMarketKey, positions, { freeMargin }, freeMarketMargin, balance) => {
+	(positions, { freeMargin }, balance) => {
 		const idleInMarkets = positions
-			.filter((p) => !p.position?.size.abs().gt(0) && p.marketKey !== selectedMarketKey)
+			.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
 			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
-		return balance.add(idleInMarkets).add(freeMargin).add(freeMarketMargin);
+		return balance.add(idleInMarkets).add(freeMargin);
 	}
 );
 
@@ -713,14 +714,45 @@ export const selectDesiredTradeFillPrice = createSelector(
 	}
 );
 
-export const selectDesiredCloseFillPrice = createSelector(
+export const selectEditPositionModalInfo = createSelector(
+	selectFuturesType,
+	selectEditPositionModalMarket,
+	selectCrossMarginPositions,
+	selectIsolatedMarginPositions,
+	selectMarkets,
+	selectPrices,
+	(type, modalMarketKey, smartPositions, isolatedPositions, markets, prices) => {
+		const contextPositions = type === 'isolated_margin' ? isolatedPositions : smartPositions;
+		const position = contextPositions.find((p) => p.marketKey === modalMarketKey);
+		const market = markets.find((m) => m.marketKey === modalMarketKey);
+		if (!market) return { position: null, market: null, price: null };
+		const price = prices[market.asset];
+		// Note this assumes the order type is always delayed off chain
+		return { position, market, marketPrice: price.offChain || wei(0) };
+	}
+);
+
+export const selectEditPosDesiredFillPrice = createSelector(
 	selectIsolatedPriceImpact,
-	selectPosition,
+	selectEditPositionModalInfo,
 	selectMarketPrice,
-	(priceImpact, position, marketPrice) => {
+	(priceImpact, { position }, marketPrice) => {
 		return position?.position?.side === PositionSide.LONG
 			? marketPrice.mul(wei(1).sub(priceImpact))
 			: marketPrice.mul(priceImpact.add(1));
+	}
+);
+
+export const selectClosePosDesiredFillPrice = createSelector(
+	selectIsolatedPriceImpact,
+	selectEditPositionModalInfo,
+	selectClosePositionOrderInputs,
+	(priceImpact, { position, marketPrice }, { price, orderType }) => {
+		let orderPrice = orderType === 'market' ? marketPrice : wei(price?.value || 0);
+		orderPrice = orderPrice ?? wei(0);
+		return position?.position?.side === PositionSide.LONG
+			? orderPrice.mul(wei(1).sub(priceImpact))
+			: orderPrice.mul(priceImpact.add(1));
 	}
 );
 
@@ -760,7 +792,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 			remainingMargin = marginDelta;
 		}
 
-		if (orderType === 'delayed' || orderType === 'delayed_offchain')
+		if (selectedType === 'isolated_margin')
 			return 'futures.market.trade.button.place-delayed-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order';
@@ -959,8 +991,7 @@ export const selectDelayedOrderFee = createSelector(
 	selectMarketInfo,
 	selectTradeSizeInputs,
 	selectSkewAdjustedPrice,
-	selectOrderType,
-	(market, { nativeSizeDelta }, price, orderType) => {
+	(market, { nativeSizeDelta }, price) => {
 		if (
 			!market?.marketSkew ||
 			!market?.feeRates.takerFeeDelayedOrder ||
@@ -974,14 +1005,8 @@ export const selectDelayedOrderFee = createSelector(
 
 		const notionalDiff = nativeSizeDelta.mul(price);
 
-		const makerFee =
-			orderType === 'delayed_offchain'
-				? market.feeRates.makerFeeOffchainDelayedOrder
-				: market.feeRates.makerFeeDelayedOrder;
-		const takerFee =
-			orderType === 'delayed_offchain'
-				? market.feeRates.takerFeeOffchainDelayedOrder
-				: market.feeRates.takerFeeDelayedOrder;
+		const makerFee = market.feeRates.makerFeeOffchainDelayedOrder;
+		const takerFee = market.feeRates.takerFeeOffchainDelayedOrder;
 
 		const staticRate = sameSide(notionalDiff, market.marketSkew) ? takerFee : makerFee;
 

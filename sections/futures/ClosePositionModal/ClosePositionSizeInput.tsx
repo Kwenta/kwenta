@@ -8,14 +8,9 @@ import { FlexDivRow } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editClosePositionSizeDelta } from 'state/futures/actions';
-import {
-	selectPosition,
-	selectOrderType,
-	selectLeverageSide,
-	selectClosePositionOrderInputs,
-} from 'state/futures/selectors';
+import { selectClosePositionOrderInputs } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	maxNativeValue: Wei;
@@ -26,9 +21,6 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 	const dispatch = useAppDispatch();
 
 	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs);
-	const position = useAppSelector(selectPosition);
-	const orderType = useAppSelector(selectOrderType);
-	const selectedLeverageSide = useAppSelector(selectLeverageSide);
 	const modal = useAppSelector(selectShowPositionModal);
 
 	const onSizeChange = useCallback(
@@ -39,10 +31,6 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 		},
 		[dispatch, modal]
 	);
-
-	const handleSetMax = useCallback(() => {
-		onSizeChange(String(floorNumber(maxNativeValue)));
-	}, [onSizeChange, maxNativeValue]);
 
 	const onChangeValue = useCallback(
 		(_, v: string) => {
@@ -61,9 +49,6 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 		<OrderSizingContainer>
 			<OrderSizingRow>
 				<InputTitle>Amount to close</InputTitle>
-				<InputHelpers>
-					<MaxButton onClick={handleSetMax}>Max</MaxButton>
-				</InputHelpers>
 			</OrderSizingRow>
 
 			<NumericInput
@@ -78,31 +63,13 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 	);
 });
 
-const OrderSizingContainer = styled.div`
-	margin-bottom: 16px;
-`;
+const OrderSizingContainer = styled.div``;
 
 const OrderSizingRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
 	cursor: default;
-`;
-
-const MaxButton = styled.button`
-	text-decoration: underline;
-	font-variant: small-caps;
-	text-transform: lowercase;
-	font-size: 13px;
-	line-height: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	background-color: transparent;
-	border: none;
-	cursor: pointer;
-`;
-
-const InputHelpers = styled.div`
-	display: flex;
 `;
 
 export default ClosePositionSizeInput;

@@ -9,30 +9,33 @@ import ErrorView from 'components/ErrorView';
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import PreviewArrow from 'components/PreviewArrow';
-import SegmentedControl from 'components/SegmentedControl';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
-import { PositionSide } from 'sdk/types/futures';
-import { OrderNameByType } from 'sdk/utils/futures';
+import { previewErrorI18n } from 'queries/futures/constants';
+import { PositionSide, PotentialTradeStatus } from 'sdk/types/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
+	editClosePositionSizeDelta,
 	editCrossMarginPositionSize,
-	submitCrossMarginAdjustPositionSize,
+	submitSmartMarginReducePositionOrder,
 } from 'state/futures/actions';
-import { setClosePositionOrderType, setClosePositionSizeDelta } from 'state/futures/reducer';
+import { setClosePositionOrderType } from 'state/futures/reducer';
 import {
 	selectClosePositionOrderInputs,
 	selectIsFetchingTradePreview,
 	selectPosition,
 	selectPositionPreviewData,
 	selectSubmittingFuturesTx,
+	selectTradePreview,
+	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
+import OrderTypeSelector from '../Trade/OrderTypeSelector';
+import ClosePositionPriceInput from './ClosePositionPriceInput';
 import ClosePositionSizeInput from './ClosePositionSizeInput';
 
 const CLOSE_PERCENT_OPTIONS = ['25%', '50%', '75%', '100%'];
@@ -45,12 +48,15 @@ export default function ClosePositionModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
+	const previewTrade = useAppSelector(selectTradePreview);
 	const preview = useAppSelector(selectPositionPreviewData);
-	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs);
+	const previewError = useAppSelector(selectTradePreviewError);
+
+	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs);
 	const showModal = useAppSelector(selectShowPositionModal);
 
-	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustPositionSize());
+	const submitCloseOrder = useCallback(() => {
+		dispatch(submitSmartMarginReducePositionOrder());
 	}, [dispatch]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
@@ -67,11 +73,39 @@ export default function ClosePositionModal() {
 		[nativeSizeDelta]
 	);
 
-	const invalid = useMemo(() => sizeWei.gt(maxNativeValue), [sizeWei, maxNativeValue]);
+	const invalidSize = useMemo(() => sizeWei.gt(maxNativeValue), [sizeWei, maxNativeValue]);
+
+	const orderError = useMemo(() => {
+		if (previewError) return t(previewErrorI18n(previewError));
+		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
+		return null;
+	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
 
 	const submitDisabled = useMemo(() => {
-		return sizeWei.eq(0) || invalid || isLoading;
-	}, [sizeWei, invalid, isLoading]);
+		if (
+			(orderType === 'limit' || orderType === 'stop_market') &&
+			(!price?.value || Number(price.value) === 0)
+		) {
+			return true;
+		}
+		return (
+			sizeWei.eq(0) ||
+			invalidSize ||
+			price?.invalidLabel ||
+			isLoading ||
+			orderError ||
+			previewTrade?.status !== PotentialTradeStatus.OK
+		);
+	}, [
+		sizeWei,
+		invalidSize,
+		isLoading,
+		orderError,
+		price?.invalidLabel,
+		price?.value,
+		orderType,
+		previewTrade?.status,
+	]);
 
 	const onClose = () => {
 		if (showModal) {
@@ -82,26 +116,34 @@ export default function ClosePositionModal() {
 
 	const onSelectPercent = useCallback(
 		(index) => {
-			if (!position?.position?.size) return;
+			if (!position?.position?.size || !showModal?.marketKey) return;
 			const option = CLOSE_PERCENT_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 			const size = floorNumber(position.position.size.abs().mul(percent));
 			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size);
-			dispatch(setClosePositionSizeDelta(sizeDelta.toString()));
+			const decimals = sizeDelta.abs().eq(position.position.size.abs()) ? undefined : 4;
+			dispatch(editClosePositionSizeDelta(showModal.marketKey, sizeDelta.toString(decimals)));
 		},
-		[dispatch, position?.position?.size, position?.position?.side]
+		[dispatch, position?.position?.size, position?.position?.side, showModal?.marketKey]
 	);
 
 	return (
 		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
 			<Spacer height={10} />
-			<OrderTypeSelector />
+			<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
 			<Spacer height={20} />
 
 			<ClosePositionSizeInput maxNativeValue={maxNativeValue} />
 			<SelectorButtons options={CLOSE_PERCENT_OPTIONS} onSelect={onSelectPercent} />
 
+			{(orderType === 'limit' || orderType === 'stop_market') && (
+				<>
+					<Spacer height={20} />
+					<ClosePositionPriceInput />
+				</>
+			)}
 			<Spacer height={20} />
+
 			<InfoBoxContainer>
 				<InfoBoxRow
 					valueNode={
@@ -145,37 +187,18 @@ export default function ClosePositionModal() {
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={submitDisabled}
 				fullWidth
-				onClick={submitMarginChange}
+				onClick={submitCloseOrder}
 			>
-				{t('futures.market.trade.edit-position.submit-size-increase')}
+				{t('futures.market.trade.edit-position.submit-close')}
 			</Button>
 
-			{transactionState?.error && (
+			{(orderError || transactionState?.error) && (
 				<>
 					<Spacer height={20} />
-					<ErrorView
-						message={transactionState?.error || 'Max leverage exceeded'}
-						formatter="revert"
-					/>
+					<ErrorView message={orderError || transactionState?.error} formatter="revert" />
 				</>
 			)}
 		</StyledBaseModal>
-	);
-}
-
-function OrderTypeSelector() {
-	const dispatch = useAppDispatch();
-	const { orderType } = useAppSelector(selectClosePositionOrderInputs);
-
-	return (
-		<SegmentedControl
-			values={CROSS_MARGIN_ORDER_TYPES.map((o) => OrderNameByType[o])}
-			selectedIndex={CROSS_MARGIN_ORDER_TYPES.indexOf(orderType)}
-			onChange={(index: number) => {
-				const type = CROSS_MARGIN_ORDER_TYPES[index];
-				dispatch(setClosePositionOrderType(type));
-			}}
-		/>
 	);
 }
 
@@ -194,17 +217,4 @@ export const BalanceText = styled(Body)`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
-
-export const MaxButton = styled.button`
-	height: 22px;
-	padding: 4px 10px;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	border-radius: 11px;
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
-	line-height: 13px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	cursor: pointer;
 `;
