@@ -602,9 +602,10 @@ export const selectDesiredTradeFillPrice = createSelector(
 	selectTradeSizeInputs,
 	selectMarketPrice,
 	(priceImpact, { nativeSizeDelta }, marketPrice) => {
+		const impactDecimalPercent = priceImpact.div(100);
 		return nativeSizeDelta.lt(0)
-			? marketPrice.mul(wei(1).sub(priceImpact))
-			: marketPrice.mul(priceImpact.add(1));
+			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
+			: marketPrice.mul(impactDecimalPercent.add(1));
 	}
 );
 
