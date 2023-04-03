@@ -8,6 +8,7 @@ import styled, { useTheme } from 'styled-components';
 import LinkArrow from 'assets/svg/app/link-arrow.svg';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Pill from 'components/Pill';
 import Table, { TableNoResults } from 'components/Table';
@@ -230,13 +231,13 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 							accessor: 'margin',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<div style={{ display: 'flex', alignItems: 'center' }}>
+									<FlexDivRowCentered>
 										<div style={{ marginRight: 10 }}>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
 											<NumericValue value={cellProps.row.original.position.leverage} suffix="x" />
 										</div>
 										<Pill>Edit</Pill>
-									</div>
+									</FlexDivRowCentered>
 								);
 							},
 							width: 115,
@@ -270,7 +271,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 							accessor: 'tp-sl',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<div style={{ display: 'flex', alignItems: 'center' }}>
+									<FlexDivRowCentered>
 										<div style={{ marginRight: 10 }}>
 											{cellProps.row.original.takeProfit === undefined ? (
 												<Body>{NO_VALUE}</Body>
@@ -284,7 +285,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 											)}
 										</div>
 										<Pill>Edit</Pill>
-									</div>
+									</FlexDivRowCentered>
 								);
 							},
 							width: 90,
