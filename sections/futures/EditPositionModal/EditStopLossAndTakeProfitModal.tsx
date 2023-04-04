@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useMemo } from 'react';
+import React, { ChangeEvent, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -90,11 +90,6 @@ export default function EditStopLossAndTakeProfitModal() {
 		dispatch,
 	]);
 
-	const isActive = useMemo(() => stopLossPrice || takeProfitPrice, [
-		stopLossPrice,
-		takeProfitPrice,
-	]);
-
 	return (
 		<StyledBaseModal
 			title={t(`futures.market.trade.edit-sl-tp.title`)}
@@ -165,7 +160,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				loading={isSubmitting}
 				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={!isActive}
+				disabled={false}
 				fullWidth
 				onClick={onSetStopLossAndTakeProfit}
 			>
