@@ -695,6 +695,24 @@ export const selectTradeSizeInputs = createSelector(
 	}
 );
 
+export const selectEditPositionModalInfo = createSelector(
+	selectFuturesType,
+	selectEditPositionModalMarket,
+	selectCrossMarginPositions,
+	selectIsolatedMarginPositions,
+	selectMarkets,
+	selectPrices,
+	(type, modalMarketKey, smartPositions, isolatedPositions, markets, prices) => {
+		const contextPositions = type === 'isolated_margin' ? isolatedPositions : smartPositions;
+		const position = contextPositions.find((p) => p.marketKey === modalMarketKey);
+		const market = markets.find((m) => m.marketKey === modalMarketKey);
+		if (!market) return { position: null, market: null, price: null };
+		const price = prices[market.asset];
+		// Note this assumes the order type is always delayed off chain
+		return { position, market, marketPrice: price.offChain || wei(0) };
+	}
+);
+
 export const selectConditionalOrdersForMarket = createSelector(
 	selectMarketAsset,
 	selectCrossMarginAccountData,
@@ -746,9 +764,28 @@ export const selectAllSLTPOrders = createSelector(selectAllConditionalOrders, (o
 	return orders.filter((o) => o.reduceOnly && o.size.abs().eq(SL_TP_MAX_SIZE));
 });
 
+export const selectSLTPModalExistingPrices = createSelector(
+	selectAllSLTPOrders,
+	selectEditPositionModalInfo,
+	(orders, { market }) => {
+		const sl = orders.find(
+			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
+		);
+		const tp = orders.find(
+			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
+		);
+		const tpDecimal = suggestedDecimals(sl?.targetPrice ?? wei(0));
+		const slDecimal = suggestedDecimals(tp?.targetPrice ?? wei(0));
+		return {
+			takeProfitPrice: sl?.targetPrice?.toString(tpDecimal) || '0.00',
+			stopLossPrice: tp?.targetPrice?.toString(slDecimal) || '0.00',
+		};
+	}
+);
+
 export const selectSlTpTradeInputs = createSelector(
 	(state: RootState) => state.futures.crossMargin.tradeInputs,
-	selectCurrentMarketSLTP,
+	selectSLTPModalExistingPrices,
 	(tradeInputs, orderPrice) => {
 		const price = {
 			stopLossPrice: '',
@@ -788,24 +825,6 @@ export const selectDesiredTradeFillPrice = createSelector(
 		return nativeSizeDelta.lt(0)
 			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
 			: marketPrice.mul(impactDecimalPercent.add(1));
-	}
-);
-
-export const selectEditPositionModalInfo = createSelector(
-	selectFuturesType,
-	selectEditPositionModalMarket,
-	selectCrossMarginPositions,
-	selectIsolatedMarginPositions,
-	selectMarkets,
-	selectPrices,
-	(type, modalMarketKey, smartPositions, isolatedPositions, markets, prices) => {
-		const contextPositions = type === 'isolated_margin' ? isolatedPositions : smartPositions;
-		const position = contextPositions.find((p) => p.marketKey === modalMarketKey);
-		const market = markets.find((m) => m.marketKey === modalMarketKey);
-		if (!market) return { position: null, market: null, price: null };
-		const price = prices[market.asset];
-		// Note this assumes the order type is always delayed off chain
-		return { position, market, marketPrice: price.offChain || wei(0) };
 	}
 );
 

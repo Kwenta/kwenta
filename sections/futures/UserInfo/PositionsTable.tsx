@@ -119,9 +119,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 				<Table
 					data={data}
 					rounded={false}
-					onTableRowClick={(row) =>
-						router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
-					}
 					noResultsMessage={
 						!isL2 ? (
 							<TableNoResults>
@@ -143,10 +140,18 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 							accessor: 'market',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<TableMarketDetails
-										marketName={cellProps.row.original.market.marketName}
-										marketKey={cellProps.row.original.market.marketKey}
-									/>
+									<MarketDetailsContainer
+										onClick={() =>
+											router.push(
+												ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
+											)
+										}
+									>
+										<TableMarketDetails
+											marketName={cellProps.row.original.market.marketName}
+											marketKey={cellProps.row.original.market.marketKey}
+										/>
+									</MarketDetailsContainer>
 								);
 							},
 							width: 120,
@@ -451,6 +456,10 @@ const NoPositionsText = styled.div`
 	font-size: 16px;
 	text-align: center;
 	text-decoration: underline;
+`;
+
+const MarketDetailsContainer = styled.div`
+	cursor: pointer;
 `;
 
 export default PositionsTable;
