@@ -240,6 +240,6 @@ export const toWei = (value?: string | null, p?: number) => {
 	return !!value ? wei(value, p) : zeroBN;
 };
 
-export const stipZeros = (value?: string | number) => {
+export const stripZeros = (value?: string | number) => {
 	return String(parseFloat(String(value)));
 };

@@ -5,7 +5,7 @@ import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
-import { editCrossMarginMarginDelta } from 'state/futures/actions';
+import { editCrossMarginTradeMarginDelta } from 'state/futures/actions';
 import {
 	selectSelectedInputDenomination,
 	selectMarginDeltaInputValue,
@@ -29,14 +29,14 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
 	const maxMargin = useAppSelector(selectIdleMargin);
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		dispatch(editCrossMarginMarginDelta(v));
+		dispatch(editCrossMarginTradeMarginDelta(v));
 	};
 
 	const onSelectPercent = (index: number) => {
 		const percent = PERCENT_OPTIONS[index].replace('%', '');
 		const margin = idleMargin.div(100).mul(percent);
 
-		dispatch(editCrossMarginMarginDelta(floorNumber(margin).toString()));
+		dispatch(editCrossMarginTradeMarginDelta(floorNumber(margin).toString()));
 	};
 
 	const invalid =

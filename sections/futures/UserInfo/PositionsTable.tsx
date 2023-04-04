@@ -11,6 +11,7 @@ import Currency from 'components/Currency';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Pill from 'components/Pill';
+import Spacer from 'components/Spacer';
 import Table, { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -22,6 +23,7 @@ import { FuturesAccountType } from 'queries/futures/subgraph';
 import MobilePositionRow from 'sections/dashboard/FuturesPositionsTable/MobilePositionRow';
 import PositionType from 'sections/futures/PositionType';
 import { setOpenModal } from 'state/app/reducer';
+import { setShowPositionModal } from 'state/app/reducer';
 import {
 	selectCrossMarginPositions,
 	selectIsolatedMarginPositions,
@@ -33,6 +35,8 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 import { formatDollars } from 'utils/formatters/number';
+
+import TableMarketDetails from './TableMarketDetails';
 
 type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
@@ -60,11 +64,7 @@ const LegacyLink = () => {
 	);
 };
 
-const PositionsTable: FC<FuturesPositionTableProps> = ({
-	accountType,
-	showCurrentMarket = true,
-	showEmptyTable = true,
-}) => {
+const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyTable = true }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
@@ -94,10 +94,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 					takeProfit: formatDollars(takeProfitPrice),
 				};
 			})
-			.filter(
-				({ position, market }) =>
-					position && market && (market?.asset !== currentMarket || showCurrentMarket)
-			);
+			.filter(({ position, market }) => !!position && !!market)
+			.sort((a) => (a.market.asset === currentMarket ? -1 : 1));
 	}, [
 		accountType,
 		crossMarginPositions,
@@ -107,7 +105,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 		stopLossPrice,
 		takeProfitPrice,
 		currentMarket,
-		showCurrentMarket,
 	]);
 
 	return (
@@ -127,13 +124,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 							</TableNoResults>
 						) : (
 							<TableNoResults>
-								{!showCurrentMarket ? (
-									t('dashboard.overview.futures-positions-table.no-result')
-								) : (
-									<Link href={ROUTES.Markets.Home(accountType)}>
-										<div>{t('common.perp-cta')}</div>
-									</Link>
-								)}
+								{t('dashboard.overview.futures-positions-table.no-result')}
 							</TableNoResults>
 						)
 					}
@@ -145,7 +136,12 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 							),
 							accessor: 'market',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
-								return <StyledText>{cellProps.row.original.market.marketName}</StyledText>;
+								return (
+									<TableMarketDetails
+										marketName={cellProps.row.original.market.marketName}
+										marketKey={cellProps.row.original.market.marketKey}
+									/>
+								);
 							},
 							width: 120,
 						},
@@ -172,19 +168,35 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 									: {};
 
 								return (
-									<div>
-										<Currency.Price
-											price={cellProps.row.original.position.size}
-											currencyKey={cellProps.row.original.market.asset}
-										/>
+									<FlexDivRowCentered>
 										<div>
+											<div>
+												<Currency.Price
+													price={cellProps.row.original.position.size}
+													currencyKey={cellProps.row.original.market.asset}
+												/>
+											</div>
 											<Currency.Price
 												price={cellProps.row.original.position.notionalValue}
 												formatOptions={formatOptions}
 												side="secondary"
 											/>
 										</div>
-									</div>
+										<Spacer width={10} />
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_position_size',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+											size="small"
+										>
+											Edit
+										</Pill>
+									</FlexDivRowCentered>
 								);
 							},
 							width: 90,
@@ -240,7 +252,18 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 												suffix="x"
 											/>
 										</div>
-										<Pill>Edit</Pill>
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_position_margin',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
 									</FlexDivRowCentered>
 								);
 							},
@@ -301,10 +324,22 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 						{
 							Header: <TableHeader>Position</TableHeader>,
 							accessor: 'pos',
-							Cell: () => {
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
-										<Pill size="small">Close</Pill>
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_close_position',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+											size="small"
+										>
+											Close
+										</Pill>
 									</div>
 								);
 							},
@@ -373,16 +408,6 @@ const PnlContainer = styled.div`
 
 const TableHeader = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const StyledText = styled.div`
-	display: flex;
-	align-items: center;
-	grid-column: 2;
-	grid-row: 1;
-	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const OpenPositionsHeader = styled.div`

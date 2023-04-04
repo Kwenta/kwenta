@@ -13,7 +13,7 @@ import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { APP_MAX_LEVERAGE } from 'constants/futures';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { previewErrorI18n } from 'queries/futures/constants';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
@@ -24,11 +24,12 @@ import {
 import {
 	selectEditPositionInputs,
 	selectEditPositionModalInfo,
+	selectEditPositionPreview,
 	selectIdleMargin,
 	selectIsFetchingTradePreview,
 	selectPosition,
-	selectPositionPreviewData,
 	selectSubmittingFuturesTx,
+	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
@@ -43,12 +44,12 @@ export default function EditPositionMarginModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
-	const preview = useAppSelector(selectPositionPreviewData);
+	const preview = useAppSelector(selectEditPositionPreview);
 	const { marginDelta } = useAppSelector(selectEditPositionInputs);
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const modal = useAppSelector(selectShowPositionModal);
 	const { market } = useAppSelector(selectEditPositionModalInfo);
-
+	const previewError = useAppSelector(selectTradePreviewError);
 	const [transferType, setTransferType] = useState(0);
 
 	useEffect(() => {
@@ -92,9 +93,15 @@ export default function EditPositionMarginModal() {
 	const maxLeverageExceeded =
 		transferType === 1 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
 
+	const orderError = useMemo(() => {
+		if (previewError) return t(previewErrorI18n(previewError));
+		if (preview?.showStatus) return preview?.statusMessage;
+		return null;
+	}, [preview?.showStatus, preview?.statusMessage, previewError, t]);
+
 	const submitDisabled = useMemo(() => {
-		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded;
-	}, [marginWei, invalid, isLoading, maxLeverageExceeded]);
+		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded || orderError;
+	}, [marginWei, invalid, isLoading, maxLeverageExceeded, orderError]);
 
 	const onClose = () => {
 		if (modal?.marketKey) {
@@ -103,14 +110,12 @@ export default function EditPositionMarginModal() {
 		dispatch(setShowPositionModal(null));
 	};
 
-	const marketAsset = market ? getDisplayAsset(market?.asset) : '';
-
 	return (
 		<StyledBaseModal
 			title={
 				transferType === 0
-					? `Increase ${marketAsset} Position Margin`
-					: `Withdraw ${marketAsset} Position Margin`
+					? `Increase ${market?.marketName} Position Margin`
+					: `Reduce ${market?.marketName} Position Margin`
 			}
 			isOpen
 			onDismiss={onClose}
@@ -157,7 +162,7 @@ export default function EditPositionMarginModal() {
 					valueNode={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
-								{preview ? formatDollars(preview.liquidationPrice) : '-'}
+								{preview ? formatDollars(preview.liqPrice) : '-'}
 							</PreviewArrow>
 						)
 					}
@@ -180,11 +185,11 @@ export default function EditPositionMarginModal() {
 					: t('futures.market.trade.edit-position.submit-margin-withdraw')}
 			</Button>
 
-			{(transactionState?.error || maxLeverageExceeded) && (
+			{(transactionState?.error || orderError || maxLeverageExceeded) && (
 				<>
 					<Spacer height={20} />
 					<ErrorView
-						message={transactionState?.error || 'Max leverage exceeded'}
+						message={transactionState?.error || orderError || 'Max leverage exceeded'}
 						formatter="revert"
 					/>
 				</>

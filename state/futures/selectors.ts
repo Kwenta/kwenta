@@ -811,10 +811,14 @@ export const selectEditPositionModalInfo = createSelector(
 );
 
 export const selectEditPosDesiredFillPrice = createSelector(
+	selectNetwork,
 	selectIsolatedPriceImpact,
 	selectEditPositionInputs,
 	selectMarketPrice,
-	(priceImpact, { nativeSizeDelta }, marketPrice) => {
+	(network, priceImpact, { nativeSizeDelta }, marketPrice) => {
+		// TODO: Remove once SNX mainnet changes depoyed
+		if (network === 10) return priceImpact;
+
 		const impactDecimalPercent = priceImpact.div(100);
 		return Number(nativeSizeDelta) < 0
 			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
@@ -823,10 +827,14 @@ export const selectEditPosDesiredFillPrice = createSelector(
 );
 
 export const selectClosePosDesiredFillPrice = createSelector(
+	selectNetwork,
 	selectIsolatedPriceImpact,
 	selectEditPositionModalInfo,
 	selectClosePositionOrderInputs,
-	(priceImpact, { position, marketPrice }, { price, orderType }) => {
+	(network, priceImpact, { position, marketPrice }, { price, orderType }) => {
+		// TODO: Remove once SNX mainnet changes depoyed
+		if (network === 10) return priceImpact;
+
 		const impactDecimalPercent = priceImpact.div(100);
 		let orderPrice = orderType === 'market' ? marketPrice : wei(price?.value || 0);
 		orderPrice = orderPrice ?? wei(0);
@@ -836,7 +844,7 @@ export const selectClosePosDesiredFillPrice = createSelector(
 	}
 );
 
-// TODO: Can move to only desired fill once Synthetix upgrade mainnet
+// TODO: Remove once SNX mainnet changes depoyed
 export const selectPriceImpactOrDesiredFill = createSelector(
 	selectIsolatedPriceImpact,
 	selectDesiredTradeFillPrice,
@@ -953,8 +961,44 @@ export const selectTradePreview = createSelector(
 	selectFuturesType,
 	(state: RootState) => state.futures,
 	(type, futures) => {
-		const preview = futures[accountType(type)].tradePreview;
-		return preview ? unserializePotentialTrade(preview) : null;
+		const preview = futures[accountType(type)].previews.trade;
+		const unserialized = preview ? unserializePotentialTrade(preview) : null;
+		return unserialized
+			? {
+					...unserialized,
+					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+			  }
+			: null;
+	}
+);
+
+export const selectEditPositionPreview = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		const preview = futures[accountType(type)].previews.edit;
+		const unserialized = preview ? unserializePotentialTrade(preview) : null;
+		return unserialized
+			? {
+					...unserialized,
+					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+			  }
+			: null;
+	}
+);
+
+export const selectClosePositionPreview = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		const preview = futures[accountType(type)].previews.close;
+		const unserialized = preview ? unserializePotentialTrade(preview) : null;
+		return unserialized
+			? {
+					...unserialized,
+					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+			  }
+			: null;
 	}
 );
 

@@ -17,7 +17,7 @@ import {
 	selectEditPositionInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, formatNumber, zeroBN } from 'utils/formatters/number';
+import { floorNumber, formatNumber, suggestedDecimals, zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	type: 'increase' | 'decrease';
@@ -99,7 +99,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 				<Spacer height={16} />
 				<StyledSlider
 					minValue={0}
-					maxValue={Number(maxNativeValue.toString(2))}
+					maxValue={Number(maxNativeValue.toString(suggestedDecimals(maxNativeValue)))}
 					step={getStep(maxNativeValue.toNumber())}
 					defaultValue={0}
 					value={nativeSizeDeltaWei.abs().toNumber()}

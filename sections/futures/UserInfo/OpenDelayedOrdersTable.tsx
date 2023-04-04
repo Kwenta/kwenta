@@ -4,7 +4,6 @@ import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
-import Currency from 'components/Currency';
 import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
@@ -31,6 +30,7 @@ import { getDisplayAsset } from 'utils/futures';
 
 import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
 import PositionType from '../PositionType';
+import TableMarketDetails from './TableMarketDetails';
 
 type CountdownTimers = Record<
 	FuturesMarketKey,
@@ -175,20 +175,18 @@ const OpenDelayedOrdersTable: React.FC = () => {
 							accessor: 'market',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
-									<MarketContainer>
-										<IconContainer>
-											<StyledCurrencyIcon currencyKey={cellProps.row.original.marketKey} />
-										</IconContainer>
-										<StyledText>
-											{cellProps.row.original.market}
-											{cellProps.row.original.isStale && (
+									<TableMarketDetails
+										marketName={cellProps.row.original.market}
+										infoLabel={cellProps.row.original.orderType}
+										marketKey={cellProps.row.original.marketKey}
+										badge={
+											cellProps.row.original.isStale && (
 												<ExpiredBadge color="red">
 													{t('futures.market.user.open-orders.badges.expired')}
 												</ExpiredBadge>
-											)}
-										</StyledText>
-										<StyledValue>{cellProps.row.original.orderType}</StyledValue>
-									</MarketContainer>
+											)
+										}
+									/>
 								);
 							},
 							sortable: true,
@@ -339,40 +337,6 @@ const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 `;
 
-const StyledCurrencyIcon = styled(Currency.Icon)`
-	width: 30px;
-	height: 30px;
-	margin-right: 8px;
-`;
-
-const IconContainer = styled.div`
-	grid-column: 1;
-	grid-row: 1 / span 2;
-`;
-
-const StyledValue = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 12px;
-	grid-column: 2;
-	grid-row: 2;
-`;
-
-const StyledText = styled.div`
-	display: flex;
-	align-items: center;
-	grid-column: 2;
-	grid-row: 1;
-	margin-bottom: -4px;
-`;
-
-const MarketContainer = styled.div`
-	display: grid;
-	grid-template-rows: auto auto;
-	grid-template-columns: auto auto;
-	align-items: center;
-`;
-
 const EditButton = styled.button`
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gray};
 	height: 28px;
@@ -408,6 +372,7 @@ const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
+	margin-left: 6px;
 `;
 
 const MobilePositionSide = styled.div<{ $side: PositionSide }>`

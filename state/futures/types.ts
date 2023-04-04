@@ -175,7 +175,7 @@ export type AccountContext = {
 	cmAccount?: string;
 };
 
-export type PreviewAction = 'edit_position' | 'trade';
+export type PreviewAction = 'edit' | 'trade' | 'close';
 
 export type FuturesAccountData = {
 	position?: FuturesPosition<string>;
@@ -244,7 +244,11 @@ export type CrossMarginState = {
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
 	showCrossMarginOnboard: boolean;
-	tradePreview: FuturesPotentialTradeDetails<string> | null;
+	previews: {
+		trade: FuturesPotentialTradeDetails<string> | null;
+		close: FuturesPotentialTradeDetails<string> | null;
+		edit: FuturesPotentialTradeDetails<string> | null;
+	};
 	previewDebounceCount: number;
 	settings: CrossMarginSettings<string>;
 	fees: CrossMarginTradeFees<string>;
@@ -267,7 +271,11 @@ export type IsolatedMarginState = {
 	tradeInputs: TradeSizeInputs<string>;
 	editPositionInputs: EditPositionInputs<string>;
 	orderType: 'market';
-	tradePreview: FuturesPotentialTradeDetails<string> | null;
+	previews: {
+		trade: FuturesPotentialTradeDetails<string> | null;
+		close: FuturesPotentialTradeDetails<string> | null;
+		edit: FuturesPotentialTradeDetails<string> | null;
+	};
 	previewDebounceCount: number;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;

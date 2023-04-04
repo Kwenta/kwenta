@@ -62,6 +62,7 @@ import {
 	FuturesState,
 	TransactionEstimationPayload,
 	TransactionEstimations,
+	PreviewAction,
 } from './types';
 
 export const FUTURES_INITIAL_STATE: FuturesState = {
@@ -123,7 +124,11 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 			},
 		},
 		fees: ZERO_CM_FEES,
-		tradePreview: null,
+		previews: {
+			trade: null,
+			close: null,
+			edit: null,
+		},
 		previewDebounceCount: 0,
 		marginDelta: '0',
 		cancellingOrder: undefined,
@@ -146,7 +151,11 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedMarketKey: FuturesMarketKey.sETHPERP,
 		leverageSide: PositionSide.LONG,
 		orderType: 'market',
-		tradePreview: null,
+		previews: {
+			trade: null,
+			close: null,
+			edit: null,
+		},
 		previewDebounceCount: 0,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		editPositionInputs: {
@@ -252,29 +261,26 @@ const futuresSlice = createSlice({
 		setCrossMarginFees: (state, action: PayloadAction<CrossMarginTradeFees<string>>) => {
 			state.crossMargin.fees = action.payload;
 		},
-		setPreviewError: (state, action: PayloadAction<string | null>) => {
-			state.errors.tradePreview = action.payload;
-		},
-		handleCrossMarginPreviewError: (futuresState, action: PayloadAction<string>) => {
-			const message = Object.values(ORDER_PREVIEW_ERRORS).includes(action.payload)
-				? action.payload
+		handlePreviewError: (
+			futuresState,
+			{
+				payload,
+			}: PayloadAction<{
+				error: string;
+				previewType: PreviewAction;
+			}>
+		) => {
+			const selectedAccountType = futuresState.selectedType;
+			const message = Object.values(ORDER_PREVIEW_ERRORS).includes(payload.error)
+				? payload.error
 				: 'Failed to get trade preview';
 			futuresState.queryStatuses.crossMarginTradePreview = {
 				status: FetchStatus.Error,
 				error: message,
 			};
-			futuresState.crossMargin.tradePreview = null;
+			futuresState[accountType(selectedAccountType)].previews[payload.previewType] = null;
 		},
-		handleIsolatedMarginPreviewError: (futuresState, action: PayloadAction<string>) => {
-			const message = Object.values(ORDER_PREVIEW_ERRORS).includes(action.payload)
-				? action.payload
-				: 'Failed to get trade preview';
-			futuresState.queryStatuses.isolatedTradePreview = {
-				status: FetchStatus.Error,
-				error: message,
-			};
-			futuresState.isolatedMargin.tradePreview = null;
-		},
+
 		setCrossMarginAccount: (
 			state,
 			action: PayloadAction<{ wallet: string; account: string; network: NetworkId }>
@@ -299,15 +305,37 @@ const futuresSlice = createSlice({
 		},
 		setIsolatedTradePreview: (
 			state,
-			action: PayloadAction<FuturesPotentialTradeDetails<string> | null>
+			{
+				payload,
+			}: PayloadAction<{
+				preview: FuturesPotentialTradeDetails<string> | null;
+				type: PreviewAction;
+			}>
 		) => {
-			state.isolatedMargin.tradePreview = action.payload;
+			state.isolatedMargin.previews[payload.type] = payload.preview;
+		},
+		clearAllTradePreviews: (state) => {
+			state.isolatedMargin.previews = {
+				edit: null,
+				trade: null,
+				close: null,
+			};
+			state.crossMargin.previews = {
+				edit: null,
+				trade: null,
+				close: null,
+			};
 		},
 		setCrossMarginTradePreview: (
 			state,
-			action: PayloadAction<FuturesPotentialTradeDetails<string> | null>
+			{
+				payload,
+			}: PayloadAction<{
+				preview: FuturesPotentialTradeDetails<string> | null;
+				type: PreviewAction;
+			}>
 		) => {
-			state.crossMargin.tradePreview = action.payload;
+			state.crossMargin.previews[payload.type] = payload.preview;
 		},
 		setCrossMarginOrderCancelling: (state, { payload }: PayloadAction<number | undefined>) => {
 			state.crossMargin.cancellingOrder = payload;
@@ -518,8 +546,8 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchIsolatedMarginTradePreview.pending, (futuresState) => {
 			futuresState.queryStatuses.isolatedTradePreview = LOADING_STATUS;
 		});
-		builder.addCase(fetchIsolatedMarginTradePreview.fulfilled, (futuresState, action) => {
-			futuresState.isolatedMargin.tradePreview = action.payload;
+		builder.addCase(fetchIsolatedMarginTradePreview.fulfilled, (futuresState, { payload }) => {
+			futuresState.isolatedMargin.previews.trade = payload;
 			futuresState.queryStatuses.isolatedTradePreview = SUCCESS_STATUS;
 		});
 		builder.addCase(fetchIsolatedMarginTradePreview.rejected, (futuresState) => {
@@ -527,23 +555,16 @@ const futuresSlice = createSlice({
 				status: FetchStatus.Error,
 				error: 'Failed to fetch trade preview',
 			};
-			futuresState.isolatedMargin.tradePreview = null;
+			futuresState.isolatedMargin.previews.trade = null;
 		});
 
 		// Fetch Cross Margin Trade Preview
 		builder.addCase(fetchCrossMarginTradePreview.pending, (futuresState) => {
 			futuresState.queryStatuses.crossMarginTradePreview = LOADING_STATUS;
 		});
-		builder.addCase(fetchCrossMarginTradePreview.fulfilled, (futuresState, action) => {
-			futuresState.crossMargin.tradePreview = action.payload;
+		builder.addCase(fetchCrossMarginTradePreview.fulfilled, (futuresState, { payload }) => {
+			futuresState.crossMargin.previews[payload.type] = payload.preview;
 			futuresState.queryStatuses.crossMarginTradePreview = SUCCESS_STATUS;
-		});
-		builder.addCase(fetchCrossMarginTradePreview.rejected, (futuresState) => {
-			futuresState.queryStatuses.crossMarginTradePreview = {
-				error: 'Failed to get preview',
-				status: FetchStatus.Error,
-			};
-			futuresState.crossMargin.tradePreview = null;
 		});
 
 		// Fetch keeper balance
@@ -677,8 +698,7 @@ const futuresSlice = createSlice({
 export default futuresSlice.reducer;
 
 export const {
-	handleCrossMarginPreviewError,
-	handleIsolatedMarginPreviewError,
+	handlePreviewError,
 	setMarketAsset,
 	setOrderType,
 	setClosePositionOrderType,
@@ -700,10 +720,10 @@ export const {
 	setLeverageInput,
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
+	clearAllTradePreviews,
 	setIsolatedMarginFee,
 	setCrossMarginTradePreview,
 	setCrossMarginLeverageForAsset,
-	setPreviewError,
 	setCrossMarginOrderCancelling,
 	setSelectedTrader,
 	setSelectedInputDenomination,

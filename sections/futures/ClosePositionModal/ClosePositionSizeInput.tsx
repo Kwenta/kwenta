@@ -43,7 +43,7 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 		return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
 	}, [nativeSizeDelta]);
 
-	const invalid = nativeSizeDelta !== '' && maxNativeValue.lte(nativeSizeDeltaWei);
+	const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei);
 
 	return (
 		<OrderSizingContainer>
