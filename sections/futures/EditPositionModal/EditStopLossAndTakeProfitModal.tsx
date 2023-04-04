@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback } from 'react';
+import React, { ChangeEvent, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -15,6 +15,7 @@ import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'stat
 import {
 	selectLeverageSide,
 	selectMarketPrice,
+	selectSlTpTradeInputs,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -33,6 +34,7 @@ export default function EditStopLossAndTakeProfitModal() {
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const transactionState = useAppSelector(selectTransaction);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
+	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
 
 	const onSelectStopLossPercent = useCallback(
 		(index) => {
@@ -88,23 +90,10 @@ export default function EditStopLossAndTakeProfitModal() {
 		dispatch,
 	]);
 
-	// const slInvalid = useMemo(() => {
-	// 	if (leverageSide === 'long') {
-	// 		return !!stopLossPrice && wei(stopLossPrice).gt(currentPrice);
-	// 	} else {
-	// 		return !!stopLossPrice && wei(stopLossPrice).lt(currentPrice);
-	// 	}
-	// }, [stopLossPrice, currentPrice, leverageSide]);
-
-	// const tpInvalid = useMemo(() => {
-	// 	if (leverageSide === 'long') {
-	// 		return !!takeProfitPrice && wei(takeProfitPrice).lt(currentPrice);
-	// 	} else {
-	// 		return !!takeProfitPrice && wei(takeProfitPrice).gt(currentPrice);
-	// 	}
-	// }, [takeProfitPrice, currentPrice, leverageSide]);
-
-	// const isDisabled = useMemo(() => slInvalid || tpInvalid, [slInvalid, tpInvalid]);
+	const isActive = useMemo(() => stopLossPrice || takeProfitPrice, [
+		stopLossPrice,
+		takeProfitPrice,
+	]);
 
 	return (
 		<StyledBaseModal
@@ -174,7 +163,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				loading={isSubmitting}
 				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={false}
+				disabled={!isActive}
 				fullWidth
 				onClick={onSetStopLossAndTakeProfit}
 			>
