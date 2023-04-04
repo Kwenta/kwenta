@@ -33,6 +33,8 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
+import TableMarketDetails from './TableMarketDetails';
+
 type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
 	showCurrentMarket?: boolean;
@@ -130,7 +132,12 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 							),
 							accessor: 'market',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
-								return <StyledText>{cellProps.row.original.market.marketName}</StyledText>;
+								return (
+									<TableMarketDetails
+										marketName={cellProps.row.original.market.marketName}
+										marketKey={cellProps.row.original.market.marketKey}
+									/>
+								);
 							},
 							width: 120,
 						},
@@ -393,16 +400,6 @@ const PnlContainer = styled.div`
 
 const TableHeader = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
-const StyledText = styled.div`
-	display: flex;
-	align-items: center;
-	grid-column: 2;
-	grid-row: 1;
-	margin-bottom: -4px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const OpenPositionsHeader = styled.div`

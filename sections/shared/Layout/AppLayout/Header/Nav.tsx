@@ -222,7 +222,7 @@ const DropDownSelect = styled(Select)`
 		width: ${(props) => {
 			//@ts-ignore
 			return props.value?.i18nLabel === 'header.nav.markets'
-				? '88px'
+				? '94px'
 				: //@ts-ignore
 				props.value?.i18nLabel === 'header.nav.leaderboard'
 				? '110px'
