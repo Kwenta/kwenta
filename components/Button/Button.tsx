@@ -31,7 +31,7 @@ type BaseButtonProps = {
 };
 
 export const border = css`
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
 	border: none;
 
 	&::before {

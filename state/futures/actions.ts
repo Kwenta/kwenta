@@ -130,8 +130,8 @@ import {
 	selectFuturesPositions,
 	selectEditPositionModalInfo,
 	selectClosePosDesiredFillPrice,
-	selectStopLossOrder,
-	selectTakeProfitOrder,
+	selectOpenDelayedOrders,
+	selectPriceImpactOrDesiredFill,
 } from './selectors';
 import {
 	AccountContext,
@@ -250,7 +250,6 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 	const { wallet, futures } = getState();
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
-
 	if (!wallet.walletAddress || !supportedNetwork) return;
 	try {
 		const positions = await sdk.futures.getFuturesPositions(
@@ -402,17 +401,22 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 	{ orders: DelayedOrderWithDetails<string>[]; wallet: string; networkId: NetworkId } | undefined,
 	void,
 	ThunkConfig
->('futures/fetchIsolatedOpenOrders', async (_, { getState, extra: { sdk } }) => {
+>('futures/fetchIsolatedOpenOrders', async (_, { dispatch, getState, extra: { sdk } }) => {
 	const wallet = selectWallet(getState());
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
 	const markets = selectMarkets(getState());
+	const existingOrders = selectOpenDelayedOrders(getState());
 	if (!wallet || !supportedNetwork || !markets.length) return;
 
 	const marketAddresses = markets.map((market) => market.market);
 
 	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(wallet, marketAddresses);
 	const nonzeroOrders = formatDelayedOrders(orders, markets);
+	const orderDropped = existingOrders.length > nonzeroOrders.length;
+	if (orderDropped) {
+		dispatch(fetchIsolatedMarginPositions());
+	}
 
 	return {
 		networkId: network,
@@ -1180,8 +1184,9 @@ export const modifyIsolatedPosition = createAsyncThunk<
 	async ({ delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
-		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 
+		// TODO: Change to desired fill when mainnet changes deployed
+		const priceImpactOrDesiredFill = selectPriceImpactOrDesiredFill(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 
 		try {
@@ -1196,7 +1201,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			const tx = await sdk.futures.modifyIsolatedMarginPosition(
 				marketInfo.market,
 				wei(nativeSizeDelta),
-				desiredFillPrice,
+				priceImpactOrDesiredFill,
 				{
 					delayed,
 					offchain,
@@ -1270,7 +1275,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 	'futures/closeIsolatedMarginPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
-		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
+		const priceImpactOrDesiredFill = selectPriceImpactOrDesiredFill(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
 			dispatch(
@@ -1280,7 +1285,10 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 					hash: null,
 				})
 			);
-			const tx = await sdk.futures.closeIsolatedPosition(marketInfo.market, desiredFillPrice);
+			const tx = await sdk.futures.closeIsolatedPosition(
+				marketInfo.market,
+				priceImpactOrDesiredFill
+			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));

@@ -164,6 +164,11 @@ export const selectMarketInfo = createSelector(
 	}
 );
 
+export const selectIsolatedPriceImpact = createSelector(
+	(state: RootState) => state.futures.isolatedMargin.priceImpact,
+	(priceImpact) => wei(priceImpact)
+);
+
 export const selectOrderType = createSelector(
 	(state: RootState) => state.futures,
 	(futures) => futures[accountType(futures.selectedType)].orderType
@@ -698,19 +703,15 @@ export const selectSlTpTradeInputs = createSelector(
 	})
 );
 
-export const selectIsolatedPriceImpact = createSelector(
-	(state: RootState) => state.futures.isolatedMargin.priceImpact,
-	(priceImpact) => wei(priceImpact)
-);
-
 export const selectDesiredTradeFillPrice = createSelector(
 	selectIsolatedPriceImpact,
 	selectTradeSizeInputs,
 	selectMarketPrice,
 	(priceImpact, { nativeSizeDelta }, marketPrice) => {
+		const impactDecimalPercent = priceImpact.div(100);
 		return nativeSizeDelta.lt(0)
-			? marketPrice.mul(wei(1).sub(priceImpact))
-			: marketPrice.mul(priceImpact.add(1));
+			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
+			: marketPrice.mul(impactDecimalPercent.add(1));
 	}
 );
 
@@ -734,12 +735,13 @@ export const selectEditPositionModalInfo = createSelector(
 
 export const selectEditPosDesiredFillPrice = createSelector(
 	selectIsolatedPriceImpact,
-	selectEditPositionModalInfo,
+	selectEditPositionInputs,
 	selectMarketPrice,
-	(priceImpact, { position }, marketPrice) => {
-		return position?.position?.side === PositionSide.LONG
-			? marketPrice.mul(wei(1).sub(priceImpact))
-			: marketPrice.mul(priceImpact.add(1));
+	(priceImpact, { nativeSizeDelta }, marketPrice) => {
+		const impactDecimalPercent = priceImpact.div(100);
+		return Number(nativeSizeDelta) < 0
+			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
+			: marketPrice.mul(impactDecimalPercent.add(1));
 	}
 );
 
@@ -748,11 +750,23 @@ export const selectClosePosDesiredFillPrice = createSelector(
 	selectEditPositionModalInfo,
 	selectClosePositionOrderInputs,
 	(priceImpact, { position, marketPrice }, { price, orderType }) => {
+		const impactDecimalPercent = priceImpact.div(100);
 		let orderPrice = orderType === 'market' ? marketPrice : wei(price?.value || 0);
 		orderPrice = orderPrice ?? wei(0);
 		return position?.position?.side === PositionSide.LONG
-			? orderPrice.mul(wei(1).sub(priceImpact))
-			: orderPrice.mul(priceImpact.add(1));
+			? orderPrice.mul(wei(1).sub(impactDecimalPercent))
+			: orderPrice.mul(impactDecimalPercent.add(1));
+	}
+);
+
+// TODO: Can move to only desired fill once Synthetix upgrade mainnet
+export const selectPriceImpactOrDesiredFill = createSelector(
+	selectIsolatedPriceImpact,
+	selectDesiredTradeFillPrice,
+	selectNetwork,
+	(priceImpact, desiredFill, network) => {
+		if (network === 10) return priceImpact;
+		return desiredFill;
 	}
 );
 

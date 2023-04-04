@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { DEFAULT_FUTURES_MARGIN_TYPE, DEFAULT_PRICE_IMPACT_DELTA } from 'constants/defaults';
+import {
+	DEFAULT_FUTURES_MARGIN_TYPE,
+	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
+} from 'constants/defaults';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { Period } from 'sdk/constants/period';
 import { NetworkId } from 'sdk/types/common';
@@ -150,7 +153,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 			nativeSizeDelta: '',
 			marginDelta: '',
 		},
-		priceImpact: DEFAULT_PRICE_IMPACT_DELTA,
+		priceImpact: DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
 		tradeFee: '0',
 		leverageInput: '0',
 	},

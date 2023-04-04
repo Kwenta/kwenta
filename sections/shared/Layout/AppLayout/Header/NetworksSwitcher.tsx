@@ -140,7 +140,7 @@ const L2Select = styled(Select)`
 	}
 
 	.react-select__control {
-		border-radius: 10px;
+		border-radius: 8px;
 	}
 
 	.react-select__dropdown-indicator {
