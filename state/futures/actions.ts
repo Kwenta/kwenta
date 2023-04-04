@@ -1721,14 +1721,13 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 
 			// To separate Stop Loss and Take Profit from other limit / stop orders
 			// we set the size to max big num value.
-
 			if (Number(stopLossPrice) > 0) {
 				params.stopLoss = {
 					price: wei(stopLossPrice),
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 					isCancelled: false,
 				};
-			} else if (!!stopLossPrice) {
+			} else if (!stopLossPrice) {
 				params.stopLoss = {
 					price: wei(0),
 					sizeDelta: wei(0),
@@ -1742,7 +1741,7 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 					isCancelled: false,
 				};
-			} else if (!!takeProfitPrice) {
+			} else if (!takeProfitPrice) {
 				params.takeProfit = {
 					price: wei(0),
 					sizeDelta: wei(0),

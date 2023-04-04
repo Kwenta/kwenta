@@ -758,12 +758,20 @@ export const selectSlTpTradeInputs = createSelector(
 		if (!!orderPrice.stopLossPrice && !tradeInputs.stopLossPrice) {
 			price.stopLossPrice = orderPrice.stopLossPrice;
 		} else {
-			price.stopLossPrice = tradeInputs.stopLossPrice || '';
+			if (tradeInputs.stopLossPrice === '0') {
+				price.stopLossPrice = '';
+			} else {
+				price.stopLossPrice = tradeInputs.stopLossPrice || '';
+			}
 		}
 		if (!!orderPrice.takeProfitPrice && !tradeInputs.takeProfitPrice) {
 			price.takeProfitPrice = orderPrice.takeProfitPrice;
 		} else {
-			price.takeProfitPrice = tradeInputs.takeProfitPrice || '';
+			if (tradeInputs.takeProfitPrice === '0') {
+				price.takeProfitPrice = '';
+			} else {
+				price.takeProfitPrice = tradeInputs.takeProfitPrice || '';
+			}
 		}
 		return {
 			stopLossPrice: price.stopLossPrice,
