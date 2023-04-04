@@ -1695,8 +1695,6 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
-		const stopLossOrder = selectStopLossOrder(getState());
-		const takeProfitOrder = selectTakeProfitOrder(getState());
 
 		try {
 			if (!marketInfo) throw new Error('Market info not found');
@@ -1720,46 +1718,28 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 				params.stopLoss = {
 					price: wei(stopLossPrice),
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
+					isCancelled: false,
 				};
-			} else if (!!stopLossOrder) {
-				dispatch(
-					setTransaction({
-						status: TransactionStatus.AwaitingExecution,
-						type: 'cancel_cross_margin_order',
-						hash: null,
-					})
-				);
-
-				// Handle contract id or subgraph id
-				dispatch(setCrossMarginOrderCancelling(stopLossOrder.id));
-				const tx = await sdk.futures.cancelConditionalOrder(account, stopLossOrder.id);
-				await monitorAndAwaitTransaction(dispatch, tx);
-				dispatch(setCrossMarginOrderCancelling(undefined));
-				dispatch(setOpenModal(null));
-				dispatch(refetchPosition('cross_margin'));
+			} else {
+				params.stopLoss = {
+					price: wei(0),
+					sizeDelta: wei(0),
+					isCancelled: true,
+				};
 			}
 
 			if (Number(takeProfitPrice) > 0) {
 				params.takeProfit = {
 					price: wei(takeProfitPrice),
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
+					isCancelled: false,
 				};
-			} else if (!!takeProfitOrder) {
-				dispatch(
-					setTransaction({
-						status: TransactionStatus.AwaitingExecution,
-						type: 'cancel_cross_margin_order',
-						hash: null,
-					})
-				);
-
-				// Handle contract id or subgraph id
-				dispatch(setCrossMarginOrderCancelling(takeProfitOrder.id));
-				const tx = await sdk.futures.cancelConditionalOrder(account, takeProfitOrder.id);
-				await monitorAndAwaitTransaction(dispatch, tx);
-				dispatch(setCrossMarginOrderCancelling(undefined));
-				dispatch(setOpenModal(null));
-				dispatch(refetchPosition('cross_margin'));
+			} else {
+				params.takeProfit = {
+					price: wei(0),
+					sizeDelta: wei(0),
+					isCancelled: true,
+				};
 			}
 
 			if (params.stopLoss || params.takeProfit) {

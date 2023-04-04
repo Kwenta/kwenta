@@ -1166,19 +1166,21 @@ export default class FuturesService {
 						inputs.push(defaultAbiCoder.encode(['uint256'], [tp.id]));
 					});
 				}
-				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
-				const encodedParams = encodeConditionalOrderParams(
-					marketKey,
-					{
-						marginDelta: wei(0),
-						sizeDelta: params.takeProfit.sizeDelta,
-						price: params.takeProfit.price,
-					},
-					ConditionalOrderTypeEnum.LIMIT,
-					desiredFillPrice,
-					true
-				);
-				inputs.push(encodedParams);
+				if (!params.takeProfit.isCancelled) {
+					commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+					const encodedParams = encodeConditionalOrderParams(
+						marketKey,
+						{
+							marginDelta: wei(0),
+							sizeDelta: params.takeProfit.sizeDelta,
+							price: params.takeProfit.price,
+						},
+						ConditionalOrderTypeEnum.LIMIT,
+						desiredFillPrice,
+						true
+					);
+					inputs.push(encodedParams);
+				}
 			}
 
 			if (params.stopLoss) {
@@ -1188,19 +1190,21 @@ export default class FuturesService {
 						inputs.push(defaultAbiCoder.encode(['uint256'], [sl.id]));
 					});
 				}
-				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
-				const encodedParams = encodeConditionalOrderParams(
-					marketKey,
-					{
-						marginDelta: wei(0),
-						sizeDelta: params.stopLoss.sizeDelta,
-						price: params.stopLoss.price,
-					},
-					ConditionalOrderTypeEnum.STOP,
-					desiredFillPrice,
-					true
-				);
-				inputs.push(encodedParams);
+				if (!params.stopLoss.isCancelled) {
+					commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+					const encodedParams = encodeConditionalOrderParams(
+						marketKey,
+						{
+							marginDelta: wei(0),
+							sizeDelta: params.stopLoss.sizeDelta,
+							price: params.stopLoss.price,
+						},
+						ConditionalOrderTypeEnum.STOP,
+						desiredFillPrice,
+						true
+					);
+					inputs.push(encodedParams);
+				}
 			}
 		}
 
