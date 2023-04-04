@@ -695,12 +695,81 @@ export const selectTradeSizeInputs = createSelector(
 	}
 );
 
+export const selectConditionalOrdersForMarket = createSelector(
+	selectMarketAsset,
+	selectCrossMarginAccountData,
+	(asset, account) => {
+		const orders = account ? unserializeConditionalOrders(account.conditionalOrders) : [];
+		return orders.filter((o) => o.asset === asset);
+	}
+);
+
+export const selectOpenConditionalOrders = createSelector(
+	selectConditionalOrdersForMarket,
+	selectFuturesType,
+	(crossOrders, futuresType) => {
+		return futuresType === 'cross_margin' ? crossOrders : [];
+	}
+);
+
+export const selectStopLossOrder = createSelector(
+	selectOpenConditionalOrders,
+	selectMarketKey,
+	(selectOpenConditionalOrders, marketKey) => {
+		return selectOpenConditionalOrders.find(
+			(o) =>
+				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
+		);
+	}
+);
+
+export const selectTakeProfitOrder = createSelector(
+	selectOpenConditionalOrders,
+	selectMarketKey,
+	(selectOpenConditionalOrders, marketKey) => {
+		return selectOpenConditionalOrders.find(
+			(o) =>
+				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT && o.reduceOnly
+		);
+	}
+);
+
+export const selectSlTpOrderPrice = createSelector(
+	selectTakeProfitOrder,
+	selectStopLossOrder,
+	(takeProfitOrder, stopLossOrder) => {
+		const tpDecimal = suggestedDecimals(takeProfitOrder?.targetPrice ?? wei(0));
+		const slDecimal = suggestedDecimals(stopLossOrder?.targetPrice ?? wei(0));
+		return {
+			takeProfitPrice: takeProfitOrder?.targetPrice?.toString(tpDecimal) || '0.00',
+			stopLossPrice: stopLossOrder?.targetPrice?.toString(slDecimal) || '0.00',
+		};
+	}
+);
+
 export const selectSlTpTradeInputs = createSelector(
 	(state: RootState) => state.futures.crossMargin.tradeInputs,
-	(tradeInputs) => ({
-		stopLossPrice: tradeInputs.stopLossPrice || '',
-		takeProfitPrice: tradeInputs.takeProfitPrice || '',
-	})
+	selectSlTpOrderPrice,
+	(tradeInputs, orderPrice) => {
+		const price = {
+			stopLossPrice: '',
+			takeProfitPrice: '',
+		};
+		if (!!orderPrice.stopLossPrice && !tradeInputs.stopLossPrice) {
+			price.stopLossPrice = orderPrice.stopLossPrice;
+		} else {
+			price.stopLossPrice = tradeInputs.stopLossPrice || '';
+		}
+		if (!!orderPrice.takeProfitPrice && !tradeInputs.takeProfitPrice) {
+			price.takeProfitPrice = orderPrice.takeProfitPrice;
+		} else {
+			price.takeProfitPrice = tradeInputs.takeProfitPrice || '';
+		}
+		return {
+			stopLossPrice: price.stopLossPrice,
+			takeProfitPrice: price.takeProfitPrice,
+		};
+	}
 );
 
 export const selectDesiredTradeFillPrice = createSelector(
@@ -868,15 +937,6 @@ export const selectMarginTransfers = createSelector(
 	}
 );
 
-export const selectConditionalOrdersForMarket = createSelector(
-	selectMarketAsset,
-	selectCrossMarginAccountData,
-	(asset, account) => {
-		const orders = account ? unserializeConditionalOrders(account.conditionalOrders) : [];
-		return orders.filter((o) => o.asset === asset);
-	}
-);
-
 export const selectOpenDelayedOrders = createSelector(selectAccountData, (account) =>
 	unserializeDelayedOrders(account?.delayedOrders ?? [])
 );
@@ -936,49 +996,6 @@ export const selectPositionStatus = createSelector(
 		return type === 'cross_margin'
 			? futures.queryStatuses.crossMarginPositions
 			: futures.queryStatuses.isolatedPositions;
-	}
-);
-
-export const selectOpenConditionalOrders = createSelector(
-	selectConditionalOrdersForMarket,
-	selectFuturesType,
-	(crossOrders, futuresType) => {
-		return futuresType === 'cross_margin' ? crossOrders : [];
-	}
-);
-
-export const selectStopLossOrder = createSelector(
-	selectOpenConditionalOrders,
-	selectMarketKey,
-	(selectOpenConditionalOrders, marketKey) => {
-		return selectOpenConditionalOrders.find(
-			(o) =>
-				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
-		);
-	}
-);
-
-export const selectTakeProfitOrder = createSelector(
-	selectOpenConditionalOrders,
-	selectMarketKey,
-	(selectOpenConditionalOrders, marketKey) => {
-		return selectOpenConditionalOrders.find(
-			(o) =>
-				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT && o.reduceOnly
-		);
-	}
-);
-
-export const selectSlTpOrderPrice = createSelector(
-	selectTakeProfitOrder,
-	selectStopLossOrder,
-	(takeProfitOrder, stopLossOrder) => {
-		const tpDecimal = suggestedDecimals(takeProfitOrder?.targetPrice ?? wei(0));
-		const slDecimal = suggestedDecimals(stopLossOrder?.targetPrice ?? wei(0));
-		return {
-			takeProfitPrice: takeProfitOrder?.targetPrice?.toString(tpDecimal) || '0.00',
-			stopLossPrice: stopLossOrder?.targetPrice?.toString(slDecimal) || '0.00',
-		};
 	}
 );
 

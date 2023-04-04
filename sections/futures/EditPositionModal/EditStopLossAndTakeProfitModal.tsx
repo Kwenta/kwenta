@@ -40,7 +40,7 @@ export default function EditStopLossAndTakeProfitModal() {
 		(index) => {
 			const option = SL_OPTIONS[index];
 			if (option === 'none') {
-				dispatch(setCrossMarginTradeStopLoss('0'));
+				dispatch(setCrossMarginTradeStopLoss(''));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 				const stopLoss =
@@ -58,7 +58,7 @@ export default function EditStopLossAndTakeProfitModal() {
 		(index) => {
 			const option = TP_OPTIONS[index];
 			if (option === 'none') {
-				dispatch(setCrossMarginTradeTakeProfit('0'));
+				dispatch(setCrossMarginTradeTakeProfit(''));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 				const takeProfit =
@@ -107,6 +107,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				currentPrice={
 					currentPrice ? formatDollars(currentPrice, { suggestDecimals: true }) : NO_VALUE
 				}
+				value={takeProfitPrice}
 				onChange={onChangeTakeProfit}
 			/>
 
@@ -134,6 +135,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				currentPrice={
 					currentPrice ? formatDollars(currentPrice, { suggestDecimals: true }) : NO_VALUE
 				}
+				value={stopLossPrice}
 				onChange={onChangeStopLoss}
 			/>
 

@@ -11,20 +11,15 @@ import { useAppSelector } from 'state/hooks';
 type OrderSizingProps = {
 	isMobile?: boolean;
 	type: 'take-profit' | 'stop-loss';
+	value: string;
 	invalid: boolean;
 	currentPrice: string;
 	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void;
 };
 
 const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
-	({ isMobile, type, invalid, currentPrice, onChange }) => {
+	({ isMobile, type, value, invalid, currentPrice, onChange }) => {
 		const { t } = useTranslation();
-		const { takeProfitPrice: tpInputPrice, stopLossPrice: slInputPrice } = useAppSelector(
-			selectSlTpTradeInputs
-		);
-		const { takeProfitPrice: tpOrderPrice, stopLossPrice: slOrderPrice } = useAppSelector(
-			selectSlTpOrderPrice
-		);
 
 		return (
 			<div style={{ marginTop: '5px', marginBottom: '10px' }}>
@@ -40,17 +35,13 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 				<NumericInput
 					invalid={invalid}
 					dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
-					value={
-						type === 'take-profit'
-							? tpInputPrice === '0'
-								? t('futures.market.trade.edit-sl-tp.no-tp')
-								: tpInputPrice
-							: slInputPrice === '0'
-							? t('futures.market.trade.edit-sl-tp.no-sl')
-							: slInputPrice
-					}
+					value={value}
 					onChange={onChange}
-					placeholder={type === 'take-profit' ? tpOrderPrice : slOrderPrice}
+					placeholder={
+						type === 'take-profit'
+							? t('futures.market.trade.edit-sl-tp.no-tp')
+							: t('futures.market.trade.edit-sl-tp.no-sl')
+					}
 				/>
 			</div>
 		);
