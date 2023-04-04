@@ -11,15 +11,13 @@ import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
 import { setOpenModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
-import { cancelConditionalOrder, updateStopLossAndTakeProfit } from 'state/futures/actions';
+import { updateStopLossAndTakeProfit } from 'state/futures/actions';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
 	selectLeverageSide,
 	selectMarketPrice,
 	selectSlTpTradeInputs,
-	selectStopLossOrder,
 	selectSubmittingFuturesTx,
-	selectTakeProfitOrder,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, suggestedDecimals } from 'utils/formatters/number';
@@ -38,8 +36,6 @@ export default function EditStopLossAndTakeProfitModal() {
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const transactionState = useAppSelector(selectTransaction);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
-	const stopLossOrder = useAppSelector(selectStopLossOrder);
-	const takeProftOrder = useAppSelector(selectTakeProfitOrder);
 
 	const onSelectStopLossPercent = useCallback(
 		(index) => {
@@ -84,18 +80,12 @@ export default function EditStopLossAndTakeProfitModal() {
 	);
 
 	const onCancelStopLoss = useCallback(() => {
-		if (stopLossOrder) {
-			dispatch(cancelConditionalOrder(stopLossOrder.id));
-		}
-		dispatch(setCrossMarginTradeTakeProfit('0.00'));
-	}, [dispatch, stopLossOrder]);
+		dispatch(setCrossMarginTradeStopLoss(''));
+	}, [dispatch]);
 
 	const onCancelTakeProfit = useCallback(() => {
-		if (takeProftOrder) {
-			dispatch(cancelConditionalOrder(takeProftOrder.id));
-		}
-		dispatch(setCrossMarginTradeTakeProfit('0.00'));
-	}, [dispatch, takeProftOrder]);
+		dispatch(setCrossMarginTradeTakeProfit(''));
+	}, [dispatch]);
 
 	const onSetStopLossAndTakeProfit = useCallback(() => dispatch(updateStopLossAndTakeProfit()), [
 		dispatch,
@@ -189,7 +179,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				loading={isSubmitting}
 				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={true}
+				disabled={false}
 				fullWidth
 				onClick={onSetStopLossAndTakeProfit}
 			>
