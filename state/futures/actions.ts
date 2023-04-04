@@ -1003,7 +1003,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 
 		try {
 			const isFlagged = await sdk.futures.getIsFlagged(account, marketInfo.market);
-			const priceImpactOrFill = isFlagged == null ? desiredFill : priceImpact;
+			const priceImpactOrFill = isFlagged == null ? priceImpact : desiredFill;
 
 			dispatch(
 				setTransaction({
