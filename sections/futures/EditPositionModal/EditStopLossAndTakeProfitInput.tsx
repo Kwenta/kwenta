@@ -21,16 +21,13 @@ type OrderSizingProps = {
 const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 	({ isMobile, type, invalid, currentPrice, onChange, onClick }) => {
 		const { t } = useTranslation();
-		const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
-		const { takeProfitPrice: tpPrice, stopLossPrice: slPrice } = useAppSelector(
+		const { takeProfitPrice: tpInputPrice, stopLossPrice: slInputPrice } = useAppSelector(
+			selectSlTpTradeInputs
+		);
+		const { takeProfitPrice: tpOrderPrice, stopLossPrice: slOrderPrice } = useAppSelector(
 			selectSlTpOrderPrice
 		);
-		// eslint-disable-next-line no-console
-		console.log(
-			`take profit price: ${tpPrice} ${takeProfitPrice}, stop loss price: ${slPrice} ${stopLossPrice} ${
-				slPrice !== '0.00' || stopLossPrice !== '0.00'
-			}`
-		);
+
 		return (
 			<div style={{ marginTop: '5px', marginBottom: '10px' }}>
 				<StyledInputHeaderRow
@@ -46,19 +43,15 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 					<NumericInput
 						invalid={invalid}
 						dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
-						value={type === 'take-profit' ? takeProfitPrice : stopLossPrice}
+						value={type === 'take-profit' ? tpInputPrice : slInputPrice}
 						onChange={onChange}
-						placeholder={type === 'take-profit' ? tpPrice : slPrice}
+						placeholder={type === 'take-profit' ? tpOrderPrice : slOrderPrice}
 					/>
 
 					<Button
 						style={{ padding: '0 23px' }}
 						onClick={onClick}
-						disabled={
-							type === 'take-profit'
-								? tpPrice !== '0.00' || takeProfitPrice !== '0.00'
-								: slPrice !== '0.00' && stopLossPrice !== '0.00'
-						}
+						disabled={type === 'take-profit' ? !tpOrderPrice : !slOrderPrice}
 					>
 						{type === 'take-profit'
 							? t('futures.market.trade.edit-sl-tp.no-tp')
