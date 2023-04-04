@@ -520,7 +520,7 @@
 				"copy": "You can unstake your pool tokens."
 			},
 			"withdraw-liquidity": {
-				"title": "Step 2. Withdraw Your Liuqidity",
+				"title": "Step 2. Withdraw Your Liquidity",
 				"copy": "You can now withdraw your liquidity from the Arrakis ETH/KWENTA vault.",
 				"pool-link": "Arrakis WETH/KWENTA Pool ↗"
 			}
