@@ -1,8 +1,7 @@
-import React, { memo, ChangeEvent, MouseEventHandler } from 'react';
+import React, { memo, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import Button from 'components/Button';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
@@ -15,11 +14,10 @@ type OrderSizingProps = {
 	invalid: boolean;
 	currentPrice: string;
 	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void;
-	onClick: MouseEventHandler<HTMLButtonElement>;
 };
 
 const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
-	({ isMobile, type, invalid, currentPrice, onChange, onClick }) => {
+	({ isMobile, type, invalid, currentPrice, onChange }) => {
 		const { t } = useTranslation();
 		const { takeProfitPrice: tpInputPrice, stopLossPrice: slInputPrice } = useAppSelector(
 			selectSlTpTradeInputs
@@ -39,35 +37,25 @@ const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
 					}
 				/>
 
-				<InputHelpers>
-					<NumericInput
-						invalid={invalid}
-						dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
-						value={type === 'take-profit' ? tpInputPrice : slInputPrice}
-						onChange={onChange}
-						placeholder={type === 'take-profit' ? tpOrderPrice : slOrderPrice}
-					/>
-
-					<Button
-						style={{ padding: '0 23px' }}
-						onClick={onClick}
-						disabled={type === 'take-profit' ? tpInputPrice !== '' : slInputPrice !== ''}
-					>
-						{type === 'take-profit'
-							? t('futures.market.trade.edit-sl-tp.no-tp')
-							: t('futures.market.trade.edit-sl-tp.no-sl')}
-					</Button>
-				</InputHelpers>
+				<NumericInput
+					invalid={invalid}
+					dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
+					value={
+						type === 'take-profit'
+							? tpInputPrice === '0'
+								? t('futures.market.trade.edit-sl-tp.no-tp')
+								: tpInputPrice
+							: slInputPrice === '0'
+							? t('futures.market.trade.edit-sl-tp.no-sl')
+							: slInputPrice
+					}
+					onChange={onChange}
+					placeholder={type === 'take-profit' ? tpOrderPrice : slOrderPrice}
+				/>
 			</div>
 		);
 	}
 );
-
-const InputHelpers = styled.div`
-	display: grid;
-	grid-template-columns: 4fr 1fr;
-	column-gap: 13px;
-`;
 
 const StyledInputHeaderRow = styled(InputHeaderRow)`
 	margin-bottom: 9px;
