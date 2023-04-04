@@ -99,7 +99,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
 	return (
-		<SelectContainer mobile={mobile} ref={ref}>
+		<div ref={ref}>
 			<MarketsDropdownSelector
 				onClick={() => setOpen(!open)}
 				mobile={mobile}
@@ -209,7 +209,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					</TableContainer>
 				</MarketsList>
 			)}
-		</SelectContainer>
+		</div>
 	);
 };
 
@@ -251,18 +251,6 @@ const SearchBarContainer = styled.div`
 	width: 100%;
 	top: 0;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-`;
-
-const SelectContainer = styled.div<{ mobile?: boolean }>`
-	height: 100%;
-	${(props) =>
-		props.mobile &&
-		css`
-			position: absolute;
-			width: 100%;
-			top: 0;
-			z-index: 5;
-		`}
 `;
 
 export default MarketsDropdown;
