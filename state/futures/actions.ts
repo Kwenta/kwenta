@@ -50,7 +50,7 @@ import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeMarketFee, computeDelayedOrderFee } from 'utils/costCalculations';
-import { floorNumber, stipZeros, zeroBN } from 'utils/formatters/number';
+import { floorNumber, stripZeros, zeroBN } from 'utils/formatters/number';
 import {
 	formatDelayedOrders,
 	marketOverrides,
@@ -785,7 +785,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	}
 
 	const nativeSize = currencyType === 'native' ? size : wei(size).div(assetRate).toString();
-	const usdSize = currencyType === 'native' ? stipZeros(assetRate.mul(size).toString()) : size;
+	const usdSize = currencyType === 'native' ? stripZeros(assetRate.mul(size).toString()) : size;
 	const leverage =
 		Number(usdSize) > 0 && position?.remainingMargin.gt(0)
 			? wei(usdSize).div(position?.remainingMargin).toString(2)
@@ -1463,7 +1463,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const { market } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
-		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
+		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
 		const { nativeSizeDelta, orderType, price } = selectClosePositionOrderInputs(getState());
 		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
 		const feeCap = selectOrderFeeCap(getState());

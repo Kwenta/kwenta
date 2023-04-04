@@ -734,10 +734,14 @@ export const selectEditPositionModalInfo = createSelector(
 );
 
 export const selectEditPosDesiredFillPrice = createSelector(
+	selectNetwork,
 	selectIsolatedPriceImpact,
 	selectEditPositionInputs,
 	selectMarketPrice,
-	(priceImpact, { nativeSizeDelta }, marketPrice) => {
+	(network, priceImpact, { nativeSizeDelta }, marketPrice) => {
+		// TODO: Remove once SNX mainnet changes depoyed
+		if (network === 10) return priceImpact;
+
 		const impactDecimalPercent = priceImpact.div(100);
 		return Number(nativeSizeDelta) < 0
 			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
@@ -746,10 +750,14 @@ export const selectEditPosDesiredFillPrice = createSelector(
 );
 
 export const selectClosePosDesiredFillPrice = createSelector(
+	selectNetwork,
 	selectIsolatedPriceImpact,
 	selectEditPositionModalInfo,
 	selectClosePositionOrderInputs,
-	(priceImpact, { position, marketPrice }, { price, orderType }) => {
+	(network, priceImpact, { position, marketPrice }, { price, orderType }) => {
+		// TODO: Remove once SNX mainnet changes depoyed
+		if (network === 10) return priceImpact;
+
 		const impactDecimalPercent = priceImpact.div(100);
 		let orderPrice = orderType === 'market' ? marketPrice : wei(price?.value || 0);
 		orderPrice = orderPrice ?? wei(0);
@@ -759,7 +767,7 @@ export const selectClosePosDesiredFillPrice = createSelector(
 	}
 );
 
-// TODO: Can move to only desired fill once Synthetix upgrade mainnet
+// TODO: Remove once SNX mainnet changes depoyed
 export const selectPriceImpactOrDesiredFill = createSelector(
 	selectIsolatedPriceImpact,
 	selectDesiredTradeFillPrice,

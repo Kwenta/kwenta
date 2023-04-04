@@ -50,10 +50,11 @@ export default function ErrorNotifier() {
 
 export const ERROR_MESSAGES = {
 	ORDER_PENDING: 'Previous order is pending, please wait for it to finish processing or cancel it.',
-	INSUFFICIENT_MARGIN: 'Insufficient margin for this order.',
+	INSUFFICIENT_MARGIN: 'Insufficient margin, minimum $50 margin required.',
 	INSUFFICIENT_ETH_BAL: 'Insufficient eth balance for gas cost',
 	CANNOT_CANCEL_ORDER_YET: 'Cannot cancel the order yet',
 	ORDER_TOO_OLD: 'Order expired, please cancel',
+	PRICE_IMPACT_EXCEEDED: 'Price exceeded desired fill price',
 };
 
 // TODO: Format more errors, especially transaction failures
@@ -66,6 +67,8 @@ export const formatError = (message?: string) => {
 	if (lowerCaseMessage.includes('previous order exists')) return ERROR_MESSAGES.ORDER_PENDING;
 	if (lowerCaseMessage.includes('cannot cancel yet')) return ERROR_MESSAGES.CANNOT_CANCEL_ORDER_YET;
 	if (lowerCaseMessage.includes('order too old')) return ERROR_MESSAGES.ORDER_TOO_OLD;
+	if (lowerCaseMessage.includes('price impact exceeded'))
+		return ERROR_MESSAGES.PRICE_IMPACT_EXCEEDED;
 	return message;
 };
 

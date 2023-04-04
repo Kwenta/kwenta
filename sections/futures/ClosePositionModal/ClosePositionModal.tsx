@@ -32,7 +32,13 @@ import {
 	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+import {
+	floorNumber,
+	formatDollars,
+	formatNumber,
+	stripZeros,
+	zeroBN,
+} from 'utils/formatters/number';
 
 import OrderTypeSelector from '../Trade/OrderTypeSelector';
 import ClosePositionPriceInput from './ClosePositionPriceInput';
@@ -73,7 +79,9 @@ export default function ClosePositionModal() {
 		[nativeSizeDelta]
 	);
 
-	const invalidSize = useMemo(() => sizeWei.gt(maxNativeValue), [sizeWei, maxNativeValue]);
+	const invalidSize = useMemo(() => {
+		return sizeWei.gt(maxNativeValue);
+	}, [sizeWei, maxNativeValue]);
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
@@ -122,7 +130,9 @@ export default function ClosePositionModal() {
 			const size = floorNumber(position.position.size.abs().mul(percent));
 			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size);
 			const decimals = sizeDelta.abs().eq(position.position.size.abs()) ? undefined : 4;
-			dispatch(editClosePositionSizeDelta(showModal.marketKey, sizeDelta.toString(decimals)));
+			dispatch(
+				editClosePositionSizeDelta(showModal.marketKey, stripZeros(sizeDelta.toString(decimals)))
+			);
 		},
 		[dispatch, position?.position?.size, position?.position?.side, showModal?.marketKey]
 	);

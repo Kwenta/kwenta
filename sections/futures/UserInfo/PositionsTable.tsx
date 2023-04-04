@@ -11,6 +11,7 @@ import Currency from 'components/Currency';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Pill from 'components/Pill';
+import Spacer from 'components/Spacer';
 import Table, { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -21,6 +22,7 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
 import MobilePositionRow from 'sections/dashboard/FuturesPositionsTable/MobilePositionRow';
 import PositionType from 'sections/futures/PositionType';
+import { setShowPositionModal } from 'state/app/reducer';
 import {
 	selectCrossMarginPositions,
 	selectIsolatedMarginPositions,
@@ -28,7 +30,7 @@ import {
 	selectMarkets,
 	selectPositionHistory,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
 type FuturesPositionTableProps = {
@@ -64,6 +66,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const dispatch = useAppDispatch();
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
@@ -167,19 +170,35 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 									: {};
 
 								return (
-									<div>
-										<Currency.Price
-											price={cellProps.row.original.position.size}
-											currencyKey={cellProps.row.original.market.asset}
-										/>
+									<FlexDivRowCentered>
 										<div>
+											<div>
+												<Currency.Price
+													price={cellProps.row.original.position.size}
+													currencyKey={cellProps.row.original.market.asset}
+												/>
+											</div>
 											<Currency.Price
 												price={cellProps.row.original.position.notionalValue}
 												formatOptions={formatOptions}
 												side="secondary"
 											/>
 										</div>
-									</div>
+										<Spacer width={10} />
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_position_size',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+											size="small"
+										>
+											Edit
+										</Pill>
+									</FlexDivRowCentered>
 								);
 							},
 							width: 90,
@@ -235,7 +254,18 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 												suffix="x"
 											/>
 										</div>
-										<Pill>Edit</Pill>
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_position_margin',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
 									</FlexDivRowCentered>
 								);
 							},
@@ -292,10 +322,22 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 						{
 							Header: <TableHeader>Position</TableHeader>,
 							accessor: 'pos',
-							Cell: () => {
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
-										<Pill size="small">Close</Pill>
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_close_position',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+											size="small"
+										>
+											Close
+										</Pill>
 									</div>
 								);
 							},
