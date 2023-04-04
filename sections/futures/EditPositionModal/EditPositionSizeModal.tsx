@@ -14,7 +14,7 @@ import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { setShowPositionModal } from 'state/app/reducer';
-import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
+import { selectTransaction } from 'state/app/selectors';
 import {
 	clearTradeInputs,
 	editCrossMarginPositionSize,
@@ -22,10 +22,11 @@ import {
 } from 'state/futures/actions';
 import {
 	selectEditPositionInputs,
+	selectEditPositionModalInfo,
+	selectEditPositionPreview,
 	selectIsFetchingTradePreview,
 	selectMarketPrice,
 	selectPosition,
-	selectPositionPreviewData,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -41,10 +42,10 @@ export default function EditPositionSizeModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
-	const preview = useAppSelector(selectPositionPreviewData);
+	const preview = useAppSelector(selectEditPositionPreview);
 	const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
-	const showModal = useAppSelector(selectShowPositionModal);
+	const { market } = useAppSelector(selectEditPositionModalInfo);
 
 	const [editType, setEditType] = useState(0);
 
@@ -54,8 +55,8 @@ export default function EditPositionSizeModal() {
 	}, []);
 
 	const onChangeTab = (selection: number) => {
-		if (showModal) {
-			dispatch(editCrossMarginPositionSize(showModal.marketKey, ''));
+		if (market) {
+			dispatch(editCrossMarginPositionSize(market.marketKey, ''));
 		}
 		setEditType(selection);
 	};
@@ -95,15 +96,19 @@ export default function EditPositionSizeModal() {
 	}, [sizeWei, invalid, isLoading, maxLeverageExceeded]);
 
 	const onClose = () => {
-		if (showModal) {
-			dispatch(editCrossMarginPositionSize(showModal.marketKey, ''));
+		if (market) {
+			dispatch(editCrossMarginPositionSize(market.marketKey, ''));
 		}
 		dispatch(setShowPositionModal(null));
 	};
 
 	return (
 		<StyledBaseModal
-			title={editType === 0 ? 'Increase Position Size' : 'Decrease Position Size'}
+			title={
+				editType === 0
+					? `Increase ${market?.marketName} Position Size`
+					: `Decrease ${market?.marketName} Position Size`
+			}
 			isOpen
 			onDismiss={onClose}
 		>
@@ -137,7 +142,7 @@ export default function EditPositionSizeModal() {
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
-									? formatNumber(preview.positionSize, { suggestDecimals: true })
+									? formatNumber(preview.size.abs(), { suggestDecimals: true })
 									: '-'}
 							</PreviewArrow>
 						)
@@ -149,7 +154,7 @@ export default function EditPositionSizeModal() {
 					valueNode={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
-								{preview ? formatDollars(preview.liquidationPrice) : '-'}
+								{preview ? formatDollars(preview.liqPrice) : '-'}
 							</PreviewArrow>
 						)
 					}

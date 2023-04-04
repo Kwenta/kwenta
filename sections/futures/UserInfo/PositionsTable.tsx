@@ -59,11 +59,7 @@ const LegacyLink = () => {
 	);
 };
 
-const PositionsTable: FC<FuturesPositionTableProps> = ({
-	accountType,
-	showCurrentMarket = true,
-	showEmptyTable = true,
-}) => {
+const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyTable = true }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
@@ -94,10 +90,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 					takeProfit: position.takeProfit,
 				};
 			})
-			.filter(
-				({ position, market }) =>
-					position && market && (market?.asset !== currentMarket || showCurrentMarket)
-			);
+			.filter(({ position, market }) => !!position && !!market)
+			.sort((a) => (a.market.asset === currentMarket ? -1 : 1));
 	}, [
 		accountType,
 		isolatedPositions,
@@ -105,7 +99,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
-		showCurrentMarket,
 	]);
 
 	return (
@@ -125,13 +118,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({
 							</TableNoResults>
 						) : (
 							<TableNoResults>
-								{!showCurrentMarket ? (
-									t('dashboard.overview.futures-positions-table.no-result')
-								) : (
-									<Link href={ROUTES.Markets.Home(accountType)}>
-										<div>{t('common.perp-cta')}</div>
-									</Link>
-								)}
+								{t('dashboard.overview.futures-positions-table.no-result')}
 							</TableNoResults>
 						)
 					}

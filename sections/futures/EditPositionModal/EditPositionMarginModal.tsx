@@ -14,7 +14,6 @@ import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
-import { getDisplayAsset } from 'sdk/utils/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
@@ -25,12 +24,11 @@ import {
 import {
 	selectEditPositionInputs,
 	selectEditPositionModalInfo,
+	selectEditPositionPreview,
 	selectIdleMargin,
 	selectIsFetchingTradePreview,
 	selectPosition,
-	selectPositionPreviewData,
 	selectSubmittingFuturesTx,
-	selectTradePreview,
 	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -46,13 +44,12 @@ export default function EditPositionMarginModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
-	const preview = useAppSelector(selectPositionPreviewData);
+	const preview = useAppSelector(selectEditPositionPreview);
 	const { marginDelta } = useAppSelector(selectEditPositionInputs);
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const modal = useAppSelector(selectShowPositionModal);
 	const { market } = useAppSelector(selectEditPositionModalInfo);
 	const previewError = useAppSelector(selectTradePreviewError);
-	const previewTrade = useAppSelector(selectTradePreview);
 	const [transferType, setTransferType] = useState(0);
 
 	useEffect(() => {
@@ -98,9 +95,9 @@ export default function EditPositionMarginModal() {
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
-		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
+		if (preview?.showStatus) return preview?.statusMessage;
 		return null;
-	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
+	}, [preview?.showStatus, preview?.statusMessage, previewError, t]);
 
 	const submitDisabled = useMemo(() => {
 		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded || orderError;
@@ -113,14 +110,12 @@ export default function EditPositionMarginModal() {
 		dispatch(setShowPositionModal(null));
 	};
 
-	const marketAsset = market ? getDisplayAsset(market?.asset) : '';
-
 	return (
 		<StyledBaseModal
 			title={
 				transferType === 0
-					? `Increase ${marketAsset} Position Margin`
-					: `Reduce ${marketAsset} Position Margin`
+					? `Increase ${market?.marketName} Position Margin`
+					: `Reduce ${market?.marketName} Position Margin`
 			}
 			isOpen
 			onDismiss={onClose}
@@ -167,7 +162,7 @@ export default function EditPositionMarginModal() {
 					valueNode={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
-								{preview ? formatDollars(preview.liquidationPrice) : '-'}
+								{preview ? formatDollars(preview.liqPrice) : '-'}
 							</PreviewArrow>
 						)
 					}

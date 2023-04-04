@@ -15,7 +15,7 @@ import { Body } from 'components/Text';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide, PotentialTradeStatus } from 'sdk/types/futures';
 import { setShowPositionModal } from 'state/app/reducer';
-import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
+import { selectTransaction } from 'state/app/selectors';
 import {
 	editClosePositionSizeDelta,
 	editCrossMarginPositionSize,
@@ -24,11 +24,11 @@ import {
 import { setClosePositionOrderType } from 'state/futures/reducer';
 import {
 	selectClosePositionOrderInputs,
+	selectClosePositionPreview,
+	selectEditPositionModalInfo,
 	selectIsFetchingTradePreview,
 	selectPosition,
-	selectPositionPreviewData,
 	selectSubmittingFuturesTx,
-	selectTradePreview,
 	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -54,12 +54,11 @@ export default function ClosePositionModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const position = useAppSelector(selectPosition);
-	const previewTrade = useAppSelector(selectTradePreview);
-	const preview = useAppSelector(selectPositionPreviewData);
+	const previewTrade = useAppSelector(selectClosePositionPreview);
 	const previewError = useAppSelector(selectTradePreviewError);
 
 	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs);
-	const showModal = useAppSelector(selectShowPositionModal);
+	const { market } = useAppSelector(selectEditPositionModalInfo);
 
 	const submitCloseOrder = useCallback(() => {
 		dispatch(submitSmartMarginReducePositionOrder());
@@ -116,29 +115,33 @@ export default function ClosePositionModal() {
 	]);
 
 	const onClose = () => {
-		if (showModal) {
-			dispatch(editCrossMarginPositionSize(showModal.marketKey, ''));
+		if (market) {
+			dispatch(editCrossMarginPositionSize(market.marketKey, ''));
 		}
 		dispatch(setShowPositionModal(null));
 	};
 
 	const onSelectPercent = useCallback(
 		(index) => {
-			if (!position?.position?.size || !showModal?.marketKey) return;
+			if (!position?.position?.size || !market?.marketKey) return;
 			const option = CLOSE_PERCENT_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 			const size = floorNumber(position.position.size.abs().mul(percent));
 			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size);
 			const decimals = sizeDelta.abs().eq(position.position.size.abs()) ? undefined : 4;
 			dispatch(
-				editClosePositionSizeDelta(showModal.marketKey, stripZeros(sizeDelta.toString(decimals)))
+				editClosePositionSizeDelta(market.marketKey, stripZeros(sizeDelta.toString(decimals)))
 			);
 		},
-		[dispatch, position?.position?.size, position?.position?.side, showModal?.marketKey]
+		[dispatch, position?.position?.size, position?.position?.side, market?.marketKey]
 	);
 
 	return (
-		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
+		<StyledBaseModal
+			title={`Close full or partial ${market?.marketName} position`}
+			isOpen
+			onDismiss={onClose}
+		>
 			<Spacer height={10} />
 			<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
 			<Spacer height={20} />
@@ -157,8 +160,8 @@ export default function ClosePositionModal() {
 			<InfoBoxContainer>
 				<InfoBoxRow
 					valueNode={
-						preview?.leverage && (
-							<PreviewArrow showPreview>{preview.leverage.toString(2)}x</PreviewArrow>
+						previewTrade?.leverage && (
+							<PreviewArrow showPreview>{previewTrade.leverage.toString(2)}x</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
@@ -166,10 +169,10 @@ export default function ClosePositionModal() {
 				/>
 				<InfoBoxRow
 					valueNode={
-						preview?.leverage && (
+						previewTrade?.size && (
 							<PreviewArrow showPreview>
-								{position?.remainingMargin
-									? formatNumber(preview.positionSize, { suggestDecimals: true })
+								{previewTrade?.size
+									? formatNumber(previewTrade.size.abs(), { suggestDecimals: true })
 									: '-'}
 							</PreviewArrow>
 						)
@@ -179,10 +182,8 @@ export default function ClosePositionModal() {
 				/>
 				<InfoBoxRow
 					valueNode={
-						preview?.leverage && (
-							<PreviewArrow showPreview>
-								{preview ? formatDollars(preview.liquidationPrice) : '-'}
-							</PreviewArrow>
+						previewTrade?.liqPrice && (
+							<PreviewArrow showPreview>{formatDollars(previewTrade?.liqPrice)}</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}

@@ -893,8 +893,44 @@ export const selectTradePreview = createSelector(
 	selectFuturesType,
 	(state: RootState) => state.futures,
 	(type, futures) => {
-		const preview = futures[accountType(type)].tradePreview;
-		return preview ? unserializePotentialTrade(preview) : null;
+		const preview = futures[accountType(type)].previews.trade;
+		const unserialized = preview ? unserializePotentialTrade(preview) : null;
+		return unserialized
+			? {
+					...unserialized,
+					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+			  }
+			: null;
+	}
+);
+
+export const selectEditPositionPreview = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		const preview = futures[accountType(type)].previews.edit;
+		const unserialized = preview ? unserializePotentialTrade(preview) : null;
+		return unserialized
+			? {
+					...unserialized,
+					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+			  }
+			: null;
+	}
+);
+
+export const selectClosePositionPreview = createSelector(
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(type, futures) => {
+		const preview = futures[accountType(type)].previews.close;
+		const unserialized = preview ? unserializePotentialTrade(preview) : null;
+		return unserialized
+			? {
+					...unserialized,
+					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+			  }
+			: null;
 	}
 );
 

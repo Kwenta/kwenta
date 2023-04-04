@@ -408,6 +408,7 @@ const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
+	margin-left: 6px;
 `;
 
 const MobilePositionSide = styled.div<{ $side: PositionSide }>`
