@@ -5,8 +5,6 @@ import styled from 'styled-components';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
-import { selectSlTpOrderPrice, selectSlTpTradeInputs } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 
 type OrderSizingProps = {
 	isMobile?: boolean;
