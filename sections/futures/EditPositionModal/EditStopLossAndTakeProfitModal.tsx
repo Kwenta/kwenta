@@ -5,14 +5,16 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
+import { InfoBoxRow } from 'components/InfoBox';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
-import { setOpenModal } from 'state/app/reducer';
+import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import { updateStopLossAndTakeProfit } from 'state/futures/actions';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
+	selectEditPositionModalInfo,
 	selectLeverageSide,
 	selectMarketPrice,
 	selectSlTpTradeInputs,
@@ -33,6 +35,7 @@ export default function EditStopLossAndTakeProfitModal() {
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const transactionState = useAppSelector(selectTransaction);
+	const { market } = useAppSelector(selectEditPositionModalInfo);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
 
@@ -94,8 +97,11 @@ export default function EditStopLossAndTakeProfitModal() {
 		<StyledBaseModal
 			title={t(`futures.market.trade.edit-sl-tp.title`)}
 			isOpen
-			onDismiss={() => dispatch(setOpenModal(null))}
+			onDismiss={() => dispatch(setShowPositionModal(null))}
 		>
+			<Spacer height={2} />
+			<InfoBoxRow title={'Market'} value={market?.marketName} />
+			<StyledSpacer marginTop={10} />
 			<EditStopLossAndTakeProfitInput
 				type={'take-profit'}
 				invalid={false}
@@ -172,10 +178,10 @@ export default function EditStopLossAndTakeProfitModal() {
 	);
 }
 
-const StyledSpacer = styled(Spacer)`
+const StyledSpacer = styled(Spacer)<{ marginTop?: number }>`
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	width: 100%;
-	margin: 20px 0px 15px;
+	margin: ${(props) => props.marginTop ?? 20}px 0px 15px;
 `;
 
 const StyledBaseModal = styled(BaseModal)`

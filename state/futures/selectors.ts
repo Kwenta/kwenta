@@ -698,22 +698,17 @@ export const selectTradeSizeInputs = createSelector(
 export const selectConditionalOrdersForMarket = createSelector(
 	selectMarketAsset,
 	selectCrossMarginAccountData,
-	(asset, account) => {
-		const orders = account ? unserializeConditionalOrders(account.conditionalOrders) : [];
-		return orders.filter((o) => o.asset === asset);
-	}
-);
-
-export const selectOpenConditionalOrders = createSelector(
-	selectConditionalOrdersForMarket,
 	selectFuturesType,
-	(crossOrders, futuresType) => {
-		return futuresType === 'cross_margin' ? crossOrders : [];
+	(asset, account, futuresType) => {
+		if (futuresType !== 'cross_margin') return [];
+		return account
+			? unserializeConditionalOrders(account.conditionalOrders).filter((o) => o.asset === asset)
+			: [];
 	}
 );
 
 export const selectStopLossOrder = createSelector(
-	selectOpenConditionalOrders,
+	selectConditionalOrdersForMarket,
 	selectMarketKey,
 	(selectOpenConditionalOrders, marketKey) => {
 		return selectOpenConditionalOrders.find(
@@ -724,7 +719,7 @@ export const selectStopLossOrder = createSelector(
 );
 
 export const selectTakeProfitOrder = createSelector(
-	selectOpenConditionalOrders,
+	selectConditionalOrdersForMarket,
 	selectMarketKey,
 	(selectOpenConditionalOrders, marketKey) => {
 		return selectOpenConditionalOrders.find(
@@ -734,7 +729,7 @@ export const selectTakeProfitOrder = createSelector(
 	}
 );
 
-export const selectSlTpOrderPrice = createSelector(
+export const selectCurrentMarketSLTP = createSelector(
 	selectTakeProfitOrder,
 	selectStopLossOrder,
 	(takeProfitOrder, stopLossOrder) => {
@@ -747,9 +742,13 @@ export const selectSlTpOrderPrice = createSelector(
 	}
 );
 
+export const selectAllSLTPOrders = createSelector(selectAllConditionalOrders, (orders) => {
+	return orders.filter((o) => o.reduceOnly && o.size.abs().eq(SL_TP_MAX_SIZE));
+});
+
 export const selectSlTpTradeInputs = createSelector(
 	(state: RootState) => state.futures.crossMargin.tradeInputs,
-	selectSlTpOrderPrice,
+	selectCurrentMarketSLTP,
 	(tradeInputs, orderPrice) => {
 		const price = {
 			stopLossPrice: '',

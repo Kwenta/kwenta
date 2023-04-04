@@ -1707,7 +1707,7 @@ const submitCMTransferTransaction = async (
 export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/updateStopLossAndTakeProfit',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState());
+		const { market } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
 		const wallet = selectWallet(getState());
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
@@ -1715,17 +1715,9 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
 
 		try {
-			if (!marketInfo) throw new Error('Market info not found');
+			if (!market) throw new Error('Market info not found');
 			if (!account) throw new Error('No cross margin account found');
 			if (!wallet) throw new Error('No wallet connected');
-
-			dispatch(
-				setTransaction({
-					status: TransactionStatus.AwaitingExecution,
-					type: 'submit_cross_order',
-					hash: null,
-				})
-			);
 
 			const params: sltpOrderInputs = {};
 
@@ -1760,14 +1752,22 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 			}
 
 			if (params.stopLoss || params.takeProfit) {
+				dispatch(
+					setTransaction({
+						status: TransactionStatus.AwaitingExecution,
+						type: 'submit_cross_order',
+						hash: null,
+					})
+				);
+
 				const tx = await sdk.futures.updateStopLossAndTakeProfit(
-					marketInfo.marketKey,
+					market.marketKey,
 					account,
 					desiredFillPrice,
 					params
 				);
 				await monitorAndAwaitTransaction(dispatch, tx);
-				dispatch(setOpenModal(null));
+				dispatch(setShowPositionModal(null));
 				dispatch(refetchPosition('cross_margin'));
 			}
 		} catch (err) {

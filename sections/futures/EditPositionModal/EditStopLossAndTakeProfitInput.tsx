@@ -6,7 +6,7 @@ import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 
-type OrderSizingProps = {
+type Props = {
 	isMobile?: boolean;
 	type: 'take-profit' | 'stop-loss';
 	value: string;
@@ -15,7 +15,7 @@ type OrderSizingProps = {
 	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void;
 };
 
-const EditStopLossAndTakeProfitInput: React.FC<OrderSizingProps> = memo(
+const EditStopLossAndTakeProfitInput: React.FC<Props> = memo(
 	({ isMobile, type, value, invalid, currentPrice, onChange }) => {
 		const { t } = useTranslation();
 

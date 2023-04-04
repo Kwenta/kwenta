@@ -20,9 +20,9 @@ import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesAccountType } from 'queries/futures/subgraph';
+import { ConditionalOrderTypeEnum } from 'sdk/types/futures';
 import MobilePositionRow from 'sections/dashboard/FuturesPositionsTable/MobilePositionRow';
 import PositionType from 'sections/futures/PositionType';
-import { setOpenModal } from 'state/app/reducer';
 import { setShowPositionModal } from 'state/app/reducer';
 import {
 	selectCrossMarginPositions,
@@ -30,7 +30,7 @@ import {
 	selectMarketAsset,
 	selectMarkets,
 	selectPositionHistory,
-	selectSlTpOrderPrice,
+	selectAllSLTPOrders,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
@@ -77,7 +77,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
-	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpOrderPrice);
+	const sltpOrders = useAppSelector(selectAllSLTPOrders);
+
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
 		return positions
@@ -86,12 +87,18 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
+				const stopLoss = sltpOrders.find(
+					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
+				);
+				const takeProfit = sltpOrders.find(
+					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
+				);
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: formatDollars(stopLossPrice),
-					takeProfit: formatDollars(takeProfitPrice),
+					stopLoss: formatDollars(stopLoss?.targetPrice ?? 0),
+					takeProfit: formatDollars(takeProfit?.targetPrice ?? 0),
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -102,9 +109,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
-		stopLossPrice,
-		takeProfitPrice,
 		currentMarket,
+		sltpOrders,
 	]);
 
 	return (
@@ -312,7 +318,14 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 											)}
 										</div>
 										<Pill
-											onClick={() => dispatch(setOpenModal('futures_edit_stop_loss_take_profit'))}
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_stop_loss_take_profit',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
 										>
 											Edit
 										</Pill>
