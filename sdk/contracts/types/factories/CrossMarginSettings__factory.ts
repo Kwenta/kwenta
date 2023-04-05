@@ -43,6 +43,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "DuplicateAddress",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "DuplicateFee",
     type: "error",
   },
@@ -61,6 +66,19 @@ const _abi = [
     inputs: [],
     name: "ZeroAddress",
     type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeProportion",
+        type: "uint256",
+      },
+    ],
+    name: "DelegateFeeProportionChanged",
+    type: "event",
   },
   {
     anonymous: false,
