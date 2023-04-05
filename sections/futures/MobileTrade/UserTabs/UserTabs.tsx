@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import PositionsTable from 'sections/futures/UserInfo/PositionsTable';
 
 import OrdersTab from './OrdersTab';

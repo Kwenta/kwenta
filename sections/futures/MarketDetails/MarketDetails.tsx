@@ -27,7 +27,7 @@ type MarketDetailsProps = {
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
 		<MainContainer mobile={mobile}>
-			<MarketsDropdown mobile />
+			<MarketsDropdown mobile={mobile} />
 			<MarketDetailsContainer mobile={mobile}>
 				{!mobile && <MarketPriceDetail />}
 				<IndexPriceDetail />

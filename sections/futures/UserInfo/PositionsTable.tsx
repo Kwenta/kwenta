@@ -356,20 +356,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 	);
 };
 
-const ButtonContainer = styled.div`
-	margin: 8px 0px 16px;
-
-	${media.lessThan('md')`
-		margin: 8px 15px 16px;
-	`};
-`;
-
-const StyledArrow = styled(LinkArrow)`
-	margin-left: 2px;
-	width: 9px;
-	height: 9px;
-`;
-
 const PnlContainer = styled.div`
 	display: flex;
 	flex-direction: column;
