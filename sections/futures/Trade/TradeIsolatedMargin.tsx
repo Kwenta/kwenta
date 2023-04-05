@@ -1,4 +1,5 @@
-import { memo, useCallback } from 'react';
+import { FC, memo, useCallback } from 'react';
+import styled from 'styled-components';
 
 import Error from 'components/ErrorView';
 import Spacer from 'components/Spacer';
@@ -20,7 +21,11 @@ import SLTPInputs from './SLTPInputs';
 import TradeBalance from './TradeBalance';
 import OrderPriceInput from './TradePanelPriceInput';
 
-const TradeIsolatedMargin = memo(() => {
+type TradeIsolatedMarginProps = {
+	mobile?: boolean;
+};
+
+const TradeIsolatedMargin: FC<TradeIsolatedMarginProps> = memo(({ mobile }) => {
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
@@ -36,11 +41,11 @@ const TradeIsolatedMargin = memo(() => {
 	);
 
 	return (
-		<div style={{ height: '100%', overflowY: 'scroll' }}>
-			<TradeBalance />
+		<TradePanelContainer $mobile={mobile}>
+			{!mobile && <TradeBalance />}
 			<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
 
-			<div style={{ padding: '0 15px' }}>
+			<MainPanelContent>
 				{pricesConnectionError && (
 					<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 				)}
@@ -67,9 +72,18 @@ const TradeIsolatedMargin = memo(() => {
 				<ManagePosition />
 
 				<FeeInfoBox />
-			</div>
-		</div>
+			</MainPanelContent>
+		</TradePanelContainer>
 	);
 });
+
+const TradePanelContainer = styled.div<{ $mobile?: boolean }>`
+	overflow-y: scroll;
+	height: ${(props) => (props.$mobile ? 'minmax(580px, 80%)' : '100%')};
+`;
+
+const MainPanelContent = styled.div`
+	padding: 0 15px;
+`;
 
 export default TradeIsolatedMargin;

@@ -2,16 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import PositionsTable from 'sections/futures/UserInfo/PositionsTable';
 
 import OrdersTab from './OrdersTab';
+import PositionsTab from './PositionsTab';
 import TradesTab from './TradesTab';
 import TransfersTab from './TransfersTab';
 
 const TABS = [
 	{
 		title: 'Position',
-		component: <PositionsTable />,
+		component: <PositionsTab />,
 	},
 	{
 		title: 'Orders',

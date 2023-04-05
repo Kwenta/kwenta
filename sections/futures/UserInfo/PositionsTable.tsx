@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
-import LinkArrow from 'assets/svg/app/link-arrow.svg';
 import Currency from 'components/Currency';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -29,7 +28,6 @@ import {
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import media from 'styles/media';
 
 import TableMarketDetails from './TableMarketDetails';
 
