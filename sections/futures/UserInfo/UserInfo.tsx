@@ -206,7 +206,7 @@ const UserInfo: React.FC = memo(() => {
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab} fullHeight>
-				<PositionsTable accountType={accountType} />
+				<PositionsTable />
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab} fullHeight>
 				<OpenDelayedOrdersTable />

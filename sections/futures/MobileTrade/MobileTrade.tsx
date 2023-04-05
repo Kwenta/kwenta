@@ -7,7 +7,6 @@ import useIsL2 from 'hooks/useIsL2';
 import MarketDetails from '../MarketDetails/MarketDetails';
 import FuturesUnsupportedNetwork from '../Trade/FuturesUnsupported';
 import OverviewTabs from './OverviewTabs';
-import PositionDetails from './PositionDetails';
 import UserTabs from './UserTabs';
 
 const MobileTrade: React.FC = () => {
@@ -22,10 +21,7 @@ const MobileTrade: React.FC = () => {
 					<FuturesUnsupportedNetwork />
 				</SwitchNetworkContainer>
 			) : (
-				<>
-					<PositionDetails />
-					<UserTabs />
-				</>
+				<UserTabs />
 			)}
 		</>
 	);

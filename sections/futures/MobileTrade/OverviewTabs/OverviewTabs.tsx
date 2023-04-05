@@ -6,7 +6,6 @@ import TradeBalance from 'sections/futures/Trade/TradeBalance';
 
 import AccountTab from './AccountTab';
 import PriceTab from './PriceTab';
-import StatsTab from './StatsTab';
 import TradesTab from './TradesTab';
 
 const TABS = [
@@ -23,11 +22,6 @@ const TABS = [
 		title: 'Trades',
 		component: <TradesTab />,
 	},
-	// {
-	// 	title: 'Stats',
-	// 	component: <StatsTab />,
-	// 	nofill: true,
-	// },
 ];
 
 const OverviewTabs: React.FC = () => {

@@ -180,7 +180,6 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	margin-bottom: 16px;
 	box-sizing: border-box;
-
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
 

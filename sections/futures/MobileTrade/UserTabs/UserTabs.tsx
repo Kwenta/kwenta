@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
+import PositionsTable from 'sections/futures/UserInfo/PositionsTable';
 
 import OrdersTab from './OrdersTab';
 import TradesTab from './TradesTab';
@@ -11,7 +12,7 @@ import TransfersTab from './TransfersTab';
 const TABS = [
 	{
 		title: 'Position',
-		component: <TradeIsolatedMargin />,
+		component: <PositionsTable />,
 	},
 	{
 		title: 'Orders',
@@ -48,16 +49,23 @@ const UserTabs: React.FC = () => {
 };
 
 const UserTabsContainer = styled.div`
-	padding: 0 15px;
 	min-height: 390px;
 `;
 
 const TabButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	grid-column-gap: 15px;
 	margin-bottom: 15px;
 	overflow: auto;
+
+	> button {
+		border-radius: 0;
+		border-left: none;
+
+		&:last-of-type {
+			border-right: none;
+		}
+	}
 `;
 
 export default UserTabs;
