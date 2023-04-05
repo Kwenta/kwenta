@@ -22,7 +22,7 @@
 				"rewards": "rewards"
 			},
 			"isolated-margin": "Isolated Margin",
-			"cross-margin": "Cross Margin",
+			"cross-margin": "Smart Margin",
 			"leaderboard-alltime": "All Time",
 			"competition-round-1": "Round 1",
 			"competition-round-2": "Round 2",
@@ -341,14 +341,15 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
-				"market-price": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
+				"market-price": "The current price of the Futures market after adding a skew-based premium or discount to the index price",
 				"index-price": "The exact index price of this market without any adjustment for market skew applied",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
 				"open-interest-s": "Total notional value on all short positions / max open interest",
 				"open-interest-l": "Total notional value on all long positions / max open interest",
-				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed."
+				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed.",
+				"skew": "Skew is the total amount of outstanding long and short contracts expressed as a percentage"
 			},
 			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
 		},
@@ -937,8 +938,6 @@
 				"history-label": "trade history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"last-trades": "last trades",
-				"skew-label": "skew",
-				"skew-tooltip": "Skew is the total amount of outstanding long and short contracts expressed as a percentage",
 				"amount-label": "amount",
 				"price-label": "price",
 				"time-label": "time"
