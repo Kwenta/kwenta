@@ -9,6 +9,7 @@ import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
+import Spacer from 'components/Spacer';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
 import { fetchTradesForSelectedMarket } from 'state/futures/actions';
@@ -177,6 +178,7 @@ const UserInfo: React.FC = memo(() => {
 				<TabLeft>
 					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
 						<TabButton
+							inline
 							key={name}
 							title={label}
 							badgeCount={badge}
@@ -189,13 +191,16 @@ const UserInfo: React.FC = memo(() => {
 				</TabLeft>
 				<TabRight>
 					{/* CALCULATOR tab */}
+					<Spacer divider height={47} width={1} />
 					<TabButton
+						inline
 						key={FuturesTab.CALCULATOR}
 						title="Calculator"
 						icon={<CalculatorIcon />}
 						onClick={handleOpenProfitCalc}
 					/>
 					<TabButton
+						inline
 						key={FuturesTab.SHARE}
 						title="Share"
 						disabled={!hasOpenPosition}
@@ -239,7 +244,6 @@ const TabButtonsContainer = styled.div`
 	display: grid;
 	grid-gap: 15px;
 	grid-template-columns: repeat(2, 1fr);
-	padding: 15px;
 
 	button {
 		font-size: 13px;
@@ -253,13 +257,11 @@ const TabButtonsContainer = styled.div`
 const TabLeft = styled.div`
 	display: flex;
 	justify-content: left;
-	grid-gap: 12px;
 `;
 
 const TabRight = styled.div`
 	display: flex;
 	justify-content: right;
-	grid-gap: 12px;
 
 	@media (max-width: 1182px) {
 		justify-content: left;
