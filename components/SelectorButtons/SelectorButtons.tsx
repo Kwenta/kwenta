@@ -1,16 +1,18 @@
 import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
+import { StyleType } from 'components/SegmentedControl/SegmentedControl';
 
 type Props = {
 	options: string[];
 	onSelect: (index: number) => void;
+	type?: StyleType;
 };
 
-export default function SelectorButtons({ onSelect, options }: Props) {
+export default function SelectorButtons({ onSelect, options, type = 'pill-button' }: Props) {
 	return (
 		<Container>
-			<SegmentedControl onChange={onSelect} styleType="pill-button" values={options} />
+			<SegmentedControl onChange={onSelect} styleType={type} values={options} />
 		</Container>
 	);
 }

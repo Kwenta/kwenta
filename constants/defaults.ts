@@ -37,7 +37,6 @@ export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 1;
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 
 // for perps v2
-export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = '0.5';
 export const DEFAULT_DELAYED_EXECUTION_BUFFER = 30;
 export const DEFAULT_DELAYED_CANCEL_BUFFER = 30;
 
@@ -48,3 +47,11 @@ export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
 	: 'isolated_margin';
 
 export const DEFAULT_LEVERAGE = '1';
+
+export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
+	MARKET: '0.5',
+	STOP: '1.25',
+	LIMIT: '1.25',
+	STOP_LOSS: '5',
+	TAKE_PROFIT: '5',
+};

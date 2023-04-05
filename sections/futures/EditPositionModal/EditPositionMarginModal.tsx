@@ -27,7 +27,6 @@ import {
 	selectEditPositionPreview,
 	selectIdleMargin,
 	selectIsFetchingTradePreview,
-	selectPosition,
 	selectSubmittingFuturesTx,
 	selectTradePreviewError,
 } from 'state/futures/selectors';
@@ -43,12 +42,11 @@ export default function EditPositionMarginModal() {
 	const transactionState = useAppSelector(selectTransaction);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
-	const position = useAppSelector(selectPosition);
 	const preview = useAppSelector(selectEditPositionPreview);
 	const { marginDelta } = useAppSelector(selectEditPositionInputs);
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const modal = useAppSelector(selectShowPositionModal);
-	const { market } = useAppSelector(selectEditPositionModalInfo);
+	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 	const previewError = useAppSelector(selectTradePreviewError);
 	const [transferType, setTransferType] = useState(0);
 
@@ -112,11 +110,7 @@ export default function EditPositionMarginModal() {
 
 	return (
 		<StyledBaseModal
-			title={
-				transferType === 0
-					? `Increase ${market?.marketName} Position Margin`
-					: `Reduce ${market?.marketName} Position Margin`
-			}
+			title={transferType === 0 ? `Increase Position Margin` : `Reduce Position Margin`}
 			isOpen
 			onDismiss={onClose}
 		>
@@ -136,6 +130,11 @@ export default function EditPositionMarginModal() {
 
 			<Spacer height={20} />
 			<InfoBoxContainer>
+				<InfoBoxRow
+					boldValue
+					title={t('futures.market.trade.edit-position.market')}
+					value={market?.marketName}
+				/>
 				<InfoBoxRow
 					valueNode={
 						preview?.leverage && (

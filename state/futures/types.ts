@@ -27,6 +27,11 @@ export type TradeSizeInputs<T = Wei> = {
 	susdSize: T;
 };
 
+export type SLTPInputs<T = Wei> = {
+	stopLossPrice?: T;
+	takeProfitPrice?: T;
+};
+
 export type CrossMarginTradeInputs<T = Wei> = TradeSizeInputs<T> & {
 	stopLossPrice?: T;
 	takeProfitPrice?: T;
@@ -234,6 +239,7 @@ export type TradePreviewResult = {
 export type CrossMarginState = {
 	tradeInputs: CrossMarginTradeInputs<string>;
 	editPositionInputs: EditPositionInputs<string>;
+	sltpModalInputs: SLTPInputs<string>;
 	marginDelta: string;
 	orderType: CrossMarginOrderType;
 	closePositionOrderInputs: ClosePositionInputs<string>;
@@ -281,7 +287,6 @@ export type IsolatedMarginState = {
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
 	leverageInput: string;
-	priceImpact: string;
 	tradeFee: string;
 	accounts: Record<
 		FuturesNetwork,

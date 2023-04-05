@@ -214,6 +214,10 @@ const darkTheme = {
 			border: '#514219',
 			text: common.dark.yellow,
 		},
+		red: {
+			fill: common.palette.alpha.red15,
+			text: common.palette.red.r200,
+		},
 	},
 	input: {
 		background: common.palette.neutral.n1100,

@@ -1,7 +1,7 @@
 import React, { FC, memo } from 'react';
 import styled from 'styled-components';
 
-type StyleType = 'tab' | 'check' | 'pill-button';
+export type StyleType = 'tab' | 'check' | 'pill-button' | 'pill-button-large';
 
 interface SegmentedControlProps {
 	values: string[];
@@ -10,6 +10,7 @@ interface SegmentedControlProps {
 	className?: string;
 	styleType?: StyleType;
 	suffix?: string;
+	isLarge?: boolean | undefined;
 	onChange(index: number): void;
 }
 
@@ -40,10 +41,12 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 			? 'display: flex; justify-content: space-between;'
 			: 'display: grid;'}
 	grid-template-columns: repeat(${(props) => props.$length}, 1fr);
-	grid-gap: ${(props) => (props.styleType === 'tab' ? '14px' : '6px')};
+	grid-gap: ${(props) =>
+		props.styleType === 'tab' || props.styleType === 'pill-button-large' ? '14px' : '6px'};
 	box-sizing: border-box;
 	width: 100%;
-	height: ${(props) => (props.styleType === 'tab' ? '38px' : '22px')};
+	height: ${(props) =>
+		props.styleType === 'tab' || props.styleType === 'pill-button-large' ? '38px' : '22px'};
 	padding: ${(props) => (props.styleType === 'tab' ? '4px' : '0')};
 	background: ${(props) =>
 		props.styleType === 'tab'
@@ -55,10 +58,13 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 `;
 
 const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: StyleType }>`
-	font-size: ${(props) => (props.styleType === 'pill-button' ? '12px' : '13px')};
+	font-size: ${(props) =>
+		props.styleType === 'pill-button' || props.styleType === 'pill-button-large' ? '12px' : '13px'};
 	font-family: ${(props) =>
 		props.styleType === 'tab' && props.isSelected
 			? props.theme.fonts.bold
+			: props.styleType === 'pill-button-large'
+			? props.theme.fonts.mono
 			: props.theme.fonts.regular};
 	cursor: pointer;
 	text-transform: capitalize;
@@ -66,29 +72,42 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 	display: ${(props) => (props.styleType === 'check' ? 'flex' : 'inherit')};
 	align-items: center;
 	border: ${(props) => {
-		if ((props.isSelected && props.styleType === 'tab') || props.styleType === 'pill-button')
+		if (
+			(props.isSelected && props.styleType === 'tab') ||
+			props.styleType === 'pill-button' ||
+			props.styleType === 'pill-button-large'
+		)
 			return props.theme.colors.selectedTheme.border;
 		return 'none';
 	}};
-	border-radius: ${(props) => (props.styleType === 'pill-button' ? '20px' : '6px')};
+	border-radius: ${(props) =>
+		props.styleType === 'pill-button'
+			? '20px'
+			: props.styleType === 'pill-button-large'
+			? '10px'
+			: '6px'};
 	border-color: ${(props) =>
-		props.styleType === 'pill-button' && props.isSelected
+		(props.styleType === 'pill-button' || props.styleType === 'pill-button-large') &&
+		props.isSelected
 			? props.theme.colors.selectedTheme.yellow
 			: undefined};
 	color: ${(props) =>
-		props.isSelected && props.styleType === 'pill-button'
+		props.isSelected &&
+		(props.styleType === 'pill-button' || props.styleType === 'pill-button-large')
 			? props.theme.colors.common.primaryYellow
 			: props.isSelected
 			? props.theme.colors.selectedTheme.button.text.primary
 			: props.theme.colors.selectedTheme.segmentedControl.button.inactive.color};
 
 	background: ${(props) =>
-		props.isSelected && props.styleType === 'tab'
+		props.isSelected && (props.styleType === 'tab' || props.styleType === 'pill-button-large')
 			? props.theme.colors.selectedTheme.segmentedControl.button.background
 			: 'transparent'};
 
 	background-color: ${(props) =>
-		props.isSelected && props.styleType === 'pill-button' && props.theme.colors.common.darkYellow};
+		props.isSelected &&
+		(props.styleType === 'pill-button' || props.styleType === 'pill-button-large') &&
+		props.theme.colors.common.darkYellow};
 	transition: all 0.1s ease-in-out;
 	&:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.icon.hover};

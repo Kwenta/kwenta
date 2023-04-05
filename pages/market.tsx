@@ -11,6 +11,7 @@ import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositio
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
 import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal';
+import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal';
 import MarketDetails from 'sections/futures/MarketDetails';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
@@ -107,6 +108,9 @@ const Market: MarketComponent = () => {
 			<MobileOrTabletView>
 				<MobileTrade />
 			</MobileOrTabletView>
+			{showPositionModal?.type === 'futures_edit_stop_loss_take_profit' && (
+				<EditStopLossAndTakeProfitModal />
+			)}
 			{showPositionModal?.type === 'futures_close_position' && <ClosePositionModal />}
 			{showPositionModal?.type === 'futures_edit_position_size' && <EditPositionSizeModal />}
 			{showPositionModal?.type === 'futures_edit_position_margin' && <EditPositionMarginModal />}

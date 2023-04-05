@@ -8,7 +8,7 @@ import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
-import { unserializePotentialTrade } from 'sdk/utils/futures';
+import { getDefaultPriceImpact, unserializePotentialTrade } from 'sdk/utils/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
@@ -18,7 +18,7 @@ import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeDelayedOrderFee, sameSide } from 'utils/costCalculations';
 import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
-import { zeroBN } from 'utils/formatters/number';
+import { stripZeros, zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
@@ -162,11 +162,6 @@ export const selectMarketInfo = createSelector(
 	(markets, selectedMarket) => {
 		return markets.find((market) => market.marketKey === selectedMarket);
 	}
-);
-
-export const selectIsolatedPriceImpact = createSelector(
-	(state: RootState) => state.futures.isolatedMargin.priceImpact,
-	(priceImpact) => wei(priceImpact)
 );
 
 export const selectOrderType = createSelector(
@@ -695,26 +690,6 @@ export const selectTradeSizeInputs = createSelector(
 	}
 );
 
-export const selectSlTpTradeInputs = createSelector(
-	(state: RootState) => state.futures.crossMargin.tradeInputs,
-	(tradeInputs) => ({
-		stopLossPrice: tradeInputs.stopLossPrice || '',
-		takeProfitPrice: tradeInputs.takeProfitPrice || '',
-	})
-);
-
-export const selectDesiredTradeFillPrice = createSelector(
-	selectIsolatedPriceImpact,
-	selectTradeSizeInputs,
-	selectMarketPrice,
-	(priceImpact, { nativeSizeDelta }, marketPrice) => {
-		const impactDecimalPercent = priceImpact.div(100);
-		return nativeSizeDelta.lt(0)
-			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
-			: marketPrice.mul(impactDecimalPercent.add(1));
-	}
-);
-
 export const selectEditPositionModalInfo = createSelector(
 	selectFuturesType,
 	selectEditPositionModalMarket,
@@ -726,19 +701,137 @@ export const selectEditPositionModalInfo = createSelector(
 		const contextPositions = type === 'isolated_margin' ? isolatedPositions : smartPositions;
 		const position = contextPositions.find((p) => p.marketKey === modalMarketKey);
 		const market = markets.find((m) => m.marketKey === modalMarketKey);
-		if (!market) return { position: null, market: null, price: null };
+		if (!market) return { position: null, market: null, marketPrice: wei(0) };
 		const price = prices[market.asset];
 		// Note this assumes the order type is always delayed off chain
 		return { position, market, marketPrice: price.offChain || wei(0) };
 	}
 );
 
+export const selectConditionalOrdersForMarket = createSelector(
+	selectMarketAsset,
+	selectCrossMarginAccountData,
+	selectFuturesType,
+	(asset, account, futuresType) => {
+		if (futuresType !== 'cross_margin') return [];
+		return account
+			? unserializeConditionalOrders(account.conditionalOrders).filter((o) => o.asset === asset)
+			: [];
+	}
+);
+
+export const selectStopLossOrder = createSelector(
+	selectConditionalOrdersForMarket,
+	selectMarketKey,
+	(selectOpenConditionalOrders, marketKey) => {
+		return selectOpenConditionalOrders.find(
+			(o) =>
+				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
+		);
+	}
+);
+
+export const selectTakeProfitOrder = createSelector(
+	selectConditionalOrdersForMarket,
+	selectMarketKey,
+	(selectOpenConditionalOrders, marketKey) => {
+		return selectOpenConditionalOrders.find(
+			(o) =>
+				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT && o.reduceOnly
+		);
+	}
+);
+
+export const selectAllSLTPOrders = createSelector(selectAllConditionalOrders, (orders) => {
+	return orders.filter((o) => o.reduceOnly && o.size.abs().eq(SL_TP_MAX_SIZE));
+});
+
+export const selectSLTPModalExistingPrices = createSelector(
+	selectAllSLTPOrders,
+	selectEditPositionModalInfo,
+	(orders, { market }) => {
+		const sl = orders.find(
+			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
+		);
+		const tp = orders.find(
+			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
+		);
+
+		return {
+			takeProfitPrice: tp?.targetPrice ? stripZeros(tp.targetPrice.toString()) : '',
+			stopLossPrice: sl?.targetPrice ? stripZeros(sl.targetPrice.toString()) : '',
+		};
+	}
+);
+
+export const selectSlTpTradeInputs = createSelector(
+	(state: RootState) => state.futures.crossMargin.tradeInputs,
+	(tradeInputs) => ({
+		stopLossPrice: tradeInputs.stopLossPrice || '',
+		takeProfitPrice: tradeInputs.takeProfitPrice || '',
+	})
+);
+
+export const selectSlTpModalInputs = createSelector(
+	(state: RootState) => state.futures.crossMargin.sltpModalInputs,
+	selectSLTPModalExistingPrices,
+	(tradeInputs, orderPrice) => {
+		const price = {
+			stopLossPrice: '',
+			takeProfitPrice: '',
+		};
+		if (!!orderPrice.stopLossPrice && !tradeInputs.stopLossPrice) {
+			price.stopLossPrice = orderPrice.stopLossPrice;
+		} else {
+			if (tradeInputs.stopLossPrice === '0') {
+				price.stopLossPrice = '';
+			} else {
+				price.stopLossPrice = tradeInputs.stopLossPrice || '';
+			}
+		}
+		if (!!orderPrice.takeProfitPrice && !tradeInputs.takeProfitPrice) {
+			price.takeProfitPrice = orderPrice.takeProfitPrice;
+		} else {
+			if (tradeInputs.takeProfitPrice === '0') {
+				price.takeProfitPrice = '';
+			} else {
+				price.takeProfitPrice = tradeInputs.takeProfitPrice || '';
+			}
+		}
+		return {
+			stopLossPrice: price.stopLossPrice,
+			takeProfitPrice: price.takeProfitPrice,
+		};
+	}
+);
+
+export const selectCrossMarginOrderPrice = (state: RootState) =>
+	state.futures.crossMargin.orderPrice.price ?? '';
+
+export const selectDesiredTradeFillPrice = createSelector(
+	selectTradeSizeInputs,
+	selectCrossMarginOrderPrice,
+	selectOrderType,
+	selectMarketPrice,
+	({ nativeSizeDelta }, orderPrice, orderType, marketPrice) => {
+		const priceImpact = getDefaultPriceImpact(orderType);
+		const conditionalOrderPrice = wei(orderPrice || 0);
+		const price =
+			orderType !== 'market' && conditionalOrderPrice.gt(0) ? conditionalOrderPrice : marketPrice;
+		const impactDecimalPercent = priceImpact.div(100);
+		return nativeSizeDelta.lt(0)
+			? price.mul(wei(1).sub(impactDecimalPercent))
+			: price.mul(impactDecimalPercent.add(1));
+	}
+);
+
 export const selectEditPosDesiredFillPrice = createSelector(
 	selectNetwork,
-	selectIsolatedPriceImpact,
 	selectEditPositionInputs,
 	selectMarketPrice,
-	(network, priceImpact, { nativeSizeDelta }, marketPrice) => {
+	(network, { nativeSizeDelta }, marketPrice) => {
+		const priceImpact = getDefaultPriceImpact('market');
+
 		// TODO: Remove once SNX mainnet changes depoyed
 		if (network === 10) return priceImpact;
 
@@ -751,10 +844,11 @@ export const selectEditPosDesiredFillPrice = createSelector(
 
 export const selectClosePosDesiredFillPrice = createSelector(
 	selectNetwork,
-	selectIsolatedPriceImpact,
 	selectEditPositionModalInfo,
 	selectClosePositionOrderInputs,
-	(network, priceImpact, { position, marketPrice }, { price, orderType }) => {
+	(network, { position, marketPrice }, { price, orderType }) => {
+		const priceImpact = getDefaultPriceImpact(orderType);
+
 		// TODO: Remove once SNX mainnet changes depoyed
 		if (network === 10) return priceImpact;
 
@@ -766,20 +860,6 @@ export const selectClosePosDesiredFillPrice = createSelector(
 			: orderPrice.mul(impactDecimalPercent.add(1));
 	}
 );
-
-// TODO: Remove once SNX mainnet changes depoyed
-export const selectPriceImpactOrDesiredFill = createSelector(
-	selectIsolatedPriceImpact,
-	selectDesiredTradeFillPrice,
-	selectNetwork,
-	(priceImpact, desiredFill, network) => {
-		if (network === 10) return priceImpact;
-		return desiredFill;
-	}
-);
-
-export const selectCrossMarginOrderPrice = (state: RootState) =>
-	state.futures.crossMargin.orderPrice.price ?? '';
 
 export const selectIsolatedMarginLeverage = createSelector(
 	selectPosition,
@@ -873,15 +953,6 @@ export const selectMarginTransfers = createSelector(
 		if (!wallet) return [];
 		const account = futures[accountType(type)].accounts[network]?.[wallet];
 		return account?.marginTransfers ?? [];
-	}
-);
-
-export const selectConditionalOrdersForMarket = createSelector(
-	selectMarketAsset,
-	selectCrossMarginAccountData,
-	(asset, account) => {
-		const orders = account ? unserializeConditionalOrders(account.conditionalOrders) : [];
-		return orders.filter((o) => o.asset === asset);
 	}
 );
 
@@ -980,36 +1051,6 @@ export const selectPositionStatus = createSelector(
 		return type === 'cross_margin'
 			? futures.queryStatuses.crossMarginPositions
 			: futures.queryStatuses.isolatedPositions;
-	}
-);
-
-export const selectOpenConditionalOrders = createSelector(
-	selectConditionalOrdersForMarket,
-	selectFuturesType,
-	(crossOrders, futuresType) => {
-		return futuresType === 'cross_margin' ? crossOrders : [];
-	}
-);
-
-export const selectStopLossOrder = createSelector(
-	selectOpenConditionalOrders,
-	selectMarketKey,
-	(selectOpenConditionalOrders, marketKey) => {
-		return selectOpenConditionalOrders.find(
-			(o) =>
-				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT && o.reduceOnly
-		);
-	}
-);
-
-export const selectTakeProfitOrder = createSelector(
-	selectOpenConditionalOrders,
-	selectMarketKey,
-	(selectOpenConditionalOrders, marketKey) => {
-		return selectOpenConditionalOrders.find(
-			(o) =>
-				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
-		);
 	}
 );
 

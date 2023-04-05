@@ -278,6 +278,7 @@ export type ConditionalOrder<T = Wei> = {
 	marketKey: FuturesMarketKey;
 	size: T;
 	targetPrice: T | null;
+	desiredFillPrice: T;
 	marginDelta: T;
 	orderType: ConditionalOrderTypeEnum;
 	orderTypeDisplay: FuturesOrderTypeDisplay;
@@ -422,9 +423,26 @@ export type SmartMarginOrderInputs = {
 	stopLoss?: {
 		price: Wei;
 		sizeDelta: Wei;
+		desiredFillPrice: Wei;
 	};
 	takeProfit?: {
 		price: Wei;
 		sizeDelta: Wei;
+		desiredFillPrice: Wei;
+	};
+};
+
+export type SLTPOrderInputs = {
+	stopLoss?: {
+		price: Wei;
+		desiredFillPrice: Wei;
+		sizeDelta: Wei;
+		isCancelled?: boolean;
+	};
+	takeProfit?: {
+		price: Wei;
+		desiredFillPrice: Wei;
+		sizeDelta: Wei;
+		isCancelled?: boolean;
 	};
 };
