@@ -341,7 +341,7 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
-				"market-price": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
+				"market-price": "The current price of the Futures market after adding a skew-based premium or discount to the index price",
 				"index-price": "The exact index price of this market without any adjustment for market skew applied",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
