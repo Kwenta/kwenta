@@ -907,6 +907,7 @@
 					"insufficient-free-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
 				},
 				"edit-position":{
+					"market": "Market",
 					"current-size": "Current size",
 					"leverage-change": "Leverage",
 					"position-size": "Position Size",

@@ -41,11 +41,10 @@ export default function EditPositionSizeModal() {
 	const transactionState = useAppSelector(selectTransaction);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
-	const position = useAppSelector(selectPosition);
 	const preview = useAppSelector(selectEditPositionPreview);
 	const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
-	const { market } = useAppSelector(selectEditPositionModalInfo);
+	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 
 	const [editType, setEditType] = useState(0);
 

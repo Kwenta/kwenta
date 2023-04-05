@@ -53,12 +53,11 @@ export default function ClosePositionModal() {
 	const transactionState = useAppSelector(selectTransaction);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
-	const position = useAppSelector(selectPosition);
 	const previewTrade = useAppSelector(selectClosePositionPreview);
 	const previewError = useAppSelector(selectTradePreviewError);
 
 	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs);
-	const { market } = useAppSelector(selectEditPositionModalInfo);
+	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 
 	const submitCloseOrder = useCallback(() => {
 		dispatch(submitSmartMarginReducePositionOrder());
@@ -137,11 +136,7 @@ export default function ClosePositionModal() {
 	);
 
 	return (
-		<StyledBaseModal
-			title={`Close full or partial ${market?.marketName} position`}
-			isOpen
-			onDismiss={onClose}
-		>
+		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
 			<Spacer height={10} />
 			<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
 			<Spacer height={20} />
@@ -158,6 +153,10 @@ export default function ClosePositionModal() {
 			<Spacer height={20} />
 
 			<InfoBoxContainer>
+				<InfoBoxRow
+					title={t('futures.market.trade.edit-position.market')}
+					value={market?.marketName}
+				/>
 				<InfoBoxRow
 					valueNode={
 						previewTrade?.leverage && (
