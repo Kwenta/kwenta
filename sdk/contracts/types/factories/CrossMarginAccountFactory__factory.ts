@@ -65,23 +65,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "CallerMustBeAccount",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "CannotUpgrade",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "OnlyOneAccountPerAddress",
+    inputs: [],
+    name: "OnlyAccount",
     type: "error",
   },
   {
@@ -168,6 +157,25 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "accounts",
+        type: "address",
+      },
+    ],
+    name: "accounts",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "exist",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "canUpgrade",
     outputs: [
@@ -188,6 +196,44 @@ const _abi = [
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_account",
+        type: "address",
+      },
+    ],
+    name: "getAccountOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+    ],
+    name: "getAccountsOwnedBy",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -222,25 +268,6 @@ const _abi = [
   {
     inputs: [],
     name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "ownerToAccount",
     outputs: [
       {
         internalType: "address",
@@ -288,7 +315,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_oldOwner",
+        name: "_account",
         type: "address",
       },
       {
@@ -296,8 +323,13 @@ const _abi = [
         name: "_newOwner",
         type: "address",
       },
+      {
+        internalType: "address",
+        name: "_oldOwner",
+        type: "address",
+      },
     ],
-    name: "updateAccountOwner",
+    name: "updateAccountOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
