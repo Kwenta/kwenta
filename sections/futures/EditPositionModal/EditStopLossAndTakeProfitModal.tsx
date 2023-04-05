@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback } from 'react';
+import React, { ChangeEvent, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -36,6 +36,12 @@ export default function EditStopLossAndTakeProfitModal() {
 	const { market, marketPrice } = useAppSelector(selectEditPositionModalInfo);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs);
+
+	useEffect(() => {
+		dispatch(setCrossSLTPModalStopLoss(''));
+		dispatch(setCrossSLTPModalTakeProfit(''));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const onSelectStopLossPercent = useCallback(
 		(index) => {

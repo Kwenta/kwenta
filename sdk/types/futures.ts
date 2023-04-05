@@ -422,21 +422,25 @@ export type SmartMarginOrderInputs = {
 	stopLoss?: {
 		price: Wei;
 		sizeDelta: Wei;
+		desiredFillPrice: Wei;
 	};
 	takeProfit?: {
 		price: Wei;
 		sizeDelta: Wei;
+		desiredFillPrice: Wei;
 	};
 };
 
-export type sltpOrderInputs = {
+export type SLTPOrderInputs = {
 	stopLoss?: {
 		price: Wei;
+		desiredFillPrice: Wei;
 		sizeDelta: Wei;
 		isCancelled?: boolean;
 	};
 	takeProfit?: {
 		price: Wei;
+		desiredFillPrice: Wei;
 		sizeDelta: Wei;
 		isCancelled?: boolean;
 	};

@@ -55,7 +55,7 @@ import {
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
 	FuturesAccountType,
-	sltpOrderInputs,
+	SLTPOrderInputs,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -979,9 +979,9 @@ export default class FuturesService {
 						marginDelta: marginDeltaMinusFees,
 						sizeDelta: order.sizeDelta,
 						price: order.conditionalOrderInputs!.price,
+						desiredFillPrice: order.desiredFillPrice,
 					},
 					order.conditionalOrderInputs.orderType,
-					order.desiredFillPrice,
 					order.conditionalOrderInputs!.reduceOnly
 				);
 				inputs.push(params);
@@ -1018,9 +1018,9 @@ export default class FuturesService {
 						marginDelta: wei(0),
 						sizeDelta: order.takeProfit.sizeDelta,
 						price: order.takeProfit.price,
+						desiredFillPrice: order.takeProfit.desiredFillPrice,
 					},
 					ConditionalOrderTypeEnum.LIMIT,
-					order.desiredFillPrice,
 					true
 				);
 				inputs.push(encodedParams);
@@ -1040,9 +1040,9 @@ export default class FuturesService {
 						marginDelta: wei(0),
 						sizeDelta: order.stopLoss.sizeDelta,
 						price: order.stopLoss.price,
+						desiredFillPrice: order.stopLoss.desiredFillPrice,
 					},
 					ConditionalOrderTypeEnum.STOP,
-					order.desiredFillPrice,
 					true
 				);
 				inputs.push(encodedParams);
@@ -1133,8 +1133,7 @@ export default class FuturesService {
 	public async updateStopLossAndTakeProfit(
 		marketKey: FuturesMarketKey,
 		crossMarginAddress: string,
-		desiredFillPrice: Wei,
-		params: sltpOrderInputs
+		params: SLTPOrderInputs
 	) {
 		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
 			crossMarginAddress,
@@ -1174,9 +1173,9 @@ export default class FuturesService {
 							marginDelta: wei(0),
 							sizeDelta: params.takeProfit.sizeDelta,
 							price: params.takeProfit.price,
+							desiredFillPrice: params.takeProfit.desiredFillPrice,
 						},
 						ConditionalOrderTypeEnum.LIMIT,
-						desiredFillPrice,
 						true
 					);
 					inputs.push(encodedParams);
@@ -1198,9 +1197,9 @@ export default class FuturesService {
 							marginDelta: wei(0),
 							sizeDelta: params.stopLoss.sizeDelta,
 							price: params.stopLoss.price,
+							desiredFillPrice: params.stopLoss.desiredFillPrice,
 						},
 						ConditionalOrderTypeEnum.STOP,
-						desiredFillPrice,
 						true
 					);
 					inputs.push(encodedParams);

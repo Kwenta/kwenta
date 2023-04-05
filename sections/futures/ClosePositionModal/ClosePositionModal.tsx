@@ -17,8 +17,8 @@ import { PositionSide, PotentialTradeStatus } from 'sdk/types/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
+	editClosePositionPrice,
 	editClosePositionSizeDelta,
-	editCrossMarginPositionSize,
 	submitSmartMarginReducePositionOrder,
 } from 'state/futures/actions';
 import { setClosePositionOrderType } from 'state/futures/reducer';
@@ -114,7 +114,8 @@ export default function ClosePositionModal() {
 
 	const onClose = () => {
 		if (market) {
-			dispatch(editCrossMarginPositionSize(market.marketKey, ''));
+			dispatch(editClosePositionSizeDelta(market.marketKey, ''));
+			dispatch(editClosePositionPrice(market.marketKey, ''));
 		}
 		dispatch(setShowPositionModal(null));
 	};
@@ -153,6 +154,7 @@ export default function ClosePositionModal() {
 
 			<InfoBoxContainer>
 				<InfoBoxRow
+					boldValue
 					title={t('futures.market.trade.edit-position.market')}
 					value={market?.marketName}
 				/>

@@ -593,13 +593,13 @@ type TradeInputParams = {
 	marginDelta: Wei;
 	sizeDelta: Wei;
 	price: Wei;
+	desiredFillPrice: Wei;
 };
 
 export const encodeConditionalOrderParams = (
 	marketKey: FuturesMarketKey,
 	tradeInputs: TradeInputParams,
 	type: ConditionalOrderTypeEnum,
-	desiredFillPrice: Wei,
 	reduceOnly: boolean
 ) => {
 	return defaultAbiCoder.encode(
@@ -610,7 +610,7 @@ export const encodeConditionalOrderParams = (
 			tradeInputs.sizeDelta.toBN(),
 			tradeInputs.price.toBN(),
 			type,
-			desiredFillPrice.toBN(),
+			tradeInputs.desiredFillPrice.toBN(),
 			reduceOnly,
 		]
 	);
@@ -641,8 +641,13 @@ export const formatOrderDisplayType = (
 	return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Limit' : 'Stop Market';
 };
 
-export const calculateDesiredFillPrice = (sizeDelta: Wei, marketPrice: Wei, priceImpact: Wei) => {
+export const calculateDesiredFillPrice = (
+	sizeDelta: Wei,
+	marketPrice: Wei,
+	priceImpactPercent: Wei
+) => {
+	const priceImpactDecimalPct = priceImpactPercent.div(100);
 	return sizeDelta.lt(0)
-		? marketPrice.mul(wei(1).sub(priceImpact))
-		: marketPrice.mul(priceImpact.add(1));
+		? marketPrice.mul(wei(1).sub(priceImpactDecimalPct))
+		: marketPrice.mul(priceImpactDecimalPct.add(1));
 };

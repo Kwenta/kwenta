@@ -810,15 +810,23 @@ export const selectSlTpModalInputs = createSelector(
 	}
 );
 
+export const selectCrossMarginOrderPrice = (state: RootState) =>
+	state.futures.crossMargin.orderPrice.price ?? '';
+
 export const selectDesiredTradeFillPrice = createSelector(
 	selectIsolatedPriceImpact,
 	selectTradeSizeInputs,
+	selectCrossMarginOrderPrice,
+	selectOrderType,
 	selectMarketPrice,
-	(priceImpact, { nativeSizeDelta }, marketPrice) => {
+	(priceImpact, { nativeSizeDelta }, orderPrice, orderType, marketPrice) => {
+		const conditionalOrderPrice = wei(orderPrice || 0);
+		const price =
+			orderType !== 'market' && conditionalOrderPrice.gt(0) ? conditionalOrderPrice : marketPrice;
 		const impactDecimalPercent = priceImpact.div(100);
 		return nativeSizeDelta.lt(0)
-			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
-			: marketPrice.mul(impactDecimalPercent.add(1));
+			? price.mul(wei(1).sub(impactDecimalPercent))
+			: price.mul(impactDecimalPercent.add(1));
 	}
 );
 
@@ -866,9 +874,6 @@ export const selectPriceImpactOrDesiredFill = createSelector(
 		return desiredFill;
 	}
 );
-
-export const selectCrossMarginOrderPrice = (state: RootState) =>
-	state.futures.crossMargin.orderPrice.price ?? '';
 
 export const selectIsolatedMarginLeverage = createSelector(
 	selectPosition,
