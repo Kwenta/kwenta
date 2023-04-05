@@ -9,6 +9,9 @@ const newTheme = {
 			background: common.palette.neutral.n1100,
 		},
 	},
+	border: {
+		color: common.palette.neutral.n700,
+	},
 	button: {
 		default: {
 			border: `1px solid ${common.palette.neutral.n700}`,
@@ -16,7 +19,7 @@ const newTheme = {
 			background: common.palette.neutral.n800,
 			color: common.palette.neutral.n0,
 			hover: {
-				background: common.palette.neutral.n700,
+				background: common.palette.neutral.n800,
 			},
 		},
 		position: {

@@ -9,6 +9,9 @@ const newTheme = {
 			background: common.palette.neutral.n10,
 		},
 	},
+	border: {
+		color: common.palette.neutral.n40,
+	},
 	button: {
 		default: {
 			border: `1px solid ${common.palette.neutral.n40}`,
