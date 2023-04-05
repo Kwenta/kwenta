@@ -74,17 +74,17 @@ export default function SLTPInputs() {
 
 	const slInvalid = useMemo(() => {
 		if (leverageSide === 'long') {
-			return !!stopLossPrice && wei(stopLossPrice).gt(currentPrice);
+			return !!stopLossPrice && wei(stopLossPrice || 0).gt(currentPrice);
 		} else {
-			return !!stopLossPrice && wei(stopLossPrice).lt(currentPrice);
+			return !!stopLossPrice && wei(stopLossPrice || 0).lt(currentPrice);
 		}
 	}, [stopLossPrice, currentPrice, leverageSide]);
 
 	const tpInvalid = useMemo(() => {
 		if (leverageSide === 'long') {
-			return !!takeProfitPrice && wei(takeProfitPrice).lt(currentPrice);
+			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(currentPrice);
 		} else {
-			return !!takeProfitPrice && wei(takeProfitPrice).gt(currentPrice);
+			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(currentPrice);
 		}
 	}, [takeProfitPrice, currentPrice, leverageSide]);
 

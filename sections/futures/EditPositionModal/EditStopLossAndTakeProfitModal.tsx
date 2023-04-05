@@ -12,12 +12,12 @@ import { NO_VALUE } from 'constants/placeholder';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import { updateStopLossAndTakeProfit } from 'state/futures/actions';
-import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
+import { setCrossSLTPModalStopLoss, setCrossSLTPModalTakeProfit } from 'state/futures/reducer';
 import {
 	selectEditPositionModalInfo,
 	selectLeverageSide,
 	selectMarketPrice,
-	selectSlTpTradeInputs,
+	selectSlTpModalInputs,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -37,13 +37,13 @@ export default function EditStopLossAndTakeProfitModal() {
 	const transactionState = useAppSelector(selectTransaction);
 	const { market } = useAppSelector(selectEditPositionModalInfo);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
-	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
+	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs);
 
 	const onSelectStopLossPercent = useCallback(
 		(index) => {
 			const option = SL_OPTIONS[index];
 			if (option === 'none') {
-				dispatch(setCrossMarginTradeStopLoss('0'));
+				dispatch(setCrossSLTPModalStopLoss('0'));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 				const stopLoss =
@@ -51,7 +51,7 @@ export default function EditStopLossAndTakeProfitModal() {
 						? currentPrice.add(currentPrice.mul(percent))
 						: currentPrice.sub(currentPrice.mul(percent));
 				const dp = suggestedDecimals(stopLoss);
-				dispatch(setCrossMarginTradeStopLoss(stopLoss.toString(dp)));
+				dispatch(setCrossSLTPModalStopLoss(stopLoss.toString(dp)));
 			}
 		},
 		[currentPrice, dispatch, leverageSide]
@@ -61,7 +61,7 @@ export default function EditStopLossAndTakeProfitModal() {
 		(index) => {
 			const option = TP_OPTIONS[index];
 			if (option === 'none') {
-				dispatch(setCrossMarginTradeTakeProfit('0'));
+				dispatch(setCrossSLTPModalTakeProfit('0'));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 				const takeProfit =
@@ -69,7 +69,7 @@ export default function EditStopLossAndTakeProfitModal() {
 						? currentPrice.sub(currentPrice.mul(percent))
 						: currentPrice.add(currentPrice.mul(percent));
 				const dp = suggestedDecimals(takeProfit);
-				dispatch(setCrossMarginTradeTakeProfit(takeProfit.toString(dp)));
+				dispatch(setCrossSLTPModalTakeProfit(takeProfit.toString(dp)));
 			}
 		},
 		[currentPrice, dispatch, leverageSide]
@@ -77,14 +77,14 @@ export default function EditStopLossAndTakeProfitModal() {
 
 	const onChangeStopLoss = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(setCrossMarginTradeStopLoss(v));
+			dispatch(setCrossSLTPModalStopLoss(v));
 		},
 		[dispatch]
 	);
 
 	const onChangeTakeProfit = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(setCrossMarginTradeTakeProfit(v));
+			dispatch(setCrossSLTPModalTakeProfit(v));
 		},
 		[dispatch]
 	);

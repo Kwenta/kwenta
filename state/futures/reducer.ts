@@ -111,6 +111,10 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedLeverageByAsset: {},
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
+		sltpModalInputs: {
+			stopLossPrice: '',
+			takeProfitPrice: '',
+		},
 		editPositionInputs: {
 			nativeSizeDelta: '',
 			marginDelta: '',
@@ -215,6 +219,12 @@ const futuresSlice = createSlice({
 		},
 		setCrossMarginTradeTakeProfit: (state, action: PayloadAction<string>) => {
 			state.crossMargin.tradeInputs.takeProfitPrice = action.payload;
+		},
+		setCrossSLTPModalStopLoss: (state, action: PayloadAction<string>) => {
+			state.crossMargin.sltpModalInputs.stopLossPrice = action.payload;
+		},
+		setCrossSLTPModalTakeProfit: (state, action: PayloadAction<string>) => {
+			state.crossMargin.sltpModalInputs.takeProfitPrice = action.payload;
 		},
 		setFuturesAccountType: (state, action) => {
 			state.selectedType = action.payload;
@@ -732,6 +742,8 @@ export const {
 	incrementIsolatedPreviewCount,
 	incrementCrossPreviewCount,
 	setSelectedPortfolioTimeframe,
+	setCrossSLTPModalStopLoss,
+	setCrossSLTPModalTakeProfit,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

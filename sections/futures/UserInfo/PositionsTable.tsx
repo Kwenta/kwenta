@@ -97,8 +97,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: formatDollars(stopLoss?.targetPrice ?? 0),
-					takeProfit: formatDollars(takeProfit?.targetPrice ?? 0),
+					stopLoss: formatDollars(stopLoss?.targetPrice ?? 0, { suggestDecimals: true }),
+					takeProfit: formatDollars(takeProfit?.targetPrice ?? 0, { suggestDecimals: true }),
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -337,7 +337,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 									</FlexDivRowCentered>
 								);
 							},
-							width: 90,
+							width: 110,
 						},
 						{
 							Header: <TableHeader>Position</TableHeader>,

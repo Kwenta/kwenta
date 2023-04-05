@@ -18,7 +18,7 @@ import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeDelayedOrderFee, sameSide } from 'utils/costCalculations';
 import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
-import { suggestedDecimals, zeroBN } from 'utils/formatters/number';
+import { stripZeros, zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
@@ -747,19 +747,6 @@ export const selectTakeProfitOrder = createSelector(
 	}
 );
 
-export const selectCurrentMarketSLTP = createSelector(
-	selectTakeProfitOrder,
-	selectStopLossOrder,
-	(takeProfitOrder, stopLossOrder) => {
-		const tpDecimal = suggestedDecimals(takeProfitOrder?.targetPrice ?? wei(0));
-		const slDecimal = suggestedDecimals(stopLossOrder?.targetPrice ?? wei(0));
-		return {
-			takeProfitPrice: takeProfitOrder?.targetPrice?.toString(tpDecimal) || '0.00',
-			stopLossPrice: stopLossOrder?.targetPrice?.toString(slDecimal) || '0.00',
-		};
-	}
-);
-
 export const selectAllSLTPOrders = createSelector(selectAllConditionalOrders, (orders) => {
 	return orders.filter((o) => o.reduceOnly && o.size.abs().eq(SL_TP_MAX_SIZE));
 });
@@ -774,17 +761,24 @@ export const selectSLTPModalExistingPrices = createSelector(
 		const tp = orders.find(
 			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
 		);
-		const tpDecimal = suggestedDecimals(sl?.targetPrice ?? wei(0));
-		const slDecimal = suggestedDecimals(tp?.targetPrice ?? wei(0));
+
 		return {
-			takeProfitPrice: sl?.targetPrice?.toString(tpDecimal) || '0.00',
-			stopLossPrice: tp?.targetPrice?.toString(slDecimal) || '0.00',
+			takeProfitPrice: stripZeros(tp?.targetPrice?.toString() || ''),
+			stopLossPrice: stripZeros(sl?.targetPrice?.toString() || ''),
 		};
 	}
 );
 
 export const selectSlTpTradeInputs = createSelector(
 	(state: RootState) => state.futures.crossMargin.tradeInputs,
+	(tradeInputs) => ({
+		stopLossPrice: tradeInputs.stopLossPrice || '',
+		takeProfitPrice: tradeInputs.takeProfitPrice || '',
+	})
+);
+
+export const selectSlTpModalInputs = createSelector(
+	(state: RootState) => state.futures.crossMargin.sltpModalInputs,
 	selectSLTPModalExistingPrices,
 	(tradeInputs, orderPrice) => {
 		const price = {

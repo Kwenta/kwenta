@@ -433,11 +433,11 @@ export type sltpOrderInputs = {
 	stopLoss?: {
 		price: Wei;
 		sizeDelta: Wei;
-		isCancelled?: boolean | false;
+		isCancelled?: boolean;
 	};
 	takeProfit?: {
 		price: Wei;
 		sizeDelta: Wei;
-		isCancelled?: boolean | false;
+		isCancelled?: boolean;
 	};
 };

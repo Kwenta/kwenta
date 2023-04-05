@@ -132,6 +132,7 @@ import {
 	selectClosePosDesiredFillPrice,
 	selectOpenDelayedOrders,
 	selectPriceImpactOrDesiredFill,
+	selectSlTpModalInputs,
 } from './selectors';
 import {
 	AccountContext,
@@ -1707,12 +1708,11 @@ const submitCMTransferTransaction = async (
 export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/updateStopLossAndTakeProfit',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const { market } = selectEditPositionModalInfo(getState());
+		const { market, position } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
 		const wallet = selectWallet(getState());
-		const tradeInputs = selectCrossMarginTradeInputs(getState());
 		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
-		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
+		const { stopLossPrice, takeProfitPrice } = selectSlTpModalInputs(getState());
 
 		try {
 			if (!market) throw new Error('Market info not found');
@@ -1723,11 +1723,13 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 
 			// To separate Stop Loss and Take Profit from other limit / stop orders
 			// we set the size to max big num value.
+			const maxSizeDelta =
+				position?.position?.side === PositionSide.LONG ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE;
+
 			if (Number(stopLossPrice) > 0) {
 				params.stopLoss = {
 					price: wei(stopLossPrice),
-					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
-					isCancelled: false,
+					sizeDelta: maxSizeDelta,
 				};
 			} else if (!stopLossPrice) {
 				params.stopLoss = {
@@ -1740,8 +1742,7 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 			if (Number(takeProfitPrice) > 0) {
 				params.takeProfit = {
 					price: wei(takeProfitPrice),
-					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
-					isCancelled: false,
+					sizeDelta: maxSizeDelta,
 				};
 			} else if (!takeProfitPrice) {
 				params.takeProfit = {
