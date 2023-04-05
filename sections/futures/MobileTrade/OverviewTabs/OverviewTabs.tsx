@@ -60,9 +60,7 @@ const OverviewTabs: React.FC = () => {
 	);
 };
 
-const OverviewTabsContainer = styled.div`
-	margin-top: 55px;
-`;
+const OverviewTabsContainer = styled.div``;
 
 const MainTabButtonsContainer = styled.div`
 	display: grid;
