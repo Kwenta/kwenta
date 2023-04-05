@@ -26,7 +26,6 @@ import {
 	selectEditPositionPreview,
 	selectIsFetchingTradePreview,
 	selectMarketPrice,
-	selectPosition,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

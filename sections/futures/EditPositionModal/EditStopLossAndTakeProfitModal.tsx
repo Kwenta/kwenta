@@ -16,7 +16,6 @@ import { setCrossSLTPModalStopLoss, setCrossSLTPModalTakeProfit } from 'state/fu
 import {
 	selectEditPositionModalInfo,
 	selectLeverageSide,
-	selectMarketPrice,
 	selectSlTpModalInputs,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
@@ -33,9 +32,8 @@ export default function EditStopLossAndTakeProfitModal() {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const leverageSide = useAppSelector(selectLeverageSide);
-	const currentPrice = useAppSelector(selectMarketPrice);
 	const transactionState = useAppSelector(selectTransaction);
-	const { market } = useAppSelector(selectEditPositionModalInfo);
+	const { market, marketPrice } = useAppSelector(selectEditPositionModalInfo);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs);
 
@@ -48,13 +46,13 @@ export default function EditStopLossAndTakeProfitModal() {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 				const stopLoss =
 					leverageSide === 'short'
-						? currentPrice.add(currentPrice.mul(percent))
-						: currentPrice.sub(currentPrice.mul(percent));
+						? marketPrice.add(marketPrice.mul(percent))
+						: marketPrice.sub(marketPrice.mul(percent));
 				const dp = suggestedDecimals(stopLoss);
 				dispatch(setCrossSLTPModalStopLoss(stopLoss.toString(dp)));
 			}
 		},
-		[currentPrice, dispatch, leverageSide]
+		[marketPrice, dispatch, leverageSide]
 	);
 
 	const onSelectTakeProfit = useCallback(
@@ -66,13 +64,13 @@ export default function EditStopLossAndTakeProfitModal() {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 				const takeProfit =
 					leverageSide === 'short'
-						? currentPrice.sub(currentPrice.mul(percent))
-						: currentPrice.add(currentPrice.mul(percent));
+						? marketPrice.sub(marketPrice.mul(percent))
+						: marketPrice.add(marketPrice.mul(percent));
 				const dp = suggestedDecimals(takeProfit);
 				dispatch(setCrossSLTPModalTakeProfit(takeProfit.toString(dp)));
 			}
 		},
-		[currentPrice, dispatch, leverageSide]
+		[marketPrice, dispatch, leverageSide]
 	);
 
 	const onChangeStopLoss = useCallback(
@@ -106,7 +104,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				type={'take-profit'}
 				invalid={false}
 				currentPrice={
-					currentPrice ? formatDollars(currentPrice, { suggestDecimals: true }) : NO_VALUE
+					marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
 				}
 				value={takeProfitPrice}
 				onChange={onChangeTakeProfit}
@@ -134,7 +132,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				type={'stop-loss'}
 				invalid={false}
 				currentPrice={
-					currentPrice ? formatDollars(currentPrice, { suggestDecimals: true }) : NO_VALUE
+					marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
 				}
 				value={stopLossPrice}
 				onChange={onChangeStopLoss}

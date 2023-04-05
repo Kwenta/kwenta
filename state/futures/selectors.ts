@@ -706,7 +706,7 @@ export const selectEditPositionModalInfo = createSelector(
 		const contextPositions = type === 'isolated_margin' ? isolatedPositions : smartPositions;
 		const position = contextPositions.find((p) => p.marketKey === modalMarketKey);
 		const market = markets.find((m) => m.marketKey === modalMarketKey);
-		if (!market) return { position: null, market: null, price: null };
+		if (!market) return { position: null, market: null, marketPrice: wei(0) };
 		const price = prices[market.asset];
 		// Note this assumes the order type is always delayed off chain
 		return { position, market, marketPrice: price.offChain || wei(0) };
@@ -763,8 +763,8 @@ export const selectSLTPModalExistingPrices = createSelector(
 		);
 
 		return {
-			takeProfitPrice: stripZeros(tp?.targetPrice?.toString() || ''),
-			stopLossPrice: stripZeros(sl?.targetPrice?.toString() || ''),
+			takeProfitPrice: tp?.targetPrice ? stripZeros(tp.targetPrice.toString()) : '',
+			stopLossPrice: sl?.targetPrice ? stripZeros(sl.targetPrice.toString()) : '',
 		};
 	}
 );

@@ -27,7 +27,6 @@ import {
 	selectClosePositionPreview,
 	selectEditPositionModalInfo,
 	selectIsFetchingTradePreview,
-	selectPosition,
 	selectSubmittingFuturesTx,
 	selectTradePreviewError,
 } from 'state/futures/selectors';
