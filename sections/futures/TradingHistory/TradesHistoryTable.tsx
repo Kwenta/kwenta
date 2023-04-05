@@ -98,7 +98,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	return (
 		<HistoryContainer mobile={mobile}>
 			<div>
-				<TableMainHeader>Trade History</TableMainHeader>
+				{!mobile && <TableMainHeader>Trade History</TableMainHeader>}
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
@@ -188,6 +188,9 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 		props.mobile &&
 		css`
 			margin-bottom: 0;
+			border-radius: 0;
+			border: none;
+			border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 		`}
 `;
 
