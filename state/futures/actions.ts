@@ -1003,6 +1003,8 @@ export const modifyIsolatedPosition = createAsyncThunk<
 
 		try {
 			const isFlagged = await sdk.futures.getIsFlagged(account, marketInfo.market);
+
+			// TODO: Remove this dynamic logic when the markets are upgraded
 			const priceImpactOrFill = isFlagged == null ? priceImpact : desiredFill;
 
 			dispatch(

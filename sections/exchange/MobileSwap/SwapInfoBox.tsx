@@ -85,7 +85,6 @@ const FeeRow = () => {
 
 const GasPriceRow = () => {
 	const { t } = useTranslation();
-	const gasSpeed = useAppSelector(selectGasSpeed);
 	const customGasPrice = useAppSelector(selectGasPrice);
 	const isL2 = useIsL2();
 	const isMainnet = useIsL1();

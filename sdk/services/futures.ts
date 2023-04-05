@@ -528,6 +528,7 @@ export default class FuturesService {
 
 	public async getIsFlagged(account: string, marketAddress: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider);
+		// TODO: Remove this catch after all markets have been upgraded
 		const isFlagged = await market.isFlagged(account).catch((_) => null);
 		return isFlagged;
 	}

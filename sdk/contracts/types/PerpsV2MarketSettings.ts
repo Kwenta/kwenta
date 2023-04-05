@@ -7,11 +7,17 @@ import type {
   BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -98,7 +104,10 @@ export declare namespace IPerpsV2MarketSettings {
 
 export interface PerpsV2MarketSettingsInterface extends utils.Interface {
   functions: {
+    "CONTRACT_NAME()": FunctionFragment;
+    "acceptOwnership()": FunctionFragment;
     "delayedOrderConfirmWindow(bytes32)": FunctionFragment;
+    "isResolverCached()": FunctionFragment;
     "keeperLiquidationFee()": FunctionFragment;
     "liquidationBufferRatio(bytes32)": FunctionFragment;
     "liquidationFeeRatio()": FunctionFragment;
@@ -117,11 +126,45 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     "minInitialMargin()": FunctionFragment;
     "minKeeperFee()": FunctionFragment;
     "nextPriceConfirmWindow(bytes32)": FunctionFragment;
+    "nominateNewOwner(address)": FunctionFragment;
+    "nominatedOwner()": FunctionFragment;
     "offchainDelayedOrderMaxAge(bytes32)": FunctionFragment;
     "offchainDelayedOrderMinAge(bytes32)": FunctionFragment;
     "offchainMarketKey(bytes32)": FunctionFragment;
     "offchainPriceDivergence(bytes32)": FunctionFragment;
+    "owner()": FunctionFragment;
     "parameters(bytes32)": FunctionFragment;
+    "rebuildCache()": FunctionFragment;
+    "resolver()": FunctionFragment;
+    "resolverAddressesRequired()": FunctionFragment;
+    "setDelayedOrderConfirmWindow(bytes32,uint256)": FunctionFragment;
+    "setKeeperLiquidationFee(uint256)": FunctionFragment;
+    "setLiquidationBufferRatio(bytes32,uint256)": FunctionFragment;
+    "setLiquidationFeeRatio(uint256)": FunctionFragment;
+    "setLiquidationPremiumMultiplier(bytes32,uint256)": FunctionFragment;
+    "setMakerFee(bytes32,uint256)": FunctionFragment;
+    "setMakerFeeDelayedOrder(bytes32,uint256)": FunctionFragment;
+    "setMakerFeeOffchainDelayedOrder(bytes32,uint256)": FunctionFragment;
+    "setMaxDelayTimeDelta(bytes32,uint256)": FunctionFragment;
+    "setMaxFundingVelocity(bytes32,uint256)": FunctionFragment;
+    "setMaxKeeperFee(uint256)": FunctionFragment;
+    "setMaxLeverage(bytes32,uint256)": FunctionFragment;
+    "setMaxLiquidationDelta(bytes32,uint256)": FunctionFragment;
+    "setMaxMarketValue(bytes32,uint256)": FunctionFragment;
+    "setMaxPD(bytes32,uint256)": FunctionFragment;
+    "setMinDelayTimeDelta(bytes32,uint256)": FunctionFragment;
+    "setMinInitialMargin(uint256)": FunctionFragment;
+    "setMinKeeperFee(uint256)": FunctionFragment;
+    "setNextPriceConfirmWindow(bytes32,uint256)": FunctionFragment;
+    "setOffchainDelayedOrderMaxAge(bytes32,uint256)": FunctionFragment;
+    "setOffchainDelayedOrderMinAge(bytes32,uint256)": FunctionFragment;
+    "setOffchainMarketKey(bytes32,bytes32)": FunctionFragment;
+    "setOffchainPriceDivergence(bytes32,uint256)": FunctionFragment;
+    "setParameters(bytes32,(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bytes32,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "setSkewScale(bytes32,uint256)": FunctionFragment;
+    "setTakerFee(bytes32,uint256)": FunctionFragment;
+    "setTakerFeeDelayedOrder(bytes32,uint256)": FunctionFragment;
+    "setTakerFeeOffchainDelayedOrder(bytes32,uint256)": FunctionFragment;
     "skewScale(bytes32)": FunctionFragment;
     "takerFee(bytes32)": FunctionFragment;
     "takerFeeDelayedOrder(bytes32)": FunctionFragment;
@@ -130,7 +173,10 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "CONTRACT_NAME"
+      | "acceptOwnership"
       | "delayedOrderConfirmWindow"
+      | "isResolverCached"
       | "keeperLiquidationFee"
       | "liquidationBufferRatio"
       | "liquidationFeeRatio"
@@ -149,11 +195,45 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
       | "minInitialMargin"
       | "minKeeperFee"
       | "nextPriceConfirmWindow"
+      | "nominateNewOwner"
+      | "nominatedOwner"
       | "offchainDelayedOrderMaxAge"
       | "offchainDelayedOrderMinAge"
       | "offchainMarketKey"
       | "offchainPriceDivergence"
+      | "owner"
       | "parameters"
+      | "rebuildCache"
+      | "resolver"
+      | "resolverAddressesRequired"
+      | "setDelayedOrderConfirmWindow"
+      | "setKeeperLiquidationFee"
+      | "setLiquidationBufferRatio"
+      | "setLiquidationFeeRatio"
+      | "setLiquidationPremiumMultiplier"
+      | "setMakerFee"
+      | "setMakerFeeDelayedOrder"
+      | "setMakerFeeOffchainDelayedOrder"
+      | "setMaxDelayTimeDelta"
+      | "setMaxFundingVelocity"
+      | "setMaxKeeperFee"
+      | "setMaxLeverage"
+      | "setMaxLiquidationDelta"
+      | "setMaxMarketValue"
+      | "setMaxPD"
+      | "setMinDelayTimeDelta"
+      | "setMinInitialMargin"
+      | "setMinKeeperFee"
+      | "setNextPriceConfirmWindow"
+      | "setOffchainDelayedOrderMaxAge"
+      | "setOffchainDelayedOrderMinAge"
+      | "setOffchainMarketKey"
+      | "setOffchainPriceDivergence"
+      | "setParameters"
+      | "setSkewScale"
+      | "setTakerFee"
+      | "setTakerFeeDelayedOrder"
+      | "setTakerFeeOffchainDelayedOrder"
       | "skewScale"
       | "takerFee"
       | "takerFeeDelayedOrder"
@@ -161,8 +241,20 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "CONTRACT_NAME",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "acceptOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "delayedOrderConfirmWindow",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isResolverCached",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "keeperLiquidationFee",
@@ -237,6 +329,14 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "nominateNewOwner",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nominatedOwner",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "offchainDelayedOrderMaxAge",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -252,9 +352,131 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     functionFragment: "offchainPriceDivergence",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "parameters",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rebuildCache",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "resolver", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "resolverAddressesRequired",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setDelayedOrderConfirmWindow",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setKeeperLiquidationFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLiquidationBufferRatio",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLiquidationFeeRatio",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLiquidationPremiumMultiplier",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMakerFee",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMakerFeeDelayedOrder",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMakerFeeOffchainDelayedOrder",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxDelayTimeDelta",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxFundingVelocity",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxKeeperFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxLeverage",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxLiquidationDelta",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxMarketValue",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxPD",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinDelayTimeDelta",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinInitialMargin",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinKeeperFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setNextPriceConfirmWindow",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOffchainDelayedOrderMaxAge",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOffchainDelayedOrderMinAge",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOffchainMarketKey",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOffchainPriceDivergence",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setParameters",
+    values: [PromiseOrValue<BytesLike>, IPerpsV2MarketSettings.ParametersStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSkewScale",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTakerFee",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTakerFeeDelayedOrder",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTakerFeeOffchainDelayedOrder",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "skewScale",
@@ -274,7 +496,19 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "CONTRACT_NAME",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "acceptOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "delayedOrderConfirmWindow",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isResolverCached",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -344,6 +578,14 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "nominateNewOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "nominatedOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "offchainDelayedOrderMaxAge",
     data: BytesLike
   ): Result;
@@ -359,7 +601,126 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     functionFragment: "offchainPriceDivergence",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "parameters", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "rebuildCache",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "resolver", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "resolverAddressesRequired",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setDelayedOrderConfirmWindow",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setKeeperLiquidationFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLiquidationBufferRatio",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLiquidationFeeRatio",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLiquidationPremiumMultiplier",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMakerFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMakerFeeDelayedOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMakerFeeOffchainDelayedOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxDelayTimeDelta",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxFundingVelocity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxKeeperFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxLeverage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxLiquidationDelta",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxMarketValue",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setMaxPD", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinDelayTimeDelta",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinInitialMargin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinKeeperFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setNextPriceConfirmWindow",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setOffchainDelayedOrderMaxAge",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setOffchainDelayedOrderMinAge",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setOffchainMarketKey",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setOffchainPriceDivergence",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setParameters",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSkewScale",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTakerFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTakerFeeDelayedOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTakerFeeOffchainDelayedOrder",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "skewScale", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "takerFee", data: BytesLike): Result;
   decodeFunctionResult(
@@ -371,8 +732,160 @@ export interface PerpsV2MarketSettingsInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "CacheUpdated(bytes32,address)": EventFragment;
+    "KeeperLiquidationFeeUpdated(uint256)": EventFragment;
+    "LiquidationBufferRatioUpdated(uint256)": EventFragment;
+    "LiquidationFeeRatioUpdated(uint256)": EventFragment;
+    "MaxKeeperFeeUpdated(uint256)": EventFragment;
+    "MinInitialMarginUpdated(uint256)": EventFragment;
+    "MinKeeperFeeUpdated(uint256)": EventFragment;
+    "OwnerChanged(address,address)": EventFragment;
+    "OwnerNominated(address)": EventFragment;
+    "ParameterUpdated(bytes32,bytes32,uint256)": EventFragment;
+    "ParameterUpdatedBytes32(bytes32,bytes32,bytes32)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "CacheUpdated"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "KeeperLiquidationFeeUpdated"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LiquidationBufferRatioUpdated"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidationFeeRatioUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MaxKeeperFeeUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MinInitialMarginUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MinKeeperFeeUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedBytes32"): EventFragment;
 }
+
+export interface CacheUpdatedEventObject {
+  name: string;
+  destination: string;
+}
+export type CacheUpdatedEvent = TypedEvent<
+  [string, string],
+  CacheUpdatedEventObject
+>;
+
+export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>;
+
+export interface KeeperLiquidationFeeUpdatedEventObject {
+  keeperFee: BigNumber;
+}
+export type KeeperLiquidationFeeUpdatedEvent = TypedEvent<
+  [BigNumber],
+  KeeperLiquidationFeeUpdatedEventObject
+>;
+
+export type KeeperLiquidationFeeUpdatedEventFilter =
+  TypedEventFilter<KeeperLiquidationFeeUpdatedEvent>;
+
+export interface LiquidationBufferRatioUpdatedEventObject {
+  bps: BigNumber;
+}
+export type LiquidationBufferRatioUpdatedEvent = TypedEvent<
+  [BigNumber],
+  LiquidationBufferRatioUpdatedEventObject
+>;
+
+export type LiquidationBufferRatioUpdatedEventFilter =
+  TypedEventFilter<LiquidationBufferRatioUpdatedEvent>;
+
+export interface LiquidationFeeRatioUpdatedEventObject {
+  bps: BigNumber;
+}
+export type LiquidationFeeRatioUpdatedEvent = TypedEvent<
+  [BigNumber],
+  LiquidationFeeRatioUpdatedEventObject
+>;
+
+export type LiquidationFeeRatioUpdatedEventFilter =
+  TypedEventFilter<LiquidationFeeRatioUpdatedEvent>;
+
+export interface MaxKeeperFeeUpdatedEventObject {
+  sUSD: BigNumber;
+}
+export type MaxKeeperFeeUpdatedEvent = TypedEvent<
+  [BigNumber],
+  MaxKeeperFeeUpdatedEventObject
+>;
+
+export type MaxKeeperFeeUpdatedEventFilter =
+  TypedEventFilter<MaxKeeperFeeUpdatedEvent>;
+
+export interface MinInitialMarginUpdatedEventObject {
+  minMargin: BigNumber;
+}
+export type MinInitialMarginUpdatedEvent = TypedEvent<
+  [BigNumber],
+  MinInitialMarginUpdatedEventObject
+>;
+
+export type MinInitialMarginUpdatedEventFilter =
+  TypedEventFilter<MinInitialMarginUpdatedEvent>;
+
+export interface MinKeeperFeeUpdatedEventObject {
+  sUSD: BigNumber;
+}
+export type MinKeeperFeeUpdatedEvent = TypedEvent<
+  [BigNumber],
+  MinKeeperFeeUpdatedEventObject
+>;
+
+export type MinKeeperFeeUpdatedEventFilter =
+  TypedEventFilter<MinKeeperFeeUpdatedEvent>;
+
+export interface OwnerChangedEventObject {
+  oldOwner: string;
+  newOwner: string;
+}
+export type OwnerChangedEvent = TypedEvent<
+  [string, string],
+  OwnerChangedEventObject
+>;
+
+export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
+
+export interface OwnerNominatedEventObject {
+  newOwner: string;
+}
+export type OwnerNominatedEvent = TypedEvent<
+  [string],
+  OwnerNominatedEventObject
+>;
+
+export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
+
+export interface ParameterUpdatedEventObject {
+  marketKey: string;
+  parameter: string;
+  value: BigNumber;
+}
+export type ParameterUpdatedEvent = TypedEvent<
+  [string, string, BigNumber],
+  ParameterUpdatedEventObject
+>;
+
+export type ParameterUpdatedEventFilter =
+  TypedEventFilter<ParameterUpdatedEvent>;
+
+export interface ParameterUpdatedBytes32EventObject {
+  marketKey: string;
+  parameter: string;
+  value: string;
+}
+export type ParameterUpdatedBytes32Event = TypedEvent<
+  [string, string, string],
+  ParameterUpdatedBytes32EventObject
+>;
+
+export type ParameterUpdatedBytes32EventFilter =
+  TypedEventFilter<ParameterUpdatedBytes32Event>;
 
 export interface PerpsV2MarketSettings extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -401,10 +914,18 @@ export interface PerpsV2MarketSettings extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    CONTRACT_NAME(overrides?: CallOverrides): Promise<[string]>;
+
+    acceptOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     delayedOrderConfirmWindow(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    isResolverCached(overrides?: CallOverrides): Promise<[boolean]>;
 
     keeperLiquidationFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -481,6 +1002,13 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    nominateNewOwner(
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
+
     offchainDelayedOrderMaxAge(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -501,10 +1029,185 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
     parameters(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[IPerpsV2MarketSettings.ParametersStructOutput]>;
+
+    rebuildCache(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    resolver(overrides?: CallOverrides): Promise<[string]>;
+
+    resolverAddressesRequired(
+      overrides?: CallOverrides
+    ): Promise<[string[]] & { addresses: string[] }>;
+
+    setDelayedOrderConfirmWindow(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _delayedOrderConfirmWindow: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setKeeperLiquidationFee(
+      _keeperFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setLiquidationBufferRatio(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _ratio: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setLiquidationFeeRatio(
+      _ratio: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setLiquidationPremiumMultiplier(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _liquidationPremiumMultiplier: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMakerFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMakerFeeDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMakerFeeOffchainDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxDelayTimeDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxDelayTimeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxFundingVelocity(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxFundingVelocity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxKeeperFee(
+      _sUSD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxLeverage(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxLeverage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxLiquidationDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxLiquidationDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxMarketValue(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxMarketValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMaxPD(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxPD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinDelayTimeDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _minDelayTimeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinInitialMargin(
+      _minMargin: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinKeeperFee(
+      _sUSD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setNextPriceConfirmWindow(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _nextPriceConfirmWindow: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setOffchainDelayedOrderMaxAge(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainDelayedOrderMaxAge: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setOffchainDelayedOrderMinAge(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainDelayedOrderMinAge: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setOffchainMarketKey(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainMarketKey: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setOffchainPriceDivergence(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setParameters(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _parameters: IPerpsV2MarketSettings.ParametersStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setSkewScale(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _skewScale: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTakerFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTakerFeeDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTakerFeeOffchainDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     skewScale(
       _marketKey: PromiseOrValue<BytesLike>,
@@ -527,10 +1230,18 @@ export interface PerpsV2MarketSettings extends BaseContract {
     ): Promise<[BigNumber]>;
   };
 
+  CONTRACT_NAME(overrides?: CallOverrides): Promise<string>;
+
+  acceptOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   delayedOrderConfirmWindow(
     _marketKey: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  isResolverCached(overrides?: CallOverrides): Promise<boolean>;
 
   keeperLiquidationFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -607,6 +1318,13 @@ export interface PerpsV2MarketSettings extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  nominateNewOwner(
+    _owner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  nominatedOwner(overrides?: CallOverrides): Promise<string>;
+
   offchainDelayedOrderMaxAge(
     _marketKey: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -627,10 +1345,183 @@ export interface PerpsV2MarketSettings extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  owner(overrides?: CallOverrides): Promise<string>;
+
   parameters(
     _marketKey: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<IPerpsV2MarketSettings.ParametersStructOutput>;
+
+  rebuildCache(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  resolver(overrides?: CallOverrides): Promise<string>;
+
+  resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
+
+  setDelayedOrderConfirmWindow(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _delayedOrderConfirmWindow: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setKeeperLiquidationFee(
+    _keeperFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setLiquidationBufferRatio(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _ratio: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setLiquidationFeeRatio(
+    _ratio: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setLiquidationPremiumMultiplier(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _liquidationPremiumMultiplier: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMakerFee(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _makerFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMakerFeeDelayedOrder(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _makerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMakerFeeOffchainDelayedOrder(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _makerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxDelayTimeDelta(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _maxDelayTimeDelta: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxFundingVelocity(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _maxFundingVelocity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxKeeperFee(
+    _sUSD: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxLeverage(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _maxLeverage: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxLiquidationDelta(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _maxLiquidationDelta: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxMarketValue(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _maxMarketValue: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMaxPD(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _maxPD: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinDelayTimeDelta(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _minDelayTimeDelta: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinInitialMargin(
+    _minMargin: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinKeeperFee(
+    _sUSD: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setNextPriceConfirmWindow(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _nextPriceConfirmWindow: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setOffchainDelayedOrderMaxAge(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _offchainDelayedOrderMaxAge: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setOffchainDelayedOrderMinAge(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _offchainDelayedOrderMinAge: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setOffchainMarketKey(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _offchainMarketKey: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setOffchainPriceDivergence(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setParameters(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _parameters: IPerpsV2MarketSettings.ParametersStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setSkewScale(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _skewScale: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTakerFee(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _takerFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTakerFeeDelayedOrder(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _takerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTakerFeeOffchainDelayedOrder(
+    _marketKey: PromiseOrValue<BytesLike>,
+    _takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   skewScale(
     _marketKey: PromiseOrValue<BytesLike>,
@@ -653,10 +1544,16 @@ export interface PerpsV2MarketSettings extends BaseContract {
   ): Promise<BigNumber>;
 
   callStatic: {
+    CONTRACT_NAME(overrides?: CallOverrides): Promise<string>;
+
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
+
     delayedOrderConfirmWindow(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    isResolverCached(overrides?: CallOverrides): Promise<boolean>;
 
     keeperLiquidationFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -733,6 +1630,13 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    nominateNewOwner(
+      _owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    nominatedOwner(overrides?: CallOverrides): Promise<string>;
+
     offchainDelayedOrderMaxAge(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -753,10 +1657,181 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    owner(overrides?: CallOverrides): Promise<string>;
+
     parameters(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<IPerpsV2MarketSettings.ParametersStructOutput>;
+
+    rebuildCache(overrides?: CallOverrides): Promise<void>;
+
+    resolver(overrides?: CallOverrides): Promise<string>;
+
+    resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
+
+    setDelayedOrderConfirmWindow(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _delayedOrderConfirmWindow: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setKeeperLiquidationFee(
+      _keeperFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setLiquidationBufferRatio(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _ratio: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setLiquidationFeeRatio(
+      _ratio: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setLiquidationPremiumMultiplier(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _liquidationPremiumMultiplier: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMakerFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMakerFeeDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMakerFeeOffchainDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxDelayTimeDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxDelayTimeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxFundingVelocity(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxFundingVelocity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxKeeperFee(
+      _sUSD: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxLeverage(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxLeverage: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxLiquidationDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxLiquidationDelta: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxMarketValue(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxMarketValue: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxPD(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxPD: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinDelayTimeDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _minDelayTimeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinInitialMargin(
+      _minMargin: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinKeeperFee(
+      _sUSD: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setNextPriceConfirmWindow(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _nextPriceConfirmWindow: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setOffchainDelayedOrderMaxAge(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainDelayedOrderMaxAge: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setOffchainDelayedOrderMinAge(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainDelayedOrderMinAge: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setOffchainMarketKey(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainMarketKey: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setOffchainPriceDivergence(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setParameters(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _parameters: IPerpsV2MarketSettings.ParametersStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setSkewScale(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _skewScale: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTakerFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTakerFeeDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTakerFeeOffchainDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     skewScale(
       _marketKey: PromiseOrValue<BytesLike>,
@@ -779,13 +1854,92 @@ export interface PerpsV2MarketSettings extends BaseContract {
     ): Promise<BigNumber>;
   };
 
-  filters: {};
+  filters: {
+    "CacheUpdated(bytes32,address)"(
+      name?: null,
+      destination?: null
+    ): CacheUpdatedEventFilter;
+    CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter;
+
+    "KeeperLiquidationFeeUpdated(uint256)"(
+      keeperFee?: null
+    ): KeeperLiquidationFeeUpdatedEventFilter;
+    KeeperLiquidationFeeUpdated(
+      keeperFee?: null
+    ): KeeperLiquidationFeeUpdatedEventFilter;
+
+    "LiquidationBufferRatioUpdated(uint256)"(
+      bps?: null
+    ): LiquidationBufferRatioUpdatedEventFilter;
+    LiquidationBufferRatioUpdated(
+      bps?: null
+    ): LiquidationBufferRatioUpdatedEventFilter;
+
+    "LiquidationFeeRatioUpdated(uint256)"(
+      bps?: null
+    ): LiquidationFeeRatioUpdatedEventFilter;
+    LiquidationFeeRatioUpdated(
+      bps?: null
+    ): LiquidationFeeRatioUpdatedEventFilter;
+
+    "MaxKeeperFeeUpdated(uint256)"(sUSD?: null): MaxKeeperFeeUpdatedEventFilter;
+    MaxKeeperFeeUpdated(sUSD?: null): MaxKeeperFeeUpdatedEventFilter;
+
+    "MinInitialMarginUpdated(uint256)"(
+      minMargin?: null
+    ): MinInitialMarginUpdatedEventFilter;
+    MinInitialMarginUpdated(
+      minMargin?: null
+    ): MinInitialMarginUpdatedEventFilter;
+
+    "MinKeeperFeeUpdated(uint256)"(sUSD?: null): MinKeeperFeeUpdatedEventFilter;
+    MinKeeperFeeUpdated(sUSD?: null): MinKeeperFeeUpdatedEventFilter;
+
+    "OwnerChanged(address,address)"(
+      oldOwner?: null,
+      newOwner?: null
+    ): OwnerChangedEventFilter;
+    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
+
+    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
+    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
+
+    "ParameterUpdated(bytes32,bytes32,uint256)"(
+      marketKey?: PromiseOrValue<BytesLike> | null,
+      parameter?: PromiseOrValue<BytesLike> | null,
+      value?: null
+    ): ParameterUpdatedEventFilter;
+    ParameterUpdated(
+      marketKey?: PromiseOrValue<BytesLike> | null,
+      parameter?: PromiseOrValue<BytesLike> | null,
+      value?: null
+    ): ParameterUpdatedEventFilter;
+
+    "ParameterUpdatedBytes32(bytes32,bytes32,bytes32)"(
+      marketKey?: PromiseOrValue<BytesLike> | null,
+      parameter?: PromiseOrValue<BytesLike> | null,
+      value?: null
+    ): ParameterUpdatedBytes32EventFilter;
+    ParameterUpdatedBytes32(
+      marketKey?: PromiseOrValue<BytesLike> | null,
+      parameter?: PromiseOrValue<BytesLike> | null,
+      value?: null
+    ): ParameterUpdatedBytes32EventFilter;
+  };
 
   estimateGas: {
+    CONTRACT_NAME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    acceptOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     delayedOrderConfirmWindow(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    isResolverCached(overrides?: CallOverrides): Promise<BigNumber>;
 
     keeperLiquidationFee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -862,6 +2016,13 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    nominateNewOwner(
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
     offchainDelayedOrderMaxAge(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -882,9 +2043,182 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
     parameters(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    rebuildCache(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    resolver(overrides?: CallOverrides): Promise<BigNumber>;
+
+    resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setDelayedOrderConfirmWindow(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _delayedOrderConfirmWindow: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setKeeperLiquidationFee(
+      _keeperFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setLiquidationBufferRatio(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _ratio: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setLiquidationFeeRatio(
+      _ratio: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setLiquidationPremiumMultiplier(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _liquidationPremiumMultiplier: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMakerFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMakerFeeDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMakerFeeOffchainDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMaxDelayTimeDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxDelayTimeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMaxFundingVelocity(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxFundingVelocity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMaxKeeperFee(
+      _sUSD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMaxLeverage(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxLeverage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMaxLiquidationDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxLiquidationDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMaxMarketValue(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxMarketValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMaxPD(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxPD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMinDelayTimeDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _minDelayTimeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMinInitialMargin(
+      _minMargin: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMinKeeperFee(
+      _sUSD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setNextPriceConfirmWindow(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _nextPriceConfirmWindow: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setOffchainDelayedOrderMaxAge(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainDelayedOrderMaxAge: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setOffchainDelayedOrderMinAge(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainDelayedOrderMinAge: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setOffchainMarketKey(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainMarketKey: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setOffchainPriceDivergence(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setParameters(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _parameters: IPerpsV2MarketSettings.ParametersStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setSkewScale(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _skewScale: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTakerFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTakerFeeDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTakerFeeOffchainDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     skewScale(
@@ -909,10 +2243,18 @@ export interface PerpsV2MarketSettings extends BaseContract {
   };
 
   populateTransaction: {
+    CONTRACT_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    acceptOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     delayedOrderConfirmWindow(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     keeperLiquidationFee(
       overrides?: CallOverrides
@@ -993,6 +2335,13 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    nominateNewOwner(
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     offchainDelayedOrderMaxAge(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1013,9 +2362,184 @@ export interface PerpsV2MarketSettings extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     parameters(
       _marketKey: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    rebuildCache(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    resolverAddressesRequired(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setDelayedOrderConfirmWindow(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _delayedOrderConfirmWindow: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setKeeperLiquidationFee(
+      _keeperFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setLiquidationBufferRatio(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _ratio: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setLiquidationFeeRatio(
+      _ratio: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setLiquidationPremiumMultiplier(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _liquidationPremiumMultiplier: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMakerFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMakerFeeDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMakerFeeOffchainDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _makerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxDelayTimeDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxDelayTimeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxFundingVelocity(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxFundingVelocity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxKeeperFee(
+      _sUSD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxLeverage(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxLeverage: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxLiquidationDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxLiquidationDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxMarketValue(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxMarketValue: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxPD(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _maxPD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinDelayTimeDelta(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _minDelayTimeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinInitialMargin(
+      _minMargin: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinKeeperFee(
+      _sUSD: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setNextPriceConfirmWindow(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _nextPriceConfirmWindow: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setOffchainDelayedOrderMaxAge(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainDelayedOrderMaxAge: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setOffchainDelayedOrderMinAge(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainDelayedOrderMinAge: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setOffchainMarketKey(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainMarketKey: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setOffchainPriceDivergence(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _offchainPriceDivergence: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setParameters(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _parameters: IPerpsV2MarketSettings.ParametersStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setSkewScale(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _skewScale: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTakerFee(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTakerFeeDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFeeDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTakerFeeOffchainDelayedOrder(
+      _marketKey: PromiseOrValue<BytesLike>,
+      _takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     skewScale(

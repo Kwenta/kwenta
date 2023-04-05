@@ -20,7 +20,7 @@ import {
 import { useAppSelector, useFetchAction } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { selectWallet } from 'state/wallet/selectors';
-import { formatCryptoCurrency, suggestedDecimals } from 'utils/formatters/number';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import TradeDrawer from '../drawers/TradeDrawer';
 
