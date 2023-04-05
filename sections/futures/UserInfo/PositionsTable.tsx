@@ -16,6 +16,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { ConditionalOrderTypeEnum } from 'sdk/types/futures';
 import MobilePositionRow from 'sections/dashboard/FuturesPositionsTable/MobilePositionRow';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
@@ -26,8 +27,10 @@ import {
 	selectMarketAsset,
 	selectMarkets,
 	selectPositionHistory,
+	selectAllSLTPOrders,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { formatDollars } from 'utils/formatters/number';
 
 import TableMarketDetails from './TableMarketDetails';
 
@@ -50,6 +53,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const accountType = useAppSelector(selectFuturesType);
+	const sltpOrders = useAppSelector(selectAllSLTPOrders);
 
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
@@ -59,24 +63,30 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-
+				const stopLoss = sltpOrders.find(
+					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
+				);
+				const takeProfit = sltpOrders.find(
+					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
+				);
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss,
-					takeProfit: position.takeProfit,
+					stopLoss: formatDollars(stopLoss?.targetPrice ?? 0, { suggestDecimals: true }),
+					takeProfit: formatDollars(takeProfit?.targetPrice ?? 0, { suggestDecimals: true }),
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1));
 	}, [
 		accountType,
-		isolatedPositions,
 		crossMarginPositions,
+		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
+		sltpOrders,
 	]);
 
 	return (
@@ -85,9 +95,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 				<Table
 					data={data}
 					rounded={false}
-					onTableRowClick={(row) =>
-						router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
-					}
 					noResultsMessage={
 						!isL2 ? (
 							<TableNoResults>
@@ -109,10 +116,18 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 							accessor: 'market',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<TableMarketDetails
-										marketName={cellProps.row.original.market.marketName}
-										marketKey={cellProps.row.original.market.marketKey}
-									/>
+									<MarketDetailsContainer
+										onClick={() =>
+											router.push(
+												ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
+											)
+										}
+									>
+										<TableMarketDetails
+											marketName={cellProps.row.original.market.marketName}
+											marketKey={cellProps.row.original.market.marketKey}
+										/>
+									</MarketDetailsContainer>
 								);
 							},
 							width: 120,
@@ -276,19 +291,30 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 											{cellProps.row.original.takeProfit === undefined ? (
 												<Body>{NO_VALUE}</Body>
 											) : (
-												<NumericValue value={cellProps.row.original.takeProfit} />
+												<div className="value">{cellProps.row.original.takeProfit}</div>
 											)}
 											{cellProps.row.original.stopLoss === undefined ? (
 												<Body>{NO_VALUE}</Body>
 											) : (
-												<NumericValue value={cellProps.row.original.stopLoss} />
+												<div className="value">{cellProps.row.original.stopLoss}</div>
 											)}
 										</div>
-										<Pill>Edit</Pill>
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_stop_loss_take_profit',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
 									</FlexDivRowCentered>
 								);
 							},
-							width: 90,
+							width: 110,
 						},
 						{
 							Header: <TableHeader>Position</TableHeader>,
@@ -392,6 +418,10 @@ const NoPositionsText = styled.div`
 	font-size: 16px;
 	text-align: center;
 	text-decoration: underline;
+`;
+
+const MarketDetailsContainer = styled.div`
+	cursor: pointer;
 `;
 
 export default PositionsTable;

@@ -55,22 +55,23 @@ export const ErrorView: FC<ErrorProps> = memo(
 const ErrorContainer = styled.div<{ messageType: MessageType; style: Record<string, string> }>`
 	color: ${(props) =>
 		props.messageType === 'error'
-			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.orange};
+			? props.theme.colors.selectedTheme.button.red.text
+			: props.theme.colors.selectedTheme.button.yellow.text};
 	flex: none;
 	order: 0;
 	flex-grow: 0;
 	text-align: center;
-	font-size: 12px;
+	font-size: 13px;
 	margin: ${(props) => props.style.margin ?? '0 0 16px 0'};
 	padding: 15px;
-	border: 1px solid rgba(239, 104, 104, 0.2);
-	border-color: ${(props) =>
+	border: 1px solid rgba(239, 104, 104, 0);
+	background: ${(props) =>
 		props.messageType === 'error'
-			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.orange};
+			? props.theme.colors.selectedTheme.button.red.fill
+			: props.theme.colors.selectedTheme.button.yellow.fill};
 	border-radius: 8px;
 	cursor: default;
+	white-space: pre-line;
 
 	:first-letter {
 		text-transform: uppercase;

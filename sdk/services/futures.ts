@@ -55,6 +55,7 @@ import {
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
 	FuturesAccountType,
+	SLTPOrderInputs,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
@@ -978,9 +979,9 @@ export default class FuturesService {
 						marginDelta: marginDeltaMinusFees,
 						sizeDelta: order.sizeDelta,
 						price: order.conditionalOrderInputs!.price,
+						desiredFillPrice: order.desiredFillPrice,
 					},
 					order.conditionalOrderInputs.orderType,
-					order.desiredFillPrice,
 					order.conditionalOrderInputs!.reduceOnly
 				);
 				inputs.push(params);
@@ -1017,9 +1018,9 @@ export default class FuturesService {
 						marginDelta: wei(0),
 						sizeDelta: order.takeProfit.sizeDelta,
 						price: order.takeProfit.price,
+						desiredFillPrice: order.takeProfit.desiredFillPrice,
 					},
 					ConditionalOrderTypeEnum.LIMIT,
-					order.desiredFillPrice,
 					true
 				);
 				inputs.push(encodedParams);
@@ -1039,9 +1040,9 @@ export default class FuturesService {
 						marginDelta: wei(0),
 						sizeDelta: order.stopLoss.sizeDelta,
 						price: order.stopLoss.price,
+						desiredFillPrice: order.stopLoss.desiredFillPrice,
 					},
 					ConditionalOrderTypeEnum.STOP,
-					order.desiredFillPrice,
 					true
 				);
 				inputs.push(encodedParams);
@@ -1126,6 +1127,89 @@ export default class FuturesService {
 		);
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'withdrawEth', [
 			amount.toBN(),
+		]);
+	}
+
+	public async updateStopLossAndTakeProfit(
+		marketKey: FuturesMarketKey,
+		crossMarginAddress: string,
+		params: SLTPOrderInputs
+	) {
+		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+			crossMarginAddress,
+			this.sdk.context.signer
+		);
+		const commands = [];
+		const inputs = [];
+
+		if (params.takeProfit || params.stopLoss) {
+			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
+			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === marketKey);
+			const existingStopLosses = existingOrdersForMarket.filter(
+				(o) =>
+					o.size.abs().eq(SL_TP_MAX_SIZE) &&
+					o.reduceOnly &&
+					o.orderType === ConditionalOrderTypeEnum.STOP
+			);
+			const existingTakeProfits = existingOrdersForMarket.filter(
+				(o) =>
+					o.size.abs().eq(SL_TP_MAX_SIZE) &&
+					o.reduceOnly &&
+					o.orderType === ConditionalOrderTypeEnum.LIMIT
+			);
+
+			if (params.takeProfit) {
+				if (existingTakeProfits.length) {
+					existingTakeProfits.forEach((tp) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [tp.id]));
+					});
+				}
+				if (!params.takeProfit.isCancelled) {
+					commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+					const encodedParams = encodeConditionalOrderParams(
+						marketKey,
+						{
+							marginDelta: wei(0),
+							sizeDelta: params.takeProfit.sizeDelta,
+							price: params.takeProfit.price,
+							desiredFillPrice: params.takeProfit.desiredFillPrice,
+						},
+						ConditionalOrderTypeEnum.LIMIT,
+						true
+					);
+					inputs.push(encodedParams);
+				}
+			}
+
+			if (params.stopLoss) {
+				if (existingStopLosses.length) {
+					existingStopLosses.forEach((sl) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [sl.id]));
+					});
+				}
+				if (!params.stopLoss.isCancelled) {
+					commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
+					const encodedParams = encodeConditionalOrderParams(
+						marketKey,
+						{
+							marginDelta: wei(0),
+							sizeDelta: params.stopLoss.sizeDelta,
+							price: params.stopLoss.price,
+							desiredFillPrice: params.stopLoss.desiredFillPrice,
+						},
+						ConditionalOrderTypeEnum.STOP,
+						true
+					);
+					inputs.push(encodedParams);
+				}
+			}
+		}
+
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+			commands,
+			inputs,
 		]);
 	}
 }

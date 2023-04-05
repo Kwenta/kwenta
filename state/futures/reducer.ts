@@ -1,9 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import {
-	DEFAULT_FUTURES_MARGIN_TYPE,
-	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
-} from 'constants/defaults';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { Period } from 'sdk/constants/period';
 import { NetworkId } from 'sdk/types/common';
@@ -111,6 +108,10 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedLeverageByAsset: {},
 		showCrossMarginOnboard: false,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
+		sltpModalInputs: {
+			stopLossPrice: '',
+			takeProfitPrice: '',
+		},
 		editPositionInputs: {
 			nativeSizeDelta: '',
 			marginDelta: '',
@@ -162,7 +163,6 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 			nativeSizeDelta: '',
 			marginDelta: '',
 		},
-		priceImpact: DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
 		tradeFee: '0',
 		leverageInput: '0',
 	},
@@ -215,6 +215,12 @@ const futuresSlice = createSlice({
 		},
 		setCrossMarginTradeTakeProfit: (state, action: PayloadAction<string>) => {
 			state.crossMargin.tradeInputs.takeProfitPrice = action.payload;
+		},
+		setCrossSLTPModalStopLoss: (state, action: PayloadAction<string>) => {
+			state.crossMargin.sltpModalInputs.stopLossPrice = action.payload;
+		},
+		setCrossSLTPModalTakeProfit: (state, action: PayloadAction<string>) => {
+			state.crossMargin.sltpModalInputs.takeProfitPrice = action.payload;
 		},
 		setFuturesAccountType: (state, action) => {
 			state.selectedType = action.payload;
@@ -732,6 +738,8 @@ export const {
 	incrementIsolatedPreviewCount,
 	incrementCrossPreviewCount,
 	setSelectedPortfolioTimeframe,
+	setCrossSLTPModalStopLoss,
+	setCrossSLTPModalTakeProfit,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

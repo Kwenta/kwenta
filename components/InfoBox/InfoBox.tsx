@@ -18,6 +18,7 @@ type InfoBoxRowProps = {
 	expandable?: boolean;
 	expanded?: boolean;
 	isSubItem?: boolean;
+	boldValue?: boolean;
 	onToggleExpand?: (key: string) => void;
 };
 
@@ -37,6 +38,7 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 		color,
 		valueNode,
 		spaceBeneath,
+		boldValue,
 	}) => (
 		<>
 			{compactBox ? (
@@ -50,6 +52,7 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 						{title}: {keyNode} {expandable ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
 					</InfoBoxKey>
 					<ValueText
+						$bold={boldValue}
 						$isSubItem={isSubItem}
 						data-testid={dataTestId}
 						$disabled={disabled}
@@ -96,6 +99,7 @@ const ValueText = styled(Body).attrs({ mono: true })<{
 	$disabled?: boolean;
 	$color?: InfoBoxRowProps['color'];
 	$isSubItem?: boolean;
+	$bold?: boolean;
 }>`
 	color: ${(props) => props.theme.colors.selectedTheme.text[props.$isSubItem ? 'label' : 'value']};
 	cursor: default;
@@ -122,6 +126,12 @@ const ValueText = styled(Body).attrs({ mono: true })<{
 		props.$disabled &&
 		css`
 			color: ${(props) => props.theme.colors.selectedTheme.gray};
+		`}
+
+	${(props) =>
+		props.$bold &&
+		css`
+			font-weight: bold;
 		`}
 `;
 

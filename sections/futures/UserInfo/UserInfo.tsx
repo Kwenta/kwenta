@@ -17,7 +17,7 @@ import {
 	selectActiveIsolatedPositionsCount,
 	selectFuturesType,
 	selectMarketAsset,
-	selectOpenConditionalOrders,
+	selectConditionalOrdersForMarket,
 	selectOpenDelayedOrders,
 	selectPosition,
 } from 'state/futures/selectors';
@@ -55,7 +55,7 @@ const UserInfo: React.FC = memo(() => {
 	const walletAddress = useAppSelector(selectWallet);
 
 	const openOrders = useAppSelector(selectOpenDelayedOrders);
-	const conditionalOrders = useAppSelector(selectOpenConditionalOrders);
+	const conditionalOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const accountType = useAppSelector(selectFuturesType);
 
 	useFetchAction(fetchTradesForSelectedMarket, {

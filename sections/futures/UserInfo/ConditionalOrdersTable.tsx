@@ -14,7 +14,7 @@ import { cancelConditionalOrder } from 'state/futures/actions';
 import {
 	selectCancellingConditionalOrder,
 	selectMarketAsset,
-	selectOpenConditionalOrders,
+	selectConditionalOrdersForMarket,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
@@ -30,7 +30,7 @@ export default function ConditionalOrdersTable() {
 	const isL2 = useIsL2();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-	const openConditionalOrders = useAppSelector(selectOpenConditionalOrders);
+	const openConditionalOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const isCancellingOrder = useAppSelector(selectCancellingConditionalOrder);
 
 	const [selectedOrder, setSelectedOrder] = useState<ConditionalOrder | undefined>();

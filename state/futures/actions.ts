@@ -5,6 +5,7 @@ import { debounce } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
+import { DEFAULT_PRICE_IMPACT_DELTA_PERCENT } from 'constants/defaults';
 import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { ZERO_ADDRESS } from 'sdk/constants/global';
@@ -26,10 +27,12 @@ import {
 	PotentialTradeStatus,
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
+	SLTPOrderInputs,
 	FuturesMarketKey,
 } from 'sdk/types/futures';
 import {
 	calculateCrossMarginFee,
+	calculateDesiredFillPrice,
 	getTradeStatusMessage,
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
@@ -130,7 +133,7 @@ import {
 	selectEditPositionModalInfo,
 	selectClosePosDesiredFillPrice,
 	selectOpenDelayedOrders,
-	selectPriceImpactOrDesiredFill,
+	selectSlTpModalInputs,
 } from './selectors';
 import {
 	AccountContext,
@@ -1195,7 +1198,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 
 		// TODO: Change to desired fill when mainnet changes deployed
-		const priceImpactOrDesiredFill = selectPriceImpactOrDesiredFill(getState());
+		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 
 		try {
@@ -1210,7 +1213,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			const tx = await sdk.futures.modifyIsolatedMarginPosition(
 				marketInfo.market,
 				wei(nativeSizeDelta),
-				priceImpactOrDesiredFill,
+				desiredFillPrice,
 				{
 					delayed,
 					offchain,
@@ -1284,7 +1287,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 	'futures/closeIsolatedMarginPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
-		const priceImpactOrDesiredFill = selectPriceImpactOrDesiredFill(getState());
+		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
 			dispatch(
@@ -1294,10 +1297,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 					hash: null,
 				})
 			);
-			const tx = await sdk.futures.closeIsolatedPosition(
-				marketInfo.market,
-				priceImpactOrDesiredFill
-			);
+			const tx = await sdk.futures.closeIsolatedPosition(marketInfo.market, desiredFillPrice);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));
@@ -1349,16 +1349,32 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 			// To separate Stop Loss and Take Profit from other limit / stop orders
 			// we set the size to max big num value.
 
+			const maxSizeDelta = tradeInputs.nativeSizeDelta.gt(0)
+				? SL_TP_MAX_SIZE.neg()
+				: SL_TP_MAX_SIZE;
+
 			if (Number(stopLossPrice) > 0) {
+				const desiredSLFillPrice = calculateDesiredFillPrice(
+					maxSizeDelta,
+					wei(stopLossPrice || 0),
+					wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP_LOSS)
+				);
 				orderInputs.stopLoss = {
 					price: wei(stopLossPrice),
+					desiredFillPrice: desiredSLFillPrice,
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 				};
 			}
 
 			if (Number(takeProfitPrice) > 0) {
+				const desiredTPFillPrice = calculateDesiredFillPrice(
+					maxSizeDelta,
+					wei(takeProfitPrice || 0),
+					wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.TAKE_PROFIT)
+				);
 				orderInputs.takeProfit = {
 					price: wei(takeProfitPrice),
+					desiredFillPrice: desiredTPFillPrice,
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 				};
 			}
@@ -1702,6 +1718,90 @@ const submitCMTransferTransaction = async (
 		throw err;
 	}
 };
+
+export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/updateStopLossAndTakeProfit',
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const { market, position } = selectEditPositionModalInfo(getState());
+		const account = selectCrossMarginAccount(getState());
+		const wallet = selectWallet(getState());
+		const { stopLossPrice, takeProfitPrice } = selectSlTpModalInputs(getState());
+
+		try {
+			if (!market) throw new Error('Market info not found');
+			if (!account) throw new Error('No cross margin account found');
+			if (!wallet) throw new Error('No wallet connected');
+
+			const maxSizeDelta =
+				position?.position?.side === PositionSide.LONG ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE;
+
+			const desiredSLFillPrice = calculateDesiredFillPrice(
+				maxSizeDelta,
+				wei(stopLossPrice || 0),
+				wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP_LOSS)
+			);
+
+			const desiredTPFillPrice = calculateDesiredFillPrice(
+				maxSizeDelta,
+				wei(takeProfitPrice || 0),
+				wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.TAKE_PROFIT)
+			);
+
+			const params: SLTPOrderInputs = {};
+
+			// To separate Stop Loss and Take Profit from other limit / stop orders
+			// we set the size to max big num value.
+
+			if (Number(stopLossPrice) > 0) {
+				params.stopLoss = {
+					price: wei(stopLossPrice),
+					desiredFillPrice: desiredSLFillPrice,
+					sizeDelta: maxSizeDelta,
+				};
+			} else if (!stopLossPrice) {
+				params.stopLoss = {
+					price: wei(0),
+					desiredFillPrice: wei(0),
+					sizeDelta: wei(0),
+					isCancelled: true,
+				};
+			}
+
+			if (Number(takeProfitPrice) > 0) {
+				params.takeProfit = {
+					price: wei(takeProfitPrice),
+					desiredFillPrice: desiredTPFillPrice,
+					sizeDelta: maxSizeDelta,
+				};
+			} else if (!takeProfitPrice) {
+				params.takeProfit = {
+					price: wei(0),
+					desiredFillPrice: wei(0),
+					sizeDelta: wei(0),
+					isCancelled: true,
+				};
+			}
+
+			if (params.stopLoss || params.takeProfit) {
+				dispatch(
+					setTransaction({
+						status: TransactionStatus.AwaitingExecution,
+						type: 'submit_cross_order',
+						hash: null,
+					})
+				);
+
+				const tx = await sdk.futures.updateStopLossAndTakeProfit(market.marketKey, account, params);
+				await monitorAndAwaitTransaction(dispatch, tx);
+				dispatch(setShowPositionModal(null));
+				dispatch(refetchPosition('cross_margin'));
+			}
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
 
 const monitorAndAwaitTransaction = async (
 	dispatch: AppDispatch,

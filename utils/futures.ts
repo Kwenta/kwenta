@@ -462,6 +462,7 @@ export const serializeConditionalOrders = (
 	return orders.map((o) => ({
 		...o,
 		size: o.size.toString(),
+		desiredFillPrice: o.desiredFillPrice.toString(),
 		targetPrice: o.targetPrice?.toString() ?? null,
 		marginDelta: o.marginDelta.toString(),
 	}));
@@ -474,6 +475,7 @@ export const unserializeConditionalOrders = (
 		...o,
 		size: wei(o.size),
 		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
+		desiredFillPrice: wei(o.desiredFillPrice || 0),
 		marginDelta: wei(o.marginDelta),
 	}));
 };

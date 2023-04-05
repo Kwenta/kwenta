@@ -17,8 +17,8 @@ import { PositionSide, PotentialTradeStatus } from 'sdk/types/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
+	editClosePositionPrice,
 	editClosePositionSizeDelta,
-	editCrossMarginPositionSize,
 	submitSmartMarginReducePositionOrder,
 } from 'state/futures/actions';
 import { setClosePositionOrderType } from 'state/futures/reducer';
@@ -27,7 +27,6 @@ import {
 	selectClosePositionPreview,
 	selectEditPositionModalInfo,
 	selectIsFetchingTradePreview,
-	selectPosition,
 	selectSubmittingFuturesTx,
 	selectTradePreviewError,
 } from 'state/futures/selectors';
@@ -53,12 +52,11 @@ export default function ClosePositionModal() {
 	const transactionState = useAppSelector(selectTransaction);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
-	const position = useAppSelector(selectPosition);
 	const previewTrade = useAppSelector(selectClosePositionPreview);
 	const previewError = useAppSelector(selectTradePreviewError);
 
 	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs);
-	const { market } = useAppSelector(selectEditPositionModalInfo);
+	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 
 	const submitCloseOrder = useCallback(() => {
 		dispatch(submitSmartMarginReducePositionOrder());
@@ -116,7 +114,8 @@ export default function ClosePositionModal() {
 
 	const onClose = () => {
 		if (market) {
-			dispatch(editCrossMarginPositionSize(market.marketKey, ''));
+			dispatch(editClosePositionSizeDelta(market.marketKey, ''));
+			dispatch(editClosePositionPrice(market.marketKey, ''));
 		}
 		dispatch(setShowPositionModal(null));
 	};
@@ -137,11 +136,7 @@ export default function ClosePositionModal() {
 	);
 
 	return (
-		<StyledBaseModal
-			title={`Close full or partial ${market?.marketName} position`}
-			isOpen
-			onDismiss={onClose}
-		>
+		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
 			<Spacer height={10} />
 			<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
 			<Spacer height={20} />
@@ -158,6 +153,11 @@ export default function ClosePositionModal() {
 			<Spacer height={20} />
 
 			<InfoBoxContainer>
+				<InfoBoxRow
+					boldValue
+					title={t('futures.market.trade.edit-position.market')}
+					value={market?.marketName}
+				/>
 				<InfoBoxRow
 					valueNode={
 						previewTrade?.leverage && (
