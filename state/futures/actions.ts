@@ -96,7 +96,6 @@ import {
 	selectFuturesType,
 	selectIsAdvancedOrder,
 	selectIsolatedMarginTradeInputs,
-	selectIsolatedPriceImpact,
 	selectKeeperEthBalance,
 	selectLeverageSide,
 	selectMarketPrice,
@@ -110,6 +109,8 @@ import {
 	selectTradeSizeInputs,
 	selectSkewAdjustedPrice,
 	selectCrossMarginBalanceInfo,
+	selectIsolatedMarginOpenOrders,
+	selectPriceImpactOrDesiredFill,
 } from './selectors';
 import {
 	CancelDelayedOrderInputs,
@@ -237,7 +238,6 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 	const { wallet, futures } = getState();
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
-
 	if (!wallet.walletAddress || !supportedNetwork) return;
 	try {
 		const positions = await sdk.futures.getFuturesPositions(
@@ -386,16 +386,18 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 	{ orders: DelayedOrderWithDetails<string>[]; wallet: string; networkId: NetworkId } | undefined,
 	void,
 	ThunkConfig
->('futures/fetchIsolatedOpenOrders', async (_, { getState, extra: { sdk } }) => {
+>('futures/fetchIsolatedOpenOrders', async (_, { dispatch, getState, extra: { sdk } }) => {
 	const wallet = selectWallet(getState());
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
 	const markets = selectMarkets(getState());
+	const existingOrders = selectIsolatedMarginOpenOrders(getState());
 	if (!wallet || !supportedNetwork || !markets.length) return;
 
 	const marketAddresses = markets.map((market) => market.market);
 
 	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(wallet, marketAddresses);
+
 	const nonzeroOrders = orders
 		.filter((o) => o.size.abs().gt(0))
 		.reduce((acc, o) => {
@@ -417,6 +419,12 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 			});
 			return acc;
 		}, [] as DelayedOrderWithDetails[]);
+
+	const orderDropped = existingOrders.length > nonzeroOrders.length;
+	if (orderDropped) {
+		dispatch(fetchIsolatedMarginPositions());
+	}
+
 	return {
 		networkId: network,
 		orders: serializeDelayedOrders(nonzeroOrders),
@@ -985,7 +993,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 	'futures/modifyIsolatedPosition',
 	async ({ sizeDelta, delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
-		const priceImpact = selectIsolatedPriceImpact(getState());
+		const priceImpact = selectPriceImpactOrDesiredFill(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 
 		try {
@@ -1073,7 +1081,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 	'futures/closeIsolatedMarginPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
-		const priceImpact = selectIsolatedPriceImpact(getState());
+		const priceImpact = selectPriceImpactOrDesiredFill(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
 			dispatch(
