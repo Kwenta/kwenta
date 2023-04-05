@@ -1,13 +1,18 @@
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import Currency from 'components/Currency';
+import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
-import { Body } from 'components/Text';
+import Spacer from 'components/Spacer/Spacer';
+import { Body, NumericValue } from 'components/Text';
+import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'sdk/types/futures';
+import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
 	selectFuturesType,
@@ -18,6 +23,8 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
+import TradePanelDrawer from '../drawers/TradePanelDrawer';
+
 const PositionsTab = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -25,6 +32,7 @@ const PositionsTab = () => {
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
+	const [isTradeDrawerOpen, toggleTradeDrawerOpen] = useReducer((s) => !s, false);
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
@@ -61,44 +69,96 @@ const PositionsTab = () => {
 		currentMarket,
 	]);
 
+	const handleCloseDrawer = useCallback(() => {
+		toggleTradeDrawerOpen();
+	}, []);
+
 	return (
 		<div>
-			{data.map((row) => (
-				<PositionItem key={row.market.asset}>
-					<PositionMeta $side={row.position.side}>
-						<div style={{ display: 'flex' }}>
-							<div className="position-side-bar" />
+			{data.length === 0 ? (
+				<></>
+			) : (
+				data.map((row) => (
+					<PositionItem key={row.market.asset}>
+						<PositionMeta $side={row.position.side}>
+							<FlexDiv>
+								<div className="position-side-bar" />
+								<div>
+									<Body>{row.market.marketName}</Body>
+									<Body capitalized color="secondary">
+										{accountType === 'isolated_margin' ? 'Isolated Margin' : 'Cross-Margin'}
+									</Body>
+								</div>
+							</FlexDiv>
 							<div>
-								<Body>{row.market.marketName}</Body>
-								<Body capitalized color="secondary">
-									{accountType === 'isolated_margin' ? 'Isolated Margin' : 'Cross-Margin'}
-								</Body>
+								<Pill onClick={handleCloseDrawer}>Close</Pill>
 							</div>
-						</div>
-						<div>
-							<Pill>Close</Pill>
-						</div>
-					</PositionMeta>
-					<PositionRow>
-						<Body color="secondary">Size</Body>
-					</PositionRow>
-					<PositionRow>
-						<Body color="secondary">Side</Body>
-					</PositionRow>
-					<PositionRow>
-						<Body color="secondary">Avg. Entry</Body>
-					</PositionRow>
-					<PositionRow>
-						<Body color="secondary">Market Margin</Body>
-					</PositionRow>
-					<PositionRow>
-						<Body color="secondary">Realized PnL</Body>
-					</PositionRow>
-					<PositionRow>
-						<Body color="secondary">TP/SL</Body>
-					</PositionRow>
-				</PositionItem>
-			))}
+						</PositionMeta>
+						<PositionRow>
+							<Body color="secondary">Size</Body>
+							<FlexDivRowCentered>
+								<div>
+									<Currency.Price price={row.position.size} currencyKey={row.market.asset} />
+								</div>
+								<Spacer width={5} />
+								<Currency.Price
+									price={row.position.notionalValue}
+									formatOptions={row.position.notionalValue.gte(1e6) ? { truncate: true } : {}}
+									side="secondary"
+								/>
+							</FlexDivRowCentered>
+						</PositionRow>
+						<PositionRow>
+							<Body color="secondary">Side</Body>
+							<PositionType side={row.position.side} />
+						</PositionRow>
+						<PositionRow>
+							<Body color="secondary">Avg. Entry</Body>
+							{row.avgEntryPrice === undefined ? (
+								<Body>{NO_VALUE}</Body>
+							) : (
+								<Currency.Price
+									price={row.avgEntryPrice}
+									formatOptions={{ suggestDecimals: true }}
+								/>
+							)}
+						</PositionRow>
+						<PositionRow>
+							<Body color="secondary">Market Margin</Body>
+							<FlexDivRowCentered>
+								<NumericValue value={row.position.initialMargin} />
+								<Spacer width={5} />
+								<NumericValue value={row.position.leverage} color="secondary" suffix="x" />
+							</FlexDivRowCentered>
+						</PositionRow>
+						<PositionRow>
+							<Body color="secondary">Realized PnL</Body>
+							<Currency.Price price={row.position.pnl} colored />
+						</PositionRow>
+						<PositionRow>
+							<Body color="secondary">TP/SL</Body>
+							<FlexDivRowCentered>
+								{row.takeProfit === undefined ? (
+									<Body>{NO_VALUE}</Body>
+								) : (
+									<NumericValue value={row.takeProfit} />
+								)}
+								<Spacer width={5} />
+								{row.stopLoss === undefined ? (
+									<Body>{NO_VALUE}</Body>
+								) : (
+									<NumericValue value={row.stopLoss} />
+								)}
+								<Spacer width={5} />
+								<Pill>Edit</Pill>
+							</FlexDivRowCentered>
+						</PositionRow>
+					</PositionItem>
+				))
+			)}
+			{isTradeDrawerOpen && (
+				<TradePanelDrawer open={isTradeDrawerOpen} closeDrawer={handleCloseDrawer} />
+			)}
 		</div>
 	);
 };

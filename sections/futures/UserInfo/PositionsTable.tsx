@@ -216,7 +216,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<FlexDivRowCentered>
-										<div style={{ marginRight: 10 }}>
+										<div>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
 											<NumericValue
 												value={cellProps.row.original.position.leverage}
@@ -224,6 +224,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 												suffix="x"
 											/>
 										</div>
+										<Spacer width={10} />
 										<Pill
 											onClick={() =>
 												dispatch(

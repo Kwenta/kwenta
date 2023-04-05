@@ -79,7 +79,7 @@ const TradeIsolatedMargin: FC<TradeIsolatedMarginProps> = memo(({ mobile }) => {
 
 const TradePanelContainer = styled.div<{ $mobile?: boolean }>`
 	overflow-y: scroll;
-	height: ${(props) => (props.$mobile ? 'minmax(580px, 80%)' : '100%')};
+	height: 100%;
 `;
 
 const MainPanelContent = styled.div`
