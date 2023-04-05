@@ -6,6 +6,7 @@ import PriceIcon from 'assets/svg/app/price.svg';
 import StatsIcon from 'assets/svg/app/stats.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import TabButton from 'components/Button/TabButton';
+import TradeBalance from 'sections/futures/Trade/TradeBalance';
 
 import AccountTab from './AccountTab';
 import PriceTab from './PriceTab';
@@ -42,7 +43,7 @@ const OverviewTabs: React.FC = () => {
 
 	return (
 		<OverviewTabsContainer>
-			{TABS[activeTab].component}
+			<TradeBalance />
 			<MainTabButtonsContainer>
 				{TABS.map(({ title, icon, nofill }, i) => (
 					<TabButton
@@ -56,6 +57,7 @@ const OverviewTabs: React.FC = () => {
 					/>
 				))}
 			</MainTabButtonsContainer>
+			{TABS[activeTab].component}
 		</OverviewTabsContainer>
 	);
 };

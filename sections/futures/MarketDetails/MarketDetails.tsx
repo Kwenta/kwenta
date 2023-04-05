@@ -26,16 +26,16 @@ type MarketDetailsProps = {
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
-		<MainContainer>
-			<MarketsDropdown />
+		<MainContainer mobile={mobile}>
+			<MarketsDropdown mobile />
 			<MarketDetailsContainer mobile={mobile}>
-				<MarketPriceDetail />
+				{!mobile && <MarketPriceDetail />}
 				<IndexPriceDetail />
-				<DailyChangeDetail />
+				{!mobile && <DailyChangeDetail />}
 				<HourlyFundingDetail />
 				<OpenInterestLongDetail />
 				<OpenInterestShortDetail />
-				<MarketSkew />
+				{!mobile && <MarketSkew />}
 			</MarketDetailsContainer>
 		</MainContainer>
 	);
@@ -169,12 +169,20 @@ const OpenInterestShortDetail = memo(() => {
 	);
 });
 
-const MainContainer = styled.div`
+const MainContainer = styled.div<{ mobile?: boolean }>`
 	display: flex;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	align-items: center;
 	height: 67px;
+
+	${(props) =>
+		props.mobile &&
+		css`
+			flex-direction: column;
+			height: initial;
+			border-top: none;
+		`}
 `;
 
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
@@ -235,6 +243,8 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 			display: grid;
 			grid-template-columns: 1fr 1fr;
 			grid-gap: 20px 0;
+			width: 100%;
+			border-left: none;
 
 			.heading {
 				margin-bottom: 2px;

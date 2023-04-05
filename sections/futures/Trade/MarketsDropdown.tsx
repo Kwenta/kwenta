@@ -257,6 +257,7 @@ const SelectContainer = styled.div<{ mobile?: boolean }>`
 	${(props) =>
 		props.mobile &&
 		css`
+			width: 100%;
 			border-bottom: ${props.theme.colors.selectedTheme.border};
 		`}
 `;
