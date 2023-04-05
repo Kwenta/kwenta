@@ -8,7 +8,7 @@ import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
-import { unserializePotentialTrade } from 'sdk/utils/futures';
+import { getDefaultPriceImpact, unserializePotentialTrade } from 'sdk/utils/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
@@ -162,11 +162,6 @@ export const selectMarketInfo = createSelector(
 	(markets, selectedMarket) => {
 		return markets.find((market) => market.marketKey === selectedMarket);
 	}
-);
-
-export const selectIsolatedPriceImpact = createSelector(
-	(state: RootState) => state.futures.isolatedMargin.priceImpact,
-	(priceImpact) => wei(priceImpact)
 );
 
 export const selectOrderType = createSelector(
@@ -814,12 +809,12 @@ export const selectCrossMarginOrderPrice = (state: RootState) =>
 	state.futures.crossMargin.orderPrice.price ?? '';
 
 export const selectDesiredTradeFillPrice = createSelector(
-	selectIsolatedPriceImpact,
 	selectTradeSizeInputs,
 	selectCrossMarginOrderPrice,
 	selectOrderType,
 	selectMarketPrice,
-	(priceImpact, { nativeSizeDelta }, orderPrice, orderType, marketPrice) => {
+	({ nativeSizeDelta }, orderPrice, orderType, marketPrice) => {
+		const priceImpact = getDefaultPriceImpact(orderType);
 		const conditionalOrderPrice = wei(orderPrice || 0);
 		const price =
 			orderType !== 'market' && conditionalOrderPrice.gt(0) ? conditionalOrderPrice : marketPrice;
@@ -832,10 +827,11 @@ export const selectDesiredTradeFillPrice = createSelector(
 
 export const selectEditPosDesiredFillPrice = createSelector(
 	selectNetwork,
-	selectIsolatedPriceImpact,
 	selectEditPositionInputs,
 	selectMarketPrice,
-	(network, priceImpact, { nativeSizeDelta }, marketPrice) => {
+	(network, { nativeSizeDelta }, marketPrice) => {
+		const priceImpact = getDefaultPriceImpact('market');
+
 		// TODO: Remove once SNX mainnet changes depoyed
 		if (network === 10) return priceImpact;
 
@@ -848,10 +844,11 @@ export const selectEditPosDesiredFillPrice = createSelector(
 
 export const selectClosePosDesiredFillPrice = createSelector(
 	selectNetwork,
-	selectIsolatedPriceImpact,
 	selectEditPositionModalInfo,
 	selectClosePositionOrderInputs,
-	(network, priceImpact, { position, marketPrice }, { price, orderType }) => {
+	(network, { position, marketPrice }, { price, orderType }) => {
+		const priceImpact = getDefaultPriceImpact(orderType);
+
 		// TODO: Remove once SNX mainnet changes depoyed
 		if (network === 10) return priceImpact;
 
@@ -861,17 +858,6 @@ export const selectClosePosDesiredFillPrice = createSelector(
 		return position?.position?.side === PositionSide.LONG
 			? orderPrice.mul(wei(1).sub(impactDecimalPercent))
 			: orderPrice.mul(impactDecimalPercent.add(1));
-	}
-);
-
-// TODO: Remove once SNX mainnet changes depoyed
-export const selectPriceImpactOrDesiredFill = createSelector(
-	selectIsolatedPriceImpact,
-	selectDesiredTradeFillPrice,
-	selectNetwork,
-	(priceImpact, desiredFill, network) => {
-		if (network === 10) return priceImpact;
-		return desiredFill;
 	}
 );
 

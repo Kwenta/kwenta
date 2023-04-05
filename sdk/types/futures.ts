@@ -278,6 +278,7 @@ export type ConditionalOrder<T = Wei> = {
 	marketKey: FuturesMarketKey;
 	size: T;
 	targetPrice: T | null;
+	desiredFillPrice: T;
 	marginDelta: T;
 	orderType: ConditionalOrderTypeEnum;
 	orderTypeDisplay: FuturesOrderTypeDisplay;

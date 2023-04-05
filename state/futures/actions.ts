@@ -133,7 +133,6 @@ import {
 	selectEditPositionModalInfo,
 	selectClosePosDesiredFillPrice,
 	selectOpenDelayedOrders,
-	selectPriceImpactOrDesiredFill,
 	selectSlTpModalInputs,
 } from './selectors';
 import {
@@ -1199,7 +1198,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 
 		// TODO: Change to desired fill when mainnet changes deployed
-		const priceImpactOrDesiredFill = selectPriceImpactOrDesiredFill(getState());
+		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 
 		try {
@@ -1214,7 +1213,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			const tx = await sdk.futures.modifyIsolatedMarginPosition(
 				marketInfo.market,
 				wei(nativeSizeDelta),
-				priceImpactOrDesiredFill,
+				desiredFillPrice,
 				{
 					delayed,
 					offchain,
@@ -1288,7 +1287,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 	'futures/closeIsolatedMarginPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
-		const priceImpactOrDesiredFill = selectPriceImpactOrDesiredFill(getState());
+		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
 			dispatch(
@@ -1298,10 +1297,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 					hash: null,
 				})
 			);
-			const tx = await sdk.futures.closeIsolatedPosition(
-				marketInfo.market,
-				priceImpactOrDesiredFill
-			);
+			const tx = await sdk.futures.closeIsolatedPosition(marketInfo.market, desiredFillPrice);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			await tx.wait();
 			dispatch(refetchPosition('isolated_margin'));
@@ -1361,7 +1357,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 				const desiredSLFillPrice = calculateDesiredFillPrice(
 					maxSizeDelta,
 					wei(stopLossPrice || 0),
-					wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT)
+					wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP_LOSS)
 				);
 				orderInputs.stopLoss = {
 					price: wei(stopLossPrice),
@@ -1371,14 +1367,14 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 			}
 
 			if (Number(takeProfitPrice) > 0) {
-				const desiredSLFillPrice = calculateDesiredFillPrice(
+				const desiredTPFillPrice = calculateDesiredFillPrice(
 					maxSizeDelta,
-					wei(stopLossPrice || 0),
-					wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT)
+					wei(takeProfitPrice || 0),
+					wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.TAKE_PROFIT)
 				);
 				orderInputs.takeProfit = {
 					price: wei(takeProfitPrice),
-					desiredFillPrice: desiredSLFillPrice,
+					desiredFillPrice: desiredTPFillPrice,
 					sizeDelta: tradeInputs.nativeSizeDelta.gt(0) ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE,
 				};
 			}
@@ -1742,13 +1738,13 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 			const desiredSLFillPrice = calculateDesiredFillPrice(
 				maxSizeDelta,
 				wei(stopLossPrice || 0),
-				wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT)
+				wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP_LOSS)
 			);
 
 			const desiredTPFillPrice = calculateDesiredFillPrice(
 				maxSizeDelta,
 				wei(takeProfitPrice || 0),
-				wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT)
+				wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.TAKE_PROFIT)
 			);
 
 			const params: SLTPOrderInputs = {};

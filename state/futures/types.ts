@@ -287,7 +287,6 @@ export type IsolatedMarginState = {
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
 	leverageInput: string;
-	priceImpact: string;
 	tradeFee: string;
 	accounts: Record<
 		FuturesNetwork,

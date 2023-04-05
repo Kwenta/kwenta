@@ -2,6 +2,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder, formatBytes32String, parseBytes32String } from 'ethers/lib/utils.js';
 
+import { DEFAULT_PRICE_IMPACT_DELTA_PERCENT } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import {
 	FuturesAggregateStatResult,
@@ -454,6 +455,7 @@ export const mapConditionalOrderFromContract = (
 		sizeDelta: BigNumber;
 		marginDelta: BigNumber;
 		reduceOnly: boolean;
+		priceImpactDelta: BigNumber;
 	},
 	account: string
 ): ConditionalOrder => {
@@ -472,6 +474,8 @@ export const mapConditionalOrderFromContract = (
 			orderDetails.conditionalOrderType,
 			orderDetails.reduceOnly
 		),
+		// TODO: Rename when ABI is updated
+		desiredFillPrice: wei(orderDetails.priceImpactDelta),
 		targetPrice: wei(orderDetails.targetPrice),
 		reduceOnly: orderDetails.reduceOnly,
 		sizeTxt: size.abs().eq(SL_TP_MAX_SIZE)
@@ -650,4 +654,15 @@ export const calculateDesiredFillPrice = (
 	return sizeDelta.lt(0)
 		? marketPrice.mul(wei(1).sub(priceImpactDecimalPct))
 		: marketPrice.mul(priceImpactDecimalPct.add(1));
+};
+
+export const getDefaultPriceImpact = (orderType: CrossMarginOrderType) => {
+	switch (orderType) {
+		case 'market':
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.MARKET);
+		case 'limit':
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.LIMIT);
+		case 'stop_market':
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP);
+	}
 };
