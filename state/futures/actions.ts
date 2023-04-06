@@ -319,7 +319,7 @@ export const fetchCrossMarginAccount = createAsyncThunk<
 	const accounts = getState().futures.crossMargin.accounts;
 
 	// Already have an accoutn fetched and persisted for this address
-	if (accounts[network][wallet]) return;
+	if (accounts[network]?.[wallet]?.account) return;
 
 	try {
 		const accounts = await sdk.futures.getCrossMarginAccounts(wallet);
@@ -1101,7 +1101,7 @@ export const createCrossMarginAccount = createAsyncThunk<
 		const accounts = getState().futures.crossMargin.accounts;
 
 		// Already have an accoutn fetched and persisted for this address
-		if (accounts[network][wallet]) {
+		if (accounts[network]?.[wallet]?.account) {
 			notifyError('There is already an account associated with this wallet');
 			rejectWithValue('Account already created');
 		}

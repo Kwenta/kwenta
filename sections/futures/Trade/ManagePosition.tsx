@@ -32,6 +32,7 @@ import {
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
 	selectCrossMarginAccount,
+	selectCMDepositApproved,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -66,6 +67,7 @@ const ManagePosition: React.FC = () => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const smartMarginAccount = useAppSelector(selectCrossMarginAccount);
+	const depositApproved = useAppSelector(selectCMDepositApproved);
 
 	const isCancelModalOpen = openModal === 'futures_close_position_confirm';
 
@@ -79,7 +81,7 @@ const ManagePosition: React.FC = () => {
 	}, [previewTrade?.statusMessage, previewError, t]);
 
 	const onSubmit = useCallback(() => {
-		if (selectedAccountType === 'cross_margin' && !smartMarginAccount) {
+		if ((selectedAccountType === 'cross_margin' && !smartMarginAccount) || !depositApproved) {
 			dispatch(setOpenModal('futures_smart_margin_onboard'));
 			return;
 		}
@@ -90,7 +92,7 @@ const ManagePosition: React.FC = () => {
 					: 'futures_confirm_isolated_margin_trade'
 			)
 		);
-	}, [selectedAccountType, smartMarginAccount, dispatch]);
+	}, [selectedAccountType, smartMarginAccount, depositApproved, dispatch]);
 
 	const placeOrderDisabledReason = useMemo<{
 		message: string;
