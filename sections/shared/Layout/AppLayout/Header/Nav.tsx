@@ -190,7 +190,7 @@ const DropDownSelect = styled(Select)`
 			height: 14px;
 
 			> path {
-				fill: #69d8bd;
+				fill: #ffb800;
 			}
 		}
 	}

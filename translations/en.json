@@ -21,7 +21,7 @@
 				"vaults": "vaults",
 				"rewards": "rewards"
 			},
-			"isolated-margin": "Isolated Margin",
+			"isolated-margin": "Legacy Futures",
 			"cross-margin": "Smart Margin",
 			"leaderboard-alltime": "All Time",
 			"competition-round-1": "Round 1",
