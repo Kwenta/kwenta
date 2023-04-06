@@ -260,7 +260,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-] as const;
+];
 
 export class CrossMarginBaseSettings__factory {
   static readonly abi = _abi;

@@ -10,7 +10,7 @@ export const DEFAULT_NUMBER_OF_TRADES = 16;
 export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/api`;
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-goerli-perps';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-perps';
 
 export const MAIN_ENDPOINT_MAINNET = `https://gateway.thegraph.com/api/${process.env.NEXT_PUBLIC_THEGRAPH_API_KEY}/subgraphs/id/HLy7PdmPJuVGjjmPNz1vW5RCCRpqzRWony2fSn7UKpf9`;
 

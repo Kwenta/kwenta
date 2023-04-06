@@ -5,6 +5,7 @@ export { BatchClaimer__factory } from "./BatchClaimer__factory";
 export { CrossMarginAccountFactory__factory } from "./CrossMarginAccountFactory__factory";
 export { CrossMarginBase__factory } from "./CrossMarginBase__factory";
 export { CrossMarginBaseSettings__factory } from "./CrossMarginBaseSettings__factory";
+export { DappMaintenance__factory } from "./DappMaintenance__factory";
 export { ERC20__factory } from "./ERC20__factory";
 export { ExchangeRates__factory } from "./ExchangeRates__factory";
 export { Exchanger__factory } from "./Exchanger__factory";

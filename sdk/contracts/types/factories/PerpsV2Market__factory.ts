@@ -228,6 +228,37 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
+        name: "flagger",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+    ],
+    name: "PositionFlagged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
         name: "liquidator",
         type: "address",
       },
@@ -246,7 +277,19 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "fee",
+        name: "flaggerFee",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "liquidatorFee",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "stakersFee",
         type: "uint256",
       },
     ],
@@ -303,6 +346,12 @@ const _abi = [
         internalType: "uint256",
         name: "fee",
         type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "int256",
+        name: "skew",
+        type: "int256",
       },
     ],
     name: "PositionModified",
@@ -451,7 +500,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "priceImpactDelta",
+        name: "desiredFillPrice",
         type: "uint256",
       },
     ],
@@ -466,7 +515,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "priceImpactDelta",
+        name: "desiredFillPrice",
         type: "uint256",
       },
       {
@@ -536,7 +585,7 @@ const _abi = [
           },
           {
             internalType: "uint128",
-            name: "priceImpactDelta",
+            name: "desiredFillPrice",
             type: "uint128",
           },
           {
@@ -616,6 +665,62 @@ const _abi = [
   },
   {
     constant: true,
+    inputs: [
+      {
+        internalType: "int256",
+        name: "sizeDelta",
+        type: "int256",
+      },
+    ],
+    name: "fillPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "invalid",
+        type: "bool",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "flagPosition",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "forceLiquidatePosition",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: true,
     inputs: [],
     name: "fundingLastRecomputed",
     outputs: [
@@ -623,6 +728,21 @@ const _abi = [
         internalType: "uint32",
         name: "timestamp",
         type: "uint32",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "fundingRateLastRecomputed",
+    outputs: [
+      {
+        internalType: "int128",
+        name: "fundingRate",
+        type: "int128",
       },
     ],
     payable: false,
@@ -659,6 +779,27 @@ const _abi = [
         internalType: "uint256",
         name: "length",
         type: "uint256",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "isFlagged",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     payable: false,
@@ -822,7 +963,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "priceImpactDelta",
+        name: "desiredFillPrice",
         type: "uint256",
       },
     ],
@@ -842,7 +983,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "priceImpactDelta",
+        name: "desiredFillPrice",
         type: "uint256",
       },
       {
@@ -1094,18 +1235,63 @@ const _abi = [
     constant: false,
     inputs: [
       {
+        internalType: "uint256",
+        name: "desiredTimeDelta",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "desiredFillPrice",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes32",
+        name: "trackingCode",
+        type: "bytes32",
+      },
+    ],
+    name: "submitCloseDelayedOrderWithTracking",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "desiredFillPrice",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes32",
+        name: "trackingCode",
+        type: "bytes32",
+      },
+    ],
+    name: "submitCloseOffchainDelayedOrderWithTracking",
+    outputs: [],
+    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [
+      {
         internalType: "int256",
         name: "sizeDelta",
         type: "int256",
       },
       {
         internalType: "uint256",
-        name: "priceImpactDelta",
+        name: "desiredTimeDelta",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "desiredTimeDelta",
+        name: "desiredFillPrice",
         type: "uint256",
       },
     ],
@@ -1125,12 +1311,12 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "priceImpactDelta",
+        name: "desiredTimeDelta",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "desiredTimeDelta",
+        name: "desiredFillPrice",
         type: "uint256",
       },
       {
@@ -1155,7 +1341,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "priceImpactDelta",
+        name: "desiredFillPrice",
         type: "uint256",
       },
     ],
@@ -1175,7 +1361,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "priceImpactDelta",
+        name: "desiredFillPrice",
         type: "uint256",
       },
       {
@@ -1234,7 +1420,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const;
+];
 
 export class PerpsV2Market__factory {
   static readonly abi = _abi;

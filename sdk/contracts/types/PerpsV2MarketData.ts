@@ -29,11 +29,9 @@ export declare namespace PerpsV2MarketData {
     makerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
     takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
     makerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
-    overrideCommitFee: PromiseOrValue<BigNumberish>;
   };
 
   export type FeeRatesStructOutput = [
-    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -47,7 +45,6 @@ export declare namespace PerpsV2MarketData {
     makerFeeDelayedOrder: BigNumber;
     takerFeeOffchainDelayedOrder: BigNumber;
     makerFeeOffchainDelayedOrder: BigNumber;
-    overrideCommitFee: BigNumber;
   };
 
   export type MarketSummaryStruct = {
@@ -93,8 +90,8 @@ export declare namespace PerpsV2MarketData {
   export type FuturesGlobalsStruct = {
     minInitialMargin: PromiseOrValue<BigNumberish>;
     liquidationFeeRatio: PromiseOrValue<BigNumberish>;
-    liquidationBufferRatio: PromiseOrValue<BigNumberish>;
     minKeeperFee: PromiseOrValue<BigNumberish>;
+    maxKeeperFee: PromiseOrValue<BigNumberish>;
   };
 
   export type FuturesGlobalsStructOutput = [
@@ -105,8 +102,8 @@ export declare namespace PerpsV2MarketData {
   ] & {
     minInitialMargin: BigNumber;
     liquidationFeeRatio: BigNumber;
-    liquidationBufferRatio: BigNumber;
     minKeeperFee: BigNumber;
+    maxKeeperFee: BigNumber;
   };
 
   export type MarketLimitsStruct = {
@@ -235,7 +232,6 @@ export declare namespace IPerpsV2MarketSettings {
   export type ParametersStruct = {
     takerFee: PromiseOrValue<BigNumberish>;
     makerFee: PromiseOrValue<BigNumberish>;
-    overrideCommitFee: PromiseOrValue<BigNumberish>;
     takerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
     makerFeeDelayedOrder: PromiseOrValue<BigNumberish>;
     takerFeeOffchainDelayedOrder: PromiseOrValue<BigNumberish>;
@@ -252,6 +248,10 @@ export declare namespace IPerpsV2MarketSettings {
     offchainDelayedOrderMaxAge: PromiseOrValue<BigNumberish>;
     offchainMarketKey: PromiseOrValue<BytesLike>;
     offchainPriceDivergence: PromiseOrValue<BigNumberish>;
+    liquidationPremiumMultiplier: PromiseOrValue<BigNumberish>;
+    liquidationBufferRatio: PromiseOrValue<BigNumberish>;
+    maxLiquidationDelta: PromiseOrValue<BigNumberish>;
+    maxPD: PromiseOrValue<BigNumberish>;
   };
 
   export type ParametersStructOutput = [
@@ -271,13 +271,15 @@ export declare namespace IPerpsV2MarketSettings {
     BigNumber,
     BigNumber,
     BigNumber,
-    BigNumber,
     string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
     BigNumber
   ] & {
     takerFee: BigNumber;
     makerFee: BigNumber;
-    overrideCommitFee: BigNumber;
     takerFeeDelayedOrder: BigNumber;
     makerFeeDelayedOrder: BigNumber;
     takerFeeOffchainDelayedOrder: BigNumber;
@@ -294,6 +296,10 @@ export declare namespace IPerpsV2MarketSettings {
     offchainDelayedOrderMaxAge: BigNumber;
     offchainMarketKey: string;
     offchainPriceDivergence: BigNumber;
+    liquidationPremiumMultiplier: BigNumber;
+    liquidationBufferRatio: BigNumber;
+    maxLiquidationDelta: BigNumber;
+    maxPD: BigNumber;
   };
 }
 

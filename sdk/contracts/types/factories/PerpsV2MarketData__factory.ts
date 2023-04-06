@@ -111,11 +111,6 @@ const _abi = [
                 name: "makerFeeOffchainDelayedOrder",
                 type: "uint256",
               },
-              {
-                internalType: "uint256",
-                name: "overrideCommitFee",
-                type: "uint256",
-              },
             ],
             internalType: "struct PerpsV2MarketData.FeeRates",
             name: "feeRates",
@@ -220,11 +215,6 @@ const _abi = [
                 name: "makerFeeOffchainDelayedOrder",
                 type: "uint256",
               },
-              {
-                internalType: "uint256",
-                name: "overrideCommitFee",
-                type: "uint256",
-              },
             ],
             internalType: "struct PerpsV2MarketData.FeeRates",
             name: "feeRates",
@@ -259,12 +249,12 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "liquidationBufferRatio",
+            name: "minKeeperFee",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "minKeeperFee",
+            name: "maxKeeperFee",
             type: "uint256",
           },
         ],
@@ -335,11 +325,6 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "makerFeeOffchainDelayedOrder",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "overrideCommitFee",
                 type: "uint256",
               },
             ],
@@ -505,11 +490,6 @@ const _abi = [
               {
                 internalType: "uint256",
                 name: "makerFeeOffchainDelayedOrder",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "overrideCommitFee",
                 type: "uint256",
               },
             ],
@@ -712,11 +692,6 @@ const _abi = [
                 name: "makerFeeOffchainDelayedOrder",
                 type: "uint256",
               },
-              {
-                internalType: "uint256",
-                name: "overrideCommitFee",
-                type: "uint256",
-              },
             ],
             internalType: "struct PerpsV2MarketData.FeeRates",
             name: "feeRates",
@@ -827,11 +802,6 @@ const _abi = [
                 name: "makerFeeOffchainDelayedOrder",
                 type: "uint256",
               },
-              {
-                internalType: "uint256",
-                name: "overrideCommitFee",
-                type: "uint256",
-              },
             ],
             internalType: "struct PerpsV2MarketData.FeeRates",
             name: "feeRates",
@@ -868,11 +838,6 @@ const _abi = [
           {
             internalType: "uint256",
             name: "makerFee",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "overrideCommitFee",
             type: "uint256",
           },
           {
@@ -953,6 +918,26 @@ const _abi = [
           {
             internalType: "uint256",
             name: "offchainPriceDivergence",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "liquidationPremiumMultiplier",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "liquidationBufferRatio",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxLiquidationDelta",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxPD",
             type: "uint256",
           },
         ],
@@ -1170,7 +1155,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-] as const;
+];
 
 export class PerpsV2MarketData__factory {
   static readonly abi = _abi;
