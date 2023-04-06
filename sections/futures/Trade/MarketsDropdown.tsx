@@ -173,7 +173,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									),
 									accessor: 'favorite',
 									sortType: 'basic',
-									sortable: false,
+									sortable: true,
 									Cell: ({ row }: any) => (
 										<div
 											onClick={() => onSelectFav(row.original.asset)}
@@ -186,7 +186,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											)}
 										</div>
 									),
-									width: 30,
+									width: 35,
 								},
 								{
 									Header: <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
