@@ -278,14 +278,13 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 };
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
-	position: absolute;
+	top: 66px;
 	z-index: 100;
 	height: ${(props) => props.height}px;
 	width: 380px;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
-	padding-top: 38px;
 	${(props) =>
 		props.mobile &&
 		css`
@@ -296,10 +295,13 @@ const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 const TableContainer = styled.div`
 	height: 100%;
 	overflow: scroll;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	border: none;
+	background-color: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	.table-body-row {
 		padding: 0;
 	}
@@ -315,14 +317,15 @@ const StyledTable = styled(Table)<{ mobile?: boolean }>`
 
 const SearchBarContainer = styled.div`
 	font-size: 13px;
-	position: absolute;
 	width: 100%;
+	height: 38px;
 	top: 0;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
 	height: 100%;
+	z-index: 100;
 	${(props) =>
 		props.mobile &&
 		css`
