@@ -895,13 +895,13 @@ export const selectPlaceOrderTranslationKey = createSelector(
 		}
 
 		if (selectedType === 'isolated_margin')
-			return 'futures.market.trade.button.place-delayed-order';
+			return remainingMargin.add(freeMargin).lt('50')
+				? 'futures.market.trade.button.deposit-margin-minimum'
+				: 'futures.market.trade.button.place-delayed-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return remainingMargin.add(freeMargin).lt('50')
-			? 'futures.market.trade.button.deposit-margin-minimum'
-			: isMarketCapReached
+		return isMarketCapReached
 			? 'futures.market.trade.button.oi-caps-reached'
 			: 'futures.market.trade.button.open-position';
 	}
@@ -969,7 +969,9 @@ export const selectTradePreview = createSelector(
 		return unserialized
 			? {
 					...unserialized,
-					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+					leverage: unserialized.margin.gt(0)
+						? unserialized.notionalValue.div(unserialized.margin).abs()
+						: wei(0),
 			  }
 			: null;
 	}
@@ -984,7 +986,9 @@ export const selectEditPositionPreview = createSelector(
 		return unserialized
 			? {
 					...unserialized,
-					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+					leverage: unserialized.margin.gt(0)
+						? unserialized.notionalValue.div(unserialized.margin).abs()
+						: wei(0),
 			  }
 			: null;
 	}
@@ -999,7 +1003,9 @@ export const selectClosePositionPreview = createSelector(
 		return unserialized
 			? {
 					...unserialized,
-					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+					leverage: unserialized.margin.gt(0)
+						? unserialized.notionalValue.div(unserialized.margin).abs()
+						: wei(0),
 			  }
 			: null;
 	}

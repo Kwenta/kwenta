@@ -39,20 +39,22 @@ export default function TradeBalance() {
 							: formatDollars(idleMargin)}
 					</NumericValue>
 				</BalanceContainer>
-				<Button
-					onClick={() =>
-						dispatch(
-							setOpenModal(
-								accountType === 'isolated_margin'
-									? 'futures_isolated_transfer'
-									: 'futures_cross_withdraw'
+				{(accountType === 'isolated_margin' || idleMargin.gt(0)) && (
+					<Button
+						onClick={() =>
+							dispatch(
+								setOpenModal(
+									accountType === 'isolated_margin'
+										? 'futures_isolated_transfer'
+										: 'futures_cross_withdraw'
+								)
 							)
-						)
-					}
-					size="xsmall"
-				>
-					Manage
-				</Button>
+						}
+						size="xsmall"
+					>
+						Manage
+					</Button>
+				)}
 			</FlexDivRowCentered>
 
 			{expanded && <DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>}
