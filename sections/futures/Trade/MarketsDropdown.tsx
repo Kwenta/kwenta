@@ -4,6 +4,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import FavoriteIcon from 'assets/svg/futures/favorite-star.svg';
+import SelectedIcon from 'assets/svg/futures/selected-fav.svg';
 import MarketBadge from 'components/Badge/MarketBadge';
 import ColoredPrice from 'components/ColoredPrice';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -48,11 +50,14 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
+	const [isSelected, setIsSelected] = useState(false);
 
 	const { ref } = useClickOutside(() => setOpen(false));
 
 	const router = useRouter();
 	const { t } = useTranslation();
+
+	const onSelect = useCallback(() => setIsSelected(!isSelected), [isSelected]);
 
 	const getBasePriceRateInfo = useCallback(
 		(asset: FuturesMarketAsset) => {
@@ -123,7 +128,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			{open && (
 				<MarketsList
 					mobile={mobile}
-					height={Math.max(window.innerHeight - (mobile ? 135 : 250), 300)}
+					height={Math.max(window.innerHeight - (mobile ? 135 : 170), 300)}
 				>
 					<SearchBarContainer>
 						<Search autoFocus onChange={setSearch} value={search} border={false} />
@@ -138,6 +143,20 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							}}
 							columns={[
 								{
+									Header: (
+										<TableHeader>
+											<FavoriteIcon />
+										</TableHeader>
+									),
+									accessor: 'favorite',
+									sortType: 'basic',
+									sortable: false,
+									Cell: ({ _ }: any) => (
+										<div onClick={onSelect}>{isSelected ? <SelectedIcon /> : <FavoriteIcon />}</div>
+									),
+									width: 25,
+								},
+								{
 									Header: <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
 									accessor: 'label',
 									sortType: 'basic',
@@ -149,7 +168,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
-									width: 50,
+									width: 80,
 								},
 								{
 									Header: <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
@@ -168,7 +187,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											</ColoredPrice>
 										);
 									},
-									width: 50,
+									width: 80,
 								},
 								{
 									Header: <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
@@ -191,7 +210,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									accessor: 'change',
 									sortType: 'basic',
 									sortable: true,
-									width: 40,
+									width: 50,
 								},
 							]}
 							data={options}
@@ -215,13 +234,12 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	position: absolute;
-	top: 60px;
 	z-index: 100;
 	height: ${(props) => props.height}px;
-	width: 320px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: ${(props) => (props.mobile ? 0 : '10px')};
-	background-color: ${(props) => props.theme.colors.selectedTheme.background};
+	width: 380px;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	background-color: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	padding-top: 38px;
 	${(props) =>
 		props.mobile &&
@@ -240,6 +258,11 @@ const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	.table-body-row {
 		padding: 0;
 	}
+
+	.table-body-row:last-child {
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
+
 	.table-body-cell {
 		height: 32px;
 	}
