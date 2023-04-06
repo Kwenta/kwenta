@@ -51,12 +51,13 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
 	const [isSelected, setIsSelected] = useState(false);
-	const onSelect = useCallback(() => setIsSelected(!isSelected), [isSelected]);
 
 	const { ref } = useClickOutside(() => setOpen(false));
 
 	const router = useRouter();
 	const { t } = useTranslation();
+
+	const onSelect = useCallback(() => setIsSelected(!isSelected), [isSelected]);
 
 	const getBasePriceRateInfo = useCallback(
 		(asset: FuturesMarketAsset) => {
@@ -144,20 +145,14 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 								{
 									Header: (
 										<TableHeader>
-											<FavoriteIcon style={{ margin: 'auto', padding: 0 }} />
+											<FavoriteIcon />
 										</TableHeader>
 									),
 									accessor: 'favorite',
 									sortType: 'basic',
 									sortable: false,
 									Cell: ({ _ }: any) => (
-										<div onClick={onSelect}>
-											{isSelected ? (
-												<SelectedIcon style={{ margin: 'auto', padding: 0 }} />
-											) : (
-												<FavoriteIcon style={{ margin: 'auto', padding: 0 }} />
-											)}
-										</div>
+										<div onClick={onSelect}>{isSelected ? <SelectedIcon /> : <FavoriteIcon />}</div>
 									),
 									width: 25,
 								},
@@ -239,12 +234,12 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	position: absolute;
-	top: 134px;
 	z-index: 100;
 	height: ${(props) => props.height}px;
-	width: 381px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	background-color: ${(props) => props.theme.colors.selectedTheme.background};
+	width: 380px;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	background-color: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	padding-top: 38px;
 	${(props) =>
 		props.mobile &&
