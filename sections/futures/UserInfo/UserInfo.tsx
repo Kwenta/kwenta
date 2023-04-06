@@ -233,11 +233,7 @@ const UserInfo: React.FC = memo(() => {
 });
 
 const UserInfoContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	height: 315px;
-	min-height: 315px;
-	max-height: 315px;
+	flex: 1;
 `;
 
 const TabButtonsContainer = styled.div`
