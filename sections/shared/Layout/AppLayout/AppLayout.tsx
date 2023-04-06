@@ -31,6 +31,8 @@ const FooterContainer = styled.footer`
 	align-items: center;
 	padding: 10px;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	background-color: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 `;
 
 const AppLayout: FC<AppLayoutProps> = memo(({ children }) => (
