@@ -235,9 +235,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	position: absolute;
 	z-index: 100;
-	height: ${(props) => props.height}px;
 	width: 380px;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	padding-top: 38px;
