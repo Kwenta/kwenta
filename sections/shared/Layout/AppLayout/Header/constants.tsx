@@ -1,7 +1,6 @@
 import { FunctionComponent } from 'react';
 
 import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
-import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
 import { COMPETITION_ENABLED } from 'constants/competition';
 import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';

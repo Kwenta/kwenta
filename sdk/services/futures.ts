@@ -94,35 +94,6 @@ export default class FuturesService {
 		return getFuturesEndpoint(this.sdk.context.networkId);
 	}
 
-	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
-		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
-		if (market) return market;
-		market = new PerpsV2MarketInternal(this.sdk.context.provider, marketKey, marketAddress);
-		this.internalFuturesMarkets = {
-			[this.sdk.context.networkId]: {
-				...this.internalFuturesMarkets[this.sdk.context.networkId],
-				[marketAddress]: market,
-			},
-		};
-
-		return market;
-	}
-
-	private async batchIdleMarketMarginSweeps(crossMarginAddress: string) {
-		const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress);
-		const commands: number[] = [];
-		const inputs: string[] = [];
-		// Sweep idle margin from other markets to account
-		if (idleMargin.totalIdleMargin.gt(0)) {
-			idleMargin.marketsWithIdleMargin.forEach((m) => {
-				commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
-				inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
-			});
-		}
-
-		return { commands, inputs, idleMargin };
-	}
-
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
 		const enabledMarkets = marketsForNetwork(
 			networkOverride?.networkId || this.sdk.context.networkId
@@ -678,7 +649,7 @@ export default class FuturesService {
 			wei(0)
 		);
 		return {
-			totalIdleMargin: idleInMarkets,
+			totalIdleInMarkets: idleInMarkets,
 			marketsWithIdleMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
 				const market = markets.find((m) => m.marketKey === p.marketKey);
 
@@ -699,8 +670,8 @@ export default class FuturesService {
 
 		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(eoa);
 		return {
-			total: idleMargin.totalIdleMargin.add(susdWalletBalance),
-			marketsTotal: idleMargin.totalIdleMargin,
+			total: idleMargin.totalIdleInMarkets.add(susdWalletBalance),
+			marketsTotal: idleMargin.totalIdleInMarkets,
 			walletTotal: susdWalletBalance,
 			marketsWithMargin: idleMargin.marketsWithIdleMargin,
 		};
@@ -800,7 +771,7 @@ export default class FuturesService {
 					crossMarginAddress
 				);
 
-				const totalFreeMargin = idleMargin.totalIdleMargin.add(freeMargin);
+				const totalFreeMargin = idleMargin.totalIdleInMarkets.add(freeMargin);
 				const depositAmount = marginDelta.gt(totalFreeMargin)
 					? marginDelta.sub(totalFreeMargin).abs()
 					: wei(0);
@@ -823,7 +794,10 @@ export default class FuturesService {
 
 	public async modifySmartMarginPositionSize(
 		crossMarginAddress: string,
-		marketAddress: string,
+		market: {
+			key: FuturesMarketKey;
+			address: string;
+		},
 		sizeDelta: Wei,
 		desiredFillPrice: Wei
 	) {
@@ -831,9 +805,18 @@ export default class FuturesService {
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
+
+		const { commands, inputs } = await this.calculateFeeAndPrepareDeposit(
+			market.key,
+			crossMarginAddress,
+			{ sizeDelta }
+		);
+		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
+		inputs.push(encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice));
+
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER],
-			[encodeSubmitOffchainOrderParams(marketAddress, sizeDelta, desiredFillPrice)],
+			commands,
+			inputs,
 		]);
 	}
 
@@ -1225,5 +1208,94 @@ export default class FuturesService {
 			commands,
 			inputs,
 		]);
+	}
+
+	// Private methods
+
+	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
+		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
+		if (market) return market;
+		market = new PerpsV2MarketInternal(this.sdk.context.provider, marketKey, marketAddress);
+		this.internalFuturesMarkets = {
+			[this.sdk.context.networkId]: {
+				...this.internalFuturesMarkets[this.sdk.context.networkId],
+				[marketAddress]: market,
+			},
+		};
+
+		return market;
+	}
+
+	private async batchIdleMarketMarginSweeps(crossMarginAddress: string) {
+		const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress);
+		const commands: number[] = [];
+		const inputs: string[] = [];
+		// Sweep idle margin from other markets to account
+		if (idleMargin.totalIdleInMarkets.gt(0)) {
+			idleMargin.marketsWithIdleMargin.forEach((m) => {
+				commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
+				inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
+			});
+		}
+
+		return { commands, inputs, idleMargin };
+	}
+
+	private async calculateFeeAndPrepareDeposit(
+		marketKey: FuturesMarketKey,
+		crossMarginAddress: string,
+		{
+			orderPrice,
+			sizeDelta,
+			orderType,
+		}: {
+			orderPrice?: Wei;
+			sizeDelta: Wei;
+			orderType?: ConditionalOrderTypeEnum;
+			marginDelta?: Wei;
+		},
+		sweepIdleMargin = true
+	) {
+		const commands = [];
+		const inputs = [];
+		const idleInMarkets = wei(0);
+		if (sweepIdleMargin) {
+			const {
+				commands: sweepCommands,
+				inputs: sweepInputs,
+				idleMargin,
+			} = await this.batchIdleMarketMarginSweeps(crossMarginAddress);
+			commands.push(...sweepCommands);
+			inputs.push(...sweepInputs);
+
+			idleInMarkets.add(idleMargin.totalIdleInMarkets);
+		}
+		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
+		const totalFreeMargin = idleInMarkets.add(freeMargin);
+		const price = orderPrice ?? (await this.sdk.prices.getOffchainPrice(marketKey));
+		if (!price || price.eq(0))
+			throw new Error('No price provided or failed to fetch current price');
+		const fee = await this.calculateSmartMarginFee(sizeDelta.abs(), price, orderType);
+
+		const feeWithBuffer = fee.add(fee.mul(0.02));
+
+		if (feeWithBuffer.eq(0) || totalFreeMargin.gt(feeWithBuffer))
+			return { fee: feeWithBuffer, commands: [], inputs: [] };
+
+		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(
+			this.sdk.context.walletAddress
+		);
+
+		const requiredDeposit = feeWithBuffer.sub(totalFreeMargin).abs();
+		if (susdWalletBalance.lt(requiredDeposit)) {
+			throw new Error('Not enough sUSD in wallet to cover the fee');
+		}
+		commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
+		inputs.push(defaultAbiCoder.encode(['int256'], [requiredDeposit.toBN()]));
+		return {
+			fee: feeWithBuffer,
+			commands,
+			inputs,
+		};
 	}
 }

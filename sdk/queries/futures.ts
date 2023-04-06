@@ -9,7 +9,6 @@ import {
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
 import { SMART_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
-import { ZERO_ADDRESS } from 'sdk/constants/global';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { mapMarginTransfers, mapSmartMarginTransfers } from 'sdk/utils/futures';
 

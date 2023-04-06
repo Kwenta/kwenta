@@ -607,7 +607,7 @@ export const encodeConditionalOrderParams = (
 	reduceOnly: boolean
 ) => {
 	return defaultAbiCoder.encode(
-		['bytes32', 'int256', 'int256', 'uint256', 'uint256', 'uint128', 'bool'],
+		['bytes32', 'int256', 'int256', 'uint256', 'uint256', 'uint256', 'bool'],
 		[
 			formatBytes32String(marketKey),
 			tradeInputs.marginDelta.toBN(),
