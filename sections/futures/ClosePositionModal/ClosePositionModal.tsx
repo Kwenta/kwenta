@@ -19,6 +19,7 @@ import { selectTransaction } from 'state/app/selectors';
 import {
 	editClosePositionPrice,
 	editClosePositionSizeDelta,
+	submitIsolatedMarginReducePositionOrder,
 	submitSmartMarginReducePositionOrder,
 } from 'state/futures/actions';
 import { setClosePositionOrderType } from 'state/futures/reducer';
@@ -26,6 +27,7 @@ import {
 	selectClosePositionOrderInputs,
 	selectClosePositionPreview,
 	selectEditPositionModalInfo,
+	selectFuturesType,
 	selectIsFetchingTradePreview,
 	selectSubmittingFuturesTx,
 	selectTradePreviewError,
@@ -54,12 +56,17 @@ export default function ClosePositionModal() {
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const previewTrade = useAppSelector(selectClosePositionPreview);
 	const previewError = useAppSelector(selectTradePreviewError);
+	const accountType = useAppSelector(selectFuturesType);
 
 	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs);
 	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 
 	const submitCloseOrder = useCallback(() => {
-		dispatch(submitSmartMarginReducePositionOrder());
+		if (accountType === 'cross_margin') {
+			dispatch(submitSmartMarginReducePositionOrder());
+		} else {
+			dispatch(submitIsolatedMarginReducePositionOrder());
+		}
 	}, [dispatch]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
@@ -135,14 +142,18 @@ export default function ClosePositionModal() {
 				editClosePositionSizeDelta(market.marketKey, stripZeros(sizeDelta.toString(decimals)))
 			);
 		},
-		[dispatch, position?.position?.size, position?.position?.side, market?.marketKey]
+		[dispatch, position?.position?.size, position?.position?.side, market?.marketKey, accountType]
 	);
 
 	return (
 		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
 			<Spacer height={10} />
-			<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
-			<Spacer height={20} />
+			{accountType === 'cross_margin' && (
+				<>
+					<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
+					<Spacer height={20} />
+				</>
+			)}
 
 			<ClosePositionSizeInput maxNativeValue={maxNativeValue} />
 			<SelectorButtons options={CLOSE_PERCENT_OPTIONS} onSelect={onSelectPercent} />

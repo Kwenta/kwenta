@@ -119,6 +119,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 				<Table
 					data={data}
 					rounded={false}
+					hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
+					columnsDeps={[accountType]}
 					noResultsMessage={
 						!isL2 ? (
 							<TableNoResults>
@@ -194,19 +196,21 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 											/>
 										</div>
 										<Spacer width={10} />
-										<Pill
-											onClick={() =>
-												dispatch(
-													setShowPositionModal({
-														type: 'futures_edit_position_size',
-														marketKey: cellProps.row.original.market.marketKey,
-													})
-												)
-											}
-											size="small"
-										>
-											Edit
-										</Pill>
+										{accountType === 'cross_margin' && (
+											<Pill
+												onClick={() =>
+													dispatch(
+														setShowPositionModal({
+															type: 'futures_edit_position_size',
+															marketKey: cellProps.row.original.market.marketKey,
+														})
+													)
+												}
+												size="small"
+											>
+												Edit
+											</Pill>
+										)}
 									</FlexDivRowCentered>
 								);
 							},
@@ -263,18 +267,20 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 												suffix="x"
 											/>
 										</div>
-										<Pill
-											onClick={() =>
-												dispatch(
-													setShowPositionModal({
-														type: 'futures_edit_position_margin',
-														marketKey: cellProps.row.original.market.marketKey,
-													})
-												)
-											}
-										>
-											Edit
-										</Pill>
+										{accountType === 'cross_margin' && (
+											<Pill
+												onClick={() =>
+													dispatch(
+														setShowPositionModal({
+															type: 'futures_edit_position_margin',
+															marketKey: cellProps.row.original.market.marketKey,
+														})
+													)
+												}
+											>
+												Edit
+											</Pill>
+										)}
 									</FlexDivRowCentered>
 								);
 							},

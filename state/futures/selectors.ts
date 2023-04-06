@@ -172,8 +172,15 @@ export const selectOrderType = createSelector(
 export const selectCrossMarginOrderType = (state: RootState) => state.futures.crossMargin.orderType;
 
 export const selectClosePositionOrderInputs = createSelector(
+	selectFuturesType,
 	(state: RootState) => state.futures,
-	(futures) => futures.crossMargin.closePositionOrderInputs
+	(type, futures) => {
+		if (type === 'cross_margin') return futures.crossMargin.closePositionOrderInputs;
+		return {
+			...futures.isolatedMargin.closePositionOrderInputs,
+			price: undefined,
+		};
+	}
 );
 
 export const selectMarketPrice = createSelector(

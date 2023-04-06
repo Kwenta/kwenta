@@ -120,7 +120,6 @@ import {
 	selectOrderFeeCap,
 	selectPosition,
 	selectTradeSizeInputs,
-	selectSkewAdjustedPrice,
 	selectIdleMargin,
 	selectSlTpTradeInputs,
 	selectCrossMarginEditPosInputs,
@@ -471,33 +470,46 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 });
 
 export const fetchIsolatedMarginTradePreview = createAsyncThunk<
-	FuturesPotentialTradeDetails<string> | null,
-	Wei,
+	{ preview: FuturesPotentialTradeDetails<string> | null; type: PreviewAction },
+	DebouncedPreviewParams,
 	ThunkConfig
 >(
 	'futures/fetchIsolatedMarginTradePreview',
-	async (sizeDelta, { dispatch, getState, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState());
+	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
-		const price = selectMarketPrice(getState());
-		const skewAdjustedPrice = selectSkewAdjustedPrice(getState());
 		const orderType = selectOrderType(getState());
+		const market = getState().futures.markets.find((m) => m.marketKey === params.market.key);
 
-		const orderTypeNum = OrderEnumByType[orderType];
-		if (!account) throw new Error('No account to fetch orders');
-		if (!marketInfo) throw new Error('No market info');
-		const leverageSide = selectLeverageSide(getState());
 		try {
-			const preview = await sdk.futures.getIsolatedTradePreview(marketInfo?.market, orderTypeNum, {
-				sizeDelta,
-				price,
-				skewAdjustedPrice,
-				leverageSide,
+			const orderTypeNum = OrderEnumByType[orderType];
+			if (!market) throw new Error('No market data provided for preview');
+			if (!account) throw new Error('No account to generate preview');
+			if (!params.orderPrice) throw new Error('No price provided for preview');
+			const leverageSide = selectLeverageSide(getState());
+
+			const skewAdjustedPrice = wei(params.orderPrice).mul(
+				wei(market.marketSkew).div(market.settings.skewScale).add(1)
+			);
+
+			const preview = await sdk.futures.getIsolatedTradePreview(
+				params.market.address,
+				orderTypeNum,
+				{
+					sizeDelta: params.sizeDelta,
+					price: params.orderPrice,
+					skewAdjustedPrice,
+					leverageSide,
+				}
+			);
+
+			const serializedPreview = serializePotentialTrade({
+				...preview,
+				marketKey: params.market.key,
 			});
-			return serializePotentialTrade({ ...preview, marketKey: marketInfo.marketKey });
+			return { preview: serializedPreview, type: params.action };
 		} catch (err) {
 			notifyError('Failed to generate trade preview', err);
-			dispatch(handlePreviewError({ error: err.message, previewType: 'trade' }));
+			dispatch(handlePreviewError({ error: err.message, previewType: params.action }));
 			throw err;
 		}
 	}
@@ -703,17 +715,25 @@ export const editClosePositionSizeDelta = (
 ): AppThunk => (dispatch, getState) => {
 	dispatch(setClosePositionSizeDelta(nativeSizeDelta));
 	const { price } = selectClosePositionOrderInputs(getState());
+	const { marketPrice } = selectEditPositionModalInfo(getState());
+
+	const accountType = selectFuturesType(getState());
 	try {
 		const market = getMarketDetailsByKey(getState, marketKey);
-		dispatch(
-			stageCrossMarginTradePreview({
-				market,
-				orderPrice: isNaN(Number(price)) || !price ? undefined : wei(price),
-				marginDelta: zeroBN,
-				sizeDelta: wei(nativeSizeDelta || 0),
-				action: 'close',
-			})
-		);
+		const smartMarginPrice = isNaN(Number(price)) || !price ? undefined : wei(price);
+		const odrderPrice = accountType === 'isolated_margin' ? marketPrice : smartMarginPrice;
+		const previewParams: TradePreviewParams = {
+			market,
+			sizeDelta: wei(nativeSizeDelta),
+			orderPrice: odrderPrice,
+			marginDelta: zeroBN,
+			action: 'close',
+		};
+		if (accountType === 'isolated_margin') {
+			dispatch(stageIsolatedMarginTradePreview(previewParams));
+		} else {
+			dispatch(stageCrossMarginTradePreview(previewParams));
+		}
 	} catch (err) {
 		dispatch(handlePreviewError({ error: err.message, previewType: 'close' }));
 	}
@@ -784,12 +804,24 @@ const stageCrossMarginTradePreview = createAsyncThunk<void, TradePreviewParams, 
 	}
 );
 
+const stageIsolatedMarginTradePreview = createAsyncThunk<void, TradePreviewParams, ThunkConfig>(
+	'futures/stageIsolatedMarginTradePreview',
+	async (inputs, { dispatch, getState }) => {
+		dispatch(incrementCrossPreviewCount());
+		const debounceCount = selectCrossPreviewCount(getState());
+		debouncedPrepareIsolatedMarginTradePreview(dispatch, { ...inputs, debounceCount });
+	}
+);
+
 export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'native'): AppThunk => (
 	dispatch,
 	getState
 ) => {
 	const assetRate = selectMarketPrice(getState());
 	const position = selectPosition(getState());
+	const marketPrice = selectMarketPrice(getState());
+	const marketKey = selectMarketKey(getState());
+
 	if (
 		size === '' ||
 		assetRate.eq(0) ||
@@ -801,6 +833,8 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 		dispatch(setLeverageInput(''));
 		return;
 	}
+
+	const market = getMarketDetailsByKey(getState, marketKey);
 
 	const nativeSize = currencyType === 'native' ? size : wei(size).div(assetRate).toString();
 	const usdSize = currencyType === 'native' ? stripZeros(assetRate.mul(size).toString()) : size;
@@ -818,7 +852,15 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	);
 	dispatch(calculateIsolatedMarginFees());
 	dispatch(incrementIsolatedPreviewCount());
-	debouncedPrepareIsolatedMarginTradePreview(dispatch);
+	dispatch(
+		stageIsolatedMarginTradePreview({
+			market,
+			sizeDelta: wei(nativeSize),
+			orderPrice: marketPrice,
+			marginDelta: zeroBN,
+			action: 'trade',
+		})
+	);
 };
 
 export const editTradeSizeInput = (size: string, currencyType: 'usd' | 'native'): AppThunk => (
@@ -851,9 +893,12 @@ export const debouncedPrepareCrossMarginTradePreview = debounce(
 	500
 );
 
-export const debouncedPrepareIsolatedMarginTradePreview = debounce((dispatch) => {
-	dispatch(prepareIsolatedMarginTradePreview());
-}, 500);
+export const debouncedPrepareIsolatedMarginTradePreview = debounce(
+	(dispatch, inputs: DebouncedPreviewParams) => {
+		dispatch(fetchIsolatedMarginTradePreview(inputs));
+	},
+	500
+);
 
 export const editTradeOrderPrice = (price: string): AppThunk => (dispatch, getState) => {
 	const rate = selectMarketPrice(getState());
@@ -1017,14 +1062,6 @@ export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) 
 	const tradeFee = susdSize.mul(staticRate);
 	dispatch(setIsolatedMarginFee(tradeFee.toString()));
 };
-
-export const prepareIsolatedMarginTradePreview = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/prepareIsolatedMarginTradePreview',
-	async (_, { getState, dispatch }) => {
-		const tradeInputs = selectIsolatedMarginTradeInputs(getState());
-		dispatch(fetchIsolatedMarginTradePreview(tradeInputs.nativeSizeDelta));
-	}
-);
 
 export const getClosePositionOrderFee = createAsyncThunk<string, void, ThunkConfig>(
 	'futures/getClosePositionOrderFee',
@@ -1536,6 +1573,44 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
+			dispatch(setShowPositionModal(null));
+			dispatch(fetchBalances());
+			dispatch(clearTradeInputs());
+		} catch (err) {
+			dispatch(handleTransactionError(err.message));
+			throw err;
+		}
+	}
+);
+
+export const submitIsolatedMarginReducePositionOrder = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/submitSmartMarginReducePositionOrder',
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const { market } = selectEditPositionModalInfo(getState());
+		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
+		const { nativeSizeDelta } = selectClosePositionOrderInputs(getState());
+		const wallet = selectWallet(getState());
+
+		try {
+			if (!market) throw new Error('Market info not found');
+			if (!wallet) throw new Error('No wallet connected');
+			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No size amount set');
+
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'modify_isolated',
+					hash: null,
+				})
+			);
+
+			const tx = await sdk.futures.modifyIsolatedMarginPosition(
+				market.market,
+				wei(nativeSizeDelta),
+				desiredFillPrice
+			);
+
+			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setShowPositionModal(null));
 			dispatch(fetchBalances());
 			dispatch(clearTradeInputs());
