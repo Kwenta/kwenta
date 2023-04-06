@@ -67,7 +67,7 @@ export default function ClosePositionModal() {
 		} else {
 			dispatch(submitIsolatedMarginReducePositionOrder());
 		}
-	}, [dispatch]);
+	}, [dispatch, accountType]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
 		isSubmitting,
@@ -142,7 +142,7 @@ export default function ClosePositionModal() {
 				editClosePositionSizeDelta(market.marketKey, stripZeros(sizeDelta.toString(decimals)))
 			);
 		},
-		[dispatch, position?.position?.size, position?.position?.side, market?.marketKey, accountType]
+		[dispatch, position?.position?.size, position?.position?.side, market?.marketKey]
 	);
 
 	return (

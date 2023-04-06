@@ -108,6 +108,21 @@ export default class FuturesService {
 		return market;
 	}
 
+	private async batchIdleMarketMarginSweeps(crossMarginAddress: string) {
+		const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress);
+		const commands: number[] = [];
+		const inputs: string[] = [];
+		// Sweep idle margin from other markets to account
+		if (idleMargin.totalIdleMargin.gt(0)) {
+			idleMargin.marketsWithIdleMargin.forEach((m) => {
+				commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
+				inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
+			});
+		}
+
+		return { commands, inputs, idleMargin };
+	}
+
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
 		const enabledMarkets = marketsForNetwork(
 			networkOverride?.networkId || this.sdk.context.networkId
@@ -752,9 +767,13 @@ export default class FuturesService {
 			this.sdk.context.signer
 		);
 
+		const { commands, inputs } = await this.batchIdleMarketMarginSweeps(crossMarginAddress);
+
+		commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
+		inputs.push(defaultAbiCoder.encode(['int256'], [amount.neg().toBN()]));
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
-			[defaultAbiCoder.encode(['int256'], [amount.neg().toBN()])],
+			commands,
+			inputs,
 		]);
 	}
 
@@ -777,15 +796,10 @@ export default class FuturesService {
 				// Margin delta bigger than account balance,
 				// need to pull some from the users wallet or idle margin
 
-				const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress);
+				const { commands, inputs, idleMargin } = await this.batchIdleMarketMarginSweeps(
+					crossMarginAddress
+				);
 
-				// Sweep idle margin from other markets to account
-				if (idleMargin.totalIdleMargin.gt(0)) {
-					idleMargin.marketsWithIdleMargin.forEach((m) => {
-						commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
-						inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
-					});
-				}
 				const totalFreeMargin = idleMargin.totalIdleMargin.add(freeMargin);
 				const depositAmount = marginDelta.gt(totalFreeMargin)
 					? marginDelta.sub(totalFreeMargin).abs()

@@ -597,14 +597,18 @@ export const selectRemainingMarketMargin = createSelector(selectPosition, (posit
 	return position.remainingMargin;
 });
 
+export const selectIdleMarginInMarkets = createSelector(selectCrossMarginPositions, (positions) => {
+	const idleInMarkets = positions
+		.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
+		.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
+	return idleInMarkets;
+});
+
 export const selectIdleMargin = createSelector(
-	selectCrossMarginPositions,
+	selectIdleMarginInMarkets,
 	selectCrossMarginBalanceInfo,
 	selectSusdBalance,
-	(positions, { freeMargin }, balance) => {
-		const idleInMarkets = positions
-			.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
-			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
+	(idleInMarkets, { freeMargin }, balance) => {
 		return balance.add(idleInMarkets).add(freeMargin);
 	}
 );
