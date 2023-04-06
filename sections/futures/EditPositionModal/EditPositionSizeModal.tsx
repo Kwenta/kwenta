@@ -25,7 +25,6 @@ import {
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
 	selectIsFetchingTradePreview,
-	selectMarketPrice,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -42,8 +41,7 @@ export default function EditPositionSizeModal() {
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const preview = useAppSelector(selectEditPositionPreview);
 	const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
-	const marketAssetRate = useAppSelector(selectMarketPrice);
-	const { market, position } = useAppSelector(selectEditPositionModalInfo);
+	const { market, position, marketPrice } = useAppSelector(selectEditPositionModalInfo);
 
 	const [editType, setEditType] = useState(0);
 
@@ -69,12 +67,12 @@ export default function EditPositionSizeModal() {
 	]);
 
 	const maxNativeIncreaseValue = useMemo(() => {
-		if (!marketAssetRate || marketAssetRate.eq(0)) return zeroBN;
+		if (!marketPrice || marketPrice.eq(0)) return zeroBN;
 		const totalMax = position?.remainingMargin.mul(APP_MAX_LEVERAGE) ?? zeroBN;
 		let max = totalMax.sub(position?.position?.notionalValue ?? 0);
 		max = max.gt(0) ? max : zeroBN;
-		return max.div(marketAssetRate);
-	}, [marketAssetRate, position?.remainingMargin, position?.position?.notionalValue]);
+		return max.div(marketPrice);
+	}, [marketPrice, position?.remainingMargin, position?.position?.notionalValue]);
 
 	const maxNativeValue = useMemo(() => {
 		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? zeroBN;

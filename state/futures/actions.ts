@@ -438,11 +438,12 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 	| undefined,
 	void,
 	ThunkConfig
->('futures/fetchCrossMarginOpenOrders', async (_, { getState, extra: { sdk } }) => {
+>('futures/fetchCrossMarginOpenOrders', async (_, { dispatch, getState, extra: { sdk } }) => {
 	const account = selectCrossMarginAccount(getState());
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
 	const markets = selectMarkets(getState());
+	const existingOrders = selectOpenDelayedOrders(getState());
 
 	const marketAddresses = markets.map((market) => market.market);
 
@@ -451,6 +452,10 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 		const orders = await sdk.futures.getConditionalOrders(account);
 		const delayedOrders = await sdk.futures.getDelayedOrders(account, marketAddresses);
 		const nonzeroOrders = formatDelayedOrders(delayedOrders, markets);
+		const orderDropped = existingOrders.length > nonzeroOrders.length;
+		if (orderDropped) {
+			dispatch(fetchCrossMarginPositions());
+		}
 
 		return {
 			account,
@@ -1222,7 +1227,6 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
-			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOrderType('delayed_offchain'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
@@ -1300,7 +1304,6 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 			const tx = await sdk.futures.closeIsolatedPosition(marketInfo.market, desiredFillPrice);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			await tx.wait();
-			dispatch(refetchPosition('isolated_margin'));
 			dispatch(setOpenModal(null));
 			// TODO: More reliable balance updates
 			setTimeout(() => dispatch(fetchBalances()), 1000);
@@ -1398,7 +1401,6 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
-			dispatch(refetchPosition('cross_margin'));
 			dispatch(fetchBalances());
 			dispatch(clearTradeInputs());
 		} catch (err) {
@@ -1474,7 +1476,6 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
-			dispatch(refetchPosition('cross_margin'));
 			dispatch(fetchBalances());
 			dispatch(clearTradeInputs());
 		} catch (err) {
@@ -1536,7 +1537,6 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
 			dispatch(setShowPositionModal(null));
-			dispatch(refetchPosition('cross_margin'));
 			dispatch(fetchBalances());
 			dispatch(clearTradeInputs());
 		} catch (err) {
@@ -1579,7 +1579,6 @@ export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
-			dispatch(refetchPosition('cross_margin'));
 			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
@@ -1794,7 +1793,6 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 				const tx = await sdk.futures.updateStopLossAndTakeProfit(market.marketKey, account, params);
 				await monitorAndAwaitTransaction(dispatch, tx);
 				dispatch(setShowPositionModal(null));
-				dispatch(refetchPosition('cross_margin'));
 			}
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
