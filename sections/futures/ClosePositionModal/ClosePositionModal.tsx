@@ -125,7 +125,10 @@ export default function ClosePositionModal() {
 			if (!position?.position?.size || !market?.marketKey) return;
 			const option = CLOSE_PERCENT_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
-			const size = floorNumber(position.position.size.abs().mul(percent));
+			const size =
+				percent === 1
+					? position.position.size.abs()
+					: floorNumber(position.position.size.abs().mul(percent));
 			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size);
 			const decimals = sizeDelta.abs().eq(position.position.size.abs()) ? undefined : 4;
 			dispatch(
