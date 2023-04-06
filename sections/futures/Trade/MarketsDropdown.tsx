@@ -128,7 +128,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			{open && (
 				<MarketsList
 					mobile={mobile}
-					height={Math.max(window.innerHeight - (mobile ? 135 : 250), 300)}
+					height={Math.max(window.innerHeight - (mobile ? 135 : 170), 300)}
 				>
 					<SearchBarContainer>
 						<Search autoFocus onChange={setSearch} value={search} border={false} />
@@ -234,10 +234,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	position: absolute;
+	height: ${(props) => props.height}px;
 	z-index: 100;
 	width: 380px;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	padding-top: 38px;
@@ -258,6 +258,11 @@ const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	.table-body-row {
 		padding: 0;
 	}
+
+	.table-body-row:last-child {
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
+
 	.table-body-cell {
 		height: 32px;
 	}
