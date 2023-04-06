@@ -57,7 +57,7 @@ const BaseTableBodyRow = styled.div<{
 export const TableCell = styled(FlexDivCentered)`
 	box-sizing: border-box;
 	&:first-child {
-		padding-left: 14px;
+		padding-left: 18px;
 	}
 	&:last-child {
 		padding-right: 14px;
