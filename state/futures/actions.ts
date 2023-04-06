@@ -1507,12 +1507,15 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 
 			const tx = await sdk.futures.modifySmartMarginPositionSize(
 				account,
-				market.market,
+				{
+					key: market.marketKey,
+					address: market.market,
+				},
 				wei(nativeSizeDelta),
 				desiredFillPrice
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
-			dispatch(setOpenModal(null));
+			dispatch(setShowPositionModal(null));
 			dispatch(fetchBalances());
 			dispatch(clearTradeInputs());
 		} catch (err) {
