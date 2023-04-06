@@ -1,5 +1,6 @@
 import { FunctionComponent } from 'react';
 
+import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
 import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
 import { COMPETITION_ENABLED } from 'constants/competition';
 import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
@@ -82,14 +83,13 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 		links: CROSS_MARGIN_ENABLED
 			? [
 					{
-						link: ROUTES.Markets.Home('isolated_margin'),
-						i18nLabel: 'header.nav.isolated-margin',
-						Icon: IsolatedMarginIcon,
-					},
-					{
 						link: ROUTES.Markets.Home('cross_margin'),
 						i18nLabel: 'header.nav.cross-margin',
-						Icon: CrossMarginIcon,
+						Icon: KwentaYellowIcon,
+					},
+					{
+						link: ROUTES.Markets.Home('isolated_margin'),
+						i18nLabel: 'header.nav.isolated-margin',
 					},
 			  ]
 			: null,
