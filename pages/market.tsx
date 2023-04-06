@@ -152,7 +152,11 @@ function TradePanelDesktop() {
 			!crossMarginAccount &&
 			queryStatus.status === FetchStatus.Idle)
 	) {
-		return <Loader />;
+		return (
+			<div>
+				<Loader inline />
+			</div>
+		);
 	}
 
 	return <TradeIsolatedMargin />;
