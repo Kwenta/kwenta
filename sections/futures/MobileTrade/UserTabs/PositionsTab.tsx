@@ -7,8 +7,9 @@ import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
 import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
-import { PositionSide } from 'sdk/types/futures';
+import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
+import { setShowPositionModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
 	selectCrossMarginPositions,
@@ -65,6 +66,18 @@ const PositionsTab = () => {
 		dispatch(setTradePanelDrawerOpen(false));
 	}, [dispatch]);
 
+	const handleOpenPositionCloseModal = useCallback(
+		(marketKey: FuturesMarketKey) => () => {
+			dispatch(
+				setShowPositionModal({
+					type: 'futures_close_position',
+					marketKey,
+				})
+			);
+		},
+		[dispatch]
+	);
+
 	return (
 		<div>
 			{data.length === 0 ? (
@@ -83,7 +96,7 @@ const PositionsTab = () => {
 								</div>
 							</FlexDiv>
 							<div>
-								<Pill onClick={handleCloseDrawer}>Close</Pill>
+								<Pill onClick={handleOpenPositionCloseModal(row.market.marketKey)}>Close</Pill>
 							</div>
 						</PositionMeta>
 						<PositionRow>
