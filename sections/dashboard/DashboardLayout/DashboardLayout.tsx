@@ -20,6 +20,7 @@ enum Tab {
 	Governance = 'governance',
 	Stake = 'staking',
 	Earn = 'earn',
+	Rewards = 'rewards',
 }
 
 const Tabs = Object.values(Tab);
@@ -61,23 +62,23 @@ const DashboardLayout: FC = ({ children }) => {
 				href: ROUTES.Dashboard.Markets,
 			},
 			{
+				name: Tab.Governance,
+				label: t('dashboard.tabs.governance'),
+				active: activeTab === Tab.Governance,
+				href: EXTERNAL_LINKS.Governance.Vote,
+				external: true,
+			},
+			{
 				name: Tab.Stake,
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
 				href: ROUTES.Dashboard.Stake,
 			},
 			{
-				name: Tab.Earn,
-				label: t('dashboard.tabs.earn'),
-				active: activeTab === Tab.Earn,
-				href: ROUTES.Dashboard.Earn,
-			},
-			{
-				name: Tab.Governance,
-				label: t('dashboard.tabs.governance'),
-				active: activeTab === Tab.Governance,
-				href: EXTERNAL_LINKS.Governance.Vote,
-				external: true,
+				name: Tab.Rewards,
+				label: t('dashboard.tabs.rewards'),
+				active: activeTab === Tab.Rewards,
+				href: ROUTES.Dashboard.Rewards,
 			},
 		],
 		[t, activeTab]

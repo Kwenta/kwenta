@@ -22,6 +22,7 @@ export const ROUTES = {
 		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
 		Earn: normalizeRoute('/dashboard', 'earn', 'tab'),
 		Stake: normalizeRoute('/dashboard', 'staking', 'tab'),
+		Rewards: normalizeRoute('/dashboard', 'rewards', 'tab'),
 	},
 	Exchange: {
 		Home: '/exchange',
