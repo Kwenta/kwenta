@@ -11,7 +11,7 @@ export const requestCandlesticks = async (
 	maxTimestamp = Math.floor(Date.now() / 1000),
 	period: number
 ) => {
-	const endpoint = 'https://pyth-api.vintage-orange-muffin.com/chart-lib/history';
+	const endpoint = 'https://pyth-api.vintage-orange-muffin.com/v2/history';
 
 	const response = await axios
 		.get(endpoint, {
