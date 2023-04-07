@@ -175,7 +175,6 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$flat?: boolean;
 	active?: boolean;
 }>`
-	${sharedStyle}
 	p {
 		text-align: left;
 	}
@@ -184,6 +183,7 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 		flex-direction: ${props.$vertical ? 'column' : 'row'};
 		border-radius: ${props.isRounded ? '100px' : '8px'};
 	`}
+	${sharedStyle}
 `;
 
 export default TabButton;
