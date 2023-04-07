@@ -117,6 +117,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					{/* <LegacyLink /> */}
 					<Table
 						data={data}
+						hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}

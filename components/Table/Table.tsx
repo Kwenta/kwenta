@@ -258,7 +258,7 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 `;
 
 export const TableNoResults = styled.div`
-	height: 100%;
+	height: 52px;
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
