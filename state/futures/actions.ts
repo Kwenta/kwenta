@@ -1229,13 +1229,9 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	}
 );
 
-export const modifyIsolatedPosition = createAsyncThunk<
-	void,
-	ModifyIsolatedPositionInputs,
-	ThunkConfig
->(
+export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/modifyIsolatedPosition',
-	async ({ delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
+	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 
@@ -1252,15 +1248,10 @@ export const modifyIsolatedPosition = createAsyncThunk<
 				})
 			);
 
-			const tx = await sdk.futures.modifyIsolatedMarginPosition(
+			const tx = await sdk.futures.submitIsolatedMarginOrder(
 				marketInfo.market,
 				wei(nativeSizeDelta),
-				desiredFillPrice,
-				{
-					delayed,
-					offchain,
-					estimationOnly: false,
-				}
+				desiredFillPrice
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
@@ -1607,7 +1598,7 @@ export const submitIsolatedMarginReducePositionOrder = createAsyncThunk<void, vo
 				})
 			);
 
-			const tx = await sdk.futures.modifyIsolatedMarginPosition(
+			const tx = await sdk.futures.submitIsolatedMarginOrder(
 				market.market,
 				wei(nativeSizeDelta),
 				desiredFillPrice
