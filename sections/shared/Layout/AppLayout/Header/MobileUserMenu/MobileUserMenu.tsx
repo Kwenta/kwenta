@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FC, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -8,7 +8,9 @@ import MenuIcon from 'assets/svg/app/menu.svg';
 import Button from 'components/Button';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { useAppSelector } from 'state/hooks';
+import { PositionSide } from 'sdk/types/futures';
+import { setLeverageSide, setTradePanelDrawerOpen } from 'state/futures/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 import { FixedFooterMixin } from 'styles/common';
 
@@ -21,6 +23,7 @@ const MobileUserMenu: FC = () => {
 	const { t } = useTranslation();
 
 	const currentTheme = useAppSelector(selectCurrentTheme);
+	const dispatch = useAppDispatch();
 
 	const closeModal = () => {
 		setIsOpen(undefined);
@@ -36,6 +39,14 @@ const MobileUserMenu: FC = () => {
 		});
 	};
 
+	const handleSideSelect = useCallback(
+		(side: PositionSide) => () => {
+			dispatch(setLeverageSide(side));
+			dispatch(setTradePanelDrawerOpen(true));
+		},
+		[dispatch]
+	);
+
 	return (
 		<>
 			<MobileFooterContainer>
@@ -43,12 +54,9 @@ const MobileUserMenu: FC = () => {
 					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
-				{!(window.location.pathname === ROUTES.Home.Root) && isOpen === 'menu' && (
-					<SettingsWrapper currentTheme={currentTheme}>{t('modals.menu.title')}</SettingsWrapper>
-				)}
-				{!(window.location.pathname === ROUTES.Home.Root) && isOpen === 'settings' && (
+				{!(window.location.pathname === ROUTES.Home.Root) && !!isOpen && (
 					<SettingsWrapper currentTheme={currentTheme}>
-						{t('modals.settings.title')}
+						{t(`modals.${isOpen}.title`)}
 					</SettingsWrapper>
 				)}
 				<MobileFooterRight>
@@ -56,6 +64,25 @@ const MobileUserMenu: FC = () => {
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 							<Button size="small">{t('homepage.nav.start-trade')}</Button>
 						</Link>
+					) : window.location.pathname.includes('/market') ? (
+						<PositionButtonsContainer>
+							<Button
+								size="medium"
+								variant="long"
+								fullWidth
+								onClick={handleSideSelect(PositionSide.LONG)}
+							>
+								Long
+							</Button>
+							<Button
+								size="medium"
+								variant="short"
+								fullWidth
+								onClick={handleSideSelect(PositionSide.SHORT)}
+							>
+								Short
+							</Button>
+						</PositionButtonsContainer>
 					) : (
 						<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
 					)}
@@ -104,6 +131,13 @@ const SettingsWrapper = styled.div<{ currentTheme: 'dark' | 'light' }>`
 			? props.theme.colors.selectedTheme.white
 			: props.theme.colors.selectedTheme.black};
 	text-transform: capitalize;
+`;
+
+const PositionButtonsContainer = styled.div`
+	display: grid;
+	width: 100%;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 8px;
 `;
 
 export default MobileUserMenu;

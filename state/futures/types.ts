@@ -229,6 +229,7 @@ export type FuturesState = {
 		>;
 	};
 	closePositionOrderFee: string;
+	tradePanelDrawerOpen: boolean;
 };
 
 export type TradePreviewResult = {

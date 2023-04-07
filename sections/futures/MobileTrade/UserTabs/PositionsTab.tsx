@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useReducer } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -13,6 +13,7 @@ import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
+import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
 	selectCrossMarginPositions,
 	selectFuturesType,
@@ -32,7 +33,6 @@ const PositionsTab = () => {
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
-	const [isTradeDrawerOpen, toggleTradeDrawerOpen] = useReducer((s) => !s, false);
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
@@ -40,6 +40,7 @@ const PositionsTab = () => {
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const accountType = useAppSelector(selectFuturesType);
+	const tradeDrawerPanelOpen = useAppSelector(({ futures }) => futures.tradePanelDrawerOpen);
 
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
@@ -70,8 +71,8 @@ const PositionsTab = () => {
 	]);
 
 	const handleCloseDrawer = useCallback(() => {
-		toggleTradeDrawerOpen();
-	}, []);
+		dispatch(setTradePanelDrawerOpen(false));
+	}, [dispatch]);
 
 	return (
 		<div>
@@ -156,8 +157,8 @@ const PositionsTab = () => {
 					</PositionItem>
 				))
 			)}
-			{isTradeDrawerOpen && (
-				<TradePanelDrawer open={isTradeDrawerOpen} closeDrawer={handleCloseDrawer} />
+			{tradeDrawerPanelOpen && (
+				<TradePanelDrawer open={tradeDrawerPanelOpen} closeDrawer={handleCloseDrawer} />
 			)}
 		</div>
 	);
