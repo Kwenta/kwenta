@@ -1,5 +1,6 @@
 import Wei from '@synthetixio/wei';
 
+import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	CrossMarginOrderType,
@@ -45,6 +46,29 @@ export type FundingRate<T = Wei> = {
 	asset: FuturesMarketKey;
 	fundingTitle: string;
 	fundingRate: T | null;
+};
+
+export type FuturesAction = {
+	account: string;
+	timestamp: number;
+	asset: FuturesMarketAsset;
+	margin: number;
+	size: number;
+	action: 'trade' | 'deposit' | 'withdraw';
+};
+
+export type FuturesPortfolio = {
+	account: string;
+	timestamp: number;
+	assets: {
+		[asset: string]: number;
+	};
+	total: number;
+};
+
+export type PortfolioValues = {
+	timestamp: number;
+	total: number;
 };
 
 export type FuturesQueryStatuses = {
@@ -166,6 +190,9 @@ export type FuturesState = {
 	transactionEstimations: TransactionEstimations;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
+	dashboard: {
+		selectedPortfolioTimeframe: Period;
+	};
 	leaderboard: {
 		selectedTrader: string | undefined;
 		selectedTraderPositionHistory: Record<
@@ -259,7 +286,7 @@ export type DelayedOrderWithDetails<T = Wei> = {
 	submittedAtTimestamp: number;
 	executableAtTimestamp: number;
 	isOffchain: boolean;
-	priceImpactDelta: T;
+	desiredFillPrice: T;
 	targetRoundId: T | null;
 	orderType: FuturesOrderTypeDisplay;
 	side: PositionSide;

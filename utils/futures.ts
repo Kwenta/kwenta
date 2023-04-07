@@ -483,7 +483,7 @@ export const serializeDelayedOrder = (
 	size: order.size.toString(),
 	commitDeposit: order.commitDeposit.toString(),
 	keeperDeposit: order.keeperDeposit.toString(),
-	priceImpactDelta: order.priceImpactDelta.toString(),
+	desiredFillPrice: order.desiredFillPrice.toString(),
 	targetRoundId: order.targetRoundId?.toString() ?? '',
 });
 
@@ -498,7 +498,7 @@ export const unserializeDelayedOrder = (
 	size: wei(order.size),
 	commitDeposit: wei(order.commitDeposit),
 	keeperDeposit: wei(order.keeperDeposit),
-	priceImpactDelta: wei(order.priceImpactDelta),
+	desiredFillPrice: wei(order.desiredFillPrice),
 	targetRoundId: wei(order.targetRoundId),
 });
 
@@ -602,9 +602,9 @@ export const unserializePositionHistory = (
 export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] => {
 	return trades.map((t) => ({
 		...t,
+		margin: t.margin.toString(),
 		size: t.size.toString(),
 		price: t.price.toString(),
-		timestamp: t.timestamp.toString(),
 		positionSize: t.positionSize.toString(),
 		pnl: t.pnl.toString(),
 		feesPaid: t.feesPaid.toString(),
@@ -615,9 +615,9 @@ export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] 
 export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<Wei>[] => {
 	return trades.map((t) => ({
 		...t,
+		margin: wei(t.margin),
 		size: wei(t.size),
 		price: wei(t.price),
-		timestamp: wei(t.timestamp),
 		positionSize: wei(t.positionSize),
 		pnl: wei(t.pnl),
 		feesPaid: wei(t.feesPaid),

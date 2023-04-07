@@ -20,7 +20,7 @@ const StyledHeading = styled.h1<{
 	line-height: 1.2;
 	margin: 0;
 	${(props) => css`
-		color: ${props.theme.colors.common.primaryWhite};
+		color: ${props.theme.colors.selectedTheme.text.value};
 		font-size: ${props.$fontSize ?? sizes[props.$variant]}px;
 	`}
 `;

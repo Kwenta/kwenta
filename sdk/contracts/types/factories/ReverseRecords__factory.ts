@@ -40,7 +40,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-] as const;
+];
 
 export class ReverseRecords__factory {
   static readonly abi = _abi;

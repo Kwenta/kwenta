@@ -96,7 +96,6 @@ import {
 	selectFuturesType,
 	selectIsAdvancedOrder,
 	selectIsolatedMarginTradeInputs,
-	selectIsolatedPriceImpact,
 	selectKeeperEthBalance,
 	selectLeverageSide,
 	selectMarketPrice,
@@ -110,6 +109,10 @@ import {
 	selectTradeSizeInputs,
 	selectSkewAdjustedPrice,
 	selectCrossMarginBalanceInfo,
+	selectIsolatedMarginOpenOrders,
+	selectPriceImpactOrDesiredFill,
+	selectIsolatedPriceImpact,
+	selectDesiredTradeFillPrice,
 } from './selectors';
 import {
 	CancelDelayedOrderInputs,
@@ -237,7 +240,6 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 	const { wallet, futures } = getState();
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
-
 	if (!wallet.walletAddress || !supportedNetwork) return;
 	try {
 		const positions = await sdk.futures.getFuturesPositions(
@@ -386,16 +388,18 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 	{ orders: DelayedOrderWithDetails<string>[]; wallet: string; networkId: NetworkId } | undefined,
 	void,
 	ThunkConfig
->('futures/fetchIsolatedOpenOrders', async (_, { getState, extra: { sdk } }) => {
+>('futures/fetchIsolatedOpenOrders', async (_, { dispatch, getState, extra: { sdk } }) => {
 	const wallet = selectWallet(getState());
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
 	const markets = selectMarkets(getState());
+	const existingOrders = selectIsolatedMarginOpenOrders(getState());
 	if (!wallet || !supportedNetwork || !markets.length) return;
 
 	const marketAddresses = markets.map((market) => market.market);
 
 	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(wallet, marketAddresses);
+
 	const nonzeroOrders = orders
 		.filter((o) => o.size.abs().gt(0))
 		.reduce((acc, o) => {
@@ -417,6 +421,12 @@ export const fetchIsolatedOpenOrders = createAsyncThunk<
 			});
 			return acc;
 		}, [] as DelayedOrderWithDetails[]);
+
+	const orderDropped = existingOrders.length > nonzeroOrders.length;
+	if (orderDropped) {
+		dispatch(fetchIsolatedMarginPositions());
+	}
+
 	return {
 		networkId: network,
 		orders: serializeDelayedOrders(nonzeroOrders),
@@ -800,7 +810,7 @@ export const fetchAllTradesForAccount = createAsyncThunk<
 		const account = selectFuturesAccount(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
 		if (!futuresSupported || !wallet || !account) return;
-		const trades = await sdk.futures.getAllTrades(wallet, accountType);
+		const trades = await sdk.futures.getAllTrades(wallet, accountType, 10000);
 		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
 	} catch (err) {
 		notifyError('Failed to fetch futures trades', err);
@@ -984,11 +994,19 @@ export const modifyIsolatedPosition = createAsyncThunk<
 >(
 	'futures/modifyIsolatedPosition',
 	async ({ sizeDelta, delayed, offchain }, { getState, dispatch, extra: { sdk } }) => {
+		const account = selectFuturesAccount(getState());
 		const marketInfo = selectMarketInfo(getState());
 		const priceImpact = selectIsolatedPriceImpact(getState());
+		const desiredFill = selectDesiredTradeFillPrice(getState());
 		if (!marketInfo) throw new Error('Market info not found');
+		if (!account) throw new Error('Account not connected');
 
 		try {
+			const isFlagged = await sdk.futures.getIsFlagged(account, marketInfo.market);
+
+			// TODO: Remove this dynamic logic when the markets are upgraded
+			const priceImpactOrFill = isFlagged == null ? priceImpact : desiredFill;
+
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -999,7 +1017,7 @@ export const modifyIsolatedPosition = createAsyncThunk<
 			const tx = await sdk.futures.modifyIsolatedMarginPosition(
 				marketInfo.market,
 				wei(sizeDelta),
-				priceImpact,
+				priceImpactOrFill,
 				{
 					delayed,
 					offchain,
@@ -1073,7 +1091,7 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 	'futures/closeIsolatedMarginPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
-		const priceImpact = selectIsolatedPriceImpact(getState());
+		const priceImpact = selectPriceImpactOrDesiredFill(getState());
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
 			dispatch(

@@ -286,7 +286,7 @@ export type DelayedOrder<T = Wei> = {
 	submittedAtTimestamp: number;
 	executableAtTimestamp: number;
 	isOffchain: boolean;
-	priceImpactDelta: T;
+	desiredFillPrice: T;
 	targetRoundId: T | null;
 	orderType: FuturesOrderTypeDisplay;
 	side: PositionSide;
@@ -345,12 +345,14 @@ export type CrossMarginOrderType = 'market' | 'stop_market' | 'limit';
 export type FuturesOrderType = IsolatedMarginOrderType | CrossMarginOrderType;
 
 export type FuturesTrade<T = Wei> = {
+	account: string;
+	margin: T;
 	size: T;
-	asset: string;
+	asset: FuturesMarketAsset;
 	price: T;
 	txnHash: string;
-	timestamp: T;
-	positionId?: string;
+	timestamp: number;
+	positionId: string;
 	positionSize: T;
 	positionClosed: boolean;
 	side: PositionSide;

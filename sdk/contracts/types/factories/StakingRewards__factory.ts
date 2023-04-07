@@ -660,7 +660,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-] as const;
+];
 
 export class StakingRewards__factory {
   static readonly abi = _abi;

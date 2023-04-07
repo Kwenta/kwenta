@@ -6,14 +6,14 @@ import ColoredPrice from 'components/ColoredPrice';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
-import { selectMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
+import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { timePresentation } from 'utils/formatters/date';
 import { formatDollars } from 'utils/formatters/number';
 
 const TransfersTab: React.FC = () => {
-	const marginTransfers = useAppSelector(selectMarginTransfers);
+	const marginTransfers = useAppSelector(selectMarketMarginTransfers);
 	const {
 		marginTransfers: { status: marginTransfersStatus },
 	} = useAppSelector(selectQueryStatuses);

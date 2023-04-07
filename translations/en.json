@@ -503,6 +503,13 @@
 			"mobile": {
 				"portfolio": "Portfolio",
 				"open-positions": "Open Positions"
+			},
+			"portfolio-chart": {
+				"welcome": "Welcome to Kwenta",
+				"hero": "Gain exposure to a variety of assets with up to 25x leverage and deep liquidity",
+				"portfolio-value": "Portfolio Value",
+				"buying-power": "Total Buying Power",
+				"upnl": "Unrealized PnL"
 			}
 		},
 		"earn": {
@@ -514,7 +521,7 @@
 				"copy": "You can unstake your pool tokens."
 			},
 			"withdraw-liquidity": {
-				"title": "Step 2. Withdraw Your Liuqidity",
+				"title": "Step 2. Withdraw Your Liquidity",
 				"copy": "You can now withdraw your liquidity from the Arrakis ETH/KWENTA vault.",
 				"pool-link": "Arrakis WETH/KWENTA Pool ↗"
 			}
