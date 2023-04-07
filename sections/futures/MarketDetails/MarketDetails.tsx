@@ -35,7 +35,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				<HourlyFundingDetail />
 				<OpenInterestLongDetail />
 				<OpenInterestShortDetail />
-				{!mobile && <MarketSkew />}
+				<MarketSkew />
 			</MarketDetailsContainer>
 		</MainContainer>
 	);
@@ -117,7 +117,7 @@ const OpenInterestLongDetail = memo(() => {
 			dataKey={MarketDataKey.openInterestLong}
 			value={
 				marketInfo?.openInterest.longUSD
-					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })} / ${oiCap}`
+					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}/${oiCap}`
 					: NO_VALUE
 			}
 		/>
@@ -162,7 +162,7 @@ const OpenInterestShortDetail = memo(() => {
 			dataKey={MarketDataKey.openInterestShort}
 			value={
 				marketInfo?.openInterest.shortUSD
-					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })} / ${oiCap}`
+					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })}/${oiCap}`
 					: NO_VALUE
 			}
 		/>
@@ -241,7 +241,7 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 			height: auto;
 			padding: 15px;
 			display: grid;
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: repeat(3, 1fr);
 			grid-gap: 20px 0;
 			width: 100%;
 			border-left: none;
