@@ -23,7 +23,7 @@ const OverviewTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
 
 	return (
-		<OverviewTabsContainer>
+		<div>
 			<TradeBalance />
 			<MainTabButtonsContainer>
 				{TABS.map(({ title, nofill }, i) => (
@@ -38,16 +38,13 @@ const OverviewTabs: React.FC = () => {
 				))}
 			</MainTabButtonsContainer>
 			{TABS[activeTab].component}
-		</OverviewTabsContainer>
+		</div>
 	);
 };
-
-const OverviewTabsContainer = styled.div``;
 
 const MainTabButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	overflow: auto;
 `;
 
 export default OverviewTabs;
