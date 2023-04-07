@@ -325,7 +325,7 @@ const SearchBarContainer = styled.div`
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
 	height: 100%;
-	z-index: 100;
+	z-index: 40;
 	${(props) =>
 		props.mobile &&
 		css`

@@ -54,11 +54,13 @@ const MobileUserMenu: FC = () => {
 					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
-				{!(window.location.pathname === ROUTES.Home.Root) && !!isOpen && (
-					<SettingsWrapper currentTheme={currentTheme}>
-						{t(`modals.${isOpen}.title`)}
-					</SettingsWrapper>
-				)}
+				{window.location.pathname !== ROUTES.Home.Root &&
+					!window.location.pathname.includes('/market') &&
+					!!isOpen && (
+						<SettingsWrapper currentTheme={currentTheme}>
+							{t(`modals.${isOpen}.title`)}
+						</SettingsWrapper>
+					)}
 				<MobileFooterRight>
 					{window.location.pathname === ROUTES.Home.Root ? (
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
