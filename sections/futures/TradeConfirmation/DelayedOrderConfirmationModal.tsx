@@ -160,12 +160,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 	}, [dispatch]);
 
 	const handleConfirmOrder = () => {
-		dispatch(
-			modifyIsolatedPosition({
-				delayed: true,
-				offchain: true,
-			})
-		);
+		dispatch(modifyIsolatedPosition());
 	};
 
 	return (

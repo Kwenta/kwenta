@@ -8,12 +8,7 @@ import KwentaSDK from 'sdk';
 
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import {
-	BPS_CONVERSION,
-	DEFAULT_DESIRED_TIMEDELTA,
-	KWENTA_TRACKING_CODE,
-	SL_TP_MAX_SIZE,
-} from 'sdk/constants/futures';
+import { BPS_CONVERSION, KWENTA_TRACKING_CODE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginAccountABI from 'sdk/contracts/abis/CrossMarginAccount.json';
@@ -48,7 +43,6 @@ import {
 	ContractOrderType,
 	PositionDetail,
 	PositionSide,
-	ModifyPositionOptions,
 	AccountExecuteFunctions,
 	MarginTransfer,
 	MarketWithIdleMargin,
@@ -839,34 +833,18 @@ export default class FuturesService {
 		return market.closePositionWithTracking(priceImpactDelta.toBN(), KWENTA_TRACKING_CODE);
 	}
 
-	public async modifyIsolatedMarginPosition<T extends boolean>(
+	public async submitIsolatedMarginOrder(
 		marketAddress: string,
 		sizeDelta: Wei,
-		priceImpactDelta: Wei,
-		options?: ModifyPositionOptions<T>
+		priceImpactDelta: Wei
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 
-		if (options?.delayed && options.offchain) {
-			return this.sdk.transactions.createContractTxn(
-				market,
-				'submitOffchainDelayedOrderWithTracking',
-				[sizeDelta.toBN(), priceImpactDelta.toBN(), KWENTA_TRACKING_CODE]
-			);
-		} else if (options?.delayed) {
-			return this.sdk.transactions.createContractTxn(market, 'submitDelayedOrderWithTracking', [
-				sizeDelta.toBN(),
-				priceImpactDelta.toBN(),
-				wei(DEFAULT_DESIRED_TIMEDELTA).toBN(),
-				KWENTA_TRACKING_CODE,
-			]);
-		} else {
-			return this.sdk.transactions.createContractTxn(market, 'modifyPositionWithTracking', [
-				sizeDelta.toBN(),
-				priceImpactDelta.toBN(),
-				KWENTA_TRACKING_CODE,
-			]);
-		}
+		return this.sdk.transactions.createContractTxn(
+			market,
+			'submitOffchainDelayedOrderWithTracking',
+			[sizeDelta.toBN(), priceImpactDelta.toBN(), KWENTA_TRACKING_CODE]
+		);
 	}
 
 	public async cancelDelayedOrder(marketAddress: string, account: string, isOffchain: boolean) {
