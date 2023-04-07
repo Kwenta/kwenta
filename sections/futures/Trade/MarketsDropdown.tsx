@@ -17,6 +17,7 @@ import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
+import useLocalStorage from 'hooks/useLocalStorage';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
@@ -50,14 +51,26 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
-	const [isSelected, setIsSelected] = useState(false);
+	const [favMarkets, setFavMarkets] = useLocalStorage<string[]>('favorite-markets', []);
 
 	const { ref } = useClickOutside(() => setOpen(false));
 
 	const router = useRouter();
 	const { t } = useTranslation();
 
-	const onSelect = useCallback(() => setIsSelected(!isSelected), [isSelected]);
+	const onSelectFav = useCallback(
+		(asset: string) => {
+			const index = favMarkets.indexOf(asset);
+
+			if (index !== -1) {
+				favMarkets.splice(index, 1);
+			} else {
+				favMarkets.push(asset);
+			}
+			setFavMarkets([...favMarkets]);
+		},
+		[favMarkets, setFavMarkets]
+	);
 
 	const getBasePriceRateInfo = useCallback(
 		(asset: FuturesMarketAsset) => {
@@ -71,6 +84,14 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		[pastPrices]
 	);
 
+	const onSelectMarket = useCallback(
+		(asset: string) => {
+			router.push(ROUTES.Markets.MarketPair(asset, accountType));
+			setOpen(false);
+		},
+		[accountType, router]
+	);
+
 	const selectedBasePriceRate = getBasePriceRateInfo(marketAsset);
 	const selectedPastPrice = getPastPrice(marketAsset);
 
@@ -78,7 +99,13 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		const markets = search
 			? futuresMarkets.filter((m) => m.asset.toLowerCase().includes(search.toLowerCase()))
 			: futuresMarkets;
-		return markets.map((market) => {
+
+		const sortedMarkets = markets
+			.filter((m) => favMarkets.includes(m.asset))
+			.sort((a, b) => getMarketName(a.asset).localeCompare(getMarketName(b.asset)))
+			.concat(markets.filter((m) => !favMarkets.includes(m.asset)));
+
+		return sortedMarkets.map((market) => {
 			const pastPrice = getPastPrice(market.asset);
 			const basePriceRate = getBasePriceRateInfo(market.asset);
 
@@ -99,7 +126,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				closureReason: market.marketClosureReason,
 			};
 		});
-	}, [futuresMarkets, search, t, getBasePriceRateInfo, getPastPrice]);
+	}, [search, futuresMarkets, favMarkets, getPastPrice, getBasePriceRateInfo, t]);
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
@@ -137,24 +164,29 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 						<StyledTable
 							highlightRowsOnHover
 							rowStyle={{ padding: '0' }}
-							onTableRowClick={(row) => {
-								router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType));
-								setOpen(false);
-							}}
 							columns={[
 								{
 									Header: (
 										<TableHeader>
-											<FavoriteIcon />
+											<FavoriteIcon height={14} width={14} />
 										</TableHeader>
 									),
 									accessor: 'favorite',
 									sortType: 'basic',
-									sortable: false,
-									Cell: ({ _ }: any) => (
-										<div onClick={onSelect}>{isSelected ? <SelectedIcon /> : <FavoriteIcon />}</div>
+									sortable: true,
+									Cell: ({ row }: any) => (
+										<div
+											onClick={() => onSelectFav(row.original.asset)}
+											style={{ cursor: 'pointer' }}
+										>
+											{favMarkets.includes(row.original.asset) ? (
+												<SelectedIcon height={14} width={14} />
+											) : (
+												<FavoriteIcon height={14} width={14} />
+											)}
+										</div>
 									),
-									width: 25,
+									width: 35,
 								},
 								{
 									Header: <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
@@ -162,7 +194,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									sortType: 'basic',
 									sortable: true,
 									Cell: ({ row }: any) => (
-										<FlexDivRowCentered>
+										<FlexDivRowCentered
+											onClick={() => onSelectMarket(row.original.asset)}
+											style={{ cursor: 'pointer' }}
+										>
 											<CurrencyIcon currencyKey={row.original.key} width="18px" height="18px" />
 											<Spacer width={10} />
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
@@ -177,14 +212,19 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									sortable: true,
 									Cell: (cellProps: any) => {
 										return (
-											<ColoredPrice
-												priceInfo={{
-													price: cellProps.row.original.price,
-													change: cellProps.row.original.priceDirection,
-												}}
+											<div
+												onClick={() => onSelectMarket(cellProps.row.original.asset)}
+												style={{ cursor: 'pointer' }}
 											>
-												{cellProps.row.original.price}
-											</ColoredPrice>
+												<ColoredPrice
+													priceInfo={{
+														price: cellProps.row.original.price,
+														change: cellProps.row.original.priceDirection,
+													}}
+												>
+													{cellProps.row.original.price}
+												</ColoredPrice>
+											</div>
 										);
 									},
 									width: 80,
@@ -193,18 +233,23 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									Header: <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
 									Cell: ({ row }: any) => {
 										return (
-											<MarketBadge
-												currencyKey={row.original.asset}
-												isFuturesMarketClosed={row.original.isMarketClosed}
-												futuresClosureReason={row.original.closureReason}
-												fallbackComponent={
-													<NumericValue
-														suffix="%"
-														colored
-														value={floorNumber(row.original.change?.mul(100) ?? '0', 2)}
-													/>
-												}
-											/>
+											<div
+												onClick={() => onSelectMarket(row.original.asset)}
+												style={{ cursor: 'pointer' }}
+											>
+												<MarketBadge
+													currencyKey={row.original.asset}
+													isFuturesMarketClosed={row.original.isMarketClosed}
+													futuresClosureReason={row.original.closureReason}
+													fallbackComponent={
+														<NumericValue
+															suffix="%"
+															colored
+															value={floorNumber(row.original.change?.mul(100) ?? '0', 2)}
+														/>
+													}
+												/>
+											</div>
 										);
 									},
 									accessor: 'change',
