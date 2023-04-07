@@ -375,7 +375,7 @@ export const selectActiveIsolatedPositionsCount = createSelector(
 	}
 );
 
-export const selectActiveCrossPositionsCount = createSelector(
+export const selectActiveSmartPositionsCount = createSelector(
 	selectCrossMarginPositions,
 	(positions) => {
 		return positions.filter((p) => !!p.position).length;

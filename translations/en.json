@@ -490,7 +490,7 @@
 			},
 			"positions-tabs": {
 				"isolated-margin": "Isolated Margin",
-				"cross-margin": "Cross Margin",
+				"smart-margin": "Smart Margin",
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
 				"spot": "Spot Balances"
