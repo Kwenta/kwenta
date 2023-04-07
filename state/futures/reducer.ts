@@ -157,6 +157,10 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 			close: null,
 			edit: null,
 		},
+		closePositionOrderInputs: {
+			orderType: 'market',
+			nativeSizeDelta: '',
+		},
 		previewDebounceCount: 0,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		editPositionInputs: {
@@ -188,7 +192,11 @@ const futuresSlice = createSlice({
 			state.crossMargin.closePositionOrderInputs.orderType = action.payload;
 		},
 		setClosePositionSizeDelta: (state, action: PayloadAction<string>) => {
-			state.crossMargin.closePositionOrderInputs.nativeSizeDelta = action.payload;
+			if (state.selectedType === 'cross_margin') {
+				state.crossMargin.closePositionOrderInputs.nativeSizeDelta = action.payload;
+			} else {
+				state.isolatedMargin.closePositionOrderInputs.nativeSizeDelta = action.payload;
+			}
 		},
 		setClosePositionPrice: (
 			state,
@@ -557,7 +565,7 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.isolatedTradePreview = LOADING_STATUS;
 		});
 		builder.addCase(fetchIsolatedMarginTradePreview.fulfilled, (futuresState, { payload }) => {
-			futuresState.isolatedMargin.previews.trade = payload;
+			futuresState.isolatedMargin.previews[payload.type] = payload.preview;
 			futuresState.queryStatuses.isolatedTradePreview = SUCCESS_STATUS;
 		});
 		builder.addCase(fetchIsolatedMarginTradePreview.rejected, (futuresState) => {

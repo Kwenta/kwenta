@@ -32,6 +32,7 @@ import {
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
 	selectCrossMarginAccount,
+	selectCMDepositApproved,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -66,6 +67,7 @@ const ManagePosition: React.FC = () => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const smartMarginAccount = useAppSelector(selectCrossMarginAccount);
+	const depositApproved = useAppSelector(selectCMDepositApproved);
 
 	const isCancelModalOpen = openModal === 'futures_close_position_confirm';
 
@@ -73,12 +75,13 @@ const ManagePosition: React.FC = () => {
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
-		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
+		if (previewTrade?.statusMessage && previewTrade.statusMessage !== 'Success')
+			return previewTrade?.statusMessage;
 		return null;
-	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
+	}, [previewTrade?.statusMessage, previewError, t]);
 
 	const onSubmit = useCallback(() => {
-		if (selectedAccountType === 'cross_margin' && !smartMarginAccount) {
+		if ((selectedAccountType === 'cross_margin' && !smartMarginAccount) || !depositApproved) {
 			dispatch(setOpenModal('futures_smart_margin_onboard'));
 			return;
 		}
@@ -89,12 +92,15 @@ const ManagePosition: React.FC = () => {
 					: 'futures_confirm_isolated_margin_trade'
 			)
 		);
-	}, [selectedAccountType, smartMarginAccount, dispatch]);
+	}, [selectedAccountType, smartMarginAccount, depositApproved, dispatch]);
 
 	const placeOrderDisabledReason = useMemo<{
 		message: string;
 		show?: 'warn' | 'error';
 	} | null>(() => {
+		if (orderError) {
+			return { message: orderError, show: 'error' };
+		}
 		// TODO: Clean up errors and warnings
 		if (leverage.gt(maxLeverageValue))
 			return {
@@ -156,6 +162,7 @@ const ManagePosition: React.FC = () => {
 		marginDelta,
 		orderType,
 		openOrder,
+		orderError,
 		orderPrice,
 		leverageSide,
 		marketAssetRate,
@@ -210,9 +217,7 @@ const ManagePosition: React.FC = () => {
 				</ManagePositionContainer>
 			</div>
 
-			{orderError ? (
-				<Error message={orderError} />
-			) : placeOrderDisabledReason?.show ? (
+			{placeOrderDisabledReason?.show ? (
 				<Error
 					message={placeOrderDisabledReason.message}
 					messageType={placeOrderDisabledReason.show}

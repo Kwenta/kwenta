@@ -16,6 +16,7 @@ import { selectBalances } from 'state/balances/selectors';
 import { approveCrossMargin, depositCrossMargin, withdrawCrossMargin } from 'state/futures/actions';
 import {
 	selectCrossMarginBalanceInfo,
+	selectIdleMarginInMarkets,
 	selectIsApprovingCrossDeposit,
 	selectIsSubmittingCrossTransfer,
 } from 'state/futures/selectors';
@@ -39,6 +40,7 @@ export default function DepositWithdrawCrossMargin({
 
 	const balances = useAppSelector(selectBalances);
 	const crossMarginBalanceInfo = useAppSelector(selectCrossMarginBalanceInfo);
+	const idleMarginInMarkets = useAppSelector(selectIdleMarginInMarkets);
 	const transactionState = useAppSelector(selectTransaction);
 	const isSubmitting = useAppSelector(selectIsSubmittingCrossTransfer);
 	const isApproving = useAppSelector(selectIsApprovingCrossDeposit);
@@ -50,8 +52,32 @@ export default function DepositWithdrawCrossMargin({
 		setTransferType(defaultTab === 'deposit' ? 0 : 1);
 	}, [defaultTab]);
 
-	const susdBal =
-		transferType === 0 ? balances?.susdWalletBalance || zeroBN : crossMarginBalanceInfo.freeMargin;
+	const totalWithdrawable = useMemo(
+		() => crossMarginBalanceInfo.freeMargin.add(idleMarginInMarkets),
+		[idleMarginInMarkets, crossMarginBalanceInfo.freeMargin]
+	);
+
+	const susdBal = useMemo(
+		() => (transferType === 0 ? balances?.susdWalletBalance || zeroBN : totalWithdrawable),
+		[balances?.susdWalletBalance, totalWithdrawable, transferType]
+	);
+
+	const disabledReason = useMemo(() => {
+		const amtWei = wei(amount || 0);
+		if (transferType === 0) {
+			const total = wei(crossMarginBalanceInfo.freeMargin).add(amtWei);
+			if (total.lt(MIN_MARGIN_AMOUNT))
+				return t('futures.market.trade.margin.modal.deposit.min-deposit');
+			if (amtWei.gt(susdBal)) return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
+		} else {
+			if (amtWei.gt(totalWithdrawable))
+				return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
+		}
+	}, [amount, crossMarginBalanceInfo.freeMargin, totalWithdrawable, transferType, susdBal, t]);
+
+	const isApproved = useMemo(() => {
+		return crossMarginBalanceInfo.allowance.gt(wei(amount || 0));
+	}, [crossMarginBalanceInfo.allowance, amount]);
 
 	const submitDeposit = useCallback(async () => {
 		dispatch(depositCrossMargin(wei(amount)));
@@ -74,23 +100,6 @@ export default function DepositWithdrawCrossMargin({
 	const withdrawMargin = useCallback(async () => {
 		dispatch(withdrawCrossMargin(wei(amount)));
 	}, [amount, dispatch]);
-
-	const disabledReason = useMemo(() => {
-		const amtWei = wei(amount || 0);
-		if (transferType === 0) {
-			const total = wei(crossMarginBalanceInfo.freeMargin).add(amtWei);
-			if (total.lt(MIN_MARGIN_AMOUNT))
-				return t('futures.market.trade.margin.modal.deposit.min-deposit');
-			if (amtWei.gt(susdBal)) return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
-		} else {
-			if (amtWei.gt(crossMarginBalanceInfo.freeMargin))
-				return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
-		}
-	}, [amount, crossMarginBalanceInfo.freeMargin, transferType, susdBal, t]);
-
-	const isApproved = useMemo(() => {
-		return crossMarginBalanceInfo.allowance.gt(wei(amount || 0));
-	}, [crossMarginBalanceInfo.allowance, amount]);
 
 	const handleSetMax = React.useCallback(() => {
 		setAmount(susdBal.toString());

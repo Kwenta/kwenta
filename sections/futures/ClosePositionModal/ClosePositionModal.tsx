@@ -19,6 +19,7 @@ import { selectTransaction } from 'state/app/selectors';
 import {
 	editClosePositionPrice,
 	editClosePositionSizeDelta,
+	submitIsolatedMarginReducePositionOrder,
 	submitSmartMarginReducePositionOrder,
 } from 'state/futures/actions';
 import { setClosePositionOrderType } from 'state/futures/reducer';
@@ -26,6 +27,7 @@ import {
 	selectClosePositionOrderInputs,
 	selectClosePositionPreview,
 	selectEditPositionModalInfo,
+	selectFuturesType,
 	selectIsFetchingTradePreview,
 	selectSubmittingFuturesTx,
 	selectTradePreviewError,
@@ -54,13 +56,18 @@ export default function ClosePositionModal() {
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const previewTrade = useAppSelector(selectClosePositionPreview);
 	const previewError = useAppSelector(selectTradePreviewError);
+	const accountType = useAppSelector(selectFuturesType);
 
 	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs);
 	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 
 	const submitCloseOrder = useCallback(() => {
-		dispatch(submitSmartMarginReducePositionOrder());
-	}, [dispatch]);
+		if (accountType === 'cross_margin') {
+			dispatch(submitSmartMarginReducePositionOrder());
+		} else {
+			dispatch(submitIsolatedMarginReducePositionOrder());
+		}
+	}, [dispatch, accountType]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
 		isSubmitting,
@@ -125,7 +132,10 @@ export default function ClosePositionModal() {
 			if (!position?.position?.size || !market?.marketKey) return;
 			const option = CLOSE_PERCENT_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
-			const size = floorNumber(position.position.size.abs().mul(percent));
+			const size =
+				percent === 1
+					? position.position.size.abs()
+					: floorNumber(position.position.size.abs().mul(percent));
 			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size);
 			const decimals = sizeDelta.abs().eq(position.position.size.abs()) ? undefined : 4;
 			dispatch(
@@ -138,8 +148,12 @@ export default function ClosePositionModal() {
 	return (
 		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
 			<Spacer height={10} />
-			<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
-			<Spacer height={20} />
+			{accountType === 'cross_margin' && (
+				<>
+					<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
+					<Spacer height={20} />
+				</>
+			)}
 
 			<ClosePositionSizeInput maxNativeValue={maxNativeValue} />
 			<SelectorButtons options={CLOSE_PERCENT_OPTIONS} onSelect={onSelectPercent} />

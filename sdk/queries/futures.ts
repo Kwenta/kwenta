@@ -9,7 +9,6 @@ import {
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
 import { SMART_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
-import { ZERO_ADDRESS } from 'sdk/constants/global';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { mapMarginTransfers, mapSmartMarginTransfers } from 'sdk/utils/futures';
 
@@ -38,11 +37,10 @@ export const queryCrossMarginAccounts = async (
 	walletAddress: string
 ): Promise<string[]> => {
 	// TODO: Contract should be updating to support one to many
-	const account = await sdk.context.contracts.CrossMarginAccountFactory?.ownerToAccount(
+	const accounts = await sdk.context.contracts.CrossMarginAccountFactory?.getAccountsOwnedBy(
 		walletAddress
 	);
-	if (!account || account === ZERO_ADDRESS) return [];
-	return [account];
+	return accounts ?? [];
 };
 
 export const queryTrades = async (

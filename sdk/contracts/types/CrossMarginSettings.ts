@@ -124,6 +124,7 @@ export interface CrossMarginSettingsInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "treasury", data: BytesLike): Result;
 
   events: {
+    "DelegateFeeProportionChanged(uint256)": EventFragment;
     "LimitOrderFeeChanged(uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "StopOrderFeeChanged(uint256)": EventFragment;
@@ -131,12 +132,26 @@ export interface CrossMarginSettingsInterface extends utils.Interface {
     "TreasuryAddressChanged(address)": EventFragment;
   };
 
+  getEvent(
+    nameOrSignatureOrTopic: "DelegateFeeProportionChanged"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LimitOrderFeeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StopOrderFeeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TradeFeeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TreasuryAddressChanged"): EventFragment;
 }
+
+export interface DelegateFeeProportionChangedEventObject {
+  feeProportion: BigNumber;
+}
+export type DelegateFeeProportionChangedEvent = TypedEvent<
+  [BigNumber],
+  DelegateFeeProportionChangedEventObject
+>;
+
+export type DelegateFeeProportionChangedEventFilter =
+  TypedEventFilter<DelegateFeeProportionChangedEvent>;
 
 export interface LimitOrderFeeChangedEventObject {
   fee: BigNumber;
@@ -335,6 +350,13 @@ export interface CrossMarginSettings extends BaseContract {
   };
 
   filters: {
+    "DelegateFeeProportionChanged(uint256)"(
+      feeProportion?: null
+    ): DelegateFeeProportionChangedEventFilter;
+    DelegateFeeProportionChanged(
+      feeProportion?: null
+    ): DelegateFeeProportionChangedEventFilter;
+
     "LimitOrderFeeChanged(uint256)"(
       fee?: null
     ): LimitOrderFeeChangedEventFilter;

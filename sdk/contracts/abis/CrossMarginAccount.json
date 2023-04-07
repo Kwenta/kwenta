@@ -10,6 +10,16 @@
         "internalType": "address",
         "name": "marginAsset",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "gelato",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "ops",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -18,11 +28,6 @@
   {
     "inputs": [],
     "name": "CannotPayFee",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "EthTransferFailed",
     "type": "error"
   },
   {
@@ -63,6 +68,17 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "delegateAddress",
+        "type": "address"
+      }
+    ],
+    "name": "InvalidDelegateAddress",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "InvalidPrice",
     "type": "error"
@@ -78,6 +94,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "Unauthorized",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -87,6 +108,44 @@
     ],
     "name": "ValueCannotBeZero",
     "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "delegate",
+        "type": "address"
+      }
+    ],
+    "name": "DelegatedAccountAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "caller",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "delegate",
+        "type": "address"
+      }
+    ],
+    "name": "DelegatedAccountRemoved",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -107,7 +166,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "user",
+        "name": "caller",
         "type": "address"
       },
       {
@@ -148,6 +207,19 @@
   },
   {
     "inputs": [],
+    "name": "MAX_BPS",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "OPS",
     "outputs": [
       {
@@ -170,6 +242,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_delegate",
+        "type": "address"
+      }
+    ],
+    "name": "addDelegate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -217,6 +302,25 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "delegate",
+        "type": "address"
+      }
+    ],
+    "name": "delegates",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -348,9 +452,9 @@
             "type": "uint8"
           },
           {
-            "internalType": "uint128",
-            "name": "priceImpactDelta",
-            "type": "uint128"
+            "internalType": "uint256",
+            "name": "desiredFillPrice",
+            "type": "uint256"
           },
           {
             "internalType": "bool",
@@ -390,7 +494,7 @@
           },
           {
             "internalType": "uint128",
-            "name": "priceImpactDelta",
+            "name": "desiredFillPrice",
             "type": "uint128"
           },
           {
@@ -508,6 +612,32 @@
   },
   {
     "inputs": [],
+    "name": "isAuth",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isOwner",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "owner",
     "outputs": [
       {
@@ -517,6 +647,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_delegate",
+        "type": "address"
+      }
+    ],
+    "name": "removeDelegate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

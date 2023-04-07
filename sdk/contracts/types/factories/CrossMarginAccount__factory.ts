@@ -22,6 +22,16 @@ const _abi = [
         name: "marginAsset",
         type: "address",
       },
+      {
+        internalType: "address",
+        name: "gelato",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "ops",
+        type: "address",
+      },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
@@ -29,11 +39,6 @@ const _abi = [
   {
     inputs: [],
     name: "CannotPayFee",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "EthTransferFailed",
     type: "error",
   },
   {
@@ -74,6 +79,17 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "delegateAddress",
+        type: "address",
+      },
+    ],
+    name: "InvalidDelegateAddress",
+    type: "error",
+  },
+  {
     inputs: [],
     name: "InvalidPrice",
     type: "error",
@@ -89,6 +105,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "Unauthorized",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "bytes32",
@@ -98,6 +119,44 @@ const _abi = [
     ],
     name: "ValueCannotBeZero",
     type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "delegate",
+        type: "address",
+      },
+    ],
+    name: "DelegatedAccountAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "delegate",
+        type: "address",
+      },
+    ],
+    name: "DelegatedAccountRemoved",
+    type: "event",
   },
   {
     anonymous: false,
@@ -118,7 +177,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "user",
+        name: "caller",
         type: "address",
       },
       {
@@ -159,6 +218,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MAX_BPS",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "OPS",
     outputs: [
       {
@@ -181,6 +253,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_delegate",
+        type: "address",
+      },
+    ],
+    name: "addDelegate",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -228,6 +313,25 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "delegate",
+        type: "address",
+      },
+    ],
+    name: "delegates",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -359,9 +463,9 @@ const _abi = [
             type: "uint8",
           },
           {
-            internalType: "uint128",
-            name: "priceImpactDelta",
-            type: "uint128",
+            internalType: "uint256",
+            name: "desiredFillPrice",
+            type: "uint256",
           },
           {
             internalType: "bool",
@@ -401,7 +505,7 @@ const _abi = [
           },
           {
             internalType: "uint128",
-            name: "priceImpactDelta",
+            name: "desiredFillPrice",
             type: "uint128",
           },
           {
@@ -519,6 +623,32 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "isAuth",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isOwner",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "owner",
     outputs: [
       {
@@ -528,6 +658,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_delegate",
+        type: "address",
+      },
+    ],
+    name: "removeDelegate",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
