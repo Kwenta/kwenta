@@ -39,6 +39,7 @@ const UserTabs: React.FC = () => {
 						title={title}
 						active={activeTab === i}
 						onClick={() => setActiveTab(i)}
+						flat
 					/>
 				))}
 			</TabButtonsContainer>
@@ -56,15 +57,6 @@ const TabButtonsContainer = styled.div`
 	grid-template-columns: repeat(4, 1fr);
 	margin-bottom: 15px;
 	overflow: auto;
-
-	> button {
-		border-radius: 0;
-		border-left: none;
-
-		&:last-of-type {
-			border-right: none;
-		}
-	}
 `;
 
 export default UserTabs;

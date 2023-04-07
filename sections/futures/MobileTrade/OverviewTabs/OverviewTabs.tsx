@@ -32,8 +32,8 @@ const OverviewTabs: React.FC = () => {
 						title={title}
 						active={activeTab === i}
 						onClick={() => setActiveTab(i)}
-						vertical
 						nofill={nofill}
+						flat
 					/>
 				))}
 			</MainTabButtonsContainer>
@@ -48,14 +48,6 @@ const MainTabButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	overflow: auto;
-
-	> button {
-		border-radius: 0;
-		border-left: none;
-		&:last-of-type {
-			border-right: none;
-		}
-	}
 `;
 
 export default OverviewTabs;

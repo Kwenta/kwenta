@@ -29,9 +29,3 @@ export const Pane = styled.div<{ noPadding?: boolean }>`
 	box-sizing: border-box;
 	height: 325px;
 `;
-
-// ${(props) =>
-// 	props.noPadding &&
-// 	css`
-// 		padding: 15px 0 0;
-// 	`}

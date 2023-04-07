@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
@@ -9,8 +7,6 @@ import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
 import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
@@ -27,12 +23,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import TradePanelDrawer from '../drawers/TradePanelDrawer';
 
 const PositionsTab = () => {
-	const { t } = useTranslation();
-	const router = useRouter();
 	const dispatch = useAppDispatch();
-	const { switchToL2 } = useNetworkSwitcher();
-
-	const isL2 = useIsL2();
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
