@@ -79,7 +79,7 @@ const PositionsTab = () => {
 	);
 
 	return (
-		<div>
+		<PositionsTabContainer>
 			{data.length === 0 ? (
 				<></>
 			) : (
@@ -164,9 +164,13 @@ const PositionsTab = () => {
 			{tradeDrawerPanelOpen && (
 				<TradePanelDrawer open={tradeDrawerPanelOpen} closeDrawer={handleCloseDrawer} />
 			)}
-		</div>
+		</PositionsTabContainer>
 	);
 };
+
+const PositionsTabContainer = styled.div`
+	padding-top: 15px;
+`;
 
 const PositionMeta = styled.div<{ $side: PositionSide }>`
 	display: flex;

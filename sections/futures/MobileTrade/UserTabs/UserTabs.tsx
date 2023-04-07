@@ -55,7 +55,6 @@ const UserTabsContainer = styled.div`
 const TabButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	margin-bottom: 15px;
 	overflow: auto;
 `;
 
