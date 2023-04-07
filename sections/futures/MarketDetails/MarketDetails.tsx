@@ -33,8 +33,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				<IndexPriceDetail />
 				{!mobile && <DailyChangeDetail />}
 				<HourlyFundingDetail />
-				<OpenInterestLongDetail />
-				<OpenInterestShortDetail />
+				{!mobile && <OpenInterestLongDetail />}
+				{!mobile && <OpenInterestShortDetail />}
 				<MarketSkew />
 			</MarketDetailsContainer>
 		</MainContainer>
