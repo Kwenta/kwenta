@@ -69,16 +69,18 @@ const MobileUserMenu: FC = () => {
 					) : window.location.pathname.includes('/market') ? (
 						<PositionButtonsContainer>
 							<Button
-								size="medium"
+								size="xsmall"
 								variant="long"
+								fontSize={13}
 								fullWidth
 								onClick={handleSideSelect(PositionSide.LONG)}
 							>
 								Long
 							</Button>
 							<Button
-								size="medium"
+								size="xsmall"
 								variant="short"
+								fontSize={13}
 								fullWidth
 								onClick={handleSideSelect(PositionSide.SHORT)}
 							>
