@@ -580,7 +580,6 @@ export default class FuturesService {
 		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
 
 		const preview = await marketInternal.getTradePreview(
-			MarketAssetByKey[marketKey],
 			crossMarginAccount,
 			tradeParams.sizeDelta.toBN(),
 			tradeParams.marginDelta.toBN(),
