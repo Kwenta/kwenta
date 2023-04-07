@@ -156,7 +156,9 @@ const PortfolioChart: FC = () => {
 						<PortfolioTitle>
 							{hoverTitle ? hoverTitle : t('dashboard.overview.portfolio-chart.portfolio-value')}
 						</PortfolioTitle>
-						<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
+						<NumericValue fontSize={20} value={hoverValue || total}>
+							{formatDollars(hoverValue || total, { maxDecimals: 2 })}
+						</NumericValue>
 						<NumericValue colored value={changeValue.value ?? zeroBN}>
 							{changeValue.text}&nbsp;
 						</NumericValue>
