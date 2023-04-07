@@ -103,7 +103,7 @@ const MobileFooterContainer = styled.div`
 	display: flex;
 	align-items: center;
 	border-top: 1px solid #2b2a2a;
-	padding: 16px 20px;
+	padding: 15px 20px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
 	z-index: 51;
 `;
@@ -114,7 +114,7 @@ const MobileFooterIconContainer = styled.div`
 
 const MobileFooterSeparator = styled.div`
 	margin: 0 20px;
-	height: 41px;
+	height: 32px;
 	width: 1px;
 	background-color: #2b2a2a;
 `;
@@ -141,7 +141,7 @@ const PositionButtonsContainer = styled.div`
 	display: grid;
 	width: 100%;
 	grid-template-columns: 1fr 1fr;
-	grid-gap: 8px;
+	grid-gap: 10px;
 `;
 
 export default MobileUserMenu;
