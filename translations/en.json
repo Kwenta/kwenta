@@ -526,6 +526,28 @@
 				"pool-link": "Arrakis WETH/KWENTA Pool ↗"
 			}
 		},
+		"rewards": {
+			"title": "Rewards",
+			"copy": "Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus. ",
+			"claimable": "Claimable",
+			"epoch": "Epoch",
+			"apr": "APR",
+			"staking": "Staking",
+			"claim": "Claim",
+			"claim-all": "Claim All",
+			"trading-rewards": {
+				"title": "Kwenta Trading Rewards",
+				"copy": "Lorem ipsum dolor sit amet consectetur."
+			},
+			"kwenta-rewards": {
+				"title": "Kwenta OP Rewards",
+				"copy": "Lorem ipsum dolor sit amet consectetur."
+			},
+			"snx-rewards": {
+				"title": "SNX OP Rewards",
+				"copy": "Lorem ipsum dolor sit amet consectetur."
+			}
+		},
 		"stake": {
 			"portfolio": {
 				"title": "Staking Dashboard",

@@ -8,6 +8,9 @@ const newTheme = {
 		secondary: {
 			background: common.palette.neutral.n1100,
 		},
+		cards: {
+			background: common.palette.neutral.n900,
+		},
 	},
 	border: {
 		color: common.palette.neutral.n700,

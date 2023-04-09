@@ -1,21 +1,24 @@
 import styled, { css } from 'styled-components';
 
 export const StakingCard = styled.div<{ $noPadding?: boolean }>`
-	background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
 	padding: 20px;
-	border-radius: 15px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 20px;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 
 	.title {
-		font-size: 15px;
-		color: ${(props) => props.theme.colors.selectedTheme.title};
+		font-size: 16px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
+	}
+
+	.label {
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	}
 
 	.value {
-		font-family: ${(props) => props.theme.fonts.monoBold};
-		font-size: 26px;
-		color: ${(props) => props.theme.colors.selectedTheme.yellow};
-		margin-top: 10px;
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	}
 
 	${(props) =>

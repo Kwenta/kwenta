@@ -3,8 +3,7 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
-import RewardsPortfolio from 'sections/dashboard/Rewards/RewardsTabs';
-import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio';
+import RewardsTabs from 'sections/dashboard/Rewards/RewardsTabs';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions';
 
@@ -29,7 +28,7 @@ const RewardsPage: RewardsComponent = () => {
 			<Head>
 				<title>{t('dashboard-rewards.page-title')}</title>
 			</Head>
-			<RewardsPortfolio />
+			<RewardsTabs />
 		</>
 	);
 };
