@@ -161,4 +161,5 @@ const StyledFlexDivCol = styled(FlexDivCol)`
 		font-weight: 400;
 	}
 `;
+
 export default RewardsTabs;

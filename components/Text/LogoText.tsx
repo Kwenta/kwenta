@@ -21,7 +21,7 @@ export const LogoText: FC<LogoTextProps> = memo(
 				<TitleText $yellow={yellow} $bold={bold}>
 					{children}
 				</TitleText>
-				{kwentaIcon ? <KwentaLogo /> : <OptimismLogo height={16} width={16} />}
+				{kwentaIcon ? <KwentaLogo /> : <OptimismLogo height={18} width={18} />}
 				{isToolTip && <SpacedHelpIcon />}
 			</div>
 		);

@@ -1,34 +1,21 @@
-import { useRouter } from 'next/router';
-import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { components } from 'react-select';
 import styled from 'styled-components';
 
+import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
+import HelpIcon from 'assets/svg/app/question-mark.svg';
+import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
+import OptimismLogo from 'assets/svg/providers/optimism.svg';
 import Button from 'components/Button';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
-import Select from 'components/Select';
-import { FuturesAccountTypes } from 'queries/futures/types';
-import { FuturesPosition } from 'sdk/types/futures';
-import { selectSusdBalance } from 'state/balances/selectors';
-import { setFuturesAccountType } from 'state/futures/reducer';
-import {
-	selectCrossMarginPositions,
-	selectFuturesPortfolio,
-	selectIsolatedMarginPositions,
-} from 'state/futures/selectors';
-import { useAppSelector, useAppDispatch } from 'state/hooks';
-import { zeroBN, formatDollars } from 'utils/formatters/number';
-import { getMarketName, MarketKeyByAsset } from 'utils/futures';
+import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
-
-type ReactSelectOptionProps = {
-	label: string;
-	synthIcon: string;
-	marketRemainingMargin?: string;
-	onClick?: () => {};
-};
+import { Body, Heading, LogoText } from 'components/Text';
+import { StakingCard } from 'sections/dashboard/Stake/card';
+import { useAppSelector } from 'state/hooks';
+import { selectAPY } from 'state/staking/selectors';
+import media from 'styles/media';
+import { formatPercent } from 'utils/formatters/number';
 
 const ClaimAllButton = memo(() => {
 	const { t } = useTranslation();
@@ -40,213 +27,160 @@ const ClaimAllButton = memo(() => {
 	);
 });
 
-const Group: FC<any> = memo(({ children, ...props }) => (
-	<components.Group {...props}>
-		<StyledOptions>{children}</StyledOptions>
-		<ClaimAllButton />
-	</components.Group>
-));
-
-const NoOptionsMessage: FC<any> = memo((props) => {
-	const { t } = useTranslation();
-
-	return (
-		<components.NoOptionsMessage {...props}>
-			<span>{t('header.balance.no-accessible-margin')}</span>
-			<Spacer height={30} />
-			<ClaimAllButton />
-		</components.NoOptionsMessage>
-	);
-});
-
 const BalanceActions: FC = () => {
-	const [balanceLabel, setBalanceLabel] = useState('');
 	const { t } = useTranslation();
-	const router = useRouter();
+	const [open, setOpen] = useState(false);
+	const REWARDS = [
+		{
+			key: 'trading-rewards',
+			title: t('dashboard.rewards.trading-rewards.title'),
+			copy: t('dashboard.rewards.trading-rewards.copy'),
+			button: t('dashboard.rewards.staking'),
+			kwentaIcon: true,
+			linkIcon: true,
+		},
+		{
+			key: 'kwenta-rewards',
+			title: t('dashboard.rewards.kwenta-rewards.title'),
+			copy: t('dashboard.rewards.kwenta-rewards.copy'),
+			button: t('dashboard.rewards.claim'),
+			kwentaIcon: false,
+			linkIcon: false,
+		},
+		{
+			key: 'snx-rewards',
+			title: t('dashboard.rewards.snx-rewards.title'),
+			copy: t('dashboard.rewards.snx-rewards.copy'),
+			button: t('dashboard.rewards.claim'),
+			kwentaIcon: false,
+			linkIcon: false,
+		},
+	];
 
-	const crossPositions = useAppSelector(selectCrossMarginPositions);
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
-	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const susdWalletBalance = useAppSelector(selectSusdBalance);
-	const dispatch = useAppDispatch();
-
-	const setMarketConfig = useCallback(
-		(position: FuturesPosition, accountType: FuturesAccountTypes) => ({
-			label: getMarketName(position.asset),
-			synthIcon: MarketKeyByAsset[position.asset],
-			marketRemainingMargin: formatDollars(position.remainingMargin),
-			onClick: () => {
-				// TODO: Remove eventually
-				dispatch(setFuturesAccountType(accountType));
-				return router.push(`/market/?asset=${position.asset}&accountType=${accountType}`);
-			},
-		}),
-		[dispatch, router]
-	);
-
-	const options = useMemo(() => {
-		const isolatedPositionsFiltered = isolatedPositions
-			.filter((position) => position.remainingMargin.gt(zeroBN))
-			.map((position) => setMarketConfig(position, FuturesAccountTypes.ISOLATED_MARGIN));
-		const crossPositionsFiltered = crossPositions
-			.filter((position) => position.remainingMargin.gt(zeroBN))
-			.map((position) => setMarketConfig(position, FuturesAccountTypes.CROSS_MARGIN));
-		return [
-			{
-				label: 'header.balance.total-margin-label',
-				totalAvailableMargin: formatDollars(portfolio.total),
-				options: [...isolatedPositionsFiltered, ...crossPositionsFiltered],
-			},
-		];
-	}, [crossPositions, isolatedPositions, setMarketConfig, portfolio]);
-
-	const OptionsGroupLabel: FC<{ label: string; totalAvailableMargin?: string }> = ({
-		label,
-		totalAvailableMargin,
-	}) => (
-		<FlexDivRow>
-			<Container>{t(label)}</Container>
-			<Container>{totalAvailableMargin}</Container>
-		</FlexDivRow>
-	);
-
-	const formatOptionLabel: FC<ReactSelectOptionProps> = ({
-		label,
-		synthIcon,
-		marketRemainingMargin,
-		onClick,
-	}: ReactSelectOptionProps) => (
-		<LabelContainer onClick={onClick}>
-			<FlexDivRow>
-				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width="24px" height="24px" />}
-				<StyledLabel>{t(label)}</StyledLabel>
-			</FlexDivRow>
-			<Container>{marketRemainingMargin}</Container>
-		</LabelContainer>
-	);
-
-	useEffect(() => {
-		setBalanceLabel(formatDollars(susdWalletBalance, { sign: '$' }));
-	}, [balanceLabel, susdWalletBalance]);
-
-	if (!balanceLabel) {
-		return null;
-	}
+	const apy = useAppSelector(selectAPY);
 
 	return (
-		<Container>
-			{susdWalletBalance.eq(zeroBN) && options.length === 0 ? (
-				<StyledWidgetButton
-					textTransform="none"
-					onClick={() => router.push(`/exchange/?quote=sUSD`)}
-					noOutline
-					mono
-				>
-					<StyledCurrencyIcon currencyKey="sUSD" width="20px" height="20px" />
-					{t('header.balance.get-susd')}
-				</StyledWidgetButton>
-			) : (
-				<BalanceSelect
-					formatOptionLabel={formatOptionLabel}
-					formatGroupLabel={OptionsGroupLabel}
-					controlHeight={41}
-					options={options}
-					value={{ label: balanceLabel, synthIcon: 'sUSD' }}
-					menuWidth={290}
-					maxMenuHeight={500}
-					optionPadding="0px"
-					components={{
-						Group,
-						NoOptionsMessage,
-						DropdownIndicator: undefined,
-						IndicatorSeparator: undefined,
-					}}
-					isSearchable={false}
-					variant="flat"
-				/>
+		<>
+			<Button
+				size="small"
+				mono
+				onClick={() => setOpen(!open)}
+				style={{ color: '#ffb800', borderColor: '#ffb800' }}
+			>
+				<KwentaLogo style={{ marginRight: '5px' }} />
+				<OptimismLogo height={18} width={18} style={{ marginRight: '5px' }} />
+				$3,837.82
+			</Button>
+			{open && (
+				<RewardsTabContainer>
+					<CardsContainer>
+						{REWARDS.map((reward) => (
+							<CardGrid key={reward.key}>
+								<Body size="medium">{reward.title}</Body>
+								<StyledFlexDivRow>
+									<div>
+										<Heading variant="h6" className="title">
+											{t('dashboard.rewards.claimable')}
+										</Heading>
+										<Spacer height={5} />
+										<LogoText kwentaIcon={reward.kwentaIcon} bold={false} yellow>
+											100
+										</LogoText>
+									</div>
+									<StyledFlexDivCol>
+										<Body size="medium" style={{ marginBottom: '5px' }}>
+											{t('dashboard.rewards.epoch')}
+										</Body>
+										<FlexDivRow
+											className="value"
+											style={{ alignItems: 'center', justifyContent: 'flex-start' }}
+										>
+											19
+											<SpacedHelpIcon />
+										</FlexDivRow>
+									</StyledFlexDivCol>
+									<StyledFlexDivCol>
+										<Body size="medium" style={{ marginBottom: '5px' }}>
+											{t('dashboard.rewards.apr')}
+										</Body>
+										<div className="value">{formatPercent(apy, { minDecimals: 2 })}</div>
+									</StyledFlexDivCol>
+									<Button
+										fullWidth
+										variant="flat"
+										size="small"
+										disabled={false}
+										onClick={() => {}}
+										style={{ marginLeft: '50px' }}
+									>
+										{reward.button}
+										{reward.linkIcon ? (
+											<LinkArrowIcon
+												height={8}
+												width={8}
+												fill={'#ffffff'}
+												style={{ marginLeft: '2px' }}
+											/>
+										) : null}
+									</Button>
+								</StyledFlexDivRow>
+							</CardGrid>
+						))}
+						<ClaimAllButton />
+					</CardsContainer>
+				</RewardsTabContainer>
 			)}
-		</Container>
+		</>
 	);
 };
 
-export default BalanceActions;
-
-const Container = styled.div`
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.mono};
+const SpacedHelpIcon = styled(HelpIcon)`
+	margin-left: 5px;
 `;
 
-const BalanceSelect = styled(Select)<{ value: { label: string } }>`
-	.react-select__control {
-		width: ${(props) => 5 * props.value.label.length + 80}px;
-	}
-
-	.react-select__group {
-		padding: 20px;
-
-		.react-select__group-heading {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-			font-size: 12px;
-			padding: 0;
-			margin-bottom: 15px;
-			text-transform: none;
-		}
-	}
-
-	.react-select__value-container {
-		padding: 0px;
-		display: flex;
-		justify-content: center;
-	}
-
-	.react-select__menu-notice--no-options {
+const RewardsTabContainer = styled.div`
+	z-index: 100;
+	position: absolute;
+	right: 12%;
+	${media.lessThan('mdUp')`
 		padding: 15px;
-	}
+	`}
 
-	.react-select__option {
-		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	}
+	${media.greaterThan('mdUp')`
+		margin-top: 56px;
+	`}
 `;
 
-const StyledOptions = styled.div`
-	border-radius: 10px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-`;
-
-const StyledCurrencyIcon = styled(CurrencyIcon)`
-	margin-right: 5px;
-	height: auto;
-	width: 20px;
-`;
-
-const StyledLabel = styled.div`
-	white-space: nowrap;
-`;
-
-const LabelContainer = styled(FlexDivRowCentered)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-size: 13px;
-	line-height: 13px;
-	padding: 10px;
-	> div {
-		align-items: center;
-	}
-`;
-
-const StyledButton = styled(Button)`
-	width: 100%;
-	height: 41px;
-	font-size: 13px;
-	margin-top: 15px;
-	align-items: center;
-`;
-
-const StyledWidgetButton = styled(Button)`
-	height: 41px;
-	font-size: 13px;
-	padding: 10px;
-	white-space: nowrap;
+const CardGrid = styled.div`
 	display: flex;
+	flex-direction: column;
 	justify-content: space-between;
-	align-items: center;
+	row-gap: 10px;
+	margin-bottom: 15px;
 `;
+
+const CardsContainer = styled(StakingCard)`
+	display: grid;
+	width: 100%;
+	grid-template-rows: repeat(3, 1fr);
+	grid-gap: 20px;
+`;
+
+const StyledFlexDivRow = styled(FlexDivRow)`
+	column-gap: 50px;
+	.value {
+		color: ${(props) => props.theme.colors.selectedTheme.text.label};
+		font-size: 13px;
+	}
+
+	.title {
+		font-weight: 400;
+	}
+`;
+
+const StyledFlexDivCol = styled(FlexDivCol)`
+	margin: auto;
+	padding: 0;
+`;
+
+export default BalanceActions;
