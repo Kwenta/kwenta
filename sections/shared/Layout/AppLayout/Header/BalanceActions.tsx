@@ -20,6 +20,8 @@ import {
 import { useAppSelector, useAppDispatch } from 'state/hooks';
 import { zeroBN, formatDollars } from 'utils/formatters/number';
 import { getMarketName, MarketKeyByAsset } from 'utils/futures';
+import Pill from 'components/Pill';
+import Spacer from 'components/Spacer/Spacer';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -28,21 +30,20 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-const GetUsdButton = memo(() => {
+const ClaimAllButton = memo(() => {
 	const { t } = useTranslation();
-	const router = useRouter();
 
 	return (
-		<StyledButton textTransform="none" onClick={() => router.push(`/exchange/?quote=sUSD`)}>
-			{t('header.balance.get-more-susd')}
-		</StyledButton>
+		<Pill color="yellow" fullWidth={true} size="large" isRounded={false}>
+			{t('dashboard.rewards.claim-all')}
+		</Pill>
 	);
 });
 
 const Group: FC<any> = memo(({ children, ...props }) => (
 	<components.Group {...props}>
 		<StyledOptions>{children}</StyledOptions>
-		<GetUsdButton />
+		<ClaimAllButton />
 	</components.Group>
 ));
 
@@ -52,7 +53,8 @@ const NoOptionsMessage: FC<any> = memo((props) => {
 	return (
 		<components.NoOptionsMessage {...props}>
 			<span>{t('header.balance.no-accessible-margin')}</span>
-			<GetUsdButton />
+			<Spacer height={30} />
+			<ClaimAllButton />
 		</components.NoOptionsMessage>
 	);
 });
