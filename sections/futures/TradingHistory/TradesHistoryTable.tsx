@@ -97,13 +97,13 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 
 	return (
 		<HistoryContainer mobile={mobile}>
-			<div>
-				<TableMainHeader>Trade History</TableMainHeader>
+			<div style={{ height: '100%' }}>
+				{!mobile && <TableMainHeader>Trade History</TableMainHeader>}
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
 					lastRef={lastElementRef}
-					mobile={mobile}
+					$mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
 							? window.open(`${blockExplorer.txLink(row.original.id)}`)
@@ -180,14 +180,17 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	margin-bottom: 16px;
 	box-sizing: border-box;
-
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
 
 	${(props) =>
 		props.mobile &&
 		css`
+			height: 100%;
 			margin-bottom: 0;
+			border-radius: 0;
+			border: none;
+			border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 		`}
 `;
 
@@ -214,12 +217,12 @@ const TableAlignment = css`
 	}
 `;
 
-const StyledTable = styled(Table)<{ mobile?: boolean }>`
+const StyledTable = styled(Table)<{ $mobile?: boolean }>`
 	border: none;
 
 	${(props) =>
 		css`
-			height: ${props.mobile ? 242 : 695}px;
+			height: ${props.$mobile ? '100%' : '695px'};
 		`}
 
 	.table-row, .table-body-row {
