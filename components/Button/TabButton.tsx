@@ -154,6 +154,8 @@ const sharedStyle = css<{
 		css`
 			border-radius: 0;
 			border: unset;
+			height: 100%;
+			width: 100%;
 
 			&:not(:last-of-type) {
 				border-right: ${props.theme.colors.selectedTheme.border};
