@@ -256,7 +256,7 @@ export type ModifyPositionOptions<T extends boolean> = {
 export type FuturesOrderTypeDisplay =
 	| 'Next Price'
 	| 'Limit'
-	| 'Stop Market'
+	| 'Stop'
 	| 'Market'
 	| 'Liquidation'
 	| 'Delayed'
