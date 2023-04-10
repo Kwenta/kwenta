@@ -325,14 +325,12 @@ const SearchBarContainer = styled.div`
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
 	height: 100%;
-	z-index: 100;
+	z-index: 40;
 	${(props) =>
 		props.mobile &&
 		css`
-			position: absolute;
 			width: 100%;
-			top: 0;
-			z-index: 5;
+			border-bottom: ${props.theme.colors.selectedTheme.border};
 		`}
 `;
 

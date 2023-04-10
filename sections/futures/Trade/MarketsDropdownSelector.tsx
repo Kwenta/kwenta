@@ -75,7 +75,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		margin-left: 12px;
 	}
 
-	width: 380px;
+	width: ${(props) => (props.mobile ? '100%' : '380px')};
 	height: 100%;
 
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};

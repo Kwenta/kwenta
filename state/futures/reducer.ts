@@ -171,6 +171,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	closePositionOrderFee: '0',
+	tradePanelDrawerOpen: false,
 };
 
 const futuresSlice = createSlice({
@@ -365,6 +366,9 @@ const futuresSlice = createSlice({
 		},
 		setSelectedPortfolioTimeframe: (state, action: PayloadAction<Period>) => {
 			state.dashboard.selectedPortfolioTimeframe = action.payload;
+		},
+		setTradePanelDrawerOpen: (state, action: PayloadAction<boolean>) => {
+			state.tradePanelDrawerOpen = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -748,6 +752,7 @@ export const {
 	setSelectedPortfolioTimeframe,
 	setCrossSLTPModalStopLoss,
 	setCrossSLTPModalTakeProfit,
+	setTradePanelDrawerOpen,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

@@ -498,7 +498,7 @@ export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> 
 	market: 'Market',
 	delayed: 'Delayed',
 	delayed_offchain: 'Delayed Market',
-	stop_market: 'Stop Market',
+	stop_market: 'Stop',
 	limit: 'Limit',
 };
 
@@ -506,7 +506,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 	return orderType === 'NextPrice'
 		? 'Next Price'
 		: orderType === 'StopMarket'
-		? 'Stop Market'
+		? 'Stop'
 		: orderType === 'DelayedOffchain'
 		? 'Delayed Market'
 		: orderType;
@@ -642,7 +642,7 @@ export const formatOrderDisplayType = (
 	if (reduceOnly) {
 		return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Take Profit' : 'Stop Loss';
 	}
-	return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Limit' : 'Stop Market';
+	return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Limit' : 'Stop';
 };
 
 export const calculateDesiredFillPrice = (

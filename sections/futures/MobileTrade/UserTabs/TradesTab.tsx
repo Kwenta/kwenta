@@ -8,7 +8,6 @@ import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesMarketAsset, FuturesTrade, PositionSide } from 'sdk/types/futures';
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
 import { fetchTradesForSelectedMarket } from 'state/futures/actions';
@@ -67,10 +66,8 @@ const TradesTab: React.FC = () => {
 
 	return (
 		<div>
-			<SectionHeader>
-				<SectionTitle>{t('futures.market.user.trades.tab')}</SectionTitle>
-			</SectionHeader>
 			<Table
+				rounded={false}
 				onTableRowClick={(row) => {
 					setSelectedTrade(row.original);
 				}}

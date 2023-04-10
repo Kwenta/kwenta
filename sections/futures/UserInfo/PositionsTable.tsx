@@ -3,10 +3,8 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
-import LinkArrow from 'assets/svg/app/link-arrow.svg';
-import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -14,18 +12,17 @@ import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import Table, { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
-import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesAccountType } from 'queries/futures/subgraph';
 import { ConditionalOrderTypeEnum } from 'sdk/types/futures';
 import MobilePositionRow from 'sections/dashboard/FuturesPositionsTable/MobilePositionRow';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import {
 	selectCrossMarginPositions,
+	selectFuturesType,
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
@@ -33,38 +30,16 @@ import {
 	selectAllSLTPOrders,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import media from 'styles/media';
 import { formatDollars } from 'utils/formatters/number';
 
 import TableMarketDetails from './TableMarketDetails';
 
 type FuturesPositionTableProps = {
-	accountType: FuturesAccountType;
 	showCurrentMarket?: boolean;
 	showEmptyTable?: boolean;
 };
 
-const LegacyLink = () => {
-	const { t } = useTranslation();
-	const theme = useTheme();
-	return (
-		<ButtonContainer>
-			<Button
-				fullWidth
-				variant="flat"
-				size="small"
-				noOutline={true}
-				textTransform="none"
-				onClick={() => window.open(EXTERNAL_LINKS.Trade.V1, '_blank', 'noopener noreferrer')}
-			>
-				{t('dashboard.overview.futures-positions-table.legacy-link')}
-				<StyledArrow fill={theme.colors.selectedTheme.text.value} />
-			</Button>
-		</ButtonContainer>
-	);
-};
-
-const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyTable = true }) => {
+const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const dispatch = useAppDispatch();
@@ -77,6 +52,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
+	const accountType = useAppSelector(selectFuturesType);
 	const sltpOrders = useAppSelector(selectAllSLTPOrders);
 
 	let data = useMemo(() => {
@@ -259,7 +235,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<FlexDivRowCentered>
-										<div style={{ marginRight: 10 }}>
+										<div>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
 											<NumericValue
 												value={cellProps.row.original.position.leverage}
@@ -373,7 +349,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 				/>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<LegacyLink />
 				{(showEmptyTable || data.length) && (
 					<>
 						<OpenPositionsHeader>
@@ -410,20 +385,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ accountType, showEmptyT
 		</div>
 	);
 };
-
-const ButtonContainer = styled.div`
-	margin: 8px 0px 16px;
-
-	${media.lessThan('md')`
-		margin: 8px 15px 16px;
-	`};
-`;
-
-const StyledArrow = styled(LinkArrow)`
-	margin-left: 2px;
-	width: 9px;
-	height: 9px;
-`;
 
 const PnlContainer = styled.div`
 	display: flex;

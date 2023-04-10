@@ -19,6 +19,7 @@ export type TabButtonProps = {
 	nofill?: boolean;
 	isRounded?: boolean;
 	onClick?: () => any;
+	flat?: boolean;
 };
 
 const InnerButton: React.FC<TabButtonProps> = React.memo(
@@ -44,27 +45,30 @@ const InnerButton: React.FC<TabButtonProps> = React.memo(
 	)
 );
 
-const TabButton: React.FC<TabButtonProps> = React.memo(({ active, onClick, ...props }) =>
-	props.inline ? (
-		<InlineTab active={active} onClick={onClick}>
-			<InnerButton {...props} />
-		</InlineTab>
-	) : (
-		<StyledButton
-			active={active}
-			$vertical={props.vertical}
-			$nofill={props.nofill}
-			onClick={onClick}
-		>
-			<InnerButton {...props} />
-		</StyledButton>
-	)
+const TabButton: React.FC<TabButtonProps> = React.memo(
+	({ active, flat = false, onClick, ...props }) =>
+		props.inline ? (
+			<InlineTab active={active} onClick={onClick}>
+				<InnerButton {...props} />
+			</InlineTab>
+		) : (
+			<StyledButton
+				active={active}
+				$vertical={props.vertical}
+				$nofill={props.nofill}
+				$flat={flat}
+				onClick={onClick}
+			>
+				<InnerButton {...props} />
+			</StyledButton>
+		)
 );
 
 const sharedStyle = css<{
 	active?: boolean;
 	$vertical?: boolean;
 	$nofill?: boolean;
+	$flat?: boolean;
 }>`
 	height: initial;
 	display: flex;
@@ -144,6 +148,19 @@ const sharedStyle = css<{
 					: props.theme.colors.selectedTheme.gray};
 		}
 	}
+
+	${(props) =>
+		props.$flat &&
+		css`
+			border-radius: 0;
+			border: unset;
+			height: 100%;
+			width: 100%;
+
+			&:not(:last-of-type) {
+				border-right: ${props.theme.colors.selectedTheme.border};
+			}
+		`}
 `;
 
 const InlineTab = styled.div`
@@ -157,9 +174,9 @@ const InlineTab = styled.div`
 const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$vertical?: boolean;
 	$nofill?: boolean;
+	$flat?: boolean;
 	active?: boolean;
 }>`
-	${sharedStyle}
 	p {
 		text-align: left;
 	}
@@ -168,6 +185,7 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 		flex-direction: ${props.$vertical ? 'column' : 'row'};
 		border-radius: ${props.isRounded ? '100px' : '8px'};
 	`}
+	${sharedStyle}
 `;
 
 export default TabButton;
