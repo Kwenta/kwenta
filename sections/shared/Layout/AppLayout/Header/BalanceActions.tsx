@@ -168,13 +168,18 @@ const CardsContainer = styled(StakingCard)`
 
 const StyledFlexDivRow = styled(FlexDivRow)`
 	column-gap: 50px;
+
 	.value {
 		color: ${(props) => props.theme.colors.selectedTheme.text.label};
 		font-size: 13px;
+		margin-top: 0px;
+		font-family: ${(props) => props.theme.fonts.regular};
 	}
 
 	.title {
 		font-weight: 400;
+		font-size: 16px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	}
 `;
 

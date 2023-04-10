@@ -7,18 +7,20 @@ export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 
 	.title {
-		font-size: 16px;
-		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
+		font-size: 15px;
+		color: ${(props) => props.theme.colors.selectedTheme.title};
+	}
+
+	.value {
+		font-family: ${(props) => props.theme.fonts.monoBold};
+		font-size: 26px;
+		color: ${(props) => props.theme.colors.selectedTheme.yellow};
+		margin-top: 10px;
 	}
 
 	.label {
 		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
-	}
-
-	.value {
-		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	}
 
 	${(props) =>

@@ -12,13 +12,14 @@ type LogoTextProps = {
 	isToolTip?: boolean;
 	kwentaIcon?: boolean;
 	bold?: boolean;
+	size?: 'medium' | 'large';
 };
 
 export const LogoText: FC<LogoTextProps> = memo(
-	({ children, yellow, isToolTip = false, bold = true, kwentaIcon = true }) => {
+	({ children, yellow, size = 'large', isToolTip = false, bold = true, kwentaIcon = true }) => {
 		return (
 			<div style={{ display: 'flex', alignItems: 'center' }}>
-				<TitleText $yellow={yellow} $bold={bold}>
+				<TitleText $yellow={yellow} $bold={bold} $size={size}>
 					{children}
 				</TitleText>
 				{kwentaIcon ? <KwentaLogo /> : <OptimismLogo height={18} width={18} />}
@@ -28,8 +29,13 @@ export const LogoText: FC<LogoTextProps> = memo(
 	}
 );
 
-const TitleText = styled(Heading)<{ $yellow?: boolean; $mono?: boolean; $bold?: boolean }>`
-	font-size: 16px;
+const TitleText = styled(Heading)<{
+	$yellow?: boolean;
+	$mono?: boolean;
+	$bold?: boolean;
+	$size?: 'medium' | 'large';
+}>`
+	font-size: ${(props) => (props.$size === 'large' ? '26' : '16')}px;
 	margin-right: 8px;
 	font-family: ${(props) => (props.$bold ? props.theme.fonts.monoBold : props.theme.fonts.mono)};
 

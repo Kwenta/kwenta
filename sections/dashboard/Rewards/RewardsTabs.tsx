@@ -77,7 +77,7 @@ const RewardsTabs: FC = () => {
 								{t('dashboard.rewards.claimable')}
 							</Heading>
 							<Spacer height={5} />
-							<LogoText kwentaIcon={reward.kwentaIcon} bold={false} yellow>
+							<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
 								100
 							</LogoText>
 						</div>
@@ -141,6 +141,15 @@ const CardGrid = styled(StakingCard)`
 
 	.title {
 		font-weight: 400;
+		font-size: 16px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
+	}
+
+	.value {
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+		margin-top: 0px;
+		font-family: ${(props) => props.theme.fonts.regular};
 	}
 `;
 
