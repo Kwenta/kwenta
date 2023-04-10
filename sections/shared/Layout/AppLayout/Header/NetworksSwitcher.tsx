@@ -17,7 +17,6 @@ import Select from 'components/Select';
 import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
-import { chain } from 'containers/Connector/config';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { ExternalLink } from 'styles/common';
@@ -35,8 +34,6 @@ const NetworksSwitcher: FC = () => {
 	const { t } = useTranslation();
 	const { openChainModal } = useChainModal();
 	const isL2 = useIsL2();
-	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
-	const networkLabel = 'header.networks-switcher.optimism-' + network;
 
 	const OPTIMISM_OPTIONS = [
 		{
@@ -64,17 +61,17 @@ const NetworksSwitcher: FC = () => {
 	const networkIcon = (prefixIcon: string) => {
 		switch (prefixIcon) {
 			case 'Polygon':
-				return <PolygonIcon width={20} height={14} />;
+				return <PolygonIcon width={24} height={16} />;
 			case 'Arbitrum One':
-				return <ArbitrumIcon width={20} height={14} />;
+				return <ArbitrumIcon width={24} height={16} />;
 			case 'Ethereum':
-				return <EthereumIcon width={20} height={14} />;
+				return <EthereumIcon width={24} height={16} />;
 			case 'Avalanche':
-				return <AvalancheIcon width={20} height={14} />;
+				return <AvalancheIcon width={24} height={16} />;
 			case 'BNB Smart Chain':
-				return <BinanceIcon width={20} height={14} />;
+				return <BinanceIcon width={24} height={16} />;
 			default:
-				return <OptimismIcon width={20} height={14} />;
+				return <OptimismIcon width={24} height={16} />;
 		}
 	};
 
@@ -96,19 +93,18 @@ const NetworksSwitcher: FC = () => {
 	);
 
 	return !isL2 ? (
-		<Container onClick={openChainModal}>
+		<div onClick={openChainModal}>
 			<StyledButton noOutline size="small" mono>
-				{activeChain && <PrefixIcon>{networkIcon(activeChain.name)}</PrefixIcon>}
-				{activeChain?.name}
+				{activeChain && networkIcon(activeChain.name)}
 			</StyledButton>
-		</Container>
+		</div>
 	) : (
 		<div>
 			<L2Select
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={41}
 				options={OPTIMISM_OPTIONS}
-				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
+				value={{ label: '', prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding="0px"
 				components={{ IndicatorSeparator, DropdownIndicator }}
@@ -121,19 +117,13 @@ const NetworksSwitcher: FC = () => {
 
 export default NetworksSwitcher;
 
-const Container = styled.div`
-	/*width: 100%;*/
-`;
-
 const StyledButton = styled(Button)`
-	min-width: 0px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	width: 41px;
+	padding: 0px;
 `;
 
 const L2Select = styled(Select)`
-	width: 137px;
+	width: 41px;
 
 	.react-select__single-value * {
 		font-family: ${(props) => props.theme.fonts.mono};
@@ -144,7 +134,7 @@ const L2Select = styled(Select)`
 	}
 
 	.react-select__dropdown-indicator {
-		margin-right: 5px;
+		display: none;
 	}
 
 	.react-select__value-container {
@@ -154,5 +144,4 @@ const L2Select = styled(Select)`
 
 const PrefixIcon = styled.span`
 	display: flex;
-	padding-right: 6px;
 `;
