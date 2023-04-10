@@ -46,6 +46,8 @@ const MainTabButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
 	grid-gap: 0;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 export default OverviewTabs;

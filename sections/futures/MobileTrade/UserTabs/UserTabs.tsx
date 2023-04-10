@@ -56,6 +56,7 @@ const TabButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	grid-gap: 0;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 export default UserTabs;

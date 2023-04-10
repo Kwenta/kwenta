@@ -153,10 +153,10 @@ const sharedStyle = css<{
 		props.$flat &&
 		css`
 			border-radius: 0;
-			border-left: none;
+			border: unset;
 
-			&:last-of-type {
-				border-right: none;
+			&:not(:last-of-type) {
+				border-right: ${props.theme.colors.selectedTheme.border};
 			}
 		`}
 `;
