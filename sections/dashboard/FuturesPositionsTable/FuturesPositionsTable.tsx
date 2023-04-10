@@ -90,7 +90,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<>
 			<DesktopOnlyView>
 				<div>
-					{/* <LegacyLink /> */}
 					<Table
 						data={data}
 						onTableRowClick={(row) =>
@@ -107,7 +106,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									{!showCurrentMarket ? (
 										t('dashboard.overview.futures-positions-table.no-result')
 									) : (
-										<Link href={ROUTES.Markets.Home(accountType)}>
+										<Link href={ROUTES.Markets.Home('cross_margin')}>
 											<div>{t('common.perp-cta')}</div>
 										</Link>
 									)}
@@ -292,7 +291,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						<div style={{ margin: '0 15px' }}>
 							{data.length === 0 ? (
 								<NoPositionsText>
-									<Link href={ROUTES.Markets.Home(accountType)}>
+									<Link href={ROUTES.Markets.Home('cross_margin')}>
 										<div>{t('common.perp-cta')}</div>
 									</Link>
 								</NoPositionsText>
