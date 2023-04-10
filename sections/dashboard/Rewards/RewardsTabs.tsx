@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
-import TabButton from 'components/Button/TabButton';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
+import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -55,12 +55,13 @@ const RewardsTabs: FC = () => {
 					</Heading>
 					<div className="value">{t('dashboard.rewards.copy')}</div>
 				</StyledFlexDivCol>
-				<StyledTabButton
-					isRounded
-					title={t('dashboard.rewards.claim-all')}
-					active
+				<Pill
+					color="yellow"
+					size="large"
 					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
-				/>
+				>
+					{t('dashboard.rewards.claim-all')}
+				</Pill>
 			</FlexDivRowCentered>
 			<CardsContainer>
 				{REWARDS.map((reward) => (
@@ -117,10 +118,6 @@ const RewardsTabs: FC = () => {
 		</RewardsTabContainer>
 	);
 };
-
-const StyledTabButton = styled(TabButton)`
-	margin-bottom: 9px;
-`;
 
 const SpacedHelpIcon = styled(HelpIcon)`
 	margin-left: 5px;

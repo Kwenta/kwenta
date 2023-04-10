@@ -2,7 +2,7 @@ import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-	size?: 'small';
+	size?: 'small' | 'large';
 	color?: 'yellow' | 'gray' | 'red';
 	outline?: boolean;
 };
@@ -18,7 +18,8 @@ const BasePill = styled.button<{
 }>`
 	${(props) => css`
 		padding: ${props.$size === 'small' ? '0 5px' : '8px'};
-		height: 20px;
+		height: ${props.$size === 'small' ? '20px' : '36px'};
+		padding: ${props.$size === 'small' ? 'auto' : '0 8px'};
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
 		font-family: ${props.theme.fonts.black};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
