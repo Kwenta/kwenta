@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import ColoredPrice from 'components/ColoredPrice';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -26,11 +25,8 @@ const TransfersTab: React.FC = () => {
 
 	return (
 		<div>
-			<SectionHeader>
-				<SectionTitle>Transfers</SectionTitle>
-			</SectionHeader>
-
 			<Table
+				rounded={false}
 				highlightRowsOnHover
 				columns={[
 					{

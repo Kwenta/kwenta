@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import TextButton from 'components/Button/TextButton';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
-import InputTitle from 'components/Input/InputTitle';
+import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
@@ -89,7 +89,7 @@ const LeverageInput: FC = memo(() => {
 				label={
 					<LeverageTitle>
 						{t('futures.market.trade.input.leverage.title')}&nbsp; —
-						<span>&nbsp; Up to {truncateMaxLeverage}x</span>
+						<LeverageTitleSpan>&nbsp; Up to {truncateMaxLeverage}x</LeverageTitleSpan>
 					</LeverageTitle>
 				}
 				rightElement={<ModeButton mode={mode} setMode={setMode} />}
@@ -146,6 +146,10 @@ const LeverageInputWrapper = styled(FlexDivCol)`
 
 const LeverageTitle = styled(InputTitle)`
 	text-transform: capitalize;
+`;
+
+const LeverageTitleSpan = styled(InputTitleSpan)`
+	text-transform: none;
 `;
 
 const SliderRow = styled(FlexDivRow)`

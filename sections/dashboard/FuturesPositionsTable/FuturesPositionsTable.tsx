@@ -3,18 +3,15 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
-import LinkArrow from 'assets/svg/app/link-arrow.svg';
 import MarketBadge from 'components/Badge/MarketBadge';
-import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
-import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
@@ -29,7 +26,6 @@ import {
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import media from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
 
 import MobilePositionRow from './MobilePositionRow';
@@ -38,26 +34,6 @@ type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
 	showCurrentMarket?: boolean;
 	showEmptyTable?: boolean;
-};
-
-const LegacyLink = () => {
-	const { t } = useTranslation();
-	const theme = useTheme();
-	return (
-		<ButtonContainer>
-			<Button
-				fullWidth
-				variant="flat"
-				size="small"
-				noOutline={true}
-				textTransform="none"
-				onClick={() => window.open(EXTERNAL_LINKS.Trade.V1, '_blank', 'noopener noreferrer')}
-			>
-				{t('dashboard.overview.futures-positions-table.legacy-link')}
-				<StyledArrow fill={theme.colors.selectedTheme.text.value} />
-			</Button>
-		</ButtonContainer>
-	);
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
@@ -114,7 +90,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<>
 			<DesktopOnlyView>
 				<div>
-					{/* <LegacyLink /> */}
 					<Table
 						data={data}
 						onTableRowClick={(row) =>
@@ -131,7 +106,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									{!showCurrentMarket ? (
 										t('dashboard.overview.futures-positions-table.no-result')
 									) : (
-										<Link href={ROUTES.Markets.Home(accountType)}>
+										<Link href={ROUTES.Markets.Home('cross_margin')}>
 											<div>{t('common.perp-cta')}</div>
 										</Link>
 									)}
@@ -304,7 +279,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<LegacyLink />
 				{(showEmptyTable || data.length) && (
 					<>
 						<OpenPositionsHeader>
@@ -317,7 +291,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						<div style={{ margin: '0 15px' }}>
 							{data.length === 0 ? (
 								<NoPositionsText>
-									<Link href={ROUTES.Markets.Home(accountType)}>
+									<Link href={ROUTES.Markets.Home('cross_margin')}>
 										<div>{t('common.perp-cta')}</div>
 									</Link>
 								</NoPositionsText>
@@ -341,20 +315,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		</>
 	);
 };
-
-const ButtonContainer = styled.div`
-	margin: 8px 0px 16px;
-
-	${media.lessThan('md')`
-		margin: 8px 15px 16px;
-	`};
-`;
-
-const StyledArrow = styled(LinkArrow)`
-	margin-left: 2px;
-	width: 9px;
-	height: 9px;
-`;
 
 const PnlContainer = styled.div`
 	display: flex;

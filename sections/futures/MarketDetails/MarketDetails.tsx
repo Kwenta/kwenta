@@ -26,15 +26,15 @@ type MarketDetailsProps = {
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
-		<MainContainer>
-			<MarketsDropdown />
+		<MainContainer mobile={mobile}>
+			<MarketsDropdown mobile={mobile} />
 			<MarketDetailsContainer mobile={mobile}>
-				<MarketPriceDetail />
+				{!mobile && <MarketPriceDetail />}
 				<IndexPriceDetail />
-				<DailyChangeDetail />
+				{!mobile && <DailyChangeDetail />}
 				<HourlyFundingDetail />
-				<OpenInterestLongDetail />
-				<OpenInterestShortDetail />
+				{!mobile && <OpenInterestLongDetail />}
+				{!mobile && <OpenInterestShortDetail />}
 				<MarketSkew />
 			</MarketDetailsContainer>
 		</MainContainer>
@@ -117,7 +117,7 @@ const OpenInterestLongDetail = memo(() => {
 			dataKey={MarketDataKey.openInterestLong}
 			value={
 				marketInfo?.openInterest.longUSD
-					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })} / ${oiCap}`
+					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}/${oiCap}`
 					: NO_VALUE
 			}
 		/>
@@ -162,19 +162,27 @@ const OpenInterestShortDetail = memo(() => {
 			dataKey={MarketDataKey.openInterestShort}
 			value={
 				marketInfo?.openInterest.shortUSD
-					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })} / ${oiCap}`
+					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })}/${oiCap}`
 					: NO_VALUE
 			}
 		/>
 	);
 });
 
-const MainContainer = styled.div`
+const MainContainer = styled.div<{ mobile?: boolean }>`
 	display: flex;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	align-items: center;
 	height: 67px;
+
+	${(props) =>
+		props.mobile &&
+		css`
+			flex-direction: column;
+			height: initial;
+			border-top: none;
+		`}
 `;
 
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
@@ -233,8 +241,10 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 			height: auto;
 			padding: 15px;
 			display: grid;
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: repeat(3, 1fr);
 			grid-gap: 20px 0;
+			width: 100%;
+			border-left: none;
 
 			.heading {
 				margin-bottom: 2px;

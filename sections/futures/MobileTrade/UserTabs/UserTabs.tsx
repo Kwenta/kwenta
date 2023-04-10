@@ -2,16 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 
 import OrdersTab from './OrdersTab';
+import PositionsTab from './PositionsTab';
 import TradesTab from './TradesTab';
 import TransfersTab from './TransfersTab';
 
 const TABS = [
 	{
 		title: 'Position',
-		component: <TradeIsolatedMargin />,
+		component: <PositionsTab />,
 	},
 	{
 		title: 'Orders',
@@ -39,6 +39,7 @@ const UserTabs: React.FC = () => {
 						title={title}
 						active={activeTab === i}
 						onClick={() => setActiveTab(i)}
+						flat
 					/>
 				))}
 			</TabButtonsContainer>
@@ -48,16 +49,14 @@ const UserTabs: React.FC = () => {
 };
 
 const UserTabsContainer = styled.div`
-	padding: 0 15px;
 	min-height: 390px;
 `;
 
 const TabButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	grid-column-gap: 15px;
-	margin-bottom: 15px;
-	overflow: auto;
+	grid-gap: 0;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 export default UserTabs;

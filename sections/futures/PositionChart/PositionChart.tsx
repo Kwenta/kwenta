@@ -10,6 +10,7 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 import { zeroBN } from 'utils/formatters/number';
 
 export default function PositionChart() {
@@ -67,7 +68,12 @@ export default function PositionChart() {
 }
 
 const Container = styled.div<{ visible: boolean }>`
-	height: calc(100% - 315px);
+	${media.greaterThan('md')`
+		height: calc(100% - 315px);
+	`}
+	${media.lessThan('md')`
+		height: 100%;
+	`}
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};

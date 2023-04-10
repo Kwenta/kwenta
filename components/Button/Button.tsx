@@ -28,6 +28,7 @@ type BaseButtonProps = {
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase';
 	$active?: boolean;
 	$mono?: boolean;
+	$fontSize?: number;
 };
 
 export const border = css`
@@ -191,6 +192,12 @@ const BaseButton = styled.button<BaseButtonProps>`
 			width: 100%;
 		`};
 
+		${(props) =>
+			props.$fontSize &&
+			css`
+				font-size: ${props.$fontSize}px;
+			`}
+
 	&:disabled {
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		background: transparent;
@@ -221,6 +228,7 @@ type ButtonProps = {
 	disabled?: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	isRounded?: boolean;
+	fontSize?: number;
 };
 
 const Button: FC<ButtonProps> = memo(
@@ -230,13 +238,21 @@ const Button: FC<ButtonProps> = memo(
 		mono,
 		left,
 		right,
+		fontSize,
 		active = true,
 		size = 'medium',
 		variant = 'flat',
 		...props
 	}) => {
 		return (
-			<BaseButton $active={active} $mono={mono} $size={size} $variant={variant} {...props}>
+			<BaseButton
+				$active={active}
+				$mono={mono}
+				$size={size}
+				$variant={variant}
+				$fontSize={fontSize}
+				{...props}
+			>
 				{loading ? (
 					<ButtonLoader />
 				) : (
