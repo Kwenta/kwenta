@@ -7,10 +7,19 @@ type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	outline?: boolean;
 	fullWidth?: boolean;
 	isRounded?: boolean;
+	blackFont?: boolean;
 };
 
 const Pill: FC<PillProps> = memo(
-	({ size = 'small', color = 'gray', isRounded = true, outline, fullWidth, ...props }) => {
+	({
+		size = 'small',
+		color = 'gray',
+		isRounded = true,
+		blackFont = true,
+		outline,
+		fullWidth,
+		...props
+	}) => {
 		return (
 			<BasePill
 				$size={size}
@@ -18,6 +27,7 @@ const Pill: FC<PillProps> = memo(
 				$outline={outline}
 				$fullWidth={fullWidth}
 				$isRounded={isRounded}
+				$blackFont={blackFont}
 				{...props}
 			/>
 		);
@@ -30,14 +40,14 @@ const BasePill = styled.button<{
 	$outline?: boolean;
 	$fullWidth?: boolean;
 	$isRounded?: boolean;
+	$blackFont?: boolean;
 }>`
 	${(props) => css`
-		padding: ${props.$size === 'small' ? '0 5px' : '8px'};
+		padding: ${props.$size === 'small' ? '0 5px' : '10px 15px'};
 		height: ${props.$size === 'small' ? '20px' : '36px'};
-		padding: ${props.$size === 'small' ? 'auto' : '0 8px'};
 		width: ${props.$fullWidth ? '100%' : 'unset'};
-		font-size: ${props.$size === 'small' ? 10 : 12}px;
-		font-family: ${props.theme.fonts.black};
+		font-size: ${props.$size === 'small' ? 10 : 13}px;
+		font-family: ${props.$blackFont ? props.theme.fonts.black : props.theme.fonts.bold};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
 		color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
 		border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].border};

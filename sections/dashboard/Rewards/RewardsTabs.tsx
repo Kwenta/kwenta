@@ -58,6 +58,7 @@ const RewardsTabs: FC = () => {
 				<Pill
 					color="yellow"
 					size="large"
+					blackFont={false}
 					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 				>
 					{t('dashboard.rewards.claim-all')}
@@ -162,12 +163,16 @@ const CardsContainer = styled.div`
 
 const StyledFlexDivCol = styled(FlexDivCol)`
 	.value {
-		color: ${(props) => props.theme.colors.selectedTheme.text.label};
 		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+		margin-top: 0px;
+		font-family: ${(props) => props.theme.fonts.regular};
 	}
 
 	.title {
 		font-weight: 400;
+		font-size: 16px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	}
 `;
 

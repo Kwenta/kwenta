@@ -21,7 +21,7 @@ const ClaimAllButton = memo(() => {
 	const { t } = useTranslation();
 
 	return (
-		<Pill color="yellow" fullWidth={true} size="large" isRounded={false}>
+		<Pill color="yellow" fullWidth={true} size="large" isRounded={false} blackFont={false}>
 			{t('dashboard.rewards.claim-all')}
 		</Pill>
 	);
@@ -83,7 +83,7 @@ const BalanceActions: FC = () => {
 											{t('dashboard.rewards.claimable')}
 										</Heading>
 										<Spacer height={5} />
-										<LogoText kwentaIcon={reward.kwentaIcon} bold={false} yellow>
+										<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
 											100
 										</LogoText>
 									</div>
