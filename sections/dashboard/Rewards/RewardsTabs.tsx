@@ -2,20 +2,22 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
+import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import TabButton from 'components/Button/TabButton';
-import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex';
-import { Heading, LogoText } from 'components/Text';
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
+import Spacer from 'components/Spacer';
+import { Body, Heading, LogoText } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppSelector } from 'state/hooks';
-import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';
+import { selectAPY } from 'state/staking/selectors';
 import media from 'styles/media';
-import { formatPercent, truncateNumbers } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 const RewardsTabs: FC = () => {
 	const { t } = useTranslation();
-	const claimableBalance = useAppSelector(selectClaimableBalance);
 	const apy = useAppSelector(selectAPY);
 	const REWARDS = [
 		{
@@ -23,18 +25,24 @@ const RewardsTabs: FC = () => {
 			title: t('dashboard.rewards.trading-rewards.title'),
 			copy: t('dashboard.rewards.trading-rewards.copy'),
 			button: t('dashboard.rewards.staking'),
+			kwentaIcon: true,
+			linkIcon: true,
 		},
 		{
 			key: 'kwenta-rewards',
 			title: t('dashboard.rewards.kwenta-rewards.title'),
 			copy: t('dashboard.rewards.kwenta-rewards.copy'),
 			button: t('dashboard.rewards.claim'),
+			kwentaIcon: false,
+			linkIcon: false,
 		},
 		{
 			key: 'snx-rewards',
 			title: t('dashboard.rewards.snx-rewards.title'),
 			copy: t('dashboard.rewards.snx-rewards.copy'),
 			button: t('dashboard.rewards.claim'),
+			kwentaIcon: false,
+			linkIcon: false,
 		},
 	];
 
@@ -42,7 +50,9 @@ const RewardsTabs: FC = () => {
 		<RewardsTabContainer>
 			<FlexDivRowCentered style={{ marginBottom: '22.5px' }}>
 				<StyledFlexDivCol>
-					<Heading variant="h4">{t('dashboard.rewards.title')}</Heading>
+					<Heading variant="h4" className="title">
+						{t('dashboard.rewards.title')}
+					</Heading>
 					<div className="value">{t('dashboard.rewards.copy')}</div>
 				</StyledFlexDivCol>
 				<StyledTabButton
@@ -56,29 +66,50 @@ const RewardsTabs: FC = () => {
 				{REWARDS.map((reward) => (
 					<CardGrid key={reward.key}>
 						<div>
-							<Heading variant="h4">{reward.title}</Heading>
+							<Heading variant="h4" className="title">
+								{reward.title}
+							</Heading>
 							<div className="value">{reward.copy}</div>
 						</div>
 						<div>
-							<Heading variant="h6">{t('dashboard.rewards.claimable')}</Heading>
-							<LogoText yellow>{truncateNumbers(claimableBalance, 4)}</LogoText>
+							<Heading variant="h6" className="title">
+								{t('dashboard.rewards.claimable')}
+							</Heading>
+							<Spacer height={5} />
+							<LogoText kwentaIcon={reward.kwentaIcon} bold={false} yellow>
+								100
+							</LogoText>
 						</div>
 						<div style={{ display: 'flex', justifyContent: 'flex-start', columnGap: '25px' }}>
 							<FlexDivCol>
-								<div className="title" style={{ marginBottom: '5px' }}>
+								<Body size="medium" style={{ marginBottom: '5px' }}>
 									{t('dashboard.rewards.epoch')}
-								</div>
-								<div className="value">19</div>
+								</Body>
+								<FlexDivRow
+									className="value"
+									style={{ alignItems: 'center', justifyContent: 'flex-start' }}
+								>
+									19
+									<SpacedHelpIcon />
+								</FlexDivRow>
 							</FlexDivCol>
 							<FlexDivCol>
-								<div className="title" style={{ marginBottom: '5px' }}>
+								<Body size="medium" style={{ marginBottom: '5px' }}>
 									{t('dashboard.rewards.apr')}
-								</div>
+								</Body>
 								<div className="value">{formatPercent(apy, { minDecimals: 2 })}</div>
 							</FlexDivCol>
 						</div>
 						<Button fullWidth variant="flat" size="small" disabled={false} onClick={() => {}}>
 							{reward.button}
+							{reward.linkIcon ? (
+								<LinkArrowIcon
+									height={8}
+									width={8}
+									fill={'#ffffff'}
+									style={{ marginLeft: '2px' }}
+								/>
+							) : null}
 						</Button>
 					</CardGrid>
 				))}
@@ -89,6 +120,10 @@ const RewardsTabs: FC = () => {
 
 const StyledTabButton = styled(TabButton)`
 	margin-bottom: 9px;
+`;
+
+const SpacedHelpIcon = styled(HelpIcon)`
+	margin-left: 5px;
 `;
 
 const RewardsTabContainer = styled.div`
@@ -106,6 +141,10 @@ const CardGrid = styled(StakingCard)`
 	flex-direction: column;
 	justify-content: space-between;
 	row-gap: 25px;
+
+	.title {
+		font-weight: 400;
+	}
 `;
 
 const CardsContainer = styled.div`
@@ -119,6 +158,10 @@ const StyledFlexDivCol = styled(FlexDivCol)`
 	.value {
 		color: ${(props) => props.theme.colors.selectedTheme.text.label};
 		font-size: 13px;
+	}
+
+	.title {
+		font-weight: 400;
 	}
 `;
 export default RewardsTabs;
