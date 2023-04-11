@@ -139,12 +139,7 @@ const BalanceActions: FC = () => {
 									>
 										{reward.button}
 										{reward.linkIcon ? (
-											<LinkArrowIcon
-												height={8}
-												width={8}
-												fill={'#ffffff'}
-												style={{ marginLeft: '2px' }}
-											/>
+											<LinkArrowIcon height={8} width={8} style={{ marginLeft: '2px' }} />
 										) : null}
 									</Button>
 								</StyledFlexDivRow>
