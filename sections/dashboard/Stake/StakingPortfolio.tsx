@@ -86,7 +86,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 
 	return (
 		<StakingPortfolioContainer>
-			<FlexDivRowCentered>
+			<FlexDivRowCentered style={{ marginBottom: '15px' }}>
 				<Heading>{t('dashboard.stake.portfolio.title')}</Heading>
 				<StyledTabButton
 					isRounded
@@ -121,6 +121,7 @@ const StakingPortfolioContainer = styled.div`
 	`}
 
 	${media.greaterThan('mdUp')`
+		margin-top: 20px;
 		margin-bottom: 100px;
 	`}
 `;

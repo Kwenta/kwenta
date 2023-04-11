@@ -26,7 +26,7 @@ const RewardsTabs: FC = () => {
 	const totalRewards = useAppSelector(selectTotalRewards);
 
 	const goToStaking = useCallback(() => {
-		router.push(ROUTES.Dashboard.Stake);
+		router.push(ROUTES.Dashboard.TradingRewards);
 	}, [router]);
 
 	const REWARDS = [

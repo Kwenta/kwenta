@@ -528,7 +528,7 @@
 		},
 		"rewards": {
 			"title": "Rewards",
-			"copy": "Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus. ",
+			"copy": "Earn rewards by trading on Kwenta and get boosted rewards for staking.",
 			"claimable": "Claimable",
 			"epoch": "Epoch",
 			"apr": "APR",
@@ -537,15 +537,15 @@
 			"claim-all": "Claim All",
 			"trading-rewards": {
 				"title": "Kwenta Trading Rewards",
-				"copy": "Lorem ipsum dolor sit amet consectetur."
+				"copy": "Earn  $KWENTA rewards in proportion to total fees paid."
 			},
 			"kwenta-rewards": {
 				"title": "Kwenta OP Rewards",
-				"copy": "Lorem ipsum dolor sit amet consectetur."
+				"copy": "Earn a share of $OP rewards issued by Kwenta."
 			},
 			"snx-rewards": {
 				"title": "SNX OP Rewards",
-				"copy": "Lorem ipsum dolor sit amet consectetur."
+				"copy": "Earn a share of $OP rewards issued by Synthetix."
 			}
 		},
 		"stake": {

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { FC, memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
@@ -31,6 +31,7 @@ const ClaimAllButton = memo(() => {
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
+	const theme = useTheme();
 	const router = useRouter();
 	const stakingApy = useAppSelector(selectAPY);
 	const epoch = useAppSelector(selectEpochPeriod);
@@ -39,7 +40,8 @@ const BalanceActions: FC = () => {
 	const [open, setOpen] = useState(false);
 
 	const goToStaking = useCallback(() => {
-		router.push(ROUTES.Dashboard.Stake);
+		router.push(ROUTES.Dashboard.TradingRewards);
+		setOpen(false);
 	}, [router]);
 
 	const REWARDS = [
@@ -84,7 +86,10 @@ const BalanceActions: FC = () => {
 				size="small"
 				mono
 				onClick={() => setOpen(!open)}
-				style={{ color: '#ffb800', borderColor: '#ffb800' }}
+				style={{
+					color: theme.colors.selectedTheme.yellow,
+					borderColor: theme.colors.selectedTheme.yellow,
+				}}
 			>
 				<KwentaLogo style={{ marginRight: '5px' }} />
 				<OptimismLogo height={18} width={18} style={{ marginRight: '5px' }} />

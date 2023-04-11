@@ -1,5 +1,6 @@
 import Head from 'next/head';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
@@ -12,9 +13,21 @@ type StakingComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Eleme
 
 const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
-	const [currentTab, setCurrentTab] = useState(StakeTab.TradingRewards);
+
+	const tabQuery = useMemo(() => {
+		if (router.query.tab) {
+			const tab = router.query.tab as StakeTab;
+			if (Object.values(StakeTab).includes(tab)) {
+				return tab;
+			}
+		}
+		return null;
+	}, [router]);
+
+	const [currentTab, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking);
 
 	useEffect(() => {
 		if (!!walletAddress) {
