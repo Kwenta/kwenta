@@ -5,7 +5,7 @@ import { EXTERNAL_LINKS } from './links';
 const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS;
 
 const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
-	prettyURLsDisabled ? `${baseURL}?${queryParam}=${path}` : `${baseURL}/${path}/?tab=${queryParam}`;
+	prettyURLsDisabled ? `${baseURL}?${queryParam}=${path}` : `${baseURL}/${path}`;
 
 export const formatUrl = (route: string, params: Record<string, string>) => {
 	return route + '?' + new URLSearchParams(params);
@@ -23,7 +23,7 @@ export const ROUTES = {
 		Earn: normalizeRoute('/dashboard', 'earn', 'tab'),
 		Stake: normalizeRoute('/dashboard', 'staking', 'tab'),
 		Rewards: normalizeRoute('/dashboard', 'rewards', 'tab'),
-		TradingRewards: normalizeRoute('/dashboard', 'staking', 'trading-rewards'),
+		TradingRewards: formatUrl('/dashboard/staking', { tab: 'trading-rewards' }),
 	},
 	Exchange: {
 		Home: '/exchange',
