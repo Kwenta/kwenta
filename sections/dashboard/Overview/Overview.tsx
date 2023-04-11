@@ -17,8 +17,8 @@ import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { fetchTokenList } from 'state/exchange/actions';
 import {
-	// selectActiveCrossPositionsCount,
 	selectActiveIsolatedPositionsCount,
+	selectActiveSmartPositionsCount,
 	selectFuturesPortfolio,
 } from 'state/futures/selectors';
 import { useAppSelector, useFetchAction } from 'state/hooks';
@@ -34,7 +34,7 @@ import PortfolioChart from '../PortfolioChart';
 import SynthBalancesTable from '../SynthBalancesTable';
 
 export enum PositionsTab {
-	CROSS_MARGIN = 'cross margin',
+	SMART_MARGIN = 'smart margin',
 	ISOLATED_MARGIN = 'isolated margin',
 	SPOT = 'spot',
 }
@@ -45,7 +45,7 @@ const Overview: FC = () => {
 	const balances = useAppSelector(selectBalances);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
-	// const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
+	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
 		PositionsTab.ISOLATED_MARGIN
@@ -121,16 +121,16 @@ const Overview: FC = () => {
 			zeroBN
 		);
 		return [
-			// {
-			// 	name: PositionsTab.CROSS_MARGIN,
-			// 	label: t('dashboard.overview.positions-tabs.cross-margin'),
-			// 	badge: crossPositions.length,
-			// 	titleIcon: <FuturesIcon type="cross_margin" />,
-			// 	active: activePositionsTab === PositionsTab.CROSS_MARGIN,
-			// 	detail: formatDollars(portfolio.crossMarginFutures),
-			// 	disabled: false,
-			// 	onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
-			// },
+			{
+				name: PositionsTab.SMART_MARGIN,
+				label: t('dashboard.overview.positions-tabs.smart-margin'),
+				badge: smartPositionsCount,
+				titleIcon: <FuturesIcon type="cross_margin" />,
+				active: activePositionsTab === PositionsTab.SMART_MARGIN,
+				detail: formatDollars(portfolio.crossMarginFutures),
+				disabled: false,
+				onClick: () => setActivePositionsTab(PositionsTab.SMART_MARGIN),
+			},
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
@@ -151,13 +151,13 @@ const Overview: FC = () => {
 			},
 		];
 	}, [
-		// crossPositionsCount,
+		smartPositionsCount,
 		isolatedPositionsCount,
 		exchangeTokens,
 		balances.totalUSDBalance,
 		t,
 		activePositionsTab,
-		// portfolio.crossMarginFutures,
+		portfolio.crossMarginFutures,
 		portfolio.isolatedMarginFutures,
 		setActivePositionsTab,
 	]);
@@ -174,7 +174,7 @@ const Overview: FC = () => {
 						<TabButton key={name} title={label} badgeCount={badge} {...rest} />
 					))}
 				</TabButtonsContainer>
-				<TabPanel name={PositionsTab.CROSS_MARGIN} activeTab={activePositionsTab}>
+				<TabPanel name={PositionsTab.SMART_MARGIN} activeTab={activePositionsTab}>
 					<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
 				</TabPanel>
 

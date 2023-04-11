@@ -375,7 +375,7 @@ export const selectActiveIsolatedPositionsCount = createSelector(
 	}
 );
 
-export const selectActiveCrossPositionsCount = createSelector(
+export const selectActiveSmartPositionsCount = createSelector(
 	selectCrossMarginPositions,
 	(positions) => {
 		return positions.filter((p) => !!p.position).length;
@@ -1157,8 +1157,13 @@ export const selectUsersTradesForMarket = createSelector(
 	}
 );
 
-export const selectAllUsersTrades = createSelector(selectAccountData, (accountData) =>
-	unserializeTrades(accountData?.trades ?? [])
+export const selectAllUsersTrades = createSelector(
+	selectIsolatedAccountData,
+	selectCrossMarginAccountData,
+	(isolatedAccountData, crossAccountData) => {
+		const allTrades = [...(isolatedAccountData?.trades ?? []), ...(crossAccountData?.trades ?? [])];
+		return unserializeTrades(allTrades);
+	}
 );
 
 export const selectSelectedPortfolioTimeframe = (state: RootState) =>
