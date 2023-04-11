@@ -41,6 +41,7 @@ import {
 	zeroBN,
 } from 'utils/formatters/number';
 
+import ClosePositionFeeInfo from '../FeeInfoBox/ClosePositionFeeInfo';
 import OrderTypeSelector from '../Trade/OrderTypeSelector';
 import ClosePositionPriceInput from './ClosePositionPriceInput';
 import ClosePositionSizeInput from './ClosePositionSizeInput';
@@ -223,6 +224,8 @@ export default function ClosePositionModal() {
 					<ErrorView message={orderError || transactionState?.error} formatter="revert" />
 				</>
 			)}
+			<Spacer height={20} />
+			<ClosePositionFeeInfo />
 		</StyledBaseModal>
 	);
 }

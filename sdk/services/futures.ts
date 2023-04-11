@@ -71,7 +71,7 @@ import {
 } from 'sdk/utils/futures';
 import { getReasonFromCode } from 'sdk/utils/synths';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;

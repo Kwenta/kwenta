@@ -30,6 +30,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
+import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
 import EditPositionSizeInput from './EditPositionSizeInput';
 
 export default function EditPositionSizeModal() {
@@ -100,11 +101,7 @@ export default function EditPositionSizeModal() {
 
 	return (
 		<StyledBaseModal
-			title={
-				editType === 0
-					? `Increase ${market?.marketName} Position Size`
-					: `Decrease ${market?.marketName} Position Size`
-			}
+			title={editType === 0 ? `Increase Position Size` : `Decrease Position Size`}
 			isOpen
 			onDismiss={onClose}
 		>
@@ -122,8 +119,13 @@ export default function EditPositionSizeModal() {
 				type={editType === 0 ? 'increase' : 'decrease'}
 			/>
 
-			<Spacer height={20} />
+			<Spacer height={6} />
 			<InfoBoxContainer>
+				<InfoBoxRow
+					boldValue
+					title={t('futures.market.trade.edit-position.market')}
+					value={market?.marketName}
+				/>
 				<InfoBoxRow
 					valueNode={
 						preview?.leverage && (
@@ -182,6 +184,8 @@ export default function EditPositionSizeModal() {
 					/>
 				</>
 			)}
+			<Spacer height={20} />
+			<EditPositionFeeInfo />
 		</StyledBaseModal>
 	);
 }

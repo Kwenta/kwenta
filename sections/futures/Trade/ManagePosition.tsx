@@ -7,16 +7,12 @@ import Error from 'components/ErrorView';
 import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
 import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
-import { PositionSide } from 'sdk/types/futures';
 import { setOpenModal } from 'state/app/reducer';
-import { selectShowModal } from 'state/app/selectors';
-import { changeLeverageSide, editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
 	selectMarketPrice,
 	selectPlaceOrderTranslationKey,
-	selectPosition,
 	selectMaxLeverage,
 	selectTradePreviewError,
 	selectTradePreview,
@@ -25,7 +21,6 @@ import {
 	selectIsolatedMarginLeverage,
 	selectCrossMarginOrderPrice,
 	selectOrderType,
-	selectIsConditionalOrder,
 	selectFuturesType,
 	selectCrossMarginMarginDelta,
 	selectLeverageSide,
@@ -39,16 +34,12 @@ import { FetchStatus } from 'state/types';
 import { isZero } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
-import ClosePositionModalCrossMargin from '../PositionCard/ClosePositionModalCrossMargin';
-import ClosePositionModalIsolatedMargin from '../PositionCard/ClosePositionModalIsolatedMargin';
-
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	const { susdSize } = useAppSelector(selectTradeSizeInputs);
 	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
-	const position = useAppSelector(selectPosition);
 	const maxLeverageValue = useAppSelector(selectMaxLeverage);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const previewTrade = useAppSelector(selectTradePreview);
@@ -62,16 +53,10 @@ const ManagePosition: React.FC = () => {
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
-	const isConditionalOrder = useAppSelector(selectIsConditionalOrder);
-	const openModal = useAppSelector(selectShowModal);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const smartMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const depositApproved = useAppSelector(selectCMDepositApproved);
-
-	const isCancelModalOpen = openModal === 'futures_close_position_confirm';
-
-	const positionDetails = position?.position;
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
@@ -190,30 +175,6 @@ const ManagePosition: React.FC = () => {
 					>
 						{t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
-
-					<CloseOrderButton
-						data-testid="trade-close-position-button"
-						fullWidth
-						noOutline
-						variant="flat"
-						onClick={() => {
-							if (selectedAccountType === 'isolated_margin' && position?.position?.size) {
-								const newTradeSize = position.position.size;
-								const newLeverageSide =
-									position.position.side === PositionSide.LONG
-										? PositionSide.SHORT
-										: PositionSide.LONG;
-								dispatch(changeLeverageSide(newLeverageSide));
-								dispatch(editTradeSizeInput(newTradeSize.toString(), 'native'));
-								onSubmit();
-							} else {
-								dispatch(setOpenModal('futures_close_position_confirm'));
-							}
-						}}
-						disabled={!positionDetails || marketInfo?.isSuspended || isConditionalOrder}
-					>
-						{t('futures.market.user.position.close-position')}
-					</CloseOrderButton>
 				</ManagePositionContainer>
 			</div>
 
@@ -223,13 +184,6 @@ const ManagePosition: React.FC = () => {
 					messageType={placeOrderDisabledReason.show}
 				/>
 			) : null}
-
-			{isCancelModalOpen &&
-				(selectedAccountType === 'cross_margin' ? (
-					<ClosePositionModalCrossMargin onDismiss={() => dispatch(setOpenModal(null))} />
-				) : (
-					<ClosePositionModalIsolatedMargin onDismiss={() => dispatch(setOpenModal(null))} />
-				))}
 		</>
 	);
 };
@@ -245,17 +199,6 @@ const PlaceOrderButton = styled(Button)`
 	height: 55px;
 	text-align: center;
 	white-space: normal;
-`;
-
-const CloseOrderButton = styled(Button)`
-	font-size: 16px;
-	height: 55px;
-	text-align: center;
-	white-space: normal;
-
-	&:disabled {
-		display: none;
-	}
 `;
 
 export default ManagePosition;

@@ -22,13 +22,13 @@ import {
 	FuturesTrade,
 	FuturesVolumes,
 	MarginTransfer,
-	OrderEnumByType,
 	PositionSide,
 	PotentialTradeStatus,
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
 	SLTPOrderInputs,
 	FuturesMarketKey,
+	ContractOrderType,
 } from 'sdk/types/futures';
 import {
 	calculateCrossMarginFee,
@@ -52,7 +52,7 @@ import { selectLatestEthPrice } from 'state/prices/selectors';
 import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
-import { computeMarketFee, computeDelayedOrderFee } from 'utils/costCalculations';
+import { computeDelayedOrderFee } from 'utils/costCalculations';
 import { floorNumber, stripZeros, zeroBN } from 'utils/formatters/number';
 import {
 	formatDelayedOrders,
@@ -143,7 +143,6 @@ import {
 	DelayedOrderWithDetails,
 	ExecuteDelayedOrderInputs,
 	FuturesTransactionType,
-	ModifyIsolatedPositionInputs,
 	PreviewAction,
 	TradePreviewParams,
 } from './types';
@@ -477,11 +476,10 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	'futures/fetchIsolatedMarginTradePreview',
 	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
-		const orderType = selectOrderType(getState());
 		const market = getState().futures.markets.find((m) => m.marketKey === params.market.key);
 
 		try {
-			const orderTypeNum = OrderEnumByType[orderType];
+			const orderTypeNum = ContractOrderType.DELAYED_OFFCHAIN;
 			if (!market) throw new Error('No market data provided for preview');
 			if (!account) throw new Error('No account to generate preview');
 			if (!params.orderPrice) throw new Error('No price provided for preview');
@@ -1057,33 +1055,10 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 
 export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) => {
 	const market = selectMarketInfo(getState());
-	const { susdSize, susdSizeDelta } = selectIsolatedMarginTradeInputs(getState());
-	const staticRate = computeMarketFee(market, susdSizeDelta);
-	const tradeFee = susdSize.mul(staticRate);
-	dispatch(setIsolatedMarginFee(tradeFee.toString()));
+	const { susdSizeDelta } = selectIsolatedMarginTradeInputs(getState());
+	const { delayedOrderFee } = computeDelayedOrderFee(market, susdSizeDelta, true);
+	dispatch(setIsolatedMarginFee(delayedOrderFee.toString()));
 };
-
-export const getClosePositionOrderFee = createAsyncThunk<string, void, ThunkConfig>(
-	'futures/getClosePositionOrderFee',
-	async (_, { getState, extra: { sdk } }) => {
-		const state = getState();
-		const position = selectPosition(state);
-		const marketInfo = selectMarketInfo(state);
-		try {
-			if (!marketInfo) {
-				throw new Error('No market found');
-			} else if (!position?.position) {
-				throw new Error('No active position in selected market');
-			} else {
-				const fee = await sdk.futures.getOrderFee(marketInfo.market, position.position.size.neg());
-				return fee.toString();
-			}
-		} catch (err) {
-			notifyError('Failed to get order fee', err);
-			throw err;
-		}
-	}
-);
 
 // Contract Mutations
 
