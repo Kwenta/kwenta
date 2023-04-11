@@ -10,7 +10,7 @@ import { selectFuturesType, selectLeverageSide, selectOrderType } from 'state/fu
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
 
-import { FeeInfoBox } from '../FeeInfoBox/FeeInfoBox';
+import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo';
 import LeverageInput from '../LeverageInput';
 import MarginInput from '../MarginInput';
 import OrderSizing from '../OrderSizing';
@@ -71,7 +71,7 @@ const TradeIsolatedMargin: FC<TradeIsolatedMarginProps> = memo(({ mobile }) => {
 
 				<ManagePosition />
 
-				<FeeInfoBox />
+				<TradePanelFeeInfo />
 			</MainPanelContent>
 		</TradePanelContainer>
 	);
