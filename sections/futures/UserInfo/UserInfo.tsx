@@ -233,6 +233,7 @@ const UserInfo: React.FC = memo(() => {
 });
 
 const UserInfoContainer = styled.div`
+	flex: 1;
 	display: flex;
 	flex-direction: column;
 	min-height: 300px;
