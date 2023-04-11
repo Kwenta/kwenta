@@ -75,12 +75,22 @@ export type FuturesAction = {
 	action: 'trade' | 'deposit' | 'withdraw';
 };
 
-export type FuturesPortfolio = {
+export type IsolatedPerpsPortfolio = {
 	account: string;
 	timestamp: number;
 	assets: {
 		[asset: string]: number;
 	};
+	total: number;
+};
+
+export type SmartPerpsPortfolio = {
+	account: string;
+	timestamp: number;
+	assets: {
+		[asset: string]: number;
+	};
+	idle: number;
 	total: number;
 };
 

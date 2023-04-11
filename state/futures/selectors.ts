@@ -4,6 +4,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
 import { ETH_UNIT } from 'constants/network';
+import { FuturesAccountTypes } from 'queries/futures/types';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
@@ -36,11 +37,12 @@ import {
 
 import {
 	FuturesAction,
-	FuturesPortfolio,
 	MarkPrices,
 	futuresPositionKeys,
 	MarkPriceInfos,
 	PortfolioValues,
+	SmartPerpsPortfolio,
+	IsolatedPerpsPortfolio,
 } from './types';
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType;
@@ -967,13 +969,34 @@ export const selectMarginTransfers = createSelector(
 	}
 );
 
+export const selectIsolatedMarginTransfers = createSelector(
+	selectWallet,
+	selectNetwork,
+	(state: RootState) => state.futures,
+	(wallet, network, futures) => {
+		if (!wallet) return [];
+		const account = futures.isolatedMargin.accounts[network]?.[wallet];
+		return account?.marginTransfers ?? [];
+	}
+);
+
+export const selectSmartMarginTransfers = createSelector(
+	selectWallet,
+	selectNetwork,
+	(state: RootState) => state.futures,
+	(wallet, network, futures) => {
+		if (!wallet) return [];
+		const account = futures.crossMargin.accounts[network]?.[wallet];
+		return account?.marginTransfers ?? [];
+	}
+);
+
 export const selectIdleMarginTransfers = createSelector(
 	selectWallet,
 	selectNetwork,
-	selectFuturesType,
 	(state: RootState) => state.futures,
-	(wallet, network, type, futures) => {
-		if (!wallet || accountType(type) !== 'crossMargin') return [];
+	(wallet, network, futures) => {
+		if (!wallet) return [];
 		const account = futures.crossMargin.accounts[network]?.[wallet];
 		return account?.idleTransfers ?? [];
 	}
@@ -1178,12 +1201,26 @@ export const selectAllUsersTrades = createSelector(
 	}
 );
 
+export const selectAllIsolatedTrades = createSelector(
+	selectIsolatedAccountData,
+	(isolatedAccountData) => {
+		return unserializeTrades(isolatedAccountData?.trades ?? []);
+	}
+);
+
+export const selectAllSmartTrades = createSelector(
+	selectCrossMarginAccountData,
+	(crossAccountData) => {
+		return unserializeTrades(crossAccountData?.trades ?? []);
+	}
+);
+
 export const selectSelectedPortfolioTimeframe = (state: RootState) =>
 	state.futures.dashboard.selectedPortfolioTimeframe;
 
-export const selectUserPortfolioValues = createSelector(
-	selectAllUsersTrades,
-	selectMarginTransfers,
+export const selectIsolatedPortfolioValues = createSelector(
+	selectAllIsolatedTrades,
+	selectIsolatedMarginTransfers,
 	selectFuturesPortfolio,
 	(trades, transfers, portfolioTotal) => {
 		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
@@ -1239,7 +1276,7 @@ export const selectUserPortfolioValues = createSelector(
 
 				return [...acc.slice(0, acc.length - (replacePrevious ? 1 : 0)), newAction];
 			}
-		}, [] as FuturesPortfolio[]);
+		}, [] as IsolatedPerpsPortfolio[]);
 		return [
 			...accountHistory.map(({ timestamp, total }) => ({ timestamp: timestamp * 1000, total })),
 			{
@@ -1250,54 +1287,160 @@ export const selectUserPortfolioValues = createSelector(
 	}
 );
 
+export const selectSmartMarginPortfolioValues = createSelector(
+	selectAllSmartTrades,
+	selectSmartMarginTransfers,
+	selectIdleMarginTransfers,
+	selectFuturesPortfolio,
+	(trades, transfers, idleTransfers, portfolioTotal) => {
+		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
+			account,
+			timestamp,
+			asset,
+			margin: margin.div(ETH_UNIT).toNumber(),
+			size: 0,
+		}));
+
+		const transferActions = transfers.map(({ account, timestamp, asset, size }) => ({
+			account,
+			timestamp,
+			asset,
+			size,
+			margin: 0,
+		}));
+
+		const idleTransferActions = idleTransfers.map(({ account, timestamp, asset, size }) => ({
+			account,
+			timestamp,
+			asset,
+			size,
+			margin: 0,
+		}));
+
+		const actions = [...tradeActions, ...transferActions, ...idleTransferActions]
+			.filter((action): action is FuturesAction => !!action)
+			.sort((a, b) => a.timestamp - b.timestamp);
+
+		const accountHistory = actions.reduce((acc, action) => {
+			if (acc.length === 0) {
+				const newTotal = action.size !== 0 ? action.size : action.margin;
+				const isIdle = action.size !== 0 && !action.asset ? true : false;
+				const lastAction = isIdle
+					? {
+							account: action.account,
+							timestamp: action.timestamp,
+							assets: {},
+							idle: newTotal,
+							total: newTotal,
+					  }
+					: {
+							account: action.account,
+							timestamp: action.timestamp,
+							assets: {
+								[action.asset]: newTotal,
+							},
+							idle: 0,
+							total: newTotal,
+					  };
+				return [lastAction];
+			} else {
+				const lastAction = acc[acc.length - 1];
+				const newAssets = !action.asset
+					? lastAction.assets
+					: {
+							...lastAction.assets,
+							[action.asset]:
+								action.size !== 0
+									? (lastAction.assets[action.asset] ?? 0) + action.size
+									: action.margin,
+					  };
+				const newIdle = !action.asset
+					? lastAction.idle + action.size
+					: lastAction.idle + action.size * -1;
+
+				const newTotal =
+					Object.entries(newAssets).reduce((acc, asset) => acc + asset[1], 0) + lastAction.idle;
+
+				const newAction = {
+					...lastAction,
+					timestamp: action.timestamp,
+					assets: newAssets,
+					idle: newIdle,
+					total: newTotal,
+				};
+				const replacePrevious = newAction.timestamp === lastAction.timestamp;
+
+				return [...acc.slice(0, acc.length - (replacePrevious ? 1 : 0)), newAction];
+			}
+		}, [] as SmartPerpsPortfolio[]);
+		return [
+			...accountHistory.map(({ timestamp, total }) => ({ timestamp: timestamp * 1000, total })),
+			{
+				timestamp: Date.now(),
+				total: portfolioTotal.crossMarginFutures.toNumber(),
+			},
+		];
+	}
+);
+
 export const selectPortfolioChartData = createSelector(
-	selectUserPortfolioValues,
+	selectIsolatedPortfolioValues,
+	selectSmartMarginPortfolioValues,
 	selectSelectedPortfolioTimeframe,
-	(portfolioValues, timeframe) => {
+	(isolatedPortfolioValues, smartPortfolioValues, timeframe) => {
 		// get the timeframe for interpolation
 		const interpolationGap =
 			timeframe === Period.ONE_YEAR
 				? PERIOD_IN_SECONDS[Period.ONE_DAY]
 				: PERIOD_IN_SECONDS[Period.ONE_HOUR] * 6;
-		if (portfolioValues.length === 0) return [];
 
 		const minTimestamp = Date.now() - PERIOD_IN_SECONDS[timeframe] * 1000;
-		const filteredPortfolioValues = portfolioValues.filter(
-			({ timestamp }) => timestamp >= minTimestamp
-		);
+		const createPortfolioData = (portfolioValues: PortfolioValues[]) => {
+			if (portfolioValues.length === 0) return [];
+			const filteredPortfolioValues = portfolioValues.filter(
+				({ timestamp }) => timestamp >= minTimestamp
+			);
 
-		const portfolioData: PortfolioValues[] = [];
-		for (let i = 0; i < filteredPortfolioValues.length; i++) {
-			if (i < filteredPortfolioValues.length - 1) {
-				const currentTimestamp = truncateTimestamp(
-					filteredPortfolioValues[i].timestamp,
-					interpolationGap * 1000
-				);
-				const nextTimestamp = truncateTimestamp(
-					filteredPortfolioValues[i + 1].timestamp,
-					interpolationGap * 1000
-				);
-				const timeDiff = nextTimestamp - currentTimestamp;
+			const portfolioData: PortfolioValues[] = [];
+			for (let i = 0; i < filteredPortfolioValues.length; i++) {
+				if (i < filteredPortfolioValues.length - 1) {
+					const currentTimestamp = truncateTimestamp(
+						filteredPortfolioValues[i].timestamp,
+						interpolationGap * 1000
+					);
+					const nextTimestamp = truncateTimestamp(
+						filteredPortfolioValues[i + 1].timestamp,
+						interpolationGap * 1000
+					);
+					const timeDiff = nextTimestamp - currentTimestamp;
 
-				if (nextTimestamp !== currentTimestamp) {
-					portfolioData.push({
-						timestamp: currentTimestamp,
-						total: filteredPortfolioValues[i].total,
-					});
-				}
-				if (timeDiff > interpolationGap * 1000) {
-					const gapCount = Math.floor(timeDiff / (interpolationGap * 1000)) - 1;
-					for (let j = 1; j <= gapCount; j++) {
+					if (nextTimestamp !== currentTimestamp) {
 						portfolioData.push({
-							timestamp: currentTimestamp + j * interpolationGap * 1000,
+							timestamp: currentTimestamp,
 							total: filteredPortfolioValues[i].total,
 						});
 					}
+					if (timeDiff > interpolationGap * 1000) {
+						const gapCount = Math.floor(timeDiff / (interpolationGap * 1000)) - 1;
+						for (let j = 1; j <= gapCount; j++) {
+							portfolioData.push({
+								timestamp: currentTimestamp + j * interpolationGap * 1000,
+								total: filteredPortfolioValues[i].total,
+							});
+						}
+					}
 				}
 			}
-		}
-		portfolioData.push(portfolioValues[portfolioValues.length - 1]);
-		return portfolioData;
+			portfolioData.push(portfolioValues[portfolioValues.length - 1]);
+			return portfolioData;
+		};
+
+		const isolatedPortfolioData = createPortfolioData(isolatedPortfolioValues);
+		const smartPortfolioData = createPortfolioData(smartPortfolioValues);
+		return {
+			[FuturesAccountTypes.ISOLATED_MARGIN]: isolatedPortfolioData,
+			[FuturesAccountTypes.CROSS_MARGIN]: smartPortfolioData,
+		};
 	}
 );
 
