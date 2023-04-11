@@ -67,8 +67,9 @@ export default function PositionChart() {
 }
 
 const Container = styled.div<{ visible: boolean }>`
-	height: calc(100% - 315px);
-	min-height: 300px;
+	min-height: calc(100% - 247px);
+	max-height: calc(100% - 247px);
+	height: calc(100% - 247px);
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
