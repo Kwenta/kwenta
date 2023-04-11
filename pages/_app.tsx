@@ -78,7 +78,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 		>
 			<ThemeProvider theme={theme}>
 				<MuiThemeProvider theme={muiTheme}>
-					<MediaContextProvider disableDynamicMediaQueries>
+					<MediaContextProvider>
 						<Layout>
 							<AcknowledgementModal />
 							<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
