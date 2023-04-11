@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { Body } from 'components/Text';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 import GitHashID from './GitHashID';
 import OperationStatus from './OperationStatus';
@@ -11,11 +12,11 @@ const Footer = () => {
 			<OperationStatus />
 			<GitHashID />
 			<RightContainer>
-				<FooterLink href="https://docs.kwenta.io">
-					<Body>Documentation</Body>
+				<FooterLink href={EXTERNAL_LINKS.Docs.DocsRoot}>
+					<Body color="secondary">Documentation</Body>
 				</FooterLink>
-				<FooterLink href="">
-					<Body>Support</Body>
+				<FooterLink href={EXTERNAL_LINKS.Social.Discord}>
+					<Body color="secondary">Support</Body>
 				</FooterLink>
 			</RightContainer>
 		</FooterContainer>
