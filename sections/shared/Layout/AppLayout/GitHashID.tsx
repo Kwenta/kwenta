@@ -7,7 +7,9 @@ const GitHashID: FC = memo(() => {
 
 	return (
 		<a href="https://github.com/Kwenta/kwenta/releases/latest" target="_blank" rel="noreferrer">
-			<Body color="secondary">{gitID}</Body>
+			<Body color="secondary" style={{ textAlign: 'center' }}>
+				{gitID}
+			</Body>
 		</a>
 	);
 });
