@@ -6,4 +6,4 @@ export const BANNER_LINK_URL =
 	'https://mirror.xyz/kwenta.eth/pYX4sd2mO6PZ8yZb_0JqNi50QQgu96sWADZKjKl6y-k';
 // Sets the text displayed on the home page banner
 export const BANNER_TEXT =
-	'Kwenta is undergoing scheduled maintenance due to the Synthetix Minataka release.';
+	'Kwenta is undergoing scheduled maintenance due to the Synthetix Caph release.';
