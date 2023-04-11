@@ -106,7 +106,6 @@ export type FuturesQueryStatuses = {
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
 	marginTransfers: QueryStatus;
-	closePositionOrderFee: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -233,7 +232,6 @@ export type FuturesState = {
 			}
 		>;
 	};
-	closePositionOrderFee: string;
 	tradePanelDrawerOpen: boolean;
 };
 
