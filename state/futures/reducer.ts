@@ -46,7 +46,6 @@ import {
 	fetchAllTradesForAccount,
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
-	getClosePositionOrderFee,
 } from './actions';
 import {
 	CrossMarginAccountData,
@@ -94,7 +93,6 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
-		closePositionOrderFee: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -157,6 +155,10 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 			close: null,
 			edit: null,
 		},
+		closePositionOrderInputs: {
+			orderType: 'market',
+			nativeSizeDelta: '',
+		},
 		previewDebounceCount: 0,
 		tradeInputs: ZERO_STATE_TRADE_INPUTS,
 		editPositionInputs: {
@@ -166,7 +168,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		tradeFee: '0',
 		leverageInput: '0',
 	},
-	closePositionOrderFee: '0',
+	tradePanelDrawerOpen: false,
 };
 
 const futuresSlice = createSlice({
@@ -187,7 +189,11 @@ const futuresSlice = createSlice({
 			state.crossMargin.closePositionOrderInputs.orderType = action.payload;
 		},
 		setClosePositionSizeDelta: (state, action: PayloadAction<string>) => {
-			state.crossMargin.closePositionOrderInputs.nativeSizeDelta = action.payload;
+			if (state.selectedType === 'cross_margin') {
+				state.crossMargin.closePositionOrderInputs.nativeSizeDelta = action.payload;
+			} else {
+				state.isolatedMargin.closePositionOrderInputs.nativeSizeDelta = action.payload;
+			}
 		},
 		setClosePositionPrice: (
 			state,
@@ -357,6 +363,9 @@ const futuresSlice = createSlice({
 		},
 		setSelectedPortfolioTimeframe: (state, action: PayloadAction<Period>) => {
 			state.dashboard.selectedPortfolioTimeframe = action.payload;
+		},
+		setTradePanelDrawerOpen: (state, action: PayloadAction<boolean>) => {
+			state.tradePanelDrawerOpen = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -553,7 +562,7 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.isolatedTradePreview = LOADING_STATUS;
 		});
 		builder.addCase(fetchIsolatedMarginTradePreview.fulfilled, (futuresState, { payload }) => {
-			futuresState.isolatedMargin.previews.trade = payload;
+			futuresState.isolatedMargin.previews[payload.type] = payload.preview;
 			futuresState.queryStatuses.isolatedTradePreview = SUCCESS_STATUS;
 		});
 		builder.addCase(fetchIsolatedMarginTradePreview.rejected, (futuresState) => {
@@ -687,17 +696,6 @@ const futuresSlice = createSlice({
 				status: FetchStatus.Error,
 			};
 		});
-		builder.addCase(getClosePositionOrderFee.fulfilled, (futuresState, { payload }) => {
-			futuresState.queryStatuses.closePositionOrderFee = SUCCESS_STATUS;
-			futuresState.closePositionOrderFee = payload;
-		});
-		builder.addCase(getClosePositionOrderFee.rejected, (futuresState, { error }) => {
-			futuresState.queryStatuses.closePositionOrderFee = {
-				error: error.message,
-				status: FetchStatus.Error,
-			};
-			futuresState.closePositionOrderFee = '0';
-		});
 	},
 });
 
@@ -740,6 +738,7 @@ export const {
 	setSelectedPortfolioTimeframe,
 	setCrossSLTPModalStopLoss,
 	setCrossSLTPModalTakeProfit,
+	setTradePanelDrawerOpen,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

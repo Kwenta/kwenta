@@ -4,10 +4,9 @@ import styled from 'styled-components';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 
+import MarketDetails from '../MarketDetails/MarketDetails';
 import FuturesUnsupportedNetwork from '../Trade/FuturesUnsupported';
-import MarketsDropdown from '../Trade/MarketsDropdown';
 import OverviewTabs from './OverviewTabs';
-import PositionDetails from './PositionDetails';
 import UserTabs from './UserTabs';
 
 const MobileTrade: React.FC = () => {
@@ -15,17 +14,14 @@ const MobileTrade: React.FC = () => {
 	const { walletAddress } = Connector.useContainer();
 	return (
 		<>
-			<MarketsDropdown mobile />
+			<MarketDetails mobile />
 			<OverviewTabs />
 			{walletAddress && !isL2 ? (
 				<SwitchNetworkContainer>
 					<FuturesUnsupportedNetwork />
 				</SwitchNetworkContainer>
 			) : (
-				<>
-					<PositionDetails />
-					<UserTabs />
-				</>
+				<UserTabs />
 			)}
 		</>
 	);

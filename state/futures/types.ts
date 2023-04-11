@@ -42,13 +42,18 @@ export type EditPositionInputs<T = Wei> = {
 	marginDelta: T;
 };
 
-export type ClosePositionInputs<T = Wei> = {
+export type ClosePositionInputsCrossMargin<T = Wei> = {
 	nativeSizeDelta: T;
 	price?: {
 		value?: string | undefined | null;
 		invalidLabel: string | undefined | null;
 	};
 	orderType: CrossMarginOrderType;
+};
+
+export type ClosePositionInputsIsolatedMargin<T = Wei> = {
+	nativeSizeDelta: T;
+	orderType: 'market';
 };
 
 export type MarkPrices<T = Wei> = Partial<Record<FuturesMarketKey, T>>;
@@ -101,7 +106,6 @@ export type FuturesQueryStatuses = {
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
 	marginTransfers: QueryStatus;
-	closePositionOrderFee: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -228,7 +232,7 @@ export type FuturesState = {
 			}
 		>;
 	};
-	closePositionOrderFee: string;
+	tradePanelDrawerOpen: boolean;
 };
 
 export type TradePreviewResult = {
@@ -242,7 +246,7 @@ export type CrossMarginState = {
 	sltpModalInputs: SLTPInputs<string>;
 	marginDelta: string;
 	orderType: CrossMarginOrderType;
-	closePositionOrderInputs: ClosePositionInputs<string>;
+	closePositionOrderInputs: ClosePositionInputsCrossMargin<string>;
 	orderFeeCap: string;
 	leverageInput: string;
 	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>;
@@ -282,6 +286,7 @@ export type IsolatedMarginState = {
 		close: FuturesPotentialTradeDetails<string> | null;
 		edit: FuturesPotentialTradeDetails<string> | null;
 	};
+	closePositionOrderInputs: ClosePositionInputsIsolatedMargin<string>;
 	previewDebounceCount: number;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;

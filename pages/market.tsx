@@ -108,10 +108,10 @@ const Market: MarketComponent = () => {
 			<MobileOrTabletView>
 				<MobileTrade />
 			</MobileOrTabletView>
+			{showPositionModal?.type === 'futures_close_position' && <ClosePositionModal />}
 			{showPositionModal?.type === 'futures_edit_stop_loss_take_profit' && (
 				<EditStopLossAndTakeProfitModal />
 			)}
-			{showPositionModal?.type === 'futures_close_position' && <ClosePositionModal />}
 			{showPositionModal?.type === 'futures_edit_position_size' && <EditPositionSizeModal />}
 			{showPositionModal?.type === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_isolated_transfer' && (

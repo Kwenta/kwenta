@@ -19,12 +19,7 @@ export default function TradeConfirmationModalIsolatedMargin() {
 	}, [dispatch]);
 
 	const handleConfirmOrder = async () => {
-		dispatch(
-			modifyIsolatedPosition({
-				delayed: false,
-				offchain: false,
-			})
-		);
+		dispatch(modifyIsolatedPosition());
 	};
 
 	return (

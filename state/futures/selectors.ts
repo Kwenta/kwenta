@@ -172,8 +172,15 @@ export const selectOrderType = createSelector(
 export const selectCrossMarginOrderType = (state: RootState) => state.futures.crossMargin.orderType;
 
 export const selectClosePositionOrderInputs = createSelector(
+	selectFuturesType,
 	(state: RootState) => state.futures,
-	(futures) => futures.crossMargin.closePositionOrderInputs
+	(type, futures) => {
+		if (type === 'cross_margin') return futures.crossMargin.closePositionOrderInputs;
+		return {
+			...futures.isolatedMargin.closePositionOrderInputs,
+			price: undefined,
+		};
+	}
 );
 
 export const selectMarketPrice = createSelector(
@@ -590,14 +597,18 @@ export const selectRemainingMarketMargin = createSelector(selectPosition, (posit
 	return position.remainingMargin;
 });
 
+export const selectIdleMarginInMarkets = createSelector(selectCrossMarginPositions, (positions) => {
+	const idleInMarkets = positions
+		.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
+		.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
+	return idleInMarkets;
+});
+
 export const selectIdleMargin = createSelector(
-	selectCrossMarginPositions,
+	selectIdleMarginInMarkets,
 	selectCrossMarginBalanceInfo,
 	selectSusdBalance,
-	(positions, { freeMargin }, balance) => {
-		const idleInMarkets = positions
-			.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
-			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
+	(idleInMarkets, { freeMargin }, balance) => {
 		return balance.add(idleInMarkets).add(freeMargin);
 	}
 );
@@ -895,13 +906,13 @@ export const selectPlaceOrderTranslationKey = createSelector(
 		}
 
 		if (selectedType === 'isolated_margin')
-			return 'futures.market.trade.button.place-delayed-order';
+			return remainingMargin.add(freeMargin).lt('50')
+				? 'futures.market.trade.button.deposit-margin-minimum'
+				: 'futures.market.trade.button.place-delayed-order';
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return remainingMargin.add(freeMargin).lt('50')
-			? 'futures.market.trade.button.deposit-margin-minimum'
-			: isMarketCapReached
+		return isMarketCapReached
 			? 'futures.market.trade.button.oi-caps-reached'
 			: 'futures.market.trade.button.open-position';
 	}
@@ -969,7 +980,9 @@ export const selectTradePreview = createSelector(
 		return unserialized
 			? {
 					...unserialized,
-					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+					leverage: unserialized.margin.gt(0)
+						? unserialized.notionalValue.div(unserialized.margin).abs()
+						: wei(0),
 			  }
 			: null;
 	}
@@ -984,7 +997,9 @@ export const selectEditPositionPreview = createSelector(
 		return unserialized
 			? {
 					...unserialized,
-					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+					leverage: unserialized.margin.gt(0)
+						? unserialized.notionalValue.div(unserialized.margin).abs()
+						: wei(0),
 			  }
 			: null;
 	}
@@ -999,7 +1014,9 @@ export const selectClosePositionPreview = createSelector(
 		return unserialized
 			? {
 					...unserialized,
-					leverage: unserialized.notionalValue.div(unserialized.margin).abs(),
+					leverage: unserialized.margin.gt(0)
+						? unserialized.notionalValue.div(unserialized.margin).abs()
+						: wei(0),
 			  }
 			: null;
 	}
@@ -1474,11 +1491,3 @@ export const selectMarketSuspended = createSelector(
 	selectMarketInfo,
 	(marketInfo) => marketInfo?.isSuspended
 );
-
-export const selectClosePositionOrderFee = createSelector(
-	(state: RootState) => state.futures.closePositionOrderFee,
-	wei
-);
-
-export const selectClosePositionOrderFeeError = (state: RootState) =>
-	state.futures.queryStatuses.closePositionOrderFee.error;

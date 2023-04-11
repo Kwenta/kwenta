@@ -25,12 +25,12 @@ import {
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
 	selectIsFetchingTradePreview,
-	selectMarketPrice,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
+import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
 import EditPositionSizeInput from './EditPositionSizeInput';
 
 export default function EditPositionSizeModal() {
@@ -42,8 +42,7 @@ export default function EditPositionSizeModal() {
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
 	const preview = useAppSelector(selectEditPositionPreview);
 	const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
-	const marketAssetRate = useAppSelector(selectMarketPrice);
-	const { market, position } = useAppSelector(selectEditPositionModalInfo);
+	const { market, position, marketPrice } = useAppSelector(selectEditPositionModalInfo);
 
 	const [editType, setEditType] = useState(0);
 
@@ -69,12 +68,12 @@ export default function EditPositionSizeModal() {
 	]);
 
 	const maxNativeIncreaseValue = useMemo(() => {
-		if (!marketAssetRate || marketAssetRate.eq(0)) return zeroBN;
+		if (!marketPrice || marketPrice.eq(0)) return zeroBN;
 		const totalMax = position?.remainingMargin.mul(APP_MAX_LEVERAGE) ?? zeroBN;
 		let max = totalMax.sub(position?.position?.notionalValue ?? 0);
 		max = max.gt(0) ? max : zeroBN;
-		return max.div(marketAssetRate);
-	}, [marketAssetRate, position?.remainingMargin, position?.position?.notionalValue]);
+		return max.div(marketPrice);
+	}, [marketPrice, position?.remainingMargin, position?.position?.notionalValue]);
 
 	const maxNativeValue = useMemo(() => {
 		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? zeroBN;
@@ -102,11 +101,7 @@ export default function EditPositionSizeModal() {
 
 	return (
 		<StyledBaseModal
-			title={
-				editType === 0
-					? `Increase ${market?.marketName} Position Size`
-					: `Decrease ${market?.marketName} Position Size`
-			}
+			title={editType === 0 ? `Increase Position Size` : `Decrease Position Size`}
 			isOpen
 			onDismiss={onClose}
 		>
@@ -124,8 +119,13 @@ export default function EditPositionSizeModal() {
 				type={editType === 0 ? 'increase' : 'decrease'}
 			/>
 
-			<Spacer height={20} />
+			<Spacer height={6} />
 			<InfoBoxContainer>
+				<InfoBoxRow
+					boldValue
+					title={t('futures.market.trade.edit-position.market')}
+					value={market?.marketName}
+				/>
 				<InfoBoxRow
 					valueNode={
 						preview?.leverage && (
@@ -184,6 +184,8 @@ export default function EditPositionSizeModal() {
 					/>
 				</>
 			)}
+			<Spacer height={20} />
+			<EditPositionFeeInfo />
 		</StyledBaseModal>
 	);
 }

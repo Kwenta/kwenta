@@ -256,7 +256,7 @@ export type ModifyPositionOptions<T extends boolean> = {
 export type FuturesOrderTypeDisplay =
 	| 'Next Price'
 	| 'Limit'
-	| 'Stop Market'
+	| 'Stop'
 	| 'Market'
 	| 'Liquidation'
 	| 'Delayed'
@@ -386,12 +386,15 @@ export enum AccountExecuteFunctions {
 	PERPS_V2_SUBMIT_ATOMIC_ORDER = 4,
 	PERPS_V2_SUBMIT_DELAYED_ORDER = 5,
 	PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER = 6,
-	PERPS_V2_CANCEL_DELAYED_ORDER = 7,
-	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 8,
-	PERPS_V2_CLOSE_POSITION = 9,
-	GELATO_PLACE_CONDITIONAL_ORDER = 10,
-	GELATO_CANCEL_CONDITIONAL_ORDER = 11,
+	PERPS_V2_CLOSE_POSITION = 7,
+	PERPS_V2_SUBMIT_CLOSE_DELAYED_ORDER = 8,
+	PERPS_V2_SUBMIT_CLOSE_OFFCHAIN_DELAYED_ORDER = 9,
+	PERPS_V2_CANCEL_DELAYED_ORDER = 10,
+	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 11,
+	GELATO_PLACE_CONDITIONAL_ORDER = 12,
+	GELATO_CANCEL_CONDITIONAL_ORDER = 13,
 }
+
 export type MarginTransfer = {
 	timestamp: number;
 	account: string;

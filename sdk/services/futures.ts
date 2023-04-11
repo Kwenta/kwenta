@@ -8,12 +8,7 @@ import KwentaSDK from 'sdk';
 
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import {
-	BPS_CONVERSION,
-	DEFAULT_DESIRED_TIMEDELTA,
-	KWENTA_TRACKING_CODE,
-	SL_TP_MAX_SIZE,
-} from 'sdk/constants/futures';
+import { BPS_CONVERSION, KWENTA_TRACKING_CODE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginAccountABI from 'sdk/contracts/abis/CrossMarginAccount.json';
@@ -48,7 +43,6 @@ import {
 	ContractOrderType,
 	PositionDetail,
 	PositionSide,
-	ModifyPositionOptions,
 	AccountExecuteFunctions,
 	MarginTransfer,
 	MarketWithIdleMargin,
@@ -77,7 +71,7 @@ import {
 } from 'sdk/utils/futures';
 import { getReasonFromCode } from 'sdk/utils/synths';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { MarketAssetByKey, MarketKeyByAsset } from 'utils/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -92,20 +86,6 @@ export default class FuturesService {
 
 	get futuresGqlEndpoint() {
 		return getFuturesEndpoint(this.sdk.context.networkId);
-	}
-
-	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
-		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
-		if (market) return market;
-		market = new PerpsV2MarketInternal(this.sdk.context.provider, marketKey, marketAddress);
-		this.internalFuturesMarkets = {
-			[this.sdk.context.networkId]: {
-				...this.internalFuturesMarkets[this.sdk.context.networkId],
-				[marketAddress]: market,
-			},
-		};
-
-		return market;
 	}
 
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
@@ -600,7 +580,6 @@ export default class FuturesService {
 		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
 
 		const preview = await marketInternal.getTradePreview(
-			MarketAssetByKey[marketKey],
 			crossMarginAccount,
 			tradeParams.sizeDelta.toBN(),
 			tradeParams.marginDelta.toBN(),
@@ -663,7 +642,7 @@ export default class FuturesService {
 			wei(0)
 		);
 		return {
-			totalIdleMargin: idleInMarkets,
+			totalIdleInMarkets: idleInMarkets,
 			marketsWithIdleMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
 				const market = markets.find((m) => m.marketKey === p.marketKey);
 
@@ -684,8 +663,8 @@ export default class FuturesService {
 
 		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(eoa);
 		return {
-			total: idleMargin.totalIdleMargin.add(susdWalletBalance),
-			marketsTotal: idleMargin.totalIdleMargin,
+			total: idleMargin.totalIdleInMarkets.add(susdWalletBalance),
+			marketsTotal: idleMargin.totalIdleInMarkets,
 			walletTotal: susdWalletBalance,
 			marketsWithMargin: idleMargin.marketsWithIdleMargin,
 		};
@@ -752,9 +731,13 @@ export default class FuturesService {
 			this.sdk.context.signer
 		);
 
+		const { commands, inputs } = await this.batchIdleMarketMarginSweeps(crossMarginAddress);
+
+		commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
+		inputs.push(defaultAbiCoder.encode(['int256'], [amount.neg().toBN()]));
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
-			[defaultAbiCoder.encode(['int256'], [amount.neg().toBN()])],
+			commands,
+			inputs,
 		]);
 	}
 
@@ -777,16 +760,11 @@ export default class FuturesService {
 				// Margin delta bigger than account balance,
 				// need to pull some from the users wallet or idle margin
 
-				const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress);
+				const { commands, inputs, idleMargin } = await this.batchIdleMarketMarginSweeps(
+					crossMarginAddress
+				);
 
-				// Sweep idle margin from other markets to account
-				if (idleMargin.totalIdleMargin.gt(0)) {
-					idleMargin.marketsWithIdleMargin.forEach((m) => {
-						commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
-						inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
-					});
-				}
-				const totalFreeMargin = idleMargin.totalIdleMargin.add(freeMargin);
+				const totalFreeMargin = idleMargin.totalIdleInMarkets.add(freeMargin);
 				const depositAmount = marginDelta.gt(totalFreeMargin)
 					? marginDelta.sub(totalFreeMargin).abs()
 					: wei(0);
@@ -809,7 +787,10 @@ export default class FuturesService {
 
 	public async modifySmartMarginPositionSize(
 		crossMarginAddress: string,
-		marketAddress: string,
+		market: {
+			key: FuturesMarketKey;
+			address: string;
+		},
 		sizeDelta: Wei,
 		desiredFillPrice: Wei
 	) {
@@ -817,9 +798,18 @@ export default class FuturesService {
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
+
+		const { commands, inputs } = await this.calculateFeeAndPrepareDeposit(
+			market.key,
+			crossMarginAddress,
+			{ sizeDelta }
+		);
+		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
+		inputs.push(encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice));
+
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER],
-			[encodeSubmitOffchainOrderParams(marketAddress, sizeDelta, desiredFillPrice)],
+			commands,
+			inputs,
 		]);
 	}
 
@@ -842,34 +832,18 @@ export default class FuturesService {
 		return market.closePositionWithTracking(priceImpactDelta.toBN(), KWENTA_TRACKING_CODE);
 	}
 
-	public async modifyIsolatedMarginPosition<T extends boolean>(
+	public async submitIsolatedMarginOrder(
 		marketAddress: string,
 		sizeDelta: Wei,
-		priceImpactDelta: Wei,
-		options?: ModifyPositionOptions<T>
+		priceImpactDelta: Wei
 	) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer);
 
-		if (options?.delayed && options.offchain) {
-			return this.sdk.transactions.createContractTxn(
-				market,
-				'submitOffchainDelayedOrderWithTracking',
-				[sizeDelta.toBN(), priceImpactDelta.toBN(), KWENTA_TRACKING_CODE]
-			);
-		} else if (options?.delayed) {
-			return this.sdk.transactions.createContractTxn(market, 'submitDelayedOrderWithTracking', [
-				sizeDelta.toBN(),
-				priceImpactDelta.toBN(),
-				wei(DEFAULT_DESIRED_TIMEDELTA).toBN(),
-				KWENTA_TRACKING_CODE,
-			]);
-		} else {
-			return this.sdk.transactions.createContractTxn(market, 'modifyPositionWithTracking', [
-				sizeDelta.toBN(),
-				priceImpactDelta.toBN(),
-				KWENTA_TRACKING_CODE,
-			]);
-		}
+		return this.sdk.transactions.createContractTxn(
+			market,
+			'submitOffchainDelayedOrderWithTracking',
+			[sizeDelta.toBN(), priceImpactDelta.toBN(), KWENTA_TRACKING_CODE]
+		);
 	}
 
 	public async cancelDelayedOrder(marketAddress: string, account: string, isOffchain: boolean) {
@@ -1211,5 +1185,94 @@ export default class FuturesService {
 			commands,
 			inputs,
 		]);
+	}
+
+	// Private methods
+
+	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
+		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
+		if (market) return market;
+		market = new PerpsV2MarketInternal(this.sdk.context.provider, marketKey, marketAddress);
+		this.internalFuturesMarkets = {
+			[this.sdk.context.networkId]: {
+				...this.internalFuturesMarkets[this.sdk.context.networkId],
+				[marketAddress]: market,
+			},
+		};
+
+		return market;
+	}
+
+	private async batchIdleMarketMarginSweeps(crossMarginAddress: string) {
+		const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress);
+		const commands: number[] = [];
+		const inputs: string[] = [];
+		// Sweep idle margin from other markets to account
+		if (idleMargin.totalIdleInMarkets.gt(0)) {
+			idleMargin.marketsWithIdleMargin.forEach((m) => {
+				commands.push(AccountExecuteFunctions.PERPS_V2_WITHDRAW_ALL_MARGIN);
+				inputs.push(defaultAbiCoder.encode(['address'], [m.marketAddress]));
+			});
+		}
+
+		return { commands, inputs, idleMargin };
+	}
+
+	private async calculateFeeAndPrepareDeposit(
+		marketKey: FuturesMarketKey,
+		crossMarginAddress: string,
+		{
+			orderPrice,
+			sizeDelta,
+			orderType,
+		}: {
+			orderPrice?: Wei;
+			sizeDelta: Wei;
+			orderType?: ConditionalOrderTypeEnum;
+			marginDelta?: Wei;
+		},
+		sweepIdleMargin = true
+	) {
+		const commands = [];
+		const inputs = [];
+		const idleInMarkets = wei(0);
+		if (sweepIdleMargin) {
+			const {
+				commands: sweepCommands,
+				inputs: sweepInputs,
+				idleMargin,
+			} = await this.batchIdleMarketMarginSweeps(crossMarginAddress);
+			commands.push(...sweepCommands);
+			inputs.push(...sweepInputs);
+
+			idleInMarkets.add(idleMargin.totalIdleInMarkets);
+		}
+		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
+		const totalFreeMargin = idleInMarkets.add(freeMargin);
+		const price = orderPrice ?? (await this.sdk.prices.getOffchainPrice(marketKey));
+		if (!price || price.eq(0))
+			throw new Error('No price provided or failed to fetch current price');
+		const fee = await this.calculateSmartMarginFee(sizeDelta.abs(), price, orderType);
+
+		const feeWithBuffer = fee.add(fee.mul(0.02));
+
+		if (feeWithBuffer.eq(0) || totalFreeMargin.gt(feeWithBuffer))
+			return { fee: feeWithBuffer, commands: [], inputs: [] };
+
+		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(
+			this.sdk.context.walletAddress
+		);
+
+		const requiredDeposit = feeWithBuffer.sub(totalFreeMargin).abs();
+		if (susdWalletBalance.lt(requiredDeposit)) {
+			throw new Error('Not enough sUSD in wallet to cover the fee');
+		}
+		commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
+		inputs.push(defaultAbiCoder.encode(['int256'], [requiredDeposit.toBN()]));
+		return {
+			fee: feeWithBuffer,
+			commands,
+			inputs,
+		};
 	}
 }

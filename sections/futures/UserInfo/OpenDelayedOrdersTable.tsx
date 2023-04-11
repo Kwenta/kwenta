@@ -278,6 +278,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 			<MobileOrTabletView>
 				<StyledTable
 					data={rowsData}
+					rounded={false}
 					noResultsMessage={
 						!isL2 ? (
 							<TableNoResults>

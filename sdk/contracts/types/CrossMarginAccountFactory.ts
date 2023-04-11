@@ -28,16 +28,18 @@ import type {
 
 export interface CrossMarginAccountFactoryInterface extends utils.Interface {
   functions: {
+    "accounts(address)": FunctionFragment;
     "canUpgrade()": FunctionFragment;
     "events()": FunctionFragment;
+    "getAccountOwner(address)": FunctionFragment;
+    "getAccountsOwnedBy(address)": FunctionFragment;
     "implementation()": FunctionFragment;
     "newAccount()": FunctionFragment;
     "owner()": FunctionFragment;
-    "ownerToAccount(address)": FunctionFragment;
     "removeUpgradability()": FunctionFragment;
     "settings()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "updateAccountOwner(address,address)": FunctionFragment;
+    "updateAccountOwnership(address,address,address)": FunctionFragment;
     "upgradeAccountImplementation(address)": FunctionFragment;
     "upgradeEvents(address)": FunctionFragment;
     "upgradeSettings(address)": FunctionFragment;
@@ -45,26 +47,40 @@ export interface CrossMarginAccountFactoryInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "accounts"
       | "canUpgrade"
       | "events"
+      | "getAccountOwner"
+      | "getAccountsOwnedBy"
       | "implementation"
       | "newAccount"
       | "owner"
-      | "ownerToAccount"
       | "removeUpgradability"
       | "settings"
       | "transferOwnership"
-      | "updateAccountOwner"
+      | "updateAccountOwnership"
       | "upgradeAccountImplementation"
       | "upgradeEvents"
       | "upgradeSettings"
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "accounts",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "canUpgrade",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "events", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getAccountOwner",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAccountsOwnedBy",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "implementation",
     values?: undefined
@@ -75,10 +91,6 @@ export interface CrossMarginAccountFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "ownerToAccount",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "removeUpgradability",
     values?: undefined
   ): string;
@@ -88,8 +100,12 @@ export interface CrossMarginAccountFactoryInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateAccountOwner",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    functionFragment: "updateAccountOwnership",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeAccountImplementation",
@@ -104,18 +120,23 @@ export interface CrossMarginAccountFactoryInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "accounts", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "canUpgrade", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "events", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getAccountOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAccountsOwnedBy",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "implementation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "newAccount", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "ownerToAccount",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "removeUpgradability",
     data: BytesLike
@@ -126,7 +147,7 @@ export interface CrossMarginAccountFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateAccountOwner",
+    functionFragment: "updateAccountOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -242,9 +263,24 @@ export interface CrossMarginAccountFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    accounts(
+      accounts: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { exist: boolean }>;
+
     canUpgrade(overrides?: CallOverrides): Promise<[boolean]>;
 
     events(overrides?: CallOverrides): Promise<[string]>;
+
+    getAccountOwner(
+      _account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getAccountsOwnedBy(
+      _owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
 
     implementation(overrides?: CallOverrides): Promise<[string]>;
 
@@ -253,11 +289,6 @@ export interface CrossMarginAccountFactory extends BaseContract {
     ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
-
-    ownerToAccount(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     removeUpgradability(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -270,9 +301,10 @@ export interface CrossMarginAccountFactory extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    updateAccountOwner(
-      _oldOwner: PromiseOrValue<string>,
+    updateAccountOwnership(
+      _account: PromiseOrValue<string>,
       _newOwner: PromiseOrValue<string>,
+      _oldOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -292,9 +324,24 @@ export interface CrossMarginAccountFactory extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  accounts(
+    accounts: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   canUpgrade(overrides?: CallOverrides): Promise<boolean>;
 
   events(overrides?: CallOverrides): Promise<string>;
+
+  getAccountOwner(
+    _account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getAccountsOwnedBy(
+    _owner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
 
   implementation(overrides?: CallOverrides): Promise<string>;
 
@@ -303,11 +350,6 @@ export interface CrossMarginAccountFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
-
-  ownerToAccount(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   removeUpgradability(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -320,9 +362,10 @@ export interface CrossMarginAccountFactory extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  updateAccountOwner(
-    _oldOwner: PromiseOrValue<string>,
+  updateAccountOwnership(
+    _account: PromiseOrValue<string>,
     _newOwner: PromiseOrValue<string>,
+    _oldOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -342,20 +385,30 @@ export interface CrossMarginAccountFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    accounts(
+      accounts: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     canUpgrade(overrides?: CallOverrides): Promise<boolean>;
 
     events(overrides?: CallOverrides): Promise<string>;
+
+    getAccountOwner(
+      _account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getAccountsOwnedBy(
+      _owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     implementation(overrides?: CallOverrides): Promise<string>;
 
     newAccount(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    ownerToAccount(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     removeUpgradability(overrides?: CallOverrides): Promise<void>;
 
@@ -366,9 +419,10 @@ export interface CrossMarginAccountFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateAccountOwner(
-      _oldOwner: PromiseOrValue<string>,
+    updateAccountOwnership(
+      _account: PromiseOrValue<string>,
       _newOwner: PromiseOrValue<string>,
+      _oldOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -424,9 +478,24 @@ export interface CrossMarginAccountFactory extends BaseContract {
   };
 
   estimateGas: {
+    accounts(
+      accounts: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     canUpgrade(overrides?: CallOverrides): Promise<BigNumber>;
 
     events(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getAccountOwner(
+      _account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAccountsOwnedBy(
+      _owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     implementation(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -435,11 +504,6 @@ export interface CrossMarginAccountFactory extends BaseContract {
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ownerToAccount(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     removeUpgradability(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -452,9 +516,10 @@ export interface CrossMarginAccountFactory extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    updateAccountOwner(
-      _oldOwner: PromiseOrValue<string>,
+    updateAccountOwnership(
+      _account: PromiseOrValue<string>,
       _newOwner: PromiseOrValue<string>,
+      _oldOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -475,9 +540,24 @@ export interface CrossMarginAccountFactory extends BaseContract {
   };
 
   populateTransaction: {
+    accounts(
+      accounts: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     canUpgrade(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     events(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getAccountOwner(
+      _account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAccountsOwnedBy(
+      _owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     implementation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -486,11 +566,6 @@ export interface CrossMarginAccountFactory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ownerToAccount(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     removeUpgradability(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -503,9 +578,10 @@ export interface CrossMarginAccountFactory extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateAccountOwner(
-      _oldOwner: PromiseOrValue<string>,
+    updateAccountOwnership(
+      _account: PromiseOrValue<string>,
       _newOwner: PromiseOrValue<string>,
+      _oldOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
