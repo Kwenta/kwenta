@@ -566,11 +566,11 @@
 					"claim-epoch": "Claim: Epoch {{EpochPeriod}}",
 					"claim": "Claim",
 					"estimated-info": "Estimated values do not reflect the final reward value and are subject to change as a result of future fees paid and staked amounts by other participants.",
-					"trading-reward": "Trading Reward:",
-					"not-eligible": "Not Eligible",
+					"trading-reward": "Trading Rewards:",
+					"not-eligible": "Eligible",
 					"eligible": "Eligible",
-					"stake-to-earn": "Stake <0>$KWENTA</0> to earn more rewards",
-					"stake-to-start": "Stake <0>$KWENTA</0> to start earning rewards",
+					"stake-to-earn": "Trade to start earning <0>$KWENTA</0> rewards",
+					"stake-to-start": "Trade to start earning <0>$KWENTA</0> rewards",
 					"learn-more": "Learn More"
 				},
 				"escrow": {
