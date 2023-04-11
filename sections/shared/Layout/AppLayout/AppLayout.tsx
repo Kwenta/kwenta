@@ -2,13 +2,13 @@ import { FC, memo } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { Body } from 'components/Text';
 import NotificationContainer from 'constants/NotificationContainer';
 import { MobileScreenContainer } from 'styles/common';
 
 import GitHashID from './GitHashID';
 import Header from './Header';
 import MobileUserMenu from './Header/MobileUserMenu';
+import OperationStatus from './OperationStatus';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -17,7 +17,7 @@ type AppLayoutProps = {
 const Footer = () => {
 	return (
 		<FooterContainer>
-			<Body color="secondary">Fully operational</Body>
+			<OperationStatus />
 			<GitHashID />
 			<div></div>
 		</FooterContainer>
