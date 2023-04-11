@@ -70,6 +70,7 @@ import {
 	marketsForNetwork,
 } from 'sdk/utils/futures';
 import { getReasonFromCode } from 'sdk/utils/synths';
+import { CrossMarginSettings } from 'state/futures/types';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { MarketKeyByAsset } from 'utils/futures';
 
@@ -497,27 +498,12 @@ export default class FuturesService {
 		return orderBy(orders, ['id'], 'desc');
 	}
 
-	public async getCrossMarginSettings() {
-		const crossMarginSettings = this.sdk.context.multicallContracts.CrossMarginSettings;
-		if (!crossMarginSettings) throw new Error(UNSUPPORTED_NETWORK);
-
-		const fees: Array<BigNumber> = await this.sdk.context.multicallProvider.all([
-			crossMarginSettings.tradeFee(),
-			crossMarginSettings.limitOrderFee(),
-			crossMarginSettings.stopOrderFee(),
-		]);
-
-		const { tradeFee, limitOrderFee, stopOrderFee } = {
-			tradeFee: fees[0],
-			limitOrderFee: fees[1],
-			stopOrderFee: fees[2],
-		};
-
+	public getCrossMarginSettings(): CrossMarginSettings {
 		return {
 			fees: {
-				base: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : wei(0),
-				limit: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
-				stop: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
+				base: wei(0),
+				limit: wei(0),
+				stop: wei(0),
 			},
 		};
 	}
@@ -675,7 +661,7 @@ export default class FuturesService {
 		price: Wei,
 		orderType?: ConditionalOrderTypeEnum
 	) {
-		const settings = await this.getCrossMarginSettings();
+		const settings = this.getCrossMarginSettings();
 		const baseRate = settings.fees.base;
 		const conditional =
 			orderType === ConditionalOrderTypeEnum.STOP

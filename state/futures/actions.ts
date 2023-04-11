@@ -207,7 +207,7 @@ export const fetchCrossMarginSettings = createAsyncThunk<
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	if (!supportedNetwork) return;
 	try {
-		const settings = await sdk.futures.getCrossMarginSettings();
+		const settings = sdk.futures.getCrossMarginSettings();
 		return serializeCrossMarginSettings(settings);
 	} catch (err) {
 		logError(err);
