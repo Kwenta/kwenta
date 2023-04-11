@@ -8,7 +8,12 @@ import { Body } from 'components/Text';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
+import {
+	selectFuturesType,
+	selectIdleMarginTransfers,
+	selectMarketMarginTransfers,
+	selectQueryStatuses,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
@@ -21,14 +26,22 @@ const Transfers: FC = () => {
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const isL2 = useIsL2();
-	const marginTransfers = useAppSelector(selectMarketMarginTransfers);
+	const accountType = useAppSelector(selectFuturesType);
+	const marketMarginTransfers = useAppSelector(selectMarketMarginTransfers);
+	const idleMarginTransfers = useAppSelector(selectIdleMarginTransfers);
+
 	const {
 		marginTransfers: { status: marginTransfersStatus },
 	} = useAppSelector(selectQueryStatuses);
-	const columnsDeps = useMemo(() => [marginTransfers, marginTransfersStatus], [
-		marginTransfers,
-		marginTransfersStatus,
-	]);
+
+	const columnsDeps = useMemo(
+		() => [marketMarginTransfers, idleMarginTransfers, marginTransfersStatus],
+		[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
+	);
+
+	const marginTransfers = useMemo(() => {
+		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers;
+	}, [accountType, marketMarginTransfers, idleMarginTransfers]);
 
 	return (
 		<Table

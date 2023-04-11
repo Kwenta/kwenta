@@ -430,10 +430,21 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchMarginTransfers.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS;
 			if (payload) {
-				const { context, marginTransfers } = payload;
-				updateFuturesAccount(futuresState, context.type, context.network, context.wallet, {
-					marginTransfers,
-				});
+				const { context, marginTransfers, idleTransfers } = payload;
+				const newAccountData =
+					context.type === 'isolated_margin'
+						? { marginTransfers }
+						: {
+								marginTransfers,
+								idleTransfers,
+						  };
+				updateFuturesAccount(
+					futuresState,
+					context.type,
+					context.network,
+					context.wallet,
+					newAccountData
+				);
 			}
 		});
 		builder.addCase(fetchMarginTransfers.rejected, (futuresState) => {

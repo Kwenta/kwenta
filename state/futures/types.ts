@@ -200,6 +200,7 @@ export type IsolatedAccountData = FuturesAccountData & {
 
 export type CrossMarginAccountData = FuturesAccountData & {
 	account: string;
+	idleTransfers: MarginTransfer[];
 	balanceInfo: CrossMarginBalanceInfo<string>;
 	delayedOrders: DelayedOrderWithDetails<string>[];
 	conditionalOrders: CrossMarginOrder<string>[];

@@ -342,6 +342,7 @@ export const fetchDailyVolumes = createAsyncThunk<FuturesVolumes<string>, void, 
 export const fetchMarginTransfers = createAsyncThunk<
 	| {
 			marginTransfers: MarginTransfer[];
+			idleTransfers: MarginTransfer[];
 			context: AccountContext;
 	  }
 	| undefined,
@@ -356,11 +357,17 @@ export const fetchMarginTransfers = createAsyncThunk<
 	try {
 		const transfers =
 			futures.selectedType === 'cross_margin'
-				? await sdk.futures.getCrossMarginTransfers(cmAccount)
+				? await sdk.futures.getIsolatedMarginTransfers(cmAccount)
 				: await sdk.futures.getIsolatedMarginTransfers();
+
+		const idleTransfers =
+			futures.selectedType === 'cross_margin'
+				? await sdk.futures.getCrossMarginTransfers(cmAccount)
+				: [];
 
 		return {
 			marginTransfers: transfers,
+			idleTransfers: idleTransfers,
 			context: {
 				wallet: wallet.walletAddress,
 				network: network,

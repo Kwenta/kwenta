@@ -967,6 +967,18 @@ export const selectMarginTransfers = createSelector(
 	}
 );
 
+export const selectIdleMarginTransfers = createSelector(
+	selectWallet,
+	selectNetwork,
+	selectFuturesType,
+	(state: RootState) => state.futures,
+	(wallet, network, type, futures) => {
+		if (!wallet || accountType(type) !== 'crossMargin') return [];
+		const account = futures.crossMargin.accounts[network]?.[wallet];
+		return account?.idleTransfers ?? [];
+	}
+);
+
 export const selectOpenDelayedOrders = createSelector(selectAccountData, (account) =>
 	unserializeDelayedOrders(account?.delayedOrders ?? [])
 );
