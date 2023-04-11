@@ -306,6 +306,6 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 	${(props) => `
 		color: ${props.theme.colors.selectedTheme.text.value};
 		border-left: 2px solid 
-			${props.theme.colors.selectedTheme.badge[props.$isEligible ? 'yellow' : 'red'].background};
+			${props.theme.colors.selectedTheme.badge[props.$isEligible ? 'yellow' : 'yellow'].background};
 		`}
 `;
