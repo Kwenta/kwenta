@@ -1,4 +1,5 @@
-import { FC, memo, useState } from 'react';
+import { useRouter } from 'next/router';
+import { FC, memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -11,11 +12,12 @@ import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
+import ROUTES from 'constants/routes';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppSelector } from 'state/hooks';
-import { selectAPY } from 'state/staking/selectors';
+import { selectAPY, selectEpochPeriod, selectTotalRewards } from 'state/staking/selectors';
 import media from 'styles/media';
-import { formatPercent } from 'utils/formatters/number';
+import { formatNumber, formatPercent, truncateNumbers } from 'utils/formatters/number';
 
 const ClaimAllButton = memo(() => {
 	const { t } = useTranslation();
@@ -29,7 +31,17 @@ const ClaimAllButton = memo(() => {
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
+	const router = useRouter();
+	const stakingApy = useAppSelector(selectAPY);
+	const epoch = useAppSelector(selectEpochPeriod);
+	const totalRewards = useAppSelector(selectTotalRewards);
+
 	const [open, setOpen] = useState(false);
+
+	const goToStaking = useCallback(() => {
+		router.push(ROUTES.Dashboard.Stake);
+	}, [router]);
+
 	const REWARDS = [
 		{
 			key: 'trading-rewards',
@@ -38,6 +50,9 @@ const BalanceActions: FC = () => {
 			button: t('dashboard.rewards.staking'),
 			kwentaIcon: true,
 			linkIcon: true,
+			apy: stakingApy,
+			rewards: totalRewards,
+			onClick: goToStaking,
 		},
 		{
 			key: 'kwenta-rewards',
@@ -46,6 +61,9 @@ const BalanceActions: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
+			apy: stakingApy,
+			rewards: totalRewards,
+			onClick: () => {},
 		},
 		{
 			key: 'snx-rewards',
@@ -54,10 +72,11 @@ const BalanceActions: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
+			apy: stakingApy,
+			rewards: totalRewards,
+			onClick: () => {},
 		},
 	];
-
-	const apy = useAppSelector(selectAPY);
 
 	return (
 		<>
@@ -84,7 +103,7 @@ const BalanceActions: FC = () => {
 										</Heading>
 										<Spacer height={5} />
 										<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
-											100
+											{truncateNumbers(reward.rewards, 4)}
 										</LogoText>
 									</div>
 									<StyledFlexDivCol>
@@ -95,7 +114,7 @@ const BalanceActions: FC = () => {
 											className="value"
 											style={{ alignItems: 'center', justifyContent: 'flex-start' }}
 										>
-											19
+											{formatNumber(epoch, { minDecimals: 0 })}
 											<SpacedHelpIcon />
 										</FlexDivRow>
 									</StyledFlexDivCol>
@@ -103,14 +122,14 @@ const BalanceActions: FC = () => {
 										<Body size="medium" style={{ marginBottom: '5px' }}>
 											{t('dashboard.rewards.apr')}
 										</Body>
-										<div className="value">{formatPercent(apy, { minDecimals: 2 })}</div>
+										<div className="value">{formatPercent(reward.apy, { minDecimals: 2 })}</div>
 									</StyledFlexDivCol>
 									<Button
 										fullWidth
 										variant="flat"
 										size="small"
 										disabled={false}
-										onClick={() => {}}
+										onClick={reward.onClick}
 										style={{ marginLeft: '50px' }}
 									>
 										{reward.button}

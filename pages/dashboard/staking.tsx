@@ -14,7 +14,7 @@ const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
-	const [currentTab, setCurrentTab] = useState(StakeTab.Staking);
+	const [currentTab, setCurrentTab] = useState(StakeTab.TradingRewards);
 
 	useEffect(() => {
 		if (!!walletAddress) {
