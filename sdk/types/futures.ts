@@ -300,7 +300,7 @@ export type DelayedOrder<T = Wei> = {
 	submittedAtTimestamp: number;
 	executableAtTimestamp: number;
 	isOffchain: boolean;
-	priceImpactDelta: T;
+	desiredFillPrice: T;
 	targetRoundId: T | null;
 	orderType: FuturesOrderTypeDisplay;
 	side: PositionSide;
