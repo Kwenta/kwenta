@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
 
 type LeaderComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
@@ -30,7 +29,6 @@ const Leader: LeaderComponent = () => {
 				<MobileOnlyView>
 					<MobileMainContent>
 						<Leaderboard mobile />
-						<GitHashID />
 					</MobileMainContent>
 				</MobileOnlyView>
 			</PageContent>

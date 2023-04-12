@@ -6,9 +6,11 @@ const GitHashID: FC = memo(() => {
 	const gitID = process.env.GIT_HASH_ID!.toString();
 
 	return (
-		<Body color="secondary" style={{ textAlign: 'center' }}>
-			{gitID}
-		</Body>
+		<a href="https://github.com/Kwenta/kwenta/releases/latest" target="_blank" rel="noreferrer">
+			<Body color="secondary" style={{ textAlign: 'center' }}>
+				{gitID}
+			</Body>
+		</a>
 	);
 });
 
