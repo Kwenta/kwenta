@@ -435,6 +435,7 @@ export type SmartMarginOrderInputs = {
 };
 
 export type SLTPOrderInputs = {
+	keeperEthDeposit: Wei;
 	stopLoss?: {
 		price: Wei;
 		desiredFillPrice: Wei;

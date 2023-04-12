@@ -95,6 +95,7 @@ import {
 	setClosePositionSizeDelta,
 	setClosePositionPrice,
 	clearAllTradePreviews,
+	setKeeperDeposit,
 } from './reducer';
 import {
 	selectCrossMarginAccount,
@@ -131,6 +132,7 @@ import {
 	selectOpenDelayedOrders,
 	selectSlTpModalInputs,
 	selectDesiredTradeFillPrice,
+	selectSmartMarginKeeperDeposit,
 } from './selectors';
 import {
 	AccountContext,
@@ -1034,6 +1036,15 @@ export const calculateCrossMarginFees = (params: TradePreviewParams): AppThunk =
 	dispatch(setCrossMarginFees(fees));
 };
 
+export const calculateKeeperDeposit = (): AppThunk => (dispatch, getState) => {
+	const keeperBalance = selectKeeperEthBalance(getState());
+	const requiredDeposit = keeperBalance.lt(ORDER_KEEPER_ETH_DEPOSIT)
+		? ORDER_KEEPER_ETH_DEPOSIT.sub(keeperBalance)
+		: wei(0);
+
+	dispatch(setKeeperDeposit(requiredDeposit.toString()));
+};
+
 export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) => {
 	const market = selectMarketInfo(getState());
 	const { susdSizeDelta } = selectIsolatedMarginTradeInputs(getState());
@@ -1755,6 +1766,7 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 		const account = selectCrossMarginAccount(getState());
 		const wallet = selectWallet(getState());
 		const { stopLossPrice, takeProfitPrice } = selectSlTpModalInputs(getState());
+		const keeperDeposit = selectSmartMarginKeeperDeposit(getState());
 
 		try {
 			if (!market) throw new Error('Market info not found');
@@ -1776,7 +1788,9 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 				wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.TAKE_PROFIT)
 			);
 
-			const params: SLTPOrderInputs = {};
+			const params: SLTPOrderInputs = {
+				keeperEthDeposit: keeperDeposit,
+			};
 
 			// To separate Stop Loss and Take Profit from other limit / stop orders
 			// we set the size to max big num value.

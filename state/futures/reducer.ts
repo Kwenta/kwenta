@@ -264,6 +264,9 @@ const futuresSlice = createSlice({
 		setCrossMarginFees: (state, action: PayloadAction<CrossMarginTradeFees<string>>) => {
 			state.crossMargin.fees = action.payload;
 		},
+		setKeeperDeposit: (state, action: PayloadAction<string>) => {
+			state.crossMargin.fees.keeperEthDeposit = action.payload;
+		},
 		handlePreviewError: (
 			futuresState,
 			{
@@ -696,6 +699,7 @@ export const {
 	setTransactionEstimate,
 	setLeverageInput,
 	setCrossMarginFees,
+	setKeeperDeposit,
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
 	clearAllTradePreviews,

@@ -688,6 +688,10 @@ export const selectCrossMarginTradeFees = createSelector(
 	}
 );
 
+export const selectSmartMarginKeeperDeposit = createSelector(selectCrossMarginTradeFees, (fees) => {
+	return fees.keeperEthDeposit;
+});
+
 export const selectTradeSizeInputs = createSelector(
 	selectFuturesType,
 	selectCrossMarginTradeInputs,

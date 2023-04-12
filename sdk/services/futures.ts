@@ -1107,10 +1107,14 @@ export default class FuturesService {
 			}
 		}
 
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			commands,
-			inputs,
-		]);
+		return this.sdk.transactions.createContractTxn(
+			crossMarginAccountContract,
+			'execute',
+			[commands, inputs],
+			{
+				value: params.keeperEthDeposit?.toBN() ?? '0',
+			}
+		);
 	}
 
 	// Private methods

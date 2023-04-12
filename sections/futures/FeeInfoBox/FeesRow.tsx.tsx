@@ -37,19 +37,27 @@ const ExecutionFeeRow = memo(({ executionFee }: { executionFee: Wei }) => {
 	);
 });
 
-const KeeperDepositRow = memo(({ smartMarginKeeperDeposit }: { smartMarginKeeperDeposit: Wei }) => {
-	return (
-		<InfoBoxRow
-			title="Keeper Deposit"
-			isSubItem
-			value={
-				smartMarginKeeperDeposit.gt(0)
-					? formatCurrency('ETH', smartMarginKeeperDeposit, { currencyKey: 'ETH' })
-					: NO_VALUE
-			}
-		/>
-	);
-});
+export const KeeperDepositRow = memo(
+	({
+		smartMarginKeeperDeposit,
+		isSubItem,
+	}: {
+		smartMarginKeeperDeposit: Wei;
+		isSubItem?: boolean;
+	}) => {
+		return (
+			<InfoBoxRow
+				title="Keeper Deposit"
+				isSubItem={isSubItem}
+				value={
+					smartMarginKeeperDeposit.gt(0)
+						? formatCurrency('ETH', smartMarginKeeperDeposit, { currencyKey: 'ETH' })
+						: NO_VALUE
+				}
+			/>
+		);
+	}
+);
 
 const EstimatedTradeFeeRow = memo(({ rates, tradeFee }: { rates: FeeRates; tradeFee?: Wei }) => {
 	return (
@@ -110,7 +118,7 @@ const FeesRow = memo(
 				<ExecutionFeeRow executionFee={executionFee} />
 				<EstimatedTradeFeeRow rates={rates} tradeFee={tradeFee} />
 				{(orderType === 'limit' || orderType === 'stop_market') && (
-					<KeeperDepositRow smartMarginKeeperDeposit={smartMarginKeeperDeposit} />
+					<KeeperDepositRow isSubItem smartMarginKeeperDeposit={smartMarginKeeperDeposit} />
 				)}
 			</InfoBoxRow>
 		);
