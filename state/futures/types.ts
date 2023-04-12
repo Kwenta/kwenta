@@ -4,7 +4,7 @@ import Wei from '@synthetixio/wei';
 import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import {
-	CrossMarginOrderType,
+	SmartMarginOrderType,
 	FuturesMarket,
 	FuturesOrderTypeDisplay,
 	FuturesPosition,
@@ -48,7 +48,7 @@ export type ClosePositionInputsCrossMargin<T = Wei> = {
 		value?: string | undefined | null;
 		invalidLabel: string | undefined | null;
 	};
-	orderType: CrossMarginOrderType;
+	orderType: SmartMarginOrderType;
 };
 
 export type ClosePositionInputsIsolatedMargin<T = Wei> = {
@@ -98,7 +98,6 @@ export type FuturesQueryStatuses = {
 	isolatedPositions: QueryStatus;
 	isolatedPositionHistory: QueryStatus;
 	openOrders: QueryStatus;
-	crossMarginSettings: QueryStatus;
 	isolatedTradePreview: QueryStatus;
 	crossMarginTradePreview: QueryStatus;
 	crossMarginAccount: QueryStatus;
@@ -153,20 +152,9 @@ export type CrossMarginBalanceInfo<T = Wei> = {
 	allowance: T;
 };
 
-export type CrossMarginSettings<T = Wei> = {
-	fees: {
-		base: T;
-		limit: T;
-		stop: T;
-	};
-};
-
 export type CrossMarginTradeFees<T = Wei> = {
-	staticFee: T;
-	crossMarginFee: T;
-	limitStopOrderFee: T;
+	delayedOrderFee: T;
 	keeperEthDeposit: T;
-	total: T;
 };
 
 type FuturesErrors = {
@@ -245,7 +233,7 @@ export type CrossMarginState = {
 	editPositionInputs: EditPositionInputs<string>;
 	sltpModalInputs: SLTPInputs<string>;
 	marginDelta: string;
-	orderType: CrossMarginOrderType;
+	orderType: SmartMarginOrderType;
 	closePositionOrderInputs: ClosePositionInputsCrossMargin<string>;
 	orderFeeCap: string;
 	leverageInput: string;
@@ -260,7 +248,6 @@ export type CrossMarginState = {
 		edit: FuturesPotentialTradeDetails<string> | null;
 	};
 	previewDebounceCount: number;
-	settings: CrossMarginSettings<string>;
 	fees: CrossMarginTradeFees<string>;
 	depositApproved: boolean;
 	cancellingOrder: number | undefined;
@@ -343,7 +330,7 @@ export type TradePreviewParams = {
 		key: FuturesMarketKey;
 		address: string;
 	};
-	orderPrice?: Wei;
+	orderPrice: Wei;
 	sizeDelta: Wei;
 	marginDelta: Wei;
 	action: PreviewAction;

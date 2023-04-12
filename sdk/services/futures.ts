@@ -8,14 +8,14 @@ import KwentaSDK from 'sdk';
 
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { BPS_CONVERSION, KWENTA_TRACKING_CODE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
+import { KWENTA_TRACKING_CODE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
-import CrossMarginAccountABI from 'sdk/contracts/abis/CrossMarginAccount.json';
 import PerpsMarketABI from 'sdk/contracts/abis/PerpsV2Market.json';
+import SmartMarginAccountABI from 'sdk/contracts/abis/SmartMarginAccount.json';
 import PerpsV2MarketInternal from 'sdk/contracts/PerpsV2MarketInternalV2';
 import {
-	CrossMarginAccount__factory,
+	SmartMarginAccount__factory,
 	PerpsV2MarketData,
 	PerpsV2Market__factory,
 } from 'sdk/contracts/types';
@@ -55,6 +55,7 @@ import { PricesMap } from 'sdk/types/prices';
 import {
 	calculateFundingRate,
 	calculateVolumes,
+	ConditionalOrderResult,
 	encodeConditionalOrderParams,
 	encodeModidyMarketMarginParams,
 	encodeSubmitOffchainOrderParams,
@@ -434,7 +435,7 @@ export default class FuturesService {
 	}
 
 	public async getCrossMarginAccountBalance(crossMarginAddress: string) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.provider
 		);
@@ -444,7 +445,7 @@ export default class FuturesService {
 	}
 
 	public async getCrossMarginBalanceInfo(walletAddress: string, crossMarginAddress: string) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.provider
 		);
@@ -466,8 +467,8 @@ export default class FuturesService {
 	}
 
 	public async getConditionalOrders(account: string) {
-		const crossMarginAccountMultiCall = new EthCallContract(account, CrossMarginAccountABI);
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountMultiCall = new EthCallContract(account, SmartMarginAccountABI);
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			account,
 			this.sdk.context.provider
 		);
@@ -482,7 +483,9 @@ export default class FuturesService {
 		const orderCalls = Array(orderId)
 			.fill(0)
 			.map((_, i) => crossMarginAccountMultiCall.getConditionalOrder(start + i));
-		const contractOrders = (await this.sdk.context.multicallProvider.all(orderCalls)) as any;
+		const contractOrders = (await this.sdk.context.multicallProvider.all(
+			orderCalls
+		)) as ConditionalOrderResult[];
 
 		for (let i = 0; i < orderId; i++) {
 			const contractOrder = contractOrders[i];
@@ -495,31 +498,6 @@ export default class FuturesService {
 		}
 
 		return orderBy(orders, ['id'], 'desc');
-	}
-
-	public async getCrossMarginSettings() {
-		const crossMarginSettings = this.sdk.context.multicallContracts.CrossMarginSettings;
-		if (!crossMarginSettings) throw new Error(UNSUPPORTED_NETWORK);
-
-		const fees: Array<BigNumber> = await this.sdk.context.multicallProvider.all([
-			crossMarginSettings.tradeFee(),
-			crossMarginSettings.limitOrderFee(),
-			crossMarginSettings.stopOrderFee(),
-		]);
-
-		const { tradeFee, limitOrderFee, stopOrderFee } = {
-			tradeFee: fees[0],
-			limitOrderFee: fees[1],
-			stopOrderFee: fees[2],
-		};
-
-		return {
-			fees: {
-				base: tradeFee ? wei(tradeFee.toNumber() / BPS_CONVERSION) : wei(0),
-				limit: limitOrderFee ? wei(limitOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
-				stop: stopOrderFee ? wei(stopOrderFee.toNumber() / BPS_CONVERSION) : wei(0),
-			},
-		};
 	}
 
 	// Perps V2 read functions
@@ -538,13 +516,6 @@ export default class FuturesService {
 		return orders.map((order, ind) => {
 			return formatDelayedOrder(account, marketAddresses[ind], order);
 		});
-	}
-
-	public async getIsFlagged(account: string, marketAddress: string) {
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider);
-		// TODO: Remove this catch after all markets have been upgraded
-		const isFlagged = await market.isFlagged(account).catch((_) => null);
-		return isFlagged;
 	}
 
 	public async getIsolatedTradePreview(
@@ -677,23 +648,6 @@ export default class FuturesService {
 		};
 	}
 
-	public async calculateSmartMarginFee(
-		sizeDelta: Wei,
-		price: Wei,
-		orderType?: ConditionalOrderTypeEnum
-	) {
-		const settings = await this.getCrossMarginSettings();
-		const baseRate = settings.fees.base;
-		const conditional =
-			orderType === ConditionalOrderTypeEnum.STOP
-				? settings.fees.stop
-				: ConditionalOrderTypeEnum.LIMIT
-				? settings.fees.limit
-				: wei(0);
-		const fee = sizeDelta.mul(baseRate.add(conditional));
-		return fee.mul(price);
-	}
-
 	// This is on an interval of 15 seconds.
 	public async getFuturesTrades(marketKey: FuturesMarketKey, minTs: number, maxTs: number) {
 		const response = await queryFuturesTrades(this.sdk, marketKey, minTs, maxTs);
@@ -721,7 +675,7 @@ export default class FuturesService {
 	}
 
 	public async depositCrossMarginAccount(crossMarginAddress: string, amount: Wei) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -733,7 +687,7 @@ export default class FuturesService {
 	}
 
 	public async withdrawCrossMarginAccount(crossMarginAddress: string, amount: Wei) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -753,7 +707,7 @@ export default class FuturesService {
 		marketAddress: string,
 		marginDelta: Wei
 	) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -801,22 +755,14 @@ export default class FuturesService {
 		sizeDelta: Wei,
 		desiredFillPrice: Wei
 	) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
 
-		const { commands, inputs } = await this.calculateFeeAndPrepareDeposit(
-			market.key,
-			crossMarginAddress,
-			{ sizeDelta }
-		);
-		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
-		inputs.push(encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice));
-
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			commands,
-			inputs,
+			[AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER],
+			[encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice)],
 		]);
 	}
 
@@ -882,9 +828,9 @@ export default class FuturesService {
 	}
 
 	public async createCrossMarginAccount() {
-		if (!this.sdk.context.contracts.CrossMarginAccountFactory) throw new Error(UNSUPPORTED_NETWORK);
+		if (!this.sdk.context.contracts.SmartMarginAccountFactory) throw new Error(UNSUPPORTED_NETWORK);
 		return this.sdk.transactions.createContractTxn(
-			this.sdk.context.contracts.CrossMarginAccountFactory,
+			this.sdk.context.contracts.SmartMarginAccountFactory,
 			'newAccount',
 			[]
 		);
@@ -899,7 +845,7 @@ export default class FuturesService {
 		crossMarginAddress: string,
 		order: SmartMarginOrderInputs
 	) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -917,21 +863,6 @@ export default class FuturesService {
 			});
 		}
 
-		// TODO: Work out how best to subtract fee, do we just let the client manage this instead?
-		const price =
-			order.conditionalOrderInputs?.price ?? (await this.sdk.prices.getOffchainPrice(market.key));
-		if (!price || price.eq(0))
-			throw new Error('No price provided or failed to fetch current price');
-		const fee = await this.calculateSmartMarginFee(
-			order.sizeDelta.abs(),
-			price,
-			order.conditionalOrderInputs?.orderType
-		);
-		// Add a 2% buffer because the price could change
-		const feeWithBuffer = fee.add(fee.mul(0.02));
-		// Need to subtract the fee so we leave enough in the account to pay it
-		const marginDeltaMinusFees = order.marginDelta.sub(feeWithBuffer);
-
 		if (order.marginDelta.gt(0)) {
 			const totalFreeMargin = freeMargin.add(idleMargin.marketsTotal);
 			const depositAmount = order.marginDelta.gt(totalFreeMargin)
@@ -947,7 +878,7 @@ export default class FuturesService {
 		if (order.sizeDelta.abs().gt(0)) {
 			if (!order.conditionalOrderInputs) {
 				commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
-				inputs.push(encodeModidyMarketMarginParams(market.address, marginDeltaMinusFees));
+				inputs.push(encodeModidyMarketMarginParams(market.address, order.marginDelta));
 				commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
 				inputs.push(
 					encodeSubmitOffchainOrderParams(market.address, order.sizeDelta, order.desiredFillPrice)
@@ -957,7 +888,7 @@ export default class FuturesService {
 				const params = encodeConditionalOrderParams(
 					market.key,
 					{
-						marginDelta: marginDeltaMinusFees,
+						marginDelta: order.marginDelta,
 						sizeDelta: order.sizeDelta,
 						price: order.conditionalOrderInputs!.price,
 						desiredFillPrice: order.desiredFillPrice,
@@ -1035,7 +966,7 @@ export default class FuturesService {
 			'execute',
 			[commands, inputs],
 			{
-				value: order.conditionalOrderInputs?.keeperEthDeposit.toBN() ?? '0',
+				value: order.keeperEthDeposit?.toBN() ?? '0',
 			}
 		);
 	}
@@ -1052,25 +983,13 @@ export default class FuturesService {
 		},
 		desiredFillPrice: Wei
 	) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
 
-		const price = await this.sdk.prices.getOffchainPrice(market.key);
-		const fee = await this.calculateSmartMarginFee(position.size.abs(), price);
-		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
-
-		const feeWithBuffer = fee.add(fee.mul(0.02));
-
 		const commands = [];
 		const inputs = [];
-
-		if (fee.gt(0) && freeMargin.lt(feeWithBuffer)) {
-			// Need to add some account margin to pay fees
-			commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
-			inputs.push(defaultAbiCoder.encode(['int256'], [feeWithBuffer.toBN()]));
-		}
 
 		// TODO: Change to delayed close when market contracts are upgraded
 
@@ -1090,7 +1009,7 @@ export default class FuturesService {
 	}
 
 	public async cancelConditionalOrder(crossMarginAddress: string, orderId: number) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -1102,7 +1021,7 @@ export default class FuturesService {
 	}
 
 	public async withdrawAccountKeeperBalance(crossMarginAddress: string, amount: Wei) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -1116,7 +1035,7 @@ export default class FuturesService {
 		crossMarginAddress: string,
 		params: SLTPOrderInputs
 	) {
-		const crossMarginAccountContract = CrossMarginAccount__factory.connect(
+		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
@@ -1188,10 +1107,14 @@ export default class FuturesService {
 			}
 		}
 
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			commands,
-			inputs,
-		]);
+		return this.sdk.transactions.createContractTxn(
+			crossMarginAccountContract,
+			'execute',
+			[commands, inputs],
+			{
+				value: params.keeperEthDeposit?.toBN() ?? '0',
+			}
+		);
 	}
 
 	// Private methods
@@ -1223,63 +1146,5 @@ export default class FuturesService {
 		}
 
 		return { commands, inputs, idleMargin };
-	}
-
-	private async calculateFeeAndPrepareDeposit(
-		marketKey: FuturesMarketKey,
-		crossMarginAddress: string,
-		{
-			orderPrice,
-			sizeDelta,
-			orderType,
-		}: {
-			orderPrice?: Wei;
-			sizeDelta: Wei;
-			orderType?: ConditionalOrderTypeEnum;
-			marginDelta?: Wei;
-		},
-		sweepIdleMargin = true
-	) {
-		const commands = [];
-		const inputs = [];
-		const idleInMarkets = wei(0);
-		if (sweepIdleMargin) {
-			const {
-				commands: sweepCommands,
-				inputs: sweepInputs,
-				idleMargin,
-			} = await this.batchIdleMarketMarginSweeps(crossMarginAddress);
-			commands.push(...sweepCommands);
-			inputs.push(...sweepInputs);
-
-			idleInMarkets.add(idleMargin.totalIdleInMarkets);
-		}
-		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
-		const totalFreeMargin = idleInMarkets.add(freeMargin);
-		const price = orderPrice ?? (await this.sdk.prices.getOffchainPrice(marketKey));
-		if (!price || price.eq(0))
-			throw new Error('No price provided or failed to fetch current price');
-		const fee = await this.calculateSmartMarginFee(sizeDelta.abs(), price, orderType);
-
-		const feeWithBuffer = fee.add(fee.mul(0.02));
-
-		if (feeWithBuffer.eq(0) || totalFreeMargin.gt(feeWithBuffer))
-			return { fee: feeWithBuffer, commands: [], inputs: [] };
-
-		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(
-			this.sdk.context.walletAddress
-		);
-
-		const requiredDeposit = feeWithBuffer.sub(totalFreeMargin).abs();
-		if (susdWalletBalance.lt(requiredDeposit)) {
-			throw new Error('Not enough sUSD in wallet to cover the fee');
-		}
-		commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN);
-		inputs.push(defaultAbiCoder.encode(['int256'], [requiredDeposit.toBN()]));
-		return {
-			fee: feeWithBuffer,
-			commands,
-			inputs,
-		};
 	}
 }

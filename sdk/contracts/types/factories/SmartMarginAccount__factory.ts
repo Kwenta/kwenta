@@ -5,31 +5,46 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  CrossMarginAccount,
-  CrossMarginAccountInterface,
-} from "../CrossMarginAccount";
+  SmartMarginAccount,
+  SmartMarginAccountInterface,
+} from "../SmartMarginAccount";
 
 const _abi = [
   {
     inputs: [
       {
         internalType: "address",
-        name: "addressResolver",
+        name: "_factory",
         type: "address",
       },
       {
         internalType: "address",
-        name: "marginAsset",
+        name: "_events",
         type: "address",
       },
       {
         internalType: "address",
-        name: "gelato",
+        name: "_marginAsset",
         type: "address",
       },
       {
         internalType: "address",
-        name: "ops",
+        name: "_futuresMarketManager",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_systemStatus",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_gelato",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_ops",
         type: "address",
       },
     ],
@@ -38,17 +53,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "CannotPayFee",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "EthWithdrawalFailed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "FailedMarginTransfer",
     type: "error",
   },
   {
@@ -110,14 +115,8 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "valueName",
-        type: "bytes32",
-      },
-    ],
-    name: "ValueCannotBeZero",
+    inputs: [],
+    name: "ZeroSizeDelta",
     type: "error",
   },
   {
@@ -162,19 +161,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "uint8",
-        name: "version",
-        type: "uint8",
-      },
-    ],
-    name: "Initialized",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "address",
         name: "caller",
@@ -211,19 +197,6 @@ const _abi = [
         internalType: "address",
         name: "",
         type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "MAX_BPS",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -338,19 +311,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "events",
-    outputs: [
-      {
-        internalType: "contract IEvents",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "enum IAccount.Command[]",
@@ -383,38 +343,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "factory",
-    outputs: [
-      {
-        internalType: "contract IFactory",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "freeMargin",
     outputs: [
       {
         internalType: "uint256",
         name: "",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "futuresMarketManager",
-    outputs: [
-      {
-        internalType: "contract IFuturesMarketManager",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -594,34 +528,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_settings",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_events",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_factory",
-        type: "address",
-      },
-    ],
-    name: "initialize",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "isAuth",
     outputs: [
@@ -674,16 +580,16 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "settings",
-    outputs: [
+    inputs: [
       {
-        internalType: "contract ISettings",
-        name: "",
+        internalType: "address",
+        name: "_owner",
         type: "address",
       },
     ],
-    stateMutability: "view",
+    name: "setInitialOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -705,15 +611,15 @@ const _abi = [
   },
 ];
 
-export class CrossMarginAccount__factory {
+export class SmartMarginAccount__factory {
   static readonly abi = _abi;
-  static createInterface(): CrossMarginAccountInterface {
-    return new utils.Interface(_abi) as CrossMarginAccountInterface;
+  static createInterface(): SmartMarginAccountInterface {
+    return new utils.Interface(_abi) as SmartMarginAccountInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): CrossMarginAccount {
-    return new Contract(address, _abi, signerOrProvider) as CrossMarginAccount;
+  ): SmartMarginAccount {
+    return new Contract(address, _abi, signerOrProvider) as SmartMarginAccount;
   }
 }

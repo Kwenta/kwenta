@@ -22,7 +22,6 @@ import { stripZeros, zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
-	unserializeCrossMarginSettings,
 	unserializeFuturesVolumes,
 	unserializeGasEstimate,
 	unserializeTradeInputs,
@@ -683,14 +682,15 @@ export const selectCrossMarginTradeFees = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
 	(fees) => {
 		return {
-			staticFee: wei(fees.staticFee),
-			crossMarginFee: wei(fees.crossMarginFee),
+			delayedOrderFee: wei(fees.delayedOrderFee),
 			keeperEthDeposit: wei(fees.keeperEthDeposit),
-			limitStopOrderFee: wei(fees.limitStopOrderFee),
-			total: wei(fees.total),
 		};
 	}
 );
+
+export const selectSmartMarginKeeperDeposit = createSelector(selectCrossMarginTradeFees, (fees) => {
+	return fees.keeperEthDeposit;
+});
 
 export const selectTradeSizeInputs = createSelector(
 	selectFuturesType,
@@ -837,15 +837,10 @@ export const selectDesiredTradeFillPrice = createSelector(
 );
 
 export const selectEditPosDesiredFillPrice = createSelector(
-	selectNetwork,
 	selectEditPositionInputs,
 	selectMarketPrice,
-	(network, { nativeSizeDelta }, marketPrice) => {
+	({ nativeSizeDelta }, marketPrice) => {
 		const priceImpact = getDefaultPriceImpact('market');
-
-		// TODO: Remove once SNX mainnet changes depoyed
-		if (network === 10) return priceImpact;
-
 		const impactDecimalPercent = priceImpact.div(100);
 		return Number(nativeSizeDelta) < 0
 			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
@@ -854,14 +849,10 @@ export const selectEditPosDesiredFillPrice = createSelector(
 );
 
 export const selectClosePosDesiredFillPrice = createSelector(
-	selectNetwork,
 	selectEditPositionModalInfo,
 	selectClosePositionOrderInputs,
-	(network, { position, marketPrice }, { price, orderType }) => {
+	({ position, marketPrice }, { price, orderType }) => {
 		const priceImpact = getDefaultPriceImpact(orderType);
-
-		// TODO: Remove once SNX mainnet changes depoyed
-		if (network === 10) return priceImpact;
 
 		const impactDecimalPercent = priceImpact.div(100);
 		let orderPrice = orderType === 'market' ? marketPrice : wei(price?.value || 0);
@@ -1084,11 +1075,6 @@ export const selectPendingDelayedOrder = createSelector(
 	}
 );
 
-export const selectCrossMarginSettings = createSelector(
-	(state: RootState) => state.futures.crossMargin.settings,
-	(settings) => unserializeCrossMarginSettings(settings)
-);
-
 export const selectIsConditionalOrder = createSelector(
 	(state: RootState) => state.futures.crossMargin.orderType,
 	(type) => type === 'limit' || type === 'stop_market'
@@ -1110,8 +1096,6 @@ export const selectDelayedOrderFee = createSelector(
 	(market, { nativeSizeDelta }, price) => {
 		if (
 			!market?.marketSkew ||
-			!market?.feeRates.takerFeeDelayedOrder ||
-			!market?.feeRates.makerFeeDelayedOrder ||
 			!market?.feeRates.takerFeeOffchainDelayedOrder ||
 			!market?.feeRates.makerFeeOffchainDelayedOrder ||
 			!nativeSizeDelta
@@ -1308,7 +1292,7 @@ export const selectOrderFee = createSelector(
 	selectMarketInfo,
 	selectTradeSizeInputs,
 	(marketInfo, { susdSizeDelta }) => {
-		return computeDelayedOrderFee(marketInfo, susdSizeDelta, true);
+		return computeDelayedOrderFee(marketInfo, susdSizeDelta);
 	}
 );
 

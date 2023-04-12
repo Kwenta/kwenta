@@ -355,9 +355,8 @@ export type PostTradeDetailsResponse = {
 	status: number;
 };
 
-export type IsolatedMarginOrderType = 'delayed' | 'delayed_offchain' | 'market';
-export type CrossMarginOrderType = 'market' | 'stop_market' | 'limit';
-export type FuturesOrderType = IsolatedMarginOrderType | CrossMarginOrderType;
+export type SmartMarginOrderType = 'market' | 'stop_market' | 'limit';
+export type FuturesOrderType = SmartMarginOrderType;
 
 export type FuturesTrade<T = Wei> = {
 	account: string;
@@ -416,11 +415,11 @@ export type SmartMarginOrderInputs = {
 	marginDelta: Wei;
 	desiredFillPrice: Wei;
 	timeDelta?: Wei;
+	keeperEthDeposit?: Wei;
 	conditionalOrderInputs?: {
 		orderType: ConditionalOrderTypeEnum;
 		price: Wei;
 		feeCap: Wei;
-		keeperEthDeposit: Wei;
 		reduceOnly: boolean;
 	};
 	stopLoss?: {
@@ -436,6 +435,7 @@ export type SmartMarginOrderInputs = {
 };
 
 export type SLTPOrderInputs = {
+	keeperEthDeposit: Wei;
 	stopLoss?: {
 		price: Wei;
 		desiredFillPrice: Wei;

@@ -234,6 +234,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 										suffix="x"
 									/>
 								</div>
+								<Spacer width={10} />
 								{accountType === 'cross_margin' && (
 									<Pill
 										onClick={() =>
@@ -293,18 +294,20 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 										<div className="value">{cellProps.row.original.stopLoss}</div>
 									)}
 								</div>
-								<Pill
-									onClick={() =>
-										dispatch(
-											setShowPositionModal({
-												type: 'futures_edit_stop_loss_take_profit',
-												marketKey: cellProps.row.original.market.marketKey,
-											})
-										)
-									}
-								>
-									Edit
-								</Pill>
+								{accountType === 'cross_margin' && (
+									<Pill
+										onClick={() =>
+											dispatch(
+												setShowPositionModal({
+													type: 'futures_edit_stop_loss_take_profit',
+													marketKey: cellProps.row.original.market.marketKey,
+												})
+											)
+										}
+									>
+										Edit
+									</Pill>
+								)}
 							</FlexDivRowCentered>
 						);
 					},
