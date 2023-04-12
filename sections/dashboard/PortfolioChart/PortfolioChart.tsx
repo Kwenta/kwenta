@@ -154,9 +154,11 @@ const PortfolioChart: FC = () => {
 		smartTotal,
 	]);
 
+	const portfolioData = useMemo(() => {
+		return accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData;
+	}, [accountType, isolatedPortfolioData, smartPortfolioData]);
+
 	const changeValue = useMemo(() => {
-		const portfolioData =
-			accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData;
 		if (portfolioData.length < 2) {
 			return {
 				value: null,
@@ -174,7 +176,7 @@ const PortfolioChart: FC = () => {
 				text,
 			};
 		}
-	}, [isolatedPortfolioData, smartPortfolioData, hoverValue, accountType]);
+	}, [portfolioData, hoverValue]);
 
 	return (
 		<>
@@ -204,7 +206,7 @@ const PortfolioChart: FC = () => {
 							{formatDollars(buyingPower, { suggestDecimals: true })}
 						</NumericValue>
 					</GridBox>
-					{!!total && smartPortfolioData.length >= 2 ? (
+					{!!total && portfolioData.length >= 2 ? (
 						<ChartContainer>
 							<TopBar>
 								<TimeframeOverlay>
@@ -221,7 +223,7 @@ const PortfolioChart: FC = () => {
 				</ChartGrid>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				{!!total && smartPortfolioData.length >= 2 ? (
+				{!!total && portfolioData.length >= 2 ? (
 					<MobileChartGrid>
 						<ChartOverlay>
 							<PortfolioTitle>Portfolio Value</PortfolioTitle>
