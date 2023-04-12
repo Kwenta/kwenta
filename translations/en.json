@@ -454,7 +454,7 @@
 				"pnl": "Unrealized P&L",
 				"notionalValue": "Size",
 				"liquidationPrice": "Liq. Price",
-				"no-result": "You have no other open positions",
+				"no-result": "You have no open positions",
 				"legacy-link": "Missing a position? Check the legacy app",
 				"mobile": {
 					"market": "Market/Side",
