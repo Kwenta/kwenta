@@ -355,8 +355,8 @@ export type PostTradeDetailsResponse = {
 	status: number;
 };
 
-export type CrossMarginOrderType = 'market' | 'stop_market' | 'limit';
-export type FuturesOrderType = CrossMarginOrderType;
+export type SmartMarginOrderType = 'market' | 'stop_market' | 'limit';
+export type FuturesOrderType = SmartMarginOrderType;
 
 export type FuturesTrade<T = Wei> = {
 	account: string;
@@ -415,11 +415,11 @@ export type SmartMarginOrderInputs = {
 	marginDelta: Wei;
 	desiredFillPrice: Wei;
 	timeDelta?: Wei;
+	keeperEthDeposit?: Wei;
 	conditionalOrderInputs?: {
 		orderType: ConditionalOrderTypeEnum;
 		price: Wei;
 		feeCap: Wei;
-		keeperEthDeposit: Wei;
 		reduceOnly: boolean;
 	};
 	stopLoss?: {

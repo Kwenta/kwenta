@@ -1288,7 +1288,7 @@ export const selectOrderFee = createSelector(
 	selectMarketInfo,
 	selectTradeSizeInputs,
 	(marketInfo, { susdSizeDelta }) => {
-		return computeDelayedOrderFee(marketInfo, susdSizeDelta, true);
+		return computeDelayedOrderFee(marketInfo, susdSizeDelta);
 	}
 );
 

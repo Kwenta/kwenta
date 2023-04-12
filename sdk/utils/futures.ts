@@ -25,7 +25,7 @@ import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { NetworkId } from 'sdk/types/common';
 import {
 	DelayedOrder,
-	CrossMarginOrderType,
+	SmartMarginOrderType,
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
@@ -644,7 +644,7 @@ export const calculateDesiredFillPrice = (
 		: marketPrice.mul(priceImpactDecimalPct.add(1));
 };
 
-export const getDefaultPriceImpact = (orderType: CrossMarginOrderType) => {
+export const getDefaultPriceImpact = (orderType: SmartMarginOrderType) => {
 	switch (orderType) {
 		case 'market':
 			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.MARKET);

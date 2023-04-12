@@ -64,6 +64,7 @@ import {
 	serializeMarkets,
 	serializePositionHistory,
 	serializeTrades,
+	unserializeMarket,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
@@ -668,6 +669,7 @@ export const editCrossMarginPositionSize = (
 	marketKey: FuturesMarketKey,
 	nativeSizeDelta: string
 ): AppThunk => (dispatch, getState) => {
+	const { marketPrice } = selectEditPositionModalInfo(getState());
 	dispatch(
 		setCrossMarginEditPositionInputs({
 			marginDelta: '',
@@ -678,6 +680,7 @@ export const editCrossMarginPositionSize = (
 		const market = getMarketDetailsByKey(getState, marketKey);
 		dispatch(
 			stageCrossMarginTradePreview({
+				orderPrice: marketPrice,
 				market,
 				marginDelta: zeroBN,
 				sizeDelta: wei(nativeSizeDelta || 0),
@@ -700,7 +703,7 @@ export const editClosePositionSizeDelta = (
 	const accountType = selectFuturesType(getState());
 	try {
 		const market = getMarketDetailsByKey(getState, marketKey);
-		const smartMarginPrice = isNaN(Number(price)) || !price ? undefined : wei(price);
+		const smartMarginPrice = isNaN(Number(price)) || !price ? marketPrice : wei(price);
 		const odrderPrice = accountType === 'isolated_margin' ? marketPrice : smartMarginPrice;
 		const previewParams: TradePreviewParams = {
 			market,
@@ -737,7 +740,7 @@ export const editClosePositionPrice = (marketKey: FuturesMarketKey, price: strin
 		dispatch(
 			stageCrossMarginTradePreview({
 				market: marketInfo,
-				orderPrice: isNaN(Number(price)) || !price ? undefined : wei(price),
+				orderPrice: isNaN(Number(price)) || !price ? marketPrice : wei(price),
 				marginDelta: zeroBN,
 				sizeDelta: wei(nativeSizeDelta || 0),
 				action: 'edit',
@@ -752,6 +755,7 @@ export const editCrossMarginPositionMargin = (
 	marketKey: FuturesMarketKey,
 	marginDelta: string
 ): AppThunk => (dispatch, getState) => {
+	const price = selectMarketPrice(getState());
 	dispatch(
 		setCrossMarginEditPositionInputs({
 			marginDelta: marginDelta,
@@ -764,6 +768,7 @@ export const editCrossMarginPositionMargin = (
 		dispatch(
 			stageCrossMarginTradePreview({
 				market,
+				orderPrice: price,
 				marginDelta: wei(marginDelta || 0),
 				sizeDelta: zeroBN,
 				action: 'edit',
@@ -777,7 +782,7 @@ export const editCrossMarginPositionMargin = (
 const stageCrossMarginTradePreview = createAsyncThunk<void, TradePreviewParams, ThunkConfig>(
 	'futures/stageCrossMarginTradePreview',
 	async (inputs, { dispatch, getState }) => {
-		dispatch(calculateCrossMarginFees());
+		dispatch(calculateCrossMarginFees(inputs));
 		dispatch(incrementCrossPreviewCount());
 		const debounceCount = selectCrossPreviewCount(getState());
 		debouncedPrepareCrossMarginTradePreview(dispatch, { ...inputs, debounceCount });
@@ -1006,19 +1011,20 @@ export const fetchAllTradesForAccount = createAsyncThunk<
 	}
 });
 
-export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => {
-	const market = selectMarketInfo(getState());
-	const orderType = selectOrderType(getState());
+export const calculateCrossMarginFees = (params: TradePreviewParams): AppThunk => (
+	dispatch,
+	getState
+) => {
+	const market = getState().futures.markets.find((m) => m.marketKey === params.market.key);
+	if (!market) throw new Error('Missing market info to compute fee');
 	const keeperBalance = selectKeeperEthBalance(getState());
+	const { delayedOrderFee } = computeDelayedOrderFee(
+		unserializeMarket(market),
+		params.sizeDelta.mul(params.orderPrice?.abs())
+	);
 
-	const { susdSizeDelta } = selectCrossMarginTradeInputs(getState());
-
-	const { delayedOrderFee } = computeDelayedOrderFee(market, susdSizeDelta, true);
-
-	const currentDeposit =
-		orderType === 'limit' || orderType === 'stop_market' ? keeperBalance : wei(0);
-	const requiredDeposit = currentDeposit.lt(ORDER_KEEPER_ETH_DEPOSIT)
-		? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
+	const requiredDeposit = keeperBalance.lt(ORDER_KEEPER_ETH_DEPOSIT)
+		? ORDER_KEEPER_ETH_DEPOSIT.sub(keeperBalance)
 		: wei(0);
 
 	const fees = {
@@ -1031,7 +1037,7 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 export const calculateIsolatedMarginFees = (): AppThunk => (dispatch, getState) => {
 	const market = selectMarketInfo(getState());
 	const { susdSizeDelta } = selectIsolatedMarginTradeInputs(getState());
-	const { delayedOrderFee } = computeDelayedOrderFee(market, susdSizeDelta, true);
+	const { delayedOrderFee } = computeDelayedOrderFee(market, susdSizeDelta);
 	dispatch(setIsolatedMarginFee(delayedOrderFee.toString()));
 };
 
@@ -1365,11 +1371,14 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 				orderInputs['conditionalOrderInputs'] = {
 					orderType:
 						orderType === 'limit' ? ConditionalOrderTypeEnum.LIMIT : ConditionalOrderTypeEnum.STOP,
-					keeperEthDeposit,
 					feeCap,
 					price: wei(orderPrice || '0'),
 					reduceOnly: false,
 				};
+			}
+
+			if (orderType !== 'market' || Number(takeProfitPrice) > 0 || Number(stopLossPrice) > 0) {
+				orderInputs.keeperEthDeposit = keeperEthDeposit;
 			}
 
 			const tx = await sdk.futures.submitCrossMarginOrder(
@@ -1503,11 +1512,11 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 				orderInputs['conditionalOrderInputs'] = {
 					orderType:
 						orderType === 'limit' ? ConditionalOrderTypeEnum.LIMIT : ConditionalOrderTypeEnum.STOP,
-					keeperEthDeposit,
 					feeCap,
 					price: wei(price?.value || '0'),
 					reduceOnly: true,
 				};
+				orderInputs.keeperEthDeposit = keeperEthDeposit;
 			}
 
 			const tx = await sdk.futures.submitCrossMarginOrder(

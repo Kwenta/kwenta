@@ -7,7 +7,7 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import { InfoBoxRow } from 'components/InfoBox';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { CrossMarginOrderType } from 'sdk/types/futures';
+import { SmartMarginOrderType } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const ExecutionFeeTooltip = memo(() => {
@@ -85,7 +85,7 @@ type FeeRates = {
 
 type FeesRowProps = {
 	tradeFee: Wei;
-	orderType: CrossMarginOrderType;
+	orderType: SmartMarginOrderType;
 	smartMarginKeeperDeposit: Wei;
 	executionFee: Wei;
 	rates: FeeRates;

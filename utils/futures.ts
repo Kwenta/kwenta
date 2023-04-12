@@ -303,8 +303,8 @@ export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string
 	return markets.map((m) => serializeMarket(m));
 };
 
-export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
-	return markets.map((m) => ({
+export const unserializeMarket = (m: FuturesMarket<string>): FuturesMarket => {
+	return {
 		...m,
 		currentFundingRate: wei(m.currentFundingRate),
 		currentFundingVelocity: wei(m.currentFundingVelocity ?? 0),
@@ -336,7 +336,11 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 			maxMarketValue: wei(m.settings.maxMarketValue),
 			skewScale: wei(m.settings.skewScale),
 		},
-	}));
+	};
+};
+
+export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
+	return markets.map((m) => unserializeMarket(m));
 };
 
 export const serializeCmBalanceInfo = (

@@ -5,7 +5,7 @@ import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { Period } from 'sdk/constants/period';
 import { NetworkId } from 'sdk/types/common';
 import {
-	CrossMarginOrderType,
+	SmartMarginOrderType,
 	FuturesAccountType,
 	FuturesMarket,
 	FuturesMarketAsset,
@@ -176,7 +176,7 @@ const futuresSlice = createSlice({
 		setOrderType: (state, action) => {
 			state[accountType(state.selectedType)].orderType = action.payload;
 		},
-		setClosePositionOrderType: (state, action: PayloadAction<CrossMarginOrderType>) => {
+		setClosePositionOrderType: (state, action: PayloadAction<SmartMarginOrderType>) => {
 			state.crossMargin.closePositionOrderInputs.orderType = action.payload;
 		},
 		setClosePositionSizeDelta: (state, action: PayloadAction<string>) => {

@@ -24,8 +24,8 @@ const TradeTotalFeesRow = memo(() => {
 			orderType={orderType}
 			smartMarginKeeperDeposit={smartMarginFees.keeperEthDeposit}
 			rates={{
-				maker: marketInfo?.feeRates.makerFee ?? zeroBN,
-				taker: marketInfo?.feeRates.takerFee ?? zeroBN,
+				maker: marketInfo?.feeRates.makerFeeOffchainDelayedOrder ?? zeroBN,
+				taker: marketInfo?.feeRates.takerFeeOffchainDelayedOrder ?? zeroBN,
 			}}
 		/>
 	);

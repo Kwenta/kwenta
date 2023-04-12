@@ -966,7 +966,7 @@ export default class FuturesService {
 			'execute',
 			[commands, inputs],
 			{
-				value: order.conditionalOrderInputs?.keeperEthDeposit.toBN() ?? '0',
+				value: order.keeperEthDeposit?.toBN() ?? '0',
 			}
 		);
 	}
