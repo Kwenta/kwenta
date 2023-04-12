@@ -54,7 +54,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	let data = useMemo(() => {
-		const positions = [...crossMarginPositions, ...isolatedPositions];
+		const positions = accountType === 'isolated_margin' ? isolatedPositions : crossMarginPositions;
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -83,6 +83,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		positionHistory,
 		currentMarket,
 		t,
+		accountType,
 		showCurrentMarket,
 	]);
 
