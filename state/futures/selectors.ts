@@ -22,7 +22,6 @@ import { stripZeros, zeroBN } from 'utils/formatters/number';
 import {
 	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
-	unserializeCrossMarginSettings,
 	unserializeFuturesVolumes,
 	unserializeGasEstimate,
 	unserializeTradeInputs,
@@ -683,11 +682,8 @@ export const selectCrossMarginTradeFees = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
 	(fees) => {
 		return {
-			staticFee: wei(fees.staticFee),
-			crossMarginFee: wei(fees.crossMarginFee),
+			delayedOrderFee: wei(fees.delayedOrderFee),
 			keeperEthDeposit: wei(fees.keeperEthDeposit),
-			limitStopOrderFee: wei(fees.limitStopOrderFee),
-			total: wei(fees.total),
 		};
 	}
 );
@@ -1084,11 +1080,6 @@ export const selectPendingDelayedOrder = createSelector(
 	}
 );
 
-export const selectCrossMarginSettings = createSelector(
-	(state: RootState) => state.futures.crossMargin.settings,
-	(settings) => unserializeCrossMarginSettings(settings)
-);
-
 export const selectIsConditionalOrder = createSelector(
 	(state: RootState) => state.futures.crossMargin.orderType,
 	(type) => type === 'limit' || type === 'stop_market'
@@ -1110,8 +1101,6 @@ export const selectDelayedOrderFee = createSelector(
 	(market, { nativeSizeDelta }, price) => {
 		if (
 			!market?.marketSkew ||
-			!market?.feeRates.takerFeeDelayedOrder ||
-			!market?.feeRates.makerFeeDelayedOrder ||
 			!market?.feeRates.takerFeeOffchainDelayedOrder ||
 			!market?.feeRates.makerFeeOffchainDelayedOrder ||
 			!nativeSizeDelta

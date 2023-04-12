@@ -98,7 +98,6 @@ export type FuturesQueryStatuses = {
 	isolatedPositions: QueryStatus;
 	isolatedPositionHistory: QueryStatus;
 	openOrders: QueryStatus;
-	crossMarginSettings: QueryStatus;
 	isolatedTradePreview: QueryStatus;
 	crossMarginTradePreview: QueryStatus;
 	crossMarginAccount: QueryStatus;
@@ -153,20 +152,9 @@ export type CrossMarginBalanceInfo<T = Wei> = {
 	allowance: T;
 };
 
-export type CrossMarginSettings<T = Wei> = {
-	fees: {
-		base: T;
-		limit: T;
-		stop: T;
-	};
-};
-
 export type CrossMarginTradeFees<T = Wei> = {
-	staticFee: T;
-	crossMarginFee: T;
-	limitStopOrderFee: T;
+	delayedOrderFee: T;
 	keeperEthDeposit: T;
-	total: T;
 };
 
 type FuturesErrors = {
@@ -260,7 +248,6 @@ export type CrossMarginState = {
 		edit: FuturesPotentialTradeDetails<string> | null;
 	};
 	previewDebounceCount: number;
-	settings: CrossMarginSettings<string>;
 	fees: CrossMarginTradeFees<string>;
 	depositApproved: boolean;
 	cancellingOrder: number | undefined;

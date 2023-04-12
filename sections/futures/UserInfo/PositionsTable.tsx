@@ -243,6 +243,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = ({ showEmptyTable = true }
 												suffix="x"
 											/>
 										</div>
+										<Spacer width={10} />
 										{accountType === 'cross_margin' && (
 											<Pill
 												onClick={() =>

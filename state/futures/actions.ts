@@ -31,7 +31,6 @@ import {
 	ContractOrderType,
 } from 'sdk/types/futures';
 import {
-	calculateCrossMarginFee,
 	calculateDesiredFillPrice,
 	getDefaultPriceImpact,
 	getTradeStatusMessage,
@@ -60,7 +59,6 @@ import {
 	marketOverrides,
 	orderPriceInvalidLabel,
 	serializeCmBalanceInfo,
-	serializeCrossMarginSettings,
 	serializeDelayedOrders,
 	serializeConditionalOrders,
 	serializeFuturesVolumes,
@@ -102,7 +100,6 @@ import {
 	selectCrossMarginAccount,
 	selectCrossMarginMarginDelta,
 	selectCrossMarginOrderPrice,
-	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
 	selectCrossMarginTradeInputs,
 	selectFuturesAccount,
@@ -139,7 +136,6 @@ import {
 	AccountContext,
 	CancelDelayedOrderInputs,
 	CrossMarginBalanceInfo,
-	CrossMarginSettings,
 	DebouncedPreviewParams,
 	DelayedOrderWithDetails,
 	ExecuteDelayedOrderInputs,
@@ -199,23 +195,6 @@ export const fetchCrossMarginBalanceInfo = createAsyncThunk<
 		}
 	}
 );
-
-export const fetchCrossMarginSettings = createAsyncThunk<
-	CrossMarginSettings<string> | undefined,
-	void,
-	ThunkConfig
->('futures/fetchCrossMarginSettings', async (_, { getState, extra: { sdk } }) => {
-	const supportedNetwork = selectFuturesSupportedNetwork(getState());
-	if (!supportedNetwork) return;
-	try {
-		const settings = await sdk.futures.getCrossMarginSettings();
-		return serializeCrossMarginSettings(settings);
-	} catch (err) {
-		logError(err);
-		notifyError('Failed to fetch cross margin settings', err);
-		throw err;
-	}
-});
 
 export const fetchCrossMarginPositions = createAsyncThunk<
 	{ positions: FuturesPosition<string>[]; account: string; network: NetworkId } | undefined,
@@ -451,6 +430,7 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 		const orders = await sdk.futures.getConditionalOrders(account);
 		const delayedOrders = await sdk.futures.getDelayedOrders(account, marketAddresses);
 		const nonzeroOrders = formatDelayedOrders(delayedOrders, markets);
+
 		const orderDropped = existingOrders.length > nonzeroOrders.length;
 		if (orderDropped) {
 			dispatch(fetchCrossMarginPositions());
@@ -611,6 +591,7 @@ export const editCrossMarginTradeMarginDelta = (marginDelta: string): AppThunk =
 	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
 
 	if (!marketInfo) throw new Error('No market selected');
+
 	if (!marginDelta || Number(marginDelta) === 0) {
 		dispatch(setCrossMarginMarginDelta(marginDelta));
 		dispatch(setCrossMarginTradePreview({ preview: null, type: 'trade' }));
@@ -624,6 +605,7 @@ export const editCrossMarginTradeMarginDelta = (marginDelta: string): AppThunk =
 	if (!leverage.eq(0)) {
 		dispatch(setLeverageInput(leverage.toString(2)));
 	}
+
 	dispatch(
 		stageCrossMarginTradePreview({
 			market: { key: marketInfo.marketKey, address: marketInfo.market },
@@ -794,7 +776,7 @@ export const editCrossMarginPositionMargin = (
 };
 
 const stageCrossMarginTradePreview = createAsyncThunk<void, TradePreviewParams, ThunkConfig>(
-	'futures/stageCrossMarginPositionChange',
+	'futures/stageCrossMarginTradePreview',
 	async (inputs, { dispatch, getState }) => {
 		dispatch(calculateCrossMarginFees());
 		dispatch(incrementCrossPreviewCount());
@@ -1029,9 +1011,8 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 	const market = selectMarketInfo(getState());
 	const orderType = selectOrderType(getState());
 	const keeperBalance = selectKeeperEthBalance(getState());
-	const settings = selectCrossMarginSettings(getState());
 
-	const { susdSize, susdSizeDelta } = selectCrossMarginTradeInputs(getState());
+	const { susdSizeDelta } = selectCrossMarginTradeInputs(getState());
 
 	const { delayedOrderFee } = computeDelayedOrderFee(market, susdSizeDelta, true);
 
@@ -1041,15 +1022,9 @@ export const calculateCrossMarginFees = (): AppThunk => (dispatch, getState) => 
 		? ORDER_KEEPER_ETH_DEPOSIT.sub(currentDeposit)
 		: wei(0);
 
-	const crossMarginFee = susdSize.mul(settings.fees.base);
-	const limitStopOrderFee = calculateCrossMarginFee(orderType, susdSize, settings);
-
 	const fees = {
-		staticFee: delayedOrderFee.toString(),
-		crossMarginFee: crossMarginFee.toString(),
+		delayedOrderFee: delayedOrderFee.toString(),
 		keeperEthDeposit: requiredDeposit.toString(),
-		limitStopOrderFee: limitStopOrderFee.toString(),
-		total: delayedOrderFee.add(crossMarginFee).add(limitStopOrderFee).toString(),
 	};
 	dispatch(setCrossMarginFees(fees));
 };
@@ -1411,6 +1386,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 				orderInputs
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
+			dispatch(fetchCrossMarginOpenOrders());
 			dispatch(setOpenModal(null));
 			dispatch(fetchBalances());
 			dispatch(clearTradeInputs());

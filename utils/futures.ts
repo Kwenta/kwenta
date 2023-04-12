@@ -17,8 +17,6 @@ import {
 import { PricesMap } from 'sdk/types/prices';
 import {
 	CrossMarginBalanceInfo,
-	CrossMarginSettings,
-	CrossMarginTradeFees,
 	TradeSizeInputs,
 	DelayedOrderWithDetails,
 	TransactionEstimation,
@@ -28,7 +26,7 @@ import {
 } from 'state/futures/types';
 import { deserializeWeiObject } from 'state/helpers';
 
-import { formatNumber, zeroBN } from './formatters/number';
+import { formatNumber } from './formatters/number';
 
 export const getMarketName = (asset: FuturesMarketAsset) => {
 	return `${getDisplayAsset(asset)}-PERP`;
@@ -229,20 +227,6 @@ export const orderPriceInvalidLabel = (
 	return null;
 };
 
-const getPositionChangeState = (existingSize: Wei, newSize: Wei) => {
-	if (newSize.eq(0)) return 'closing';
-	if (existingSize.eq(newSize)) return 'edit_leverage';
-	if (existingSize.eq(0)) return 'increase_size';
-	if ((existingSize.gt(0) && newSize.lt(0)) || (existingSize.lt(0) && newSize.gt(0)))
-		return 'flip_side';
-	if (
-		(existingSize.gt(0) && newSize.gt(existingSize)) ||
-		(existingSize.lt(0) && newSize.lt(existingSize))
-	)
-		return 'increase_size';
-	return 'reduce_size';
-};
-
 export const updatePositionUpnl = (
 	positionDetails: FuturesPosition<string>,
 	prices: MarkPrices,
@@ -277,53 +261,6 @@ export const updatePositionUpnl = (
 				  }
 				: position,
 	};
-};
-
-export const calculateMarginDelta = (
-	tradeInputs: {
-		nativeSizeDelta: Wei;
-		susdSizeDelta: Wei;
-		leverage: Wei;
-		price: Wei;
-	},
-	fees: CrossMarginTradeFees,
-	position: FuturesPosition | null | undefined
-) => {
-	const existingSize = position?.position
-		? position?.position?.side === 'long'
-			? position?.position?.size
-			: position?.position?.size.neg()
-		: zeroBN;
-
-	const newSize = existingSize.add(tradeInputs.nativeSizeDelta);
-	const newSizeAbs = newSize.abs();
-	const posChangeState = getPositionChangeState(existingSize, newSize);
-
-	switch (posChangeState) {
-		case 'closing':
-			return zeroBN;
-		case 'edit_leverage':
-			const nextMargin = position?.position?.notionalValue.div(tradeInputs.leverage) ?? zeroBN;
-			const delta = nextMargin.sub(position?.remainingMargin);
-			return delta.add(fees.total);
-		case 'reduce_size':
-			// When a position is reducing we keep the leverage the same as the existing position
-			let marginDiff = tradeInputs.susdSizeDelta.div(position?.position?.leverage ?? zeroBN);
-			return tradeInputs.susdSizeDelta.gt(0)
-				? marginDiff.neg().add(fees.total)
-				: marginDiff.add(fees.total);
-		case 'increase_size':
-			// When a position is increasing we calculate margin for selected leverage
-			return tradeInputs.susdSizeDelta.abs().div(tradeInputs.leverage).add(fees.total);
-		case 'flip_side':
-			// When flipping sides we calculate the margin required for selected leverage
-			const newNotionalSize = newSizeAbs.mul(tradeInputs.price);
-			const newMargin = newNotionalSize.div(tradeInputs.leverage);
-			const remainingMargin =
-				position?.position?.size.mul(tradeInputs.price).div(position?.position?.leverage) ?? zeroBN;
-			const marginDelta = newMargin.sub(remainingMargin ?? zeroBN);
-			return marginDelta.add(fees.total);
-	}
 };
 
 export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> => {
@@ -510,40 +447,12 @@ export const unserializeDelayedOrders = (
 	orders: DelayedOrderWithDetails<string>[]
 ): DelayedOrderWithDetails[] => orders.map((o) => unserializeDelayedOrder(o));
 
-export const serializeCrossMarginSettings = (
-	settings: CrossMarginSettings
-): CrossMarginSettings<string> => ({
-	fees: {
-		base: settings.fees.base.toString(),
-		limit: settings.fees.limit.toString(),
-		stop: settings.fees.stop.toString(),
-	},
-});
-
-export const unserializeCrossMarginSettings = (
-	settings: CrossMarginSettings<string>
-): CrossMarginSettings => ({
-	fees: {
-		base: wei(settings.fees.base),
-		limit: wei(settings.fees.limit),
-		stop: wei(settings.fees.stop),
-	},
-});
-
 export const unserializeGasEstimate = (
 	estimate: TransactionEstimation<string>
 ): TransactionEstimation => ({
 	...estimate,
 	limit: wei(estimate.limit),
 	cost: wei(estimate.cost),
-});
-
-export const serializeTradeFees = (fees: CrossMarginTradeFees) => ({
-	staticFee: fees.staticFee.toString(),
-	crossMarginFee: fees.crossMarginFee.toString(),
-	keeperEthDeposit: fees.keeperEthDeposit.toString(),
-	limitStopOrderFee: fees.limitStopOrderFee.toString(),
-	total: fees.total.toString(),
 });
 
 export const serializePrices = (prices: PricesMap) => {

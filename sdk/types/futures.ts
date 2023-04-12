@@ -355,9 +355,8 @@ export type PostTradeDetailsResponse = {
 	status: number;
 };
 
-export type IsolatedMarginOrderType = 'delayed' | 'delayed_offchain' | 'market';
 export type CrossMarginOrderType = 'market' | 'stop_market' | 'limit';
-export type FuturesOrderType = IsolatedMarginOrderType | CrossMarginOrderType;
+export type FuturesOrderType = CrossMarginOrderType;
 
 export type FuturesTrade<T = Wei> = {
 	account: string;

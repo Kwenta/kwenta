@@ -15,7 +15,6 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import {
-	selectCrossMarginSettings,
 	selectCrossMarginTradeFees,
 	selectIsolatedMarginFee,
 	selectMarketInfo,
@@ -68,9 +67,6 @@ export const CrossMarginFeeInfoBox = memo(() => {
 	return (
 		<FeeInfoBoxContainer>
 			<ProtocolFeeRow />
-			<LimitStopFeeRow />
-			<CrossMarginFeeRow />
-			<CrossMarginTotalFeeRow />
 			{(orderType === 'limit' || orderType === 'stop_market') && <KeeperDepositRow />}
 		</FeeInfoBoxContainer>
 	);
@@ -110,49 +106,8 @@ const ProtocolFeeRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Protocol Fee"
-			value={formatDollars(crossMarginFees.staticFee, { suggestDecimals: true })}
+			value={formatDollars(crossMarginFees.delayedOrderFee, { suggestDecimals: true })}
 			keyNode={<MarketCostTooltip />}
-		/>
-	);
-});
-
-const LimitStopFeeRow = memo(() => {
-	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
-	const orderType = useAppSelector(selectOrderType);
-	const {
-		fees: { limit, stop },
-	} = useAppSelector(selectCrossMarginSettings);
-
-	const orderFeeRate = useMemo(
-		() => (orderType === 'limit' ? limit : orderType === 'stop_market' ? stop : null),
-		[orderType, stop, limit]
-	);
-
-	return (
-		<InfoBoxRow
-			dataTestId="limit-stop"
-			title="Limit / Stop Fee"
-			{...(crossMarginFees.limitStopOrderFee.gt(0) && orderFeeRate
-				? {
-						value: formatDollars(crossMarginFees.limitStopOrderFee, { suggestDecimals: true }),
-						keyNode: formatPercent(orderFeeRate),
-				  }
-				: { value: '' })}
-		/>
-	);
-});
-
-const CrossMarginFeeRow = memo(() => {
-	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
-	const {
-		fees: { base },
-	} = useAppSelector(selectCrossMarginSettings);
-
-	return (
-		<InfoBoxRow
-			title="Cross Margin Fee"
-			value={formatDollars(crossMarginFees.crossMarginFee, { suggestDecimals: true })}
-			keyNode={formatPercent(base)}
 		/>
 	);
 });
@@ -203,18 +158,6 @@ const TradingRewardRow = memo(() => {
 					</FlexDivRowCentered>
 				</CompactBox>
 			}
-		/>
-	);
-});
-
-const CrossMarginTotalFeeRow = memo(() => {
-	const crossMarginFees = useAppSelector(selectCrossMarginTradeFees);
-	return (
-		<InfoBoxRow
-			title="Total Fee"
-			value={formatDollars(crossMarginFees.total, {
-				minDecimals: crossMarginFees.total.lt(0.01) ? 4 : 2,
-			})}
 		/>
 	);
 });

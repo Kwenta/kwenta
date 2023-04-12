@@ -8,8 +8,6 @@ import { InfoBoxRow } from 'components/InfoBox';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { CrossMarginOrderType } from 'sdk/types/futures';
-import { selectCrossMarginSettings } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const ExecutionFeeTooltip = memo(() => {
@@ -38,33 +36,6 @@ const ExecutionFeeRow = memo(({ executionFee }: { executionFee: Wei }) => {
 		/>
 	);
 });
-
-const LimitStopFeeRow = memo(
-	({
-		conditionalOrderFee,
-		orderType,
-	}: {
-		conditionalOrderFee: Wei;
-		orderType: CrossMarginOrderType;
-	}) => {
-		const { fees } = useAppSelector(selectCrossMarginSettings);
-
-		const orderFeeRate = useMemo(
-			() => (orderType === 'limit' ? fees.limit : orderType === 'stop_market' ? fees.stop : null),
-			[orderType, fees]
-		);
-
-		return (
-			<InfoBoxRow
-				isSubItem
-				dataTestId="limit-stop"
-				title="Limit / Stop Fee"
-				value={formatDollars(conditionalOrderFee, { suggestDecimals: true })}
-				keyNode={formatPercent(orderFeeRate ?? 0)}
-			/>
-		);
-	}
-);
 
 const KeeperDepositRow = memo(({ smartMarginKeeperDeposit }: { smartMarginKeeperDeposit: Wei }) => {
 	return (
@@ -115,27 +86,18 @@ type FeeRates = {
 type FeesRowProps = {
 	tradeFee: Wei;
 	orderType: CrossMarginOrderType;
-	conditionalOrderFee: Wei;
 	smartMarginKeeperDeposit: Wei;
 	executionFee: Wei;
 	rates: FeeRates;
 };
 
 const FeesRow = memo(
-	({
-		tradeFee,
-		smartMarginKeeperDeposit,
-		conditionalOrderFee,
-		orderType,
-		executionFee,
-		rates,
-	}: FeesRowProps) => {
+	({ tradeFee, smartMarginKeeperDeposit, orderType, executionFee, rates }: FeesRowProps) => {
 		const [expanded, toggleExpanded] = useReducer((s) => !s, false);
 
 		const totalFee = useMemo(() => {
-			let total = tradeFee.add(executionFee ?? zeroBN);
-			return total.add(conditionalOrderFee);
-		}, [tradeFee, executionFee, conditionalOrderFee]);
+			return tradeFee.add(executionFee ?? zeroBN);
+		}, [tradeFee, executionFee]);
 
 		return (
 			<InfoBoxRow
@@ -146,9 +108,6 @@ const FeesRow = memo(
 				onToggleExpand={toggleExpanded}
 			>
 				<ExecutionFeeRow executionFee={executionFee} />
-				{conditionalOrderFee.gt(0) && (
-					<LimitStopFeeRow conditionalOrderFee={conditionalOrderFee} orderType={orderType} />
-				)}
 				<EstimatedTradeFeeRow rates={rates} tradeFee={tradeFee} />
 				{(orderType === 'limit' || orderType === 'stop_market') && (
 					<KeeperDepositRow smartMarginKeeperDeposit={smartMarginKeeperDeposit} />

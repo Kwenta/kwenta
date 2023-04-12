@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei';
 
 import { CrossMarginOrderType, FuturesOrderType } from 'sdk/types/futures';
 
-export const ISOLATED_MARGIN_ORDER_TYPES: FuturesOrderType[] = ['delayed_offchain', 'market'];
+export const ISOLATED_MARGIN_ORDER_TYPES: FuturesOrderType[] = ['market'];
 export const CROSS_MARGIN_ORDER_TYPES: CrossMarginOrderType[] = ['market', 'limit', 'stop_market'];
 export const ORDER_KEEPER_ETH_DEPOSIT = wei(0.01);
 export const DEFAULT_MAX_LEVERAGE = wei(10);

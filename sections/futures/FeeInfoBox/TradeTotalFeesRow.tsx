@@ -22,7 +22,6 @@ const TradeTotalFeesRow = memo(() => {
 			executionFee={marketInfo?.keeperDeposit ?? zeroBN}
 			tradeFee={tradePreview?.fee ?? zeroBN}
 			orderType={orderType}
-			conditionalOrderFee={smartMarginFees.limitStopOrderFee}
 			smartMarginKeeperDeposit={smartMarginFees.keeperEthDeposit}
 			rates={{
 				maker: marketInfo?.feeRates.makerFee ?? zeroBN,

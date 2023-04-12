@@ -37,7 +37,7 @@ export const queryCrossMarginAccounts = async (
 	walletAddress: string
 ): Promise<string[]> => {
 	// TODO: Contract should be updating to support one to many
-	const accounts = await sdk.context.contracts.CrossMarginAccountFactory?.getAccountsOwnedBy(
+	const accounts = await sdk.context.contracts.SmartMarginAccountFactory?.getAccountsOwnedBy(
 		walletAddress
 	);
 	return accounts ?? [];
