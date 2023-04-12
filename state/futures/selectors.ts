@@ -833,15 +833,10 @@ export const selectDesiredTradeFillPrice = createSelector(
 );
 
 export const selectEditPosDesiredFillPrice = createSelector(
-	selectNetwork,
 	selectEditPositionInputs,
 	selectMarketPrice,
-	(network, { nativeSizeDelta }, marketPrice) => {
+	({ nativeSizeDelta }, marketPrice) => {
 		const priceImpact = getDefaultPriceImpact('market');
-
-		// TODO: Remove once SNX mainnet changes depoyed
-		if (network === 10) return priceImpact;
-
 		const impactDecimalPercent = priceImpact.div(100);
 		return Number(nativeSizeDelta) < 0
 			? marketPrice.mul(wei(1).sub(impactDecimalPercent))
@@ -850,14 +845,10 @@ export const selectEditPosDesiredFillPrice = createSelector(
 );
 
 export const selectClosePosDesiredFillPrice = createSelector(
-	selectNetwork,
 	selectEditPositionModalInfo,
 	selectClosePositionOrderInputs,
-	(network, { position, marketPrice }, { price, orderType }) => {
+	({ position, marketPrice }, { price, orderType }) => {
 		const priceImpact = getDefaultPriceImpact(orderType);
-
-		// TODO: Remove once SNX mainnet changes depoyed
-		if (network === 10) return priceImpact;
 
 		const impactDecimalPercent = priceImpact.div(100);
 		let orderPrice = orderType === 'market' ? marketPrice : wei(price?.value || 0);

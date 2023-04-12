@@ -32,7 +32,6 @@ import {
 } from 'sdk/types/futures';
 import {
 	calculateDesiredFillPrice,
-	getDefaultPriceImpact,
 	getTradeStatusMessage,
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
@@ -1185,7 +1184,6 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		const marketInfo = selectMarketInfo(getState());
-		const priceImpact = getDefaultPriceImpact('market');
 		const desiredFill = selectDesiredTradeFillPrice(getState());
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 
@@ -1193,11 +1191,6 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 		if (!account) throw new Error('Account not connected');
 
 		try {
-			const isFlagged = await sdk.futures.getIsFlagged(account, marketInfo.market);
-
-			// TODO: Remove this dynamic logic when the markets are upgraded
-			const priceImpactOrFill = isFlagged == null ? priceImpact : desiredFill;
-
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1209,7 +1202,7 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 			const tx = await sdk.futures.submitIsolatedMarginOrder(
 				marketInfo.market,
 				wei(nativeSizeDelta),
-				priceImpactOrFill
+				desiredFill
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
