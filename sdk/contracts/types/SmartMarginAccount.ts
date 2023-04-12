@@ -119,11 +119,10 @@ export declare namespace IPerpsV2MarketConsolidated {
   };
 }
 
-export interface CrossMarginAccountInterface extends utils.Interface {
+export interface SmartMarginAccountInterface extends utils.Interface {
   functions: {
     "ETH()": FunctionFragment;
     "GELATO()": FunctionFragment;
-    "MAX_BPS()": FunctionFragment;
     "OPS()": FunctionFragment;
     "VERSION()": FunctionFragment;
     "addDelegate(address)": FunctionFragment;
@@ -131,21 +130,17 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     "committedMargin()": FunctionFragment;
     "conditionalOrderId()": FunctionFragment;
     "delegates(address)": FunctionFragment;
-    "events()": FunctionFragment;
     "execute(uint8[],bytes[])": FunctionFragment;
     "executeConditionalOrder(uint256)": FunctionFragment;
-    "factory()": FunctionFragment;
     "freeMargin()": FunctionFragment;
-    "futuresMarketManager()": FunctionFragment;
     "getConditionalOrder(uint256)": FunctionFragment;
     "getDelayedOrder(bytes32)": FunctionFragment;
     "getPosition(bytes32)": FunctionFragment;
-    "initialize(address,address,address,address)": FunctionFragment;
     "isAuth()": FunctionFragment;
     "isOwner()": FunctionFragment;
     "owner()": FunctionFragment;
     "removeDelegate(address)": FunctionFragment;
-    "settings()": FunctionFragment;
+    "setInitialOwnership(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -153,7 +148,6 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "ETH"
       | "GELATO"
-      | "MAX_BPS"
       | "OPS"
       | "VERSION"
       | "addDelegate"
@@ -161,27 +155,22 @@ export interface CrossMarginAccountInterface extends utils.Interface {
       | "committedMargin"
       | "conditionalOrderId"
       | "delegates"
-      | "events"
       | "execute"
       | "executeConditionalOrder"
-      | "factory"
       | "freeMargin"
-      | "futuresMarketManager"
       | "getConditionalOrder"
       | "getDelayedOrder"
       | "getPosition"
-      | "initialize"
       | "isAuth"
       | "isOwner"
       | "owner"
       | "removeDelegate"
-      | "settings"
+      | "setInitialOwnership"
       | "transferOwnership"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "ETH", values?: undefined): string;
   encodeFunctionData(functionFragment: "GELATO", values?: undefined): string;
-  encodeFunctionData(functionFragment: "MAX_BPS", values?: undefined): string;
   encodeFunctionData(functionFragment: "OPS", values?: undefined): string;
   encodeFunctionData(functionFragment: "VERSION", values?: undefined): string;
   encodeFunctionData(
@@ -204,7 +193,6 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "delegates",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "events", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BytesLike>[]]
@@ -213,13 +201,8 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "executeConditionalOrder",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "factory", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "freeMargin",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "futuresMarketManager",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -234,15 +217,6 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "getPosition",
     values: [PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
-  ): string;
   encodeFunctionData(functionFragment: "isAuth", values?: undefined): string;
   encodeFunctionData(functionFragment: "isOwner", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -250,7 +224,10 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "removeDelegate",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "settings", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setInitialOwnership",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
@@ -258,7 +235,6 @@ export interface CrossMarginAccountInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "ETH", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "GELATO", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "MAX_BPS", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "OPS", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "VERSION", data: BytesLike): Result;
   decodeFunctionResult(
@@ -275,18 +251,12 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "events", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeConditionalOrder",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "freeMargin", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "futuresMarketManager",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getConditionalOrder",
     data: BytesLike
@@ -299,7 +269,6 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "getPosition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isAuth", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -307,7 +276,10 @@ export interface CrossMarginAccountInterface extends utils.Interface {
     functionFragment: "removeDelegate",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "settings", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setInitialOwnership",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -316,13 +288,11 @@ export interface CrossMarginAccountInterface extends utils.Interface {
   events: {
     "DelegatedAccountAdded(address,address)": EventFragment;
     "DelegatedAccountRemoved(address,address)": EventFragment;
-    "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DelegatedAccountAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegatedAccountRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
@@ -350,13 +320,6 @@ export type DelegatedAccountRemovedEvent = TypedEvent<
 export type DelegatedAccountRemovedEventFilter =
   TypedEventFilter<DelegatedAccountRemovedEvent>;
 
-export interface InitializedEventObject {
-  version: number;
-}
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
-
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
 export interface OwnershipTransferredEventObject {
   caller: string;
   newOwner: string;
@@ -369,12 +332,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface CrossMarginAccount extends BaseContract {
+export interface SmartMarginAccount extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CrossMarginAccountInterface;
+  interface: SmartMarginAccountInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -400,8 +363,6 @@ export interface CrossMarginAccount extends BaseContract {
 
     GELATO(overrides?: CallOverrides): Promise<[string]>;
 
-    MAX_BPS(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     OPS(overrides?: CallOverrides): Promise<[string]>;
 
     VERSION(overrides?: CallOverrides): Promise<[string]>;
@@ -425,8 +386,6 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    events(overrides?: CallOverrides): Promise<[string]>;
-
     execute(
       _commands: PromiseOrValue<BigNumberish>[],
       _inputs: PromiseOrValue<BytesLike>[],
@@ -438,11 +397,7 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    factory(overrides?: CallOverrides): Promise<[string]>;
-
     freeMargin(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    futuresMarketManager(overrides?: CallOverrides): Promise<[string]>;
 
     getConditionalOrder(
       _conditionalOrderId: PromiseOrValue<BigNumberish>,
@@ -467,14 +422,6 @@ export interface CrossMarginAccount extends BaseContract {
       }
     >;
 
-    initialize(
-      _owner: PromiseOrValue<string>,
-      _settings: PromiseOrValue<string>,
-      _events: PromiseOrValue<string>,
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     isAuth(overrides?: CallOverrides): Promise<[boolean]>;
 
     isOwner(overrides?: CallOverrides): Promise<[boolean]>;
@@ -486,7 +433,10 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    settings(overrides?: CallOverrides): Promise<[string]>;
+    setInitialOwnership(
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
@@ -497,8 +447,6 @@ export interface CrossMarginAccount extends BaseContract {
   ETH(overrides?: CallOverrides): Promise<string>;
 
   GELATO(overrides?: CallOverrides): Promise<string>;
-
-  MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
 
   OPS(overrides?: CallOverrides): Promise<string>;
 
@@ -523,8 +471,6 @@ export interface CrossMarginAccount extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  events(overrides?: CallOverrides): Promise<string>;
-
   execute(
     _commands: PromiseOrValue<BigNumberish>[],
     _inputs: PromiseOrValue<BytesLike>[],
@@ -536,11 +482,7 @@ export interface CrossMarginAccount extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  factory(overrides?: CallOverrides): Promise<string>;
-
   freeMargin(overrides?: CallOverrides): Promise<BigNumber>;
-
-  futuresMarketManager(overrides?: CallOverrides): Promise<string>;
 
   getConditionalOrder(
     _conditionalOrderId: PromiseOrValue<BigNumberish>,
@@ -557,14 +499,6 @@ export interface CrossMarginAccount extends BaseContract {
     overrides?: CallOverrides
   ): Promise<IPerpsV2MarketConsolidated.PositionStructOutput>;
 
-  initialize(
-    _owner: PromiseOrValue<string>,
-    _settings: PromiseOrValue<string>,
-    _events: PromiseOrValue<string>,
-    _factory: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   isAuth(overrides?: CallOverrides): Promise<boolean>;
 
   isOwner(overrides?: CallOverrides): Promise<boolean>;
@@ -576,7 +510,10 @@ export interface CrossMarginAccount extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  settings(overrides?: CallOverrides): Promise<string>;
+  setInitialOwnership(
+    _owner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   transferOwnership(
     _newOwner: PromiseOrValue<string>,
@@ -587,8 +524,6 @@ export interface CrossMarginAccount extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<string>;
 
     GELATO(overrides?: CallOverrides): Promise<string>;
-
-    MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
 
     OPS(overrides?: CallOverrides): Promise<string>;
 
@@ -613,8 +548,6 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    events(overrides?: CallOverrides): Promise<string>;
-
     execute(
       _commands: PromiseOrValue<BigNumberish>[],
       _inputs: PromiseOrValue<BytesLike>[],
@@ -626,11 +559,7 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    factory(overrides?: CallOverrides): Promise<string>;
-
     freeMargin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    futuresMarketManager(overrides?: CallOverrides): Promise<string>;
 
     getConditionalOrder(
       _conditionalOrderId: PromiseOrValue<BigNumberish>,
@@ -647,14 +576,6 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<IPerpsV2MarketConsolidated.PositionStructOutput>;
 
-    initialize(
-      _owner: PromiseOrValue<string>,
-      _settings: PromiseOrValue<string>,
-      _events: PromiseOrValue<string>,
-      _factory: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     isAuth(overrides?: CallOverrides): Promise<boolean>;
 
     isOwner(overrides?: CallOverrides): Promise<boolean>;
@@ -666,7 +587,10 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    settings(overrides?: CallOverrides): Promise<string>;
+    setInitialOwnership(
+      _owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
@@ -693,9 +617,6 @@ export interface CrossMarginAccount extends BaseContract {
       delegate?: PromiseOrValue<string> | null
     ): DelegatedAccountRemovedEventFilter;
 
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-
     "OwnershipTransferred(address,address)"(
       caller?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
@@ -710,8 +631,6 @@ export interface CrossMarginAccount extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<BigNumber>;
 
     GELATO(overrides?: CallOverrides): Promise<BigNumber>;
-
-    MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
 
     OPS(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -736,8 +655,6 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    events(overrides?: CallOverrides): Promise<BigNumber>;
-
     execute(
       _commands: PromiseOrValue<BigNumberish>[],
       _inputs: PromiseOrValue<BytesLike>[],
@@ -749,11 +666,7 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    factory(overrides?: CallOverrides): Promise<BigNumber>;
-
     freeMargin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    futuresMarketManager(overrides?: CallOverrides): Promise<BigNumber>;
 
     getConditionalOrder(
       _conditionalOrderId: PromiseOrValue<BigNumberish>,
@@ -770,14 +683,6 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initialize(
-      _owner: PromiseOrValue<string>,
-      _settings: PromiseOrValue<string>,
-      _events: PromiseOrValue<string>,
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     isAuth(overrides?: CallOverrides): Promise<BigNumber>;
 
     isOwner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -789,7 +694,10 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    settings(overrides?: CallOverrides): Promise<BigNumber>;
+    setInitialOwnership(
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     transferOwnership(
       _newOwner: PromiseOrValue<string>,
@@ -801,8 +709,6 @@ export interface CrossMarginAccount extends BaseContract {
     ETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     GELATO(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    MAX_BPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     OPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -829,8 +735,6 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    events(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     execute(
       _commands: PromiseOrValue<BigNumberish>[],
       _inputs: PromiseOrValue<BytesLike>[],
@@ -842,13 +746,7 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     freeMargin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    futuresMarketManager(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getConditionalOrder(
       _conditionalOrderId: PromiseOrValue<BigNumberish>,
@@ -865,14 +763,6 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    initialize(
-      _owner: PromiseOrValue<string>,
-      _settings: PromiseOrValue<string>,
-      _events: PromiseOrValue<string>,
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     isAuth(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -884,7 +774,10 @@ export interface CrossMarginAccount extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    settings(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    setInitialOwnership(
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       _newOwner: PromiseOrValue<string>,

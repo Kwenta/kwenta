@@ -1,12 +1,12 @@
 import SegmentedControl from 'components/SegmentedControl';
 import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
-import { CrossMarginOrderType } from 'sdk/types/futures';
+import { SmartMarginOrderType } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
 import { editTradeOrderPrice } from 'state/futures/actions';
 import { useAppDispatch } from 'state/hooks';
 
 type Props = {
-	orderType: CrossMarginOrderType;
+	orderType: SmartMarginOrderType;
 	setOrderTypeAction: (payload: any) => any;
 };
 
