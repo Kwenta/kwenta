@@ -96,9 +96,7 @@ const Transfers: FC = () => {
 						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 					</TableNoResults>
 				) : (
-					<TableNoResults>
-						<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
-					</TableNoResults>
+					<TableNoResults>{t('futures.market.user.transfers.table.no-results')}</TableNoResults>
 				)
 			}
 			pageSize={3}
@@ -110,11 +108,6 @@ export default Transfers;
 
 const ActionCell = styled(Body)`
 	text-transform: capitalize;
-`;
-
-const StyledTitle = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-size: 16px;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`

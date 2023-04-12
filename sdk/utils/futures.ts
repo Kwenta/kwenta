@@ -25,7 +25,7 @@ import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { NetworkId } from 'sdk/types/common';
 import {
 	DelayedOrder,
-	CrossMarginOrderType,
+	SmartMarginOrderType,
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
@@ -37,7 +37,6 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
 	FuturesVolumes,
-	IsolatedMarginOrderType,
 	PositionDetail,
 	PositionSide,
 	PostTradeDetailsResponse,
@@ -45,7 +44,6 @@ import {
 	MarginTransfer,
 	ConditionalOrderTypeEnum,
 } from 'sdk/types/futures';
-import { CrossMarginSettings } from 'state/futures/types';
 import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
@@ -308,7 +306,7 @@ export const formatDelayedOrder = (
 	const {
 		isOffchain,
 		sizeDelta,
-		priceImpactDelta,
+		desiredFillPrice,
 		targetRoundId,
 		commitDeposit,
 		keeperDeposit,
@@ -325,7 +323,7 @@ export const formatDelayedOrder = (
 		submittedAtTimestamp: intentionTime.toNumber() * 1000,
 		executableAtTimestamp: executableAtTime.toNumber() * 1000,
 		isOffchain: isOffchain,
-		priceImpactDelta: wei(priceImpactDelta),
+		desiredFillPrice: wei(desiredFillPrice),
 		targetRoundId: wei(targetRoundId),
 		orderType: isOffchain ? 'Delayed Market' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
@@ -430,33 +428,25 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	INSUFFICIENT_FREE_MARGIN: `You don't have enough sUSD for this trade`,
 };
 
-export const calculateCrossMarginFee = (
-	orderType: CrossMarginOrderType | IsolatedMarginOrderType,
-	susdSize: Wei,
-	feeRates: CrossMarginSettings
-) => {
-	if (orderType !== 'limit' && orderType !== 'stop_market') return zeroBN;
-	const conditionalOrderFeeRate = orderType === 'limit' ? feeRates.fees.limit : feeRates.fees.stop;
-	return susdSize.mul(conditionalOrderFeeRate);
-};
-
 export const getPythNetworkUrl = (networkId: NetworkId) => {
 	return networkId === 420 ? 'https://xc-testnet.pyth.network' : 'https://xc-mainnet.pyth.network';
 };
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
 
+export type ConditionalOrderResult = {
+	conditionalOrderType: number;
+	desiredFillPrice: BigNumber;
+	gelatoTaskId: string;
+	marginDelta: BigNumber;
+	marketKey: string;
+	reduceOnly: boolean;
+	sizeDelta: BigNumber;
+	targetPrice: BigNumber;
+};
+
 export const mapConditionalOrderFromContract = (
-	orderDetails: {
-		id: number;
-		marketKey: string;
-		conditionalOrderType: number;
-		targetPrice: BigNumber;
-		sizeDelta: BigNumber;
-		marginDelta: BigNumber;
-		reduceOnly: boolean;
-		priceImpactDelta: BigNumber;
-	},
+	orderDetails: ConditionalOrderResult & { id: number },
 	account: string
 ): ConditionalOrder => {
 	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey;
@@ -475,7 +465,7 @@ export const mapConditionalOrderFromContract = (
 			orderDetails.reduceOnly
 		),
 		// TODO: Rename when ABI is updated
-		desiredFillPrice: wei(orderDetails.priceImpactDelta),
+		desiredFillPrice: wei(orderDetails.desiredFillPrice),
 		targetPrice: wei(orderDetails.targetPrice),
 		reduceOnly: orderDetails.reduceOnly,
 		sizeTxt: size.abs().eq(SL_TP_MAX_SIZE)
@@ -496,8 +486,6 @@ export const mapConditionalOrderFromContract = (
 
 export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> = {
 	market: 'Market',
-	delayed: 'Delayed',
-	delayed_offchain: 'Delayed Market',
 	stop_market: 'Stop',
 	limit: 'Limit',
 };
@@ -656,7 +644,7 @@ export const calculateDesiredFillPrice = (
 		: marketPrice.mul(priceImpactDecimalPct.add(1));
 };
 
-export const getDefaultPriceImpact = (orderType: CrossMarginOrderType) => {
+export const getDefaultPriceImpact = (orderType: SmartMarginOrderType) => {
 	switch (orderType) {
 		case 'market':
 			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.MARKET);

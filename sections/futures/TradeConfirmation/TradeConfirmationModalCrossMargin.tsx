@@ -31,7 +31,7 @@ export default function TradeConfirmationModalCrossMargin() {
 			onDismiss={onDismiss}
 			onConfirmOrder={handleConfirmOrder}
 			isSubmitting={isSubmitting}
-			tradeFee={tradeFees.total}
+			tradeFee={tradeFees.delayedOrderFee}
 			keeperFee={isConditionalOrder ? tradeFees.keeperEthDeposit : null}
 		/>
 	);

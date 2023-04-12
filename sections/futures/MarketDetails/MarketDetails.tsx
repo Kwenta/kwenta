@@ -138,7 +138,7 @@ const MarketSkew = memo(() => {
 							minDecimals: 0,
 						})}
 					/>
-					{' / '}
+					{'/'}
 					<MarketDetailValue
 						color="green"
 						value={formatPercent(marketInfo ? marketInfo?.openInterest.longPct : 0, {

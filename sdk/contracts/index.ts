@@ -8,7 +8,6 @@ import MultipleMerkleDistributorABI from '../contracts/abis/MultipleMerkleDistri
 import MultipleMerkleDistributorPerpsV2ABI from '../contracts/abis/MultipleMerkleDistributorPerpsV2.json';
 import RewardEscrowABI from '../contracts/abis/RewardEscrow.json';
 import SupplyScheduleABI from '../contracts/abis/SupplySchedule.json';
-import CrossMarginSettingsABI from './abis/CrossMarginSettings.json';
 import DappMaintenanceABI from './abis/DappMaintenance.json';
 import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
@@ -25,8 +24,7 @@ import SynthRedeemerABI from './abis/SynthRedeemer.json';
 import SystemStatusABI from './abis/SystemStatus.json';
 import { ADDRESSES } from './constants';
 import {
-	CrossMarginAccountFactory__factory,
-	CrossMarginSettings__factory,
+	SmartMarginAccountFactory__factory,
 	ExchangeRates__factory,
 	Exchanger__factory,
 	FuturesMarketData__factory,
@@ -123,14 +121,11 @@ export const getContractsByNetwork = (
 		SUSD: ADDRESSES.SUSD[networkId]
 			? ERC20__factory.connect(ADDRESSES.SUSD[networkId], provider)
 			: undefined,
-		CrossMarginAccountFactory: ADDRESSES.CrossMarginAccountFactory[networkId]
-			? CrossMarginAccountFactory__factory.connect(
-					ADDRESSES.CrossMarginAccountFactory[networkId],
+		SmartMarginAccountFactory: ADDRESSES.SmartMarginAccountFactory[networkId]
+			? SmartMarginAccountFactory__factory.connect(
+					ADDRESSES.SmartMarginAccountFactory[networkId],
 					provider
 			  )
-			: undefined,
-		CrossMarginSettings: ADDRESSES.CrossMarginSettings[networkId]
-			? CrossMarginSettings__factory.connect(ADDRESSES.CrossMarginSettings[networkId], provider)
 			: undefined,
 		// TODO: Replace these when we move away from wagmi hooks
 		KwentaArrakisVault: ADDRESSES.KwentaArrakisVault[networkId]
@@ -182,9 +177,6 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 	return {
 		SynthRedeemer: ADDRESSES.SynthRedeemer[networkId]
 			? new EthCallContract(ADDRESSES.SynthRedeemer[networkId], SynthRedeemerABI)
-			: undefined,
-		CrossMarginSettings: ADDRESSES.CrossMarginSettings[networkId]
-			? new EthCallContract(ADDRESSES.CrossMarginSettings[networkId], CrossMarginSettingsABI)
 			: undefined,
 		ExchangeRates: ADDRESSES.ExchangeRates[networkId]
 			? new EthCallContract(ADDRESSES.ExchangeRates[networkId], ExchangeRatesABI)

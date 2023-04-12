@@ -7,9 +7,7 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import { InfoBoxRow } from 'components/InfoBox';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { CrossMarginOrderType } from 'sdk/types/futures';
-import { selectCrossMarginSettings } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { SmartMarginOrderType } from 'sdk/types/futures';
 import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const ExecutionFeeTooltip = memo(() => {
@@ -39,46 +37,27 @@ const ExecutionFeeRow = memo(({ executionFee }: { executionFee: Wei }) => {
 	);
 });
 
-const LimitStopFeeRow = memo(
+export const KeeperDepositRow = memo(
 	({
-		conditionalOrderFee,
-		orderType,
+		smartMarginKeeperDeposit,
+		isSubItem,
 	}: {
-		conditionalOrderFee: Wei;
-		orderType: CrossMarginOrderType;
+		smartMarginKeeperDeposit: Wei;
+		isSubItem?: boolean;
 	}) => {
-		const { fees } = useAppSelector(selectCrossMarginSettings);
-
-		const orderFeeRate = useMemo(
-			() => (orderType === 'limit' ? fees.limit : orderType === 'stop_market' ? fees.stop : null),
-			[orderType, fees]
-		);
-
 		return (
 			<InfoBoxRow
-				isSubItem
-				dataTestId="limit-stop"
-				title="Limit / Stop Fee"
-				value={formatDollars(conditionalOrderFee, { suggestDecimals: true })}
-				keyNode={formatPercent(orderFeeRate ?? 0)}
+				title="Keeper Deposit"
+				isSubItem={isSubItem}
+				value={
+					smartMarginKeeperDeposit.gt(0)
+						? formatCurrency('ETH', smartMarginKeeperDeposit, { currencyKey: 'ETH' })
+						: NO_VALUE
+				}
 			/>
 		);
 	}
 );
-
-const KeeperDepositRow = memo(({ smartMarginKeeperDeposit }: { smartMarginKeeperDeposit: Wei }) => {
-	return (
-		<InfoBoxRow
-			title="Keeper Deposit"
-			isSubItem
-			value={
-				smartMarginKeeperDeposit.gt(0)
-					? formatCurrency('ETH', smartMarginKeeperDeposit, { currencyKey: 'ETH' })
-					: NO_VALUE
-			}
-		/>
-	);
-});
 
 const EstimatedTradeFeeRow = memo(({ rates, tradeFee }: { rates: FeeRates; tradeFee?: Wei }) => {
 	return (
@@ -114,28 +93,19 @@ type FeeRates = {
 
 type FeesRowProps = {
 	tradeFee: Wei;
-	orderType: CrossMarginOrderType;
-	conditionalOrderFee: Wei;
+	orderType: SmartMarginOrderType;
 	smartMarginKeeperDeposit: Wei;
 	executionFee: Wei;
 	rates: FeeRates;
 };
 
 const FeesRow = memo(
-	({
-		tradeFee,
-		smartMarginKeeperDeposit,
-		conditionalOrderFee,
-		orderType,
-		executionFee,
-		rates,
-	}: FeesRowProps) => {
+	({ tradeFee, smartMarginKeeperDeposit, orderType, executionFee, rates }: FeesRowProps) => {
 		const [expanded, toggleExpanded] = useReducer((s) => !s, false);
 
 		const totalFee = useMemo(() => {
-			let total = tradeFee.add(executionFee ?? zeroBN);
-			return total.add(conditionalOrderFee);
-		}, [tradeFee, executionFee, conditionalOrderFee]);
+			return tradeFee.add(executionFee ?? zeroBN);
+		}, [tradeFee, executionFee]);
 
 		return (
 			<InfoBoxRow
@@ -146,12 +116,9 @@ const FeesRow = memo(
 				onToggleExpand={toggleExpanded}
 			>
 				<ExecutionFeeRow executionFee={executionFee} />
-				{conditionalOrderFee.gt(0) && (
-					<LimitStopFeeRow conditionalOrderFee={conditionalOrderFee} orderType={orderType} />
-				)}
 				<EstimatedTradeFeeRow rates={rates} tradeFee={tradeFee} />
 				{(orderType === 'limit' || orderType === 'stop_market') && (
-					<KeeperDepositRow smartMarginKeeperDeposit={smartMarginKeeperDeposit} />
+					<KeeperDepositRow isSubItem smartMarginKeeperDeposit={smartMarginKeeperDeposit} />
 				)}
 			</InfoBoxRow>
 		);
