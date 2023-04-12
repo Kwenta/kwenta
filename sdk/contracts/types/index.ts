@@ -2,9 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { BatchClaimer } from "./BatchClaimer";
-export type { CrossMarginAccount } from "./CrossMarginAccount";
-export type { CrossMarginAccountFactory } from "./CrossMarginAccountFactory";
-export type { CrossMarginSettings } from "./CrossMarginSettings";
 export type { DappMaintenance } from "./DappMaintenance";
 export type { ERC20 } from "./ERC20";
 export type { ExchangeRates } from "./ExchangeRates";
@@ -25,6 +22,8 @@ export type { PerpsV2MarketViews } from "./PerpsV2MarketViews";
 export type { Pyth } from "./Pyth";
 export type { ReverseRecords } from "./ReverseRecords";
 export type { RewardEscrow } from "./RewardEscrow";
+export type { SmartMarginAccount } from "./SmartMarginAccount";
+export type { SmartMarginAccountFactory } from "./SmartMarginAccountFactory";
 export type { StakingRewards } from "./StakingRewards";
 export type { SupplySchedule } from "./SupplySchedule";
 export type { Synth } from "./Synth";
@@ -38,9 +37,6 @@ export type { VKwentaRedeemer } from "./VKwentaRedeemer";
 export type { VeKwentaRedeemer } from "./VeKwentaRedeemer";
 export * as factories from "./factories";
 export { BatchClaimer__factory } from "./factories/BatchClaimer__factory";
-export { CrossMarginAccount__factory } from "./factories/CrossMarginAccount__factory";
-export { CrossMarginAccountFactory__factory } from "./factories/CrossMarginAccountFactory__factory";
-export { CrossMarginSettings__factory } from "./factories/CrossMarginSettings__factory";
 export { DappMaintenance__factory } from "./factories/DappMaintenance__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
 export { Exchanger__factory } from "./factories/Exchanger__factory";
@@ -61,6 +57,8 @@ export { PerpsV2MarketViews__factory } from "./factories/PerpsV2MarketViews__fac
 export { Pyth__factory } from "./factories/Pyth__factory";
 export { ReverseRecords__factory } from "./factories/ReverseRecords__factory";
 export { RewardEscrow__factory } from "./factories/RewardEscrow__factory";
+export { SmartMarginAccount__factory } from "./factories/SmartMarginAccount__factory";
+export { SmartMarginAccountFactory__factory } from "./factories/SmartMarginAccountFactory__factory";
 export { StakingRewards__factory } from "./factories/StakingRewards__factory";
 export { SupplySchedule__factory } from "./factories/SupplySchedule__factory";
 export { Synth__factory } from "./factories/Synth__factory";

@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  CrossMarginAccountFactory,
-  CrossMarginAccountFactoryInterface,
-} from "../CrossMarginAccountFactory";
+  SmartMarginAccountFactory,
+  SmartMarginAccountFactoryInterface,
+} from "../SmartMarginAccountFactory";
 
 const _abi = [
   {
@@ -15,21 +15,6 @@ const _abi = [
       {
         internalType: "address",
         name: "_owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_settings",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_events",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_implementation",
         type: "address",
       },
     ],
@@ -53,6 +38,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "CannotUpgrade",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "bytes",
@@ -60,12 +50,7 @@ const _abi = [
         type: "bytes",
       },
     ],
-    name: "AccountFailedToInitialize",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "CannotUpgrade",
+    name: "FailedToSetAcountOwner",
     type: "error",
   },
   {
@@ -84,19 +69,6 @@ const _abi = [
       },
     ],
     name: "AccountImplementationUpgraded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "events",
-        type: "address",
-      },
-    ],
-    name: "EventsUpgraded",
     type: "event",
   },
   {
@@ -144,19 +116,6 @@ const _abi = [
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "settings",
-        type: "address",
-      },
-    ],
-    name: "SettingsUpgraded",
-    type: "event",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -183,19 +142,6 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "events",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -286,19 +232,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "settings",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -347,47 +280,21 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_events",
-        type: "address",
-      },
-    ],
-    name: "upgradeEvents",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_settings",
-        type: "address",
-      },
-    ],
-    name: "upgradeSettings",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
 ];
 
-export class CrossMarginAccountFactory__factory {
+export class SmartMarginAccountFactory__factory {
   static readonly abi = _abi;
-  static createInterface(): CrossMarginAccountFactoryInterface {
-    return new utils.Interface(_abi) as CrossMarginAccountFactoryInterface;
+  static createInterface(): SmartMarginAccountFactoryInterface {
+    return new utils.Interface(_abi) as SmartMarginAccountFactoryInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): CrossMarginAccountFactory {
+  ): SmartMarginAccountFactory {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as CrossMarginAccountFactory;
+    ) as SmartMarginAccountFactory;
   }
 }

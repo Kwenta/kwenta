@@ -66,7 +66,7 @@ const ManagePosition: React.FC = () => {
 	}, [previewTrade?.statusMessage, previewError, t]);
 
 	const onSubmit = useCallback(() => {
-		if ((selectedAccountType === 'cross_margin' && !smartMarginAccount) || !depositApproved) {
+		if (selectedAccountType === 'cross_margin' && (!smartMarginAccount || !depositApproved)) {
 			dispatch(setOpenModal('futures_smart_margin_onboard'));
 			return;
 		}

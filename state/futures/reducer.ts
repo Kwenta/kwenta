@@ -5,7 +5,7 @@ import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import { Period } from 'sdk/constants/period';
 import { NetworkId } from 'sdk/types/common';
 import {
-	CrossMarginOrderType,
+	SmartMarginOrderType,
 	FuturesAccountType,
 	FuturesMarket,
 	FuturesMarketAsset,
@@ -35,7 +35,6 @@ import {
 	fetchDailyVolumes,
 	refetchPosition,
 	fetchCrossMarginOpenOrders,
-	fetchCrossMarginSettings,
 	fetchIsolatedMarginTradePreview,
 	fetchCrossMarginTradePreview,
 	fetchKeeperEthBalance,
@@ -85,7 +84,6 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		isolatedPositions: DEFAULT_QUERY_STATUS,
 		isolatedPositionHistory: DEFAULT_QUERY_STATUS,
 		openOrders: DEFAULT_QUERY_STATUS,
-		crossMarginSettings: DEFAULT_QUERY_STATUS,
 		isolatedTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginTradePreview: DEFAULT_QUERY_STATUS,
 		crossMarginAccount: DEFAULT_QUERY_STATUS,
@@ -136,13 +134,6 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 			price: undefined,
 			invalidLabel: undefined,
 		},
-		settings: {
-			fees: {
-				base: '0',
-				limit: '0',
-				stop: '0',
-			},
-		},
 	},
 	isolatedMargin: {
 		accounts: DEFAULT_MAP_BY_NETWORK,
@@ -185,7 +176,7 @@ const futuresSlice = createSlice({
 		setOrderType: (state, action) => {
 			state[accountType(state.selectedType)].orderType = action.payload;
 		},
-		setClosePositionOrderType: (state, action: PayloadAction<CrossMarginOrderType>) => {
+		setClosePositionOrderType: (state, action: PayloadAction<SmartMarginOrderType>) => {
 			state.crossMargin.closePositionOrderInputs.orderType = action.payload;
 		},
 		setClosePositionSizeDelta: (state, action: PayloadAction<string>) => {
@@ -272,6 +263,9 @@ const futuresSlice = createSlice({
 		},
 		setCrossMarginFees: (state, action: PayloadAction<CrossMarginTradeFees<string>>) => {
 			state.crossMargin.fees = action.payload;
+		},
+		setKeeperDeposit: (state, action: PayloadAction<string>) => {
+			state.crossMargin.fees.keeperEthDeposit = action.payload;
 		},
 		handlePreviewError: (
 			futuresState,
@@ -540,23 +534,6 @@ const futuresSlice = createSlice({
 			};
 		});
 
-		// Fetch Cross Margin Settings
-		builder.addCase(fetchCrossMarginSettings.pending, (futuresState) => {
-			futuresState.queryStatuses.openOrders = LOADING_STATUS;
-		});
-		builder.addCase(fetchCrossMarginSettings.fulfilled, (futuresState, action) => {
-			if (action.payload) {
-				futuresState.crossMargin.settings = action.payload;
-			}
-			futuresState.queryStatuses.crossMarginSettings = SUCCESS_STATUS;
-		});
-		builder.addCase(fetchCrossMarginSettings.rejected, (futuresState) => {
-			futuresState.queryStatuses.crossMarginSettings = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch cross margin settings',
-			};
-		});
-
 		// Fetch Isolated Margin Trade Preview
 		builder.addCase(fetchIsolatedMarginTradePreview.pending, (futuresState) => {
 			futuresState.queryStatuses.isolatedTradePreview = LOADING_STATUS;
@@ -717,11 +694,12 @@ export const {
 	setCrossMarginMarginDelta,
 	setCrossMarginTradeStopLoss,
 	setCrossMarginTradeTakeProfit,
-	setCrossMarginFees,
 	setCrossMarginOrderPrice,
 	setCrossMarginOrderPriceInvalidLabel,
 	setTransactionEstimate,
 	setLeverageInput,
+	setCrossMarginFees,
+	setKeeperDeposit,
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
 	clearAllTradePreviews,

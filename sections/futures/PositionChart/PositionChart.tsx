@@ -68,8 +68,10 @@ export default function PositionChart() {
 }
 
 const Container = styled.div<{ visible: boolean }>`
-	${media.greaterThan('md')`
-		height: calc(100% - 315px);
+	${media.greaterThan('mdUp')`
+	  min-height: calc(100% - 406px);
+	  max-height: calc(100% - 300px);
+		flex: 1;
 	`}
 	${media.lessThan('md')`
 		height: 100%;

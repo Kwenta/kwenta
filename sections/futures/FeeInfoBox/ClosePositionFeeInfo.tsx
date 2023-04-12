@@ -22,11 +22,10 @@ const ClosePositionFeeInfo = memo(() => {
 			executionFee={market?.keeperDeposit ?? zeroBN}
 			tradeFee={tradePreview?.fee ?? zeroBN}
 			orderType={orderType}
-			conditionalOrderFee={smartMarginFees.limitStopOrderFee}
 			smartMarginKeeperDeposit={smartMarginFees.keeperEthDeposit}
 			rates={{
-				maker: market?.feeRates.makerFee ?? zeroBN,
-				taker: market?.feeRates.takerFee ?? zeroBN,
+				maker: market?.feeRates.makerFeeOffchainDelayedOrder ?? zeroBN,
+				taker: market?.feeRates.takerFeeOffchainDelayedOrder ?? zeroBN,
 			}}
 		/>
 	);

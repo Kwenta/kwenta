@@ -104,14 +104,6 @@ export type SynthBalances = Balances & {
 	susdWalletBalance: Wei;
 };
 
-export type TradeFees = {
-	staticFee: Wei;
-	crossMarginFee: Wei;
-	keeperEthDeposit: Wei;
-	limitStopOrderFee: Wei;
-	total: Wei;
-};
-
 export type FuturesTradeInputs = {
 	nativeSize: string;
 	susdSize: string;

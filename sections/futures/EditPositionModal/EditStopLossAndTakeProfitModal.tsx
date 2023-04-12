@@ -11,17 +11,19 @@ import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
-import { updateStopLossAndTakeProfit } from 'state/futures/actions';
+import { calculateKeeperDeposit, updateStopLossAndTakeProfit } from 'state/futures/actions';
 import { setCrossSLTPModalStopLoss, setCrossSLTPModalTakeProfit } from 'state/futures/reducer';
 import {
 	selectEditPositionModalInfo,
 	selectLeverageSide,
 	selectSlTpModalInputs,
+	selectSmartMarginKeeperDeposit,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, suggestedDecimals } from 'utils/formatters/number';
 
+import { KeeperDepositRow } from '../FeeInfoBox/FeesRow.tsx';
 import { BalanceText, InfoContainer } from './EditPositionMarginModal';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
@@ -36,10 +38,12 @@ export default function EditStopLossAndTakeProfitModal() {
 	const { market, marketPrice } = useAppSelector(selectEditPositionModalInfo);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs);
+	const keeperDeposit = useAppSelector(selectSmartMarginKeeperDeposit);
 
 	useEffect(() => {
 		dispatch(setCrossSLTPModalStopLoss(''));
 		dispatch(setCrossSLTPModalTakeProfit(''));
+		dispatch(calculateKeeperDeposit());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -176,6 +180,8 @@ export default function EditStopLossAndTakeProfitModal() {
 			>
 				{t(`futures.market.trade.edit-sl-tp.set-sl-n-tp`)}
 			</Button>
+			<Spacer height={20} />
+			<KeeperDepositRow smartMarginKeeperDeposit={keeperDeposit} />
 
 			{transactionState?.error && <ErrorView message={transactionState.error} formatter="revert" />}
 		</StyledBaseModal>

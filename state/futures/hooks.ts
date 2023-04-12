@@ -5,7 +5,6 @@ import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import {
 	fetchCrossMarginAccount,
 	fetchCrossMarginAccountData,
-	fetchCrossMarginSettings,
 	fetchFuturesPositionHistory,
 	fetchIsolatedMarginAccountData,
 	fetchCrossMarginOpenOrders,
@@ -37,10 +36,6 @@ export const usePollMarketFuturesData = () => {
 		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
 	});
 
-	useFetchAction(fetchCrossMarginSettings, {
-		dependencies: [networkId],
-		disabled: !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
-	});
 	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] });
 	useFetchAction(fetchMarginTransfers, { dependencies: [networkId, wallet, selectedAccountType] });
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
@@ -71,7 +66,7 @@ export const usePollMarketFuturesData = () => {
 
 	usePollAction('fetchCrossMarginOpenOrders', fetchCrossMarginOpenOrders, {
 		dependencies: [networkId, wallet, markets.length],
-		intervalTime: 20000,
+		intervalTime: 10000,
 		disabled: !wallet || selectedAccountType === 'isolated_margin',
 	});
 };

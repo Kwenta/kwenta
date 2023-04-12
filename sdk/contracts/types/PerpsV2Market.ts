@@ -32,7 +32,7 @@ export declare namespace IPerpsV2MarketConsolidated {
   export type DelayedOrderStruct = {
     isOffchain: PromiseOrValue<boolean>;
     sizeDelta: PromiseOrValue<BigNumberish>;
-    priceImpactDelta: PromiseOrValue<BigNumberish>;
+    desiredFillPrice: PromiseOrValue<BigNumberish>;
     targetRoundId: PromiseOrValue<BigNumberish>;
     commitDeposit: PromiseOrValue<BigNumberish>;
     keeperDeposit: PromiseOrValue<BigNumberish>;
@@ -54,7 +54,7 @@ export declare namespace IPerpsV2MarketConsolidated {
   ] & {
     isOffchain: boolean;
     sizeDelta: BigNumber;
-    priceImpactDelta: BigNumber;
+    desiredFillPrice: BigNumber;
     targetRoundId: BigNumber;
     commitDeposit: BigNumber;
     keeperDeposit: BigNumber;
@@ -102,10 +102,14 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     "delayedOrders(address)": FunctionFragment;
     "executeDelayedOrder(address)": FunctionFragment;
     "executeOffchainDelayedOrder(address,bytes[])": FunctionFragment;
+    "fillPrice(int256)": FunctionFragment;
+    "flagPosition(address)": FunctionFragment;
+    "forceLiquidatePosition(address)": FunctionFragment;
     "fundingLastRecomputed()": FunctionFragment;
     "fundingRateLastRecomputed()": FunctionFragment;
     "fundingSequence(uint256)": FunctionFragment;
     "fundingSequenceLength()": FunctionFragment;
+    "isFlagged(address)": FunctionFragment;
     "liquidatePosition(address)": FunctionFragment;
     "liquidationFee(address)": FunctionFragment;
     "liquidationPrice(address)": FunctionFragment;
@@ -123,6 +127,8 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     "profitLoss(address)": FunctionFragment;
     "recomputeFunding()": FunctionFragment;
     "remainingMargin(address)": FunctionFragment;
+    "submitCloseDelayedOrderWithTracking(uint256,uint256,bytes32)": FunctionFragment;
+    "submitCloseOffchainDelayedOrderWithTracking(uint256,bytes32)": FunctionFragment;
     "submitDelayedOrder(int256,uint256,uint256)": FunctionFragment;
     "submitDelayedOrderWithTracking(int256,uint256,uint256,bytes32)": FunctionFragment;
     "submitOffchainDelayedOrder(int256,uint256)": FunctionFragment;
@@ -148,10 +154,14 @@ export interface PerpsV2MarketInterface extends utils.Interface {
       | "delayedOrders"
       | "executeDelayedOrder"
       | "executeOffchainDelayedOrder"
+      | "fillPrice"
+      | "flagPosition"
+      | "forceLiquidatePosition"
       | "fundingLastRecomputed"
       | "fundingRateLastRecomputed"
       | "fundingSequence"
       | "fundingSequenceLength"
+      | "isFlagged"
       | "liquidatePosition"
       | "liquidationFee"
       | "liquidationPrice"
@@ -169,6 +179,8 @@ export interface PerpsV2MarketInterface extends utils.Interface {
       | "profitLoss"
       | "recomputeFunding"
       | "remainingMargin"
+      | "submitCloseDelayedOrderWithTracking"
+      | "submitCloseOffchainDelayedOrderWithTracking"
       | "submitDelayedOrder"
       | "submitDelayedOrderWithTracking"
       | "submitOffchainDelayedOrder"
@@ -232,6 +244,18 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "fillPrice",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "flagPosition",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "forceLiquidatePosition",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "fundingLastRecomputed",
     values?: undefined
   ): string;
@@ -246,6 +270,10 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "fundingSequenceLength",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isFlagged",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "liquidatePosition",
@@ -320,6 +348,18 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "remainingMargin",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "submitCloseDelayedOrderWithTracking",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "submitCloseOffchainDelayedOrderWithTracking",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "submitDelayedOrder",
@@ -413,6 +453,15 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     functionFragment: "executeOffchainDelayedOrder",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "fillPrice", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "flagPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "forceLiquidatePosition",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "fundingLastRecomputed",
     data: BytesLike
@@ -429,6 +478,7 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     functionFragment: "fundingSequenceLength",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isFlagged", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "liquidatePosition",
     data: BytesLike
@@ -477,6 +527,14 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "submitCloseDelayedOrderWithTracking",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "submitCloseOffchainDelayedOrderWithTracking",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "submitDelayedOrder",
     data: BytesLike
   ): Result;
@@ -511,8 +569,9 @@ export interface PerpsV2MarketInterface extends utils.Interface {
     "FundingRecomputed(int256,int256,uint256,uint256)": EventFragment;
     "MarginTransferred(address,int256)": EventFragment;
     "PerpsTracking(bytes32,bytes32,bytes32,int256,uint256)": EventFragment;
-    "PositionLiquidated(uint256,address,address,int256,uint256,uint256)": EventFragment;
-    "PositionModified(uint256,address,uint256,int256,int256,uint256,uint256,uint256)": EventFragment;
+    "PositionFlagged(uint256,address,address,uint256)": EventFragment;
+    "PositionLiquidated(uint256,address,address,int256,uint256,uint256,uint256,uint256)": EventFragment;
+    "PositionModified(uint256,address,uint256,int256,int256,uint256,uint256,uint256,int256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DelayedOrderRemoved"): EventFragment;
@@ -520,6 +579,7 @@ export interface PerpsV2MarketInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "FundingRecomputed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarginTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PerpsTracking"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PositionFlagged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionLiquidated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionModified"): EventFragment;
 }
@@ -620,16 +680,40 @@ export type PerpsTrackingEvent = TypedEvent<
 
 export type PerpsTrackingEventFilter = TypedEventFilter<PerpsTrackingEvent>;
 
+export interface PositionFlaggedEventObject {
+  id: BigNumber;
+  account: string;
+  flagger: string;
+  timestamp: BigNumber;
+}
+export type PositionFlaggedEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber],
+  PositionFlaggedEventObject
+>;
+
+export type PositionFlaggedEventFilter = TypedEventFilter<PositionFlaggedEvent>;
+
 export interface PositionLiquidatedEventObject {
   id: BigNumber;
   account: string;
   liquidator: string;
   size: BigNumber;
   price: BigNumber;
-  fee: BigNumber;
+  flaggerFee: BigNumber;
+  liquidatorFee: BigNumber;
+  stakersFee: BigNumber;
 }
 export type PositionLiquidatedEvent = TypedEvent<
-  [BigNumber, string, string, BigNumber, BigNumber, BigNumber],
+  [
+    BigNumber,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ],
   PositionLiquidatedEventObject
 >;
 
@@ -645,11 +729,13 @@ export interface PositionModifiedEventObject {
   lastPrice: BigNumber;
   fundingIndex: BigNumber;
   fee: BigNumber;
+  skew: BigNumber;
 }
 export type PositionModifiedEvent = TypedEvent<
   [
     BigNumber,
     string,
+    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -724,12 +810,12 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<ContractTransaction>;
 
     closePosition(
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     closePositionWithTracking(
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -758,11 +844,28 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    fillPrice(
+      sizeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
+
+    flagPosition(
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    forceLiquidatePosition(
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     fundingLastRecomputed(
       overrides?: CallOverrides
     ): Promise<[number] & { timestamp: number }>;
 
-    fundingRateLastRecomputed(overrides?: CallOverrides): Promise<[BigNumber]>;
+    fundingRateLastRecomputed(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { fundingRate: BigNumber }>;
 
     fundingSequence(
       index: PromiseOrValue<BigNumberish>,
@@ -772,6 +875,11 @@ export interface PerpsV2Market extends BaseContract {
     fundingSequenceLength(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { length: BigNumber }>;
+
+    isFlagged(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     liquidatePosition(
       account: PromiseOrValue<string>,
@@ -808,13 +916,13 @@ export interface PerpsV2Market extends BaseContract {
 
     modifyPosition(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     modifyPositionWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -868,30 +976,43 @@ export interface PerpsV2Market extends BaseContract {
       [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
     >;
 
+    submitCloseDelayedOrderWithTracking(
+      desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
+      trackingCode: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    submitCloseOffchainDelayedOrderWithTracking(
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
+      trackingCode: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     submitDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
       desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     submitDelayedOrderWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
       desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     submitOffchainDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     submitOffchainDelayedOrderWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -944,12 +1065,12 @@ export interface PerpsV2Market extends BaseContract {
   ): Promise<ContractTransaction>;
 
   closePosition(
-    priceImpactDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   closePositionWithTracking(
-    priceImpactDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
     trackingCode: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -974,6 +1095,21 @@ export interface PerpsV2Market extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  fillPrice(
+    sizeDelta: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
+
+  flagPosition(
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  forceLiquidatePosition(
+    account: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   fundingLastRecomputed(overrides?: CallOverrides): Promise<number>;
 
   fundingRateLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
@@ -984,6 +1120,11 @@ export interface PerpsV2Market extends BaseContract {
   ): Promise<BigNumber>;
 
   fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isFlagged(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   liquidatePosition(
     account: PromiseOrValue<string>,
@@ -1016,13 +1157,13 @@ export interface PerpsV2Market extends BaseContract {
 
   modifyPosition(
     sizeDelta: PromiseOrValue<BigNumberish>,
-    priceImpactDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   modifyPositionWithTracking(
     sizeDelta: PromiseOrValue<BigNumberish>,
-    priceImpactDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
     trackingCode: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1076,30 +1217,43 @@ export interface PerpsV2Market extends BaseContract {
     [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
   >;
 
+  submitCloseDelayedOrderWithTracking(
+    desiredTimeDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
+    trackingCode: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  submitCloseOffchainDelayedOrderWithTracking(
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
+    trackingCode: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   submitDelayedOrder(
     sizeDelta: PromiseOrValue<BigNumberish>,
-    priceImpactDelta: PromiseOrValue<BigNumberish>,
     desiredTimeDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   submitDelayedOrderWithTracking(
     sizeDelta: PromiseOrValue<BigNumberish>,
-    priceImpactDelta: PromiseOrValue<BigNumberish>,
     desiredTimeDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
     trackingCode: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   submitOffchainDelayedOrder(
     sizeDelta: PromiseOrValue<BigNumberish>,
-    priceImpactDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   submitOffchainDelayedOrderWithTracking(
     sizeDelta: PromiseOrValue<BigNumberish>,
-    priceImpactDelta: PromiseOrValue<BigNumberish>,
+    desiredFillPrice: PromiseOrValue<BigNumberish>,
     trackingCode: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1152,12 +1306,12 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<void>;
 
     closePosition(
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     closePositionWithTracking(
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1182,6 +1336,21 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    fillPrice(
+      sizeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
+
+    flagPosition(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    forceLiquidatePosition(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     fundingLastRecomputed(overrides?: CallOverrides): Promise<number>;
 
     fundingRateLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1192,6 +1361,11 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<BigNumber>;
 
     fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isFlagged(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     liquidatePosition(
       account: PromiseOrValue<string>,
@@ -1224,13 +1398,13 @@ export interface PerpsV2Market extends BaseContract {
 
     modifyPosition(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     modifyPositionWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1282,30 +1456,43 @@ export interface PerpsV2Market extends BaseContract {
       [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
     >;
 
+    submitCloseDelayedOrderWithTracking(
+      desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
+      trackingCode: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    submitCloseOffchainDelayedOrderWithTracking(
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
+      trackingCode: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     submitDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
       desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     submitDelayedOrderWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
       desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     submitOffchainDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     submitOffchainDelayedOrderWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1404,13 +1591,28 @@ export interface PerpsV2Market extends BaseContract {
       fee?: null
     ): PerpsTrackingEventFilter;
 
-    "PositionLiquidated(uint256,address,address,int256,uint256,uint256)"(
+    "PositionFlagged(uint256,address,address,uint256)"(
+      id?: null,
+      account?: null,
+      flagger?: null,
+      timestamp?: null
+    ): PositionFlaggedEventFilter;
+    PositionFlagged(
+      id?: null,
+      account?: null,
+      flagger?: null,
+      timestamp?: null
+    ): PositionFlaggedEventFilter;
+
+    "PositionLiquidated(uint256,address,address,int256,uint256,uint256,uint256,uint256)"(
       id?: null,
       account?: null,
       liquidator?: null,
       size?: null,
       price?: null,
-      fee?: null
+      flaggerFee?: null,
+      liquidatorFee?: null,
+      stakersFee?: null
     ): PositionLiquidatedEventFilter;
     PositionLiquidated(
       id?: null,
@@ -1418,10 +1620,12 @@ export interface PerpsV2Market extends BaseContract {
       liquidator?: null,
       size?: null,
       price?: null,
-      fee?: null
+      flaggerFee?: null,
+      liquidatorFee?: null,
+      stakersFee?: null
     ): PositionLiquidatedEventFilter;
 
-    "PositionModified(uint256,address,uint256,int256,int256,uint256,uint256,uint256)"(
+    "PositionModified(uint256,address,uint256,int256,int256,uint256,uint256,uint256,int256)"(
       id?: PromiseOrValue<BigNumberish> | null,
       account?: PromiseOrValue<string> | null,
       margin?: null,
@@ -1429,7 +1633,8 @@ export interface PerpsV2Market extends BaseContract {
       tradeSize?: null,
       lastPrice?: null,
       fundingIndex?: null,
-      fee?: null
+      fee?: null,
+      skew?: null
     ): PositionModifiedEventFilter;
     PositionModified(
       id?: PromiseOrValue<BigNumberish> | null,
@@ -1439,7 +1644,8 @@ export interface PerpsV2Market extends BaseContract {
       tradeSize?: null,
       lastPrice?: null,
       fundingIndex?: null,
-      fee?: null
+      fee?: null,
+      skew?: null
     ): PositionModifiedEventFilter;
   };
 
@@ -1474,12 +1680,12 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<BigNumber>;
 
     closePosition(
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     closePositionWithTracking(
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1504,6 +1710,21 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    fillPrice(
+      sizeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    flagPosition(
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    forceLiquidatePosition(
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     fundingLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
 
     fundingRateLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1514,6 +1735,11 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<BigNumber>;
 
     fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isFlagged(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     liquidatePosition(
       account: PromiseOrValue<string>,
@@ -1542,13 +1768,13 @@ export interface PerpsV2Market extends BaseContract {
 
     modifyPosition(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     modifyPositionWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1591,30 +1817,43 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    submitCloseDelayedOrderWithTracking(
+      desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
+      trackingCode: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    submitCloseOffchainDelayedOrderWithTracking(
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
+      trackingCode: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     submitDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
       desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     submitDelayedOrderWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
       desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     submitOffchainDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     submitOffchainDelayedOrderWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1662,12 +1901,12 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     closePosition(
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     closePositionWithTracking(
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1696,6 +1935,21 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    fillPrice(
+      sizeDelta: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    flagPosition(
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    forceLiquidatePosition(
+      account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     fundingLastRecomputed(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1710,6 +1964,11 @@ export interface PerpsV2Market extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     fundingSequenceLength(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isFlagged(
+      account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1740,13 +1999,13 @@ export interface PerpsV2Market extends BaseContract {
 
     modifyPosition(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     modifyPositionWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1789,30 +2048,43 @@ export interface PerpsV2Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    submitCloseDelayedOrderWithTracking(
+      desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
+      trackingCode: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    submitCloseOffchainDelayedOrderWithTracking(
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
+      trackingCode: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     submitDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
       desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     submitDelayedOrderWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
       desiredTimeDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     submitOffchainDelayedOrder(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     submitOffchainDelayedOrderWithTracking(
       sizeDelta: PromiseOrValue<BigNumberish>,
-      priceImpactDelta: PromiseOrValue<BigNumberish>,
+      desiredFillPrice: PromiseOrValue<BigNumberish>,
       trackingCode: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

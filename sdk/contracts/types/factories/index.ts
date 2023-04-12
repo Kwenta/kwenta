@@ -2,9 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export { BatchClaimer__factory } from "./BatchClaimer__factory";
-export { CrossMarginAccount__factory } from "./CrossMarginAccount__factory";
-export { CrossMarginAccountFactory__factory } from "./CrossMarginAccountFactory__factory";
-export { CrossMarginSettings__factory } from "./CrossMarginSettings__factory";
 export { DappMaintenance__factory } from "./DappMaintenance__factory";
 export { ERC20__factory } from "./ERC20__factory";
 export { ExchangeRates__factory } from "./ExchangeRates__factory";
@@ -25,6 +22,8 @@ export { PerpsV2MarketViews__factory } from "./PerpsV2MarketViews__factory";
 export { Pyth__factory } from "./Pyth__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";
 export { RewardEscrow__factory } from "./RewardEscrow__factory";
+export { SmartMarginAccount__factory } from "./SmartMarginAccount__factory";
+export { SmartMarginAccountFactory__factory } from "./SmartMarginAccountFactory__factory";
 export { StakingRewards__factory } from "./StakingRewards__factory";
 export { SupplySchedule__factory } from "./SupplySchedule__factory";
 export { Synth__factory } from "./Synth__factory";
