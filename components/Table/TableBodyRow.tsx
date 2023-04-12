@@ -9,17 +9,19 @@ type TableBodyRowProps = TableRowProps & {
 	localRef: any;
 	highlightRowsOnHover?: boolean;
 	rowStyle: Record<string, any>;
+	rounded?: boolean;
 	onClick?: () => void;
 };
 
 const TableBodyRow: React.FC<TableBodyRowProps> = React.memo(
-	({ row, localRef, highlightRowsOnHover, onClick, ...props }) => (
+	({ row, localRef, highlightRowsOnHover, rounded, onClick, ...props }) => (
 		<BaseTableBodyRow
 			className="table-body-row"
 			{...props}
 			ref={localRef}
 			onClick={onClick}
 			$highlightRowsOnHover={highlightRowsOnHover}
+			$rounded={rounded}
 		>
 			{row.cells.map((cell) => (
 				<TableCell className="table-body-cell" {...cell.getCellProps()}>
@@ -33,13 +35,20 @@ const TableBodyRow: React.FC<TableBodyRowProps> = React.memo(
 const BaseTableBodyRow = styled.div<{
 	$highlightRowsOnHover?: boolean;
 	rowStyle?: Record<string, any>;
+	$rounded?: boolean;
 }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 6px 0;
-	&:last-child {
-		border: none;
-	}
+
+	${(props) =>
+		props.$rounded &&
+		css`
+			&:last-child {
+				border-bottom-left-radius: 10px;
+				border-bottom-right-radius: 10px;
+			}
+		`}
 
 	&:nth-child(odd) {
 		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};

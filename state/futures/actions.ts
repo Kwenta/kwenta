@@ -33,6 +33,7 @@ import {
 import {
 	calculateCrossMarginFee,
 	calculateDesiredFillPrice,
+	getDefaultPriceImpact,
 	getTradeStatusMessage,
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
@@ -123,7 +124,6 @@ import {
 	selectIdleMargin,
 	selectSlTpTradeInputs,
 	selectCrossMarginEditPosInputs,
-	selectDesiredTradeFillPrice,
 	selectCrossPreviewCount,
 	selectTradePreview,
 	selectEditPosDesiredFillPrice,
@@ -133,6 +133,7 @@ import {
 	selectClosePosDesiredFillPrice,
 	selectOpenDelayedOrders,
 	selectSlTpModalInputs,
+	selectDesiredTradeFillPrice,
 } from './selectors';
 import {
 	AccountContext,
@@ -1214,14 +1215,21 @@ export const withdrawIsolatedMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/modifyIsolatedPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const account = selectFuturesAccount(getState());
 		const marketInfo = selectMarketInfo(getState());
+		const priceImpact = getDefaultPriceImpact('market');
+		const desiredFill = selectDesiredTradeFillPrice(getState());
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 
-		// TODO: Change to desired fill when mainnet changes deployed
-		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		if (!marketInfo) throw new Error('Market info not found');
+		if (!account) throw new Error('Account not connected');
 
 		try {
+			const isFlagged = await sdk.futures.getIsFlagged(account, marketInfo.market);
+
+			// TODO: Remove this dynamic logic when the markets are upgraded
+			const priceImpactOrFill = isFlagged == null ? priceImpact : desiredFill;
+
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1233,7 +1241,7 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 			const tx = await sdk.futures.submitIsolatedMarginOrder(
 				marketInfo.market,
 				wei(nativeSizeDelta),
-				desiredFillPrice
+				priceImpactOrFill
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());

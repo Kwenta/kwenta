@@ -5,7 +5,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import ExchangeModals from 'sections/exchange/ExchangeModals';
 import { MobileSwap } from 'sections/exchange/MobileSwap';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 
 const ExchangeContent = memo(() => (
@@ -19,7 +18,6 @@ const ExchangeContent = memo(() => (
 		</DesktopOnlyView>
 		<MobileOrTabletView>
 			<MobileSwap />
-			<GitHashID />
 		</MobileOrTabletView>
 		<ExchangeModals />
 	</PageContent>

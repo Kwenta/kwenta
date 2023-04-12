@@ -487,7 +487,7 @@ export const serializeDelayedOrder = (
 	size: order.size.toString(),
 	commitDeposit: order.commitDeposit.toString(),
 	keeperDeposit: order.keeperDeposit.toString(),
-	priceImpactDelta: order.priceImpactDelta.toString(),
+	desiredFillPrice: order.desiredFillPrice.toString(),
 	targetRoundId: order.targetRoundId?.toString() ?? '',
 });
 
@@ -502,7 +502,7 @@ export const unserializeDelayedOrder = (
 	size: wei(order.size),
 	commitDeposit: wei(order.commitDeposit),
 	keeperDeposit: wei(order.keeperDeposit),
-	priceImpactDelta: wei(order.priceImpactDelta),
+	desiredFillPrice: wei(order.desiredFillPrice),
 	targetRoundId: wei(order.targetRoundId),
 });
 

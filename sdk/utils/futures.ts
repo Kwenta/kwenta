@@ -308,7 +308,7 @@ export const formatDelayedOrder = (
 	const {
 		isOffchain,
 		sizeDelta,
-		priceImpactDelta,
+		desiredFillPrice,
 		targetRoundId,
 		commitDeposit,
 		keeperDeposit,
@@ -325,7 +325,7 @@ export const formatDelayedOrder = (
 		submittedAtTimestamp: intentionTime.toNumber() * 1000,
 		executableAtTimestamp: executableAtTime.toNumber() * 1000,
 		isOffchain: isOffchain,
-		priceImpactDelta: wei(priceImpactDelta),
+		desiredFillPrice: wei(desiredFillPrice),
 		targetRoundId: wei(targetRoundId),
 		orderType: isOffchain ? 'Delayed Market' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,

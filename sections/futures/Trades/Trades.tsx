@@ -178,7 +178,6 @@ const Trades: React.FC = memo(() => {
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
-				showPagination
 				pageSize={3}
 			/>
 		</Card>

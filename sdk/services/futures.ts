@@ -12,7 +12,7 @@ import { BPS_CONVERSION, KWENTA_TRACKING_CODE, SL_TP_MAX_SIZE } from 'sdk/consta
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import CrossMarginAccountABI from 'sdk/contracts/abis/CrossMarginAccount.json';
-import FuturesMarketABI from 'sdk/contracts/abis/FuturesMarket.json';
+import PerpsMarketABI from 'sdk/contracts/abis/PerpsV2Market.json';
 import PerpsV2MarketInternal from 'sdk/contracts/PerpsV2MarketInternalV2';
 import {
 	CrossMarginAccount__factory,
@@ -247,7 +247,7 @@ export default class FuturesService {
 		address: string, // Cross margin or EOA address
 		futuresMarkets: { asset: FuturesMarketAsset; marketKey: FuturesMarketKey; address: string }[]
 	) {
-		const marketDataContract = this.sdk.context.multicallContracts.FuturesMarketData;
+		const marketDataContract = this.sdk.context.multicallContracts.PerpsV2MarketData;
 
 		if (!this.sdk.context.isL2 || !marketDataContract) {
 			throw new Error(UNSUPPORTED_NETWORK);
@@ -260,7 +260,7 @@ export default class FuturesService {
 			positionCalls.push(
 				marketDataContract.positionDetailsForMarketKey(formatBytes32String(marketKey), address)
 			);
-			const marketContract = new EthCallContract(marketAddress, FuturesMarketABI);
+			const marketContract = new EthCallContract(marketAddress, PerpsMarketABI);
 			liquidationCalls.push(marketContract.canLiquidate(address));
 		}
 
@@ -538,6 +538,13 @@ export default class FuturesService {
 		return orders.map((order, ind) => {
 			return formatDelayedOrder(account, marketAddresses[ind], order);
 		});
+	}
+
+	public async getIsFlagged(account: string, marketAddress: string) {
+		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider);
+		// TODO: Remove this catch after all markets have been upgraded
+		const isFlagged = await market.isFlagged(account).catch((_) => null);
+		return isFlagged;
 	}
 
 	public async getIsolatedTradePreview(
