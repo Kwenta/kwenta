@@ -139,7 +139,7 @@ export default function EditStopLossAndTakeProfitModal() {
 			<Spacer height={20} />
 
 			<InfoContainer style={{ margin: 0 }}>
-				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-pnl')}</BalanceText>
+				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-profit')}</BalanceText>
 
 				<BalanceText>
 					<span>{'-'}</span>
@@ -167,7 +167,7 @@ export default function EditStopLossAndTakeProfitModal() {
 			<Spacer height={20} />
 
 			<InfoContainer style={{ margin: 0 }}>
-				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-pnl')}</BalanceText>
+				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-loss')}</BalanceText>
 
 				<BalanceText>
 					<span>{'-'}</span>
