@@ -57,7 +57,7 @@ const TradingRewardRow = memo(() => {
 				<CompactBox $isEligible={isRewardEligible} onClick={goToStaking}>
 					<FlexDivRow style={{ marginBottom: '5px' }}>
 						<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
-						<Badge color={isRewardEligible ? 'yellow' : 'red'}>
+						<Badge color={isRewardEligible ? 'yellow' : 'gray'}>
 							{t(`dashboard.stake.tabs.trading-rewards.${isRewardEligible ? '' : 'not-'}eligible`)}
 							{isRewardEligible ? (
 								<EligibleIcon viewBox="0 0 8 8" style={{ paddingLeft: '2px' }} />
