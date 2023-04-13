@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
@@ -12,7 +12,8 @@ import { ETH_UNIT } from 'constants/network';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesTrade, PositionSide } from 'sdk/types/futures';
+import { FuturesTrade } from 'sdk/types/futures';
+import PositionType from 'sections/futures/PositionType';
 import {
 	selectMarketAsset,
 	selectQueryStatuses,
@@ -82,11 +83,7 @@ const Trades: React.FC = memo(() => {
 						Header: <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
 						accessor: 'side',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
-							</>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => <PositionType side={cellProps.value} />,
 						width: 60,
 						sortable: true,
 					},
@@ -185,21 +182,6 @@ const Trades: React.FC = memo(() => {
 });
 
 export default Trades;
-
-const StyledPositionSide = styled.div<{ side: PositionSide }>`
-	text-transform: uppercase;
-	${(props) =>
-		props.side === PositionSide.LONG &&
-		css`
-			color: ${props.theme.colors.selectedTheme.green};
-		`}
-
-	${(props) =>
-		props.side === PositionSide.SHORT &&
-		css`
-			color: ${props.theme.colors.selectedTheme.red};
-		`}
-`;
 
 const StyledExternalLink = styled(ExternalLink)`
 	padding: 10px;
