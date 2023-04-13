@@ -7,7 +7,7 @@ import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import Badge from 'components/Badge';
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
+import { InfoBoxRow } from 'components/InfoBox';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
@@ -25,7 +25,7 @@ import TradeTotalFeesRow from './TradeTotalFeesRow';
 
 export const TradePanelFeeInfo = memo(() => {
 	return (
-		<FeeInfoBoxContainer $hasBorder={false}>
+		<FeeInfoBoxContainer>
 			<LiquidationRow />
 			<TradeTotalFeesRow />
 			<TradingRewardRow />
@@ -97,7 +97,7 @@ const LiquidationRow = memo(() => {
 	);
 });
 
-const FeeInfoBoxContainer = styled(InfoBoxContainer)`
+const FeeInfoBoxContainer = styled.div`
 	margin-bottom: 16px;
 `;
 

@@ -71,7 +71,7 @@ const Container = styled.div<{ visible: boolean }>`
 	${media.greaterThan('mdUp')`
 	  min-height: calc(100% - 300px);
 	  max-height: calc(100% - 300px);
-		height: calc(100% - 300px);
+		flex: 1;
 	`}
 	${media.lessThan('md')`
 		height: 100%;
