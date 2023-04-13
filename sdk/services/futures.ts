@@ -14,13 +14,9 @@ import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts'
 import PerpsMarketABI from 'sdk/contracts/abis/PerpsV2Market.json';
 import SmartMarginAccountABI from 'sdk/contracts/abis/SmartMarginAccount.json';
 import PerpsV2MarketInternal from 'sdk/contracts/PerpsV2MarketInternalV2';
-import {
-	SmartMarginAccount__factory,
-	PerpsV2MarketData,
-	PerpsV2Market__factory,
-} from 'sdk/contracts/types';
+import { SmartMarginAccount__factory, PerpsV2Market__factory } from 'sdk/contracts/types';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
-import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
+import { IPerpsV2MarketSettings, PerpsV2MarketData } from 'sdk/contracts/types/PerpsV2MarketData';
 import {
 	queryCrossMarginAccounts,
 	querySmartMarginTransfers,
@@ -103,34 +99,17 @@ export default class FuturesService {
 			ExchangeRates,
 			PerpsV2MarketData,
 			PerpsV2MarketSettings,
-			PerpsV2MarketDataUpgraded,
-			PerpsV2MarketSettingsUpgraded,
 		} = this.sdk.context.multicallContracts;
 
-		if (
-			!PerpsV2MarketData ||
-			!PerpsV2MarketSettings ||
-			!SystemStatus ||
-			!ExchangeRates ||
-			!PerpsV2MarketDataUpgraded ||
-			!PerpsV2MarketSettingsUpgraded
-		) {
+		if (!SystemStatus || !ExchangeRates || !PerpsV2MarketData || !PerpsV2MarketSettings) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
 
-		// TODO Merge upgraded and original contracts once deployed to mainnet
-		const futuresData =
-			this.sdk.context.networkId === 10
-				? await this.sdk.context.multicallProvider.all([
-						PerpsV2MarketData.allProxiedMarketSummaries(),
-						PerpsV2MarketSettings.minInitialMargin(),
-						PerpsV2MarketSettings.minKeeperFee(),
-				  ])
-				: await this.sdk.context.multicallProvider.all([
-						PerpsV2MarketDataUpgraded.allProxiedMarketSummaries(),
-						PerpsV2MarketSettingsUpgraded.minInitialMargin(),
-						PerpsV2MarketSettingsUpgraded.minKeeperFee(),
-				  ]);
+		const futuresData = await this.sdk.context.multicallProvider.all([
+			PerpsV2MarketData.allProxiedMarketSummaries(),
+			PerpsV2MarketSettings.minInitialMargin(),
+			PerpsV2MarketSettings.minKeeperFee(),
+		]);
 
 		const { markets, minInitialMargin, minKeeperFee } = {
 			markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
@@ -150,11 +129,7 @@ export default class FuturesService {
 			return m.key;
 		});
 
-		const parametersCalls = marketKeys.map((key: string) =>
-			this.sdk.context.networkId === 10
-				? PerpsV2MarketSettings.parameters(key)
-				: PerpsV2MarketSettingsUpgraded.parameters(key)
-		);
+		const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key));
 
 		const responses = await this.sdk.context.multicallProvider.all([...parametersCalls]);
 		const marketParameters = responses as IPerpsV2MarketSettings.ParametersStructOutput[];
@@ -753,16 +728,34 @@ export default class FuturesService {
 			address: string;
 		},
 		sizeDelta: Wei,
-		desiredFillPrice: Wei
+		desiredFillPrice: Wei,
+		cancelPendingReduceOrders?: boolean
 	) {
+		const commands = [];
+		const inputs = [];
+
+		if (cancelPendingReduceOrders) {
+			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
+			const existingOrdersForMarket = existingOrders.filter(
+				(o) => o.marketKey === market.key && o.reduceOnly
+			);
+			// Remove all pending reduce only orders if instructed
+			existingOrdersForMarket.forEach((o) => {
+				commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+				inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]));
+			});
+		}
 		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
 
+		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
+		inputs.push(encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice));
+
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER],
-			[encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice)],
+			commands,
+			inputs,
 		]);
 	}
 
@@ -843,7 +836,8 @@ export default class FuturesService {
 		},
 		walletAddress: string,
 		crossMarginAddress: string,
-		order: SmartMarginOrderInputs
+		order: SmartMarginOrderInputs,
+		cancelPendingReduceOrders?: boolean
 	) {
 		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
@@ -900,29 +894,13 @@ export default class FuturesService {
 			}
 		}
 
-		if (order.takeProfit || order.stopLoss) {
-			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
-			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === market.key);
-			const existingStopLosses = existingOrdersForMarket.filter(
-				(o) =>
-					o.size.abs().eq(SL_TP_MAX_SIZE) &&
-					o.reduceOnly &&
-					o.orderType === ConditionalOrderTypeEnum.STOP
-			);
-			const existingTakeProfits = existingOrdersForMarket.filter(
-				(o) =>
-					o.size.abs().eq(SL_TP_MAX_SIZE) &&
-					o.reduceOnly &&
-					o.orderType === ConditionalOrderTypeEnum.LIMIT
-			);
+		const existingOrders = await this.getConditionalOrders(crossMarginAddress);
+		const existingOrdersForMarket = existingOrders.filter(
+			(o) => o.marketKey === market.key && o.reduceOnly
+		);
 
+		if (order.takeProfit || order.stopLoss) {
 			if (order.takeProfit) {
-				if (existingTakeProfits.length) {
-					existingTakeProfits.forEach((tp) => {
-						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
-						inputs.push(defaultAbiCoder.encode(['uint256'], [tp.id]));
-					});
-				}
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 				const encodedParams = encodeConditionalOrderParams(
 					market.key,
@@ -939,12 +917,6 @@ export default class FuturesService {
 			}
 
 			if (order.stopLoss) {
-				if (existingStopLosses.length) {
-					existingStopLosses.forEach((sl) => {
-						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
-						inputs.push(defaultAbiCoder.encode(['uint256'], [sl.id]));
-					});
-				}
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 				const encodedParams = encodeConditionalOrderParams(
 					market.key,
@@ -958,6 +930,39 @@ export default class FuturesService {
 					true
 				);
 				inputs.push(encodedParams);
+			}
+		}
+
+		if (cancelPendingReduceOrders) {
+			// Remove all pending reduce only orders if instructed
+			existingOrdersForMarket.forEach((o) => {
+				commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+				inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]));
+			});
+		} else {
+			if (order.takeProfit) {
+				// Remove only existing take profit to overwrite
+				const existingTakeProfits = existingOrdersForMarket.filter(
+					(o) => o.size.abs().eq(SL_TP_MAX_SIZE) && o.orderType === ConditionalOrderTypeEnum.LIMIT
+				);
+				if (existingTakeProfits.length) {
+					existingTakeProfits.forEach((tp) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [tp.id]));
+					});
+				}
+			}
+			if (order.stopLoss) {
+				// Remove only existing stop loss to overwrite
+				const existingStopLosses = existingOrdersForMarket.filter(
+					(o) => o.size.abs().eq(SL_TP_MAX_SIZE) && o.orderType === ConditionalOrderTypeEnum.STOP
+				);
+				if (existingStopLosses.length) {
+					existingStopLosses.forEach((sl) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [sl.id]));
+					});
+				}
 			}
 		}
 

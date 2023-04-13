@@ -64,7 +64,6 @@ import {
 	serializeMarkets,
 	serializePositionHistory,
 	serializeTrades,
-	unserializeMarket,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
@@ -147,11 +146,12 @@ import {
 } from './types';
 
 export const fetchMarkets = createAsyncThunk<
-	{ markets: FuturesMarket<string>[] } | undefined,
+	{ markets: FuturesMarket<string>[]; networkId: NetworkId } | undefined,
 	void,
 	ThunkConfig
 >('futures/fetchMarkets', async (_, { getState, extra: { sdk } }) => {
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
+	const networkId = selectNetwork(getState());
 	if (!supportedNetwork) return;
 	try {
 		const markets = await sdk.futures.getMarkets();
@@ -166,7 +166,7 @@ export const fetchMarkets = createAsyncThunk<
 		});
 
 		const serializedMarkets = serializeMarkets(overrideMarkets);
-		return { markets: serializedMarkets };
+		return { markets: serializedMarkets, networkId };
 	} catch (err) {
 		logError(err);
 		notifyError('Failed to fetch markets', err);
@@ -203,16 +203,16 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 	void,
 	ThunkConfig
 >('futures/fetchCrossMarginPositions', async (_, { getState, extra: { sdk } }) => {
-	const { futures } = getState();
 	const account = selectCrossMarginAccount(getState());
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
+	const markets = selectMarkets(getState());
 
 	if (!account || !supportedNetwork) return;
 	try {
 		const positions = await sdk.futures.getFuturesPositions(
 			account,
-			futures.markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
+			markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
 		);
 		const serializedPositions = positions.map(
 			(p) => serializeWeiObject(p) as FuturesPosition<string>
@@ -220,7 +220,7 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 		return { positions: serializedPositions, account, network };
 	} catch (err) {
 		logError(err);
-		notifyError('Failed to fetch cross-margin positions', err);
+		notifyError('Failed to fetch smart-margin positions', err);
 		throw err;
 	}
 });
@@ -230,14 +230,16 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 	void,
 	ThunkConfig
 >('futures/fetchIsolatedMarginPositions', async (_, { getState, extra: { sdk } }) => {
-	const { wallet, futures } = getState();
+	const { wallet } = getState();
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
+	const markets = selectMarkets(getState());
+
 	if (!wallet.walletAddress || !supportedNetwork) return;
 	try {
 		const positions = await sdk.futures.getFuturesPositions(
 			wallet.walletAddress,
-			futures.markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
+			markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
 		);
 		return {
 			positions: positions.map((p) => serializeWeiObject(p) as FuturesPosition<string>),
@@ -324,6 +326,7 @@ export const fetchDailyVolumes = createAsyncThunk<FuturesVolumes<string>, void, 
 export const fetchMarginTransfers = createAsyncThunk<
 	| {
 			marginTransfers: MarginTransfer[];
+			idleTransfers: MarginTransfer[];
 			context: AccountContext;
 	  }
 	| undefined,
@@ -338,11 +341,17 @@ export const fetchMarginTransfers = createAsyncThunk<
 	try {
 		const transfers =
 			futures.selectedType === 'cross_margin'
-				? await sdk.futures.getCrossMarginTransfers(cmAccount)
+				? await sdk.futures.getIsolatedMarginTransfers(cmAccount)
 				: await sdk.futures.getIsolatedMarginTransfers();
+
+		const idleTransfers =
+			futures.selectedType === 'cross_margin'
+				? await sdk.futures.getCrossMarginTransfers(cmAccount)
+				: [];
 
 		return {
 			marginTransfers: transfers,
+			idleTransfers: idleTransfers,
 			context: {
 				wallet: wallet.walletAddress,
 				network: network,
@@ -459,7 +468,9 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	'futures/fetchIsolatedMarginTradePreview',
 	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
-		const market = getState().futures.markets.find((m) => m.marketKey === params.market.key);
+		const markets = selectMarkets(getState());
+
+		const market = markets.find((m) => m.marketKey === params.market.key);
 
 		try {
 			const orderTypeNum = ContractOrderType.DELAYED_OFFCHAIN;
@@ -1005,7 +1016,7 @@ export const fetchAllTradesForAccount = createAsyncThunk<
 		const account = selectFuturesAccount(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
 		if (!futuresSupported || !wallet || !account) return;
-		const trades = await sdk.futures.getAllTrades(wallet, accountType, 10000);
+		const trades = await sdk.futures.getAllTrades(wallet, accountType, 200);
 		return { trades: serializeTrades(trades), networkId, account, accountType, wallet };
 	} catch (err) {
 		notifyError('Failed to fetch futures trades', err);
@@ -1017,11 +1028,12 @@ export const calculateCrossMarginFees = (params: TradePreviewParams): AppThunk =
 	dispatch,
 	getState
 ) => {
-	const market = getState().futures.markets.find((m) => m.marketKey === params.market.key);
+	const markets = selectMarkets(getState());
+	const market = markets.find((m) => m.marketKey === params.market.key);
 	if (!market) throw new Error('Missing market info to compute fee');
 	const keeperBalance = selectKeeperEthBalance(getState());
 	const { delayedOrderFee } = computeDelayedOrderFee(
-		unserializeMarket(market),
+		market,
 		params.sizeDelta.mul(params.orderPrice?.abs())
 	);
 
@@ -1324,6 +1336,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
 		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		const wallet = selectWallet(getState());
+		const position = selectPosition(getState());
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
 
 		try {
@@ -1392,11 +1405,17 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 				orderInputs.keeperEthDeposit = keeperEthDeposit;
 			}
 
+			let existingSize = position?.position?.size ?? wei(0);
+			existingSize =
+				position?.position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize;
+			const isClosing = existingSize.add(tradeInputs.nativeSizeDelta).eq(0);
+
 			const tx = await sdk.futures.submitCrossMarginOrder(
 				{ address: marketInfo.market, key: marketInfo.marketKey },
 				wallet,
 				account,
-				orderInputs
+				orderInputs,
+				isClosing
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchCrossMarginOpenOrders());
@@ -1450,7 +1469,7 @@ export const submitCrossMarginAdjustMargin = createAsyncThunk<void, void, ThunkC
 export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/submitCrossMarginAdjustPositionSize',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const { market } = selectEditPositionModalInfo(getState());
+		const { market, position } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
 		const desiredFillPrice = selectEditPosDesiredFillPrice(getState());
 		const { nativeSizeDelta } = selectCrossMarginEditPosInputs(getState());
@@ -1468,6 +1487,11 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 				})
 			);
 
+			let existingSize = position?.position?.size ?? wei(0);
+			existingSize =
+				position?.position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize;
+			const isClosing = existingSize.add(nativeSizeDelta).eq(0);
+
 			const tx = await sdk.futures.modifySmartMarginPositionSize(
 				account,
 				{
@@ -1475,7 +1499,8 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 					address: market.market,
 				},
 				wei(nativeSizeDelta),
-				desiredFillPrice
+				desiredFillPrice,
+				isClosing
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setShowPositionModal(null));
@@ -1491,7 +1516,7 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/submitSmartMarginReducePositionOrder',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const { market } = selectEditPositionModalInfo(getState());
+		const { market, position } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
 		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
 		const { nativeSizeDelta, orderType, price } = selectClosePositionOrderInputs(getState());
@@ -1504,6 +1529,10 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 			if (!wallet) throw new Error('No wallet connected');
 			if (!account) throw new Error('No cross margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
+
+			const isClosing = wei(nativeSizeDelta)
+				.abs()
+				.eq(position?.position?.size.abs() || 0);
 
 			dispatch(
 				setTransaction({
@@ -1534,7 +1563,8 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 				{ address: market.market, key: market.marketKey },
 				wallet,
 				account,
-				orderInputs
+				orderInputs,
+				isClosing
 			);
 
 			await monitorAndAwaitTransaction(dispatch, tx);
@@ -1855,7 +1885,8 @@ const monitorAndAwaitTransaction = async (
 };
 
 const getMarketDetailsByKey = (getState: () => RootState, key: FuturesMarketKey) => {
-	const market = getState().futures.markets.find((m) => {
+	const markets = selectMarkets(getState());
+	const market = markets.find((m) => {
 		return m.marketKey === key;
 	});
 	if (!market) throw new Error(`No market info found for ${key}`);

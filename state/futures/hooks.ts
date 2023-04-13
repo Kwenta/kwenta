@@ -59,15 +59,21 @@ export const usePollMarketFuturesData = () => {
 		disabled: !wallet,
 	});
 	usePollAction('fetchIsolatedOpenOrders', fetchIsolatedOpenOrders, {
-		dependencies: [networkId, wallet, markets.length],
+		dependencies: [networkId, wallet, markets.length, selectedAccountType],
 		intervalTime: 10000,
 		disabled: !wallet || selectedAccountType === 'cross_margin',
 	});
 
 	usePollAction('fetchCrossMarginOpenOrders', fetchCrossMarginOpenOrders, {
-		dependencies: [networkId, wallet, markets.length],
+		dependencies: [networkId, wallet, markets.length, crossMarginAddress],
 		intervalTime: 10000,
 		disabled: !wallet || selectedAccountType === 'isolated_margin',
+	});
+
+	usePollAction('fetchAllTradesForAccount', fetchAllTradesForAccount, {
+		dependencies: [networkId, wallet, crossMarginAddress, selectedAccountType],
+		intervalTime: 30000,
+		disabled: !wallet,
 	});
 };
 
@@ -81,10 +87,6 @@ export const usePollDashboardFuturesData = () => {
 
 	useFetchAction(fetchMarginTransfers, {
 		dependencies: [networkId, wallet, selectedAccountType],
-		disabled: !wallet,
-	});
-	useFetchAction(fetchAllTradesForAccount, {
-		dependencies: [networkId, wallet],
 		disabled: !wallet,
 	});
 
@@ -107,5 +109,10 @@ export const usePollDashboardFuturesData = () => {
 		intervalTime: 30000,
 		dependencies: [wallet, markets.length, networkId, crossMarginAddress],
 		disabled: !markets.length || !crossMarginAddress,
+	});
+	usePollAction('fetchAllTradesForAccount', fetchAllTradesForAccount, {
+		dependencies: [networkId, wallet, selectedAccountType, crossMarginAddress],
+		intervalTime: 30000,
+		disabled: !wallet,
 	});
 };

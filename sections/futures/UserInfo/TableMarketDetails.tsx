@@ -1,20 +1,17 @@
-import { ReactElement } from 'react';
+import { memo, ReactElement } from 'react';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { FuturesMarketKey } from 'sdk/types/futures';
 
-export default function TableMarketDetails({
-	marketKey,
-	marketName,
-	infoLabel,
-	badge,
-}: {
+type Props = {
 	marketKey: FuturesMarketKey;
 	marketName: string;
 	infoLabel?: string;
 	badge?: ReactElement;
-}) {
+};
+
+const TableMarketDetails = memo(({ marketKey, marketName, infoLabel, badge }: Props) => {
 	return (
 		<MarketContainer>
 			<IconContainer>
@@ -27,7 +24,9 @@ export default function TableMarketDetails({
 			<StyledValue>{infoLabel}</StyledValue>
 		</MarketContainer>
 	);
-}
+});
+
+export default TableMarketDetails;
 
 const IconContainer = styled.div`
 	grid-column: 1;
