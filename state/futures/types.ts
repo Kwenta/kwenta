@@ -75,12 +75,22 @@ export type FuturesAction = {
 	action: 'trade' | 'deposit' | 'withdraw';
 };
 
-export type FuturesPortfolio = {
+export type IsolatedPerpsPortfolio = {
 	account: string;
 	timestamp: number;
 	assets: {
 		[asset: string]: number;
 	};
+	total: number;
+};
+
+export type SmartPerpsPortfolio = {
+	account: string;
+	timestamp: number;
+	assets: {
+		[asset: string]: number;
+	};
+	idle: number;
 	total: number;
 };
 
@@ -188,6 +198,7 @@ export type IsolatedAccountData = FuturesAccountData & {
 
 export type CrossMarginAccountData = FuturesAccountData & {
 	account: string;
+	idleTransfers: MarginTransfer[];
 	balanceInfo: CrossMarginBalanceInfo<string>;
 	delayedOrders: DelayedOrderWithDetails<string>[];
 	conditionalOrders: CrossMarginOrder<string>[];
@@ -202,7 +213,7 @@ export type FuturesState = {
 	isolatedMargin: IsolatedMarginState;
 	fundingRates: FundingRate<string>[];
 	crossMargin: CrossMarginState;
-	markets: FuturesMarket<string>[];
+	markets: Record<FuturesNetwork, FuturesMarket<string>[]>;
 	queryStatuses: FuturesQueryStatuses;
 	dailyMarketVolumes: FuturesVolumes<string>;
 	transactionEstimations: TransactionEstimations;

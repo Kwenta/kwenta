@@ -28,6 +28,7 @@ export const ZERO_STATE_CM_ACCOUNT = {
 	},
 	trades: [],
 	positions: [],
+	idleTransfers: [],
 	delayedOrders: [],
 	conditionalOrders: [],
 	positionHistory: [],

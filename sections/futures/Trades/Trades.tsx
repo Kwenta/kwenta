@@ -1,7 +1,8 @@
-import React, { memo, useMemo } from 'react';
+import { useRouter } from 'next/router';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
@@ -9,28 +10,35 @@ import ColoredPrice from 'components/ColoredPrice';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
+import ROUTES from 'constants/routes';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesTrade, PositionSide } from 'sdk/types/futures';
+import { FuturesTrade } from 'sdk/types/futures';
 import {
+	selectAllTradesForAccountType,
+	selectFuturesType,
 	selectMarketAsset,
 	selectQueryStatuses,
-	selectUsersTradesForMarket,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
+import PositionType from '../PositionType';
 import { TradeStatus } from '../types';
+import TableMarketDetails from '../UserInfo/TableMarketDetails';
 import TimeDisplay from './TimeDisplay';
 
-const Trades: React.FC = memo(() => {
+const Trades = memo(() => {
 	const { t } = useTranslation();
 	const { switchToL2 } = useNetworkSwitcher();
+	const router = useRouter();
+
 	const marketAsset = useAppSelector(selectMarketAsset);
-	const history = useAppSelector(selectUsersTradesForMarket);
+	const accountType = useAppSelector(selectFuturesType);
+	const history = useAppSelector(selectAllTradesForAccountType);
 	const { trades } = useAppSelector(selectQueryStatuses);
 
 	const isLoading = !history.length && trades.status === FetchStatus.Loading;
@@ -38,7 +46,7 @@ const Trades: React.FC = memo(() => {
 
 	const isL2 = useIsL2();
 
-	const historyData = React.useMemo(() => {
+	const historyData = useMemo(() => {
 		return history.map((trade) => {
 			const pnl = trade?.pnl.div(ETH_UNIT);
 			const feesPaid = trade?.feesPaid.div(ETH_UNIT);
@@ -68,6 +76,38 @@ const Trades: React.FC = memo(() => {
 				rounded={false}
 				columns={[
 					{
+						Header: (
+							<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
+						),
+						accessor: 'market',
+						Cell: (cellProps: CellProps<typeof historyData[number]>) => {
+							return (
+								<MarketDetailsContainer
+									onClick={() =>
+										cellProps.row.original.market
+											? router.push(
+													ROUTES.Markets.MarketPair(
+														cellProps.row.original.market.asset,
+														accountType
+													)
+											  )
+											: undefined
+									}
+								>
+									{cellProps.row.original.market ? (
+										<TableMarketDetails
+											marketName={cellProps.row.original.market?.marketName}
+											marketKey={cellProps.row.original.market?.marketKey}
+										/>
+									) : (
+										'-'
+									)}
+								</MarketDetailsContainer>
+							);
+						},
+						width: 100,
+					},
+					{
 						Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
 						accessor: 'time',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -83,9 +123,7 @@ const Trades: React.FC = memo(() => {
 						accessor: 'side',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
-							</>
+							<PositionType side={cellProps.value}>{cellProps.value}</PositionType>
 						),
 						width: 60,
 						sortable: true,
@@ -186,21 +224,6 @@ const Trades: React.FC = memo(() => {
 
 export default Trades;
 
-const StyledPositionSide = styled.div<{ side: PositionSide }>`
-	text-transform: uppercase;
-	${(props) =>
-		props.side === PositionSide.LONG &&
-		css`
-			color: ${props.theme.colors.selectedTheme.green};
-		`}
-
-	${(props) =>
-		props.side === PositionSide.SHORT &&
-		css`
-			color: ${props.theme.colors.selectedTheme.red};
-		`}
-`;
-
 const StyledExternalLink = styled(ExternalLink)`
 	padding: 10px;
 	&:hover {
@@ -220,4 +243,8 @@ const StyledLinkIcon = styled(LinkIcon)`
 	path {
 		fill: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
+`;
+
+const MarketDetailsContainer = styled.div`
+	cursor: pointer;
 `;

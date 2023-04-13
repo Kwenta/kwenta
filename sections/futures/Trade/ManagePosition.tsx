@@ -100,7 +100,7 @@ const ManagePosition: React.FC = () => {
 		if (isMarketCapReached)
 			return {
 				show: 'warn',
-				message: `OI interest limit exceeded`,
+				message: `Open interest limit exceeded`,
 			};
 
 		const invalidReason = orderPriceInvalidLabel(

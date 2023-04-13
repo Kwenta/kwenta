@@ -1,5 +1,5 @@
 import BN from 'bn.js';
-import { Provider, Contract as MultiCallContract } from 'ethcall';
+import { Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
 
@@ -42,12 +42,25 @@ type Position = {
 	lastFundingIndex: BigNumber;
 };
 
-const ethcallProvider = new Provider();
+type MarketSettings = {
+	minInitialMargin: BigNumber;
+	takerFeeOffchainDelayedOrder: BigNumber;
+	makerFeeOffchainDelayedOrder: BigNumber;
+	maxLeverage: BigNumber;
+	maxMarketValue: BigNumber;
+	skewScale: BigNumber;
+	liquidationPremiumMultiplier: BigNumber;
+	maxFundingVelocity: BigNumber;
+	liquidationBufferRatio: BigNumber;
+	liquidationFeeRatio: BigNumber;
+	maxKeeperFee: BigNumber;
+	minKeeperFee: BigNumber;
+};
 
 class FuturesMarketInternal {
 	_provider: ethers.providers.Provider;
 	_perpsV2MarketContract: Contract;
-	_perpsV2MarketSettings: Contract | undefined;
+	_perpsV2MarketSettings: MultiCallContract | undefined;
 	_marketKeyBytes: string;
 
 	_onChainData: {
@@ -60,6 +73,8 @@ class FuturesMarketInternal {
 		accruedFunding: BigNumber;
 	};
 
+	_marketSettings: MarketSettings | undefined;
+
 	_cache: Record<string, BigNumber>;
 
 	constructor(
@@ -70,7 +85,7 @@ class FuturesMarketInternal {
 		this._provider = provider;
 
 		this._perpsV2MarketContract = PerpsV2Market__factory.connect(marketAddress, provider);
-		this._perpsV2MarketSettings = sdk.context.contracts.PerpsV2MarketSettingsUpgraded;
+		this._perpsV2MarketSettings = sdk.context.multicallContracts.PerpsV2MarketSettings;
 		this._marketKeyBytes = formatBytes32String(marketKey);
 		this._cache = {};
 		this._onChainData = {
@@ -94,8 +109,7 @@ class FuturesMarketInternal {
 			this._perpsV2MarketContract.address,
 			PerpsV2Market
 		);
-		await ethcallProvider.init(this._provider as any);
-		const preFetchedData = await ethcallProvider.all([
+		const preFetchedData = await sdk.context.multicallProvider.all([
 			multiCallContract.assetPrice(),
 			multiCallContract.marketSkew(),
 			multiCallContract.marketSize(),
@@ -121,8 +135,8 @@ class FuturesMarketInternal {
 		const position = preFetchedData[7] as Position;
 		const price = limitStopPrice || this._onChainData.assetPrice;
 
-		const takerFee = await this._getSetting('takerFeeOffchainDelayedOrder', [this._marketKeyBytes]);
-		const makerFee = await this._getSetting('makerFeeOffchainDelayedOrder', [this._marketKeyBytes]);
+		const takerFee = await this._getSetting('takerFeeOffchainDelayedOrder');
+		const makerFee = await this._getSetting('makerFeeOffchainDelayedOrder');
 
 		const tradeParams = {
 			sizeDelta,
@@ -195,7 +209,7 @@ class FuturesMarketInternal {
 		if (margin.lte(liqMargin)) {
 			return { newPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.CAN_LIQUIDATE };
 		}
-		const maxLeverage = await this._getSetting('maxLeverage', [this._marketKeyBytes]);
+		const maxLeverage = await this._getSetting('maxLeverage');
 
 		const leverage = divideDecimal(
 			multiplyDecimal(newPos.size, tradeParams.price),
@@ -210,7 +224,7 @@ class FuturesMarketInternal {
 			};
 		}
 
-		const maxMarketValue = await this._getSetting('maxMarketValue', [this._marketKeyBytes]);
+		const maxMarketValue = await this._getSetting('maxMarketValue');
 		const tooLarge = await this._orderSizeTooLarge(maxMarketValue, oldPos.size, newPos.size);
 		if (tooLarge) {
 			return {
@@ -230,10 +244,8 @@ class FuturesMarketInternal {
 
 		// note: this is the same as fillPrice() where the skew is 0.
 		const notional = multiplyDecimal(positionSize, currentPrice).abs();
-		const skewScale = await this._getSetting('skewScale', [this._marketKeyBytes]);
-		const liqPremiumMultiplier = await this._getSetting('liquidationPremiumMultiplier', [
-			this._marketKeyBytes,
-		]);
+		const skewScale = await this._getSetting('skewScale');
+		const liqPremiumMultiplier = await this._getSetting('liquidationPremiumMultiplier');
 
 		const skewedSize = positionSize.abs().div(skewScale);
 		const value = multiplyDecimal(skewedSize, notional);
@@ -312,7 +324,7 @@ class FuturesMarketInternal {
 	};
 
 	_currentFundingVelocity = async () => {
-		const maxFundingVelocity = await this._getSetting('maxFundingVelocity', [this._marketKeyBytes]);
+		const maxFundingVelocity = await this._getSetting('maxFundingVelocity');
 		const skew = await this._proportionalSkew();
 		return multiplyDecimal(skew, maxFundingVelocity);
 	};
@@ -337,7 +349,7 @@ class FuturesMarketInternal {
 
 	_proportionalSkew = async () => {
 		const marketSkew = await this._onChainData.marketSkew;
-		const skewScale = await this._getSetting('skewScale', [this._marketKeyBytes]);
+		const skewScale = await this._getSetting('skewScale');
 
 		const pSkew = divideDecimal(marketSkew, skewScale);
 
@@ -361,9 +373,7 @@ class FuturesMarketInternal {
 	};
 
 	_liquidationMargin = async (positionSize: BigNumber, price: BigNumber) => {
-		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio', [
-			this._marketKeyBytes,
-		]);
+		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio');
 		const liquidationBuffer = multiplyDecimal(
 			multiplyDecimal(positionSize.abs(), price),
 			liquidationBufferRatio
@@ -413,13 +423,43 @@ class FuturesMarketInternal {
 		return a.gte(ZERO_BIG_NUM) === b.gte(ZERO_BIG_NUM);
 	}
 
-	_getSetting = async (settingGetter: string, params: any[] = []) => {
-		const cached = this._cache[settingGetter];
-		if (!this._perpsV2MarketSettings) throw new Error('Unsupported network');
-		if (cached) return cached;
-		const res = await this._perpsV2MarketSettings[settingGetter](...params);
-		this._cache[settingGetter] = res;
-		return res;
+	_batchGetSettings = async () => {
+		if (!this._perpsV2MarketSettings) throw new Error('Market settings not initialized');
+		const settings = (await sdk.context.multicallProvider.all([
+			this._perpsV2MarketSettings.minInitialMargin(),
+			this._perpsV2MarketSettings.takerFeeOffchainDelayedOrder(this._marketKeyBytes),
+			this._perpsV2MarketSettings.makerFeeOffchainDelayedOrder(this._marketKeyBytes),
+			this._perpsV2MarketSettings.maxLeverage(this._marketKeyBytes),
+			this._perpsV2MarketSettings.maxMarketValue(this._marketKeyBytes),
+			this._perpsV2MarketSettings.skewScale(this._marketKeyBytes),
+			this._perpsV2MarketSettings.liquidationPremiumMultiplier(this._marketKeyBytes),
+			this._perpsV2MarketSettings.maxFundingVelocity(this._marketKeyBytes),
+			this._perpsV2MarketSettings.liquidationBufferRatio(this._marketKeyBytes),
+			this._perpsV2MarketSettings.liquidationFeeRatio(),
+			this._perpsV2MarketSettings.maxKeeperFee(),
+			this._perpsV2MarketSettings.minKeeperFee(),
+		])) as BigNumber[];
+		this._marketSettings = {
+			minInitialMargin: settings[0],
+			takerFeeOffchainDelayedOrder: settings[1],
+			makerFeeOffchainDelayedOrder: settings[2],
+			maxLeverage: settings[3],
+			maxMarketValue: settings[4],
+			skewScale: settings[5],
+			liquidationPremiumMultiplier: settings[6],
+			maxFundingVelocity: settings[7],
+			liquidationBufferRatio: settings[8],
+			liquidationFeeRatio: settings[9],
+			maxKeeperFee: settings[10],
+			minKeeperFee: settings[11],
+		};
+		return this._marketSettings;
+	};
+
+	_getSetting = async (settingType: keyof MarketSettings) => {
+		if (this._marketSettings) return this._marketSettings[settingType];
+		const settings = await this._batchGetSettings();
+		return settings[settingType];
 	};
 }
 

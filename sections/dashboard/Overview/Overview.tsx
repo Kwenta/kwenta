@@ -16,19 +16,20 @@ import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { fetchTokenList } from 'state/exchange/actions';
+import { setFuturesAccountType } from 'state/futures/reducer';
 import {
 	selectActiveIsolatedPositionsCount,
 	selectActiveSmartPositionsCount,
 	selectFuturesPortfolio,
+	selectFuturesType,
 } from 'state/futures/selectors';
-import { useAppSelector, useFetchAction } from 'state/hooks';
+import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks';
 import { selectSynthsMap } from 'state/wallet/selectors';
 import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
-import { MarketsTab } from '../Markets/Markets';
 import MobileDashboard from '../MobileDashboard';
 import PortfolioChart from '../PortfolioChart';
 import SynthBalancesTable from '../SynthBalancesTable';
@@ -41,16 +42,23 @@ export enum PositionsTab {
 
 const Overview: FC = () => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 
+	const accountType = useAppSelector(selectFuturesType);
 	const balances = useAppSelector(selectBalances);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
-		PositionsTab.ISOLATED_MARGIN
+		accountType === 'isolated_margin' ? PositionsTab.ISOLATED_MARGIN : PositionsTab.SMART_MARGIN
 	);
-	const [activeMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+
+	useEffect(() => {
+		accountType === 'isolated_margin'
+			? setActivePositionsTab(PositionsTab.ISOLATED_MARGIN)
+			: setActivePositionsTab(PositionsTab.SMART_MARGIN);
+	}, [accountType, setActivePositionsTab]);
 
 	const { network } = Connector.useContainer();
 	const synthsMap = useAppSelector(selectSynthsMap);
@@ -129,7 +137,10 @@ const Overview: FC = () => {
 				active: activePositionsTab === PositionsTab.SMART_MARGIN,
 				detail: formatDollars(portfolio.crossMarginFutures),
 				disabled: false,
-				onClick: () => setActivePositionsTab(PositionsTab.SMART_MARGIN),
+				onClick: () => {
+					setActivePositionsTab(PositionsTab.SMART_MARGIN);
+					dispatch(setFuturesAccountType(FuturesAccountTypes.CROSS_MARGIN));
+				},
 			},
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
@@ -139,7 +150,10 @@ const Overview: FC = () => {
 				titleIcon: <FuturesIcon type="isolated_margin" />,
 				detail: formatDollars(portfolio.isolatedMarginFutures),
 				disabled: false,
-				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),
+				onClick: () => {
+					setActivePositionsTab(PositionsTab.ISOLATED_MARGIN);
+					dispatch(setFuturesAccountType(FuturesAccountTypes.ISOLATED_MARGIN));
+				},
 			},
 			{
 				name: PositionsTab.SPOT,
@@ -151,11 +165,12 @@ const Overview: FC = () => {
 			},
 		];
 	}, [
+		t,
+		dispatch,
 		smartPositionsCount,
 		isolatedPositionsCount,
 		exchangeTokens,
 		balances.totalUSDBalance,
-		t,
 		activePositionsTab,
 		portfolio.crossMarginFutures,
 		portfolio.isolatedMarginFutures,
@@ -186,9 +201,7 @@ const Overview: FC = () => {
 					<SynthBalancesTable exchangeTokens={exchangeTokens} />
 				</TabPanel>
 				<SubHeading>{t('dashboard.overview.markets-tabs.futures')}</SubHeading>
-				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
-					<FuturesMarketsTable />
-				</TabPanel>
+				<FuturesMarketsTable />
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileDashboard exchangeTokens={exchangeTokens} />
