@@ -59,15 +59,21 @@ export const usePollMarketFuturesData = () => {
 		disabled: !wallet,
 	});
 	usePollAction('fetchIsolatedOpenOrders', fetchIsolatedOpenOrders, {
-		dependencies: [networkId, wallet, markets.length],
+		dependencies: [networkId, wallet, markets.length, selectedAccountType],
 		intervalTime: 10000,
 		disabled: !wallet || selectedAccountType === 'cross_margin',
 	});
 
 	usePollAction('fetchCrossMarginOpenOrders', fetchCrossMarginOpenOrders, {
-		dependencies: [networkId, wallet, markets.length],
+		dependencies: [networkId, wallet, markets.length, crossMarginAddress],
 		intervalTime: 10000,
 		disabled: !wallet || selectedAccountType === 'isolated_margin',
+	});
+
+	usePollAction('fetchAllTradesForAccount', fetchAllTradesForAccount, {
+		dependencies: [networkId, wallet, selectedAccountType],
+		intervalTime: 30000,
+		disabled: !wallet,
 	});
 };
 

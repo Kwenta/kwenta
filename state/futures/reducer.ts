@@ -11,6 +11,7 @@ import {
 	FuturesMarketKey,
 	FuturesPotentialTradeDetails,
 	PositionSide,
+	FuturesTrade,
 } from 'sdk/types/futures';
 import {
 	DEFAULT_MAP_BY_NETWORK,
@@ -649,9 +650,7 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
 			if (payload) {
 				const { accountType: type, trades, networkId, wallet } = payload;
-				updateFuturesAccount(futuresState, type, networkId, wallet, {
-					trades,
-				});
+				mergeTradesForAccount(futuresState, type, networkId, wallet, trades);
 			}
 		});
 		builder.addCase(fetchTradesForSelectedMarket.rejected, (futuresState) => {
@@ -670,10 +669,8 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchAllTradesForAccount.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.trades = SUCCESS_STATUS;
 			if (payload) {
-				const { accountType: type, trades, networkId, account: wallet } = payload;
-				updateFuturesAccount(futuresState, type, networkId, wallet, {
-					trades,
-				});
+				const { accountType: type, trades, networkId, wallet } = payload;
+				mergeTradesForAccount(futuresState, type, networkId, wallet, trades);
 			}
 		});
 		builder.addCase(fetchAllTradesForAccount.rejected, (futuresState) => {
@@ -736,6 +733,25 @@ const findWalletForAccount = (
 		return value.account === account;
 	});
 	return entry ? entry[0] : undefined;
+};
+
+const mergeTradesForAccount = (
+	futuresState: FuturesState,
+	type: FuturesAccountType,
+	network: NetworkId,
+	wallet: string,
+	trades: FuturesTrade<string>[]
+) => {
+	const existingTrades = futuresState[accountType(type)].accounts[network]?.[wallet]?.trades ?? [];
+	trades.forEach((t) => {
+		if (!existingTrades.find((et) => et.txnHash === t.txnHash)) {
+			existingTrades.push(t);
+		}
+	});
+	existingTrades.sort((a, b) => b.timestamp - a.timestamp);
+	updateFuturesAccount(futuresState, type, network, wallet, {
+		trades: trades,
+	});
 };
 
 const updateFuturesAccount = (

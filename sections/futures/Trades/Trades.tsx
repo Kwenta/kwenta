@@ -1,4 +1,5 @@
-import React, { memo, useMemo } from 'react';
+import { useRouter } from 'next/router';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -9,15 +10,17 @@ import ColoredPrice from 'components/ColoredPrice';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
+import ROUTES from 'constants/routes';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import {
+	selectAllTradesForAccountType,
+	selectFuturesType,
 	selectMarketAsset,
 	selectQueryStatuses,
-	selectUsersTradesForMarket,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -25,13 +28,17 @@ import { ExternalLink } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
 import { TradeStatus } from '../types';
+import TableMarketDetails from '../UserInfo/TableMarketDetails';
 import TimeDisplay from './TimeDisplay';
 
-const Trades: React.FC = memo(() => {
+const Trades = memo(() => {
 	const { t } = useTranslation();
 	const { switchToL2 } = useNetworkSwitcher();
+	const router = useRouter();
+
 	const marketAsset = useAppSelector(selectMarketAsset);
-	const history = useAppSelector(selectUsersTradesForMarket);
+	const accountType = useAppSelector(selectFuturesType);
+	const history = useAppSelector(selectAllTradesForAccountType);
 	const { trades } = useAppSelector(selectQueryStatuses);
 
 	const isLoading = !history.length && trades.status === FetchStatus.Loading;
@@ -39,7 +46,7 @@ const Trades: React.FC = memo(() => {
 
 	const isL2 = useIsL2();
 
-	const historyData = React.useMemo(() => {
+	const historyData = useMemo(() => {
 		return history.map((trade) => {
 			const pnl = trade?.pnl.div(ETH_UNIT);
 			const feesPaid = trade?.feesPaid.div(ETH_UNIT);
@@ -68,6 +75,38 @@ const Trades: React.FC = memo(() => {
 				highlightRowsOnHover
 				rounded={false}
 				columns={[
+					{
+						Header: (
+							<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
+						),
+						accessor: 'market',
+						Cell: (cellProps: CellProps<typeof historyData[number]>) => {
+							return (
+								<MarketDetailsContainer
+									onClick={() =>
+										cellProps.row.original.market
+											? router.push(
+													ROUTES.Markets.MarketPair(
+														cellProps.row.original.market.asset,
+														accountType
+													)
+											  )
+											: undefined
+									}
+								>
+									{cellProps.row.original.market ? (
+										<TableMarketDetails
+											marketName={cellProps.row.original.market?.marketName}
+											marketKey={cellProps.row.original.market?.marketKey}
+										/>
+									) : (
+										'-'
+									)}
+								</MarketDetailsContainer>
+							);
+						},
+						width: 100,
+					},
 					{
 						Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
 						accessor: 'time',
@@ -202,4 +241,8 @@ const StyledLinkIcon = styled(LinkIcon)`
 	path {
 		fill: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
+`;
+
+const MarketDetailsContainer = styled.div`
+	cursor: pointer;
 `;
