@@ -168,7 +168,7 @@ const LeverageInputContainer = styled.div`
 const LeverageButton = styled(Button)`
 	padding: 0;
 	font-size: 13px;
-	height: 42px;
+	height: 38px;
 	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 
