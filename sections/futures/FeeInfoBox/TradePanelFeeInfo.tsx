@@ -7,7 +7,7 @@ import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
 import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import Badge from 'components/Badge';
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
+import { InfoBoxRow } from 'components/InfoBox';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
@@ -57,7 +57,7 @@ const TradingRewardRow = memo(() => {
 				<CompactBox $isEligible={isRewardEligible} onClick={goToStaking}>
 					<FlexDivRow style={{ marginBottom: '5px' }}>
 						<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
-						<Badge color={isRewardEligible ? 'yellow' : 'red'}>
+						<Badge color={isRewardEligible ? 'yellow' : 'gray'}>
 							{t(`dashboard.stake.tabs.trading-rewards.${isRewardEligible ? '' : 'not-'}eligible`)}
 							{isRewardEligible ? (
 								<EligibleIcon viewBox="0 0 8 8" style={{ paddingLeft: '2px' }} />
@@ -89,7 +89,7 @@ const LiquidationRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Liquidation price"
-			color="gold"
+			color="preview"
 			value={
 				potentialTradeDetails?.liqPrice ? formatDollars(potentialTradeDetails.liqPrice) : NO_VALUE
 			}
@@ -97,7 +97,7 @@ const LiquidationRow = memo(() => {
 	);
 });
 
-const FeeInfoBoxContainer = styled(InfoBoxContainer)`
+const FeeInfoBoxContainer = styled.div`
 	margin-bottom: 16px;
 `;
 
