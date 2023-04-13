@@ -34,7 +34,7 @@ const TabPanelContainer = styled.div<{ $fullHeight?: boolean }>`
 	${(props) =>
 		props.$fullHeight &&
 		css`
-			height: calc(100% - 64px);
+			flex: 1;
 			& > div,
 			& > div > div {
 				height: 100%;
