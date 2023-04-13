@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import TabButton from 'components/Button/TabButton';
+import Button from 'components/Button/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { SplitStakingCard } from 'sections/dashboard/Stake/card';
@@ -86,15 +86,12 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 
 	return (
 		<StakingPortfolioContainer>
-			<FlexDivRowCentered>
+			<StakingHeading>
 				<Heading>{t('dashboard.stake.portfolio.title')}</Heading>
-				<StyledTabButton
-					isRounded
-					title="Staking Docs"
-					active
-					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
-				/>
-			</FlexDivRowCentered>
+				<Button size="small" onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}>
+					Staking Docs
+				</Button>
+			</StakingHeading>
 			<CardsContainer>
 				{DEFAULT_CARDS.map((card, i) => (
 					<SplitStakingCard key={i}>
@@ -111,8 +108,8 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 	);
 };
 
-const StyledTabButton = styled(TabButton)`
-	margin-bottom: 9px;
+const StakingHeading = styled(FlexDivRowCentered)`
+	margin-bottom: 15px;
 `;
 
 const StakingPortfolioContainer = styled.div`
