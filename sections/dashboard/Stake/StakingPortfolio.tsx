@@ -18,6 +18,8 @@ import {
 } from 'state/staking/selectors';
 import media from 'styles/media';
 import { truncateNumbers } from 'utils/formatters/number';
+import { Router, useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
 
 export enum StakeTab {
 	Staking = 'staking',
@@ -32,6 +34,7 @@ type StakingPortfolioProps = {
 
 const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const kwentaBalance = useAppSelector(selectKwentaBalance);
 	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance);
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
@@ -88,9 +91,14 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 		<StakingPortfolioContainer>
 			<StakingHeading>
 				<Heading>{t('dashboard.stake.portfolio.title')}</Heading>
-				<Button size="small" onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}>
-					Staking Docs
-				</Button>
+				<ButtonContainer>
+					<Button size="small" onClick={() => router.push(ROUTES.Dashboard.Earn)}>
+						Earn Page
+					</Button>
+					<Button size="small" onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}>
+						Staking Docs
+					</Button>
+				</ButtonContainer>
 			</StakingHeading>
 			<CardsContainer>
 				{DEFAULT_CARDS.map((card, i) => (
@@ -107,6 +115,10 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 		</StakingPortfolioContainer>
 	);
 };
+
+const ButtonContainer = styled(FlexDivRowCentered)`
+	column-gap: 10px;
+`;
 
 const StakingHeading = styled(FlexDivRowCentered)`
 	margin-bottom: 15px;
