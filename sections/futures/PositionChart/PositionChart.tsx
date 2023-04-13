@@ -69,7 +69,7 @@ export default function PositionChart() {
 
 const Container = styled.div<{ visible: boolean }>`
 	${media.greaterThan('mdUp')`
-	  min-height: calc(100% - 406px);
+	  min-height: calc(100% - 300px);
 	  max-height: calc(100% - 300px);
 		flex: 1;
 	`}

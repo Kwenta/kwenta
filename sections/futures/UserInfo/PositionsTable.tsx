@@ -8,7 +8,7 @@ import Currency from 'components/Currency';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
-import Table, { TableNoResults } from 'components/Table';
+import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -345,10 +345,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 const PnlContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-`;
-
-const TableHeader = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const MarketDetailsContainer = styled.div`

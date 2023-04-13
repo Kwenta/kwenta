@@ -237,7 +237,8 @@ const UserInfoContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	min-height: 300px;
-	max-height: 406px;
+	max-height: 300px;
+	height: 300px;
 `;
 
 const TabButtonsContainer = styled.div`
