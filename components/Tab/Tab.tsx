@@ -1,6 +1,8 @@
 import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
+import { TableBody } from 'components/Table';
+
 export const TabList: FC = ({ children, ...props }) => (
 	<div role="tablist" {...props}>
 		{children}
@@ -36,10 +38,11 @@ const TabPanelContainer = styled.div<{ $fullHeight?: boolean }>`
 		css`
 			flex: 1;
 
-			& > div {
+			${TableBody} {
 				height: calc(100% - 52px);
 			}
 
+			& > div,
 			& > div > div {
 				height: 100%;
 			}

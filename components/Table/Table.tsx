@@ -241,7 +241,7 @@ const TableContainer = styled.div`
 	height: 100%;
 `;
 
-const TableBody = styled.div`
+export const TableBody = styled.div`
 	overflow-y: auto;
 	overflow-x: hidden;
 `;
