@@ -15,6 +15,7 @@ import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade } from 'sdk/types/futures';
+import PositionType from 'sections/futures/PositionType';
 import {
 	selectAllTradesForAccountType,
 	selectFuturesType,
@@ -26,7 +27,6 @@ import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
 
-import PositionType from '../PositionType';
 import { TradeStatus } from '../types';
 import TableMarketDetails from '../UserInfo/TableMarketDetails';
 import TimeDisplay from './TimeDisplay';
@@ -122,9 +122,7 @@ const Trades = memo(() => {
 						Header: <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
 						accessor: 'side',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<PositionType side={cellProps.value}>{cellProps.value}</PositionType>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => <PositionType side={cellProps.value} />,
 						width: 60,
 						sortable: true,
 					},
