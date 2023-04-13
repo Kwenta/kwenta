@@ -89,7 +89,7 @@ const LiquidationRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Liquidation price"
-			color="gold"
+			color="preview"
 			value={
 				potentialTradeDetails?.liqPrice ? formatDollars(potentialTradeDetails.liqPrice) : NO_VALUE
 			}

@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import { Body } from 'components/Text';
+import { BodyProps } from 'components/Text/Body';
 import { NO_VALUE } from 'constants/placeholder';
 
 type InfoBoxRowProps = {
@@ -12,7 +13,7 @@ type InfoBoxRowProps = {
 	valueNode?: React.ReactNode;
 	spaceBeneath?: boolean;
 	compactBox?: boolean;
-	color?: 'green' | 'red' | 'gold' | undefined;
+	color?: BodyProps['color'];
 	disabled?: boolean;
 	dataTestId?: string;
 	expandable?: boolean;
@@ -56,7 +57,7 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 						$isSubItem={isSubItem}
 						data-testid={dataTestId}
 						$disabled={disabled}
-						$color={color}
+						color={color}
 					>
 						{disabled ? NO_VALUE : value}
 						{valueNode}
@@ -103,24 +104,6 @@ const ValueText = styled(Body).attrs({ mono: true })<{
 }>`
 	color: ${(props) => props.theme.colors.selectedTheme.text[props.$isSubItem ? 'label' : 'value']};
 	cursor: default;
-
-	${(props) =>
-		props.$color === 'red' &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.red};
-		`}
-
-	${(props) =>
-		props.$color === 'green' &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.green};
-		`}
-
-	${(props) =>
-		props.$color === 'gold' &&
-		css`
-			color: ${(props) => props.theme.colors.common.primaryGold};
-		`}
 
 	${(props) =>
 		props.$disabled &&
