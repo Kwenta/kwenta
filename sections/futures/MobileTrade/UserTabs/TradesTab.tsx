@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
@@ -9,12 +9,12 @@ import { ETH_UNIT } from 'constants/network';
 import { FuturesTrade, PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
-import { fetchTradesForSelectedMarket } from 'state/futures/actions';
+import { fetchAllTradesForAccount } from 'state/futures/actions';
 import {
+	selectAllTradesForAccountType,
 	selectFuturesType,
 	selectMarketAsset,
 	selectQueryStatuses,
-	selectUsersTradesForMarket,
 } from 'state/futures/selectors';
 import { useAppSelector, useFetchAction } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -23,22 +23,22 @@ import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import TradeDrawer from '../drawers/TradeDrawer';
 
-const TradesTab: React.FC = () => {
+const TradesTab = () => {
 	const { t } = useTranslation();
 	const walletAddress = useAppSelector(selectWallet);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const accountType = useAppSelector(selectFuturesType);
-	const history = useAppSelector(selectUsersTradesForMarket);
+	const history = useAppSelector(selectAllTradesForAccountType);
 	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
-	useFetchAction(fetchTradesForSelectedMarket, {
+	useFetchAction(fetchAllTradesForAccount, {
 		dependencies: [walletAddress, accountType, marketAsset],
 		disabled: !walletAddress,
 	});
 
-	const historyData = React.useMemo(() => {
+	const historyData = useMemo(() => {
 		return history.map((trade) => {
 			const pnl = trade?.pnl.div(ETH_UNIT);
 			const feesPaid = trade?.feesPaid.div(ETH_UNIT);

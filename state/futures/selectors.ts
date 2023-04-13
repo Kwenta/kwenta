@@ -1187,15 +1187,40 @@ export const selectAllUsersTrades = createSelector(
 
 export const selectAllIsolatedTrades = createSelector(
 	selectIsolatedAccountData,
-	(isolatedAccountData) => {
-		return unserializeTrades(isolatedAccountData?.trades ?? []);
+	selectMarkets,
+	(isolatedAccountData, markets) => {
+		const trades = unserializeTrades(isolatedAccountData?.trades ?? []);
+		return trades.map((t) => {
+			const market = markets.find((m) => m.asset === t.asset);
+			return {
+				...t,
+				market: market,
+			};
+		});
 	}
 );
 
-export const selectAllSmartTrades = createSelector(
+export const selectAllSmartMarginTrades = createSelector(
 	selectCrossMarginAccountData,
-	(crossAccountData) => {
-		return unserializeTrades(crossAccountData?.trades ?? []);
+	selectMarkets,
+	(smartMarginAccountData, markets) => {
+		const trades = unserializeTrades(smartMarginAccountData?.trades ?? []);
+		return trades.map((t) => {
+			const market = markets.find((m) => m.asset === t.asset);
+			return {
+				...t,
+				market: market,
+			};
+		});
+	}
+);
+
+export const selectAllTradesForAccountType = createSelector(
+	selectAllIsolatedTrades,
+	selectAllSmartMarginTrades,
+	selectFuturesType,
+	(isolatedTrades, smartMarginTrades, accountType) => {
+		return accountType === 'isolated_margin' ? isolatedTrades : smartMarginTrades;
 	}
 );
 
@@ -1272,7 +1297,7 @@ export const selectIsolatedPortfolioValues = createSelector(
 );
 
 export const selectSmartMarginPortfolioValues = createSelector(
-	selectAllSmartTrades,
+	selectAllSmartMarginTrades,
 	selectSmartMarginTransfers,
 	selectIdleMarginTransfers,
 	selectFuturesPortfolio,

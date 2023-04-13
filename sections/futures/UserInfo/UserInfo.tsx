@@ -12,7 +12,7 @@ import TabButton from 'components/Button/TabButton';
 import Spacer from 'components/Spacer';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import { fetchTradesForSelectedMarket } from 'state/futures/actions';
+import { fetchAllTradesForAccount } from 'state/futures/actions';
 import {
 	selectActiveSmartPositionsCount,
 	selectActiveIsolatedPositionsCount,
@@ -59,8 +59,8 @@ const UserInfo: React.FC = memo(() => {
 	const conditionalOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const accountType = useAppSelector(selectFuturesType);
 
-	useFetchAction(fetchTradesForSelectedMarket, {
-		dependencies: [walletAddress, accountType, marketAsset, position?.position?.size.toString()],
+	useFetchAction(fetchAllTradesForAccount, {
+		dependencies: [walletAddress, accountType, position?.position?.size.toString()],
 		disabled: !walletAddress,
 	});
 
@@ -89,13 +89,13 @@ const UserInfo: React.FC = memo(() => {
 	}, []);
 
 	const refetchTrades = useCallback(() => {
-		dispatch(fetchTradesForSelectedMarket);
+		dispatch(fetchAllTradesForAccount());
 	}, [dispatch]);
 
 	useEffect(() => {
 		refetchTrades();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [position]);
+	}, [position?.marketKey]);
 
 	const TABS = useMemo(
 		() => [
