@@ -26,7 +26,6 @@ import { formatDollars, suggestedDecimals } from 'utils/formatters/number';
 
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow.tsx';
 import PositionType from '../PositionType';
-import { BalanceText, InfoContainer } from './EditPositionMarginModal';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
 const TP_OPTIONS = ['none', '5%', '10%', '25%', '50%', '100%'];
@@ -136,17 +135,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				type={'pill-button-large'}
 			/>
 
-			<Spacer height={20} />
-
-			<InfoContainer style={{ margin: 0 }}>
-				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-profit')}</BalanceText>
-
-				<BalanceText>
-					<span>{'-'}</span>
-				</BalanceText>
-			</InfoContainer>
-
-			<StyledSpacer />
+			<StyledSpacer height={10} />
 
 			<EditStopLossAndTakeProfitInput
 				type={'stop-loss'}
@@ -163,16 +152,6 @@ export default function EditStopLossAndTakeProfitModal() {
 				options={SL_OPTIONS}
 				type={'pill-button-large'}
 			/>
-
-			<Spacer height={20} />
-
-			<InfoContainer style={{ margin: 0 }}>
-				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-loss')}</BalanceText>
-
-				<BalanceText>
-					<span>{'-'}</span>
-				</BalanceText>
-			</InfoContainer>
 
 			<Spacer height={20} />
 
