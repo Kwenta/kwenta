@@ -1336,6 +1336,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
 		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		const wallet = selectWallet(getState());
+		const position = selectPosition(getState());
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
 
 		try {
@@ -1404,11 +1405,17 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 				orderInputs.keeperEthDeposit = keeperEthDeposit;
 			}
 
+			let existingSize = position?.position?.size ?? wei(0);
+			existingSize =
+				position?.position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize;
+			const isClosing = existingSize.add(tradeInputs.nativeSizeDelta).eq(0);
+
 			const tx = await sdk.futures.submitCrossMarginOrder(
 				{ address: marketInfo.market, key: marketInfo.marketKey },
 				wallet,
 				account,
-				orderInputs
+				orderInputs,
+				isClosing
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchCrossMarginOpenOrders());
@@ -1462,7 +1469,7 @@ export const submitCrossMarginAdjustMargin = createAsyncThunk<void, void, ThunkC
 export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/submitCrossMarginAdjustPositionSize',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const { market } = selectEditPositionModalInfo(getState());
+		const { market, position } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
 		const desiredFillPrice = selectEditPosDesiredFillPrice(getState());
 		const { nativeSizeDelta } = selectCrossMarginEditPosInputs(getState());
@@ -1480,6 +1487,11 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 				})
 			);
 
+			let existingSize = position?.position?.size ?? wei(0);
+			existingSize =
+				position?.position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize;
+			const isClosing = existingSize.add(nativeSizeDelta).eq(0);
+
 			const tx = await sdk.futures.modifySmartMarginPositionSize(
 				account,
 				{
@@ -1487,7 +1499,8 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 					address: market.market,
 				},
 				wei(nativeSizeDelta),
-				desiredFillPrice
+				desiredFillPrice,
+				isClosing
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setShowPositionModal(null));
@@ -1503,7 +1516,7 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/submitSmartMarginReducePositionOrder',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const { market } = selectEditPositionModalInfo(getState());
+		const { market, position } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
 		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
 		const { nativeSizeDelta, orderType, price } = selectClosePositionOrderInputs(getState());
@@ -1516,6 +1529,10 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 			if (!wallet) throw new Error('No wallet connected');
 			if (!account) throw new Error('No cross margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
+
+			const isClosing = wei(nativeSizeDelta)
+				.abs()
+				.eq(position?.position?.size.abs() || 0);
 
 			dispatch(
 				setTransaction({
@@ -1546,7 +1563,8 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 				{ address: market.market, key: market.marketKey },
 				wallet,
 				account,
-				orderInputs
+				orderInputs,
+				isClosing
 			);
 
 			await monitorAndAwaitTransaction(dispatch, tx);

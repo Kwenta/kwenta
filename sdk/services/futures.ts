@@ -728,16 +728,34 @@ export default class FuturesService {
 			address: string;
 		},
 		sizeDelta: Wei,
-		desiredFillPrice: Wei
+		desiredFillPrice: Wei,
+		cancelPendingReduceOrders?: boolean
 	) {
+		const commands = [];
+		const inputs = [];
+
+		if (cancelPendingReduceOrders) {
+			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
+			const existingOrdersForMarket = existingOrders.filter(
+				(o) => o.marketKey === market.key && o.reduceOnly
+			);
+			// Remove all pending reduce only orders if instructed
+			existingOrdersForMarket.forEach((o) => {
+				commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+				inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]));
+			});
+		}
 		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
 
+		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
+		inputs.push(encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice));
+
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER],
-			[encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice)],
+			commands,
+			inputs,
 		]);
 	}
 
@@ -818,7 +836,8 @@ export default class FuturesService {
 		},
 		walletAddress: string,
 		crossMarginAddress: string,
-		order: SmartMarginOrderInputs
+		order: SmartMarginOrderInputs,
+		cancelPendingReduceOrders?: boolean
 	) {
 		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
@@ -875,29 +894,13 @@ export default class FuturesService {
 			}
 		}
 
-		if (order.takeProfit || order.stopLoss) {
-			const existingOrders = await this.getConditionalOrders(crossMarginAddress);
-			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === market.key);
-			const existingStopLosses = existingOrdersForMarket.filter(
-				(o) =>
-					o.size.abs().eq(SL_TP_MAX_SIZE) &&
-					o.reduceOnly &&
-					o.orderType === ConditionalOrderTypeEnum.STOP
-			);
-			const existingTakeProfits = existingOrdersForMarket.filter(
-				(o) =>
-					o.size.abs().eq(SL_TP_MAX_SIZE) &&
-					o.reduceOnly &&
-					o.orderType === ConditionalOrderTypeEnum.LIMIT
-			);
+		const existingOrders = await this.getConditionalOrders(crossMarginAddress);
+		const existingOrdersForMarket = existingOrders.filter(
+			(o) => o.marketKey === market.key && o.reduceOnly
+		);
 
+		if (order.takeProfit || order.stopLoss) {
 			if (order.takeProfit) {
-				if (existingTakeProfits.length) {
-					existingTakeProfits.forEach((tp) => {
-						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
-						inputs.push(defaultAbiCoder.encode(['uint256'], [tp.id]));
-					});
-				}
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 				const encodedParams = encodeConditionalOrderParams(
 					market.key,
@@ -914,12 +917,6 @@ export default class FuturesService {
 			}
 
 			if (order.stopLoss) {
-				if (existingStopLosses.length) {
-					existingStopLosses.forEach((sl) => {
-						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
-						inputs.push(defaultAbiCoder.encode(['uint256'], [sl.id]));
-					});
-				}
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER);
 				const encodedParams = encodeConditionalOrderParams(
 					market.key,
@@ -933,6 +930,39 @@ export default class FuturesService {
 					true
 				);
 				inputs.push(encodedParams);
+			}
+		}
+
+		if (cancelPendingReduceOrders) {
+			// Remove all pending reduce only orders if instructed
+			existingOrdersForMarket.forEach((o) => {
+				commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+				inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]));
+			});
+		} else {
+			if (order.takeProfit) {
+				// Remove only existing take profit to overwrite
+				const existingTakeProfits = existingOrdersForMarket.filter(
+					(o) => o.size.abs().eq(SL_TP_MAX_SIZE) && o.orderType === ConditionalOrderTypeEnum.LIMIT
+				);
+				if (existingTakeProfits.length) {
+					existingTakeProfits.forEach((tp) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [tp.id]));
+					});
+				}
+			}
+			if (order.stopLoss) {
+				// Remove only existing stop loss to overwrite
+				const existingStopLosses = existingOrdersForMarket.filter(
+					(o) => o.size.abs().eq(SL_TP_MAX_SIZE) && o.orderType === ConditionalOrderTypeEnum.STOP
+				);
+				if (existingStopLosses.length) {
+					existingStopLosses.forEach((sl) => {
+						commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+						inputs.push(defaultAbiCoder.encode(['uint256'], [sl.id]));
+					});
+				}
 			}
 		}
 

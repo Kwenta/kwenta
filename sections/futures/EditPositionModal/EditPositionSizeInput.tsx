@@ -8,16 +8,12 @@ import { FlexDivRow } from 'components/layout/flex';
 import { getStep } from 'components/Slider/Slider';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
+import { PositionSide } from 'sdk/types/futures';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionSize } from 'state/futures/actions';
-import {
-	selectPosition,
-	selectOrderType,
-	selectLeverageSide,
-	selectEditPositionInputs,
-} from 'state/futures/selectors';
+import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, formatNumber, suggestedDecimals, zeroBN } from 'utils/formatters/number';
+import { stripZeros, formatNumber, suggestedDecimals, zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	type: 'increase' | 'decrease';
@@ -31,29 +27,27 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 
 		const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
 
-		const position = useAppSelector(selectPosition);
-		const orderType = useAppSelector(selectOrderType);
-		const selectedLeverageSide = useAppSelector(selectLeverageSide);
+		const { position } = useAppSelector(selectEditPositionModalInfo);
 		const modal = useAppSelector(selectShowPositionModal);
 
 		const onSizeChange = useCallback(
 			(value: string) => {
 				if (modal) {
-					dispatch(
-						editCrossMarginPositionSize(modal.marketKey, type === 'increase' ? value : '-' + value)
-					);
+					const side = position?.position?.side;
+					const sizeDelta =
+						(side === PositionSide.LONG && type === 'decrease') ||
+						(side === PositionSide.SHORT && type === 'increase')
+							? '-' + value
+							: value;
+					dispatch(editCrossMarginPositionSize(modal.marketKey, sizeDelta));
 				}
 			},
-			[dispatch, type, modal]
+			[dispatch, type, modal, position?.position?.side]
 		);
 
 		const handleSetMax = useCallback(() => {
-			onSizeChange(String(floorNumber(maxNativeValue)));
+			onSizeChange(stripZeros(maxNativeValue.toString()));
 		}, [onSizeChange, maxNativeValue]);
-
-		const handleSetPositionSize = () => {
-			onSizeChange(position?.position?.size.toString() ?? '0');
-		};
 
 		const onChangeValue = useCallback(
 			(_, v: string) => {
@@ -66,26 +60,18 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 			onSizeChange,
 		]);
 
-		const showPosSizeHelper =
-			position?.position?.size &&
-			(orderType === 'limit' || orderType === 'stop_market') &&
-			position?.position.side !== selectedLeverageSide;
-
 		const nativeSizeDeltaWei = useMemo(() => {
 			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
 		}, [nativeSizeDelta]);
 
-		const invalid = nativeSizeDelta !== '' && maxNativeValue.lte(nativeSizeDeltaWei);
+		const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei);
 
 		return (
 			<OrderSizingContainer>
 				<OrderSizingRow>
-					<InputTitle>{type ? 'Add' : 'Remove'} position size</InputTitle>
+					<InputTitle>{type === 'increase' ? 'Increase' : 'Reduce'} position size</InputTitle>
 					<InputHelpers>
 						<MaxButton onClick={handleSetMax}>Max</MaxButton>
-						{showPosSizeHelper && (
-							<MaxButton onClick={handleSetPositionSize}>Position Size</MaxButton>
-						)}
 					</InputHelpers>
 				</OrderSizingRow>
 
