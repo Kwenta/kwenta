@@ -39,12 +39,7 @@ const TabPanelContainer = styled.div<{ $fullHeight?: boolean }>`
 			flex: 1;
 
 			${TableBody} {
-				height: calc(100% - 52px);
-			}
-
-			& > div,
-			& > div > div {
-				height: 100%;
+				height: calc(100% - 94px);
 			}
 		`}
 `;
