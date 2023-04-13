@@ -276,6 +276,9 @@ export const TableNoResults = styled.div`
 		font-size: 16px;
 		font-family: ${(props) => props.theme.fonts.regular};
 	}
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
 `;
 
 const SortIconContainer = styled.span`
