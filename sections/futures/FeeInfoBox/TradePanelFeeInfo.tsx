@@ -25,7 +25,7 @@ import TradeTotalFeesRow from './TradeTotalFeesRow';
 
 export const TradePanelFeeInfo = memo(() => {
 	return (
-		<FeeInfoBoxContainer>
+		<FeeInfoBoxContainer $hasBorder={false}>
 			<LiquidationRow />
 			<TradeTotalFeesRow />
 			<TradingRewardRow />
