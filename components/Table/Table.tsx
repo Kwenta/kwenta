@@ -211,7 +211,6 @@ export const Table: FC<TableProps> = memo(
 											highlightRowsOnHover={highlightRowsOnHover}
 											row={row}
 											onClick={handleClick}
-											rounded={rounded}
 											{...props}
 										/>
 									);
@@ -242,7 +241,7 @@ const TableContainer = styled.div`
 	height: 100%;
 `;
 
-const TableBody = styled.div`
+export const TableBody = styled.div`
 	overflow-y: auto;
 	overflow-x: hidden;
 `;
@@ -292,7 +291,6 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
 	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom: none;
 	${(props) =>
 		props.$rounded
 			? css`
