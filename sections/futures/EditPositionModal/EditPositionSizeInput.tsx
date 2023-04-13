@@ -13,7 +13,7 @@ import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionSize } from 'state/futures/actions';
 import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, formatNumber, suggestedDecimals, zeroBN } from 'utils/formatters/number';
+import { stripZeros, formatNumber, suggestedDecimals, zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	type: 'increase' | 'decrease';
@@ -46,7 +46,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 		);
 
 		const handleSetMax = useCallback(() => {
-			onSizeChange(String(floorNumber(maxNativeValue)));
+			onSizeChange(stripZeros(maxNativeValue.toString()));
 		}, [onSizeChange, maxNativeValue]);
 
 		const onChangeValue = useCallback(
@@ -64,7 +64,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
 		}, [nativeSizeDelta]);
 
-		const invalid = nativeSizeDelta !== '' && maxNativeValue.lte(nativeSizeDeltaWei);
+		const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei);
 
 		return (
 			<OrderSizingContainer>

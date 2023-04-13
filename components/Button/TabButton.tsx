@@ -32,7 +32,11 @@ const InnerButton: React.FC<TabButtonProps> = React.memo(
 					<Body className="title" weight="bold">
 						{title}
 					</Body>
-					{!!badgeCount && <div className="badge">{badgeCount}</div>}
+					{!!badgeCount && (
+						<Body mono weight="bold" className="badge">
+							{badgeCount}
+						</Body>
+					)}
 				</div>
 
 				{detail && (
@@ -96,8 +100,6 @@ const sharedStyle = css<{
 		padding-right: 4px;
 		margin-left: 7px;
 		font-size: 13px;
-		font-family: ${(props) => props.theme.fonts.bold};
-
 		color: ${(props) => props.theme.colors.selectedTheme.black};
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.background};
 		border-radius: 4px;

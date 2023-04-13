@@ -115,7 +115,6 @@ export default function SLTPInputs() {
 					<NumericInput
 						invalid={slInvalid}
 						dataTestId={'trade-panel-stop-loss-input'}
-						right={'-10%'}
 						value={stopLossPrice}
 						placeholder={'0.00'}
 						onChange={onChangeStopLoss}
@@ -131,7 +130,6 @@ export default function SLTPInputs() {
 					<NumericInput
 						invalid={tpInvalid}
 						dataTestId={'trade-panel-take-profit-input'}
-						right={'-10%'}
 						value={takeProfitPrice}
 						placeholder={'0.00'}
 						onChange={onChangeTakeProfit}
