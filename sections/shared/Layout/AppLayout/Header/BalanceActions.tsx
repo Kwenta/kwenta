@@ -59,8 +59,8 @@ const BalanceActions: FC = () => {
 		const tokenAddresses = [KWENTA_ADDRESS, OP_ADDRESS];
 		const initExchangeTokens = async () => {
 			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true);
-			const [kwentaPrice, opPrice] = tokenAddresses.map((tokenAddress) =>
-				coinGeckoPrices[tokenAddress].usd.toString()
+			const [kwentaPrice, opPrice] = tokenAddresses.map(
+				(tokenAddress) => coinGeckoPrices[tokenAddress].usd.toString() ?? 0
 			);
 
 			setRewardBalance(
