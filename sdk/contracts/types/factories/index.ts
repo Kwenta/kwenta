@@ -15,9 +15,7 @@ export { MultipleMerkleDistributor__factory } from "./MultipleMerkleDistributor_
 export { MultipleMerkleDistributorPerpsV2__factory } from "./MultipleMerkleDistributorPerpsV2__factory";
 export { PerpsV2Market__factory } from "./PerpsV2Market__factory";
 export { PerpsV2MarketData__factory } from "./PerpsV2MarketData__factory";
-export { PerpsV2MarketDataUpgrade__factory } from "./PerpsV2MarketDataUpgrade__factory";
 export { PerpsV2MarketSettings__factory } from "./PerpsV2MarketSettings__factory";
-export { PerpsV2MarketSettingsUpgrade__factory } from "./PerpsV2MarketSettingsUpgrade__factory";
 export { PerpsV2MarketViews__factory } from "./PerpsV2MarketViews__factory";
 export { Pyth__factory } from "./Pyth__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";

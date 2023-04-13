@@ -14,13 +14,9 @@ import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts'
 import PerpsMarketABI from 'sdk/contracts/abis/PerpsV2Market.json';
 import SmartMarginAccountABI from 'sdk/contracts/abis/SmartMarginAccount.json';
 import PerpsV2MarketInternal from 'sdk/contracts/PerpsV2MarketInternalV2';
-import {
-	SmartMarginAccount__factory,
-	PerpsV2MarketData,
-	PerpsV2Market__factory,
-} from 'sdk/contracts/types';
+import { SmartMarginAccount__factory, PerpsV2Market__factory } from 'sdk/contracts/types';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
-import { IPerpsV2MarketSettings } from 'sdk/contracts/types/PerpsV2MarketData';
+import { IPerpsV2MarketSettings, PerpsV2MarketData } from 'sdk/contracts/types/PerpsV2MarketData';
 import {
 	queryCrossMarginAccounts,
 	querySmartMarginTransfers,
@@ -103,34 +99,17 @@ export default class FuturesService {
 			ExchangeRates,
 			PerpsV2MarketData,
 			PerpsV2MarketSettings,
-			PerpsV2MarketDataUpgraded,
-			PerpsV2MarketSettingsUpgraded,
 		} = this.sdk.context.multicallContracts;
 
-		if (
-			!PerpsV2MarketData ||
-			!PerpsV2MarketSettings ||
-			!SystemStatus ||
-			!ExchangeRates ||
-			!PerpsV2MarketDataUpgraded ||
-			!PerpsV2MarketSettingsUpgraded
-		) {
+		if (!SystemStatus || !ExchangeRates || !PerpsV2MarketData || !PerpsV2MarketSettings) {
 			throw new Error(UNSUPPORTED_NETWORK);
 		}
 
-		// TODO Merge upgraded and original contracts once deployed to mainnet
-		const futuresData =
-			this.sdk.context.networkId === 10
-				? await this.sdk.context.multicallProvider.all([
-						PerpsV2MarketData.allProxiedMarketSummaries(),
-						PerpsV2MarketSettings.minInitialMargin(),
-						PerpsV2MarketSettings.minKeeperFee(),
-				  ])
-				: await this.sdk.context.multicallProvider.all([
-						PerpsV2MarketDataUpgraded.allProxiedMarketSummaries(),
-						PerpsV2MarketSettingsUpgraded.minInitialMargin(),
-						PerpsV2MarketSettingsUpgraded.minKeeperFee(),
-				  ]);
+		const futuresData = await this.sdk.context.multicallProvider.all([
+			PerpsV2MarketData.allProxiedMarketSummaries(),
+			PerpsV2MarketSettings.minInitialMargin(),
+			PerpsV2MarketSettings.minKeeperFee(),
+		]);
 
 		const { markets, minInitialMargin, minKeeperFee } = {
 			markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
@@ -150,11 +129,7 @@ export default class FuturesService {
 			return m.key;
 		});
 
-		const parametersCalls = marketKeys.map((key: string) =>
-			this.sdk.context.networkId === 10
-				? PerpsV2MarketSettings.parameters(key)
-				: PerpsV2MarketSettingsUpgraded.parameters(key)
-		);
+		const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key));
 
 		const responses = await this.sdk.context.multicallProvider.all([...parametersCalls]);
 		const marketParameters = responses as IPerpsV2MarketSettings.ParametersStructOutput[];
