@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,6 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
-import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppSelector } from 'state/hooks';
@@ -23,7 +23,9 @@ const RewardsTabs: FC = () => {
 	const router = useRouter();
 	const stakingApy = useAppSelector(selectAPY);
 	const epoch = useAppSelector(selectEpochPeriod);
-	const totalRewards = useAppSelector(selectTotalRewards);
+	const tradingRewards = useAppSelector(selectTotalRewards);
+	const kwentaOpRewards = wei(1);
+	const snxOpRewards = wei(2);
 
 	const goToStaking = useCallback(() => {
 		router.push(ROUTES.Dashboard.TradingRewards);
@@ -37,7 +39,7 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.staking'),
 			kwentaIcon: true,
 			linkIcon: true,
-			rewards: totalRewards,
+			rewards: tradingRewards,
 			apy: stakingApy,
 			onClick: goToStaking,
 		},
@@ -48,7 +50,7 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: totalRewards,
+			rewards: kwentaOpRewards,
 			apy: stakingApy,
 			onClick: () => {},
 		},
@@ -59,7 +61,7 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: totalRewards,
+			rewards: snxOpRewards,
 			apy: stakingApy,
 			onClick: () => {},
 		},
@@ -74,12 +76,7 @@ const RewardsTabs: FC = () => {
 					</Heading>
 					<div className="value">{t('dashboard.rewards.copy')}</div>
 				</StyledFlexDivCol>
-				<Pill
-					color="yellow"
-					size="large"
-					blackFont={false}
-					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
-				>
+				<Pill color="yellow" size="large" blackFont={false} onClick={() => {}}>
 					{t('dashboard.rewards.claim-all')}
 				</Pill>
 			</FlexDivRowCentered>

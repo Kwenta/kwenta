@@ -1,5 +1,6 @@
+import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
-import { FC, memo, useCallback, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -12,12 +13,21 @@ import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
+import { KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import ROUTES from 'constants/routes';
 import { StakingCard } from 'sections/dashboard/Stake/card';
+import { sdk } from 'state/config';
 import { useAppSelector } from 'state/hooks';
 import { selectAPY, selectEpochPeriod, selectTotalRewards } from 'state/staking/selectors';
 import media from 'styles/media';
-import { formatNumber, formatPercent, truncateNumbers } from 'utils/formatters/number';
+import {
+	formatDollars,
+	formatNumber,
+	formatPercent,
+	toWei,
+	truncateNumbers,
+	zeroBN,
+} from 'utils/formatters/number';
 
 const ClaimAllButton = memo(() => {
 	const { t } = useTranslation();
@@ -35,14 +45,35 @@ const BalanceActions: FC = () => {
 	const router = useRouter();
 	const stakingApy = useAppSelector(selectAPY);
 	const epoch = useAppSelector(selectEpochPeriod);
-	const totalRewards = useAppSelector(selectTotalRewards);
-
+	const tradingRewards = useAppSelector(selectTotalRewards);
+	const kwentaOpRewards = wei(1);
+	const snxOpRewards = wei(2);
 	const [open, setOpen] = useState(false);
-
+	const [rewardBalance, setRewardBalance] = useState(zeroBN);
 	const goToStaking = useCallback(() => {
 		router.push(ROUTES.Dashboard.TradingRewards);
 		setOpen(false);
 	}, [router]);
+
+	useEffect(() => {
+		const tokenAddresses = [KWENTA_ADDRESS, OP_ADDRESS];
+		const initExchangeTokens = async () => {
+			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true);
+			const [kwentaPrice, opPrice] = tokenAddresses.map((tokenAddress) =>
+				coinGeckoPrices[tokenAddress].usd.toString()
+			);
+
+			setRewardBalance(
+				toWei(kwentaPrice)
+					.mul(tradingRewards)
+					.add(toWei(opPrice).mul(kwentaOpRewards.add(snxOpRewards)))
+			);
+		};
+
+		(async () => {
+			await initExchangeTokens();
+		})();
+	}, [kwentaOpRewards, rewardBalance, snxOpRewards, tradingRewards]);
 
 	const REWARDS = [
 		{
@@ -53,7 +84,7 @@ const BalanceActions: FC = () => {
 			kwentaIcon: true,
 			linkIcon: true,
 			apy: stakingApy,
-			rewards: totalRewards,
+			rewards: tradingRewards,
 			onClick: goToStaking,
 		},
 		{
@@ -64,7 +95,7 @@ const BalanceActions: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			apy: stakingApy,
-			rewards: totalRewards,
+			rewards: kwentaOpRewards,
 			onClick: () => {},
 		},
 		{
@@ -75,7 +106,7 @@ const BalanceActions: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			apy: stakingApy,
-			rewards: totalRewards,
+			rewards: snxOpRewards,
 			onClick: () => {},
 		},
 	];
@@ -93,7 +124,7 @@ const BalanceActions: FC = () => {
 			>
 				<KwentaLogo style={{ marginRight: '5px' }} />
 				<OptimismLogo height={18} width={18} style={{ marginRight: '5px' }} />
-				$3,837.82
+				{formatDollars(rewardBalance, { maxDecimals: 2 })}
 			</Button>
 			{open && (
 				<RewardsTabContainer>
