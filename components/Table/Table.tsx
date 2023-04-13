@@ -211,7 +211,6 @@ export const Table: FC<TableProps> = memo(
 											highlightRowsOnHover={highlightRowsOnHover}
 											row={row}
 											onClick={handleClick}
-											rounded={rounded}
 											{...props}
 										/>
 									);
@@ -276,9 +275,6 @@ export const TableNoResults = styled.div`
 		font-size: 16px;
 		font-family: ${(props) => props.theme.fonts.regular};
 	}
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom-left-radius: 10px;
-	border-bottom-right-radius: 10px;
 `;
 
 const SortIconContainer = styled.span`
@@ -295,7 +291,6 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
 	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom: none;
 	${(props) =>
 		props.$rounded
 			? css`
