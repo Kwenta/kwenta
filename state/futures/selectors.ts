@@ -138,8 +138,10 @@ export const selectMarketAsset = createSelector(
 );
 
 export const selectMarkets = createSelector(
-	(state: RootState) => state.futures.markets,
-	(markets) => unserializeMarkets(markets)
+	selectNetwork,
+	(state: RootState) => state.futures,
+	(network, futures) =>
+		futures.markets[network] ? unserializeMarkets(futures.markets[network]) : []
 );
 
 export const selectMarketVolumes = createSelector(
@@ -147,14 +149,12 @@ export const selectMarketVolumes = createSelector(
 	(dailyMarketVolumes) => unserializeFuturesVolumes(dailyMarketVolumes)
 );
 
-export const selectMarketKeys = createSelector(
-	(state: RootState) => state.futures.markets,
-	(markets) => markets.map(({ asset }) => MarketKeyByAsset[asset])
+export const selectMarketKeys = createSelector(selectMarkets, (markets) =>
+	markets.map(({ asset }) => MarketKeyByAsset[asset])
 );
 
-export const selectMarketAssets = createSelector(
-	(state: RootState) => state.futures.markets,
-	(markets) => markets.map(({ asset }) => asset)
+export const selectMarketAssets = createSelector(selectMarkets, (markets) =>
+	markets.map(({ asset }) => asset)
 );
 
 export const selectMarketInfo = createSelector(

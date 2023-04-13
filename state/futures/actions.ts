@@ -64,7 +64,6 @@ import {
 	serializeMarkets,
 	serializePositionHistory,
 	serializeTrades,
-	unserializeMarket,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
@@ -147,11 +146,12 @@ import {
 } from './types';
 
 export const fetchMarkets = createAsyncThunk<
-	{ markets: FuturesMarket<string>[] } | undefined,
+	{ markets: FuturesMarket<string>[]; networkId: NetworkId } | undefined,
 	void,
 	ThunkConfig
 >('futures/fetchMarkets', async (_, { getState, extra: { sdk } }) => {
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
+	const networkId = selectNetwork(getState());
 	if (!supportedNetwork) return;
 	try {
 		const markets = await sdk.futures.getMarkets();
@@ -166,7 +166,7 @@ export const fetchMarkets = createAsyncThunk<
 		});
 
 		const serializedMarkets = serializeMarkets(overrideMarkets);
-		return { markets: serializedMarkets };
+		return { markets: serializedMarkets, networkId };
 	} catch (err) {
 		logError(err);
 		notifyError('Failed to fetch markets', err);
@@ -203,16 +203,16 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 	void,
 	ThunkConfig
 >('futures/fetchCrossMarginPositions', async (_, { getState, extra: { sdk } }) => {
-	const { futures } = getState();
 	const account = selectCrossMarginAccount(getState());
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
+	const markets = selectMarkets(getState());
 
 	if (!account || !supportedNetwork) return;
 	try {
 		const positions = await sdk.futures.getFuturesPositions(
 			account,
-			futures.markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
+			markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
 		);
 		const serializedPositions = positions.map(
 			(p) => serializeWeiObject(p) as FuturesPosition<string>
@@ -220,7 +220,7 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 		return { positions: serializedPositions, account, network };
 	} catch (err) {
 		logError(err);
-		notifyError('Failed to fetch cross-margin positions', err);
+		notifyError('Failed to fetch smart-margin positions', err);
 		throw err;
 	}
 });
@@ -230,14 +230,16 @@ export const fetchIsolatedMarginPositions = createAsyncThunk<
 	void,
 	ThunkConfig
 >('futures/fetchIsolatedMarginPositions', async (_, { getState, extra: { sdk } }) => {
-	const { wallet, futures } = getState();
+	const { wallet } = getState();
 	const supportedNetwork = selectFuturesSupportedNetwork(getState());
 	const network = selectNetwork(getState());
+	const markets = selectMarkets(getState());
+
 	if (!wallet.walletAddress || !supportedNetwork) return;
 	try {
 		const positions = await sdk.futures.getFuturesPositions(
 			wallet.walletAddress,
-			futures.markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
+			markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
 		);
 		return {
 			positions: positions.map((p) => serializeWeiObject(p) as FuturesPosition<string>),
@@ -466,7 +468,9 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	'futures/fetchIsolatedMarginTradePreview',
 	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
-		const market = getState().futures.markets.find((m) => m.marketKey === params.market.key);
+		const markets = selectMarkets(getState());
+
+		const market = markets.find((m) => m.marketKey === params.market.key);
 
 		try {
 			const orderTypeNum = ContractOrderType.DELAYED_OFFCHAIN;
@@ -1024,11 +1028,12 @@ export const calculateCrossMarginFees = (params: TradePreviewParams): AppThunk =
 	dispatch,
 	getState
 ) => {
-	const market = getState().futures.markets.find((m) => m.marketKey === params.market.key);
+	const markets = selectMarkets(getState());
+	const market = markets.find((m) => m.marketKey === params.market.key);
 	if (!market) throw new Error('Missing market info to compute fee');
 	const keeperBalance = selectKeeperEthBalance(getState());
 	const { delayedOrderFee } = computeDelayedOrderFee(
-		unserializeMarket(market),
+		market,
 		params.sizeDelta.mul(params.orderPrice?.abs())
 	);
 
@@ -1862,7 +1867,8 @@ const monitorAndAwaitTransaction = async (
 };
 
 const getMarketDetailsByKey = (getState: () => RootState, key: FuturesMarketKey) => {
-	const market = getState().futures.markets.find((m) => {
+	const markets = selectMarkets(getState());
+	const market = markets.find((m) => {
 		return m.marketKey === key;
 	});
 	if (!market) throw new Error(`No market info found for ${key}`);

@@ -7,7 +7,6 @@ import { NetworkId } from 'sdk/types/common';
 import {
 	SmartMarginOrderType,
 	FuturesAccountType,
-	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPotentialTradeDetails,
@@ -63,7 +62,10 @@ import {
 export const FUTURES_INITIAL_STATE: FuturesState = {
 	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
 	confirmationModalOpen: false,
-	markets: [],
+	markets: {
+		420: [],
+		10: [],
+	},
 	dailyMarketVolumes: {},
 	errors: {},
 	fundingRates: [],
@@ -222,9 +224,6 @@ const futuresSlice = createSlice({
 		setFuturesAccountType: (state, action) => {
 			state.selectedType = action.payload;
 		},
-		setFuturesMarkets: (state, action: PayloadAction<FuturesMarket<string>[]>) => {
-			state.markets = action.payload;
-		},
 		setCrossMarginTradeInputs: (state, action: PayloadAction<TradeSizeInputs<string>>) => {
 			state.crossMargin.tradeInputs = action.payload;
 		},
@@ -363,15 +362,14 @@ const futuresSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		// TODO: Separate markets by network
 		// Markets
 		builder.addCase(fetchMarkets.pending, (futuresState) => {
 			futuresState.queryStatuses.markets = LOADING_STATUS;
 		});
-		builder.addCase(fetchMarkets.fulfilled, (futuresState, action) => {
+		builder.addCase(fetchMarkets.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.markets = SUCCESS_STATUS;
-			if (action.payload?.markets) {
-				futuresState.markets = action.payload.markets;
+			if (payload) {
+				futuresState.markets[payload.networkId] = payload.markets;
 			}
 		});
 		builder.addCase(fetchMarkets.rejected, (futuresState) => {
@@ -699,7 +697,6 @@ export const {
 	setOrderFeeCap,
 	setLeverageSide,
 	setFuturesAccountType,
-	setFuturesMarkets,
 	setCrossMarginTradeInputs,
 	setCrossMarginAccount,
 	setCrossMarginMarginDelta,

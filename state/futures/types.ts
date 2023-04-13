@@ -213,7 +213,7 @@ export type FuturesState = {
 	isolatedMargin: IsolatedMarginState;
 	fundingRates: FundingRate<string>[];
 	crossMargin: CrossMarginState;
-	markets: FuturesMarket<string>[];
+	markets: Record<FuturesNetwork, FuturesMarket<string>[]>;
 	queryStatuses: FuturesQueryStatuses;
 	dailyMarketVolumes: FuturesVolumes<string>;
 	transactionEstimations: TransactionEstimations;
