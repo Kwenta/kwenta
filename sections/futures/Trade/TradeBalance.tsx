@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import Button from 'components/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body, NumericValue } from 'components/Text';
@@ -32,7 +33,7 @@ export default function TradeBalance() {
 		<Container>
 			<FlexDivRowCentered>
 				<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
-					<Body color="secondary">Available Margin</Body>
+					<Body color="secondary">Available Margin{expanded ? <HideIcon /> : <ExpandIcon />}</Body>
 					<NumericValue size="large" weight="bold">
 						{accountType === 'isolated_margin'
 							? formatDollars(availableIsolatedMargin)
@@ -73,4 +74,13 @@ const BalanceContainer = styled.div<{ clickable: boolean }>`
 
 const DetailsContainer = styled.div`
 	margin-top: 15px;
+`;
+
+const ExpandIcon = styled(CaretDownIcon)`
+	margin-left: 8px;
+`;
+
+const HideIcon = styled(ExpandIcon)`
+	transform: rotate(180deg);
+	margin-bottom: -4px;
 `;
