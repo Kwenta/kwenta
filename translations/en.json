@@ -878,6 +878,7 @@
 				},
 				"confirmation": {
 					"modal": {
+						"approve-order": "Step 1: Approve sUSD spend",
 						"confirm-order": {
 							"long": "Confirm Long order",
 							"short": "Confirm Short order"

@@ -143,7 +143,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 	);
 
 	return (
-		<StyledTable
+		<Table
 			data={rowsData}
 			columnsDeps={[isCancelling, isExecuting]}
 			highlightRowsOnHover
@@ -264,10 +264,6 @@ const OpenDelayedOrdersTable: React.FC = () => {
 		/>
 	);
 };
-
-const StyledTable = styled(Table)`
-	margin-bottom: 20px;
-`;
 
 const EditButton = styled.button`
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gray};

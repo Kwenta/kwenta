@@ -300,6 +300,7 @@ const darkTheme = {
 		accent: `#252525`,
 	},
 	newTheme,
+	imageInvert: { value: '0' },
 };
 
 export default darkTheme;

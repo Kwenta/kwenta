@@ -47,6 +47,7 @@ const Container = styled.div`
 	& img {
 		border-radius: 100%;
 		border: 2px solid transparent;
+		filter: invert(${(props) => props.theme.colors.selectedTheme.imageInvert.value});
 	}
 `;
 

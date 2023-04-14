@@ -14,6 +14,7 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
+import { OrderNameByType } from 'sdk/utils/futures';
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -41,8 +42,11 @@ type Props = {
 	gasFee?: Wei | null;
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
+	executionFee: Wei;
 	errorMessage?: string | null | undefined;
 	isSubmitting?: boolean;
+	allowanceValid?: boolean;
+	onApproveAllowance: () => any;
 	onConfirmOrder: () => any;
 	onDismiss: () => void;
 };
@@ -51,8 +55,11 @@ export default function TradeConfirmationModal({
 	tradeFee,
 	gasFee,
 	keeperFee,
+	executionFee,
 	errorMessage,
 	isSubmitting,
+	allowanceValid,
+	onApproveAllowance,
 	onConfirmOrder,
 	onDismiss,
 }: Props) {
@@ -66,6 +73,8 @@ export default function TradeConfirmationModal({
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const leverageInput = useAppSelector(selectLeverageInput);
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
+
+	const totalFee = tradeFee.add(executionFee);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {
@@ -116,7 +125,7 @@ export default function TradeConfirmationModal({
 			},
 			orderType === 'limit' || orderType === 'stop_market'
 				? {
-						label: orderType + ' order price',
+						label: OrderNameByType[orderType] + ' order price',
 						value: formatDollars(orderPrice, { suggestDecimals: true }),
 				  }
 				: {
@@ -134,7 +143,7 @@ export default function TradeConfirmationModal({
 			},
 			{
 				label: 'total fee',
-				value: formatDollars(tradeFee),
+				value: formatDollars(totalFee),
 			},
 			keeperFee
 				? {
@@ -154,7 +163,7 @@ export default function TradeConfirmationModal({
 			positionDetails,
 			keeperFee,
 			gasFee,
-			tradeFee,
+			totalFee,
 			orderType,
 			orderPrice,
 			potentialTradeDetails,
@@ -167,6 +176,10 @@ export default function TradeConfirmationModal({
 		if (positionDetails?.margin.lt(MIN_MARGIN_AMOUNT))
 			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
 	}, [positionDetails?.margin, t]);
+
+	const buttonText = allowanceValid
+		? t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
+		: t(`futures.market.trade.confirmation.modal.approve-order`);
 
 	return (
 		<>
@@ -195,7 +208,7 @@ export default function TradeConfirmationModal({
 											preset="bottom"
 											width="300px"
 											content={row.tooltipContent}
-											style={{ padding: 10, textTransform: 'none' }}
+											style={{ padding: 10, textTransform: 'none', left: '80%' }}
 										>
 											<Label>
 												{row.label}
@@ -216,16 +229,11 @@ export default function TradeConfirmationModal({
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
 						variant={isSubmitting ? 'flat' : leverageSide}
-						onClick={onConfirmOrder}
+						onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
 						className={leverageSide}
 						disabled={!positionDetails || isSubmitting || !!disabledReason}
 					>
-						{isSubmitting ? (
-							<ButtonLoader />
-						) : (
-							disabledReason ||
-							t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
-						)}
+						{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
 					</ConfirmTradeButton>
 					{errorMessage && (
 						<ErrorContainer>
@@ -242,16 +250,11 @@ export default function TradeConfirmationModal({
 					buttons={
 						<MobileConfirmTradeButton
 							className={leverageSide}
-							onClick={onConfirmOrder}
+							onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
 							disabled={!positionDetails || isSubmitting || !!disabledReason}
 							variant={isSubmitting ? 'flat' : leverageSide}
 						>
-							{isSubmitting ? (
-								<ButtonLoader />
-							) : (
-								disabledReason ||
-								t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
-							)}
+							{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
 						</MobileConfirmTradeButton>
 					}
 				/>
@@ -276,6 +279,8 @@ const RowsContainer = styled.div`
 `;
 
 const Label = styled.div`
+	display: flex;
+	align-items: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
