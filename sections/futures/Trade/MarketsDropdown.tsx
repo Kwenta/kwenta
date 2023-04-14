@@ -155,7 +155,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			{open && (
 				<MarketsList
 					mobile={mobile}
-					height={Math.max(window.innerHeight - (mobile ? 135 : 170), 300)}
+					height={Math.max(window.innerHeight - (mobile ? 135 : 210), 300)}
 				>
 					<SearchBarContainer>
 						<Search autoFocus onChange={setSearch} value={search} border={false} />
