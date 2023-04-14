@@ -47,6 +47,8 @@ const Container = styled.div`
 	& img {
 		border-radius: 100%;
 		border: 2px solid transparent;
+		filter: invert(0);
+		/* 0 = dark theme, 1 = light theme */
 	}
 `;
 
