@@ -320,7 +320,6 @@ const SearchBarContainer = styled.div`
 	width: 100%;
 	height: 38px;
 	top: 0;
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
