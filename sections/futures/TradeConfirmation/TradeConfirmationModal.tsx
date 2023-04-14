@@ -196,7 +196,7 @@ export default function TradeConfirmationModal({
 											preset="bottom"
 											width="300px"
 											content={row.tooltipContent}
-											style={{ padding: 10, textTransform: 'none' }}
+											style={{ padding: 10, textTransform: 'none', left: '80%' }}
 										>
 											<Label>
 												{row.label}
@@ -277,6 +277,8 @@ const RowsContainer = styled.div`
 `;
 
 const Label = styled.div`
+	display: flex;
+	align-items: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
