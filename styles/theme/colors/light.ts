@@ -292,6 +292,7 @@ const lightTheme = {
 		accent: `#d5d5d5`,
 	},
 	newTheme,
+	imageInvert: { value: '1' },
 };
 
 export default lightTheme;
