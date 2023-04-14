@@ -275,9 +275,10 @@ export const selectFuturesAccount = createSelector(
 );
 
 export const selectAllConditionalOrders = createSelector(
+	selectFuturesType,
 	selectCrossMarginAccountData,
-	(account) => {
-		if (!account) return [];
+	(selectedType, account) => {
+		if (!account || selectedType === 'isolated_margin') return [];
 		return unserializeConditionalOrders(account.conditionalOrders);
 	}
 );
