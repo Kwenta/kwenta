@@ -231,7 +231,6 @@ export default function TradeConfirmationModal({
 						variant={isSubmitting ? 'flat' : leverageSide}
 						onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
 						className={leverageSide}
-						noOutline={true}
 						disabled={!positionDetails || isSubmitting || !!disabledReason}
 					>
 						{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
