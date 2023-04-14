@@ -14,6 +14,7 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
+import { OrderNameByType } from 'sdk/utils/futures';
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -116,7 +117,7 @@ export default function TradeConfirmationModal({
 			},
 			orderType === 'limit' || orderType === 'stop_market'
 				? {
-						label: orderType + ' order price',
+						label: OrderNameByType[orderType] + ' order price',
 						value: formatDollars(orderPrice, { suggestDecimals: true }),
 				  }
 				: {
