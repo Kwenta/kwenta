@@ -113,11 +113,6 @@ export const selectAccountData = createSelector(
 		type === 'cross_margin' ? crossAccountData : isolatedAccountData
 );
 
-export const selectCMDepositApproved = createSelector(selectCrossMarginAccountData, (account) => {
-	if (!account) return false;
-	return wei(account.balanceInfo.allowance || 0).gt(0);
-});
-
 export const selectCMBalance = createSelector(selectCrossMarginAccountData, (account) =>
 	wei(account?.balanceInfo.freeMargin || 0)
 );
@@ -569,6 +564,25 @@ export const selectCrossMarginBalanceInfo = createSelector(
 					keeperEthBal: wei(0),
 					allowance: wei(0),
 			  };
+	}
+);
+
+export const selectSmartMarginDepositApproved = createSelector(
+	selectCrossMarginAccountData,
+	(account) => {
+		if (!account) return false;
+		return wei(account.balanceInfo.allowance || 0).gt(0);
+	}
+);
+
+export const selectSmartMarginAllowanceValid = createSelector(
+	selectCrossMarginAccountData,
+	selectCrossMarginBalanceInfo,
+	selectCrossMarginMarginDelta,
+	(account, { freeMargin }, marginDelta) => {
+		if (!account || freeMargin.gt(marginDelta)) return false;
+		const marginDeposit = marginDelta.sub(freeMargin);
+		return wei(account.balanceInfo.allowance || 0).gt(marginDeposit);
 	}
 );
 

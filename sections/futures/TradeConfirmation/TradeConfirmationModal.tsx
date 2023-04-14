@@ -44,6 +44,8 @@ type Props = {
 	executionFee: Wei;
 	errorMessage?: string | null | undefined;
 	isSubmitting?: boolean;
+	allowanceValid?: boolean;
+	onApproveAllowance: () => any;
 	onConfirmOrder: () => any;
 	onDismiss: () => void;
 };
@@ -55,6 +57,8 @@ export default function TradeConfirmationModal({
 	executionFee,
 	errorMessage,
 	isSubmitting,
+	allowanceValid,
+	onApproveAllowance,
 	onConfirmOrder,
 	onDismiss,
 }: Props) {
@@ -172,6 +176,10 @@ export default function TradeConfirmationModal({
 			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
 	}, [positionDetails?.margin, t]);
 
+	const buttonText = allowanceValid
+		? t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
+		: t(`futures.market.trade.confirmation.modal.approve-order`);
+
 	return (
 		<>
 			<DesktopOnlyView>
@@ -220,16 +228,11 @@ export default function TradeConfirmationModal({
 					<ConfirmTradeButton
 						data-testid="trade-open-position-confirm-order-button"
 						variant={isSubmitting ? 'flat' : leverageSide}
-						onClick={onConfirmOrder}
+						onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
 						className={leverageSide}
 						disabled={!positionDetails || isSubmitting || !!disabledReason}
 					>
-						{isSubmitting ? (
-							<ButtonLoader />
-						) : (
-							disabledReason ||
-							t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
-						)}
+						{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
 					</ConfirmTradeButton>
 					{errorMessage && (
 						<ErrorContainer>
@@ -246,16 +249,11 @@ export default function TradeConfirmationModal({
 					buttons={
 						<MobileConfirmTradeButton
 							className={leverageSide}
-							onClick={onConfirmOrder}
+							onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
 							disabled={!positionDetails || isSubmitting || !!disabledReason}
 							variant={isSubmitting ? 'flat' : leverageSide}
 						>
-							{isSubmitting ? (
-								<ButtonLoader />
-							) : (
-								disabledReason ||
-								t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
-							)}
+							{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
 						</MobileConfirmTradeButton>
 					}
 				/>

@@ -12,7 +12,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { approveCrossMargin, createCrossMarginAccount } from 'state/futures/actions';
 import {
 	selectCMAccountQueryStatus,
-	selectCMDepositApproved,
+	selectSmartMarginDepositApproved,
 	selectCrossMarginAccount,
 	selectFuturesSupportedNetwork,
 	selectSubmittingFuturesTx,
@@ -33,7 +33,7 @@ export default function CrossMarginOnboard({ isOpen }: Props) {
 	const crossMarginAvailable = useAppSelector(selectFuturesSupportedNetwork);
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
-	const depositApproved = useAppSelector(selectCMDepositApproved);
+	const depositApproved = useAppSelector(selectSmartMarginDepositApproved);
 	const txProcessing = useAppSelector(selectSubmittingFuturesTx);
 	const preview = useAppSelector(selectTradePreview);
 
