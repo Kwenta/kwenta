@@ -12,6 +12,7 @@ import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
+	selectLeverageInput,
 	selectLeverageSide,
 	selectMarketPrice,
 	selectSlTpTradeInputs,
@@ -27,35 +28,42 @@ export default function SLTPInputs() {
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const leverageSide = useAppSelector(selectLeverageSide);
+	const leverage = useAppSelector(selectLeverageInput);
 
 	const [showInputs, setShowInputs] = useState(false);
+
+	const leverageWei = useMemo(() => {
+		return leverage && Number(leverage) > 0 ? wei(leverage) : wei(1);
+	}, [leverage]);
 
 	const onSelectStopLossPercent = useCallback(
 		(index) => {
 			const option = SL_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
+			const relativePercent = wei(percent).div(leverageWei);
 			const stopLoss =
 				leverageSide === 'short'
-					? currentPrice.add(currentPrice.mul(percent))
-					: currentPrice.sub(currentPrice.mul(percent));
+					? currentPrice.add(currentPrice.mul(relativePercent))
+					: currentPrice.sub(currentPrice.mul(relativePercent));
 			const dp = suggestedDecimals(stopLoss);
 			dispatch(setCrossMarginTradeStopLoss(stopLoss.toString(dp)));
 		},
-		[currentPrice, dispatch, leverageSide]
+		[currentPrice, dispatch, leverageSide, leverageWei]
 	);
 
 	const onSelectTakeProfit = useCallback(
 		(index) => {
 			const option = TP_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
+			const relativePercent = wei(percent).div(leverageWei);
 			const takeProfit =
 				leverageSide === 'short'
-					? currentPrice.sub(currentPrice.mul(percent))
-					: currentPrice.add(currentPrice.mul(percent));
+					? currentPrice.sub(currentPrice.mul(relativePercent))
+					: currentPrice.add(currentPrice.mul(relativePercent));
 			const dp = suggestedDecimals(takeProfit);
 			dispatch(setCrossMarginTradeTakeProfit(takeProfit.toString(dp)));
 		},
-		[currentPrice, dispatch, leverageSide]
+		[currentPrice, dispatch, leverageSide, leverageWei]
 	);
 
 	const onChangeStopLoss = useCallback(

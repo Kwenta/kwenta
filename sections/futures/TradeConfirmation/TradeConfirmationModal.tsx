@@ -42,6 +42,7 @@ type Props = {
 	gasFee?: Wei | null;
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
+	executionFee: Wei;
 	errorMessage?: string | null | undefined;
 	isSubmitting?: boolean;
 	onConfirmOrder: () => any;
@@ -52,6 +53,7 @@ export default function TradeConfirmationModal({
 	tradeFee,
 	gasFee,
 	keeperFee,
+	executionFee,
 	errorMessage,
 	isSubmitting,
 	onConfirmOrder,
@@ -67,6 +69,8 @@ export default function TradeConfirmationModal({
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const leverageInput = useAppSelector(selectLeverageInput);
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
+
+	const totalFee = tradeFee.add(executionFee);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {
@@ -135,7 +139,7 @@ export default function TradeConfirmationModal({
 			},
 			{
 				label: 'total fee',
-				value: formatDollars(tradeFee),
+				value: formatDollars(totalFee),
 			},
 			keeperFee
 				? {
@@ -155,7 +159,7 @@ export default function TradeConfirmationModal({
 			positionDetails,
 			keeperFee,
 			gasFee,
-			tradeFee,
+			totalFee,
 			orderType,
 			orderPrice,
 			potentialTradeDetails,

@@ -710,10 +710,16 @@ export const editClosePositionSizeDelta = (
 	nativeSizeDelta: string
 ): AppThunk => (dispatch, getState) => {
 	dispatch(setClosePositionSizeDelta(nativeSizeDelta));
+
+	if (nativeSizeDelta === '' || !nativeSizeDelta) {
+		dispatch(setIsolatedTradePreview({ preview: null, type: 'close' }));
+		dispatch(setCrossMarginTradePreview({ preview: null, type: 'close' }));
+		return;
+	}
 	const { price } = selectClosePositionOrderInputs(getState());
 	const { marketPrice } = selectEditPositionModalInfo(getState());
-
 	const accountType = selectFuturesType(getState());
+
 	try {
 		const market = getMarketDetailsByKey(getState, marketKey);
 		const smartMarginPrice = isNaN(Number(price)) || !price ? marketPrice : wei(price);

@@ -9,6 +9,8 @@ import { FuturesMarketAsset, FuturesOrderType, PositionSide } from 'sdk/types/fu
 import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
+import PositionType from '../PositionType';
+
 type Props = {
 	marketAsset: FuturesMarketAsset;
 	nativeSizeDelta: Wei;
@@ -41,14 +43,7 @@ export default function TradeConfirmationSummary({
 				/>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.side')}
-					value={
-						<NumberBody
-							color={leverageSide === 'short' ? 'negative' : 'positive'}
-							className={leverageSide}
-						>
-							{leverageSide.toUpperCase()}
-						</NumberBody>
-					}
+					value={<PositionType side={leverageSide} />}
 				/>
 			</InfoBoxContainer>
 			<InfoBoxContainer>

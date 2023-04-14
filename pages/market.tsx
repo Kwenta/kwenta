@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, FC, useCallback } from 'react';
+import { useEffect, FC } from 'react';
 import styled from 'styled-components';
 
 import Loader from 'components/Loader';
@@ -55,20 +55,7 @@ const Market: MarketComponent = () => {
 	const openModal = useAppSelector(selectShowModal);
 	const showPositionModal = useAppSelector(selectShowPositionModal);
 	const accountType = useAppSelector(selectFuturesType);
-
-	const resetTradeState = useCallback(() => {
-		dispatch(clearTradeInputs());
-	}, [dispatch]);
-
-	useEffect(() => {
-		const handleRouteChange = () => {
-			resetTradeState();
-		};
-		router.events.on('routeChangeStart', handleRouteChange);
-		return () => {
-			router.events.off('routeChangeStart', handleRouteChange);
-		};
-	}, [router.events, resetTradeState]);
+	const selectedMarketAsset = useAppSelector(selectMarketAsset);
 
 	const routerAccountType =
 		router.query.accountType === 'cross_margin' ? 'cross_margin' : 'isolated_margin';
@@ -81,16 +68,21 @@ const Market: MarketComponent = () => {
 	}, [router.isReady, routerAccountType]);
 
 	useEffect(() => {
-		resetTradeState();
+		dispatch(clearTradeInputs());
 		// Clear trade state when switching address
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [walletAddress]);
 
 	useEffect(() => {
-		if (routerMarketAsset && MarketKeyByAsset[routerMarketAsset]) {
+		if (
+			selectedMarketAsset !== routerMarketAsset &&
+			routerMarketAsset &&
+			MarketKeyByAsset[routerMarketAsset]
+		) {
 			dispatch(setMarketAsset(routerMarketAsset));
+			dispatch(clearTradeInputs());
 		}
-	}, [router, setCurrentMarket, dispatch, routerMarketAsset]);
+	}, [router, setCurrentMarket, dispatch, routerMarketAsset, selectedMarketAsset]);
 
 	return (
 		<>
