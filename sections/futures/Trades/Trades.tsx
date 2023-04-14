@@ -214,7 +214,6 @@ const Trades = memo(() => {
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
-				pageSize={3}
 			/>
 		</Card>
 	);
