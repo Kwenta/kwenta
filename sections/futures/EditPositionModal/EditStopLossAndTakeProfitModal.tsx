@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import React, { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -55,6 +56,10 @@ export default function EditStopLossAndTakeProfitModal() {
 	]);
 	const hasOrders = useMemo(() => stopLoss || takeProfit, [stopLoss, takeProfit]);
 
+	const leverageWei = useMemo(() => {
+		return position?.position?.leverage.gt(0) ? wei(position.position.leverage) : wei(1);
+	}, [position?.position?.leverage]);
+
 	const hasChangeOrders = useMemo(() => {
 		const tpOrderPrice = takeProfit?.targetPrice
 			? stripZeros(takeProfit?.targetPrice?.toString())
@@ -87,15 +92,16 @@ export default function EditStopLossAndTakeProfitModal() {
 				dispatch(setCrossSLTPModalStopLoss('0'));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
+				const relativePercent = wei(percent).div(leverageWei);
 				const stopLoss =
 					position?.position?.side === 'short'
-						? marketPrice.add(marketPrice.mul(percent))
-						: marketPrice.sub(marketPrice.mul(percent));
+						? marketPrice.add(marketPrice.mul(relativePercent))
+						: marketPrice.sub(marketPrice.mul(relativePercent));
 				const dp = suggestedDecimals(stopLoss);
 				dispatch(setCrossSLTPModalStopLoss(stopLoss.toString(dp)));
 			}
 		},
-		[marketPrice, dispatch, position?.position?.side]
+		[marketPrice, dispatch, position?.position?.side, leverageWei]
 	);
 
 	const onSelectTakeProfit = useCallback(
@@ -105,15 +111,16 @@ export default function EditStopLossAndTakeProfitModal() {
 				dispatch(setCrossSLTPModalTakeProfit('0'));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
+				const relativePercent = wei(percent).div(leverageWei);
 				const takeProfit =
 					position?.position?.side === 'short'
-						? marketPrice.sub(marketPrice.mul(percent))
-						: marketPrice.add(marketPrice.mul(percent));
+						? marketPrice.sub(marketPrice.mul(relativePercent))
+						: marketPrice.add(marketPrice.mul(relativePercent));
 				const dp = suggestedDecimals(takeProfit);
 				dispatch(setCrossSLTPModalTakeProfit(takeProfit.toString(dp)));
 			}
 		},
-		[marketPrice, dispatch, position?.position?.side]
+		[marketPrice, dispatch, position?.position?.side, leverageWei]
 	);
 
 	const onChangeStopLoss = useCallback(
