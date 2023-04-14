@@ -77,10 +77,6 @@ export const selectMarginDeltaInputValue = (state: RootState) =>
 export const selectFuturesSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420;
 
-export const selectCrossMarginTransferOpen = (state: RootState) =>
-	state.app.showModal === 'futures_cross_deposit' ||
-	state.app.showModal === 'futures_cross_withdraw';
-
 export const selectShowCrossMarginOnboard = (state: RootState) =>
 	state.app.showModal === 'futures_smart_margin_onboard';
 
@@ -116,11 +112,6 @@ export const selectAccountData = createSelector(
 	(type, crossAccountData, isolatedAccountData) =>
 		type === 'cross_margin' ? crossAccountData : isolatedAccountData
 );
-
-export const selectCMDepositApproved = createSelector(selectCrossMarginAccountData, (account) => {
-	if (!account) return false;
-	return wei(account.balanceInfo.allowance || 0).gt(0);
-});
 
 export const selectCMBalance = createSelector(selectCrossMarginAccountData, (account) =>
 	wei(account?.balanceInfo.freeMargin || 0)
@@ -279,42 +270,11 @@ export const selectFuturesAccount = createSelector(
 );
 
 export const selectAllConditionalOrders = createSelector(
+	selectFuturesType,
 	selectCrossMarginAccountData,
-	(account) => {
-		if (!account) return [];
+	(selectedType, account) => {
+		if (!account || selectedType === 'isolated_margin') return [];
 		return unserializeConditionalOrders(account.conditionalOrders);
-	}
-);
-
-export const selectCrossMarginPositions = createSelector(
-	selectCrossMarginAccountData,
-	selectAllConditionalOrders,
-	(account, orders) => {
-		return (
-			account?.positions?.map(
-				// TODO: Maybe change to explicit serializing functions to avoid casting
-				(p) => {
-					const pos = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
-					const stopLoss = orders.find(
-						(o) =>
-							o.size.abs() === SL_TP_MAX_SIZE &&
-							o.reduceOnly &&
-							o.orderType === ConditionalOrderTypeEnum.STOP
-					);
-					const takeProfit = orders.find(
-						(o) =>
-							o.size.abs() === SL_TP_MAX_SIZE &&
-							o.reduceOnly &&
-							o.orderType === ConditionalOrderTypeEnum.LIMIT
-					);
-					return {
-						...pos,
-						stopLoss,
-						takeProfit,
-					};
-				}
-			) ?? []
-		);
 	}
 );
 
@@ -348,6 +308,41 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 		const history =
 			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? [];
 		return unserializePositionHistory(history);
+	}
+);
+
+export const selectCrossMarginPositions = createSelector(
+	selectCrossMarginAccountData,
+	selectAllConditionalOrders,
+	selectMarkPrices,
+	selectPositionHistory,
+	(account, orders, prices, positionHistory) => {
+		const positions =
+			account?.positions?.map((p) => updatePositionUpnl(p, prices, positionHistory)) ?? [];
+		return (
+			positions.map(
+				// TODO: Maybe change to explicit serializing functions to avoid casting
+				(pos) => {
+					const stopLoss = orders.find(
+						(o) =>
+							o.size.abs() === SL_TP_MAX_SIZE &&
+							o.reduceOnly &&
+							o.orderType === ConditionalOrderTypeEnum.STOP
+					);
+					const takeProfit = orders.find(
+						(o) =>
+							o.size.abs() === SL_TP_MAX_SIZE &&
+							o.reduceOnly &&
+							o.orderType === ConditionalOrderTypeEnum.LIMIT
+					);
+					return {
+						...pos,
+						stopLoss,
+						takeProfit,
+					};
+				}
+			) ?? []
+		);
 	}
 );
 
@@ -572,6 +567,25 @@ export const selectCrossMarginBalanceInfo = createSelector(
 	}
 );
 
+export const selectSmartMarginDepositApproved = createSelector(
+	selectCrossMarginAccountData,
+	(account) => {
+		if (!account) return false;
+		return wei(account.balanceInfo.allowance || 0).gt(0);
+	}
+);
+
+export const selectSmartMarginAllowanceValid = createSelector(
+	selectCrossMarginAccountData,
+	selectCrossMarginBalanceInfo,
+	selectCrossMarginMarginDelta,
+	(account, { freeMargin }, marginDelta) => {
+		if (!account || freeMargin.gt(marginDelta)) return false;
+		const marginDeposit = marginDelta.sub(freeMargin);
+		return wei(account.balanceInfo.allowance || 0).gt(marginDeposit);
+	}
+);
+
 export const selectAvailableMargin = createSelector(
 	selectMarketInfo,
 	selectPosition,
@@ -611,6 +625,14 @@ export const selectIdleMargin = createSelector(
 	selectSusdBalance,
 	(idleInMarkets, { freeMargin }, balance) => {
 		return balance.add(idleInMarkets).add(freeMargin);
+	}
+);
+
+export const selectWithdrawableMargin = createSelector(
+	selectIdleMarginInMarkets,
+	selectCrossMarginBalanceInfo,
+	(idleInMarkets, { freeMargin }) => {
+		return idleInMarkets.add(freeMargin);
 	}
 );
 

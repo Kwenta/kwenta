@@ -112,7 +112,6 @@ const Transfers: FC = () => {
 					<TableNoResults>{t('futures.market.user.transfers.table.no-results')}</TableNoResults>
 				)
 			}
-			pageSize={3}
 		/>
 	);
 };

@@ -2,11 +2,14 @@ import React, { memo } from 'react';
 
 import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import { InfoBoxRow } from 'components/InfoBox/InfoBox';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
+import { selectSusdBalance } from 'state/balances/selectors';
 import {
 	selectCrossMarginBalanceInfo,
-	selectIdleMargin,
+	selectIdleMarginInMarkets,
+	selectMarketInfo,
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -22,7 +25,9 @@ function MarginInfoBox() {
 	const openModal = useAppSelector(selectShowModal);
 	const position = useAppSelector(selectPosition);
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
-	const idleMargin = useAppSelector(selectIdleMargin);
+	const idleMarginInMarkets = useAppSelector(selectIdleMarginInMarkets);
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const walletBal = useAppSelector(selectSusdBalance);
 
 	return (
 		<>
@@ -43,8 +48,14 @@ function MarginInfoBox() {
 				}
 			/>
 			<InfoBoxRow title="Account margin" value={formatDollars(freeMargin)} />
-			<InfoBoxRow title="Idle margin" value={formatDollars(idleMargin)} />
-			<InfoBoxRow title="Market margin" value={formatDollars(position?.remainingMargin || '0')} />
+			<InfoBoxRow title="Wallet balance" value={formatDollars(walletBal)} />
+			<InfoBoxRow title="Idle in markets" value={formatDollars(idleMarginInMarkets)} />
+			{marketInfo?.asset && (
+				<InfoBoxRow
+					title={`${getDisplayAsset(marketInfo.asset)} Market margin`}
+					value={formatDollars(position?.remainingMargin || '0')}
+				/>
+			)}
 
 			{openModal === 'futures_withdraw_keeper_balance' && (
 				<ManageKeeperBalanceModal defaultType="withdraw" />

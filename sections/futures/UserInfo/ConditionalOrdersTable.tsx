@@ -49,7 +49,7 @@ export default function ConditionalOrdersTable() {
 	}, [openConditionalOrders, isCancellingOrder, marketAsset, dispatch]);
 
 	return (
-		<StyledTable
+		<Table
 			data={rows}
 			highlightRowsOnHover
 			rounded={false}
@@ -170,10 +170,6 @@ export default function ConditionalOrdersTable() {
 		/>
 	);
 }
-
-const StyledTable = styled(Table)`
-	margin-bottom: 20px;
-`;
 
 const EditButton = styled.button`
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gray};
