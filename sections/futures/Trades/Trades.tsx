@@ -70,152 +70,147 @@ const Trades = memo(() => {
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
 
 	return (
-		<Card>
-			<Table
-				highlightRowsOnHover
-				rounded={false}
-				columns={[
-					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
-						),
-						accessor: 'market',
-						Cell: (cellProps: CellProps<typeof historyData[number]>) => {
-							return (
-								<MarketDetailsContainer
-									onClick={() =>
-										cellProps.row.original.market
-											? router.push(
-													ROUTES.Markets.MarketPair(
-														cellProps.row.original.market.asset,
-														accountType
-													)
-											  )
-											: undefined
-									}
-								>
-									{cellProps.row.original.market ? (
-										<TableMarketDetails
-											marketName={cellProps.row.original.market?.marketName}
-											marketKey={cellProps.row.original.market?.marketKey}
-										/>
-									) : (
-										'-'
-									)}
-								</MarketDetailsContainer>
-							);
-						},
-						width: 100,
+		<Table
+			highlightRowsOnHover
+			rounded={false}
+			columns={[
+				{
+					Header: (
+						<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
+					),
+					accessor: 'market',
+					Cell: (cellProps: CellProps<typeof historyData[number]>) => {
+						return (
+							<MarketDetailsContainer
+								onClick={() =>
+									cellProps.row.original.market
+										? router.push(
+												ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
+										  )
+										: undefined
+								}
+							>
+								{cellProps.row.original.market ? (
+									<TableMarketDetails
+										marketName={cellProps.row.original.market?.marketName}
+										marketKey={cellProps.row.original.market?.marketKey}
+									/>
+								) : (
+									'-'
+								)}
+							</MarketDetailsContainer>
+						);
 					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
-						accessor: 'time',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<GridDivCenteredRow>
-								<TimeDisplay value={cellProps.value} />
-							</GridDivCenteredRow>
-						),
-						width: 90,
-						sortable: true,
+					width: 100,
+				},
+				{
+					Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
+					accessor: 'time',
+					Cell: (cellProps: CellProps<FuturesTrade>) => (
+						<GridDivCenteredRow>
+							<TimeDisplay value={cellProps.value} />
+						</GridDivCenteredRow>
+					),
+					width: 90,
+					sortable: true,
+				},
+				{
+					Header: <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
+					accessor: 'side',
+					sortType: 'basic',
+					Cell: (cellProps: CellProps<FuturesTrade>) => <PositionType side={cellProps.value} />,
+					width: 60,
+					sortable: true,
+				},
+				{
+					Header: <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
+					accessor: 'value',
+					sortType: 'basic',
+					Cell: (cellProps: CellProps<FuturesTrade>) => {
+						const formatOptions = {
+							suggestDecimals: true,
+						};
+						return <>{formatDollars(cellProps.value, formatOptions)}</>;
 					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
-						accessor: 'side',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => <PositionType side={cellProps.value} />,
-						width: 60,
-						sortable: true,
+					width: 90,
+					sortable: true,
+				},
+				{
+					Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
+					accessor: 'amount',
+					sortType: 'basic',
+					Cell: (cellProps: CellProps<FuturesTrade>) => (
+						<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
+					),
+					width: 90,
+					sortable: true,
+				},
+				{
+					Header: <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+					accessor: 'netPnl',
+					sortType: 'basic',
+					Cell: (cellProps: CellProps<FuturesTrade>) => {
+						const formatOptions = {
+							maxDecimals: 2,
+						};
+						return cellProps.value.eq(0) ? (
+							'--'
+						) : (
+							<ColoredPrice
+								priceInfo={{
+									price: cellProps.value,
+									change: cellProps.value.gt(0) ? 'up' : 'down',
+								}}
+							>
+								{formatDollars(cellProps.value, formatOptions)}
+							</ColoredPrice>
+						);
 					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
-						accessor: 'value',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							const formatOptions = {
-								suggestDecimals: true,
-							};
-							return <>{formatDollars(cellProps.value, formatOptions)}</>;
-						},
-						width: 90,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
-						accessor: 'amount',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
-						),
-						width: 90,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
-						accessor: 'netPnl',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							const formatOptions = {
-								maxDecimals: 2,
-							};
-							return cellProps.value.eq(0) ? (
-								'--'
-							) : (
-								<ColoredPrice
-									priceInfo={{
-										price: cellProps.value,
-										change: cellProps.value.gt(0) ? 'up' : 'down',
-									}}
-								>
-									{formatDollars(cellProps.value, formatOptions)}
-								</ColoredPrice>
-							);
-						},
-						width: 90,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
-						sortType: 'basic',
-						accessor: 'feesPaid',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>{cellProps.value.eq(0) ? '--' : formatDollars(cellProps.value)}</>
-						),
-						width: 90,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.order-type')}</TableHeader>,
-						accessor: 'type',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => <>{cellProps.value}</>,
-						width: 100,
-					},
-					{
-						accessor: 'txnHash',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
-								<StyledLinkIcon />
-							</StyledExternalLink>
-						),
-						width: 25,
-						sortable: false,
-					},
-				]}
-				columnsDeps={columnsDeps}
-				data={historyData}
-				isLoading={isLoading && isLoaded}
-				noResultsMessage={
-					!isL2 ? (
-						<TableNoResults>
-							{t('common.l2-cta')}
-							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-						</TableNoResults>
-					) : isLoaded && historyData?.length === 0 ? (
-						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
-					) : undefined
-				}
-			/>
-		</Card>
+					width: 90,
+					sortable: true,
+				},
+				{
+					Header: <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
+					sortType: 'basic',
+					accessor: 'feesPaid',
+					Cell: (cellProps: CellProps<FuturesTrade>) => (
+						<>{cellProps.value.eq(0) ? '--' : formatDollars(cellProps.value)}</>
+					),
+					width: 90,
+					sortable: true,
+				},
+				{
+					Header: <TableHeader>{t('futures.market.user.trades.table.order-type')}</TableHeader>,
+					accessor: 'type',
+					sortType: 'basic',
+					Cell: (cellProps: CellProps<FuturesTrade>) => <>{cellProps.value}</>,
+					width: 100,
+				},
+				{
+					accessor: 'txnHash',
+					Cell: (cellProps: CellProps<FuturesTrade>) => (
+						<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
+							<StyledLinkIcon />
+						</StyledExternalLink>
+					),
+					width: 25,
+					sortable: false,
+				},
+			]}
+			columnsDeps={columnsDeps}
+			data={historyData}
+			isLoading={isLoading && isLoaded}
+			noResultsMessage={
+				!isL2 ? (
+					<TableNoResults>
+						{t('common.l2-cta')}
+						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+					</TableNoResults>
+				) : isLoaded && historyData?.length === 0 ? (
+					<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
+				) : undefined
+			}
+		/>
 	);
 });
 

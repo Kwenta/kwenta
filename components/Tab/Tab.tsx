@@ -1,8 +1,6 @@
 import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
-import { TableBody } from 'components/Table';
-
 export const TabList: FC = ({ children, ...props }) => (
 	<div role="tablist" {...props}>
 		{children}
