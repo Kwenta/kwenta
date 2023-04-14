@@ -66,7 +66,7 @@ export const CurrencyLabel = styled(Body)`
 
 const Container = styled.div`
 	width: 100%;
-	height: 100%;
+	height: 67px;
 `;
 
 export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
