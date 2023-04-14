@@ -5,7 +5,6 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
-import Card from 'components/Card';
 import ColoredPrice from 'components/ColoredPrice';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
