@@ -16,7 +16,7 @@ export default function FuturesIcon(props: IconProps) {
 	const CrossMarginIcon = currentTheme === 'dark' ? CrossMarginIconDark : CrossMarginIconLight;
 	const IsolatedMarginIcon =
 		currentTheme === 'dark' ? IsolatedMarginIconDark : IsolatedMarginIconLight;
-	return props.type === 'cross_margin' ? (
+	return props.type === 'cross_margin' || props.type === 'smart_margin' ? (
 		<CrossMarginIcon {...props} />
 	) : (
 		<IsolatedMarginIcon {...props} />
