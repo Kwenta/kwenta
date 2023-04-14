@@ -66,7 +66,7 @@ export const CurrencyLabel = styled(Body)`
 
 const Container = styled.div`
 	width: 100%;
-	height: 67px;
+	height: 100%;
 `;
 
 export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
@@ -76,7 +76,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	}
 
 	width: ${(props) => (props.mobile ? '100%' : '380px')};
-	height: 100%;
+	height: 67px;
 
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	padding: 15px;
