@@ -14,6 +14,7 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
+import { OrderNameByType } from 'sdk/utils/futures';
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -41,6 +42,7 @@ type Props = {
 	gasFee?: Wei | null;
 	tradeFee: Wei;
 	keeperFee?: Wei | null;
+	executionFee: Wei;
 	errorMessage?: string | null | undefined;
 	isSubmitting?: boolean;
 	onConfirmOrder: () => any;
@@ -51,6 +53,7 @@ export default function TradeConfirmationModal({
 	tradeFee,
 	gasFee,
 	keeperFee,
+	executionFee,
 	errorMessage,
 	isSubmitting,
 	onConfirmOrder,
@@ -66,6 +69,8 @@ export default function TradeConfirmationModal({
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const leverageInput = useAppSelector(selectLeverageInput);
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
+
+	const totalFee = tradeFee.add(executionFee);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {
@@ -116,7 +121,7 @@ export default function TradeConfirmationModal({
 			},
 			orderType === 'limit' || orderType === 'stop_market'
 				? {
-						label: orderType + ' order price',
+						label: OrderNameByType[orderType] + ' order price',
 						value: formatDollars(orderPrice, { suggestDecimals: true }),
 				  }
 				: {
@@ -134,7 +139,7 @@ export default function TradeConfirmationModal({
 			},
 			{
 				label: 'total fee',
-				value: formatDollars(tradeFee),
+				value: formatDollars(totalFee),
 			},
 			keeperFee
 				? {
@@ -154,7 +159,7 @@ export default function TradeConfirmationModal({
 			positionDetails,
 			keeperFee,
 			gasFee,
-			tradeFee,
+			totalFee,
 			orderType,
 			orderPrice,
 			potentialTradeDetails,
@@ -195,7 +200,7 @@ export default function TradeConfirmationModal({
 											preset="bottom"
 											width="300px"
 											content={row.tooltipContent}
-											style={{ padding: 10, textTransform: 'none' }}
+											style={{ padding: 10, textTransform: 'none', left: '80%' }}
 										>
 											<Label>
 												{row.label}
@@ -276,6 +281,8 @@ const RowsContainer = styled.div`
 `;
 
 const Label = styled.div`
+	display: flex;
+	align-items: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;

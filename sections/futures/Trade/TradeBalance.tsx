@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
+import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import Button from 'components/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body, NumericValue } from 'components/Text';
@@ -9,6 +10,7 @@ import {
 	selectAvailableMargin,
 	selectFuturesType,
 	selectIdleMargin,
+	selectWithdrawableMargin,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
@@ -20,6 +22,7 @@ export default function TradeBalance() {
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const accountType = useAppSelector(selectFuturesType);
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin);
+	const withdrawable = useAppSelector(selectWithdrawableMargin);
 
 	const [expanded, setExpanded] = useState(false);
 
@@ -32,14 +35,14 @@ export default function TradeBalance() {
 		<Container>
 			<FlexDivRowCentered>
 				<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
-					<Body color="secondary">Available Margin</Body>
+					<Body color="secondary">Available Margin{expanded ? <HideIcon /> : <ExpandIcon />}</Body>
 					<NumericValue size="large" weight="bold">
 						{accountType === 'isolated_margin'
 							? formatDollars(availableIsolatedMargin)
 							: formatDollars(idleMargin)}
 					</NumericValue>
 				</BalanceContainer>
-				{(accountType === 'isolated_margin' || idleMargin.gt(0)) && (
+				{(accountType === 'isolated_margin' || withdrawable.gt(0)) && (
 					<Button
 						onClick={() =>
 							dispatch(
@@ -73,4 +76,13 @@ const BalanceContainer = styled.div<{ clickable: boolean }>`
 
 const DetailsContainer = styled.div`
 	margin-top: 15px;
+`;
+
+const ExpandIcon = styled(CaretDownIcon)`
+	margin-left: 8px;
+`;
+
+const HideIcon = styled(ExpandIcon)`
+	transform: rotate(180deg);
+	margin-bottom: -4px;
 `;

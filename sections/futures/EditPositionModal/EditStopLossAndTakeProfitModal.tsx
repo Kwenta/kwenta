@@ -1,4 +1,5 @@
-import React, { ChangeEvent, useCallback, useEffect } from 'react';
+import { wei } from '@synthetixio/wei';
+import React, { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,23 +11,23 @@ import { FlexDivRowCentered } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
-import { PositionSide } from 'sdk/types/futures';
+import { ConditionalOrderTypeEnum, PositionSide } from 'sdk/types/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import { calculateKeeperDeposit, updateStopLossAndTakeProfit } from 'state/futures/actions';
 import { setCrossSLTPModalStopLoss, setCrossSLTPModalTakeProfit } from 'state/futures/reducer';
 import {
+	selectAllSLTPOrders,
 	selectEditPositionModalInfo,
 	selectSlTpModalInputs,
 	selectSmartMarginKeeperDeposit,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, suggestedDecimals } from 'utils/formatters/number';
+import { formatDollars, stripZeros, suggestedDecimals } from 'utils/formatters/number';
 
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow.tsx';
 import PositionType from '../PositionType';
-import { BalanceText, InfoContainer } from './EditPositionMarginModal';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
 const TP_OPTIONS = ['none', '5%', '10%', '25%', '50%', '100%'];
@@ -40,6 +41,42 @@ export default function EditStopLossAndTakeProfitModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs);
 	const keeperDeposit = useAppSelector(selectSmartMarginKeeperDeposit);
+
+	const sltpOrders = useAppSelector(selectAllSLTPOrders);
+	const stopLoss = sltpOrders.find(
+		(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
+	);
+	const takeProfit = sltpOrders.find(
+		(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
+	);
+
+	const hasInputValues = useMemo(() => takeProfitPrice || stopLossPrice, [
+		takeProfitPrice,
+		stopLossPrice,
+	]);
+	const hasOrders = useMemo(() => stopLoss || takeProfit, [stopLoss, takeProfit]);
+
+	const leverageWei = useMemo(() => {
+		return position?.position?.leverage.gt(0) ? wei(position.position.leverage) : wei(1);
+	}, [position?.position?.leverage]);
+
+	const hasChangeOrders = useMemo(() => {
+		const tpOrderPrice = takeProfit?.targetPrice
+			? stripZeros(takeProfit?.targetPrice?.toString())
+			: '';
+		const slOrderPrice = stopLoss?.targetPrice ? stripZeros(stopLoss?.targetPrice?.toString()) : '';
+		return hasOrders && (tpOrderPrice !== takeProfitPrice || slOrderPrice !== stopLossPrice);
+	}, [hasOrders, stopLoss?.targetPrice, stopLossPrice, takeProfit?.targetPrice, takeProfitPrice]);
+
+	const isActive = useMemo(
+		() =>
+			hasOrders
+				? hasInputValues
+					? hasChangeOrders
+					: takeProfitPrice !== undefined || stopLossPrice !== undefined
+				: hasInputValues,
+		[hasChangeOrders, hasInputValues, hasOrders, stopLossPrice, takeProfitPrice]
+	);
 
 	useEffect(() => {
 		dispatch(setCrossSLTPModalStopLoss(''));
@@ -55,15 +92,16 @@ export default function EditStopLossAndTakeProfitModal() {
 				dispatch(setCrossSLTPModalStopLoss('0'));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
+				const relativePercent = wei(percent).div(leverageWei);
 				const stopLoss =
 					position?.position?.side === 'short'
-						? marketPrice.add(marketPrice.mul(percent))
-						: marketPrice.sub(marketPrice.mul(percent));
+						? marketPrice.add(marketPrice.mul(relativePercent))
+						: marketPrice.sub(marketPrice.mul(relativePercent));
 				const dp = suggestedDecimals(stopLoss);
 				dispatch(setCrossSLTPModalStopLoss(stopLoss.toString(dp)));
 			}
 		},
-		[marketPrice, dispatch, position?.position?.side]
+		[marketPrice, dispatch, position?.position?.side, leverageWei]
 	);
 
 	const onSelectTakeProfit = useCallback(
@@ -73,15 +111,16 @@ export default function EditStopLossAndTakeProfitModal() {
 				dispatch(setCrossSLTPModalTakeProfit('0'));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
+				const relativePercent = wei(percent).div(leverageWei);
 				const takeProfit =
 					position?.position?.side === 'short'
-						? marketPrice.sub(marketPrice.mul(percent))
-						: marketPrice.add(marketPrice.mul(percent));
+						? marketPrice.sub(marketPrice.mul(relativePercent))
+						: marketPrice.add(marketPrice.mul(relativePercent));
 				const dp = suggestedDecimals(takeProfit);
 				dispatch(setCrossSLTPModalTakeProfit(takeProfit.toString(dp)));
 			}
 		},
-		[marketPrice, dispatch, position?.position?.side]
+		[marketPrice, dispatch, position?.position?.side, leverageWei]
 	);
 
 	const onChangeStopLoss = useCallback(
@@ -136,17 +175,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				type={'pill-button-large'}
 			/>
 
-			<Spacer height={20} />
-
-			<InfoContainer style={{ margin: 0 }}>
-				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-profit')}</BalanceText>
-
-				<BalanceText>
-					<span>{'-'}</span>
-				</BalanceText>
-			</InfoContainer>
-
-			<StyledSpacer />
+			<StyledSpacer height={10} />
 
 			<EditStopLossAndTakeProfitInput
 				type={'stop-loss'}
@@ -166,16 +195,6 @@ export default function EditStopLossAndTakeProfitModal() {
 
 			<Spacer height={20} />
 
-			<InfoContainer style={{ margin: 0 }}>
-				<BalanceText>{t('futures.market.trade.edit-sl-tp.estimated-loss')}</BalanceText>
-
-				<BalanceText>
-					<span>{'-'}</span>
-				</BalanceText>
-			</InfoContainer>
-
-			<Spacer height={20} />
-
 			<ErrorView message={t('futures.market.trade.edit-sl-tp.warning')} messageType="warn" />
 
 			<Spacer height={4} />
@@ -184,7 +203,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				loading={isSubmitting}
 				variant="flat"
 				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={false}
+				disabled={!isActive}
 				fullWidth
 				onClick={onSetStopLossAndTakeProfit}
 			>

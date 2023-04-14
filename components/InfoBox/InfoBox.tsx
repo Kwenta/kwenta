@@ -21,7 +21,6 @@ type InfoBoxRowProps = {
 	isSubItem?: boolean;
 	boldValue?: boolean;
 	onToggleExpand?: (key: string) => void;
-	hasBorder?: boolean;
 };
 
 export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
@@ -84,17 +83,12 @@ const Row = styled.div<{ $isSubItem?: boolean }>`
 	}
 `;
 
-export const InfoBoxContainer = styled.div<{ $hasBorder?: boolean }>`
+export const InfoBoxContainer = styled.div`
 	box-sizing: border-box;
 	width: 100%;
-
-	${(props) =>
-		props.$hasBorder &&
-		css`
-			border: ${props.theme.colors.selectedTheme.border};
-			border-radius: 10px;
-			padding: 14px;
-		`}
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 8px;
+	padding: 12px 14px;
 `;
 
 const InfoBoxKey = styled(Body)`
