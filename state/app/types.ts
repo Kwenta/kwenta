@@ -5,7 +5,6 @@ import { FuturesMarketKey } from 'sdk/types/futures';
 import { FuturesTransactionType } from 'state/futures/types';
 
 export type ModalType =
-	| 'futures_cross_deposit'
 	| 'futures_close_position_confirm'
 	| 'futures_cross_withdraw'
 	| 'futures_isolated_transfer'

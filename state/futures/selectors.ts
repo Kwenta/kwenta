@@ -77,10 +77,6 @@ export const selectMarginDeltaInputValue = (state: RootState) =>
 export const selectFuturesSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420;
 
-export const selectCrossMarginTransferOpen = (state: RootState) =>
-	state.app.showModal === 'futures_cross_deposit' ||
-	state.app.showModal === 'futures_cross_withdraw';
-
 export const selectShowCrossMarginOnboard = (state: RootState) =>
 	state.app.showModal === 'futures_smart_margin_onboard';
 
@@ -611,6 +607,14 @@ export const selectIdleMargin = createSelector(
 	selectSusdBalance,
 	(idleInMarkets, { freeMargin }, balance) => {
 		return balance.add(idleInMarkets).add(freeMargin);
+	}
+);
+
+export const selectWithdrawableMargin = createSelector(
+	selectIdleMarginInMarkets,
+	selectCrossMarginBalanceInfo,
+	(idleInMarkets, { freeMargin }) => {
+		return idleInMarkets.add(freeMargin);
 	}
 );
 

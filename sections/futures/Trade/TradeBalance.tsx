@@ -10,6 +10,7 @@ import {
 	selectAvailableMargin,
 	selectFuturesType,
 	selectIdleMargin,
+	selectWithdrawableMargin,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
@@ -21,6 +22,7 @@ export default function TradeBalance() {
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const accountType = useAppSelector(selectFuturesType);
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin);
+	const withdrawable = useAppSelector(selectWithdrawableMargin);
 
 	const [expanded, setExpanded] = useState(false);
 
@@ -40,7 +42,7 @@ export default function TradeBalance() {
 							: formatDollars(idleMargin)}
 					</NumericValue>
 				</BalanceContainer>
-				{(accountType === 'isolated_margin' || idleMargin.gt(0)) && (
+				{(accountType === 'isolated_margin' || withdrawable.gt(0)) && (
 					<Button
 						onClick={() =>
 							dispatch(
