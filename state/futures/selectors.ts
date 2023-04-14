@@ -283,38 +283,6 @@ export const selectAllConditionalOrders = createSelector(
 	}
 );
 
-export const selectCrossMarginPositions = createSelector(
-	selectCrossMarginAccountData,
-	selectAllConditionalOrders,
-	(account, orders) => {
-		return (
-			account?.positions?.map(
-				// TODO: Maybe change to explicit serializing functions to avoid casting
-				(p) => {
-					const pos = deserializeWeiObject(p, futuresPositionKeys) as FuturesPosition;
-					const stopLoss = orders.find(
-						(o) =>
-							o.size.abs() === SL_TP_MAX_SIZE &&
-							o.reduceOnly &&
-							o.orderType === ConditionalOrderTypeEnum.STOP
-					);
-					const takeProfit = orders.find(
-						(o) =>
-							o.size.abs() === SL_TP_MAX_SIZE &&
-							o.reduceOnly &&
-							o.orderType === ConditionalOrderTypeEnum.LIMIT
-					);
-					return {
-						...pos,
-						stopLoss,
-						takeProfit,
-					};
-				}
-			) ?? []
-		);
-	}
-);
-
 export const selectPositionHistory = createSelector(
 	selectFuturesType,
 	selectCrossMarginAccountData,
@@ -345,6 +313,41 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 		const history =
 			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? [];
 		return unserializePositionHistory(history);
+	}
+);
+
+export const selectCrossMarginPositions = createSelector(
+	selectCrossMarginAccountData,
+	selectAllConditionalOrders,
+	selectMarkPrices,
+	selectPositionHistory,
+	(account, orders, prices, positionHistory) => {
+		const positions =
+			account?.positions?.map((p) => updatePositionUpnl(p, prices, positionHistory)) ?? [];
+		return (
+			positions.map(
+				// TODO: Maybe change to explicit serializing functions to avoid casting
+				(pos) => {
+					const stopLoss = orders.find(
+						(o) =>
+							o.size.abs() === SL_TP_MAX_SIZE &&
+							o.reduceOnly &&
+							o.orderType === ConditionalOrderTypeEnum.STOP
+					);
+					const takeProfit = orders.find(
+						(o) =>
+							o.size.abs() === SL_TP_MAX_SIZE &&
+							o.reduceOnly &&
+							o.orderType === ConditionalOrderTypeEnum.LIMIT
+					);
+					return {
+						...pos,
+						stopLoss,
+						takeProfit,
+					};
+				}
+			) ?? []
+		);
 	}
 );
 
