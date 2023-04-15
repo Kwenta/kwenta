@@ -155,7 +155,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			{open && (
 				<MarketsList
 					mobile={mobile}
-					height={Math.max(window.innerHeight - (mobile ? 135 : 170), 300)}
+					height={Math.max(window.innerHeight - (mobile ? 135 : 210), 300)}
 				>
 					<SearchBarContainer>
 						<Search autoFocus onChange={setSearch} value={search} border={false} />
@@ -320,7 +320,6 @@ const SearchBarContainer = styled.div`
 	width: 100%;
 	height: 38px;
 	top: 0;
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean }>`
