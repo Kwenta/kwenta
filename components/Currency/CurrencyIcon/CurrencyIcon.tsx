@@ -33,7 +33,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = React.memo(({ currencyKey, isDepreca
 	const src = SYNTH_ICONS[currencyKey];
 
 	if (src) {
-		return <Image src={src} {...props} />;
+		return <Image src={src} {...props} className={`${currencyKey !== 'KWENTA' && 'synth-icon'}`} />;
 	} else {
 		return <TokenIcon currencyKey={currencyKey} isDeprecated={isDeprecated} {...props} />;
 	}
@@ -43,11 +43,12 @@ const Container = styled.div`
 	position: relative;
 	display: flex;
 	align-items: center;
-
+	.synth-icon {
+		filter: invert(${(props) => props.theme.colors.selectedTheme.imageInvert.value});
+	}
 	& img {
 		border-radius: 100%;
 		border: 2px solid transparent;
-		filter: invert(${(props) => props.theme.colors.selectedTheme.imageInvert.value});
 	}
 `;
 

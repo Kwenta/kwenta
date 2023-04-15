@@ -240,6 +240,7 @@ const Button: FC<ButtonProps> = memo(
 		right,
 		fontSize,
 		active = true,
+		noOutline = true,
 		size = 'medium',
 		variant = 'flat',
 		...props
@@ -251,6 +252,7 @@ const Button: FC<ButtonProps> = memo(
 				$size={size}
 				$variant={variant}
 				$fontSize={fontSize}
+				noOutline={noOutline}
 				{...props}
 			>
 				{loading ? (

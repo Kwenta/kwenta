@@ -35,7 +35,10 @@ export default function TradeBalance() {
 		<Container>
 			<FlexDivRowCentered>
 				<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
-					<Body color="secondary">Available Margin{expanded ? <HideIcon /> : <ExpandIcon />}</Body>
+					<Body color="secondary">
+						Available Margin
+						{accountType === 'cross_margin' ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
+					</Body>
 					<NumericValue size="large" weight="bold">
 						{accountType === 'isolated_margin'
 							? formatDollars(availableIsolatedMargin)

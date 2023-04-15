@@ -49,7 +49,7 @@ export default function TradeConfirmationSummary({
 			<InfoBoxContainer>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.leverage')}
-					value={<NumberBody>{leverage.toString(2)} X</NumberBody>}
+					value={<NumberBody>{leverage.toString(2)}X</NumberBody>}
 				/>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.order-type')}
