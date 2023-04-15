@@ -238,6 +238,7 @@ const CardsContainer = styled(StakingCard)`
 
 const StyledFlexDivRow = styled(FlexDivRow)`
 	column-gap: 50px;
+	align-items: center;
 
 	.value {
 		color: ${(props) => props.theme.colors.selectedTheme.text.label};

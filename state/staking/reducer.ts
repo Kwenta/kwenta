@@ -4,6 +4,8 @@ import { FetchStatus } from 'state/types';
 
 import {
 	claimMultipleRewards,
+	claimMultipleRewardsAll,
+	claimMultipleRewardsOp,
 	fetchClaimableRewards,
 	fetchEscrowData,
 	fetchStakingData,
@@ -124,6 +126,12 @@ const stakingSlice = createSlice({
 			state.getRewardStatus = FetchStatus.Loading;
 		});
 		builder.addCase(claimMultipleRewards.pending, (state) => {
+			state.claimRewardsStatus = FetchStatus.Loading;
+		});
+		builder.addCase(claimMultipleRewardsAll.pending, (state) => {
+			state.claimRewardsStatus = FetchStatus.Loading;
+		});
+		builder.addCase(claimMultipleRewardsOp.pending, (state) => {
 			state.claimRewardsStatus = FetchStatus.Loading;
 		});
 		builder.addCase(vestEscrowedRewards.pending, (state) => {
