@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import RewardsTabs from 'sections/dashboard/Rewards/RewardsTabs';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions';
+import { fetchClaimableRewards, fetchStakingData } from 'state/staking/actions';
 
 type RewardsComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
 
@@ -19,7 +19,6 @@ const RewardsPage: RewardsComponent = () => {
 			dispatch(fetchStakingData()).then(() => {
 				dispatch(fetchClaimableRewards());
 			});
-			dispatch(fetchEscrowData());
 		}
 	}, [dispatch, walletAddress]);
 

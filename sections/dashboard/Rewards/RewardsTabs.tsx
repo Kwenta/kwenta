@@ -16,16 +16,17 @@ import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppSelector } from 'state/hooks';
-import { selectAPY, selectEpochPeriod } from 'state/staking/selectors';
+import { selectAPY, selectEpochPeriod, selectTotalRewards } from 'state/staking/selectors';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import { formatNumber, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { formatNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 const RewardsTabs: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const network = useAppSelector(selectNetwork);
 	const walletAddress = useAppSelector(selectWallet);
+	const tradingRewards = useAppSelector(selectTotalRewards);
 	const stakingApy = useAppSelector(selectAPY);
 	const epoch = useAppSelector(selectEpochPeriod);
 
@@ -57,7 +58,8 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.staking'),
 			kwentaIcon: true,
 			linkIcon: true,
-			rewards: truncateNumbers(wei(estimatedTradingReward ?? zeroBN), 4),
+			rewards: tradingRewards,
+			estimatedRewards: truncateNumbers(wei(estimatedTradingReward ?? zeroBN), 4),
 			apy: stakingApy,
 			onClick: goToStaking,
 		},
@@ -68,7 +70,8 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
+			rewards: tradingRewards,
+			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
 			apy: stakingApy,
 			onClick: () => {},
 		},
@@ -79,7 +82,8 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
+			rewards: tradingRewards,
+			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
 			apy: stakingApy,
 			onClick: () => {},
 		},
@@ -108,15 +112,28 @@ const RewardsTabs: FC = () => {
 							<div className="value">{reward.copy}</div>
 						</div>
 						<div>
-							<Heading variant="h6" className="title">
-								{t('dashboard.rewards.claimable')}
-							</Heading>
+							<Heading className="title">{t('dashboard.rewards.claimable')}</Heading>
 							<Spacer height={5} />
 							<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
 								{truncateNumbers(reward.rewards, 4)}
 							</LogoText>
 						</div>
-						<div style={{ display: 'flex', justifyContent: 'flex-start', columnGap: '25px' }}>
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'flex-start',
+								columnGap: '25px',
+								alignItems: 'center',
+							}}
+						>
+							<FlexDivCol>
+								<Body size="medium" style={{ marginBottom: '5px' }}>
+									{t('dashboard.rewards.estimated')}
+								</Body>
+								<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
+									{truncateNumbers(reward.estimatedRewards, 4)}
+								</LogoText>
+							</FlexDivCol>
 							<FlexDivCol>
 								<Body size="medium" style={{ marginBottom: '5px' }}>
 									{t('dashboard.rewards.epoch')}
@@ -128,12 +145,6 @@ const RewardsTabs: FC = () => {
 									{formatNumber(epoch, { minDecimals: 0 })}
 									<SpacedHelpIcon />
 								</FlexDivRow>
-							</FlexDivCol>
-							<FlexDivCol>
-								<Body size="medium" style={{ marginBottom: '5px' }}>
-									{t('dashboard.rewards.apr')}
-								</Body>
-								<div className="value">{formatPercent(reward.apy, { minDecimals: 2 })}</div>
 							</FlexDivCol>
 						</div>
 						<Button fullWidth variant="flat" size="small" disabled={false} onClick={reward.onClick}>

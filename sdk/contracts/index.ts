@@ -203,6 +203,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 					MultipleMerkleDistributorPerpsV2ABI
 			  )
 			: undefined,
+		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
+			? new EthCallContract(ADDRESSES.OpRewards[networkId], MultipleMerkleDistributorPerpsV2ABI)
+			: undefined,
 		vKwentaToken: ADDRESSES.vKwentaToken[networkId]
 			? new EthCallContract(ADDRESSES.vKwentaToken[networkId], ERC20ABI)
 			: undefined,

@@ -174,12 +174,6 @@ const BalanceActions: FC = () => {
 											<SpacedHelpIcon />
 										</FlexDivRow>
 									</StyledFlexDivCol>
-									<StyledFlexDivCol>
-										<Body size="medium" style={{ marginBottom: '5px' }}>
-											{t('dashboard.rewards.apr')}
-										</Body>
-										<div className="value">{formatPercent(reward.apy, { minDecimals: 2 })}</div>
-									</StyledFlexDivCol>
 									<Button
 										fullWidth
 										variant="flat"

@@ -19,6 +19,8 @@ export type StakingState = {
 	totalVestable: string;
 	escrowData: EscrowData<string>[];
 	totalRewards: string;
+	kwentaOpRewards: string;
+	snxOpRewards: string;
 	claimableRewards: ClaimParams[][];
 	selectedEpoch?: number;
 	stakeStatus: FetchStatus;

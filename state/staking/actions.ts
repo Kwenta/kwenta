@@ -152,6 +152,8 @@ export const fetchClaimableRewards = createAsyncThunk<
 			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
 		>['claimableRewards'][];
 		totalRewards: string;
+		kwentaOpRewards: string;
+		snxOpRewards: string;
 	},
 	void,
 	ThunkConfig
@@ -173,6 +175,8 @@ export const fetchClaimableRewards = createAsyncThunk<
 	return {
 		claimableRewards: [claimableRewardsV1, claimableRewardsV2],
 		totalRewards: totalRewardsV1.add(totalRewardsV2).toString(),
+		kwentaOpRewards: totalRewardsV1.toString(),
+		snxOpRewards: totalRewardsV2.toString(),
 	};
 });
 

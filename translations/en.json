@@ -530,6 +530,7 @@
 			"title": "Rewards",
 			"copy": "Earn rewards by trading on Kwenta and get boosted rewards for staking.",
 			"claimable": "Claimable",
+			"estimated": "Estimated",
 			"epoch": "Epoch",
 			"apr": "APR",
 			"staking": "Staking",
