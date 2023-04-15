@@ -15,24 +15,40 @@ import { Body, Heading, LogoText } from 'components/Text';
 import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
 import { StakingCard } from 'sections/dashboard/Stake/card';
-import { useAppSelector } from 'state/hooks';
-import { selectAPY, selectEpochPeriod, selectTotalRewards } from 'state/staking/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { claimMultipleRewardsAll, claimMultipleRewardsOp } from 'state/staking/actions';
+import {
+	selectEpochPeriod,
+	selectKwentaOpRewards,
+	selectSnxOpRewards,
+	selectTotalRewards,
+} from 'state/staking/selectors';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
 import { formatNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 const RewardsTabs: FC = () => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const network = useAppSelector(selectNetwork);
 	const walletAddress = useAppSelector(selectWallet);
 	const tradingRewards = useAppSelector(selectTotalRewards);
-	const stakingApy = useAppSelector(selectAPY);
+	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
+	const snxOpRewards = useAppSelector(selectSnxOpRewards);
 	const epoch = useAppSelector(selectEpochPeriod);
 
 	const goToStaking = useCallback(() => {
 		router.push(ROUTES.Dashboard.TradingRewards);
 	}, [router]);
+
+	const handleClaimAll = useCallback(() => {
+		dispatch(claimMultipleRewardsAll());
+	}, [dispatch]);
+
+	const handleClaimOp = useCallback(() => {
+		dispatch(claimMultipleRewardsOp());
+	}, [dispatch]);
 
 	const estimatedTradingRewardQuery = useGetFile(
 		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current.json`
@@ -50,6 +66,16 @@ const RewardsTabs: FC = () => {
 		[estimatedKwentaRewardQuery?.data?.claims, walletAddress]
 	);
 
+	const claimDisabledAll = useMemo(
+		() => tradingRewards.add(kwentaOpRewards).add(snxOpRewards).lte(0),
+		[kwentaOpRewards, snxOpRewards, tradingRewards]
+	);
+
+	const claimDisabledOp = useMemo(() => kwentaOpRewards.add(snxOpRewards).lte(0), [
+		kwentaOpRewards,
+		snxOpRewards,
+	]);
+
 	const REWARDS = [
 		{
 			key: 'trading-rewards',
@@ -60,8 +86,8 @@ const RewardsTabs: FC = () => {
 			linkIcon: true,
 			rewards: tradingRewards,
 			estimatedRewards: truncateNumbers(wei(estimatedTradingReward ?? zeroBN), 4),
-			apy: stakingApy,
 			onClick: goToStaking,
+			isDisabled: false,
 		},
 		{
 			key: 'kwenta-rewards',
@@ -70,10 +96,10 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: tradingRewards,
+			rewards: kwentaOpRewards,
 			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
-			apy: stakingApy,
-			onClick: () => {},
+			onClick: handleClaimOp,
+			isDisabled: claimDisabledOp,
 		},
 		{
 			key: 'snx-rewards',
@@ -82,10 +108,10 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: tradingRewards,
+			rewards: snxOpRewards,
 			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
-			apy: stakingApy,
-			onClick: () => {},
+			onClick: handleClaimOp,
+			isDisabled: claimDisabledOp,
 		},
 	];
 
@@ -98,7 +124,13 @@ const RewardsTabs: FC = () => {
 					</Heading>
 					<div className="value">{t('dashboard.rewards.copy')}</div>
 				</StyledFlexDivCol>
-				<Pill color="yellow" size="large" blackFont={false} onClick={() => {}}>
+				<Pill
+					color="yellow"
+					size="large"
+					blackFont={false}
+					onClick={handleClaimAll}
+					disabled={claimDisabledAll}
+				>
 					{t('dashboard.rewards.claim-all')}
 				</Pill>
 			</FlexDivRowCentered>
@@ -147,7 +179,13 @@ const RewardsTabs: FC = () => {
 								</FlexDivRow>
 							</FlexDivCol>
 						</div>
-						<Button fullWidth variant="flat" size="small" disabled={false} onClick={reward.onClick}>
+						<Button
+							fullWidth
+							variant="flat"
+							size="small"
+							disabled={reward.isDisabled}
+							onClick={reward.onClick}
+						>
 							{reward.button}
 							{reward.linkIcon ? (
 								<LinkArrowIcon

@@ -22,6 +22,8 @@ export type StakingState = {
 	kwentaOpRewards: string;
 	snxOpRewards: string;
 	claimableRewards: ClaimParams[][];
+	claimableRewardsAll: ClaimParams[][];
+	claimableRewardsOp: ClaimParams[];
 	selectedEpoch?: number;
 	stakeStatus: FetchStatus;
 	unstakeStatus: FetchStatus;

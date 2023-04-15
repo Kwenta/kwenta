@@ -69,6 +69,18 @@ const BasePill = styled.button<{
 			color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].hover.text};
 		}
 	`}
+
+	&:disabled {
+		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
+		background: transparent;
+		box-shadow: none;
+		text-shadow: none;
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		cursor: not-allowed;
+		&::before {
+			display: none;
+		}
+	}
 `;
 
 export default Pill;

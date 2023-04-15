@@ -1,7 +1,5 @@
-import { wei } from '@synthetixio/wei';
-import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
-import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -18,62 +16,57 @@ import { KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import ROUTES from 'constants/routes';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { sdk } from 'state/config';
-import { useAppSelector } from 'state/hooks';
-import { selectAPY, selectEpochPeriod } from 'state/staking/selectors';
-import { selectNetwork, selectWallet } from 'state/wallet/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { claimMultipleRewardsAll, claimMultipleRewardsOp } from 'state/staking/actions';
+import {
+	selectEpochPeriod,
+	selectKwentaOpRewards,
+	selectSnxOpRewards,
+	selectTotalRewards,
+} from 'state/staking/selectors';
 import media from 'styles/media';
 import {
 	formatDollars,
 	formatNumber,
-	formatPercent,
 	toWei,
 	truncateNumbers,
 	zeroBN,
 } from 'utils/formatters/number';
-// eslint-disable-next-line import/order
-import useGetFile from 'queries/files/useGetFile';
-
-const ClaimAllButton = memo(() => {
-	const { t } = useTranslation();
-
-	return (
-		<Pill color="yellow" fullWidth={true} size="large" isRounded={false} blackFont={false}>
-			{t('dashboard.rewards.claim-all')}
-		</Pill>
-	);
-});
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const router = useRouter();
-	const network = useAppSelector(selectNetwork);
-	const walletAddress = useAppSelector(selectWallet);
-	const stakingApy = useAppSelector(selectAPY);
 	const epoch = useAppSelector(selectEpochPeriod);
+	const tradingRewards = useAppSelector(selectTotalRewards);
+	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
+	const snxOpRewards = useAppSelector(selectSnxOpRewards);
 	const [open, setOpen] = useState(false);
 	const [rewardBalance, setRewardBalance] = useState(zeroBN);
+
 	const goToStaking = useCallback(() => {
 		router.push(ROUTES.Dashboard.TradingRewards);
 		setOpen(false);
 	}, [router]);
 
-	const estimatedTradingRewardQuery = useGetFile(
-		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current.json`
+	const handleClaimAll = useCallback(() => {
+		dispatch(claimMultipleRewardsAll());
+	}, [dispatch]);
+
+	const handleClaimOp = useCallback(() => {
+		dispatch(claimMultipleRewardsOp());
+	}, [dispatch]);
+
+	const claimDisabledAll = useMemo(
+		() => tradingRewards.add(kwentaOpRewards).add(snxOpRewards).lte(0),
+		[kwentaOpRewards, snxOpRewards, tradingRewards]
 	);
 
-	const estimatedTradingReward = useMemo(
-		() => BigNumber.from(estimatedTradingRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
-		[estimatedTradingRewardQuery?.data?.claims, walletAddress]
-	);
-
-	const estimatedKwentaRewardQuery = useGetFile(
-		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current-op.json`
-	);
-	const estimatedKwentaReward = useMemo(
-		() => BigNumber.from(estimatedKwentaRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
-		[estimatedKwentaRewardQuery?.data?.claims, walletAddress]
-	);
+	const claimDisabledOp = useMemo(() => kwentaOpRewards.add(snxOpRewards).lte(0), [
+		kwentaOpRewards,
+		snxOpRewards,
+	]);
 
 	const REWARDS = [
 		{
@@ -83,9 +76,9 @@ const BalanceActions: FC = () => {
 			button: t('dashboard.rewards.staking'),
 			kwentaIcon: true,
 			linkIcon: true,
-			apy: stakingApy,
-			rewards: truncateNumbers(wei(estimatedTradingReward ?? zeroBN), 4),
+			rewards: tradingRewards,
 			onClick: goToStaking,
+			isDisabled: false,
 		},
 		{
 			key: 'kwenta-rewards',
@@ -94,9 +87,9 @@ const BalanceActions: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			apy: stakingApy,
-			rewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
-			onClick: () => {},
+			rewards: kwentaOpRewards,
+			onClick: handleClaimOp,
+			isDisabled: claimDisabledOp,
 		},
 		{
 			key: 'snx-rewards',
@@ -105,9 +98,9 @@ const BalanceActions: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			apy: stakingApy,
-			rewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
-			onClick: () => {},
+			rewards: snxOpRewards,
+			onClick: handleClaimOp,
+			isDisabled: claimDisabledOp,
 		},
 	];
 
@@ -121,15 +114,15 @@ const BalanceActions: FC = () => {
 
 			setRewardBalance(
 				toWei(kwentaPrice)
-					.mul(estimatedTradingReward)
-					.add(toWei(opPrice).mul(estimatedKwentaReward.add(estimatedKwentaReward)))
+					.mul(tradingRewards)
+					.add(toWei(opPrice).mul(kwentaOpRewards.add(snxOpRewards)))
 			);
 		};
 
 		(async () => {
 			await initExchangeTokens();
 		})();
-	}, [estimatedKwentaReward, estimatedTradingReward, rewardBalance]);
+	}, [kwentaOpRewards, snxOpRewards, tradingRewards]);
 
 	return (
 		<>
@@ -178,7 +171,7 @@ const BalanceActions: FC = () => {
 										fullWidth
 										variant="flat"
 										size="small"
-										disabled={false}
+										disabled={reward.isDisabled}
 										onClick={reward.onClick}
 										style={{ marginLeft: '50px' }}
 									>
@@ -190,7 +183,17 @@ const BalanceActions: FC = () => {
 								</StyledFlexDivRow>
 							</CardGrid>
 						))}
-						<ClaimAllButton />
+						<Pill
+							color="yellow"
+							fullWidth={true}
+							size="large"
+							isRounded={false}
+							blackFont={false}
+							onClick={handleClaimAll}
+							disabled={claimDisabledAll}
+						>
+							{t('dashboard.rewards.claim-all')}
+						</Pill>
 					</CardsContainer>
 				</RewardsTabContainer>
 			)}

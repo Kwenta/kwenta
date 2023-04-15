@@ -377,14 +377,23 @@ export default class KwentaTokenService {
 		return this.performStakeAction('unstake', amount, { escrow: true });
 	}
 
-	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
+	public async getClaimableRewards(
+		epochPeriod: number,
+		isOldDistributor: boolean = true,
+		isOp: boolean = false
+	) {
 		const {
 			MultipleMerkleDistributor,
 			MultipleMerkleDistributorPerpsV2,
+			MultipleMerkleDistributorOp,
 		} = this.sdk.context.multicallContracts;
 		const { walletAddress } = this.sdk.context;
 
-		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
+		if (
+			!MultipleMerkleDistributor ||
+			!MultipleMerkleDistributorPerpsV2 ||
+			!MultipleMerkleDistributorOp
+		) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
@@ -397,7 +406,7 @@ export default class KwentaTokenService {
 			(i) =>
 				`trading-rewards-snapshots/${
 					this.sdk.context.networkId === 420 ? `goerli-` : ''
-				}epoch-${i}.json`
+				}epoch-${i}${isOp ? '-op' : ''}.json`
 		);
 
 		const responses: EpochData[] = await Promise.all(
@@ -463,6 +472,45 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
 			[MultipleMerkleDistributor.address, MultipleMerkleDistributorPerpsV2.address],
 			claimableRewards,
+		]);
+	}
+
+	public async claimMultipleRewardsAll(claimableRewards: ClaimParams[][]) {
+		const {
+			BatchClaimer,
+			MultipleMerkleDistributor,
+			MultipleMerkleDistributorPerpsV2,
+			MultipleMerkleDistributorOp,
+		} = this.sdk.context.contracts;
+
+		if (
+			!BatchClaimer ||
+			!MultipleMerkleDistributor ||
+			!MultipleMerkleDistributorPerpsV2 ||
+			!MultipleMerkleDistributorOp
+		) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
+			[
+				MultipleMerkleDistributor.address,
+				MultipleMerkleDistributorPerpsV2.address,
+				MultipleMerkleDistributorOp.address,
+			],
+			claimableRewards,
+		]);
+	}
+
+	public async claimOpRewards(claimableRewardsOp: ClaimParams[]) {
+		const { MultipleMerkleDistributorOp } = this.sdk.context.contracts;
+
+		if (!MultipleMerkleDistributorOp) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		return this.sdk.transactions.createContractTxn(MultipleMerkleDistributorOp, 'claimMultiple', [
+			claimableRewardsOp,
 		]);
 	}
 
