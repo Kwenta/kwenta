@@ -1,6 +1,7 @@
 import { wei } from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
-import { FC, memo, useCallback, useEffect, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -18,7 +19,8 @@ import ROUTES from 'constants/routes';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { sdk } from 'state/config';
 import { useAppSelector } from 'state/hooks';
-import { selectAPY, selectEpochPeriod, selectTotalRewards } from 'state/staking/selectors';
+import { selectAPY, selectEpochPeriod } from 'state/staking/selectors';
+import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
 import {
 	formatDollars,
@@ -28,6 +30,8 @@ import {
 	truncateNumbers,
 	zeroBN,
 } from 'utils/formatters/number';
+// eslint-disable-next-line import/order
+import useGetFile from 'queries/files/useGetFile';
 
 const ClaimAllButton = memo(() => {
 	const { t } = useTranslation();
@@ -43,11 +47,10 @@ const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
+	const network = useAppSelector(selectNetwork);
+	const walletAddress = useAppSelector(selectWallet);
 	const stakingApy = useAppSelector(selectAPY);
 	const epoch = useAppSelector(selectEpochPeriod);
-	const tradingRewards = useAppSelector(selectTotalRewards);
-	const kwentaOpRewards = wei(1);
-	const snxOpRewards = wei(2);
 	const [open, setOpen] = useState(false);
 	const [rewardBalance, setRewardBalance] = useState(zeroBN);
 	const goToStaking = useCallback(() => {
@@ -55,25 +58,22 @@ const BalanceActions: FC = () => {
 		setOpen(false);
 	}, [router]);
 
-	useEffect(() => {
-		const tokenAddresses = [KWENTA_ADDRESS, OP_ADDRESS];
-		const initExchangeTokens = async () => {
-			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true);
-			const [kwentaPrice, opPrice] = tokenAddresses.map(
-				(tokenAddress) => coinGeckoPrices[tokenAddress].usd.toString() ?? 0
-			);
+	const estimatedTradingRewardQuery = useGetFile(
+		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current.json`
+	);
 
-			setRewardBalance(
-				toWei(kwentaPrice)
-					.mul(tradingRewards)
-					.add(toWei(opPrice).mul(kwentaOpRewards.add(snxOpRewards)))
-			);
-		};
+	const estimatedTradingReward = useMemo(
+		() => BigNumber.from(estimatedTradingRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedTradingRewardQuery?.data?.claims, walletAddress]
+	);
 
-		(async () => {
-			await initExchangeTokens();
-		})();
-	}, [kwentaOpRewards, rewardBalance, snxOpRewards, tradingRewards]);
+	const estimatedKwentaRewardQuery = useGetFile(
+		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current-op.json`
+	);
+	const estimatedKwentaReward = useMemo(
+		() => BigNumber.from(estimatedKwentaRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedKwentaRewardQuery?.data?.claims, walletAddress]
+	);
 
 	const REWARDS = [
 		{
@@ -84,7 +84,7 @@ const BalanceActions: FC = () => {
 			kwentaIcon: true,
 			linkIcon: true,
 			apy: stakingApy,
-			rewards: tradingRewards,
+			rewards: truncateNumbers(wei(estimatedTradingReward ?? zeroBN), 4),
 			onClick: goToStaking,
 		},
 		{
@@ -95,7 +95,7 @@ const BalanceActions: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			apy: stakingApy,
-			rewards: kwentaOpRewards,
+			rewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
 			onClick: () => {},
 		},
 		{
@@ -106,10 +106,30 @@ const BalanceActions: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			apy: stakingApy,
-			rewards: snxOpRewards,
+			rewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
 			onClick: () => {},
 		},
 	];
+
+	useEffect(() => {
+		const tokenAddresses = [KWENTA_ADDRESS, OP_ADDRESS];
+		const initExchangeTokens = async () => {
+			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true);
+			const [kwentaPrice, opPrice] = tokenAddresses.map(
+				(tokenAddress) => coinGeckoPrices[tokenAddress]?.usd.toString() ?? 0
+			);
+
+			setRewardBalance(
+				toWei(kwentaPrice)
+					.mul(estimatedTradingReward)
+					.add(toWei(opPrice).mul(estimatedKwentaReward.add(estimatedKwentaReward)))
+			);
+		};
+
+		(async () => {
+			await initExchangeTokens();
+		})();
+	}, [estimatedKwentaReward, estimatedTradingReward, rewardBalance]);
 
 	return (
 		<>

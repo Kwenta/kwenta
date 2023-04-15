@@ -1,6 +1,7 @@
 import { wei } from '@synthetixio/wei';
+import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -12,24 +13,41 @@ import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
 import ROUTES from 'constants/routes';
+import useGetFile from 'queries/files/useGetFile';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppSelector } from 'state/hooks';
-import { selectAPY, selectEpochPeriod, selectTotalRewards } from 'state/staking/selectors';
+import { selectAPY, selectEpochPeriod } from 'state/staking/selectors';
+import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import { formatNumber, formatPercent, truncateNumbers } from 'utils/formatters/number';
+import { formatNumber, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 const RewardsTabs: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const network = useAppSelector(selectNetwork);
+	const walletAddress = useAppSelector(selectWallet);
 	const stakingApy = useAppSelector(selectAPY);
 	const epoch = useAppSelector(selectEpochPeriod);
-	const tradingRewards = useAppSelector(selectTotalRewards);
-	const kwentaOpRewards = wei(1);
-	const snxOpRewards = wei(2);
 
 	const goToStaking = useCallback(() => {
 		router.push(ROUTES.Dashboard.TradingRewards);
 	}, [router]);
+
+	const estimatedTradingRewardQuery = useGetFile(
+		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current.json`
+	);
+	const estimatedTradingReward = useMemo(
+		() => BigNumber.from(estimatedTradingRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedTradingRewardQuery?.data?.claims, walletAddress]
+	);
+
+	const estimatedKwentaRewardQuery = useGetFile(
+		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current-op.json`
+	);
+	const estimatedKwentaReward = useMemo(
+		() => BigNumber.from(estimatedKwentaRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedKwentaRewardQuery?.data?.claims, walletAddress]
+	);
 
 	const REWARDS = [
 		{
@@ -39,7 +57,7 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.staking'),
 			kwentaIcon: true,
 			linkIcon: true,
-			rewards: tradingRewards,
+			rewards: truncateNumbers(wei(estimatedTradingReward ?? zeroBN), 4),
 			apy: stakingApy,
 			onClick: goToStaking,
 		},
@@ -50,7 +68,7 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: kwentaOpRewards,
+			rewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
 			apy: stakingApy,
 			onClick: () => {},
 		},
@@ -61,7 +79,7 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: snxOpRewards,
+			rewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
 			apy: stakingApy,
 			onClick: () => {},
 		},
