@@ -575,6 +575,17 @@ export const selectSmartMarginDepositApproved = createSelector(
 	}
 );
 
+export const selectSmartMarginAllowanceValid = createSelector(
+	selectCrossMarginAccountData,
+	selectCrossMarginBalanceInfo,
+	selectCrossMarginMarginDelta,
+	(account, { freeMargin }, marginDelta) => {
+		if (!account || freeMargin.gt(marginDelta)) return false;
+		const marginDeposit = marginDelta.sub(freeMargin);
+		return wei(account.balanceInfo.allowance || 0).gt(marginDeposit);
+	}
+);
+
 export const selectAvailableMargin = createSelector(
 	selectMarketInfo,
 	selectPosition,
@@ -614,18 +625,6 @@ export const selectIdleMargin = createSelector(
 	selectSusdBalance,
 	(idleInMarkets, { freeMargin }, balance) => {
 		return balance.add(idleInMarkets).add(freeMargin);
-	}
-);
-
-export const selectSmartMarginAllowanceValid = createSelector(
-	selectCrossMarginAccountData,
-	selectCrossMarginBalanceInfo,
-	selectCrossMarginMarginDelta,
-	selectIdleMarginInMarkets,
-	(account, { freeMargin }, marginDelta, idleMargin) => {
-		if (!account || idleMargin.add(freeMargin).gt(marginDelta)) return false;
-		const marginDeposit = marginDelta.sub(idleMargin.add(freeMargin));
-		return wei(account.balanceInfo.allowance || 0).gt(marginDeposit);
 	}
 );
 
