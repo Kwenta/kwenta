@@ -14,6 +14,7 @@ import Spacer from 'components/Spacer/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
 import { KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import ROUTES from 'constants/routes';
+import useClickOutside from 'hooks/useClickOutside';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { sdk } from 'state/config';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -44,6 +45,8 @@ const BalanceActions: FC = () => {
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
 	const [open, setOpen] = useState(false);
 	const [rewardBalance, setRewardBalance] = useState(zeroBN);
+
+	const { ref } = useClickOutside(() => setOpen(false));
 
 	const goToStaking = useCallback(() => {
 		router.push(ROUTES.Dashboard.TradingRewards);
@@ -140,7 +143,7 @@ const BalanceActions: FC = () => {
 				{formatDollars(rewardBalance, { maxDecimals: 2 })}
 			</Button>
 			{open && (
-				<RewardsTabContainer>
+				<RewardsTabContainer ref={ref}>
 					<CardsContainer>
 						{REWARDS.map((reward) => (
 							<CardGrid key={reward.key}>
