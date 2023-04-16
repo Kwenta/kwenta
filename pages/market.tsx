@@ -142,9 +142,9 @@ function TradePanelDesktop() {
 			queryStatus.status === FetchStatus.Idle)
 	) {
 		return (
-			<div>
+			<LoaderContainer>
 				<Loader inline />
-			</div>
+			</LoaderContainer>
 		);
 	}
 
@@ -161,4 +161,10 @@ const StyledFullHeightContainer = styled.div`
 	grid-gap: 0;
 	flex: 1;
 	height: calc(100% - 64px);
+`;
+
+const LoaderContainer = styled.div`
+	text-align: center;
+	width: 100%;
+	padding: 50px;
 `;
