@@ -8,6 +8,7 @@ import Connector from 'containers/Connector';
 import { truncateAddress } from 'utils/formatters/string';
 
 import ConnectionDot from '../ConnectionDot';
+import NetworksSwitcher from '../NetworksSwitcher';
 
 export const MobileWalletActions: FC = () => {
 	const { walletAddress } = Connector.useContainer();
@@ -22,14 +23,17 @@ export const MobileWalletActions: FC = () => {
 	}, [ensName, truncatedWalletAddress]);
 
 	return (
-		<StyledButton mono noOutline onClick={openAccountModal}>
-			{ensAvatar ? (
-				<StyledImage src={ensAvatar} alt={ensName || walletAddress!} width={16} height={16} />
-			) : (
-				<ConnectionDot />
-			)}
-			{walletLabel}
-		</StyledButton>
+		<div style={{ display: 'flex' }}>
+			<NetworksSwitcher mobile />
+			<StyledButton mono noOutline onClick={openAccountModal}>
+				{ensAvatar ? (
+					<StyledImage src={ensAvatar} alt={ensName || walletAddress!} width={16} height={16} />
+				) : (
+					<ConnectionDot />
+				)}
+				{walletLabel}
+			</StyledButton>
+		</div>
 	);
 };
 
