@@ -48,7 +48,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 		() => [
 			{
 				name: PositionsTab.SMART_MARGIN,
-				label: t('dashboard.overview.positions-tabs.cross-margin'),
+				label: t('dashboard.overview.positions-tabs.smart-margin'),
 				badge: smartPositionsCount,
 				active: activePositionsTab === PositionsTab.SMART_MARGIN,
 				detail: formatDollars(portfolio.crossMarginFutures),
