@@ -27,7 +27,7 @@ import {
 	selectAllSLTPOrders,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars, formatPercent } from 'utils/formatters/number';
 
 import TableMarketDetails from './TableMarketDetails';
 
@@ -269,6 +269,9 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								return (
 									<PnlContainer>
 										<Currency.Price price={cellProps.row.original.position.pnl} colored />
+										<NumericValue value={cellProps.row.original.position.pnlPct} colored>
+											{formatPercent(cellProps.row.original.position.pnlPct)}
+										</NumericValue>
 									</PnlContainer>
 								);
 							},
