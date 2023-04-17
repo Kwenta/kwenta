@@ -11,11 +11,12 @@ import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
+import { ConditionalOrderTypeEnum, FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
+	selectAllSLTPOrders,
 	selectCrossMarginPositions,
 	selectFuturesType,
 	selectIsolatedMarginPositions,
@@ -40,6 +41,7 @@ const PositionsTab = () => {
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const accountType = useAppSelector(selectFuturesType);
+	const sltpOrders = useAppSelector(selectAllSLTPOrders);
 	const tradeDrawerPanelOpen = useAppSelector(({ futures }) => futures.tradePanelDrawerOpen);
 
 	let data = useMemo(() => {
@@ -50,23 +52,29 @@ const PositionsTab = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-
+				const stopLoss = sltpOrders.find(
+					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
+				);
+				const takeProfit = sltpOrders.find(
+					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
+				);
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss,
-					takeProfit: position.takeProfit,
+					stopLoss: stopLoss?.targetPrice ?? 0,
+					takeProfit: takeProfit?.targetPrice ?? 0,
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1));
 	}, [
 		accountType,
-		isolatedPositions,
 		crossMarginPositions,
+		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
+		sltpOrders,
 		currentMarket,
 	]);
 
@@ -113,7 +121,9 @@ const PositionsTab = () => {
 								</div>
 							</FlexDiv>
 							<div>
-								<Pill onClick={handleOpenPositionCloseModal(row.market.marketKey)}>Close</Pill>
+								<Pill size="medium" onClick={handleOpenPositionCloseModal(row.market.marketKey)}>
+									Close
+								</Pill>
 							</div>
 						</PositionMeta>
 						<PositionRow>
@@ -167,16 +177,17 @@ const PositionsTab = () => {
 								{row.takeProfit === undefined ? (
 									<Body>{NO_VALUE}</Body>
 								) : (
-									<NumericValue value={row.takeProfit} />
+									<Currency.Price price={row.takeProfit} />
 								)}
 								<Spacer width={5} />
 								{row.stopLoss === undefined ? (
 									<Body>{NO_VALUE}</Body>
 								) : (
-									<NumericValue value={row.stopLoss} />
+									<Currency.Price price={row.stopLoss} />
 								)}
 								<Spacer width={5} />
 								<Pill
+									size="medium"
 									onClick={() =>
 										dispatch(
 											setShowPositionModal({
