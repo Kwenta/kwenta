@@ -25,12 +25,18 @@ const appSlice = createSlice({
 	initialState: APP_INITIAL_STATE,
 	reducers: {
 		setOpenModal: (state, action: PayloadAction<ModalType>) => {
+			if (action.payload) {
+				state.showPositionModal = null;
+			}
 			state.showModal = action.payload;
 		},
 		setShowPositionModal: (
 			state,
 			action: PayloadAction<{ type: FuturesPositionModalType; marketKey: FuturesMarketKey } | null>
 		) => {
+			if (action.payload) {
+				state.showModal = null;
+			}
 			state.showPositionModal = action.payload;
 		},
 		setGasPrice: (state, action: PayloadAction<GasPrice<string>>) => {

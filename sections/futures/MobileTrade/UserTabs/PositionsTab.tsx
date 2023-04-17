@@ -132,12 +132,16 @@ const PositionsTab = () => {
 							<Body color="secondary">Market Margin</Body>
 							<FlexDivRowCentered>
 								<NumericValue value={row.position.initialMargin} />
-								<Spacer width={5} />
-								<NumericValue value={row.position.leverage} color="secondary" suffix="x" />
 							</FlexDivRowCentered>
 						</PositionRow>
 						<PositionRow>
-							<Body color="secondary">Realized PnL</Body>
+							<Body color="secondary">Leverage</Body>
+							<FlexDivRowCentered>
+								<NumericValue value={row.position.leverage} suffix="x" />
+							</FlexDivRowCentered>
+						</PositionRow>
+						<PositionRow>
+							<Body color="secondary">Unrealized PnL</Body>
 							<Currency.Price price={row.position.pnl} colored />
 						</PositionRow>
 						<PositionRow>
@@ -155,7 +159,18 @@ const PositionsTab = () => {
 									<NumericValue value={row.stopLoss} />
 								)}
 								<Spacer width={5} />
-								<Pill>Edit</Pill>
+								<Pill
+									onClick={() =>
+										dispatch(
+											setShowPositionModal({
+												type: 'futures_edit_stop_loss_take_profit',
+												marketKey: row.market.marketKey,
+											})
+										)
+									}
+								>
+									Edit
+								</Pill>
 							</FlexDivRowCentered>
 						</PositionRow>
 					</PositionItem>
