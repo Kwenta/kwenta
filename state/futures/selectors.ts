@@ -1143,15 +1143,10 @@ export const selectPositionStatus = createSelector(
 );
 
 export const selectPendingDelayedOrder = createSelector(
-	selectConditionalOrdersForMarket,
 	selectOpenDelayedOrders,
-	selectFuturesType,
 	selectMarketKey,
-	(crossOrders, isolatedOrder, futuresType, marketKey) => {
-		if (futuresType === 'cross_margin') {
-			return crossOrders.find((o) => o.marketKey === marketKey);
-		}
-		return isolatedOrder.find((o) => o.marketKey === marketKey);
+	(delayedOrders, marketKey) => {
+		return delayedOrders.find((o) => o.marketKey === marketKey);
 	}
 );
 
