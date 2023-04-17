@@ -41,7 +41,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 	const balances = useAppSelector(selectBalances);
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
-		PositionsTab.ISOLATED_MARGIN
+		PositionsTab.SMART_MARGIN
 	);
 
 	const POSITIONS_TABS = useMemo(
