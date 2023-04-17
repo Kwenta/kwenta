@@ -6,7 +6,6 @@ import styled, { css } from 'styled-components';
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
-import { blockExplorer } from 'containers/Connector/Connector';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -98,17 +97,17 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	return (
 		<HistoryContainer mobile={mobile}>
 			<div style={{ height: '100%' }}>
-				{!mobile && <TableMainHeader>Trade History</TableMainHeader>}
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
 					lastRef={lastElementRef}
 					$mobile={mobile}
-					onTableRowClick={(row) =>
-						row.original.id !== NO_VALUE
-							? window.open(`${blockExplorer.txLink(row.original.id)}`)
-							: undefined
-					}
+					onTableRowClick={(_row) => {
+						// TODO: Open tx to creator not executor
+						// row.original.id !== NO_VALUE
+						// ? window.open(`${blockExplorer.txLink(row.original.id)}`)
+						// : undefined
+					}}
 					highlightRowsOnHover
 					columns={[
 						{
@@ -176,8 +175,6 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 
 export default TradesHistoryTable;
 
-const HEADER_HEIGHT = 46;
-
 const HistoryContainer = styled.div<{ mobile?: boolean }>`
 	box-sizing: border-box;
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
@@ -193,14 +190,6 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 				border: none;
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 			`};
-`;
-
-const TableMainHeader = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	padding: 15px;
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	height: ${HEADER_HEIGHT}px;
 `;
 
 const TableAlignment = css`
@@ -221,11 +210,14 @@ const TableAlignment = css`
 
 const StyledTable = styled(Table)<{ $mobile?: boolean }>`
 	border: none;
-	height: calc(100% - ${HEADER_HEIGHT}px);
+	height: 100%;
 	.table-row,
 	.table-body-row {
 		${TableAlignment}
 		padding: 0;
+	}
+	.table-body-cell {
+		height: 30px;
 	}
 	${(props) =>
 		props.$mobile &&
@@ -245,7 +237,6 @@ const TimeValue = styled(Body)`
 `;
 
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`
-	padding-left: 4px;
 	white-space: nowrap;
 	color: ${(props) =>
 		props.normal

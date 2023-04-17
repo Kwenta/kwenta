@@ -36,9 +36,9 @@ const Input = styled.input`
 
 	font: inherit;
 	color: currentColor;
-	width: 20px;
-	height: 20px;
-	border: 0.15em solid currentColor;
+	width: 22px;
+	height: 22px;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 	border-radius: 3px;
 	transform: translateY(-0.075em);
 
@@ -48,8 +48,8 @@ const Input = styled.input`
 
 	&::before {
 		content: '';
-		width: 0.75em;
-		height: 0.75em;
+		width: 0.9em;
+		height: 0.9em;
 		clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 		transform: scale(0);
 		transform-origin: bottom left;
