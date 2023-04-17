@@ -366,6 +366,47 @@ export const fetchMarginTransfers = createAsyncThunk<
 	}
 });
 
+export const fetchCombinedMarginTransfers = createAsyncThunk<
+	| {
+			isolatedMarginTransfers: MarginTransfer[];
+			smartMarginTransfers: MarginTransfer[];
+			idleTransfers: MarginTransfer[];
+			context: AccountContext;
+	  }
+	| undefined,
+	void,
+	ThunkConfig
+>('futures/fetchCombinedMarginTransfers', async (_, { getState, extra: { sdk } }) => {
+	const { wallet, futures } = getState();
+	const supportedNetwork = selectFuturesSupportedNetwork(getState());
+	const network = selectNetwork(getState());
+	const cmAccount = selectCrossMarginAccount(getState());
+	if (!wallet.walletAddress || !supportedNetwork) return;
+	try {
+		const isolatedMarginTransfers = await sdk.futures.getIsolatedMarginTransfers();
+		const smartMarginTransfers = cmAccount
+			? await sdk.futures.getIsolatedMarginTransfers(cmAccount)
+			: [];
+		const idleTransfers = cmAccount ? await sdk.futures.getCrossMarginTransfers(cmAccount) : [];
+
+		return {
+			isolatedMarginTransfers,
+			smartMarginTransfers,
+			idleTransfers,
+			context: {
+				wallet: wallet.walletAddress,
+				network: network,
+				type: futures.selectedType,
+				cmAccount,
+			},
+		};
+	} catch (err) {
+		logError(err);
+		notifyError('Failed to fetch combined margin transfers', err);
+		throw err;
+	}
+});
+
 export const fetchCrossMarginAccountData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchCrossMarginAccountData',
 	async (_, { dispatch }) => {
