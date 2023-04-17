@@ -42,7 +42,7 @@ const MobileUserMenu: FC = () => {
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 							<Button size="small">{t('homepage.nav.start-trade')}</Button>
 						</Link>
-					) : window.location.pathname.includes('/market') ? (
+					) : window.location.pathname.includes('/market') && !isOpen ? (
 						<PositionButtonsContainer>
 							<Button
 								size="xsmall"
