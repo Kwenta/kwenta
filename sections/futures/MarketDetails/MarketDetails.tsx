@@ -4,8 +4,8 @@ import styled, { css } from 'styled-components';
 
 import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
-import { NO_VALUE } from 'constants/placeholder';
 import Spacer from 'components/Spacer';
+import { NO_VALUE } from 'constants/placeholder';
 import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
