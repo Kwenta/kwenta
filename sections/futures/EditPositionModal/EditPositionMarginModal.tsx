@@ -59,14 +59,6 @@ export default function EditPositionMarginModal() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const onChangeTab = (selection: number) => {
-		setTransferType(selection);
-	};
-
-	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustMargin());
-	}, [dispatch]);
-
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
 		isSubmitting,
 		isFetchingPreview,
@@ -104,6 +96,14 @@ export default function EditPositionMarginModal() {
 	const submitDisabled = useMemo(() => {
 		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded || orderError;
 	}, [marginWei, invalid, isLoading, maxLeverageExceeded, orderError]);
+
+	const onChangeTab = (selection: number) => {
+		setTransferType(selection);
+	};
+
+	const submitMarginChange = useCallback(() => {
+		dispatch(submitCrossMarginAdjustMargin());
+	}, [dispatch]);
 
 	const onClose = () => {
 		if (modal?.marketKey) {
