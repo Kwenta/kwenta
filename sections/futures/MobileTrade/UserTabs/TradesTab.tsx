@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
+import useIsL2 from 'hooks/useIsL2';
 import { FuturesTrade, PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
@@ -30,6 +31,9 @@ const TradesTab = () => {
 	const accountType = useAppSelector(selectFuturesType);
 	const history = useAppSelector(selectAllTradesForAccountType);
 	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
+
+	const isL2 = useIsL2();
+	const isLoaded = !isL2 || tradesQuery.status === FetchStatus.Success;
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
@@ -108,7 +112,7 @@ const TradesTab = () => {
 				data={historyData}
 				isLoading={tradesQuery.status === FetchStatus.Loading}
 				noResultsMessage={
-					tradesQuery.status === FetchStatus.Success && historyData?.length === 0 ? (
+					isLoaded && historyData?.length === 0 ? (
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
