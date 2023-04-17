@@ -85,6 +85,8 @@ export const selectEditPositionModalMarket = (state: RootState) =>
 
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
+export const selectShowHistory = (state: RootState) => !!state.futures.preferences.showHistory;
+
 export const selectCrossMarginAccountData = createSelector(
 	selectWallet,
 	selectNetwork,
