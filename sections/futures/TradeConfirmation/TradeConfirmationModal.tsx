@@ -296,7 +296,7 @@ const Value = styled.div`
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.selectedTheme.orange};
+		color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	}
 `;
 

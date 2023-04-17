@@ -81,7 +81,7 @@ export default function PositionChart({ mobile }: Props) {
 
 const Container = styled(FlexDivRowCentered)<{ visible: boolean }>`
 		${media.greaterThan('mdUp')`
-		height: calc(100vh - 450px);
+		height: calc(100vh - 480px);
 		`}
 		${media.lessThan('md')`
 			height: 100%;
