@@ -9,11 +9,7 @@ import { truncateAddress } from 'utils/formatters/string';
 
 import ConnectionDot from '../ConnectionDot';
 
-type MobileWalletButtonProps = {
-	toggleModal(): void;
-};
-
-export const MobileWalletActions: FC<MobileWalletButtonProps> = () => {
+export const MobileWalletActions: FC = () => {
 	const { walletAddress } = Connector.useContainer();
 	const { data: ensAvatar } = useEnsAvatar({ address: walletAddress!, chainId: 1 });
 	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
