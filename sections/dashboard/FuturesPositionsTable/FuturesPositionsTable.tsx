@@ -241,8 +241,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Header: <TableHeader>TP/SL</TableHeader>,
 								accessor: 'tp-sl',
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
-									// eslint-disable-next-line no-console
-									console.log(`stopLoss`, cellProps.row.original.takeProfit);
 									return (
 										<FlexDivRowCentered>
 											<div style={{ marginRight: 10 }}>
