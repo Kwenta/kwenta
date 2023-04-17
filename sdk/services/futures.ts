@@ -695,10 +695,14 @@ export default class FuturesService {
 			if (marginDelta.gt(freeMargin)) {
 				// Margin delta bigger than account balance,
 				// need to pull some from the users wallet or idle margin
+				const {
+					commands: sweepCommands,
+					inputs: sweepInputs,
+					idleMargin,
+				} = await this.batchIdleMarketMarginSweeps(crossMarginAddress);
 
-				const { commands, inputs, idleMargin } = await this.batchIdleMarketMarginSweeps(
-					crossMarginAddress
-				);
+				commands.push(...sweepCommands);
+				inputs.push(...sweepInputs);
 
 				const totalFreeMargin = idleMargin.totalIdleInMarkets.add(freeMargin);
 				const depositAmount = marginDelta.gt(totalFreeMargin)
