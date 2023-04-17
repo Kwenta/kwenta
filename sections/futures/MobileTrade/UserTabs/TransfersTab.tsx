@@ -76,8 +76,6 @@ const TransfersTab: React.FC = () => {
 						</TableNoResults>
 					) : undefined
 				}
-				showPagination
-				pageSize={5}
 			/>
 		</div>
 	);

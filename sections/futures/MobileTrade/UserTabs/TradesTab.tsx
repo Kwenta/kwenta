@@ -116,8 +116,6 @@ const TradesTab = () => {
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
-				showPagination
-				pageSize={5}
 			/>
 
 			<TradeDrawer trade={selectedTrade} closeDrawer={() => setSelectedTrade(undefined)} />

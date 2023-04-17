@@ -39,12 +39,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
 			<MarketDetailsContainer mobile={mobile}>
 				{!mobile && <MarketPriceDetail />}
-				<IndexPriceDetail />
+				<IndexPriceDetail mobile={mobile} />
 				{!mobile && <DailyChangeDetail />}
-				<HourlyFundingDetail />
+				<HourlyFundingDetail mobile={mobile} />
 				{!mobile && <OpenInterestLongDetail />}
 				{!mobile && <OpenInterestShortDetail />}
-				<MarketSkew />
+				<MarketSkew mobile={mobile} />
 			</MarketDetailsContainer>
 			{!mobile && (
 				<ShowHistoryContainer>
@@ -74,11 +74,12 @@ const MarketPriceDetail = memo(() => {
 	);
 });
 
-const IndexPriceDetail = memo(() => {
+const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo);
 
 	return (
 		<MarketDetail
+			mobile={mobile}
 			dataKey={MarketDataKey.indexPrice}
 			value={indexPrice ? formatDollars(indexPrice.price, { suggestDecimals: true }) : NO_VALUE}
 		/>
@@ -113,7 +114,7 @@ const DailyChangeDetail = memo(() => {
 	);
 });
 
-const HourlyFundingDetail = memo(() => {
+const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingValue = marketInfo?.currentFundingRate;
@@ -123,6 +124,7 @@ const HourlyFundingDetail = memo(() => {
 			dataKey={t('futures.market.info.hourly-funding')}
 			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
+			mobile={mobile}
 		/>
 	);
 });
@@ -145,7 +147,7 @@ const OpenInterestLongDetail = memo(() => {
 	);
 });
 
-const MarketSkew = memo(() => {
+const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	return (
@@ -158,6 +160,7 @@ const MarketSkew = memo(() => {
 						value={formatPercent(marketInfo ? marketInfo?.openInterest.shortPct : 0, {
 							minDecimals: 0,
 						})}
+						mobile={mobile}
 					/>
 					{'/'}
 					<MarketDetailValue
@@ -165,6 +168,7 @@ const MarketSkew = memo(() => {
 						value={formatPercent(marketInfo ? marketInfo?.openInterest.longPct : 0, {
 							minDecimals: 0,
 						})}
+						mobile={mobile}
 					/>
 				</>
 			}
