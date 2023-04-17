@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
 import { NO_VALUE } from 'constants/placeholder';
+import Spacer from 'components/Spacer';
 import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
@@ -20,7 +21,9 @@ import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import MarketsDropdown from '../Trade/MarketsDropdown';
+import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from './styles';
 import { MarketDataKey } from './utils';
 
 type MarketDetailsProps = {
@@ -33,6 +36,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
 		<MainContainer mobile={mobile}>
 			<MarketsDropdown mobile={mobile} />
+			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
 			<MarketDetailsContainer mobile={mobile}>
 				{!mobile && <MarketPriceDetail />}
 				<IndexPriceDetail />
@@ -191,7 +195,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	align-items: center;
-	height: 67px;
+	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
 
 	${(props) =>
 		props.mobile &&

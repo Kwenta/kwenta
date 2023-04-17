@@ -1,0 +1,1 @@
+export const MARKETS_DETAILS_HEIGHT_DESKTOP = 67;
