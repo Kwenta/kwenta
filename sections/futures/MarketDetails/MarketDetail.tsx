@@ -57,6 +57,7 @@ const MarketDetailsTooltip = styled(Tooltip).attrs({ position: 'fixed', height: 
 }>`
 	z-index: 2;
 	padding: 10px;
+	max-width: 300px;
 	right: ${(props) => props.mobile && '1px'};
 `;
 
