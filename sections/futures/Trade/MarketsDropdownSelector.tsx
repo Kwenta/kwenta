@@ -13,7 +13,7 @@ import { PricesInfo } from 'state/prices/types';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 import { MarketKeyByAsset } from 'utils/futures';
 
-import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../MarketDetails/styles';
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 
 type Props = {
 	asset: FuturesMarketAsset;

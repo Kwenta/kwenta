@@ -87,260 +87,279 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	]);
 
 	return (
-		<Table
-			data={data}
-			rounded={false}
-			hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
-			columnsDeps={[accountType]}
-			noResultsMessage={
-				!isL2 ? (
-					<TableNoResults>
-						{t('common.l2-cta')}
-						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-					</TableNoResults>
-				) : (
-					<TableNoResults>
-						{t('dashboard.overview.futures-positions-table.no-result')}
-					</TableNoResults>
-				)
-			}
-			highlightRowsOnHover
-			columns={[
-				{
-					Header: (
-						<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
-					),
-					accessor: 'market',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						return (
-							<MarketDetailsContainer
-								onClick={() =>
-									router.push(
-										ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
-									)
-								}
-							>
-								<TableMarketDetails
-									marketName={cellProps.row.original.market.marketName}
-									marketKey={cellProps.row.original.market.marketKey}
-								/>
-							</MarketDetailsContainer>
-						);
-					},
-					width: 120,
-				},
-				{
-					Header: <TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>,
-					accessor: 'position',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						return <PositionType side={cellProps.row.original.position.side} />;
-					},
-					width: 60,
-				},
-				{
-					Header: (
-						<TableHeader>
-							{t('dashboard.overview.futures-positions-table.notionalValue')}
-						</TableHeader>
-					),
-					accessor: 'notionalValue',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-							? { truncate: true }
-							: {};
-
-						return (
-							<FlexDivRowCentered>
-								<div>
-									<div>
-										<Currency.Price
-											price={cellProps.row.original.position.size}
-											currencyKey={cellProps.row.original.market.asset}
-										/>
-									</div>
-									<Currency.Price
-										price={cellProps.row.original.position.notionalValue}
-										formatOptions={formatOptions}
-										side="secondary"
-									/>
-								</div>
-								<Spacer width={10} />
-								{accountType === 'cross_margin' && (
-									<Pill
-										onClick={() =>
-											dispatch(
-												setShowPositionModal({
-													type: 'futures_edit_position_size',
-													marketKey: cellProps.row.original.market.marketKey,
-												})
-											)
-										}
-										size="small"
-									>
-										Edit
-									</Pill>
-								)}
-							</FlexDivRowCentered>
-						);
-					},
-					width: 90,
-				},
-				{
-					Header: (
-						<TableHeader>{t('dashboard.overview.futures-positions-table.avg-entry')}</TableHeader>
-					),
-					accessor: 'avgEntryPrice',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						return cellProps.row.original.avgEntryPrice === undefined ? (
-							<Body>{NO_VALUE}</Body>
+		<Container>
+			<TableContainer>
+				<Table
+					data={data}
+					rounded={false}
+					hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
+					columnsDeps={[accountType]}
+					noResultsMessage={
+						!isL2 ? (
+							<TableNoResults>
+								{t('common.l2-cta')}
+								<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+							</TableNoResults>
 						) : (
-							<Currency.Price
-								price={cellProps.row.original.avgEntryPrice}
-								formatOptions={{ suggestDecimals: true }}
-							/>
-						);
-					},
-					width: 115,
-				},
-				{
-					Header: (
-						<TableHeader>
-							{t('dashboard.overview.futures-positions-table.liquidationPrice')}
-						</TableHeader>
-					),
-					accessor: 'liquidationPrice',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						return (
-							<Currency.Price
-								price={cellProps.row.original.position.liquidationPrice}
-								formatOptions={{ suggestDecimals: true }}
-								side="preview"
-							/>
-						);
-					},
-					width: 100,
-				},
-				{
-					Header: <TableHeader>Market Margin</TableHeader>,
-					accessor: 'margin',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						return (
-							<FlexDivRowCentered>
-								<div>
-									<NumericValue value={cellProps.row.original.position.initialMargin} />
-									<NumericValue
-										value={cellProps.row.original.position.leverage}
-										color="secondary"
-										suffix="x"
+							<TableNoResults>
+								{t('dashboard.overview.futures-positions-table.no-result')}
+							</TableNoResults>
+						)
+					}
+					highlightRowsOnHover
+					columns={[
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
+							),
+							accessor: 'market',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<MarketDetailsContainer
+										onClick={() =>
+											router.push(
+												ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
+											)
+										}
+									>
+										<TableMarketDetails
+											marketName={cellProps.row.original.market.marketName}
+											marketKey={cellProps.row.original.market.marketKey}
+										/>
+									</MarketDetailsContainer>
+								);
+							},
+							width: 120,
+						},
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
+							),
+							accessor: 'position',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return <PositionType side={cellProps.row.original.position.side} />;
+							},
+							width: 60,
+						},
+						{
+							Header: (
+								<TableHeader>
+									{t('dashboard.overview.futures-positions-table.notionalValue')}
+								</TableHeader>
+							),
+							accessor: 'notionalValue',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
+									? { truncate: true }
+									: {};
+
+								return (
+									<FlexDivRowCentered>
+										<div>
+											<div>
+												<Currency.Price
+													price={cellProps.row.original.position.size}
+													currencyKey={cellProps.row.original.market.asset}
+												/>
+											</div>
+											<Currency.Price
+												price={cellProps.row.original.position.notionalValue}
+												formatOptions={formatOptions}
+												side="secondary"
+											/>
+										</div>
+										<Spacer width={10} />
+										{accountType === 'cross_margin' && (
+											<Pill
+												onClick={() =>
+													dispatch(
+														setShowPositionModal({
+															type: 'futures_edit_position_size',
+															marketKey: cellProps.row.original.market.marketKey,
+														})
+													)
+												}
+												size="small"
+											>
+												Edit
+											</Pill>
+										)}
+									</FlexDivRowCentered>
+								);
+							},
+							width: 90,
+						},
+						{
+							Header: (
+								<TableHeader>
+									{t('dashboard.overview.futures-positions-table.avg-entry')}
+								</TableHeader>
+							),
+							accessor: 'avgEntryPrice',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return cellProps.row.original.avgEntryPrice === undefined ? (
+									<Body>{NO_VALUE}</Body>
+								) : (
+									<Currency.Price
+										price={cellProps.row.original.avgEntryPrice}
+										formatOptions={{ suggestDecimals: true }}
 									/>
-								</div>
-								<Spacer width={10} />
-								{accountType === 'cross_margin' && (
-									<Pill
-										onClick={() =>
-											dispatch(
-												setShowPositionModal({
-													type: 'futures_edit_position_margin',
-													marketKey: cellProps.row.original.market.marketKey,
-												})
-											)
-										}
-									>
-										Edit
-									</Pill>
-								)}
-							</FlexDivRowCentered>
-						);
-					},
-					width: 115,
-				},
-				{
-					Header: <TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>,
-					accessor: 'pnl',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<PnlContainer>
-								<Currency.Price price={cellProps.row.original.position.pnl} colored />
-							</PnlContainer>
-						);
-					},
-					width: 100,
-				},
-				{
-					Header: <TableHeader>Funding</TableHeader>,
-					accessor: 'funding',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						return (
-							<Currency.Price price={cellProps.row.original.position.accruedFunding} colored />
-						);
-					},
-					width: 90,
-				},
-				{
-					Header: <TableHeader>TP/SL</TableHeader>,
-					accessor: 'tp-sl',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						return (
-							<FlexDivRowCentered>
-								<div style={{ marginRight: 10 }}>
-									{cellProps.row.original.takeProfit === undefined ? (
-										<Body>{NO_VALUE}</Body>
-									) : (
-										<div className="value">{cellProps.row.original.takeProfit}</div>
-									)}
-									{cellProps.row.original.stopLoss === undefined ? (
-										<Body>{NO_VALUE}</Body>
-									) : (
-										<div className="value">{cellProps.row.original.stopLoss}</div>
-									)}
-								</div>
-								{accountType === 'cross_margin' && (
-									<Pill
-										onClick={() =>
-											dispatch(
-												setShowPositionModal({
-													type: 'futures_edit_stop_loss_take_profit',
-													marketKey: cellProps.row.original.market.marketKey,
-												})
-											)
-										}
-									>
-										Edit
-									</Pill>
-								)}
-							</FlexDivRowCentered>
-						);
-					},
-					width: 110,
-				},
-				{
-					Header: <TableHeader>Position</TableHeader>,
-					accessor: 'pos',
-					Cell: (cellProps: CellProps<typeof data[number]>) => {
-						return (
-							<div>
-								<Pill
-									onClick={() =>
-										dispatch(
-											setShowPositionModal({
-												type: 'futures_close_position',
-												marketKey: cellProps.row.original.market.marketKey,
-											})
-										)
-									}
-									size="small"
-								>
-									Close
-								</Pill>
-							</div>
-						);
-					},
-					width: 90,
-				},
-			]}
-		/>
+								);
+							},
+							width: 115,
+						},
+						{
+							Header: (
+								<TableHeader>
+									{t('dashboard.overview.futures-positions-table.liquidationPrice')}
+								</TableHeader>
+							),
+							accessor: 'liquidationPrice',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<Currency.Price
+										price={cellProps.row.original.position.liquidationPrice}
+										formatOptions={{ suggestDecimals: true }}
+										side="preview"
+									/>
+								);
+							},
+							width: 100,
+						},
+						{
+							Header: <TableHeader>Market Margin</TableHeader>,
+							accessor: 'margin',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<FlexDivRowCentered>
+										<div>
+											<NumericValue value={cellProps.row.original.position.initialMargin} />
+											<NumericValue
+												value={cellProps.row.original.position.leverage}
+												color="secondary"
+												suffix="x"
+											/>
+										</div>
+										<Spacer width={10} />
+										{accountType === 'cross_margin' && (
+											<Pill
+												onClick={() =>
+													dispatch(
+														setShowPositionModal({
+															type: 'futures_edit_position_margin',
+															marketKey: cellProps.row.original.market.marketKey,
+														})
+													)
+												}
+											>
+												Edit
+											</Pill>
+										)}
+									</FlexDivRowCentered>
+								);
+							},
+							width: 115,
+						},
+						{
+							Header: (
+								<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
+							),
+							accessor: 'pnl',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<PnlContainer>
+										<Currency.Price price={cellProps.row.original.position.pnl} colored />
+									</PnlContainer>
+								);
+							},
+							width: 100,
+						},
+						{
+							Header: <TableHeader>Funding</TableHeader>,
+							accessor: 'funding',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<Currency.Price price={cellProps.row.original.position.accruedFunding} colored />
+								);
+							},
+							width: 90,
+						},
+						{
+							Header: <TableHeader>TP/SL</TableHeader>,
+							accessor: 'tp-sl',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<FlexDivRowCentered>
+										<div style={{ marginRight: 10 }}>
+											{cellProps.row.original.takeProfit === undefined ? (
+												<Body>{NO_VALUE}</Body>
+											) : (
+												<div className="value">{cellProps.row.original.takeProfit}</div>
+											)}
+											{cellProps.row.original.stopLoss === undefined ? (
+												<Body>{NO_VALUE}</Body>
+											) : (
+												<div className="value">{cellProps.row.original.stopLoss}</div>
+											)}
+										</div>
+										{accountType === 'cross_margin' && (
+											<Pill
+												onClick={() =>
+													dispatch(
+														setShowPositionModal({
+															type: 'futures_edit_stop_loss_take_profit',
+															marketKey: cellProps.row.original.market.marketKey,
+														})
+													)
+												}
+											>
+												Edit
+											</Pill>
+										)}
+									</FlexDivRowCentered>
+								);
+							},
+							width: 110,
+						},
+						{
+							Header: <TableHeader>Position</TableHeader>,
+							accessor: 'pos',
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
+								return (
+									<div>
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_close_position',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+											size="small"
+										>
+											Close
+										</Pill>
+									</div>
+								);
+							},
+							width: 90,
+						},
+					]}
+				/>
+			</TableContainer>
+		</Container>
 	);
 };
+
+const Container = styled.div`
+	width: 100%;
+	overflow: scroll;
+`;
+
+const TableContainer = styled.div`
+	min-width: 1200px;
+`;
 
 const PnlContainer = styled.div`
 	display: flex;

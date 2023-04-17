@@ -16,6 +16,7 @@ import MarketDetails from 'sections/futures/MarketDetails';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
+import { TRADE_PANEL_WIDTH } from 'sections/futures/styles';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
@@ -157,7 +158,7 @@ export default Market;
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: 380px 1fr;
+	grid-template-columns: ${TRADE_PANEL_WIDTH}px 1fr;
 	grid-gap: 0;
 	flex: 1;
 	height: calc(100% - 64px);

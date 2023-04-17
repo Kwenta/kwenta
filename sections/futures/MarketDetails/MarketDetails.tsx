@@ -20,10 +20,10 @@ import media from 'styles/media';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
-import { MARKETS_DETAILS_HEIGHT_DESKTOP } from './styles';
 import { MarketDataKey } from './utils';
 
 type MarketDetailsProps = {
@@ -275,7 +275,7 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 `;
 
 const ShowHistoryContainer = styled.div`
-	margin-right: 20px;
+	margin: 0 20px;
 `;
 
 export default MarketDetails;
