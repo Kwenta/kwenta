@@ -31,7 +31,6 @@ const Input = styled.input`
 	appearance: none;
 
 	background-color: var(--form-background);
-	/* Not removed via appearance */
 	margin: 0;
 	margin-right: 6px;
 
@@ -54,10 +53,9 @@ const Input = styled.input`
 		clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 		transform: scale(0);
 		transform-origin: bottom left;
-		transition: 120ms transform ease-in-out;
+		transition: 100ms transform ease-in-out;
 		box-shadow: inset 1em 1em var(--form-control-color);
-		/* Windows High Contrast Mode */
-		background-color: white;
+		background-color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	}
 	&:checked::before {
 		transform: scale(1);
