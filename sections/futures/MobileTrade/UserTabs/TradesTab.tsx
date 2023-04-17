@@ -7,6 +7,7 @@ import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
 import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade, PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
@@ -26,6 +27,8 @@ import TradeDrawer from '../drawers/TradeDrawer';
 
 const TradesTab = () => {
 	const { t } = useTranslation();
+	const { switchToL2 } = useNetworkSwitcher();
+
 	const walletAddress = useAppSelector(selectWallet);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const accountType = useAppSelector(selectFuturesType);
@@ -112,7 +115,12 @@ const TradesTab = () => {
 				data={historyData}
 				isLoading={tradesQuery.status === FetchStatus.Loading}
 				noResultsMessage={
-					isLoaded && historyData?.length === 0 ? (
+					!isL2 ? (
+						<TableNoResults>
+							{t('common.l2-cta')}
+							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+						</TableNoResults>
+					) : isLoaded && historyData?.length === 0 ? (
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}

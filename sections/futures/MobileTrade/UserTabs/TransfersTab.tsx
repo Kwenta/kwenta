@@ -5,23 +5,40 @@ import styled from 'styled-components';
 import ColoredPrice from 'components/ColoredPrice';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
-import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import {
+	selectFuturesType,
+	selectIdleMarginTransfers,
+	selectMarketMarginTransfers,
+	selectQueryStatuses,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { timePresentation } from 'utils/formatters/date';
 import { formatDollars } from 'utils/formatters/number';
 
 const TransfersTab: React.FC = () => {
-	const marginTransfers = useAppSelector(selectMarketMarginTransfers);
+	const { t } = useTranslation();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const isL2 = useIsL2();
+	const accountType = useAppSelector(selectFuturesType);
+	const marketMarginTransfers = useAppSelector(selectMarketMarginTransfers);
+	const idleMarginTransfers = useAppSelector(selectIdleMarginTransfers);
+
 	const {
 		marginTransfers: { status: marginTransfersStatus },
 	} = useAppSelector(selectQueryStatuses);
 
-	const { t } = useTranslation();
-	const columnsDeps = useMemo(() => [marginTransfers, marginTransfersStatus], [
-		marginTransfers,
-		marginTransfersStatus,
-	]);
+	const columnsDeps = useMemo(
+		() => [marketMarginTransfers, idleMarginTransfers, marginTransfersStatus],
+		[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
+	);
+
+	const marginTransfers = useMemo(() => {
+		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers;
+	}, [accountType, idleMarginTransfers, marketMarginTransfers]);
 
 	return (
 		<div>
@@ -70,11 +87,14 @@ const TransfersTab: React.FC = () => {
 				columnsDeps={columnsDeps}
 				isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
 				noResultsMessage={
-					marginTransfers?.length === 0 ? (
+					!isL2 ? (
 						<TableNoResults>
-							<Body size="large">{t('futures.market.user.transfers.table.no-results')}</Body>
+							{t('common.l2-cta')}
+							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 						</TableNoResults>
-					) : undefined
+					) : (
+						<TableNoResults>{t('futures.market.user.transfers.table.no-results')}</TableNoResults>
+					)
 				}
 			/>
 		</div>
