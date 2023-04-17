@@ -17,11 +17,13 @@ import { previewErrorI18n } from 'queries/futures/constants';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
+	approveCrossMargin,
 	clearTradeInputs,
 	editCrossMarginPositionMargin,
 	submitCrossMarginAdjustMargin,
 } from 'state/futures/actions';
 import {
+	selectEditMarginAllowanceValid,
 	selectEditPositionInputs,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
@@ -48,6 +50,8 @@ export default function EditPositionMarginModal() {
 	const modal = useAppSelector(selectShowPositionModal);
 	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 	const previewError = useAppSelector(selectTradePreviewError);
+	const allowanceValid = useAppSelector(selectEditMarginAllowanceValid);
+
 	const [transferType, setTransferType] = useState(0);
 
 	useEffect(() => {
@@ -107,6 +111,14 @@ export default function EditPositionMarginModal() {
 		}
 		dispatch(setShowPositionModal(null));
 	};
+
+	const handleApproveSmartMargin = useCallback(async () => {
+		dispatch(approveCrossMargin());
+	}, [dispatch]);
+
+	const depositButtonText = allowanceValid
+		? t('futures.market.trade.edit-position.submit-margin-deposit')
+		: t(`futures.market.trade.confirmation.modal.approve-order`);
 
 	return (
 		<StyledBaseModal
@@ -177,10 +189,10 @@ export default function EditPositionMarginModal() {
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={submitDisabled}
 				fullWidth
-				onClick={submitMarginChange}
+				onClick={allowanceValid ? submitMarginChange : handleApproveSmartMargin}
 			>
 				{transferType === 0
-					? t('futures.market.trade.edit-position.submit-margin-deposit')
+					? depositButtonText
 					: t('futures.market.trade.edit-position.submit-margin-withdraw')}
 			</Button>
 

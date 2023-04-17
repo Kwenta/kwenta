@@ -85,6 +85,8 @@ export const selectEditPositionModalMarket = (state: RootState) =>
 
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
+export const selectShowHistory = (state: RootState) => !!state.futures.preferences.showHistory;
+
 export const selectCrossMarginAccountData = createSelector(
 	selectWallet,
 	selectNetwork,
@@ -627,7 +629,7 @@ export const selectSmartMarginAllowanceValid = createSelector(
 		if (!account) return false;
 		const marginDeposit = marginDelta.sub(totalIdleMargin);
 		return (
-			totalIdleMargin.gt(marginDelta) || wei(account.balanceInfo.allowance || 0).gt(marginDeposit)
+			totalIdleMargin.gte(marginDelta) || wei(account.balanceInfo.allowance || 0).gte(marginDeposit)
 		);
 	}
 );
@@ -687,6 +689,23 @@ export const selectEditPositionInputs = createSelector(
 	selectIsolatedMarginEditPosInputs,
 	(type, crossMarginInputs, isolatedInputs) => {
 		return type === 'cross_margin' ? crossMarginInputs : isolatedInputs;
+	}
+);
+
+export const selectEditMarginAllowanceValid = createSelector(
+	selectCrossMarginAccountData,
+	selectCrossMarginBalanceInfo,
+	selectIdleMarginInMarkets,
+	selectEditPositionInputs,
+	(account, { freeMargin }, idleInMarkets, { marginDelta }) => {
+		const totalIdleMargin = freeMargin.add(idleInMarkets);
+		if (!account) return false;
+		const marginDelatWei = wei(marginDelta || 0);
+		const marginDeposit = marginDelatWei.sub(totalIdleMargin);
+		return (
+			totalIdleMargin.gte(marginDelatWei) ||
+			wei(account.balanceInfo.allowance || 0).gte(marginDeposit)
+		);
 	}
 );
 

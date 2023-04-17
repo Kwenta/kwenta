@@ -2,21 +2,27 @@ import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
+import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
+import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
+	selectShowHistory,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import media from 'styles/media';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import MarketsDropdown from '../Trade/MarketsDropdown';
+import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
 
@@ -25,9 +31,12 @@ type MarketDetailsProps = {
 };
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
+	const dispatch = useAppDispatch();
+	const showHistory = useAppSelector(selectShowHistory);
 	return (
 		<MainContainer mobile={mobile}>
 			<MarketsDropdown mobile={mobile} />
+			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
 			<MarketDetailsContainer mobile={mobile}>
 				{!mobile && <MarketPriceDetail />}
 				<IndexPriceDetail />
@@ -37,6 +46,18 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				{!mobile && <OpenInterestShortDetail />}
 				<MarketSkew />
 			</MarketDetailsContainer>
+			{!mobile && (
+				<ShowHistoryContainer>
+					<Checkbox
+						id="history"
+						label="Show History"
+						checked={showHistory}
+						onChange={() => {
+							dispatch(setShowTradeHistory(!showHistory));
+						}}
+					/>
+				</ShowHistoryContainer>
+			)}
 		</MainContainer>
 	);
 };
@@ -174,7 +195,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	align-items: center;
-	height: 67px;
+	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
 
 	${(props) =>
 		props.mobile &&
@@ -251,6 +272,10 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 			}
 		`}
 	`}
+`;
+
+const ShowHistoryContainer = styled.div`
+	margin: 0 20px;
 `;
 
 export default MarketDetails;

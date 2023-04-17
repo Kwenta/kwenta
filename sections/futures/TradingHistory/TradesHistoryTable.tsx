@@ -132,7 +132,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 									</DirectionalValue>
 								);
 							},
-							width: 100,
+							width: 110,
 						},
 						{
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
@@ -151,7 +151,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 									</PriceValue>
 								);
 							},
-							width: 110,
+							width: 100,
 						},
 						{
 							Header: <TableHeader>{t('futures.market.history.time-label')}</TableHeader>,
@@ -176,42 +176,44 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 
 export default TradesHistoryTable;
 
-const HistoryContainer = styled.div<{ mobile?: boolean }>`
-	width: 100%;
-	margin-bottom: 16px;
-	box-sizing: border-box;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 10px;
+const HEADER_HEIGHT = 46;
 
-	${(props) =>
-		props.mobile &&
-		css`
-			height: 100%;
-			margin-bottom: 0;
-			border-radius: 0;
-			border: none;
-			border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-		`}
+const HistoryContainer = styled.div<{ mobile?: boolean }>`
+	box-sizing: border-box;
+	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+	height: 100%;
+	width: ${(props) => (props.mobile ? '100%' : '300px')};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background}
+		${(props) =>
+			props.mobile &&
+			css`
+				height: 100%;
+				margin-bottom: 0;
+				border-radius: 0;
+				border: none;
+				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+			`};
 `;
 
 const TableMainHeader = styled.div`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	padding: 20px 15px;
+	padding: 15px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	height: ${HEADER_HEIGHT}px;
 `;
 
 const TableAlignment = css`
 	justify-content: space-between;
 	& > div:first-child {
-		flex: 60 60 0 !important;
+		flex: 70 70 0 !important;
 	}
 	& > div:nth-child(2) {
 		flex: 100 100 0 !important;
 		justify-content: center;
 	}
 	& > div:last-child {
-		flex: 70 70 0 !important;
+		flex: 60 60 0 !important;
 		justify-content: flex-end;
 		padding-right: 20px;
 	}
@@ -219,16 +221,17 @@ const TableAlignment = css`
 
 const StyledTable = styled(Table)<{ $mobile?: boolean }>`
 	border: none;
-
-	${(props) =>
-		css`
-			height: ${props.$mobile ? '100%' : '695px'};
-		`}
-
-	.table-row, .table-body-row {
+	height: calc(100% - ${HEADER_HEIGHT}px);
+	.table-row,
+	.table-body-row {
 		${TableAlignment}
 		padding: 0;
 	}
+	${(props) =>
+		props.$mobile &&
+		css`
+			height: 100%;
+		`};
 `;
 
 const PriceValue = styled(Body).attrs({ mono: true })`

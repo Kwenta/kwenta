@@ -14,7 +14,7 @@ const TABS = [
 		nofill: true,
 	},
 	{
-		title: 'Trades',
+		title: 'History',
 		component: <TradesTab />,
 	},
 ];

@@ -34,7 +34,7 @@ import { FetchStatus } from 'state/types';
 import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
 import { getMarketName, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
-import MarketsDropdownSelector from './MarketsDropdownSelector';
+import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {
 	mobile?: boolean;
@@ -155,7 +155,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			{open && (
 				<MarketsList
 					mobile={mobile}
-					height={Math.max(window.innerHeight - (mobile ? 135 : 210), 300)}
+					height={Math.max(window.innerHeight - (mobile ? 159 : 210), 300)}
 				>
 					<SearchBarContainer>
 						<Search autoFocus onChange={setSearch} value={search} border={false} />
@@ -330,6 +330,11 @@ const SelectContainer = styled.div<{ mobile?: boolean }>`
 		css`
 			width: 100%;
 			border-bottom: ${props.theme.colors.selectedTheme.border};
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: ${MARKET_SELECTOR_HEIGHT_MOBILE + 1}px;
 		`}
 `;
 

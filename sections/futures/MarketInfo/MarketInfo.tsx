@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import PositionChart from '../PositionChart';
+import { TRADE_PANEL_WIDTH } from '../styles';
 import UserInfo from '../UserInfo';
 
 const MarketInfo: React.FC = React.memo(() => (
@@ -14,8 +15,9 @@ const MarketInfo: React.FC = React.memo(() => (
 const Container = styled.div`
 	display: flex;
 	flex-direction: column;
+	width: calc(100hv - ${TRADE_PANEL_WIDTH}px);
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
-	/*overflow-y: scroll;*/
+	overflow-x: scroll;
 `;
 
 export default MarketInfo;

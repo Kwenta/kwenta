@@ -24,7 +24,7 @@ export const DEFAULT_SLIPPAGE = 1;
 export const DEFAULT_1INCH_SLIPPAGE = 3;
 
 // for Trading History
-export const DEFAULT_NUMBER_OF_TRADES: number = 16;
+export const DEFAULT_NUMBER_OF_TRADES: number = 32;
 export const MAX_TIMESTAMP: number = 8640000000000000;
 
 // for Fee History

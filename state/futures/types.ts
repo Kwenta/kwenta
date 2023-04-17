@@ -219,6 +219,9 @@ export type FuturesState = {
 	transactionEstimations: TransactionEstimations;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
+	preferences: {
+		showHistory?: boolean;
+	};
 	dashboard: {
 		selectedPortfolioTimeframe: Period;
 	};

@@ -217,20 +217,20 @@ export const Table: FC<TableProps> = memo(
 								})}
 							</TableBody>
 						) : null}
+						{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
+							<Pagination
+								compact={compactPagination}
+								pageIndex={pageIndex}
+								pageCount={pageCount}
+								canNextPage={canNextPage}
+								canPreviousPage={canPreviousPage}
+								setPage={gotoPage}
+								previousPage={previousPage}
+								nextPage={nextPage}
+							/>
+						) : undefined}
 					</ReactTable>
 				</TableContainer>
-				{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
-					<Pagination
-						compact={compactPagination}
-						pageIndex={pageIndex}
-						pageCount={pageCount}
-						canNextPage={canNextPage}
-						canPreviousPage={canPreviousPage}
-						setPage={gotoPage}
-						previousPage={previousPage}
-						nextPage={nextPage}
-					/>
-				) : undefined}
 			</>
 		);
 	}

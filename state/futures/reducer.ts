@@ -71,6 +71,9 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	errors: {},
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
+	preferences: {
+		showHistory: true,
+	},
 	dashboard: {
 		selectedPortfolioTimeframe: Period.ONE_WEEK,
 	},
@@ -360,6 +363,9 @@ const futuresSlice = createSlice({
 		},
 		setTradePanelDrawerOpen: (state, action: PayloadAction<boolean>) => {
 			state.tradePanelDrawerOpen = action.payload;
+		},
+		setShowTradeHistory: (state, action: PayloadAction<boolean>) => {
+			state.preferences.showHistory = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -722,6 +728,7 @@ export const {
 	setCrossSLTPModalStopLoss,
 	setCrossSLTPModalTakeProfit,
 	setTradePanelDrawerOpen,
+	setShowTradeHistory,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (
