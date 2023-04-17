@@ -1,3 +1,4 @@
+import { useAccountModal } from '@rainbow-me/rainbowkit';
 import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useEnsAvatar, useEnsName } from 'wagmi';
@@ -12,19 +13,20 @@ type MobileWalletButtonProps = {
 	toggleModal(): void;
 };
 
-export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }) => {
+export const MobileWalletActions: FC<MobileWalletButtonProps> = () => {
 	const { walletAddress } = Connector.useContainer();
 	const { data: ensAvatar } = useEnsAvatar({ address: walletAddress!, chainId: 1 });
 	const { data: ensName } = useEnsName({ address: walletAddress!, chainId: 1 });
 	const [walletLabel, setWalletLabel] = useState<string>('');
 	const truncatedWalletAddress = truncateAddress(walletAddress! ?? '');
+	const { openAccountModal } = useAccountModal();
 
 	useEffect(() => {
 		setWalletLabel(ensName || truncatedWalletAddress!);
 	}, [ensName, truncatedWalletAddress]);
 
 	return (
-		<StyledButton mono noOutline onClick={toggleModal}>
+		<StyledButton mono noOutline onClick={openAccountModal}>
 			{ensAvatar ? (
 				<StyledImage src={ensAvatar} alt={ensName || walletAddress!} width={16} height={16} />
 			) : (
