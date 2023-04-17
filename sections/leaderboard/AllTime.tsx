@@ -154,11 +154,12 @@ const AllTime: FC<AllTimeProps> = ({
 									Header: <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
 									accessor: 'pnl',
 									Cell: (cellProps: CellProps<any>) => (
-										<ColorCodedPrice
+										<Currency.Price
 											currencyKey="sUSD"
 											price={cellProps.row.original.pnl}
 											sign="$"
 											conversionRate={1}
+											colored={true}
 										/>
 									),
 									width: compact ? 'auto' : 100,
@@ -226,7 +227,12 @@ const AllTime: FC<AllTimeProps> = ({
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
-								<ColorCodedPrice currencyKey="sUSD" price={cellProps.row.original.pnl} sign="$" />
+								<Currency.Price
+									currencyKey="sUSD"
+									price={cellProps.row.original.pnl}
+									sign="$"
+									colored={true}
+								/>
 							),
 							width: 125,
 						},
@@ -236,16 +242,6 @@ const AllTime: FC<AllTimeProps> = ({
 		</>
 	);
 };
-
-const ColorCodedPrice = styled(Currency.Price)`
-	align-items: right;
-	color: ${(props) =>
-		props.price > 0
-			? props.theme.colors.selectedTheme.green
-			: props.price < 0
-			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text.primary};
-`;
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
