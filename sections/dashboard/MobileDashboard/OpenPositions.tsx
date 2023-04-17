@@ -41,14 +41,14 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 	const balances = useAppSelector(selectBalances);
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
-		PositionsTab.ISOLATED_MARGIN
+		PositionsTab.SMART_MARGIN
 	);
 
 	const POSITIONS_TABS = useMemo(
 		() => [
 			{
 				name: PositionsTab.SMART_MARGIN,
-				label: t('dashboard.overview.positions-tabs.cross-margin'),
+				label: t('dashboard.overview.positions-tabs.smart-margin'),
 				badge: smartPositionsCount,
 				active: activePositionsTab === PositionsTab.SMART_MARGIN,
 				detail: formatDollars(portfolio.crossMarginFutures),
@@ -118,10 +118,8 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 const TabButtonsContainer = styled.div`
 	display: flex;
 	margin: 16px 0;
-
-	& > button:not(:last-of-type) {
-		margin-right: 14px;
-	}
+	justify-content: space-between;
+	column-gap: 4px;
 `;
 
 export default OpenPositions;
