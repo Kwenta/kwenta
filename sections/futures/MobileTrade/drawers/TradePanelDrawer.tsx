@@ -48,7 +48,6 @@ const Closer = styled.div`
 const Foreground = styled.div`
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	border-radius: 8px 8px 0 0;
-	min-height: 580px;
 	max-height: 80%;
 `;
 

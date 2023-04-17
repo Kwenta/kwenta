@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import EligibleIcon from 'assets/svg/app/eligible.svg';
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
-import NotEligibleIcon from 'assets/svg/app/not-eligible.svg';
 import Badge from 'components/Badge';
 import { InfoBoxRow } from 'components/InfoBox';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
@@ -57,12 +56,12 @@ const TradingRewardRow = memo(() => {
 				<CompactBox $isEligible={isRewardEligible} onClick={goToStaking}>
 					<FlexDivRow style={{ marginBottom: '5px' }}>
 						<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
-						<Badge color={isRewardEligible ? 'yellow' : 'gray'}>
+						<Badge color="gray">
 							{t(`dashboard.stake.tabs.trading-rewards.${isRewardEligible ? '' : 'not-'}eligible`)}
 							{isRewardEligible ? (
 								<EligibleIcon viewBox="0 0 8 8" style={{ paddingLeft: '2px' }} />
 							) : (
-								<NotEligibleIcon width="12" height="12" viewBox="-1.5 -0.5 9 9" />
+								<EligibleIcon viewBox="0 0 8 8" style={{ paddingLeft: '2px' }} />
 							)}
 						</Badge>
 					</FlexDivRow>
@@ -115,7 +114,7 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 	${(props) => `
 		color: ${props.theme.colors.selectedTheme.text.value};
 		border-left: 2px solid 
-			${props.theme.colors.selectedTheme.badge[props.$isEligible ? 'yellow' : 'red'].background};
+			${props.theme.colors.selectedTheme.badge.gray.background};
 		`}
 `;
 

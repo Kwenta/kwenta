@@ -8,6 +8,7 @@ import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
 import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
+import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
@@ -64,6 +65,7 @@ const ManagePosition: React.FC = () => {
 	}, [previewTrade?.statusMessage, previewError, t]);
 
 	const onSubmit = useCallback(() => {
+		dispatch(setTradePanelDrawerOpen(false));
 		if (selectedAccountType === 'cross_margin' && !smartMarginAccount) {
 			dispatch(setOpenModal('futures_smart_margin_onboard'));
 			return;
