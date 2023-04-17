@@ -129,16 +129,16 @@ const ManagePosition: React.FC = () => {
 		if (isZero(susdSize)) {
 			return { message: 'Trade size required' };
 		}
+		if (orderType === 'market' && !!openOrder) {
+			return {
+				show: 'warn',
+				message: ERROR_MESSAGES.ORDER_PENDING,
+			};
+		}
 		if (selectedAccountType === 'cross_margin') {
 			if ((isZero(marginDelta) && isZero(susdSize)) || previewStatus.status !== FetchStatus.Success)
 				return { message: 'awaiting_preview' };
 			if (orderType !== 'market' && isZero(orderPrice)) return { message: 'trade price required' };
-		} else if (selectedAccountType === 'isolated_margin') {
-			if (orderType === 'market' && !!openOrder)
-				return {
-					show: 'warn',
-					message: ERROR_MESSAGES.ORDER_PENDING,
-				};
 		}
 
 		return null;
