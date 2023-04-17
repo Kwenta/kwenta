@@ -232,17 +232,19 @@ const TabButtonContainer = styled.div<{ numItems: number; mobile?: boolean }>`
 	display: grid;
 	grid-template-columns: ${({ numItems }) => `repeat(${numItems}, 1fr)`};
 	margin-bottom: ${({ mobile }) => (mobile ? '16px' : '0px')};
+	column-gap: 15px;
 `;
 
 const SearchContainer = styled.div<{ compact?: boolean; mobile?: boolean }>`
 	display: ${({ compact }) => (compact ? 'none' : 'flex')};
 	flex-direction: ${({ mobile }) => (mobile ? 'column' : 'row')};
 	margin-top: ${({ compact }) => (compact ? '0px' : '16px')};
+	column-gap: 15px;
 `;
 
 const SearchBarContainer = styled.div`
 	display: flex;
-	height: 35px;
+	height: 100%;
 	width: 100%;
 `;
 
