@@ -11,11 +11,6 @@ import { isSupportedNetworkId } from 'utils/network';
 import ConnectionDot from '../ConnectionDot';
 import MobileWalletActions from './MobileWalletActions';
 
-type MobileWalletButtonProps = {
-	toggleModal(): void;
-	closeModal(): void;
-};
-
 const MobileConnectButton = () => {
 	const { t } = useTranslation();
 	const { openConnectModal: connectWallet } = useConnectModal();
@@ -53,13 +48,13 @@ const MobileUnsupportedButton = () => {
 	);
 };
 
-const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) => {
+const MobileWalletButton: React.FC = () => {
 	const { network, isWalletConnected } = Connector.useContainer();
 
 	if (!isWalletConnected) {
 		return <MobileConnectButton />;
 	} else if (isSupportedNetworkId(network?.id as NetworkId)) {
-		return <MobileWalletActions toggleModal={toggleModal} />;
+		return <MobileWalletActions />;
 	} else {
 		return <MobileUnsupportedButton />;
 	}
