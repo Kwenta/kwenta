@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
+import { selectFuturesType } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 
 import ConditionalOrdersTab from './ConditionalOrdersTab';
 import OrdersTab from './OrdersTab';
@@ -29,17 +31,19 @@ const TABS = [
 	{
 		title: 'Transfers',
 		component: <TransfersTab />,
+		type: 'isolated_margin',
 	},
 ];
 
 const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
+	const accountType = useAppSelector(selectFuturesType);
 
 	return (
 		<Container>
 			<UserTabsContainer>
 				<TabButtonsContainer>
-					{TABS.map(({ title }, i) => (
+					{TABS.filter(({ type }) => !type || type === accountType).map(({ title }, i) => (
 						<TabButton
 							key={title}
 							title={title}
@@ -66,9 +70,8 @@ const UserTabsContainer = styled.div`
 `;
 
 const TabButtonsContainer = styled.div`
-	display: grid;
-	grid-template-columns: repeat(5, 1fr);
-	grid-gap: 0;
+	display: flex;
+	justify-content: space-between;
 `;
 
 export default UserTabs;
