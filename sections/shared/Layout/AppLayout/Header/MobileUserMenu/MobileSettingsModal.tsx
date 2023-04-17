@@ -8,15 +8,13 @@ import MobileAccountIcon from 'assets/svg/app/account-info.svg';
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
 import MobileSwitchIcon from 'assets/svg/app/mobile-switch.svg';
-import MoonIcon from 'assets/svg/app/moon.svg';
-import SunIcon from 'assets/svg/app/sun.svg';
 import FullScreenModal from 'components/FullScreenModal';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { languageIcon } from 'constants/menu';
 import ROUTES from 'constants/routes';
 import Logo from 'sections/shared/Layout/Logo';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { setTheme, setLanguage } from 'state/preferences/reducer';
+import { setLanguage } from 'state/preferences/reducer';
 import { selectCurrentTheme, selectLanguage } from 'state/preferences/selectors';
 import colors from 'styles/theme/colors';
 import { Language } from 'translations/constants';
@@ -51,10 +49,6 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 
 	const [expanded, setExpanded] = useState<SettingCategories>();
 	const currentTheme = useAppSelector(selectCurrentTheme);
-
-	const toggleTheme = () => {
-		dispatch(setTheme(currentTheme === 'light' ? 'dark' : 'light'));
-	};
 
 	const handleToggle = (category: SettingCategories) => () => {
 		setExpanded((c) => (category === c ? undefined : category));
@@ -132,47 +126,6 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 							}))}
 						/>
 					</div>
-
-					{!(window.location.pathname === ROUTES.Home.Root) && (
-						<div>
-							<MobileSubMenu
-								i18nLabel={t('mobile-menu.theme.title')}
-								onDismiss={onDismiss}
-								active={expanded === 'theme'}
-								onToggle={handleToggle('theme')}
-								options={[
-									{
-										label: t('mobile-menu.theme.options.dark'),
-										icon: (
-											<MoonIcon
-												fill={
-													currentTheme === 'dark'
-														? colors.common.secondaryGold
-														: colors.common.secondaryGray
-												}
-											/>
-										),
-										onClick: toggleTheme,
-										selected: currentTheme === 'dark',
-									},
-									{
-										label: t('mobile-menu.theme.options.light'),
-										icon: (
-											<SunIcon
-												fill={
-													currentTheme === 'light'
-														? colors.common.secondaryGold
-														: colors.common.secondaryGray
-												}
-											/>
-										),
-										onClick: toggleTheme,
-										selected: currentTheme === 'light',
-									},
-								]}
-							/>
-						</div>
-					)}
 				</div>
 			</Container>
 		</StyledFullScreenModal>
