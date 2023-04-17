@@ -87,7 +87,7 @@ export const usePollDashboardFuturesData = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType);
 
 	useFetchAction(fetchCombinedMarginTransfers, {
-		dependencies: [networkId, wallet, selectedAccountType],
+		dependencies: [networkId, wallet],
 		disabled: !wallet,
 	});
 
