@@ -12,6 +12,7 @@ import {
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
 	fetchAllTradesForAccount,
+	fetchCombinedMarginTransfers,
 } from './actions';
 import {
 	selectCrossMarginAccount,
@@ -85,7 +86,7 @@ export const usePollDashboardFuturesData = () => {
 	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 
-	useFetchAction(fetchMarginTransfers, {
+	useFetchAction(fetchCombinedMarginTransfers, {
 		dependencies: [networkId, wallet, selectedAccountType],
 		disabled: !wallet,
 	});
