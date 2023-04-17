@@ -54,36 +54,34 @@ export default function PositionChart({ mobile }: Props) {
 
 	return (
 		<Container visible={isChartReady}>
-			<InnerContainer>
-				<ChartContainer>
-					<TVChart
-						openOrders={openOrders}
-						activePosition={activePosition}
-						potentialTrade={
-							previewTrade
-								? {
-										price: modifiedAverage || previewTrade.price,
-										liqPrice: previewTrade.liqPrice,
-										size: previewTrade.size,
-								  }
-								: null
-						}
-						onChartReady={() => {
-							setIsChartReady(true);
-						}}
-						showOrderLines={showOrderLines}
-						onToggleShowOrderLines={onToggleLines}
-					/>
-				</ChartContainer>
-				{showHistory && !mobile && <TradesHistoryTable />}
-			</InnerContainer>
+			<ChartContainer>
+				<TVChart
+					openOrders={openOrders}
+					activePosition={activePosition}
+					potentialTrade={
+						previewTrade
+							? {
+									price: modifiedAverage || previewTrade.price,
+									liqPrice: previewTrade.liqPrice,
+									size: previewTrade.size,
+							  }
+							: null
+					}
+					onChartReady={() => {
+						setIsChartReady(true);
+					}}
+					showOrderLines={showOrderLines}
+					onToggleShowOrderLines={onToggleLines}
+				/>
+			</ChartContainer>
+			{showHistory && !mobile && <TradesHistoryTable />}
 		</Container>
 	);
 }
 
-const Container = styled.div<{ visible: boolean }>`
+const Container = styled(FlexDivRowCentered)<{ visible: boolean }>`
 		${media.greaterThan('mdUp')`
-		height: calc(100vh - 450px);
+		height: calc(100vh - 480px);
 		`}
 		${media.lessThan('md')`
 			height: 100%;
@@ -92,10 +90,6 @@ const Container = styled.div<{ visible: boolean }>`
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 
-`;
-
-const InnerContainer = styled(FlexDivRowCentered)`
-	height: 100%;
 `;
 
 const ChartContainer = styled.div`
