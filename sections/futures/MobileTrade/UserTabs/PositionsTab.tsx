@@ -1,10 +1,12 @@
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
+import { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
@@ -24,6 +26,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import TradePanelDrawer from '../drawers/TradePanelDrawer';
 
 const PositionsTab = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
@@ -81,7 +84,7 @@ const PositionsTab = () => {
 	return (
 		<PositionsTabContainer>
 			{data.length === 0 ? (
-				<></>
+				<TableNoResults>{t('dashboard.overview.futures-positions-table.no-result')}</TableNoResults>
 			) : (
 				data.map((row) => (
 					<PositionItem key={row.market.asset}>
