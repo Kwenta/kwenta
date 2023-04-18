@@ -67,7 +67,9 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 				)}
 			</FlexDivRowCentered>
 
-			{expanded && <DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>}
+			{expanded && accountType === 'cross_margin' && (
+				<DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>
+			)}
 		</Container>
 	);
 });

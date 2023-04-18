@@ -98,8 +98,14 @@ const StyledCard = styled(Card)`
 	border-radius: 10px;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
+	${media.lessThan('md')`
+		&&& {
+			width: 80%;
+		}
+	`}
 	${media.lessThan('sm')`
 		&&& {
+			width: 90%;
 			margin-top: 30px;
 		}
 	`}

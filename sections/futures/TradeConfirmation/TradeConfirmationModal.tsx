@@ -8,7 +8,6 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
 import { ButtonLoader } from 'components/Loader/Loader';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
@@ -34,7 +33,6 @@ import {
 	formatPercent,
 } from 'utils/formatters/number';
 
-import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import TradeConfirmationRow from './TradeConfirmationRow';
 import TradeConfirmationSummary from './TradeConfirmationSummary';
 
@@ -182,89 +180,63 @@ export default function TradeConfirmationModal({
 		: t(`futures.market.trade.confirmation.modal.approve-order`);
 
 	return (
-		<>
-			<DesktopOnlyView>
-				<StyledBaseModal
-					onDismiss={onDismiss}
-					isOpen
-					title={t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)}
-				>
-					<Spacer height={8} />
-					<TradeConfirmationSummary
-						marketAsset={marketAsset}
-						nativeSizeDelta={potentialTradeDetails?.sizeDelta ?? zeroBN}
-						leverageSide={leverageSide}
-						orderType={orderType}
-						leverage={wei(leverageInput || '0')}
-					/>
-					<RowsContainer>
-						{dataRows.map((row, i) => {
-							if (!row) return null;
-							return (
-								<TradeConfirmationRow key={`datarow-${i}`}>
-									{row.tooltipContent ? (
-										<Tooltip
-											height="auto"
-											preset="bottom"
-											width="300px"
-											content={row.tooltipContent}
-											style={{ padding: 10, textTransform: 'none', left: '80%' }}
-										>
-											<Label>
-												{row.label}
-												<StyledHelpIcon />
-											</Label>
-										</Tooltip>
-									) : (
-										<Label>{row.label}</Label>
-									)}
+		<StyledBaseModal
+			onDismiss={onDismiss}
+			isOpen
+			title={t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)}
+		>
+			<Spacer height={8} />
+			<TradeConfirmationSummary
+				marketAsset={marketAsset}
+				nativeSizeDelta={potentialTradeDetails?.sizeDelta ?? zeroBN}
+				leverageSide={leverageSide}
+				orderType={orderType}
+				leverage={wei(leverageInput || '0')}
+			/>
+			<RowsContainer>
+				{dataRows.map((row, i) => {
+					if (!row) return null;
+					return (
+						<TradeConfirmationRow key={`datarow-${i}`}>
+							{row.tooltipContent ? (
+								<Tooltip
+									height="auto"
+									preset="bottom"
+									width="300px"
+									content={row.tooltipContent}
+									style={{ padding: 10, textTransform: 'none', left: '80%' }}
+								>
+									<Label>
+										{row.label}
+										<StyledHelpIcon />
+									</Label>
+								</Tooltip>
+							) : (
+								<Label>{row.label}</Label>
+							)}
 
-									<Value>
-										<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
-									</Value>
-								</TradeConfirmationRow>
-							);
-						})}
-					</RowsContainer>
-					<ConfirmTradeButton
-						data-testid="trade-open-position-confirm-order-button"
-						variant={isSubmitting ? 'flat' : leverageSide}
-						onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
-						className={leverageSide}
-						disabled={!positionDetails || isSubmitting || !!disabledReason}
-					>
-						{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
-					</ConfirmTradeButton>
-					{errorMessage && (
-						<ErrorContainer>
-							<ErrorView message={errorMessage} />
-						</ErrorContainer>
-					)}
-				</StyledBaseModal>
-			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<BaseDrawer
-					open
-					closeDrawer={onDismiss}
-					items={dataRows}
-					buttons={
-						<MobileConfirmTradeButton
-							className={leverageSide}
-							onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
-							disabled={!positionDetails || isSubmitting || !!disabledReason}
-							variant={isSubmitting ? 'flat' : leverageSide}
-						>
-							{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
-						</MobileConfirmTradeButton>
-					}
-				/>
-				{errorMessage && (
-					<ErrorContainer>
-						<ErrorView message={errorMessage} />
-					</ErrorContainer>
-				)}
-			</MobileOrTabletView>
-		</>
+							<Value>
+								<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
+							</Value>
+						</TradeConfirmationRow>
+					);
+				})}
+			</RowsContainer>
+			<ConfirmTradeButton
+				data-testid="trade-open-position-confirm-order-button"
+				variant={isSubmitting ? 'flat' : leverageSide}
+				onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
+				className={leverageSide}
+				disabled={!positionDetails || isSubmitting || !!disabledReason}
+			>
+				{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
+			</ConfirmTradeButton>
+			{errorMessage && (
+				<ErrorContainer>
+					<ErrorView message={errorMessage} />
+				</ErrorContainer>
+			)}
+		</StyledBaseModal>
 	);
 }
 
