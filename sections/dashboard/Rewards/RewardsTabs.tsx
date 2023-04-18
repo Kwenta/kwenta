@@ -116,7 +116,7 @@ const RewardsTabs: FC = () => {
 
 	return (
 		<RewardsTabContainer>
-			<FlexDivRowCentered style={{ marginBottom: '22.5px' }}>
+			<HeaderContainer>
 				<StyledFlexDivCol>
 					<Heading variant="h4" className="title">
 						{t('dashboard.rewards.title')}
@@ -132,7 +132,7 @@ const RewardsTabs: FC = () => {
 				>
 					{t('dashboard.rewards.claim-all')}
 				</Pill>
-			</FlexDivRowCentered>
+			</HeaderContainer>
 			<CardsContainer>
 				{REWARDS.map((reward) => (
 					<CardGrid key={reward.key}>
@@ -204,6 +204,14 @@ const RewardsTabs: FC = () => {
 	);
 };
 
+const HeaderContainer = styled(FlexDivRowCentered)`
+	margin-bottom: 22.5px;
+
+	${media.lessThan('mdUp')`
+		flex-direction: column;
+		row-gap: 15px;
+	`}
+`;
 const SpacedHelpIcon = styled(HelpIcon)`
 	margin-left: 5px;
 `;
@@ -211,6 +219,7 @@ const SpacedHelpIcon = styled(HelpIcon)`
 const RewardsTabContainer = styled.div`
 	${media.lessThan('mdUp')`
 		padding: 15px;
+
 	`}
 
 	${media.greaterThan('mdUp')`
@@ -243,6 +252,10 @@ const CardsContainer = styled.div`
 	width: 100%;
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 20px;
+
+	${media.lessThan('mdUp')`
+		grid-template-columns: repeat(1, 1fr);
+	`}
 `;
 
 const StyledFlexDivCol = styled(FlexDivCol)`
