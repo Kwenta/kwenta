@@ -327,6 +327,7 @@ const SelectContainer = styled.div<{ mobile?: boolean }>`
 			width: 100%;
 			border-bottom: ${props.theme.colors.selectedTheme.border};
 			position: absolute;
+			top: 0;
 			left: 0;
 			right: 0;
 			height: ${MARKET_SELECTOR_HEIGHT_MOBILE + 1}px;
