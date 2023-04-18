@@ -1,9 +1,8 @@
 import Wei from '@synthetixio/wei';
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
-import ColoredPrice from 'components/ColoredPrice';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FlexDivCentered } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
@@ -32,29 +31,34 @@ type Props = {
 const MarketsDropdownSelector: FC<Props> = (props) => (
 	<Container {...props}>
 		<ContentContainer mobile={props.mobile}>
-			<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width="31px" height="31px" />
-			<div className="currency-meta">
-				<CurrencyLabel weight="bold">
-					{props.label}
-					<MarketBadge
-						currencyKey={props.asset}
-						isFuturesMarketClosed={props.isMarketClosed}
-						futuresClosureReason={props.closureReason}
-					/>
-				</CurrencyLabel>
-			</div>
-			{props.mobile && (
-				<div style={{ marginRight: 15 }}>
-					<ColoredPrice priceInfo={props.priceDetails.priceInfo}>
-						{formatDollars(props.priceDetails.priceInfo?.price ?? '0')}
-					</ColoredPrice>
-					<NumericValue value={props.priceDetails.oneDayChange} colored>
-						{formatPercent(props.priceDetails.oneDayChange)}
-					</NumericValue>
+			<LeftContainer $mobile={props.mobile}>
+				<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width="31px" height="31px" />
+				<div className="currency-meta">
+					<CurrencyLabel weight="bold">
+						{props.label}
+						<MarketBadge
+							currencyKey={props.asset}
+							isFuturesMarketClosed={props.isMarketClosed}
+							futuresClosureReason={props.closureReason}
+						/>
+					</CurrencyLabel>
 				</div>
+				{props.mobile && <StyledCaretDownIcon />}
+			</LeftContainer>
+			{props.mobile && (
+				<MobileRightContainer>
+					<div>
+						<NumericValue value={props.priceDetails.priceInfo}>
+							{formatDollars(props.priceDetails.priceInfo?.price ?? '0')}
+						</NumericValue>
+						<NumericValue value={props.priceDetails.oneDayChange} colored>
+							{formatPercent(props.priceDetails.oneDayChange)}
+						</NumericValue>
+					</div>
+				</MobileRightContainer>
 			)}
 
-			<StyledCaretDownIcon />
+			{!props.mobile && <StyledCaretDownIcon />}
 		</ContentContainer>
 	</Container>
 );
@@ -90,43 +94,39 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		background: ${(props) =>
 			props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
 	}
-	.name {
-		font-family: ${(props) => props.theme.fonts.regular};
-		font-size: 12.5px;
-		line-height: 12.5px;
-		margin: 0;
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
 
 	p {
 		margin: 0;
-	}
-
-	.price {
-		font-family: ${(props) => props.theme.fonts.mono};
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-		font-size: 15px;
-	}
-
-	.change {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11.5px;
-		text-align: right;
 	}
 
 	&:not(:last-of-type) {
 		margin-bottom: 4px;
 	}
 
-	.green {
-		color: ${(props) => props.theme.colors.selectedTheme.green};
-	}
-
-	.red {
-		color: ${(props) => props.theme.colors.selectedTheme.red};
-	}
 	height: ${(props) =>
 		props.mobile ? MARKET_SELECTOR_HEIGHT_MOBILE : MARKETS_DETAILS_HEIGHT_DESKTOP - 2}px;
+`;
+
+const LeftContainer = styled.div<{ $mobile?: boolean }>`
+	flex: 1;
+	display: flex;
+	align-items: center;
+
+	${(props) =>
+		props.$mobile &&
+		css`
+			padding-right: 15px;
+			border-right: ${props.theme.colors.selectedTheme.border};
+		`}
+`;
+
+const MobileRightContainer = styled.div`
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding-left: 15px;
+	text-align: right;
 `;
 
 export default MarketsDropdownSelector;

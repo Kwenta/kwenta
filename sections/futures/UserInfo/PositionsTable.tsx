@@ -84,6 +84,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					rounded={false}
 					hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
 					columnsDeps={[accountType]}
+					noBottom={true}
 					noResultsMessage={
 						!isL2 ? (
 							<TableNoResults>
@@ -352,6 +353,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 const Container = styled.div`
 	width: 100%;
 	overflow: scroll;
+	height: 100%;
 `;
 
 const TableContainer = styled.div`

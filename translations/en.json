@@ -682,6 +682,12 @@
 	},
 	"futures": {
 		"page-title": "Kwenta Futures",
+		"cta-buttons": {
+			"copy": "Isolated margin is being replaced with smart margin, where you will have access to conditional orders and be eligible for trading rewards. ",
+			"learn-more": "Learn more",
+			"switch-to-smart-margin": "Switch to Smart Margin",
+			"dismiss": "Dismiss"
+		},
 		"wallet-overview": {
 			"no-positions": "You have no open positions. Open a position now: ",
 			"title": "wallet overview",
