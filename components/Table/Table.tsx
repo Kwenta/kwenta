@@ -291,6 +291,7 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
 	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom-width: 0;
 	${(props) =>
 		props.$rounded
 			? css`

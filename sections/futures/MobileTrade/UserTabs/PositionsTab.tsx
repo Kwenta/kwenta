@@ -9,6 +9,8 @@ import Spacer from 'components/Spacer/Spacer';
 import { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
@@ -28,6 +30,9 @@ import TradePanelDrawer from '../drawers/TradePanelDrawer';
 const PositionsTab = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const isL2 = useIsL2();
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
@@ -45,7 +50,6 @@ const PositionsTab = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-
 				return {
 					market: market!,
 					position: position.position!,
@@ -58,8 +62,8 @@ const PositionsTab = () => {
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1));
 	}, [
 		accountType,
-		isolatedPositions,
 		crossMarginPositions,
+		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
@@ -84,7 +88,16 @@ const PositionsTab = () => {
 	return (
 		<PositionsTabContainer>
 			{data.length === 0 ? (
-				<TableNoResults>{t('dashboard.overview.futures-positions-table.no-result')}</TableNoResults>
+				!isL2 ? (
+					<TableNoResults>
+						{t('common.l2-cta')}
+						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+					</TableNoResults>
+				) : (
+					<TableNoResults>
+						{t('dashboard.overview.futures-positions-table.no-result')}
+					</TableNoResults>
+				)
 			) : (
 				data.map((row) => (
 					<PositionItem key={row.market.asset}>
@@ -99,7 +112,9 @@ const PositionsTab = () => {
 								</div>
 							</FlexDiv>
 							<div>
-								<Pill onClick={handleOpenPositionCloseModal(row.market.marketKey)}>Close</Pill>
+								<Pill size="medium" onClick={handleOpenPositionCloseModal(row.market.marketKey)}>
+									Close
+								</Pill>
 							</div>
 						</PositionMeta>
 						<PositionRow>
@@ -153,16 +168,17 @@ const PositionsTab = () => {
 								{row.takeProfit === undefined ? (
 									<Body>{NO_VALUE}</Body>
 								) : (
-									<NumericValue value={row.takeProfit} />
+									<Currency.Price price={row.takeProfit} />
 								)}
 								<Spacer width={5} />
 								{row.stopLoss === undefined ? (
 									<Body>{NO_VALUE}</Body>
 								) : (
-									<NumericValue value={row.stopLoss} />
+									<Currency.Price price={row.stopLoss} />
 								)}
 								<Spacer width={5} />
 								<Pill
+									size="medium"
 									onClick={() =>
 										dispatch(
 											setShowPositionModal({

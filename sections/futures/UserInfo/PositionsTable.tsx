@@ -14,7 +14,6 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { ConditionalOrderTypeEnum } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import {
@@ -24,10 +23,9 @@ import {
 	selectMarketAsset,
 	selectMarkets,
 	selectPositionHistory,
-	selectAllSLTPOrders,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, formatPercent } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 import TableMarketDetails from './TableMarketDetails';
 
@@ -50,7 +48,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const accountType = useAppSelector(selectFuturesType);
-	const sltpOrders = useAppSelector(selectAllSLTPOrders);
 
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
@@ -60,18 +57,12 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-				const stopLoss = sltpOrders.find(
-					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
-				);
-				const takeProfit = sltpOrders.find(
-					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
-				);
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: formatDollars(stopLoss?.targetPrice ?? 0, { suggestDecimals: true }),
-					takeProfit: formatDollars(takeProfit?.targetPrice ?? 0, { suggestDecimals: true }),
+					stopLoss: position.stopLoss,
+					takeProfit: position.takeProfit,
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -83,7 +74,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
-		sltpOrders,
 	]);
 
 	return (
@@ -297,12 +287,12 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											{cellProps.row.original.takeProfit === undefined ? (
 												<Body>{NO_VALUE}</Body>
 											) : (
-												<div className="value">{cellProps.row.original.takeProfit}</div>
+												<Currency.Price price={cellProps.row.original.takeProfit} />
 											)}
 											{cellProps.row.original.stopLoss === undefined ? (
 												<Body>{NO_VALUE}</Body>
 											) : (
-												<div className="value">{cellProps.row.original.stopLoss}</div>
+												<Currency.Price price={cellProps.row.original.stopLoss} />
 											)}
 										</div>
 										{accountType === 'cross_margin' && (
