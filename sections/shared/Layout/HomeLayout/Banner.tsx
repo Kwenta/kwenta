@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -12,23 +12,24 @@ import media from 'styles/media';
 const Banner = memo(() => {
 	const router = useRouter();
 	const currentMarket = useAppSelector(selectMarketAsset);
+
+	const switchToSM = useCallback(() => {
+		router.push(ROUTES.Markets.MarketPair(currentMarket, 'cross_margin'));
+	}, [currentMarket, router]);
+
 	if (!BANNER_ENABLED) return null;
 	if (router.pathname === '/market' && router.query.accountType === 'isolated_margin') {
 		return (
 			<>
 				<DesktopOnlyView>
-					<FuturesBannerContainer
-						onClick={() => router.push(ROUTES.Markets.MarketPair(currentMarket, 'cross_margin'))}
-					>
+					<FuturesBannerContainer onClick={() => switchToSM()}>
 						<FuturesBannerLinkWrapper>
 							<FuturesLink>{BANNER_TEXT}</FuturesLink>
 						</FuturesBannerLinkWrapper>
 					</FuturesBannerContainer>
 				</DesktopOnlyView>
 				<MobileOrTabletView>
-					<FuturesBannerContainer
-						onClick={() => router.push(ROUTES.Markets.MarketPair(currentMarket, 'cross_margin'))}
-					>
+					<FuturesBannerContainer onClick={() => switchToSM()}>
 						<FuturesLink>{BANNER_TEXT}</FuturesLink>
 					</FuturesBannerContainer>
 				</MobileOrTabletView>

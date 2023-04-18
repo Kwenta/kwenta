@@ -353,6 +353,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 const Container = styled.div`
 	width: 100%;
 	overflow: scroll;
+	height: 100%;
 `;
 
 const TableContainer = styled.div`
