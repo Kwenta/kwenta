@@ -36,6 +36,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	totalVestable: '0',
 	escrowData: [],
 	totalRewards: '0',
+	totalRewardsAll: '0',
 	kwentaOpRewards: '0',
 	snxOpRewards: '0',
 	claimableRewards: [],
@@ -108,12 +109,8 @@ const stakingSlice = createSlice({
 			state.totalRewards = action.payload.totalRewards;
 		});
 		builder.addCase(fetchClaimableRewardsAll.fulfilled, (state, action) => {
-			state.claimableRewards = action.payload.claimableRewards;
 			state.claimableRewardsAll = action.payload.claimableRewardsAll;
-			state.claimableRewardsOp = action.payload.claimableRewardsOp;
-			state.totalRewards = action.payload.totalRewards;
-			state.kwentaOpRewards = action.payload.kwentaOpRewards;
-			state.snxOpRewards = action.payload.snxOpRewards;
+			state.totalRewardsAll = action.payload.totalRewardsAll;
 		});
 		builder.addCase(stakeKwenta.pending, (state) => {
 			state.stakeStatus = FetchStatus.Loading;

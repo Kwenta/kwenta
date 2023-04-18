@@ -19,6 +19,7 @@ export type StakingState = {
 	totalVestable: string;
 	escrowData: EscrowData<string>[];
 	totalRewards: string;
+	totalRewardsAll: string;
 	kwentaOpRewards: string;
 	snxOpRewards: string;
 	claimableRewards: ClaimParams[][];

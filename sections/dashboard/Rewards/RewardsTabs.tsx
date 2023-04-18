@@ -22,7 +22,7 @@ import {
 	selectEpochPeriod,
 	selectKwentaOpRewards,
 	selectSnxOpRewards,
-	selectTotalRewards,
+	selectTotalRewardsAll,
 } from 'state/staking/selectors';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
@@ -34,7 +34,7 @@ const RewardsTabs: FC = () => {
 	const router = useRouter();
 	const network = useAppSelector(selectNetwork);
 	const walletAddress = useAppSelector(selectWallet);
-	const tradingRewards = useAppSelector(selectTotalRewards);
+	const tradingRewards = useAppSelector(selectTotalRewardsAll);
 	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
 	const epoch = useAppSelector(selectEpochPeriod);

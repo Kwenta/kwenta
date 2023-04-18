@@ -178,18 +178,10 @@ export const fetchClaimableRewards = createAsyncThunk<
 
 export const fetchClaimableRewardsAll = createAsyncThunk<
 	{
-		claimableRewards: Awaited<
-			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards'][];
 		claimableRewardsAll: Awaited<
 			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
 		>['claimableRewards'][];
-		claimableRewardsOp: Awaited<
-			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards'];
-		totalRewards: string;
-		kwentaOpRewards: string;
-		snxOpRewards: string;
+		totalRewardsAll: string;
 	},
 	void,
 	ThunkConfig
@@ -208,18 +200,9 @@ export const fetchClaimableRewardsAll = createAsyncThunk<
 		totalRewards: totalRewardsV2,
 	} = await sdk.kwentaToken.getClaimableRewardsAll(epochPeriod, false);
 
-	const {
-		claimableRewards: claimableRewardsOp,
-		totalRewards: totalRewardsOp,
-	} = await sdk.kwentaToken.getClaimableRewardsAll(epochPeriod, false, true);
-
 	return {
-		claimableRewards: [claimableRewardsV1, claimableRewardsV2],
-		claimableRewardsAll: [claimableRewardsV1, claimableRewardsV2, claimableRewardsOp],
-		claimableRewardsOp,
-		totalRewards: totalRewardsV1.add(totalRewardsV2).toString(),
-		kwentaOpRewards: totalRewardsOp.toString(),
-		snxOpRewards: totalRewardsOp.toString(),
+		claimableRewardsAll: [claimableRewardsV1, claimableRewardsV2],
+		totalRewardsAll: totalRewardsV1.add(totalRewardsV2).toString(),
 	};
 });
 
@@ -253,14 +236,14 @@ export const claimMultipleRewardsAll = createAsyncThunk<void, void, ThunkConfig>
 			staking: { claimableRewardsAll },
 		} = getState();
 
-		const { hash } = await sdk.kwentaToken.claimMultipleRewards(claimableRewardsAll);
+		const { hash } = await sdk.kwentaToken.claimMultipleRewardsAll(claimableRewardsAll);
 
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
-				dispatch(fetchClaimableRewards());
+				dispatch(fetchClaimableRewardsAll());
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Error });

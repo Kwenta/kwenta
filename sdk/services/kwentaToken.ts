@@ -511,6 +511,8 @@ export default class KwentaTokenService {
 			rewards.map((reward) =>
 				isOldDistributor
 					? MultipleMerkleDistributor.isClaimed(reward[0], reward[4])
+					: isOp
+					? MultipleMerkleDistributorOp.isClaimed(reward[0], reward[4])
 					: MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4])
 			)
 		);
@@ -565,11 +567,7 @@ export default class KwentaTokenService {
 		}
 
 		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
-			[
-				MultipleMerkleDistributor.address,
-				MultipleMerkleDistributorPerpsV2.address,
-				MultipleMerkleDistributorOp.address,
-			],
+			[MultipleMerkleDistributor.address, MultipleMerkleDistributorPerpsV2.address],
 			claimableRewards,
 		]);
 	}

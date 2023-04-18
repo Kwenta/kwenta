@@ -23,7 +23,7 @@ import {
 	selectEpochPeriod,
 	selectKwentaOpRewards,
 	selectSnxOpRewards,
-	selectTotalRewards,
+	selectTotalRewardsAll,
 } from 'state/staking/selectors';
 import media from 'styles/media';
 import {
@@ -40,7 +40,7 @@ const BalanceActions: FC = () => {
 	const theme = useTheme();
 	const router = useRouter();
 	const epoch = useAppSelector(selectEpochPeriod);
-	const tradingRewards = useAppSelector(selectTotalRewards);
+	const tradingRewards = useAppSelector(selectTotalRewardsAll);
 	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
 	const [open, setOpen] = useState(false);
