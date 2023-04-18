@@ -1,9 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { FlexDiv } from 'components/layout/flex';
+import Pill from 'components/Pill';
+import Spacer from 'components/Spacer';
+import { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import {
 	DEFAULT_DELAYED_CANCEL_BUFFER,
 	DEFAULT_DELAYED_EXECUTION_BUFFER,
@@ -12,14 +15,17 @@ import useInterval from 'hooks/useInterval';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
+import PositionType from 'sections/futures/PositionType';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
-import { selectOpenDelayedOrders, selectMarketAsset, selectMarkets } from 'state/futures/selectors';
-import { DelayedOrderWithDetails } from 'state/futures/types';
+import {
+	selectOpenDelayedOrders,
+	selectMarketAsset,
+	selectMarkets,
+	selectIsExecutingOrder,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, suggestedDecimals } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
-
-import OrderDrawer from '../drawers/OrderDrawer';
 
 type CountdownTimers = Record<
 	FuturesMarketKey,
@@ -27,8 +33,8 @@ type CountdownTimers = Record<
 >;
 
 const OrdersTab: React.FC = () => {
-	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
+	const { t } = useTranslation();
 	const { switchToL2 } = useNetworkSwitcher();
 	const isL2 = useIsL2();
 
@@ -36,9 +42,23 @@ const OrdersTab: React.FC = () => {
 	// TODO: Requires changes to bring back support for cross margin
 	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders);
 	const futuresMarkets = useAppSelector(selectMarkets);
+	const isExecuting = useAppSelector(selectIsExecutingOrder);
 
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
-	const [selectedOrder, setSelectedOrder] = useState<DelayedOrderWithDetails | undefined>();
+
+	const handleCancel = useCallback(
+		(marketAddress: string, isOffchain: boolean) => () => {
+			dispatch(cancelDelayedOrder({ marketAddress, isOffchain }));
+		},
+		[dispatch]
+	);
+
+	const handleExecute = useCallback(
+		(marketKey: FuturesMarketKey, marketAddress: string, isOffchain: boolean) => () => {
+			dispatch(executeDelayedOrder({ marketKey, marketAddress, isOffchain }));
+		},
+		[dispatch]
+	);
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openDelayedOrders
@@ -81,23 +101,6 @@ const OrdersTab: React.FC = () => {
 								? market.settings.offchainDelayedOrderMaxAge
 								: market.settings.maxDelayTimeDelta),
 					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
-					onCancel: () => {
-						dispatch(
-							cancelDelayedOrder({
-								marketAddress: o.marketAddress,
-								isOffchain: o.isOffchain,
-							})
-						);
-					},
-					onExecute: () => {
-						dispatch(
-							executeDelayedOrder({
-								marketKey: o.marketKey,
-								marketAddress: o.marketAddress,
-								isOffchain: o.isOffchain,
-							})
-						);
-					},
 				};
 				return order;
 			})
@@ -109,7 +112,7 @@ const OrdersTab: React.FC = () => {
 					: -1;
 			});
 		return ordersWithCancel;
-	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
+	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers]);
 
 	useInterval(
 		() => {
@@ -131,7 +134,7 @@ const OrdersTab: React.FC = () => {
 	);
 
 	return (
-		<div>
+		<OrdersTabContainer>
 			{!isL2 ? (
 				<TableNoResults style={{ marginTop: '15px' }}>
 					{t('common.l2-cta')}
@@ -142,73 +145,111 @@ const OrdersTab: React.FC = () => {
 					{t('futures.market.user.open-orders.table.no-result')}
 				</TableNoResults>
 			) : (
-				<StyledTable
-					data={rowsData}
-					rounded={false}
-					onTableRowClick={(row) => setSelectedOrder(row.original)}
-					columns={[
-						{
-							Header: (
-								<TableHeader>{t('futures.market.user.open-orders.table.side-type')}</TableHeader>
-							),
-							accessor: 'side/type',
-							Cell: (cellProps: CellProps<any>) => (
+				rowsData.map((order) => (
+					<OrderItem>
+						<OrderMeta $side={order.side}>
+							<FlexDiv>
+								<div className="position-side-bar" />
 								<div>
-									<MobilePositionSide $side={cellProps.row.original.side}>
-										{cellProps.row.original.side}
-									</MobilePositionSide>
-									<div>{cellProps.row.original.orderType}</div>
+									<Body>{order.market}</Body>
+									<Body capitalized color="secondary">
+										{order.orderType}
+									</Body>
 								</div>
-							),
-							width: 100,
-						},
-						{
-							Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
-							accessor: 'size',
-							Cell: (cellProps: CellProps<any>) => {
-								return (
-									<div>
-										<div>{cellProps.row.original.sizeTxt}</div>
-									</div>
-								);
-							},
-						},
-					]}
-				/>
+							</FlexDiv>
+							<FlexDiv>
+								{order.show && order.isStale && (
+									<Pill
+										size="medium"
+										onClick={handleCancel(order.marketAddress, order.isOffchain)}
+										disabled={order.isCancelling}
+										color="red"
+									>
+										Cancel
+									</Pill>
+								)}
+								{order.show && !order.isStale && order.isFailed && (
+									<>
+										<Spacer width={10} />
+										<Pill
+											size="medium"
+											onClick={handleExecute(
+												order.marketKey,
+												order.marketAddress,
+												order.isOffchain
+											)}
+											disabled={isExecuting}
+										>
+											Execute
+										</Pill>
+									</>
+								)}
+							</FlexDiv>
+						</OrderMeta>
+						<OrderRow>
+							<Body color="secondary">Size</Body>
+							<Body mono>{order.sizeTxt}</Body>
+						</OrderRow>
+						<OrderRow>
+							<Body color="secondary">Side</Body>
+							<PositionType side={order.side} />
+						</OrderRow>
+						<OrderRow>
+							<Body color="secondary">Status</Body>
+							<div>
+								{order.show &&
+									(order.isStale ? (
+										<Body>{t('futures.market.user.open-orders.status.expired')}</Body>
+									) : order.isFailed ? (
+										<Body>{t('futures.market.user.open-orders.status.failed')}</Body>
+									) : (
+										<Body>{t('futures.market.user.open-orders.status.pending')}</Body>
+									))}
+							</div>
+						</OrderRow>
+					</OrderItem>
+				))
 			)}
-			{selectedOrder && (
-				<OrderDrawer
-					open={!!selectedOrder}
-					order={selectedOrder}
-					closeDrawer={() => setSelectedOrder(undefined)}
-				/>
-			)}
-		</div>
+		</OrdersTabContainer>
 	);
 };
 
-const StyledTable = styled(Table)`
-	margin-bottom: 20px;
+const OrdersTabContainer = styled.div`
+	padding-top: 15px;
 `;
 
-const MobilePositionSide = styled.div<{ $side: PositionSide }>`
-	text-transform: uppercase;
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	letter-spacing: 1.4px;
-	margin-bottom: 4px;
+const OrderMeta = styled.div<{ $side: PositionSide }>`
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px;
 
-	${(props) =>
-		props.$side === 'long' &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.green};
-		`};
+	.position-side-bar {
+		height: 100%;
+		width: 4px;
+		margin-right: 8px;
+		background-color: ${(props) =>
+			props.theme.colors.selectedTheme.newTheme.text[
+				props.$side === PositionSide.LONG ? 'positive' : 'negative'
+			]};
+	}
+`;
 
-	${(props) =>
-		props.$side === 'short' &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.red};
-		`};
+const OrderItem = styled.div`
+	margin: 0 20px;
+	padding: 20px 0;
+
+	&:not(:last-of-type) {
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
+`;
+
+const OrderRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+
+	&:not(:last-of-type) {
+		margin-bottom: 10px;
+	}
 `;
 
 export default OrdersTab;

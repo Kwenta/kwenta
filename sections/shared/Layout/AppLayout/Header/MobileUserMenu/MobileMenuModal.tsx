@@ -167,6 +167,7 @@ const Container = styled.div<{ hasBorder?: boolean }>`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	overflow-y: scroll;
 
 	${(props) =>
 		props.hasBorder &&
