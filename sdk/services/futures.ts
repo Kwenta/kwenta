@@ -1034,8 +1034,9 @@ export default class FuturesService {
 			crossMarginAddress,
 			this.sdk.context.signer
 		);
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'withdrawEth', [
-			amount.toBN(),
+		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+			[AccountExecuteFunctions.ACCOUNT_WITHDRAW_ETH],
+			[defaultAbiCoder.encode(['uint256'], [amount.toBN()])],
 		]);
 	}
 
