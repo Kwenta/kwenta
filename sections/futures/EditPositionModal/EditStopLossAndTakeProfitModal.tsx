@@ -15,7 +15,7 @@ import { ConditionalOrderTypeEnum, PositionSide } from 'sdk/types/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import { calculateKeeperDeposit, updateStopLossAndTakeProfit } from 'state/futures/actions';
-import { setCrossSLTPModalStopLoss, setCrossSLTPModalTakeProfit } from 'state/futures/reducer';
+import { setSLTPModalStopLoss, setSLTPModalTakeProfit } from 'state/futures/reducer';
 import {
 	selectAllSLTPOrders,
 	selectEditPositionModalInfo,
@@ -38,6 +38,7 @@ export default function EditStopLossAndTakeProfitModal() {
 	const dispatch = useAppDispatch();
 	const transactionState = useAppSelector(selectTransaction);
 	const { market, marketPrice, position } = useAppSelector(selectEditPositionModalInfo);
+	const exsistingSLTPOrders = useAppSelector(selectAllSLTPOrders);
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs);
 	const keeperDeposit = useAppSelector(selectSmartMarginKeeperDeposit);
@@ -79,8 +80,22 @@ export default function EditStopLossAndTakeProfitModal() {
 	);
 
 	useEffect(() => {
-		dispatch(setCrossSLTPModalStopLoss(''));
-		dispatch(setCrossSLTPModalTakeProfit(''));
+		const existingSL = exsistingSLTPOrders.find(
+			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
+		);
+		const existingTP = exsistingSLTPOrders.find(
+			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
+		);
+		dispatch(
+			setSLTPModalStopLoss(
+				existingSL?.targetPrice ? stripZeros(existingSL.targetPrice.toString()) : ''
+			)
+		);
+		dispatch(
+			setSLTPModalTakeProfit(
+				existingTP?.targetPrice ? stripZeros(existingTP.targetPrice.toString()) : ''
+			)
+		);
 		dispatch(calculateKeeperDeposit());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -89,7 +104,7 @@ export default function EditStopLossAndTakeProfitModal() {
 		(index) => {
 			const option = SL_OPTIONS[index];
 			if (option === 'none') {
-				dispatch(setCrossSLTPModalStopLoss('0'));
+				dispatch(setSLTPModalStopLoss(''));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 				const relativePercent = wei(percent).div(leverageWei);
@@ -98,7 +113,7 @@ export default function EditStopLossAndTakeProfitModal() {
 						? marketPrice.add(marketPrice.mul(relativePercent))
 						: marketPrice.sub(marketPrice.mul(relativePercent));
 				const dp = suggestedDecimals(stopLoss);
-				dispatch(setCrossSLTPModalStopLoss(stopLoss.toString(dp)));
+				dispatch(setSLTPModalStopLoss(stopLoss.toString(dp)));
 			}
 		},
 		[marketPrice, dispatch, position?.position?.side, leverageWei]
@@ -108,7 +123,7 @@ export default function EditStopLossAndTakeProfitModal() {
 		(index) => {
 			const option = TP_OPTIONS[index];
 			if (option === 'none') {
-				dispatch(setCrossSLTPModalTakeProfit('0'));
+				dispatch(setSLTPModalTakeProfit(''));
 			} else {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 				const relativePercent = wei(percent).div(leverageWei);
@@ -117,7 +132,7 @@ export default function EditStopLossAndTakeProfitModal() {
 						? marketPrice.sub(marketPrice.mul(relativePercent))
 						: marketPrice.add(marketPrice.mul(relativePercent));
 				const dp = suggestedDecimals(takeProfit);
-				dispatch(setCrossSLTPModalTakeProfit(takeProfit.toString(dp)));
+				dispatch(setSLTPModalTakeProfit(takeProfit.toString(dp)));
 			}
 		},
 		[marketPrice, dispatch, position?.position?.side, leverageWei]
@@ -125,14 +140,14 @@ export default function EditStopLossAndTakeProfitModal() {
 
 	const onChangeStopLoss = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(setCrossSLTPModalStopLoss(v));
+			dispatch(setSLTPModalStopLoss(v));
 		},
 		[dispatch]
 	);
 
 	const onChangeTakeProfit = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(setCrossSLTPModalTakeProfit(v));
+			dispatch(setSLTPModalTakeProfit(v));
 		},
 		[dispatch]
 	);
@@ -140,6 +155,22 @@ export default function EditStopLossAndTakeProfitModal() {
 	const onSetStopLossAndTakeProfit = useCallback(() => dispatch(updateStopLossAndTakeProfit()), [
 		dispatch,
 	]);
+
+	const slInvalid = useMemo(() => {
+		if (position?.position?.side === 'long') {
+			return !!stopLossPrice && wei(stopLossPrice || 0).gt(marketPrice);
+		} else {
+			return !!stopLossPrice && wei(stopLossPrice || 0).lt(marketPrice);
+		}
+	}, [stopLossPrice, marketPrice, position?.position?.side]);
+
+	const tpInvalid = useMemo(() => {
+		if (position?.position?.side === 'long') {
+			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(marketPrice);
+		} else {
+			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(marketPrice);
+		}
+	}, [takeProfitPrice, marketPrice, position?.position?.side]);
 
 	return (
 		<StyledBaseModal
@@ -161,7 +192,7 @@ export default function EditStopLossAndTakeProfitModal() {
 			<StyledSpacer marginTop={6} />
 			<EditStopLossAndTakeProfitInput
 				type={'take-profit'}
-				invalid={false}
+				invalid={tpInvalid}
 				currentPrice={
 					marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
 				}
@@ -179,7 +210,7 @@ export default function EditStopLossAndTakeProfitModal() {
 
 			<EditStopLossAndTakeProfitInput
 				type={'stop-loss'}
-				invalid={false}
+				invalid={slInvalid}
 				currentPrice={
 					marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
 				}
