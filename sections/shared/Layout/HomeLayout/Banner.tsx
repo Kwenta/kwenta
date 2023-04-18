@@ -1,42 +1,49 @@
+import { useRouter } from 'next/router';
 import { memo } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { BANNER_ENABLED, BANNER_LINK_URL, BANNER_TEXT } from 'constants/announcement';
+import { BANNER_ENABLED, BANNER_TEXT } from 'constants/announcement';
+import ROUTES from 'constants/routes';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
-type BannerProps = {
-	compact?: boolean;
-};
-const Banner: React.FC<BannerProps> = memo(({ compact = false }) => {
+const Banner = memo(() => {
+	const router = useRouter();
+	const currentMarket = useAppSelector(selectMarketAsset);
 	if (!BANNER_ENABLED) return null;
-
-	return (
-		<>
-			<DesktopOnlyView>
-				<FuturesBannerContainer $compact={compact}>
-					<FuturesBannerLinkWrapper>{bannerLink}</FuturesBannerLinkWrapper>
-				</FuturesBannerContainer>
-			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<FuturesBannerContainer>{bannerLink}</FuturesBannerContainer>
-			</MobileOrTabletView>
-		</>
-	);
+	if (router.pathname === '/market' && router.query.accountType === 'isolated_margin') {
+		return (
+			<>
+				<DesktopOnlyView>
+					<FuturesBannerContainer
+						onClick={() => router.push(ROUTES.Markets.MarketPair(currentMarket, 'cross_margin'))}
+					>
+						<FuturesBannerLinkWrapper>
+							<FuturesLink>{BANNER_TEXT}</FuturesLink>
+						</FuturesBannerLinkWrapper>
+					</FuturesBannerContainer>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					<FuturesBannerContainer
+						onClick={() => router.push(ROUTES.Markets.MarketPair(currentMarket, 'cross_margin'))}
+					>
+						<FuturesLink>{BANNER_TEXT}</FuturesLink>
+					</FuturesBannerContainer>
+				</MobileOrTabletView>
+			</>
+		);
+	}
+	return null;
 });
 
-const FuturesLink = styled.a`
+const FuturesLink = styled.div`
 	margin-right: 5px;
 	padding: 4px 9px;
 	border-radius: 20px;
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.text};
 `;
-
-const linkProps = BANNER_LINK_URL
-	? { href: BANNER_LINK_URL, target: '_blank' }
-	: { as: 'p' as const };
-
-const bannerLink = <FuturesLink {...linkProps}>{BANNER_TEXT}</FuturesLink>;
 
 const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 	height: 60px;
@@ -44,7 +51,8 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 	display: flex;
 	align-items: center;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.background};
-	margin-bottom: ${(props) => (props.$compact ? '0' : '20px')};
+	margin-bottom: 0;
+	cursor: pointer;
 
 	${media.lessThan('md')`
 		position: relative;

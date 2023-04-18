@@ -9,7 +9,6 @@ import { TabList, TabPanel } from 'components/Tab';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import Banner from 'sections/shared/Layout/HomeLayout/Banner';
 import { LeftSideContent, PageContent } from 'styles/common';
 
 import Links from '../Links';
@@ -87,7 +86,6 @@ const DashboardLayout: FC = ({ children }) => {
 	return (
 		<AppLayout>
 			<DesktopOnlyView>
-				<Banner />
 				<PageContent>
 					<StyledFullHeightContainer>
 						<StyledLeftSideContent>

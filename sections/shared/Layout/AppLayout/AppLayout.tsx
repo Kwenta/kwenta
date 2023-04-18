@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
@@ -16,13 +15,12 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = memo(({ children }) => {
-	const router = useRouter();
 	return (
 		<AppLayoutContainer>
 			<DesktopOnlyView>
 				<DesktopGridContainer>
 					<Header />
-					{!router.pathname.startsWith('/dashboard') && <Banner compact={true} />}
+					<Banner />
 					<main>{children}</main>
 					<Footer />
 				</DesktopGridContainer>
