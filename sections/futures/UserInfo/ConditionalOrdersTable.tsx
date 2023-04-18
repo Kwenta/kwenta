@@ -53,6 +53,7 @@ export default function ConditionalOrdersTable() {
 			data={rows}
 			highlightRowsOnHover
 			rounded={false}
+			noBottom={true}
 			noResultsMessage={
 				!isL2 ? (
 					<TableNoResults>

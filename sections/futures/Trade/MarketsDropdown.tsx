@@ -255,6 +255,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							]}
 							data={options}
 							isLoading={isFetching}
+							noBottom={true}
 							noResultsMessage={
 								options?.length === 0 ? (
 									<TableNoResults>
