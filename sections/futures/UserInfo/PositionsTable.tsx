@@ -84,6 +84,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					rounded={false}
 					hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
 					columnsDeps={[accountType]}
+					noBottom={true}
 					noResultsMessage={
 						!isL2 ? (
 							<TableNoResults>

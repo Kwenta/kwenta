@@ -69,6 +69,7 @@ type TableProps = {
 	compactPagination?: boolean;
 	rowStyle?: Record<string, any>;
 	rounded?: boolean;
+	noBottom?: boolean;
 };
 
 export const Table: FC<TableProps> = memo(
@@ -93,6 +94,7 @@ export const Table: FC<TableProps> = memo(
 		compactPagination = false,
 		rowStyle = {},
 		rounded = true,
+		noBottom = false,
 	}) => {
 		const memoizedColumns = useMemo(
 			() => columns,
@@ -161,6 +163,7 @@ export const Table: FC<TableProps> = memo(
 						{...getTableProps()}
 						palette={palette}
 						$rounded={rounded}
+						$noBottom={noBottom}
 						className={className}
 					>
 						{headerGroups.map((headerGroup) => (
@@ -283,7 +286,7 @@ const SortIconContainer = styled.span`
 	flex-direction: column;
 `;
 
-const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
+const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBottom?: boolean }>`
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -291,7 +294,12 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
 	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom-width: 0;
+	${(props) =>
+		props.$noBottom &&
+		css`
+			border-bottom-width: 0;
+		`};
+
 	${(props) =>
 		props.$rounded
 			? css`

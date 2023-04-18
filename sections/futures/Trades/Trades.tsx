@@ -72,6 +72,7 @@ const Trades = memo(() => {
 		<Table
 			highlightRowsOnHover
 			rounded={false}
+			noBottom={true}
 			columns={[
 				{
 					Header: (

@@ -47,6 +47,7 @@ const Transfers: FC = () => {
 		<Table
 			highlightRowsOnHover
 			rounded={false}
+			noBottom={true}
 			columns={[
 				{
 					Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
