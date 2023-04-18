@@ -65,8 +65,8 @@ const DASHBOARD_LINKS = [
 		i18nLabel: 'dashboard.tabs.staking',
 	},
 	{
-		link: ROUTES.Dashboard.Earn,
-		i18nLabel: 'dashboard.tabs.earn',
+		link: ROUTES.Dashboard.Rewards,
+		i18nLabel: 'dashboard.tabs.rewards',
 	},
 ];
 

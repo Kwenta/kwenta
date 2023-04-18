@@ -12,6 +12,7 @@ export type { FuturesMarketSettings } from "./FuturesMarketSettings";
 export type { KwentaArrakisVault } from "./KwentaArrakisVault";
 export type { KwentaStakingRewards } from "./KwentaStakingRewards";
 export type { MultipleMerkleDistributor } from "./MultipleMerkleDistributor";
+export type { MultipleMerkleDistributorOp } from "./MultipleMerkleDistributorOp";
 export type { MultipleMerkleDistributorPerpsV2 } from "./MultipleMerkleDistributorPerpsV2";
 export type { PerpsV2Market } from "./PerpsV2Market";
 export type { PerpsV2MarketData } from "./PerpsV2MarketData";
@@ -45,6 +46,7 @@ export { FuturesMarketSettings__factory } from "./factories/FuturesMarketSetting
 export { KwentaArrakisVault__factory } from "./factories/KwentaArrakisVault__factory";
 export { KwentaStakingRewards__factory } from "./factories/KwentaStakingRewards__factory";
 export { MultipleMerkleDistributor__factory } from "./factories/MultipleMerkleDistributor__factory";
+export { MultipleMerkleDistributorOp__factory } from "./factories/MultipleMerkleDistributorOp__factory";
 export { MultipleMerkleDistributorPerpsV2__factory } from "./factories/MultipleMerkleDistributorPerpsV2__factory";
 export { PerpsV2Market__factory } from "./factories/PerpsV2Market__factory";
 export { PerpsV2MarketData__factory } from "./factories/PerpsV2MarketData__factory";

@@ -4,7 +4,10 @@ import { FetchStatus } from 'state/types';
 
 import {
 	claimMultipleRewards,
+	claimMultipleRewardsAll,
+	claimMultipleRewardsOp,
 	fetchClaimableRewards,
+	fetchClaimableRewardsAll,
 	fetchEscrowData,
 	fetchStakingData,
 	getReward,
@@ -33,7 +36,12 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	totalVestable: '0',
 	escrowData: [],
 	totalRewards: '0',
+	totalRewardsAll: '0',
+	kwentaOpRewards: '0',
+	snxOpRewards: '0',
 	claimableRewards: [],
+	claimableRewardsAll: [],
+	claimableRewardsOp: [],
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
 	stakeEscrowedStatus: FetchStatus.Idle,
@@ -100,6 +108,10 @@ const stakingSlice = createSlice({
 			state.claimableRewards = action.payload.claimableRewards;
 			state.totalRewards = action.payload.totalRewards;
 		});
+		builder.addCase(fetchClaimableRewardsAll.fulfilled, (state, action) => {
+			state.claimableRewardsAll = action.payload.claimableRewardsAll;
+			state.totalRewardsAll = action.payload.totalRewardsAll;
+		});
 		builder.addCase(stakeKwenta.pending, (state) => {
 			state.stakeStatus = FetchStatus.Loading;
 		});
@@ -116,6 +128,12 @@ const stakingSlice = createSlice({
 			state.getRewardStatus = FetchStatus.Loading;
 		});
 		builder.addCase(claimMultipleRewards.pending, (state) => {
+			state.claimRewardsStatus = FetchStatus.Loading;
+		});
+		builder.addCase(claimMultipleRewardsAll.pending, (state) => {
+			state.claimRewardsStatus = FetchStatus.Loading;
+		});
+		builder.addCase(claimMultipleRewardsOp.pending, (state) => {
 			state.claimRewardsStatus = FetchStatus.Loading;
 		});
 		builder.addCase(vestEscrowedRewards.pending, (state) => {

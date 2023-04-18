@@ -126,6 +126,9 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	TradingRewardsPerpsV2: {
 		10: '0x2787CC20e5ECb4BF1bfB79eAE284201027683179',
 	},
+	OpRewards: {
+		10: '0x1964cF9d0c5c268DcF5a5d37F13600483237f6F5',
+	},
 	BatchClaimer: {
 		10: '0x6Fd879830D9b1EE5d4f9ef12f8D5deE916bebD0b',
 	},

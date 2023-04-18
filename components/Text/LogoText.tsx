@@ -3,28 +3,41 @@ import styled, { css } from 'styled-components';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
+import OptimismLogo from 'assets/svg/providers/optimism.svg';
 
 import Heading from './Heading';
 
 type LogoTextProps = {
 	yellow?: boolean;
 	isToolTip?: boolean;
+	kwentaIcon?: boolean;
+	bold?: boolean;
+	size?: 'medium' | 'large';
 };
 
-export const LogoText: FC<LogoTextProps> = memo(({ children, yellow, isToolTip = false }) => {
-	return (
-		<div style={{ display: 'flex', alignItems: 'center' }}>
-			<TitleText $yellow={yellow}>{children}</TitleText>
-			<KwentaLogo />
-			{isToolTip && <SpacedHelpIcon />}
-		</div>
-	);
-});
+export const LogoText: FC<LogoTextProps> = memo(
+	({ children, yellow, size = 'large', isToolTip = false, bold = true, kwentaIcon = true }) => {
+		return (
+			<div style={{ display: 'flex', alignItems: 'center' }}>
+				<TitleText $yellow={yellow} $bold={bold} $size={size}>
+					{children}
+				</TitleText>
+				{kwentaIcon ? <KwentaLogo /> : <OptimismLogo height={18} width={18} />}
+				{isToolTip && <SpacedHelpIcon />}
+			</div>
+		);
+	}
+);
 
-const TitleText = styled(Heading)<{ $yellow?: boolean; $mono?: boolean }>`
-	font-size: 26px;
+const TitleText = styled(Heading)<{
+	$yellow?: boolean;
+	$mono?: boolean;
+	$bold?: boolean;
+	$size?: 'medium' | 'large';
+}>`
+	font-size: ${(props) => (props.$size === 'large' ? '26' : '16')}px;
 	margin-right: 8px;
-	font-family: ${(props) => props.theme.fonts.monoBold};
+	font-family: ${(props) => (props.$bold ? props.theme.fonts.monoBold : props.theme.fonts.mono)};
 
 	${(props) =>
 		props.$yellow &&

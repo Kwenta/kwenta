@@ -66,8 +66,8 @@ const WalletButtons: React.FC = () => {
 	const walletIsConnectedAndSupported = (
 		<>
 			<BalanceActions />
-			<NetworksSwitcher />
 			<WalletActions />
+			<NetworksSwitcher />
 		</>
 	);
 

@@ -14,6 +14,7 @@ import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
 import KwentaArrakisVaultABI from './abis/KwentaArrakisVault.json';
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
+import MultipleMerkleDistributorOpABI from './abis/MultipleMerkleDistributorOp.json';
 import PerpsV2MarketABI from './abis/PerpsV2Market.json';
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
@@ -44,6 +45,8 @@ import {
 	VeKwentaRedeemer__factory,
 	Pyth__factory,
 	BatchClaimer__factory,
+	MultipleMerkleDistributorOp__factory,
+	MultipleMerkleDistributorPerpsV2__factory,
 } from './types';
 import { PerpsV2MarketData__factory } from './types/factories/PerpsV2MarketData__factory';
 import { PerpsV2MarketSettings__factory } from './types/factories/PerpsV2MarketSettings__factory';
@@ -136,10 +139,13 @@ export const getContractsByNetwork = (
 			? MultipleMerkleDistributor__factory.connect(ADDRESSES.TradingRewards[networkId], provider)
 			: undefined,
 		MultipleMerkleDistributorPerpsV2: ADDRESSES.TradingRewardsPerpsV2[networkId]
-			? MultipleMerkleDistributor__factory.connect(
+			? MultipleMerkleDistributorPerpsV2__factory.connect(
 					ADDRESSES.TradingRewardsPerpsV2[networkId],
 					provider
 			  )
+			: undefined,
+		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
+			? MultipleMerkleDistributorOp__factory.connect(ADDRESSES.OpRewards[networkId], provider)
 			: undefined,
 		BatchClaimer: ADDRESSES.BatchClaimer[networkId]
 			? BatchClaimer__factory.connect(ADDRESSES.BatchClaimer[networkId], provider)
@@ -202,6 +208,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 					ADDRESSES.TradingRewardsPerpsV2[networkId],
 					MultipleMerkleDistributorPerpsV2ABI
 			  )
+			: undefined,
+		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
+			? new EthCallContract(ADDRESSES.OpRewards[networkId], MultipleMerkleDistributorOpABI)
 			: undefined,
 		vKwentaToken: ADDRESSES.vKwentaToken[networkId]
 			? new EthCallContract(ADDRESSES.vKwentaToken[networkId], ERC20ABI)
