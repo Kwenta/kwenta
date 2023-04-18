@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { FlexDiv } from 'components/layout/flex';
 import Pill from 'components/Pill';
@@ -23,12 +23,9 @@ import {
 	selectMarkets,
 	selectIsExecutingOrder,
 } from 'state/futures/selectors';
-import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, suggestedDecimals } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
-
-import OrderDrawer from '../drawers/OrderDrawer';
 
 type CountdownTimers = Record<
 	FuturesMarketKey,
@@ -38,6 +35,8 @@ type CountdownTimers = Record<
 const OrdersTab: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const { t } = useTranslation();
+	const { switchToL2 } = useNetworkSwitcher();
+	const isL2 = useIsL2();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	// TODO: Requires changes to bring back support for cross margin
@@ -136,8 +135,15 @@ const OrdersTab: React.FC = () => {
 
 	return (
 		<OrdersTabContainer>
-			{rowsData.length === 0 ? (
-				<TableNoResults>You have no open orders</TableNoResults>
+			{!isL2 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('common.l2-cta')}
+					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+				</TableNoResults>
+			) : rowsData.length === 0 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('futures.market.user.open-orders.table.no-result')}
+				</TableNoResults>
 			) : (
 				rowsData.map((order) => (
 					<OrderItem>

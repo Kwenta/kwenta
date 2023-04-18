@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import Button from 'components/Button';
 import ErrorView from 'components/ErrorView';
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import NumericInput from 'components/Input/NumericInput';
@@ -26,7 +27,6 @@ import {
 	BalanceContainer,
 	BalanceText,
 	MaxButton,
-	MarginActionButton,
 } from '../Trade/TransferIsolatedMarginModal';
 
 type TransferType = 'deposit' | 'withdraw';
@@ -135,7 +135,7 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 			/>
 			<Spacer height={20} />
 
-			<MarginActionButton
+			<Button
 				data-testid="futures-market-trade-withdraw-margin-button"
 				disabled={isDisabled}
 				fullWidth
@@ -150,14 +150,14 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 						}`
 					)
 				)}
-			</MarginActionButton>
-			{openOrders.length && transferType === 1 && (
+			</Button>
+			{openOrders.length && transferType === 1 ? (
 				<ErrorView
 					containerStyle={{ margin: '16px 0 0 0' }}
 					messageType="warn"
 					message={t('futures.market.trade.orders.manage-keeper-deposit.withdraw-warning')}
 				/>
-			)}
+			) : null}
 		</StyledBaseModal>
 	);
 }

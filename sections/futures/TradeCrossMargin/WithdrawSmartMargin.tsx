@@ -68,7 +68,7 @@ export default function WithdrawSmartMargin({ onDismiss }: Props) {
 				}
 			/>
 
-			<MarginActionButton
+			<Button
 				variant="flat"
 				data-testid="futures-market-trade-withdraw-margin-button"
 				disabled={!!disabledReason || !amount || isSubmitting}
@@ -80,9 +80,15 @@ export default function WithdrawSmartMargin({ onDismiss }: Props) {
 				) : (
 					disabledReason || t(`futures.market.trade.margin.modal.withdraw.button`)
 				)}
-			</MarginActionButton>
+			</Button>
 
-			{transactionState?.error && <ErrorView message={transactionState.error} formatter="revert" />}
+			{transactionState?.error && (
+				<ErrorView
+					containerStyle={{ margin: '16px 0 0 0' }}
+					message={transactionState.error}
+					formatter="revert"
+				/>
+			)}
 		</StyledBaseModal>
 	);
 }
@@ -106,13 +112,6 @@ export const BalanceText = styled.p`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
-
-export const MarginActionButton = styled(Button)`
-	margin-top: 16px;
-	height: 55px;
-	font-size: 15px;
-	text-transform: initial;
 `;
 
 export const MaxButton = styled.button`

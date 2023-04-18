@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import styled from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
@@ -17,7 +17,11 @@ import { formatDollars } from 'utils/formatters/number';
 
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 
-export default function TradeBalance() {
+type TradeBalanceProps = {
+	isMobile?: boolean;
+};
+
+const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) => {
 	const dispatch = useAppDispatch();
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const accountType = useAppSelector(selectFuturesType);
@@ -35,11 +39,11 @@ export default function TradeBalance() {
 		<Container>
 			<FlexDivRowCentered>
 				<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
-					<Body color="secondary">
+					<Body size={isMobile ? 'medium' : 'large'} color="secondary">
 						Available Margin
 						{accountType === 'cross_margin' ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
 					</Body>
-					<NumericValue size="large" weight="bold">
+					<NumericValue size={isMobile ? 'medium' : 'large'} weight="bold">
 						{accountType === 'isolated_margin'
 							? formatDollars(availableIsolatedMargin)
 							: formatDollars(idleMargin)}
@@ -63,10 +67,12 @@ export default function TradeBalance() {
 				)}
 			</FlexDivRowCentered>
 
-			{expanded && <DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>}
+			{expanded && accountType === 'cross_margin' && (
+				<DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>
+			)}
 		</Container>
 	);
-}
+});
 
 const Container = styled.div`
 	width: 100%;
@@ -89,3 +95,5 @@ const HideIcon = styled(ExpandIcon)`
 	transform: rotate(180deg);
 	margin-bottom: -4px;
 `;
+
+export default TradeBalance;
