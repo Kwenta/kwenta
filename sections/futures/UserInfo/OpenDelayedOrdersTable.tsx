@@ -149,6 +149,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 			highlightRowsOnHover
 			showPagination
 			rounded={false}
+			noBottom={true}
 			noResultsMessage={
 				!isL2 ? (
 					<TableNoResults>
