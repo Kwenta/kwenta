@@ -28,6 +28,7 @@ import {
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
 	selectCrossMarginAccount,
+	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
@@ -56,6 +57,7 @@ const ManagePosition: React.FC = () => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const smartMarginAccount = useAppSelector(selectCrossMarginAccount);
+	const position = useAppSelector(selectPosition);
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
@@ -63,6 +65,8 @@ const ManagePosition: React.FC = () => {
 			return previewTrade?.statusMessage;
 		return null;
 	}, [previewTrade?.statusMessage, previewError, t]);
+
+	const increasingPosition = !position?.position?.side || position?.position?.side === leverageSide;
 
 	const onSubmit = useCallback(() => {
 		dispatch(setTradePanelDrawerOpen(false));
@@ -97,7 +101,7 @@ const ManagePosition: React.FC = () => {
 				show: 'warn',
 				message: `Market suspended`,
 			};
-		if (isMarketCapReached)
+		if (isMarketCapReached && increasingPosition)
 			return {
 				show: 'warn',
 				message: `Open interest limit exceeded`,
@@ -156,6 +160,7 @@ const ManagePosition: React.FC = () => {
 		maxUsdInputAmount,
 		selectedAccountType,
 		isMarketCapReached,
+		increasingPosition,
 		previewStatus,
 		maxLeverageValue,
 		leverage,
