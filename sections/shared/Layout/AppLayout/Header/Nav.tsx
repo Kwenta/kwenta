@@ -24,6 +24,7 @@ type ReactSelectOptionProps = {
 	postfixIcon?: string;
 	isActive: boolean;
 	link: string;
+	isParentLink?: boolean;
 	badge: BadgeType[];
 	Icon: FunctionComponent<any>;
 };
@@ -46,6 +47,7 @@ const Nav: FC = memo(() => {
 		badge,
 		link,
 		isActive,
+		isParentLink,
 	}: ReactSelectOptionProps) => {
 		if (i18nLabel === 'header.nav.leaderboard' || i18nLabel === 'header.nav.options.title') {
 			return (
@@ -57,7 +59,7 @@ const Nav: FC = memo(() => {
 
 		const option = (
 			<LabelContainer>
-				<NavLabel>
+				<NavLabel isActive={isActive || !isParentLink}>
 					{t(i18nLabel)}
 					{badge?.map(({ i18nLabel, color }) => (
 						<Badge color={color}>{t(i18nLabel)}</Badge>
@@ -120,7 +122,7 @@ const Nav: FC = memo(() => {
 							formatOptionLabel={formatOptionLabel}
 							controlHeight={34}
 							options={links}
-							value={{ i18nLabel, isActive }}
+							value={{ i18nLabel, isActive, isParentLink: true }}
 							components={{ IndicatorSeparator, DropdownIndicator }}
 							isSearchable={false}
 						/>
@@ -149,10 +151,14 @@ const MenuLinks = styled.ul`
 	padding-top: 2px;
 `;
 
-const NavLabel = styled.div`
+const NavLabel = styled.div<{ isActive?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 15px;
 	line-height: 15px;
+	color: ${(props) =>
+		props.isActive
+			? props.theme.colors.selectedTheme.button.text.primary
+			: props.theme.colors.selectedTheme.gray};
 `;
 
 const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`

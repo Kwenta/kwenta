@@ -71,6 +71,7 @@ const UserTabsContainer = styled.div`
 	width: 100%;
 	overflow: scroll;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const TabButtonsContainer = styled.div`

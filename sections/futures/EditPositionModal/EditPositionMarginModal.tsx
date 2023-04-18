@@ -12,7 +12,7 @@ import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { APP_MAX_LEVERAGE } from 'constants/futures';
+import { APP_MAX_LEVERAGE, MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
@@ -68,7 +68,12 @@ export default function EditPositionMarginModal() {
 		const maxSize = position?.remainingMargin.mul(APP_MAX_LEVERAGE);
 		const currentSize = position?.position?.notionalValue;
 		const max = maxSize?.sub(currentSize).div(APP_MAX_LEVERAGE) ?? wei(0);
-		return max.lt(0) ? zeroBN : max;
+		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0);
+		return max.lt(0)
+			? zeroBN
+			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
+			? max
+			: position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0);
 	}, [position?.remainingMargin, position?.position?.notionalValue]);
 
 	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
