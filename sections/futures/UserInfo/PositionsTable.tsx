@@ -61,8 +61,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss,
-					takeProfit: position.takeProfit,
+					stopLoss: position.stopLoss?.targetPrice,
+					takeProfit: position.takeProfit?.targetPrice,
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
