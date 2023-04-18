@@ -69,14 +69,40 @@ export default function EditStopLossAndTakeProfitModal() {
 		return hasOrders && (tpOrderPrice !== takeProfitPrice || slOrderPrice !== stopLossPrice);
 	}, [hasOrders, stopLoss?.targetPrice, stopLossPrice, takeProfit?.targetPrice, takeProfitPrice]);
 
+	const slInvalid = useMemo(() => {
+		if (position?.position?.side === 'long') {
+			return !!stopLossPrice && wei(stopLossPrice || 0).gt(marketPrice);
+		} else {
+			return !!stopLossPrice && wei(stopLossPrice || 0).lt(marketPrice);
+		}
+	}, [stopLossPrice, marketPrice, position?.position?.side]);
+
+	const tpInvalid = useMemo(() => {
+		if (position?.position?.side === 'long') {
+			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(marketPrice);
+		} else {
+			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(marketPrice);
+		}
+	}, [takeProfitPrice, marketPrice, position?.position?.side]);
+
 	const isActive = useMemo(
 		() =>
-			hasOrders
+			!slInvalid &&
+			!tpInvalid &&
+			(hasOrders
 				? hasInputValues
 					? hasChangeOrders
 					: takeProfitPrice !== undefined || stopLossPrice !== undefined
-				: hasInputValues,
-		[hasChangeOrders, hasInputValues, hasOrders, stopLossPrice, takeProfitPrice]
+				: hasInputValues),
+		[
+			hasChangeOrders,
+			hasInputValues,
+			hasOrders,
+			stopLossPrice,
+			takeProfitPrice,
+			slInvalid,
+			tpInvalid,
+		]
 	);
 
 	useEffect(() => {
@@ -155,22 +181,6 @@ export default function EditStopLossAndTakeProfitModal() {
 	const onSetStopLossAndTakeProfit = useCallback(() => dispatch(updateStopLossAndTakeProfit()), [
 		dispatch,
 	]);
-
-	const slInvalid = useMemo(() => {
-		if (position?.position?.side === 'long') {
-			return !!stopLossPrice && wei(stopLossPrice || 0).gt(marketPrice);
-		} else {
-			return !!stopLossPrice && wei(stopLossPrice || 0).lt(marketPrice);
-		}
-	}, [stopLossPrice, marketPrice, position?.position?.side]);
-
-	const tpInvalid = useMemo(() => {
-		if (position?.position?.side === 'long') {
-			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(marketPrice);
-		} else {
-			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(marketPrice);
-		}
-	}, [takeProfitPrice, marketPrice, position?.position?.side]);
 
 	return (
 		<StyledBaseModal
