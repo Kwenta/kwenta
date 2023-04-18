@@ -325,15 +325,18 @@ export const selectCrossMarginPositions = createSelector(
 			positions.map(
 				// TODO: Maybe change to explicit serializing functions to avoid casting
 				(pos) => {
-					const stopLoss = orders.find(
-						(o) =>
-							o.size.abs() === SL_TP_MAX_SIZE &&
+					const stopLoss = orders.find((o) => {
+						return (
+							o.marketKey === pos.marketKey &&
+							o.size.abs().eq(SL_TP_MAX_SIZE) &&
 							o.reduceOnly &&
 							o.orderType === ConditionalOrderTypeEnum.STOP
-					);
+						);
+					});
 					const takeProfit = orders.find(
 						(o) =>
-							o.size.abs() === SL_TP_MAX_SIZE &&
+							o.marketKey === pos.marketKey &&
+							o.size.abs().eq(SL_TP_MAX_SIZE) &&
 							o.reduceOnly &&
 							o.orderType === ConditionalOrderTypeEnum.LIMIT
 					);
@@ -832,35 +835,10 @@ export const selectSlTpTradeInputs = createSelector(
 
 export const selectSlTpModalInputs = createSelector(
 	(state: RootState) => state.futures.crossMargin.sltpModalInputs,
-	selectSLTPModalExistingPrices,
-	(tradeInputs, orderPrice) => {
-		const price = {
-			stopLossPrice: '',
-			takeProfitPrice: '',
-		};
-		if (!!orderPrice.stopLossPrice && !tradeInputs.stopLossPrice) {
-			price.stopLossPrice = orderPrice.stopLossPrice;
-		} else {
-			if (tradeInputs.stopLossPrice === '0') {
-				price.stopLossPrice = '';
-			} else {
-				price.stopLossPrice = tradeInputs.stopLossPrice || '';
-			}
-		}
-		if (!!orderPrice.takeProfitPrice && !tradeInputs.takeProfitPrice) {
-			price.takeProfitPrice = orderPrice.takeProfitPrice;
-		} else {
-			if (tradeInputs.takeProfitPrice === '0') {
-				price.takeProfitPrice = '';
-			} else {
-				price.takeProfitPrice = tradeInputs.takeProfitPrice || '';
-			}
-		}
-		return {
-			stopLossPrice: price.stopLossPrice,
-			takeProfitPrice: price.takeProfitPrice,
-		};
-	}
+	(inputs) => ({
+		stopLossPrice: inputs.stopLossPrice ?? '',
+		takeProfitPrice: inputs.takeProfitPrice ?? '',
+	})
 );
 
 export const selectCrossMarginOrderPrice = (state: RootState) =>

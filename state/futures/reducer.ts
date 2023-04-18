@@ -220,10 +220,10 @@ const futuresSlice = createSlice({
 		setCrossMarginTradeTakeProfit: (state, action: PayloadAction<string>) => {
 			state.crossMargin.tradeInputs.takeProfitPrice = action.payload;
 		},
-		setCrossSLTPModalStopLoss: (state, action: PayloadAction<string>) => {
+		setSLTPModalStopLoss: (state, action: PayloadAction<string>) => {
 			state.crossMargin.sltpModalInputs.stopLossPrice = action.payload;
 		},
-		setCrossSLTPModalTakeProfit: (state, action: PayloadAction<string>) => {
+		setSLTPModalTakeProfit: (state, action: PayloadAction<string>) => {
 			state.crossMargin.sltpModalInputs.takeProfitPrice = action.payload;
 		},
 		setFuturesAccountType: (state, action) => {
@@ -764,8 +764,8 @@ export const {
 	incrementIsolatedPreviewCount,
 	incrementCrossPreviewCount,
 	setSelectedPortfolioTimeframe,
-	setCrossSLTPModalStopLoss,
-	setCrossSLTPModalTakeProfit,
+	setSLTPModalStopLoss,
+	setSLTPModalTakeProfit,
 	setTradePanelDrawerOpen,
 	setShowTradeHistory,
 } = futuresSlice.actions;
