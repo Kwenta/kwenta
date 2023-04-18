@@ -377,7 +377,79 @@ export default class KwentaTokenService {
 		return this.performStakeAction('unstake', amount, { escrow: true });
 	}
 
-	public async getClaimableRewards(
+	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
+		const {
+			MultipleMerkleDistributor,
+			MultipleMerkleDistributorPerpsV2,
+		} = this.sdk.context.multicallContracts;
+		const { walletAddress } = this.sdk.context;
+
+		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
+		}
+
+		const periods = Array.from(new Array(Number(epochPeriod)), (_, i) => i);
+		const adjustedPeriods = isOldDistributor
+			? periods.slice(0, TRADING_REWARDS_CUTOFF_EPOCH)
+			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH);
+
+		const fileNames = adjustedPeriods.map(
+			(i) =>
+				`trading-rewards-snapshots/${
+					this.sdk.context.networkId === 420 ? `goerli-` : ''
+				}epoch-${i}.json`
+		);
+
+		const responses: EpochData[] = await Promise.all(
+			fileNames.map(async (fileName, index) => {
+				const response = await client.get(fileName);
+				const period = isOldDistributor
+					? index >= 5
+						? index >= 10
+							? index + 2
+							: index + 1
+						: index
+					: index + TRADING_REWARDS_CUTOFF_EPOCH;
+				return { ...response.data, period };
+			})
+		);
+
+		const rewards = responses
+			.map((d) => {
+				const reward = d.claims[walletAddress];
+
+				if (reward) {
+					return [reward.index, walletAddress, reward.amount, reward.proof, d.period];
+				}
+
+				return null;
+			})
+			.filter((x): x is ClaimParams => !!x);
+
+		const claimed: boolean[] = await this.sdk.context.multicallProvider.all(
+			rewards.map((reward) =>
+				isOldDistributor
+					? MultipleMerkleDistributor.isClaimed(reward[0], reward[4])
+					: MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4])
+			)
+		);
+
+		const { totalRewards, claimableRewards } = rewards.reduce(
+			(acc, next, i) => {
+				if (!claimed[i]) {
+					acc.claimableRewards.push(next);
+					acc.totalRewards = acc.totalRewards.add(wei(formatEther(next[2])));
+				}
+
+				return acc;
+			},
+			{ claimableRewards: [] as ClaimParams[], totalRewards: wei(0) }
+		);
+
+		return { claimableRewards, totalRewards };
+	}
+
+	public async getClaimableRewardsAll(
 		epochPeriod: number,
 		isOldDistributor: boolean = true,
 		isOp: boolean = false

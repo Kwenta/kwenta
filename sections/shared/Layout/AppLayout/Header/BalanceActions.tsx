@@ -66,10 +66,9 @@ const BalanceActions: FC = () => {
 		[kwentaOpRewards, snxOpRewards, tradingRewards]
 	);
 
-	const claimDisabledOp = useMemo(() => kwentaOpRewards.add(snxOpRewards).lte(0), [
-		kwentaOpRewards,
-		snxOpRewards,
-	]);
+	const claimDisabledKwentaOp = useMemo(() => kwentaOpRewards.lte(0), [kwentaOpRewards]);
+
+	const claimDisabledSnxOp = useMemo(() => snxOpRewards.lte(0), [snxOpRewards]);
 
 	const REWARDS = [
 		{
@@ -92,7 +91,7 @@ const BalanceActions: FC = () => {
 			linkIcon: false,
 			rewards: kwentaOpRewards,
 			onClick: handleClaimOp,
-			isDisabled: claimDisabledOp,
+			isDisabled: claimDisabledKwentaOp,
 		},
 		{
 			key: 'snx-rewards',
@@ -102,8 +101,8 @@ const BalanceActions: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: snxOpRewards,
-			onClick: handleClaimOp,
-			isDisabled: claimDisabledOp,
+			onClick: () => {},
+			isDisabled: claimDisabledSnxOp,
 		},
 	];
 

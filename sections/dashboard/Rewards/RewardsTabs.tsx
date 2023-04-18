@@ -12,6 +12,7 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
+import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
 import { StakingCard } from 'sections/dashboard/Stake/card';
@@ -58,12 +59,12 @@ const RewardsTabs: FC = () => {
 		[estimatedTradingRewardQuery?.data?.claims, walletAddress]
 	);
 
-	const estimatedKwentaRewardQuery = useGetFile(
+	const estimatedKwentaOpQuery = useGetFile(
 		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current-op.json`
 	);
-	const estimatedKwentaReward = useMemo(
-		() => BigNumber.from(estimatedKwentaRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
-		[estimatedKwentaRewardQuery?.data?.claims, walletAddress]
+	const estimatedKwentaOp = useMemo(
+		() => BigNumber.from(estimatedKwentaOpQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedKwentaOpQuery?.data?.claims, walletAddress]
 	);
 
 	const claimDisabledAll = useMemo(
@@ -71,10 +72,9 @@ const RewardsTabs: FC = () => {
 		[kwentaOpRewards, snxOpRewards, tradingRewards]
 	);
 
-	const claimDisabledOp = useMemo(() => kwentaOpRewards.add(snxOpRewards).lte(0), [
-		kwentaOpRewards,
-		snxOpRewards,
-	]);
+	const claimDisabledKwentaOp = useMemo(() => kwentaOpRewards.lte(0), [kwentaOpRewards]);
+
+	const claimDisabledSnxOp = useMemo(() => snxOpRewards.lte(0), [snxOpRewards]);
 
 	const REWARDS = [
 		{
@@ -97,9 +97,9 @@ const RewardsTabs: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: kwentaOpRewards,
-			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
+			estimatedRewards: truncateNumbers(wei(estimatedKwentaOp ?? zeroBN), 4),
 			onClick: handleClaimOp,
-			isDisabled: claimDisabledOp,
+			isDisabled: claimDisabledKwentaOp,
 		},
 		{
 			key: 'snx-rewards',
@@ -109,9 +109,8 @@ const RewardsTabs: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: snxOpRewards,
-			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
-			onClick: handleClaimOp,
-			isDisabled: claimDisabledOp,
+			onClick: () => {},
+			isDisabled: claimDisabledSnxOp,
 		},
 	];
 
@@ -163,7 +162,9 @@ const RewardsTabs: FC = () => {
 									{t('dashboard.rewards.estimated')}
 								</Body>
 								<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
-									{truncateNumbers(reward.estimatedRewards, 4)}
+									{!!reward.estimatedRewards
+										? truncateNumbers(reward.estimatedRewards, 4)
+										: NO_VALUE}
 								</LogoText>
 							</FlexDivCol>
 							<FlexDivCol>

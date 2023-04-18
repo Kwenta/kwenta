@@ -151,15 +151,7 @@ export const fetchClaimableRewards = createAsyncThunk<
 		claimableRewards: Awaited<
 			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
 		>['claimableRewards'][];
-		claimableRewardsAll: Awaited<
-			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards'][];
-		claimableRewardsOp: Awaited<
-			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards'];
 		totalRewards: string;
-		kwentaOpRewards: string;
-		snxOpRewards: string;
 	},
 	void,
 	ThunkConfig
@@ -178,10 +170,48 @@ export const fetchClaimableRewards = createAsyncThunk<
 		totalRewards: totalRewardsV2,
 	} = await sdk.kwentaToken.getClaimableRewards(epochPeriod, false);
 
+	return {
+		claimableRewards: [claimableRewardsV1, claimableRewardsV2],
+		totalRewards: totalRewardsV1.add(totalRewardsV2).toString(),
+	};
+});
+
+export const fetchClaimableRewardsAll = createAsyncThunk<
+	{
+		claimableRewards: Awaited<
+			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
+		>['claimableRewards'][];
+		claimableRewardsAll: Awaited<
+			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
+		>['claimableRewards'][];
+		claimableRewardsOp: Awaited<
+			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
+		>['claimableRewards'];
+		totalRewards: string;
+		kwentaOpRewards: string;
+		snxOpRewards: string;
+	},
+	void,
+	ThunkConfig
+>('staking/fetchClaimableRewardsAll', async (_, { getState, extra: { sdk } }) => {
+	const {
+		staking: { epochPeriod },
+	} = getState();
+
+	const {
+		claimableRewards: claimableRewardsV1,
+		totalRewards: totalRewardsV1,
+	} = await sdk.kwentaToken.getClaimableRewardsAll(epochPeriod, true);
+
+	const {
+		claimableRewards: claimableRewardsV2,
+		totalRewards: totalRewardsV2,
+	} = await sdk.kwentaToken.getClaimableRewardsAll(epochPeriod, false);
+
 	const {
 		claimableRewards: claimableRewardsOp,
 		totalRewards: totalRewardsOp,
-	} = await sdk.kwentaToken.getClaimableRewards(epochPeriod, false, true);
+	} = await sdk.kwentaToken.getClaimableRewardsAll(epochPeriod, false, true);
 
 	return {
 		claimableRewards: [claimableRewardsV1, claimableRewardsV2],

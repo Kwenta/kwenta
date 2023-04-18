@@ -43,10 +43,14 @@ const BasePill = styled.button<{
 	$blackFont?: boolean;
 }>`
 	${(props) => css`
-		padding: ${props.$size === 'small' ? '0 5px' : props.$size === 'medium' ? '3.5px 8px' : '8px'};
-		height: ${props.$size === 'medium' ? '24px' : '20px'};
+		padding: ${props.$size === 'small'
+			? '0 5px'
+			: props.$size === 'medium'
+			? '3.5px 8px'
+			: '10px 15px'};
+		height: ${props.$size === 'small' ? '20px' : props.$size === 'medium' ? '24px' : '36px'};
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
-		font-family: ${props.theme.fonts.black};
+		font-family: ${props.$blackFont ? props.theme.fonts.black : props.theme.fonts.bold};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
 		color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
 		border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].border};

@@ -7,6 +7,7 @@ import {
 	claimMultipleRewardsAll,
 	claimMultipleRewardsOp,
 	fetchClaimableRewards,
+	fetchClaimableRewardsAll,
 	fetchEscrowData,
 	fetchStakingData,
 	getReward,
@@ -103,6 +104,10 @@ const stakingSlice = createSlice({
 			state.escrowData = action.payload.escrowData;
 		});
 		builder.addCase(fetchClaimableRewards.fulfilled, (state, action) => {
+			state.claimableRewards = action.payload.claimableRewards;
+			state.totalRewards = action.payload.totalRewards;
+		});
+		builder.addCase(fetchClaimableRewardsAll.fulfilled, (state, action) => {
 			state.claimableRewards = action.payload.claimableRewards;
 			state.claimableRewardsAll = action.payload.claimableRewardsAll;
 			state.claimableRewardsOp = action.payload.claimableRewardsOp;
