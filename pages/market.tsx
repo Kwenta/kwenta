@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, FC } from 'react';
+import { useEffect, FC, useState } from 'react';
 import styled from 'styled-components';
 
 import Loader from 'components/Loader';
@@ -18,6 +18,7 @@ import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import { TRADE_PANEL_WIDTH } from 'sections/futures/styles';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
+import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
 import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal';
@@ -30,6 +31,7 @@ import { clearTradeInputs } from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
 import { setFuturesAccountType, setMarketAsset } from 'state/futures/reducer';
 import {
+	selectActiveIsolatedPositionsCount,
 	selectCMAccountQueryStatus,
 	selectCrossMarginAccount,
 	selectFuturesType,
@@ -130,6 +132,13 @@ function TradePanelDesktop() {
 	const accountType = useAppSelector(selectFuturesType);
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
+	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
+	const [open, setOpen] = useState(false);
+
+	useEffect(() => setOpen(accountType === 'isolated_margin' && isolatedPositionsCount === 0), [
+		accountType,
+		isolatedPositionsCount,
+	]);
 
 	if (walletAddress && !isL2) {
 		return <FuturesUnsupportedNetwork />;
@@ -146,6 +155,14 @@ function TradePanelDesktop() {
 			<LoaderContainer>
 				<Loader inline />
 			</LoaderContainer>
+		);
+	}
+
+	if (accountType === 'isolated_margin' && isolatedPositionsCount === 0) {
+		return open ? (
+			<SwitchToSmartMargin onDismiss={() => setOpen(false)} />
+		) : (
+			<TradeIsolatedMargin />
 		);
 	}
 
