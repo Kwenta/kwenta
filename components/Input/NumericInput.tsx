@@ -18,6 +18,7 @@ type NumericInputProps = Omit<
 	suffix?: string;
 	max?: number;
 	maxLength?: number | 'none';
+	roundedCorner?: boolean;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -37,6 +38,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 		max = 0,
 		maxLength = 'none',
 		className,
+		roundedCorner = true,
 		...props
 	}) => {
 		const handleChange = useCallback(
@@ -63,6 +65,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 				$textAlign={textAlign}
 				$length={value.length}
 				className={className}
+				$roundedCorner={roundedCorner}
 			>
 				{left && (
 					<>
@@ -100,6 +103,7 @@ const InputContainer = styled.div<{
 	$textAlign?: string;
 	$suffix?: string;
 	$length: number;
+	$roundedCorner?: boolean;
 }>`
 	display: flex;
 	align-items: center;
@@ -111,7 +115,7 @@ const InputContainer = styled.div<{
 		props.$invalid
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.input.borderColor};
-	border-radius: 8px;
+	border-radius: ${(props) => (props.$roundedCorner ? '8px' : '0')};
 	padding: 0 10px;
 	height: 38px;
 	box-sizing: border-box;

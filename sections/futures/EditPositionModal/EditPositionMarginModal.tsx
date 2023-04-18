@@ -17,11 +17,13 @@ import { previewErrorI18n } from 'queries/futures/constants';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
+	approveCrossMargin,
 	clearTradeInputs,
 	editCrossMarginPositionMargin,
 	submitCrossMarginAdjustMargin,
 } from 'state/futures/actions';
 import {
+	selectEditMarginAllowanceValid,
 	selectEditPositionInputs,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
@@ -48,20 +50,14 @@ export default function EditPositionMarginModal() {
 	const modal = useAppSelector(selectShowPositionModal);
 	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 	const previewError = useAppSelector(selectTradePreviewError);
+	const allowanceValid = useAppSelector(selectEditMarginAllowanceValid);
+
 	const [transferType, setTransferType] = useState(0);
 
 	useEffect(() => {
 		dispatch(clearTradeInputs());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const onChangeTab = (selection: number) => {
-		setTransferType(selection);
-	};
-
-	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustMargin());
-	}, [dispatch]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
 		isSubmitting,
@@ -101,12 +97,28 @@ export default function EditPositionMarginModal() {
 		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded || orderError;
 	}, [marginWei, invalid, isLoading, maxLeverageExceeded, orderError]);
 
+	const onChangeTab = (selection: number) => {
+		setTransferType(selection);
+	};
+
+	const submitMarginChange = useCallback(() => {
+		dispatch(submitCrossMarginAdjustMargin());
+	}, [dispatch]);
+
 	const onClose = () => {
 		if (modal?.marketKey) {
 			dispatch(editCrossMarginPositionMargin(modal.marketKey, ''));
 		}
 		dispatch(setShowPositionModal(null));
 	};
+
+	const handleApproveSmartMargin = useCallback(async () => {
+		dispatch(approveCrossMargin());
+	}, [dispatch]);
+
+	const depositButtonText = allowanceValid
+		? t('futures.market.trade.edit-position.submit-margin-deposit')
+		: t(`futures.market.trade.confirmation.modal.approve-order`);
 
 	return (
 		<StyledBaseModal
@@ -177,10 +189,10 @@ export default function EditPositionMarginModal() {
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={submitDisabled}
 				fullWidth
-				onClick={submitMarginChange}
+				onClick={allowanceValid ? submitMarginChange : handleApproveSmartMargin}
 			>
 				{transferType === 0
-					? t('futures.market.trade.edit-position.submit-margin-deposit')
+					? depositButtonText
 					: t('futures.market.trade.edit-position.submit-margin-withdraw')}
 			</Button>
 

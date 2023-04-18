@@ -2,7 +2,7 @@ import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-	size?: 'small' | 'large';
+	size?: 'small' | 'medium' | 'large';
 	color?: 'yellow' | 'gray' | 'red';
 	outline?: boolean;
 	fullWidth?: boolean;
@@ -35,7 +35,7 @@ const Pill: FC<PillProps> = memo(
 );
 
 const BasePill = styled.button<{
-	$size: 'small' | 'large';
+	$size: 'small' | 'medium' | 'large';
 	$color: 'yellow' | 'gray' | 'red';
 	$outline?: boolean;
 	$fullWidth?: boolean;
@@ -43,11 +43,10 @@ const BasePill = styled.button<{
 	$blackFont?: boolean;
 }>`
 	${(props) => css`
-		padding: ${props.$size === 'small' ? '0 5px' : '10px 15px'};
-		height: ${props.$size === 'small' ? '20px' : '36px'};
-		width: ${props.$fullWidth ? '100%' : 'unset'};
-		font-size: ${props.$size === 'small' ? 10 : 13}px;
-		font-family: ${props.$blackFont ? props.theme.fonts.black : props.theme.fonts.bold};
+		padding: ${props.$size === 'small' ? '0 5px' : props.$size === 'medium' ? '3.5px 8px' : '8px'};
+		height: ${props.$size === 'medium' ? '24px' : '20px'};
+		font-size: ${props.$size === 'small' ? 10 : 12}px;
+		font-family: ${props.theme.fonts.black};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
 		color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
 		border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].border};

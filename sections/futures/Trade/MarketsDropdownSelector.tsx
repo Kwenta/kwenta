@@ -13,6 +13,8 @@ import { PricesInfo } from 'state/prices/types';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 import { MarketKeyByAsset } from 'utils/futures';
 
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
+
 type Props = {
 	asset: FuturesMarketAsset;
 	label: string;
@@ -57,6 +59,8 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 	</Container>
 );
 
+export const MARKET_SELECTOR_HEIGHT_MOBILE = 58;
+
 export const CurrencyLabel = styled(Body)`
 	font-size: 16px;
 	display: flex;
@@ -76,7 +80,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	}
 
 	width: ${(props) => (props.mobile ? '100%' : '380px')};
-	height: 67px;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	padding: 15px;
@@ -121,6 +125,8 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	.red {
 		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
+	height: ${(props) =>
+		props.mobile ? MARKET_SELECTOR_HEIGHT_MOBILE : MARKETS_DETAILS_HEIGHT_DESKTOP - 2}px;
 `;
 
 export default MarketsDropdownSelector;

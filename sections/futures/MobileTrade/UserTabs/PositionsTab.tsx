@@ -1,12 +1,16 @@
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
+import { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
@@ -24,7 +28,11 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import TradePanelDrawer from '../drawers/TradePanelDrawer';
 
 const PositionsTab = () => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const isL2 = useIsL2();
 
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
@@ -42,21 +50,20 @@ const PositionsTab = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss,
-					takeProfit: position.takeProfit,
+					stopLoss: position.stopLoss?.targetPrice,
+					takeProfit: position.takeProfit?.targetPrice,
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1));
 	}, [
 		accountType,
-		isolatedPositions,
 		crossMarginPositions,
+		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
 		currentMarket,
@@ -81,7 +88,16 @@ const PositionsTab = () => {
 	return (
 		<PositionsTabContainer>
 			{data.length === 0 ? (
-				<></>
+				!isL2 ? (
+					<TableNoResults>
+						{t('common.l2-cta')}
+						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+					</TableNoResults>
+				) : (
+					<TableNoResults>
+						{t('dashboard.overview.futures-positions-table.no-result')}
+					</TableNoResults>
+				)
 			) : (
 				data.map((row) => (
 					<PositionItem key={row.market.asset}>
@@ -96,7 +112,9 @@ const PositionsTab = () => {
 								</div>
 							</FlexDiv>
 							<div>
-								<Pill onClick={handleOpenPositionCloseModal(row.market.marketKey)}>Close</Pill>
+								<Pill size="medium" onClick={handleOpenPositionCloseModal(row.market.marketKey)}>
+									Close
+								</Pill>
 							</div>
 						</PositionMeta>
 						<PositionRow>
@@ -132,12 +150,16 @@ const PositionsTab = () => {
 							<Body color="secondary">Market Margin</Body>
 							<FlexDivRowCentered>
 								<NumericValue value={row.position.initialMargin} />
-								<Spacer width={5} />
-								<NumericValue value={row.position.leverage} color="secondary" suffix="x" />
 							</FlexDivRowCentered>
 						</PositionRow>
 						<PositionRow>
-							<Body color="secondary">Realized PnL</Body>
+							<Body color="secondary">Leverage</Body>
+							<FlexDivRowCentered>
+								<NumericValue value={row.position.leverage} suffix="x" />
+							</FlexDivRowCentered>
+						</PositionRow>
+						<PositionRow>
+							<Body color="secondary">Unrealized PnL</Body>
 							<Currency.Price price={row.position.pnl} colored />
 						</PositionRow>
 						<PositionRow>
@@ -146,16 +168,28 @@ const PositionsTab = () => {
 								{row.takeProfit === undefined ? (
 									<Body>{NO_VALUE}</Body>
 								) : (
-									<NumericValue value={row.takeProfit} />
+									<Currency.Price price={row.takeProfit} />
 								)}
 								<Spacer width={5} />
 								{row.stopLoss === undefined ? (
 									<Body>{NO_VALUE}</Body>
 								) : (
-									<NumericValue value={row.stopLoss} />
+									<Currency.Price price={row.stopLoss} />
 								)}
 								<Spacer width={5} />
-								<Pill>Edit</Pill>
+								<Pill
+									size="medium"
+									onClick={() =>
+										dispatch(
+											setShowPositionModal({
+												type: 'futures_edit_stop_loss_take_profit',
+												marketKey: row.market.marketKey,
+											})
+										)
+									}
+								>
+									Edit
+								</Pill>
 							</FlexDivRowCentered>
 						</PositionRow>
 					</PositionItem>

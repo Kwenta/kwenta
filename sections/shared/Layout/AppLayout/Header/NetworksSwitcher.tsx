@@ -1,7 +1,7 @@
 import { useChainModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import SwitchIcon from 'assets/svg/app/switch.svg';
@@ -29,7 +29,11 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-const NetworksSwitcher: FC = () => {
+type NetworksSwitcherProps = {
+	mobile?: boolean;
+};
+
+const NetworksSwitcher: FC<NetworksSwitcherProps> = ({ mobile }) => {
 	const { activeChain } = Connector.useContainer();
 	const { t } = useTranslation();
 	const { openChainModal } = useChainModal();
@@ -92,12 +96,12 @@ const NetworksSwitcher: FC = () => {
 		</ExternalLink>
 	);
 
-	return !isL2 ? (
-		<div onClick={openChainModal}>
+	return !isL2 || mobile ? (
+		<Container onClick={openChainModal} $mobile={mobile}>
 			<StyledButton noOutline size="small" mono>
 				{activeChain && networkIcon(activeChain.name)}
 			</StyledButton>
-		</div>
+		</Container>
 	) : (
 		<div>
 			<L2Select
@@ -117,9 +121,17 @@ const NetworksSwitcher: FC = () => {
 
 export default NetworksSwitcher;
 
+const Container = styled.div<{ $mobile?: boolean }>`
+	${(props) =>
+		props.$mobile &&
+		css`
+			margin-right: 10px;
+		`}
+`;
+
 const StyledButton = styled(Button)`
 	width: 41px;
-	padding: 0px;
+	padding: 0;
 `;
 
 const L2Select = styled(Select)`

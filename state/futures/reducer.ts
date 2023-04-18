@@ -45,6 +45,7 @@ import {
 	fetchAllTradesForAccount,
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
+	fetchCombinedMarginTransfers,
 } from './actions';
 import {
 	CrossMarginAccountData,
@@ -71,6 +72,9 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	errors: {},
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
+	preferences: {
+		showHistory: true,
+	},
 	dashboard: {
 		selectedPortfolioTimeframe: Period.ONE_WEEK,
 	},
@@ -216,10 +220,10 @@ const futuresSlice = createSlice({
 		setCrossMarginTradeTakeProfit: (state, action: PayloadAction<string>) => {
 			state.crossMargin.tradeInputs.takeProfitPrice = action.payload;
 		},
-		setCrossSLTPModalStopLoss: (state, action: PayloadAction<string>) => {
+		setSLTPModalStopLoss: (state, action: PayloadAction<string>) => {
 			state.crossMargin.sltpModalInputs.stopLossPrice = action.payload;
 		},
-		setCrossSLTPModalTakeProfit: (state, action: PayloadAction<string>) => {
+		setSLTPModalTakeProfit: (state, action: PayloadAction<string>) => {
 			state.crossMargin.sltpModalInputs.takeProfitPrice = action.payload;
 		},
 		setFuturesAccountType: (state, action) => {
@@ -361,6 +365,9 @@ const futuresSlice = createSlice({
 		setTradePanelDrawerOpen: (state, action: PayloadAction<boolean>) => {
 			state.tradePanelDrawerOpen = action.payload;
 		},
+		setShowTradeHistory: (state, action: PayloadAction<boolean>) => {
+			state.preferences.showHistory = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		// Markets
@@ -444,6 +451,44 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.marginTransfers = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch margin transfers',
+			};
+		});
+
+		// combined margin transfers
+		builder.addCase(fetchCombinedMarginTransfers.pending, (futuresState) => {
+			futuresState.queryStatuses.marginTransfers = LOADING_STATUS;
+		});
+		builder.addCase(fetchCombinedMarginTransfers.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS;
+			if (payload) {
+				const { context, isolatedMarginTransfers, smartMarginTransfers, idleTransfers } = payload;
+				const newIsolatedAccountData = { marginTransfers: isolatedMarginTransfers };
+				const newSmartAccountData = {
+					marginTransfers: smartMarginTransfers,
+					idleTransfers,
+				};
+
+				updateFuturesAccount(
+					futuresState,
+					'isolated_margin',
+					context.network,
+					context.wallet,
+					newIsolatedAccountData
+				);
+
+				updateFuturesAccount(
+					futuresState,
+					'smart_margin',
+					context.network,
+					context.wallet,
+					newSmartAccountData
+				);
+			}
+		});
+		builder.addCase(fetchCombinedMarginTransfers.rejected, (futuresState) => {
+			futuresState.queryStatuses.marginTransfers = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch combined margin transfers',
 			};
 		});
 
@@ -719,9 +764,10 @@ export const {
 	incrementIsolatedPreviewCount,
 	incrementCrossPreviewCount,
 	setSelectedPortfolioTimeframe,
-	setCrossSLTPModalStopLoss,
-	setCrossSLTPModalTakeProfit,
+	setSLTPModalStopLoss,
+	setSLTPModalTakeProfit,
 	setTradePanelDrawerOpen,
+	setShowTradeHistory,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

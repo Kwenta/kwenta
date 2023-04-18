@@ -31,8 +31,8 @@ const useGetFuturesTrades = (
 						first: DEFAULT_NUMBER_OF_TRADES,
 						where: {
 							marketKey: `${ethersUtils.formatBytes32String(currencyKey as string)}`,
-							timestamp_gt: pageParam.minTs,
-							timestamp_lt: pageParam.maxTs,
+							timestamp_gt: pageParam?.minTs ?? 0,
+							timestamp_lt: pageParam?.maxTs ?? Math.floor(Date.now() / 1000),
 						},
 						orderDirection: 'desc',
 						orderBy: 'timestamp',

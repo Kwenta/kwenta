@@ -13,7 +13,7 @@ type LinksProps = {
 };
 
 const Links: FC<LinksProps> = ({ isMobile }) => (
-	<LinkContainer isMobile={isMobile}>
+	<LinkContainer $isMobile={isMobile}>
 		<a href={EXTERNAL_LINKS.Social.Twitter} target="_blank" rel="noreferrer">
 			<TwitterIcon />
 		</a>
@@ -29,7 +29,7 @@ const Links: FC<LinksProps> = ({ isMobile }) => (
 	</LinkContainer>
 );
 
-const LinkContainer = styled.div<{ isMobile?: boolean }>`
+const LinkContainer = styled.div<{ $isMobile?: boolean }>`
 	max-width: 80px;
 	display: flex;
 	justify-content: space-between;
@@ -38,10 +38,11 @@ const LinkContainer = styled.div<{ isMobile?: boolean }>`
 	margin-left: 15px;
 
 	${(props) =>
-		props.isMobile &&
+		props.$isMobile &&
 		css`
 			margin-top: 0;
 			margin-left: 0;
+			margin-bottom: 50px;
 
 			a {
 				outline: none;

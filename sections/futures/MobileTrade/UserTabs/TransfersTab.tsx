@@ -5,80 +5,99 @@ import styled from 'styled-components';
 import ColoredPrice from 'components/ColoredPrice';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
-import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import {
+	selectFuturesType,
+	selectIdleMarginTransfers,
+	selectMarketMarginTransfers,
+	selectQueryStatuses,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { timePresentation } from 'utils/formatters/date';
 import { formatDollars } from 'utils/formatters/number';
 
 const TransfersTab: React.FC = () => {
-	const marginTransfers = useAppSelector(selectMarketMarginTransfers);
+	const { t } = useTranslation();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const isL2 = useIsL2();
+	const accountType = useAppSelector(selectFuturesType);
+	const marketMarginTransfers = useAppSelector(selectMarketMarginTransfers);
+	const idleMarginTransfers = useAppSelector(selectIdleMarginTransfers);
+
 	const {
 		marginTransfers: { status: marginTransfersStatus },
 	} = useAppSelector(selectQueryStatuses);
 
-	const { t } = useTranslation();
-	const columnsDeps = useMemo(() => [marginTransfers, marginTransfersStatus], [
-		marginTransfers,
-		marginTransfersStatus,
-	]);
+	const columnsDeps = useMemo(
+		() => [marketMarginTransfers, idleMarginTransfers, marginTransfersStatus],
+		[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
+	);
+
+	const marginTransfers = useMemo(() => {
+		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers;
+	}, [accountType, idleMarginTransfers, marketMarginTransfers]);
 
 	return (
 		<div>
-			<Table
-				rounded={false}
-				highlightRowsOnHover
-				columns={[
-					{
-						Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
-						accessor: 'action',
-						Cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
-						width: 50,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
-						accessor: 'size',
-						sortType: 'basic',
-						Cell: (cellProps: any) => {
-							const formatOptions = {
-								minDecimals: 0,
-							};
-
-							return (
-								<ColoredPrice
-									priceInfo={{
-										price: cellProps.row.original.size,
-										change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
-									}}
-								>
-									{cellProps.row.original.action === 'deposit' ? '+' : ''}
-									{formatDollars(cellProps.row.original.size, formatOptions)}
-								</ColoredPrice>
-							);
+			{!isL2 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('common.l2-cta')}
+					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+				</TableNoResults>
+			) : marginTransfersStatus === FetchStatus.Success && marginTransfers.length === 0 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('futures.market.user.transfers.table.no-results')}
+				</TableNoResults>
+			) : (
+				<Table
+					rounded={false}
+					highlightRowsOnHover
+					columns={[
+						{
+							Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
+							accessor: 'action',
+							Cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
+							width: 50,
 						},
-						sortable: true,
-						width: 50,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
-						accessor: 'timestamp',
-						Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
-						width: 50,
-					},
-				]}
-				data={marginTransfers}
-				columnsDeps={columnsDeps}
-				isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
-				noResultsMessage={
-					marginTransfers?.length === 0 ? (
-						<TableNoResults>
-							<Body size="large">{t('futures.market.user.transfers.table.no-results')}</Body>
-						</TableNoResults>
-					) : undefined
-				}
-				showPagination
-				pageSize={5}
-			/>
+						{
+							Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
+							accessor: 'size',
+							sortType: 'basic',
+							Cell: (cellProps: any) => {
+								const formatOptions = {
+									minDecimals: 0,
+								};
+
+								return (
+									<ColoredPrice
+										priceInfo={{
+											price: cellProps.row.original.size,
+											change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
+										}}
+									>
+										{cellProps.row.original.action === 'deposit' ? '+' : ''}
+										{formatDollars(cellProps.row.original.size, formatOptions)}
+									</ColoredPrice>
+								);
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
+							accessor: 'timestamp',
+							Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
+							width: 50,
+						},
+					]}
+					data={marginTransfers}
+					columnsDeps={columnsDeps}
+					isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
+				/>
+			)}
 		</div>
 	);
 };

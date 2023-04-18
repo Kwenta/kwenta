@@ -21,7 +21,6 @@ import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
 	selectIsolatedMarginPositions,
-	selectMarketAsset,
 	selectMarkets,
 	selectPositionHistory,
 } from 'state/futures/selectors';
@@ -50,11 +49,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
 	const positionHistory = useAppSelector(selectPositionHistory);
-	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	let data = useMemo(() => {
-		const positions = accountType === 'isolated_margin' ? isolatedPositions : crossMarginPositions;
+		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -68,24 +66,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					position: position.position!,
 					description,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss,
-					takeProfit: position.takeProfit,
+					stopLoss: position.stopLoss?.targetPrice,
+					takeProfit: position.takeProfit?.targetPrice,
 				};
 			})
-			.filter(
-				({ position, market }) =>
-					position && market && (market?.asset !== currentMarket || showCurrentMarket)
-			);
-	}, [
-		isolatedPositions,
-		crossMarginPositions,
-		futuresMarkets,
-		positionHistory,
-		currentMarket,
-		t,
-		accountType,
-		showCurrentMarket,
-	]);
+			.filter(({ position, market }) => !!position && !!market);
+	}, [accountType, isolatedPositions, crossMarginPositions, futuresMarkets, t, positionHistory]);
 
 	return (
 		<>
@@ -244,12 +230,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 												{cellProps.row.original.takeProfit === undefined ? (
 													<Body>{NO_VALUE}</Body>
 												) : (
-													<NumericValue value={cellProps.row.original.takeProfit} />
+													<Currency.Price price={cellProps.row.original.takeProfit} />
 												)}
 												{cellProps.row.original.stopLoss === undefined ? (
 													<Body>{NO_VALUE}</Body>
 												) : (
-													<NumericValue value={cellProps.row.original.stopLoss} />
+													<Currency.Price price={cellProps.row.original.stopLoss} />
 												)}
 											</div>
 										</FlexDivRowCentered>

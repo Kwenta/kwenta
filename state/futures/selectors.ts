@@ -85,6 +85,8 @@ export const selectEditPositionModalMarket = (state: RootState) =>
 
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader;
 
+export const selectShowHistory = (state: RootState) => !!state.futures.preferences.showHistory;
+
 export const selectCrossMarginAccountData = createSelector(
 	selectWallet,
 	selectNetwork,
@@ -323,15 +325,18 @@ export const selectCrossMarginPositions = createSelector(
 			positions.map(
 				// TODO: Maybe change to explicit serializing functions to avoid casting
 				(pos) => {
-					const stopLoss = orders.find(
-						(o) =>
-							o.size.abs() === SL_TP_MAX_SIZE &&
+					const stopLoss = orders.find((o) => {
+						return (
+							o.marketKey === pos.marketKey &&
+							o.size.abs().eq(SL_TP_MAX_SIZE) &&
 							o.reduceOnly &&
 							o.orderType === ConditionalOrderTypeEnum.STOP
-					);
+						);
+					});
 					const takeProfit = orders.find(
 						(o) =>
-							o.size.abs() === SL_TP_MAX_SIZE &&
+							o.marketKey === pos.marketKey &&
+							o.size.abs().eq(SL_TP_MAX_SIZE) &&
 							o.reduceOnly &&
 							o.orderType === ConditionalOrderTypeEnum.LIMIT
 					);
@@ -627,7 +632,7 @@ export const selectSmartMarginAllowanceValid = createSelector(
 		if (!account) return false;
 		const marginDeposit = marginDelta.sub(totalIdleMargin);
 		return (
-			totalIdleMargin.gt(marginDelta) || wei(account.balanceInfo.allowance || 0).gt(marginDeposit)
+			totalIdleMargin.gte(marginDelta) || wei(account.balanceInfo.allowance || 0).gte(marginDeposit)
 		);
 	}
 );
@@ -687,6 +692,23 @@ export const selectEditPositionInputs = createSelector(
 	selectIsolatedMarginEditPosInputs,
 	(type, crossMarginInputs, isolatedInputs) => {
 		return type === 'cross_margin' ? crossMarginInputs : isolatedInputs;
+	}
+);
+
+export const selectEditMarginAllowanceValid = createSelector(
+	selectCrossMarginAccountData,
+	selectCrossMarginBalanceInfo,
+	selectIdleMarginInMarkets,
+	selectEditPositionInputs,
+	(account, { freeMargin }, idleInMarkets, { marginDelta }) => {
+		const totalIdleMargin = freeMargin.add(idleInMarkets);
+		if (!account) return false;
+		const marginDelatWei = wei(marginDelta || 0);
+		const marginDeposit = marginDelatWei.sub(totalIdleMargin);
+		return (
+			totalIdleMargin.gte(marginDelatWei) ||
+			wei(account.balanceInfo.allowance || 0).gte(marginDeposit)
+		);
 	}
 );
 
@@ -813,35 +835,10 @@ export const selectSlTpTradeInputs = createSelector(
 
 export const selectSlTpModalInputs = createSelector(
 	(state: RootState) => state.futures.crossMargin.sltpModalInputs,
-	selectSLTPModalExistingPrices,
-	(tradeInputs, orderPrice) => {
-		const price = {
-			stopLossPrice: '',
-			takeProfitPrice: '',
-		};
-		if (!!orderPrice.stopLossPrice && !tradeInputs.stopLossPrice) {
-			price.stopLossPrice = orderPrice.stopLossPrice;
-		} else {
-			if (tradeInputs.stopLossPrice === '0') {
-				price.stopLossPrice = '';
-			} else {
-				price.stopLossPrice = tradeInputs.stopLossPrice || '';
-			}
-		}
-		if (!!orderPrice.takeProfitPrice && !tradeInputs.takeProfitPrice) {
-			price.takeProfitPrice = orderPrice.takeProfitPrice;
-		} else {
-			if (tradeInputs.takeProfitPrice === '0') {
-				price.takeProfitPrice = '';
-			} else {
-				price.takeProfitPrice = tradeInputs.takeProfitPrice || '';
-			}
-		}
-		return {
-			stopLossPrice: price.stopLossPrice,
-			takeProfitPrice: price.takeProfitPrice,
-		};
-	}
+	(inputs) => ({
+		stopLossPrice: inputs.stopLossPrice ?? '',
+		takeProfitPrice: inputs.takeProfitPrice ?? '',
+	})
 );
 
 export const selectCrossMarginOrderPrice = (state: RootState) =>
@@ -1124,15 +1121,10 @@ export const selectPositionStatus = createSelector(
 );
 
 export const selectPendingDelayedOrder = createSelector(
-	selectConditionalOrdersForMarket,
 	selectOpenDelayedOrders,
-	selectFuturesType,
 	selectMarketKey,
-	(crossOrders, isolatedOrder, futuresType, marketKey) => {
-		if (futuresType === 'cross_margin') {
-			return crossOrders.find((o) => o.marketKey === marketKey);
-		}
-		return isolatedOrder.find((o) => o.marketKey === marketKey);
+	(delayedOrders, marketKey) => {
+		return delayedOrders.find((o) => o.marketKey === marketKey);
 	}
 );
 

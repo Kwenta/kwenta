@@ -12,6 +12,7 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { FlexDiv, FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import { TabPanel } from 'components/Tab';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { selectMarketVolumes } from 'state/futures/selectors';
@@ -203,7 +204,9 @@ const Assets = () => {
 									<StatsCard
 										noOutline
 										onClick={() => {
-											router.push(`/market/?asset=${key}`);
+											router.push(
+												`/market/?asset=${key}&accountType=${DEFAULT_FUTURES_MARGIN_TYPE}`
+											);
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
@@ -254,7 +257,9 @@ const Assets = () => {
 										className={key}
 										noOutline={false}
 										onClick={() => {
-											router.push(`/market/?asset=${key}`);
+											router.push(
+												`/market/?asset=${key}&accountType=${DEFAULT_FUTURES_MARGIN_TYPE}`
+											);
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />

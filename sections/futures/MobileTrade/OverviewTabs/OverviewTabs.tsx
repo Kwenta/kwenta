@@ -14,7 +14,7 @@ const TABS = [
 		nofill: true,
 	},
 	{
-		title: 'Trades',
+		title: 'History',
 		component: <TradesTab />,
 	},
 ];
@@ -24,7 +24,7 @@ const OverviewTabs: React.FC = () => {
 
 	return (
 		<div>
-			<TradeBalance />
+			<TradeBalance isMobile={true} />
 			<MainTabButtonsContainer>
 				{TABS.map(({ title, nofill }, i) => (
 					<TabButton

@@ -6,6 +6,8 @@ import styled, { css } from 'styled-components';
 import { GridDivCenteredRow } from 'components/layout/grid';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
+import useIsL2 from 'hooks/useIsL2';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade, PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
@@ -25,11 +27,16 @@ import TradeDrawer from '../drawers/TradeDrawer';
 
 const TradesTab = () => {
 	const { t } = useTranslation();
+	const { switchToL2 } = useNetworkSwitcher();
+
 	const walletAddress = useAppSelector(selectWallet);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const accountType = useAppSelector(selectFuturesType);
 	const history = useAppSelector(selectAllTradesForAccountType);
 	const { trades: tradesQuery } = useAppSelector(selectQueryStatuses);
+
+	const isL2 = useIsL2();
+	const isLoaded = !isL2 || tradesQuery.status === FetchStatus.Success;
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
@@ -63,59 +70,62 @@ const TradesTab = () => {
 
 	return (
 		<div>
-			<Table
-				rounded={false}
-				onTableRowClick={(row) => {
-					setSelectedTrade(row.original);
-				}}
-				columns={[
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
-						accessor: 'timestamp',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<GridDivCenteredRow>
-								<TimeDisplay value={cellProps.value} />
-							</GridDivCenteredRow>
-						),
-						width: 80,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.side-type')}</TableHeader>,
-						accessor: 'side',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<div>
-								<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
-								<div>{cellProps.row.original.orderType}</div>
-							</div>
-						),
-						width: 100,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
-						accessor: 'amount',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
-						),
-						width: 80,
-						sortable: true,
-					},
-				]}
-				columnsDeps={columnsDeps}
-				data={historyData}
-				isLoading={tradesQuery.status === FetchStatus.Loading}
-				noResultsMessage={
-					tradesQuery.status === FetchStatus.Success && historyData?.length === 0 ? (
-						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
-					) : undefined
-				}
-				showPagination
-				pageSize={5}
-			/>
-
+			{!isL2 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('common.l2-cta')}
+					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+				</TableNoResults>
+			) : isLoaded && historyData?.length === 0 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('futures.market.user.trades.table.no-results')}
+				</TableNoResults>
+			) : (
+				<Table
+					rounded={false}
+					onTableRowClick={(row) => {
+						setSelectedTrade(row.original);
+					}}
+					columns={[
+						{
+							Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
+							accessor: 'timestamp',
+							Cell: (cellProps: CellProps<FuturesTrade>) => (
+								<GridDivCenteredRow>
+									<TimeDisplay value={cellProps.value} />
+								</GridDivCenteredRow>
+							),
+							width: 80,
+							sortable: true,
+						},
+						{
+							Header: <TableHeader>{t('futures.market.user.trades.table.side-type')}</TableHeader>,
+							accessor: 'side',
+							sortType: 'basic',
+							Cell: (cellProps: CellProps<FuturesTrade>) => (
+								<div>
+									<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
+									<div>{cellProps.row.original.orderType}</div>
+								</div>
+							),
+							width: 100,
+							sortable: true,
+						},
+						{
+							Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
+							accessor: 'amount',
+							sortType: 'basic',
+							Cell: (cellProps: CellProps<FuturesTrade>) => (
+								<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
+							),
+							width: 80,
+							sortable: true,
+						},
+					]}
+					columnsDeps={columnsDeps}
+					data={historyData}
+					isLoading={tradesQuery.status === FetchStatus.Loading}
+				/>
+			)}
 			<TradeDrawer trade={selectedTrade} closeDrawer={() => setSelectedTrade(undefined)} />
 		</div>
 	);

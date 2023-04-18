@@ -217,20 +217,20 @@ export const Table: FC<TableProps> = memo(
 								})}
 							</TableBody>
 						) : null}
+						{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
+							<Pagination
+								compact={compactPagination}
+								pageIndex={pageIndex}
+								pageCount={pageCount}
+								canNextPage={canNextPage}
+								canPreviousPage={canPreviousPage}
+								setPage={gotoPage}
+								previousPage={previousPage}
+								nextPage={nextPage}
+							/>
+						) : undefined}
 					</ReactTable>
 				</TableContainer>
-				{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
-					<Pagination
-						compact={compactPagination}
-						pageIndex={pageIndex}
-						pageCount={pageCount}
-						canNextPage={canNextPage}
-						canPreviousPage={canPreviousPage}
-						setPage={gotoPage}
-						previousPage={previousPage}
-						nextPage={nextPage}
-					/>
-				) : undefined}
 			</>
 		);
 	}
@@ -291,6 +291,7 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean }>`
 	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom-width: 0;
 	${(props) =>
 		props.$rounded
 			? css`
