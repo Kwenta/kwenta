@@ -132,50 +132,50 @@ const OrdersTab: React.FC = () => {
 
 	return (
 		<div>
-			<StyledTable
-				data={rowsData}
-				rounded={false}
-				noResultsMessage={
-					!isL2 ? (
-						<TableNoResults>
-							{t('common.l2-cta')}
-							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-						</TableNoResults>
-					) : (
-						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
-					)
-				}
-				onTableRowClick={(row) => setSelectedOrder(row.original)}
-				columns={[
-					{
-						Header: (
-							<TableHeader>{t('futures.market.user.open-orders.table.side-type')}</TableHeader>
-						),
-						accessor: 'side/type',
-						Cell: (cellProps: CellProps<any>) => (
-							<div>
-								<MobilePositionSide $side={cellProps.row.original.side}>
-									{cellProps.row.original.side}
-								</MobilePositionSide>
-								<div>{cellProps.row.original.orderType}</div>
-							</div>
-						),
-						width: 100,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
-						accessor: 'size',
-						Cell: (cellProps: CellProps<any>) => {
-							return (
+			{!isL2 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('common.l2-cta')}
+					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+				</TableNoResults>
+			) : rowsData.length === 0 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('futures.market.user.open-orders.table.no-result')}
+				</TableNoResults>
+			) : (
+				<StyledTable
+					data={rowsData}
+					rounded={false}
+					onTableRowClick={(row) => setSelectedOrder(row.original)}
+					columns={[
+						{
+							Header: (
+								<TableHeader>{t('futures.market.user.open-orders.table.side-type')}</TableHeader>
+							),
+							accessor: 'side/type',
+							Cell: (cellProps: CellProps<any>) => (
 								<div>
-									<div>{cellProps.row.original.sizeTxt}</div>
+									<MobilePositionSide $side={cellProps.row.original.side}>
+										{cellProps.row.original.side}
+									</MobilePositionSide>
+									<div>{cellProps.row.original.orderType}</div>
 								</div>
-							);
+							),
+							width: 100,
 						},
-					},
-				]}
-			/>
-
+						{
+							Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
+							accessor: 'size',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<div>
+										<div>{cellProps.row.original.sizeTxt}</div>
+									</div>
+								);
+							},
+						},
+					]}
+				/>
+			)}
 			{selectedOrder && (
 				<OrderDrawer
 					open={!!selectedOrder}
