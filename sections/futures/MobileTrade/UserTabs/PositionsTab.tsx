@@ -170,11 +170,11 @@ const PositionsTab = () => {
 								) : (
 									<Currency.Price price={row.takeProfit} />
 								)}
-								<Spacer width={5} />
+								<Body>/</Body>
 								{row.stopLoss === undefined ? (
-									<Body>{NO_VALUE}</Body>
+									<Body color="secondary">{NO_VALUE}</Body>
 								) : (
-									<Currency.Price price={row.stopLoss} />
+									<Currency.Price price={row.stopLoss} side="secondary" />
 								)}
 								<Spacer width={5} />
 								<Pill
