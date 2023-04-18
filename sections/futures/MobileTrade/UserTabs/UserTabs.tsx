@@ -13,7 +13,7 @@ import TransfersTab from './TransfersTab';
 
 const TABS = [
 	{
-		title: 'Position',
+		title: 'Positions',
 		component: <PositionsTab />,
 	},
 	{
