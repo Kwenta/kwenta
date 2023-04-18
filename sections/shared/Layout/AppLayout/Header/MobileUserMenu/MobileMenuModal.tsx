@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import LinkIconLight from 'assets/svg/app/link-light.svg';
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
@@ -161,19 +161,13 @@ const StyledFullScreenModal = styled(FullScreenModal)`
 	}
 `;
 
-const Container = styled.div<{ hasBorder?: boolean }>`
+const Container = styled.div`
 	height: 100%;
 	padding: 24px 32px 100px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	overflow-y: scroll;
-
-	${(props) =>
-		props.hasBorder &&
-		css`
-			border-top: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
-		`}
 `;
 
 const LogoContainer = styled.div`

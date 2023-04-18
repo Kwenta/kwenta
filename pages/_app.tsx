@@ -57,7 +57,7 @@ Sentry.init({
 	ignoreErrors: IGNORE_ERRORS,
 });
 
-const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
+const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
 	const { providerReady } = Connector.useContainer();
 
 	useAppData(providerReady);

@@ -64,7 +64,7 @@ const MobileUserMenu: FC = () => {
 							</Button>
 						</PositionButtonsContainer>
 					) : (
-						<MobileWalletButton />
+						<MobileWalletButton toggleModal={toggleOpen} />
 					)}
 				</MobileFooterRight>
 			</MobileFooterContainer>
