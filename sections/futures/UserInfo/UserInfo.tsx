@@ -125,6 +125,7 @@ const UserInfo: React.FC = memo(() => {
 				name: FuturesTab.CONDITIONAL_ORDERS,
 				label: 'Orders',
 				badge: conditionalOrders.length,
+				disabled: accountType === 'isolated_margin',
 				active: activeTab === FuturesTab.CONDITIONAL_ORDERS,
 				icon: <OpenPositionsIcon />,
 				onClick: () =>
@@ -147,7 +148,7 @@ const UserInfo: React.FC = memo(() => {
 				name: FuturesTab.TRANSFERS,
 				label: 'Transfers',
 				badge: undefined,
-				disabled: false, // leave this until we determine a disbaled state
+				disabled: accountType === 'cross_margin', // leave this until we determine a disbaled state
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <TransfersIcon width={11} height={11} />,
 				onClick: () =>
@@ -172,11 +173,13 @@ const UserInfo: React.FC = memo(() => {
 		setHasOpenPosition(!!position?.position);
 	}, [position]);
 
+	const filteredTabs = TABS.filter((tab) => !tab.disabled);
+
 	return (
 		<UserInfoContainer>
 			<TabButtonsContainer>
 				<TabLeft>
-					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
+					{filteredTabs.map(({ name, label, badge, active, disabled, onClick, icon }) => (
 						<TabButton
 							inline
 							key={name}
