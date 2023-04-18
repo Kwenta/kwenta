@@ -1,9 +1,11 @@
 import { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 
-import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { FlexDiv } from 'components/layout/flex';
+import Pill from 'components/Pill';
+import Spacer from 'components/Spacer';
+import { TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import {
 	DEFAULT_DELAYED_CANCEL_BUFFER,
 	DEFAULT_DELAYED_EXECUTION_BUFFER,
@@ -27,10 +29,7 @@ type CountdownTimers = Record<
 >;
 
 const OrdersTab: React.FC = () => {
-	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const { switchToL2 } = useNetworkSwitcher();
-	const isL2 = useIsL2();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	// TODO: Requires changes to bring back support for cross margin
@@ -38,7 +37,6 @@ const OrdersTab: React.FC = () => {
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
-	const [selectedOrder, setSelectedOrder] = useState<DelayedOrderWithDetails | undefined>();
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openDelayedOrders
@@ -131,84 +129,80 @@ const OrdersTab: React.FC = () => {
 	);
 
 	return (
-		<div>
-			<StyledTable
-				data={rowsData}
-				rounded={false}
-				noResultsMessage={
-					!isL2 ? (
-						<TableNoResults>
-							{t('common.l2-cta')}
-							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-						</TableNoResults>
-					) : (
-						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
-					)
-				}
-				onTableRowClick={(row) => setSelectedOrder(row.original)}
-				columns={[
-					{
-						Header: (
-							<TableHeader>{t('futures.market.user.open-orders.table.side-type')}</TableHeader>
-						),
-						accessor: 'side/type',
-						Cell: (cellProps: CellProps<any>) => (
-							<div>
-								<MobilePositionSide $side={cellProps.row.original.side}>
-									{cellProps.row.original.side}
-								</MobilePositionSide>
-								<div>{cellProps.row.original.orderType}</div>
-							</div>
-						),
-						width: 100,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
-						accessor: 'size',
-						Cell: (cellProps: CellProps<any>) => {
-							return (
+		<OrdersTabContainer>
+			{rowsData.length === 0 ? (
+				<TableNoResults>You have no open orders</TableNoResults>
+			) : (
+				rowsData.map((order) => (
+					<OrderItem>
+						<OrderMeta $side={order.side}>
+							<FlexDiv>
+								<div className="position-side-bar" />
 								<div>
-									<div>{cellProps.row.original.sizeTxt}</div>
+									<Body>{order.market}</Body>
+									<Body capitalized color="secondary">
+										{/*accountType === 'isolated_margin' ? 'Isolated Margin' : 'Cross-Margin'*/}
+									</Body>
 								</div>
-							);
-						},
-					},
-				]}
-			/>
-
-			{selectedOrder && (
-				<OrderDrawer
-					open={!!selectedOrder}
-					order={selectedOrder}
-					closeDrawer={() => setSelectedOrder(undefined)}
-				/>
+							</FlexDiv>
+							<FlexDiv>
+								<Pill>Cancel</Pill>
+								<Spacer width={10} />
+								<Pill>Edit</Pill>
+							</FlexDiv>
+						</OrderMeta>
+						<OrderRow>
+							<Body color="secondary">Size</Body>
+						</OrderRow>
+						<OrderRow>
+							<Body color="secondary">Side</Body>
+						</OrderRow>
+						<OrderRow>
+							<Body color="secondary">Status</Body>
+						</OrderRow>
+					</OrderItem>
+				))
 			)}
-		</div>
+		</OrdersTabContainer>
 	);
 };
 
-const StyledTable = styled(Table)`
-	margin-bottom: 20px;
+const OrdersTabContainer = styled.div`
+	padding-top: 15px;
 `;
 
-const MobilePositionSide = styled.div<{ $side: PositionSide }>`
-	text-transform: uppercase;
-	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	letter-spacing: 1.4px;
-	margin-bottom: 4px;
+const OrderMeta = styled.div<{ $side: PositionSide }>`
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px;
 
-	${(props) =>
-		props.$side === 'long' &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.green};
-		`};
+	.position-side-bar {
+		height: 100%;
+		width: 4px;
+		margin-right: 8px;
+		background-color: ${(props) =>
+			props.theme.colors.selectedTheme.newTheme.text[
+				props.$side === PositionSide.LONG ? 'positive' : 'negative'
+			]};
+	}
+`;
 
-	${(props) =>
-		props.$side === 'short' &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.red};
-		`};
+const OrderItem = styled.div`
+	margin: 0 20px;
+	padding: 20px 0;
+
+	&:not(:last-of-type) {
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
+`;
+
+const OrderRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+
+	&:not(:last-of-type) {
+		margin-bottom: 10px;
+	}
 `;
 
 export default OrdersTab;
