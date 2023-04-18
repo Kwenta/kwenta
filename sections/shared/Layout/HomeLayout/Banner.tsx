@@ -5,13 +5,16 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { BANNER_ENABLED, BANNER_LINK_URL, BANNER_TEXT } from 'constants/announcement';
 import media from 'styles/media';
 
-const Banner = memo(() => {
+type BannerProps = {
+	compact?: boolean;
+};
+const Banner: React.FC<BannerProps> = memo(({ compact = false }) => {
 	if (!BANNER_ENABLED) return null;
 
 	return (
 		<>
 			<DesktopOnlyView>
-				<FuturesBannerContainer>
+				<FuturesBannerContainer $compact={compact}>
 					<FuturesBannerLinkWrapper>{bannerLink}</FuturesBannerLinkWrapper>
 				</FuturesBannerContainer>
 			</DesktopOnlyView>
@@ -24,9 +27,9 @@ const Banner = memo(() => {
 
 const FuturesLink = styled.a`
 	margin-right: 5px;
-	background: #313131;
 	padding: 4px 9px;
 	border-radius: 20px;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.text};
 `;
 
 const linkProps = BANNER_LINK_URL
@@ -35,12 +38,13 @@ const linkProps = BANNER_LINK_URL
 
 const bannerLink = <FuturesLink {...linkProps}>{BANNER_TEXT}</FuturesLink>;
 
-const FuturesBannerContainer = styled.div`
-	height: 70px;
+const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
+	height: 60px;
 	width: 100%;
 	display: flex;
 	align-items: center;
-	margin-bottom: -35px;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.background};
+	margin-bottom: ${(props) => (props.$compact ? '0' : '20px')};
 
 	${media.lessThan('md')`
 		position: relative;
@@ -59,10 +63,8 @@ const FuturesBannerLinkWrapper = styled.div`
 	width: 100%;
 	text-align: center;
 	position: absolute;
-
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 13px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
