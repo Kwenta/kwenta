@@ -133,12 +133,12 @@ const OrdersTab: React.FC = () => {
 	return (
 		<div>
 			{!isL2 ? (
-				<TableNoResults style={{ marginTop: '16px' }}>
+				<TableNoResults style={{ marginTop: '15px' }}>
 					{t('common.l2-cta')}
 					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 				</TableNoResults>
 			) : rowsData.length === 0 ? (
-				<TableNoResults style={{ marginTop: '16px' }}>
+				<TableNoResults style={{ marginTop: '15px' }}>
 					{t('futures.market.user.open-orders.table.no-result')}
 				</TableNoResults>
 			) : (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
@@ -23,6 +23,7 @@ const TABS = [
 	{
 		title: 'Orders',
 		component: <ConditionalOrdersTab />,
+		type: 'cross_margin',
 	},
 	{
 		title: 'Trades',
@@ -38,12 +39,15 @@ const TABS = [
 const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
 	const accountType = useAppSelector(selectFuturesType);
+	const filteredTabs = useMemo(() => TABS.filter(({ type }) => !type || type === accountType), [
+		accountType,
+	]);
 
 	return (
 		<Container>
 			<UserTabsContainer>
 				<TabButtonsContainer>
-					{TABS.filter(({ type }) => !type || type === accountType).map(({ title }, i) => (
+					{filteredTabs.map(({ title }, i) => (
 						<TabButton
 							key={title}
 							title={title}
@@ -54,7 +58,7 @@ const UserTabs: React.FC = () => {
 					))}
 				</TabButtonsContainer>
 			</UserTabsContainer>
-			<div>{TABS[activeTab].component}</div>
+			<div>{filteredTabs[activeTab].component}</div>
 		</Container>
 	);
 };

@@ -71,12 +71,12 @@ const TradesTab = () => {
 	return (
 		<div>
 			{!isL2 ? (
-				<TableNoResults style={{ marginTop: '16px' }}>
+				<TableNoResults style={{ marginTop: '15px' }}>
 					{t('common.l2-cta')}
 					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 				</TableNoResults>
 			) : isLoaded && historyData?.length === 0 ? (
-				<TableNoResults style={{ marginTop: '16px' }}>
+				<TableNoResults style={{ marginTop: '15px' }}>
 					{t('futures.market.user.trades.table.no-results')}
 				</TableNoResults>
 			) : (

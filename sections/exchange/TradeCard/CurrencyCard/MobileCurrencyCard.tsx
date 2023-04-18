@@ -77,7 +77,7 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 							}}
 							placeholder={t('exchange.currency-card.amount-placeholder')}
 							disabled={disabled}
-							isRounded={false}
+							roundedCorner={false}
 						/>
 						<SwapCurrencyPrice data-testid="amount-value">
 							{!!currencyKey && tradeAmount != null

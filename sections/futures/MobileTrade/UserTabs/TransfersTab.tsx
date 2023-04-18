@@ -42,61 +42,62 @@ const TransfersTab: React.FC = () => {
 
 	return (
 		<div>
-			<Table
-				rounded={false}
-				highlightRowsOnHover
-				columns={[
-					{
-						Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
-						accessor: 'action',
-						Cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
-						width: 50,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
-						accessor: 'size',
-						sortType: 'basic',
-						Cell: (cellProps: any) => {
-							const formatOptions = {
-								minDecimals: 0,
-							};
-
-							return (
-								<ColoredPrice
-									priceInfo={{
-										price: cellProps.row.original.size,
-										change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
-									}}
-								>
-									{cellProps.row.original.action === 'deposit' ? '+' : ''}
-									{formatDollars(cellProps.row.original.size, formatOptions)}
-								</ColoredPrice>
-							);
+			{!isL2 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('common.l2-cta')}
+					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+				</TableNoResults>
+			) : marginTransfersStatus === FetchStatus.Success && marginTransfers.length === 0 ? (
+				<TableNoResults style={{ marginTop: '15px' }}>
+					{t('futures.market.user.transfers.table.no-results')}
+				</TableNoResults>
+			) : (
+				<Table
+					rounded={false}
+					highlightRowsOnHover
+					columns={[
+						{
+							Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
+							accessor: 'action',
+							Cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
+							width: 50,
 						},
-						sortable: true,
-						width: 50,
-					},
-					{
-						Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
-						accessor: 'timestamp',
-						Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
-						width: 50,
-					},
-				]}
-				data={marginTransfers}
-				columnsDeps={columnsDeps}
-				isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
-				noResultsMessage={
-					!isL2 ? (
-						<TableNoResults>
-							{t('common.l2-cta')}
-							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-						</TableNoResults>
-					) : (
-						<TableNoResults>{t('futures.market.user.transfers.table.no-results')}</TableNoResults>
-					)
-				}
-			/>
+						{
+							Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
+							accessor: 'size',
+							sortType: 'basic',
+							Cell: (cellProps: any) => {
+								const formatOptions = {
+									minDecimals: 0,
+								};
+
+								return (
+									<ColoredPrice
+										priceInfo={{
+											price: cellProps.row.original.size,
+											change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
+										}}
+									>
+										{cellProps.row.original.action === 'deposit' ? '+' : ''}
+										{formatDollars(cellProps.row.original.size, formatOptions)}
+									</ColoredPrice>
+								);
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
+							accessor: 'timestamp',
+							Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
+							width: 50,
+						},
+					]}
+					data={marginTransfers}
+					columnsDeps={columnsDeps}
+					isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
+				/>
+			)}
 		</div>
 	);
 };
