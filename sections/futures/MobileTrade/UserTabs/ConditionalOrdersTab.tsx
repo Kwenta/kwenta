@@ -66,22 +66,24 @@ const ConditionalOrdersTab: React.FC = () => {
 								</div>
 							</FlexDiv>
 							<FlexDiv>
-								<Pill onClick={cancelOrder(order.id)}>Cancel</Pill>
+								<Pill color="red" onClick={cancelOrder(order.id)}>
+									Cancel
+								</Pill>
 								<Spacer width={10} />
 								<Pill>Edit</Pill>
 							</FlexDiv>
 						</OrderMeta>
 						<OrderRow>
 							<Body color="secondary">Size</Body>
-							<div>{order.sizeTxt}</div>
+							<Body>{order.sizeTxt}</Body>
 						</OrderRow>
 						<OrderRow>
 							<Body color="secondary">Reduce Only</Body>
-							<div>{order.reduceOnly ? 'yes' : 'no'}</div>
+							<Body>{order.reduceOnly ? 'Yes' : 'No'}</Body>
 						</OrderRow>
 						<OrderRow>
 							<Body color="secondary">Side</Body>
-							<PositionType side={order.side!} />;
+							<PositionType side={order.side!} />
 						</OrderRow>
 						<OrderRow>
 							<Body color="secondary">CL Price</Body>
@@ -89,7 +91,7 @@ const ConditionalOrdersTab: React.FC = () => {
 						</OrderRow>
 						<OrderRow>
 							<Body color="secondary">Reserved Margin</Body>
-							<div>{formatDollars(order.marginDelta?.gt(0) ? order.marginDelta : '0')}</div>
+							<Body mono>{formatDollars(order.marginDelta?.gt(0) ? order.marginDelta : '0')}</Body>
 						</OrderRow>
 					</OrderItem>
 				))

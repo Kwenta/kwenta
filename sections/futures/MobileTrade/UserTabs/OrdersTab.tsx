@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { FlexDiv } from 'components/layout/flex';
@@ -14,8 +15,14 @@ import useInterval from 'hooks/useInterval';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
+import PositionType from 'sections/futures/PositionType';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
-import { selectOpenDelayedOrders, selectMarketAsset, selectMarkets } from 'state/futures/selectors';
+import {
+	selectOpenDelayedOrders,
+	selectMarketAsset,
+	selectMarkets,
+	selectIsExecutingOrder,
+} from 'state/futures/selectors';
 import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, suggestedDecimals } from 'utils/formatters/number';
@@ -30,13 +37,29 @@ type CountdownTimers = Record<
 
 const OrdersTab: React.FC = () => {
 	const dispatch = useAppDispatch();
+	const { t } = useTranslation();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	// TODO: Requires changes to bring back support for cross margin
 	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders);
 	const futuresMarkets = useAppSelector(selectMarkets);
+	const isExecuting = useAppSelector(selectIsExecutingOrder);
 
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
+
+	const handleCancel = useCallback(
+		(marketAddress: string, isOffchain: boolean) => () => {
+			dispatch(cancelDelayedOrder({ marketAddress, isOffchain }));
+		},
+		[dispatch]
+	);
+
+	const handleExecute = useCallback(
+		(marketKey: FuturesMarketKey, marketAddress: string, isOffchain: boolean) => () => {
+			dispatch(executeDelayedOrder({ marketKey, marketAddress, isOffchain }));
+		},
+		[dispatch]
+	);
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openDelayedOrders
@@ -79,23 +102,6 @@ const OrdersTab: React.FC = () => {
 								? market.settings.offchainDelayedOrderMaxAge
 								: market.settings.maxDelayTimeDelta),
 					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
-					onCancel: () => {
-						dispatch(
-							cancelDelayedOrder({
-								marketAddress: o.marketAddress,
-								isOffchain: o.isOffchain,
-							})
-						);
-					},
-					onExecute: () => {
-						dispatch(
-							executeDelayedOrder({
-								marketKey: o.marketKey,
-								marketAddress: o.marketAddress,
-								isOffchain: o.isOffchain,
-							})
-						);
-					},
 				};
 				return order;
 			})
@@ -107,7 +113,7 @@ const OrdersTab: React.FC = () => {
 					: -1;
 			});
 		return ordersWithCancel;
-	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
+	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers]);
 
 	useInterval(
 		() => {
@@ -141,24 +147,57 @@ const OrdersTab: React.FC = () => {
 								<div>
 									<Body>{order.market}</Body>
 									<Body capitalized color="secondary">
-										{/*accountType === 'isolated_margin' ? 'Isolated Margin' : 'Cross-Margin'*/}
+										{order.orderType}
 									</Body>
 								</div>
 							</FlexDiv>
 							<FlexDiv>
-								<Pill>Cancel</Pill>
-								<Spacer width={10} />
-								<Pill>Edit</Pill>
+								{order.show && order.isStale && (
+									<Pill
+										onClick={handleCancel(order.marketAddress, order.isOffchain)}
+										disabled={order.isCancelling}
+										color="red"
+									>
+										Cancel
+									</Pill>
+								)}
+								{order.show && !order.isStale && order.isFailed && (
+									<>
+										<Spacer width={10} />
+										<Pill
+											onClick={handleExecute(
+												order.marketKey,
+												order.marketAddress,
+												order.isOffchain
+											)}
+											disabled={isExecuting}
+										>
+											Execute
+										</Pill>
+									</>
+								)}
 							</FlexDiv>
 						</OrderMeta>
 						<OrderRow>
 							<Body color="secondary">Size</Body>
+							<Body mono>{order.sizeTxt}</Body>
 						</OrderRow>
 						<OrderRow>
 							<Body color="secondary">Side</Body>
+							<PositionType side={order.side} />
 						</OrderRow>
 						<OrderRow>
 							<Body color="secondary">Status</Body>
+							<div>
+								{order.show &&
+									(order.isStale ? (
+										<Body>{t('futures.market.user.open-orders.status.expired')}</Body>
+									) : order.isFailed ? (
+										<Body>{t('futures.market.user.open-orders.status.failed')}</Body>
+									) : (
+										<Body>{t('futures.market.user.open-orders.status.pending')}</Body>
+									))}
+							</div>
 						</OrderRow>
 					</OrderItem>
 				))
