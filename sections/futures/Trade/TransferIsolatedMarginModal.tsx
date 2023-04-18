@@ -174,7 +174,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 				<Spacer height={20} />
 			)}
 
-			<MarginActionButton
+			<Button
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={isDisabled}
 				fullWidth
@@ -184,8 +184,10 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 				{transferType === 0
 					? t('futures.market.trade.margin.modal.deposit.button')
 					: t('futures.market.trade.margin.modal.withdraw.button')}
-			</MarginActionButton>
-			{txError && <Error message={txError} formatter="revert" />}
+			</Button>
+			{txError && (
+				<Error containerStyle={{ margin: '16px 0 0 0' }} message={txError} formatter="revert" />
+			)}
 		</StyledBaseModal>
 	);
 };
@@ -214,11 +216,6 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
-
-export const MarginActionButton = styled(Button)`
-	height: 55px;
-	margin-bottom: 20px;
 `;
 
 export const MaxButton = styled.button`

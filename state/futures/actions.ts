@@ -574,7 +574,9 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 		// If this is a trade with no existsing position size then we need to subtract
 		// remaining idle market margin to get an accurate preview
 		const marginDelta =
-			(!position?.position || position?.position?.size.abs().eq(0)) && marketMargin.gt(0)
+			(!position?.position || position?.position?.size.abs().eq(0)) &&
+			marketMargin.gt(0) &&
+			params.action === 'trade'
 				? params.marginDelta.sub(marketMargin)
 				: params.marginDelta;
 
@@ -815,7 +817,7 @@ export const editCrossMarginPositionMargin = (
 	marketKey: FuturesMarketKey,
 	marginDelta: string
 ): AppThunk => (dispatch, getState) => {
-	const price = selectMarketPrice(getState());
+	const { marketPrice } = selectEditPositionModalInfo(getState());
 	dispatch(
 		setCrossMarginEditPositionInputs({
 			marginDelta: marginDelta,
@@ -828,7 +830,7 @@ export const editCrossMarginPositionMargin = (
 		dispatch(
 			stageCrossMarginTradePreview({
 				market,
-				orderPrice: price,
+				orderPrice: marketPrice,
 				marginDelta: wei(marginDelta || 0),
 				sizeDelta: zeroBN,
 				action: 'edit',
