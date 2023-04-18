@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import { FlexDiv } from 'components/layout/flex';
 import Pill from 'components/Pill';
-import Spacer from 'components/Spacer';
 import { TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import { PositionSide } from 'sdk/types/futures';
@@ -69,8 +68,6 @@ const ConditionalOrdersTab: React.FC = () => {
 								<Pill size="medium" color="red" onClick={cancelOrder(order.id)}>
 									Cancel
 								</Pill>
-								<Spacer width={10} />
-								<Pill size="medium">Edit</Pill>
 							</FlexDiv>
 						</OrderMeta>
 						<OrderRow>
