@@ -11,12 +11,11 @@ import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { ConditionalOrderTypeEnum, FuturesMarketKey, PositionSide } from 'sdk/types/futures';
+import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
-	selectAllSLTPOrders,
 	selectCrossMarginPositions,
 	selectFuturesType,
 	selectIsolatedMarginPositions,
@@ -41,7 +40,6 @@ const PositionsTab = () => {
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const accountType = useAppSelector(selectFuturesType);
-	const sltpOrders = useAppSelector(selectAllSLTPOrders);
 	const tradeDrawerPanelOpen = useAppSelector(({ futures }) => futures.tradePanelDrawerOpen);
 
 	let data = useMemo(() => {
@@ -52,18 +50,12 @@ const PositionsTab = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-				const stopLoss = sltpOrders.find(
-					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
-				);
-				const takeProfit = sltpOrders.find(
-					(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
-				);
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: stopLoss?.targetPrice ?? 0,
-					takeProfit: takeProfit?.targetPrice ?? 0,
+					stopLoss: position.stopLoss,
+					takeProfit: position.takeProfit,
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -74,7 +66,6 @@ const PositionsTab = () => {
 		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
-		sltpOrders,
 		currentMarket,
 	]);
 
