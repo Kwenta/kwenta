@@ -239,6 +239,7 @@ const UserInfoContainer = styled.div`
 	min-height: 300px;
 	max-height: 300px;
 	height: 300px;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const TabButtonsContainer = styled.div`
