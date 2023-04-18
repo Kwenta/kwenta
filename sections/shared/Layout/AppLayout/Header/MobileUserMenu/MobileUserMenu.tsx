@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,34 +10,17 @@ import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import { PositionSide } from 'sdk/types/futures';
 import { setLeverageSide, setTradePanelDrawerOpen } from 'state/futures/reducer';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { selectCurrentTheme } from 'state/preferences/selectors';
+import { useAppDispatch } from 'state/hooks';
 import { FixedFooterMixin } from 'styles/common';
 
 import MobileMenuModal from './MobileMenuModal';
-import MobileSettingsModal from './MobileSettingsModal';
 import MobileWalletButton from './MobileWalletButton';
 
 const MobileUserMenu: FC = () => {
-	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
+	const [isOpen, toggleOpen] = useReducer((s) => !s, false);
 	const { t } = useTranslation();
 
-	const currentTheme = useAppSelector(selectCurrentTheme);
 	const dispatch = useAppDispatch();
-
-	const closeModal = () => {
-		setIsOpen(undefined);
-	};
-
-	const toggleModal = (modal: 'menu' | 'settings') => () => {
-		setIsOpen((s) => {
-			if (!!s) {
-				return s === modal ? undefined : s === 'menu' ? 'settings' : 'menu';
-			} else {
-				return modal;
-			}
-		});
-	};
 
 	const handleSideSelect = useCallback(
 		(side: PositionSide) => () => {
@@ -50,23 +33,16 @@ const MobileUserMenu: FC = () => {
 	return (
 		<>
 			<MobileFooterContainer>
-				<MobileFooterIconContainer onClick={!!isOpen ? closeModal : toggleModal('menu')}>
-					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
+				<MobileFooterIconContainer onClick={toggleOpen}>
+					{isOpen ? <CloseIcon /> : <MenuIcon />}
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
-				{window.location.pathname !== ROUTES.Home.Root &&
-					!window.location.pathname.includes('/market') &&
-					!!isOpen && (
-						<SettingsWrapper currentTheme={currentTheme}>
-							{t(`modals.${isOpen}.title`)}
-						</SettingsWrapper>
-					)}
 				<MobileFooterRight>
 					{window.location.pathname === ROUTES.Home.Root ? (
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 							<Button size="small">{t('homepage.nav.start-trade')}</Button>
 						</Link>
-					) : window.location.pathname.includes('/market') ? (
+					) : window.location.pathname.includes('/market') && !isOpen ? (
 						<PositionButtonsContainer>
 							<Button
 								size="xsmall"
@@ -88,12 +64,11 @@ const MobileUserMenu: FC = () => {
 							</Button>
 						</PositionButtonsContainer>
 					) : (
-						<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
+						<MobileWalletButton />
 					)}
 				</MobileFooterRight>
 			</MobileFooterContainer>
-			{isOpen === 'menu' && <MobileMenuModal onDismiss={closeModal} />}
-			{isOpen === 'settings' && <MobileSettingsModal onDismiss={closeModal} />}
+			{isOpen && <MobileMenuModal onDismiss={toggleOpen} />}
 		</>
 	);
 };
@@ -124,17 +99,6 @@ const MobileFooterRight = styled.div`
 	flex-grow: 1;
 	justify-content: flex-end;
 	align-items: center;
-`;
-
-const SettingsWrapper = styled.div<{ currentTheme: 'dark' | 'light' }>`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 19px;
-	line-height: 19px;
-	color: ${(props) =>
-		props.currentTheme === 'dark'
-			? props.theme.colors.selectedTheme.white
-			: props.theme.colors.selectedTheme.black};
-	text-transform: capitalize;
 `;
 
 const PositionButtonsContainer = styled.div`

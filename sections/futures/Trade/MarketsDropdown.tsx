@@ -164,6 +164,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 						<StyledTable
 							highlightRowsOnHover
 							rowStyle={{ padding: '0' }}
+							onTableRowClick={(row) => onSelectMarket(row.original.asset)}
 							columns={[
 								{
 									Header: (
@@ -176,8 +177,11 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									sortable: true,
 									Cell: ({ row }: any) => (
 										<div
-											onClick={() => onSelectFav(row.original.asset)}
-											style={{ cursor: 'pointer' }}
+											onClick={(e) => {
+												onSelectFav(row.original.asset);
+												e.stopPropagation();
+											}}
+											style={{ cursor: 'pointer', zIndex: 200 }}
 										>
 											{favMarkets.includes(row.original.asset) ? (
 												<SelectedIcon height={14} width={14} />
@@ -194,10 +198,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									sortType: 'basic',
 									sortable: true,
 									Cell: ({ row }: any) => (
-										<FlexDivRowCentered
-											onClick={() => onSelectMarket(row.original.asset)}
-											style={{ cursor: 'pointer' }}
-										>
+										<FlexDivRowCentered>
 											<CurrencyIcon currencyKey={row.original.key} width="18px" height="18px" />
 											<Spacer width={10} />
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
@@ -212,10 +213,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									sortable: true,
 									Cell: (cellProps: any) => {
 										return (
-											<div
-												onClick={() => onSelectMarket(cellProps.row.original.asset)}
-												style={{ cursor: 'pointer' }}
-											>
+											<div>
 												<ColoredPrice
 													priceInfo={{
 														price: cellProps.row.original.price,
@@ -233,10 +231,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									Header: <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
 									Cell: ({ row }: any) => {
 										return (
-											<div
-												onClick={() => onSelectMarket(row.original.asset)}
-												style={{ cursor: 'pointer' }}
-											>
+											<div>
 												<MarketBadge
 													currencyKey={row.original.asset}
 													isFuturesMarketClosed={row.original.isMarketClosed}
@@ -300,6 +295,7 @@ const TableContainer = styled.div`
 
 const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	border: none;
+	cursor: pointer;
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	.table-body-row {

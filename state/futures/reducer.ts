@@ -45,6 +45,7 @@ import {
 	fetchAllTradesForAccount,
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
+	fetchCombinedMarginTransfers,
 } from './actions';
 import {
 	CrossMarginAccountData,
@@ -450,6 +451,44 @@ const futuresSlice = createSlice({
 			futuresState.queryStatuses.marginTransfers = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch margin transfers',
+			};
+		});
+
+		// combined margin transfers
+		builder.addCase(fetchCombinedMarginTransfers.pending, (futuresState) => {
+			futuresState.queryStatuses.marginTransfers = LOADING_STATUS;
+		});
+		builder.addCase(fetchCombinedMarginTransfers.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS;
+			if (payload) {
+				const { context, isolatedMarginTransfers, smartMarginTransfers, idleTransfers } = payload;
+				const newIsolatedAccountData = { marginTransfers: isolatedMarginTransfers };
+				const newSmartAccountData = {
+					marginTransfers: smartMarginTransfers,
+					idleTransfers,
+				};
+
+				updateFuturesAccount(
+					futuresState,
+					'isolated_margin',
+					context.network,
+					context.wallet,
+					newIsolatedAccountData
+				);
+
+				updateFuturesAccount(
+					futuresState,
+					'smart_margin',
+					context.network,
+					context.wallet,
+					newSmartAccountData
+				);
+			}
+		});
+		builder.addCase(fetchCombinedMarginTransfers.rejected, (futuresState) => {
+			futuresState.queryStatuses.marginTransfers = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch combined margin transfers',
 			};
 		});
 

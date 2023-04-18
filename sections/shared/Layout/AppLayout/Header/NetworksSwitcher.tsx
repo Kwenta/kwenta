@@ -1,7 +1,7 @@
 import { useChainModal } from '@rainbow-me/rainbowkit';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import SwitchIcon from 'assets/svg/app/switch.svg';
@@ -17,7 +17,6 @@ import Select from 'components/Select';
 import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
-import { chain } from 'containers/Connector/config';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { ExternalLink } from 'styles/common';
@@ -30,13 +29,15 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-const NetworksSwitcher: FC = () => {
+type NetworksSwitcherProps = {
+	mobile?: boolean;
+};
+
+const NetworksSwitcher: FC<NetworksSwitcherProps> = ({ mobile }) => {
 	const { activeChain } = Connector.useContainer();
 	const { t } = useTranslation();
 	const { openChainModal } = useChainModal();
 	const isL2 = useIsL2();
-	const network = activeChain?.id === chain.optimismGoerli.id ? 'testnet' : 'mainnet';
-	const networkLabel = 'header.networks-switcher.optimism-' + network;
 
 	const OPTIMISM_OPTIONS = [
 		{
@@ -64,17 +65,17 @@ const NetworksSwitcher: FC = () => {
 	const networkIcon = (prefixIcon: string) => {
 		switch (prefixIcon) {
 			case 'Polygon':
-				return <PolygonIcon width={20} height={14} />;
+				return <PolygonIcon width={24} height={16} />;
 			case 'Arbitrum One':
-				return <ArbitrumIcon width={20} height={14} />;
+				return <ArbitrumIcon width={24} height={16} />;
 			case 'Ethereum':
-				return <EthereumIcon width={20} height={14} />;
+				return <EthereumIcon width={24} height={16} />;
 			case 'Avalanche':
-				return <AvalancheIcon width={20} height={14} />;
+				return <AvalancheIcon width={24} height={16} />;
 			case 'BNB Smart Chain':
-				return <BinanceIcon width={20} height={14} />;
+				return <BinanceIcon width={24} height={16} />;
 			default:
-				return <OptimismIcon width={20} height={14} />;
+				return <OptimismIcon width={24} height={16} />;
 		}
 	};
 
@@ -95,11 +96,10 @@ const NetworksSwitcher: FC = () => {
 		</ExternalLink>
 	);
 
-	return !isL2 ? (
-		<Container onClick={openChainModal}>
+	return !isL2 || mobile ? (
+		<Container onClick={openChainModal} $mobile={mobile}>
 			<StyledButton noOutline size="small" mono>
-				{activeChain && <PrefixIcon>{networkIcon(activeChain.name)}</PrefixIcon>}
-				{activeChain?.name}
+				{activeChain && networkIcon(activeChain.name)}
 			</StyledButton>
 		</Container>
 	) : (
@@ -108,7 +108,7 @@ const NetworksSwitcher: FC = () => {
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={41}
 				options={OPTIMISM_OPTIONS}
-				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
+				value={{ label: '', prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding="0px"
 				components={{ IndicatorSeparator, DropdownIndicator }}
@@ -121,19 +121,21 @@ const NetworksSwitcher: FC = () => {
 
 export default NetworksSwitcher;
 
-const Container = styled.div`
-	/*width: 100%;*/
+const Container = styled.div<{ $mobile?: boolean }>`
+	${(props) =>
+		props.$mobile &&
+		css`
+			margin-right: 10px;
+		`}
 `;
 
 const StyledButton = styled(Button)`
-	min-width: 0px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	width: 41px;
+	padding: 0;
 `;
 
 const L2Select = styled(Select)`
-	width: 137px;
+	width: 41px;
 
 	.react-select__single-value * {
 		font-family: ${(props) => props.theme.fonts.mono};
@@ -144,7 +146,7 @@ const L2Select = styled(Select)`
 	}
 
 	.react-select__dropdown-indicator {
-		margin-right: 5px;
+		display: none;
 	}
 
 	.react-select__value-container {
@@ -154,5 +156,4 @@ const L2Select = styled(Select)`
 
 const PrefixIcon = styled.span`
 	display: flex;
-	padding-right: 6px;
 `;
