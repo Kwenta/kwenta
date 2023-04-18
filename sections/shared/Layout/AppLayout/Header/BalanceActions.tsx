@@ -18,7 +18,12 @@ import useClickOutside from 'hooks/useClickOutside';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { sdk } from 'state/config';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { claimMultipleRewardsAll, claimMultipleRewardsOp } from 'state/staking/actions';
+import {
+	claimMultipleRewardsAll,
+	claimMultipleRewardsOp,
+	fetchClaimableRewardsAll,
+	fetchStakingData,
+} from 'state/staking/actions';
 import {
 	selectEpochPeriod,
 	selectKwentaOpRewards,
@@ -39,6 +44,7 @@ const BalanceActions: FC = () => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const router = useRouter();
+	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
 	const epoch = useAppSelector(selectEpochPeriod);
 	const tradingRewards = useAppSelector(selectTotalRewardsAll);
 	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
@@ -60,6 +66,14 @@ const BalanceActions: FC = () => {
 	const handleClaimOp = useCallback(() => {
 		dispatch(claimMultipleRewardsOp());
 	}, [dispatch]);
+
+	useEffect(() => {
+		if (!!walletAddress) {
+			dispatch(fetchStakingData()).then(() => {
+				dispatch(fetchClaimableRewardsAll());
+			});
+		}
+	}, [dispatch, walletAddress]);
 
 	const claimDisabledAll = useMemo(
 		() => tradingRewards.add(kwentaOpRewards).add(snxOpRewards).lte(0),
