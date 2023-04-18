@@ -526,6 +526,29 @@
 				"pool-link": "Arrakis WETH/KWENTA Pool ↗"
 			}
 		},
+		"rewards": {
+			"title": "Rewards",
+			"copy": "Earn rewards by trading on Kwenta and get boosted rewards for staking.",
+			"claimable": "Claimable",
+			"estimated": "Estimated",
+			"epoch": "Epoch",
+			"apr": "APR",
+			"staking": "Staking",
+			"claim": "Claim",
+			"claim-all": "Claim All",
+			"trading-rewards": {
+				"title": "Kwenta Trading Rewards",
+				"copy": "Earn  $KWENTA rewards in proportion to total fees paid."
+			},
+			"kwenta-rewards": {
+				"title": "Kwenta OP Rewards",
+				"copy": "Earn a share of $OP rewards issued by Kwenta."
+			},
+			"snx-rewards": {
+				"title": "SNX OP Rewards",
+				"copy": "Earn a share of $OP rewards issued by Synthetix."
+			}
+		},
 		"stake": {
 			"portfolio": {
 				"title": "Staking Dashboard",
@@ -653,6 +676,9 @@
 	},
 	"dashboard-stake": {
 		"page-title": "Staking | Kwenta"
+	},
+	"dashboard-rewards": {
+		"page-title": "Rewards | Kwenta"
 	},
 	"futures": {
 		"page-title": "Kwenta Futures",

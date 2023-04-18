@@ -12,6 +12,7 @@ export { FuturesMarketSettings__factory } from "./FuturesMarketSettings__factory
 export { KwentaArrakisVault__factory } from "./KwentaArrakisVault__factory";
 export { KwentaStakingRewards__factory } from "./KwentaStakingRewards__factory";
 export { MultipleMerkleDistributor__factory } from "./MultipleMerkleDistributor__factory";
+export { MultipleMerkleDistributorOp__factory } from "./MultipleMerkleDistributorOp__factory";
 export { MultipleMerkleDistributorPerpsV2__factory } from "./MultipleMerkleDistributorPerpsV2__factory";
 export { PerpsV2Market__factory } from "./PerpsV2Market__factory";
 export { PerpsV2MarketData__factory } from "./PerpsV2MarketData__factory";
