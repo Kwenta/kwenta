@@ -66,11 +66,11 @@ const ConditionalOrdersTab: React.FC = () => {
 								</div>
 							</FlexDiv>
 							<FlexDiv>
-								<Pill color="red" onClick={cancelOrder(order.id)}>
+								<Pill size="medium" color="red" onClick={cancelOrder(order.id)}>
 									Cancel
 								</Pill>
 								<Spacer width={10} />
-								<Pill>Edit</Pill>
+								<Pill size="medium">Edit</Pill>
 							</FlexDiv>
 						</OrderMeta>
 						<OrderRow>

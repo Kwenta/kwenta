@@ -160,6 +160,7 @@ const OrdersTab: React.FC = () => {
 							<FlexDiv>
 								{order.show && order.isStale && (
 									<Pill
+										size="medium"
 										onClick={handleCancel(order.marketAddress, order.isOffchain)}
 										disabled={order.isCancelling}
 										color="red"
@@ -171,6 +172,7 @@ const OrdersTab: React.FC = () => {
 									<>
 										<Spacer width={10} />
 										<Pill
+											size="medium"
 											onClick={handleExecute(
 												order.marketKey,
 												order.marketAddress,
