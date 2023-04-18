@@ -230,12 +230,16 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 												{cellProps.row.original.takeProfit === undefined ? (
 													<Body>{NO_VALUE}</Body>
 												) : (
-													<Currency.Price price={cellProps.row.original.takeProfit} />
+													<div>
+														<Currency.Price price={cellProps.row.original.takeProfit} />
+													</div>
 												)}
 												{cellProps.row.original.stopLoss === undefined ? (
 													<Body>{NO_VALUE}</Body>
 												) : (
-													<Currency.Price price={cellProps.row.original.stopLoss} />
+													<div>
+														<Currency.Price price={cellProps.row.original.stopLoss} />
+													</div>
 												)}
 											</div>
 										</FlexDivRowCentered>
