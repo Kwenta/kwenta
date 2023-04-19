@@ -101,7 +101,8 @@ const sharedStyle = css<{
 		margin-left: 7px;
 		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.black};
-		background-color: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.background};
+		background-color: ${(props) =>
+			props.theme.colors.selectedTheme.newTheme.badge.yellow.background};
 		border-radius: 4px;
 	}
 
