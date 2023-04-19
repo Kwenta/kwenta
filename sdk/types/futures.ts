@@ -289,6 +289,7 @@ export type ConditionalOrder<T = Wei> = {
 	isStale?: boolean;
 	isExecutable?: boolean;
 	isCancelling?: boolean;
+	isSlTp?: boolean;
 };
 
 export type DelayedOrder<T = Wei> = {

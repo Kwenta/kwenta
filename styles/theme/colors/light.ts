@@ -291,7 +291,9 @@ const lightTheme = {
 		bg: '#515151',
 	},
 	chartLine: {
-		long: common.light.green,
+		long: common.palette.green.g700,
+		short: common.palette.red.r500,
+		default: '#4094E8',
 	},
 	socket: {
 		accent: `#d5d5d5`,

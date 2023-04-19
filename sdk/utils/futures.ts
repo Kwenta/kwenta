@@ -481,6 +481,7 @@ export const mapConditionalOrderFromContract = (
 		side: sizeDelta.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 		isStale: false,
 		isExecutable: false,
+		isSlTp: size.eq(SL_TP_MAX_SIZE),
 	};
 };
 

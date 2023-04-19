@@ -7,6 +7,7 @@ import { chain } from 'containers/Connector/config';
 import { NetworkId } from 'sdk/types/common';
 import { ConditionalOrder } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
+import { formatOrderDisplayType } from 'sdk/utils/futures';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';
 import { useAppSelector } from 'state/hooks';
@@ -97,55 +98,55 @@ export function TVChart({
 		};
 	}, []);
 
-	// TODO: Re-enable on implementation of limit orders
-	// const renderOrderLines = () => {
-	// 	_widget.current?.onChartReady(() => {
-	// 		_widget.current?.chart().dataReady(() => {
-	// 			clearOrderLines();
-	// 			_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
-	// 				if (order.targetPrice) {
-	// 					const color =
-	// 						order.side === 'long'
-	// 							? colors.selectedTheme.chartLine.long
-	// 							: colors.selectedTheme.red;
+	const renderOrderLines = () => {
+		_widget.current?.onChartReady(() => {
+			_widget.current?.chart().dataReady(() => {
+				clearOrderLines();
+				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
+					if (order.targetPrice) {
+						const color = order.isSlTp
+							? colors.selectedTheme.chartLine.default
+							: order.side === 'long'
+							? colors.selectedTheme.chartLine.long
+							: colors.selectedTheme.red;
 
-	// 					const orderLine = _widget.current
-	// 						?.chart()
-	// 						.createPositionLine()
-	// 						.setText(order.orderType)
-	// 						.setTooltip('Average entry price')
-	// 						.setQuantity(formatNumber(order.size.abs()))
-	// 						.setPrice(order.targetPrice?.toNumber() ?? 0)
-	// 						.setExtendLeft(false)
-	// 						.setQuantityTextColor(colors.white)
-	// 						.setBodyTextColor(darkTheme.black)
-	// 						.setLineStyle(2)
-	// 						.setLineColor(color)
-	// 						.setBodyBorderColor(color)
-	// 						.setQuantityBackgroundColor(color)
-	// 						.setQuantityBorderColor(color)
-	// 						.setLineLength(25);
-	// 					if (orderLine) {
-	// 						acc.push(orderLine);
-	// 					}
-	// 				}
-	// 				return acc;
-	// 			}, []);
-	// 		});
-	// 	});
-	// };
+						const orderLine = _widget.current
+							?.chart()
+							.createPositionLine()
+							.setText(formatOrderDisplayType(order.orderType, order.reduceOnly))
+							.setTooltip('Average entry price')
+							.setQuantity(order.isSlTp ? '100%' : formatNumber(order.size.abs()))
+							.setPrice(order.targetPrice?.toNumber())
+							.setExtendLeft(false)
+							.setQuantityTextColor(colors.white)
+							.setBodyTextColor(darkTheme.black)
+							.setLineStyle(2)
+							.setLineColor(color)
+							.setBodyBorderColor(color)
+							.setQuantityBackgroundColor(color)
+							.setQuantityBorderColor(color)
+							.setLineLength(25);
+						if (orderLine) {
+							acc.push(orderLine);
+						}
+					}
+					return acc;
+				}, []);
+			});
+		});
+	};
 
 	const onToggleOrderLines = () => {
 		if (_oderLineRefs.current.length) {
 			clearOrderLines();
 		} else {
-			// renderOrderLines();
+			renderOrderLines();
 		}
 	};
 
 	useEffect(() => {
 		if (showOrderLines) {
-			// renderOrderLines();
+			renderOrderLines();
 		}
 		// eslint-disable-next-line
 	}, [openOrders]);
