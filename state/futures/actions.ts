@@ -994,7 +994,7 @@ export const fetchFuturesPositionHistory = createAsyncThunk<
 		const wallet = selectWallet(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
 		if (!wallet || !account || !futuresSupported) return;
-		const history = await sdk.futures.getPositionHistory(wallet);
+		const history = await sdk.futures.getPositionHistory(account);
 		return { accountType, account, wallet, networkId, history: serializePositionHistory(history) };
 	} catch (err) {
 		notifyError('Failed to fetch position history', err);
