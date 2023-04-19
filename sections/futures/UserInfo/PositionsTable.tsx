@@ -104,6 +104,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
 							),
 							accessor: 'market',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<MarketDetailsContainer
@@ -127,6 +129,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
 							),
 							accessor: 'position',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return <PositionType side={cellProps.row.original.position.side} />;
 							},
@@ -139,6 +143,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								</TableHeader>
 							),
 							accessor: 'notionalValue',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
 									? { truncate: true }
@@ -187,6 +193,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								</TableHeader>
 							),
 							accessor: 'avgEntryPrice',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return cellProps.row.original.avgEntryPrice === undefined ? (
 									<Body>{NO_VALUE}</Body>
@@ -206,6 +214,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								</TableHeader>
 							),
 							accessor: 'liquidationPrice',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<Currency.Price
@@ -220,6 +230,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 						{
 							Header: <TableHeader>Market Margin</TableHeader>,
 							accessor: 'margin',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<FlexDivRowCentered>
@@ -256,6 +268,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
 							),
 							accessor: 'pnl',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<PnlContainer>
@@ -271,6 +285,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 						{
 							Header: <TableHeader>Funding</TableHeader>,
 							accessor: 'funding',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<Currency.Price price={cellProps.row.original.position.accruedFunding} colored />
@@ -281,6 +297,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 						{
 							Header: <TableHeader>TP/SL</TableHeader>,
 							accessor: 'tp-sl',
+							sortType: 'basic',
+							sortable: true,
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<FlexDivRowCentered>
