@@ -913,7 +913,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 	selectFuturesType,
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].orderType,
 	selectIsMarketCapReached,
-	(position, marginDelta, { freeMargin }, selectedType, orderType, isMarketCapReached) => {
+	(position, marginDelta, { freeMargin }, selectedType, orderType) => {
 		let remainingMargin;
 		if (selectedType === 'isolated_margin') {
 			remainingMargin = position?.remainingMargin || zeroBN;
@@ -928,9 +928,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return isMarketCapReached
-			? 'futures.market.trade.button.oi-caps-reached'
-			: 'futures.market.trade.button.open-position';
+		return 'futures.market.trade.button.open-position';
 	}
 );
 
