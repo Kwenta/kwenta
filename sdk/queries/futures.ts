@@ -96,7 +96,7 @@ export const queryPositionHistory = (sdk: KwentaSDK, account: string) => {
 		sdk.futures.futuresGqlEndpoint,
 		{
 			where: {
-				account: account,
+				abstractAccount: account,
 			},
 			first: 99999,
 			orderBy: 'openTimestamp',
