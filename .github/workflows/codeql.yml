@@ -2,10 +2,10 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "perps-v2-dev", dev, main, v1-main ]
+    branches: [ main, dev ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "perps-v2-dev" ]
+    branches: [ dev ]
   schedule:
     - cron: '25 14 * * 1'
 

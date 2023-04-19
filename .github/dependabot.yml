@@ -2,8 +2,8 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/" 
-    open-pull-requests-limit: 3
-    target-branch: "perps-v2-dev"
+    open-pull-requests-limit: 5
+    target-branch: "dev"
     schedule:
       interval: "daily"
 
@@ -11,8 +11,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    open-pull-requests-limit: 3
-    target-branch: "perps-v2-dev"
+    open-pull-requests-limit: 5
+    target-branch: "dev"
     labels:
       - "npm"
       - "dependencies"
