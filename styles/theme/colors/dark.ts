@@ -297,7 +297,7 @@ const darkTheme = {
 	},
 	chartLine: {
 		long: common.palette.green.g700,
-		short: common.palette.red.r500,
+		short: common.palette.red.r600,
 		default: '#4094E8',
 	},
 	socket: {

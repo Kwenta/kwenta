@@ -108,7 +108,7 @@ export function TVChart({
 							? colors.selectedTheme.chartLine.default
 							: order.side === 'long'
 							? colors.selectedTheme.chartLine.long
-							: colors.selectedTheme.red;
+							: colors.selectedTheme.chartLine.short;
 
 						const orderLine = _widget.current
 							?.chart()
