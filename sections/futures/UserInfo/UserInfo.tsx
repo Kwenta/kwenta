@@ -101,7 +101,7 @@ const UserInfo: React.FC = memo(() => {
 		() => [
 			{
 				name: FuturesTab.POSITION,
-				label: 'Position',
+				label: 'Positions',
 				badge: accountType === 'isolated_margin' ? isolatedPositionsCount : smartPositionsCount,
 				active: activeTab === FuturesTab.POSITION,
 				icon: <PositionIcon />,
