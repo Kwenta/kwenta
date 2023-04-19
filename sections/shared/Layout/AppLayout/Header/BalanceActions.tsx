@@ -4,19 +4,16 @@ import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
-import HelpIcon from 'assets/svg/app/question-mark.svg';
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import OptimismLogo from 'assets/svg/providers/optimism.svg';
 import Button from 'components/Button';
-import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
+import { FlexDivRow } from 'components/layout/flex';
 import Pill from 'components/Pill';
-import Spacer from 'components/Spacer/Spacer';
-import { Body, Heading, LogoText } from 'components/Text';
-import { KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
+import { Body, LogoText } from 'components/Text';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import { StakingCard } from 'sections/dashboard/Stake/card';
-import { sdk } from 'state/config';
+import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	claimMultipleRewardsAll,
@@ -25,27 +22,22 @@ import {
 	fetchStakingData,
 } from 'state/staking/actions';
 import {
-	selectEpochPeriod,
 	selectKwentaOpRewards,
 	selectSnxOpRewards,
 	selectTotalRewardsAll,
 } from 'state/staking/selectors';
+import { selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import {
-	formatDollars,
-	formatNumber,
-	toWei,
-	truncateNumbers,
-	zeroBN,
-} from 'utils/formatters/number';
+import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const router = useRouter();
-	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
-	const epoch = useAppSelector(selectEpochPeriod);
+	const walletAddress = useAppSelector(selectWallet);
+	const opPrice = useAppSelector(selectOpPrice);
+	const kwentaPrice = useAppSelector(selectKwentaPrice);
 	const tradingRewards = useAppSelector(selectTotalRewardsAll);
 	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
@@ -120,25 +112,13 @@ const BalanceActions: FC = () => {
 		},
 	];
 
-	useEffect(() => {
-		const tokenAddresses = [KWENTA_ADDRESS, OP_ADDRESS];
-		const initExchangeTokens = async () => {
-			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true);
-			const [kwentaPrice, opPrice] = tokenAddresses.map(
-				(tokenAddress) => coinGeckoPrices[tokenAddress]?.usd.toString() ?? 0
-			);
-
+	useEffect(
+		() =>
 			setRewardBalance(
-				toWei(kwentaPrice)
-					.mul(tradingRewards)
-					.add(toWei(opPrice).mul(kwentaOpRewards.add(snxOpRewards)))
-			);
-		};
-
-		(async () => {
-			await initExchangeTokens();
-		})();
-	}, [kwentaOpRewards, snxOpRewards, tradingRewards]);
+				kwentaPrice.mul(tradingRewards).add(opPrice.mul(kwentaOpRewards.add(snxOpRewards)))
+			),
+		[kwentaOpRewards, kwentaPrice, opPrice, snxOpRewards, tradingRewards]
+	);
 
 	return (
 		<>
@@ -148,7 +128,7 @@ const BalanceActions: FC = () => {
 				onClick={() => setOpen(!open)}
 				style={{
 					color: theme.colors.selectedTheme.yellow,
-					borderColor: theme.colors.selectedTheme.yellow,
+					borderColor: theme.colors.selectedTheme.newTheme.border.yellow,
 				}}
 			>
 				<KwentaLogo style={{ marginRight: '5px' }} />
@@ -160,29 +140,18 @@ const BalanceActions: FC = () => {
 					<CardsContainer>
 						{REWARDS.map((reward) => (
 							<CardGrid key={reward.key}>
-								<Body size="medium">{reward.title}</Body>
+								<Body size="medium" color="primary" weight="bold">
+									{reward.title}
+								</Body>
 								<StyledFlexDivRow>
 									<div>
-										<Heading variant="h6" className="title">
+										<Body size="medium" color="secondary">
 											{t('dashboard.rewards.claimable')}
-										</Heading>
-										<Spacer height={5} />
+										</Body>
 										<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
 											{truncateNumbers(reward.rewards, 4)}
 										</LogoText>
 									</div>
-									<StyledFlexDivCol>
-										<Body size="medium" style={{ marginBottom: '5px' }}>
-											{t('dashboard.rewards.epoch')}
-										</Body>
-										<FlexDivRow
-											className="value"
-											style={{ alignItems: 'center', justifyContent: 'flex-start' }}
-										>
-											{formatNumber(epoch, { minDecimals: 0 })}
-											<SpacedHelpIcon />
-										</FlexDivRow>
-									</StyledFlexDivCol>
 									<Button
 										fullWidth
 										variant="flat"
@@ -199,17 +168,29 @@ const BalanceActions: FC = () => {
 								</StyledFlexDivRow>
 							</CardGrid>
 						))}
-						<Pill
-							color="yellow"
-							fullWidth={true}
-							size="large"
-							isRounded={false}
-							blackFont={false}
-							onClick={handleClaimAll}
-							disabled={claimDisabledAll}
-						>
-							{t('dashboard.rewards.claim-all')}
-						</Pill>
+						<ButtonContainer>
+							<Pill
+								color="gray"
+								fullWidth={true}
+								size="large"
+								roundedCorner={false}
+								weight="bold"
+								onClick={() => router.push(ROUTES.Dashboard.Rewards)}
+							>
+								{t('dashboard.rewards.learn-more')}
+							</Pill>
+							<Pill
+								color="yellow"
+								fullWidth={true}
+								size="large"
+								roundedCorner={false}
+								weight="bold"
+								onClick={handleClaimAll}
+								disabled={claimDisabledAll}
+							>
+								{t('dashboard.rewards.claim-all')}
+							</Pill>
+						</ButtonContainer>
 					</CardsContainer>
 				</RewardsTabContainer>
 			)}
@@ -217,14 +198,15 @@ const BalanceActions: FC = () => {
 	);
 };
 
-const SpacedHelpIcon = styled(HelpIcon)`
-	margin-left: 5px;
+const ButtonContainer = styled(FlexDivRow)`
+	column-gap: 15px;
 `;
 
 const RewardsTabContainer = styled.div`
 	z-index: 100;
 	position: absolute;
 	right: 12%;
+
 	${media.lessThan('mdUp')`
 		padding: 15px;
 	`}
@@ -238,8 +220,7 @@ const CardGrid = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	row-gap: 10px;
-	margin-bottom: 15px;
+	row-gap: 7px;
 `;
 
 const CardsContainer = styled(StakingCard)`
@@ -252,24 +233,6 @@ const CardsContainer = styled(StakingCard)`
 const StyledFlexDivRow = styled(FlexDivRow)`
 	column-gap: 50px;
 	align-items: center;
-
-	.value {
-		color: ${(props) => props.theme.colors.selectedTheme.text.label};
-		font-size: 13px;
-		margin-top: 0px;
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
-
-	.title {
-		font-weight: 400;
-		font-size: 16px;
-		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
-	}
-`;
-
-const StyledFlexDivCol = styled(FlexDivCol)`
-	margin: auto;
-	padding: 0;
 `;
 
 export default BalanceActions;

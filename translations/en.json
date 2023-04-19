@@ -536,6 +536,8 @@
 			"staking": "Staking",
 			"claim": "Claim",
 			"claim-all": "Claim All",
+			"learn-more": "Learn more",
+			"disclaimer": "Disclaimer: The estimated epoch reward values presented are not indicative of the the final rewards value. Please be aware that these estimations may fluctuate due to factors such as: future fees paid and the staking contributions of other participants leading up to the epoch-ending snapshot. For additional insights on rewards, <0>kindly refer to our blog.<0>",
 			"trading-rewards": {
 				"title": "Kwenta Trading Rewards",
 				"copy": "Earn  $KWENTA rewards in proportion to total fees paid."

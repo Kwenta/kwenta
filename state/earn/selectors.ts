@@ -51,6 +51,8 @@ export const selectWethAmount = createSelector((state: RootState) => state.earn.
 
 export const selectWethPrice = createSelector((state: RootState) => state.earn.wethPrice, toWei);
 
+export const selectOpPrice = createSelector((state: RootState) => state.earn.opPrice, toWei);
+
 export const selectLpTvl = createSelector(
 	selectKwentaAmount,
 	selectKwentaPrice,

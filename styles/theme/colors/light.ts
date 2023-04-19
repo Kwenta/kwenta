@@ -14,6 +14,7 @@ const newTheme = {
 	},
 	border: {
 		color: common.palette.neutral.n40,
+		yellow: common.palette.yellow.y900,
 		style: `1px solid ${common.palette.neutral.n40}`,
 	},
 	button: {
