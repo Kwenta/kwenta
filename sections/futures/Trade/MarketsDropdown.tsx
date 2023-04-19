@@ -109,6 +109,11 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			const pastPrice = getPastPrice(market.asset);
 			const basePriceRate = getBasePriceRateInfo(market.asset);
 
+			const change =
+				basePriceRate && pastPrice?.rate && basePriceRate.price.gt(0)
+					? wei(basePriceRate.price).sub(pastPrice?.rate).div(basePriceRate.price)
+					: zeroBN;
+
 			return {
 				value: market.asset,
 				label: getMarketName(market.asset),
@@ -117,10 +122,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				description: getSynthDescription(market.asset, t),
 				priceNum: basePriceRate?.price.toNumber() ?? 0,
 				price: formatDollars(basePriceRate?.price ?? '0', { suggestDecimals: true }),
-				change:
-					basePriceRate && pastPrice?.rate && basePriceRate.price.gt(0)
-						? wei(basePriceRate.price).sub(pastPrice?.rate).div(basePriceRate.price)
-						: zeroBN,
+				change: change.toNumber(),
 				priceDirection: basePriceRate?.change ?? null,
 				isMarketClosed: market.isSuspended,
 				closureReason: market.marketClosureReason,
@@ -244,7 +246,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 														<NumericValue
 															suffix="%"
 															colored
-															value={floorNumber(row.original.change?.mul(100) ?? '0', 2)}
+															value={floorNumber(
+																row.original.change ? row.original.change * 100 : '0',
+																2
+															)}
 														/>
 													}
 												/>
