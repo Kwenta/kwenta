@@ -14,6 +14,7 @@ const newTheme = {
 	},
 	border: {
 		color: common.palette.neutral.n700,
+		yellow: common.palette.yellow.y900,
 		style: `1px solid ${common.palette.neutral.n700}`,
 	},
 	button: {
@@ -208,11 +209,6 @@ const darkTheme = {
 		},
 		disabled: { text: '#555555', background: 'transparent' },
 		tab: {
-			badge: {
-				background: '#E4B378',
-				text: '#282626',
-				shadow: 'inset 0px 0.8px 0px rgba(255, 255, 255, 0.6)',
-			},
 			disabled: { border: '1px solid #353333', text: '#353333' },
 		},
 		pill: { background: common.dark.yellow, text: common.dark.yellow, hover: common.black },

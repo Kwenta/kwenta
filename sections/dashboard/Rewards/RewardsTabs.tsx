@@ -2,16 +2,16 @@ import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
-import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
+import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
@@ -126,7 +126,7 @@ const RewardsTabs: FC = () => {
 				<Pill
 					color="yellow"
 					size="large"
-					blackFont={false}
+					weight="bold"
 					onClick={handleClaimAll}
 					disabled={claimDisabledAll}
 				>
@@ -176,7 +176,6 @@ const RewardsTabs: FC = () => {
 									style={{ alignItems: 'center', justifyContent: 'flex-start' }}
 								>
 									{formatNumber(epoch, { minDecimals: 0 })}
-									<SpacedHelpIcon />
 								</FlexDivRow>
 							</FlexDivCol>
 						</div>
@@ -200,9 +199,27 @@ const RewardsTabs: FC = () => {
 					</CardGrid>
 				))}
 			</CardsContainer>
+			<StyledFlexDivCol>
+				<div className="value">
+					<Trans
+						i18nKey={'dashboard.rewards.disclaimer'}
+						components={[
+							<Emphasis
+								href={EXTERNAL_LINKS.Docs.RewardsGuide}
+								target="_blank"
+								rel="noopener noreferrer"
+							/>,
+						]}
+					/>
+				</div>
+			</StyledFlexDivCol>
 		</RewardsTabContainer>
 	);
 };
+
+const Emphasis = styled.a`
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
+`;
 
 const HeaderContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 22.5px;
@@ -211,9 +228,6 @@ const HeaderContainer = styled(FlexDivRowCentered)`
 		flex-direction: column;
 		row-gap: 15px;
 	`}
-`;
-const SpacedHelpIcon = styled(HelpIcon)`
-	margin-left: 5px;
 `;
 
 const RewardsTabContainer = styled.div`
@@ -241,6 +255,7 @@ const CardGrid = styled(StakingCard)`
 
 	.value {
 		font-size: 13px;
+		line-height: 16px;
 		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 		margin-top: 0px;
 		font-family: ${(props) => props.theme.fonts.regular};
@@ -252,6 +267,7 @@ const CardsContainer = styled.div`
 	width: 100%;
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 20px;
+	margin-bottom: 20px;
 
 	${media.lessThan('mdUp')`
 		grid-template-columns: repeat(1, 1fr);
