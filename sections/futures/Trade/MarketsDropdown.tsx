@@ -102,8 +102,20 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 		const sortedMarkets = markets
 			.filter((m) => favMarkets.includes(m.asset))
-			.sort((a, b) => getMarketName(a.asset).localeCompare(getMarketName(b.asset)))
-			.concat(markets.filter((m) => !favMarkets.includes(m.asset)));
+			.sort((a, b) =>
+				getBasePriceRateInfo(b.asset)?.price.sub(getBasePriceRateInfo(a.asset)?.price).gt(0)
+					? 1
+					: -1
+			)
+			.concat(
+				markets
+					.filter((m) => !favMarkets.includes(m.asset))
+					.sort((a, b) =>
+						getBasePriceRateInfo(b.asset)?.price.sub(getBasePriceRateInfo(a.asset)?.price).gt(0)
+							? 1
+							: -1
+					)
+			);
 
 		return sortedMarkets.map((market) => {
 			const pastPrice = getPastPrice(market.asset);
@@ -169,7 +181,6 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 						<StyledTable
 							highlightRowsOnHover
 							rowStyle={{ padding: '0' }}
-							sortBy={[{ id: 'priceNum', desc: true }]}
 							onTableRowClick={(row) => onSelectMarket(row.original.asset)}
 							columns={[
 								{
