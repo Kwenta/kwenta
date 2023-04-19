@@ -2,6 +2,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import React, { useMemo, memo, useCallback } from 'react';
 import styled from 'styled-components';
 
+import TextButton from 'components/Button/TextButton';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
@@ -71,7 +72,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 				<OrderSizingRow>
 					<InputTitle>{type === 'increase' ? 'Increase' : 'Reduce'} position size</InputTitle>
 					<InputHelpers>
-						<MaxButton onClick={handleSetMax}>Max</MaxButton>
+						<TextButton onClick={handleSetMax}>Max</TextButton>
 					</InputHelpers>
 				</OrderSizingRow>
 
@@ -108,18 +109,6 @@ const OrderSizingRow = styled(FlexDivRow)`
 	align-items: center;
 	margin-bottom: 8px;
 	cursor: default;
-`;
-
-const MaxButton = styled.button`
-	text-decoration: underline;
-	font-variant: small-caps;
-	text-transform: lowercase;
-	font-size: 13px;
-	line-height: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	background-color: transparent;
-	border: none;
-	cursor: pointer;
 `;
 
 const InputHelpers = styled.div`
