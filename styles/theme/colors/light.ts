@@ -164,7 +164,7 @@ const newTheme = {
 
 const lightTheme = {
 	...common.light,
-	table: { fill: '#EEE', hover: '#E6E6E6' },
+	table: { fill: common.palette.neutral.n10, hover: common.palette.neutral.n20 },
 	gold: '#724713',
 	badge: {
 		red: { background: '#FF8D8D', text: 'black' },
@@ -287,7 +287,9 @@ const lightTheme = {
 		bg: '#515151',
 	},
 	chartLine: {
-		long: common.light.green,
+		long: common.palette.green.g700,
+		short: common.palette.red.r600,
+		default: '#4094E8',
 	},
 	socket: {
 		accent: `#d5d5d5`,

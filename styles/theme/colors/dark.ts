@@ -292,7 +292,9 @@ const darkTheme = {
 		bg: '#fff',
 	},
 	chartLine: {
-		long: '#37A141',
+		long: common.palette.green.g700,
+		short: common.palette.red.r600,
+		default: '#4094E8',
 	},
 	socket: {
 		accent: `#252525`,
