@@ -44,7 +44,6 @@ const OpenDelayedOrdersTable: React.FC = () => {
 	const isL2 = useIsL2();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
-	// TODO: Requires changes to bring back support for cross margin
 	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const isCancelling = useAppSelector(selectIsCancellingOrder);

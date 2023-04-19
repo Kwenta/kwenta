@@ -908,15 +908,6 @@
 				"isolated-margin": {
 					"title": "Isolated Margin"
 				},
-				"cross-margin": {
-					"connect-wallet": "Connect your wallet to start trading",
-					"title": "Cross Margin",
-					"faq-title": " Cross Margin FAQ",
-					"create-account": "Create Account",
-					"unsupported": "Cross margin is not supported on this network",
-					"switch-type": "Switch to isolated margin",
-					"account-query-failed": "Failed to fetch account"
-				},
 				"preview": {
 					"insufficient-margin": "Insufficient free margin",
 					"error": "Error generating preview"

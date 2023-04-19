@@ -310,7 +310,7 @@ export const fetchCrossMarginAccount = createAsyncThunk<
 		if (account) return { account, wallet, network };
 		return undefined;
 	} catch (err) {
-		notifyError('Failed to fetch cross margin account', err);
+		notifyError('Failed to fetch smart margin account', err);
 		rejectWithValue(err.message);
 	}
 });
@@ -1163,7 +1163,7 @@ export const depositCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectCrossMarginAccount(getState());
 		if (!account) {
-			notifyError('No cross margin account');
+			notifyError('No smart margin account');
 			return;
 		}
 		await submitCMTransferTransaction(dispatch, sdk, 'deposit_cross_margin', account, amount);
@@ -1175,7 +1175,7 @@ export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectCrossMarginAccount(getState());
 		if (!account) {
-			notifyError('No cross margin account');
+			notifyError('No smart margin account');
 			return;
 		}
 		await submitCMTransferTransaction(dispatch, sdk, 'withdraw_cross_margin', account, amount);
@@ -1186,7 +1186,7 @@ export const approveCrossMargin = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/approveCrossMargin',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectCrossMarginAccount(getState());
-		if (!account) throw new Error('No cross margin account');
+		if (!account) throw new Error('No smart margin account');
 		try {
 			dispatch(
 				setTransaction({
@@ -1390,7 +1390,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 
 		try {
 			if (!marketInfo) throw new Error('Market info not found');
-			if (!account) throw new Error('No cross margin account found');
+			if (!account) throw new Error('No smart margin account found');
 			if (!wallet) throw new Error('No wallet connected');
 
 			dispatch(
@@ -1487,7 +1487,7 @@ export const submitCrossMarginAdjustMargin = createAsyncThunk<void, void, ThunkC
 
 		try {
 			if (!market) throw new Error('Market info not found');
-			if (!account) throw new Error('No cross margin account found');
+			if (!account) throw new Error('No smart margin account found');
 			if (!marginDelta || marginDelta === '') throw new Error('No margin amount set');
 
 			dispatch(
@@ -1525,7 +1525,7 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 
 		try {
 			if (!market) throw new Error('Market info not found');
-			if (!account) throw new Error('No cross margin account found');
+			if (!account) throw new Error('No smart margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
 
 			dispatch(
@@ -1576,7 +1576,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 		try {
 			if (!market) throw new Error('Market info not found');
 			if (!wallet) throw new Error('No wallet connected');
-			if (!account) throw new Error('No cross margin account found');
+			if (!account) throw new Error('No smart margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
 
 			const isClosing = wei(nativeSizeDelta)
@@ -1675,7 +1675,7 @@ export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig
 
 		try {
 			if (!position?.position) throw new Error('No position to close');
-			if (!crossMarginAccount) throw new Error('No cross margin account');
+			if (!crossMarginAccount) throw new Error('No smart margin account');
 			if (!market) throw new Error('Missing market info');
 
 			dispatch(
@@ -1712,7 +1712,7 @@ export const cancelConditionalOrder = createAsyncThunk<void, number, ThunkConfig
 	async (contractOrderId, { getState, dispatch, extra: { sdk } }) => {
 		const crossMarginAccount = selectCrossMarginAccount(getState());
 		try {
-			if (!crossMarginAccount) throw new Error('No cross margin account');
+			if (!crossMarginAccount) throw new Error('No smart margin account');
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1742,7 +1742,7 @@ export const withdrawAccountKeeperBalance = createAsyncThunk<void, Wei, ThunkCon
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
 		const crossMarginAccount = selectCrossMarginAccount(getState());
 		try {
-			if (!crossMarginAccount) throw new Error('No cross margin account');
+			if (!crossMarginAccount) throw new Error('No smart margin account');
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1849,7 +1849,7 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 
 		try {
 			if (!market) throw new Error('Market info not found');
-			if (!account) throw new Error('No cross margin account found');
+			if (!account) throw new Error('No smart margin account found');
 			if (!wallet) throw new Error('No wallet connected');
 
 			const maxSizeDelta =
