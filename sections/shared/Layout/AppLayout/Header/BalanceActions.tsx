@@ -14,9 +14,8 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import { StakingCard } from 'sections/dashboard/Stake/card';
-import { fetchEarnTokenPrices } from 'state/earn/actions';
 import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
-import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	claimMultipleRewardsAll,
 	claimMultipleRewardsOp,
@@ -68,8 +67,6 @@ const BalanceActions: FC = () => {
 			});
 		}
 	}, [dispatch, walletAddress]);
-
-	usePollAction('fetchEarnTokenPrices', fetchEarnTokenPrices, { intervalTime: 600000 });
 
 	const claimDisabledAll = useMemo(
 		() => tradingRewards.add(kwentaOpRewards).add(snxOpRewards).lte(0),
