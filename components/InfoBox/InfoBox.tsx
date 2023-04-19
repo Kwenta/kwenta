@@ -102,7 +102,6 @@ const ValueText = styled(Body).attrs({ mono: true })<{
 	$isSubItem?: boolean;
 	$bold?: boolean;
 }>`
-	color: ${(props) => props.theme.colors.selectedTheme.text[props.$isSubItem ? 'label' : 'value']};
 	cursor: default;
 
 	${(props) =>
