@@ -185,8 +185,8 @@ const BalanceActions: FC = () => {
 								color="gray"
 								fullWidth={true}
 								size="large"
-								isRounded={false}
-								blackFont={false}
+								roundedCorner={false}
+								weight="regular"
 								onClick={() =>
 									window.open(EXTERNAL_LINKS.Docs.RewardsGuide, '_blank', 'noopener noreferrer')
 								}
@@ -198,8 +198,8 @@ const BalanceActions: FC = () => {
 								color="yellow"
 								fullWidth={true}
 								size="large"
-								isRounded={false}
-								blackFont={false}
+								roundedCorner={false}
+								weight="regular"
 								onClick={handleClaimAll}
 								disabled={claimDisabledAll}
 							>

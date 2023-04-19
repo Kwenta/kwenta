@@ -1,21 +1,25 @@
 import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
+type PillSize = 'small' | 'medium' | 'large';
+type PillColor = 'yellow' | 'gray' | 'red';
+type FontWeight = 'regular' | 'bold' | 'black';
+
 type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-	size?: 'small' | 'medium' | 'large';
-	color?: 'yellow' | 'gray' | 'red';
+	size?: PillSize;
+	color?: PillColor;
 	outline?: boolean;
 	fullWidth?: boolean;
-	isRounded?: boolean;
-	blackFont?: boolean;
+	roundedCorner?: boolean;
+	weight?: FontWeight;
 };
 
 const Pill: FC<PillProps> = memo(
 	({
 		size = 'small',
 		color = 'gray',
-		isRounded = true,
-		blackFont = true,
+		roundedCorner = true,
+		weight = 'black',
 		outline,
 		fullWidth,
 		...props
@@ -26,8 +30,8 @@ const Pill: FC<PillProps> = memo(
 				$color={color}
 				$outline={outline}
 				$fullWidth={fullWidth}
-				$isRounded={isRounded}
-				$blackFont={blackFont}
+				$roundedCorner={roundedCorner}
+				$weight={weight}
 				{...props}
 			/>
 		);
@@ -35,12 +39,12 @@ const Pill: FC<PillProps> = memo(
 );
 
 const BasePill = styled.button<{
-	$size: 'small' | 'medium' | 'large';
-	$color: 'yellow' | 'gray' | 'red';
+	$size: PillSize;
+	$color: PillColor;
 	$outline?: boolean;
 	$fullWidth?: boolean;
-	$isRounded?: boolean;
-	$blackFont?: boolean;
+	$roundedCorner?: boolean;
+	$weight?: FontWeight;
 }>`
 	${(props) => css`
 		padding: ${props.$size === 'small'
@@ -51,11 +55,11 @@ const BasePill = styled.button<{
 		height: ${props.$size === 'small' ? '20px' : props.$size === 'medium' ? '24px' : '36px'};
 		width: ${props.$fullWidth ? '100%' : 'auto'};
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
-		font-family: ${props.$blackFont ? props.theme.fonts.black : props.theme.fonts.bold};
+		font-family: ${props.$weight && props.theme.fonts[props.$weight]};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
 		color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
 		border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].border};
-		border-radius: ${props.$isRounded ? '50' : '8'}px;
+		border-radius: ${props.$roundedCorner ? '50' : '8'}px;
 		cursor: pointer;
 		font-variant: all-small-caps;
 

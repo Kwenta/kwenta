@@ -125,7 +125,7 @@ const RewardsTabs: FC = () => {
 				<Pill
 					color="yellow"
 					size="large"
-					blackFont={false}
+					weight="regular"
 					onClick={handleClaimAll}
 					disabled={claimDisabledAll}
 				>

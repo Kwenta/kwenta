@@ -1,7 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { ethers, BigNumber } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
