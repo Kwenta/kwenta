@@ -31,6 +31,9 @@ export const selectPrices = createSelector(
 export const selectOffchainPricesInfo = (state: RootState) =>
 	deserializePricesInfo(state.prices.offChainPrices);
 
+export const selectOnChainPricesInfo = (state: RootState) =>
+	deserializePricesInfo(state.prices.onChainPrices);
+
 export const selectPreviousDayPrices = (state: RootState) => state.prices.previousDayPrices;
 
 export const selectLatestEthPrice = createSelector(selectPrices, (prices) => {

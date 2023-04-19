@@ -12,7 +12,11 @@ import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/typ
 import { getDefaultPriceImpact, unserializePotentialTrade } from 'sdk/utils/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
-import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
+import {
+	selectOffchainPricesInfo,
+	selectOnChainPricesInfo,
+	selectPrices,
+} from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
@@ -32,6 +36,7 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeConditionalOrders,
+	MarketAssetByKey,
 } from 'utils/futures';
 
 import {
@@ -274,9 +279,18 @@ export const selectFuturesAccount = createSelector(
 export const selectAllConditionalOrders = createSelector(
 	selectFuturesType,
 	selectCrossMarginAccountData,
-	(selectedType, account) => {
+	selectOnChainPricesInfo,
+	(selectedType, account, prices) => {
 		if (!account || selectedType === 'isolated_margin') return [];
-		return unserializeConditionalOrders(account.conditionalOrders);
+
+		const orders = unserializeConditionalOrders(account.conditionalOrders);
+		return orders.map((o) => {
+			const price = prices[MarketAssetByKey[o.marketKey]];
+			return {
+				...o,
+				currentPrice: price,
+			};
+		});
 	}
 );
 
