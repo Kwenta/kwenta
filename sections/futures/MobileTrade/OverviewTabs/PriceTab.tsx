@@ -7,19 +7,19 @@ import PositionChart from 'sections/futures/PositionChart';
 const PriceTab: React.FC = () => {
 	return (
 		<StyledPane noPadding>
-			<PositionChart />
+			<PositionChart mobile />
 		</StyledPane>
 	);
 };
 
 const StyledPane = styled(Pane)`
 	#tv_chart_container {
-		min-height: 313px;
-		max-height: 313px;
+		min-height: 324px;
+		max-height: 324px;
 	}
 
 	iframe {
-		max-height: 313px;
+		max-height: 324px;
 	}
 `;
 

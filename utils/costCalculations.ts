@@ -1,95 +1,34 @@
 import Wei, { wei } from '@synthetixio/wei';
 
-import { FuturesMarket, FuturesOrderType } from 'sdk/types/futures';
+import { FuturesMarket } from 'sdk/types/futures';
 
 import { zeroBN } from './formatters/number';
 
-export const computeDelayedOrderFee = (
-	market: FuturesMarket | undefined,
-	susdSizeDelta: Wei,
-	isOffchain: boolean
-) => {
+export const computeDelayedOrderFee = (market: FuturesMarket | undefined, susdSizeDelta: Wei) => {
 	if (
 		!market?.marketSkew ||
-		!market?.feeRates.takerFeeDelayedOrder ||
-		!market?.feeRates.makerFeeDelayedOrder ||
-		!market?.feeRates.takerFeeOffchainDelayedOrder ||
-		!market?.feeRates.makerFeeOffchainDelayedOrder ||
-		!susdSizeDelta
-	) {
-		return { commitDeposit: undefined, delayedOrderFee: undefined };
-	}
-
-	const makerFee = isOffchain
-		? market.feeRates.makerFeeOffchainDelayedOrder
-		: market.feeRates.makerFeeDelayedOrder;
-	const takerFee = isOffchain
-		? market.feeRates.takerFeeOffchainDelayedOrder
-		: market.feeRates.takerFeeDelayedOrder;
-	const staticRate = sameSide(susdSizeDelta, market.marketSkew) ? takerFee : makerFee;
-	return {
-		commitDeposit: susdSizeDelta.mul(staticRate).abs(),
-		delayedOrderFee: susdSizeDelta.mul(staticRate).abs(),
-	};
-};
-
-export const computeOrderFee = (
-	market: FuturesMarket | undefined,
-	susdSizeDelta: Wei,
-	orderType: FuturesOrderType
-) => {
-	if (
-		!market?.marketSkew ||
-		!market?.feeRates.takerFee ||
-		!market?.feeRates.makerFee ||
-		!market?.feeRates.takerFeeDelayedOrder ||
-		!market?.feeRates.makerFeeDelayedOrder ||
 		!market?.feeRates.takerFeeOffchainDelayedOrder ||
 		!market?.feeRates.makerFeeOffchainDelayedOrder ||
 		!susdSizeDelta
 	) {
 		return {
-			orderFee: zeroBN,
-			makerFee: zeroBN,
-			takerFee: zeroBN,
+			commitDeposit: zeroBN,
+			delayedOrderFee: zeroBN,
+			makerFeeRate: zeroBN,
+			takerFeeRate: zeroBN,
 		};
 	}
 
-	const makerFee =
-		orderType === 'delayed_offchain'
-			? market.feeRates.makerFeeOffchainDelayedOrder
-			: orderType === 'delayed'
-			? market.feeRates.makerFeeDelayedOrder
-			: market.feeRates.makerFee;
-	const takerFee =
-		orderType === 'delayed_offchain'
-			? market.feeRates.takerFeeOffchainDelayedOrder
-			: orderType === 'delayed'
-			? market.feeRates.takerFeeDelayedOrder
-			: market.feeRates.takerFee;
+	const makerFeeRate = market.feeRates.makerFeeOffchainDelayedOrder;
+	const takerFeeRate = market.feeRates.takerFeeOffchainDelayedOrder;
+	const staticRate = sameSide(susdSizeDelta, market.marketSkew) ? takerFeeRate : makerFeeRate;
 
 	return {
-		orderFee: sameSide(susdSizeDelta, market.marketSkew) ? takerFee : makerFee,
-		makerFee,
-		takerFee,
+		commitDeposit: susdSizeDelta.mul(staticRate).abs(),
+		delayedOrderFee: susdSizeDelta.mul(staticRate).abs(),
+		makerFeeRate,
+		takerFeeRate,
 	};
-};
-
-export const computeMarketFee = (market: FuturesMarket | undefined, usdSizeDelta: Wei) => {
-	if (
-		!market?.marketSkew ||
-		!market?.feeRates.takerFee ||
-		!market?.feeRates.makerFee ||
-		!usdSizeDelta
-	) {
-		return zeroBN;
-	}
-
-	if (sameSide(usdSizeDelta, market.marketSkew)) {
-		return market.feeRates.takerFee;
-	} else {
-		return market.feeRates.makerFee;
-	}
 };
 
 export const sameSide = (a: Wei, b: Wei) => {

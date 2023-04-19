@@ -5,17 +5,9 @@ export const ZERO_STATE_TRADE_INPUTS = {
 	susdSize: '',
 };
 
-export const ZERO_STATE_CM_TRADE_INPUTS = {
-	...ZERO_STATE_TRADE_INPUTS,
-	leverage: '1',
-};
-
 export const ZERO_CM_FEES = {
-	staticFee: '0',
-	crossMarginFee: '0',
-	limitStopOrderFee: '0',
+	delayedOrderFee: '0',
 	keeperEthDeposit: '0',
-	total: '0',
 };
 
 export const ZERO_STATE_ISOLATED_ACCOUNT = {
@@ -23,7 +15,7 @@ export const ZERO_STATE_ISOLATED_ACCOUNT = {
 	trades: [],
 	marginTransfers: [],
 	positions: [],
-	openOrders: [],
+	delayedOrders: [],
 	positionHistory: [],
 };
 
@@ -36,7 +28,9 @@ export const ZERO_STATE_CM_ACCOUNT = {
 	},
 	trades: [],
 	positions: [],
-	openOrders: [],
+	idleTransfers: [],
+	delayedOrders: [],
+	conditionalOrders: [],
 	positionHistory: [],
 };
 

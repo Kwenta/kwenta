@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import { FlexDivCentered } from 'components/layout/flex';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { BorderedPanel } from 'styles/common';
 
 const FuturesUnsupportedNetwork = () => {
 	const { t } = useTranslation();
@@ -38,9 +37,9 @@ const Title = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
-const MessageContainer = styled(BorderedPanel)`
-	text-align: center;
+const MessageContainer = styled.div`
 	padding: 20px;
+	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 

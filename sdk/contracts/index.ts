@@ -8,13 +8,13 @@ import MultipleMerkleDistributorABI from '../contracts/abis/MultipleMerkleDistri
 import MultipleMerkleDistributorPerpsV2ABI from '../contracts/abis/MultipleMerkleDistributorPerpsV2.json';
 import RewardEscrowABI from '../contracts/abis/RewardEscrow.json';
 import SupplyScheduleABI from '../contracts/abis/SupplySchedule.json';
-import CrossMarginBaseSettingsABI from './abis/CrossMarginBaseSettings.json';
 import DappMaintenanceABI from './abis/DappMaintenance.json';
 import ExchangeRatesABI from './abis/ExchangeRates.json';
 import FuturesMarketDataABI from './abis/FuturesMarketData.json';
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
 import KwentaArrakisVaultABI from './abis/KwentaArrakisVault.json';
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
+import MultipleMerkleDistributorOpABI from './abis/MultipleMerkleDistributorOp.json';
 import PerpsV2MarketABI from './abis/PerpsV2Market.json';
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
@@ -23,14 +23,11 @@ import SynthRedeemerABI from './abis/SynthRedeemer.json';
 import SystemStatusABI from './abis/SystemStatus.json';
 import { ADDRESSES } from './constants';
 import {
-	CrossMarginAccountFactory__factory,
-	CrossMarginBaseSettings__factory,
+	SmartMarginAccountFactory__factory,
 	ExchangeRates__factory,
 	Exchanger__factory,
 	FuturesMarketData__factory,
 	FuturesMarketSettings__factory,
-	PerpsV2MarketData__factory,
-	PerpsV2MarketSettings__factory,
 	RewardEscrow__factory,
 	Synthetix__factory,
 	SynthRedeemer__factory,
@@ -48,7 +45,11 @@ import {
 	VeKwentaRedeemer__factory,
 	Pyth__factory,
 	BatchClaimer__factory,
+	MultipleMerkleDistributorOp__factory,
+	MultipleMerkleDistributorPerpsV2__factory,
 } from './types';
+import { PerpsV2MarketData__factory } from './types/factories/PerpsV2MarketData__factory';
+import { PerpsV2MarketSettings__factory } from './types/factories/PerpsV2MarketSettings__factory';
 
 type ContractFactory = {
 	connect: (address: string, provider: ethers.providers.Provider) => Contract;
@@ -109,15 +110,9 @@ export const getContractsByNetwork = (
 		SUSD: ADDRESSES.SUSD[networkId]
 			? ERC20__factory.connect(ADDRESSES.SUSD[networkId], provider)
 			: undefined,
-		CrossMarginAccountFactory: ADDRESSES.CrossMarginAccountFactory[networkId]
-			? CrossMarginAccountFactory__factory.connect(
-					ADDRESSES.CrossMarginAccountFactory[networkId],
-					provider
-			  )
-			: undefined,
-		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
-			? CrossMarginBaseSettings__factory.connect(
-					ADDRESSES.CrossMarginBaseSettings[networkId],
+		SmartMarginAccountFactory: ADDRESSES.SmartMarginAccountFactory[networkId]
+			? SmartMarginAccountFactory__factory.connect(
+					ADDRESSES.SmartMarginAccountFactory[networkId],
 					provider
 			  )
 			: undefined,
@@ -144,10 +139,13 @@ export const getContractsByNetwork = (
 			? MultipleMerkleDistributor__factory.connect(ADDRESSES.TradingRewards[networkId], provider)
 			: undefined,
 		MultipleMerkleDistributorPerpsV2: ADDRESSES.TradingRewardsPerpsV2[networkId]
-			? MultipleMerkleDistributor__factory.connect(
+			? MultipleMerkleDistributorPerpsV2__factory.connect(
 					ADDRESSES.TradingRewardsPerpsV2[networkId],
 					provider
 			  )
+			: undefined,
+		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
+			? MultipleMerkleDistributorOp__factory.connect(ADDRESSES.OpRewards[networkId], provider)
 			: undefined,
 		BatchClaimer: ADDRESSES.BatchClaimer[networkId]
 			? BatchClaimer__factory.connect(ADDRESSES.BatchClaimer[networkId], provider)
@@ -171,12 +169,6 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 	return {
 		SynthRedeemer: ADDRESSES.SynthRedeemer[networkId]
 			? new EthCallContract(ADDRESSES.SynthRedeemer[networkId], SynthRedeemerABI)
-			: undefined,
-		CrossMarginBaseSettings: ADDRESSES.CrossMarginBaseSettings[networkId]
-			? new EthCallContract(
-					ADDRESSES.CrossMarginBaseSettings[networkId],
-					CrossMarginBaseSettingsABI
-			  )
 			: undefined,
 		ExchangeRates: ADDRESSES.ExchangeRates[networkId]
 			? new EthCallContract(ADDRESSES.ExchangeRates[networkId], ExchangeRatesABI)
@@ -216,6 +208,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 					ADDRESSES.TradingRewardsPerpsV2[networkId],
 					MultipleMerkleDistributorPerpsV2ABI
 			  )
+			: undefined,
+		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
+			? new EthCallContract(ADDRESSES.OpRewards[networkId], MultipleMerkleDistributorOpABI)
 			: undefined,
 		vKwentaToken: ADDRESSES.vKwentaToken[networkId]
 			? new EthCallContract(ADDRESSES.vKwentaToken[networkId], ERC20ABI)

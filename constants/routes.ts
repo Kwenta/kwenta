@@ -22,6 +22,8 @@ export const ROUTES = {
 		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
 		Earn: normalizeRoute('/dashboard', 'earn', 'tab'),
 		Stake: normalizeRoute('/dashboard', 'staking', 'tab'),
+		Rewards: normalizeRoute('/dashboard', 'rewards', 'tab'),
+		TradingRewards: formatUrl('/dashboard/staking', { tab: 'trading-rewards' }),
 	},
 	Exchange: {
 		Home: '/exchange',
@@ -41,6 +43,8 @@ export const ROUTES = {
 			}),
 		Orders: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
 			formatUrl('/market', { asset, accountType, tab: 'orders' }),
+		ConditionalOrders: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+			formatUrl('/market', { asset, accountType, tab: 'conditional_orders' }),
 		Trades: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
 			formatUrl('/market', { asset, accountType, tab: 'trades' }),
 		Transfers: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>

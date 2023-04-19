@@ -21,9 +21,8 @@
 				"vaults": "vaults",
 				"rewards": "rewards"
 			},
-			"isolated-margin": "Isolated Margin",
-			"cross-margin": "Cross Margin",
-			"v2-alpha": "Try Futures V2 Alpha",
+			"isolated-margin": "Legacy Futures",
+			"cross-margin": "Smart Margin",
 			"leaderboard-alltime": "All Time",
 			"competition-round-1": "Round 1",
 			"competition-round-2": "Round 2",
@@ -342,14 +341,15 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
-				"market-price": "The current price of the futures market after adding a skew-based premium or discount to the oracle price",
+				"market-price": "The current price of the Futures market after adding a skew-based premium or discount to the index price",
 				"index-price": "The exact index price of this market without any adjustment for market skew applied",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
 				"open-interest-s": "Total notional value on all short positions / max open interest",
 				"open-interest-l": "Total notional value on all long positions / max open interest",
-				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed."
+				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed.",
+				"skew": "Skew is the total amount of outstanding long and short contracts expressed as a percentage"
 			},
 			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
 		},
@@ -454,7 +454,7 @@
 				"pnl": "Unrealized P&L",
 				"notionalValue": "Size",
 				"liquidationPrice": "Liq. Price",
-				"no-result": "You have no other open positions",
+				"no-result": "You have no open positions",
 				"legacy-link": "Missing a position? Check the legacy app",
 				"mobile": {
 					"market": "Market/Side",
@@ -490,7 +490,7 @@
 			},
 			"positions-tabs": {
 				"isolated-margin": "Isolated Margin",
-				"cross-margin": "Cross Margin",
+				"smart-margin": "Smart Margin",
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
 				"spot": "Spot Balances"
@@ -524,6 +524,31 @@
 				"title": "Step 2. Withdraw Your Liquidity",
 				"copy": "You can now withdraw your liquidity from the Arrakis ETH/KWENTA vault.",
 				"pool-link": "Arrakis WETH/KWENTA Pool ↗"
+			}
+		},
+		"rewards": {
+			"title": "Rewards",
+			"copy": "Earn rewards by trading on Kwenta and get boosted rewards for staking.",
+			"claimable": "Claimable",
+			"estimated": "Estimated",
+			"epoch": "Epoch",
+			"apr": "APR",
+			"staking": "Staking",
+			"claim": "Claim",
+			"claim-all": "Claim All",
+			"learn-more": "Learn more",
+			"disclaimer": "Disclaimer: The estimated epoch reward values presented are not indicative of the the final rewards value. Please be aware that these estimations may fluctuate due to factors such as: future fees paid and the staking contributions of other participants leading up to the epoch-ending snapshot. For additional insights on rewards, <0>kindly refer to our blog.<0>",
+			"trading-rewards": {
+				"title": "Kwenta Trading Rewards",
+				"copy": "Earn  $KWENTA rewards in proportion to total fees paid."
+			},
+			"kwenta-rewards": {
+				"title": "Kwenta OP Rewards",
+				"copy": "Earn a share of $OP rewards issued by Kwenta."
+			},
+			"snx-rewards": {
+				"title": "SNX OP Rewards",
+				"copy": "Earn a share of $OP rewards issued by Synthetix."
 			}
 		},
 		"stake": {
@@ -654,8 +679,17 @@
 	"dashboard-stake": {
 		"page-title": "Staking | Kwenta"
 	},
+	"dashboard-rewards": {
+		"page-title": "Rewards | Kwenta"
+	},
 	"futures": {
 		"page-title": "Kwenta Futures",
+		"cta-buttons": {
+			"copy": "Isolated margin is being replaced with smart margin, where you will have access to conditional orders and be eligible for trading rewards. ",
+			"learn-more": "Learn more",
+			"switch-to-smart-margin": "Switch to Smart Margin",
+			"dismiss": "Dismiss"
+		},
 		"wallet-overview": {
 			"no-positions": "You have no open positions. Open a position now: ",
 			"title": "wallet overview",
@@ -794,7 +828,6 @@
 					"open-position": "Open Position",
 					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
-					"oi-caps-reached": "Open Interest Cap Reached",
 					"place-next-price-order": "Place Next Price Order",
 					"place-delayed-order": "Place Order",
 					"place-limit-order": "Place Limit Order",
@@ -853,6 +886,7 @@
 				},
 				"confirmation": {
 					"modal": {
+						"approve-order": "Step 1: Approve sUSD spend",
 						"confirm-order": {
 							"long": "Confirm Long order",
 							"short": "Confirm Short order"
@@ -873,15 +907,6 @@
 				},
 				"isolated-margin": {
 					"title": "Isolated Margin"
-				},
-				"cross-margin": {
-					"connect-wallet": "Connect your wallet to start trading",
-					"title": "Cross Margin",
-					"faq-title": " Cross Margin FAQ",
-					"create-account": "Create Account",
-					"unsupported": "Cross margin is not supported on this network",
-					"switch-type": "Switch to isolated margin",
-					"account-query-failed": "Failed to fetch account"
 				},
 				"preview": {
 					"insufficient-margin": "Insufficient free margin",
@@ -906,14 +931,39 @@
 					"failed": "Transaction failed",
 					"insufficient-margin": "Leverage cannot be increased, it exceeds the minimum margin requirement of $40",
 					"insufficient-free-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
+				},
+				"edit-position":{
+					"market": "Market",
+					"current-size": "Current size",
+					"leverage-change": "Leverage",
+					"position-size": "Position Size",
+					"margin-change": "Margin",
+					"liquidation": "Liquidation",
+					"submit-size": "Submit size change",
+					"submit-margin-withdraw": "Withdraw Margin",
+					"submit-margin-deposit": "Deposit Margin",
+					"submit-size-increase": "Increase Size",
+					"submit-size-decrease": "Decrease Size",
+					"submit-close": "Submit Close Order",
+					"current-margin": "Current margin"
+				},
+				"edit-sl-tp": {
+					"title": "Set Position SL/TP",
+					"set-sl-n-tp": "Set SL & TP",
+					"take-profit": "Take Profit",
+					"no-tp": "No TP",
+					"no-sl": "No SL",
+					"stop-loss": "Stop Loss",
+					"last-price": "Last Price",
+					"estimated-profit": "Estimated Profit",
+					"estimated-loss": "Estimated Loss",
+					"warning": "This setting applies to the entire position."
 				}
 			},
 			"history": {
 				"history-label": "trade history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"last-trades": "last trades",
-				"skew-label": "skew",
-				"skew-tooltip": "Skew is the total amount of outstanding long and short contracts expressed as a percentage",
 				"amount-label": "amount",
 				"price-label": "price",
 				"time-label": "time"
@@ -969,8 +1019,10 @@
 						"size": "Size",
 						"size-price": "Size/Price",
 						"reserved-margin": "Reserved margin",
+						"reduce-only": "Reduce only",
 						"commit-deposit": "Commit Deposit",
-						"price": "Price",
+						"price": "Target Price",
+						"current-price": "CL Price",
 						"parameters": "Parameters",
 						"status": "Status",
 						"actions": "Actions",
@@ -1059,15 +1111,15 @@
 				}
 			},
 			"onboard": {
-				"title": "Cross Margin",
-				"step1-intro": "Start by creating your cross margin account",
+				"title": "Smart Margin",
+				"step1-intro": "Start by creating your smart margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
 				"step3-intro": "Lastly, deposit sUSD to begin trading",
-				"step3-complete": "Your cross margin account has been successfully created!",
-				"faq1": "What is cross margin?",
-				"faq2": "Is cross margin better than isolated margin?",
-				"faq3": "How will a cross margin account affect my trading?",
-				"unsupported-network": "Cross margin is not supported on this network"
+				"step3-complete": "Your smart margin account has been successfully created!",
+				"faq1": "What is smart margin?",
+				"faq2": "Is smart margin better than isolated margin?",
+				"faq3": "How will a smart margin account affect my trading?",
+				"unsupported-network": "Smart margin is not supported on this network"
 			}
 		}
 	},

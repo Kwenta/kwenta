@@ -204,6 +204,7 @@ const StyledMenuItem = styled(Body).attrs({ weight: 'bold' })`
 `;
 
 const Container = styled.header`
+	padding: 15px;
 	display: grid;
 	align-items: center;
 	width: 100%;

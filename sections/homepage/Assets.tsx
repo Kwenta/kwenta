@@ -12,6 +12,7 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { FlexDiv, FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import { TabPanel } from 'components/Tab';
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { selectMarketVolumes } from 'state/futures/selectors';
@@ -203,7 +204,9 @@ const Assets = () => {
 									<StatsCard
 										noOutline
 										onClick={() => {
-											router.push(`/market/?asset=${key}`);
+											router.push(
+												`/market/?asset=${key}&accountType=${DEFAULT_FUTURES_MARGIN_TYPE}`
+											);
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
@@ -216,12 +219,7 @@ const Assets = () => {
 										</StatsIconContainer>
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
-											<Currency.Price
-												currencyKey="sUSD"
-												price={price}
-												sign="$"
-												conversionRate={1}
-											/>
+											<Currency.Price price={price} />
 										</AssetPrice>
 										<StatsValueContainer>
 											<StatsValue>
@@ -237,13 +235,7 @@ const Assets = () => {
 												{volume === 0 ? (
 													<>-</>
 												) : (
-													<Currency.Price
-														currencyKey="sUSD"
-														price={volume}
-														sign="$"
-														conversionRate={1}
-														formatOptions={{ minDecimals: 0 }}
-													/>
+													<Currency.Price price={volume} formatOptions={{ minDecimals: 0 }} />
 												)}
 											</StatsValue>
 										</StatsValueContainer>
@@ -265,7 +257,9 @@ const Assets = () => {
 										className={key}
 										noOutline={false}
 										onClick={() => {
-											router.push(`/market/?asset=${key}`);
+											router.push(
+												`/market/?asset=${key}&accountType=${DEFAULT_FUTURES_MARGIN_TYPE}`
+											);
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
@@ -278,12 +272,7 @@ const Assets = () => {
 										</StatsIconContainer>
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
-											<Currency.Price
-												currencyKey="sUSD"
-												price={price}
-												sign="$"
-												conversionRate={1}
-											/>
+											<Currency.Price price={price} />
 										</AssetPrice>
 										<StatsValueContainer>
 											<StatsValue>
@@ -299,13 +288,7 @@ const Assets = () => {
 												{volume === 0 ? (
 													<>-</>
 												) : (
-													<Currency.Price
-														currencyKey="sUSD"
-														price={volume}
-														sign="$"
-														conversionRate={1}
-														formatOptions={{ minDecimals: 0 }}
-													/>
+													<Currency.Price price={volume} formatOptions={{ minDecimals: 0 }} />
 												)}
 											</StatsValue>
 										</StatsValueContainer>

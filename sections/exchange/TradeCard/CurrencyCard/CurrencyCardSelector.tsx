@@ -120,9 +120,10 @@ const CurrencySelector = styled.div<{
 	box-sizing: border-box;
 	position: relative;
 	${border}
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 
 	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
 	}
 
 	${(props) =>

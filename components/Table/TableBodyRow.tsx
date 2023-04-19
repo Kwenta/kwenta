@@ -35,11 +35,12 @@ const BaseTableBodyRow = styled.div<{
 	rowStyle?: Record<string, any>;
 }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 6px 0;
-	&:last-child {
-		border: none;
+
+	&:not(:last-child) {
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}
+
+	padding: 6px 0;
 
 	&:nth-child(odd) {
 		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
@@ -57,7 +58,7 @@ const BaseTableBodyRow = styled.div<{
 export const TableCell = styled(FlexDivCentered)`
 	box-sizing: border-box;
 	&:first-child {
-		padding-left: 14px;
+		padding-left: 18px;
 	}
 	&:last-child {
 		padding-right: 14px;

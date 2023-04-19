@@ -24,7 +24,6 @@ export type FuturesMarket<T = Wei> = {
 	assetHex: string;
 	currentFundingRate: T;
 	currentFundingVelocity: T;
-	currentRoundId: T;
 	feeRates: {
 		makerFee: T;
 		takerFee: T;
@@ -38,6 +37,8 @@ export type FuturesMarket<T = Wei> = {
 		longPct: number;
 		shortUSD: T;
 		longUSD: T;
+		long: T;
+		short: T;
 	};
 	marketDebt: T;
 	marketSkew: T;
@@ -47,7 +48,8 @@ export type FuturesMarket<T = Wei> = {
 	keeperDeposit: T;
 	isSuspended: boolean;
 	marketClosureReason: SynthSuspensionReason;
-	marketLimit: T;
+	marketLimitUsd: T;
+	marketLimitNative: T;
 	settings: {
 		maxMarketValue: T;
 		skewScale: T;
@@ -239,6 +241,9 @@ export type FuturesPosition<T = Wei> = {
 	remainingMargin: T;
 	accessibleMargin: T;
 	position: FuturesFilledPosition<T> | null;
+	// This prevents TS issues when creating a union with the cross margin position type.
+	stopLoss?: ConditionalOrder<T>;
+	takeProfit?: ConditionalOrder<T>;
 };
 
 export type ModifyPositionOptions<T extends boolean> = {
@@ -251,30 +256,40 @@ export type ModifyPositionOptions<T extends boolean> = {
 export type FuturesOrderTypeDisplay =
 	| 'Next Price'
 	| 'Limit'
-	| 'Stop Market'
+	| 'Stop'
 	| 'Market'
 	| 'Liquidation'
 	| 'Delayed'
+	| 'Take Profit'
+	| 'Stop Loss'
 	| 'Delayed Market';
 
-export type FuturesOrder<T = Wei> = {
-	id: string; // formatted subgraph id
-	contractId: number;
+export enum ConditionalOrderTypeEnum {
+	LIMIT = 0,
+	STOP = 1,
+}
+
+export type ConditionalOrder<T = Wei> = {
+	id: number;
+	subgraphId: string;
 	account: string;
 	asset: FuturesMarketAsset;
 	market: string;
 	marketKey: FuturesMarketKey;
 	size: T;
 	targetPrice: T | null;
+	desiredFillPrice: T;
 	marginDelta: T;
-	targetRoundId: T | null;
-	orderType: FuturesOrderTypeDisplay;
+	orderType: ConditionalOrderTypeEnum;
+	orderTypeDisplay: FuturesOrderTypeDisplay;
 	sizeTxt?: string;
 	targetPriceTxt?: string;
+	reduceOnly: boolean;
 	side?: PositionSide;
 	isStale?: boolean;
 	isExecutable?: boolean;
 	isCancelling?: boolean;
+	isSlTp?: boolean;
 };
 
 export type DelayedOrder<T = Wei> = {
@@ -293,6 +308,7 @@ export type DelayedOrder<T = Wei> = {
 };
 
 export type FuturesPotentialTradeDetails<T = Wei> = {
+	marketKey: FuturesMarketKey;
 	size: T;
 	sizeDelta: T;
 	liqPrice: T;
@@ -340,9 +356,8 @@ export type PostTradeDetailsResponse = {
 	status: number;
 };
 
-export type IsolatedMarginOrderType = 'delayed' | 'delayed_offchain' | 'market';
-export type CrossMarginOrderType = 'market' | 'stop_market' | 'limit';
-export type FuturesOrderType = IsolatedMarginOrderType | CrossMarginOrderType;
+export type SmartMarginOrderType = 'market' | 'stop_market' | 'limit';
+export type FuturesOrderType = SmartMarginOrderType;
 
 export type FuturesTrade<T = Wei> = {
 	account: string;
@@ -363,6 +378,23 @@ export type FuturesTrade<T = Wei> = {
 	accountType: FuturesAccountType;
 };
 
+export enum AccountExecuteFunctions {
+	ACCOUNT_MODIFY_MARGIN = 0,
+	ACCOUNT_WITHDRAW_ETH = 1,
+	PERPS_V2_MODIFY_MARGIN = 2,
+	PERPS_V2_WITHDRAW_ALL_MARGIN = 3,
+	PERPS_V2_SUBMIT_ATOMIC_ORDER = 4,
+	PERPS_V2_SUBMIT_DELAYED_ORDER = 5,
+	PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER = 6,
+	PERPS_V2_CLOSE_POSITION = 7,
+	PERPS_V2_SUBMIT_CLOSE_DELAYED_ORDER = 8,
+	PERPS_V2_SUBMIT_CLOSE_OFFCHAIN_DELAYED_ORDER = 9,
+	PERPS_V2_CANCEL_DELAYED_ORDER = 10,
+	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 11,
+	GELATO_PLACE_CONDITIONAL_ORDER = 12,
+	GELATO_CANCEL_CONDITIONAL_ORDER = 13,
+}
+
 export type MarginTransfer = {
 	timestamp: number;
 	account: string;
@@ -371,4 +403,50 @@ export type MarginTransfer = {
 	action: string;
 	market?: string;
 	asset?: FuturesMarketAsset;
+};
+
+export type MarketWithIdleMargin = {
+	marketAddress: string;
+	marketKey: FuturesMarketKey;
+	position: FuturesPosition;
+};
+
+export type SmartMarginOrderInputs = {
+	sizeDelta: Wei;
+	marginDelta: Wei;
+	desiredFillPrice: Wei;
+	timeDelta?: Wei;
+	keeperEthDeposit?: Wei;
+	conditionalOrderInputs?: {
+		orderType: ConditionalOrderTypeEnum;
+		price: Wei;
+		feeCap: Wei;
+		reduceOnly: boolean;
+	};
+	stopLoss?: {
+		price: Wei;
+		sizeDelta: Wei;
+		desiredFillPrice: Wei;
+	};
+	takeProfit?: {
+		price: Wei;
+		sizeDelta: Wei;
+		desiredFillPrice: Wei;
+	};
+};
+
+export type SLTPOrderInputs = {
+	keeperEthDeposit: Wei;
+	stopLoss?: {
+		price: Wei;
+		desiredFillPrice: Wei;
+		sizeDelta: Wei;
+		isCancelled?: boolean;
+	};
+	takeProfit?: {
+		price: Wei;
+		desiredFillPrice: Wei;
+		sizeDelta: Wei;
+		isCancelled?: boolean;
+	};
 };

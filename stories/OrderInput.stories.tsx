@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
+import InputButton from 'components/Input/InputButton';
 import NumericInput from 'components/Input/NumericInput';
-import { InputButton } from 'sections/futures/OrderSizing/OrderSizing';
 
 const DenominationToggle = () => {
 	const [asset, setAsset] = useState<'sUSD' | 'ETH'>('sUSD');

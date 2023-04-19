@@ -1,10 +1,27 @@
 import common from './common';
 
 const newTheme = {
+	containers: {
+		primary: {
+			background: common.palette.neutral.n0,
+		},
+		secondary: {
+			background: common.palette.neutral.n10,
+		},
+		cards: {
+			background: common.palette.neutral.n20,
+		},
+	},
+	border: {
+		color: common.palette.neutral.n40,
+		yellow: common.palette.yellow.y900,
+		style: `1px solid ${common.palette.neutral.n40}`,
+	},
 	button: {
 		default: {
-			border: common.palette.neutral.n80,
-			background: common.palette.neutral.n40,
+			border: `1px solid ${common.palette.neutral.n40}`,
+			borderColor: common.palette.neutral.n40,
+			background: common.palette.neutral.n20,
 			color: common.palette.neutral.n900,
 			hover: {
 				background: common.palette.neutral.n30,
@@ -38,17 +55,21 @@ const newTheme = {
 				},
 			},
 		},
+		cell: {
+			background: 'transparent',
+			hover: {
+				background: common.palette.neutral.n20,
+			},
+		},
 	},
 	text: {
 		primary: common.palette.neutral.n900,
 		secondary: common.palette.neutral.n600,
 		tertiary: common.palette.neutral,
-		number: {
-			positive: common.palette.green.g800,
-			negative: common.palette.red.r700,
-			neutral: common.palette.neutral.n900,
-			preview: common.palette.yellow.y800,
-		},
+		positive: common.palette.green.g800,
+		negative: common.palette.red.r700,
+		preview: common.palette.yellow.y800,
+		warning: common.palette.yellow.y800,
 	},
 	pill: {
 		yellow: {
@@ -67,17 +88,16 @@ const newTheme = {
 			},
 		},
 		gray: {
-			text: common.palette.neutral.n70,
-			background: common.palette.neutral.n700,
+			text: common.palette.neutral.n1100,
+			background: common.palette.neutral.n20,
 			border: common.palette.neutral.n70,
 			outline: {
-				text: common.palette.neutral.n900,
+				text: common.palette.neutral.n1100,
 				background: common.palette.neutral.n20,
 				border: common.palette.neutral.n20,
 			},
 			hover: {
-				background: common.palette.neutral.n70,
-				border: common.palette.alpha.white10,
+				background: common.palette.neutral.n30,
 				text: common.palette.neutral.n900,
 			},
 		},
@@ -126,11 +146,25 @@ const newTheme = {
 			},
 		},
 	},
+	tabs: {
+		position: {
+			background: common.palette.neutral.n20,
+			color: common.palette.neutral.n100,
+			long: {
+				color: common.palette.green.g600,
+				background: common.palette.green.g100,
+			},
+			short: {
+				color: common.palette.red.r300,
+				background: common.palette.alpha.red5,
+			},
+		},
+	},
 };
 
 const lightTheme = {
 	...common.light,
-	table: { fill: '#EEE', hover: '#E6E6E6' },
+	table: { fill: common.palette.neutral.n10, hover: common.palette.neutral.n20 },
 	gold: '#724713',
 	badge: {
 		red: { background: '#FF8D8D', text: 'black' },
@@ -173,11 +207,6 @@ const lightTheme = {
 		},
 		disabled: { text: '#B3B3B3', background: '#272727' },
 		tab: {
-			badge: {
-				background: '#E4B378',
-				text: common.secondaryGray,
-				shadow: 'inset 0px 0.8px 0px rgba(255, 255, 255, 0.6)',
-			},
 			disabled: { border: '1px solid #353333', text: '#B3B3B3' },
 		},
 		pill: { background: common.light.yellow, text: common.light.yellow, hover: common.light.white },
@@ -187,22 +216,23 @@ const lightTheme = {
 			border: '#532800',
 			text: '#fff',
 		},
+		red: {
+			fill: common.palette.alpha.red15,
+			text: common.palette.red.r200,
+		},
 	},
 	input: {
-		background: '#dbdbdb',
-		secondary: {
-			background: '#eaeaea',
-		},
+		background: common.palette.neutral.n0,
+		border: `1px solid ${common.palette.neutral.n40}`,
+		borderColor: common.palette.neutral.n40,
 		placeholder: '#686868',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
 		hover: common.black,
 	},
-	segmented: {
-		background: '#eaeaea',
+	segmentedControl: {
+		background: common.palette.neutral.n20,
 		button: {
-			background: '#F2F2F2',
-			shadow:
-				'0px 2px 2px rgb(0 0 0 / 10%), inset 0px 0px 20px rgb(255 255 255 / 30%), inset 0px 1px 0px rgb(255 255 255 / 50%)',
+			background: common.palette.neutral.n0,
 			inactive: { color: '#787878' },
 		},
 	},
@@ -257,12 +287,15 @@ const lightTheme = {
 		bg: '#515151',
 	},
 	chartLine: {
-		long: common.light.green,
+		long: common.palette.green.g700,
+		short: common.palette.red.r600,
+		default: '#4094E8',
 	},
 	socket: {
 		accent: `#d5d5d5`,
 	},
 	newTheme,
+	imageInvert: { value: '1' },
 };
 
 export default lightTheme;

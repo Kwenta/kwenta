@@ -9,9 +9,9 @@ import { FuturesAccountTypes } from 'queries/futures/types';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectBalances } from 'state/balances/selectors';
 import {
-	// selectCrossMarginPositions,
 	selectFuturesPortfolio,
 	selectActiveIsolatedPositionsCount,
+	selectActiveSmartPositionsCount,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
@@ -35,26 +35,26 @@ export type OpenPositionsProps = {
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeTokenBalances }) => {
 	const { t } = useTranslation();
-	// const crossPositions = useAppSelector(selectCrossMarginPositions);
+	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useAppSelector(selectBalances);
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
-		PositionsTab.ISOLATED_MARGIN
+		PositionsTab.SMART_MARGIN
 	);
 
 	const POSITIONS_TABS = useMemo(
 		() => [
-			// {
-			// 	name: PositionsTab.CROSS_MARGIN,
-			// 	label: t('dashboard.overview.positions-tabs.cross-margin'),
-			// 	badge: crossPositions.length,
-			// 	active: activePositionsTab === PositionsTab.CROSS_MARGIN,
-			// 	detail: formatDollars(portfolio.crossMarginFutures),
-			// 	disabled: false,
-			// 	onClick: () => setActivePositionsTab(PositionsTab.CROSS_MARGIN),
-			// },
+			{
+				name: PositionsTab.SMART_MARGIN,
+				label: t('dashboard.overview.positions-tabs.smart-margin'),
+				badge: smartPositionsCount,
+				active: activePositionsTab === PositionsTab.SMART_MARGIN,
+				detail: formatDollars(portfolio.crossMarginFutures),
+				disabled: false,
+				onClick: () => setActivePositionsTab(PositionsTab.SMART_MARGIN),
+			},
 			{
 				name: PositionsTab.ISOLATED_MARGIN,
 				label: t('dashboard.overview.positions-tabs.isolated-margin'),
@@ -75,10 +75,10 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 		],
 		[
 			t,
-			// crossPositions,
 			activePositionsTab,
+			smartPositionsCount,
 			isolatedPositionsCount,
-			// portfolio.crossMarginFutures,
+			portfolio.crossMarginFutures,
 			portfolio.isolatedMarginFutures,
 			balances.totalUSDBalance,
 			exchangeTokenBalances,
@@ -100,7 +100,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 				</TabButtonsContainer>
 			</div>
 
-			<TabPanel name={PositionsTab.CROSS_MARGIN} activeTab={activePositionsTab}>
+			<TabPanel name={PositionsTab.SMART_MARGIN} activeTab={activePositionsTab}>
 				<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
 			</TabPanel>
 
@@ -118,10 +118,8 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 const TabButtonsContainer = styled.div`
 	display: flex;
 	margin: 16px 0;
-
-	& > button:not(:last-of-type) {
-		margin-right: 14px;
-	}
+	justify-content: space-between;
+	column-gap: 4px;
 `;
 
 export default OpenPositions;

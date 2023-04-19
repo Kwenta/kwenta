@@ -34,9 +34,9 @@ const Tooltip: FC<TooltipProps> = memo((props) => {
 		if (myRef.current !== null) {
 			const { left, bottom, top } = myRef.current.getBoundingClientRect();
 			if (isFirefox) {
-				setPosition({ left: `${left - 24}px`, top: `${top - 36}px` });
+				setPosition({ left: `${left - 110}px`, top: `${top - 36}px` });
 			} else {
-				setPosition({ left: `${left}px`, top: `${bottom + 20}px` });
+				setPosition({ left: `${left - 130}px`, top: `${bottom + 20}px` });
 			}
 		}
 	}, []);

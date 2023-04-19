@@ -1,9 +1,10 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 
 import { Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import {
-	CrossMarginOrderType,
+	SmartMarginOrderType,
 	FuturesMarket,
 	FuturesOrderTypeDisplay,
 	FuturesPosition,
@@ -11,9 +12,8 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
 	FuturesVolumes,
-	IsolatedMarginOrderType,
 	PositionSide,
-	FuturesOrder as CrossMarginOrder,
+	ConditionalOrder as CrossMarginOrder,
 	FuturesMarketKey,
 	FuturesMarketAsset,
 	MarginTransfer,
@@ -27,16 +27,34 @@ export type TradeSizeInputs<T = Wei> = {
 	susdSize: T;
 };
 
+export type SLTPInputs<T = Wei> = {
+	stopLossPrice?: T;
+	takeProfitPrice?: T;
+};
+
 export type CrossMarginTradeInputs<T = Wei> = TradeSizeInputs<T> & {
-	leverage: string;
+	stopLossPrice?: T;
+	takeProfitPrice?: T;
 };
 
-export type CrossMarginTradeInputsWithDelta<T = Wei> = CrossMarginTradeInputs<T> & {
+export type EditPositionInputs<T = Wei> = {
 	nativeSizeDelta: T;
-	susdSizeDelta: T;
+	marginDelta: T;
 };
 
-export type IsolatedMarginTradeInputs<T = Wei> = TradeSizeInputs<T>;
+export type ClosePositionInputsCrossMargin<T = Wei> = {
+	nativeSizeDelta: T;
+	price?: {
+		value?: string | undefined | null;
+		invalidLabel: string | undefined | null;
+	};
+	orderType: SmartMarginOrderType;
+};
+
+export type ClosePositionInputsIsolatedMargin<T = Wei> = {
+	nativeSizeDelta: T;
+	orderType: 'market';
+};
 
 export type MarkPrices<T = Wei> = Partial<Record<FuturesMarketKey, T>>;
 
@@ -57,12 +75,22 @@ export type FuturesAction = {
 	action: 'trade' | 'deposit' | 'withdraw';
 };
 
-export type FuturesPortfolio = {
+export type IsolatedPerpsPortfolio = {
 	account: string;
 	timestamp: number;
 	assets: {
 		[asset: string]: number;
 	};
+	total: number;
+};
+
+export type SmartPerpsPortfolio = {
+	account: string;
+	timestamp: number;
+	assets: {
+		[asset: string]: number;
+	};
+	idle: number;
 	total: number;
 };
 
@@ -80,7 +108,6 @@ export type FuturesQueryStatuses = {
 	isolatedPositions: QueryStatus;
 	isolatedPositionHistory: QueryStatus;
 	openOrders: QueryStatus;
-	crossMarginSettings: QueryStatus;
 	isolatedTradePreview: QueryStatus;
 	crossMarginTradePreview: QueryStatus;
 	crossMarginAccount: QueryStatus;
@@ -88,7 +115,6 @@ export type FuturesQueryStatuses = {
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
 	marginTransfers: QueryStatus;
-	closePositionOrderFee: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -105,7 +131,8 @@ export type FuturesTransactionType =
 	| 'close_cross_margin'
 	| 'submit_cross_order'
 	| 'cancel_cross_margin_order'
-	| 'withdraw_keeper_balance';
+	| 'withdraw_keeper_balance'
+	| 'create_cross_margin_account';
 
 export type FuturesTransaction = {
 	type: FuturesTransactionType;
@@ -135,18 +162,9 @@ export type CrossMarginBalanceInfo<T = Wei> = {
 	allowance: T;
 };
 
-export type CrossMarginSettings<T = Wei> = {
-	tradeFee: T;
-	limitOrderFee: T;
-	stopOrderFee: T;
-};
-
 export type CrossMarginTradeFees<T = Wei> = {
-	staticFee: T;
-	crossMarginFee: T;
-	limitStopOrderFee: T;
+	delayedOrderFee: T;
 	keeperEthDeposit: T;
-	total: T;
 };
 
 type FuturesErrors = {
@@ -157,6 +175,15 @@ type FuturesNetwork = number;
 
 export type InputCurrencyDenomination = 'usd' | 'native';
 
+export type AccountContext = {
+	type: FuturesAccountType;
+	network: NetworkId;
+	wallet: string;
+	cmAccount?: string;
+};
+
+export type PreviewAction = 'edit' | 'trade' | 'close';
+
 export type FuturesAccountData = {
 	position?: FuturesPosition<string>;
 	positions?: FuturesPosition<string>[];
@@ -166,13 +193,15 @@ export type FuturesAccountData = {
 };
 
 export type IsolatedAccountData = FuturesAccountData & {
-	openOrders?: DelayedOrderWithDetails<string>[];
+	delayedOrders: DelayedOrderWithDetails<string>[];
 };
 
 export type CrossMarginAccountData = FuturesAccountData & {
 	account: string;
+	idleTransfers: MarginTransfer[];
 	balanceInfo: CrossMarginBalanceInfo<string>;
-	openOrders: CrossMarginOrder<string>[];
+	delayedOrders: DelayedOrderWithDetails<string>[];
+	conditionalOrders: CrossMarginOrder<string>[];
 };
 
 // TODO: Separate in some way by network and wallet
@@ -184,12 +213,15 @@ export type FuturesState = {
 	isolatedMargin: IsolatedMarginState;
 	fundingRates: FundingRate<string>[];
 	crossMargin: CrossMarginState;
-	markets: FuturesMarket<string>[];
+	markets: Record<FuturesNetwork, FuturesMarket<string>[]>;
 	queryStatuses: FuturesQueryStatuses;
 	dailyMarketVolumes: FuturesVolumes<string>;
 	transactionEstimations: TransactionEstimations;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
+	preferences: {
+		showHistory?: boolean;
+	};
 	dashboard: {
 		selectedPortfolioTimeframe: Period;
 	};
@@ -202,7 +234,7 @@ export type FuturesState = {
 			}
 		>;
 	};
-	closePositionOrderFee: string;
+	tradePanelDrawerOpen: boolean;
 };
 
 export type TradePreviewResult = {
@@ -212,20 +244,27 @@ export type TradePreviewResult = {
 
 export type CrossMarginState = {
 	tradeInputs: CrossMarginTradeInputs<string>;
+	editPositionInputs: EditPositionInputs<string>;
+	sltpModalInputs: SLTPInputs<string>;
 	marginDelta: string;
-	orderType: CrossMarginOrderType;
+	orderType: SmartMarginOrderType;
+	closePositionOrderInputs: ClosePositionInputsCrossMargin<string>;
 	orderFeeCap: string;
+	leverageInput: string;
 	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
 	showCrossMarginOnboard: boolean;
-	tradePreview: FuturesPotentialTradeDetails<string> | null;
-	settings: CrossMarginSettings<string>;
+	previews: {
+		trade: FuturesPotentialTradeDetails<string> | null;
+		close: FuturesPotentialTradeDetails<string> | null;
+		edit: FuturesPotentialTradeDetails<string> | null;
+	};
+	previewDebounceCount: number;
 	fees: CrossMarginTradeFees<string>;
 	depositApproved: boolean;
-	cancellingOrder: string | undefined;
-	showOnboard: boolean;
+	cancellingOrder: number | undefined;
 	accounts: Record<
 		FuturesNetwork,
 		{
@@ -240,14 +279,20 @@ export type CrossMarginState = {
 };
 
 export type IsolatedMarginState = {
-	tradeInputs: IsolatedMarginTradeInputs<string>;
-	orderType: IsolatedMarginOrderType;
-	tradePreview: FuturesPotentialTradeDetails<string> | null;
+	tradeInputs: TradeSizeInputs<string>;
+	editPositionInputs: EditPositionInputs<string>;
+	orderType: 'market';
+	previews: {
+		trade: FuturesPotentialTradeDetails<string> | null;
+		close: FuturesPotentialTradeDetails<string> | null;
+		edit: FuturesPotentialTradeDetails<string> | null;
+	};
+	closePositionOrderInputs: ClosePositionInputsIsolatedMargin<string>;
+	previewDebounceCount: number;
 	leverageSide: PositionSide;
 	selectedMarketKey: FuturesMarketKey;
 	selectedMarketAsset: FuturesMarketAsset;
 	leverageInput: string;
-	priceImpact: string;
 	tradeFee: string;
 	accounts: Record<
 		FuturesNetwork,
@@ -258,7 +303,6 @@ export type IsolatedMarginState = {
 };
 
 export type ModifyIsolatedPositionInputs = {
-	sizeDelta: Wei;
 	delayed: boolean;
 	offchain: boolean;
 };
@@ -293,6 +337,21 @@ export type DelayedOrderWithDetails<T = Wei> = {
 	isStale?: boolean;
 	isExecutable?: boolean;
 	isCancelling?: boolean;
+};
+
+export type TradePreviewParams = {
+	market: {
+		key: FuturesMarketKey;
+		address: string;
+	};
+	orderPrice: Wei;
+	sizeDelta: Wei;
+	marginDelta: Wei;
+	action: PreviewAction;
+};
+
+export type DebouncedPreviewParams = TradePreviewParams & {
+	debounceCount: number;
 };
 
 export const futuresPositionKeys = new Set([

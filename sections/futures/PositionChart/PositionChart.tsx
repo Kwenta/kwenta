@@ -1,27 +1,38 @@
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
+import { FlexDivRowCentered } from 'components/layout/flex';
 import TVChart from 'components/TVChart';
-import useAverageEntryPrice from 'hooks/useAverageEntryPrice';
 import {
-	selectCrossMarginOpenOrders,
+	selectConditionalOrdersForMarket,
 	selectPosition,
+	selectPositionPreviewData,
 	selectSelectedMarketPositionHistory,
+	selectShowHistory,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
+import { zeroBN } from 'utils/formatters/number';
 
-export default function PositionChart() {
+import TradesHistoryTable from '../TradingHistory/TradesHistoryTable';
+
+type Props = {
+	mobile?: boolean;
+};
+
+export default function PositionChart({ mobile }: Props) {
 	const position = useAppSelector(selectPosition);
-	const openOrders = useAppSelector(selectCrossMarginOpenOrders);
+	const openOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const previewTrade = useAppSelector(selectTradePreview);
 	const subgraphPosition = useAppSelector(selectSelectedMarketPositionHistory);
+	const positionPreview = useAppSelector(selectPositionPreviewData);
+	const showHistory = useAppSelector(selectShowHistory);
 
 	const [showOrderLines, setShowOrderLines] = useState(true);
 	const [isChartReady, setIsChartReady] = useState(false);
 
-	const modifiedAverage = useAverageEntryPrice(subgraphPosition);
+	const modifiedAverage = positionPreview?.avgEntryPrice ?? zeroBN;
 
 	const activePosition = useMemo(() => {
 		if (!position?.position) {
@@ -43,36 +54,44 @@ export default function PositionChart() {
 
 	return (
 		<Container visible={isChartReady}>
-			<TVChart
-				openOrders={openOrders}
-				activePosition={activePosition}
-				potentialTrade={
-					previewTrade
-						? {
-								price: modifiedAverage || previewTrade.price,
-								liqPrice: previewTrade.liqPrice,
-								size: previewTrade.size,
-						  }
-						: null
-				}
-				onChartReady={() => {
-					setIsChartReady(true);
-				}}
-				showOrderLines={showOrderLines}
-				onToggleShowOrderLines={onToggleLines}
-			/>
+			<ChartContainer>
+				<TVChart
+					openOrders={openOrders}
+					activePosition={activePosition}
+					potentialTrade={
+						previewTrade
+							? {
+									price: modifiedAverage || previewTrade.price,
+									liqPrice: previewTrade.liqPrice,
+									size: previewTrade.size,
+							  }
+							: null
+					}
+					onChartReady={() => {
+						setIsChartReady(true);
+					}}
+					showOrderLines={showOrderLines}
+					onToggleShowOrderLines={onToggleLines}
+				/>
+			</ChartContainer>
+			{showHistory && !mobile && <TradesHistoryTable />}
 		</Container>
 	);
 }
 
-const Container = styled.div<{ visible: boolean }>`
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	${media.lessThan('md')`
-		border: none;
-	`}
-	border-radius: 10px;
-	padding: 3px;
-	min-height: 450px;
+const Container = styled(FlexDivRowCentered)<{ visible: boolean }>`
+		${media.greaterThan('mdUp')`
+		height: calc(100vh - 480px);
+		`}
+		${media.lessThan('md')`
+			height: 100%;
+		`}
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+
+`;
+
+const ChartContainer = styled.div`
+	flex: 1;
+	height: 100%;
 `;

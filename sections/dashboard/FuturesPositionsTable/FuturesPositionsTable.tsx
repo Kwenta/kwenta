@@ -3,17 +3,15 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
-import LinkArrow from 'assets/svg/app/link-arrow.svg';
 import MarketBadge from 'components/Badge/MarketBadge';
-import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
-import { EXTERNAL_LINKS } from 'constants/links';
+import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
@@ -23,13 +21,10 @@ import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
 	selectIsolatedMarginPositions,
-	selectMarketAsset,
 	selectMarkets,
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import media from 'styles/media';
-import { formatNumber } from 'utils/formatters/number';
 import { getSynthDescription } from 'utils/futures';
 
 import MobilePositionRow from './MobilePositionRow';
@@ -38,26 +33,6 @@ type FuturesPositionTableProps = {
 	accountType: FuturesAccountType;
 	showCurrentMarket?: boolean;
 	showEmptyTable?: boolean;
-};
-
-const LegacyLink = () => {
-	const { t } = useTranslation();
-	const theme = useTheme();
-	return (
-		<ButtonContainer>
-			<Button
-				fullWidth
-				variant="flat"
-				size="small"
-				noOutline={true}
-				textTransform="none"
-				onClick={() => window.open(EXTERNAL_LINKS.Trade.V1, '_blank', 'noopener noreferrer')}
-			>
-				{t('dashboard.overview.futures-positions-table.legacy-link')}
-				<StyledArrow fill={theme.colors.selectedTheme.text.value} />
-			</Button>
-		</ButtonContainer>
-	);
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
@@ -74,7 +49,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
 	const positionHistory = useAppSelector(selectPositionHistory);
-	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 
 	let data = useMemo(() => {
@@ -88,37 +62,24 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				});
 
 				return {
-					market,
-					position: position.position,
+					market: market!,
+					position: position.position!,
 					description,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
+					stopLoss: position.stopLoss?.targetPrice,
+					takeProfit: position.takeProfit?.targetPrice,
 				};
 			})
-			.filter(
-				(position) =>
-					position.position &&
-					position.market &&
-					(position?.market?.asset !== currentMarket || showCurrentMarket)
-			);
-	}, [
-		isolatedPositions,
-		crossMarginPositions,
-		accountType,
-		futuresMarkets,
-		positionHistory,
-		currentMarket,
-		t,
-		showCurrentMarket,
-	]);
+			.filter(({ position, market }) => !!position && !!market);
+	}, [accountType, isolatedPositions, crossMarginPositions, futuresMarkets, t, positionHistory]);
 
 	return (
 		<>
 			<DesktopOnlyView>
 				<div>
-					<LegacyLink />
 					<Table
 						data={data}
-						showPagination
+						hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}
@@ -133,7 +94,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									{!showCurrentMarket ? (
 										t('dashboard.overview.futures-positions-table.no-result')
 									) : (
-										<Link href={ROUTES.Markets.Home(accountType)}>
+										<Link href={ROUTES.Markets.Home('cross_margin')}>
 											<div>{t('common.perp-cta')}</div>
 										</Link>
 									)}
@@ -167,7 +128,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										</MarketContainer>
 									);
 								},
-								width: 198,
+								width: 180,
 							},
 							{
 								Header: (
@@ -177,7 +138,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Cell: (cellProps: CellProps<any>) => {
 									return <PositionType side={cellProps.row.original.position.side} />;
 								},
-								width: 90,
+								width: 70,
 							},
 							{
 								Header: (
@@ -193,51 +154,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 									return (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.position.notionalValue}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
 									);
 								},
 								width: 90,
-							},
-							{
-								Header: (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.leverage')}
-									</TableHeader>
-								),
-								accessor: 'leverage',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<Body mono>{formatNumber(cellProps.row.original.position.leverage ?? 0)}x</Body>
-									);
-								},
-								width: 90,
-							},
-							{
-								Header: (
-									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
-								),
-								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) => {
-									return (
-										<PnlContainer>
-											<ChangePercent value={cellProps.row.original.position.pnlPct} />
-											<div>
-												<Currency.Price
-													currencyKey="sUSD"
-													price={cellProps.row.original.position.pnl}
-													sign="$"
-													conversionRate={1}
-												/>
-											</div>
-										</PnlContainer>
-									);
-								},
-								width: 125,
 							},
 							{
 								Header: (
@@ -254,10 +176,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<Body>{NO_VALUE}</Body>
 									) : (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.avgEntryPrice}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
 									);
@@ -277,12 +196,72 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									};
 									return (
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.position.liquidationPrice}
-											sign="$"
-											conversionRate={1}
 											formatOptions={formatOptions}
 										/>
+									);
+								},
+								width: 115,
+							},
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
+								),
+								accessor: 'pnl',
+								Cell: (cellProps: CellProps<any>) => {
+									return (
+										<PnlContainer>
+											<ChangePercent value={cellProps.row.original.position.pnlPct} />
+											<div>
+												<Currency.Price price={cellProps.row.original.position.pnl} />
+											</div>
+										</PnlContainer>
+									);
+								},
+								width: 125,
+							},
+							{
+								Header: <TableHeader>TP/SL</TableHeader>,
+								accessor: 'tp-sl',
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
+									return (
+										<FlexDivRowCentered>
+											<div style={{ marginRight: 10 }}>
+												{cellProps.row.original.takeProfit === undefined ? (
+													<Body>{NO_VALUE}</Body>
+												) : (
+													<div>
+														<Currency.Price price={cellProps.row.original.takeProfit} />
+													</div>
+												)}
+												{cellProps.row.original.stopLoss === undefined ? (
+													<Body>{NO_VALUE}</Body>
+												) : (
+													<div>
+														<Currency.Price price={cellProps.row.original.stopLoss} />
+													</div>
+												)}
+											</div>
+										</FlexDivRowCentered>
+									);
+								},
+								width: 90,
+							},
+							{
+								Header: <TableHeader>Market Margin</TableHeader>,
+								accessor: 'margin',
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
+									return (
+										<FlexDivRowCentered>
+											<div style={{ marginRight: 10 }}>
+												<NumericValue value={cellProps.row.original.position.initialMargin} />
+												<NumericValue
+													value={cellProps.row.original.position.leverage}
+													color="secondary"
+													suffix="x"
+												/>
+											</div>
+										</FlexDivRowCentered>
 									);
 								},
 								width: 115,
@@ -292,7 +271,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				</div>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<LegacyLink />
 				{(showEmptyTable || data.length) && (
 					<>
 						<OpenPositionsHeader>
@@ -305,7 +283,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						<div style={{ margin: '0 15px' }}>
 							{data.length === 0 ? (
 								<NoPositionsText>
-									<Link href={ROUTES.Markets.Home(accountType)}>
+									<Link href={ROUTES.Markets.Home('cross_margin')}>
 										<div>{t('common.perp-cta')}</div>
 									</Link>
 								</NoPositionsText>
@@ -329,20 +307,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		</>
 	);
 };
-
-const ButtonContainer = styled.div`
-	margin: 8px 0px 16px;
-
-	${media.lessThan('md')`
-		margin: 8px 15px 16px;
-	`};
-`;
-
-const StyledArrow = styled(LinkArrow)`
-	margin-left: 2px;
-	width: 9px;
-	height: 9px;
-`;
 
 const PnlContainer = styled.div`
 	display: flex;
@@ -368,7 +332,7 @@ const StyledValue = styled.div`
 	grid-row: 2;
 `;
 
-const TableHeader = styled.div`
+const TableHeader = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 

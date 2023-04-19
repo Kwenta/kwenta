@@ -1,11 +1,11 @@
 import Head from 'next/head';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio';
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions';
 
@@ -13,9 +13,21 @@ type StakingComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Eleme
 
 const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
-	const [currentTab, setCurrentTab] = useState(StakeTab.Staking);
+
+	const tabQuery = useMemo(() => {
+		if (router.query.tab) {
+			const tab = router.query.tab as StakeTab;
+			if (Object.values(StakeTab).includes(tab)) {
+				return tab;
+			}
+		}
+		return null;
+	}, [router]);
+
+	const [currentTab, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking);
 
 	useEffect(() => {
 		if (!!walletAddress) {
@@ -40,7 +52,6 @@ const StakingPage: StakingComponent = () => {
 			</Head>
 			<StakingPortfolio setCurrentTab={setCurrentTab} />
 			<StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />
-			<GitHashID />
 		</>
 	);
 };

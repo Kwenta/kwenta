@@ -84,10 +84,6 @@ export default class MyDocument extends Document {
 						type="font/woff2"
 						crossOrigin="anonymous"
 					/>
-					<meta
-						name="viewport"
-						content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
-					/>
 				</Head>
 				<body>
 					<Main />

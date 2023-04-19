@@ -1,10 +1,7 @@
 import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
-import Button from 'components/Button';
 import { PositionSide } from 'sdk/types/futures';
-import { selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
 
 interface PositionButtonsProps {
 	selected: PositionSide;
@@ -13,15 +10,12 @@ interface PositionButtonsProps {
 }
 
 const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) => {
-	const marketInfo = useAppSelector(selectMarketInfo);
-
 	return (
 		<PositionButtonsContainer>
 			<PositionButton
 				data-testid="position-side-long-button"
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
-				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.LONG)}
 			>
 				<span>Long</span>
@@ -31,7 +25,6 @@ const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) 
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
 				$right={true}
-				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
 				<span>Short</span>
@@ -50,19 +43,19 @@ const PositionButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	margin-bottom: 16px;
-	margin-top: 8px;
 `;
 
-const PositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonProps>`
+const PositionButton = styled.div<PositionButtonProps>`
 	font-size: 16px;
-	height: 40px;
+	height: 50px;
 	font-variant: all-small-caps;
 	text-transform: uppercase;
-	border-radius: ${(props) => (props.$right ? '0 8px 8px 0' : '8px 0 0 8px')};
-
-	&:active {
-		transform: scale(0.96);
-	}
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	transition: all 0.15s ease-in-out;
 
 	> span {
 		position: relative;
@@ -70,27 +63,27 @@ const PositionButton = styled(Button).attrs({ fullWidth: true })<PositionButtonP
 
 	${(props) => css`
 		font-family: ${props.theme.fonts.bold};
-		color: ${props.theme.colors.selectedTheme.newTheme.button.default.color};
+		color: ${props.theme.colors.selectedTheme.newTheme.tabs.position.color};
+		background: ${props.theme.colors.selectedTheme.newTheme.tabs.position.background};
 
 		&:hover {
-			background: ${props.theme.colors.selectedTheme.newTheme.button.default.hover.background};
+			color: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color};
+			border-top: 3px
+				${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color} solid;
 		}
+		border-top: ${props.theme.colors.selectedTheme.border};
+		border-bottom: ${props.theme.colors.selectedTheme.border};
 	`}
 
 	${(props) =>
 		props.$isActive &&
 		css`
-			&::before {
-				display: none;
-			}
-			background: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position]
-				.active.background};
-			color: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position].active
-				.color};
-			&:hover {
-				background: ${props.theme.colors.selectedTheme.newTheme.button.position[props.$position]
-					.active.background};
-			}
+			color: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color};
+			border-bottom-color: transparent;
+			border-top: 3px
+				${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color} solid;
+			background: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position]
+				.background};
 		`};
 `;
 

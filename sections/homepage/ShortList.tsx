@@ -135,12 +135,7 @@ const ShortList = () => {
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
-									<ColorCodedPrice
-										currencyKey="sUSD"
-										price={cellProps.row.original.pnl}
-										sign="$"
-										conversionRate={1}
-									/>
+									<ColorCodedPrice price={cellProps.row.original.pnl} />
 								),
 								width: 125,
 							},
@@ -198,12 +193,7 @@ const ShortList = () => {
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => (
-									<ColorCodedPrice
-										currencyKey="sUSD"
-										price={cellProps.row.original.pnl}
-										sign="$"
-										conversionRate={1}
-									/>
+									<ColorCodedPrice price={cellProps.row.original.pnl} />
 								),
 								width: 125,
 							},

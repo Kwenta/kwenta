@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
-import { GridDivCenteredRow } from 'components/layout/grid';
 import Loader from 'components/Loader';
 import { Body } from 'components/Text';
 
@@ -69,6 +68,8 @@ type TableProps = {
 	lastRef?: any;
 	compactPagination?: boolean;
 	rowStyle?: Record<string, any>;
+	rounded?: boolean;
+	noBottom?: boolean;
 };
 
 export const Table: FC<TableProps> = memo(
@@ -92,6 +93,8 @@ export const Table: FC<TableProps> = memo(
 		lastRef = null,
 		compactPagination = false,
 		rowStyle = {},
+		rounded = true,
+		noBottom = false,
 	}) => {
 		const memoizedColumns = useMemo(
 			() => columns,
@@ -156,9 +159,15 @@ export const Table: FC<TableProps> = memo(
 		return (
 			<>
 				<TableContainer>
-					<ReactTable {...getTableProps()} palette={palette} className={className}>
+					<ReactTable
+						{...getTableProps()}
+						palette={palette}
+						$rounded={rounded}
+						$noBottom={noBottom}
+						className={className}
+					>
 						{headerGroups.map((headerGroup) => (
-							<div className="table-row" {...headerGroup.getHeaderGroupProps()}>
+							<div className="table-row" style={{ display: 'flex' }}>
 								{headerGroup.headers.map((column: any) => (
 									<TableCellHead
 										hideHeaders={hideHeaders}
@@ -189,43 +198,42 @@ export const Table: FC<TableProps> = memo(
 						))}
 						{isLoading ? (
 							<Loader />
-						) : (
-							page.length > 0 && (
-								<TableBody className="table-body" {...getTableBodyProps()}>
-									{page.map((row: Row, idx: number) => {
-										prepareRow(row);
-										const props = row.getRowProps();
-										const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
-										const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
-										return (
-											<TableBodyRow
-												rowStyle={rowStyle}
-												localRef={localRef}
-												highlightRowsOnHover={highlightRowsOnHover}
-												row={row}
-												onClick={handleClick}
-												{...props}
-											/>
-										);
-									})}
-								</TableBody>
-							)
-						)}
-						{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
+						) : !!noResultsMessage && !isLoading && data.length === 0 ? (
+							noResultsMessage
+						) : page.length > 0 ? (
+							<TableBody className="table-body" {...getTableBodyProps()}>
+								{page.map((row, idx) => {
+									prepareRow(row);
+									const props = row.getRowProps();
+									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
+									const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
+									return (
+										<TableBodyRow
+											rowStyle={rowStyle}
+											localRef={localRef}
+											highlightRowsOnHover={highlightRowsOnHover}
+											row={row}
+											onClick={handleClick}
+											{...props}
+										/>
+									);
+								})}
+							</TableBody>
+						) : null}
+						{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
+							<Pagination
+								compact={compactPagination}
+								pageIndex={pageIndex}
+								pageCount={pageCount}
+								canNextPage={canNextPage}
+								canPreviousPage={canPreviousPage}
+								setPage={gotoPage}
+								previousPage={previousPage}
+								nextPage={nextPage}
+							/>
+						) : undefined}
 					</ReactTable>
 				</TableContainer>
-				{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
-					<Pagination
-						compact={compactPagination}
-						pageIndex={pageIndex}
-						pageCount={pageCount}
-						canNextPage={canNextPage}
-						canPreviousPage={canPreviousPage}
-						setPage={gotoPage}
-						previousPage={previousPage}
-						nextPage={nextPage}
-					/>
-				) : undefined}
 			</>
 		);
 	}
@@ -233,9 +241,10 @@ export const Table: FC<TableProps> = memo(
 
 const TableContainer = styled.div`
 	overflow-x: auto;
+	height: 100%;
 `;
 
-const TableBody = styled.div`
+export const TableBody = styled.div`
 	overflow-y: auto;
 	overflow-x: hidden;
 `;
@@ -251,13 +260,15 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	${(props) => (props.hideHeaders ? `display: none` : '')}
 `;
 
-export const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 40px;
-	text-align: center;
+export const TableNoResults = styled.div`
+	height: 52px;
+	height: 100%;
+	padding: 16px;
+	display: flex;
 	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.bold};
@@ -275,13 +286,29 @@ const SortIconContainer = styled.span`
 	flex-direction: column;
 `;
 
-const ReactTable = styled.div<{ palette: TablePalette }>`
+const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBottom?: boolean }>`
+	display: flex;
+	flex-direction: column;
 	width: 100%;
 	height: 100%;
 	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 10px;
+	${(props) =>
+		props.$noBottom &&
+		css`
+			border-bottom-width: 0;
+		`};
+
+	${(props) =>
+		props.$rounded
+			? css`
+					border-radius: 10px;
+			  `
+			: css`
+					border-left: none;
+					border-right: none;
+			  `};
 
 	${(props) =>
 		props.palette === 'primary' &&
@@ -291,7 +318,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			}
 			${TableCell} {
 				color: ${(props) => props.theme.colors.selectedTheme.text.value};
-				font-size: 12px;
+				font-size: 13px;
 				height: ${CARD_HEIGHT};
 				font-family: ${(props) => props.theme.fonts.mono};
 			}

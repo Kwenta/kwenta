@@ -1,7 +1,8 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
-import { parseBytes32String } from 'ethers/lib/utils.js';
+import { defaultAbiCoder, formatBytes32String, parseBytes32String } from 'ethers/lib/utils.js';
 
+import { DEFAULT_PRICE_IMPACT_DELTA_PERCENT } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import {
 	FuturesAggregateStatResult,
@@ -17,17 +18,18 @@ import {
 	TESTNET_MARKETS,
 	AGGREGATE_ASSET_KEY,
 	MAIN_ENDPOINTS,
+	SL_TP_MAX_SIZE,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { NetworkId } from 'sdk/types/common';
 import {
 	DelayedOrder,
-	CrossMarginOrderType,
+	SmartMarginOrderType,
 	FundingRateUpdate,
 	FuturesMarketAsset,
 	FuturesMarketKey,
-	FuturesOrder,
+	ConditionalOrder,
 	FuturesOrderType,
 	FuturesOrderTypeDisplay,
 	FuturesPosition,
@@ -35,14 +37,13 @@ import {
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
 	FuturesVolumes,
-	IsolatedMarginOrderType,
 	PositionDetail,
 	PositionSide,
 	PostTradeDetailsResponse,
 	PotentialTradeStatus,
 	MarginTransfer,
+	ConditionalOrderTypeEnum,
 } from 'sdk/types/futures';
-import { CrossMarginSettings } from 'state/futures/types';
 import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
@@ -374,7 +375,6 @@ export const formatPotentialTrade = (
 	leverageSide: PositionSide
 ) => {
 	const { fee, liqPrice, margin, price, size, status } = preview;
-
 	return {
 		fee: wei(fee),
 		liqPrice: wei(liqPrice),
@@ -425,18 +425,7 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	NO_POSITION_OPEN: 'No position open',
 	PRICE_TOO_VOLATILE: 'Price too volatile',
 	PRICE_IMPACT_TOLERANCE_EXCEEDED: 'Price impact tolerance exceeded',
-	INSUFFICIENT_FREE_MARGIN: 'Insufficient free margin',
-};
-
-export const calculateCrossMarginFee = (
-	orderType: CrossMarginOrderType | IsolatedMarginOrderType,
-	susdSize: Wei,
-	feeRates: CrossMarginSettings
-) => {
-	if (orderType !== 'limit' && orderType !== 'stop_market') return zeroBN;
-	const advancedOrderFeeRate =
-		orderType === 'limit' ? feeRates.limitOrderFee : feeRates.stopOrderFee;
-	return susdSize.mul(advancedOrderFeeRate);
+	INSUFFICIENT_FREE_MARGIN: `You don't have enough sUSD for this trade`,
 };
 
 export const getPythNetworkUrl = (networkId: NetworkId) => {
@@ -444,49 +433,61 @@ export const getPythNetworkUrl = (networkId: NetworkId) => {
 };
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
-export const mapFuturesOrderFromEvent = (
-	orderDetails: {
-		id: number;
-		marketKey: string;
-		orderType: number;
-		targetPrice: BigNumber;
-		sizeDelta: BigNumber;
-		marginDelta: BigNumber;
-	},
+
+export type ConditionalOrderResult = {
+	conditionalOrderType: number;
+	desiredFillPrice: BigNumber;
+	gelatoTaskId: string;
+	marginDelta: BigNumber;
+	marketKey: string;
+	reduceOnly: boolean;
+	sizeDelta: BigNumber;
+	targetPrice: BigNumber;
+};
+
+export const mapConditionalOrderFromContract = (
+	orderDetails: ConditionalOrderResult & { id: number },
 	account: string
-): FuturesOrder => {
+): ConditionalOrder => {
 	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey;
 	const asset = MarketAssetByKey[marketKey];
 	const sizeDelta = wei(orderDetails.sizeDelta);
 	const size = sizeDelta.abs();
 	return {
-		contractId: orderDetails.id,
-		id: `CM-${account}-${orderDetails.id}`,
+		id: orderDetails.id,
+		subgraphId: `CM-${account}-${orderDetails.id}`,
 		account: account,
 		size: sizeDelta,
 		marginDelta: wei(orderDetails.marginDelta),
-		orderType: orderDetails.orderType === 0 ? 'Limit' : 'Stop Market',
+		orderType: orderDetails.conditionalOrderType,
+		orderTypeDisplay: formatOrderDisplayType(
+			orderDetails.conditionalOrderType,
+			orderDetails.reduceOnly
+		),
+		// TODO: Rename when ABI is updated
+		desiredFillPrice: wei(orderDetails.desiredFillPrice),
 		targetPrice: wei(orderDetails.targetPrice),
-		sizeTxt: formatCurrency(asset, size, {
-			currencyKey: getDisplayAsset(asset) ?? '',
-			minDecimals: size.lt(0.01) ? 4 : 2,
-		}),
+		reduceOnly: orderDetails.reduceOnly,
+		sizeTxt: size.abs().eq(SL_TP_MAX_SIZE)
+			? 'Close'
+			: formatCurrency(asset, size, {
+					currencyKey: getDisplayAsset(asset) ?? '',
+					minDecimals: size.lt(0.01) ? 4 : 2,
+			  }),
 		targetPriceTxt: formatDollars(wei(orderDetails.targetPrice)),
 		marketKey: marketKey,
 		market: getMarketName(asset),
 		asset: asset,
-		targetRoundId: wei(0), // Only used for next price which is no longer supported
 		side: sizeDelta.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 		isStale: false,
 		isExecutable: false,
+		isSlTp: size.eq(SL_TP_MAX_SIZE),
 	};
 };
 
 export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> = {
 	market: 'Market',
-	delayed: 'Delayed',
-	delayed_offchain: 'Delayed Market',
-	stop_market: 'Stop Market',
+	stop_market: 'Stop',
 	limit: 'Limit',
 };
 
@@ -494,7 +495,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 	return orderType === 'NextPrice'
 		? 'Next Price'
 		: orderType === 'StopMarket'
-		? 'Stop Market'
+		? 'Stop'
 		: orderType === 'DelayedOffchain'
 		? 'Delayed Market'
 		: orderType;
@@ -562,7 +563,7 @@ export const mapMarginTransfers = (
 	);
 };
 
-export const mapCrossMarginTransfers = (
+export const mapSmartMarginTransfers = (
 	marginTransfers: CrossMarginAccountTransferResult[]
 ): MarginTransfer[] => {
 	return marginTransfers.map(
@@ -579,4 +580,78 @@ export const mapCrossMarginTransfers = (
 			};
 		}
 	);
+};
+
+type TradeInputParams = {
+	marginDelta: Wei;
+	sizeDelta: Wei;
+	price: Wei;
+	desiredFillPrice: Wei;
+};
+
+export const encodeConditionalOrderParams = (
+	marketKey: FuturesMarketKey,
+	tradeInputs: TradeInputParams,
+	type: ConditionalOrderTypeEnum,
+	reduceOnly: boolean
+) => {
+	return defaultAbiCoder.encode(
+		['bytes32', 'int256', 'int256', 'uint256', 'uint256', 'uint256', 'bool'],
+		[
+			formatBytes32String(marketKey),
+			tradeInputs.marginDelta.toBN(),
+			tradeInputs.sizeDelta.toBN(),
+			tradeInputs.price.toBN(),
+			type,
+			tradeInputs.desiredFillPrice.toBN(),
+			reduceOnly,
+		]
+	);
+};
+
+export const encodeSubmitOffchainOrderParams = (
+	marketAddress: string,
+	sizeDelta: Wei,
+	desiredFillPrice: Wei
+) => {
+	return defaultAbiCoder.encode(
+		['address', 'int256', 'uint256'],
+		[marketAddress, sizeDelta.toBN(), desiredFillPrice.toBN()]
+	);
+};
+
+export const encodeModidyMarketMarginParams = (marketAddress: string, marginDelta: Wei) => {
+	return defaultAbiCoder.encode(['address', 'int256'], [marketAddress, marginDelta.toBN()]);
+};
+
+export const formatOrderDisplayType = (
+	orderType: ConditionalOrderTypeEnum,
+	reduceOnly: boolean
+) => {
+	if (reduceOnly) {
+		return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Take Profit' : 'Stop Loss';
+	}
+	return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Limit' : 'Stop';
+};
+
+export const calculateDesiredFillPrice = (
+	sizeDelta: Wei,
+	marketPrice: Wei,
+	priceImpactPercent: Wei
+) => {
+	const priceImpactDecimalPct = priceImpactPercent.div(100);
+	return sizeDelta.lt(0)
+		? marketPrice.mul(wei(1).sub(priceImpactDecimalPct))
+		: marketPrice.mul(priceImpactDecimalPct.add(1));
+};
+
+export const getDefaultPriceImpact = (orderType: SmartMarginOrderType) => {
+	switch (orderType) {
+		case 'market':
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.MARKET);
+		case 'limit':
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.LIMIT);
+		case 'stop_market':
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP);
+	}
 };

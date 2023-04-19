@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 
+import { Body } from 'components/Text';
 import { PositionSide } from 'sdk/types/futures';
 
 type PositionProps = {
@@ -15,24 +16,21 @@ const PositionType: React.FC<PositionProps> = ({ side = PositionSide.LONG, mobil
 	);
 };
 
-const StyledText = styled.p<{ side: PositionSide }>`
-	text-transform: uppercase;
-	padding: 5px 9px;
-	border-radius: 6px;
-	font-family: ${(props) => props.theme.fonts.monoBold};
-	font-variant: all-small-caps;
+const StyledText = styled(Body).attrs({ weight: 'bold', capitalized: true })<{
+	side: PositionSide;
+}>`
+	padding: 3px 5px;
+	border-radius: 4px;
 
 	${(props) =>
 		props.side === PositionSide.LONG
 			? css`
-					color: ${(props) => props.theme.colors.selectedTheme.green};
+					color: ${props.theme.colors.selectedTheme.green};
 					background: rgba(127, 212, 130, 0.1);
-					letter-spacing: 1.4px;
 			  `
 			: css`
-					color: ${(props) => props.theme.colors.selectedTheme.red};
+					color: ${props.theme.colors.selectedTheme.red};
 					background: rgba(239, 104, 104, 0.1);
-					letter-spacing: -0.2px;
 			  `};
 	};
 `;
@@ -40,11 +38,12 @@ const StyledText = styled.p<{ side: PositionSide }>`
 const MobileStyledText = styled.p<{ side: PositionSide }>`
 	margin: 0;
 	text-transform: uppercase;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) =>
-		props.side === PositionSide.LONG
-			? props.theme.colors.common.primaryGreen
-			: props.theme.colors.common.primaryRed};
+	${(props) => css`
+		font-family: ${props.theme.fonts.bold};
+		color: ${props.theme.colors.common[
+			props.side === PositionSide.LONG ? 'primaryGreen' : 'primaryRed'
+		]};
+	`}
 `;
 
 export default PositionType;

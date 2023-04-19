@@ -22,8 +22,8 @@ const Search: FC<SearchProps> = memo(({ value, disabled, border = true, autoFocu
 	);
 
 	return (
-		<SearchBar>
-			<StyledSvg />
+		<SearchBar border={border}>
+			<SearchIconPath />
 			<SearchInput
 				autoFocus={autoFocus}
 				border={border}
@@ -36,34 +36,36 @@ const Search: FC<SearchProps> = memo(({ value, disabled, border = true, autoFocu
 	);
 });
 
-const StyledSvg = styled(SearchIconPath)`
-	position: absolute;
-	left: 12px;
-`;
-
 const SearchInput = styled(Input)<{ border: boolean }>`
 	position: relative;
-	height: 100%;
-	text-indent: 16px;
+	height: 38px;
 	border-radius: 8px;
 	padding: 10px 15px;
 	font-size: 14px;
 	background: ${(props) =>
-		props.border ? props.theme.colors.selectedTheme.input.secondary.background : 'none'};
-
-	border: ${(props) => (props.border ? props.theme.colors.selectedTheme.border : 'none')};
+		props.border
+			? props.theme.colors.selectedTheme.input.background
+			: props.theme.colors.selectedTheme.newTheme.containers.primary.background};
+	border: none;
 
 	${media.lessThan('sm')`
 		font-size: 13px;
 	`}
 `;
 
-const SearchBar = styled.div`
+const SearchBar = styled.div<{ border: boolean }>`
 	width: 100%;
 	overflow-x: auto;
 	position: relative;
 	display: flex;
 	align-items: center;
+	padding-left: 18px;
+	background: ${(props) =>
+		props.border
+			? props.theme.colors.selectedTheme.input.background
+			: props.theme.colors.selectedTheme.newTheme.containers.primary.background};
+	border-radius: 8px;
+	border: ${(props) => (props.border ? props.theme.colors.selectedTheme.input.border : 'none')};
 `;
 
 export default Search;

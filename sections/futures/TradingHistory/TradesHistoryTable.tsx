@@ -6,7 +6,6 @@ import styled, { css } from 'styled-components';
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
-import { blockExplorer } from 'containers/Connector/Connector';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -97,18 +96,18 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 
 	return (
 		<HistoryContainer mobile={mobile}>
-			<div>
-				<TableMainHeader>Trade History</TableMainHeader>
+			<div style={{ height: '100%' }}>
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
 					lastRef={lastElementRef}
-					mobile={mobile}
-					onTableRowClick={(row) =>
-						row.original.id !== NO_VALUE
-							? window.open(`${blockExplorer.txLink(row.original.id)}`)
-							: undefined
-					}
+					$mobile={mobile}
+					onTableRowClick={(_row) => {
+						// TODO: Open tx to creator not executor
+						// row.original.id !== NO_VALUE
+						// ? window.open(`${blockExplorer.txLink(row.original.id)}`)
+						// : undefined
+					}}
 					highlightRowsOnHover
 					columns={[
 						{
@@ -132,7 +131,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 									</DirectionalValue>
 								);
 							},
-							width: 100,
+							width: 110,
 						},
 						{
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
@@ -151,7 +150,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 									</PriceValue>
 								);
 							},
-							width: 110,
+							width: 100,
 						},
 						{
 							Header: <TableHeader>{t('futures.market.history.time-label')}</TableHeader>,
@@ -177,55 +176,54 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 export default TradesHistoryTable;
 
 const HistoryContainer = styled.div<{ mobile?: boolean }>`
-	width: 100%;
-	margin-bottom: 16px;
 	box-sizing: border-box;
-
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 10px;
-
-	${(props) =>
-		props.mobile &&
-		css`
-			margin-bottom: 0;
-		`}
-`;
-
-const TableMainHeader = styled.div`
-	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	padding: 20px 15px;
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+	height: 100%;
+	width: ${(props) => (props.mobile ? '100%' : '300px')};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background}
+		${(props) =>
+			props.mobile &&
+			css`
+				height: 100%;
+				margin-bottom: 0;
+				border-radius: 0;
+				border: none;
+				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+			`};
 `;
 
 const TableAlignment = css`
 	justify-content: space-between;
 	& > div:first-child {
-		flex: 60 60 0 !important;
+		flex: 70 70 0 !important;
 	}
 	& > div:nth-child(2) {
 		flex: 100 100 0 !important;
 		justify-content: center;
 	}
 	& > div:last-child {
-		flex: 70 70 0 !important;
+		flex: 60 60 0 !important;
 		justify-content: flex-end;
 		padding-right: 20px;
 	}
 `;
 
-const StyledTable = styled(Table)<{ mobile?: boolean }>`
+const StyledTable = styled(Table)<{ $mobile?: boolean }>`
 	border: none;
-
-	${(props) =>
-		css`
-			height: ${props.mobile ? 242 : 695}px;
-		`}
-
-	.table-row, .table-body-row {
+	height: 100%;
+	.table-row,
+	.table-body-row {
 		${TableAlignment}
 		padding: 0;
 	}
+	.table-body-cell {
+		height: 30px;
+	}
+	${(props) =>
+		props.$mobile &&
+		css`
+			height: 100%;
+		`};
 `;
 
 const PriceValue = styled(Body).attrs({ mono: true })`
@@ -239,7 +237,6 @@ const TimeValue = styled(Body)`
 `;
 
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`
-	padding-left: 4px;
 	white-space: nowrap;
 	color: ${(props) =>
 		props.normal

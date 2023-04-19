@@ -103,14 +103,16 @@ export const fetchEarnTokenPrices = createAsyncThunk<
 	{
 		kwentaPrice: string;
 		wethPrice: string;
+		opPrice: string;
 	},
 	void,
 	ThunkConfig
 >('earn/fetchEarnTokenPrices', async (_, { extra: { sdk } }) => {
-	const { kwentaPrice, wethPrice } = await sdk.kwentaToken.getEarnTokenPrices();
+	const { kwentaPrice, wethPrice, opPrice } = await sdk.kwentaToken.getEarnTokenPrices();
 
 	return {
 		kwentaPrice: kwentaPrice.toString(),
 		wethPrice: wethPrice.toString(),
+		opPrice: opPrice.toString(),
 	};
 });

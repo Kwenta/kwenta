@@ -14,8 +14,9 @@ export const DropdownIndicator = (props: any) => {
 	);
 };
 
-export const StyledCaretDownIcon = styled(CaretDownIcon)`
+export const StyledCaretDownIcon = styled(CaretDownIcon)<{ flip?: boolean }>`
 	width: 11px;
+	transform: ${(props) => (props.flip ? 'rotate(180deg)' : 'none')};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
@@ -59,7 +60,7 @@ function Select<T>({ variant, ...props }: Props<T>) {
 					left: 0,
 					right: 0,
 					bottom: 0,
-					borderRadius: 10,
+					borderRadius: 8,
 					padding: 1,
 					background: colors.selectedTheme.button.border,
 					WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -72,17 +73,15 @@ function Select<T>({ variant, ...props }: Props<T>) {
 				background:
 					variant === 'transparent'
 						? 'none'
-						: variant === 'flat'
-						? colors.selectedTheme.button.fill
-						: colors.selectedTheme.button.background,
-				borderRadius: variant === 'transparent' ? 30 : 10,
+						: colors.selectedTheme.newTheme.button.default.background,
+				borderRadius: variant === 'transparent' ? 30 : 8,
 			}),
 			menu: (provided, state) => ({
 				...provided,
 				background: colors.selectedTheme.cell.fill,
 				border: 'none',
 				outline: 'none',
-				borderRadius: 10,
+				borderRadius: 8,
 				boxShadow: colors.selectedTheme.button.shadow,
 				padding: 0,
 				width: state.selectProps.menuWidth,
@@ -90,7 +89,7 @@ function Select<T>({ variant, ...props }: Props<T>) {
 			}),
 			menuList: (provided) => ({
 				...provided,
-				borderRadius: 10,
+				borderRadius: 8,
 				padding: 0,
 				textAlign: 'left',
 				border: colors.selectedTheme.border,
