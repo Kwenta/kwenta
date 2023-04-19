@@ -1,13 +1,17 @@
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
+import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import { FlexDiv } from 'components/layout/flex';
 import Pill from 'components/Pill';
+import Spacer from 'components/Spacer';
 import { TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
+import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
+import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning';
 import { cancelConditionalOrder } from 'state/futures/actions';
 import {
 	selectAllConditionalOrders,
@@ -48,58 +52,70 @@ const ConditionalOrdersTab: React.FC = () => {
 	}, [openConditionalOrders, isCancellingOrder, marketAsset]);
 
 	return (
-		<OrdersTabContainer>
+		<div>
+			<ConditionalOrdersWarning mobile />
+			<Spacer height={15} />
 			{rows.length === 0 ? (
 				<TableNoResults>You have no open orders</TableNoResults>
 			) : (
-				rows.map((order) => (
-					<OrderItem>
-						<OrderMeta $side={order.side!}>
-							<FlexDiv>
-								<div className="position-side-bar" />
-								<div>
-									<Body>{order.market}</Body>
-									<Body capitalized color="secondary">
-										{order.orderTypeDisplay}
-									</Body>
-								</div>
-							</FlexDiv>
-							<FlexDiv>
-								<Pill size="medium" color="red" onClick={cancelOrder(order.id)}>
-									Cancel
-								</Pill>
-							</FlexDiv>
-						</OrderMeta>
-						<OrderRow>
-							<Body color="secondary">Size</Body>
-							<Body>{order.sizeTxt}</Body>
-						</OrderRow>
-						<OrderRow>
-							<Body color="secondary">Reduce Only</Body>
-							<Body>{order.reduceOnly ? 'Yes' : 'No'}</Body>
-						</OrderRow>
-						<OrderRow>
-							<Body color="secondary">Side</Body>
-							<PositionType side={order.side!} />
-						</OrderRow>
-						<OrderRow>
-							<Body color="secondary">CL Price</Body>
-							<Currency.Price price={order.targetPrice} />
-						</OrderRow>
-						<OrderRow>
-							<Body color="secondary">Reserved Margin</Body>
-							<Body mono>{formatDollars(order.marginDelta?.gt(0) ? order.marginDelta : '0')}</Body>
-						</OrderRow>
-					</OrderItem>
-				))
+				rows.map((order) => {
+					return (
+						<OrderItem>
+							<OrderMeta $side={order.side!}>
+								<FlexDiv>
+									<div className="position-side-bar" />
+									<div>
+										<Body>{order.market}</Body>
+										<Body capitalized color="secondary">
+											{order.orderTypeDisplay}
+										</Body>
+									</div>
+								</FlexDiv>
+								<FlexDiv>
+									<Pill size="medium" color="red" onClick={cancelOrder(order.id)}>
+										Cancel
+									</Pill>
+								</FlexDiv>
+							</OrderMeta>
+							<OrderRow>
+								<Body color="secondary">Size</Body>
+								<Body>{order.sizeTxt}</Body>
+							</OrderRow>
+							<OrderRow>
+								<Body color="secondary">Reduce Only</Body>
+								<Body>{order.reduceOnly ? 'Yes' : 'No'}</Body>
+							</OrderRow>
+							<OrderRow>
+								<Body color="secondary">Side</Body>
+								<PositionType side={order.side!} />
+							</OrderRow>
+							<OrderRow>
+								<Body color="secondary">Chainlink Price</Body>
+								{order.currentPrice?.price ? (
+									<ColoredPrice priceInfo={order.currentPrice}>
+										{formatDollars(order.currentPrice.price)}
+									</ColoredPrice>
+								) : (
+									NO_VALUE
+								)}
+							</OrderRow>
+							<OrderRow>
+								<Body color="secondary">Target Price</Body>
+								<Currency.Price price={order.targetPrice} />
+							</OrderRow>
+							<OrderRow>
+								<Body color="secondary">Reserved Margin</Body>
+								<Body mono>
+									{formatDollars(order.marginDelta?.gt(0) ? order.marginDelta : '0')}
+								</Body>
+							</OrderRow>
+						</OrderItem>
+					);
+				})
 			)}
-		</OrdersTabContainer>
+		</div>
 	);
 };
-
-const OrdersTabContainer = styled.div`
-	padding-top: 15px;
-`;
 
 const OrderMeta = styled.div<{ $side: PositionSide }>`
 	display: flex;
