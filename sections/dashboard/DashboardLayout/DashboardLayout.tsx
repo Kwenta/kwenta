@@ -62,13 +62,6 @@ const DashboardLayout: FC = ({ children }) => {
 				href: ROUTES.Dashboard.Markets,
 			},
 			{
-				name: Tab.Governance,
-				label: t('dashboard.tabs.governance'),
-				active: activeTab === Tab.Governance,
-				href: EXTERNAL_LINKS.Governance.Vote,
-				external: true,
-			},
-			{
 				name: Tab.Stake,
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
@@ -79,6 +72,13 @@ const DashboardLayout: FC = ({ children }) => {
 				label: t('dashboard.tabs.rewards'),
 				active: activeTab === Tab.Rewards,
 				href: ROUTES.Dashboard.Rewards,
+			},
+			{
+				name: Tab.Governance,
+				label: t('dashboard.tabs.governance'),
+				active: activeTab === Tab.Governance,
+				href: EXTERNAL_LINKS.Governance.Vote,
+				external: true,
 			},
 		],
 		[t, activeTab]
