@@ -190,7 +190,6 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 										width="200px"
 										height="auto"
 										left="-100px !important"
-										top="-70px !important"
 										content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
 									>
 										<WithCursor cursor="help">
@@ -212,8 +211,6 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 											<CustomStyledTooltip
 												width="260px"
 												height="auto"
-												top="-120px !important"
-												right="-60px !important"
 												content={t('dashboard.stake.tabs.trading-rewards.estimated-info')}
 											>
 												<WithCursor cursor="help">
