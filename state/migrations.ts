@@ -70,6 +70,13 @@ export const migrations = {
 			staking: STAKING_INITIAL_STATE,
 		};
 	},
+	20: (state: any) => {
+		return {
+			...state,
+			earn: EARN_INITIAL_STATE,
+			staking: STAKING_INITIAL_STATE,
+		};
+	},
 };
 
 export default migrations;

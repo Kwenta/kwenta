@@ -4,7 +4,7 @@ import { ethers, BigNumber } from 'ethers';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
-import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS } from 'constants/currency';
+import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
 import { EPOCH_START, TRADING_REWARDS_CUTOFF_EPOCH, WEEK } from 'queries/staking/utils';
@@ -114,13 +114,14 @@ export default class KwentaTokenService {
 
 	public async getEarnTokenPrices() {
 		const coinGeckoPrices = await this.sdk.exchange.batchGetCoingeckoPrices(
-			[KWENTA_ADDRESS, ETH_COINGECKO_ADDRESS],
+			[KWENTA_ADDRESS, ETH_COINGECKO_ADDRESS, OP_ADDRESS],
 			false
 		);
 
 		return {
 			kwentaPrice: coinGeckoPrices ? wei(coinGeckoPrices[KWENTA_ADDRESS]?.usd) : zeroBN,
 			wethPrice: coinGeckoPrices ? wei(coinGeckoPrices[ETH_COINGECKO_ADDRESS]?.usd) : zeroBN,
+			opPrice: coinGeckoPrices ? wei(coinGeckoPrices[OP_ADDRESS]?.usd) : zeroBN,
 		};
 	}
 

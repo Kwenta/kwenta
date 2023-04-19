@@ -10,12 +10,11 @@ import Button from 'components/Button';
 import { FlexDivRow } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import { Body, LogoText } from 'components/Text';
-import { KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import { StakingCard } from 'sections/dashboard/Stake/card';
-import { sdk } from 'state/config';
+import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	claimMultipleRewardsAll,
@@ -30,7 +29,7 @@ import {
 } from 'state/staking/selectors';
 import { selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import { formatDollars, toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
@@ -38,6 +37,8 @@ const BalanceActions: FC = () => {
 	const theme = useTheme();
 	const router = useRouter();
 	const walletAddress = useAppSelector(selectWallet);
+	const opPrice = useAppSelector(selectOpPrice);
+	const kwentaPrice = useAppSelector(selectKwentaPrice);
 	const tradingRewards = useAppSelector(selectTotalRewardsAll);
 	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
@@ -112,25 +113,13 @@ const BalanceActions: FC = () => {
 		},
 	];
 
-	useEffect(() => {
-		const tokenAddresses = [KWENTA_ADDRESS, OP_ADDRESS];
-		const initExchangeTokens = async () => {
-			const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true);
-			const [kwentaPrice, opPrice] = tokenAddresses.map(
-				(tokenAddress) => coinGeckoPrices[tokenAddress]?.usd.toString() ?? 0
-			);
-
+	useEffect(
+		() =>
 			setRewardBalance(
-				toWei(kwentaPrice)
-					.mul(tradingRewards)
-					.add(toWei(opPrice).mul(kwentaOpRewards.add(snxOpRewards)))
-			);
-		};
-
-		(async () => {
-			await initExchangeTokens();
-		})();
-	}, [kwentaOpRewards, snxOpRewards, tradingRewards]);
+				kwentaPrice.mul(tradingRewards).add(opPrice.mul(kwentaOpRewards.add(snxOpRewards)))
+			),
+		[kwentaOpRewards, kwentaPrice, opPrice, snxOpRewards, tradingRewards]
+	);
 
 	return (
 		<>
