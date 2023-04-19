@@ -164,6 +164,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 						<StyledTable
 							highlightRowsOnHover
 							rowStyle={{ padding: '0' }}
+							sortBy={[{ id: 'priceNum', desc: true }]}
 							onTableRowClick={(row) => onSelectMarket(row.original.asset)}
 							columns={[
 								{
