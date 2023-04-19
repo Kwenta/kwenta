@@ -1,46 +1,59 @@
-import { memo } from 'react';
+import { useRouter } from 'next/router';
+import { memo, useCallback } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { BANNER_ENABLED, BANNER_LINK_URL, BANNER_TEXT } from 'constants/announcement';
+import { BANNER_ENABLED, BANNER_TEXT } from 'constants/announcement';
+import ROUTES from 'constants/routes';
+import { selectMarketAsset } from 'state/futures/selectors';
+import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
 const Banner = memo(() => {
-	if (!BANNER_ENABLED) return null;
+	const router = useRouter();
+	const currentMarket = useAppSelector(selectMarketAsset);
 
-	return (
-		<>
-			<DesktopOnlyView>
-				<FuturesBannerContainer>
-					<FuturesBannerLinkWrapper>{bannerLink}</FuturesBannerLinkWrapper>
-				</FuturesBannerContainer>
-			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<FuturesBannerContainer>{bannerLink}</FuturesBannerContainer>
-			</MobileOrTabletView>
-		</>
-	);
+	const switchToSM = useCallback(() => {
+		router.push(ROUTES.Markets.MarketPair(currentMarket, 'cross_margin'));
+	}, [currentMarket, router]);
+
+	if (!BANNER_ENABLED) return null;
+	if (router.pathname === '/market' && router.query.accountType === 'isolated_margin') {
+		return (
+			<>
+				<DesktopOnlyView>
+					<FuturesBannerContainer onClick={() => switchToSM()}>
+						<FuturesBannerLinkWrapper>
+							<FuturesLink>{BANNER_TEXT}</FuturesLink>
+						</FuturesBannerLinkWrapper>
+					</FuturesBannerContainer>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					<FuturesBannerContainer onClick={() => switchToSM()}>
+						<FuturesLink>{BANNER_TEXT}</FuturesLink>
+					</FuturesBannerContainer>
+				</MobileOrTabletView>
+			</>
+		);
+	}
+	return null;
 });
 
-const FuturesLink = styled.a`
+const FuturesLink = styled.div`
 	margin-right: 5px;
-	background: #313131;
 	padding: 4px 9px;
 	border-radius: 20px;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.text};
 `;
 
-const linkProps = BANNER_LINK_URL
-	? { href: BANNER_LINK_URL, target: '_blank' }
-	: { as: 'p' as const };
-
-const bannerLink = <FuturesLink {...linkProps}>{BANNER_TEXT}</FuturesLink>;
-
-const FuturesBannerContainer = styled.div`
-	height: 70px;
+const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
+	height: 60px;
 	width: 100%;
 	display: flex;
 	align-items: center;
-	margin-bottom: -35px;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.background};
+	margin-bottom: 0;
+	cursor: pointer;
 
 	${media.lessThan('md')`
 		position: relative;
@@ -59,10 +72,8 @@ const FuturesBannerLinkWrapper = styled.div`
 	width: 100%;
 	text-align: center;
 	position: absolute;
-
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 13px;
 	display: flex;
 	justify-content: center;
 	align-items: center;

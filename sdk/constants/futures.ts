@@ -1,7 +1,9 @@
+import { ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils.js';
 import { gql } from 'graphql-request';
 
 import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
+import { weiFromWei } from 'utils/formatters/number';
 
 export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
 
@@ -19,6 +21,8 @@ export const MAIN_ENDPOINT_OP_MAINNET =
 
 export const MAIN_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
+
+export const SL_TP_MAX_SIZE = weiFromWei(ethers.constants.MaxInt256);
 
 export const FUTURES_ENDPOINTS: Record<number, string> = {
 	10: FUTURES_ENDPOINT_OP_MAINNET,
@@ -326,9 +330,9 @@ export const ISOLATED_MARGIN_FRAGMENT = gql`
 	}
 `;
 
-export const CROSS_MARGIN_FRAGMENT = gql`
-	query userCrossMarginTransfers($walletAddress: String!) {
-		crossMarginAccountTransfers(
+export const SMART_MARGIN_FRAGMENT = gql`
+	query userSmartMarginTransfers($walletAddress: String!) {
+		smartMarginAccountTransfers(
 			where: { abstractAccount: $walletAddress }
 			orderBy: timestamp
 			orderDirection: desc

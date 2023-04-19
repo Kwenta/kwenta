@@ -52,16 +52,13 @@ export const migrations = {
 			futures: FUTURES_INITIAL_STATE,
 		};
 	},
-	9: (state: any) => {
+	22: (state: any) => {
 		return {
 			...state,
 			home: HOME_INITIAL_STATE,
-		};
-	},
-	11: (state: any) => {
-		return {
-			...state,
 			futures: FUTURES_INITIAL_STATE,
+			earn: EARN_INITIAL_STATE,
+			staking: STAKING_INITIAL_STATE,
 		};
 	},
 };

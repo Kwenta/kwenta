@@ -1,7 +1,6 @@
 import { FunctionComponent } from 'react';
 
-import LinkIconLight from 'assets/svg/app/link-light.svg';
-import { CrossMarginIcon, IsolatedMarginIcon } from 'components/Nav/FuturesIcon';
+import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
 import { COMPETITION_ENABLED } from 'constants/competition';
 import { CROSS_MARGIN_ENABLED, DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -66,8 +65,8 @@ const DASHBOARD_LINKS = [
 		i18nLabel: 'dashboard.tabs.staking',
 	},
 	{
-		link: ROUTES.Dashboard.Earn,
-		i18nLabel: 'dashboard.tabs.earn',
+		link: ROUTES.Dashboard.Rewards,
+		i18nLabel: 'dashboard.tabs.rewards',
 	},
 ];
 
@@ -83,36 +82,13 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 		links: CROSS_MARGIN_ENABLED
 			? [
 					{
-						link: ROUTES.Markets.Home('isolated_margin'),
-						i18nLabel: 'header.nav.isolated-margin',
-						Icon: IsolatedMarginIcon,
-					},
-					{
 						link: ROUTES.Markets.Home('cross_margin'),
 						i18nLabel: 'header.nav.cross-margin',
-						badge: [
-							{
-								i18nLabel: 'header.nav.beta-badge',
-								color: 'gray',
-							},
-							{
-								i18nLabel: 'header.nav.reward-badge',
-								color: 'yellow',
-							},
-						],
-						Icon: CrossMarginIcon,
+						Icon: KwentaYellowIcon,
 					},
 					{
-						link: EXTERNAL_LINKS.Trade.PerpsV2,
-						externalLink: true,
-						i18nLabel: 'header.nav.v2-alpha',
-						badge: [
-							{
-								i18nLabel: 'header.nav.alpha-badge',
-								color: 'red',
-							},
-						],
-						Icon: LinkIconLight,
+						link: ROUTES.Markets.Home('isolated_margin'),
+						i18nLabel: 'header.nav.isolated-margin',
 					},
 			  ]
 			: null,

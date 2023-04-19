@@ -50,25 +50,27 @@ const FuturesHistoryTable: FC = () => {
 
 	const mappedHistoricalTrades = useMemo(
 		() =>
-			trades.map((trade) => {
-				const pnl = trade.pnl.div(ETH_UNIT);
-				const feesPaid = trade.feesPaid.div(ETH_UNIT);
-				const netPnl = pnl.sub(feesPaid);
-				return {
-					...trade,
-					pnl,
-					feesPaid,
-					netPnl,
-					displayAsset: getDisplayAsset(trade.asset),
-					market: getMarketName(trade.asset),
-					price: Number(trade.price?.div(ETH_UNIT)),
-					size: Number(trade.size.div(ETH_UNIT).abs()),
-					timestamp: trade.timestamp * 1000,
-					date: formatShortDateWithoutYear(new Date(trade.timestamp * 1000)),
-					id: trade.txnHash,
-					status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-				};
-			}),
+			trades
+				.map((trade) => {
+					const pnl = trade.pnl.div(ETH_UNIT);
+					const feesPaid = trade.feesPaid.div(ETH_UNIT);
+					const netPnl = pnl.sub(feesPaid);
+					return {
+						...trade,
+						pnl,
+						feesPaid,
+						netPnl,
+						displayAsset: getDisplayAsset(trade.asset),
+						market: getMarketName(trade.asset),
+						price: Number(trade.price?.div(ETH_UNIT)),
+						size: Number(trade.size.div(ETH_UNIT).abs()),
+						timestamp: trade.timestamp * 1000,
+						date: formatShortDateWithoutYear(new Date(trade.timestamp * 1000)),
+						id: trade.txnHash,
+						status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+					};
+				})
+				.sort((a, b) => b.timestamp - a.timestamp),
 		[trades]
 	);
 

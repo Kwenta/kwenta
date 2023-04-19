@@ -27,6 +27,7 @@ const Container = styled.div`
 	position: fixed;
 	top: 0px;
 	left: 0px;
+	z-index: -100;
 
 	> .line {
 		position: absolute;

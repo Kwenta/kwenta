@@ -7,8 +7,8 @@ import styled, { useTheme } from 'styled-components';
 import Logo from 'assets/svg/brand/logo-only.svg';
 import Button from 'components/Button';
 import Currency from 'components/Currency';
+import { GridDivCenteredRow } from 'components/layout/grid';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { TableNoResults } from 'components/Table';
 import { Body, NumericValue, Heading } from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -16,6 +16,7 @@ import { Period } from 'sdk/constants/period';
 import {
 	selectBuyingPower,
 	selectFuturesPortfolio,
+	selectFuturesType,
 	selectPortfolioChartData,
 	selectSelectedPortfolioTimeframe,
 	selectTotalUnrealizedPnl,
@@ -50,7 +51,16 @@ const ChartCTA = () => {
 const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 	const theme = useTheme();
 	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe);
-	const portfolioData = useAppSelector(selectPortfolioChartData);
+	const accountType = useAppSelector(selectFuturesType);
+	const {
+		isolated_margin: isolatedPortfolioData,
+		cross_margin: smartPortfolioData,
+	} = useAppSelector(selectPortfolioChartData);
+
+	const portfolioData = useMemo(
+		() => (accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData),
+		[accountType, isolatedPortfolioData, smartPortfolioData]
+	);
 
 	const lineColor = useMemo(() => {
 		const isNegative =
@@ -101,7 +111,13 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 				<Legend
 					verticalAlign="top"
 					align="left"
-					formatter={(value) => (value === 'total' ? 'Isolated Margin' : value)}
+					formatter={(value) =>
+						value === 'total'
+							? accountType === 'isolated_margin'
+								? 'Isolated Margin'
+								: 'Smart Margin'
+							: value
+					}
 				/>
 				<Line
 					type="monotone"
@@ -117,16 +133,30 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 
 const PortfolioChart: FC = () => {
 	const { t } = useTranslation();
-	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const portfolioData = useAppSelector(selectPortfolioChartData);
+	const { isolatedMarginFutures: isolatedTotal, crossMarginFutures: smartTotal } = useAppSelector(
+		selectFuturesPortfolio
+	);
+	const accountType = useAppSelector(selectFuturesType);
+	const {
+		isolated_margin: isolatedPortfolioData,
+		cross_margin: smartPortfolioData,
+	} = useAppSelector(selectPortfolioChartData);
+
 	const buyingPower = useAppSelector(selectBuyingPower);
 	const upnl = useAppSelector(selectTotalUnrealizedPnl);
 
 	const [hoverValue, setHoverValue] = useState<number | null>(null);
 	const [hoverTitle, setHoverTitle] = useState<string | null>(null);
 
-	// TODO: Add back cross margin when relevant
-	const total = useMemo(() => portfolio.isolatedMarginFutures, [portfolio.isolatedMarginFutures]);
+	const total = useMemo(() => (accountType === 'isolated_margin' ? isolatedTotal : smartTotal), [
+		accountType,
+		isolatedTotal,
+		smartTotal,
+	]);
+
+	const portfolioData = useMemo(() => {
+		return accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData;
+	}, [accountType, isolatedPortfolioData, smartPortfolioData]);
 
 	const changeValue = useMemo(() => {
 		if (portfolioData.length < 2) {
@@ -156,7 +186,9 @@ const PortfolioChart: FC = () => {
 						<PortfolioTitle>
 							{hoverTitle ? hoverTitle : t('dashboard.overview.portfolio-chart.portfolio-value')}
 						</PortfolioTitle>
-						<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
+						<NumericValue fontSize={20} value={hoverValue || total}>
+							{formatDollars(hoverValue || total, { maxDecimals: 2 })}
+						</NumericValue>
 						<NumericValue colored value={changeValue.value ?? zeroBN}>
 							{changeValue.text}&nbsp;
 						</NumericValue>
@@ -298,8 +330,14 @@ const ChartGrid = styled.div`
 	height: 260px;
 `;
 
-const CTAContainer = styled(TableNoResults)`
+const CTAContainer = styled(GridDivCenteredRow)`
 	height: 100%;
+	text-align: center;
+	justify-content: center;
+	justify-items: center;
+	grid-gap: 10px;
+	padding: 50px 40px;
+	margin-top: -2px;
 `;
 
 export default PortfolioChart;

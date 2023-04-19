@@ -69,13 +69,17 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	SynthSwap: {
 		10: '0x6d6273f52b0C8eaB388141393c1e8cfDB3311De6',
 	},
-	CrossMarginAccountFactory: {
-		10: '0x8e43BF1910ad1461EEe0Daca10547c7e6d9D2f36',
-		420: '0x9320170B37eDEb4f41cb6E5A8F82B984aD9c44eE',
+	SmartMarginAccount: {
+		10: '0x0CA2ca9FFf09f575A178F4Bb3c0e7744a1069982',
+		420: '0xeDB667C5C93E7C7eeEB5A8Fa111fFDE1474CBE50',
 	},
-	CrossMarginBaseSettings: {
-		10: '0x8954C7b1417E3De398c7F33520EbAe142929Ba2A',
-		420: '0x8d1CB3f153D4646b64A447809e1Ce7714d41C6B4',
+	SmartMarginAccountFactory: {
+		10: '0x8234F990b149Ae59416dc260305E565e5DAfEb54',
+		420: '0xb5dCFb08a2CB07399b75B650B980732340c5Ed90',
+	},
+	SmartMarginEvents: {
+		10: '0x6BA8Eb350c72A665B841DA90f03401539e7D765F',
+		420: '0x3617154844291712cBD2148D912b61d6641229a4',
 	},
 	KwentaArrakisVault: {
 		10: '0x56dEa47c40877c2aaC2a689aC56aa56cAE4938d2',
@@ -121,6 +125,9 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	},
 	TradingRewardsPerpsV2: {
 		10: '0x2787CC20e5ECb4BF1bfB79eAE284201027683179',
+	},
+	OpRewards: {
+		10: '0x1964cF9d0c5c268DcF5a5d37F13600483237f6F5',
 	},
 	BatchClaimer: {
 		10: '0x6Fd879830D9b1EE5d4f9ef12f8D5deE916bebD0b',

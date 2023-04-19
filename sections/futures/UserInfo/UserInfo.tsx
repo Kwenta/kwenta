@@ -9,31 +9,34 @@ import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
+import Spacer from 'components/Spacer';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
-import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import { fetchTradesForSelectedMarket } from 'state/futures/actions';
+import { fetchAllTradesForAccount } from 'state/futures/actions';
 import {
-	selectActiveCrossPositionsCount,
+	selectActiveSmartPositionsCount,
 	selectActiveIsolatedPositionsCount,
 	selectFuturesType,
 	selectMarketAsset,
-	selectOpenOrders,
+	selectOpenDelayedOrders,
 	selectPosition,
+	selectAllConditionalOrders,
 } from 'state/futures/selectors';
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
 import { selectWallet } from 'state/wallet/selectors';
 
-import PositionCard from '../PositionCard';
 import ProfitCalculator from '../ProfitCalculator';
 import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
-import OpenOrdersTable from './OpenOrdersTable';
+import ConditionalOrdersTable from './ConditionalOrdersTable';
+import OpenDelayedOrdersTable from './OpenDelayedOrdersTable';
+import PositionsTable from './PositionsTable';
 
 enum FuturesTab {
 	POSITION = 'position',
 	ORDERS = 'orders',
+	CONDITIONAL_ORDERS = 'conditional_orders',
 	TRADES = 'trades',
 	CALCULATOR = 'calculator',
 	TRANSFERS = 'transfers',
@@ -48,15 +51,16 @@ const UserInfo: React.FC = memo(() => {
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
-	const crossPositionsCount = useAppSelector(selectActiveCrossPositionsCount);
+	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	const walletAddress = useAppSelector(selectWallet);
 
-	const openOrders = useAppSelector(selectOpenOrders);
+	const openOrders = useAppSelector(selectOpenDelayedOrders);
+	const conditionalOrders = useAppSelector(selectAllConditionalOrders);
 	const accountType = useAppSelector(selectFuturesType);
 
-	useFetchAction(fetchTradesForSelectedMarket, {
-		dependencies: [walletAddress, accountType, marketAsset, position?.position?.size.toString()],
+	useFetchAction(fetchAllTradesForAccount, {
+		dependencies: [walletAddress, accountType, position?.position?.size.toString()],
 		disabled: !walletAddress,
 	});
 
@@ -85,20 +89,20 @@ const UserInfo: React.FC = memo(() => {
 	}, []);
 
 	const refetchTrades = useCallback(() => {
-		dispatch(fetchTradesForSelectedMarket);
+		dispatch(fetchAllTradesForAccount());
 	}, [dispatch]);
 
 	useEffect(() => {
 		refetchTrades();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [position]);
+	}, [position?.marketKey]);
 
 	const TABS = useMemo(
 		() => [
 			{
 				name: FuturesTab.POSITION,
-				label: 'Position',
-				badge: accountType === 'isolated_margin' ? isolatedPositionsCount : crossPositionsCount,
+				label: 'Positions',
+				badge: accountType === 'isolated_margin' ? isolatedPositionsCount : smartPositionsCount,
 				active: activeTab === FuturesTab.POSITION,
 				icon: <PositionIcon />,
 				onClick: () =>
@@ -108,12 +112,24 @@ const UserInfo: React.FC = memo(() => {
 			},
 			{
 				name: FuturesTab.ORDERS,
-				label: 'Orders',
+				label: 'Pending',
 				badge: openOrders?.length,
 				active: activeTab === FuturesTab.ORDERS,
 				icon: <OpenPositionsIcon />,
 				onClick: () =>
 					router.push(ROUTES.Markets.Orders(marketAsset, accountType), undefined, {
+						scroll: false,
+					}),
+			},
+			{
+				name: FuturesTab.CONDITIONAL_ORDERS,
+				label: 'Orders',
+				badge: conditionalOrders.length,
+				disabled: accountType === 'isolated_margin',
+				active: activeTab === FuturesTab.CONDITIONAL_ORDERS,
+				icon: <OpenPositionsIcon />,
+				onClick: () =>
+					router.push(ROUTES.Markets.ConditionalOrders(marketAsset, accountType), undefined, {
 						scroll: false,
 					}),
 			},
@@ -132,7 +148,7 @@ const UserInfo: React.FC = memo(() => {
 				name: FuturesTab.TRANSFERS,
 				label: 'Transfers',
 				badge: undefined,
-				disabled: false, // leave this until we determine a disbaled state
+				disabled: accountType === 'cross_margin', // leave this until we determine a disbaled state
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <TransfersIcon width={11} height={11} />,
 				onClick: () =>
@@ -148,7 +164,8 @@ const UserInfo: React.FC = memo(() => {
 			openOrders?.length,
 			accountType,
 			isolatedPositionsCount,
-			crossPositionsCount,
+			smartPositionsCount,
+			conditionalOrders.length,
 		]
 	);
 
@@ -156,12 +173,15 @@ const UserInfo: React.FC = memo(() => {
 		setHasOpenPosition(!!position?.position);
 	}, [position]);
 
+	const filteredTabs = TABS.filter((tab) => !tab.disabled);
+
 	return (
-		<>
+		<UserInfoContainer>
 			<TabButtonsContainer>
 				<TabLeft>
-					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
+					{filteredTabs.map(({ name, label, badge, active, disabled, onClick, icon }) => (
 						<TabButton
+							inline
 							key={name}
 							title={label}
 							badgeCount={badge}
@@ -174,13 +194,16 @@ const UserInfo: React.FC = memo(() => {
 				</TabLeft>
 				<TabRight>
 					{/* CALCULATOR tab */}
+					<Spacer divider height={47} width={1} />
 					<TabButton
+						inline
 						key={FuturesTab.CALCULATOR}
 						title="Calculator"
 						icon={<CalculatorIcon />}
 						onClick={handleOpenProfitCalc}
 					/>
 					<TabButton
+						inline
 						key={FuturesTab.SHARE}
 						title="Share"
 						disabled={!hasOpenPosition}
@@ -190,33 +213,42 @@ const UserInfo: React.FC = memo(() => {
 				</TabRight>
 			</TabButtonsContainer>
 
-			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<PositionCard />
-				<FuturesPositionsTable accountType={accountType} showCurrentMarket={false} />
+			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab} fullHeight>
+				<PositionsTable />
 			</TabPanel>
-			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
-				<OpenOrdersTable />
+			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab} fullHeight>
+				<OpenDelayedOrdersTable />
 			</TabPanel>
-			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.CONDITIONAL_ORDERS} activeTab={activeTab} fullHeight>
+				<ConditionalOrdersTable />
+			</TabPanel>
+			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab} fullHeight>
 				<Trades />
 			</TabPanel>
-			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
+			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab} fullHeight>
 				<Transfers />
 			</TabPanel>
 
 			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}
 			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
-		</>
+		</UserInfoContainer>
 	);
 });
+
+const UserInfoContainer = styled.div`
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 300px;
+	max-height: 300px;
+	height: 300px;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+`;
 
 const TabButtonsContainer = styled.div`
 	display: grid;
 	grid-gap: 15px;
 	grid-template-columns: repeat(2, 1fr);
-
-	margin-top: 16px;
-	margin-bottom: 16px;
 
 	button {
 		font-size: 13px;
@@ -230,13 +262,11 @@ const TabButtonsContainer = styled.div`
 const TabLeft = styled.div`
 	display: flex;
 	justify-content: left;
-	grid-gap: 12px;
 `;
 
 const TabRight = styled.div`
 	display: flex;
 	justify-content: right;
-	grid-gap: 12px;
 
 	@media (max-width: 1182px) {
 		justify-content: left;

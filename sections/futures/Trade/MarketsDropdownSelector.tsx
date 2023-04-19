@@ -1,9 +1,8 @@
 import Wei from '@synthetixio/wei';
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
-import ColoredPrice from 'components/ColoredPrice';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FlexDivCentered } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
@@ -12,6 +11,8 @@ import { FuturesMarketAsset, SynthSuspensionReason } from 'sdk/types/futures';
 import { PricesInfo } from 'state/prices/types';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 import { MarketKeyByAsset } from 'utils/futures';
+
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 
 type Props = {
 	asset: FuturesMarketAsset;
@@ -30,36 +31,41 @@ type Props = {
 const MarketsDropdownSelector: FC<Props> = (props) => (
 	<Container {...props}>
 		<ContentContainer mobile={props.mobile}>
-			<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width="31px" height="31px" />
-			<div className="currency-meta">
-				<CurrencyLabel>
-					{props.label}
-					<MarketBadge
-						currencyKey={props.asset}
-						isFuturesMarketClosed={props.isMarketClosed}
-						futuresClosureReason={props.closureReason}
-					/>
-				</CurrencyLabel>
-				<Body className="name">{props.description}</Body>
-			</div>
-			{props.mobile && (
-				<div style={{ marginRight: 15 }}>
-					<ColoredPrice priceInfo={props.priceDetails.priceInfo}>
-						{formatDollars(props.priceDetails.priceInfo?.price ?? '0')}
-					</ColoredPrice>
-					<NumericValue value={props.priceDetails.oneDayChange} colored>
-						{formatPercent(props.priceDetails.oneDayChange)}
-					</NumericValue>
+			<LeftContainer $mobile={props.mobile}>
+				<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width="31px" height="31px" />
+				<div className="currency-meta">
+					<CurrencyLabel weight="bold">
+						{props.label}
+						<MarketBadge
+							currencyKey={props.asset}
+							isFuturesMarketClosed={props.isMarketClosed}
+							futuresClosureReason={props.closureReason}
+						/>
+					</CurrencyLabel>
 				</div>
+				{props.mobile && <StyledCaretDownIcon />}
+			</LeftContainer>
+			{props.mobile && (
+				<MobileRightContainer>
+					<div>
+						<NumericValue value={props.priceDetails.priceInfo}>
+							{formatDollars(props.priceDetails.priceInfo?.price ?? '0')}
+						</NumericValue>
+						<NumericValue value={props.priceDetails.oneDayChange} colored>
+							{formatPercent(props.priceDetails.oneDayChange)}
+						</NumericValue>
+					</div>
+				</MobileRightContainer>
 			)}
 
-			<StyledCaretDownIcon />
+			{!props.mobile && <StyledCaretDownIcon />}
 		</ContentContainer>
 	</Container>
 );
 
-export const CurrencyLabel = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
+export const MARKET_SELECTOR_HEIGHT_MOBILE = 58;
+
+export const CurrencyLabel = styled(Body)`
 	font-size: 16px;
 	display: flex;
 	align-items: center;
@@ -68,6 +74,7 @@ export const CurrencyLabel = styled.div`
 
 const Container = styled.div`
 	width: 100%;
+	height: 100%;
 `;
 
 export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
@@ -76,50 +83,50 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		margin-left: 12px;
 	}
 
+	width: ${(props) => (props.mobile ? '100%' : '380px')};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background};
+
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: ${(props) => (props.mobile ? 0 : '10px')};
-	padding: 10px;
+	padding: 15px;
 	cursor: pointer;
-	background: ${(props) => props.theme.colors.selectedTheme.background};
+	transition: all 0.2s ease-in-out;
 	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
-	}
-	.name {
-		font-family: ${(props) => props.theme.fonts.regular};
-		font-size: 12.5px;
-		line-height: 12.5px;
-		margin: 0;
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
+		background: ${(props) =>
+			props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
 	}
 
 	p {
 		margin: 0;
 	}
 
-	.price {
-		font-family: ${(props) => props.theme.fonts.mono};
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-		font-size: 15px;
-	}
-
-	.change {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11.5px;
-		text-align: right;
-	}
-
 	&:not(:last-of-type) {
 		margin-bottom: 4px;
 	}
 
-	.green {
-		color: ${(props) => props.theme.colors.selectedTheme.green};
-	}
+	height: ${(props) =>
+		props.mobile ? MARKET_SELECTOR_HEIGHT_MOBILE : MARKETS_DETAILS_HEIGHT_DESKTOP - 2}px;
+`;
 
-	.red {
-		color: ${(props) => props.theme.colors.selectedTheme.red};
-	}
+const LeftContainer = styled.div<{ $mobile?: boolean }>`
+	flex: 1;
+	display: flex;
+	align-items: center;
+
+	${(props) =>
+		props.$mobile &&
+		css`
+			padding-right: 15px;
+			border-right: ${props.theme.colors.selectedTheme.border};
+		`}
+`;
+
+const MobileRightContainer = styled.div`
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding-left: 15px;
+	text-align: right;
 `;
 
 export default MarketsDropdownSelector;

@@ -75,6 +75,12 @@ export default class PricesService {
 		return this.sdk.context.isMainnet ? PYTH_IDS.mainnet : PYTH_IDS.testnet;
 	}
 
+	public getOffchainPrice(marketKey: FuturesMarketKey) {
+		const price = this.offChainPrices[MarketAssetByKey[marketKey]];
+		if (!price) throw new Error(`No price data for ${marketKey}`);
+		return price;
+	}
+
 	public async startPriceUpdates(intervalTime: number) {
 		// Poll the onchain prices
 		if (!this.ratesInterval) {

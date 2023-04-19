@@ -1,31 +1,37 @@
 import { useRouter } from 'next/router';
-import { useEffect, FC, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, FC, useState } from 'react';
 import styled from 'styled-components';
 
-import Error from 'components/ErrorView';
 import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesMarketAsset } from 'sdk/types/futures';
+import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
-import LeftSidebar from 'sections/futures/LeftSidebar/LeftSidebar';
+import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
+import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal';
+import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal';
+import MarketDetails from 'sections/futures/MarketDetails';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
+import { TRADE_PANEL_WIDTH } from 'sections/futures/styles';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
+import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
-import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
+import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal';
+import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin';
+import WithdrawSmartMargin from 'sections/futures/TradeCrossMargin/WithdrawSmartMargin';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import GitHashID from 'sections/shared/Layout/AppLayout/GitHashID';
 import { setOpenModal } from 'state/app/reducer';
-import { selectOpenModal } from 'state/app/selectors';
-import { clearTradeInputs, fetchCrossMarginAccount } from 'state/futures/actions';
+import { selectShowModal, selectShowPositionModal } from 'state/app/selectors';
+import { clearTradeInputs } from 'state/futures/actions';
 import { usePollMarketFuturesData } from 'state/futures/hooks';
-import { setMarketAsset, setShowCrossMarginOnboard } from 'state/futures/reducer';
+import { setFuturesAccountType, setMarketAsset } from 'state/futures/reducer';
 import {
+	selectActiveIsolatedPositionsCount,
 	selectCMAccountQueryStatus,
 	selectCrossMarginAccount,
 	selectFuturesType,
@@ -34,7 +40,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { PageContent, FullHeightContainer, RightSideContent } from 'styles/common';
+import { PageContent } from 'styles/common';
 import { MarketKeyByAsset } from 'utils/futures';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
@@ -49,77 +55,90 @@ const Market: MarketComponent = () => {
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset);
 	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
-	const openModal = useAppSelector(selectOpenModal);
+	const openModal = useAppSelector(selectShowModal);
+	const showPositionModal = useAppSelector(selectShowPositionModal);
+	const accountType = useAppSelector(selectFuturesType);
+	const selectedMarketAsset = useAppSelector(selectMarketAsset);
 
-	const resetTradeState = useCallback(() => {
+	const routerAccountType =
+		router.query.accountType === 'cross_margin' ? 'cross_margin' : 'isolated_margin';
+
+	useEffect(() => {
+		if (router.isReady && accountType !== routerAccountType) {
+			dispatch(setFuturesAccountType(routerAccountType));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [router.isReady, routerAccountType]);
+
+	useEffect(() => {
 		dispatch(clearTradeInputs());
-	}, [dispatch]);
-
-	useEffect(() => {
-		const handleRouteChange = () => {
-			resetTradeState();
-		};
-		router.events.on('routeChangeStart', handleRouteChange);
-		return () => {
-			router.events.off('routeChangeStart', handleRouteChange);
-		};
-	}, [router.events, resetTradeState]);
-
-	useEffect(() => {
-		resetTradeState();
 		// Clear trade state when switching address
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [walletAddress]);
 
 	useEffect(() => {
-		if (routerMarketAsset && MarketKeyByAsset[routerMarketAsset]) {
+		if (
+			selectedMarketAsset !== routerMarketAsset &&
+			routerMarketAsset &&
+			MarketKeyByAsset[routerMarketAsset]
+		) {
 			dispatch(setMarketAsset(routerMarketAsset));
+			dispatch(clearTradeInputs());
 		}
-	}, [router, setCurrentMarket, dispatch, routerMarketAsset]);
+	}, [router, setCurrentMarket, dispatch, routerMarketAsset, selectedMarketAsset]);
 
 	return (
 		<>
 			<MarketHead />
-
-			<CrossMarginOnboard
-				onClose={() => dispatch(setShowCrossMarginOnboard(false))}
-				isOpen={showOnboard}
-			/>
+			<CrossMarginOnboard isOpen={showOnboard} />
 			<DesktopOnlyView>
 				<PageContent>
+					<MarketDetails />
 					<StyledFullHeightContainer>
-						<LeftSidebar />
+						<TradePanelDesktop />
 						<MarketInfo />
-						<StyledRightSideContent>
-							<TradePanelDesktop />
-						</StyledRightSideContent>
 					</StyledFullHeightContainer>
-					<GitHashID />
 				</PageContent>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileTrade />
-				<GitHashID />
 			</MobileOrTabletView>
+			{showPositionModal?.type === 'futures_close_position' && <ClosePositionModal />}
+			{showPositionModal?.type === 'futures_edit_stop_loss_take_profit' && (
+				<EditStopLossAndTakeProfitModal />
+			)}
+			{showPositionModal?.type === 'futures_edit_position_size' && <EditPositionSizeModal />}
+			{showPositionModal?.type === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
+			{openModal === 'futures_cross_withdraw' && (
+				<WithdrawSmartMargin onDismiss={() => dispatch(setOpenModal(null))} />
+			)}
+
+			{openModal === 'futures_confirm_smart_margin_trade' && <TradeConfirmationModalCrossMargin />}
+			{openModal === 'futures_confirm_isolated_margin_trade' && <DelayedOrderConfirmationModal />}
 		</>
 	);
 };
 
 function TradePanelDesktop() {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
 	const router = useRouter();
 	const isL2 = useIsL2();
 	const { walletAddress } = Connector.useContainer();
 	const accountType = useAppSelector(selectFuturesType);
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
+	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
+	const [open, setOpen] = useState(false);
+
+	useEffect(() => setOpen(accountType === 'isolated_margin' && isolatedPositionsCount === 0), [
+		accountType,
+		isolatedPositionsCount,
+	]);
 
 	if (walletAddress && !isL2) {
 		return <FuturesUnsupportedNetwork />;
@@ -132,24 +151,21 @@ function TradePanelDesktop() {
 			!crossMarginAccount &&
 			queryStatus.status === FetchStatus.Idle)
 	) {
-		return <Loader />;
-	}
-
-	if (accountType === 'cross_margin') {
-		return queryStatus.status === FetchStatus.Error && !crossMarginAccount ? (
-			<div>
-				<Error
-					message={t('futures.market.trade.cross-margin.account-query-failed')}
-					retryButton={{
-						onClick: () => dispatch(fetchCrossMarginAccount()),
-						label: 'Retry',
-					}}
-				/>
-			</div>
-		) : (
-			<TradeCrossMargin />
+		return (
+			<LoaderContainer>
+				<Loader inline />
+			</LoaderContainer>
 		);
 	}
+
+	if (accountType === 'isolated_margin' && isolatedPositionsCount === 0) {
+		return open ? (
+			<SwitchToSmartMargin onDismiss={() => setOpen(false)} />
+		) : (
+			<TradeIsolatedMargin />
+		);
+	}
+
 	return <TradeIsolatedMargin />;
 }
 
@@ -157,23 +173,16 @@ Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Market;
 
-const StyledRightSideContent = styled(RightSideContent)`
-	width: 100%;
+const StyledFullHeightContainer = styled.div`
+	display: grid;
+	grid-template-columns: ${TRADE_PANEL_WIDTH}px 1fr;
+	grid-gap: 0;
+	flex: 1;
+	height: calc(100% - 64px);
 `;
 
-const StyledFullHeightContainer = styled(FullHeightContainer)`
-	display: grid;
-	grid-template-columns: 20% 55% 25%;
-	column-gap: 15px;
-	width: calc(100% - 30px);
-	@media (min-width: 1725px) {
-		display: grid;
-		grid-template-columns: 320px 1fr 370px;
-		column-gap: 15px;
-		width: 100%;
-	}
-	@media (max-width: 1200px) {
-		grid-template-columns: 70% 30%;
-		width: calc(100% - 15px);
-	}
+const LoaderContainer = styled.div`
+	text-align: center;
+	width: 100%;
+	padding: 50px;
 `;

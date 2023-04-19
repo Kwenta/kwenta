@@ -6,13 +6,13 @@ import styled from 'styled-components';
 import ErrorView from 'components/ErrorView';
 import { FlexDivRow } from 'components/layout/flex';
 import StyledSlider from 'components/Slider/StyledSlider';
-import { editCrossMarginSize } from 'state/futures/actions';
+import { editCrossMarginTradeSize } from 'state/futures/actions';
 import {
 	selectAboveMaxLeverage,
-	selectCrossMarginBalanceInfo,
+	selectCrossMarginMarginDelta,
 	selectLeverageSide,
 	selectMaxLeverage,
-	selectMaxUsdInputAmount,
+	selectMaxUsdSizeInput,
 	selectPosition,
 	selectTradeSizeInputs,
 } from 'state/futures/selectors';
@@ -21,13 +21,13 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 export default function OrderSizeSlider() {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const { freeMargin: freeCrossMargin } = useAppSelector(selectCrossMarginBalanceInfo);
 	const { susdSizeString } = useAppSelector(selectTradeSizeInputs);
 	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const position = useAppSelector(selectPosition);
-	const maxUsdInputAmount = useAppSelector(selectMaxUsdInputAmount);
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
+	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
 
 	const [percent, setPercent] = useState(0);
 	const [usdValue, setUsdValue] = useState(susdSizeString);
@@ -40,7 +40,7 @@ export default function OrderSizeSlider() {
 			const usdValue = Number(usdAmount).toFixed(0);
 			setUsdValue(usdValue);
 			if (commit) {
-				dispatch(editCrossMarginSize(usdValue, 'usd'));
+				dispatch(editCrossMarginTradeSize(usdValue, 'usd'));
 			}
 		},
 		[maxUsdInputAmount, dispatch]
@@ -75,7 +75,7 @@ export default function OrderSizeSlider() {
 				minValue={0}
 				maxValue={100}
 				step={1}
-				disabled={freeCrossMargin.eq(0)}
+				disabled={marginDelta.eq(0)}
 				defaultValue={percent}
 				value={percent}
 				onChange={(_, value) => onChangeMarginPercent(value, false)}

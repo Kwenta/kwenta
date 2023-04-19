@@ -16,4 +16,5 @@ export type EarnState = {
 	lpTotalSupply: string;
 	kwentaPrice: string;
 	wethPrice: string;
+	opPrice: string;
 };

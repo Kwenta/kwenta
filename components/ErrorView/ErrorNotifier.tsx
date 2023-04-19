@@ -5,26 +5,26 @@ import styled, { useTheme } from 'styled-components';
 import ErrorIcon from 'assets/svg/app/error.svg';
 import { truncateString } from 'utils/formatters/string';
 
-function ToastContent({ message, error }: { message: string; error?: Error }) {
+function ToastContent({ message, errorDetails }: { message: string; errorDetails?: string }) {
 	const [expanded, setExpanded] = useState(false);
-	if (!error) return <>{message}</>;
+	if (!errorDetails) return <>{message}</>;
 	return (
 		<div>
 			<div>{message}</div>
 			<TextButton onClick={() => setExpanded(!expanded)}>
 				{expanded ? 'Hide' : 'Show'} Details
 			</TextButton>
-			{expanded ? <ErrorDetails>{error.message}</ErrorDetails> : null}
+			{expanded ? <ErrorDetails>{errorDetails}</ErrorDetails> : null}
 		</div>
 	);
 }
 
 export const notifyError = (message: string, error?: Error) => {
-	const formatted = formatError(message);
-	const truncated = truncateString(formatted);
-	toast.error(<ToastContent message={truncated} error={error} />, {
+	const friendlyError = formatError(error?.message);
+	const truncated = truncateString(message);
+	toast.error(<ToastContent message={truncated} errorDetails={friendlyError} />, {
 		position: toast.POSITION.TOP_RIGHT,
-		toastId: truncated,
+		toastId: message,
 		containerId: 'errors',
 	});
 };
@@ -48,10 +48,27 @@ export default function ErrorNotifier() {
 	);
 }
 
-const formatError = (message: string) => {
+export const ERROR_MESSAGES = {
+	ORDER_PENDING: 'Previous order is pending, please wait for it to finish processing or cancel it.',
+	INSUFFICIENT_MARGIN: 'Insufficient margin, minimum $50 margin required.',
+	INSUFFICIENT_ETH_BAL: 'Insufficient eth balance for gas cost',
+	CANNOT_CANCEL_ORDER_YET: 'Cannot cancel the order yet',
+	ORDER_TOO_OLD: 'Order expired, please cancel',
+	PRICE_IMPACT_EXCEEDED: 'Price exceeded desired fill price',
+};
+
+// TODO: Format more errors, especially transaction failures
+export const formatError = (message?: string) => {
 	if (!message) return '';
-	if (message.includes('insufficient funds for intrinsic transaction cost'))
-		return 'Insufficient ETH balance for gas cost';
+	const lowerCaseMessage = message.toLowerCase();
+	if (lowerCaseMessage.includes('insufficient funds for intrinsic transaction cost'))
+		return ERROR_MESSAGES.INSUFFICIENT_ETH_BAL;
+	if (lowerCaseMessage.includes('insufficient margin')) return ERROR_MESSAGES.INSUFFICIENT_MARGIN;
+	if (lowerCaseMessage.includes('previous order exists')) return ERROR_MESSAGES.ORDER_PENDING;
+	if (lowerCaseMessage.includes('cannot cancel yet')) return ERROR_MESSAGES.CANNOT_CANCEL_ORDER_YET;
+	if (lowerCaseMessage.includes('order too old')) return ERROR_MESSAGES.ORDER_TOO_OLD;
+	if (lowerCaseMessage.includes('price impact exceeded'))
+		return ERROR_MESSAGES.PRICE_IMPACT_EXCEEDED;
 	return message;
 };
 

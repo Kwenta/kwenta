@@ -153,6 +153,21 @@ export const selectTotalRewards = createSelector(
 	wei
 );
 
+export const selectTotalRewardsAll = createSelector(
+	(state: RootState) => state.staking.totalRewardsAll,
+	wei
+);
+
+export const selectKwentaOpRewards = createSelector(
+	(state: RootState) => state.staking.kwentaOpRewards ?? '0',
+	wei
+);
+
+export const selectSnxOpRewards = createSelector(
+	(state: RootState) => state.staking.snxOpRewards ?? '0',
+	wei
+);
+
 export const selectTotalVestable = createSelector(
 	(state: RootState) => state.staking.totalVestable,
 	wei

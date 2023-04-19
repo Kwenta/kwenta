@@ -138,12 +138,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['usdBalance']>(
 										cellProps.row.original.usdBalance,
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.usdBalance}
-											sign="$"
-											conversionRate={1}
-										/>
+										<Currency.Price price={cellProps.row.original.usdBalance} />
 									);
 								},
 								width: 198,
@@ -164,10 +159,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 									return conditionalRender<Cell['price']>(
 										cellProps.row.original.price,
 										<Currency.Price
-											currencyKey="sUSD"
 											price={cellProps.row.original.price!}
-											sign="$"
-											conversionRate={1}
 											formatOptions={{
 												minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 											}}
@@ -240,9 +232,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 											</IconContainer>
 											<StyledText>{cellProps.row.original.synth}</StyledText>
 											<Currency.Price
-												currencyKey="sUSD"
 												price={cellProps.row.original.price ?? 0}
-												sign="$"
 												formatOptions={{
 													minDecimals: isDecimalFour(cellProps.row.original.synth) ? 4 : 2,
 												}}
@@ -265,11 +255,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								return (
 									<div>
 										<div>{formatNumber(cellProps.row.original.balance ?? 0)}</div>
-										<Currency.Price
-											currencyKey="sUSD"
-											price={cellProps.row.original.usdBalance ?? 0}
-											sign="$"
-										/>
+										<Currency.Price price={cellProps.row.original.usdBalance ?? 0} />
 									</div>
 								);
 							},

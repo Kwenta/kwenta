@@ -2,18 +2,15 @@ import { formatBytes32String } from 'ethers/lib/utils.js';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
+import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import {
 	FuturesAccountType,
 	getFuturesPositions,
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
-import {
-	CROSS_MARGIN_FRAGMENT,
-	ISOLATED_MARGIN_FRAGMENT,
-	DEFAULT_NUMBER_OF_TRADES,
-} from 'sdk/constants/futures';
+import { SMART_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
 import { FuturesMarketKey } from 'sdk/types/futures';
-import { mapCrossMarginTransfers, mapMarginTransfers } from 'sdk/utils/futures';
+import { mapMarginTransfers, mapSmartMarginTransfers } from 'sdk/utils/futures';
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,
@@ -35,25 +32,15 @@ export const queryAccountsFromSubgraph = async (
 	return response?.crossMarginAccounts.map((cm: { id: string }) => cm.id) || [];
 };
 
-const queryAccountFromLogs = async (sdk: KwentaSDK, address: string | null): Promise<string[]> => {
-	const { CrossMarginAccountFactory } = sdk.context.contracts;
-	if (!CrossMarginAccountFactory) return [];
-	const accountFilter = CrossMarginAccountFactory.filters.NewAccount(address);
-	if (accountFilter) {
-		const logs = await CrossMarginAccountFactory.queryFilter(accountFilter);
-		if (logs.length) {
-			return logs.map((l) => l.args?.[1]);
-		}
-	}
-	return [];
-};
-
 export const queryCrossMarginAccounts = async (
 	sdk: KwentaSDK,
 	walletAddress: string
 ): Promise<string[]> => {
-	const accounts = await queryAccountFromLogs(sdk, walletAddress);
-	return accounts;
+	// TODO: Contract should be updating to support one to many
+	const accounts = await sdk.context.contracts.SmartMarginAccountFactory?.getAccountsOwnedBy(
+		walletAddress
+	);
+	return accounts ?? [];
 };
 
 export const queryTrades = async (
@@ -67,7 +54,7 @@ export const queryTrades = async (
 ) => {
 	const filter: Record<string, string> = {
 		account: params.walletAddress,
-		accountType: params.accountType,
+		accountType: params.accountType === 'isolated_margin' ? 'isolated_margin' : 'smart_margin',
 	};
 	if (params.marketAsset) {
 		filter['asset'] = formatBytes32String(params.marketAsset);
@@ -156,11 +143,11 @@ export const queryIsolatedMarginTransfers = async (sdk: KwentaSDK, account: stri
 	return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
 };
 
-export const queryCrossMarginTransfers = async (sdk: KwentaSDK, account: string) => {
-	const response = await request(sdk.futures.futuresGqlEndpoint, CROSS_MARGIN_FRAGMENT, {
+export const querySmartMarginTransfers = async (sdk: KwentaSDK, account: string) => {
+	const response = await request(sdk.futures.futuresGqlEndpoint, SMART_MARGIN_FRAGMENT, {
 		walletAddress: account,
 	});
-	return response ? mapCrossMarginTransfers(response.crossMarginAccountTransfers) : [];
+	return response ? mapSmartMarginTransfers(response.smartMarginAccountTransfers) : [];
 };
 
 export const queryFuturesTrades = (
@@ -189,8 +176,8 @@ export const queryFuturesTrades = (
 			accountType: true,
 			margin: true,
 			size: true,
-			asset: true,
 			marketKey: true,
+			asset: true,
 			price: true,
 			positionId: true,
 			positionSize: true,

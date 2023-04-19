@@ -5,8 +5,9 @@ import { ThemeContext } from 'styled-components';
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
 import { NetworkId } from 'sdk/types/common';
-import { FuturesOrder } from 'sdk/types/futures';
+import { ConditionalOrder } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
+import { formatOrderDisplayType } from 'sdk/utils/futures';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';
 import { useAppSelector } from 'state/hooks';
@@ -26,7 +27,7 @@ import { ChartPosition } from './types';
 export type ChartProps = {
 	activePosition?: ChartPosition | null;
 	potentialTrade?: ChartPosition | null;
-	openOrders: FuturesOrder[];
+	openOrders: ConditionalOrder[];
 	showOrderLines: boolean;
 	onChartReady?: () => void;
 	onToggleShowOrderLines?: () => void;
@@ -73,8 +74,8 @@ export function TVChart({
 	const { network } = Connector.useContainer();
 
 	const DEFAULT_OVERRIDES = {
-		'paneProperties.background': colors.selectedTheme.background,
-		'chartProperties.background': colors.selectedTheme.background,
+		'paneProperties.background': colors.selectedTheme.newTheme.containers.primary.background,
+		'chartProperties.background': colors.selectedTheme.newTheme.containers.primary.background,
 		'paneProperties.backgroundType': 'solid',
 	};
 
@@ -97,55 +98,55 @@ export function TVChart({
 		};
 	}, []);
 
-	// TODO: Re-enable on implementation of limit orders
-	// const renderOrderLines = () => {
-	// 	_widget.current?.onChartReady(() => {
-	// 		_widget.current?.chart().dataReady(() => {
-	// 			clearOrderLines();
-	// 			_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
-	// 				if (order.targetPrice) {
-	// 					const color =
-	// 						order.side === 'long'
-	// 							? colors.selectedTheme.chartLine.long
-	// 							: colors.selectedTheme.red;
+	const renderOrderLines = () => {
+		_widget.current?.onChartReady(() => {
+			_widget.current?.chart().dataReady(() => {
+				clearOrderLines();
+				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
+					if (order.targetPrice) {
+						const color = order.isSlTp
+							? colors.selectedTheme.chartLine.default
+							: order.side === 'long'
+							? colors.selectedTheme.chartLine.long
+							: colors.selectedTheme.chartLine.short;
 
-	// 					const orderLine = _widget.current
-	// 						?.chart()
-	// 						.createPositionLine()
-	// 						.setText(order.orderType)
-	// 						.setTooltip('Average entry price')
-	// 						.setQuantity(formatNumber(order.size.abs()))
-	// 						.setPrice(order.targetPrice?.toNumber() ?? 0)
-	// 						.setExtendLeft(false)
-	// 						.setQuantityTextColor(colors.white)
-	// 						.setBodyTextColor(darkTheme.black)
-	// 						.setLineStyle(2)
-	// 						.setLineColor(color)
-	// 						.setBodyBorderColor(color)
-	// 						.setQuantityBackgroundColor(color)
-	// 						.setQuantityBorderColor(color)
-	// 						.setLineLength(25);
-	// 					if (orderLine) {
-	// 						acc.push(orderLine);
-	// 					}
-	// 				}
-	// 				return acc;
-	// 			}, []);
-	// 		});
-	// 	});
-	// };
+						const orderLine = _widget.current
+							?.chart()
+							.createPositionLine()
+							.setText(formatOrderDisplayType(order.orderType, order.reduceOnly))
+							.setTooltip('Average entry price')
+							.setQuantity(order.isSlTp ? '100%' : formatNumber(order.size.abs()))
+							.setPrice(order.targetPrice?.toNumber())
+							.setExtendLeft(false)
+							.setQuantityTextColor(colors.white)
+							.setBodyTextColor(darkTheme.black)
+							.setLineStyle(2)
+							.setLineColor(color)
+							.setBodyBorderColor(color)
+							.setQuantityBackgroundColor(color)
+							.setQuantityBorderColor(color)
+							.setLineLength(25);
+						if (orderLine) {
+							acc.push(orderLine);
+						}
+					}
+					return acc;
+				}, []);
+			});
+		});
+	};
 
 	const onToggleOrderLines = () => {
 		if (_oderLineRefs.current.length) {
 			clearOrderLines();
 		} else {
-			// renderOrderLines();
+			renderOrderLines();
 		}
 	};
 
 	useEffect(() => {
 		if (showOrderLines) {
-			// renderOrderLines();
+			renderOrderLines();
 		}
 		// eslint-disable-next-line
 	}, [openOrders]);
@@ -182,10 +183,10 @@ export function TVChart({
 			theme: 'dark',
 			custom_css_url: './theme.css',
 			loading_screen: {
-				backgroundColor: colors.selectedTheme.background,
+				backgroundColor: colors.selectedTheme.newTheme.containers.primary.background,
 			},
 			overrides: DEFAULT_OVERRIDES,
-			toolbar_bg: colors.selectedTheme.background,
+			toolbar_bg: colors.selectedTheme.newTheme.containers.primary.background,
 			time_frames: [
 				{ text: '4H', resolution: '5', description: '4 hours' },
 				{ text: '12H', resolution: '5', description: '1 Day' },

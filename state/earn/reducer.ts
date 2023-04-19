@@ -21,6 +21,7 @@ export const EARN_INITIAL_STATE: EarnState = {
 	lpTotalSupply: '0',
 	wethPrice: '0',
 	kwentaPrice: '0',
+	opPrice: '0',
 };
 
 const earnSlice = createSlice({
@@ -44,6 +45,7 @@ const earnSlice = createSlice({
 		builder.addCase(fetchEarnTokenPrices.fulfilled, (state, action) => {
 			state.kwentaPrice = action.payload.kwentaPrice;
 			state.wethPrice = action.payload.wethPrice;
+			state.opPrice = action.payload.opPrice;
 		});
 		builder.addCase(stakeTokens.pending, (state) => {
 			state.stakeStatus = FetchStatus.Loading;

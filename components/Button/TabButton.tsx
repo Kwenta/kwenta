@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 
 import Button from './Button';
@@ -13,16 +14,17 @@ export type TabButtonProps = {
 	active?: boolean;
 	titleIcon?: ReactNode;
 	disabled?: boolean;
-	noOutline?: boolean;
+	inline?: boolean;
 	vertical?: boolean;
 	nofill?: boolean;
 	isRounded?: boolean;
-	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
+	onClick?: () => any;
+	flat?: boolean;
 };
 
-const TabButton: React.FC<TabButtonProps> = React.memo(
-	({ title, detail, badgeCount, icon, titleIcon, vertical, nofill, ...props }) => (
-		<StyledButton $vertical={vertical} $nofill={nofill} noOutline {...props}>
+const InnerButton: React.FC<TabButtonProps> = React.memo(
+	({ title, detail, badgeCount, icon, titleIcon }) => (
+		<FlexDivRowCentered>
 			{!!icon && <div>{icon}</div>}
 			<div>
 				<div className="title-container">
@@ -30,7 +32,11 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 					<Body className="title" weight="bold">
 						{title}
 					</Body>
-					{!!badgeCount && <div className="badge">{badgeCount}</div>}
+					{!!badgeCount && (
+						<Body mono weight="bold" className="badge">
+							{badgeCount}
+						</Body>
+					)}
 				</div>
 
 				{detail && (
@@ -39,13 +45,34 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 					</Body>
 				)}
 			</div>
-		</StyledButton>
+		</FlexDivRowCentered>
 	)
 );
 
-const StyledButton = styled(Button).attrs({ size: 'small' })<{
+const TabButton: React.FC<TabButtonProps> = React.memo(
+	({ active, flat = false, onClick, ...props }) =>
+		props.inline ? (
+			<InlineTab active={active} onClick={onClick}>
+				<InnerButton {...props} />
+			</InlineTab>
+		) : (
+			<StyledButton
+				active={active}
+				$vertical={props.vertical}
+				$nofill={props.nofill}
+				$flat={flat}
+				onClick={onClick}
+			>
+				<InnerButton {...props} />
+			</StyledButton>
+		)
+);
+
+const sharedStyle = css<{
+	active?: boolean;
 	$vertical?: boolean;
 	$nofill?: boolean;
+	$flat?: boolean;
 }>`
 	height: initial;
 	display: flex;
@@ -54,74 +81,114 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	padding-bottom: 10px;
 	justify-content: center;
 
-	p {
-		text-align: left;
-	}
-
 	.title-container {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 	}
 
-	${(props) => css`
-		flex-direction: ${props.$vertical ? 'column' : 'row'};
-		border-radius: ${props.isRounded ? '100px' : '8px'};
-		background-color: ${props.theme.colors.selectedTheme.tab.background[
-			props.active ? 'active' : 'inactive'
-		]};
+	background-color: ${(props) =>
+		props.active
+			? props.theme.colors.selectedTheme.newTheme.button.default.background
+			: 'transparent'};
 
-		.title {
-			text-align: center;
-			color: ${props.active
-				? props.theme.colors.selectedTheme.button.text.primary
-				: props.theme.colors.selectedTheme.gray};
+	.badge {
+		height: 16px;
+		width: fit-content;
+		min-width: 16px;
+		padding-left: 4px;
+		padding-right: 4px;
+		margin-left: 7px;
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.black};
+		background-color: ${(props) =>
+			props.theme.colors.selectedTheme.newTheme.badge.yellow.background};
+		border-radius: 4px;
+	}
+
+	&:disabled {
+		background-color: transparent;
+		p {
+			color: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
 		}
-
-		.detail {
-			color: ${props.theme.colors.selectedTheme[props.active ? 'gold' : 'gray']};
-			margin-top: 4px;
-			font-size: 18px;
+		svg {
+			path {
+				fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
+			}
 		}
 
 		.badge {
-			height: 16px;
-			width: fit-content;
-			min-width: 16px;
-			padding-left: 4px;
-			padding-right: 4px;
-			margin-left: 7px;
-			font-size: 13px;
-			color: ${props.theme.colors.selectedTheme.black};
-			background-color: ${props.theme.colors.selectedTheme.button.tab.badge.background};
-			border-radius: 4px;
+			display: none;
 		}
+	}
 
-		svg {
-			margin-right: ${props.$vertical ? '0' : '7px'};
-			path {
-				${props.$nofill ? 'stroke' : 'fill'}: ${props.active
+	&:hover {
+		background: ${(props) =>
+			props.theme.colors.selectedTheme.newTheme.button.default.hover.background};
+	}
+
+	.title {
+		text-align: center;
+		color: ${(props) =>
+			props.active
+				? props.theme.colors.selectedTheme.button.text.primary
+				: props.theme.colors.selectedTheme.gray};
+	}
+
+	.detail {
+		color: ${(props) => props.theme.colors.selectedTheme[props.active ? 'gold' : 'gray']};
+		margin-top: 4px;
+		font-size: 18px;
+	}
+
+	svg {
+		margin-top: 2px;
+		margin-right: ${(props) => (props.$vertical ? '0' : '7px')};
+		path {
+			${(props) => (props.$nofill ? 'stroke' : 'fill')}: ${(props) =>
+				props.active
 					? props.theme.colors.selectedTheme.button.text.primary
 					: props.theme.colors.selectedTheme.gray};
-			}
 		}
+	}
 
-		&:disabled {
-			background-color: transparent;
-			p {
-				color: ${props.theme.colors.selectedTheme.button.tab.disabled.text};
-			}
-			svg {
-				path {
-					fill: ${props.theme.colors.selectedTheme.button.tab.disabled.text};
-				}
-			}
+	${(props) =>
+		props.$flat &&
+		css`
+			border-radius: 0;
+			border: unset;
+			height: 100%;
+			width: 100%;
 
-			.badge {
-				display: none;
+			&:not(:last-of-type) {
+				border-right: ${props.theme.colors.selectedTheme.border};
 			}
-		}
+		`}
+`;
+
+const InlineTab = styled.div`
+	${sharedStyle}
+	cursor: pointer;
+	border-right: ${(props) => props.theme.colors.selectedTheme.border};
+	padding: 14px 20px;
+	transition: all 0.1s ease-in-out;
+`;
+
+const StyledButton = styled(Button).attrs({ size: 'small' })<{
+	$vertical?: boolean;
+	$nofill?: boolean;
+	$flat?: boolean;
+	active?: boolean;
+}>`
+	p {
+		text-align: left;
+	}
+
+	${(props) => css`
+		flex-direction: ${props.$vertical ? 'column' : 'row'};
+		border-radius: ${props.isRounded ? '100px' : '8px'};
 	`}
+	${sharedStyle}
 `;
 
 export default TabButton;

@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import Button from 'components/Button';
 import useRewardsTimer from 'hooks/useRewardsTimer';
 import { GridContainer } from 'sections/earn/grid';
-import { claimRewards, fetchEarnTokenPrices } from 'state/earn/actions';
+import { claimRewards } from 'state/earn/actions';
 import { selectEarnApy, selectEarnedRewards, selectYieldPerDay } from 'state/earn/selectors';
-import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatPercent, truncateNumbers } from 'utils/formatters/number';
 
 import GridData from './GridData';
@@ -24,8 +24,6 @@ const StakeGrid = () => {
 	const earnedRewards = useAppSelector(selectEarnedRewards);
 	const yieldPerDay = useAppSelector(selectYieldPerDay);
 	const earnApy = useAppSelector(selectEarnApy);
-
-	usePollAction('fetchEarnTokenPrices', fetchEarnTokenPrices, { intervalTime: 30000 });
 
 	const handleClaim = useCallback(() => {
 		dispatch(claimRewards());

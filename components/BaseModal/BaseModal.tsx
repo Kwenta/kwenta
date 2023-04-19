@@ -66,8 +66,8 @@ const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	background: rgba(0, 0, 0, 0.7);
 	${media.lessThan('sm')`
-		overflow: hidden;
-		padding-bottom: 90px;
+		overflow: scroll;
+		padding-bottom: 80px;
 	`}
 `;
 
@@ -79,7 +79,6 @@ const StyledDialogContent = styled(DialogContent)`
 	${media.lessThan('md')`
 		&&& {
 			width: 80%;
-
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -99,8 +98,14 @@ const StyledCard = styled(Card)`
 	border-radius: 10px;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
+	${media.lessThan('md')`
+		&&& {
+			width: 80%;
+		}
+	`}
 	${media.lessThan('sm')`
 		&&& {
+			width: 90%;
 			margin-top: 30px;
 		}
 	`}

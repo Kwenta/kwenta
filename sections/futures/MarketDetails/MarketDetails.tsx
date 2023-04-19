@@ -2,23 +2,28 @@ import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
+import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
-import { FlexDivCentered } from 'components/layout/flex';
+import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
+import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
+	selectShowHistory,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import media from 'styles/media';
 import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import MarketsDropdown from '../Trade/MarketsDropdown';
-import MarketDetail from './MarketDetail';
+import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
+import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
 
 type MarketDetailsProps = {
@@ -26,23 +31,34 @@ type MarketDetailsProps = {
 };
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
+	const dispatch = useAppDispatch();
+	const showHistory = useAppSelector(selectShowHistory);
 	return (
-		<FlexDivCentered>
-			{!mobile && (
-				<MarketDropDownContainer>
-					<MarketsDropdown />
-				</MarketDropDownContainer>
-			)}
-
+		<MainContainer mobile={mobile}>
+			<MarketsDropdown mobile={mobile} />
+			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
 			<MarketDetailsContainer mobile={mobile}>
-				<MarketPriceDetail />
-				<IndexPriceDetail />
-				<DailyChangeDetail />
-				<HourlyFundingDetail />
-				<OpenInterestLongDetail />
-				<OpenInterestShortDetail />
+				{!mobile && <MarketPriceDetail />}
+				<IndexPriceDetail mobile={mobile} />
+				{!mobile && <DailyChangeDetail />}
+				<HourlyFundingDetail mobile={mobile} />
+				{!mobile && <OpenInterestLongDetail />}
+				{!mobile && <OpenInterestShortDetail />}
+				<MarketSkew mobile={mobile} />
 			</MarketDetailsContainer>
-		</FlexDivCentered>
+			{!mobile && (
+				<ShowHistoryContainer>
+					<Checkbox
+						id="history"
+						label="Show History"
+						checked={showHistory}
+						onChange={() => {
+							dispatch(setShowTradeHistory(!showHistory));
+						}}
+					/>
+				</ShowHistoryContainer>
+			)}
+		</MainContainer>
 	);
 };
 
@@ -58,11 +74,12 @@ const MarketPriceDetail = memo(() => {
 	);
 });
 
-const IndexPriceDetail = memo(() => {
+const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo);
 
 	return (
 		<MarketDetail
+			mobile={mobile}
 			dataKey={MarketDataKey.indexPrice}
 			value={indexPrice ? formatDollars(indexPrice.price, { suggestDecimals: true }) : NO_VALUE}
 		/>
@@ -97,7 +114,7 @@ const DailyChangeDetail = memo(() => {
 	);
 });
 
-const HourlyFundingDetail = memo(() => {
+const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingValue = marketInfo?.currentFundingRate;
@@ -107,14 +124,15 @@ const HourlyFundingDetail = memo(() => {
 			dataKey={t('futures.market.info.hourly-funding')}
 			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
+			mobile={mobile}
 		/>
 	);
 });
 
 const OpenInterestLongDetail = memo(() => {
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const oiCap = marketInfo?.marketLimit
-		? formatDollars(marketInfo?.marketLimit, { truncate: true })
+	const oiCap = marketInfo?.marketLimitUsd
+		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
 		: null;
 
 	return (
@@ -122,8 +140,37 @@ const OpenInterestLongDetail = memo(() => {
 			dataKey={MarketDataKey.openInterestLong}
 			value={
 				marketInfo?.openInterest.longUSD
-					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })} / ${oiCap}`
+					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}/${oiCap}`
 					: NO_VALUE
+			}
+		/>
+	);
+});
+
+const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
+	const marketInfo = useAppSelector(selectMarketInfo);
+
+	return (
+		<MarketDetail
+			dataKey={MarketDataKey.skew}
+			value={
+				<>
+					<MarketDetailValue
+						color="red"
+						value={formatPercent(marketInfo ? marketInfo?.openInterest.shortPct : 0, {
+							minDecimals: 0,
+						})}
+						mobile={mobile}
+					/>
+					{'/'}
+					<MarketDetailValue
+						color="green"
+						value={formatPercent(marketInfo ? marketInfo?.openInterest.longPct : 0, {
+							minDecimals: 0,
+						})}
+						mobile={mobile}
+					/>
+				</>
 			}
 		/>
 	);
@@ -131,8 +178,8 @@ const OpenInterestLongDetail = memo(() => {
 
 const OpenInterestShortDetail = memo(() => {
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const oiCap = marketInfo?.marketLimit
-		? formatDollars(marketInfo?.marketLimit, { truncate: true })
+	const oiCap = marketInfo?.marketLimitUsd
+		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
 		: null;
 
 	return (
@@ -140,29 +187,46 @@ const OpenInterestShortDetail = memo(() => {
 			dataKey={MarketDataKey.openInterestShort}
 			value={
 				marketInfo?.openInterest.shortUSD
-					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })} / ${oiCap}`
+					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })}/${oiCap}`
 					: NO_VALUE
 			}
 		/>
 	);
 });
 
+const MainContainer = styled.div<{ mobile?: boolean }>`
+	display: flex;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	align-items: center;
+	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
+
+	${(props) =>
+		props.mobile &&
+		css`
+			flex-direction: column;
+			height: initial;
+			border-top: none;
+		`}
+`;
+
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
-	height: 55px;
+	height: 100%;
 	padding: 10px 45px 10px 15px;
-	margin-bottom: 16px;
 	box-sizing: border-box;
 	overflow-x: scroll;
 	scrollbar-width: none;
 
 	display: flex;
-	justify-content: space-between;
-	align-items: start;
+	align-items: center;
 
-	border-radius: 10px;
 	box-sizing: border-box;
+
+	& > div {
+		margin-right: 30px;
+	}
 
 	${media.lessThan('xl')`
 		& > div {
@@ -170,8 +234,12 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		}
 	`}
 
+	.heading, .value {
+		white-space: nowrap;
+	}
+
 	${(props) => css`
-		border: ${props.theme.colors.selectedTheme.border};
+		border-left: ${props.theme.colors.selectedTheme.border};
 
 		.heading {
 			color: ${props.theme.colors.selectedTheme.text.label};
@@ -192,33 +260,26 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		.paused {
 			color: ${props.theme.colors.selectedTheme.gray};
 		}
-	`}
 
-	.heading, .value {
-		white-space: nowrap;
-	}
-
-	${(props) =>
-		props.mobile &&
+		${props.mobile &&
 		css`
 			height: auto;
 			padding: 15px;
 			display: grid;
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: repeat(3, 1fr);
 			grid-gap: 20px 0;
+			width: 100%;
+			border-left: none;
 
 			.heading {
 				margin-bottom: 2px;
 			}
 		`}
+	`}
 `;
 
-const MarketDropDownContainer = styled.div`
-	width: 280px;
-	margin-right: 15px;
-	@media (min-width: 1200px) {
-		display: none;
-	}
+const ShowHistoryContainer = styled.div`
+	margin: 0 20px;
 `;
 
 export default MarketDetails;

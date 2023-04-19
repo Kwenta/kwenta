@@ -1,30 +1,29 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import { FuturesAccountType } from 'queries/futures/subgraph';
-import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
-import TradeCrossMargin from 'sections/futures/TradeCrossMargin';
 import { selectFuturesType } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
+import ConditionalOrdersTab from './ConditionalOrdersTab';
 import OrdersTab from './OrdersTab';
+import PositionsTab from './PositionsTab';
 import TradesTab from './TradesTab';
 import TransfersTab from './TransfersTab';
 
-const getTabs = (accountType: FuturesAccountType) => [
+const TABS = [
 	{
-		title: 'Position',
-		component:
-			accountType === 'isolated_margin' ? (
-				<TradeIsolatedMargin isMobile />
-			) : (
-				<TradeCrossMargin isMobile />
-			),
+		title: 'Positions',
+		component: <PositionsTab />,
+	},
+	{
+		title: 'Pending',
+		component: <OrdersTab />,
 	},
 	{
 		title: 'Orders',
-		component: <OrdersTab />,
+		component: <ConditionalOrdersTab />,
+		type: 'cross_margin',
 	},
 	{
 		title: 'Trades',
@@ -33,43 +32,51 @@ const getTabs = (accountType: FuturesAccountType) => [
 	{
 		title: 'Transfers',
 		component: <TransfersTab />,
+		type: 'isolated_margin',
 	},
 ];
 
 const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
 	const accountType = useAppSelector(selectFuturesType);
-
-	const tabs = getTabs(accountType);
+	const filteredTabs = useMemo(() => TABS.filter(({ type }) => !type || type === accountType), [
+		accountType,
+	]);
 
 	return (
-		<UserTabsContainer>
-			<TabButtonsContainer>
-				{tabs.map(({ title }, i) => (
-					<TabButton
-						key={title}
-						title={title}
-						active={activeTab === i}
-						onClick={() => setActiveTab(i)}
-					/>
-				))}
-			</TabButtonsContainer>
-			<div>{tabs[activeTab].component}</div>
-		</UserTabsContainer>
+		<Container>
+			<UserTabsContainer>
+				<TabButtonsContainer>
+					{filteredTabs.map(({ title }, i) => (
+						<TabButton
+							key={title}
+							title={title}
+							active={activeTab === i}
+							onClick={() => setActiveTab(i)}
+							flat
+						/>
+					))}
+				</TabButtonsContainer>
+			</UserTabsContainer>
+			<div>{filteredTabs[activeTab].component}</div>
+		</Container>
 	);
 };
 
-const UserTabsContainer = styled.div`
-	padding: 0 15px;
+const Container = styled.div`
 	min-height: 390px;
 `;
 
+const UserTabsContainer = styled.div`
+	width: 100%;
+	overflow: scroll;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+`;
+
 const TabButtonsContainer = styled.div`
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	grid-column-gap: 15px;
-	margin-bottom: 15px;
-	overflow: auto;
+	display: flex;
+	justify-content: space-between;
 `;
 
 export default UserTabs;

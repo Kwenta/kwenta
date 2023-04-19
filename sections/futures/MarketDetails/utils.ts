@@ -40,6 +40,7 @@ export enum MarketDataKey {
 	dailyTrades = '24H Trades',
 	openInterestLong = 'Open Interest (L)',
 	openInterestShort = 'Open Interest (S)',
+	skew = 'Skew',
 	instFundingRate = 'Inst. Funding Rate',
 	hourlyFundingRate = '1H Funding Rate',
 }
@@ -54,6 +55,7 @@ export const marketDataKeyMap: Record<MarketDataKey, string> = {
 	[MarketDataKey.openInterestShort]: 'open-interest-s',
 	[MarketDataKey.instFundingRate]: '1h-funding-rate',
 	[MarketDataKey.hourlyFundingRate]: '1h-funding-rate',
+	[MarketDataKey.skew]: 'skew',
 };
 
 export const isMarketDataKey = (key: string): key is MarketDataKey => {

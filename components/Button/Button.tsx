@@ -18,7 +18,7 @@ export type ButtonVariant =
 	| 'short';
 
 type BaseButtonProps = {
-	$size: 'small' | 'medium' | 'large';
+	$size: 'xsmall' | 'small' | 'medium' | 'large';
 	$variant: ButtonVariant;
 	isActive?: boolean;
 	isRounded?: boolean;
@@ -28,10 +28,11 @@ type BaseButtonProps = {
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase';
 	$active?: boolean;
 	$mono?: boolean;
+	$fontSize?: number;
 };
 
 export const border = css`
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
 	border: none;
 
 	&::before {
@@ -43,7 +44,7 @@ export const border = css`
 		bottom: 0;
 		border-radius: 8px;
 		padding: 1px;
-		background: ${(props) => props.theme.colors.selectedTheme.button.border};
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.borderColor};
 		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
 		-webkit-mask-composite: xor;
 		mask-image: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -53,6 +54,12 @@ export const border = css`
 `;
 
 const sizeMap = {
+	xsmall: {
+		paddingVertical: 6,
+		paddingHorizontal: 12,
+		height: 32,
+		fontSize: 12,
+	},
 	small: {
 		paddingVertical: 8,
 		paddingHorizontal: 16,
@@ -96,7 +103,7 @@ const BaseButton = styled.button<BaseButtonProps>`
 	${(props) =>
 		props.$variant === 'primary' &&
 		css`
-			background: ${props.theme.colors.selectedTheme.button.primary.background};
+			background: ${props.theme.colors.selectedTheme.newTheme.button.default.background};
 			text-shadow: ${props.theme.colors.selectedTheme.button.primary.textShadow};
 			&:hover {
 				background: ${props.theme.colors.selectedTheme.button.primary.hover};
@@ -106,7 +113,7 @@ const BaseButton = styled.button<BaseButtonProps>`
 	${(props) =>
 		(props.noOutline || props.$variant === 'flat') &&
 		css`
-			background: ${props.theme.colors.selectedTheme.button.fill};
+			background: ${props.theme.colors.selectedTheme.newTheme.button.default.background};
 			border: ${props.theme.colors.selectedTheme.border};
 			&:hover {
 				background: ${props.theme.colors.selectedTheme.button.fillHover};
@@ -185,6 +192,12 @@ const BaseButton = styled.button<BaseButtonProps>`
 			width: 100%;
 		`};
 
+		${(props) =>
+			props.$fontSize &&
+			css`
+				font-size: ${props.$fontSize}px;
+			`}
+
 	&:disabled {
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		background: transparent;
@@ -205,7 +218,7 @@ type ButtonProps = {
 	className?: string;
 	left?: ReactNode;
 	right?: ReactNode;
-	size?: 'small' | 'medium' | 'large';
+	size?: 'xsmall' | 'small' | 'medium' | 'large';
 	variant?: ButtonVariant;
 	fullWidth?: boolean;
 	noOutline?: boolean;
@@ -215,6 +228,7 @@ type ButtonProps = {
 	disabled?: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	isRounded?: boolean;
+	fontSize?: number;
 };
 
 const Button: FC<ButtonProps> = memo(
@@ -224,13 +238,23 @@ const Button: FC<ButtonProps> = memo(
 		mono,
 		left,
 		right,
+		fontSize,
 		active = true,
+		noOutline = true,
 		size = 'medium',
 		variant = 'flat',
 		...props
 	}) => {
 		return (
-			<BaseButton $active={active} $mono={mono} $size={size} $variant={variant} {...props}>
+			<BaseButton
+				$active={active}
+				$mono={mono}
+				$size={size}
+				$variant={variant}
+				$fontSize={fontSize}
+				noOutline={noOutline}
+				{...props}
+			>
 				{loading ? (
 					<ButtonLoader />
 				) : (

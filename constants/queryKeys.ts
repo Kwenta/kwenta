@@ -278,12 +278,6 @@ export const QUERY_KEYS = {
 			market,
 		],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
-		CrossMarginSettings: (networkId: NetworkId, settingsAddress: string) => [
-			'futures',
-			'cross-margin-settings',
-			networkId,
-			settingsAddress,
-		],
 	},
 	Files: {
 		Get: (fileName: string) => ['files', 'get', fileName],

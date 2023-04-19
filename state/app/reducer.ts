@@ -2,13 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { TransactionStatus } from 'sdk/types/common';
+import { FuturesMarketKey } from 'sdk/types/futures';
 import { isUserDeniedError } from 'utils/formatters/error';
 
 import { checkSynthetixStatus } from './actions';
-import { AppState, GasPrice, ModalType, Transaction } from './types';
+import { AppState, FuturesPositionModalType, GasPrice, ModalType, Transaction } from './types';
 
 export const APP_INITIAL_STATE: AppState = {
-	openModal: null,
+	showModal: undefined,
 	gasPrice: {
 		baseFeePerGas: '0', // Note that this is used for estimating price and should not be included in the transaction
 		maxPriorityFeePerGas: '0',
@@ -24,7 +25,19 @@ const appSlice = createSlice({
 	initialState: APP_INITIAL_STATE,
 	reducers: {
 		setOpenModal: (state, action: PayloadAction<ModalType>) => {
-			state.openModal = action.payload;
+			if (action.payload) {
+				state.showPositionModal = null;
+			}
+			state.showModal = action.payload;
+		},
+		setShowPositionModal: (
+			state,
+			action: PayloadAction<{ type: FuturesPositionModalType; marketKey: FuturesMarketKey } | null>
+		) => {
+			if (action.payload) {
+				state.showModal = null;
+			}
+			state.showPositionModal = action.payload;
 		},
 		setGasPrice: (state, action: PayloadAction<GasPrice<string>>) => {
 			state.gasPrice = action.payload;
@@ -46,7 +59,7 @@ const appSlice = createSlice({
 			if (isUserDeniedError(action.payload)) {
 				state.transaction = undefined;
 			} else {
-				notifyError(action.payload);
+				notifyError('Transaction failed', new Error(action.payload));
 				if (state.transaction) {
 					state.transaction.status = TransactionStatus.Failed;
 					state.transaction.error = action.payload;
@@ -63,6 +76,7 @@ const appSlice = createSlice({
 
 export const {
 	setOpenModal,
+	setShowPositionModal,
 	setGasPrice,
 	setTransaction,
 	handleTransactionError,

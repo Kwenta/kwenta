@@ -1,10 +1,12 @@
+import { useRouter } from 'next/router';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import TabButton from 'components/Button/TabButton';
+import Button from 'components/Button/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { EXTERNAL_LINKS } from 'constants/links';
+import ROUTES from 'constants/routes';
 import { SplitStakingCard } from 'sections/dashboard/Stake/card';
 import { Heading } from 'sections/earn/text';
 import { useAppSelector } from 'state/hooks';
@@ -32,6 +34,7 @@ type StakingPortfolioProps = {
 
 const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const kwentaBalance = useAppSelector(selectKwentaBalance);
 	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance);
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
@@ -86,15 +89,17 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 
 	return (
 		<StakingPortfolioContainer>
-			<FlexDivRowCentered>
+			<StakingHeading>
 				<Heading>{t('dashboard.stake.portfolio.title')}</Heading>
-				<StyledTabButton
-					isRounded
-					title="Staking Docs"
-					active
-					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
-				/>
-			</FlexDivRowCentered>
+				<ButtonContainer>
+					<Button size="small" onClick={() => router.push(ROUTES.Dashboard.Earn)}>
+						Earn Page
+					</Button>
+					<Button size="small" onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}>
+						Staking Docs
+					</Button>
+				</ButtonContainer>
+			</StakingHeading>
 			<CardsContainer>
 				{DEFAULT_CARDS.map((card, i) => (
 					<SplitStakingCard key={i}>
@@ -111,8 +116,12 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 	);
 };
 
-const StyledTabButton = styled(TabButton)`
-	margin-bottom: 9px;
+const ButtonContainer = styled(FlexDivRowCentered)`
+	column-gap: 10px;
+`;
+
+const StakingHeading = styled(FlexDivRowCentered)`
+	margin-bottom: 15px;
 `;
 
 const StakingPortfolioContainer = styled.div`
@@ -121,6 +130,7 @@ const StakingPortfolioContainer = styled.div`
 	`}
 
 	${media.greaterThan('mdUp')`
+		margin-top: 20px;
 		margin-bottom: 100px;
 	`}
 `;
