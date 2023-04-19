@@ -45,7 +45,7 @@ export const EXTERNAL_LINKS = {
 		MarketingDao:
 			'https://github.com/Kwenta/kwenta-state-log/blob/master/sections/2.md#marketingdao-grants-council-trial',
 		Faq: 'https://docs.kwenta.io/resources/faq',
-		CrossMarginFaq: 'https://docs.kwenta.io/products/futures/cross-margin-accounts',
+		CrossMarginFaq: 'https://docs.kwenta.io/using-kwenta/smart-margin/trading-on-kwenta/faq',
 		Staking: 'https://docs.kwenta.io/using-kwenta/staking-kwenta',
 		TradingRewardsV2: 'https://mirror.xyz/kwenta.eth/7k-5UYXXcCNJ_DRRWvYBsK5zDm5UA945My4QrInhxoI',
 		RewardsGuide: 'https://mirror.xyz/kwenta.eth/8KyrISnjOcuAX_VW-GxVqxpcbWukB_RlP5XWWMz-UGk',
