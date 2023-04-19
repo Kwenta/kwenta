@@ -868,6 +868,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	const position = selectPosition(getState());
 	const marketPrice = selectMarketPrice(getState());
 	const marketKey = selectMarketKey(getState());
+	const tradeSide = selectLeverageSide(getState());
 
 	if (
 		size === '' ||
@@ -889,6 +890,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 		Number(usdSize) > 0 && position?.remainingMargin.gt(0)
 			? wei(usdSize).div(position?.remainingMargin).toString(2)
 			: '';
+	const nativeSizeDelta = tradeSide === PositionSide.LONG ? wei(nativeSize) : wei(nativeSize).neg();
 
 	dispatch(setLeverageInput(leverage));
 	dispatch(
@@ -902,7 +904,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	dispatch(
 		stageIsolatedMarginTradePreview({
 			market,
-			sizeDelta: wei(nativeSize),
+			sizeDelta: nativeSizeDelta,
 			orderPrice: marketPrice,
 			marginDelta: zeroBN,
 			action: 'trade',
