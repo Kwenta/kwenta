@@ -254,8 +254,10 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 const CustomStyledTooltip = styled(Tooltip)`
 	padding: 10px;
 	white-space: normal;
+	left: -80px;
 	${media.lessThan('md')`
 		width: 310px;
+		left: -220px;
 	`}
 `;
 
