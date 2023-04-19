@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
-import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
@@ -176,7 +175,6 @@ const RewardsTabs: FC = () => {
 									style={{ alignItems: 'center', justifyContent: 'flex-start' }}
 								>
 									{formatNumber(epoch, { minDecimals: 0 })}
-									<SpacedHelpIcon />
 								</FlexDivRow>
 							</FlexDivCol>
 						</div>
@@ -200,6 +198,9 @@ const RewardsTabs: FC = () => {
 					</CardGrid>
 				))}
 			</CardsContainer>
+			<StyledFlexDivCol>
+				<div className="value">{t('dashboard.rewards.disclaimer')}</div>
+			</StyledFlexDivCol>
 		</RewardsTabContainer>
 	);
 };
@@ -211,9 +212,6 @@ const HeaderContainer = styled(FlexDivRowCentered)`
 		flex-direction: column;
 		row-gap: 15px;
 	`}
-`;
-const SpacedHelpIcon = styled(HelpIcon)`
-	margin-left: 5px;
 `;
 
 const RewardsTabContainer = styled.div`
@@ -241,6 +239,7 @@ const CardGrid = styled(StakingCard)`
 
 	.value {
 		font-size: 13px;
+		line-height: 16px;
 		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 		margin-top: 0px;
 		font-family: ${(props) => props.theme.fonts.regular};
@@ -252,6 +251,7 @@ const CardsContainer = styled.div`
 	width: 100%;
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 20px;
+	margin-bottom: 20px;
 
 	${media.lessThan('mdUp')`
 		grid-template-columns: repeat(1, 1fr);

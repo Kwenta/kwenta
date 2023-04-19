@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
-import HelpIcon from 'assets/svg/app/question-mark.svg';
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 import OptimismLogo from 'assets/svg/providers/optimism.svg';
 import Button from 'components/Button';
-import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
+import { FlexDivRow } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
 import { KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
+import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import { StakingCard } from 'sections/dashboard/Stake/card';
@@ -25,27 +25,20 @@ import {
 	fetchStakingData,
 } from 'state/staking/actions';
 import {
-	selectEpochPeriod,
 	selectKwentaOpRewards,
 	selectSnxOpRewards,
 	selectTotalRewardsAll,
 } from 'state/staking/selectors';
+import { selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import {
-	formatDollars,
-	formatNumber,
-	toWei,
-	truncateNumbers,
-	zeroBN,
-} from 'utils/formatters/number';
+import { formatDollars, toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	const router = useRouter();
-	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
-	const epoch = useAppSelector(selectEpochPeriod);
+	const walletAddress = useAppSelector(selectWallet);
 	const tradingRewards = useAppSelector(selectTotalRewardsAll);
 	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
@@ -148,7 +141,7 @@ const BalanceActions: FC = () => {
 				onClick={() => setOpen(!open)}
 				style={{
 					color: theme.colors.selectedTheme.yellow,
-					borderColor: theme.colors.selectedTheme.yellow,
+					borderColor: theme.colors.selectedTheme.newTheme.border.yellow,
 				}}
 			>
 				<KwentaLogo style={{ marginRight: '5px' }} />
@@ -171,18 +164,6 @@ const BalanceActions: FC = () => {
 											{truncateNumbers(reward.rewards, 4)}
 										</LogoText>
 									</div>
-									<StyledFlexDivCol>
-										<Body size="medium" style={{ marginBottom: '5px' }}>
-											{t('dashboard.rewards.epoch')}
-										</Body>
-										<FlexDivRow
-											className="value"
-											style={{ alignItems: 'center', justifyContent: 'flex-start' }}
-										>
-											{formatNumber(epoch, { minDecimals: 0 })}
-											<SpacedHelpIcon />
-										</FlexDivRow>
-									</StyledFlexDivCol>
 									<Button
 										fullWidth
 										variant="flat"
@@ -199,17 +180,32 @@ const BalanceActions: FC = () => {
 								</StyledFlexDivRow>
 							</CardGrid>
 						))}
-						<Pill
-							color="yellow"
-							fullWidth={true}
-							size="large"
-							isRounded={false}
-							blackFont={false}
-							onClick={handleClaimAll}
-							disabled={claimDisabledAll}
-						>
-							{t('dashboard.rewards.claim-all')}
-						</Pill>
+						<ButtonContainer>
+							<Pill
+								color="gray"
+								fullWidth={true}
+								size="large"
+								isRounded={false}
+								blackFont={false}
+								onClick={() =>
+									window.open(EXTERNAL_LINKS.Docs.RewardsGuide, '_blank', 'noopener noreferrer')
+								}
+								disabled={claimDisabledAll}
+							>
+								{t('dashboard.rewards.learn-more')}
+							</Pill>
+							<Pill
+								color="yellow"
+								fullWidth={true}
+								size="large"
+								isRounded={false}
+								blackFont={false}
+								onClick={handleClaimAll}
+								disabled={claimDisabledAll}
+							>
+								{t('dashboard.rewards.claim-all')}
+							</Pill>
+						</ButtonContainer>
 					</CardsContainer>
 				</RewardsTabContainer>
 			)}
@@ -217,8 +213,8 @@ const BalanceActions: FC = () => {
 	);
 };
 
-const SpacedHelpIcon = styled(HelpIcon)`
-	margin-left: 5px;
+const ButtonContainer = styled(FlexDivRow)`
+	column-gap: 15px;
 `;
 
 const RewardsTabContainer = styled.div`
@@ -265,11 +261,6 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 		font-size: 16px;
 		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	}
-`;
-
-const StyledFlexDivCol = styled(FlexDivCol)`
-	margin: auto;
-	padding: 0;
 `;
 
 export default BalanceActions;
