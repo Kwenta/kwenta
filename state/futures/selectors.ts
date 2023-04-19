@@ -12,7 +12,11 @@ import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/typ
 import { getDefaultPriceImpact, unserializePotentialTrade } from 'sdk/utils/futures';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
-import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors';
+import {
+	selectOffchainPricesInfo,
+	selectOnChainPricesInfo,
+	selectPrices,
+} from 'state/prices/selectors';
 import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
@@ -32,6 +36,7 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeConditionalOrders,
+	MarketAssetByKey,
 } from 'utils/futures';
 
 import {
@@ -274,9 +279,18 @@ export const selectFuturesAccount = createSelector(
 export const selectAllConditionalOrders = createSelector(
 	selectFuturesType,
 	selectCrossMarginAccountData,
-	(selectedType, account) => {
+	selectOnChainPricesInfo,
+	(selectedType, account, prices) => {
 		if (!account || selectedType === 'isolated_margin') return [];
-		return unserializeConditionalOrders(account.conditionalOrders);
+
+		const orders = unserializeConditionalOrders(account.conditionalOrders);
+		return orders.map((o) => {
+			const price = prices[MarketAssetByKey[o.marketKey]];
+			return {
+				...o,
+				currentPrice: price,
+			};
+		});
 	}
 );
 
@@ -913,7 +927,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 	selectFuturesType,
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].orderType,
 	selectIsMarketCapReached,
-	(position, marginDelta, { freeMargin }, selectedType, orderType, isMarketCapReached) => {
+	(position, marginDelta, { freeMargin }, selectedType, orderType) => {
 		let remainingMargin;
 		if (selectedType === 'isolated_margin') {
 			remainingMargin = position?.remainingMargin || zeroBN;
@@ -928,9 +942,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order';
 		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return isMarketCapReached
-			? 'futures.market.trade.button.oi-caps-reached'
-			: 'futures.market.trade.button.open-position';
+		return 'futures.market.trade.button.open-position';
 	}
 );
 

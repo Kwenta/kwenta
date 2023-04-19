@@ -4,8 +4,10 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import Badge from 'components/Badge';
+import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { cancelConditionalOrder } from 'state/futures/actions';
@@ -18,6 +20,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
 import PositionType from '../PositionType';
+import ConditionalOrdersWarning from './ConditionalOrdersWarning';
 import TableMarketDetails from './TableMarketDetails';
 
 export default function ConditionalOrdersTable() {
@@ -49,128 +52,157 @@ export default function ConditionalOrdersTable() {
 	}, [openConditionalOrders, isCancellingOrder, marketAsset, dispatch]);
 
 	return (
-		<Table
-			data={rows}
-			highlightRowsOnHover
-			rounded={false}
-			noBottom={true}
-			noResultsMessage={
-				!isL2 ? (
-					<TableNoResults>
-						{t('common.l2-cta')}
-						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-					</TableNoResults>
-				) : (
-					<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
-				)
-			}
-			columns={[
-				{
-					Header: (
-						<TableHeader>{t('futures.market.user.open-orders.table.market-type')}</TableHeader>
-					),
-					accessor: 'market',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<TableMarketDetails
-								marketName={cellProps.row.original.market}
-								infoLabel={cellProps.row.original.orderTypeDisplay}
-								marketKey={cellProps.row.original.marketKey}
-								badge={
-									cellProps.row.original.isStale && (
-										<ExpiredBadge color="red">
-											{t('futures.market.user.open-orders.badges.expired')}
-										</ExpiredBadge>
-									)
-								}
-							/>
-						);
+		<Container>
+			<ConditionalOrdersWarning />
+			<Table
+				data={rows}
+				highlightRowsOnHover
+				noBottom={true}
+				rounded={false}
+				noResultsMessage={
+					!isL2 ? (
+						<TableNoResults>
+							{t('common.l2-cta')}
+							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+						</TableNoResults>
+					) : (
+						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+					)
+				}
+				columns={[
+					{
+						Header: (
+							<TableHeader>{t('futures.market.user.open-orders.table.market-type')}</TableHeader>
+						),
+						accessor: 'market',
+						Cell: (cellProps: CellProps<any>) => {
+							return (
+								<TableMarketDetails
+									marketName={cellProps.row.original.market}
+									infoLabel={cellProps.row.original.orderTypeDisplay}
+									marketKey={cellProps.row.original.marketKey}
+									badge={
+										cellProps.row.original.isStale && (
+											<ExpiredBadge color="red">
+												{t('futures.market.user.open-orders.badges.expired')}
+											</ExpiredBadge>
+										)
+									}
+								/>
+							);
+						},
+						sortable: true,
+						width: 70,
 					},
-					sortable: true,
-					width: 70,
-				},
-				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>,
-					accessor: 'side',
-					Cell: (cellProps: CellProps<any>) => {
-						return <PositionType side={cellProps.row.original.side} />;
+					{
+						Header: <TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>,
+						accessor: 'side',
+						Cell: (cellProps: CellProps<any>) => {
+							return <PositionType side={cellProps.row.original.side} />;
+						},
+						sortable: true,
+						width: 40,
 					},
-					sortable: true,
-					width: 40,
-				},
-				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.type')}</TableHeader>,
-					accessor: 'type',
-					Cell: (cellProps: CellProps<any>) => {
-						return <div>{cellProps.row.original.orderTypeDisplay}</div>;
+					{
+						Header: <TableHeader>{t('futures.market.user.open-orders.table.type')}</TableHeader>,
+						accessor: 'type',
+						Cell: (cellProps: CellProps<any>) => {
+							return <div>{cellProps.row.original.orderTypeDisplay}</div>;
+						},
+						sortable: true,
+						width: 50,
 					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<TableHeader>{t('futures.market.user.open-orders.table.reduce-only')}</TableHeader>
-					),
-					accessor: 'reduceOnly',
-					Cell: (cellProps: CellProps<any>) => {
-						return <div>{cellProps.row.original.reduceOnly ? 'yes' : 'no'}</div>;
+					{
+						Header: (
+							<TableHeader>{t('futures.market.user.open-orders.table.reduce-only')}</TableHeader>
+						),
+						accessor: 'reduceOnly',
+						Cell: (cellProps: CellProps<any>) => {
+							return <div>{cellProps.row.original.reduceOnly ? 'yes' : 'no'}</div>;
+						},
+						sortable: true,
+						width: 50,
 					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
-					accessor: 'size',
-					Cell: (cellProps: CellProps<any>) => {
-						return <div>{cellProps.row.original.sizeTxt}</div>;
+					{
+						Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
+						accessor: 'size',
+						Cell: (cellProps: CellProps<any>) => {
+							return <div>{cellProps.row.original.sizeTxt}</div>;
+						},
+						sortable: true,
+						width: 50,
 					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.price')}</TableHeader>,
-					accessor: 'price',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div>
-								<Currency.Price price={cellProps.row.original.targetPrice} />
-							</div>
-						);
+					{
+						Header: (
+							<TableHeader>{t('futures.market.user.open-orders.table.current-price')}</TableHeader>
+						),
+						accessor: 'clPrice',
+						Cell: (cellProps: CellProps<any>) => {
+							return cellProps.row.original.currentPrice ? (
+								<div>
+									<ColoredPrice priceInfo={cellProps.row.original.currentPrice}>
+										{formatDollars(cellProps.row.original.currentPrice.price)}
+									</ColoredPrice>
+								</div>
+							) : (
+								NO_VALUE
+							);
+						},
+						sortable: true,
+						width: 50,
 					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<TableHeader>{t('futures.market.user.open-orders.table.reserved-margin')}</TableHeader>
-					),
-					accessor: 'marginDelta',
-					Cell: (cellProps: CellProps<any>) => {
-						const { marginDelta } = cellProps.row.original;
-						return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>;
+					{
+						Header: <TableHeader>{t('futures.market.user.open-orders.table.price')}</TableHeader>,
+						accessor: 'price',
+						Cell: (cellProps: CellProps<any>) => {
+							return (
+								<div>
+									<Currency.Price price={cellProps.row.original.targetPrice} />
+								</div>
+							);
+						},
+						sortable: true,
+						width: 50,
 					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>,
-					accessor: 'actions',
-					Cell: (cellProps: CellProps<any>) => {
-						const cancellingRow = cellProps.row.original.isCancelling;
-						return (
-							<div style={{ display: 'flex' }}>
-								<CancelButton disabled={cancellingRow} onClick={cellProps.row.original.cancel}>
-									{t('futures.market.user.open-orders.actions.cancel')}
-								</CancelButton>
-							</div>
-						);
+					{
+						Header: (
+							<TableHeader>
+								{t('futures.market.user.open-orders.table.reserved-margin')}
+							</TableHeader>
+						),
+						accessor: 'marginDelta',
+						Cell: (cellProps: CellProps<any>) => {
+							const { marginDelta } = cellProps.row.original;
+							return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>;
+						},
+						sortable: true,
+						width: 50,
 					},
-					width: 50,
-				},
-			]}
-		/>
+					{
+						Header: <TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>,
+						accessor: 'actions',
+						Cell: (cellProps: CellProps<any>) => {
+							const cancellingRow = cellProps.row.original.isCancelling;
+							return (
+								<div style={{ display: 'flex' }}>
+									<CancelButton disabled={cancellingRow} onClick={cellProps.row.original.cancel}>
+										{t('futures.market.user.open-orders.actions.cancel')}
+									</CancelButton>
+								</div>
+							);
+						},
+						width: 50,
+					},
+				]}
+			/>
+		</Container>
 	);
 }
+
+const Container = styled.div`
+	height: 100%;
+	overflow: scroll;
+`;
 
 const EditButton = styled.button`
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gray};

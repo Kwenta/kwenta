@@ -15,6 +15,7 @@ const newTheme = {
 	border: {
 		color: common.palette.neutral.n40,
 		yellow: common.palette.yellow.y900,
+		style: `1px solid ${common.palette.neutral.n40}`,
 	},
 	button: {
 		default: {
@@ -68,6 +69,7 @@ const newTheme = {
 		positive: common.palette.green.g800,
 		negative: common.palette.red.r700,
 		preview: common.palette.yellow.y800,
+		warning: common.palette.yellow.y800,
 	},
 	pill: {
 		yellow: {
