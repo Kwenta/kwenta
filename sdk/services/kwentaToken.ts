@@ -438,7 +438,7 @@ export default class KwentaTokenService {
 			(acc, next, i) => {
 				if (!claimed[i]) {
 					acc.claimableRewards.push(next);
-					acc.totalRewards = acc.totalRewards.add(wei(formatEther(next[2])));
+					acc.totalRewards = acc.totalRewards.add(wei(next[2]));
 				}
 
 				return acc;
@@ -521,7 +521,7 @@ export default class KwentaTokenService {
 			(acc, next, i) => {
 				if (!claimed[i]) {
 					acc.claimableRewards.push(next);
-					acc.totalRewards = acc.totalRewards.add(wei(formatEther(next[2])));
+					acc.totalRewards = acc.totalRewards.add(wei(next[2]));
 				}
 
 				return acc;
