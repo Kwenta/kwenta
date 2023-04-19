@@ -69,7 +69,7 @@ const BalanceActions: FC = () => {
 		}
 	}, [dispatch, walletAddress]);
 
-	usePollAction('fetchEarnTokenPrices', fetchEarnTokenPrices, { intervalTime: 30000 });
+	usePollAction('fetchEarnTokenPrices', fetchEarnTokenPrices, { intervalTime: 600000 });
 
 	const claimDisabledAll = useMemo(
 		() => tradingRewards.add(kwentaOpRewards).add(snxOpRewards).lte(0),
