@@ -179,7 +179,6 @@ const BalanceActions: FC = () => {
 								onClick={() =>
 									window.open(EXTERNAL_LINKS.Docs.RewardsGuide, '_blank', 'noopener noreferrer')
 								}
-								disabled={claimDisabledAll}
 							>
 								{t('dashboard.rewards.learn-more')}
 							</Pill>

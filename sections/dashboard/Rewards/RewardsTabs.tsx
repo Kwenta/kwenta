@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
@@ -11,6 +11,7 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import { Body, Heading, LogoText } from 'components/Text';
+import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
@@ -199,11 +200,26 @@ const RewardsTabs: FC = () => {
 				))}
 			</CardsContainer>
 			<StyledFlexDivCol>
-				<div className="value">{t('dashboard.rewards.disclaimer')}</div>
+				<div className="value">
+					<Trans
+						i18nKey={'dashboard.rewards.disclaimer'}
+						components={[
+							<Emphasis
+								href={EXTERNAL_LINKS.Docs.RewardsGuide}
+								target="_blank"
+								rel="noopener noreferrer"
+							/>,
+						]}
+					/>
+				</div>
 			</StyledFlexDivCol>
 		</RewardsTabContainer>
 	);
 };
+
+const Emphasis = styled.a`
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
+`;
 
 const HeaderContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 22.5px;
