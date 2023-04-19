@@ -9,8 +9,7 @@ import OptimismLogo from 'assets/svg/providers/optimism.svg';
 import Button from 'components/Button';
 import { FlexDivRow } from 'components/layout/flex';
 import Pill from 'components/Pill';
-import Spacer from 'components/Spacer/Spacer';
-import { Body, Heading, LogoText } from 'components/Text';
+import { Body, LogoText } from 'components/Text';
 import { KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
@@ -153,13 +152,14 @@ const BalanceActions: FC = () => {
 					<CardsContainer>
 						{REWARDS.map((reward) => (
 							<CardGrid key={reward.key}>
-								<Body size="medium">{reward.title}</Body>
+								<Body size="medium" color="primary" weight="bold">
+									{reward.title}
+								</Body>
 								<StyledFlexDivRow>
 									<div>
-										<Heading variant="h6" className="title">
+										<Body size="medium" color="secondary">
 											{t('dashboard.rewards.claimable')}
-										</Heading>
-										<Spacer height={5} />
+										</Body>
 										<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
 											{truncateNumbers(reward.rewards, 4)}
 										</LogoText>
@@ -221,6 +221,7 @@ const RewardsTabContainer = styled.div`
 	z-index: 100;
 	position: absolute;
 	right: 12%;
+
 	${media.lessThan('mdUp')`
 		padding: 15px;
 	`}
@@ -234,8 +235,7 @@ const CardGrid = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	row-gap: 10px;
-	margin-bottom: 15px;
+	row-gap: 7px;
 `;
 
 const CardsContainer = styled(StakingCard)`
@@ -248,19 +248,6 @@ const CardsContainer = styled(StakingCard)`
 const StyledFlexDivRow = styled(FlexDivRow)`
 	column-gap: 50px;
 	align-items: center;
-
-	.value {
-		color: ${(props) => props.theme.colors.selectedTheme.text.label};
-		font-size: 13px;
-		margin-top: 0px;
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
-
-	.title {
-		font-weight: 400;
-		font-size: 16px;
-		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
-	}
 `;
 
 export default BalanceActions;
