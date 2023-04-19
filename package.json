@@ -143,7 +143,7 @@
 		"jest-preview": "^0.3.1",
 		"jest-transformer-svg": "^2.0.0",
 		"lint-staged": "^13.0.3",
-		"next-router-mock": "0.8.0",
+		"next-router-mock": "0.9.3",
 		"pinst": "3.0.0",
 		"postcss": "^8.4.20",
 		"prettier": "2.0.5",
