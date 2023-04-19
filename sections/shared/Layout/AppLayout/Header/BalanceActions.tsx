@@ -15,7 +15,7 @@ import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
 import {
 	claimMultipleRewardsAll,
 	claimMultipleRewardsOp,
@@ -30,6 +30,7 @@ import {
 import { selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
 import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { fetchEarnTokenPrices } from 'state/earn/actions';
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
@@ -67,6 +68,8 @@ const BalanceActions: FC = () => {
 			});
 		}
 	}, [dispatch, walletAddress]);
+
+	usePollAction('fetchEarnTokenPrices', fetchEarnTokenPrices, { intervalTime: 30000 });
 
 	const claimDisabledAll = useMemo(
 		() => tradingRewards.add(kwentaOpRewards).add(snxOpRewards).lte(0),
