@@ -14,6 +14,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import { StakingCard } from 'sections/dashboard/Stake/card';
+import { fetchEarnTokenPrices } from 'state/earn/actions';
 import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
 import {
@@ -30,7 +31,6 @@ import {
 import { selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
 import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
-import { fetchEarnTokenPrices } from 'state/earn/actions';
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
