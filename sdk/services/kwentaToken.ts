@@ -1,7 +1,6 @@
 import Wei, { wei } from '@synthetixio/wei';
 import axios from 'axios';
 import { ethers, BigNumber } from 'ethers';
-import { formatEther } from 'ethers/lib/utils.js';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
@@ -11,7 +10,7 @@ import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
 import { EPOCH_START, TRADING_REWARDS_CUTOFF_EPOCH, WEEK } from 'queries/staking/utils';
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
-import { zeroBN } from 'utils/formatters/number';
+import { weiFromWei, zeroBN } from 'utils/formatters/number';
 
 import * as sdkErrors from '../common/errors';
 
@@ -439,7 +438,7 @@ export default class KwentaTokenService {
 			(acc, next, i) => {
 				if (!claimed[i]) {
 					acc.claimableRewards.push(next);
-					acc.totalRewards = acc.totalRewards.add(wei(formatEther(next[2])));
+					acc.totalRewards = acc.totalRewards.add(weiFromWei(next[2]));
 				}
 
 				return acc;
@@ -522,7 +521,7 @@ export default class KwentaTokenService {
 			(acc, next, i) => {
 				if (!claimed[i]) {
 					acc.claimableRewards.push(next);
-					acc.totalRewards = acc.totalRewards.add(wei(formatEther(next[2])));
+					acc.totalRewards = acc.totalRewards.add(weiFromWei(next[2]));
 				}
 
 				return acc;
