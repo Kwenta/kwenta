@@ -7,7 +7,6 @@ import TransfersIcon from 'assets/svg/futures/deposit-withdraw-arrows.svg';
 import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
-import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import Spacer from 'components/Spacer';
 import { TabPanel } from 'components/Tab';
@@ -65,7 +64,6 @@ const UserInfo: React.FC = memo(() => {
 	});
 
 	const [showShareModal, setShowShareModal] = useState(false);
-	const [hasOpenPosition, setHasOpenPosition] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
 
 	const tabQuery = useMemo(() => {
@@ -82,10 +80,6 @@ const UserInfo: React.FC = memo(() => {
 
 	const handleOpenProfitCalc = useCallback(() => {
 		setOpenProfitCalcModal((s) => !s);
-	}, []);
-
-	const handleOpenShareModal = useCallback(() => {
-		setShowShareModal((s) => !s);
 	}, []);
 
 	const refetchTrades = useCallback(() => {
@@ -169,10 +163,6 @@ const UserInfo: React.FC = memo(() => {
 		]
 	);
 
-	useEffect(() => {
-		setHasOpenPosition(!!position?.position);
-	}, [position]);
-
 	const filteredTabs = TABS.filter((tab) => !tab.disabled);
 
 	return (
@@ -201,14 +191,6 @@ const UserInfo: React.FC = memo(() => {
 						title="Calculator"
 						icon={<CalculatorIcon />}
 						onClick={handleOpenProfitCalc}
-					/>
-					<TabButton
-						inline
-						key={FuturesTab.SHARE}
-						title="Share"
-						disabled={!hasOpenPosition}
-						icon={<UploadIcon />}
-						onClick={handleOpenShareModal}
 					/>
 				</TabRight>
 			</TabButtonsContainer>

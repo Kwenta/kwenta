@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
+import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import Currency from 'components/Currency';
-import { FlexDivRowCentered } from 'components/layout/flex';
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
@@ -22,11 +23,13 @@ import {
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
+	selectPosition,
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatPercent } from 'utils/formatters/number';
 
+import ShareModal from '../ShareModal';
 import TableMarketDetails from './TableMarketDetails';
 
 type FuturesPositionTableProps = {
@@ -48,6 +51,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const accountType = useAppSelector(selectFuturesType);
+	const [showShareModal, setShowShareModal] = useState(false);
+	const position = useAppSelector(selectPosition);
 
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
@@ -75,6 +80,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 		positionHistory,
 		currentMarket,
 	]);
+
+	const handleOpenShareModal = useCallback(() => {
+		setShowShareModal((s) => !s);
+	}, []);
 
 	return (
 		<Container>
@@ -324,21 +333,34 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'pos',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<div>
-										<Pill
-											onClick={() =>
-												dispatch(
-													setShowPositionModal({
-														type: 'futures_close_position',
-														marketKey: cellProps.row.original.market.marketKey,
-													})
-												)
-											}
-											size="small"
-										>
-											Close
-										</Pill>
-									</div>
+									<FlexDivRow style={{ columnGap: '5px' }}>
+										<div>
+											<Pill
+												onClick={() =>
+													dispatch(
+														setShowPositionModal({
+															type: 'futures_close_position',
+															marketKey: cellProps.row.original.market.marketKey,
+														})
+													)
+												}
+												size="small"
+											>
+												Close
+											</Pill>
+										</div>
+										<div>
+											<Pill fullWidth onClick={handleOpenShareModal} size="small">
+												<FlexDivRowCentered>
+													<UploadIcon
+														width={6}
+														style={{ marginRight: '2px', marginBottom: '1px' }}
+													/>
+													Share
+												</FlexDivRowCentered>
+											</Pill>
+										</div>
+									</FlexDivRow>
 								);
 							},
 							width: 90,
@@ -346,6 +368,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					]}
 				/>
 			</TableContainer>
+			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
 		</Container>
 	);
 };
