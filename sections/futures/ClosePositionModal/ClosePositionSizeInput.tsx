@@ -6,9 +6,13 @@ import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
+import { PositionSide } from 'sdk/types/futures';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editClosePositionSizeDelta } from 'state/futures/actions';
-import { selectClosePositionOrderInputs } from 'state/futures/selectors';
+import {
+	selectClosePositionOrderInputs,
+	selectEditPositionModalInfo,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -21,15 +25,21 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 	const dispatch = useAppDispatch();
 
 	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs);
+	const { position } = useAppSelector(selectEditPositionModalInfo);
 	const modal = useAppSelector(selectShowPositionModal);
 
 	const onSizeChange = useCallback(
 		(value: string) => {
 			if (modal) {
-				dispatch(editClosePositionSizeDelta(modal.marketKey, value));
+				dispatch(
+					editClosePositionSizeDelta(
+						modal.marketKey,
+						position?.position?.side === PositionSide.LONG ? '-' + value : value
+					)
+				);
 			}
 		},
-		[dispatch, modal]
+		[dispatch, modal, position?.position?.side]
 	);
 
 	const onChangeValue = useCallback(
@@ -43,7 +53,7 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 		return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
 	}, [nativeSizeDelta]);
 
-	const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei);
+	const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei.abs());
 
 	return (
 		<OrderSizingContainer>
