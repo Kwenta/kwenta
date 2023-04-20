@@ -760,7 +760,7 @@ export const editClosePositionSizeDelta = (
 		return;
 	}
 	const { price } = selectClosePositionOrderInputs(getState());
-	const { marketPrice } = selectEditPositionModalInfo(getState());
+	const { position, marketPrice } = selectEditPositionModalInfo(getState());
 	const accountType = selectFuturesType(getState());
 
 	try {
@@ -769,7 +769,10 @@ export const editClosePositionSizeDelta = (
 		const odrderPrice = accountType === 'isolated_margin' ? marketPrice : smartMarginPrice;
 		const previewParams: TradePreviewParams = {
 			market,
-			sizeDelta: wei(nativeSizeDelta),
+			sizeDelta:
+				position?.position?.side === PositionSide.LONG
+					? wei(nativeSizeDelta).neg()
+					: wei(nativeSizeDelta),
 			orderPrice: odrderPrice,
 			marginDelta: zeroBN,
 			action: 'close',
