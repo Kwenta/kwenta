@@ -1581,9 +1581,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 			if (!account) throw new Error('No smart margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
 
-			const isClosing = wei(nativeSizeDelta)
-				.abs()
-				.eq(position?.position?.size.abs() || 0);
+			const isClosing = wei(nativeSizeDelta).eq(position?.position?.size.abs() || 0);
 
 			dispatch(
 				setTransaction({
@@ -1594,7 +1592,10 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 			);
 
 			const orderInputs: SmartMarginOrderInputs = {
-				sizeDelta: wei(nativeSizeDelta),
+				sizeDelta:
+					position?.position?.side === PositionSide.LONG
+						? wei(nativeSizeDelta).neg()
+						: wei(nativeSizeDelta),
 				marginDelta: wei(0),
 				desiredFillPrice: desiredFillPrice,
 			};
