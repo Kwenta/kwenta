@@ -5,7 +5,6 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import { FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
@@ -14,6 +13,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import {
@@ -25,6 +25,7 @@ import {
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 import { formatPercent } from 'utils/formatters/number';
 
 import TableMarketDetails from './TableMarketDetails';
@@ -114,13 +115,13 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 										}
 									>
 										<TableMarketDetails
-											marketName={cellProps.row.original.market.marketName}
+											marketName={getDisplayAsset(cellProps.row.original.market.asset) ?? ''}
 											marketKey={cellProps.row.original.market.marketKey}
 										/>
 									</MarketDetailsContainer>
 								);
 							},
-							width: 120,
+							width: 100,
 						},
 						{
 							Header: (
@@ -145,7 +146,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									: {};
 
 								return (
-									<FlexDivRowCentered>
+									<ColWithButton>
 										<div>
 											<div>
 												<Currency.Price
@@ -175,7 +176,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 												Edit
 											</Pill>
 										)}
-									</FlexDivRowCentered>
+									</ColWithButton>
 								);
 							},
 							width: 90,
@@ -222,7 +223,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'margin',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<FlexDivRowCentered>
+									<ColWithButton>
 										<div>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
 											<NumericValue
@@ -246,7 +247,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 												Edit
 											</Pill>
 										)}
-									</FlexDivRowCentered>
+									</ColWithButton>
 								);
 							},
 							width: 115,
@@ -266,7 +267,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									</PnlContainer>
 								);
 							},
-							width: 100,
+							width: 90,
 						},
 						{
 							Header: <TableHeader>Funding</TableHeader>,
@@ -283,7 +284,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'tp-sl',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<FlexDivRowCentered>
+									<ColWithButton>
 										<div style={{ marginRight: 10 }}>
 											{cellProps.row.original.takeProfit === undefined ? (
 												<Body>{NO_VALUE}</Body>
@@ -314,7 +315,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 												Edit
 											</Pill>
 										)}
-									</FlexDivRowCentered>
+									</ColWithButton>
 								);
 							},
 							width: 110,
@@ -357,7 +358,7 @@ const Container = styled.div`
 `;
 
 const TableContainer = styled.div`
-	min-width: 1000px;
+	min-width: 820px;
 `;
 
 const PnlContainer = styled.div`
@@ -367,6 +368,16 @@ const PnlContainer = styled.div`
 
 const MarketDetailsContainer = styled.div`
 	cursor: pointer;
+`;
+
+const ColWithButton = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-content: center;
+	align-items: center;
+	${media.lessThan('xxl')`
+		display: block;
+	`}
 `;
 
 export default PositionsTable;

@@ -239,6 +239,9 @@ const UserInfoContainer = styled.div`
 	flex: 1;
 	display: flex;
 	flex-direction: column;
+	min-height: 300px;
+	max-height: 300px;
+	height: 300px;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
