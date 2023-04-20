@@ -170,7 +170,7 @@ const InlineTab = styled.div`
 	${sharedStyle}
 	cursor: pointer;
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 14px 20px;
+	padding: 10px 20px;
 	transition: all 0.1s ease-in-out;
 `;
 

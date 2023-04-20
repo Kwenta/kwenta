@@ -1,7 +1,7 @@
 import React, { ChangeEvent, memo } from 'react';
 import styled from 'styled-components';
 
-import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
+import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
@@ -48,9 +48,7 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
 		<>
 			<Container>
 				<OrderSizingRow>
-					<InputTitle>
-						Margin&nbsp; —<InputTitleSpan>&nbsp; Set collateral</InputTitleSpan>
-					</InputTitle>
+					<InputTitle>Margin</InputTitle>
 					<InputHelpers>
 						<SelectorButtons onSelect={onSelectPercent} options={PERCENT_OPTIONS} />
 					</InputHelpers>

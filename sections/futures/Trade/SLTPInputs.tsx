@@ -115,7 +115,7 @@ export default function SLTPInputs() {
 					<Spacer height={6} />
 
 					<InputHeaderRow
-						label="Stop Loss"
+						label="SL"
 						rightElement={
 							<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
 						}
@@ -131,7 +131,7 @@ export default function SLTPInputs() {
 					<Spacer height={12} />
 
 					<InputHeaderRow
-						label="Take Profit"
+						label="TP"
 						rightElement={<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />}
 					/>
 

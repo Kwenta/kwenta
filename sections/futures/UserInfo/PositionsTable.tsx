@@ -357,7 +357,7 @@ const Container = styled.div`
 `;
 
 const TableContainer = styled.div`
-	min-width: 1200px;
+	min-width: 1000px;
 `;
 
 const PnlContainer = styled.div`
