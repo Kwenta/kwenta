@@ -451,7 +451,7 @@
 				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
-				"pnl": "Unrealized P&L",
+				"pnl": "uP&L",
 				"notionalValue": "Size",
 				"liquidationPrice": "Liq. Price",
 				"no-result": "You have no open positions",

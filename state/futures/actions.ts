@@ -1267,10 +1267,10 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 		const desiredFill = selectDesiredTradeFillPrice(getState());
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 
-		if (!marketInfo) throw new Error('Market info not found');
-		if (!account) throw new Error('Account not connected');
-
 		try {
+			if (!marketInfo) throw new Error('Market info not found');
+			if (!account) throw new Error('Account not connected');
+
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
