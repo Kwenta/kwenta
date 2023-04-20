@@ -26,7 +26,8 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 	const onSizeChange = useCallback(
 		(value: string) => {
 			if (modal) {
-				dispatch(editClosePositionSizeDelta(modal.marketKey, value));
+				const updatedValue = value.includes('-') ? value.replace('-', '') : `-${value}`;
+				dispatch(editClosePositionSizeDelta(modal.marketKey, updatedValue));
 			}
 		},
 		[dispatch, modal]
