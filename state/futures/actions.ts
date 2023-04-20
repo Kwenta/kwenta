@@ -750,11 +750,11 @@ export const editCrossMarginPositionSize = (
 
 export const editClosePositionSizeDelta = (
 	marketKey: FuturesMarketKey,
-	nativeSizeDelta: string
+	amount: string
 ): AppThunk => (dispatch, getState) => {
-	dispatch(setClosePositionSizeDelta(nativeSizeDelta));
+	dispatch(setClosePositionSizeDelta(amount));
 
-	if (nativeSizeDelta === '' || !nativeSizeDelta) {
+	if (amount === '' || !amount) {
 		dispatch(setIsolatedTradePreview({ preview: null, type: 'close' }));
 		dispatch(setCrossMarginTradePreview({ preview: null, type: 'close' }));
 		return;
@@ -769,10 +769,7 @@ export const editClosePositionSizeDelta = (
 		const odrderPrice = accountType === 'isolated_margin' ? marketPrice : smartMarginPrice;
 		const previewParams: TradePreviewParams = {
 			market,
-			sizeDelta:
-				position?.position?.side === PositionSide.LONG
-					? wei(nativeSizeDelta).neg()
-					: wei(nativeSizeDelta),
+			sizeDelta: position?.position?.side === PositionSide.LONG ? wei(amount).neg() : wei(amount),
 			orderPrice: odrderPrice,
 			marginDelta: zeroBN,
 			action: 'close',

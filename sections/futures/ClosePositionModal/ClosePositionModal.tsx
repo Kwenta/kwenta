@@ -137,13 +137,12 @@ export default function ClosePositionModal() {
 				percent === 1
 					? position.position.size.abs()
 					: floorNumber(position.position.size.abs().mul(percent));
-			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size);
-			const decimals = sizeDelta.abs().eq(position.position.size.abs()) ? undefined : 4;
+			const decimals = wei(size).abs().abs().eq(position.position.size.abs()) ? undefined : 4;
 			dispatch(
-				editClosePositionSizeDelta(market.marketKey, stripZeros(sizeDelta.toString(decimals)))
+				editClosePositionSizeDelta(market.marketKey, stripZeros(wei(size).abs().toString(decimals)))
 			);
 		},
-		[dispatch, position?.position?.size, position?.position?.side, market?.marketKey]
+		[dispatch, position?.position?.size, market?.marketKey]
 	);
 
 	return (
