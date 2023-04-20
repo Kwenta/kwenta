@@ -88,7 +88,6 @@ const Container = styled(FlexDivRowCentered)<{ visible: boolean }>`
 		`}
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-
 `;
 
 const ChartContainer = styled.div`

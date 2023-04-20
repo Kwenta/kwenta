@@ -16,7 +16,7 @@ import MarketDetails from 'sections/futures/MarketDetails';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
-import { TRADE_PANEL_WIDTH } from 'sections/futures/styles';
+import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
@@ -41,6 +41,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { PageContent } from 'styles/common';
+import media from 'styles/media';
 import { MarketKeyByAsset } from 'utils/futures';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
@@ -175,10 +176,13 @@ export default Market;
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: ${TRADE_PANEL_WIDTH}px 1fr;
 	grid-gap: 0;
 	flex: 1;
 	height: calc(100% - 64px);
+	grid-template-columns: ${TRADE_PANEL_WIDTH_LG}px 1fr;
+	${media.lessThan('xxl')`
+	grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
+	`}
 `;
 
 const LoaderContainer = styled.div`
