@@ -14,8 +14,8 @@ type AmountContainerProps = {
 };
 
 const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
-	const marketAsset = useAppSelector(selectMarketAsset);
-
+	const defaultAsset = useAppSelector(selectMarketAsset);
+	const marketAsset = position?.asset ?? defaultAsset;
 	const marketName = getMarketName(marketAsset);
 	const positionDetails = position?.position ?? null;
 	const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';

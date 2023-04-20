@@ -15,6 +15,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { FuturesPosition } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import {
@@ -23,7 +24,6 @@ import {
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
-	selectPosition,
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -52,7 +52,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const accountType = useAppSelector(selectFuturesType);
 	const [showShareModal, setShowShareModal] = useState(false);
-	const position = useAppSelector(selectPosition);
 
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
@@ -68,6 +67,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
+					share: position,
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -81,7 +81,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 		currentMarket,
 	]);
 
-	const handleOpenShareModal = useCallback(() => {
+	const [position, setPosition] = useState<FuturesPosition>(data[0]?.share!);
+
+	const handleOpenShareModal = useCallback((position: FuturesPosition) => {
+		setPosition(position);
 		setShowShareModal((s) => !s);
 	}, []);
 
@@ -333,34 +336,39 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'pos',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<FlexDivRow style={{ columnGap: '5px' }}>
-										<div>
-											<Pill
-												onClick={() =>
-													dispatch(
-														setShowPositionModal({
-															type: 'futures_close_position',
-															marketKey: cellProps.row.original.market.marketKey,
-														})
-													)
-												}
-												size="small"
-											>
-												Close
-											</Pill>
-										</div>
-										<div>
-											<Pill fullWidth onClick={handleOpenShareModal} size="small">
-												<FlexDivRowCentered>
-													<UploadIcon
-														width={6}
-														style={{ marginRight: '2px', marginBottom: '1px' }}
-													/>
-													Share
-												</FlexDivRowCentered>
-											</Pill>
-										</div>
-									</FlexDivRow>
+									<>
+										<FlexDivRow style={{ columnGap: '5px' }}>
+											<div>
+												<Pill
+													onClick={() =>
+														dispatch(
+															setShowPositionModal({
+																type: 'futures_close_position',
+																marketKey: cellProps.row.original.market.marketKey,
+															})
+														)
+													}
+													size="small"
+												>
+													Close
+												</Pill>
+											</div>
+											<div>
+												<Pill
+													onClick={() => handleOpenShareModal(cellProps.row.original.share)}
+													size="small"
+												>
+													<FlexDivRowCentered>
+														<UploadIcon
+															width={6}
+															style={{ marginRight: '2px', marginBottom: '1px' }}
+														/>
+														Share
+													</FlexDivRowCentered>
+												</Pill>
+											</div>
+										</FlexDivRow>
+									</>
 								);
 							},
 							width: 90,
