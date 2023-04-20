@@ -62,6 +62,7 @@ class FuturesMarketInternal {
 	_perpsV2MarketContract: Contract;
 	_perpsV2MarketSettings: MultiCallContract | undefined;
 	_marketKeyBytes: string;
+	_block: ethers.providers.Block | null;
 
 	_onChainData: {
 		assetPrice: BigNumber;
@@ -88,6 +89,7 @@ class FuturesMarketInternal {
 		this._perpsV2MarketSettings = sdk.context.multicallContracts.PerpsV2MarketSettings;
 		this._marketKeyBytes = formatBytes32String(marketKey);
 		this._cache = {};
+		this._block = null;
 		this._onChainData = {
 			assetPrice: BigNumber.from(0),
 			marketSkew: BigNumber.from(0),
@@ -119,6 +121,9 @@ class FuturesMarketInternal {
 			multiCallContract.fundingRateLastRecomputed(),
 			multiCallContract.positions(account),
 		]);
+
+		const blockNum = await this._provider?.getBlockNumber();
+		this._block = await fetchBlockWithRetry(blockNum, this._provider);
 
 		this._onChainData = {
 			//@ts-ignore
@@ -316,10 +321,9 @@ class FuturesMarketInternal {
 
 	_proportionalElapsed = async () => {
 		// TODO: get block at the start
-		const blockNum = await this._provider?.getBlockNumber();
-		const block = await this._provider?.getBlock(blockNum);
+		if (!this._block) throw new Error('Missing block data');
 		const fundingLastRecomputed = this._onChainData.fundingLastRecomputed;
-		const rate = BigNumber.from(block.timestamp).sub(fundingLastRecomputed);
+		const rate = BigNumber.from(this._block.timestamp).sub(fundingLastRecomputed);
 		return divideDecimal(rate, BigNumber.from(86400));
 	};
 
@@ -462,5 +466,19 @@ class FuturesMarketInternal {
 		return settings[settingType];
 	};
 }
+
+const fetchBlockWithRetry = async (
+	blockNum: number,
+	provider: ethers.providers.Provider,
+	count = 0
+): Promise<ethers.providers.Block | null> => {
+	// Sometimes the block number is returned before the block
+	// is ready to fetch and so getBlock returns null
+	const block = await provider?.getBlock(blockNum);
+	if (block) return block;
+	if (count > 5) return null;
+	await new Promise((resolve) => setTimeout(resolve, 200));
+	return fetchBlockWithRetry(blockNum, provider, count + 1);
+};
 
 export default FuturesMarketInternal;
