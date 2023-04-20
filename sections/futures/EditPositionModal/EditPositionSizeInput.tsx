@@ -65,7 +65,12 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
 		}, [nativeSizeDelta]);
 
-		const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei);
+		const maxNativeValueWithBuffer = useMemo(() => {
+			if (type === 'decrease') return maxNativeValue;
+			return maxNativeValue.add(maxNativeValue.mul(0.001));
+		}, [maxNativeValue, type]);
+
+		const invalid = nativeSizeDelta !== '' && maxNativeValueWithBuffer.lt(nativeSizeDeltaWei.abs());
 
 		return (
 			<OrderSizingContainer>
