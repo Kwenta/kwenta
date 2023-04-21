@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FC, useCallback, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -19,6 +20,7 @@ import MobileWalletButton from './MobileWalletButton';
 const MobileUserMenu: FC = () => {
 	const [isOpen, toggleOpen] = useReducer((s) => !s, false);
 	const { t } = useTranslation();
+	const { asPath } = useRouter();
 
 	const dispatch = useAppDispatch();
 
@@ -42,7 +44,7 @@ const MobileUserMenu: FC = () => {
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
 							<Button size="small">{t('homepage.nav.start-trade')}</Button>
 						</Link>
-					) : window.location.pathname.includes('/market') && !isOpen ? (
+					) : asPath.split('/').includes('market') && !isOpen ? (
 						<PositionButtonsContainer>
 							<Button
 								size="xsmall"
