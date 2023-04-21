@@ -129,20 +129,24 @@ const PositionsTab = () => {
 									formatOptions={row.position.notionalValue.gte(1e6) ? { truncate: true } : {}}
 									colorType="secondary"
 								/>
-								<Spacer width={5} />
-								<Pill
-									size="medium"
-									onClick={() =>
-										dispatch(
-											setShowPositionModal({
-												type: 'futures_edit_position_size',
-												marketKey: row.market.marketKey,
-											})
-										)
-									}
-								>
-									Edit
-								</Pill>
+								{accountType === 'cross_margin' && (
+									<>
+										<Spacer width={5} />
+										<Pill
+											size="medium"
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_position_size',
+														marketKey: row.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
+									</>
+								)}
 							</FlexDivRowCentered>
 						</PositionRow>
 						<PositionRow>
@@ -164,20 +168,24 @@ const PositionsTab = () => {
 							<Body color="secondary">Market Margin</Body>
 							<FlexDivRowCentered>
 								<NumericValue value={row.position.initialMargin} />
-								<Spacer width={5} />
-								<Pill
-									size="medium"
-									onClick={() =>
-										dispatch(
-											setShowPositionModal({
-												type: 'futures_edit_position_margin',
-												marketKey: row.market.marketKey,
-											})
-										)
-									}
-								>
-									Edit
-								</Pill>
+								{accountType === 'cross_margin' && (
+									<>
+										<Spacer width={5} />
+										<Pill
+											size="medium"
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_position_margin',
+														marketKey: row.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
+									</>
+								)}
 							</FlexDivRowCentered>
 						</PositionRow>
 						<PositionRow>
@@ -208,20 +216,24 @@ const PositionsTab = () => {
 								) : (
 									<Currency.Price price={row.stopLoss} colorType="secondary" />
 								)}
-								<Spacer width={5} />
-								<Pill
-									size="medium"
-									onClick={() =>
-										dispatch(
-											setShowPositionModal({
-												type: 'futures_edit_stop_loss_take_profit',
-												marketKey: row.market.marketKey,
-											})
-										)
-									}
-								>
-									Edit
-								</Pill>
+								{accountType === 'cross_margin' && (
+									<>
+										<Spacer width={5} />
+										<Pill
+											size="medium"
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_stop_loss_take_profit',
+														marketKey: row.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
+									</>
+								)}
 							</FlexDivRowCentered>
 						</PositionRow>
 					</PositionItem>
