@@ -58,7 +58,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-
 				return {
 					market: market!,
 					position: position.position!,
