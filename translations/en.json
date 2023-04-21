@@ -894,6 +894,8 @@
 						"close-order": "Close position",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
 						"disabled-min-margin": "Minimum market margin of $50 required",
+						"disabled-eth-bal": "Min ETH {{depositAmount}} balance required",
+						"eth-bal-warning": "The limit order service requires some ETH to cover gas. The 0.01 ETH deposit will cover many orders and you can withdraw any unused balance.",
 						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool."
 					}
 				},

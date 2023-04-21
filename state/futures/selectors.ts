@@ -742,6 +742,10 @@ export const selectKeeperEthBalance = createSelector(selectCrossMarginAccountDat
 	wei(account?.balanceInfo.keeperEthBal || 0)
 );
 
+export const selectWalletEthBalance = createSelector(selectCrossMarginAccountData, (account) =>
+	wei(account?.balanceInfo.walletEthBal || 0)
+);
+
 export const selectCrossMarginTradeFees = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
 	(fees) => {
@@ -755,6 +759,14 @@ export const selectCrossMarginTradeFees = createSelector(
 export const selectSmartMarginKeeperDeposit = createSelector(selectCrossMarginTradeFees, (fees) => {
 	return fees.keeperEthDeposit;
 });
+
+export const selectKeeperDepositExceedsBal = createSelector(
+	selectCrossMarginTradeFees,
+	selectWalletEthBalance,
+	({ keeperEthDeposit }, walletEthBalance) => {
+		return keeperEthDeposit.gt(walletEthBalance);
+	}
+);
 
 export const selectTradeSizeInputs = createSelector(
 	selectFuturesType,
@@ -845,6 +857,11 @@ export const selectSlTpTradeInputs = createSelector(
 		stopLossPrice: tradeInputs.stopLossPrice || '',
 		takeProfitPrice: tradeInputs.takeProfitPrice || '',
 	})
+);
+
+export const selectNewTradeHasSlTp = createSelector(
+	(state: RootState) => state.futures.crossMargin.tradeInputs,
+	(tradeInputs) => Number(tradeInputs.stopLossPrice) > 0 || Number(tradeInputs.takeProfitPrice) > 0
 );
 
 export const selectSlTpModalInputs = createSelector(

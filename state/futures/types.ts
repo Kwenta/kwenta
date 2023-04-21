@@ -160,6 +160,7 @@ export type CrossMarginBalanceInfo<T = Wei> = {
 	freeMargin: T;
 	keeperEthBal: T;
 	allowance: T;
+	walletEthBal: T;
 };
 
 export type CrossMarginTradeFees<T = Wei> = {

@@ -428,15 +428,17 @@ export default class FuturesService {
 		if (!SUSD) throw new Error(UNSUPPORTED_NETWORK);
 
 		// TODO: EthCall
-		const [freeMargin, keeperEthBal, allowance] = await Promise.all([
+		const [freeMargin, keeperEthBal, walletEthBal, allowance] = await Promise.all([
 			crossMarginAccountContract.freeMargin(),
 			this.sdk.context.provider.getBalance(crossMarginAddress),
+			this.sdk.context.provider.getBalance(walletAddress),
 			SUSD.allowance(walletAddress, crossMarginAccountContract.address),
 		]);
 
 		return {
 			freeMargin: wei(freeMargin),
 			keeperEthBal: wei(keeperEthBal),
+			walletEthBal: wei(walletEthBal),
 			allowance: wei(allowance),
 		};
 	}
