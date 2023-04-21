@@ -85,7 +85,6 @@ import {
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
 	setLeverageSide,
-	setOrderType,
 	setTransactionEstimate,
 	setCrossMarginEditPositionInputs,
 	setIsolatedMarginEditPositionInputs,
@@ -1266,7 +1265,6 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 		const marketInfo = selectMarketInfo(getState());
 		const desiredFill = selectDesiredTradeFillPrice(getState());
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
-
 		try {
 			if (!marketInfo) throw new Error('Market info not found');
 			if (!account) throw new Error('Account not connected');
@@ -1286,7 +1284,6 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
-			dispatch(setOrderType('delayed_offchain'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
 			dispatch(fetchBalances());
