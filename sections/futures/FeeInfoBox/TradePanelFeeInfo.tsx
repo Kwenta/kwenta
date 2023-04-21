@@ -43,8 +43,8 @@ const TradingRewardRow = memo(() => {
 		[walletAddress, stakedKwentaBalance, stakedEscrowedKwentaBalance]
 	);
 
-	const goToStaking = useCallback(() => {
-		router.push(ROUTES.Dashboard.Stake);
+	const goToRewards = useCallback(() => {
+		router.push(ROUTES.Dashboard.Rewards);
 	}, []);
 
 	return (
@@ -53,7 +53,7 @@ const TradingRewardRow = memo(() => {
 			compactBox
 			value=""
 			keyNode={
-				<CompactBox $isEligible={isRewardEligible} onClick={goToStaking}>
+				<CompactBox $isEligible={isRewardEligible} onClick={goToRewards}>
 					<FlexDivRow style={{ marginBottom: '5px' }}>
 						<div>{t('dashboard.stake.tabs.trading-rewards.trading-reward')}</div>
 						<Badge color="gray">

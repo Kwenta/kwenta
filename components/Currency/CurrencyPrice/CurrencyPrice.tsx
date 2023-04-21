@@ -17,7 +17,7 @@ type CurrencyPriceProps = {
 	conversionRate?: WeiSource;
 	formatOptions?: FormatCurrencyOptions;
 	truncate?: boolean;
-	side?: 'secondary' | 'positive' | 'negative' | 'preview';
+	colorType?: 'secondary' | 'positive' | 'negative' | 'preview';
 	colored?: boolean;
 };
 
@@ -26,7 +26,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		price,
 		change,
 		formatOptions,
-		side,
+		colorType: side,
 		sign,
 		currencyKey = 'sUSD',
 		conversionRate = 1,

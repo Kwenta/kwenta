@@ -205,12 +205,12 @@ const FuturesMarketsTable: FC = () => {
 											<Currency.Price
 												price={cellProps.row.original.longInterest}
 												truncate
-												side="positive"
+												colorType="positive"
 											/>
 											<Currency.Price
 												price={cellProps.row.original.shortInterest}
 												truncate
-												side="negative"
+												colorType="negative"
 											/>
 										</OpenInterestContainer>
 									);
