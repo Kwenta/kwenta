@@ -127,7 +127,7 @@ const PositionsTab = () => {
 								<Currency.Price
 									price={row.position.notionalValue}
 									formatOptions={row.position.notionalValue.gte(1e6) ? { truncate: true } : {}}
-									side="secondary"
+									colorType="secondary"
 								/>
 								<Spacer width={5} />
 								<Pill
@@ -187,6 +187,10 @@ const PositionsTab = () => {
 							</FlexDivRowCentered>
 						</PositionRow>
 						<PositionRow>
+							<Body color="secondary">Liquidation</Body>
+							<Currency.Price price={row.position.liquidationPrice} colorType="preview" />
+						</PositionRow>
+						<PositionRow>
 							<Body color="secondary">Unrealized PnL</Body>
 							<Currency.Price price={row.position.pnl} colored />
 						</PositionRow>
@@ -202,7 +206,7 @@ const PositionsTab = () => {
 								{row.stopLoss === undefined ? (
 									<Body color="secondary">{NO_VALUE}</Body>
 								) : (
-									<Currency.Price price={row.stopLoss} side="secondary" />
+									<Currency.Price price={row.stopLoss} colorType="secondary" />
 								)}
 								<Spacer width={5} />
 								<Pill
