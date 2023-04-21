@@ -29,6 +29,7 @@ import {
 	selectEditPositionModalInfo,
 	selectFuturesType,
 	selectIsFetchingTradePreview,
+	selectKeeperDepositExceedsBal,
 	selectSubmittingFuturesTx,
 	selectTradePreviewError,
 } from 'state/futures/selectors';
@@ -58,6 +59,7 @@ export default function ClosePositionModal() {
 	const previewTrade = useAppSelector(selectClosePositionPreview);
 	const previewError = useAppSelector(selectTradePreviewError);
 	const accountType = useAppSelector(selectFuturesType);
+	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal);
 
 	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs);
 	const { market, position } = useAppSelector(selectEditPositionModalInfo);
@@ -94,10 +96,18 @@ export default function ClosePositionModal() {
 		return null;
 	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t]);
 
+	const showEthBalWarning = useMemo(() => {
+		return ethBalanceExceeded && orderType !== 'market';
+	}, [ethBalanceExceeded, orderType]);
+
+	const ethBalWarningMessage = showEthBalWarning
+		? t('futures.market.trade.confirmation.modal.eth-bal-warning')
+		: null;
+
 	const submitDisabled = useMemo(() => {
 		if (
 			(orderType === 'limit' || orderType === 'stop_market') &&
-			(!price?.value || Number(price.value) === 0)
+			(!price?.value || Number(price.value) === 0 || showEthBalWarning)
 		) {
 			return true;
 		}
@@ -110,6 +120,7 @@ export default function ClosePositionModal() {
 			previewTrade?.status !== PotentialTradeStatus.OK
 		);
 	}, [
+		showEthBalWarning,
 		sizeWei,
 		invalidSize,
 		isLoading,
@@ -218,11 +229,13 @@ export default function ClosePositionModal() {
 				{t('futures.market.trade.edit-position.submit-close')}
 			</Button>
 
-			{(orderError || transactionState?.error) && (
-				<>
-					<Spacer height={20} />
-					<ErrorView message={orderError || transactionState?.error} formatter="revert" />
-				</>
+			{(orderError || transactionState?.error || ethBalWarningMessage) && (
+				<ErrorView
+					containerStyle={{ margin: '16px 0' }}
+					messageType={ethBalWarningMessage ? 'warn' : 'error'}
+					message={orderError || transactionState?.error || ethBalWarningMessage}
+					formatter="revert"
+				/>
 			)}
 			<Spacer height={20} />
 			<ClosePositionFeeInfo />

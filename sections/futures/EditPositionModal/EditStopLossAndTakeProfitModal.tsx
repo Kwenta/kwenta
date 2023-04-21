@@ -19,6 +19,7 @@ import { setSLTPModalStopLoss, setSLTPModalTakeProfit } from 'state/futures/redu
 import {
 	selectAllSLTPOrders,
 	selectEditPositionModalInfo,
+	selectKeeperDepositExceedsBal,
 	selectSlTpModalInputs,
 	selectSmartMarginKeeperDeposit,
 	selectSubmittingFuturesTx,
@@ -42,6 +43,7 @@ export default function EditStopLossAndTakeProfitModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs);
 	const keeperDeposit = useAppSelector(selectSmartMarginKeeperDeposit);
+	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal);
 
 	const sltpOrders = useAppSelector(selectAllSLTPOrders);
 	const stopLoss = sltpOrders.find(
@@ -85,16 +87,22 @@ export default function EditStopLossAndTakeProfitModal() {
 		}
 	}, [takeProfitPrice, marketPrice, position?.position?.side]);
 
+	const ethBalWarningMessage = ethBalanceExceeded
+		? t('futures.market.trade.confirmation.modal.eth-bal-warning')
+		: null;
+
 	const isActive = useMemo(
 		() =>
 			!slInvalid &&
 			!tpInvalid &&
+			!ethBalanceExceeded &&
 			(hasOrders
 				? hasInputValues
 					? hasChangeOrders
 					: takeProfitPrice !== undefined || stopLossPrice !== undefined
 				: hasInputValues),
 		[
+			ethBalanceExceeded,
 			hasChangeOrders,
 			hasInputValues,
 			hasOrders,
@@ -236,7 +244,10 @@ export default function EditStopLossAndTakeProfitModal() {
 
 			<Spacer height={20} />
 
-			<ErrorView message={t('futures.market.trade.edit-sl-tp.warning')} messageType="warn" />
+			<ErrorView
+				message={ethBalWarningMessage ?? t('futures.market.trade.edit-sl-tp.warning')}
+				messageType="warn"
+			/>
 
 			<Spacer height={4} />
 
