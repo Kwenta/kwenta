@@ -26,7 +26,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 import TableMarketDetails from './TableMarketDetails';
 
@@ -58,14 +58,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-				const netFunding = (position.position?.accruedFunding ?? zeroBN).add(
-					thisPositionHistory?.netFunding ?? zeroBN
-				);
 
 				return {
 					market: market!,
 					position: position.position!,
-					netFunding,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
@@ -278,7 +274,9 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							Header: <TableHeader>Funding</TableHeader>,
 							accessor: 'funding',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
-								return <Currency.Price price={cellProps.row.original.netFunding} colored />;
+								return (
+									<Currency.Price price={cellProps.row.original.position.accruedFunding} colored />
+								);
 							},
 							width: 90,
 						},
