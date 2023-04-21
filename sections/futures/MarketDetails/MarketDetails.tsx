@@ -162,6 +162,7 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 						})}
 						mobile={mobile}
 					/>
+					{'/'}
 					<MarketDetailValue
 						color="red"
 						value={formatPercent(marketInfo ? marketInfo?.openInterest.shortPct : 0, {
@@ -169,7 +170,6 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 						})}
 						mobile={mobile}
 					/>
-					{'/'}
 				</>
 			}
 		/>
