@@ -157,7 +157,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											<Currency.Price
 												price={cellProps.row.original.position.notionalValue}
 												formatOptions={formatOptions}
-												side="secondary"
+												colorType="secondary"
 											/>
 										</div>
 										<Spacer width={10} />
@@ -212,7 +212,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									<Currency.Price
 										price={cellProps.row.original.position.liquidationPrice}
 										formatOptions={{ suggestDecimals: true }}
-										side="preview"
+										colorType="preview"
 									/>
 								);
 							},

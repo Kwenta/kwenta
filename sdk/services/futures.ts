@@ -586,8 +586,13 @@ export default class FuturesService {
 
 	public async getIdleMarginInMarkets(accountOrEoa: string) {
 		const markets = this.markets ?? (await this.getMarkets());
+		const filteredMarkets = markets.filter((m) => !m.isSuspended);
 		const marketParams =
-			markets?.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market })) ?? [];
+			filteredMarkets?.map((m) => ({
+				asset: m.asset,
+				marketKey: m.marketKey,
+				address: m.market,
+			})) ?? [];
 		const positions = await this.getFuturesPositions(accountOrEoa, marketParams);
 		const positionsWithIdleMargin = positions.filter(
 			(p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0)
@@ -599,7 +604,7 @@ export default class FuturesService {
 		return {
 			totalIdleInMarkets: idleInMarkets,
 			marketsWithIdleMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
-				const market = markets.find((m) => m.marketKey === p.marketKey);
+				const market = filteredMarkets.find((m) => m.marketKey === p.marketKey);
 
 				if (market) {
 					acc.push({

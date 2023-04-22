@@ -335,6 +335,8 @@ const futuresSlice = createSlice({
 				trade: null,
 				close: null,
 			};
+			state.queryStatuses.isolatedTradePreview = DEFAULT_QUERY_STATUS;
+			state.queryStatuses.crossMarginTradePreview = DEFAULT_QUERY_STATUS;
 		},
 		setCrossMarginTradePreview: (
 			state,

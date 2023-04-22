@@ -159,15 +159,7 @@ function TradePanelDesktop() {
 		);
 	}
 
-	if (accountType === 'isolated_margin' && isolatedPositionsCount === 0) {
-		return open ? (
-			<SwitchToSmartMargin onDismiss={() => setOpen(false)} />
-		) : (
-			<TradeIsolatedMargin />
-		);
-	}
-
-	return <TradeIsolatedMargin />;
+	return open ? <SwitchToSmartMargin onDismiss={() => setOpen(false)} /> : <TradeIsolatedMargin />;
 }
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;

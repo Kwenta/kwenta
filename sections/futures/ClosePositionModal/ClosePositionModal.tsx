@@ -87,7 +87,7 @@ export default function ClosePositionModal() {
 	);
 
 	const invalidSize = useMemo(() => {
-		return sizeWei.gt(maxNativeValue);
+		return sizeWei.abs().gt(maxNativeValue.abs());
 	}, [sizeWei, maxNativeValue]);
 
 	const orderError = useMemo(() => {
@@ -148,8 +148,10 @@ export default function ClosePositionModal() {
 				percent === 1
 					? position.position.size.abs()
 					: floorNumber(position.position.size.abs().mul(percent));
+
 			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size);
 			const decimals = sizeDelta.abs().eq(position.position.size.abs()) ? undefined : 4;
+
 			dispatch(
 				editClosePositionSizeDelta(market.marketKey, stripZeros(sizeDelta.toString(decimals)))
 			);
