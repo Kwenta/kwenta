@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-import { gweiToWei, formatDollars, weiFromWei } from 'utils/formatters/number';
+import { gweiToWei, formatDollars, weiFromWei, stripZeros } from 'utils/formatters/number';
 
 describe('number utils', () => {
 	test('ether to gwei', () => {
@@ -24,6 +24,13 @@ describe('number utils', () => {
 	});
 	test('should truncate thousands correctly', () => {
 		const formatted = formatDollars('325764.27345', { truncate: true });
-		expect(formatted).toEqual('$326k');
+		expect(formatted).toEqual('$326K');
+	});
+	test('should strip traling zeros correctly', () => {
+		let formatted = stripZeros('325764.2734500000');
+		expect(formatted).toEqual('325764.27345');
+
+		formatted = stripZeros('325760000');
+		expect(formatted).toEqual('325760000');
 	});
 });
