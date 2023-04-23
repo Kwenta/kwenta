@@ -1,13 +1,18 @@
+import Wei from '@synthetixio/wei';
 import { format } from 'date-fns';
-import { FC, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { selectMarketPrice, selectSelectedMarketPositionHistory } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { FuturesPositionHistory } from 'sdk/types/futures';
 import media from 'styles/media';
 import getLocale from 'utils/formatters/getLocale';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+
+type PositionMetadataProps = {
+	positionHistory: FuturesPositionHistory | null | undefined;
+	marketPrice: Wei;
+};
 
 function getColor(props: any) {
 	let color = '';
@@ -80,31 +85,22 @@ function getFontFamily(props: any) {
 	}
 }
 
-const PositionMetadata: FC = () => {
+const PositionMetadata: React.FC<PositionMetadataProps> = ({ positionHistory, marketPrice }) => {
 	const { t } = useTranslation();
 	const [currentTimestamp, setCurrentTimestamp] = useState(0);
 
-	const currentPosition = useAppSelector(selectSelectedMarketPositionHistory);
-	const marketPrice = useAppSelector(selectMarketPrice);
-
-	let avgEntryPrice = '',
-		openAtDate = '',
-		openAtTime = '',
-		createdOnDate = '',
-		createdOnTime = '';
-
-	avgEntryPrice = currentPosition?.avgEntryPrice.toNumber().toString() ?? '';
-	const openTimestamp = currentPosition?.openTimestamp ?? 0;
-
-	openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
-	openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
-	createdOnDate = format(currentTimestamp, 'PP', { locale: getLocale() });
-	createdOnTime = format(currentTimestamp, 'HH:mm:ss', { locale: getLocale() });
+	const avgEntryPrice = positionHistory?.avgEntryPrice.toNumber().toString() ?? '';
+	const openTimestamp = positionHistory?.openTimestamp ?? 0;
 
 	useLayoutEffect(() => {
 		const now = new Date().getTime();
 		setCurrentTimestamp(now);
 	}, []);
+
+	const openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
+	const openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
+	const createdOnDate = format(currentTimestamp, 'PP', { locale: getLocale() });
+	const createdOnTime = format(currentTimestamp, 'HH:mm:ss', { locale: getLocale() });
 
 	return (
 		<>

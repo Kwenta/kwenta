@@ -25,7 +25,6 @@ import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
 import { selectWallet } from 'state/wallet/selectors';
 
 import ProfitCalculator from '../ProfitCalculator';
-import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
 import ConditionalOrdersTable from './ConditionalOrdersTable';
@@ -63,7 +62,6 @@ const UserInfo: React.FC = memo(() => {
 		disabled: !walletAddress,
 	});
 
-	const [showShareModal, setShowShareModal] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
 
 	const tabQuery = useMemo(() => {
@@ -212,7 +210,6 @@ const UserInfo: React.FC = memo(() => {
 			</TabPanel>
 
 			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}
-			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
 		</UserInfoContainer>
 	);
 });

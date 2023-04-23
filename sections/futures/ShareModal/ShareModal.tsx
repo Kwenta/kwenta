@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -6,7 +7,7 @@ import MobilePNLGraphicPNG from 'assets/png/mobile-pnl-graphic.png';
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
 import BaseModal from 'components/BaseModal';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { FuturesPosition } from 'sdk/types/futures';
+import { FuturesPosition, FuturesPositionHistory } from 'sdk/types/futures';
 import media from 'styles/media';
 
 import AmountContainer from './AmountContainer';
@@ -15,10 +16,17 @@ import ShareModalButton from './ShareModalButton';
 
 type ShareModalProps = {
 	position: FuturesPosition | null | undefined;
+	positionHistory: FuturesPositionHistory | null | undefined;
+	marketPrice: Wei;
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ShareModal: FC<ShareModalProps> = ({ position, setShowShareModal }) => {
+const ShareModal: FC<ShareModalProps> = ({
+	position,
+	positionHistory,
+	marketPrice,
+	setShowShareModal,
+}) => {
 	const { t } = useTranslation();
 
 	return (
@@ -39,7 +47,7 @@ const ShareModal: FC<ShareModalProps> = ({ position, setShowShareModal }) => {
 							</MobileOrTabletView>
 						</PNLImageFrame>
 						<AmountContainer position={position} />
-						<PositionMetadata />
+						<PositionMetadata positionHistory={positionHistory} marketPrice={marketPrice} />
 					</PNLGraphic>
 					<ShareModalButton position={position} />
 				</ModalWindow>

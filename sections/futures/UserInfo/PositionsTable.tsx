@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesPosition } from 'sdk/types/futures';
+import { FuturesPosition, FuturesPositionHistory } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
@@ -25,11 +26,12 @@ import {
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
+	selectMarkPrices,
 	selectPositionHistory,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { formatPercent } from 'utils/formatters/number';
+import { formatPercent, zeroBN } from 'utils/formatters/number';
 
 import ShareModal from '../ShareModal';
 import TableMarketDetails from './TableMarketDetails';
@@ -37,6 +39,12 @@ import TableMarketDetails from './TableMarketDetails';
 type FuturesPositionTableProps = {
 	showCurrentMarket?: boolean;
 	showEmptyTable?: boolean;
+};
+
+type sharePositionProps = {
+	position: FuturesPosition | null | undefined;
+	history: FuturesPositionHistory | undefined;
+	marketPrice: Wei;
 };
 
 const PositionsTable: FC<FuturesPositionTableProps> = () => {
@@ -52,6 +60,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
+	const markPrices = useAppSelector(selectMarkPrices);
 	const accountType = useAppSelector(selectFuturesType);
 	const [showShareModal, setShowShareModal] = useState(false);
 
@@ -63,13 +72,18 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
+				const markPrice = markPrices[market?.marketKey!] ?? zeroBN;
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
-					share: position,
+					share: {
+						position,
+						history: thisPositionHistory,
+						marketPrice: markPrice,
+					},
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -80,13 +94,20 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
+		markPrices,
 		currentMarket,
 	]);
 
-	const [position, setPosition] = useState<FuturesPosition>(data[0]?.share!);
+	const [position, setPosition] = useState<FuturesPosition>(data[0]?.share.position!);
+	const [thisPositionHistory, setThisPositionHistory] = useState<FuturesPositionHistory>(
+		data[0]?.share.history!
+	);
+	const [marketPrice, setMarketPrice] = useState<Wei>(zeroBN);
 
-	const handleOpenShareModal = useCallback((position: FuturesPosition) => {
-		setPosition(position);
+	const handleOpenShareModal = useCallback((share: sharePositionProps) => {
+		setPosition(share?.position!);
+		setThisPositionHistory(share?.history!);
+		setMarketPrice(share?.marketPrice);
 		setShowShareModal((s) => !s);
 	}, []);
 
@@ -378,7 +399,14 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					]}
 				/>
 			</TableContainer>
-			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
+			{showShareModal && (
+				<ShareModal
+					position={position}
+					positionHistory={thisPositionHistory}
+					marketPrice={marketPrice}
+					setShowShareModal={setShowShareModal}
+				/>
+			)}
 		</Container>
 	);
 };
