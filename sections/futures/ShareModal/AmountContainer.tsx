@@ -2,22 +2,19 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FuturesPosition, PositionSide } from 'sdk/types/futures';
+import { PositionSide } from 'sdk/types/futures';
 import { selectMarketAsset } from 'state/futures/selectors';
+import { SharePositionParams } from 'state/futures/types';
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { getMarketName, MarketKeyByAsset } from 'utils/futures';
 
-type AmountContainerProps = {
-	position: FuturesPosition | null | undefined;
-};
-
-const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
+const AmountContainer: FC<SharePositionParams> = ({ asset, position }) => {
 	const defaultAsset = useAppSelector(selectMarketAsset);
-	const marketAsset = position?.asset ?? defaultAsset;
+	const marketAsset = asset ?? defaultAsset;
 	const marketName = getMarketName(marketAsset);
-	const positionDetails = position?.position ?? null;
+	const positionDetails = position ?? null;
 	const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
 	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
 	const pnlPct = positionDetails?.pnlPct.mul(100);

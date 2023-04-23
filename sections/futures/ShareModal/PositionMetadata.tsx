@@ -1,18 +1,12 @@
-import Wei from '@synthetixio/wei';
 import { format } from 'date-fns';
 import { useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { FuturesPositionHistory } from 'sdk/types/futures';
+import { SharePositionParams } from 'state/futures/types';
 import media from 'styles/media';
 import getLocale from 'utils/formatters/getLocale';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
-
-type PositionMetadataProps = {
-	positionHistory: FuturesPositionHistory | null | undefined;
-	marketPrice: Wei;
-};
 
 function getColor(props: any) {
 	let color = '';
@@ -85,7 +79,7 @@ function getFontFamily(props: any) {
 	}
 }
 
-const PositionMetadata: React.FC<PositionMetadataProps> = ({ positionHistory, marketPrice }) => {
+const PositionMetadata: React.FC<SharePositionParams> = ({ positionHistory, marketPrice }) => {
 	const { t } = useTranslation();
 	const [currentTimestamp, setCurrentTimestamp] = useState(0);
 
@@ -132,7 +126,9 @@ const PositionMetadata: React.FC<PositionMetadataProps> = ({ positionHistory, ma
 				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
-				<ContainerText className="date-or-price">{formatNumber(marketPrice)}</ContainerText>
+				<ContainerText className="date-or-price">
+					{formatNumber(marketPrice ?? zeroBN)}
+				</ContainerText>
 			</BottomRightContainer>
 		</>
 	);
