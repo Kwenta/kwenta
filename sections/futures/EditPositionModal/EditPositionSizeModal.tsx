@@ -79,6 +79,11 @@ export default function EditPositionSizeModal() {
 		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? zeroBN;
 	}, [editType, maxNativeIncreaseValue, position?.position?.size]);
 
+	const maxNativeValueWithBuffer = useMemo(() => {
+		if (editType === 1) return maxNativeValue;
+		return maxNativeValue.add(maxNativeValue.mul(0.001));
+	}, [maxNativeValue, editType]);
+
 	const sizeWei = useMemo(
 		() => (!nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? wei(0) : wei(nativeSizeDelta)),
 		[nativeSizeDelta]
@@ -86,7 +91,10 @@ export default function EditPositionSizeModal() {
 
 	const maxLeverageExceeded = editType === 0 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
 
-	const invalid = useMemo(() => sizeWei.gt(maxNativeValue), [sizeWei, maxNativeValue]);
+	const invalid = useMemo(() => sizeWei.abs().gt(maxNativeValueWithBuffer), [
+		sizeWei,
+		maxNativeValueWithBuffer,
+	]);
 
 	const submitDisabled = useMemo(() => {
 		return sizeWei.eq(0) || invalid || isLoading || maxLeverageExceeded;

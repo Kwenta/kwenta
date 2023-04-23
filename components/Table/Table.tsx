@@ -7,13 +7,15 @@ import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
 import Loader from 'components/Loader';
 import { Body } from 'components/Text';
+import media from 'styles/media';
 
 import Pagination from './Pagination';
 import TableBodyRow, { TableCell } from './TableBodyRow';
 
 export type TablePalette = 'primary';
 
-const CARD_HEIGHT = '40px';
+const CARD_HEIGHT_MD = '50px';
+const CARD_HEIGHT_LG = '40px';
 const MAX_PAGE_ROWS = 100;
 const MAX_TOTAL_ROWS = 9999;
 
@@ -314,12 +316,18 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBo
 		props.palette === 'primary' &&
 		css`
 			${TableBody} {
-				max-height: calc(100% - ${CARD_HEIGHT});
+				max-height: calc(100% - ${CARD_HEIGHT_LG});
+				${media.lessThan('xxl')`
+					max-height: calc(100% - ${CARD_HEIGHT_MD});
+				`}
 			}
 			${TableCell} {
 				color: ${(props) => props.theme.colors.selectedTheme.text.value};
 				font-size: 13px;
-				height: ${CARD_HEIGHT};
+				height: ${CARD_HEIGHT_LG};
+				${media.lessThan('xxl')`
+					height: ${CARD_HEIGHT_MD};
+				`}
 				font-family: ${(props) => props.theme.fonts.mono};
 			}
 			${TableCellHead} {

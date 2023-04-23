@@ -12,6 +12,7 @@ import {
 	FuturesPotentialTradeDetails,
 	PositionSide,
 	FuturesTrade,
+	FuturesOrderType,
 } from 'sdk/types/futures';
 import {
 	DEFAULT_MAP_BY_NETWORK,
@@ -180,7 +181,7 @@ const futuresSlice = createSlice({
 			state[accountType(state.selectedType)].tradeInputs = ZERO_STATE_TRADE_INPUTS;
 			state[accountType(state.selectedType)].selectedMarketAsset = action.payload;
 		},
-		setOrderType: (state, action) => {
+		setOrderType: (state, action: PayloadAction<FuturesOrderType>) => {
 			state[accountType(state.selectedType)].orderType = action.payload;
 		},
 		setClosePositionOrderType: (state, action: PayloadAction<SmartMarginOrderType>) => {
@@ -335,6 +336,8 @@ const futuresSlice = createSlice({
 				trade: null,
 				close: null,
 			};
+			state.queryStatuses.isolatedTradePreview = DEFAULT_QUERY_STATUS;
+			state.queryStatuses.crossMarginTradePreview = DEFAULT_QUERY_STATUS;
 		},
 		setCrossMarginTradePreview: (
 			state,
