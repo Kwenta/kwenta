@@ -6,6 +6,7 @@ import {
 	claimMultipleRewards,
 	claimMultipleRewardsAll,
 	claimMultipleRewardsOp,
+	claimMultipleRewardsSnxOp,
 	fetchClaimableRewards,
 	fetchClaimableRewardsAll,
 	fetchEscrowData,
@@ -42,6 +43,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	claimableRewards: [],
 	claimableRewardsAll: [],
 	claimableRewardsOp: [],
+	claimableRewardsSnxOp: [],
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
 	stakeEscrowedStatus: FetchStatus.Idle,
@@ -134,6 +136,9 @@ const stakingSlice = createSlice({
 			state.claimRewardsStatus = FetchStatus.Loading;
 		});
 		builder.addCase(claimMultipleRewardsOp.pending, (state) => {
+			state.claimRewardsStatus = FetchStatus.Loading;
+		});
+		builder.addCase(claimMultipleRewardsSnxOp.pending, (state) => {
 			state.claimRewardsStatus = FetchStatus.Loading;
 		});
 		builder.addCase(vestEscrowedRewards.pending, (state) => {

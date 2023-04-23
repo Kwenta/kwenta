@@ -25,6 +25,7 @@ export type StakingState = {
 	claimableRewards: ClaimParams[][];
 	claimableRewardsAll: ClaimParams[][];
 	claimableRewardsOp: ClaimParams[];
+	claimableRewardsSnxOp: ClaimParams[];
 	selectedEpoch?: number;
 	stakeStatus: FetchStatus;
 	unstakeStatus: FetchStatus;

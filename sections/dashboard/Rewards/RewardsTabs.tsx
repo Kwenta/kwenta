@@ -17,7 +17,11 @@ import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { claimMultipleRewardsAll, claimMultipleRewardsOp } from 'state/staking/actions';
+import {
+	claimMultipleRewardsAll,
+	claimMultipleRewardsOp,
+	claimMultipleRewardsSnxOp,
+} from 'state/staking/actions';
 import {
 	selectEpochPeriod,
 	selectKwentaOpRewards,
@@ -49,6 +53,10 @@ const RewardsTabs: FC = () => {
 
 	const handleClaimOp = useCallback(() => {
 		dispatch(claimMultipleRewardsOp());
+	}, [dispatch]);
+
+	const handleClaimOpSnx = useCallback(() => {
+		dispatch(claimMultipleRewardsSnxOp());
 	}, [dispatch]);
 
 	const estimatedTradingRewardQuery = useGetFile(
@@ -109,7 +117,7 @@ const RewardsTabs: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: snxOpRewards,
-			onClick: () => {},
+			onClick: handleClaimOpSnx,
 			isDisabled: claimDisabledSnxOp,
 		},
 	];

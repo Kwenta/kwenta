@@ -159,12 +159,12 @@ export const selectTotalRewardsAll = createSelector(
 );
 
 export const selectKwentaOpRewards = createSelector(
-	(state: RootState) => state.staking.kwentaOpRewards ?? '0',
+	(state: RootState) => state.staking.kwentaOpRewards,
 	wei
 );
 
 export const selectSnxOpRewards = createSelector(
-	(state: RootState) => state.staking.snxOpRewards ?? '0',
+	(state: RootState) => state.staking.snxOpRewards,
 	wei
 );
 

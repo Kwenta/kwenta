@@ -452,19 +452,22 @@ export default class KwentaTokenService {
 	public async getClaimableRewardsAll(
 		epochPeriod: number,
 		isOldDistributor: boolean = true,
-		isOp: boolean = false
+		isOp: boolean = false,
+		isSnx: boolean = false
 	) {
 		const {
 			MultipleMerkleDistributor,
 			MultipleMerkleDistributorPerpsV2,
 			MultipleMerkleDistributorOp,
+			MultipleMerkleDistributorSnxOp,
 		} = this.sdk.context.multicallContracts;
 		const { walletAddress } = this.sdk.context;
 
 		if (
 			!MultipleMerkleDistributor ||
 			!MultipleMerkleDistributorPerpsV2 ||
-			!MultipleMerkleDistributorOp
+			!MultipleMerkleDistributorOp ||
+			!MultipleMerkleDistributorSnxOp
 		) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
@@ -478,7 +481,7 @@ export default class KwentaTokenService {
 			(i) =>
 				`trading-rewards-snapshots/${
 					this.sdk.context.networkId === 420 ? `goerli-` : ''
-				}epoch-${i}${isOp ? '-op' : ''}.json`
+				}epoch-${i}${isOp ? '-op' : isSnx ? '-snx-op' : ''}.json`
 		);
 
 		const responses: EpochData[] = await Promise.all(
@@ -513,6 +516,8 @@ export default class KwentaTokenService {
 					? MultipleMerkleDistributor.isClaimed(reward[0], reward[4])
 					: isOp
 					? MultipleMerkleDistributorOp.isClaimed(reward[0], reward[4])
+					: isSnx
+					? MultipleMerkleDistributorSnxOp.isClaimed(reward[0], reward[4])
 					: MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4])
 			)
 		);
@@ -572,16 +577,21 @@ export default class KwentaTokenService {
 		]);
 	}
 
-	public async claimOpRewards(claimableRewardsOp: ClaimParams[]) {
-		const { MultipleMerkleDistributorOp } = this.sdk.context.contracts;
+	public async claimOpRewards(claimableRewardsOp: ClaimParams[], isSnx: boolean = false) {
+		const {
+			MultipleMerkleDistributorOp,
+			MultipleMerkleDistributorSnxOp,
+		} = this.sdk.context.contracts;
 
-		if (!MultipleMerkleDistributorOp) {
+		if (!MultipleMerkleDistributorOp || !MultipleMerkleDistributorSnxOp) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		return this.sdk.transactions.createContractTxn(MultipleMerkleDistributorOp, 'claimMultiple', [
-			claimableRewardsOp,
-		]);
+		return this.sdk.transactions.createContractTxn(
+			isSnx ? MultipleMerkleDistributorSnxOp : MultipleMerkleDistributorOp,
+			'claimMultiple',
+			[claimableRewardsOp]
+		);
 	}
 
 	private performStakeAction(
