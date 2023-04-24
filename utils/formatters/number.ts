@@ -241,5 +241,6 @@ export const toWei = (value?: string | null, p?: number) => {
 };
 
 export const stripZeros = (value?: string | number) => {
-	return String(parseFloat(String(value)));
+	if (!value) return '';
+	return String(value).replace(/(\.[0-9]*[1-9])0+$|\.0*$/, '$1');
 };

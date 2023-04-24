@@ -23,6 +23,8 @@ import {
 	selectTradePreview,
 	selectLeverageInput,
 	selectSlTpTradeInputs,
+	selectKeeperDepositExceedsBal,
+	selectNewTradeHasSlTp,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
@@ -31,6 +33,7 @@ import {
 	formatDollars,
 	formatNumber,
 	formatPercent,
+	stripZeros,
 } from 'utils/formatters/number';
 
 import TradeConfirmationRow from './TradeConfirmationRow';
@@ -70,7 +73,9 @@ export default function TradeConfirmationModal({
 	const position = useAppSelector(selectPosition);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const leverageInput = useAppSelector(selectLeverageInput);
+	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal);
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
+	const hasSlTp = useAppSelector(selectNewTradeHasSlTp);
 
 	const totalFee = tradeFee.add(executionFee);
 
@@ -170,10 +175,23 @@ export default function TradeConfirmationModal({
 		]
 	);
 
+	const showEthBalWarning = useMemo(() => {
+		return ethBalanceExceeded && (orderType !== 'market' || hasSlTp);
+	}, [ethBalanceExceeded, orderType, hasSlTp]);
+
+	const ethBalWarningMessage = showEthBalWarning
+		? t('futures.market.trade.confirmation.modal.eth-bal-warning')
+		: null;
+
 	const disabledReason = useMemo(() => {
+		if (showEthBalWarning) {
+			return t('futures.market.trade.confirmation.modal.disabled-eth-bal', {
+				depositAmount: stripZeros(keeperFee?.toString()),
+			});
+		}
 		if (positionDetails?.margin.lt(MIN_MARGIN_AMOUNT))
 			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
-	}, [positionDetails?.margin, t]);
+	}, [positionDetails?.margin, t, showEthBalWarning, keeperFee]);
 
 	const buttonText = allowanceValid
 		? t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
@@ -231,10 +249,12 @@ export default function TradeConfirmationModal({
 			>
 				{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
 			</ConfirmTradeButton>
-			{errorMessage && (
-				<ErrorContainer>
-					<ErrorView message={errorMessage} />
-				</ErrorContainer>
+			{(errorMessage || ethBalWarningMessage) && (
+				<ErrorView
+					messageType={ethBalWarningMessage ? 'warn' : 'error'}
+					message={errorMessage ?? ethBalWarningMessage}
+					containerStyle={{ margin: '16px 0 0 0' }}
+				/>
 			)}
 		</StyledBaseModal>
 	);
@@ -288,10 +308,6 @@ export const MobileConfirmTradeButton = styled(Button)`
 	height: 45px;
 	width: 100%;
 	font-size: 15px;
-`;
-
-const ErrorContainer = styled.div`
-	margin-top: 20px;
 `;
 
 const StyledHelpIcon = styled(HelpIcon)`

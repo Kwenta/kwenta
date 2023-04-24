@@ -38,7 +38,6 @@ import {
 	fetchCrossMarginOpenOrders,
 	fetchIsolatedMarginTradePreview,
 	fetchCrossMarginTradePreview,
-	fetchKeeperEthBalance,
 	fetchCrossMarginAccount,
 	fetchFuturesPositionHistory,
 	fetchPositionHistoryForTrader,
@@ -336,6 +335,8 @@ const futuresSlice = createSlice({
 				trade: null,
 				close: null,
 			};
+			state.queryStatuses.isolatedTradePreview = DEFAULT_QUERY_STATUS;
+			state.queryStatuses.crossMarginTradePreview = DEFAULT_QUERY_STATUS;
 		},
 		setCrossMarginTradePreview: (
 			state,
@@ -613,16 +614,6 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchCrossMarginTradePreview.fulfilled, (futuresState, { payload }) => {
 			futuresState.crossMargin.previews[payload.type] = payload.preview;
 			futuresState.queryStatuses.crossMarginTradePreview = SUCCESS_STATUS;
-		});
-
-		// Fetch keeper balance
-		builder.addCase(fetchKeeperEthBalance.fulfilled, (futuresState, action) => {
-			if (!action.payload) return;
-			const { account, network, balance } = action.payload;
-			const wallet = findWalletForAccount(futuresState.crossMargin, account, network);
-			if (wallet) {
-				futuresState.crossMargin.accounts[network][wallet].balanceInfo.keeperEthBal = balance;
-			}
 		});
 
 		// Fetch cross margin account

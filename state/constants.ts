@@ -23,8 +23,9 @@ export const ZERO_STATE_CM_ACCOUNT = {
 	position: undefined,
 	balanceInfo: {
 		freeMargin: '0',
-		keeperEthBal: '0',
 		allowance: '0',
+		keeperEthBal: '0',
+		walletEthBal: '0',
 	},
 	trades: [],
 	positions: [],

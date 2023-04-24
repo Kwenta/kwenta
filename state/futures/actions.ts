@@ -962,18 +962,6 @@ export const editTradeOrderPrice = (price: string): AppThunk => (dispatch, getSt
 	}
 };
 
-export const fetchKeeperEthBalance = createAsyncThunk<
-	{ balance: string; account: string; network: NetworkId } | undefined,
-	void,
-	ThunkConfig
->('futures/fetchKeeperEthBalance', async (_, { getState, extra: { sdk } }) => {
-	const account = selectCrossMarginAccount(getState());
-	const network = selectNetwork(getState());
-	if (!account) return;
-	const bal = await sdk.futures.getCrossMarginKeeperBalance(account);
-	return { balance: bal.toString(), account, network };
-});
-
 export const fetchFuturesPositionHistory = createAsyncThunk<
 	| {
 			accountType: FuturesAccountType;
