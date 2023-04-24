@@ -351,6 +351,7 @@ export const serializeCmBalanceInfo = (
 	return {
 		freeMargin: overview.freeMargin.toString(),
 		keeperEthBal: overview.keeperEthBal.toString(),
+		walletEthBal: overview.walletEthBal.toString(),
 		allowance: overview.allowance.toString(),
 	};
 };
@@ -361,6 +362,7 @@ export const unserializeCmBalanceInfo = (
 	return {
 		freeMargin: wei(balanceInfo.freeMargin),
 		keeperEthBal: wei(balanceInfo.keeperEthBal),
+		walletEthBal: wei(balanceInfo.walletEthBal),
 		allowance: wei(balanceInfo.allowance),
 	};
 };
