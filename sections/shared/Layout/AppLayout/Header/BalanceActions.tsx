@@ -91,9 +91,9 @@ const BalanceActions: FC = () => {
 			isDisabled: false,
 		},
 		{
-			key: 'kwenta-rewards',
-			title: t('dashboard.rewards.kwenta-rewards.title'),
-			copy: t('dashboard.rewards.kwenta-rewards.copy'),
+			key: 'op-rewards',
+			title: t('dashboard.rewards.op-rewards.title'),
+			copy: t('dashboard.rewards.op-rewards.copy'),
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
