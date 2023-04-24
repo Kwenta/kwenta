@@ -24,8 +24,8 @@ import {
 } from 'queries/staking/utils';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { claimMultipleRewards } from 'state/staking/actions';
-import { selectEpochPeriod, selectResetTime, selectTotalRewards } from 'state/staking/selectors';
+import { claimMultipleKwentaRewards } from 'state/staking/actions';
+import { selectEpochPeriod, selectKwentaRewards, selectResetTime } from 'state/staking/selectors';
 import media from 'styles/media';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -37,7 +37,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 		const dispatch = useAppDispatch();
 
 		const resetTime = useAppSelector(selectResetTime);
-		const totalRewards = useAppSelector(selectTotalRewards);
+		const kwentaRewards = useAppSelector(selectKwentaRewards);
 		const epochPeriod = useAppSelector(selectEpochPeriod);
 
 		const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end);
@@ -69,10 +69,10 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 			[estimatedRewardQuery?.data?.tokenTotal]
 		);
 
-		const claimDisabled = useMemo(() => totalRewards.lte(0), [totalRewards]);
+		const claimDisabled = useMemo(() => kwentaRewards.lte(0), [kwentaRewards]);
 
 		const handleClaim = useCallback(() => {
-			dispatch(claimMultipleRewards());
+			dispatch(claimMultipleKwentaRewards());
 		}, [dispatch]);
 
 		const ratio = useMemo(() => {
@@ -87,7 +87,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 					<CardGrid>
 						<div>
 							<Title>{t('dashboard.stake.tabs.trading-rewards.claimable-rewards-all')}</Title>
-							<LogoText yellow>{truncateNumbers(totalRewards, 4)}</LogoText>
+							<LogoText yellow>{truncateNumbers(kwentaRewards, 4)}</LogoText>
 						</div>
 						<div>
 							<Title>{t('dashboard.stake.tabs.trading-rewards.trading-activity-reset')}</Title>

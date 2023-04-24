@@ -16,16 +16,13 @@ import { StakingCard } from 'sections/dashboard/Stake/card';
 import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
-	claimMultipleRewardsAll,
-	claimMultipleRewardsOp,
-	fetchClaimableRewardsAll,
+	claimMultipleAllRewards,
+	claimMultipleOpRewards,
+	claimMultipleSnxOpRewards,
+	fetchClaimableRewards,
 	fetchStakingData,
 } from 'state/staking/actions';
-import {
-	selectKwentaOpRewards,
-	selectSnxOpRewards,
-	selectTotalRewardsAll,
-} from 'state/staking/selectors';
+import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors';
 import { selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
 import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -38,8 +35,8 @@ const BalanceActions: FC = () => {
 	const walletAddress = useAppSelector(selectWallet);
 	const opPrice = useAppSelector(selectOpPrice);
 	const kwentaPrice = useAppSelector(selectKwentaPrice);
-	const tradingRewards = useAppSelector(selectTotalRewardsAll);
-	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
+	const kwentaRewards = useAppSelector(selectKwentaRewards);
+	const opRewards = useAppSelector(selectOpRewards);
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
 	const [open, setOpen] = useState(false);
 	const [rewardBalance, setRewardBalance] = useState(zeroBN);
@@ -52,27 +49,32 @@ const BalanceActions: FC = () => {
 	}, [router]);
 
 	const handleClaimAll = useCallback(() => {
-		dispatch(claimMultipleRewardsAll());
+		dispatch(claimMultipleAllRewards());
 	}, [dispatch]);
 
 	const handleClaimOp = useCallback(() => {
-		dispatch(claimMultipleRewardsOp());
+		dispatch(claimMultipleOpRewards());
+	}, [dispatch]);
+
+	const handleClaimSnxOp = useCallback(() => {
+		dispatch(claimMultipleSnxOpRewards());
 	}, [dispatch]);
 
 	useEffect(() => {
 		if (!!walletAddress) {
 			dispatch(fetchStakingData()).then(() => {
-				dispatch(fetchClaimableRewardsAll());
+				dispatch(fetchClaimableRewards());
 			});
 		}
 	}, [dispatch, walletAddress]);
 
-	const claimDisabledAll = useMemo(
-		() => tradingRewards.add(kwentaOpRewards).add(snxOpRewards).lte(0),
-		[kwentaOpRewards, snxOpRewards, tradingRewards]
-	);
+	const claimDisabledAll = useMemo(() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0), [
+		opRewards,
+		snxOpRewards,
+		kwentaRewards,
+	]);
 
-	const claimDisabledKwentaOp = useMemo(() => kwentaOpRewards.lte(0), [kwentaOpRewards]);
+	const claimDisabledOp = useMemo(() => opRewards.lte(0), [opRewards]);
 
 	const claimDisabledSnxOp = useMemo(() => snxOpRewards.lte(0), [snxOpRewards]);
 
@@ -84,7 +86,7 @@ const BalanceActions: FC = () => {
 			button: t('dashboard.rewards.staking'),
 			kwentaIcon: true,
 			linkIcon: true,
-			rewards: tradingRewards,
+			rewards: kwentaRewards,
 			onClick: goToStaking,
 			isDisabled: false,
 		},
@@ -95,9 +97,9 @@ const BalanceActions: FC = () => {
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: kwentaOpRewards,
+			rewards: opRewards,
 			onClick: handleClaimOp,
-			isDisabled: claimDisabledKwentaOp,
+			isDisabled: claimDisabledOp,
 		},
 		{
 			key: 'snx-rewards',
@@ -107,7 +109,7 @@ const BalanceActions: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: snxOpRewards,
-			onClick: () => {},
+			onClick: handleClaimSnxOp,
 			isDisabled: claimDisabledSnxOp,
 		},
 	];
@@ -115,9 +117,9 @@ const BalanceActions: FC = () => {
 	useEffect(
 		() =>
 			setRewardBalance(
-				kwentaPrice.mul(tradingRewards).add(opPrice.mul(kwentaOpRewards.add(snxOpRewards)))
+				kwentaPrice.mul(kwentaRewards).add(opPrice.mul(opRewards.add(snxOpRewards)))
 			),
-		[kwentaOpRewards, kwentaPrice, opPrice, snxOpRewards, tradingRewards]
+		[kwentaRewards, kwentaPrice, opPrice, snxOpRewards, opRewards]
 	);
 
 	return (

@@ -139,8 +139,8 @@ export const selectIsGettingReward = createSelector(
 );
 
 export const selectIsClaimingRewards = createSelector(
-	(state: RootState) => state.staking.claimRewardsStatus,
-	(claimRewardsStatus) => claimRewardsStatus === FetchStatus.Loading
+	(state: RootState) => state.staking.claimKwentaRewardsStatus,
+	(claimKwentaRewardsStatus) => claimKwentaRewardsStatus === FetchStatus.Loading
 );
 
 export const selectIsVestingEscrowedRewards = createSelector(
@@ -148,20 +148,12 @@ export const selectIsVestingEscrowedRewards = createSelector(
 	(vestEscrowedRewardsStatus) => vestEscrowedRewardsStatus === FetchStatus.Loading
 );
 
-export const selectTotalRewards = createSelector(
-	(state: RootState) => state.staking.totalRewards,
+export const selectKwentaRewards = createSelector(
+	(state: RootState) => state.staking.kwentaRewards,
 	wei
 );
 
-export const selectTotalRewardsAll = createSelector(
-	(state: RootState) => state.staking.totalRewardsAll,
-	wei
-);
-
-export const selectKwentaOpRewards = createSelector(
-	(state: RootState) => state.staking.kwentaOpRewards,
-	wei
-);
+export const selectOpRewards = createSelector((state: RootState) => state.staking.opRewards, wei);
 
 export const selectSnxOpRewards = createSelector(
 	(state: RootState) => state.staking.snxOpRewards,
