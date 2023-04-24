@@ -772,6 +772,19 @@ export const selectTradeSizeInputs = createSelector(
 	}
 );
 
+export const selectTradeSizeInputsDisabled = createSelector(
+	selectMarginDeltaInputValue,
+	selectFuturesType,
+	selectPosition,
+	(marginDeltaInput, selectedAccountType, position) => {
+		const remaining =
+			selectedAccountType === 'isolated_margin'
+				? position?.remainingMargin || zeroBN
+				: wei(marginDeltaInput || 0);
+		return remaining.lte(0);
+	}
+);
+
 export const selectEditPositionModalInfo = createSelector(
 	selectFuturesType,
 	selectEditPositionModalMarket,
