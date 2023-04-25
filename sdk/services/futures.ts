@@ -8,7 +8,7 @@ import KwentaSDK from 'sdk';
 
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { KWENTA_TRACKING_CODE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
+import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import PerpsMarketABI from 'sdk/contracts/abis/PerpsV2Market.json';
@@ -454,8 +454,8 @@ export default class FuturesService {
 
 		const orderIdBigNum = await crossMarginAccountContract.conditionalOrderId();
 		const orderId = orderIdBigNum.toNumber();
-		// Limit to the latest 100
-		const start = orderId > 100 ? orderId - 100 : 0;
+		// Limit to the latest 500
+		const start = orderId > ORDERS_FETCH_SIZE ? orderId - ORDERS_FETCH_SIZE : 0;
 
 		const orderCalls = Array(orderId)
 			.fill(0)
@@ -469,7 +469,7 @@ export default class FuturesService {
 			// Checks if the order is still pending
 			// Orders are never removed but all values set to zero so we check a zero value on price to filter pending
 			if (contractOrder && contractOrder.targetPrice.gt(0)) {
-				const order = mapConditionalOrderFromContract({ ...contractOrder, id: i }, account);
+				const order = mapConditionalOrderFromContract({ ...contractOrder, id: start + i }, account);
 				orders.push(order);
 			}
 		}
