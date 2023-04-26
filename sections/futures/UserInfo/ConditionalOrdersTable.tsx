@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import Badge from 'components/Badge';
 import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
+import Pill from 'components/Pill';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
@@ -185,9 +186,13 @@ export default function ConditionalOrdersTable() {
 							const cancellingRow = cellProps.row.original.isCancelling;
 							return (
 								<div style={{ display: 'flex' }}>
-									<CancelButton disabled={cancellingRow} onClick={cellProps.row.original.cancel}>
+									<Pill
+										color="red"
+										onClick={cellProps.row.original.cancel}
+										disabled={cancellingRow}
+									>
 										{t('futures.market.user.open-orders.actions.cancel')}
-									</CancelButton>
+									</Pill>
 								</div>
 							);
 						},
@@ -202,37 +207,6 @@ export default function ConditionalOrdersTable() {
 const Container = styled.div`
 	height: 100%;
 	overflow: scroll;
-`;
-
-const EditButton = styled.button`
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gray};
-	height: 28px;
-	min-width: 72px;
-	box-sizing: border-box;
-	border-radius: 14px;
-	cursor: pointer;
-	background-color: transparent;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
-	padding-left: 12px;
-	padding-right: 12px;
-
-	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.gray};
-		color: ${(props) => props.theme.colors.selectedTheme.white};
-	}
-`;
-
-const CancelButton = styled(EditButton)`
-	opacity: ${(props) => (props.disabled ? 0.4 : 1)};
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
-	color: ${(props) => props.theme.colors.selectedTheme.red};
-
-	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.red};
-		color: ${(props) => props.theme.colors.selectedTheme.white};
-	}
 `;
 
 const ExpiredBadge = styled(Badge)`
