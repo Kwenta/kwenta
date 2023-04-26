@@ -487,9 +487,9 @@ export default class KwentaTokenService {
 
 		const fileNames = adjustedPeriods.map(
 			(i) =>
-				`trading-rewards-snapshots/${
-					this.sdk.context.networkId === 420 ? `goerli-` : ''
-				}epoch-${i}${isOp ? '-op' : isSnx ? '-snx-op' : ''}.json`
+				`trading-rewards-snapshots/${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${
+					isSnx ? i - OP_REWARDS_CUTOFF_EPOCH : i
+				}${isOp ? (isSnx ? '-snx-op' : '-op') : ''}.json`
 		);
 
 		const responses: EpochData[] = await Promise.all(
@@ -502,7 +502,9 @@ export default class KwentaTokenService {
 							: index + 1
 						: index
 					: isOp
-					? index + OP_REWARDS_CUTOFF_EPOCH
+					? isSnx
+						? index
+						: index + OP_REWARDS_CUTOFF_EPOCH
 					: index + TRADING_REWARDS_CUTOFF_EPOCH;
 				return { ...response.data, period };
 			})
@@ -607,7 +609,7 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(
 			isSnx ? MultipleMerkleDistributorSnxOp : MultipleMerkleDistributorOp,
 			'claimMultiple',
-			claimableRewards
+			[claimableRewards]
 		);
 	}
 
