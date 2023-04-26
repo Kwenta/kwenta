@@ -148,10 +148,18 @@ export const getReward = createAsyncThunk<void, void, ThunkConfig>(
 
 export const fetchClaimableRewards = createAsyncThunk<
 	{
-		claimableRewards: Awaited<
+		claimableKwentaRewards: Awaited<
 			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
 		>['claimableRewards'][];
-		totalRewards: string;
+		claimableOpRewards: Awaited<
+			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
+		>['claimableRewards'];
+		claimableSnxOpRewards: Awaited<
+			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
+		>['claimableRewards'];
+		kwentaRewards: string;
+		opRewards: string;
+		snxOpRewards: string;
 	},
 	void,
 	ThunkConfig
@@ -161,115 +169,126 @@ export const fetchClaimableRewards = createAsyncThunk<
 	} = getState();
 
 	const {
-		claimableRewards: claimableRewardsV1,
-		totalRewards: totalRewardsV1,
-	} = await sdk.kwentaToken.getClaimableRewards(epochPeriod, true);
+		claimableRewards: claimableKwentaRewardsV1,
+		totalRewards: kwentaRewardsV1,
+	} = await sdk.kwentaToken.getClaimableAllRewards(epochPeriod);
 
 	const {
-		claimableRewards: claimableRewardsV2,
-		totalRewards: totalRewardsV2,
-	} = await sdk.kwentaToken.getClaimableRewards(epochPeriod, false);
+		claimableRewards: claimableKwentaRewardsV2,
+		totalRewards: kwentaRewardsV2,
+	} = await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false);
+
+	const {
+		claimableRewards: claimableOpRewards,
+		totalRewards: opRewards,
+	} = await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false);
+
+	const {
+		claimableRewards: claimableSnxOpRewards,
+		totalRewards: snxOpRewards,
+	} = await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true);
 
 	return {
-		claimableRewards: [claimableRewardsV1, claimableRewardsV2],
-		totalRewards: totalRewardsV1.add(totalRewardsV2).toString(),
+		claimableKwentaRewards: [claimableKwentaRewardsV1, claimableKwentaRewardsV2],
+		claimableOpRewards,
+		claimableSnxOpRewards,
+		kwentaRewards: kwentaRewardsV1.add(kwentaRewardsV2).toString(),
+		opRewards: opRewards.toString(),
+		snxOpRewards: snxOpRewards.toString(),
 	};
 });
 
-export const fetchClaimableRewardsAll = createAsyncThunk<
-	{
-		claimableRewardsAll: Awaited<
-			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards'][];
-		totalRewardsAll: string;
-	},
-	void,
-	ThunkConfig
->('staking/fetchClaimableRewardsAll', async (_, { getState, extra: { sdk } }) => {
-	const {
-		staking: { epochPeriod },
-	} = getState();
-
-	const {
-		claimableRewards: claimableRewardsV1,
-		totalRewards: totalRewardsV1,
-	} = await sdk.kwentaToken.getClaimableRewardsAll(epochPeriod, true);
-
-	const {
-		claimableRewards: claimableRewardsV2,
-		totalRewards: totalRewardsV2,
-	} = await sdk.kwentaToken.getClaimableRewardsAll(epochPeriod, false);
-
-	return {
-		claimableRewardsAll: [claimableRewardsV1, claimableRewardsV2],
-		totalRewardsAll: totalRewardsV1.add(totalRewardsV2).toString(),
-	};
-});
-
-export const claimMultipleRewards = createAsyncThunk<void, void, ThunkConfig>(
-	'staking/claimMultipleRewards',
+export const claimMultipleAllRewards = createAsyncThunk<void, void, ThunkConfig>(
+	'staking/claimMultipleAllRewards',
 	async (_, { dispatch, getState, extra: { sdk } }) => {
 		const {
-			staking: { claimableRewards },
+			staking: { claimableKwentaRewards, claimableOpRewards, claimableSnxOpRewards },
 		} = getState();
 
-		const { hash } = await sdk.kwentaToken.claimMultipleRewards(claimableRewards);
+		const { hash } = await sdk.kwentaToken.claimMultipleAllRewards([
+			...claimableKwentaRewards,
+			claimableOpRewards,
+			claimableSnxOpRewards,
+		]);
 
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
-				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Success });
+				dispatch({ type: 'staking/setClaimAllRewardsStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
 				dispatch(fetchClaimableRewards());
 			},
 			onTxFailed: () => {
-				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Error });
+				dispatch({ type: 'staking/setClaimAllRewardsStatus', payload: FetchStatus.Error });
 			},
 		});
 	}
 );
 
-export const claimMultipleRewardsAll = createAsyncThunk<void, void, ThunkConfig>(
-	'staking/claimMultipleRewardsAll',
+export const claimMultipleKwentaRewards = createAsyncThunk<void, void, ThunkConfig>(
+	'staking/claimMultipleKwentaRewards',
 	async (_, { dispatch, getState, extra: { sdk } }) => {
 		const {
-			staking: { claimableRewardsAll },
+			staking: { claimableKwentaRewards },
 		} = getState();
 
-		const { hash } = await sdk.kwentaToken.claimMultipleRewardsAll(claimableRewardsAll);
+		const { hash } = await sdk.kwentaToken.claimMultipleKwentaRewards(claimableKwentaRewards);
 
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
-				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Success });
+				dispatch({ type: 'staking/setClaimKwentaRewardsStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
-				dispatch(fetchClaimableRewardsAll());
+				dispatch(fetchClaimableRewards());
 			},
 			onTxFailed: () => {
-				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Error });
+				dispatch({ type: 'staking/setClaimKwentaRewardsStatus', payload: FetchStatus.Error });
 			},
 		});
 	}
 );
 
-export const claimMultipleRewardsOp = createAsyncThunk<void, void, ThunkConfig>(
-	'staking/claimMultipleRewardsOp',
+export const claimMultipleOpRewards = createAsyncThunk<void, void, ThunkConfig>(
+	'staking/claimMultipleOpRewards',
 	async (_, { dispatch, getState, extra: { sdk } }) => {
 		const {
-			staking: { claimableRewardsOp },
+			staking: { claimableOpRewards },
 		} = getState();
 
-		const { hash } = await sdk.kwentaToken.claimOpRewards(claimableRewardsOp);
+		const { hash } = await sdk.kwentaToken.claimOpRewards(claimableOpRewards, false);
 
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
-				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Success });
+				dispatch({ type: 'staking/setClaimOpRewardsStatus', payload: FetchStatus.Success });
 				dispatch(fetchStakingData());
 				dispatch(fetchClaimableRewards());
 			},
 			onTxFailed: () => {
-				dispatch({ type: 'staking/setClaimRewardsStatus', payload: FetchStatus.Error });
+				dispatch({ type: 'staking/setClaimOpRewardsStatus', payload: FetchStatus.Error });
+			},
+		});
+	}
+);
+
+export const claimMultipleSnxOpRewards = createAsyncThunk<void, void, ThunkConfig>(
+	'staking/claimMultipleSnxOpRewards',
+	async (_, { dispatch, getState, extra: { sdk } }) => {
+		const {
+			staking: { claimableSnxOpRewards },
+		} = getState();
+
+		const { hash } = await sdk.kwentaToken.claimOpRewards(claimableSnxOpRewards, true);
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setClaimSnxOpRewardsStatus', payload: FetchStatus.Success });
+				dispatch(fetchStakingData());
+				dispatch(fetchClaimableRewards());
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setClaimSnxOpRewardsStatus', payload: FetchStatus.Error });
 			},
 		});
 	}

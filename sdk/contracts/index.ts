@@ -147,6 +147,9 @@ export const getContractsByNetwork = (
 		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
 			? MultipleMerkleDistributorOp__factory.connect(ADDRESSES.OpRewards[networkId], provider)
 			: undefined,
+		MultipleMerkleDistributorSnxOp: ADDRESSES.SnxOpRewards[networkId]
+			? MultipleMerkleDistributorOp__factory.connect(ADDRESSES.SnxOpRewards[networkId], provider)
+			: undefined,
 		BatchClaimer: ADDRESSES.BatchClaimer[networkId]
 			? BatchClaimer__factory.connect(ADDRESSES.BatchClaimer[networkId], provider)
 			: undefined,
@@ -211,6 +214,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
 			? new EthCallContract(ADDRESSES.OpRewards[networkId], MultipleMerkleDistributorOpABI)
+			: undefined,
+		MultipleMerkleDistributorSnxOp: ADDRESSES.SnxOpRewards[networkId]
+			? new EthCallContract(ADDRESSES.SnxOpRewards[networkId], MultipleMerkleDistributorOpABI)
 			: undefined,
 		vKwentaToken: ADDRESSES.vKwentaToken[networkId]
 			? new EthCallContract(ADDRESSES.vKwentaToken[networkId], ERC20ABI)
