@@ -527,9 +527,9 @@ export default class KwentaTokenService {
 				isOldDistributor
 					? MultipleMerkleDistributor.isClaimed(reward[0], reward[4])
 					: isOp
-					? MultipleMerkleDistributorOp.isClaimed(reward[0], reward[4])
-					: isSnx
-					? MultipleMerkleDistributorSnxOp.isClaimed(reward[0], reward[4])
+					? isSnx
+						? MultipleMerkleDistributorSnxOp.isClaimed(reward[0], reward[4])
+						: MultipleMerkleDistributorOp.isClaimed(reward[0], reward[4])
 					: MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4])
 			)
 		);
