@@ -20,6 +20,7 @@ import {
 	selectPosition,
 	selectFuturesType,
 	selectCrossMarginMarginDelta,
+	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
@@ -48,6 +49,7 @@ const LeverageInput: FC = memo(() => {
 	const leverageInput = useAppSelector(selectLeverageInput);
 	const futuresType = useAppSelector(selectFuturesType);
 	const crossMarginMarginDelta = useAppSelector(selectCrossMarginMarginDelta);
+	const isDisabled = useAppSelector(selectTradeSizeInputsDisabled);
 
 	const availableMargin = useMemo(() => {
 		return futuresType === 'isolated_margin' ? position?.remainingMargin : crossMarginMarginDelta;
@@ -67,10 +69,6 @@ const LeverageInput: FC = memo(() => {
 		[marketPrice, dispatch, availableMargin]
 	);
 
-	const isDisabled = useMemo(() => {
-		return availableMargin?.lte(0) || maxLeverage.lte(0);
-	}, [maxLeverage, availableMargin]);
-
 	const leverageButtons = marketInfo?.maxLeverage.eq(25)
 		? ['2', '5', '10', '25']
 		: ['2', '5', '10'];
@@ -86,6 +84,7 @@ const LeverageInput: FC = memo(() => {
 	return (
 		<LeverageInputWrapper>
 			<InputHeaderRow
+				disabled={isDisabled}
 				label={
 					<LeverageTitle>
 						{t('futures.market.trade.input.leverage.title')}&nbsp; —
@@ -125,11 +124,11 @@ const LeverageInput: FC = memo(() => {
 						<LeverageButton
 							key={l}
 							mono
+							disabled={isDisabled}
 							variant="flat"
 							onClick={() => {
 								onLeverageChange(l);
 							}}
-							disabled={maxLeverage.lt(l) || marketInfo?.isSuspended}
 						>
 							{l}x
 						</LeverageButton>
