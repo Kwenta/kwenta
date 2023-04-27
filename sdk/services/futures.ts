@@ -24,6 +24,7 @@ import {
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
 	queryTrades,
+	queryCompletePositionHistory,
 } from 'sdk/queries/futures';
 import { NetworkId } from 'sdk/types/common';
 import { NetworkOverrideOptions } from 'sdk/types/common';
@@ -551,6 +552,11 @@ export default class FuturesService {
 
 	public async getPositionHistory(walletAddress: string) {
 		const response = await queryPositionHistory(this.sdk, walletAddress);
+		return response ? mapFuturesPositions(response) : [];
+	}
+
+	public async getCompletePositionHistory(walletAddress: string) {
+		const response = await queryCompletePositionHistory(this.sdk, walletAddress);
 		return response ? mapFuturesPositions(response) : [];
 	}
 
