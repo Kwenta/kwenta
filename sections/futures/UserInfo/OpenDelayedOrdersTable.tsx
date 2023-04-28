@@ -7,6 +7,7 @@ import Badge from 'components/Badge';
 import { ButtonLoader } from 'components/Loader/Loader';
 import Pill from 'components/Pill';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import {
 	DEFAULT_DELAYED_CANCEL_BUFFER,
 	DEFAULT_DELAYED_EXECUTION_BUFFER,
@@ -219,11 +220,17 @@ const OpenDelayedOrdersTable: React.FC = () => {
 							<div>
 								{cellProps.row.original.show &&
 									(cellProps.row.original.isStale ? (
-										<div>{t('futures.market.user.open-orders.status.expired')}</div>
+										<Body color="negative">
+											{t('futures.market.user.open-orders.status.expired')}
+										</Body>
 									) : cellProps.row.original.isFailed ? (
-										<div>{t('futures.market.user.open-orders.status.failed')}</div>
+										<Body color="negative">
+											{t('futures.market.user.open-orders.status.failed')}
+										</Body>
 									) : (
-										<div>{t('futures.market.user.open-orders.status.pending')}</div>
+										<Body color="preview">
+											{t('futures.market.user.open-orders.status.pending')}
+										</Body>
 									))}
 							</div>
 						);
