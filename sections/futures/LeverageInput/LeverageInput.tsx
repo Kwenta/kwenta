@@ -69,9 +69,9 @@ const LeverageInput: FC = memo(() => {
 		[marketPrice, dispatch, availableMargin]
 	);
 
-	const leverageButtons = marketInfo?.maxLeverage.eq(25)
-		? ['2', '5', '10', '25']
-		: ['2', '5', '10'];
+	const leverageButtons = marketInfo?.maxLeverage.eq(50)
+		? ['2', '10', '25', '50']
+		: ['2', '5', '10', '25'];
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
 		: 10;
