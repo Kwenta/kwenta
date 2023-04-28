@@ -1,10 +1,12 @@
 import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
+import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import Currency from 'components/Currency';
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
@@ -22,12 +24,15 @@ import {
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
+	selectMarkPrices,
 	selectPositionHistory,
 } from 'state/futures/selectors';
+import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { formatPercent } from 'utils/formatters/number';
+import { formatPercent, zeroBN } from 'utils/formatters/number';
 
+import ShareModal from '../ShareModal';
 import TableMarketDetails from './TableMarketDetails';
 
 type FuturesPositionTableProps = {
@@ -48,7 +53,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
+	const markPrices = useAppSelector(selectMarkPrices);
 	const accountType = useAppSelector(selectFuturesType);
+	const [showShareModal, setShowShareModal] = useState(false);
+	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null);
 
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
@@ -58,12 +66,19 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
+				const markPrice = markPrices[market?.marketKey!] ?? zeroBN;
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
+					share: {
+						asset: position.asset,
+						position: position.position!,
+						positionHistory: thisPositionHistory!,
+						marketPrice: markPrice,
+					},
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -74,8 +89,14 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
+		markPrices,
 		currentMarket,
 	]);
+
+	const handleOpenShareModal = useCallback((share: SharePositionParams) => {
+		setSharePosition(share);
+		setShowShareModal((s) => !s);
+	}, []);
 
 	return (
 		<Container>
@@ -325,21 +346,39 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'pos',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<div>
-										<Pill
-											onClick={() =>
-												dispatch(
-													setShowPositionModal({
-														type: 'futures_close_position',
-														marketKey: cellProps.row.original.market.marketKey,
-													})
-												)
-											}
-											size="small"
-										>
-											Close
-										</Pill>
-									</div>
+									<>
+										<FlexDivRow style={{ columnGap: '5px' }}>
+											<div>
+												<Pill
+													onClick={() =>
+														dispatch(
+															setShowPositionModal({
+																type: 'futures_close_position',
+																marketKey: cellProps.row.original.market.marketKey,
+															})
+														)
+													}
+													size="small"
+												>
+													Close
+												</Pill>
+											</div>
+											<div>
+												<Pill
+													onClick={() => handleOpenShareModal(cellProps.row.original.share)}
+													size="small"
+												>
+													<FlexDivRowCentered>
+														<UploadIcon
+															width={6}
+															style={{ marginRight: '2px', marginBottom: '1px' }}
+														/>
+														Share
+													</FlexDivRowCentered>
+												</Pill>
+											</div>
+										</FlexDivRow>
+									</>
 								);
 							},
 							width: 90,
@@ -347,6 +386,9 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					]}
 				/>
 			</TableContainer>
+			{showShareModal && (
+				<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
+			)}
 		</Container>
 	);
 };

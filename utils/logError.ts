@@ -21,4 +21,5 @@ export const IGNORE_ERRORS = [
 	'timeout exceeded',
 	'Unsupported network',
 	'request aborted',
+	'Transaction reverted without a reason string',
 ];

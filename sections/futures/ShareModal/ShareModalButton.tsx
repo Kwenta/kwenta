@@ -6,13 +6,8 @@ import styled from 'styled-components';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { FuturesPosition, PositionSide } from 'sdk/types/futures';
-import {
-	selectMarketAsset,
-	selectMarketPrice,
-	selectSelectedMarketPositionHistory,
-} from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { PositionSide } from 'sdk/types/futures';
+import { SharePositionParams } from 'state/futures/types';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import { getMarketName } from 'utils/futures';
 
@@ -42,15 +37,11 @@ function downloadPng(dataUrl: string) {
 }
 
 type ShareModalButtonProps = {
-	position: FuturesPosition | null | undefined;
+	position: SharePositionParams;
 };
 
 const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
 	const { t } = useTranslation();
-
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const marketPrice = useAppSelector(selectMarketPrice);
-	const currentPosition = useAppSelector(selectSelectedMarketPositionHistory);
 
 	const handleDownloadImage = async () => {
 		let node = document.getElementById('pnl-graphic');
@@ -62,17 +53,17 @@ const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
 	};
 
 	const handleTweet = () => {
-		const positionDetails = position?.position ?? null;
+		const positionDetails = position.position ?? null;
 		const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
-		const marketName = getMarketName(marketAsset);
+		const marketName = getMarketName(position.asset!);
 		const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
 		const pnlPct = `+${positionDetails?.pnlPct.mul(100).toNumber().toFixed(2)}%`;
 
-		const avgEntryPrice = currentPosition?.avgEntryPrice
-			? formatNumber(currentPosition?.avgEntryPrice)
+		const avgEntryPrice = position.positionHistory?.avgEntryPrice
+			? formatNumber(position.positionHistory?.avgEntryPrice)
 			: '';
 		const dollarEntry = formatDollars(avgEntryPrice ?? zeroBN, { suggestDecimals: true });
-		const dollarCurrent = formatNumber(marketPrice);
+		const dollarCurrent = formatNumber(position.marketPrice ?? zeroBN);
 		const text = getTwitterText(side, marketName, leverage, pnlPct, dollarEntry, dollarCurrent);
 		window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
 	};

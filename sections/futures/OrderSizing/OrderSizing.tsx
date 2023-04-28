@@ -12,12 +12,11 @@ import {
 	selectPosition,
 	selectTradeSizeInputs,
 	selectCrossMarginOrderPrice,
-	selectFuturesType,
 	selectSelectedInputDenomination,
 	selectMaxUsdSizeInput,
-	selectCrossMarginMarginDelta,
 	selectLeverageSide,
 	selectAvailableOi,
+	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
@@ -32,23 +31,21 @@ import { DenominationToggle } from './DenominationToggle';
 
 type OrderSizingProps = {
 	isMobile?: boolean;
-	disabled?: boolean;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) => {
+const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 	const dispatch = useAppDispatch();
 
 	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs);
 
 	const position = useAppSelector(selectPosition);
-	const selectedAccountType = useAppSelector(selectFuturesType);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
-	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
 	const tradeSide = useAppSelector(selectLeverageSide);
 	const availableOi = useAppSelector(selectAvailableOi);
+	const isDisabled = useAppSelector(selectTradeSizeInputsDisabled);
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
@@ -92,12 +89,6 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 		[dispatch, assetInputType]
 	);
 
-	const isDisabled = useMemo(() => {
-		const remaining =
-			selectedAccountType === 'isolated_margin' ? position?.remainingMargin || zeroBN : marginDelta;
-		return remaining.lte(0) || disabled;
-	}, [position?.remainingMargin, disabled, selectedAccountType, marginDelta]);
-
 	const invalid = useMemo(() => {
 		return (
 			(assetInputType === 'usd' &&
@@ -120,6 +111,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ disabled, isMobile }) =>
 	return (
 		<OrderSizingContainer>
 			<InputHeaderRow
+				disabled={isDisabled}
 				label={
 					<InputTitle>
 						Size
