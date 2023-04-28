@@ -189,13 +189,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										accessor: 'pnl',
 										Cell: (cellProps: CellProps<typeof data[number]>) => (
 											<PnlContainer>
-												<Currency.Price
-													currencyKey="sUSD"
-													price={cellProps.row.original.pnl}
-													sign="$"
-													conversionRate={1}
-													colored={true}
-												/>
+												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
@@ -272,13 +266,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										accessor: 'pnl',
 										Cell: (cellProps: CellProps<typeof data[number]>) => (
 											<PnlContainer>
-												<ColorCodedPrice
-													currencyKey="sUSD"
-													price={cellProps.row.original.pnl}
-													$value={cellProps.row.original.pnl}
-													sign="$"
-													conversionRate={1}
-												/>
+												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
