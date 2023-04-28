@@ -998,7 +998,7 @@ export const fetchPositionHistoryForTrader = createAsyncThunk<
 		const networkId = selectNetwork(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
 		if (!futuresSupported) return;
-		const history = await sdk.futures.getPositionHistory(traderAddress);
+		const history = await sdk.futures.getCompletePositionHistory(traderAddress);
 		return { history: serializePositionHistory(history), networkId, address: traderAddress };
 	} catch (err) {
 		notifyError('Failed to fetch history for trader ' + traderAddress, err);
