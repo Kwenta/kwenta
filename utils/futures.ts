@@ -249,6 +249,7 @@ export const updatePositionUpnl = (
 			.mul(position.side === PositionSide.LONG ? -1 : 1)
 	);
 	const pnlPct = pnl.div(position.initialMargin.add(thisPositionHistory.netTransfers));
+	const accruedFunding = position.accruedFunding.add(thisPositionHistory.netFunding);
 
 	return {
 		...deserializedPositionDetails,
@@ -256,6 +257,7 @@ export const updatePositionUpnl = (
 			!!position && !!pnl && !!pnlPct
 				? {
 						...position,
+						accruedFunding,
 						pnl,
 						pnlPct,
 				  }
@@ -349,6 +351,7 @@ export const serializeCmBalanceInfo = (
 	return {
 		freeMargin: overview.freeMargin.toString(),
 		keeperEthBal: overview.keeperEthBal.toString(),
+		walletEthBal: overview.walletEthBal.toString(),
 		allowance: overview.allowance.toString(),
 	};
 };
@@ -359,6 +362,7 @@ export const unserializeCmBalanceInfo = (
 	return {
 		freeMargin: wei(balanceInfo.freeMargin),
 		keeperEthBal: wei(balanceInfo.keeperEthBal),
+		walletEthBal: wei(balanceInfo.walletEthBal),
 		allowance: wei(balanceInfo.allowance),
 	};
 };

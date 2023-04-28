@@ -8,7 +8,7 @@ import KwentaSDK from 'sdk';
 
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { KWENTA_TRACKING_CODE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
+import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import PerpsMarketABI from 'sdk/contracts/abis/PerpsV2Market.json';
@@ -428,15 +428,17 @@ export default class FuturesService {
 		if (!SUSD) throw new Error(UNSUPPORTED_NETWORK);
 
 		// TODO: EthCall
-		const [freeMargin, keeperEthBal, allowance] = await Promise.all([
+		const [freeMargin, keeperEthBal, walletEthBal, allowance] = await Promise.all([
 			crossMarginAccountContract.freeMargin(),
 			this.sdk.context.provider.getBalance(crossMarginAddress),
+			this.sdk.context.provider.getBalance(walletAddress),
 			SUSD.allowance(walletAddress, crossMarginAccountContract.address),
 		]);
 
 		return {
 			freeMargin: wei(freeMargin),
 			keeperEthBal: wei(keeperEthBal),
+			walletEthBal: wei(walletEthBal),
 			allowance: wei(allowance),
 		};
 	}
@@ -452,8 +454,8 @@ export default class FuturesService {
 
 		const orderIdBigNum = await crossMarginAccountContract.conditionalOrderId();
 		const orderId = orderIdBigNum.toNumber();
-		// Limit to the latest 100
-		const start = orderId > 100 ? orderId - 100 : 0;
+		// Limit to the latest 500
+		const start = orderId > ORDERS_FETCH_SIZE ? orderId - ORDERS_FETCH_SIZE : 0;
 
 		const orderCalls = Array(orderId)
 			.fill(0)
@@ -467,7 +469,7 @@ export default class FuturesService {
 			// Checks if the order is still pending
 			// Orders are never removed but all values set to zero so we check a zero value on price to filter pending
 			if (contractOrder && contractOrder.targetPrice.gt(0)) {
-				const order = mapConditionalOrderFromContract({ ...contractOrder, id: i }, account);
+				const order = mapConditionalOrderFromContract({ ...contractOrder, id: start + i }, account);
 				orders.push(order);
 			}
 		}
@@ -584,8 +586,13 @@ export default class FuturesService {
 
 	public async getIdleMarginInMarkets(accountOrEoa: string) {
 		const markets = this.markets ?? (await this.getMarkets());
+		const filteredMarkets = markets.filter((m) => !m.isSuspended);
 		const marketParams =
-			markets?.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market })) ?? [];
+			filteredMarkets?.map((m) => ({
+				asset: m.asset,
+				marketKey: m.marketKey,
+				address: m.market,
+			})) ?? [];
 		const positions = await this.getFuturesPositions(accountOrEoa, marketParams);
 		const positionsWithIdleMargin = positions.filter(
 			(p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0)
@@ -597,7 +604,7 @@ export default class FuturesService {
 		return {
 			totalIdleInMarkets: idleInMarkets,
 			marketsWithIdleMargin: positionsWithIdleMargin.reduce<MarketWithIdleMargin[]>((acc, p) => {
-				const market = markets.find((m) => m.marketKey === p.marketKey);
+				const market = filteredMarkets.find((m) => m.marketKey === p.marketKey);
 
 				if (market) {
 					acc.push({

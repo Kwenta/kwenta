@@ -71,7 +71,7 @@
 		},
 		"hero": {
 			"title": "TRADE SYNTHETIC PERPETUALS",
-			"copy": "Gain exposure to a variety of assets with up to <0>25x leverage</0> and <0>deep liquidity</0>"
+			"copy": "Gain exposure to a variety of assets with up to <0>50x leverage</0> and <0>deep liquidity</0>"
 		},
 		"assets": {
 			"title": "UNIQUE MARKETS",
@@ -451,7 +451,7 @@
 				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
-				"pnl": "Unrealized P&L",
+				"pnl": "uP&L",
 				"notionalValue": "Size",
 				"liquidationPrice": "Liq. Price",
 				"no-result": "You have no open positions",
@@ -542,7 +542,7 @@
 				"title": "Kwenta Trading Rewards",
 				"copy": "Earn  $KWENTA rewards in proportion to total fees paid."
 			},
-			"kwenta-rewards": {
+			"op-rewards": {
 				"title": "Kwenta OP Rewards",
 				"copy": "Earn a share of $OP rewards issued by Kwenta."
 			},
@@ -594,8 +594,8 @@
 					"trading-reward": "Trading Rewards:",
 					"not-eligible": "Eligible",
 					"eligible": "Eligible",
-					"stake-to-earn": "Trade to start earning <0>$KWENTA</0> rewards",
-					"stake-to-start": "Trade to start earning <0>$KWENTA</0> rewards",
+					"stake-to-earn": "Trade to earn <0>$KWENTA</0> and <0>$OP</> rewards",
+					"stake-to-start": "Trade to earn <0>$KWENTA</0> and <0>$OP</> rewards",
 					"learn-more": "Learn More"
 				},
 				"escrow": {
@@ -894,6 +894,8 @@
 						"close-order": "Close position",
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
 						"disabled-min-margin": "Minimum market margin of $50 required",
+						"disabled-eth-bal": "Min ETH {{depositAmount}} balance required",
+						"eth-bal-warning": "The limit order service requires some ETH to cover gas. The 0.01 ETH deposit will cover many orders and you can withdraw any unused balance.",
 						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool."
 					}
 				},

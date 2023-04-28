@@ -2,7 +2,7 @@ import { createMedia } from '@artsy/fresnel';
 import mapValues from 'lodash/mapValues';
 import { generateMedia } from 'styled-media-query';
 
-type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 type Breakpoints = Record<Breakpoint, number>;
 
 export const breakpoints: Breakpoints = {
@@ -11,6 +11,7 @@ export const breakpoints: Breakpoints = {
 	md: 768,
 	lg: 1150,
 	xl: 1300,
+	xxl: 1500,
 };
 
 // match fresnel media queries behavior with styled-media-query (e.g - 480 will be 479 using fresnel, so we +1)
@@ -29,6 +30,7 @@ export const media = generateMedia({
 	mdUp: `${breakpoints.md + 1}px`,
 	lg: `${breakpoints.lg}px`,
 	xl: `${breakpoints.xl}px`,
+	xxl: `${breakpoints.xxl}px`,
 });
 
 export const mediaStyles = AppMedia.createMediaStyle();

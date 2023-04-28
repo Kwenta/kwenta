@@ -620,12 +620,19 @@ export const selectRemainingMarketMargin = createSelector(selectPosition, (posit
 	return position.remainingMargin;
 });
 
-export const selectIdleMarginInMarkets = createSelector(selectCrossMarginPositions, (positions) => {
-	const idleInMarkets = positions
-		.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
-		.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
-	return idleInMarkets;
-});
+export const selectIdleMarginInMarkets = createSelector(
+	selectCrossMarginPositions,
+	selectMarkets,
+	(positions, markets) => {
+		const idleInMarkets = positions
+			.filter((p) => {
+				return !markets.find((m) => m.marketKey === p.marketKey)?.isSuspended;
+			})
+			.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
+			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
+		return idleInMarkets;
+	}
+);
 
 export const selectIdleMargin = createSelector(
 	selectIdleMarginInMarkets,
@@ -742,6 +749,10 @@ export const selectKeeperEthBalance = createSelector(selectCrossMarginAccountDat
 	wei(account?.balanceInfo.keeperEthBal || 0)
 );
 
+export const selectWalletEthBalance = createSelector(selectCrossMarginAccountData, (account) =>
+	wei(account?.balanceInfo.walletEthBal || 0)
+);
+
 export const selectCrossMarginTradeFees = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
 	(fees) => {
@@ -756,12 +767,33 @@ export const selectSmartMarginKeeperDeposit = createSelector(selectCrossMarginTr
 	return fees.keeperEthDeposit;
 });
 
+export const selectKeeperDepositExceedsBal = createSelector(
+	selectCrossMarginTradeFees,
+	selectWalletEthBalance,
+	({ keeperEthDeposit }, walletEthBalance) => {
+		return keeperEthDeposit.gt(walletEthBalance);
+	}
+);
+
 export const selectTradeSizeInputs = createSelector(
 	selectFuturesType,
 	selectCrossMarginTradeInputs,
 	selectIsolatedMarginTradeInputs,
 	(type, crossMarginInputs, isolatedInputs) => {
 		return type === 'cross_margin' ? crossMarginInputs : isolatedInputs;
+	}
+);
+
+export const selectTradeSizeInputsDisabled = createSelector(
+	selectMarginDeltaInputValue,
+	selectFuturesType,
+	selectPosition,
+	(marginDeltaInput, selectedAccountType, position) => {
+		const remaining =
+			selectedAccountType === 'isolated_margin'
+				? position?.remainingMargin || zeroBN
+				: wei(marginDeltaInput || 0);
+		return remaining.lte(0);
 	}
 );
 
@@ -845,6 +877,11 @@ export const selectSlTpTradeInputs = createSelector(
 		stopLossPrice: tradeInputs.stopLossPrice || '',
 		takeProfitPrice: tradeInputs.takeProfitPrice || '',
 	})
+);
+
+export const selectNewTradeHasSlTp = createSelector(
+	(state: RootState) => state.futures.crossMargin.tradeInputs,
+	(tradeInputs) => Number(tradeInputs.stopLossPrice) > 0 || Number(tradeInputs.takeProfitPrice) > 0
 );
 
 export const selectSlTpModalInputs = createSelector(

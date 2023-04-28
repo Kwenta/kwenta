@@ -18,6 +18,7 @@ import {
 	FuturesMarketAsset,
 	MarginTransfer,
 	FuturesAccountType,
+	FuturesFilledPosition,
 } from 'sdk/types/futures';
 import { PricesInfo } from 'state/prices/types';
 import { QueryStatus } from 'state/types';
@@ -160,6 +161,7 @@ export type CrossMarginBalanceInfo<T = Wei> = {
 	freeMargin: T;
 	keeperEthBal: T;
 	allowance: T;
+	walletEthBal: T;
 };
 
 export type CrossMarginTradeFees<T = Wei> = {
@@ -352,6 +354,13 @@ export type TradePreviewParams = {
 
 export type DebouncedPreviewParams = TradePreviewParams & {
 	debounceCount: number;
+};
+
+export type SharePositionParams = {
+	asset?: FuturesMarketAsset;
+	position?: FuturesFilledPosition;
+	positionHistory?: FuturesPositionHistory;
+	marketPrice?: Wei;
 };
 
 export const futuresPositionKeys = new Set([

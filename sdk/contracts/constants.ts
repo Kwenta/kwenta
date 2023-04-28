@@ -44,7 +44,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		420: '0x0dde87714C3bdACB93bB1d38605aFff209a85998',
 	},
 	PerpsV2MarketData: {
-		10: '0x58e6227510F83d3F45B339F2f7A05a699fDEE6D4',
+		10: '0x340B5d664834113735730Ad4aFb3760219Ad9112',
 		420: '0xcE2dC389fc8Be231beECED1D900881e38596d7b2',
 	},
 	PerpsV2MarketSettings: {
@@ -128,6 +128,9 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	},
 	OpRewards: {
 		10: '0x1964cF9d0c5c268DcF5a5d37F13600483237f6F5',
+	},
+	SnxOpRewards: {
+		10: '0xD301BCC5D3229A0a6400F1030c382A5d503931E1',
 	},
 	BatchClaimer: {
 		10: '0x6Fd879830D9b1EE5d4f9ef12f8D5deE916bebD0b',

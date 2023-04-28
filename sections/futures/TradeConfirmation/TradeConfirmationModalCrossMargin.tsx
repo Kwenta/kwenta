@@ -6,6 +6,7 @@ import {
 	selectCrossMarginTradeFees,
 	selectIsConditionalOrder,
 	selectMarketInfo,
+	selectNewTradeHasSlTp,
 	selectSmartMarginAllowanceValid,
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
@@ -22,6 +23,7 @@ export default function TradeConfirmationModalCrossMargin() {
 	const tradeFees = useAppSelector(selectCrossMarginTradeFees);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const allowanceValid = useAppSelector(selectSmartMarginAllowanceValid);
+	const hasSlTp = useAppSelector(selectNewTradeHasSlTp);
 
 	const onDismiss = useCallback(() => {
 		dispatch(setOpenModal(null));
@@ -44,7 +46,7 @@ export default function TradeConfirmationModalCrossMargin() {
 			allowanceValid={allowanceValid}
 			tradeFee={tradeFees.delayedOrderFee}
 			executionFee={marketInfo?.keeperDeposit ?? zeroBN}
-			keeperFee={isConditionalOrder ? tradeFees.keeperEthDeposit : null}
+			keeperFee={isConditionalOrder || hasSlTp ? tradeFees.keeperEthDeposit : null}
 		/>
 	);
 }

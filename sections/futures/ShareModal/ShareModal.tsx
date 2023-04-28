@@ -6,7 +6,7 @@ import MobilePNLGraphicPNG from 'assets/png/mobile-pnl-graphic.png';
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
 import BaseModal from 'components/BaseModal';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { FuturesPosition } from 'sdk/types/futures';
+import { SharePositionParams } from 'state/futures/types';
 import media from 'styles/media';
 
 import AmountContainer from './AmountContainer';
@@ -14,11 +14,11 @@ import PositionMetadata from './PositionMetadata';
 import ShareModalButton from './ShareModalButton';
 
 type ShareModalProps = {
-	position: FuturesPosition | null | undefined;
+	sharePosition: SharePositionParams;
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ShareModal: FC<ShareModalProps> = ({ position, setShowShareModal }) => {
+const ShareModal: FC<ShareModalProps> = ({ sharePosition, setShowShareModal }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -38,10 +38,13 @@ const ShareModal: FC<ShareModalProps> = ({ position, setShowShareModal }) => {
 								<PNLImage src={MobilePNLGraphicPNG} aria-label="pnl-graphic" />
 							</MobileOrTabletView>
 						</PNLImageFrame>
-						<AmountContainer position={position} />
-						<PositionMetadata />
+						<AmountContainer asset={sharePosition.asset} position={sharePosition.position} />
+						<PositionMetadata
+							positionHistory={sharePosition.positionHistory}
+							marketPrice={sharePosition.marketPrice}
+						/>
 					</PNLGraphic>
-					<ShareModalButton position={position} />
+					<ShareModalButton position={sharePosition} />
 				</ModalWindow>
 			</BaseModal>
 		</>

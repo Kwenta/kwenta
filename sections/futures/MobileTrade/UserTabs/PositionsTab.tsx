@@ -1,7 +1,8 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import Currency from 'components/Currency';
 import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
@@ -13,6 +14,7 @@ import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
+import ShareModal from 'sections/futures/ShareModal';
 import { setShowPositionModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
@@ -21,9 +23,12 @@ import {
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
+	selectMarkPrices,
 	selectPositionHistory,
 } from 'state/futures/selectors';
+import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { zeroBN } from 'utils/formatters/number';
 
 import TradePanelDrawer from '../drawers/TradePanelDrawer';
 
@@ -39,8 +44,11 @@ const PositionsTab = () => {
 	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
+	const markPrices = useAppSelector(selectMarkPrices);
 	const accountType = useAppSelector(selectFuturesType);
 	const tradeDrawerPanelOpen = useAppSelector(({ futures }) => futures.tradePanelDrawerOpen);
+	const [showShareModal, setShowShareModal] = useState(false);
+	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null);
 
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
@@ -50,12 +58,19 @@ const PositionsTab = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
+				const markPrice = markPrices[market?.marketKey!] ?? zeroBN;
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
+					share: {
+						asset: position.asset,
+						position: position.position!,
+						positionHistory: thisPositionHistory!,
+						marketPrice: markPrice,
+					},
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -66,6 +81,7 @@ const PositionsTab = () => {
 		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
+		markPrices,
 		currentMarket,
 	]);
 
@@ -84,6 +100,11 @@ const PositionsTab = () => {
 		},
 		[dispatch]
 	);
+
+	const handleOpenShareModal = useCallback((share: SharePositionParams) => {
+		setSharePosition(share);
+		setShowShareModal((s) => !s);
+	}, []);
 
 	return (
 		<PositionsTabContainer>
@@ -111,11 +132,17 @@ const PositionsTab = () => {
 									</Body>
 								</div>
 							</FlexDiv>
-							<div>
+							<FlexDivRowCentered style={{ columnGap: '5px' }}>
 								<Pill size="medium" onClick={handleOpenPositionCloseModal(row.market.marketKey)}>
 									Close
 								</Pill>
-							</div>
+								<Pill size="medium" onClick={() => handleOpenShareModal(row.share)}>
+									<FlexDivRowCentered>
+										<UploadIcon width={6} style={{ marginRight: '2px', marginBottom: '1px' }} />
+										Share
+									</FlexDivRowCentered>
+								</Pill>
+							</FlexDivRowCentered>
 						</PositionMeta>
 						<PositionRow>
 							<Body color="secondary">Size</Body>
@@ -127,8 +154,26 @@ const PositionsTab = () => {
 								<Currency.Price
 									price={row.position.notionalValue}
 									formatOptions={row.position.notionalValue.gte(1e6) ? { truncate: true } : {}}
-									side="secondary"
+									colorType="secondary"
 								/>
+								{accountType === 'cross_margin' && (
+									<>
+										<Spacer width={5} />
+										<Pill
+											size="medium"
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_position_size',
+														marketKey: row.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
+									</>
+								)}
 							</FlexDivRowCentered>
 						</PositionRow>
 						<PositionRow>
@@ -150,6 +195,24 @@ const PositionsTab = () => {
 							<Body color="secondary">Market Margin</Body>
 							<FlexDivRowCentered>
 								<NumericValue value={row.position.initialMargin} />
+								{accountType === 'cross_margin' && (
+									<>
+										<Spacer width={5} />
+										<Pill
+											size="medium"
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_position_margin',
+														marketKey: row.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
+									</>
+								)}
 							</FlexDivRowCentered>
 						</PositionRow>
 						<PositionRow>
@@ -157,6 +220,10 @@ const PositionsTab = () => {
 							<FlexDivRowCentered>
 								<NumericValue value={row.position.leverage} suffix="x" />
 							</FlexDivRowCentered>
+						</PositionRow>
+						<PositionRow>
+							<Body color="secondary">Liquidation</Body>
+							<Currency.Price price={row.position.liquidationPrice} colorType="preview" />
 						</PositionRow>
 						<PositionRow>
 							<Body color="secondary">Unrealized PnL</Body>
@@ -174,22 +241,26 @@ const PositionsTab = () => {
 								{row.stopLoss === undefined ? (
 									<Body color="secondary">{NO_VALUE}</Body>
 								) : (
-									<Currency.Price price={row.stopLoss} side="secondary" />
+									<Currency.Price price={row.stopLoss} colorType="secondary" />
 								)}
-								<Spacer width={5} />
-								<Pill
-									size="medium"
-									onClick={() =>
-										dispatch(
-											setShowPositionModal({
-												type: 'futures_edit_stop_loss_take_profit',
-												marketKey: row.market.marketKey,
-											})
-										)
-									}
-								>
-									Edit
-								</Pill>
+								{accountType === 'cross_margin' && (
+									<>
+										<Spacer width={5} />
+										<Pill
+											size="medium"
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_edit_stop_loss_take_profit',
+														marketKey: row.market.marketKey,
+													})
+												)
+											}
+										>
+											Edit
+										</Pill>
+									</>
+								)}
 							</FlexDivRowCentered>
 						</PositionRow>
 					</PositionItem>
@@ -197,6 +268,9 @@ const PositionsTab = () => {
 			)}
 			{tradeDrawerPanelOpen && (
 				<TradePanelDrawer open={tradeDrawerPanelOpen} closeDrawer={handleCloseDrawer} />
+			)}
+			{showShareModal && (
+				<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
 			)}
 		</PositionsTabContainer>
 	);
@@ -234,6 +308,7 @@ const PositionItem = styled.div`
 const PositionRow = styled.div`
 	display: flex;
 	justify-content: space-between;
+	min-height: 22px;
 
 	&:not(:last-of-type) {
 		margin-bottom: 10px;

@@ -85,7 +85,6 @@ import {
 	setIsolatedMarginTradeInputs,
 	setIsolatedTradePreview,
 	setLeverageSide,
-	setOrderType,
 	setTransactionEstimate,
 	setCrossMarginEditPositionInputs,
 	setIsolatedMarginEditPositionInputs,
@@ -963,18 +962,6 @@ export const editTradeOrderPrice = (price: string): AppThunk => (dispatch, getSt
 	}
 };
 
-export const fetchKeeperEthBalance = createAsyncThunk<
-	{ balance: string; account: string; network: NetworkId } | undefined,
-	void,
-	ThunkConfig
->('futures/fetchKeeperEthBalance', async (_, { getState, extra: { sdk } }) => {
-	const account = selectCrossMarginAccount(getState());
-	const network = selectNetwork(getState());
-	if (!account) return;
-	const bal = await sdk.futures.getCrossMarginKeeperBalance(account);
-	return { balance: bal.toString(), account, network };
-});
-
 export const fetchFuturesPositionHistory = createAsyncThunk<
 	| {
 			accountType: FuturesAccountType;
@@ -994,7 +981,7 @@ export const fetchFuturesPositionHistory = createAsyncThunk<
 		const wallet = selectWallet(getState());
 		const futuresSupported = selectFuturesSupportedNetwork(getState());
 		if (!wallet || !account || !futuresSupported) return;
-		const history = await sdk.futures.getPositionHistory(wallet);
+		const history = await sdk.futures.getPositionHistory(account);
 		return { accountType, account, wallet, networkId, history: serializePositionHistory(history) };
 	} catch (err) {
 		notifyError('Failed to fetch position history', err);
@@ -1266,11 +1253,10 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 		const marketInfo = selectMarketInfo(getState());
 		const desiredFill = selectDesiredTradeFillPrice(getState());
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
-
-		if (!marketInfo) throw new Error('Market info not found');
-		if (!account) throw new Error('Account not connected');
-
 		try {
+			if (!marketInfo) throw new Error('Market info not found');
+			if (!account) throw new Error('Account not connected');
+
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1286,7 +1272,6 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
-			dispatch(setOrderType('delayed_offchain'));
 			dispatch(setOpenModal(null));
 			dispatch(clearTradeInputs());
 			dispatch(fetchBalances());

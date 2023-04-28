@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
+import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import Currency from 'components/Currency';
-import { FlexDivRowCentered } from 'components/layout/flex';
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
@@ -14,6 +15,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import {
@@ -22,11 +24,15 @@ import {
 	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
+	selectMarkPrices,
 	selectPositionHistory,
 } from 'state/futures/selectors';
+import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatPercent } from 'utils/formatters/number';
+import media from 'styles/media';
+import { formatPercent, zeroBN } from 'utils/formatters/number';
 
+import ShareModal from '../ShareModal';
 import TableMarketDetails from './TableMarketDetails';
 
 type FuturesPositionTableProps = {
@@ -47,7 +53,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	const positionHistory = useAppSelector(selectPositionHistory);
 	const currentMarket = useAppSelector(selectMarketAsset);
 	const futuresMarkets = useAppSelector(selectMarkets);
+	const markPrices = useAppSelector(selectMarkPrices);
 	const accountType = useAppSelector(selectFuturesType);
+	const [showShareModal, setShowShareModal] = useState(false);
+	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null);
 
 	let data = useMemo(() => {
 		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
@@ -57,12 +66,19 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
+				const markPrice = markPrices[market?.marketKey!] ?? zeroBN;
 				return {
 					market: market!,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
+					share: {
+						asset: position.asset,
+						position: position.position!,
+						positionHistory: thisPositionHistory!,
+						marketPrice: markPrice,
+					},
 				};
 			})
 			.filter(({ position, market }) => !!position && !!market)
@@ -73,8 +89,14 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
+		markPrices,
 		currentMarket,
 	]);
+
+	const handleOpenShareModal = useCallback((share: SharePositionParams) => {
+		setSharePosition(share);
+		setShowShareModal((s) => !s);
+	}, []);
 
 	return (
 		<Container>
@@ -114,13 +136,13 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 										}
 									>
 										<TableMarketDetails
-											marketName={cellProps.row.original.market.marketName}
+											marketName={getDisplayAsset(cellProps.row.original.market.asset) ?? ''}
 											marketKey={cellProps.row.original.market.marketKey}
 										/>
 									</MarketDetailsContainer>
 								);
 							},
-							width: 120,
+							width: 100,
 						},
 						{
 							Header: (
@@ -145,7 +167,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									: {};
 
 								return (
-									<FlexDivRowCentered>
+									<ColWithButton>
 										<div>
 											<div>
 												<Currency.Price
@@ -156,7 +178,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											<Currency.Price
 												price={cellProps.row.original.position.notionalValue}
 												formatOptions={formatOptions}
-												side="secondary"
+												colorType="secondary"
 											/>
 										</div>
 										<Spacer width={10} />
@@ -175,7 +197,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 												Edit
 											</Pill>
 										)}
-									</FlexDivRowCentered>
+									</ColWithButton>
 								);
 							},
 							width: 90,
@@ -211,7 +233,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									<Currency.Price
 										price={cellProps.row.original.position.liquidationPrice}
 										formatOptions={{ suggestDecimals: true }}
-										side="preview"
+										colorType="preview"
 									/>
 								);
 							},
@@ -222,7 +244,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'margin',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<FlexDivRowCentered>
+									<ColWithButton>
 										<div>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
 											<NumericValue
@@ -246,7 +268,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 												Edit
 											</Pill>
 										)}
-									</FlexDivRowCentered>
+									</ColWithButton>
 								);
 							},
 							width: 115,
@@ -266,7 +288,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									</PnlContainer>
 								);
 							},
-							width: 100,
+							width: 90,
 						},
 						{
 							Header: <TableHeader>Funding</TableHeader>,
@@ -283,7 +305,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'tp-sl',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<FlexDivRowCentered>
+									<ColWithButton>
 										<div style={{ marginRight: 10 }}>
 											{cellProps.row.original.takeProfit === undefined ? (
 												<Body>{NO_VALUE}</Body>
@@ -314,7 +336,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 												Edit
 											</Pill>
 										)}
-									</FlexDivRowCentered>
+									</ColWithButton>
 								);
 							},
 							width: 110,
@@ -324,21 +346,39 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'pos',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<div>
-										<Pill
-											onClick={() =>
-												dispatch(
-													setShowPositionModal({
-														type: 'futures_close_position',
-														marketKey: cellProps.row.original.market.marketKey,
-													})
-												)
-											}
-											size="small"
-										>
-											Close
-										</Pill>
-									</div>
+									<>
+										<FlexDivRow style={{ columnGap: '5px' }}>
+											<div>
+												<Pill
+													onClick={() =>
+														dispatch(
+															setShowPositionModal({
+																type: 'futures_close_position',
+																marketKey: cellProps.row.original.market.marketKey,
+															})
+														)
+													}
+													size="small"
+												>
+													Close
+												</Pill>
+											</div>
+											<div>
+												<Pill
+													onClick={() => handleOpenShareModal(cellProps.row.original.share)}
+													size="small"
+												>
+													<FlexDivRowCentered>
+														<UploadIcon
+															width={6}
+															style={{ marginRight: '2px', marginBottom: '1px' }}
+														/>
+														Share
+													</FlexDivRowCentered>
+												</Pill>
+											</div>
+										</FlexDivRow>
+									</>
 								);
 							},
 							width: 90,
@@ -346,6 +386,9 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					]}
 				/>
 			</TableContainer>
+			{showShareModal && (
+				<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
+			)}
 		</Container>
 	);
 };
@@ -357,7 +400,7 @@ const Container = styled.div`
 `;
 
 const TableContainer = styled.div`
-	min-width: 1200px;
+	min-width: 820px;
 `;
 
 const PnlContainer = styled.div`
@@ -367,6 +410,16 @@ const PnlContainer = styled.div`
 
 const MarketDetailsContainer = styled.div`
 	cursor: pointer;
+`;
+
+const ColWithButton = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-content: center;
+	align-items: center;
+	${media.lessThan('xxl')`
+		display: block;
+	`}
 `;
 
 export default PositionsTable;
