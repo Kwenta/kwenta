@@ -136,6 +136,51 @@ export const queryPositionHistory = (sdk: KwentaSDK, account: string) => {
 	);
 };
 
+export const queryCompletePositionHistory = (sdk: KwentaSDK, account: string) => {
+	return getFuturesPositions(
+		sdk.futures.futuresGqlEndpoint,
+		{
+			where: {
+				account: account,
+			},
+			first: 99999,
+			orderBy: 'openTimestamp',
+			orderDirection: 'desc',
+		},
+		{
+			id: true,
+			lastTxHash: true,
+			openTimestamp: true,
+			closeTimestamp: true,
+			timestamp: true,
+			market: true,
+			marketKey: true,
+			asset: true,
+			account: true,
+			abstractAccount: true,
+			accountType: true,
+			isOpen: true,
+			isLiquidated: true,
+			trades: true,
+			totalVolume: true,
+			size: true,
+			initialMargin: true,
+			margin: true,
+			pnl: true,
+			feesPaid: true,
+			netFunding: true,
+			pnlWithFeesPaid: true,
+			netTransfers: true,
+			totalDeposits: true,
+			fundingIndex: true,
+			entryPrice: true,
+			avgEntryPrice: true,
+			lastPrice: true,
+			exitPrice: true,
+		}
+	);
+};
+
 export const queryIsolatedMarginTransfers = async (sdk: KwentaSDK, account: string) => {
 	const response = await request(sdk.futures.futuresGqlEndpoint, ISOLATED_MARGIN_FRAGMENT, {
 		walletAddress: account,
