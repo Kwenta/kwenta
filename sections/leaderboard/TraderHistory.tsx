@@ -347,11 +347,6 @@ const valueColor = css<{ $value: WeiSource }>`
 			: props.theme.colors.selectedTheme.button.text.primary};
 `;
 
-const ColorCodedPrice = styled(Currency.Price)<{ $value: WeiSource }>`
-	align-items: right;
-	${valueColor}
-`;
-
 const StyledValue = styled.div<{ $value: WeiSource }>`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
