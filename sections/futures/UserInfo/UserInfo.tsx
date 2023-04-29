@@ -7,7 +7,6 @@ import TransfersIcon from 'assets/svg/futures/deposit-withdraw-arrows.svg';
 import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
-import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import TabButton from 'components/Button/TabButton';
 import Spacer from 'components/Spacer';
 import { TabPanel } from 'components/Tab';
@@ -26,7 +25,6 @@ import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks';
 import { selectWallet } from 'state/wallet/selectors';
 
 import ProfitCalculator from '../ProfitCalculator';
-import ShareModal from '../ShareModal';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
 import ConditionalOrdersTable from './ConditionalOrdersTable';
@@ -64,8 +62,6 @@ const UserInfo: React.FC = memo(() => {
 		disabled: !walletAddress,
 	});
 
-	const [showShareModal, setShowShareModal] = useState(false);
-	const [hasOpenPosition, setHasOpenPosition] = useState(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState(false);
 
 	const tabQuery = useMemo(() => {
@@ -82,10 +78,6 @@ const UserInfo: React.FC = memo(() => {
 
 	const handleOpenProfitCalc = useCallback(() => {
 		setOpenProfitCalcModal((s) => !s);
-	}, []);
-
-	const handleOpenShareModal = useCallback(() => {
-		setShowShareModal((s) => !s);
 	}, []);
 
 	const refetchTrades = useCallback(() => {
@@ -169,10 +161,6 @@ const UserInfo: React.FC = memo(() => {
 		]
 	);
 
-	useEffect(() => {
-		setHasOpenPosition(!!position?.position);
-	}, [position]);
-
 	const filteredTabs = TABS.filter((tab) => !tab.disabled);
 
 	return (
@@ -202,14 +190,6 @@ const UserInfo: React.FC = memo(() => {
 						icon={<CalculatorIcon />}
 						onClick={handleOpenProfitCalc}
 					/>
-					<TabButton
-						inline
-						key={FuturesTab.SHARE}
-						title="Share"
-						disabled={!hasOpenPosition}
-						icon={<UploadIcon />}
-						onClick={handleOpenShareModal}
-					/>
 				</TabRight>
 			</TabButtonsContainer>
 
@@ -230,7 +210,6 @@ const UserInfo: React.FC = memo(() => {
 			</TabPanel>
 
 			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}
-			{showShareModal && <ShareModal position={position} setShowShareModal={setShowShareModal} />}
 		</UserInfoContainer>
 	);
 });

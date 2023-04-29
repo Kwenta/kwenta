@@ -189,10 +189,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										accessor: 'pnl',
 										Cell: (cellProps: CellProps<typeof data[number]>) => (
 											<PnlContainer>
-												<ColorCodedPrice
-													price={cellProps.row.original.pnl}
-													$value={cellProps.row.original.pnl}
-												/>
+												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
@@ -269,13 +266,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										accessor: 'pnl',
 										Cell: (cellProps: CellProps<typeof data[number]>) => (
 											<PnlContainer>
-												<ColorCodedPrice
-													currencyKey="sUSD"
-													price={cellProps.row.original.pnl}
-													$value={cellProps.row.original.pnl}
-													sign="$"
-													conversionRate={1}
-												/>
+												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
@@ -354,11 +345,6 @@ const valueColor = css<{ $value: WeiSource }>`
 			: wei(props.$value).lt(0)
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.button.text.primary};
-`;
-
-const ColorCodedPrice = styled(Currency.Price)<{ $value: WeiSource }>`
-	align-items: right;
-	${valueColor}
 `;
 
 const StyledValue = styled.div<{ $value: WeiSource }>`

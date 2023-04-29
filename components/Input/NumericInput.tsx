@@ -39,6 +39,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 		maxLength = 'none',
 		className,
 		roundedCorner = true,
+		disabled,
 		...props
 	}) => {
 		const handleChange = useCallback(
@@ -66,6 +67,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 				$length={value.length}
 				className={className}
 				$roundedCorner={roundedCorner}
+				$disabled={disabled}
 			>
 				{left && (
 					<>
@@ -76,6 +78,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 				<input
 					data-testid={dataTestId}
 					value={value}
+					disabled={disabled}
 					type="text"
 					inputMode="decimal"
 					onChange={handleChange}
@@ -104,6 +107,7 @@ const InputContainer = styled.div<{
 	$suffix?: string;
 	$length: number;
 	$roundedCorner?: boolean;
+	$disabled?: boolean;
 }>`
 	display: flex;
 	align-items: center;
@@ -119,6 +123,7 @@ const InputContainer = styled.div<{
 	padding: 0 10px;
 	height: 38px;
 	box-sizing: border-box;
+	opacity: ${(props) => (props.$disabled ? 0.4 : 1)};
 
 	& > input {
 		display: flex;
