@@ -188,6 +188,7 @@ export default function ConditionalOrdersTable() {
 								<div style={{ display: 'flex' }}>
 									<Pill
 										color="red"
+										size="medium"
 										onClick={cellProps.row.original.cancel}
 										disabled={cancellingRow}
 									>

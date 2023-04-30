@@ -249,7 +249,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 									(isCancelling ? (
 										<ButtonLoader />
 									) : (
-										<Pill color="red" onClick={cellProps.row.original.onCancel}>
+										<Pill size="medium" color="red" onClick={cellProps.row.original.onCancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
 										</Pill>
 									))}
@@ -259,7 +259,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 									(isExecuting ? (
 										<ButtonLoader />
 									) : (
-										<Pill onClick={cellProps.row.original.onExecute}>
+										<Pill size="medium" onClick={cellProps.row.original.onExecute}>
 											{t('futures.market.user.open-orders.actions.execute')}
 										</Pill>
 									))}
