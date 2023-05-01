@@ -29,6 +29,8 @@ type BaseButtonProps = {
 	$active?: boolean;
 	$mono?: boolean;
 	$fontSize?: number;
+	$capitalized?: boolean;
+	$bold?: boolean;
 };
 
 export const border = css`
@@ -166,7 +168,14 @@ const BaseButton = styled.button<BaseButtonProps>`
 			}
 		`}
 
-	font-family: ${(props) => props.theme.fonts[props.$mono ? 'mono' : 'bold']};
+	font-family: ${(props) =>
+		props.theme.fonts[props.$mono ? 'mono' : props.$bold ? 'bold' : 'regular']};
+
+	${(props) =>
+		props.$capitalized &&
+		css`
+			font-variant: all-small-caps;
+		`}
 
 	${(props) =>
 		props.$variant === 'secondary' &&
@@ -229,6 +238,8 @@ type ButtonProps = {
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	isRounded?: boolean;
 	fontSize?: number;
+	capitalized?: boolean;
+	bold?: boolean;
 };
 
 const Button: FC<ButtonProps> = memo(
@@ -243,6 +254,8 @@ const Button: FC<ButtonProps> = memo(
 		noOutline = true,
 		size = 'medium',
 		variant = 'flat',
+		capitalized,
+		bold = true,
 		...props
 	}) => {
 		return (
@@ -253,6 +266,8 @@ const Button: FC<ButtonProps> = memo(
 				$variant={variant}
 				$fontSize={fontSize}
 				noOutline={noOutline}
+				$capitalized={capitalized}
+				$bold={bold}
 				{...props}
 			>
 				{loading ? (
