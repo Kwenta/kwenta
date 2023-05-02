@@ -40,8 +40,8 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({ attemptRetry }) => {
 					</CurrencyItemTitle>
 					<Currency.Icon
 						currencyKey={quoteCurrencyKey}
-						width="40px"
-						height="40px"
+						width={40}
+						height={40}
 						data-testid="currency-img"
 					/>
 				</CurrencyItem>

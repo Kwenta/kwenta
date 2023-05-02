@@ -8,8 +8,8 @@ export type TokenIconProps = {
 	currencyKey: string;
 	type?: 'synth' | 'asset' | 'token';
 	className?: string;
-	width?: string;
-	height?: string;
+	width?: number;
+	height?: number;
 	isDeprecated?: boolean;
 	style?: any;
 	url?: string;
@@ -38,8 +38,8 @@ const TokenImage = styled.img<{ $isDeprecated?: boolean }>`
 
 const Placeholder = styled(FlexDivCentered)<{
 	$isDeprecated?: boolean;
-	height?: string;
-	width?: string;
+	height?: string | number;
+	width?: string | number;
 }>`
 	border-radius: 100%;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -52,8 +52,8 @@ const Placeholder = styled(FlexDivCentered)<{
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin: 0 auto;
-	height: ${(props) => props.height};
-	width: ${(props) => props.width};
+	height: ${(props) => props.height}px;
+	width: ${(props) => props.width}px;
 `;
 
 export default TokenIcon;
