@@ -6,9 +6,10 @@ on:
 
 jobs:
   steps: 
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+    - name: Sentry
+      uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
     - name: Create Sentry release
       uses: getsentry/action-release@v1
