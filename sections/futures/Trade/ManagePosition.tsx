@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -32,7 +33,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { isZero } from 'utils/formatters/number';
-import { appAdjustedLeverage, orderPriceInvalidLabel } from 'utils/futures';
+import { orderPriceInvalidLabel } from 'utils/futures';
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
@@ -89,7 +90,8 @@ const ManagePosition: React.FC = () => {
 		if (orderError) {
 			return { message: orderError, show: 'error' };
 		}
-		const maxLeverage = appAdjustedLeverage(marketInfo);
+		const maxLeverage = marketInfo?.safeMaxLeverage ?? wei(1);
+
 		// TODO: Clean up errors and warnings
 		if (leverage.gt(maxLeverageValue))
 			return {
@@ -164,6 +166,7 @@ const ManagePosition: React.FC = () => {
 		previewStatus,
 		maxLeverageValue,
 		leverage,
+		marketInfo?.safeMaxLeverage,
 	]);
 
 	return (

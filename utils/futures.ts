@@ -216,6 +216,7 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 		marketSkew: market.marketSkew.toString(),
 		marketSize: market.marketSize.toString(),
 		maxLeverage: market.maxLeverage.toString(),
+		safeMaxLeverage: market.safeMaxLeverage.toString(),
 		minInitialMargin: market.minInitialMargin.toString(),
 		keeperDeposit: market.keeperDeposit.toString(),
 		marketLimitUsd: market.marketLimitUsd.toString(),
@@ -256,6 +257,7 @@ export const unserializeMarket = (m: FuturesMarket<string>): FuturesMarket => {
 		marketSkew: wei(m.marketSkew),
 		marketSize: wei(m.marketSize),
 		maxLeverage: wei(m.maxLeverage),
+		safeMaxLeverage: wei(m.safeMaxLeverage),
 		minInitialMargin: wei(m.minInitialMargin),
 		keeperDeposit: wei(m.keeperDeposit),
 		marketLimitUsd: wei(m.marketLimitUsd),
@@ -493,10 +495,4 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 			});
 			return acc;
 		}, [] as DelayedOrderWithDetails[]);
-};
-
-export const appAdjustedLeverage = (market?: FuturesMarket | null) => {
-	// 50x to 35x & 25x to 20x
-	if (market?.maxLeverage.gte(50)) return wei(35);
-	return wei(20);
 };

@@ -26,6 +26,8 @@ export const SL_TP_MAX_SIZE = weiFromWei(ethers.constants.MaxInt256);
 
 export const ORDERS_FETCH_SIZE = 500;
 
+export const SAFE_MAX_LEVERAGE_MULTIPLIER = 0.96;
+
 export const FUTURES_ENDPOINTS: Record<number, string> = {
 	10: FUTURES_ENDPOINT_OP_MAINNET,
 	420: FUTURES_ENDPOINT_OP_GOERLI,

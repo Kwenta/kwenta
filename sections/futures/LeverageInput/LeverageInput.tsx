@@ -55,15 +55,23 @@ const LeverageInput: FC = memo(() => {
 		return futuresType === 'isolated_margin' ? position?.remainingMargin : crossMarginMarginDelta;
 	}, [position?.remainingMargin, crossMarginMarginDelta, futuresType]);
 
+	const safeMaxLeverageString = useMemo(
+		() => (marketInfo?.safeMaxLeverage ? stripZeros(marketInfo.safeMaxLeverage.toString()) : '1'),
+		[marketInfo?.safeMaxLeverage]
+	);
+
 	const leverageButtons = useMemo(
-		() => (marketInfo?.maxLeverage.eq(50) ? ['2', '5', '25', '35'] : ['2', '5', '10', '20']),
-		[marketInfo?.maxLeverage]
+		() =>
+			marketInfo?.maxLeverage.eq(50)
+				? ['2', '5', '25', safeMaxLeverageString]
+				: ['2', '5', '10', safeMaxLeverageString],
+		[marketInfo?.maxLeverage, safeMaxLeverageString]
 	);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: string) => {
 			const isMax = leverageButtons.indexOf(newLeverage) === leverageButtons.length - 1;
-			const leverage = isMax ? stripZeros(maxLeverage.toString()) : newLeverage;
+			const leverage = isMax ? safeMaxLeverageString : newLeverage;
 			const remainingMargin = availableMargin ?? zeroBN;
 			const newTradeSize =
 				leverage === '' || marketPrice.eq(0) || remainingMargin.eq(0)
@@ -73,7 +81,7 @@ const LeverageInput: FC = memo(() => {
 			dispatch(editTradeSizeInput(String(floored), 'native'));
 			dispatch(setLeverageInput(leverage));
 		},
-		[marketPrice, dispatch, availableMargin, leverageButtons, maxLeverage]
+		[marketPrice, dispatch, availableMargin, leverageButtons, safeMaxLeverageString]
 	);
 
 	const truncateMaxLeverage = maxLeverage.gte(0)

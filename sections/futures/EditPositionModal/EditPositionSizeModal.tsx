@@ -28,7 +28,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
-import { appAdjustedLeverage } from 'utils/futures';
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
 import EditPositionSizeInput from './EditPositionSizeInput';
@@ -67,7 +66,12 @@ export default function EditPositionSizeModal() {
 		isFetchingPreview,
 	]);
 
-	const maxLeverage = useMemo(() => appAdjustedLeverage(market), [market]);
+	const maxLeverage = useMemo(() => market?.safeMaxLeverage ?? wei(1), [market]);
+
+	const resultingLeverage = useMemo(() => {
+		if (!preview || !position) return;
+		return preview.size.mul(marketPrice).div(position.remainingMargin).abs();
+	}, [preview, position, marketPrice]);
 
 	const maxNativeIncreaseValue = useMemo(() => {
 		if (!marketPrice || marketPrice.eq(0)) return zeroBN;
@@ -81,6 +85,17 @@ export default function EditPositionSizeModal() {
 		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? zeroBN;
 	}, [editType, maxNativeIncreaseValue, position?.position?.size]);
 
+	const minNativeValue = useMemo(() => {
+		if (editType === 0) return zeroBN;
+		// If a user is over max leverage they can only
+		// decrease to a value below max leverage
+		if (position?.position && position?.position?.leverage.gt(market.safeMaxLeverage)) {
+			const safeSize = position.remainingMargin.mul(market.safeMaxLeverage).div(marketPrice);
+			return position.position.size.sub(safeSize);
+		}
+		return zeroBN;
+	}, [market, position?.position, editType, marketPrice, position?.remainingMargin]);
+
 	const maxNativeValueWithBuffer = useMemo(() => {
 		if (editType === 1) return maxNativeValue;
 		return maxNativeValue.add(maxNativeValue.mul(0.001));
@@ -91,7 +106,18 @@ export default function EditPositionSizeModal() {
 		[nativeSizeDelta]
 	);
 
-	const maxLeverageExceeded = editType === 0 && position?.position?.leverage.gt(maxLeverage);
+	const maxLeverageExceeded = useMemo(() => {
+		return (
+			(editType === 0 && position?.position?.leverage.gt(maxLeverage)) ||
+			(editType === 1 && resultingLeverage?.gt(market?.safeMaxLeverage ?? zeroBN))
+		);
+	}, [
+		editType,
+		position?.position?.leverage,
+		maxLeverage,
+		market?.safeMaxLeverage,
+		resultingLeverage,
+	]);
 
 	const invalid = useMemo(() => sizeWei.abs().gt(maxNativeValueWithBuffer), [
 		sizeWei,
@@ -125,6 +151,7 @@ export default function EditPositionSizeModal() {
 			<Spacer height={20} />
 
 			<EditPositionSizeInput
+				minNativeValue={minNativeValue.lt(maxNativeValue) ? minNativeValue : zeroBN}
 				maxNativeValue={maxNativeValue}
 				type={editType === 0 ? 'increase' : 'decrease'}
 			/>
@@ -138,8 +165,8 @@ export default function EditPositionSizeModal() {
 				/>
 				<InfoBoxRow
 					valueNode={
-						preview?.leverage && (
-							<PreviewArrow showPreview>{preview.leverage.toString(2)}x</PreviewArrow>
+						resultingLeverage && (
+							<PreviewArrow showPreview>{resultingLeverage.toString(2)}x</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
@@ -147,7 +174,7 @@ export default function EditPositionSizeModal() {
 				/>
 				<InfoBoxRow
 					valueNode={
-						preview?.leverage && (
+						preview?.size && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
 									? formatNumber(preview.size.abs(), { suggestDecimals: true })

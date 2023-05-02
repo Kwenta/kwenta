@@ -34,7 +34,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
-import { appAdjustedLeverage } from 'utils/futures';
 
 import EditPositionMarginInput from './EditPositionMarginInput';
 
@@ -65,7 +64,7 @@ export default function EditPositionMarginModal() {
 		isFetchingPreview,
 	]);
 
-	const maxLeverage = appAdjustedLeverage(market);
+	const maxLeverage = useMemo(() => market?.safeMaxLeverage ?? wei(1), [market?.safeMaxLeverage]);
 
 	const maxWithdraw = useMemo(() => {
 		const maxSize = position?.remainingMargin.mul(maxLeverage);
@@ -77,7 +76,7 @@ export default function EditPositionMarginModal() {
 			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
 			? max
 			: position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0);
-	}, [position?.remainingMargin, position?.position?.notionalValue]);
+	}, [position?.remainingMargin, position?.position?.notionalValue, maxLeverage]);
 
 	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
 		idleMargin,
@@ -92,7 +91,10 @@ export default function EditPositionMarginModal() {
 
 	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount]);
 
-	const maxLeverageExceeded = transferType === 1 && position?.position?.leverage.gt(maxLeverage);
+	const maxLeverageExceeded = useMemo(
+		() => transferType === 1 && position?.position?.leverage.gt(maxLeverage),
+		[transferType, position?.position?.leverage, maxLeverage]
+	);
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));

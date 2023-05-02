@@ -36,7 +36,6 @@ import {
 	unserializeTrades,
 	unserializeConditionalOrders,
 	MarketAssetByKey,
-	appAdjustedLeverage,
 } from 'utils/futures';
 
 import {
@@ -534,7 +533,7 @@ export const selectMaxLeverage = createSelector(
 	(position, market, leverageSide, futuresType) => {
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
-		let adjustedMaxLeverage = appAdjustedLeverage(market);
+		let adjustedMaxLeverage = market?.safeMaxLeverage ?? wei(1);
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;

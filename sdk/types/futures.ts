@@ -44,6 +44,7 @@ export type FuturesMarket<T = Wei> = {
 	marketSkew: T;
 	marketSize: T;
 	maxLeverage: T;
+	safeMaxLeverage: T;
 	minInitialMargin: T;
 	keeperDeposit: T;
 	isSuspended: boolean;

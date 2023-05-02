@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { defaultAbiCoder, formatBytes32String, parseBytes32String } from 'ethers/lib/utils.js';
 
 import { DEFAULT_PRICE_IMPACT_DELTA_PERCENT } from 'constants/defaults';
+import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { ETH_UNIT } from 'constants/network';
 import {
 	FuturesAggregateStatResult,
@@ -19,6 +20,7 @@ import {
 	AGGREGATE_ASSET_KEY,
 	MAIN_ENDPOINTS,
 	SL_TP_MAX_SIZE,
+	SAFE_MAX_LEVERAGE_MULTIPLIER,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
@@ -654,4 +656,11 @@ export const getDefaultPriceImpact = (orderType: SmartMarginOrderType) => {
 		case 'stop_market':
 			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP);
 	}
+};
+
+export const appAdjustedLeverage = (marketLeverage: Wei) => {
+	const baseLeverage = marketLeverage?.gt(APP_MAX_LEVERAGE)
+		? wei(APP_MAX_LEVERAGE)
+		: marketLeverage;
+	return wei(baseLeverage).mul(SAFE_MAX_LEVERAGE_MULTIPLIER);
 };
