@@ -5,6 +5,7 @@ on:
     branches: [ main, dev ]
 
 jobs:
+  name: sentry
   runs-on: ubuntu-latest
 
 steps: 
