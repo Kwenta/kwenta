@@ -74,7 +74,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 		const invalid =
 			nativeSizeDelta !== '' &&
 			(maxNativeValueWithBuffer.lt(nativeSizeDeltaWei.abs()) ||
-				minNativeValue.gt(nativeSizeDeltaWei));
+				minNativeValue.gt(nativeSizeDeltaWei.abs()));
 
 		return (
 			<OrderSizingContainer>
