@@ -494,3 +494,9 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 			return acc;
 		}, [] as DelayedOrderWithDetails[]);
 };
+
+export const appAdjustedLeverage = (market?: FuturesMarket | null) => {
+	// 50x to 35x & 25x to 20x
+	if (market?.maxLeverage.gte(50)) return wei(35);
+	return wei(20);
+};

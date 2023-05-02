@@ -1,8 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
-import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
+import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
@@ -37,6 +36,7 @@ import {
 	unserializeTrades,
 	unserializeConditionalOrders,
 	MarketAssetByKey,
+	appAdjustedLeverage,
 } from 'utils/futures';
 
 import {
@@ -397,12 +397,6 @@ export const selectActiveSmartPositionsCount = createSelector(
 	}
 );
 
-export const selectTotalBuyingPower = createSelector(selectFuturesPositions, (positions) => {
-	return positions.reduce((acc, p) => {
-		return acc.add(p.accessibleMargin.mul(APP_MAX_LEVERAGE));
-	}, zeroBN);
-});
-
 export const selectTotalUnrealizedPnl = createSelector(selectFuturesPositions, (positions) => {
 	return positions.reduce((acc, p) => {
 		return acc.add(p.position?.pnl ?? zeroBN);
@@ -536,20 +530,11 @@ export const selectMaxLeverage = createSelector(
 	selectPosition,
 	selectMarketInfo,
 	selectLeverageSide,
-	selectOrderType,
 	selectFuturesType,
-	(position, market, leverageSide, orderType, futuresType) => {
+	(position, market, leverageSide, futuresType) => {
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
-		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
-		let adjustedMaxLeverage = marketMaxLeverage.gt(APP_MAX_LEVERAGE)
-			? APP_MAX_LEVERAGE
-			: marketMaxLeverage;
-
-		adjustedMaxLeverage =
-			futuresType === 'isolated_margin'
-				? adjustedMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
-				: adjustedMaxLeverage;
+		let adjustedMaxLeverage = appAdjustedLeverage(market);
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;

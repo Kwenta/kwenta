@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
-import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
@@ -33,7 +32,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { isZero } from 'utils/formatters/number';
-import { orderPriceInvalidLabel } from 'utils/futures';
+import { appAdjustedLeverage, orderPriceInvalidLabel } from 'utils/futures';
 
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
@@ -90,11 +89,12 @@ const ManagePosition: React.FC = () => {
 		if (orderError) {
 			return { message: orderError, show: 'error' };
 		}
+		const maxLeverage = appAdjustedLeverage(marketInfo);
 		// TODO: Clean up errors and warnings
 		if (leverage.gt(maxLeverageValue))
 			return {
 				show: 'warn',
-				message: `Max leverage ${APP_MAX_LEVERAGE.toString(0)}x exceeded`,
+				message: `Max leverage ${maxLeverage.toString(0)}x exceeded`,
 			};
 		if (marketInfo?.isSuspended)
 			return {

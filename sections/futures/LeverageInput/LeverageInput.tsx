@@ -23,7 +23,7 @@ import {
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { floorNumber, stripZeros, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
 
@@ -55,23 +55,27 @@ const LeverageInput: FC = memo(() => {
 		return futuresType === 'isolated_margin' ? position?.remainingMargin : crossMarginMarginDelta;
 	}, [position?.remainingMargin, crossMarginMarginDelta, futuresType]);
 
-	const onLeverageChange = useCallback(
-		(newLeverage: string) => {
-			const remainingMargin = availableMargin ?? zeroBN;
-			const newTradeSize =
-				newLeverage === '' || marketPrice.eq(0) || remainingMargin.eq(0)
-					? ''
-					: wei(Number(newLeverage)).mul(remainingMargin).div(marketPrice).toString();
-			const floored = floorNumber(Number(newTradeSize), 4);
-			dispatch(editTradeSizeInput(String(floored), 'native'));
-			dispatch(setLeverageInput(newLeverage));
-		},
-		[marketPrice, dispatch, availableMargin]
+	const leverageButtons = useMemo(
+		() => (marketInfo?.maxLeverage.eq(50) ? ['2', '5', '25', '35'] : ['2', '5', '10', '20']),
+		[marketInfo?.maxLeverage]
 	);
 
-	const leverageButtons = marketInfo?.maxLeverage.eq(50)
-		? ['2', '10', '25', '50']
-		: ['2', '5', '10', '25'];
+	const onLeverageChange = useCallback(
+		(newLeverage: string) => {
+			const isMax = leverageButtons.indexOf(newLeverage) === leverageButtons.length - 1;
+			const leverage = isMax ? stripZeros(maxLeverage.toString()) : newLeverage;
+			const remainingMargin = availableMargin ?? zeroBN;
+			const newTradeSize =
+				leverage === '' || marketPrice.eq(0) || remainingMargin.eq(0)
+					? ''
+					: wei(Number(leverage)).mul(remainingMargin).div(marketPrice).toString();
+			const floored = floorNumber(Number(newTradeSize), 4);
+			dispatch(editTradeSizeInput(String(floored), 'native'));
+			dispatch(setLeverageInput(leverage));
+		},
+		[marketPrice, dispatch, availableMargin, leverageButtons, maxLeverage]
+	);
+
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
 		: 10;

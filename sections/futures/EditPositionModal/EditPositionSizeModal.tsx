@@ -12,7 +12,6 @@ import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
@@ -29,6 +28,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+import { appAdjustedLeverage } from 'utils/futures';
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
 import EditPositionSizeInput from './EditPositionSizeInput';
@@ -67,13 +67,15 @@ export default function EditPositionSizeModal() {
 		isFetchingPreview,
 	]);
 
+	const maxLeverage = useMemo(() => appAdjustedLeverage(market), [market]);
+
 	const maxNativeIncreaseValue = useMemo(() => {
 		if (!marketPrice || marketPrice.eq(0)) return zeroBN;
-		const totalMax = position?.remainingMargin.mul(APP_MAX_LEVERAGE) ?? zeroBN;
+		const totalMax = position?.remainingMargin.mul(maxLeverage) ?? zeroBN;
 		let max = totalMax.sub(position?.position?.notionalValue ?? 0);
 		max = max.gt(0) ? max : zeroBN;
 		return max.div(marketPrice);
-	}, [marketPrice, position?.remainingMargin, position?.position?.notionalValue]);
+	}, [marketPrice, position?.remainingMargin, position?.position?.notionalValue, maxLeverage]);
 
 	const maxNativeValue = useMemo(() => {
 		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? zeroBN;
@@ -89,7 +91,7 @@ export default function EditPositionSizeModal() {
 		[nativeSizeDelta]
 	);
 
-	const maxLeverageExceeded = editType === 0 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
+	const maxLeverageExceeded = editType === 0 && position?.position?.leverage.gt(maxLeverage);
 
 	const invalid = useMemo(() => sizeWei.abs().gt(maxNativeValueWithBuffer), [
 		sizeWei,

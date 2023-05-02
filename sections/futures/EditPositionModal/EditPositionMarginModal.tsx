@@ -12,7 +12,7 @@ import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { APP_MAX_LEVERAGE, MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
@@ -34,6 +34,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
+import { appAdjustedLeverage } from 'utils/futures';
 
 import EditPositionMarginInput from './EditPositionMarginInput';
 
@@ -64,10 +65,12 @@ export default function EditPositionMarginModal() {
 		isFetchingPreview,
 	]);
 
+	const maxLeverage = appAdjustedLeverage(market);
+
 	const maxWithdraw = useMemo(() => {
-		const maxSize = position?.remainingMargin.mul(APP_MAX_LEVERAGE);
+		const maxSize = position?.remainingMargin.mul(maxLeverage);
 		const currentSize = position?.position?.notionalValue;
-		const max = maxSize?.sub(currentSize).div(APP_MAX_LEVERAGE) ?? wei(0);
+		const max = maxSize?.sub(currentSize).div(maxLeverage) ?? wei(0);
 		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0);
 		return max.lt(0)
 			? zeroBN
@@ -89,8 +92,7 @@ export default function EditPositionMarginModal() {
 
 	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount]);
 
-	const maxLeverageExceeded =
-		transferType === 1 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
+	const maxLeverageExceeded = transferType === 1 && position?.position?.leverage.gt(maxLeverage);
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));
