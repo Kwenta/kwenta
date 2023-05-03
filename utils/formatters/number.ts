@@ -208,7 +208,9 @@ export const suggestedDecimals = (value: WeiSource) => {
 	if (value >= 10) return 3;
 	if (value >= 0.1) return 4;
 	if (value >= 0.01) return 5;
-	return 6;
+	if (value >= 0.001) return 6;
+	if (value >= 0.0001) return 7;
+	return 8;
 };
 
 export const floorNumber = (num: WeiSource, decimals?: number) => {
