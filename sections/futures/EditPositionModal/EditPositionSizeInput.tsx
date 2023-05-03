@@ -19,11 +19,12 @@ import { stripZeros, formatNumber, suggestedDecimals, zeroBN } from 'utils/forma
 type OrderSizingProps = {
 	type: 'increase' | 'decrease';
 	maxNativeValue: Wei;
+	minNativeValue: Wei;
 	isMobile?: boolean;
 };
 
 const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
-	({ isMobile, type, maxNativeValue }) => {
+	({ isMobile, type, maxNativeValue, minNativeValue }) => {
 		const dispatch = useAppDispatch();
 
 		const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
@@ -70,7 +71,10 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 			return maxNativeValue.add(maxNativeValue.mul(0.001));
 		}, [maxNativeValue, type]);
 
-		const invalid = nativeSizeDelta !== '' && maxNativeValueWithBuffer.lt(nativeSizeDeltaWei.abs());
+		const invalid =
+			nativeSizeDelta !== '' &&
+			(maxNativeValueWithBuffer.lt(nativeSizeDeltaWei.abs()) ||
+				minNativeValue.gt(nativeSizeDeltaWei.abs()));
 
 		return (
 			<OrderSizingContainer>
@@ -90,7 +94,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 				/>
 				<Spacer height={16} />
 				<StyledSlider
-					minValue={0}
+					minValue={Number(minNativeValue.toString(suggestedDecimals(minNativeValue)))}
 					maxValue={Number(maxNativeValue.toString(suggestedDecimals(maxNativeValue)))}
 					step={getStep(maxNativeValue.toNumber())}
 					defaultValue={0}
