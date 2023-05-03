@@ -16,6 +16,7 @@ import {
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
 
@@ -494,23 +495,29 @@ export default class KwentaTokenService {
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
-				const response = await client.get(fileName);
-				const period = isOldDistributor
-					? index >= 5
-						? index >= 10
-							? index + 2
-							: index + 1
-						: index
-					: isOp
-					? isSnx
-						? index
-						: index + OP_REWARDS_CUTOFF_EPOCH
-					: index + TRADING_REWARDS_CUTOFF_EPOCH;
-				return { ...response.data, period };
+				try {
+					const response = await client.get(fileName);
+					const period = isOldDistributor
+						? index >= 5
+							? index >= 10
+								? index + 2
+								: index + 1
+							: index
+						: isOp
+						? isSnx
+							? index
+							: index + OP_REWARDS_CUTOFF_EPOCH
+						: index + TRADING_REWARDS_CUTOFF_EPOCH;
+					return { ...response.data, period };
+				} catch (err) {
+					logError(err);
+					return null;
+				}
 			})
 		);
 
 		const rewards = responses
+			.filter((response) => response !== null)
 			.map((d) => {
 				const reward = d.claims[walletAddress];
 
