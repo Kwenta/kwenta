@@ -48,6 +48,7 @@ import { FuturesMarketKey } from 'sdk/types/futures';
 
 export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
 	sAAVEPERP: AAVEIcon,
+	sADAPERP: ADAIcon,
 	sAPEPERP: APEIcon,
 	sAPTPERP: APTIcon,
 	sARBPERP: ARBIcon,
