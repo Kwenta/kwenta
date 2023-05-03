@@ -20,7 +20,6 @@ import {
 	AGGREGATE_ASSET_KEY,
 	MAIN_ENDPOINTS,
 	SL_TP_MAX_SIZE,
-	SAFE_MAX_LEVERAGE_MULTIPLIER,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
@@ -658,9 +657,9 @@ export const getDefaultPriceImpact = (orderType: SmartMarginOrderType) => {
 	}
 };
 
+// Returns the max leverage without buffer
+
 export const appAdjustedLeverage = (marketLeverage: Wei) => {
-	const baseLeverage = marketLeverage?.gt(APP_MAX_LEVERAGE)
-		? wei(APP_MAX_LEVERAGE)
-		: marketLeverage;
-	return wei(baseLeverage).mul(SAFE_MAX_LEVERAGE_MULTIPLIER);
+	if (marketLeverage.gte(APP_MAX_LEVERAGE)) return APP_MAX_LEVERAGE;
+	return wei(25);
 };

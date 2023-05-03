@@ -66,7 +66,7 @@ export default function EditPositionSizeModal() {
 		isFetchingPreview,
 	]);
 
-	const maxLeverage = useMemo(() => market?.safeMaxLeverage ?? wei(1), [market]);
+	const maxLeverage = useMemo(() => market?.appMaxLeverage ?? wei(1), [market?.appMaxLeverage]);
 
 	const resultingLeverage = useMemo(() => {
 		if (!preview || !position) return;
@@ -89,12 +89,12 @@ export default function EditPositionSizeModal() {
 		if (editType === 0) return zeroBN;
 		// If a user is over max leverage they can only
 		// decrease to a value below max leverage
-		if (position?.position && position?.position?.leverage.gt(market.safeMaxLeverage)) {
-			const safeSize = position.remainingMargin.mul(market.safeMaxLeverage).div(marketPrice);
+		if (position?.position && position?.position?.leverage.gt(maxLeverage)) {
+			const safeSize = position.remainingMargin.mul(maxLeverage).div(marketPrice);
 			return position.position.size.sub(safeSize);
 		}
 		return zeroBN;
-	}, [market, position?.position, editType, marketPrice, position?.remainingMargin]);
+	}, [maxLeverage, position?.position, editType, marketPrice, position?.remainingMargin]);
 
 	const maxNativeValueWithBuffer = useMemo(() => {
 		if (editType === 1) return maxNativeValue;
@@ -109,15 +109,9 @@ export default function EditPositionSizeModal() {
 	const maxLeverageExceeded = useMemo(() => {
 		return (
 			(editType === 0 && position?.position?.leverage.gt(maxLeverage)) ||
-			(editType === 1 && resultingLeverage?.gt(market?.safeMaxLeverage ?? zeroBN))
+			(editType === 1 && resultingLeverage?.gt(maxLeverage))
 		);
-	}, [
-		editType,
-		position?.position?.leverage,
-		maxLeverage,
-		market?.safeMaxLeverage,
-		resultingLeverage,
-	]);
+	}, [editType, position?.position?.leverage, maxLeverage, resultingLeverage]);
 
 	const invalid = useMemo(() => sizeWei.abs().gt(maxNativeValueWithBuffer), [
 		sizeWei,

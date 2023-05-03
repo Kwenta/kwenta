@@ -64,19 +64,17 @@ export default function EditPositionMarginModal() {
 		isFetchingPreview,
 	]);
 
-	const maxLeverage = useMemo(() => market?.safeMaxLeverage ?? wei(1), [market?.safeMaxLeverage]);
-
 	const maxWithdraw = useMemo(() => {
-		const maxSize = position?.remainingMargin.mul(maxLeverage);
+		const maxSize = position?.remainingMargin.mul(market?.appMaxLeverage ?? 1);
 		const currentSize = position?.position?.notionalValue;
-		const max = maxSize?.sub(currentSize).div(maxLeverage) ?? wei(0);
+		const max = maxSize?.sub(currentSize).div(market?.appMaxLeverage ?? 1) ?? wei(0);
 		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0);
 		return max.lt(0)
 			? zeroBN
 			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
 			? max
 			: position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0);
-	}, [position?.remainingMargin, position?.position?.notionalValue, maxLeverage]);
+	}, [position?.remainingMargin, position?.position?.notionalValue, market?.appMaxLeverage]);
 
 	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
 		idleMargin,
@@ -92,8 +90,8 @@ export default function EditPositionMarginModal() {
 	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount]);
 
 	const maxLeverageExceeded = useMemo(
-		() => transferType === 1 && position?.position?.leverage.gt(maxLeverage),
-		[transferType, position?.position?.leverage, maxLeverage]
+		() => transferType === 1 && position?.position?.leverage.gt(market?.appMaxLeverage ?? 1),
+		[transferType, position?.position?.leverage, market?.appMaxLeverage]
 	);
 
 	const orderError = useMemo(() => {

@@ -90,7 +90,7 @@ const ManagePosition: React.FC = () => {
 		if (orderError) {
 			return { message: orderError, show: 'error' };
 		}
-		const maxLeverage = marketInfo?.safeMaxLeverage ?? wei(1);
+		const maxLeverage = marketInfo?.appMaxLeverage ?? wei(1);
 
 		// TODO: Clean up errors and warnings
 		if (leverage.gt(maxLeverageValue))
@@ -166,7 +166,7 @@ const ManagePosition: React.FC = () => {
 		previewStatus,
 		maxLeverageValue,
 		leverage,
-		marketInfo?.safeMaxLeverage,
+		marketInfo?.appMaxLeverage,
 	]);
 
 	return (

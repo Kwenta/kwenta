@@ -15,7 +15,6 @@ import { setLeverageInput } from 'state/futures/reducer';
 import {
 	selectLeverageInput,
 	selectMarketPrice,
-	selectMarketInfo,
 	selectMaxLeverage,
 	selectPosition,
 	selectFuturesType,
@@ -23,7 +22,7 @@ import {
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, stripZeros, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
 
@@ -43,7 +42,6 @@ const LeverageInput: FC = memo(() => {
 	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const position = useAppSelector(selectPosition);
-	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const marketPrice = useAppSelector(selectMarketPrice);
 	const leverageInput = useAppSelector(selectLeverageInput);
@@ -55,33 +53,23 @@ const LeverageInput: FC = memo(() => {
 		return futuresType === 'isolated_margin' ? position?.remainingMargin : crossMarginMarginDelta;
 	}, [position?.remainingMargin, crossMarginMarginDelta, futuresType]);
 
-	const safeMaxLeverageString = useMemo(
-		() => (marketInfo?.safeMaxLeverage ? stripZeros(marketInfo.safeMaxLeverage.toString()) : '1'),
-		[marketInfo?.safeMaxLeverage]
-	);
-
 	const leverageButtons = useMemo(
-		() =>
-			marketInfo?.maxLeverage.eq(50)
-				? ['2', '5', '25', safeMaxLeverageString]
-				: ['2', '5', '10', safeMaxLeverageString],
-		[marketInfo?.maxLeverage, safeMaxLeverageString]
+		() => (maxLeverage.eq(50) ? ['2', '5', '25', '50'] : ['2', '5', '10', '25']),
+		[maxLeverage]
 	);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: string) => {
-			const isMax = leverageButtons.indexOf(newLeverage) === leverageButtons.length - 1;
-			const leverage = isMax ? safeMaxLeverageString : newLeverage;
 			const remainingMargin = availableMargin ?? zeroBN;
 			const newTradeSize =
-				leverage === '' || marketPrice.eq(0) || remainingMargin.eq(0)
+				newLeverage === '' || marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''
-					: wei(Number(leverage)).mul(remainingMargin).div(marketPrice).toString();
+					: wei(Number(newLeverage)).mul(remainingMargin).div(marketPrice).toString();
 			const floored = floorNumber(Number(newTradeSize), 4);
 			dispatch(editTradeSizeInput(String(floored), 'native'));
-			dispatch(setLeverageInput(leverage));
+			dispatch(setLeverageInput(newLeverage));
 		},
-		[marketPrice, dispatch, availableMargin, leverageButtons, safeMaxLeverageString]
+		[marketPrice, dispatch, availableMargin]
 	);
 
 	const truncateMaxLeverage = maxLeverage.gte(0)

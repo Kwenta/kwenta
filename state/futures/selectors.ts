@@ -533,7 +533,7 @@ export const selectMaxLeverage = createSelector(
 	(position, market, leverageSide, futuresType) => {
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
-		let adjustedMaxLeverage = market?.safeMaxLeverage ?? wei(1);
+		let adjustedMaxLeverage = market?.appMaxLeverage ?? wei(1);
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;
@@ -585,7 +585,8 @@ export const selectAvailableMargin = createSelector(
 		if (!marketInfo || !position) return zeroBN;
 		if (!position?.position) return position.remainingMargin;
 
-		let inaccessible = position.position.notionalValue.div(marketInfo.maxLeverage).abs() ?? zeroBN;
+		let inaccessible =
+			position.position.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? zeroBN;
 
 		// If the user has a position open, we'll enforce a min initial margin requirement.
 		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
@@ -1571,7 +1572,7 @@ export const selectPreviewAvailableMargin = createSelector(
 	(marketInfo, tradePreview, delayedOrderFee) => {
 		if (!marketInfo || !tradePreview) return zeroBN;
 
-		let inaccessible = tradePreview.notionalValue.div(marketInfo.maxLeverage).abs() ?? zeroBN;
+		let inaccessible = tradePreview.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? zeroBN;
 		const totalDeposit = !!delayedOrderFee.commitDeposit
 			? delayedOrderFee.commitDeposit.add(marketInfo.keeperDeposit)
 			: zeroBN;
@@ -1661,7 +1662,7 @@ export const selectPreviewMarginChange = createSelector(
 		const maxPositionSize =
 			!!tradePreview && !!marketInfo
 				? tradePreview.margin
-						.mul(marketInfo.maxLeverage)
+						.mul(marketInfo.appMaxLeverage)
 						.mul(tradePreview.side === PositionSide.LONG ? 1 : -1)
 				: null;
 
