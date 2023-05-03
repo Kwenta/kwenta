@@ -98,6 +98,15 @@ export enum FuturesMarketKey {
 	sAXSPERP = 'sAXSPERP',
 	sAUDPERP = 'sAUDPERP',
 	sGBPPERP = 'sGBPPERP',
+	sADAPERP = 'sADAPERP',
+	sAPTPERP = 'sAPTPERP',
+	sBCHPERP = 'sBCHPERP',
+	sCRVPERP = 'sCRVPERP',
+	sFILPERP = 'sFILPERP',
+	sGMXPERP = 'sGMXPERP',
+	sLDOPERP = 'sLDOPERP',
+	sLTCPERP = 'sLTCPERP',
+	sSHIBPERP = 'sSHIBPERP',
 }
 
 export enum FuturesMarketAsset {
@@ -125,6 +134,15 @@ export enum FuturesMarketAsset {
 	AXS = 'AXS',
 	AUD = 'AUD',
 	GBP = 'GBP',
+	ADA = 'ADA',
+	APT = 'APT',
+	BCH = 'BCH',
+	CRV = 'CRV',
+	FIL = 'FIL',
+	GMX = 'GMX',
+	LDO = 'LDO',
+	LTC = 'LTC',
+	SHIB = 'SHIB',
 }
 
 export interface FuturesMarketConfig {
