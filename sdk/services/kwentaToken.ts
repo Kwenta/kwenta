@@ -517,6 +517,7 @@ export default class KwentaTokenService {
 		);
 
 		const rewards = responses
+			.filter(Boolean)
 			.map((d) => {
 				const reward = d.claims[walletAddress];
 
