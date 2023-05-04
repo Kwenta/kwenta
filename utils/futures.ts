@@ -74,6 +74,15 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sAXSPERP]: FuturesMarketAsset.AXS,
 	[FuturesMarketKey.sAUDPERP]: FuturesMarketAsset.AUD,
 	[FuturesMarketKey.sGBPPERP]: FuturesMarketAsset.GBP,
+	[FuturesMarketKey.sAPTPERP]: FuturesMarketAsset.APT,
+	[FuturesMarketKey.sLDOPERP]: FuturesMarketAsset.LDO,
+	[FuturesMarketKey.sADAPERP]: FuturesMarketAsset.ADA,
+	[FuturesMarketKey.sGMXPERP]: FuturesMarketAsset.GMX,
+	[FuturesMarketKey.sFILPERP]: FuturesMarketAsset.FIL,
+	[FuturesMarketKey.sLTCPERP]: FuturesMarketAsset.LTC,
+	[FuturesMarketKey.sBCHPERP]: FuturesMarketAsset.BCH,
+	[FuturesMarketKey.sSHIBPERP]: FuturesMarketAsset.SHIB,
+	[FuturesMarketKey.sCRVPERP]: FuturesMarketAsset.CRV,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -101,6 +110,15 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.AXS]: FuturesMarketKey.sAXSPERP,
 	[FuturesMarketAsset.AUD]: FuturesMarketKey.sAUDPERP,
 	[FuturesMarketAsset.GBP]: FuturesMarketKey.sGBPPERP,
+	[FuturesMarketAsset.APT]: FuturesMarketKey.sAPTPERP,
+	[FuturesMarketAsset.LDO]: FuturesMarketKey.sLDOPERP,
+	[FuturesMarketAsset.ADA]: FuturesMarketKey.sADAPERP,
+	[FuturesMarketAsset.GMX]: FuturesMarketKey.sGMXPERP,
+	[FuturesMarketAsset.FIL]: FuturesMarketKey.sFILPERP,
+	[FuturesMarketAsset.LTC]: FuturesMarketKey.sLTCPERP,
+	[FuturesMarketAsset.BCH]: FuturesMarketKey.sBCHPERP,
+	[FuturesMarketAsset.SHIB]: FuturesMarketKey.sSHIBPERP,
+	[FuturesMarketAsset.CRV]: FuturesMarketKey.sCRVPERP,
 } as const;
 
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
@@ -128,6 +146,15 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.AXS]: 'Axie Infinity',
 	[FuturesMarketAsset.AUD]: 'Australian Dollar',
 	[FuturesMarketAsset.GBP]: 'Pound Sterling',
+	[FuturesMarketAsset.APT]: 'Aptos',
+	[FuturesMarketAsset.LDO]: 'Lido',
+	[FuturesMarketAsset.ADA]: 'Cardano',
+	[FuturesMarketAsset.GMX]: 'GMX',
+	[FuturesMarketAsset.FIL]: 'Filecoin',
+	[FuturesMarketAsset.LTC]: 'Litecoin',
+	[FuturesMarketAsset.BCH]: 'Bitcoin Cash',
+	[FuturesMarketAsset.SHIB]: 'Shiba Inu',
+	[FuturesMarketAsset.CRV]: 'Curve DAO',
 } as const;
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {};
@@ -215,7 +242,8 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 		marketDebt: market.marketDebt.toString(),
 		marketSkew: market.marketSkew.toString(),
 		marketSize: market.marketSize.toString(),
-		maxLeverage: market.maxLeverage.toString(),
+		contractMaxLeverage: market.contractMaxLeverage.toString(),
+		appMaxLeverage: market.appMaxLeverage.toString(),
 		minInitialMargin: market.minInitialMargin.toString(),
 		keeperDeposit: market.keeperDeposit.toString(),
 		marketLimitUsd: market.marketLimitUsd.toString(),
@@ -255,7 +283,8 @@ export const unserializeMarket = (m: FuturesMarket<string>): FuturesMarket => {
 		marketDebt: wei(m.marketDebt),
 		marketSkew: wei(m.marketSkew),
 		marketSize: wei(m.marketSize),
-		maxLeverage: wei(m.maxLeverage),
+		contractMaxLeverage: wei(m.contractMaxLeverage),
+		appMaxLeverage: wei(m.appMaxLeverage),
 		minInitialMargin: wei(m.minInitialMargin),
 		keeperDeposit: wei(m.keeperDeposit),
 		marketLimitUsd: wei(m.marketLimitUsd),

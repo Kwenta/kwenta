@@ -142,7 +142,9 @@ export default function ConditionalOrdersTable() {
 							return cellProps.row.original.currentPrice ? (
 								<div>
 									<ColoredPrice priceInfo={cellProps.row.original.currentPrice}>
-										{formatDollars(cellProps.row.original.currentPrice.price)}
+										{formatDollars(cellProps.row.original.currentPrice.price, {
+											suggestDecimals: true,
+										})}
 									</ColoredPrice>
 								</div>
 							) : (
@@ -158,7 +160,10 @@ export default function ConditionalOrdersTable() {
 						Cell: (cellProps: CellProps<any>) => {
 							return (
 								<div>
-									<Currency.Price price={cellProps.row.original.targetPrice} />
+									<Currency.Price
+										price={cellProps.row.original.targetPrice}
+										formatOptions={{ suggestDecimals: true }}
+									/>
 								</div>
 							);
 						},

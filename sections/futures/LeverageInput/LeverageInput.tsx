@@ -15,7 +15,6 @@ import { setLeverageInput } from 'state/futures/reducer';
 import {
 	selectLeverageInput,
 	selectMarketPrice,
-	selectMarketInfo,
 	selectMaxLeverage,
 	selectPosition,
 	selectFuturesType,
@@ -43,7 +42,6 @@ const LeverageInput: FC = memo(() => {
 	const dispatch = useAppDispatch();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const position = useAppSelector(selectPosition);
-	const marketInfo = useAppSelector(selectMarketInfo);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
 	const marketPrice = useAppSelector(selectMarketPrice);
 	const leverageInput = useAppSelector(selectLeverageInput);
@@ -54,6 +52,11 @@ const LeverageInput: FC = memo(() => {
 	const availableMargin = useMemo(() => {
 		return futuresType === 'isolated_margin' ? position?.remainingMargin : crossMarginMarginDelta;
 	}, [position?.remainingMargin, crossMarginMarginDelta, futuresType]);
+
+	const leverageButtons = useMemo(
+		() => (maxLeverage.eq(50) ? ['2', '5', '25', '50'] : ['2', '5', '10', '25']),
+		[maxLeverage]
+	);
 
 	const onLeverageChange = useCallback(
 		(newLeverage: string) => {
@@ -69,9 +72,6 @@ const LeverageInput: FC = memo(() => {
 		[marketPrice, dispatch, availableMargin]
 	);
 
-	const leverageButtons = marketInfo?.maxLeverage.eq(50)
-		? ['2', '10', '25', '50']
-		: ['2', '5', '10', '25'];
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
 		: 10;

@@ -90,7 +90,9 @@ const LiquidationRow = memo(() => {
 			title="Liquidation price"
 			color="preview"
 			value={
-				potentialTradeDetails?.liqPrice ? formatDollars(potentialTradeDetails.liqPrice) : NO_VALUE
+				potentialTradeDetails?.liqPrice
+					? formatDollars(potentialTradeDetails.liqPrice, { suggestDecimals: true })
+					: NO_VALUE
 			}
 		/>
 	);

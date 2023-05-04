@@ -50,6 +50,7 @@ import {
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
+	appAdjustedLeverage,
 	calculateFundingRate,
 	calculateVolumes,
 	ConditionalOrderResult,
@@ -187,7 +188,8 @@ export default class FuturesService {
 				},
 				marketDebt: wei(marketDebt),
 				marketSkew: wei(marketSkew),
-				maxLeverage: wei(maxLeverage),
+				contractMaxLeverage: wei(maxLeverage),
+				appMaxLeverage: appAdjustedLeverage(wei(maxLeverage)),
 				marketSize: wei(marketSize),
 				marketLimitUsd: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
 				marketLimitNative: wei(marketParameters[i].maxMarketValue),
