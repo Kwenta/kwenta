@@ -19,7 +19,7 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 		return [
 			{
 				label: 'Market',
-				value: trade.market,
+				value: trade.market.marketName,
 			},
 			{
 				label: 'Side',

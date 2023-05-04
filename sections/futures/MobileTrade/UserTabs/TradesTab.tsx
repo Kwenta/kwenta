@@ -88,7 +88,7 @@ const TradesTab = () => {
 					columns={[
 						{
 							Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
-							accessor: 'timestamp',
+							accessor: 'time',
 							Cell: (cellProps: CellProps<FuturesTrade>) => (
 								<GridDivCenteredRow>
 									<TimeDisplay value={cellProps.value} />
