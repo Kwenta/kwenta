@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { defaultAbiCoder, formatBytes32String, parseBytes32String } from 'ethers/lib/utils.js';
 
 import { DEFAULT_PRICE_IMPACT_DELTA_PERCENT } from 'constants/defaults';
+import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { ETH_UNIT } from 'constants/network';
 import {
 	FuturesAggregateStatResult,
@@ -654,4 +655,11 @@ export const getDefaultPriceImpact = (orderType: SmartMarginOrderType) => {
 		case 'stop_market':
 			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP);
 	}
+};
+
+// Returns the max leverage without buffer
+
+export const appAdjustedLeverage = (marketLeverage: Wei) => {
+	if (marketLeverage.gte(APP_MAX_LEVERAGE)) return APP_MAX_LEVERAGE;
+	return wei(25);
 };
