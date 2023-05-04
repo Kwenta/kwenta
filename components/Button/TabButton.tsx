@@ -11,6 +11,7 @@ export type TabButtonProps = {
 	detail?: string;
 	badgeCount?: number;
 	icon?: any;
+	iconOnly?: boolean;
 	active?: boolean;
 	titleIcon?: ReactNode;
 	disabled?: boolean;
@@ -50,10 +51,10 @@ const InnerButton: React.FC<TabButtonProps> = React.memo(
 );
 
 const TabButton: React.FC<TabButtonProps> = React.memo(
-	({ active, flat = false, onClick, ...props }) =>
+	({ active, flat = false, onClick, iconOnly, icon, ...props }) =>
 		props.inline ? (
-			<InlineTab active={active} onClick={onClick}>
-				<InnerButton {...props} />
+			<InlineTab active={active} onClick={onClick} $iconOnly={iconOnly}>
+				{iconOnly && icon ? <div>{icon}</div> : <InnerButton icon={icon} {...props} />}
 			</InlineTab>
 		) : (
 			<StyledButton
@@ -70,6 +71,7 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 
 const sharedStyle = css<{
 	active?: boolean;
+	$iconOnly?: boolean;
 	$vertical?: boolean;
 	$nofill?: boolean;
 	$flat?: boolean;
@@ -143,7 +145,7 @@ const sharedStyle = css<{
 
 	svg {
 		margin-top: 2px;
-		margin-right: ${(props) => (props.$vertical ? '0' : '7px')};
+		margin-right: ${(props) => (props.$vertical || props.$iconOnly ? '0' : '7px')};
 		path {
 			${(props) => (props.$nofill ? 'stroke' : 'fill')}: ${(props) =>
 				props.active
@@ -170,7 +172,7 @@ const InlineTab = styled.div`
 	${sharedStyle}
 	cursor: pointer;
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 10px 20px;
+	padding: 0px 20px;
 	transition: all 0.1s ease-in-out;
 `;
 

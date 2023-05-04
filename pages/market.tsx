@@ -171,9 +171,10 @@ const StyledFullHeightContainer = styled.div`
 	grid-gap: 0;
 	flex: 1;
 	height: calc(100% - 64px);
+	width: 100vw;
 	grid-template-columns: ${TRADE_PANEL_WIDTH_LG}px 1fr;
 	${media.lessThan('xxl')`
-	grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
+		grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
 	`}
 `;
 
