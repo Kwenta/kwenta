@@ -248,7 +248,7 @@ const TableContainer = styled.div`
 
 export const TableBody = styled.div`
 	overflow-y: auto;
-	overflow-x: hidden;
+	overflow-x: visible;
 `;
 
 export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`

@@ -308,6 +308,8 @@ const TitleText = styled.a`
 const StyledCell = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	display: flex;
+	padding-top: 5px;
+	padding-bottom: 5px;
 `;
 
 const TitleSeparator = styled.div`
