@@ -49,7 +49,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
 	const { switchToL2 } = useNetworkSwitcher();
-	const theme = useTheme();
 
 	const isL2 = useIsL2();
 
