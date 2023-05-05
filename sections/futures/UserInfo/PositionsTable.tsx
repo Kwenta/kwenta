@@ -2,8 +2,9 @@ import { useRouter } from 'next/router';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
+import PencilIcon from 'assets/svg/app/pencil.svg';
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import Currency from 'components/Currency';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
@@ -15,9 +16,11 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { FuturesMarketKey } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
+import { FuturesPositionModalType } from 'state/app/types';
 import {
 	selectCrossMarginPositions,
 	selectFuturesType,
@@ -29,6 +32,7 @@ import {
 } from 'state/futures/selectors';
 import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { FOOTER_HEIGHT } from 'styles/common';
 import media from 'styles/media';
 import { formatPercent, zeroBN } from 'utils/formatters/number';
 
@@ -99,7 +103,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	}, []);
 
 	return (
-		<Container>
+		<>
 			<TableContainer>
 				<Table
 					data={data}
@@ -183,19 +187,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 										</div>
 										<Spacer width={10} />
 										{accountType === 'cross_margin' && (
-											<Pill
-												onClick={() =>
-													dispatch(
-														setShowPositionModal({
-															type: 'futures_edit_position_size',
-															marketKey: cellProps.row.original.market.marketKey,
-														})
-													)
-												}
-												size="small"
-											>
-												Edit
-											</Pill>
+											<EditButton
+												modalType={'futures_edit_position_size'}
+												marketKey={cellProps.row.original.market.marketKey}
+											/>
 										)}
 									</ColWithButton>
 								);
@@ -255,18 +250,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 										</div>
 										<Spacer width={10} />
 										{accountType === 'cross_margin' && (
-											<Pill
-												onClick={() =>
-													dispatch(
-														setShowPositionModal({
-															type: 'futures_edit_position_margin',
-															marketKey: cellProps.row.original.market.marketKey,
-														})
-													)
-												}
-											>
-												Edit
-											</Pill>
+											<EditButton
+												modalType={'futures_edit_position_margin'}
+												marketKey={cellProps.row.original.market.marketKey}
+											/>
 										)}
 									</ColWithButton>
 								);
@@ -323,18 +310,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											)}
 										</div>
 										{accountType === 'cross_margin' && (
-											<Pill
-												onClick={() =>
-													dispatch(
-														setShowPositionModal({
-															type: 'futures_edit_stop_loss_take_profit',
-															marketKey: cellProps.row.original.market.marketKey,
-														})
-													)
-												}
-											>
-												Edit
-											</Pill>
+											<EditButton
+												modalType={'futures_edit_stop_loss_take_profit'}
+												marketKey={cellProps.row.original.market.marketKey}
+											/>
 										)}
 									</ColWithButton>
 								);
@@ -369,11 +348,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 													size="small"
 												>
 													<FlexDivRowCentered>
-														<UploadIcon
-															width={6}
-															style={{ marginRight: '2px', marginBottom: '1px' }}
-														/>
-														Share
+														<UploadIcon width={8} />
 													</FlexDivRowCentered>
 												</Pill>
 											</div>
@@ -389,18 +364,37 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 			{showShareModal && (
 				<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
 			)}
-		</Container>
+		</>
 	);
 };
 
-const Container = styled.div`
-	width: 100%;
-	overflow: scroll;
-	height: 100%;
-`;
+const EditButton = ({
+	marketKey,
+	modalType,
+}: {
+	marketKey: FuturesMarketKey;
+	modalType: FuturesPositionModalType;
+}) => {
+	const dispatch = useAppDispatch();
+	const theme = useTheme();
+	return (
+		<Pill
+			onClick={() =>
+				dispatch(
+					setShowPositionModal({
+						type: modalType,
+						marketKey: marketKey,
+					})
+				)
+			}
+		>
+			<PencilIcon fill={theme.colors.selectedTheme.newTheme.text.primary} width={8} />
+		</Pill>
+	);
+};
 
 const TableContainer = styled.div`
-	min-width: 820px;
+	height: calc(100% - ${FOOTER_HEIGHT - 1}px);
 `;
 
 const PnlContainer = styled.div`

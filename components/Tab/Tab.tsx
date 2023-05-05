@@ -31,10 +31,10 @@ export const TabPanel: React.FC<TabPanelProps> = memo(
 
 const TabPanelContainer = styled.div<{ $fullHeight?: boolean }>`
 	outline: none;
-	flex: 1;
+
 	${(props) =>
 		props.$fullHeight &&
 		css`
-			min-height: calc(100% - 94px);
+			height: 100%;
 		`}
 `;
