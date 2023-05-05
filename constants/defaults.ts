@@ -30,9 +30,6 @@ export const MAX_TIMESTAMP: number = 8640000000000000;
 // for Fee History
 export const DEFAULT_NUMBER_OF_FUTURES_FEE: number = 9999;
 
-// leverage adjustment
-export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 1;
-
 // for mobile leaderboard
 export const DEFAULT_LEADERBOARD_ROWS = 20;
 
@@ -49,9 +46,9 @@ export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
 export const DEFAULT_LEVERAGE = '1';
 
 export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
-	MARKET: '0.5',
-	STOP: '1.25',
-	LIMIT: '1.25',
+	MARKET: '1',
+	STOP: '2',
+	LIMIT: '2',
 	STOP_LOSS: '5',
 	TAKE_PROFIT: '5',
 };

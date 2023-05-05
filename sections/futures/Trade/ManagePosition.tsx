@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -5,7 +6,6 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
-import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
@@ -90,11 +90,13 @@ const ManagePosition: React.FC = () => {
 		if (orderError) {
 			return { message: orderError, show: 'error' };
 		}
+		const maxLeverage = marketInfo?.appMaxLeverage ?? wei(1);
+
 		// TODO: Clean up errors and warnings
 		if (leverage.gt(maxLeverageValue))
 			return {
 				show: 'warn',
-				message: `Max leverage ${APP_MAX_LEVERAGE.toString(0)}x exceeded`,
+				message: `Max leverage ${maxLeverage.toString(0)}x exceeded`,
 			};
 		if (marketInfo?.isSuspended)
 			return {
@@ -164,6 +166,7 @@ const ManagePosition: React.FC = () => {
 		previewStatus,
 		maxLeverageValue,
 		leverage,
+		marketInfo?.appMaxLeverage,
 	]);
 
 	return (

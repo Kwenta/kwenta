@@ -11,6 +11,7 @@ import TabButton from 'components/Button/TabButton';
 import Spacer from 'components/Spacer';
 import { TabPanel } from 'components/Tab';
 import ROUTES from 'constants/routes';
+import useWindowSize from 'hooks/useWindowSize';
 import { fetchAllTradesForAccount } from 'state/futures/actions';
 import {
 	selectActiveSmartPositionsCount,
@@ -46,6 +47,7 @@ const FutureTabs = Object.values(FuturesTab);
 const UserInfo: React.FC = memo(() => {
 	const router = useRouter();
 	const dispatch = useAppDispatch();
+	const { lessThanWidth } = useWindowSize();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const position = useAppSelector(selectPosition);
@@ -182,9 +184,10 @@ const UserInfo: React.FC = memo(() => {
 				</TabLeft>
 				<TabRight>
 					{/* CALCULATOR tab */}
-					<Spacer divider height={47} width={1} />
+					<Spacer divider height={40} width={1} />
 					<TabButton
 						inline
+						iconOnly={lessThanWidth('xl')}
 						key={FuturesTab.CALCULATOR}
 						title="Calculator"
 						icon={<CalculatorIcon />}
@@ -218,9 +221,9 @@ const UserInfoContainer = styled.div`
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	min-height: 300px;
-	max-height: 300px;
-	height: 300px;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
@@ -232,10 +235,6 @@ const TabButtonsContainer = styled.div`
 	button {
 		font-size: 13px;
 	}
-
-	@media (max-width: 1182px) {
-		grid-template-columns: repeat(1, 1fr);
-	}
 `;
 
 const TabLeft = styled.div`
@@ -246,10 +245,6 @@ const TabLeft = styled.div`
 const TabRight = styled.div`
 	display: flex;
 	justify-content: right;
-
-	@media (max-width: 1182px) {
-		justify-content: left;
-	}
 `;
 
 export default UserInfo;

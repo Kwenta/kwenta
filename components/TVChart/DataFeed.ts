@@ -68,6 +68,8 @@ const getPriceScale = (asset: string | null) => {
 		case 'FTM':
 		case 'AUD':
 			return 10000;
+		case 'SHIB':
+			return 1000000000;
 		default:
 			return 1000;
 	}

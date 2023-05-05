@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableHeader } from 'components/Table';
+import { TableCell } from 'components/Table/TableBodyRow';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
@@ -245,6 +246,10 @@ const AllTime: FC<AllTimeProps> = ({
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
+	${TableCell} {
+		padding-top: 8px;
+		padding-bottom: 8px;
+	}
 `;
 
 const TableTitle = styled.div`

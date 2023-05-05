@@ -31,10 +31,12 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
+import media from 'styles/media';
 import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
 import { getMarketName, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
+import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
 
 type MarketsDropdownProps = {
 	mobile?: boolean;
@@ -297,7 +299,10 @@ const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	top: 66px;
 	z-index: 100;
 	height: ${(props) => props.height}px;
-	width: 380px;
+	width: ${TRADE_PANEL_WIDTH_LG}px;
+	${media.lessThan('xxl')`
+		width: ${TRADE_PANEL_WIDTH_MD}px;
+	`}
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
