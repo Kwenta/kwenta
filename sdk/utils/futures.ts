@@ -20,6 +20,8 @@ import {
 	AGGREGATE_ASSET_KEY,
 	MAIN_ENDPOINTS,
 	SL_TP_MAX_SIZE,
+	KWENTA_PYTH_SERVER,
+	PUBLIC_PYTH_SERVER,
 } from 'sdk/constants/futures';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
@@ -429,8 +431,12 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	INSUFFICIENT_FREE_MARGIN: `You don't have enough sUSD for this trade`,
 };
 
-export const getPythNetworkUrl = (networkId: NetworkId) => {
-	return networkId === 420 ? 'https://xc-testnet.pyth.network' : 'https://xc-mainnet.pyth.network';
+export const getPythNetworkUrl = (networkId: NetworkId, publicProvider: boolean = false) => {
+	return networkId === 420
+		? 'https://xc-testnet.pyth.network'
+		: publicProvider
+		? PUBLIC_PYTH_SERVER
+		: KWENTA_PYTH_SERVER;
 };
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);

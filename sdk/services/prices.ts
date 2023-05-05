@@ -54,6 +54,10 @@ export default class PricesService {
 			this.pyth.onWsError = (error) => {
 				// TODO: Feedback connection issue and display
 				// prompt to try disabling add blocker
+				this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(params.networkId, true), {
+					logger: LOG_WS ? console : undefined,
+				});
+
 				this.sdk.context.events.emit('prices_connection_update', {
 					connected: false,
 					error: error || new Error('pyth prices ws connection failed'),
