@@ -6,7 +6,7 @@ const newTheme = {
 			background: common.palette.neutral.n0,
 		},
 		secondary: {
-			background: common.palette.alpha.white25,
+			background: common.palette.neutral.n0,
 		},
 		cards: {
 			background: common.palette.neutral.n20,
