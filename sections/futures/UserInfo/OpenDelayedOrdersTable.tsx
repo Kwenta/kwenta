@@ -5,7 +5,9 @@ import styled from 'styled-components';
 
 import Badge from 'components/Badge';
 import { ButtonLoader } from 'components/Loader/Loader';
+import Pill from 'components/Pill';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
 import {
 	DEFAULT_DELAYED_CANCEL_BUFFER,
 	DEFAULT_DELAYED_EXECUTION_BUFFER,
@@ -218,11 +220,17 @@ const OpenDelayedOrdersTable: React.FC = () => {
 							<div>
 								{cellProps.row.original.show &&
 									(cellProps.row.original.isStale ? (
-										<div>{t('futures.market.user.open-orders.status.expired')}</div>
+										<Body color="negative">
+											{t('futures.market.user.open-orders.status.expired')}
+										</Body>
 									) : cellProps.row.original.isFailed ? (
-										<div>{t('futures.market.user.open-orders.status.failed')}</div>
+										<Body color="negative">
+											{t('futures.market.user.open-orders.status.failed')}
+										</Body>
 									) : (
-										<div>{t('futures.market.user.open-orders.status.pending')}</div>
+										<Body color="preview">
+											{t('futures.market.user.open-orders.status.pending')}
+										</Body>
 									))}
 							</div>
 						);
@@ -241,9 +249,9 @@ const OpenDelayedOrdersTable: React.FC = () => {
 									(isCancelling ? (
 										<ButtonLoader />
 									) : (
-										<CancelButton onClick={cellProps.row.original.onCancel}>
+										<Pill size="medium" color="red" onClick={cellProps.row.original.onCancel}>
 											{t('futures.market.user.open-orders.actions.cancel')}
-										</CancelButton>
+										</Pill>
 									))}
 								{cellProps.row.original.show &&
 									!cellProps.row.original.isStale &&
@@ -251,9 +259,9 @@ const OpenDelayedOrdersTable: React.FC = () => {
 									(isExecuting ? (
 										<ButtonLoader />
 									) : (
-										<EditButton onClick={cellProps.row.original.onExecute}>
+										<Pill size="medium" onClick={cellProps.row.original.onExecute}>
 											{t('futures.market.user.open-orders.actions.execute')}
-										</EditButton>
+										</Pill>
 									))}
 							</div>
 						);
@@ -264,37 +272,6 @@ const OpenDelayedOrdersTable: React.FC = () => {
 		/>
 	);
 };
-
-const EditButton = styled.button`
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gray};
-	height: 28px;
-	min-width: 72px;
-	box-sizing: border-box;
-	border-radius: 14px;
-	cursor: pointer;
-	background-color: transparent;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
-	padding-left: 12px;
-	padding-right: 12px;
-
-	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.gray};
-		color: ${(props) => props.theme.colors.selectedTheme.white};
-	}
-`;
-
-const CancelButton = styled(EditButton)`
-	opacity: ${(props) => (props.disabled ? 0.4 : 1)};
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
-	color: ${(props) => props.theme.colors.selectedTheme.red};
-
-	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.red};
-		color: ${(props) => props.theme.colors.selectedTheme.white};
-	}
-`;
 
 const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};

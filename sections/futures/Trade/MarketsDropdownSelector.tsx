@@ -93,6 +93,18 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		width: ${TRADE_PANEL_WIDTH_LG}px;
 	`}
 
+	width: ${TRADE_PANEL_WIDTH_LG}px;
+
+	${media.lessThan('xxl')`
+		width: ${TRADE_PANEL_WIDTH_MD}px;
+	`}
+
+	${(props) =>
+		props.mobile &&
+		css`
+			width: 100%;
+		`}
+
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
