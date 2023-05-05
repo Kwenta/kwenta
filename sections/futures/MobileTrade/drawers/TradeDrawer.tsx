@@ -33,12 +33,12 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 				label: 'Status',
 				value: trade.status,
 			},
-			{ label: 'Size', value: formatCryptoCurrency(trade.size) },
+			{ label: 'Size', value: formatCryptoCurrency(trade.amount, { suggestDecimals: true }) },
 			{
 				label: 'Price',
-				value: formatDollars(trade.price),
+				value: formatDollars(trade.value, { suggestDecimals: true }),
 			},
-			{ label: 'Date/Time', value: <TimeDisplay value={trade.timestamp} horizontal /> },
+			{ label: 'Date/Time', value: <TimeDisplay value={trade.time} horizontal /> },
 			{
 				label: 'PnL',
 				value: trade.netPnl.eq(0) ? (
