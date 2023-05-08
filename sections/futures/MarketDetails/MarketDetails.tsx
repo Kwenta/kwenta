@@ -121,6 +121,7 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
 	const fundingHours = useAppSelector(selectSelectedInpuHours);
+
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
 		fundingRate,
 		fundingHours,

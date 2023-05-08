@@ -1,30 +1,39 @@
-import { memo, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import Pill from 'components/Pill';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
 import { selectSelectedInpuHours } from 'state/futures/selectors';
+import { InputFundingRateHours } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
-export const HoursToggle = memo(() => {
-	const fundingHours = useAppSelector(selectSelectedInpuHours);
-	const dispatch = useAppDispatch();
+type HoursToggleProps = {
+	hours: InputFundingRateHours[];
+};
 
+const HoursToggle: React.FC<HoursToggleProps> = ({ hours }) => {
+	const dispatch = useAppDispatch();
+	const fundingHours = useAppSelector(selectSelectedInpuHours);
+	const [index, setIndex] = useState(hours.indexOf(fundingHours));
 	const toggleHours = useCallback(() => {
-		dispatch(setSelectedInputFundingRateHour(fundingHours === '1' ? '8' : '1'));
-	}, [dispatch, fundingHours]);
+		const nextIndex = (index + 1) % hours.length;
+		setIndex(nextIndex);
+		dispatch(setSelectedInputFundingRateHour(hours[nextIndex]));
+	}, [dispatch, hours, index]);
 
 	return (
 		<PillContainer>
 			<Pill size="xs" weight="bold" roundedCorner={false} onClick={toggleHours}>
-				{fundingHours === '1' ? '1H' : '8H'}
-				<SwitchAssetArrows height={6} />
+				{index === 3 ? '1Y' : hours[index] + 'H'}
+				<SwitchAssetArrows height={7} />
 			</Pill>
 		</PillContainer>
 	);
-});
+};
 
 const PillContainer = styled.div`
 	margin-left: 8px;
 `;
+
+export default HoursToggle;
