@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
-type PillSize = 'small' | 'medium' | 'large';
+type PillSize = 'xs' | 'small' | 'medium' | 'large';
 type PillColor = 'yellow' | 'gray' | 'red';
 type FontWeight = 'regular' | 'bold' | 'black';
 
@@ -47,13 +47,19 @@ const BasePill = styled.button<{
 	$weight?: FontWeight;
 }>`
 	${(props) => css`
-		padding: ${props.$size === 'small'
+		padding: ${props.$size === 'small' || props.$size === 'xs'
 			? '0 5px'
 			: props.$size === 'medium'
 			? '3.5px 8px'
 			: '10px 15px'};
-		height: ${props.$size === 'small' ? '20px' : props.$size === 'medium' ? '24px' : '36px'};
-		width: ${props.$fullWidth ? '100%' : 'auto'};
+		height: ${props.$size === 'xs'
+			? '18px'
+			: props.$size === 'small'
+			? '20px'
+			: props.$size === 'medium'
+			? '24px'
+			: '36px'};
+		width: ${props.$fullWidth ? '100%' : props.$size === 'xs' ? '36px' : 'auto'};
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
 		font-family: ${props.$weight && props.theme.fonts[props.$weight]};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};

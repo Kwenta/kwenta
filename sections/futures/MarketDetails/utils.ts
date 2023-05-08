@@ -8,7 +8,7 @@ export enum MarketDataKey {
 	openInterestShort = 'Open Interest (S)',
 	skew = 'Skew',
 	instFundingRate = 'Inst. Funding Rate',
-	hourlyFundingRate = '1H Funding Rate',
+	hourlyFundingRate = 'Funding Rate',
 }
 
 export const marketDataKeyMap: Record<MarketDataKey, string> = {
@@ -20,7 +20,7 @@ export const marketDataKeyMap: Record<MarketDataKey, string> = {
 	[MarketDataKey.openInterestLong]: 'open-interest-l',
 	[MarketDataKey.openInterestShort]: 'open-interest-s',
 	[MarketDataKey.instFundingRate]: '1h-funding-rate',
-	[MarketDataKey.hourlyFundingRate]: '1h-funding-rate',
+	[MarketDataKey.hourlyFundingRate]: 'funding-rate',
 	[MarketDataKey.skew]: 'skew',
 };
 
