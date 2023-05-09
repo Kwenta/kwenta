@@ -39,24 +39,26 @@ const MarketDetail: FC<MarketDetailProps> = memo(
 		}, [dataKey, marketInfo]);
 
 		return (
-			<MarketDetailsTooltip
-				key={dataKey}
-				mobile={mobile}
-				content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
-			>
-				<WithCursor cursor="help">
-					<Body className="heading">{dataKey}</Body>
-					<FlexDivRowCentered>
-						<MarketDetailValue
-							value={value}
-							color={color}
-							mobile={mobile}
-							pausedClass={pausedClass}
-						/>
-						{toggle && <HoursToggle hours={hours} />}
-					</FlexDivRowCentered>
-				</WithCursor>
-			</MarketDetailsTooltip>
+			<FlexDivRowCentered style={{ alignItems: 'flex-end' }}>
+				<MarketDetailsTooltip
+					key={dataKey}
+					mobile={mobile}
+					content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
+				>
+					<WithCursor cursor="help">
+						<Body className="heading">{dataKey}</Body>
+						<FlexDivRowCentered>
+							<MarketDetailValue
+								value={value}
+								color={color}
+								mobile={mobile}
+								pausedClass={pausedClass}
+							/>
+						</FlexDivRowCentered>
+					</WithCursor>
+				</MarketDetailsTooltip>
+				{toggle && <HoursToggle hours={hours} />}
+			</FlexDivRowCentered>
 		);
 	}
 );

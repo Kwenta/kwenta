@@ -12,6 +12,7 @@ type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	fullWidth?: boolean;
 	roundedCorner?: boolean;
 	weight?: FontWeight;
+	toggle?: boolean;
 };
 
 const Pill: FC<PillProps> = memo(
@@ -20,6 +21,7 @@ const Pill: FC<PillProps> = memo(
 		color = 'gray',
 		roundedCorner = true,
 		weight = 'black',
+		toggle = false,
 		outline,
 		fullWidth,
 		...props
@@ -32,6 +34,7 @@ const Pill: FC<PillProps> = memo(
 				$fullWidth={fullWidth}
 				$roundedCorner={roundedCorner}
 				$weight={weight}
+				$toggle={toggle}
 				{...props}
 			/>
 		);
@@ -45,10 +48,11 @@ const BasePill = styled.button<{
 	$fullWidth?: boolean;
 	$roundedCorner?: boolean;
 	$weight?: FontWeight;
+	$toggle?: boolean;
 }>`
 	${(props) => css`
 		padding: ${props.$size === 'small' || props.$size === 'xs'
-			? '0 5px'
+			? '0 3px'
 			: props.$size === 'medium'
 			? '3.5px 8px'
 			: '10px 15px'};
@@ -63,7 +67,9 @@ const BasePill = styled.button<{
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
 		font-family: ${props.$weight && props.theme.fonts[props.$weight]};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
-		color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
+		color: ${props.$toggle
+			? props.theme.colors.selectedTheme.newTheme.text.primary
+			: props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
 		border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].border};
 		border-radius: ${props.$roundedCorner ? '50' : '8'}px;
 		cursor: pointer;

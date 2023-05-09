@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
+import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import Pill from 'components/Pill';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
 import { selectSelectedInpuHours } from 'state/futures/selectors';
@@ -24,9 +24,9 @@ const HoursToggle: React.FC<HoursToggleProps> = ({ hours }) => {
 
 	return (
 		<PillContainer>
-			<Pill size="xs" weight="bold" roundedCorner={false} onClick={toggleHours}>
+			<Pill size="xs" weight="bold" roundedCorner={false} onClick={toggleHours} toggle>
 				{index === 3 ? '1Y' : hours[index] + 'H'}
-				<SwitchAssetArrows height={7} />
+				<CaretDownIcon height={7} width={12} />
 			</Pill>
 		</PillContainer>
 	);
@@ -34,6 +34,7 @@ const HoursToggle: React.FC<HoursToggleProps> = ({ hours }) => {
 
 const PillContainer = styled.div`
 	margin-left: 8px;
+	z-index: 200;
 `;
 
 export default HoursToggle;
