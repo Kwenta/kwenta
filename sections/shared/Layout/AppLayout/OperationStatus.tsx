@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { Body } from 'components/Text';
@@ -21,20 +22,34 @@ const OperationStatusThemeMap = {
 } as const;
 
 const OperationStatus = () => {
-	return (
-		<Tooltip height="auto" width="auto" preset="top" content={CURRENT_STATUS.message}>
+	const content = useMemo(
+		() => (
 			<OperationStatusContainer>
 				<OuterCircle $status={CURRENT_STATUS.status}>
 					<InnerCircle $status={CURRENT_STATUS.status} />
 				</OuterCircle>
-				<Body color="secondary">{CURRENT_STATUS}</Body>
+				<Body color="secondary">{CURRENT_STATUS.status}</Body>
 			</OperationStatusContainer>
-		</Tooltip>
+		),
+		[]
+	);
+
+	return CURRENT_STATUS.message ? (
+		<StyledTooltip height="auto" width="auto" preset="top" content={CURRENT_STATUS.message}>
+			{content}
+		</StyledTooltip>
+	) : (
+		content
 	);
 };
 
+const StyledTooltip = styled(Tooltip)`
+	/*left: 75px;*/
+`;
+
 const OperationStatusContainer = styled.div`
 	display: flex;
+	cursor: default;
 `;
 
 const OuterCircle = styled.div<{ $status: OperationalStatus }>`
