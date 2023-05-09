@@ -24,7 +24,7 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
 import { formatDollars } from 'utils/formatters/number';
-import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
+import { AssetDisplayByAsset, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
 type FuturesMarketsTableProps = {
 	search?: string;
@@ -42,8 +42,13 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 	const markPrices = useAppSelector(selectMarkPrices);
 
 	let data = useMemo(() => {
-		const markets = search
-			? futuresMarkets.filter((m) => m.asset.toLowerCase().includes(search.toLowerCase()))
+		const lowerSearch = search?.toLowerCase();
+		const markets = lowerSearch
+			? futuresMarkets.filter(
+					(m) =>
+						m.asset.toLowerCase().includes(lowerSearch) ||
+						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)
+			  )
 			: futuresMarkets;
 		return markets.map((market) => {
 			const description = getSynthDescription(market.asset, t);
@@ -72,7 +77,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [futuresMarkets, pastRates, futuresVolumes, markPrices, pricesInfo, t]);
+	}, [search, futuresMarkets, t, futuresVolumes, pricesInfo, pastRates, markPrices]);
 
 	return (
 		<>
