@@ -35,8 +35,8 @@ import media from 'styles/media';
 import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
 import { getMarketName, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
-import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
+import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {
 	mobile?: boolean;
@@ -303,6 +303,11 @@ const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	${media.lessThan('xxl')`
 		width: ${TRADE_PANEL_WIDTH_MD}px;
 	`}
+
+	${media.lessThan('md')`
+		width: 100%;
+	`}
+
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
