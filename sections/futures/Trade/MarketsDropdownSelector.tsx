@@ -99,6 +99,10 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		width: ${TRADE_PANEL_WIDTH_MD}px;
 	`}
 
+	${media.lessThan('md')`
+		width: 100%;
+	`}
+
 	${(props) =>
 		props.mobile &&
 		css`
