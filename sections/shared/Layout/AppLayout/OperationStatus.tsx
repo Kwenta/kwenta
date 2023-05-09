@@ -1,13 +1,9 @@
 import styled from 'styled-components';
 
 import { Body } from 'components/Text';
+import Tooltip from 'components/Tooltip/Tooltip';
+import { OperationalStatus, CURRENT_STATUS } from 'constants/status';
 import common from 'styles/theme/colors/common';
-
-enum OperationalStatus {
-	FullyOperational = 'Fully operational',
-	Degraded = 'Degraded',
-	Offline = 'Offline',
-}
 
 const OperationStatusThemeMap = {
 	[OperationalStatus.FullyOperational]: {
@@ -24,16 +20,16 @@ const OperationStatusThemeMap = {
 	},
 } as const;
 
-const CURRENT_STATUS = OperationalStatus.FullyOperational;
-
 const OperationStatus = () => {
 	return (
-		<OperationStatusContainer>
-			<OuterCircle $status={CURRENT_STATUS}>
-				<InnerCircle $status={CURRENT_STATUS} />
-			</OuterCircle>
-			<Body color="secondary">{CURRENT_STATUS}</Body>
-		</OperationStatusContainer>
+		<Tooltip height="auto" width="auto" preset="top" content={CURRENT_STATUS.message}>
+			<OperationStatusContainer>
+				<OuterCircle $status={CURRENT_STATUS.status}>
+					<InnerCircle $status={CURRENT_STATUS.status} />
+				</OuterCircle>
+				<Body color="secondary">{CURRENT_STATUS}</Body>
+			</OperationStatusContainer>
+		</Tooltip>
 	);
 };
 
