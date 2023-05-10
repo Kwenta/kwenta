@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
-type PillSize = 'xs' | 'small' | 'medium' | 'large';
+type PillSize = 'small' | 'medium' | 'large';
 type PillColor = 'yellow' | 'gray' | 'red';
 type FontWeight = 'regular' | 'bold' | 'black';
 
@@ -12,7 +12,6 @@ type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	fullWidth?: boolean;
 	roundedCorner?: boolean;
 	weight?: FontWeight;
-	toggle?: boolean;
 };
 
 const Pill: FC<PillProps> = memo(
@@ -21,7 +20,6 @@ const Pill: FC<PillProps> = memo(
 		color = 'gray',
 		roundedCorner = true,
 		weight = 'black',
-		toggle = false,
 		outline,
 		fullWidth,
 		...props
@@ -34,7 +32,6 @@ const Pill: FC<PillProps> = memo(
 				$fullWidth={fullWidth}
 				$roundedCorner={roundedCorner}
 				$weight={weight}
-				$toggle={toggle}
 				{...props}
 			/>
 		);
@@ -48,28 +45,19 @@ const BasePill = styled.button<{
 	$fullWidth?: boolean;
 	$roundedCorner?: boolean;
 	$weight?: FontWeight;
-	$toggle?: boolean;
 }>`
 	${(props) => css`
-		padding: ${props.$size === 'small' || props.$size === 'xs'
-			? '0 3px'
+		padding: ${props.$size === 'small'
+			? '0 5px'
 			: props.$size === 'medium'
 			? '3.5px 8px'
 			: '10px 15px'};
-		height: ${props.$size === 'xs'
-			? '18px'
-			: props.$size === 'small'
-			? '20px'
-			: props.$size === 'medium'
-			? '24px'
-			: '36px'};
-		width: ${props.$fullWidth ? '100%' : props.$size === 'xs' ? '42px' : 'auto'};
+		height: ${props.$size === 'small' ? '20px' : props.$size === 'medium' ? '24px' : '36px'};
+		width: ${props.$fullWidth ? '100%' : 'auto'};
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
 		font-family: ${props.$weight && props.theme.fonts[props.$weight]};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
-		color: ${props.$toggle
-			? props.theme.colors.selectedTheme.newTheme.text.primary
-			: props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
+		color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
 		border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].border};
 		border-radius: ${props.$roundedCorner ? '50' : '8'}px;
 		cursor: pointer;
