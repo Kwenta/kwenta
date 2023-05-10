@@ -6,7 +6,6 @@ import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketInfo } from 'state/futures/selectors';
-import { InputFundingRateHours } from 'state/futures/types';
 import { useAppSelector } from 'state/hooks';
 
 import HoursToggle from './HoursToggle';
@@ -19,8 +18,6 @@ type MarketDetailProps = {
 	value: string | ReactElement;
 	toggle?: boolean;
 };
-
-const hours: InputFundingRateHours[] = ['1', '8', '24', '8766'];
 
 const MarketDetail: FC<MarketDetailProps> = memo(
 	({ mobile, dataKey, color, value, toggle = false }) => {
@@ -57,7 +54,7 @@ const MarketDetail: FC<MarketDetailProps> = memo(
 						</FlexDivRowCentered>
 					</WithCursor>
 				</MarketDetailsTooltip>
-				{toggle && <HoursToggle hours={hours} />}
+				{toggle && <HoursToggle />}
 			</FlexDivRowCentered>
 		);
 	}

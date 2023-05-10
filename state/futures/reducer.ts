@@ -53,7 +53,6 @@ import {
 	CrossMarginTradeFees,
 	EditPositionInputs,
 	InputCurrencyDenomination,
-	InputFundingRateHours,
 	IsolatedAccountData,
 	TradeSizeInputs,
 	FuturesState,
@@ -73,7 +72,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	errors: {},
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
-	selectedInputHours: '1',
+	selectedInputHours: 1,
 	preferences: {
 		showHistory: true,
 	},
@@ -261,7 +260,7 @@ const futuresSlice = createSlice({
 		setSelectedInputDenomination: (state, action: PayloadAction<InputCurrencyDenomination>) => {
 			state.selectedInputDenomination = action.payload;
 		},
-		setSelectedInputFundingRateHour: (state, action: PayloadAction<InputFundingRateHours>) => {
+		setSelectedInputFundingRateHour: (state, action: PayloadAction<number>) => {
 			state.selectedInputHours = action.payload;
 		},
 		setIsolatedMarginFee: (state, action: PayloadAction<string>) => {

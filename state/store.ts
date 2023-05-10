@@ -34,7 +34,7 @@ const LOG_REDUX = false;
 const persistConfig = {
 	key: 'root1',
 	storage,
-	version: 28,
+	version: 29,
 	blacklist: ['app', 'wallet'],
 	migrate: createMigrate(migrations, { debug: true }),
 };

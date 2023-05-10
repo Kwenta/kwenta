@@ -2,29 +2,23 @@ import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import { FUNDING_RATE_PERIODS } from 'sdk/constants/period';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
 import { selectSelectedInpuHours } from 'state/futures/selectors';
-import { InputFundingRateHours } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
-type HoursToggleProps = {
-	hours: InputFundingRateHours[];
-};
-
-const HoursToggle: React.FC<HoursToggleProps> = ({ hours }) => {
+const HoursToggle: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const fundingHours = useAppSelector(selectSelectedInpuHours);
 	const [open, setOpen] = useState(false);
-	const [index, setIndex] = useState(hours.indexOf(fundingHours));
-	const periodDisplay = (i: number) => (i === 3 ? '1Y' : hours[i] + 'H');
+	const getLabelByValue = (value: number): string => FUNDING_RATE_PERIODS[value] ?? '1H';
 	const updatePeriod = useCallback(
 		(v) => {
 			dispatch(setSelectedInputFundingRateHour(v));
-			setIndex(hours.indexOf(v));
 			setOpen(!open);
 		},
-		[dispatch, hours, open]
+		[dispatch, open]
 	);
 	return (
 		<ToggleContainer>
@@ -33,14 +27,14 @@ const HoursToggle: React.FC<HoursToggleProps> = ({ hours }) => {
 					style={{ borderBottomWidth: open ? '1px' : '0' }}
 					onClick={() => setOpen(!open)}
 				>
-					{periodDisplay(index)}
+					{getLabelByValue(fundingHours)}
 					<CaretDownIcon width={12} />
 				</ToggleTableHeader>
 				{open && (
 					<ToggleTableRows>
-						{hours.map((value, i) => (
-							<ToggleTableRow key={value} onClick={() => updatePeriod(value)}>
-								{periodDisplay(i)}
+						{Object.entries(FUNDING_RATE_PERIODS).map(([key, value]) => (
+							<ToggleTableRow key={key} onClick={() => updatePeriod(Number(key))}>
+								{value}
 							</ToggleTableRow>
 						))}
 					</ToggleTableRows>
@@ -58,6 +52,9 @@ const ToggleTableRow = styled.div`
 		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 		background: ${(props) =>
 			props.theme.colors.selectedTheme.newTheme.pill['gray'].hover.background};
+		:last-child {
+			border-radius: 0px 0px 9px 9px;
+		}
 	}
 `;
 
