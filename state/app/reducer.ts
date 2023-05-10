@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
-import { OperationalStatus } from 'constants/status';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
+import { OperationalStatus } from 'sdk/types/system';
 import { isUserDeniedError } from 'utils/formatters/error';
 
 import { checkSynthetixStatus, fetchKwentaStatus } from './actions';

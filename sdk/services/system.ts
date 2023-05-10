@@ -2,13 +2,8 @@ import KwentaSDK from 'sdk';
 
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 
+import { OperationalStatus } from '../types/system';
 import { client } from '../utils/files';
-
-enum OperationalStatus {
-	FullyOperational = 'Fully operational',
-	Degraded = 'Degraded',
-	Offline = 'Offline',
-}
 
 const StatusMap = {
 	'0': OperationalStatus.FullyOperational,

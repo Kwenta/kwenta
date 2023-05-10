@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { OperationalStatus } from 'constants/status';
+import { OperationalStatus } from 'sdk/types/system';
 import { fetchKwentaStatus } from 'state/app/actions';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import common from 'styles/theme/colors/common';
@@ -27,13 +27,9 @@ const OperationStatus = () => {
 	const kwentaStatus = useAppSelector(({ app }) => app.kwentaStatus);
 	const dispatch = useAppDispatch();
 
-	const fetchStatus = useCallback(() => {
+	useEffect(() => {
 		dispatch(fetchKwentaStatus());
 	}, [dispatch]);
-
-	useEffect(() => {
-		fetchStatus();
-	}, [fetchStatus]);
 
 	const content = useMemo(
 		() => (
@@ -48,7 +44,7 @@ const OperationStatus = () => {
 	);
 
 	return !!kwentaStatus.message ? (
-		<StyledTooltip height="auto" width="auto" preset="top" content={kwentaStatus.message}>
+		<StyledTooltip height="auto" width="auto" content={kwentaStatus.message}>
 			{content}
 		</StyledTooltip>
 	) : (
@@ -57,7 +53,8 @@ const OperationStatus = () => {
 };
 
 const StyledTooltip = styled(Tooltip)`
-	/*left: 75px;*/
+	top: -50px;
+	left: 0;
 `;
 
 const OperationStatusContainer = styled.div`
