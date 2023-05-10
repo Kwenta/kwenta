@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -7,12 +7,10 @@ import Badge from 'components/Badge';
 import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import Pill from 'components/Pill';
-import Spacer from 'components/Spacer';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { setShowPositionModal } from 'state/app/reducer';
 import { cancelConditionalOrder } from 'state/futures/actions';
 import {
 	selectCancellingConditionalOrder,
@@ -21,7 +19,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
-import { MarketKeyByAsset } from 'utils/futures';
 
 import PositionType from '../PositionType';
 import ConditionalOrdersWarning from './ConditionalOrdersWarning';
@@ -36,15 +33,6 @@ export default function ConditionalOrdersTable() {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const openConditionalOrders = useAppSelector(selectAllConditionalOrders);
 	const isCancellingOrder = useAppSelector(selectCancellingConditionalOrder);
-
-	const handleOpenEditModal = useCallback(() => {
-		dispatch(
-			setShowPositionModal({
-				type: 'futures_edit_stop_loss_take_profit',
-				marketKey: MarketKeyByAsset[marketAsset],
-			})
-		);
-	}, [dispatch, marketAsset]);
 
 	const rows = useMemo(() => {
 		const ordersWithCancel = openConditionalOrders
@@ -210,10 +198,6 @@ export default function ConditionalOrdersTable() {
 										disabled={cancellingRow}
 									>
 										{t('futures.market.user.open-orders.actions.cancel')}
-									</Pill>
-									<Spacer width={10} />
-									<Pill size="medium" onClick={handleOpenEditModal}>
-										{t('futures.market.user.open-orders.actions.edit')}
 									</Pill>
 								</div>
 							);
