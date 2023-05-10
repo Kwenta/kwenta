@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers';
 
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
+import { KwentaStatus } from 'sdk/types/system';
 import { FuturesTransactionType } from 'state/futures/types';
 
 export type ModalType =
@@ -45,4 +46,5 @@ export type AppState = {
 	gasPrice: GasPrice<string>;
 	transaction?: Transaction | undefined;
 	synthetixOnMaintenance: boolean;
+	kwentaStatus: KwentaStatus;
 };
