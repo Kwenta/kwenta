@@ -28,7 +28,8 @@ import {
 
 type TradeParams = {
 	sizeDelta: BigNumber;
-	price: BigNumber;
+	fillPrice: BigNumber;
+	desiredFillPrice: BigNumber;
 	takerFee: BigNumber;
 	makerFee: BigNumber;
 	trackingCode: string;
@@ -105,7 +106,7 @@ class FuturesMarketInternal {
 		account: string,
 		sizeDelta: BigNumber,
 		marginDelta: BigNumber,
-		limitStopPrice?: BigNumber
+		tradePrice: BigNumber
 	) => {
 		const multiCallContract = new MultiCallContract(
 			this._perpsV2MarketContract.address,
@@ -138,16 +139,17 @@ class FuturesMarketInternal {
 		};
 
 		const position = preFetchedData[7] as Position;
-		const price = limitStopPrice || this._onChainData.assetPrice;
 
 		const takerFee = await this._getSetting('takerFeeOffchainDelayedOrder');
 		const makerFee = await this._getSetting('makerFeeOffchainDelayedOrder');
+		const fillPrice = await this._fillPrice(sizeDelta, tradePrice);
 
 		const tradeParams = {
-			sizeDelta,
-			price: price,
-			takerFee,
-			makerFee,
+			sizeDelta: sizeDelta,
+			fillPrice: fillPrice,
+			desiredFillPrice: tradePrice,
+			makerFee: makerFee,
+			takerFee: takerFee,
 			trackingCode: KWENTA_TRACKING_CODE,
 		};
 
@@ -158,7 +160,7 @@ class FuturesMarketInternal {
 		);
 
 		const liqPrice = await this._approxLiquidationPrice(newPos, newPos.lastPrice);
-		return { ...newPos, liqPrice, fee, price: tradeParams.price, status: status };
+		return { ...newPos, liqPrice, fee, price: newPos.lastPrice, status: status };
 	};
 
 	_postTradeDetails = async (
@@ -175,7 +177,7 @@ class FuturesMarketInternal {
 		const fee = await this._orderFee(tradeParams);
 		const { margin, status } = await this._recomputeMarginWithDelta(
 			oldPos,
-			tradeParams.price,
+			tradeParams.fillPrice,
 			marginDelta.sub(fee)
 		);
 
@@ -189,7 +191,7 @@ class FuturesMarketInternal {
 			id: oldPos.id,
 			lastFundingIndex: lastFundingIndex,
 			margin: margin,
-			lastPrice: tradeParams.price,
+			lastPrice: tradeParams.fillPrice,
 			size: oldPos.size.add(tradeParams.sizeDelta),
 		};
 
@@ -208,8 +210,8 @@ class FuturesMarketInternal {
 			}
 		}
 
-		const liqPremium = await this._liquidationPremium(newPos.size, tradeParams.price);
-		let liqMargin = await this._liquidationMargin(newPos.size, tradeParams.price);
+		const liqPremium = await this._liquidationPremium(newPos.size, this._onChainData.assetPrice);
+		let liqMargin = await this._liquidationMargin(newPos.size, this._onChainData.assetPrice);
 		liqMargin = liqMargin.add(liqPremium);
 		if (margin.lte(liqMargin)) {
 			return { newPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.CAN_LIQUIDATE };
@@ -217,7 +219,7 @@ class FuturesMarketInternal {
 		const maxLeverage = await this._getSetting('maxLeverage');
 
 		const leverage = divideDecimal(
-			multiplyDecimal(newPos.size, tradeParams.price),
+			multiplyDecimal(newPos.size, tradeParams.fillPrice),
 			margin.add(fee)
 		);
 
@@ -252,13 +254,13 @@ class FuturesMarketInternal {
 		const skewScale = await this._getSetting('skewScale');
 		const liqPremiumMultiplier = await this._getSetting('liquidationPremiumMultiplier');
 
-		const skewedSize = positionSize.abs().div(skewScale);
+		const skewedSize = divideDecimal(positionSize.abs(), skewScale);
 		const value = multiplyDecimal(skewedSize, notional);
 		return multiplyDecimal(value, liqPremiumMultiplier);
 	};
 
 	_orderFee = async (tradeParams: TradeParams) => {
-		const notionalDiff = multiplyDecimal(tradeParams.sizeDelta, tradeParams.price);
+		const notionalDiff = multiplyDecimal(tradeParams.sizeDelta, tradeParams.fillPrice);
 		const marketSkew = await this._onChainData.marketSkew;
 		const sameSide = notionalDiff.gte(0) === marketSkew.gte(0);
 		const staticRate = sameSide ? tradeParams.takerFee : tradeParams.makerFee;
@@ -396,6 +398,45 @@ class FuturesMarketInternal {
 		const cappedProportionalFee = proportionalFee.gt(maxFee) ? maxFee : proportionalFee;
 		const minFee = await this._getSetting('minKeeperFee');
 		return cappedProportionalFee.gt(minFee) ? proportionalFee : minFee;
+	};
+
+	_fillPrice = async (size: BigNumber, price: BigNumber) => {
+		const marketSkew = await this._onChainData.marketSkew;
+		const skewScale = await this._getSetting('skewScale');
+
+		const pdBefore = divideDecimal(marketSkew, skewScale);
+		const pdAfter = divideDecimal(marketSkew.add(size), skewScale);
+		const priceBefore = price.add(multiplyDecimal(price, pdBefore));
+		const priceAfter = price.add(multiplyDecimal(price, pdAfter));
+
+		// How is the p/d-adjusted price calculated using an example:
+		//
+		// price      = $1200 USD (oracle)
+		// size       = 100
+		// skew       = 0
+		// skew_scale = 1,000,000 (1M)
+		//
+		// Then,
+		//
+		// pd_before = 0 / 1,000,000
+		//           = 0
+		// pd_after  = (0 + 100) / 1,000,000
+		//           = 100 / 1,000,000
+		//           = 0.0001
+		//
+		// price_before = 1200 * (1 + pd_before)
+		//              = 1200 * (1 + 0)
+		//              = 1200
+		// price_after  = 1200 * (1 + pd_after)
+		//              = 1200 * (1 + 0.0001)
+		//              = 1200 * (1.0001)
+		//              = 1200.12
+		// Finally,
+		//
+		// fill_price = (price_before + price_after) / 2
+		//            = (1200 + 1200.12) / 2
+		//            = 1200.06
+		return divideDecimal(priceBefore.add(priceAfter), UNIT_BIG_NUM.mul(2));
 	};
 
 	_orderSizeTooLarge = async (maxSize: BigNumber, oldSize: BigNumber, newSize: BigNumber) => {

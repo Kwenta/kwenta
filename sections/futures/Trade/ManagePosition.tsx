@@ -178,7 +178,6 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						fullWidth
 						variant={leverageSide}
-						disabled={!!placeOrderDisabledReason}
 						onClick={onSubmit}
 					>
 						{t(placeOrderTranslationKey)}
