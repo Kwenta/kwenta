@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
-import CaretUpIcon from 'assets/svg/app/caret-up.svg';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
 import { selectSelectedInpuHours } from 'state/futures/selectors';
 import { InputFundingRateHours } from 'state/futures/types';
@@ -16,7 +15,7 @@ type HoursToggleProps = {
 const HoursToggle: React.FC<HoursToggleProps> = ({ hours }) => {
 	const dispatch = useAppDispatch();
 	const fundingHours = useAppSelector(selectSelectedInpuHours);
-	const [open, setOpen] = useState(true);
+	const [open, setOpen] = useState(false);
 	const [index, setIndex] = useState(hours.indexOf(fundingHours));
 	const periodDisplay = (i: number) => (i === 3 ? '1Y' : hours[i] + 'H');
 	const updatePeriod = useCallback(
@@ -35,7 +34,7 @@ const HoursToggle: React.FC<HoursToggleProps> = ({ hours }) => {
 					onClick={() => setOpen(!open)}
 				>
 					{periodDisplay(index)}
-					{open ? <CaretUpIcon width={12} /> : <CaretDownIcon width={12} />}
+					<CaretDownIcon width={12} />
 				</ToggleTableHeader>
 				{open && (
 					<ToggleTableRows>
