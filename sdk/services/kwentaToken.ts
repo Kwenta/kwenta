@@ -7,10 +7,16 @@ import KwentaSDK from 'sdk';
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
-import { EPOCH_START, TRADING_REWARDS_CUTOFF_EPOCH, WEEK } from 'queries/staking/utils';
+import {
+	EPOCH_START,
+	OP_REWARDS_CUTOFF_EPOCH,
+	TRADING_REWARDS_CUTOFF_EPOCH,
+	WEEK,
+} from 'queries/staking/utils';
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
 
@@ -449,53 +455,69 @@ export default class KwentaTokenService {
 		return { claimableRewards, totalRewards };
 	}
 
-	public async getClaimableRewardsAll(
+	public async getClaimableAllRewards(
 		epochPeriod: number,
 		isOldDistributor: boolean = true,
-		isOp: boolean = false
+		isOp: boolean = false,
+		isSnx: boolean = false
 	) {
 		const {
 			MultipleMerkleDistributor,
 			MultipleMerkleDistributorPerpsV2,
 			MultipleMerkleDistributorOp,
+			MultipleMerkleDistributorSnxOp,
 		} = this.sdk.context.multicallContracts;
 		const { walletAddress } = this.sdk.context;
 
 		if (
 			!MultipleMerkleDistributor ||
 			!MultipleMerkleDistributorPerpsV2 ||
-			!MultipleMerkleDistributorOp
+			!MultipleMerkleDistributorOp ||
+			!MultipleMerkleDistributorSnxOp
 		) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		const periods = Array.from(new Array(Number(epochPeriod)), (_, i) => i);
+
 		const adjustedPeriods = isOldDistributor
 			? periods.slice(0, TRADING_REWARDS_CUTOFF_EPOCH)
+			: isOp
+			? periods.slice(OP_REWARDS_CUTOFF_EPOCH)
 			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH);
 
 		const fileNames = adjustedPeriods.map(
 			(i) =>
-				`trading-rewards-snapshots/${
-					this.sdk.context.networkId === 420 ? `goerli-` : ''
-				}epoch-${i}${isOp ? '-op' : ''}.json`
+				`trading-rewards-snapshots/${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${
+					isSnx ? i - OP_REWARDS_CUTOFF_EPOCH : i
+				}${isOp ? (isSnx ? '-snx-op' : '-op') : ''}.json`
 		);
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
-				const response = await client.get(fileName);
-				const period = isOldDistributor
-					? index >= 5
-						? index >= 10
-							? index + 2
-							: index + 1
-						: index
-					: index + TRADING_REWARDS_CUTOFF_EPOCH;
-				return { ...response.data, period };
+				try {
+					const response = await client.get(fileName);
+					const period = isOldDistributor
+						? index >= 5
+							? index >= 10
+								? index + 2
+								: index + 1
+							: index
+						: isOp
+						? isSnx
+							? index
+							: index + OP_REWARDS_CUTOFF_EPOCH
+						: index + TRADING_REWARDS_CUTOFF_EPOCH;
+					return { ...response.data, period };
+				} catch (err) {
+					logError(err);
+					return null;
+				}
 			})
 		);
 
 		const rewards = responses
+			.filter(Boolean)
 			.map((d) => {
 				const reward = d.claims[walletAddress];
 
@@ -512,7 +534,9 @@ export default class KwentaTokenService {
 				isOldDistributor
 					? MultipleMerkleDistributor.isClaimed(reward[0], reward[4])
 					: isOp
-					? MultipleMerkleDistributorOp.isClaimed(reward[0], reward[4])
+					? isSnx
+						? MultipleMerkleDistributorSnxOp.isClaimed(reward[0], reward[4])
+						: MultipleMerkleDistributorOp.isClaimed(reward[0], reward[4])
 					: MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4])
 			)
 		);
@@ -532,7 +556,7 @@ export default class KwentaTokenService {
 		return { claimableRewards, totalRewards };
 	}
 
-	public async claimMultipleRewards(claimableRewards: ClaimParams[][]) {
+	public async claimMultipleKwentaRewards(claimableRewards: ClaimParams[][]) {
 		const {
 			BatchClaimer,
 			MultipleMerkleDistributor,
@@ -549,39 +573,51 @@ export default class KwentaTokenService {
 		]);
 	}
 
-	public async claimMultipleRewardsAll(claimableRewards: ClaimParams[][]) {
+	public async claimMultipleAllRewards(claimableRewards: ClaimParams[][]) {
 		const {
 			BatchClaimer,
 			MultipleMerkleDistributor,
 			MultipleMerkleDistributorPerpsV2,
 			MultipleMerkleDistributorOp,
+			MultipleMerkleDistributorSnxOp,
 		} = this.sdk.context.contracts;
 
 		if (
 			!BatchClaimer ||
 			!MultipleMerkleDistributor ||
 			!MultipleMerkleDistributorPerpsV2 ||
-			!MultipleMerkleDistributorOp
+			!MultipleMerkleDistributorOp ||
+			!MultipleMerkleDistributorSnxOp
 		) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
 		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
-			[MultipleMerkleDistributor.address, MultipleMerkleDistributorPerpsV2.address],
+			[
+				MultipleMerkleDistributor.address,
+				MultipleMerkleDistributorPerpsV2.address,
+				MultipleMerkleDistributorOp.address,
+				MultipleMerkleDistributorSnxOp.address,
+			],
 			claimableRewards,
 		]);
 	}
 
-	public async claimOpRewards(claimableRewardsOp: ClaimParams[]) {
-		const { MultipleMerkleDistributorOp } = this.sdk.context.contracts;
+	public async claimOpRewards(claimableRewards: ClaimParams[], isSnx: boolean = false) {
+		const {
+			MultipleMerkleDistributorOp,
+			MultipleMerkleDistributorSnxOp,
+		} = this.sdk.context.contracts;
 
-		if (!MultipleMerkleDistributorOp) {
+		if (!MultipleMerkleDistributorOp || !MultipleMerkleDistributorSnxOp) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
 		}
 
-		return this.sdk.transactions.createContractTxn(MultipleMerkleDistributorOp, 'claimMultiple', [
-			claimableRewardsOp,
-		]);
+		return this.sdk.transactions.createContractTxn(
+			isSnx ? MultipleMerkleDistributorSnxOp : MultipleMerkleDistributorOp,
+			'claimMultiple',
+			[claimableRewards]
+		);
 	}
 
 	private performStakeAction(

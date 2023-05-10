@@ -31,9 +31,16 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
+import media from 'styles/media';
 import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
-import { getMarketName, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
+import {
+	AssetDisplayByAsset,
+	getMarketName,
+	getSynthDescription,
+	MarketKeyByAsset,
+} from 'utils/futures';
 
+import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {
@@ -96,8 +103,13 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const selectedPastPrice = getPastPrice(marketAsset);
 
 	const options = useMemo(() => {
-		const markets = search
-			? futuresMarkets.filter((m) => m.asset.toLowerCase().includes(search.toLowerCase()))
+		const lowerSearch = search?.toLowerCase();
+		const markets = lowerSearch
+			? futuresMarkets.filter(
+					(m) =>
+						m.asset.toLowerCase().includes(lowerSearch) ||
+						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)
+			  )
 			: futuresMarkets;
 
 		const sortedMarkets = markets
@@ -297,7 +309,15 @@ const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	top: 66px;
 	z-index: 100;
 	height: ${(props) => props.height}px;
-	width: 380px;
+	width: ${TRADE_PANEL_WIDTH_LG}px;
+	${media.lessThan('xxl')`
+		width: ${TRADE_PANEL_WIDTH_MD}px;
+	`}
+
+	${media.lessThan('md')`
+		width: 100%;
+	`}
+
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};

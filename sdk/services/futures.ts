@@ -8,7 +8,7 @@ import KwentaSDK from 'sdk';
 
 import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
-import { KWENTA_TRACKING_CODE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
+import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from 'sdk/contracts';
 import PerpsMarketABI from 'sdk/contracts/abis/PerpsV2Market.json';
@@ -24,6 +24,7 @@ import {
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
 	queryTrades,
+	queryCompletePositionHistory,
 } from 'sdk/queries/futures';
 import { NetworkId } from 'sdk/types/common';
 import { NetworkOverrideOptions } from 'sdk/types/common';
@@ -49,6 +50,7 @@ import {
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
+	appAdjustedLeverage,
 	calculateFundingRate,
 	calculateVolumes,
 	ConditionalOrderResult,
@@ -186,7 +188,8 @@ export default class FuturesService {
 				},
 				marketDebt: wei(marketDebt),
 				marketSkew: wei(marketSkew),
-				maxLeverage: wei(maxLeverage),
+				contractMaxLeverage: wei(maxLeverage),
+				appMaxLeverage: appAdjustedLeverage(wei(maxLeverage)),
 				marketSize: wei(marketSize),
 				marketLimitUsd: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
 				marketLimitNative: wei(marketParameters[i].maxMarketValue),
@@ -454,8 +457,8 @@ export default class FuturesService {
 
 		const orderIdBigNum = await crossMarginAccountContract.conditionalOrderId();
 		const orderId = orderIdBigNum.toNumber();
-		// Limit to the latest 100
-		const start = orderId > 100 ? orderId - 100 : 0;
+		// Limit to the latest 500
+		const start = orderId > ORDERS_FETCH_SIZE ? orderId - ORDERS_FETCH_SIZE : 0;
 
 		const orderCalls = Array(orderId)
 			.fill(0)
@@ -469,7 +472,7 @@ export default class FuturesService {
 			// Checks if the order is still pending
 			// Orders are never removed but all values set to zero so we check a zero value on price to filter pending
 			if (contractOrder && contractOrder.targetPrice.gt(0)) {
-				const order = mapConditionalOrderFromContract({ ...contractOrder, id: i }, account);
+				const order = mapConditionalOrderFromContract({ ...contractOrder, id: start + i }, account);
 				orders.push(order);
 			}
 		}
@@ -551,6 +554,11 @@ export default class FuturesService {
 
 	public async getPositionHistory(walletAddress: string) {
 		const response = await queryPositionHistory(this.sdk, walletAddress);
+		return response ? mapFuturesPositions(response) : [];
+	}
+
+	public async getCompletePositionHistory(walletAddress: string) {
+		const response = await queryCompletePositionHistory(this.sdk, walletAddress);
 		return response ? mapFuturesPositions(response) : [];
 	}
 

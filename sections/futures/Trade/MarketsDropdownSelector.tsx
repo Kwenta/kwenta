@@ -9,10 +9,15 @@ import { StyledCaretDownIcon } from 'components/Select/Select';
 import { Body, NumericValue } from 'components/Text';
 import { FuturesMarketAsset, SynthSuspensionReason } from 'sdk/types/futures';
 import { PricesInfo } from 'state/prices/types';
+import media from 'styles/media';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 import { MarketKeyByAsset } from 'utils/futures';
 
-import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
+import {
+	MARKETS_DETAILS_HEIGHT_DESKTOP,
+	TRADE_PANEL_WIDTH_LG,
+	TRADE_PANEL_WIDTH_MD,
+} from '../styles';
 
 type Props = {
 	asset: FuturesMarketAsset;
@@ -82,8 +87,28 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		flex: 1;
 		margin-left: 12px;
 	}
+	width: ${(props) => (props.mobile ? '100%' : TRADE_PANEL_WIDTH_MD + 'px')};
 
-	width: ${(props) => (props.mobile ? '100%' : '380px')};
+	${media.greaterThan('xxl')`
+		width: ${TRADE_PANEL_WIDTH_LG}px;
+	`}
+
+	width: ${TRADE_PANEL_WIDTH_LG}px;
+
+	${media.lessThan('xxl')`
+		width: ${TRADE_PANEL_WIDTH_MD}px;
+	`}
+
+	${media.lessThan('md')`
+		width: 100%;
+	`}
+
+	${(props) =>
+		props.mobile &&
+		css`
+			width: 100%;
+		`}
+
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
@@ -91,8 +116,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	cursor: pointer;
 	transition: all 0.2s ease-in-out;
 	&:hover {
-		background: ${(props) =>
-			props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
 	}
 
 	p {

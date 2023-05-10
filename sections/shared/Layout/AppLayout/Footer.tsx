@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { Body } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
+import { FOOTER_HEIGHT } from 'styles/common';
 
 import GitHashID from './GitHashID';
 import OperationStatus from './OperationStatus';
@@ -28,7 +29,8 @@ const FooterContainer = styled.footer`
 	z-index: 120;
 	grid-template-columns: repeat(3, 1fr);
 	align-items: center;
-	padding: 10px;
+	padding: 0 10px;
+	height: ${FOOTER_HEIGHT}px;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};

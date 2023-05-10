@@ -17,12 +17,16 @@ import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { claimMultipleRewardsAll, claimMultipleRewardsOp } from 'state/staking/actions';
+import {
+	claimMultipleAllRewards,
+	claimMultipleOpRewards,
+	claimMultipleSnxOpRewards,
+} from 'state/staking/actions';
 import {
 	selectEpochPeriod,
-	selectKwentaOpRewards,
+	selectKwentaRewards,
+	selectOpRewards,
 	selectSnxOpRewards,
-	selectTotalRewardsAll,
 } from 'state/staking/selectors';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
@@ -34,8 +38,8 @@ const RewardsTabs: FC = () => {
 	const router = useRouter();
 	const network = useAppSelector(selectNetwork);
 	const walletAddress = useAppSelector(selectWallet);
-	const tradingRewards = useAppSelector(selectTotalRewardsAll);
-	const kwentaOpRewards = useAppSelector(selectKwentaOpRewards);
+	const kwentaRewards = useAppSelector(selectKwentaRewards);
+	const opRewards = useAppSelector(selectOpRewards);
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
 	const epoch = useAppSelector(selectEpochPeriod);
 
@@ -44,35 +48,40 @@ const RewardsTabs: FC = () => {
 	}, [router]);
 
 	const handleClaimAll = useCallback(() => {
-		dispatch(claimMultipleRewardsAll());
+		dispatch(claimMultipleAllRewards());
 	}, [dispatch]);
 
 	const handleClaimOp = useCallback(() => {
-		dispatch(claimMultipleRewardsOp());
+		dispatch(claimMultipleOpRewards());
 	}, [dispatch]);
 
-	const estimatedTradingRewardQuery = useGetFile(
+	const handleClaimOpSnx = useCallback(() => {
+		dispatch(claimMultipleSnxOpRewards());
+	}, [dispatch]);
+
+	const estimatedKwentaRewardQuery = useGetFile(
 		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current.json`
 	);
-	const estimatedTradingReward = useMemo(
-		() => BigNumber.from(estimatedTradingRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
-		[estimatedTradingRewardQuery?.data?.claims, walletAddress]
+	const estimatedKwentaReward = useMemo(
+		() => BigNumber.from(estimatedKwentaRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedKwentaRewardQuery?.data?.claims, walletAddress]
 	);
 
-	const estimatedKwentaOpQuery = useGetFile(
+	const estimatedOpQuery = useGetFile(
 		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current-op.json`
 	);
-	const estimatedKwentaOp = useMemo(
-		() => BigNumber.from(estimatedKwentaOpQuery?.data?.claims[walletAddress!]?.amount ?? 0),
-		[estimatedKwentaOpQuery?.data?.claims, walletAddress]
+	const estimatedOp = useMemo(
+		() => BigNumber.from(estimatedOpQuery?.data?.claims[walletAddress!]?.amount ?? 0),
+		[estimatedOpQuery?.data?.claims, walletAddress]
 	);
 
-	const claimDisabledAll = useMemo(
-		() => tradingRewards.add(kwentaOpRewards).add(snxOpRewards).lte(0),
-		[kwentaOpRewards, snxOpRewards, tradingRewards]
-	);
+	const claimDisabledAll = useMemo(() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0), [
+		opRewards,
+		snxOpRewards,
+		kwentaRewards,
+	]);
 
-	const claimDisabledKwentaOp = useMemo(() => kwentaOpRewards.lte(0), [kwentaOpRewards]);
+	const claimDisabledKwentaOp = useMemo(() => opRewards.lte(0), [opRewards]);
 
 	const claimDisabledSnxOp = useMemo(() => snxOpRewards.lte(0), [snxOpRewards]);
 
@@ -84,20 +93,20 @@ const RewardsTabs: FC = () => {
 			button: t('dashboard.rewards.staking'),
 			kwentaIcon: true,
 			linkIcon: true,
-			rewards: tradingRewards,
-			estimatedRewards: truncateNumbers(wei(estimatedTradingReward ?? zeroBN), 4),
+			rewards: kwentaRewards,
+			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
 			onClick: goToStaking,
 			isDisabled: false,
 		},
 		{
-			key: 'kwenta-rewards',
-			title: t('dashboard.rewards.kwenta-rewards.title'),
-			copy: t('dashboard.rewards.kwenta-rewards.copy'),
+			key: 'op-rewards',
+			title: t('dashboard.rewards.op-rewards.title'),
+			copy: t('dashboard.rewards.op-rewards.copy'),
 			button: t('dashboard.rewards.claim'),
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: kwentaOpRewards,
-			estimatedRewards: truncateNumbers(wei(estimatedKwentaOp ?? zeroBN), 4),
+			rewards: opRewards,
+			estimatedRewards: truncateNumbers(wei(estimatedOp ?? zeroBN), 4),
 			onClick: handleClaimOp,
 			isDisabled: claimDisabledKwentaOp,
 		},
@@ -109,7 +118,7 @@ const RewardsTabs: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: snxOpRewards,
-			onClick: () => {},
+			onClick: handleClaimOpSnx,
 			isDisabled: claimDisabledSnxOp,
 		},
 	];

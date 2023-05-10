@@ -12,7 +12,6 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import media from 'styles/media';
 import { zeroBN } from 'utils/formatters/number';
 
 import TradesHistoryTable from '../TradingHistory/TradesHistoryTable';
@@ -80,14 +79,10 @@ export default function PositionChart({ mobile }: Props) {
 }
 
 const Container = styled(FlexDivRowCentered)<{ visible: boolean }>`
-		${media.greaterThan('mdUp')`
-		height: calc(100vh - 480px);
-		`}
-		${media.lessThan('md')`
-			height: 100%;
-		`}
+	height: 100%;
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+	overflow: hidden;
 `;
 
 const ChartContainer = styled.div`

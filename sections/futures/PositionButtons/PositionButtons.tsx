@@ -78,13 +78,13 @@ const PositionButton = styled.div<PositionButtonProps>`
 	${(props) =>
 		props.$isActive &&
 		css`
-			color: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color};
+			color: ${props.theme.colors.selectedTheme.newTheme.text.primary};
 			border-bottom-color: transparent;
 			border-top: 3px
 				${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position].color} solid;
 			background: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position]
 				.background};
-		`};
+		`}
 `;
 
 export default PositionButtons;
