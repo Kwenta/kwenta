@@ -56,6 +56,7 @@ type MarketSettings = {
 	liquidationFeeRatio: BigNumber;
 	maxKeeperFee: BigNumber;
 	minKeeperFee: BigNumber;
+	keeperLiquidationFee: BigNumber;
 };
 
 class FuturesMarketInternal {
@@ -174,6 +175,11 @@ class FuturesMarketInternal {
 			return { newPos: oldPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.NIL_ORDER };
 		}
 
+		// The order is not submitted if the user's existing position needs to be liquidated.
+		if (await this._canLiquidate(oldPos, this._onChainData.assetPrice)) {
+			return { newPos: oldPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.CAN_LIQUIDATE };
+		}
+
 		const fee = await this._orderFee(tradeParams);
 		const { margin, status } = await this._recomputeMarginWithDelta(
 			oldPos,
@@ -262,10 +268,31 @@ class FuturesMarketInternal {
 	_orderFee = async (tradeParams: TradeParams) => {
 		const notionalDiff = multiplyDecimal(tradeParams.sizeDelta, tradeParams.fillPrice);
 		const marketSkew = await this._onChainData.marketSkew;
-		const sameSide = notionalDiff.gte(0) === marketSkew.gte(0);
-		const staticRate = sameSide ? tradeParams.takerFee : tradeParams.makerFee;
+		if (this._sameSide(marketSkew.add(tradeParams.sizeDelta), marketSkew)) {
+			const staticRate = this._sameSide(notionalDiff, marketSkew)
+				? tradeParams.takerFee
+				: tradeParams.makerFee;
+
+			return multiplyDecimal(notionalDiff, staticRate).abs();
+		}
+
 		// IGNORED DYNAMIC FEE //
-		return multiplyDecimal(notionalDiff, staticRate).abs();
+
+		const takerSize = divideDecimal(
+			marketSkew.add(tradeParams.sizeDelta),
+			tradeParams.sizeDelta
+		).abs();
+		const makerSize = UNIT_BIG_NUM.sub(takerSize);
+		const takerFee = multiplyDecimal(
+			multiplyDecimal(notionalDiff, takerSize),
+			tradeParams.takerFee
+		).abs();
+		const makerFee = multiplyDecimal(
+			multiplyDecimal(notionalDiff, makerSize),
+			tradeParams.makerFee
+		).abs();
+
+		return takerFee.add(makerFee);
 	};
 
 	_recomputeMarginWithDelta = async (
@@ -371,8 +398,10 @@ class FuturesMarketInternal {
 
 		const fundingPerUnit = await this._netFundingPerUnit(position.lastFundingIndex, currentPrice);
 		const liqMargin = await this._liquidationMargin(position.size, currentPrice);
+		const liqPremium = await this._liquidationPremium(position.size, currentPrice);
+
 		const result = position.lastPrice
-			.add(divideDecimal(liqMargin.sub(position.margin), position.size))
+			.add(divideDecimal(liqMargin.sub(position.margin.sub(liqPremium)), position.size))
 			.sub(fundingPerUnit);
 
 		return result.lt(0) ? BigNumber.from(0) : result;
@@ -384,8 +413,9 @@ class FuturesMarketInternal {
 			multiplyDecimal(positionSize.abs(), price),
 			liquidationBufferRatio
 		);
+		const liqKeeperFee = await this._getSetting('keeperLiquidationFee');
 		const fee = await this._liquidationFee(positionSize, price);
-		return liquidationBuffer.add(fee);
+		return liquidationBuffer.add(fee).add(liqKeeperFee);
 	};
 
 	_liquidationFee = async (positionSize: BigNumber, price: BigNumber) => {
@@ -439,6 +469,23 @@ class FuturesMarketInternal {
 		return divideDecimal(priceBefore.add(priceAfter), UNIT_BIG_NUM.mul(2));
 	};
 
+	_canLiquidate = async (position: Position, price: BigNumber) => {
+		// No liquidating empty positions.
+		if (position.size.eq(0)) {
+			return false;
+		}
+
+		return (await this._remainingLiquidatableMargin(position, price)).lt(
+			await this._liquidationMargin(position.size, price)
+		);
+	};
+
+	_remainingLiquidatableMargin = async (position: Position, price: BigNumber) => {
+		const liqPremium = await this._liquidationPremium(position.size, price);
+		const remaining = (await this._marginPlusProfitFunding(position, price)).sub(liqPremium);
+		return remaining.gt(0) ? remaining : ZERO_BIG_NUM;
+	};
+
 	_orderSizeTooLarge = async (maxSize: BigNumber, oldSize: BigNumber, newSize: BigNumber) => {
 		if (this._sameSide(oldSize, newSize) && newSize.abs().lte(oldSize.abs())) {
 			return false;
@@ -483,6 +530,7 @@ class FuturesMarketInternal {
 			this._perpsV2MarketSettings.liquidationFeeRatio(),
 			this._perpsV2MarketSettings.maxKeeperFee(),
 			this._perpsV2MarketSettings.minKeeperFee(),
+			this._perpsV2MarketSettings.keeperLiquidationFee(),
 		])) as BigNumber[];
 		this._marketSettings = {
 			minInitialMargin: settings[0],
@@ -497,6 +545,7 @@ class FuturesMarketInternal {
 			liquidationFeeRatio: settings[9],
 			maxKeeperFee: settings[10],
 			minKeeperFee: settings[11],
+			keeperLiquidationFee: settings[12],
 		};
 		return this._marketSettings;
 	};

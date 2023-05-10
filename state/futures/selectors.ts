@@ -738,24 +738,17 @@ export const selectWalletEthBalance = createSelector(selectCrossMarginAccountDat
 	wei(account?.balanceInfo.walletEthBal || 0)
 );
 
-export const selectCrossMarginTradeFees = createSelector(
+export const selectSmartMarginKeeperDeposit = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
 	(fees) => {
-		return {
-			delayedOrderFee: wei(fees.delayedOrderFee),
-			keeperEthDeposit: wei(fees.keeperEthDeposit),
-		};
+		return wei(fees.keeperEthDeposit);
 	}
 );
 
-export const selectSmartMarginKeeperDeposit = createSelector(selectCrossMarginTradeFees, (fees) => {
-	return fees.keeperEthDeposit;
-});
-
 export const selectKeeperDepositExceedsBal = createSelector(
-	selectCrossMarginTradeFees,
+	selectSmartMarginKeeperDeposit,
 	selectWalletEthBalance,
-	({ keeperEthDeposit }, walletEthBalance) => {
+	(keeperEthDeposit, walletEthBalance) => {
 		return keeperEthDeposit.gt(walletEthBalance);
 	}
 );

@@ -99,7 +99,6 @@ import {
 	selectCrossMarginAccount,
 	selectCrossMarginMarginDelta,
 	selectCrossMarginOrderPrice,
-	selectCrossMarginTradeFees,
 	selectCrossMarginTradeInputs,
 	selectFuturesAccount,
 	selectFuturesSupportedNetwork,
@@ -604,6 +603,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 				);
 				preview.showStatus = true;
 			}
+
 			const serializedPreview = serializePotentialTrade({
 				...preview,
 				marketKey: params.market.key,
@@ -1369,7 +1369,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const feeCap = selectOrderFeeCap(getState());
 		const orderType = selectOrderType(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
-		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
+		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState());
 		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		const wallet = selectWallet(getState());
 		const position = selectPosition(getState());
@@ -1556,7 +1556,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 		const account = selectCrossMarginAccount(getState());
 		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
 		const { nativeSizeDelta, orderType, price } = selectClosePositionOrderInputs(getState());
-		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
+		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState());
 		const feeCap = selectOrderFeeCap(getState());
 		const wallet = selectWallet(getState());
 

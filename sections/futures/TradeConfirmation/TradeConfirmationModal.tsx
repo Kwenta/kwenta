@@ -41,7 +41,6 @@ import TradeConfirmationSummary from './TradeConfirmationSummary';
 
 type Props = {
 	gasFee?: Wei | null;
-	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	executionFee: Wei;
 	errorMessage?: string | null | undefined;
@@ -53,7 +52,6 @@ type Props = {
 };
 
 export default function TradeConfirmationModal({
-	tradeFee,
 	gasFee,
 	keeperFee,
 	executionFee,
@@ -77,7 +75,10 @@ export default function TradeConfirmationModal({
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
 	const hasSlTp = useAppSelector(selectNewTradeHasSlTp);
 
-	const totalFee = tradeFee.add(executionFee);
+	const totalFee = useMemo(() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee, [
+		potentialTradeDetails?.fee,
+		executionFee,
+	]);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {
