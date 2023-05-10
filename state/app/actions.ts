@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { KwentaStatus } from 'sdk/services/system';
+import { KwentaStatus } from 'sdk/types/system';
 import { ThunkConfig } from 'state/types';
 
 export const checkSynthetixStatus = createAsyncThunk<boolean, void, ThunkConfig>(

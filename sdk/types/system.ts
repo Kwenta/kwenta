@@ -3,3 +3,9 @@ export enum OperationalStatus {
 	Degraded = 'Degraded',
 	Offline = 'Offline',
 }
+
+export type KwentaStatus = {
+	status: OperationalStatus;
+	message: string;
+	lastUpdatedAt: string;
+};

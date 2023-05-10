@@ -2,20 +2,9 @@ import KwentaSDK from 'sdk';
 
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 
-import { OperationalStatus } from '../types/system';
+import { KwentaStatus } from '../types/system';
 import { client } from '../utils/files';
-
-const StatusMap = {
-	'0': OperationalStatus.FullyOperational,
-	'1': OperationalStatus.Degraded,
-	'2': OperationalStatus.Offline,
-} as const;
-
-export type KwentaStatus = {
-	status: OperationalStatus;
-	message: string;
-	lastUpdatedAt: string;
-};
+import { StatusMap } from '../utils/system';
 
 export default class SystemService {
 	private sdk: KwentaSDK;
