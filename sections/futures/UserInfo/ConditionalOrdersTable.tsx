@@ -212,7 +212,7 @@ export default function ConditionalOrdersTable() {
 										{t('futures.market.user.open-orders.actions.cancel')}
 									</Pill>
 									<Spacer width={10} />
-									<Pill onClick={handleOpenEditModal}>
+									<Pill size="medium" onClick={handleOpenEditModal}>
 										{t('futures.market.user.open-orders.actions.edit')}
 									</Pill>
 								</div>
