@@ -3,9 +3,3 @@ export enum OperationalStatus {
 	Degraded = 'Degraded',
 	Offline = 'Offline',
 }
-
-export const CURRENT_STATUS = {
-	status: OperationalStatus.FullyOperational,
-	message: undefined,
-	lastUpdated: undefined,
-} as const;

@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 
+import { KwentaStatus } from 'sdk/services/system';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { FuturesTransactionType } from 'state/futures/types';
@@ -45,4 +46,5 @@ export type AppState = {
 	gasPrice: GasPrice<string>;
 	transaction?: Transaction | undefined;
 	synthetixOnMaintenance: boolean;
+	kwentaStatus: KwentaStatus;
 };

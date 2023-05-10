@@ -1,12 +1,10 @@
 import Wei, { wei } from '@synthetixio/wei';
-import axios from 'axios';
 import { ethers, BigNumber } from 'ethers';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
-import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
 import {
 	EPOCH_START,
 	OP_REWARDS_CUTOFF_EPOCH,
@@ -19,11 +17,7 @@ import { weiFromWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
-
-const client = axios.create({
-	baseURL: `${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/`,
-	timeout: 5000,
-});
+import { client } from '../utils/files';
 
 export type ClaimParams = [number, string, string, string[], number];
 

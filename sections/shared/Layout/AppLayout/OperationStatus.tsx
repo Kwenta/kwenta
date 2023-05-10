@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { OperationalStatus, CURRENT_STATUS } from 'constants/status';
+import { OperationalStatus } from 'constants/status';
+import { fetchKwentaStatus } from 'state/app/actions';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import common from 'styles/theme/colors/common';
 
 const OperationStatusThemeMap = {
@@ -22,20 +24,31 @@ const OperationStatusThemeMap = {
 } as const;
 
 const OperationStatus = () => {
+	const kwentaStatus = useAppSelector(({ app }) => app.kwentaStatus);
+	const dispatch = useAppDispatch();
+
+	const fetchStatus = useCallback(() => {
+		dispatch(fetchKwentaStatus());
+	}, [dispatch]);
+
+	useEffect(() => {
+		fetchStatus();
+	}, [fetchStatus]);
+
 	const content = useMemo(
 		() => (
 			<OperationStatusContainer>
-				<OuterCircle $status={CURRENT_STATUS.status}>
-					<InnerCircle $status={CURRENT_STATUS.status} />
+				<OuterCircle $status={kwentaStatus.status}>
+					<InnerCircle $status={kwentaStatus.status} />
 				</OuterCircle>
-				<Body color="secondary">{CURRENT_STATUS.status}</Body>
+				<Body color="secondary">{kwentaStatus.status}</Body>
 			</OperationStatusContainer>
 		),
-		[]
+		[kwentaStatus.status]
 	);
 
-	return CURRENT_STATUS.message ? (
-		<StyledTooltip height="auto" width="auto" preset="top" content={CURRENT_STATUS.message}>
+	return !!kwentaStatus.message ? (
+		<StyledTooltip height="auto" width="auto" preset="top" content={kwentaStatus.message}>
 			{content}
 		</StyledTooltip>
 	) : (
