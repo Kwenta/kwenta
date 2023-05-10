@@ -20,7 +20,7 @@ type MarketDetailProps = {
 	toggle?: boolean;
 };
 
-const hours: InputFundingRateHours[] = ['1', '8', '24', '8760'];
+const hours: InputFundingRateHours[] = ['1', '8', '24', '8766'];
 
 const MarketDetail: FC<MarketDetailProps> = memo(
 	({ mobile, dataKey, color, value, toggle = false }) => {
@@ -39,7 +39,7 @@ const MarketDetail: FC<MarketDetailProps> = memo(
 		}, [dataKey, marketInfo]);
 
 		return (
-			<FlexDivRowCentered style={{ alignItems: 'flex-end' }}>
+			<FlexDivRowCentered>
 				<MarketDetailsTooltip
 					key={dataKey}
 					mobile={mobile}
