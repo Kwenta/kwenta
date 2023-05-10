@@ -2,11 +2,13 @@ import { ReactElement, memo, FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
+import HoursToggle from './HoursToggle';
 import { isMarketDataKey, marketDataKeyMap } from './utils';
 
 type MarketDetailProps = {
@@ -14,36 +16,49 @@ type MarketDetailProps = {
 	dataKey: string;
 	color?: string;
 	value: string | ReactElement;
+	toggle?: boolean;
 };
 
-const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, value }) => {
-	const { t } = useTranslation();
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
+const MarketDetail: FC<MarketDetailProps> = memo(
+	({ mobile, dataKey, color, value, toggle = false }) => {
+		const { t } = useTranslation();
+		const marketInfo = useAppSelector(selectMarketInfo);
+		const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
-	const contentSuffix = useMemo(() => {
-		if (dataKey === marketInfo?.marketName) {
-			return 'market-key';
-		} else if (isMarketDataKey(dataKey)) {
-			return marketDataKeyMap[dataKey];
-		} else {
-			return '';
-		}
-	}, [dataKey, marketInfo]);
+		const contentSuffix = useMemo(() => {
+			if (dataKey === marketInfo?.marketName) {
+				return 'market-key';
+			} else if (isMarketDataKey(dataKey)) {
+				return marketDataKeyMap[dataKey];
+			} else {
+				return '';
+			}
+		}, [dataKey, marketInfo]);
 
-	return (
-		<MarketDetailsTooltip
-			key={dataKey}
-			mobile={mobile}
-			content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
-		>
-			<WithCursor cursor="help">
-				<Body className="heading">{dataKey}</Body>
-				<MarketDetailValue value={value} color={color} mobile={mobile} pausedClass={pausedClass} />
-			</WithCursor>
-		</MarketDetailsTooltip>
-	);
-});
+		return (
+			<FlexDivRowCentered>
+				<MarketDetailsTooltip
+					key={dataKey}
+					mobile={mobile}
+					content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
+				>
+					<WithCursor cursor="help">
+						<Body className="heading">{dataKey}</Body>
+						<FlexDivRowCentered>
+							<MarketDetailValue
+								value={value}
+								color={color}
+								mobile={mobile}
+								pausedClass={pausedClass}
+							/>
+						</FlexDivRowCentered>
+					</WithCursor>
+				</MarketDetailsTooltip>
+				{toggle && <HoursToggle />}
+			</FlexDivRowCentered>
+		);
+	}
+);
 
 export default MarketDetail;
 
