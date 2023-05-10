@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -24,9 +24,13 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
 import { formatDollars } from 'utils/formatters/number';
-import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
+import { AssetDisplayByAsset, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
 
-const FuturesMarketsTable: FC = () => {
+type FuturesMarketsTableProps = {
+	search?: string;
+};
+
+const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -38,7 +42,15 @@ const FuturesMarketsTable: FC = () => {
 	const markPrices = useAppSelector(selectMarkPrices);
 
 	let data = useMemo(() => {
-		return futuresMarkets.map((market) => {
+		const lowerSearch = search?.toLowerCase();
+		const markets = lowerSearch
+			? futuresMarkets.filter(
+					(m) =>
+						m.asset.toLowerCase().includes(lowerSearch) ||
+						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)
+			  )
+			: futuresMarkets;
+		return markets.map((market) => {
 			const description = getSynthDescription(market.asset, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const assetPriceInfo = pricesInfo[market.asset];
@@ -65,7 +77,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [futuresMarkets, pastRates, futuresVolumes, markPrices, pricesInfo, t]);
+	}, [search, futuresMarkets, t, futuresVolumes, pricesInfo, pastRates, markPrices]);
 
 	return (
 		<>
