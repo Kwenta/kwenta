@@ -22,7 +22,7 @@ export const APP_INITIAL_STATE: AppState = {
 	kwentaStatus: {
 		status: OperationalStatus.FullyOperational,
 		message: '',
-		lastUpdatedAt: '',
+		lastUpdatedAt: undefined,
 	},
 };
 

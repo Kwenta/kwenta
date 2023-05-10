@@ -1,3 +1,4 @@
+import { formatDistance } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -43,8 +44,16 @@ const OperationStatus = () => {
 		[kwentaStatus.status]
 	);
 
+	const parsedDate = useMemo(() => {
+		return kwentaStatus.lastUpdatedAt
+			? ` (Last updated: ${formatDistance(new Date(kwentaStatus.lastUpdatedAt * 1000), new Date(), {
+					addSuffix: true,
+			  })})`
+			: '';
+	}, [kwentaStatus.lastUpdatedAt]);
+
 	return !!kwentaStatus.message ? (
-		<StyledTooltip height="auto" width="auto" content={kwentaStatus.message}>
+		<StyledTooltip height="auto" width="auto" content={`${kwentaStatus.message}${parsedDate}`}>
 			{content}
 		</StyledTooltip>
 	) : (

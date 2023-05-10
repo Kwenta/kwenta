@@ -29,7 +29,9 @@ export default class SystemService {
 	}
 
 	public async getKwentaStatus(): Promise<KwentaStatus> {
-		const response = await client.get('kwenta-status.json');
+		const response = await client.get('kwenta-status.json', {
+			headers: { 'Cache-Control': 'no-cache' },
+		});
 
 		return {
 			...response.data,
