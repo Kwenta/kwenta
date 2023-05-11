@@ -435,14 +435,14 @@ class FuturesMarketInternal {
 
 		// start with initial margin
 		const margins = await Promise.all(
-			prices.map(async (price) => await this._marginPlusProfitFunding(position, price))
+			prices.map((price) => this._marginPlusProfitFunding(position, price))
 		);
 
 		const liqMargins = await Promise.all(
-			prices.map(async (price) => await this._exactLiquidationMargin(position.size, price))
+			prices.map((price) => this._exactLiquidationMargin(position.size, price))
 		);
 		const liqPremiums = await Promise.all(
-			prices.map(async (price) => await this._exactLiquidationPremium(position.size, price))
+			prices.map((price) => this._exactLiquidationPremium(position.size, price))
 		);
 
 		const exactLiqPrice = prices.find((price, i) => {
