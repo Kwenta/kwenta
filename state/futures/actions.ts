@@ -99,7 +99,6 @@ import {
 	selectCrossMarginAccount,
 	selectCrossMarginMarginDelta,
 	selectCrossMarginOrderPrice,
-	selectCrossMarginTradeFees,
 	selectCrossMarginTradeInputs,
 	selectFuturesAccount,
 	selectFuturesSupportedNetwork,
@@ -108,7 +107,6 @@ import {
 	selectIsolatedMarginTradeInputs,
 	selectKeeperEthBalance,
 	selectLeverageSide,
-	selectMarketPrice,
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketKey,
@@ -131,6 +129,7 @@ import {
 	selectSlTpModalInputs,
 	selectDesiredTradeFillPrice,
 	selectSmartMarginKeeperDeposit,
+	selectSkewAdjustedPrice,
 } from './selectors';
 import {
 	AccountContext,
@@ -604,6 +603,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 				);
 				preview.showStatus = true;
 			}
+
 			const serializedPreview = serializePotentialTrade({
 				...preview,
 				marketKey: params.market.key,
@@ -641,7 +641,7 @@ export const editCrossMarginTradeMarginDelta = (marginDelta: string): AppThunk =
 	dispatch,
 	getState
 ) => {
-	const orderPrice = selectMarketPrice(getState());
+	const orderPrice = selectSkewAdjustedPrice(getState());
 	const marketInfo = selectMarketInfo(getState());
 	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
 
@@ -676,7 +676,7 @@ export const editCrossMarginTradeSize = (
 	size: string,
 	currencyType: 'usd' | 'native'
 ): AppThunk => (dispatch, getState) => {
-	const assetRate = selectMarketPrice(getState());
+	const assetRate = selectSkewAdjustedPrice(getState());
 	const marginDelta = selectCrossMarginMarginDelta(getState());
 	const orderPrice = selectCrossMarginOrderPrice(getState());
 	const isConditionalOrder = selectIsConditionalOrder(getState());
@@ -788,7 +788,7 @@ export const editClosePositionPrice = (marketKey: FuturesMarketKey, price: strin
 	getState
 ) => {
 	const { nativeSizeDelta, orderType } = selectClosePositionOrderInputs(getState());
-	const marketPrice = selectMarketPrice(getState());
+	const marketPrice = selectSkewAdjustedPrice(getState());
 	const { position } = selectEditPositionModalInfo(getState());
 	const closeTradeSide =
 		position?.position?.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT;
@@ -863,15 +863,14 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	dispatch,
 	getState
 ) => {
-	const assetRate = selectMarketPrice(getState());
+	const marketPrice = selectSkewAdjustedPrice(getState());
 	const position = selectPosition(getState());
-	const marketPrice = selectMarketPrice(getState());
 	const marketKey = selectMarketKey(getState());
 	const tradeSide = selectLeverageSide(getState());
 
 	if (
 		size === '' ||
-		assetRate.eq(0) ||
+		marketPrice.eq(0) ||
 		!position?.remainingMargin ||
 		position?.remainingMargin.eq(0)
 	) {
@@ -883,8 +882,8 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 
 	const market = getMarketDetailsByKey(getState, marketKey);
 
-	const nativeSize = currencyType === 'native' ? size : wei(size).div(assetRate).toString();
-	const usdSize = currencyType === 'native' ? stripZeros(assetRate.mul(size).toString()) : size;
+	const nativeSize = currencyType === 'native' ? size : wei(size).div(marketPrice).toString();
+	const usdSize = currencyType === 'native' ? stripZeros(marketPrice.mul(size).toString()) : size;
 	const leverage =
 		Number(usdSize) > 0 && position?.remainingMargin.gt(0)
 			? wei(usdSize).div(position?.remainingMargin).toString(2)
@@ -949,7 +948,7 @@ export const debouncedPrepareIsolatedMarginTradePreview = debounce(
 );
 
 export const editTradeOrderPrice = (price: string): AppThunk => (dispatch, getState) => {
-	const rate = selectMarketPrice(getState());
+	const rate = selectSkewAdjustedPrice(getState());
 	const orderType = selectOrderType(getState());
 	const side = selectLeverageSide(getState());
 	const inputs = selectCrossMarginTradeInputs(getState());
@@ -1369,7 +1368,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const feeCap = selectOrderFeeCap(getState());
 		const orderType = selectOrderType(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
-		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
+		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState());
 		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		const wallet = selectWallet(getState());
 		const position = selectPosition(getState());
@@ -1556,7 +1555,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void,
 		const account = selectCrossMarginAccount(getState());
 		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
 		const { nativeSizeDelta, orderType, price } = selectClosePositionOrderInputs(getState());
-		const { keeperEthDeposit } = selectCrossMarginTradeFees(getState());
+		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState());
 		const feeCap = selectOrderFeeCap(getState());
 		const wallet = selectWallet(getState());
 

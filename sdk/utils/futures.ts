@@ -331,7 +331,7 @@ export const formatDelayedOrder = (
 	};
 };
 
-export const formatPotentialIsolatedTrade = (
+export const formatPotentialTrade = (
 	preview: PostTradeDetailsResponse,
 	basePrice: Wei,
 	nativeSizeDelta: Wei,
@@ -367,30 +367,6 @@ export const formatPotentialIsolatedTrade = (
 		statusMessage: getTradeStatusMessage(status),
 		priceImpact: priceImpact,
 		slippageAmount: priceImpact.mul(slippageDirection).mul(tradeValueWithoutSlippage),
-	};
-};
-
-export const formatPotentialTrade = (
-	preview: PostTradeDetailsResponse,
-	nativeSizeDelta: Wei,
-	leverageSide: PositionSide
-) => {
-	const { fee, liqPrice, margin, price, size, status } = preview;
-	return {
-		fee: wei(fee),
-		liqPrice: wei(liqPrice),
-		margin: wei(margin),
-		price: wei(price),
-		size: wei(size),
-		sizeDelta: nativeSizeDelta,
-		side: leverageSide,
-		leverage: wei(margin).eq(0) ? wei(0) : wei(size).mul(wei(price)).div(wei(margin)).abs(),
-		notionalValue: wei(size).mul(wei(price)),
-		status,
-		showStatus: status > 0, // 0 is success
-		statusMessage: getTradeStatusMessage(status),
-		priceImpact: wei(0),
-		slippageAmount: wei(0),
 	};
 };
 
