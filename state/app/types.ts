@@ -47,4 +47,5 @@ export type AppState = {
 	transaction?: Transaction | undefined;
 	synthetixOnMaintenance: boolean;
 	kwentaStatus: KwentaStatus;
+	acknowledgedOrdersWarning: boolean;
 };
