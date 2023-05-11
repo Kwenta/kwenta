@@ -441,13 +441,22 @@ class FuturesMarketInternal {
 			prices.map((price) => this._exactLiquidationPremium(position.size, price))
 		);
 
-		const exactLiqPrice = prices.find((price, i) => {
+		const validPrices = prices.filter((price, i) => {
 			const margin = margins[i];
 			const liqMargin = liqMargins[i];
 			const liqPremium = liqPremiums[i];
-			return margin.sub(liqMargin).sub(liqPremium).gt(0);
+			return margin.sub(liqMargin).sub(liqPremium).lt(0);
 		});
-		return exactLiqPrice ?? BigNumber.from(0);
+
+		let exactLiqPrice;
+		if (validPrices.length > 0) {
+			exactLiqPrice = position.size.gt(0)
+				? validPrices.reduce((max, current) => (max.gt(current) ? max : current))
+				: validPrices.reduce((min, current) => (min.lt(current) ? min : current));
+		} else {
+			exactLiqPrice = BigNumber.from(0);
+		}
+		return exactLiqPrice;
 	};
 
 	_exactLiquidationMargin = async (positionSize: BigNumber, price: BigNumber) => {
