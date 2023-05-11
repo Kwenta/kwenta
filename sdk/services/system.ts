@@ -2,6 +2,10 @@ import KwentaSDK from 'sdk';
 
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 
+import { KwentaStatus } from '../types/system';
+import { client } from '../utils/files';
+import { StatusMap } from '../utils/system';
+
 export default class SystemService {
 	private sdk: KwentaSDK;
 
@@ -22,5 +26,16 @@ export default class SystemService {
 		])) as [boolean, boolean];
 
 		return isSystemUpgrading || isExchangePaused;
+	}
+
+	public async getKwentaStatus(): Promise<KwentaStatus> {
+		const response = await client.get('kwenta-status.json', {
+			headers: { 'Cache-Control': 'no-cache' },
+		});
+
+		return {
+			...response.data,
+			status: StatusMap[response.data.status as keyof typeof StatusMap],
+		};
 	}
 }

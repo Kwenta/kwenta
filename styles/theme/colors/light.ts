@@ -64,7 +64,7 @@ const newTheme = {
 	},
 	text: {
 		primary: common.palette.neutral.n900,
-		secondary: common.palette.neutral.n600,
+		secondary: common.palette.neutral.n400,
 		tertiary: common.palette.neutral,
 		positive: common.palette.green.g800,
 		negative: common.palette.red.r700,

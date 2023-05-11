@@ -721,6 +721,8 @@ export const selectEditMarginAllowanceValid = createSelector(
 export const selectSelectedInputDenomination = (state: RootState) =>
 	state.futures.selectedInputDenomination;
 
+export const selectSelectedInpuHours = (state: RootState) => state.futures.selectedInputHours;
+
 export const selectCrossMarginSelectedLeverage = createSelector(
 	selectMarketKey,
 	(state: RootState) => state.futures.crossMargin.selectedLeverageByAsset,
