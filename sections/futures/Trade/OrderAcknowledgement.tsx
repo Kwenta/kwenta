@@ -22,7 +22,7 @@ export default function OrderAcknowledgement({ onClick, inContainer }: Props) {
 		<ContentContainer>
 			<Body color="negative">
 				Conditional orders are an experimental feature and execution is not guaranteed in times of
-				high network congestion
+				network congestion
 			</Body>
 			<Spacer height={12} />
 			<FlexDivRowCentered>
