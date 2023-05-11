@@ -162,7 +162,7 @@ class FuturesMarketInternal {
 		);
 
 		const liqPrice = await this._approxLiquidationPrice(newPos, newPos.lastPrice);
-		const exactLiqPrice = await this._exactLiquidationPrice(newPos, newPos.lastPrice, liqPrice);
+		const exactLiqPrice = await this._exactLiquidationPrice(newPos, liqPrice);
 		return { ...newPos, liqPrice: exactLiqPrice, fee, price: newPos.lastPrice, status: status };
 	};
 
@@ -418,11 +418,7 @@ class FuturesMarketInternal {
 		return result.lt(0) ? BigNumber.from(0) : result;
 	};
 
-	_exactLiquidationPrice = async (
-		position: Position,
-		currentPrice: BigNumber,
-		approxLiquidationPrice: BigNumber
-	) => {
+	_exactLiquidationPrice = async (position: Position, approxLiquidationPrice: BigNumber) => {
 		if (position.size.isZero()) {
 			return BigNumber.from('0');
 		}

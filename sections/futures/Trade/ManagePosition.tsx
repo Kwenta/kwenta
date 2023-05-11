@@ -29,10 +29,11 @@ import {
 	selectMaxUsdSizeInput,
 	selectCrossMarginAccount,
 	selectPosition,
+	selectMarketPriceInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { isZero } from 'utils/formatters/number';
+import { isZero, zeroBN } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 const ManagePosition: React.FC = () => {
@@ -55,6 +56,7 @@ const ManagePosition: React.FC = () => {
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const marketInfo = useAppSelector(selectMarketInfo);
+	const indexPrice = useAppSelector(selectMarketPriceInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const smartMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const position = useAppSelector(selectPosition);
@@ -93,6 +95,17 @@ const ManagePosition: React.FC = () => {
 		const maxLeverage = marketInfo?.appMaxLeverage ?? wei(1);
 
 		// TODO: Clean up errors and warnings
+		const indexPriceWei = indexPrice?.price ?? zeroBN;
+		const canLiquidate =
+			(previewTrade?.size.gt(0) && indexPriceWei.lt(previewTrade?.liqPrice)) ||
+			(previewTrade?.size.lt(0) && indexPriceWei.gt(previewTrade?.liqPrice));
+		if (canLiquidate) {
+			return {
+				show: 'warn',
+				message: `Position can be liquidated`,
+			};
+		}
+
 		if (leverage.gt(maxLeverageValue))
 			return {
 				show: 'warn',
@@ -166,6 +179,8 @@ const ManagePosition: React.FC = () => {
 		previewStatus,
 		maxLeverageValue,
 		leverage,
+		indexPrice,
+		previewTrade,
 		marketInfo?.appMaxLeverage,
 	]);
 
