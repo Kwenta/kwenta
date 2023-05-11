@@ -219,6 +219,7 @@ class FuturesMarketInternal {
 		const liqPremium = await this._liquidationPremium(newPos.size, this._onChainData.assetPrice);
 		let liqMargin = await this._liquidationMargin(newPos.size, this._onChainData.assetPrice);
 		liqMargin = liqMargin.add(liqPremium);
+
 		if (margin.lte(liqMargin)) {
 			return { newPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.CAN_LIQUIDATE };
 		}
@@ -259,7 +260,6 @@ class FuturesMarketInternal {
 		const notional = multiplyDecimal(positionSize, currentPrice).abs();
 		const skewScale = await this._getSetting('skewScale');
 		const liqPremiumMultiplier = await this._getSetting('liquidationPremiumMultiplier');
-
 		const skewedSize = divideDecimal(positionSize.abs(), skewScale);
 		const value = multiplyDecimal(skewedSize, notional);
 		return multiplyDecimal(value, liqPremiumMultiplier);
@@ -317,7 +317,6 @@ class FuturesMarketInternal {
 
 	_marginPlusProfitFunding = async (position: Position, price: BigNumber) => {
 		const funding = this._onChainData.accruedFunding;
-
 		return position.margin.add(this._profitLoss(position, price)).add(funding);
 	};
 
@@ -399,11 +398,9 @@ class FuturesMarketInternal {
 		const fundingPerUnit = await this._netFundingPerUnit(position.lastFundingIndex, currentPrice);
 		const liqMargin = await this._liquidationMargin(position.size, currentPrice);
 		const liqPremium = await this._liquidationPremium(position.size, currentPrice);
-
 		const result = position.lastPrice
 			.add(divideDecimal(liqMargin.sub(position.margin.sub(liqPremium)), position.size))
 			.sub(fundingPerUnit);
-
 		return result.lt(0) ? BigNumber.from(0) : result;
 	};
 
@@ -475,14 +472,16 @@ class FuturesMarketInternal {
 			return false;
 		}
 
-		return (await this._remainingLiquidatableMargin(position, price)).lt(
-			await this._liquidationMargin(position.size, price)
-		);
+		const remainingLiquidatableMargin = await this._remainingLiquidatableMargin(position, price);
+		const liqMargin = await this._liquidationMargin(position.size, price);
+
+		return remainingLiquidatableMargin.lt(liqMargin);
 	};
 
 	_remainingLiquidatableMargin = async (position: Position, price: BigNumber) => {
 		const liqPremium = await this._liquidationPremium(position.size, price);
-		const remaining = (await this._marginPlusProfitFunding(position, price)).sub(liqPremium);
+		const marginPlusProfitFunding = await this._marginPlusProfitFunding(position, price);
+		const remaining = marginPlusProfitFunding.sub(liqPremium);
 		return remaining.gt(0) ? remaining : ZERO_BIG_NUM;
 	};
 
