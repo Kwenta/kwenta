@@ -3,7 +3,7 @@ import { memo } from 'react';
 import {
 	selectClosePositionOrderInputs,
 	selectClosePositionPreview,
-	selectCrossMarginTradeFees,
+	selectSmartMarginKeeperDeposit,
 	selectEditPositionModalInfo,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
@@ -14,7 +14,7 @@ import FeesRow from './FeesRow.tsx';
 const ClosePositionFeeInfo = memo(() => {
 	const tradePreview = useAppSelector(selectClosePositionPreview);
 	const { market } = useAppSelector(selectEditPositionModalInfo);
-	const smartMarginFees = useAppSelector(selectCrossMarginTradeFees);
+	const keeperEthDeposit = useAppSelector(selectSmartMarginKeeperDeposit);
 	const { orderType } = useAppSelector(selectClosePositionOrderInputs);
 
 	return (
@@ -22,7 +22,7 @@ const ClosePositionFeeInfo = memo(() => {
 			executionFee={market?.keeperDeposit ?? zeroBN}
 			tradeFee={tradePreview?.fee ?? zeroBN}
 			orderType={orderType}
-			smartMarginKeeperDeposit={smartMarginFees.keeperEthDeposit}
+			smartMarginKeeperDeposit={keeperEthDeposit}
 			rates={{
 				maker: market?.feeRates.makerFeeOffchainDelayedOrder ?? zeroBN,
 				taker: market?.feeRates.takerFeeOffchainDelayedOrder ?? zeroBN,

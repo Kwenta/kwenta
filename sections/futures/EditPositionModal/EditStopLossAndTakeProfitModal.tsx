@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -13,7 +13,7 @@ import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
 import { ConditionalOrderTypeEnum, PositionSide } from 'sdk/types/futures';
 import { setShowPositionModal } from 'state/app/reducer';
-import { selectTransaction } from 'state/app/selectors';
+import { selectAckedOrdersWarning, selectTransaction } from 'state/app/selectors';
 import { calculateKeeperDeposit, updateStopLossAndTakeProfit } from 'state/futures/actions';
 import { setSLTPModalStopLoss, setSLTPModalTakeProfit } from 'state/futures/reducer';
 import {
@@ -29,6 +29,7 @@ import { formatDollars, stripZeros, suggestedDecimals } from 'utils/formatters/n
 
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow.tsx';
 import PositionType from '../PositionType';
+import OrderAcknowledgement from '../Trade/OrderAcknowledgement';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
 const TP_OPTIONS = ['none', '5%', '10%', '25%', '50%', '100%'];
@@ -44,13 +45,17 @@ export default function EditStopLossAndTakeProfitModal() {
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs);
 	const keeperDeposit = useAppSelector(selectSmartMarginKeeperDeposit);
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal);
+	const hideOrderWarning = useAppSelector(selectAckedOrdersWarning);
 
-	const sltpOrders = useAppSelector(selectAllSLTPOrders);
-	const stopLoss = sltpOrders.find(
+	const stopLoss = exsistingSLTPOrders.find(
 		(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
 	);
-	const takeProfit = sltpOrders.find(
+	const takeProfit = exsistingSLTPOrders.find(
 		(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
+	);
+
+	const [showOrderWarning, setShowOrderWarning] = useState(
+		!stopLoss && !takeProfit && !hideOrderWarning
 	);
 
 	const hasInputValues = useMemo(() => takeProfitPrice || stopLossPrice, [
@@ -208,63 +213,72 @@ export default function EditStopLossAndTakeProfitModal() {
 				}
 			/>
 			<StyledSpacer marginTop={6} />
-			<EditStopLossAndTakeProfitInput
-				type={'take-profit'}
-				invalid={tpInvalid}
-				currentPrice={
-					marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
-				}
-				value={takeProfitPrice}
-				onChange={onChangeTakeProfit}
-			/>
 
-			<SelectorButtons
-				onSelect={onSelectTakeProfit}
-				options={TP_OPTIONS}
-				type={'pill-button-large'}
-			/>
+			{showOrderWarning ? (
+				<OrderAcknowledgement inContainer onClick={() => setShowOrderWarning(false)} />
+			) : (
+				<>
+					<EditStopLossAndTakeProfitInput
+						type={'take-profit'}
+						invalid={tpInvalid}
+						currentPrice={
+							marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
+						}
+						value={takeProfitPrice}
+						onChange={onChangeTakeProfit}
+					/>
 
-			<StyledSpacer height={10} />
+					<SelectorButtons
+						onSelect={onSelectTakeProfit}
+						options={TP_OPTIONS}
+						type={'pill-button-large'}
+					/>
 
-			<EditStopLossAndTakeProfitInput
-				type={'stop-loss'}
-				invalid={slInvalid}
-				currentPrice={
-					marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
-				}
-				value={stopLossPrice}
-				onChange={onChangeStopLoss}
-			/>
+					<StyledSpacer height={10} />
 
-			<SelectorButtons
-				onSelect={onSelectStopLossPercent}
-				options={SL_OPTIONS}
-				type={'pill-button-large'}
-			/>
+					<EditStopLossAndTakeProfitInput
+						type={'stop-loss'}
+						invalid={slInvalid}
+						currentPrice={
+							marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
+						}
+						value={stopLossPrice}
+						onChange={onChangeStopLoss}
+					/>
 
-			<Spacer height={20} />
+					<SelectorButtons
+						onSelect={onSelectStopLossPercent}
+						options={SL_OPTIONS}
+						type={'pill-button-large'}
+					/>
 
-			<ErrorView
-				message={ethBalWarningMessage ?? t('futures.market.trade.edit-sl-tp.warning')}
-				messageType="warn"
-			/>
+					<Spacer height={20} />
 
-			<Spacer height={4} />
+					<ErrorView
+						message={ethBalWarningMessage ?? t('futures.market.trade.edit-sl-tp.warning')}
+						messageType="warn"
+					/>
 
-			<Button
-				loading={isSubmitting}
-				variant="flat"
-				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={!isActive}
-				fullWidth
-				onClick={onSetStopLossAndTakeProfit}
-			>
-				{t(`futures.market.trade.edit-sl-tp.set-sl-n-tp`)}
-			</Button>
-			<Spacer height={20} />
-			<KeeperDepositRow smartMarginKeeperDeposit={keeperDeposit} />
+					<Spacer height={4} />
 
-			{transactionState?.error && <ErrorView message={transactionState.error} formatter="revert" />}
+					<Button
+						loading={isSubmitting}
+						variant="flat"
+						data-testid="futures-market-trade-deposit-margin-button"
+						disabled={!isActive}
+						fullWidth
+						onClick={onSetStopLossAndTakeProfit}
+					>
+						{t(`futures.market.trade.edit-sl-tp.set-sl-n-tp`)}
+					</Button>
+					<Spacer height={20} />
+					<KeeperDepositRow smartMarginKeeperDeposit={keeperDeposit} />
+
+					{transactionState?.error && (
+						<ErrorView message={transactionState.error} formatter="revert" />
+					)}
+				</>
+			)}
 		</StyledBaseModal>
 	);
 }

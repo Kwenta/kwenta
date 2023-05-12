@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
@@ -10,6 +10,7 @@ import { FlexDivRow } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
+import { selectAckedOrdersWarning } from 'state/app/selectors';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
 	selectLeverageInput,
@@ -20,6 +21,8 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { suggestedDecimals } from 'utils/formatters/number';
 
+import OrderAcknowledgement from './OrderAcknowledgement';
+
 const TP_OPTIONS = ['5%', '10%', '25%', '50%', '100%'];
 const SL_OPTIONS = ['2%', '5%', '10%', '20%', '50%'];
 
@@ -29,8 +32,19 @@ export default function SLTPInputs() {
 	const currentPrice = useAppSelector(selectMarketPrice);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const leverage = useAppSelector(selectLeverageInput);
+	const hideWarning = useAppSelector(selectAckedOrdersWarning);
 
 	const [showInputs, setShowInputs] = useState(false);
+	const [showOrderWarning, setShowOrderWarning] = useState(false);
+
+	useEffect(() => {
+		if (hideWarning) return;
+		if (showInputs) {
+			setShowOrderWarning(true);
+		} else {
+			setShowOrderWarning(false);
+		}
+	}, [showInputs, hideWarning]);
 
 	const leverageWei = useMemo(() => {
 		return leverage && Number(leverage) > 0 ? wei(leverage) : wei(1);
@@ -110,40 +124,46 @@ export default function SLTPInputs() {
 					<StyledCaretDownIcon style={{ transform: [{ rotateY: '180deg' }] }} flip={showInputs} />
 				</Button>
 			</ExpandRow>
-			{showInputs && (
-				<InputsContainer>
-					<Spacer height={6} />
+			{showInputs ? (
+				showOrderWarning ? (
+					<WarningContainer>
+						<OrderAcknowledgement onClick={() => setShowOrderWarning(false)} />
+					</WarningContainer>
+				) : (
+					<InputsContainer>
+						<Spacer height={6} />
 
-					<InputHeaderRow
-						label="SL"
-						rightElement={
-							<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
-						}
-					/>
-					<NumericInput
-						invalid={slInvalid}
-						dataTestId={'trade-panel-stop-loss-input'}
-						value={stopLossPrice}
-						placeholder={'0.00'}
-						onChange={onChangeStopLoss}
-					/>
+						<InputHeaderRow
+							label="SL"
+							rightElement={
+								<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
+							}
+						/>
+						<NumericInput
+							invalid={slInvalid}
+							dataTestId={'trade-panel-stop-loss-input'}
+							value={stopLossPrice}
+							placeholder={'0.00'}
+							onChange={onChangeStopLoss}
+						/>
 
-					<Spacer height={12} />
+						<Spacer height={12} />
 
-					<InputHeaderRow
-						label="TP"
-						rightElement={<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />}
-					/>
+						<InputHeaderRow
+							label="TP"
+							rightElement={<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />}
+						/>
 
-					<NumericInput
-						invalid={tpInvalid}
-						dataTestId={'trade-panel-take-profit-input'}
-						value={takeProfitPrice}
-						placeholder={'0.00'}
-						onChange={onChangeTakeProfit}
-					/>
-				</InputsContainer>
-			)}
+						<NumericInput
+							invalid={tpInvalid}
+							dataTestId={'trade-panel-take-profit-input'}
+							value={takeProfitPrice}
+							placeholder={'0.00'}
+							onChange={onChangeTakeProfit}
+						/>
+					</InputsContainer>
+				)
+			) : null}
 		</Container>
 	);
 }
@@ -165,4 +185,8 @@ const ExpandRow = styled(FlexDivRow)`
 
 const InputsContainer = styled.div`
 	padding: 4px;
+`;
+
+const WarningContainer = styled.div`
+	padding: 10px 0;
 `;

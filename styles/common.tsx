@@ -255,3 +255,5 @@ export const YellowIconButton = styled.div`
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;
+
+export const FOOTER_HEIGHT = 30;

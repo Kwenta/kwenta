@@ -1,7 +1,7 @@
 import { memo } from 'react';
 
 import {
-	selectCrossMarginTradeFees,
+	selectSmartMarginKeeperDeposit,
 	selectMarketInfo,
 	selectOrderType,
 	selectTradePreview,
@@ -14,7 +14,7 @@ import FeesRow from './FeesRow.tsx';
 const TradeTotalFeesRow = memo(() => {
 	const tradePreview = useAppSelector(selectTradePreview);
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const smartMarginFees = useAppSelector(selectCrossMarginTradeFees);
+	const keeperEthDeposit = useAppSelector(selectSmartMarginKeeperDeposit);
 	const orderType = useAppSelector(selectOrderType);
 
 	return (
@@ -22,7 +22,7 @@ const TradeTotalFeesRow = memo(() => {
 			executionFee={marketInfo?.keeperDeposit ?? zeroBN}
 			tradeFee={tradePreview?.fee ?? zeroBN}
 			orderType={orderType}
-			smartMarginKeeperDeposit={smartMarginFees.keeperEthDeposit}
+			smartMarginKeeperDeposit={keeperEthDeposit}
 			rates={{
 				maker: marketInfo?.feeRates.makerFeeOffchainDelayedOrder ?? zeroBN,
 				taker: marketInfo?.feeRates.takerFeeOffchainDelayedOrder ?? zeroBN,

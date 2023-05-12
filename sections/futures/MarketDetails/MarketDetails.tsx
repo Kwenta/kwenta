@@ -1,4 +1,5 @@
-import React, { memo } from 'react';
+import { wei } from '@synthetixio/wei';
+import React, { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -11,6 +12,7 @@ import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
+	selectSelectedInpuHours,
 	selectShowHistory,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
@@ -41,10 +43,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				{!mobile && <MarketPriceDetail />}
 				<IndexPriceDetail mobile={mobile} />
 				{!mobile && <DailyChangeDetail />}
-				<HourlyFundingDetail mobile={mobile} />
 				{!mobile && <OpenInterestLongDetail />}
 				{!mobile && <OpenInterestShortDetail />}
 				<MarketSkew mobile={mobile} />
+				<HourlyFundingDetail mobile={mobile} />
 			</MarketDetailsContainer>
 			{!mobile && (
 				<ShowHistoryContainer>
@@ -117,7 +119,13 @@ const DailyChangeDetail = memo(() => {
 const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const fundingValue = marketInfo?.currentFundingRate;
+	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
+	const fundingHours = useAppSelector(selectSelectedInpuHours);
+
+	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
+		fundingRate,
+		fundingHours,
+	]);
 
 	return (
 		<MarketDetail
@@ -125,6 +133,7 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
 			mobile={mobile}
+			toggle
 		/>
 	);
 });
