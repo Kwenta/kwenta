@@ -89,7 +89,7 @@ const ToggleTable = styled.div`
 const ToggleContainer = styled.div`
 	margin-left: 8px;
 	cursor: pointer;
-	z-index: 100;
+
 	${media.lessThan('sm')`
 		margin-right: 30px;
 	`}

@@ -54,13 +54,17 @@ const MarketDetail: FC<MarketDetailProps> = memo(
 						</FlexDivRowCentered>
 					</WithCursor>
 				</MarketDetailsTooltip>
-				{toggle && <HoursToggle />}
+				{toggle && <StyledHoursToggle />}
 			</FlexDivRowCentered>
 		);
 	}
 );
 
 export default MarketDetail;
+
+const StyledHoursToggle = styled(HoursToggle)`
+	z-index: 2;
+`;
 
 // Extend type of cursor to accept different style of cursor. Currently accept only 'help'
 const WithCursor = styled.div<{ cursor: 'help' }>`
