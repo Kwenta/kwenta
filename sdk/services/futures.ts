@@ -58,7 +58,6 @@ import {
 	encodeModidyMarketMarginParams,
 	encodeSubmitOffchainOrderParams,
 	formatDelayedOrder,
-	formatPotentialIsolatedTrade,
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
@@ -516,7 +515,7 @@ export default class FuturesService {
 			this.sdk.context.walletAddress
 		);
 
-		return formatPotentialIsolatedTrade(
+		return formatPotentialTrade(
 			details,
 			inputs.skewAdjustedPrice,
 			inputs.sizeDelta,
@@ -531,7 +530,7 @@ export default class FuturesService {
 		tradeParams: {
 			sizeDelta: Wei;
 			marginDelta: Wei;
-			orderPrice?: Wei;
+			orderPrice: Wei;
 			leverageSide: PositionSide;
 		}
 	) {
@@ -541,10 +540,15 @@ export default class FuturesService {
 			crossMarginAccount,
 			tradeParams.sizeDelta.toBN(),
 			tradeParams.marginDelta.toBN(),
-			tradeParams.orderPrice?.toBN()
+			tradeParams.orderPrice.toBN()
 		);
 
-		return formatPotentialTrade(preview, tradeParams.sizeDelta, tradeParams.leverageSide);
+		return formatPotentialTrade(
+			preview,
+			tradeParams.orderPrice,
+			tradeParams.sizeDelta,
+			tradeParams.leverageSide
+		);
 	}
 
 	public async getCrossMarginKeeperBalance(account: string) {
