@@ -22,7 +22,7 @@ const HoursToggle: React.FC = () => {
 	);
 	return (
 		<ToggleContainer>
-			<ToggleTable style={{ position: 'fixed' }}>
+			<ToggleTable>
 				<ToggleTableHeader
 					style={{ borderBottomWidth: open ? '1px' : '0' }}
 					onClick={() => setOpen(!open)}
@@ -48,6 +48,7 @@ const ToggleTableRow = styled.div`
 	margin: auto;
 	padding: 1.5px 6px;
 	height: 18px;
+
 	:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 		background: ${(props) =>
@@ -65,6 +66,7 @@ const ToggleTableRows = styled.div`
 	}
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 `;
+
 const ToggleTableHeader = styled.div`
 	display: flex;
 	justify-content: space-evenly;
