@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import { FUNDING_RATE_PERIODS } from 'sdk/constants/period';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
-import { selectSelectedInpuHours } from 'state/futures/selectors';
+import { selectSelectedInputHours } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
 const HoursToggle: React.FC = () => {
 	const dispatch = useAppDispatch();
-	const fundingHours = useAppSelector(selectSelectedInpuHours);
+	const fundingHours = useAppSelector(selectSelectedInputHours);
 	const [open, setOpen] = useState(false);
 	const getLabelByValue = (value: number): string => FUNDING_RATE_PERIODS[value] ?? '1H';
 	const updatePeriod = useCallback(

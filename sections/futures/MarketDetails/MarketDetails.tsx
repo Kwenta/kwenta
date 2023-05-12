@@ -12,7 +12,7 @@ import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
-	selectSelectedInpuHours,
+	selectSelectedInputHours,
 	selectShowHistory,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
@@ -120,7 +120,7 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
-	const fundingHours = useAppSelector(selectSelectedInpuHours);
+	const fundingHours = useAppSelector(selectSelectedInputHours);
 
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
 		fundingRate,
