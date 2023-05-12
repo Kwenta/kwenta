@@ -71,7 +71,7 @@ const TradingRewardRow = memo(() => {
 								i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 									isRewardEligible ? 'earn' : 'start'
 								}`}
-								components={[<Body weight="bold" inline />]}
+								components={[<Body weight="bold" inline as="span" />]}
 							/>
 						</Body>
 						<StyledLinkArrowIcon />

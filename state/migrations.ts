@@ -73,7 +73,7 @@ export const migrations = {
 			staking: STAKING_INITIAL_STATE,
 		};
 	},
-	28: (state: any) => {
+	29: (state: any) => {
 		return {
 			...state,
 			futures: FUTURES_INITIAL_STATE,
