@@ -133,11 +133,11 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	useEffect(() => {
 		if (myRef.current !== null) {
 			const { left, top } = myRef.current.getBoundingClientRect();
-			const leftSpace = mobile ? 83 : 100;
+			const leftSpace = mobile ? 83 : 90;
 			const topSpace = mobile ? 15 : 13;
 			setFixedPosition({ left: `${left + leftSpace}px`, top: `${top + topSpace}px` });
 		}
-	}, [mobile]);
+	}, [mobile, fundingRate]);
 
 	return (
 		<div ref={myRef}>
