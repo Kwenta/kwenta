@@ -524,6 +524,25 @@ export default class FuturesService {
 		);
 	}
 
+	public async getExactLiquidationPrice(
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
+		positionDetails: PositionDetail
+	) {
+		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
+
+		const position = {
+			id: '0',
+			size: positionDetails.position.size.toBN(),
+			margin: positionDetails.position.margin.toBN(),
+			lastFundingIndex: positionDetails.position.fundingIndex.toBN(),
+			lastPrice: positionDetails.position.lastPrice.toBN(),
+		};
+		const approxLiquidationPrice = positionDetails.liquidationPrice.toBN();
+		// const exactLiqPrice = marketInternal._exactLiquidationPrice(position, approxLiquidationPrice);
+		return wei(approxLiquidationPrice);
+	}
+
 	public async getCrossMarginTradePreview(
 		crossMarginAccount: string,
 		marketKey: FuturesMarketKey,
