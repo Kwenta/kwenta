@@ -129,6 +129,7 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 		fundingRate,
 		fundingHours,
 	]);
+	const isFirefox = /firefox/i.test(navigator.userAgent);
 
 	return (
 		<MarketDetail
@@ -137,7 +138,9 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
 			mobile={mobile}
 			extra={
-				mobile ? targetContainer && createPortal(<HoursToggle />, targetContainer) : <HoursToggle />
+				mobile
+					? targetContainer && createPortal(<HoursToggle />, targetContainer)
+					: !isFirefox && <HoursToggle />
 			}
 		/>
 	);
