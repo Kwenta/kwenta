@@ -80,7 +80,6 @@ export default function PositionChart({ mobile }: Props) {
 
 const Container = styled(FlexDivRowCentered)<{ visible: boolean }>`
 	height: 100%;
-	background: ${(props) => props.theme.colors.selectedTheme.background};
 	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 	overflow: hidden;
 `;

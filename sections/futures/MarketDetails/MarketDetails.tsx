@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -122,35 +122,19 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
 	const fundingHours = useAppSelector(selectSelectedInputHours);
-	const [fixedPosition, setFixedPosition] = useState({});
-	const myRef = useRef<HTMLDivElement>(null);
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
 		fundingRate,
 		fundingHours,
 	]);
-	const isFirefox = /firefox/i.test(navigator.userAgent);
-
-	useEffect(() => {
-		if (myRef.current !== null) {
-			const { left, top } = myRef.current.getBoundingClientRect();
-			const leftSpace = mobile ? 83 : 90;
-			const topSpace = mobile ? 15 : 13;
-			setFixedPosition({ left: `${left + leftSpace}px`, top: `${top + topSpace}px` });
-		}
-	}, [mobile, fundingRate]);
 
 	return (
-		<div ref={myRef}>
-			<MarketDetail
-				dataKey={t('futures.market.info.hourly-funding')}
-				value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
-				color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
-				mobile={mobile}
-				extra={
-					<div style={{ position: 'fixed', ...fixedPosition }}>{!isFirefox && <HoursToggle />}</div>
-				}
-			/>
-		</div>
+		<MarketDetail
+			dataKey={t('futures.market.info.hourly-funding')}
+			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
+			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
+			mobile={mobile}
+			extra={<HoursToggle />}
+		/>
 	);
 });
 
