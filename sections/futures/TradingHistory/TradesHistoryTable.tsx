@@ -210,7 +210,7 @@ const TableAlignment = css`
 const StyledTable = styled(Table)<{ $mobile?: boolean }>`
 	border: none;
 	height: 100%;
-	z-index: -1;
+
 	.table-row,
 	.table-body-row {
 		${TableAlignment}
