@@ -293,6 +293,7 @@ const ShowHistoryContainer = styled.div`
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	min-height: 50px;
+	padding-right: 20px;
 `;
 
 export default MarketDetails;
