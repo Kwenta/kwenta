@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import { zIndex } from 'constants/ui';
 import { FUNDING_RATE_PERIODS } from 'sdk/constants/period';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
 import { selectSelectedInputHours } from 'state/futures/selectors';
@@ -65,7 +66,7 @@ const ToggleTableRows = styled.div`
 			${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
 	}
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
-	z-index: 3;
+	z-index: ${zIndex.HEADER};
 `;
 
 const ToggleTableHeader = styled.div`
@@ -93,13 +94,12 @@ const ToggleContainer = styled.div`
 	margin-left: 8px;
 	cursor: pointer;
 	position: absolute;
-	left: 1405px;
-	top: 103px;
 
 	${media.lessThan('sm')`
-		margin-right: 30px;
+		position: relative;
+		top: -35px;
 		left: 350px;
-		top: 90px;
+		z-index: ${zIndex.HEADER};
 	`}
 	margin-bottom: 2px;
 `;

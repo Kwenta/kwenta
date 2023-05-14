@@ -1,5 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import React, { memo, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -7,6 +8,7 @@ import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
 import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
+import { zIndex } from 'constants/ui';
 import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
@@ -122,6 +124,7 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
 	const fundingHours = useAppSelector(selectSelectedInputHours);
+	const targetContainer = document.getElementById('mobile-view') as any;
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
 		fundingRate,
 		fundingHours,
@@ -133,7 +136,9 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
 			mobile={mobile}
-			extra={<HoursToggle />}
+			extra={
+				mobile ? targetContainer && createPortal(<HoursToggle />, targetContainer) : <HoursToggle />
+			}
 		/>
 	);
 });
@@ -238,9 +243,14 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	}
 
 	${media.lessThan('xl')`
+		gap: 10px;
 		& > div {
 			margin-right: 10px;
 		}
+	`}
+
+	${media.lessThan('lg')`
+		gap: 6px;
 	`}
 
 	.heading, .value {
@@ -289,7 +299,7 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 
 const ShowHistoryContainer = styled.div`
 	display: flex;
-	z-index: 3;
+	z-index: ${zIndex.HEADER};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	min-height: 50px;
