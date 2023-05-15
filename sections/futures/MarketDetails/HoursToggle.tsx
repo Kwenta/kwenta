@@ -22,7 +22,7 @@ const HoursToggle: React.FC = () => {
 	);
 	return (
 		<ToggleContainer>
-			<ToggleTable style={{ position: 'fixed' }}>
+			<ToggleTable>
 				<ToggleTableHeader
 					style={{ borderBottomWidth: open ? '1px' : '0' }}
 					onClick={() => setOpen(!open)}

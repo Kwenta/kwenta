@@ -27,6 +27,7 @@ import MarketsDropdown from '../Trade/MarketsDropdown';
 import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
+import { Body } from 'components/Text';
 
 type MarketDetailsProps = {
 	mobile?: boolean;
@@ -39,15 +40,17 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		<MainContainer mobile={mobile}>
 			<MarketsDropdown mobile={mobile} />
 			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
-			<MarketDetailsContainer mobile={mobile}>
-				{!mobile && <MarketPriceDetail />}
-				<IndexPriceDetail mobile={mobile} />
-				{!mobile && <DailyChangeDetail />}
-				{!mobile && <OpenInterestLongDetail />}
-				{!mobile && <OpenInterestShortDetail />}
-				<MarketSkew mobile={mobile} />
-				<HourlyFundingDetail mobile={mobile} />
-			</MarketDetailsContainer>
+			<DetailsWrapper>
+				<MarketDetailsContainer mobile={mobile}>
+					{!mobile && <MarketPriceDetail />}
+					<IndexPriceDetail mobile={mobile} />
+					{!mobile && <DailyChangeDetail />}
+					{!mobile && <OpenInterestLongDetail />}
+					{!mobile && <OpenInterestShortDetail />}
+					<MarketSkew mobile={mobile} />
+					<HourlyFundingDetail mobile={mobile} />
+				</MarketDetailsContainer>
+			</DetailsWrapper>
 			{!mobile && (
 				<ShowHistoryContainer>
 					<Checkbox
@@ -209,6 +212,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	align-items: center;
 	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
+	overflow-y: visible;
 
 	${(props) =>
 		props.mobile &&
@@ -285,6 +289,11 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 			}
 		`}
 	`}
+`;
+
+const DetailsWrapper = styled.div`
+	display: block;
+	overflow-x: scroll;
 `;
 
 const ShowHistoryContainer = styled.div`
