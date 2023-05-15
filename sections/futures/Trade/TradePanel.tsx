@@ -106,6 +106,7 @@ const TradePanel: FC<Props> = memo(({ mobile }) => {
 const TradePanelContainer = styled.div<{ $mobile?: boolean }>`
 	overflow-y: scroll;
 	height: 100%;
+	scrollbar-width: none;
 `;
 
 const MainPanelContent = styled.div`

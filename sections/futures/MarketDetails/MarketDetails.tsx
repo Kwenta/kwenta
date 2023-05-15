@@ -1,5 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import React, { memo, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
@@ -7,12 +8,13 @@ import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
 import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
+import { zIndex } from 'constants/ui';
 import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
-	selectSelectedInpuHours,
+	selectSelectedInputHours,
 	selectShowHistory,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
@@ -25,6 +27,7 @@ import { getDisplayAsset } from 'utils/futures';
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
+import HoursToggle from './HoursToggle';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
 
@@ -120,8 +123,8 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
-	const fundingHours = useAppSelector(selectSelectedInpuHours);
-
+	const fundingHours = useAppSelector(selectSelectedInputHours);
+	const targetContainer = document.getElementById('mobile-view') as any;
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
 		fundingRate,
 		fundingHours,
@@ -133,7 +136,9 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
 			mobile={mobile}
-			toggle
+			extra={
+				mobile ? targetContainer && createPortal(<HoursToggle />, targetContainer) : <HoursToggle />
+			}
 		/>
 	);
 });
@@ -209,6 +214,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	align-items: center;
 	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
+	overflow-y: visible;
 
 	${(props) =>
 		props.mobile &&
@@ -222,7 +228,6 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
-	height: 100%;
 	padding: 10px 45px 10px 15px;
 	box-sizing: border-box;
 	overflow-x: scroll;
@@ -238,9 +243,14 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	}
 
 	${media.lessThan('xl')`
+		gap: 10px;
 		& > div {
 			margin-right: 10px;
 		}
+	`}
+
+	${media.lessThan('lg')`
+		gap: 6px;
 	`}
 
 	.heading, .value {
@@ -248,8 +258,6 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	}
 
 	${(props) => css`
-		border-left: ${props.theme.colors.selectedTheme.border};
-
 		.heading {
 			color: ${props.theme.colors.selectedTheme.text.label};
 		}
@@ -274,12 +282,13 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		css`
 			height: auto;
 			padding: 15px;
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			grid-gap: 20px 0;
+			display: flex;
+			justify-content: flex-start;
+			${media.lessThan('md')`
+				gap: 25px;
+			`}
 			width: 100%;
 			border-left: none;
-
 			.heading {
 				margin-bottom: 2px;
 			}
@@ -288,7 +297,12 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 `;
 
 const ShowHistoryContainer = styled.div`
-	margin: 0 20px;
+	display: flex;
+	z-index: ${zIndex.HEADER};
+	background-color: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
+	min-height: 50px;
+	padding-right: 20px;
 `;
 
 export default MarketDetails;

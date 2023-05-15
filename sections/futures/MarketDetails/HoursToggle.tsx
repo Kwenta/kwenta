@@ -2,15 +2,16 @@ import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import { HOURS_TOGGLE_HEIGHT, HOURS_TOGGLE_WIDTH, zIndex } from 'constants/ui';
 import { FUNDING_RATE_PERIODS } from 'sdk/constants/period';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
-import { selectSelectedInpuHours } from 'state/futures/selectors';
+import { selectSelectedInputHours } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
 const HoursToggle: React.FC = () => {
 	const dispatch = useAppDispatch();
-	const fundingHours = useAppSelector(selectSelectedInpuHours);
+	const fundingHours = useAppSelector(selectSelectedInputHours);
 	const [open, setOpen] = useState(false);
 	const getLabelByValue = (value: number): string => FUNDING_RATE_PERIODS[value] ?? '1H';
 	const updatePeriod = useCallback(
@@ -21,8 +22,8 @@ const HoursToggle: React.FC = () => {
 		[dispatch, open]
 	);
 	return (
-		<ToggleContainer>
-			<ToggleTable style={{ position: 'fixed' }}>
+		<ToggleContainer open={open}>
+			<ToggleTable>
 				<ToggleTableHeader
 					style={{ borderBottomWidth: open ? '1px' : '0' }}
 					onClick={() => setOpen(!open)}
@@ -47,7 +48,12 @@ const HoursToggle: React.FC = () => {
 const ToggleTableRow = styled.div`
 	margin: auto;
 	padding: 1.5px 6px;
-	height: 18px;
+	height: ${HOURS_TOGGLE_HEIGHT};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].background};
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
+	:last-child {
+		border-radius: 0px 0px 9px 9px;
+	}
 	:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 		background: ${(props) =>
@@ -64,12 +70,14 @@ const ToggleTableRows = styled.div`
 			${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
 	}
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+	z-index: ${zIndex.HEADER};
 `;
+
 const ToggleTableHeader = styled.div`
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
-	height: 18px;
+	height: ${HOURS_TOGGLE_HEIGHT};
 	border-bottom-style: solid;
 	border-bottom-color: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
 `;
@@ -79,21 +87,28 @@ const ToggleTable = styled.div`
 	flex-direction: column;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].background};
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
+	:first-child {
+		border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
+	}
 	border-radius: 9px;
-	width: 47px;
+	width: ${HOURS_TOGGLE_WIDTH};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
-const ToggleContainer = styled.div`
+const ToggleContainer = styled.div<{ open: boolean }>`
 	margin-left: 8px;
 	cursor: pointer;
-	z-index: 100;
+	margin-top: ${(props) => (props.open ? '92px' : '20px')};
+
 	${media.lessThan('sm')`
-		margin-right: 30px;
+		position: relative;
+		top: -35px;
+		left: 290px;
+		z-index: ${zIndex.HEADER};
+		margin-top: 0px;
+		width: ${HOURS_TOGGLE_WIDTH};
 	`}
-	margin-bottom: 2px;
 `;
 
 export default HoursToggle;
