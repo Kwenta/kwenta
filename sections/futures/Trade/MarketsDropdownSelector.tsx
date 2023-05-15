@@ -88,15 +88,16 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		margin-left: 12px;
 	}
 	width: ${(props) => (props.mobile ? '100%' : TRADE_PANEL_WIDTH_MD + 'px')};
-
+	border-right: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	${media.greaterThan('xxl')`
-		width: ${TRADE_PANEL_WIDTH_LG}px;
+		width: ${TRADE_PANEL_WIDTH_LG + 1}px;
 	`}
 
 	width: ${TRADE_PANEL_WIDTH_LG}px;
 
 	${media.lessThan('xxl')`
-		width: ${TRADE_PANEL_WIDTH_MD}px;
+		width: ${TRADE_PANEL_WIDTH_MD + 1}px;
 	`}
 
 	${media.lessThan('md')`
@@ -128,7 +129,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	}
 
 	height: ${(props) =>
-		props.mobile ? MARKET_SELECTOR_HEIGHT_MOBILE : MARKETS_DETAILS_HEIGHT_DESKTOP - 2}px;
+		props.mobile ? MARKET_SELECTOR_HEIGHT_MOBILE : MARKETS_DETAILS_HEIGHT_DESKTOP - 1}px;
 `;
 
 const LeftContainer = styled.div<{ $mobile?: boolean }>`

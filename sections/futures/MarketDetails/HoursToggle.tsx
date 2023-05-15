@@ -21,7 +21,7 @@ const HoursToggle: React.FC = () => {
 		[dispatch, open]
 	);
 	return (
-		<ToggleContainer>
+		<ToggleContainer open={open}>
 			<ToggleTable>
 				<ToggleTableHeader
 					style={{ borderBottomWidth: open ? '1px' : '0' }}
@@ -65,6 +65,7 @@ const ToggleTableRows = styled.div`
 	}
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 `;
+
 const ToggleTableHeader = styled.div`
 	display: flex;
 	justify-content: space-evenly;
@@ -86,14 +87,15 @@ const ToggleTable = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
-const ToggleContainer = styled.div`
+const ToggleContainer = styled.div<{ open: boolean }>`
 	margin-left: 8px;
 	cursor: pointer;
-	z-index: 100;
+	z-index: 3;
 	${media.lessThan('sm')`
 		margin-right: 30px;
 	`}
-	margin-bottom: 2px;
+
+	margin-top: ${(props) => (props.open ? '82px' : '10px')};
 `;
 
 export default HoursToggle;
