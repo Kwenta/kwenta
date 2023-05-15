@@ -1,11 +1,12 @@
 import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, memo } from 'react';
+import React, { ChangeEvent, memo, useMemo } from 'react';
 import styled from 'styled-components';
 
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
+import { Body } from 'components/Text';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { editCrossMarginTradeMarginDelta } from 'state/futures/actions';
 import {
@@ -43,13 +44,19 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
 		dispatch(editCrossMarginTradeMarginDelta(floorNumber(margin).toString()));
 	};
 
+	const belowMinMargin = useMemo(
+		() =>
+			marginDeltaInputValue !== '' &&
+			wei(marginDeltaInputValue)
+				.add(position?.remainingMargin || 0)
+				.lt(MIN_MARGIN_AMOUNT),
+		[marginDeltaInputValue, position?.remainingMargin]
+	);
+
 	const invalid =
 		assetInputType === 'usd' &&
 		marginDeltaInputValue !== '' &&
-		(maxMargin.lt(marginDeltaInputValue || 0) ||
-			wei(marginDeltaInputValue)
-				.add(position?.remainingMargin || 0)
-				.lt(MIN_MARGIN_AMOUNT));
+		(maxMargin.lt(marginDeltaInputValue || 0) || belowMinMargin);
 
 	return (
 		<>
@@ -66,6 +73,7 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
 					dataTestId={'set-order-margin-susd' + (isMobile ? '-mobile' : '-desktop')}
 					value={marginDeltaInputValue}
 					placeholder="0.00"
+					right={belowMinMargin && <Body color="negative">Minimum $50</Body>}
 					onChange={onChangeValue}
 				/>
 			</Container>
