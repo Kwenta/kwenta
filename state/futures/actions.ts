@@ -539,6 +539,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 			});
 			return { preview: serializedPreview, type: params.action };
 		} catch (err) {
+			logError(err);
 			notifyError('Failed to generate trade preview', err);
 			dispatch(handlePreviewError({ error: err.message, previewType: params.action }));
 			throw err;
@@ -610,6 +611,7 @@ export const fetchCrossMarginTradePreview = createAsyncThunk<
 			});
 			return { preview: serializedPreview, type: params.action };
 		} catch (err) {
+			logError(err);
 			notifyError('Failed to generate trade preview', err);
 			dispatch(
 				handlePreviewError({
