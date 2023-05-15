@@ -91,13 +91,13 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	${media.greaterThan('xxl')`
-		width: ${TRADE_PANEL_WIDTH_LG + 1}px;
+		width: ${TRADE_PANEL_WIDTH_LG + 0.5}px;
 	`}
 
 	width: ${TRADE_PANEL_WIDTH_LG}px;
 
 	${media.lessThan('xxl')`
-		width: ${TRADE_PANEL_WIDTH_MD + 1}px;
+		width: ${TRADE_PANEL_WIDTH_MD + 0.5}px;
 	`}
 
 	${media.lessThan('md')`
