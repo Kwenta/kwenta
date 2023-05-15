@@ -165,24 +165,24 @@ export type FuturesVolumes<T = Wei> = {
 };
 
 export type PositionDetail = {
-	remainingMargin: Wei;
-	accessibleMargin: Wei;
+	remainingMargin: BigNumber;
+	accessibleMargin: BigNumber;
 	orderPending: boolean;
 	order: {
 		pending: boolean;
-		fee: Wei;
-		leverage: Wei;
+		fee: BigNumber;
+		leverage: BigNumber;
 	};
 	position: {
-		fundingIndex: Wei;
-		lastPrice: Wei;
-		size: Wei;
-		margin: Wei;
+		fundingIndex: BigNumber;
+		lastPrice: BigNumber;
+		size: BigNumber;
+		margin: BigNumber;
 	};
-	accruedFunding: Wei;
-	notionalValue: Wei;
-	liquidationPrice: Wei;
-	profitLoss: Wei;
+	accruedFunding: BigNumber;
+	notionalValue: BigNumber;
+	liquidationPrice: BigNumber;
+	profitLoss: BigNumber;
 };
 
 export enum PositionSide {

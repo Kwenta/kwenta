@@ -251,12 +251,23 @@ export default class FuturesService {
 		)) as boolean[];
 
 		// map the positions using the results
-		const positions = positionDetails.map((position, ind) => {
-			const canLiquidate = canLiquidateState[ind];
-			const marketKey = futuresMarkets[ind].marketKey;
-			const asset = futuresMarkets[ind].asset;
-			return mapFuturesPosition(position, canLiquidate, asset, marketKey);
-		});
+		const positions = await Promise.all(
+			positionDetails.map(async (position, ind) => {
+				const canLiquidate = canLiquidateState[ind];
+				const marketAddress = futuresMarkets[ind].address;
+				const marketKey = futuresMarkets[ind].marketKey;
+				const asset = futuresMarkets[ind].asset;
+				const liquidationPrice = position.position.size.abs().gt(0)
+					? await this.sdk.futures.getExactLiquidationPrice(marketKey, marketAddress, position)
+					: position.liquidationPrice;
+				return mapFuturesPosition(
+					{ ...position, liquidationPrice },
+					canLiquidate,
+					asset,
+					marketKey
+				);
+			})
+		);
 
 		return positions;
 	}
@@ -521,6 +532,27 @@ export default class FuturesService {
 			inputs.sizeDelta,
 			inputs.leverageSide
 		);
+	}
+
+	public async getExactLiquidationPrice(
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
+		positionDetails: PositionDetail
+	) {
+		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
+		const internalPosition = {
+			id: '0',
+			size: positionDetails.position.size,
+			margin: positionDetails.position.margin,
+			lastFundingIndex: positionDetails.position.fundingIndex,
+			lastPrice: positionDetails.position.lastPrice,
+		};
+		const approxLiquidationPrice = positionDetails.liquidationPrice;
+		const exactLiqPrice = await marketInternal._exactLiquidationPrice(
+			internalPosition,
+			approxLiquidationPrice
+		);
+		return exactLiqPrice;
 	}
 
 	public async getCrossMarginTradePreview(

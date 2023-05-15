@@ -429,6 +429,9 @@ class FuturesMarketInternal {
 				.toBN()
 		);
 
+		// get settings once to avoid synchronous calls
+		await this._batchGetSettings();
+
 		// start with initial margin
 		const margins = await Promise.all(
 			prices.map((price) => this._marginPlusProfitFunding(position, price))
@@ -467,24 +470,24 @@ class FuturesMarketInternal {
 
 	_liquidationMargin = async (positionSize: BigNumber, price: BigNumber) => {
 		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio');
+		const liqKeeperFee = await this._getSetting('keeperLiquidationFee');
 		const liquidationBuffer = multiplyDecimal(
 			multiplyDecimal(positionSize.abs(), price),
 			liquidationBufferRatio
 		);
-		const liqKeeperFee = await this._getSetting('keeperLiquidationFee');
 		const fee = await this._liquidationFee(positionSize, price);
 		return liquidationBuffer.add(fee).add(liqKeeperFee);
 	};
 
 	_liquidationFee = async (positionSize: BigNumber, price: BigNumber) => {
 		const liquidationFeeRatio = await this._getSetting('liquidationFeeRatio');
+		const minFee = await this._getSetting('minKeeperFee');
+		const maxFee = await this._getSetting('maxKeeperFee');
 		const proportionalFee = multiplyDecimal(
 			multiplyDecimal(positionSize.abs(), price),
 			liquidationFeeRatio
 		);
-		const maxFee = await this._getSetting('maxKeeperFee');
 		const cappedProportionalFee = proportionalFee.gt(maxFee) ? maxFee : proportionalFee;
-		const minFee = await this._getSetting('minKeeperFee');
 		return cappedProportionalFee.gt(minFee) ? proportionalFee : minFee;
 	};
 
