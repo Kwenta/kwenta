@@ -341,7 +341,7 @@ export const formatPotentialTrade = (
 
 	const tradeValueWithoutSlippage = wei(nativeSizeDelta).abs().mul(wei(basePrice));
 	const notionalValue = wei(size).mul(wei(basePrice));
-	const leverage = notionalValue.div(wei(margin));
+	const leverage = margin.gt(0) ? notionalValue.div(wei(margin)) : zeroBN;
 
 	const priceImpact = wei(price).sub(basePrice).div(basePrice);
 	const slippageDirection = nativeSizeDelta.gt(0)

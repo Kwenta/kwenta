@@ -155,7 +155,7 @@ const ManagePosition: React.FC = () => {
 			};
 		}
 		if (selectedAccountType === 'cross_margin') {
-			if ((isZero(marginDelta) && isZero(susdSize)) || previewStatus.status !== FetchStatus.Success)
+			if (previewTrade?.status !== 0 || previewStatus.status === FetchStatus.Loading)
 				return { message: 'awaiting_preview' };
 			if (orderType !== 'market' && isZero(orderPrice)) return { message: 'trade price required' };
 		}
@@ -192,6 +192,7 @@ const ManagePosition: React.FC = () => {
 						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth
+						loading={previewStatus.status === FetchStatus.Loading}
 						variant={leverageSide}
 						disabled={!!placeOrderDisabledReason}
 						onClick={onSubmit}
