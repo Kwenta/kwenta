@@ -205,6 +205,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											}
 											color="red"
 											size="small"
+											background="gray"
 										>
 											Close
 										</Pill>

@@ -12,6 +12,7 @@ type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	fullWidth?: boolean;
 	roundedCorner?: boolean;
 	weight?: FontWeight;
+	background?: PillColor;
 };
 
 const Pill: FC<PillProps> = memo(
@@ -22,6 +23,7 @@ const Pill: FC<PillProps> = memo(
 		weight = 'black',
 		outline,
 		fullWidth,
+		background,
 		...props
 	}) => {
 		return (
@@ -32,6 +34,7 @@ const Pill: FC<PillProps> = memo(
 				$fullWidth={fullWidth}
 				$roundedCorner={roundedCorner}
 				$weight={weight}
+				$background={background}
 				{...props}
 			/>
 		);
@@ -45,6 +48,7 @@ const BasePill = styled.button<{
 	$fullWidth?: boolean;
 	$roundedCorner?: boolean;
 	$weight?: FontWeight;
+	$background?: PillColor;
 }>`
 	${(props) => css`
 		padding: ${props.$size === 'small'
@@ -56,25 +60,32 @@ const BasePill = styled.button<{
 		width: ${props.$fullWidth ? '100%' : 'auto'};
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
 		font-family: ${props.$weight && props.theme.fonts[props.$weight]};
-		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
+		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$background ?? props.$color]
+			.background};
 		color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].text};
-		border: 1px solid ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].border};
+		border: 1px solid
+			${props.theme.colors.selectedTheme.newTheme.pill[props.$background ?? props.$color].border};
 		border-radius: ${props.$roundedCorner ? '50' : '8'}px;
 		cursor: pointer;
 		font-variant: all-small-caps;
 
 		${props.$outline &&
 		css`
-			background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].outline
-				.background};
+			background: ${props.theme.colors.selectedTheme.newTheme.pill[
+				props.$background ?? props.$color
+			].outline.background};
 			color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].outline.text};
 			border: 1px solid
-				${props.theme.colors.selectedTheme.newTheme.pill[props.$color].outline.border};
+				${props.theme.colors.selectedTheme.newTheme.pill[props.$background ?? props.$color].outline
+					.border};
 		`}
 
 		&:hover {
-			background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].hover.background};
-			color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].hover.text};
+			background: ${props.theme.colors.selectedTheme.newTheme.pill[
+				props.$background ?? props.$color
+			].hover.background};
+			color: ${props.theme.colors.selectedTheme.newTheme.pill[props.$background ?? props.$color]
+				.hover.text};
 		}
 	`}
 
