@@ -129,7 +129,6 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 		fundingRate,
 		fundingHours,
 	]);
-	const isFirefox = /firefox/i.test(navigator.userAgent);
 
 	return (
 		<MarketDetail
@@ -138,9 +137,7 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
 			mobile={mobile}
 			extra={
-				mobile
-					? targetContainer && createPortal(<HoursToggle />, targetContainer)
-					: !isFirefox && <HoursToggle />
+				mobile ? targetContainer && createPortal(<HoursToggle />, targetContainer) : <HoursToggle />
 			}
 		/>
 	);
@@ -217,6 +214,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	align-items: center;
 	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
+	overflow-y: visible;
 
 	${(props) =>
 		props.mobile &&
@@ -230,7 +228,6 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
-	height: 100%;
 	padding: 10px 45px 10px 15px;
 	box-sizing: border-box;
 	overflow-x: scroll;
@@ -261,8 +258,6 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	}
 
 	${(props) => css`
-		border-left: ${props.theme.colors.selectedTheme.border};
-
 		.heading {
 			color: ${props.theme.colors.selectedTheme.text.label};
 		}
