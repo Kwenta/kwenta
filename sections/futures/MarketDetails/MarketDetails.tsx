@@ -282,12 +282,13 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		css`
 			height: auto;
 			padding: 15px;
-			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			grid-gap: 15px 0;
+			display: flex;
+			justify-content: flex-start;
+			${media.lessThan('md')`
+				gap: 25px;
+			`}
 			width: 100%;
 			border-left: none;
-			margin: 0 20px;
 			.heading {
 				margin-bottom: 2px;
 			}
