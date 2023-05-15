@@ -7,7 +7,7 @@ import styled, { useTheme } from 'styled-components';
 import PencilIcon from 'assets/svg/app/pencil.svg';
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import Currency from 'components/Currency';
-import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
+import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
@@ -171,28 +171,44 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									: {};
 
 								return (
-									<ColWithButton>
-										<div>
+									<FlexDivRowCentered>
+										<ColWithButton>
 											<div>
+												<FlexDivRowCentered style={{ columnGap: '5px' }}>
+													<Currency.Price
+														price={cellProps.row.original.position.size}
+														currencyKey={cellProps.row.original.market.asset}
+													/>
+													{accountType === 'cross_margin' && (
+														<EditButton
+															modalType={'futures_edit_position_size'}
+															marketKey={cellProps.row.original.market.marketKey}
+														/>
+													)}
+												</FlexDivRowCentered>
 												<Currency.Price
-													price={cellProps.row.original.position.size}
-													currencyKey={cellProps.row.original.market.asset}
+													price={cellProps.row.original.position.notionalValue}
+													formatOptions={formatOptions}
+													colorType="secondary"
 												/>
 											</div>
-											<Currency.Price
-												price={cellProps.row.original.position.notionalValue}
-												formatOptions={formatOptions}
-												colorType="secondary"
-											/>
-										</div>
-										<Spacer width={10} />
-										{accountType === 'cross_margin' && (
-											<EditButton
-												modalType={'futures_edit_position_size'}
-												marketKey={cellProps.row.original.market.marketKey}
-											/>
-										)}
-									</ColWithButton>
+											<Spacer width={5} />
+										</ColWithButton>
+										<Pill
+											onClick={() =>
+												dispatch(
+													setShowPositionModal({
+														type: 'futures_close_position',
+														marketKey: cellProps.row.original.market.marketKey,
+													})
+												)
+											}
+											color="red"
+											size="small"
+										>
+											Close
+										</Pill>
+									</FlexDivRowCentered>
 								);
 							},
 							width: 90,
@@ -239,23 +255,22 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'margin',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<ColWithButton>
-										<div>
+									<FlexDivCol style={{ alignItems: 'flex-start' }}>
+										<FlexDivRowCentered style={{ columnGap: '5px' }}>
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
-											<NumericValue
-												value={cellProps.row.original.position.leverage}
-												color="secondary"
-												suffix="x"
-											/>
-										</div>
-										<Spacer width={10} />
-										{accountType === 'cross_margin' && (
-											<EditButton
-												modalType={'futures_edit_position_margin'}
-												marketKey={cellProps.row.original.market.marketKey}
-											/>
-										)}
-									</ColWithButton>
+											{accountType === 'cross_margin' && (
+												<EditButton
+													modalType={'futures_edit_position_margin'}
+													marketKey={cellProps.row.original.market.marketKey}
+												/>
+											)}
+										</FlexDivRowCentered>
+										<NumericValue
+											value={cellProps.row.original.position.leverage}
+											color="secondary"
+											suffix="x"
+										/>
+									</FlexDivCol>
 								);
 							},
 							width: 115,
@@ -267,12 +282,22 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
-									<PnlContainer>
-										<Currency.Price price={cellProps.row.original.position.pnl} colored />
-										<NumericValue value={cellProps.row.original.position.pnlPct} colored>
-											{formatPercent(cellProps.row.original.position.pnlPct)}
-										</NumericValue>
-									</PnlContainer>
+									<FlexDivRowCentered style={{ columnGap: '35px' }}>
+										<PnlContainer>
+											<Currency.Price price={cellProps.row.original.position.pnl} colored />
+											<NumericValue value={cellProps.row.original.position.pnlPct} colored>
+												{formatPercent(cellProps.row.original.position.pnlPct)}
+											</NumericValue>
+										</PnlContainer>
+										<Pill
+											onClick={() => handleOpenShareModal(cellProps.row.original.share)}
+											size="small"
+										>
+											<FlexDivRowCentered>
+												<UploadIcon width={8} />
+											</FlexDivRowCentered>
+										</Pill>
+									</FlexDivRowCentered>
 								);
 							},
 							width: 90,
@@ -292,8 +317,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'tp-sl',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<ColWithButton>
-										<div style={{ marginRight: 10 }}>
+									<FlexDivCol style={{ alignItems: 'flex-start' }}>
+										<FlexDivRowCentered style={{ columnGap: '5px' }}>
 											{cellProps.row.original.takeProfit === undefined ? (
 												<Body>{NO_VALUE}</Body>
 											) : (
@@ -301,62 +326,24 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 													<Currency.Price price={cellProps.row.original.takeProfit} />
 												</div>
 											)}
-											{cellProps.row.original.stopLoss === undefined ? (
-												<Body>{NO_VALUE}</Body>
-											) : (
-												<div>
-													<Currency.Price price={cellProps.row.original.stopLoss} />
-												</div>
+											{accountType === 'cross_margin' && (
+												<EditButton
+													modalType={'futures_edit_stop_loss_take_profit'}
+													marketKey={cellProps.row.original.market.marketKey}
+												/>
 											)}
-										</div>
-										{accountType === 'cross_margin' && (
-											<EditButton
-												modalType={'futures_edit_stop_loss_take_profit'}
-												marketKey={cellProps.row.original.market.marketKey}
-											/>
+										</FlexDivRowCentered>
+										{cellProps.row.original.stopLoss === undefined ? (
+											<Body>{NO_VALUE}</Body>
+										) : (
+											<div>
+												<Currency.Price price={cellProps.row.original.stopLoss} />
+											</div>
 										)}
-									</ColWithButton>
+									</FlexDivCol>
 								);
 							},
 							width: 110,
-						},
-						{
-							Header: <TableHeader>Position</TableHeader>,
-							accessor: 'pos',
-							Cell: (cellProps: CellProps<typeof data[number]>) => {
-								return (
-									<>
-										<FlexDivRow style={{ columnGap: '5px' }}>
-											<div>
-												<Pill
-													onClick={() =>
-														dispatch(
-															setShowPositionModal({
-																type: 'futures_close_position',
-																marketKey: cellProps.row.original.market.marketKey,
-															})
-														)
-													}
-													size="small"
-												>
-													Close
-												</Pill>
-											</div>
-											<div>
-												<Pill
-													onClick={() => handleOpenShareModal(cellProps.row.original.share)}
-													size="small"
-												>
-													<FlexDivRowCentered>
-														<UploadIcon width={8} />
-													</FlexDivRowCentered>
-												</Pill>
-											</div>
-										</FlexDivRow>
-									</>
-								);
-							},
-							width: 90,
 						},
 					]}
 				/>
@@ -378,7 +365,9 @@ const EditButton = ({
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	return (
-		<Pill
+		<PencilIcon
+			fill={theme.colors.selectedTheme.newTheme.text.preview}
+			width={8}
 			onClick={() =>
 				dispatch(
 					setShowPositionModal({
@@ -387,9 +376,7 @@ const EditButton = ({
 					})
 				)
 			}
-		>
-			<PencilIcon fill={theme.colors.selectedTheme.newTheme.text.primary} width={8} />
-		</Pill>
+		/>
 	);
 };
 
