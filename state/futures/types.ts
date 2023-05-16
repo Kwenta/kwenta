@@ -177,6 +177,10 @@ type FuturesNetwork = number;
 
 export type InputCurrencyDenomination = 'usd' | 'native';
 
+export type FundingRatePeriods = {
+	[key: number]: string;
+};
+
 export type AccountContext = {
 	type: FuturesAccountType;
 	network: NetworkId;
@@ -221,6 +225,7 @@ export type FuturesState = {
 	transactionEstimations: TransactionEstimations;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
+	selectedInputHours: number;
 	preferences: {
 		showHistory?: boolean;
 	};

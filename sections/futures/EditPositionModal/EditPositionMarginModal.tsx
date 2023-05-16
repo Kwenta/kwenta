@@ -12,7 +12,7 @@ import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { APP_MAX_LEVERAGE, MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
@@ -65,16 +65,18 @@ export default function EditPositionMarginModal() {
 	]);
 
 	const maxWithdraw = useMemo(() => {
-		const maxSize = position?.remainingMargin.mul(APP_MAX_LEVERAGE);
+		const maxSize = position?.remainingMargin.mul(market?.appMaxLeverage ?? 1);
 		const currentSize = position?.position?.notionalValue;
-		const max = maxSize?.sub(currentSize).div(APP_MAX_LEVERAGE) ?? wei(0);
+		const max = maxSize?.sub(currentSize).div(market?.appMaxLeverage ?? 1) ?? wei(0);
 		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0);
-		return max.lt(0)
+		const remainingMarginMax = position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0);
+
+		return max.lt(0) || remainingMarginMax.lt(0)
 			? zeroBN
 			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
 			? max
-			: position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0);
-	}, [position?.remainingMargin, position?.position?.notionalValue]);
+			: remainingMarginMax;
+	}, [position?.remainingMargin, position?.position?.notionalValue, market?.appMaxLeverage]);
 
 	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
 		idleMargin,
@@ -89,8 +91,10 @@ export default function EditPositionMarginModal() {
 
 	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount]);
 
-	const maxLeverageExceeded =
-		transferType === 1 && position?.position?.leverage.gt(APP_MAX_LEVERAGE);
+	const maxLeverageExceeded = useMemo(
+		() => transferType === 1 && position?.position?.leverage.gt(market?.appMaxLeverage ?? 1),
+		[transferType, position?.position?.leverage, market?.appMaxLeverage]
+	);
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError));

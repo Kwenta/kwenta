@@ -9,10 +9,15 @@ import { StyledCaretDownIcon } from 'components/Select/Select';
 import { Body, NumericValue } from 'components/Text';
 import { FuturesMarketAsset, SynthSuspensionReason } from 'sdk/types/futures';
 import { PricesInfo } from 'state/prices/types';
+import media from 'styles/media';
 import { formatDollars, formatPercent } from 'utils/formatters/number';
 import { MarketKeyByAsset } from 'utils/futures';
 
-import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
+import {
+	MARKETS_DETAILS_HEIGHT_DESKTOP,
+	TRADE_PANEL_WIDTH_LG,
+	TRADE_PANEL_WIDTH_MD,
+} from '../styles';
 
 type Props = {
 	asset: FuturesMarketAsset;
@@ -82,8 +87,29 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		flex: 1;
 		margin-left: 12px;
 	}
+	width: ${(props) => (props.mobile ? '100%' : TRADE_PANEL_WIDTH_MD + 'px')};
+	border-right: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	${media.greaterThan('xxl')`
+		width: ${TRADE_PANEL_WIDTH_LG + 0.5}px;
+	`}
 
-	width: ${(props) => (props.mobile ? '100%' : '380px')};
+	width: ${TRADE_PANEL_WIDTH_LG}px;
+
+	${media.lessThan('xxl')`
+		width: ${TRADE_PANEL_WIDTH_MD + 0.5}px;
+	`}
+
+	${media.lessThan('md')`
+		width: 100%;
+	`}
+
+	${(props) =>
+		props.mobile &&
+		css`
+			width: 100%;
+		`}
+
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
@@ -91,8 +117,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	cursor: pointer;
 	transition: all 0.2s ease-in-out;
 	&:hover {
-		background: ${(props) =>
-			props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
 	}
 
 	p {
@@ -104,7 +129,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	}
 
 	height: ${(props) =>
-		props.mobile ? MARKET_SELECTOR_HEIGHT_MOBILE : MARKETS_DETAILS_HEIGHT_DESKTOP - 2}px;
+		props.mobile ? MARKET_SELECTOR_HEIGHT_MOBILE : MARKETS_DETAILS_HEIGHT_DESKTOP - 1}px;
 `;
 
 const LeftContainer = styled.div<{ $mobile?: boolean }>`

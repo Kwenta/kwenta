@@ -126,14 +126,26 @@ const stakingSlice = createSlice({
 		builder.addCase(stakeKwenta.pending, (state) => {
 			state.stakeStatus = FetchStatus.Loading;
 		});
+		builder.addCase(stakeKwenta.rejected, (state) => {
+			state.stakeStatus = FetchStatus.Idle;
+		});
 		builder.addCase(unstakeKwenta.pending, (state) => {
 			state.unstakeStatus = FetchStatus.Loading;
+		});
+		builder.addCase(unstakeKwenta.rejected, (state) => {
+			state.unstakeStatus = FetchStatus.Idle;
 		});
 		builder.addCase(stakeEscrow.pending, (state) => {
 			state.stakeEscrowedStatus = FetchStatus.Loading;
 		});
+		builder.addCase(stakeEscrow.rejected, (state) => {
+			state.stakeEscrowedStatus = FetchStatus.Idle;
+		});
 		builder.addCase(unstakeEscrow.pending, (state) => {
 			state.unstakeEscrowedStatus = FetchStatus.Loading;
+		});
+		builder.addCase(unstakeEscrow.rejected, (state) => {
+			state.unstakeEscrowedStatus = FetchStatus.Idle;
 		});
 		builder.addCase(getReward.pending, (state) => {
 			state.getRewardStatus = FetchStatus.Loading;
@@ -152,6 +164,9 @@ const stakingSlice = createSlice({
 		});
 		builder.addCase(vestEscrowedRewards.pending, (state) => {
 			state.vestEscrowedRewardsStatus = FetchStatus.Loading;
+		});
+		builder.addCase(vestEscrowedRewards.rejected, (state) => {
+			state.vestEscrowedRewardsStatus = FetchStatus.Idle;
 		});
 	},
 });

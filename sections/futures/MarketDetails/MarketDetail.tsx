@@ -2,6 +2,7 @@ import { ReactElement, memo, FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketInfo } from 'state/futures/selectors';
@@ -14,9 +15,10 @@ type MarketDetailProps = {
 	dataKey: string;
 	color?: string;
 	value: string | ReactElement;
+	extra?: ReactElement;
 };
 
-const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, value }) => {
+const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, value, extra }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
@@ -32,16 +34,26 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 	}, [dataKey, marketInfo]);
 
 	return (
-		<MarketDetailsTooltip
-			key={dataKey}
-			mobile={mobile}
-			content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
-		>
-			<WithCursor cursor="help">
-				<Body className="heading">{dataKey}</Body>
-				<MarketDetailValue value={value} color={color} mobile={mobile} pausedClass={pausedClass} />
-			</WithCursor>
-		</MarketDetailsTooltip>
+		<FlexDivRowCentered>
+			<MarketDetailsTooltip
+				key={dataKey}
+				mobile={mobile}
+				content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
+			>
+				<WithCursor cursor="help">
+					<Body className="heading">{dataKey}</Body>
+					<FlexDivRowCentered>
+						<MarketDetailValue
+							value={value}
+							color={color}
+							mobile={mobile}
+							pausedClass={pausedClass}
+						/>
+					</FlexDivRowCentered>
+				</WithCursor>
+			</MarketDetailsTooltip>
+			<div style={{ marginBottom: '5px' }}>{extra}</div>
+		</FlexDivRowCentered>
 	);
 });
 

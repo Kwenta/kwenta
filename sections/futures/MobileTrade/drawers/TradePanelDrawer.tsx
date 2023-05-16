@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import FullScreenModal from 'components/FullScreenModal';
 import { zIndex } from 'constants/ui';
-import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
+import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel';
 
 type TradePanelDrawerProps = {
 	open: boolean;

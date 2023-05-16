@@ -1,12 +1,10 @@
 import Wei, { wei } from '@synthetixio/wei';
-import axios from 'axios';
 import { ethers, BigNumber } from 'ethers';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
-import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from 'queries/files/constants';
 import {
 	EPOCH_START,
 	OP_REWARDS_CUTOFF_EPOCH,
@@ -16,13 +14,10 @@ import {
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'utils/formatters/date';
 import { weiFromWei, zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
-
-const client = axios.create({
-	baseURL: `${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/`,
-	timeout: 5000,
-});
+import { client } from '../utils/files';
 
 export type ClaimParams = [number, string, string, string[], number];
 
@@ -494,23 +489,29 @@ export default class KwentaTokenService {
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
-				const response = await client.get(fileName);
-				const period = isOldDistributor
-					? index >= 5
-						? index >= 10
-							? index + 2
-							: index + 1
-						: index
-					: isOp
-					? isSnx
-						? index
-						: index + OP_REWARDS_CUTOFF_EPOCH
-					: index + TRADING_REWARDS_CUTOFF_EPOCH;
-				return { ...response.data, period };
+				try {
+					const response = await client.get(fileName);
+					const period = isOldDistributor
+						? index >= 5
+							? index >= 10
+								? index + 2
+								: index + 1
+							: index
+						: isOp
+						? isSnx
+							? index
+							: index + OP_REWARDS_CUTOFF_EPOCH
+						: index + TRADING_REWARDS_CUTOFF_EPOCH;
+					return { ...response.data, period };
+				} catch (err) {
+					logError(err);
+					return null;
+				}
 			})
 		);
 
 		const rewards = responses
+			.filter(Boolean)
 			.map((d) => {
 				const reward = d.claims[walletAddress];
 

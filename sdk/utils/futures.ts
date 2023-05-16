@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { defaultAbiCoder, formatBytes32String, parseBytes32String } from 'ethers/lib/utils.js';
 
 import { DEFAULT_PRICE_IMPACT_DELTA_PERCENT } from 'constants/defaults';
+import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { ETH_UNIT } from 'constants/network';
 import {
 	FuturesAggregateStatResult,
@@ -330,7 +331,7 @@ export const formatDelayedOrder = (
 	};
 };
 
-export const formatPotentialIsolatedTrade = (
+export const formatPotentialTrade = (
 	preview: PostTradeDetailsResponse,
 	basePrice: Wei,
 	nativeSizeDelta: Wei,
@@ -340,7 +341,7 @@ export const formatPotentialIsolatedTrade = (
 
 	const tradeValueWithoutSlippage = wei(nativeSizeDelta).abs().mul(wei(basePrice));
 	const notionalValue = wei(size).mul(wei(basePrice));
-	const leverage = notionalValue.div(wei(margin));
+	const leverage = margin.gt(0) ? notionalValue.div(wei(margin)) : zeroBN;
 
 	const priceImpact = wei(price).sub(basePrice).div(basePrice);
 	const slippageDirection = nativeSizeDelta.gt(0)
@@ -366,30 +367,6 @@ export const formatPotentialIsolatedTrade = (
 		statusMessage: getTradeStatusMessage(status),
 		priceImpact: priceImpact,
 		slippageAmount: priceImpact.mul(slippageDirection).mul(tradeValueWithoutSlippage),
-	};
-};
-
-export const formatPotentialTrade = (
-	preview: PostTradeDetailsResponse,
-	nativeSizeDelta: Wei,
-	leverageSide: PositionSide
-) => {
-	const { fee, liqPrice, margin, price, size, status } = preview;
-	return {
-		fee: wei(fee),
-		liqPrice: wei(liqPrice),
-		margin: wei(margin),
-		price: wei(price),
-		size: wei(size),
-		sizeDelta: nativeSizeDelta,
-		side: leverageSide,
-		leverage: wei(margin).eq(0) ? wei(0) : wei(size).mul(wei(price)).div(wei(margin)).abs(),
-		notionalValue: wei(size).mul(wei(price)),
-		status,
-		showStatus: status > 0, // 0 is success
-		statusMessage: getTradeStatusMessage(status),
-		priceImpact: wei(0),
-		slippageAmount: wei(0),
 	};
 };
 
@@ -654,4 +631,11 @@ export const getDefaultPriceImpact = (orderType: SmartMarginOrderType) => {
 		case 'stop_market':
 			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP);
 	}
+};
+
+// Returns the max leverage without buffer
+
+export const appAdjustedLeverage = (marketLeverage: Wei) => {
+	if (marketLeverage.gte(APP_MAX_LEVERAGE)) return APP_MAX_LEVERAGE;
+	return wei(25);
 };

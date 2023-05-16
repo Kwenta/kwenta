@@ -7,6 +7,7 @@ import TabButton from 'components/Button/TabButton';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import { TabPanel } from 'components/Tab';
+import Search from 'components/Table/Search';
 import * as Text from 'components/Text';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
@@ -68,6 +69,7 @@ const Overview: FC = () => {
 	const oneInchEnabled = network.id === 10;
 
 	const [exchangeTokens, setExchangeTokens] = useState<any>([]);
+	const [search, setSearch] = useState('');
 
 	useFetchAction(fetchTokenList, { dependencies: [network] });
 
@@ -201,7 +203,10 @@ const Overview: FC = () => {
 					<SynthBalancesTable exchangeTokens={exchangeTokens} />
 				</TabPanel>
 				<SubHeading>{t('dashboard.overview.markets-tabs.futures')}</SubHeading>
-				<FuturesMarketsTable />
+				<SearchBarContainer>
+					<Search autoFocus value={search} onChange={setSearch} disabled={false} />
+				</SearchBarContainer>
+				<FuturesMarketsTable search={search} />
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileDashboard exchangeTokens={exchangeTokens} />
@@ -209,6 +214,12 @@ const Overview: FC = () => {
 		</>
 	);
 };
+
+const SearchBarContainer = styled.div`
+	display: flex;
+	height: 100%;
+	width: 100%;
+`;
 
 const TabButtonsContainer = styled.div`
 	display: flex;
@@ -226,6 +237,7 @@ const SubHeading = styled(Text.Heading).attrs({ variant: 'h4' })`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
 	margin-top: 20px;
+	margin-bottom: 16px;
 	font-variant: all-small-caps;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `;

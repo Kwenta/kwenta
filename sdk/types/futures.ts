@@ -43,7 +43,8 @@ export type FuturesMarket<T = Wei> = {
 	marketDebt: T;
 	marketSkew: T;
 	marketSize: T;
-	maxLeverage: T;
+	contractMaxLeverage: T;
+	appMaxLeverage: T;
 	minInitialMargin: T;
 	keeperDeposit: T;
 	isSuspended: boolean;
@@ -97,6 +98,15 @@ export enum FuturesMarketKey {
 	sAXSPERP = 'sAXSPERP',
 	sAUDPERP = 'sAUDPERP',
 	sGBPPERP = 'sGBPPERP',
+	sADAPERP = 'sADAPERP',
+	sAPTPERP = 'sAPTPERP',
+	sBCHPERP = 'sBCHPERP',
+	sCRVPERP = 'sCRVPERP',
+	sFILPERP = 'sFILPERP',
+	sGMXPERP = 'sGMXPERP',
+	sLDOPERP = 'sLDOPERP',
+	sLTCPERP = 'sLTCPERP',
+	sSHIBPERP = 'sSHIBPERP',
 }
 
 export enum FuturesMarketAsset {
@@ -124,6 +134,15 @@ export enum FuturesMarketAsset {
 	AXS = 'AXS',
 	AUD = 'AUD',
 	GBP = 'GBP',
+	ADA = 'ADA',
+	APT = 'APT',
+	BCH = 'BCH',
+	CRV = 'CRV',
+	FIL = 'FIL',
+	GMX = 'GMX',
+	LDO = 'LDO',
+	LTC = 'LTC',
+	SHIB = 'SHIB',
 }
 
 export interface FuturesMarketConfig {
@@ -146,24 +165,24 @@ export type FuturesVolumes<T = Wei> = {
 };
 
 export type PositionDetail = {
-	remainingMargin: Wei;
-	accessibleMargin: Wei;
+	remainingMargin: BigNumber;
+	accessibleMargin: BigNumber;
 	orderPending: boolean;
 	order: {
 		pending: boolean;
-		fee: Wei;
-		leverage: Wei;
+		fee: BigNumber;
+		leverage: BigNumber;
 	};
 	position: {
-		fundingIndex: Wei;
-		lastPrice: Wei;
-		size: Wei;
-		margin: Wei;
+		fundingIndex: BigNumber;
+		lastPrice: BigNumber;
+		size: BigNumber;
+		margin: BigNumber;
 	};
-	accruedFunding: Wei;
-	notionalValue: Wei;
-	liquidationPrice: Wei;
-	profitLoss: Wei;
+	accruedFunding: BigNumber;
+	notionalValue: BigNumber;
+	liquidationPrice: BigNumber;
+	profitLoss: BigNumber;
 };
 
 export enum PositionSide {

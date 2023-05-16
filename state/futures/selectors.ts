@@ -1,8 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { DEFAULT_LEVERAGE, DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
-import { APP_MAX_LEVERAGE, DEFAULT_MAX_LEVERAGE } from 'constants/futures';
+import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
@@ -397,12 +396,6 @@ export const selectActiveSmartPositionsCount = createSelector(
 	}
 );
 
-export const selectTotalBuyingPower = createSelector(selectFuturesPositions, (positions) => {
-	return positions.reduce((acc, p) => {
-		return acc.add(p.accessibleMargin.mul(APP_MAX_LEVERAGE));
-	}, zeroBN);
-});
-
 export const selectTotalUnrealizedPnl = createSelector(selectFuturesPositions, (positions) => {
 	return positions.reduce((acc, p) => {
 		return acc.add(p.position?.pnl ?? zeroBN);
@@ -536,20 +529,11 @@ export const selectMaxLeverage = createSelector(
 	selectPosition,
 	selectMarketInfo,
 	selectLeverageSide,
-	selectOrderType,
 	selectFuturesType,
-	(position, market, leverageSide, orderType, futuresType) => {
+	(position, market, leverageSide, futuresType) => {
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
-		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
-		let adjustedMaxLeverage = marketMaxLeverage.gt(APP_MAX_LEVERAGE)
-			? APP_MAX_LEVERAGE
-			: marketMaxLeverage;
-
-		adjustedMaxLeverage =
-			futuresType === 'isolated_margin'
-				? adjustedMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT)
-				: adjustedMaxLeverage;
+		let adjustedMaxLeverage = market?.appMaxLeverage ?? wei(1);
 
 		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (futuresType === 'cross_margin') return adjustedMaxLeverage;
@@ -601,7 +585,8 @@ export const selectAvailableMargin = createSelector(
 		if (!marketInfo || !position) return zeroBN;
 		if (!position?.position) return position.remainingMargin;
 
-		let inaccessible = position.position.notionalValue.div(marketInfo.maxLeverage).abs() ?? zeroBN;
+		let inaccessible =
+			position.position.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? zeroBN;
 
 		// If the user has a position open, we'll enforce a min initial margin requirement.
 		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
@@ -736,6 +721,8 @@ export const selectEditMarginAllowanceValid = createSelector(
 export const selectSelectedInputDenomination = (state: RootState) =>
 	state.futures.selectedInputDenomination;
 
+export const selectSelectedInputHours = (state: RootState) => state.futures.selectedInputHours;
+
 export const selectCrossMarginSelectedLeverage = createSelector(
 	selectMarketKey,
 	(state: RootState) => state.futures.crossMargin.selectedLeverageByAsset,
@@ -753,24 +740,17 @@ export const selectWalletEthBalance = createSelector(selectCrossMarginAccountDat
 	wei(account?.balanceInfo.walletEthBal || 0)
 );
 
-export const selectCrossMarginTradeFees = createSelector(
+export const selectSmartMarginKeeperDeposit = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
 	(fees) => {
-		return {
-			delayedOrderFee: wei(fees.delayedOrderFee),
-			keeperEthDeposit: wei(fees.keeperEthDeposit),
-		};
+		return wei(fees.keeperEthDeposit);
 	}
 );
 
-export const selectSmartMarginKeeperDeposit = createSelector(selectCrossMarginTradeFees, (fees) => {
-	return fees.keeperEthDeposit;
-});
-
 export const selectKeeperDepositExceedsBal = createSelector(
-	selectCrossMarginTradeFees,
+	selectSmartMarginKeeperDeposit,
 	selectWalletEthBalance,
-	({ keeperEthDeposit }, walletEthBalance) => {
+	(keeperEthDeposit, walletEthBalance) => {
 		return keeperEthDeposit.gt(walletEthBalance);
 	}
 );
@@ -1587,7 +1567,7 @@ export const selectPreviewAvailableMargin = createSelector(
 	(marketInfo, tradePreview, delayedOrderFee) => {
 		if (!marketInfo || !tradePreview) return zeroBN;
 
-		let inaccessible = tradePreview.notionalValue.div(marketInfo.maxLeverage).abs() ?? zeroBN;
+		let inaccessible = tradePreview.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? zeroBN;
 		const totalDeposit = !!delayedOrderFee.commitDeposit
 			? delayedOrderFee.commitDeposit.add(marketInfo.keeperDeposit)
 			: zeroBN;
@@ -1677,7 +1657,7 @@ export const selectPreviewMarginChange = createSelector(
 		const maxPositionSize =
 			!!tradePreview && !!marketInfo
 				? tradePreview.margin
-						.mul(marketInfo.maxLeverage)
+						.mul(marketInfo.appMaxLeverage)
 						.mul(tradePreview.side === PositionSide.LONG ? 1 : -1)
 				: null;
 

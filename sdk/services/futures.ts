@@ -50,6 +50,7 @@ import {
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
 import {
+	appAdjustedLeverage,
 	calculateFundingRate,
 	calculateVolumes,
 	ConditionalOrderResult,
@@ -57,7 +58,6 @@ import {
 	encodeModidyMarketMarginParams,
 	encodeSubmitOffchainOrderParams,
 	formatDelayedOrder,
-	formatPotentialIsolatedTrade,
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
@@ -187,7 +187,8 @@ export default class FuturesService {
 				},
 				marketDebt: wei(marketDebt),
 				marketSkew: wei(marketSkew),
-				maxLeverage: wei(maxLeverage),
+				contractMaxLeverage: wei(maxLeverage),
+				appMaxLeverage: appAdjustedLeverage(wei(maxLeverage)),
 				marketSize: wei(marketSize),
 				marketLimitUsd: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
 				marketLimitNative: wei(marketParameters[i].maxMarketValue),
@@ -250,12 +251,23 @@ export default class FuturesService {
 		)) as boolean[];
 
 		// map the positions using the results
-		const positions = positionDetails.map((position, ind) => {
-			const canLiquidate = canLiquidateState[ind];
-			const marketKey = futuresMarkets[ind].marketKey;
-			const asset = futuresMarkets[ind].asset;
-			return mapFuturesPosition(position, canLiquidate, asset, marketKey);
-		});
+		const positions = await Promise.all(
+			positionDetails.map(async (position, ind) => {
+				const canLiquidate = canLiquidateState[ind];
+				const marketAddress = futuresMarkets[ind].address;
+				const marketKey = futuresMarkets[ind].marketKey;
+				const asset = futuresMarkets[ind].asset;
+				const liquidationPrice = position.position.size.abs().gt(0)
+					? await this.sdk.futures.getExactLiquidationPrice(marketKey, marketAddress, position)
+					: position.liquidationPrice;
+				return mapFuturesPosition(
+					{ ...position, liquidationPrice },
+					canLiquidate,
+					asset,
+					marketKey
+				);
+			})
+		);
 
 		return positions;
 	}
@@ -514,12 +526,33 @@ export default class FuturesService {
 			this.sdk.context.walletAddress
 		);
 
-		return formatPotentialIsolatedTrade(
+		return formatPotentialTrade(
 			details,
 			inputs.skewAdjustedPrice,
 			inputs.sizeDelta,
 			inputs.leverageSide
 		);
+	}
+
+	public async getExactLiquidationPrice(
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
+		positionDetails: PositionDetail
+	) {
+		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
+		const internalPosition = {
+			id: '0',
+			size: positionDetails.position.size,
+			margin: positionDetails.position.margin,
+			lastFundingIndex: positionDetails.position.fundingIndex,
+			lastPrice: positionDetails.position.lastPrice,
+		};
+		const approxLiquidationPrice = positionDetails.liquidationPrice;
+		const exactLiqPrice = await marketInternal._exactLiquidationPrice(
+			internalPosition,
+			approxLiquidationPrice
+		);
+		return exactLiqPrice;
 	}
 
 	public async getCrossMarginTradePreview(
@@ -529,7 +562,7 @@ export default class FuturesService {
 		tradeParams: {
 			sizeDelta: Wei;
 			marginDelta: Wei;
-			orderPrice?: Wei;
+			orderPrice: Wei;
 			leverageSide: PositionSide;
 		}
 	) {
@@ -539,10 +572,15 @@ export default class FuturesService {
 			crossMarginAccount,
 			tradeParams.sizeDelta.toBN(),
 			tradeParams.marginDelta.toBN(),
-			tradeParams.orderPrice?.toBN()
+			tradeParams.orderPrice.toBN()
 		);
 
-		return formatPotentialTrade(preview, tradeParams.sizeDelta, tradeParams.leverageSide);
+		return formatPotentialTrade(
+			preview,
+			tradeParams.orderPrice,
+			tradeParams.sizeDelta,
+			tradeParams.leverageSide
+		);
 	}
 
 	public async getCrossMarginKeeperBalance(account: string) {

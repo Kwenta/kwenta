@@ -71,7 +71,7 @@ const TradingRewardRow = memo(() => {
 								i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 									isRewardEligible ? 'earn' : 'start'
 								}`}
-								components={[<Body weight="bold" inline />]}
+								components={[<Body weight="bold" inline as="span" />]}
 							/>
 						</Body>
 						<StyledLinkArrowIcon />
@@ -90,7 +90,9 @@ const LiquidationRow = memo(() => {
 			title="Liquidation price"
 			color="preview"
 			value={
-				potentialTradeDetails?.liqPrice ? formatDollars(potentialTradeDetails.liqPrice) : NO_VALUE
+				potentialTradeDetails?.liqPrice
+					? formatDollars(potentialTradeDetails.liqPrice, { suggestDecimals: true })
+					: NO_VALUE
 			}
 		/>
 	);

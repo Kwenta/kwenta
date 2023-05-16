@@ -19,7 +19,7 @@ import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin';
-import TradeIsolatedMargin from 'sections/futures/Trade/TradeIsolatedMargin';
+import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel';
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
 import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal';
 import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin';
@@ -171,9 +171,10 @@ const StyledFullHeightContainer = styled.div`
 	grid-gap: 0;
 	flex: 1;
 	height: calc(100% - 64px);
+	width: 100vw;
 	grid-template-columns: ${TRADE_PANEL_WIDTH_LG}px 1fr;
 	${media.lessThan('xxl')`
-	grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
+		grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
 	`}
 `;
 

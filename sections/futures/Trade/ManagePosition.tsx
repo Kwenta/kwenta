@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -5,7 +6,6 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
-import { APP_MAX_LEVERAGE } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { setOpenModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
@@ -29,10 +29,11 @@ import {
 	selectMaxUsdSizeInput,
 	selectCrossMarginAccount,
 	selectPosition,
+	selectMarketPriceInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { isZero } from 'utils/formatters/number';
+import { isZero, zeroBN } from 'utils/formatters/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 const ManagePosition: React.FC = () => {
@@ -55,6 +56,7 @@ const ManagePosition: React.FC = () => {
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const marketAssetRate = useAppSelector(selectMarketPrice);
 	const marketInfo = useAppSelector(selectMarketInfo);
+	const indexPrice = useAppSelector(selectMarketPriceInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);
 	const smartMarginAccount = useAppSelector(selectCrossMarginAccount);
 	const position = useAppSelector(selectPosition);
@@ -90,11 +92,24 @@ const ManagePosition: React.FC = () => {
 		if (orderError) {
 			return { message: orderError, show: 'error' };
 		}
+		const maxLeverage = marketInfo?.appMaxLeverage ?? wei(1);
+
 		// TODO: Clean up errors and warnings
+		const indexPriceWei = indexPrice?.price ?? zeroBN;
+		const canLiquidate =
+			(previewTrade?.size.gt(0) && indexPriceWei.lt(previewTrade?.liqPrice)) ||
+			(previewTrade?.size.lt(0) && indexPriceWei.gt(previewTrade?.liqPrice));
+		if (canLiquidate) {
+			return {
+				show: 'warn',
+				message: `Position can be liquidated`,
+			};
+		}
+
 		if (leverage.gt(maxLeverageValue))
 			return {
 				show: 'warn',
-				message: `Max leverage ${APP_MAX_LEVERAGE.toString(0)}x exceeded`,
+				message: `Max leverage ${maxLeverage.toString(0)}x exceeded`,
 			};
 		if (marketInfo?.isSuspended)
 			return {
@@ -140,7 +155,7 @@ const ManagePosition: React.FC = () => {
 			};
 		}
 		if (selectedAccountType === 'cross_margin') {
-			if ((isZero(marginDelta) && isZero(susdSize)) || previewStatus.status !== FetchStatus.Success)
+			if (previewTrade?.status !== 0 || previewStatus.status === FetchStatus.Loading)
 				return { message: 'awaiting_preview' };
 			if (orderType !== 'market' && isZero(orderPrice)) return { message: 'trade price required' };
 		}
@@ -164,6 +179,9 @@ const ManagePosition: React.FC = () => {
 		previewStatus,
 		maxLeverageValue,
 		leverage,
+		indexPrice,
+		previewTrade,
+		marketInfo?.appMaxLeverage,
 	]);
 
 	return (
@@ -174,6 +192,7 @@ const ManagePosition: React.FC = () => {
 						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth
+						loading={previewStatus.status === FetchStatus.Loading}
 						variant={leverageSide}
 						disabled={!!placeOrderDisabledReason}
 						onClick={onSubmit}

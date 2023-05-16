@@ -169,33 +169,36 @@ export const Table: FC<TableProps> = memo(
 						className={className}
 					>
 						{headerGroups.map((headerGroup) => (
-							<div className="table-row" style={{ display: 'flex' }}>
-								{headerGroup.headers.map((column: any) => (
-									<TableCellHead
-										hideHeaders={hideHeaders}
-										{...column.getHeaderProps(
-											column.sortable ? column.getSortByToggleProps() : undefined
-										)}
-									>
-										{column.render('Header')}
-										{column.sortable && (
-											<SortIconContainer>
-												{column.isSorted ? (
-													column.isSortedDesc ? (
-														<StyledSortDownIcon />
+							<div key={headerGroup.id} className="table-row" style={{ display: 'flex' }}>
+								{headerGroup.headers.map((column: any) => {
+									return (
+										<TableCellHead
+											key={column.id}
+											hideHeaders={hideHeaders}
+											{...column.getHeaderProps(
+												column.sortable ? column.getSortByToggleProps() : undefined
+											)}
+										>
+											{column.render('Header')}
+											{column.sortable && (
+												<SortIconContainer>
+													{column.isSorted ? (
+														column.isSortedDesc ? (
+															<StyledSortDownIcon />
+														) : (
+															<StyledSortUpIcon />
+														)
 													) : (
-														<StyledSortUpIcon />
-													)
-												) : (
-													<>
-														<StyledSortUpIcon />
-														<StyledSortDownIcon />
-													</>
-												)}
-											</SortIconContainer>
-										)}
-									</TableCellHead>
-								))}
+														<>
+															<StyledSortUpIcon />
+															<StyledSortDownIcon />
+														</>
+													)}
+												</SortIconContainer>
+											)}
+										</TableCellHead>
+									);
+								})}
 							</div>
 						))}
 						{isLoading ? (
@@ -248,7 +251,7 @@ const TableContainer = styled.div`
 
 export const TableBody = styled.div`
 	overflow-y: auto;
-	overflow-x: hidden;
+	overflow-x: visible;
 `;
 
 export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
