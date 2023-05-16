@@ -10,6 +10,7 @@ import {
 } from 'public/static/charting_library/charting_library';
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
+import { NetworkId } from 'sdk/types/common';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
 import { sdk } from 'state/config';
@@ -78,13 +79,15 @@ const fetchCombinedCandles = async (
 	base: string,
 	from: number,
 	to: number,
-	resolution: ResolutionString
+	resolution: ResolutionString,
+	networkId: NetworkId
 ) => {
 	const candleData = await requestCandlesticks(
 		getDisplayAsset(base),
 		from,
 		to,
-		resolutionToSeconds(resolution)
+		resolutionToSeconds(resolution),
+		networkId
 	);
 	return candleData;
 };
@@ -150,7 +153,7 @@ const subscribeOffChainPrices = (
 };
 
 const DataFeedFactory = (
-	networkId: number,
+	networkId: NetworkId,
 	onSubscribe: (priceListener: PricesListener) => void
 ): IBasicDataFeed => {
 	_latestChartBar.current = undefined;
@@ -194,7 +197,7 @@ const DataFeedFactory = (
 			const { base } = splitBaseQuote(symbolInfo.name);
 
 			try {
-				fetchCombinedCandles(base, from, to, _resolution).then((bars) => {
+				fetchCombinedCandles(base, from, to, _resolution, networkId).then((bars) => {
 					const chartBars = bars.map((b) => {
 						return {
 							high: b.high,

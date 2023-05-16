@@ -34,18 +34,3 @@ export const mapPythCandles = (candleData: PythResponse): Candle[] => {
 		};
 	});
 };
-
-export const mapPriceChart = (candles: CandleResult[]): Candle[] => {
-	return candles.map(({ id, synth, open, high, low, close, average, timestamp }) => {
-		return {
-			id: id,
-			synth: synth,
-			open: open.toNumber(),
-			high: high.toNumber(),
-			low: low.toNumber(),
-			close: close.toNumber(),
-			average: average.toNumber(),
-			timestamp: timestamp.toNumber(),
-		};
-	});
-};
