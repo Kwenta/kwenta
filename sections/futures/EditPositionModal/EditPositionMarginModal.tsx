@@ -69,11 +69,13 @@ export default function EditPositionMarginModal() {
 		const currentSize = position?.position?.notionalValue;
 		const max = maxSize?.sub(currentSize).div(market?.appMaxLeverage ?? 1) ?? wei(0);
 		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0);
-		return max.lt(0)
+		const remainingMarginMax = position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0);
+
+		return max.lt(0) || remainingMarginMax.lt(0)
 			? zeroBN
 			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
 			? max
-			: position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0);
+			: remainingMarginMax;
 	}, [position?.remainingMargin, position?.position?.notionalValue, market?.appMaxLeverage]);
 
 	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
