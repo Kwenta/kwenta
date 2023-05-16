@@ -3,12 +3,14 @@ import styled from 'styled-components';
 
 import media from 'styles/media';
 
+import FundingChart from '../FundingChart';
 import PositionChart from '../PositionChart';
 import UserInfo from '../UserInfo';
 
 const MarketInfo: React.FC = React.memo(() => (
 	<Container>
-		<PositionChart />
+		{/*<PositionChart />*/}
+		<FundingChart />
 		<UserInfo />
 	</Container>
 ));
