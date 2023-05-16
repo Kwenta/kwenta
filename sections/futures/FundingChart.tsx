@@ -3,14 +3,18 @@ import { LineChart, XAxis, Legend, Line } from 'recharts';
 import styled from 'styled-components';
 
 import { fetchFundingRates } from 'state/futures/actions';
-import { useAppDispatch } from 'state/hooks';
+import { selectMarketInfo } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 const FundingChart = () => {
 	const dispatch = useAppDispatch();
+	const marketInfo = useAppSelector(selectMarketInfo);
 
 	useEffect(() => {
-		dispatch(fetchFundingRates());
-	}, [dispatch]);
+		if (marketInfo?.market) {
+			dispatch(fetchFundingRates(marketInfo.market));
+		}
+	}, [dispatch, marketInfo?.market]);
 
 	return (
 		<Container>

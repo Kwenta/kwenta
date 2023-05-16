@@ -1912,14 +1912,10 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 	}
 );
 
-export const fetchFundingRates = createAsyncThunk<void, void, ThunkConfig>(
+export const fetchFundingRates = createAsyncThunk<void, string, ThunkConfig>(
 	'futures/fetchFundingRates',
-	async (_, { getState, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState());
-
-		if (marketInfo?.market) {
-			await sdk.futures.getMarketFundingRates(marketInfo.market);
-		}
+	async (marketAddress, { extra: { sdk } }) => {
+		await sdk.futures.getMarketFundingRates(marketAddress);
 	}
 );
 

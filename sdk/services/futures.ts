@@ -277,24 +277,29 @@ export default class FuturesService {
 		const periodLength = PERIOD_IN_SECONDS['ONE_WEEK'];
 		const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 
-		const response = await request(
-			this.futuresGqlEndpoint,
-			gql`
-				query fundingRateUpdates($marketAddress: String!, $minTimestamp: BigInt!) {
-					fundingRateUpdates(
-						where: { market: $marketAddress, timestamp_gt: $minTimeStamp, orderBy: sequenceLength }
-					) {
-						timestamp
-						funding
+		try {
+			const response = await request(
+				this.futuresGqlEndpoint,
+				gql`
+					query fundingRateUpdate($marketAddress: String!, $minTimestamp: BigInt!) {
+						fundingRateUpdates(
+							where: { market: $marketAddress, timestamp_lt: $minTimestamp }
+							orderBy: sequenceLength
+						) {
+							timestamp
+							funding
+						}
 					}
-				}
-			`,
-			{ marketAddress, minTimestamp }
-		);
+				`,
+				{ marketAddress, minTimestamp }
+			);
 
-		console.log({ response });
+			console.log({ response });
 
-		return response;
+			return response;
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
