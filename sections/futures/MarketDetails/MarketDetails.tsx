@@ -40,40 +40,38 @@ type MarketDetailsProps = {
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const dispatch = useAppDispatch();
 	const showHistory = useAppSelector(selectShowHistory);
+
+	const MarketDetailsDesktop = () => (
+		<MarketDetailsContainer>
+			<MarketPriceDetail />
+			<IndexPriceDetail />
+			<DailyChangeDetail />
+			<OpenInterestLongDetail />
+			<OpenInterestShortDetail />
+			<MarketSkew />
+			<HourlyFundingDetail />
+		</MarketDetailsContainer>
+	);
+
+	const MarketDetailsMobile = () => (
+		<MarketDetailsContainer mobile={mobile}>
+			<IndexPriceDetail mobile={mobile} />
+			<MarketSkew mobile={mobile} />
+			<HourlyFundingDetail mobile={mobile} />
+			<MarketPriceDetail mobile={mobile} />
+			<DailyChangeDetail mobile={mobile} />
+			<FlexDivRow style={{ columnGap: '25px' }}>
+				<OpenInterestLongDetail mobile={mobile} />
+				<OpenInterestShortDetail mobile={mobile} />
+			</FlexDivRow>
+		</MarketDetailsContainer>
+	);
+
 	return (
 		<MainContainer mobile={mobile}>
 			<MarketsDropdown mobile={mobile} />
-			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
-			{!mobile && (
-				<MarketDetailsContainer>
-					<MarketPriceDetail />
-					<IndexPriceDetail />
-					<DailyChangeDetail />
-					<OpenInterestLongDetail />
-					<OpenInterestShortDetail />
-					<MarketSkew />
-					<HourlyFundingDetail />
-				</MarketDetailsContainer>
-			)}
-			{mobile && (
-				<MarketDetailsContainer mobile={mobile} style={{ alignItems: 'flex-start' }}>
-					<FlexDivCol style={{ rowGap: '15px' }}>
-						<IndexPriceDetail mobile={mobile} />
-						<MarketPriceDetail mobile={mobile} />
-					</FlexDivCol>
-					<FlexDivCol style={{ rowGap: '15px' }}>
-						<MarketSkew mobile={mobile} />
-						<DailyChangeDetail mobile={mobile} />
-					</FlexDivCol>
-					<FlexDivCol style={{ rowGap: '15px' }}>
-						<HourlyFundingDetail mobile={mobile} />
-						<FlexDivRow style={{ columnGap: '25px' }}>
-							<OpenInterestLongDetail mobile={mobile} />
-							<OpenInterestShortDetail mobile={mobile} />
-						</FlexDivRow>
-					</FlexDivCol>
-				</MarketDetailsContainer>
-			)}
+			{mobile ? <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} /> : <MarketDetailsDesktop />}
+			{mobile && <MarketDetailsMobile />}
 			{!mobile && (
 				<ShowHistoryContainer>
 					<Checkbox
@@ -289,14 +287,10 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
 	padding: 10px 45px 10px 15px;
-	box-sizing: border-box;
 	overflow-x: scroll;
 	scrollbar-width: none;
-
 	display: flex;
 	align-items: center;
-
-	box-sizing: border-box;
 
 	& > div {
 		margin-right: 30px;
@@ -341,14 +335,22 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		${props.mobile &&
 		css`
 			height: auto;
-			padding: 15px;
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: flex-start;
-			${media.lessThan('md')`
-				gap: 25px;
-			`}
 			width: 100%;
+			padding: 15px;
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			grid-template-rows: 1fr 1fr;
+			grid-gap: 15px 25px;
+			justify-items: start;
+			align-items: start;
+			justify-content: start;
+			${media.lessThan('md')`
+				margin: 0px;
+				& > div {
+					margin-right: 30px;
+				}
+			`}
+
 			border-left: none;
 			.heading {
 				margin-bottom: 2px;

@@ -41,7 +41,7 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 				content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
 			>
 				<WithCursor cursor="help">
-					<Body size={mobile ? 'small' : 'large'} className="heading">
+					<Body size={mobile ? 'small' : 'medium'} className="heading">
 						{dataKey}
 					</Body>
 					<FlexDivRowCentered>
@@ -54,7 +54,7 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 					</FlexDivRowCentered>
 				</WithCursor>
 			</MarketDetailsTooltip>
-			<div style={{ marginBottom: '5px' }}>{extra}</div>
+			{extra}
 		</FlexDivRowCentered>
 	);
 });

@@ -103,12 +103,11 @@ const ToggleContainer = styled.div<{ open: boolean }>`
 
 	${media.lessThan('md')`
 		position: relative;
-		top: -95px;
-		left: 300px;
+		top: -100px;
+		left: 310px;
 		z-index: ${zIndex.HEADER};
 		margin-top: 0px;
 		width: ${HOURS_TOGGLE_WIDTH};
-		clear: both;
 	`}
 `;
 
