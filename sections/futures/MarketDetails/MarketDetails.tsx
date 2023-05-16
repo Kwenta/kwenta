@@ -6,8 +6,9 @@ import styled, { css } from 'styled-components';
 
 import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
-import { FlexDivCol } from 'components/layout/flex';
+import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
+import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import { zIndex } from 'constants/ui';
 import { setShowTradeHistory } from 'state/futures/reducer';
@@ -43,15 +44,36 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		<MainContainer mobile={mobile}>
 			<MarketsDropdown mobile={mobile} />
 			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
-			<MarketDetailsContainer mobile={mobile}>
-				<MarketPriceDetail mobile={mobile} />
-				<IndexPriceDetail mobile={mobile} />
-				<DailyChangeDetail mobile={mobile} />
-				<OpenInterestLongDetail mobile={mobile} />
-				<OpenInterestShortDetail mobile={mobile} />
-				<MarketSkew mobile={mobile} />
-				<HourlyFundingDetail mobile={mobile} />
-			</MarketDetailsContainer>
+			{!mobile && (
+				<MarketDetailsContainer>
+					<MarketPriceDetail />
+					<IndexPriceDetail />
+					<DailyChangeDetail />
+					<OpenInterestLongDetail />
+					<OpenInterestShortDetail />
+					<MarketSkew />
+					<HourlyFundingDetail />
+				</MarketDetailsContainer>
+			)}
+			{mobile && (
+				<MarketDetailsContainer mobile={mobile} style={{ alignItems: 'flex-start' }}>
+					<FlexDivCol style={{ rowGap: '15px' }}>
+						<IndexPriceDetail mobile={mobile} />
+						<MarketPriceDetail mobile={mobile} />
+					</FlexDivCol>
+					<FlexDivCol style={{ rowGap: '15px' }}>
+						<MarketSkew mobile={mobile} />
+						<DailyChangeDetail mobile={mobile} />
+					</FlexDivCol>
+					<FlexDivCol style={{ rowGap: '15px' }}>
+						<HourlyFundingDetail mobile={mobile} />
+						<FlexDivRow style={{ columnGap: '25px' }}>
+							<OpenInterestLongDetail mobile={mobile} />
+							<OpenInterestShortDetail mobile={mobile} />
+						</FlexDivRow>
+					</FlexDivCol>
+				</MarketDetailsContainer>
+			)}
 			{!mobile && (
 				<ShowHistoryContainer>
 					<Checkbox
@@ -190,7 +212,9 @@ const OpenInterestLongDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) =
 				marketInfo?.openInterest.longUSD ? (
 					<FlexDivCol>
 						<div>{formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}</div>
-						<div>{oiCap}</div>
+						<Body mono size="small" color="secondary" weight="bold">
+							{oiCap}
+						</Body>
 					</FlexDivCol>
 				) : (
 					NO_VALUE
@@ -223,7 +247,9 @@ const OpenInterestShortDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) 
 				marketInfo?.openInterest.shortUSD ? (
 					<FlexDivCol>
 						<div>{formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })}</div>
-						<div>{oiCap}</div>
+						<Body mono size="small" color="secondary" weight="bold">
+							{oiCap}
+						</Body>
 					</FlexDivCol>
 				) : (
 					NO_VALUE

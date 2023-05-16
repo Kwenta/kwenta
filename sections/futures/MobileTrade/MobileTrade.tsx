@@ -30,7 +30,7 @@ const MobileTrade: React.FC = () => {
 };
 
 const MobileContainer = styled.div`
-	max-height: 125px;
+	max-height: 180px;
 `;
 
 const SwitchNetworkContainer = styled.div`
