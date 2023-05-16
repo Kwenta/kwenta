@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components';
 
 import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
+import { FlexDivCol } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
 import { zIndex } from 'constants/ui';
@@ -43,11 +44,11 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			<MarketsDropdown mobile={mobile} />
 			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
 			<MarketDetailsContainer mobile={mobile}>
-				{!mobile && <MarketPriceDetail />}
+				<MarketPriceDetail mobile={mobile} />
 				<IndexPriceDetail mobile={mobile} />
-				{!mobile && <DailyChangeDetail />}
-				{!mobile && <OpenInterestLongDetail />}
-				{!mobile && <OpenInterestShortDetail />}
+				<DailyChangeDetail mobile={mobile} />
+				<OpenInterestLongDetail mobile={mobile} />
+				<OpenInterestShortDetail mobile={mobile} />
 				<MarketSkew mobile={mobile} />
 				<HourlyFundingDetail mobile={mobile} />
 			</MarketDetailsContainer>
@@ -67,11 +68,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	);
 };
 
-const MarketPriceDetail = memo(() => {
+const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo);
 
 	return (
 		<MarketDetail
+			mobile={mobile}
 			color={getColorFromPriceInfo(markPrice)}
 			value={markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
 			dataKey={MarketDataKey.marketPrice}
@@ -91,7 +93,7 @@ const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	);
 });
 
-const DailyChangeDetail = memo(() => {
+const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo);
 	const indexPriceWei = indexPrice?.price ?? zeroBN;
 	const pastRates = useAppSelector(selectPreviousDayPrices);
@@ -100,6 +102,7 @@ const DailyChangeDetail = memo(() => {
 
 	return (
 		<MarketDetail
+			mobile={mobile}
 			dataKey={MarketDataKey.dailyChange}
 			value={
 				indexPriceWei.gt(0) && pastPrice?.rate
@@ -143,29 +146,12 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	);
 });
 
-const OpenInterestLongDetail = memo(() => {
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const oiCap = marketInfo?.marketLimitUsd
-		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
-		: null;
-
-	return (
-		<MarketDetail
-			dataKey={MarketDataKey.openInterestLong}
-			value={
-				marketInfo?.openInterest.longUSD
-					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}/${oiCap}`
-					: NO_VALUE
-			}
-		/>
-	);
-});
-
 const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 
 	return (
 		<MarketDetail
+			mobile={mobile}
 			dataKey={MarketDataKey.skew}
 			value={
 				<>
@@ -190,13 +176,61 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	);
 });
 
-const OpenInterestShortDetail = memo(() => {
+const OpenInterestLongDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const oiCap = marketInfo?.marketLimitUsd
 		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
 		: null;
 
-	return (
+	return mobile ? (
+		<MarketDetail
+			mobile
+			dataKey={MarketDataKey.openInterestLongMobile}
+			value={
+				marketInfo?.openInterest.longUSD ? (
+					<FlexDivCol>
+						<div>{formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}</div>
+						<div>{oiCap}</div>
+					</FlexDivCol>
+				) : (
+					NO_VALUE
+				)
+			}
+		/>
+	) : (
+		<MarketDetail
+			dataKey={MarketDataKey.openInterestLong}
+			value={
+				marketInfo?.openInterest.longUSD
+					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}/${oiCap}`
+					: NO_VALUE
+			}
+		/>
+	);
+});
+
+const OpenInterestShortDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const oiCap = marketInfo?.marketLimitUsd
+		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
+		: null;
+
+	return mobile ? (
+		<MarketDetail
+			mobile
+			dataKey={MarketDataKey.openInterestShortMobile}
+			value={
+				marketInfo?.openInterest.shortUSD ? (
+					<FlexDivCol>
+						<div>{formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })}</div>
+						<div>{oiCap}</div>
+					</FlexDivCol>
+				) : (
+					NO_VALUE
+				)
+			}
+		/>
+	) : (
 		<MarketDetail
 			dataKey={MarketDataKey.openInterestShort}
 			value={
@@ -283,6 +317,7 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 			height: auto;
 			padding: 15px;
 			display: flex;
+			flex-wrap: wrap;
 			justify-content: flex-start;
 			${media.lessThan('md')`
 				gap: 25px;
