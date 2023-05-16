@@ -7,6 +7,7 @@ import { NetworkId } from 'sdk/types/common';
 import { getRatesEndpoint } from 'sdk/utils/prices';
 import logError from 'utils/logError';
 
+import { DEFAULT_PYTH_TV_ENDPOINT } from './constants';
 import { mapCandles, mapPythCandles } from './utils';
 
 export const requestCandlesticks = async (
@@ -17,7 +18,7 @@ export const requestCandlesticks = async (
 	networkId: NetworkId = DEFAULT_NETWORK_ID
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId);
-	const pythTvEndpoint = 'https://pyth-api.vintage-orange-muffin.com/v2/history';
+	const pythTvEndpoint = DEFAULT_PYTH_TV_ENDPOINT;
 
 	if (period <= 3600) {
 		const response = await axios
