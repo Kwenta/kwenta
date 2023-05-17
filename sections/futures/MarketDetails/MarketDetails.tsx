@@ -38,44 +38,42 @@ type MarketDetailsProps = {
 };
 
 interface OpenInterestDetailProps extends MarketDetailsProps {
-	isLong: boolean;
+	isLong?: boolean;
 }
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const dispatch = useAppDispatch();
 	const showHistory = useAppSelector(selectShowHistory);
 
-	const MarketDetailsDesktop = () => (
-		<MarketDetailsContainer>
-			<MarketPriceDetail />
-			<IndexPriceDetail />
-			<DailyChangeDetail />
-			<OpenInterestLongDetail />
-			<OpenInterestShortDetail />
-			<MarketSkew />
-			<HourlyFundingDetail />
-		</MarketDetailsContainer>
-	);
-
-	const MarketDetailsMobile = () => (
+	const SelectedMarketDetailsView = mobile ? (
 		<MarketDetailsContainer mobile={mobile}>
 			<IndexPriceDetail mobile={mobile} />
 			<MarketSkew mobile={mobile} />
 			<HourlyFundingDetail mobile={mobile} />
 			<MarketPriceDetail mobile={mobile} />
 			<DailyChangeDetail mobile={mobile} />
-			<FlexDivRow style={{ columnGap: '25px' }}>
-				<OpenInterestLongDetail mobile={mobile} />
-				<OpenInterestShortDetail mobile={mobile} />
+			<FlexDivRow columnGap="25px">
+				<OpenInterestDetail isLong mobile={mobile} />
+				<OpenInterestDetail mobile={mobile} />
 			</FlexDivRow>
+		</MarketDetailsContainer>
+	) : (
+		<MarketDetailsContainer>
+			<MarketPriceDetail />
+			<IndexPriceDetail />
+			<DailyChangeDetail />
+			<OpenInterestDetail isLong />
+			<OpenInterestDetail />
+			<MarketSkew />
+			<HourlyFundingDetail />
 		</MarketDetailsContainer>
 	);
 
 	return (
 		<MainContainer mobile={mobile}>
 			<MarketsDropdown mobile={mobile} />
-			{mobile ? <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} /> : <MarketDetailsDesktop />}
-			{mobile && <MarketDetailsMobile />}
+			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
+			{SelectedMarketDetailsView}
 			{!mobile && (
 				<ShowHistoryContainer>
 					<Checkbox
@@ -233,13 +231,6 @@ const OpenInterestDetail: React.FC<OpenInterestDetailProps> = memo(({ mobile, is
 		/>
 	);
 });
-
-const OpenInterestLongDetail: React.FC<MarketDetailsProps> = (props) => (
-	<OpenInterestDetail isLong {...props} />
-);
-const OpenInterestShortDetail: React.FC<MarketDetailsProps> = (props) => (
-	<OpenInterestDetail isLong={false} {...props} />
-);
 
 const MainContainer = styled.div<{ mobile?: boolean }>`
 	display: flex;
