@@ -203,9 +203,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 													})
 												)
 											}
-											color="red"
+											color="redGray"
 											size="small"
-											background="gray"
 										>
 											Close
 										</Pill>
@@ -283,7 +282,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
-									<FlexDivRowCentered style={{ columnGap: '35px' }}>
+									<FlexDivRowCentered columnGap="35px">
 										<PnlContainer>
 											<Currency.Price price={cellProps.row.original.position.pnl} colored />
 											<NumericValue value={cellProps.row.original.position.pnlPct} colored>

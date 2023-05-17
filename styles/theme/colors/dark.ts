@@ -144,6 +144,21 @@ const newTheme = {
 				text: common.palette.neutral.n900,
 			},
 		},
+		redGray: {
+			text: common.palette.red.r300,
+			background: common.palette.neutral.n800,
+			border: common.palette.neutral.n600,
+			outline: {
+				background: common.palette.neutral.n20,
+				text: common.palette.red.r300,
+				border: common.palette.alpha.white10,
+			},
+			hover: {
+				background: common.palette.neutral.n700,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n30,
+			},
+		},
 	},
 	tabs: {
 		position: {
