@@ -916,7 +916,7 @@
 				},
 				"fees": {
 					"tooltip": "Fees are displayed as maker / taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew.",
-					"keeper-tooltip": "Fixed fee to cover automated order execution"
+					"keeper-tooltip": "Dynamic fee to cover automated order execution"
 				},
 				"orders": {
 					"manage-keeper-deposit": {

@@ -17,7 +17,7 @@ const ExecutionFeeTooltip = memo(() => {
 		<Tooltip
 			height="auto"
 			preset="top"
-			width="300px"
+			width="240px"
 			content={t('futures.market.trade.fees.keeper-tooltip')}
 			style={{ textTransform: 'none' }}
 		>
