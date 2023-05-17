@@ -54,7 +54,7 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 					</FlexDivRowCentered>
 				</WithCursor>
 			</MarketDetailsTooltip>
-			{extra}
+			<div style={{ marginBottom: '5px' }}>{extra}</div>
 		</FlexDivRowCentered>
 	);
 });
