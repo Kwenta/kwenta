@@ -54,15 +54,18 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	return (
 		<Container>
 			<FlexDivRowCentered>
-				<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
+				<BalanceContainer
+					clickable={accountType === 'cross_margin' && !isDepositRequired}
+					onClick={onClickContainer}
+				>
 					{isDepositRequired ? (
 						<FlexDivRowCentered>
 							<FlexDivCol>
 								<Body size={isMobile ? 'small' : 'medium'} color="secondary">
-									No available margin:
+									No available margin
 								</Body>
 								<Body size={isMobile ? 'small' : 'medium'} color="preview">
-									Min.$50 sUSD required to trade on Kwenta
+									Min. $50 sUSD required to trade
 								</Body>
 							</FlexDivCol>
 							<Button
