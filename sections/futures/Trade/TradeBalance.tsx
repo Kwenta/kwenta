@@ -9,7 +9,6 @@ import { Body, NumericValue } from 'components/Text';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
-import { selectSusdBalance } from 'state/balances/selectors';
 import {
 	selectAvailableMargin,
 	selectFuturesType,
@@ -34,17 +33,13 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	const accountType = useAppSelector(selectFuturesType);
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin);
 	const withdrawable = useAppSelector(selectWithdrawableMargin);
-	const susdBalance = useAppSelector(selectSusdBalance);
 	const openModal = useAppSelector(selectShowModal);
 
 	const [expanded, setExpanded] = useState(false);
 
-	const minDeposit = useMemo(() => {
-		const min = MIN_MARGIN_AMOUNT.sub(idleMargin);
-		return min.lt(zeroBN) ? zeroBN : min;
+	const isDepositRequired = useMemo(() => {
+		return MIN_MARGIN_AMOUNT.sub(idleMargin).gt(zeroBN);
 	}, [idleMargin]);
-
-	const isDepositRequired = useMemo(() => susdBalance.lt(minDeposit), [minDeposit, susdBalance]);
 
 	const onClickContainer = () => {
 		if (accountType === 'isolated_margin' || isDepositRequired) return;
