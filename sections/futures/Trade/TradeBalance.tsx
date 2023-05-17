@@ -75,37 +75,35 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 							</Button>
 						</FlexDivRowCentered>
 					) : (
-						<FlexDivRowCentered>
-							<FlexDivCol>
-								<Body size={isMobile ? 'medium' : 'large'} color="secondary">
-									Available Margin
-									{accountType === 'cross_margin' ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
-								</Body>
-								<NumericValue size={isMobile ? 'medium' : 'large'} weight="bold">
-									{accountType === 'isolated_margin'
-										? formatDollars(availableIsolatedMargin)
-										: formatDollars(idleMargin)}
-								</NumericValue>
-							</FlexDivCol>
-							{(accountType === 'isolated_margin' || withdrawable.gt(0) || !isDepositRequired) && (
-								<Button
-									onClick={() =>
-										dispatch(
-											setOpenModal(
-												accountType === 'isolated_margin'
-													? 'futures_isolated_transfer'
-													: 'futures_cross_withdraw'
-											)
-										)
-									}
-									size="xsmall"
-								>
-									Manage
-								</Button>
-							)}
-						</FlexDivRowCentered>
+						<FlexDivCol>
+							<Body size={isMobile ? 'medium' : 'large'} color="secondary">
+								Available Margin
+								{accountType === 'cross_margin' ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
+							</Body>
+							<NumericValue size={isMobile ? 'medium' : 'large'} weight="bold">
+								{accountType === 'isolated_margin'
+									? formatDollars(availableIsolatedMargin)
+									: formatDollars(idleMargin)}
+							</NumericValue>
+						</FlexDivCol>
 					)}
 				</BalanceContainer>
+				{(accountType === 'isolated_margin' || withdrawable.gt(0) || !isDepositRequired) && (
+					<Button
+						onClick={() =>
+							dispatch(
+								setOpenModal(
+									accountType === 'isolated_margin'
+										? 'futures_isolated_transfer'
+										: 'futures_cross_withdraw'
+								)
+							)
+						}
+						size="xsmall"
+					>
+						Manage
+					</Button>
+				)}
 			</FlexDivRowCentered>
 
 			{expanded && accountType === 'cross_margin' && (
