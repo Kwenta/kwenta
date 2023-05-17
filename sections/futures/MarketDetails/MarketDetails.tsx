@@ -37,6 +37,10 @@ type MarketDetailsProps = {
 	mobile?: boolean;
 };
 
+interface OpenInterestDetailProps extends MarketDetailsProps {
+	isLong: boolean;
+}
+
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const dispatch = useAppDispatch();
 	const showHistory = useAppSelector(selectShowHistory);
@@ -196,75 +200,46 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	);
 });
 
-const OpenInterestLongDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
+const OpenInterestDetail: React.FC<OpenInterestDetailProps> = memo(({ mobile, isLong }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const oiCap = marketInfo?.marketLimitUsd
 		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
 		: null;
+	const openInterestType = isLong ? 'longUSD' : 'shortUSD';
+	const formattedUSD = marketInfo?.openInterest[openInterestType]
+		? formatDollars(marketInfo?.openInterest[openInterestType], { truncate: true })
+		: NO_VALUE;
 
-	return mobile ? (
+	const mobileValue = (
+		<FlexDivCol>
+			<div>{formattedUSD}</div>
+			<Body mono size="small" color="secondary" weight="bold">
+				{oiCap}
+			</Body>
+		</FlexDivCol>
+	);
+
+	const desktopValue = `${formattedUSD}/${oiCap}`;
+
+	const dataKey = `openInterest${isLong ? 'Long' : 'Short'}${
+		mobile ? 'Mobile' : ''
+	}` as keyof typeof MarketDataKey;
+
+	return (
 		<MarketDetail
-			mobile
-			dataKey={MarketDataKey.openInterestLongMobile}
-			value={
-				marketInfo?.openInterest.longUSD ? (
-					<FlexDivCol>
-						<div>{formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}</div>
-						<Body mono size="small" color="secondary" weight="bold">
-							{oiCap}
-						</Body>
-					</FlexDivCol>
-				) : (
-					NO_VALUE
-				)
-			}
-		/>
-	) : (
-		<MarketDetail
-			dataKey={MarketDataKey.openInterestLong}
-			value={
-				marketInfo?.openInterest.longUSD
-					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}/${oiCap}`
-					: NO_VALUE
-			}
+			mobile={mobile}
+			dataKey={MarketDataKey[dataKey]}
+			value={mobile ? mobileValue : desktopValue}
 		/>
 	);
 });
 
-const OpenInterestShortDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const oiCap = marketInfo?.marketLimitUsd
-		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
-		: null;
-
-	return mobile ? (
-		<MarketDetail
-			mobile
-			dataKey={MarketDataKey.openInterestShortMobile}
-			value={
-				marketInfo?.openInterest.shortUSD ? (
-					<FlexDivCol>
-						<div>{formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })}</div>
-						<Body mono size="small" color="secondary" weight="bold">
-							{oiCap}
-						</Body>
-					</FlexDivCol>
-				) : (
-					NO_VALUE
-				)
-			}
-		/>
-	) : (
-		<MarketDetail
-			dataKey={MarketDataKey.openInterestShort}
-			value={
-				marketInfo?.openInterest.shortUSD
-					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })}/${oiCap}`
-					: NO_VALUE
-			}
-		/>
-	);
-});
+const OpenInterestLongDetail: React.FC<MarketDetailsProps> = (props) => (
+	<OpenInterestDetail isLong {...props} />
+);
+const OpenInterestShortDetail: React.FC<MarketDetailsProps> = (props) => (
+	<OpenInterestDetail isLong={false} {...props} />
+);
 
 const MainContainer = styled.div<{ mobile?: boolean }>`
 	display: flex;
