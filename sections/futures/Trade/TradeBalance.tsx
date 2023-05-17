@@ -58,7 +58,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 					clickable={accountType === 'cross_margin' && !isDepositRequired}
 					onClick={onClickContainer}
 				>
-					{isDepositRequired ? (
+					{accountType === 'cross_margin' && isDepositRequired ? (
 						<FlexDivRowCentered>
 							<FlexDivCol>
 								<Body size={isMobile ? 'small' : 'medium'} color="secondary">
