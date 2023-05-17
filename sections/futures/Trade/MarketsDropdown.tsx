@@ -230,7 +230,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 										<FlexDivRowCentered>
 											<CurrencyIcon currencyKey={row.original.key} width="18px" height="18px" />
 											<Spacer width={10} />
-											<Body>{row.original.label}</Body>
+											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
 									width: 80,
