@@ -42,22 +42,20 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	}, [idleMargin]);
 
 	const onClickContainer = () => {
-		if (accountType === 'isolated_margin' || isDepositRequired) return;
+		if (accountType === 'isolated_margin') return;
 		setExpanded(!expanded);
 	};
 
 	return (
 		<Container>
 			<FlexDivRowCentered>
-				<BalanceContainer
-					clickable={accountType === 'cross_margin' && !isDepositRequired}
-					onClick={onClickContainer}
-				>
+				<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
 					{accountType === 'cross_margin' && isDepositRequired ? (
 						<FlexDivRowCentered>
 							<FlexDivCol>
 								<Body size={isMobile ? 'small' : 'medium'} color="secondary">
 									No available margin
+									{expanded ? <HideIcon /> : <ExpandIcon />}
 								</Body>
 								<Body size={isMobile ? 'small' : 'medium'} color="preview">
 									Min. $50 sUSD required to trade
