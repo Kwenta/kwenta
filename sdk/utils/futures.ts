@@ -116,7 +116,7 @@ export const marketsForNetwork = (networkId: number) => {
 };
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
-	return `${getDisplayAsset(asset)}-PERP`;
+	return `${getDisplayAsset(asset)}/sUSD`;
 };
 
 export const getDisplayAsset = (asset: string | null) => {
