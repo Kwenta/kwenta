@@ -1,35 +1,45 @@
 import { useEffect } from 'react';
-import { LineChart, XAxis, Legend, Line } from 'recharts';
-import styled from 'styled-components';
+import { LineChart, XAxis, Legend, Line, ResponsiveContainer } from 'recharts';
+import styled, { useTheme } from 'styled-components';
 
 import { fetchFundingRates } from 'state/futures/actions';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { formatChartTime } from 'utils/formatters/date';
 
 const FundingChart = () => {
+	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const marketInfo = useAppSelector(selectMarketInfo);
+	const marketFundingRates = useAppSelector(({ futures }) => futures.marketFundingRates);
 
 	useEffect(() => {
-		if (marketInfo?.market) {
-			dispatch(fetchFundingRates(marketInfo.market));
+		if (marketInfo?.asset) {
+			dispatch(fetchFundingRates(marketInfo.asset));
 		}
-	}, [dispatch, marketInfo?.market]);
+	}, [dispatch, marketInfo?.asset]);
 
 	return (
-		<Container>
-			<LineChart>
+		<ResponsiveContainer width="100%" height="100%">
+			<LineChart data={marketFundingRates}>
 				<XAxis
-					dataKey="funding"
+					dataKey="fundingRate"
 					type="number"
 					scale="time"
+					tickFormatter={formatChartTime}
 					minTickGap={75}
 					domain={['dataMin', 'dataMax']}
 				/>
 				<Legend verticalAlign="top" align="left" />
-				<Line type="monotone" dataKey="total" stroke="" dot={false} isAnimationActive={false} />
+				<Line
+					type="monotone"
+					dataKey="fundingRate"
+					stroke={theme.colors.selectedTheme.green}
+					dot={false}
+					isAnimationActive={false}
+				/>
 			</LineChart>
-		</Container>
+		</ResponsiveContainer>
 	);
 };
 

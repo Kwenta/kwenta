@@ -272,34 +272,30 @@ export default class FuturesService {
 		return positions;
 	}
 
-	public async getMarketFundingRates(marketAddress: string) {
-		console.log('marketAddress', marketAddress);
+	public async getMarketFundingRates(marketAsset: FuturesMarketAsset) {
 		const periodLength = PERIOD_IN_SECONDS['ONE_WEEK'];
 		const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 
-		try {
-			const response = await request(
-				this.futuresGqlEndpoint,
-				gql`
-					query fundingRateUpdate($marketAddress: String!, $minTimestamp: BigInt!) {
-						fundingRateUpdates(
-							where: { market: $marketAddress, timestamp_lt: $minTimestamp }
-							orderBy: sequenceLength
-						) {
-							timestamp
-							funding
-						}
+		const response = await request(
+			this.futuresGqlEndpoint,
+			gql`
+				query fundingRateUpdate($marketAsset: Bytes!, $minTimestamp: BigInt!) {
+					fundingRatePeriods(
+						where: { asset: $marketAsset, timestamp_gt: $minTimestamp }
+						first: 1000
+					) {
+						timestamp
+						fundingRate
 					}
-				`,
-				{ marketAddress, minTimestamp }
-			);
+				}
+			`,
+			{ marketAsset: ethers.utils.formatBytes32String(marketAsset), minTimestamp }
+		);
 
-			console.log({ response });
-
-			return response;
-		} catch (error) {
-			console.log(error);
-		}
+		return response.fundingRatePeriods.map((x: any) => ({
+			timestamp: Number(x.timesamp),
+			fundingRate: Number(x.fundingRate),
+		}));
 	}
 
 	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {

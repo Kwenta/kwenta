@@ -46,6 +46,7 @@ import {
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
 	fetchCombinedMarginTransfers,
+	fetchFundingRates,
 } from './actions';
 import {
 	CrossMarginAccountData,
@@ -168,6 +169,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
+	marketFundingRates: [],
 };
 
 const futuresSlice = createSlice({
@@ -719,6 +721,11 @@ const futuresSlice = createSlice({
 				error: 'Failed to fetch trades',
 				status: FetchStatus.Error,
 			};
+		});
+
+		// Fetch funding rates
+		builder.addCase(fetchFundingRates.fulfilled, (futuresState, { payload }) => {
+			futuresState.marketFundingRates = payload;
 		});
 	},
 });

@@ -242,6 +242,7 @@ export type FuturesState = {
 		>;
 	};
 	tradePanelDrawerOpen: boolean;
+	marketFundingRates: { timestamp: string; funding: string }[];
 };
 
 export type TradePreviewResult = {
