@@ -45,7 +45,8 @@ const FundingChart = () => {
 				<Line
 					type="monotone"
 					dataKey="fundingRate"
-					stroke={theme.colors.selectedTheme.green}
+					stroke={theme.colors.selectedTheme.text.value}
+					strokeWidth={2}
 					dot={false}
 					isAnimationActive={false}
 				/>
