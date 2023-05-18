@@ -292,8 +292,11 @@ export default class FuturesService {
 			{ marketAsset: ethers.utils.formatBytes32String(marketAsset), minTimestamp }
 		);
 
+		// const delta = PERIOD_IN_SECONDS['ONE_HOUR'] * 6000;
+
 		return response.fundingRatePeriods.map((x: any) => ({
-			timestamp: Number(x.timesamp),
+			// timestamp: Math.floor(Number(x.timestamp) / delta) * delta,
+			timestamp: Number(x.timestamp) * 1000,
 			fundingRate: Number(x.fundingRate),
 		}));
 	}

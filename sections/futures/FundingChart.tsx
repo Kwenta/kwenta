@@ -1,11 +1,22 @@
+import { wei } from '@synthetixio/wei';
 import { useEffect } from 'react';
-import { LineChart, XAxis, Legend, Line, ResponsiveContainer } from 'recharts';
-import styled, { useTheme } from 'styled-components';
+import { LineChart, XAxis, Line, ResponsiveContainer, YAxis } from 'recharts';
+import { useTheme } from 'styled-components';
 
+import { ETH_UNIT } from 'constants/network';
 import { fetchFundingRates } from 'state/futures/actions';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatChartTime } from 'utils/formatters/date';
+import { formatPercent } from 'utils/formatters/number';
+
+const formatFundingRate = (value: number) => {
+	if (value === 0) {
+		return '0%';
+	} else {
+		return formatPercent(wei(value).div(ETH_UNIT).div(24), { minDecimals: 4 });
+	}
+};
 
 const FundingChart = () => {
 	const theme = useTheme();
@@ -22,15 +33,15 @@ const FundingChart = () => {
 	return (
 		<ResponsiveContainer width="100%" height="100%">
 			<LineChart data={marketFundingRates}>
+				<YAxis dataKey="fundingRate" domain={['auto', 0]} tickFormatter={formatFundingRate} />
 				<XAxis
-					dataKey="fundingRate"
+					dataKey="timestamp"
 					type="number"
 					scale="time"
 					tickFormatter={formatChartTime}
 					minTickGap={75}
 					domain={['dataMin', 'dataMax']}
 				/>
-				<Legend verticalAlign="top" align="left" />
 				<Line
 					type="monotone"
 					dataKey="fundingRate"
@@ -42,10 +53,5 @@ const FundingChart = () => {
 		</ResponsiveContainer>
 	);
 };
-
-const Container = styled.div`
-	height: 100%;
-	overflow: hidden;
-`;
 
 export default FundingChart;
