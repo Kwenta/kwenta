@@ -281,7 +281,7 @@ export default class FuturesService {
 			gql`
 				query fundingRateUpdate($marketAsset: Bytes!, $minTimestamp: BigInt!) {
 					fundingRatePeriods(
-						where: { asset: $marketAsset, timestamp_gt: $minTimestamp }
+						where: { asset: $marketAsset, timestamp_gt: $minTimestamp, period: "Hourly" }
 						first: 1000
 					) {
 						timestamp
