@@ -101,12 +101,12 @@ const ToggleContainer = styled.div<{ open: boolean }>`
 	cursor: pointer;
 	margin-top: ${(props) => (props.open ? '92px' : '20px')};
 
-	${media.lessThan('sm')`
+	${media.lessThan('mdUp')`
 		position: relative;
-		top: -35px;
-		left: 290px;
-		z-index: ${zIndex.HEADER};
+		top: -100px;
+		left: calc(80% - 10px);
 		margin-top: 0px;
+		z-index: ${zIndex.HEADER};
 		width: ${HOURS_TOGGLE_WIDTH};
 	`}
 `;

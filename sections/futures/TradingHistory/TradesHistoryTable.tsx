@@ -233,7 +233,6 @@ const PriceValue = styled(Body).attrs({ mono: true })`
 
 const TimeValue = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	text-decoration: underline;
 `;
 
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`

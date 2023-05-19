@@ -41,7 +41,9 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 				content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
 			>
 				<WithCursor cursor="help">
-					<Body className="heading">{dataKey}</Body>
+					<Body size={mobile ? 'small' : 'medium'} className="heading">
+						{dataKey}
+					</Body>
 					<FlexDivRowCentered>
 						<MarketDetailValue
 							value={value}
@@ -88,7 +90,7 @@ export const MarketDetailValue = ({
 		as="span"
 		mono
 		weight="bold"
-		size={mobile ? 'medium' : 'large'}
+		size={mobile ? 'small' : 'large'}
 		className={`value ${color || ''} ${pausedClass}`}
 	>
 		{value}

@@ -41,8 +41,8 @@ export type HistoricalRatesUpdates = {
 };
 
 export type Candle = {
-	id: string;
-	synth: string;
+	id?: string;
+	synth?: string;
 	open: number;
 	high: number;
 	low: number;
@@ -70,3 +70,13 @@ export type Prices = Price[];
 export type Rates = Record<string, Wei>;
 
 export type PriceResponse = Record<string, { usd: number }>;
+
+export type PythResponse = {
+	c: number[];
+	h: number[];
+	l: number[];
+	o: number[];
+	t: number[];
+	v: number[];
+	s: string;
+};

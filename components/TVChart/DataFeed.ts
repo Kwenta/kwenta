@@ -10,9 +10,9 @@ import {
 } from 'public/static/charting_library/charting_library';
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
+import { NetworkId } from 'sdk/types/common';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
-import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 import { sdk } from 'state/config';
 import { getDisplayAsset } from 'utils/futures';
 
@@ -77,67 +77,19 @@ const getPriceScale = (asset: string | null) => {
 
 const fetchCombinedCandles = async (
 	base: string,
-	quote: string,
 	from: number,
 	to: number,
 	resolution: ResolutionString,
-	networkId: number
+	networkId: NetworkId
 ) => {
-	const baseCurrencyIsSUSD = base === 'sUSD';
-	const quoteCurrencyIsSUSD = quote === 'sUSD';
-	const baseDataPromise = requestCandlesticks(
+	const candleData = await requestCandlesticks(
 		getDisplayAsset(base),
 		from,
 		to,
 		resolutionToSeconds(resolution),
 		networkId
 	);
-	const quoteDataPromise = requestCandlesticks(
-		quote,
-		from,
-		to,
-		resolutionToSeconds(resolution),
-		networkId
-	);
-
-	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
-		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
-	});
-};
-
-const fetchLastCandle = async (
-	base: string,
-	quote: string,
-	resolution: ResolutionString,
-	networkId: number
-) => {
-	const baseCurrencyIsSUSD = base === 'sUSD';
-	const quoteCurrencyIsSUSD = quote === 'sUSD';
-	const to = Math.floor(Date.now() / 1000);
-	const from = 0;
-
-	const baseDataPromise = requestCandlesticks(
-		getDisplayAsset(base),
-		from,
-		to,
-		resolutionToSeconds(resolution),
-		networkId,
-		1,
-		'desc'
-	);
-	const quoteDataPromise = requestCandlesticks(
-		quote,
-		from,
-		to,
-		resolutionToSeconds(resolution),
-		networkId,
-		1,
-		'desc'
-	);
-
-	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
-		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
-	});
+	return candleData;
 };
 
 const updateBar = (bar: ChartBar, price: number) => {
@@ -201,7 +153,7 @@ const subscribeOffChainPrices = (
 };
 
 const DataFeedFactory = (
-	networkId: number,
+	networkId: NetworkId,
 	onSubscribe: (priceListener: PricesListener) => void
 ): IBasicDataFeed => {
 	_latestChartBar.current = undefined;
@@ -242,10 +194,10 @@ const DataFeedFactory = (
 			onHistoryCallback: HistoryCallback,
 			onErrorCallback: (error: any) => any
 		) {
-			const { base, quote } = splitBaseQuote(symbolInfo.name);
+			const { base } = splitBaseQuote(symbolInfo.name);
 
 			try {
-				fetchCombinedCandles(base, quote, from, to, _resolution, networkId).then((bars) => {
+				fetchCombinedCandles(base, from, to, _resolution, networkId).then((bars) => {
 					const chartBars = bars.map((b) => {
 						return {
 							high: b.high,
@@ -274,49 +226,7 @@ const DataFeedFactory = (
 			_resolution: ResolutionString,
 			onTick: SubscribeBarsCallback
 		) => {
-			const { base, quote } = splitBaseQuote(symbolInfo.name);
-
-			// fill in gaps from last candle to now
-			fetchLastCandle(base, quote, _resolution, networkId).then((bars) => {
-				const chartBar = bars.map((b) => {
-					return {
-						high: b.high,
-						low: b.low,
-						open: b.open,
-						close: b.close,
-						time: b.timestamp * 1000,
-					};
-				})[0];
-				if (chartBar) {
-					const resolutionMs = resolutionToSeconds(_resolution) * 1000;
-					if (Date.now() - chartBar.time > resolutionMs) {
-						for (
-							var ts = chartBar.time + resolutionMs;
-							ts < Math.floor(ts / resolutionMs) * resolutionMs - resolutionMs;
-							ts += resolutionMs
-						) {
-							const latestBar = {
-								high: chartBar.close,
-								low: chartBar.close,
-								open: chartBar.close,
-								close: chartBar.close,
-								time: Math.floor(ts / resolutionMs) * resolutionMs,
-							};
-							onTick(latestBar);
-							_latestChartBar.current = {
-								bar: latestBar,
-								asset: base,
-							};
-						}
-					} else {
-						onTick(chartBar);
-						_latestChartBar.current = {
-							bar: chartBar,
-							asset: base,
-						};
-					}
-				}
-			});
+			const { base } = splitBaseQuote(symbolInfo.name);
 
 			// subscribe to off chain prices
 			const listener = subscribeOffChainPrices(base as FuturesMarketAsset, _resolution, onTick);
