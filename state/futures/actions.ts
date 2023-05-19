@@ -1539,7 +1539,7 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, boolea
 			}
 
 			const desiredFillPrice = overridePriceProtection
-				? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta || 0))
+				? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
 				: selectEditPosDesiredFillPrice(getState());
 
 			dispatch(
@@ -1601,7 +1601,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 			}
 
 			const desiredFillPrice = overridePriceProtection
-				? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta || 0))
+				? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
 				: selectClosePosDesiredFillPrice(getState());
 
 			const isClosing = wei(nativeSizeDelta)
