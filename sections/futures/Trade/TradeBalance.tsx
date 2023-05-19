@@ -9,6 +9,7 @@ import { Body, NumericValue } from 'components/Text';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
+import { selectSusdBalance } from 'state/balances/selectors';
 import {
 	selectAvailableMargin,
 	selectFuturesType,
@@ -20,7 +21,6 @@ import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
-import { selectSusdBalance } from 'state/balances/selectors';
 
 type TradeBalanceProps = {
 	isMobile?: boolean;
@@ -110,6 +110,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 			{openModal === 'futures_isolated_transfer' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
+					onlyDeposits={accountType === 'cross_margin'}
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}

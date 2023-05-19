@@ -29,6 +29,7 @@ import { formatDollars, zeroBN } from 'utils/formatters/number';
 type Props = {
 	onDismiss(): void;
 	defaultTab: 'deposit' | 'withdraw';
+	onlyDeposits?: boolean;
 };
 
 type BalanceStatus = 'low_balance' | 'no_balance' | 'high_balance';
@@ -39,7 +40,11 @@ const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
 
 const PLACEHOLDER = '$0.00';
 
-const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
+const TransferIsolatedMarginModal: React.FC<Props> = ({
+	onDismiss,
+	defaultTab,
+	onlyDeposits = false,
+}) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
@@ -133,7 +138,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		>
 			{balanceStatus === 'high_balance' ? (
 				<StyledSegmentedControl
-					values={['Deposit', 'Withdraw']}
+					values={onlyDeposits ? ['Deposit'] : ['Deposit', 'Withdraw']}
 					selectedIndex={transferType}
 					onChange={onChangeTab}
 				/>
