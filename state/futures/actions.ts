@@ -32,6 +32,7 @@ import {
 } from 'sdk/types/futures';
 import {
 	calculateDesiredFillPrice,
+	getDefaultPriceImpact,
 	getTradeStatusMessage,
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
@@ -64,6 +65,7 @@ import {
 	serializeMarkets,
 	serializePositionHistory,
 	serializeTrades,
+	fillPriceWithBuffer,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
@@ -130,6 +132,8 @@ import {
 	selectDesiredTradeFillPrice,
 	selectSmartMarginKeeperDeposit,
 	selectSkewAdjustedPrice,
+	selectEditPositionPreview,
+	selectClosePositionPreview,
 } from './selectors';
 import {
 	AccountContext,
@@ -1360,9 +1364,9 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 	}
 );
 
-export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
+export const submitCrossMarginOrder = createAsyncThunk<void, boolean, ThunkConfig>(
 	'futures/submitCrossMarginOrder',
-	async (_, { getState, dispatch, extra: { sdk } }) => {
+	async (overridePriceProtection, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
 		const account = selectCrossMarginAccount(getState());
 		const tradeInputs = selectCrossMarginTradeInputs(getState());
@@ -1370,8 +1374,8 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 		const feeCap = selectOrderFeeCap(getState());
 		const orderType = selectOrderType(getState());
 		const orderPrice = selectCrossMarginOrderPrice(getState());
+		const preview = selectTradePreview(getState());
 		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState());
-		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
 		const wallet = selectWallet(getState());
 		const position = selectPosition(getState());
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
@@ -1380,6 +1384,17 @@ export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 			if (!marketInfo) throw new Error('Market info not found');
 			if (!account) throw new Error('No smart margin account found');
 			if (!wallet) throw new Error('No wallet connected');
+			if (!preview) throw new Error('Missing trade preview');
+			if (
+				!overridePriceProtection &&
+				preview.priceImpact.mul(100).gt(getDefaultPriceImpact(orderType))
+			) {
+				throw new Error('Price impact exceeds price protection');
+			}
+
+			const desiredFillPrice = overridePriceProtection
+				? fillPriceWithBuffer(preview.price, tradeInputs.nativeSizeDelta)
+				: selectDesiredTradeFillPrice(getState());
 
 			dispatch(
 				setTransaction({
@@ -1503,18 +1518,29 @@ export const submitCrossMarginAdjustMargin = createAsyncThunk<void, void, ThunkC
 	}
 );
 
-export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, ThunkConfig>(
+export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, boolean, ThunkConfig>(
 	'futures/submitCrossMarginAdjustPositionSize',
-	async (_, { getState, dispatch, extra: { sdk } }) => {
+	async (overridePriceProtection, { getState, dispatch, extra: { sdk } }) => {
 		const { market, position } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
-		const desiredFillPrice = selectEditPosDesiredFillPrice(getState());
+		const preview = selectEditPositionPreview(getState());
 		const { nativeSizeDelta } = selectCrossMarginEditPosInputs(getState());
 
 		try {
 			if (!market) throw new Error('Market info not found');
 			if (!account) throw new Error('No smart margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
+			if (!preview) throw new Error('Missing trade preview');
+			if (
+				!overridePriceProtection &&
+				preview.priceImpact.mul(100).gt(getDefaultPriceImpact('market'))
+			) {
+				throw new Error('Price impact exceeds price protection');
+			}
+
+			const desiredFillPrice = overridePriceProtection
+				? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
+				: selectEditPosDesiredFillPrice(getState());
 
 			dispatch(
 				setTransaction({
@@ -1550,22 +1576,33 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, void, 
 	}
 );
 
-export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, void, ThunkConfig>(
+export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boolean, ThunkConfig>(
 	'futures/submitSmartMarginReducePositionOrder',
-	async (_, { getState, dispatch, extra: { sdk } }) => {
+	async (overridePriceProtection, { getState, dispatch, extra: { sdk } }) => {
 		const { market, position } = selectEditPositionModalInfo(getState());
 		const account = selectCrossMarginAccount(getState());
-		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
 		const { nativeSizeDelta, orderType, price } = selectClosePositionOrderInputs(getState());
 		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState());
 		const feeCap = selectOrderFeeCap(getState());
 		const wallet = selectWallet(getState());
+		const preview = selectClosePositionPreview(getState());
 
 		try {
 			if (!market) throw new Error('Market info not found');
 			if (!wallet) throw new Error('No wallet connected');
 			if (!account) throw new Error('No smart margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
+			if (!preview) throw new Error('Missing trade preview');
+			if (
+				!overridePriceProtection &&
+				preview.priceImpact.mul(100).gt(getDefaultPriceImpact(orderType))
+			) {
+				throw new Error('Price impact exceeds price protection');
+			}
+
+			const desiredFillPrice = overridePriceProtection
+				? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
+				: selectClosePosDesiredFillPrice(getState());
 
 			const isClosing = wei(nativeSizeDelta)
 				.abs()

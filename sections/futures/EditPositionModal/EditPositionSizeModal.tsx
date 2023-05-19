@@ -12,6 +12,7 @@ import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
+import { getDefaultPriceImpact } from 'sdk/utils/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
@@ -27,9 +28,10 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
+import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage';
 import EditPositionSizeInput from './EditPositionSizeInput';
 
 export default function EditPositionSizeModal() {
@@ -43,6 +45,7 @@ export default function EditPositionSizeModal() {
 	const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
 	const { market, position, marketPrice } = useAppSelector(selectEditPositionModalInfo);
 
+	const [overridePriceProtection, setOverridePriceProtection] = useState(false);
 	const [editType, setEditType] = useState(0);
 
 	useEffect(() => {
@@ -58,8 +61,8 @@ export default function EditPositionSizeModal() {
 	};
 
 	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustPositionSize());
-	}, [dispatch]);
+		dispatch(submitCrossMarginAdjustPositionSize(overridePriceProtection));
+	}, [dispatch, overridePriceProtection]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
 		isSubmitting,
@@ -67,6 +70,10 @@ export default function EditPositionSizeModal() {
 	]);
 
 	const maxLeverage = useMemo(() => market?.appMaxLeverage ?? wei(1), [market?.appMaxLeverage]);
+
+	const exceedsPriceProtection = useMemo(() => {
+		return preview?.priceImpact.abs().mul(100).gt(getDefaultPriceImpact('market'));
+	}, [preview?.priceImpact]);
 
 	const resultingLeverage = useMemo(() => {
 		if (!preview || !position) return;
@@ -119,8 +126,21 @@ export default function EditPositionSizeModal() {
 	]);
 
 	const submitDisabled = useMemo(() => {
-		return sizeWei.eq(0) || invalid || isLoading || maxLeverageExceeded;
-	}, [sizeWei, invalid, isLoading, maxLeverageExceeded]);
+		return (
+			sizeWei.eq(0) ||
+			invalid ||
+			isLoading ||
+			maxLeverageExceeded ||
+			(exceedsPriceProtection && !overridePriceProtection)
+		);
+	}, [
+		sizeWei,
+		invalid,
+		isLoading,
+		maxLeverageExceeded,
+		exceedsPriceProtection,
+		overridePriceProtection,
+	]);
 
 	const onClose = () => {
 		if (market) {
@@ -190,7 +210,25 @@ export default function EditPositionSizeModal() {
 					title={t('futures.market.trade.edit-position.liquidation')}
 					value={formatDollars(position?.position?.liquidationPrice || 0)}
 				/>
+				<InfoBoxRow
+					color={exceedsPriceProtection ? 'negative' : 'primary'}
+					title={t('futures.market.trade.edit-position.price-impact')}
+					value={formatPercent(preview?.priceImpact || 0)}
+				/>
+				<InfoBoxRow
+					title={t('futures.market.trade.edit-position.fill-price')}
+					value={formatDollars(preview?.price || 0)}
+				/>
 			</InfoBoxContainer>
+			{exceedsPriceProtection && (
+				<>
+					<Spacer height={20} />
+					<ConfirmSlippage
+						checked={overridePriceProtection}
+						onChangeChecked={(checked) => setOverridePriceProtection(checked)}
+					/>
+				</>
+			)}
 			<Spacer height={20} />
 
 			<Button
@@ -206,11 +244,16 @@ export default function EditPositionSizeModal() {
 					: t('futures.market.trade.edit-position.submit-size-decrease')}
 			</Button>
 
-			{(transactionState?.error || maxLeverageExceeded) && (
+			{(transactionState?.error ||
+				maxLeverageExceeded ||
+				(exceedsPriceProtection && !overridePriceProtection)) && (
 				<>
 					<Spacer height={20} />
 					<ErrorView
-						message={transactionState?.error || 'Max leverage exceeded'}
+						message={
+							transactionState?.error ||
+							(maxLeverageExceeded ? 'Max leverage exceeded' : 'Exceeds Price Protection')
+						}
 						formatter="revert"
 					/>
 				</>

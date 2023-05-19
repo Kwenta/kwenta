@@ -16,8 +16,9 @@ export const FlexDivColCentered = styled(FlexDivCol)`
 	align-items: center;
 `;
 
-export const FlexDivRow = styled(FlexDiv)`
+export const FlexDivRow = styled(FlexDiv)<{ columnGap?: string }>`
 	justify-content: space-between;
+	column-gap: ${(props) => props.columnGap || 'initial'};
 `;
 
 export const FlexDivRowCentered = styled(FlexDivRow)`

@@ -7,21 +7,31 @@ type CheckboxProps = {
 	id: string;
 	label: string;
 	checked: boolean;
+	checkSide?: 'left' | 'right';
 	onChange: () => void;
 };
 
-export const Checkbox: FC<CheckboxProps> = memo(({ id, label, checked, onChange, ...props }) => (
-	<CheckboxContainer>
-		<Input type="checkbox" id={id} name={id} checked={checked} onChange={onChange} {...props} />
-		<Label htmlFor={id}>{<Body color="secondary">{label}</Body>}</Label>
-	</CheckboxContainer>
-));
+export const Checkbox: FC<CheckboxProps> = memo(
+	({ id, label, checked, onChange, checkSide = 'left', ...props }) => (
+		<CheckboxContainer>
+			{checkSide === 'left' && (
+				<Input type="checkbox" id={id} name={id} checked={checked} onChange={onChange} {...props} />
+			)}
+			<Label htmlFor={id}>{<Body color="secondary">{label}</Body>}</Label>
+			{checkSide === 'right' && (
+				<Input type="checkbox" id={id} name={id} checked={checked} onChange={onChange} {...props} />
+			)}
+		</CheckboxContainer>
+	)
+);
 
 const CheckboxContainer = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	display: flex;
+	justify-content: space-between;
 	align-items: center;
 	cursor: pointer;
+	gap: 8px;
 `;
 
 const Input = styled.input`
@@ -32,13 +42,12 @@ const Input = styled.input`
 
 	background-color: var(--form-background);
 	margin: 0;
-	margin-right: 6px;
 
 	font: inherit;
 	color: currentColor;
 	width: 22px;
 	height: 22px;
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.checkBox.border};
 	border-radius: 3px;
 	transform: translateY(-0.075em);
 

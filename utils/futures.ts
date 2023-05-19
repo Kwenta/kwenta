@@ -29,7 +29,7 @@ import { deserializeWeiObject } from 'state/helpers';
 import { formatNumber } from './formatters/number';
 
 export const getMarketName = (asset: FuturesMarketAsset) => {
-	return `${getDisplayAsset(asset)}-PERP`;
+	return `${getDisplayAsset(asset)}/sUSD`;
 };
 
 export const getDisplayAsset = (asset: string | null) => {
@@ -522,4 +522,13 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 			});
 			return acc;
 		}, [] as DelayedOrderWithDetails[]);
+};
+
+const DELAYED_ORDER_PRICE_BUFFER = 0.0005;
+
+export const fillPriceWithBuffer = (price: Wei, sizeDelta: Wei) => {
+	// Allow for 0.5% price movement during delayed order
+	return price.add(
+		price.mul(sizeDelta.gt(0) ? DELAYED_ORDER_PRICE_BUFFER : -DELAYED_ORDER_PRICE_BUFFER)
+	);
 };
