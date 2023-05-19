@@ -5,8 +5,8 @@ import { Candle } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
 
 export type TempCandle = {
-	id: string;
-	synth: string;
+	id?: string;
+	synth?: string;
 	open: Wei;
 	high: Wei;
 	low: Wei;
