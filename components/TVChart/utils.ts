@@ -17,3 +17,12 @@ export const resolutionToSeconds = (resolution: ResolutionString): number => {
 		return period;
 	}
 };
+
+export const getSupportedResolution = (period: number): string => {
+	if (!isNaN(Number(period))) {
+		const resolution = period / 60;
+		return resolution >= 720 ? '720' : resolution.toString();
+	} else {
+		return '1';
+	}
+};

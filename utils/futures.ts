@@ -29,7 +29,7 @@ import { deserializeWeiObject } from 'state/helpers';
 import { formatNumber } from './formatters/number';
 
 export const getMarketName = (asset: FuturesMarketAsset) => {
-	return `${getDisplayAsset(asset)}-PERP`;
+	return `${getDisplayAsset(asset)}/sUSD`;
 };
 
 export const getDisplayAsset = (asset: string | null) => {
