@@ -7,7 +7,7 @@ import styled, { useTheme } from 'styled-components';
 import PencilIcon from 'assets/svg/app/pencil.svg';
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import Currency from 'components/Currency';
-import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex';
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
@@ -171,10 +171,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									: {};
 
 								return (
-									<FlexDivRowCentered>
+									<FlexDivRowCentered columnGap="5px">
 										<ColWithButton>
 											<div>
-												<FlexDivRowCentered style={{ columnGap: '5px' }}>
+												<FlexDivRowCentered justifyContent="flex-start" columnGap="5px">
 													<Currency.Price
 														price={cellProps.row.original.position.size}
 														currencyKey={cellProps.row.original.market.asset}
@@ -211,7 +211,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									</FlexDivRowCentered>
 								);
 							},
-							width: 90,
+							width: 140,
 						},
 						{
 							Header: (
@@ -230,7 +230,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									/>
 								);
 							},
-							width: 115,
+							width: 100,
 						},
 						{
 							Header: (
@@ -255,8 +255,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'margin',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<FlexDivCol style={{ alignItems: 'flex-start' }}>
-										<FlexDivRowCentered style={{ columnGap: '5px' }}>
+									<FlexDivCol>
+										<FlexDivRow justifyContent="flex-start" columnGap="5px">
 											<NumericValue value={cellProps.row.original.position.initialMargin} />
 											{accountType === 'cross_margin' && (
 												<EditButton
@@ -264,7 +264,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 													marketKey={cellProps.row.original.market.marketKey}
 												/>
 											)}
-										</FlexDivRowCentered>
+										</FlexDivRow>
 										<NumericValue
 											value={cellProps.row.original.position.leverage}
 											color="secondary"
@@ -273,7 +273,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									</FlexDivCol>
 								);
 							},
-							width: 115,
+							width: 100,
 						},
 						{
 							Header: (
@@ -282,7 +282,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
-									<FlexDivRowCentered columnGap="35px">
+									<FlexDivRowCentered columnGap="5px">
 										<PnlContainer>
 											<Currency.Price price={cellProps.row.original.position.pnl} colored />
 											<NumericValue value={cellProps.row.original.position.pnlPct} colored>
@@ -300,7 +300,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									</FlexDivRowCentered>
 								);
 							},
-							width: 90,
+							width: 130,
 						},
 						{
 							Header: <TableHeader>Funding</TableHeader>,
@@ -317,8 +317,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							accessor: 'tp-sl',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
-									<FlexDivCol style={{ alignItems: 'flex-start' }}>
-										<FlexDivRowCentered style={{ columnGap: '5px' }}>
+									<FlexDivCol>
+										<FlexDivRowCentered justifyContent="flex-start" columnGap="5px">
 											{cellProps.row.original.takeProfit === undefined ? (
 												<Body>{NO_VALUE}</Body>
 											) : (
@@ -343,7 +343,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									</FlexDivCol>
 								);
 							},
-							width: 110,
+							width: 100,
 						},
 					]}
 				/>
@@ -365,7 +365,7 @@ const EditButton = ({
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 	return (
-		<PencilIcon
+		<StyledPencilIcon
 			fill={theme.colors.selectedTheme.newTheme.text.preview}
 			width={8}
 			onClick={() =>
@@ -379,6 +379,13 @@ const EditButton = ({
 		/>
 	);
 };
+
+const StyledPencilIcon = styled(PencilIcon)`
+	cursor: pointer;
+	&:hover {
+		fill: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].hover.text};
+	}
+`;
 
 const TableContainer = styled.div`
 	height: calc(100% - ${FOOTER_HEIGHT - 1}px);

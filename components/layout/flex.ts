@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
-export const FlexDiv = styled.div`
+export const FlexDiv = styled.div<{ columnGap?: string }>`
 	display: flex;
+	column-gap: ${(props) => props.columnGap || 'initial'};
 `;
 
 export const FlexDivCentered = styled(FlexDiv)`
@@ -16,11 +17,10 @@ export const FlexDivColCentered = styled(FlexDivCol)`
 	align-items: center;
 `;
 
-export const FlexDivRow = styled(FlexDiv)<{ columnGap?: string }>`
-	justify-content: space-between;
-	column-gap: ${(props) => props.columnGap || 'initial'};
+export const FlexDivRow = styled(FlexDiv)<{ justifyContent?: string }>`
+	justify-content: ${(props) => props.justifyContent || 'space-between'};
 `;
 
-export const FlexDivRowCentered = styled(FlexDivRow)`
-	align-items: center;
+export const FlexDivRowCentered = styled(FlexDivRow)<{ alignItems?: string }>`
+	align-items: ${(props) => props.alignItems || 'center'};
 `;
