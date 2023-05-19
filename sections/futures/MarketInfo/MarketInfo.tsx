@@ -1,19 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 
-import FundingChart from '../FundingChart';
-import PositionChart from '../PositionChart';
 import UserInfo from '../UserInfo';
+import ChartWrapper from './ChartWrapper';
 
 const MarketInfo: React.FC = React.memo(() => {
-	const selectedChart = useAppSelector(({ futures }) => futures.selectedChart);
-
 	return (
 		<Container>
-			{selectedChart === 'price' ? <PositionChart /> : <FundingChart />}
+			<ChartWrapper />
 			<UserInfo />
 		</Container>
 	);

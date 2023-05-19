@@ -1,6 +1,7 @@
 import { wei } from '@synthetixio/wei';
 import { useEffect } from 'react';
 import { LineChart, XAxis, Line, ResponsiveContainer, YAxis } from 'recharts';
+import styled from 'styled-components';
 import { useTheme } from 'styled-components';
 
 import { ETH_UNIT } from 'constants/network';
@@ -31,7 +32,7 @@ const FundingChart = () => {
 	}, [dispatch, marketInfo?.asset]);
 
 	return (
-		<ResponsiveContainer width="100%" height="100%">
+		<FundingChartContainer>
 			<LineChart data={marketFundingRates}>
 				<YAxis dataKey="fundingRate" domain={['auto', 0]} tickFormatter={formatFundingRate} />
 				<XAxis
@@ -51,8 +52,12 @@ const FundingChart = () => {
 					isAnimationActive={false}
 				/>
 			</LineChart>
-		</ResponsiveContainer>
+		</FundingChartContainer>
 	);
 };
+
+const FundingChartContainer = styled(ResponsiveContainer)`
+	flex: 1;
+`;
 
 export default FundingChart;

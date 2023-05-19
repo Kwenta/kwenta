@@ -1,32 +1,24 @@
 import { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { FlexDivRowCentered } from 'components/layout/flex';
+import { FlexDiv } from 'components/layout/flex';
 import TVChart from 'components/TVChart';
 import {
 	selectConditionalOrdersForMarket,
 	selectPosition,
 	selectPositionPreviewData,
 	selectSelectedMarketPositionHistory,
-	selectShowHistory,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { zeroBN } from 'utils/formatters/number';
 
-import TradesHistoryTable from '../TradingHistory/TradesHistoryTable';
-
-type Props = {
-	mobile?: boolean;
-};
-
-export default function PositionChart({ mobile }: Props) {
+export default function PositionChart() {
 	const position = useAppSelector(selectPosition);
 	const openOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const previewTrade = useAppSelector(selectTradePreview);
 	const subgraphPosition = useAppSelector(selectSelectedMarketPositionHistory);
 	const positionPreview = useAppSelector(selectPositionPreviewData);
-	const showHistory = useAppSelector(selectShowHistory);
 
 	const [showOrderLines, setShowOrderLines] = useState(true);
 	const [isChartReady, setIsChartReady] = useState(false);
@@ -53,38 +45,31 @@ export default function PositionChart({ mobile }: Props) {
 
 	return (
 		<Container visible={isChartReady}>
-			<ChartContainer>
-				<TVChart
-					openOrders={openOrders}
-					activePosition={activePosition}
-					potentialTrade={
-						previewTrade
-							? {
-									price: modifiedAverage || previewTrade.price,
-									liqPrice: previewTrade.liqPrice,
-									size: previewTrade.size,
-							  }
-							: null
-					}
-					onChartReady={() => {
-						setIsChartReady(true);
-					}}
-					showOrderLines={showOrderLines}
-					onToggleShowOrderLines={onToggleLines}
-				/>
-			</ChartContainer>
-			{showHistory && !mobile && <TradesHistoryTable />}
+			<TVChart
+				openOrders={openOrders}
+				activePosition={activePosition}
+				potentialTrade={
+					previewTrade
+						? {
+								price: modifiedAverage || previewTrade.price,
+								liqPrice: previewTrade.liqPrice,
+								size: previewTrade.size,
+						  }
+						: null
+				}
+				onChartReady={() => {
+					setIsChartReady(true);
+				}}
+				showOrderLines={showOrderLines}
+				onToggleShowOrderLines={onToggleLines}
+			/>
 		</Container>
 	);
 }
 
-const Container = styled(FlexDivRowCentered)<{ visible: boolean }>`
-	height: 100%;
-	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-	overflow: hidden;
-`;
-
-const ChartContainer = styled.div`
+const Container = styled(FlexDiv)<{ visible: boolean }>`
 	flex: 1;
 	height: 100%;
+	width: 100%;
+	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `;
