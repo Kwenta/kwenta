@@ -67,7 +67,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 								variant="yellow"
 								size="xsmall"
 								textTransform="none"
-								onClick={() => dispatch(setOpenModal('futures_isolated_transfer'))}
+								onClick={() => dispatch(setOpenModal('futures_smart_margin_socket'))}
 							>
 								{t('header.balance.get-susd')}
 							</Button>
@@ -107,11 +107,15 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 			{expanded && accountType === 'cross_margin' && (
 				<DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>
 			)}
-			{openModal === 'futures_isolated_transfer' && (
+			{openModal === 'futures_smart_margin_socket' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
-					onlyDeposits={accountType === 'cross_margin'}
-					onDismiss={() => dispatch(setOpenModal(null))}
+					isSmartMargin={accountType === 'cross_margin'}
+					onDismiss={() => {
+						// eslint-disable-next-line no-console
+						console.log(`TradeBalance.tsx: onDismiss`);
+						dispatch(setOpenModal(null));
+					}}
 				/>
 			)}
 		</Container>
