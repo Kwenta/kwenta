@@ -18,7 +18,7 @@ import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars, formatPercent } from 'utils/formatters/number';
 
 import TradeTotalFeesRow from './TradeTotalFeesRow';
 
@@ -27,6 +27,7 @@ export const TradePanelFeeInfo = memo(() => {
 		<FeeInfoBoxContainer>
 			<TradeTotalFeesRow />
 			<LiquidationRow />
+			<PriceImpactRow />
 			<TradingRewardRow />
 		</FeeInfoBoxContainer>
 	);
@@ -92,6 +93,21 @@ const LiquidationRow = memo(() => {
 			value={
 				potentialTradeDetails?.liqPrice
 					? formatDollars(potentialTradeDetails.liqPrice, { suggestDecimals: true })
+					: NO_VALUE
+			}
+		/>
+	);
+});
+
+const PriceImpactRow = memo(() => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
+
+	return (
+		<InfoBoxRow
+			title="Price impact"
+			value={
+				potentialTradeDetails?.priceImpact
+					? formatPercent(potentialTradeDetails.priceImpact)
 					: NO_VALUE
 			}
 		/>
