@@ -20,6 +20,7 @@ import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
+import { selectSusdBalance } from 'state/balances/selectors';
 
 type TradeBalanceProps = {
 	isMobile?: boolean;
@@ -30,6 +31,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	const dispatch = useAppDispatch();
 
 	const idleMargin = useAppSelector(selectIdleMargin);
+	const walletBal = useAppSelector(selectSusdBalance);
 	const accountType = useAppSelector(selectFuturesType);
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin);
 	const withdrawable = useAppSelector(selectWithdrawableMargin);
@@ -38,8 +40,8 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	const [expanded, setExpanded] = useState(false);
 
 	const isDepositRequired = useMemo(() => {
-		return MIN_MARGIN_AMOUNT.sub(idleMargin).gt(zeroBN);
-	}, [idleMargin]);
+		return walletBal.lt(MIN_MARGIN_AMOUNT) && withdrawable.eq(0);
+	}, [walletBal, withdrawable]);
 
 	const onClickContainer = () => {
 		if (accountType === 'isolated_margin') return;
@@ -84,7 +86,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 						</FlexDivCol>
 					)}
 				</BalanceContainer>
-				{(accountType === 'isolated_margin' || withdrawable.gt(0) || !isDepositRequired) && (
+				{(accountType === 'isolated_margin' || withdrawable.gt(zeroBN)) && (
 					<Button
 						onClick={() =>
 							dispatch(
