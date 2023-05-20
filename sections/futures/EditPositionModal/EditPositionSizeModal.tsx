@@ -12,7 +12,6 @@ import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { getDefaultPriceImpact } from 'sdk/utils/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
@@ -71,10 +70,6 @@ export default function EditPositionSizeModal() {
 
 	const maxLeverage = useMemo(() => market?.appMaxLeverage ?? wei(1), [market?.appMaxLeverage]);
 
-	const exceedsPriceProtection = useMemo(() => {
-		return preview?.priceImpact.abs().mul(100).gt(getDefaultPriceImpact('market'));
-	}, [preview?.priceImpact]);
-
 	const resultingLeverage = useMemo(() => {
 		if (!preview || !position) return;
 		return preview.size.mul(marketPrice).div(position.remainingMargin).abs();
@@ -131,14 +126,14 @@ export default function EditPositionSizeModal() {
 			invalid ||
 			isLoading ||
 			maxLeverageExceeded ||
-			(exceedsPriceProtection && !overridePriceProtection)
+			(preview?.exceedsPriceProtection && !overridePriceProtection)
 		);
 	}, [
 		sizeWei,
 		invalid,
 		isLoading,
 		maxLeverageExceeded,
-		exceedsPriceProtection,
+		preview?.exceedsPriceProtection,
 		overridePriceProtection,
 	]);
 
@@ -211,7 +206,7 @@ export default function EditPositionSizeModal() {
 					value={formatDollars(position?.position?.liquidationPrice || 0)}
 				/>
 				<InfoBoxRow
-					color={exceedsPriceProtection ? 'negative' : 'primary'}
+					color={preview?.exceedsPriceProtection ? 'negative' : 'primary'}
 					title={t('futures.market.trade.edit-position.price-impact')}
 					value={formatPercent(preview?.priceImpact || 0)}
 				/>
@@ -220,7 +215,7 @@ export default function EditPositionSizeModal() {
 					value={formatDollars(preview?.price || 0)}
 				/>
 			</InfoBoxContainer>
-			{exceedsPriceProtection && (
+			{preview?.exceedsPriceProtection && (
 				<>
 					<Spacer height={20} />
 					<ConfirmSlippage
@@ -246,7 +241,7 @@ export default function EditPositionSizeModal() {
 
 			{(transactionState?.error ||
 				maxLeverageExceeded ||
-				(exceedsPriceProtection && !overridePriceProtection)) && (
+				(preview?.exceedsPriceProtection && !overridePriceProtection)) && (
 				<>
 					<Spacer height={20} />
 					<ErrorView

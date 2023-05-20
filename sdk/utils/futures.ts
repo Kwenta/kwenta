@@ -366,6 +366,7 @@ export const formatPotentialTrade = (
 		showStatus: status > 0, // 0 is success
 		statusMessage: getTradeStatusMessage(status),
 		priceImpact: priceImpact,
+		exceedsPriceProtection: priceImpact.mul(100).gt(getDefaultPriceImpact('market')),
 		slippageAmount: priceImpact.mul(slippageDirection).mul(tradeValueWithoutSlippage),
 	};
 };
