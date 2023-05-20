@@ -14,7 +14,6 @@ import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { previewErrorI18n } from 'queries/futures/constants';
 import { PositionSide, PotentialTradeStatus } from 'sdk/types/futures';
-import { getDefaultPriceImpact } from 'sdk/utils/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
@@ -76,10 +75,6 @@ export default function ClosePositionModal() {
 		}
 	}, [dispatch, accountType, overridePriceProtection]);
 
-	const exceedsPriceProtection = useMemo(() => {
-		return previewTrade?.priceImpact.abs().mul(100).gt(getDefaultPriceImpact('market'));
-	}, [previewTrade?.priceImpact]);
-
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
 		isSubmitting,
 		isFetchingPreview,
@@ -120,7 +115,7 @@ export default function ClosePositionModal() {
 			return true;
 		}
 
-		if (exceedsPriceProtection && !overridePriceProtection) return true;
+		if (previewTrade?.exceedsPriceProtection && !overridePriceProtection) return true;
 		return (
 			sizeWei.eq(0) ||
 			invalidSize ||
@@ -140,7 +135,7 @@ export default function ClosePositionModal() {
 		orderType,
 		previewTrade?.status,
 		overridePriceProtection,
-		exceedsPriceProtection,
+		previewTrade?.exceedsPriceProtection,
 	]);
 
 	const onClose = () => {
@@ -230,7 +225,7 @@ export default function ClosePositionModal() {
 					value={formatDollars(position?.position?.liquidationPrice || 0)}
 				/>
 				<InfoBoxRow
-					color={exceedsPriceProtection ? 'negative' : 'primary'}
+					color={previewTrade?.exceedsPriceProtection ? 'negative' : 'primary'}
 					title={t('futures.market.trade.edit-position.price-impact')}
 					value={formatPercent(previewTrade?.priceImpact || 0)}
 				/>
@@ -239,7 +234,7 @@ export default function ClosePositionModal() {
 					value={formatDollars(previewTrade?.price || 0)}
 				/>
 			</InfoBoxContainer>
-			{exceedsPriceProtection && (
+			{previewTrade?.exceedsPriceProtection && (
 				<>
 					<Spacer height={20} />
 					<ConfirmSlippage

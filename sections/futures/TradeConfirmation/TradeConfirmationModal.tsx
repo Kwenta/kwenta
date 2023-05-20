@@ -13,7 +13,7 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
-import { getDefaultPriceImpact, OrderNameByType } from 'sdk/utils/futures';
+import { OrderNameByType } from 'sdk/utils/futures';
 import { submitCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectLeverageSide,
@@ -78,10 +78,6 @@ export default function TradeConfirmationModal({
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false);
 
 	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch]);
-
-	const exceedsPriceProtection = useMemo(() => {
-		return potentialTradeDetails?.priceImpact.abs().mul(100).gt(getDefaultPriceImpact(orderType));
-	}, [potentialTradeDetails?.priceImpact, orderType]);
 
 	const totalFee = useMemo(() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee, [
 		potentialTradeDetails?.fee,
@@ -149,7 +145,7 @@ export default function TradeConfirmationModal({
 				label: 'price impact',
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
 				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
-				color: exceedsPriceProtection ? 'red' : '',
+				color: positionDetails?.exceedsPriceProtection ? 'red' : '',
 			},
 			{
 				label: 'total fee',
@@ -179,7 +175,6 @@ export default function TradeConfirmationModal({
 			potentialTradeDetails,
 			stopLossPrice,
 			takeProfitPrice,
-			exceedsPriceProtection,
 		]
 	);
 
@@ -197,7 +192,7 @@ export default function TradeConfirmationModal({
 				depositAmount: stripZeros(keeperFee?.toString()),
 			});
 		}
-		if (exceedsPriceProtection && !overridePriceProtection) {
+		if (positionDetails?.exceedsPriceProtection && !overridePriceProtection) {
 			return t('futures.market.trade.confirmation.modal.disabled-exceeds-price-protection');
 		}
 		if (positionDetails?.margin.lt(MIN_MARGIN_AMOUNT))
@@ -208,7 +203,7 @@ export default function TradeConfirmationModal({
 		showEthBalWarning,
 		keeperFee,
 		overridePriceProtection,
-		exceedsPriceProtection,
+		positionDetails?.exceedsPriceProtection,
 	]);
 
 	const buttonText = allowanceValid
@@ -258,7 +253,7 @@ export default function TradeConfirmationModal({
 					);
 				})}
 			</RowsContainer>
-			{exceedsPriceProtection && (
+			{positionDetails?.exceedsPriceProtection && (
 				<ConfirmSlippage
 					checked={overridePriceProtection}
 					onChangeChecked={(checked) => setOverridePriceProtection(checked)}
