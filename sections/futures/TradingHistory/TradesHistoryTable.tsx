@@ -126,6 +126,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 										{cellProps.row.original.amount !== NO_VALUE
 											? `${formatNumber(numValue, {
 													minDecimals: numDecimals,
+													truncate: true,
 											  })} ${normal ? '💀' : ''}`
 											: NO_VALUE}
 									</DirectionalValue>
