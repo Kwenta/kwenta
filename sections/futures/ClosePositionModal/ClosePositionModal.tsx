@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -38,12 +38,14 @@ import {
 	floorNumber,
 	formatDollars,
 	formatNumber,
+	formatPercent,
 	stripZeros,
 	zeroBN,
 } from 'utils/formatters/number';
 
 import ClosePositionFeeInfo from '../FeeInfoBox/ClosePositionFeeInfo';
 import OrderTypeSelector from '../Trade/OrderTypeSelector';
+import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage';
 import ClosePositionPriceInput from './ClosePositionPriceInput';
 import ClosePositionSizeInput from './ClosePositionSizeInput';
 
@@ -60,17 +62,18 @@ export default function ClosePositionModal() {
 	const previewError = useAppSelector(selectTradePreviewError);
 	const accountType = useAppSelector(selectFuturesType);
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal);
-
 	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs);
 	const { market, position } = useAppSelector(selectEditPositionModalInfo);
 
+	const [overridePriceProtection, setOverridePriceProtection] = useState(false);
+
 	const submitCloseOrder = useCallback(() => {
 		if (accountType === 'cross_margin') {
-			dispatch(submitSmartMarginReducePositionOrder());
+			dispatch(submitSmartMarginReducePositionOrder(overridePriceProtection));
 		} else {
 			dispatch(submitIsolatedMarginReducePositionOrder());
 		}
-	}, [dispatch, accountType]);
+	}, [dispatch, accountType, overridePriceProtection]);
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
 		isSubmitting,
@@ -111,6 +114,8 @@ export default function ClosePositionModal() {
 		) {
 			return true;
 		}
+
+		if (previewTrade?.exceedsPriceProtection && !overridePriceProtection) return true;
 		return (
 			sizeWei.eq(0) ||
 			invalidSize ||
@@ -129,6 +134,8 @@ export default function ClosePositionModal() {
 		price?.value,
 		orderType,
 		previewTrade?.status,
+		overridePriceProtection,
+		previewTrade?.exceedsPriceProtection,
 	]);
 
 	const onClose = () => {
@@ -217,7 +224,25 @@ export default function ClosePositionModal() {
 					title={t('futures.market.trade.edit-position.liquidation')}
 					value={formatDollars(position?.position?.liquidationPrice || 0)}
 				/>
+				<InfoBoxRow
+					color={previewTrade?.exceedsPriceProtection ? 'negative' : 'primary'}
+					title={t('futures.market.trade.edit-position.price-impact')}
+					value={formatPercent(previewTrade?.priceImpact || 0)}
+				/>
+				<InfoBoxRow
+					title={t('futures.market.trade.edit-position.fill-price')}
+					value={formatDollars(previewTrade?.price || 0)}
+				/>
 			</InfoBoxContainer>
+			{previewTrade?.exceedsPriceProtection && (
+				<>
+					<Spacer height={20} />
+					<ConfirmSlippage
+						checked={overridePriceProtection}
+						onChangeChecked={(checked) => setOverridePriceProtection(checked)}
+					/>
+				</>
+			)}
 			<Spacer height={20} />
 
 			<Button
