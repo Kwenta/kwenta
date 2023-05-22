@@ -273,7 +273,7 @@ export default class FuturesService {
 	}
 
 	public async getMarketFundingRates(marketAsset: FuturesMarketAsset) {
-		const periodLength = PERIOD_IN_SECONDS['ONE_WEEK'];
+		const periodLength = PERIOD_IN_SECONDS.TWO_WEEKS;
 		const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 
 		const response = await request(

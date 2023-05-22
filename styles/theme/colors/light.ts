@@ -160,6 +160,12 @@ const newTheme = {
 			},
 		},
 	},
+	fundingChart: {
+		tooltip: {
+			background: common.palette.neutral.n40,
+			border: common.palette.neutral.n50,
+		},
+	},
 };
 
 const lightTheme = {

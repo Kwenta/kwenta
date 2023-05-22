@@ -1,23 +1,14 @@
-import { wei } from '@synthetixio/wei';
 import { useEffect } from 'react';
-import { LineChart, XAxis, Line, ResponsiveContainer, YAxis } from 'recharts';
+import { LineChart, XAxis, Line, ResponsiveContainer, YAxis, Tooltip } from 'recharts';
 import styled from 'styled-components';
 import { useTheme } from 'styled-components';
 
-import { ETH_UNIT } from 'constants/network';
 import { fetchFundingRates } from 'state/futures/actions';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatChartTime } from 'utils/formatters/date';
-import { formatPercent } from 'utils/formatters/number';
 
-const formatFundingRate = (value: number) => {
-	if (value === 0) {
-		return '0%';
-	} else {
-		return formatPercent(wei(value).div(ETH_UNIT).div(24), { minDecimals: 4 });
-	}
-};
+import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip';
 
 const FundingChart = () => {
 	const theme = useTheme();
@@ -43,11 +34,13 @@ const FundingChart = () => {
 					minTickGap={75}
 					domain={['dataMin', 'dataMax']}
 				/>
+				<Tooltip content={<FundingChartTooltip />} formatter={(x) => formatFundingRate(x as any)} />
 				<Line
 					type="monotone"
 					dataKey="fundingRate"
 					stroke={theme.colors.selectedTheme.text.value}
 					strokeWidth={2}
+					strokeLinecap="square"
 					dot={false}
 					isAnimationActive={false}
 				/>
