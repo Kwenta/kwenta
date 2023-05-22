@@ -524,7 +524,7 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 		}, [] as DelayedOrderWithDetails[]);
 };
 
-const DELAYED_ORDER_PRICE_BUFFER = 0.0005;
+const DELAYED_ORDER_PRICE_BUFFER = 0.005;
 
 export const fillPriceWithBuffer = (price: Wei, sizeDelta: Wei) => {
 	// Allow for 0.5% price movement during delayed order

@@ -32,7 +32,6 @@ import {
 } from 'sdk/types/futures';
 import {
 	calculateDesiredFillPrice,
-	getDefaultPriceImpact,
 	getTradeStatusMessage,
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
@@ -1385,16 +1384,14 @@ export const submitCrossMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 			if (!account) throw new Error('No smart margin account found');
 			if (!wallet) throw new Error('No wallet connected');
 			if (!preview) throw new Error('Missing trade preview');
-			if (
-				!overridePriceProtection &&
-				preview.priceImpact.mul(100).gt(getDefaultPriceImpact(orderType))
-			) {
+			if (!overridePriceProtection && preview.exceedsPriceProtection) {
 				throw new Error('Price impact exceeds price protection');
 			}
 
-			const desiredFillPrice = overridePriceProtection
-				? fillPriceWithBuffer(preview.price, tradeInputs.nativeSizeDelta)
-				: selectDesiredTradeFillPrice(getState());
+			const desiredFillPrice =
+				preview.exceedsPriceProtection && overridePriceProtection
+					? fillPriceWithBuffer(preview.price, tradeInputs.nativeSizeDelta)
+					: selectDesiredTradeFillPrice(getState());
 
 			dispatch(
 				setTransaction({
@@ -1531,16 +1528,14 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, boolea
 			if (!account) throw new Error('No smart margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
 			if (!preview) throw new Error('Missing trade preview');
-			if (
-				!overridePriceProtection &&
-				preview.priceImpact.mul(100).gt(getDefaultPriceImpact('market'))
-			) {
+			if (!overridePriceProtection && preview.exceedsPriceProtection) {
 				throw new Error('Price impact exceeds price protection');
 			}
 
-			const desiredFillPrice = overridePriceProtection
-				? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
-				: selectEditPosDesiredFillPrice(getState());
+			const desiredFillPrice =
+				preview.exceedsPriceProtection && overridePriceProtection
+					? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
+					: selectEditPosDesiredFillPrice(getState());
 
 			dispatch(
 				setTransaction({
@@ -1593,16 +1588,14 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 			if (!account) throw new Error('No smart margin account found');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No margin amount set');
 			if (!preview) throw new Error('Missing trade preview');
-			if (
-				!overridePriceProtection &&
-				preview.priceImpact.mul(100).gt(getDefaultPriceImpact(orderType))
-			) {
+			if (!overridePriceProtection && preview.exceedsPriceProtection) {
 				throw new Error('Price impact exceeds price protection');
 			}
 
-			const desiredFillPrice = overridePriceProtection
-				? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
-				: selectClosePosDesiredFillPrice(getState());
+			const desiredFillPrice =
+				preview.exceedsPriceProtection && overridePriceProtection
+					? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
+					: selectClosePosDesiredFillPrice(getState());
 
 			const isClosing = wei(nativeSizeDelta)
 				.abs()
