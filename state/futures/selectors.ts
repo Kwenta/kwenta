@@ -605,19 +605,21 @@ export const selectRemainingMarketMargin = createSelector(selectPosition, (posit
 	return position.remainingMargin;
 });
 
-export const selectIdleMarginInMarkets = createSelector(
-	selectCrossMarginPositions,
-	selectMarkets,
-	(positions, markets) => {
+export const selectMarginInMarkets = (isSuspended: boolean = false) =>
+	createSelector(selectCrossMarginPositions, selectMarkets, (positions, markets) => {
 		const idleInMarkets = positions
 			.filter((p) => {
-				return !markets.find((m) => m.marketKey === p.marketKey)?.isSuspended;
+				const market = markets.find((m) => m.marketKey === p.marketKey);
+				return market && market.isSuspended === isSuspended;
 			})
 			.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
 			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
 		return idleInMarkets;
-	}
-);
+	});
+
+export const selectIdleMarginInMarkets = selectMarginInMarkets();
+
+export const selectLockedMarginInMarkets = selectMarginInMarkets(true);
 
 export const selectIdleMargin = createSelector(
 	selectIdleMarginInMarkets,
