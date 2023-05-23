@@ -5,7 +5,10 @@ import { InfoBoxRow } from 'components/InfoBox/InfoBox';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
 import { selectSusdBalance } from 'state/balances/selectors';
-import { selectCrossMarginBalanceInfo, selectIdleMarginInMarkets } from 'state/futures/selectors';
+import {
+	selectCrossMarginBalanceInfo,
+	selectAvailableMarginInMarkets,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PillButtonSpan } from 'styles/common';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
@@ -18,7 +21,7 @@ function MarginInfoBox() {
 	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
 	const openModal = useAppSelector(selectShowModal);
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
-	const idleMarginInMarkets = useAppSelector(selectIdleMarginInMarkets);
+	const idleMarginInMarkets = useAppSelector(selectAvailableMarginInMarkets);
 	const walletBal = useAppSelector(selectSusdBalance);
 
 	return (

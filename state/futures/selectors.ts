@@ -617,12 +617,12 @@ export const selectMarginInMarkets = (isSuspended: boolean = false) =>
 		return idleInMarkets;
 	});
 
-export const selectIdleMarginInMarkets = selectMarginInMarkets();
+export const selectAvailableMarginInMarkets = selectMarginInMarkets();
 
 export const selectLockedMarginInMarkets = selectMarginInMarkets(true);
 
 export const selectIdleMargin = createSelector(
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginBalanceInfo,
 	selectSusdBalance,
 	(idleInMarkets, { freeMargin }, balance) => {
@@ -633,7 +633,7 @@ export const selectIdleMargin = createSelector(
 export const selectSmartMarginAllowanceValid = createSelector(
 	selectCrossMarginAccountData,
 	selectCrossMarginBalanceInfo,
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginMarginDelta,
 	(account, { freeMargin }, idleInMarkets, marginDelta) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets);
@@ -646,7 +646,7 @@ export const selectSmartMarginAllowanceValid = createSelector(
 );
 
 export const selectWithdrawableMargin = createSelector(
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginBalanceInfo,
 	(idleInMarkets, { freeMargin }) => {
 		return idleInMarkets.add(freeMargin);
@@ -706,7 +706,7 @@ export const selectEditPositionInputs = createSelector(
 export const selectEditMarginAllowanceValid = createSelector(
 	selectCrossMarginAccountData,
 	selectCrossMarginBalanceInfo,
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectEditPositionInputs,
 	(account, { freeMargin }, idleInMarkets, { marginDelta }) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets);
