@@ -115,14 +115,12 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	}
 
 	// specified truncation params overrides universal truncate
-	if (truncateThreshold && !truncation) {
-		for (const threshold of thresholds) {
-			if (weiValue.gt(threshold.value) && weiValue.gte(truncateThreshold)) {
-				truncation = threshold;
-				break;
-			}
-		}
-	}
+	truncation =
+		truncateThreshold && !truncation
+			? thresholds.find(
+					(threshold) => weiValue.gt(threshold.value) && weiValue.gte(truncateThreshold)
+			  )
+			: truncation;
 
 	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
 
