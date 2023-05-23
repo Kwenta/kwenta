@@ -864,7 +864,7 @@
 							"deposit": "Deposit"
 						},
 						"bridge": {
-							"title": "Bridge",
+							"title": "Bridge & Swap",
 							"low-balance": "Your sUSD balance is low. You can bridge more assets from another network below.",
 							"no-balance": "To get started, you need sUSD to trade on Kwenta. You can bridge assets from another network into sUSD below."
 						}
