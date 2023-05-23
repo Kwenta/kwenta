@@ -176,7 +176,7 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.BLUR]: 'Blur',
 	[FuturesMarketAsset.XRP]: 'XRP',
 	[FuturesMarketAsset.DOT]: 'Polkadot',
-	[FuturesMarketAsset.FLOKI]: 'FLOKI',
+	[FuturesMarketAsset.FLOKI]: 'Floki',
 	[FuturesMarketAsset.INJ]: 'Injective',
 	[FuturesMarketAsset.TRX]: 'Tron',
 } as const;
