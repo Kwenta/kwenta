@@ -20,7 +20,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
-import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
+import SmartMarginOnboardModal from './SmartMarginOnboardModal';
 
 type TradeBalanceProps = {
 	isMobile?: boolean;
@@ -108,9 +108,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 				<DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>
 			)}
 			{openModal === 'futures_smart_margin_socket' && (
-				<TransferIsolatedMarginModal
-					defaultTab="deposit"
-					isSmartMargin={accountType === 'cross_margin'}
+				<SmartMarginOnboardModal
 					onDismiss={() => {
 						dispatch(setOpenModal(null));
 					}}

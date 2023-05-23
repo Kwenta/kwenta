@@ -29,7 +29,6 @@ import { formatDollars, zeroBN } from 'utils/formatters/number';
 type Props = {
 	onDismiss(): void;
 	defaultTab: 'deposit' | 'withdraw';
-	isSmartMargin?: boolean;
 };
 
 type BalanceStatus = 'low_balance' | 'no_balance' | 'high_balance';
@@ -40,11 +39,7 @@ const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
 
 const PLACEHOLDER = '$0.00';
 
-const TransferIsolatedMarginModal: React.FC<Props> = ({
-	onDismiss,
-	defaultTab,
-	isSmartMargin = false,
-}) => {
+const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
@@ -156,27 +151,26 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({
 					{openSocket ? <SocketBridge /> : <Spacer height={20} />}
 				</>
 			)}
-			{!isSmartMargin && (
-				<>
-					<BalanceContainer>
-						<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
-						<BalanceText>
-							<span>{formatDollars(susdBal)}</span> sUSD
-						</BalanceText>
-					</BalanceContainer>
-					<NumericInput
-						dataTestId="futures-market-trade-deposit-margin-input"
-						placeholder={PLACEHOLDER}
-						value={amount}
-						onChange={(_, v) => setAmount(v)}
-						right={
-							<MaxButton onClick={handleSetMax}>
-								{t('futures.market.trade.margin.modal.max')}
-							</MaxButton>
-						}
-					/>
-				</>
-			)}
+
+			<>
+				<BalanceContainer>
+					<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
+					<BalanceText>
+						<span>{formatDollars(susdBal)}</span> sUSD
+					</BalanceText>
+				</BalanceContainer>
+				<NumericInput
+					dataTestId="futures-market-trade-deposit-margin-input"
+					placeholder={PLACEHOLDER}
+					value={amount}
+					onChange={(_, v) => setAmount(v)}
+					right={
+						<MaxButton onClick={handleSetMax}>
+							{t('futures.market.trade.margin.modal.max')}
+						</MaxButton>
+					}
+				/>
+			</>
 			{transferType === 0 ? (
 				<MinimumAmountDisclaimer>
 					{t('futures.market.trade.margin.modal.deposit.disclaimer')}
@@ -185,19 +179,18 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({
 				<Spacer height={20} />
 			)}
 
-			{!isSmartMargin && (
-				<Button
-					data-testid="futures-market-trade-deposit-margin-button"
-					disabled={isDisabled}
-					fullWidth
-					onClick={transferType === 0 ? onDeposit : onWithdraw}
-					variant="flat"
-				>
-					{transferType === 0
-						? t('futures.market.trade.margin.modal.deposit.button')
-						: t('futures.market.trade.margin.modal.withdraw.button')}
-				</Button>
-			)}
+			<Button
+				data-testid="futures-market-trade-deposit-margin-button"
+				disabled={isDisabled}
+				fullWidth
+				onClick={transferType === 0 ? onDeposit : onWithdraw}
+				variant="flat"
+			>
+				{transferType === 0
+					? t('futures.market.trade.margin.modal.deposit.button')
+					: t('futures.market.trade.margin.modal.withdraw.button')}
+			</Button>
+
 			{txError && (
 				<Error containerStyle={{ margin: '16px 0 0 0' }} message={txError} formatter="revert" />
 			)}
