@@ -151,26 +151,21 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 					{openSocket ? <SocketBridge /> : <Spacer height={20} />}
 				</>
 			)}
-
-			<>
-				<BalanceContainer>
-					<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
-					<BalanceText>
-						<span>{formatDollars(susdBal)}</span> sUSD
-					</BalanceText>
-				</BalanceContainer>
-				<NumericInput
-					dataTestId="futures-market-trade-deposit-margin-input"
-					placeholder={PLACEHOLDER}
-					value={amount}
-					onChange={(_, v) => setAmount(v)}
-					right={
-						<MaxButton onClick={handleSetMax}>
-							{t('futures.market.trade.margin.modal.max')}
-						</MaxButton>
-					}
-				/>
-			</>
+			<BalanceContainer>
+				<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
+				<BalanceText>
+					<span>{formatDollars(susdBal)}</span> sUSD
+				</BalanceText>
+			</BalanceContainer>
+			<NumericInput
+				dataTestId="futures-market-trade-deposit-margin-input"
+				placeholder={PLACEHOLDER}
+				value={amount}
+				onChange={(_, v) => setAmount(v)}
+				right={
+					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
+				}
+			/>
 			{transferType === 0 ? (
 				<MinimumAmountDisclaimer>
 					{t('futures.market.trade.margin.modal.deposit.disclaimer')}
@@ -239,7 +234,7 @@ export const MaxButton = styled.button`
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
-	margin: 20px 0 10px;
+	margin: 10px 0;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: center;
 `;
