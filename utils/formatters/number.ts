@@ -11,11 +11,12 @@ import {
 import { isFiatCurrency } from 'utils/currencies';
 import logError from 'utils/logError';
 
+export type TruncateUnits = 1e3 | 1e6 | 1e9 | 1e12;
+
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
 type TruncatedOptions = {
-	truncate?: boolean;
-	truncateOverM?: boolean;
+	truncateOver?: TruncateUnits;
 	truncation?: {
 		// Maybe remove manual truncation params
 		unit: string;
@@ -86,8 +87,7 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
-	const shouldTruncate = options?.truncate;
-	const shouldTruncateOverM = options?.truncateOverM;
+	const truncateThreshold = options?.truncateOver;
 	const suggestDecimals = options?.suggestDecimals;
 	let truncation = options?.truncation;
 
@@ -108,11 +108,22 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	}
 
 	// specified truncation params overrides universal truncate
-	if (shouldTruncate && !truncation) {
-		if (weiValue.gt(1e6)) {
-			truncation = { divisor: 1e6, unit: 'M', decimals: 2 };
-		} else if (weiValue.gt(1e3) && !shouldTruncateOverM) {
-			truncation = { divisor: 1e3, unit: 'K', decimals: 0 };
+	if (truncateThreshold && !truncation && weiValue.gt(truncateThreshold)) {
+		switch (truncateThreshold) {
+			case 1e12:
+				truncation = { divisor: 1e12, unit: 'T', decimals: 2 };
+				break;
+			case 1e9:
+				truncation = { divisor: 1e9, unit: 'B', decimals: 2 };
+				break;
+			case 1e6:
+				truncation = { divisor: 1e6, unit: 'M', decimals: 2 };
+				break;
+			case 1e3:
+				truncation = { divisor: 1e3, unit: 'K', decimals: 0 };
+				break;
+			default:
+				break;
 		}
 	}
 
