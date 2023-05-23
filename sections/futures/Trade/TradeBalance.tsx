@@ -112,8 +112,6 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 					defaultTab="deposit"
 					isSmartMargin={accountType === 'cross_margin'}
 					onDismiss={() => {
-						// eslint-disable-next-line no-console
-						console.log(`TradeBalance.tsx: onDismiss`);
 						dispatch(setOpenModal(null));
 					}}
 				/>
