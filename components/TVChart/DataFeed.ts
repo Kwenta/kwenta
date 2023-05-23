@@ -57,6 +57,7 @@ const splitBaseQuote = (symbolName: string) => {
 	return { base, quote };
 };
 
+// TODO: Make this dynamic
 const getPriceScale = (asset: string | null) => {
 	switch (asset) {
 		case 'BTC':
@@ -69,6 +70,8 @@ const getPriceScale = (asset: string | null) => {
 		case 'AUD':
 			return 10000;
 		case 'SHIB':
+		case 'FLOKI':
+		case 'PEPE':
 			return 1000000000;
 		default:
 			return 1000;
