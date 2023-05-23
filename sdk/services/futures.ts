@@ -25,6 +25,7 @@ import {
 	queryPositionHistory,
 	queryTrades,
 	queryCompletePositionHistory,
+	queryFundingRateHistory,
 } from 'sdk/queries/futures';
 import { NetworkId } from 'sdk/types/common';
 import { NetworkOverrideOptions } from 'sdk/types/common';
@@ -272,30 +273,12 @@ export default class FuturesService {
 		return positions;
 	}
 
-	public async getMarketFundingRates(marketAsset: FuturesMarketAsset) {
-		const periodLength = PERIOD_IN_SECONDS.TWO_WEEKS;
+	public async getMarketFundingRatesHistory(
+		marketAsset: FuturesMarketAsset,
+		periodLength = PERIOD_IN_SECONDS.TWO_WEEKS
+	) {
 		const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
-
-		const response = await request(
-			this.futuresGqlEndpoint,
-			gql`
-				query fundingRateUpdate($marketAsset: Bytes!, $minTimestamp: BigInt!) {
-					fundingRatePeriods(
-						where: { asset: $marketAsset, timestamp_gt: $minTimestamp, period: "Hourly" }
-						first: 1000
-					) {
-						timestamp
-						fundingRate
-					}
-				}
-			`,
-			{ marketAsset: ethers.utils.formatBytes32String(marketAsset), minTimestamp }
-		);
-
-		return response.fundingRatePeriods.map((x: any) => ({
-			timestamp: Number(x.timestamp) * 1000,
-			fundingRate: Number(x.fundingRate),
-		}));
+		return queryFundingRateHistory(this.sdk, marketAsset, minTimestamp);
 	}
 
 	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {

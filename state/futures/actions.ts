@@ -1946,7 +1946,7 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 export const fetchFundingRates = createAsyncThunk<any, FuturesMarketAsset, ThunkConfig>(
 	'futures/fetchFundingRates',
 	async (marketAsset, { extra: { sdk } }) => {
-		return sdk.futures.getMarketFundingRates(marketAsset);
+		return sdk.futures.getMarketFundingRatesHistory(marketAsset);
 	}
 );
 
