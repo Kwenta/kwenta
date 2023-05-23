@@ -83,6 +83,14 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sBCHPERP]: FuturesMarketAsset.BCH,
 	[FuturesMarketKey.sSHIBPERP]: FuturesMarketAsset.SHIB,
 	[FuturesMarketKey.sCRVPERP]: FuturesMarketAsset.CRV,
+	[FuturesMarketKey.sSUIPERP]: FuturesMarketAsset.SUI,
+	[FuturesMarketKey.sPEPEPERP]: FuturesMarketAsset.PEPE,
+	[FuturesMarketKey.sBLURPERP]: FuturesMarketAsset.BLUR,
+	[FuturesMarketKey.sXRPPERP]: FuturesMarketAsset.XRP,
+	[FuturesMarketKey.sDOTPERP]: FuturesMarketAsset.DOT,
+	[FuturesMarketKey.sFLOKIPERP]: FuturesMarketAsset.FLOKI,
+	[FuturesMarketKey.sINJPERP]: FuturesMarketAsset.INJ,
+	[FuturesMarketKey.sTRXPERP]: FuturesMarketAsset.TRX,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -119,6 +127,14 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.BCH]: FuturesMarketKey.sBCHPERP,
 	[FuturesMarketAsset.SHIB]: FuturesMarketKey.sSHIBPERP,
 	[FuturesMarketAsset.CRV]: FuturesMarketKey.sCRVPERP,
+	[FuturesMarketAsset.SUI]: FuturesMarketKey.sSUIPERP,
+	[FuturesMarketAsset.PEPE]: FuturesMarketKey.sPEPEPERP,
+	[FuturesMarketAsset.BLUR]: FuturesMarketKey.sBLURPERP,
+	[FuturesMarketAsset.XRP]: FuturesMarketKey.sXRPPERP,
+	[FuturesMarketAsset.DOT]: FuturesMarketKey.sDOTPERP,
+	[FuturesMarketAsset.FLOKI]: FuturesMarketKey.sFLOKIPERP,
+	[FuturesMarketAsset.INJ]: FuturesMarketKey.sINJPERP,
+	[FuturesMarketAsset.TRX]: FuturesMarketKey.sTRXPERP,
 } as const;
 
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
@@ -155,6 +171,14 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.BCH]: 'Bitcoin Cash',
 	[FuturesMarketAsset.SHIB]: 'Shiba Inu',
 	[FuturesMarketAsset.CRV]: 'Curve DAO',
+	[FuturesMarketAsset.SUI]: 'Sui',
+	[FuturesMarketAsset.PEPE]: 'Pepe',
+	[FuturesMarketAsset.BLUR]: 'Blur',
+	[FuturesMarketAsset.XRP]: 'XRP',
+	[FuturesMarketAsset.DOT]: 'Polkadot',
+	[FuturesMarketAsset.FLOKI]: 'Floki',
+	[FuturesMarketAsset.INJ]: 'Injective',
+	[FuturesMarketAsset.TRX]: 'Tron',
 } as const;
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {};
