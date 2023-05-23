@@ -166,10 +166,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							),
 							accessor: 'notionalValue',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
-								const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-									? { truncate: true }
-									: {};
-
 								return (
 									<ColWithButton>
 										<div>
@@ -181,8 +177,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											</div>
 											<Currency.Price
 												price={cellProps.row.original.position.notionalValue}
-												formatOptions={formatOptions}
 												colorType="secondary"
+												formatOptions={{ truncateOver: 1e6 }}
 											/>
 										</div>
 										<Spacer width={10} />
