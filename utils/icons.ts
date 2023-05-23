@@ -69,6 +69,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sBTCPERP: BTCIcon,
 	sCRVPERP: CRVIcon,
 	sDOGEPERP: DOGEIcon,
+	sDOTPERP: DOTIcon,
 	sDYDXPERP: DYDXIcon,
 	sETHPERP: ETHIcon,
 	sEURPERP: EURIcon,
