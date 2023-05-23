@@ -1,26 +1,25 @@
-import { useEffect } from 'react';
 import { LineChart, XAxis, Line, ResponsiveContainer, YAxis, Tooltip } from 'recharts';
 import styled from 'styled-components';
 import { useTheme } from 'styled-components';
 
+import { FuturesMarketAsset } from 'sdk/types/futures';
 import { fetchFundingRates } from 'state/futures/actions';
 import { selectMarketInfo } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { useAppSelector, usePollAction } from 'state/hooks';
 import { formatChartTime } from 'utils/formatters/date';
 
 import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip';
 
 const FundingChart = () => {
 	const theme = useTheme();
-	const dispatch = useAppDispatch();
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketFundingRates = useAppSelector(({ futures }) => futures.marketFundingRates);
 
-	useEffect(() => {
-		if (marketInfo?.asset) {
-			dispatch(fetchFundingRates(marketInfo.asset));
-		}
-	}, [dispatch, marketInfo?.asset]);
+	usePollAction(
+		'fetchFundingRates',
+		() => fetchFundingRates(marketInfo?.asset || FuturesMarketAsset.sETH),
+		{ dependencies: [marketInfo?.asset], intervalTime: 60 * 60 * 1000 }
+	);
 
 	return (
 		<FundingChartContainer>
