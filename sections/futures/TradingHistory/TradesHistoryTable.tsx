@@ -127,6 +127,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 											? `${formatNumber(numValue, {
 													minDecimals: numDecimals,
 													truncate: true,
+													truncateOverM: true,
 											  })} ${normal ? '💀' : ''}`
 											: NO_VALUE}
 									</DirectionalValue>

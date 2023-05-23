@@ -15,6 +15,7 @@ type WeiSource = Wei | number | string | ethers.BigNumber;
 
 type TruncatedOptions = {
 	truncate?: boolean;
+	truncateOverM?: boolean;
 	truncation?: {
 		// Maybe remove manual truncation params
 		unit: string;
@@ -86,6 +87,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
 	const shouldTruncate = options?.truncate;
+	const shouldTruncateOverM = options?.truncateOverM;
 	const suggestDecimals = options?.suggestDecimals;
 	let truncation = options?.truncation;
 
@@ -109,7 +111,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	if (shouldTruncate && !truncation) {
 		if (weiValue.gt(1e6)) {
 			truncation = { divisor: 1e6, unit: 'M', decimals: 2 };
-		} else if (weiValue.gt(1e3)) {
+		} else if (weiValue.gt(1e3) && !shouldTruncateOverM) {
 			truncation = { divisor: 1e3, unit: 'K', decimals: 0 };
 		}
 	}
