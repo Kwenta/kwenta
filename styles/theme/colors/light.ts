@@ -161,6 +161,9 @@ const newTheme = {
 			},
 		},
 	},
+	checkBox: {
+		border: common.palette.neutral.n100,
+	},
 	tabs: {
 		position: {
 			background: common.palette.neutral.n20,

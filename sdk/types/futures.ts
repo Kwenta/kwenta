@@ -107,6 +107,14 @@ export enum FuturesMarketKey {
 	sLDOPERP = 'sLDOPERP',
 	sLTCPERP = 'sLTCPERP',
 	sSHIBPERP = 'sSHIBPERP',
+	sSUIPERP = 'sSUIPERP',
+	sPEPEPERP = 'sPEPEPERP',
+	sBLURPERP = 'sBLURPERP',
+	sXRPPERP = 'sXRPPERP',
+	sDOTPERP = 'sDOTPERP',
+	sTRXPERP = 'sTRXPERP',
+	sFLOKIPERP = 'sFLOKIPERP',
+	sINJPERP = 'sINJPERP',
 }
 
 export enum FuturesMarketAsset {
@@ -143,6 +151,14 @@ export enum FuturesMarketAsset {
 	LDO = 'LDO',
 	LTC = 'LTC',
 	SHIB = 'SHIB',
+	SUI = 'SUI',
+	PEPE = 'PEPE',
+	BLUR = 'BLUR',
+	XRP = 'XRP',
+	DOT = 'DOT',
+	TRX = 'TRX',
+	FLOKI = 'FLOKI',
+	INJ = 'INJ',
 }
 
 export interface FuturesMarketConfig {
@@ -342,6 +358,7 @@ export type FuturesPotentialTradeDetails<T = Wei> = {
 	statusMessage: string;
 	priceImpact: T;
 	slippageAmount: T;
+	exceedsPriceProtection: boolean;
 };
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/interfaces/IFuturesMarketBaseTypes.sol#L6-L19

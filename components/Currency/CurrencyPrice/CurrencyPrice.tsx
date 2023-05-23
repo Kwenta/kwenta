@@ -16,7 +16,6 @@ type CurrencyPriceProps = {
 	change?: number;
 	conversionRate?: WeiSource;
 	formatOptions?: FormatCurrencyOptions;
-	truncate?: boolean;
 	colorType?: 'secondary' | 'positive' | 'negative' | 'preview';
 	colored?: boolean;
 };
@@ -31,7 +30,6 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		currencyKey = 'sUSD',
 		conversionRate = 1,
 		showCurrencyKey = false,
-		truncate = false,
 		colored = false,
 		...rest
 	}) => {
@@ -48,7 +46,6 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 					{formatCurrency(currencyKey, cleanPrice.div(conversionRate), {
 						sign: currencyKey === 'sUSD' ? '$' : sign,
 						currencyKey: showCurrencyKey ? currencyKey : undefined,
-						truncate,
 						...formatOptions,
 					})}
 				</NumericValue>

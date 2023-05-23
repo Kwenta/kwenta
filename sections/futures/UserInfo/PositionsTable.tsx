@@ -166,10 +166,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							),
 							accessor: 'notionalValue',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
-								const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-									? { truncate: true }
-									: {};
-
 								return (
 									<FlexDivRowCentered columnGap="5px">
 										<ColWithButton>
@@ -188,7 +184,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 												</FlexDivRowCentered>
 												<Currency.Price
 													price={cellProps.row.original.position.notionalValue}
-													formatOptions={formatOptions}
+													formatOptions={{ truncateOver: 1e6 }}
 													colorType="secondary"
 												/>
 											</div>

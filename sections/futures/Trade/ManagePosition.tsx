@@ -23,7 +23,6 @@ import {
 	selectCrossMarginOrderPrice,
 	selectOrderType,
 	selectFuturesType,
-	selectCrossMarginMarginDelta,
 	selectLeverageSide,
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
@@ -41,7 +40,6 @@ const ManagePosition: React.FC = () => {
 	const dispatch = useAppDispatch();
 
 	const { susdSize } = useAppSelector(selectTradeSizeInputs);
-	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
 	const maxLeverageValue = useAppSelector(selectMaxLeverage);
 	const selectedAccountType = useAppSelector(selectFuturesType);
 	const previewTrade = useAppSelector(selectTradePreview);
@@ -163,7 +161,6 @@ const ManagePosition: React.FC = () => {
 		return null;
 	}, [
 		susdSize,
-		marginDelta,
 		orderType,
 		openOrder,
 		orderError,

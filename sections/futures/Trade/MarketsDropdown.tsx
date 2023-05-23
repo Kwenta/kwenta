@@ -115,7 +115,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		const sortedMarkets = markets
 			.filter((m) => favMarkets.includes(m.asset))
 			.sort((a, b) =>
-				getBasePriceRateInfo(b.asset)?.price.sub(getBasePriceRateInfo(a.asset)?.price).gt(0)
+				getBasePriceRateInfo(b.asset)
+					?.price.sub(getBasePriceRateInfo(a.asset)?.price ?? 0)
+					.gt(0)
 					? 1
 					: -1
 			)
@@ -123,7 +125,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				markets
 					.filter((m) => !favMarkets.includes(m.asset))
 					.sort((a, b) =>
-						getBasePriceRateInfo(b.asset)?.price.sub(getBasePriceRateInfo(a.asset)?.price).gt(0)
+						getBasePriceRateInfo(b.asset)
+							?.price.sub(getBasePriceRateInfo(a.asset)?.price ?? 0)
+							.gt(0)
 							? 1
 							: -1
 					)
