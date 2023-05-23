@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { FlexDiv } from 'components/layout/flex';
 import TVChart from 'components/TVChart';
@@ -13,7 +13,11 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { zeroBN } from 'utils/formatters/number';
 
-export default function PositionChart() {
+type PositionChartProps = {
+	display?: boolean;
+};
+
+export default function PositionChart({ display = true }: PositionChartProps) {
 	const position = useAppSelector(selectPosition);
 	const openOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const previewTrade = useAppSelector(selectTradePreview);
@@ -44,7 +48,7 @@ export default function PositionChart() {
 	}, [setShowOrderLines]);
 
 	return (
-		<Container visible={isChartReady}>
+		<Container $visible={isChartReady} $display={display}>
 			<TVChart
 				openOrders={openOrders}
 				activePosition={activePosition}
@@ -67,9 +71,14 @@ export default function PositionChart() {
 	);
 }
 
-const Container = styled(FlexDiv)<{ visible: boolean }>`
+const Container = styled(FlexDiv)<{ $visible: boolean; $display?: boolean }>`
 	flex: 1;
 	height: 100%;
 	width: 100%;
-	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+	visibility: ${(props) => (props.$visible ? 'visible' : 'hidden')};
+	${(props) =>
+		!props.$display &&
+		css`
+			display: none;
+		`}
 `;

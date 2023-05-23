@@ -1,5 +1,6 @@
+import { FC } from 'react';
 import { LineChart, XAxis, Line, ResponsiveContainer, YAxis, Tooltip } from 'recharts';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useTheme } from 'styled-components';
 
 import { FuturesMarketAsset } from 'sdk/types/futures';
@@ -10,7 +11,11 @@ import { formatChartTime } from 'utils/formatters/date';
 
 import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip';
 
-const FundingChart = () => {
+type FundingChartProps = {
+	display?: boolean;
+};
+
+const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	const theme = useTheme();
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const marketFundingRates = useAppSelector(({ futures }) => futures.marketFundingRates);
@@ -22,7 +27,7 @@ const FundingChart = () => {
 	);
 
 	return (
-		<FundingChartContainer>
+		<FundingChartContainer $display={display}>
 			<LineChart data={marketFundingRates}>
 				<YAxis dataKey="fundingRate" domain={['auto', 0]} tickFormatter={formatFundingRate} />
 				<XAxis
@@ -48,8 +53,13 @@ const FundingChart = () => {
 	);
 };
 
-const FundingChartContainer = styled(ResponsiveContainer)`
+const FundingChartContainer = styled(ResponsiveContainer)<{ $display: boolean }>`
 	flex: 1;
+	${(props) =>
+		!props.$display &&
+		css`
+			display: none;
+		`}
 `;
 
 export default FundingChart;

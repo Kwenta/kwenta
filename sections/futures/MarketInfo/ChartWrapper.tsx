@@ -14,8 +14,8 @@ const ChartWrapper = () => {
 
 	return (
 		<Container>
-			{selectedChart === 'price' ? <PositionChart /> : <FundingChart />}
-
+			<PositionChart display={selectedChart === 'price'} />
+			<FundingChart display={selectedChart === 'funding'} />
 			{showHistory && <TradesHistoryTable />}
 		</Container>
 	);
