@@ -19,7 +19,7 @@ describe('number utils', () => {
 		expect(weiVal.toNumber()).toEqual(0.1);
 	});
 	test('should truncate millions correctly', () => {
-		const formatted = formatDollars('3251764', { truncateOver: 1e6 });
+		const formatted = formatDollars('3251764', { truncateOver: 1e3 });
 		expect(formatted).toEqual('$3.25M');
 	});
 	test('should truncate thousands correctly', () => {

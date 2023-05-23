@@ -25,6 +25,13 @@ type TruncatedOptions = {
 	};
 };
 
+const thresholds = [
+	{ value: 1e12, divisor: 1e12, unit: 'T', decimals: 2 },
+	{ value: 1e9, divisor: 1e9, unit: 'B', decimals: 2 },
+	{ value: 1e6, divisor: 1e6, unit: 'M', decimals: 2 },
+	{ value: 1e3, divisor: 1e3, unit: 'K', decimals: 0 },
+];
+
 export type FormatNumberOptions = {
 	minDecimals?: number;
 	maxDecimals?: number;
@@ -87,7 +94,7 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
-	const truncateThreshold = options?.truncateOver;
+	const truncateThreshold = options?.truncateOver ?? 0;
 	const suggestDecimals = options?.suggestDecimals;
 	let truncation = options?.truncation;
 
@@ -108,22 +115,12 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	}
 
 	// specified truncation params overrides universal truncate
-	if (truncateThreshold && !truncation && weiValue.gt(truncateThreshold)) {
-		switch (truncateThreshold) {
-			case 1e12:
-				truncation = { divisor: 1e12, unit: 'T', decimals: 2 };
+	if (truncateThreshold && !truncation) {
+		for (const threshold of thresholds) {
+			if (weiValue.gt(threshold.value) && weiValue.gte(truncateThreshold)) {
+				truncation = threshold;
 				break;
-			case 1e9:
-				truncation = { divisor: 1e9, unit: 'B', decimals: 2 };
-				break;
-			case 1e6:
-				truncation = { divisor: 1e6, unit: 'M', decimals: 2 };
-				break;
-			case 1e3:
-				truncation = { divisor: 1e3, unit: 'K', decimals: 0 };
-				break;
-			default:
-				break;
+			}
 		}
 	}
 

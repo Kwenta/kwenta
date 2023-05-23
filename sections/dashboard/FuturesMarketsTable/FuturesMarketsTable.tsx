@@ -217,6 +217,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 											<Currency.Price
 												price={cellProps.row.original.longInterest}
 												colorType="positive"
+												formatOptions={{ truncateOver: 1e3 }}
 											/>
 											<Currency.Price
 												price={cellProps.row.original.shortInterest}
