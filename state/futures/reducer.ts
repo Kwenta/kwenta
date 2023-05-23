@@ -171,7 +171,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
-	marketFundingRates: [],
+	marketFundingRates: {} as FuturesState['marketFundingRates'],
 };
 
 const futuresSlice = createSlice({
@@ -736,7 +736,7 @@ const futuresSlice = createSlice({
 			};
 		});
 		builder.addCase(fetchFundingRates.fulfilled, (futuresState, { payload }) => {
-			futuresState.marketFundingRates = payload;
+			futuresState.marketFundingRates[payload.marketAsset] = payload.rates;
 		});
 	},
 });

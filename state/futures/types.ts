@@ -244,7 +244,7 @@ export type FuturesState = {
 		>;
 	};
 	tradePanelDrawerOpen: boolean;
-	marketFundingRates: { timestamp: string; funding: string }[];
+	marketFundingRates: Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>;
 };
 
 export type TradePreviewResult = {

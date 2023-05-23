@@ -3,9 +3,8 @@ import { LineChart, XAxis, Line, ResponsiveContainer, YAxis, Tooltip } from 'rec
 import styled, { css } from 'styled-components';
 import { useTheme } from 'styled-components';
 
-import { FuturesMarketAsset } from 'sdk/types/futures';
 import { fetchFundingRates } from 'state/futures/actions';
-import { selectMarketInfo } from 'state/futures/selectors';
+import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
 import { formatChartTime } from 'utils/formatters/date';
 
@@ -17,18 +16,17 @@ type FundingChartProps = {
 
 const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	const theme = useTheme();
-	const marketInfo = useAppSelector(selectMarketInfo);
+	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketFundingRates = useAppSelector(({ futures }) => futures.marketFundingRates);
 
-	usePollAction(
-		'fetchFundingRates',
-		() => fetchFundingRates(marketInfo?.asset || FuturesMarketAsset.sETH),
-		{ dependencies: [marketInfo?.asset], intervalTime: 60 * 60 * 1000 }
-	);
+	usePollAction('fetchFundingRates', () => fetchFundingRates(marketAsset), {
+		dependencies: [marketAsset],
+		intervalTime: 60 * 60 * 1000,
+	});
 
 	return (
 		<FundingChartContainer $display={display}>
-			<LineChart data={marketFundingRates}>
+			<LineChart data={marketFundingRates[marketAsset]}>
 				<YAxis dataKey="fundingRate" domain={['auto', 0]} tickFormatter={formatFundingRate} />
 				<XAxis
 					dataKey="timestamp"
