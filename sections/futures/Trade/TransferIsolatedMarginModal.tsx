@@ -185,7 +185,6 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 					? t('futures.market.trade.margin.modal.deposit.button')
 					: t('futures.market.trade.margin.modal.withdraw.button')}
 			</Button>
-
 			{txError && (
 				<Error containerStyle={{ margin: '16px 0 0 0' }} message={txError} formatter="revert" />
 			)}
