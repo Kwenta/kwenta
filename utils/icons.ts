@@ -35,11 +35,11 @@ import LINKIcon from 'assets/png/currencies/sLINK.png';
 import LTCIcon from 'assets/png/currencies/sLTC.png';
 import MATICIcon from 'assets/png/currencies/sMATIC.png';
 import NEARIcon from 'assets/png/currencies/sNEAR.png';
+import SNXIcon from 'assets/png/currencies/SNX.png';
 import OILIcon from 'assets/png/currencies/sOIL.png';
 import OPIcon from 'assets/png/currencies/sOP.png';
 import PEPEIcon from 'assets/png/currencies/sPEPE.png';
 import SHIBIcon from 'assets/png/currencies/sSHIB.png';
-import SNXIcon from 'assets/png/currencies/SNX.png';
 import SOLIcon from 'assets/png/currencies/sSOL.png';
 import SUIIcon from 'assets/png/currencies/sSUI.png';
 import TRXIcon from 'assets/png/currencies/sTRX.png';
@@ -105,6 +105,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sAVAX: AVAXIcon,
 	sAXS: AXSIcon,
 	sBCH: BCHIcon,
+	sBLUR: BLURIcon,
 	sBNB: BNBIcon,
 	sBTC: BTCIcon,
 	sCHF: CHFIcon,
@@ -116,10 +117,12 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sETHBTC: ETHBTCIcon,
 	sEUR: EURIcon,
 	sFIL: FILIcon,
+	sFLOKI: FLOKIIcon,
 	sFLOW: FLOWIcon,
 	sFTM: FTMIcon,
 	sGBP: GBPIcon,
 	sGMX: GMXIcon,
+	sINJ: INJIcon,
 	sINR: INRIcon,
 	sJPY: JPYIcon,
 	sKRW: KRWIcon,
@@ -129,14 +132,18 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sMATIC: MATICIcon,
 	sNEAR: NEARIcon,
 	sOP: OPIcon,
+	sPEPE: PEPEIcon,
 	sSHIB: SHIBIcon,
 	sSOL: SOLIcon,
+	sSUI: SUIIcon,
+	sTRX: TRXIcon,
 	sUNI: UNIIcon,
 	sUSD: USDIcon,
 	sWTI: OILIcon,
 	sXAU: XAUIcon,
 	sXAG: XAGIcon,
 	sXMR: XMRIcon,
+	sXRP: XRPIcon,
 	KWENTA: KWENTAIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 	WBTC: WBTCIcon,
