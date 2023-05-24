@@ -153,7 +153,7 @@ const PositionsTab = () => {
 								<Spacer width={5} />
 								<Currency.Price
 									price={row.position.notionalValue}
-									formatOptions={row.position.notionalValue.gte(1e6) ? { truncate: true } : {}}
+									formatOptions={{ truncateOver: 1e6 }}
 									colorType="secondary"
 								/>
 								{accountType === 'cross_margin' && (
