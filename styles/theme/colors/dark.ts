@@ -162,6 +162,12 @@ const newTheme = {
 			},
 		},
 	},
+	fundingChart: {
+		tooltip: {
+			background: common.palette.neutral.n700,
+			border: common.palette.neutral.n600,
+		},
+	},
 };
 
 const darkTheme = {

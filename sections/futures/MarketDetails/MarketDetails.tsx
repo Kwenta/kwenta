@@ -29,6 +29,7 @@ import { getDisplayAsset } from 'utils/futures';
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
+import ChartToggle from './ChartToggle';
 import HoursToggle from './HoursToggle';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
@@ -76,6 +77,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			{SelectedMarketDetailsView}
 			{!mobile && (
 				<ShowHistoryContainer>
+					<ChartToggle />
 					<Checkbox
 						id="history"
 						label="Show History"
@@ -327,10 +329,12 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 
 const ShowHistoryContainer = styled.div`
 	display: flex;
+	align-items: center;
 	z-index: ${zIndex.HEADER};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	min-height: 50px;
+	padding-left: 8px;
 	padding-right: 20px;
 `;
 

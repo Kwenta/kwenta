@@ -3,15 +3,17 @@ import styled from 'styled-components';
 
 import media from 'styles/media';
 
-import PositionChart from '../PositionChart';
 import UserInfo from '../UserInfo';
+import ChartWrapper from './ChartWrapper';
 
-const MarketInfo: React.FC = React.memo(() => (
-	<Container>
-		<PositionChart />
-		<UserInfo />
-	</Container>
-));
+const MarketInfo: React.FC = React.memo(() => {
+	return (
+		<Container>
+			<ChartWrapper />
+			<UserInfo />
+		</Container>
+	);
+});
 
 const Container = styled.div`
 	height: 100%;
