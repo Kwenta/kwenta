@@ -171,7 +171,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
-	historicalFundingRates: {} as FuturesState['historicalFundingRates'],
+	historicalFundingRates: {},
 };
 
 const futuresSlice = createSlice({
