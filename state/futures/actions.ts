@@ -29,6 +29,7 @@ import {
 	SLTPOrderInputs,
 	FuturesMarketKey,
 	ContractOrderType,
+	FuturesMarketAsset,
 } from 'sdk/types/futures';
 import {
 	calculateDesiredFillPrice,
@@ -1941,6 +1942,15 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 		}
 	}
 );
+
+export const fetchFundingRatesHistory = createAsyncThunk<
+	{ marketAsset: FuturesMarketAsset; rates: any },
+	FuturesMarketAsset,
+	ThunkConfig
+>('futures/fetchFundingRatesHistory', async (marketAsset, { extra: { sdk } }) => {
+	const rates = await sdk.futures.getMarketFundingRatesHistory(marketAsset);
+	return { marketAsset, rates };
+});
 
 const monitorAndAwaitTransaction = async (
 	dispatch: AppDispatch,
