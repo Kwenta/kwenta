@@ -107,7 +107,7 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 					},
 				},
 				axisLabel: {
-					formatter: (value: WeiSource) => formatDollars(value, { truncate: true }),
+					formatter: (value: WeiSource) => formatDollars(value, { truncateOver: 1e3 }),
 				},
 				position: 'right',
 			},

@@ -203,11 +203,11 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 const OpenInterestDetail: React.FC<OpenInterestDetailProps> = memo(({ mobile, isLong }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const oiCap = marketInfo?.marketLimitUsd
-		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
+		? formatDollars(marketInfo?.marketLimitUsd, { truncateOver: 1e3 })
 		: null;
 	const openInterestType = isLong ? 'longUSD' : 'shortUSD';
 	const formattedUSD = marketInfo?.openInterest[openInterestType]
-		? formatDollars(marketInfo?.openInterest[openInterestType], { truncate: true })
+		? formatDollars(marketInfo?.openInterest[openInterestType], { truncateOver: 1e3 })
 		: NO_VALUE;
 
 	const mobileValue = (

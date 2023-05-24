@@ -148,14 +148,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-										? { truncate: true }
-										: {};
-
 									return (
 										<Currency.Price
 											price={cellProps.row.original.position.notionalValue}
-											formatOptions={formatOptions}
+											formatOptions={{ truncateOver: 1e6 }}
 										/>
 									);
 								},
