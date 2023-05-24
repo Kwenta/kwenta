@@ -101,7 +101,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
-		marketFundingRates: DEFAULT_QUERY_STATUS,
+		historicalFundingRates: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -171,7 +171,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
-	marketFundingRates: {} as FuturesState['marketFundingRates'],
+	historicalFundingRates: {} as FuturesState['historicalFundingRates'],
 };
 
 const futuresSlice = createSlice({
@@ -730,13 +730,13 @@ const futuresSlice = createSlice({
 
 		// Fetch funding rates
 		builder.addCase(fetchFundingRatesHistory.rejected, (futuresState) => {
-			futuresState.queryStatuses.marketFundingRates = {
+			futuresState.queryStatuses.historicalFundingRates = {
 				error: 'Failed to fetch funding rates',
 				status: FetchStatus.Error,
 			};
 		});
 		builder.addCase(fetchFundingRatesHistory.fulfilled, (futuresState, { payload }) => {
-			futuresState.marketFundingRates[payload.marketAsset] = payload.rates;
+			futuresState.historicalFundingRates[payload.marketAsset] = payload.rates;
 		});
 	},
 });

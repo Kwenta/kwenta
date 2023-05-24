@@ -116,7 +116,7 @@ export type FuturesQueryStatuses = {
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
 	marginTransfers: QueryStatus;
-	marketFundingRates: QueryStatus;
+	historicalFundingRates: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -244,7 +244,9 @@ export type FuturesState = {
 		>;
 	};
 	tradePanelDrawerOpen: boolean;
-	marketFundingRates: Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>;
+	historicalFundingRates: Partial<
+		Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>
+	>;
 };
 
 export type TradePreviewResult = {

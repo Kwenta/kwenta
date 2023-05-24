@@ -17,7 +17,7 @@ type FundingChartProps = {
 const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	const theme = useTheme();
 	const marketAsset = useAppSelector(selectMarketAsset);
-	const marketFundingRates = useAppSelector(({ futures }) => futures.marketFundingRates);
+	const historicalFundingRates = useAppSelector(({ futures }) => futures.historicalFundingRates);
 
 	usePollAction('fetchFundingRatesHistory', () => fetchFundingRatesHistory(marketAsset), {
 		dependencies: [marketAsset],
@@ -26,7 +26,7 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 
 	return (
 		<FundingChartContainer $display={display}>
-			<LineChart data={marketFundingRates[marketAsset]}>
+			<LineChart data={historicalFundingRates[marketAsset]}>
 				<YAxis dataKey="fundingRate" domain={['auto', 0]} tickFormatter={formatFundingRate} />
 				<XAxis
 					dataKey="timestamp"
