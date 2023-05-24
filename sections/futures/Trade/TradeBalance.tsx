@@ -82,7 +82,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 				) : (
 					<>
 						{isMobile ? (
-							<FlexDivCol style={{ rowGap: '2px' }}>
+							<FlexDivCol rowGap="5px">
 								<FlexDivRow style={{ width: '200px' }}>
 									<Body size={'medium'} color="secondary">
 										Available Margin:
@@ -93,13 +93,13 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 											: formatDollars(idleMargin)}
 									</NumericValue>
 								</FlexDivRow>
-								{accountType === 'cross_margin' && lockedMargin.lte(0) && (
+								{accountType === 'cross_margin' && lockedMargin.gt(0) && (
 									<FlexDivRow style={{ width: '200px' }}>
 										<Body size={'medium'} color="secondary">
 											Locked Margin:
 										</Body>
 										<FlexDivRowCentered columnGap="5px">
-											<NumericValue size={'medium'} weight="bold">
+											<NumericValue size={'medium'} weight="bold" color="secondary">
 												{formatDollars(lockedMargin)}
 											</NumericValue>
 											<HelpIcon />
@@ -119,7 +119,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 											: formatDollars(idleMargin)}
 									</NumericValue>
 								</FlexDivCol>
-								{accountType === 'cross_margin' && lockedMargin.lte(0) && (
+								{accountType === 'cross_margin' && lockedMargin.gt(0) && (
 									<StyledFlexDivCol>
 										<FlexDivRowCentered columnGap="5px">
 											<Body size={'medium'} color="secondary">
@@ -127,7 +127,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 											</Body>
 											<HelpIcon />
 										</FlexDivRowCentered>
-										<NumericValue size={'large'} weight="bold">
+										<NumericValue size={'large'} weight="bold" color="secondary">
 											{formatDollars(lockedMargin)}
 										</NumericValue>
 									</StyledFlexDivCol>
@@ -138,7 +138,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 				)}
 
 				{(accountType === 'isolated_margin' || withdrawable.gt(0) || !isDepositRequired) && (
-					<FlexDivRowCentered>
+					<FlexDivRowCentered columnGap="15px">
 						<PencilIcon
 							fill={theme.colors.selectedTheme.newTheme.text.preview}
 							width={16}
