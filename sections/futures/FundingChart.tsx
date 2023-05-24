@@ -3,7 +3,7 @@ import { LineChart, XAxis, Line, ResponsiveContainer, YAxis, Tooltip } from 'rec
 import styled, { css } from 'styled-components';
 import { useTheme } from 'styled-components';
 
-import { fetchFundingRates } from 'state/futures/actions';
+import { fetchFundingRatesHistory } from 'state/futures/actions';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
 import { formatChartTime } from 'utils/formatters/date';
@@ -19,7 +19,7 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const marketFundingRates = useAppSelector(({ futures }) => futures.marketFundingRates);
 
-	usePollAction('fetchFundingRates', () => fetchFundingRates(marketAsset), {
+	usePollAction('fetchFundingRatesHistory', () => fetchFundingRatesHistory(marketAsset), {
 		dependencies: [marketAsset],
 		intervalTime: 60 * 60 * 1000,
 	});

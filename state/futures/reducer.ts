@@ -46,7 +46,7 @@ import {
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
 	fetchCombinedMarginTransfers,
-	fetchFundingRates,
+	fetchFundingRatesHistory,
 } from './actions';
 import {
 	CrossMarginAccountData,
@@ -729,13 +729,13 @@ const futuresSlice = createSlice({
 		});
 
 		// Fetch funding rates
-		builder.addCase(fetchFundingRates.rejected, (futuresState) => {
+		builder.addCase(fetchFundingRatesHistory.rejected, (futuresState) => {
 			futuresState.queryStatuses.marketFundingRates = {
 				error: 'Failed to fetch funding rates',
 				status: FetchStatus.Error,
 			};
 		});
-		builder.addCase(fetchFundingRates.fulfilled, (futuresState, { payload }) => {
+		builder.addCase(fetchFundingRatesHistory.fulfilled, (futuresState, { payload }) => {
 			futuresState.marketFundingRates[payload.marketAsset] = payload.rates;
 		});
 	},
