@@ -9,6 +9,7 @@ import Button from 'components/Button';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import { Body, NumericValue } from 'components/Text';
+import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
@@ -56,18 +57,21 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 
 	return (
 		<Container>
-			<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
+			<BalanceContainer
+				clickable={accountType === 'cross_margin'}
+				onClick={!isMobile ? onClickContainer : undefined}
+			>
 				{accountType === 'cross_margin' && isDepositRequired ? (
 					<DepositContainer>
 						<FlexDivCol>
 							<FlexDivRow columnGap="5px" justifyContent="flex-start">
 								<Body size={isMobile ? 'small' : 'medium'} color="secondary">
-									No available margin
+									{t('futures.market.trade.trade-balance.no-available-margin')}
 								</Body>
 								{expanded ? <HideIcon /> : <ExpandIcon />}
 							</FlexDivRow>
 							<Body size={isMobile ? 'small' : 'medium'} color="preview">
-								Min. $50 sUSD required to trade
+								{t('futures.market.trade.trade-balance.min-margin')}
 							</Body>
 						</FlexDivCol>
 						<Button
@@ -85,7 +89,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 							<FlexDivCol rowGap="5px">
 								<FlexDivRow style={{ width: '200px' }}>
 									<Body size={'medium'} color="secondary">
-										Available Margin:
+										{t('futures.market.trade.trade-balance.available-margin')}:
 									</Body>
 									<NumericValue size={'medium'} weight="bold">
 										{accountType === 'isolated_margin'
@@ -96,13 +100,19 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 								{accountType === 'cross_margin' && lockedMargin.gt(0) && (
 									<FlexDivRow style={{ width: '200px' }}>
 										<Body size={'medium'} color="secondary">
-											Locked Margin:
+											{t('futures.market.trade.trade-balance.locked-margin')}:
 										</Body>
 										<FlexDivRowCentered columnGap="5px">
 											<NumericValue size={'medium'} weight="bold" color="secondary">
 												{formatDollars(lockedMargin)}
 											</NumericValue>
-											<HelpIcon />
+											<Tooltip
+												position="fixed"
+												content={t('futures.market.trade.trade-balance.tooltip')}
+												width="200px !important"
+											>
+												<HelpIcon />
+											</Tooltip>
 										</FlexDivRowCentered>
 									</FlexDivRow>
 								)}
@@ -111,7 +121,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 							<FlexDivRow columnGap="10px" justifyContent="flex-start">
 								<FlexDivCol>
 									<Body size={'medium'} color="secondary">
-										Available Margin
+										{t('futures.market.trade.trade-balance.available-margin')}
 									</Body>
 									<NumericValue size={'large'} weight="bold">
 										{accountType === 'isolated_margin'
@@ -123,9 +133,15 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 									<StyledFlexDivCol>
 										<FlexDivRowCentered columnGap="5px">
 											<Body size={'medium'} color="secondary">
-												Locked Margin
+												{t('futures.market.trade.trade-balance.locked-margin')}
 											</Body>
-											<HelpIcon />
+											<Tooltip
+												position="fixed"
+												content={t('futures.market.trade.trade-balance.tooltip')}
+												width="280px"
+											>
+												<HelpIcon />
+											</Tooltip>
 										</FlexDivRowCentered>
 										<NumericValue size={'large'} weight="bold" color="secondary">
 											{formatDollars(lockedMargin)}
@@ -154,11 +170,11 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 							}
 						/>
 						{expanded ? (
-							<Pill roundedCorner={false}>
+							<Pill roundedCorner={false} onClick={onClickContainer}>
 								<HideIcon />
 							</Pill>
 						) : (
-							<Pill roundedCorner={false}>
+							<Pill roundedCorner={false} onClick={onClickContainer}>
 								<ExpandIcon />
 							</Pill>
 						)}
