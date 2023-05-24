@@ -118,7 +118,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	truncation =
 		truncateThreshold && !truncation
 			? thresholds.find(
-					(threshold) => weiValue.gt(threshold.value) && weiValue.gte(truncateThreshold)
+					(threshold) => weiValue.gte(threshold.value) && weiValue.gte(truncateThreshold)
 			  )
 			: truncation;
 
