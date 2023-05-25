@@ -7,7 +7,6 @@ import styled, { css } from 'styled-components';
 import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
-import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import { zIndex } from 'constants/ui';
@@ -28,7 +27,7 @@ import { getDisplayAsset } from 'utils/futures';
 
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import MarketsDropdown from '../Trade/MarketsDropdown';
-import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
+import ChartToggle from './ChartToggle';
 import HoursToggle from './HoursToggle';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
@@ -72,10 +71,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	return (
 		<MainContainer mobile={mobile}>
 			<MarketsDropdown mobile={mobile} />
-			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
 			{SelectedMarketDetailsView}
 			{!mobile && (
 				<ShowHistoryContainer>
+					<ChartToggle />
 					<Checkbox
 						id="history"
 						label="Show History"
@@ -327,10 +326,12 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 
 const ShowHistoryContainer = styled.div`
 	display: flex;
+	align-items: center;
 	z-index: ${zIndex.HEADER};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	min-height: 50px;
+	padding-left: 8px;
 	padding-right: 20px;
 `;
 

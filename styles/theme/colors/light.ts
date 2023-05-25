@@ -163,6 +163,18 @@ const newTheme = {
 			},
 		},
 	},
+	pencilIcon: {
+		color: common.palette.yellow.y900,
+		hover: {
+			color: common.palette.yellow.y500,
+		},
+	},
+	fundingChart: {
+		tooltip: {
+			background: common.palette.neutral.n40,
+			border: common.palette.neutral.n50,
+		},
+	},
 };
 
 const lightTheme = {

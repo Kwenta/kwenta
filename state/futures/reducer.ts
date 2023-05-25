@@ -46,6 +46,7 @@ import {
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
 	fetchCombinedMarginTransfers,
+	fetchFundingRatesHistory,
 } from './actions';
 import {
 	CrossMarginAccountData,
@@ -73,6 +74,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
 	selectedInputHours: 1,
+	selectedChart: 'price',
 	preferences: {
 		showHistory: true,
 	},
@@ -99,6 +101,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
+		historicalFundingRates: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -168,6 +171,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
+	historicalFundingRates: {},
 };
 
 const futuresSlice = createSlice({
@@ -373,6 +377,9 @@ const futuresSlice = createSlice({
 		},
 		setShowTradeHistory: (state, action: PayloadAction<boolean>) => {
 			state.preferences.showHistory = action.payload;
+		},
+		setSelectedChart: (state, action: PayloadAction<'price' | 'funding'>) => {
+			state.selectedChart = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -720,6 +727,17 @@ const futuresSlice = createSlice({
 				status: FetchStatus.Error,
 			};
 		});
+
+		// Fetch funding rates
+		builder.addCase(fetchFundingRatesHistory.rejected, (futuresState) => {
+			futuresState.queryStatuses.historicalFundingRates = {
+				error: 'Failed to fetch funding rates',
+				status: FetchStatus.Error,
+			};
+		});
+		builder.addCase(fetchFundingRatesHistory.fulfilled, (futuresState, { payload }) => {
+			futuresState.historicalFundingRates[payload.marketAsset] = payload.rates;
+		});
 	},
 });
 
@@ -765,6 +783,7 @@ export const {
 	setSLTPModalTakeProfit,
 	setTradePanelDrawerOpen,
 	setShowTradeHistory,
+	setSelectedChart,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

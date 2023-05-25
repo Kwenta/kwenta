@@ -7,7 +7,7 @@ import PositionChart from 'sections/futures/PositionChart';
 const PriceTab: React.FC = () => {
 	return (
 		<StyledPane noPadding>
-			<PositionChart mobile />
+			<PositionChart />
 		</StyledPane>
 	);
 };

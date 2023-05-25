@@ -25,6 +25,7 @@ import {
 	queryPositionHistory,
 	queryTrades,
 	queryCompletePositionHistory,
+	queryFundingRateHistory,
 } from 'sdk/queries/futures';
 import { NetworkId } from 'sdk/types/common';
 import { NetworkOverrideOptions } from 'sdk/types/common';
@@ -270,6 +271,14 @@ export default class FuturesService {
 		);
 
 		return positions;
+	}
+
+	public async getMarketFundingRatesHistory(
+		marketAsset: FuturesMarketAsset,
+		periodLength = PERIOD_IN_SECONDS.TWO_WEEKS
+	) {
+		const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
+		return queryFundingRateHistory(this.sdk, marketAsset, minTimestamp);
 	}
 
 	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {

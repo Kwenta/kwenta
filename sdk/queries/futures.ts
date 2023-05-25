@@ -9,7 +9,7 @@ import {
 	getFuturesTrades,
 } from 'queries/futures/subgraph';
 import { SMART_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
-import { FuturesMarketKey } from 'sdk/types/futures';
+import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
 import { mapMarginTransfers, mapSmartMarginTransfers } from 'sdk/utils/futures';
 
 export const queryAccountsFromSubgraph = async (
@@ -235,4 +235,36 @@ export const queryFuturesTrades = (
 			trackingCode: true,
 		}
 	);
+};
+
+export const queryFundingRateHistory = async (
+	sdk: KwentaSDK,
+	marketAsset: FuturesMarketAsset,
+	minTimestamp: number,
+	period: 'Hourly' | 'Daily' = 'Hourly'
+) => {
+	const response = await request(
+		sdk.futures.futuresGqlEndpoint,
+		gql`
+			query fundingRateUpdate(
+				$marketAsset: Bytes!
+				$minTimestamp: BigInt!
+				$period: FundingRatePeriodType!
+			) {
+				fundingRatePeriods(
+					where: { asset: $marketAsset, timestamp_gt: $minTimestamp, period: $period }
+					first: 1000
+				) {
+					timestamp
+					fundingRate
+				}
+			}
+		`,
+		{ marketAsset: formatBytes32String(marketAsset), minTimestamp, period }
+	);
+
+	return response.fundingRatePeriods.map((x: any) => ({
+		timestamp: Number(x.timestamp) * 1000,
+		fundingRate: Number(x.fundingRate),
+	}));
 };

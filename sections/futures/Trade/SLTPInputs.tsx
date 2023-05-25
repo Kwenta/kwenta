@@ -121,7 +121,7 @@ export default function SLTPInputs() {
 						padding: '3px 5px',
 					}}
 				>
-					<StyledCaretDownIcon style={{ transform: [{ rotateY: '180deg' }] }} flip={showInputs} />
+					<StyledCaretDownIcon style={{ transform: [{ rotateY: '180deg' }] }} $flip={showInputs} />
 				</Button>
 			</ExpandRow>
 			{showInputs ? (

@@ -4,11 +4,9 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
-import Error from 'components/ErrorView';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
 import { selectSusdBalance } from 'state/balances/selectors';
-import { selectIsolatedTransferError } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
@@ -23,7 +21,6 @@ const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
 const SmartMarginOnboardModal: React.FC<Props> = memo(({ onDismiss }) => {
 	const { t } = useTranslation();
 
-	const txError = useAppSelector(selectIsolatedTransferError);
 	const susdBalance = useAppSelector(selectSusdBalance);
 
 	return (
@@ -50,10 +47,6 @@ const SmartMarginOnboardModal: React.FC<Props> = memo(({ onDismiss }) => {
 			<MinimumAmountDisclaimer>
 				{t('futures.market.trade.margin.modal.deposit.disclaimer')}
 			</MinimumAmountDisclaimer>
-
-			{txError && (
-				<Error containerStyle={{ margin: '16px 0 0 0' }} message={txError} formatter="revert" />
-			)}
 		</StyledBaseModal>
 	);
 });
