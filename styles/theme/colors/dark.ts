@@ -145,6 +145,9 @@ const newTheme = {
 			},
 		},
 	},
+	checkBox: {
+		border: common.palette.neutral.n400,
+	},
 	tabs: {
 		position: {
 			background: common.palette.neutral.n1100,
@@ -157,6 +160,12 @@ const newTheme = {
 				color: common.palette.red.r300,
 				background: common.palette.alpha.red5,
 			},
+		},
+	},
+	fundingChart: {
+		tooltip: {
+			background: common.palette.neutral.n700,
+			border: common.palette.neutral.n600,
 		},
 	},
 };

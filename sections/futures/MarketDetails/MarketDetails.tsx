@@ -1,18 +1,22 @@
 import { wei } from '@synthetixio/wei';
 import React, { memo, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
+import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
+import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
+import { zIndex } from 'constants/ui';
 import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
-	selectSelectedInpuHours,
+	selectSelectedInputHours,
 	selectShowHistory,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
@@ -25,6 +29,8 @@ import { getDisplayAsset } from 'utils/futures';
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import MarketsDropdown from '../Trade/MarketsDropdown';
 import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
+import ChartToggle from './ChartToggle';
+import HoursToggle from './HoursToggle';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
 
@@ -32,24 +38,46 @@ type MarketDetailsProps = {
 	mobile?: boolean;
 };
 
+interface OpenInterestDetailProps extends MarketDetailsProps {
+	isLong?: boolean;
+}
+
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const dispatch = useAppDispatch();
 	const showHistory = useAppSelector(selectShowHistory);
+
+	const SelectedMarketDetailsView = mobile ? (
+		<MarketDetailsContainer mobile={mobile}>
+			<IndexPriceDetail mobile={mobile} />
+			<MarketSkew mobile={mobile} />
+			<HourlyFundingDetail mobile={mobile} />
+			<MarketPriceDetail mobile={mobile} />
+			<DailyChangeDetail mobile={mobile} />
+			<FlexDivRow columnGap="25px">
+				<OpenInterestDetail isLong mobile={mobile} />
+				<OpenInterestDetail mobile={mobile} />
+			</FlexDivRow>
+		</MarketDetailsContainer>
+	) : (
+		<MarketDetailsContainer>
+			<MarketPriceDetail />
+			<IndexPriceDetail />
+			<DailyChangeDetail />
+			<OpenInterestDetail isLong />
+			<OpenInterestDetail />
+			<MarketSkew />
+			<HourlyFundingDetail />
+		</MarketDetailsContainer>
+	);
+
 	return (
 		<MainContainer mobile={mobile}>
 			<MarketsDropdown mobile={mobile} />
 			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
-			<MarketDetailsContainer mobile={mobile}>
-				{!mobile && <MarketPriceDetail />}
-				<IndexPriceDetail mobile={mobile} />
-				{!mobile && <DailyChangeDetail />}
-				{!mobile && <OpenInterestLongDetail />}
-				{!mobile && <OpenInterestShortDetail />}
-				<MarketSkew mobile={mobile} />
-				<HourlyFundingDetail mobile={mobile} />
-			</MarketDetailsContainer>
+			{SelectedMarketDetailsView}
 			{!mobile && (
 				<ShowHistoryContainer>
+					<ChartToggle />
 					<Checkbox
 						id="history"
 						label="Show History"
@@ -64,11 +92,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	);
 };
 
-const MarketPriceDetail = memo(() => {
+const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo);
 
 	return (
 		<MarketDetail
+			mobile={mobile}
 			color={getColorFromPriceInfo(markPrice)}
 			value={markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
 			dataKey={MarketDataKey.marketPrice}
@@ -88,7 +117,7 @@ const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	);
 });
 
-const DailyChangeDetail = memo(() => {
+const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo);
 	const indexPriceWei = indexPrice?.price ?? zeroBN;
 	const pastRates = useAppSelector(selectPreviousDayPrices);
@@ -97,6 +126,7 @@ const DailyChangeDetail = memo(() => {
 
 	return (
 		<MarketDetail
+			mobile={mobile}
 			dataKey={MarketDataKey.dailyChange}
 			value={
 				indexPriceWei.gt(0) && pastPrice?.rate
@@ -120,8 +150,8 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
-	const fundingHours = useAppSelector(selectSelectedInpuHours);
-
+	const fundingHours = useAppSelector(selectSelectedInputHours);
+	const targetContainer = document.getElementById('mobile-view') as any;
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
 		fundingRate,
 		fundingHours,
@@ -133,24 +163,8 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
 			mobile={mobile}
-			toggle
-		/>
-	);
-});
-
-const OpenInterestLongDetail = memo(() => {
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const oiCap = marketInfo?.marketLimitUsd
-		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
-		: null;
-
-	return (
-		<MarketDetail
-			dataKey={MarketDataKey.openInterestLong}
-			value={
-				marketInfo?.openInterest.longUSD
-					? `${formatDollars(marketInfo?.openInterest.longUSD, { truncate: true })}/${oiCap}`
-					: NO_VALUE
+			extra={
+				mobile ? targetContainer && createPortal(<HoursToggle />, targetContainer) : <HoursToggle />
 			}
 		/>
 	);
@@ -161,6 +175,7 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 
 	return (
 		<MarketDetail
+			mobile={mobile}
 			dataKey={MarketDataKey.skew}
 			value={
 				<>
@@ -185,20 +200,36 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	);
 });
 
-const OpenInterestShortDetail = memo(() => {
+const OpenInterestDetail: React.FC<OpenInterestDetailProps> = memo(({ mobile, isLong }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const oiCap = marketInfo?.marketLimitUsd
-		? formatDollars(marketInfo?.marketLimitUsd, { truncate: true })
+		? formatDollars(marketInfo?.marketLimitUsd, { truncateOver: 1e3 })
 		: null;
+	const openInterestType = isLong ? 'longUSD' : 'shortUSD';
+	const formattedUSD = marketInfo?.openInterest[openInterestType]
+		? formatDollars(marketInfo?.openInterest[openInterestType], { truncateOver: 1e3 })
+		: NO_VALUE;
+
+	const mobileValue = (
+		<FlexDivCol>
+			<div>{formattedUSD}</div>
+			<Body mono size="small" color="secondary" weight="bold">
+				{oiCap}
+			</Body>
+		</FlexDivCol>
+	);
+
+	const desktopValue = `${formattedUSD}/${oiCap}`;
+
+	const dataKey = `openInterest${isLong ? 'Long' : 'Short'}${
+		mobile ? 'Mobile' : ''
+	}` as keyof typeof MarketDataKey;
 
 	return (
 		<MarketDetail
-			dataKey={MarketDataKey.openInterestShort}
-			value={
-				marketInfo?.openInterest.shortUSD
-					? `${formatDollars(marketInfo?.openInterest.shortUSD, { truncate: true })}/${oiCap}`
-					: NO_VALUE
-			}
+			mobile={mobile}
+			dataKey={MarketDataKey[dataKey]}
+			value={mobile ? mobileValue : desktopValue}
 		/>
 	);
 });
@@ -209,6 +240,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	align-items: center;
 	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
+	overflow-y: visible;
 
 	${(props) =>
 		props.mobile &&
@@ -222,25 +254,25 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
 	gap: 26px;
-	height: 100%;
 	padding: 10px 45px 10px 15px;
-	box-sizing: border-box;
 	overflow-x: scroll;
 	scrollbar-width: none;
-
 	display: flex;
 	align-items: center;
-
-	box-sizing: border-box;
 
 	& > div {
 		margin-right: 30px;
 	}
 
 	${media.lessThan('xl')`
+		gap: 10px;
 		& > div {
 			margin-right: 10px;
 		}
+	`}
+
+	${media.lessThan('lg')`
+		gap: 6px;
 	`}
 
 	.heading, .value {
@@ -248,8 +280,6 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	}
 
 	${(props) => css`
-		border-left: ${props.theme.colors.selectedTheme.border};
-
 		.heading {
 			color: ${props.theme.colors.selectedTheme.text.label};
 		}
@@ -273,13 +303,23 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		${props.mobile &&
 		css`
 			height: auto;
+			width: 100%;
 			padding: 15px;
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
-			grid-gap: 20px 0;
-			width: 100%;
-			border-left: none;
+			grid-template-rows: 1fr 1fr;
+			grid-gap: 15px 25px;
+			justify-items: start;
+			align-items: start;
+			justify-content: start;
+			${media.lessThan('md')`
+				margin: 0px;
+				& > div {
+					margin-right: 30px;
+				}
+			`}
 
+			border-left: none;
 			.heading {
 				margin-bottom: 2px;
 			}
@@ -288,7 +328,14 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 `;
 
 const ShowHistoryContainer = styled.div`
-	margin: 0 20px;
+	display: flex;
+	align-items: center;
+	z-index: ${zIndex.HEADER};
+	background-color: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
+	min-height: 50px;
+	padding-left: 8px;
+	padding-right: 20px;
 `;
 
 export default MarketDetails;

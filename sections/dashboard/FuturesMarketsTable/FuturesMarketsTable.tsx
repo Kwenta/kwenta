@@ -216,13 +216,13 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 										<OpenInterestContainer>
 											<Currency.Price
 												price={cellProps.row.original.longInterest}
-												truncate
 												colorType="positive"
+												formatOptions={{ truncateOver: 1e3 }}
 											/>
 											<Currency.Price
 												price={cellProps.row.original.shortInterest}
-												truncate
 												colorType="negative"
+												formatOptions={{ truncateOver: 1e3 }}
 											/>
 										</OpenInterestContainer>
 									);
@@ -248,7 +248,12 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								),
 								accessor: 'dailyVolume',
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
-									return <Currency.Price price={cellProps.row.original.volume} truncate />;
+									return (
+										<Currency.Price
+											price={cellProps.row.original.volume}
+											formatOptions={{ truncateOver: 1e3 }}
+										/>
+									);
 								},
 								width: 125,
 								sortable: true,
@@ -320,7 +325,10 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
-										<Currency.Price price={cellProps.row.original.openInterest} truncate />
+										<Currency.Price
+											price={cellProps.row.original.openInterest}
+											formatOptions={{ truncateOver: 1e3 }}
+										/>
 										<div>
 											<ChangePercent
 												showArrow={false}
@@ -357,7 +365,10 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 											/>
 										</div>
 										<div>
-											<Currency.Price price={cellProps.row.original.volume ?? 0} truncate />
+											<Currency.Price
+												price={cellProps.row.original.volume ?? 0}
+												formatOptions={{ truncateOver: 1e3 }}
+											/>
 										</div>
 									</div>
 								);

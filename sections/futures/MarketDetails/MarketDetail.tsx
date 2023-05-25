@@ -8,7 +8,6 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
-import HoursToggle from './HoursToggle';
 import { isMarketDataKey, marketDataKeyMap } from './utils';
 
 type MarketDetailProps = {
@@ -16,49 +15,49 @@ type MarketDetailProps = {
 	dataKey: string;
 	color?: string;
 	value: string | ReactElement;
-	toggle?: boolean;
+	extra?: ReactElement;
 };
 
-const MarketDetail: FC<MarketDetailProps> = memo(
-	({ mobile, dataKey, color, value, toggle = false }) => {
-		const { t } = useTranslation();
-		const marketInfo = useAppSelector(selectMarketInfo);
-		const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
+const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, value, extra }) => {
+	const { t } = useTranslation();
+	const marketInfo = useAppSelector(selectMarketInfo);
+	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
-		const contentSuffix = useMemo(() => {
-			if (dataKey === marketInfo?.marketName) {
-				return 'market-key';
-			} else if (isMarketDataKey(dataKey)) {
-				return marketDataKeyMap[dataKey];
-			} else {
-				return '';
-			}
-		}, [dataKey, marketInfo]);
+	const contentSuffix = useMemo(() => {
+		if (dataKey === marketInfo?.marketName) {
+			return 'market-key';
+		} else if (isMarketDataKey(dataKey)) {
+			return marketDataKeyMap[dataKey];
+		} else {
+			return '';
+		}
+	}, [dataKey, marketInfo]);
 
-		return (
-			<FlexDivRowCentered>
-				<MarketDetailsTooltip
-					key={dataKey}
-					mobile={mobile}
-					content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
-				>
-					<WithCursor cursor="help">
-						<Body className="heading">{dataKey}</Body>
-						<FlexDivRowCentered>
-							<MarketDetailValue
-								value={value}
-								color={color}
-								mobile={mobile}
-								pausedClass={pausedClass}
-							/>
-						</FlexDivRowCentered>
-					</WithCursor>
-				</MarketDetailsTooltip>
-				{toggle && <HoursToggle />}
-			</FlexDivRowCentered>
-		);
-	}
-);
+	return (
+		<FlexDivRowCentered>
+			<MarketDetailsTooltip
+				key={dataKey}
+				mobile={mobile}
+				content={t(`exchange.market-details-card.tooltips.${contentSuffix}`)}
+			>
+				<WithCursor cursor="help">
+					<Body size={mobile ? 'small' : 'medium'} className="heading">
+						{dataKey}
+					</Body>
+					<FlexDivRowCentered>
+						<MarketDetailValue
+							value={value}
+							color={color}
+							mobile={mobile}
+							pausedClass={pausedClass}
+						/>
+					</FlexDivRowCentered>
+				</WithCursor>
+			</MarketDetailsTooltip>
+			<div style={{ marginBottom: '5px' }}>{extra}</div>
+		</FlexDivRowCentered>
+	);
+});
 
 export default MarketDetail;
 
@@ -91,7 +90,7 @@ export const MarketDetailValue = ({
 		as="span"
 		mono
 		weight="bold"
-		size={mobile ? 'medium' : 'large'}
+		size={mobile ? 'small' : 'large'}
 		className={`value ${color || ''} ${pausedClass}`}
 	>
 		{value}

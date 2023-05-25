@@ -9,7 +9,7 @@ export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
 
 export const DEFAULT_NUMBER_OF_TRADES = 16;
 
-export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/api`;
+export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/version/0.0.9/api`;
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-perps';
@@ -374,6 +374,86 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 		pythIds: {
 			mainnet: '0xa19d04ac696c7a6616d291c7e5d1377cc8be437c327b75adb5dc1bad745fcae8',
 			testnet: '0x94bce4aee88fdfa5b58d81090bd6b3784717fa6df85419d9f04433bb3d615d5c',
+		},
+	},
+	[FuturesMarketKey.sSUIPERP]: {
+		key: FuturesMarketKey.sSUIPERP,
+		asset: FuturesMarketAsset.SUI,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x23d7315113f5b1d3ba7a83604c44b94d79f4fd69af77f804fc7f920a6dc65744',
+			testnet: '0x50c67b3fd225db8912a424dd4baed60ffdde625ed2feaaf283724f9608fea266',
+		},
+	},
+	[FuturesMarketKey.sPEPEPERP]: {
+		key: FuturesMarketKey.sPEPEPERP,
+		asset: FuturesMarketAsset.PEPE,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xd69731a2e74ac1ce884fc3890f7ee324b6deb66147055249568869ed700882e4',
+			testnet: '0xed82efbfade01083ffa8f64664c86af39282c9f084877066ae72b635e77718f0',
+		},
+	},
+	[FuturesMarketKey.sBLURPERP]: {
+		key: FuturesMarketKey.sBLURPERP,
+		asset: FuturesMarketAsset.BLUR,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x856aac602516addee497edf6f50d39e8c95ae5fb0da1ed434a8c2ab9c3e877e9',
+			testnet: '0xbe2dbc97659e92bf07462aeda414195246515e6b17abd6997f0ab2297cb03e1d',
+		},
+	},
+	[FuturesMarketKey.sXRPPERP]: {
+		key: FuturesMarketKey.sXRPPERP,
+		asset: FuturesMarketAsset.XRP,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xec5d399846a9209f3fe5881d70aae9268c94339ff9817e8d18ff19fa05eea1c8',
+			testnet: '0xbfaf7739cb6fe3e1c57a0ac08e1d931e9e6062d476fa57804e165ab572b5b621',
+		},
+	},
+	[FuturesMarketKey.sDOTPERP]: {
+		key: FuturesMarketKey.sDOTPERP,
+		asset: FuturesMarketAsset.DOT,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xca3eed9b267293f6595901c734c7525ce8ef49adafe8284606ceb307afa2ca5b',
+			testnet: '0x36032e522b810babd8e3148e9f0d588af9e95e93b97ffb58566b837fdbd31f7f',
+		},
+	},
+	[FuturesMarketKey.sTRXPERP]: {
+		key: FuturesMarketKey.sTRXPERP,
+		asset: FuturesMarketAsset.TRX,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x67aed5a24fdad045475e7195c98a98aea119c763f272d4523f5bac93a4f33c2b',
+			testnet: '0x013317758a5b499650d72edcd7ba12bb5cc54ce9434196b607fa5e01e0f7797b',
+		},
+	},
+	[FuturesMarketKey.sFLOKIPERP]: {
+		key: FuturesMarketKey.sFLOKIPERP,
+		asset: FuturesMarketAsset.FLOKI,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x6b1381ce7e874dc5410b197ac8348162c0dd6c0d4c9cd6322672d6c2b1d58293',
+			testnet: '0x57596fe1a697014b962ac9e693dee99c4bb01d6c5eca271a1a26ad475a92cdbd',
+		},
+	},
+	[FuturesMarketKey.sINJPERP]: {
+		key: FuturesMarketKey.sINJPERP,
+		asset: FuturesMarketAsset.INJ,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x7a5bc1d2b56ad029048cd63964b3ad2776eadf812edc1a43a31406cb54bff592',
+			testnet: '0x2d9315a88f3019f8efa88dfe9c0f0843712da0bac814461e27733f6b83eb51b3',
 		},
 	},
 };

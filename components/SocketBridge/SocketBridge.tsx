@@ -6,7 +6,8 @@ import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
 import { fetchBalances } from 'state/balances/actions';
-import { useAppDispatch } from 'state/hooks';
+import { selectFuturesType } from 'state/futures/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	customizeSocket,
 	socketDefaultChains,
@@ -18,6 +19,7 @@ const SocketBridge = () => {
 	const { activeChain, signer } = Connector.useContainer();
 	const dispatch = useAppDispatch();
 	const customize = customizeSocket(useTheme());
+	const accountType = useAppSelector(selectFuturesType);
 	const onBridgeSuccess = useCallback(() => {
 		dispatch(fetchBalances());
 	}, [dispatch]);
@@ -40,9 +42,11 @@ const SocketBridge = () => {
 				enableSameChainSwaps={true}
 				onBridgeSuccess={onBridgeSuccess}
 			/>
-			<StyledDiv>
-				<ArrowIcon />
-			</StyledDiv>
+			{accountType === 'isolated_margin' && (
+				<StyledDiv>
+					<ArrowIcon />
+				</StyledDiv>
+			)}
 		</BridgeContainer>
 	);
 };

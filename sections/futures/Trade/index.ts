@@ -1,1 +1,1 @@
-export { default } from './TradeIsolatedMargin';
+export { default } from './TradePanel';

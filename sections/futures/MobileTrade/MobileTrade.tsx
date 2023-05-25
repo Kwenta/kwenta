@@ -14,7 +14,9 @@ const MobileTrade: React.FC = () => {
 	const { walletAddress } = Connector.useContainer();
 	return (
 		<>
-			<MarketDetails mobile />
+			<MobileContainer id="mobile-view">
+				<MarketDetails mobile />
+			</MobileContainer>
 			<OverviewTabs />
 			{walletAddress && !isL2 ? (
 				<SwitchNetworkContainer>
@@ -26,6 +28,10 @@ const MobileTrade: React.FC = () => {
 		</>
 	);
 };
+
+const MobileContainer = styled.div`
+	max-height: 190px;
+`;
 
 const SwitchNetworkContainer = styled.div`
 	padding: 15px;

@@ -7,10 +7,11 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { FuturesFilledPosition, FuturesMarket, PositionSide } from 'sdk/types/futures';
+import { getMarketName } from 'sdk/utils/futures';
 import { selectMarkPrices } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatNumber } from 'utils/formatters/number';
-import { MarketKeyByAsset, getDisplayAsset, isDecimalFour } from 'utils/futures';
+import { MarketKeyByAsset, isDecimalFour } from 'utils/futures';
 
 type MobilePositionRowProps = {
 	row: {
@@ -31,7 +32,7 @@ const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) =>
 				<div>
 					<OpenPositionSize>
 						{formatNumber(row.position?.size ?? 0)}
-						<OpenPositionMarketName>{getDisplayAsset(row.market?.asset)}</OpenPositionMarketName>
+						<OpenPositionMarketName>{getMarketName(row.market?.asset)}</OpenPositionMarketName>
 					</OpenPositionSize>
 					<OpenPositionSide side={row.position?.side ?? PositionSide.LONG}>
 						<span className="side">{row.position?.side ?? PositionSide.LONG}</span>{' '}

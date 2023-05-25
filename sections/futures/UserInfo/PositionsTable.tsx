@@ -17,7 +17,7 @@ import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { getMarketName } from 'sdk/utils/futures';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import { FuturesPositionModalType } from 'state/app/types';
@@ -140,7 +140,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 										}
 									>
 										<TableMarketDetails
-											marketName={getDisplayAsset(cellProps.row.original.market.asset) ?? ''}
+											marketName={getMarketName(cellProps.row.original.market.asset) ?? ''}
 											marketKey={cellProps.row.original.market.marketKey}
 										/>
 									</MarketDetailsContainer>
@@ -166,10 +166,6 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							),
 							accessor: 'notionalValue',
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
-								const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-									? { truncate: true }
-									: {};
-
 								return (
 									<ColWithButton>
 										<div>
@@ -181,8 +177,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											</div>
 											<Currency.Price
 												price={cellProps.row.original.position.notionalValue}
-												formatOptions={formatOptions}
 												colorType="secondary"
+												formatOptions={{ truncateOver: 1e6 }}
 											/>
 										</div>
 										<Spacer width={10} />

@@ -190,7 +190,13 @@ export default class PricesService {
 			}
 		);
 		const prices = (response ? Object.values(response).flat() : []) as SynthPrice[];
-		return prices;
+
+		//TODO: remove this once the rates are fixed
+		return prices.map((price) =>
+			price.synth === MarketAssetByKey[FuturesMarketKey.sPEPEPERP]
+				? { ...price, rate: wei(price.rate.toString()).div(1e10).toString() }
+				: price
+		) as SynthPrice[];
 	}
 
 	public async getPythPriceUpdateData(marketKey: FuturesMarketKey) {

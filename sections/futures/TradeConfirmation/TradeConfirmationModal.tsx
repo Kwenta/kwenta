@@ -1,5 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -14,6 +14,7 @@ import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
+import { submitCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -26,7 +27,7 @@ import {
 	selectKeeperDepositExceedsBal,
 	selectNewTradeHasSlTp,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
 	zeroBN,
 	formatCurrency,
@@ -36,24 +37,22 @@ import {
 	stripZeros,
 } from 'utils/formatters/number';
 
+import ConfirmSlippage from './ConfirmSlippage';
 import TradeConfirmationRow from './TradeConfirmationRow';
 import TradeConfirmationSummary from './TradeConfirmationSummary';
 
 type Props = {
 	gasFee?: Wei | null;
-	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	executionFee: Wei;
 	errorMessage?: string | null | undefined;
 	isSubmitting?: boolean;
 	allowanceValid?: boolean;
 	onApproveAllowance: () => any;
-	onConfirmOrder: () => any;
 	onDismiss: () => void;
 };
 
 export default function TradeConfirmationModal({
-	tradeFee,
 	gasFee,
 	keeperFee,
 	executionFee,
@@ -61,10 +60,10 @@ export default function TradeConfirmationModal({
 	isSubmitting,
 	allowanceValid,
 	onApproveAllowance,
-	onConfirmOrder,
 	onDismiss,
 }: Props) {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
@@ -76,8 +75,14 @@ export default function TradeConfirmationModal({
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal);
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
 	const hasSlTp = useAppSelector(selectNewTradeHasSlTp);
+	const [overridePriceProtection, setOverridePriceProtection] = useState(false);
 
-	const totalFee = tradeFee.add(executionFee);
+	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch]);
+
+	const totalFee = useMemo(() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee, [
+		potentialTradeDetails?.fee,
+		executionFee,
+	]);
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(zeroBN)) {
@@ -140,9 +145,7 @@ export default function TradeConfirmationModal({
 				label: 'price impact',
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
 				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
-				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
-					? 'red'
-					: '',
+				color: positionDetails?.exceedsPriceProtection ? 'red' : '',
 			},
 			{
 				label: 'total fee',
@@ -189,9 +192,19 @@ export default function TradeConfirmationModal({
 				depositAmount: stripZeros(keeperFee?.toString()),
 			});
 		}
+		if (positionDetails?.exceedsPriceProtection && !overridePriceProtection) {
+			return t('futures.market.trade.confirmation.modal.disabled-exceeds-price-protection');
+		}
 		if (positionDetails?.margin.lt(MIN_MARGIN_AMOUNT))
 			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
-	}, [positionDetails?.margin, t, showEthBalWarning, keeperFee]);
+	}, [
+		positionDetails?.margin,
+		t,
+		showEthBalWarning,
+		keeperFee,
+		overridePriceProtection,
+		positionDetails?.exceedsPriceProtection,
+	]);
 
 	const buttonText = allowanceValid
 		? t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
@@ -240,6 +253,12 @@ export default function TradeConfirmationModal({
 					);
 				})}
 			</RowsContainer>
+			{positionDetails?.exceedsPriceProtection && (
+				<ConfirmSlippage
+					checked={overridePriceProtection}
+					onChangeChecked={(checked) => setOverridePriceProtection(checked)}
+				/>
+			)}
 			<ConfirmTradeButton
 				data-testid="trade-open-position-confirm-order-button"
 				variant={isSubmitting ? 'flat' : leverageSide}
