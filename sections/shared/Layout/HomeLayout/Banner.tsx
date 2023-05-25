@@ -1,35 +1,40 @@
-import { useRouter } from 'next/router';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { BANNER_ENABLED, BANNER_TEXT } from 'constants/announcement';
-import ROUTES from 'constants/routes';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { MILLISECONDS_PER_DAY } from 'sdk/constants/period';
 import media from 'styles/media';
+import localStore from 'utils/localStore';
 
 const Banner = memo(() => {
-	const router = useRouter();
-	const currentMarket = useAppSelector(selectMarketAsset);
+	const currentTime = new Date().getTime();
+	const storedTime: number = localStore.get('bannerIsClicked') || 0;
+	const [isClicked, setIsClicked] = useState(currentTime - storedTime < 3 * MILLISECONDS_PER_DAY);
 
-	const switchToSM = useCallback(() => {
-		router.push(ROUTES.Markets.MarketPair(currentMarket, 'cross_margin'));
-	}, [currentMarket, router]);
+	useEffect(() => {
+		if (isClicked) {
+			localStore.set('bannerIsClicked', currentTime);
+		}
+	}, [isClicked, currentTime]);
 
-	if (!BANNER_ENABLED) return null;
+	const handleClick = useCallback(() => {
+		setIsClicked(true);
+	}, []);
+
+	if (!BANNER_ENABLED || isClicked) return null;
 
 	return (
 		<>
 			<DesktopOnlyView>
-				<FuturesBannerContainer onClick={() => switchToSM()}>
+				<FuturesBannerContainer onClick={handleClick}>
 					<FuturesBannerLinkWrapper>
 						<FuturesLink>{BANNER_TEXT}</FuturesLink>
 					</FuturesBannerLinkWrapper>
 				</FuturesBannerContainer>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<FuturesBannerContainer onClick={() => switchToSM()}>
+				<FuturesBannerContainer onClick={handleClick}>
 					<FuturesLink>{BANNER_TEXT}</FuturesLink>
 				</FuturesBannerContainer>
 			</MobileOrTabletView>
