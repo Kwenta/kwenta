@@ -162,6 +162,12 @@ const newTheme = {
 			},
 		},
 	},
+	pencilIcon: {
+		color: common.palette.yellow.y500,
+		hover: {
+			color: common.palette.yellow.y900,
+		},
+	},
 	fundingChart: {
 		tooltip: {
 			background: common.palette.neutral.n700,
