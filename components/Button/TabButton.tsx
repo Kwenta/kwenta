@@ -138,7 +138,7 @@ const sharedStyle = css<{
 	}
 
 	.detail {
-		color: ${(props) => props.theme.colors.selectedTheme[props.active ? 'gold' : 'gray']};
+		color: ${(props) => props.theme.colors.selectedTheme[props.active ? 'yellow' : 'gray']};
 		margin-top: 4px;
 		font-size: 18px;
 	}
