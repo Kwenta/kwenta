@@ -2,8 +2,9 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { BANNER_ENABLED, BANNER_TEXT } from 'constants/announcement';
+import { BANNER_ENABLED, BANNER_LINK_URL, BANNER_TEXT } from 'constants/announcement';
 import { MILLISECONDS_PER_DAY } from 'sdk/constants/period';
+import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover';
 import media from 'styles/media';
 import localStore from 'utils/localStore';
 
@@ -18,24 +19,37 @@ const Banner = memo(() => {
 		}
 	}, [isClicked, currentTime]);
 
-	const handleClick = useCallback(() => {
+	const handleDismiss = useCallback((e) => {
 		setIsClicked(true);
+		e.stopPropagation();
 	}, []);
+
+	const openDetails = useCallback(
+		() => window.open(BANNER_LINK_URL, '_blank', 'noopener noreferrer'),
+		[]
+	);
 
 	if (!BANNER_ENABLED || isClicked) return null;
 
 	return (
 		<>
 			<DesktopOnlyView>
-				<FuturesBannerContainer onClick={handleClick}>
+				<FuturesBannerContainer onClick={openDetails}>
 					<FuturesBannerLinkWrapper>
 						<FuturesLink>{BANNER_TEXT}</FuturesLink>
+						<CloseIconWithHover onClick={handleDismiss} style={{ marginTop: '3px' }} />
 					</FuturesBannerLinkWrapper>
 				</FuturesBannerContainer>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<FuturesBannerContainer onClick={handleClick}>
+				<FuturesBannerContainer onClick={openDetails}>
 					<FuturesLink>{BANNER_TEXT}</FuturesLink>
+					<CloseIconWithHover
+						width={12}
+						height={12}
+						onClick={handleDismiss}
+						style={{ flex: '0.08', marginTop: '5px' }}
+					/>
 				</FuturesBannerContainer>
 			</MobileOrTabletView>
 		</>
@@ -47,6 +61,10 @@ const FuturesLink = styled.div`
 	padding: 4px 9px;
 	border-radius: 20px;
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.text};
+	${media.lessThan('md')`
+		margin-right: 0px;
+		flex: 1;
+	`};
 `;
 
 const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
@@ -61,7 +79,7 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 	${media.lessThan('md')`
 		position: relative;
 		margin-bottom: 0px;
-		flex-direction: column;
+		flex-direction: row;
 		justify-content: center;
 		text-align: center;
 		background: transaparent;
