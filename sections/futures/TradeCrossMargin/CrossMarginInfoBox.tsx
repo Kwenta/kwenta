@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 
-import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import { InfoBoxRow } from 'components/InfoBox/InfoBox';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
@@ -10,9 +9,9 @@ import {
 	selectAvailableMarginInMarkets,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { PillButtonSpan } from 'styles/common';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
 
+import PencilButton from '../../shared/components/PencilButton';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
 
 function MarginInfoBox() {
@@ -32,12 +31,12 @@ function MarginInfoBox() {
 				valueNode={
 					<>
 						{keeperEthBal.gt(0) && (
-							<PillButtonSpan
-								padding={'4px 3px 1px 3px'}
+							<PencilButton
+								width={10}
+								height={10}
 								onClick={() => dispatch(setOpenModal('futures_withdraw_keeper_balance'))}
-							>
-								<WithdrawArrow width="12px" height="9px" />
-							</PillButtonSpan>
+								style={{ cursor: 'pointer', marginLeft: '10px' }}
+							/>
 						)}
 					</>
 				}

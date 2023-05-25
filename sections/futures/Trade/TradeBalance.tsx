@@ -1,9 +1,8 @@
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
-import PencilIcon from 'assets/svg/app/pencil.svg';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
@@ -24,6 +23,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
+import PencilButton from '../../shared/components/PencilButton';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import SmartMarginOnboardModal from './SmartMarginOnboardModal';
 
@@ -34,7 +34,6 @@ type TradeBalanceProps = {
 const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const theme = useTheme();
 
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets);
@@ -155,8 +154,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 
 				{(accountType === 'isolated_margin' || withdrawable.gt(0) || !isDepositRequired) && (
 					<FlexDivRowCentered columnGap="15px">
-						<PencilIcon
-							fill={theme.colors.selectedTheme.newTheme.text.preview}
+						<PencilButton
 							width={16}
 							height={16}
 							onClick={() =>
