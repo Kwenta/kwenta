@@ -18,25 +18,23 @@ const Banner = memo(() => {
 	}, [currentMarket, router]);
 
 	if (!BANNER_ENABLED) return null;
-	if (router.pathname === '/market' && router.query.accountType === 'isolated_margin') {
-		return (
-			<>
-				<DesktopOnlyView>
-					<FuturesBannerContainer onClick={() => switchToSM()}>
-						<FuturesBannerLinkWrapper>
-							<FuturesLink>{BANNER_TEXT}</FuturesLink>
-						</FuturesBannerLinkWrapper>
-					</FuturesBannerContainer>
-				</DesktopOnlyView>
-				<MobileOrTabletView>
-					<FuturesBannerContainer onClick={() => switchToSM()}>
+
+	return (
+		<>
+			<DesktopOnlyView>
+				<FuturesBannerContainer onClick={() => switchToSM()}>
+					<FuturesBannerLinkWrapper>
 						<FuturesLink>{BANNER_TEXT}</FuturesLink>
-					</FuturesBannerContainer>
-				</MobileOrTabletView>
-			</>
-		);
-	}
-	return null;
+					</FuturesBannerLinkWrapper>
+				</FuturesBannerContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<FuturesBannerContainer onClick={() => switchToSM()}>
+					<FuturesLink>{BANNER_TEXT}</FuturesLink>
+				</FuturesBannerContainer>
+			</MobileOrTabletView>
+		</>
+	);
 });
 
 const FuturesLink = styled.div`
