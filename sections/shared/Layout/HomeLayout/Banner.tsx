@@ -36,14 +36,20 @@ const Banner = memo(() => {
 			<DesktopOnlyView>
 				<FuturesBannerContainer onClick={openDetails}>
 					<FuturesBannerLinkWrapper>
-						<FuturesLink>{BANNER_TEXT}</FuturesLink>
+						<FuturesLink>
+							<strong>Important: </strong>
+							{BANNER_TEXT}
+						</FuturesLink>
 						<CloseIconWithHover onClick={handleDismiss} style={{ marginTop: '3px' }} />
 					</FuturesBannerLinkWrapper>
 				</FuturesBannerContainer>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<FuturesBannerContainer onClick={openDetails}>
-					<FuturesLink>{BANNER_TEXT}</FuturesLink>
+					<FuturesLink>
+						<strong>Important: </strong>
+						{BANNER_TEXT}
+					</FuturesLink>
 					<CloseIconWithHover
 						width={12}
 						height={12}
@@ -86,7 +92,7 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 		padding: 12px 10px;
 		border-radius: 0px;
 		gap: 5px;
-		height: 60px;
+		height: 70px;
 	`}
 `;
 
