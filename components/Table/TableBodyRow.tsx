@@ -36,7 +36,9 @@ const BaseTableBodyRow = styled.div<{
 }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	:not(:last-child) {
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
 
 	padding: 6px 0;
 
