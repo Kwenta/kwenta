@@ -9,7 +9,7 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
-import { selectGasPrice, selectGasSpeed } from 'state/app/selectors';
+import { selectGasPrice } from 'state/app/selectors';
 import {
 	selectTransactionFeeWei,
 	selectFeeCostWei,
@@ -126,14 +126,14 @@ const SwapInfoBoxContainer = styled(InfoBoxContainer)`
 `;
 
 const StyledDynamicFee = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	margin-left: 5px;
 `;
 
 const StyledTimerIcon = styled(TimerIcon)`
 	margin-left: 5px;
 	path {
-		fill: ${(props) => props.theme.colors.selectedTheme.gold};
+		fill: ${(props) => props.theme.colors.selectedTheme.yellow};
 	}
 `;
 

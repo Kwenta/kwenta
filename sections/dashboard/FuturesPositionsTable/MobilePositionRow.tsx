@@ -123,8 +123,8 @@ const OpenPositionSize = styled.div`
 `;
 
 const OpenPositionMarketName = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gold};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.yellow};
 	border-radius: 4px;
 	font-size: 6px;
 	padding: 2px;

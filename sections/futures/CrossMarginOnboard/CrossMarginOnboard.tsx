@@ -193,10 +193,3 @@ const Complete = styled.div`
 const LoaderContainer = styled.div`
 	height: 120px;
 `;
-
-const MinimumAmountDisclaimer = styled.div`
-	font-size: 12px;
-	margin: 20px 0 0;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	text-align: center;
-`;
