@@ -242,11 +242,10 @@ const HeaderContainer = styled(FlexDivRowCentered)`
 const RewardsTabContainer = styled.div`
 	${media.lessThan('mdUp')`
 		padding: 15px;
-
 	`}
 
 	${media.greaterThan('mdUp')`
-		margin-top: 66px;
+		margin-top: 26px;
 	`}
 `;
 

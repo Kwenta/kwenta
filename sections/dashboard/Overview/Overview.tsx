@@ -13,7 +13,6 @@ import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SynthSymbol } from 'sdk/data/synths';
-import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { fetchTokenList } from 'state/exchange/actions';
@@ -182,8 +181,6 @@ const Overview: FC = () => {
 	return (
 		<>
 			<DesktopOnlyView>
-				<CompetitionBanner />
-
 				<PortfolioChart />
 
 				<TabButtonsContainer>

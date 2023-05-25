@@ -45,7 +45,7 @@ const FuturesLink = styled.div`
 `;
 
 const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
-	height: 60px;
+	height: 50px;
 	width: 100%;
 	display: flex;
 	align-items: center;
@@ -60,9 +60,10 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 		justify-content: center;
 		text-align: center;
 		background: transaparent;
-		padding: 22px 10px;
+		padding: 12px 10px;
 		border-radius: 0px;
 		gap: 5px;
+		height: 60px;
 	`}
 `;
 

@@ -20,7 +20,6 @@ const AppLayout: FC<AppLayoutProps> = memo(({ children }) => {
 			<DesktopOnlyView>
 				<DesktopGridContainer>
 					<Header />
-					<Banner />
 					<main>{children}</main>
 					<Footer />
 				</DesktopGridContainer>
