@@ -35,9 +35,13 @@ export default class PricesService {
 	private onChainPrices: PricesMap = {};
 	private ratesInterval: number | undefined;
 	private pyth: EvmPriceServiceConnection;
+	private retryCount: number;
+	private maxRetries: number;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
+		this.retryCount = 0;
+		this.maxRetries = 10;
 
 		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(sdk.context.networkId), {
 			logger: LOG_WS ? console : undefined,
@@ -54,9 +58,17 @@ export default class PricesService {
 			this.pyth.onWsError = (error) => {
 				// TODO: Feedback connection issue and display
 				// prompt to try disabling add blocker
-				this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(params.networkId, true), {
-					logger: LOG_WS ? console : undefined,
-				});
+				if (this.retryCount < this.maxRetries) {
+					this.retryCount++;
+					setTimeout(() => {
+						this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(params.networkId, true), {
+							logger: LOG_WS ? console : undefined,
+						});
+					}, Math.pow(2, this.retryCount) * 1000);
+				} else {
+					logError(new Error('Maximum retries exceeded'));
+					// TODO: Take action when maximum retries are exceeded, e.g. update the operational status
+				}
 
 				this.sdk.context.events.emit('prices_connection_update', {
 					connected: false,
