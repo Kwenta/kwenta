@@ -1,11 +1,9 @@
-import detectEthereumProvider from '@metamask/detect-provider';
 import loadProvider from '@synthetixio/providers';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers, providers } from 'ethers';
 
-import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
+import { DEFAULT_GAS_BUFFER } from 'constants/defaults';
 import {
-	GWEI_UNIT,
 	GWEI_DECIMALS,
 	GasLimitEstimate,
 	SUPPORTED_NETWORKS,
@@ -14,33 +12,10 @@ import {
 import { NetworkId } from 'sdk/types/common';
 import { GasPrice } from 'state/app/types';
 
-import logError from './logError';
-
-type EthereumProvider = {
-	isMetaMask: boolean;
-	chainId: string;
-};
-
 export const staticMainnetProvider = new ethers.providers.InfuraProvider();
 
 export function isSupportedNetworkId(id: NetworkId): boolean {
 	return SUPPORTED_NETWORKS.includes(id);
-}
-
-export async function getDefaultNetworkId(walletConnected = true) {
-	try {
-		if (walletConnected && window.ethereum) {
-			const provider = (await detectEthereumProvider()) as EthereumProvider;
-			if (provider && provider.chainId) {
-				const id = Number(provider.chainId) as NetworkId;
-				return isSupportedNetworkId(id) ? id : DEFAULT_NETWORK_ID;
-			}
-		}
-		return DEFAULT_NETWORK_ID;
-	} catch (e) {
-		logError(e);
-		return DEFAULT_NETWORK_ID;
-	}
 }
 
 const loadInfuraProvider = (networkId: NetworkId) => {
@@ -108,7 +83,3 @@ export const getTransactionPrice = (
 };
 
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;
-
-export const gasPriceInWei = (gasPrice: number) => Math.ceil(gasPrice * GWEI_UNIT); // 🤔 sometimes a float on kovan
-
-export const getIsOVM = (networkId: number) => [10, 69, 420].includes(networkId);

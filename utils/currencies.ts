@@ -76,7 +76,7 @@ export const getExchangeRatesTupleForCurrencies = (
 	return [baseRate, quoteRate];
 };
 
-export const newGetCoinGeckoPricesForCurrencies = (
+export const getCoinGeckoPricesForCurrencies = (
 	coinGeckoPrices: PriceResponse | null,
 	baseAddress: string | null
 ) => {

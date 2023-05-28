@@ -30,7 +30,7 @@ import { DeprecatedSynthBalance } from 'sdk/types/synths';
 import { Token, TokenBalances } from 'sdk/types/tokens';
 import { getReasonFromCode } from 'sdk/utils/synths';
 import {
-	newGetCoinGeckoPricesForCurrencies,
+	getCoinGeckoPricesForCurrencies,
 	getExchangeRatesForCurrencies,
 	getExchangeRatesTupleForCurrencies,
 } from 'utils/currencies';
@@ -175,11 +175,11 @@ export default class ExchangeService {
 		]);
 
 		const base = baseRate.lte(0)
-			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
+			? getCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
 			: baseRate;
 
 		const quote = quoteRate.lte(0)
-			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
+			? getCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
 			: quoteRate;
 
 		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
