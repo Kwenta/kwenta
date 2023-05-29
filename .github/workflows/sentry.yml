@@ -15,6 +15,14 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+
+    - name: Build code
+      run: npm i --legacy-peer-deps && npm run build
+
     - name: Create Sentry release
       uses: getsentry/action-release@v1
       env:
@@ -23,4 +31,4 @@ jobs:
         SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       with:
         environment: production
-        sourcemaps: '/'
+        sourcemaps: '/.next'
