@@ -21,7 +21,7 @@ jobs:
         node-version: 16.x
 
     - name: Build code
-      run: npm i --legacy-peer-deps && npm run build
+      run: npm i --legacy-peer-deps && npm run build && ls 
 
     - name: Create Sentry release
       uses: getsentry/action-release@v1
@@ -31,4 +31,5 @@ jobs:
         SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       with:
         environment: production
-        sourcemaps: '/.next'
+        sourcemaps: '.next'
+        ignore_missing: true
