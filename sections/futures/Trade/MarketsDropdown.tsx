@@ -162,17 +162,12 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	}, [search, futuresMarkets, favMarkets, getPastPrice, getBasePriceRateInfo, t]);
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
-	const tableHeight: number = useMemo(
-		() =>
-			Math.max(
-				window.innerHeight -
-					(mobile
-						? 159 + Number(showBanner) * BANNER_HEIGHT_MOBILE
-						: 205 + Number(showBanner) * BANNER_HEIGHT_DESKTOP),
-				300
-			),
-		[mobile, showBanner]
-	);
+
+	const tableHeight: number = useMemo(() => {
+		const BANNER_HEIGHT = mobile ? BANNER_HEIGHT_MOBILE : BANNER_HEIGHT_DESKTOP;
+		const OFFSET = mobile ? 159 : 205;
+		return Math.max(window.innerHeight - OFFSET - Number(showBanner) * BANNER_HEIGHT, 300);
+	}, [mobile, showBanner]);
 
 	return (
 		<SelectContainer mobile={mobile} ref={ref} accountType={accountType}>
