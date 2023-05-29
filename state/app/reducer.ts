@@ -25,6 +25,7 @@ export const APP_INITIAL_STATE: AppState = {
 		lastUpdatedAt: undefined,
 	},
 	acknowledgedOrdersWarning: false,
+	showBanner: true,
 };
 
 const appSlice = createSlice({
@@ -76,6 +77,9 @@ const appSlice = createSlice({
 		setAcknowledgedOrdersWarning: (state, action: PayloadAction<boolean>) => {
 			state.acknowledgedOrdersWarning = action.payload;
 		},
+		setShowBanner: (state, action: PayloadAction<boolean>) => {
+			state.showBanner = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(checkSynthetixStatus.fulfilled, (state, action) => {
@@ -96,6 +100,7 @@ export const {
 	updateTransactionStatus,
 	updateTransactionHash,
 	setAcknowledgedOrdersWarning,
+	setShowBanner,
 } = appSlice.actions;
 
 export default appSlice.reducer;
