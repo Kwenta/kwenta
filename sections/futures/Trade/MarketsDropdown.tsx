@@ -15,7 +15,11 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import Search from 'components/Table/Search';
 import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
-import { BANNER_ENABLED } from 'constants/announcement';
+import {
+	BANNER_ENABLED,
+	BANNER_HEIGHT_DESKTOP,
+	BANNER_HEIGHT_MOBILE,
+} from 'constants/announcement';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
@@ -64,8 +68,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
 	const [favMarkets, setFavMarkets] = useLocalStorage<string[]>('favorite-markets', []);
-	const [showBanner] = useState(
-		currentTime - storedTime >= 3 * MILLISECONDS_PER_DAY && BANNER_ENABLED
+	const showBanner = useMemo(
+		() => currentTime - storedTime >= 2 * MILLISECONDS_PER_DAY && BANNER_ENABLED,
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[storedTime]
 	);
 
 	const { ref } = useClickOutside(() => setOpen(false));
@@ -168,9 +174,17 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 	const tableHeight: number = useMemo(
-		() => Math.max(window.innerHeight - (mobile ? 159 : 205) - (showBanner ? 50 : 0), 300),
+		() =>
+			Math.max(
+				window.innerHeight -
+					(mobile
+						? 159 + Number(showBanner) * BANNER_HEIGHT_MOBILE
+						: 205 + Number(showBanner) * BANNER_HEIGHT_DESKTOP),
+				300
+			),
 		[mobile, showBanner]
 	);
+
 	return (
 		<SelectContainer mobile={mobile} ref={ref} accountType={accountType}>
 			<MarketsDropdownSelector

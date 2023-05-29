@@ -2,7 +2,13 @@ import { memo, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { BANNER_ENABLED, BANNER_LINK_URL, BANNER_TEXT } from 'constants/announcement';
+import {
+	BANNER_ENABLED,
+	BANNER_HEIGHT_DESKTOP,
+	BANNER_HEIGHT_MOBILE,
+	BANNER_LINK_URL,
+	BANNER_TEXT,
+} from 'constants/announcement';
 import { MILLISECONDS_PER_DAY } from 'sdk/constants/period';
 import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover';
 import media from 'styles/media';
@@ -11,7 +17,7 @@ import localStore from 'utils/localStore';
 const Banner = memo(() => {
 	const currentTime = new Date().getTime();
 	const storedTime: number = localStore.get('bannerIsClicked') || 0;
-	const [isClicked, setIsClicked] = useState(currentTime - storedTime < 3 * MILLISECONDS_PER_DAY);
+	const [isClicked, setIsClicked] = useState(currentTime - storedTime < 2 * MILLISECONDS_PER_DAY);
 
 	const handleDismiss = useCallback((e) => {
 		setIsClicked(true);
@@ -70,7 +76,7 @@ const FuturesLink = styled.div`
 `;
 
 const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
-	height: 50px;
+	height: ${BANNER_HEIGHT_DESKTOP}px;
 	width: 100%;
 	display: flex;
 	align-items: center;
@@ -88,7 +94,7 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 		padding: 12px 10px;
 		border-radius: 0px;
 		gap: 5px;
-		height: 70px;
+		height: ${BANNER_HEIGHT_MOBILE}px;
 	`}
 `;
 
