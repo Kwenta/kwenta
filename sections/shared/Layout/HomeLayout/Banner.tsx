@@ -2,6 +2,7 @@ import { memo, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { Body } from 'components/Text';
 import {
 	BANNER_ENABLED,
 	BANNER_HEIGHT_DESKTOP,
@@ -17,14 +18,39 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 import localStore from 'utils/localStore';
 
+type BannerViewProps = {
+	mode: 'mobile' | 'desktop';
+	onDismiss: (e: any) => void;
+	onDetails: () => void;
+};
+
+const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) => {
+	const isMobile = mode === 'mobile';
+	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { marginTop: '3px' };
+	const closeIconProps = isMobile ? { width: 12, height: 12 } : {};
+	const linkSize = isMobile ? 'small' : 'medium';
+
+	return (
+		<FuturesBannerContainer onClick={onDetails}>
+			<FuturesBannerLinkWrapper>
+				<FuturesLink size={linkSize}>
+					<strong>Important: </strong>
+					{BANNER_TEXT}
+				</FuturesLink>
+				<CloseIconWithHover onClick={onDismiss} style={closeIconStyle} {...closeIconProps} />
+			</FuturesBannerLinkWrapper>
+		</FuturesBannerContainer>
+	);
+};
+
 const Banner = memo(() => {
 	const dispatch = useAppDispatch();
 	const showBanner = useAppSelector(selectShowBanner);
-	const currentTime = new Date().getTime();
 	const storedTime: number = localStore.get('bannerIsClicked') || 0;
 
 	useEffect(
 		() => {
+			const currentTime = new Date().getTime();
 			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME));
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -34,7 +60,7 @@ const Banner = memo(() => {
 	const handleDismiss = useCallback(
 		(e) => {
 			dispatch(setShowBanner(false));
-			localStore.set('bannerIsClicked', currentTime);
+			localStore.set('bannerIsClicked', new Date().getTime());
 			e.stopPropagation();
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,35 +77,16 @@ const Banner = memo(() => {
 	return (
 		<>
 			<DesktopOnlyView>
-				<FuturesBannerContainer onClick={openDetails}>
-					<FuturesBannerLinkWrapper>
-						<FuturesLink>
-							<strong>Important: </strong>
-							{BANNER_TEXT}
-						</FuturesLink>
-						<CloseIconWithHover onClick={handleDismiss} style={{ marginTop: '3px' }} />
-					</FuturesBannerLinkWrapper>
-				</FuturesBannerContainer>
+				<BannerView mode="desktop" onDismiss={handleDismiss} onDetails={openDetails} />
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<FuturesBannerContainer onClick={openDetails}>
-					<FuturesLink>
-						<strong>Important: </strong>
-						{BANNER_TEXT}
-					</FuturesLink>
-					<CloseIconWithHover
-						width={12}
-						height={12}
-						onClick={handleDismiss}
-						style={{ flex: '0.08', marginTop: '5px' }}
-					/>
-				</FuturesBannerContainer>
+				<BannerView mode="mobile" onDismiss={handleDismiss} onDetails={openDetails} />
 			</MobileOrTabletView>
 		</>
 	);
 });
 
-const FuturesLink = styled.div`
+const FuturesLink = styled(Body)`
 	margin-right: 5px;
 	padding: 4px 9px;
 	border-radius: 20px;
@@ -122,6 +129,7 @@ const FuturesBannerLinkWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding: 0 10px;
 `;
 
 export default Banner;
