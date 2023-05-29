@@ -117,6 +117,12 @@ const newTheme = {
 			},
 		},
 	},
+	banner: {
+		yellow: {
+			text: common.palette.yellow.y1000,
+			background: common.palette.yellow.y300,
+		},
+	},
 	badge: {
 		yellow: {
 			text: common.palette.neutral.n900,
