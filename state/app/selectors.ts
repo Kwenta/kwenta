@@ -12,3 +12,5 @@ export const selectGasPrice = (state: RootState) => unserializeGasPrice(state.ap
 export const selectTransaction = (state: RootState) => state.app.transaction;
 
 export const selectAckedOrdersWarning = (state: RootState) => state.app.acknowledgedOrdersWarning;
+
+export const selectShowBanner = (state: RootState) => state.app.showBanner;

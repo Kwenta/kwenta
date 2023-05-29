@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -8,30 +8,45 @@ import {
 	BANNER_HEIGHT_MOBILE,
 	BANNER_LINK_URL,
 	BANNER_TEXT,
+	BANNER_WAITING_TIME,
 } from 'constants/announcement';
-import { MILLISECONDS_PER_DAY } from 'sdk/constants/period';
 import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover';
+import { setShowBanner } from 'state/app/reducer';
+import { selectShowBanner } from 'state/app/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
 import localStore from 'utils/localStore';
 
 const Banner = memo(() => {
+	const dispatch = useAppDispatch();
+	const showBanner = useAppSelector(selectShowBanner);
 	const currentTime = new Date().getTime();
 	const storedTime: number = localStore.get('bannerIsClicked') || 0;
-	const [isClicked, setIsClicked] = useState(currentTime - storedTime < 2 * MILLISECONDS_PER_DAY);
 
-	const handleDismiss = useCallback((e) => {
-		setIsClicked(true);
-		localStore.set('bannerIsClicked', currentTime);
-		e.stopPropagation();
+	useEffect(
+		() => {
+			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME));
+		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		[storedTime]
+	);
+
+	const handleDismiss = useCallback(
+		(e) => {
+			dispatch(setShowBanner(false));
+			localStore.set('bannerIsClicked', currentTime);
+			e.stopPropagation();
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
 
 	const openDetails = useCallback(
 		() => window.open(BANNER_LINK_URL, '_blank', 'noopener noreferrer'),
 		[]
 	);
 
-	if (!BANNER_ENABLED || isClicked) return null;
+	if (!BANNER_ENABLED || !showBanner) return null;
 
 	return (
 		<>

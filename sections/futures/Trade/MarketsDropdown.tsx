@@ -15,17 +15,13 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import Search from 'components/Table/Search';
 import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
-import {
-	BANNER_ENABLED,
-	BANNER_HEIGHT_DESKTOP,
-	BANNER_HEIGHT_MOBILE,
-} from 'constants/announcement';
+import { BANNER_HEIGHT_DESKTOP, BANNER_HEIGHT_MOBILE } from 'constants/announcement';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
-import { MILLISECONDS_PER_DAY } from 'sdk/constants/period';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { selectShowBanner } from 'state/app/selectors';
 import {
 	selectMarketAsset,
 	selectMarkets,
@@ -45,7 +41,6 @@ import {
 	getSynthDescription,
 	MarketKeyByAsset,
 } from 'utils/futures';
-import localStore from 'utils/localStore';
 
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
@@ -55,8 +50,6 @@ type MarketsDropdownProps = {
 };
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
-	const currentTime = new Date().getTime();
-	const storedTime: number = localStore.get('bannerIsClicked') || 0;
 	const markPrices = useAppSelector(selectMarkPriceInfos);
 	const pastPrices = useAppSelector(selectPreviousDayPrices);
 	const accountType = useAppSelector(selectFuturesType);
@@ -68,11 +61,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
 	const [favMarkets, setFavMarkets] = useLocalStorage<string[]>('favorite-markets', []);
-	const showBanner = useMemo(
-		() => currentTime - storedTime >= 2 * MILLISECONDS_PER_DAY && BANNER_ENABLED,
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[storedTime]
-	);
+	const showBanner = useAppSelector(selectShowBanner);
 
 	const { ref } = useClickOutside(() => setOpen(false));
 
