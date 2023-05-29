@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -13,15 +13,11 @@ const Banner = memo(() => {
 	const storedTime: number = localStore.get('bannerIsClicked') || 0;
 	const [isClicked, setIsClicked] = useState(currentTime - storedTime < 3 * MILLISECONDS_PER_DAY);
 
-	useEffect(() => {
-		if (isClicked) {
-			localStore.set('bannerIsClicked', currentTime);
-		}
-	}, [isClicked, currentTime]);
-
 	const handleDismiss = useCallback((e) => {
 		setIsClicked(true);
+		localStore.set('bannerIsClicked', currentTime);
 		e.stopPropagation();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const openDetails = useCallback(

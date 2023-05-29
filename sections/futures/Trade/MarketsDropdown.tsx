@@ -15,9 +15,11 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import Search from 'components/Table/Search';
 import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
+import { BANNER_ENABLED } from 'constants/announcement';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { MILLISECONDS_PER_DAY } from 'sdk/constants/period';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import {
@@ -39,6 +41,7 @@ import {
 	getSynthDescription,
 	MarketKeyByAsset,
 } from 'utils/futures';
+import localStore from 'utils/localStore';
 
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
@@ -48,6 +51,8 @@ type MarketsDropdownProps = {
 };
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
+	const currentTime = new Date().getTime();
+	const storedTime: number = localStore.get('bannerIsClicked') || 0;
 	const markPrices = useAppSelector(selectMarkPriceInfos);
 	const pastPrices = useAppSelector(selectPreviousDayPrices);
 	const accountType = useAppSelector(selectFuturesType);
@@ -59,6 +64,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
 	const [favMarkets, setFavMarkets] = useLocalStorage<string[]>('favorite-markets', []);
+	const [showBanner] = useState(
+		currentTime - storedTime >= 3 * MILLISECONDS_PER_DAY && BANNER_ENABLED
+	);
 
 	const { ref } = useClickOutside(() => setOpen(false));
 
@@ -159,7 +167,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	}, [search, futuresMarkets, favMarkets, getPastPrice, getBasePriceRateInfo, t]);
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
-
+	const tableHeight: number = useMemo(
+		() => Math.max(window.innerHeight - (mobile ? 159 : 205) - (showBanner ? 50 : 0), 300),
+		[mobile, showBanner]
+	);
 	return (
 		<SelectContainer mobile={mobile} ref={ref} accountType={accountType}>
 			<MarketsDropdownSelector
@@ -183,13 +194,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				}}
 			/>
 			{open && (
-				<MarketsList
-					mobile={mobile}
-					height={Math.max(
-						window.innerHeight - (mobile ? 159 : accountType === 'cross_margin' ? 210 : 270),
-						300
-					)}
-				>
+				<MarketsList mobile={mobile} height={tableHeight}>
 					<SearchBarContainer>
 						<Search autoFocus onChange={setSearch} value={search} border={false} />
 					</SearchBarContainer>

@@ -21,10 +21,10 @@ const MarketsPage: MarketsProps = () => {
 
 	return (
 		<>
-			<Spacer height={15} />
 			<Head>
 				<title>{t('dashboard-markets.page-title')}</title>
 			</Head>
+			<Spacer height={15} />
 			<SearchBarContainer>
 				<Search autoFocus value={search} onChange={setSearch} disabled={false} />
 			</SearchBarContainer>
