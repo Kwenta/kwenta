@@ -31,6 +31,7 @@ type Props = {
 		priceInfo?: PricesInfo;
 	};
 	onClick: () => void;
+	expanded: boolean;
 };
 
 const MarketsDropdownSelector: FC<Props> = (props) => (
@@ -48,7 +49,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 						/>
 					</CurrencyLabel>
 				</div>
-				{props.mobile && <StyledCaretDownIcon />}
+				{props.mobile && <StyledCaretDownIcon $flip={props.expanded} />}
 			</LeftContainer>
 			{props.mobile && (
 				<MobileRightContainer>
@@ -63,7 +64,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 				</MobileRightContainer>
 			)}
 
-			{!props.mobile && <StyledCaretDownIcon />}
+			{!props.mobile && <StyledCaretDownIcon $flip={props.expanded} />}
 		</ContentContainer>
 	</Container>
 );

@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import { StyledCaretDownIcon } from 'components/Select/Select';
 import { HOURS_TOGGLE_HEIGHT, HOURS_TOGGLE_WIDTH, zIndex } from 'constants/ui';
 import { FUNDING_RATE_PERIODS } from 'sdk/constants/period';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
@@ -29,7 +29,7 @@ const HoursToggle: React.FC = () => {
 					onClick={() => setOpen(!open)}
 				>
 					{getLabelByValue(fundingHours)}
-					<CaretDownIcon width={12} />
+					<StyledCaretDownIcon width={12} $flip={open} />
 				</ToggleTableHeader>
 				{open && (
 					<ToggleTableRows>

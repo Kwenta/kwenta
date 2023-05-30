@@ -173,6 +173,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		<SelectContainer mobile={mobile} ref={ref} accountType={accountType}>
 			<MarketsDropdownSelector
 				onClick={() => setOpen(!open)}
+				expanded={open}
 				mobile={mobile}
 				asset={marketAsset}
 				label={getMarketName(marketAsset)}
