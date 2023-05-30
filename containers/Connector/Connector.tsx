@@ -1,4 +1,3 @@
-import { TransactionNotifier as BaseTN } from '@synthetixio/transaction-notifier';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createContainer } from 'unstated-next';
 import { useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
@@ -10,9 +9,8 @@ import { setSigner } from 'state/wallet/actions';
 import { setNetwork } from 'state/wallet/reducer';
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer';
-import { activeChainIds, chain, wagmiClient } from './config';
+import { activeChainIds, chain } from './config';
 
-export let transactionNotifier = new BaseTN(wagmiClient.provider);
 export let blockExplorer = generateExplorerFunctions(getBaseUrl(10));
 
 const useConnector = () => {
@@ -49,7 +47,6 @@ const useConnector = () => {
 				handleNetworkChange(networkId);
 				setProviderReady(true);
 			});
-			transactionNotifier = new BaseTN(provider);
 		}
 	}, [provider, handleNetworkChange]);
 

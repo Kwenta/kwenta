@@ -5,7 +5,10 @@ import { omit, clone } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { getEthGasPrice } from 'sdk/common/gas';
+import { TRANSACTION_EVENTS_MAP } from 'sdk/constants/transactions';
 import { NetworkIdByName } from 'sdk/types/common';
+import { Emitter } from 'sdk/types/transactions';
+import { createEmitter, getRevertReason } from 'sdk/utils/transactions';
 
 import * as sdkErrors from '../common/errors';
 import { ContractName } from '../contracts';
@@ -26,6 +29,51 @@ export default class TransactionsService {
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
+	}
+
+	// Copied over from: https://github.com/Synthetixio/js-monorepo
+	hash(transactionHash: string): Emitter {
+		const emitter = createEmitter();
+		setTimeout(() => this.watchTransaction(transactionHash, emitter), 5);
+		return emitter;
+	}
+
+	watchTransaction(transactionHash: string, emitter: Emitter): void {
+		emitter.emit(TRANSACTION_EVENTS_MAP.txSent, { transactionHash });
+		this.sdk.context.provider
+			.waitForTransaction(transactionHash)
+			.then(({ status, blockNumber, transactionHash }) => {
+				if (status === 1) {
+					emitter.emit(TRANSACTION_EVENTS_MAP.txConfirmed, {
+						status,
+						blockNumber,
+						transactionHash,
+					});
+				} else {
+					setTimeout(() => {
+						this.sdk.context.provider.getNetwork().then(({ chainId }) => {
+							try {
+								getRevertReason({
+									txHash: transactionHash,
+									networkId: chainId,
+									blockNumber,
+									provider: this.sdk.context.provider,
+								}).then((revertReason) =>
+									emitter.emit(TRANSACTION_EVENTS_MAP.txFailed, {
+										transactionHash,
+										failureReason: revertReason,
+									})
+								);
+							} catch (e) {
+								emitter.emit(TRANSACTION_EVENTS_MAP.txFailed, {
+									transactionHash,
+									failureReason: 'Transaction reverted for an unknown reason',
+								});
+							}
+						});
+					}, 5000);
+				}
+			});
 	}
 
 	public createContractTxn(

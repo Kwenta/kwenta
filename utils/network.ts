@@ -1,4 +1,3 @@
-import loadProvider from '@synthetixio/providers';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers, providers } from 'ethers';
 
@@ -23,10 +22,7 @@ const loadInfuraProvider = (networkId: NetworkId) => {
 		throw new Error('You must define NEXT_PUBLIC_INFURA_PROJECT_ID in your environment');
 	}
 
-	return loadProvider({
-		networkId,
-		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-	});
+	return new ethers.providers.InfuraProvider(networkId, process.env.NEXT_PUBLIC_INFURA_PROJECT_ID);
 };
 
 const loadBlastProvider = (networkId: NetworkId) => {

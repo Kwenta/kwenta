@@ -36,7 +36,7 @@ The following tasks are expected to be completed before the SDK can be considere
 
 ## General
 
-- [ ] Remove code that refers to `@synthetixio/*` packages.
+- [x] Remove code that refers to `@synthetixio/*` packages.
 - [x] Add contract typings.
 - [x] Implement `Context` class.
 - [ ] Cache redux state and hydrate on load
@@ -57,6 +57,7 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Remove Duplicated types.
 - [ ] Create a standard way of passing in numeric values (particularly amounts) to the SDK. Weigh pros and cons of (`Wei`, `ethers.BigNumber` and `string`).
 - [ ] Create interfaces for all the services, so we don't have to colocate method types and logic, especially when the types are verbose.
+- [ ] Add acknowledgement for features gotten from Synthetix codebase.
 
 ## Exchange
 
