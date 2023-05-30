@@ -56,7 +56,7 @@ export default function ConditionalOrdersTable() {
 		<Container>
 			<ConditionalOrdersWarning />
 			<Table
-				data={rows}
+				data={[...rows, ...rows]}
 				highlightRowsOnHover
 				noBottom={true}
 				rounded={false}
@@ -211,7 +211,7 @@ export default function ConditionalOrdersTable() {
 }
 
 const Container = styled.div`
-	height: 100%;
+	height: calc(100% - 40px);
 	overflow: scroll;
 `;
 
