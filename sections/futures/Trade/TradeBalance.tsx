@@ -2,11 +2,11 @@ import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 import HelpIcon from 'assets/svg/app/question-mark.svg';
 import Button from 'components/Button';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
+import { StyledCaretDownIcon } from 'components/Select/Select';
 import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { MIN_MARGIN_AMOUNT } from 'constants/futures';
@@ -56,10 +56,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 
 	return (
 		<Container>
-			<BalanceContainer
-				clickable={accountType === 'cross_margin'}
-				onClick={!isMobile ? onClickContainer : undefined}
-			>
+			<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
 				{accountType === 'cross_margin' && isDepositRequired ? (
 					<DepositContainer>
 						<FlexDivCol>
@@ -67,7 +64,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 								<Body size={isMobile ? 'small' : 'medium'} color="secondary">
 									{t('futures.market.trade.trade-balance.no-available-margin')}
 								</Body>
-								{expanded ? <HideIcon /> : <ExpandIcon />}
+								<StyledCaretDownIcon $flip={expanded} />
 							</FlexDivRow>
 							<Body size={isMobile ? 'small' : 'medium'} color="preview">
 								{t('futures.market.trade.trade-balance.min-margin')}
@@ -157,25 +154,20 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 						<PencilButton
 							width={16}
 							height={16}
-							onClick={() =>
+							onClick={(e) => {
+								e.stopPropagation();
 								dispatch(
 									setOpenModal(
 										accountType === 'isolated_margin'
 											? 'futures_isolated_transfer'
 											: 'futures_cross_withdraw'
 									)
-								)
-							}
+								);
+							}}
 						/>
-						{expanded ? (
-							<Pill roundedCorner={false} onClick={onClickContainer}>
-								<HideIcon />
-							</Pill>
-						) : (
-							<Pill roundedCorner={false} onClick={onClickContainer}>
-								<ExpandIcon />
-							</Pill>
-						)}
+						<Pill roundedCorner={false} onClick={onClickContainer}>
+							<StyledCaretDownIcon $flip={expanded} style={{ marginTop: '1.5px' }} />
+						</Pill>
 					</FlexDivRowCentered>
 				)}
 			</BalanceContainer>
@@ -215,13 +207,6 @@ const BalanceContainer = styled(FlexDivRowCentered)<{ clickable: boolean }>`
 
 const DetailsContainer = styled.div`
 	margin-top: 15px;
-`;
-
-const ExpandIcon = styled(CaretDownIcon)``;
-
-const HideIcon = styled(CaretDownIcon)`
-	transform: scaleY(-1);
-	margin-top: 4px;
 `;
 
 export default TradeBalance;

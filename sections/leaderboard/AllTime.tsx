@@ -12,6 +12,7 @@ import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
 import { AccountStat } from 'queries/futures/types';
 import { StyledTrader } from 'sections/leaderboard/trader';
+import media from 'styles/media';
 import { getMedal } from 'utils/competition';
 import { staticMainnetProvider } from 'utils/network';
 
@@ -250,6 +251,9 @@ const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 		padding-top: 8px;
 		padding-bottom: 8px;
 	}
+	${media.lessThan('md')`
+		margin-bottom: 150px;
+	`}
 `;
 
 const TableTitle = styled.div`

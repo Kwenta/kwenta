@@ -711,6 +711,7 @@ export const selectEditMarginAllowanceValid = createSelector(
 	(account, { freeMargin }, idleInMarkets, { marginDelta }) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets);
 		if (!account) return false;
+		if (isNaN(Number(marginDelta))) return false;
 		const marginDelatWei = wei(marginDelta || 0);
 		const marginDeposit = marginDelatWei.sub(totalIdleMargin);
 		return (

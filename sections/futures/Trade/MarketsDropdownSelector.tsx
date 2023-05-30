@@ -31,6 +31,7 @@ type Props = {
 		priceInfo?: PricesInfo;
 	};
 	onClick: () => void;
+	expanded: boolean;
 };
 
 const MarketsDropdownSelector: FC<Props> = (props) => (
@@ -48,7 +49,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 						/>
 					</CurrencyLabel>
 				</div>
-				{props.mobile && <StyledCaretDownIcon />}
+				{props.mobile && <StyledCaretDownIcon $flip={props.expanded} />}
 			</LeftContainer>
 			{props.mobile && (
 				<MobileRightContainer>
@@ -63,7 +64,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 				</MobileRightContainer>
 			)}
 
-			{!props.mobile && <StyledCaretDownIcon />}
+			{!props.mobile && <StyledCaretDownIcon $flip={props.expanded} />}
 		</ContentContainer>
 	</Container>
 );
@@ -87,14 +88,12 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		flex: 1;
 		margin-left: 12px;
 	}
-	width: ${(props) => (props.mobile ? '100%' : TRADE_PANEL_WIDTH_MD + 'px')};
+
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	${media.greaterThan('xxl')`
 		width: ${TRADE_PANEL_WIDTH_LG + 0.5}px;
 	`}
-
-	width: ${TRADE_PANEL_WIDTH_LG}px;
 
 	${media.lessThan('xxl')`
 		width: ${TRADE_PANEL_WIDTH_MD + 0.5}px;

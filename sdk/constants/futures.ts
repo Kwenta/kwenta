@@ -425,7 +425,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sTRXPERP]: {
 		key: FuturesMarketKey.sTRXPERP,
 		asset: FuturesMarketAsset.TRX,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x67aed5a24fdad045475e7195c98a98aea119c763f272d4523f5bac93a4f33c2b',
