@@ -51,7 +51,7 @@ const Banner = memo(() => {
 	useEffect(
 		() => {
 			const currentTime = new Date().getTime();
-			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME));
+			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED));
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[storedTime]
