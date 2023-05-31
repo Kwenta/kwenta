@@ -258,7 +258,7 @@ const AllTime: FC<AllTimeProps> = ({
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined; height?: number }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
-	height: ${({ height }) => height}px;
+	height: ${({ height }) => (height ? height + 'px' : 'auto')};
 	max-height: 665px;
 
 	${TableCell} {
