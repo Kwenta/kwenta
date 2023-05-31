@@ -101,14 +101,12 @@ const ToggleContainer = styled.div<{ open: boolean }>`
 	cursor: pointer;
 	margin-top: ${(props) => (props.open ? '92px' : '20px')};
 
-	${media.lessThan('mdUp')`
-		position: relative;
-		top: -100px;
-		left: calc(80% - 10px);
-		margin-top: 0px;
-		z-index: ${zIndex.HEADER};
-		width: ${HOURS_TOGGLE_WIDTH};
-	`}
+	${media.lessThan('lg')`
+               position: absolute;
+               right: -50px;
+               z-index: ${zIndex.HEADER};
+               width: ${HOURS_TOGGLE_WIDTH};
+       `}
 `;
 
 export default HoursToggle;

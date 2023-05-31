@@ -49,7 +49,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	};
 
 	return (
-		<Container>
+		<Container mobile={isMobile}>
 			<FlexDivRowCentered>
 				<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
 					{accountType === 'cross_margin' && isDepositRequired ? (
@@ -118,9 +118,10 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	);
 });
 
-const Container = styled.div`
+const Container = styled.div<{ mobile: boolean }>`
 	width: 100%;
 	padding: 13px 15px;
+	border-bottom: ${(props) => (props.mobile ? props.theme.colors.selectedTheme.border : 0)};
 `;
 
 const BalanceContainer = styled.div<{ clickable: boolean }>`

@@ -88,8 +88,6 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		margin-left: 12px;
 	}
 	width: ${(props) => (props.mobile ? '100%' : TRADE_PANEL_WIDTH_MD + 'px')};
-	border-right: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	${media.greaterThan('xxl')`
 		width: ${TRADE_PANEL_WIDTH_LG + 0.5}px;
 	`}

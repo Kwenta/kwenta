@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import TradeBalance from 'sections/futures/Trade/TradeBalance';
 
 import PriceTab from './PriceTab';
 import TradesTab from './TradesTab';
@@ -24,7 +23,6 @@ const OverviewTabs: React.FC = () => {
 
 	return (
 		<div>
-			<TradeBalance isMobile={true} />
 			<MainTabButtonsContainer>
 				{TABS.map(({ title, nofill }, i) => (
 					<TabButton

@@ -10,6 +10,7 @@ interface Size {
 interface ReturnValue extends Size {
 	lessThanWidth: (breakpoint: Breakpoint) => boolean;
 	greaterThanWidth: (breakpoint: Breakpoint) => boolean;
+	deviceType: 'mobile' | 'tablet' | 'desktop';
 }
 
 export default function useWindowSize(): ReturnValue {
@@ -45,5 +46,6 @@ export default function useWindowSize(): ReturnValue {
 		...windowSize,
 		lessThanWidth,
 		greaterThanWidth,
+		deviceType: lessThanWidth('md') ? 'mobile' : lessThanWidth('lg') ? 'tablet' : 'desktop',
 	};
 }

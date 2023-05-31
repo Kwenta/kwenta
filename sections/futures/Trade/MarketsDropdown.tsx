@@ -40,7 +40,11 @@ import {
 	MarketKeyByAsset,
 } from 'utils/futures';
 
-import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
+import {
+	MARKETS_DETAILS_HEIGHT_DESKTOP,
+	TRADE_PANEL_WIDTH_LG,
+	TRADE_PANEL_WIDTH_MD,
+} from '../styles';
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {
@@ -311,7 +315,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	top: 66px;
-	z-index: 100;
+	z-index: 1000;
 	height: ${(props) => props.height}px;
 	width: ${TRADE_PANEL_WIDTH_LG}px;
 	${media.lessThan('xxl')`
@@ -364,13 +368,15 @@ const SearchBarContainer = styled.div`
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean; accountType?: string }>`
-	height: 100%;
-	z-index: 40;
+	z-index: 100;
+	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
+	position: relative;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+
 	${(props) =>
 		props.mobile &&
 		css`
 			width: 100%;
-			border-bottom: ${props.theme.colors.selectedTheme.border};
 			position: absolute;
 			top: ${props.accountType === 'isolated_margin' ? '60' : '0'}px;
 			left: 0;

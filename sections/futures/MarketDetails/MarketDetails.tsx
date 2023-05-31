@@ -1,16 +1,15 @@
 import { wei } from '@synthetixio/wei';
 import React, { memo, useMemo } from 'react';
-import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
-import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import { zIndex } from 'constants/ui';
+import useWindowSize from 'hooks/useWindowSize';
 import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
@@ -27,8 +26,6 @@ import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
-import MarketsDropdown from '../Trade/MarketsDropdown';
-import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
 import HoursToggle from './HoursToggle';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
@@ -41,20 +38,22 @@ interface OpenInterestDetailProps extends MarketDetailsProps {
 	isLong?: boolean;
 }
 
-const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
+const MarketDetails: React.FC<MarketDetailsProps> = () => {
 	const dispatch = useAppDispatch();
 	const showHistory = useAppSelector(selectShowHistory);
+	const { deviceType } = useWindowSize();
+	const mobileOrTablet = deviceType !== 'desktop';
 
-	const SelectedMarketDetailsView = mobile ? (
-		<MarketDetailsContainer mobile={mobile}>
-			<IndexPriceDetail mobile={mobile} />
-			<MarketSkew mobile={mobile} />
-			<HourlyFundingDetail mobile={mobile} />
-			<MarketPriceDetail mobile={mobile} />
-			<DailyChangeDetail mobile={mobile} />
+	const SelectedMarketDetailsView = mobileOrTablet ? (
+		<MarketDetailsContainer mobile={mobileOrTablet}>
+			<IndexPriceDetail mobile={mobileOrTablet} />
+			<MarketSkew mobile={mobileOrTablet} />
+			<HourlyFundingDetail mobile={deviceType === 'mobile'} />
+			<MarketPriceDetail mobile={mobileOrTablet} />
+			<DailyChangeDetail mobile={mobileOrTablet} />
 			<FlexDivRow columnGap="25px">
-				<OpenInterestDetail isLong mobile={mobile} />
-				<OpenInterestDetail mobile={mobile} />
+				<OpenInterestDetail isLong mobile={mobileOrTablet} />
+				<OpenInterestDetail mobile={mobileOrTablet} />
 			</FlexDivRow>
 		</MarketDetailsContainer>
 	) : (
@@ -70,11 +69,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	);
 
 	return (
-		<MainContainer mobile={mobile}>
-			<MarketsDropdown mobile={mobile} />
-			{mobile && <Spacer height={MARKET_SELECTOR_HEIGHT_MOBILE} />}
+		<MainContainer mobile={mobileOrTablet}>
 			{SelectedMarketDetailsView}
-			{!mobile && (
+			{!mobileOrTablet && (
 				<ShowHistoryContainer>
 					<Checkbox
 						id="history"
@@ -149,7 +146,6 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
 	const fundingHours = useAppSelector(selectSelectedInputHours);
-	const targetContainer = document.getElementById('mobile-view') as any;
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
 		fundingRate,
 		fundingHours,
@@ -161,9 +157,7 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
 			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
 			mobile={mobile}
-			extra={
-				mobile ? targetContainer && createPortal(<HoursToggle />, targetContainer) : <HoursToggle />
-			}
+			extra={<HoursToggle />}
 		/>
 	);
 });
@@ -233,19 +227,20 @@ const OpenInterestDetail: React.FC<OpenInterestDetailProps> = memo(({ mobile, is
 });
 
 const MainContainer = styled.div<{ mobile?: boolean }>`
-	display: flex;
-	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	display: grid;
 	align-items: center;
 	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
 	overflow-y: visible;
+	grid-template-columns: 1fr 150px;
+	border-bottom: ${(props) => (props.mobile ? 0 : props.theme.colors.selectedTheme.border)};
 
 	${(props) =>
 		props.mobile &&
 		css`
+			display: flex;
 			flex-direction: column;
-			height: initial;
-			border-top: none;
+			height: auto;
+			height: ${MARKETS_DETAILS_HEIGHT_DESKTOP * 2}px;
 		`}
 `;
 
@@ -257,6 +252,8 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	scrollbar-width: none;
 	display: flex;
 	align-items: center;
+	width: 100%;
+	overflow-y: visible;
 
 	& > div {
 		margin-right: 30px;
@@ -331,7 +328,7 @@ const ShowHistoryContainer = styled.div`
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	min-height: 50px;
-	padding-right: 20px;
+	padding: 0 20px;
 `;
 
 export default MarketDetails;
