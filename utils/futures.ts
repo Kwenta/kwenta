@@ -43,11 +43,8 @@ export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => 
 	});
 };
 
-export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
-	marketKeyOrAsset === 'sEUR' ||
-	marketKeyOrAsset === 'EUR' ||
-	marketKeyOrAsset === 'sDOGE' ||
-	marketKeyOrAsset === 'DOGE';
+export const isDecimalFour = (marketKeyOrAsset: string) =>
+	['sEUR', 'EUR', 'sDOGE', 'DOGE'].includes(marketKeyOrAsset);
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sBTCPERP]: FuturesMarketAsset.sBTC,

@@ -33,3 +33,5 @@ export const NetworkNameById = {
 	420: 'goerli-ovm',
 	31337: 'mainnet-fork',
 } as const;
+
+export type CurrencyKey = string;
