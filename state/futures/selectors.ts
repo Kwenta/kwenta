@@ -605,22 +605,24 @@ export const selectRemainingMarketMargin = createSelector(selectPosition, (posit
 	return position.remainingMargin;
 });
 
-export const selectIdleMarginInMarkets = createSelector(
-	selectCrossMarginPositions,
-	selectMarkets,
-	(positions, markets) => {
+export const selectMarginInMarkets = (isSuspended: boolean = false) =>
+	createSelector(selectCrossMarginPositions, selectMarkets, (positions, markets) => {
 		const idleInMarkets = positions
 			.filter((p) => {
-				return !markets.find((m) => m.marketKey === p.marketKey)?.isSuspended;
+				const market = markets.find((m) => m.marketKey === p.marketKey);
+				return market && market.isSuspended === isSuspended;
 			})
 			.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
 			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
 		return idleInMarkets;
-	}
-);
+	});
+
+export const selectAvailableMarginInMarkets = selectMarginInMarkets();
+
+export const selectLockedMarginInMarkets = selectMarginInMarkets(true);
 
 export const selectIdleMargin = createSelector(
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginBalanceInfo,
 	selectSusdBalance,
 	(idleInMarkets, { freeMargin }, balance) => {
@@ -631,7 +633,7 @@ export const selectIdleMargin = createSelector(
 export const selectSmartMarginAllowanceValid = createSelector(
 	selectCrossMarginAccountData,
 	selectCrossMarginBalanceInfo,
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginMarginDelta,
 	(account, { freeMargin }, idleInMarkets, marginDelta) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets);
@@ -644,7 +646,7 @@ export const selectSmartMarginAllowanceValid = createSelector(
 );
 
 export const selectWithdrawableMargin = createSelector(
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginBalanceInfo,
 	(idleInMarkets, { freeMargin }) => {
 		return idleInMarkets.add(freeMargin);
@@ -704,11 +706,12 @@ export const selectEditPositionInputs = createSelector(
 export const selectEditMarginAllowanceValid = createSelector(
 	selectCrossMarginAccountData,
 	selectCrossMarginBalanceInfo,
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectEditPositionInputs,
 	(account, { freeMargin }, idleInMarkets, { marginDelta }) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets);
 		if (!account) return false;
+		if (isNaN(Number(marginDelta))) return false;
 		const marginDelatWei = wei(marginDelta || 0);
 		const marginDeposit = marginDelatWei.sub(totalIdleMargin);
 		return (

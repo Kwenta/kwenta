@@ -26,6 +26,7 @@ import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
+import ChartToggle from './ChartToggle';
 import HoursToggle from './HoursToggle';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
@@ -73,6 +74,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = () => {
 			{SelectedMarketDetailsView}
 			{!mobileOrTablet && (
 				<ShowHistoryContainer>
+					<ChartToggle />
 					<Checkbox
 						id="history"
 						label="Show History"
@@ -231,7 +233,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 	align-items: center;
 	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
 	overflow-y: visible;
-	grid-template-columns: 1fr 150px;
+	grid-template-columns: 1fr 280px;
 	border-bottom: ${(props) => (props.mobile ? 0 : props.theme.colors.selectedTheme.border)};
 
 	${(props) =>
@@ -246,7 +248,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
-	gap: 26px;
+	gap: 20px;
 	padding: 10px 45px 10px 15px;
 	overflow-x: scroll;
 	scrollbar-width: none;
@@ -324,11 +326,11 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 
 const ShowHistoryContainer = styled.div`
 	display: flex;
+	align-items: center;
 	z-index: ${zIndex.HEADER};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
-	min-height: 50px;
-	padding: 0 20px;
+	padding: 0 15px;
 `;
 
 export default MarketDetails;

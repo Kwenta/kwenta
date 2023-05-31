@@ -206,7 +206,7 @@ export const Table: FC<TableProps> = memo(
 						) : !!noResultsMessage && !isLoading && data.length === 0 ? (
 							noResultsMessage
 						) : page.length > 0 ? (
-							<TableBody className="table-body" {...getTableBodyProps()}>
+							<TableBody key="table-body" className="table-body" {...getTableBodyProps()}>
 								{page.map((row, idx) => {
 									prepareRow(row);
 									const props = row.getRowProps();

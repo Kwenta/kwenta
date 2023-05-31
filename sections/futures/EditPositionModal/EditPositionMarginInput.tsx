@@ -32,7 +32,7 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 					dispatch(
 						editCrossMarginPositionMargin(
 							positionModal.marketKey,
-							type === 'deposit' ? value : '-' + value
+							type === 'deposit' || !value ? value : '-' + value
 						)
 					);
 				}

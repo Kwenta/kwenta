@@ -69,6 +69,12 @@ const newTheme = {
 		preview: common.palette.yellow.y500,
 		warning: common.palette.yellow.y500,
 	},
+	banner: {
+		yellow: {
+			text: common.palette.yellow.y500,
+			background: common.palette.yellow.y1000,
+		},
+	},
 	badge: {
 		yellow: {
 			text: common.palette.neutral.n900,
@@ -175,6 +181,18 @@ const newTheme = {
 				color: common.palette.red.r300,
 				background: common.palette.alpha.red5,
 			},
+		},
+	},
+	pencilIcon: {
+		color: common.palette.yellow.y500,
+		hover: {
+			color: common.palette.yellow.y900,
+		},
+	},
+	fundingChart: {
+		tooltip: {
+			background: common.palette.neutral.n700,
+			border: common.palette.neutral.n600,
 		},
 	},
 };

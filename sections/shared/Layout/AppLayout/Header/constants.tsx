@@ -119,7 +119,7 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 	},
 	{
 		i18nLabel: 'header.nav.options.title',
-		link: EXTERNAL_LINKS.Options.Portfolio,
+		link: EXTERNAL_LINKS.Options.Trade,
 	},
 ];
 
