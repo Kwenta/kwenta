@@ -34,7 +34,7 @@ import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FOOTER_HEIGHT } from 'styles/common';
 import media from 'styles/media';
-import { formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatPercent, zeroBN } from 'sdk/utils/number';
 
 import ShareModal from '../ShareModal';
 import TableMarketDetails from './TableMarketDetails';

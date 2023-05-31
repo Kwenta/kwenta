@@ -6,7 +6,7 @@ import Button from 'components/Button';
 import { ConditionalOrder, PositionSide } from 'sdk/types/futures';
 import { cancelConditionalOrder } from 'state/futures/actions';
 import { useAppDispatch } from 'state/hooks';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'sdk/utils/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';

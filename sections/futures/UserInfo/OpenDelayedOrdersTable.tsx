@@ -25,7 +25,7 @@ import {
 	selectMarkets,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatCurrency, suggestedDecimals } from 'utils/formatters/number';
+import { formatCurrency, suggestedDecimals } from 'sdk/utils/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import PositionType from '../PositionType';

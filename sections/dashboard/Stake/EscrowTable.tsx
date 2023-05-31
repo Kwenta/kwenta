@@ -10,7 +10,7 @@ import type { EscrowData } from 'sdk/services/kwentaToken';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { vestEscrowedRewards } from 'state/staking/actions';
-import { truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 import VestConfirmationModal from './VestConfirmationModal';
 

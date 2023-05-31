@@ -19,13 +19,7 @@ import {
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import {
-	floorNumber,
-	formatCryptoCurrency,
-	formatDollars,
-	isZero,
-	zeroBN,
-} from 'utils/formatters/number';
+import { floorNumber, formatCryptoCurrency, formatDollars, isZero, zeroBN } from 'sdk/utils/number';
 
 import { DenominationToggle } from './DenominationToggle';
 

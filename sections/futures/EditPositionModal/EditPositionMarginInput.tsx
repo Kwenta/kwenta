@@ -7,11 +7,11 @@ import NumericInput from 'components/Input/NumericInput';
 import { getStep } from 'components/Slider/Slider';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
+import { floorNumber, formatNumber, zeroBN } from 'sdk/utils/number';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionMargin } from 'state/futures/actions';
 import { selectEditPositionInputs } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, formatNumber, zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	isMobile?: boolean;

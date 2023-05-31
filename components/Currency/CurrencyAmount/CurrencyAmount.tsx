@@ -4,7 +4,7 @@ import { FC, memo } from 'react';
 import styled from 'styled-components';
 
 import { ContainerRowMixin } from 'components/layout/grid';
-import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
+import { formatCurrency, FormatCurrencyOptions } from 'sdk/utils/number';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 

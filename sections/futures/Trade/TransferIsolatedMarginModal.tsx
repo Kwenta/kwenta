@@ -14,7 +14,8 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
+import { formatDollars, zeroBN } from 'sdk/utils/number';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions';
 import {
@@ -24,7 +25,6 @@ import {
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 type Props = {
 	onDismiss(): void;

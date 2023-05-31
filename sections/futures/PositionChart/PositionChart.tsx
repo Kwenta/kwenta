@@ -12,7 +12,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'sdk/utils/number';
 
 type PositionChartProps = {
 	display?: boolean;

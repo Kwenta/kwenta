@@ -17,8 +17,8 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
-import { timePresentation } from 'utils/formatters/date';
-import { formatDollars } from 'utils/formatters/number';
+import { timePresentation } from 'sdk/utils/date';
+import { formatDollars } from 'sdk/utils/number';
 import { truncateAddress } from 'utils/formatters/string';
 
 const Transfers: FC = () => {

@@ -7,7 +7,7 @@ import { PositionSide } from 'sdk/types/futures';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch } from 'state/hooks';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'sdk/utils/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';

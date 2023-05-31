@@ -7,7 +7,7 @@ import { GridContainer } from 'sections/earn/grid';
 import { claimRewards } from 'state/earn/actions';
 import { selectEarnApy, selectEarnedRewards, selectYieldPerDay } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatPercent, truncateNumbers } from 'utils/formatters/number';
+import { formatPercent, truncateNumbers } from 'sdk/utils/number';
 
 import GridData from './GridData';
 

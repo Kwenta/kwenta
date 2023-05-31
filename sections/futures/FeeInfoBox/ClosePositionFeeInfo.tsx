@@ -7,7 +7,7 @@ import {
 	selectEditPositionModalInfo,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'sdk/utils/number';
 
 import FeesRow from './FeesRow.tsx';
 

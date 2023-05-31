@@ -9,7 +9,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'sdk/utils/number';
 
 type MobileCurrencyCardProps = {
 	currencyKey?: string;

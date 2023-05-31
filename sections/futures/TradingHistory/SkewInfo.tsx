@@ -7,7 +7,7 @@ import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatCurrency, formatPercent } from 'sdk/utils/number';
 
 import OpenInterestBar from './OpenInterestBar';
 

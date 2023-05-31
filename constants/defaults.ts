@@ -40,11 +40,3 @@ export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
 	: 'isolated_margin';
 
 export const DEFAULT_LEVERAGE = '1';
-
-export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
-	MARKET: '1',
-	STOP: '2',
-	LIMIT: '2',
-	STOP_LOSS: '5',
-	TAKE_PROFIT: '5',
-};

@@ -19,7 +19,7 @@ import {
 	selectMarketAsset,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars } from 'sdk/utils/number';
 
 const ConditionalOrdersTab: React.FC = () => {
 	const dispatch = useAppDispatch();

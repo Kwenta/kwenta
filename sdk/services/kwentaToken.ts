@@ -12,8 +12,8 @@ import {
 } from 'queries/staking/utils';
 import { ZERO_WEI } from 'sdk/constants/number';
 import { ContractName } from 'sdk/contracts';
+import { formatTruncatedDuration } from 'sdk/utils/date';
 import { weiFromWei } from 'sdk/utils/number';
-import { formatTruncatedDuration } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';

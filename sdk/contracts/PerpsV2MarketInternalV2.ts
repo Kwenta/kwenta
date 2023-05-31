@@ -16,7 +16,7 @@ import {
 	UNIT_BN,
 	multiplyDecimal,
 	divideDecimal,
-} from 'utils/formatters/number';
+} from 'sdk/utils/number';
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin

@@ -8,12 +8,12 @@ import { NetworkId } from 'sdk/types/common';
 import { ConditionalOrder } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
 import { formatOrderDisplayType } from 'sdk/utils/futures';
+import { formatNumber } from 'sdk/utils/number';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';
 import { useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 import darkTheme from 'styles/theme/colors/dark';
-import { formatNumber } from 'utils/formatters/number';
 
 import {
 	IChartingLibraryWidget,

@@ -15,8 +15,8 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { timePresentation } from 'utils/formatters/date';
-import { formatDollars } from 'utils/formatters/number';
+import { timePresentation } from 'sdk/utils/date';
+import { formatDollars } from 'sdk/utils/number';
 
 const TransfersTab: React.FC = () => {
 	const { t } = useTranslation();

@@ -3,12 +3,13 @@ import styled from 'styled-components';
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { PositionSide } from 'sdk/types/futures';
+import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { formatNumber, zeroBN } from 'sdk/utils/number';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { SharePositionParams } from 'state/futures/types';
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { formatNumber, zeroBN } from 'utils/formatters/number';
-import { getMarketName, MarketKeyByAsset } from 'utils/futures';
+import { getMarketName } from 'utils/futures';
 
 const AmountContainer: FC<SharePositionParams> = ({ asset, position }) => {
 	const defaultAsset = useAppSelector(selectMarketAsset);

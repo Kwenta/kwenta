@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 
+import { weiFromEth } from 'sdk/utils/number';
 import { DEFAULT_NETWORK } from 'testing/unit/constants';
-import { weiFromEth } from 'utils/formatters/number';
 
 export type MockEthProvider = Record<string, any>;
 

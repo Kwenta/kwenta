@@ -25,7 +25,7 @@ import {
 import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors';
 import { selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import { formatDollars, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { formatDollars, truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();

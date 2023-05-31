@@ -22,8 +22,8 @@ import {
 	selectTotalUnrealizedPnl,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatChartDate, formatChartTime, formatShortDateWithTime } from 'utils/formatters/date';
-import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatChartDate, formatChartTime, formatShortDateWithTime } from 'sdk/utils/date';
+import { formatDollars, formatPercent, zeroBN } from 'sdk/utils/number';
 
 import { Timeframe } from './Timeframe';
 

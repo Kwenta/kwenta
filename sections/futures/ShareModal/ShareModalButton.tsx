@@ -8,7 +8,7 @@ import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { PositionSide } from 'sdk/types/futures';
 import { SharePositionParams } from 'state/futures/types';
-import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, zeroBN } from 'sdk/utils/number';
 import { getMarketName } from 'utils/futures';
 
 function getTwitterText(

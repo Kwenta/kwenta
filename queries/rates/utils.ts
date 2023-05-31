@@ -1,4 +1,4 @@
-import { CandleResult } from 'queries/futures/subgraph';
+import { CandleResult } from 'sdk/utils/subgraph';
 
 import { Candle, PythResponse } from './types';
 

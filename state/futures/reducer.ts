@@ -14,6 +14,7 @@ import {
 	FuturesTrade,
 	FuturesOrderType,
 } from 'sdk/types/futures';
+import { MarketKeyByAsset } from 'sdk/utils/futures';
 import {
 	DEFAULT_MAP_BY_NETWORK,
 	DEFAULT_QUERY_STATUS,
@@ -26,7 +27,6 @@ import {
 } from 'state/constants';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
-import { MarketKeyByAsset } from 'utils/futures';
 
 import {
 	fetchCrossMarginBalanceInfo,

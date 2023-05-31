@@ -41,7 +41,7 @@ import {
 	formatPercent,
 	stripZeros,
 	zeroBN,
-} from 'utils/formatters/number';
+} from 'sdk/utils/number';
 
 import ClosePositionFeeInfo from '../FeeInfoBox/ClosePositionFeeInfo';
 import OrderTypeSelector from '../Trade/OrderTypeSelector';

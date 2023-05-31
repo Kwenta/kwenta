@@ -32,7 +32,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { isZero, zeroBN } from 'utils/formatters/number';
+import { isZero, zeroBN } from 'sdk/utils/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 const ManagePosition: React.FC = () => {

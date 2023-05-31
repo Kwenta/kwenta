@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { SharePositionParams } from 'state/futures/types';
 import media from 'styles/media';
 import getLocale from 'utils/formatters/getLocale';
-import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, zeroBN } from 'sdk/utils/number';
 
 function getColor(props: any) {
 	let color = '';

@@ -14,7 +14,7 @@ import {
 	selectEditPositionModalInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'sdk/utils/number';
 
 type OrderSizingProps = {
 	maxNativeValue: Wei;

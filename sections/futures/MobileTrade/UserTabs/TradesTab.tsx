@@ -21,7 +21,7 @@ import {
 import { useAppSelector, useFetchAction } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { selectWallet } from 'state/wallet/selectors';
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { formatCryptoCurrency } from 'sdk/utils/number';
 
 import TradeDrawer from '../drawers/TradeDrawer';
 

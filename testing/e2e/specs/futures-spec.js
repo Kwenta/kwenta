@@ -1,5 +1,5 @@
+import { formatNumber } from '../../../sdk/utils/number';
 import FuturesPage from '../pages/markets/futures-page';
-import { formatNumber } from '../../../utils/formatters/number';
 
 const futures = new FuturesPage();
 

@@ -25,7 +25,7 @@ import { selectTokenList } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { selectNetwork } from 'state/wallet/selectors';
-import { zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'sdk/utils/number';
 
 import CurrencyRow from './CurrencyRow';
 

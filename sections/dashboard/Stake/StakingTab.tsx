@@ -9,7 +9,7 @@ import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getReward } from 'state/staking/actions';
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';
-import { formatPercent, truncateNumbers } from 'utils/formatters/number';
+import { formatPercent, truncateNumbers } from 'sdk/utils/number';
 
 import StakeInputCard from './InputCards/StakeInputCard';
 

@@ -22,7 +22,7 @@ import {
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { floorNumber, truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 import LeverageSlider from '../LeverageSlider';
 

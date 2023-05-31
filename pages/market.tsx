@@ -7,6 +7,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import { FuturesMarketAsset } from 'sdk/types/futures';
+import { MarketKeyByAsset } from 'sdk/utils/futures';
 import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
@@ -42,7 +43,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { PageContent } from 'styles/common';
 import media from 'styles/media';
-import { MarketKeyByAsset } from 'utils/futures';
 
 type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
 

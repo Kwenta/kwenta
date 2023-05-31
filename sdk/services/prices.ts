@@ -18,10 +18,10 @@ import {
 	SynthPricesTuple,
 } from 'sdk/types/prices';
 import { getDisplayAsset, getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
+import { MarketAssetByKey } from 'sdk/utils/futures';
 import { startInterval } from 'sdk/utils/interval';
+import { scale } from 'sdk/utils/number';
 import { getRatesEndpoint } from 'sdk/utils/prices';
-import { scale } from 'utils/formatters/number';
-import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';

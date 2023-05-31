@@ -1,9 +1,8 @@
 import { wei } from '@synthetixio/wei';
 
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PricesMap } from 'sdk/types/prices';
 import { PricesInfoMap, PricesInfoMapWei } from 'state/prices/types';
-
-import { zeroBN } from './formatters/number';
 
 export const getPricesInfo = (oldPrices: PricesInfoMap, newPrices: PricesMap<string>) => {
 	let pricesInfo: PricesInfoMap = {};
@@ -33,7 +32,7 @@ export const deserializePricesInfo = (pricesInfo: PricesInfoMap) => {
 	let asset: keyof PricesMap<string>;
 	for (asset in pricesInfo) {
 		newPricesInfo[asset] = {
-			price: wei(pricesInfo[asset]?.price ?? zeroBN),
+			price: wei(pricesInfo[asset]?.price ?? ZERO_WEI),
 			change: pricesInfo[asset]?.change ?? null,
 		};
 	}

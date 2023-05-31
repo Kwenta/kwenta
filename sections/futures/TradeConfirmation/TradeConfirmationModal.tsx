@@ -10,10 +10,18 @@ import ErrorView from 'components/ErrorView';
 import { ButtonLoader } from 'components/Loader/Loader';
 import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
+import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
 import { PositionSide } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
+import {
+	zeroBN,
+	formatCurrency,
+	formatDollars,
+	formatNumber,
+	formatPercent,
+	stripZeros,
+} from 'sdk/utils/number';
 import { submitCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectLeverageSide,
@@ -28,14 +36,6 @@ import {
 	selectNewTradeHasSlTp,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import {
-	zeroBN,
-	formatCurrency,
-	formatDollars,
-	formatNumber,
-	formatPercent,
-	stripZeros,
-} from 'utils/formatters/number';
 
 import ConfirmSlippage from './ConfirmSlippage';
 import TradeConfirmationRow from './TradeConfirmationRow';

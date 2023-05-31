@@ -12,8 +12,9 @@ import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { previewErrorI18n } from 'queries/futures/constants';
+import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
+import { formatDollars, zeroBN } from 'sdk/utils/number';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {
@@ -33,7 +34,6 @@ import {
 	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 import EditPositionMarginInput from './EditPositionMarginInput';
 

@@ -8,7 +8,7 @@ import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchan
 import { selectGasPrice } from 'state/app/selectors';
 import { selectTransactionFeeWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatNumber, formatDollars } from 'utils/formatters/number';
+import { formatNumber, formatDollars } from 'sdk/utils/number';
 
 type GasPriceSelectProps = {
 	className?: string;

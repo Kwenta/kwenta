@@ -22,7 +22,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import media from 'styles/media';
-import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatPercent, zeroBN } from 'sdk/utils/number';
 import { getDisplayAsset } from 'utils/futures';
 
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';

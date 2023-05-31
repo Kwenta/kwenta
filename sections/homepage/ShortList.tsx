@@ -19,7 +19,7 @@ import { StackSection } from 'sections/homepage/section';
 import { Title } from 'sections/homepage/text';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
-import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, zeroBN } from 'sdk/utils/number';
 
 const ShortList = () => {
 	const { t } = useTranslation();

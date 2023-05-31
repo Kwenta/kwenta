@@ -21,7 +21,7 @@ import {
 	selectSubmissionDisabledReason,
 } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { secondsToTime } from 'utils/formatters/date';
+import { secondsToTime } from 'sdk/utils/date';
 
 const TradeSummaryCard: FC = memo(() => {
 	const dispatch = useAppDispatch();

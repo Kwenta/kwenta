@@ -30,7 +30,7 @@ import {
 } from 'state/staking/selectors';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import { formatNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { formatNumber, truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 const RewardsTabs: FC = () => {
 	const { t } = useTranslation();

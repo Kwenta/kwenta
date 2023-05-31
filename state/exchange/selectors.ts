@@ -2,13 +2,13 @@ import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { CRYPTO_CURRENCY_MAP } from 'sdk/constants/exchange';
+import { toWei, zeroBN } from 'sdk/utils/number';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { selectPrices } from 'state/prices/selectors';
 import type { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectIsWalletConnected } from 'state/wallet/selectors';
-import { toWei, zeroBN } from 'utils/formatters/number';
 
 export const selectTokenList = (state: RootState) => state.exchange.tokenList;
 

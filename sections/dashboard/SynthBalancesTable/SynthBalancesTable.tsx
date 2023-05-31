@@ -17,7 +17,7 @@ import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { selectSynthsMap } from 'state/wallet/selectors';
 import { sortWei } from 'utils/balances';
-import { formatNumber, zeroBN } from 'utils/formatters/number';
+import { formatNumber, zeroBN } from 'sdk/utils/number';
 import { isDecimalFour } from 'utils/futures';
 
 type Cell = {

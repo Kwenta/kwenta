@@ -9,7 +9,7 @@ import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
 import { selectMarketInfo, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'sdk/utils/number';
 
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 

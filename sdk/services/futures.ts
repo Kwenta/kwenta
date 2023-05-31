@@ -6,7 +6,6 @@ import request, { gql } from 'graphql-request';
 import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
@@ -50,6 +49,7 @@ import {
 	SLTPOrderInputs,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
+import { calculateTimestampForPeriod } from 'sdk/utils/date';
 import {
 	appAdjustedLeverage,
 	calculateFundingRate,
@@ -67,10 +67,10 @@ import {
 	mapFuturesPositions,
 	mapTrades,
 	marketsForNetwork,
+	MarketKeyByAsset,
 } from 'sdk/utils/futures';
+import { getFuturesAggregateStats } from 'sdk/utils/subgraph';
 import { getReasonFromCode } from 'sdk/utils/synths';
-import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { MarketKeyByAsset } from 'utils/futures';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;

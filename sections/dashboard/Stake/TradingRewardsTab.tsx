@@ -27,8 +27,8 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleKwentaRewards } from 'state/staking/actions';
 import { selectEpochPeriod, selectKwentaRewards, selectResetTime } from 'state/staking/selectors';
 import media from 'styles/media';
-import { formatTruncatedDuration } from 'utils/formatters/date';
-import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { formatTruncatedDuration } from 'sdk/utils/date';
+import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	({ period = 0, start = 0, end = Math.floor(Date.now() / 1000) }) => {

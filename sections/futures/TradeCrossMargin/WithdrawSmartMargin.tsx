@@ -13,7 +13,7 @@ import { selectTransaction } from 'state/app/selectors';
 import { withdrawCrossMargin } from 'state/futures/actions';
 import { selectIsSubmittingCrossTransfer, selectWithdrawableMargin } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars } from 'sdk/utils/number';
 
 type Props = {
 	onDismiss(): void;

@@ -8,7 +8,7 @@ import { COMPETITION_DATES, COMPETITION_ENABLED } from 'constants/competition';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { ExternalLink } from 'styles/common';
 import media from 'styles/media';
-import { formatDateWithoutYear } from 'utils/formatters/date';
+import { formatDateWithoutYear } from 'sdk/utils/date';
 
 import { CompetitionState } from './CompetitionState';
 

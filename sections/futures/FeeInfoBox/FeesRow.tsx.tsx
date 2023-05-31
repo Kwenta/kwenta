@@ -8,7 +8,7 @@ import { InfoBoxRow } from 'components/InfoBox';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { SmartMarginOrderType } from 'sdk/types/futures';
-import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'sdk/utils/number';
 
 const ExecutionFeeTooltip = memo(() => {
 	const { t } = useTranslation();

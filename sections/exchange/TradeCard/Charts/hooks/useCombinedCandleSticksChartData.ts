@@ -2,7 +2,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import orderBy from 'lodash/orderBy';
 
 import { Candle } from 'queries/rates/types';
-import { zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'sdk/utils/number';
 
 export type TempCandle = {
 	id?: string;

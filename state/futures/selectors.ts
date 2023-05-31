@@ -8,7 +8,10 @@ import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
+import { truncateTimestamp } from 'sdk/utils/date';
 import { getDefaultPriceImpact, unserializePotentialTrade } from 'sdk/utils/futures';
+import { MarketKeyByAsset, MarketAssetByKey } from 'sdk/utils/futures';
+import { stripZeros, zeroBN } from 'sdk/utils/number';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import {
@@ -20,11 +23,8 @@ import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeDelayedOrderFee, sameSide } from 'utils/costCalculations';
-import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
-import { stripZeros, zeroBN } from 'utils/formatters/number';
 import {
-	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
 	unserializeFuturesVolumes,
 	unserializeGasEstimate,
@@ -35,7 +35,6 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeConditionalOrders,
-	MarketAssetByKey,
 } from 'utils/futures';
 
 import {

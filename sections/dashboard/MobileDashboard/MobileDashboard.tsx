@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'sdk/utils/number';
 
 import OpenPositions, { OpenPositionsProps } from './OpenPositions';
 import Portfolio from './Portfolio';

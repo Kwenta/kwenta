@@ -9,7 +9,7 @@ import {
 	selectAvailableMarginInMarkets,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatCurrency, formatDollars } from 'utils/formatters/number';
+import { formatCurrency, formatDollars } from 'sdk/utils/number';
 
 import PencilButton from '../../shared/components/PencilButton';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';

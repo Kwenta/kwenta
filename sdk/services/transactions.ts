@@ -18,8 +18,7 @@ const OVMGasPriceOracle = getContractFactory('OVM_GasPriceOracle').attach(
 );
 
 const contractAbi = JSON.parse(
-	// @ts-ignore
-	OVMGasPriceOracle.interface.format(ethers.utils.FormatTypes.json)
+	OVMGasPriceOracle.interface.format(ethers.utils.FormatTypes.json) as string
 );
 
 const DEFAULT_GAS_BUFFER = 0.2;

@@ -19,7 +19,7 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'sdk/utils/number';
 import logError from 'utils/logError';
 
 import {

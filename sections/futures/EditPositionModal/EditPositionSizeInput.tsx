@@ -14,7 +14,7 @@ import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionSize } from 'state/futures/actions';
 import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { stripZeros, formatNumber, suggestedDecimals, zeroBN } from 'utils/formatters/number';
+import { stripZeros, formatNumber, suggestedDecimals, zeroBN } from 'sdk/utils/number';
 
 type OrderSizingProps = {
 	type: 'increase' | 'decrease';

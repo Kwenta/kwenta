@@ -25,7 +25,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks';
 import { selectSynthsMap } from 'state/wallet/selectors';
-import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
+import { formatDollars, toWei, zeroBN } from 'sdk/utils/number';
 import logError from 'utils/logError';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';

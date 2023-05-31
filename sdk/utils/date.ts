@@ -4,8 +4,8 @@ import getISOWeeksInYear from 'date-fns/getISOWeeksInYear';
 import subHours from 'date-fns/subHours';
 import { TFunction } from 'i18next';
 
-import getLocale from './getLocale';
-import { strPadLeft } from './string';
+import getLocale from '../../utils/formatters/getLocale';
+import { strPadLeft } from '../../utils/formatters/string';
 
 export const formatTxTimestamp = (timestamp: number | Date) =>
 	formatDate(timestamp, 'MMM d, yy | HH:mm');

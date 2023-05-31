@@ -15,4 +15,5 @@ export const TRANSACTION_EVENTS_MAP = Object.fromEntries(
 
 export const DEFAULT_GAS_BUFFER = 5000;
 
+export const ETH_UNIT = 1000000000000000000;
 export const GWEI_DECIMALS = 9;

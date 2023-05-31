@@ -25,7 +25,7 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, stripZeros, suggestedDecimals } from 'utils/formatters/number';
+import { formatDollars, stripZeros, suggestedDecimals } from 'sdk/utils/number';
 
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow.tsx';
 import PositionType from '../PositionType';

@@ -1,8 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import { toWei, truncateNumbers, zeroBN } from 'sdk/utils/number';
 import { RootState } from 'state/store';
-import { toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 export const selectBalance = createSelector((state: RootState) => state.earn.balance, toWei);
 

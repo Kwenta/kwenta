@@ -16,7 +16,7 @@ import {
 	selectSlippagePercentWei,
 } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, formatPercent, zeroBN } from 'sdk/utils/number';
 
 const PriceImpactRow = () => {
 	const { t } = useTranslation();

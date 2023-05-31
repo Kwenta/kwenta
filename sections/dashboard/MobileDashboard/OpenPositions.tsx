@@ -14,7 +14,7 @@ import {
 	selectActiveSmartPositionsCount,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars } from 'sdk/utils/number';
 
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import { MarketsTab } from '../Markets/Markets';

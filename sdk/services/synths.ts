@@ -3,9 +3,9 @@ import { ethers } from 'ethers';
 import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { notNill } from 'queries/synths/utils';
 import { ZERO_WEI } from 'sdk/constants/number';
 import { SynthBalance } from 'sdk/types/synths';
+import { notNill } from 'sdk/utils/general';
 
 import * as sdkErrors from '../common/errors';
 

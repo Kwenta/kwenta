@@ -27,7 +27,7 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDollars, formatNumber, formatPercent, zeroBN } from 'sdk/utils/number';
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
 import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage';

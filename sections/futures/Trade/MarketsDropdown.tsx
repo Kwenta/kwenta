@@ -21,6 +21,8 @@ import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
+import { floorNumber, formatDollars, zeroBN } from 'sdk/utils/number';
 import { selectShowBanner } from 'state/app/selectors';
 import {
 	selectMarketAsset,
@@ -34,13 +36,7 @@ import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
 import media from 'styles/media';
-import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
-import {
-	AssetDisplayByAsset,
-	getMarketName,
-	getSynthDescription,
-	MarketKeyByAsset,
-} from 'utils/futures';
+import { getMarketName, getSynthDescription } from 'utils/futures';
 
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';

@@ -2,15 +2,14 @@ import { formatBytes32String } from 'ethers/lib/utils.js';
 import request, { gql } from 'graphql-request';
 import KwentaSDK from 'sdk';
 
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import {
-	FuturesAccountType,
-	getFuturesPositions,
-	getFuturesTrades,
-} from 'queries/futures/subgraph';
-import { SMART_MARGIN_FRAGMENT, ISOLATED_MARGIN_FRAGMENT } from 'sdk/constants/futures';
+	SMART_MARGIN_FRAGMENT,
+	ISOLATED_MARGIN_FRAGMENT,
+	DEFAULT_NUMBER_OF_TRADES,
+} from 'sdk/constants/futures';
 import { FuturesMarketAsset, FuturesMarketKey } from 'sdk/types/futures';
 import { mapMarginTransfers, mapSmartMarginTransfers } from 'sdk/utils/futures';
+import { FuturesAccountType, getFuturesPositions, getFuturesTrades } from 'sdk/utils/subgraph';
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,

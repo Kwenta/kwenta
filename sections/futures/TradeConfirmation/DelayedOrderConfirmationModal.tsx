@@ -34,7 +34,7 @@ import {
 	formatDollars,
 	formatPercent,
 	formatNumber,
-} from 'utils/formatters/number';
+} from 'sdk/utils/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import TradeConfirmationRow from './TradeConfirmationRow';

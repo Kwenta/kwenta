@@ -13,6 +13,7 @@ import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import ROUTES from 'constants/routes';
+import { zeroBN } from 'sdk/utils/number';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { fetchPositionHistoryForTrader } from 'state/futures/actions';
 import {
@@ -23,7 +24,6 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
-import { zeroBN } from 'utils/formatters/number';
 import { getMarketName } from 'utils/futures';
 
 type TraderHistoryProps = {
