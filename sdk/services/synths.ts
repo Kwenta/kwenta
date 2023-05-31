@@ -4,8 +4,8 @@ import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { notNill } from 'queries/synths/utils';
-import { SynthBalance } from 'sdk/types/tokens';
-import { zeroBN } from 'utils/formatters/number';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { SynthBalance } from 'sdk/types/synths';
 
 import * as sdkErrors from '../common/errors';
 
@@ -55,7 +55,7 @@ export default class SynthsService {
 				'desc'
 			),
 			totalUSDBalance,
-			susdWalletBalance: balancesMap?.['sUSD']?.balance ?? zeroBN,
+			susdWalletBalance: balancesMap?.['sUSD']?.balance ?? ZERO_WEI,
 		};
 
 		return balances;

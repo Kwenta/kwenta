@@ -1,8 +1,7 @@
-import { BigNumber } from 'ethers';
-
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { KwentaStatus } from 'sdk/types/system';
+import { GasPrice } from 'sdk/types/transactions';
 import { FuturesTransactionType } from 'state/futures/types';
 
 export type ModalType =
@@ -23,13 +22,6 @@ export type FuturesPositionModalType =
 	| 'futures_edit_stop_loss_take_profit';
 
 export type GasSpeed = 'average' | 'fast' | 'fastest';
-
-export type GasPrice<T = BigNumber> = {
-	baseFeePerGas?: T; // Note that this is used for estimating price and should not be included in the transaction
-	maxPriorityFeePerGas?: T;
-	maxFeePerGas?: T;
-	gasPrice?: T;
-};
 
 export type TransactionType = FuturesTransactionType; // TODO: Support all types
 

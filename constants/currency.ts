@@ -16,29 +16,6 @@ export const CATEGORY: Category[] = [
 ];
 export const CATEGORY_MAP = keyBy(CATEGORY);
 
-export const CRYPTO_CURRENCY = [
-	'KNC',
-	'COMP',
-	'REN',
-	'LEND',
-	'SNX',
-	'BTC',
-	'ETH',
-	'XRP',
-	'BCH',
-	'LTC',
-	'EOS',
-	'BNB',
-	'XTZ',
-	'XMR',
-	'ADA',
-	'LINK',
-	'TRX',
-	'DASH',
-	'ETC',
-];
-
-export const CRYPTO_CURRENCY_MAP = keyBy(CRYPTO_CURRENCY);
 export type FUTURES_FIAT = 'EUR' | 'JPY' | 'USD' | 'AUD' | 'GBP' | 'CHF';
 export const FIAT_SYNTHS: Set<CurrencyKey | FUTURES_FIAT> = new Set([
 	'sEUR',
@@ -75,25 +52,6 @@ export const INDEX_SYNTHS = new Set<CurrencyKey | 'DebtRatio'>(['DebtRatio']);
 
 export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
-
-export const ETH_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'; // For 1inch API
-
-// For coingecko API
-export const ETH_COINGECKO_ADDRESS = '0x4200000000000000000000000000000000000006';
-export const KWENTA_ADDRESS = '0x920cf626a271321c151d027030d5d08af699456b';
-export const OP_ADDRESS = '0x4200000000000000000000000000000000000042';
-
-export const ATOMIC_EXCHANGES_L1 = [
-	'sBTC',
-	'sETH',
-	'sEUR',
-	'sUSD',
-	'sCHF',
-	'sJPY',
-	'sAUD',
-	'sGBP',
-	'sKRW',
-];
 
 export enum SynthsName {
 	sUSD = 'sUSD',

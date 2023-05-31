@@ -36,6 +36,7 @@ import {
 	getTradeStatusMessage,
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
+import { getTransactionPrice } from 'sdk/utils/transactions';
 import { unserializeGasPrice } from 'state/app/helpers';
 import {
 	handleTransactionError,
@@ -68,7 +69,6 @@ import {
 	fillPriceWithBuffer,
 } from 'utils/futures';
 import logError from 'utils/logError';
-import { getTransactionPrice } from 'utils/network';
 import { refetchWithComparator } from 'utils/queries';
 
 import {

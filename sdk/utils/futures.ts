@@ -49,11 +49,11 @@ import { formatCurrency, formatDollars, zeroBN } from 'utils/formatters/number';
 import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
-export const getFuturesEndpoint = (networkId: number): string => {
+export const getFuturesEndpoint = (networkId: number) => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10];
 };
 
-export const getMainEndpoint = (networkId: number): string => {
+export const getMainEndpoint = (networkId: number) => {
 	return MAIN_ENDPOINTS[networkId] || MAIN_ENDPOINTS[10];
 };
 

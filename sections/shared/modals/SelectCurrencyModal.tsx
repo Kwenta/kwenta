@@ -9,10 +9,11 @@ import Input from 'components/Input/Input';
 import { FlexDivCentered } from 'components/layout/flex';
 import { RowsHeader, CenteredModal } from 'components/layout/modals';
 import Loader from 'components/Loader';
-import { CurrencyKey, CATEGORY_MAP, ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
+import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
+import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'sdk/constants/exchange';
 import { getSynthsListForNetwork, SynthSymbol } from 'sdk/data/synths';
 import { NetworkId } from 'sdk/types/common';
 import {

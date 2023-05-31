@@ -3,12 +3,12 @@ import BN from 'bn.js';
 import { Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
+import KwentaSDK from 'sdk';
 
 import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 import PerpsV2Market from 'sdk/contracts/abis/PerpsV2Market.json';
 import { PerpsV2Market__factory } from 'sdk/contracts/types';
 import { FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
-import { sdk } from 'state/config';
 import {
 	zeroBN,
 	ZERO_BIG_NUM,
@@ -61,6 +61,7 @@ type MarketSettings = {
 };
 
 class FuturesMarketInternal {
+	_sdk: KwentaSDK;
 	_provider: ethers.providers.Provider;
 	_perpsV2MarketContract: Contract;
 	_perpsV2MarketSettings: MultiCallContract | undefined;
@@ -82,10 +83,12 @@ class FuturesMarketInternal {
 	_cache: Record<string, BigNumber>;
 
 	constructor(
+		sdk: KwentaSDK,
 		provider: ethers.providers.Provider,
 		marketKey: FuturesMarketKey,
 		marketAddress: string
 	) {
+		this._sdk = sdk;
 		this._provider = provider;
 
 		this._perpsV2MarketContract = PerpsV2Market__factory.connect(marketAddress, provider);
@@ -114,7 +117,7 @@ class FuturesMarketInternal {
 			this._perpsV2MarketContract.address,
 			PerpsV2Market
 		);
-		const preFetchedData = await sdk.context.multicallProvider.all([
+		const preFetchedData = await this._sdk.context.multicallProvider.all([
 			multiCallContract.assetPrice(),
 			multiCallContract.marketSkew(),
 			multiCallContract.marketSize(),
@@ -171,7 +174,7 @@ class FuturesMarketInternal {
 		tradeParams: TradeParams,
 		marginDelta: BigNumber
 	): Promise<{ newPos: Position; status: PotentialTradeStatus; fee: BigNumber }> => {
-		if (!sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
+		if (!this._sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
 		// Reverts if the user is trying to submit a size-zero order.
 		if (tradeParams.sizeDelta.eq(0) && marginDelta.eq(0)) {
 			return { newPos: oldPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.NIL_ORDER };
@@ -589,7 +592,7 @@ class FuturesMarketInternal {
 
 	_batchGetSettings = async () => {
 		if (!this._perpsV2MarketSettings) throw new Error('Market settings not initialized');
-		const settings = (await sdk.context.multicallProvider.all([
+		const settings = (await this._sdk.context.multicallProvider.all([
 			this._perpsV2MarketSettings.minInitialMargin(),
 			this._perpsV2MarketSettings.takerFeeOffchainDelayedOrder(this._marketKeyBytes),
 			this._perpsV2MarketSettings.makerFeeOffchainDelayedOrder(this._marketKeyBytes),

@@ -1,5 +1,5 @@
 import type { TransactionResponse } from '@ethersproject/providers';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 
 export type TransactionEventCode = 'txSent' | 'txConfirmed' | 'txFailed' | 'txError';
 
@@ -35,3 +35,12 @@ export type GetCodeParams = {
 	blockNumber: number;
 	provider: ethers.providers.Provider;
 };
+
+export type GasPrice<T = BigNumber> = {
+	baseFeePerGas?: T; // Note that this is used for estimating price and should not be included in the transaction
+	maxPriorityFeePerGas?: T;
+	maxFeePerGas?: T;
+	gasPrice?: T;
+};
+
+export type GasLimitEstimate = BigNumber | null;

@@ -8,47 +8,44 @@ import { formatBytes32String } from 'ethers/lib/utils.js';
 import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
-import { CurrencyKey } from 'constants/currency';
-import {
-	ATOMIC_EXCHANGES_L1,
-	CRYPTO_CURRENCY_MAP,
-	ETH_ADDRESS,
-	ETH_COINGECKO_ADDRESS,
-} from 'constants/currency';
-import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
-import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
-import { CG_BASE_API_URL } from 'queries/coingecko/constants';
-import { PriceResponse } from 'queries/coingecko/types';
 import { getEthGasPrice } from 'sdk/common/gas';
 import {
 	ADDITIONAL_MARKETS,
+	ATOMIC_EXCHANGE_SLIPPAGE,
+	CG_BASE_API_URL,
 	DEFAULT_BUFFER,
 	FILTERED_TOKENS,
 	PROTOCOLS,
+	DEFAULT_1INCH_SLIPPAGE,
+	KWENTA_REFERRAL_ADDRESS,
+	SYNTH_SWAP_OPTIMISM_ADDRESS,
 } from 'sdk/constants/exchange';
 import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
+import { UNIT_BIG_NUM, ZERO_WEI } from 'sdk/constants/number';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
-import { NetworkId } from 'sdk/types/common';
+import { CurrencyKey, NetworkId } from 'sdk/types/common';
 import { FuturesMarketKey, SynthSuspensionReason } from 'sdk/types/futures';
 import { DeprecatedSynthBalance } from 'sdk/types/synths';
 import { Token, TokenBalances } from 'sdk/types/tokens';
 import { synthToAsset } from 'sdk/utils/exchange';
 import { getProxySynthSymbol, getReasonFromCode } from 'sdk/utils/synths';
-import { UNIT_BIG_NUM, zeroBN } from 'utils/formatters/number';
-import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
+import { getTransactionPrice, normalizeGasLimit } from 'sdk/utils/transactions';
 
 import * as sdkErrors from '../common/errors';
+import {
+	ATOMIC_EXCHANGES_L1,
+	CRYPTO_CURRENCY_MAP,
+	ETH_ADDRESS,
+	ETH_COINGECKO_ADDRESS,
+} from '../constants/exchange';
 import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
-import { queryPriceAdjustmentData } from '../queries/exchange';
 import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
 	OneInchSwapResponse,
 	OneInchTokenListResponse,
 } from '../types/1inch';
-
-type Rates = Record<string, Wei>;
+import { PriceResponse, Rates } from '../types/exchange';
 
 export default class ExchangeService {
 	private tokensMap: any = {};
@@ -527,7 +524,7 @@ export default class ExchangeService {
 				gasPrice,
 				BigNumber.from(gasInfo?.limit || 0),
 				ethPriceRate,
-				gasInfo?.l1Fee ?? zeroBN
+				gasInfo?.l1Fee ?? ZERO_WEI
 			);
 		} else {
 			if (!this.sdk.context.contracts.Synthetix) {
@@ -807,15 +804,6 @@ export default class ExchangeService {
 		this.allTokensMap = { ...this.synthsMap, ...tokensMap };
 
 		return { tokensMap: this.tokensMap, tokenList: this.tokenList };
-	}
-
-	public async getPriceAdjustment() {
-		const { rebate, reclaim } = await queryPriceAdjustmentData(
-			this.sdk,
-			this.sdk.context.walletAddress
-		);
-
-		return { rebate: wei(rebate), reclaim: wei(reclaim) };
 	}
 
 	public async getSynthSuspensions() {

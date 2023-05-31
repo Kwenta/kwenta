@@ -3,7 +3,6 @@ import { ethers, BigNumber } from 'ethers';
 import moment from 'moment';
 import KwentaSDK from 'sdk';
 
-import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from 'constants/currency';
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import {
 	EPOCH_START,
@@ -11,12 +10,14 @@ import {
 	TRADING_REWARDS_CUTOFF_EPOCH,
 	WEEK,
 } from 'queries/staking/utils';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { ContractName } from 'sdk/contracts';
+import { weiFromWei } from 'sdk/utils/number';
 import { formatTruncatedDuration } from 'utils/formatters/date';
-import { weiFromWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
+import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../constants/exchange';
 import { client } from '../utils/files';
 
 export type ClaimParams = [number, string, string, string[], number];
@@ -119,9 +120,9 @@ export default class KwentaTokenService {
 		);
 
 		return {
-			kwentaPrice: coinGeckoPrices ? wei(coinGeckoPrices[KWENTA_ADDRESS]?.usd) : zeroBN,
-			wethPrice: coinGeckoPrices ? wei(coinGeckoPrices[ETH_COINGECKO_ADDRESS]?.usd) : zeroBN,
-			opPrice: coinGeckoPrices ? wei(coinGeckoPrices[OP_ADDRESS]?.usd) : zeroBN,
+			kwentaPrice: coinGeckoPrices ? wei(coinGeckoPrices[KWENTA_ADDRESS]?.usd) : ZERO_WEI,
+			wethPrice: coinGeckoPrices ? wei(coinGeckoPrices[ETH_COINGECKO_ADDRESS]?.usd) : ZERO_WEI,
+			opPrice: coinGeckoPrices ? wei(coinGeckoPrices[OP_ADDRESS]?.usd) : ZERO_WEI,
 		};
 	}
 

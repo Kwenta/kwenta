@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 
-import { gweiToWei, formatDollars, weiFromWei, stripZeros } from 'utils/formatters/number';
+import { weiFromWei } from 'sdk/utils/number';
+import { gweiToWei, formatDollars, stripZeros } from 'utils/formatters/number';
 
 describe('number utils', () => {
 	test('ether to gwei', () => {

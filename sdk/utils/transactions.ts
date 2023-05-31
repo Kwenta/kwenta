@@ -3,8 +3,10 @@
 import { Deferrable } from '@ethersproject/properties';
 import type { TransactionRequest } from '@ethersproject/providers';
 import { toUtf8String } from '@ethersproject/strings';
+import Wei, { wei } from '@synthetixio/wei';
 
-import { Emitter, RevertReasonParams } from 'sdk/types/transactions';
+import { DEFAULT_GAS_BUFFER, GWEI_DECIMALS } from '../constants/transactions';
+import { Emitter, GasLimitEstimate, GasPrice, RevertReasonParams } from '../types/transactions';
 
 const isKovan = (networkId: number): boolean => networkId === 42;
 
@@ -88,3 +90,27 @@ export function createEmitter(): Emitter {
 		},
 	};
 }
+
+export const getTotalGasPrice = (gasPriceObj?: GasPrice | null) => {
+	if (!gasPriceObj) return wei(0);
+	const { gasPrice, baseFeePerGas, maxPriorityFeePerGas } = gasPriceObj;
+	if (gasPrice) {
+		return wei(gasPrice, GWEI_DECIMALS);
+	}
+	return wei(baseFeePerGas || 0, GWEI_DECIMALS).add(wei(maxPriorityFeePerGas || 0, GWEI_DECIMALS));
+};
+
+export const getTransactionPrice = (
+	gasPrice: GasPrice | null,
+	gasLimit: GasLimitEstimate,
+	ethPrice: Wei | null,
+	optimismLayerOneFee: Wei | null
+) => {
+	if (!gasPrice || !gasLimit || !ethPrice) return null;
+	const totalGasPrice = getTotalGasPrice(gasPrice);
+	const gasPriceCost = totalGasPrice.mul(wei(gasLimit, GWEI_DECIMALS)).mul(ethPrice);
+	const l1Cost = ethPrice.mul(optimismLayerOneFee || 0);
+	return gasPriceCost.add(l1Cost);
+};
+
+export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;

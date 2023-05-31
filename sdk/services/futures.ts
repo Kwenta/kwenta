@@ -1192,7 +1192,12 @@ export default class FuturesService {
 	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
 		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
 		if (market) return market;
-		market = new PerpsV2MarketInternal(this.sdk.context.provider, marketKey, marketAddress);
+		market = new PerpsV2MarketInternal(
+			this.sdk,
+			this.sdk.context.provider,
+			marketKey,
+			marketAddress
+		);
 		this.internalFuturesMarkets = {
 			[this.sdk.context.networkId]: {
 				...this.internalFuturesMarkets[this.sdk.context.networkId],

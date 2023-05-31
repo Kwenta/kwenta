@@ -3,7 +3,7 @@ import { formatBytes32String } from 'ethers/lib/utils.js';
 import { gql } from 'graphql-request';
 
 import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
-import { weiFromWei } from 'utils/formatters/number';
+import { weiFromWei } from 'sdk/utils/number';
 
 export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
 
