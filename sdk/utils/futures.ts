@@ -409,15 +409,13 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 };
 
 export const getPythNetworkUrl = (networkId: NetworkId, publicProvider: boolean = false) => {
-	if (networkId === 420) {
-		return 'https://xc-testnet.pyth.network';
-	}
-
-	const defaultPythServer = process.env.NEXT_PUBLIC_KWENTA_PYTH_ACTIVE
-		? KWENTA_PYTH_SERVER
-		: PUBLIC_PYTH_SERVER;
-
-	return publicProvider ? PUBLIC_PYTH_SERVER : defaultPythServer;
+	const defaultPythServer =
+		process.env.NEXT_DEFAULT_PRICE_SERVICE === 'KWENTA' ? KWENTA_PYTH_SERVER : PUBLIC_PYTH_SERVER;
+	return networkId === 420
+		? 'https://xc-testnet.pyth.network'
+		: publicProvider
+		? PUBLIC_PYTH_SERVER
+		: defaultPythServer;
 };
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
