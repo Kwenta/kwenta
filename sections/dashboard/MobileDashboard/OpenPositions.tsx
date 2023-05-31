@@ -8,11 +8,7 @@ import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectBalances } from 'state/balances/selectors';
-import {
-	selectFuturesPortfolio,
-	selectActiveIsolatedPositionsCount,
-	selectActiveSmartPositionsCount,
-} from 'state/futures/selectors';
+import { selectFuturesPortfolio, selectActiveSmartPositionsCount } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
@@ -36,7 +32,7 @@ export type OpenPositionsProps = {
 const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeTokenBalances }) => {
 	const { t } = useTranslation();
 	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
-	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
+
 	const portfolio = useAppSelector(selectFuturesPortfolio);
 	const balances = useAppSelector(selectBalances);
 
@@ -56,15 +52,6 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 				onClick: () => setActivePositionsTab(PositionsTab.SMART_MARGIN),
 			},
 			{
-				name: PositionsTab.ISOLATED_MARGIN,
-				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: isolatedPositionsCount,
-				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
-				detail: formatDollars(portfolio.isolatedMarginFutures),
-				disabled: false,
-				onClick: () => setActivePositionsTab(PositionsTab.ISOLATED_MARGIN),
-			},
-			{
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
@@ -77,9 +64,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 			t,
 			activePositionsTab,
 			smartPositionsCount,
-			isolatedPositionsCount,
 			portfolio.crossMarginFutures,
-			portfolio.isolatedMarginFutures,
 			balances.totalUSDBalance,
 			exchangeTokenBalances,
 			setActivePositionsTab,
@@ -104,10 +89,6 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 				<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
 			</TabPanel>
 
-			<TabPanel name={PositionsTab.ISOLATED_MARGIN} activeTab={activePositionsTab}>
-				<FuturesPositionsTable accountType={FuturesAccountTypes.ISOLATED_MARGIN} />
-			</TabPanel>
-
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>
 				<SynthBalancesTable exchangeTokens={exchangeTokens} />
 			</TabPanel>
@@ -118,8 +99,8 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 const TabButtonsContainer = styled.div`
 	display: flex;
 	margin: 16px 0;
-	justify-content: space-between;
-	column-gap: 4px;
+	justify-content: flex-start;
+	column-gap: 10px;
 `;
 
 export default OpenPositions;
