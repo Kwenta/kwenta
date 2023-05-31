@@ -8,7 +8,7 @@ import KwentaSDK from 'sdk';
 import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constants/prices';
-import { NetworkId } from 'sdk/types/common';
+import { NetworkId, PriceServer } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import {
 	CurrencyPrice,
@@ -28,6 +28,7 @@ import * as sdkErrors from '../common/errors';
 
 const DEBUG_WS = false;
 const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS;
+const PRICE_SERVER = process.env.NEXT_PUBLIC_DEFAULT_PRICE_SERVICE === 'KWENTA' ? 'KWENTA' : 'PYTH';
 
 export default class PricesService {
 	private sdk: KwentaSDK;
@@ -35,39 +36,38 @@ export default class PricesService {
 	private onChainPrices: PricesMap = {};
 	private ratesInterval: number | undefined;
 	private pyth: EvmPriceServiceConnection;
-	private retryCount: number;
-	private maxRetries: number;
+	private retryCount: number = 0;
+	private maxRetries: number = 5;
+	private currentServer: PriceServer = PRICE_SERVER;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-		this.retryCount = 0;
-		this.maxRetries = 10;
-
-		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(sdk.context.networkId), {
-			logger: LOG_WS ? console : undefined,
-		});
+		this.pyth = this.connectToPyth(sdk.context.networkId, this.currentServer);
 
 		// TODO: Typed events
 		this.sdk.context.events.on('network_changed', (params) => {
 			if (this.pyth) {
 				this.pyth.closeWebSocket();
 			}
-			this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(params.networkId), {
-				logger: LOG_WS ? console : undefined,
-			});
+			this.pyth = this.connectToPyth(params.networkId, this.currentServer);
+
 			this.pyth.onWsError = (error) => {
 				// TODO: Feedback connection issue and display
 				// prompt to try disabling add blocker
 				if (this.retryCount < this.maxRetries) {
 					this.retryCount++;
 					setTimeout(() => {
-						this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(params.networkId, true), {
-							logger: LOG_WS ? console : undefined,
-						});
+						this.pyth = this.connectToPyth(params.networkId, this.currentServer);
 					}, Math.pow(2, this.retryCount) * 1000);
 				} else {
 					logError(new Error('Maximum retries exceeded'));
-					// TODO: Take action when maximum retries are exceeded, e.g. update the operational status
+
+					// If we've hit the max retries for one server, switch servers and reset retryCount
+					this.retryCount = 0;
+					this.pyth = this.connectToPyth(
+						params.networkId,
+						this.currentServer === 'KWENTA' ? 'PYTH' : 'KWENTA'
+					);
 				}
 
 				this.sdk.context.events.emit('prices_connection_update', {
@@ -233,6 +233,12 @@ export default class PricesService {
 				return acc;
 			}, {}) ?? {};
 		return offChainPrices;
+	}
+
+	private connectToPyth(networkId: NetworkId, server: PriceServer) {
+		return new EvmPriceServiceConnection(getPythNetworkUrl(networkId, server), {
+			logger: LOG_WS ? console : undefined,
+		});
 	}
 
 	private formatPythPrice(priceFeed: PriceFeed): Wei {
