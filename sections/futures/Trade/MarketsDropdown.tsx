@@ -15,11 +15,13 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import Search from 'components/Table/Search';
 import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
+import { BANNER_HEIGHT_DESKTOP, BANNER_HEIGHT_MOBILE } from 'constants/announcement';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { selectShowBanner } from 'state/app/selectors';
 import {
 	selectMarketAsset,
 	selectMarkets,
@@ -59,6 +61,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
 	const [favMarkets, setFavMarkets] = useLocalStorage<string[]>('favorite-markets', []);
+	const showBanner = useAppSelector(selectShowBanner);
 
 	const { ref } = useClickOutside(() => setOpen(false));
 
@@ -160,10 +163,17 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
+	const tableHeight: number = useMemo(() => {
+		const BANNER_HEIGHT = mobile ? BANNER_HEIGHT_MOBILE : BANNER_HEIGHT_DESKTOP;
+		const OFFSET = mobile ? 159 : 205;
+		return Math.max(window.innerHeight - OFFSET - Number(showBanner) * BANNER_HEIGHT, 300);
+	}, [mobile, showBanner]);
+
 	return (
 		<SelectContainer mobile={mobile} ref={ref} accountType={accountType}>
 			<MarketsDropdownSelector
 				onClick={() => setOpen(!open)}
+				expanded={open}
 				mobile={mobile}
 				asset={marketAsset}
 				label={getMarketName(marketAsset)}
@@ -183,13 +193,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				}}
 			/>
 			{open && (
-				<MarketsList
-					mobile={mobile}
-					height={Math.max(
-						window.innerHeight - (mobile ? 159 : accountType === 'cross_margin' ? 210 : 270),
-						300
-					)}
-				>
+				<MarketsList mobile={mobile} height={tableHeight}>
 					<SearchBarContainer>
 						<Search autoFocus onChange={setSearch} value={search} border={false} />
 					</SearchBarContainer>
@@ -371,8 +375,8 @@ const SelectContainer = styled.div<{ mobile?: boolean; accountType?: string }>`
 		css`
 			width: 100%;
 			border-bottom: ${props.theme.colors.selectedTheme.border};
-			position: absolute;
-			top: ${props.accountType === 'isolated_margin' ? '60' : '0'}px;
+			position: relative;
+			top: 0;
 			left: 0;
 			right: 0;
 			height: ${MARKET_SELECTOR_HEIGHT_MOBILE + 1}px;

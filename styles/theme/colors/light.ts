@@ -117,6 +117,12 @@ const newTheme = {
 			},
 		},
 	},
+	banner: {
+		yellow: {
+			text: common.palette.yellow.y1000,
+			background: common.palette.yellow.y300,
+		},
+	},
 	badge: {
 		yellow: {
 			text: common.palette.neutral.n900,
@@ -161,6 +167,12 @@ const newTheme = {
 				color: common.palette.red.r300,
 				background: common.palette.alpha.red5,
 			},
+		},
+	},
+	pencilIcon: {
+		color: common.palette.yellow.y900,
+		hover: {
+			color: common.palette.yellow.y500,
 		},
 	},
 	fundingChart: {

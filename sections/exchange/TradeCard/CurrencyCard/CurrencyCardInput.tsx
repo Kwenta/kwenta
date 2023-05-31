@@ -114,7 +114,7 @@ const InputContainer = styled(FlexDivCol)`
 
 const InputLabel = styled.div`
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	line-height: 0.75em;

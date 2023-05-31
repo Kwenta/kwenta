@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import Spacer from 'components/Spacer';
 import Search from 'components/Table/Search';
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import FuturesMarketsTable from 'sections/dashboard/FuturesMarketsTable';
@@ -23,6 +24,7 @@ const MarketsPage: MarketsProps = () => {
 			<Head>
 				<title>{t('dashboard-markets.page-title')}</title>
 			</Head>
+			<Spacer height={15} />
 			<SearchBarContainer>
 				<Search autoFocus value={search} onChange={setSearch} disabled={false} />
 			</SearchBarContainer>

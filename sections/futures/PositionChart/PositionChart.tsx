@@ -11,6 +11,7 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 import { zeroBN } from 'utils/formatters/number';
 
 type PositionChartProps = {
@@ -73,7 +74,12 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 
 const Container = styled(FlexDiv)<{ $visible: boolean; $display?: boolean }>`
 	flex: 1;
-	height: 100%;
+	${media.greaterThan('mdUp')`
+		height: calc(100vh - 480px);
+	`}
+	${media.lessThan('md')`
+		height: 100%;
+	`}
 	width: 100%;
 	visibility: ${(props) => (props.$visible ? 'visible' : 'hidden')};
 	${(props) =>

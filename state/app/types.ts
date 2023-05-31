@@ -49,4 +49,5 @@ export type AppState = {
 	synthetixOnMaintenance: boolean;
 	kwentaStatus: KwentaStatus;
 	acknowledgedOrdersWarning: boolean;
+	showBanner: boolean;
 };

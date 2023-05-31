@@ -328,6 +328,7 @@ const ChartGrid = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;
 	height: 260px;
+	margin-top: 15px;
 `;
 
 const CTAContainer = styled(GridDivCenteredRow)`
