@@ -14,7 +14,6 @@ import { ZERO_WEI } from 'sdk/constants/number';
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'sdk/utils/date';
 import { weiFromWei } from 'sdk/utils/number';
-import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../constants/exchange';
@@ -505,7 +504,7 @@ export default class KwentaTokenService {
 						: index + TRADING_REWARDS_CUTOFF_EPOCH;
 					return { ...response.data, period };
 				} catch (err) {
-					logError(err);
+					this.sdk.context.logError(err);
 					return null;
 				}
 			})

@@ -15,6 +15,7 @@ import {
 import { ZERO_WEI } from 'sdk/constants/number';
 import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { ETH_UNIT } from 'sdk/constants/transactions';
+import { IContext } from 'sdk/context';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
 import { NetworkId } from 'sdk/types/common';
 import {
@@ -47,7 +48,6 @@ import {
 	FuturesMarginTransferResult,
 	CrossMarginAccountTransferResult,
 } from 'sdk/utils/subgraph';
-import logError from 'utils/logError';
 
 export const getFuturesEndpoint = (networkId: number) => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10];
@@ -103,14 +103,14 @@ export const calculateFundingRate = (
 	return fundingRate;
 };
 
-export const marketsForNetwork = (networkId: number) => {
+export const marketsForNetwork = (networkId: number, logError: IContext['logError']) => {
 	switch (networkId) {
 		case 10:
 			return MAINNET_MARKETS;
 		case 420:
 			return TESTNET_MARKETS;
 		default:
-			logError(new Error('Futures is not supported on this network.'));
+			logError?.(new Error('Futures is not supported on this network.'));
 			return [];
 	}
 };

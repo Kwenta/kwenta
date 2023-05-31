@@ -1,6 +1,8 @@
 import Wei from '@synthetixio/wei';
 import keyBy from 'lodash/keyBy';
 
+import { FIAT_SYNTHS } from 'sdk/constants/number';
+
 export type CurrencyKey = string;
 
 // TODO: standardize this
@@ -15,22 +17,6 @@ export const CATEGORY: Category[] = [
 	'inverse',
 ];
 export const CATEGORY_MAP = keyBy(CATEGORY);
-
-export type FUTURES_FIAT = 'EUR' | 'JPY' | 'USD' | 'AUD' | 'GBP' | 'CHF';
-export const FIAT_SYNTHS: Set<CurrencyKey | FUTURES_FIAT> = new Set([
-	'sEUR',
-	'sJPY',
-	'sUSD',
-	'sAUD',
-	'sGBP',
-	'sCHF',
-	'EUR',
-	'JPY',
-	'USD',
-	'AUD',
-	'GBP',
-	'CHF',
-]);
 
 export const LSE_SYNTHS = new Set<CurrencyKey>([]);
 

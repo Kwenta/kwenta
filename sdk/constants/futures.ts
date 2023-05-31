@@ -3,15 +3,20 @@ import { ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils.js';
 import { gql } from 'graphql-request';
 
-import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
-import { SmartMarginOrderType, FuturesOrderType } from 'sdk/types/futures';
+import {
+	FuturesMarketAsset,
+	FuturesMarketConfig,
+	FuturesMarketKey,
+	SmartMarginOrderType,
+	FuturesOrderType,
+} from 'sdk/types/futures';
 import { weiFromWei } from 'sdk/utils/number';
 
 export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
 
 // Defaults
 
-export const DEFAULT_NUMBER_OF_TRADES = 16;
+export const DEFAULT_NUMBER_OF_TRADES = 32;
 
 export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
 	MARKET: '1',

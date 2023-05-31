@@ -26,8 +26,7 @@ import {
 	queryCompletePositionHistory,
 	queryFundingRateHistory,
 } from 'sdk/queries/futures';
-import { NetworkId } from 'sdk/types/common';
-import { NetworkOverrideOptions } from 'sdk/types/common';
+import { NetworkId, NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
 	FundingRateResponse,
@@ -89,7 +88,8 @@ export default class FuturesService {
 
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
 		const enabledMarkets = marketsForNetwork(
-			networkOverride?.networkId || this.sdk.context.networkId
+			networkOverride?.networkId || this.sdk.context.networkId,
+			this.sdk.context.logError
 		);
 		const contracts =
 			networkOverride && networkOverride?.networkId !== this.sdk.context.networkId

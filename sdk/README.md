@@ -58,6 +58,9 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Create a standard way of passing in numeric values (particularly amounts) to the SDK. Weigh pros and cons of (`Wei`, `ethers.BigNumber` and `string`).
 - [ ] Create interfaces for all the services, so we don't have to colocate method types and logic, especially when the types are verbose.
 - [ ] Add acknowledgement for features gotten from Synthetix codebase.
+- [ ] Switch to relative imports
+- [ ] Create `package.json` and set up TypeScript build.
+- [ ] Set up monorepos with Lerna, NX, Yarn Workspaces (or the npm equivalent).
 
 ## Exchange
 

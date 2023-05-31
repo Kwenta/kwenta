@@ -9,17 +9,6 @@ import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { getEthGasPrice } from 'sdk/common/gas';
-import {
-	ADDITIONAL_MARKETS,
-	ATOMIC_EXCHANGE_SLIPPAGE,
-	CG_BASE_API_URL,
-	DEFAULT_BUFFER,
-	FILTERED_TOKENS,
-	PROTOCOLS,
-	DEFAULT_1INCH_SLIPPAGE,
-	KWENTA_REFERRAL_ADDRESS,
-	SYNTH_SWAP_OPTIMISM_ADDRESS,
-} from 'sdk/constants/exchange';
 import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
 import { UNIT_BIG_NUM, ZERO_WEI } from 'sdk/constants/number';
 import erc20Abi from 'sdk/contracts/abis/ERC20.json';
@@ -37,6 +26,15 @@ import {
 	CRYPTO_CURRENCY_MAP,
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
+	ADDITIONAL_MARKETS,
+	ATOMIC_EXCHANGE_SLIPPAGE,
+	CG_BASE_API_URL,
+	DEFAULT_BUFFER,
+	FILTERED_TOKENS,
+	PROTOCOLS,
+	DEFAULT_1INCH_SLIPPAGE,
+	KWENTA_REFERRAL_ADDRESS,
+	SYNTH_SWAP_OPTIMISM_ADDRESS,
 } from '../constants/exchange';
 import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
 import {

@@ -1,11 +1,9 @@
 import { wei } from '@synthetixio/wei';
 
-import { CurrencyKey, FIAT_SYNTHS } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import { ADDITIONAL_MARKETS } from 'sdk/constants/exchange';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { Price, Prices } from 'sdk/types/prices';
-
-export const isFiatCurrency = (currencyKey: CurrencyKey) => FIAT_SYNTHS.has(currencyKey);
 
 // TODO: replace this with a more robust logic (like checking the asset field)
 export const synthToAsset = (currencyKey: CurrencyKey | FuturesMarketKey) => {

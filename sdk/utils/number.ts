@@ -7,9 +7,9 @@ import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
-} from 'constants/defaults';
-import { isFiatCurrency } from 'utils/currencies';
-import logError from 'utils/logError';
+} from 'sdk/constants/number';
+
+import { isFiatCurrency } from './exchange';
 
 export type TruncateUnits = 1e3 | 1e6 | 1e9 | 1e12;
 
@@ -102,7 +102,8 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	try {
 		weiValue = wei(value);
 	} catch (e) {
-		logError(e, true);
+		// eslint-disable-next-line
+		console.error(e);
 	}
 
 	const isNegative = weiValue.lt(wei(0));

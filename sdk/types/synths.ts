@@ -1,6 +1,6 @@
 import Wei from '@synthetixio/wei';
 
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey } from 'sdk/types/common';
 
 export type SynthBalance = {
 	currencyKey: CurrencyKey;

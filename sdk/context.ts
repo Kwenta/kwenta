@@ -3,8 +3,6 @@ import { EventEmitter } from 'events';
 import { Provider as EthCallProvider } from 'ethcall';
 import { ethers } from 'ethers';
 
-import { NetworkId } from 'sdk/types/common';
-
 import * as sdkErrors from './common/errors';
 import {
 	ContractsMap,
@@ -12,12 +10,14 @@ import {
 	getContractsByNetwork,
 	getMulticallContractsByNetwork,
 } from './contracts';
+import { NetworkId } from './types/common';
 
 export interface IContext {
 	provider: ethers.providers.Provider;
 	networkId: NetworkId;
 	signer?: ethers.Signer;
 	walletAddress?: string;
+	logError?: (err: Error, skipReport?: boolean) => void;
 }
 
 const DEFAULT_CONTEXT: Partial<IContext> = {
@@ -97,5 +97,9 @@ export default class Context implements IContext {
 	public async setSigner(signer: ethers.Signer) {
 		this.context.walletAddress = await signer.getAddress();
 		this.context.signer = signer;
+	}
+
+	public logError(err: Error, skipReport = false) {
+		return this.context.logError?.(err, skipReport);
 	}
 }
