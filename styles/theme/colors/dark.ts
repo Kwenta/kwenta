@@ -69,6 +69,12 @@ const newTheme = {
 		preview: common.palette.yellow.y500,
 		warning: common.palette.yellow.y500,
 	},
+	banner: {
+		yellow: {
+			text: common.palette.yellow.y500,
+			background: common.palette.yellow.y1000,
+		},
+	},
 	badge: {
 		yellow: {
 			text: common.palette.neutral.n900,
