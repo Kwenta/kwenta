@@ -44,6 +44,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 					color={side}
 				>
 					{formatCurrency(currencyKey, cleanPrice.div(conversionRate), {
+						suggestDecimals: true,
 						sign: currencyKey === 'sUSD' ? '$' : sign,
 						currencyKey: showCurrencyKey ? currencyKey : undefined,
 						...formatOptions,

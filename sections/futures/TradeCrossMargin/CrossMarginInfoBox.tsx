@@ -11,7 +11,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatCurrency, formatDollars } from 'utils/formatters/number';
 
-import PencilButton from '../../shared/components/PencilButton';
+import PencilButton from '../../../components/Button/PencilButton';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
 
 function MarginInfoBox() {

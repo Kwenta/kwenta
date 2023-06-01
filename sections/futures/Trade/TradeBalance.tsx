@@ -24,7 +24,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { formatDollars } from 'utils/formatters/number';
 
-import PencilButton from '../../shared/components/PencilButton';
+import PencilButton from '../../../components/Button/PencilButton';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import SmartMarginOnboardModal from './SmartMarginOnboardModal';
 
