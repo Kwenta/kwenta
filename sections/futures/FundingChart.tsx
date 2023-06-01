@@ -52,7 +52,11 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 					minTickGap={75}
 					domain={['dataMin', 'dataMax']}
 				/>
-				<Tooltip content={<FundingChartTooltip />} formatter={(x) => formatFundingRate(x as any)} />
+				<Tooltip
+					content={<FundingChartTooltip />}
+					formatter={(x) => formatFundingRate(x as any)}
+					isAnimationActive={false}
+				/>
 				<ReferenceLine y={0} stroke={theme.colors.selectedTheme.text.body} />
 				<Line
 					type="monotone"
