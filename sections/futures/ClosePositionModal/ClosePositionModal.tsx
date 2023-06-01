@@ -13,7 +13,15 @@ import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { previewErrorI18n } from 'queries/futures/constants';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide, PotentialTradeStatus } from 'sdk/types/futures';
+import {
+	floorNumber,
+	formatDollars,
+	formatNumber,
+	formatPercent,
+	stripZeros,
+} from 'sdk/utils/number';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
@@ -34,14 +42,6 @@ import {
 	selectTradePreviewError,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import {
-	floorNumber,
-	formatDollars,
-	formatNumber,
-	formatPercent,
-	stripZeros,
-	zeroBN,
-} from 'utils/formatters/number';
 
 import ClosePositionFeeInfo from '../FeeInfoBox/ClosePositionFeeInfo';
 import OrderTypeSelector from '../Trade/OrderTypeSelector';
@@ -81,7 +81,7 @@ export default function ClosePositionModal() {
 	]);
 
 	const maxNativeValue = useMemo(() => {
-		return position?.position?.size ?? zeroBN;
+		return position?.position?.size ?? ZERO_WEI;
 	}, [position?.position?.size]);
 
 	const sizeWei = useMemo(

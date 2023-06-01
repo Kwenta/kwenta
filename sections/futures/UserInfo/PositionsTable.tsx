@@ -16,6 +16,8 @@ import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useWindowSize from 'hooks/useWindowSize';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatPercent } from 'sdk/utils/number';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import {
@@ -31,7 +33,6 @@ import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FOOTER_HEIGHT } from 'styles/common';
 import media from 'styles/media';
-import { formatPercent, zeroBN } from 'utils/formatters/number';
 
 import PositionsTab from '../MobileTrade/UserTabs/PositionsTab';
 import ShareModal from '../ShareModal';
@@ -70,7 +71,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-				const markPrice = markPrices[market?.marketKey!] ?? zeroBN;
+				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI;
 				return {
 					market: market!,
 					position: position.position!,
@@ -273,6 +274,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								>
 									Close
 								</Pill>
+								<Spacer width={4} />
 								<Pill onClick={() => handleOpenShareModal(row.share)} size="small">
 									<FlexDivRowCentered>
 										<UploadIcon width={8} />

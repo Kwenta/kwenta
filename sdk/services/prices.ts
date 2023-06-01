@@ -17,12 +17,15 @@ import {
 	PricesMap,
 	SynthPricesTuple,
 } from 'sdk/types/prices';
-import { getDisplayAsset, getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
+import {
+	getDisplayAsset,
+	getPythNetworkUrl,
+	normalizePythId,
+	MarketAssetByKey,
+} from 'sdk/utils/futures';
 import { startInterval } from 'sdk/utils/interval';
+import { scale } from 'sdk/utils/number';
 import { getRatesEndpoint } from 'sdk/utils/prices';
-import { scale } from 'utils/formatters/number';
-import { MarketAssetByKey } from 'utils/futures';
-import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
 
@@ -58,7 +61,7 @@ export default class PricesService {
 					connected: false,
 					error: error || new Error('pyth prices ws connection failed'),
 				});
-				logError(error);
+				this.sdk.context.logError(error);
 			};
 			this.subscribeToPythPriceUpdates();
 		});
@@ -92,7 +95,7 @@ export default class PricesService {
 						type: 'on_chain',
 					});
 				} catch (err) {
-					logError(err);
+					this.sdk.context.logError(err);
 				}
 			}, intervalTime);
 		}
@@ -239,7 +242,7 @@ export default class PricesService {
 				type: 'off_chain',
 			});
 		} catch (err) {
-			logError(err);
+			this.sdk.context.logError(err);
 		}
 		this.pyth.subscribePriceFeedUpdates(this.pythIds, (priceFeed) => {
 			const id = normalizePythId(priceFeed.id);

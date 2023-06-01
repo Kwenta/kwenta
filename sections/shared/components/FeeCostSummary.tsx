@@ -5,7 +5,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { selectFeeCostWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars } from 'sdk/utils/number';
 
 const FeeCostSummary: FC = memo(({ ...rest }) => {
 	const { t } = useTranslation();

@@ -9,23 +9,23 @@ import FuturesIcon from 'components/Nav/FuturesIcon';
 import { TabPanel } from 'components/Tab';
 import Search from 'components/Table/Search';
 import * as Text from 'components/Text';
-import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
+import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'sdk/constants/exchange';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { SynthSymbol } from 'sdk/data/synths';
+import { formatDollars, toWei } from 'sdk/utils/number';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { fetchTokenList } from 'state/exchange/actions';
 import { setFuturesAccountType } from 'state/futures/reducer';
 import {
-	selectActiveIsolatedPositionsCount,
 	selectActiveSmartPositionsCount,
 	selectFuturesPortfolio,
 	selectFuturesType,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks';
 import { selectSynthsMap } from 'state/wallet/selectors';
-import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -47,7 +47,6 @@ const Overview: FC = () => {
 	const accountType = useAppSelector(selectFuturesType);
 	const balances = useAppSelector(selectBalances);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
@@ -96,10 +95,12 @@ const Overview: FC = () => {
 				const _exchangeTokens = exchangeBalances.map((exchangeToken) => {
 					const { name, currencyKey, balance, address } = exchangeToken;
 
-					const price = coinGeckoPrices ? toWei(coinGeckoPrices[address]?.usd?.toString()) : zeroBN;
+					const price = coinGeckoPrices
+						? toWei(coinGeckoPrices[address]?.usd?.toString())
+						: ZERO_WEI;
 					const priceChange = coinGeckoPrices
 						? toWei(coinGeckoPrices[address]?.usd_24h_change?.toString()).div(100)
-						: zeroBN;
+						: ZERO_WEI;
 
 					const usdBalance = balance.mul(price);
 
@@ -127,7 +128,7 @@ const Overview: FC = () => {
 	const POSITIONS_TABS = useMemo(() => {
 		const exchangeTokenBalances = exchangeTokens.reduce(
 			(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
-			zeroBN
+			ZERO_WEI
 		);
 		return [
 			{
@@ -144,19 +145,6 @@ const Overview: FC = () => {
 				},
 			},
 			{
-				name: PositionsTab.ISOLATED_MARGIN,
-				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: isolatedPositionsCount,
-				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
-				titleIcon: <FuturesIcon type="isolated_margin" />,
-				detail: formatDollars(portfolio.isolatedMarginFutures),
-				disabled: false,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.ISOLATED_MARGIN);
-					dispatch(setFuturesAccountType(FuturesAccountTypes.ISOLATED_MARGIN));
-				},
-			},
-			{
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
@@ -169,12 +157,10 @@ const Overview: FC = () => {
 		t,
 		dispatch,
 		smartPositionsCount,
-		isolatedPositionsCount,
 		exchangeTokens,
 		balances.totalUSDBalance,
 		activePositionsTab,
 		portfolio.crossMarginFutures,
-		portfolio.isolatedMarginFutures,
 		setActivePositionsTab,
 	]);
 
@@ -190,10 +176,6 @@ const Overview: FC = () => {
 				</TabButtonsContainer>
 				<TabPanel name={PositionsTab.SMART_MARGIN} activeTab={activePositionsTab}>
 					<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
-				</TabPanel>
-
-				<TabPanel name={PositionsTab.ISOLATED_MARGIN} activeTab={activePositionsTab}>
-					<FuturesPositionsTable accountType={FuturesAccountTypes.ISOLATED_MARGIN} />
 				</TabPanel>
 
 				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>

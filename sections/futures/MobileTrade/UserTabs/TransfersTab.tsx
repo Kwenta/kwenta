@@ -7,6 +7,7 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { formatDollars } from 'sdk/utils/number';
 import {
 	selectFuturesType,
 	selectIdleMarginTransfers,
@@ -16,7 +17,6 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { timePresentation } from 'utils/formatters/date';
-import { formatDollars } from 'utils/formatters/number';
 
 const TransfersTab: React.FC = () => {
 	const { t } = useTranslation();

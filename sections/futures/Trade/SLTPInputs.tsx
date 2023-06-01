@@ -19,7 +19,7 @@ import {
 	selectSlTpTradeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { suggestedDecimals } from 'utils/formatters/number';
+import { suggestedDecimals } from 'sdk/utils/number';
 
 import OrderAcknowledgement from './OrderAcknowledgement';
 

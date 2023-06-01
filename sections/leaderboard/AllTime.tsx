@@ -7,11 +7,15 @@ import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableHeader } from 'components/Table';
 import { TableCell } from 'components/Table/TableBodyRow';
+import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement';
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
-import Connector from 'containers/Connector';
 import useENSAvatar from 'hooks/useENSAvatar';
 import { AccountStat } from 'queries/futures/types';
 import { StyledTrader } from 'sections/leaderboard/trader';
+import { selectShowBanner } from 'state/app/selectors';
+import { useAppSelector } from 'state/hooks';
+import { selectWallet } from 'state/wallet/selectors';
+import { FOOTER_HEIGHT } from 'styles/common';
 import media from 'styles/media';
 import { getMedal } from 'utils/competition';
 import { staticMainnetProvider } from 'utils/network';
@@ -34,7 +38,8 @@ const AllTime: FC<AllTimeProps> = ({
 	activeTab,
 }) => {
 	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
+	const walletAddress = useAppSelector(selectWallet);
+	const showBanner = useAppSelector(selectShowBanner);
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i) => {
@@ -54,10 +59,16 @@ const AllTime: FC<AllTimeProps> = ({
 		return [...pinRow, ...stats];
 	}, [stats, pinRow]);
 
+	const tableHeight = useMemo(
+		() => window.innerHeight - FOOTER_HEIGHT - 161 - Number(showBanner) * BANNER_HEIGHT_DESKTOP,
+		[showBanner]
+	);
+
 	return (
 		<>
 			<MobileHiddenView>
 				<StyledTable
+					height={tableHeight}
 					compact={compact}
 					showPagination
 					isLoading={isLoading}
@@ -245,12 +256,20 @@ const AllTime: FC<AllTimeProps> = ({
 	);
 };
 
-const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
+const StyledTable = styled(Table)<{ compact: boolean | undefined; height?: number }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
+	height: ${({ height }) => (height ? height + 'px' : 'auto')};
+	max-height: 665px;
+
 	${TableCell} {
 		padding-top: 8px;
 		padding-bottom: 8px;
 	}
+
+	${media.lessThan('lg')`
+		max-height: 600px;
+	`}
+
 	${media.lessThan('md')`
 		margin-bottom: 150px;
 	`}

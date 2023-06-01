@@ -12,7 +12,7 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars, formatPercent } from 'utils/formatters/number';
+import { formatDollars, formatPercent } from 'sdk/utils/number';
 
 const AvailableMarginRow = memo(() => {
 	const availableMargin = useAppSelector(selectAvailableMargin);

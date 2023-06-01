@@ -1,12 +1,10 @@
 import axios from 'axios';
 import { UseQueryOptions, useQuery } from 'react-query';
 
-import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
-
-import { CG_BASE_API_URL } from './constants';
-import { PriceResponse } from './types';
+import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS, CG_BASE_API_URL } from 'sdk/constants/exchange';
+import { PriceResponse } from 'sdk/types/exchange';
 
 const useCoinGeckoTokenPricesQuery = (
 	tokenAddresses: string[],

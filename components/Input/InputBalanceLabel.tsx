@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'sdk/utils/number';
 
 type Props = {
 	balance: Wei;

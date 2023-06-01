@@ -14,7 +14,7 @@ import {
 	selectVKwentaBalance,
 } from 'state/staking/selectors';
 import { numericValueCSS } from 'styles/common';
-import { truncateNumbers } from 'utils/formatters/number';
+import { truncateNumbers } from 'sdk/utils/number';
 
 type RedeemInputCardProps = {
 	inputLabel: string;

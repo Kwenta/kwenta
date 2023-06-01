@@ -12,9 +12,9 @@ import Connector from 'containers/Connector';
 import useENSs from 'hooks/useENSs';
 import useGetFile from 'queries/files/useGetFile';
 import { AccountStat } from 'queries/futures/types';
+import { formatPercent } from 'sdk/utils/number';
 import { StyledTrader } from 'sections/leaderboard/trader';
 import { getMedal, getCompetitionDataLocation } from 'utils/competition';
-import { formatPercent } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
 type CompetitionProps = {

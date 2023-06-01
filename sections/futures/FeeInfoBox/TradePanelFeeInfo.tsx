@@ -18,7 +18,7 @@ import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { formatDollars, formatPercent } from 'utils/formatters/number';
+import { formatDollars, formatPercent } from 'sdk/utils/number';
 
 import TradeTotalFeesRow from './TradeTotalFeesRow';
 

@@ -14,6 +14,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import ShareModal from 'sections/futures/ShareModal';
@@ -32,7 +33,6 @@ import {
 import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { zeroBN } from 'utils/formatters/number';
 
 import TradePanelDrawer from '../drawers/TradePanelDrawer';
 
@@ -62,7 +62,7 @@ const PositionsTab = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-				const markPrice = markPrices[market?.marketKey!] ?? zeroBN;
+				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI;
 				return {
 					market: market!,
 					position: position.position!,

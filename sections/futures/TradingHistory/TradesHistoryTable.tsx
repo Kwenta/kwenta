@@ -9,7 +9,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatNumber } from 'utils/formatters/number';
+import { formatNumber } from 'sdk/utils/number';
 
 type TradesHistoryTableProps = {
 	mobile?: boolean;

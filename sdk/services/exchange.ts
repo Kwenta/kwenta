@@ -8,50 +8,42 @@ import { formatBytes32String } from 'ethers/lib/utils.js';
 import { get, keyBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
-import { CurrencyKey } from 'constants/currency';
+import { getEthGasPrice } from 'sdk/common/gas';
+import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
+import { UNIT_BIG_NUM, ZERO_WEI } from 'sdk/constants/number';
+import erc20Abi from 'sdk/contracts/abis/ERC20.json';
+import { CurrencyKey, NetworkId } from 'sdk/types/common';
+import { FuturesMarketKey, SynthSuspensionReason } from 'sdk/types/futures';
+import { DeprecatedSynthBalance } from 'sdk/types/synths';
+import { Token, TokenBalances } from 'sdk/types/tokens';
+import { synthToAsset } from 'sdk/utils/exchange';
+import { getProxySynthSymbol, getReasonFromCode } from 'sdk/utils/synths';
+import { getTransactionPrice, normalizeGasLimit } from 'sdk/utils/transactions';
+
+import * as sdkErrors from '../common/errors';
 import {
 	ATOMIC_EXCHANGES_L1,
 	CRYPTO_CURRENCY_MAP,
 	ETH_ADDRESS,
 	ETH_COINGECKO_ADDRESS,
-} from 'constants/currency';
-import { DEFAULT_1INCH_SLIPPAGE } from 'constants/defaults';
-import { ATOMIC_EXCHANGE_SLIPPAGE } from 'constants/exchange';
-import { CG_BASE_API_URL } from 'queries/coingecko/constants';
-import { PriceResponse } from 'queries/coingecko/types';
-import { getProxySynthSymbol } from 'queries/synths/utils';
-import { getEthGasPrice } from 'sdk/common/gas';
-import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
-import erc20Abi from 'sdk/contracts/abis/ERC20.json';
-import { NetworkId } from 'sdk/types/common';
-import { SynthSuspensionReason } from 'sdk/types/futures';
-import { DeprecatedSynthBalance } from 'sdk/types/synths';
-import { Token, TokenBalances } from 'sdk/types/tokens';
-import { getReasonFromCode } from 'sdk/utils/synths';
-import {
-	newGetCoinGeckoPricesForCurrencies,
-	getExchangeRatesForCurrencies,
-	getExchangeRatesTupleForCurrencies,
-} from 'utils/currencies';
-import { UNIT_BIG_NUM, zeroBN } from 'utils/formatters/number';
-import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
-
-import * as sdkErrors from '../common/errors';
+	ADDITIONAL_MARKETS,
+	ATOMIC_EXCHANGE_SLIPPAGE,
+	CG_BASE_API_URL,
+	DEFAULT_BUFFER,
+	FILTERED_TOKENS,
+	PROTOCOLS,
+	DEFAULT_1INCH_SLIPPAGE,
+	KWENTA_REFERRAL_ADDRESS,
+	SYNTH_SWAP_OPTIMISM_ADDRESS,
+} from '../constants/exchange';
 import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
-import { queryPriceAdjustmentData } from '../queries/exchange';
 import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
 	OneInchSwapResponse,
 	OneInchTokenListResponse,
 } from '../types/1inch';
-
-const PROTOCOLS =
-	'OPTIMISM_UNISWAP_V3,OPTIMISM_SYNTHETIX,OPTIMISM_SYNTHETIX_WRAPPER,OPTIMISM_ONE_INCH_LIMIT_ORDER,OPTIMISM_ONE_INCH_LIMIT_ORDER_V2,OPTIMISM_CURVE,OPTIMISM_BALANCER_V2,OPTIMISM_VELODROME,OPTIMISM_KYBERSWAP_ELASTIC';
-
-const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
-const DEFAULT_BUFFER = 0.2;
+import { PriceResponse, Rates } from '../types/exchange';
 
 export default class ExchangeService {
 	private tokensMap: any = {};
@@ -175,11 +167,11 @@ export default class ExchangeService {
 		]);
 
 		const base = baseRate.lte(0)
-			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
+			? this.getCoingeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
 			: baseRate;
 
 		const quote = quoteRate.lte(0)
-			? newGetCoinGeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
+			? this.getCoingeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
 			: quoteRate;
 
 		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0);
@@ -515,7 +507,7 @@ export default class ExchangeService {
 	) {
 		const gasPrices = await getEthGasPrice(this.sdk.context.networkId, this.sdk.context.provider);
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey);
-		const ethPriceRate = getExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD');
+		const ethPriceRate = this.getExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD');
 		const gasPrice = gasPrices.fast;
 
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
@@ -530,7 +522,7 @@ export default class ExchangeService {
 				gasPrice,
 				BigNumber.from(gasInfo?.limit || 0),
 				ethPriceRate,
-				gasInfo?.l1Fee ?? zeroBN
+				gasInfo?.l1Fee ?? ZERO_WEI
 			);
 		} else {
 			if (!this.sdk.context.contracts.Synthetix) {
@@ -681,7 +673,7 @@ export default class ExchangeService {
 		} else {
 			return this.checkIsAtomic(currencyKey, 'sUSD')
 				? await this.getAtomicRates(currencyKey)
-				: getExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
+				: this.getExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD');
 		}
 	}
 
@@ -810,15 +802,6 @@ export default class ExchangeService {
 		this.allTokensMap = { ...this.synthsMap, ...tokensMap };
 
 		return { tokensMap: this.tokensMap, tokenList: this.tokenList };
-	}
-
-	public async getPriceAdjustment() {
-		const { rebate, reclaim } = await queryPriceAdjustmentData(
-			this.sdk,
-			this.sdk.context.walletAddress
-		);
-
-		return { rebate: wei(rebate), reclaim: wei(reclaim) };
 	}
 
 	public async getSynthSuspensions() {
@@ -970,7 +953,7 @@ export default class ExchangeService {
 					this.getAtomicRates(quoteCurrencyKey),
 					this.getAtomicRates(baseCurrencyKey),
 			  ])
-			: getExchangeRatesTupleForCurrencies(
+			: this.getExchangeRatesTupleForCurrencies(
 					this.sdk.prices.currentPrices.onChain,
 					quoteCurrencyKey,
 					baseCurrencyKey
@@ -1060,6 +1043,45 @@ export default class ExchangeService {
 		} else {
 			return null;
 		}
+	}
+
+	private getCoingeckoPricesForCurrencies(
+		coingeckoPrices: PriceResponse | null,
+		baseAddress: string | null
+	) {
+		if (!coingeckoPrices || !baseAddress) {
+			return wei(0);
+		}
+		const base = (baseAddress === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : baseAddress).toLowerCase();
+
+		if (!coingeckoPrices[base]) {
+			return wei(0);
+		}
+
+		return wei(coingeckoPrices[base].usd);
+	}
+
+	private getExchangeRatesForCurrencies(
+		rates: Rates | null,
+		base: CurrencyKey | FuturesMarketKey | string,
+		quote: CurrencyKey | FuturesMarketKey | null
+	) {
+		base = ADDITIONAL_MARKETS.has(base) ? synthToAsset(base) : base;
+		return !rates || !base || !quote || !rates[base] || !rates[quote]
+			? wei(0)
+			: rates[base].div(rates[quote]);
+	}
+
+	private getExchangeRatesTupleForCurrencies(
+		rates: Rates | null,
+		base: CurrencyKey | FuturesMarketKey | string,
+		quote: CurrencyKey | FuturesMarketKey | null
+	) {
+		base = ADDITIONAL_MARKETS.has(base) ? synthToAsset(base) : base;
+		const baseRate = !rates || !base || !rates[base] ? wei(0) : rates[base];
+		const quoteRate = !rates || !quote || !rates[quote] ? wei(0) : rates[quote];
+
+		return [baseRate, quoteRate];
 	}
 
 	// TODO: This is temporary.
