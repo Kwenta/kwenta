@@ -35,49 +35,15 @@ export default class PricesService {
 	private offChainPrices: PricesMap = {};
 	private onChainPrices: PricesMap = {};
 	private ratesInterval: number | undefined;
-	private pyth: EvmPriceServiceConnection;
+	private pyth!: EvmPriceServiceConnection;
 	private retryCount: number = 0;
 	private maxRetries: number = 5;
 	private currentServer: PriceServer = PRICE_SERVER;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-		this.pyth = this.connectToPyth(sdk.context.networkId, this.currentServer);
-
-		// TODO: Typed events
-		this.sdk.context.events.on('network_changed', (params) => {
-			if (this.pyth) {
-				this.pyth.closeWebSocket();
-			}
-			this.pyth = this.connectToPyth(params.networkId, this.currentServer);
-
-			this.pyth.onWsError = (error) => {
-				// TODO: Feedback connection issue and display
-				// prompt to try disabling add blocker
-				if (this.retryCount < this.maxRetries) {
-					this.retryCount++;
-					setTimeout(() => {
-						this.pyth = this.connectToPyth(params.networkId, this.currentServer);
-					}, Math.pow(2, this.retryCount) * 1000);
-				} else {
-					logError(new Error('Maximum retries exceeded'));
-
-					// If we've hit the max retries for one server, switch servers and reset retryCount
-					this.retryCount = 0;
-					this.pyth = this.connectToPyth(
-						params.networkId,
-						this.currentServer === 'KWENTA' ? 'PYTH' : 'KWENTA'
-					);
-				}
-
-				this.sdk.context.events.emit('prices_connection_update', {
-					connected: false,
-					error: error || new Error('pyth prices ws connection failed'),
-				});
-				logError(error);
-			};
-			this.subscribeToPythPriceUpdates();
-		});
+		this.setEventListeners();
+		this.connectToPyth(sdk.context.networkId, this.currentServer);
 	}
 
 	get currentPrices() {
@@ -236,9 +202,55 @@ export default class PricesService {
 	}
 
 	private connectToPyth(networkId: NetworkId, server: PriceServer) {
-		return new EvmPriceServiceConnection(getPythNetworkUrl(networkId, server), {
+		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(networkId, server), {
 			logger: LOG_WS ? console : undefined,
 		});
+
+		this.pyth.onWsError = (error) => this.retryConnection(networkId, error);
+
+		this.sdk.context.events.emit('prices_connection_update', {
+			connected: true,
+		});
+
+		return this.pyth;
+	}
+
+	private setEventListeners() {
+		this.sdk.context.events.on('network_changed', (params) => {
+			if (this.pyth) {
+				this.pyth.closeWebSocket();
+			}
+			this.connectToPyth(params.networkId, this.currentServer);
+		});
+
+		this.sdk.context.events.on('prices_connection_update', (params) => {
+			if (params.connected) {
+				this.subscribeToPythPriceUpdates();
+			}
+		});
+	}
+
+	private retryConnection(networkId: NetworkId, error: Error) {
+		if (this.pyth) {
+			this.pyth.closeWebSocket();
+		}
+
+		this.sdk.context.events.emit('prices_connection_update', {
+			connected: false,
+			error: error || new Error('pyth prices ws connection failed'),
+		});
+
+		if (this.retryCount < this.maxRetries) {
+			this.retryCount++;
+			setTimeout(() => {
+				this.connectToPyth(networkId, this.currentServer);
+			}, Math.pow(2, this.retryCount) * 1000);
+		} else {
+			logError(new Error('Maximum retries exceeded'));
+			this.retryCount = 0;
+			this.currentServer = this.currentServer === 'KWENTA' ? 'PYTH' : 'KWENTA';
+			this.connectToPyth(networkId, this.currentServer);
+		}
 	}
 
 	private formatPythPrice(priceFeed: PriceFeed): Wei {
