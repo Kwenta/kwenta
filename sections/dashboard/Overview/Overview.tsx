@@ -20,7 +20,6 @@ import { sdk } from 'state/config';
 import { fetchTokenList } from 'state/exchange/actions';
 import { setFuturesAccountType } from 'state/futures/reducer';
 import {
-	selectActiveIsolatedPositionsCount,
 	selectActiveSmartPositionsCount,
 	selectFuturesPortfolio,
 	selectFuturesType,
@@ -48,7 +47,6 @@ const Overview: FC = () => {
 	const accountType = useAppSelector(selectFuturesType);
 	const balances = useAppSelector(selectBalances);
 	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
 	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
@@ -147,19 +145,6 @@ const Overview: FC = () => {
 				},
 			},
 			{
-				name: PositionsTab.ISOLATED_MARGIN,
-				label: t('dashboard.overview.positions-tabs.isolated-margin'),
-				badge: isolatedPositionsCount,
-				active: activePositionsTab === PositionsTab.ISOLATED_MARGIN,
-				titleIcon: <FuturesIcon type="isolated_margin" />,
-				detail: formatDollars(portfolio.isolatedMarginFutures),
-				disabled: false,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.ISOLATED_MARGIN);
-					dispatch(setFuturesAccountType(FuturesAccountTypes.ISOLATED_MARGIN));
-				},
-			},
-			{
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
@@ -172,12 +157,10 @@ const Overview: FC = () => {
 		t,
 		dispatch,
 		smartPositionsCount,
-		isolatedPositionsCount,
 		exchangeTokens,
 		balances.totalUSDBalance,
 		activePositionsTab,
 		portfolio.crossMarginFutures,
-		portfolio.isolatedMarginFutures,
 		setActivePositionsTab,
 	]);
 
@@ -193,10 +176,6 @@ const Overview: FC = () => {
 				</TabButtonsContainer>
 				<TabPanel name={PositionsTab.SMART_MARGIN} activeTab={activePositionsTab}>
 					<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
-				</TabPanel>
-
-				<TabPanel name={PositionsTab.ISOLATED_MARGIN} activeTab={activePositionsTab}>
-					<FuturesPositionsTable accountType={FuturesAccountTypes.ISOLATED_MARGIN} />
 				</TabPanel>
 
 				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>

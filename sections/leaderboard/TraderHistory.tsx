@@ -12,9 +12,11 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
+import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement';
 import ROUTES from 'constants/routes';
 import { ZERO_WEI } from 'sdk/constants/number';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
+import { selectShowBanner } from 'state/app/selectors';
 import { fetchPositionHistoryForTrader } from 'state/futures/actions';
 import {
 	selectFuturesPositions,
@@ -23,7 +25,8 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { ExternalLink } from 'styles/common';
+import { ExternalLink, FOOTER_HEIGHT } from 'styles/common';
+import media from 'styles/media';
 import { getMarketName } from 'utils/futures';
 
 type TraderHistoryProps = {
@@ -40,6 +43,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		const dispatch = useAppDispatch();
 		const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader);
 		const positions = useAppSelector(selectFuturesPositions);
+		const showBanner = useAppSelector(selectShowBanner);
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses);
 		const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo]);
 
@@ -85,10 +89,16 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 				);
 		}, [positionHistory, positions, searchTerm]);
 
+		const tableHeight = useMemo(
+			() => window.innerHeight - FOOTER_HEIGHT - 161 - Number(showBanner) * BANNER_HEIGHT_DESKTOP,
+			[showBanner]
+		);
+
 		return (
 			<>
 				<DesktopOnlyView>
 					<StyledTable
+						height={tableHeight}
 						compact={compact}
 						showPagination
 						pageSize={10}
@@ -129,8 +139,6 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												</StyledCell>
 											);
 										},
-										sortType: 'basic',
-										sortable: true,
 										width: compact ? 40 : 100,
 									},
 									{
@@ -165,8 +173,6 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										),
 										accessor: 'trades',
 										width: compact ? 40 : 100,
-										sortType: 'basic',
-										sortable: true,
 									},
 									{
 										Header: (
@@ -179,8 +185,6 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<Currency.Price price={cellProps.row.original.totalVolume} />
 										),
 										width: compact ? 40 : 100,
-										sortType: 'basic',
-										sortable: true,
 									},
 									{
 										Header: (
@@ -196,8 +200,6 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											</PnlContainer>
 										),
 										width: compact ? 40 : 100,
-										sortType: 'basic',
-										sortable: true,
 									},
 								],
 							},
@@ -273,8 +275,6 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											</PnlContainer>
 										),
 										width: 40,
-										sortType: 'basic',
-										sortable: true,
 									},
 								],
 							},
@@ -286,8 +286,17 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 	}
 );
 
-const StyledTable = styled(Table)<{ compact?: boolean }>`
+const StyledTable = styled(Table)<{ compact?: boolean; height?: number }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
+	height: ${({ height }) => (height ? height + 'px' : 'auto')};
+	max-height: 665px;
+	${media.lessThan('lg')`
+		max-height: 600px;
+	`}
+
+	${media.lessThan('md')`
+		margin-bottom: 150px;
+	`}
 `;
 
 const TableTitle = styled.div`
