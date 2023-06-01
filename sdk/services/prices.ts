@@ -28,7 +28,8 @@ import * as sdkErrors from '../common/errors';
 
 const DEBUG_WS = false;
 const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS;
-const PRICE_SERVER = process.env.NEXT_PUBLIC_DEFAULT_PRICE_SERVER === 'KWENTA' ? 'KWENTA' : 'PYTH';
+const DEFAULT_PRICE_SERVER =
+	process.env.NEXT_PUBLIC_DEFAULT_PRICE_SERVICE === 'KWENTA' ? 'KWENTA' : 'PYTH';
 
 export default class PricesService {
 	private sdk: KwentaSDK;
@@ -38,7 +39,7 @@ export default class PricesService {
 	private pyth!: EvmPriceServiceConnection;
 	private retryCount: number = 0;
 	private maxRetries: number = 5;
-	private server: PriceServer = PRICE_SERVER;
+	private server: PriceServer = DEFAULT_PRICE_SERVER;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
