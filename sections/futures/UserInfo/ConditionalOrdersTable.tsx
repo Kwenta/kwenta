@@ -8,6 +8,8 @@ import ColoredPrice from 'components/ColoredPrice';
 import Currency from 'components/Currency';
 import Pill from 'components/Pill';
 import Table, { TableHeader, TableNoResults } from 'components/Table';
+import { Body } from 'components/Text';
+import { CustomFontLabel } from 'components/Text/CustomFontLabel';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
@@ -108,7 +110,7 @@ export default function ConditionalOrdersTable() {
 						Header: <TableHeader>{t('futures.market.user.open-orders.table.type')}</TableHeader>,
 						accessor: 'type',
 						Cell: (cellProps: CellProps<any>) => {
-							return <div>{cellProps.row.original.orderTypeDisplay}</div>;
+							return <Body>{cellProps.row.original.orderTypeDisplay}</Body>;
 						},
 						sortable: true,
 						width: 50,
@@ -119,7 +121,7 @@ export default function ConditionalOrdersTable() {
 						),
 						accessor: 'reduceOnly',
 						Cell: (cellProps: CellProps<any>) => {
-							return <div>{cellProps.row.original.reduceOnly ? 'yes' : 'no'}</div>;
+							return <Body>{cellProps.row.original.reduceOnly ? 'Yes' : 'No'}</Body>;
 						},
 						sortable: true,
 						width: 50,
@@ -128,7 +130,7 @@ export default function ConditionalOrdersTable() {
 						Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
 						accessor: 'size',
 						Cell: (cellProps: CellProps<any>) => {
-							return <div>{cellProps.row.original.sizeTxt}</div>;
+							return <CustomFontLabel text={cellProps.row.original.sizeTxt} />;
 						},
 						sortable: true,
 						width: 50,
@@ -211,7 +213,7 @@ export default function ConditionalOrdersTable() {
 }
 
 const Container = styled.div`
-	height: 100%;
+	height: calc(100% - 40px);
 	overflow: scroll;
 `;
 
