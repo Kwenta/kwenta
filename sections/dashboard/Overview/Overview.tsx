@@ -9,10 +9,12 @@ import FuturesIcon from 'components/Nav/FuturesIcon';
 import { TabPanel } from 'components/Tab';
 import Search from 'components/Table/Search';
 import * as Text from 'components/Text';
-import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
+import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'sdk/constants/exchange';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { SynthSymbol } from 'sdk/data/synths';
+import { formatDollars, toWei } from 'sdk/utils/number';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { fetchTokenList } from 'state/exchange/actions';
@@ -24,7 +26,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks';
 import { selectSynthsMap } from 'state/wallet/selectors';
-import { formatDollars, toWei, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -94,10 +95,12 @@ const Overview: FC = () => {
 				const _exchangeTokens = exchangeBalances.map((exchangeToken) => {
 					const { name, currencyKey, balance, address } = exchangeToken;
 
-					const price = coinGeckoPrices ? toWei(coinGeckoPrices[address]?.usd?.toString()) : zeroBN;
+					const price = coinGeckoPrices
+						? toWei(coinGeckoPrices[address]?.usd?.toString())
+						: ZERO_WEI;
 					const priceChange = coinGeckoPrices
 						? toWei(coinGeckoPrices[address]?.usd_24h_change?.toString()).div(100)
-						: zeroBN;
+						: ZERO_WEI;
 
 					const usdBalance = balance.mul(price);
 
@@ -125,7 +128,7 @@ const Overview: FC = () => {
 	const POSITIONS_TABS = useMemo(() => {
 		const exchangeTokenBalances = exchangeTokens.reduce(
 			(initial: Wei, { usdBalance }: { usdBalance: Wei }) => initial.add(usdBalance),
-			zeroBN
+			ZERO_WEI
 		);
 		return [
 			{

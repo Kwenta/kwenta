@@ -10,7 +10,7 @@ import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { ExternalLink } from 'styles/common';
-import { truncateNumbers } from 'utils/formatters/number';
+import { truncateNumbers } from 'sdk/utils/number';
 
 type Props = {
 	onDismiss(): void;

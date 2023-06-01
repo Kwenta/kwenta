@@ -5,8 +5,8 @@ import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
-import { formatShortDateUTC, toJSTimestamp } from 'utils/formatters/date';
-import { formatDollars } from 'utils/formatters/number';
+import { formatShortDateUTC, toJSTimestamp } from 'sdk/utils/date';
+import { formatDollars } from 'sdk/utils/number';
 
 import { initChart } from '../initChart';
 import type { EChartsOption } from '../initChart';

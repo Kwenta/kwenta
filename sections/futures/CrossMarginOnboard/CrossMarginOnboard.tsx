@@ -113,7 +113,7 @@ export default function CrossMarginOnboard({ isOpen }: Props) {
 		// 		<>
 		// 			<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
 		// 			<InputBalanceLabel
-		// 				balance={susdBal || zeroBN}
+		// 				balance={susdBal || ZERO_WEI}
 		// 				currencyKey="sUSD"
 		// 				onSetAmount={setDepositAmount}
 		// 			/>

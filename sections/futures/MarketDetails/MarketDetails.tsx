@@ -10,6 +10,9 @@ import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import { zIndex } from 'constants/ui';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { getDisplayAsset } from 'sdk/utils/futures';
+import { formatDollars, formatPercent } from 'sdk/utils/number';
 import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
@@ -22,8 +25,6 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import media from 'styles/media';
-import { formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset } from 'utils/futures';
 
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import MarketsDropdown from '../Trade/MarketsDropdown';
@@ -116,7 +117,7 @@ const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 
 const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo);
-	const indexPriceWei = indexPrice?.price ?? zeroBN;
+	const indexPriceWei = indexPrice?.price ?? ZERO_WEI;
 	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(marketAsset));
@@ -127,14 +128,14 @@ const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			dataKey={MarketDataKey.dailyChange}
 			value={
 				indexPriceWei.gt(0) && pastPrice?.rate
-					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? zeroBN)
+					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? ZERO_WEI)
 					: NO_VALUE
 			}
 			color={
 				pastPrice?.rate
-					? indexPriceWei.sub(pastPrice.rate).gt(zeroBN)
+					? indexPriceWei.sub(pastPrice.rate).gt(ZERO_WEI)
 						? 'green'
-						: indexPriceWei.sub(pastPrice.rate).lt(zeroBN)
+						: indexPriceWei.sub(pastPrice.rate).lt(ZERO_WEI)
 						? 'red'
 						: ''
 					: undefined
@@ -146,7 +147,7 @@ const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const { t } = useTranslation();
 	const marketInfo = useAppSelector(selectMarketInfo);
-	const fundingRate = marketInfo?.currentFundingRate ?? zeroBN;
+	const fundingRate = marketInfo?.currentFundingRate ?? ZERO_WEI;
 	const fundingHours = useAppSelector(selectSelectedInputHours);
 	const targetContainer = document.getElementById('mobile-view') as any;
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
@@ -157,8 +158,8 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	return (
 		<MarketDetail
 			dataKey={t('futures.market.info.hourly-funding')}
-			value={fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE}
-			color={fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined}
+			value={fundingValue ? formatPercent(fundingValue ?? ZERO_WEI, { minDecimals: 6 }) : NO_VALUE}
+			color={fundingValue?.gt(ZERO_WEI) ? 'green' : fundingValue?.lt(ZERO_WEI) ? 'red' : undefined}
 			mobile={mobile}
 			extra={
 				mobile ? targetContainer && createPortal(<HoursToggle />, targetContainer) : <HoursToggle />

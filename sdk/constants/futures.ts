@@ -1,13 +1,30 @@
+import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils.js';
 import { gql } from 'graphql-request';
 
-import { FuturesMarketAsset, FuturesMarketConfig, FuturesMarketKey } from 'sdk/types/futures';
-import { weiFromWei } from 'utils/formatters/number';
+import {
+	FuturesMarketAsset,
+	FuturesMarketConfig,
+	FuturesMarketKey,
+	SmartMarginOrderType,
+	FuturesOrderType,
+} from 'sdk/types/futures';
+import { weiFromWei } from 'sdk/utils/number';
 
 export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
 
-export const DEFAULT_NUMBER_OF_TRADES = 16;
+// Defaults
+
+export const DEFAULT_NUMBER_OF_TRADES = 32;
+
+export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
+	MARKET: '1',
+	STOP: '2',
+	LIMIT: '2',
+	STOP_LOSS: '5',
+	TAKE_PROFIT: '5',
+};
 
 export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/version/0.0.9/api`;
 
@@ -29,6 +46,14 @@ export const PUBLIC_PYTH_SERVER = 'https://xc-mainnet.pyth.network';
 export const SL_TP_MAX_SIZE = weiFromWei(ethers.constants.MaxInt256);
 
 export const ORDERS_FETCH_SIZE = 500;
+
+export const ISOLATED_MARGIN_ORDER_TYPES: FuturesOrderType[] = ['market'];
+export const CROSS_MARGIN_ORDER_TYPES: SmartMarginOrderType[] = ['market', 'limit', 'stop_market'];
+export const ORDER_KEEPER_ETH_DEPOSIT = wei(0.01);
+export const DEFAULT_DELAYED_LEVERAGE_CAP = wei(100);
+export const MAX_POSITION_BUFFER = 0.01;
+export const MIN_MARGIN_AMOUNT = wei(50);
+export const APP_MAX_LEVERAGE = wei(50);
 
 export const FUTURES_ENDPOINTS: Record<number, string> = {
 	10: FUTURES_ENDPOINT_OP_MAINNET,

@@ -1,4 +1,3 @@
-import { TransactionStatusData } from '@synthetixio/transaction-notifier';
 import { toast } from 'react-toastify';
 
 import {
@@ -6,7 +5,9 @@ import {
 	NotificationPending,
 	NotificationError,
 } from 'components/TransactionNotification';
-import { blockExplorer, transactionNotifier } from 'containers/Connector/Connector';
+import { blockExplorer } from 'containers/Connector/Connector';
+import { TransactionStatusData } from 'sdk/types/transactions';
+import { sdk } from 'state/config';
 
 export const monitorTransaction = ({
 	txHash,
@@ -24,7 +25,7 @@ export const monitorTransaction = ({
 		onClick: () => window.open(link, '_blank'),
 		containerId: 'notifications',
 	};
-	const emitter = transactionNotifier.hash(txHash);
+	const emitter = sdk.transactions.hash(txHash);
 	emitter.on('txSent', () => {
 		toast(NotificationPending, { ...toastProps, toastId: txHash });
 	});

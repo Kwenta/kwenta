@@ -7,7 +7,8 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import { Body } from 'components/Text';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
+import { floorNumber } from 'sdk/utils/number';
 import { editCrossMarginTradeMarginDelta } from 'state/futures/actions';
 import {
 	selectSelectedInputDenomination,
@@ -16,7 +17,6 @@ import {
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber } from 'utils/formatters/number';
 
 const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%'];
 

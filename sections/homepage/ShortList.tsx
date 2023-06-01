@@ -15,11 +15,12 @@ import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import useGetStats from 'queries/futures/useGetStats';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatDollars, formatNumber } from 'sdk/utils/number';
 import { StackSection } from 'sections/homepage/section';
 import { Title } from 'sections/homepage/text';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
-import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 
 const ShortList = () => {
 	const { t } = useTranslation();
@@ -208,7 +209,7 @@ const ShortList = () => {
 							{totalTradeStats.isLoading ? (
 								<Loader />
 							) : (
-								formatDollars(totalTradeStats.data?.totalVolume || zeroBN, {
+								formatDollars(totalTradeStats.data?.totalVolume || ZERO_WEI, {
 									minDecimals: 0,
 								})
 							)}

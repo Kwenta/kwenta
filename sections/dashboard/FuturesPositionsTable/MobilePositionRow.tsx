@@ -8,10 +8,11 @@ import Currency from 'components/Currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { FuturesFilledPosition, FuturesMarket, PositionSide } from 'sdk/types/futures';
 import { getMarketName } from 'sdk/utils/futures';
+import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { formatNumber } from 'sdk/utils/number';
 import { selectMarkPrices } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatNumber } from 'utils/formatters/number';
-import { MarketKeyByAsset, isDecimalFour } from 'utils/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type MobilePositionRowProps = {
 	row: {

@@ -17,11 +17,15 @@ import {
 	PricesMap,
 	SynthPricesTuple,
 } from 'sdk/types/prices';
-import { getDisplayAsset, getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
+import {
+	getDisplayAsset,
+	getPythNetworkUrl,
+	normalizePythId,
+	MarketAssetByKey,
+} from 'sdk/utils/futures';
 import { startInterval } from 'sdk/utils/interval';
+import { scale } from 'sdk/utils/number';
 import { getRatesEndpoint } from 'sdk/utils/prices';
-import { scale } from 'utils/formatters/number';
-import { MarketAssetByKey } from 'utils/futures';
 import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
@@ -75,7 +79,7 @@ export default class PricesService {
 						type: 'on_chain',
 					});
 				} catch (err) {
-					logError(err);
+					this.sdk.context.logError(err);
 				}
 			}, intervalTime);
 		}
@@ -235,9 +239,6 @@ export default class PricesService {
 
 	private setEventListeners() {
 		this.sdk.context.events.on('network_changed', (params) => {
-			if (this.pyth) {
-				this.pyth.closeWebSocket();
-			}
 			this.connectToPyth(params.networkId, this.server);
 		});
 
@@ -284,7 +285,7 @@ export default class PricesService {
 				type: 'off_chain',
 			});
 		} catch (err) {
-			logError(err);
+			this.sdk.context.logError(err);
 		}
 		this.pyth.subscribePriceFeedUpdates(this.pythIds, (priceFeed) => {
 			const id = normalizePythId(priceFeed.id);

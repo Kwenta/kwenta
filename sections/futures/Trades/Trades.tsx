@@ -24,7 +24,7 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
-import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatDollars } from 'sdk/utils/number';
 
 import { TradeStatus } from '../types';
 import TableMarketDetails from '../UserInfo/TableMarketDetails';

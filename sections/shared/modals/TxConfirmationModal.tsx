@@ -16,7 +16,7 @@ import { closeModal } from 'state/exchange/reducer';
 import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { numericValueCSS, NoTextTransform } from 'styles/common';
-import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
+import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'sdk/utils/number';
 
 export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 

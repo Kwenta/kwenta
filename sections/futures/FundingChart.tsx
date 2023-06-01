@@ -6,7 +6,7 @@ import { useTheme } from 'styled-components';
 import { fetchFundingRatesHistory } from 'state/futures/actions';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
-import { formatChartTime } from 'utils/formatters/date';
+import { formatChartTime } from 'sdk/utils/date';
 
 import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip';
 

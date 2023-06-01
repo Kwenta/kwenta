@@ -1,8 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 
+import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarket } from 'sdk/types/futures';
-
-import { zeroBN } from './formatters/number';
 
 export const computeDelayedOrderFee = (market: FuturesMarket | undefined, susdSizeDelta: Wei) => {
 	if (
@@ -12,10 +11,10 @@ export const computeDelayedOrderFee = (market: FuturesMarket | undefined, susdSi
 		!susdSizeDelta
 	) {
 		return {
-			commitDeposit: zeroBN,
-			delayedOrderFee: zeroBN,
-			makerFeeRate: zeroBN,
-			takerFeeRate: zeroBN,
+			commitDeposit: ZERO_WEI,
+			delayedOrderFee: ZERO_WEI,
+			makerFeeRate: ZERO_WEI,
+			takerFeeRate: ZERO_WEI,
 		};
 	}
 

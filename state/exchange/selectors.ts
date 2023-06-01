@@ -1,14 +1,15 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP } from 'sdk/constants/exchange';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { toWei } from 'sdk/utils/number';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { selectPrices } from 'state/prices/selectors';
 import type { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectIsWalletConnected } from 'state/wallet/selectors';
-import { toWei, zeroBN } from 'utils/formatters/number';
 
 export const selectTokenList = (state: RootState) => state.exchange.tokenList;
 
@@ -42,7 +43,7 @@ export const selectBaseCurrencyName = createSelector(
 );
 
 export const selectNoSynths = createSelector(selectTotalUSDBalanceWei, (totalUSDBalance) =>
-	totalUSDBalance.lte(zeroBN)
+	totalUSDBalance.lte(ZERO_WEI)
 );
 
 export const selectShowFee = createSelector(
@@ -52,7 +53,7 @@ export const selectShowFee = createSelector(
 
 export const selectRateWei = createSelector(
 	(state: RootState) => state.exchange.rate,
-	(rate) => (!!rate ? wei(rate) : zeroBN)
+	(rate) => (!!rate ? wei(rate) : ZERO_WEI)
 );
 
 export const selectInverseRate = createSelector(selectRateWei, (rate) =>
@@ -66,7 +67,7 @@ export const selectQuoteBalanceWei = createSelector(
 	(balancesMap, tokenBalances, quoteCurrencyKey) => {
 		return quoteCurrencyKey
 			? toWei(balancesMap[quoteCurrencyKey]?.balance ?? tokenBalances?.[quoteCurrencyKey]?.balance)
-			: zeroBN;
+			: ZERO_WEI;
 	}
 );
 
@@ -83,7 +84,7 @@ export const selectBaseBalanceWei = createSelector(
 	(balancesMap, tokenBalances, baseCurrencyKey) => {
 		return baseCurrencyKey
 			? toWei(balancesMap[baseCurrencyKey]?.balance ?? tokenBalances?.[baseCurrencyKey]?.balance)
-			: zeroBN;
+			: ZERO_WEI;
 	}
 );
 

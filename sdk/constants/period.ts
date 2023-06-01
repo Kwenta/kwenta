@@ -1,5 +1,3 @@
-import { FundingRatePeriods } from 'state/futures/types';
-
 export enum Period {
 	ONE_HOUR = 'ONE_HOUR',
 	FOUR_HOURS = 'FOUR_HOURS',
@@ -43,10 +41,3 @@ export const PERIOD_IN_SECONDS: Record<Period, number> = {
 export const SECONDS_PER_DAY = 24 * 60 * 60;
 
 export const MILLISECONDS_PER_DAY = SECONDS_PER_DAY * 1000;
-
-export const FUNDING_RATE_PERIODS: FundingRatePeriods = {
-	1: '1H',
-	8: '8H',
-	24: '24H',
-	8766: '1Y',
-};

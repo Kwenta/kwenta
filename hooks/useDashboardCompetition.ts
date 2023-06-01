@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { COMPETITION_DATES } from 'constants/competition';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
-import { calculatedTimeDifference } from 'utils/formatters/date';
+import { calculatedTimeDifference } from 'sdk/utils/date';
 
 type TCompetitionSate = 'comingSoon' | 'comingToStart' | 'live' | 'comingToEnd' | 'ended';
 

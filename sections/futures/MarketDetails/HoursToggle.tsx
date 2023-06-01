@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { StyledCaretDownIcon } from 'components/Select/Select';
+import { FUNDING_RATE_PERIODS } from 'constants/funding';
 import { HOURS_TOGGLE_HEIGHT, HOURS_TOGGLE_WIDTH, zIndex } from 'constants/ui';
-import { FUNDING_RATE_PERIODS } from 'sdk/constants/period';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
 import { selectSelectedInputHours } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

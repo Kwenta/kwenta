@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 
 import { PositionSide } from 'sdk/types/futures';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
-import { formatCryptoCurrency, formatDollars } from 'utils/formatters/number';
+import { formatCryptoCurrency, formatDollars } from 'sdk/utils/number';
 
 import BaseDrawer from './BaseDrawer';
 
