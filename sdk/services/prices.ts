@@ -42,7 +42,7 @@ export default class PricesService {
 	private ratesInterval: number | undefined;
 	private pyth!: EvmPriceServiceConnection;
 	private retryCount: number = 0;
-	private maxRetries: number = 5;
+	private maxRetries: number = 3;
 	private server: PriceServer = DEFAULT_PRICE_SERVER;
 
 	constructor(sdk: KwentaSDK) {
