@@ -240,6 +240,15 @@ export default class PricesService {
 				this.retryConnection(this.sdk.context.networkId);
 			}
 		});
+
+		if (this.pyth) {
+			this.pyth.onWsError = (error: Error) => {
+				this.sdk.context.events.emit('prices_connection_update', {
+					connected: false,
+					error: error || new Error('pyth prices ws connection failed'),
+				});
+			};
+		}
 	}
 
 	private retryConnection(networkId: NetworkId) {
