@@ -408,8 +408,8 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	INSUFFICIENT_FREE_MARGIN: `You don't have enough sUSD for this trade`,
 };
 
-export const getPythNetworkUrl = (networkId: NetworkId, currentServer: PriceServer = 'KWENTA') => {
-	const defaultPythServer = currentServer === 'KWENTA' ? KWENTA_PYTH_SERVER : PUBLIC_PYTH_SERVER;
+export const getPythNetworkUrl = (networkId: NetworkId, server: PriceServer = 'KWENTA') => {
+	const defaultPythServer = server === 'KWENTA' ? KWENTA_PYTH_SERVER : PUBLIC_PYTH_SERVER;
 	return networkId === 420 ? 'https://xc-testnet.pyth.network' : defaultPythServer;
 };
 

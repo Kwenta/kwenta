@@ -38,12 +38,12 @@ export default class PricesService {
 	private pyth!: EvmPriceServiceConnection;
 	private retryCount: number = 0;
 	private maxRetries: number = 5;
-	private currentServer: PriceServer = PRICE_SERVER;
+	private server: PriceServer = PRICE_SERVER;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
 		this.setEventListeners();
-		this.connectToPyth(sdk.context.networkId, this.currentServer);
+		this.connectToPyth(sdk.context.networkId, this.server);
 	}
 
 	get currentPrices() {
@@ -202,6 +202,10 @@ export default class PricesService {
 	}
 
 	private connectToPyth(networkId: NetworkId, server: PriceServer) {
+		if (this.pyth) {
+			this.pyth.closeWebSocket();
+		}
+
 		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(networkId, server), {
 			logger: LOG_WS ? console : undefined,
 		});
@@ -214,8 +218,6 @@ export default class PricesService {
 				});
 			})
 			.catch((error) => this.retryConnection(networkId, error));
-
-		return this.pyth;
 	}
 
 	private setEventListeners() {
@@ -223,7 +225,7 @@ export default class PricesService {
 			if (this.pyth) {
 				this.pyth.closeWebSocket();
 			}
-			this.connectToPyth(params.networkId, this.currentServer);
+			this.connectToPyth(params.networkId, this.server);
 		});
 
 		this.sdk.context.events.on('prices_connection_update', (params) => {
@@ -234,10 +236,6 @@ export default class PricesService {
 	}
 
 	private retryConnection(networkId: NetworkId, error: Error) {
-		if (this.pyth) {
-			this.pyth.closeWebSocket();
-		}
-
 		this.sdk.context.events.emit('prices_connection_update', {
 			connected: false,
 			error: error || new Error('pyth prices ws connection failed'),
@@ -246,13 +244,13 @@ export default class PricesService {
 		if (this.retryCount < this.maxRetries) {
 			this.retryCount++;
 			setTimeout(() => {
-				this.connectToPyth(networkId, this.currentServer);
+				this.connectToPyth(networkId, this.server);
 			}, Math.pow(2, this.retryCount) * 100);
 		} else {
 			logError(new Error('Maximum retries exceeded'));
 			this.retryCount = 0;
-			this.currentServer = this.currentServer === 'KWENTA' ? 'PYTH' : 'KWENTA';
-			this.connectToPyth(networkId, this.currentServer);
+			this.server = this.server === 'KWENTA' ? 'PYTH' : 'KWENTA';
+			this.connectToPyth(networkId, this.server);
 		}
 	}
 
