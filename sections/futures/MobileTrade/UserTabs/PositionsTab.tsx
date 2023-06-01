@@ -1,3 +1,4 @@
+import Router from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -10,6 +11,7 @@ import Spacer from 'components/Spacer/Spacer';
 import { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
+import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
@@ -124,7 +126,10 @@ const PositionsTab = () => {
 			) : (
 				data.map((row) => (
 					<PositionItem key={row.market.asset}>
-						<PositionMeta $side={row.position.side}>
+						<PositionMeta
+							$side={row.position.side}
+							onClick={() => Router.push(ROUTES.Markets.MarketPair(row.market.asset, accountType))}
+						>
 							<FlexDiv>
 								<div className="position-side-bar" />
 								<div>
