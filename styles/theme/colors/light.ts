@@ -177,7 +177,7 @@ const newTheme = {
 	},
 	fundingChart: {
 		tooltip: {
-			background: common.palette.neutral.n40,
+			background: common.palette.neutral.n10,
 			border: common.palette.neutral.n50,
 		},
 	},
