@@ -217,7 +217,12 @@ export default class PricesService {
 					connected: true,
 				});
 			})
-			.catch((error) => this.retryConnection(networkId, error));
+			.catch((error) => {
+				this.sdk.context.events.emit('prices_connection_update', {
+					connected: false,
+					error: error || new Error('pyth prices ws connection failed'),
+				});
+			});
 	}
 
 	private setEventListeners() {
@@ -231,16 +236,13 @@ export default class PricesService {
 		this.sdk.context.events.on('prices_connection_update', (params) => {
 			if (params.connected) {
 				this.subscribeToPythPriceUpdates();
+			} else {
+				this.retryConnection(this.sdk.context.networkId);
 			}
 		});
 	}
 
-	private retryConnection(networkId: NetworkId, error: Error) {
-		this.sdk.context.events.emit('prices_connection_update', {
-			connected: false,
-			error: error || new Error('pyth prices ws connection failed'),
-		});
-
+	private retryConnection(networkId: NetworkId) {
 		if (this.retryCount < this.maxRetries) {
 			this.retryCount++;
 			setTimeout(() => {
