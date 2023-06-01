@@ -206,11 +206,14 @@ export default class PricesService {
 			logger: LOG_WS ? console : undefined,
 		});
 
-		this.pyth.onWsError = (error) => this.retryConnection(networkId, error);
-
-		this.sdk.context.events.emit('prices_connection_update', {
-			connected: true,
-		});
+		this.pyth
+			.getPriceFeedIds()
+			.then((_) => {
+				this.sdk.context.events.emit('prices_connection_update', {
+					connected: true,
+				});
+			})
+			.catch((error) => this.retryConnection(networkId, error));
 
 		return this.pyth;
 	}
@@ -244,7 +247,7 @@ export default class PricesService {
 			this.retryCount++;
 			setTimeout(() => {
 				this.connectToPyth(networkId, this.currentServer);
-			}, Math.pow(2, this.retryCount) * 1000);
+			}, Math.pow(2, this.retryCount) * 100);
 		} else {
 			logError(new Error('Maximum retries exceeded'));
 			this.retryCount = 0;
