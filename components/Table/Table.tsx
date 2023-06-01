@@ -337,6 +337,7 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBo
 				color: ${(props) => props.theme.colors.selectedTheme.text.label};
 				font-family: ${(props) => props.theme.fonts.regular};
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+				height: 34px;
 			}
 		`}
 `;

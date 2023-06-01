@@ -11,7 +11,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
-import PencilButton from '../../shared/components/PencilButton';
+import PencilButton from '../../../components/Button/PencilButton';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
 
 function MarginInfoBox() {

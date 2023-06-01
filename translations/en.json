@@ -1030,7 +1030,7 @@
 						"type": "Type",
 						"size": "Size",
 						"size-price": "Size/Price",
-						"reserved-margin": "Reserved margin",
+						"reserved-margin": "Margin",
 						"reduce-only": "Reduce only",
 						"commit-deposit": "Commit Deposit",
 						"price": "Target Price",

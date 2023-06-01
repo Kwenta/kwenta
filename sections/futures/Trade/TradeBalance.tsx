@@ -9,6 +9,7 @@ import Pill from 'components/Pill';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
+import useWindowSize from 'hooks/useWindowSize';
 import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
 import { formatDollars } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
@@ -23,7 +24,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
-import PencilButton from '../../shared/components/PencilButton';
+import PencilButton from '../../../components/Button/PencilButton';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
 import SmartMarginOnboardModal from './SmartMarginOnboardModal';
 
@@ -34,6 +35,7 @@ type TradeBalanceProps = {
 const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
+	const { deviceType } = useWindowSize();
 
 	const idleMargin = useAppSelector(selectIdleMargin);
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets);
@@ -55,7 +57,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	};
 
 	return (
-		<Container>
+		<Container mobile={deviceType === 'mobile'}>
 			<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
 				{accountType === 'cross_margin' && isDepositRequired ? (
 					<DepositContainer>
@@ -195,9 +197,10 @@ const StyledFlexDivCol = styled(FlexDivCol)`
 	padding-left: 10px;
 `;
 
-const Container = styled.div`
+const Container = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	padding: 13px 15px;
+	border-bottom: ${(props) => (props.mobile ? props.theme.colors.selectedTheme.border : 0)};
 `;
 
 const BalanceContainer = styled(FlexDivRowCentered)<{ clickable: boolean }>`

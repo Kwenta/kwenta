@@ -12,6 +12,6 @@ export const BANNER_TEXT =
 // Sets the height of the banner component on desktop
 export const BANNER_HEIGHT_DESKTOP = 50;
 // Sets the height of the banner component on mobile
-export const BANNER_HEIGHT_MOBILE = 70;
+export const BANNER_HEIGHT_MOBILE = 85;
 // Sets the waiting time of the banner component before it is reactive
 export const BANNER_WAITING_TIME = 2 * MILLISECONDS_PER_DAY;

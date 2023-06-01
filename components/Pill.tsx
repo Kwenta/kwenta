@@ -2,7 +2,7 @@ import { FC, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 type PillSize = 'small' | 'medium' | 'large';
-type PillColor = 'yellow' | 'gray' | 'red';
+type PillColor = 'yellow' | 'gray' | 'red' | 'redGray';
 type FontWeight = 'regular' | 'bold' | 'black';
 
 type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {

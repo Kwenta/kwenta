@@ -1,30 +1,30 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { selectShowBanner } from 'state/app/selectors';
-import { useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 
+import MarketDetails from '../MarketDetails';
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import UserInfo from '../UserInfo';
 import ChartWrapper from './ChartWrapper';
 
-const MarketInfo: React.FC = React.memo(() => {
-	const showBanner = useAppSelector(selectShowBanner);
-
-	return (
-		<Container showBanner={showBanner}>
-			<ChartWrapper />
-			<UserInfo />
-		</Container>
-	);
-});
+const MarketInfo: React.FC = React.memo(() => (
+	<Container>
+		<MarketDetails />
+		<ChartWrapper />
+		<UserInfo />
+	</Container>
+));
 
 const Container = styled.div<{ showBanner?: boolean }>`
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
 	display: grid;
-	grid-template-rows: 1fr calc(320px - ${(props) => (props.showBanner ? 50 : 0)}px);
-	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+	grid-template-rows: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px 1fr 300px;
+	${media.lessThan('xl')`
+		grid-template-rows: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px 1fr 250px;
+	`}
 `;
 
 export default MarketInfo;

@@ -1,21 +1,24 @@
+import Router from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import Currency from 'components/Currency';
-import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
+import { FlexDiv, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import Pill from 'components/Pill';
 import Spacer from 'components/Spacer/Spacer';
 import { TableNoResults } from 'components/Table';
 import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
+import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import ShareModal from 'sections/futures/ShareModal';
+import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton';
 import { setShowPositionModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
@@ -29,6 +32,7 @@ import {
 } from 'state/futures/selectors';
 import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
+import media from 'styles/media';
 
 import TradePanelDrawer from '../drawers/TradePanelDrawer';
 
@@ -107,7 +111,7 @@ const PositionsTab = () => {
 	}, []);
 
 	return (
-		<PositionsTabContainer>
+		<div>
 			{data.length === 0 ? (
 				!isL2 ? (
 					<TableNoResults>
@@ -122,7 +126,10 @@ const PositionsTab = () => {
 			) : (
 				data.map((row) => (
 					<PositionItem key={row.market.asset}>
-						<PositionMeta $side={row.position.side}>
+						<PositionMeta
+							$side={row.position.side}
+							onClick={() => Router.push(ROUTES.Markets.MarketPair(row.market.asset, accountType))}
+						>
 							<FlexDiv>
 								<div className="position-side-bar" />
 								<div>
@@ -145,123 +152,100 @@ const PositionsTab = () => {
 							</FlexDivRowCentered>
 						</PositionMeta>
 						<PositionRow>
-							<Body color="secondary">Size</Body>
-							<FlexDivRowCentered>
+							<PositionCell>
+								<Body color="secondary">Size</Body>
 								<div>
-									<Currency.Price price={row.position.size} currencyKey={row.market.asset} />
+									<FlexDivRow justifyContent="start">
+										<Currency.Price price={row.position.size} currencyKey={row.market.asset} />
+										{accountType === 'cross_margin' && (
+											<>
+												<Spacer width={5} />
+												<EditPositionButton
+													modalType={'futures_edit_position_size'}
+													marketKey={row.market.marketKey}
+												/>
+											</>
+										)}
+									</FlexDivRow>
+									<Spacer width={5} />
+									<Currency.Price
+										price={row.position.notionalValue}
+										formatOptions={{ truncateOver: 1e6 }}
+										colorType="secondary"
+									/>
 								</div>
-								<Spacer width={5} />
-								<Currency.Price
-									price={row.position.notionalValue}
-									formatOptions={{ truncateOver: 1e6 }}
-									colorType="secondary"
-								/>
-								{accountType === 'cross_margin' && (
-									<>
-										<Spacer width={5} />
-										<Pill
-											size="medium"
-											onClick={() =>
-												dispatch(
-													setShowPositionModal({
-														type: 'futures_edit_position_size',
-														marketKey: row.market.marketKey,
-													})
-												)
-											}
-										>
-											Edit
-										</Pill>
-									</>
-								)}
-							</FlexDivRowCentered>
-						</PositionRow>
-						<PositionRow>
-							<Body color="secondary">Side</Body>
-							<PositionType side={row.position.side} />
-						</PositionRow>
-						<PositionRow>
-							<Body color="secondary">Avg. Entry</Body>
-							{row.avgEntryPrice === undefined ? (
-								<Body>{NO_VALUE}</Body>
-							) : (
-								<Currency.Price
-									price={row.avgEntryPrice}
-									formatOptions={{ suggestDecimals: true }}
-								/>
-							)}
-						</PositionRow>
-						<PositionRow>
-							<Body color="secondary">Market Margin</Body>
-							<FlexDivRowCentered>
-								<NumericValue value={row.position.initialMargin} />
-								{accountType === 'cross_margin' && (
-									<>
-										<Spacer width={5} />
-										<Pill
-											size="medium"
-											onClick={() =>
-												dispatch(
-													setShowPositionModal({
-														type: 'futures_edit_position_margin',
-														marketKey: row.market.marketKey,
-													})
-												)
-											}
-										>
-											Edit
-										</Pill>
-									</>
-								)}
-							</FlexDivRowCentered>
-						</PositionRow>
-						<PositionRow>
-							<Body color="secondary">Leverage</Body>
-							<FlexDivRowCentered>
-								<NumericValue value={row.position.leverage} suffix="x" />
-							</FlexDivRowCentered>
-						</PositionRow>
-						<PositionRow>
-							<Body color="secondary">Liquidation</Body>
-							<Currency.Price price={row.position.liquidationPrice} colorType="preview" />
-						</PositionRow>
-						<PositionRow>
-							<Body color="secondary">Unrealized PnL</Body>
-							<Currency.Price price={row.position.pnl} colored />
-						</PositionRow>
-						<PositionRow>
-							<Body color="secondary">TP/SL</Body>
-							<FlexDivRowCentered>
-								{row.takeProfit === undefined ? (
+							</PositionCell>
+							<PositionCell>
+								<Body color="secondary">Side</Body>
+								<FlexDivRow>
+									<PositionType side={row.position.side} />
+								</FlexDivRow>
+							</PositionCell>
+							<PositionCell>
+								<Body color="secondary">Avg. Entry</Body>
+								{row.avgEntryPrice === undefined ? (
 									<Body>{NO_VALUE}</Body>
 								) : (
-									<Currency.Price price={row.takeProfit} />
+									<Currency.Price
+										price={row.avgEntryPrice}
+										formatOptions={{ suggestDecimals: true }}
+									/>
 								)}
-								<Body>/</Body>
-								{row.stopLoss === undefined ? (
-									<Body color="secondary">{NO_VALUE}</Body>
-								) : (
-									<Currency.Price price={row.stopLoss} colorType="secondary" />
-								)}
-								{accountType === 'cross_margin' && (
-									<>
-										<Spacer width={5} />
-										<Pill
-											size="medium"
-											onClick={() =>
-												dispatch(
-													setShowPositionModal({
-														type: 'futures_edit_stop_loss_take_profit',
-														marketKey: row.market.marketKey,
-													})
-												)
-											}
-										>
-											Edit
-										</Pill>
-									</>
-								)}
-							</FlexDivRowCentered>
+							</PositionCell>
+							<PositionCell>
+								<Body color="secondary">Market Margin</Body>
+								<FlexDivRow justifyContent="start">
+									<NumericValue value={row.position.initialMargin} />
+									{accountType === 'cross_margin' && (
+										<>
+											<Spacer width={5} />
+											<EditPositionButton
+												modalType={'futures_edit_position_margin'}
+												marketKey={row.market.marketKey}
+											/>
+										</>
+									)}
+								</FlexDivRow>
+							</PositionCell>
+							<PositionCell>
+								<Body color="secondary">Leverage</Body>
+								<FlexDivRowCentered>
+									<NumericValue value={row.position.leverage} suffix="x" />
+								</FlexDivRowCentered>
+							</PositionCell>
+							<PositionCell>
+								<Body color="secondary">Liquidation</Body>
+								<Currency.Price price={row.position.liquidationPrice} colorType="preview" />
+							</PositionCell>
+							<PositionCell>
+								<Body color="secondary">Unrealized PnL</Body>
+								<Currency.Price price={row.position.pnl} colored />
+							</PositionCell>
+							<PositionCell>
+								<Body color="secondary">TP/SL</Body>
+								<FlexDivRow justifyContent="start">
+									{row.takeProfit === undefined ? (
+										<Body>{NO_VALUE}</Body>
+									) : (
+										<Currency.Price price={row.takeProfit} />
+									)}
+									<Body>/</Body>
+									{row.stopLoss === undefined ? (
+										<Body color="secondary">{NO_VALUE}</Body>
+									) : (
+										<Currency.Price price={row.stopLoss} colorType="secondary" />
+									)}
+									{accountType === 'cross_margin' && (
+										<>
+											<Spacer width={5} />
+											<EditPositionButton
+												modalType={'futures_edit_stop_loss_take_profit'}
+												marketKey={row.market.marketKey}
+											/>
+										</>
+									)}
+								</FlexDivRow>
+							</PositionCell>
 						</PositionRow>
 					</PositionItem>
 				))
@@ -272,13 +256,9 @@ const PositionsTab = () => {
 			{showShareModal && (
 				<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
 			)}
-		</PositionsTabContainer>
+		</div>
 	);
 };
-
-const PositionsTabContainer = styled.div`
-	padding-top: 15px;
-`;
 
 const PositionMeta = styled.div<{ $side: PositionSide }>`
 	display: flex;
@@ -299,6 +279,9 @@ const PositionMeta = styled.div<{ $side: PositionSide }>`
 const PositionItem = styled.div`
 	margin: 0 20px;
 	padding: 20px 0;
+	${media.greaterThan('md')`
+		padding: 16px 0;
+	`}
 
 	&:not(:last-of-type) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
@@ -306,13 +289,24 @@ const PositionItem = styled.div`
 `;
 
 const PositionRow = styled.div`
-	display: flex;
-	justify-content: space-between;
 	min-height: 22px;
+	grid-template-columns: 1fr 1fr;
+	display: grid;
+	grid-gap: 10px;
+
+	${media.greaterThan('md')`
+		grid-template-columns: 1fr 1fr 1fr;
+	`}
+
+	${media.greaterThan('lg')`
+		grid-template-columns: 1fr 1fr 1fr 1fr;
+	`}
 
 	&:not(:last-of-type) {
 		margin-bottom: 10px;
 	}
 `;
+
+const PositionCell = styled.div``;
 
 export default PositionsTab;

@@ -11,6 +11,7 @@ import {
 	BANNER_TEXT,
 	BANNER_WAITING_TIME,
 } from 'constants/announcement';
+import { MARKET_SELECTOR_HEIGHT_MOBILE } from 'sections/futures/Trade/MarketsDropdownSelector';
 import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover';
 import { setShowBanner } from 'state/app/reducer';
 import { selectShowBanner } from 'state/app/selectors';
@@ -118,6 +119,7 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 		border-radius: 0px;
 		gap: 5px;
 		height: ${BANNER_HEIGHT_MOBILE}px;
+		margin-top: ${MARKET_SELECTOR_HEIGHT_MOBILE}px;
 	`}
 `;
 

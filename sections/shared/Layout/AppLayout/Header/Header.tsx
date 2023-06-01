@@ -27,6 +27,7 @@ const Container = styled.header`
 	display: flex;
 	justify-content: space-between;
 	padding: 15px;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const LogoNav = styled.div`

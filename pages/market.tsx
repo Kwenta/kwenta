@@ -6,6 +6,7 @@ import Loader from 'components/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import useWindowSize from 'hooks/useWindowSize';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { MarketKeyByAsset } from 'sdk/utils/futures';
 import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal';
@@ -13,7 +14,6 @@ import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
 import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal';
 import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal';
-import MarketDetails from 'sections/futures/MarketDetails';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
@@ -50,6 +50,7 @@ const Market: MarketComponent = () => {
 	const router = useRouter();
 	const { walletAddress } = Connector.useContainer();
 	const dispatch = useAppDispatch();
+	const { lessThanWidth } = useWindowSize();
 	usePollMarketFuturesData();
 
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
@@ -93,13 +94,23 @@ const Market: MarketComponent = () => {
 			<MarketHead />
 			<CrossMarginOnboard isOpen={showOnboard} />
 			<DesktopOnlyView>
-				<PageContent>
-					<MarketDetails />
-					<StyledFullHeightContainer>
-						<TradePanelDesktop />
-						<MarketInfo />
-					</StyledFullHeightContainer>
-				</PageContent>
+				{lessThanWidth('lg') ? (
+					<PageContent>
+						<TabletContainer>
+							<TradePanelDesktop />
+							<TabletRightSection>
+								<MobileTrade />
+							</TabletRightSection>
+						</TabletContainer>
+					</PageContent>
+				) : (
+					<PageContent>
+						<StyledFullHeightContainer>
+							<TradePanelDesktop />
+							<MarketInfo />
+						</StyledFullHeightContainer>
+					</PageContent>
+				)}
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<MobileTrade />
@@ -182,4 +193,15 @@ const LoaderContainer = styled.div`
 	text-align: center;
 	width: 100%;
 	padding: 50px;
+`;
+
+const TabletContainer = styled.div`
+	display: grid;
+	grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
+	height: 100%;
+`;
+
+const TabletRightSection = styled.div`
+	overflow-y: scroll;
+	height: 100%;
 `;
