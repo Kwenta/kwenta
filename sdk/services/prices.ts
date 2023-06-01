@@ -256,7 +256,7 @@ export default class PricesService {
 			this.retryCount++;
 			setTimeout(() => {
 				this.connectToPyth(networkId, this.server);
-			}, Math.pow(2, this.retryCount) * 100);
+			}, Math.pow(2, this.retryCount) * 50);
 		} else {
 			logError(new Error('Maximum retries exceeded'));
 			this.retryCount = 0;
