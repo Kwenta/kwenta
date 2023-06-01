@@ -11,6 +11,7 @@ import {
 	SL_TP_MAX_SIZE,
 } from 'sdk/constants/futures';
 import { ZERO_ADDRESS } from 'sdk/constants/global';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
@@ -39,7 +40,7 @@ import {
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
 import { marketOverrides } from 'sdk/utils/futures';
-import { floorNumber, stripZeros, zeroBN } from 'sdk/utils/number';
+import { floorNumber, stripZeros } from 'sdk/utils/number';
 import { getTransactionPrice } from 'sdk/utils/transactions';
 import { unserializeGasPrice } from 'state/app/helpers';
 import {
@@ -745,7 +746,7 @@ export const editCrossMarginPositionSize = (
 			stageCrossMarginTradePreview({
 				orderPrice: marketPrice,
 				market,
-				marginDelta: zeroBN,
+				marginDelta: ZERO_WEI,
 				sizeDelta: wei(nativeSizeDelta || 0),
 				action: 'edit',
 			})
@@ -778,7 +779,7 @@ export const editClosePositionSizeDelta = (
 			market,
 			sizeDelta: wei(nativeSizeDelta),
 			orderPrice: odrderPrice,
-			marginDelta: zeroBN,
+			marginDelta: ZERO_WEI,
 			action: 'close',
 		};
 		if (accountType === 'isolated_margin') {
@@ -810,7 +811,7 @@ export const editClosePositionPrice = (marketKey: FuturesMarketKey, price: strin
 			stageCrossMarginTradePreview({
 				market: marketInfo,
 				orderPrice: isNaN(Number(price)) || !price ? marketPrice : wei(price),
-				marginDelta: zeroBN,
+				marginDelta: ZERO_WEI,
 				sizeDelta: wei(nativeSizeDelta || 0),
 				action: 'edit',
 			})
@@ -839,7 +840,7 @@ export const editCrossMarginPositionMargin = (
 				market,
 				orderPrice: marketPrice,
 				marginDelta: wei(marginDelta || 0),
-				sizeDelta: zeroBN,
+				sizeDelta: ZERO_WEI,
 				action: 'edit',
 			})
 		);
@@ -912,7 +913,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 			market,
 			sizeDelta: nativeSizeDelta,
 			orderPrice: marketPrice,
-			marginDelta: zeroBN,
+			marginDelta: ZERO_WEI,
 			action: 'trade',
 		})
 	);

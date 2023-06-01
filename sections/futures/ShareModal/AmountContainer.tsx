@@ -2,9 +2,10 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
 import { MarketKeyByAsset } from 'sdk/utils/futures';
-import { formatNumber, zeroBN } from 'sdk/utils/number';
+import { formatNumber } from 'sdk/utils/number';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { SharePositionParams } from 'state/futures/types';
 import { useAppSelector } from 'state/hooks';
@@ -16,7 +17,7 @@ const AmountContainer: FC<SharePositionParams> = ({ asset, position }) => {
 	const marketAsset = asset ?? defaultAsset;
 	const marketName = getMarketName(marketAsset);
 	const positionDetails = position ?? null;
-	const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
+	const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x';
 	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
 	const pnlPct = positionDetails?.pnlPct.mul(100);
 

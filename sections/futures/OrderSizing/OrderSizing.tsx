@@ -6,6 +6,8 @@ import TextButton from 'components/Button/TextButton';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { floorNumber, formatCryptoCurrency, formatDollars, isZero } from 'sdk/utils/number';
 import { editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketPrice,
@@ -19,7 +21,6 @@ import {
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, formatCryptoCurrency, formatDollars, isZero, zeroBN } from 'sdk/utils/number';
 
 import { DenominationToggle } from './DenominationToggle';
 
@@ -61,7 +62,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 	}, [tradeSide, availableOi, increasingPosition, position?.position?.size]);
 
 	const maxNativeValue = useMemo(() => {
-		const max = !isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : zeroBN;
+		const max = !isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : ZERO_WEI;
 		return max.lt(availableOiNative) ? max : availableOiNative;
 	}, [tradePrice, maxUsdInputAmount, availableOiNative]);
 

@@ -12,6 +12,8 @@ import PreviewArrow from 'components/PreviewArrow';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatDollars, formatNumber, formatPercent } from 'sdk/utils/number';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectTransaction } from 'state/app/selectors';
 import {
@@ -27,7 +29,6 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, formatNumber, formatPercent, zeroBN } from 'sdk/utils/number';
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
 import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage';
@@ -76,26 +77,26 @@ export default function EditPositionSizeModal() {
 	}, [preview, position, marketPrice]);
 
 	const maxNativeIncreaseValue = useMemo(() => {
-		if (!marketPrice || marketPrice.eq(0)) return zeroBN;
-		const totalMax = position?.remainingMargin.mul(maxLeverage) ?? zeroBN;
+		if (!marketPrice || marketPrice.eq(0)) return ZERO_WEI;
+		const totalMax = position?.remainingMargin.mul(maxLeverage) ?? ZERO_WEI;
 		let max = totalMax.sub(position?.position?.notionalValue ?? 0);
-		max = max.gt(0) ? max : zeroBN;
+		max = max.gt(0) ? max : ZERO_WEI;
 		return max.div(marketPrice);
 	}, [marketPrice, position?.remainingMargin, position?.position?.notionalValue, maxLeverage]);
 
 	const maxNativeValue = useMemo(() => {
-		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? zeroBN;
+		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? ZERO_WEI;
 	}, [editType, maxNativeIncreaseValue, position?.position?.size]);
 
 	const minNativeValue = useMemo(() => {
-		if (editType === 0) return zeroBN;
+		if (editType === 0) return ZERO_WEI;
 		// If a user is over max leverage they can only
 		// decrease to a value below max leverage
 		if (position?.position && position?.position?.leverage.gt(maxLeverage)) {
 			const safeSize = position.remainingMargin.mul(maxLeverage).div(marketPrice);
 			return position.position.size.sub(safeSize);
 		}
-		return zeroBN;
+		return ZERO_WEI;
 	}, [maxLeverage, position?.position, editType, marketPrice, position?.remainingMargin]);
 
 	const maxNativeValueWithBuffer = useMemo(() => {
@@ -160,7 +161,7 @@ export default function EditPositionSizeModal() {
 			<Spacer height={20} />
 
 			<EditPositionSizeInput
-				minNativeValue={minNativeValue.lt(maxNativeValue) ? minNativeValue : zeroBN}
+				minNativeValue={minNativeValue.lt(maxNativeValue) ? minNativeValue : ZERO_WEI}
 				maxNativeValue={maxNativeValue}
 				type={editType === 0 ? 'increase' : 'decrease'}
 			/>

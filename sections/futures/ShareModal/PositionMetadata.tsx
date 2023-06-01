@@ -3,10 +3,11 @@ import { useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatDollars, formatNumber } from 'sdk/utils/number';
 import { SharePositionParams } from 'state/futures/types';
 import media from 'styles/media';
 import getLocale from 'utils/formatters/getLocale';
-import { formatDollars, formatNumber, zeroBN } from 'sdk/utils/number';
 
 function getColor(props: any) {
 	let color = '';
@@ -117,7 +118,7 @@ const PositionMetadata: React.FC<SharePositionParams> = ({ positionHistory, mark
 					{t('futures.modals.share.position-metadata.avg-open-price')}
 				</ContainerText>
 				<ContainerText className="date-or-price">
-					{formatDollars(avgEntryPrice ?? zeroBN, {
+					{formatDollars(avgEntryPrice ?? ZERO_WEI, {
 						suggestDecimals: true,
 					})}
 				</ContainerText>
@@ -127,7 +128,7 @@ const PositionMetadata: React.FC<SharePositionParams> = ({ positionHistory, mark
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
 				<ContainerText className="date-or-price">
-					{formatNumber(marketPrice ?? zeroBN)}
+					{formatNumber(marketPrice ?? ZERO_WEI)}
 				</ContainerText>
 			</BottomRightContainer>
 		</>

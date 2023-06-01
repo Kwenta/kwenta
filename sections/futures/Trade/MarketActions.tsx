@@ -5,11 +5,11 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
 import { selectMarketInfo, selectPosition } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { zeroBN } from 'sdk/utils/number';
 
 import TransferIsolatedMarginModal from './TransferIsolatedMarginModal';
 
@@ -37,7 +37,7 @@ const MarketActions: React.FC = () => {
 				<MarketActionButton
 					data-testid="futures-market-trade-button-withdraw"
 					disabled={
-						position?.remainingMargin?.lte(zeroBN) ||
+						position?.remainingMargin?.lte(ZERO_WEI) ||
 						marketInfo?.isSuspended ||
 						!isL2 ||
 						!walletAddress

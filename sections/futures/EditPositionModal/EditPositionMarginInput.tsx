@@ -7,7 +7,8 @@ import NumericInput from 'components/Input/NumericInput';
 import { getStep } from 'components/Slider/Slider';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
-import { floorNumber, formatNumber, zeroBN } from 'sdk/utils/number';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { floorNumber, formatNumber } from 'sdk/utils/number';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionMargin } from 'state/futures/actions';
 import { selectEditPositionInputs } from 'state/futures/selectors';
@@ -50,7 +51,7 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 		]);
 
 		const marginDeltaWei = useMemo(() => {
-			return !marginDelta || isNaN(Number(marginDelta)) ? zeroBN : wei(marginDelta);
+			return !marginDelta || isNaN(Number(marginDelta)) ? ZERO_WEI : wei(marginDelta);
 		}, [marginDelta]);
 
 		const invalid = useMemo(() => wei(marginDeltaWei || 0).gt(maxUsdInput), [

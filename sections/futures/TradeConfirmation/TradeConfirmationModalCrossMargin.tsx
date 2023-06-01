@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { ZERO_WEI } from 'sdk/constants/number';
 import { setOpenModal } from 'state/app/reducer';
 import { approveCrossMargin } from 'state/futures/actions';
 import {
@@ -11,7 +12,6 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { zeroBN } from 'sdk/utils/number';
 
 import TradeConfirmationModal from './TradeConfirmationModal';
 
@@ -41,7 +41,7 @@ export default function TradeConfirmationModalCrossMargin() {
 			onApproveAllowance={handleApproveSmartMargin}
 			isSubmitting={isSubmitting}
 			allowanceValid={allowanceValid}
-			executionFee={marketInfo?.keeperDeposit ?? zeroBN}
+			executionFee={marketInfo?.keeperDeposit ?? ZERO_WEI}
 			keeperFee={isConditionalOrder || hasSlTp ? keeperEthDeposit : null}
 		/>
 	);

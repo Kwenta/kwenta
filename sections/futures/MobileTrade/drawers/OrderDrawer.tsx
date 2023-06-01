@@ -4,11 +4,11 @@ import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
 import { PositionSide } from 'sdk/types/futures';
+import { getDisplayAsset } from 'sdk/utils/futures';
+import { formatCurrency } from 'sdk/utils/number';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { DelayedOrderWithDetails } from 'state/futures/types';
 import { useAppDispatch } from 'state/hooks';
-import { formatCurrency } from 'sdk/utils/number';
-import { getDisplayAsset } from 'utils/futures';
 
 import BaseDrawer from './BaseDrawer';
 

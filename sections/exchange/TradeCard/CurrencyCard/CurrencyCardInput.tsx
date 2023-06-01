@@ -8,8 +8,9 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatDollars } from 'sdk/utils/number';
 import { CapitalizedText, numericValueCSS } from 'styles/common';
-import { formatDollars, zeroBN } from 'sdk/utils/number';
 
 type CurrencyCardInputProps = {
 	label: string;
@@ -91,7 +92,7 @@ const CurrencyCardInputAmountValue = memo(({ currencyKeySelected, amount, priceR
 	const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
 
 	const tradeAmount = useMemo(() => {
-		const amountBN = amount === '' ? zeroBN : wei(amount);
+		const amountBN = amount === '' ? ZERO_WEI : wei(amount);
 		let current = priceRate ? amountBN.mul(priceRate) : null;
 
 		if (!!selectPriceCurrencyRate && !!current) {

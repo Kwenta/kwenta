@@ -20,6 +20,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesMarketAsset, FuturesTrade } from 'sdk/types/futures';
 import { formatShortDateWithoutYear } from 'sdk/utils/date';
 import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { formatCryptoCurrency, formatDollars } from 'sdk/utils/number';
 import TradeDrawer from 'sections/futures/MobileTrade/drawers/TradeDrawer';
 import PositionType from 'sections/futures/PositionType';
@@ -31,7 +32,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { getDisplayAsset, getMarketName } from 'utils/futures';
+import { getMarketName } from 'utils/futures';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 

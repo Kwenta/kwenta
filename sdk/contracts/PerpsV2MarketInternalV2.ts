@@ -6,17 +6,11 @@ import { formatBytes32String } from 'ethers/lib/utils';
 import KwentaSDK from 'sdk';
 
 import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
+import { ZERO_WEI, ZERO_BIG_NUM, UNIT_BIG_NUM, UNIT_BN } from 'sdk/constants/number';
 import PerpsV2Market from 'sdk/contracts/abis/PerpsV2Market.json';
 import { PerpsV2Market__factory } from 'sdk/contracts/types';
 import { FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
-import {
-	zeroBN,
-	ZERO_BIG_NUM,
-	UNIT_BIG_NUM,
-	UNIT_BN,
-	multiplyDecimal,
-	divideDecimal,
-} from 'sdk/utils/number';
+import { multiplyDecimal, divideDecimal } from 'sdk/utils/number';
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin
@@ -320,8 +314,8 @@ class FuturesMarketInternal {
 		const marginPlusProfitFunding = await this._marginPlusProfitFunding(position, price);
 		const newMargin = marginPlusProfitFunding.add(marginDelta);
 
-		if (newMargin.lt(zeroBN.toBN())) {
-			return { margin: zeroBN.toBN(), status: PotentialTradeStatus.INSUFFICIENT_MARGIN };
+		if (newMargin.lt(ZERO_WEI.toBN())) {
+			return { margin: ZERO_WEI.toBN(), status: PotentialTradeStatus.INSUFFICIENT_MARGIN };
 		}
 
 		const lMargin = await this._liquidationMargin(position.size, price);

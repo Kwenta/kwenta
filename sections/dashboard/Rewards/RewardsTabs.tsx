@@ -15,6 +15,8 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatNumber, truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {
@@ -30,7 +32,6 @@ import {
 } from 'state/staking/selectors';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import { formatNumber, truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 const RewardsTabs: FC = () => {
 	const { t } = useTranslation();
@@ -94,7 +95,7 @@ const RewardsTabs: FC = () => {
 			kwentaIcon: true,
 			linkIcon: true,
 			rewards: kwentaRewards,
-			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? zeroBN), 4),
+			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? ZERO_WEI), 4),
 			onClick: goToStaking,
 			isDisabled: false,
 		},
@@ -106,7 +107,7 @@ const RewardsTabs: FC = () => {
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: opRewards,
-			estimatedRewards: truncateNumbers(wei(estimatedOp ?? zeroBN), 4),
+			estimatedRewards: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
 			onClick: handleClaimOp,
 			isDisabled: claimDisabledKwentaOp,
 		},

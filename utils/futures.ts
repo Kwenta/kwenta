@@ -14,7 +14,7 @@ import {
 	PositionSide,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
-import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset, getDisplayAsset } from 'sdk/utils/futures';
 import { formatNumber } from 'sdk/utils/number';
 import {
 	CrossMarginBalanceInfo,
@@ -29,10 +29,6 @@ import { deserializeWeiObject } from 'state/helpers';
 
 export const getMarketName = (asset: FuturesMarketAsset) => {
 	return `${getDisplayAsset(asset)}/sUSD`;
-};
-
-export const getDisplayAsset = (asset: string | null) => {
-	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
 };
 
 export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => {

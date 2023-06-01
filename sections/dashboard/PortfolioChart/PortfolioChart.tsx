@@ -12,7 +12,10 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, NumericValue, Heading } from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { Period } from 'sdk/constants/period';
+import { formatChartDate, formatChartTime, formatShortDateWithTime } from 'sdk/utils/date';
+import { formatDollars, formatPercent } from 'sdk/utils/number';
 import {
 	selectBuyingPower,
 	selectFuturesPortfolio,
@@ -22,8 +25,6 @@ import {
 	selectTotalUnrealizedPnl,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatChartDate, formatChartTime, formatShortDateWithTime } from 'sdk/utils/date';
-import { formatDollars, formatPercent, zeroBN } from 'sdk/utils/number';
 
 import { Timeframe } from './Timeframe';
 
@@ -189,20 +190,20 @@ const PortfolioChart: FC = () => {
 						<NumericValue fontSize={20} value={hoverValue || total}>
 							{formatDollars(hoverValue || total, { maxDecimals: 2 })}
 						</NumericValue>
-						<NumericValue colored value={changeValue.value ?? zeroBN}>
+						<NumericValue colored value={changeValue.value ?? ZERO_WEI}>
 							{changeValue.text}&nbsp;
 						</NumericValue>
 					</ChartOverlay>
 					<GridBox>
 						<PortfolioTitle>{t('dashboard.overview.portfolio-chart.upnl')}</PortfolioTitle>
-						<NumericValue colored value={upnl ?? zeroBN}>
-							{upnl.gt(zeroBN) ? '+' : ''}
+						<NumericValue colored value={upnl ?? ZERO_WEI}>
+							{upnl.gt(ZERO_WEI) ? '+' : ''}
 							{formatDollars(upnl, { suggestDecimals: true })}
 						</NumericValue>
 					</GridBox>
 					<GridBox>
 						<PortfolioTitle>{t('dashboard.overview.portfolio-chart.buying-power')}</PortfolioTitle>
-						<NumericValue value={buyingPower ?? zeroBN}>
+						<NumericValue value={buyingPower ?? ZERO_WEI}>
 							{formatDollars(buyingPower, { suggestDecimals: true })}
 						</NumericValue>
 					</GridBox>
@@ -228,7 +229,7 @@ const PortfolioChart: FC = () => {
 						<ChartOverlay>
 							<PortfolioTitle>Portfolio Value</PortfolioTitle>
 							<PortfolioText currencyKey="sUSD" price={hoverValue || total} sign="$" />
-							<NumericValue colored value={changeValue.value ?? zeroBN}>
+							<NumericValue colored value={changeValue.value ?? ZERO_WEI}>
 								{changeValue.text}&nbsp;
 							</NumericValue>
 						</ChartOverlay>

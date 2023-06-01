@@ -12,6 +12,7 @@ import { Body, NumericValue } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import ShareModal from 'sections/futures/ShareModal';
@@ -28,7 +29,6 @@ import {
 } from 'state/futures/selectors';
 import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { zeroBN } from 'sdk/utils/number';
 
 import TradePanelDrawer from '../drawers/TradePanelDrawer';
 
@@ -58,7 +58,7 @@ const PositionsTab = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-				const markPrice = markPrices[market?.marketKey!] ?? zeroBN;
+				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI;
 				return {
 					market: market!,
 					position: position.position!,

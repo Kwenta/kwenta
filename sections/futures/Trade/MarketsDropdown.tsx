@@ -19,10 +19,11 @@ import { BANNER_HEIGHT_DESKTOP, BANNER_HEIGHT_MOBILE } from 'constants/announcem
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
-import { floorNumber, formatDollars, zeroBN } from 'sdk/utils/number';
+import { floorNumber, formatDollars } from 'sdk/utils/number';
 import { selectShowBanner } from 'state/app/selectors';
 import {
 	selectMarketAsset,
@@ -139,7 +140,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			const change =
 				basePriceRate && pastPrice?.rate && basePriceRate.price.gt(0)
 					? wei(basePriceRate.price).sub(pastPrice?.rate).div(basePriceRate.price)
-					: zeroBN;
+					: ZERO_WEI;
 
 			return {
 				value: market.asset,
@@ -184,7 +185,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							? wei(selectedBasePriceRate.price)
 									.sub(selectedPastPrice.rate)
 									.div(selectedBasePriceRate.price)
-							: zeroBN,
+							: ZERO_WEI,
 					priceInfo: selectedBasePriceRate,
 				}}
 			/>

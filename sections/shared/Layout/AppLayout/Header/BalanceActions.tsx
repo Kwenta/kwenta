@@ -12,6 +12,8 @@ import Pill from 'components/Pill';
 import { Body, LogoText } from 'components/Text';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatDollars, truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -25,7 +27,6 @@ import {
 import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors';
 import { selectWallet } from 'state/wallet/selectors';
 import media from 'styles/media';
-import { formatDollars, truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation();
@@ -39,7 +40,7 @@ const BalanceActions: FC = () => {
 	const opRewards = useAppSelector(selectOpRewards);
 	const snxOpRewards = useAppSelector(selectSnxOpRewards);
 	const [open, setOpen] = useState(false);
-	const [rewardBalance, setRewardBalance] = useState(zeroBN);
+	const [rewardBalance, setRewardBalance] = useState(ZERO_WEI);
 
 	const { ref } = useClickOutside(() => setOpen(false));
 

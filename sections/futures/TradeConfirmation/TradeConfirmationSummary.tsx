@@ -7,9 +7,10 @@ import { FlexDivRowCentered } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
 import { NumericValue } from 'components/Text';
 import { NumberBody } from 'components/Text/NumericValue';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketAsset, FuturesOrderType, PositionSide } from 'sdk/types/futures';
 import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
-import { formatCurrency, zeroBN } from 'sdk/utils/number';
+import { formatCurrency } from 'sdk/utils/number';
 
 import PositionType from '../PositionType';
 
@@ -42,7 +43,7 @@ export default function TradeConfirmationSummary({
 							<NumericValue value={nativeSizeDelta} colored>
 								{formatCurrency(
 									getDisplayAsset(marketAsset) || '',
-									nativeSizeDelta.abs() ?? zeroBN,
+									nativeSizeDelta.abs() ?? ZERO_WEI,
 									{
 										currencyKey: getDisplayAsset(marketAsset) ?? '',
 									}

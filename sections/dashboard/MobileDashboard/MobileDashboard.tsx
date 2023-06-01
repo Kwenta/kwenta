@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
+import { ZERO_WEI } from 'sdk/constants/number';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
-import { zeroBN } from 'sdk/utils/number';
 
 import OpenPositions, { OpenPositionsProps } from './OpenPositions';
 import Portfolio from './Portfolio';
@@ -11,7 +11,7 @@ type MobileDashboardProps = Pick<OpenPositionsProps, 'exchangeTokens'>;
 const MobileDashboard: FC<MobileDashboardProps> = ({ exchangeTokens }) => {
 	const exchangeTokenBalances = exchangeTokens.reduce(
 		(initial, { usdBalance }) => initial.add(usdBalance),
-		zeroBN
+		ZERO_WEI
 	);
 
 	return (

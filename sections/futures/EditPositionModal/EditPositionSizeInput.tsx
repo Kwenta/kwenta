@@ -9,12 +9,13 @@ import { FlexDivRow } from 'components/layout/flex';
 import { getStep } from 'components/Slider/Slider';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
+import { stripZeros, formatNumber, suggestedDecimals } from 'sdk/utils/number';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionSize } from 'state/futures/actions';
 import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { stripZeros, formatNumber, suggestedDecimals, zeroBN } from 'sdk/utils/number';
 
 type OrderSizingProps = {
 	type: 'increase' | 'decrease';
@@ -63,7 +64,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 		]);
 
 		const nativeSizeDeltaWei = useMemo(() => {
-			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
+			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? ZERO_WEI : wei(nativeSizeDelta);
 		}, [nativeSizeDelta]);
 
 		const maxNativeValueWithBuffer = useMemo(() => {

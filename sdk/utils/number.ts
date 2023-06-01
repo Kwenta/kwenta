@@ -1,5 +1,4 @@
 import Wei, { wei } from '@synthetixio/wei';
-import BN from 'bn.js';
 import { BigNumber, ethers, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
@@ -7,6 +6,8 @@ import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
+	UNIT_BIG_NUM,
+	ZERO_WEI,
 } from 'sdk/constants/number';
 
 import { isFiatCurrency } from './exchange';
@@ -52,12 +53,6 @@ export const SHORT_CRYPTO_CURRENCY_DECIMALS = 4;
 export const LONG_CRYPTO_CURRENCY_DECIMALS = 8;
 
 export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.')[1] || '').length;
-
-export const zeroBN = wei(0);
-
-export const UNIT_BN = new BN('10').pow(new BN(18));
-export const UNIT_BIG_NUM = BigNumber.from('10').pow(18);
-export const ZERO_BIG_NUM = BigNumber.from('0');
 
 export const truncateNumbers = (value: WeiSource, maxDecimalDigits: number) => {
 	if (value.toString().includes('.')) {
@@ -248,7 +243,7 @@ export const gweiToWei = (val: WeiSource) => {
 };
 
 export const toWei = (value?: string | null, p?: number) => {
-	return !!value ? wei(value, p) : zeroBN;
+	return !!value ? wei(value, p) : ZERO_WEI;
 };
 
 export const stripZeros = (value?: string | number) => {

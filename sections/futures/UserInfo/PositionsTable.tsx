@@ -16,8 +16,10 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import { getMarketName } from 'sdk/utils/futures';
+import { formatPercent } from 'sdk/utils/number';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import { FuturesPositionModalType } from 'state/app/types';
@@ -34,7 +36,6 @@ import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FOOTER_HEIGHT } from 'styles/common';
 import media from 'styles/media';
-import { formatPercent, zeroBN } from 'sdk/utils/number';
 
 import ShareModal from '../ShareModal';
 import TableMarketDetails from './TableMarketDetails';
@@ -70,7 +71,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const thisPositionHistory = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === position.asset;
 				});
-				const markPrice = markPrices[market?.marketKey!] ?? zeroBN;
+				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI;
 				return {
 					market: market!,
 					position: position.position!,

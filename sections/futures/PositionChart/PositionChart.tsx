@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 
 import { FlexDiv } from 'components/layout/flex';
 import TVChart from 'components/TVChart';
+import { ZERO_WEI } from 'sdk/constants/number';
 import {
 	selectConditionalOrdersForMarket,
 	selectPosition,
@@ -12,7 +13,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-import { zeroBN } from 'sdk/utils/number';
 
 type PositionChartProps = {
 	display?: boolean;
@@ -28,7 +28,7 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 	const [showOrderLines, setShowOrderLines] = useState(true);
 	const [isChartReady, setIsChartReady] = useState(false);
 
-	const modifiedAverage = positionPreview?.avgEntryPrice ?? zeroBN;
+	const modifiedAverage = positionPreview?.avgEntryPrice ?? ZERO_WEI;
 
 	const activePosition = useMemo(() => {
 		if (!position?.position) {

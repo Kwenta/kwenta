@@ -1,9 +1,9 @@
 import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
+import { ZERO_WEI } from 'sdk/constants/number';
 import { NetworkId } from 'sdk/types/common';
 import { formatShortDate, toJSTimestamp } from 'sdk/utils/date';
-import { zeroBN } from 'sdk/utils/number';
 
 export type TradingRewardProps = {
 	period: number | string;
@@ -69,7 +69,7 @@ export function getApy(totalStakedBalance: number, weekCounter: number) {
 	const yearlyRewards = startWeeklySupply.mul(wei(1).sub(SUPPLY_RATE.pow(52))).div(wei(DECAY_RATE));
 	return wei(totalStakedBalance).gt(0)
 		? yearlyRewards.mul(wei(STAKING_REWARDS_RATIO)).div(wei(totalStakedBalance))
-		: zeroBN;
+		: ZERO_WEI;
 }
 
 export const parseEpochData = (index: number, networkId?: NetworkId) => {

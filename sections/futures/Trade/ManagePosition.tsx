@@ -7,6 +7,8 @@ import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
 import { previewErrorI18n } from 'queries/futures/constants';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { isZero } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
@@ -32,7 +34,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
-import { isZero, zeroBN } from 'sdk/utils/number';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 const ManagePosition: React.FC = () => {
@@ -93,7 +94,7 @@ const ManagePosition: React.FC = () => {
 		const maxLeverage = marketInfo?.appMaxLeverage ?? wei(1);
 
 		// TODO: Clean up errors and warnings
-		const indexPriceWei = indexPrice?.price ?? zeroBN;
+		const indexPriceWei = indexPrice?.price ?? ZERO_WEI;
 		const canLiquidate =
 			(previewTrade?.size.gt(0) && indexPriceWei.lt(previewTrade?.liqPrice)) ||
 			(previewTrade?.size.lt(0) && indexPriceWei.gt(previewTrade?.liqPrice));

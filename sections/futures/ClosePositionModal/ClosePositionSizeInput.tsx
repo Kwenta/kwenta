@@ -6,6 +6,7 @@ import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editClosePositionSizeDelta } from 'state/futures/actions';
@@ -14,7 +15,6 @@ import {
 	selectEditPositionModalInfo,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { zeroBN } from 'sdk/utils/number';
 
 type OrderSizingProps = {
 	maxNativeValue: Wei;
@@ -50,7 +50,7 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 	);
 
 	const nativeSizeDeltaWei = useMemo(() => {
-		return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? zeroBN : wei(nativeSizeDelta);
+		return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? ZERO_WEI : wei(nativeSizeDelta);
 	}, [nativeSizeDelta]);
 
 	const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei.abs());

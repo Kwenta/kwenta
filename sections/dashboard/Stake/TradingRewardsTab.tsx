@@ -22,13 +22,14 @@ import {
 	FuturesFeeProps,
 	TradingRewardProps,
 } from 'queries/staking/utils';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatTruncatedDuration } from 'sdk/utils/date';
+import { formatDollars, formatPercent, truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleKwentaRewards } from 'state/staking/actions';
 import { selectEpochPeriod, selectKwentaRewards, selectResetTime } from 'state/staking/selectors';
 import media from 'styles/media';
-import { formatTruncatedDuration } from 'sdk/utils/date';
-import { formatDollars, formatPercent, truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	({ period = 0, start = 0, end = Math.floor(Date.now() / 1000) }) => {
@@ -46,7 +47,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 
 			return t
 				.map((trade) => formatEther(trade.feesPaid.sub(trade.keeperFeesPaid).toString()))
-				.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
+				.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI);
 		}, [futuresFeeQuery.data]);
 
 		const totalFuturesFeeQuery = useGetFuturesFee(start, end);
@@ -54,7 +55,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 			const t: FuturesFeeProps[] = totalFuturesFeeQuery.data ?? [];
 			return t
 				.map((trade) => formatEther(trade.feesKwenta.toString()))
-				.reduce((acc, curr) => acc.add(wei(curr)), zeroBN);
+				.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI);
 		}, [totalFuturesFeeQuery.data]);
 
 		const estimatedRewardQuery = useGetFile(
@@ -76,7 +77,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 		}, [dispatch]);
 
 		const ratio = useMemo(() => {
-			return wei(weeklyRewards).gt(0) ? wei(estimatedReward).div(wei(weeklyRewards)) : zeroBN;
+			return wei(weeklyRewards).gt(0) ? wei(estimatedReward).div(wei(weeklyRewards)) : ZERO_WEI;
 		}, [estimatedReward, weeklyRewards]);
 
 		const showEstimatedValue = useMemo(() => wei(period).eq(epochPeriod), [epochPeriod, period]);

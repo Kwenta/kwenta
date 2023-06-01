@@ -9,6 +9,8 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatDollars, formatNumber, formatPercent } from 'sdk/utils/number';
 import { selectGasPrice } from 'state/app/selectors';
 import {
 	selectTransactionFeeWei,
@@ -16,7 +18,6 @@ import {
 	selectSlippagePercentWei,
 } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars, formatNumber, formatPercent, zeroBN } from 'sdk/utils/number';
 
 const PriceImpactRow = () => {
 	const { t } = useTranslation();
@@ -55,7 +56,7 @@ const FeeRow = () => {
 			value=""
 			valueNode={
 				<div style={{ display: 'flex' }}>
-					{formatPercent(baseFeeRate ?? zeroBN)}
+					{formatPercent(baseFeeRate ?? ZERO_WEI)}
 					{exchangeFeeRate != null && baseFeeRate != null ? (
 						wei(exchangeFeeRate)
 							.sub(baseFeeRate ?? 0)

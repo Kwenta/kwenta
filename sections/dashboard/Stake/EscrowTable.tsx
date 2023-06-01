@@ -6,11 +6,12 @@ import styled from 'styled-components';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead, TableHeader } from 'components/Table';
+import { ZERO_WEI } from 'sdk/constants/number';
 import type { EscrowData } from 'sdk/services/kwentaToken';
+import { truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { vestEscrowedRewards } from 'state/staking/actions';
-import { truncateNumbers, zeroBN } from 'sdk/utils/number';
 
 import VestConfirmationModal from './VestConfirmationModal';
 
@@ -53,7 +54,7 @@ const EscrowTable = () => {
 
 					return acc;
 				},
-				{ totalVestable: zeroBN, totalFee: zeroBN }
+				{ totalVestable: ZERO_WEI, totalFee: ZERO_WEI }
 			),
 		[checkedState, escrowData]
 	);

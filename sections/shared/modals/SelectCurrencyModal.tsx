@@ -14,6 +14,7 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'sdk/constants/exchange';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { getSynthsListForNetwork, SynthSymbol } from 'sdk/data/synths';
 import { NetworkId } from 'sdk/types/common';
 import {
@@ -25,7 +26,6 @@ import { selectTokenList } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { selectNetwork } from 'state/wallet/selectors';
-import { zeroBN } from 'sdk/utils/number';
 
 import CurrencyRow from './CurrencyRow';
 
@@ -136,7 +136,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								token.address === ETH_ADDRESS ? ETH_COINGECKO_ADDRESS : token.address;
 							if (coinGeckoPrices?.[tokenAddress] && tokenBalances !== null) {
 								const price = wei(coinGeckoPrices[tokenAddress].usd ?? 0);
-								const balance = tokenBalances[token.symbol]?.balance ?? zeroBN;
+								const balance = tokenBalances[token.symbol]?.balance ?? ZERO_WEI;
 								const usdBalance = price.mul(balance);
 
 								return { ...token, usdBalance, balance };

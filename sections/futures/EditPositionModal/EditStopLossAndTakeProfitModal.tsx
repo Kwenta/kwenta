@@ -12,6 +12,7 @@ import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
 import { ConditionalOrderTypeEnum, PositionSide } from 'sdk/types/futures';
+import { formatDollars, stripZeros, suggestedDecimals } from 'sdk/utils/number';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectAckedOrdersWarning, selectTransaction } from 'state/app/selectors';
 import { calculateKeeperDeposit, updateStopLossAndTakeProfit } from 'state/futures/actions';
@@ -25,9 +26,8 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, stripZeros, suggestedDecimals } from 'sdk/utils/number';
 
-import { KeeperDepositRow } from '../FeeInfoBox/FeesRow.tsx';
+import { KeeperDepositRow } from '../FeeInfoBox/FeesRow';
 import PositionType from '../PositionType';
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';

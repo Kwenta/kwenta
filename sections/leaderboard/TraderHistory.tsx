@@ -13,7 +13,7 @@ import FuturesIcon from 'components/Nav/FuturesIcon';
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import ROUTES from 'constants/routes';
-import { zeroBN } from 'sdk/utils/number';
+import { ZERO_WEI } from 'sdk/constants/number';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { fetchPositionHistoryForTrader } from 'state/futures/actions';
 import {
@@ -59,7 +59,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 					const pnlWithFeesPaid = stat.pnl
 						.sub(stat.feesPaid)
 						.add(stat.netFunding)
-						.add(thisPosition?.position?.accruedFunding ?? zeroBN);
+						.add(thisPosition?.position?.accruedFunding ?? ZERO_WEI);
 
 					return {
 						...stat,

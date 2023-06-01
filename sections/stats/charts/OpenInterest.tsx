@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
-import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { MarketKeyByAsset, getDisplayAsset } from 'sdk/utils/futures';
 import { formatDollars } from 'sdk/utils/number';
-import { getDisplayAsset } from 'utils/futures';
 import { SYNTH_ICONS } from 'utils/icons';
 
 import { initChart } from '../initChart';
