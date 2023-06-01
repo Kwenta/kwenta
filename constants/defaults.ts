@@ -39,9 +39,7 @@ export const DEFAULT_DELAYED_CANCEL_BUFFER = 15;
 
 export const CROSS_MARGIN_ENABLED = true;
 
-export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
-	? 'cross_margin'
-	: 'isolated_margin';
+export const DEFAULT_FUTURES_MARGIN_TYPE = 'cross_margin';
 
 export const DEFAULT_LEVERAGE = '1';
 
