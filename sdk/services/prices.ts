@@ -28,7 +28,7 @@ import * as sdkErrors from '../common/errors';
 
 const DEBUG_WS = false;
 const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS;
-const PRICE_SERVER = process.env.NEXT_PUBLIC_DEFAULT_PRICE_SERVICE === 'KWENTA' ? 'KWENTA' : 'PYTH';
+const PRICE_SERVER = process.env.NEXT_PUBLIC_DEFAULT_PRICE_SERVER === 'KWENTA' ? 'KWENTA' : 'PYTH';
 
 export default class PricesService {
 	private sdk: KwentaSDK;
@@ -210,6 +210,13 @@ export default class PricesService {
 			logger: LOG_WS ? console : undefined,
 		});
 
+		this.pyth.onWsError = (error: Error) => {
+			this.sdk.context.events.emit('prices_connection_update', {
+				connected: false,
+				error: error || new Error('pyth prices ws connection failed'),
+			});
+		};
+
 		this.pyth
 			.getPriceFeedIds()
 			.then((_) => {
@@ -240,15 +247,6 @@ export default class PricesService {
 				this.retryConnection(this.sdk.context.networkId);
 			}
 		});
-
-		if (this.pyth) {
-			this.pyth.onWsError = (error: Error) => {
-				this.sdk.context.events.emit('prices_connection_update', {
-					connected: false,
-					error: error || new Error('pyth prices ws connection failed'),
-				});
-			};
-		}
 	}
 
 	private retryConnection(networkId: NetworkId) {
