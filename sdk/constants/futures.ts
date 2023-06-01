@@ -39,6 +39,10 @@ export const MAIN_ENDPOINT_OP_MAINNET =
 export const MAIN_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
 
+export const KWENTA_PYTH_SERVER = 'https://price.kwenta.io';
+
+export const PUBLIC_PYTH_SERVER = 'https://xc-mainnet.pyth.network';
+
 export const SL_TP_MAX_SIZE = weiFromWei(ethers.constants.MaxInt256);
 
 export const ORDERS_FETCH_SIZE = 500;

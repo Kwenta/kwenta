@@ -8,7 +8,7 @@ import KwentaSDK from 'sdk';
 import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constants/prices';
-import { NetworkId } from 'sdk/types/common';
+import { NetworkId, PriceServer } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import {
 	CurrencyPrice,
@@ -26,45 +26,29 @@ import {
 import { startInterval } from 'sdk/utils/interval';
 import { scale } from 'sdk/utils/number';
 import { getRatesEndpoint } from 'sdk/utils/prices';
+import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
 
 const DEBUG_WS = false;
 const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS;
+const DEFAULT_PRICE_SERVER =
+	process.env.NEXT_PUBLIC_DEFAULT_PRICE_SERVICE === 'KWENTA' ? 'KWENTA' : 'PYTH';
 
 export default class PricesService {
 	private sdk: KwentaSDK;
 	private offChainPrices: PricesMap = {};
 	private onChainPrices: PricesMap = {};
 	private ratesInterval: number | undefined;
-	private pyth: EvmPriceServiceConnection;
+	private pyth!: EvmPriceServiceConnection;
+	private retryCount: number = 0;
+	private maxRetries: number = 3;
+	private server: PriceServer = DEFAULT_PRICE_SERVER;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-
-		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(sdk.context.networkId), {
-			logger: LOG_WS ? console : undefined,
-		});
-
-		// TODO: Typed events
-		this.sdk.context.events.on('network_changed', (params) => {
-			if (this.pyth) {
-				this.pyth.closeWebSocket();
-			}
-			this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(params.networkId), {
-				logger: LOG_WS ? console : undefined,
-			});
-			this.pyth.onWsError = (error) => {
-				// TODO: Feedback connection issue and display
-				// prompt to try disabling add blocker
-				this.sdk.context.events.emit('prices_connection_update', {
-					connected: false,
-					error: error || new Error('pyth prices ws connection failed'),
-				});
-				this.sdk.context.logError(error);
-			};
-			this.subscribeToPythPriceUpdates();
-		});
+		this.setEventListeners();
+		this.connectToPyth(sdk.context.networkId, this.server);
 	}
 
 	get currentPrices() {
@@ -220,6 +204,65 @@ export default class PricesService {
 				return acc;
 			}, {}) ?? {};
 		return offChainPrices;
+	}
+
+	private connectToPyth(networkId: NetworkId, server: PriceServer) {
+		if (this.pyth) {
+			this.pyth.closeWebSocket();
+		}
+
+		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(networkId, server), {
+			logger: LOG_WS ? console : undefined,
+		});
+
+		this.pyth.onWsError = (error: Error) => {
+			this.sdk.context.events.emit('prices_connection_update', {
+				connected: false,
+				error: error || new Error('pyth prices ws connection failed'),
+			});
+		};
+
+		this.pyth
+			.getPriceFeedIds()
+			.then((_) => {
+				this.sdk.context.events.emit('prices_connection_update', {
+					connected: true,
+				});
+			})
+			.catch((error) => {
+				this.sdk.context.events.emit('prices_connection_update', {
+					connected: false,
+					error: error || new Error('pyth prices ws connection failed'),
+				});
+			});
+	}
+
+	private setEventListeners() {
+		this.sdk.context.events.on('network_changed', (params) => {
+			this.connectToPyth(params.networkId, this.server);
+		});
+
+		this.sdk.context.events.on('prices_connection_update', (params) => {
+			if (params.connected) {
+				this.subscribeToPythPriceUpdates();
+			} else {
+				this.retryConnection(this.sdk.context.networkId);
+			}
+		});
+	}
+
+	private retryConnection(networkId: NetworkId) {
+		if (this.retryCount < this.maxRetries) {
+			this.retryCount++;
+			setTimeout(() => {
+				this.connectToPyth(networkId, this.server);
+			}, Math.pow(2, this.retryCount) * 50);
+		} else {
+			logError(new Error('Maximum retries exceeded'));
+			this.retryCount = 0;
+			this.server = this.server === 'KWENTA' ? 'PYTH' : 'KWENTA';
+			this.connectToPyth(networkId, this.server);
+		}
 	}
 
 	private formatPythPrice(priceFeed: PriceFeed): Wei {

@@ -10,6 +10,8 @@ import {
 	AGGREGATE_ASSET_KEY,
 	MAIN_ENDPOINTS,
 	SL_TP_MAX_SIZE,
+	KWENTA_PYTH_SERVER,
+	PUBLIC_PYTH_SERVER,
 	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
 } from 'sdk/constants/futures';
 import { ZERO_WEI } from 'sdk/constants/number';
@@ -17,7 +19,7 @@ import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { ETH_UNIT } from 'sdk/constants/transactions';
 import { IContext } from 'sdk/context';
 import { IPerpsV2MarketConsolidated } from 'sdk/contracts/types/PerpsV2Market';
-import { NetworkId } from 'sdk/types/common';
+import { NetworkId, PriceServer } from 'sdk/types/common';
 import {
 	DelayedOrder,
 	SmartMarginOrderType,
@@ -406,8 +408,9 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	INSUFFICIENT_FREE_MARGIN: `You don't have enough sUSD for this trade`,
 };
 
-export const getPythNetworkUrl = (networkId: NetworkId) => {
-	return networkId === 420 ? 'https://xc-testnet.pyth.network' : 'https://xc-mainnet.pyth.network';
+export const getPythNetworkUrl = (networkId: NetworkId, server: PriceServer = 'KWENTA') => {
+	const defaultPythServer = server === 'KWENTA' ? KWENTA_PYTH_SERVER : PUBLIC_PYTH_SERVER;
+	return networkId === 420 ? 'https://xc-testnet.pyth.network' : defaultPythServer;
 };
 
 export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
