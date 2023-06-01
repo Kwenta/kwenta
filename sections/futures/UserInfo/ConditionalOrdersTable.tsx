@@ -13,6 +13,7 @@ import { CustomFontLabel } from 'components/Text/CustomFontLabel';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { formatDollars } from 'sdk/utils/number';
 import { cancelConditionalOrder } from 'state/futures/actions';
 import {
 	selectCancellingConditionalOrder,
@@ -20,7 +21,6 @@ import {
 	selectAllConditionalOrders,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars } from 'sdk/utils/number';
 
 import PositionType from '../PositionType';
 import ConditionalOrdersWarning from './ConditionalOrdersWarning';

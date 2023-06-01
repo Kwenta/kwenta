@@ -12,13 +12,13 @@ import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import { formatDollars, formatPercent } from 'sdk/utils/number';
 import { selectTradePreview } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { formatDollars, formatPercent } from 'sdk/utils/number';
 
 import TradeTotalFeesRow from './TradeTotalFeesRow';
 

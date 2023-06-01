@@ -3,10 +3,10 @@ import { LineChart, XAxis, Line, ResponsiveContainer, YAxis, Tooltip } from 'rec
 import styled, { css } from 'styled-components';
 import { useTheme } from 'styled-components';
 
+import { formatChartTime } from 'sdk/utils/date';
 import { fetchFundingRatesHistory } from 'state/futures/actions';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
-import { formatChartTime } from 'sdk/utils/date';
 
 import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip';
 

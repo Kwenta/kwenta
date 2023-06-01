@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 
 import { InfoBoxRow } from 'components/InfoBox/InfoBox';
+import { formatCurrency, formatDollars } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
 import { selectSusdBalance } from 'state/balances/selectors';
@@ -9,7 +10,6 @@ import {
 	selectAvailableMarginInMarkets,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatCurrency, formatDollars } from 'sdk/utils/number';
 
 import PencilButton from '../../shared/components/PencilButton';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';

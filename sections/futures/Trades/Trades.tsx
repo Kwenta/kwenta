@@ -14,6 +14,7 @@ import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade } from 'sdk/types/futures';
+import { formatCryptoCurrency, formatDollars } from 'sdk/utils/number';
 import PositionType from 'sections/futures/PositionType';
 import {
 	selectAllTradesForAccountType,
@@ -24,7 +25,6 @@ import {
 import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
-import { formatCryptoCurrency, formatDollars } from 'sdk/utils/number';
 
 import { TradeStatus } from '../types';
 import TableMarketDetails from '../UserInfo/TableMarketDetails';

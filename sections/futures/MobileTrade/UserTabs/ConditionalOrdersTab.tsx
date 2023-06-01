@@ -10,6 +10,7 @@ import { TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import { PositionSide } from 'sdk/types/futures';
+import { formatDollars } from 'sdk/utils/number';
 import PositionType from 'sections/futures/PositionType';
 import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning';
 import { cancelConditionalOrder } from 'state/futures/actions';
@@ -19,7 +20,6 @@ import {
 	selectMarketAsset,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars } from 'sdk/utils/number';
 
 const ConditionalOrdersTab: React.FC = () => {
 	const dispatch = useAppDispatch();

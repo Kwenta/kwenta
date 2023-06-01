@@ -6,6 +6,7 @@ import Button from 'components/Button';
 import Card, { CardBody } from 'components/Card';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
+import { secondsToTime } from 'sdk/utils/date';
 import { MessageContainer } from 'sections/exchange/message';
 import { SummaryItems } from 'sections/exchange/summary';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
@@ -21,7 +22,6 @@ import {
 	selectSubmissionDisabledReason,
 } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { secondsToTime } from 'sdk/utils/date';
 
 const TradeSummaryCard: FC = memo(() => {
 	const dispatch = useAppDispatch();
