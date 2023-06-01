@@ -2,9 +2,9 @@ import Head from 'next/head';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { formatCurrency } from 'sdk/utils/number';
 import { selectInverseRate } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatCurrency } from 'sdk/utils/number';
 
 const ExchangeHead = memo(() => {
 	const { t } = useTranslation();

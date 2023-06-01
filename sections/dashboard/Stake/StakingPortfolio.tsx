@@ -7,6 +7,7 @@ import Button from 'components/Button/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
+import { truncateNumbers } from 'sdk/utils/number';
 import { SplitStakingCard } from 'sections/dashboard/Stake/card';
 import { Heading } from 'sections/earn/text';
 import { useAppSelector } from 'state/hooks';
@@ -19,7 +20,6 @@ import {
 	selectTotalVestable,
 } from 'state/staking/selectors';
 import media from 'styles/media';
-import { truncateNumbers } from 'sdk/utils/number';
 
 export enum StakeTab {
 	Staking = 'staking',

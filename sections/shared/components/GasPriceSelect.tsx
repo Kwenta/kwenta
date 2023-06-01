@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
+import { formatNumber, formatDollars } from 'sdk/utils/number';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { selectGasPrice } from 'state/app/selectors';
 import { selectTransactionFeeWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatNumber, formatDollars } from 'sdk/utils/number';
 
 type GasPriceSelectProps = {
 	className?: string;

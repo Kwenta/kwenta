@@ -2,10 +2,10 @@ import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { NO_VALUE } from 'constants/placeholder';
+import { formatDollars } from 'sdk/utils/number';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { selectFeeCostWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars } from 'sdk/utils/number';
 
 const FeeCostSummary: FC = memo(({ ...rest }) => {
 	const { t } = useTranslation();
