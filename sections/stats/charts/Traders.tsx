@@ -4,7 +4,7 @@ import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
-import { formatShortDateUTC, toJSTimestamp } from 'utils/formatters/date';
+import { formatShortDateUTC, toJSTimestamp } from 'sdk/utils/date';
 
 import { initChart } from '../initChart';
 import type { EChartsOption } from '../initChart';

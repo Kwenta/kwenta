@@ -10,6 +10,8 @@ import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { floorNumber, truncateNumbers } from 'sdk/utils/number';
 import { editTradeSizeInput } from 'state/futures/actions';
 import { setLeverageInput } from 'state/futures/reducer';
 import {
@@ -22,7 +24,6 @@ import {
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { floorNumber, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import LeverageSlider from '../LeverageSlider';
 
@@ -60,7 +61,7 @@ const LeverageInput: FC = memo(() => {
 
 	const onLeverageChange = useCallback(
 		(newLeverage: string) => {
-			const remainingMargin = availableMargin ?? zeroBN;
+			const remainingMargin = availableMargin ?? ZERO_WEI;
 			const newTradeSize =
 				newLeverage === '' || marketPrice.eq(0) || remainingMargin.eq(0)
 					? ''

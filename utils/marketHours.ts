@@ -5,10 +5,10 @@ import {
 	AFTER_HOURS_SYNTHS,
 	COMMODITY_SYNTHS,
 	CurrencyKey,
-	FIAT_SYNTHS,
 	LSE_SYNTHS,
 	TSE_SYNTHS,
 } from 'constants/currency';
+import { FIAT_SYNTHS } from 'sdk/constants/number';
 
 export const forexHours = () => {
 	// Sunday 5pm ET to Friday 4pm ET

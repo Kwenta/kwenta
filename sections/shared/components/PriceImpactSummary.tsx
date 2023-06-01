@@ -5,7 +5,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { selectSlippagePercentWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatPercent } from 'utils/formatters/number';
+import { formatPercent } from 'sdk/utils/number';
 
 const PriceImpactSummary: FC = memo(() => {
 	const { t } = useTranslation();

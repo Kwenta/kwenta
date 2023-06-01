@@ -13,8 +13,8 @@ import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { NetworkId } from 'sdk/types/common';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
+import { getDisplayAsset } from 'sdk/utils/futures';
 import { sdk } from 'state/config';
-import { getDisplayAsset } from 'utils/futures';
 
 import { ChartBar } from './types';
 import { resolutionToSeconds } from './utils';

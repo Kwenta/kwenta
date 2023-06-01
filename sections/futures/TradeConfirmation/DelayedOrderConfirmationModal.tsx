@@ -10,8 +10,10 @@ import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
 import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
+import { formatCurrency, formatDollars, formatPercent, formatNumber } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition } from 'state/futures/actions';
 import {
@@ -28,13 +30,6 @@ import {
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getKnownError } from 'utils/formatters/error';
-import {
-	zeroBN,
-	formatCurrency,
-	formatDollars,
-	formatPercent,
-	formatNumber,
-} from 'utils/formatters/number';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import TradeConfirmationRow from './TradeConfirmationRow';
@@ -59,19 +54,19 @@ const DelayedOrderConfirmationModal: FC = () => {
 		const positionDetails = position?.position;
 		return positionDetails
 			? positionDetails.size.mul(positionDetails.side === PositionSide.LONG ? 1 : -1)
-			: zeroBN;
+			: ZERO_WEI;
 	}, [position]);
 
 	const orderDetails = useMemo(() => {
-		return { nativeSizeDelta, size: (positionSize ?? zeroBN).add(nativeSizeDelta).abs() };
+		return { nativeSizeDelta, size: (positionSize ?? ZERO_WEI).add(nativeSizeDelta).abs() };
 	}, [nativeSizeDelta, positionSize]);
 
 	const isClosing = useMemo(() => {
-		return orderDetails.size.eq(zeroBN);
+		return orderDetails.size.eq(ZERO_WEI);
 	}, [orderDetails]);
 
 	const totalDeposit = useMemo(() => {
-		return (potentialTradeDetails?.fee ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
+		return (potentialTradeDetails?.fee ?? ZERO_WEI).add(marketInfo?.keeperDeposit ?? ZERO_WEI);
 	}, [potentialTradeDetails?.fee, marketInfo?.keeperDeposit]);
 
 	const dataRows = useMemo(
@@ -79,40 +74,40 @@ const DelayedOrderConfirmationModal: FC = () => {
 			{
 				label: t('futures.market.user.position.modal.estimated-fill'),
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
-				value: formatDollars(potentialTradeDetails?.price ?? zeroBN, {
+				value: formatDollars(potentialTradeDetails?.price ?? ZERO_WEI, {
 					suggestDecimals: true,
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.estimated-price-impact'),
-				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
+				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI)}`,
 				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
 					? 'red'
 					: '',
 			},
 			{
 				label: t('futures.market.user.position.modal.liquidation-price'),
-				value: formatDollars(potentialTradeDetails?.liqPrice ?? zeroBN, {
+				value: formatDollars(potentialTradeDetails?.liqPrice ?? ZERO_WEI, {
 					suggestDecimals: true,
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.time-delay'),
-				value: `${formatNumber(marketInfo?.settings.offchainDelayedOrderMinAge ?? zeroBN, {
+				value: `${formatNumber(marketInfo?.settings.offchainDelayedOrderMinAge ?? ZERO_WEI, {
 					maxDecimals: 0,
 				})} sec`,
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
 				tooltipContent: t('futures.market.trade.fees.tooltip'),
-				value: formatDollars(potentialTradeDetails?.fee ?? zeroBN, {
+				value: formatDollars(potentialTradeDetails?.fee ?? ZERO_WEI, {
 					minDecimals: 2,
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.keeper-deposit'),
 				tooltipContent: t('futures.market.trade.fees.keeper-tooltip'),
-				value: formatDollars(marketInfo?.keeperDeposit ?? zeroBN, {
+				value: formatDollars(marketInfo?.keeperDeposit ?? ZERO_WEI, {
 					minDecimals: 2,
 				}),
 			},
@@ -137,7 +132,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 				label: t('futures.market.user.position.modal.size'),
 				value: formatCurrency(
 					getDisplayAsset(marketAsset) || '',
-					orderDetails.nativeSizeDelta.abs() ?? zeroBN,
+					orderDetails.nativeSizeDelta.abs() ?? ZERO_WEI,
 					{
 						currencyKey: getDisplayAsset(marketAsset) ?? '',
 					}
@@ -181,7 +176,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 						nativeSizeDelta={orderDetails.nativeSizeDelta}
 						leverageSide={leverageSide}
 						orderType={orderType}
-						leverage={potentialTradeDetails?.leverage ?? zeroBN}
+						leverage={potentialTradeDetails?.leverage ?? ZERO_WEI}
 					/>
 					{dataRows.map((row, i) => (
 						<TradeConfirmationRow key={`datarow-${i}`} className={i === 0 ? '' : 'border'}>

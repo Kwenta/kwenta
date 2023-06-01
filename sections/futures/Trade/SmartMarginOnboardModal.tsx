@@ -8,7 +8,7 @@ import { FlexDivRowCentered } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars } from 'sdk/utils/number';
 
 type Props = {
 	onDismiss(): void;

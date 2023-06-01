@@ -10,10 +10,18 @@ import ErrorView from 'components/ErrorView';
 import { ButtonLoader } from 'components/Loader/Loader';
 import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
+import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
+import {
+	formatCurrency,
+	formatDollars,
+	formatNumber,
+	formatPercent,
+	stripZeros,
+} from 'sdk/utils/number';
 import { submitCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectLeverageSide,
@@ -28,14 +36,6 @@ import {
 	selectNewTradeHasSlTp,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import {
-	zeroBN,
-	formatCurrency,
-	formatDollars,
-	formatNumber,
-	formatPercent,
-	stripZeros,
-} from 'utils/formatters/number';
 
 import ConfirmSlippage from './ConfirmSlippage';
 import TradeConfirmationRow from './TradeConfirmationRow';
@@ -85,12 +85,12 @@ export default function TradeConfirmationModal({
 	]);
 
 	const positionSide = useMemo(() => {
-		if (potentialTradeDetails?.size.eq(zeroBN)) {
+		if (potentialTradeDetails?.size.eq(ZERO_WEI)) {
 			return position?.position?.side === PositionSide.LONG
 				? PositionSide.SHORT
 				: PositionSide.LONG;
 		}
-		return potentialTradeDetails?.size.gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
+		return potentialTradeDetails?.size.gte(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT;
 	}, [potentialTradeDetails?.size, position?.position?.side]);
 
 	const positionDetails = useMemo(() => {
@@ -98,8 +98,8 @@ export default function TradeConfirmationModal({
 			? {
 					...potentialTradeDetails,
 					side: positionSide,
-					leverage: potentialTradeDetails.margin.eq(zeroBN)
-						? zeroBN
+					leverage: potentialTradeDetails.margin.eq(ZERO_WEI)
+						? ZERO_WEI
 						: potentialTradeDetails.size
 								.mul(potentialTradeDetails.price)
 								.div(potentialTradeDetails.margin)
@@ -121,15 +121,15 @@ export default function TradeConfirmationModal({
 			{
 				label: 'liquidation price',
 				color: 'red',
-				value: formatDollars(positionDetails?.liqPrice ?? zeroBN, { suggestDecimals: true }),
+				value: formatDollars(positionDetails?.liqPrice ?? ZERO_WEI, { suggestDecimals: true }),
 			},
 			{
 				label: 'resulting leverage',
-				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
+				value: `${formatNumber(positionDetails?.leverage ?? ZERO_WEI)}x`,
 			},
 			{
 				label: 'resulting margin',
-				value: formatDollars(positionDetails?.margin ?? zeroBN),
+				value: formatDollars(positionDetails?.margin ?? ZERO_WEI),
 			},
 			orderType === 'limit' || orderType === 'stop_market'
 				? {
@@ -138,13 +138,13 @@ export default function TradeConfirmationModal({
 				  }
 				: {
 						label: 'fill price',
-						value: formatDollars(positionDetails?.price ?? zeroBN, { suggestDecimals: true }),
+						value: formatDollars(positionDetails?.price ?? ZERO_WEI, { suggestDecimals: true }),
 				  },
 
 			{
 				label: 'price impact',
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
-				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
+				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI)}`,
 				color: positionDetails?.exceedsPriceProtection ? 'red' : '',
 			},
 			{
@@ -219,7 +219,7 @@ export default function TradeConfirmationModal({
 			<Spacer height={8} />
 			<TradeConfirmationSummary
 				marketAsset={marketAsset}
-				nativeSizeDelta={potentialTradeDetails?.sizeDelta ?? zeroBN}
+				nativeSizeDelta={potentialTradeDetails?.sizeDelta ?? ZERO_WEI}
 				leverageSide={leverageSide}
 				orderType={orderType}
 				leverage={wei(leverageInput || '0')}

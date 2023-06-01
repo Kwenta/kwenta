@@ -11,7 +11,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import { selectInsufficientBalance } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, numericValueCSS } from 'styles/common';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'sdk/utils/number';
 
 type CurrencyCardSelectorProps = {
 	tokenName: string | null;

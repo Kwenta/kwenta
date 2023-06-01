@@ -6,7 +6,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { NetworkId } from 'sdk/types/common';
 import { getFuturesEndpoint } from 'sdk/utils/futures';
-import { weiFromWei } from 'utils/formatters/number';
+import { weiFromWei } from 'sdk/utils/number';
 import { truncateAddress } from 'utils/formatters/string';
 import logError from 'utils/logError';
 

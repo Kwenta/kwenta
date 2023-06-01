@@ -14,6 +14,7 @@ import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement';
 import ROUTES from 'constants/routes';
+import { ZERO_WEI } from 'sdk/constants/number';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { selectShowBanner } from 'state/app/selectors';
 import { fetchPositionHistoryForTrader } from 'state/futures/actions';
@@ -26,7 +27,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink, FOOTER_HEIGHT } from 'styles/common';
 import media from 'styles/media';
-import { zeroBN } from 'utils/formatters/number';
 import { getMarketName } from 'utils/futures';
 
 type TraderHistoryProps = {
@@ -63,7 +63,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 					const pnlWithFeesPaid = stat.pnl
 						.sub(stat.feesPaid)
 						.add(stat.netFunding)
-						.add(thisPosition?.position?.accruedFunding ?? zeroBN);
+						.add(thisPosition?.position?.accruedFunding ?? ZERO_WEI);
 
 					return {
 						...stat,

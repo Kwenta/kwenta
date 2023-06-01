@@ -19,7 +19,7 @@ import {
 	selectTotalVestable,
 } from 'state/staking/selectors';
 import media from 'styles/media';
-import { truncateNumbers } from 'utils/formatters/number';
+import { truncateNumbers } from 'sdk/utils/number';
 
 export enum StakeTab {
 	Staking = 'staking',

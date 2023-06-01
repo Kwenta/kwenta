@@ -20,7 +20,7 @@ import {
 	selectAllConditionalOrders,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
+import { formatDollars } from 'sdk/utils/number';
 
 import PositionType from '../PositionType';
 import ConditionalOrdersWarning from './ConditionalOrdersWarning';

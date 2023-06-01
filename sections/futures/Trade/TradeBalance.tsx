@@ -9,7 +9,8 @@ import Pill from 'components/Pill';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
+import { formatDollars } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
 import { selectSusdBalance } from 'state/balances/selectors';
@@ -21,7 +22,6 @@ import {
 	selectWithdrawableMargin,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
 
 import PencilButton from '../../shared/components/PencilButton';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';

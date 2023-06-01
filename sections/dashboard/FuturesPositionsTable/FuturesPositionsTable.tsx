@@ -16,7 +16,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesAccountType } from 'queries/futures/subgraph';
+import { FuturesAccountType } from 'sdk/utils/subgraph';
 import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,

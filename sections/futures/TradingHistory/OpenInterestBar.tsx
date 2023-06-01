@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 
-import { formatPercent } from 'utils/formatters/number';
+import { formatPercent } from 'sdk/utils/number';
 
 type OpenInterestProps = {
 	skew: {

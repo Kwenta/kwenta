@@ -1,8 +1,8 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { orderBy } from 'lodash';
 
-import { notNill } from 'queries/synths/utils';
 import { SynthBalance, TokenBalances } from 'sdk/types/tokens';
+import { notNill } from 'sdk/utils/general';
 import { BalancesActionReturn } from 'state/balances/types';
 
 export const sortWei = (a: Wei, b: Wei, order: 'descending' | 'ascending') => {

@@ -12,7 +12,7 @@ import { submitSettle } from 'state/exchange/actions';
 import { closeModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { NoTextTransform, ExternalLink } from 'styles/common';
-import { secondsToTime } from 'utils/formatters/date';
+import { secondsToTime } from 'sdk/utils/date';
 import logError from 'utils/logError';
 
 const SettleTransactionsCard: FC = memo(() => {

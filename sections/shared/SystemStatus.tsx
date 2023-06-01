@@ -38,8 +38,6 @@ const SOCIAL_LINKS = [
 	},
 ];
 
-export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
-
 const SystemStatus: FC<SystemStatusProps> = memo(({ children }) => {
 	const { t } = useTranslation();
 

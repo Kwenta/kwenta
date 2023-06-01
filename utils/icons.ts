@@ -50,7 +50,8 @@ import XAUIcon from 'assets/png/currencies/sXAU.png';
 import XMRIcon from 'assets/png/currencies/sXMR.png';
 import XRPIcon from 'assets/png/currencies/sXRP.png';
 import WBTCIcon from 'assets/png/currencies/WBTC.png';
-import { CRYPTO_CURRENCY_MAP, SynthsName } from 'constants/currency';
+import { SynthsName } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP } from 'sdk/constants/exchange';
 import { FuturesMarketKey } from 'sdk/types/futures';
 
 export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {

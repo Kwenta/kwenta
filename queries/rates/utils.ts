@@ -1,13 +1,6 @@
-import { chain } from 'containers/Connector/config';
-import { CandleResult } from 'queries/futures/subgraph';
-import { NetworkId } from 'sdk/types/common';
+import { CandleResult } from 'sdk/utils/subgraph';
 
-import { RATES_ENDPOINTS } from './constants';
 import { Candle, PythResponse } from './types';
-
-export const getRatesEndpoint = (networkId: NetworkId) => {
-	return RATES_ENDPOINTS[networkId] || RATES_ENDPOINTS[chain.optimism.id];
-};
 
 export const mapCandles = (candles: CandleResult[]): Candle[] => {
 	return candles.map(({ id, synth, open, high, low, close, timestamp }) => {

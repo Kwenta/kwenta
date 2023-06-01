@@ -1,4 +1,4 @@
-import * as subgraph from 'queries/futures/subgraph';
+import * as subgraph from 'sdk/utils/subgraph';
 
 export const mockGrapqhlRequest = (returnData: any) => {
 	jest.spyOn(require('graphql-request'), 'default').mockImplementation(() => returnData);

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { selectInverseRate } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'sdk/utils/number';
 
 const ExchangeHead = memo(() => {
 	const { t } = useTranslation();

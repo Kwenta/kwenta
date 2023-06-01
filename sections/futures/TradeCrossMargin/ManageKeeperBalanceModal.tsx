@@ -11,6 +11,8 @@ import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import Connector from 'containers/Connector';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatCurrency } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { withdrawAccountKeeperBalance } from 'state/futures/actions';
 import {
@@ -19,7 +21,6 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import logError from 'utils/logError';
 
 import {
@@ -48,7 +49,7 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 
 	const [amount, setAmount] = useState('');
 	const [isMax, setMax] = useState(false);
-	const [userEthBal, setUserEthBal] = useState(zeroBN);
+	const [userEthBal, setUserEthBal] = useState(ZERO_WEI);
 	const [transferType, setTransferType] = useState(defaultType === 'deposit' ? 0 : 1);
 
 	const getUserEthBal = useCallback(async () => {

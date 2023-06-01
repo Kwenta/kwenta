@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-import { GasPrice } from './types';
+import { GasPrice } from 'sdk/types/transactions';
 
 export const serializeGasPrice = (gasPrice: GasPrice): GasPrice<string> => ({
 	baseFeePerGas: gasPrice.baseFeePerGas?.toString() ?? '0',
