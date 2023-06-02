@@ -223,7 +223,6 @@ class FuturesMarketInternal {
 			return { newPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.CAN_LIQUIDATE };
 		}
 		const maxLeverage = await this._getSetting('maxLeverage');
-
 		const maxLeverageForSize = await this._maxLeverageForSize(newPos.size);
 
 		const leverage = divideDecimal(
@@ -233,7 +232,7 @@ class FuturesMarketInternal {
 
 		if (
 			maxLeverage.add(UNIT_BIG_NUM.div(100)).lt(leverage.abs()) ||
-			leverage.gt(maxLeverageForSize)
+			leverage.abs().gt(maxLeverageForSize)
 		) {
 			return {
 				newPos: oldPos,
@@ -596,7 +595,7 @@ class FuturesMarketInternal {
 		const skewScaleWei = wei(skewScale);
 
 		return liqBuffer
-			.div(wei(size).div(skewScaleWei).mul(liqPremMultiplierWei.add(liqBufferRatioWei)))
+			.div(wei(size).abs().div(skewScaleWei).mul(liqPremMultiplierWei.add(liqBufferRatioWei)))
 			.toBN();
 	};
 
