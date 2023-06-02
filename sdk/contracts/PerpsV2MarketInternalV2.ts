@@ -224,12 +224,17 @@ class FuturesMarketInternal {
 		}
 		const maxLeverage = await this._getSetting('maxLeverage');
 
+		const maxLeverageForSize = await this._maxLeverageForSize(newPos.size);
+
 		const leverage = divideDecimal(
 			multiplyDecimal(newPos.size, tradeParams.fillPrice),
 			margin.add(fee)
 		);
 
-		if (maxLeverage.add(UNIT_BIG_NUM.div(100)).lt(leverage.abs())) {
+		if (
+			maxLeverage.add(UNIT_BIG_NUM.div(100)).lt(leverage.abs()) ||
+			leverage.gt(maxLeverageForSize)
+		) {
 			return {
 				newPos: oldPos,
 				fee: ZERO_BIG_NUM,
@@ -578,6 +583,21 @@ class FuturesMarketInternal {
 		}
 
 		return false;
+	};
+
+	_maxLeverageForSize = async (size: BigNumber) => {
+		const skewScale = await this._getSetting('skewScale');
+		const liqPremMultiplier = await this._getSetting('liquidationPremiumMultiplier');
+		const liqBufferRatio = await this._getSetting('liquidationBufferRatio');
+		const liqBuffer = wei(0.5);
+
+		const liqBufferRatioWei = wei(liqBufferRatio);
+		const liqPremMultiplierWei = wei(liqPremMultiplier);
+		const skewScaleWei = wei(skewScale);
+
+		return liqBuffer
+			.div(wei(size).div(skewScaleWei).mul(liqPremMultiplierWei.add(liqBufferRatioWei)))
+			.toBN();
 	};
 
 	_sameSide(a: BigNumber, b: BigNumber) {

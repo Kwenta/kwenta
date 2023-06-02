@@ -6,7 +6,7 @@ const KNOWN_ERROR_PATTERNS: Record<string, string> = {
 	'executability not reached': 'Cannot execute yet, try again in a few seconds',
 	'cannot cancel yet': 'Cannot cancel order yet',
 	'Insufficient margin': 'Insufficient margin',
-	'Max leverage exceeded': 'Max leverage exceeded',
+	'Max leverage exceeded': 'Max leverage exceeded (larger positions have lower max leverage)',
 };
 
 export const formatRevert = (revertMsg: string) => {
