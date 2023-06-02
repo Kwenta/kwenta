@@ -595,7 +595,7 @@ class FuturesMarketInternal {
 		const skewScaleWei = wei(skewScale);
 
 		return liqBuffer
-			.div(wei(size).abs().div(skewScaleWei).mul(liqPremMultiplierWei.add(liqBufferRatioWei)))
+			.div(wei(size).abs().div(skewScaleWei).mul(liqPremMultiplierWei).add(liqBufferRatioWei))
 			.toBN();
 	};
 
