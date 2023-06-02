@@ -44,9 +44,9 @@ export function useAppData(ready: boolean) {
 	}, [ready]);
 
 	useEffect(() => {
-		sdk.prices.onPricesUpdated(({ prices, type }) => {
+		sdk.prices.onPricesUpdated(({ prices, type, source }) => {
 			dispatch(updatePrices(serializePrices(prices), type));
-			if (type === 'off_chain') {
+			if (source === 'stream') {
 				// must be connected again, remove any error
 				dispatch(setConnectionError(null));
 			}

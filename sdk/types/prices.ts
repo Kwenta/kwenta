@@ -23,4 +23,8 @@ export type SynthPrice = {
 
 export type PriceType = 'on_chain' | 'off_chain';
 
-export type PricesListener = (updatedPrices: { type: PriceType; prices: PricesMap }) => void;
+export type PricesListener = (updatedPrices: {
+	type: PriceType;
+	prices: PricesMap;
+	source: 'fetch' | 'stream';
+}) => void;

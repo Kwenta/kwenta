@@ -26,7 +26,6 @@ import {
 import { startInterval } from 'sdk/utils/interval';
 import { scale } from 'sdk/utils/number';
 import { getRatesEndpoint } from 'sdk/utils/prices';
-import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
 
@@ -41,9 +40,10 @@ export default class PricesService {
 	private onChainPrices: PricesMap = {};
 	private ratesInterval: number | undefined;
 	private pyth!: EvmPriceServiceConnection;
-	private retryCount: number = 0;
-	private maxRetries: number = 3;
+	private lastConnectionTime: number = Date.now();
+	private wsConnected: boolean = false;
 	private server: PriceServer = DEFAULT_PRICE_SERVER;
+	private connectionMonitorId: number = 0;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
@@ -214,55 +214,53 @@ export default class PricesService {
 		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(networkId, server), {
 			logger: LOG_WS ? console : undefined,
 		});
+		this.lastConnectionTime = Date.now();
+		this.monitorConnection();
 
 		this.pyth.onWsError = (error: Error) => {
+			if (error?.message) {
+				this.sdk.context.logError(error);
+			}
+			this.setWsConnected(false);
 			this.sdk.context.events.emit('prices_connection_update', {
 				connected: false,
 				error: error || new Error('pyth prices ws connection failed'),
 			});
 		};
 
-		this.pyth
-			.getPriceFeedIds()
-			.then((_) => {
-				this.sdk.context.events.emit('prices_connection_update', {
-					connected: true,
-				});
-			})
-			.catch((error) => {
-				this.sdk.context.events.emit('prices_connection_update', {
-					connected: false,
-					error: error || new Error('pyth prices ws connection failed'),
-				});
+		this.subscribeToPythPriceUpdates();
+	}
+
+	private setWsConnected(connected: boolean) {
+		if (connected !== this.wsConnected) {
+			this.wsConnected = connected;
+			this.sdk.context.events.emit('prices_connection_update', {
+				connected: connected,
 			});
+		}
 	}
 
 	private setEventListeners() {
 		this.sdk.context.events.on('network_changed', (params) => {
 			this.connectToPyth(params.networkId, this.server);
 		});
-
-		this.sdk.context.events.on('prices_connection_update', (params) => {
-			if (params.connected) {
-				this.subscribeToPythPriceUpdates();
-			} else {
-				this.retryConnection(this.sdk.context.networkId);
-			}
-		});
 	}
 
-	private retryConnection(networkId: NetworkId) {
-		if (this.retryCount < this.maxRetries) {
-			this.retryCount++;
-			setTimeout(() => {
-				this.connectToPyth(networkId, this.server);
-			}, Math.pow(2, this.retryCount) * 50);
-		} else {
-			logError(new Error('Maximum retries exceeded'));
-			this.retryCount = 0;
-			this.server = this.server === 'KWENTA' ? 'PYTH' : 'KWENTA';
-			this.connectToPyth(networkId, this.server);
-		}
+	private monitorConnection() {
+		// Should get a constant stream of messages so when we don't
+		// receive any for a 10 second period we switch servers
+		if (this.connectionMonitorId) clearTimeout(this.connectionMonitorId);
+		this.connectionMonitorId = setTimeout(() => {
+			if (Date.now() - this.lastConnectionTime > 10000) {
+				this.switchConnection();
+			}
+			this.monitorConnection();
+		}, 1000);
+	}
+
+	private switchConnection() {
+		this.server = this.server === 'KWENTA' ? 'PYTH' : 'KWENTA';
+		this.connectToPyth(this.sdk.context.networkId, this.server);
 	}
 
 	private formatPythPrice(priceFeed: PriceFeed): Wei {
@@ -274,6 +272,7 @@ export default class PricesService {
 		this.sdk.context.events.emit('prices_updated', {
 			prices: offChainPrices,
 			type: 'off_chain',
+			source: 'stream',
 		});
 	}, PRICE_UPDATE_THROTTLE);
 
@@ -283,6 +282,7 @@ export default class PricesService {
 			this.sdk.context.events.emit('prices_updated', {
 				prices: this.offChainPrices,
 				type: 'off_chain',
+				source: 'fetch',
 			});
 		} catch (err) {
 			this.sdk.context.logError(err);
@@ -294,6 +294,8 @@ export default class PricesService {
 				const price = this.formatPythPrice(priceFeed);
 				this.offChainPrices[assetKey] = price;
 			}
+			this.setWsConnected(true);
+			this.lastConnectionTime = Date.now();
 			this.throttleOffChainPricesUpdate(this.offChainPrices);
 		});
 	}
