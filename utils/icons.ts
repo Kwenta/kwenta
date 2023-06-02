@@ -9,6 +9,7 @@ import AUDIcon from 'assets/png/currencies/sAUD.png';
 import AVAXIcon from 'assets/png/currencies/sAVAX.png';
 import AXSIcon from 'assets/png/currencies/sAXS.png';
 import BCHIcon from 'assets/png/currencies/sBCH.png';
+import BLURIcon from 'assets/png/currencies/sBLUR.png';
 import BNBIcon from 'assets/png/currencies/sBNB.png';
 import BTCIcon from 'assets/png/currencies/sBTC.png';
 import CHFIcon from 'assets/png/currencies/sCHF.png';
@@ -20,10 +21,12 @@ import ETHIcon from 'assets/png/currencies/sETH.png';
 import ETHBTCIcon from 'assets/png/currencies/sETHBTC.png';
 import EURIcon from 'assets/png/currencies/sEUR.png';
 import FILIcon from 'assets/png/currencies/sFIL.png';
+import FLOKIIcon from 'assets/png/currencies/sFLOKI.png';
 import FLOWIcon from 'assets/png/currencies/sFLOW.png';
 import FTMIcon from 'assets/png/currencies/sFTM.png';
 import GBPIcon from 'assets/png/currencies/sGBP.png';
 import GMXIcon from 'assets/png/currencies/sGMX.png';
+import INJIcon from 'assets/png/currencies/sINJ.png';
 import INRIcon from 'assets/png/currencies/sINR.png';
 import JPYIcon from 'assets/png/currencies/sJPY.png';
 import KRWIcon from 'assets/png/currencies/sKRW.png';
@@ -35,15 +38,20 @@ import NEARIcon from 'assets/png/currencies/sNEAR.png';
 import SNXIcon from 'assets/png/currencies/SNX.png';
 import OILIcon from 'assets/png/currencies/sOIL.png';
 import OPIcon from 'assets/png/currencies/sOP.png';
+import PEPEIcon from 'assets/png/currencies/sPEPE.png';
 import SHIBIcon from 'assets/png/currencies/sSHIB.png';
 import SOLIcon from 'assets/png/currencies/sSOL.png';
+import SUIIcon from 'assets/png/currencies/sSUI.png';
+import TRXIcon from 'assets/png/currencies/sTRX.png';
 import UNIIcon from 'assets/png/currencies/sUNI.png';
 import USDIcon from 'assets/png/currencies/sUSD.png';
 import XAGIcon from 'assets/png/currencies/sXAG.png';
 import XAUIcon from 'assets/png/currencies/sXAU.png';
 import XMRIcon from 'assets/png/currencies/sXMR.png';
+import XRPIcon from 'assets/png/currencies/sXRP.png';
 import WBTCIcon from 'assets/png/currencies/WBTC.png';
-import { CRYPTO_CURRENCY_MAP, SynthsName } from 'constants/currency';
+import { SynthsName } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP } from 'sdk/constants/exchange';
 import { FuturesMarketKey } from 'sdk/types/futures';
 
 export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
@@ -57,30 +65,38 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sAVAXPERP: AVAXIcon,
 	sAXSPERP: AXSIcon,
 	sBCHPERP: BCHIcon,
+	sBLURPERP: BLURIcon,
 	sBNBPERP: BNBIcon,
 	sBTCPERP: BTCIcon,
 	sCRVPERP: CRVIcon,
 	sDOGEPERP: DOGEIcon,
+	sDOTPERP: DOTIcon,
 	sDYDXPERP: DYDXIcon,
 	sETHPERP: ETHIcon,
 	sEURPERP: EURIcon,
 	sFILPERP: FILIcon,
+	sFLOKIPERP: FLOKIIcon,
 	sFLOWPERP: FLOWIcon,
 	sFTMPERP: FTMIcon,
 	sGBPPERP: GBPIcon,
 	sGMXPERP: GMXIcon,
+	sINJPERP: INJIcon,
 	sLINKPERP: LINKIcon,
 	sLDOPERP: LDOIcon,
 	sLTCPERP: LTCIcon,
 	sMATICPERP: MATICIcon,
 	sNEARPERP: NEARIcon,
 	sOPPERP: OPIcon,
+	sPEPEPERP: PEPEIcon,
 	sSHIBPERP: SHIBIcon,
 	sSOLPERP: SOLIcon,
+	sSUIPERP: SUIIcon,
+	sTRXPERP: TRXIcon,
 	sUNIPERP: UNIIcon,
 	sXAUPERP: XAUIcon,
 	sXAGPERP: XAGIcon,
 	sXMRPERP: XMRIcon,
+	sXRPPERP: XRPIcon,
 	sAAVE: AAVEIcon,
 	sADA: ADAIcon,
 	sAPE: APEIcon,
@@ -91,6 +107,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sAVAX: AVAXIcon,
 	sAXS: AXSIcon,
 	sBCH: BCHIcon,
+	sBLUR: BLURIcon,
 	sBNB: BNBIcon,
 	sBTC: BTCIcon,
 	sCHF: CHFIcon,
@@ -102,10 +119,12 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sETHBTC: ETHBTCIcon,
 	sEUR: EURIcon,
 	sFIL: FILIcon,
+	sFLOKI: FLOKIIcon,
 	sFLOW: FLOWIcon,
 	sFTM: FTMIcon,
 	sGBP: GBPIcon,
 	sGMX: GMXIcon,
+	sINJ: INJIcon,
 	sINR: INRIcon,
 	sJPY: JPYIcon,
 	sKRW: KRWIcon,
@@ -115,14 +134,18 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sMATIC: MATICIcon,
 	sNEAR: NEARIcon,
 	sOP: OPIcon,
+	sPEPE: PEPEIcon,
 	sSHIB: SHIBIcon,
 	sSOL: SOLIcon,
+	sSUI: SUIIcon,
+	sTRX: TRXIcon,
 	sUNI: UNIIcon,
 	sUSD: USDIcon,
 	sWTI: OILIcon,
 	sXAU: XAUIcon,
 	sXAG: XAGIcon,
 	sXMR: XMRIcon,
+	sXRP: XRPIcon,
 	KWENTA: KWENTAIcon,
 	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
 	WBTC: WBTCIcon,

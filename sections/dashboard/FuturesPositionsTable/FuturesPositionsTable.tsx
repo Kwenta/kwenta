@@ -16,7 +16,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesAccountType } from 'queries/futures/subgraph';
+import { FuturesAccountType } from 'sdk/utils/subgraph';
 import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
@@ -148,14 +148,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = cellProps.row.original.position.notionalValue.gte(1e6)
-										? { truncate: true }
-										: {};
-
 									return (
 										<Currency.Price
 											price={cellProps.row.original.position.notionalValue}
-											formatOptions={formatOptions}
+											formatOptions={{ truncateOver: 1e6 }}
 										/>
 									);
 								},

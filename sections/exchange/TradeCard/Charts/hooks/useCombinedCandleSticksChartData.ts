@@ -2,11 +2,11 @@ import Wei, { wei } from '@synthetixio/wei';
 import orderBy from 'lodash/orderBy';
 
 import { Candle } from 'queries/rates/types';
-import { zeroBN } from 'utils/formatters/number';
+import { ZERO_WEI } from 'sdk/constants/number';
 
 export type TempCandle = {
-	id: string;
-	synth: string;
+	id?: string;
+	synth?: string;
 	open: Wei;
 	high: Wei;
 	low: Wei;
@@ -41,10 +41,10 @@ export const combineDataToPair = (
 	let prevQuoteCandle: TempCandle = quoteCandles[0];
 
 	return allCandles.reduce((candles, candle) => {
-		let open = zeroBN;
-		let high = zeroBN;
-		let low = zeroBN;
-		let close = zeroBN;
+		let open = ZERO_WEI;
+		let high = ZERO_WEI;
+		let low = ZERO_WEI;
+		let close = ZERO_WEI;
 		if (candle.isBase) {
 			open = candle.open.div(prevQuoteCandle.open);
 			high = candle.high.div(prevQuoteCandle.high);

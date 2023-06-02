@@ -3,10 +3,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { TransactionStatus } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
+import { OperationalStatus } from 'sdk/types/system';
+import { GasPrice } from 'sdk/types/transactions';
 import { isUserDeniedError } from 'utils/formatters/error';
 
-import { checkSynthetixStatus } from './actions';
-import { AppState, FuturesPositionModalType, GasPrice, ModalType, Transaction } from './types';
+import { checkSynthetixStatus, fetchKwentaStatus } from './actions';
+import { AppState, FuturesPositionModalType, ModalType, Transaction } from './types';
 
 export const APP_INITIAL_STATE: AppState = {
 	showModal: undefined,
@@ -18,6 +20,13 @@ export const APP_INITIAL_STATE: AppState = {
 	},
 	gasSpeed: 'fast',
 	synthetixOnMaintenance: false,
+	kwentaStatus: {
+		status: OperationalStatus.FullyOperational,
+		message: '',
+		lastUpdatedAt: undefined,
+	},
+	acknowledgedOrdersWarning: false,
+	showBanner: true,
 };
 
 const appSlice = createSlice({
@@ -66,10 +75,19 @@ const appSlice = createSlice({
 				}
 			}
 		},
+		setAcknowledgedOrdersWarning: (state, action: PayloadAction<boolean>) => {
+			state.acknowledgedOrdersWarning = action.payload;
+		},
+		setShowBanner: (state, action: PayloadAction<boolean>) => {
+			state.showBanner = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(checkSynthetixStatus.fulfilled, (state, action) => {
 			state.synthetixOnMaintenance = action.payload;
+		});
+		builder.addCase(fetchKwentaStatus.fulfilled, (state, action) => {
+			state.kwentaStatus = action.payload;
 		});
 	},
 });
@@ -82,6 +100,8 @@ export const {
 	handleTransactionError,
 	updateTransactionStatus,
 	updateTransactionHash,
+	setAcknowledgedOrdersWarning,
+	setShowBanner,
 } = appSlice.actions;
 
 export default appSlice.reducer;

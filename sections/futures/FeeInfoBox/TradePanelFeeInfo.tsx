@@ -12,13 +12,13 @@ import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import { formatDollars, formatPercent } from 'sdk/utils/number';
 import { selectTradePreview } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors';
-import { formatDollars } from 'utils/formatters/number';
 
 import TradeTotalFeesRow from './TradeTotalFeesRow';
 
@@ -27,6 +27,7 @@ export const TradePanelFeeInfo = memo(() => {
 		<FeeInfoBoxContainer>
 			<TradeTotalFeesRow />
 			<LiquidationRow />
+			<PriceImpactRow />
 			<TradingRewardRow />
 		</FeeInfoBoxContainer>
 	);
@@ -71,7 +72,7 @@ const TradingRewardRow = memo(() => {
 								i18nKey={`dashboard.stake.tabs.trading-rewards.stake-to-${
 									isRewardEligible ? 'earn' : 'start'
 								}`}
-								components={[<Body weight="bold" inline />]}
+								components={[<Body weight="bold" inline as="span" />]}
 							/>
 						</Body>
 						<StyledLinkArrowIcon />
@@ -92,6 +93,21 @@ const LiquidationRow = memo(() => {
 			value={
 				potentialTradeDetails?.liqPrice
 					? formatDollars(potentialTradeDetails.liqPrice, { suggestDecimals: true })
+					: NO_VALUE
+			}
+		/>
+	);
+});
+
+const PriceImpactRow = memo(() => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview);
+
+	return (
+		<InfoBoxRow
+			title="Price impact"
+			value={
+				potentialTradeDetails?.priceImpact
+					? formatPercent(potentialTradeDetails.priceImpact)
 					: NO_VALUE
 			}
 		/>

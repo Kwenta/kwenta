@@ -6,13 +6,13 @@ import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
+import { secondsToTime } from 'sdk/utils/date';
 import { MessageContainer, Message, FixedMessageContainerSpacer } from 'sections/exchange/message';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import { submitSettle } from 'state/exchange/actions';
 import { closeModal } from 'state/exchange/reducer';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { NoTextTransform, ExternalLink } from 'styles/common';
-import { secondsToTime } from 'utils/formatters/date';
 import logError from 'utils/logError';
 
 const SettleTransactionsCard: FC = memo(() => {

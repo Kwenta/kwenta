@@ -1,8 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
+import { toWei, truncateNumbers } from 'sdk/utils/number';
 import { RootState } from 'state/store';
-import { toWei, truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 export const selectBalance = createSelector((state: RootState) => state.earn.balance, toWei);
 
@@ -26,7 +27,7 @@ export const selectYieldPerDay = createSelector(
 	(balance, rewardRate, totalSupply) => {
 		const rawYield = toWei(totalSupply).gt(0)
 			? toWei(balance).mul(rewardRate).div(totalSupply).mul(PERIOD_IN_SECONDS.ONE_DAY)
-			: zeroBN;
+			: ZERO_WEI;
 
 		return truncateNumbers(rawYield.toString(), 4);
 	}
@@ -70,7 +71,7 @@ export const selectLpTotalSupply = createSelector(
 export const selectLpTokenValue = createSelector(
 	selectLpTvl,
 	selectLpTotalSupply,
-	(tvl, lpTotalSupply) => (lpTotalSupply.gt(0) ? tvl.div(lpTotalSupply) : zeroBN)
+	(tvl, lpTotalSupply) => (lpTotalSupply.gt(0) ? tvl.div(lpTotalSupply) : ZERO_WEI)
 );
 
 export const selectEarnApy = createSelector(
@@ -78,5 +79,5 @@ export const selectEarnApy = createSelector(
 	selectKwentaPrice,
 	(state: RootState) => state.earn.rewardRate,
 	(state: RootState) => state.earn.totalSupply,
-	(_lpTokenValue, _kwentaPrice, _rewardRate, _totalSupply) => zeroBN
+	(_lpTokenValue, _kwentaPrice, _rewardRate, _totalSupply) => ZERO_WEI
 );

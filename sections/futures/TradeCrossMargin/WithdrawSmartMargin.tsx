@@ -9,11 +9,11 @@ import ErrorView from 'components/ErrorView';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
+import { formatDollars } from 'sdk/utils/number';
 import { selectTransaction } from 'state/app/selectors';
 import { withdrawCrossMargin } from 'state/futures/actions';
 import { selectIsSubmittingCrossTransfer, selectWithdrawableMargin } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars } from 'utils/formatters/number';
 
 type Props = {
 	onDismiss(): void;

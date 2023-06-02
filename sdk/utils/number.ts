@@ -1,5 +1,4 @@
 import Wei, { wei } from '@synthetixio/wei';
-import BN from 'bn.js';
 import { BigNumber, ethers, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 
@@ -7,14 +6,18 @@ import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
-} from 'constants/defaults';
-import { isFiatCurrency } from 'utils/currencies';
-import logError from 'utils/logError';
+	UNIT_BIG_NUM,
+	ZERO_WEI,
+} from 'sdk/constants/number';
+
+import { isFiatCurrency } from './exchange';
+
+export type TruncateUnits = 1e3 | 1e6 | 1e9 | 1e12;
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
 type TruncatedOptions = {
-	truncate?: boolean;
+	truncateOver?: TruncateUnits;
 	truncation?: {
 		// Maybe remove manual truncation params
 		unit: string;
@@ -22,6 +25,13 @@ type TruncatedOptions = {
 		decimals: number;
 	};
 };
+
+const thresholds = [
+	{ value: 1e12, divisor: 1e12, unit: 'T', decimals: 2 },
+	{ value: 1e9, divisor: 1e9, unit: 'B', decimals: 2 },
+	{ value: 1e6, divisor: 1e6, unit: 'M', decimals: 2 },
+	{ value: 1e3, divisor: 1e3, unit: 'K', decimals: 0 },
+];
 
 export type FormatNumberOptions = {
 	minDecimals?: number;
@@ -43,12 +53,6 @@ export const SHORT_CRYPTO_CURRENCY_DECIMALS = 4;
 export const LONG_CRYPTO_CURRENCY_DECIMALS = 8;
 
 export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.')[1] || '').length;
-
-export const zeroBN = wei(0);
-
-export const UNIT_BN = new BN('10').pow(new BN(18));
-export const UNIT_BIG_NUM = BigNumber.from('10').pow(18);
-export const ZERO_BIG_NUM = BigNumber.from('0');
 
 export const truncateNumbers = (value: WeiSource, maxDecimalDigits: number) => {
 	if (value.toString().includes('.')) {
@@ -85,7 +89,7 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
-	const shouldTruncate = options?.truncate;
+	const truncateThreshold = options?.truncateOver ?? 0;
 	const suggestDecimals = options?.suggestDecimals;
 	let truncation = options?.truncation;
 
@@ -93,7 +97,8 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	try {
 		weiValue = wei(value);
 	} catch (e) {
-		logError(e, true);
+		// eslint-disable-next-line
+		console.error(e);
 	}
 
 	const isNegative = weiValue.lt(wei(0));
@@ -106,13 +111,12 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	}
 
 	// specified truncation params overrides universal truncate
-	if (shouldTruncate && !truncation) {
-		if (weiValue.gt(1e6)) {
-			truncation = { divisor: 1e6, unit: 'M', decimals: 2 };
-		} else if (weiValue.gt(1e3)) {
-			truncation = { divisor: 1e3, unit: 'K', decimals: 0 };
-		}
-	}
+	truncation =
+		truncateThreshold && !truncation
+			? thresholds.find(
+					(threshold) => weiValue.gte(threshold.value) && weiValue.gte(truncateThreshold)
+			  )
+			: truncation;
 
 	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs();
 
@@ -239,7 +243,7 @@ export const gweiToWei = (val: WeiSource) => {
 };
 
 export const toWei = (value?: string | null, p?: number) => {
-	return !!value ? wei(value, p) : zeroBN;
+	return !!value ? wei(value, p) : ZERO_WEI;
 };
 
 export const stripZeros = (value?: string | number) => {

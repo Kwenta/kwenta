@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
 import { NO_VALUE } from 'constants/placeholder';
-import { formatPercent } from 'utils/formatters/number';
+import { formatPercent } from 'sdk/utils/number';
 
 type ChangePercentProps = {
 	value: WeiSource;

@@ -58,6 +58,7 @@ Required:
 - `NEXT_PUBLIC_SOCKET_API_KEY` - Socket API key (get it from [socket.tech](https://docs.socket.tech/socket-api/v2#api-key)
 - `NEXT_PUBLIC_SATSUMA_API_KEY` - API key for Satsuma subgraph queries
 - `NEXT_PUBLIC_THEGRAPH_API_KEY` - API key for The Graph's decentralized service
+- `NEXT_PUBLIC_DEFAULT_PRICE_SERVICE` - Specifies the default price server, options are `KWENTA` or `PYTH`
 
 ### Run
 

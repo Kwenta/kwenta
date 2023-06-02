@@ -6,7 +6,6 @@ import request, { gql } from 'graphql-request';
 import { orderBy } from 'lodash';
 import KwentaSDK from 'sdk';
 
-import { getFuturesAggregateStats } from 'queries/futures/subgraph';
 import { UNSUPPORTED_NETWORK } from 'sdk/common/errors';
 import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from 'sdk/constants/futures';
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from 'sdk/constants/period';
@@ -25,9 +24,9 @@ import {
 	queryPositionHistory,
 	queryTrades,
 	queryCompletePositionHistory,
+	queryFundingRateHistory,
 } from 'sdk/queries/futures';
-import { NetworkId } from 'sdk/types/common';
-import { NetworkOverrideOptions } from 'sdk/types/common';
+import { NetworkId, NetworkOverrideOptions } from 'sdk/types/common';
 import {
 	FundingRateInput,
 	FundingRateResponse,
@@ -49,6 +48,7 @@ import {
 	SLTPOrderInputs,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
+import { calculateTimestampForPeriod } from 'sdk/utils/date';
 import {
 	appAdjustedLeverage,
 	calculateFundingRate,
@@ -58,7 +58,6 @@ import {
 	encodeModidyMarketMarginParams,
 	encodeSubmitOffchainOrderParams,
 	formatDelayedOrder,
-	formatPotentialIsolatedTrade,
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	getMarketName,
@@ -67,10 +66,10 @@ import {
 	mapFuturesPositions,
 	mapTrades,
 	marketsForNetwork,
+	MarketKeyByAsset,
 } from 'sdk/utils/futures';
+import { getFuturesAggregateStats } from 'sdk/utils/subgraph';
 import { getReasonFromCode } from 'sdk/utils/synths';
-import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { MarketKeyByAsset } from 'utils/futures';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -89,7 +88,8 @@ export default class FuturesService {
 
 	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
 		const enabledMarkets = marketsForNetwork(
-			networkOverride?.networkId || this.sdk.context.networkId
+			networkOverride?.networkId || this.sdk.context.networkId,
+			this.sdk.context.logError
 		);
 		const contracts =
 			networkOverride && networkOverride?.networkId !== this.sdk.context.networkId
@@ -252,14 +252,33 @@ export default class FuturesService {
 		)) as boolean[];
 
 		// map the positions using the results
-		const positions = positionDetails.map((position, ind) => {
-			const canLiquidate = canLiquidateState[ind];
-			const marketKey = futuresMarkets[ind].marketKey;
-			const asset = futuresMarkets[ind].asset;
-			return mapFuturesPosition(position, canLiquidate, asset, marketKey);
-		});
+		const positions = await Promise.all(
+			positionDetails.map(async (position, ind) => {
+				const canLiquidate = canLiquidateState[ind];
+				const marketAddress = futuresMarkets[ind].address;
+				const marketKey = futuresMarkets[ind].marketKey;
+				const asset = futuresMarkets[ind].asset;
+				const liquidationPrice = position.position.size.abs().gt(0)
+					? await this.sdk.futures.getExactLiquidationPrice(marketKey, marketAddress, position)
+					: position.liquidationPrice;
+				return mapFuturesPosition(
+					{ ...position, liquidationPrice },
+					canLiquidate,
+					asset,
+					marketKey
+				);
+			})
+		);
 
 		return positions;
+	}
+
+	public async getMarketFundingRatesHistory(
+		marketAsset: FuturesMarketAsset,
+		periodLength = PERIOD_IN_SECONDS.TWO_WEEKS
+	) {
+		const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
+		return queryFundingRateHistory(this.sdk, marketAsset, minTimestamp);
 	}
 
 	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
@@ -516,12 +535,33 @@ export default class FuturesService {
 			this.sdk.context.walletAddress
 		);
 
-		return formatPotentialIsolatedTrade(
+		return formatPotentialTrade(
 			details,
 			inputs.skewAdjustedPrice,
 			inputs.sizeDelta,
 			inputs.leverageSide
 		);
+	}
+
+	public async getExactLiquidationPrice(
+		marketKey: FuturesMarketKey,
+		marketAddress: string,
+		positionDetails: PositionDetail
+	) {
+		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
+		const internalPosition = {
+			id: '0',
+			size: positionDetails.position.size,
+			margin: positionDetails.position.margin,
+			lastFundingIndex: positionDetails.position.fundingIndex,
+			lastPrice: positionDetails.position.lastPrice,
+		};
+		const approxLiquidationPrice = positionDetails.liquidationPrice;
+		const exactLiqPrice = await marketInternal._exactLiquidationPrice(
+			internalPosition,
+			approxLiquidationPrice
+		);
+		return exactLiqPrice;
 	}
 
 	public async getCrossMarginTradePreview(
@@ -531,7 +571,7 @@ export default class FuturesService {
 		tradeParams: {
 			sizeDelta: Wei;
 			marginDelta: Wei;
-			orderPrice?: Wei;
+			orderPrice: Wei;
 			leverageSide: PositionSide;
 		}
 	) {
@@ -541,10 +581,15 @@ export default class FuturesService {
 			crossMarginAccount,
 			tradeParams.sizeDelta.toBN(),
 			tradeParams.marginDelta.toBN(),
-			tradeParams.orderPrice?.toBN()
+			tradeParams.orderPrice.toBN()
 		);
 
-		return formatPotentialTrade(preview, tradeParams.sizeDelta, tradeParams.leverageSide);
+		return formatPotentialTrade(
+			preview,
+			tradeParams.orderPrice,
+			tradeParams.sizeDelta,
+			tradeParams.leverageSide
+		);
 	}
 
 	public async getCrossMarginKeeperBalance(account: string) {
@@ -1147,7 +1192,12 @@ export default class FuturesService {
 	private getInternalFuturesMarket(marketAddress: string, marketKey: FuturesMarketKey) {
 		let market = this.internalFuturesMarkets[this.sdk.context.networkId]?.[marketAddress];
 		if (market) return market;
-		market = new PerpsV2MarketInternal(this.sdk.context.provider, marketKey, marketAddress);
+		market = new PerpsV2MarketInternal(
+			this.sdk,
+			this.sdk.context.provider,
+			marketKey,
+			marketAddress
+		);
 		this.internalFuturesMarkets = {
 			[this.sdk.context.networkId]: {
 				...this.internalFuturesMarkets[this.sdk.context.networkId],

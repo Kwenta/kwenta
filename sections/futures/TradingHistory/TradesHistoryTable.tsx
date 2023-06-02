@@ -7,9 +7,9 @@ import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
+import { formatNumber } from 'sdk/utils/number';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatNumber } from 'utils/formatters/number';
 
 type TradesHistoryTableProps = {
 	mobile?: boolean;
@@ -126,6 +126,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 										{cellProps.row.original.amount !== NO_VALUE
 											? `${formatNumber(numValue, {
 													minDecimals: numDecimals,
+													truncateOver: 1e6,
 											  })} ${normal ? '💀' : ''}`
 											: NO_VALUE}
 									</DirectionalValue>
@@ -180,16 +181,15 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
 	height: 100%;
 	width: ${(props) => (props.mobile ? '100%' : '300px')};
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background}
-		${(props) =>
-			props.mobile &&
-			css`
-				height: 100%;
-				margin-bottom: 0;
-				border-radius: 0;
-				border: none;
-				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-			`};
+	${(props) =>
+		props.mobile &&
+		css`
+			height: 100%;
+			margin-bottom: 0;
+			border-radius: 0;
+			border: none;
+			border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+		`};
 `;
 
 const TableAlignment = css`
@@ -211,6 +211,7 @@ const TableAlignment = css`
 const StyledTable = styled(Table)<{ $mobile?: boolean }>`
 	border: none;
 	height: 100%;
+
 	.table-row,
 	.table-body-row {
 		${TableAlignment}
@@ -233,7 +234,6 @@ const PriceValue = styled(Body).attrs({ mono: true })`
 
 const TimeValue = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	text-decoration: underline;
 `;
 
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`

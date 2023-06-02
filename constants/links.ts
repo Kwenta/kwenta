@@ -17,7 +17,7 @@ export const EXTERNAL_LINKS = {
 		OptimismTokenBridge: 'https://gateway.optimism.io',
 	},
 	Options: {
-		Portfolio: 'https://options.kwenta.eth.limo/#/portfolio',
+		Trade: 'https://options.kwenta.eth.limo/#/trade',
 	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',

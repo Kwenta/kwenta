@@ -15,6 +15,7 @@ import { TabPanel } from 'components/Tab';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
+import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';
@@ -81,36 +82,16 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 			},
 		});
 
-		Promise.all([
-			requestCandlesticks(
-				asset,
-				Math.floor(Date.now() / 1000) - 60 * 60 * 24,
-				undefined,
-				60,
-				10,
-				1,
-				'desc',
-				true
-			),
-			requestCandlesticks(
-				asset,
-				Math.floor(Date.now() / 1000) - 60 * 60 * 24,
-				undefined,
-				3600,
-				10,
-				24,
-				'asc',
-				true
-			),
-		])
-			.then(([currentPrice, bars]) => {
+		requestCandlesticks(asset, Math.floor(Date.now() / 1000) - SECONDS_PER_DAY, undefined, 3600)
+			.then((bars) => {
 				let positive = false;
 				if (bars !== undefined) {
-					const first = bars[0]?.average ?? 0;
-					positive = (currentPrice[0]?.average ?? 0) - first >= 0;
+					const first = bars[0]?.close ?? 0;
+					const last = bars[bars.length - 1]?.close ?? 0;
+					positive = last - first >= 0;
 				}
 				const results = bars.map((b) => ({
-					value: b.average,
+					value: b.close,
 					time: b.timestamp as UTCTimestamp,
 				}));
 				return { results, positive };
@@ -143,7 +124,9 @@ const Assets = () => {
 	const futuresMarkets = useAppSelector(selectOptimismMarkets);
 	const pastRates = useAppSelector(selectPreviousDayPrices);
 	const futuresVolumes = useAppSelector(selectMarketVolumes);
-	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider));
+	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider), {
+		intervalTime: 600,
+	});
 
 	const PERPS = useMemo(() => {
 		return futuresMarkets.map((market) => {

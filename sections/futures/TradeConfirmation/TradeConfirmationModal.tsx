@@ -1,5 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -10,10 +10,19 @@ import ErrorView from 'components/ErrorView';
 import { ButtonLoader } from 'components/Loader/Loader';
 import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
 import { NO_VALUE } from 'constants/placeholder';
+import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
+import {
+	formatCurrency,
+	formatDollars,
+	formatNumber,
+	formatPercent,
+	stripZeros,
+} from 'sdk/utils/number';
+import { submitCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -26,34 +35,24 @@ import {
 	selectKeeperDepositExceedsBal,
 	selectNewTradeHasSlTp,
 } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import {
-	zeroBN,
-	formatCurrency,
-	formatDollars,
-	formatNumber,
-	formatPercent,
-	stripZeros,
-} from 'utils/formatters/number';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
+import ConfirmSlippage from './ConfirmSlippage';
 import TradeConfirmationRow from './TradeConfirmationRow';
 import TradeConfirmationSummary from './TradeConfirmationSummary';
 
 type Props = {
 	gasFee?: Wei | null;
-	tradeFee: Wei;
 	keeperFee?: Wei | null;
 	executionFee: Wei;
 	errorMessage?: string | null | undefined;
 	isSubmitting?: boolean;
 	allowanceValid?: boolean;
 	onApproveAllowance: () => any;
-	onConfirmOrder: () => any;
 	onDismiss: () => void;
 };
 
 export default function TradeConfirmationModal({
-	tradeFee,
 	gasFee,
 	keeperFee,
 	executionFee,
@@ -61,10 +60,10 @@ export default function TradeConfirmationModal({
 	isSubmitting,
 	allowanceValid,
 	onApproveAllowance,
-	onConfirmOrder,
 	onDismiss,
 }: Props) {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 
 	const marketAsset = useAppSelector(selectMarketAsset);
 	const potentialTradeDetails = useAppSelector(selectTradePreview);
@@ -76,16 +75,22 @@ export default function TradeConfirmationModal({
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal);
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
 	const hasSlTp = useAppSelector(selectNewTradeHasSlTp);
+	const [overridePriceProtection, setOverridePriceProtection] = useState(false);
 
-	const totalFee = tradeFee.add(executionFee);
+	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch]);
+
+	const totalFee = useMemo(() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee, [
+		potentialTradeDetails?.fee,
+		executionFee,
+	]);
 
 	const positionSide = useMemo(() => {
-		if (potentialTradeDetails?.size.eq(zeroBN)) {
+		if (potentialTradeDetails?.size.eq(ZERO_WEI)) {
 			return position?.position?.side === PositionSide.LONG
 				? PositionSide.SHORT
 				: PositionSide.LONG;
 		}
-		return potentialTradeDetails?.size.gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
+		return potentialTradeDetails?.size.gte(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT;
 	}, [potentialTradeDetails?.size, position?.position?.side]);
 
 	const positionDetails = useMemo(() => {
@@ -93,8 +98,8 @@ export default function TradeConfirmationModal({
 			? {
 					...potentialTradeDetails,
 					side: positionSide,
-					leverage: potentialTradeDetails.margin.eq(zeroBN)
-						? zeroBN
+					leverage: potentialTradeDetails.margin.eq(ZERO_WEI)
+						? ZERO_WEI
 						: potentialTradeDetails.size
 								.mul(potentialTradeDetails.price)
 								.div(potentialTradeDetails.margin)
@@ -116,15 +121,15 @@ export default function TradeConfirmationModal({
 			{
 				label: 'liquidation price',
 				color: 'red',
-				value: formatDollars(positionDetails?.liqPrice ?? zeroBN, { suggestDecimals: true }),
+				value: formatDollars(positionDetails?.liqPrice ?? ZERO_WEI, { suggestDecimals: true }),
 			},
 			{
 				label: 'resulting leverage',
-				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
+				value: `${formatNumber(positionDetails?.leverage ?? ZERO_WEI)}x`,
 			},
 			{
 				label: 'resulting margin',
-				value: formatDollars(positionDetails?.margin ?? zeroBN),
+				value: formatDollars(positionDetails?.margin ?? ZERO_WEI),
 			},
 			orderType === 'limit' || orderType === 'stop_market'
 				? {
@@ -133,16 +138,14 @@ export default function TradeConfirmationModal({
 				  }
 				: {
 						label: 'fill price',
-						value: formatDollars(positionDetails?.price ?? zeroBN, { suggestDecimals: true }),
+						value: formatDollars(positionDetails?.price ?? ZERO_WEI, { suggestDecimals: true }),
 				  },
 
 			{
 				label: 'price impact',
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
-				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? zeroBN)}`,
-				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
-					? 'red'
-					: '',
+				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI)}`,
+				color: positionDetails?.exceedsPriceProtection ? 'red' : '',
 			},
 			{
 				label: 'total fee',
@@ -189,9 +192,19 @@ export default function TradeConfirmationModal({
 				depositAmount: stripZeros(keeperFee?.toString()),
 			});
 		}
+		if (positionDetails?.exceedsPriceProtection && !overridePriceProtection) {
+			return t('futures.market.trade.confirmation.modal.disabled-exceeds-price-protection');
+		}
 		if (positionDetails?.margin.lt(MIN_MARGIN_AMOUNT))
 			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
-	}, [positionDetails?.margin, t, showEthBalWarning, keeperFee]);
+	}, [
+		positionDetails?.margin,
+		t,
+		showEthBalWarning,
+		keeperFee,
+		overridePriceProtection,
+		positionDetails?.exceedsPriceProtection,
+	]);
 
 	const buttonText = allowanceValid
 		? t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
@@ -206,7 +219,7 @@ export default function TradeConfirmationModal({
 			<Spacer height={8} />
 			<TradeConfirmationSummary
 				marketAsset={marketAsset}
-				nativeSizeDelta={potentialTradeDetails?.sizeDelta ?? zeroBN}
+				nativeSizeDelta={potentialTradeDetails?.sizeDelta ?? ZERO_WEI}
 				leverageSide={leverageSide}
 				orderType={orderType}
 				leverage={wei(leverageInput || '0')}
@@ -240,6 +253,12 @@ export default function TradeConfirmationModal({
 					);
 				})}
 			</RowsContainer>
+			{positionDetails?.exceedsPriceProtection && (
+				<ConfirmSlippage
+					checked={overridePriceProtection}
+					onChangeChecked={(checked) => setOverridePriceProtection(checked)}
+				/>
+			)}
 			<ConfirmTradeButton
 				data-testid="trade-open-position-confirm-order-button"
 				variant={isSubmitting ? 'flat' : leverageSide}

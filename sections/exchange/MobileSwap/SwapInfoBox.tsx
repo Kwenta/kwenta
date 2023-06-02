@@ -9,14 +9,15 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
-import { selectGasPrice, selectGasSpeed } from 'state/app/selectors';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatDollars, formatNumber, formatPercent } from 'sdk/utils/number';
+import { selectGasPrice } from 'state/app/selectors';
 import {
 	selectTransactionFeeWei,
 	selectFeeCostWei,
 	selectSlippagePercentWei,
 } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatDollars, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const PriceImpactRow = () => {
 	const { t } = useTranslation();
@@ -55,7 +56,7 @@ const FeeRow = () => {
 			value=""
 			valueNode={
 				<div style={{ display: 'flex' }}>
-					{formatPercent(baseFeeRate ?? zeroBN)}
+					{formatPercent(baseFeeRate ?? ZERO_WEI)}
 					{exchangeFeeRate != null && baseFeeRate != null ? (
 						wei(exchangeFeeRate)
 							.sub(baseFeeRate ?? 0)
@@ -126,14 +127,14 @@ const SwapInfoBoxContainer = styled(InfoBoxContainer)`
 `;
 
 const StyledDynamicFee = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	margin-left: 5px;
 `;
 
 const StyledTimerIcon = styled(TimerIcon)`
 	margin-left: 5px;
 	path {
-		fill: ${(props) => props.theme.colors.selectedTheme.gold};
+		fill: ${(props) => props.theme.colors.selectedTheme.yellow};
 	}
 `;
 

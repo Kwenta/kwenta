@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -15,6 +15,8 @@ import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
+import { formatDollars } from 'sdk/utils/number';
 import {
 	selectFuturesType,
 	selectMarkets,
@@ -23,10 +25,13 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
-import { formatDollars } from 'utils/formatters/number';
-import { getSynthDescription, MarketKeyByAsset } from 'utils/futures';
+import { getSynthDescription } from 'utils/futures';
 
-const FuturesMarketsTable: FC = () => {
+type FuturesMarketsTableProps = {
+	search?: string;
+};
+
+const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -38,7 +43,15 @@ const FuturesMarketsTable: FC = () => {
 	const markPrices = useAppSelector(selectMarkPrices);
 
 	let data = useMemo(() => {
-		return futuresMarkets.map((market) => {
+		const lowerSearch = search?.toLowerCase();
+		const markets = lowerSearch
+			? futuresMarkets.filter(
+					(m) =>
+						m.asset.toLowerCase().includes(lowerSearch) ||
+						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)
+			  )
+			: futuresMarkets;
+		return markets.map((market) => {
 			const description = getSynthDescription(market.asset, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const assetPriceInfo = pricesInfo[market.asset];
@@ -65,7 +78,7 @@ const FuturesMarketsTable: FC = () => {
 				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [futuresMarkets, pastRates, futuresVolumes, markPrices, pricesInfo, t]);
+	}, [search, futuresMarkets, t, futuresVolumes, pricesInfo, pastRates, markPrices]);
 
 	return (
 		<>
@@ -204,13 +217,13 @@ const FuturesMarketsTable: FC = () => {
 										<OpenInterestContainer>
 											<Currency.Price
 												price={cellProps.row.original.longInterest}
-												truncate
 												colorType="positive"
+												formatOptions={{ truncateOver: 1e3 }}
 											/>
 											<Currency.Price
 												price={cellProps.row.original.shortInterest}
-												truncate
 												colorType="negative"
+												formatOptions={{ truncateOver: 1e3 }}
 											/>
 										</OpenInterestContainer>
 									);
@@ -236,7 +249,12 @@ const FuturesMarketsTable: FC = () => {
 								),
 								accessor: 'dailyVolume',
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
-									return <Currency.Price price={cellProps.row.original.volume} truncate />;
+									return (
+										<Currency.Price
+											price={cellProps.row.original.volume}
+											formatOptions={{ truncateOver: 1e3 }}
+										/>
+									);
 								},
 								width: 125,
 								sortable: true,
@@ -308,7 +326,10 @@ const FuturesMarketsTable: FC = () => {
 							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
-										<Currency.Price price={cellProps.row.original.openInterest} truncate />
+										<Currency.Price
+											price={cellProps.row.original.openInterest}
+											formatOptions={{ truncateOver: 1e3 }}
+										/>
 										<div>
 											<ChangePercent
 												showArrow={false}
@@ -345,7 +366,10 @@ const FuturesMarketsTable: FC = () => {
 											/>
 										</div>
 										<div>
-											<Currency.Price price={cellProps.row.original.volume ?? 0} truncate />
+											<Currency.Price
+												price={cellProps.row.original.volume ?? 0}
+												formatOptions={{ truncateOver: 1e3 }}
+											/>
 										</div>
 									</div>
 								);

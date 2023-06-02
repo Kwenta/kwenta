@@ -7,10 +7,12 @@ import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { FuturesFilledPosition, FuturesMarket, PositionSide } from 'sdk/types/futures';
+import { getMarketName } from 'sdk/utils/futures';
+import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { formatNumber } from 'sdk/utils/number';
 import { selectMarkPrices } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatNumber } from 'utils/formatters/number';
-import { MarketKeyByAsset, getDisplayAsset, isDecimalFour } from 'utils/futures';
+import { isDecimalFour } from 'utils/futures';
 
 type MobilePositionRowProps = {
 	row: {
@@ -31,7 +33,7 @@ const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) =>
 				<div>
 					<OpenPositionSize>
 						{formatNumber(row.position?.size ?? 0)}
-						<OpenPositionMarketName>{getDisplayAsset(row.market?.asset)}</OpenPositionMarketName>
+						<OpenPositionMarketName>{getMarketName(row.market?.asset)}</OpenPositionMarketName>
 					</OpenPositionSize>
 					<OpenPositionSide side={row.position?.side ?? PositionSide.LONG}>
 						<span className="side">{row.position?.side ?? PositionSide.LONG}</span>{' '}
@@ -122,8 +124,8 @@ const OpenPositionSize = styled.div`
 `;
 
 const OpenPositionMarketName = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gold};
+	color: ${(props) => props.theme.colors.selectedTheme.yellow};
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.yellow};
 	border-radius: 4px;
 	font-size: 6px;
 	padding: 2px;

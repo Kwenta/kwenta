@@ -113,7 +113,7 @@ export default function CrossMarginOnboard({ isOpen }: Props) {
 		// 		<>
 		// 			<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
 		// 			<InputBalanceLabel
-		// 				balance={susdBal || zeroBN}
+		// 				balance={susdBal || ZERO_WEI}
 		// 				currencyKey="sUSD"
 		// 				onSetAmount={setDepositAmount}
 		// 			/>
@@ -192,11 +192,4 @@ const Complete = styled.div`
 
 const LoaderContainer = styled.div`
 	height: 120px;
-`;
-
-const MinimumAmountDisclaimer = styled.div`
-	font-size: 12px;
-	margin: 20px 0 0;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	text-align: center;
 `;

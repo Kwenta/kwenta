@@ -15,11 +15,16 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import Search from 'components/Table/Search';
 import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
+import { BANNER_HEIGHT_DESKTOP, BANNER_HEIGHT_MOBILE } from 'constants/announcement';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
+import { floorNumber, formatDollars } from 'sdk/utils/number';
+import { selectShowBanner } from 'state/app/selectors';
 import {
 	selectMarketAsset,
 	selectMarkets,
@@ -32,11 +37,14 @@ import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
 import media from 'styles/media';
-import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
-import { getMarketName, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
+import { getMarketName, getSynthDescription } from 'utils/futures';
 
+import {
+	MARKETS_DETAILS_HEIGHT_DESKTOP,
+	TRADE_PANEL_WIDTH_LG,
+	TRADE_PANEL_WIDTH_MD,
+} from '../styles';
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
-import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
 
 type MarketsDropdownProps = {
 	mobile?: boolean;
@@ -54,6 +62,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
 	const [favMarkets, setFavMarkets] = useLocalStorage<string[]>('favorite-markets', []);
+	const showBanner = useAppSelector(selectShowBanner);
 
 	const { ref } = useClickOutside(() => setOpen(false));
 
@@ -98,14 +107,21 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const selectedPastPrice = getPastPrice(marketAsset);
 
 	const options = useMemo(() => {
-		const markets = search
-			? futuresMarkets.filter((m) => m.asset.toLowerCase().includes(search.toLowerCase()))
+		const lowerSearch = search?.toLowerCase();
+		const markets = lowerSearch
+			? futuresMarkets.filter(
+					(m) =>
+						m.asset.toLowerCase().includes(lowerSearch) ||
+						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)
+			  )
 			: futuresMarkets;
 
 		const sortedMarkets = markets
 			.filter((m) => favMarkets.includes(m.asset))
 			.sort((a, b) =>
-				getBasePriceRateInfo(b.asset)?.price.sub(getBasePriceRateInfo(a.asset)?.price).gt(0)
+				getBasePriceRateInfo(b.asset)
+					?.price.sub(getBasePriceRateInfo(a.asset)?.price ?? 0)
+					.gt(0)
 					? 1
 					: -1
 			)
@@ -113,7 +129,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				markets
 					.filter((m) => !favMarkets.includes(m.asset))
 					.sort((a, b) =>
-						getBasePriceRateInfo(b.asset)?.price.sub(getBasePriceRateInfo(a.asset)?.price).gt(0)
+						getBasePriceRateInfo(b.asset)
+							?.price.sub(getBasePriceRateInfo(a.asset)?.price ?? 0)
+							.gt(0)
 							? 1
 							: -1
 					)
@@ -126,7 +144,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			const change =
 				basePriceRate && pastPrice?.rate && basePriceRate.price.gt(0)
 					? wei(basePriceRate.price).sub(pastPrice?.rate).div(basePriceRate.price)
-					: zeroBN;
+					: ZERO_WEI;
 
 			return {
 				value: market.asset,
@@ -146,10 +164,17 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
 
+	const tableHeight: number = useMemo(() => {
+		const BANNER_HEIGHT = mobile ? BANNER_HEIGHT_MOBILE : BANNER_HEIGHT_DESKTOP;
+		const OFFSET = mobile ? 159 : 205;
+		return Math.max(window.innerHeight - OFFSET - Number(showBanner) * BANNER_HEIGHT, 300);
+	}, [mobile, showBanner]);
+
 	return (
 		<SelectContainer mobile={mobile} ref={ref} accountType={accountType}>
 			<MarketsDropdownSelector
 				onClick={() => setOpen(!open)}
+				expanded={open}
 				mobile={mobile}
 				asset={marketAsset}
 				label={getMarketName(marketAsset)}
@@ -164,18 +189,12 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							? wei(selectedBasePriceRate.price)
 									.sub(selectedPastPrice.rate)
 									.div(selectedBasePriceRate.price)
-							: zeroBN,
+							: ZERO_WEI,
 					priceInfo: selectedBasePriceRate,
 				}}
 			/>
 			{open && (
-				<MarketsList
-					mobile={mobile}
-					height={Math.max(
-						window.innerHeight - (mobile ? 159 : accountType === 'cross_margin' ? 210 : 270),
-						300
-					)}
-				>
+				<MarketsList mobile={mobile} height={tableHeight}>
 					<SearchBarContainer>
 						<Search autoFocus onChange={setSearch} value={search} border={false} />
 					</SearchBarContainer>
@@ -297,12 +316,17 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	top: 66px;
-	z-index: 100;
+	z-index: 1000;
 	height: ${(props) => props.height}px;
 	width: ${TRADE_PANEL_WIDTH_LG}px;
 	${media.lessThan('xxl')`
 		width: ${TRADE_PANEL_WIDTH_MD}px;
 	`}
+
+	${media.lessThan('md')`
+		width: 100%;
+	`}
+
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
@@ -345,15 +369,18 @@ const SearchBarContainer = styled.div`
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean; accountType?: string }>`
-	height: 100%;
-	z-index: 40;
+	z-index: 100;
+	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
+	position: relative;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+
 	${(props) =>
 		props.mobile &&
 		css`
 			width: 100%;
 			border-bottom: ${props.theme.colors.selectedTheme.border};
 			position: absolute;
-			top: ${props.accountType === 'isolated_margin' ? '60' : '0'}px;
+			top: 0;
 			left: 0;
 			right: 0;
 			height: ${MARKET_SELECTOR_HEIGHT_MOBILE + 1}px;

@@ -5,8 +5,8 @@ import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
-import { formatShortDateUTC, toJSTimestamp } from 'utils/formatters/date';
-import { formatDollars } from 'utils/formatters/number';
+import { formatShortDateUTC, toJSTimestamp } from 'sdk/utils/date';
+import { formatDollars } from 'sdk/utils/number';
 
 import { initChart } from '../initChart';
 import type { EChartsOption } from '../initChart';
@@ -57,7 +57,7 @@ export const Volume = () => {
 					position: 'right',
 					axisLabel: {
 						formatter: (value: WeiSource) =>
-							formatDollars(value, { truncate: true, maxDecimals: 0 }),
+							formatDollars(value, { truncateOver: 1e3, maxDecimals: 0 }),
 					},
 				},
 			],

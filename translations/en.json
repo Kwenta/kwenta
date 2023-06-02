@@ -348,7 +348,7 @@
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
 				"open-interest-s": "Total notional value on all short positions / max open interest",
 				"open-interest-l": "Total notional value on all long positions / max open interest",
-				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed.",
+				"funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate increases when a market is skewed long, and decreases when it is skewed short. Funding accrues on a position every time it is opened, modified, or closed.",
 				"skew": "Skew is the total amount of outstanding long and short contracts expressed as a percentage"
 			},
 			"deprecated-info": "DEBT-PERP is being deprecated soon. Please close your positions at your earliest convenience."
@@ -727,7 +727,7 @@
 			},
 			"info": {
 				"default-market": "ETH-PERP",
-				"hourly-funding": "1H Funding Rate",
+				"hourly-funding": "Funding Rate",
 				"instant-funding": "Inst. Funding Rate",
 				"fallback-funding": "Funding Rate"
 			},
@@ -864,7 +864,7 @@
 							"deposit": "Deposit"
 						},
 						"bridge": {
-							"title": "Bridge",
+							"title": "Bridge & Swap",
 							"low-balance": "Your sUSD balance is low. You can bridge more assets from another network below.",
 							"no-balance": "To get started, you need sUSD to trade on Kwenta. You can bridge assets from another network into sUSD below."
 						}
@@ -884,6 +884,13 @@
 				"cost-basis": {
 					"tooltip": "Dynamic fees are currently in effect and may vary based on market conditions during the execution round"
 				},
+				"trade-balance": {
+					"available-margin": "Available Margin",
+					"locked-margin": "Locked Margin",
+					"no-available-margin": "No available margin",
+					"min-margin": "Min. $50 sUSD required to trade",
+					"tooltip": "Margin currently locked in closed markets. It will become available once the market reopens."
+				},
 				"confirmation": {
 					"modal": {
 						"approve-order": "Step 1: Approve sUSD spend",
@@ -895,6 +902,7 @@
 						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper.",
 						"disabled-min-margin": "Minimum market margin of $50 required",
 						"disabled-eth-bal": "Min ETH {{depositAmount}} balance required",
+						"disabled-exceeds-price-protection": "Price protection exceeded ",
 						"eth-bal-warning": "The limit order service requires some ETH to cover gas. The 0.01 ETH deposit will cover many orders and you can withdraw any unused balance.",
 						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool."
 					}
@@ -916,7 +924,7 @@
 				},
 				"fees": {
 					"tooltip": "Fees are displayed as maker / taker. Maker fees apply to orders that reduce the market skew. Taker fees apply to orders that increase the market skew.",
-					"keeper-tooltip": "Fixed fee to cover automated order execution"
+					"keeper-tooltip": "Dynamic fee to cover automated order execution"
 				},
 				"orders": {
 					"manage-keeper-deposit": {
@@ -941,6 +949,8 @@
 					"position-size": "Position Size",
 					"margin-change": "Margin",
 					"liquidation": "Liquidation",
+					"price-impact": "Price Impact",
+					"fill-price": "Fill Price",
 					"submit-size": "Submit size change",
 					"submit-margin-withdraw": "Withdraw Margin",
 					"submit-margin-deposit": "Deposit Margin",
@@ -1020,7 +1030,7 @@
 						"type": "Type",
 						"size": "Size",
 						"size-price": "Size/Price",
-						"reserved-margin": "Reserved margin",
+						"reserved-margin": "Margin",
 						"reduce-only": "Reduce only",
 						"commit-deposit": "Commit Deposit",
 						"price": "Target Price",

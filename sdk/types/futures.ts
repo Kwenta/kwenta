@@ -107,6 +107,14 @@ export enum FuturesMarketKey {
 	sLDOPERP = 'sLDOPERP',
 	sLTCPERP = 'sLTCPERP',
 	sSHIBPERP = 'sSHIBPERP',
+	sSUIPERP = 'sSUIPERP',
+	sPEPEPERP = 'sPEPEPERP',
+	sBLURPERP = 'sBLURPERP',
+	sXRPPERP = 'sXRPPERP',
+	sDOTPERP = 'sDOTPERP',
+	sTRXPERP = 'sTRXPERP',
+	sFLOKIPERP = 'sFLOKIPERP',
+	sINJPERP = 'sINJPERP',
 }
 
 export enum FuturesMarketAsset {
@@ -143,6 +151,14 @@ export enum FuturesMarketAsset {
 	LDO = 'LDO',
 	LTC = 'LTC',
 	SHIB = 'SHIB',
+	SUI = 'SUI',
+	PEPE = 'PEPE',
+	BLUR = 'BLUR',
+	XRP = 'XRP',
+	DOT = 'DOT',
+	TRX = 'TRX',
+	FLOKI = 'FLOKI',
+	INJ = 'INJ',
 }
 
 export interface FuturesMarketConfig {
@@ -165,24 +181,24 @@ export type FuturesVolumes<T = Wei> = {
 };
 
 export type PositionDetail = {
-	remainingMargin: Wei;
-	accessibleMargin: Wei;
+	remainingMargin: BigNumber;
+	accessibleMargin: BigNumber;
 	orderPending: boolean;
 	order: {
 		pending: boolean;
-		fee: Wei;
-		leverage: Wei;
+		fee: BigNumber;
+		leverage: BigNumber;
 	};
 	position: {
-		fundingIndex: Wei;
-		lastPrice: Wei;
-		size: Wei;
-		margin: Wei;
+		fundingIndex: BigNumber;
+		lastPrice: BigNumber;
+		size: BigNumber;
+		margin: BigNumber;
 	};
-	accruedFunding: Wei;
-	notionalValue: Wei;
-	liquidationPrice: Wei;
-	profitLoss: Wei;
+	accruedFunding: BigNumber;
+	notionalValue: BigNumber;
+	liquidationPrice: BigNumber;
+	profitLoss: BigNumber;
 };
 
 export enum PositionSide {
@@ -342,6 +358,7 @@ export type FuturesPotentialTradeDetails<T = Wei> = {
 	statusMessage: string;
 	priceImpact: T;
 	slippageAmount: T;
+	exceedsPriceProtection: boolean;
 };
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/interfaces/IFuturesMarketBaseTypes.sol#L6-L19

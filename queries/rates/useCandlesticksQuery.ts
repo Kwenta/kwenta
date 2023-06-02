@@ -1,47 +1,73 @@
-import { getCandles } from 'queries/futures/subgraph';
-import { NetworkId } from 'sdk/types/common';
+import axios from 'axios';
 
-import { getRatesEndpoint, mapCandles, mapPriceChart } from './utils';
+import { getSupportedResolution } from 'components/TVChart/utils';
+import { DEFAULT_NETWORK_ID } from 'constants/defaults';
+import { NetworkId } from 'sdk/types/common';
+import { getRatesEndpoint } from 'sdk/utils/prices';
+import { getCandles } from 'sdk/utils/subgraph';
+import logError from 'utils/logError';
+
+import { DEFAULT_PYTH_TV_ENDPOINT } from './constants';
+import { mapCandles, mapPythCandles } from './utils';
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
 	period: number,
-	networkId: number,
-	limit?: number,
-	orderDirection: 'asc' | 'desc' | undefined = 'asc',
-	priceChart?: boolean | null
+	networkId: NetworkId = DEFAULT_NETWORK_ID
 ) => {
-	const ratesEndpoint = getRatesEndpoint(networkId as NetworkId);
+	const ratesEndpoint = getRatesEndpoint(networkId);
+	const pythTvEndpoint = DEFAULT_PYTH_TV_ENDPOINT;
 
-	const response = await getCandles(
-		ratesEndpoint,
-		{
-			first: limit ?? 999999,
-			where: {
-				synth: `${currencyKey}`,
-				timestamp_gt: `${minTimestamp}`,
-				timestamp_lt: `${maxTimestamp}`,
-				period: `${period}`,
+	if (period <= 3600) {
+		const response = await axios
+			.get(pythTvEndpoint, {
+				params: {
+					from: minTimestamp,
+					to: maxTimestamp,
+					symbol: `${currencyKey}/USD`,
+					resolution: getSupportedResolution(period),
+				},
+			})
+			.then((response) => {
+				return mapPythCandles(response.data);
+			})
+			.catch((err) => {
+				logError(err);
+				return [];
+			});
+
+		return response;
+	} else {
+		const response = await getCandles(
+			ratesEndpoint,
+			{
+				first: 999999,
+				where: {
+					synth: `${currencyKey}`,
+					timestamp_gt: `${minTimestamp}`,
+					timestamp_lt: `${maxTimestamp}`,
+					period: `${period}`,
+				},
+				orderBy: 'timestamp',
+				orderDirection: 'asc',
 			},
-			orderBy: 'timestamp',
-			orderDirection,
-		},
-		{
-			id: true,
-			synth: true,
-			open: true,
-			high: true,
-			low: true,
-			close: true,
-			timestamp: true,
-			average: true,
-			period: true,
-			aggregatedPrices: true,
-		}
-	).then((response) => {
-		return priceChart ? mapPriceChart(response) : mapCandles(response);
-	});
-	return response;
+			{
+				id: true,
+				synth: true,
+				open: true,
+				high: true,
+				low: true,
+				close: true,
+				timestamp: true,
+				average: true,
+				period: true,
+				aggregatedPrices: true,
+			}
+		).then((response) => {
+			return mapCandles(response);
+		});
+		return response;
+	}
 };

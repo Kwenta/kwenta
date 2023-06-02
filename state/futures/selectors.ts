@@ -5,10 +5,14 @@ import { DEFAULT_LEVERAGE } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
+import { truncateTimestamp } from 'sdk/utils/date';
 import { getDefaultPriceImpact, unserializePotentialTrade } from 'sdk/utils/futures';
+import { MarketKeyByAsset, MarketAssetByKey } from 'sdk/utils/futures';
+import { stripZeros } from 'sdk/utils/number';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import {
@@ -20,11 +24,8 @@ import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeDelayedOrderFee, sameSide } from 'utils/costCalculations';
-import { truncateTimestamp } from 'utils/formatters/date';
 import { getKnownError } from 'utils/formatters/error';
-import { stripZeros, zeroBN } from 'utils/formatters/number';
 import {
-	MarketKeyByAsset,
 	unserializeCmBalanceInfo,
 	unserializeFuturesVolumes,
 	unserializeGasEstimate,
@@ -35,7 +36,6 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeConditionalOrders,
-	MarketAssetByKey,
 } from 'utils/futures';
 
 import {
@@ -207,7 +207,7 @@ export const selectSkewAdjustedPrice = createSelector(
 		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return price;
 		return price
 			? wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1))
-			: zeroBN;
+			: ZERO_WEI;
 	}
 );
 
@@ -398,8 +398,8 @@ export const selectActiveSmartPositionsCount = createSelector(
 
 export const selectTotalUnrealizedPnl = createSelector(selectFuturesPositions, (positions) => {
 	return positions.reduce((acc, p) => {
-		return acc.add(p.position?.pnl ?? zeroBN);
-	}, zeroBN);
+		return acc.add(p.position?.pnl ?? ZERO_WEI);
+	}, ZERO_WEI);
 });
 
 export const selectSubmittingFuturesTx = createSelector(
@@ -582,11 +582,11 @@ export const selectAvailableMargin = createSelector(
 	selectMarketInfo,
 	selectPosition,
 	(marketInfo, position) => {
-		if (!marketInfo || !position) return zeroBN;
+		if (!marketInfo || !position) return ZERO_WEI;
 		if (!position?.position) return position.remainingMargin;
 
 		let inaccessible =
-			position.position.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? zeroBN;
+			position.position.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? ZERO_WEI;
 
 		// If the user has a position open, we'll enforce a min initial margin requirement.
 		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
@@ -596,31 +596,33 @@ export const selectAvailableMargin = createSelector(
 		// check if available margin will be less than 0
 		return position.remainingMargin.sub(inaccessible).gt(0)
 			? position.remainingMargin.sub(inaccessible).abs()
-			: zeroBN;
+			: ZERO_WEI;
 	}
 );
 
 export const selectRemainingMarketMargin = createSelector(selectPosition, (position) => {
-	if (!position) return zeroBN;
+	if (!position) return ZERO_WEI;
 	return position.remainingMargin;
 });
 
-export const selectIdleMarginInMarkets = createSelector(
-	selectCrossMarginPositions,
-	selectMarkets,
-	(positions, markets) => {
+export const selectMarginInMarkets = (isSuspended: boolean = false) =>
+	createSelector(selectCrossMarginPositions, selectMarkets, (positions, markets) => {
 		const idleInMarkets = positions
 			.filter((p) => {
-				return !markets.find((m) => m.marketKey === p.marketKey)?.isSuspended;
+				const market = markets.find((m) => m.marketKey === p.marketKey);
+				return market && market.isSuspended === isSuspended;
 			})
 			.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
 			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0));
 		return idleInMarkets;
-	}
-);
+	});
+
+export const selectAvailableMarginInMarkets = selectMarginInMarkets();
+
+export const selectLockedMarginInMarkets = selectMarginInMarkets(true);
 
 export const selectIdleMargin = createSelector(
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginBalanceInfo,
 	selectSusdBalance,
 	(idleInMarkets, { freeMargin }, balance) => {
@@ -631,7 +633,7 @@ export const selectIdleMargin = createSelector(
 export const selectSmartMarginAllowanceValid = createSelector(
 	selectCrossMarginAccountData,
 	selectCrossMarginBalanceInfo,
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginMarginDelta,
 	(account, { freeMargin }, idleInMarkets, marginDelta) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets);
@@ -644,7 +646,7 @@ export const selectSmartMarginAllowanceValid = createSelector(
 );
 
 export const selectWithdrawableMargin = createSelector(
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectCrossMarginBalanceInfo,
 	(idleInMarkets, { freeMargin }) => {
 		return idleInMarkets.add(freeMargin);
@@ -704,11 +706,12 @@ export const selectEditPositionInputs = createSelector(
 export const selectEditMarginAllowanceValid = createSelector(
 	selectCrossMarginAccountData,
 	selectCrossMarginBalanceInfo,
-	selectIdleMarginInMarkets,
+	selectAvailableMarginInMarkets,
 	selectEditPositionInputs,
 	(account, { freeMargin }, idleInMarkets, { marginDelta }) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets);
 		if (!account) return false;
+		if (isNaN(Number(marginDelta))) return false;
 		const marginDelatWei = wei(marginDelta || 0);
 		const marginDeposit = marginDelatWei.sub(totalIdleMargin);
 		return (
@@ -720,6 +723,8 @@ export const selectEditMarginAllowanceValid = createSelector(
 
 export const selectSelectedInputDenomination = (state: RootState) =>
 	state.futures.selectedInputDenomination;
+
+export const selectSelectedInputHours = (state: RootState) => state.futures.selectedInputHours;
 
 export const selectCrossMarginSelectedLeverage = createSelector(
 	selectMarketKey,
@@ -738,24 +743,17 @@ export const selectWalletEthBalance = createSelector(selectCrossMarginAccountDat
 	wei(account?.balanceInfo.walletEthBal || 0)
 );
 
-export const selectCrossMarginTradeFees = createSelector(
+export const selectSmartMarginKeeperDeposit = createSelector(
 	(state: RootState) => state.futures.crossMargin.fees,
 	(fees) => {
-		return {
-			delayedOrderFee: wei(fees.delayedOrderFee),
-			keeperEthDeposit: wei(fees.keeperEthDeposit),
-		};
+		return wei(fees.keeperEthDeposit);
 	}
 );
 
-export const selectSmartMarginKeeperDeposit = createSelector(selectCrossMarginTradeFees, (fees) => {
-	return fees.keeperEthDeposit;
-});
-
 export const selectKeeperDepositExceedsBal = createSelector(
-	selectCrossMarginTradeFees,
+	selectSmartMarginKeeperDeposit,
 	selectWalletEthBalance,
-	({ keeperEthDeposit }, walletEthBalance) => {
+	(keeperEthDeposit, walletEthBalance) => {
 		return keeperEthDeposit.gt(walletEthBalance);
 	}
 );
@@ -776,7 +774,7 @@ export const selectTradeSizeInputsDisabled = createSelector(
 	(marginDeltaInput, selectedAccountType, position) => {
 		const remaining =
 			selectedAccountType === 'isolated_margin'
-				? position?.remainingMargin || zeroBN
+				? position?.remainingMargin || ZERO_WEI
 				: wei(marginDeltaInput || 0);
 		return remaining.lte(0);
 	}
@@ -952,7 +950,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 	(position, marginDelta, { freeMargin }, selectedType, orderType) => {
 		let remainingMargin;
 		if (selectedType === 'isolated_margin') {
-			remainingMargin = position?.remainingMargin || zeroBN;
+			remainingMargin = position?.remainingMargin || ZERO_WEI;
 		} else {
 			remainingMargin = marginDelta;
 		}
@@ -1513,7 +1511,7 @@ export const selectHasRemainingMargin = createSelector(
 	selectFuturesType,
 	selectCrossMarginBalanceInfo,
 	(position, futuresType, balanceInfo) => {
-		const posMargin = position?.remainingMargin ?? zeroBN;
+		const posMargin = position?.remainingMargin ?? ZERO_WEI;
 		return futuresType === 'cross_margin'
 			? balanceInfo.freeMargin.add(posMargin).gt(0)
 			: posMargin.gt(0);
@@ -1570,12 +1568,12 @@ export const selectPreviewAvailableMargin = createSelector(
 	selectTradePreview,
 	selectDelayedOrderFee,
 	(marketInfo, tradePreview, delayedOrderFee) => {
-		if (!marketInfo || !tradePreview) return zeroBN;
+		if (!marketInfo || !tradePreview) return ZERO_WEI;
 
-		let inaccessible = tradePreview.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? zeroBN;
+		let inaccessible = tradePreview.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? ZERO_WEI;
 		const totalDeposit = !!delayedOrderFee.commitDeposit
 			? delayedOrderFee.commitDeposit.add(marketInfo.keeperDeposit)
-			: zeroBN;
+			: ZERO_WEI;
 
 		// If the user has a position open, we'll enforce a min initial margin requirement.
 		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
@@ -1585,7 +1583,7 @@ export const selectPreviewAvailableMargin = createSelector(
 		// check if available margin will be less than 0
 		return tradePreview.margin.sub(inaccessible).sub(totalDeposit).gt(0)
 			? tradePreview.margin.sub(inaccessible).sub(totalDeposit).abs()
-			: zeroBN;
+			: ZERO_WEI;
 	}
 );
 
@@ -1642,9 +1640,9 @@ export const selectPositionPreviewData = createSelector(
 			notionalValue: tradePreview.notionalValue,
 			leverage: tradePreview.margin.gt(0)
 				? tradePreview.notionalValue.div(tradePreview.margin).abs()
-				: zeroBN,
+				: ZERO_WEI,
 			liquidationPrice: tradePreview.liqPrice,
-			avgEntryPrice: modifiedAverage || zeroBN,
+			avgEntryPrice: modifiedAverage || ZERO_WEI,
 			showStatus: tradePreview.showStatus,
 		} as PositionPreviewData;
 	}
@@ -1656,8 +1654,8 @@ export const selectPreviewMarginChange = createSelector(
 	selectMarketInfo,
 	(tradePreview, previewAvailableMargin, marketInfo) => {
 		const potentialMarginUsage = tradePreview?.margin.gt(0)
-			? tradePreview!.margin.sub(previewAvailableMargin).div(tradePreview!.margin).abs() ?? zeroBN
-			: zeroBN;
+			? tradePreview!.margin.sub(previewAvailableMargin).div(tradePreview!.margin).abs() ?? ZERO_WEI
+			: ZERO_WEI;
 
 		const maxPositionSize =
 			!!tradePreview && !!marketInfo
@@ -1668,13 +1666,13 @@ export const selectPreviewMarginChange = createSelector(
 
 		const potentialBuyingPower = !!maxPositionSize
 			? maxPositionSize.sub(tradePreview?.notionalValue).abs()
-			: zeroBN;
+			: ZERO_WEI;
 
 		return {
 			showPreview: !!tradePreview && tradePreview.sizeDelta.abs().gt(0),
-			totalMargin: tradePreview?.margin || zeroBN,
-			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : zeroBN,
-			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
+			totalMargin: tradePreview?.margin || ZERO_WEI,
+			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : ZERO_WEI,
+			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : ZERO_WEI,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
 	}
@@ -1690,8 +1688,8 @@ export const selectBuyingPower = createSelector(
 	selectPosition,
 	selectMaxLeverage,
 	(position, maxLeverage) => {
-		const totalMargin = position?.remainingMargin ?? zeroBN;
-		return totalMargin.gt(zeroBN) ? totalMargin.mul(maxLeverage ?? zeroBN) : zeroBN;
+		const totalMargin = position?.remainingMargin ?? ZERO_WEI;
+		return totalMargin.gt(ZERO_WEI) ? totalMargin.mul(maxLeverage ?? ZERO_WEI) : ZERO_WEI;
 	}
 );
 
@@ -1699,12 +1697,12 @@ export const selectMarginUsage = createSelector(
 	selectAvailableMargin,
 	selectPosition,
 	(availableMargin, position) => {
-		const totalMargin = position?.remainingMargin ?? zeroBN;
-		return availableMargin.gt(zeroBN)
+		const totalMargin = position?.remainingMargin ?? ZERO_WEI;
+		return availableMargin.gt(ZERO_WEI)
 			? totalMargin.sub(availableMargin).div(totalMargin)
-			: totalMargin.gt(zeroBN)
+			: totalMargin.gt(ZERO_WEI)
 			? wei(1)
-			: zeroBN;
+			: ZERO_WEI;
 	}
 );
 

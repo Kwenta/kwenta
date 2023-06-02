@@ -1,7 +1,7 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 
 import { Period } from 'sdk/constants/period';
+import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	SmartMarginOrderType,
@@ -116,6 +116,7 @@ export type FuturesQueryStatuses = {
 	trades: QueryStatus;
 	selectedTraderPositionHistory: QueryStatus;
 	marginTransfers: QueryStatus;
+	historicalFundingRates: QueryStatus;
 };
 
 export type FuturesTransactionType =
@@ -177,6 +178,10 @@ type FuturesNetwork = number;
 
 export type InputCurrencyDenomination = 'usd' | 'native';
 
+export type FundingRatePeriods = {
+	[key: number]: string;
+};
+
 export type AccountContext = {
 	type: FuturesAccountType;
 	network: NetworkId;
@@ -221,6 +226,8 @@ export type FuturesState = {
 	transactionEstimations: TransactionEstimations;
 	errors: FuturesErrors;
 	selectedInputDenomination: InputCurrencyDenomination;
+	selectedInputHours: number;
+	selectedChart: 'price' | 'funding';
 	preferences: {
 		showHistory?: boolean;
 	};
@@ -237,6 +244,9 @@ export type FuturesState = {
 		>;
 	};
 	tradePanelDrawerOpen: boolean;
+	historicalFundingRates: Partial<
+		Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>
+	>;
 };
 
 export type TradePreviewResult = {

@@ -2,7 +2,7 @@ import CrossMarginIconDark from 'assets/svg/futures/cross-margin-icon-dark.svg';
 import CrossMarginIconLight from 'assets/svg/futures/cross-margin-icon-light.svg';
 import IsolatedMarginIconDark from 'assets/svg/futures/isolated-margin-icon-dark.svg';
 import IsolatedMarginIconLight from 'assets/svg/futures/isolated-margin-icon-light.svg';
-import { FuturesAccountType } from 'queries/futures/subgraph';
+import { FuturesAccountType } from 'sdk/utils/subgraph';
 import { useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 

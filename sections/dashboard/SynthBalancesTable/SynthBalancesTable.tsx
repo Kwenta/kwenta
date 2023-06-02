@@ -10,14 +10,15 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { SynthSymbol } from 'sdk/data/synths';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { formatNumber } from 'sdk/utils/number';
 import { selectBalances } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { selectSynthsMap } from 'state/wallet/selectors';
 import { sortWei } from 'utils/balances';
-import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isDecimalFour } from 'utils/futures';
 
 type Cell = {
@@ -64,7 +65,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 				usdBalance,
 				price,
 				priceChange:
-					currencyKey === 'sUSD' ? zeroBN : price?.sub(pastPrice?.rate ?? zeroBN).div(price),
+					currencyKey === 'sUSD' ? ZERO_WEI : price?.sub(pastPrice?.rate ?? ZERO_WEI).div(price),
 			};
 		});
 	}, [pastRates, prices, synthBalances, synthsMap]);
@@ -170,8 +171,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								sortable: true,
 								sortType: useMemo(
 									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-										const rowOne = rowA.original.price ?? zeroBN;
-										const rowTwo = rowB.original.price ?? zeroBN;
+										const rowOne = rowA.original.price ?? ZERO_WEI;
+										const rowTwo = rowB.original.price ?? ZERO_WEI;
 										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
 									},
 									[]
@@ -184,7 +185,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 									return conditionalRender<Cell['priceChange']>(
 										cellProps.row.original.priceChange,
 										<ChangePercent
-											value={cellProps.row.original.priceChange ?? zeroBN}
+											value={cellProps.row.original.priceChange ?? ZERO_WEI}
 											decimals={2}
 											className="change-pct"
 										/>
@@ -193,8 +194,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								sortable: true,
 								sortType: useMemo(
 									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-										const rowOne = rowA.original.priceChange ?? zeroBN;
-										const rowTwo = rowB.original.priceChange ?? zeroBN;
+										const rowOne = rowA.original.priceChange ?? ZERO_WEI;
+										const rowTwo = rowB.original.priceChange ?? ZERO_WEI;
 
 										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
 									},
@@ -272,7 +273,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 								return conditionalRender<Cell['priceChange']>(
 									cellProps.row.original.priceChange,
 									<ChangePercent
-										value={cellProps.row.original.priceChange ?? zeroBN}
+										value={cellProps.row.original.priceChange ?? ZERO_WEI}
 										decimals={2}
 										className="change-pct"
 									/>
@@ -280,8 +281,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 							},
 							sortable: true,
 							sortType: (rowA: Row<Cell>, rowB: Row<Cell>) => {
-								const rowOne = rowA.original.priceChange ?? zeroBN;
-								const rowTwo = rowB.original.priceChange ?? zeroBN;
+								const rowOne = rowA.original.priceChange ?? ZERO_WEI;
+								const rowTwo = rowB.original.priceChange ?? ZERO_WEI;
 
 								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
 							},

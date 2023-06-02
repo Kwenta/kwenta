@@ -14,6 +14,7 @@ import {
 	FuturesTrade,
 	FuturesOrderType,
 } from 'sdk/types/futures';
+import { MarketKeyByAsset } from 'sdk/utils/futures';
 import {
 	DEFAULT_MAP_BY_NETWORK,
 	DEFAULT_QUERY_STATUS,
@@ -26,7 +27,6 @@ import {
 } from 'state/constants';
 import { accountType } from 'state/helpers';
 import { FetchStatus } from 'state/types';
-import { MarketKeyByAsset } from 'utils/futures';
 
 import {
 	fetchCrossMarginBalanceInfo,
@@ -46,6 +46,7 @@ import {
 	fetchIsolatedOpenOrders,
 	fetchMarginTransfers,
 	fetchCombinedMarginTransfers,
+	fetchFundingRatesHistory,
 } from './actions';
 import {
 	CrossMarginAccountData,
@@ -72,6 +73,8 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	errors: {},
 	fundingRates: [],
 	selectedInputDenomination: 'usd',
+	selectedInputHours: 1,
+	selectedChart: 'price',
 	preferences: {
 		showHistory: true,
 	},
@@ -98,6 +101,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
+		historicalFundingRates: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -167,6 +171,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
+	historicalFundingRates: {},
 };
 
 const futuresSlice = createSlice({
@@ -258,6 +263,9 @@ const futuresSlice = createSlice({
 		},
 		setSelectedInputDenomination: (state, action: PayloadAction<InputCurrencyDenomination>) => {
 			state.selectedInputDenomination = action.payload;
+		},
+		setSelectedInputFundingRateHour: (state, action: PayloadAction<number>) => {
+			state.selectedInputHours = action.payload;
 		},
 		setIsolatedMarginFee: (state, action: PayloadAction<string>) => {
 			state.isolatedMargin.tradeFee = action.payload;
@@ -369,6 +377,9 @@ const futuresSlice = createSlice({
 		},
 		setShowTradeHistory: (state, action: PayloadAction<boolean>) => {
 			state.preferences.showHistory = action.payload;
+		},
+		setSelectedChart: (state, action: PayloadAction<'price' | 'funding'>) => {
+			state.selectedChart = action.payload;
 		},
 	},
 	extraReducers: (builder) => {
@@ -716,6 +727,17 @@ const futuresSlice = createSlice({
 				status: FetchStatus.Error,
 			};
 		});
+
+		// Fetch funding rates
+		builder.addCase(fetchFundingRatesHistory.rejected, (futuresState) => {
+			futuresState.queryStatuses.historicalFundingRates = {
+				error: 'Failed to fetch funding rates',
+				status: FetchStatus.Error,
+			};
+		});
+		builder.addCase(fetchFundingRatesHistory.fulfilled, (futuresState, { payload }) => {
+			futuresState.historicalFundingRates[payload.marketAsset] = payload.rates;
+		});
 	},
 });
 
@@ -751,6 +773,7 @@ export const {
 	setCrossMarginOrderCancelling,
 	setSelectedTrader,
 	setSelectedInputDenomination,
+	setSelectedInputFundingRateHour,
 	setCrossMarginEditPositionInputs,
 	setIsolatedMarginEditPositionInputs,
 	incrementIsolatedPreviewCount,
@@ -760,6 +783,7 @@ export const {
 	setSLTPModalTakeProfit,
 	setTradePanelDrawerOpen,
 	setShowTradeHistory,
+	setSelectedChart,
 } = futuresSlice.actions;
 
 const findWalletForAccount = (

@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 
+import { toWei } from 'sdk/utils/number';
 import type { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { unserializeBalances } from 'utils/balances';
-import { toWei } from 'utils/formatters/number';
 
 export const selectBalancesFetchStatus = (state: RootState) => state.balances.status;
 

@@ -14,7 +14,9 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
-import { MIN_MARGIN_AMOUNT } from 'constants/futures';
+import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatDollars } from 'sdk/utils/number';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions';
 import {
@@ -24,7 +26,6 @@ import {
 	selectPosition,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { formatDollars, zeroBN } from 'utils/formatters/number';
 
 type Props = {
 	onDismiss(): void;
@@ -50,9 +51,9 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	const availableMargin = useAppSelector(selectAvailableMargin);
 
 	const minDeposit = useMemo(() => {
-		const accessibleMargin = position?.accessibleMargin ?? zeroBN;
+		const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI;
 		const min = MIN_MARGIN_AMOUNT.sub(accessibleMargin);
-		return min.lt(zeroBN) ? zeroBN : min;
+		return min.lt(ZERO_WEI) ? ZERO_WEI : min;
 	}, [position?.accessibleMargin]);
 
 	const [openSocket, setOpenSocket] = useState(false);
@@ -63,9 +64,9 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 
 	const balanceStatus: BalanceStatus = useMemo(
 		() =>
-			availableMargin.gt(zeroBN) || susdBalance.gt(minDeposit)
+			availableMargin.gt(ZERO_WEI) || susdBalance.gt(minDeposit)
 				? 'high_balance'
-				: susdBalance.eq(zeroBN)
+				: susdBalance.eq(ZERO_WEI)
 				? 'no_balance'
 				: 'low_balance',
 		[availableMargin, minDeposit, susdBalance]

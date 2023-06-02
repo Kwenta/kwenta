@@ -169,33 +169,36 @@ export const Table: FC<TableProps> = memo(
 						className={className}
 					>
 						{headerGroups.map((headerGroup) => (
-							<div className="table-row" style={{ display: 'flex' }}>
-								{headerGroup.headers.map((column: any) => (
-									<TableCellHead
-										hideHeaders={hideHeaders}
-										{...column.getHeaderProps(
-											column.sortable ? column.getSortByToggleProps() : undefined
-										)}
-									>
-										{column.render('Header')}
-										{column.sortable && (
-											<SortIconContainer>
-												{column.isSorted ? (
-													column.isSortedDesc ? (
-														<StyledSortDownIcon />
+							<div key={headerGroup.id} className="table-row" style={{ display: 'flex' }}>
+								{headerGroup.headers.map((column: any) => {
+									return (
+										<TableCellHead
+											key={column.id}
+											hideHeaders={hideHeaders}
+											{...column.getHeaderProps(
+												column.sortable ? column.getSortByToggleProps() : undefined
+											)}
+										>
+											{column.render('Header')}
+											{column.sortable && (
+												<SortIconContainer>
+													{column.isSorted ? (
+														column.isSortedDesc ? (
+															<StyledSortDownIcon />
+														) : (
+															<StyledSortUpIcon />
+														)
 													) : (
-														<StyledSortUpIcon />
-													)
-												) : (
-													<>
-														<StyledSortUpIcon />
-														<StyledSortDownIcon />
-													</>
-												)}
-											</SortIconContainer>
-										)}
-									</TableCellHead>
-								))}
+														<>
+															<StyledSortUpIcon />
+															<StyledSortDownIcon />
+														</>
+													)}
+												</SortIconContainer>
+											)}
+										</TableCellHead>
+									);
+								})}
 							</div>
 						))}
 						{isLoading ? (
@@ -203,7 +206,7 @@ export const Table: FC<TableProps> = memo(
 						) : !!noResultsMessage && !isLoading && data.length === 0 ? (
 							noResultsMessage
 						) : page.length > 0 ? (
-							<TableBody className="table-body" {...getTableBodyProps()}>
+							<TableBody key="table-body" className="table-body" {...getTableBodyProps()}>
 								{page.map((row, idx) => {
 									prepareRow(row);
 									const props = row.getRowProps();
@@ -334,6 +337,7 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBo
 				color: ${(props) => props.theme.colors.selectedTheme.text.label};
 				font-family: ${(props) => props.theme.fonts.regular};
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+				height: 34px;
 			}
 		`}
 `;

@@ -1,70 +1,125 @@
-import { useRouter } from 'next/router';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { BANNER_ENABLED, BANNER_TEXT } from 'constants/announcement';
-import ROUTES from 'constants/routes';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { Body } from 'components/Text';
+import {
+	BANNER_ENABLED,
+	BANNER_HEIGHT_DESKTOP,
+	BANNER_HEIGHT_MOBILE,
+	BANNER_LINK_URL,
+	BANNER_TEXT,
+	BANNER_WAITING_TIME,
+} from 'constants/announcement';
+import { MARKET_SELECTOR_HEIGHT_MOBILE } from 'sections/futures/Trade/MarketsDropdownSelector';
+import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover';
+import { setShowBanner } from 'state/app/reducer';
+import { selectShowBanner } from 'state/app/selectors';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
+import localStore from 'utils/localStore';
+
+type BannerViewProps = {
+	mode: 'mobile' | 'desktop';
+	onDismiss: (e: any) => void;
+	onDetails: () => void;
+};
+
+const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) => {
+	const isMobile = mode === 'mobile';
+	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { flex: '0.1' };
+	const closeIconProps = isMobile ? { width: 12, height: 12 } : {};
+	const linkSize = isMobile ? 'small' : 'medium';
+
+	return (
+		<FuturesBannerContainer onClick={onDetails}>
+			<FuturesBannerLinkWrapper>
+				<FuturesLink size={linkSize}>
+					<strong>Important: </strong>
+					{BANNER_TEXT}
+				</FuturesLink>
+				<CloseIconWithHover onClick={onDismiss} style={closeIconStyle} {...closeIconProps} />
+			</FuturesBannerLinkWrapper>
+		</FuturesBannerContainer>
+	);
+};
 
 const Banner = memo(() => {
-	const router = useRouter();
-	const currentMarket = useAppSelector(selectMarketAsset);
+	const dispatch = useAppDispatch();
+	const showBanner = useAppSelector(selectShowBanner);
+	const storedTime: number = localStore.get('bannerIsClicked') || 0;
 
-	const switchToSM = useCallback(() => {
-		router.push(ROUTES.Markets.MarketPair(currentMarket, 'cross_margin'));
-	}, [currentMarket, router]);
+	useEffect(
+		() => {
+			const currentTime = new Date().getTime();
+			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED));
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[storedTime]
+	);
 
-	if (!BANNER_ENABLED) return null;
-	if (router.pathname === '/market' && router.query.accountType === 'isolated_margin') {
-		return (
-			<>
-				<DesktopOnlyView>
-					<FuturesBannerContainer onClick={() => switchToSM()}>
-						<FuturesBannerLinkWrapper>
-							<FuturesLink>{BANNER_TEXT}</FuturesLink>
-						</FuturesBannerLinkWrapper>
-					</FuturesBannerContainer>
-				</DesktopOnlyView>
-				<MobileOrTabletView>
-					<FuturesBannerContainer onClick={() => switchToSM()}>
-						<FuturesLink>{BANNER_TEXT}</FuturesLink>
-					</FuturesBannerContainer>
-				</MobileOrTabletView>
-			</>
-		);
-	}
-	return null;
+	const handleDismiss = useCallback(
+		(e) => {
+			dispatch(setShowBanner(false));
+			localStore.set('bannerIsClicked', new Date().getTime());
+			e.stopPropagation();
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
+	const openDetails = useCallback(
+		() => window.open(BANNER_LINK_URL, '_blank', 'noopener noreferrer'),
+		[]
+	);
+
+	if (!BANNER_ENABLED || !showBanner) return null;
+
+	return (
+		<>
+			<DesktopOnlyView>
+				<BannerView mode="desktop" onDismiss={handleDismiss} onDetails={openDetails} />
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<BannerView mode="mobile" onDismiss={handleDismiss} onDetails={openDetails} />
+			</MobileOrTabletView>
+		</>
+	);
 });
 
-const FuturesLink = styled.div`
+const FuturesLink = styled(Body)`
 	margin-right: 5px;
 	padding: 4px 9px;
 	border-radius: 20px;
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.text};
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.text};
+	flex: 5;
+	${media.lessThan('md')`
+		margin-right: 0px;
+		flex: 1;
+	`};
 `;
 
 const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
-	height: 60px;
+	height: ${BANNER_HEIGHT_DESKTOP}px;
 	width: 100%;
 	display: flex;
 	align-items: center;
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.background};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.background};
 	margin-bottom: 0;
 	cursor: pointer;
 
 	${media.lessThan('md')`
 		position: relative;
 		margin-bottom: 0px;
-		flex-direction: column;
+		flex-direction: row;
 		justify-content: center;
 		text-align: center;
 		background: transaparent;
-		padding: 22px 10px;
+		padding: 12px 10px;
 		border-radius: 0px;
 		gap: 5px;
+		height: ${BANNER_HEIGHT_MOBILE}px;
+		margin-top: ${MARKET_SELECTOR_HEIGHT_MOBILE}px;
 	`}
 `;
 
@@ -77,6 +132,7 @@ const FuturesBannerLinkWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding: 0 10px;
 `;
 
 export default Banner;

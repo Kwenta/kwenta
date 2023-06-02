@@ -64,7 +64,7 @@ const newTheme = {
 	},
 	text: {
 		primary: common.palette.neutral.n900,
-		secondary: common.palette.neutral.n600,
+		secondary: common.palette.neutral.n400,
 		tertiary: common.palette.neutral,
 		positive: common.palette.green.g800,
 		negative: common.palette.red.r700,
@@ -116,6 +116,27 @@ const newTheme = {
 				text: common.palette.neutral.n900,
 			},
 		},
+		redGray: {
+			text: common.palette.red.r300,
+			background: common.palette.neutral.n20,
+			border: common.palette.neutral.n70,
+			outline: {
+				background: common.palette.neutral.n20,
+				text: common.palette.red.r300,
+				border: common.palette.neutral.n20,
+			},
+			hover: {
+				background: common.palette.neutral.n30,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
+			},
+		},
+	},
+	banner: {
+		yellow: {
+			text: common.palette.yellow.y1000,
+			background: common.palette.yellow.y300,
+		},
 	},
 	badge: {
 		yellow: {
@@ -146,6 +167,9 @@ const newTheme = {
 			},
 		},
 	},
+	checkBox: {
+		border: common.palette.neutral.n100,
+	},
 	tabs: {
 		position: {
 			background: common.palette.neutral.n20,
@@ -158,6 +182,18 @@ const newTheme = {
 				color: common.palette.red.r300,
 				background: common.palette.alpha.red5,
 			},
+		},
+	},
+	pencilIcon: {
+		color: common.palette.yellow.y900,
+		hover: {
+			color: common.palette.yellow.y500,
+		},
+	},
+	fundingChart: {
+		tooltip: {
+			background: common.palette.neutral.n10,
+			border: common.palette.neutral.n50,
 		},
 	},
 };

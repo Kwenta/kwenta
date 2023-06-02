@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
+import { truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { approveKwentaToken, redeemToken } from 'state/staking/actions';
@@ -14,7 +15,6 @@ import {
 	selectVKwentaBalance,
 } from 'state/staking/selectors';
 import { numericValueCSS } from 'styles/common';
-import { truncateNumbers } from 'utils/formatters/number';
 
 type RedeemInputCardProps = {
 	inputLabel: string;

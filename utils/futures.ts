@@ -5,7 +5,6 @@ import {
 	DelayedOrder,
 	FuturesMarket,
 	FuturesMarketAsset,
-	FuturesMarketKey,
 	ConditionalOrder,
 	FuturesOrderType,
 	FuturesPosition,
@@ -15,6 +14,8 @@ import {
 	PositionSide,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
+import { AssetDisplayByAsset, MarketKeyByAsset, getDisplayAsset } from 'sdk/utils/futures';
+import { formatNumber } from 'sdk/utils/number';
 import {
 	CrossMarginBalanceInfo,
 	TradeSizeInputs,
@@ -26,14 +27,8 @@ import {
 } from 'state/futures/types';
 import { deserializeWeiObject } from 'state/helpers';
 
-import { formatNumber } from './formatters/number';
-
 export const getMarketName = (asset: FuturesMarketAsset) => {
-	return `${getDisplayAsset(asset)}-PERP`;
-};
-
-export const getDisplayAsset = (asset: string | null) => {
-	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
+	return `${getDisplayAsset(asset)}/sUSD`;
 };
 
 export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => {
@@ -43,121 +38,8 @@ export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => 
 	});
 };
 
-export const isDecimalFour = (marketKeyOrAsset: string | undefined): boolean =>
-	marketKeyOrAsset === 'sEUR' ||
-	marketKeyOrAsset === 'EUR' ||
-	marketKeyOrAsset === 'sDOGE' ||
-	marketKeyOrAsset === 'DOGE';
-
-export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
-	[FuturesMarketKey.sBTCPERP]: FuturesMarketAsset.sBTC,
-	[FuturesMarketKey.sETHPERP]: FuturesMarketAsset.sETH,
-	[FuturesMarketKey.sLINKPERP]: FuturesMarketAsset.LINK,
-	[FuturesMarketKey.sSOLPERP]: FuturesMarketAsset.SOL,
-	[FuturesMarketKey.sAVAXPERP]: FuturesMarketAsset.AVAX,
-	[FuturesMarketKey.sAAVEPERP]: FuturesMarketAsset.AAVE,
-	[FuturesMarketKey.sUNIPERP]: FuturesMarketAsset.UNI,
-	[FuturesMarketKey.sMATICPERP]: FuturesMarketAsset.MATIC,
-	[FuturesMarketKey.sXAUPERP]: FuturesMarketAsset.XAU,
-	[FuturesMarketKey.sXAGPERP]: FuturesMarketAsset.XAG,
-	[FuturesMarketKey.sEURPERP]: FuturesMarketAsset.EUR,
-	[FuturesMarketKey.sAPEPERP]: FuturesMarketAsset.APE,
-	[FuturesMarketKey.sDYDXPERP]: FuturesMarketAsset.DYDX,
-	[FuturesMarketKey.sBNBPERP]: FuturesMarketAsset.BNB,
-	[FuturesMarketKey.sDOGEPERP]: FuturesMarketAsset.DOGE,
-	[FuturesMarketKey.sOPPERP]: FuturesMarketAsset.OP,
-	[FuturesMarketKey.sARBPERP]: FuturesMarketAsset.ARB,
-	[FuturesMarketKey.sATOMPERP]: FuturesMarketAsset.ATOM,
-	[FuturesMarketKey.sFTMPERP]: FuturesMarketAsset.FTM,
-	[FuturesMarketKey.sNEARPERP]: FuturesMarketAsset.NEAR,
-	[FuturesMarketKey.sFLOWPERP]: FuturesMarketAsset.FLOW,
-	[FuturesMarketKey.sAXSPERP]: FuturesMarketAsset.AXS,
-	[FuturesMarketKey.sAUDPERP]: FuturesMarketAsset.AUD,
-	[FuturesMarketKey.sGBPPERP]: FuturesMarketAsset.GBP,
-	[FuturesMarketKey.sAPTPERP]: FuturesMarketAsset.APT,
-	[FuturesMarketKey.sLDOPERP]: FuturesMarketAsset.LDO,
-	[FuturesMarketKey.sADAPERP]: FuturesMarketAsset.ADA,
-	[FuturesMarketKey.sGMXPERP]: FuturesMarketAsset.GMX,
-	[FuturesMarketKey.sFILPERP]: FuturesMarketAsset.FIL,
-	[FuturesMarketKey.sLTCPERP]: FuturesMarketAsset.LTC,
-	[FuturesMarketKey.sBCHPERP]: FuturesMarketAsset.BCH,
-	[FuturesMarketKey.sSHIBPERP]: FuturesMarketAsset.SHIB,
-	[FuturesMarketKey.sCRVPERP]: FuturesMarketAsset.CRV,
-} as const;
-
-export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
-	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTCPERP,
-	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETHPERP,
-	[FuturesMarketAsset.LINK]: FuturesMarketKey.sLINKPERP,
-	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOLPERP,
-	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAXPERP,
-	[FuturesMarketAsset.AAVE]: FuturesMarketKey.sAAVEPERP,
-	[FuturesMarketAsset.UNI]: FuturesMarketKey.sUNIPERP,
-	[FuturesMarketAsset.MATIC]: FuturesMarketKey.sMATICPERP,
-	[FuturesMarketAsset.XAU]: FuturesMarketKey.sXAUPERP,
-	[FuturesMarketAsset.XAG]: FuturesMarketKey.sXAGPERP,
-	[FuturesMarketAsset.EUR]: FuturesMarketKey.sEURPERP,
-	[FuturesMarketAsset.APE]: FuturesMarketKey.sAPEPERP,
-	[FuturesMarketAsset.DYDX]: FuturesMarketKey.sDYDXPERP,
-	[FuturesMarketAsset.BNB]: FuturesMarketKey.sBNBPERP,
-	[FuturesMarketAsset.DOGE]: FuturesMarketKey.sDOGEPERP,
-	[FuturesMarketAsset.OP]: FuturesMarketKey.sOPPERP,
-	[FuturesMarketAsset.ARB]: FuturesMarketKey.sARBPERP,
-	[FuturesMarketAsset.ATOM]: FuturesMarketKey.sATOMPERP,
-	[FuturesMarketAsset.FTM]: FuturesMarketKey.sFTMPERP,
-	[FuturesMarketAsset.NEAR]: FuturesMarketKey.sNEARPERP,
-	[FuturesMarketAsset.FLOW]: FuturesMarketKey.sFLOWPERP,
-	[FuturesMarketAsset.AXS]: FuturesMarketKey.sAXSPERP,
-	[FuturesMarketAsset.AUD]: FuturesMarketKey.sAUDPERP,
-	[FuturesMarketAsset.GBP]: FuturesMarketKey.sGBPPERP,
-	[FuturesMarketAsset.APT]: FuturesMarketKey.sAPTPERP,
-	[FuturesMarketAsset.LDO]: FuturesMarketKey.sLDOPERP,
-	[FuturesMarketAsset.ADA]: FuturesMarketKey.sADAPERP,
-	[FuturesMarketAsset.GMX]: FuturesMarketKey.sGMXPERP,
-	[FuturesMarketAsset.FIL]: FuturesMarketKey.sFILPERP,
-	[FuturesMarketAsset.LTC]: FuturesMarketKey.sLTCPERP,
-	[FuturesMarketAsset.BCH]: FuturesMarketKey.sBCHPERP,
-	[FuturesMarketAsset.SHIB]: FuturesMarketKey.sSHIBPERP,
-	[FuturesMarketAsset.CRV]: FuturesMarketKey.sCRVPERP,
-} as const;
-
-export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
-	[FuturesMarketAsset.sBTC]: 'Bitcoin',
-	[FuturesMarketAsset.sETH]: 'Ether',
-	[FuturesMarketAsset.LINK]: 'Chainlink',
-	[FuturesMarketAsset.SOL]: 'Solana',
-	[FuturesMarketAsset.AVAX]: 'Avalanche',
-	[FuturesMarketAsset.AAVE]: 'Aave',
-	[FuturesMarketAsset.UNI]: 'Uniswap',
-	[FuturesMarketAsset.MATIC]: 'Polygon',
-	[FuturesMarketAsset.XAU]: 'Gold',
-	[FuturesMarketAsset.XAG]: 'Silver',
-	[FuturesMarketAsset.EUR]: 'Euro',
-	[FuturesMarketAsset.APE]: 'ApeCoin',
-	[FuturesMarketAsset.DYDX]: 'DYDX',
-	[FuturesMarketAsset.BNB]: 'Binance Coin',
-	[FuturesMarketAsset.DOGE]: 'Dogecoin',
-	[FuturesMarketAsset.OP]: 'Optimism',
-	[FuturesMarketAsset.ARB]: 'Arbitrum',
-	[FuturesMarketAsset.ATOM]: 'Cosmos',
-	[FuturesMarketAsset.FTM]: 'Fantom',
-	[FuturesMarketAsset.NEAR]: 'Near',
-	[FuturesMarketAsset.FLOW]: 'Flow',
-	[FuturesMarketAsset.AXS]: 'Axie Infinity',
-	[FuturesMarketAsset.AUD]: 'Australian Dollar',
-	[FuturesMarketAsset.GBP]: 'Pound Sterling',
-	[FuturesMarketAsset.APT]: 'Aptos',
-	[FuturesMarketAsset.LDO]: 'Lido',
-	[FuturesMarketAsset.ADA]: 'Cardano',
-	[FuturesMarketAsset.GMX]: 'GMX',
-	[FuturesMarketAsset.FIL]: 'Filecoin',
-	[FuturesMarketAsset.LTC]: 'Litecoin',
-	[FuturesMarketAsset.BCH]: 'Bitcoin Cash',
-	[FuturesMarketAsset.SHIB]: 'Shiba Inu',
-	[FuturesMarketAsset.CRV]: 'Curve DAO',
-} as const;
-
-export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {};
+export const isDecimalFour = (marketKeyOrAsset: string) =>
+	['sEUR', 'EUR', 'sDOGE', 'DOGE'].includes(marketKeyOrAsset);
 
 export const orderPriceInvalidLabel = (
 	orderPrice: string,
@@ -522,4 +404,13 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 			});
 			return acc;
 		}, [] as DelayedOrderWithDetails[]);
+};
+
+const DELAYED_ORDER_PRICE_BUFFER = 0.005;
+
+export const fillPriceWithBuffer = (price: Wei, sizeDelta: Wei) => {
+	// Allow for 0.5% price movement during delayed order
+	return price.add(
+		price.mul(sizeDelta.gt(0) ? DELAYED_ORDER_PRICE_BUFFER : -DELAYED_ORDER_PRICE_BUFFER)
+	);
 };

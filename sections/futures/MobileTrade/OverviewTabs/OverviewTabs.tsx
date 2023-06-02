@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import TradeBalance from 'sections/futures/Trade/TradeBalance';
 
+import FundingTab from './FundingTab';
 import PriceTab from './PriceTab';
 import TradesTab from './TradesTab';
 
@@ -11,6 +11,11 @@ const TABS = [
 	{
 		title: 'Price',
 		component: <PriceTab />,
+		nofill: true,
+	},
+	{
+		title: 'Funding',
+		component: <FundingTab />,
 		nofill: true,
 	},
 	{
@@ -24,7 +29,6 @@ const OverviewTabs: React.FC = () => {
 
 	return (
 		<div>
-			<TradeBalance isMobile={true} />
 			<MainTabButtonsContainer>
 				{TABS.map(({ title, nofill }, i) => (
 					<TabButton
@@ -44,7 +48,7 @@ const OverviewTabs: React.FC = () => {
 
 const MainTabButtonsContainer = styled.div`
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 0;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
 
-export default function logError(err: Error, skipReport = false): void {
+export default function logError(err: Error, skipReport = false) {
 	// eslint-disable-next-line no-console
 	console.error(err);
 	if (!sentrySkipFilter(err) && !skipReport) {

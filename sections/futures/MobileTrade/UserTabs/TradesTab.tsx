@@ -9,6 +9,7 @@ import { ETH_UNIT } from 'constants/network';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesTrade, PositionSide } from 'sdk/types/futures';
+import { formatCryptoCurrency } from 'sdk/utils/number';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
 import { fetchAllTradesForAccount } from 'state/futures/actions';
@@ -21,7 +22,6 @@ import {
 import { useAppSelector, useFetchAction } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { selectWallet } from 'state/wallet/selectors';
-import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import TradeDrawer from '../drawers/TradeDrawer';
 

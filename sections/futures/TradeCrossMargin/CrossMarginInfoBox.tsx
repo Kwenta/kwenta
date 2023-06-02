@@ -1,15 +1,17 @@
 import React, { memo } from 'react';
 
-import WithdrawArrow from 'assets/svg/futures/withdraw-arrow.svg';
 import { InfoBoxRow } from 'components/InfoBox/InfoBox';
+import { formatCurrency, formatDollars } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
 import { selectSusdBalance } from 'state/balances/selectors';
-import { selectCrossMarginBalanceInfo, selectIdleMarginInMarkets } from 'state/futures/selectors';
+import {
+	selectCrossMarginBalanceInfo,
+	selectAvailableMarginInMarkets,
+} from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { PillButtonSpan } from 'styles/common';
-import { formatCurrency, formatDollars } from 'utils/formatters/number';
 
+import PencilButton from '../../../components/Button/PencilButton';
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
 
 function MarginInfoBox() {
@@ -18,7 +20,7 @@ function MarginInfoBox() {
 	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
 	const openModal = useAppSelector(selectShowModal);
 	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
-	const idleMarginInMarkets = useAppSelector(selectIdleMarginInMarkets);
+	const idleMarginInMarkets = useAppSelector(selectAvailableMarginInMarkets);
 	const walletBal = useAppSelector(selectSusdBalance);
 
 	return (
@@ -29,12 +31,12 @@ function MarginInfoBox() {
 				valueNode={
 					<>
 						{keeperEthBal.gt(0) && (
-							<PillButtonSpan
-								padding={'4px 3px 1px 3px'}
+							<PencilButton
+								width={10}
+								height={10}
 								onClick={() => dispatch(setOpenModal('futures_withdraw_keeper_balance'))}
-							>
-								<WithdrawArrow width="12px" height="9px" />
-							</PillButtonSpan>
+								style={{ cursor: 'pointer', marginLeft: '10px' }}
+							/>
 						)}
 					</>
 				}

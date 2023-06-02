@@ -1,37 +1,33 @@
 import { useCallback, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-import { FlexDivRowCentered } from 'components/layout/flex';
+import { FlexDiv } from 'components/layout/flex';
 import TVChart from 'components/TVChart';
+import { ZERO_WEI } from 'sdk/constants/number';
 import {
 	selectConditionalOrdersForMarket,
 	selectPosition,
 	selectPositionPreviewData,
 	selectSelectedMarketPositionHistory,
-	selectShowHistory,
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { zeroBN } from 'utils/formatters/number';
 
-import TradesHistoryTable from '../TradingHistory/TradesHistoryTable';
-
-type Props = {
-	mobile?: boolean;
+type PositionChartProps = {
+	display?: boolean;
 };
 
-export default function PositionChart({ mobile }: Props) {
+export default function PositionChart({ display = true }: PositionChartProps) {
 	const position = useAppSelector(selectPosition);
 	const openOrders = useAppSelector(selectConditionalOrdersForMarket);
 	const previewTrade = useAppSelector(selectTradePreview);
 	const subgraphPosition = useAppSelector(selectSelectedMarketPositionHistory);
 	const positionPreview = useAppSelector(selectPositionPreviewData);
-	const showHistory = useAppSelector(selectShowHistory);
 
 	const [showOrderLines, setShowOrderLines] = useState(true);
 	const [isChartReady, setIsChartReady] = useState(false);
 
-	const modifiedAverage = positionPreview?.avgEntryPrice ?? zeroBN;
+	const modifiedAverage = positionPreview?.avgEntryPrice ?? ZERO_WEI;
 
 	const activePosition = useMemo(() => {
 		if (!position?.position) {
@@ -52,40 +48,37 @@ export default function PositionChart({ mobile }: Props) {
 	}, [setShowOrderLines]);
 
 	return (
-		<Container visible={isChartReady}>
-			<ChartContainer>
-				<TVChart
-					openOrders={openOrders}
-					activePosition={activePosition}
-					potentialTrade={
-						previewTrade
-							? {
-									price: modifiedAverage || previewTrade.price,
-									liqPrice: previewTrade.liqPrice,
-									size: previewTrade.size,
-							  }
-							: null
-					}
-					onChartReady={() => {
-						setIsChartReady(true);
-					}}
-					showOrderLines={showOrderLines}
-					onToggleShowOrderLines={onToggleLines}
-				/>
-			</ChartContainer>
-			{showHistory && !mobile && <TradesHistoryTable />}
+		<Container $visible={isChartReady} $display={display}>
+			<TVChart
+				openOrders={openOrders}
+				activePosition={activePosition}
+				potentialTrade={
+					previewTrade
+						? {
+								price: modifiedAverage || previewTrade.price,
+								liqPrice: previewTrade.liqPrice,
+								size: previewTrade.size,
+						  }
+						: null
+				}
+				onChartReady={() => {
+					setIsChartReady(true);
+				}}
+				showOrderLines={showOrderLines}
+				onToggleShowOrderLines={onToggleLines}
+			/>
 		</Container>
 	);
 }
 
-const Container = styled(FlexDivRowCentered)<{ visible: boolean }>`
-	height: 100%;
-	background: ${(props) => props.theme.colors.selectedTheme.background};
-	visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-	overflow: hidden;
-`;
-
-const ChartContainer = styled.div`
+const Container = styled(FlexDiv)<{ $visible: boolean; $display?: boolean }>`
 	flex: 1;
 	height: 100%;
+	width: 100%;
+	visibility: ${(props) => (props.$visible ? 'visible' : 'hidden')};
+	${(props) =>
+		!props.$display &&
+		css`
+			display: none;
+		`}
 `;

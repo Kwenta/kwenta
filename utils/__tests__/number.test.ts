@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 
-import { gweiToWei, formatDollars, weiFromWei, stripZeros } from 'utils/formatters/number';
+import { weiFromWei } from 'sdk/utils/number';
+import { gweiToWei, formatDollars, stripZeros } from 'sdk/utils/number';
 
 describe('number utils', () => {
 	test('ether to gwei', () => {
@@ -19,11 +20,11 @@ describe('number utils', () => {
 		expect(weiVal.toNumber()).toEqual(0.1);
 	});
 	test('should truncate millions correctly', () => {
-		const formatted = formatDollars('3251764', { truncate: true });
+		const formatted = formatDollars('3251764', { truncateOver: 1e3 });
 		expect(formatted).toEqual('$3.25M');
 	});
 	test('should truncate thousands correctly', () => {
-		const formatted = formatDollars('325764.27345', { truncate: true });
+		const formatted = formatDollars('325764.27345', { truncateOver: 1e3 });
 		expect(formatted).toEqual('$326K');
 	});
 	test('should strip traling zeros correctly', () => {

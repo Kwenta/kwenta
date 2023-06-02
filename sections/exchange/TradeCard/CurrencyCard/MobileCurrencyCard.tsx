@@ -8,8 +8,9 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import NumericInput from 'components/Input/NumericInput';
 import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { ZERO_WEI } from 'sdk/constants/number';
+import { formatCurrency } from 'sdk/utils/number';
 import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 type MobileCurrencyCardProps = {
 	currencyKey?: string;
@@ -43,7 +44,7 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 			currencyKey,
 		]);
 
-		const amountBN = useMemo(() => (amount === '' ? zeroBN : wei(amount)), [amount]);
+		const amountBN = useMemo(() => (amount === '' ? ZERO_WEI : wei(amount)), [amount]);
 
 		const tradeAmount = useMemo(() => {
 			let current = priceRate ? amountBN.mul(priceRate) : null;

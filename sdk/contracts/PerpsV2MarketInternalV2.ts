@@ -1,21 +1,16 @@
+import { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
+import KwentaSDK from 'sdk';
 
 import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
+import { ZERO_WEI, ZERO_BIG_NUM, UNIT_BIG_NUM, UNIT_BN } from 'sdk/constants/number';
 import PerpsV2Market from 'sdk/contracts/abis/PerpsV2Market.json';
 import { PerpsV2Market__factory } from 'sdk/contracts/types';
 import { FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
-import { sdk } from 'state/config';
-import {
-	zeroBN,
-	ZERO_BIG_NUM,
-	UNIT_BIG_NUM,
-	UNIT_BN,
-	multiplyDecimal,
-	divideDecimal,
-} from 'utils/formatters/number';
+import { multiplyDecimal, divideDecimal } from 'sdk/utils/number';
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin
@@ -28,7 +23,8 @@ import {
 
 type TradeParams = {
 	sizeDelta: BigNumber;
-	price: BigNumber;
+	fillPrice: BigNumber;
+	desiredFillPrice: BigNumber;
 	takerFee: BigNumber;
 	makerFee: BigNumber;
 	trackingCode: string;
@@ -55,9 +51,11 @@ type MarketSettings = {
 	liquidationFeeRatio: BigNumber;
 	maxKeeperFee: BigNumber;
 	minKeeperFee: BigNumber;
+	keeperLiquidationFee: BigNumber;
 };
 
 class FuturesMarketInternal {
+	_sdk: KwentaSDK;
 	_provider: ethers.providers.Provider;
 	_perpsV2MarketContract: Contract;
 	_perpsV2MarketSettings: MultiCallContract | undefined;
@@ -79,10 +77,12 @@ class FuturesMarketInternal {
 	_cache: Record<string, BigNumber>;
 
 	constructor(
+		sdk: KwentaSDK,
 		provider: ethers.providers.Provider,
 		marketKey: FuturesMarketKey,
 		marketAddress: string
 	) {
+		this._sdk = sdk;
 		this._provider = provider;
 
 		this._perpsV2MarketContract = PerpsV2Market__factory.connect(marketAddress, provider);
@@ -105,13 +105,13 @@ class FuturesMarketInternal {
 		account: string,
 		sizeDelta: BigNumber,
 		marginDelta: BigNumber,
-		limitStopPrice?: BigNumber
+		tradePrice: BigNumber
 	) => {
 		const multiCallContract = new MultiCallContract(
 			this._perpsV2MarketContract.address,
 			PerpsV2Market
 		);
-		const preFetchedData = await sdk.context.multicallProvider.all([
+		const preFetchedData = await this._sdk.context.multicallProvider.all([
 			multiCallContract.assetPrice(),
 			multiCallContract.marketSkew(),
 			multiCallContract.marketSize(),
@@ -138,16 +138,17 @@ class FuturesMarketInternal {
 		};
 
 		const position = preFetchedData[7] as Position;
-		const price = limitStopPrice || this._onChainData.assetPrice;
 
 		const takerFee = await this._getSetting('takerFeeOffchainDelayedOrder');
 		const makerFee = await this._getSetting('makerFeeOffchainDelayedOrder');
+		const fillPrice = await this._fillPrice(sizeDelta, tradePrice);
 
 		const tradeParams = {
-			sizeDelta,
-			price: price,
-			takerFee,
-			makerFee,
+			sizeDelta: sizeDelta,
+			fillPrice: fillPrice,
+			desiredFillPrice: tradePrice,
+			makerFee: makerFee,
+			takerFee: takerFee,
 			trackingCode: KWENTA_TRACKING_CODE,
 		};
 
@@ -158,7 +159,8 @@ class FuturesMarketInternal {
 		);
 
 		const liqPrice = await this._approxLiquidationPrice(newPos, newPos.lastPrice);
-		return { ...newPos, liqPrice, fee, price: tradeParams.price, status: status };
+		const exactLiqPrice = await this._exactLiquidationPrice(newPos, liqPrice);
+		return { ...newPos, liqPrice: exactLiqPrice, fee, price: newPos.lastPrice, status: status };
 	};
 
 	_postTradeDetails = async (
@@ -166,16 +168,21 @@ class FuturesMarketInternal {
 		tradeParams: TradeParams,
 		marginDelta: BigNumber
 	): Promise<{ newPos: Position; status: PotentialTradeStatus; fee: BigNumber }> => {
-		if (!sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
+		if (!this._sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
 		// Reverts if the user is trying to submit a size-zero order.
 		if (tradeParams.sizeDelta.eq(0) && marginDelta.eq(0)) {
 			return { newPos: oldPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.NIL_ORDER };
 		}
 
+		// The order is not submitted if the user's existing position needs to be liquidated.
+		if (await this._canLiquidate(oldPos, this._onChainData.assetPrice)) {
+			return { newPos: oldPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.CAN_LIQUIDATE };
+		}
+
 		const fee = await this._orderFee(tradeParams);
 		const { margin, status } = await this._recomputeMarginWithDelta(
 			oldPos,
-			tradeParams.price,
+			tradeParams.fillPrice,
 			marginDelta.sub(fee)
 		);
 
@@ -189,7 +196,7 @@ class FuturesMarketInternal {
 			id: oldPos.id,
 			lastFundingIndex: lastFundingIndex,
 			margin: margin,
-			lastPrice: tradeParams.price,
+			lastPrice: tradeParams.fillPrice,
 			size: oldPos.size.add(tradeParams.sizeDelta),
 		};
 
@@ -208,16 +215,17 @@ class FuturesMarketInternal {
 			}
 		}
 
-		const liqPremium = await this._liquidationPremium(newPos.size, tradeParams.price);
-		let liqMargin = await this._liquidationMargin(newPos.size, tradeParams.price);
+		const liqPremium = await this._liquidationPremium(newPos.size, this._onChainData.assetPrice);
+		let liqMargin = await this._liquidationMargin(newPos.size, this._onChainData.assetPrice);
 		liqMargin = liqMargin.add(liqPremium);
+
 		if (margin.lte(liqMargin)) {
 			return { newPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.CAN_LIQUIDATE };
 		}
 		const maxLeverage = await this._getSetting('maxLeverage');
 
 		const leverage = divideDecimal(
-			multiplyDecimal(newPos.size, tradeParams.price),
+			multiplyDecimal(newPos.size, tradeParams.fillPrice),
 			margin.add(fee)
 		);
 
@@ -251,19 +259,51 @@ class FuturesMarketInternal {
 		const notional = multiplyDecimal(positionSize, currentPrice).abs();
 		const skewScale = await this._getSetting('skewScale');
 		const liqPremiumMultiplier = await this._getSetting('liquidationPremiumMultiplier');
-
-		const skewedSize = positionSize.abs().div(skewScale);
+		const skewedSize = divideDecimal(positionSize.abs(), skewScale);
 		const value = multiplyDecimal(skewedSize, notional);
 		return multiplyDecimal(value, liqPremiumMultiplier);
 	};
 
+	_exactLiquidationPremium = async (positionSize: BigNumber, currentPrice: BigNumber) => {
+		if (positionSize.eq(0)) {
+			return 0;
+		}
+
+		const skewScale = await this._getSetting('skewScale');
+		const liqPremiumMultiplier = await this._getSetting('liquidationPremiumMultiplier');
+		const skewedSize = divideDecimal(positionSize.pow(2).div(UNIT_BIG_NUM).abs(), skewScale);
+		const value = multiplyDecimal(skewedSize, currentPrice);
+		return multiplyDecimal(value, liqPremiumMultiplier);
+	};
+
 	_orderFee = async (tradeParams: TradeParams) => {
-		const notionalDiff = multiplyDecimal(tradeParams.sizeDelta, tradeParams.price);
+		const notionalDiff = multiplyDecimal(tradeParams.sizeDelta, tradeParams.fillPrice);
 		const marketSkew = await this._onChainData.marketSkew;
-		const sameSide = notionalDiff.gte(0) === marketSkew.gte(0);
-		const staticRate = sameSide ? tradeParams.takerFee : tradeParams.makerFee;
+		if (this._sameSide(marketSkew.add(tradeParams.sizeDelta), marketSkew)) {
+			const staticRate = this._sameSide(notionalDiff, marketSkew)
+				? tradeParams.takerFee
+				: tradeParams.makerFee;
+
+			return multiplyDecimal(notionalDiff, staticRate).abs();
+		}
+
 		// IGNORED DYNAMIC FEE //
-		return multiplyDecimal(notionalDiff, staticRate).abs();
+
+		const takerSize = divideDecimal(
+			marketSkew.add(tradeParams.sizeDelta),
+			tradeParams.sizeDelta
+		).abs();
+		const makerSize = UNIT_BIG_NUM.sub(takerSize);
+		const takerFee = multiplyDecimal(
+			multiplyDecimal(notionalDiff, takerSize),
+			tradeParams.takerFee
+		).abs();
+		const makerFee = multiplyDecimal(
+			multiplyDecimal(notionalDiff, makerSize),
+			tradeParams.makerFee
+		).abs();
+
+		return takerFee.add(makerFee);
 	};
 
 	_recomputeMarginWithDelta = async (
@@ -274,8 +314,8 @@ class FuturesMarketInternal {
 		const marginPlusProfitFunding = await this._marginPlusProfitFunding(position, price);
 		const newMargin = marginPlusProfitFunding.add(marginDelta);
 
-		if (newMargin.lt(zeroBN.toBN())) {
-			return { margin: zeroBN.toBN(), status: PotentialTradeStatus.INSUFFICIENT_MARGIN };
+		if (newMargin.lt(ZERO_WEI.toBN())) {
+			return { margin: ZERO_WEI.toBN(), status: PotentialTradeStatus.INSUFFICIENT_MARGIN };
 		}
 
 		const lMargin = await this._liquidationMargin(position.size, price);
@@ -288,7 +328,6 @@ class FuturesMarketInternal {
 
 	_marginPlusProfitFunding = async (position: Position, price: BigNumber) => {
 		const funding = this._onChainData.accruedFunding;
-
 		return position.margin.add(this._profitLoss(position, price)).add(funding);
 	};
 
@@ -369,33 +408,151 @@ class FuturesMarketInternal {
 
 		const fundingPerUnit = await this._netFundingPerUnit(position.lastFundingIndex, currentPrice);
 		const liqMargin = await this._liquidationMargin(position.size, currentPrice);
+		const liqPremium = await this._liquidationPremium(position.size, currentPrice);
 		const result = position.lastPrice
-			.add(divideDecimal(liqMargin.sub(position.margin), position.size))
+			.add(divideDecimal(liqMargin.sub(position.margin.sub(liqPremium)), position.size))
 			.sub(fundingPerUnit);
-
 		return result.lt(0) ? BigNumber.from(0) : result;
+	};
+
+	_exactLiquidationPrice = async (position: Position, approxLiquidationPrice: BigNumber) => {
+		if (position.size.isZero()) {
+			return BigNumber.from('0');
+		}
+
+		const prices = Array.from(Array(1001).keys()).map((x) =>
+			wei(approxLiquidationPrice)
+				.mul(1 + (x - 500) / 1000)
+				.toBN()
+		);
+
+		// get settings once to avoid synchronous calls
+		await this._batchGetSettings();
+
+		// start with initial margin
+		const margins = await Promise.all(
+			prices.map((price) => this._marginPlusProfitFunding(position, price))
+		);
+
+		const liqMargins = await Promise.all(
+			prices.map((price) => this._exactLiquidationMargin(position.size, price))
+		);
+		const liqPremiums = await Promise.all(
+			prices.map((price) => this._exactLiquidationPremium(position.size, price))
+		);
+
+		const validPrices = prices.filter((price, i) => {
+			const margin = margins[i];
+			const liqMargin = liqMargins[i];
+			const liqPremium = liqPremiums[i];
+			return margin.sub(liqMargin).sub(liqPremium).lt(0);
+		});
+
+		let exactLiqPrice;
+		if (validPrices.length > 0) {
+			exactLiqPrice = position.size.gt(0)
+				? validPrices.reduce((max, current) => (max.gt(current) ? max : current))
+				: validPrices.reduce((min, current) => (min.lt(current) ? min : current));
+		} else {
+			exactLiqPrice = BigNumber.from(0);
+		}
+		return exactLiqPrice;
+	};
+
+	_exactLiquidationMargin = async (positionSize: BigNumber, price: BigNumber) => {
+		const keeperFee = await this._liquidationFee(positionSize, price);
+		const stakerFee = await this._stakerFee(positionSize, price);
+		return keeperFee.add(stakerFee);
 	};
 
 	_liquidationMargin = async (positionSize: BigNumber, price: BigNumber) => {
 		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio');
+		const liqKeeperFee = await this._getSetting('keeperLiquidationFee');
 		const liquidationBuffer = multiplyDecimal(
 			multiplyDecimal(positionSize.abs(), price),
 			liquidationBufferRatio
 		);
 		const fee = await this._liquidationFee(positionSize, price);
-		return liquidationBuffer.add(fee);
+		return liquidationBuffer.add(fee).add(liqKeeperFee);
 	};
 
 	_liquidationFee = async (positionSize: BigNumber, price: BigNumber) => {
 		const liquidationFeeRatio = await this._getSetting('liquidationFeeRatio');
+		const minFee = await this._getSetting('minKeeperFee');
+		const maxFee = await this._getSetting('maxKeeperFee');
 		const proportionalFee = multiplyDecimal(
 			multiplyDecimal(positionSize.abs(), price),
 			liquidationFeeRatio
 		);
-		const maxFee = await this._getSetting('maxKeeperFee');
 		const cappedProportionalFee = proportionalFee.gt(maxFee) ? maxFee : proportionalFee;
-		const minFee = await this._getSetting('minKeeperFee');
 		return cappedProportionalFee.gt(minFee) ? proportionalFee : minFee;
+	};
+
+	_stakerFee = async (positionSize: BigNumber, price: BigNumber) => {
+		const liquidationBufferRatio = await this._getSetting('liquidationBufferRatio');
+		const stakerFee = multiplyDecimal(
+			multiplyDecimal(positionSize.abs(), price),
+			liquidationBufferRatio
+		);
+		return stakerFee;
+	};
+
+	_fillPrice = async (size: BigNumber, price: BigNumber) => {
+		const marketSkew = await this._onChainData.marketSkew;
+		const skewScale = await this._getSetting('skewScale');
+
+		const pdBefore = divideDecimal(marketSkew, skewScale);
+		const pdAfter = divideDecimal(marketSkew.add(size), skewScale);
+		const priceBefore = price.add(multiplyDecimal(price, pdBefore));
+		const priceAfter = price.add(multiplyDecimal(price, pdAfter));
+
+		// How is the p/d-adjusted price calculated using an example:
+		//
+		// price      = $1200 USD (oracle)
+		// size       = 100
+		// skew       = 0
+		// skew_scale = 1,000,000 (1M)
+		//
+		// Then,
+		//
+		// pd_before = 0 / 1,000,000
+		//           = 0
+		// pd_after  = (0 + 100) / 1,000,000
+		//           = 100 / 1,000,000
+		//           = 0.0001
+		//
+		// price_before = 1200 * (1 + pd_before)
+		//              = 1200 * (1 + 0)
+		//              = 1200
+		// price_after  = 1200 * (1 + pd_after)
+		//              = 1200 * (1 + 0.0001)
+		//              = 1200 * (1.0001)
+		//              = 1200.12
+		// Finally,
+		//
+		// fill_price = (price_before + price_after) / 2
+		//            = (1200 + 1200.12) / 2
+		//            = 1200.06
+		return divideDecimal(priceBefore.add(priceAfter), UNIT_BIG_NUM.mul(2));
+	};
+
+	_canLiquidate = async (position: Position, price: BigNumber) => {
+		// No liquidating empty positions.
+		if (position.size.eq(0)) {
+			return false;
+		}
+
+		const remainingLiquidatableMargin = await this._remainingLiquidatableMargin(position, price);
+		const liqMargin = await this._liquidationMargin(position.size, price);
+
+		return remainingLiquidatableMargin.lt(liqMargin);
+	};
+
+	_remainingLiquidatableMargin = async (position: Position, price: BigNumber) => {
+		const liqPremium = await this._liquidationPremium(position.size, price);
+		const marginPlusProfitFunding = await this._marginPlusProfitFunding(position, price);
+		const remaining = marginPlusProfitFunding.sub(liqPremium);
+		return remaining.gt(0) ? remaining : ZERO_BIG_NUM;
 	};
 
 	_orderSizeTooLarge = async (maxSize: BigNumber, oldSize: BigNumber, newSize: BigNumber) => {
@@ -429,7 +586,7 @@ class FuturesMarketInternal {
 
 	_batchGetSettings = async () => {
 		if (!this._perpsV2MarketSettings) throw new Error('Market settings not initialized');
-		const settings = (await sdk.context.multicallProvider.all([
+		const settings = (await this._sdk.context.multicallProvider.all([
 			this._perpsV2MarketSettings.minInitialMargin(),
 			this._perpsV2MarketSettings.takerFeeOffchainDelayedOrder(this._marketKeyBytes),
 			this._perpsV2MarketSettings.makerFeeOffchainDelayedOrder(this._marketKeyBytes),
@@ -442,6 +599,7 @@ class FuturesMarketInternal {
 			this._perpsV2MarketSettings.liquidationFeeRatio(),
 			this._perpsV2MarketSettings.maxKeeperFee(),
 			this._perpsV2MarketSettings.minKeeperFee(),
+			this._perpsV2MarketSettings.keeperLiquidationFee(),
 		])) as BigNumber[];
 		this._marketSettings = {
 			minInitialMargin: settings[0],
@@ -456,6 +614,7 @@ class FuturesMarketInternal {
 			liquidationFeeRatio: settings[9],
 			maxKeeperFee: settings[10],
 			minKeeperFee: settings[11],
+			keeperLiquidationFee: settings[12],
 		};
 		return this._marketSettings;
 	};
