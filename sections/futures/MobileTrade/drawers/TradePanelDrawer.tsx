@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import FullScreenModal from 'components/FullScreenModal';
 import { zIndex } from 'constants/ui';
+import CloseOnlyPrompt from 'sections/futures/Trade/CloseOnlyPrompt';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel';
 
 type TradePanelDrawerProps = {
@@ -15,7 +16,11 @@ const TradePanelDrawer: FC<TradePanelDrawerProps> = ({ open, closeDrawer }) => {
 			<Background>
 				<Closer onClick={closeDrawer} />
 				<Foreground>
-					<TradeIsolatedMargin mobile />
+					{process.env.NEXT_PUBLIC_CLOSE_ONLY === 'true' ? (
+						<CloseOnlyPrompt mobile />
+					) : (
+						<TradeIsolatedMargin mobile />
+					)}
 				</Foreground>
 			</Background>
 		</StyledModal>

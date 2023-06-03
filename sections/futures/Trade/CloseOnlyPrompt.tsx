@@ -5,12 +5,16 @@ import AlertIcon from 'assets/svg/app/alert.svg';
 import Spacer from 'components/Spacer/Spacer';
 import { Body } from 'components/Text';
 
-const CloseOnlyPrompt = () => {
+type Props = {
+	mobile?: boolean;
+};
+
+const CloseOnlyPrompt: React.FC<Props> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 
 	return (
-		<MessageContainer>
+		<MessageContainer $mobile={mobile}>
 			<Title>
 				<AlertIcon fill={theme.colors.selectedTheme.newTheme.pencilIcon.color} />
 			</Title>
@@ -26,12 +30,13 @@ const Title = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `;
 
-const MessageContainer = styled.div`
+const MessageContainer = styled.div<{ $mobile?: boolean }>`
 	padding: 0 30px;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	height: ${(props) => props.$mobile && '500px'};
 `;
 
 export default CloseOnlyPrompt;

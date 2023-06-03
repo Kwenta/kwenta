@@ -160,7 +160,7 @@ function TradePanelDesktop() {
 		);
 	}
 
-	return process.env.NEXT_PUBLIC_CLOSE_ONLY ? (
+	return process.env.NEXT_PUBLIC_CLOSE_ONLY === 'true' ? (
 		<CloseOnlyPrompt />
 	) : open ? (
 		<SwitchToSmartMargin onDismiss={() => setOpen(false)} />
