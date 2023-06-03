@@ -15,20 +15,12 @@ const CloseOnlyPrompt: React.FC<Props> = ({ mobile }) => {
 
 	return (
 		<MessageContainer $mobile={mobile}>
-			<Title>
-				<AlertIcon fill={theme.colors.selectedTheme.newTheme.pencilIcon.color} />
-			</Title>
+			<AlertIcon fill={theme.colors.selectedTheme.newTheme.pencilIcon.color} />
 			<Spacer height={21.25} />
 			<Body size="large">{t('futures.cta-buttons.close-only')}</Body>
 		</MessageContainer>
 	);
 };
-
-const Title = styled.div`
-	font-family: ${(props) => props.theme.fonts.monoBold};
-	font-size: 23px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
 
 const MessageContainer = styled.div<{ $mobile?: boolean }>`
 	padding: 0 30px;
@@ -37,6 +29,7 @@ const MessageContainer = styled.div<{ $mobile?: boolean }>`
 	flex-direction: column;
 	justify-content: center;
 	height: ${(props) => props.$mobile && '500px'};
+	align-items: center;
 `;
 
 export default CloseOnlyPrompt;
