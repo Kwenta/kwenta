@@ -17,7 +17,6 @@ import MarketInfo from 'sections/futures/MarketInfo';
 import MarketHead from 'sections/futures/MarketInfo/MarketHead';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles';
-import CloseOnlyPrompt from 'sections/futures/Trade/CloseOnlyPrompt';
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
 import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin';
 import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel';
@@ -160,13 +159,7 @@ function TradePanelDesktop() {
 		);
 	}
 
-	return process.env.NEXT_PUBLIC_CLOSE_ONLY === 'true' ? (
-		<CloseOnlyPrompt />
-	) : open ? (
-		<SwitchToSmartMargin onDismiss={() => setOpen(false)} />
-	) : (
-		<TradeIsolatedMargin />
-	);
+	return open ? <SwitchToSmartMargin onDismiss={() => setOpen(false)} /> : <TradeIsolatedMargin />;
 }
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
