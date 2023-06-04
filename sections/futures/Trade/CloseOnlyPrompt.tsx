@@ -6,15 +6,15 @@ import Spacer from 'components/Spacer/Spacer';
 import { Body } from 'components/Text';
 
 type Props = {
-	mobile?: boolean;
+	$mobile?: boolean;
 };
 
-const CloseOnlyPrompt: React.FC<Props> = ({ mobile }) => {
+const CloseOnlyPrompt: React.FC<Props> = ({ $mobile }) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 
 	return (
-		<MessageContainer $mobile={mobile}>
+		<MessageContainer $mobile={$mobile}>
 			<AlertIcon fill={theme.colors.selectedTheme.newTheme.pencilIcon.color} />
 			<Spacer height={21.25} />
 			<Body size="large">{t('futures.cta-buttons.close-only')}</Body>
