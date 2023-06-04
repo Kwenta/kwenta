@@ -598,6 +598,10 @@ export const encodeSubmitOffchainOrderParams = (
 	);
 };
 
+export const encodeCloseOffchainOrderParams = (marketAddress: string, desiredFillPrice: Wei) => {
+	return defaultAbiCoder.encode(['address', 'uint256'], [marketAddress, desiredFillPrice.toBN()]);
+};
+
 export const encodeModidyMarketMarginParams = (marketAddress: string, marginDelta: Wei) => {
 	return defaultAbiCoder.encode(['address', 'int256'], [marketAddress, marginDelta.toBN()]);
 };
