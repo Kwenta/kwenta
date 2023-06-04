@@ -67,6 +67,7 @@ import {
 	mapFuturesPositions,
 	mapTrades,
 	marketsForNetwork,
+	encodeCloseOffchainOrderParams,
 } from 'sdk/utils/futures';
 import { getReasonFromCode } from 'sdk/utils/synths';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
@@ -1046,10 +1047,6 @@ export default class FuturesService {
 			key: FuturesMarketKey;
 		},
 		crossMarginAddress: string,
-		position: {
-			size: Wei;
-			side: PositionSide;
-		},
 		desiredFillPrice: Wei
 	) {
 		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
@@ -1060,16 +1057,18 @@ export default class FuturesService {
 		const commands = [];
 		const inputs = [];
 
-		// TODO: Change to delayed close when market contracts are upgraded
-
-		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
-		inputs.push(
-			encodeSubmitOffchainOrderParams(
-				market.address,
-				position.side === PositionSide.LONG ? position.size.neg() : position.size,
-				desiredFillPrice
-			)
+		const existingOrders = await this.getConditionalOrders(crossMarginAddress);
+		const existingOrdersForMarket = existingOrders.filter(
+			(o) => o.marketKey === market.key && o.reduceOnly
 		);
+
+		existingOrdersForMarket.forEach((o) => {
+			commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
+			inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]));
+		});
+
+		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_CLOSE_OFFCHAIN_DELAYED_ORDER);
+		inputs.push(encodeCloseOffchainOrderParams(market.address, desiredFillPrice));
 
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
 			commands,

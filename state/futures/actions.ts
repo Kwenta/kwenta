@@ -1627,13 +1627,19 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 				orderInputs.keeperEthDeposit = keeperEthDeposit;
 			}
 
-			const tx = await sdk.futures.submitCrossMarginOrder(
-				{ address: market.market, key: market.marketKey },
-				wallet,
-				account,
-				orderInputs,
-				isClosing
-			);
+			const tx = isClosing
+				? await sdk.futures.closeCrossMarginPosition(
+						{ address: market.market, key: market.marketKey },
+						account,
+						desiredFillPrice
+				  )
+				: await sdk.futures.submitCrossMarginOrder(
+						{ address: market.market, key: market.marketKey },
+						wallet,
+						account,
+						orderInputs,
+						isClosing
+				  );
 
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
@@ -1710,10 +1716,6 @@ export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig
 					key: market.marketKey,
 				},
 				crossMarginAccount,
-				{
-					size: position.position.size,
-					side: position.position?.side,
-				},
 				desiredFillPrice
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
