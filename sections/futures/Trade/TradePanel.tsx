@@ -16,6 +16,7 @@ import LeverageInput from '../LeverageInput';
 import MarginInput from '../MarginInput';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
+import CloseOnlyPrompt from './CloseOnlyPrompt';
 import ManagePosition from './ManagePosition';
 import OrderAcknowledgement from './OrderAcknowledgement';
 import OrderTypeSelector from './OrderTypeSelector';
@@ -54,7 +55,9 @@ const TradePanel: FC<Props> = memo(({ mobile }) => {
 		}
 	}, [orderType, hideOrderWarning]);
 
-	return (
+	return process.env.NEXT_PUBLIC_CLOSE_ONLY === 'true' ? (
+		<CloseOnlyPrompt $mobile={mobile} />
+	) : (
 		<TradePanelContainer $mobile={mobile}>
 			{!mobile && <TradeBalance />}
 			<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
