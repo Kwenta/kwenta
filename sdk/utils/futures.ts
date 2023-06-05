@@ -399,7 +399,7 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	CAN_LIQUIDATE: 'Position can be liquidated',
 	CANNOT_LIQUIDATE: 'Position cannot be liquidated',
 	MAX_MARKET_SIZE_EXCEEDED: 'Open interest limit exceeded',
-	MAX_LEVERAGE_EXCEEDED: 'Max leverage exceeded',
+	MAX_LEVERAGE_EXCEEDED: 'Max leverage exceeded (larger positions have lower max leverage)',
 	INSUFFICIENT_MARGIN: 'Insufficient margin',
 	NOT_PERMITTED: 'Not permitted by this address',
 	NO_POSITION_OPEN: 'No position open',
