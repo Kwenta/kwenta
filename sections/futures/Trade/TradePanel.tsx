@@ -55,53 +55,57 @@ const TradePanel: FC<Props> = memo(({ mobile }) => {
 		}
 	}, [orderType, hideOrderWarning]);
 
-	return process.env.NEXT_PUBLIC_CLOSE_ONLY === 'true' ? (
-		<CloseOnlyPrompt $mobile={mobile} />
-	) : (
+	return (
 		<TradePanelContainer $mobile={mobile}>
 			{!mobile && <TradeBalance />}
-			<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
+			{process.env.NEXT_PUBLIC_CLOSE_ONLY === 'true' ? (
+				<CloseOnlyPrompt $mobile={mobile} />
+			) : (
+				<>
+					<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
 
-			<MainPanelContent>
-				{pricesConnectionError && (
-					<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
-				)}
-
-				{accountType === 'cross_margin' && (
-					<OrderTypeSelector orderType={orderType} setOrderTypeAction={setOrderType} />
-				)}
-
-				{showOrderWarning ? (
-					<>
-						<Spacer height={16} />
-						<OrderAcknowledgement
-							inContainer
-							onClick={() => setShowOrderWarning(!showOrderWarning)}
-						/>
-					</>
-				) : (
-					<>
-						{accountType === 'cross_margin' && <MarginInput />}
-
-						{orderType !== 'market' && accountType === 'cross_margin' && (
-							<>
-								<OrderPriceInput />
-								<Spacer height={16} />
-							</>
+					<MainPanelContent>
+						{pricesConnectionError && (
+							<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 						)}
 
-						<OrderSizing />
+						{accountType === 'cross_margin' && (
+							<OrderTypeSelector orderType={orderType} setOrderTypeAction={setOrderType} />
+						)}
 
-						<LeverageInput />
+						{showOrderWarning ? (
+							<>
+								<Spacer height={16} />
+								<OrderAcknowledgement
+									inContainer
+									onClick={() => setShowOrderWarning(!showOrderWarning)}
+								/>
+							</>
+						) : (
+							<>
+								{accountType === 'cross_margin' && <MarginInput />}
 
-						{accountType === 'cross_margin' && <SLTPInputs />}
+								{orderType !== 'market' && accountType === 'cross_margin' && (
+									<>
+										<OrderPriceInput />
+										<Spacer height={16} />
+									</>
+								)}
 
-						<ManagePosition />
+								<OrderSizing />
 
-						<TradePanelFeeInfo />
-					</>
-				)}
-			</MainPanelContent>
+								<LeverageInput />
+
+								{accountType === 'cross_margin' && <SLTPInputs />}
+
+								<ManagePosition />
+
+								<TradePanelFeeInfo />
+							</>
+						)}
+					</MainPanelContent>
+				</>
+			)}
 		</TradePanelContainer>
 	);
 });
