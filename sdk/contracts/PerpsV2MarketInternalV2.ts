@@ -560,7 +560,7 @@ class FuturesMarketInternal {
 	};
 
 	_orderSizeTooLarge = async (maxSize: BigNumber, oldSize: BigNumber, newSize: BigNumber) => {
-		if (this._sameSide(oldSize, newSize) && newSize.abs().lte(oldSize.abs())) {
+		if ((this._sameSide(oldSize, newSize) && newSize.abs().lte(oldSize.abs())) || newSize.eq(0)) {
 			return false;
 		}
 

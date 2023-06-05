@@ -28,7 +28,7 @@ const MessageContainer = styled.div<{ $mobile?: boolean }>`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	height: ${(props) => props.$mobile && '500px'};
+	height: ${(props) => (props.$mobile ? '500px' : '100%')};
 	align-items: center;
 `;
 
