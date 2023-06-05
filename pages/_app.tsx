@@ -5,7 +5,7 @@ import { BrowserTracing } from '@sentry/tracing';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { FC, ReactElement, ReactNode, useMemo } from 'react';
+import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -58,6 +58,7 @@ Sentry.init({
 });
 
 const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
+	const [isReady, setReady] = useState(false);
 	const { providerReady } = Connector.useContainer();
 
 	useAppData(providerReady);
@@ -66,10 +67,13 @@ const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
 	const getLayout = Component.getLayout || ((page) => page);
 	const currentTheme = useAppSelector(selectCurrentTheme);
 
-	const isReady = useMemo(() => typeof window !== 'undefined', []);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
 	// @ts-ignore palette options
 	const muiTheme = useMemo(() => createTheme(getDesignTokens(currentTheme)), [currentTheme]);
+
+	useEffect(() => {
+		setReady(true);
+	}, []);
 
 	return isReady ? (
 		<RainbowKitProvider

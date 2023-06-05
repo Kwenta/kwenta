@@ -33,7 +33,7 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	});
 
 	return (
-		<FundingChartContainer $display={display}>
+		<FundingChartContainer $display={display} minWidth={1} minHeight={1}>
 			<LineChart
 				data={historicalFundingRates[marketAsset]}
 				margin={{
