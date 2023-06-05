@@ -23,7 +23,7 @@ const CloseOnlyPrompt: React.FC<Props> = ({ $mobile }) => {
 };
 
 const MessageContainer = styled.div<{ $mobile?: boolean }>`
-	padding: 0 30px;
+	padding: 30px 30px;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
