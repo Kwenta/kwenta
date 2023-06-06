@@ -77,7 +77,7 @@ const DashboardLayout: FC = ({ children }) => {
 				name: Tab.Governance,
 				label: t('dashboard.tabs.governance'),
 				active: activeTab === Tab.Governance,
-				href: EXTERNAL_LINKS.Governance.Vote,
+				href: EXTERNAL_LINKS.Docs.Governance,
 				external: true,
 			},
 		],

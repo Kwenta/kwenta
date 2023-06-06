@@ -36,14 +36,13 @@ export const EXTERNAL_LINKS = {
 		DocsRoot: 'https://docs.kwenta.io/',
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
 		HowToTrade: 'https://docs.kwenta.io/products/futures',
-		Governance: 'https://github.com/Kwenta/kwenta-state-log',
-		DaoRoles: 'https://github.com/Kwenta/kwenta-state-log/blob/master/sections/2.md',
+		Governance: 'https://gov.kwenta.eth.limo',
+		DaoRoles: 'https://gov.kwenta.eth.limo/sections/2',
 		HowToUse: 'https://docs.kwenta.io/onboard/how-to-start-using-kwenta',
 		Perpetuals: 'https://docs.kwenta.io/products/futures',
 		Spot: 'https://docs.kwenta.io/products/swaps ',
 		DevDao: 'https://docs.kwenta.io/dao/contribute/devdao-contribute',
-		MarketingDao:
-			'https://github.com/Kwenta/kwenta-state-log/blob/master/sections/2.md#marketingdao-grants-council-trial',
+		MarketingDao: 'https://gov.kwenta.eth.limo/sections/2/#marketingdao-grants-council-trial',
 		Faq: 'https://docs.kwenta.io/resources/faq',
 		CrossMarginFaq: 'https://docs.kwenta.io/using-kwenta/smart-margin/trading-on-kwenta/faq',
 		Staking: 'https://docs.kwenta.io/using-kwenta/staking-kwenta',
@@ -59,7 +58,7 @@ export const EXTERNAL_LINKS = {
 		V1: 'https://v1.kwenta.eth.limo/dashboard',
 	},
 	Governance: {
-		Kips: 'https://github.com/Kwenta/kwenta-state-log',
+		Kips: 'https://gov.kwenta.eth.limo/all-kips',
 		Vote: 'https://snapshot.org/#/kwenta.eth',
 	},
 	Competition: {
