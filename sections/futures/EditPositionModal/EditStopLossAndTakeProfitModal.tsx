@@ -30,6 +30,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow';
 import PositionType from '../PositionType';
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement';
+import ShowPercentage from '../Trade/ShowPercentage';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
 const TP_OPTIONS = ['none', '5%', '10%', '25%', '50%', '100%'];
@@ -226,6 +227,7 @@ export default function EditStopLossAndTakeProfitModal() {
 						}
 						value={takeProfitPrice}
 						onChange={onChangeTakeProfit}
+						right={<ShowPercentage targetPrice={takeProfitPrice} />}
 					/>
 
 					<SelectorButtons
@@ -244,6 +246,7 @@ export default function EditStopLossAndTakeProfitModal() {
 						}
 						value={stopLossPrice}
 						onChange={onChangeStopLoss}
+						right={<ShowPercentage targetPrice={stopLossPrice} isStopLoss={true} />}
 					/>
 
 					<SelectorButtons
