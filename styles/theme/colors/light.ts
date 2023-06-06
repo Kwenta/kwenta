@@ -116,6 +116,27 @@ const newTheme = {
 				text: common.palette.neutral.n900,
 			},
 		},
+		redGray: {
+			text: common.palette.red.r300,
+			background: common.palette.neutral.n20,
+			border: common.palette.neutral.n70,
+			outline: {
+				background: common.palette.neutral.n20,
+				text: common.palette.red.r300,
+				border: common.palette.neutral.n20,
+			},
+			hover: {
+				background: common.palette.neutral.n30,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n900,
+			},
+		},
+	},
+	banner: {
+		yellow: {
+			text: common.palette.yellow.y1000,
+			background: common.palette.yellow.y300,
+		},
 	},
 	badge: {
 		yellow: {
@@ -171,7 +192,7 @@ const newTheme = {
 	},
 	fundingChart: {
 		tooltip: {
-			background: common.palette.neutral.n40,
+			background: common.palette.neutral.n10,
 			border: common.palette.neutral.n50,
 		},
 	},

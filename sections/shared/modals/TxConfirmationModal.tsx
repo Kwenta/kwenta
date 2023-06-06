@@ -11,12 +11,12 @@ import Error from 'components/ErrorView';
 import { FlexDivRowCentered, FlexDivColCentered } from 'components/layout/flex';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
+import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'sdk/utils/number';
 import { MessageButton } from 'sections/exchange/message';
 import { closeModal } from 'state/exchange/reducer';
 import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { numericValueCSS, NoTextTransform } from 'styles/common';
-import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 
@@ -65,8 +65,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 						<CurrencyItemTitle>{t('exchange.common.from')}</CurrencyItemTitle>
 						<Currency.Icon
 							currencyKey={quoteCurrencyKey}
-							width="40px"
-							height="40px"
+							width={40}
+							height={40}
 							data-testid="quote-currency-img"
 						/>
 					</CurrencyItem>
@@ -78,8 +78,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
 					<Currency.Icon
 						currencyKey={baseCurrencyKey!}
-						width="40px"
-						height="40px"
+						width={40}
+						height={40}
 						data-testid="base-currency-img"
 					/>
 				</CurrencyItem>

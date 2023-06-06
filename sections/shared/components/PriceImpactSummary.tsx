@@ -2,10 +2,10 @@ import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { NO_VALUE } from 'constants/placeholder';
+import { formatPercent } from 'sdk/utils/number';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { selectSlippagePercentWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
-import { formatPercent } from 'utils/formatters/number';
 
 const PriceImpactSummary: FC = memo(() => {
 	const { t } = useTranslation();

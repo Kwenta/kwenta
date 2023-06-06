@@ -6,7 +6,7 @@ import ChangePercent from 'components/ChangePercent';
 import { ContainerRowMixin } from 'components/layout/grid';
 import { NumericValue } from 'components/Text';
 import { CurrencyKey } from 'constants/currency';
-import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
+import { formatCurrency, FormatCurrencyOptions } from 'sdk/utils/number';
 
 type CurrencyPriceProps = {
 	currencyKey?: CurrencyKey;
@@ -44,6 +44,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 					color={side}
 				>
 					{formatCurrency(currencyKey, cleanPrice.div(conversionRate), {
+						suggestDecimals: true,
 						sign: currencyKey === 'sUSD' ? '$' : sign,
 						currencyKey: showCurrencyKey ? currencyKey : undefined,
 						...formatOptions,

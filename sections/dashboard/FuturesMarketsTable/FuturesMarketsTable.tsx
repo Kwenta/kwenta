@@ -15,6 +15,8 @@ import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
+import { formatDollars } from 'sdk/utils/number';
 import {
 	selectFuturesType,
 	selectMarkets,
@@ -23,8 +25,7 @@ import {
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors';
-import { formatDollars } from 'utils/formatters/number';
-import { AssetDisplayByAsset, getSynthDescription, MarketKeyByAsset } from 'utils/futures';
+import { getSynthDescription } from 'utils/futures';
 
 type FuturesMarketsTableProps = {
 	search?: string;

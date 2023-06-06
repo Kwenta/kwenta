@@ -29,7 +29,7 @@ const CloseIconWithHover: React.FC<CloseIconProps> = ({
 };
 
 const CloseIconWrapper = styled(CloseIcon)`
-	stroke: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.text};
+	stroke: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	&:hover {
 		stroke: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	}

@@ -69,6 +69,12 @@ const newTheme = {
 		preview: common.palette.yellow.y500,
 		warning: common.palette.yellow.y500,
 	},
+	banner: {
+		yellow: {
+			text: common.palette.yellow.y500,
+			background: common.palette.yellow.y1000,
+		},
+	},
 	badge: {
 		yellow: {
 			text: common.palette.neutral.n900,
@@ -142,6 +148,21 @@ const newTheme = {
 				background: common.palette.red.r500,
 				border: common.palette.alpha.white10,
 				text: common.palette.neutral.n900,
+			},
+		},
+		redGray: {
+			text: common.palette.red.r300,
+			background: common.palette.neutral.n800,
+			border: common.palette.neutral.n600,
+			outline: {
+				background: common.palette.neutral.n20,
+				text: common.palette.red.r300,
+				border: common.palette.alpha.white10,
+			},
+			hover: {
+				background: common.palette.neutral.n700,
+				border: common.palette.alpha.white10,
+				text: common.palette.neutral.n30,
 			},
 		},
 	},

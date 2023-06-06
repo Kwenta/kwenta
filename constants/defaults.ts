@@ -19,10 +19,6 @@ export const DEFAULT_NUMBER_DECIMALS = 2;
 export const DEFAULT_PERCENT_DECIMALS = 2;
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
-// for DEX aggregators like 1inch
-export const DEFAULT_SLIPPAGE = 1;
-export const DEFAULT_1INCH_SLIPPAGE = 3;
-
 // for Trading History
 export const DEFAULT_NUMBER_OF_TRADES: number = 32;
 export const MAX_TIMESTAMP: number = 8640000000000000;
@@ -39,16 +35,6 @@ export const DEFAULT_DELAYED_CANCEL_BUFFER = 15;
 
 export const CROSS_MARGIN_ENABLED = true;
 
-export const DEFAULT_FUTURES_MARGIN_TYPE = CROSS_MARGIN_ENABLED
-	? 'cross_margin'
-	: 'isolated_margin';
+export const DEFAULT_FUTURES_MARGIN_TYPE = 'cross_margin';
 
 export const DEFAULT_LEVERAGE = '1';
-
-export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
-	MARKET: '1',
-	STOP: '2',
-	LIMIT: '2',
-	STOP_LOSS: '5',
-	TAKE_PROFIT: '5',
-};

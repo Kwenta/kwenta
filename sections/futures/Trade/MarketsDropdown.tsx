@@ -19,8 +19,11 @@ import { BANNER_HEIGHT_DESKTOP, BANNER_HEIGHT_MOBILE } from 'constants/announcem
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketAsset } from 'sdk/types/futures';
 import { getDisplayAsset } from 'sdk/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
+import { floorNumber, formatDollars } from 'sdk/utils/number';
 import { selectShowBanner } from 'state/app/selectors';
 import {
 	selectMarketAsset,
@@ -34,15 +37,13 @@ import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import { FetchStatus } from 'state/types';
 import media from 'styles/media';
-import { floorNumber, formatDollars, zeroBN } from 'utils/formatters/number';
-import {
-	AssetDisplayByAsset,
-	getMarketName,
-	getSynthDescription,
-	MarketKeyByAsset,
-} from 'utils/futures';
+import { getMarketName, getSynthDescription } from 'utils/futures';
 
-import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from '../styles';
+import {
+	MARKETS_DETAILS_HEIGHT_DESKTOP,
+	TRADE_PANEL_WIDTH_LG,
+	TRADE_PANEL_WIDTH_MD,
+} from '../styles';
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {
@@ -143,7 +144,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			const change =
 				basePriceRate && pastPrice?.rate && basePriceRate.price.gt(0)
 					? wei(basePriceRate.price).sub(pastPrice?.rate).div(basePriceRate.price)
-					: zeroBN;
+					: ZERO_WEI;
 
 			return {
 				value: market.asset,
@@ -173,6 +174,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		<SelectContainer mobile={mobile} ref={ref} accountType={accountType}>
 			<MarketsDropdownSelector
 				onClick={() => setOpen(!open)}
+				expanded={open}
 				mobile={mobile}
 				asset={marketAsset}
 				label={getMarketName(marketAsset)}
@@ -187,7 +189,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							? wei(selectedBasePriceRate.price)
 									.sub(selectedPastPrice.rate)
 									.div(selectedBasePriceRate.price)
-							: zeroBN,
+							: ZERO_WEI,
 					priceInfo: selectedBasePriceRate,
 				}}
 			/>
@@ -235,7 +237,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									sortable: true,
 									Cell: ({ row }: any) => (
 										<FlexDivRowCentered>
-											<CurrencyIcon currencyKey={row.original.key} width="18px" height="18px" />
+											<CurrencyIcon currencyKey={row.original.key} width={18} height={18} />
 											<Spacer width={10} />
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
@@ -314,7 +316,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	top: 66px;
-	z-index: 100;
+	z-index: 1000;
 	height: ${(props) => props.height}px;
 	width: ${TRADE_PANEL_WIDTH_LG}px;
 	${media.lessThan('xxl')`
@@ -367,14 +369,17 @@ const SearchBarContainer = styled.div`
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean; accountType?: string }>`
-	height: 100%;
-	z-index: 40;
+	z-index: 100;
+	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
+	position: relative;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+
 	${(props) =>
 		props.mobile &&
 		css`
 			width: 100%;
 			border-bottom: ${props.theme.colors.selectedTheme.border};
-			position: relative;
+			position: absolute;
 			top: 0;
 			left: 0;
 			right: 0;

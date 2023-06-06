@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
 
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import { StyledCaretDownIcon } from 'components/Select/Select';
+import { FUNDING_RATE_PERIODS } from 'constants/funding';
 import { HOURS_TOGGLE_HEIGHT, HOURS_TOGGLE_WIDTH, zIndex } from 'constants/ui';
-import { FUNDING_RATE_PERIODS } from 'sdk/constants/period';
 import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
 import { selectSelectedInputHours } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -29,7 +29,7 @@ const HoursToggle: React.FC = () => {
 					onClick={() => setOpen(!open)}
 				>
 					{getLabelByValue(fundingHours)}
-					<CaretDownIcon width={12} />
+					<StyledCaretDownIcon width={12} $flip={open} />
 				</ToggleTableHeader>
 				{open && (
 					<ToggleTableRows>
@@ -101,14 +101,12 @@ const ToggleContainer = styled.div<{ open: boolean }>`
 	cursor: pointer;
 	margin-top: ${(props) => (props.open ? '92px' : '20px')};
 
-	${media.lessThan('mdUp')`
-		position: relative;
-		top: -100px;
-		left: calc(80% - 10px);
-		margin-top: 0px;
-		z-index: ${zIndex.HEADER};
-		width: ${HOURS_TOGGLE_WIDTH};
-	`}
+	${media.lessThan('lg')`
+               position: absolute;
+               right: -50px;
+               z-index: ${zIndex.HEADER};
+               width: ${HOURS_TOGGLE_WIDTH};
+       `}
 `;
 
 export default HoursToggle;

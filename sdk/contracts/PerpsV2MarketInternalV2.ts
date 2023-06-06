@@ -3,20 +3,14 @@ import BN from 'bn.js';
 import { Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
+import KwentaSDK from 'sdk';
 
 import { KWENTA_TRACKING_CODE } from 'sdk/constants/futures';
+import { ZERO_WEI, ZERO_BIG_NUM, UNIT_BIG_NUM, UNIT_BN } from 'sdk/constants/number';
 import PerpsV2Market from 'sdk/contracts/abis/PerpsV2Market.json';
 import { PerpsV2Market__factory } from 'sdk/contracts/types';
 import { FuturesMarketKey, PotentialTradeStatus } from 'sdk/types/futures';
-import { sdk } from 'state/config';
-import {
-	zeroBN,
-	ZERO_BIG_NUM,
-	UNIT_BIG_NUM,
-	UNIT_BN,
-	multiplyDecimal,
-	divideDecimal,
-} from 'utils/formatters/number';
+import { multiplyDecimal, divideDecimal } from 'sdk/utils/number';
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin
@@ -61,6 +55,7 @@ type MarketSettings = {
 };
 
 class FuturesMarketInternal {
+	_sdk: KwentaSDK;
 	_provider: ethers.providers.Provider;
 	_perpsV2MarketContract: Contract;
 	_perpsV2MarketSettings: MultiCallContract | undefined;
@@ -82,10 +77,12 @@ class FuturesMarketInternal {
 	_cache: Record<string, BigNumber>;
 
 	constructor(
+		sdk: KwentaSDK,
 		provider: ethers.providers.Provider,
 		marketKey: FuturesMarketKey,
 		marketAddress: string
 	) {
+		this._sdk = sdk;
 		this._provider = provider;
 
 		this._perpsV2MarketContract = PerpsV2Market__factory.connect(marketAddress, provider);
@@ -114,7 +111,7 @@ class FuturesMarketInternal {
 			this._perpsV2MarketContract.address,
 			PerpsV2Market
 		);
-		const preFetchedData = await sdk.context.multicallProvider.all([
+		const preFetchedData = await this._sdk.context.multicallProvider.all([
 			multiCallContract.assetPrice(),
 			multiCallContract.marketSkew(),
 			multiCallContract.marketSize(),
@@ -171,7 +168,7 @@ class FuturesMarketInternal {
 		tradeParams: TradeParams,
 		marginDelta: BigNumber
 	): Promise<{ newPos: Position; status: PotentialTradeStatus; fee: BigNumber }> => {
-		if (!sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
+		if (!this._sdk.context.contracts.Exchanger) throw new Error('Unsupported network');
 		// Reverts if the user is trying to submit a size-zero order.
 		if (tradeParams.sizeDelta.eq(0) && marginDelta.eq(0)) {
 			return { newPos: oldPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.NIL_ORDER };
@@ -226,13 +223,17 @@ class FuturesMarketInternal {
 			return { newPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.CAN_LIQUIDATE };
 		}
 		const maxLeverage = await this._getSetting('maxLeverage');
+		const maxLeverageForSize = await this._maxLeverageForSize(newPos.size);
 
 		const leverage = divideDecimal(
 			multiplyDecimal(newPos.size, tradeParams.fillPrice),
 			margin.add(fee)
 		);
 
-		if (maxLeverage.add(UNIT_BIG_NUM.div(100)).lt(leverage.abs())) {
+		if (
+			maxLeverage.add(UNIT_BIG_NUM.div(100)).lt(leverage.abs()) ||
+			leverage.abs().gt(maxLeverageForSize)
+		) {
 			return {
 				newPos: oldPos,
 				fee: ZERO_BIG_NUM,
@@ -317,8 +318,8 @@ class FuturesMarketInternal {
 		const marginPlusProfitFunding = await this._marginPlusProfitFunding(position, price);
 		const newMargin = marginPlusProfitFunding.add(marginDelta);
 
-		if (newMargin.lt(zeroBN.toBN())) {
-			return { margin: zeroBN.toBN(), status: PotentialTradeStatus.INSUFFICIENT_MARGIN };
+		if (newMargin.lt(ZERO_WEI.toBN())) {
+			return { margin: ZERO_WEI.toBN(), status: PotentialTradeStatus.INSUFFICIENT_MARGIN };
 		}
 
 		const lMargin = await this._liquidationMargin(position.size, price);
@@ -583,13 +584,28 @@ class FuturesMarketInternal {
 		return false;
 	};
 
+	_maxLeverageForSize = async (size: BigNumber) => {
+		const skewScale = await this._getSetting('skewScale');
+		const liqPremMultiplier = await this._getSetting('liquidationPremiumMultiplier');
+		const liqBufferRatio = await this._getSetting('liquidationBufferRatio');
+		const liqBuffer = wei(0.5);
+
+		const liqBufferRatioWei = wei(liqBufferRatio);
+		const liqPremMultiplierWei = wei(liqPremMultiplier);
+		const skewScaleWei = wei(skewScale);
+
+		return liqBuffer
+			.div(wei(size).abs().div(skewScaleWei).mul(liqPremMultiplierWei).add(liqBufferRatioWei))
+			.toBN();
+	};
+
 	_sameSide(a: BigNumber, b: BigNumber) {
 		return a.gte(ZERO_BIG_NUM) === b.gte(ZERO_BIG_NUM);
 	}
 
 	_batchGetSettings = async () => {
 		if (!this._perpsV2MarketSettings) throw new Error('Market settings not initialized');
-		const settings = (await sdk.context.multicallProvider.all([
+		const settings = (await this._sdk.context.multicallProvider.all([
 			this._perpsV2MarketSettings.minInitialMargin(),
 			this._perpsV2MarketSettings.takerFeeOffchainDelayedOrder(this._marketKeyBytes),
 			this._perpsV2MarketSettings.makerFeeOffchainDelayedOrder(this._marketKeyBytes),

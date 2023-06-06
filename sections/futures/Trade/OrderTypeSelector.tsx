@@ -1,5 +1,5 @@
 import SegmentedControl from 'components/SegmentedControl';
-import { CROSS_MARGIN_ORDER_TYPES } from 'constants/futures';
+import { CROSS_MARGIN_ORDER_TYPES } from 'sdk/constants/futures';
 import { SmartMarginOrderType } from 'sdk/types/futures';
 import { OrderNameByType } from 'sdk/utils/futures';
 import { editTradeOrderPrice } from 'state/futures/actions';
@@ -17,7 +17,7 @@ export default function OrderTypeSelector({ setOrderTypeAction, orderType }: Pro
 		<SegmentedControl
 			values={CROSS_MARGIN_ORDER_TYPES.map((o) => OrderNameByType[o])}
 			selectedIndex={CROSS_MARGIN_ORDER_TYPES.indexOf(orderType)}
-			onChange={(index: number) => {
+			onChange={(index) => {
 				const type = CROSS_MARGIN_ORDER_TYPES[index];
 				dispatch(setOrderTypeAction(type));
 				dispatch(editTradeOrderPrice(''));

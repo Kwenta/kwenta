@@ -5,10 +5,13 @@ import { debounce } from 'lodash';
 import KwentaSDK from 'sdk';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
-import { DEFAULT_PRICE_IMPACT_DELTA_PERCENT } from 'constants/defaults';
-import { ORDER_KEEPER_ETH_DEPOSIT } from 'constants/futures';
-import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
+import {
+	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
+	ORDER_KEEPER_ETH_DEPOSIT,
+	SL_TP_MAX_SIZE,
+} from 'sdk/constants/futures';
 import { ZERO_ADDRESS } from 'sdk/constants/global';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
@@ -36,6 +39,9 @@ import {
 	getTradeStatusMessage,
 	serializePotentialTrade,
 } from 'sdk/utils/futures';
+import { marketOverrides } from 'sdk/utils/futures';
+import { floorNumber, stripZeros } from 'sdk/utils/number';
+import { getTransactionPrice } from 'sdk/utils/transactions';
 import { unserializeGasPrice } from 'state/app/helpers';
 import {
 	handleTransactionError,
@@ -53,10 +59,8 @@ import { AppDispatch, AppThunk, RootState } from 'state/store';
 import { ThunkConfig } from 'state/types';
 import { selectNetwork, selectWallet } from 'state/wallet/selectors';
 import { computeDelayedOrderFee } from 'utils/costCalculations';
-import { floorNumber, stripZeros, zeroBN } from 'utils/formatters/number';
 import {
 	formatDelayedOrders,
-	marketOverrides,
 	orderPriceInvalidLabel,
 	serializeCmBalanceInfo,
 	serializeDelayedOrders,
@@ -68,7 +72,6 @@ import {
 	fillPriceWithBuffer,
 } from 'utils/futures';
 import logError from 'utils/logError';
-import { getTransactionPrice } from 'utils/network';
 import { refetchWithComparator } from 'utils/queries';
 
 import {
@@ -743,7 +746,7 @@ export const editCrossMarginPositionSize = (
 			stageCrossMarginTradePreview({
 				orderPrice: marketPrice,
 				market,
-				marginDelta: zeroBN,
+				marginDelta: ZERO_WEI,
 				sizeDelta: wei(nativeSizeDelta || 0),
 				action: 'edit',
 			})
@@ -776,7 +779,7 @@ export const editClosePositionSizeDelta = (
 			market,
 			sizeDelta: wei(nativeSizeDelta),
 			orderPrice: odrderPrice,
-			marginDelta: zeroBN,
+			marginDelta: ZERO_WEI,
 			action: 'close',
 		};
 		if (accountType === 'isolated_margin') {
@@ -808,7 +811,7 @@ export const editClosePositionPrice = (marketKey: FuturesMarketKey, price: strin
 			stageCrossMarginTradePreview({
 				market: marketInfo,
 				orderPrice: isNaN(Number(price)) || !price ? marketPrice : wei(price),
-				marginDelta: zeroBN,
+				marginDelta: ZERO_WEI,
 				sizeDelta: wei(nativeSizeDelta || 0),
 				action: 'edit',
 			})
@@ -837,7 +840,7 @@ export const editCrossMarginPositionMargin = (
 				market,
 				orderPrice: marketPrice,
 				marginDelta: wei(marginDelta || 0),
-				sizeDelta: zeroBN,
+				sizeDelta: ZERO_WEI,
 				action: 'edit',
 			})
 		);
@@ -910,7 +913,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 			market,
 			sizeDelta: nativeSizeDelta,
 			orderPrice: marketPrice,
-			marginDelta: zeroBN,
+			marginDelta: ZERO_WEI,
 			action: 'trade',
 		})
 	);

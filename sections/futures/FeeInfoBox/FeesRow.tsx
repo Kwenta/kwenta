@@ -7,8 +7,9 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import { InfoBoxRow } from 'components/InfoBox';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { SmartMarginOrderType } from 'sdk/types/futures';
-import { formatCurrency, formatDollars, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatDollars, formatPercent } from 'sdk/utils/number';
 
 const ExecutionFeeTooltip = memo(() => {
 	const { t } = useTranslation();
@@ -104,7 +105,7 @@ const FeesRow = memo(
 		const [expanded, toggleExpanded] = useReducer((s) => !s, false);
 
 		const totalFee = useMemo(() => {
-			return tradeFee.add(executionFee ?? zeroBN);
+			return tradeFee.add(executionFee ?? ZERO_WEI);
 		}, [tradeFee, executionFee]);
 
 		return (

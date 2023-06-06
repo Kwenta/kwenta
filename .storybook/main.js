@@ -15,7 +15,11 @@ module.exports = {
 			loader: require.resolve('@svgr/webpack'),
 		});
 
-		config.resolve.fallback = { path: false, stream: false };
+		config.resolve.fallback = {
+			path: false,
+			stream: false,
+			crypto: require.resolve('crypto-browserify'),
+		};
 
 		return config;
 	},

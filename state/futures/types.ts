@@ -1,7 +1,7 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 
 import { Period } from 'sdk/constants/period';
+import { NetworkId } from 'sdk/types/common';
 import { TransactionStatus } from 'sdk/types/common';
 import {
 	SmartMarginOrderType,

@@ -1,5 +1,7 @@
 import { providers } from 'ethers';
 
+export type PriceServer = 'KWENTA' | 'PYTH';
+
 export type NetworkId = 1 | 5 | 420 | 10 | 42 | 69 | 31337;
 
 export type NetworkOverrideOptions = {
@@ -33,3 +35,5 @@ export const NetworkNameById = {
 	420: 'goerli-ovm',
 	31337: 'mainnet-fork',
 } as const;
+
+export type CurrencyKey = string;

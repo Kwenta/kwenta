@@ -168,8 +168,8 @@ export const Table: FC<TableProps> = memo(
 						$noBottom={noBottom}
 						className={className}
 					>
-						{headerGroups.map((headerGroup) => (
-							<div key={headerGroup.id} className="table-row" style={{ display: 'flex' }}>
+						{headerGroups.map((headerGroup: any, index) => (
+							<div key={index} className="table-row" style={{ display: 'flex' }}>
 								{headerGroup.headers.map((column: any) => {
 									return (
 										<TableCellHead
@@ -206,7 +206,7 @@ export const Table: FC<TableProps> = memo(
 						) : !!noResultsMessage && !isLoading && data.length === 0 ? (
 							noResultsMessage
 						) : page.length > 0 ? (
-							<TableBody key="table-body" className="table-body" {...getTableBodyProps()}>
+							<TableBody className="table-body" {...getTableBodyProps()}>
 								{page.map((row, idx) => {
 									prepareRow(row);
 									const props = row.getRowProps();
@@ -337,6 +337,7 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBo
 				color: ${(props) => props.theme.colors.selectedTheme.text.label};
 				font-family: ${(props) => props.theme.fonts.regular};
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+				height: 34px;
 			}
 		`}
 `;

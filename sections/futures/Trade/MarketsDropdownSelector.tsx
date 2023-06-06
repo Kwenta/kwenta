@@ -8,10 +8,10 @@ import { FlexDivCentered } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import { Body, NumericValue } from 'components/Text';
 import { FuturesMarketAsset, SynthSuspensionReason } from 'sdk/types/futures';
+import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { formatDollars, formatPercent } from 'sdk/utils/number';
 import { PricesInfo } from 'state/prices/types';
 import media from 'styles/media';
-import { formatDollars, formatPercent } from 'utils/formatters/number';
-import { MarketKeyByAsset } from 'utils/futures';
 
 import {
 	MARKETS_DETAILS_HEIGHT_DESKTOP,
@@ -31,13 +31,14 @@ type Props = {
 		priceInfo?: PricesInfo;
 	};
 	onClick: () => void;
+	expanded: boolean;
 };
 
 const MarketsDropdownSelector: FC<Props> = (props) => (
 	<Container {...props}>
 		<ContentContainer mobile={props.mobile}>
 			<LeftContainer $mobile={props.mobile}>
-				<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width="31px" height="31px" />
+				<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width={31} height={31} />
 				<div className="currency-meta">
 					<CurrencyLabel weight="bold">
 						{props.label}
@@ -48,7 +49,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 						/>
 					</CurrencyLabel>
 				</div>
-				{props.mobile && <StyledCaretDownIcon />}
+				{props.mobile && <StyledCaretDownIcon $flip={props.expanded} />}
 			</LeftContainer>
 			{props.mobile && (
 				<MobileRightContainer>
@@ -63,7 +64,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 				</MobileRightContainer>
 			)}
 
-			{!props.mobile && <StyledCaretDownIcon />}
+			{!props.mobile && <StyledCaretDownIcon $flip={props.expanded} />}
 		</ContentContainer>
 	</Container>
 );
@@ -87,9 +88,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 		flex: 1;
 		margin-left: 12px;
 	}
-
-	border-right: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	width: ${(props) => (props.mobile ? '100%' : TRADE_PANEL_WIDTH_MD + 'px')};
 	${media.greaterThan('xxl')`
 		width: ${TRADE_PANEL_WIDTH_LG + 0.5}px;
 	`}

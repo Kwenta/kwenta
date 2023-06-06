@@ -1,4 +1,12 @@
+import { Contract } from 'ethcall';
 import { BigNumber } from 'ethers';
+
+import ERC20ABI from '../contracts/abis/ERC20.json';
+
+export const getProxySynthSymbol = (address: string) => {
+	const c = new Contract(address, ERC20ABI);
+	return c.symbol();
+};
 
 export const getReasonFromCode = (reasonCode: BigNumber | number) => {
 	switch (Number(reasonCode)) {

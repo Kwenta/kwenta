@@ -8,10 +8,10 @@ import { border } from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import { NO_VALUE } from 'constants/placeholder';
+import { formatCurrency } from 'sdk/utils/number';
 import { selectInsufficientBalance } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, numericValueCSS } from 'styles/common';
-import { formatCurrency } from 'utils/formatters/number';
 
 type CurrencyCardSelectorProps = {
 	tokenName: string | null;
@@ -49,7 +49,7 @@ const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
 					data-testid="currency-selector"
 				>
 					<TokenLabel>
-						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width="25px" height="25px" />}
+						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width={25} height={25} />}
 						{currencyKey ?? (
 							<CapitalizedText>
 								{t('exchange.currency-card.currency-selector.select-token')}

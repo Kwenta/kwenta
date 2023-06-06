@@ -2,7 +2,7 @@ import { wei, WeiSource } from '@synthetixio/wei';
 import { FC, memo, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { formatNumber, FormatNumberOptions } from 'utils/formatters/number';
+import { formatNumber, FormatNumberOptions } from 'sdk/utils/number';
 
 import Body, { BodyProps } from './Body';
 

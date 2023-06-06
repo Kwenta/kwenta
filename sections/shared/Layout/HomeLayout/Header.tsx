@@ -8,7 +8,6 @@ import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
 import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
-import Button from 'components/Button';
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { GridDivCenteredCol } from 'components/layout/grid';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
@@ -16,6 +15,7 @@ import { Body } from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
+import RefButton from 'sections/shared/components/RefButton';
 
 import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
 import Logo from '../Logo';
@@ -125,9 +125,9 @@ const Header = memo(() => {
 					</Links>
 					<MenuContainer>
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-							<Button noOutline size="medium">
+							<RefButton noOutline size="medium">
 								{t('homepage.nav.start-trade')}
-							</Button>
+							</RefButton>
 						</Link>
 					</MenuContainer>
 				</Container>

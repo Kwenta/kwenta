@@ -18,6 +18,7 @@ import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import CloseOnlyPrompt from './CloseOnlyPrompt';
 import ManagePosition from './ManagePosition';
+import MarketsDropdown from './MarketsDropdown';
 import OrderAcknowledgement from './OrderAcknowledgement';
 import OrderTypeSelector from './OrderTypeSelector';
 import SLTPInputs from './SLTPInputs';
@@ -57,6 +58,8 @@ const TradePanel: FC<Props> = memo(({ mobile }) => {
 
 	return (
 		<TradePanelContainer $mobile={mobile}>
+			<MarketsDropdown />
+
 			{!mobile && <TradeBalance />}
 			{process.env.NEXT_PUBLIC_CLOSE_ONLY === 'true' ? (
 				<CloseOnlyPrompt $mobile={mobile} />
@@ -114,6 +117,7 @@ const TradePanelContainer = styled.div<{ $mobile?: boolean }>`
 	overflow-y: scroll;
 	height: 100%;
 	scrollbar-width: none;
+	border-right: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const MainPanelContent = styled.div`

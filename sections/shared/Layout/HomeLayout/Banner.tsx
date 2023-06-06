@@ -11,6 +11,7 @@ import {
 	BANNER_TEXT,
 	BANNER_WAITING_TIME,
 } from 'constants/announcement';
+import { MARKET_SELECTOR_HEIGHT_MOBILE } from 'sections/futures/Trade/MarketsDropdownSelector';
 import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover';
 import { setShowBanner } from 'state/app/reducer';
 import { selectShowBanner } from 'state/app/selectors';
@@ -26,7 +27,7 @@ type BannerViewProps = {
 
 const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) => {
 	const isMobile = mode === 'mobile';
-	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { marginTop: '3px' };
+	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { flex: '0.1' };
 	const closeIconProps = isMobile ? { width: 12, height: 12 } : {};
 	const linkSize = isMobile ? 'small' : 'medium';
 
@@ -51,7 +52,7 @@ const Banner = memo(() => {
 	useEffect(
 		() => {
 			const currentTime = new Date().getTime();
-			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME));
+			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED));
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[storedTime]
@@ -90,7 +91,8 @@ const FuturesLink = styled(Body)`
 	margin-right: 5px;
 	padding: 4px 9px;
 	border-radius: 20px;
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.text};
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.text};
+	flex: 5;
 	${media.lessThan('md')`
 		margin-right: 0px;
 		flex: 1;
@@ -102,7 +104,7 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 	width: 100%;
 	display: flex;
 	align-items: center;
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.badge.yellow.dark.background};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.background};
 	margin-bottom: 0;
 	cursor: pointer;
 
@@ -117,6 +119,7 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 		border-radius: 0px;
 		gap: 5px;
 		height: ${BANNER_HEIGHT_MOBILE}px;
+		margin-top: ${MARKET_SELECTOR_HEIGHT_MOBILE}px;
 	`}
 `;
 

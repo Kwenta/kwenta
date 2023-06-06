@@ -4,7 +4,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
-import Button from 'components/Button';
 import { FlexDivColCentered } from 'components/layout/flex';
 import { GridDiv } from 'components/layout/grid';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
@@ -13,6 +12,7 @@ import Webp from 'components/Webp';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import { StackSection } from 'sections/homepage/section';
+import RefButton from 'sections/shared/components/RefButton';
 import media from 'styles/media';
 
 const Hero = () => {
@@ -30,9 +30,9 @@ const Hero = () => {
 				</SynthetixContainer>
 				<CTAContainer>
 					<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-						<Button variant="flat" textColor="yellow" size="large">
+						<RefButton variant="flat" textColor="yellow" size="large">
 							{t('homepage.nav.trade-now')}
-						</Button>
+						</RefButton>
 					</Link>
 				</CTAContainer>
 				<HeroImageContainer>

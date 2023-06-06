@@ -52,6 +52,7 @@ const MarketContainer = styled.div`
 	grid-template-rows: auto auto;
 	grid-template-columns: auto auto;
 	align-items: center;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 `;
 
 const StyledValue = styled.div`

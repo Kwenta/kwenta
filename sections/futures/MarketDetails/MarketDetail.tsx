@@ -34,7 +34,7 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 	}, [dataKey, marketInfo]);
 
 	return (
-		<FlexDivRowCentered>
+		<Container>
 			<MarketDetailsTooltip
 				key={dataKey}
 				mobile={mobile}
@@ -54,8 +54,8 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 					</FlexDivRowCentered>
 				</WithCursor>
 			</MarketDetailsTooltip>
-			<div style={{ marginBottom: '5px' }}>{extra}</div>
-		</FlexDivRowCentered>
+			{extra}
+		</Container>
 	);
 });
 
@@ -96,3 +96,8 @@ export const MarketDetailValue = ({
 		{value}
 	</Body>
 );
+
+const Container = styled(FlexDivRowCentered)`
+	position: relative;
+	overflow: visible;
+`;

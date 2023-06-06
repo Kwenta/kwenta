@@ -8,7 +8,7 @@ import KwentaSDK from 'sdk';
 import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from 'sdk/constants/futures';
 import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
 import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from 'sdk/constants/prices';
-import { NetworkId } from 'sdk/types/common';
+import { NetworkId, PriceServer } from 'sdk/types/common';
 import { FuturesMarketKey } from 'sdk/types/futures';
 import {
 	CurrencyPrice,
@@ -17,51 +17,38 @@ import {
 	PricesMap,
 	SynthPricesTuple,
 } from 'sdk/types/prices';
-import { getDisplayAsset, getPythNetworkUrl, normalizePythId } from 'sdk/utils/futures';
+import {
+	getDisplayAsset,
+	getPythNetworkUrl,
+	normalizePythId,
+	MarketAssetByKey,
+} from 'sdk/utils/futures';
 import { startInterval } from 'sdk/utils/interval';
+import { scale } from 'sdk/utils/number';
 import { getRatesEndpoint } from 'sdk/utils/prices';
-import { scale } from 'utils/formatters/number';
-import { MarketAssetByKey } from 'utils/futures';
-import logError from 'utils/logError';
 
 import * as sdkErrors from '../common/errors';
 
 const DEBUG_WS = false;
 const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS;
+const DEFAULT_PRICE_SERVER =
+	process.env.NEXT_PUBLIC_DEFAULT_PRICE_SERVICE === 'KWENTA' ? 'KWENTA' : 'PYTH';
 
 export default class PricesService {
 	private sdk: KwentaSDK;
 	private offChainPrices: PricesMap = {};
 	private onChainPrices: PricesMap = {};
 	private ratesInterval: number | undefined;
-	private pyth: EvmPriceServiceConnection;
+	private pyth!: EvmPriceServiceConnection;
+	private lastConnectionTime: number = Date.now();
+	private wsConnected: boolean = false;
+	private server: PriceServer = DEFAULT_PRICE_SERVER;
+	private connectionMonitorId: number = 0;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;
-
-		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(sdk.context.networkId), {
-			logger: LOG_WS ? console : undefined,
-		});
-
-		// TODO: Typed events
-		this.sdk.context.events.on('network_changed', (params) => {
-			if (this.pyth) {
-				this.pyth.closeWebSocket();
-			}
-			this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(params.networkId), {
-				logger: LOG_WS ? console : undefined,
-			});
-			this.pyth.onWsError = (error) => {
-				// TODO: Feedback connection issue and display
-				// prompt to try disabling add blocker
-				this.sdk.context.events.emit('prices_connection_update', {
-					connected: false,
-					error: error || new Error('pyth prices ws connection failed'),
-				});
-				logError(error);
-			};
-			this.subscribeToPythPriceUpdates();
-		});
+		this.setEventListeners();
+		this.connectToPyth(sdk.context.networkId, this.server);
 	}
 
 	get currentPrices() {
@@ -92,7 +79,7 @@ export default class PricesService {
 						type: 'on_chain',
 					});
 				} catch (err) {
-					logError(err);
+					this.sdk.context.logError(err);
 				}
 			}, intervalTime);
 		}
@@ -219,6 +206,63 @@ export default class PricesService {
 		return offChainPrices;
 	}
 
+	private connectToPyth(networkId: NetworkId, server: PriceServer) {
+		if (this.pyth) {
+			this.pyth.closeWebSocket();
+		}
+
+		this.pyth = new EvmPriceServiceConnection(getPythNetworkUrl(networkId, server), {
+			logger: LOG_WS ? console : undefined,
+		});
+		this.lastConnectionTime = Date.now();
+		this.monitorConnection();
+
+		this.pyth.onWsError = (error: Error) => {
+			if (error?.message) {
+				this.sdk.context.logError(error);
+			}
+			this.setWsConnected(false);
+			this.sdk.context.events.emit('prices_connection_update', {
+				connected: false,
+				error: error || new Error('pyth prices ws connection failed'),
+			});
+		};
+
+		this.subscribeToPythPriceUpdates();
+	}
+
+	private setWsConnected(connected: boolean) {
+		if (connected !== this.wsConnected) {
+			this.wsConnected = connected;
+			this.sdk.context.events.emit('prices_connection_update', {
+				connected: connected,
+			});
+		}
+	}
+
+	private setEventListeners() {
+		this.sdk.context.events.on('network_changed', (params) => {
+			this.connectToPyth(params.networkId, this.server);
+		});
+	}
+
+	private monitorConnection() {
+		// Should get a constant stream of messages so when we don't
+		// receive any for a 10 second period we switch servers
+		if (this.connectionMonitorId) clearTimeout(this.connectionMonitorId);
+		this.connectionMonitorId = setTimeout(() => {
+			if (Date.now() - this.lastConnectionTime > 10000) {
+				this.switchConnection();
+			}
+			this.monitorConnection();
+		}, 1000);
+	}
+
+	private switchConnection() {
+		this.server = this.server === 'KWENTA' ? 'PYTH' : 'KWENTA';
+		this.connectToPyth(this.sdk.context.networkId, this.server);
+	}
+
 	private formatPythPrice(priceFeed: PriceFeed): Wei {
 		const price = priceFeed.getPriceUnchecked();
 		return scale(wei(price.price), price.expo);
@@ -228,6 +272,7 @@ export default class PricesService {
 		this.sdk.context.events.emit('prices_updated', {
 			prices: offChainPrices,
 			type: 'off_chain',
+			source: 'stream',
 		});
 	}, PRICE_UPDATE_THROTTLE);
 
@@ -237,9 +282,10 @@ export default class PricesService {
 			this.sdk.context.events.emit('prices_updated', {
 				prices: this.offChainPrices,
 				type: 'off_chain',
+				source: 'fetch',
 			});
 		} catch (err) {
-			logError(err);
+			this.sdk.context.logError(err);
 		}
 		this.pyth.subscribePriceFeedUpdates(this.pythIds, (priceFeed) => {
 			const id = normalizePythId(priceFeed.id);
@@ -248,6 +294,8 @@ export default class PricesService {
 				const price = this.formatPythPrice(priceFeed);
 				this.offChainPrices[assetKey] = price;
 			}
+			this.setWsConnected(true);
+			this.lastConnectionTime = Date.now();
 			this.throttleOffChainPricesUpdate(this.offChainPrices);
 		});
 	}

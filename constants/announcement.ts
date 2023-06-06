@@ -1,7 +1,7 @@
 import { MILLISECONDS_PER_DAY } from 'sdk/constants/period';
 
 // Shows or hides the home page banner entirely when set to true/false
-export const BANNER_ENABLED = true;
+export const BANNER_ENABLED = false;
 // Sets the link destination for the banner component, or renders the banner as
 // plain, un-clickable text if set to a falsey value (`false`, `null`, '', etc...)
 export const BANNER_LINK_URL =
@@ -12,6 +12,6 @@ export const BANNER_TEXT =
 // Sets the height of the banner component on desktop
 export const BANNER_HEIGHT_DESKTOP = 50;
 // Sets the height of the banner component on mobile
-export const BANNER_HEIGHT_MOBILE = 70;
+export const BANNER_HEIGHT_MOBILE = 85;
 // Sets the waiting time of the banner component before it is reactive
 export const BANNER_WAITING_TIME = 2 * MILLISECONDS_PER_DAY;

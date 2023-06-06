@@ -1,5 +1,6 @@
 import { memo } from 'react';
 
+import { ZERO_WEI } from 'sdk/constants/number';
 import {
 	selectSmartMarginKeeperDeposit,
 	selectMarketInfo,
@@ -7,9 +8,8 @@ import {
 	selectTradePreview,
 } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { zeroBN } from 'utils/formatters/number';
 
-import FeesRow from './FeesRow.tsx';
+import FeesRow from './FeesRow';
 
 const TradeTotalFeesRow = memo(() => {
 	const tradePreview = useAppSelector(selectTradePreview);
@@ -19,13 +19,13 @@ const TradeTotalFeesRow = memo(() => {
 
 	return (
 		<FeesRow
-			executionFee={marketInfo?.keeperDeposit ?? zeroBN}
-			tradeFee={tradePreview?.fee ?? zeroBN}
+			executionFee={marketInfo?.keeperDeposit ?? ZERO_WEI}
+			tradeFee={tradePreview?.fee ?? ZERO_WEI}
 			orderType={orderType}
 			smartMarginKeeperDeposit={keeperEthDeposit}
 			rates={{
-				maker: marketInfo?.feeRates.makerFeeOffchainDelayedOrder ?? zeroBN,
-				taker: marketInfo?.feeRates.takerFeeOffchainDelayedOrder ?? zeroBN,
+				maker: marketInfo?.feeRates.makerFeeOffchainDelayedOrder ?? ZERO_WEI,
+				taker: marketInfo?.feeRates.takerFeeOffchainDelayedOrder ?? ZERO_WEI,
 			}}
 		/>
 	);

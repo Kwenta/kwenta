@@ -6,9 +6,10 @@ import styled from 'styled-components';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
+import { formatDollars, formatNumber } from 'sdk/utils/number';
 import { SharePositionParams } from 'state/futures/types';
-import { formatDollars, formatNumber, zeroBN } from 'utils/formatters/number';
 import { getMarketName } from 'utils/futures';
 
 function getTwitterText(
@@ -56,14 +57,14 @@ const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
 		const positionDetails = position.position ?? null;
 		const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
 		const marketName = getMarketName(position.asset!);
-		const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
+		const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x';
 		const pnlPct = `+${positionDetails?.pnlPct.mul(100).toNumber().toFixed(2)}%`;
 
 		const avgEntryPrice = position.positionHistory?.avgEntryPrice
 			? formatNumber(position.positionHistory?.avgEntryPrice)
 			: '';
-		const dollarEntry = formatDollars(avgEntryPrice ?? zeroBN, { suggestDecimals: true });
-		const dollarCurrent = formatNumber(position.marketPrice ?? zeroBN);
+		const dollarEntry = formatDollars(avgEntryPrice ?? ZERO_WEI, { suggestDecimals: true });
+		const dollarCurrent = formatNumber(position.marketPrice ?? ZERO_WEI);
 		const text = getTwitterText(side, marketName, leverage, pnlPct, dollarEntry, dollarCurrent);
 		window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
 	};

@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
-import { formatShortDateUTC, toJSTimestamp } from 'utils/formatters/date';
+import { formatShortDateUTC, toJSTimestamp } from 'sdk/utils/date';
 
 import { initChart } from '../initChart';
 import type { EChartsOption } from '../initChart';
@@ -18,11 +18,16 @@ export const Traders = () => {
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
-	const { chart, defaultOptions } = useMemo(() => {
+	const [chart, setChart] = useState<any>(null);
+	const [defaultOptions, setDefaultOptions] = useState<any>(null);
+
+	useEffect(() => {
 		if (chart) chart.dispose();
-		return initChart(ref?.current, theme);
+		const result = initChart(ref?.current, theme);
+		setChart(result.chart);
+		setDefaultOptions(result.defaultOptions);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ref?.current, theme]);
+	}, [theme]);
 
 	useEffect(() => {
 		if (!ref || !chart || !ref.current || !dailyStatsData || !dailyStatsData.length) {
