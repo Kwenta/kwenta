@@ -1,5 +1,5 @@
 import { WeiSource } from '@synthetixio/wei';
-import { useEffect, useRef, useMemo, FC } from 'react';
+import { useEffect, useRef, useMemo, FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
@@ -31,11 +31,16 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 
 	const ref = useRef<HTMLDivElement | null>(null);
 
-	const { chart, defaultOptions } = useMemo(() => {
+	const [chart, setChart] = useState<any>(null);
+	const [defaultOptions, setDefaultOptions] = useState<any>(null);
+
+	useEffect(() => {
 		if (chart) chart.dispose();
-		return initChart(ref?.current, theme);
+		const result = initChart(ref?.current, theme);
+		setChart(result.chart);
+		setDefaultOptions(result.defaultOptions);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ref?.current, theme]);
+	}, [theme]);
 
 	const openInterestStats = useMemo(() => {
 		const sortedData = openInterestData
