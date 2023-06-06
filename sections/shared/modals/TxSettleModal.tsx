@@ -29,8 +29,8 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({ onDismiss, txError, atte
 					</CurrencyItemTitle>
 					<Currency.Icon
 						currencyKey={baseCurrencyKey!}
-						width="40px"
-						height="40px"
+						width={40}
+						height={40}
 						data-testid="currency-img"
 					/>
 				</CurrencyItem>

@@ -65,8 +65,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 						<CurrencyItemTitle>{t('exchange.common.from')}</CurrencyItemTitle>
 						<Currency.Icon
 							currencyKey={quoteCurrencyKey}
-							width="40px"
-							height="40px"
+							width={40}
+							height={40}
 							data-testid="quote-currency-img"
 						/>
 					</CurrencyItem>
@@ -78,8 +78,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
 					<Currency.Icon
 						currencyKey={baseCurrencyKey!}
-						width="40px"
-						height="40px"
+						width={40}
+						height={40}
 						data-testid="base-currency-img"
 					/>
 				</CurrencyItem>

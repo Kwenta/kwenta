@@ -91,7 +91,7 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 						onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
 						data-testid="currency-selector"
 					>
-						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width="20px" height="20px" />}
+						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width={20} height={20} />}
 						<div className="label">{currencyKey ?? 'Select'}</div>
 						{hasCurrencySelectCallback && <CaretDownIcon />}
 					</MobileCurrencySelector>

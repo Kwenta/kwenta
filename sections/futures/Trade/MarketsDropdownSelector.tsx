@@ -38,7 +38,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 	<Container {...props}>
 		<ContentContainer mobile={props.mobile}>
 			<LeftContainer $mobile={props.mobile}>
-				<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width="31px" height="31px" />
+				<CurrencyIcon currencyKey={MarketKeyByAsset[props.asset]} width={31} height={31} />
 				<div className="currency-meta">
 					<CurrencyLabel weight="bold">
 						{props.label}

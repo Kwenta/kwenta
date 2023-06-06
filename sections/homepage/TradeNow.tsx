@@ -3,11 +3,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import Button from 'components/Button';
 import { FlexDivColCentered } from 'components/layout/flex';
 import * as Text from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
+import RefButton from 'sections/shared/components/RefButton';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media from 'styles/media';
 
@@ -23,9 +23,9 @@ const TradeNow = () => {
 					<GrayDescription>{t('homepage.tradenow.categories')}</GrayDescription>
 					<CTAContainer>
 						<Link href={ROUTES.Markets.Home(DEFAULT_FUTURES_MARGIN_TYPE)}>
-							<Button variant="flat" textColor="yellow" size="medium">
+							<RefButton variant="flat" textColor="yellow" size="medium">
 								{t('homepage.nav.trade-now')}
-							</Button>
+							</RefButton>
 						</Link>
 					</CTAContainer>
 				</TransparentCard>

@@ -237,7 +237,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									sortable: true,
 									Cell: ({ row }: any) => (
 										<FlexDivRowCentered>
-											<CurrencyIcon currencyKey={row.original.key} width="18px" height="18px" />
+											<CurrencyIcon currencyKey={row.original.key} width={18} height={18} />
 											<Spacer width={10} />
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
