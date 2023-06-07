@@ -7,17 +7,17 @@ export default function ChatRoom() {
 	const [showChat, setShowChat] = useState(false);
 	return (
 		<>
-			<Body color="secondary" style={{ marginRight: '18px' }}>
-				<a
-					href="#"
-					onClick={(e) => {
-						e.preventDefault();
-						setShowChat(!showChat);
-					}}
-				>
+			<a
+				href="#"
+				onClick={(e) => {
+					e.preventDefault();
+					setShowChat(!showChat);
+				}}
+			>
+				<Body color="secondary" style={{ marginRight: '18px' }}>
 					Chat
-				</a>
-			</Body>
+				</Body>
+			</a>
 
 			{showChat && (
 				<Widgetbot
@@ -26,7 +26,13 @@ export default function ChatRoom() {
 					shard="https://emerald.widgetbot.io"
 					width={500}
 					height={400}
-					style={{ position: 'absolute', bottom: 0, right: 0, marginBottom: '50px' }}
+					style={{
+						position: 'absolute',
+						bottom: 0,
+						right: 0,
+						marginBottom: '50px',
+						marginRight: '50px',
+					}}
 				/>
 			)}
 		</>
