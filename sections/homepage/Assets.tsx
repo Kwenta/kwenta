@@ -11,6 +11,8 @@ import Button from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { FlexDiv, FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
+import { MobileOnlyView } from 'components/Media';
+import { NotMobileView } from 'components/Media/Media';
 import { TabPanel } from 'components/Tab';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import Connector from 'containers/Connector';
@@ -22,7 +24,7 @@ import { selectOptimismMarkets } from 'state/home/selectors';
 import { useAppSelector, usePollAction } from 'state/hooks';
 import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media, { Media } from 'styles/media';
+import media from 'styles/media';
 import { getSynthDescription } from 'utils/futures';
 
 enum MarketsTab {
@@ -177,7 +179,7 @@ const Assets = () => {
 
 	return (
 		<Container>
-			<Media lessThan="sm">
+			<MobileOnlyView>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<SliderContainer>
@@ -228,8 +230,8 @@ const Assets = () => {
 						</StyledSlider>
 					</SliderContainer>
 				</TabPanel>
-			</Media>
-			<Media greaterThanOrEqual="sm">
+			</MobileOnlyView>
+			<NotMobileView>
 				<FlexDivColCentered>
 					{title}
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
@@ -281,7 +283,7 @@ const Assets = () => {
 						</StyledFlexDivRow>
 					</TabPanel>
 				</FlexDivColCentered>
-			</Media>
+			</NotMobileView>
 		</Container>
 	);
 };

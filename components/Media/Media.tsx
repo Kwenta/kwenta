@@ -1,27 +1,43 @@
+import dynamic from 'next/dynamic';
 import { FC, ReactNode, memo } from 'react';
 
-import { Media } from 'styles/media';
+import { BREAKPOINTS } from 'styles/media';
 
 type MediaProps = {
 	children: ReactNode;
 };
 
+const MediaQuery = dynamic(() => import('react-responsive'), {
+	ssr: false,
+});
+
+// <Media greaterThanOrEqual="md">{children}</Media>
 export const DesktopOnlyView: FC<MediaProps> = memo(({ children }) => (
-	<Media greaterThanOrEqual="md">{children}</Media>
+	<MediaQuery minWidth={BREAKPOINTS.md}>{children}</MediaQuery>
 ));
 
+// <Media between={['sm', 'md']}>{children}</Media>
 export const TabletOnlyView: FC<MediaProps> = memo(({ children }) => (
-	<Media between={['sm', 'md']}>{children}</Media>
+	<MediaQuery minWidth={BREAKPOINTS.sm} maxWidth={BREAKPOINTS.md - 1}>
+		{children}
+	</MediaQuery>
 ));
 
+// <Media lessThan="md">{children}</Media>
 export const MobileOrTabletView: FC<MediaProps> = memo(({ children }) => (
-	<Media lessThan="md">{children}</Media>
+	<MediaQuery maxWidth={BREAKPOINTS.md - 1}>{children}</MediaQuery>
 ));
 
+// <Media greaterThan="xs">{children}</Media>
 export const MobileHiddenView: FC<MediaProps> = memo(({ children }) => (
-	<Media greaterThan="xs">{children}</Media>
+	<MediaQuery minWidth={BREAKPOINTS.xs + 1}>{children}</MediaQuery>
 ));
 
+// <Media at="xs">{children}</Media>
 export const MobileOnlyView: FC<MediaProps> = memo(({ children }) => (
-	<Media at="xs">{children}</Media>
+	<MediaQuery maxWidth={BREAKPOINTS.sm - 1}>{children}</MediaQuery>
+));
+
+export const NotMobileView: FC<MediaProps> = memo(({ children }) => (
+	<MediaQuery minWidth={BREAKPOINTS.sm}>{children}</MediaQuery>
 ));

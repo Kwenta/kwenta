@@ -24,7 +24,6 @@ import { useAppData } from 'state/app/hooks';
 import { useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 import store from 'state/store';
-import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
 import { IGNORE_ERRORS } from 'utils/logError';
 import { getDesignTokens } from 'utils/theme';
@@ -82,14 +81,12 @@ const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
 		>
 			<ThemeProvider theme={theme}>
 				<MuiThemeProvider theme={muiTheme}>
-					<MediaContextProvider>
-						<Layout>
-							<AcknowledgementModal />
-							<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
-						</Layout>
-						<ErrorNotifier />
-						<ReactQueryDevtools position="top-left" />
-					</MediaContextProvider>
+					<Layout>
+						<AcknowledgementModal />
+						<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
+					</Layout>
+					<ErrorNotifier />
+					<ReactQueryDevtools position="top-left" />
 				</MuiThemeProvider>
 			</ThemeProvider>
 		</RainbowKitProvider>

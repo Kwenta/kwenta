@@ -12,10 +12,12 @@ import {
 	FlexDivRow,
 } from 'components/layout/flex';
 import { GridDiv } from 'components/layout/grid';
+import { MobileOnlyView } from 'components/Media';
+import { NotMobileView } from 'components/Media/Media';
 import { StackSection } from 'sections/homepage/section';
 import { Copy, Title } from 'sections/homepage/text';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media, { Media } from 'styles/media';
+import media from 'styles/media';
 
 const EARNINGS = [
 	{
@@ -55,7 +57,7 @@ const Earning = () => {
 		<StackSection>
 			<Container>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
-				<Media greaterThan="sm">
+				<NotMobileView>
 					<StyledFlexContainer>
 						{EARNINGS.map(({ id, title, copy, image }) => (
 							<FeatureCard key={id}>
@@ -67,8 +69,8 @@ const Earning = () => {
 							</FeatureCard>
 						))}
 					</StyledFlexContainer>
-				</Media>
-				<Media lessThan="sm">
+				</NotMobileView>
+				<MobileOnlyView>
 					<StyledFlexDivColCentered>
 						{EARNINGS.map(({ id, title, copy, image }) => (
 							<FeatureCard key={id}>
@@ -80,7 +82,7 @@ const Earning = () => {
 							</FeatureCard>
 						))}
 					</StyledFlexDivColCentered>
-				</Media>
+				</MobileOnlyView>
 			</Container>
 		</StackSection>
 	);
