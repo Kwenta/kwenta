@@ -147,7 +147,13 @@ export default function SLTPInputs() {
 							placeholder={'0.00'}
 							onChange={onChangeStopLoss}
 							right={
-								<ShowPercentage targetPrice={stopLossPrice} isStopLoss={true} isTradePanel={true} />
+								<ShowPercentage
+									targetPrice={stopLossPrice}
+									isStopLoss={true}
+									currentPrice={currentPrice}
+									leverageSide={leverageSide}
+									leverageWei={leverageWei}
+								/>
 							}
 						/>
 						<Spacer height={12} />
@@ -163,7 +169,14 @@ export default function SLTPInputs() {
 							value={takeProfitPrice}
 							placeholder={'0.00'}
 							onChange={onChangeTakeProfit}
-							right={<ShowPercentage targetPrice={takeProfitPrice} isTradePanel={true} />}
+							right={
+								<ShowPercentage
+									targetPrice={takeProfitPrice}
+									currentPrice={currentPrice}
+									leverageSide={leverageSide}
+									leverageWei={leverageWei}
+								/>
+							}
 						/>
 					</InputsContainer>
 				)
