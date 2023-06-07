@@ -906,9 +906,8 @@ export const selectTradePreview = createSelector(
 					? unserialized.notionalValue.div(unserialized.margin).abs()
 					: wei(0),
 			};
-		} else {
-			return null;
 		}
+		return null;
 	}
 );
 
@@ -933,9 +932,8 @@ export const selectEditPositionPreview = createSelector(
 					? unserialized.notionalValue.div(unserialized.margin).abs()
 					: wei(0),
 			};
-		} else {
-			return null;
 		}
+		return null;
 	}
 );
 
@@ -963,9 +961,8 @@ export const selectClosePositionPreview = createSelector(
 					? unserialized.notionalValue.div(unserialized.margin).abs()
 					: wei(0),
 			};
-		} else {
-			return null;
 		}
+		return null;
 	}
 );
 
