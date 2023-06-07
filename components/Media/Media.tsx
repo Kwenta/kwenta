@@ -30,7 +30,7 @@ export const MobileOrTabletView: FC<MediaProps> = memo(({ children }) => (
 
 // <Media greaterThan="xs">{children}</Media>
 export const MobileHiddenView: FC<MediaProps> = memo(({ children }) => (
-	<MediaQuery minWidth={BREAKPOINTS.xs + 1}>{children}</MediaQuery>
+	<MediaQuery minWidth={BREAKPOINTS.sm}>{children}</MediaQuery>
 ));
 
 // <Media at="xs">{children}</Media>
