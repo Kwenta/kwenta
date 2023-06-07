@@ -35,7 +35,9 @@ export const MobileHiddenView: FC<MediaProps> = memo(({ children }) => (
 
 // <Media at="xs">{children}</Media>
 export const MobileOnlyView: FC<MediaProps> = memo(({ children }) => (
-	<MediaQuery maxWidth={BREAKPOINTS.sm - 1}>{children}</MediaQuery>
+	<MediaQuery minWidth={BREAKPOINTS.xs} maxWidth={BREAKPOINTS.sm - 1}>
+		{children}
+	</MediaQuery>
 ));
 
 export const NotMobileView: FC<MediaProps> = memo(({ children }) => (
