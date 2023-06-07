@@ -880,103 +880,108 @@ export const selectCrossMarginOrderPrice = (state: RootState) =>
 
 export const selectTradePreview = createSelector(
 	selectFuturesType,
+	selectTradeSizeInputs,
+	selectCrossMarginOrderPrice,
+	selectOrderType,
 	(state: RootState) => state.futures,
-	(type, futures) => {
+	(type, { nativeSizeDelta }, orderPrice, orderType, futures) => {
 		const preview = futures[accountType(type)].previews.trade;
 		const unserialized = preview ? unserializePotentialTrade(preview) : null;
-		return unserialized
-			? {
-					...unserialized,
-					leverage: unserialized.margin.gt(0)
-						? unserialized.notionalValue.div(unserialized.margin).abs()
-						: wei(0),
-			  }
-			: null;
+		if (unserialized) {
+			const priceImpact = getDefaultPriceImpact(orderType);
+			const conditionalOrderPrice = wei(orderPrice || 0);
+			const price =
+				orderType !== 'market' && conditionalOrderPrice.gt(0)
+					? conditionalOrderPrice
+					: unserialized.price;
+			const impactDecimalPercent = priceImpact.div(100);
+			const desiredFillPrice = nativeSizeDelta.lt(0)
+				? price.mul(wei(1).sub(impactDecimalPercent))
+				: price.mul(impactDecimalPercent.add(1));
+
+			return {
+				...unserialized,
+				desiredFillPrice,
+				leverage: unserialized.margin.gt(0)
+					? unserialized.notionalValue.div(unserialized.margin).abs()
+					: wei(0),
+			};
+		} else {
+			return null;
+		}
 	}
 );
 
 export const selectEditPositionPreview = createSelector(
 	selectFuturesType,
+	selectEditPositionInputs,
 	(state: RootState) => state.futures,
-	(type, futures) => {
+	(type, { nativeSizeDelta }, futures) => {
 		const preview = futures[accountType(type)].previews.edit;
 		const unserialized = preview ? unserializePotentialTrade(preview) : null;
-		return unserialized
-			? {
-					...unserialized,
-					leverage: unserialized.margin.gt(0)
-						? unserialized.notionalValue.div(unserialized.margin).abs()
-						: wei(0),
-			  }
-			: null;
+		if (unserialized) {
+			const priceImpact = getDefaultPriceImpact('market');
+			const impactDecimalPercent = priceImpact.div(100);
+			const desiredFillPrice =
+				Number(nativeSizeDelta) < 0
+					? unserialized.price.mul(wei(1).sub(impactDecimalPercent))
+					: unserialized.price.mul(impactDecimalPercent.add(1));
+			return {
+				...unserialized,
+				desiredFillPrice,
+				leverage: unserialized.margin.gt(0)
+					? unserialized.notionalValue.div(unserialized.margin).abs()
+					: wei(0),
+			};
+		} else {
+			return null;
+		}
 	}
 );
 
 export const selectClosePositionPreview = createSelector(
 	selectFuturesType,
+	selectEditPositionModalInfo,
+	selectClosePositionOrderInputs,
 	(state: RootState) => state.futures,
-	(type, futures) => {
+	(type, { position }, { price, orderType }, futures) => {
 		const preview = futures[accountType(type)].previews.close;
 		const unserialized = preview ? unserializePotentialTrade(preview) : null;
-		return unserialized
-			? {
-					...unserialized,
-					leverage: unserialized.margin.gt(0)
-						? unserialized.notionalValue.div(unserialized.margin).abs()
-						: wei(0),
-			  }
-			: null;
+		if (unserialized) {
+			const priceImpact = getDefaultPriceImpact(orderType);
+			const impactDecimalPercent = priceImpact.div(100);
+			let orderPrice =
+				(orderType === 'market' ? unserialized.price : wei(price?.value || 0)) ?? wei(0);
+			const desiredFillPrice =
+				position?.position?.side === PositionSide.LONG
+					? orderPrice.mul(wei(1).sub(impactDecimalPercent))
+					: orderPrice.mul(impactDecimalPercent.add(1));
+			return {
+				...unserialized,
+				desiredFillPrice,
+				leverage: unserialized.margin.gt(0)
+					? unserialized.notionalValue.div(unserialized.margin).abs()
+					: wei(0),
+			};
+		} else {
+			return null;
+		}
 	}
 );
 
 export const selectDesiredTradeFillPrice = createSelector(
-	selectTradeSizeInputs,
-	selectCrossMarginOrderPrice,
-	selectOrderType,
 	selectTradePreview,
-	({ nativeSizeDelta }, orderPrice, orderType, tradePreview) => {
-		if (tradePreview === null) return ZERO_WEI;
-		const priceImpact = getDefaultPriceImpact(orderType);
-		const conditionalOrderPrice = wei(orderPrice || 0);
-		const price =
-			orderType !== 'market' && conditionalOrderPrice.gt(0)
-				? conditionalOrderPrice
-				: tradePreview.price;
-		const impactDecimalPercent = priceImpact.div(100);
-		return nativeSizeDelta.lt(0)
-			? price.mul(wei(1).sub(impactDecimalPercent))
-			: price.mul(impactDecimalPercent.add(1));
-	}
+	(tradePreview) => tradePreview?.desiredFillPrice ?? wei(0)
 );
 
 export const selectEditPosDesiredFillPrice = createSelector(
-	selectEditPositionInputs,
 	selectEditPositionPreview,
-	({ nativeSizeDelta }, editPreview) => {
-		if (editPreview === null) return ZERO_WEI;
-		const priceImpact = getDefaultPriceImpact('market');
-		const impactDecimalPercent = priceImpact.div(100);
-		return Number(nativeSizeDelta) < 0
-			? editPreview.price.mul(wei(1).sub(impactDecimalPercent))
-			: editPreview.price.mul(impactDecimalPercent.add(1));
-	}
+	(editPreview) => editPreview?.desiredFillPrice ?? wei(0)
 );
 
 export const selectClosePosDesiredFillPrice = createSelector(
-	selectEditPositionModalInfo,
-	selectClosePositionOrderInputs,
 	selectClosePositionPreview,
-	({ position }, { price, orderType }, closePreview) => {
-		if (closePreview === null) return ZERO_WEI;
-		const priceImpact = getDefaultPriceImpact(orderType);
-
-		const impactDecimalPercent = priceImpact.div(100);
-		let orderPrice = orderType === 'market' ? closePreview.price : wei(price?.value || 0);
-		orderPrice = orderPrice ?? wei(0);
-		return position?.position?.side === PositionSide.LONG
-			? orderPrice.mul(wei(1).sub(impactDecimalPercent))
-			: orderPrice.mul(impactDecimalPercent.add(1));
-	}
+	(closePreview) => closePreview?.desiredFillPrice ?? wei(0)
 );
 
 export const selectIsolatedMarginLeverage = createSelector(
