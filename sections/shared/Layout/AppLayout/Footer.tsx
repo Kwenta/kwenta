@@ -8,6 +8,7 @@ import { FOOTER_HEIGHT } from 'styles/common';
 
 import GitHashID from './GitHashID';
 import OperationStatus from './OperationStatus';
+import ChatRoom from 'components/ChatRoom/ChatRoom';
 
 const Footer = () => {
 	return (
@@ -15,6 +16,7 @@ const Footer = () => {
 			<OperationStatus />
 			<GitHashID />
 			<RightContainer>
+				<ChatRoom />
 				<FooterLinkInternal onClick={() => router.push(ROUTES.Stats.Home)}>
 					<Body color="secondary">Stats</Body>
 				</FooterLinkInternal>
