@@ -39,7 +39,7 @@ export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => 
 };
 
 export const isDecimalFour = (marketKeyOrAsset: string) =>
-	['sEUR', 'EUR', 'sDOGE', 'DOGE', 'ARB'].includes(marketKeyOrAsset);
+	['sEUR', 'EUR', 'sDOGE', 'DOGE'].includes(marketKeyOrAsset);
 
 export const orderPriceInvalidLabel = (
 	orderPrice: string,
