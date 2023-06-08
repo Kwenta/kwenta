@@ -32,7 +32,7 @@
 		"@material-ui/core": "^4.12.3",
 		"@metamask/detect-provider": "2.0.0",
 		"@pythnetwork/pyth-evm-js": "1.10.0",
-		"@rainbow-me/rainbowkit": "0.8.1",
+		"@rainbow-me/rainbowkit": "0.9.0",
 		"@reach/dialog": "0.15.0",
 		"@reduxjs/toolkit": "^1.8.5",
 		"@sentry/browser": "7.43.0",
