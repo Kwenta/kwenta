@@ -966,21 +966,6 @@ export const selectClosePositionPreview = createSelector(
 	}
 );
 
-export const selectDesiredTradeFillPrice = createSelector(
-	selectTradePreview,
-	(tradePreview) => tradePreview?.desiredFillPrice ?? wei(0)
-);
-
-export const selectEditPosDesiredFillPrice = createSelector(
-	selectEditPositionPreview,
-	(editPreview) => editPreview?.desiredFillPrice ?? wei(0)
-);
-
-export const selectClosePosDesiredFillPrice = createSelector(
-	selectClosePositionPreview,
-	(closePreview) => closePreview?.desiredFillPrice ?? wei(0)
-);
-
 export const selectIsolatedMarginLeverage = createSelector(
 	selectPosition,
 	selectIsolatedMarginTradeInputs,

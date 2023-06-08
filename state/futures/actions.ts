@@ -125,14 +125,11 @@ import {
 	selectCrossMarginEditPosInputs,
 	selectCrossPreviewCount,
 	selectTradePreview,
-	selectEditPosDesiredFillPrice,
 	selectClosePositionOrderInputs,
 	selectFuturesPositions,
 	selectEditPositionModalInfo,
-	selectClosePosDesiredFillPrice,
 	selectOpenDelayedOrders,
 	selectSlTpModalInputs,
-	selectDesiredTradeFillPrice,
 	selectSmartMarginKeeperDeposit,
 	selectSkewAdjustedPrice,
 	selectEditPositionPreview,
@@ -1259,7 +1256,8 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		const marketInfo = selectMarketInfo(getState());
-		const desiredFill = selectDesiredTradeFillPrice(getState());
+		const tradePreview = selectTradePreview(getState());
+		const desiredFillPrice = tradePreview?.desiredFillPrice ?? wei(0);
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 		try {
 			if (!marketInfo) throw new Error('Market info not found');
@@ -1276,7 +1274,7 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 			const tx = await sdk.futures.submitIsolatedMarginOrder(
 				marketInfo.market,
 				wei(nativeSizeDelta),
-				desiredFill
+				desiredFillPrice
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
@@ -1343,7 +1341,8 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 	'futures/closeIsolatedMarginPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
-		const desiredFillPrice = selectDesiredTradeFillPrice(getState());
+		const tradePreview = selectTradePreview(getState());
+		const desiredFillPrice = tradePreview?.desiredFillPrice ?? wei(0);
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
 			dispatch(
@@ -1395,7 +1394,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 			const desiredFillPrice =
 				preview.exceedsPriceProtection && overridePriceProtection
 					? fillPriceWithBuffer(preview.price, tradeInputs.nativeSizeDelta)
-					: selectDesiredTradeFillPrice(getState());
+					: preview.price;
 
 			dispatch(
 				setTransaction({
@@ -1539,7 +1538,7 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, boolea
 			const desiredFillPrice =
 				preview.exceedsPriceProtection && overridePriceProtection
 					? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
-					: selectEditPosDesiredFillPrice(getState());
+					: preview.price;
 
 			dispatch(
 				setTransaction({
@@ -1599,7 +1598,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 			const desiredFillPrice =
 				preview.exceedsPriceProtection && overridePriceProtection
 					? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
-					: selectClosePosDesiredFillPrice(getState());
+					: preview.price;
 
 			const isClosing = wei(nativeSizeDelta)
 				.abs()
@@ -1660,7 +1659,8 @@ export const submitIsolatedMarginReducePositionOrder = createAsyncThunk<void, vo
 	'futures/submitSmartMarginReducePositionOrder',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const { market } = selectEditPositionModalInfo(getState());
-		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
+		const closePreview = selectClosePositionPreview(getState());
+		const desiredFillPrice = closePreview?.price ?? wei(0);
 		const { nativeSizeDelta } = selectClosePositionOrderInputs(getState());
 		const wallet = selectWallet(getState());
 
@@ -1699,7 +1699,8 @@ export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const { position, market } = selectEditPositionModalInfo(getState());
 		const crossMarginAccount = selectCrossMarginAccount(getState());
-		const desiredFillPrice = selectClosePosDesiredFillPrice(getState());
+		const closePreview = selectClosePositionPreview(getState());
+		const desiredFillPrice = closePreview?.price ?? wei(0);
 
 		try {
 			if (!position?.position) throw new Error('No position to close');
