@@ -9,6 +9,7 @@ import Button from 'components/Button';
 import Currency from 'components/Currency';
 import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import Loader from 'components/Loader';
+import { MobileOnlyView, NotMobileView } from 'components/Media/Media';
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import ROUTES from 'constants/routes';
@@ -20,7 +21,7 @@ import { formatDollars, formatNumber } from 'sdk/utils/number';
 import { StackSection } from 'sections/homepage/section';
 import { Title } from 'sections/homepage/text';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media, { Media } from 'styles/media';
+import media from 'styles/media';
 
 const ShortList = () => {
 	const { t } = useTranslation();
@@ -65,7 +66,7 @@ const ShortList = () => {
 		<StackSection>
 			<Container>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
-				<Media greaterThan="sm">
+				<NotMobileView>
 					<StyledTable
 						showPagination
 						isLoading={statsQuery.isLoading}
@@ -142,8 +143,8 @@ const ShortList = () => {
 							},
 						]}
 					/>
-				</Media>
-				<Media lessThan="sm">
+				</NotMobileView>
+				<MobileOnlyView>
 					<StyledTable
 						showPagination
 						isLoading={statsQuery.isLoading}
@@ -200,7 +201,7 @@ const ShortList = () => {
 							},
 						]}
 					/>
-				</Media>
+				</MobileOnlyView>
 				<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
 				<StatsCardContainer>
 					<StatsCard>

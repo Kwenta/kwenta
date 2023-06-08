@@ -25,7 +25,6 @@
 		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./sdk/contracts/types './sdk/contracts/abis/*.json' --show-stack-traces"
 	},
 	"dependencies": {
-		"@artsy/fresnel": "1.7.0",
 		"@eth-optimism/contracts": "0.5.37",
 		"@gnosis.pm/safe-apps-provider": "^0.14.0",
 		"@gnosis.pm/safe-apps-sdk": "^7.7.0",
@@ -74,6 +73,7 @@
 		"react-is": "^18.0.0",
 		"react-query": "3.39.3",
 		"react-redux": "8.0.5",
+		"react-responsive": "^9.0.2",
 		"react-rnd": "^10.3.7",
 		"react-select": "4.3.1",
 		"react-slick": "0.29.0",
