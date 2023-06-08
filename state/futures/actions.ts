@@ -1256,8 +1256,8 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		const marketInfo = selectMarketInfo(getState());
-		const tradePreview = selectTradePreview(getState());
-		const desiredFillPrice = tradePreview?.desiredFillPrice ?? wei(0);
+		const editPreview = selectEditPositionPreview(getState());
+		const desiredFillPrice = editPreview?.desiredFillPrice ?? wei(0);
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 		try {
 			if (!marketInfo) throw new Error('Market info not found');
@@ -1341,8 +1341,8 @@ export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkCon
 	'futures/closeIsolatedMarginPosition',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState());
-		const tradePreview = selectTradePreview(getState());
-		const desiredFillPrice = tradePreview?.desiredFillPrice ?? wei(0);
+		const closePreview = selectClosePositionPreview(getState());
+		const desiredFillPrice = closePreview?.desiredFillPrice ?? wei(0);
 		if (!marketInfo) throw new Error('Market info not found');
 		try {
 			dispatch(
