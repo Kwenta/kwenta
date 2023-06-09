@@ -1393,8 +1393,8 @@ export const submitCrossMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 
 			const desiredFillPrice =
 				preview.exceedsPriceProtection && overridePriceProtection
-					? fillPriceWithBuffer(preview.price, tradeInputs.nativeSizeDelta)
-					: preview.price;
+					? fillPriceWithBuffer(preview.desiredFillPrice, tradeInputs.nativeSizeDelta)
+					: preview.desiredFillPrice;
 
 			dispatch(
 				setTransaction({
@@ -1537,8 +1537,8 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, boolea
 
 			const desiredFillPrice =
 				preview.exceedsPriceProtection && overridePriceProtection
-					? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
-					: preview.price;
+					? fillPriceWithBuffer(preview.desiredFillPrice, wei(nativeSizeDelta))
+					: preview.desiredFillPrice;
 
 			dispatch(
 				setTransaction({
@@ -1597,8 +1597,8 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 
 			const desiredFillPrice =
 				preview.exceedsPriceProtection && overridePriceProtection
-					? fillPriceWithBuffer(preview.price, wei(nativeSizeDelta))
-					: preview.price;
+					? fillPriceWithBuffer(preview.desiredFillPrice, wei(nativeSizeDelta))
+					: preview.desiredFillPrice;
 
 			const isClosing = wei(nativeSizeDelta)
 				.abs()
