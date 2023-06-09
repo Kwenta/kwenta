@@ -13,10 +13,11 @@ type Props = {
 	invalid: boolean;
 	currentPrice: string;
 	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void;
+	right?: React.ReactNode;
 };
 
 const EditStopLossAndTakeProfitInput: React.FC<Props> = memo(
-	({ isMobile, type, value, invalid, currentPrice, onChange }) => {
+	({ isMobile, type, value, invalid, currentPrice, onChange, right }) => {
 		const { t } = useTranslation();
 
 		return (
@@ -40,6 +41,7 @@ const EditStopLossAndTakeProfitInput: React.FC<Props> = memo(
 							? t('futures.market.trade.edit-sl-tp.no-tp')
 							: t('futures.market.trade.edit-sl-tp.no-sl')
 					}
+					right={right}
 				/>
 			</div>
 		);

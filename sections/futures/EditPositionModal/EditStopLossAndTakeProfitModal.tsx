@@ -15,7 +15,11 @@ import { ConditionalOrderTypeEnum, PositionSide } from 'sdk/types/futures';
 import { formatDollars, stripZeros, suggestedDecimals } from 'sdk/utils/number';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectAckedOrdersWarning, selectTransaction } from 'state/app/selectors';
-import { calculateKeeperDeposit, updateStopLossAndTakeProfit } from 'state/futures/actions';
+import {
+	calculateKeeperDeposit,
+	clearTradeInputs,
+	updateStopLossAndTakeProfit,
+} from 'state/futures/actions';
 import { setSLTPModalStopLoss, setSLTPModalTakeProfit } from 'state/futures/reducer';
 import {
 	selectAllSLTPOrders,
@@ -30,6 +34,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow';
 import PositionType from '../PositionType';
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement';
+import ShowPercentage from '../Trade/ShowPercentage';
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
 const TP_OPTIONS = ['none', '5%', '10%', '25%', '50%', '100%'];
@@ -125,6 +130,8 @@ export default function EditStopLossAndTakeProfitModal() {
 		const existingTP = exsistingSLTPOrders.find(
 			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
 		);
+		dispatch(clearTradeInputs());
+
 		dispatch(
 			setSLTPModalStopLoss(
 				existingSL?.targetPrice ? stripZeros(existingSL.targetPrice.toString()) : ''
@@ -226,6 +233,14 @@ export default function EditStopLossAndTakeProfitModal() {
 						}
 						value={takeProfitPrice}
 						onChange={onChangeTakeProfit}
+						right={
+							<ShowPercentage
+								targetPrice={takeProfitPrice}
+								currentPrice={marketPrice}
+								leverageSide={position?.position?.side}
+								leverageWei={leverageWei}
+							/>
+						}
 					/>
 
 					<SelectorButtons
@@ -244,6 +259,15 @@ export default function EditStopLossAndTakeProfitModal() {
 						}
 						value={stopLossPrice}
 						onChange={onChangeStopLoss}
+						right={
+							<ShowPercentage
+								targetPrice={stopLossPrice}
+								isStopLoss={true}
+								currentPrice={marketPrice}
+								leverageSide={position?.position?.side}
+								leverageWei={leverageWei}
+							/>
+						}
 					/>
 
 					<SelectorButtons

@@ -22,6 +22,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import OrderAcknowledgement from './OrderAcknowledgement';
+import ShowPercentage from './ShowPercentage';
 
 const TP_OPTIONS = ['5%', '10%', '25%', '50%', '100%'];
 const SL_OPTIONS = ['2%', '5%', '10%', '20%', '50%'];
@@ -145,8 +146,16 @@ export default function SLTPInputs() {
 							value={stopLossPrice}
 							placeholder={'0.00'}
 							onChange={onChangeStopLoss}
+							right={
+								<ShowPercentage
+									targetPrice={stopLossPrice}
+									isStopLoss={true}
+									currentPrice={currentPrice}
+									leverageSide={leverageSide}
+									leverageWei={leverageWei}
+								/>
+							}
 						/>
-
 						<Spacer height={12} />
 
 						<InputHeaderRow
@@ -160,6 +169,14 @@ export default function SLTPInputs() {
 							value={takeProfitPrice}
 							placeholder={'0.00'}
 							onChange={onChangeTakeProfit}
+							right={
+								<ShowPercentage
+									targetPrice={takeProfitPrice}
+									currentPrice={currentPrice}
+									leverageSide={leverageSide}
+									leverageWei={leverageWei}
+								/>
+							}
 						/>
 					</InputsContainer>
 				)
