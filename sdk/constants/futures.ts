@@ -19,7 +19,7 @@ export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
 export const DEFAULT_NUMBER_OF_TRADES = 32;
 
 export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
-	MARKET: '1',
+	MARKET: '4',
 	STOP: '4',
 	LIMIT: '4',
 	STOP_LOSS: '5',
