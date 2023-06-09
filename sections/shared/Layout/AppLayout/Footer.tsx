@@ -16,7 +16,6 @@ const Footer = () => {
 			<OperationStatus />
 			<GitHashID />
 			<RightContainer>
-				<ChatRoom />
 				<FooterLinkInternal onClick={() => router.push(ROUTES.Stats.Home)}>
 					<Body color="secondary">Stats</Body>
 				</FooterLinkInternal>
