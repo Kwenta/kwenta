@@ -8,7 +8,6 @@ import { FOOTER_HEIGHT } from 'styles/common';
 
 import GitHashID from './GitHashID';
 import OperationStatus from './OperationStatus';
-import ChatRoom from 'components/ChatRoom/ChatRoom';
 
 const Footer = () => {
 	return (
