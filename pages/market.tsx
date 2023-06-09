@@ -178,6 +178,7 @@ Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 export default Market;
 
 const StyledFullHeightContainer = styled.div`
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	display: grid;
 	grid-gap: 0;
 	flex: 1;
@@ -196,6 +197,7 @@ const LoaderContainer = styled.div`
 `;
 
 const TabletContainer = styled.div`
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	display: grid;
 	grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
 	height: 100%;

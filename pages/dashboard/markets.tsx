@@ -35,8 +35,6 @@ const MarketsPage: MarketsProps = () => {
 
 const SearchBarContainer = styled.div`
 	display: flex;
-	height: 100%;
-	width: 100%;
 `;
 
 MarketsPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;

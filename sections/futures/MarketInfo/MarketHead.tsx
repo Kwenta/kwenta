@@ -24,10 +24,7 @@ const MarketHead: FC = () => {
 							marketName,
 							rate: formatCurrency('sUSD', latestPrice, {
 								currencyKey: 'sUSD',
-								minDecimals:
-									marketName != null && isDecimalFour(marketName)
-										? DEFAULT_CRYPTO_DECIMALS
-										: undefined,
+								suggestDecimals: true,
 							}),
 					  })
 					: t('futures.market.page-title')}

@@ -1,8 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
-import { mediaStyles } from 'styles/media';
-
 export default class MyDocument extends Document {
 	static async getInitialProps(ctx: any) {
 		const styledComponentsSheet = new ServerStyleSheet();
@@ -34,7 +32,6 @@ export default class MyDocument extends Document {
 		return (
 			<Html lang="en">
 				<Head>
-					<style type="text/css" dangerouslySetInnerHTML={{ __html: mediaStyles }} />
 					<link
 						rel="preload"
 						href="/fonts/AkkuratLLWeb-Regular.woff2"
