@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components';
 import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
+import { blockExplorer } from 'containers/Connector/Connector';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { formatNumber } from 'sdk/utils/number';
 import { selectMarketKey } from 'state/futures/selectors';
@@ -44,6 +45,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 								time: Number(trade?.timestamp),
 								id: trade?.txnHash,
 								orderType: trade?.orderType,
+								account: trade?.account,
 							};
 						})
 				: [];
@@ -103,10 +105,9 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 					lastRef={lastElementRef}
 					$mobile={mobile}
 					onTableRowClick={(_row) => {
-						// TODO: Open tx to creator not executor
-						// row.original.id !== NO_VALUE
-						// ? window.open(`${blockExplorer.txLink(row.original.id)}`)
-						// : undefined
+						return _row.original.id !== NO_VALUE
+							? window.open(`${blockExplorer.addressLink(_row.original.account)}`)
+							: undefined;
 					}}
 					highlightRowsOnHover
 					columns={[
