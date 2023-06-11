@@ -45,7 +45,8 @@ export const getStep = (maxValue: number) => {
 	if (maxValue < 10) return 0.01;
 	if (maxValue < 100) return 1;
 	if (maxValue < 10000) return 10;
-	return 100;
+	if (maxValue < 100000) return 1000;
+	return 10000;
 };
 
 const styledMarkLabel = css`
