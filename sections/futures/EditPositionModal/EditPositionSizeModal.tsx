@@ -76,15 +76,6 @@ export default function EditPositionSizeModal() {
 		return preview.size.mul(marketPrice).div(position.remainingMargin).abs();
 	}, [preview, position, marketPrice]);
 
-	// preview.size: [1447139.934800000000000000]
-	// marketPrice: [0.526526310000000000]
-	// position.remainingMargin: [111331.155585285113635000]
-	// resultingLeverage 6.84
-
-	// preview.size: [317139.934800000000000000]
-	// marketPrice: [0.526720000000000000]
-	// position.remainingMargin: [111331.171586255460927209]
-	// resultingLeverage 1.50
 	const maxNativeIncreaseValue = useMemo(() => {
 		if (!marketPrice || marketPrice.eq(0)) return ZERO_WEI;
 		const totalMax = position?.remainingMargin.mul(maxLeverage) ?? ZERO_WEI;
