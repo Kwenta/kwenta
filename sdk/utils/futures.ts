@@ -345,7 +345,7 @@ export const formatPotentialTrade = (
 	const notionalValue = wei(size).mul(wei(basePrice));
 	const leverage = margin.gt(0) ? notionalValue.div(wei(margin)) : ZERO_WEI;
 
-	const priceImpact = wei(price).sub(basePrice).div(basePrice);
+	const priceImpact = wei(price).sub(basePrice).div(basePrice).abs();
 	const slippageDirection = nativeSizeDelta.gt(0)
 		? priceImpact.gt(0)
 			? -1
@@ -353,7 +353,6 @@ export const formatPotentialTrade = (
 			? priceImpact.lt(0)
 			: -1
 		: 1;
-
 	return {
 		fee: wei(fee),
 		liqPrice: wei(liqPrice),
@@ -434,6 +433,7 @@ export const mapConditionalOrderFromContract = (
 	const asset = MarketAssetByKey[marketKey];
 	const sizeDelta = wei(orderDetails.sizeDelta);
 	const size = sizeDelta.abs();
+
 	return {
 		id: orderDetails.id,
 		subgraphId: `CM-${account}-${orderDetails.id}`,
