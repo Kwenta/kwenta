@@ -304,7 +304,7 @@ const TableContainer = styled.div`
 
 const PositionRowDesktop = styled.div`
 	display: grid;
-	grid-template-columns: 75px 60px 1fr 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
+	grid-template-columns: 75px 60px minmax(130px, 1fr) 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
 	grid-gap: 10px;
 	height: 100%;
 	height: 54px;
