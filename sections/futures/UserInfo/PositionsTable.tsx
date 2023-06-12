@@ -74,6 +74,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI;
 				return {
 					market: market!,
+					remainingMargin: position.remainingMargin,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
@@ -205,7 +206,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 						<PositionCell>
 							<FlexDivCol>
 								<FlexDivRow justifyContent="flex-start" columnGap="5px">
-									<NumericValue value={row.position.initialMargin} />
+									<NumericValue value={row.remainingMargin} />
 									{accountType === 'cross_margin' && (
 										<EditPositionButton
 											modalType={'futures_edit_position_margin'}
@@ -303,7 +304,7 @@ const TableContainer = styled.div`
 
 const PositionRowDesktop = styled.div`
 	display: grid;
-	grid-template-columns: 75px 60px 200px 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
+	grid-template-columns: 75px 60px 1fr 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
 	grid-gap: 10px;
 	height: 100%;
 	height: 54px;
