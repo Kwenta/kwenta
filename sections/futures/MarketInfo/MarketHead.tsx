@@ -2,12 +2,10 @@ import Head from 'next/head';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import { formatCurrency } from 'sdk/utils/number';
 import { selectMarketAsset, selectSkewAdjustedPrice } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
-import { isDecimalFour } from 'utils/futures';
 
 const MarketHead: FC = () => {
 	const { t } = useTranslation();
