@@ -21,10 +21,6 @@ const ShowPercentage: React.FC<ShowPercentageProps> = ({
 	leverageWei,
 }) => {
 	const calculatePercentage = useMemo(() => {
-		// eslint-disable-next-line no-console
-		console.log(
-			`targetPrice: ${targetPrice}, currentPrice: ${currentPrice}, leverageSide: ${leverageSide}`
-		);
 		if (!targetPrice || !currentPrice || !leverageSide) return '';
 		const priceWei = wei(targetPrice);
 		const diff =
