@@ -951,7 +951,7 @@
 					"margin-change": "Margin",
 					"liquidation": "Liquidation",
 					"price-impact": "Price Impact",
-					"fill-price": "Fill Price",
+					"fill-price": "Est. Fill Price",
 					"submit-size": "Submit size change",
 					"submit-margin-withdraw": "Withdraw Margin",
 					"submit-margin-deposit": "Deposit Margin",
