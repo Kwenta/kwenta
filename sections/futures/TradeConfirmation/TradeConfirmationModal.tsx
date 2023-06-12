@@ -137,7 +137,7 @@ export default function TradeConfirmationModal({
 						value: formatDollars(orderPrice, { suggestDecimals: true }),
 				  }
 				: {
-						label: 'fill price',
+						label: 'Est. fill price',
 						value: formatDollars(positionDetails?.price ?? ZERO_WEI, { suggestDecimals: true }),
 				  },
 
