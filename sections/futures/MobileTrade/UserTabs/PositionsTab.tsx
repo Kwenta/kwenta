@@ -246,6 +246,10 @@ const PositionsTab = () => {
 									)}
 								</FlexDivRow>
 							</PositionCell>
+							<PositionCell>
+								<Body color="secondary">Funding</Body>
+								<Currency.Price price={row.position.accruedFunding} colored />
+							</PositionCell>
 						</PositionRow>
 					</PositionItem>
 				))

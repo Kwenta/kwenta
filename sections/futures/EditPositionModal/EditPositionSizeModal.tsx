@@ -199,12 +199,14 @@ export default function EditPositionSizeModal() {
 					valueNode={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
-								{preview ? formatDollars(preview.liqPrice) : '-'}
+								{preview ? formatDollars(preview.liqPrice, { suggestDecimals: true }) : '-'}
 							</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					value={formatDollars(position?.position?.liquidationPrice || 0)}
+					value={formatDollars(position?.position?.liquidationPrice || 0, {
+						suggestDecimals: true,
+					})}
 				/>
 				<InfoBoxRow
 					color={preview?.exceedsPriceProtection ? 'negative' : 'primary'}
@@ -213,7 +215,7 @@ export default function EditPositionSizeModal() {
 				/>
 				<InfoBoxRow
 					title={t('futures.market.trade.edit-position.fill-price')}
-					value={formatDollars(preview?.price || 0)}
+					value={formatDollars(preview?.price || 0, { suggestDecimals: true })}
 				/>
 			</InfoBoxContainer>
 			{preview?.exceedsPriceProtection && (
