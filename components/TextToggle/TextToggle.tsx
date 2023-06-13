@@ -4,14 +4,19 @@ import styled, { css } from 'styled-components';
 import { FlexDiv, FlexDivCol } from 'components/layout/flex';
 import { Body } from 'components/Text';
 
-interface ToggleProps<T> {
+interface TextToggleProps<T> {
 	title: string;
 	options: T[];
 	selectedOption: T;
 	onOptionChange: (value: T) => void;
 }
 
-const Toggle: React.FC<ToggleProps<any>> = ({ title, options, selectedOption, onOptionChange }) => {
+const TextToggle: React.FC<TextToggleProps<any>> = ({
+	title,
+	options,
+	selectedOption,
+	onOptionChange,
+}) => {
 	return (
 		<FlexDivCol>
 			<Body color="secondary">{title}</Body>
@@ -38,8 +43,8 @@ const ToggleButton = styled(Body)<{ $active: boolean }>`
 		props.$active &&
 		css`
 			color: ${props.theme.colors.selectedTheme.newTheme.text.primary};
-			font-weight: 700;
+			font-family: ${(props) => props.theme.fonts.bold};
 		`}
 `;
 
-export default Toggle;
+export default TextToggle;
