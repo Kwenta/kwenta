@@ -857,7 +857,7 @@ export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
 		stageCrossMarginTradePreview({
 			market: { key: marketInfo.marketKey, address: marketInfo.market },
 			orderPrice,
-			marginDelta: marginDelta,
+			marginDelta,
 			sizeDelta: nativeSizeDelta,
 			action: 'trade',
 		})

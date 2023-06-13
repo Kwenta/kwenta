@@ -15,14 +15,14 @@ import { useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 import darkTheme from 'styles/theme/colors/dark';
 
-import { DEFAULT_RESOLUTION } from './constants';
-import DataFeedFactory from './DataFeed';
-import { ChartPosition } from './types';
 import {
 	IChartingLibraryWidget,
 	IPositionLineAdapter,
 	widget,
 } from '../../public/static/charting_library';
+import { DEFAULT_RESOLUTION } from './constants';
+import DataFeedFactory from './DataFeed';
+import { ChartPosition } from './types';
 
 export type ChartProps = {
 	activePosition?: ChartPosition | null;

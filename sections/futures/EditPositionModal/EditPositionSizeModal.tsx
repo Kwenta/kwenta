@@ -71,7 +71,7 @@ export default function EditPositionSizeModal() {
 
 	const maxLeverage = useMemo(
 		() => (editType === 0 ? market?.appMaxLeverage : market?.contractMaxLeverage) ?? wei(1),
-		[market?.appMaxLeverage, editType]
+		[market?.appMaxLeverage, editType, market?.contractMaxLeverage]
 	);
 
 	const resultingLeverage = useMemo(() => {
