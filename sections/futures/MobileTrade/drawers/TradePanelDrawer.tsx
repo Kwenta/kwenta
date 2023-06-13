@@ -15,7 +15,7 @@ const TradePanelDrawer: FC<TradePanelDrawerProps> = ({ open, closeDrawer }) => {
 			<Background>
 				<Closer onClick={closeDrawer} />
 				<Foreground>
-					<TradeIsolatedMargin mobile />
+					<TradeIsolatedMargin mobile closeDrawer={closeDrawer} />
 				</Foreground>
 			</Background>
 		</StyledModal>

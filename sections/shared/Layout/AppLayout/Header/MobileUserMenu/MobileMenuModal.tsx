@@ -86,6 +86,7 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 										currentTheme={currentTheme}
 										isActive={router.asPath.includes(link)}
 										onClick={onDismiss}
+										isLink
 									>
 										<FlexDivRowCentered>
 											{t(i18nLabel)}

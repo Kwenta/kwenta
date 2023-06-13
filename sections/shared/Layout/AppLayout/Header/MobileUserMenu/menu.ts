@@ -6,6 +6,7 @@ import type { ThemeName } from 'styles/theme';
 export const MenuButton = styled.div<{
 	currentTheme: ThemeName;
 	isActive: boolean;
+	isLink?: boolean;
 }>`
 	outline: none;
 	width: 100%;
@@ -25,7 +26,8 @@ export const MenuButton = styled.div<{
 				? props.theme.colors.common.primaryWhite
 				: props.theme.colors.selectedTheme.black};
 			path {
-				fill: ${window.location.pathname === ROUTES.Home.Root || props.currentTheme === 'dark'
+				${props.isLink ? 'fill' : 'stroke'}: ${window.location.pathname === ROUTES.Home.Root ||
+				props.currentTheme === 'dark'
 					? props.theme.colors.common.primaryWhite
 					: props.theme.colors.selectedTheme.black};
 			}

@@ -1,37 +1,50 @@
 import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
+import CloseIcon from 'assets/svg/app/close.svg';
+import { FlexDivRow } from 'components/layout/flex';
 import { PositionSide } from 'sdk/types/futures';
 
 interface PositionButtonsProps {
 	selected: PositionSide;
 	onSelect(position: PositionSide): void;
 	type?: 'button' | 'submit' | 'reset' | undefined;
+	mobile?: boolean;
+	closeDrawer?: () => void;
 }
 
-const PositionButtons: FC<PositionButtonsProps> = memo(({ selected, onSelect }) => {
-	return (
-		<PositionButtonsContainer>
-			<PositionButton
-				data-testid="position-side-long-button"
-				$position={PositionSide.LONG}
-				$isActive={selected === 'long'}
-				onClick={() => onSelect(PositionSide.LONG)}
-			>
-				<span>Long</span>
-			</PositionButton>
-			<PositionButton
-				data-testid="position-side-short-button"
-				$position={PositionSide.SHORT}
-				$isActive={selected === 'short'}
-				$right={true}
-				onClick={() => onSelect(PositionSide.SHORT)}
-			>
-				<span>Short</span>
-			</PositionButton>
-		</PositionButtonsContainer>
-	);
-});
+const PositionButtons: FC<PositionButtonsProps> = memo(
+	({ selected, onSelect, mobile, closeDrawer }) => {
+		return (
+			<PositionButtonsWrapper $mobile={mobile}>
+				<PositionButtonsContainer>
+					<PositionButton
+						data-testid="position-side-long-button"
+						$position={PositionSide.LONG}
+						$isActive={selected === 'long'}
+						onClick={() => onSelect(PositionSide.LONG)}
+					>
+						<span>Long</span>
+					</PositionButton>
+					<PositionButton
+						data-testid="position-side-short-button"
+						$position={PositionSide.SHORT}
+						$isActive={selected === 'short'}
+						$right={true}
+						onClick={() => onSelect(PositionSide.SHORT)}
+					>
+						<span>Short</span>
+					</PositionButton>
+				</PositionButtonsContainer>
+				{mobile && (
+					<CloseButton onClick={closeDrawer}>
+						<CloseIcon height={15} width={15} />
+					</CloseButton>
+				)}
+			</PositionButtonsWrapper>
+		);
+	}
+);
 
 type PositionButtonProps = {
 	$position: PositionSide;
@@ -39,10 +52,22 @@ type PositionButtonProps = {
 	$right?: boolean;
 };
 
+const PositionButtonsWrapper = styled(FlexDivRow)<{ $mobile?: boolean }>`
+	width: 100%;
+	margin-bottom: 16px;
+
+	${(props) =>
+		props.$mobile &&
+		css`
+			position: fixed;
+		`}
+`;
+
 const PositionButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	margin-bottom: 16px;
+	flex: 1;
+	background: ${(props) => props.theme.colors.selectedTheme.background};
 `;
 
 const PositionButton = styled.div<PositionButtonProps>`
@@ -85,6 +110,18 @@ const PositionButton = styled.div<PositionButtonProps>`
 			background: ${props.theme.colors.selectedTheme.newTheme.tabs.position[props.$position]
 				.background};
 		`}
+`;
+
+const CloseButton = styled.button`
+	width: 50px;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.tabs.position.background};
+	border-left: ${(props) => props.theme.colors.selectedTheme.border};
+	border-right: none;
 `;
 
 export default PositionButtons;
