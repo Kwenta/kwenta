@@ -23,7 +23,7 @@ const TextToggle: React.FC<TextToggleProps<any>> = ({
 			<FlexDiv columnGap="10px">
 				{options.map((value) => (
 					<ToggleButton
-						color="secondary"
+						color="quaternary"
 						$active={selectedOption === value}
 						onClick={() => onOptionChange(value)}
 					>
