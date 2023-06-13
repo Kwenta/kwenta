@@ -3,31 +3,28 @@ import React, { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
-import { Checkbox } from 'components/Checkbox';
 import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
-import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
-import { zIndex } from 'constants/ui';
 import useWindowSize from 'hooks/useWindowSize';
 import { ZERO_WEI } from 'sdk/constants/number';
 import { getDisplayAsset } from 'sdk/utils/futures';
 import { formatDollars, formatPercent } from 'sdk/utils/number';
-import { setShowTradeHistory } from 'state/futures/reducer';
 import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
 	selectSelectedInputHours,
-	selectShowHistory,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices } from 'state/prices/selectors';
 import media from 'styles/media';
 
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import ChartToggle from './ChartToggle';
+import HistoryToggle from './HisotryToggle';
 import HoursToggle from './HoursToggle';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';
 import { MarketDataKey } from './utils';
@@ -41,8 +38,6 @@ interface OpenInterestDetailProps extends MarketDetailsProps {
 }
 
 const MarketDetails: React.FC<MarketDetailsProps> = () => {
-	const dispatch = useAppDispatch();
-	const showHistory = useAppSelector(selectShowHistory);
 	const { deviceType } = useWindowSize();
 	const mobileOrTablet = deviceType !== 'desktop';
 
@@ -74,17 +69,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = () => {
 		<MainContainer mobile={mobileOrTablet}>
 			{SelectedMarketDetailsView}
 			{!mobileOrTablet && (
-				<ShowHistoryContainer>
+				<ToggleContainer justifyContent="flex-end" columnGap="30px">
 					<ChartToggle />
-					<Checkbox
-						id="history"
-						label="Show History"
-						checked={showHistory}
-						onChange={() => {
-							dispatch(setShowTradeHistory(!showHistory));
-						}}
-					/>
-				</ShowHistoryContainer>
+					<HistoryToggle />
+				</ToggleContainer>
 			)}
 		</MainContainer>
 	);
@@ -325,13 +313,8 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	`}
 `;
 
-const ShowHistoryContainer = styled.div`
-	display: flex;
-	align-items: center;
-	z-index: ${zIndex.HEADER};
-	background-color: ${(props) =>
-		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
-	padding: 0 15px;
+const ToggleContainer = styled(FlexDivRowCentered)`
+	padding-right: 17.5px;
 `;
 
 export default MarketDetails;

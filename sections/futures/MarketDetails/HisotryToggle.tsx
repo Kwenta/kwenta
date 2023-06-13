@@ -3,32 +3,29 @@ import styled, { css } from 'styled-components';
 
 import { FlexDiv, FlexDivCol } from 'components/layout/flex';
 import { Body } from 'components/Text';
-import { setSelectedChart } from 'state/futures/reducer';
+import { setShowTradeHistory } from 'state/futures/reducer';
+import { selectShowHistory } from 'state/futures/selectors';
 import { useAppSelector, useAppDispatch } from 'state/hooks';
 
-const CHART_OPTIONS: ('price' | 'funding')[] = ['price', 'funding'];
-
-const ChartToggle = () => {
+const HistoryToggle = () => {
 	const dispatch = useAppDispatch();
-	const selectedChart = useAppSelector(({ futures }) => futures.selectedChart);
+	const showHistory = useAppSelector(selectShowHistory);
 
-	const handleChartChange = useCallback(
-		(chart: 'price' | 'funding') => () => {
-			dispatch(setSelectedChart(chart));
-		},
-		[dispatch]
-	);
+	const handleHistoryChange = useCallback(() => dispatch(setShowTradeHistory(!showHistory)), [
+		dispatch,
+		showHistory,
+	]);
 
 	return (
 		<>
 			<FlexDivCol>
-				<Body color="secondary">Chart</Body>
+				<Body color="secondary">Hisotry</Body>
 				<FlexDiv columnGap="10px">
-					{CHART_OPTIONS.map((value) => (
+					{['show', 'hide'].map((value) => (
 						<ToggleButton
 							color="secondary"
-							$active={selectedChart === value}
-							onClick={handleChartChange(value)}
+							$active={value === 'show' ? showHistory : !showHistory}
+							onClick={handleHistoryChange}
 						>
 							{value}
 						</ToggleButton>
@@ -51,4 +48,4 @@ const ToggleButton = styled(Body)<{ $active: boolean }>`
 		`}
 `;
 
-export default ChartToggle;
+export default HistoryToggle;
