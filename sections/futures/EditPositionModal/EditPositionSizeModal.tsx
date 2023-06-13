@@ -69,7 +69,10 @@ export default function EditPositionSizeModal() {
 		isFetchingPreview,
 	]);
 
-	const maxLeverage = useMemo(() => market?.appMaxLeverage ?? wei(1), [market?.appMaxLeverage]);
+	const maxLeverage = useMemo(
+		() => (editType === 0 ? market?.appMaxLeverage : market?.contractMaxLeverage) ?? wei(1),
+		[market?.appMaxLeverage, editType]
+	);
 
 	const resultingLeverage = useMemo(() => {
 		if (!preview || !position) return;

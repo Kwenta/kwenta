@@ -4,7 +4,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
 import Connector from 'containers/Connector';
 
-import type { AppDispatch, RootState } from './store';
+import type { AppDispatch, AppThunk, RootState } from './store';
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 
@@ -18,6 +18,8 @@ const onPollRemoved = (id: string) => {
 	}
 };
 
+type ActionType = AsyncThunkAction<any, any, any> | AppThunk<any>;
+
 // TODO: explore potentially move polling to the sdk and register listeners from the app
 // The sdk would only poll when there are registered listeners
 
@@ -26,7 +28,7 @@ export const useStartPollingAction = () => {
 	const dispatch = useAppDispatch();
 
 	const startPolling = useCallback(
-		(id: string, action: () => AsyncThunkAction<any, any, any>, intervalTime = 20000) => {
+		(id: string, action: () => ActionType, intervalTime = 20000) => {
 			if (intervalRefs.current[id]) {
 				clearInterval(intervalRefs.current[id]);
 				onPollRemoved(id);
@@ -66,7 +68,7 @@ const DEFAULT_INTERVAL = 20000;
 
 export const usePollAction = (
 	actionName: string,
-	action: () => AsyncThunkAction<any, any, any>,
+	action: () => ActionType,
 	options?: { dependencies?: any[]; disabled?: boolean; intervalTime?: number }
 ) => {
 	const { providerReady } = Connector.useContainer();

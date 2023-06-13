@@ -69,7 +69,6 @@ import {
 	serializeMarkets,
 	serializePositionHistory,
 	serializeTrades,
-	fillPriceWithBuffer,
 } from 'utils/futures';
 import logError from 'utils/logError';
 import { refetchWithComparator } from 'utils/queries';
@@ -846,6 +845,25 @@ export const editCrossMarginPositionMargin = (
 	}
 };
 
+export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
+	const orderPrice = selectSkewAdjustedPrice(getState());
+	const marketInfo = selectMarketInfo(getState());
+	const marginDelta = selectCrossMarginMarginDelta(getState());
+	const { nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
+
+	if (!marketInfo) throw new Error('No market selected');
+
+	dispatch(
+		stageCrossMarginTradePreview({
+			market: { key: marketInfo.marketKey, address: marketInfo.market },
+			orderPrice,
+			marginDelta: marginDelta,
+			sizeDelta: nativeSizeDelta,
+			action: 'trade',
+		})
+	);
+};
+
 const stageCrossMarginTradePreview = createAsyncThunk<void, TradePreviewParams, ThunkConfig>(
 	'futures/stageCrossMarginTradePreview',
 	async (inputs, { dispatch, getState }) => {
@@ -1380,6 +1398,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState());
 		const wallet = selectWallet(getState());
 		const position = selectPosition(getState());
+		const openDelayedOrders = selectOpenDelayedOrders(getState());
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState());
 
 		try {
@@ -1390,11 +1409,6 @@ export const submitCrossMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 			if (!overridePriceProtection && preview.exceedsPriceProtection) {
 				throw new Error('Price impact exceeds price protection');
 			}
-
-			const desiredFillPrice =
-				preview.exceedsPriceProtection && overridePriceProtection
-					? fillPriceWithBuffer(preview.desiredFillPrice, tradeInputs.nativeSizeDelta)
-					: preview.desiredFillPrice;
 
 			dispatch(
 				setTransaction({
@@ -1407,7 +1421,7 @@ export const submitCrossMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 			const orderInputs: SmartMarginOrderInputs = {
 				sizeDelta: tradeInputs.nativeSizeDelta,
 				marginDelta: marginDelta,
-				desiredFillPrice: desiredFillPrice,
+				desiredFillPrice: preview.desiredFillPrice,
 			};
 
 			// To separate Stop Loss and Take Profit from other limit / stop orders
@@ -1462,12 +1476,16 @@ export const submitCrossMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 				position?.position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize;
 			const isClosing = existingSize.add(tradeInputs.nativeSizeDelta).eq(0);
 
+			const staleOrder = openDelayedOrders.find(
+				(o) => o.isStale && o.marketKey === marketInfo.marketKey
+			);
+
 			const tx = await sdk.futures.submitCrossMarginOrder(
 				{ address: marketInfo.market, key: marketInfo.marketKey },
 				wallet,
 				account,
 				orderInputs,
-				isClosing
+				{ cancelPendingReduceOrders: isClosing, cancelExpiredDelayedOrders: !!staleOrder }
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchCrossMarginOpenOrders());
@@ -1535,11 +1553,6 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, boolea
 				throw new Error('Price impact exceeds price protection');
 			}
 
-			const desiredFillPrice =
-				preview.exceedsPriceProtection && overridePriceProtection
-					? fillPriceWithBuffer(preview.desiredFillPrice, wei(nativeSizeDelta))
-					: preview.desiredFillPrice;
-
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1560,7 +1573,7 @@ export const submitCrossMarginAdjustPositionSize = createAsyncThunk<void, boolea
 					address: market.market,
 				},
 				wei(nativeSizeDelta),
-				desiredFillPrice,
+				preview.desiredFillPrice,
 				isClosing
 			);
 			await monitorAndAwaitTransaction(dispatch, tx);
@@ -1595,11 +1608,6 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 				throw new Error('Price impact exceeds price protection');
 			}
 
-			const desiredFillPrice =
-				preview.exceedsPriceProtection && overridePriceProtection
-					? fillPriceWithBuffer(preview.desiredFillPrice, wei(nativeSizeDelta))
-					: preview.desiredFillPrice;
-
 			const isClosing = wei(nativeSizeDelta)
 				.abs()
 				.eq(position?.position?.size.abs() || 0);
@@ -1615,7 +1623,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 			const orderInputs: SmartMarginOrderInputs = {
 				sizeDelta: wei(nativeSizeDelta),
 				marginDelta: wei(0),
-				desiredFillPrice: desiredFillPrice,
+				desiredFillPrice: preview.desiredFillPrice,
 			};
 
 			if (orderType !== 'market') {
@@ -1633,14 +1641,14 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 				? await sdk.futures.closeCrossMarginPosition(
 						{ address: market.market, key: market.marketKey },
 						account,
-						desiredFillPrice
+						preview.desiredFillPrice
 				  )
 				: await sdk.futures.submitCrossMarginOrder(
 						{ address: market.market, key: market.marketKey },
 						wallet,
 						account,
 						orderInputs,
-						isClosing
+						{ cancelPendingReduceOrders: isClosing }
 				  );
 
 			await monitorAndAwaitTransaction(dispatch, tx);

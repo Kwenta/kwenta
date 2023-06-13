@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { DEFAULT_LEVERAGE } from 'constants/defaults';
+import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_LEVERAGE } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
@@ -1092,8 +1092,23 @@ export const selectIdleMarginTransfers = createSelector(
 	}
 );
 
-export const selectOpenDelayedOrders = createSelector(selectAccountData, (account) =>
-	unserializeDelayedOrders(account?.delayedOrders ?? [])
+export const selectOpenDelayedOrders = createSelector(
+	selectAccountData,
+	selectMarkets,
+	(account, markets) => {
+		const orders = unserializeDelayedOrders(account?.delayedOrders ?? []);
+
+		return orders.map((o) => {
+			const timePastExecution = Math.floor((Date.now() - o.executableAtTimestamp) / 1000);
+			const market = markets.find((m) => m.marketKey === o.marketKey);
+			return {
+				...o,
+				isStale:
+					timePastExecution >
+					DEFAULT_DELAYED_CANCEL_BUFFER + (market?.settings.offchainDelayedOrderMaxAge ?? 0),
+			};
+		});
+	}
 );
 
 export const selectTradePreviewError = createSelector(
