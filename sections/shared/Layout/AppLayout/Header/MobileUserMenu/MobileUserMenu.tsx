@@ -79,7 +79,7 @@ const MobileFooterContainer = styled.div`
 	${FixedFooterMixin};
 	display: flex;
 	align-items: center;
-	border-top: 1px solid #2b2a2a;
+	border-top: ${(props) => props.theme.colors.selectedTheme.newTheme.border.style};
 	padding: 15px 20px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
 	z-index: 51;

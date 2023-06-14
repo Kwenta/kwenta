@@ -12,7 +12,7 @@ export const MenuButton = styled.div<{
 	width: 100%;
 	font-size: 19px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	text-transform: capitalize;
 	margin-bottom: 30px;
 	display: flex;

@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components';
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
 import Badge from 'components/Badge';
-import ROUTES from 'constants/routes';
+import { GridDiv } from 'components/layout/grid';
 import { useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 import { ThemeName } from 'styles/theme';
@@ -51,7 +51,6 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = memo(
 						{links
 							? links.map(({ i18nLabel, link: subLink, badge, Icon }) => (
 									<SubMenuItemContainer key={i18nLabel}>
-										<SubMenuIcon>·</SubMenuIcon>
 										<StyledLink href={subLink}>
 											<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
 												<div>
@@ -108,14 +107,15 @@ const StyledBadge = styled(Badge)`
 	margin-left: 8px;
 `;
 
-const SubMenuContainer = styled.div`
+const SubMenuContainer = styled(GridDiv)`
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 10px;
 	box-sizing: border-box;
+	margin-bottom: 20px;
 `;
 
 const SubMenuItemContainer = styled.div`
-	display: flex;
-	align-items: center;
-	margin-bottom: 20px;
+	border-bottom: 2px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 `;
 
 const StyledLink = styled(Link)`
@@ -133,16 +133,11 @@ const SubMenuExternalLink = styled.a`
 
 const SubMenuItem = styled.div<{ currentTheme: ThemeName; active?: boolean; selected?: boolean }>`
 	font-size: 19px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	box-sizing: border-box;
-	padding: 15px;
-	background-color: ${(props) =>
-		window.location.pathname === ROUTES.Home.Root || props.currentTheme === 'dark'
-			? 'rgba(255, 255, 255, 0.05)'
-			: 'rgb(232, 232, 232)'};
-	border-radius: 8px;
 	width: 100%;
 	text-transform: capitalize;
+	padding-bottom: 10px;
 
 	div {
 		display: flex;
