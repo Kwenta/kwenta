@@ -690,6 +690,7 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sFLOKIPERP]: FuturesMarketAsset.FLOKI,
 	[FuturesMarketKey.sINJPERP]: FuturesMarketAsset.INJ,
 	[FuturesMarketKey.sTRXPERP]: FuturesMarketAsset.TRX,
+	[FuturesMarketKey.sSTETHPERP]: FuturesMarketAsset.STETH,
 } as const;
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -734,6 +735,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.FLOKI]: FuturesMarketKey.sFLOKIPERP,
 	[FuturesMarketAsset.INJ]: FuturesMarketKey.sINJPERP,
 	[FuturesMarketAsset.TRX]: FuturesMarketKey.sTRXPERP,
+	[FuturesMarketAsset.STETH]: FuturesMarketKey.sSTETHPERP,
 } as const;
 
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
@@ -778,6 +780,7 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.FLOKI]: 'Floki',
 	[FuturesMarketAsset.INJ]: 'Injective',
 	[FuturesMarketAsset.TRX]: 'Tron',
+	[FuturesMarketAsset.STETH]: 'Lido Staked ETH',
 } as const;
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {};
