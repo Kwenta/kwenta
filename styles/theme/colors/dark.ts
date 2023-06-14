@@ -64,7 +64,7 @@ const newTheme = {
 		primary: common.palette.neutral.n0,
 		secondary: common.palette.neutral.n70,
 		tertiary: common.palette.neutral,
-		quaternary: common.palette.neutral.n200,
+		disabled: common.palette.neutral.n200,
 		positive: common.palette.green.g500,
 		negative: common.palette.red.r300,
 		preview: common.palette.yellow.y500,
