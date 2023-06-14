@@ -2,55 +2,57 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
-import { selectFuturesType } from 'state/futures/selectors';
+import {
+	selectActiveSmartPositionsCount,
+	selectAllConditionalOrders,
+	selectOpenDelayedOrders,
+} from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 
 import ConditionalOrdersTab from './ConditionalOrdersTab';
 import OrdersTab from './OrdersTab';
 import PositionsTab from './PositionsTab';
 import TradesTab from './TradesTab';
-import TransfersTab from './TransfersTab';
-
-const TABS = [
-	{
-		title: 'Positions',
-		component: <PositionsTab />,
-	},
-	{
-		title: 'Pending',
-		component: <OrdersTab />,
-	},
-	{
-		title: 'Orders',
-		component: <ConditionalOrdersTab />,
-		type: 'cross_margin',
-	},
-	{
-		title: 'Trades',
-		component: <TradesTab />,
-	},
-	{
-		title: 'Transfers',
-		component: <TransfersTab />,
-		type: 'isolated_margin',
-	},
-];
 
 const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
-	const accountType = useAppSelector(selectFuturesType);
-	const filteredTabs = useMemo(() => TABS.filter(({ type }) => !type || type === accountType), [
-		accountType,
-	]);
+	const openOrders = useAppSelector(selectOpenDelayedOrders);
+	const conditionalOrders = useAppSelector(selectAllConditionalOrders);
+	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
+
+	const TABS = useMemo(() => {
+		return [
+			{
+				title: 'Positions',
+				component: <PositionsTab />,
+				badge: smartPositionsCount,
+			},
+			{
+				title: 'Pending',
+				component: <OrdersTab />,
+				badge: openOrders.length,
+			},
+			{
+				title: 'Orders',
+				component: <ConditionalOrdersTab />,
+				badge: conditionalOrders.length,
+			},
+			{
+				title: 'Trades',
+				component: <TradesTab />,
+			},
+		];
+	}, [conditionalOrders.length, openOrders.length, smartPositionsCount]);
 
 	return (
 		<Container>
 			<UserTabsContainer>
 				<TabButtonsContainer>
-					{filteredTabs.map(({ title }, i) => (
+					{TABS.map(({ title, badge }, i) => (
 						<TabButton
 							key={title}
 							title={title}
+							badgeCount={badge}
 							active={activeTab === i}
 							onClick={() => setActiveTab(i)}
 							flat
@@ -58,7 +60,7 @@ const UserTabs: React.FC = () => {
 					))}
 				</TabButtonsContainer>
 			</UserTabsContainer>
-			<div>{filteredTabs[activeTab].component}</div>
+			<div>{TABS[activeTab].component}</div>
 		</Container>
 	);
 };
