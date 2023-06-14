@@ -22,7 +22,7 @@ import {
 	formatPercent,
 	stripZeros,
 } from 'sdk/utils/number';
-import { submitCrossMarginOrder } from 'state/futures/actions';
+import { refetchTradePreview, submitCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -35,7 +35,7 @@ import {
 	selectKeeperDepositExceedsBal,
 	selectNewTradeHasSlTp,
 } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
 
 import ConfirmSlippage from './ConfirmSlippage';
 import TradeConfirmationRow from './TradeConfirmationRow';
@@ -76,6 +76,8 @@ export default function TradeConfirmationModal({
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
 	const hasSlTp = useAppSelector(selectNewTradeHasSlTp);
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false);
+
+	usePollAction('refresh_preview', refetchTradePreview, { intervalTime: 6000 });
 
 	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch]);
 

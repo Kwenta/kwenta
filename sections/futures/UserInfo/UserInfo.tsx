@@ -28,6 +28,7 @@ import { selectWallet } from 'state/wallet/selectors';
 import ProfitCalculator from '../ProfitCalculator';
 import Trades from '../Trades';
 import Transfers from '../Transfers';
+
 import ConditionalOrdersTable from './ConditionalOrdersTable';
 import OpenDelayedOrdersTable from './OpenDelayedOrdersTable';
 import PositionsTable from './PositionsTable';

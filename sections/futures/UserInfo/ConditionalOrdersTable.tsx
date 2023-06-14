@@ -23,6 +23,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import PositionType from '../PositionType';
+
 import ConditionalOrdersWarning from './ConditionalOrdersWarning';
 import TableMarketDetails from './TableMarketDetails';
 
