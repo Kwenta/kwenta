@@ -220,7 +220,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 						<PositionCell>
 							<FlexDivRowCentered columnGap="5px">
 								<PnlContainer>
-									<Currency.Price price={row.position.pnl} colored />
+									<Currency.Price
+										price={row.position.pnl.add(row.position.accruedFunding)}
+										colored
+									/>
 									<NumericValue value={row.position.pnlPct} colored>
 										{formatPercent(row.position.pnlPct)}
 									</NumericValue>
