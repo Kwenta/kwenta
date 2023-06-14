@@ -29,6 +29,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import PositionType from '../PositionType';
+
 import TableMarketDetails from './TableMarketDetails';
 
 type CountdownTimers = Record<

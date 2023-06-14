@@ -35,6 +35,7 @@ import { KeeperDepositRow } from '../FeeInfoBox/FeesRow';
 import PositionType from '../PositionType';
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement';
 import ShowPercentage from '../Trade/ShowPercentage';
+
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput';
 
 const TP_OPTIONS = ['none', '5%', '10%', '25%', '50%', '100%'];

@@ -27,6 +27,7 @@ import { selectPreviousDayPrices } from 'state/prices/selectors';
 import media from 'styles/media';
 
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
+
 import ChartToggle from './ChartToggle';
 import HoursToggle from './HoursToggle';
 import MarketDetail, { MarketDetailValue } from './MarketDetail';

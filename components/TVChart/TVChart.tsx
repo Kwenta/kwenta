@@ -20,6 +20,7 @@ import {
 	IPositionLineAdapter,
 	widget,
 } from '../../public/static/charting_library';
+
 import { DEFAULT_RESOLUTION } from './constants';
 import DataFeedFactory from './DataFeed';
 import { ChartPosition } from './types';

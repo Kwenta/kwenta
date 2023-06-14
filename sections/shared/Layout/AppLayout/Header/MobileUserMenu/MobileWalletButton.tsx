@@ -9,6 +9,7 @@ import { NetworkId } from 'sdk/types/common';
 import { isSupportedNetworkId } from 'utils/network';
 
 import ConnectionDot from '../ConnectionDot';
+
 import MobileWalletActions from './MobileWalletActions';
 
 type MobileConnectButtonProps = {
