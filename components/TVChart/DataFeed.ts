@@ -87,7 +87,7 @@ const fetchCombinedCandles = async (
 	networkId: NetworkId
 ) => {
 	const candleData = await requestCandlesticks(
-		getDisplayAsset(base),
+		getDisplayAsset(base)?.toUpperCase() ?? '',
 		from,
 		to,
 		resolutionToSeconds(resolution),
