@@ -65,6 +65,7 @@ const PositionsTab = () => {
 				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI;
 				return {
 					market: market!,
+					remainingMargin: position.remainingMargin,
 					position: position.position!,
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
@@ -195,7 +196,7 @@ const PositionsTab = () => {
 							<PositionCell>
 								<Body color="secondary">Market Margin</Body>
 								<FlexDivRow justifyContent="start">
-									<NumericValue value={row.position.initialMargin} />
+									<NumericValue value={row.remainingMargin} />
 									{accountType === 'cross_margin' && (
 										<>
 											<Spacer width={5} />
