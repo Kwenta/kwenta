@@ -10,5 +10,6 @@ export enum zIndex {
 	BASE = 1,
 	HEADER = 10,
 	DIALOG_OVERLAY = 50,
+	MOBILE_FOOTER = 51,
 	DRAWER = 65,
 }
