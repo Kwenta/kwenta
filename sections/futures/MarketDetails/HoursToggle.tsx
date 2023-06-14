@@ -99,7 +99,7 @@ const ToggleTable = styled.div`
 const ToggleContainer = styled.div<{ open: boolean }>`
 	margin-left: 8px;
 	cursor: pointer;
-	margin-top: ${(props) => (props.open ? '92px' : '20px')};
+	margin-top: ${(props) => (props.open ? '84px' : '12px')};
 
 	${media.lessThan('lg')`
                position: absolute;
