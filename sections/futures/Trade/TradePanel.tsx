@@ -1,5 +1,5 @@
 import { FC, memo, useCallback, useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Error from 'components/ErrorView';
 import Spacer from 'components/Spacer';
@@ -11,11 +11,6 @@ import { selectFuturesType, selectLeverageSide, selectOrderType } from 'state/fu
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
 
-import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo';
-import LeverageInput from '../LeverageInput';
-import MarginInput from '../MarginInput';
-import OrderSizing from '../OrderSizing';
-import PositionButtons from '../PositionButtons';
 import CloseOnlyPrompt from './CloseOnlyPrompt';
 import ManagePosition from './ManagePosition';
 import MarketsDropdown from './MarketsDropdown';
@@ -24,6 +19,11 @@ import OrderTypeSelector from './OrderTypeSelector';
 import SLTPInputs from './SLTPInputs';
 import TradeBalance from './TradeBalance';
 import OrderPriceInput from './TradePanelPriceInput';
+import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo';
+import LeverageInput from '../LeverageInput';
+import MarginInput from '../MarginInput';
+import OrderSizing from '../OrderSizing';
+import PositionButtons from '../PositionButtons';
 
 type Props = {
 	mobile?: boolean;
@@ -77,7 +77,7 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 						closeDrawer={closeDrawer}
 					/>
 
-					<MainPanelContent>
+					<MainPanelContent $mobile={mobile}>
 						{pricesConnectionError && (
 							<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 						)}
@@ -130,8 +130,14 @@ const TradePanelContainer = styled.div<{ $mobile?: boolean }>`
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
-const MainPanelContent = styled.div`
-	padding: 65px 15px 0;
+const MainPanelContent = styled.div<{ $mobile?: boolean }>`
+	padding: 0 15px;
+
+	${(props) =>
+		props.$mobile &&
+		css`
+			padding: 65px 15px 0;
+		`}
 `;
 
 export default TradePanel;

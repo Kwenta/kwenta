@@ -39,12 +39,12 @@ import { FetchStatus } from 'state/types';
 import media from 'styles/media';
 import { getMarketName, getSynthDescription } from 'utils/futures';
 
+import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 import {
 	MARKETS_DETAILS_HEIGHT_DESKTOP,
 	TRADE_PANEL_WIDTH_LG,
 	TRADE_PANEL_WIDTH_MD,
 } from '../styles';
-import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {
 	mobile?: boolean;
@@ -369,7 +369,7 @@ const SearchBarContainer = styled.div`
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean; accountType?: string }>`
-	z-index: 100;
+	z-index: 40;
 	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
 	position: relative;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
