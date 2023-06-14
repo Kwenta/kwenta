@@ -134,8 +134,22 @@ export default class FuturesService {
 
 		const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key));
 
-		const responses = await this.sdk.context.multicallProvider.all([...parametersCalls]);
-		const marketParameters = responses as IPerpsV2MarketSettings.ParametersStructOutput[];
+		let marketParameters: IPerpsV2MarketSettings.ParametersStructOutput[] = [];
+
+		if (this.sdk.context.isMainnet) {
+			marketParameters = await this.sdk.context.multicallProvider.all(parametersCalls);
+		} else {
+			const firstResponses = await this.sdk.context.multicallProvider.all(
+				parametersCalls.slice(0, 20)
+			);
+			const secondResponses = await this.sdk.context.multicallProvider.all(
+				parametersCalls.slice(20, parametersCalls.length)
+			);
+			marketParameters = [
+				...firstResponses,
+				...secondResponses,
+			] as IPerpsV2MarketSettings.ParametersStructOutput[];
+		}
 
 		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys);
 
