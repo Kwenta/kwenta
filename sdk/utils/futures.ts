@@ -122,7 +122,8 @@ export const getMarketName = (asset: FuturesMarketAsset | null) => {
 };
 
 export const getDisplayAsset = (asset: string | null) => {
-	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
+	if (!asset) return null;
+	return asset.startsWith('ST') ? 'st' + asset.slice(2) : asset[0] === 's' ? asset.slice(1) : asset;
 };
 
 export const calculateVolumes = (
