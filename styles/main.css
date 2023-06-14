@@ -80,7 +80,6 @@ body {
 	text-rendering: optimizeSpeed;
 	margin: 0;
 	position: relative;
-	min-height: 100vh;
 	font-size: 12px;
 
 	-ms-overflow-style: none;
