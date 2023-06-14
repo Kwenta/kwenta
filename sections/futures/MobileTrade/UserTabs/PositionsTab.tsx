@@ -216,7 +216,11 @@ const PositionsTab = () => {
 							</PositionCell>
 							<PositionCell>
 								<Body color="secondary">Liquidation</Body>
-								<Currency.Price price={row.position.liquidationPrice} colorType="preview" />
+								<Currency.Price
+									price={row.position.liquidationPrice}
+									formatOptions={{ suggestDecimals: true }}
+									colorType="preview"
+								/>
 							</PositionCell>
 							<PositionCell>
 								<Body color="secondary">Unrealized PnL</Body>
