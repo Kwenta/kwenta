@@ -41,6 +41,7 @@ import OPIcon from 'assets/png/currencies/sOP.png';
 import PEPEIcon from 'assets/png/currencies/sPEPE.png';
 import SHIBIcon from 'assets/png/currencies/sSHIB.png';
 import SOLIcon from 'assets/png/currencies/sSOL.png';
+import STETHIcon from 'assets/png/currencies/sstETH.png';
 import SUIIcon from 'assets/png/currencies/sSUI.png';
 import TRXIcon from 'assets/png/currencies/sTRX.png';
 import UNIIcon from 'assets/png/currencies/sUNI.png';
@@ -90,6 +91,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sPEPEPERP: PEPEIcon,
 	sSHIBPERP: SHIBIcon,
 	sSOLPERP: SOLIcon,
+	sSTETHPERP: STETHIcon,
 	sSUIPERP: SUIIcon,
 	sTRXPERP: TRXIcon,
 	sUNIPERP: UNIIcon,
@@ -137,6 +139,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sPEPE: PEPEIcon,
 	sSHIB: SHIBIcon,
 	sSOL: SOLIcon,
+	sSTETH: STETHIcon,
 	sSUI: SUIIcon,
 	sTRX: TRXIcon,
 	sUNI: UNIIcon,
