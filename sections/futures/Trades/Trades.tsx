@@ -28,6 +28,7 @@ import { ExternalLink } from 'styles/common';
 
 import { TradeStatus } from '../types';
 import TableMarketDetails from '../UserInfo/TableMarketDetails';
+
 import TimeDisplay from './TimeDisplay';
 
 const Trades = memo(() => {

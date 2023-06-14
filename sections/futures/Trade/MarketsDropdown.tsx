@@ -44,6 +44,7 @@ import {
 	TRADE_PANEL_WIDTH_LG,
 	TRADE_PANEL_WIDTH_MD,
 } from '../styles';
+
 import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {

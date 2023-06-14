@@ -46,6 +46,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import ClosePositionFeeInfo from '../FeeInfoBox/ClosePositionFeeInfo';
 import OrderTypeSelector from '../Trade/OrderTypeSelector';
 import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage';
+
 import ClosePositionPriceInput from './ClosePositionPriceInput';
 import ClosePositionSizeInput from './ClosePositionSizeInput';
 

@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import PencilButton from '../../../components/Button/PencilButton';
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
+
 import SmartMarginOnboardModal from './SmartMarginOnboardModal';
 
 type TradeBalanceProps = {

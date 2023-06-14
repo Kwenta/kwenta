@@ -7,6 +7,7 @@ import Card, { CardBody } from 'components/Card';
 import { FlexDivRowCentered } from 'components/layout/flex';
 
 import { Side } from '../types';
+
 import CurrencyCardInput from './CurrencyCardInput';
 import CurrencyCardSelector from './CurrencyCardSelector';
 

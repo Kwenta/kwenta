@@ -16,6 +16,7 @@ import LeverageInput from '../LeverageInput';
 import MarginInput from '../MarginInput';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
+
 import CloseOnlyPrompt from './CloseOnlyPrompt';
 import ManagePosition from './ManagePosition';
 import MarketsDropdown from './MarketsDropdown';

@@ -13,6 +13,7 @@ import { selectCurrentTheme } from 'state/preferences/selectors';
 import { ThemeName } from 'styles/theme';
 
 import { SubMenuLink } from '../constants';
+
 import { MenuButton } from './menu';
 
 type MobileSubMenuOption = {
