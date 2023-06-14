@@ -32,6 +32,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
 import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage';
+
 import EditPositionSizeInput from './EditPositionSizeInput';
 
 export default function EditPositionSizeModal() {
@@ -69,7 +70,10 @@ export default function EditPositionSizeModal() {
 		isFetchingPreview,
 	]);
 
-	const maxLeverage = useMemo(() => market?.appMaxLeverage ?? wei(1), [market?.appMaxLeverage]);
+	const maxLeverage = useMemo(
+		() => (editType === 0 ? market?.appMaxLeverage : market?.contractMaxLeverage) ?? wei(1),
+		[market?.appMaxLeverage, editType, market?.contractMaxLeverage]
+	);
 
 	const resultingLeverage = useMemo(() => {
 		if (!preview || !position) return;

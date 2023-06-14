@@ -39,12 +39,13 @@ import { FetchStatus } from 'state/types';
 import media from 'styles/media';
 import { getMarketName, getSynthDescription } from 'utils/futures';
 
-import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 import {
 	MARKETS_DETAILS_HEIGHT_DESKTOP,
 	TRADE_PANEL_WIDTH_LG,
 	TRADE_PANEL_WIDTH_MD,
 } from '../styles';
+
+import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
 
 type MarketsDropdownProps = {
 	mobile?: boolean;

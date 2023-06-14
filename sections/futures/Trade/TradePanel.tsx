@@ -11,6 +11,12 @@ import { selectFuturesType, selectLeverageSide, selectOrderType } from 'state/fu
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { selectPricesConnectionError } from 'state/prices/selectors';
 
+import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo';
+import LeverageInput from '../LeverageInput';
+import MarginInput from '../MarginInput';
+import OrderSizing from '../OrderSizing';
+import PositionButtons from '../PositionButtons';
+
 import CloseOnlyPrompt from './CloseOnlyPrompt';
 import ManagePosition from './ManagePosition';
 import MarketsDropdown from './MarketsDropdown';
@@ -19,11 +25,6 @@ import OrderTypeSelector from './OrderTypeSelector';
 import SLTPInputs from './SLTPInputs';
 import TradeBalance from './TradeBalance';
 import OrderPriceInput from './TradePanelPriceInput';
-import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo';
-import LeverageInput from '../LeverageInput';
-import MarginInput from '../MarginInput';
-import OrderSizing from '../OrderSizing';
-import PositionButtons from '../PositionButtons';
 
 type Props = {
 	mobile?: boolean;

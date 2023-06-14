@@ -32,6 +32,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { getKnownError } from 'utils/formatters/error';
 
 import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
+
 import TradeConfirmationRow from './TradeConfirmationRow';
 import TradeConfirmationSummary from './TradeConfirmationSummary';
 

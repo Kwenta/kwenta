@@ -134,8 +134,22 @@ export default class FuturesService {
 
 		const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key));
 
-		const responses = await this.sdk.context.multicallProvider.all([...parametersCalls]);
-		const marketParameters = responses as IPerpsV2MarketSettings.ParametersStructOutput[];
+		let marketParameters: IPerpsV2MarketSettings.ParametersStructOutput[] = [];
+
+		if (this.sdk.context.isMainnet) {
+			marketParameters = await this.sdk.context.multicallProvider.all(parametersCalls);
+		} else {
+			const firstResponses = await this.sdk.context.multicallProvider.all(
+				parametersCalls.slice(0, 20)
+			);
+			const secondResponses = await this.sdk.context.multicallProvider.all(
+				parametersCalls.slice(20, parametersCalls.length)
+			);
+			marketParameters = [
+				...firstResponses,
+				...secondResponses,
+			] as IPerpsV2MarketSettings.ParametersStructOutput[];
+		}
 
 		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys);
 
@@ -256,18 +270,10 @@ export default class FuturesService {
 		const positions = await Promise.all(
 			positionDetails.map(async (position, ind) => {
 				const canLiquidate = canLiquidateState[ind];
-				const marketAddress = futuresMarkets[ind].address;
 				const marketKey = futuresMarkets[ind].marketKey;
 				const asset = futuresMarkets[ind].asset;
-				const liquidationPrice = position.position.size.abs().gt(0)
-					? await this.sdk.futures.getExactLiquidationPrice(marketKey, marketAddress, position)
-					: position.liquidationPrice;
-				return mapFuturesPosition(
-					{ ...position, liquidationPrice },
-					canLiquidate,
-					asset,
-					marketKey
-				);
+
+				return mapFuturesPosition(position, canLiquidate, asset, marketKey);
 			})
 		);
 
@@ -542,27 +548,6 @@ export default class FuturesService {
 			inputs.sizeDelta,
 			inputs.leverageSide
 		);
-	}
-
-	public async getExactLiquidationPrice(
-		marketKey: FuturesMarketKey,
-		marketAddress: string,
-		positionDetails: PositionDetail
-	) {
-		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
-		const internalPosition = {
-			id: '0',
-			size: positionDetails.position.size,
-			margin: positionDetails.position.margin,
-			lastFundingIndex: positionDetails.position.fundingIndex,
-			lastPrice: positionDetails.position.lastPrice,
-		};
-		const approxLiquidationPrice = positionDetails.liquidationPrice;
-		const exactLiqPrice = await marketInternal._exactLiquidationPrice(
-			internalPosition,
-			approxLiquidationPrice
-		);
-		return exactLiqPrice;
 	}
 
 	public async getCrossMarginTradePreview(
@@ -902,7 +887,10 @@ export default class FuturesService {
 		walletAddress: string,
 		crossMarginAddress: string,
 		order: SmartMarginOrderInputs,
-		cancelPendingReduceOrders?: boolean
+		options?: {
+			cancelPendingReduceOrders?: boolean;
+			cancelExpiredDelayedOrders?: boolean;
+		}
 	) {
 		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
@@ -910,6 +898,11 @@ export default class FuturesService {
 		);
 		const commands = [];
 		const inputs = [];
+
+		if (options?.cancelExpiredDelayedOrders) {
+			commands.push(AccountExecuteFunctions.PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER);
+			inputs.push(defaultAbiCoder.encode(['address'], [market.address]));
+		}
 
 		const idleMargin = await this.getIdleMargin(walletAddress, crossMarginAddress);
 		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
@@ -998,7 +991,7 @@ export default class FuturesService {
 			}
 		}
 
-		if (cancelPendingReduceOrders) {
+		if (options?.cancelPendingReduceOrders) {
 			// Remove all pending reduce only orders if instructed
 			existingOrdersForMarket.forEach((o) => {
 				commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);

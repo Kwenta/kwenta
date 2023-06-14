@@ -20,6 +20,7 @@ import { selectCurrentTheme } from 'state/preferences/selectors';
 import colors from 'styles/theme/colors';
 
 import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
+
 import { MenuButton } from './menu';
 import MobileSubMenu from './MobileSubMenu';
 
