@@ -5,7 +5,7 @@ import { useEnsAvatar, useEnsName } from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import { truncateAddress } from 'utils/formatters/string';
+import { truncateAddress } from 'sdk/utils/string';
 
 import ConnectionDot from '../ConnectionDot';
 import NetworksSwitcher from '../NetworksSwitcher';
