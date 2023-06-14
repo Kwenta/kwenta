@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
 	size?: 'xsmall' | 'small' | 'medium' | 'large';
 	weight?: 'regular' | 'bold' | 'black';
-	color?: 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'positive' | 'negative' | 'preview';
+	color?: 'primary' | 'secondary' | 'tertiary' | 'positive' | 'negative' | 'preview';
 	className?: string;
 	fontSize?: number;
 	mono?: boolean;

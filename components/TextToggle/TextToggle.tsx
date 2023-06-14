@@ -22,11 +22,7 @@ const TextToggle: React.FC<TextToggleProps<any>> = ({
 			<Body color="secondary">{title}</Body>
 			<FlexDiv columnGap="10px">
 				{options.map((value) => (
-					<ToggleButton
-						color="quaternary"
-						$active={selectedOption === value}
-						onClick={() => onOptionChange(value)}
-					>
+					<ToggleButton $active={selectedOption === value} onClick={() => onOptionChange(value)}>
 						{value}
 					</ToggleButton>
 				))}
@@ -38,6 +34,7 @@ const TextToggle: React.FC<TextToggleProps<any>> = ({
 const ToggleButton = styled(Body)<{ $active: boolean }>`
 	cursor: pointer;
 	text-transform: capitalize;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.quaternary};
 
 	${(props) =>
 		props.$active &&
