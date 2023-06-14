@@ -6,6 +6,7 @@ import NotificationContainer from 'constants/NotificationContainer';
 import { MobileScreenContainer } from 'styles/common';
 
 import Banner from '../HomeLayout/Banner';
+
 import Footer from './Footer';
 import Header from './Header';
 import MobileUserMenu from './Header/MobileUserMenu';

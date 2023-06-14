@@ -6,6 +6,7 @@ import media from 'styles/media';
 import MarketDetails from '../MarketDetails';
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
 import UserInfo from '../UserInfo';
+
 import ChartWrapper from './ChartWrapper';
 
 const MarketInfo: React.FC = React.memo(() => (

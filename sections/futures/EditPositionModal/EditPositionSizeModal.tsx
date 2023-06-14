@@ -32,6 +32,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo';
 import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage';
+
 import EditPositionSizeInput from './EditPositionSizeInput';
 
 export default function EditPositionSizeModal() {

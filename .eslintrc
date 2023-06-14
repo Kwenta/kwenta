@@ -40,7 +40,8 @@
 					"builtin", 
 					"external", 
 					"internal", 
-					["parent", "sibling"]
+					"parent",
+					"sibling"
 				],
 				"newlines-between": "always",
 				"pathGroups": [

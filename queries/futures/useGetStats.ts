@@ -11,6 +11,7 @@ import { truncateAddress } from 'utils/formatters/string';
 import logError from 'utils/logError';
 
 import { getFuturesStats } from '../../sdk/utils/subgraph';
+
 import { AccountStat, FuturesStat } from './types';
 
 const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {

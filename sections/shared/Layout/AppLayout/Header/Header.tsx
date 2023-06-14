@@ -5,6 +5,7 @@ import { MobileHiddenView } from 'components/Media';
 
 import Banner from '../../HomeLayout/Banner';
 import Logo from '../../Logo';
+
 import Nav from './Nav';
 import WalletButtons from './WalletButtons';
 
