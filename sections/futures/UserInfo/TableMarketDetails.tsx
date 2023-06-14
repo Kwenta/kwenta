@@ -17,11 +17,13 @@ const TableMarketDetails = memo(({ marketKey, marketName, infoLabel, badge }: Pr
 			<IconContainer>
 				<StyledCurrencyIcon currencyKey={marketKey} />
 			</IconContainer>
-			<StyledText>
-				{marketName}
-				{badge}
-			</StyledText>
-			<StyledValue>{infoLabel}</StyledValue>
+			<div>
+				<StyledText>
+					{marketName}
+					{badge}
+				</StyledText>
+				{infoLabel && <StyledValue>{infoLabel}</StyledValue>}
+			</div>
 		</MarketContainer>
 	);
 });
@@ -44,13 +46,10 @@ const StyledText = styled.div`
 	align-items: center;
 	grid-column: 2;
 	grid-row: 1;
-	margin-bottom: -4px;
 `;
 
 const MarketContainer = styled.div`
-	display: grid;
-	grid-template-rows: auto auto;
-	grid-template-columns: auto auto;
+	display: flex;
 	align-items: center;
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 `;
