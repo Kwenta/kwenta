@@ -147,7 +147,7 @@ const ManagePosition: React.FC = () => {
 		if (isZero(susdSize)) {
 			return { message: 'Trade size required' };
 		}
-		if (orderType === 'market' && !!openOrder) {
+		if (orderType === 'market' && !!openOrder && !openOrder.isStale) {
 			return {
 				show: 'warn',
 				message: ERROR_MESSAGES.ORDER_PENDING,

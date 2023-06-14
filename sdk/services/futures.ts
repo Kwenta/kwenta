@@ -887,7 +887,10 @@ export default class FuturesService {
 		walletAddress: string,
 		crossMarginAddress: string,
 		order: SmartMarginOrderInputs,
-		cancelPendingReduceOrders?: boolean
+		options?: {
+			cancelPendingReduceOrders?: boolean;
+			cancelExpiredDelayedOrders?: boolean;
+		}
 	) {
 		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
 			crossMarginAddress,
@@ -895,6 +898,11 @@ export default class FuturesService {
 		);
 		const commands = [];
 		const inputs = [];
+
+		if (options?.cancelExpiredDelayedOrders) {
+			commands.push(AccountExecuteFunctions.PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER);
+			inputs.push(defaultAbiCoder.encode(['address'], [market.address]));
+		}
 
 		const idleMargin = await this.getIdleMargin(walletAddress, crossMarginAddress);
 		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress);
@@ -983,7 +991,7 @@ export default class FuturesService {
 			}
 		}
 
-		if (cancelPendingReduceOrders) {
+		if (options?.cancelPendingReduceOrders) {
 			// Remove all pending reduce only orders if instructed
 			existingOrdersForMarket.forEach((o) => {
 				commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER);
