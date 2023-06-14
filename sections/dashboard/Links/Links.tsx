@@ -42,7 +42,6 @@ const LinkContainer = styled.div<{ $isMobile?: boolean }>`
 		css`
 			margin-top: 0;
 			margin-left: 0;
-			margin-bottom: 50px;
 
 			a {
 				outline: none;

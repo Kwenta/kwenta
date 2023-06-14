@@ -93,7 +93,7 @@ const MobileFooterSeparator = styled.div`
 	margin: 0 20px;
 	height: 32px;
 	width: 1px;
-	background-color: #2b2a2a;
+	background-color: ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 `;
 
 const MobileFooterRight = styled.div`
