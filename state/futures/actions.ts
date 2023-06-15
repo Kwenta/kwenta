@@ -846,9 +846,12 @@ export const editCrossMarginPositionMargin = (
 };
 
 export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
-	const orderPrice = selectSkewAdjustedPrice(getState());
+	const orderPrice = selectCrossMarginOrderPrice(getState());
+	const marketPrice = selectSkewAdjustedPrice(getState());
 	const marketInfo = selectMarketInfo(getState());
 	const marginDelta = selectCrossMarginMarginDelta(getState());
+	const isConditionalOrder = selectIsConditionalOrder(getState());
+	const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : marketPrice;
 	const { nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
 
 	if (!marketInfo) throw new Error('No market selected');
@@ -856,7 +859,7 @@ export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
 	dispatch(
 		stageCrossMarginTradePreview({
 			market: { key: marketInfo.marketKey, address: marketInfo.market },
-			orderPrice,
+			orderPrice: price,
 			marginDelta,
 			sizeDelta: nativeSizeDelta,
 			action: 'trade',
