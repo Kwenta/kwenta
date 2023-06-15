@@ -63,6 +63,7 @@ const getPriceScale = (asset: string | null) => {
 		case 'BTC':
 		case 'BNB':
 		case 'ETH':
+		case 'stETH':
 		case 'XAU':
 			return 100;
 		case 'DOGE':
@@ -86,7 +87,7 @@ const fetchCombinedCandles = async (
 	networkId: NetworkId
 ) => {
 	const candleData = await requestCandlesticks(
-		getDisplayAsset(base),
+		getDisplayAsset(base)?.toUpperCase() ?? '',
 		from,
 		to,
 		resolutionToSeconds(resolution),
