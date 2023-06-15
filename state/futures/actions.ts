@@ -133,6 +133,7 @@ import {
 	selectSkewAdjustedPrice,
 	selectEditPositionPreview,
 	selectClosePositionPreview,
+	selectMarketIndexPrice,
 } from './selectors';
 import {
 	AccountContext,
@@ -511,6 +512,7 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		const markets = selectMarkets(getState());
+		const indexPrice = selectMarketIndexPrice(getState());
 
 		const market = markets.find((m) => m.marketKey === params.market.key);
 
@@ -521,17 +523,14 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 			if (!params.orderPrice) throw new Error('No price provided for preview');
 			const leverageSide = selectLeverageSide(getState());
 
-			const skewAdjustedPrice = wei(params.orderPrice).mul(
-				wei(market.marketSkew).div(market.settings.skewScale).add(1)
-			);
-
 			const preview = await sdk.futures.getIsolatedTradePreview(
 				params.market.address,
+				params.market.key,
 				orderTypeNum,
 				{
 					sizeDelta: params.sizeDelta,
 					price: params.orderPrice,
-					skewAdjustedPrice,
+					indexPrice,
 					leverageSide,
 				}
 			);
@@ -646,7 +645,7 @@ export const editCrossMarginTradeMarginDelta = (marginDelta: string): AppThunk =
 	dispatch,
 	getState
 ) => {
-	const orderPrice = selectSkewAdjustedPrice(getState());
+	const orderPrice = selectMarketIndexPrice(getState());
 	const marketInfo = selectMarketInfo(getState());
 	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
 
@@ -681,17 +680,17 @@ export const editCrossMarginTradeSize = (
 	size: string,
 	currencyType: 'usd' | 'native'
 ): AppThunk => (dispatch, getState) => {
-	const assetRate = selectSkewAdjustedPrice(getState());
+	const indexPrice = selectMarketIndexPrice(getState());
 	const marginDelta = selectCrossMarginMarginDelta(getState());
 	const orderPrice = selectCrossMarginOrderPrice(getState());
 	const isConditionalOrder = selectIsConditionalOrder(getState());
 	const tradeSide = selectLeverageSide(getState());
 	const marketInfo = selectMarketInfo(getState());
-	const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : assetRate;
+	const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : indexPrice;
 
 	if (!marketInfo) throw new Error('No market selected');
 
-	if (size === '' || assetRate.eq(0)) {
+	if (size === '' || price.eq(0)) {
 		dispatch(setCrossMarginTradeInputs(ZERO_STATE_TRADE_INPUTS));
 		dispatch(setCrossMarginTradePreview({ preview: null, type: 'trade' }));
 		dispatch(setLeverageInput(''));
@@ -793,7 +792,7 @@ export const editClosePositionPrice = (marketKey: FuturesMarketKey, price: strin
 	getState
 ) => {
 	const { nativeSizeDelta, orderType } = selectClosePositionOrderInputs(getState());
-	const marketPrice = selectSkewAdjustedPrice(getState());
+	const marketPrice = selectMarketIndexPrice(getState());
 	const { position } = selectEditPositionModalInfo(getState());
 	const closeTradeSide =
 		position?.position?.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT;
@@ -846,9 +845,12 @@ export const editCrossMarginPositionMargin = (
 };
 
 export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
-	const orderPrice = selectSkewAdjustedPrice(getState());
+	const orderPrice = selectCrossMarginOrderPrice(getState());
+	const indexPrice = selectMarketIndexPrice(getState());
 	const marketInfo = selectMarketInfo(getState());
 	const marginDelta = selectCrossMarginMarginDelta(getState());
+	const isConditionalOrder = selectIsConditionalOrder(getState());
+	const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : indexPrice;
 	const { nativeSizeDelta } = selectCrossMarginTradeInputs(getState());
 
 	if (!marketInfo) throw new Error('No market selected');
@@ -856,7 +858,7 @@ export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
 	dispatch(
 		stageCrossMarginTradePreview({
 			market: { key: marketInfo.marketKey, address: marketInfo.market },
-			orderPrice,
+			orderPrice: price,
 			marginDelta,
 			sizeDelta: nativeSizeDelta,
 			action: 'trade',
@@ -887,7 +889,7 @@ export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'nati
 	dispatch,
 	getState
 ) => {
-	const marketPrice = selectSkewAdjustedPrice(getState());
+	const marketPrice = selectMarketIndexPrice(getState());
 	const position = selectPosition(getState());
 	const marketKey = selectMarketKey(getState());
 	const tradeSide = selectLeverageSide(getState());
@@ -1274,8 +1276,8 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		const marketInfo = selectMarketInfo(getState());
-		const editPreview = selectEditPositionPreview(getState());
-		const desiredFillPrice = editPreview?.desiredFillPrice ?? wei(0);
+		const preview = selectTradePreview(getState());
+		const desiredFillPrice = preview?.desiredFillPrice ?? wei(0);
 		const { nativeSizeDelta } = selectTradeSizeInputs(getState());
 		try {
 			if (!marketInfo) throw new Error('Market info not found');

@@ -77,7 +77,9 @@ export default function EditPositionSizeModal() {
 
 	const resultingLeverage = useMemo(() => {
 		if (!preview || !position) return;
-		return preview.size.mul(marketPrice).div(position.remainingMargin).abs();
+		return position.remainingMargin.gt(0)
+			? preview.size.mul(marketPrice).div(position.remainingMargin).abs()
+			: wei(0);
 	}, [preview, position, marketPrice]);
 
 	const maxNativeIncreaseValue = useMemo(() => {

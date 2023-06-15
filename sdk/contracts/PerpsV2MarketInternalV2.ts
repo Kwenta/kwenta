@@ -1,4 +1,4 @@
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import BN from 'bn.js';
 import { Contract as MultiCallContract } from 'ethcall';
 import { BigNumber, ethers, Contract } from 'ethers';
@@ -161,6 +161,12 @@ class FuturesMarketInternal {
 		const liqPrice = await this._approxLiquidationPrice(newPos, newPos.lastPrice);
 
 		return { ...newPos, liqPrice: liqPrice, fee, price: newPos.lastPrice, status: status };
+	};
+
+	getSkewAdjustedPrice = async (price: Wei) => {
+		const marketSkew = wei(await this._onChainData.marketSkew);
+		const skewScale = wei(await this._getSetting('skewScale'));
+		return price.mul(marketSkew.div(skewScale).add(1));
 	};
 
 	_postTradeDetails = async (

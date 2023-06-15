@@ -526,11 +526,12 @@ export default class FuturesService {
 
 	public async getIsolatedTradePreview(
 		marketAddress: string,
+		marketKey: FuturesMarketKey,
 		orderType: ContractOrderType,
 		inputs: {
 			sizeDelta: Wei;
 			price: Wei;
-			skewAdjustedPrice: Wei;
+			indexPrice: Wei;
 			leverageSide: PositionSide;
 		}
 	) {
@@ -542,12 +543,10 @@ export default class FuturesService {
 			this.sdk.context.walletAddress
 		);
 
-		return formatPotentialTrade(
-			details,
-			inputs.skewAdjustedPrice,
-			inputs.sizeDelta,
-			inputs.leverageSide
-		);
+		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey);
+		const skewAdjustedPrice = await marketInternal.getSkewAdjustedPrice(inputs.price);
+
+		return formatPotentialTrade(details, skewAdjustedPrice, inputs.sizeDelta, inputs.leverageSide);
 	}
 
 	public async getCrossMarginTradePreview(
@@ -570,9 +569,18 @@ export default class FuturesService {
 			tradeParams.orderPrice.toBN()
 		);
 
+		const skewAdjustedPrice = await marketInternal.getSkewAdjustedPrice(tradeParams.orderPrice);
+
+		// eslint-disable-next-line
+		console.log('skew adjusted price', skewAdjustedPrice.toString());
+		// eslint-disable-next-line
+		console.log('raw pyth price:', tradeParams.orderPrice.toString());
+		// eslint-disable-next-line
+		console.log('preview calculated price:', wei(preview.price).toString());
+
 		return formatPotentialTrade(
 			preview,
-			tradeParams.orderPrice,
+			skewAdjustedPrice,
 			tradeParams.sizeDelta,
 			tradeParams.leverageSide
 		);
@@ -929,6 +937,8 @@ export default class FuturesService {
 
 		if (order.sizeDelta.abs().gt(0)) {
 			if (!order.conditionalOrderInputs) {
+				// eslint-disable-next-line
+				console.log('desired fill price:', order.desiredFillPrice.toString());
 				commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
 				inputs.push(encodeModidyMarketMarginParams(market.address, order.marginDelta));
 				commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
