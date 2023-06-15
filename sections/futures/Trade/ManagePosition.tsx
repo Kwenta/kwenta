@@ -14,7 +14,7 @@ import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
-	selectMarketPrice,
+	selectMarketIndexPrice,
 	selectPlaceOrderTranslationKey,
 	selectMaxLeverage,
 	selectTradePreviewError,
@@ -53,7 +53,7 @@ const ManagePosition: React.FC = () => {
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached);
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const marketAssetRate = useAppSelector(selectMarketPrice);
+	const marketAssetRate = useAppSelector(selectMarketIndexPrice);
 	const marketInfo = useAppSelector(selectMarketInfo);
 	const indexPrice = useAppSelector(selectMarketPriceInfo);
 	const previewStatus = useAppSelector(selectTradePreviewStatus);

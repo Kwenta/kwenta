@@ -10,7 +10,7 @@ import { ZERO_WEI } from 'sdk/constants/number';
 import { floorNumber, formatCryptoCurrency, formatDollars, isZero } from 'sdk/utils/number';
 import { editTradeSizeInput } from 'state/futures/actions';
 import {
-	selectMarketPrice,
+	selectMarketIndexPrice,
 	selectPosition,
 	selectTradeSizeInputs,
 	selectCrossMarginOrderPrice,
@@ -34,7 +34,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs);
 
 	const position = useAppSelector(selectPosition);
-	const marketAssetRate = useAppSelector(selectMarketPrice);
+	const marketAssetRate = useAppSelector(selectMarketIndexPrice);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const assetInputType = useAppSelector(selectSelectedInputDenomination);
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);

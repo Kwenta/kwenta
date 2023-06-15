@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import { PositionSide } from 'sdk/types/futures';
 import PositionButtons from 'sections/futures/PositionButtons';
-import { selectMarketAsset, selectMarketPrice } from 'state/futures/selectors';
+import { selectMarketAsset, selectMarketIndexPrice } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { getMarketName } from 'utils/futures';
 
@@ -24,7 +24,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = memo(({ setOpenProfitCalcMod
 	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
 	const { t } = useTranslation();
 
-	const marketPrice = useAppSelector(selectMarketPrice);
+	const marketPrice = useAppSelector(selectMarketIndexPrice);
 
 	// Wei
 	const [entryPrice, setEntryPrice] = useState('');
