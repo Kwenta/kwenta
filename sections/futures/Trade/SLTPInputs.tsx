@@ -16,7 +16,7 @@ import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'stat
 import {
 	selectLeverageInput,
 	selectLeverageSide,
-	selectMarketPrice,
+	selectMarketIndexPrice,
 	selectSlTpTradeInputs,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -30,7 +30,7 @@ const SL_OPTIONS = ['2%', '5%', '10%', '20%', '50%'];
 export default function SLTPInputs() {
 	const dispatch = useAppDispatch();
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
-	const currentPrice = useAppSelector(selectMarketPrice);
+	const currentPrice = useAppSelector(selectMarketIndexPrice);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const leverage = useAppSelector(selectLeverageInput);
 	const hideWarning = useAppSelector(selectAckedOrdersWarning);

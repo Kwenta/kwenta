@@ -4,7 +4,7 @@ import { editTradeOrderPrice } from 'state/futures/actions';
 import {
 	selectCrossMarginOrderPrice,
 	selectLeverageSide,
-	selectMarketPrice,
+	selectMarketIndexPrice,
 	selectOrderType,
 } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
@@ -14,7 +14,7 @@ import OrderPriceInput from '../OrderPriceInput';
 export default function TradePanelPriceInput() {
 	const dispatch = useAppDispatch();
 
-	const marketPrice = useAppSelector(selectMarketPrice);
+	const marketPrice = useAppSelector(selectMarketIndexPrice);
 	const leverageSide = useAppSelector(selectLeverageSide);
 	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
 	const orderType = useAppSelector(selectOrderType);

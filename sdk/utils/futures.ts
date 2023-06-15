@@ -271,6 +271,7 @@ export const mapFuturesPositions = (
 	);
 };
 
+// TODO: Move to app
 export const serializePotentialTrade = (
 	preview: FuturesPotentialTradeDetails
 ): FuturesPotentialTradeDetails<string> => ({
@@ -284,9 +285,9 @@ export const serializePotentialTrade = (
 	leverage: preview.leverage.toString(),
 	notionalValue: preview.notionalValue.toString(),
 	priceImpact: preview.priceImpact.toString(),
-	slippageAmount: preview.slippageAmount.toString(),
 });
 
+// TODO: Move to app
 export const unserializePotentialTrade = (
 	preview: FuturesPotentialTradeDetails<string>
 ): FuturesPotentialTradeDetails => ({
@@ -300,7 +301,6 @@ export const unserializePotentialTrade = (
 	leverage: wei(preview.leverage),
 	notionalValue: wei(preview.notionalValue),
 	priceImpact: wei(preview.priceImpact),
-	slippageAmount: wei(preview.slippageAmount),
 });
 
 export const formatDelayedOrder = (
@@ -337,24 +337,16 @@ export const formatDelayedOrder = (
 
 export const formatPotentialTrade = (
 	preview: PostTradeDetailsResponse,
-	basePrice: Wei,
+	skewAdjustedPrice: Wei,
 	nativeSizeDelta: Wei,
 	leverageSide: PositionSide
 ) => {
 	const { fee, liqPrice, margin, price, size, status } = preview;
 
-	const tradeValueWithoutSlippage = wei(nativeSizeDelta).abs().mul(wei(basePrice));
-	const notionalValue = wei(size).mul(wei(basePrice));
+	const notionalValue = wei(size).mul(wei(price));
 	const leverage = margin.gt(0) ? notionalValue.div(wei(margin)) : ZERO_WEI;
+	const priceImpact = wei(price).sub(skewAdjustedPrice).div(skewAdjustedPrice).abs();
 
-	const priceImpact = wei(price).sub(basePrice).div(basePrice).abs();
-	const slippageDirection = nativeSizeDelta.gt(0)
-		? priceImpact.gt(0)
-			? -1
-			: nativeSizeDelta.lt(0)
-			? priceImpact.lt(0)
-			: -1
-		: 1;
 	return {
 		fee: wei(fee),
 		liqPrice: wei(liqPrice),
@@ -370,7 +362,6 @@ export const formatPotentialTrade = (
 		statusMessage: getTradeStatusMessage(status),
 		priceImpact: priceImpact,
 		exceedsPriceProtection: priceImpact.mul(100).gt(getDefaultPriceImpact('market')),
-		slippageAmount: priceImpact.mul(slippageDirection).mul(tradeValueWithoutSlippage),
 	};
 };
 

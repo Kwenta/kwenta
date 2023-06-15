@@ -16,7 +16,7 @@ import { editTradeSizeInput } from 'state/futures/actions';
 import { setLeverageInput } from 'state/futures/reducer';
 import {
 	selectLeverageInput,
-	selectMarketPrice,
+	selectMarketIndexPrice,
 	selectMaxLeverage,
 	selectPosition,
 	selectFuturesType,
@@ -44,7 +44,7 @@ const LeverageInput: FC = memo(() => {
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const position = useAppSelector(selectPosition);
 	const maxLeverage = useAppSelector(selectMaxLeverage);
-	const marketPrice = useAppSelector(selectMarketPrice);
+	const marketPrice = useAppSelector(selectMarketIndexPrice);
 	const leverageInput = useAppSelector(selectLeverageInput);
 	const futuresType = useAppSelector(selectFuturesType);
 	const crossMarginMarginDelta = useAppSelector(selectCrossMarginMarginDelta);

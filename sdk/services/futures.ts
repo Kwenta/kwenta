@@ -526,11 +526,11 @@ export default class FuturesService {
 
 	public async getIsolatedTradePreview(
 		marketAddress: string,
+		marketKey: FuturesMarketKey,
 		orderType: ContractOrderType,
 		inputs: {
 			sizeDelta: Wei;
 			price: Wei;
-			skewAdjustedPrice: Wei;
 			leverageSide: PositionSide;
 		}
 	) {
@@ -542,12 +542,13 @@ export default class FuturesService {
 			this.sdk.context.walletAddress
 		);
 
-		return formatPotentialTrade(
-			details,
-			inputs.skewAdjustedPrice,
-			inputs.sizeDelta,
-			inputs.leverageSide
+		const skewAdjustedPrice = await this.getSkewAdjustedPrice(
+			inputs.price,
+			marketAddress,
+			marketKey
 		);
+
+		return formatPotentialTrade(details, skewAdjustedPrice, inputs.sizeDelta, inputs.leverageSide);
 	}
 
 	public async getCrossMarginTradePreview(
@@ -570,9 +571,15 @@ export default class FuturesService {
 			tradeParams.orderPrice.toBN()
 		);
 
+		const skewAdjustedPrice = await this.getSkewAdjustedPrice(
+			tradeParams.orderPrice,
+			marketAddress,
+			marketKey
+		);
+
 		return formatPotentialTrade(
 			preview,
-			tradeParams.orderPrice,
+			skewAdjustedPrice,
 			tradeParams.sizeDelta,
 			tradeParams.leverageSide
 		);
@@ -1178,6 +1185,22 @@ export default class FuturesService {
 			}
 		);
 	}
+
+	public getSkewAdjustedPrice = async (price: Wei, marketAddress: string, marketKey: string) => {
+		const marketContract = new EthCallContract(marketAddress, PerpsMarketABI);
+		const { PerpsV2MarketSettings } = this.sdk.context.multicallContracts;
+		if (!PerpsV2MarketSettings) throw new Error(UNSUPPORTED_NETWORK);
+
+		const [marketSkew, skewScale] = await this.sdk.context.multicallProvider.all([
+			marketContract.marketSkew(),
+			PerpsV2MarketSettings.skewScale(formatBytes32String(marketKey)),
+		]);
+
+		const skewWei = wei(marketSkew);
+		const scaleWei = wei(skewScale);
+
+		return price.mul(skewWei.div(scaleWei).add(1));
+	};
 
 	// Private methods
 
