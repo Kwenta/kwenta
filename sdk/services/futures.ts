@@ -571,13 +571,6 @@ export default class FuturesService {
 
 		const skewAdjustedPrice = await marketInternal.getSkewAdjustedPrice(tradeParams.orderPrice);
 
-		// eslint-disable-next-line
-		console.log('skew adjusted price', skewAdjustedPrice.toString());
-		// eslint-disable-next-line
-		console.log('raw pyth price:', tradeParams.orderPrice.toString());
-		// eslint-disable-next-line
-		console.log('preview calculated price:', wei(preview.price).toString());
-
 		return formatPotentialTrade(
 			preview,
 			skewAdjustedPrice,
@@ -937,8 +930,6 @@ export default class FuturesService {
 
 		if (order.sizeDelta.abs().gt(0)) {
 			if (!order.conditionalOrderInputs) {
-				// eslint-disable-next-line
-				console.log('desired fill price:', order.desiredFillPrice.toString());
 				commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN);
 				inputs.push(encodeModidyMarketMarginParams(market.address, order.marginDelta));
 				commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER);
