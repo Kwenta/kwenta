@@ -5,7 +5,7 @@ import type { ThemeName } from 'styles/theme';
 
 export const MenuButton = styled.div<{
 	currentTheme: ThemeName;
-	isActive: boolean;
+	isActive?: boolean;
 	isLink?: boolean;
 }>`
 	outline: none;

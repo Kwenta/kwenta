@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -37,12 +37,6 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS;
 
 	const currentTheme = useAppSelector(selectCurrentTheme);
-
-	const [expanded, setExpanded] = useState<string | undefined>();
-
-	const handleToggle = (link: string) => () => {
-		setExpanded((l) => (l === link ? undefined : link));
-	};
 
 	const showStatsPage = useCallback(() => {
 		router.push(ROUTES.Stats.Home);
@@ -81,11 +75,9 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 							{links?.length ? (
 								<MobileSubMenu
 									links={links}
-									active={expanded === link}
 									i18nLabel={i18nLabel}
 									defaultOpen={router.asPath.includes(link)}
 									onDismiss={onDismiss}
-									onToggle={handleToggle(link)}
 								/>
 							) : link === ROUTES.Stats.Home ? (
 								<MenuButton

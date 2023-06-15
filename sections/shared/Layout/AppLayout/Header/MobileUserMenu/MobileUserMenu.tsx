@@ -83,6 +83,7 @@ const MobileFooterContainer = styled.div`
 	padding: 15px 20px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
 	z-index: 51;
+	min-height: 71px;
 `;
 
 const MobileFooterIconContainer = styled.div`
