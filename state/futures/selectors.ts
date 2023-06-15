@@ -10,6 +10,7 @@ import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
 import { TransactionStatus } from 'sdk/types/common';
 import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
 import { truncateTimestamp } from 'sdk/utils/date';
+import { calculateDesiredFillPrice } from 'sdk/utils/futures';
 import { getDefaultPriceImpact, unserializePotentialTrade } from 'sdk/utils/futures';
 import { MarketKeyByAsset, MarketAssetByKey } from 'sdk/utils/futures';
 import { stripZeros } from 'sdk/utils/number';
@@ -181,7 +182,7 @@ export const selectClosePositionOrderInputs = createSelector(
 	}
 );
 
-export const selectMarketPrice = createSelector(
+export const selectMarketIndexPrice = createSelector(
 	selectMarketAsset,
 	selectPrices,
 	(marketAsset, prices) => {
@@ -201,7 +202,7 @@ export const selectMarketPriceInfo = createSelector(
 );
 
 export const selectSkewAdjustedPrice = createSelector(
-	selectMarketPrice,
+	selectMarketIndexPrice,
 	selectMarketInfo,
 	(price, marketInfo) => {
 		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return price;
@@ -494,7 +495,7 @@ export const selectIsExecutingOrder = createSelector(
 export const selectIsMarketCapReached = createSelector(
 	(state: RootState) => state.futures[accountType(state.futures.selectedType)].leverageSide,
 	selectMarketInfo,
-	selectMarketPrice,
+	selectMarketIndexPrice,
 	(leverageSide, marketInfo, marketAssetRate) => {
 		const maxMarketValueUSD = marketInfo?.marketLimitUsd ?? wei(0);
 		const marketSize = marketInfo?.marketSize ?? wei(0);
@@ -894,10 +895,7 @@ export const selectTradePreview = createSelector(
 				orderType !== 'market' && conditionalOrderPrice.gt(0)
 					? conditionalOrderPrice
 					: unserialized.price;
-			const impactDecimalPercent = priceImpact.div(100);
-			const desiredFillPrice = nativeSizeDelta.lt(0)
-				? price.mul(wei(1).sub(impactDecimalPercent))
-				: price.mul(impactDecimalPercent.add(1));
+			const desiredFillPrice = calculateDesiredFillPrice(nativeSizeDelta, price, priceImpact);
 
 			return {
 				...unserialized,
@@ -920,11 +918,12 @@ export const selectEditPositionPreview = createSelector(
 		const unserialized = preview ? unserializePotentialTrade(preview) : null;
 		if (unserialized) {
 			const priceImpact = getDefaultPriceImpact('market');
-			const impactDecimalPercent = priceImpact.div(100);
-			const desiredFillPrice =
-				Number(nativeSizeDelta) < 0
-					? unserialized.price.mul(wei(1).sub(impactDecimalPercent))
-					: unserialized.price.mul(impactDecimalPercent.add(1));
+			const desiredFillPrice = calculateDesiredFillPrice(
+				wei(nativeSizeDelta || 0),
+				unserialized.price,
+				priceImpact
+			);
+
 			return {
 				...unserialized,
 				desiredFillPrice,
@@ -947,13 +946,14 @@ export const selectClosePositionPreview = createSelector(
 		const unserialized = preview ? unserializePotentialTrade(preview) : null;
 		if (unserialized) {
 			const priceImpact = getDefaultPriceImpact(orderType);
-			const impactDecimalPercent = priceImpact.div(100);
 			let orderPrice =
 				(orderType === 'market' ? unserialized.price : wei(price?.value || 0)) ?? wei(0);
-			const desiredFillPrice =
-				position?.position?.side === PositionSide.LONG
-					? orderPrice.mul(wei(1).sub(impactDecimalPercent))
-					: orderPrice.mul(impactDecimalPercent.add(1));
+			const desiredFillPrice = calculateDesiredFillPrice(
+				position?.position?.side === PositionSide.LONG ? wei(-1) : wei(1),
+				orderPrice,
+				priceImpact
+			);
+
 			return {
 				...unserialized,
 				desiredFillPrice,
