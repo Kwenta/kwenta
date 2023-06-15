@@ -12,4 +12,5 @@ export enum zIndex {
 	DIALOG_OVERLAY = 50,
 	MOBILE_FOOTER = 51,
 	DRAWER = 65,
+	MARKET_DROPDOWN = 400,
 }
