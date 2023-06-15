@@ -10,10 +10,17 @@ import {
 	TRADING_REWARDS_CUTOFF_EPOCH,
 	WEEK,
 } from 'queries/staking/utils';
+import {
+	AGGREGATE_ASSET_KEY,
+	FUTURES_ENDPOINT_OP_MAINNET,
+	KWENTA_TRACKING_CODE,
+} from 'sdk/constants/futures';
 import { ZERO_WEI } from 'sdk/constants/number';
+import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { ContractName } from 'sdk/contracts';
 import { formatTruncatedDuration } from 'sdk/utils/date';
 import { weiFromWei } from 'sdk/utils/number';
+import { getFuturesAggregateStats, getFuturesTrades } from 'sdk/utils/subgraph';
 
 import * as sdkErrors from '../common/errors';
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../constants/exchange';
@@ -612,6 +619,58 @@ export default class KwentaTokenService {
 			'claimMultiple',
 			[claimableRewards]
 		);
+	}
+
+	public async getFuturesFee(start: number, end: number) {
+		if (!this.sdk.context.isL2) {
+			throw new Error(sdkErrors.REQUIRES_L2);
+		}
+
+		const response = await getFuturesAggregateStats(
+			FUTURES_ENDPOINT_OP_MAINNET,
+			{
+				first: DEFAULT_NUMBER_OF_FUTURES_FEE,
+				where: {
+					asset: AGGREGATE_ASSET_KEY,
+					period: SECONDS_PER_DAY,
+					timestamp_gte: start,
+					timestamp_lt: end,
+				},
+				orderDirection: 'desc',
+				orderBy: 'timestamp',
+			},
+			{ timestamp: true, feesKwenta: true }
+		);
+
+		return response;
+	}
+
+	public async getFuturesFeeForAccount(account: string, start: number, end: number) {
+		if (!account) return null;
+
+		const response = await getFuturesTrades(
+			FUTURES_ENDPOINT_OP_MAINNET,
+			{
+				first: DEFAULT_NUMBER_OF_FUTURES_FEE,
+				where: {
+					account: account,
+					timestamp_gt: start,
+					timestamp_lt: end,
+					trackingCode: KWENTA_TRACKING_CODE,
+				},
+				orderDirection: 'desc',
+				orderBy: 'timestamp',
+			},
+			{
+				timestamp: true,
+				account: true,
+				abstractAccount: true,
+				accountType: true,
+				feesPaid: true,
+				keeperFeesPaid: true,
+			}
+		);
+		return response;
 	}
 
 	private performStakeAction(

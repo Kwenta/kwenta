@@ -4,36 +4,17 @@ import KwentaSDK from 'sdk';
 
 import { REQUIRES_L2 } from 'sdk/common/errors';
 import { FUTURES_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
+import { DEFAULT_LEADERBOARD_DATA } from 'sdk/constants/stats';
 import { ETH_UNIT } from 'sdk/constants/transactions';
 import { AccountStat, FuturesStat } from 'sdk/types/stats';
-import { weiFromWei } from 'sdk/utils/number';
+import { mapStat } from 'sdk/utils/stats';
 import { truncateAddress } from 'sdk/utils/string';
 import { getFuturesStats } from 'sdk/utils/subgraph';
-
-const mapStat = (stat: FuturesStat, i: number) => ({
-	...stat,
-	trader: stat.account,
-	traderShort: truncateAddress(stat.account),
-	pnl: weiFromWei(stat.pnlWithFeesPaid),
-	totalVolume: weiFromWei(stat.totalVolume),
-	totalTrades: wei(stat.totalTrades).toNumber(),
-	liquidations: wei(stat.liquidations).toNumber(),
-	rank: i + 1,
-	rankText: (i + 1).toString(),
-});
 
 type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all';
 
 type LeaderboardResult = {
 	[part in LeaderboardPart]: AccountStat[];
-};
-
-export const DEFAULT_LEADERBOARD_DATA = {
-	top: [],
-	bottom: [],
-	wallet: [],
-	search: [],
-	all: [],
 };
 
 export default class StatsService {
