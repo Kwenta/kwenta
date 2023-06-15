@@ -512,7 +512,6 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState());
 		const markets = selectMarkets(getState());
-		const indexPrice = selectMarketIndexPrice(getState());
 
 		const market = markets.find((m) => m.marketKey === params.market.key);
 
@@ -530,7 +529,6 @@ export const fetchIsolatedMarginTradePreview = createAsyncThunk<
 				{
 					sizeDelta: params.sizeDelta,
 					price: params.orderPrice,
-					indexPrice,
 					leverageSide,
 				}
 			);

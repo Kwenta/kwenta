@@ -271,6 +271,7 @@ export const mapFuturesPositions = (
 	);
 };
 
+// TODO: Move to app
 export const serializePotentialTrade = (
 	preview: FuturesPotentialTradeDetails
 ): FuturesPotentialTradeDetails<string> => ({
@@ -286,6 +287,7 @@ export const serializePotentialTrade = (
 	priceImpact: preview.priceImpact.toString(),
 });
 
+// TODO: Move to app
 export const unserializePotentialTrade = (
 	preview: FuturesPotentialTradeDetails<string>
 ): FuturesPotentialTradeDetails => ({
