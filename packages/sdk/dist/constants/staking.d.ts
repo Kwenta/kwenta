@@ -1,0 +1,13 @@
+import { BigNumber } from "ethers";
+export declare const DEFAULT_NUMBER_OF_FUTURES_FEE: number;
+export declare const EPOCH_START: Record<number, number>;
+export declare const WEEK = 604800;
+export declare const DECAY_RATE = 0.0205;
+export declare const INITIAL_WEEKLY_SUPPLY: BigNumber;
+export declare const STAKING_REWARDS_RATIO = 0.6;
+export declare const TRADING_REWARDS_RATIO = 0.05;
+export declare const STAKING_HIGH_GAS_LIMIT: BigNumber;
+export declare const STAKING_LOW_GAS_LIMIT: BigNumber;
+export declare const TRADING_REWARDS_CUTOFF_EPOCH = 13;
+export declare const OP_REWARDS_CUTOFF_EPOCH = 22;
+export declare const SUPPLY_RATE: import("@synthetixio/wei").default;

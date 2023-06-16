@@ -1,0 +1,200 @@
+{
+  "types": [
+    {
+      "fields": [
+        {
+          "name": "id",
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            }
+          }
+        },
+        {
+          "name": "fee",
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "BigDecimal",
+              "ofType": null
+            }
+          }
+        }
+      ],
+      "inputFields": null,
+      "name": "ExchangeFee"
+    },
+    {
+      "fields": null,
+      "inputFields": [
+        {
+          "name": "id",
+          "type": {
+            "kind": "SCALAR",
+            "name": "ID",
+            "ofType": null
+          }
+        },
+        {
+          "name": "id_not",
+          "type": {
+            "kind": "SCALAR",
+            "name": "ID",
+            "ofType": null
+          }
+        },
+        {
+          "name": "id_gt",
+          "type": {
+            "kind": "SCALAR",
+            "name": "ID",
+            "ofType": null
+          }
+        },
+        {
+          "name": "id_lt",
+          "type": {
+            "kind": "SCALAR",
+            "name": "ID",
+            "ofType": null
+          }
+        },
+        {
+          "name": "id_gte",
+          "type": {
+            "kind": "SCALAR",
+            "name": "ID",
+            "ofType": null
+          }
+        },
+        {
+          "name": "id_lte",
+          "type": {
+            "kind": "SCALAR",
+            "name": "ID",
+            "ofType": null
+          }
+        },
+        {
+          "name": "id_in",
+          "type": {
+            "kind": "LIST",
+            "name": null,
+            "ofType": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            }
+          }
+        },
+        {
+          "name": "id_not_in",
+          "type": {
+            "kind": "LIST",
+            "name": null,
+            "ofType": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            }
+          }
+        },
+        {
+          "name": "fee",
+          "type": {
+            "kind": "SCALAR",
+            "name": "BigDecimal",
+            "ofType": null
+          }
+        },
+        {
+          "name": "fee_not",
+          "type": {
+            "kind": "SCALAR",
+            "name": "BigDecimal",
+            "ofType": null
+          }
+        },
+        {
+          "name": "fee_gt",
+          "type": {
+            "kind": "SCALAR",
+            "name": "BigDecimal",
+            "ofType": null
+          }
+        },
+        {
+          "name": "fee_lt",
+          "type": {
+            "kind": "SCALAR",
+            "name": "BigDecimal",
+            "ofType": null
+          }
+        },
+        {
+          "name": "fee_gte",
+          "type": {
+            "kind": "SCALAR",
+            "name": "BigDecimal",
+            "ofType": null
+          }
+        },
+        {
+          "name": "fee_lte",
+          "type": {
+            "kind": "SCALAR",
+            "name": "BigDecimal",
+            "ofType": null
+          }
+        },
+        {
+          "name": "fee_in",
+          "type": {
+            "kind": "LIST",
+            "name": null,
+            "ofType": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigDecimal",
+                "ofType": null
+              }
+            }
+          }
+        },
+        {
+          "name": "fee_not_in",
+          "type": {
+            "kind": "LIST",
+            "name": null,
+            "ofType": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BigDecimal",
+                "ofType": null
+              }
+            }
+          }
+        }
+      ],
+      "name": "ExchangeFee_filter"
+    }
+  ]
+}

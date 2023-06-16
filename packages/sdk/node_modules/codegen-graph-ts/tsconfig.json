@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"declaration": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"strict": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"module": "CommonJS",
+		"outDir": "./build",
+		"target": "es6",
+		"skipLibCheck": true,
+		"isolatedModules": true,
+		"baseUrl": "src",
+		"lib": ["ESNext"]
+	},
+	"exclude": ["__tests__**", "build/**", "generated/**"]
+}

@@ -1,0 +1,14 @@
+import BN from 'bn.js';
+import { BigNumber } from '@ethersproject/bignumber';
+import { CurrencyKey } from '../types/common';
+export declare const ZERO_WEI: import("@synthetixio/wei").default;
+export declare const UNIT_BN: BN;
+export declare const UNIT_BIG_NUM: BigNumber;
+export declare const ZERO_BIG_NUM: BigNumber;
+export declare const DEFAULT_CRYPTO_DECIMALS = 4;
+export declare const DEFAULT_FIAT_DECIMALS = 2;
+export declare const DEFAULT_NUMBER_DECIMALS = 2;
+export declare const DEFAULT_PERCENT_DECIMALS = 2;
+export declare const DEFAULT_TOKEN_DECIMALS = 18;
+export type FUTURES_FIAT = 'EUR' | 'JPY' | 'USD' | 'AUD' | 'GBP' | 'CHF';
+export declare const FIAT_SYNTHS: Set<CurrencyKey | FUTURES_FIAT>;
