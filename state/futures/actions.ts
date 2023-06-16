@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import Wei, { wei } from '@synthetixio/wei';
 import { BigNumber, ethers } from 'ethers';
 import { debounce } from 'lodash';
-import KwentaSDK from 'sdk';
+import KwentaSDK from 'sdk/src';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import {
@@ -38,8 +38,8 @@ import {
 	calculateDesiredFillPrice,
 	getTradeStatusMessage,
 	serializePotentialTrade,
-} from 'sdk/utils/futures';
-import { marketOverrides } from 'sdk/utils/futures';
+} from 'sdk/src/utils/futures';
+import { marketOverrides } from 'sdk/src/utils/futures';
 import { floorNumber, stripZeros } from 'sdk/utils/number';
 import { getTransactionPrice } from 'sdk/utils/transactions';
 import { unserializeGasPrice } from 'state/app/helpers';

@@ -2,7 +2,7 @@ import { DefaultTheme } from 'styled-components';
 
 import { RGB, SocketCustomizationProps } from 'components/SocketBridge/types';
 import { chain } from 'containers/Connector/config';
-import { ADDRESSES } from 'sdk/contracts/constants';
+import { ADDRESSES } from 'sdk/src/contracts/constants';
 
 export const DEFAULT_WIDTH = 360;
 export const DEFAULT_MOBILE_WIDTH = 180;

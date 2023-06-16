@@ -21,8 +21,8 @@ import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketAsset } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/utils/futures';
-import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
+import { getDisplayAsset } from 'sdk/src/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/src/utils/futures';
 import { floorNumber, formatDollars } from 'sdk/utils/number';
 import { selectShowBanner } from 'state/app/selectors';
 import {

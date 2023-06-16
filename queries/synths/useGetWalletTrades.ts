@@ -4,7 +4,7 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { NetworkId } from 'sdk/types/common';
-import { getMainEndpoint } from 'sdk/utils/futures';
+import { getMainEndpoint } from 'sdk/src/utils/futures';
 import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';

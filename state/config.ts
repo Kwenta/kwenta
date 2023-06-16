@@ -1,4 +1,4 @@
-import KwentaSDK from 'sdk';
+import KwentaSDK from 'sdk/src';
 
 import { wagmiClient } from 'containers/Connector/config';
 import logError from 'utils/logError';

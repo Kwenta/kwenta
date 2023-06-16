@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { getDisplayAsset } from 'sdk/src/utils/futures';
 import { formatCurrency } from 'sdk/utils/number';
 import { selectMarketAsset, selectSkewAdjustedPrice } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';

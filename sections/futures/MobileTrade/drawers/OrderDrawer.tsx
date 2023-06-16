@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
 import { PositionSide } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { getDisplayAsset } from 'sdk/src/utils/futures';
 import { formatCurrency } from 'sdk/utils/number';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import { DelayedOrderWithDetails } from 'state/futures/types';

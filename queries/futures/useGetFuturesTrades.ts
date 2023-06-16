@@ -6,7 +6,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { NetworkId } from 'sdk/types/common';
 import { FuturesTrade } from 'sdk/types/futures';
-import { getFuturesEndpoint, mapTrades } from 'sdk/utils/futures';
+import { getFuturesEndpoint, mapTrades } from 'sdk/src/utils/futures';
 import { notNill } from 'sdk/utils/general';
 import logError from 'utils/logError';
 

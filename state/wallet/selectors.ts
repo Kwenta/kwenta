@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { getSynthsForNetwork } from 'sdk/data/synths';
+import { getSynthsForNetwork } from 'sdk/src/data/synths';
 import type { RootState } from 'state/store';
 
 const SUPPORTED_NETWORKS = [1, 10, 5, 420];

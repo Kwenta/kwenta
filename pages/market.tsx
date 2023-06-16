@@ -8,7 +8,7 @@ import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useWindowSize from 'hooks/useWindowSize';
 import { FuturesMarketAsset } from 'sdk/types/futures';
-import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { MarketKeyByAsset } from 'sdk/src/utils/futures';
 import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';

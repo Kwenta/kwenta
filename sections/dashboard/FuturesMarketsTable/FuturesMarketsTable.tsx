@@ -14,8 +14,8 @@ import Spacer from 'components/Spacer';
 import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
 import { FuturesMarketAsset } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/utils/futures';
-import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/utils/futures';
+import { getDisplayAsset } from 'sdk/src/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/src/utils/futures';
 import { formatDollars } from 'sdk/utils/number';
 import {
 	selectFuturesType,

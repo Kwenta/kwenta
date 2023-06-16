@@ -2,7 +2,7 @@ import { FC, memo } from 'react';
 
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
-import { SynthSymbol } from 'sdk/data/synths';
+import { SynthSymbol } from 'sdk/src/data/synths';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';

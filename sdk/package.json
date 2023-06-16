@@ -1,0 +1,33 @@
+{
+  "name": "@kwenta/sdk",
+  "version": "1.0.0",
+  "description": "Note: This document is a work in progress, as the implementation of the Kwenta SDK is still in progress. Interfaces, types and overall structure are subject to change.",
+  "main": "dist/index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
+    "@ethersproject/providers": "^5.7.2",
+    "@ethersproject/strings": "^5.7.0",
+    "@pythnetwork/pyth-evm-js": "^1.17.0",
+    "@synthetixio/wei": "^2.74.4",
+    "axios": "^1.4.0",
+    "codegen-graph-ts": "^0.1.4",
+    "date-fns": "^2.30.0",
+    "ethcall": "^6.0.0",
+    "ethers": "^6.6.0",
+    "graphql-request": "^6.1.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.195"
+  }
+}

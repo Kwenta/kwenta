@@ -9,7 +9,7 @@ import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import useWindowSize from 'hooks/useWindowSize';
 import { ZERO_WEI } from 'sdk/constants/number';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { getDisplayAsset } from 'sdk/src/utils/futures';
 import { formatDollars, formatPercent } from 'sdk/utils/number';
 import {
 	selectMarketAsset,

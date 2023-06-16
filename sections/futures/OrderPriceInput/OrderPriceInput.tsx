@@ -6,7 +6,7 @@ import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FuturesOrderType, PositionSide } from 'sdk/types/futures';
-import { OrderNameByType } from 'sdk/utils/futures';
+import { OrderNameByType } from 'sdk/src/utils/futures';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 type Props = {

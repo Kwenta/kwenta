@@ -13,7 +13,7 @@ import {
 	REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import KwentaSDK from 'sdk';
+import KwentaSDK from 'sdk/src';
 
 import appReducer from './app/reducer';
 import balancesReducer from './balances/reducer';

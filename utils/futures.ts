@@ -14,7 +14,7 @@ import {
 	PositionSide,
 } from 'sdk/types/futures';
 import { PricesMap } from 'sdk/types/prices';
-import { AssetDisplayByAsset, MarketKeyByAsset, getDisplayAsset } from 'sdk/utils/futures';
+import { AssetDisplayByAsset, MarketKeyByAsset, getDisplayAsset } from 'sdk/src/utils/futures';
 import { formatNumber } from 'sdk/utils/number';
 import {
 	CrossMarginBalanceInfo,

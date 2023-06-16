@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumber } from 'ethers';
-import KwentaSDK from 'sdk';
+import KwentaSDK from 'sdk/src';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
-import { EscrowData } from 'sdk/services/kwentaToken';
+import { EscrowData } from 'sdk/src/services/kwentaToken';
 import { FetchStatus, ThunkConfig } from 'state/types';
 
 export const fetchStakingData = createAsyncThunk<

@@ -16,7 +16,7 @@ import useInterval from 'hooks/useInterval';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { FuturesMarketKey } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { getDisplayAsset } from 'sdk/src/utils/futures';
 import { formatCurrency, suggestedDecimals } from 'sdk/utils/number';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import {

@@ -7,7 +7,7 @@ import Currency from 'components/Currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { SynthSymbol } from 'sdk/data/synths';
+import { SynthSymbol } from 'sdk/src/data/synths';
 import { useAppSelector } from 'state/hooks';
 import { SelectableCurrencyRow } from 'styles/common';
 

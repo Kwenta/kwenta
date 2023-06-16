@@ -14,7 +14,7 @@ import {
 	FuturesTrade,
 	FuturesOrderType,
 } from 'sdk/types/futures';
-import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { MarketKeyByAsset } from 'sdk/src/utils/futures';
 import {
 	DEFAULT_MAP_BY_NETWORK,
 	DEFAULT_QUERY_STATUS,

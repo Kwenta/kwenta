@@ -15,7 +15,7 @@ import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'sdk/constants/exchange';
 import { ZERO_WEI } from 'sdk/constants/number';
-import { getSynthsListForNetwork, SynthSymbol } from 'sdk/data/synths';
+import { getSynthsListForNetwork, SynthSymbol } from 'sdk/src/data/synths';
 import { NetworkId } from 'sdk/types/common';
 import {
 	selectBalances,

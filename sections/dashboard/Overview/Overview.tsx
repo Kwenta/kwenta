@@ -13,7 +13,7 @@ import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'sdk/constants/exchange';
 import { ZERO_WEI } from 'sdk/constants/number';
-import { SynthSymbol } from 'sdk/data/synths';
+import { SynthSymbol } from 'sdk/src/data/synths';
 import { formatDollars, toWei } from 'sdk/utils/number';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';

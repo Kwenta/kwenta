@@ -12,7 +12,7 @@ import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
-import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
+import { getDisplayAsset, OrderNameByType } from 'sdk/src/utils/futures';
 import { formatCurrency, formatDollars, formatPercent, formatNumber } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition } from 'state/futures/actions';

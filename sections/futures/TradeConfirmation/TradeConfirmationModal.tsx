@@ -14,7 +14,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
 import { ZERO_WEI } from 'sdk/constants/number';
 import { PositionSide } from 'sdk/types/futures';
-import { OrderNameByType } from 'sdk/utils/futures';
+import { OrderNameByType } from 'sdk/src/utils/futures';
 import {
 	formatCurrency,
 	formatDollars,

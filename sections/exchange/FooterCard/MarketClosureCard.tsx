@@ -2,7 +2,7 @@ import { FC, useMemo, memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { SynthSymbol } from 'sdk/data/synths';
+import { SynthSymbol } from 'sdk/src/data/synths';
 import {
 	MessageContainer,
 	Message,

@@ -16,7 +16,7 @@ import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useWindowSize from 'hooks/useWindowSize';
 import { ZERO_WEI } from 'sdk/constants/number';
-import { getDisplayAsset } from 'sdk/utils/futures';
+import { getDisplayAsset } from 'sdk/src/utils/futures';
 import { formatPercent } from 'sdk/utils/number';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';

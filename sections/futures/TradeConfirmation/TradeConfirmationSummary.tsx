@@ -9,7 +9,7 @@ import { NumericValue } from 'components/Text';
 import { NumberBody } from 'components/Text/NumericValue';
 import { ZERO_WEI } from 'sdk/constants/number';
 import { FuturesMarketAsset, FuturesOrderType, PositionSide } from 'sdk/types/futures';
-import { getDisplayAsset, OrderNameByType } from 'sdk/utils/futures';
+import { getDisplayAsset, OrderNameByType } from 'sdk/src/utils/futures';
 import { formatCurrency } from 'sdk/utils/number';
 
 import PositionType from '../PositionType';

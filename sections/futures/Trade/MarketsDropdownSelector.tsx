@@ -8,7 +8,7 @@ import { FlexDivCentered } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import { Body, NumericValue } from 'components/Text';
 import { FuturesMarketAsset, SynthSuspensionReason } from 'sdk/types/futures';
-import { MarketKeyByAsset } from 'sdk/utils/futures';
+import { MarketKeyByAsset } from 'sdk/src/utils/futures';
 import { formatDollars, formatPercent } from 'sdk/utils/number';
 import { PricesInfo } from 'state/prices/types';
 import media from 'styles/media';

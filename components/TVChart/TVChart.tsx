@@ -7,7 +7,7 @@ import { chain } from 'containers/Connector/config';
 import { NetworkId } from 'sdk/types/common';
 import { ConditionalOrder } from 'sdk/types/futures';
 import { PricesListener } from 'sdk/types/prices';
-import { formatOrderDisplayType } from 'sdk/utils/futures';
+import { formatOrderDisplayType } from 'sdk/src/utils/futures';
 import { formatNumber } from 'sdk/utils/number';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';
