@@ -150,7 +150,7 @@ const MetaRow = styled(FlexDivRow)`
 `;
 
 const ControlContainer = styled.div`
-	width: 88px;
+	width: 100px;
 
 	> div {
 		gap: 6px;
