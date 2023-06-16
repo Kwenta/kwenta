@@ -150,10 +150,16 @@ const MetaRow = styled(FlexDivRow)`
 `;
 
 const ControlContainer = styled.div`
-	width: 100px;
+	width: 75px;
 
 	> div {
-		gap: 6px;
+		padding: 3px;
+		gap: 3px;
+	}
+
+	button {
+		max-width: 35px;
+		padding: 0;
 	}
 `;
 

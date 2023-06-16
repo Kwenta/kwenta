@@ -55,6 +55,7 @@ type PositionButtonProps = {
 const PositionButtonsWrapper = styled(FlexDivRow)<{ $mobile?: boolean }>`
 	width: 100%;
 	margin-bottom: 16px;
+	height: 50px;
 
 	${(props) =>
 		props.$mobile &&
@@ -114,11 +115,13 @@ const PositionButton = styled.div<PositionButtonProps>`
 
 const CloseButton = styled.button`
 	width: 50px;
+	height: 100%;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.tabs.position.background};
+	box-sizing: border-box;
 `;
 
 export default PositionButtons;
