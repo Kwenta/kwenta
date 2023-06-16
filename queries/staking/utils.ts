@@ -11,18 +11,6 @@ export type TradingRewardProps = {
 	end?: number;
 };
 
-export type EpochDataProps = {
-	merkleRoot: string;
-	tokenTotal: string;
-	claims: {
-		[address: string]: {
-			index: number;
-			amount: string;
-			proof: string[];
-		};
-	};
-};
-
 export type FuturesFeeForAccountProps = {
 	timestamp: number;
 	account: string;
@@ -36,8 +24,6 @@ export type FuturesFeeProps = {
 	timestamp: string;
 	feesKwenta: BigNumber;
 };
-
-export type ClaimParams = [number, string, string, string[], number];
 
 export const EPOCH_START: Record<number, number> = {
 	420: 1665878400,

@@ -4,10 +4,8 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
-import ChevronDown from 'assets/svg/app/chevron-down.svg';
-import ChevronUp from 'assets/svg/app/chevron-up.svg';
 import Badge from 'components/Badge';
-import ROUTES from 'constants/routes';
+import { GridDiv } from 'components/layout/grid';
 import { useAppSelector } from 'state/hooks';
 import { selectCurrentTheme } from 'state/preferences/selectors';
 import { ThemeName } from 'styles/theme';
@@ -27,79 +25,67 @@ type MobileSubMenuOption = {
 type MobileSubMenuProps = {
 	i18nLabel: string;
 	defaultOpen?: boolean;
-	active: boolean;
 	options?: MobileSubMenuOption[];
 	links?: SubMenuLink[];
 	onDismiss(): void;
-	onToggle(): void;
 };
 
 const MobileSubMenu: React.FC<MobileSubMenuProps> = memo(
-	({ i18nLabel, active, options, links, onDismiss, onToggle }) => {
+	({ i18nLabel, options, links, onDismiss }) => {
 		const { t } = useTranslation();
 		const { asPath } = useRouter();
 		const currentTheme = useAppSelector(selectCurrentTheme);
 
 		return (
 			<>
-				<SubMenuButton currentTheme={currentTheme} isActive={active} onClick={onToggle}>
-					{t(i18nLabel)}
-					{active ? <ChevronUp /> : <ChevronDown />}
-				</SubMenuButton>
-				{active && (
-					<SubMenuContainer onClick={onDismiss}>
-						{links
-							? links.map(({ i18nLabel, link: subLink, badge, Icon }) => (
-									<SubMenuItemContainer key={i18nLabel}>
-										<SubMenuIcon>·</SubMenuIcon>
-										<StyledLink href={subLink}>
-											<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
-												<div>
-													{t(i18nLabel)}{' '}
-													{badge?.map(({ i18nLabel, color }) => (
-														<StyledBadge color={color}>{t(i18nLabel)}</StyledBadge>
-													))}
-													{Icon && <Icon />}
-												</div>
+				<SubMenuButton currentTheme={currentTheme}>{t(i18nLabel)}</SubMenuButton>
+				<SubMenuContainer onClick={onDismiss}>
+					{links
+						? links.map(({ i18nLabel, link: subLink, badge, Icon }) => (
+								<SubMenuItemContainer key={i18nLabel}>
+									<StyledLink href={subLink}>
+										<SubMenuItem currentTheme={currentTheme} active={asPath.includes(subLink)}>
+											<div>
+												{t(i18nLabel)}{' '}
+												{badge?.map(({ i18nLabel, color }) => (
+													<StyledBadge color={color}>{t(i18nLabel)}</StyledBadge>
+												))}
+												{Icon && <Icon />}
+											</div>
+										</SubMenuItem>
+									</StyledLink>
+								</SubMenuItemContainer>
+						  ))
+						: options?.map(({ label, icon, onClick, selected, externalLink }) => (
+								<SubMenuItemContainer key={label}>
+									<SubMenuIcon selected={selected}>{icon ?? '·'}</SubMenuIcon>
+									{externalLink ? (
+										<SubMenuExternalLink href={externalLink} target="_blank" rel="noreferrer">
+											<SubMenuItem currentTheme={currentTheme} selected={selected}>
+												{label}
 											</SubMenuItem>
-										</StyledLink>
-									</SubMenuItemContainer>
-							  ))
-							: options?.map(({ label, icon, onClick, selected, externalLink }) => (
-									<SubMenuItemContainer key={label}>
-										<SubMenuIcon selected={selected}>{icon ?? '·'}</SubMenuIcon>
-										{externalLink ? (
-											<SubMenuExternalLink href={externalLink} target="_blank" rel="noreferrer">
-												<SubMenuItem currentTheme={currentTheme} selected={selected}>
-													{label}
-												</SubMenuItem>
-											</SubMenuExternalLink>
-										) : (
-											<SubMenuFlex>
-												<SubMenuItem
-													currentTheme={currentTheme}
-													onClick={selected ? undefined : onClick}
-													selected={selected}
-												>
-													{label}
-												</SubMenuItem>
-											</SubMenuFlex>
-										)}
-									</SubMenuItemContainer>
-							  ))}
-					</SubMenuContainer>
-				)}
+										</SubMenuExternalLink>
+									) : (
+										<SubMenuFlex>
+											<SubMenuItem
+												currentTheme={currentTheme}
+												onClick={selected ? undefined : onClick}
+												selected={selected}
+											>
+												{label}
+											</SubMenuItem>
+										</SubMenuFlex>
+									)}
+								</SubMenuItemContainer>
+						  ))}
+				</SubMenuContainer>
 			</>
 		);
 	}
 );
 
 const SubMenuButton = styled(MenuButton)`
-	${(props) =>
-		props.isActive &&
-		css`
-			margin-bottom: 20px;
-		`}
+	margin-bottom: 20px;
 `;
 
 const StyledBadge = styled(Badge)`
@@ -108,14 +94,15 @@ const StyledBadge = styled(Badge)`
 	margin-left: 8px;
 `;
 
-const SubMenuContainer = styled.div`
+const SubMenuContainer = styled(GridDiv)`
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 10px;
 	box-sizing: border-box;
+	margin-bottom: 20px;
 `;
 
 const SubMenuItemContainer = styled.div`
-	display: flex;
-	align-items: center;
-	margin-bottom: 20px;
+	border-bottom: 2px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 `;
 
 const StyledLink = styled(Link)`
@@ -132,17 +119,12 @@ const SubMenuExternalLink = styled.a`
 `;
 
 const SubMenuItem = styled.div<{ currentTheme: ThemeName; active?: boolean; selected?: boolean }>`
-	font-size: 19px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-size: 16px;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	box-sizing: border-box;
-	padding: 15px;
-	background-color: ${(props) =>
-		window.location.pathname === ROUTES.Home.Root || props.currentTheme === 'dark'
-			? 'rgba(255, 255, 255, 0.05)'
-			: 'rgb(232, 232, 232)'};
-	border-radius: 8px;
 	width: 100%;
 	text-transform: capitalize;
+	padding-bottom: 10px;
 
 	div {
 		display: flex;
@@ -154,12 +136,6 @@ const SubMenuItem = styled.div<{ currentTheme: ThemeName; active?: boolean; sele
 		height: 22px;
 		width: 22px;
 	}
-
-	${(props) =>
-		props.active &&
-		css`
-			color: ${(props) => props.theme.colors.selectedTheme.button.active};
-		`}
 
 	${(props) =>
 		props.selected &&
