@@ -1,5 +1,5 @@
 import { FC, memo, useCallback, useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Error from 'components/ErrorView';
 import Spacer from 'components/Spacer';
@@ -28,9 +28,10 @@ import OrderPriceInput from './TradePanelPriceInput';
 
 type Props = {
 	mobile?: boolean;
+	closeDrawer?: () => void;
 };
 
-const TradePanel: FC<Props> = memo(({ mobile }) => {
+const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 	const dispatch = useAppDispatch();
 
 	const leverageSide = useAppSelector(selectLeverageSide);
@@ -59,16 +60,25 @@ const TradePanel: FC<Props> = memo(({ mobile }) => {
 
 	return (
 		<TradePanelContainer $mobile={mobile}>
-			<MarketsDropdown />
+			{!mobile && (
+				<>
+					<MarketsDropdown />
+					<TradeBalance />
+				</>
+			)}
 
-			{!mobile && <TradeBalance />}
 			{process.env.NEXT_PUBLIC_CLOSE_ONLY === 'true' ? (
 				<CloseOnlyPrompt $mobile={mobile} />
 			) : (
 				<>
-					<PositionButtons selected={leverageSide} onSelect={handleChangeSide} />
+					<PositionButtons
+						selected={leverageSide}
+						onSelect={handleChangeSide}
+						mobile={mobile}
+						closeDrawer={closeDrawer}
+					/>
 
-					<MainPanelContent>
+					<MainPanelContent $mobile={mobile}>
 						{pricesConnectionError && (
 							<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 						)}
@@ -121,8 +131,14 @@ const TradePanelContainer = styled.div<{ $mobile?: boolean }>`
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
-const MainPanelContent = styled.div`
+const MainPanelContent = styled.div<{ $mobile?: boolean }>`
 	padding: 0 15px;
+
+	${(props) =>
+		props.$mobile &&
+		css`
+			padding: 65px 15px 0;
+		`}
 `;
 
 export default TradePanel;

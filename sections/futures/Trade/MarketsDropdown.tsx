@@ -17,6 +17,7 @@ import { Body } from 'components/Text';
 import NumericValue from 'components/Text/NumericValue';
 import { BANNER_HEIGHT_DESKTOP, BANNER_HEIGHT_MOBILE } from 'constants/announcement';
 import ROUTES from 'constants/routes';
+import { zIndex } from 'constants/ui';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
 import { ZERO_WEI } from 'sdk/constants/number';
@@ -370,7 +371,7 @@ const SearchBarContainer = styled.div`
 `;
 
 const SelectContainer = styled.div<{ mobile?: boolean; accountType?: string }>`
-	z-index: 100;
+	z-index: ${zIndex.MARKET_DROPDOWN};
 	height: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px;
 	position: relative;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};

@@ -65,9 +65,11 @@ export const BaseModal: FC<BaseModalProps> = memo(
 const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	background: rgba(0, 0, 0, 0.7);
-	${media.lessThan('sm')`
+	${media.lessThan('md')`
+		z-index: ${zIndex.MOBILE_FOOTER};
 		overflow: scroll;
-		padding-bottom: 80px;
+		display: flex;
+		align-items: flex-end;
 	`}
 `;
 
@@ -78,7 +80,7 @@ const StyledDialogContent = styled(DialogContent)`
 
 	${media.lessThan('md')`
 		&&& {
-			width: 80%;
+			/*width: 80%;*/
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -100,13 +102,8 @@ const StyledCard = styled(Card)`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	${media.lessThan('md')`
 		&&& {
-			width: 80%;
-		}
-	`}
-	${media.lessThan('sm')`
-		&&& {
-			width: 90%;
-			margin-top: 30px;
+			width: 100%;
+			border-radius: 10px 10px 0 0;
 		}
 	`}
 `;

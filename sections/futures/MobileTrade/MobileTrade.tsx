@@ -1,11 +1,12 @@
-import React from 'react';
+import { useCallback } from 'react';
 import styled from 'styled-components';
 
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useWindowSize from 'hooks/useWindowSize';
 import { selectShowBanner } from 'state/app/selectors';
-import { useAppSelector } from 'state/hooks';
+import { setTradePanelDrawerOpen } from 'state/futures/reducer';
+import { useAppDispatch, useAppSelector } from 'state/hooks';
 
 import MarketDetails from '../MarketDetails/MarketDetails';
 import FuturesUnsupportedNetwork from '../Trade/FuturesUnsupported';
@@ -13,6 +14,7 @@ import MarketsDropdown from '../Trade/MarketsDropdown';
 import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector';
 import TradeBalance from '../Trade/TradeBalance';
 
+import TradePanelDrawer from './drawers/TradePanelDrawer';
 import OverviewTabs from './OverviewTabs';
 import UserTabs from './UserTabs';
 
@@ -21,6 +23,13 @@ const MobileTrade: React.FC = () => {
 	const { walletAddress } = Connector.useContainer();
 	const { deviceType } = useWindowSize();
 	const showBanner = useAppSelector(selectShowBanner);
+	const tradeDrawerPanelOpen = useAppSelector(({ futures }) => futures.tradePanelDrawerOpen);
+	const dispatch = useAppDispatch();
+
+	const handleCloseDrawer = useCallback(() => {
+		dispatch(setTradePanelDrawerOpen(false));
+	}, [dispatch]);
+
 	return (
 		<>
 			<MobileContainer mobile={deviceType === 'mobile'} id="mobile-view" showBanner={showBanner}>
@@ -35,6 +44,9 @@ const MobileTrade: React.FC = () => {
 				</SwitchNetworkContainer>
 			) : (
 				<UserTabs />
+			)}
+			{tradeDrawerPanelOpen && (
+				<TradePanelDrawer open={tradeDrawerPanelOpen} closeDrawer={handleCloseDrawer} />
 			)}
 		</>
 	);

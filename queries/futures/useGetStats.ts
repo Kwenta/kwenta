@@ -7,12 +7,12 @@ import useIsL2 from 'hooks/useIsL2';
 import { FUTURES_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
 import { NetworkId } from 'sdk/types/common';
 import { getFuturesEndpoint } from 'sdk/src/utils/futures';
-import { truncateAddress } from 'utils/formatters/string';
+import { truncateAddress } from 'sdk/formatters/string';
 import logError from 'utils/logError';
 
-import { getFuturesStats } from '../../sdk/utils/subgraph';
+import { getFuturesStats } from 'sdk/utils/subgraph';
 
-import { AccountStat, FuturesStat } from './types';
+import { AccountStat } from './types';
 
 const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 	const { network } = Connector.useContainer();
@@ -42,7 +42,7 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 					}
 				);
 
-				const stats = response.map((stat: FuturesStat, i: number) => ({
+				const stats = response.map((stat, i) => ({
 					...stat,
 					trader: stat.account,
 					traderShort: truncateAddress(stat.account),

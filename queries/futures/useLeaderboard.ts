@@ -7,7 +7,7 @@ import Connector from 'containers/Connector';
 import { NetworkId } from 'sdk/types/common';
 import { getFuturesEndpoint } from 'sdk/src/utils/futures';
 import { weiFromWei } from 'sdk/utils/number';
-import { truncateAddress } from 'utils/formatters/string';
+import { truncateAddress } from 'sdk/utils/string';
 import logError from 'utils/logError';
 
 import { AccountStat, FuturesStat } from './types';
