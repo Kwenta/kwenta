@@ -20,7 +20,6 @@ import PositionType from 'sections/futures/PositionType';
 import ShareModal from 'sections/futures/ShareModal';
 import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton';
 import { setShowPositionModal } from 'state/app/reducer';
-import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {
 	selectCrossMarginPositions,
 	selectFuturesType,
@@ -33,8 +32,6 @@ import {
 import { SharePositionParams } from 'state/futures/types';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import media from 'styles/media';
-
-import TradePanelDrawer from '../drawers/TradePanelDrawer';
 
 const PositionsTab = () => {
 	const { t } = useTranslation();
@@ -50,7 +47,6 @@ const PositionsTab = () => {
 	const futuresMarkets = useAppSelector(selectMarkets);
 	const markPrices = useAppSelector(selectMarkPrices);
 	const accountType = useAppSelector(selectFuturesType);
-	const tradeDrawerPanelOpen = useAppSelector(({ futures }) => futures.tradePanelDrawerOpen);
 	const [showShareModal, setShowShareModal] = useState(false);
 	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null);
 
@@ -89,10 +85,6 @@ const PositionsTab = () => {
 		markPrices,
 		currentMarket,
 	]);
-
-	const handleCloseDrawer = useCallback(() => {
-		dispatch(setTradePanelDrawerOpen(false));
-	}, [dispatch]);
 
 	const handleOpenPositionCloseModal = useCallback(
 		(marketKey: FuturesMarketKey) => () => {
@@ -258,9 +250,6 @@ const PositionsTab = () => {
 						</PositionRow>
 					</PositionItem>
 				))
-			)}
-			{tradeDrawerPanelOpen && (
-				<TradePanelDrawer open={tradeDrawerPanelOpen} closeDrawer={handleCloseDrawer} />
 			)}
 			{showShareModal && (
 				<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
