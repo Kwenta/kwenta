@@ -1,4 +1,4 @@
-import { NetworkId } from '../../types/common';
+import { NetworkId } from '../types/common';
 
 export type SynthSymbol =
 	| 'sAAVE'

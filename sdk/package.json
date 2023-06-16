@@ -1,18 +1,20 @@
 {
   "name": "@kwenta/sdk",
   "version": "1.0.0",
-  "description": "Note: This document is a work in progress, as the implementation of the Kwenta SDK is still in progress. Interfaces, types and overall structure are subject to change.",
+  "description": "SDK for headless interaction with Kwenta",
   "main": "dist/index.js",
   "directories": {
     "doc": "docs"
   },
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@eth-optimism/contracts": "^0.6.0",
     "@ethersproject/bignumber": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@ethersproject/strings": "^5.7.0",
@@ -22,7 +24,7 @@
     "codegen-graph-ts": "^0.1.4",
     "date-fns": "^2.30.0",
     "ethcall": "^6.0.0",
-    "ethers": "^6.6.0",
+    "ethers": "^5.7.2",
     "graphql-request": "^6.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4"

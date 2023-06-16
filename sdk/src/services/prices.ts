@@ -6,27 +6,27 @@ import request, { gql } from 'graphql-request';
 import { throttle } from 'lodash';
 import KwentaSDK from '..';
 
-import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from '../../constants/futures';
-import { PERIOD_IN_SECONDS } from '../../constants/period';
-import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from '../../constants/prices';
-import { NetworkId, PriceServer } from '../../types/common';
-import { FuturesMarketKey } from '../../types/futures';
+import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from '../constants/futures';
+import { PERIOD_IN_SECONDS } from '../constants/period';
+import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from '../constants/prices';
+import { NetworkId, PriceServer } from '../types/common';
+import { FuturesMarketKey } from '../types/futures';
 import {
 	CurrencyPrice,
 	SynthPrice,
 	PricesListener,
 	PricesMap,
 	SynthPricesTuple,
-} from '../../types/prices';
+} from '../types/prices';
 import {
 	getDisplayAsset,
 	getPythNetworkUrl,
 	normalizePythId,
 	MarketAssetByKey,
 } from '../utils/futures';
-import { startInterval } from '../../utils/interval';
-import { scale } from '../../utils/number';
-import { getRatesEndpoint } from '../../utils/prices';
+import { startInterval } from '../utils/interval';
+import { scale } from '../utils/number';
+import { getRatesEndpoint } from '../utils/prices';
 
 import * as sdkErrors from '../common/errors';
 

@@ -5,13 +5,14 @@ import { omit, clone } from 'lodash';
 import KwentaSDK from '..';
 
 import { getEthGasPrice } from '../common/gas';
-import { TRANSACTION_EVENTS_MAP } from '../../constants/transactions';
-import { NetworkIdByName } from '../../types/common';
-import { Emitter } from '../../types/transactions';
-import { createEmitter, getRevertReason } from '../../utils/transactions';
+import { TRANSACTION_EVENTS_MAP } from '../constants/transactions';
+import { NetworkIdByName } from '../types/common';
+import { Emitter } from '../types/transactions';
+import { createEmitter, getRevertReason } from '../utils/transactions';
 
 import * as sdkErrors from '../common/errors';
 import { ContractName } from '../contracts';
+import { BigNumber } from '@ethersproject/bignumber';
 
 const OVMGasPriceOracle = getContractFactory('OVM_GasPriceOracle').attach(
 	predeploys.OVM_GasPriceOracle
@@ -85,7 +86,7 @@ export default class TransactionsService {
 		const txn = {
 			to: contract.address,
 			data: contract.interface.encodeFunctionData(method, args),
-			value: ethers.BigNumber.from(0),
+			value: BigNumber.from(0),
 			...txnOptions,
 		};
 

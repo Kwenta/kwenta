@@ -3,19 +3,18 @@
 
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import { BigNumber } from '@ethersproject/bignumber';
 
-import { NetworkId, NetworkIdByName } from '../../types/common';
+import { NetworkId, NetworkIdByName } from '../types/common';
 
 const MULTIPLIER = wei(2);
 
 export const computeGasFee = (
-	baseFeePerGas: BigNumber,
+	baseFeePerGas: ethers.BigNumber,
 	maxPriorityFeePerGas: number
 ): {
-	maxPriorityFeePerGas: BigNumber;
-	maxFeePerGas: BigNumber;
-	baseFeePerGas: BigNumber;
+	maxPriorityFeePerGas: ethers.BigNumber;
+	maxFeePerGas: ethers.BigNumber;
+	baseFeePerGas: ethers.BigNumber;
 } => ({
 	maxPriorityFeePerGas: wei(maxPriorityFeePerGas, 9).toBN(),
 	maxFeePerGas: wei(baseFeePerGas, 9).mul(MULTIPLIER).add(wei(maxPriorityFeePerGas, 9)).toBN(),
@@ -24,7 +23,7 @@ export const computeGasFee = (
 
 export const getGasPriceFromProvider = async (provider: ethers.providers.Provider) => {
 	try {
-		const gasPrice = await provider.getGasPrice();
+		const { gasPrice } = await provider.getFeeData();
 		return {
 			fastest: { gasPrice },
 			fast: { gasPrice },

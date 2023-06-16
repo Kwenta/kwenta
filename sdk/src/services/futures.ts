@@ -695,7 +695,7 @@ export default class FuturesService {
 
 	public async approveCrossMarginDeposit(
 		crossMarginAddress: string,
-		amount: BigNumber = ethers.constants.MaxUint256
+		amount: BigNumber = BigNumber.from(ethers.MaxUint256)
 	) {
 		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK);
 		return this.sdk.transactions.createContractTxn(this.sdk.context.contracts.SUSD, 'approve', [

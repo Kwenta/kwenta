@@ -10,8 +10,8 @@ import { KWENTA_TRACKING_CODE } from '../constants/futures';
 import { ZERO_WEI, ZERO_BIG_NUM, UNIT_BIG_NUM, UNIT_BN } from '../constants/number';
 import PerpsV2Market from './abis/PerpsV2Market.json';
 import { PerpsV2Market__factory } from './types';
-import { FuturesMarketKey, PotentialTradeStatus } from '../../types/futures';
-import { multiplyDecimal, divideDecimal } from '../../utils/number';
+import { FuturesMarketKey, PotentialTradeStatus } from '../types/futures';
+import { multiplyDecimal, divideDecimal } from '../utils/number';
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin

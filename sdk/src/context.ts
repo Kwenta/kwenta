@@ -13,7 +13,7 @@ import {
 import { NetworkId } from './types/common';
 
 export interface IContext {
-	provider: ethers.Provider;
+	provider: ethers.providers.Provider;
 	networkId: NetworkId;
 	signer?: ethers.Signer;
 	walletAddress?: string;
@@ -34,7 +34,7 @@ export default class Context implements IContext {
 	constructor(context: IContext) {
 		this.context = { ...DEFAULT_CONTEXT, ...context };
 
-		this.multicallProvider = new EthCallProvider(this.networkId ?? 10, this.context.provider);
+		this.multicallProvider = new EthCallProvider(this.networkId, this.context.provider);
 
 		if (context.signer) {
 			this.setSigner(context.signer);
@@ -76,7 +76,7 @@ export default class Context implements IContext {
 		return [1, 10].includes(this.networkId);
 	}
 
-	public async setProvider(provider: ethers.Provider) {
+	public async setProvider(provider: ethers.providers.Provider) {
 		this.context.provider = provider;
 		const networkId = ((await provider.getNetwork()).chainId as unknown) as NetworkId;
 

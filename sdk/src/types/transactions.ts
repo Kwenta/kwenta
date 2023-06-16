@@ -1,5 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber';
-import type { Provider, TransactionResponse } from '@ethersproject/providers';
+import { ethers, BigNumber } from 'ethers';
 
 export type TransactionEventCode = 'txSent' | 'txConfirmed' | 'txFailed' | 'txError';
 
@@ -26,14 +25,14 @@ export type RevertReasonParams = {
 	txHash: string;
 	networkId: number;
 	blockNumber: number;
-	provider: Provider;
+	provider: ethers.providers.Provider;
 };
 
 export type GetCodeParams = {
-	tx: TransactionResponse;
+	tx: ethers.providers.TransactionResponse;
 	networkId: number;
 	blockNumber: number;
-	provider: Provider;
+	provider: ethers.providers.Provider;
 };
 
 export type GasPrice<T = BigNumber> = {

@@ -2,9 +2,9 @@ import KwentaSDK from '..';
 
 import { UNSUPPORTED_NETWORK } from '../common/errors';
 
-import { KwentaStatus } from '../../types/system';
-import { client } from '../../utils/files';
-import { StatusMap } from '../../utils/system';
+import { KwentaStatus } from '../types/system';
+import { client } from '../utils/files';
+import { StatusMap } from '../utils/system';
 
 export default class SystemService {
 	private sdk: KwentaSDK;

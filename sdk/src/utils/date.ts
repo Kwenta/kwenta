@@ -3,7 +3,7 @@ import formatDate from 'date-fns/format';
 import getISOWeeksInYear from 'date-fns/getISOWeeksInYear';
 import subHours from 'date-fns/subHours';
 
-import { strPadLeft } from '../../utils/formatters/string';
+import { strPadLeft } from './string';
 
 export const formatTxTimestamp = (timestamp: number | Date) =>
 	formatDate(timestamp, 'MMM d, yy | HH:mm');

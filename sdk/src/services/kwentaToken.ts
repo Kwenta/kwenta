@@ -10,14 +10,14 @@ import {
 	TRADING_REWARDS_CUTOFF_EPOCH,
 	WEEK,
 } from 'queries/staking/utils';
-import { ZERO_WEI } from '../../constants/number';
+import { ZERO_WEI } from '../constants/number';
 import { ContractName } from '../contracts';
-import { formatTruncatedDuration } from '../../utils/date';
-import { weiFromWei } from '../../utils/number';
+import { formatTruncatedDuration } from '../utils/date';
+import { weiFromWei } from '../utils/number';
 
 import * as sdkErrors from '../common/errors';
-import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../../constants/exchange';
-import { client } from '../../utils/files';
+import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../constants/exchange';
+import { client } from '../utils/files';
 import { BigNumber } from '@ethersproject/bignumber';
 
 export type ClaimParams = [number, string, string, string[], number];

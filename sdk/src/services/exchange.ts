@@ -411,7 +411,7 @@ export default class ExchangeService {
 			const { hash } = await this.sdk.transactions.createContractTxn(
 				quoteCurrencyContract,
 				'approve',
-				[approveAddress, ethers.constants.MaxUint256]
+				[approveAddress, ethers.MaxUint256]
 			);
 
 			return hash;

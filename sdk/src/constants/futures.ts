@@ -1,7 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { gql } from 'graphql-request';
-import { formatBytes32String } from '@ethersproject/strings'
 
 import {
 	FuturesMarketAsset,
@@ -12,7 +11,7 @@ import {
 } from '../types/futures';
 import { weiFromWei } from '../utils/number';
 
-export const KWENTA_TRACKING_CODE = formatBytes32String('KWENTA');
+export const KWENTA_TRACKING_CODE = ethers.utils.formatBytes32String('KWENTA');
 
 // Defaults
 

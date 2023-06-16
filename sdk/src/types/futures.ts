@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber';
+import { BigNumber } from 'ethers';
 import Wei from '@synthetixio/wei';
 
 export type FundingRateInput = {

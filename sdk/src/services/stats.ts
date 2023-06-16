@@ -1,4 +1,4 @@
-import KwentaSDK from 'sdk/src';
+import KwentaSDK from '..';
 
 export default class StatsService {
 	private sdk: KwentaSDK;

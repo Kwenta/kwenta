@@ -9,7 +9,9 @@
 		"module": "commonjs",
 		"lib": ["dom", "es2017"],
 		"target": "es5",
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"declaration": true,
+		"resolveJsonModule": true
 	},
-	"include": ["src"]
+	"include": ["src", "src/**/**.json"]
 }

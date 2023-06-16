@@ -3,9 +3,9 @@ import { ethers } from 'ethers';
 import { orderBy } from 'lodash';
 import KwentaSDK from '..';
 
-import { ZERO_WEI } from '../../constants/number';
-import { SynthBalance } from '../../types/synths';
-import { notNill } from '../../utils/general';
+import { ZERO_WEI } from '../constants/number';
+import { SynthBalance } from '../types/synths';
+import { notNill } from '../utils/general';
 
 import * as sdkErrors from '../common/errors';
 import { BigNumber } from '@ethersproject/bignumber';

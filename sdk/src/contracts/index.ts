@@ -1,7 +1,7 @@
 import { Contract as EthCallContract } from 'ethcall';
 import { Contract, ethers } from 'ethers';
 
-import { NetworkId } from '../../types/common';
+import { NetworkId } from '../types/common';
 
 import ERC20ABI from './abis/ERC20.json';
 import MultipleMerkleDistributorABI from './abis/MultipleMerkleDistributor.json';

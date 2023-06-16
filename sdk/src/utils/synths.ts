@@ -1,7 +1,7 @@
 import { Contract } from 'ethcall';
 import { BigNumber } from '@ethersproject/bignumber';
 
-import ERC20ABI from '../src/contracts/abis/ERC20.json';
+import ERC20ABI from '../contracts/abis/ERC20.json';
 
 export const getProxySynthSymbol = (address: string) => {
 	const c = new Contract(address, ERC20ABI);

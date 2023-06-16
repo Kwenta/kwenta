@@ -6,10 +6,10 @@ import {
 	SMART_MARGIN_FRAGMENT,
 	ISOLATED_MARGIN_FRAGMENT,
 	DEFAULT_NUMBER_OF_TRADES,
-} from '../../constants/futures';
-import { FuturesMarketAsset, FuturesMarketKey } from '../../types/futures';
+} from '../constants/futures';
+import { FuturesMarketAsset, FuturesMarketKey } from '../types/futures';
 import { mapMarginTransfers, mapSmartMarginTransfers } from '../utils/futures';
-import { FuturesAccountType, getFuturesPositions, getFuturesTrades } from '../../utils/subgraph';
+import { FuturesAccountType, getFuturesPositions, getFuturesTrades } from '../utils/subgraph';
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,

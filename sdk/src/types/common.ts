@@ -1,4 +1,4 @@
-import { Provider } from '@ethersproject/providers';
+import { ethers } from 'ethers';
 
 export type PriceServer = 'KWENTA' | 'PYTH';
 
@@ -6,7 +6,7 @@ export type NetworkId = 1 | 5 | 420 | 10 | 42 | 69 | 31337;
 
 export type NetworkOverrideOptions = {
 	networkId: NetworkId;
-	provider: Provider;
+	provider: ethers.providers.Provider;
 };
 
 export enum TransactionStatus {
