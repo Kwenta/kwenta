@@ -16,7 +16,7 @@ export const queryAccountsFromSubgraph = async (
 	walletAddress: string | null
 ): Promise<string[]> => {
 	if (!walletAddress) return [];
-	const response = await request(
+	const response: any = await request(
 		sdk.futures.futuresGqlEndpoint,
 		gql`
 			query crossMarginAccounts($owner: String!) {
@@ -181,14 +181,14 @@ export const queryCompletePositionHistory = (sdk: KwentaSDK, account: string) =>
 };
 
 export const queryIsolatedMarginTransfers = async (sdk: KwentaSDK, account: string) => {
-	const response = await request(sdk.futures.futuresGqlEndpoint, ISOLATED_MARGIN_FRAGMENT, {
+	const response: any = await request(sdk.futures.futuresGqlEndpoint, ISOLATED_MARGIN_FRAGMENT, {
 		walletAddress: account,
 	});
 	return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
 };
 
 export const querySmartMarginTransfers = async (sdk: KwentaSDK, account: string) => {
-	const response = await request(sdk.futures.futuresGqlEndpoint, SMART_MARGIN_FRAGMENT, {
+	const response: any = await request(sdk.futures.futuresGqlEndpoint, SMART_MARGIN_FRAGMENT, {
 		walletAddress: account,
 	});
 	return response ? mapSmartMarginTransfers(response.smartMarginAccountTransfers) : [];
@@ -242,7 +242,7 @@ export const queryFundingRateHistory = async (
 	minTimestamp: number,
 	period: 'Hourly' | 'Daily' = 'Hourly'
 ) => {
-	const response = await request(
+	const response: any = await request(
 		sdk.futures.futuresGqlEndpoint,
 		gql`
 			query fundingRateUpdate(

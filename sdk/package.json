@@ -8,7 +8,8 @@
   },
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "generate-contract-types": "typechain --target ethers-v5 --out-dir ./src/contracts/types './src/contracts/abis/*.json' --show-stack-traces"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
     "@pythnetwork/pyth-evm-js": "^1.17.0",
     "@synthetixio/wei": "^2.74.4",
     "axios": "^1.4.0",
+    "bn.js": "^5.2.1",
     "codegen-graph-ts": "^0.1.4",
     "date-fns": "^2.30.0",
     "ethcall": "^6.0.0",
@@ -30,6 +32,10 @@
     "moment": "^2.29.4"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.195"
+    "@typechain/ethers-v5": "^11.0.0",
+    "@types/bn.js": "^5.1.1",
+    "@types/lodash": "^4.14.195",
+    "typechain": "^8.2.0",
+    "typescript": "^5.1.3"
   }
 }

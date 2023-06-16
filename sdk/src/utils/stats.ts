@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 
-import { FuturesStat } from 'sdk/types/stats';
+import { FuturesStat } from '../types/stats';
 
 import { weiFromWei } from './number';
 import { truncateAddress } from './string';

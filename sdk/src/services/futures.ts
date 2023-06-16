@@ -9,8 +9,8 @@ import { orderBy } from 'lodash';
 import KwentaSDK from '..';
 
 import { UNSUPPORTED_NETWORK } from '../common/errors';
-import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from '../../constants/futures';
-import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from '../../constants/period';
+import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from '../constants/futures';
+import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from '../constants/period';
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from '../contracts';
 import PerpsMarketABI from '../contracts/abis/PerpsV2Market.json';
 import SmartMarginAccountABI from '../contracts/abis/SmartMarginAccount.json';
@@ -28,7 +28,7 @@ import {
 	queryCompletePositionHistory,
 	queryFundingRateHistory,
 } from '../queries/futures';
-import { NetworkId, NetworkOverrideOptions } from '../../types/common';
+import { NetworkId, NetworkOverrideOptions } from '../types/common';
 import {
 	FundingRateInput,
 	FundingRateResponse,
@@ -48,9 +48,9 @@ import {
 	ConditionalOrderTypeEnum,
 	FuturesAccountType,
 	SLTPOrderInputs,
-} from '../../types/futures';
-import { PricesMap } from '../../types/prices';
-import { calculateTimestampForPeriod } from '../../utils/date';
+} from '../types/futures';
+import { PricesMap } from '../types/prices';
+import { calculateTimestampForPeriod } from '../utils/date';
 import {
 	appAdjustedLeverage,
 	calculateFundingRate,
@@ -71,8 +71,8 @@ import {
 	MarketKeyByAsset,
 	encodeCloseOffchainOrderParams,
 } from '../utils/futures';
-import { getFuturesAggregateStats } from '../../utils/subgraph';
-import { getReasonFromCode } from '../../utils/synths';
+import { getFuturesAggregateStats } from '../utils/subgraph';
+import { getReasonFromCode } from '../utils/synths';
 
 export default class FuturesService {
 	private sdk: KwentaSDK;
@@ -695,7 +695,7 @@ export default class FuturesService {
 
 	public async approveCrossMarginDeposit(
 		crossMarginAddress: string,
-		amount: BigNumber = BigNumber.from(ethers.MaxUint256)
+		amount: BigNumber = BigNumber.from(ethers.constants.MaxUint256)
 	) {
 		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK);
 		return this.sdk.transactions.createContractTxn(this.sdk.context.contracts.SUSD, 'approve', [

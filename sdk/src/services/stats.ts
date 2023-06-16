@@ -127,7 +127,7 @@ export default class StatsService {
 			: this.sdk.futures.futuresGqlEndpoint;
 
 		try {
-			const response = await request(
+			const response: any = await request(
 				futuresEndpoint,
 				gql`
 					query FuturesCumulativeStats {

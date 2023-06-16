@@ -39,12 +39,12 @@ export default class PricesService {
 	private sdk: KwentaSDK;
 	private offChainPrices: PricesMap = {};
 	private onChainPrices: PricesMap = {};
-	private ratesInterval: number | undefined;
+	private ratesInterval?: ReturnType<typeof setInterval>;
 	private pyth!: EvmPriceServiceConnection;
 	private lastConnectionTime: number = Date.now();
 	private wsConnected: boolean = false;
 	private server: PriceServer = DEFAULT_PRICE_SERVER;
-	private connectionMonitorId: number = 0;
+	private connectionMonitorId?: ReturnType<typeof setTimeout>;
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk;

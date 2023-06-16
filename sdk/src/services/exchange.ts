@@ -10,16 +10,16 @@ import { get, keyBy } from 'lodash';
 import KwentaSDK from '..';
 
 import { getEthGasPrice } from '../common/gas';
-import { KWENTA_TRACKING_CODE } from '../../constants/futures';
-import { UNIT_BIG_NUM, ZERO_WEI } from '../../constants/number';
+import { KWENTA_TRACKING_CODE } from '../constants/futures';
+import { UNIT_BIG_NUM, ZERO_WEI } from '../constants/number';
 import erc20Abi from '../contracts/abis/ERC20.json';
-import { CurrencyKey, NetworkId } from '../../types/common';
-import { FuturesMarketKey, SynthSuspensionReason } from '../../types/futures';
-import { DeprecatedSynthBalance } from '../../types/synths';
-import { Token, TokenBalances } from '../../types/tokens';
-import { synthToAsset } from '../../utils/exchange';
-import { getProxySynthSymbol, getReasonFromCode } from '../../utils/synths';
-import { getTransactionPrice, normalizeGasLimit } from '../../utils/transactions';
+import { CurrencyKey, NetworkId } from '../types/common';
+import { FuturesMarketKey, SynthSuspensionReason } from '../types/futures';
+import { DeprecatedSynthBalance } from '../types/synths';
+import { Token, TokenBalances } from '../types/tokens';
+import { synthToAsset } from '../utils/exchange';
+import { getProxySynthSymbol, getReasonFromCode } from '../utils/synths';
+import { getTransactionPrice, normalizeGasLimit } from '../utils/transactions';
 
 import * as sdkErrors from '../common/errors';
 import {
@@ -36,15 +36,15 @@ import {
 	DEFAULT_1INCH_SLIPPAGE,
 	KWENTA_REFERRAL_ADDRESS,
 	SYNTH_SWAP_OPTIMISM_ADDRESS,
-} from '../../constants/exchange';
+} from '../constants/exchange';
 import { getSynthsForNetwork, SynthSymbol } from '../data/synths';
 import {
 	OneInchApproveSpenderResponse,
 	OneInchQuoteResponse,
 	OneInchSwapResponse,
 	OneInchTokenListResponse,
-} from '../../types/1inch';
-import { PriceResponse, Rates } from '../../types/exchange';
+} from '../types/1inch';
+import { PriceResponse, Rates } from '../types/exchange';
 
 export default class ExchangeService {
 	private tokensMap: any = {};
@@ -411,7 +411,7 @@ export default class ExchangeService {
 			const { hash } = await this.sdk.transactions.createContractTxn(
 				quoteCurrencyContract,
 				'approve',
-				[approveAddress, ethers.MaxUint256]
+				[approveAddress, ethers.constants.MaxUint256]
 			);
 
 			return hash;

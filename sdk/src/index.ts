@@ -31,7 +31,7 @@ export default class KwentaSDK {
 		this.system = new SystemService(this);
 	}
 
-	public setProvider(provider: ethers.Provider) {
+	public setProvider(provider: ethers.providers.Provider) {
 		return this.context.setProvider(provider);
 	}
 

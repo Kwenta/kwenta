@@ -23,7 +23,7 @@ export const computeGasFee = (
 
 export const getGasPriceFromProvider = async (provider: ethers.providers.Provider) => {
 	try {
-		const { gasPrice } = await provider.getFeeData();
+		const gasPrice = await provider.getGasPrice();
 		return {
 			fastest: { gasPrice },
 			fast: { gasPrice },
