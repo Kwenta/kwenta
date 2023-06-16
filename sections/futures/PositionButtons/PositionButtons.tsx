@@ -114,14 +114,11 @@ const PositionButton = styled.div<PositionButtonProps>`
 
 const CloseButton = styled.button`
 	width: 50px;
-	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.tabs.position.background};
-	border-left: ${(props) => props.theme.colors.selectedTheme.border};
-	border-right: none;
 `;
 
 export default PositionButtons;
