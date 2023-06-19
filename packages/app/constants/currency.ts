@@ -1,7 +1,6 @@
+import { FIAT_SYNTHS } from '@kwenta/sdk/constants';
 import Wei from '@synthetixio/wei';
 import keyBy from 'lodash/keyBy';
-
-import { FIAT_SYNTHS } from 'sdk/constants/number';
 
 export type CurrencyKey = string;
 

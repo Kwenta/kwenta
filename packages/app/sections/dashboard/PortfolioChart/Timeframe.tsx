@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { PERIOD_DISPLAY, Period } from 'sdk/constants/period';
+import { PERIOD_DISPLAY, Period } from '@kwenta/sdk/constants';
 import { setSelectedPortfolioTimeframe } from 'state/futures/reducer';
 import { selectSelectedPortfolioTimeframe } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

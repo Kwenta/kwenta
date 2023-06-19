@@ -1,3 +1,4 @@
+import { toWei, truncateNumbers } from '@kwenta/sdk/utils';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
@@ -5,7 +6,6 @@ import { ethers } from 'ethers';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { Rates } from 'queries/rates/types';
-import { toWei, truncateNumbers } from 'sdk/utils/number';
 import { fetchBalances } from 'state/balances/actions';
 import { AppThunk } from 'state/store';
 import { FetchStatus, ThunkConfig } from 'state/types';

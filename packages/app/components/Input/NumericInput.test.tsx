@@ -1,10 +1,13 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { wait } from '@testing-library/user-event/dist/utils';
 
 import ContextProvider from 'testing/unit/mocks/MockProviders';
 
 import NumericInput from './NumericInput';
+
+const wait = (ms: number) => {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+};
 
 describe('NumericInput', () => {
 	test('happy path', async () => {

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 
 import { COMPETITION_DATES } from 'constants/competition';
-import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
-import { calculatedTimeDifference } from 'sdk/utils/date';
+import { PERIOD_IN_SECONDS } from '@kwenta/sdk/constants';
+import { calculatedTimeDifference } from '@kwenta/sdk/utils';
 
 type TCompetitionSate = 'comingSoon' | 'comingToStart' | 'live' | 'comingToEnd' | 'ended';
 

@@ -1,3 +1,4 @@
+import { TransactionStatusData } from '@kwenta/sdk/types';
 import { toast } from 'react-toastify';
 
 import {
@@ -6,7 +7,6 @@ import {
 	NotificationError,
 } from 'components/TransactionNotification';
 import { blockExplorer } from 'containers/Connector/Connector';
-import { TransactionStatusData } from 'sdk/types/transactions';
 import { sdk } from 'state/config';
 
 export const monitorTransaction = ({

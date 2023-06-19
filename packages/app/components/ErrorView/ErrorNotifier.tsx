@@ -1,9 +1,9 @@
+import { truncateString } from '@kwenta/sdk/utils';
 import { useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import styled, { useTheme } from 'styled-components';
 
 import ErrorIcon from 'assets/svg/app/error.svg';
-import { truncateString } from 'sdk/utils/string';
 
 function ToastContent({ message, errorDetails }: { message: string; errorDetails?: string }) {
 	const [expanded, setExpanded] = useState(false);

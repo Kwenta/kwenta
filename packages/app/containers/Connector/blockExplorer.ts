@@ -1,6 +1,5 @@
+import { NetworkId, NetworkNameById, NetworkIdByName } from '@kwenta/sdk/types';
 import { OPTIMISM_NETWORKS } from '@synthetixio/optimism-networks';
-
-import { NetworkId, NetworkNameById, NetworkIdByName } from 'sdk/types/common';
 
 export const getBaseUrl = (networkId: NetworkId) => {
 	if (networkId === 10 || networkId === 420) {

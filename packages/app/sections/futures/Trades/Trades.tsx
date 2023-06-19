@@ -1,3 +1,5 @@
+import { FuturesTrade } from '@kwenta/sdk/types';
+import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils';
 import { useRouter } from 'next/router';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,8 +15,6 @@ import ROUTES from 'constants/routes';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesTrade } from 'sdk/types/futures';
-import { formatCryptoCurrency, formatDollars } from 'sdk/utils/number';
 import PositionType from 'sections/futures/PositionType';
 import {
 	selectAllTradesForAccountType,

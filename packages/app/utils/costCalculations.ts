@@ -1,7 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { FuturesMarket } from '@kwenta/sdk/types';
 import Wei, { wei } from '@synthetixio/wei';
-
-import { ZERO_WEI } from 'sdk/constants/number';
-import { FuturesMarket } from 'sdk/types/futures';
 
 export const computeDelayedOrderFee = (market: FuturesMarket | undefined, susdSizeDelta: Wei) => {
 	if (

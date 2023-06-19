@@ -2,10 +2,10 @@ import Wei from '@synthetixio/wei';
 
 import { CurrencyKey } from '../types/common';
 
-export type SynthBalance = {
+export type SynthBalance<T = Wei> = {
 	currencyKey: CurrencyKey;
-	balance: Wei;
-	usdBalance: Wei;
+	balance: T;
+	usdBalance: T;
 };
 
 export type SynthBalancesMap = Partial<{ [key: string]: SynthBalance }>;

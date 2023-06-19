@@ -1,3 +1,4 @@
+import { formatDollars, truncateAddress } from '@kwenta/sdk/utils';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -8,7 +9,6 @@ import { Body } from 'components/Text';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { formatDollars } from 'sdk/utils/number';
 import {
 	selectFuturesType,
 	selectIdleMarginTransfers,
@@ -19,7 +19,6 @@ import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
-import { truncateAddress } from 'sdk/utils/string';
 
 const Transfers: FC = () => {
 	const { t } = useTranslation();

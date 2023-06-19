@@ -1,4 +1,4 @@
-import { ConditionalOrder, PositionSide } from '@kwenta/sdk';
+import { ConditionalOrder, PositionSide } from '@kwenta/sdk/types';
 import { getDisplayAsset, formatCurrency } from '@kwenta/sdk/utils';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

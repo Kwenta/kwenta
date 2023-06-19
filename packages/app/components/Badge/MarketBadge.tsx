@@ -1,9 +1,9 @@
+import { SynthSuspensionReason } from '@kwenta/sdk/types';
 import React, { FC, memo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
-import { SynthSuspensionReason } from 'sdk/types/futures';
 import { marketIsOpen, marketNextOpen, marketNextTransition } from 'utils/marketHours';
 
 import Badge from './Badge';

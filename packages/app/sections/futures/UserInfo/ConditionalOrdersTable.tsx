@@ -1,3 +1,4 @@
+import { formatDollars } from '@kwenta/sdk/utils';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -13,7 +14,6 @@ import { CustomFontLabel } from 'components/Text/CustomFontLabel';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { formatDollars } from 'sdk/utils/number';
 import { cancelConditionalOrder } from 'state/futures/actions';
 import {
 	selectCancellingConditionalOrder,

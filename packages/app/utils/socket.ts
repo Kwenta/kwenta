@@ -1,4 +1,4 @@
-import { ADDRESSES } from '@kwenta/sdk/contracts/constants';
+import { ADDRESSES } from '@kwenta/sdk/constants';
 import { DefaultTheme } from 'styled-components';
 
 import { RGB, SocketCustomizationProps } from 'components/SocketBridge/types';

@@ -1,8 +1,7 @@
+import { formatNumber, FormatNumberOptions } from '@kwenta/sdk/utils';
 import { wei, WeiSource } from '@synthetixio/wei';
 import { FC, memo, useMemo } from 'react';
 import styled from 'styled-components';
-
-import { formatNumber, FormatNumberOptions } from 'sdk/utils/number';
 
 import Body, { BodyProps } from './Body';
 

@@ -1,4 +1,4 @@
-import { NetworkId } from 'sdk/types/common';
+import { NetworkId } from '@kwenta/sdk/types';
 
 export type WalletState = {
 	walletAddress?: string;

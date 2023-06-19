@@ -1,6 +1,6 @@
+import { SynthBalance, TokenBalances } from '@kwenta/sdk/types';
 import Wei from '@synthetixio/wei';
 
-import { SynthBalance, TokenBalances } from 'sdk/types/tokens';
 import { FetchStatus } from 'state/types';
 
 export type BalancesState = {

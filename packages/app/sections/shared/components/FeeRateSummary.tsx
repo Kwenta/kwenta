@@ -1,10 +1,10 @@
+import { formatPercent } from '@kwenta/sdk/utils';
 import { FC, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { formatPercent } from 'sdk/utils/number';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
 import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';

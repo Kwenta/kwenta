@@ -10,7 +10,7 @@ import { FlexDivRow } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
-import { suggestedDecimals } from 'sdk/utils/number';
+import { suggestedDecimals } from '@kwenta/sdk/utils';
 import { selectAckedOrdersWarning } from 'state/app/selectors';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {

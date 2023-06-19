@@ -1,7 +1,7 @@
+import { NetworkId } from '@kwenta/sdk/types';
 import { ethers, providers } from 'ethers';
 
 import { SUPPORTED_NETWORKS, BLAST_NETWORK_LOOKUP } from 'constants/network';
-import { NetworkId } from 'sdk/types/common';
 
 export const staticMainnetProvider = new ethers.providers.InfuraProvider();
 

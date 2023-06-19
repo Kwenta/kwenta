@@ -1,8 +1,8 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { PositionSide } from 'sdk/types/futures';
-import { formatCryptoCurrency, formatDollars } from 'sdk/utils/number';
+import { PositionSide } from '@kwenta/sdk/types';
+import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 
 import BaseDrawer from './BaseDrawer';

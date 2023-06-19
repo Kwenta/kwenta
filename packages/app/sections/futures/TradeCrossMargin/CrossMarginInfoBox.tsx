@@ -1,7 +1,7 @@
+import { formatCurrency, formatDollars } from '@kwenta/sdk/utils';
 import React, { memo } from 'react';
 
 import { InfoBoxRow } from 'components/InfoBox/InfoBox';
-import { formatCurrency, formatDollars } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
 import { selectSusdBalance } from 'state/balances/selectors';

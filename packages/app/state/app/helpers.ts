@@ -1,6 +1,5 @@
+import { GasPrice } from '@kwenta/sdk/types';
 import { BigNumber } from 'ethers';
-
-import { GasPrice } from 'sdk/types/transactions';
 
 export const serializeGasPrice = (gasPrice: GasPrice): GasPrice<string> => ({
 	baseFeePerGas: gasPrice.baseFeePerGas?.toString() ?? '0',

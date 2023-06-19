@@ -1,9 +1,9 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
 import { useCallback, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { FlexDiv } from 'components/layout/flex';
 import TVChart from 'components/TVChart';
-import { ZERO_WEI } from 'sdk/constants/number';
 import {
 	selectConditionalOrdersForMarket,
 	selectPosition,

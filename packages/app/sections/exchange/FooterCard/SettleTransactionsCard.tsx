@@ -6,7 +6,7 @@ import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { secondsToTime } from 'sdk/utils/date';
+import { secondsToTime } from '@kwenta/sdk/utils';
 import { MessageContainer, Message, FixedMessageContainerSpacer } from 'sections/exchange/message';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import { submitSettle } from 'state/exchange/actions';

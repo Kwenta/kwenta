@@ -1,3 +1,4 @@
+import { truncateNumbers } from '@kwenta/sdk/utils';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +8,6 @@ import Button from 'components/Button/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
-import { truncateNumbers } from 'sdk/utils/number';
 import { SplitStakingCard } from 'sections/dashboard/Stake/card';
 import { Heading } from 'sections/earn/text';
 import { useAppSelector } from 'state/hooks';

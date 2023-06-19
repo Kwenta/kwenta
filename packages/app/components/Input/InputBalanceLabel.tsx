@@ -1,10 +1,10 @@
+import { formatCurrency } from '@kwenta/sdk/utils';
 import Wei from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { FlexDivRowCentered } from 'components/layout/flex';
 import { Body } from 'components/Text';
-import { formatCurrency } from 'sdk/utils/number';
 
 type Props = {
 	balance: Wei;

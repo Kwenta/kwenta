@@ -1,7 +1,5 @@
-import { TransactionStatus } from 'sdk/types/common';
-import { FuturesMarketKey } from 'sdk/types/futures';
-import { KwentaStatus } from 'sdk/types/system';
-import { GasPrice } from 'sdk/types/transactions';
+import { TransactionStatus, FuturesMarketKey, KwentaStatus, GasPrice } from '@kwenta/sdk/types';
+
 import { FuturesTransactionType } from 'state/futures/types';
 
 export type ModalType =

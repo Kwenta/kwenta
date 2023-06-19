@@ -1,3 +1,4 @@
+import { formatPercent, truncateAddress } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,10 +13,8 @@ import Connector from 'containers/Connector';
 import useENSs from 'hooks/useENSs';
 import useGetFile from 'queries/files/useGetFile';
 import { AccountStat } from 'queries/futures/types';
-import { formatPercent } from 'sdk/utils/number';
 import { StyledTrader } from 'sections/leaderboard/trader';
 import { getMedal, getCompetitionDataLocation } from 'utils/competition';
-import { truncateAddress } from 'sdk/utils/string';
 
 type CompetitionProps = {
 	round: CompetitionRound;

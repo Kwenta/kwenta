@@ -1,3 +1,4 @@
+import { formatDateWithoutYear } from '@kwenta/sdk/utils';
 import { memo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -6,7 +7,6 @@ import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg';
 import { Body } from 'components/Text';
 import { COMPETITION_DATES, COMPETITION_ENABLED } from 'constants/competition';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { formatDateWithoutYear } from 'sdk/utils/date';
 import { ExternalLink } from 'styles/common';
 import media from 'styles/media';
 

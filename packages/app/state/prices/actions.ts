@@ -1,7 +1,7 @@
+import { SynthPrice, PricesMap, PriceType } from '@kwenta/sdk/types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { notifyError } from 'components/ErrorView/ErrorNotifier';
-import { SynthPrice, PricesMap, PriceType } from 'sdk/types/prices';
 import { selectPrices } from 'state/prices/selectors';
 import { AppThunk } from 'state/store';
 import { ThunkConfig } from 'state/types';

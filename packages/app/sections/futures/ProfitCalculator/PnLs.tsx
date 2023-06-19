@@ -1,7 +1,6 @@
+import { PositionSide } from '@kwenta/sdk/types';
 import { wei } from '@synthetixio/wei';
 import React from 'react';
-
-import { PositionSide } from 'sdk/types/futures';
 
 import StatWithContainer from './StatWithContainer';
 

@@ -1,3 +1,4 @@
+import { formatCurrency, formatPercent } from '@kwenta/sdk/utils';
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -5,7 +6,6 @@ import styled from 'styled-components';
 
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { formatCurrency, formatPercent } from 'sdk/utils/number';
 import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 

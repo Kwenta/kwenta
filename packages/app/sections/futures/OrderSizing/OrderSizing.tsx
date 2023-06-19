@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { floorNumber, formatCryptoCurrency, formatDollars, isZero } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import React, { useMemo, memo, useCallback } from 'react';
 import styled from 'styled-components';
@@ -6,8 +8,6 @@ import TextButton from 'components/Button/TextButton';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { floorNumber, formatCryptoCurrency, formatDollars, isZero } from 'sdk/utils/number';
 import { editTradeSizeInput } from 'state/futures/actions';
 import {
 	selectMarketIndexPrice,

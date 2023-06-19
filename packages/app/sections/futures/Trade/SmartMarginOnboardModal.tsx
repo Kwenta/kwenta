@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import BaseModal from 'components/BaseModal';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
-import { formatDollars } from 'sdk/utils/number';
+import { formatDollars } from '@kwenta/sdk/utils';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
 

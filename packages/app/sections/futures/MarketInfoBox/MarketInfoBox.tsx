@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
-import { formatDollars, formatPercent } from 'sdk/utils/number';
+import { formatDollars, formatPercent } from '@kwenta/sdk/utils';
 import {
 	selectAvailableMargin,
 	selectBuyingPower,

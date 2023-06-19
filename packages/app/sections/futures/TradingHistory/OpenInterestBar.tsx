@@ -1,7 +1,6 @@
+import { formatPercent } from '@kwenta/sdk/utils';
 import { memo } from 'react';
 import styled from 'styled-components';
-
-import { formatPercent } from 'sdk/utils/number';
 
 type OpenInterestProps = {
 	skew: {

@@ -1,9 +1,8 @@
+import { ADDITIONAL_MARKETS } from '@kwenta/sdk/constants';
+import { FuturesMarketKey, Price, Prices } from '@kwenta/sdk/types';
 import { wei } from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
-import { ADDITIONAL_MARKETS } from 'sdk/constants/exchange';
-import { FuturesMarketKey } from 'sdk/types/futures';
-import { Price, Prices } from 'sdk/types/prices';
 
 // TODO: replace this with a more robust logic (like checking the asset field)
 export const synthToAsset = (currencyKey: CurrencyKey | FuturesMarketKey) => {

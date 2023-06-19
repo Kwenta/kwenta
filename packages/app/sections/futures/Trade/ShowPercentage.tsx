@@ -1,9 +1,9 @@
+import { PositionSide } from '@kwenta/sdk/types';
+import { formatPercent } from '@kwenta/sdk/utils';
 import Wei, { wei } from '@synthetixio/wei';
 import { useMemo } from 'react';
 
 import { Body } from 'components/Text';
-import { PositionSide } from 'sdk/types/futures';
-import { formatPercent } from 'sdk/utils/number';
 
 type ShowPercentageProps = {
 	targetPrice: string;

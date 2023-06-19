@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatDollars, formatPercent } from '@kwenta/sdk/utils';
 import Link from 'next/link';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,10 +14,8 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Body, NumericValue, Heading } from 'components/Text';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { Period } from 'sdk/constants/period';
-import { formatChartDate, formatChartTime, formatShortDateWithTime } from 'sdk/utils/date';
-import { formatDollars, formatPercent } from 'sdk/utils/number';
+import { Period } from '@kwenta/sdk/constants';
+import { formatChartDate, formatChartTime, formatShortDateWithTime } from '@kwenta/sdk/utils';
 import {
 	selectBuyingPower,
 	selectFuturesPortfolio,

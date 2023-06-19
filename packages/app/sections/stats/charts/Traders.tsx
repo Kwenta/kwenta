@@ -1,10 +1,10 @@
+import { formatShortDateUTC, toJSTimestamp } from '@kwenta/sdk/utils';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
 import useStatsData from 'hooks/useStatsData';
-import { formatShortDateUTC, toJSTimestamp } from 'sdk/utils/date';
 
 import { initChart } from '../initChart';
 import type { EChartsOption } from '../initChart';

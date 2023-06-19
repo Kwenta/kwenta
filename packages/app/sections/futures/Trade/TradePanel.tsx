@@ -1,9 +1,9 @@
+import { PositionSide } from '@kwenta/sdk/types';
 import { FC, memo, useCallback, useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 
 import Error from 'components/ErrorView';
 import Spacer from 'components/Spacer';
-import { PositionSide } from 'sdk/types/futures';
 import { selectAckedOrdersWarning } from 'state/app/selectors';
 import { changeLeverageSide } from 'state/futures/actions';
 import { setOrderType } from 'state/futures/reducer';

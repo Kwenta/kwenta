@@ -1,3 +1,5 @@
+import { FuturesTrade, PositionSide } from '@kwenta/sdk/types';
+import { formatCryptoCurrency } from '@kwenta/sdk/utils';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -8,8 +10,6 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesTrade, PositionSide } from 'sdk/types/futures';
-import { formatCryptoCurrency } from 'sdk/utils/number';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { TradeStatus } from 'sections/futures/types';
 import { fetchAllTradesForAccount } from 'state/futures/actions';

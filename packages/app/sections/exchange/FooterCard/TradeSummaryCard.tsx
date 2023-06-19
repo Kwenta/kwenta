@@ -6,7 +6,7 @@ import Button from 'components/Button';
 import Card, { CardBody } from 'components/Card';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
-import { secondsToTime } from 'sdk/utils/date';
+import { secondsToTime } from '@kwenta/sdk/utils';
 import { MessageContainer } from 'sections/exchange/message';
 import { SummaryItems } from 'sections/exchange/summary';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';

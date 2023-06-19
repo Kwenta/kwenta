@@ -1,10 +1,10 @@
+import { truncateNumbers } from '@kwenta/sdk/utils';
 import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { FlexDivRowCentered } from 'components/layout/flex';
-import { truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { approveKwentaToken, redeemToken } from 'state/staking/actions';

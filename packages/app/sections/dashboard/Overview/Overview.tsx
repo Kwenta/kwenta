@@ -1,4 +1,5 @@
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS, ZERO_WEI } from '@kwenta/sdk/constants';
+import { SynthSymbol } from '@kwenta/sdk/data';
 import { formatDollars, toWei } from '@kwenta/sdk/utils';
 import Wei from '@synthetixio/wei';
 import { FC, useEffect, useMemo, useState } from 'react';
@@ -13,7 +14,6 @@ import Search from 'components/Table/Search';
 import * as Text from 'components/Text';
 import Connector from 'containers/Connector';
 import { FuturesAccountTypes } from 'queries/futures/types';
-import { SynthSymbol } from 'sdk/src/data/synths';
 import { selectBalances } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { fetchTokenList } from 'state/exchange/actions';

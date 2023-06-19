@@ -1,10 +1,10 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatDollars, formatNumber } from '@kwenta/sdk/utils';
 import { format } from 'date-fns';
 import { useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatDollars, formatNumber } from 'sdk/utils/number';
 import { SharePositionParams } from 'state/futures/types';
 import media from 'styles/media';
 import getLocale from 'utils/formatters/getLocale';

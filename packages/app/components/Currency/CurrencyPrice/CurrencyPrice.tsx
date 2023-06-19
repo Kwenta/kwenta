@@ -6,7 +6,7 @@ import ChangePercent from 'components/ChangePercent';
 import { ContainerRowMixin } from 'components/layout/grid';
 import { NumericValue } from 'components/Text';
 import { CurrencyKey } from 'constants/currency';
-import { formatCurrency, FormatCurrencyOptions } from 'sdk/utils/number';
+import { formatCurrency, FormatCurrencyOptions } from '@kwenta/sdk/utils';
 
 type CurrencyPriceProps = {
 	currencyKey?: CurrencyKey;

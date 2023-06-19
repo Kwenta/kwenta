@@ -1,4 +1,4 @@
-import type KwentaSDK from 'sdk/src';
+import type KwentaSDK from '@kwenta/sdk';
 
 import type { AppDispatch, RootState } from './store';
 

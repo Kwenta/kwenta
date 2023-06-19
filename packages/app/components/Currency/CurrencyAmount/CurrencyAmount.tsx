@@ -1,10 +1,10 @@
+import { formatCurrency, FormatCurrencyOptions } from '@kwenta/sdk/utils';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import { FC, memo } from 'react';
 import styled from 'styled-components';
 
 import { ContainerRowMixin } from 'components/layout/grid';
-import { formatCurrency, FormatCurrencyOptions } from 'sdk/utils/number';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 

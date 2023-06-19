@@ -1,3 +1,5 @@
+import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants';
+import { formatDollars } from '@kwenta/sdk/utils';
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -10,8 +12,6 @@ import { StyledCaretDownIcon } from 'components/Select/Select';
 import { Body, NumericValue } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
 import useWindowSize from 'hooks/useWindowSize';
-import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
-import { formatDollars } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { selectShowModal } from 'state/app/selectors';
 import { selectSusdBalance } from 'state/balances/selectors';

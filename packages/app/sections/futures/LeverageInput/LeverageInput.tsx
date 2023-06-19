@@ -10,8 +10,8 @@ import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { floorNumber, truncateNumbers } from 'sdk/utils/number';
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { floorNumber, truncateNumbers } from '@kwenta/sdk/utils';
 import { editTradeSizeInput } from 'state/futures/actions';
 import { setLeverageInput } from 'state/futures/reducer';
 import {

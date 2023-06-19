@@ -15,7 +15,7 @@ import Connector from 'containers/Connector';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
-import { WalletTradesExchangeResult } from 'sdk/types/synths';
+import { WalletTradesExchangeResult } from '@kwenta/sdk/types';
 import { useAppSelector } from 'state/hooks';
 import { selectSynthsMap } from 'state/wallet/selectors';
 import { ExternalLink } from 'styles/common';

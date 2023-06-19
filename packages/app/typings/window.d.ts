@@ -1,6 +1,5 @@
+import { NetworkId } from '@kwenta/sdk/types';
 import { ethers } from 'ethers';
-
-import { NetworkId } from 'sdk/types/common';
 
 declare global {
 	interface Window {

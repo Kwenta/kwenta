@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types';
 import Router from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,8 +16,6 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { FuturesMarketKey, PositionSide } from 'sdk/types/futures';
 import PositionType from 'sections/futures/PositionType';
 import ShareModal from 'sections/futures/ShareModal';
 import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton';

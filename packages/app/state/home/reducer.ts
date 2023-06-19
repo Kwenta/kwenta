@@ -1,6 +1,6 @@
+import { FuturesMarket } from '@kwenta/sdk/types';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { FuturesMarket } from 'sdk/types/futures';
 import { FetchStatus } from 'state/types';
 
 import { fetchOptimismMarkets } from './actions';

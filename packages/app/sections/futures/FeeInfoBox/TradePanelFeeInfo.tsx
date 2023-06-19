@@ -1,3 +1,4 @@
+import { formatDollars, formatPercent } from '@kwenta/sdk/utils';
 import router from 'next/router';
 import React, { memo, useCallback, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -12,7 +13,6 @@ import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { formatDollars, formatPercent } from 'sdk/utils/number';
 import { selectTradePreview } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import {

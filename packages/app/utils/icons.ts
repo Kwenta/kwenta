@@ -1,3 +1,6 @@
+import { CRYPTO_CURRENCY_MAP } from '@kwenta/sdk/constants';
+import { FuturesMarketKey } from '@kwenta/sdk/types';
+
 import KWENTAIcon from 'assets/png/currencies/KWENTA.png';
 import AAVEIcon from 'assets/png/currencies/sAAVE.png';
 import ADAIcon from 'assets/png/currencies/sADA.png';
@@ -52,8 +55,6 @@ import XMRIcon from 'assets/png/currencies/sXMR.png';
 import XRPIcon from 'assets/png/currencies/sXRP.png';
 import WBTCIcon from 'assets/png/currencies/WBTC.png';
 import { SynthsName } from 'constants/currency';
-import { CRYPTO_CURRENCY_MAP } from 'sdk/constants/exchange';
-import { FuturesMarketKey } from 'sdk/types/futures';
 
 export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
 	sAAVEPERP: AAVEIcon,

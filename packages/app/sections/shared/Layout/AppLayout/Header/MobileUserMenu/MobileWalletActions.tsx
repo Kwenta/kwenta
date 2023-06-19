@@ -1,3 +1,4 @@
+import { truncateAddress } from '@kwenta/sdk/utils';
 import { useAccountModal } from '@rainbow-me/rainbowkit';
 import { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -5,7 +6,6 @@ import { useEnsAvatar, useEnsName } from 'wagmi';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import { truncateAddress } from 'sdk/utils/string';
 
 import ConnectionDot from '../ConnectionDot';
 import NetworksSwitcher from '../NetworksSwitcher';

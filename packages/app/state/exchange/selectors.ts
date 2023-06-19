@@ -1,9 +1,8 @@
+import { CRYPTO_CURRENCY_MAP, ZERO_WEI } from '@kwenta/sdk/constants';
+import { toWei } from '@kwenta/sdk/utils';
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
-import { CRYPTO_CURRENCY_MAP } from 'sdk/constants/exchange';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { toWei } from 'sdk/utils/number';
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors';
 import { sdk } from 'state/config';
 import { selectPrices } from 'state/prices/selectors';

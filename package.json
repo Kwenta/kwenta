@@ -16,5 +16,8 @@
 	"bugs": {
 		"url": "https://github.com/Kwenta/kwenta/issues"
 	},
-	"homepage": "https://github.com/Kwenta/kwenta#readme"
+	"homepage": "https://github.com/Kwenta/kwenta#readme",
+	"devDependencies": {
+		"husky": "8.0.1"
+	}
 }

@@ -1,10 +1,10 @@
+import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS, CG_BASE_API_URL } from '@kwenta/sdk/constants';
+import { PriceResponse } from '@kwenta/sdk/types';
 import axios from 'axios';
 import { UseQueryOptions, useQuery } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
-import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS, CG_BASE_API_URL } from 'sdk/constants/exchange';
-import { PriceResponse } from 'sdk/types/exchange';
 
 const useCoinGeckoTokenPricesQuery = (
 	tokenAddresses: string[],

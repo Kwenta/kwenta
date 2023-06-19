@@ -1,3 +1,4 @@
+import { PositionSide } from '@kwenta/sdk/types';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useReducer } from 'react';
@@ -9,7 +10,6 @@ import MenuIcon from 'assets/svg/app/menu.svg';
 import Button from 'components/Button';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { PositionSide } from 'sdk/types/futures';
 import { setLeverageSide, setTradePanelDrawerOpen } from 'state/futures/reducer';
 import { useAppDispatch } from 'state/hooks';
 import { FixedFooterMixin } from 'styles/common';

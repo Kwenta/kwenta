@@ -1,4 +1,4 @@
-import { FuturesAccountType, FuturesMarketAsset } from 'sdk/types/futures';
+import { FuturesAccountType, FuturesMarketAsset } from '@kwenta/sdk/types';
 
 import { EXTERNAL_LINKS } from './links';
 

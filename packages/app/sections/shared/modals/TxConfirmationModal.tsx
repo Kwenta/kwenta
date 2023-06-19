@@ -1,3 +1,4 @@
+import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from '@kwenta/sdk/utils';
 import { FC, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
@@ -11,7 +12,6 @@ import Error from 'components/ErrorView';
 import { FlexDivRowCentered, FlexDivColCentered } from 'components/layout/flex';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
-import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'sdk/utils/number';
 import { MessageButton } from 'sections/exchange/message';
 import { closeModal } from 'state/exchange/reducer';
 import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';

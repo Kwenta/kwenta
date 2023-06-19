@@ -1,9 +1,9 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
 import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 
-import { ZERO_WEI } from 'sdk/constants/number';
-import { NetworkId } from 'sdk/types/common';
-import { formatShortDate, toJSTimestamp } from 'sdk/utils/date';
+import { NetworkId } from '@kwenta/sdk/types';
+import { formatShortDate, toJSTimestamp } from '@kwenta/sdk/utils';
 
 export type TradingRewardProps = {
 	period: number | string;

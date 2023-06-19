@@ -1,5 +1,6 @@
+import { FuturesMarketKey } from '@kwenta/sdk/types';
+
 import PencilButton from 'components/Button/PencilButton';
-import { FuturesMarketKey } from 'sdk/types/futures';
 import { setShowPositionModal } from 'state/app/reducer';
 import { FuturesPositionModalType } from 'state/app/types';
 import { useAppDispatch } from 'state/hooks';

@@ -1,4 +1,4 @@
-import { SynthSymbol } from '@kwenta/sdk/data/synths';
+import { SynthSymbol } from '@kwenta/sdk/data';
 import { FC, useMemo, memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 

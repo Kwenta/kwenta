@@ -1,6 +1,6 @@
+import { SynthPrice, AssetKey } from '@kwenta/sdk/types';
 import Wei from '@synthetixio/wei';
 
-import { SynthPrice, AssetKey } from 'sdk/types/prices';
 import { QueryStatus } from 'state/types';
 
 export type PriceChange = 'up' | 'down' | null;

@@ -1,10 +1,9 @@
+import { NetworkId } from '@kwenta/sdk/types';
+import { getRatesEndpoint, getCandles } from '@kwenta/sdk/utils';
 import axios from 'axios';
 
 import { getSupportedResolution } from 'components/TVChart/utils';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { NetworkId } from 'sdk/types/common';
-import { getRatesEndpoint } from 'sdk/utils/prices';
-import { getCandles } from 'sdk/utils/subgraph';
 import logError from 'utils/logError';
 
 import { DEFAULT_PYTH_TV_ENDPOINT } from './constants';

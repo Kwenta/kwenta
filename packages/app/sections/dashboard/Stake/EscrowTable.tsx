@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { EscrowData } from '@kwenta/sdk/types';
 import { truncateNumbers } from '@kwenta/sdk/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +9,6 @@ import styled from 'styled-components';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Table from 'components/Table';
 import { TableCellHead, TableHeader } from 'components/Table';
-import type { EscrowData } from 'sdk/src/services/kwentaToken';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { vestEscrowedRewards } from 'state/staking/actions';

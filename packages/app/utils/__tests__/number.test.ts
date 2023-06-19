@@ -1,7 +1,5 @@
+import { gweiToWei, formatDollars, stripZeros, weiFromWei } from '@kwenta/sdk/utils';
 import { BigNumber } from 'ethers';
-
-import { weiFromWei } from 'sdk/utils/number';
-import { gweiToWei, formatDollars, stripZeros } from 'sdk/utils/number';
 
 describe('number utils', () => {
 	test('ether to gwei', () => {

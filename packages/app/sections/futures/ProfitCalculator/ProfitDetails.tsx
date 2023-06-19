@@ -1,10 +1,10 @@
+import { PositionSide } from '@kwenta/sdk/types';
 import { wei } from '@synthetixio/wei';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { Body } from 'components/Text';
-import { PositionSide } from 'sdk/types/futures';
 
 function textColor(props: any) {
 	if (!props.className || props.className === 'row-name')

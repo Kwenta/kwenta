@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatCurrency } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +13,6 @@ import Loader from 'components/Loader';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import Connector from 'containers/Connector';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatCurrency } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { withdrawAccountKeeperBalance } from 'state/futures/actions';
 import {

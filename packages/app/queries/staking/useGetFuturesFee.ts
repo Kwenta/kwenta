@@ -1,11 +1,14 @@
+import {
+	AGGREGATE_ASSET_KEY,
+	FUTURES_ENDPOINT_OP_MAINNET,
+	SECONDS_PER_DAY,
+} from '@kwenta/sdk/constants';
+import { getFuturesAggregateStats } from '@kwenta/sdk/utils';
 import { useQuery, UseQueryOptions } from 'react-query';
 
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import useIsL2 from 'hooks/useIsL2';
-import { AGGREGATE_ASSET_KEY, FUTURES_ENDPOINT_OP_MAINNET } from 'sdk/constants/futures';
-import { SECONDS_PER_DAY } from 'sdk/constants/period';
-import { getFuturesAggregateStats } from 'sdk/utils/subgraph';
 
 const useGetFuturesFee = (
 	start: number,

@@ -1,4 +1,4 @@
-import { formatNumber } from '../../../sdk/utils/number';
+import { formatNumber } from '@kwenta/sdk/utils';
 import FuturesPage from '../pages/markets/futures-page';
 
 const futures = new FuturesPage();

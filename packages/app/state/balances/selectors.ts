@@ -1,6 +1,6 @@
+import { toWei } from '@kwenta/sdk/utils';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { toWei } from 'sdk/utils/number';
 import type { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 import { unserializeBalances } from 'utils/balances';

@@ -1,4 +1,4 @@
-import * as subgraph from 'sdk/utils/subgraph';
+import * as subgraph from '@kwenta/sdk/utils';
 
 export const mockGrapqhlRequest = (returnData: any) => {
 	jest.spyOn(require('graphql-request'), 'default').mockImplementation(() => returnData);

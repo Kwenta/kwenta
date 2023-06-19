@@ -1,6 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
 import { FC } from 'react';
 
-import { ZERO_WEI } from 'sdk/constants/number';
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner';
 
 import OpenPositions, { OpenPositionsProps } from './OpenPositions';

@@ -1,8 +1,8 @@
+import { FuturesMarketKey } from '@kwenta/sdk/types';
 import { memo, ReactElement } from 'react';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import { FuturesMarketKey } from 'sdk/types/futures';
 
 type Props = {
 	marketKey: FuturesMarketKey;

@@ -1,9 +1,9 @@
+import { keepDoublePlaceholder } from '@kwenta/sdk/utils';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { useDashboardCompetition } from 'hooks/useDashboardCompetition';
-import { keepDoublePlaceholder } from 'sdk/utils/date';
 
 const Container = styled.p`
 	font-family: ${(props) => props.theme.fonts.monoBold};

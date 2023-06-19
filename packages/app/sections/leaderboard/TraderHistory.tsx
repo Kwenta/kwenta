@@ -1,3 +1,4 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
 import { wei, WeiSource } from '@synthetixio/wei';
 import router from 'next/router';
 import { FC, memo, useEffect, useMemo } from 'react';
@@ -14,7 +15,6 @@ import Table, { TableHeader } from 'components/Table';
 import { Body } from 'components/Text';
 import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement';
 import ROUTES from 'constants/routes';
-import { ZERO_WEI } from 'sdk/constants/number';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { selectShowBanner } from 'state/app/selectors';
 import { fetchPositionHistoryForTrader } from 'state/futures/actions';

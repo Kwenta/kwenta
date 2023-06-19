@@ -1,3 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { SmartMarginOrderType } from '@kwenta/sdk/types';
+import { formatCurrency, formatDollars, formatPercent } from '@kwenta/sdk/utils';
 import Wei from '@synthetixio/wei';
 import { memo, useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,9 +10,6 @@ import HelpIcon from 'assets/svg/app/question-mark.svg';
 import { InfoBoxRow } from 'components/InfoBox';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { SmartMarginOrderType } from 'sdk/types/futures';
-import { formatCurrency, formatDollars, formatPercent } from 'sdk/utils/number';
 
 const ExecutionFeeTooltip = memo(() => {
 	const { t } = useTranslation();

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
-import { notNill } from 'sdk/utils/general';
+import { notNill } from '@kwenta/sdk/utils';
 
 const useIsL2 = () => {
 	const { activeChain } = Connector.useContainer();

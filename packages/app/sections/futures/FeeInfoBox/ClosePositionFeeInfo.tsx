@@ -1,6 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
 import { memo } from 'react';
 
-import { ZERO_WEI } from 'sdk/constants/number';
 import {
 	selectClosePositionOrderInputs,
 	selectClosePositionPreview,

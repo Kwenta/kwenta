@@ -1,8 +1,8 @@
+import { formatDollars, formatNumber } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { formatDollars, formatNumber } from 'sdk/utils/number';
 import { HeaderContainer, MarketStatsContainer, MarketStat } from 'sections/dashboard/mobile';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectMarketVolumes, selectOpenInterest } from 'state/futures/selectors';

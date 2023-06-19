@@ -1,6 +1,5 @@
-import { Period } from 'sdk/constants/period';
-import { NetworkId } from 'sdk/types/common';
-import { FuturesAccountType, FuturesMarketAsset } from 'sdk/types/futures';
+import { Period } from '@kwenta/sdk/constants';
+import { NetworkId, FuturesAccountType, FuturesMarketAsset } from '@kwenta/sdk/types';
 
 import { CurrencyKey } from './currency';
 

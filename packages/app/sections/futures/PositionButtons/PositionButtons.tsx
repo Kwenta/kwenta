@@ -1,9 +1,9 @@
+import { PositionSide } from '@kwenta/sdk/types';
 import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import CloseIcon from 'assets/svg/app/close.svg';
 import { FlexDivRow } from 'components/layout/flex';
-import { PositionSide } from 'sdk/types/futures';
 
 interface PositionButtonsProps {
 	selected: PositionSide;

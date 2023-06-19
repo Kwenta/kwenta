@@ -1,4 +1,4 @@
-import { MarketKeyByAsset, getDisplayAsset } from '@kwenta/sdk/utils';
+import { MarketKeyByAsset, getDisplayAsset, formatDollars } from '@kwenta/sdk/utils';
 import { WeiSource } from '@synthetixio/wei';
 import { useEffect, useRef, useMemo, FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';

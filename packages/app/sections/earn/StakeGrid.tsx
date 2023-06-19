@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
 import useRewardsTimer from 'hooks/useRewardsTimer';
-import { formatPercent, truncateNumbers } from 'sdk/utils/number';
+import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils';
 import { GridContainer } from 'sections/earn/grid';
 import { claimRewards } from 'state/earn/actions';
 import { selectEarnApy, selectEarnedRewards, selectYieldPerDay } from 'state/earn/selectors';

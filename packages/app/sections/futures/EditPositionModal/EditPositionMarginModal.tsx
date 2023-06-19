@@ -1,3 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants';
+import { formatDollars } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +16,6 @@ import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { previewErrorI18n } from 'queries/futures/constants';
-import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatDollars } from 'sdk/utils/number';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
 import {

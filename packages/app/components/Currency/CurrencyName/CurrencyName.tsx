@@ -1,10 +1,10 @@
+import { MarketClosureReason } from '@kwenta/sdk/types';
 import React, { memo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import { ContainerRowMixin } from 'components/layout/grid';
 import MarketClosureIcon from 'components/MarketClosureIcon';
-import { MarketClosureReason } from 'sdk/types/futures';
 
 import CurrencyIcon from '../CurrencyIcon';
 import { CurrencyIconProps } from '../CurrencyIcon/CurrencyIcon';

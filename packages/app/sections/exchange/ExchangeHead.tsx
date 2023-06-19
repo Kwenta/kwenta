@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { formatCurrency } from 'sdk/utils/number';
+import { formatCurrency } from '@kwenta/sdk/utils';
 import { selectInverseRate } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 

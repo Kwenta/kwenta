@@ -1,10 +1,10 @@
+import { formatPercent } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import { FC } from 'react';
 import styled from 'styled-components';
 
 import { NumericValue } from 'components/Text';
 import { ETH_UNIT } from 'constants/network';
-import { formatPercent } from 'sdk/utils/number';
 
 export const parseFundingRate = (value: number) => {
 	return wei(value).div(ETH_UNIT).div(24);

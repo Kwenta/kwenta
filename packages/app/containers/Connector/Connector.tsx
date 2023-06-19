@@ -1,8 +1,8 @@
+import { NetworkId } from '@kwenta/sdk/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createContainer } from 'unstated-next';
 import { useAccount, useNetwork, useSigner, useProvider } from 'wagmi';
 
-import { NetworkId } from 'sdk/types/common';
 import { sdk } from 'state/config';
 import { useAppDispatch } from 'state/hooks';
 import { setSigner } from 'state/wallet/actions';

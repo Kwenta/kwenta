@@ -11,8 +11,8 @@ import { FlexDivRowCentered } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
 import { NO_VALUE } from 'constants/placeholder';
-import { ConditionalOrderTypeEnum, PositionSide } from 'sdk/types/futures';
-import { formatDollars, stripZeros, suggestedDecimals } from 'sdk/utils/number';
+import { ConditionalOrderTypeEnum, PositionSide } from '@kwenta/sdk/types';
+import { formatDollars, stripZeros, suggestedDecimals } from '@kwenta/sdk/utils';
 import { setShowPositionModal } from 'state/app/reducer';
 import { selectAckedOrdersWarning, selectTransaction } from 'state/app/selectors';
 import {

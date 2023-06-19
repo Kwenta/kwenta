@@ -1,3 +1,4 @@
+import { formatPercent } from '@kwenta/sdk/utils';
 import { wei, WeiSource } from '@synthetixio/wei';
 import { FC, memo } from 'react';
 import styled from 'styled-components';
@@ -5,7 +6,6 @@ import styled from 'styled-components';
 import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
 import { NO_VALUE } from 'constants/placeholder';
-import { formatPercent } from 'sdk/utils/number';
 
 type ChangePercentProps = {
 	value: WeiSource;

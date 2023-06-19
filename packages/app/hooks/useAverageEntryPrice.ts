@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { FuturesPositionHistory, PositionSide } from 'sdk/types/futures';
+import { FuturesPositionHistory, PositionSide } from '@kwenta/sdk/types';
 import { selectTradePreview } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 

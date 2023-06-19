@@ -1,3 +1,5 @@
+import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants';
+import { floorNumber } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import React, { ChangeEvent, memo, useMemo } from 'react';
 import styled from 'styled-components';
@@ -7,8 +9,6 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import { Body } from 'components/Text';
-import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
-import { floorNumber } from 'sdk/utils/number';
 import { editCrossMarginTradeMarginDelta } from 'state/futures/actions';
 import {
 	selectSelectedInputDenomination,

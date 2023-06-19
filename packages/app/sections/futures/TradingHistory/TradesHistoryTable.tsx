@@ -1,3 +1,4 @@
+import { formatNumber } from '@kwenta/sdk/utils';
 import { FC, useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -8,7 +9,6 @@ import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { formatNumber } from 'sdk/utils/number';
 import { selectMarketKey } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 

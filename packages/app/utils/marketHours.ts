@@ -1,3 +1,4 @@
+import { FIAT_SYNTHS } from '@kwenta/sdk/constants';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import moment from 'moment-business-time';
 
@@ -8,7 +9,6 @@ import {
 	LSE_SYNTHS,
 	TSE_SYNTHS,
 } from 'constants/currency';
-import { FIAT_SYNTHS } from 'sdk/constants/number';
 
 export const forexHours = () => {
 	// Sunday 5pm ET to Friday 4pm ET

@@ -1,3 +1,5 @@
+import { ZERO_WEI, MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants';
+import { formatDollars } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import dynamic from 'next/dynamic';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,9 +16,6 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import SegmentedControl from 'components/SegmentedControl';
 import Spacer from 'components/Spacer';
-import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatDollars } from 'sdk/utils/number';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions';
 import {

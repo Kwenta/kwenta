@@ -6,7 +6,11 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    devDependencies:
+      husky:
+        specifier: 8.0.1
+        version: 8.0.1
 
   packages/app:
     dependencies:
@@ -17,8 +21,8 @@ importers:
         specifier: ^0.14.0
         version: 0.14.0
       '@gnosis.pm/safe-apps-sdk':
-        specifier: ^7.7.0
-        version: 7.7.0
+        specifier: ^7.8.0
+        version: 7.8.0
       '@kwenta/sdk':
         specifier: workspace:*
         version: link:../sdk
@@ -2822,17 +2826,6 @@ packages:
     dependencies:
       '@gnosis.pm/safe-apps-sdk': 7.8.0
       events: 3.3.0
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
-    dev: false
-
-  /@gnosis.pm/safe-apps-sdk@7.7.0:
-    resolution: {integrity: sha512-MuiH09q/5DFfHQLrwNW7JSvGEMGqrS3jNJy9UKZHW77rxzmZssHX1l3+p5whTbtrcvLbxQgcp5egMrdw/sj0qw==}
-    dependencies:
-      '@gnosis.pm/safe-react-gateway-sdk': 3.5.2
-      ethers: 5.7.2
     transitivePeerDependencies:
       - bufferutil
       - encoding

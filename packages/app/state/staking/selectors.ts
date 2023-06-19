@@ -1,8 +1,8 @@
+import { toWei } from '@kwenta/sdk/utils';
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { getApy, getEpochDetails, parseEpochData } from 'queries/staking/utils';
-import { toWei } from 'sdk/utils/number';
 import { RootState } from 'state/store';
 import { FetchStatus } from 'state/types';
 

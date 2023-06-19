@@ -1,8 +1,7 @@
+import { ZERO_WEI, PERIOD_IN_SECONDS } from '@kwenta/sdk/constants';
+import { toWei, truncateNumbers } from '@kwenta/sdk/utils';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { ZERO_WEI } from 'sdk/constants/number';
-import { PERIOD_IN_SECONDS } from 'sdk/constants/period';
-import { toWei, truncateNumbers } from 'sdk/utils/number';
 import { RootState } from 'state/store';
 
 export const selectBalance = createSelector((state: RootState) => state.earn.balance, toWei);

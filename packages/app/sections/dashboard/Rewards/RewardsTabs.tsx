@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatNumber, truncateNumbers } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
@@ -15,8 +17,6 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useGetFile from 'queries/files/useGetFile';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatNumber, truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import {

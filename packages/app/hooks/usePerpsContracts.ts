@@ -1,7 +1,7 @@
+import { PerpsV2Market, PerpsV2Market__factory } from '@kwenta/sdk/types';
 import { useMemo } from 'react';
 
 import Connector from 'containers/Connector';
-import { PerpsV2Market, PerpsV2Market__factory } from 'sdk/src/contracts/types';
 import { selectMarketInfo } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 

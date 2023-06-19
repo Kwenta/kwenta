@@ -9,8 +9,8 @@ import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import useIsL1 from 'hooks/useIsL1';
 import useIsL2 from 'hooks/useIsL2';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatDollars, formatNumber, formatPercent } from 'sdk/utils/number';
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatDollars, formatNumber, formatPercent } from '@kwenta/sdk/utils';
 import { selectGasPrice } from 'state/app/selectors';
 import {
 	selectTransactionFeeWei,

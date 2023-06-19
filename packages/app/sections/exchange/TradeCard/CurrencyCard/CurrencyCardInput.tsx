@@ -8,8 +8,8 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex';
 import Loader from 'components/Loader';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatDollars } from 'sdk/utils/number';
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatDollars } from '@kwenta/sdk/utils';
 import { CapitalizedText, numericValueCSS } from 'styles/common';
 
 type CurrencyCardInputProps = {

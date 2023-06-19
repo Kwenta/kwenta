@@ -1,10 +1,10 @@
+import { OperationalStatus } from '@kwenta/sdk/types';
 import { formatDistance } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { Body } from 'components/Text';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { OperationalStatus } from 'sdk/types/system';
 import { fetchKwentaStatus } from 'state/app/actions';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import common from 'styles/theme/colors/common';

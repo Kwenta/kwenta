@@ -1,3 +1,5 @@
+import { PositionSide } from '@kwenta/sdk/types';
+import { formatDollars } from '@kwenta/sdk/utils';
 import { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
@@ -9,8 +11,6 @@ import Spacer from 'components/Spacer';
 import { TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
-import { PositionSide } from 'sdk/types/futures';
-import { formatDollars } from 'sdk/utils/number';
 import PositionType from 'sections/futures/PositionType';
 import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning';
 import { cancelConditionalOrder } from 'state/futures/actions';

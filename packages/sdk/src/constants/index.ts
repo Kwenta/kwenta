@@ -8,3 +8,4 @@ export * from './prices';
 export * from './staking';
 export * from './stats';
 export * from './transactions';
+export * from '../contracts/constants';

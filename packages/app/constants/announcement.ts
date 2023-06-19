@@ -1,4 +1,4 @@
-import { MILLISECONDS_PER_DAY } from 'sdk/constants/period';
+import { MILLISECONDS_PER_DAY } from '@kwenta/sdk/constants';
 
 // Shows or hides the home page banner entirely when set to true/false
 export const BANNER_ENABLED = false;

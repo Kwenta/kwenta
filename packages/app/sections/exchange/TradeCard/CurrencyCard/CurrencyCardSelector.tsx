@@ -8,7 +8,7 @@ import { border } from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
 import { NO_VALUE } from 'constants/placeholder';
-import { formatCurrency } from 'sdk/utils/number';
+import { formatCurrency } from '@kwenta/sdk/utils';
 import { selectInsufficientBalance } from 'state/exchange/selectors';
 import { useAppSelector } from 'state/hooks';
 import { CapitalizedText, numericValueCSS } from 'styles/common';

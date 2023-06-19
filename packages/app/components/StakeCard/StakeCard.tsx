@@ -1,3 +1,4 @@
+import { toWei, truncateNumbers } from '@kwenta/sdk/utils';
 import Wei from '@synthetixio/wei';
 import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +9,6 @@ import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRowCentered } from 'components/layout/flex';
 import SegmentedControl from 'components/SegmentedControl';
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
-import { toWei, truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { numericValueCSS } from 'styles/common';
 

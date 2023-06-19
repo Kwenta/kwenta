@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { SynthSymbol } from '@kwenta/sdk/data';
 import { getDisplayAsset, formatNumber } from '@kwenta/sdk/utils';
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactElement, useMemo } from 'react';
@@ -12,7 +13,6 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Table, { TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
-import { SynthSymbol } from 'sdk/src/data/synths';
 import { selectBalances } from 'state/balances/selectors';
 import { useAppSelector } from 'state/hooks';
 import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';

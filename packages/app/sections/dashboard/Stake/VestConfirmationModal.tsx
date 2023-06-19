@@ -1,3 +1,4 @@
+import { truncateNumbers } from '@kwenta/sdk/utils';
 import Wei from '@synthetixio/wei';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -9,7 +10,6 @@ import { FlexDivRowCentered } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
 import { Body } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
-import { truncateNumbers } from 'sdk/utils/number';
 import { ExternalLink } from 'styles/common';
 
 type Props = {

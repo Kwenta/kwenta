@@ -1,5 +1,5 @@
-import type { EscrowData } from 'sdk/src/services/kwentaToken';
-import { ClaimParams } from 'sdk/src/services/kwentaToken';
+import { EscrowData, ClaimParams } from '@kwenta/sdk/types';
+
 import { FetchStatus } from 'state/types';
 
 export type StakingState = {

@@ -1,3 +1,4 @@
+import { isZero } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,8 +8,7 @@ import Button from 'components/Button';
 import Error from 'components/ErrorView';
 import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier';
 import { previewErrorI18n } from 'queries/futures/constants';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { isZero } from 'sdk/utils/number';
+import { ZERO_WEI } from '@kwenta/sdk/constants';
 import { setOpenModal } from 'state/app/reducer';
 import { setTradePanelDrawerOpen } from 'state/futures/reducer';
 import {

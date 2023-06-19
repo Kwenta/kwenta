@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatDollars, formatNumber } from '@kwenta/sdk/utils';
 import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,8 +18,6 @@ import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import useGetStats from 'queries/futures/useGetStats';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatDollars, formatNumber } from 'sdk/utils/number';
 import { StackSection } from 'sections/homepage/section';
 import { Title } from 'sections/homepage/text';
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common';

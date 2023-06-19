@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatDollars, truncateNumbers } from '@kwenta/sdk/utils';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,8 +14,6 @@ import Pill from 'components/Pill';
 import { Body, LogoText } from 'components/Text';
 import ROUTES from 'constants/routes';
 import useClickOutside from 'hooks/useClickOutside';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatDollars, truncateNumbers } from 'sdk/utils/number';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

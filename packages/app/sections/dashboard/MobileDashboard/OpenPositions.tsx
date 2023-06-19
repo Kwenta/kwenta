@@ -1,3 +1,4 @@
+import { formatDollars } from '@kwenta/sdk/utils';
 import Wei from '@synthetixio/wei';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +7,6 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import { FuturesAccountTypes } from 'queries/futures/types';
-import { formatDollars } from 'sdk/utils/number';
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
 import { selectBalances } from 'state/balances/selectors';
 import { selectFuturesPortfolio, selectActiveSmartPositionsCount } from 'state/futures/selectors';

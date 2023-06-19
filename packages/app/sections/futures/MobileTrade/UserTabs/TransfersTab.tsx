@@ -7,7 +7,7 @@ import Table, { TableHeader, TableNoResults } from 'components/Table';
 import { Body } from 'components/Text';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { formatDollars } from 'sdk/utils/number';
+import { formatDollars } from '@kwenta/sdk/utils';
 import {
 	selectFuturesType,
 	selectIdleMarginTransfers,

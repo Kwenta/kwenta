@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import moment from 'moment';
 
@@ -21,35 +21,11 @@ import {
 	WEEK,
 } from '../constants/staking';
 import { ContractName } from '../contracts';
+import { ClaimParams, EpochData, EscrowData } from '../types/kwentaToken';
 import { formatTruncatedDuration } from '../utils/date';
 import { client } from '../utils/files';
 import { weiFromWei } from '../utils/number';
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph';
-
-export type ClaimParams = [number, string, string, string[], number];
-
-type EpochData = {
-	merkleRoot: string;
-	tokenTotal: string;
-	claims: {
-		[address: string]: {
-			index: number;
-			amount: string;
-			proof: string[];
-		};
-	};
-	period: number;
-};
-
-export type EscrowData<T = Wei> = {
-	id: number;
-	date: string;
-	time: string;
-	vestable: T;
-	amount: T;
-	fee: T;
-	status: 'VESTING' | 'VESTED';
-};
 
 export default class KwentaTokenService {
 	private sdk: KwentaSDK;

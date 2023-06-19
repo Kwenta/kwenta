@@ -22,8 +22,23 @@
 		"./utils": {
 			"import": "./dist/utils/index.js",
 			"types": "./dist/utils/index.d.ts"
+		},
+		"./data": {
+			"import": "./dist/data/index.js",
+			"types": "./dist/data/index.d.ts"
+		},
+		"./types": {
+			"import": "./dist/types/index.js",
+			"types": "./dist/types/index.d.ts"
 		}
 	},
+	"files": [
+		"constants",
+		"data",
+		"dist",
+		"types",
+		"utils"
+	],
 	"dependencies": {
 		"@eth-optimism/contracts": "^0.6.0",
 		"@ethersproject/bignumber": "^5.7.0",

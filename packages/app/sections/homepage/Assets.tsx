@@ -1,3 +1,4 @@
+import { SECONDS_PER_DAY } from '@kwenta/sdk/constants';
 import { wei } from '@synthetixio/wei';
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
 import router from 'next/router';
@@ -17,7 +18,6 @@ import { TabPanel } from 'components/Tab';
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
 import Connector from 'containers/Connector';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import { SECONDS_PER_DAY } from 'sdk/constants/period';
 import { selectMarketVolumes } from 'state/futures/selectors';
 import { fetchOptimismMarkets } from 'state/home/actions';
 import { selectOptimismMarkets } from 'state/home/selectors';

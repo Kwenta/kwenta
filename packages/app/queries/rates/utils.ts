@@ -1,4 +1,4 @@
-import { CandleResult } from 'sdk/utils/subgraph';
+import { CandleResult } from '@kwenta/sdk/utils';
 
 import { Candle, PythResponse } from './types';
 

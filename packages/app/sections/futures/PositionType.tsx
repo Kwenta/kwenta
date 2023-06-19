@@ -1,7 +1,7 @@
+import { PositionSide } from '@kwenta/sdk/types';
 import styled, { css } from 'styled-components';
 
 import { Body } from 'components/Text';
-import { PositionSide } from 'sdk/types/futures';
 
 type PositionProps = {
 	side: PositionSide;

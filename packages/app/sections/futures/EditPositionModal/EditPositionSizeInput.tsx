@@ -1,3 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { PositionSide } from '@kwenta/sdk/types';
+import { stripZeros, formatNumber, suggestedDecimals } from '@kwenta/sdk/utils';
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useMemo, memo, useCallback } from 'react';
 import styled from 'styled-components';
@@ -9,9 +12,6 @@ import { FlexDivRow } from 'components/layout/flex';
 import { getStep } from 'components/Slider/Slider';
 import StyledSlider from 'components/Slider/StyledSlider';
 import Spacer from 'components/Spacer';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { PositionSide } from 'sdk/types/futures';
-import { stripZeros, formatNumber, suggestedDecimals } from 'sdk/utils/number';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editCrossMarginPositionSize } from 'state/futures/actions';
 import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors';

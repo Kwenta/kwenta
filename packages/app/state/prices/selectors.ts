@@ -1,7 +1,7 @@
+import { Prices } from '@kwenta/sdk/types';
 import { createSelector } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
-import { Prices } from 'sdk/types/prices';
 import { RootState } from 'state/store';
 import { getPricesForCurrencies } from 'utils/currencies';
 import { deserializePricesInfo } from 'utils/prices';

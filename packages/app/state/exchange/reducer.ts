@@ -1,8 +1,8 @@
+import { truncateNumbers } from '@kwenta/sdk/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import { wei } from '@synthetixio/wei';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import { truncateNumbers } from 'sdk/utils/number';
 import { FetchStatus } from 'state/types';
 
 import {

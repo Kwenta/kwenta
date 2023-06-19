@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { PositionSide } from '@kwenta/sdk/types';
 import Wei, { wei } from '@synthetixio/wei';
 import React, { useMemo, memo, useCallback } from 'react';
 import styled from 'styled-components';
@@ -6,8 +8,6 @@ import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
 import { FlexDivRow } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { PositionSide } from 'sdk/types/futures';
 import { selectShowPositionModal } from 'state/app/selectors';
 import { editClosePositionSizeDelta } from 'state/futures/actions';
 import {

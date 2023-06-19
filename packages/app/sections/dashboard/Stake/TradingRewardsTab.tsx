@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { formatDollars, formatPercent, truncateNumbers } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
 import { formatEther } from 'ethers/lib/utils.js';
@@ -22,9 +24,7 @@ import {
 	FuturesFeeProps,
 	TradingRewardProps,
 } from 'queries/staking/utils';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { formatTruncatedDuration } from 'sdk/utils/date';
-import { formatDollars, formatPercent, truncateNumbers } from 'sdk/utils/number';
+import { formatTruncatedDuration } from '@kwenta/sdk/utils';
 import { StakingCard } from 'sections/dashboard/Stake/card';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { claimMultipleKwentaRewards } from 'state/staking/actions';

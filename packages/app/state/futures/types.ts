@@ -1,9 +1,7 @@
-import Wei from '@synthetixio/wei';
-
-import { Period } from 'sdk/constants/period';
-import { NetworkId } from 'sdk/types/common';
-import { TransactionStatus } from 'sdk/types/common';
+import { Period } from '@kwenta/sdk/constants';
 import {
+	NetworkId,
+	TransactionStatus,
 	SmartMarginOrderType,
 	FuturesMarket,
 	FuturesOrderTypeDisplay,
@@ -19,7 +17,9 @@ import {
 	MarginTransfer,
 	FuturesAccountType,
 	FuturesFilledPosition,
-} from 'sdk/types/futures';
+} from '@kwenta/sdk/types';
+import Wei from '@synthetixio/wei';
+
 import { PricesInfo } from 'state/prices/types';
 import { QueryStatus } from 'state/types';
 
