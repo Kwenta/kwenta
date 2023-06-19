@@ -1,3 +1,12 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { FuturesMarketAsset } from '@kwenta/sdk/types';
+import {
+	getDisplayAsset,
+	AssetDisplayByAsset,
+	MarketKeyByAsset,
+	floorNumber,
+	formatDollars,
+} from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -20,11 +29,6 @@ import ROUTES from 'constants/routes';
 import { zIndex } from 'constants/ui';
 import useClickOutside from 'hooks/useClickOutside';
 import useLocalStorage from 'hooks/useLocalStorage';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { FuturesMarketAsset } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/src/utils/futures';
-import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/src/utils/futures';
-import { floorNumber, formatDollars } from 'sdk/utils/number';
 import { selectShowBanner } from 'state/app/selectors';
 import {
 	selectMarketAsset,

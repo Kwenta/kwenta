@@ -1,8 +1,8 @@
+import { getDisplayAsset } from '@kwenta/sdk/utils';
 import { memo, useCallback } from 'react';
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg';
 import InputButton from 'components/Input/InputButton';
-import { getDisplayAsset } from 'sdk/src/utils/futures';
 import { setSelectedInputDenomination } from 'state/futures/reducer';
 import { selectMarketAsset, selectSelectedInputDenomination } from 'state/futures/selectors';
 import { useAppDispatch, useAppSelector } from 'state/hooks';

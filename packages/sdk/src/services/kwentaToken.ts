@@ -1,30 +1,30 @@
+import { BigNumber } from '@ethersproject/bignumber';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import moment from 'moment';
-import KwentaSDK from '..';
 
-import { DEFAULT_NUMBER_OF_FUTURES_FEE,
-	EPOCH_START,
-	OP_REWARDS_CUTOFF_EPOCH,
-	TRADING_REWARDS_CUTOFF_EPOCH,
-	WEEK,
-} from '../constants/staking';
-import { ZERO_WEI } from '../constants/number';
-import { ContractName } from '../contracts';
-import { formatTruncatedDuration } from '../utils/date';
-import { weiFromWei } from '../utils/number';
+import KwentaSDK from '..';
+import * as sdkErrors from '../common/errors';
+import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../constants/exchange';
 import {
 	AGGREGATE_ASSET_KEY,
 	FUTURES_ENDPOINT_OP_MAINNET,
 	KWENTA_TRACKING_CODE,
 } from '../constants/futures';
+import { ZERO_WEI } from '../constants/number';
 import { SECONDS_PER_DAY } from '../constants/period';
-import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph';
-
-import * as sdkErrors from '../common/errors';
-import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../constants/exchange';
+import {
+	DEFAULT_NUMBER_OF_FUTURES_FEE,
+	EPOCH_START,
+	OP_REWARDS_CUTOFF_EPOCH,
+	TRADING_REWARDS_CUTOFF_EPOCH,
+	WEEK,
+} from '../constants/staking';
+import { ContractName } from '../contracts';
+import { formatTruncatedDuration } from '../utils/date';
 import { client } from '../utils/files';
-import { BigNumber } from '@ethersproject/bignumber';
+import { weiFromWei } from '../utils/number';
+import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph';
 
 export type ClaimParams = [number, string, string, string[], number];
 
@@ -385,10 +385,8 @@ export default class KwentaTokenService {
 	}
 
 	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
-		const {
-			MultipleMerkleDistributor,
-			MultipleMerkleDistributorPerpsV2,
-		} = this.sdk.context.multicallContracts;
+		const { MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
+			this.sdk.context.multicallContracts;
 		const { walletAddress } = this.sdk.context;
 
 		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
@@ -558,11 +556,8 @@ export default class KwentaTokenService {
 	}
 
 	public async claimMultipleKwentaRewards(claimableRewards: ClaimParams[][]) {
-		const {
-			BatchClaimer,
-			MultipleMerkleDistributor,
-			MultipleMerkleDistributorPerpsV2,
-		} = this.sdk.context.contracts;
+		const { BatchClaimer, MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
+			this.sdk.context.contracts;
 
 		if (!BatchClaimer || !MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);
@@ -605,10 +600,8 @@ export default class KwentaTokenService {
 	}
 
 	public async claimOpRewards(claimableRewards: ClaimParams[], isSnx: boolean = false) {
-		const {
-			MultipleMerkleDistributorOp,
-			MultipleMerkleDistributorSnxOp,
-		} = this.sdk.context.contracts;
+		const { MultipleMerkleDistributorOp, MultipleMerkleDistributorSnxOp } =
+			this.sdk.context.contracts;
 
 		if (!MultipleMerkleDistributorOp || !MultipleMerkleDistributorSnxOp) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK);

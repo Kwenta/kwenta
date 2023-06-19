@@ -2,12 +2,6 @@ import Wei from '@synthetixio/wei';
 
 import { NetworkId } from '../types/common';
 
-export type SynthBalance<T = Wei> = {
-	currencyKey: string;
-	balance: T;
-	usdBalance: T;
-};
-
 export type TokenBalances<T = Wei> = Record<
 	string,
 	{

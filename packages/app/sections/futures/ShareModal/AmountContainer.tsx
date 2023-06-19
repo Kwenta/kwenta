@@ -1,11 +1,10 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { PositionSide } from '@kwenta/sdk/types';
+import { MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils';
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { PositionSide } from 'sdk/types/futures';
-import { MarketKeyByAsset } from 'sdk/src/utils/futures';
-import { formatNumber } from 'sdk/utils/number';
 import { selectMarketAsset } from 'state/futures/selectors';
 import { SharePositionParams } from 'state/futures/types';
 import { useAppSelector } from 'state/hooks';

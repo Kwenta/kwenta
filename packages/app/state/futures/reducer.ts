@@ -1,10 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
-import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
-import { Period } from 'sdk/constants/period';
-import { NetworkId } from 'sdk/types/common';
+import { Period } from '@kwenta/sdk/constants';
 import {
+	NetworkId,
 	SmartMarginOrderType,
 	FuturesAccountType,
 	FuturesMarketAsset,
@@ -13,8 +9,12 @@ import {
 	PositionSide,
 	FuturesTrade,
 	FuturesOrderType,
-} from 'sdk/types/futures';
-import { MarketKeyByAsset } from 'sdk/src/utils/futures';
+} from '@kwenta/sdk/types';
+import { MarketKeyByAsset } from '@kwenta/sdk/utils';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
+import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants';
 import {
 	DEFAULT_MAP_BY_NETWORK,
 	DEFAULT_QUERY_STATUS,

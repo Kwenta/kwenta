@@ -1,3 +1,5 @@
+import { FuturesOrderType, PositionSide } from '@kwenta/sdk/types';
+import { OrderNameByType } from '@kwenta/sdk/utils';
 import Wei from '@synthetixio/wei';
 import { ChangeEvent, useMemo } from 'react';
 import styled from 'styled-components';
@@ -5,8 +7,6 @@ import styled from 'styled-components';
 import InputHeaderRow from 'components/Input/InputHeaderRow';
 import InputTitle from 'components/Input/InputTitle';
 import NumericInput from 'components/Input/NumericInput';
-import { FuturesOrderType, PositionSide } from 'sdk/types/futures';
-import { OrderNameByType } from 'sdk/src/utils/futures';
 import { orderPriceInvalidLabel } from 'utils/futures';
 
 type Props = {

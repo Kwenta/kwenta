@@ -1,11 +1,12 @@
+import { parseBytes32String } from '@ethersproject/strings';
 import { EvmPriceServiceConnection, PriceFeed } from '@pythnetwork/pyth-evm-js';
 import Wei, { wei } from '@synthetixio/wei';
 import { formatEther } from 'ethers/lib/utils.js';
-import { parseBytes32String } from '@ethersproject/strings';
 import request, { gql } from 'graphql-request';
 import { throttle } from 'lodash';
-import KwentaSDK from '..';
 
+import KwentaSDK from '..';
+import * as sdkErrors from '../common/errors';
 import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from '../constants/futures';
 import { PERIOD_IN_SECONDS } from '../constants/period';
 import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from '../constants/prices';
@@ -27,8 +28,6 @@ import {
 import { startInterval } from '../utils/interval';
 import { scale } from '../utils/number';
 import { getRatesEndpoint } from '../utils/prices';
-
-import * as sdkErrors from '../common/errors';
 
 const DEBUG_WS = false;
 const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS;

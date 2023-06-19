@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { getDisplayAsset, formatDollars, formatPercent } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import React, { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,9 +10,6 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import { Body } from 'components/Text';
 import { NO_VALUE } from 'constants/placeholder';
 import useWindowSize from 'hooks/useWindowSize';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { getDisplayAsset } from 'sdk/src/utils/futures';
-import { formatDollars, formatPercent } from 'sdk/utils/number';
 import {
 	selectMarketAsset,
 	selectMarketInfo,

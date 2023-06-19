@@ -1,3 +1,5 @@
+import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS, ZERO_WEI } from '@kwenta/sdk/constants';
+import { NetworkId } from '@kwenta/sdk/types';
 import { wei } from '@synthetixio/wei';
 import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
@@ -13,10 +15,7 @@ import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
-import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS } from 'sdk/constants/exchange';
-import { ZERO_WEI } from 'sdk/constants/number';
 import { getSynthsListForNetwork, SynthSymbol } from 'sdk/src/data/synths';
-import { NetworkId } from 'sdk/types/common';
 import {
 	selectBalances,
 	selectBalancesFetchStatus,

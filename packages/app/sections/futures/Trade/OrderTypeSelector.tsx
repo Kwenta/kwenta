@@ -1,7 +1,8 @@
+import { CROSS_MARGIN_ORDER_TYPES } from '@kwenta/sdk/constants';
+import { SmartMarginOrderType } from '@kwenta/sdk/types';
+import { OrderNameByType } from '@kwenta/sdk/utils';
+
 import SegmentedControl from 'components/SegmentedControl';
-import { CROSS_MARGIN_ORDER_TYPES } from 'sdk/constants/futures';
-import { SmartMarginOrderType } from 'sdk/types/futures';
-import { OrderNameByType } from 'sdk/src/utils/futures';
 import { editTradeOrderPrice } from 'state/futures/actions';
 import { useAppDispatch } from 'state/hooks';
 

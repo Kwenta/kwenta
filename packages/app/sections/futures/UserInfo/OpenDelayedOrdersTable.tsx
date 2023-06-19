@@ -1,3 +1,5 @@
+import { FuturesMarketKey } from '@kwenta/sdk/types';
+import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils';
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -15,9 +17,6 @@ import {
 import useInterval from 'hooks/useInterval';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesMarketKey } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/src/utils/futures';
-import { formatCurrency, suggestedDecimals } from 'sdk/utils/number';
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
 import {
 	selectIsCancellingOrder,

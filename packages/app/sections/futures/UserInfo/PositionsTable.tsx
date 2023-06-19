@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { getDisplayAsset, formatPercent } from '@kwenta/sdk/utils';
 import { useRouter } from 'next/router';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,9 +17,6 @@ import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useWindowSize from 'hooks/useWindowSize';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { getDisplayAsset } from 'sdk/src/utils/futures';
-import { formatPercent } from 'sdk/utils/number';
 import PositionType from 'sections/futures/PositionType';
 import { setShowPositionModal } from 'state/app/reducer';
 import {

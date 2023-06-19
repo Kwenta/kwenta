@@ -1,13 +1,11 @@
+import { NetworkId } from '@kwenta/sdk/types';
+import { getFuturesEndpoint, weiFromWei, truncateAddress } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { NetworkId } from 'sdk/types/common';
-import { getFuturesEndpoint } from 'sdk/src/utils/futures';
-import { weiFromWei } from 'sdk/utils/number';
-import { truncateAddress } from 'sdk/utils/string';
 import logError from 'utils/logError';
 
 import { AccountStat, FuturesStat } from './types';

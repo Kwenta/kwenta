@@ -1,3 +1,11 @@
+import { FuturesMarketAsset, FuturesTrade } from '@kwenta/sdk/types';
+import {
+	MarketKeyByAsset,
+	getDisplayAsset,
+	formatCryptoCurrency,
+	formatDollars,
+	formatShortDateWithoutYear,
+} from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import * as _ from 'lodash/fp';
 import Link from 'next/link';
@@ -17,11 +25,6 @@ import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesMarketAsset, FuturesTrade } from 'sdk/types/futures';
-import { formatShortDateWithoutYear } from 'sdk/utils/date';
-import { MarketKeyByAsset } from 'sdk/src/utils/futures';
-import { getDisplayAsset } from 'sdk/src/utils/futures';
-import { formatCryptoCurrency, formatDollars } from 'sdk/utils/number';
 import TradeDrawer from 'sections/futures/MobileTrade/drawers/TradeDrawer';
 import PositionType from 'sections/futures/PositionType';
 import { TradeStatus } from 'sections/futures/types';

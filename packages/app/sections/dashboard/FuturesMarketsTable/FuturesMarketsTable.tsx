@@ -1,3 +1,10 @@
+import { FuturesMarketAsset } from '@kwenta/sdk/types';
+import {
+	AssetDisplayByAsset,
+	MarketKeyByAsset,
+	getDisplayAsset,
+	formatDollars,
+} from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
@@ -13,10 +20,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Spacer from 'components/Spacer';
 import Table, { TableHeader } from 'components/Table';
 import ROUTES from 'constants/routes';
-import { FuturesMarketAsset } from 'sdk/types/futures';
-import { getDisplayAsset } from 'sdk/src/utils/futures';
-import { AssetDisplayByAsset, MarketKeyByAsset } from 'sdk/src/utils/futures';
-import { formatDollars } from 'sdk/utils/number';
 import {
 	selectFuturesType,
 	selectMarkets,

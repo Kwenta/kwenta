@@ -1,3 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { FuturesMarketAsset, FuturesOrderType, PositionSide } from '@kwenta/sdk/types';
+import { getDisplayAsset, OrderNameByType, formatCurrency } from '@kwenta/sdk/utils';
 import Wei from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -7,10 +10,6 @@ import { FlexDivRowCentered } from 'components/layout/flex';
 import Spacer from 'components/Spacer';
 import { NumericValue } from 'components/Text';
 import { NumberBody } from 'components/Text/NumericValue';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { FuturesMarketAsset, FuturesOrderType, PositionSide } from 'sdk/types/futures';
-import { getDisplayAsset, OrderNameByType } from 'sdk/src/utils/futures';
-import { formatCurrency } from 'sdk/utils/number';
 
 import PositionType from '../PositionType';
 

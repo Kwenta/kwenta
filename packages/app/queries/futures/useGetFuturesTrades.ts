@@ -1,16 +1,12 @@
+import { NetworkId, FuturesTrade } from '@kwenta/sdk/types';
+import { getFuturesEndpoint, mapTrades, notNill, getFuturesTrades } from '@kwenta/sdk/utils';
 import { utils as ethersUtils } from 'ethers';
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
 
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { NetworkId } from 'sdk/types/common';
-import { FuturesTrade } from 'sdk/types/futures';
-import { getFuturesEndpoint, mapTrades } from 'sdk/src/utils/futures';
-import { notNill } from 'sdk/utils/general';
 import logError from 'utils/logError';
-
-import { getFuturesTrades } from '../../sdk/utils/subgraph';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,

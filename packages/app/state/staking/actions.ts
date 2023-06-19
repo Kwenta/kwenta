@@ -1,6 +1,6 @@
+import KwentaSDK from '@kwenta/sdk';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { BigNumber } from 'ethers';
-import KwentaSDK from 'sdk/src';
 
 import { monitorTransaction } from 'contexts/RelayerContext';
 import { EscrowData } from 'sdk/src/services/kwentaToken';

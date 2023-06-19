@@ -1,6 +1,6 @@
+import { SynthSuspensionReason, Token } from '@kwenta/sdk/types';
+
 import { SynthSymbol } from 'sdk/src/data/synths';
-import { SynthSuspensionReason } from 'sdk/types/futures';
-import { Token } from 'sdk/types/tokens';
 import { FetchStatus } from 'state/types';
 
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';

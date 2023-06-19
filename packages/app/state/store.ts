@@ -1,3 +1,4 @@
+import KwentaSDK from '@kwenta/sdk';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import type { AnyAction, ThunkAction } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
@@ -13,7 +14,6 @@ import {
 	REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import KwentaSDK from 'sdk/src';
 
 import appReducer from './app/reducer';
 import balancesReducer from './balances/reducer';

@@ -1,11 +1,10 @@
+import { MarketKeyByAsset, getDisplayAsset } from '@kwenta/sdk/utils';
 import { WeiSource } from '@synthetixio/wei';
 import { useEffect, useRef, useMemo, FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
 
 import useStatsData from 'hooks/useStatsData';
-import { MarketKeyByAsset, getDisplayAsset } from 'sdk/src/utils/futures';
-import { formatDollars } from 'sdk/utils/number';
 import { SYNTH_ICONS } from 'utils/icons';
 
 import { initChart } from '../initChart';

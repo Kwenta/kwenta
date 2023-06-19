@@ -1,8 +1,8 @@
+import { SynthSymbol } from '@kwenta/sdk/data/synths';
 import { FC, useMemo, memo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { SynthSymbol } from 'sdk/src/data/synths';
 import {
 	MessageContainer,
 	Message,

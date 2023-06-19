@@ -1,3 +1,13 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants';
+import { PositionSide } from '@kwenta/sdk/types';
+import {
+	getDisplayAsset,
+	OrderNameByType,
+	formatCurrency,
+	formatDollars,
+	formatPercent,
+	formatNumber,
+} from '@kwenta/sdk/utils';
 import { FC, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -10,10 +20,6 @@ import { ButtonLoader } from 'components/Loader/Loader';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { PositionSide } from 'sdk/types/futures';
-import { getDisplayAsset, OrderNameByType } from 'sdk/src/utils/futures';
-import { formatCurrency, formatDollars, formatPercent, formatNumber } from 'sdk/utils/number';
 import { setOpenModal } from 'state/app/reducer';
 import { modifyIsolatedPosition } from 'state/futures/actions';
 import {

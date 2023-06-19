@@ -1,0 +1,7 @@
+{
+	"name": "@kwenta/sdk/types",
+	"type": "module",
+	"main": "../dist/types/index.js",
+	"types": "../dist/types/index.d.ts",
+	"sideEffects": false
+}

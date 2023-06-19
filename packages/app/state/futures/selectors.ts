@@ -1,19 +1,25 @@
+import { SL_TP_MAX_SIZE, ZERO_WEI, PERIOD_IN_SECONDS, Period } from '@kwenta/sdk/constants';
+import {
+	TransactionStatus,
+	ConditionalOrderTypeEnum,
+	FuturesPosition,
+	PositionSide,
+} from '@kwenta/sdk/types';
+import {
+	truncateTimestamp,
+	calculateDesiredFillPrice,
+	getDefaultPriceImpact,
+	unserializePotentialTrade,
+	MarketKeyByAsset,
+	MarketAssetByKey,
+	stripZeros,
+} from '@kwenta/sdk/utils';
 import { createSelector } from '@reduxjs/toolkit';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_LEVERAGE } from 'constants/defaults';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesAccountTypes } from 'queries/futures/types';
-import { SL_TP_MAX_SIZE } from 'sdk/constants/futures';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { PERIOD_IN_SECONDS, Period } from 'sdk/constants/period';
-import { TransactionStatus } from 'sdk/types/common';
-import { ConditionalOrderTypeEnum, FuturesPosition, PositionSide } from 'sdk/types/futures';
-import { truncateTimestamp } from 'sdk/utils/date';
-import { calculateDesiredFillPrice } from 'sdk/src/utils/futures';
-import { getDefaultPriceImpact, unserializePotentialTrade } from 'sdk/src/utils/futures';
-import { MarketKeyByAsset, MarketAssetByKey } from 'sdk/src/utils/futures';
-import { stripZeros } from 'sdk/utils/number';
 import { selectSusdBalance } from 'state/balances/selectors';
 import { accountType, deserializeWeiObject } from 'state/helpers';
 import {

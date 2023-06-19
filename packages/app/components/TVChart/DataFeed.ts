@@ -1,3 +1,5 @@
+import { NetworkId, FuturesMarketAsset, PricesListener } from '@kwenta/sdk/types';
+import { getDisplayAsset } from '@kwenta/sdk/utils';
 import {
 	HistoryCallback,
 	IBasicDataFeed,
@@ -10,10 +12,6 @@ import {
 } from 'public/static/charting_library/charting_library';
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import { NetworkId } from 'sdk/types/common';
-import { FuturesMarketAsset } from 'sdk/types/futures';
-import { PricesListener } from 'sdk/types/prices';
-import { getDisplayAsset } from 'sdk/src/utils/futures';
 import { sdk } from 'state/config';
 
 import { ChartBar } from './types';

@@ -1,0 +1,7 @@
+{
+	"name": "@kwenta/sdk/constants",
+	"type": "module",
+	"main": "../dist/constants/index.js",
+	"types": "../dist/constants/index.d.ts",
+	"sideEffects": false
+}

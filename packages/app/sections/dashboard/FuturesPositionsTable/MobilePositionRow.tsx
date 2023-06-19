@@ -1,3 +1,5 @@
+import { FuturesFilledPosition, FuturesMarket, PositionSide } from '@kwenta/sdk/types';
+import { getMarketName, MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils';
 import Wei, { wei } from '@synthetixio/wei';
 import { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
@@ -6,10 +8,6 @@ import { border } from 'components/Button';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import { FuturesFilledPosition, FuturesMarket, PositionSide } from 'sdk/types/futures';
-import { getMarketName } from 'sdk/src/utils/futures';
-import { MarketKeyByAsset } from 'sdk/src/utils/futures';
-import { formatNumber } from 'sdk/utils/number';
 import { selectMarkPrices } from 'state/futures/selectors';
 import { useAppSelector } from 'state/hooks';
 import { isDecimalFour } from 'utils/futures';

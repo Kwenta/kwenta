@@ -1,6 +1,3 @@
-import Wei, { wei } from '@synthetixio/wei';
-import { TFunction } from 'i18next';
-
 import {
 	DelayedOrder,
 	FuturesMarket,
@@ -12,10 +9,17 @@ import {
 	FuturesTrade,
 	FuturesVolumes,
 	PositionSide,
-} from 'sdk/types/futures';
-import { PricesMap } from 'sdk/types/prices';
-import { AssetDisplayByAsset, MarketKeyByAsset, getDisplayAsset } from 'sdk/src/utils/futures';
-import { formatNumber } from 'sdk/utils/number';
+	PricesMap,
+} from '@kwenta/sdk/types';
+import {
+	AssetDisplayByAsset,
+	MarketKeyByAsset,
+	getDisplayAsset,
+	formatNumber,
+} from '@kwenta/sdk/utils';
+import Wei, { wei } from '@synthetixio/wei';
+import { TFunction } from 'i18next';
+
 import {
 	CrossMarginBalanceInfo,
 	TradeSizeInputs,

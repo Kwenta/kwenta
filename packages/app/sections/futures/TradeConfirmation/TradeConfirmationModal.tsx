@@ -1,3 +1,13 @@
+import { MIN_MARGIN_AMOUNT, ZERO_WEI } from '@kwenta/sdk/constants';
+import { PositionSide } from '@kwenta/sdk/types';
+import {
+	OrderNameByType,
+	formatCurrency,
+	formatDollars,
+	formatNumber,
+	formatPercent,
+	stripZeros,
+} from '@kwenta/sdk/utils';
 import Wei, { wei } from '@synthetixio/wei';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,17 +21,6 @@ import { ButtonLoader } from 'components/Loader/Loader';
 import Spacer from 'components/Spacer';
 import Tooltip from 'components/Tooltip/Tooltip';
 import { NO_VALUE } from 'constants/placeholder';
-import { MIN_MARGIN_AMOUNT } from 'sdk/constants/futures';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { PositionSide } from 'sdk/types/futures';
-import { OrderNameByType } from 'sdk/src/utils/futures';
-import {
-	formatCurrency,
-	formatDollars,
-	formatNumber,
-	formatPercent,
-	stripZeros,
-} from 'sdk/utils/number';
 import { refetchTradePreview, submitCrossMarginOrder } from 'state/futures/actions';
 import {
 	selectLeverageSide,

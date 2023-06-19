@@ -1,19 +1,11 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import Wei, { wei } from '@synthetixio/wei';
-import { BigNumber, ethers } from 'ethers';
-import { debounce } from 'lodash';
-import KwentaSDK from 'sdk/src';
-
-import { notifyError } from 'components/ErrorView/ErrorNotifier';
+import KwentaSDK from '@kwenta/sdk';
 import {
 	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
 	ORDER_KEEPER_ETH_DEPOSIT,
 	SL_TP_MAX_SIZE,
-} from 'sdk/constants/futures';
-import { ZERO_ADDRESS } from 'sdk/constants/global';
-import { ZERO_WEI } from 'sdk/constants/number';
-import { NetworkId } from 'sdk/types/common';
-import { TransactionStatus } from 'sdk/types/common';
+	ZERO_ADDRESS,
+	ZERO_WEI,
+} from '@kwenta/sdk/constants';
 import {
 	DelayedOrder,
 	FuturesAccountType,
@@ -33,15 +25,24 @@ import {
 	FuturesMarketKey,
 	ContractOrderType,
 	FuturesMarketAsset,
-} from 'sdk/types/futures';
+	NetworkId,
+	TransactionStatus,
+} from '@kwenta/sdk/types';
 import {
 	calculateDesiredFillPrice,
 	getTradeStatusMessage,
 	serializePotentialTrade,
-} from 'sdk/src/utils/futures';
-import { marketOverrides } from 'sdk/src/utils/futures';
-import { floorNumber, stripZeros } from 'sdk/utils/number';
-import { getTransactionPrice } from 'sdk/utils/transactions';
+	marketOverrides,
+	floorNumber,
+	stripZeros,
+	getTransactionPrice,
+} from '@kwenta/sdk/utils';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import Wei, { wei } from '@synthetixio/wei';
+import { BigNumber, ethers } from 'ethers';
+import { debounce } from 'lodash';
+
+import { notifyError } from 'components/ErrorView/ErrorNotifier';
 import { unserializeGasPrice } from 'state/app/helpers';
 import {
 	handleTransactionError,

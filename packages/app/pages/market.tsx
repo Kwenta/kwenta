@@ -1,3 +1,5 @@
+import { FuturesMarketAsset } from '@kwenta/sdk/types';
+import { MarketKeyByAsset } from '@kwenta/sdk/utils';
 import { useRouter } from 'next/router';
 import { useEffect, FC, useState } from 'react';
 import styled from 'styled-components';
@@ -7,8 +9,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Connector from 'containers/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useWindowSize from 'hooks/useWindowSize';
-import { FuturesMarketAsset } from 'sdk/types/futures';
-import { MarketKeyByAsset } from 'sdk/src/utils/futures';
 import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal';
 import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';

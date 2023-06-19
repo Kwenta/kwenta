@@ -1,14 +1,11 @@
+import { NetworkId, ConditionalOrder, PricesListener } from '@kwenta/sdk/types';
+import { formatOrderDisplayType, formatNumber } from '@kwenta/sdk/utils';
 import { useRouter } from 'next/router';
 import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
 import { ThemeContext } from 'styled-components';
 
 import Connector from 'containers/Connector';
 import { chain } from 'containers/Connector/config';
-import { NetworkId } from 'sdk/types/common';
-import { ConditionalOrder } from 'sdk/types/futures';
-import { PricesListener } from 'sdk/types/prices';
-import { formatOrderDisplayType } from 'sdk/src/utils/futures';
-import { formatNumber } from 'sdk/utils/number';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import { sdk } from 'state/config';
 import { useAppSelector } from 'state/hooks';

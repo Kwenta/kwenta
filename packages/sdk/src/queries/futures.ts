@@ -1,7 +1,7 @@
 import { formatBytes32String } from '@ethersproject/strings';
 import request, { gql } from 'graphql-request';
-import KwentaSDK from '..';
 
+import KwentaSDK from '..';
 import {
 	SMART_MARGIN_FRAGMENT,
 	ISOLATED_MARGIN_FRAGMENT,
