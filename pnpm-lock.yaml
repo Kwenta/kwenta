@@ -206,6 +206,9 @@ importers:
       wagmi:
         specifier: 0.9.6
         version: 0.9.6(ethers@5.7.2)(react-dom@18.2.0)(react-native@0.71.11)(react@18.2.0)(typescript@4.7.4)
+      zrender:
+        specifier: ^5.4.3
+        version: 5.4.3
     devDependencies:
       '@microsoft/eslint-formatter-sarif':
         specifier: 2.1.7
