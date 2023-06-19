@@ -125,6 +125,11 @@ const StakingHeading = styled(FlexDivRowCentered)`
 `;
 
 const StakingPortfolioContainer = styled.div`
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
+	padding: 20px;
+	border-radius: 20px;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
+
 	${media.lessThan('mdUp')`
 		padding: 15px;
 	`}
