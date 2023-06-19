@@ -430,7 +430,7 @@ importers:
         specifier: ^2.30.0
         version: 2.30.0
       ethcall:
-        specifier: ^4.7.2
+        specifier: 4.7.2
         version: 4.7.2
       ethers:
         specifier: ^5.7.2
