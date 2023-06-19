@@ -1,8 +1,8 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { SafeAppProvider } from '@gnosis.pm/safe-apps-provider';
 import SafeAppsSDK, { Opts as SafeOpts, SafeInfo } from '@gnosis.pm/safe-apps-sdk';
-import { Connector, Chain, ConnectorNotFoundError } from '@wagmi/core';
 import { getAddress } from 'ethers/lib/utils';
+import { Connector, Chain, ConnectorNotFoundError } from 'wagmi';
 
 function normalizeChainId(chainId: string | number) {
 	if (typeof chainId === 'string') {
