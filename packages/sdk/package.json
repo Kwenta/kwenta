@@ -46,7 +46,9 @@
 	],
 	"dependencies": {
 		"@eth-optimism/contracts": "^0.6.0",
+		"@ethersproject/abi": "^5.7.0",
 		"@ethersproject/bignumber": "^5.7.0",
+		"@ethersproject/properties": "^5.7.0",
 		"@ethersproject/providers": "^5.7.2",
 		"@ethersproject/strings": "^5.7.0",
 		"@pythnetwork/pyth-evm-js": "^1.17.0",
@@ -55,7 +57,7 @@
 		"bn.js": "^5.2.1",
 		"codegen-graph-ts": "^0.1.4",
 		"date-fns": "^2.30.0",
-		"ethcall": "^6.0.0",
+		"ethcall": "4.7.2",
 		"ethers": "^5.7.2",
 		"graphql-request": "^6.1.0",
 		"lodash": "^4.17.21",

@@ -26,7 +26,7 @@ const DEFAULT_CONTEXT: Partial<IContext> = {
 
 export default class Context implements IContext {
 	private context: IContext;
-	public multicallProvider: EthCallProvider;
+	public multicallProvider = new EthCallProvider();
 	public contracts: ContractsMap;
 	public multicallContracts: MulticallContractsMap;
 	public events = new EventEmitter().setMaxListeners(100);
@@ -34,7 +34,9 @@ export default class Context implements IContext {
 	constructor(context: IContext) {
 		this.context = { ...DEFAULT_CONTEXT, ...context };
 
-		this.multicallProvider = new EthCallProvider(this.networkId, this.context.provider);
+		if (context.provider) {
+			this.multicallProvider.init(context.provider);
+		}
 
 		if (context.signer) {
 			this.setSigner(context.signer);
@@ -78,9 +80,9 @@ export default class Context implements IContext {
 
 	public async setProvider(provider: ethers.providers.Provider) {
 		this.context.provider = provider;
-		const networkId = ((await provider.getNetwork()).chainId as unknown) as NetworkId;
+		this.multicallProvider.init(provider);
+		const networkId = (await provider.getNetwork()).chainId as NetworkId;
 
-		this.multicallProvider = new EthCallProvider(networkId, provider);
 		this.setNetworkId(networkId);
 
 		return networkId;

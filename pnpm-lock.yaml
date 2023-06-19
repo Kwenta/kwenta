@@ -396,7 +396,13 @@ importers:
       '@eth-optimism/contracts':
         specifier: ^0.6.0
         version: 0.6.0(ethers@5.7.2)
+      '@ethersproject/abi':
+        specifier: ^5.7.0
+        version: 5.7.0
       '@ethersproject/bignumber':
+        specifier: ^5.7.0
+        version: 5.7.0
+      '@ethersproject/properties':
         specifier: ^5.7.0
         version: 5.7.0
       '@ethersproject/providers':
@@ -424,8 +430,8 @@ importers:
         specifier: ^2.30.0
         version: 2.30.0
       ethcall:
-        specifier: ^6.0.0
-        version: 6.0.0(ethers@5.7.2)
+        specifier: ^4.7.2
+        version: 4.7.2
       ethers:
         specifier: ^5.7.2
         version: 5.7.2
@@ -7453,10 +7459,6 @@ packages:
     resolution: {integrity: sha512-N+0kuo9KgrUQ1Sn/ifDXsvg0TTleP7rIy4zOBGECxAljqvqfqpTfzx0Q1NUedOixRMBfe2Whhb056a42cWs26Q==}
     dev: true
 
-  /@types/node@18.16.18:
-    resolution: {integrity: sha512-/aNaQZD0+iSBAGnvvN2Cx92HqE5sZCPZtx2TsK+4nvV23fFe09jVDvpArXr2j9DnYlzuU9WuoykDDc6wqvpNcw==}
-    dev: false
-
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
     dev: true
@@ -8648,14 +8650,6 @@ packages:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/keccak256': 5.7.0
       '@ethersproject/strings': 5.7.0
-    dev: false
-
-  /abi-coder@5.0.0(ethers@5.7.2):
-    resolution: {integrity: sha512-Kpyv/AhAaIaVJiJ6S/xqoTsiJrfSMc3QsBCiRDqic3o1CZNKGR3CIeT1K/1VZ7Wk5uSwsOAxQcke1TVUEz+usg==}
-    peerDependencies:
-      ethers: ^6.0.0
-    dependencies:
-      ethers: 5.7.2
     dev: false
 
   /abi-decoder@2.4.0:
@@ -13210,16 +13204,6 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-    dev: false
-
-  /ethcall@6.0.0(ethers@5.7.2):
-    resolution: {integrity: sha512-EhXUUTbVSpSGX5xqLFoyLT+Wi6yewB1P5pUmn+coPYQWroolIbPiIFX/5zUlIHKZjYQdvk1WNMOWMhqVPxuZwQ==}
-    peerDependencies:
-      ethers: ^6.0.0
-    dependencies:
-      '@types/node': 18.16.18
-      abi-coder: 5.0.0(ethers@5.7.2)
-      ethers: 5.7.2
     dev: false
 
   /ethereum-block-by-date@1.4.5:
