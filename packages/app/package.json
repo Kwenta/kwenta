@@ -25,6 +25,7 @@
 	},
 	"dependencies": {
 		"@eth-optimism/contracts": "0.5.37",
+		"@ethersproject/providers": "^5.7.2",
 		"@gnosis.pm/safe-apps-provider": "^0.14.0",
 		"@gnosis.pm/safe-apps-sdk": "^7.8.0",
 		"@kwenta/sdk": "workspace:*",
