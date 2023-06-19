@@ -412,8 +412,8 @@ importers:
         specifier: ^2.74.4
         version: 2.74.4
       axios:
-        specifier: ^1.4.0
-        version: 1.4.0(debug@4.3.4)
+        specifier: 0.27.2
+        version: 0.27.2(debug@4.3.4)
       bn.js:
         specifier: ^5.2.1
         version: 5.2.1
@@ -9389,6 +9389,7 @@ packages:
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
+    dev: true
 
   /axobject-query@2.2.0:
     resolution: {integrity: sha512-Td525n+iPOOyUQIeBfcASuG6uJsDOITl7Mds5gFyerkWiX7qhUTdYUBlSgNMyVqtSJqwpt1kXGLdUt6SykLMRA==}
