@@ -4,7 +4,9 @@
 	"description": "Kwenta",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"pre-commit": "pnpm run --filter \"@kwenta/*\" pre-commit",
+		"check-types": "pnpm run --filter \"@kwenta/*\" check-types",
+		"prepare": "husky install"
 	},
 	"repository": {
 		"type": "git",
@@ -17,7 +19,18 @@
 		"url": "https://github.com/Kwenta/kwenta/issues"
 	},
 	"homepage": "https://github.com/Kwenta/kwenta#readme",
+	"husky": {
+		"hooks": {
+			"pre-commit": "npm run lint"
+		}
+	},
+	"lint-staged": {
+		"*.{ts,tsx}": [
+			"eslint"
+		]
+	},
 	"devDependencies": {
-		"husky": "8.0.1"
+		"husky": "8.0.1",
+		"lint-staged": "^13.0.3"
 	}
 }

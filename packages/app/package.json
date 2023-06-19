@@ -1,12 +1,12 @@
 {
-	"name": "kwenta",
+	"name": "@kwenta/app",
 	"version": "7.2.5",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
 		"start": "next start",
 		"export": "next export",
-		"tsc": "tsc --noEmit",
+		"check-types": "tsc --noEmit",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
 		"jest-preview": "jest-preview",
 		"lint": "eslint . --ext ts,.tsx && tsc",
@@ -137,12 +137,10 @@
 		"eslint-plugin-testing-library": "^5.1.0",
 		"eslint-plugin-ui-testing": "^2.0.0",
 		"html-to-image": "1.11.4",
-		"husky": "8.0.1",
 		"jest": "28.1.0",
 		"jest-environment-jsdom": "28.1.0",
 		"jest-preview": "^0.3.1",
 		"jest-transformer-svg": "^2.0.0",
-		"lint-staged": "^13.0.3",
 		"next-router-mock": "0.9.3",
 		"pinst": "3.0.0",
 		"postcss": "^8.4.24",
@@ -152,16 +150,6 @@
 		"typescript": "4.7.4",
 		"url-loader": "4.1.0",
 		"webp-loader": "0.6.0"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "npm run lint"
-		}
-	},
-	"lint-staged": {
-		"*.{ts,tsx}": [
-			"eslint"
-		]
 	},
 	"engines": {
 		"node": ">=16",
