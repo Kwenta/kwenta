@@ -16,6 +16,10 @@
 	"author": "",
 	"license": "MIT",
 	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
 		"./constants": {
 			"import": "./dist/constants/index.js",
 			"types": "./dist/constants/index.d.ts"

@@ -351,9 +351,6 @@ importers:
       html-to-image:
         specifier: 1.11.4
         version: 1.11.4
-      husky:
-        specifier: 8.0.1
-        version: 8.0.1
       jest:
         specifier: 28.1.0
         version: 28.1.0(@types/node@14.0.13)
@@ -366,9 +363,6 @@ importers:
       jest-transformer-svg:
         specifier: ^2.0.0
         version: 2.0.0(jest@28.1.0)(react@18.2.0)
-      lint-staged:
-        specifier: ^13.0.3
-        version: 13.0.3
       next-router-mock:
         specifier: 0.9.3
         version: 0.9.3(next@13.3.4)(react@18.2.0)
