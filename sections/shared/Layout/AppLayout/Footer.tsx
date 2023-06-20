@@ -1,6 +1,7 @@
 import router from 'next/router';
 import styled from 'styled-components';
 
+import ChatRoom from 'components/ChatRoom/ChatRoom';
 import { Body } from 'components/Text';
 import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
@@ -15,6 +16,7 @@ const Footer = () => {
 			<OperationStatus />
 			<GitHashID />
 			<RightContainer>
+				<ChatRoom />
 				<FooterLinkInternal onClick={() => router.push(ROUTES.Stats.Home)}>
 					<Body color="secondary">Stats</Body>
 				</FooterLinkInternal>
