@@ -21,7 +21,8 @@
 		"postpublish": "pinst --enable",
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
-		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./sdk/contracts/types './sdk/contracts/abis/*.json' --show-stack-traces"
+		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./sdk/contracts/types './sdk/contracts/abis/*.json' --show-stack-traces",
+		"preinstall": "pnpm --filter \"@kwenta/sdk\" build"
 	},
 	"dependencies": {
 		"@eth-optimism/contracts": "0.5.37",
