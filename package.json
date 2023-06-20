@@ -42,7 +42,6 @@
 		"@synthetixio/wei": "2.74.4",
 		"@widgetbot/react-embed": "^1.7.0",
 		"axios": "0.27.2",
-		"bignumber.js": "9.0.0",
 		"codegen-graph-ts": "^0.1.4",
 		"cors": "^2.8.5",
 		"crypto-browserify": "^3.12.0",
