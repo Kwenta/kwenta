@@ -50,7 +50,6 @@
 		"echarts": "5.4.2",
 		"eslint-config-next": "^13.3.4",
 		"ethcall": "4.7.2",
-		"ethereum-block-by-date": "^1.4.5",
 		"ethers": "5.7.2",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
