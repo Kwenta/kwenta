@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Spacer from 'components/Spacer';
-import { formatRevert, isUserDeniedError } from 'utils/formatters/error';
 import { truncateString } from 'sdk/utils/string';
+import { formatRevert, isUserDeniedError } from 'utils/formatters/error';
 
 import { formatError } from './ErrorNotifier';
 

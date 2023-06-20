@@ -9,6 +9,7 @@ import { blockExplorer } from 'containers/Connector/Connector';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { formatDollars } from 'sdk/utils/number';
+import { truncateAddress } from 'sdk/utils/string';
 import {
 	selectFuturesType,
 	selectIdleMarginTransfers,
@@ -19,7 +20,6 @@ import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
-import { truncateAddress } from 'sdk/utils/string';
 
 const Transfers: FC = () => {
 	const { t } = useTranslation();

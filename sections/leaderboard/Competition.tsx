@@ -13,9 +13,9 @@ import useENSs from 'hooks/useENSs';
 import useGetFile from 'queries/files/useGetFile';
 import { AccountStat } from 'queries/futures/types';
 import { formatPercent } from 'sdk/utils/number';
+import { truncateAddress } from 'sdk/utils/string';
 import { StyledTrader } from 'sections/leaderboard/trader';
 import { getMedal, getCompetitionDataLocation } from 'utils/competition';
-import { truncateAddress } from 'sdk/utils/string';
 
 type CompetitionProps = {
 	round: CompetitionRound;
