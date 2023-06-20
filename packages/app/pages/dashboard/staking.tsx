@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
@@ -9,7 +9,7 @@ import StakingTabs from 'sections/dashboard/Stake/StakingTabs';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions';
 
-type StakingComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element };
 
 const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation();

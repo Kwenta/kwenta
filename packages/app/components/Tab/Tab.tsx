@@ -1,7 +1,7 @@
-import { FC, memo } from 'react';
+import { FC, ReactNode, memo } from 'react';
 import styled, { css } from 'styled-components';
 
-export const TabList: FC = ({ children, ...props }) => (
+export const TabList: FC<{ children?: ReactNode }> = ({ children, ...props }) => (
 	<div role="tablist" {...props}>
 		{children}
 	</div>
@@ -11,6 +11,7 @@ type TabPanelProps = {
 	name: string;
 	activeTab: string;
 	fullHeight?: boolean;
+	children?: ReactNode;
 };
 
 export const TabPanel: React.FC<TabPanelProps> = memo(

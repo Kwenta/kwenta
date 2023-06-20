@@ -33,7 +33,7 @@ const NumericValue: FC<NumericValueProps> = memo(
 
 		return (
 			<Body mono color={numberColor} {...props}>
-				{props.children ?? formatNumber(value, options)}
+				{props.children && formatNumber(value, options)}
 				{suffix}
 			</Body>
 		);

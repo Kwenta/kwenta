@@ -1,5 +1,5 @@
-import i18n from 'i18n';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import Failure from 'assets/svg/app/failure.svg';
@@ -13,35 +13,41 @@ type NotificationProps = {
 };
 
 const NotificationPending = () => {
+	const { t } = useTranslation();
+
 	return (
 		<FlexDivCentered>
 			<IconContainer>
 				<Spinner width={35} height={35} />
 			</IconContainer>
-			<FlexDivCol>{i18n.t('common.transaction.transaction-sent')}</FlexDivCol>
+			<FlexDivCol>{t('common.transaction.transaction-sent')}</FlexDivCol>
 		</FlexDivCentered>
 	);
 };
 
 const NotificationSuccess = () => {
+	const { t } = useTranslation();
+
 	return (
 		<FlexDivCentered>
 			<IconContainer>
 				<Success width={35} height={35} />
 			</IconContainer>
-			<FlexDivCol>{i18n.t('common.transaction.transaction-confirmed')}</FlexDivCol>
+			<FlexDivCol>{t('common.transaction.transaction-confirmed')}</FlexDivCol>
 		</FlexDivCentered>
 	);
 };
 
 const NotificationError = ({ failureReason }: NotificationProps) => {
+	const { t } = useTranslation();
+
 	return (
 		<FlexDivCentered>
 			<IconContainer>
 				<Failure width={35} />
 			</IconContainer>
 			<FlexDivCol>
-				<div>{i18n.t('common.transaction.transaction-failed')}</div>
+				<div>{t('common.transaction.transaction-failed')}</div>
 				<div>{failureReason}</div>
 			</FlexDivCol>
 		</FlexDivCentered>

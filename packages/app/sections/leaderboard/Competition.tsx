@@ -90,6 +90,7 @@ const Competition: FC<CompetitionProps> = ({
 	return (
 		<>
 			<DesktopOnlyView>
+				{/*@ts-expect-error*/}
 				<StyledTable
 					compact={compact}
 					showPagination={!compact}
@@ -185,6 +186,7 @@ const Competition: FC<CompetitionProps> = ({
 				/>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
+				{/*@ts-expect-error*/}
 				<StyledTable
 					data={data}
 					compact={compact}

@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
@@ -7,7 +7,7 @@ import RewardsTabs from 'sections/dashboard/Rewards/RewardsTabs';
 import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { fetchClaimableRewards, fetchStakingData } from 'state/staking/actions';
 
-type RewardsComponent = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type RewardsComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element };
 
 const RewardsPage: RewardsComponent = () => {
 	const { t } = useTranslation();

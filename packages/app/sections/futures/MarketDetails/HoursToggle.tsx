@@ -15,7 +15,7 @@ const HoursToggle: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	const getLabelByValue = (value: number): string => FUNDING_RATE_PERIODS[value] ?? '1H';
 	const updatePeriod = useCallback(
-		(v) => {
+		(v: number) => {
 			dispatch(setSelectedInputFundingRateHour(v));
 			setOpen(!open);
 		},

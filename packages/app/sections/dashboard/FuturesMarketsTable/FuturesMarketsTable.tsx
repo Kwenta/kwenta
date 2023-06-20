@@ -87,6 +87,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 		<>
 			<DesktopOnlyView>
 				<TableContainer>
+					{/*@ts-expect-error*/}
 					<StyledTable
 						data={data}
 						showPagination
@@ -275,6 +276,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 				</TableContainer>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
+				{/*@ts-expect-error*/}
 				<StyledMobileTable
 					data={data}
 					showPagination

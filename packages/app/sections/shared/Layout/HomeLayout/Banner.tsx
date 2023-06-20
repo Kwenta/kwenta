@@ -59,7 +59,7 @@ const Banner = memo(() => {
 	);
 
 	const handleDismiss = useCallback(
-		(e) => {
+		(e: any) => {
 			dispatch(setShowBanner(false));
 			localStore.set('bannerIsClicked', new Date().getTime());
 			e.stopPropagation();

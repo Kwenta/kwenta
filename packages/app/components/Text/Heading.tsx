@@ -1,10 +1,11 @@
-import { memo } from 'react';
+import { ReactNode, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 type HeadingProps = {
 	variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 	fontSize?: number;
 	className?: string;
+	children?: ReactNode;
 };
 
 const Heading: React.FC<HeadingProps> = memo(({ variant = 'h1', fontSize, ...props }) => {

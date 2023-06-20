@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 
 import { linkCSS } from 'styles/common';
@@ -10,6 +10,7 @@ type NavButtonProps = {
 	href: string;
 	disabled?: boolean;
 	external?: boolean;
+	children?: ReactNode;
 };
 
 const NavButton: React.FC<NavButtonProps> = ({ title, href, external, disabled, ...props }) => {

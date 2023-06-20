@@ -30,5 +30,6 @@
     "**/*.ts",
     "**/*.tsx",
     "next.config.js"
-  ]
+  ],
+  "types": ["node", "jest", "@testing-library/jest-dom"],
 }

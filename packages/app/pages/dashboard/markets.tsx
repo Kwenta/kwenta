@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -11,7 +11,7 @@ import { fetchMarkets } from 'state/futures/actions';
 import { useAppSelector, usePollAction } from 'state/hooks';
 import { selectNetwork } from 'state/wallet/selectors';
 
-type MarketsProps = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type MarketsProps = React.FC & { getLayout: (page: ReactNode) => JSX.Element };
 
 const MarketsPage: MarketsProps = () => {
 	const { t } = useTranslation();

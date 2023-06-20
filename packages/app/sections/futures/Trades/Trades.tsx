@@ -80,6 +80,7 @@ const Trades = memo(() => {
 						<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
 					),
 					accessor: 'market',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<typeof historyData[number]>) => {
 						return (
 							<MarketDetailsContainer
@@ -107,6 +108,7 @@ const Trades = memo(() => {
 				{
 					Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
 					accessor: 'time',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<FuturesTrade>) => (
 						<GridDivCenteredRow>
 							<TimeDisplay value={cellProps.value} />
@@ -119,6 +121,7 @@ const Trades = memo(() => {
 					Header: <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
 					accessor: 'side',
 					sortType: 'basic',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<FuturesTrade>) => <PositionType side={cellProps.value} />,
 					width: 60,
 					sortable: true,
@@ -127,6 +130,7 @@ const Trades = memo(() => {
 					Header: <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
 					accessor: 'value',
 					sortType: 'basic',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<FuturesTrade>) => {
 						const formatOptions = {
 							suggestDecimals: true,
@@ -140,6 +144,7 @@ const Trades = memo(() => {
 					Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
 					accessor: 'amount',
 					sortType: 'basic',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<FuturesTrade>) => (
 						<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
 					),
@@ -150,6 +155,7 @@ const Trades = memo(() => {
 					Header: <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
 					accessor: 'netPnl',
 					sortType: 'basic',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<FuturesTrade>) => {
 						const formatOptions = {
 							maxDecimals: 2,
@@ -174,6 +180,7 @@ const Trades = memo(() => {
 					Header: <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
 					sortType: 'basic',
 					accessor: 'feesPaid',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<FuturesTrade>) => (
 						<>{cellProps.value.eq(0) ? '--' : formatDollars(cellProps.value)}</>
 					),
@@ -184,11 +191,13 @@ const Trades = memo(() => {
 					Header: <TableHeader>{t('futures.market.user.trades.table.order-type')}</TableHeader>,
 					accessor: 'type',
 					sortType: 'basic',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<FuturesTrade>) => <>{cellProps.value}</>,
 					width: 100,
 				},
 				{
 					accessor: 'txnHash',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<FuturesTrade>) => (
 						<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
 							<StyledLinkIcon />

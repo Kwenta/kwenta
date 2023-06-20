@@ -89,6 +89,7 @@ const TradesTab = () => {
 						{
 							Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
 							accessor: 'time',
+							// @ts-expect-error
 							Cell: (cellProps: CellProps<FuturesTrade>) => (
 								<GridDivCenteredRow>
 									<TimeDisplay value={cellProps.value} />
@@ -101,6 +102,7 @@ const TradesTab = () => {
 							Header: <TableHeader>{t('futures.market.user.trades.table.side-type')}</TableHeader>,
 							accessor: 'side',
 							sortType: 'basic',
+							// @ts-expect-error
 							Cell: (cellProps: CellProps<FuturesTrade>) => (
 								<div>
 									<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
@@ -114,6 +116,7 @@ const TradesTab = () => {
 							Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
 							accessor: 'amount',
 							sortType: 'basic',
+							// @ts-expect-error
 							Cell: (cellProps: CellProps<FuturesTrade>) => (
 								<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
 							),

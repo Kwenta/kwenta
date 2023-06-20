@@ -1,3 +1,4 @@
+import { FuturesAccountType } from '@kwenta/sdk/utils';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
@@ -16,7 +17,6 @@ import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
 import useIsL2 from 'hooks/useIsL2';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { FuturesAccountType } from '@kwenta/sdk/utils';
 import PositionType from 'sections/futures/PositionType';
 import {
 	selectCrossMarginPositions,
@@ -110,6 +110,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									</TableHeader>
 								),
 								accessor: 'market',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<any>) => {
 									return (
 										<MarketContainer>
@@ -135,6 +136,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
 								),
 								accessor: 'position',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<any>) => {
 									return <PositionType side={cellProps.row.original.position.side} />;
 								},
@@ -147,6 +149,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									</TableHeader>
 								),
 								accessor: 'notionalValue',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<any>) => {
 									return (
 										<Currency.Price
@@ -164,6 +167,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									</TableHeader>
 								),
 								accessor: 'avgEntryPrice',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = {
 										suggestDecimals: true,
@@ -186,6 +190,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									</TableHeader>
 								),
 								accessor: 'liquidationPrice',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = {
 										suggestDecimals: true,
@@ -204,6 +209,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
 								),
 								accessor: 'pnl',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<any>) => {
 									return (
 										<PnlContainer>
@@ -219,6 +225,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							{
 								Header: <TableHeader>TP/SL</TableHeader>,
 								accessor: 'tp-sl',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<FlexDivRowCentered>
@@ -246,6 +253,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							{
 								Header: <TableHeader>Market Margin</TableHeader>,
 								accessor: 'margin',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<FlexDivRowCentered>

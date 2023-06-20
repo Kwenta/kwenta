@@ -45,10 +45,11 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 			onChangeMargin(String(floorNumber(maxUsdInput)));
 		}, [onChangeMargin, maxUsdInput]);
 
-		const onChangeValue = useCallback((_, v: string) => onChangeMargin(v), [onChangeMargin]);
-		const onChangeSlider = useCallback((_, v: number | number[]) => onChangeMargin(String(v)), [
-			onChangeMargin,
-		]);
+		const onChangeValue = useCallback((_: any, v: string) => onChangeMargin(v), [onChangeMargin]);
+		const onChangeSlider = useCallback(
+			(_: any, v: number | number[]) => onChangeMargin(String(v)),
+			[onChangeMargin]
+		);
 
 		const marginDeltaWei = useMemo(() => {
 			return !marginDelta || isNaN(Number(marginDelta)) ? ZERO_WEI : wei(marginDelta);

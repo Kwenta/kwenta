@@ -16,18 +16,9 @@ export default {
 } as ComponentMeta<typeof Table>;
 
 const data = [
-	{
-		id: 1,
-		name: 'First thing',
-	},
-	{
-		id: 2,
-		name: 'Second thing',
-	},
-	{
-		id: 3,
-		name: 'Third thing',
-	},
+	{ id: 1, name: 'First thing' },
+	{ id: 2, name: 'Second thing' },
+	{ id: 3, name: 'Third thing' },
 ];
 
 export const Default = () => {
@@ -37,11 +28,13 @@ export const Default = () => {
 			columns={[
 				{
 					Header: () => <div>Number</div>,
+					// @ts-expect-error
 					Cell: (cell: CellProps<typeof data[number]>) => <div>{cell.row.original.id}</div>,
 					accessor: 'id',
 				},
 				{
 					Header: () => <div>Name</div>,
+					// @ts-expect-error
 					Cell: (cell: CellProps<typeof data[number]>) => <div>{cell.row.original.name}</div>,
 					accessor: 'name',
 				},

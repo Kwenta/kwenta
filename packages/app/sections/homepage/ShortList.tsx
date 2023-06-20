@@ -67,6 +67,7 @@ const ShortList = () => {
 			<Container>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 				<NotMobileView>
+					{/*@ts-expect-error*/}
 					<StyledTable
 						showPagination
 						isLoading={statsQuery.isLoading}
@@ -145,6 +146,7 @@ const ShortList = () => {
 					/>
 				</NotMobileView>
 				<MobileOnlyView>
+					{/*@ts-expect-error*/}
 					<StyledTable
 						showPagination
 						isLoading={statsQuery.isLoading}

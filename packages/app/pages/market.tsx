@@ -1,7 +1,7 @@
 import { FuturesMarketAsset } from '@kwenta/sdk/types';
 import { MarketKeyByAsset } from '@kwenta/sdk/utils';
 import { useRouter } from 'next/router';
-import { useEffect, FC, useState } from 'react';
+import { useEffect, FC, useState, ReactNode } from 'react';
 import styled from 'styled-components';
 
 import Loader from 'components/Loader';
@@ -44,7 +44,7 @@ import { FetchStatus } from 'state/types';
 import { PageContent } from 'styles/common';
 import media from 'styles/media';
 
-type MarketComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type MarketComponent = FC & { getLayout: (page: ReactNode) => JSX.Element };
 
 const Market: MarketComponent = () => {
 	const router = useRouter();

@@ -79,6 +79,7 @@ export default function ConditionalOrdersTable() {
 							<TableHeader>{t('futures.market.user.open-orders.table.market-type')}</TableHeader>
 						),
 						accessor: 'market',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							return (
 								<TableMarketDetails
@@ -101,6 +102,7 @@ export default function ConditionalOrdersTable() {
 					{
 						Header: <TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>,
 						accessor: 'side',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							return <PositionType side={cellProps.row.original.side} />;
 						},
@@ -110,6 +112,7 @@ export default function ConditionalOrdersTable() {
 					{
 						Header: <TableHeader>{t('futures.market.user.open-orders.table.type')}</TableHeader>,
 						accessor: 'type',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							return <Body>{cellProps.row.original.orderTypeDisplay}</Body>;
 						},
@@ -121,6 +124,7 @@ export default function ConditionalOrdersTable() {
 							<TableHeader>{t('futures.market.user.open-orders.table.reduce-only')}</TableHeader>
 						),
 						accessor: 'reduceOnly',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							return <Body>{cellProps.row.original.reduceOnly ? 'Yes' : 'No'}</Body>;
 						},
@@ -130,6 +134,7 @@ export default function ConditionalOrdersTable() {
 					{
 						Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
 						accessor: 'size',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							return <CustomFontLabel text={cellProps.row.original.sizeTxt} />;
 						},
@@ -141,6 +146,7 @@ export default function ConditionalOrdersTable() {
 							<TableHeader>{t('futures.market.user.open-orders.table.current-price')}</TableHeader>
 						),
 						accessor: 'clPrice',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.currentPrice ? (
 								<div>
@@ -160,6 +166,7 @@ export default function ConditionalOrdersTable() {
 					{
 						Header: <TableHeader>{t('futures.market.user.open-orders.table.price')}</TableHeader>,
 						accessor: 'price',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							return (
 								<div>
@@ -180,6 +187,7 @@ export default function ConditionalOrdersTable() {
 							</TableHeader>
 						),
 						accessor: 'marginDelta',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							const { marginDelta } = cellProps.row.original;
 							return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>;
@@ -190,6 +198,7 @@ export default function ConditionalOrdersTable() {
 					{
 						Header: <TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>,
 						accessor: 'actions',
+						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
 							const cancellingRow = cellProps.row.original.isCancelling;
 							return (

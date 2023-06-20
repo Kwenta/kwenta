@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -25,7 +25,7 @@ enum Tab {
 
 const Tabs = Object.values(Tab);
 
-const DashboardLayout: FC = ({ children }) => {
+const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 

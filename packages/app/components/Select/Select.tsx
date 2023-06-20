@@ -20,6 +20,7 @@ export const StyledCaretDownIcon = styled(CaretDownIcon)<{ $flip?: boolean }>`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
+// @ts-expect-error
 function Select<T>({ variant, ...props }: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
@@ -147,6 +148,7 @@ function Select<T>({ variant, ...props }: Props<T>) {
 			styles={computedStyles}
 			classNamePrefix="react-select"
 			{...props}
+			// @ts-expect-error
 			components={{ IndicatorSeparator, ...props.components }}
 		/>
 	);

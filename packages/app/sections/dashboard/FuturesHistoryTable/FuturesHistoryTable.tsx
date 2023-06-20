@@ -83,6 +83,7 @@ const FuturesHistoryTable: FC = () => {
 		<>
 			<DesktopOnlyView>
 				<TableContainer>
+					{/* @ts-expect-error */}
 					<StyledTable
 						data={isL2 ? mappedHistoricalTrades : []}
 						showPagination
@@ -224,6 +225,7 @@ const FuturesHistoryTable: FC = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<TableContainer>
+					{/* @ts-expect-error */}
 					<MobileStyledTable
 						data={isL2 ? mappedHistoricalTrades : []}
 						onTableRowClick={(row) => {

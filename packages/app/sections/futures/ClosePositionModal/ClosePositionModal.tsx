@@ -148,7 +148,7 @@ export default function ClosePositionModal() {
 	};
 
 	const onSelectPercent = useCallback(
-		(index) => {
+		(index: number) => {
 			if (!position?.position?.size || !market?.marketKey) return;
 			const option = CLOSE_PERCENT_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
