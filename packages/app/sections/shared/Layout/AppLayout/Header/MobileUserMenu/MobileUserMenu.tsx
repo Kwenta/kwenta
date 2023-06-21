@@ -1,36 +1,36 @@
-import { PositionSide } from '@kwenta/sdk/types';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { FC, useCallback, useReducer } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { PositionSide } from '@kwenta/sdk/types'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { FC, useCallback, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import CloseIcon from 'assets/svg/app/close.svg';
-import MenuIcon from 'assets/svg/app/menu.svg';
-import Button from 'components/Button';
-import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
-import ROUTES from 'constants/routes';
-import { setLeverageSide, setTradePanelDrawerOpen } from 'state/futures/reducer';
-import { useAppDispatch } from 'state/hooks';
-import { FixedFooterMixin } from 'styles/common';
+import CloseIcon from 'assets/svg/app/close.svg'
+import MenuIcon from 'assets/svg/app/menu.svg'
+import Button from 'components/Button'
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
+import ROUTES from 'constants/routes'
+import { setLeverageSide, setTradePanelDrawerOpen } from 'state/futures/reducer'
+import { useAppDispatch } from 'state/hooks'
+import { FixedFooterMixin } from 'styles/common'
 
-import MobileMenuModal from './MobileMenuModal';
-import MobileWalletButton from './MobileWalletButton';
+import MobileMenuModal from './MobileMenuModal'
+import MobileWalletButton from './MobileWalletButton'
 
 const MobileUserMenu: FC = () => {
-	const [isOpen, toggleOpen] = useReducer((s) => !s, false);
-	const { t } = useTranslation();
-	const { asPath } = useRouter();
+	const [isOpen, toggleOpen] = useReducer((s) => !s, false)
+	const { t } = useTranslation()
+	const { asPath } = useRouter()
 
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
 	const handleSideSelect = useCallback(
 		(side: PositionSide) => () => {
-			dispatch(setLeverageSide(side));
-			dispatch(setTradePanelDrawerOpen(true));
+			dispatch(setLeverageSide(side))
+			dispatch(setTradePanelDrawerOpen(true))
 		},
 		[dispatch]
-	);
+	)
 
 	return (
 		<>
@@ -72,8 +72,8 @@ const MobileUserMenu: FC = () => {
 			</MobileFooterContainer>
 			{isOpen && <MobileMenuModal onDismiss={toggleOpen} />}
 		</>
-	);
-};
+	)
+}
 
 const MobileFooterContainer = styled.div`
 	${FixedFooterMixin};
@@ -84,31 +84,31 @@ const MobileFooterContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
 	z-index: 51;
 	min-height: 71px;
-`;
+`
 
 const MobileFooterIconContainer = styled.div`
 	width: 25px;
-`;
+`
 
 const MobileFooterSeparator = styled.div`
 	margin: 0 20px;
 	height: 32px;
 	width: 1px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
-`;
+`
 
 const MobileFooterRight = styled.div`
 	display: flex;
 	flex-grow: 1;
 	justify-content: flex-end;
 	align-items: center;
-`;
+`
 
 const PositionButtonsContainer = styled.div`
 	display: grid;
 	width: 100%;
 	grid-template-columns: 1fr 1fr;
 	grid-gap: 10px;
-`;
+`
 
-export default MobileUserMenu;
+export default MobileUserMenu

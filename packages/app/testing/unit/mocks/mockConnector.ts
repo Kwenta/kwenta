@@ -1,7 +1,7 @@
-import Connector from 'containers/Connector/Connector';
-import { DEFAULT_NETWORK, MOCK_SIGNER, TEST_ADDR } from 'testing/unit/constants';
+import Connector from 'containers/Connector/Connector'
+import { DEFAULT_NETWORK, MOCK_SIGNER, TEST_ADDR } from 'testing/unit/constants'
 
-import { mockProvider } from './mockEthersProvider';
+import { mockProvider } from './mockEthersProvider'
 
 const DEFAULT_CONNECTOR = {
 	activeChain: {
@@ -26,7 +26,7 @@ const DEFAULT_CONNECTOR = {
 	defaultSynthetixjs: null,
 	l2Synthetixjs: null,
 	l2SynthsMap: {},
-};
+}
 
 const mockConnector = (overrides?: Record<string, any>) => {
 	// @ts-ignore
@@ -34,8 +34,8 @@ const mockConnector = (overrides?: Record<string, any>) => {
 		return {
 			...DEFAULT_CONNECTOR,
 			...(overrides ?? {}),
-		};
-	});
-};
+		}
+	})
+}
 
-export default mockConnector;
+export default mockConnector

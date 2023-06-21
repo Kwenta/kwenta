@@ -1,1 +1,1 @@
-export { default } from './MobileDashboard';
+export { default } from './MobileDashboard'

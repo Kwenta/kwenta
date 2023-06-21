@@ -1,19 +1,19 @@
-import { FuturesMarket } from '@kwenta/sdk/types';
-import { createSlice } from '@reduxjs/toolkit';
+import { FuturesMarket } from '@kwenta/sdk/types'
+import { createSlice } from '@reduxjs/toolkit'
 
-import { FetchStatus } from 'state/types';
+import { FetchStatus } from 'state/types'
 
-import { fetchOptimismMarkets } from './actions';
+import { fetchOptimismMarkets } from './actions'
 
 type HomeState = {
-	optimismMarkets: FuturesMarket<string>[];
-	marketsQueryStatus: FetchStatus;
-};
+	optimismMarkets: FuturesMarket<string>[]
+	marketsQueryStatus: FetchStatus
+}
 
 export const HOME_INITIAL_STATE: HomeState = {
 	optimismMarkets: [],
 	marketsQueryStatus: FetchStatus.Idle,
-};
+}
 
 export const homeSlice = createSlice({
 	name: 'home',
@@ -21,15 +21,15 @@ export const homeSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(fetchOptimismMarkets.pending, (state) => {
-			state.marketsQueryStatus = FetchStatus.Loading;
-		});
+			state.marketsQueryStatus = FetchStatus.Loading
+		})
 		builder.addCase(fetchOptimismMarkets.fulfilled, (state, action) => {
-			state.optimismMarkets = action.payload.markets;
-		});
+			state.optimismMarkets = action.payload.markets
+		})
 		builder.addCase(fetchOptimismMarkets.rejected, (state) => {
-			state.marketsQueryStatus = FetchStatus.Error;
-		});
+			state.marketsQueryStatus = FetchStatus.Error
+		})
 	},
-});
+})
 
-export default homeSlice.reducer;
+export default homeSlice.reducer

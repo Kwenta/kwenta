@@ -1,1 +1,1 @@
-export { default } from './ProfitCalculator';
+export { default } from './ProfitCalculator'

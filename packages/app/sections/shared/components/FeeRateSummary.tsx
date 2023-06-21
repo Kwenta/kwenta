@@ -1,19 +1,19 @@
-import { formatPercent } from '@kwenta/sdk/utils';
-import { FC, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { formatPercent } from '@kwenta/sdk/utils'
+import { FC, memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import Tooltip from 'components/Tooltip/Tooltip';
-import { NO_VALUE } from 'constants/placeholder';
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
-import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/hooks';
+import Tooltip from 'components/Tooltip/Tooltip'
+import { NO_VALUE } from 'constants/placeholder'
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary'
+import { selectExchangeFeeRateWei, selectBaseFeeRateWei } from 'state/exchange/selectors'
+import { useAppSelector } from 'state/hooks'
 
 const FeeRateSummaryItem: FC = memo(() => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
-	const exchangeFeeRate = useAppSelector(selectExchangeFeeRateWei);
-	const baseFeeRate = useAppSelector(selectBaseFeeRateWei);
+	const exchangeFeeRate = useAppSelector(selectExchangeFeeRateWei)
+	const baseFeeRate = useAppSelector(selectBaseFeeRateWei)
 
 	return (
 		<SummaryItem>
@@ -39,23 +39,23 @@ const FeeRateSummaryItem: FC = memo(() => {
 				</FeeRateItem>
 			</SummaryItemValue>
 		</SummaryItem>
-	);
-});
+	)
+})
 
 export const FeeRateItem = styled.span`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-`;
+`
 
 export const DynamicFeeLabel = styled.span`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
+`
 
 const CustomStyledTooltip = styled(Tooltip)`
 	width: 300px;
 	padding: 4px;
 	text-align: center;
-`;
+`
 
-export default FeeRateSummaryItem;
+export default FeeRateSummaryItem

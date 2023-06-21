@@ -1,45 +1,45 @@
-import { FC, memo, useCallback, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { FC, memo, useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import useDebouncedMemo from 'hooks/useDebouncedMemo';
-import { updateBaseAmount, setMaxQuoteBalance } from 'state/exchange/actions';
-import { setQuoteAmount, setOpenModal } from 'state/exchange/reducer';
-import { selectQuoteBalanceWei } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import useDebouncedMemo from 'hooks/useDebouncedMemo'
+import { updateBaseAmount, setMaxQuoteBalance } from 'state/exchange/actions'
+import { setQuoteAmount, setOpenModal } from 'state/exchange/reducer'
+import { selectQuoteBalanceWei } from 'state/exchange/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import MobileCurrencyCard from '../TradeCard/CurrencyCard/MobileCurrencyCard';
+import MobileCurrencyCard from '../TradeCard/CurrencyCard/MobileCurrencyCard'
 
 const MobileQuoteCurrencyCard: FC = memo(() => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	const { quoteCurrencyKey, quoteAmount, quotePriceRate } = useAppSelector(({ exchange }) => ({
 		quoteCurrencyKey: exchange.quoteCurrencyKey,
 		quoteAmount: exchange.quoteAmount,
 		quotePriceRate: exchange.quotePriceRate,
-	}));
+	}))
 
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
-	const quoteAmountDebounced = useDebouncedMemo(() => quoteAmount, [quoteAmount], 300);
+	const quoteAmountDebounced = useDebouncedMemo(() => quoteAmount, [quoteAmount], 300)
 
 	const onQuoteAmountChange = useCallback(
 		(value: string) => {
-			dispatch(setQuoteAmount(value));
+			dispatch(setQuoteAmount(value))
 		},
 		[dispatch]
-	);
+	)
 
 	useEffect(() => {
-		dispatch(updateBaseAmount());
-	}, [dispatch, quoteAmountDebounced]);
+		dispatch(updateBaseAmount())
+	}, [dispatch, quoteAmountDebounced])
 
 	const onQuoteBalanceClick = useCallback(() => {
-		dispatch(setMaxQuoteBalance());
-	}, [dispatch]);
+		dispatch(setMaxQuoteBalance())
+	}, [dispatch])
 
-	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
+	const quoteBalance = useAppSelector(selectQuoteBalanceWei)
 
-	const openQuoteModal = useCallback(() => dispatch(setOpenModal('quote-select')), [dispatch]);
+	const openQuoteModal = useCallback(() => dispatch(setOpenModal('quote-select')), [dispatch])
 
 	return (
 		<MobileCurrencyCard
@@ -52,7 +52,7 @@ const MobileQuoteCurrencyCard: FC = memo(() => {
 			priceRate={quotePriceRate}
 			label={t('exchange.common.from')}
 		/>
-	);
-});
+	)
+})
 
-export default MobileQuoteCurrencyCard;
+export default MobileQuoteCurrencyCard

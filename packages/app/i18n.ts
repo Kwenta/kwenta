@@ -1,10 +1,10 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
-import { DEFAULT_LANGUAGE } from 'constants/defaults';
-import { Language } from 'translations/constants';
+import { DEFAULT_LANGUAGE } from 'constants/defaults'
+import { Language } from 'translations/constants'
 
-import enTranslation from './translations/en.json';
+import enTranslation from './translations/en.json'
 
 // TODO: lazy load it
 i18n.use(initReactI18next).init({
@@ -16,6 +16,6 @@ i18n.use(initReactI18next).init({
 	interpolation: {
 		escapeValue: false, // react already safes from xss
 	},
-});
+})
 
-export default i18n;
+export default i18n

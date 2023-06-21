@@ -1,15 +1,15 @@
-import { DialogOverlay, DialogContent } from '@reach/dialog';
-import { FC, ReactNode, SyntheticEvent, memo } from 'react';
-import styled from 'styled-components';
+import { DialogOverlay, DialogContent } from '@reach/dialog'
+import { FC, ReactNode, SyntheticEvent, memo } from 'react'
+import styled from 'styled-components'
 
-import { HEADER_HEIGHT, zIndex } from 'constants/ui';
+import { HEADER_HEIGHT, zIndex } from 'constants/ui'
 
 type FullScreenModalProps = {
-	title?: ReactNode;
-	isOpen: boolean;
-	children: ReactNode;
-	onDismiss?: (event?: SyntheticEvent<Element, Event> | undefined) => void;
-};
+	title?: ReactNode
+	isOpen: boolean
+	children: ReactNode
+	onDismiss?: (event?: SyntheticEvent<Element, Event> | undefined) => void
+}
 
 export const FullScreenModal: FC<FullScreenModalProps> = memo(
 	({ title, children, isOpen, onDismiss, ...rest }) => (
@@ -20,19 +20,19 @@ export const FullScreenModal: FC<FullScreenModalProps> = memo(
 			</StyledDialogContent>
 		</StyledDialogOverlay>
 	)
-);
+)
 
 const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	top: ${HEADER_HEIGHT};
-`;
+`
 
 const StyledDialogContent = styled(DialogContent)`
 	padding: 0;
 	border: 0;
 	background: none;
-`;
+`
 
 const Title = styled.div`
 	text-transform: capitalize;
@@ -41,6 +41,6 @@ const Title = styled.div`
 	font-size: 24px;
 	line-height: 24px;
 	padding-bottom: 24px;
-`;
+`
 
-export default FullScreenModal;
+export default FullScreenModal

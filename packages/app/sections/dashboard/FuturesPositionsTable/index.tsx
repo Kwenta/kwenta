@@ -1,1 +1,1 @@
-export { default } from './FuturesPositionsTable';
+export { default } from './FuturesPositionsTable'

@@ -1,19 +1,19 @@
-import { FC, memo } from 'react';
-import styled from 'styled-components';
+import { FC, memo } from 'react'
+import styled from 'styled-components'
 
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import NotificationContainer from 'constants/NotificationContainer';
-import { MobileScreenContainer } from 'styles/common';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import NotificationContainer from 'constants/NotificationContainer'
+import { MobileScreenContainer } from 'styles/common'
 
-import Banner from '../HomeLayout/Banner';
+import Banner from '../HomeLayout/Banner'
 
-import Footer from './Footer';
-import Header from './Header';
-import MobileUserMenu from './Header/MobileUserMenu';
+import Footer from './Footer'
+import Header from './Header'
+import MobileUserMenu from './Header/MobileUserMenu'
 
 type AppLayoutProps = {
-	children: React.ReactNode;
-};
+	children: React.ReactNode
+}
 
 const AppLayout: FC<AppLayoutProps> = memo(({ children }) => {
 	return (
@@ -34,8 +34,8 @@ const AppLayout: FC<AppLayoutProps> = memo(({ children }) => {
 			</MobileOrTabletView>
 			<NotificationContainer />
 		</AppLayoutContainer>
-	);
-});
+	)
+})
 
 const AppLayoutContainer = styled.div`
 	height: 100%;
@@ -43,7 +43,7 @@ const AppLayoutContainer = styled.div`
 	> div {
 		height: 100%;
 	}
-`;
+`
 
 const DesktopGridContainer = styled.div`
 	width: 100%;
@@ -61,6 +61,6 @@ const DesktopGridContainer = styled.div`
 			height: 100%;
 		}
 	}
-`;
+`
 
-export default AppLayout;
+export default AppLayout

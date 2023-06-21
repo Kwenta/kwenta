@@ -1,1 +1,1 @@
-export { default } from './ShareModal';
+export { default } from './ShareModal'

@@ -1,18 +1,18 @@
-import { FC, ReactNode, memo } from 'react';
-import styled, { css } from 'styled-components';
+import { FC, ReactNode, memo } from 'react'
+import styled, { css } from 'styled-components'
 
 export const TabList: FC<{ children?: ReactNode }> = ({ children, ...props }) => (
 	<div role="tablist" {...props}>
 		{children}
 	</div>
-);
+)
 
 type TabPanelProps = {
-	name: string;
-	activeTab: string;
-	fullHeight?: boolean;
-	children?: ReactNode;
-};
+	name: string
+	activeTab: string
+	fullHeight?: boolean
+	children?: ReactNode
+}
 
 export const TabPanel: React.FC<TabPanelProps> = memo(
 	({ name, activeTab, fullHeight, children, ...props }) =>
@@ -28,7 +28,7 @@ export const TabPanel: React.FC<TabPanelProps> = memo(
 				{children}
 			</TabPanelContainer>
 		) : null
-);
+)
 
 const TabPanelContainer = styled.div<{ $fullHeight?: boolean }>`
 	outline: none;
@@ -38,4 +38,4 @@ const TabPanelContainer = styled.div<{ $fullHeight?: boolean }>`
 		css`
 			height: 100%;
 		`}
-`;
+`

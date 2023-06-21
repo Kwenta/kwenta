@@ -1,28 +1,28 @@
-import React, { FC, useContext, useMemo } from 'react';
-import ReactSelect, { Props, StylesConfig, components } from 'react-select';
-import styled, { ThemeContext } from 'styled-components';
+import React, { FC, useContext, useMemo } from 'react'
+import ReactSelect, { Props, StylesConfig, components } from 'react-select'
+import styled, { ThemeContext } from 'styled-components'
 
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import CaretDownIcon from 'assets/svg/app/caret-down.svg'
 
-export const IndicatorSeparator: FC = () => null;
+export const IndicatorSeparator: FC = () => null
 
 export const DropdownIndicator = (props: any) => {
 	return (
 		<components.DropdownIndicator {...props}>
 			<StyledCaretDownIcon />
 		</components.DropdownIndicator>
-	);
-};
+	)
+}
 
 export const StyledCaretDownIcon = styled(CaretDownIcon)<{ $flip?: boolean }>`
 	width: 11px;
 	transform: ${(props) => (props.$flip ? 'rotate(180deg)' : 'none')};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 // @ts-expect-error
 function Select<T>({ variant, ...props }: Props<T>) {
-	const { colors, fonts } = useContext(ThemeContext);
+	const { colors, fonts } = useContext(ThemeContext)
 
 	const computedStyles = useMemo(() => {
 		const styles: StylesConfig = {
@@ -139,9 +139,9 @@ function Select<T>({ variant, ...props }: Props<T>) {
 				...provided,
 				height: '100%',
 			}),
-		};
-		return styles;
-	}, [colors, fonts, variant]);
+		}
+		return styles
+	}, [colors, fonts, variant])
 
 	return (
 		<ReactSelect
@@ -151,7 +151,7 @@ function Select<T>({ variant, ...props }: Props<T>) {
 			// @ts-expect-error
 			components={{ IndicatorSeparator, ...props.components }}
 		/>
-	);
+	)
 }
 
-export default Select;
+export default Select

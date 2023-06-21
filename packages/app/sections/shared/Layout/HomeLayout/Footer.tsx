@@ -1,23 +1,23 @@
-import { memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { ThemeProvider } from 'styled-components';
+import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { ThemeProvider } from 'styled-components'
 
-import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
-import DiscordLogo from 'assets/svg/social/discord.svg';
-import MirrorLogo from 'assets/svg/social/mirror.svg';
-import { FlexDivCentered } from 'components/layout/flex';
-import PoweredBySynthetix from 'components/PoweredBySynthetix';
-import { Body } from 'components/Text';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { GridContainer } from 'sections/homepage/section';
-import { ExternalLink } from 'styles/common';
-import media from 'styles/media';
-import { themes } from 'styles/theme';
+import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg'
+import DiscordLogo from 'assets/svg/social/discord.svg'
+import MirrorLogo from 'assets/svg/social/mirror.svg'
+import { FlexDivCentered } from 'components/layout/flex'
+import PoweredBySynthetix from 'components/PoweredBySynthetix'
+import { Body } from 'components/Text'
+import { EXTERNAL_LINKS } from 'constants/links'
+import { GridContainer } from 'sections/homepage/section'
+import { ExternalLink } from 'styles/common'
+import media from 'styles/media'
+import { themes } from 'styles/theme'
 
-import Logo from '../Logo';
+import Logo from '../Logo'
 
 const Footer = memo(() => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 	const DOC_LINKS = [
 		{
 			key: 'about-kwenta',
@@ -97,7 +97,7 @@ const Footer = memo(() => {
 				},
 			],
 		},
-	];
+	]
 	return (
 		<ThemeProvider theme={themes.dark}>
 			<StyledGridContainer>
@@ -133,8 +133,8 @@ const Footer = memo(() => {
 				</PowerContainer>
 			</StyledGridContainer>
 		</ThemeProvider>
-	);
-});
+	)
+})
 
 const StyledLink = styled.a`
 	cursor: pointer;
@@ -145,7 +145,7 @@ const StyledLink = styled.a`
 			font-size: 15px;
 		`};
 	}
-`;
+`
 
 const CopyRight = styled.div`
 	font-size: 12px;
@@ -160,14 +160,14 @@ const CopyRight = styled.div`
 		margin-right: 0px;
 		padding-top: 0px;
 	`};
-`;
+`
 
 const ListTitle = styled.div`
 	font-size: 15px;
 	line-height: 150%;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: uppercase;
-`;
+`
 
 const PowerContainer = styled.div`
 	display: flex;
@@ -188,7 +188,7 @@ const PowerContainer = styled.div`
 		justify-content: center;
 		margin-bottom: 100px;
 	`};
-`;
+`
 
 const MultiListContainer = styled.div`
 	display: flex;
@@ -207,7 +207,7 @@ const MultiListContainer = styled.div`
 		margin-top: 45px;
 		margin-bottom: 60px;
 	`};
-`;
+`
 
 const ListContainer = styled.div`
 	font-size: 18px;
@@ -216,7 +216,7 @@ const ListContainer = styled.div`
 	${media.lessThan('sm')`
 		font-size: 15px;
 	`};
-`;
+`
 
 const LogoFooter = styled.div`
 	display: flex;
@@ -228,7 +228,7 @@ const LogoFooter = styled.div`
 		align-items: center;
 		align-content: center;
 	`};
-`;
+`
 
 const StyledGridContainer = styled(GridContainer)`
 	grid-template-columns: repeat(1, auto);
@@ -239,7 +239,7 @@ const StyledGridContainer = styled(GridContainer)`
 		justify-content: space-between;
 		align-items: center;
 	`};
-`;
+`
 
 const SocialIcons = styled(FlexDivCentered)`
 	> * + * {
@@ -253,6 +253,6 @@ const SocialIcons = styled(FlexDivCentered)`
 	svg {
 		color: ${(props) => props.theme.colors.common.primaryWhite};
 	}
-`;
+`
 
-export default Footer;
+export default Footer

@@ -1,10 +1,10 @@
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { Heading, Description } from 'sections/earn/text';
+import { Heading, Description } from 'sections/earn/text'
 
 const StepTwo = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<StepTwoContainer>
@@ -18,12 +18,12 @@ const StepTwo = () => {
 				<BigButton>{t('dashboard.earn.withdraw-liquidity.pool-link')}</BigButton>
 			</a>
 		</StepTwoContainer>
-	);
-};
+	)
+}
 
 const StepTwoContainer = styled.div`
 	margin-top: 50px;
-`;
+`
 
 const BigButton = styled.div`
 	width: 100%;
@@ -39,6 +39,6 @@ const BigButton = styled.div`
 	border-radius: 15px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
 	margin-bottom: 50px;
-`;
+`
 
-export default StepTwo;
+export default StepTwo

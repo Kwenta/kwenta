@@ -1,11 +1,11 @@
 // import { ComponentStory } from '@storybook/react';
 
-import ChangePercent from 'components/ChangePercent';
+import ChangePercent from 'components/ChangePercent'
 
 export default {
 	title: 'Components/ChangePercent',
 	component: ChangePercent,
-};
+}
 
 // const Template: ComponentStory<typeof ChangePercent> = (args) => <ChangePercent {...args} />;
 
@@ -22,5 +22,5 @@ export const Default = () => {
 				<ChangePercent value="0.00" />
 			</div>
 		</div>
-	);
-};
+	)
+}

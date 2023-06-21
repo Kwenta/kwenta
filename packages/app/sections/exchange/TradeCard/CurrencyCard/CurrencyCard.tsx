@@ -1,32 +1,32 @@
-import Wei from '@synthetixio/wei';
-import { FC, useMemo, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import Wei from '@synthetixio/wei'
+import { FC, useMemo, memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import Card, { CardBody } from 'components/Card';
-import { FlexDivRowCentered } from 'components/layout/flex';
+import Card, { CardBody } from 'components/Card'
+import { FlexDivRowCentered } from 'components/layout/flex'
 
-import { Side } from '../types';
+import { Side } from '../types'
 
-import CurrencyCardInput from './CurrencyCardInput';
-import CurrencyCardSelector from './CurrencyCardSelector';
+import CurrencyCardInput from './CurrencyCardInput'
+import CurrencyCardSelector from './CurrencyCardSelector'
 
 type CurrencyCardProps = {
-	side: Side;
-	currencyKey?: string;
-	currencyName?: string;
-	amount: string;
-	onAmountChange: (value: string) => void;
-	walletBalance?: Wei | null;
-	onBalanceClick: () => void;
-	onCurrencySelect?: () => void;
-	priceRate?: Wei | number | null;
-	className?: string;
-	label: string;
-	disableInput?: boolean;
-	isLoading?: boolean;
-	disabled?: boolean;
-};
+	side: Side
+	currencyKey?: string
+	currencyName?: string
+	amount: string
+	onAmountChange: (value: string) => void
+	walletBalance?: Wei | null
+	onBalanceClick: () => void
+	onCurrencySelect?: () => void
+	priceRate?: Wei | number | null
+	className?: string
+	label: string
+	disableInput?: boolean
+	isLoading?: boolean
+	disabled?: boolean
+}
 
 const CurrencyCard: FC<CurrencyCardProps> = memo(
 	({
@@ -45,22 +45,22 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 		disabled,
 		...rest
 	}) => {
-		const { t } = useTranslation();
+		const { t } = useTranslation()
 
-		const isBase = useMemo(() => side === 'base', [side]);
+		const isBase = useMemo(() => side === 'base', [side])
 
 		const hasWalletBalance = useMemo(() => !!walletBalance && !!currencyKey, [
 			walletBalance,
 			currencyKey,
-		]);
+		])
 
-		const hasCurrencySelectCallback = !!onCurrencySelect;
+		const hasCurrencySelectCallback = !!onCurrencySelect
 
 		const tokenName = useMemo(() => {
 			return currencyKey && currencyKey[0] === 's'
 				? t('common.currency.synthetic-currency-name', { currencyName })
-				: currencyName || t('exchange.currency-card.synth-name');
-		}, [currencyKey, currencyName, t]);
+				: currencyName || t('exchange.currency-card.synth-name')
+		}, [currencyKey, currencyName, t])
 
 		return (
 			<CardContainer>
@@ -101,14 +101,14 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 					</StyledCardBody>
 				</StyledCard>
 			</CardContainer>
-		);
+		)
 	}
-);
+)
 
 const CardContainer = styled.div`
 	display: grid;
 	height: 183px;
-`;
+`
 
 const StyledCard = styled(Card)<{ interactive?: boolean }>`
 	${(props) =>
@@ -116,14 +116,14 @@ const StyledCard = styled(Card)<{ interactive?: boolean }>`
 		css`
 			pointer-events: none;
 		`}
-`;
+`
 
 const StyledCardBody = styled(CardBody)`
 	padding: 20px 32px;
-`;
+`
 
 const CurrencyContainer = styled(FlexDivRowCentered)`
 	gap: 20px;
-`;
+`
 
-export default CurrencyCard;
+export default CurrencyCard

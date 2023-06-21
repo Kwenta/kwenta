@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-import Button from 'components/Button';
+import Button from 'components/Button'
 
 const RefButton = React.forwardRef<HTMLDivElement, React.ComponentProps<typeof Button>>(
 	(props, ref) => (
@@ -10,6 +10,6 @@ const RefButton = React.forwardRef<HTMLDivElement, React.ComponentProps<typeof B
 			</Button>
 		</div>
 	)
-);
+)
 
-export default RefButton;
+export default RefButton

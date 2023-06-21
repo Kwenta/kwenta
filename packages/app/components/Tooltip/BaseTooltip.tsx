@@ -1,18 +1,18 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
-import media from 'styles/media';
+import media from 'styles/media'
 
 // base styles for each component that make up the tooltip.
 
 interface BaseTooltipProps {
-	preset?: string;
-	width?: string;
-	height?: string;
-	top?: string;
-	bottom?: string;
-	left?: string;
-	right?: string;
-	position?: string;
+	preset?: string
+	width?: string
+	height?: string
+	top?: string
+	bottom?: string
+	left?: string
+	right?: string
+	position?: string
 }
 
 export const BaseTooltip = styled.div<BaseTooltipProps>`
@@ -79,9 +79,9 @@ export const BaseTooltip = styled.div<BaseTooltipProps>`
 
 		transform: translate(-20px, 5px);
 	`}
-`;
+`
 
 export const ToolTipWrapper = styled.div`
 	position: relative;
 	display: inline-block;
-`;
+`

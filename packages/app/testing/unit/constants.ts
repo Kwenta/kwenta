@@ -1,14 +1,14 @@
-import { Wallet } from 'ethers';
+import { Wallet } from 'ethers'
 
-export const TEST_ADDR = '0x1c099210997E5C5689189A256C6145ca743B2610';
-export const TEST_PK = 'b826c22c04853f6ba05575275494a3a5c9eff298c36cb58d11370f83c87574e4';
+export const TEST_ADDR = '0x1c099210997E5C5689189A256C6145ca743B2610'
+export const TEST_PK = 'b826c22c04853f6ba05575275494a3a5c9eff298c36cb58d11370f83c87574e4'
 
-export const MOCK_SIGNER = new Wallet(TEST_PK);
+export const MOCK_SIGNER = new Wallet(TEST_PK)
 
 export const DEFAULT_NETWORK = {
 	id: 420,
 	name: 'optimism-goerli',
-};
+}
 
 export const CHAINS = [
 	{
@@ -135,4 +135,4 @@ export const CHAINS = [
 		},
 		testnet: true,
 	},
-];
+]

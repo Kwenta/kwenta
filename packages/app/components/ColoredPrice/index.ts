@@ -1,1 +1,1 @@
-export { default } from './ColoredPrice';
+export { default } from './ColoredPrice'

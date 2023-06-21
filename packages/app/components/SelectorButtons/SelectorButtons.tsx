@@ -1,14 +1,14 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
-import Button from 'components/Button';
-import SegmentedControl from 'components/SegmentedControl';
-import { StyleType } from 'components/SegmentedControl/SegmentedControl';
+import Button from 'components/Button'
+import SegmentedControl from 'components/SegmentedControl'
+import { StyleType } from 'components/SegmentedControl/SegmentedControl'
 
 type Props = {
-	options: string[];
-	onSelect: (index: number) => void;
-	type?: StyleType;
-};
+	options: string[]
+	onSelect: (index: number) => void
+	type?: StyleType
+}
 
 export default function SelectorButtons({ onSelect, options, type = 'pill-button' }: Props) {
 	return (
@@ -30,7 +30,7 @@ export default function SelectorButtons({ onSelect, options, type = 'pill-button
 				))
 			)}
 		</Container>
-	);
+	)
 }
 
 const Container = styled.div<{ $flex?: boolean }>`
@@ -45,4 +45,4 @@ const Container = styled.div<{ $flex?: boolean }>`
 			justify-content: flex-end;
 			align-items: center;
 		`}
-`;
+`

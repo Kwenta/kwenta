@@ -1,23 +1,23 @@
-import { MarketClosureReason } from '@kwenta/sdk/types';
-import React, { memo, FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import { MarketClosureReason } from '@kwenta/sdk/types'
+import React, { memo, FC } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import { ContainerRowMixin } from 'components/layout/grid';
-import MarketClosureIcon from 'components/MarketClosureIcon';
+import { ContainerRowMixin } from 'components/layout/grid'
+import MarketClosureIcon from 'components/MarketClosureIcon'
 
-import CurrencyIcon from '../CurrencyIcon';
-import { CurrencyIconProps } from '../CurrencyIcon/CurrencyIcon';
+import CurrencyIcon from '../CurrencyIcon'
+import { CurrencyIconProps } from '../CurrencyIcon/CurrencyIcon'
 
 type CurrencyNameProps = {
-	currencyKey: string;
-	symbol?: string;
-	name?: string | null;
-	showIcon?: boolean;
-	iconProps?: Partial<CurrencyIconProps>;
-	marketClosureReason?: MarketClosureReason;
-	isDeprecated?: boolean;
-};
+	currencyKey: string
+	symbol?: string
+	name?: string | null
+	showIcon?: boolean
+	iconProps?: Partial<CurrencyIconProps>
+	marketClosureReason?: MarketClosureReason
+	isDeprecated?: boolean
+}
 
 export const CurrencyName: FC<CurrencyNameProps> = memo(
 	({
@@ -30,7 +30,7 @@ export const CurrencyName: FC<CurrencyNameProps> = memo(
 		isDeprecated = false,
 		...rest
 	}) => {
-		const { t } = useTranslation();
+		const { t } = useTranslation()
 		return (
 			<Container showIcon={showIcon} {...rest}>
 				{showIcon && (
@@ -55,9 +55,9 @@ export const CurrencyName: FC<CurrencyNameProps> = memo(
 					{name && <Name className="name">{name}</Name>}
 				</NameAndSymbol>
 			</Container>
-		);
+		)
 	}
-);
+)
 
 const Container = styled.span<{ showIcon?: boolean }>`
 	${(props) =>
@@ -69,11 +69,11 @@ const Container = styled.span<{ showIcon?: boolean }>`
 			grid-auto-flow: column;
 			grid-gap: 8px;
 		`}
-`;
+`
 
 const NameAndSymbol = styled.span`
 	${ContainerRowMixin};
-`;
+`
 
 const Symbol = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -81,22 +81,22 @@ const Symbol = styled.div`
 	font-size: 14px;
 	display: flex;
 	align-items: center;
-`;
+`
 
 const Name = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const CurrencyIconContainer = styled.span`
 	position: relative;
-`;
+`
 
 const MarketClosureIconContainer = styled.span`
 	position: absolute;
 	bottom: 0;
 	right: 0;
 	transform: translate(10%, 10%);
-`;
+`
 
 const Deprecated = styled.div`
 	display: flex;
@@ -105,7 +105,7 @@ const Deprecated = styled.div`
 	margin-left: 10px;
 	text-transform: uppercase;
 	font-size: 12px;
-`;
+`
 
 const DeprecatedDot = styled.div`
 	width: 9px;
@@ -114,6 +114,6 @@ const DeprecatedDot = styled.div`
 	box-shadow: 0px 0px 10px ${(props) => props.theme.colors.red};
 	margin-right: 4px;
 	border-radius: 50%;
-`;
+`
 
-export default CurrencyName;
+export default CurrencyName

@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { FlexDivCentered } from 'components/layout/flex';
+import { FlexDivCentered } from 'components/layout/flex'
 
 const TradeConfirmationRow = styled(FlexDivCentered)`
 	justify-content: space-between;
@@ -9,6 +9,6 @@ const TradeConfirmationRow = styled(FlexDivCentered)`
 	&:last-child {
 		border: none;
 	}
-`;
+`
 
-export default TradeConfirmationRow;
+export default TradeConfirmationRow

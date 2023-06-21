@@ -1,6 +1,6 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
-import StyledTooltip from './Tooltip';
+import StyledTooltip from './Tooltip'
 
 const ErrorTooltip = styled(StyledTooltip)`
 	font-size: 12px;
@@ -11,6 +11,6 @@ const ErrorTooltip = styled(StyledTooltip)`
 			color: ${props.theme.colors.red};
 		}
 	`}
-`;
+`
 
-export default ErrorTooltip;
+export default ErrorTooltip

@@ -6,7 +6,11 @@
 	"scripts": {
 		"pre-commit": "pnpm run --filter \"@kwenta/*\" pre-commit",
 		"check-types": "pnpm run --filter \"@kwenta/*\" check-types",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"format": "prettier --write \"**/*.{ts,tsx}\"",
+		"lint": "eslint . --ext ts,.tsx && tsc",
+		"lint:sarif": "node testing/lint.js . --ext ts,.tsx && tsc",
+		"lint:fix": "eslint packages --ext ts,.tsx --fix"
 	},
 	"repository": {
 		"type": "git",
@@ -21,7 +25,7 @@
 	"homepage": "https://github.com/Kwenta/kwenta#readme",
 	"husky": {
 		"hooks": {
-			"pre-commit": "npm run lint"
+			"pre-commit": "pnpm lint"
 		}
 	},
 	"lint-staged": {
@@ -30,7 +34,21 @@
 		]
 	},
 	"devDependencies": {
+		"eslint": "^8.43.0",
+		"eslint-config-prettier": "8.5.0",
+		"eslint-config-react-app": "6.0.0",
+		"eslint-plugin-chai-friendly": "^0.7.2",
+		"eslint-plugin-cypress": "^2.12.1",
+		"eslint-plugin-flowtype": "5.2.0",
+		"eslint-plugin-import": "2.27.5",
+		"eslint-plugin-jsx-a11y": "6.6.1",
+		"eslint-plugin-prettier": "4.2.1",
+		"eslint-plugin-react": "7.21.5",
+		"eslint-plugin-react-hooks": "4.6.0",
+		"eslint-plugin-testing-library": "^5.1.0",
+		"eslint-plugin-ui-testing": "^2.0.0",
 		"husky": "8.0.1",
-		"lint-staged": "^13.0.3"
+		"lint-staged": "^13.0.3",
+		"prettier": "2.0.5"
 	}
 }

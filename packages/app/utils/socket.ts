@@ -1,24 +1,24 @@
-import { ADDRESSES } from '@kwenta/sdk/constants';
-import { DefaultTheme } from 'styled-components';
+import { ADDRESSES } from '@kwenta/sdk/constants'
+import { DefaultTheme } from 'styled-components'
 
-import { RGB, SocketCustomizationProps } from 'components/SocketBridge/types';
-import { chain } from 'containers/Connector/config';
+import { RGB, SocketCustomizationProps } from 'components/SocketBridge/types'
+import { chain } from 'containers/Connector/config'
 
-export const DEFAULT_WIDTH = 360;
-export const DEFAULT_MOBILE_WIDTH = 180;
+export const DEFAULT_WIDTH = 360
+export const DEFAULT_MOBILE_WIDTH = 180
 export const SOCKET_SOURCE_TOKEN_ADDRESS =
-	ADDRESSES.SUSD[chain.mainnet.id] || '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
-export const SOCKET_DEST_TOKEN_ADDRESS = ADDRESSES.SUSD[chain.optimism.id];
+	ADDRESSES.SUSD[chain.mainnet.id] || '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+export const SOCKET_DEST_TOKEN_ADDRESS = ADDRESSES.SUSD[chain.optimism.id]
 
 export default function hexToRGB(hex: string): RGB {
-	const r = parseInt(hex.slice(1, 3), 16);
-	const g = parseInt(hex.slice(3, 5), 16);
-	const b = parseInt(hex.slice(5, 7), 16);
+	const r = parseInt(hex.slice(1, 3), 16)
+	const g = parseInt(hex.slice(3, 5), 16)
+	const b = parseInt(hex.slice(5, 7), 16)
 	return {
 		r,
 		g,
 		b,
-	};
+	}
 }
 
 export const socketDefaultChains = [
@@ -28,12 +28,12 @@ export const socketDefaultChains = [
 	chain.mainnet.id,
 	chain.optimism.id,
 	chain.polygon.id,
-];
+]
 
 export function customizeSocket(theme: DefaultTheme): SocketCustomizationProps {
-	const background = hexToRGB(theme.colors.selectedTheme.input.background);
-	const text = hexToRGB(theme.colors.selectedTheme.button.text.primary);
-	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.socket.accent);
+	const background = hexToRGB(theme.colors.selectedTheme.input.background)
+	const text = hexToRGB(theme.colors.selectedTheme.button.text.primary)
+	const primaryButtonBg = hexToRGB(theme.colors.selectedTheme.socket.accent)
 
 	return {
 		width: window.innerWidth > 768 ? DEFAULT_WIDTH : DEFAULT_MOBILE_WIDTH,
@@ -48,5 +48,5 @@ export function customizeSocket(theme: DefaultTheme): SocketCustomizationProps {
 		text: `rgb(${text.r},${text.g},${text.b})`, //main text
 		secondaryText: `rgb(${text.r},${text.g},${text.b})`, //secondary text
 		fontFamily: `AkkuratLLWeb-Regular`,
-	};
+	}
 }

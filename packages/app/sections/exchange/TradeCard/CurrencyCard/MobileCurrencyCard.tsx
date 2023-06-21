@@ -1,28 +1,28 @@
-import Wei, { wei } from '@synthetixio/wei';
-import { FC, memo, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import Wei, { wei } from '@synthetixio/wei'
+import { FC, memo, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import NumericInput from 'components/Input/NumericInput';
-import { NO_VALUE } from 'constants/placeholder';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { formatCurrency } from '@kwenta/sdk/utils';
-import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile';
+import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg'
+import CurrencyIcon from 'components/Currency/CurrencyIcon'
+import NumericInput from 'components/Input/NumericInput'
+import { NO_VALUE } from 'constants/placeholder'
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency'
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatCurrency } from '@kwenta/sdk/utils'
+import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile'
 
 type MobileCurrencyCardProps = {
-	currencyKey?: string;
-	amount: string;
-	onAmountChange: (value: string) => void;
-	walletBalance?: Wei | null;
-	onBalanceClick: () => void;
-	onCurrencySelect?: () => void;
-	priceRate?: Wei | number | string | null;
-	label: string;
-	disabled?: boolean;
-};
+	currencyKey?: string
+	amount: string
+	onAmountChange: (value: string) => void
+	walletBalance?: Wei | null
+	onBalanceClick: () => void
+	onCurrencySelect?: () => void
+	priceRate?: Wei | number | string | null
+	label: string
+	disabled?: boolean
+}
 
 const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 	({
@@ -36,27 +36,27 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 		label,
 		disabled,
 	}) => {
-		const { t } = useTranslation();
-		const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+		const { t } = useTranslation()
+		const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency()
 
 		const hasWalletBalance = useMemo(() => !!walletBalance && !!currencyKey, [
 			walletBalance,
 			currencyKey,
-		]);
+		])
 
-		const amountBN = useMemo(() => (amount === '' ? ZERO_WEI : wei(amount)), [amount]);
+		const amountBN = useMemo(() => (amount === '' ? ZERO_WEI : wei(amount)), [amount])
 
 		const tradeAmount = useMemo(() => {
-			let current = priceRate ? amountBN.mul(priceRate) : null;
+			let current = priceRate ? amountBN.mul(priceRate) : null
 
 			if (!!selectPriceCurrencyRate && !!current) {
-				current = getPriceAtCurrentRate(current);
+				current = getPriceAtCurrentRate(current)
 			}
 
-			return current;
-		}, [priceRate, amountBN, selectPriceCurrencyRate, getPriceAtCurrentRate]);
+			return current
+		}, [priceRate, amountBN, selectPriceCurrencyRate, getPriceAtCurrentRate])
 
-		const hasCurrencySelectCallback = useMemo(() => !!onCurrencySelect, [onCurrencySelect]);
+		const hasCurrencySelectCallback = useMemo(() => !!onCurrencySelect, [onCurrencySelect])
 
 		return (
 			<div>
@@ -74,7 +74,7 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 						<SwapTextInput
 							value={amount}
 							onChange={(_, value) => {
-								onAmountChange(value);
+								onAmountChange(value)
 							}}
 							placeholder={t('exchange.currency-card.amount-placeholder')}
 							disabled={disabled}
@@ -97,12 +97,12 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 					</MobileCurrencySelector>
 				</MainInput>
 			</div>
-		);
+		)
 	}
-);
+)
 
 const MobileCurrencySelector = styled.button<{
-	currencyKeySelected: boolean;
+	currencyKeySelected: boolean
 }>`
 	background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 	padding: 6px;
@@ -123,7 +123,7 @@ const MobileCurrencySelector = styled.button<{
 	svg {
 		margin-top: -2px;
 	}
-`;
+`
 
 const MainInput = styled.div`
 	box-sizing: border-box;
@@ -135,7 +135,7 @@ const MainInput = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 15px;
-`;
+`
 
 const SwapTextInput = styled(NumericInput)`
 	background-color: transparent;
@@ -143,13 +143,13 @@ const SwapTextInput = styled(NumericInput)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	margin-bottom: 10px;
 	height: initial;
-`;
+`
 
 const SwapCurrencyPrice = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	height: 12px;
 	margin-left: 10px;
-`;
+`
 
-export default MobileCurrencyCard;
+export default MobileCurrencyCard

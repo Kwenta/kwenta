@@ -1,48 +1,48 @@
-import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants';
-import { floorNumber } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import React, { ChangeEvent, memo, useMemo } from 'react';
-import styled from 'styled-components';
+import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants'
+import { floorNumber } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import React, { ChangeEvent, memo, useMemo } from 'react'
+import styled from 'styled-components'
 
-import InputTitle from 'components/Input/InputTitle';
-import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRow } from 'components/layout/flex';
-import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
-import { Body } from 'components/Text';
-import { editCrossMarginTradeMarginDelta } from 'state/futures/actions';
+import InputTitle from 'components/Input/InputTitle'
+import NumericInput from 'components/Input/NumericInput'
+import { FlexDivRow } from 'components/layout/flex'
+import SelectorButtons from 'components/SelectorButtons/SelectorButtons'
+import { Body } from 'components/Text'
+import { editCrossMarginTradeMarginDelta } from 'state/futures/actions'
 import {
 	selectSelectedInputDenomination,
 	selectMarginDeltaInputValue,
 	selectIdleMargin,
 	selectPosition,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%'];
+const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%']
 
 type MarginInputProps = {
-	isMobile?: boolean;
-};
+	isMobile?: boolean
+}
 
 const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
-	const idleMargin = useAppSelector(selectIdleMargin);
-	const assetInputType = useAppSelector(selectSelectedInputDenomination);
-	const marginDeltaInputValue = useAppSelector(selectMarginDeltaInputValue);
-	const maxMargin = useAppSelector(selectIdleMargin);
-	const position = useAppSelector(selectPosition);
+	const idleMargin = useAppSelector(selectIdleMargin)
+	const assetInputType = useAppSelector(selectSelectedInputDenomination)
+	const marginDeltaInputValue = useAppSelector(selectMarginDeltaInputValue)
+	const maxMargin = useAppSelector(selectIdleMargin)
+	const position = useAppSelector(selectPosition)
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		dispatch(editCrossMarginTradeMarginDelta(v));
-	};
+		dispatch(editCrossMarginTradeMarginDelta(v))
+	}
 
 	const onSelectPercent = (index: number) => {
-		const percent = PERCENT_OPTIONS[index].replace('%', '');
-		const margin = idleMargin.div(100).mul(percent);
+		const percent = PERCENT_OPTIONS[index].replace('%', '')
+		const margin = idleMargin.div(100).mul(percent)
 
-		dispatch(editCrossMarginTradeMarginDelta(floorNumber(margin).toString()));
-	};
+		dispatch(editCrossMarginTradeMarginDelta(floorNumber(margin).toString()))
+	}
 
 	const belowMinMargin = useMemo(
 		() =>
@@ -51,12 +51,12 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
 				.add(position?.remainingMargin || 0)
 				.lt(MIN_MARGIN_AMOUNT),
 		[marginDeltaInputValue, position?.remainingMargin]
-	);
+	)
 
 	const invalid =
 		assetInputType === 'usd' &&
 		marginDeltaInputValue !== '' &&
-		(maxMargin.lt(marginDeltaInputValue || 0) || belowMinMargin);
+		(maxMargin.lt(marginDeltaInputValue || 0) || belowMinMargin)
 
 	return (
 		<>
@@ -78,23 +78,23 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
 				/>
 			</Container>
 		</>
-	);
-});
+	)
+})
 
 const Container = styled.div`
 	margin-top: 18px;
 	margin-bottom: 16px;
-`;
+`
 
 const OrderSizingRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
 	cursor: default;
-`;
+`
 
 const InputHelpers = styled.div`
 	display: flex;
-`;
+`
 
-export default MarginInput;
+export default MarginInput

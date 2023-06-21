@@ -1,22 +1,22 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import { Checkbox } from 'components/Checkbox';
-import { FlexDivRowCentered } from 'components/layout/flex';
-import Spacer from 'components/Spacer';
-import { Body } from 'components/Text';
-import { setAcknowledgedOrdersWarning } from 'state/app/reducer';
-import { selectAckedOrdersWarning } from 'state/app/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import Button from 'components/Button'
+import { Checkbox } from 'components/Checkbox'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import Spacer from 'components/Spacer'
+import { Body } from 'components/Text'
+import { setAcknowledgedOrdersWarning } from 'state/app/reducer'
+import { selectAckedOrdersWarning } from 'state/app/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type Props = {
-	inContainer?: boolean;
-	onClick: () => void;
-};
+	inContainer?: boolean
+	onClick: () => void
+}
 
 export default function OrderAcknowledgement({ onClick, inContainer }: Props) {
-	const dispatch = useAppDispatch();
-	const checked = useAppSelector(selectAckedOrdersWarning);
+	const dispatch = useAppDispatch()
+	const checked = useAppSelector(selectAckedOrdersWarning)
 
 	const content = (
 		<ContentContainer>
@@ -40,12 +40,12 @@ export default function OrderAcknowledgement({ onClick, inContainer }: Props) {
 				Proceed
 			</Button>
 		</ContentContainer>
-	);
+	)
 	if (inContainer) {
-		return <Container>{content}</Container>;
+		return <Container>{content}</Container>
 	}
 
-	return content;
+	return content
 }
 
 const Container = styled.div`
@@ -54,7 +54,7 @@ const Container = styled.div`
 		props.theme.colors.selectedTheme.newTheme.containers.secondary.background};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;
-`;
+`
 
 const ContentContainer = styled.div`
 	padding: 10px 15px;
@@ -63,4 +63,4 @@ const ContentContainer = styled.div`
 	align-items: center;
 	display: flex;
 	flex-direction: column;
-`;
+`

@@ -1,16 +1,16 @@
-import React from 'react';
-import { Row, TableRowProps } from 'react-table';
-import styled, { css } from 'styled-components';
+import React from 'react'
+import { Row, TableRowProps } from 'react-table'
+import styled, { css } from 'styled-components'
 
-import { FlexDivCentered } from 'components/layout/flex';
+import { FlexDivCentered } from 'components/layout/flex'
 
 type TableBodyRowProps = TableRowProps & {
-	row: Row;
-	localRef: any;
-	highlightRowsOnHover?: boolean;
-	rowStyle: Record<string, any>;
-	onClick?: () => void;
-};
+	row: Row
+	localRef: any
+	highlightRowsOnHover?: boolean
+	rowStyle: Record<string, any>
+	onClick?: () => void
+}
 
 const TableBodyRow: React.FC<TableBodyRowProps> = React.memo(
 	({ row, localRef, highlightRowsOnHover, onClick, ...props }) => (
@@ -28,11 +28,11 @@ const TableBodyRow: React.FC<TableBodyRowProps> = React.memo(
 			))}
 		</BaseTableBodyRow>
 	)
-);
+)
 
 const BaseTableBodyRow = styled.div<{
-	$highlightRowsOnHover?: boolean;
-	rowStyle?: Record<string, any>;
+	$highlightRowsOnHover?: boolean
+	rowStyle?: Record<string, any>
 }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 
@@ -53,7 +53,7 @@ const BaseTableBodyRow = styled.div<{
 				background-color: ${(props) => props.theme.colors.selectedTheme.table.hover};
 			}
 		`}
-`;
+`
 
 export const TableCell = styled(FlexDivCentered)`
 	box-sizing: border-box;
@@ -63,6 +63,6 @@ export const TableCell = styled(FlexDivCentered)`
 	&:last-child {
 		padding-right: 14px;
 	}
-`;
+`
 
-export default TableBodyRow;
+export default TableBodyRow

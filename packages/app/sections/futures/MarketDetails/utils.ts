@@ -26,8 +26,8 @@ export const marketDataKeyMap: Record<MarketDataKey, string> = {
 	[MarketDataKey.instFundingRate]: '1h-funding-rate',
 	[MarketDataKey.hourlyFundingRate]: 'funding-rate',
 	[MarketDataKey.skew]: 'skew',
-};
+}
 
 export const isMarketDataKey = (key: string): key is MarketDataKey => {
-	return Object.values<string>(MarketDataKey).includes(key);
-};
+	return Object.values<string>(MarketDataKey).includes(key)
+}

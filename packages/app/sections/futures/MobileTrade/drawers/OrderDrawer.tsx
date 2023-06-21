@@ -1,25 +1,25 @@
-import { PositionSide } from '@kwenta/sdk/types';
-import { getDisplayAsset, formatCurrency } from '@kwenta/sdk/utils';
-import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import { PositionSide } from '@kwenta/sdk/types'
+import { getDisplayAsset, formatCurrency } from '@kwenta/sdk/utils'
+import React, { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import Button from 'components/Button';
-import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
-import { DelayedOrderWithDetails } from 'state/futures/types';
-import { useAppDispatch } from 'state/hooks';
+import Button from 'components/Button'
+import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
+import { DelayedOrderWithDetails } from 'state/futures/types'
+import { useAppDispatch } from 'state/hooks'
 
-import BaseDrawer from './BaseDrawer';
+import BaseDrawer from './BaseDrawer'
 
 type OrderDrawerProps = {
-	open: boolean;
-	order: DelayedOrderWithDetails;
-	closeDrawer(): void;
-};
+	open: boolean
+	order: DelayedOrderWithDetails
+	closeDrawer(): void
+}
 
 const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
 	const onCancel = useCallback(
 		(order: DelayedOrderWithDetails) => {
@@ -28,10 +28,10 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 					marketAddress: order.marketAddress,
 					isOffchain: order.isOffchain,
 				})
-			);
+			)
 		},
 		[dispatch]
-	);
+	)
 
 	const onExecute = useCallback(
 		(order: DelayedOrderWithDetails) => {
@@ -41,13 +41,13 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 					marketAddress: order.marketAddress,
 					isOffchain: order.isOffchain,
 				})
-			);
+			)
 		},
 		[dispatch]
-	);
+	)
 
 	const items = React.useMemo(() => {
-		if (!order || !order.side || !order.asset) return [];
+		if (!order || !order.side || !order.asset) return []
 
 		return [
 			{
@@ -69,8 +69,8 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 				label: t('futures.market.user.open-orders.table.type'),
 				value: order.orderType,
 			},
-		];
-	}, [t, order]);
+		]
+	}, [t, order])
 
 	return (
 		<BaseDrawer
@@ -86,8 +86,8 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer }) =
 				</>
 			}
 		/>
-	);
-};
+	)
+}
 
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	text-transform: uppercase;
@@ -103,13 +103,13 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 		css`
 			color: ${props.theme.colors.common.primaryRed};
 		`}
-`;
+`
 
 const ExecuteButton = styled(Button)`
 	margin-right: 10px;
 	height: 41px;
 	flex: 1;
-`;
+`
 
 const CancelOrderButton = styled(Button)`
 	font-size: 16px;
@@ -134,6 +134,6 @@ const CancelOrderButton = styled(Button)`
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		transform: none;
 	}
-`;
+`
 
-export default OrderDrawer;
+export default OrderDrawer

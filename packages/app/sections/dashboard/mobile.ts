@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
 export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 	background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
@@ -24,7 +24,7 @@ export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 			padding: 0;
 			overflow: hidden;
 		`}
-`;
+`
 
 export const SplitStakingCard = styled(StakingCard)`
 	display: flex;
@@ -42,17 +42,17 @@ export const SplitStakingCard = styled(StakingCard)`
 			border-right: ${(props) => props.theme.colors.selectedTheme.border};
 		}
 	}
-`;
+`
 
 export const HeaderContainer = styled.div`
 	padding: 15px;
-`;
+`
 
 export const MarketStatsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-gap: 8px;
-`;
+`
 
 export const MarketStat = styled.div`
 	border-radius: 8px;
@@ -69,4 +69,4 @@ export const MarketStat = styled.div`
 		font-family: ${(props) => props.theme.fonts.bold};
 		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}
-`;
+`

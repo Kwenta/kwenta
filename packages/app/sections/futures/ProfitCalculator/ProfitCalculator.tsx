@@ -1,48 +1,48 @@
-import { PositionSide } from '@kwenta/sdk/types';
-import { wei } from '@synthetixio/wei';
-import { useCallback, useEffect, useState, FC, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { PositionSide } from '@kwenta/sdk/types'
+import { wei } from '@synthetixio/wei'
+import { useCallback, useEffect, useState, FC, memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import BaseModal from 'components/BaseModal';
-import PositionButtons from 'sections/futures/PositionButtons';
-import { selectMarketAsset, selectMarketIndexPrice } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { getMarketName } from 'utils/futures';
+import BaseModal from 'components/BaseModal'
+import PositionButtons from 'sections/futures/PositionButtons'
+import { selectMarketAsset, selectMarketIndexPrice } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import { getMarketName } from 'utils/futures'
 
-import LabelWithInput from './LabelWithInput';
-import PnLs from './PnLs';
-import ProfitDetails from './ProfitDetails';
+import LabelWithInput from './LabelWithInput'
+import PnLs from './PnLs'
+import ProfitDetails from './ProfitDetails'
 
 type ProfitCalculatorProps = {
-	setOpenProfitCalcModal(val: boolean): void;
-};
+	setOpenProfitCalcModal(val: boolean): void
+}
 
 const ProfitCalculator: FC<ProfitCalculatorProps> = memo(({ setOpenProfitCalcModal }) => {
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const marketName = getMarketName(marketAsset);
-	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
-	const { t } = useTranslation();
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const marketName = getMarketName(marketAsset)
+	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset
+	const { t } = useTranslation()
 
-	const marketPrice = useAppSelector(selectMarketIndexPrice);
+	const marketPrice = useAppSelector(selectMarketIndexPrice)
 
 	// Wei
-	const [entryPrice, setEntryPrice] = useState('');
-	const [exitPrice, setExitPrice] = useState('');
-	const [gainPercent, setGainPercent] = useState('');
-	const [stopLoss, setStopLoss] = useState('');
-	const [lossPercent, setLossPercent] = useState('');
-	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState('');
-	const [basePositionSize, setBasePositionSize] = useState('');
+	const [entryPrice, setEntryPrice] = useState('')
+	const [exitPrice, setExitPrice] = useState('')
+	const [gainPercent, setGainPercent] = useState('')
+	const [stopLoss, setStopLoss] = useState('')
+	const [lossPercent, setLossPercent] = useState('')
+	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState('')
+	const [basePositionSize, setBasePositionSize] = useState('')
 	// Custom type
-	const [leverageSide, setLeverageSide] = useState(PositionSide.LONG);
+	const [leverageSide, setLeverageSide] = useState(PositionSide.LONG)
 
 	const onEntryPriceAmountChange = (value: string) => {
-		setEntryPrice(value);
-	};
+		setEntryPrice(value)
+	}
 
 	const onExitPriceAmountChange = (value: string, fromLeverage: boolean = false) => {
-		setExitPrice(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value);
+		setExitPrice(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value)
 		setGainPercent(
 			value === ''
 				? ''
@@ -52,12 +52,12 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = memo(({ setOpenProfitCalcMod
 							? wei(value).div(entryPrice).toNumber() - 1
 							: (wei(value).div(entryPrice).toNumber() - 1) * -1)
 				  ).toFixed(2)
-		);
-	};
+		)
+	}
 
 	const onGainPercentChange = useCallback(
 		(value: string) => {
-			setGainPercent(value);
+			setGainPercent(value)
 			setExitPrice(
 				value === ''
 					? ''
@@ -65,13 +65,13 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = memo(({ setOpenProfitCalcMod
 							? wei(value).div(100).add(1).mul(entryPrice).toNumber()
 							: wei(1).sub(wei(value).div(100)).mul(entryPrice).toNumber()
 					  ).toFixed(2)
-			);
+			)
 		},
 		[entryPrice, leverageSide]
-	);
+	)
 
 	const onStopLossAmountChange = (value: string, fromLeverage: boolean = false) => {
-		setStopLoss(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value);
+		setStopLoss(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value)
 		setLossPercent(
 			value === ''
 				? ''
@@ -79,12 +79,12 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = memo(({ setOpenProfitCalcMod
 						? (1 - wei(value).div(entryPrice).toNumber()) * 100
 						: (1 - wei(value).div(entryPrice).toNumber()) * 100 * -1
 				  ).toFixed(2)
-		);
-	};
+		)
+	}
 
 	const onLossPercentChange = useCallback(
 		(value: string) => {
-			setLossPercent(value);
+			setLossPercent(value)
 			setStopLoss(
 				value === ''
 					? ''
@@ -92,43 +92,43 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = memo(({ setOpenProfitCalcMod
 							? wei(1).sub(wei(value).div(100)).mul(entryPrice).toNumber()
 							: wei(value).div(100).add(1).mul(entryPrice).toNumber()
 					  ).toFixed(2)
-			);
+			)
 		},
 		[entryPrice, leverageSide]
-	);
+	)
 
 	const onTradeAmountChange = useCallback(
 		(value: any, fromLeverage: boolean = false) => {
 			setMarketAssetPositionSize(
 				fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value
-			);
+			)
 			setBasePositionSize(
 				value === '' ? '' : (parseFloat(entryPrice) * parseFloat(value)).toFixed(2)
-			);
+			)
 		},
 		[entryPrice]
-	);
+	)
 
 	const onTradeAmountSUSDChange = useCallback(
 		(value: string) => {
-			setBasePositionSize(value);
+			setBasePositionSize(value)
 			setMarketAssetPositionSize(
 				value === '' ? '' : wei(value).div(entryPrice).toNumber().toFixed(2)
-			);
+			)
 		},
 		[entryPrice]
-	);
+	)
 
 	useEffect(() => {
-		setEntryPrice(marketPrice.toNumber().toString());
+		setEntryPrice(marketPrice.toNumber().toString())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [])
 
 	useEffect(() => {
-		onGainPercentChange(gainPercent);
-		onLossPercentChange(lossPercent);
+		onGainPercentChange(gainPercent)
+		onLossPercentChange(lossPercent)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [leverageSide]);
+	}, [leverageSide])
 
 	return (
 		<>
@@ -225,8 +225,8 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = memo(({ setOpenProfitCalcMod
 				</div>
 			</StyledBaseModal>
 		</>
-	);
-});
+	)
+})
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
@@ -238,7 +238,7 @@ const StyledBaseModal = styled(BaseModal)`
 	.card-body {
 		padding: 12px 28px 28px 28px;
 	}
-`;
+`
 
 const StatsGrid = styled.div`
 	display: grid;
@@ -246,26 +246,26 @@ const StatsGrid = styled.div`
 	grid-template-columns: repeat(3, 1fr);
 
 	margin-top: 10px;
-`;
+`
 
 const LeftColumn = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: left;
 	align-self: left;
-`;
+`
 
 const RightColumn = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: right;
 	align-self: right;
-`;
+`
 
 const ProfitCalcGrid = styled.div`
 	display: grid;
 	grid-gap: 1.1rem;
 	grid-template-columns: repeat(2, 1fr);
-`;
+`
 
-export default ProfitCalculator;
+export default ProfitCalculator

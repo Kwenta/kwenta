@@ -1,18 +1,18 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { SmartMarginOrderType } from '@kwenta/sdk/types';
-import { formatCurrency, formatDollars, formatPercent } from '@kwenta/sdk/utils';
-import Wei from '@synthetixio/wei';
-import { memo, useMemo, useReducer } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { SmartMarginOrderType } from '@kwenta/sdk/types'
+import { formatCurrency, formatDollars, formatPercent } from '@kwenta/sdk/utils'
+import Wei from '@synthetixio/wei'
+import { memo, useMemo, useReducer } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import HelpIcon from 'assets/svg/app/question-mark.svg';
-import { InfoBoxRow } from 'components/InfoBox';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { NO_VALUE } from 'constants/placeholder';
+import HelpIcon from 'assets/svg/app/question-mark.svg'
+import { InfoBoxRow } from 'components/InfoBox'
+import Tooltip from 'components/Tooltip/Tooltip'
+import { NO_VALUE } from 'constants/placeholder'
 
 const ExecutionFeeTooltip = memo(() => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<Tooltip
@@ -24,8 +24,8 @@ const ExecutionFeeTooltip = memo(() => {
 		>
 			<StyledHelpIcon />
 		</Tooltip>
-	);
-});
+	)
+})
 
 const ExecutionFeeRow = memo(({ executionFee }: { executionFee: Wei }) => {
 	return (
@@ -35,16 +35,16 @@ const ExecutionFeeRow = memo(({ executionFee }: { executionFee: Wei }) => {
 			keyNode={<ExecutionFeeTooltip />}
 			isSubItem
 		/>
-	);
-});
+	)
+})
 
 export const KeeperDepositRow = memo(
 	({
 		smartMarginKeeperDeposit,
 		isSubItem,
 	}: {
-		smartMarginKeeperDeposit: Wei;
-		isSubItem?: boolean;
+		smartMarginKeeperDeposit: Wei
+		isSubItem?: boolean
 	}) => {
 		return (
 			<InfoBoxRow
@@ -56,9 +56,9 @@ export const KeeperDepositRow = memo(
 						: NO_VALUE
 				}
 			/>
-		);
+		)
 	}
-);
+)
 
 const EstimatedTradeFeeRow = memo(({ rates, tradeFee }: { rates: FeeRates; tradeFee?: Wei }) => {
 	return (
@@ -68,11 +68,11 @@ const EstimatedTradeFeeRow = memo(({ rates, tradeFee }: { rates: FeeRates; trade
 			keyNode={<MarketCostTooltip />}
 			isSubItem
 		/>
-	);
-});
+	)
+})
 
 const MarketCostTooltip = memo(() => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<Tooltip
@@ -84,29 +84,29 @@ const MarketCostTooltip = memo(() => {
 		>
 			<StyledHelpIcon />
 		</Tooltip>
-	);
-});
+	)
+})
 
 type FeeRates = {
-	maker: Wei;
-	taker: Wei;
-};
+	maker: Wei
+	taker: Wei
+}
 
 type FeesRowProps = {
-	tradeFee: Wei;
-	orderType: SmartMarginOrderType;
-	smartMarginKeeperDeposit: Wei;
-	executionFee: Wei;
-	rates: FeeRates;
-};
+	tradeFee: Wei
+	orderType: SmartMarginOrderType
+	smartMarginKeeperDeposit: Wei
+	executionFee: Wei
+	rates: FeeRates
+}
 
 const FeesRow = memo(
 	({ tradeFee, smartMarginKeeperDeposit, orderType, executionFee, rates }: FeesRowProps) => {
-		const [expanded, toggleExpanded] = useReducer((s) => !s, false);
+		const [expanded, toggleExpanded] = useReducer((s) => !s, false)
 
 		const totalFee = useMemo(() => {
-			return tradeFee.add(executionFee ?? ZERO_WEI);
-		}, [tradeFee, executionFee]);
+			return tradeFee.add(executionFee ?? ZERO_WEI)
+		}, [tradeFee, executionFee])
 
 		return (
 			<InfoBoxRow
@@ -122,12 +122,12 @@ const FeesRow = memo(
 					<KeeperDepositRow isSubItem smartMarginKeeperDeposit={smartMarginKeeperDeposit} />
 				)}
 			</InfoBoxRow>
-		);
+		)
 	}
-);
+)
 
-export default FeesRow;
+export default FeesRow
 
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-left: 4px;
-`;
+`

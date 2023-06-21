@@ -1,10 +1,10 @@
-import { wei } from '@synthetixio/wei';
-import { FC, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import { wei } from '@synthetixio/wei'
+import { FC, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import StakeCard from 'components/StakeCard/StakeCard';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { approveKwentaToken, stakeEscrow, unstakeEscrow } from 'state/staking/actions';
+import StakeCard from 'components/StakeCard/StakeCard'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { approveKwentaToken, stakeEscrow, unstakeEscrow } from 'state/staking/actions'
 import {
 	selectCanStakeEscrowedKwenta,
 	selectCanUnstakeEscrowedKwenta,
@@ -13,37 +13,37 @@ import {
 	selectIsUnstakedEscrowedKwenta,
 	selectStakedEscrowedKwentaBalance,
 	selectUnstakedEscrowedKwentaBalance,
-} from 'state/staking/selectors';
+} from 'state/staking/selectors'
 
 const EscrowInputCard: FC = () => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
-	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved);
-	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalance);
-	const stakeEnabled = useAppSelector(selectCanStakeEscrowedKwenta);
-	const unstakeEnabled = useAppSelector(selectCanUnstakeEscrowedKwenta);
-	const isStakedEscrowedKwenta = useAppSelector(selectIsStakedEscrowedKwenta);
-	const isUnstakedEscrowedKwenta = useAppSelector(selectIsUnstakedEscrowedKwenta);
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved)
+	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalance)
+	const stakeEnabled = useAppSelector(selectCanStakeEscrowedKwenta)
+	const unstakeEnabled = useAppSelector(selectCanUnstakeEscrowedKwenta)
+	const isStakedEscrowedKwenta = useAppSelector(selectIsStakedEscrowedKwenta)
+	const isUnstakedEscrowedKwenta = useAppSelector(selectIsUnstakedEscrowedKwenta)
 
 	const handleApprove = useCallback(() => {
-		dispatch(approveKwentaToken('kwenta'));
-	}, [dispatch]);
+		dispatch(approveKwentaToken('kwenta'))
+	}, [dispatch])
 
 	const handleStakeEscrow = useCallback(
 		(amount: string) => {
-			dispatch(stakeEscrow(wei(amount).toBN()));
+			dispatch(stakeEscrow(wei(amount).toBN()))
 		},
 		[dispatch]
-	);
+	)
 
 	const handleUnstakeEscrow = useCallback(
 		(amount: string) => {
-			dispatch(unstakeEscrow(wei(amount).toBN()));
+			dispatch(unstakeEscrow(wei(amount).toBN()))
 		},
 		[dispatch]
-	);
+	)
 
 	return (
 		<StakeCard
@@ -59,7 +59,7 @@ const EscrowInputCard: FC = () => {
 			onUnstake={handleUnstakeEscrow}
 			onApprove={handleApprove}
 		/>
-	);
-};
+	)
+}
 
-export default EscrowInputCard;
+export default EscrowInputCard

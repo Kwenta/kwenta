@@ -1,15 +1,15 @@
-import { FC, memo } from 'react';
-import styled from 'styled-components';
+import { FC, memo } from 'react'
+import styled from 'styled-components'
 
-import { Body } from 'components/Text';
+import { Body } from 'components/Text'
 
 type CheckboxProps = {
-	id: string;
-	label: string;
-	checked: boolean;
-	checkSide?: 'left' | 'right';
-	onChange: () => void;
-};
+	id: string
+	label: string
+	checked: boolean
+	checkSide?: 'left' | 'right'
+	onChange: () => void
+}
 
 export const Checkbox: FC<CheckboxProps> = memo(
 	({ id, label, checked, onChange, checkSide = 'left', ...props }) => (
@@ -23,7 +23,7 @@ export const Checkbox: FC<CheckboxProps> = memo(
 			)}
 		</CheckboxContainer>
 	)
-);
+)
 
 const CheckboxContainer = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -32,7 +32,7 @@ const CheckboxContainer = styled.div`
 	align-items: center;
 	cursor: pointer;
 	gap: 8px;
-`;
+`
 
 const Input = styled.input`
 	-webkit-appearance: none;
@@ -69,8 +69,8 @@ const Input = styled.input`
 	&:checked::before {
 		transform: scale(1);
 	}
-`;
+`
 
 const Label = styled.label`
 	cursor: pointer;
-`;
+`

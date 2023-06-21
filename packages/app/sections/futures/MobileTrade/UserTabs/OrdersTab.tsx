@@ -1,68 +1,65 @@
-import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types';
-import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils';
-import { useState, useMemo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
+import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils'
+import { useState, useMemo, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { FlexDiv } from 'components/layout/flex';
-import Pill from 'components/Pill';
-import Spacer from 'components/Spacer';
-import { TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
-import {
-	DEFAULT_DELAYED_CANCEL_BUFFER,
-	DEFAULT_DELAYED_EXECUTION_BUFFER,
-} from 'constants/defaults';
-import useInterval from 'hooks/useInterval';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import PositionType from 'sections/futures/PositionType';
-import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
+import { FlexDiv } from 'components/layout/flex'
+import Pill from 'components/Pill'
+import Spacer from 'components/Spacer'
+import { TableNoResults } from 'components/Table'
+import { Body } from 'components/Text'
+import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults'
+import useInterval from 'hooks/useInterval'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import PositionType from 'sections/futures/PositionType'
+import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
 import {
 	selectOpenDelayedOrders,
 	selectMarketAsset,
 	selectMarkets,
 	selectIsExecutingOrder,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type CountdownTimers = Record<
 	FuturesMarketKey,
 	{ timeToExecution: number; timePastExecution: number }
->;
+>
 
 const OrdersTab: React.FC = () => {
-	const dispatch = useAppDispatch();
-	const { t } = useTranslation();
-	const { switchToL2 } = useNetworkSwitcher();
-	const isL2 = useIsL2();
+	const dispatch = useAppDispatch()
+	const { t } = useTranslation()
+	const { switchToL2 } = useNetworkSwitcher()
+	const isL2 = useIsL2()
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders);
-	const futuresMarkets = useAppSelector(selectMarkets);
-	const isExecuting = useAppSelector(selectIsExecutingOrder);
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders)
+	const futuresMarkets = useAppSelector(selectMarkets)
+	const isExecuting = useAppSelector(selectIsExecutingOrder)
 
-	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
+	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>()
 
 	const handleCancel = useCallback(
 		(marketAddress: string, isOffchain: boolean) => () => {
-			dispatch(cancelDelayedOrder({ marketAddress, isOffchain }));
+			dispatch(cancelDelayedOrder({ marketAddress, isOffchain }))
 		},
 		[dispatch]
-	);
+	)
 
 	const handleExecute = useCallback(
 		(marketKey: FuturesMarketKey, marketAddress: string, isOffchain: boolean) => () => {
-			dispatch(executeDelayedOrder({ marketKey, marketAddress, isOffchain }));
+			dispatch(executeDelayedOrder({ marketKey, marketAddress, isOffchain }))
 		},
 		[dispatch]
-	);
+	)
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openDelayedOrders
 			.map((o) => {
-				const market = futuresMarkets.find((m) => m.market === o.marketAddress);
-				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
+				const market = futuresMarkets.find((m) => m.market === o.marketAddress)
+				const timer = countdownTimers ? countdownTimers[o.marketKey] : null
 				const order = {
 					...o,
 					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
@@ -99,37 +96,37 @@ const OrdersTab: React.FC = () => {
 								? market.settings.offchainDelayedOrderMaxAge
 								: market.settings.maxDelayTimeDelta),
 					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
-				};
-				return order;
+				}
+				return order
 			})
 			.sort((a, b) => {
 				return b.asset === marketAsset && a.asset !== marketAsset
 					? 1
 					: b.asset === marketAsset && a.asset === marketAsset
 					? 0
-					: -1;
-			});
-		return ordersWithCancel;
-	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers]);
+					: -1
+			})
+		return ordersWithCancel
+	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers])
 
 	useInterval(
 		() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
-				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000);
-				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
+				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000)
+				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000)
 
 				// Only updated delayed orders
 				acc[order.marketKey] = {
 					timeToExecution: Math.max(timeToExecution, 0),
 					timePastExecution: Math.max(timePastExecution, 0),
-				};
-				return acc;
-			}, {} as CountdownTimers);
-			setCountdownTimers(newCountdownTimers);
+				}
+				return acc
+			}, {} as CountdownTimers)
+			setCountdownTimers(newCountdownTimers)
 		},
 		1000,
 		[rowsData]
-	);
+	)
 
 	return (
 		<OrdersTabContainer>
@@ -207,12 +204,12 @@ const OrdersTab: React.FC = () => {
 				))
 			)}
 		</OrdersTabContainer>
-	);
-};
+	)
+}
 
 const OrdersTabContainer = styled.div`
 	padding-top: 15px;
-`;
+`
 
 const OrderMeta = styled.div<{ $side: PositionSide }>`
 	display: flex;
@@ -228,7 +225,7 @@ const OrderMeta = styled.div<{ $side: PositionSide }>`
 				props.$side === PositionSide.LONG ? 'positive' : 'negative'
 			]};
 	}
-`;
+`
 
 const OrderItem = styled.div`
 	margin: 0 20px;
@@ -237,7 +234,7 @@ const OrderItem = styled.div`
 	&:not(:last-of-type) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}
-`;
+`
 
 const OrderRow = styled.div`
 	display: flex;
@@ -246,6 +243,6 @@ const OrderRow = styled.div`
 	&:not(:last-of-type) {
 		margin-bottom: 10px;
 	}
-`;
+`
 
-export default OrdersTab;
+export default OrdersTab

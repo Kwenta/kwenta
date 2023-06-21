@@ -1,4 +1,4 @@
-import common from './common';
+import common from './common'
 
 const newTheme = {
 	containers: {
@@ -201,7 +201,7 @@ const newTheme = {
 			border: common.palette.neutral.n50,
 		},
 	},
-};
+}
 
 const lightTheme = {
 	...common.light,
@@ -337,6 +337,6 @@ const lightTheme = {
 	},
 	newTheme,
 	imageInvert: { value: '1' },
-};
+}
 
-export default lightTheme;
+export default lightTheme

@@ -1,16 +1,11 @@
-import {
-	TransactionStatus,
-	FuturesMarketKey,
-	OperationalStatus,
-	GasPrice,
-} from '@kwenta/sdk/types';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { TransactionStatus, FuturesMarketKey, OperationalStatus, GasPrice } from '@kwenta/sdk/types'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { notifyError } from 'components/ErrorView/ErrorNotifier';
-import { isUserDeniedError } from 'utils/formatters/error';
+import { notifyError } from 'components/ErrorView/ErrorNotifier'
+import { isUserDeniedError } from 'utils/formatters/error'
 
-import { checkSynthetixStatus, fetchKwentaStatus } from './actions';
-import { AppState, FuturesPositionModalType, ModalType, Transaction } from './types';
+import { checkSynthetixStatus, fetchKwentaStatus } from './actions'
+import { AppState, FuturesPositionModalType, ModalType, Transaction } from './types'
 
 export const APP_INITIAL_STATE: AppState = {
 	showModal: undefined,
@@ -29,7 +24,7 @@ export const APP_INITIAL_STATE: AppState = {
 	},
 	acknowledgedOrdersWarning: false,
 	showBanner: true,
-};
+}
 
 const appSlice = createSlice({
 	name: 'app',
@@ -37,62 +32,62 @@ const appSlice = createSlice({
 	reducers: {
 		setOpenModal: (state, action: PayloadAction<ModalType>) => {
 			if (action.payload) {
-				state.showPositionModal = null;
+				state.showPositionModal = null
 			}
-			state.showModal = action.payload;
+			state.showModal = action.payload
 		},
 		setShowPositionModal: (
 			state,
 			action: PayloadAction<{ type: FuturesPositionModalType; marketKey: FuturesMarketKey } | null>
 		) => {
 			if (action.payload) {
-				state.showModal = null;
+				state.showModal = null
 			}
-			state.showPositionModal = action.payload;
+			state.showPositionModal = action.payload
 		},
 		setGasPrice: (state, action: PayloadAction<GasPrice<string>>) => {
-			state.gasPrice = action.payload;
+			state.gasPrice = action.payload
 		},
 		setTransaction: (state, action: PayloadAction<Transaction | undefined>) => {
-			state.transaction = action.payload;
+			state.transaction = action.payload
 		},
 		updateTransactionStatus: (state, action: PayloadAction<TransactionStatus>) => {
 			if (state.transaction) {
-				state.transaction.status = action.payload;
+				state.transaction.status = action.payload
 			}
 		},
 		updateTransactionHash: (state, action: PayloadAction<string>) => {
 			if (state.transaction) {
-				state.transaction.hash = action.payload;
+				state.transaction.hash = action.payload
 			}
 		},
 		handleTransactionError: (state, action: PayloadAction<string>) => {
 			if (isUserDeniedError(action.payload)) {
-				state.transaction = undefined;
+				state.transaction = undefined
 			} else {
-				notifyError('Transaction failed', new Error(action.payload));
+				notifyError('Transaction failed', new Error(action.payload))
 				if (state.transaction) {
-					state.transaction.status = TransactionStatus.Failed;
-					state.transaction.error = action.payload;
+					state.transaction.status = TransactionStatus.Failed
+					state.transaction.error = action.payload
 				}
 			}
 		},
 		setAcknowledgedOrdersWarning: (state, action: PayloadAction<boolean>) => {
-			state.acknowledgedOrdersWarning = action.payload;
+			state.acknowledgedOrdersWarning = action.payload
 		},
 		setShowBanner: (state, action: PayloadAction<boolean>) => {
-			state.showBanner = action.payload;
+			state.showBanner = action.payload
 		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(checkSynthetixStatus.fulfilled, (state, action) => {
-			state.synthetixOnMaintenance = action.payload;
-		});
+			state.synthetixOnMaintenance = action.payload
+		})
 		builder.addCase(fetchKwentaStatus.fulfilled, (state, action) => {
-			state.kwentaStatus = action.payload;
-		});
+			state.kwentaStatus = action.payload
+		})
 	},
-});
+})
 
 export const {
 	setOpenModal,
@@ -104,6 +99,6 @@ export const {
 	updateTransactionHash,
 	setAcknowledgedOrdersWarning,
 	setShowBanner,
-} = appSlice.actions;
+} = appSlice.actions
 
-export default appSlice.reducer;
+export default appSlice.reducer

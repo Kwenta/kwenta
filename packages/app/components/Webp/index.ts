@@ -1,1 +1,1 @@
-export { default } from './Webp';
+export { default } from './Webp'

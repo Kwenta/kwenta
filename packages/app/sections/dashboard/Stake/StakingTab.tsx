@@ -1,28 +1,28 @@
-import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils';
-import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import { SplitContainer } from 'components/layout/grid';
-import { LogoText } from 'components/Text';
-import { StakingCard } from 'sections/dashboard/Stake/card';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { getReward } from 'state/staking/actions';
-import { selectAPY, selectClaimableBalance } from 'state/staking/selectors';
+import Button from 'components/Button'
+import { SplitContainer } from 'components/layout/grid'
+import { LogoText } from 'components/Text'
+import { StakingCard } from 'sections/dashboard/Stake/card'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { getReward } from 'state/staking/actions'
+import { selectAPY, selectClaimableBalance } from 'state/staking/selectors'
 
-import StakeInputCard from './InputCards/StakeInputCard';
+import StakeInputCard from './InputCards/StakeInputCard'
 
 const StakingTab = () => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
-	const claimableBalance = useAppSelector(selectClaimableBalance);
-	const apy = useAppSelector(selectAPY);
+	const claimableBalance = useAppSelector(selectClaimableBalance)
+	const apy = useAppSelector(selectAPY)
 
 	const handleGetReward = useCallback(() => {
-		dispatch(getReward());
-	}, [dispatch]);
+		dispatch(getReward())
+	}, [dispatch])
 
 	return (
 		<SplitContainer>
@@ -49,14 +49,14 @@ const StakingTab = () => {
 			</CardGridContainer>
 			<StakeInputCard />
 		</SplitContainer>
-	);
-};
+	)
+}
 
 const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-`;
+`
 
 const CardGrid = styled.div`
 	display: grid;
@@ -73,6 +73,6 @@ const CardGrid = styled.div`
 	.title {
 		color: ${(props) => props.theme.colors.selectedTheme.title};
 	}
-`;
+`
 
-export default StakingTab;
+export default StakingTab

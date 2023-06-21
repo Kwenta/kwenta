@@ -1,29 +1,29 @@
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import styled from 'styled-components';
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import styled from 'styled-components'
 
-import BaseModal from 'components/BaseModal';
-import Button from 'components/Button';
-import { Body } from 'components/Text';
-import ROUTES from 'constants/routes';
-import Connector from 'containers/Connector';
-import localStore from 'utils/localStore';
-import logError from 'utils/logError';
+import BaseModal from 'components/BaseModal'
+import Button from 'components/Button'
+import { Body } from 'components/Text'
+import ROUTES from 'constants/routes'
+import Connector from 'containers/Connector'
+import localStore from 'utils/localStore'
+import logError from 'utils/logError'
 
 export default function AcknowledgementModal() {
-	const { walletAddress } = Connector.useContainer();
-	const router = useRouter();
-	const [acks, setAcks] = useState<Record<string, boolean>>({});
+	const { walletAddress } = Connector.useContainer()
+	const router = useRouter()
+	const [acks, setAcks] = useState<Record<string, boolean>>({})
 
 	const acknowledgedAddresses = (localStore.get('acknowledgedAddresses') || {}) as Record<
 		string,
 		boolean
-	>;
+	>
 
 	const protectedRoute =
 		router.asPath.startsWith(ROUTES.Earn.Home) ||
 		router.asPath.startsWith(ROUTES.Exchange.Home) ||
-		router.asPath.includes('/market');
+		router.asPath.includes('/market')
 
 	if (
 		!protectedRoute ||
@@ -31,18 +31,18 @@ export default function AcknowledgementModal() {
 		acks[walletAddress.toLowerCase()] ||
 		acknowledgedAddresses[walletAddress.toLowerCase()]
 	) {
-		return null;
+		return null
 	}
 
 	const onAccept = () => {
 		try {
-			acknowledgedAddresses[walletAddress.toLowerCase()] = true;
-			localStore.set('acknowledgedAddresses', acknowledgedAddresses);
-			setAcks({ ...acks, [walletAddress.toLowerCase()]: true });
+			acknowledgedAddresses[walletAddress.toLowerCase()] = true
+			localStore.set('acknowledgedAddresses', acknowledgedAddresses)
+			setAcks({ ...acks, [walletAddress.toLowerCase()]: true })
 		} catch (err) {
-			logError(err);
+			logError(err)
 		}
-	};
+	}
 
 	return (
 		<StyledBaseModal onDismiss={() => {}} title="Kwenta Terms of Service" showCross={false}>
@@ -65,15 +65,15 @@ export default function AcknowledgementModal() {
 				Accept & Continue
 			</Button>
 		</StyledBaseModal>
-	);
+	)
 }
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		max-width: 400px;
 	}
-`;
+`
 
 const BodyText = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.body};
-`;
+`

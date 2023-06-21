@@ -1,17 +1,17 @@
-import { FC } from 'react';
-import styled from 'styled-components';
+import { FC } from 'react'
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import { StatsTimeframe } from 'hooks/useStatsData';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { setSelectedTimeframe } from 'state/stats/reducer';
-import { selectSelectedTimeframe } from 'state/stats/selectors';
+import Button from 'components/Button'
+import { StatsTimeframe } from 'hooks/useStatsData'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { setSelectedTimeframe } from 'state/stats/reducer'
+import { selectSelectedTimeframe } from 'state/stats/selectors'
 
 const Container = styled.div`
 	display: flex;
 	justify-content: end;
 	gap: 4px;
-`;
+`
 
 const StyledBtn = styled(Button)`
 	width: 40px;
@@ -36,13 +36,13 @@ const StyledBtn = styled(Button)`
 	&:before {
 		content: unset;
 	}
-`;
+`
 
-const TIMEFRAMES: StatsTimeframe[] = ['1M', '1Y', 'MAX'];
+const TIMEFRAMES: StatsTimeframe[] = ['1M', '1Y', 'MAX']
 
 export const TimeframeSwitcher: FC = () => {
-	const dispatch = useAppDispatch();
-	const selectedTimeframe = useAppSelector(selectSelectedTimeframe);
+	const dispatch = useAppDispatch()
+	const selectedTimeframe = useAppSelector(selectSelectedTimeframe)
 	return (
 		<Container>
 			{TIMEFRAMES.map((timeframe) => (
@@ -55,5 +55,5 @@ export const TimeframeSwitcher: FC = () => {
 				</StyledBtn>
 			))}
 		</Container>
-	);
-};
+	)
+}

@@ -1,1 +1,1 @@
-export { default } from './MarketInfo';
+export { default } from './MarketInfo'

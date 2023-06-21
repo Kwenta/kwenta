@@ -1,1 +1,1 @@
-export { default } from './Frame';
+export { default } from './Frame'

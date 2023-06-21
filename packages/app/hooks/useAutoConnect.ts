@@ -1,20 +1,20 @@
-import { useEffect } from 'react';
-import { useConnect } from 'wagmi';
+import { useEffect } from 'react'
+import { useConnect } from 'wagmi'
 
-const AUTOCONNECTED_CONNECTOR_IDS = ['safe'];
+const AUTOCONNECTED_CONNECTOR_IDS = ['safe']
 
 function useAutoConnect() {
-	const { connect, connectors } = useConnect();
+	const { connect, connectors } = useConnect()
 
 	useEffect(() => {
 		AUTOCONNECTED_CONNECTOR_IDS.forEach((connector) => {
-			const connectorInstance = connectors.find((c) => c.id === connector && c.ready);
+			const connectorInstance = connectors.find((c) => c.id === connector && c.ready)
 
 			if (connectorInstance) {
-				connect({ connector: connectorInstance });
+				connect({ connector: connectorInstance })
 			}
-		});
-	}, [connect, connectors]);
+		})
+	}, [connect, connectors])
 }
 
-export { useAutoConnect };
+export { useAutoConnect }

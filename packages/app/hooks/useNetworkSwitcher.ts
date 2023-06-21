@@ -1,33 +1,33 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useConnect, useSwitchNetwork } from 'wagmi';
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useConnect, useSwitchNetwork } from 'wagmi'
 
-import Connector from 'containers/Connector';
+import Connector from 'containers/Connector'
 
 const useNetworkSwitcher = () => {
-	const { isWalletConnected } = Connector.useContainer();
-	const { connect: connectWallet } = useConnect();
-	const [, setNetworkError] = useState<string | null>(null);
-	const { switchNetwork } = useSwitchNetwork();
+	const { isWalletConnected } = Connector.useContainer()
+	const { connect: connectWallet } = useConnect()
+	const [, setNetworkError] = useState<string | null>(null)
+	const { switchNetwork } = useSwitchNetwork()
 
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	const switchToL2 = async () => {
-		if (!isWalletConnected) connectWallet();
+		if (!isWalletConnected) connectWallet()
 		try {
 			if (!switchNetwork) {
-				return setNetworkError(t('user-menu.error.please-install-metamask'));
+				return setNetworkError(t('user-menu.error.please-install-metamask'))
 			}
-			setNetworkError(null);
-			switchNetwork(10);
+			setNetworkError(null)
+			switchNetwork(10)
 		} catch (e) {
-			setNetworkError(e.message);
+			setNetworkError(e.message)
 		}
-	};
+	}
 
 	return {
 		switchToL2,
-	};
-};
+	}
+}
 
-export default useNetworkSwitcher;
+export default useNetworkSwitcher

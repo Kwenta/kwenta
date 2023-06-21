@@ -1,7 +1,7 @@
-import { generateMedia } from 'styled-media-query';
+import { generateMedia } from 'styled-media-query'
 
-export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
-export type Breakpoints = Record<Breakpoint, number>;
+export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
+export type Breakpoints = Record<Breakpoint, number>
 
 export const BREAKPOINTS: Breakpoints = {
 	xs: 0,
@@ -10,7 +10,7 @@ export const BREAKPOINTS: Breakpoints = {
 	lg: 1150,
 	xl: 1300,
 	xxl: 1500,
-};
+}
 
 // TODO: consider swapping this library, its a bit confusing to use "lessThan" and "greaterThan" when it doesn't actually do it... ("lessThan 768px, matches 768px...")
 export const media = generateMedia({
@@ -20,6 +20,6 @@ export const media = generateMedia({
 	lg: `${BREAKPOINTS.lg}px`,
 	xl: `${BREAKPOINTS.xl}px`,
 	xxl: `${BREAKPOINTS.xxl}px`,
-});
+})
 
-export default media;
+export default media

@@ -1,56 +1,56 @@
-import { FuturesTrade } from '@kwenta/sdk/types';
-import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils';
-import { useRouter } from 'next/router';
-import { memo, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import { FuturesTrade } from '@kwenta/sdk/types'
+import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils'
+import { useRouter } from 'next/router'
+import { memo, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CellProps } from 'react-table'
+import styled from 'styled-components'
 
-import LinkIcon from 'assets/svg/app/link-blue.svg';
-import ColoredPrice from 'components/ColoredPrice';
-import { GridDivCenteredRow } from 'components/layout/grid';
-import Table, { TableHeader, TableNoResults } from 'components/Table';
-import { ETH_UNIT } from 'constants/network';
-import ROUTES from 'constants/routes';
-import { blockExplorer } from 'containers/Connector/Connector';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import PositionType from 'sections/futures/PositionType';
+import LinkIcon from 'assets/svg/app/link-blue.svg'
+import ColoredPrice from 'components/ColoredPrice'
+import { GridDivCenteredRow } from 'components/layout/grid'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
+import { ETH_UNIT } from 'constants/network'
+import ROUTES from 'constants/routes'
+import { blockExplorer } from 'containers/Connector/Connector'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import PositionType from 'sections/futures/PositionType'
 import {
 	selectAllTradesForAccountType,
 	selectFuturesType,
 	selectMarketAsset,
 	selectQueryStatuses,
-} from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { FetchStatus } from 'state/types';
-import { ExternalLink } from 'styles/common';
+} from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import { FetchStatus } from 'state/types'
+import { ExternalLink } from 'styles/common'
 
-import { TradeStatus } from '../types';
-import TableMarketDetails from '../UserInfo/TableMarketDetails';
+import { TradeStatus } from '../types'
+import TableMarketDetails from '../UserInfo/TableMarketDetails'
 
-import TimeDisplay from './TimeDisplay';
+import TimeDisplay from './TimeDisplay'
 
 const Trades = memo(() => {
-	const { t } = useTranslation();
-	const { switchToL2 } = useNetworkSwitcher();
-	const router = useRouter();
+	const { t } = useTranslation()
+	const { switchToL2 } = useNetworkSwitcher()
+	const router = useRouter()
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const accountType = useAppSelector(selectFuturesType);
-	const history = useAppSelector(selectAllTradesForAccountType);
-	const { trades } = useAppSelector(selectQueryStatuses);
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const accountType = useAppSelector(selectFuturesType)
+	const history = useAppSelector(selectAllTradesForAccountType)
+	const { trades } = useAppSelector(selectQueryStatuses)
 
-	const isLoading = !history.length && trades.status === FetchStatus.Loading;
-	const isLoaded = trades.status === FetchStatus.Success;
+	const isLoading = !history.length && trades.status === FetchStatus.Loading
+	const isLoaded = trades.status === FetchStatus.Success
 
-	const isL2 = useIsL2();
+	const isL2 = useIsL2()
 
 	const historyData = useMemo(() => {
 		return history.map((trade) => {
-			const pnl = trade?.pnl.div(ETH_UNIT);
-			const feesPaid = trade?.feesPaid.div(ETH_UNIT);
-			const netPnl = pnl.sub(feesPaid);
+			const pnl = trade?.pnl.div(ETH_UNIT)
+			const feesPaid = trade?.feesPaid.div(ETH_UNIT)
+			const netPnl = pnl.sub(feesPaid)
 			return {
 				...trade,
 				pnl,
@@ -63,11 +63,11 @@ const Trades = memo(() => {
 				asset: marketAsset,
 				type: trade?.orderType,
 				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-			};
-		});
-	}, [history, marketAsset]);
+			}
+		})
+	}, [history, marketAsset])
 
-	const columnsDeps = useMemo(() => [historyData], [historyData]);
+	const columnsDeps = useMemo(() => [historyData], [historyData])
 
 	return (
 		<Table
@@ -101,7 +101,7 @@ const Trades = memo(() => {
 									'-'
 								)}
 							</MarketDetailsContainer>
-						);
+						)
 					},
 					width: 100,
 				},
@@ -134,8 +134,8 @@ const Trades = memo(() => {
 					Cell: (cellProps: CellProps<FuturesTrade>) => {
 						const formatOptions = {
 							suggestDecimals: true,
-						};
-						return <>{formatDollars(cellProps.value, formatOptions)}</>;
+						}
+						return <>{formatDollars(cellProps.value, formatOptions)}</>
 					},
 					width: 90,
 					sortable: true,
@@ -159,7 +159,7 @@ const Trades = memo(() => {
 					Cell: (cellProps: CellProps<FuturesTrade>) => {
 						const formatOptions = {
 							maxDecimals: 2,
-						};
+						}
 						return cellProps.value.eq(0) ? (
 							'--'
 						) : (
@@ -171,7 +171,7 @@ const Trades = memo(() => {
 							>
 								{formatDollars(cellProps.value, formatOptions)}
 							</ColoredPrice>
-						);
+						)
 					},
 					width: 90,
 					sortable: true,
@@ -221,10 +221,10 @@ const Trades = memo(() => {
 				) : undefined
 			}
 		/>
-	);
-});
+	)
+})
 
-export default Trades;
+export default Trades
 
 const StyledExternalLink = styled(ExternalLink)`
 	padding: 10px;
@@ -235,7 +235,7 @@ const StyledExternalLink = styled(ExternalLink)`
 			}
 		}
 	}
-`;
+`
 
 const StyledLinkIcon = styled(LinkIcon)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -245,8 +245,8 @@ const StyledLinkIcon = styled(LinkIcon)`
 	path {
 		fill: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
-`;
+`
 
 const MarketDetailsContainer = styled.div`
 	cursor: pointer;
-`;
+`

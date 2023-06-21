@@ -1,15 +1,15 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import TextLogo from 'assets/svg/brand/text-logo-white.svg';
-import { FlexDivColCentered } from 'components/layout/flex';
-import { Body } from 'components/Text';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { ExternalLink } from 'styles/common';
+import TextLogo from 'assets/svg/brand/text-logo-white.svg'
+import { FlexDivColCentered } from 'components/layout/flex'
+import { Body } from 'components/Text'
+import { EXTERNAL_LINKS } from 'constants/links'
+import { ExternalLink } from 'styles/common'
 
 const PoweredBySynthetix = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 	return (
 		<Container>
 			<Text>{t('common.powered-by')}</Text>
@@ -17,12 +17,12 @@ const PoweredBySynthetix = () => {
 				<TextLogo height="10.5px" />
 			</ExternalLink>
 		</Container>
-	);
-};
+	)
+}
 
 const Container = styled(FlexDivColCentered)`
 	row-gap: 5px;
-`;
+`
 
 const Text = styled(Body)`
 	font-size: 10px;
@@ -33,6 +33,6 @@ const Text = styled(Body)`
 	text-transform: uppercase;
 	line-height: 100%;
 	text-align: center;
-`;
+`
 
-export default PoweredBySynthetix;
+export default PoweredBySynthetix

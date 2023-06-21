@@ -1,29 +1,29 @@
-import { FuturesFilledPosition, FuturesMarket, PositionSide } from '@kwenta/sdk/types';
-import { getMarketName, MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils';
-import Wei, { wei } from '@synthetixio/wei';
-import { memo, FC } from 'react';
-import styled, { css } from 'styled-components';
+import { FuturesFilledPosition, FuturesMarket, PositionSide } from '@kwenta/sdk/types'
+import { getMarketName, MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils'
+import Wei, { wei } from '@synthetixio/wei'
+import { memo, FC } from 'react'
+import styled, { css } from 'styled-components'
 
-import { border } from 'components/Button';
-import ChangePercent from 'components/ChangePercent';
-import Currency from 'components/Currency';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import { selectMarkPrices } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { isDecimalFour } from 'utils/futures';
+import { border } from 'components/Button'
+import ChangePercent from 'components/ChangePercent'
+import Currency from 'components/Currency'
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults'
+import { selectMarkPrices } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import { isDecimalFour } from 'utils/futures'
 
 type MobilePositionRowProps = {
 	row: {
-		market?: FuturesMarket;
-		position: FuturesFilledPosition | null;
-		avgEntryPrice?: Wei;
-	};
-	onClick(): void;
-};
+		market?: FuturesMarket
+		position: FuturesFilledPosition | null
+		avgEntryPrice?: Wei
+	}
+	onClick(): void
+}
 
 const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) => {
-	const prices = useAppSelector(selectMarkPrices);
-	const marketPrice = !!row.market ? prices[MarketKeyByAsset[row.market.asset]] ?? wei(0) : wei(0);
+	const prices = useAppSelector(selectMarkPrices)
+	const marketPrice = !!row.market ? prices[MarketKeyByAsset[row.market.asset]] ?? wei(0) : wei(0)
 	return !!row.position && !!row.market ? (
 		<OpenPositionContainer side={row.position?.side} key={row.market?.asset} onClick={onClick}>
 			<CurrencyDetailsContainer>
@@ -73,8 +73,8 @@ const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) =>
 		</OpenPositionContainer>
 	) : (
 		<></>
-	);
-});
+	)
+})
 
 const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
 	display: flex;
@@ -111,7 +111,7 @@ const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
 				);
 			}
 		`}
-`;
+`
 
 const OpenPositionSize = styled.div`
 	display: flex;
@@ -119,7 +119,7 @@ const OpenPositionSize = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	font-size: 12px;
-`;
+`
 
 const OpenPositionMarketName = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
@@ -128,7 +128,7 @@ const OpenPositionMarketName = styled.span`
 	font-size: 6px;
 	padding: 2px;
 	margin-left: 4px;
-`;
+`
 
 const OpenPositionSide = styled.div<{ side: PositionSide }>`
 	font-size: 12px;
@@ -149,30 +149,30 @@ const OpenPositionSide = styled.div<{ side: PositionSide }>`
 	.leverage {
 		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}
-`;
+`
 
 const EntryPrice = styled.div`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
-`;
+`
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 8px;
-`;
+`
 
 const CurrencyDetailsContainer = styled.div`
 	display: flex;
 	width: 125px;
 	margin-right: 30px;
-`;
+`
 
 const RightColumnsContainer = styled.div`
 	display: flex;
 	flex: 1;
 	justify-content: space-between;
-`;
+`
 
-export default MobilePositionRow;
+export default MobilePositionRow

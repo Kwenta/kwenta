@@ -1,26 +1,26 @@
-import { PositionSide } from '@kwenta/sdk/types';
-import { wei } from '@synthetixio/wei';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import { PositionSide } from '@kwenta/sdk/types'
+import { wei } from '@synthetixio/wei'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import { Body } from 'components/Text';
+import { Body } from 'components/Text'
 
 function textColor(props: any) {
 	if (!props.className || props.className === 'row-name')
-		return props.theme.colors.selectedTheme.button.text.primary;
-	if (props.className === 'long') return props.theme.colors.selectedTheme.green;
-	if (props.className === 'short') return props.theme.colors.selectedTheme.red;
-	if (props.className === 'gray-font-color') return props.theme.colors.selectedTheme.gray;
+		return props.theme.colors.selectedTheme.button.text.primary
+	if (props.className === 'long') return props.theme.colors.selectedTheme.green
+	if (props.className === 'short') return props.theme.colors.selectedTheme.red
+	if (props.className === 'gray-font-color') return props.theme.colors.selectedTheme.gray
 }
 
 type ProfitDetailsProps = {
-	stopLoss: string;
-	exitPrice: string;
-	marketName: string;
-	leverageSide: PositionSide;
-	marketAssetPositionSize: string;
-};
+	stopLoss: string
+	exitPrice: string
+	marketName: string
+	leverageSide: PositionSide
+	marketAssetPositionSize: string
+}
 
 const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 	stopLoss,
@@ -29,9 +29,9 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 	leverageSide,
 	marketAssetPositionSize,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
-	const entryOrderDetails = leverageSide === PositionSide.LONG ? 'Long' : 'Short';
+	const entryOrderDetails = leverageSide === PositionSide.LONG ? 'Long' : 'Short'
 
 	return (
 		<>
@@ -95,10 +95,10 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 				</ProfitDetailsRow>
 			</ProfitDetailsContainer>
 		</>
-	);
-};
+	)
+}
 
-const Details = styled.div``;
+const Details = styled.div``
 
 const RowText = styled(Body).attrs({ size: 'small' })`
 	display: inline-block;
@@ -107,7 +107,7 @@ const RowText = styled(Body).attrs({ size: 'small' })`
 		color: ${textColor(props)};
 		text-align: ${props.className === 'row-name' ? 'left' : 'right'};
 	`}
-`;
+`
 
 const ProfitDetailsContainer = styled.div`
 	margin-top: 20px;
@@ -115,7 +115,7 @@ const ProfitDetailsContainer = styled.div`
 	box-sizing: border-box;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 6px;
-`;
+`
 
 const ProfitDetailsRow = styled.div`
 	display: flex;
@@ -130,6 +130,6 @@ const ProfitDetailsRow = styled.div`
 		padding-bottom: 12px;
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}
-`;
+`
 
-export default ProfitDetails;
+export default ProfitDetails

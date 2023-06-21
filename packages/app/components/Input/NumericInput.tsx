@@ -1,29 +1,29 @@
-import { FC, memo, useCallback } from 'react';
-import styled, { css } from 'styled-components';
+import { FC, memo, useCallback } from 'react'
+import styled, { css } from 'styled-components'
 
-import Spacer from 'components/Spacer';
+import Spacer from 'components/Spacer'
 
 type NumericInputProps = Omit<
 	React.InputHTMLAttributes<HTMLInputElement>,
 	'onChange' | 'maxLength'
 > & {
-	value: string;
-	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
-	left?: React.ReactNode;
-	right?: React.ReactNode;
-	dataTestId?: string;
-	invalid?: boolean;
-	bold?: boolean;
-	textAlign?: string;
-	suffix?: string;
-	max?: number;
-	maxLength?: number | 'none';
-	roundedCorner?: boolean;
-};
+	value: string
+	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void
+	left?: React.ReactNode
+	right?: React.ReactNode
+	dataTestId?: string
+	invalid?: boolean
+	bold?: boolean
+	textAlign?: string
+	suffix?: string
+	max?: number
+	maxLength?: number | 'none'
+	roundedCorner?: boolean
+}
 
-const INVALID_CHARS = ['-', '+', 'e'];
+const INVALID_CHARS = ['-', '+', 'e']
 
-const isInvalid = (key: string) => INVALID_CHARS.includes(key);
+const isInvalid = (key: string) => INVALID_CHARS.includes(key)
 
 const NumericInput: FC<NumericInputProps> = memo(
 	({
@@ -44,20 +44,20 @@ const NumericInput: FC<NumericInputProps> = memo(
 	}) => {
 		const handleChange = useCallback(
 			(e: React.ChangeEvent<HTMLInputElement>) => {
-				let standardizedNum = e.target.value.replace(/[^0-9.,]/g, '').replace(/,/g, '.');
+				let standardizedNum = e.target.value.replace(/[^0-9.,]/g, '').replace(/,/g, '.')
 
 				if (maxLength !== 'none') {
-					standardizedNum = standardizedNum.substring(0, maxLength);
+					standardizedNum = standardizedNum.substring(0, maxLength)
 				}
 				// TODO: make regex only accept valid numbers, so we don't need to check again.
-				if (isNaN(Number(standardizedNum))) return;
-				const valueIsAboveMax = max !== 0 && Number(standardizedNum) > max;
+				if (isNaN(Number(standardizedNum))) return
+				const valueIsAboveMax = max !== 0 && Number(standardizedNum) > max
 				if (!valueIsAboveMax) {
-					onChange(e, standardizedNum);
+					onChange(e, standardizedNum)
 				}
 			},
 			[onChange, max, maxLength]
-		);
+		)
 
 		return (
 			<InputContainer
@@ -84,7 +84,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 					onChange={handleChange}
 					onKeyDown={(e) => {
 						if (isInvalid(e.key)) {
-							e.preventDefault();
+							e.preventDefault()
 						}
 					}}
 					{...props}
@@ -96,18 +96,18 @@ const NumericInput: FC<NumericInputProps> = memo(
 					</>
 				)}
 			</InputContainer>
-		);
+		)
 	}
-);
+)
 
 const InputContainer = styled.div<{
-	$invalid?: boolean;
-	$bold?: boolean;
-	$textAlign?: string;
-	$suffix?: string;
-	$length: number;
-	$roundedCorner?: boolean;
-	$disabled?: boolean;
+	$invalid?: boolean
+	$bold?: boolean
+	$textAlign?: string
+	$suffix?: string
+	$length: number
+	$roundedCorner?: boolean
+	$disabled?: boolean
 }>`
 	display: flex;
 	align-items: center;
@@ -170,6 +170,6 @@ const InputContainer = styled.div<{
 			color: ${props.theme.colors.selectedTheme.input.placeholder};
 		}
 	`}
-`;
+`
 
-export default NumericInput;
+export default NumericInput

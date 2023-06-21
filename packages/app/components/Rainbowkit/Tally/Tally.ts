@@ -1,12 +1,12 @@
-import { Chain, Wallet } from '@rainbow-me/rainbowkit';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import { Chain, Wallet } from '@rainbow-me/rainbowkit'
+import { InjectedConnector } from 'wagmi/connectors/injected'
 
-import TallyIcon from 'assets/png/rainbowkit/tallyho.png';
+import TallyIcon from 'assets/png/rainbowkit/tallyho.png'
 
 type TallyOptions = {
-	chains: Chain[];
-	shimDisconnect?: boolean;
-};
+	chains: Chain[]
+	shimDisconnect?: boolean
+}
 
 const Tally = ({ chains, shimDisconnect }: TallyOptions): Wallet => ({
 	id: 'tally',
@@ -18,11 +18,11 @@ const Tally = ({ chains, shimDisconnect }: TallyOptions): Wallet => ({
 			'https://chrome.google.com/webstore/detail/tally-ho/eajafomhmkipbjmfmhebemolkcicgfmd',
 	},
 	createConnector: () => {
-		const connector = new InjectedConnector({ chains, options: { shimDisconnect } });
+		const connector = new InjectedConnector({ chains, options: { shimDisconnect } })
 		return {
 			connector,
-		};
+		}
 	},
-});
+})
 
-export default Tally;
+export default Tally

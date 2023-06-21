@@ -1,18 +1,18 @@
-import React, { FC, memo } from 'react';
-import styled, { css } from 'styled-components';
+import React, { FC, memo } from 'react'
+import styled, { css } from 'styled-components'
 
-export type StyleType = 'tab' | 'check' | 'pill-button' | 'pill-button-large';
+export type StyleType = 'tab' | 'check' | 'pill-button' | 'pill-button-large'
 
 interface SegmentedControlProps {
-	values: React.ReactNode[];
-	selectedIndex?: number;
-	style?: React.CSSProperties;
-	className?: string;
-	styleType?: StyleType;
-	suffix?: string;
-	isLarge?: boolean | undefined;
-	onChange(index: number): void;
-	icon?: boolean;
+	values: React.ReactNode[]
+	selectedIndex?: number
+	style?: React.CSSProperties
+	className?: string
+	styleType?: StyleType
+	suffix?: string
+	isLarge?: boolean | undefined
+	onChange(index: number): void
+	icon?: boolean
 }
 
 const SegmentedControl: FC<SegmentedControlProps> = memo(
@@ -33,9 +33,9 @@ const SegmentedControl: FC<SegmentedControlProps> = memo(
 					</SegmentedControlOption>
 				))}
 			</SegmentedControlContainer>
-		);
+		)
 	}
-);
+)
 
 const SegmentedControlContainer = styled.div<{ $length: number; styleType: StyleType }>`
 	${(props) =>
@@ -57,12 +57,12 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 	border: ${(props) =>
 		props.styleType === 'tab' ? props.theme.colors.selectedTheme.border : 'none'};
 	border-radius: 8px;
-`;
+`
 
 const SegmentedControlOption = styled.button<{
-	isSelected: boolean;
-	styleType: StyleType;
-	$icon?: boolean;
+	isSelected: boolean
+	styleType: StyleType
+	$icon?: boolean
 }>`
 	font-size: ${(props) =>
 		props.styleType === 'pill-button' || props.styleType === 'pill-button-large' ? '12px' : '13px'};
@@ -83,8 +83,8 @@ const SegmentedControlOption = styled.button<{
 			props.styleType === 'pill-button' ||
 			props.styleType === 'pill-button-large'
 		)
-			return props.theme.colors.selectedTheme.border;
-		return 'none';
+			return props.theme.colors.selectedTheme.border
+		return 'none'
 	}};
 	border-radius: ${(props) =>
 		props.styleType === 'pill-button'
@@ -135,7 +135,7 @@ const SegmentedControlOption = styled.button<{
 			background-color: ${(props) => !props.isSelected && props.theme.colors.common.darkYellow};
 		}
 	}
-`;
+`
 
 const CheckBox = styled.div<{ selected: boolean }>`
 	transition: all 0.1s ease-in-out;
@@ -147,6 +147,6 @@ const CheckBox = styled.div<{ selected: boolean }>`
 	width: 15px;
 	background: ${(props) =>
 		props.selected ? props.theme.colors.selectedTheme.yellow : 'transparent'};
-`;
+`
 
-export default SegmentedControl;
+export default SegmentedControl

@@ -1,20 +1,20 @@
-import { formatDollars, formatNumber } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { HeaderContainer, MarketStatsContainer, MarketStat } from 'sections/dashboard/mobile';
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
-import { selectMarketVolumes, selectOpenInterest } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { HeaderContainer, MarketStatsContainer, MarketStat } from 'sections/dashboard/mobile'
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile'
+import { selectMarketVolumes, selectOpenInterest } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
-import FuturesMarketsTable from '../FuturesMarketsTable';
+import FuturesMarketsTable from '../FuturesMarketsTable'
 
 const FuturesMarkets = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
-	const futuresVolumes = useAppSelector(selectMarketVolumes);
-	const openInterest = useAppSelector(selectOpenInterest);
+	const futuresVolumes = useAppSelector(selectMarketVolumes)
+	const openInterest = useAppSelector(selectOpenInterest)
 
 	const [trades, volume] = useMemo(() => {
 		const { totalTrades, totalVolume } = Object.values(futuresVolumes).reduce(
@@ -23,9 +23,9 @@ const FuturesMarkets = () => {
 				totalVolume: totalVolume.add(volume),
 			}),
 			{ totalTrades: wei(0), totalVolume: wei(0) }
-		);
-		return [totalTrades, totalVolume];
-	}, [futuresVolumes]);
+		)
+		return [totalTrades, totalVolume]
+	}, [futuresVolumes])
 
 	return (
 		<div>
@@ -57,7 +57,7 @@ const FuturesMarkets = () => {
 
 			<FuturesMarketsTable />
 		</div>
-	);
-};
+	)
+}
 
-export default FuturesMarkets;
+export default FuturesMarkets

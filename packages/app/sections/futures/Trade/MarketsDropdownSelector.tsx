@@ -1,37 +1,37 @@
-import { FuturesMarketAsset, SynthSuspensionReason } from '@kwenta/sdk/types';
-import { MarketKeyByAsset, formatDollars, formatPercent } from '@kwenta/sdk/utils';
-import Wei from '@synthetixio/wei';
-import { FC } from 'react';
-import styled, { css } from 'styled-components';
+import { FuturesMarketAsset, SynthSuspensionReason } from '@kwenta/sdk/types'
+import { MarketKeyByAsset, formatDollars, formatPercent } from '@kwenta/sdk/utils'
+import Wei from '@synthetixio/wei'
+import { FC } from 'react'
+import styled, { css } from 'styled-components'
 
-import MarketBadge from 'components/Badge/MarketBadge';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FlexDivCentered } from 'components/layout/flex';
-import { StyledCaretDownIcon } from 'components/Select/Select';
-import { Body, NumericValue } from 'components/Text';
-import { PricesInfo } from 'state/prices/types';
-import media from 'styles/media';
+import MarketBadge from 'components/Badge/MarketBadge'
+import CurrencyIcon from 'components/Currency/CurrencyIcon'
+import { FlexDivCentered } from 'components/layout/flex'
+import { StyledCaretDownIcon } from 'components/Select/Select'
+import { Body, NumericValue } from 'components/Text'
+import { PricesInfo } from 'state/prices/types'
+import media from 'styles/media'
 
 import {
 	MARKETS_DETAILS_HEIGHT_DESKTOP,
 	TRADE_PANEL_WIDTH_LG,
 	TRADE_PANEL_WIDTH_MD,
-} from '../styles';
+} from '../styles'
 
 type Props = {
-	asset: FuturesMarketAsset;
-	label: string;
-	description: string;
-	isMarketClosed?: boolean;
-	closureReason?: SynthSuspensionReason;
-	mobile?: boolean;
+	asset: FuturesMarketAsset
+	label: string
+	description: string
+	isMarketClosed?: boolean
+	closureReason?: SynthSuspensionReason
+	mobile?: boolean
 	priceDetails: {
-		oneDayChange: Wei;
-		priceInfo?: PricesInfo;
-	};
-	onClick: () => void;
-	expanded: boolean;
-};
+		oneDayChange: Wei
+		priceInfo?: PricesInfo
+	}
+	onClick: () => void
+	expanded: boolean
+}
 
 const MarketsDropdownSelector: FC<Props> = (props) => (
 	<Container {...props}>
@@ -66,21 +66,21 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 			{!props.mobile && <StyledCaretDownIcon $flip={props.expanded} />}
 		</ContentContainer>
 	</Container>
-);
+)
 
-export const MARKET_SELECTOR_HEIGHT_MOBILE = 58;
+export const MARKET_SELECTOR_HEIGHT_MOBILE = 58
 
 export const CurrencyLabel = styled(Body)`
 	font-size: 16px;
 	display: flex;
 	align-items: center;
 	gap: 5px;
-`;
+`
 
 const Container = styled.div`
 	width: 100%;
 	height: 100%;
-`;
+`
 
 export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	.currency-meta {
@@ -126,7 +126,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 
 	height: ${(props) =>
 		props.mobile ? MARKET_SELECTOR_HEIGHT_MOBILE : MARKETS_DETAILS_HEIGHT_DESKTOP - 1}px;
-`;
+`
 
 const LeftContainer = styled.div<{ $mobile?: boolean }>`
 	flex: 1;
@@ -139,7 +139,7 @@ const LeftContainer = styled.div<{ $mobile?: boolean }>`
 			padding-right: 15px;
 			border-right: ${props.theme.colors.selectedTheme.border};
 		`}
-`;
+`
 
 const MobileRightContainer = styled.div`
 	flex: 1;
@@ -148,6 +148,6 @@ const MobileRightContainer = styled.div`
 	justify-content: flex-end;
 	padding-left: 15px;
 	text-align: right;
-`;
+`
 
-export default MarketsDropdownSelector;
+export default MarketsDropdownSelector

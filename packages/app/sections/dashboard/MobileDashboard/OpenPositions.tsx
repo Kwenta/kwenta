@@ -1,44 +1,44 @@
-import { formatDollars } from '@kwenta/sdk/utils';
-import Wei from '@synthetixio/wei';
-import { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { formatDollars } from '@kwenta/sdk/utils'
+import Wei from '@synthetixio/wei'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import TabButton from 'components/Button/TabButton';
-import { TabPanel } from 'components/Tab';
-import { FuturesAccountTypes } from 'queries/futures/types';
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
-import { selectBalances } from 'state/balances/selectors';
-import { selectFuturesPortfolio, selectActiveSmartPositionsCount } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import TabButton from 'components/Button/TabButton'
+import { TabPanel } from 'components/Tab'
+import { FuturesAccountTypes } from 'queries/futures/types'
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile'
+import { selectBalances } from 'state/balances/selectors'
+import { selectFuturesPortfolio, selectActiveSmartPositionsCount } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
-import FuturesPositionsTable from '../FuturesPositionsTable';
-import { MarketsTab } from '../Markets/Markets';
-import { PositionsTab } from '../Overview/Overview';
-import SynthBalancesTable from '../SynthBalancesTable';
+import FuturesPositionsTable from '../FuturesPositionsTable'
+import { MarketsTab } from '../Markets'
+import { PositionsTab } from '../Overview'
+import SynthBalancesTable from '../SynthBalancesTable'
 
 export type OpenPositionsProps = {
 	exchangeTokens: {
-		synth: string;
-		description: string;
-		balance: Wei;
-		usdBalance: Wei;
-		price: Wei;
-		priceChange: Wei;
-	}[];
-	exchangeTokenBalances: Wei;
-};
+		synth: string
+		description: string
+		balance: Wei
+		usdBalance: Wei
+		price: Wei
+		priceChange: Wei
+	}[]
+	exchangeTokenBalances: Wei
+}
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeTokenBalances }) => {
-	const { t } = useTranslation();
-	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
+	const { t } = useTranslation()
+	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount)
 
-	const portfolio = useAppSelector(selectFuturesPortfolio);
-	const balances = useAppSelector(selectBalances);
+	const portfolio = useAppSelector(selectFuturesPortfolio)
+	const balances = useAppSelector(selectBalances)
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
 		PositionsTab.SMART_MARGIN
-	);
+	)
 
 	const POSITIONS_TABS = useMemo(
 		() => [
@@ -69,7 +69,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 			exchangeTokenBalances,
 			setActivePositionsTab,
 		]
-	);
+	)
 
 	return (
 		<div>
@@ -93,14 +93,14 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 				<SynthBalancesTable exchangeTokens={exchangeTokens} />
 			</TabPanel>
 		</div>
-	);
-};
+	)
+}
 
 const TabButtonsContainer = styled.div`
 	display: flex;
 	margin: 16px 0;
 	justify-content: flex-start;
 	column-gap: 10px;
-`;
+`
 
-export default OpenPositions;
+export default OpenPositions

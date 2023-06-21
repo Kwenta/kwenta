@@ -1,30 +1,30 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react'
 
-import { COMPETITION_ENABLED } from 'constants/competition';
-import { EXTERNAL_LINKS } from 'constants/links';
-import ROUTES from 'constants/routes';
+import { COMPETITION_ENABLED } from 'constants/competition'
+import { EXTERNAL_LINKS } from 'constants/links'
+import ROUTES from 'constants/routes'
 
 export type Badge = {
-	i18nLabel: string;
-	color: 'yellow' | 'red' | 'gray';
-};
+	i18nLabel: string
+	color: 'yellow' | 'red' | 'gray'
+}
 
 export type SubMenuLink = {
-	i18nLabel: string;
-	link: string;
-	badge?: Badge[];
-	Icon?: FunctionComponent<any>;
-	externalLink?: boolean;
-};
+	i18nLabel: string
+	link: string
+	badge?: Badge[]
+	Icon?: FunctionComponent<any>
+	externalLink?: boolean
+}
 
 export type MenuLink = {
-	i18nLabel: string;
-	link: string;
-	links?: SubMenuLink[] | null;
-	hidden?: boolean;
-};
+	i18nLabel: string
+	link: string
+	links?: SubMenuLink[] | null
+	hidden?: boolean
+}
 
-export type MenuLinks = MenuLink[];
+export type MenuLinks = MenuLink[]
 
 export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 	{
@@ -43,7 +43,7 @@ export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 		i18nLabel: 'homepage.nav.blog',
 		link: EXTERNAL_LINKS.Social.Mirror,
 	},
-];
+]
 
 const DASHBOARD_LINKS = [
 	{
@@ -66,7 +66,7 @@ const DASHBOARD_LINKS = [
 		link: ROUTES.Dashboard.Rewards,
 		i18nLabel: 'dashboard.tabs.rewards',
 	},
-];
+]
 
 export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 	{
@@ -106,9 +106,9 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 		i18nLabel: 'header.nav.options.title',
 		link: EXTERNAL_LINKS.Options.Trade,
 	},
-];
+]
 
-export const DESKTOP_NAV_LINKS = getMenuLinks(false).filter((m) => !m.hidden);
-export const MOBILE_NAV_LINKS = getMenuLinks(true).filter((m) => !m.hidden);
+export const DESKTOP_NAV_LINKS = getMenuLinks(false).filter((m) => !m.hidden)
+export const MOBILE_NAV_LINKS = getMenuLinks(true).filter((m) => !m.hidden)
 
-export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];
+export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = []

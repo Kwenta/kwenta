@@ -1,101 +1,101 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { formatCurrency } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatCurrency } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import ErrorView from 'components/ErrorView';
-import { notifyError } from 'components/ErrorView/ErrorNotifier';
-import NumericInput from 'components/Input/NumericInput';
-import Loader from 'components/Loader';
-import SegmentedControl from 'components/SegmentedControl';
-import Spacer from 'components/Spacer';
-import Connector from 'containers/Connector';
-import { setOpenModal } from 'state/app/reducer';
-import { withdrawAccountKeeperBalance } from 'state/futures/actions';
+import Button from 'components/Button'
+import ErrorView from 'components/ErrorView'
+import { notifyError } from 'components/ErrorView/ErrorNotifier'
+import NumericInput from 'components/Input/NumericInput'
+import Loader from 'components/Loader'
+import SegmentedControl from 'components/SegmentedControl'
+import Spacer from 'components/Spacer'
+import Connector from 'containers/Connector'
+import { setOpenModal } from 'state/app/reducer'
+import { withdrawAccountKeeperBalance } from 'state/futures/actions'
 import {
 	selectCrossMarginBalanceInfo,
 	selectConditionalOrdersForMarket,
 	selectSubmittingFuturesTx,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import logError from 'utils/logError';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import logError from 'utils/logError'
 
 import {
 	StyledBaseModal,
 	BalanceContainer,
 	BalanceText,
 	MaxButton,
-} from '../Trade/TransferIsolatedMarginModal';
+} from '../Trade/TransferIsolatedMarginModal'
 
-type TransferType = 'deposit' | 'withdraw';
+type TransferType = 'deposit' | 'withdraw'
 
 type Props = {
-	defaultType: TransferType;
-};
+	defaultType: TransferType
+}
 
-const DEPOSIT_ENABLED = false;
+const DEPOSIT_ENABLED = false
 
 export default function ManageKeeperBalanceModal({ defaultType }: Props) {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
-	const { provider, walletAddress } = Connector.useContainer();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const { provider, walletAddress } = Connector.useContainer()
 
-	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
-	const openOrders = useAppSelector(selectConditionalOrdersForMarket);
-	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
+	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo)
+	const openOrders = useAppSelector(selectConditionalOrdersForMarket)
+	const isSubmitting = useAppSelector(selectSubmittingFuturesTx)
 
-	const [amount, setAmount] = useState('');
-	const [isMax, setMax] = useState(false);
-	const [userEthBal, setUserEthBal] = useState(ZERO_WEI);
-	const [transferType, setTransferType] = useState(defaultType === 'deposit' ? 0 : 1);
+	const [amount, setAmount] = useState('')
+	const [isMax, setMax] = useState(false)
+	const [userEthBal, setUserEthBal] = useState(ZERO_WEI)
+	const [transferType, setTransferType] = useState(defaultType === 'deposit' ? 0 : 1)
 
 	const getUserEthBal = useCallback(async () => {
-		if (!walletAddress) return;
+		if (!walletAddress) return
 		try {
-			const bal = await provider.getBalance(walletAddress);
-			setUserEthBal(wei(bal));
+			const bal = await provider.getBalance(walletAddress)
+			setUserEthBal(wei(bal))
 		} catch (err) {
-			notifyError('Failed to read ETH balance', err);
-			logError(err);
+			notifyError('Failed to read ETH balance', err)
+			logError(err)
 		}
-	}, [walletAddress, provider]);
+	}, [walletAddress, provider])
 
 	useEffect(() => {
-		getUserEthBal();
+		getUserEthBal()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [walletAddress]);
+	}, [walletAddress])
 
 	const onWithdrawKeeperDeposit = useCallback(() => {
-		if (keeperEthBal.eq(0)) return;
-		dispatch(withdrawAccountKeeperBalance(wei(amount)));
-	}, [dispatch, amount, keeperEthBal]);
+		if (keeperEthBal.eq(0)) return
+		dispatch(withdrawAccountKeeperBalance(wei(amount)))
+	}, [dispatch, amount, keeperEthBal])
 
 	const onDepositKeeperDeposit = useCallback(async () => {
 		// 	// TODO: Waiting for the function to be added to the smart contract
-	}, []);
+	}, [])
 
 	const exceedsLimit = useMemo(() => {
-		const amtWei = wei(amount || 0);
-		return transferType === 0 && amtWei.gt(transferType === 0 ? userEthBal : keeperEthBal);
-	}, [transferType, amount, userEthBal, keeperEthBal]);
+		const amtWei = wei(amount || 0)
+		return transferType === 0 && amtWei.gt(transferType === 0 ? userEthBal : keeperEthBal)
+	}, [transferType, amount, userEthBal, keeperEthBal])
 
 	const isDisabled = useMemo(() => {
-		if (!amount || isSubmitting || exceedsLimit) return true;
-		return false;
-	}, [amount, isSubmitting, exceedsLimit]);
+		if (!amount || isSubmitting || exceedsLimit) return true
+		return false
+	}, [amount, isSubmitting, exceedsLimit])
 
 	const handleSetMax = React.useCallback(() => {
-		setMax(true);
-		setAmount(keeperEthBal.toString());
-	}, [keeperEthBal]);
+		setMax(true)
+		setAmount(keeperEthBal.toString())
+	}, [keeperEthBal])
 
 	const onChangeTab = (selection: number) => {
-		setTransferType(selection);
-		setAmount('');
-	};
+		setTransferType(selection)
+		setAmount('')
+	}
 
 	return (
 		<StyledBaseModal
@@ -125,8 +125,8 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 				value={amount}
 				invalid={exceedsLimit}
 				onChange={(_, v) => {
-					if (isMax) setMax(false);
-					setAmount(v);
+					if (isMax) setMax(false)
+					setAmount(v)
 				}}
 				right={
 					<MaxButton data-testid="futures-market-trade-withdraw-max-button" onClick={handleSetMax}>
@@ -160,9 +160,9 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 				/>
 			) : null}
 		</StyledBaseModal>
-	);
+	)
 }
 
 const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;
-`;
+`

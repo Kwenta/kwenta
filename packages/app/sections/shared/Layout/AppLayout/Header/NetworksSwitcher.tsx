@@ -1,43 +1,43 @@
-import { useChainModal } from '@rainbow-me/rainbowkit';
-import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import { useChainModal } from '@rainbow-me/rainbowkit'
+import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import LinkIcon from 'assets/svg/app/link-blue.svg';
-import SwitchIcon from 'assets/svg/app/switch.svg';
-import ArbitrumIcon from 'assets/svg/providers/arbitrum.svg';
-import AvalancheIcon from 'assets/svg/providers/avalanche.svg';
-import BinanceIcon from 'assets/svg/providers/binance.svg';
-import EthereumIcon from 'assets/svg/providers/ethereum.svg';
-import OptimismIcon from 'assets/svg/providers/optimism.svg';
-import PolygonIcon from 'assets/svg/providers/polygon.svg';
-import Button from 'components/Button';
-import LabelContainer from 'components/Nav/DropDownLabel';
-import Select from 'components/Select';
-import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select';
-import { EXTERNAL_LINKS } from 'constants/links';
-import Connector from 'containers/Connector';
-import { blockExplorer } from 'containers/Connector/Connector';
-import useIsL2 from 'hooks/useIsL2';
-import { ExternalLink } from 'styles/common';
+import LinkIcon from 'assets/svg/app/link-blue.svg'
+import SwitchIcon from 'assets/svg/app/switch.svg'
+import ArbitrumIcon from 'assets/svg/providers/arbitrum.svg'
+import AvalancheIcon from 'assets/svg/providers/avalanche.svg'
+import BinanceIcon from 'assets/svg/providers/binance.svg'
+import EthereumIcon from 'assets/svg/providers/ethereum.svg'
+import OptimismIcon from 'assets/svg/providers/optimism.svg'
+import PolygonIcon from 'assets/svg/providers/polygon.svg'
+import Button from 'components/Button'
+import LabelContainer from 'components/Nav/DropDownLabel'
+import Select from 'components/Select'
+import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select'
+import { EXTERNAL_LINKS } from 'constants/links'
+import Connector from 'containers/Connector'
+import { blockExplorer } from 'containers/Connector/Connector'
+import useIsL2 from 'hooks/useIsL2'
+import { ExternalLink } from 'styles/common'
 
 type ReactSelectOptionProps = {
-	label: string;
-	prefixIcon?: string;
-	postfixIcon?: string;
-	link?: string;
-	onClick?: () => {};
-};
+	label: string
+	prefixIcon?: string
+	postfixIcon?: string
+	link?: string
+	onClick?: () => {}
+}
 
 type NetworksSwitcherProps = {
-	mobile?: boolean;
-};
+	mobile?: boolean
+}
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = ({ mobile }) => {
-	const { activeChain } = Connector.useContainer();
-	const { t } = useTranslation();
-	const { openChainModal } = useChainModal();
-	const isL2 = useIsL2();
+	const { activeChain } = Connector.useContainer()
+	const { t } = useTranslation()
+	const { openChainModal } = useChainModal()
+	const isL2 = useIsL2()
 
 	const OPTIMISM_OPTIONS = [
 		{
@@ -60,24 +60,24 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = ({ mobile }) => {
 			postfixIcon: 'Link',
 			link: EXTERNAL_LINKS.Docs.DocsRoot,
 		},
-	];
+	]
 
 	const networkIcon = (prefixIcon: string) => {
 		switch (prefixIcon) {
 			case 'Polygon':
-				return <PolygonIcon width={24} height={16} />;
+				return <PolygonIcon width={24} height={16} />
 			case 'Arbitrum One':
-				return <ArbitrumIcon width={24} height={16} />;
+				return <ArbitrumIcon width={24} height={16} />
 			case 'Ethereum':
-				return <EthereumIcon width={24} height={16} />;
+				return <EthereumIcon width={24} height={16} />
 			case 'Avalanche':
-				return <AvalancheIcon width={24} height={16} />;
+				return <AvalancheIcon width={24} height={16} />
 			case 'BNB Smart Chain':
-				return <BinanceIcon width={24} height={16} />;
+				return <BinanceIcon width={24} height={16} />
 			default:
-				return <OptimismIcon width={24} height={16} />;
+				return <OptimismIcon width={24} height={16} />
 		}
-	};
+	}
 
 	const formatOptionLabel = ({
 		label,
@@ -94,7 +94,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = ({ mobile }) => {
 					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
 			</LabelContainer>
 		</ExternalLink>
-	);
+	)
 
 	return !isL2 || mobile ? (
 		<Container onClick={openChainModal} $mobile={mobile}>
@@ -116,10 +116,10 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = ({ mobile }) => {
 				variant="flat"
 			/>
 		</div>
-	);
-};
+	)
+}
 
-export default NetworksSwitcher;
+export default NetworksSwitcher
 
 const Container = styled.div<{ $mobile?: boolean }>`
 	${(props) =>
@@ -127,12 +127,12 @@ const Container = styled.div<{ $mobile?: boolean }>`
 		css`
 			margin-right: 10px;
 		`}
-`;
+`
 
 const StyledButton = styled(Button)`
 	width: 41px;
 	padding: 0;
-`;
+`
 
 const L2Select = styled(Select)`
 	width: 41px;
@@ -152,8 +152,8 @@ const L2Select = styled(Select)`
 	.react-select__value-container {
 		padding-right: 0;
 	}
-`;
+`
 
 const PrefixIcon = styled.span`
 	display: flex;
-`;
+`

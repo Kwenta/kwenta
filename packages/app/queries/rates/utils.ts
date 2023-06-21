@@ -1,6 +1,6 @@
-import { CandleResult } from '@kwenta/sdk/utils';
+import { CandleResult } from '@kwenta/sdk/utils'
 
-import { Candle, PythResponse } from './types';
+import { Candle, PythResponse } from './types'
 
 export const mapCandles = (candles: CandleResult[]): Candle[] => {
 	return candles.map(({ id, synth, open, high, low, close, timestamp }) => {
@@ -12,9 +12,9 @@ export const mapCandles = (candles: CandleResult[]): Candle[] => {
 			low: low.toNumber(),
 			close: close.toNumber(),
 			timestamp: timestamp.toNumber(),
-		};
-	});
-};
+		}
+	})
+}
 
 export const mapPythCandles = (candleData: PythResponse): Candle[] => {
 	return candleData.t.map((timestamp, ind) => {
@@ -24,6 +24,6 @@ export const mapPythCandles = (candleData: PythResponse): Candle[] => {
 			high: candleData.h[ind],
 			low: candleData.l[ind],
 			close: candleData.c[ind],
-		};
-	});
-};
+		}
+	})
+}

@@ -1,33 +1,33 @@
-import { FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import { FC, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CellProps } from 'react-table'
+import styled from 'styled-components'
 
-import Currency from 'components/Currency';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import Table, { TableHeader } from 'components/Table';
-import { TableCell } from 'components/Table/TableBodyRow';
-import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement';
-import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults';
-import useENSAvatar from 'hooks/useENSAvatar';
-import { AccountStat } from 'queries/futures/types';
-import { StyledTrader } from 'sections/leaderboard/trader';
-import { selectShowBanner } from 'state/app/selectors';
-import { useAppSelector } from 'state/hooks';
-import { selectWallet } from 'state/wallet/selectors';
-import { FOOTER_HEIGHT } from 'styles/common';
-import media from 'styles/media';
-import { getMedal } from 'utils/competition';
-import { staticMainnetProvider } from 'utils/network';
+import Currency from 'components/Currency'
+import { MobileHiddenView, MobileOnlyView } from 'components/Media'
+import Table, { TableHeader } from 'components/Table'
+import { TableCell } from 'components/Table/TableBodyRow'
+import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement'
+import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults'
+import useENSAvatar from 'hooks/useENSAvatar'
+import { AccountStat } from 'queries/futures/types'
+import { StyledTrader } from 'sections/leaderboard/trader'
+import { selectShowBanner } from 'state/app/selectors'
+import { useAppSelector } from 'state/hooks'
+import { selectWallet } from 'state/wallet/selectors'
+import { FOOTER_HEIGHT } from 'styles/common'
+import media from 'styles/media'
+import { getMedal } from 'utils/competition'
+import { staticMainnetProvider } from 'utils/network'
 
 type AllTimeProps = {
-	stats: AccountStat[];
-	isLoading: boolean;
-	pinRow: AccountStat[];
-	onClickTrader: (trader: string) => void;
-	compact?: boolean;
-	activeTab?: string;
-};
+	stats: AccountStat[]
+	isLoading: boolean
+	pinRow: AccountStat[]
+	onClickTrader: (trader: string) => void
+	compact?: boolean
+	activeTab?: string
+}
 
 const AllTime: FC<AllTimeProps> = ({
 	stats,
@@ -37,32 +37,32 @@ const AllTime: FC<AllTimeProps> = ({
 	compact,
 	activeTab,
 }) => {
-	const { t } = useTranslation();
-	const walletAddress = useAppSelector(selectWallet);
-	const showBanner = useAppSelector(selectShowBanner);
+	const { t } = useTranslation()
+	const walletAddress = useAppSelector(selectWallet)
+	const showBanner = useAppSelector(selectShowBanner)
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i) => {
-			return i.account.toLowerCase() === walletAddress?.toLowerCase();
-		});
+			return i.account.toLowerCase() === walletAddress?.toLowerCase()
+		})
 
-		const anchorPosition = ownPosition !== -1 && ownPosition > 10 ? stats[ownPosition] : null;
+		const anchorPosition = ownPosition !== -1 && ownPosition > 10 ? stats[ownPosition] : null
 
-		stats = stats.slice(0, 10);
+		stats = stats.slice(0, 10)
 
 		if (anchorPosition) {
-			stats.push(anchorPosition);
+			stats.push(anchorPosition)
 		}
 	}
 
 	const data = useMemo(() => {
-		return [...pinRow, ...stats];
-	}, [stats, pinRow]);
+		return [...pinRow, ...stats]
+	}, [stats, pinRow])
 
 	const tableHeight = useMemo(
 		() => window.innerHeight - FOOTER_HEIGHT - 161 - Number(showBanner) * BANNER_HEIGHT_DESKTOP,
 		[showBanner]
-	);
+	)
 
 	return (
 		<>
@@ -110,7 +110,7 @@ const AllTime: FC<AllTimeProps> = ({
 										const avatar = useENSAvatar(
 											staticMainnetProvider,
 											cellProps.row.original.traderEns
-										);
+										)
 										return (
 											<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
 												{compact && cellProps.row.original.rank + '. '}
@@ -136,7 +136,7 @@ const AllTime: FC<AllTimeProps> = ({
 												</StyledTrader>
 												{getMedal(cellProps.row.original.rank)}
 											</StyledOrderType>
-										);
+										)
 									},
 									width: 120,
 								},
@@ -205,10 +205,7 @@ const AllTime: FC<AllTimeProps> = ({
 							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
 							accessor: 'trader',
 							Cell: (cellProps: CellProps<any>) => {
-								const avatar = useENSAvatar(
-									staticMainnetProvider,
-									cellProps.row.original.traderEns
-								);
+								const avatar = useENSAvatar(staticMainnetProvider, cellProps.row.original.traderEns)
 								return (
 									<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
 										{compact && cellProps.row.original.rank + '. '}
@@ -234,7 +231,7 @@ const AllTime: FC<AllTimeProps> = ({
 										</StyledTrader>
 										{getMedal(cellProps.row.original.rank)}
 									</StyledOrderType>
-								);
+								)
 							},
 							width: 150,
 						},
@@ -255,8 +252,8 @@ const AllTime: FC<AllTimeProps> = ({
 				/>
 			</MobileOnlyView>
 		</>
-	);
-};
+	)
+}
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined; height?: number }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
@@ -275,24 +272,24 @@ const StyledTable = styled(Table)<{ compact: boolean | undefined; height?: numbe
 	${media.lessThan('md')`
 		margin-bottom: 150px;
 	`}
-`;
+`
 
 const TableTitle = styled.div`
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
-`;
+`
 
 const TitleText = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
-`;
+`
 
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	display: flex;
 	align-items: center;
-`;
+`
 
-export default AllTime;
+export default AllTime

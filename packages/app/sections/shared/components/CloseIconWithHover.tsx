@@ -1,14 +1,14 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import CloseIcon from 'assets/svg/app/close-banner.svg';
+import CloseIcon from 'assets/svg/app/close-banner.svg'
 
 type CloseIconProps = {
-	width?: number;
-	height?: number;
-	onClick?: React.MouseEventHandler<SVGSVGElement>;
-	strokeWidth?: number;
-	style?: React.CSSProperties;
-};
+	width?: number
+	height?: number
+	onClick?: React.MouseEventHandler<SVGSVGElement>
+	strokeWidth?: number
+	style?: React.CSSProperties
+}
 
 const CloseIconWithHover: React.FC<CloseIconProps> = ({
 	width = 10,
@@ -25,14 +25,14 @@ const CloseIconWithHover: React.FC<CloseIconProps> = ({
 			strokeWidth={strokeWidth}
 			style={style}
 		/>
-	);
-};
+	)
+}
 
 const CloseIconWrapper = styled(CloseIcon)`
 	stroke: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	&:hover {
 		stroke: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	}
-`;
+`
 
-export default CloseIconWithHover;
+export default CloseIconWithHover

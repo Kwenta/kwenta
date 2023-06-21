@@ -1,22 +1,22 @@
 type Props = {
-	text: string;
-};
+	text: string
+}
 
 export const CustomFontLabel: React.FC<Props> = ({ text }) => {
-	const chars = text.split('');
+	const chars = text.split('')
 
 	return (
 		<div>
 			{chars.map((char, index) => {
-				const isNumber = !isNaN(Number(char));
-				const fontFamily = isNumber ? 'AkkuratMonoLLWeb-Regular' : 'AkkuratLLWeb-Regular';
+				const isNumber = !isNaN(Number(char))
+				const fontFamily = isNumber ? 'AkkuratMonoLLWeb-Regular' : 'AkkuratLLWeb-Regular'
 
 				return (
 					<span key={index} style={{ fontFamily }}>
 						{char}
 					</span>
-				);
+				)
 			})}
 		</div>
-	);
-};
+	)
+}

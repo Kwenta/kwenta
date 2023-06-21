@@ -1,1 +1,1 @@
-export { default } from './ChangePercent';
+export { default } from './ChangePercent'

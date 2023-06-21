@@ -1,2 +1,2 @@
-export { default } from './Button';
-export { border } from './Button';
+export { default } from './Button'
+export { border } from './Button'

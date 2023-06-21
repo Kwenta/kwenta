@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
 export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
@@ -29,7 +29,7 @@ export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 			padding: 0;
 			overflow: hidden;
 		`}
-`;
+`
 
 export const SplitStakingCard = styled(StakingCard)`
 	display: flex;
@@ -47,4 +47,4 @@ export const SplitStakingCard = styled(StakingCard)`
 			border-right: ${(props) => props.theme.colors.selectedTheme.border};
 		}
 	}
-`;
+`

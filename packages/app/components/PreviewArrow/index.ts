@@ -1,1 +1,1 @@
-export { default } from './PreviewArrow';
+export { default } from './PreviewArrow'

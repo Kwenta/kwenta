@@ -1,29 +1,29 @@
-import Wei from '@synthetixio/wei';
-import { FC, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import Wei from '@synthetixio/wei'
+import { FC, memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
-import { border } from 'components/Button';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
-import { NO_VALUE } from 'constants/placeholder';
-import { formatCurrency } from '@kwenta/sdk/utils';
-import { selectInsufficientBalance } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/hooks';
-import { CapitalizedText, numericValueCSS } from 'styles/common';
+import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg'
+import { border } from 'components/Button'
+import CurrencyIcon from 'components/Currency/CurrencyIcon'
+import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex'
+import { NO_VALUE } from 'constants/placeholder'
+import { formatCurrency } from '@kwenta/sdk/utils'
+import { selectInsufficientBalance } from 'state/exchange/selectors'
+import { useAppSelector } from 'state/hooks'
+import { CapitalizedText, numericValueCSS } from 'styles/common'
 
 type CurrencyCardSelectorProps = {
-	tokenName: string | null;
-	hasCurrencySelectCallback: boolean;
-	onCurrencySelect?: () => void;
-	currencyKey?: string;
-	disableInput: boolean;
-	hasWalletBalance: boolean;
-	onBalanceClick(): void;
-	isBase: boolean;
-	walletBalance?: Wei | null;
-};
+	tokenName: string | null
+	hasCurrencySelectCallback: boolean
+	onCurrencySelect?: () => void
+	currencyKey?: string
+	disableInput: boolean
+	hasWalletBalance: boolean
+	onBalanceClick(): void
+	isBase: boolean
+	walletBalance?: Wei | null
+}
 
 const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
 	({
@@ -37,7 +37,7 @@ const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
 		walletBalance,
 		isBase,
 	}) => {
-		const { t } = useTranslation();
+		const { t } = useTranslation()
 
 		return (
 			<SelectorContainer>
@@ -69,13 +69,13 @@ const CurrencyCardSelector: FC<CurrencyCardSelectorProps> = memo(
 					/>
 				</WalletBalanceContainer>
 			</SelectorContainer>
-		);
+		)
 	}
-);
+)
 
 const CurrencyCardSelectorWalletBalance = memo(
 	({ hasWalletBalance, onBalanceClick, isBase, currencyKey, walletBalance }: any) => {
-		const insufficientBalance = useAppSelector(selectInsufficientBalance);
+		const insufficientBalance = useAppSelector(selectInsufficientBalance)
 
 		return (
 			<WalletBalance
@@ -85,24 +85,24 @@ const CurrencyCardSelectorWalletBalance = memo(
 			>
 				{hasWalletBalance ? formatCurrency(currencyKey!, walletBalance!) : NO_VALUE}
 			</WalletBalance>
-		);
+		)
 	}
-);
+)
 
 const TokenLabel = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
 	gap: 10px;
-`;
+`
 
 const SelectorContainer = styled(FlexDivColCentered)`
 	row-gap: 18px;
-`;
+`
 
 const CurrencySelector = styled.div<{
-	currencyKeySelected: boolean;
-	interactive?: boolean;
+	currencyKeySelected: boolean
+	interactive?: boolean
 }>`
 	display: flex;
 	justify-content: space-between;
@@ -134,7 +134,7 @@ const CurrencySelector = styled.div<{
 				cursor: pointer;
 			}
 		`};
-`;
+`
 
 const CurrencyNameLabel = styled.div`
 	text-transform: capitalize;
@@ -145,7 +145,7 @@ const CurrencyNameLabel = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	width: 180px;
 	padding-left: 12px;
-`;
+`
 
 const WalletBalanceContainer = styled(FlexDivRow)<{ disableInput?: boolean }>`
 	${(props) =>
@@ -154,14 +154,14 @@ const WalletBalanceContainer = styled(FlexDivRow)<{ disableInput?: boolean }>`
 			pointer-events: none;
 		`}
 	width: 160px;
-`;
+`
 
 const WalletBalanceLabel = styled.div`
 	text-transform: capitalize;
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 	${numericValueCSS};
@@ -174,6 +174,6 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 			color: ${props.theme.colors.selectedTheme.red};
 		`}
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
+`
 
-export default CurrencyCardSelector;
+export default CurrencyCardSelector

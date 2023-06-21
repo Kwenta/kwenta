@@ -1,30 +1,30 @@
-import { formatDateWithoutYear } from '@kwenta/sdk/utils';
-import { memo, FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { formatDateWithoutYear } from '@kwenta/sdk/utils'
+import { memo, FC } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg';
-import { Body } from 'components/Text';
-import { COMPETITION_DATES, COMPETITION_ENABLED } from 'constants/competition';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { ExternalLink } from 'styles/common';
-import media from 'styles/media';
+import CompetitionBannerBg from 'assets/svg/app/competition-banner-bg.svg'
+import { Body } from 'components/Text'
+import { COMPETITION_DATES, COMPETITION_ENABLED } from 'constants/competition'
+import { EXTERNAL_LINKS } from 'constants/links'
+import { ExternalLink } from 'styles/common'
+import media from 'styles/media'
 
-import { CompetitionState } from './CompetitionState';
+import { CompetitionState } from './CompetitionState'
 
 type CompetitionBannerProps = {
-	compact?: boolean;
-	hideBanner?: boolean;
-};
+	compact?: boolean
+	hideBanner?: boolean
+}
 
-const formatedStartDate = formatDateWithoutYear(COMPETITION_DATES.START_DATE);
-const formatedEndDate = formatDateWithoutYear(COMPETITION_DATES.END_DATE);
-const competitionPeriod = `${formatedStartDate}-${formatedEndDate.split(' ')[1]}`;
+const formatedStartDate = formatDateWithoutYear(COMPETITION_DATES.START_DATE)
+const formatedEndDate = formatDateWithoutYear(COMPETITION_DATES.END_DATE)
+const competitionPeriod = `${formatedStartDate}-${formatedEndDate.split(' ')[1]}`
 
 export const CompetitionBanner: FC<CompetitionBannerProps> = memo(({ compact, hideBanner }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
-	if (!COMPETITION_ENABLED) return null;
+	if (!COMPETITION_ENABLED) return null
 
 	return (
 		<BannerContainer compact={compact} hideBanner={hideBanner}>
@@ -34,8 +34,8 @@ export const CompetitionBanner: FC<CompetitionBannerProps> = memo(({ compact, hi
 
 			<StyledBg />
 		</BannerContainer>
-	);
-});
+	)
+})
 
 const BannerContainer = styled.div<{ compact?: boolean; hideBanner?: boolean }>`
 	position: relative;
@@ -54,12 +54,12 @@ const BannerContainer = styled.div<{ compact?: boolean; hideBanner?: boolean }>`
 		margin-bottom: 0;
 	`}
 	gap: 10px;
-`;
+`
 
 const CompetitionPeriod = styled(Body).attrs({ mono: true, weight: 'bold' })`
 	font-style: normal;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const CTA = styled(ExternalLink)`
 	padding: 8px 11.5px;
@@ -80,7 +80,7 @@ const CTA = styled(ExternalLink)`
 		color: #171002;
 		background-color: #ffb800;
 	}
-`;
+`
 
 const StyledBg = styled(CompetitionBannerBg)`
 	width: 100%;
@@ -100,4 +100,4 @@ const StyledBg = styled(CompetitionBannerBg)`
 	& > g {
 		stroke: ${(props) => props.theme.colors.selectedTheme.competitionBanner.bg};
 	}
-`;
+`

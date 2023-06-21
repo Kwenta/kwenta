@@ -1,1 +1,1 @@
-export { default } from './SocketBridge';
+export { default } from './SocketBridge'

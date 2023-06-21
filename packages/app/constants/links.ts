@@ -1,6 +1,6 @@
-import { CurrencyKey } from './currency';
+import { CurrencyKey } from './currency'
 
-export const PROD_HOSTNAME = 'kwenta.eth.limo';
+export const PROD_HOSTNAME = 'kwenta.eth.limo'
 
 export const EXTERNAL_LINKS = {
 	Trading: {
@@ -64,4 +64,4 @@ export const EXTERNAL_LINKS = {
 	Competition: {
 		LearnMore: 'https://mirror.xyz/kwenta.eth/s_PO64SxvuwDHz9fdHebsYeQAOOc73D3bL2q4nC6LvU',
 	},
-};
+}

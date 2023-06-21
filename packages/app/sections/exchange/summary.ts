@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import { numericValueCSS } from 'styles/common';
-import media from 'styles/media';
+import { numericValueCSS } from 'styles/common'
+import media from 'styles/media'
 
 export const SummaryItems = styled.div`
 	display: grid;
@@ -15,7 +15,7 @@ export const SummaryItems = styled.div`
 		grid-template-rows: auto auto;
 		grid-gap: 20px;
 	`}
-`;
+`
 
 export const SummaryItem = styled.div`
 	display: grid;
@@ -24,14 +24,14 @@ export const SummaryItem = styled.div`
 	${media.lessThan('md')`
 		width: unset;
 	`}
-`;
+`
 
 export const SummaryItemLabel = styled.div`
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
-`;
+`
 
 export const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -40,4 +40,4 @@ export const SummaryItemValue = styled.div`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-size: 13px;
-`;
+`

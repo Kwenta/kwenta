@@ -1,25 +1,25 @@
-import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import MobilePNLGraphicPNG from 'assets/png/mobile-pnl-graphic.png';
-import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
-import BaseModal from 'components/BaseModal';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { SharePositionParams } from 'state/futures/types';
-import media from 'styles/media';
+import MobilePNLGraphicPNG from 'assets/png/mobile-pnl-graphic.png'
+import PNLGraphicPNG from 'assets/png/pnl-graphic.png'
+import BaseModal from 'components/BaseModal'
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import { SharePositionParams } from 'state/futures/types'
+import media from 'styles/media'
 
-import AmountContainer from './AmountContainer';
-import PositionMetadata from './PositionMetadata';
-import ShareModalButton from './ShareModalButton';
+import AmountContainer from './AmountContainer'
+import PositionMetadata from './PositionMetadata'
+import ShareModalButton from './ShareModalButton'
 
 type ShareModalProps = {
-	sharePosition: SharePositionParams;
-	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
-};
+	sharePosition: SharePositionParams
+	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>
+}
 
 const ShareModal: FC<ShareModalProps> = ({ sharePosition, setShowShareModal }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<>
@@ -48,13 +48,13 @@ const ShareModal: FC<ShareModalProps> = ({ sharePosition, setShowShareModal }) =
 				</ModalWindow>
 			</BaseModal>
 		</>
-	);
-};
+	)
+}
 
 const PNLImageFrame = styled.div`
 	position: relative;
 	border-radius: 10px;
-`;
+`
 
 const PNLImage = styled.img`
 	position: relative;
@@ -65,11 +65,11 @@ const PNLImage = styled.img`
 	border-radius: 10px;
 	border: 0px solid ${(props) => props.theme.colors.common.primaryGold};
 	box-shadow: 0 0 0.5px ${(props) => props.theme.colors.common.primaryGold};
-`;
+`
 
 const PNLGraphic = styled.div`
 	position: relative;
-`;
+`
 
 const ModalWindow = styled.div`
 	padding: 0px 25px;
@@ -78,6 +78,6 @@ const ModalWindow = styled.div`
 	${media.lessThan('md')`
 		padding: 0px 12px;
 	`}
-`;
+`
 
-export default ShareModal;
+export default ShareModal

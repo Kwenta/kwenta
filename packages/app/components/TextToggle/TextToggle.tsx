@@ -1,14 +1,14 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
+import React from 'react'
+import styled, { css } from 'styled-components'
 
-import { FlexDiv, FlexDivCol } from 'components/layout/flex';
-import { Body } from 'components/Text';
+import { FlexDiv, FlexDivCol } from 'components/layout/flex'
+import { Body } from 'components/Text'
 
 interface TextToggleProps<T> {
-	title: string;
-	options: T[];
-	selectedOption: T;
-	onOptionChange: (value: T) => void;
+	title: string
+	options: T[]
+	selectedOption: T
+	onOptionChange: (value: T) => void
 }
 
 const TextToggle: React.FC<TextToggleProps<any>> = ({
@@ -28,8 +28,8 @@ const TextToggle: React.FC<TextToggleProps<any>> = ({
 				))}
 			</FlexDiv>
 		</FlexDivCol>
-	);
-};
+	)
+}
 
 const ToggleButton = styled(Body)<{ $active: boolean }>`
 	cursor: pointer;
@@ -42,6 +42,6 @@ const ToggleButton = styled(Body)<{ $active: boolean }>`
 			color: ${props.theme.colors.selectedTheme.newTheme.text.primary};
 			font-family: ${(props) => props.theme.fonts.bold};
 		`}
-`;
+`
 
-export default TextToggle;
+export default TextToggle

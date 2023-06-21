@@ -1,14 +1,14 @@
-import { FC } from 'react';
-import styled from 'styled-components';
+import { FC } from 'react'
+import styled from 'styled-components'
 
-import FullScreenModal from 'components/FullScreenModal';
-import { zIndex } from 'constants/ui';
-import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel';
+import FullScreenModal from 'components/FullScreenModal'
+import { zIndex } from 'constants/ui'
+import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel'
 
 type TradePanelDrawerProps = {
-	open: boolean;
-	closeDrawer(): void;
-};
+	open: boolean
+	closeDrawer(): void
+}
 const TradePanelDrawer: FC<TradePanelDrawerProps> = ({ open, closeDrawer }) => {
 	return (
 		<StyledModal isOpen={open} onDismiss={closeDrawer}>
@@ -19,8 +19,8 @@ const TradePanelDrawer: FC<TradePanelDrawerProps> = ({ open, closeDrawer }) => {
 				</Foreground>
 			</Background>
 		</StyledModal>
-	);
-};
+	)
+}
 
 const StyledModal = styled(FullScreenModal)`
 	top: 0;
@@ -39,17 +39,17 @@ const StyledModal = styled(FullScreenModal)`
 			width: 100%;
 		}
 	}
-`;
+`
 
 const Closer = styled.div`
 	flex: 1;
-`;
+`
 
 const Foreground = styled.div`
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	border-radius: 8px 8px 0 0;
 	max-height: 80%;
-`;
+`
 
 const Background = styled.div`
 	display: flex;
@@ -58,6 +58,6 @@ const Background = styled.div`
 	background-color: rgba(0, 0, 0, 0.5);
 	height: 100%;
 	width: 100%;
-`;
+`
 
-export default TradePanelDrawer;
+export default TradePanelDrawer

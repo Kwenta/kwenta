@@ -90,7 +90,7 @@ export const palette = {
 		darkButton: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
 		darkButtonHover: 'linear-gradient(180deg, #383838 0%, #1E1E1E 100%)',
 	},
-};
+}
 
 const common = {
 	primaryWhite: '#ECE8E3',
@@ -138,6 +138,6 @@ const common = {
 		rewardTitle: '#171002',
 	},
 	palette,
-};
+}
 
-export default common;
+export default common

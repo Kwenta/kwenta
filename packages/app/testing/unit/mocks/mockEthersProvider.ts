@@ -1,9 +1,9 @@
-import { BigNumber } from '@ethersproject/bignumber';
-import { weiFromEth } from '@kwenta/sdk/utils';
+import { BigNumber } from '@ethersproject/bignumber'
+import { weiFromEth } from '@kwenta/sdk/utils'
 
-import { DEFAULT_NETWORK } from 'testing/unit/constants';
+import { DEFAULT_NETWORK } from 'testing/unit/constants'
 
-export type MockEthProvider = Record<string, any>;
+export type MockEthProvider = Record<string, any>
 
 const DEFAULT_PROVIDER = {
 	network: DEFAULT_NETWORK,
@@ -20,11 +20,11 @@ const DEFAULT_PROVIDER = {
 	getTransactionCount: () => 1,
 	getAvatar: () => '',
 	lookupAddress: () => 'name',
-};
+}
 
 export const mockProvider = (overrides: MockEthProvider = {}) => {
 	return {
 		...DEFAULT_PROVIDER,
 		...overrides,
-	};
-};
+	}
+}

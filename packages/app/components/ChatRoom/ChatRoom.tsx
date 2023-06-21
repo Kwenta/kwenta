@@ -1,17 +1,17 @@
-import Widgetbot from '@widgetbot/react-embed';
-import { useState } from 'react';
+import Widgetbot from '@widgetbot/react-embed'
+import { useState } from 'react'
 
-import { Body } from 'components/Text';
+import { Body } from 'components/Text'
 
 export default function ChatRoom() {
-	const [showChat, setShowChat] = useState(false);
+	const [showChat, setShowChat] = useState(false)
 	return (
 		<>
 			<a
 				href="#"
 				onClick={(e) => {
-					e.preventDefault();
-					setShowChat(!showChat);
+					e.preventDefault()
+					setShowChat(!showChat)
 				}}
 			>
 				<Body color="secondary" style={{ marginRight: '18px' }}>
@@ -36,5 +36,5 @@ export default function ChatRoom() {
 				/>
 			)}
 		</>
-	);
+	)
 }

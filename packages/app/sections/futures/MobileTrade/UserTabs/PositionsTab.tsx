@@ -1,25 +1,25 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types';
-import Router from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
+import Router from 'next/router'
+import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import UploadIcon from 'assets/svg/futures/upload-icon.svg';
-import Currency from 'components/Currency';
-import { FlexDiv, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
-import Pill from 'components/Pill';
-import Spacer from 'components/Spacer/Spacer';
-import { TableNoResults } from 'components/Table';
-import { Body, NumericValue } from 'components/Text';
-import { NO_VALUE } from 'constants/placeholder';
-import ROUTES from 'constants/routes';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import PositionType from 'sections/futures/PositionType';
-import ShareModal from 'sections/futures/ShareModal';
-import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton';
-import { setShowPositionModal } from 'state/app/reducer';
+import UploadIcon from 'assets/svg/futures/upload-icon.svg'
+import Currency from 'components/Currency'
+import { FlexDiv, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import Pill from 'components/Pill'
+import Spacer from 'components/Spacer/Spacer'
+import { TableNoResults } from 'components/Table'
+import { Body, NumericValue } from 'components/Text'
+import { NO_VALUE } from 'constants/placeholder'
+import ROUTES from 'constants/routes'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import PositionType from 'sections/futures/PositionType'
+import ShareModal from 'sections/futures/ShareModal'
+import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton'
+import { setShowPositionModal } from 'state/app/reducer'
 import {
 	selectCrossMarginPositions,
 	selectFuturesType,
@@ -28,37 +28,37 @@ import {
 	selectMarkets,
 	selectMarkPrices,
 	selectPositionHistory,
-} from 'state/futures/selectors';
-import { SharePositionParams } from 'state/futures/types';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import media from 'styles/media';
+} from 'state/futures/selectors'
+import { SharePositionParams } from 'state/futures/types'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import media from 'styles/media'
 
 const PositionsTab = () => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
-	const { switchToL2 } = useNetworkSwitcher();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const { switchToL2 } = useNetworkSwitcher()
 
-	const isL2 = useIsL2();
+	const isL2 = useIsL2()
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
-	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
-	const positionHistory = useAppSelector(selectPositionHistory);
-	const currentMarket = useAppSelector(selectMarketAsset);
-	const futuresMarkets = useAppSelector(selectMarkets);
-	const markPrices = useAppSelector(selectMarkPrices);
-	const accountType = useAppSelector(selectFuturesType);
-	const [showShareModal, setShowShareModal] = useState(false);
-	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null);
+	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions)
+	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
+	const positionHistory = useAppSelector(selectPositionHistory)
+	const currentMarket = useAppSelector(selectMarketAsset)
+	const futuresMarkets = useAppSelector(selectMarkets)
+	const markPrices = useAppSelector(selectMarkPrices)
+	const accountType = useAppSelector(selectFuturesType)
+	const [showShareModal, setShowShareModal] = useState(false)
+	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
+		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions
 		return positions
 			.map((position) => {
-				const market = futuresMarkets.find((market) => market.asset === position.asset);
+				const market = futuresMarkets.find((market) => market.asset === position.asset)
 				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset;
-				});
-				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI;
+					return ph.isOpen && ph.asset === position.asset
+				})
+				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI
 				return {
 					market: market!,
 					remainingMargin: position.remainingMargin,
@@ -72,10 +72,10 @@ const PositionsTab = () => {
 						positionHistory: thisPositionHistory!,
 						marketPrice: markPrice,
 					},
-				};
+				}
 			})
 			.filter(({ position, market }) => !!position && !!market)
-			.sort((a) => (a.market.asset === currentMarket ? -1 : 1));
+			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
 	}, [
 		accountType,
 		crossMarginPositions,
@@ -84,7 +84,7 @@ const PositionsTab = () => {
 		positionHistory,
 		markPrices,
 		currentMarket,
-	]);
+	])
 
 	const handleOpenPositionCloseModal = useCallback(
 		(marketKey: FuturesMarketKey) => () => {
@@ -93,15 +93,15 @@ const PositionsTab = () => {
 					type: 'futures_close_position',
 					marketKey,
 				})
-			);
+			)
 		},
 		[dispatch]
-	);
+	)
 
 	const handleOpenShareModal = useCallback((share: SharePositionParams) => {
-		setSharePosition(share);
-		setShowShareModal((s) => !s);
-	}, []);
+		setSharePosition(share)
+		setShowShareModal((s) => !s)
+	}, [])
 
 	return (
 		<div>
@@ -255,8 +255,8 @@ const PositionsTab = () => {
 				<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
 			)}
 		</div>
-	);
-};
+	)
+}
 
 const PositionMeta = styled.div<{ $side: PositionSide }>`
 	display: flex;
@@ -272,7 +272,7 @@ const PositionMeta = styled.div<{ $side: PositionSide }>`
 				props.$side === PositionSide.LONG ? 'positive' : 'negative'
 			]};
 	}
-`;
+`
 
 const PositionItem = styled.div`
 	margin: 0 20px;
@@ -284,7 +284,7 @@ const PositionItem = styled.div`
 	&:not(:last-of-type) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}
-`;
+`
 
 const PositionRow = styled.div`
 	min-height: 22px;
@@ -303,8 +303,8 @@ const PositionRow = styled.div`
 	&:not(:last-of-type) {
 		margin-bottom: 10px;
 	}
-`;
+`
 
-const PositionCell = styled.div``;
+const PositionCell = styled.div``
 
-export default PositionsTab;
+export default PositionsTab

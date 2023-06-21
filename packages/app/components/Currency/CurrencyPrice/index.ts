@@ -1,1 +1,1 @@
-export { default } from './CurrencyPrice';
+export { default } from './CurrencyPrice'

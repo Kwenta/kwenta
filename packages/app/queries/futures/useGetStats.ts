@@ -1,22 +1,22 @@
-import { FUTURES_ENDPOINT_OP_MAINNET } from '@kwenta/sdk/constants';
-import { NetworkId } from '@kwenta/sdk/types';
-import { getFuturesEndpoint, truncateAddress, getFuturesStats } from '@kwenta/sdk/utils';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { FUTURES_ENDPOINT_OP_MAINNET } from '@kwenta/sdk/constants'
+import { NetworkId } from '@kwenta/sdk/types'
+import { getFuturesEndpoint, truncateAddress, getFuturesStats } from '@kwenta/sdk/utils'
+import { useQuery, UseQueryOptions } from 'react-query'
 
-import { ETH_UNIT } from 'constants/network';
-import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
-import useIsL2 from 'hooks/useIsL2';
-import logError from 'utils/logError';
+import { ETH_UNIT } from 'constants/network'
+import QUERY_KEYS from 'constants/queryKeys'
+import Connector from 'containers/Connector'
+import useIsL2 from 'hooks/useIsL2'
+import logError from 'utils/logError'
 
-import { AccountStat } from './types';
+import { AccountStat } from './types'
 
 const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
-	const { network } = Connector.useContainer();
-	const isL2 = useIsL2();
+	const { network } = Connector.useContainer()
+	const isL2 = useIsL2()
 	const futuresEndpoint = homepage
 		? FUTURES_ENDPOINT_OP_MAINNET
-		: getFuturesEndpoint(network?.id as NetworkId);
+		: getFuturesEndpoint(network?.id as NetworkId)
 
 	return useQuery<AccountStat[]>(
 		QUERY_KEYS.Futures.Stats(network?.id as NetworkId),
@@ -37,7 +37,7 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 						totalTrades: true,
 						totalVolume: true,
 					}
-				);
+				)
 
 				const stats = response.map((stat, i) => ({
 					...stat,
@@ -49,19 +49,19 @@ const useGetStats = (homepage?: boolean, options?: UseQueryOptions<any>) => {
 					liquidations: stat.liquidations.toNumber(),
 					rank: i + 1,
 					rankText: (i + 1).toString(),
-				}));
+				}))
 
-				return stats as AccountStat[];
+				return stats as AccountStat[]
 			} catch (e) {
-				logError(e);
-				return [];
+				logError(e)
+				return []
 			}
 		},
 		{
 			enabled: homepage || isL2,
 			...options,
 		}
-	);
-};
+	)
+}
 
-export default useGetStats;
+export default useGetStats

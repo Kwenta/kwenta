@@ -1,12 +1,12 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
-import ROUTES from 'constants/routes';
-import type { ThemeName } from 'styles/theme';
+import ROUTES from 'constants/routes'
+import type { ThemeName } from 'styles/theme'
 
 export const MenuButton = styled.div<{
-	currentTheme: ThemeName;
-	isActive?: boolean;
-	isLink?: boolean;
+	currentTheme: ThemeName
+	isActive?: boolean
+	isLink?: boolean
 }>`
 	outline: none;
 	width: 100%;
@@ -32,4 +32,4 @@ export const MenuButton = styled.div<{
 					: props.theme.colors.selectedTheme.black};
 			}
 		`}
-`;
+`

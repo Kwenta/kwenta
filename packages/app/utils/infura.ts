@@ -6,4 +6,4 @@ export const INFURA_SUPPORTED_NETWORKS = {
 	69: 'optimism-kovan',
 	420: 'goerli-ovm',
 	31337: 'mainnet-fork',
-} as const;
+} as const

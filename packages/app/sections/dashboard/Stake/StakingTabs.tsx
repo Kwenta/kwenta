@@ -1,51 +1,51 @@
-import { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import TabButton from 'components/Button/TabButton';
-import { FlexDivRowCentered } from 'components/layout/flex';
-import LabelContainer from 'components/Nav/DropDownLabel';
-import Select from 'components/Select';
-import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
-import { TabPanel } from 'components/Tab';
-import useIsL2 from 'hooks/useIsL2';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { setSelectedEpoch } from 'state/staking/reducer';
-import { selectEpochData, selectSelectedEpoch } from 'state/staking/selectors';
-import media from 'styles/media';
+import TabButton from 'components/Button/TabButton'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import LabelContainer from 'components/Nav/DropDownLabel'
+import Select from 'components/Select'
+import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select'
+import { TabPanel } from 'components/Tab'
+import useIsL2 from 'hooks/useIsL2'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { setSelectedEpoch } from 'state/staking/reducer'
+import { selectEpochData, selectSelectedEpoch } from 'state/staking/selectors'
+import media from 'styles/media'
 
-import EscrowTab from './EscrowTab';
-import RedemptionTab from './RedemptionTab';
-import { StakeTab } from './StakingPortfolio';
-import StakingTab from './StakingTab';
-import TradingRewardsTab from './TradingRewardsTab';
+import EscrowTab from './EscrowTab'
+import RedemptionTab from './RedemptionTab'
+import { StakeTab } from './StakingPortfolio'
+import StakingTab from './StakingTab'
+import TradingRewardsTab from './TradingRewardsTab'
 
 type EpochValue = {
-	period: number;
-	start: number;
-	end: number;
-	label: string;
-};
+	period: number
+	start: number
+	end: number
+	label: string
+}
 
 type StakingTabsProp = {
-	currentTab: StakeTab;
-	onChangeTab(tab: StakeTab): () => void;
-};
+	currentTab: StakeTab
+	onChangeTab(tab: StakeTab): () => void
+}
 
 const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => {
-	const { t } = useTranslation();
-	const isL2 = useIsL2();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const isL2 = useIsL2()
+	const dispatch = useAppDispatch()
 
-	const epochData = useAppSelector(selectEpochData);
-	const selectedEpoch = useAppSelector(selectSelectedEpoch);
+	const epochData = useAppSelector(selectEpochData)
+	const selectedEpoch = useAppSelector(selectSelectedEpoch)
 
 	const handleChangeEpoch = useCallback(
 		(value: EpochValue) => () => {
-			dispatch(setSelectedEpoch(value.period));
+			dispatch(setSelectedEpoch(value.period))
 		},
 		[dispatch]
-	);
+	)
 
 	const formatOptionLabel = useCallback(
 		(option: EpochValue) => (
@@ -54,7 +54,7 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 			</div>
 		),
 		[handleChangeEpoch]
-	);
+	)
 
 	return (
 		<StakingTabsContainer>
@@ -124,12 +124,12 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 				</TabPanel>
 			</div>
 		</StakingTabsContainer>
-	);
-};
+	)
+}
 
 const SelectLabelContainer = styled(LabelContainer)`
 	font-size: 12px;
-`;
+`
 
 const StakingSelect = styled(Select)`
 	height: 38px;
@@ -152,7 +152,7 @@ const StakingSelect = styled(Select)`
 	.react-select__dropdown-indicator {
 		margin-right: 10px;
 	}
-`;
+`
 
 const StyledFlexDivRowCentered = styled(FlexDivRowCentered)<{ active: boolean }>`
 	display: ${(props) => (props.active ? 'flex' : 'none')};
@@ -160,7 +160,7 @@ const StyledFlexDivRowCentered = styled(FlexDivRowCentered)<{ active: boolean }>
 	${media.lessThan('md')`
 		width: unset;
 	`}
-`;
+`
 
 const PeriodLabel = styled.div`
 	font-size: 11px;
@@ -170,7 +170,7 @@ const PeriodLabel = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	margin-left: 4px;
 	width: 50%;
-`;
+`
 
 const StakingTabsHeader = styled.div`
 	display: flex;
@@ -182,14 +182,14 @@ const StakingTabsHeader = styled.div`
 		row-gap: 10px;
 		margin-bottom: 10px;
 	`}
-`;
+`
 
 const StakingTabsContainer = styled.div`
 	margin-bottom: 50px;
 	${media.lessThan('md')`
 		padding: 15px;
 	`}
-`;
+`
 
 const TabButtons = styled.div`
 	display: flex;
@@ -200,6 +200,6 @@ const TabButtons = styled.div`
 	${media.lessThan('md')`
 		justify-content: space-around;
 	`}
-`;
+`
 
-export default StakingTabs;
+export default StakingTabs

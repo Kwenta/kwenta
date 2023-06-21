@@ -1,15 +1,15 @@
-import { ReactElement } from 'react';
-import styled from 'styled-components';
+import { ReactElement } from 'react'
+import styled from 'styled-components'
 
-import { FlexDivRow } from 'components/layout/flex';
+import { FlexDivRow } from 'components/layout/flex'
 
-import InputTitle from './InputTitle';
+import InputTitle from './InputTitle'
 
 type Props = {
-	label: string | ReactElement;
-	rightElement?: ReactElement;
-	disabled?: boolean;
-};
+	label: string | ReactElement
+	rightElement?: ReactElement
+	disabled?: boolean
+}
 
 export default function InputHeaderRow({ label, rightElement, disabled }: Props) {
 	return (
@@ -17,7 +17,7 @@ export default function InputHeaderRow({ label, rightElement, disabled }: Props)
 			<InputTitle>{label}</InputTitle>
 			{rightElement}
 		</Container>
-	);
+	)
 }
 
 const Container = styled(FlexDivRow)<{ $disabled?: boolean }>`
@@ -27,4 +27,4 @@ const Container = styled(FlexDivRow)<{ $disabled?: boolean }>`
 	margin-bottom: 8px;
 	cursor: default;
 	opacity: ${(props) => (props.$disabled ? 0.4 : 1)};
-`;
+`

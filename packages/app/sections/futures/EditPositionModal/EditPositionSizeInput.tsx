@@ -1,81 +1,81 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { PositionSide } from '@kwenta/sdk/types';
-import { stripZeros, formatNumber, suggestedDecimals } from '@kwenta/sdk/utils';
-import Wei, { wei } from '@synthetixio/wei';
-import React, { useMemo, memo, useCallback } from 'react';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { PositionSide } from '@kwenta/sdk/types'
+import { stripZeros, formatNumber, suggestedDecimals } from '@kwenta/sdk/utils'
+import Wei, { wei } from '@synthetixio/wei'
+import React, { useMemo, memo, useCallback } from 'react'
+import styled from 'styled-components'
 
-import TextButton from 'components/Button/TextButton';
-import InputTitle from 'components/Input/InputTitle';
-import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRow } from 'components/layout/flex';
-import { getStep } from 'components/Slider/Slider';
-import StyledSlider from 'components/Slider/StyledSlider';
-import Spacer from 'components/Spacer';
-import { selectShowPositionModal } from 'state/app/selectors';
-import { editCrossMarginPositionSize } from 'state/futures/actions';
-import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import TextButton from 'components/Button/TextButton'
+import InputTitle from 'components/Input/InputTitle'
+import NumericInput from 'components/Input/NumericInput'
+import { FlexDivRow } from 'components/layout/flex'
+import { getStep } from 'components/Slider/Slider'
+import StyledSlider from 'components/Slider/StyledSlider'
+import Spacer from 'components/Spacer'
+import { selectShowPositionModal } from 'state/app/selectors'
+import { editCrossMarginPositionSize } from 'state/futures/actions'
+import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type OrderSizingProps = {
-	type: 'increase' | 'decrease';
-	maxNativeValue: Wei;
-	minNativeValue: Wei;
-	isMobile?: boolean;
-};
+	type: 'increase' | 'decrease'
+	maxNativeValue: Wei
+	minNativeValue: Wei
+	isMobile?: boolean
+}
 
 const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 	({ isMobile, type, maxNativeValue, minNativeValue }) => {
-		const dispatch = useAppDispatch();
+		const dispatch = useAppDispatch()
 
-		const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs);
+		const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs)
 
-		const { position } = useAppSelector(selectEditPositionModalInfo);
-		const modal = useAppSelector(selectShowPositionModal);
+		const { position } = useAppSelector(selectEditPositionModalInfo)
+		const modal = useAppSelector(selectShowPositionModal)
 
 		const onSizeChange = useCallback(
 			(value: string) => {
 				if (modal) {
-					const side = position?.position?.side;
+					const side = position?.position?.side
 					const sizeDelta =
 						(side === PositionSide.LONG && type === 'decrease') ||
 						(side === PositionSide.SHORT && type === 'increase')
 							? '-' + value
-							: value;
-					dispatch(editCrossMarginPositionSize(modal.marketKey, sizeDelta));
+							: value
+					dispatch(editCrossMarginPositionSize(modal.marketKey, sizeDelta))
 				}
 			},
 			[dispatch, type, modal, position?.position?.side]
-		);
+		)
 
 		const handleSetMax = useCallback(() => {
-			onSizeChange(stripZeros(maxNativeValue.toString()));
-		}, [onSizeChange, maxNativeValue]);
+			onSizeChange(stripZeros(maxNativeValue.toString()))
+		}, [onSizeChange, maxNativeValue])
 
 		const onChangeValue = useCallback(
 			(_: any, v: string) => {
-				onSizeChange(v);
+				onSizeChange(v)
 			},
 			[onSizeChange]
-		);
+		)
 
 		const onChangeSlider = useCallback((_: any, v: number | number[]) => onSizeChange(String(v)), [
 			onSizeChange,
-		]);
+		])
 
 		const nativeSizeDeltaWei = useMemo(() => {
-			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? ZERO_WEI : wei(nativeSizeDelta);
-		}, [nativeSizeDelta]);
+			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? ZERO_WEI : wei(nativeSizeDelta)
+		}, [nativeSizeDelta])
 
 		const maxNativeValueWithBuffer = useMemo(() => {
-			if (type === 'decrease') return maxNativeValue;
-			return maxNativeValue.add(maxNativeValue.mul(0.001));
-		}, [maxNativeValue, type]);
+			if (type === 'decrease') return maxNativeValue
+			return maxNativeValue.add(maxNativeValue.mul(0.001))
+		}, [maxNativeValue, type])
 
 		const invalid =
 			nativeSizeDelta !== '' &&
 			(maxNativeValueWithBuffer.lt(nativeSizeDeltaWei.abs()) ||
-				minNativeValue.gt(nativeSizeDeltaWei.abs()));
+				minNativeValue.gt(nativeSizeDeltaWei.abs()))
 
 		return (
 			<OrderSizingContainer>
@@ -106,23 +106,23 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 					$currentMark={Number(nativeSizeDelta ?? 0)}
 				/>
 			</OrderSizingContainer>
-		);
+		)
 	}
-);
+)
 
 const OrderSizingContainer = styled.div`
 	margin-bottom: 16px;
-`;
+`
 
 const OrderSizingRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
 	cursor: default;
-`;
+`
 
 const InputHelpers = styled.div`
 	display: flex;
-`;
+`
 
-export default EditPositionSizeInput;
+export default EditPositionSizeInput

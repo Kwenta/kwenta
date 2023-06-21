@@ -1,44 +1,44 @@
-import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import ColoredPrice from 'components/ColoredPrice';
-import Table, { TableHeader, TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { formatDollars } from '@kwenta/sdk/utils';
+import ColoredPrice from 'components/ColoredPrice'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
+import { Body } from 'components/Text'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import { formatDollars } from '@kwenta/sdk/utils'
 import {
 	selectFuturesType,
 	selectIdleMarginTransfers,
 	selectMarketMarginTransfers,
 	selectQueryStatuses,
-} from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { FetchStatus } from 'state/types';
-import { timePresentation } from 'utils/formatters/date';
+} from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import { FetchStatus } from 'state/types'
+import { timePresentation } from 'utils/formatters/date'
 
 const TransfersTab: React.FC = () => {
-	const { t } = useTranslation();
-	const { switchToL2 } = useNetworkSwitcher();
+	const { t } = useTranslation()
+	const { switchToL2 } = useNetworkSwitcher()
 
-	const isL2 = useIsL2();
-	const accountType = useAppSelector(selectFuturesType);
-	const marketMarginTransfers = useAppSelector(selectMarketMarginTransfers);
-	const idleMarginTransfers = useAppSelector(selectIdleMarginTransfers);
+	const isL2 = useIsL2()
+	const accountType = useAppSelector(selectFuturesType)
+	const marketMarginTransfers = useAppSelector(selectMarketMarginTransfers)
+	const idleMarginTransfers = useAppSelector(selectIdleMarginTransfers)
 
 	const {
 		marginTransfers: { status: marginTransfersStatus },
-	} = useAppSelector(selectQueryStatuses);
+	} = useAppSelector(selectQueryStatuses)
 
 	const columnsDeps = useMemo(
 		() => [marketMarginTransfers, idleMarginTransfers, marginTransfersStatus],
 		[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
-	);
+	)
 
 	const marginTransfers = useMemo(() => {
-		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers;
-	}, [accountType, idleMarginTransfers, marketMarginTransfers]);
+		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers
+	}, [accountType, idleMarginTransfers, marketMarginTransfers])
 
 	return (
 		<div>
@@ -69,7 +69,7 @@ const TransfersTab: React.FC = () => {
 							Cell: (cellProps: any) => {
 								const formatOptions = {
 									minDecimals: 0,
-								};
+								}
 
 								return (
 									<ColoredPrice
@@ -81,7 +81,7 @@ const TransfersTab: React.FC = () => {
 										{cellProps.row.original.action === 'deposit' ? '+' : ''}
 										{formatDollars(cellProps.row.original.size, formatOptions)}
 									</ColoredPrice>
-								);
+								)
 							},
 							sortable: true,
 							width: 50,
@@ -99,11 +99,11 @@ const TransfersTab: React.FC = () => {
 				/>
 			)}
 		</div>
-	);
-};
+	)
+}
 
 const ActionCell = styled(Body)`
 	text-transform: capitalize;
-`;
+`
 
-export default TransfersTab;
+export default TransfersTab

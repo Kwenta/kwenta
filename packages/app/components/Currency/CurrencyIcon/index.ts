@@ -1,1 +1,1 @@
-export { default } from './CurrencyIcon';
+export { default } from './CurrencyIcon'

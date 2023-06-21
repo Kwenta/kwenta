@@ -1,21 +1,21 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 
-import CrossIcon from 'assets/svg/app/cross.svg';
-import FullScreenModal from 'components/FullScreenModal';
-import { resetButtonCSS } from 'styles/common';
+import CrossIcon from 'assets/svg/app/cross.svg'
+import FullScreenModal from 'components/FullScreenModal'
+import { resetButtonCSS } from 'styles/common'
 
 type DrawerItem = {
-	label: string;
-	value: React.ReactNode;
-} | null;
+	label: string
+	value: React.ReactNode
+} | null
 
 type BaseDrawerProps = {
-	items: DrawerItem[];
-	open: boolean;
-	closeDrawer(): void;
-	buttons?: React.ReactNode;
-};
+	items: DrawerItem[]
+	open: boolean
+	closeDrawer(): void
+	buttons?: React.ReactNode
+}
 
 const BaseDrawer: React.FC<BaseDrawerProps> = ({ open, closeDrawer, items, buttons }) => (
 	<StyledModal isOpen={open}>
@@ -27,19 +27,19 @@ const BaseDrawer: React.FC<BaseDrawerProps> = ({ open, closeDrawer, items, butto
 					</CloseButton>
 				</CloseButtonRow>
 				{items.map((row) => {
-					if (!row) return null;
+					if (!row) return null
 					return (
 						<Row key={row.label}>
 							<div className="key">{row.label}</div>
 							<div className="value">{row.value}</div>
 						</Row>
-					);
+					)
 				})}
 				{buttons && <ButtonsContainer>{buttons}</ButtonsContainer>}
 			</Foreground>
 		</Background>
 	</StyledModal>
-);
+)
 
 const StyledModal = styled(FullScreenModal)`
 	top: 0;
@@ -60,7 +60,7 @@ const StyledModal = styled(FullScreenModal)`
 			width: 100%;
 		}
 	}
-`;
+`
 
 const Background = styled.div`
 	display: flex;
@@ -68,14 +68,14 @@ const Background = styled.div`
 	background-color: rgba(0, 0, 0, 0.5);
 	height: 100%;
 	width: 100%;
-`;
+`
 
 const Foreground = styled.div`
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	padding: 15px;
 	border-radius: 8px 8px 0 0;
 	width: 100%;
-`;
+`
 
 const Row = styled.div`
 	display: flex;
@@ -100,23 +100,23 @@ const Row = styled.div`
 	&:not(:last-of-type) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}
-`;
+`
 
 const ButtonsContainer = styled.div`
 	width: 100%;
 	display: flex;
 	margin-top: 5px;
-`;
+`
 
 const CloseButtonRow = styled.div`
 	width: 100%;
 	display: flex;
 	justify-content: flex-end;
-`;
+`
 
 const CloseButton = styled.button`
 	${resetButtonCSS};
 	color: ${(props) => props.theme.colors.selectedTheme.gray2};
-`;
+`
 
-export default BaseDrawer;
+export default BaseDrawer

@@ -1,47 +1,47 @@
-import { createTheme, MuiThemeProvider } from '@material-ui/core';
-import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import * as Sentry from '@sentry/browser';
-import { BrowserTracing } from '@sentry/tracing';
-import { NextPage } from 'next';
-import { AppProps } from 'next/app';
-import Head from 'next/head';
-import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { QueryClientProvider, QueryClient } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
-import { Provider } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
-import { WagmiConfig } from 'wagmi';
+import { createTheme, MuiThemeProvider } from '@material-ui/core'
+import { darkTheme, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import * as Sentry from '@sentry/browser'
+import { BrowserTracing } from '@sentry/tracing'
+import { NextPage } from 'next'
+import { AppProps } from 'next/app'
+import Head from 'next/head'
+import { FC, ReactElement, ReactNode, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { QueryClientProvider, QueryClient } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
+import { Provider } from 'react-redux'
+import { ThemeProvider } from 'styled-components'
+import { WagmiConfig } from 'wagmi'
 
-import ErrorNotifier from 'components/ErrorView/ErrorNotifier';
-import Connector from 'containers/Connector';
-import { chains, wagmiClient } from 'containers/Connector/config';
-import useMonitorTransactions from 'hooks/useMonitorTransactions';
-import AcknowledgementModal from 'sections/app/AcknowledgementModal';
-import Layout from 'sections/shared/Layout';
-import SystemStatus from 'sections/shared/SystemStatus';
-import { useAppData } from 'state/app/hooks';
-import { useAppSelector } from 'state/hooks';
-import { selectCurrentTheme } from 'state/preferences/selectors';
-import store from 'state/store';
-import { themes } from 'styles/theme';
-import { IGNORE_ERRORS } from 'utils/logError';
-import { getDesignTokens } from 'utils/theme';
+import ErrorNotifier from 'components/ErrorView/ErrorNotifier'
+import Connector from 'containers/Connector'
+import { chains, wagmiClient } from 'containers/Connector/config'
+import useMonitorTransactions from 'hooks/useMonitorTransactions'
+import AcknowledgementModal from 'sections/app/AcknowledgementModal'
+import Layout from 'sections/shared/Layout'
+import SystemStatus from 'sections/shared/SystemStatus'
+import { useAppData } from 'state/app/hooks'
+import { useAppSelector } from 'state/hooks'
+import { selectCurrentTheme } from 'state/preferences/selectors'
+import store from 'state/store'
+import { themes } from 'styles/theme'
+import { IGNORE_ERRORS } from 'utils/logError'
+import { getDesignTokens } from 'utils/theme'
 
-import 'styles/main.css';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import '@reach/dialog/styles.css';
-import '@rainbow-me/rainbowkit/styles.css';
-import '../i18n';
+import 'styles/main.css'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+import '@reach/dialog/styles.css'
+import '@rainbow-me/rainbowkit/styles.css'
+import '../i18n'
 
 type NextPageWithLayout = NextPage & {
-	getLayout?: (page: ReactElement) => ReactNode;
-};
+	getLayout?: (page: ReactElement) => ReactNode
+}
 
 type AppPropsWithLayout = AppProps & {
-	Component: NextPageWithLayout;
-};
+	Component: NextPageWithLayout
+}
 
 Sentry.init({
 	dsn:
@@ -54,25 +54,25 @@ Sentry.init({
 	integrations: [new BrowserTracing()],
 	tracesSampleRate: 0.3,
 	ignoreErrors: IGNORE_ERRORS,
-});
+})
 
 const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
-	const [isReady, setReady] = useState(false);
-	const { providerReady } = Connector.useContainer();
+	const [isReady, setReady] = useState(false)
+	const { providerReady } = Connector.useContainer()
 
-	useAppData(providerReady);
-	useMonitorTransactions();
+	useAppData(providerReady)
+	useMonitorTransactions()
 
-	const getLayout = Component.getLayout || ((page) => page);
-	const currentTheme = useAppSelector(selectCurrentTheme);
+	const getLayout = Component.getLayout || ((page) => page)
+	const currentTheme = useAppSelector(selectCurrentTheme)
 
-	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
+	const theme = useMemo(() => themes[currentTheme], [currentTheme])
 	// @ts-ignore palette options
-	const muiTheme = useMemo(() => createTheme(getDesignTokens(currentTheme)), [currentTheme]);
+	const muiTheme = useMemo(() => createTheme(getDesignTokens(currentTheme)), [currentTheme])
 
 	useEffect(() => {
-		setReady(true);
-	}, []);
+		setReady(true)
+	}, [])
 
 	return isReady ? (
 		<RainbowKitProvider
@@ -90,11 +90,11 @@ const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
 				</MuiThemeProvider>
 			</ThemeProvider>
 		</RainbowKitProvider>
-	) : null;
-};
+	) : null
+}
 
 const App: FC<AppProps> = (props) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<>
@@ -131,7 +131,7 @@ const App: FC<AppProps> = (props) => {
 				</QueryClientProvider>
 			</Provider>
 		</>
-	);
-};
+	)
+}
 
-export default App;
+export default App

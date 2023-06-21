@@ -1,7 +1,7 @@
-import { Period } from '@kwenta/sdk/constants';
-import { NetworkId, FuturesAccountType, FuturesMarketAsset } from '@kwenta/sdk/types';
+import { Period } from '@kwenta/sdk/constants'
+import { NetworkId, FuturesAccountType, FuturesMarketAsset } from '@kwenta/sdk/types'
 
-import { CurrencyKey } from './currency';
+import { CurrencyKey } from './currency'
 
 export const QUERY_KEYS = {
 	Rates: {
@@ -299,6 +299,6 @@ export const QUERY_KEYS = {
 			end,
 		],
 	},
-};
+}
 
-export default QUERY_KEYS;
+export default QUERY_KEYS

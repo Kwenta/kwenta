@@ -1,24 +1,24 @@
-import { NetworkId, FuturesTrade } from '@kwenta/sdk/types';
-import { getFuturesEndpoint, mapTrades, notNill, getFuturesTrades } from '@kwenta/sdk/utils';
-import { utils as ethersUtils } from 'ethers';
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query';
+import { NetworkId, FuturesTrade } from '@kwenta/sdk/types'
+import { getFuturesEndpoint, mapTrades, notNill, getFuturesTrades } from '@kwenta/sdk/utils'
+import { utils as ethersUtils } from 'ethers'
+import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
 
-import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
-import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
-import logError from 'utils/logError';
+import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults'
+import QUERY_KEYS from 'constants/queryKeys'
+import Connector from 'containers/Connector'
+import logError from 'utils/logError'
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
 	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
-	const { network } = Connector.useContainer();
-	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
+	const { network } = Connector.useContainer()
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId)
 
 	return useInfiniteQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.Trades(network?.id as NetworkId, currencyKey || null),
 		async ({ pageParam = { maxTs: Math.floor(Date.now() / 1000), minTs: 0 } }) => {
-			if (!currencyKey) return null;
+			if (!currencyKey) return null
 
 			try {
 				const response = await getFuturesTrades(
@@ -54,11 +54,11 @@ const useGetFuturesTrades = (
 						fundingAccrued: true,
 						trackingCode: true,
 					}
-				);
-				return response ? mapTrades(response) : null;
+				)
+				return response ? mapTrades(response) : null
 			} catch (e) {
-				logError(e);
-				return null;
+				logError(e)
+				return null
 			}
 		},
 		{
@@ -70,7 +70,7 @@ const useGetFuturesTrades = (
 							minTs: 0,
 							maxTs: lastPage[lastPage.length - 1].timestamp,
 					  }
-					: null;
+					: null
 			},
 			getPreviousPageParam: (firstPage) => {
 				return notNill(firstPage) && firstPage?.length > 0
@@ -78,10 +78,10 @@ const useGetFuturesTrades = (
 							minTs: firstPage[0].timestamp,
 							maxTs: MAX_TIMESTAMP,
 					  }
-					: null;
+					: null
 			},
 		}
-	);
-};
+	)
+}
 
-export default useGetFuturesTrades;
+export default useGetFuturesTrades

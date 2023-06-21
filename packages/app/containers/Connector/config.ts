@@ -1,4 +1,4 @@
-import { Chain, connectorsForWallets } from '@rainbow-me/rainbowkit';
+import { Chain, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import {
 	braveWallet,
 	coinbaseWallet,
@@ -8,8 +8,8 @@ import {
 	rainbowWallet,
 	trustWallet,
 	walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createClient } from 'wagmi';
+} from '@rainbow-me/rainbowkit/wallets'
+import { configureChains, createClient } from 'wagmi'
 import {
 	arbitrum,
 	avalanche,
@@ -19,21 +19,21 @@ import {
 	optimism,
 	goerli,
 	optimismGoerli,
-} from 'wagmi/chains';
-import { infuraProvider } from 'wagmi/providers/infura';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { publicProvider } from 'wagmi/providers/public';
+} from 'wagmi/chains'
+import { infuraProvider } from 'wagmi/providers/infura'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+import { publicProvider } from 'wagmi/providers/public'
 
-import BinanceIcon from 'assets/png/rainbowkit/binance.png';
-import Frame from 'components/Rainbowkit/Frame';
-import Safe from 'components/Rainbowkit/Gnosis';
-import Tally from 'components/Rainbowkit/Tally';
-import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from 'constants/network';
+import BinanceIcon from 'assets/png/rainbowkit/binance.png'
+import Frame from 'components/Rainbowkit/Frame'
+import Safe from 'components/Rainbowkit/Gnosis'
+import Tally from 'components/Rainbowkit/Tally'
+import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from 'constants/network'
 
 const bscWithIcon: Chain = {
 	...bsc,
 	iconUrl: async () => BinanceIcon,
-};
+}
 
 export const chain = {
 	optimism,
@@ -44,7 +44,7 @@ export const chain = {
 	bsc: bscWithIcon,
 	goerli,
 	optimismGoerli,
-};
+}
 
 const { chains, provider } = configureChains(Object.values(chain), [
 	infuraProvider({
@@ -64,7 +64,7 @@ const { chains, provider } = configureChains(Object.values(chain), [
 		priority: 1,
 	}),
 	publicProvider({ stallTimeout: STALL_TIMEOUT, priority: 5 }),
-]);
+])
 
 const connectors = connectorsForWallets([
 	{
@@ -88,19 +88,19 @@ const connectors = connectorsForWallets([
 			injectedWallet({ chains, shimDisconnect: true }),
 		],
 	},
-]);
+])
 
 export const wagmiClient = createClient({
 	autoConnect: true,
 	connectors,
 	provider,
-});
+})
 
 export const activeChainIds = [
 	chain.optimism.id,
 	chain.mainnet.id,
 	chain.optimismGoerli.id,
 	chain.goerli.id,
-];
+]
 
-export { chains };
+export { chains }

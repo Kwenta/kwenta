@@ -1,26 +1,26 @@
-import { memo, FC } from 'react';
+import { memo, FC } from 'react'
 
-import LoaderIcon from 'assets/svg/app/loader.svg';
-import { AbsoluteCenteredDiv } from 'styles/common';
+import LoaderIcon from 'assets/svg/app/loader.svg'
+import { AbsoluteCenteredDiv } from 'styles/common'
 
 type LoaderProps = {
-	inline?: boolean;
-	width?: string;
-	height?: string;
-	style?: Record<string, any>;
-};
+	inline?: boolean
+	width?: string
+	height?: string
+	style?: Record<string, any>
+}
 
 export const Loader: FC<LoaderProps> = memo(
 	({ inline, width = '38px', height = '38px', style = {}, ...rest }) => {
-		const loader = <LoaderIcon style={{ width, height, ...style }} />;
+		const loader = <LoaderIcon style={{ width, height, ...style }} />
 
-		return inline ? loader : <AbsoluteCenteredDiv {...rest}>{loader}</AbsoluteCenteredDiv>;
+		return inline ? loader : <AbsoluteCenteredDiv {...rest}>{loader}</AbsoluteCenteredDiv>
 	}
-);
+)
 
 Loader.defaultProps = {
 	inline: false,
-};
+}
 
 export const MiniLoader: FC<LoaderProps & { centered?: boolean }> = memo((props) => {
 	return (
@@ -30,11 +30,11 @@ export const MiniLoader: FC<LoaderProps & { centered?: boolean }> = memo((props)
 			width="11px"
 			style={{ marginLeft: `${!props.centered ? '10px' : '0px'}` }}
 		/>
-	);
-});
+	)
+})
 
 export const ButtonLoader = memo(() => {
-	return <Loader inline height="20x" width="20px" />;
-});
+	return <Loader inline height="20x" width="20px" />
+})
 
-export default Loader;
+export default Loader

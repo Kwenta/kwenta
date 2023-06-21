@@ -1,20 +1,20 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
+import React from 'react'
+import styled, { css } from 'styled-components'
 
-import { PositionSide } from '@kwenta/sdk/types';
-import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils';
-import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
+import { PositionSide } from '@kwenta/sdk/types'
+import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils'
+import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
 
-import BaseDrawer from './BaseDrawer';
+import BaseDrawer from './BaseDrawer'
 
 type TradeDrawerProps = {
-	trade?: any;
-	closeDrawer(): void;
-};
+	trade?: any
+	closeDrawer(): void
+}
 
 const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 	const drawerItems = React.useMemo(() => {
-		if (!trade) return [];
+		if (!trade) return []
 
 		return [
 			{
@@ -51,11 +51,11 @@ const TradeDrawer: React.FC<TradeDrawerProps> = ({ trade, closeDrawer }) => {
 				label: 'Fees',
 				value: trade.feesPaid.eq(0) ? '--' : formatDollars(trade.feesPaid),
 			},
-		];
-	}, [trade]);
+		]
+	}, [trade])
 
-	return <BaseDrawer open={!!trade} closeDrawer={closeDrawer} items={drawerItems} />;
-};
+	return <BaseDrawer open={!!trade} closeDrawer={closeDrawer} items={drawerItems} />
+}
 
 const StyledPositionSide = styled.div<{ side?: PositionSide | null }>`
 	text-transform: uppercase;
@@ -72,7 +72,7 @@ const StyledPositionSide = styled.div<{ side?: PositionSide | null }>`
 		css`
 			color: ${props.theme.colors.common.primaryRed};
 		`}
-`;
+`
 
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 	color: ${(props) =>
@@ -81,6 +81,6 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.negative
 			? props.theme.colors.common.primaryRed
 			: props.theme.colors.common.primaryGreen};
-`;
+`
 
-export default TradeDrawer;
+export default TradeDrawer

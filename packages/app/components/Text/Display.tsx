@@ -1,14 +1,14 @@
-import { FC } from 'react';
-import styled from 'styled-components';
+import { FC } from 'react'
+import styled from 'styled-components'
 
-type DisplayProps = {};
+type DisplayProps = {}
 
 const Display: FC<DisplayProps> = ({ ...props }) => {
-	return <StyledDisplay {...props} />;
-};
+	return <StyledDisplay {...props} />
+}
 
 const StyledDisplay = styled.p`
 	line-height: 1.2;
-`;
+`
 
-export default Display;
+export default Display

@@ -1,15 +1,15 @@
-import React, { FC, memo } from 'react';
-import styled from 'styled-components';
+import React, { FC, memo } from 'react'
+import styled from 'styled-components'
 
-import { FlexDivCentered } from 'components/layout/flex';
+import { FlexDivCentered } from 'components/layout/flex'
 
 export type CardHeaderProps = {
-	children: React.ReactNode;
-	className?: string;
-	lowercase?: boolean;
-	noBorder?: boolean;
-	onClick?: () => void;
-};
+	children: React.ReactNode
+	className?: string
+	lowercase?: boolean
+	noBorder?: boolean
+	onClick?: () => void
+}
 
 const CardHeader: FC<CardHeaderProps> = memo(
 	({ children, lowercase = false, noBorder = false, ...rest }) => (
@@ -17,7 +17,7 @@ const CardHeader: FC<CardHeaderProps> = memo(
 			{children}
 		</Container>
 	)
-);
+)
 
 const Container = styled(FlexDivCentered)<{ lowercase: boolean; noBorder: boolean }>`
 	position: relative;
@@ -30,6 +30,6 @@ const Container = styled(FlexDivCentered)<{ lowercase: boolean; noBorder: boolea
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	flex-shrink: 0;
-`;
+`
 
-export default CardHeader;
+export default CardHeader

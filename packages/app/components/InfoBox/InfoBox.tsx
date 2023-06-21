@@ -1,28 +1,28 @@
-import React, { memo, FC } from 'react';
-import styled, { css } from 'styled-components';
+import React, { memo, FC } from 'react'
+import styled, { css } from 'styled-components'
 
-import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
-import { Body } from 'components/Text';
-import { BodyProps } from 'components/Text/Body';
-import { NO_VALUE } from 'constants/placeholder';
+import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg'
+import { Body } from 'components/Text'
+import { BodyProps } from 'components/Text/Body'
+import { NO_VALUE } from 'constants/placeholder'
 
 type InfoBoxRowProps = {
-	children?: React.ReactNode;
-	title: string;
-	value: React.ReactNode;
-	keyNode?: React.ReactNode;
-	valueNode?: React.ReactNode;
-	spaceBeneath?: boolean;
-	compactBox?: boolean;
-	color?: BodyProps['color'];
-	disabled?: boolean;
-	dataTestId?: string;
-	expandable?: boolean;
-	expanded?: boolean;
-	isSubItem?: boolean;
-	boldValue?: boolean;
-	onToggleExpand?: (key: string) => void;
-};
+	children?: React.ReactNode
+	title: string
+	value: React.ReactNode
+	keyNode?: React.ReactNode
+	valueNode?: React.ReactNode
+	spaceBeneath?: boolean
+	compactBox?: boolean
+	color?: BodyProps['color']
+	disabled?: boolean
+	dataTestId?: string
+	expandable?: boolean
+	expanded?: boolean
+	isSubItem?: boolean
+	boldValue?: boolean
+	onToggleExpand?: (key: string) => void
+}
 
 export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 	({
@@ -69,7 +69,7 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 			{expandable && expanded && children}
 		</>
 	)
-);
+)
 
 const Row = styled.div<{ $isSubItem?: boolean }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
@@ -82,7 +82,7 @@ const Row = styled.div<{ $isSubItem?: boolean }>`
 	&:not(:last-of-type) {
 		padding-bottom: 6px;
 	}
-`;
+`
 
 export const InfoBoxContainer = styled.div`
 	box-sizing: border-box;
@@ -90,18 +90,18 @@ export const InfoBoxContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;
 	padding: 12px 14px;
-`;
+`
 
 const InfoBoxKey = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 	text-transform: capitalize;
-`;
+`
 
 const ValueText = styled(Body).attrs({ mono: true })<{
-	$disabled?: boolean;
-	$color?: InfoBoxRowProps['color'];
-	$isSubItem?: boolean;
-	$bold?: boolean;
+	$disabled?: boolean
+	$color?: InfoBoxRowProps['color']
+	$isSubItem?: boolean
+	$bold?: boolean
 }>`
 	cursor: default;
 
@@ -116,13 +116,13 @@ const ValueText = styled(Body).attrs({ mono: true })<{
 		css`
 			font-weight: bold;
 		`}
-`;
+`
 
 const ExpandIcon = styled(CaretDownIcon)`
 	margin-left: 8px;
-`;
+`
 
 const HideIcon = styled(ExpandIcon)`
 	transform: rotate(180deg);
 	margin-bottom: -4px;
-`;
+`

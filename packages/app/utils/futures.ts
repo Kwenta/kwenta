@@ -10,15 +10,15 @@ import {
 	FuturesVolumes,
 	PositionSide,
 	PricesMap,
-} from '@kwenta/sdk/types';
+} from '@kwenta/sdk/types'
 import {
 	AssetDisplayByAsset,
 	MarketKeyByAsset,
 	getDisplayAsset,
 	formatNumber,
-} from '@kwenta/sdk/utils';
-import Wei, { wei } from '@synthetixio/wei';
-import { TFunction } from 'i18next';
+} from '@kwenta/sdk/utils'
+import Wei, { wei } from '@synthetixio/wei'
+import { TFunction } from 'i18next'
 
 import {
 	CrossMarginBalanceInfo,
@@ -28,22 +28,22 @@ import {
 	futuresPositionKeys,
 	FundingRate,
 	MarkPrices,
-} from 'state/futures/types';
-import { deserializeWeiObject } from 'state/helpers';
+} from 'state/futures/types'
+import { deserializeWeiObject } from 'state/helpers'
 
 export const getMarketName = (asset: FuturesMarketAsset) => {
-	return `${getDisplayAsset(asset)}/sUSD`;
-};
+	return `${getDisplayAsset(asset)}/sUSD`
+}
 
 export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => {
-	const assetDisplayName = AssetDisplayByAsset[synth];
+	const assetDisplayName = AssetDisplayByAsset[synth]
 	return t('common.currency.futures-market-short-name', {
 		currencyName: assetDisplayName,
-	});
-};
+	})
+}
 
 export const isDecimalFour = (marketKeyOrAsset: string) =>
-	['sEUR', 'EUR', 'sDOGE', 'DOGE'].includes(marketKeyOrAsset);
+	['sEUR', 'EUR', 'sDOGE', 'DOGE'].includes(marketKeyOrAsset)
 
 export const orderPriceInvalidLabel = (
 	orderPrice: string,
@@ -51,21 +51,21 @@ export const orderPriceInvalidLabel = (
 	currentPrice: Wei,
 	orderType: FuturesOrderType
 ): string | null => {
-	if (!orderPrice || Number(orderPrice) <= 0) return null;
-	const isLong = leverageSide === 'long';
+	if (!orderPrice || Number(orderPrice) <= 0) return null
+	const isLong = leverageSide === 'long'
 	if (
 		((isLong && orderType === 'limit') || (!isLong && orderType === 'stop_market')) &&
 		wei(orderPrice).gt(currentPrice)
 	) {
-		return 'max ' + formatNumber(currentPrice);
+		return 'max ' + formatNumber(currentPrice)
 	}
 	if (
 		((!isLong && orderType === 'limit') || (isLong && orderType === 'stop_market')) &&
 		wei(orderPrice).lt(currentPrice)
 	)
-		return 'min ' + formatNumber(currentPrice);
-	return null;
-};
+		return 'min ' + formatNumber(currentPrice)
+	return null
+}
 
 export const updatePositionUpnl = (
 	positionDetails: FuturesPosition<string>,
@@ -75,21 +75,21 @@ export const updatePositionUpnl = (
 	const deserializedPositionDetails = deserializeWeiObject(
 		positionDetails,
 		futuresPositionKeys
-	) as FuturesPosition;
-	const offChainPrice = prices[MarketKeyByAsset[deserializedPositionDetails.asset]];
-	const position = deserializedPositionDetails.position;
+	) as FuturesPosition
+	const offChainPrice = prices[MarketKeyByAsset[deserializedPositionDetails.asset]]
+	const position = deserializedPositionDetails.position
 	const thisPositionHistory = positionHistory.find(
 		({ isOpen, asset }) => isOpen && asset === positionDetails.asset
-	);
-	if (!thisPositionHistory || !position || !offChainPrice) return deserializedPositionDetails;
+	)
+	if (!thisPositionHistory || !position || !offChainPrice) return deserializedPositionDetails
 
 	const pnl = position.size.mul(
 		thisPositionHistory.avgEntryPrice
 			.sub(offChainPrice)
 			.mul(position.side === PositionSide.LONG ? -1 : 1)
-	);
-	const pnlPct = pnl.div(position.initialMargin.add(thisPositionHistory.netTransfers));
-	const accruedFunding = position.accruedFunding.add(thisPositionHistory.netFunding);
+	)
+	const pnlPct = pnl.div(position.initialMargin.add(thisPositionHistory.netTransfers))
+	const accruedFunding = position.accruedFunding.add(thisPositionHistory.netFunding)
 
 	return {
 		...deserializedPositionDetails,
@@ -102,8 +102,8 @@ export const updatePositionUpnl = (
 						pnlPct,
 				  }
 				: position,
-	};
-};
+	}
+}
 
 export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> => {
 	return {
@@ -139,12 +139,12 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 			maxMarketValue: market.settings.maxMarketValue.toString(),
 			skewScale: market.settings.skewScale.toString(),
 		},
-	};
-};
+	}
+}
 
 export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string>[] => {
-	return markets.map((m) => serializeMarket(m));
-};
+	return markets.map((m) => serializeMarket(m))
+}
 
 export const unserializeMarket = (m: FuturesMarket<string>): FuturesMarket => {
 	return {
@@ -180,12 +180,12 @@ export const unserializeMarket = (m: FuturesMarket<string>): FuturesMarket => {
 			maxMarketValue: wei(m.settings.maxMarketValue),
 			skewScale: wei(m.settings.skewScale),
 		},
-	};
-};
+	}
+}
 
 export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
-	return markets.map((m) => unserializeMarket(m));
-};
+	return markets.map((m) => unserializeMarket(m))
+}
 
 export const serializeCmBalanceInfo = (
 	overview: CrossMarginBalanceInfo
@@ -195,8 +195,8 @@ export const serializeCmBalanceInfo = (
 		keeperEthBal: overview.keeperEthBal.toString(),
 		walletEthBal: overview.walletEthBal.toString(),
 		allowance: overview.allowance.toString(),
-	};
-};
+	}
+}
 
 export const unserializeCmBalanceInfo = (
 	balanceInfo: CrossMarginBalanceInfo<string>
@@ -206,42 +206,42 @@ export const unserializeCmBalanceInfo = (
 		keeperEthBal: wei(balanceInfo.keeperEthBal),
 		walletEthBal: wei(balanceInfo.walletEthBal),
 		allowance: wei(balanceInfo.allowance),
-	};
-};
+	}
+}
 
 export const serializeFuturesVolumes = (volumes: FuturesVolumes) => {
 	return Object.keys(volumes).reduce<FuturesVolumes<string>>((acc, k) => {
 		acc[k] = {
 			trades: volumes[k].trades.toString(),
 			volume: volumes[k].volume.toString(),
-		};
-		return acc;
-	}, {});
-};
+		}
+		return acc
+	}, {})
+}
 
 export const unserializeFuturesVolumes = (volumes: FuturesVolumes<string>) => {
 	return Object.keys(volumes).reduce<FuturesVolumes>((acc, k) => {
 		acc[k] = {
 			trades: wei(volumes[k].trades),
 			volume: wei(volumes[k].volume),
-		};
-		return acc;
-	}, {});
-};
+		}
+		return acc
+	}, {})
+}
 
 export const serializeTradeInputs = (tradeInputs: TradeSizeInputs): TradeSizeInputs<string> => {
 	return {
 		nativeSize: tradeInputs.nativeSize.toString(),
 		susdSize: tradeInputs.susdSize.toString(),
-	};
-};
+	}
+}
 
 export const unserializeTradeInputs = (tradeInputs: TradeSizeInputs<string>): TradeSizeInputs => {
 	return {
 		nativeSize: wei(tradeInputs.nativeSize || 0),
 		susdSize: wei(tradeInputs.susdSize || 0),
-	};
-};
+	}
+}
 
 export const serializeConditionalOrders = (
 	orders: ConditionalOrder[]
@@ -252,8 +252,8 @@ export const serializeConditionalOrders = (
 		desiredFillPrice: o.desiredFillPrice.toString(),
 		targetPrice: o.targetPrice?.toString() ?? null,
 		marginDelta: o.marginDelta.toString(),
-	}));
-};
+	}))
+}
 
 export const unserializeConditionalOrders = (
 	orders: ConditionalOrder<string>[]
@@ -264,8 +264,8 @@ export const unserializeConditionalOrders = (
 		targetPrice: o.targetPrice ? wei(o.targetPrice) : null,
 		desiredFillPrice: wei(o.desiredFillPrice || 0),
 		marginDelta: wei(o.marginDelta),
-	}));
-};
+	}))
+}
 
 export const serializeDelayedOrder = (
 	order: DelayedOrderWithDetails
@@ -276,11 +276,11 @@ export const serializeDelayedOrder = (
 	keeperDeposit: order.keeperDeposit.toString(),
 	desiredFillPrice: order.desiredFillPrice.toString(),
 	targetRoundId: order.targetRoundId?.toString() ?? '',
-});
+})
 
 export const serializeDelayedOrders = (
 	orders: DelayedOrderWithDetails[]
-): DelayedOrderWithDetails<string>[] => orders.map((o) => serializeDelayedOrder(o));
+): DelayedOrderWithDetails<string>[] => orders.map((o) => serializeDelayedOrder(o))
 
 export const unserializeDelayedOrder = (
 	order: DelayedOrderWithDetails<string>
@@ -291,11 +291,11 @@ export const unserializeDelayedOrder = (
 	keeperDeposit: wei(order.keeperDeposit),
 	desiredFillPrice: wei(order.desiredFillPrice),
 	targetRoundId: wei(order.targetRoundId),
-});
+})
 
 export const unserializeDelayedOrders = (
 	orders: DelayedOrderWithDetails<string>[]
-): DelayedOrderWithDetails[] => orders.map((o) => unserializeDelayedOrder(o));
+): DelayedOrderWithDetails[] => orders.map((o) => unserializeDelayedOrder(o))
 
 export const unserializeGasEstimate = (
 	estimate: TransactionEstimation<string>
@@ -303,14 +303,14 @@ export const unserializeGasEstimate = (
 	...estimate,
 	limit: wei(estimate.limit),
 	cost: wei(estimate.cost),
-});
+})
 
 export const serializePrices = (prices: PricesMap) => {
 	return Object.entries(prices).reduce<PricesMap<string>>((acc, [key, price]) => {
-		acc[key as FuturesMarketAsset] = price.toString();
-		return acc;
-	}, {});
-};
+		acc[key as FuturesMarketAsset] = price.toString()
+		return acc
+	}, {})
+}
 
 export const serializePositionHistory = (
 	positions: FuturesPositionHistory[]
@@ -331,8 +331,8 @@ export const serializePositionHistory = (
 		totalVolume: p.totalVolume.toString(),
 		avgEntryPrice: p.avgEntryPrice.toString(),
 		leverage: p.leverage.toString(),
-	}));
-};
+	}))
+}
 
 export const unserializePositionHistory = (
 	positions: FuturesPositionHistory<string>[]
@@ -353,8 +353,8 @@ export const unserializePositionHistory = (
 		totalVolume: wei(p.totalVolume),
 		avgEntryPrice: wei(p.avgEntryPrice),
 		leverage: wei(p.leverage),
-	}));
-};
+	}))
+}
 
 export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] => {
 	return trades.map((t) => ({
@@ -366,8 +366,8 @@ export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] 
 		pnl: t.pnl.toString(),
 		feesPaid: t.feesPaid.toString(),
 		keeperFeesPaid: t.keeperFeesPaid.toString(),
-	}));
-};
+	}))
+}
 
 export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<Wei>[] => {
 	return trades.map((t) => ({
@@ -379,19 +379,19 @@ export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<
 		pnl: wei(t.pnl),
 		feesPaid: wei(t.feesPaid),
 		keeperFeesPaid: wei(t.keeperFeesPaid),
-	}));
-};
+	}))
+}
 
 export const unserializeFundingRates = (rates: FundingRate<string>[]): FundingRate[] => {
-	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }));
-};
+	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }))
+}
 
 export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMarket[]) => {
 	return orders
 		.filter((o) => o.size.abs().gt(0))
 		.reduce((acc, o) => {
-			const market = markets.find((m) => m.market === o.marketAddress);
-			if (!market) return acc;
+			const market = markets.find((m) => m.market === o.marketAddress)
+			if (!market) return acc
 
 			acc.push({
 				...o,
@@ -405,7 +405,7 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 								? market.settings.offchainDelayedOrderMinAge * 1000
 								: market.settings.minDelayTimeDelta * 1000)
 						: o.executableAtTimestamp,
-			});
-			return acc;
-		}, [] as DelayedOrderWithDetails[]);
-};
+			})
+			return acc
+		}, [] as DelayedOrderWithDetails[])
+}

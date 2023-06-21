@@ -1,5 +1,5 @@
-import { StatsTimeframe } from 'hooks/useStatsData';
+import { StatsTimeframe } from 'hooks/useStatsData'
 
 export type StatsState = {
-	selectedTimeframe: StatsTimeframe;
-};
+	selectedTimeframe: StatsTimeframe
+}

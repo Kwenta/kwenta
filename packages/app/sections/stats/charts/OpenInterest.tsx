@@ -1,45 +1,45 @@
-import { MarketKeyByAsset, getDisplayAsset, formatDollars } from '@kwenta/sdk/utils';
-import { WeiSource } from '@synthetixio/wei';
-import { useEffect, useRef, useMemo, FC, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { useTheme } from 'styled-components';
+import { MarketKeyByAsset, getDisplayAsset, formatDollars } from '@kwenta/sdk/utils'
+import { WeiSource } from '@synthetixio/wei'
+import { useEffect, useRef, useMemo, FC, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { useTheme } from 'styled-components'
 
-import useStatsData from 'hooks/useStatsData';
-import { SYNTH_ICONS } from 'utils/icons';
+import useStatsData from 'hooks/useStatsData'
+import { SYNTH_ICONS } from 'utils/icons'
 
-import { initChart } from '../initChart';
-import type { EChartsOption } from '../initChart';
-import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles';
+import { initChart } from '../initChart'
+import type { EChartsOption } from '../initChart'
+import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles'
 
 type RichLabel = {
-	width: number;
-	height: number;
+	width: number
+	height: number
 	backgroundColor: {
-		image: any;
-	};
-};
+		image: any
+	}
+}
 
-type RichLabelMap = Record<string, RichLabel>;
-type OpenInterestProps = { mobile: boolean };
+type RichLabelMap = Record<string, RichLabel>
+type OpenInterestProps = { mobile: boolean }
 
 export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
-	const { t } = useTranslation();
-	const theme = useTheme();
+	const { t } = useTranslation()
+	const theme = useTheme()
 
-	const { openInterestData } = useStatsData();
+	const { openInterestData } = useStatsData()
 
-	const ref = useRef<HTMLDivElement | null>(null);
+	const ref = useRef<HTMLDivElement | null>(null)
 
-	const [chart, setChart] = useState<any>(null);
-	const [defaultOptions, setDefaultOptions] = useState<any>(null);
+	const [chart, setChart] = useState<any>(null)
+	const [defaultOptions, setDefaultOptions] = useState<any>(null)
 
 	useEffect(() => {
-		if (chart) chart.dispose();
-		const result = initChart(ref?.current, theme);
-		setChart(result.chart);
-		setDefaultOptions(result.defaultOptions);
+		if (chart) chart.dispose()
+		const result = initChart(ref?.current, theme)
+		setChart(result.chart)
+		setDefaultOptions(result.defaultOptions)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [theme]);
+	}, [theme])
 
 	const openInterestStats = useMemo(() => {
 		const sortedData = openInterestData
@@ -55,23 +55,23 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 					},
 				} as RichLabel,
 			}))
-			.sort((a, b) => b.openInterest - a.openInterest);
+			.sort((a, b) => b.openInterest - a.openInterest)
 
-		return mobile ? sortedData.slice(0, 5) : sortedData;
-	}, [mobile, openInterestData]);
+		return mobile ? sortedData.slice(0, 5) : sortedData
+	}, [mobile, openInterestData])
 
 	useEffect(() => {
 		if (!ref || !chart || !ref.current || !openInterestData || !openInterestData.length) {
-			return;
+			return
 		}
 
-		const totalOI = openInterestData.reduce((acc, curr) => acc + curr.openInterest, 0);
-		const subtext = formatDollars(totalOI, { maxDecimals: 0 });
+		const totalOI = openInterestData.reduce((acc, curr) => acc + curr.openInterest, 0)
+		const subtext = formatDollars(totalOI, { maxDecimals: 0 })
 
 		const richLabels = openInterestStats.reduce((acc, openInterestStat) => {
-			acc[openInterestStat.asset] = openInterestStat.richLabel;
-			return acc;
-		}, {} as RichLabelMap);
+			acc[openInterestStat.asset] = openInterestStat.richLabel
+			return acc
+		}, {} as RichLabelMap)
 
 		const option: EChartsOption = {
 			...defaultOptions,
@@ -84,7 +84,7 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 				data: openInterestStats.map(({ asset }) => asset),
 				axisLabel: {
 					formatter: (market: any) => {
-						return [`{${market}| }`, `{syntheticAsset|${market}}`].join('\n');
+						return [`{${market}| }`, `{syntheticAsset|${market}}`].join('\n')
 					},
 					rich: {
 						syntheticAsset: {
@@ -133,10 +133,10 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 				valueFormatter: (value: WeiSource) => formatDollars(value, { maxDecimals: 0 }),
 			},
 			legend: undefined,
-		};
+		}
 
-		chart.setOption(option);
-	}, [ref, chart, t, openInterestData, openInterestStats, theme, defaultOptions]);
+		chart.setOption(option)
+	}, [ref, chart, t, openInterestData, openInterestStats, theme, defaultOptions])
 
 	return (
 		<StyledChartContainer width={2}>
@@ -145,9 +145,9 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 			</ChartHeader>
 			<ChartWrapper ref={ref} />
 		</StyledChartContainer>
-	);
-};
+	)
+}
 
 const StyledChartContainer = styled(ChartContainer)`
 	overflow: scroll;
-`;
+`

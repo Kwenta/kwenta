@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 export const StyledTrader = styled.a`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -8,4 +8,4 @@ export const StyledTrader = styled.a`
 		text-decoration: underline;
 		cursor: pointer;
 	}
-`;
+`

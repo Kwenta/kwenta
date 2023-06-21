@@ -1,29 +1,29 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants';
-import { formatDollars } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants'
+import { formatDollars } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import BaseModal from 'components/BaseModal';
-import Button from 'components/Button';
-import ErrorView from 'components/ErrorView';
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
-import { FlexDivRowCentered } from 'components/layout/flex';
-import PreviewArrow from 'components/PreviewArrow';
-import SegmentedControl from 'components/SegmentedControl';
-import Spacer from 'components/Spacer';
-import { Body } from 'components/Text';
-import { previewErrorI18n } from 'queries/futures/constants';
-import { setShowPositionModal } from 'state/app/reducer';
-import { selectShowPositionModal, selectTransaction } from 'state/app/selectors';
+import BaseModal from 'components/BaseModal'
+import Button from 'components/Button'
+import ErrorView from 'components/ErrorView'
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import PreviewArrow from 'components/PreviewArrow'
+import SegmentedControl from 'components/SegmentedControl'
+import Spacer from 'components/Spacer'
+import { Body } from 'components/Text'
+import { previewErrorI18n } from 'queries/futures/constants'
+import { setShowPositionModal } from 'state/app/reducer'
+import { selectShowPositionModal, selectTransaction } from 'state/app/selectors'
 import {
 	approveCrossMargin,
 	clearTradeInputs,
 	editCrossMarginPositionMargin,
 	submitCrossMarginAdjustMargin,
-} from 'state/futures/actions';
+} from 'state/futures/actions'
 import {
 	selectEditMarginAllowanceValid,
 	selectEditPositionInputs,
@@ -33,102 +33,102 @@ import {
 	selectIsFetchingTradePreview,
 	selectSubmittingFuturesTx,
 	selectTradePreviewError,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import EditPositionMarginInput from './EditPositionMarginInput';
+import EditPositionMarginInput from './EditPositionMarginInput'
 
 export default function EditPositionMarginModal() {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
-	const transactionState = useAppSelector(selectTransaction);
-	const isSubmitting = useAppSelector(selectSubmittingFuturesTx);
-	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview);
-	const preview = useAppSelector(selectEditPositionPreview);
-	const { marginDelta } = useAppSelector(selectEditPositionInputs);
-	const idleMargin = useAppSelector(selectIdleMargin);
-	const modal = useAppSelector(selectShowPositionModal);
-	const { market, position } = useAppSelector(selectEditPositionModalInfo);
-	const previewError = useAppSelector(selectTradePreviewError);
-	const allowanceValid = useAppSelector(selectEditMarginAllowanceValid);
+	const transactionState = useAppSelector(selectTransaction)
+	const isSubmitting = useAppSelector(selectSubmittingFuturesTx)
+	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview)
+	const preview = useAppSelector(selectEditPositionPreview)
+	const { marginDelta } = useAppSelector(selectEditPositionInputs)
+	const idleMargin = useAppSelector(selectIdleMargin)
+	const modal = useAppSelector(selectShowPositionModal)
+	const { market, position } = useAppSelector(selectEditPositionModalInfo)
+	const previewError = useAppSelector(selectTradePreviewError)
+	const allowanceValid = useAppSelector(selectEditMarginAllowanceValid)
 
-	const [transferType, setTransferType] = useState(0);
+	const [transferType, setTransferType] = useState(0)
 
 	useEffect(() => {
-		dispatch(clearTradeInputs());
+		dispatch(clearTradeInputs())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [])
 
 	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
 		isSubmitting,
 		isFetchingPreview,
-	]);
+	])
 
 	const maxWithdraw = useMemo(() => {
-		const maxSize = position?.remainingMargin.mul(market?.appMaxLeverage ?? 1);
-		const currentSize = position?.position?.notionalValue;
-		const max = maxSize?.sub(currentSize).div(market?.appMaxLeverage ?? 1) ?? wei(0);
-		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0);
-		const remainingMarginMax = position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0);
+		const maxSize = position?.remainingMargin.mul(market?.appMaxLeverage ?? 1)
+		const currentSize = position?.position?.notionalValue
+		const max = maxSize?.sub(currentSize).div(market?.appMaxLeverage ?? 1) ?? wei(0)
+		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0)
+		const remainingMarginMax = position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0)
 
 		return max.lt(0) || remainingMarginMax.lt(0)
 			? ZERO_WEI
 			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
 			? max
-			: remainingMarginMax;
-	}, [position?.remainingMargin, position?.position?.notionalValue, market?.appMaxLeverage]);
+			: remainingMarginMax
+	}, [position?.remainingMargin, position?.position?.notionalValue, market?.appMaxLeverage])
 
 	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
 		idleMargin,
 		maxWithdraw,
 		transferType,
-	]);
+	])
 
 	const marginWei = useMemo(
 		() => (!marginDelta || isNaN(Number(marginDelta)) ? wei(0) : wei(marginDelta)),
 		[marginDelta]
-	);
+	)
 
-	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount]);
+	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount])
 
 	const maxLeverageExceeded = useMemo(
 		() => transferType === 1 && position?.position?.leverage.gt(market?.appMaxLeverage ?? 1),
 		[transferType, position?.position?.leverage, market?.appMaxLeverage]
-	);
+	)
 
 	const orderError = useMemo(() => {
-		if (previewError) return t(previewErrorI18n(previewError));
-		if (preview?.showStatus) return preview?.statusMessage;
-		return null;
-	}, [preview?.showStatus, preview?.statusMessage, previewError, t]);
+		if (previewError) return t(previewErrorI18n(previewError))
+		if (preview?.showStatus) return preview?.statusMessage
+		return null
+	}, [preview?.showStatus, preview?.statusMessage, previewError, t])
 
 	const submitDisabled = useMemo(() => {
-		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded || orderError;
-	}, [marginWei, invalid, isLoading, maxLeverageExceeded, orderError]);
+		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded || orderError
+	}, [marginWei, invalid, isLoading, maxLeverageExceeded, orderError])
 
 	const onChangeTab = (selection: number) => {
-		setTransferType(selection);
-	};
+		setTransferType(selection)
+	}
 
 	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustMargin());
-	}, [dispatch]);
+		dispatch(submitCrossMarginAdjustMargin())
+	}, [dispatch])
 
 	const onClose = () => {
 		if (modal?.marketKey) {
-			dispatch(editCrossMarginPositionMargin(modal.marketKey, ''));
+			dispatch(editCrossMarginPositionMargin(modal.marketKey, ''))
 		}
-		dispatch(setShowPositionModal(null));
-	};
+		dispatch(setShowPositionModal(null))
+	}
 
 	const handleApproveSmartMargin = useCallback(async () => {
-		dispatch(approveCrossMargin());
-	}, [dispatch]);
+		dispatch(approveCrossMargin())
+	}, [dispatch])
 
 	const depositButtonText = allowanceValid
 		? t('futures.market.trade.edit-position.submit-margin-deposit')
-		: t(`futures.market.trade.confirmation.modal.approve-order`);
+		: t(`futures.market.trade.confirmation.modal.approve-order`)
 
 	return (
 		<StyledBaseModal
@@ -216,25 +216,25 @@ export default function EditPositionMarginModal() {
 				</>
 			)}
 		</StyledBaseModal>
-	);
+	)
 }
 
 export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
-`;
+`
 
 export const InfoContainer = styled(FlexDivRowCentered)`
 	margin: 16px 0;
-`;
+`
 
 export const BalanceText = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
+`
 
 export const MaxButton = styled.button`
 	height: 22px;
@@ -247,4 +247,4 @@ export const MaxButton = styled.button`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	cursor: pointer;
-`;
+`

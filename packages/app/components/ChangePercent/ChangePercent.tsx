@@ -1,24 +1,24 @@
-import { formatPercent } from '@kwenta/sdk/utils';
-import { wei, WeiSource } from '@synthetixio/wei';
-import { FC, memo } from 'react';
-import styled from 'styled-components';
+import { formatPercent } from '@kwenta/sdk/utils'
+import { wei, WeiSource } from '@synthetixio/wei'
+import { FC, memo } from 'react'
+import styled from 'styled-components'
 
-import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
-import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
-import { NO_VALUE } from 'constants/placeholder';
+import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg'
+import ChangePositiveIcon from 'assets/svg/app/change-positive.svg'
+import { NO_VALUE } from 'constants/placeholder'
 
 type ChangePercentProps = {
-	value: WeiSource;
-	className?: string;
-	decimals?: number;
-	showArrow?: boolean;
-};
+	value: WeiSource
+	className?: string
+	decimals?: number
+	showArrow?: boolean
+}
 
 export const ChangePercent: FC<ChangePercentProps> = memo(
 	({ value, decimals = 2, showArrow = true, ...rest }) => {
-		const isValid = !!value;
-		const isZero = value && wei(value).eq(0);
-		const isPositive = value && wei(value).gt(0);
+		const isValid = !!value
+		const isZero = value && wei(value).eq(0)
+		const isPositive = value && wei(value).gt(0)
 		return (
 			<CurrencyChange isValid={isValid} isPositive={isPositive} isZero={isZero} {...rest}>
 				{!isValid || isZero ? (
@@ -32,9 +32,9 @@ export const ChangePercent: FC<ChangePercentProps> = memo(
 				)}
 				{!isZero && value && formatPercent(wei(value).abs(), { minDecimals: decimals })}
 			</CurrencyChange>
-		);
+		)
 	}
-);
+)
 
 const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean; isZero: boolean }>`
 	display: inline-flex;
@@ -58,6 +58,6 @@ const CurrencyChange = styled.span<{ isValid: boolean; isPositive: boolean; isZe
 					: props.theme.colors.selectedTheme.red};
 		}
 	}
-`;
+`
 
-export default ChangePercent;
+export default ChangePercent

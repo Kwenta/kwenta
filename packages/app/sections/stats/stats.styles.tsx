@@ -1,17 +1,17 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 export const ChartTitle = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.white};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 18px;
 	font-weight: bold;
-`;
+`
 
 export const ChartHeader = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-`;
+`
 
 export const StatsContainer = styled.div`
 	margin: 40px 0;
@@ -24,7 +24,7 @@ export const StatsContainer = styled.div`
 		grid-template-columns: repeat(2, 50%);
 		padding: 0 10% 0 10%;
 	}
-`;
+`
 
 export const ChartContainer = styled.div<{ width: number }>`
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
@@ -39,9 +39,9 @@ export const ChartContainer = styled.div<{ width: number }>`
 	@media only screen and (min-width: 600px) {
 		grid-column: span ${(props) => props.width};
 	}
-`;
+`
 
 export const ChartWrapper = styled.div`
 	width: 100%;
 	height: 380px;
-`;
+`

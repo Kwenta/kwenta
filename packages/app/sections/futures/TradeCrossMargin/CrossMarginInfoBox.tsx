@@ -1,28 +1,28 @@
-import { formatCurrency, formatDollars } from '@kwenta/sdk/utils';
-import React, { memo } from 'react';
+import { formatCurrency, formatDollars } from '@kwenta/sdk/utils'
+import React, { memo } from 'react'
 
-import { InfoBoxRow } from 'components/InfoBox/InfoBox';
-import { setOpenModal } from 'state/app/reducer';
-import { selectShowModal } from 'state/app/selectors';
-import { selectSusdBalance } from 'state/balances/selectors';
+import { InfoBoxRow } from 'components/InfoBox/InfoBox'
+import { setOpenModal } from 'state/app/reducer'
+import { selectShowModal } from 'state/app/selectors'
+import { selectSusdBalance } from 'state/balances/selectors'
 import {
 	selectCrossMarginBalanceInfo,
 	selectAvailableMarginInMarkets,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import PencilButton from '../../../components/Button/PencilButton';
+import PencilButton from '../../../components/Button/PencilButton'
 
-import ManageKeeperBalanceModal from './ManageKeeperBalanceModal';
+import ManageKeeperBalanceModal from './ManageKeeperBalanceModal'
 
 function MarginInfoBox() {
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
-	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo);
-	const openModal = useAppSelector(selectShowModal);
-	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo);
-	const idleMarginInMarkets = useAppSelector(selectAvailableMarginInMarkets);
-	const walletBal = useAppSelector(selectSusdBalance);
+	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo)
+	const openModal = useAppSelector(selectShowModal)
+	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo)
+	const idleMarginInMarkets = useAppSelector(selectAvailableMarginInMarkets)
+	const walletBal = useAppSelector(selectSusdBalance)
 
 	return (
 		<>
@@ -49,7 +49,7 @@ function MarginInfoBox() {
 				<ManageKeeperBalanceModal defaultType="withdraw" />
 			)}
 		</>
-	);
+	)
 }
 
-export default memo(MarginInfoBox);
+export default memo(MarginInfoBox)

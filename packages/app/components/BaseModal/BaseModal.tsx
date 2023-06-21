@@ -1,36 +1,36 @@
-import { DialogOverlay, DialogContent } from '@reach/dialog';
-import { FC, memo, ReactNode } from 'react';
-import { Rnd, Props } from 'react-rnd';
-import styled from 'styled-components';
+import { DialogOverlay, DialogContent } from '@reach/dialog'
+import { FC, memo, ReactNode } from 'react'
+import { Rnd, Props } from 'react-rnd'
+import styled from 'styled-components'
 
-import CrossIcon from 'assets/svg/app/cross.svg';
-import Card, { CardHeader, CardBody } from 'components/Card';
-import { zIndex } from 'constants/ui';
-import { resetButtonCSS } from 'styles/common';
-import media from 'styles/media';
+import CrossIcon from 'assets/svg/app/cross.svg'
+import Card, { CardHeader, CardBody } from 'components/Card'
+import { zIndex } from 'constants/ui'
+import { resetButtonCSS } from 'styles/common'
+import media from 'styles/media'
 
 type BaseModalProps = {
-	title: ReactNode;
-	isOpen?: boolean;
-	onDismiss: () => void;
-	children: ReactNode;
-	showCross?: boolean;
-	lowercase?: boolean;
-	rndProps?: Props;
-};
+	title: ReactNode
+	isOpen?: boolean
+	onDismiss: () => void
+	children: ReactNode
+	showCross?: boolean
+	lowercase?: boolean
+	rndProps?: Props
+}
 
 type ModalContentWrapperProps = {
-	children: ReactNode;
-	rndProps?: Props;
-};
+	children: ReactNode
+	rndProps?: Props
+}
 
 const ModalContentWrapper: FC<ModalContentWrapperProps> = memo(({ children, rndProps }) => {
 	if (rndProps?.disableDragging) {
-		return <>{children}</>;
+		return <>{children}</>
 	} else {
-		return <Rnd {...rndProps}>{children}</Rnd>;
+		return <Rnd {...rndProps}>{children}</Rnd>
 	}
-});
+})
 
 export const BaseModal: FC<BaseModalProps> = memo(
 	({
@@ -61,7 +61,7 @@ export const BaseModal: FC<BaseModalProps> = memo(
 			</StyledDialogContent>
 		</StyledDialogOverlay>
 	)
-);
+)
 
 const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
@@ -72,7 +72,7 @@ const StyledDialogOverlay = styled(DialogOverlay)`
 		display: flex;
 		align-items: flex-end;
 	`}
-`;
+`
 
 const StyledDialogContent = styled(DialogContent)`
 	padding: 0;
@@ -94,7 +94,7 @@ const StyledDialogContent = styled(DialogContent)`
 			margin: 0;
 		}
 	`}
-`;
+`
 
 const StyledCard = styled(Card)`
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
@@ -107,20 +107,20 @@ const StyledCard = styled(Card)`
 			border-radius: 10px 10px 0 0;
 		}
 	`}
-`;
+`
 
 const StyledCardHeader = styled(CardHeader)`
 	height: 45px;
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	padding: 20px;
-`;
+`
 
 const StyledCardBody = styled(CardBody)`
 	overflow-y: scroll;
 	padding: 0 20px;
 	padding-bottom: 20px;
-`;
+`
 
 const DismissButton = styled.button`
 	${resetButtonCSS};
@@ -130,6 +130,6 @@ const DismissButton = styled.button`
 	&:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
+`
 
-export default BaseModal;
+export default BaseModal

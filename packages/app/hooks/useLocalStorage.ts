@@ -1,26 +1,26 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react'
 
-import localStore from 'utils/localStore';
+import localStore from 'utils/localStore'
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
-	const [storedValue, setStoredValue] = useState<T>(localStore.get<T>(key) ?? initialValue);
+	const [storedValue, setStoredValue] = useState<T>(localStore.get<T>(key) ?? initialValue)
 
 	const setValue = useCallback(
 		(value: T) => {
-			setStoredValue(value);
-			localStore.set(key, value);
+			setStoredValue(value)
+			localStore.set(key, value)
 		},
 		[key, setStoredValue]
-	);
+	)
 
 	useEffect(() => {
-		const item = localStore.get<T>(key);
+		const item = localStore.get<T>(key)
 		if (item) {
-			setStoredValue(item);
+			setStoredValue(item)
 		}
-	}, [key, setStoredValue]);
+	}, [key, setStoredValue])
 
-	return [storedValue, setValue] as const;
+	return [storedValue, setValue] as const
 }
 
-export default useLocalStorage;
+export default useLocalStorage

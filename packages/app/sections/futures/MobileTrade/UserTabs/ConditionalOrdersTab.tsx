@@ -1,39 +1,39 @@
-import { PositionSide } from '@kwenta/sdk/types';
-import { formatDollars } from '@kwenta/sdk/utils';
-import { useCallback, useMemo } from 'react';
-import styled from 'styled-components';
+import { PositionSide } from '@kwenta/sdk/types'
+import { formatDollars } from '@kwenta/sdk/utils'
+import { useCallback, useMemo } from 'react'
+import styled from 'styled-components'
 
-import ColoredPrice from 'components/ColoredPrice';
-import Currency from 'components/Currency';
-import { FlexDiv } from 'components/layout/flex';
-import Pill from 'components/Pill';
-import Spacer from 'components/Spacer';
-import { TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
-import { NO_VALUE } from 'constants/placeholder';
-import PositionType from 'sections/futures/PositionType';
-import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning';
-import { cancelConditionalOrder } from 'state/futures/actions';
+import ColoredPrice from 'components/ColoredPrice'
+import Currency from 'components/Currency'
+import { FlexDiv } from 'components/layout/flex'
+import Pill from 'components/Pill'
+import Spacer from 'components/Spacer'
+import { TableNoResults } from 'components/Table'
+import { Body } from 'components/Text'
+import { NO_VALUE } from 'constants/placeholder'
+import PositionType from 'sections/futures/PositionType'
+import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning'
+import { cancelConditionalOrder } from 'state/futures/actions'
 import {
 	selectAllConditionalOrders,
 	selectCancellingConditionalOrder,
 	selectMarketAsset,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 const ConditionalOrdersTab: React.FC = () => {
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const openConditionalOrders = useAppSelector(selectAllConditionalOrders);
-	const isCancellingOrder = useAppSelector(selectCancellingConditionalOrder);
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const openConditionalOrders = useAppSelector(selectAllConditionalOrders)
+	const isCancellingOrder = useAppSelector(selectCancellingConditionalOrder)
 
 	const cancelOrder = useCallback(
 		(orderId: number) => () => {
-			dispatch(cancelConditionalOrder(orderId));
+			dispatch(cancelConditionalOrder(orderId))
 		},
 		[dispatch]
-	);
+	)
 
 	const rows = useMemo(() => {
 		const ordersWithCancel = openConditionalOrders.sort((a, b) => {
@@ -41,15 +41,15 @@ const ConditionalOrdersTab: React.FC = () => {
 				? 1
 				: b.asset === marketAsset && a.asset === marketAsset
 				? 0
-				: -1;
-		});
-		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === isCancellingOrder);
+				: -1
+		})
+		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === isCancellingOrder)
 		ordersWithCancel[cancellingIndex] = {
 			...ordersWithCancel[cancellingIndex],
 			isCancelling: true,
-		};
-		return ordersWithCancel;
-	}, [openConditionalOrders, isCancellingOrder, marketAsset]);
+		}
+		return ordersWithCancel
+	}, [openConditionalOrders, isCancellingOrder, marketAsset])
 
 	return (
 		<div>
@@ -110,12 +110,12 @@ const ConditionalOrdersTab: React.FC = () => {
 								</Body>
 							</OrderRow>
 						</OrderItem>
-					);
+					)
 				})
 			)}
 		</div>
-	);
-};
+	)
+}
 
 const OrderMeta = styled.div<{ $side: PositionSide }>`
 	display: flex;
@@ -131,7 +131,7 @@ const OrderMeta = styled.div<{ $side: PositionSide }>`
 				props.$side === PositionSide.LONG ? 'positive' : 'negative'
 			]};
 	}
-`;
+`
 
 const OrderItem = styled.div`
 	margin: 0 20px;
@@ -140,7 +140,7 @@ const OrderItem = styled.div`
 	&:not(:last-of-type) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}
-`;
+`
 
 const OrderRow = styled.div`
 	display: flex;
@@ -149,6 +149,6 @@ const OrderRow = styled.div`
 	&:not(:last-of-type) {
 		margin-bottom: 10px;
 	}
-`;
+`
 
-export default ConditionalOrdersTab;
+export default ConditionalOrdersTab

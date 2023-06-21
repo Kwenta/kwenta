@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const InputButton = styled.button`
 	height: 22px;
@@ -14,6 +14,6 @@ const InputButton = styled.button`
 			fill: ${(props) => props.theme.colors.selectedTheme.input.hover};
 		}
 	}
-`;
+`
 
-export default InputButton;
+export default InputButton

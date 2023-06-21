@@ -1,9 +1,9 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import media from 'styles/media';
+import media from 'styles/media'
 
-import EscrowTable from './EscrowTable';
-import EscrowInputCard from './InputCards/EscrowInputCard';
+import EscrowTable from './EscrowTable'
+import EscrowInputCard from './InputCards/EscrowInputCard'
 
 const EscrowTab = () => {
 	return (
@@ -11,8 +11,8 @@ const EscrowTab = () => {
 			<EscrowTable />
 			<EscrowInputCard />
 		</EscrowTabContainer>
-	);
-};
+	)
+}
 
 const EscrowTabContainer = styled.div`
 	${media.greaterThan('mdUp')`
@@ -32,6 +32,6 @@ const EscrowTabContainer = styled.div`
 			margin-bottom: 15px;
 		}
 	`}
-`;
+`
 
-export default EscrowTab;
+export default EscrowTab

@@ -1,13 +1,13 @@
-import { OperationalStatus } from '@kwenta/sdk/types';
-import { formatDistance } from 'date-fns';
-import { useEffect, useMemo } from 'react';
-import styled from 'styled-components';
+import { OperationalStatus } from '@kwenta/sdk/types'
+import { formatDistance } from 'date-fns'
+import { useEffect, useMemo } from 'react'
+import styled from 'styled-components'
 
-import { Body } from 'components/Text';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { fetchKwentaStatus } from 'state/app/actions';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import common from 'styles/theme/colors/common';
+import { Body } from 'components/Text'
+import Tooltip from 'components/Tooltip/Tooltip'
+import { fetchKwentaStatus } from 'state/app/actions'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import common from 'styles/theme/colors/common'
 
 const OperationStatusThemeMap = {
 	[OperationalStatus.FullyOperational]: {
@@ -22,15 +22,15 @@ const OperationStatusThemeMap = {
 		outer: common.palette.alpha.red15,
 		inner: common.palette.red.r300,
 	},
-} as const;
+} as const
 
 const OperationStatus = () => {
-	const kwentaStatus = useAppSelector(({ app }) => app.kwentaStatus);
-	const dispatch = useAppDispatch();
+	const kwentaStatus = useAppSelector(({ app }) => app.kwentaStatus)
+	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		dispatch(fetchKwentaStatus());
-	}, [dispatch]);
+		dispatch(fetchKwentaStatus())
+	}, [dispatch])
 
 	const content = useMemo(
 		() => (
@@ -42,15 +42,15 @@ const OperationStatus = () => {
 			</OperationStatusContainer>
 		),
 		[kwentaStatus.status]
-	);
+	)
 
 	const parsedDate = useMemo(() => {
 		return kwentaStatus.lastUpdatedAt
 			? ` (Last updated: ${formatDistance(new Date(kwentaStatus.lastUpdatedAt * 1000), new Date(), {
 					addSuffix: true,
 			  })})`
-			: '';
-	}, [kwentaStatus.lastUpdatedAt]);
+			: ''
+	}, [kwentaStatus.lastUpdatedAt])
 
 	return !!kwentaStatus.message ? (
 		<StyledTooltip height="auto" width="auto" content={`${kwentaStatus.message}${parsedDate}`}>
@@ -58,18 +58,18 @@ const OperationStatus = () => {
 		</StyledTooltip>
 	) : (
 		content
-	);
-};
+	)
+}
 
 const StyledTooltip = styled(Tooltip)`
 	top: -50px;
 	left: 0;
-`;
+`
 
 const OperationStatusContainer = styled.div`
 	display: flex;
 	cursor: default;
-`;
+`
 
 const OuterCircle = styled.div<{ $status: OperationalStatus }>`
 	display: flex;
@@ -80,13 +80,13 @@ const OuterCircle = styled.div<{ $status: OperationalStatus }>`
 	height: 14px;
 	border-radius: 50%;
 	background: ${(props) => OperationStatusThemeMap[props.$status].outer};
-`;
+`
 
 const InnerCircle = styled.div<{ $status: OperationalStatus }>`
 	background-color: ${(props) => OperationStatusThemeMap[props.$status].inner};
 	width: 7px;
 	height: 7px;
 	border-radius: 50%;
-`;
+`
 
-export default OperationStatus;
+export default OperationStatus

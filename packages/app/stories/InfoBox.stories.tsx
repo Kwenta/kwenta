@@ -1,6 +1,6 @@
-import { ComponentMeta } from '@storybook/react';
+import { ComponentMeta } from '@storybook/react'
 
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
 
 export default {
 	title: 'Components/InfoBox',
@@ -11,7 +11,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<any>;
+} as ComponentMeta<any>
 
 export const Default = () => {
 	return (
@@ -19,8 +19,8 @@ export const Default = () => {
 			<InfoBoxRow title="First key" value="First value" />
 			<InfoBoxRow title="Second key" value="Second value" />
 		</InfoBoxContainer>
-	);
-};
+	)
+}
 
 export const Spaced = () => {
 	return (
@@ -29,5 +29,5 @@ export const Spaced = () => {
 			<InfoBoxRow title="Second key" value="Second value" spaceBeneath />
 			<InfoBoxRow title="Third key" value="Third value" />
 		</InfoBoxContainer>
-	);
-};
+	)
+}

@@ -1,38 +1,38 @@
-import { formatNumber, formatDollars } from '@kwenta/sdk/utils';
-import { FC, useMemo, memo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { formatNumber, formatDollars } from '@kwenta/sdk/utils'
+import { FC, useMemo, memo } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { NO_VALUE } from 'constants/placeholder';
-import useIsL1 from 'hooks/useIsL1';
-import useIsL2 from 'hooks/useIsL2';
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary';
-import { selectGasPrice } from 'state/app/selectors';
-import { selectTransactionFeeWei } from 'state/exchange/selectors';
-import { useAppSelector } from 'state/hooks';
+import { NO_VALUE } from 'constants/placeholder'
+import useIsL1 from 'hooks/useIsL1'
+import useIsL2 from 'hooks/useIsL2'
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from 'sections/exchange/summary'
+import { selectGasPrice } from 'state/app/selectors'
+import { selectTransactionFeeWei } from 'state/exchange/selectors'
+import { useAppSelector } from 'state/hooks'
 
 type GasPriceSelectProps = {
-	className?: string;
-};
+	className?: string
+}
 
 const GasPriceItem: FC = memo(() => {
-	const customGasPrice = useAppSelector(selectGasPrice);
-	const isL2 = useIsL2();
-	const transactionFee = useAppSelector(selectTransactionFeeWei);
+	const customGasPrice = useAppSelector(selectGasPrice)
+	const isL2 = useIsL2()
+	const transactionFee = useAppSelector(selectTransactionFeeWei)
 
 	const formattedTransactionFee = useMemo(() => {
-		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE;
-	}, [transactionFee]);
+		return transactionFee ? formatDollars(transactionFee, { maxDecimals: 1 }) : NO_VALUE
+	}, [transactionFee])
 
 	return (
 		<span data-testid="gas-price">
 			{isL2 ? formattedTransactionFee : `${formatNumber(+customGasPrice, { minDecimals: 2 })} Gwei`}
 		</span>
-	);
-});
+	)
+})
 
 const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ ...rest }) => {
-	const { t } = useTranslation();
-	const isMainnet = useIsL1();
+	const { t } = useTranslation()
+	const isMainnet = useIsL1()
 
 	return (
 		<SummaryItem {...rest}>
@@ -43,7 +43,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = memo(({ ...rest }) => {
 				<GasPriceItem />
 			</SummaryItemValue>
 		</SummaryItem>
-	);
-});
+	)
+})
 
-export default GasPriceSelect;
+export default GasPriceSelect

@@ -1,41 +1,41 @@
-import { formatDollars } from '@kwenta/sdk/utils';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import { formatDollars } from '@kwenta/sdk/utils'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CellProps } from 'react-table'
+import styled from 'styled-components'
 
-import Badge from 'components/Badge';
-import ColoredPrice from 'components/ColoredPrice';
-import Currency from 'components/Currency';
-import Pill from 'components/Pill';
-import Table, { TableHeader, TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
-import { CustomFontLabel } from 'components/Text/CustomFontLabel';
-import { NO_VALUE } from 'constants/placeholder';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { cancelConditionalOrder } from 'state/futures/actions';
+import Badge from 'components/Badge'
+import ColoredPrice from 'components/ColoredPrice'
+import Currency from 'components/Currency'
+import Pill from 'components/Pill'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
+import { Body } from 'components/Text'
+import { CustomFontLabel } from 'components/Text/CustomFontLabel'
+import { NO_VALUE } from 'constants/placeholder'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import { cancelConditionalOrder } from 'state/futures/actions'
 import {
 	selectCancellingConditionalOrder,
 	selectMarketAsset,
 	selectAllConditionalOrders,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import PositionType from '../PositionType';
+import PositionType from '../PositionType'
 
-import ConditionalOrdersWarning from './ConditionalOrdersWarning';
-import TableMarketDetails from './TableMarketDetails';
+import ConditionalOrdersWarning from './ConditionalOrdersWarning'
+import TableMarketDetails from './TableMarketDetails'
 
 export default function ConditionalOrdersTable() {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
-	const { switchToL2 } = useNetworkSwitcher();
-	const isL2 = useIsL2();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const { switchToL2 } = useNetworkSwitcher()
+	const isL2 = useIsL2()
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const openConditionalOrders = useAppSelector(selectAllConditionalOrders);
-	const isCancellingOrder = useAppSelector(selectCancellingConditionalOrder);
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const openConditionalOrders = useAppSelector(selectAllConditionalOrders)
+	const isCancellingOrder = useAppSelector(selectCancellingConditionalOrder)
 
 	const rows = useMemo(() => {
 		const ordersWithCancel = openConditionalOrders
@@ -45,15 +45,15 @@ export default function ConditionalOrdersTable() {
 					? 1
 					: b.asset === marketAsset && a.asset === marketAsset
 					? 0
-					: -1;
-			});
-		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === isCancellingOrder);
+					: -1
+			})
+		const cancellingIndex = ordersWithCancel.findIndex((o) => o.id === isCancellingOrder)
 		ordersWithCancel[cancellingIndex] = {
 			...ordersWithCancel[cancellingIndex],
 			isCancelling: true,
-		};
-		return ordersWithCancel;
-	}, [openConditionalOrders, isCancellingOrder, marketAsset, dispatch]);
+		}
+		return ordersWithCancel
+	}, [openConditionalOrders, isCancellingOrder, marketAsset, dispatch])
 
 	return (
 		<Container>
@@ -94,7 +94,7 @@ export default function ConditionalOrdersTable() {
 										)
 									}
 								/>
-							);
+							)
 						},
 						sortable: true,
 						width: 70,
@@ -104,7 +104,7 @@ export default function ConditionalOrdersTable() {
 						accessor: 'side',
 						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
-							return <PositionType side={cellProps.row.original.side} />;
+							return <PositionType side={cellProps.row.original.side} />
 						},
 						sortable: true,
 						width: 40,
@@ -114,7 +114,7 @@ export default function ConditionalOrdersTable() {
 						accessor: 'type',
 						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
-							return <Body>{cellProps.row.original.orderTypeDisplay}</Body>;
+							return <Body>{cellProps.row.original.orderTypeDisplay}</Body>
 						},
 						sortable: true,
 						width: 50,
@@ -126,7 +126,7 @@ export default function ConditionalOrdersTable() {
 						accessor: 'reduceOnly',
 						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
-							return <Body>{cellProps.row.original.reduceOnly ? 'Yes' : 'No'}</Body>;
+							return <Body>{cellProps.row.original.reduceOnly ? 'Yes' : 'No'}</Body>
 						},
 						sortable: true,
 						width: 50,
@@ -136,7 +136,7 @@ export default function ConditionalOrdersTable() {
 						accessor: 'size',
 						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
-							return <CustomFontLabel text={cellProps.row.original.sizeTxt} />;
+							return <CustomFontLabel text={cellProps.row.original.sizeTxt} />
 						},
 						sortable: true,
 						width: 50,
@@ -158,7 +158,7 @@ export default function ConditionalOrdersTable() {
 								</div>
 							) : (
 								NO_VALUE
-							);
+							)
 						},
 						sortable: true,
 						width: 50,
@@ -175,7 +175,7 @@ export default function ConditionalOrdersTable() {
 										formatOptions={{ suggestDecimals: true }}
 									/>
 								</div>
-							);
+							)
 						},
 						sortable: true,
 						width: 50,
@@ -189,8 +189,8 @@ export default function ConditionalOrdersTable() {
 						accessor: 'marginDelta',
 						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
-							const { marginDelta } = cellProps.row.original;
-							return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>;
+							const { marginDelta } = cellProps.row.original
+							return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>
 						},
 						sortable: true,
 						width: 50,
@@ -200,7 +200,7 @@ export default function ConditionalOrdersTable() {
 						accessor: 'actions',
 						// @ts-expect-error
 						Cell: (cellProps: CellProps<any>) => {
-							const cancellingRow = cellProps.row.original.isCancelling;
+							const cancellingRow = cellProps.row.original.isCancelling
 							return (
 								<div style={{ display: 'flex' }}>
 									<Pill
@@ -212,24 +212,24 @@ export default function ConditionalOrdersTable() {
 										{t('futures.market.user.open-orders.actions.cancel')}
 									</Pill>
 								</div>
-							);
+							)
 						},
 						width: 50,
 					},
 				]}
 			/>
 		</Container>
-	);
+	)
 }
 
 const Container = styled.div`
 	height: calc(100% - 40px);
 	overflow: scroll;
-`;
+`
 
 const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
 	margin-left: 5px;
-`;
+`

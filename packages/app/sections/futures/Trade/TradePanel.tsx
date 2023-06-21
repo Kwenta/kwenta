@@ -1,62 +1,62 @@
-import { PositionSide } from '@kwenta/sdk/types';
-import { FC, memo, useCallback, useState, useEffect } from 'react';
-import styled, { css } from 'styled-components';
+import { PositionSide } from '@kwenta/sdk/types'
+import { FC, memo, useCallback, useState, useEffect } from 'react'
+import styled, { css } from 'styled-components'
 
-import Error from 'components/ErrorView';
-import Spacer from 'components/Spacer';
-import { selectAckedOrdersWarning } from 'state/app/selectors';
-import { changeLeverageSide } from 'state/futures/actions';
-import { setOrderType } from 'state/futures/reducer';
-import { selectFuturesType, selectLeverageSide, selectOrderType } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { selectPricesConnectionError } from 'state/prices/selectors';
+import Error from 'components/ErrorView'
+import Spacer from 'components/Spacer'
+import { selectAckedOrdersWarning } from 'state/app/selectors'
+import { changeLeverageSide } from 'state/futures/actions'
+import { setOrderType } from 'state/futures/reducer'
+import { selectFuturesType, selectLeverageSide, selectOrderType } from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { selectPricesConnectionError } from 'state/prices/selectors'
 
-import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo';
-import LeverageInput from '../LeverageInput';
-import MarginInput from '../MarginInput';
-import OrderSizing from '../OrderSizing';
-import PositionButtons from '../PositionButtons';
+import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo'
+import LeverageInput from '../LeverageInput'
+import MarginInput from '../MarginInput'
+import OrderSizing from '../OrderSizing'
+import PositionButtons from '../PositionButtons'
 
-import CloseOnlyPrompt from './CloseOnlyPrompt';
-import ManagePosition from './ManagePosition';
-import MarketsDropdown from './MarketsDropdown';
-import OrderAcknowledgement from './OrderAcknowledgement';
-import OrderTypeSelector from './OrderTypeSelector';
-import SLTPInputs from './SLTPInputs';
-import TradeBalance from './TradeBalance';
-import OrderPriceInput from './TradePanelPriceInput';
+import CloseOnlyPrompt from './CloseOnlyPrompt'
+import ManagePosition from './ManagePosition'
+import MarketsDropdown from './MarketsDropdown'
+import OrderAcknowledgement from './OrderAcknowledgement'
+import OrderTypeSelector from './OrderTypeSelector'
+import SLTPInputs from './SLTPInputs'
+import TradeBalance from './TradeBalance'
+import OrderPriceInput from './TradePanelPriceInput'
 
 type Props = {
-	mobile?: boolean;
-	closeDrawer?: () => void;
-};
+	mobile?: boolean
+	closeDrawer?: () => void
+}
 
 const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const accountType = useAppSelector(selectFuturesType);
-	const orderType = useAppSelector(selectOrderType);
-	const pricesConnectionError = useAppSelector(selectPricesConnectionError);
-	const hideOrderWarning = useAppSelector(selectAckedOrdersWarning);
+	const leverageSide = useAppSelector(selectLeverageSide)
+	const accountType = useAppSelector(selectFuturesType)
+	const orderType = useAppSelector(selectOrderType)
+	const pricesConnectionError = useAppSelector(selectPricesConnectionError)
+	const hideOrderWarning = useAppSelector(selectAckedOrdersWarning)
 
-	const [showOrderWarning, setShowOrderWarning] = useState(false);
+	const [showOrderWarning, setShowOrderWarning] = useState(false)
 
 	const handleChangeSide = useCallback(
 		(side: PositionSide) => {
-			dispatch(changeLeverageSide(side));
+			dispatch(changeLeverageSide(side))
 		},
 		[dispatch]
-	);
+	)
 
 	useEffect(() => {
-		if (hideOrderWarning) return;
+		if (hideOrderWarning) return
 		if (orderType !== 'market') {
-			setShowOrderWarning(true);
+			setShowOrderWarning(true)
 		} else {
-			setShowOrderWarning(false);
+			setShowOrderWarning(false)
 		}
-	}, [orderType, hideOrderWarning]);
+	}, [orderType, hideOrderWarning])
 
 	return (
 		<TradePanelContainer $mobile={mobile}>
@@ -121,15 +121,15 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 				</>
 			)}
 		</TradePanelContainer>
-	);
-});
+	)
+})
 
 const TradePanelContainer = styled.div<{ $mobile?: boolean }>`
 	overflow-y: scroll;
 	height: 100%;
 	scrollbar-width: none;
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
-`;
+`
 
 const MainPanelContent = styled.div<{ $mobile?: boolean }>`
 	padding: 0 15px;
@@ -139,6 +139,6 @@ const MainPanelContent = styled.div<{ $mobile?: boolean }>`
 		css`
 			padding: 65px 15px 0;
 		`}
-`;
+`
 
-export default TradePanel;
+export default TradePanel

@@ -1,4 +1,4 @@
-const REVERT_REGEX = /execution reverted: /;
+const REVERT_REGEX = /execution reverted: /
 
 const KNOWN_ERROR_PATTERNS: Record<string, string> = {
 	'order too old, use cancel': 'Order too old, use cancel',
@@ -7,24 +7,24 @@ const KNOWN_ERROR_PATTERNS: Record<string, string> = {
 	'cannot cancel yet': 'Cannot cancel order yet',
 	'Insufficient margin': 'Insufficient margin',
 	'Max leverage exceeded': 'Max leverage exceeded (larger positions have lower max leverage)',
-};
+}
 
 export const formatRevert = (revertMsg: string) => {
-	if (!revertMsg) return '';
-	return revertMsg.replace(REVERT_REGEX, '');
-};
+	if (!revertMsg) return ''
+	return revertMsg.replace(REVERT_REGEX, '')
+}
 
 export const isUserDeniedError = (message: string | undefined) => {
-	if (!message) return false;
+	if (!message) return false
 	return (
 		message.includes('User denied transaction signature') ||
 		message.includes('user rejected transaction')
-	);
-};
+	)
+}
 
 export const getKnownError = (message: string | undefined) => {
-	if (!message) return '';
+	if (!message) return ''
 
-	const knownKey = Object.keys(KNOWN_ERROR_PATTERNS).find((k) => message.includes(k));
-	return knownKey ? KNOWN_ERROR_PATTERNS[knownKey] : message;
-};
+	const knownKey = Object.keys(KNOWN_ERROR_PATTERNS).find((k) => message.includes(k))
+	return knownKey ? KNOWN_ERROR_PATTERNS[knownKey] : message
+}

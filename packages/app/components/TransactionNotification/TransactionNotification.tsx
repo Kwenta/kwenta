@@ -1,19 +1,19 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import Failure from 'assets/svg/app/failure.svg';
-import Spinner from 'assets/svg/app/spinner.svg';
-import Success from 'assets/svg/app/success.svg';
-import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'components/layout/flex';
+import Failure from 'assets/svg/app/failure.svg'
+import Spinner from 'assets/svg/app/spinner.svg'
+import Success from 'assets/svg/app/success.svg'
+import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 
 type NotificationProps = {
-	closeToast?: Function;
-	failureReason?: string;
-};
+	closeToast?: Function
+	failureReason?: string
+}
 
 const NotificationPending = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<FlexDivCentered>
@@ -22,11 +22,11 @@ const NotificationPending = () => {
 			</IconContainer>
 			<FlexDivCol>{t('common.transaction.transaction-sent')}</FlexDivCol>
 		</FlexDivCentered>
-	);
-};
+	)
+}
 
 const NotificationSuccess = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<FlexDivCentered>
@@ -35,11 +35,11 @@ const NotificationSuccess = () => {
 			</IconContainer>
 			<FlexDivCol>{t('common.transaction.transaction-confirmed')}</FlexDivCol>
 		</FlexDivCentered>
-	);
-};
+	)
+}
 
 const NotificationError = ({ failureReason }: NotificationProps) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<FlexDivCentered>
@@ -51,12 +51,12 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 				<div>{failureReason}</div>
 			</FlexDivCol>
 		</FlexDivCentered>
-	);
-};
+	)
+}
 
 const IconContainer = styled(FlexDivRowCentered)`
 	width: 35px;
 	margin-right: 12px;
-`;
+`
 
-export { NotificationPending, NotificationSuccess, NotificationError };
+export { NotificationPending, NotificationSuccess, NotificationError }

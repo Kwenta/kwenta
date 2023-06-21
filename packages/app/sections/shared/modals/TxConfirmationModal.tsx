@@ -1,32 +1,32 @@
-import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from '@kwenta/sdk/utils';
-import { FC, useCallback } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import styled from 'styled-components';
+import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from '@kwenta/sdk/utils'
+import { FC, useCallback } from 'react'
+import { useTranslation, Trans } from 'react-i18next'
+import styled from 'styled-components'
 
-import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
-import InfoIcon from 'assets/svg/app/info.svg';
-import OneInchImage from 'assets/svg/providers/1inch.svg';
-import BaseModal from 'components/BaseModal';
-import Currency from 'components/Currency';
-import Error from 'components/ErrorView';
-import { FlexDivRowCentered, FlexDivColCentered } from 'components/layout/flex';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { ESTIMATE_VALUE } from 'constants/placeholder';
-import { MessageButton } from 'sections/exchange/message';
-import { closeModal } from 'state/exchange/reducer';
-import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { numericValueCSS, NoTextTransform } from 'styles/common';
+import ArrowsIcon from 'assets/svg/app/circle-arrows.svg'
+import InfoIcon from 'assets/svg/app/info.svg'
+import OneInchImage from 'assets/svg/providers/1inch.svg'
+import BaseModal from 'components/BaseModal'
+import Currency from 'components/Currency'
+import Error from 'components/ErrorView'
+import { FlexDivRowCentered, FlexDivColCentered } from 'components/layout/flex'
+import Tooltip from 'components/Tooltip/Tooltip'
+import { ESTIMATE_VALUE } from 'constants/placeholder'
+import { MessageButton } from 'sections/exchange/message'
+import { closeModal } from 'state/exchange/reducer'
+import { selectEstimatedBaseTradePrice } from 'state/exchange/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { numericValueCSS, NoTextTransform } from 'styles/common'
 
-export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
+export type TxProvider = 'synthetix' | '1inch' | 'synthswap'
 
 type TxConfirmationModalProps = {
-	attemptRetry: () => void;
-};
+	attemptRetry: () => void
+}
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry }) => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
 	const {
 		baseCurrencyKey,
@@ -44,18 +44,18 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 		baseAmount: exchange.baseAmount,
 		quoteAmount: exchange.quoteAmount,
 		txError: exchange.txError,
-	}));
+	}))
 
-	const totalTradePrice = useAppSelector(selectEstimatedBaseTradePrice);
+	const totalTradePrice = useAppSelector(selectEstimatedBaseTradePrice)
 
 	const getBaseCurrencyAmount = (decimals?: number) =>
 		formatCurrency(baseCurrencyKey!, baseAmount, {
 			minDecimals: decimals,
-		});
+		})
 
 	const onDismiss = useCallback(() => {
-		dispatch(closeModal());
-	}, [dispatch]);
+		dispatch(closeModal())
+	}, [dispatch])
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
@@ -204,8 +204,8 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ attemptRetry
 				</Actions>
 			)}
 		</StyledBaseModal>
-	);
-};
+	)
+}
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
@@ -214,7 +214,7 @@ const StyledBaseModal = styled(BaseModal)`
 	.card-body {
 		padding: 24px;
 	}
-`;
+`
 
 const Currencies = styled.div`
 	display: grid;
@@ -223,51 +223,51 @@ const Currencies = styled.div`
 	justify-content: center;
 	grid-auto-flow: column;
 	align-items: flex-end;
-`;
+`
 
 const CurrencyItem = styled.div`
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
+`
 
 const CurrencyItemTitle = styled.div`
 	padding-bottom: 8px;
 	text-transform: capitalize;
-`;
+`
 
 const ArrowsIconContainer = styled.div`
 	color: ${(props) => props.theme.colors.goldColors.color1};
 	padding-bottom: 2px;
-`;
+`
 
 const Subtitle = styled.div`
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	padding-bottom: 48px;
-`;
+`
 
 const SummaryItem = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 	padding-bottom: 8px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-`;
+`
 
 const SummaryItemLabel = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	${numericValueCSS};
-`;
+`
 
 const Actions = styled(FlexDivColCentered)`
 	margin: 8px 0px;
-`;
+`
 
 const Text = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
-`;
+`
 
 const TxProviderContainer = styled(FlexDivRowCentered)`
 	padding-top: 32px;
@@ -276,19 +276,19 @@ const TxProviderContainer = styled(FlexDivRowCentered)`
 		margin-left: 10px;
 	}
 	justify-content: center;
-`;
+`
 
 const CustomStyledTooltip = styled(Tooltip)`
 	padding: 10px;
 	width: 100%;
 	word-break: all;
-`;
+`
 
 const ExchangeFeeHintTooltip = styled(Tooltip)`
 	width: 240px;
 	padding: 10px;
 	margin: 0px 0px 0px 40px;
-`;
+`
 
 export const TooltipItem = styled.span`
 	display: inline-flex;
@@ -298,6 +298,6 @@ export const TooltipItem = styled.span`
 		margin-left: 5px;
 		transform: translateY(2px);
 	}
-`;
+`
 
-export default TxConfirmationModal;
+export default TxConfirmationModal

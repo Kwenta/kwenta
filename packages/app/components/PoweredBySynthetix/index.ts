@@ -1,1 +1,1 @@
-export { default } from './PoweredBySynthetix';
+export { default } from './PoweredBySynthetix'

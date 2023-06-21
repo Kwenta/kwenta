@@ -1,40 +1,40 @@
-import { truncateString } from '@kwenta/sdk/utils';
-import React, { FC, useMemo, memo } from 'react';
-import styled from 'styled-components';
+import { truncateString } from '@kwenta/sdk/utils'
+import React, { FC, useMemo, memo } from 'react'
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import Spacer from 'components/Spacer';
-import { formatRevert, isUserDeniedError } from 'utils/formatters/error';
+import Button from 'components/Button'
+import Spacer from 'components/Spacer'
+import { formatRevert, isUserDeniedError } from 'utils/formatters/error'
 
-import { formatError } from './ErrorNotifier';
+import { formatError } from './ErrorNotifier'
 
-type MessageType = 'error' | 'warn';
+type MessageType = 'error' | 'warn'
 
 type ErrorProps = {
-	message: string;
-	messageType?: MessageType;
-	formatter?: 'revert' | undefined;
-	containerStyle?: Record<string, string>;
+	message: string
+	messageType?: MessageType
+	formatter?: 'revert' | undefined
+	containerStyle?: Record<string, string>
 	retryButton?: {
-		onClick: () => void;
-		label: string;
-	};
-};
+		onClick: () => void
+		label: string
+	}
+}
 
 export const ErrorView: FC<ErrorProps> = memo(
 	({ message, formatter, retryButton, containerStyle, messageType = 'error' }) => {
 		const formattedMessage = useMemo(() => {
-			const formattedError = formatError(message);
-			if (formattedError) return formattedError;
+			const formattedError = formatError(message)
+			if (formattedError) return formattedError
 			switch (formatter) {
 				case 'revert':
-					return formatRevert(message);
+					return formatRevert(message)
 				default:
-					return message;
+					return message
 			}
-		}, [message, formatter]);
+		}, [message, formatter])
 
-		if (isUserDeniedError(message) || !message) return null;
+		if (isUserDeniedError(message) || !message) return null
 
 		return (
 			<ErrorContainer messageType={messageType} style={containerStyle ?? {}}>
@@ -48,9 +48,9 @@ export const ErrorView: FC<ErrorProps> = memo(
 					</>
 				)}
 			</ErrorContainer>
-		);
+		)
 	}
-);
+)
 
 const ErrorContainer = styled.div<{ messageType: MessageType; style: Record<string, string> }>`
 	color: ${(props) =>
@@ -76,6 +76,6 @@ const ErrorContainer = styled.div<{ messageType: MessageType; style: Record<stri
 	:first-letter {
 		text-transform: uppercase;
 	}
-`;
+`
 
-export default ErrorView;
+export default ErrorView

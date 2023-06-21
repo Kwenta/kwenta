@@ -1,12 +1,12 @@
-import { Chain, Wallet } from '@rainbow-me/rainbowkit';
+import { Chain, Wallet } from '@rainbow-me/rainbowkit'
 
-import GnosisIcon from 'assets/png/rainbowkit/gnosis.png';
+import GnosisIcon from 'assets/png/rainbowkit/gnosis.png'
 
-import { SafeConnector } from './SafeConnector';
+import { SafeConnector } from './SafeConnector'
 
 type SafeOptions = {
-	chains: Chain[];
-};
+	chains: Chain[]
+}
 
 const Safe = ({ chains }: SafeOptions): Wallet => ({
 	id: 'safe',
@@ -19,11 +19,11 @@ const Safe = ({ chains }: SafeOptions): Wallet => ({
 	},
 	// @ts-ignore
 	createConnector: () => {
-		const connector = new SafeConnector({ chains });
+		const connector = new SafeConnector({ chains })
 		return {
 			connector,
-		};
+		}
 	},
-});
+})
 
-export default Safe;
+export default Safe

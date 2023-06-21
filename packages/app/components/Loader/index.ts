@@ -1,1 +1,1 @@
-export { default, MiniLoader } from './Loader';
+export { default, MiniLoader } from './Loader'

@@ -1,13 +1,13 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 
-import media from 'styles/media';
+import media from 'styles/media'
 
-import MarketDetails from '../MarketDetails';
-import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
-import UserInfo from '../UserInfo';
+import MarketDetails from '../MarketDetails'
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles'
+import UserInfo from '../UserInfo'
 
-import ChartWrapper from './ChartWrapper';
+import ChartWrapper from './ChartWrapper'
 
 const MarketInfo: React.FC = React.memo(() => (
 	<Container>
@@ -15,7 +15,7 @@ const MarketInfo: React.FC = React.memo(() => (
 		<ChartWrapper />
 		<UserInfo />
 	</Container>
-));
+))
 
 const Container = styled.div<{ showBanner?: boolean }>`
 	height: 100%;
@@ -26,6 +26,6 @@ const Container = styled.div<{ showBanner?: boolean }>`
 	${media.lessThan('xl')`
 		grid-template-rows: ${MARKETS_DETAILS_HEIGHT_DESKTOP}px 1fr 250px;
 	`}
-`;
+`
 
-export default MarketInfo;
+export default MarketInfo

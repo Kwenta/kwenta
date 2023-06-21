@@ -1,4 +1,4 @@
-import common from './common';
+import common from './common'
 
 const eliteTheme = {
 	background: '#282626',
@@ -97,6 +97,6 @@ const eliteTheme = {
 		fill: '',
 		hover: '',
 	},
-};
+}
 
-export default eliteTheme;
+export default eliteTheme

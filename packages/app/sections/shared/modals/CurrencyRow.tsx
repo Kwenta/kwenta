@@ -1,45 +1,43 @@
-import { SynthSymbol } from '@kwenta/sdk/data';
-import Wei from '@synthetixio/wei';
-import { FC, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { SynthSymbol } from '@kwenta/sdk/data'
+import Wei from '@synthetixio/wei'
+import { FC, memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import Currency from 'components/Currency';
-import { NO_VALUE } from 'constants/placeholder';
-import Connector from 'containers/Connector';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { useAppSelector } from 'state/hooks';
-import { SelectableCurrencyRow } from 'styles/common';
+import Currency from 'components/Currency'
+import { NO_VALUE } from 'constants/placeholder'
+import Connector from 'containers/Connector'
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency'
+import { useAppSelector } from 'state/hooks'
+import { SelectableCurrencyRow } from 'styles/common'
 
 type Token = {
-	name: string;
-	symbol: string;
-	isSynth: boolean;
-	logoURI?: string;
-};
+	name: string
+	symbol: string
+	isSynth: boolean
+	logoURI?: string
+}
 
 type TokenBalance = {
-	currencyKey: string;
-	balance: Wei;
-	usdBalance?: Wei;
-};
+	currencyKey: string
+	balance: Wei
+	usdBalance?: Wei
+}
 
 type SynthRowProps = {
-	token: Token;
-	balance?: TokenBalance;
-	onClick: () => void;
-};
+	token: Token
+	balance?: TokenBalance
+	onClick: () => void
+}
 
 const CurrencyRow: FC<SynthRowProps> = memo(({ token, onClick, balance }) => {
-	const { t } = useTranslation();
-	const { isWalletConnected } = Connector.useContainer();
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const synthSuspensions = useAppSelector(({ exchange }) => exchange.synthSuspensions);
-	const currencyKey = token.symbol;
+	const { t } = useTranslation()
+	const { isWalletConnected } = Connector.useContainer()
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency()
+	const synthSuspensions = useAppSelector(({ exchange }) => exchange.synthSuspensions)
+	const currencyKey = token.symbol
 
-	const reason = token.isSynth
-		? synthSuspensions?.[token.symbol as SynthSymbol]?.reason
-		: undefined;
+	const reason = token.isSynth ? synthSuspensions?.[token.symbol as SynthSymbol]?.reason : undefined
 
 	return (
 		<StyledSelectableCurrencyRow key={token.symbol} onClick={onClick} isSelectable>
@@ -65,11 +63,11 @@ const CurrencyRow: FC<SynthRowProps> = memo(({ token, onClick, balance }) => {
 				NO_VALUE
 			)}
 		</StyledSelectableCurrencyRow>
-	);
-});
+	)
+})
 
 const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
 	padding: 5px 16px;
-`;
+`
 
-export default CurrencyRow;
+export default CurrencyRow

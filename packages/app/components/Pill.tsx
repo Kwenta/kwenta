@@ -1,18 +1,18 @@
-import { FC, memo } from 'react';
-import styled, { css } from 'styled-components';
+import { FC, memo } from 'react'
+import styled, { css } from 'styled-components'
 
-type PillSize = 'small' | 'medium' | 'large';
-type PillColor = 'yellow' | 'gray' | 'red' | 'redGray';
-type FontWeight = 'regular' | 'bold' | 'black';
+type PillSize = 'small' | 'medium' | 'large'
+type PillColor = 'yellow' | 'gray' | 'red' | 'redGray'
+type FontWeight = 'regular' | 'bold' | 'black'
 
 type PillProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-	size?: PillSize;
-	color?: PillColor;
-	outline?: boolean;
-	fullWidth?: boolean;
-	roundedCorner?: boolean;
-	weight?: FontWeight;
-};
+	size?: PillSize
+	color?: PillColor
+	outline?: boolean
+	fullWidth?: boolean
+	roundedCorner?: boolean
+	weight?: FontWeight
+}
 
 const Pill: FC<PillProps> = memo(
 	({
@@ -34,17 +34,17 @@ const Pill: FC<PillProps> = memo(
 				$weight={weight}
 				{...props}
 			/>
-		);
+		)
 	}
-);
+)
 
 const BasePill = styled.button<{
-	$size: PillSize;
-	$color: PillColor;
-	$outline?: boolean;
-	$fullWidth?: boolean;
-	$roundedCorner?: boolean;
-	$weight?: FontWeight;
+	$size: PillSize
+	$color: PillColor
+	$outline?: boolean
+	$fullWidth?: boolean
+	$roundedCorner?: boolean
+	$weight?: FontWeight
 }>`
 	${(props) => css`
 		padding: ${props.$size === 'small'
@@ -89,6 +89,6 @@ const BasePill = styled.button<{
 			display: none;
 		}
 	}
-`;
+`
 
-export default Pill;
+export default Pill

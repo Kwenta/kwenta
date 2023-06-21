@@ -1,24 +1,24 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { getDisplayAsset, formatPercent } from '@kwenta/sdk/utils';
-import { useRouter } from 'next/router';
-import { FC, useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { getDisplayAsset, formatPercent } from '@kwenta/sdk/utils'
+import { useRouter } from 'next/router'
+import { FC, useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import UploadIcon from 'assets/svg/futures/upload-icon.svg';
-import Currency from 'components/Currency';
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
-import Pill from 'components/Pill';
-import Spacer from 'components/Spacer';
-import { TableNoResults } from 'components/Table';
-import { Body, NumericValue } from 'components/Text';
-import { NO_VALUE } from 'constants/placeholder';
-import ROUTES from 'constants/routes';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import useWindowSize from 'hooks/useWindowSize';
-import PositionType from 'sections/futures/PositionType';
-import { setShowPositionModal } from 'state/app/reducer';
+import UploadIcon from 'assets/svg/futures/upload-icon.svg'
+import Currency from 'components/Currency'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import Pill from 'components/Pill'
+import Spacer from 'components/Spacer'
+import { TableNoResults } from 'components/Table'
+import { Body, NumericValue } from 'components/Text'
+import { NO_VALUE } from 'constants/placeholder'
+import ROUTES from 'constants/routes'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import useWindowSize from 'hooks/useWindowSize'
+import PositionType from 'sections/futures/PositionType'
+import { setShowPositionModal } from 'state/app/reducer'
 import {
 	selectCrossMarginPositions,
 	selectFuturesType,
@@ -27,51 +27,51 @@ import {
 	selectMarkets,
 	selectMarkPrices,
 	selectPositionHistory,
-} from 'state/futures/selectors';
-import { SharePositionParams } from 'state/futures/types';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FOOTER_HEIGHT } from 'styles/common';
-import media from 'styles/media';
+} from 'state/futures/selectors'
+import { SharePositionParams } from 'state/futures/types'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { FOOTER_HEIGHT } from 'styles/common'
+import media from 'styles/media'
 
-import PositionsTab from '../MobileTrade/UserTabs/PositionsTab';
-import ShareModal from '../ShareModal';
+import PositionsTab from '../MobileTrade/UserTabs/PositionsTab'
+import ShareModal from '../ShareModal'
 
-import EditPositionButton from './EditPositionButton';
-import TableMarketDetails from './TableMarketDetails';
+import EditPositionButton from './EditPositionButton'
+import TableMarketDetails from './TableMarketDetails'
 
 type FuturesPositionTableProps = {
-	showCurrentMarket?: boolean;
-	showEmptyTable?: boolean;
-};
+	showCurrentMarket?: boolean
+	showEmptyTable?: boolean
+}
 
 const PositionsTable: FC<FuturesPositionTableProps> = () => {
-	const { t } = useTranslation();
-	const router = useRouter();
-	const dispatch = useAppDispatch();
-	const { switchToL2 } = useNetworkSwitcher();
-	const { lessThanWidth } = useWindowSize();
+	const { t } = useTranslation()
+	const router = useRouter()
+	const dispatch = useAppDispatch()
+	const { switchToL2 } = useNetworkSwitcher()
+	const { lessThanWidth } = useWindowSize()
 
-	const isL2 = useIsL2();
+	const isL2 = useIsL2()
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
-	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
-	const positionHistory = useAppSelector(selectPositionHistory);
-	const currentMarket = useAppSelector(selectMarketAsset);
-	const futuresMarkets = useAppSelector(selectMarkets);
-	const markPrices = useAppSelector(selectMarkPrices);
-	const accountType = useAppSelector(selectFuturesType);
-	const [showShareModal, setShowShareModal] = useState(false);
-	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null);
+	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions)
+	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
+	const positionHistory = useAppSelector(selectPositionHistory)
+	const currentMarket = useAppSelector(selectMarketAsset)
+	const futuresMarkets = useAppSelector(selectMarkets)
+	const markPrices = useAppSelector(selectMarkPrices)
+	const accountType = useAppSelector(selectFuturesType)
+	const [showShareModal, setShowShareModal] = useState(false)
+	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
+		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions
 		return positions
 			.map((position) => {
-				const market = futuresMarkets.find((market) => market.asset === position.asset);
+				const market = futuresMarkets.find((market) => market.asset === position.asset)
 				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset;
-				});
-				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI;
+					return ph.isOpen && ph.asset === position.asset
+				})
+				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI
 				return {
 					market: market!,
 					remainingMargin: position.remainingMargin,
@@ -85,10 +85,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 						positionHistory: thisPositionHistory!,
 						marketPrice: markPrice,
 					},
-				};
+				}
 			})
 			.filter(({ position, market }) => !!position && !!market)
-			.sort((a) => (a.market.asset === currentMarket ? -1 : 1));
+			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
 	}, [
 		accountType,
 		crossMarginPositions,
@@ -97,12 +97,12 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 		positionHistory,
 		markPrices,
 		currentMarket,
-	]);
+	])
 
 	const handleOpenShareModal = useCallback((share: SharePositionParams) => {
-		setSharePosition(share);
-		setShowShareModal((s) => !s);
-	}, []);
+		setSharePosition(share)
+		setShowShareModal((s) => !s)
+	}, [])
 
 	if (!isL2)
 		return (
@@ -112,21 +112,21 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 				</TableNoResults>
 			</TableContainer>
-		);
+		)
 
 	if (!data.length)
 		return (
 			<TableContainer>
 				<TableNoResults>{t('dashboard.overview.futures-positions-table.no-result')}</TableNoResults>
 			</TableContainer>
-		);
+		)
 
 	if (lessThanWidth('xl')) {
 		return (
 			<TableContainer>
 				<PositionsTab />
 			</TableContainer>
-		);
+		)
 	}
 
 	return (
@@ -290,8 +290,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 				<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
 			)}
 		</>
-	);
-};
+	)
+}
 
 const TableContainer = styled.div`
 	overflow: scroll;
@@ -300,7 +300,7 @@ const TableContainer = styled.div`
 	${media.lessThan('xl')`
 		height: calc(100% - ${FOOTER_HEIGHT}px);
 	`}
-`;
+`
 
 const PositionRowDesktop = styled.div`
 	display: grid;
@@ -315,7 +315,7 @@ const PositionRowDesktop = styled.div`
 	:not(:last-child) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}
-`;
+`
 
 const HeadersRow = styled(PositionRowDesktop)`
 	height: ${FOOTER_HEIGHT}px;
@@ -325,21 +325,21 @@ const HeadersRow = styled(PositionRowDesktop)`
 	:not(:last-child) {
 		border-bottom: 0;
 	}
-`;
+`
 
 const PositionCell = styled.div`
 	display: flex;
 	align-items: center;
-`;
+`
 
 const PnlContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-`;
+`
 
 const MarketDetailsContainer = styled.div`
 	cursor: pointer;
-`;
+`
 
 const ColWithButton = styled.div`
 	display: flex;
@@ -349,6 +349,6 @@ const ColWithButton = styled.div`
 	${media.lessThan('xxl')`
 		display: block;
 	`}
-`;
+`
 
-export default PositionsTable;
+export default PositionsTable

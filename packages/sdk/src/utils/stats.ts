@@ -1,9 +1,9 @@
-import { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei'
 
-import { FuturesStat } from '../types/stats';
+import { FuturesStat } from '../types/stats'
 
-import { weiFromWei } from './number';
-import { truncateAddress } from './string';
+import { weiFromWei } from './number'
+import { truncateAddress } from './string'
 
 export const mapStat = (stat: FuturesStat, i: number) => ({
 	...stat,
@@ -15,4 +15,4 @@ export const mapStat = (stat: FuturesStat, i: number) => ({
 	liquidations: wei(stat.liquidations).toNumber(),
 	rank: i + 1,
 	rankText: (i + 1).toString(),
-});
+})

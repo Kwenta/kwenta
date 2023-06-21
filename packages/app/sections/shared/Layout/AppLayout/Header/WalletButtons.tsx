@@ -1,40 +1,40 @@
-import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import { useNetwork } from 'wagmi';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+import { useNetwork } from 'wagmi'
 
-import MoonIcon from 'assets/svg/app/moon.svg';
-import SunIcon from 'assets/svg/app/sun.svg';
-import Button from 'components/Button';
-import Connector from 'containers/Connector';
-import { useAutoConnect } from 'hooks/useAutoConnect';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { setTheme } from 'state/preferences/reducer';
-import { selectCurrentTheme } from 'state/preferences/selectors';
+import MoonIcon from 'assets/svg/app/moon.svg'
+import SunIcon from 'assets/svg/app/sun.svg'
+import Button from 'components/Button'
+import Connector from 'containers/Connector'
+import { useAutoConnect } from 'hooks/useAutoConnect'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { setTheme } from 'state/preferences/reducer'
+import { selectCurrentTheme } from 'state/preferences/selectors'
 
-import BalanceActions from './BalanceActions';
-import ConnectionDot from './ConnectionDot';
-import NetworksSwitcher from './NetworksSwitcher';
-import WalletActions from './WalletActions';
+import BalanceActions from './BalanceActions'
+import ConnectionDot from './ConnectionDot'
+import NetworksSwitcher from './NetworksSwitcher'
+import WalletActions from './WalletActions'
 
 const WalletButtons: React.FC = () => {
-	const { t } = useTranslation();
-	const { isWalletConnected } = Connector.useContainer();
-	const { chain: network } = useNetwork();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const { isWalletConnected } = Connector.useContainer()
+	const { chain: network } = useNetwork()
+	const dispatch = useAppDispatch()
 
-	const currentTheme = useAppSelector(selectCurrentTheme);
-	const { openConnectModal } = useConnectModal();
-	const { openChainModal } = useChainModal();
+	const currentTheme = useAppSelector(selectCurrentTheme)
+	const { openConnectModal } = useConnectModal()
+	const { openChainModal } = useChainModal()
 
-	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
+	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon
 
 	const toggleTheme = () => {
-		dispatch(setTheme(currentTheme === 'light' ? 'dark' : 'light'));
-	};
+		dispatch(setTheme(currentTheme === 'light' ? 'dark' : 'light'))
+	}
 
-	useAutoConnect();
+	useAutoConnect()
 	const walletIsNotConnected = (
 		<>
 			<Button
@@ -49,7 +49,7 @@ const WalletButtons: React.FC = () => {
 				{t('common.wallet.connect-wallet')}
 			</Button>
 		</>
-	);
+	)
 
 	const walletIsConnectedButNotSupported = (
 		<>
@@ -61,7 +61,7 @@ const WalletButtons: React.FC = () => {
 				{t('common.wallet.unsupported-network')}
 			</Button>
 		</>
-	);
+	)
 
 	const walletIsConnectedAndSupported = (
 		<>
@@ -69,7 +69,7 @@ const WalletButtons: React.FC = () => {
 			<WalletActions />
 			<NetworksSwitcher />
 		</>
-	);
+	)
 
 	return (
 		<Container>
@@ -82,14 +82,14 @@ const WalletButtons: React.FC = () => {
 				<ThemeIcon width={20} />
 			</MenuButton>
 		</Container>
-	);
-};
+	)
+}
 
 const Container = styled.div`
 	display: grid;
 	grid-gap: 15px;
 	grid-auto-flow: column;
-`;
+`
 
 const MenuButton = styled(Button)`
 	display: grid;
@@ -111,6 +111,6 @@ const MenuButton = styled(Button)`
 			}
 		}
 	}
-`;
+`
 
-export default WalletButtons;
+export default WalletButtons

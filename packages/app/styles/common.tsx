@@ -1,10 +1,10 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
-import { border } from 'components/Button';
-import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex';
-import { Body } from 'components/Text';
-import { zIndex } from 'constants/ui';
-import media from 'styles/media';
+import { border } from 'components/Button'
+import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex'
+import { Body } from 'components/Text'
+import { zIndex } from 'constants/ui'
+import media from 'styles/media'
 
 export const linkCSS = css<{ underline?: boolean; hoverUnderline?: boolean }>`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -13,14 +13,14 @@ export const linkCSS = css<{ underline?: boolean; hoverUnderline?: boolean }>`
 	&:hover {
 		text-decoration: ${(props) => (props.hoverUnderline ? 'underline' : 'none')};
 	}
-`;
+`
 
 export const ExternalLink = styled.a.attrs<{ underline?: boolean; hoverUnderline?: boolean }>({
 	target: '_blank',
 	rel: 'noopener noreferrer',
 })`
 	${linkCSS};
-`;
+`
 
 export const resetButtonCSS = css`
 	border: none;
@@ -28,15 +28,15 @@ export const resetButtonCSS = css`
 	outline: none;
 	cursor: pointer;
 	padding: 0;
-`;
+`
 
 export const numericValueCSS = css`
 	font-family: ${(props) => props.theme.fonts.mono};
-`;
+`
 
 export const NoTextTransform = styled.span`
 	text-transform: none;
-`;
+`
 
 export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: boolean }>`
 	padding: 5px 0;
@@ -51,22 +51,22 @@ export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: 
 			: css`
 					cursor: default;
 			  `}
-`;
+`
 
 export const CapitalizedText = styled.span`
 	text-transform: capitalize;
-`;
+`
 
 export const absoluteCenteredCSS = css`
 	position: absolute;
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
-`;
+`
 
 export const AbsoluteCenteredDiv = styled.div`
 	${absoluteCenteredCSS};
-`;
+`
 
 export const PageContent = styled.section`
 	display: flex;
@@ -74,7 +74,7 @@ export const PageContent = styled.section`
 	width: 100%;
 	height: 100%;
 	${(props) => props.theme.animations.show};
-`;
+`
 
 export const FixedFooterMixin = `
 	position: fixed;
@@ -82,7 +82,7 @@ export const FixedFooterMixin = `
 	left: 0;
 	right: 0;
 	border-radius: 0;
-`;
+`
 
 export const FullScreenContainer = styled.div`
 	width: 100%;
@@ -91,38 +91,38 @@ export const FullScreenContainer = styled.div`
 	${media.lessThan('sm')`
 		padding: 20px 15px 0;
 	`};
-`;
+`
 
 export const MobileScreenContainer = styled.div`
 	width: 100%;
 	height: 100%;
 	overflow-y: scroll;
 	padding-bottom: 80px;
-`;
+`
 
 export const FullHeightContainer = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
 	flex-grow: 1;
 	gap: 10px;
-`;
+`
 
 export const MainContent = styled(FlexDiv)`
 	flex-grow: 1;
 	flex-direction: column;
 	margin: 0 auto;
 	max-width: 1032px;
-`;
+`
 
 export const RightSideContent = styled.div`
 	background-color: transparent;
 	height: auto;
-`;
+`
 
 export const LeftSideContent = styled.div`
 	background-color: transparent;
 	height: auto;
-`;
+`
 
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
@@ -171,7 +171,7 @@ export const SwapCurrenciesButton = styled.button`
 			fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		}
 	}
-`;
+`
 
 export const SmallGoldenHeader = styled(Body).attrs({ weight: 'bold' })`
 	font-size: 14px;
@@ -185,7 +185,7 @@ export const SmallGoldenHeader = styled(Body).attrs({ weight: 'bold' })`
 		font-size: 12px;
 		margin-bottom: 12px;
 	`}
-`;
+`
 
 export const WhiteHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
@@ -201,13 +201,13 @@ export const WhiteHeader = styled.div`
 		width: 306px;
 		text-shadow: none;
 	`}
-`;
+`
 
 export const BorderedPanel = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-`;
+`
 
 const PillButtonCss = css<{ padding?: string }>`
 	transition: all 0.1s ease-in-out;
@@ -244,16 +244,16 @@ const PillButtonCss = css<{ padding?: string }>`
 			}
 		}
 	}
-`;
+`
 
 export const PillButtonSpan = styled.span<{ padding?: string }>`
 	${PillButtonCss}
-`;
+`
 
 export const YellowIconButton = styled.div`
 	transition: all 0.1s ease-in-out;
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-`;
+`
 
-export const FOOTER_HEIGHT = 30;
+export const FOOTER_HEIGHT = 30

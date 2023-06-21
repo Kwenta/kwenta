@@ -1,61 +1,61 @@
-import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants';
-import { formatDollars } from '@kwenta/sdk/utils';
-import { memo, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants'
+import { formatDollars } from '@kwenta/sdk/utils'
+import { memo, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import HelpIcon from 'assets/svg/app/question-mark.svg';
-import Button from 'components/Button';
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
-import Pill from 'components/Pill';
-import { StyledCaretDownIcon } from 'components/Select/Select';
-import { Body, NumericValue } from 'components/Text';
-import Tooltip from 'components/Tooltip/Tooltip';
-import useWindowSize from 'hooks/useWindowSize';
-import { setOpenModal } from 'state/app/reducer';
-import { selectShowModal } from 'state/app/selectors';
-import { selectSusdBalance } from 'state/balances/selectors';
+import HelpIcon from 'assets/svg/app/question-mark.svg'
+import Button from 'components/Button'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import Pill from 'components/Pill'
+import { StyledCaretDownIcon } from 'components/Select/Select'
+import { Body, NumericValue } from 'components/Text'
+import Tooltip from 'components/Tooltip/Tooltip'
+import useWindowSize from 'hooks/useWindowSize'
+import { setOpenModal } from 'state/app/reducer'
+import { selectShowModal } from 'state/app/selectors'
+import { selectSusdBalance } from 'state/balances/selectors'
 import {
 	selectAvailableMargin,
 	selectFuturesType,
 	selectIdleMargin,
 	selectLockedMarginInMarkets,
 	selectWithdrawableMargin,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import PencilButton from '../../../components/Button/PencilButton';
-import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox';
+import PencilButton from '../../../components/Button/PencilButton'
+import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox'
 
-import SmartMarginOnboardModal from './SmartMarginOnboardModal';
+import SmartMarginOnboardModal from './SmartMarginOnboardModal'
 
 type TradeBalanceProps = {
-	isMobile?: boolean;
-};
+	isMobile?: boolean
+}
 
 const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
-	const { deviceType } = useWindowSize();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const { deviceType } = useWindowSize()
 
-	const idleMargin = useAppSelector(selectIdleMargin);
-	const lockedMargin = useAppSelector(selectLockedMarginInMarkets);
-	const walletBal = useAppSelector(selectSusdBalance);
-	const accountType = useAppSelector(selectFuturesType);
-	const availableIsolatedMargin = useAppSelector(selectAvailableMargin);
-	const withdrawable = useAppSelector(selectWithdrawableMargin);
-	const openModal = useAppSelector(selectShowModal);
+	const idleMargin = useAppSelector(selectIdleMargin)
+	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
+	const walletBal = useAppSelector(selectSusdBalance)
+	const accountType = useAppSelector(selectFuturesType)
+	const availableIsolatedMargin = useAppSelector(selectAvailableMargin)
+	const withdrawable = useAppSelector(selectWithdrawableMargin)
+	const openModal = useAppSelector(selectShowModal)
 
-	const [expanded, setExpanded] = useState(false);
+	const [expanded, setExpanded] = useState(false)
 
 	const isDepositRequired = useMemo(() => {
-		return walletBal.lt(MIN_MARGIN_AMOUNT) && withdrawable.eq(0);
-	}, [walletBal, withdrawable]);
+		return walletBal.lt(MIN_MARGIN_AMOUNT) && withdrawable.eq(0)
+	}, [walletBal, withdrawable])
 
 	const onClickContainer = () => {
-		if (accountType === 'isolated_margin') return;
-		setExpanded(!expanded);
-	};
+		if (accountType === 'isolated_margin') return
+		setExpanded(!expanded)
+	}
 
 	return (
 		<Container mobile={deviceType === 'mobile'}>
@@ -158,14 +158,14 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 							width={16}
 							height={16}
 							onClick={(e) => {
-								e.stopPropagation();
+								e.stopPropagation()
 								dispatch(
 									setOpenModal(
 										accountType === 'isolated_margin'
 											? 'futures_isolated_transfer'
 											: 'futures_cross_withdraw'
 									)
-								);
+								)
 							}}
 						/>
 						<Pill roundedCorner={false} onClick={onClickContainer}>
@@ -181,36 +181,36 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 			{openModal === 'futures_smart_margin_socket' && (
 				<SmartMarginOnboardModal
 					onDismiss={() => {
-						dispatch(setOpenModal(null));
+						dispatch(setOpenModal(null))
 					}}
 				/>
 			)}
 		</Container>
-	);
-});
+	)
+})
 
 const DepositContainer = styled(FlexDivRowCentered)`
 	width: 100%;
-`;
+`
 
 const StyledFlexDivCol = styled(FlexDivCol)`
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
 	padding-left: 10px;
-`;
+`
 
 const Container = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	padding: 13px 15px;
 	border-bottom: ${(props) => (props.mobile ? props.theme.colors.selectedTheme.border : 0)};
-`;
+`
 
 const BalanceContainer = styled(FlexDivRowCentered)<{ clickable: boolean }>`
 	cursor: ${(props) => (props.clickable ? 'pointer' : 'default')};
 	width: 100%;
-`;
+`
 
 const DetailsContainer = styled.div`
 	margin-top: 15px;
-`;
+`
 
-export default TradeBalance;
+export default TradeBalance

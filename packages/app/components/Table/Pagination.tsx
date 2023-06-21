@@ -1,24 +1,24 @@
-import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import React, { FC } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg';
-import LeftArrowIcon from 'assets/svg/app/caret-left.svg';
-import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg';
-import RightArrowIcon from 'assets/svg/app/caret-right.svg';
-import { GridDivCenteredCol } from 'components/layout/grid';
-import { resetButtonCSS } from 'styles/common';
+import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg'
+import LeftArrowIcon from 'assets/svg/app/caret-left.svg'
+import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg'
+import RightArrowIcon from 'assets/svg/app/caret-right.svg'
+import { GridDivCenteredCol } from 'components/layout/grid'
+import { resetButtonCSS } from 'styles/common'
 
 type PaginationProps = {
-	pageIndex: number;
-	pageCount: number;
-	canNextPage: boolean;
-	canPreviousPage: boolean;
-	compact: boolean;
-	setPage: (page: number) => void;
-	previousPage: () => void;
-	nextPage: () => void;
-};
+	pageIndex: number
+	pageCount: number
+	canNextPage: boolean
+	canPreviousPage: boolean
+	compact: boolean
+	setPage: (page: number) => void
+	previousPage: () => void
+	nextPage: () => void
+}
 
 const Pagination: FC<PaginationProps> = React.memo(
 	({
@@ -31,10 +31,10 @@ const Pagination: FC<PaginationProps> = React.memo(
 		nextPage,
 		previousPage,
 	}) => {
-		const { t } = useTranslation();
+		const { t } = useTranslation()
 
-		const firstPage = () => setPage(0);
-		const toLastPage = () => setPage(pageCount - 1);
+		const firstPage = () => setPage(0)
+		const toLastPage = () => setPage(pageCount - 1)
 
 		return (
 			<PaginationContainer compact={compact}>
@@ -62,13 +62,13 @@ const Pagination: FC<PaginationProps> = React.memo(
 					</ArrowButton>
 				</span>
 			</PaginationContainer>
-		);
+		)
 	}
-);
+)
 
 const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 	grid-template-columns: auto 1fr auto;
@@ -76,7 +76,7 @@ const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 	justify-items: center;
-`;
+`
 
 const ArrowButton = styled.button`
 	${resetButtonCSS};
@@ -90,6 +90,6 @@ const ArrowButton = styled.button`
 		height: 14px;
 		fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
+`
 
-export default Pagination;
+export default Pagination

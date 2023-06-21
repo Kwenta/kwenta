@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 type Props = {
-	mobile?: boolean;
-};
+	mobile?: boolean
+}
 
 export default function ConditionalOrdersWarning({ mobile }: Props) {
 	return (
@@ -10,7 +10,7 @@ export default function ConditionalOrdersWarning({ mobile }: Props) {
 			Conditional orders are executed based on the onchain Chainlink price which can differ from the
 			offchain prices displayed above.
 		</OrdersWarning>
-	);
+	)
 }
 
 const OrdersWarning = styled.div<{ mobile?: boolean }>`
@@ -21,4 +21,4 @@ const OrdersWarning = styled.div<{ mobile?: boolean }>`
 	border-bottom: ${(props) =>
 		props.mobile ? props.theme.colors.selectedTheme.newTheme.border.style : 'none'};
 	text-align: center;
-`;
+`

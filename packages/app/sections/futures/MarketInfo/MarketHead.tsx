@@ -1,17 +1,17 @@
-import { getDisplayAsset, formatCurrency } from '@kwenta/sdk/utils';
-import Head from 'next/head';
-import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import { getDisplayAsset, formatCurrency } from '@kwenta/sdk/utils'
+import Head from 'next/head'
+import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { selectMarketAsset, selectSkewAdjustedPrice } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { selectMarketAsset, selectSkewAdjustedPrice } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
 const MarketHead: FC = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const latestPrice = useAppSelector(selectSkewAdjustedPrice);
-	const marketName = getDisplayAsset(marketAsset);
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const latestPrice = useAppSelector(selectSkewAdjustedPrice)
+	const marketName = getDisplayAsset(marketAsset)
 
 	return (
 		<Head>
@@ -27,7 +27,7 @@ const MarketHead: FC = () => {
 					: t('futures.market.page-title')}
 			</title>
 		</Head>
-	);
-};
+	)
+}
 
-export default MarketHead;
+export default MarketHead

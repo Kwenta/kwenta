@@ -1,30 +1,30 @@
-import { ChangeEvent, useCallback } from 'react';
+import { ChangeEvent, useCallback } from 'react'
 
-import { editTradeOrderPrice } from 'state/futures/actions';
+import { editTradeOrderPrice } from 'state/futures/actions'
 import {
 	selectCrossMarginOrderPrice,
 	selectLeverageSide,
 	selectMarketIndexPrice,
 	selectOrderType,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import OrderPriceInput from '../OrderPriceInput';
+import OrderPriceInput from '../OrderPriceInput'
 
 export default function TradePanelPriceInput() {
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
-	const marketPrice = useAppSelector(selectMarketIndexPrice);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const orderType = useAppSelector(selectOrderType);
+	const marketPrice = useAppSelector(selectMarketIndexPrice)
+	const leverageSide = useAppSelector(selectLeverageSide)
+	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const orderType = useAppSelector(selectOrderType)
 
 	const handleOnChange = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(editTradeOrderPrice(v));
+			dispatch(editTradeOrderPrice(v))
 		},
 		[dispatch]
-	);
+	)
 
 	return (
 		<OrderPriceInput
@@ -34,5 +34,5 @@ export default function TradePanelPriceInput() {
 			marketPrice={marketPrice}
 			onChange={handleOnChange}
 		/>
-	);
+	)
 }

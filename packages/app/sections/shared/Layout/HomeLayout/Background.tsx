@@ -1,5 +1,5 @@
-import { memo } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { memo } from 'react'
+import styled, { keyframes } from 'styled-components'
 
 const Background = memo(() => {
 	return (
@@ -8,8 +8,8 @@ const Background = memo(() => {
 			<div className="line" />
 			<div className="line" />
 		</Container>
-	);
-});
+	)
+})
 
 const drop = keyframes`
 	from {
@@ -18,7 +18,7 @@ const drop = keyframes`
 	to {
 		top:100%;
 	}
-`;
+`
 
 const Container = styled.div`
 	background-color: transparent;
@@ -67,6 +67,6 @@ const Container = styled.div`
 			}
 		}
 	}
-`;
+`
 
-export default Background;
+export default Background

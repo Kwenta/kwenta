@@ -4,4 +4,4 @@ export {
 	MobileOrTabletView,
 	MobileHiddenView,
 	TabletOnlyView,
-} from './Media';
+} from './Media'

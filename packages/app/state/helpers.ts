@@ -1,5 +1,5 @@
-import { FuturesAccountType } from '@kwenta/sdk/types';
-import Wei, { wei } from '@synthetixio/wei';
+import { FuturesAccountType } from '@kwenta/sdk/types'
+import Wei, { wei } from '@synthetixio/wei'
 
 // Redux recommends that values stored in state are serializable
 // (Generally for diffing, performance and persistence reasons).
@@ -18,35 +18,35 @@ import Wei, { wei } from '@synthetixio/wei';
 export const serializeWeiObject = (object: object) => {
 	return Object.entries(object).reduce((acc, [key, value]) => {
 		if (!value) {
-			acc[key] = value;
+			acc[key] = value
 		} else if (value instanceof Wei) {
-			acc[key] = value.toString();
+			acc[key] = value.toString()
 		} else if (typeof value === 'object') {
-			acc[key] = serializeWeiObject(value);
+			acc[key] = serializeWeiObject(value)
 		} else {
-			acc[key] = value;
+			acc[key] = value
 		}
 
-		return acc;
-	}, {} as any);
-};
+		return acc
+	}, {} as any)
+}
 
 // TODO: This deserialization algorithm can be improved
 export const deserializeWeiObject = (object: object, keys: Set<string>, prefix?: string) => {
 	return Object.entries(object).reduce((acc, [key, value]) => {
 		if (!value) {
-			acc[key] = value;
+			acc[key] = value
 		} else if (keys.has(prefix ? `${prefix}.${key}` : key)) {
-			acc[key] = wei(value);
+			acc[key] = wei(value)
 		} else if (typeof value === 'object') {
-			acc[key] = deserializeWeiObject(value, keys, key);
+			acc[key] = deserializeWeiObject(value, keys, key)
 		} else {
-			acc[key] = value;
+			acc[key] = value
 		}
 
-		return acc;
-	}, {} as any);
-};
+		return acc
+	}, {} as any)
+}
 
 export const accountType = (type: FuturesAccountType) =>
-	type === 'cross_margin' || type === 'smart_margin' ? 'crossMargin' : 'isolatedMargin';
+	type === 'cross_margin' || type === 'smart_margin' ? 'crossMargin' : 'isolatedMargin'

@@ -1,12 +1,12 @@
-import { wei } from '@synthetixio/wei';
-import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { wei } from '@synthetixio/wei'
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import ErrorView from 'components/ErrorView';
-import { FlexDivRow } from 'components/layout/flex';
-import StyledSlider from 'components/Slider/StyledSlider';
-import { editCrossMarginTradeSize } from 'state/futures/actions';
+import ErrorView from 'components/ErrorView'
+import { FlexDivRow } from 'components/layout/flex'
+import StyledSlider from 'components/Slider/StyledSlider'
+import { editCrossMarginTradeSize } from 'state/futures/actions'
 import {
 	selectAboveMaxLeverage,
 	selectCrossMarginMarginDelta,
@@ -15,49 +15,49 @@ import {
 	selectMaxUsdSizeInput,
 	selectPosition,
 	selectTradeSizeInputs,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 export default function OrderSizeSlider() {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
-	const { susdSizeString } = useAppSelector(selectTradeSizeInputs);
-	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage);
-	const maxLeverage = useAppSelector(selectMaxLeverage);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const position = useAppSelector(selectPosition);
-	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
-	const marginDelta = useAppSelector(selectCrossMarginMarginDelta);
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const { susdSizeString } = useAppSelector(selectTradeSizeInputs)
+	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage)
+	const maxLeverage = useAppSelector(selectMaxLeverage)
+	const leverageSide = useAppSelector(selectLeverageSide)
+	const position = useAppSelector(selectPosition)
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput)
+	const marginDelta = useAppSelector(selectCrossMarginMarginDelta)
 
-	const [percent, setPercent] = useState(0);
-	const [usdValue, setUsdValue] = useState(susdSizeString);
+	const [percent, setPercent] = useState(0)
+	const [usdValue, setUsdValue] = useState(susdSizeString)
 
 	const onChangeMarginPercent = useCallback(
 		(value: any, commit = false) => {
-			setPercent(value);
-			const fraction = value / 100;
-			const usdAmount = maxUsdInputAmount.mul(fraction).toString();
-			const usdValue = Number(usdAmount).toFixed(0);
-			setUsdValue(usdValue);
+			setPercent(value)
+			const fraction = value / 100
+			const usdAmount = maxUsdInputAmount.mul(fraction).toString()
+			const usdValue = Number(usdAmount).toFixed(0)
+			setUsdValue(usdValue)
 			if (commit) {
-				dispatch(editCrossMarginTradeSize(usdValue, 'usd'));
+				dispatch(editCrossMarginTradeSize(usdValue, 'usd'))
 			}
 		},
 		[maxUsdInputAmount, dispatch]
-	);
+	)
 
 	useEffect(() => {
 		if (susdSizeString !== usdValue) {
 			if (!susdSizeString || maxUsdInputAmount.eq(0)) {
-				setPercent(0);
-				return;
+				setPercent(0)
+				return
 			}
 
-			const percent = wei(susdSizeString).div(maxUsdInputAmount).mul(100).toNumber();
-			setPercent(Number(percent.toFixed(2)));
+			const percent = wei(susdSizeString).div(maxUsdInputAmount).mul(100).toNumber()
+			setPercent(Number(percent.toFixed(2)))
 		}
 		// eslint-disable-next-line
-	}, [susdSizeString]);
+	}, [susdSizeString])
 
 	if (aboveMaxLeverage && position?.position?.side === leverageSide) {
 		return (
@@ -66,7 +66,7 @@ export default function OrderSizeSlider() {
 					maxLeverage: parseInt(maxLeverage.toString()),
 				})}
 			/>
-		);
+		)
 	}
 
 	return (
@@ -89,11 +89,11 @@ export default function OrderSizeSlider() {
 				$currentMark={percent}
 			/>
 		</SliderRow>
-	);
+	)
 }
 
 const SliderRow = styled(FlexDivRow)`
 	margin-top: 8px;
 	margin-bottom: 32px;
 	position: relative;
-`;
+`

@@ -1,12 +1,12 @@
-import React from 'react';
-import { DefaultTheme, StyledComponent } from 'styled-components';
+import React from 'react'
+import { DefaultTheme, StyledComponent } from 'styled-components'
 
 type WebpProps = {
 	/** (only) png files imported. */
-	srcOrSrcset: any;
+	srcOrSrcset: any
 	/** styled <img> element. */
-	StyledImg?: StyledComponent<'img', DefaultTheme, {}, never>;
-};
+	StyledImg?: StyledComponent<'img', DefaultTheme, {}, never>
+}
 
 const Webp: React.FC<WebpProps> = ({ srcOrSrcset, StyledImg }) => {
 	return (
@@ -15,7 +15,7 @@ const Webp: React.FC<WebpProps> = ({ srcOrSrcset, StyledImg }) => {
 			<source srcSet={srcOrSrcset} type="image/png" />
 			{StyledImg ? <StyledImg src={srcOrSrcset} /> : <img src={srcOrSrcset} />}
 		</picture>
-	);
-};
+	)
+}
 
-export default Webp;
+export default Webp

@@ -1,1 +1,1 @@
-export type Side = 'base' | 'quote';
+export type Side = 'base' | 'quote'

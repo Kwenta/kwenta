@@ -1,29 +1,29 @@
-import { NetworkId } from '@kwenta/sdk/types';
-import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
-import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { NetworkId } from '@kwenta/sdk/types'
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit'
+import React, { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import Connector from 'containers/Connector';
-import { isSupportedNetworkId } from 'utils/network';
+import Button from 'components/Button'
+import Connector from 'containers/Connector'
+import { isSupportedNetworkId } from 'utils/network'
 
-import ConnectionDot from '../ConnectionDot';
+import ConnectionDot from '../ConnectionDot'
 
-import MobileWalletActions from './MobileWalletActions';
+import MobileWalletActions from './MobileWalletActions'
 
 type MobileConnectButtonProps = {
-	toggleModal(): void;
-};
+	toggleModal(): void
+}
 
 const MobileConnectButton: React.FC<MobileConnectButtonProps> = ({ toggleModal }) => {
-	const { t } = useTranslation();
-	const { openConnectModal } = useConnectModal();
+	const { t } = useTranslation()
+	const { openConnectModal } = useConnectModal()
 
 	const handleConnect = useCallback(() => {
-		toggleModal();
-		openConnectModal?.();
-	}, [toggleModal, openConnectModal]);
+		toggleModal()
+		openConnectModal?.()
+	}, [toggleModal, openConnectModal])
 
 	return (
 		<ConnectButton
@@ -37,12 +37,12 @@ const MobileConnectButton: React.FC<MobileConnectButtonProps> = ({ toggleModal }
 			<ConnectionDot />
 			{t('common.wallet.connect-wallet')}
 		</ConnectButton>
-	);
-};
+	)
+}
 
 const MobileUnsupportedButton = () => {
-	const { t } = useTranslation();
-	const { openChainModal } = useChainModal();
+	const { t } = useTranslation()
+	const { openChainModal } = useChainModal()
 
 	return (
 		<ConnectButton
@@ -55,27 +55,27 @@ const MobileUnsupportedButton = () => {
 			<ConnectionDot />
 			{t('common.wallet.unsupported-network')}
 		</ConnectButton>
-	);
-};
+	)
+}
 
 type MobileWalletButtonProps = {
-	toggleModal(): void;
-};
+	toggleModal(): void
+}
 
 const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) => {
-	const { network, isWalletConnected } = Connector.useContainer();
+	const { network, isWalletConnected } = Connector.useContainer()
 
 	if (!isWalletConnected) {
-		return <MobileConnectButton toggleModal={toggleModal} />;
+		return <MobileConnectButton toggleModal={toggleModal} />
 	} else if (isSupportedNetworkId(network?.id as NetworkId)) {
-		return <MobileWalletActions />;
+		return <MobileWalletActions />
 	} else {
-		return <MobileUnsupportedButton />;
+		return <MobileUnsupportedButton />
 	}
-};
+}
 
 const ConnectButton = styled(Button)`
 	font-size: 13px;
-`;
+`
 
-export default MobileWalletButton;
+export default MobileWalletButton

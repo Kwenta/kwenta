@@ -1,26 +1,26 @@
-import { useCallback, useState } from 'react';
-import styled from 'styled-components';
+import { useCallback, useState } from 'react'
+import styled from 'styled-components'
 
-import { StyledCaretDownIcon } from 'components/Select/Select';
-import { FUNDING_RATE_PERIODS } from 'constants/funding';
-import { HOURS_TOGGLE_HEIGHT, HOURS_TOGGLE_WIDTH, zIndex } from 'constants/ui';
-import { setSelectedInputFundingRateHour } from 'state/futures/reducer';
-import { selectSelectedInputHours } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import media from 'styles/media';
+import { StyledCaretDownIcon } from 'components/Select/Select'
+import { FUNDING_RATE_PERIODS } from 'constants/funding'
+import { HOURS_TOGGLE_HEIGHT, HOURS_TOGGLE_WIDTH, zIndex } from 'constants/ui'
+import { setSelectedInputFundingRateHour } from 'state/futures/reducer'
+import { selectSelectedInputHours } from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import media from 'styles/media'
 
 const HoursToggle: React.FC = () => {
-	const dispatch = useAppDispatch();
-	const fundingHours = useAppSelector(selectSelectedInputHours);
-	const [open, setOpen] = useState(false);
-	const getLabelByValue = (value: number): string => FUNDING_RATE_PERIODS[value] ?? '1H';
+	const dispatch = useAppDispatch()
+	const fundingHours = useAppSelector(selectSelectedInputHours)
+	const [open, setOpen] = useState(false)
+	const getLabelByValue = (value: number): string => FUNDING_RATE_PERIODS[value] ?? '1H'
 	const updatePeriod = useCallback(
 		(v: number) => {
-			dispatch(setSelectedInputFundingRateHour(v));
-			setOpen(!open);
+			dispatch(setSelectedInputFundingRateHour(v))
+			setOpen(!open)
 		},
 		[dispatch, open]
-	);
+	)
 	return (
 		<ToggleContainer open={open}>
 			<ToggleTable>
@@ -42,8 +42,8 @@ const HoursToggle: React.FC = () => {
 				)}
 			</ToggleTable>
 		</ToggleContainer>
-	);
-};
+	)
+}
 
 const ToggleTableRow = styled.div`
 	margin: auto;
@@ -62,7 +62,7 @@ const ToggleTableRow = styled.div`
 			border-radius: 0px 0px 9px 9px;
 		}
 	}
-`;
+`
 
 const ToggleTableRows = styled.div`
 	> div:not(:last-child) {
@@ -71,7 +71,7 @@ const ToggleTableRows = styled.div`
 	}
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	z-index: ${zIndex.HEADER};
-`;
+`
 
 const ToggleTableHeader = styled.div`
 	display: flex;
@@ -80,7 +80,7 @@ const ToggleTableHeader = styled.div`
 	height: ${HOURS_TOGGLE_HEIGHT};
 	border-bottom-style: solid;
 	border-bottom-color: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
-`;
+`
 
 const ToggleTable = styled.div`
 	display: flex;
@@ -94,7 +94,7 @@ const ToggleTable = styled.div`
 	width: ${HOURS_TOGGLE_WIDTH};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
-`;
+`
 
 const ToggleContainer = styled.div<{ open: boolean }>`
 	margin-left: 8px;
@@ -107,6 +107,6 @@ const ToggleContainer = styled.div<{ open: boolean }>`
                z-index: ${zIndex.HEADER};
                width: ${HOURS_TOGGLE_WIDTH};
        `}
-`;
+`
 
-export default HoursToggle;
+export default HoursToggle

@@ -1,47 +1,47 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { FC, FunctionComponent, memo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { FC, FunctionComponent, memo, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import LinkIconLight from 'assets/svg/app/link-light.svg';
-import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
-import Badge from 'components/Badge';
-import { FlexDivRow } from 'components/layout/flex';
-import LabelContainer from 'components/Nav/DropDownLabel';
-import Select from 'components/Select';
-import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { linkCSS } from 'styles/common';
-import media from 'styles/media';
+import LinkIconLight from 'assets/svg/app/link-light.svg'
+import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg'
+import Badge from 'components/Badge'
+import { FlexDivRow } from 'components/layout/flex'
+import LabelContainer from 'components/Nav/DropDownLabel'
+import Select from 'components/Select'
+import { DropdownIndicator, IndicatorSeparator } from 'components/Select/Select'
+import Tooltip from 'components/Tooltip/Tooltip'
+import { selectMarketAsset } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import { linkCSS } from 'styles/common'
+import media from 'styles/media'
 
-import { DESKTOP_NAV_LINKS, Badge as BadgeType } from './constants';
+import { DESKTOP_NAV_LINKS, Badge as BadgeType } from './constants'
 
 type ReactSelectOptionProps = {
-	i18nLabel: string;
-	postfixIcon?: string;
-	isActive: boolean;
-	link: string;
-	isParentLink?: boolean;
-	badge: BadgeType[];
-	Icon: FunctionComponent<any>;
-};
+	i18nLabel: string
+	postfixIcon?: string
+	isActive: boolean
+	link: string
+	isParentLink?: boolean
+	badge: BadgeType[]
+	Icon: FunctionComponent<any>
+}
 
 const Nav: FC = memo(() => {
-	const { t } = useTranslation();
-	const { asPath } = useRouter();
-	const marketAsset = useAppSelector(selectMarketAsset);
+	const { t } = useTranslation()
+	const { asPath } = useRouter()
+	const marketAsset = useAppSelector(selectMarketAsset)
 
 	const getLink = useCallback(
 		(link: string) => {
 			return link.indexOf('/market') === 0
 				? `/market/?accountType=cross_margin&asset=${marketAsset}`
-				: link;
+				: link
 		},
 		[marketAsset]
-	);
+	)
 
 	const formatOptionLabel = ({
 		i18nLabel,
@@ -56,7 +56,7 @@ const Nav: FC = memo(() => {
 				<MenuInside isDropDown isActive={isActive}>
 					{t(i18nLabel)}
 				</MenuInside>
-			);
+			)
 		}
 
 		const option = (
@@ -69,22 +69,22 @@ const Nav: FC = memo(() => {
 				</NavLabel>
 				{Icon && <Icon />}
 			</LabelContainer>
-		);
+		)
 		if (link) {
-			return <Link href={link}>{option}</Link>;
+			return <Link href={link}>{option}</Link>
 		}
 
-		return option;
-	};
+		return option
+	}
 
 	return (
 		<nav>
 			<MenuLinks>
 				{DESKTOP_NAV_LINKS.map(({ i18nLabel, link, links }) => {
-					const routeBase = asPath.split('/')[1];
-					const linkBase = link.split('/')[1]?.split('?')[0];
-					const isActive = routeBase === linkBase;
-					const url = getLink(link);
+					const routeBase = asPath.split('/')[1]
+					const linkBase = link.split('/')[1]?.split('?')[0]
+					const isActive = routeBase === linkBase
+					const url = getLink(link)
 
 					if (!links) {
 						return (
@@ -114,7 +114,7 @@ const Nav: FC = memo(() => {
 									)}
 								</MenuInside>
 							</Link>
-						);
+						)
 					}
 
 					return (
@@ -128,12 +128,12 @@ const Nav: FC = memo(() => {
 							components={{ IndicatorSeparator, DropdownIndicator }}
 							isSearchable={false}
 						/>
-					);
+					)
 				})}
 			</MenuLinks>
 		</nav>
-	);
-});
+	)
+})
 
 const CustomStyledTooltip = styled(Tooltip)`
 	padding: 10px;
@@ -142,16 +142,16 @@ const CustomStyledTooltip = styled(Tooltip)`
 	${media.lessThan('md')`
 		width: 310px;
 	`}
-`;
+`
 
 const WithCursor = styled.div<{ cursor: 'help' | 'pointer' }>`
 	cursor: ${(props) => props.cursor};
-`;
+`
 
 const MenuLinks = styled.ul`
 	display: flex;
 	padding-top: 2px;
-`;
+`
 
 const NavLabel = styled.div<{ isActive?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
@@ -161,7 +161,7 @@ const NavLabel = styled.div<{ isActive?: boolean }>`
 		props.isActive
 			? props.theme.colors.selectedTheme.button.text.primary
 			: props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 	${linkCSS};
@@ -183,7 +183,7 @@ const MenuInside = styled.div<{ isActive: boolean; isDropDown?: boolean }>`
 		background: ${(props) =>
 			!props.isDropDown ? props.theme.colors.selectedTheme.button.fill : 'transparent'};
 	}
-`;
+`
 
 const DropDownSelect = styled(Select)`
 	.react-select__menu {
@@ -237,7 +237,7 @@ const DropDownSelect = styled(Select)`
 				: //@ts-ignore
 				props.value?.i18nLabel === 'header.nav.options.title'
 				? '80px'
-				: '100%';
+				: '100%'
 		}};
 	}
 
@@ -250,6 +250,6 @@ const DropDownSelect = styled(Select)`
 	.react-select__menu-notice--no-options {
 		padding: 15px;
 	}
-`;
+`
 
-export default Nav;
+export default Nav

@@ -1,31 +1,31 @@
-import { formatPercent } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import { FC } from 'react';
-import styled from 'styled-components';
+import { formatPercent } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import { FC } from 'react'
+import styled from 'styled-components'
 
-import { NumericValue } from 'components/Text';
-import { ETH_UNIT } from 'constants/network';
+import { NumericValue } from 'components/Text'
+import { ETH_UNIT } from 'constants/network'
 
 export const parseFundingRate = (value: number) => {
-	return wei(value).div(ETH_UNIT).div(24);
-};
+	return wei(value).div(ETH_UNIT).div(24)
+}
 
 export const formatFundingRate = (value: number) => {
-	const parsed = parseFundingRate(value);
+	const parsed = parseFundingRate(value)
 
-	return parsed.eq(0) ? '0%' : formatPercent(parsed, { minDecimals: 4 });
-};
+	return parsed.eq(0) ? '0%' : formatPercent(parsed, { minDecimals: 4 })
+}
 
 type FundingChartTooltipProps = {
-	active?: boolean;
-	payload?: { value: number }[];
-};
+	active?: boolean
+	payload?: { value: number }[]
+}
 
 const FundingChartTooltip: FC<FundingChartTooltipProps> = ({ active, payload }) => {
 	if (active && payload && payload.length) {
-		const { value } = payload[0];
-		const parsedValue = parseFundingRate(value);
-		const percent = formatFundingRate(value);
+		const { value } = payload[0]
+		const parsedValue = parseFundingRate(value)
+		const percent = formatFundingRate(value)
 
 		return (
 			<FundingChartTooltipContainer>
@@ -33,11 +33,11 @@ const FundingChartTooltip: FC<FundingChartTooltipProps> = ({ active, payload }) 
 					{percent}
 				</NumericValue>
 			</FundingChartTooltipContainer>
-		);
+		)
 	}
 
-	return null;
-};
+	return null
+}
 
 const FundingChartTooltipContainer = styled.div`
 	padding: 10px;
@@ -46,6 +46,6 @@ const FundingChartTooltipContainer = styled.div`
 		${(props) => props.theme.colors.selectedTheme.newTheme.fundingChart.tooltip.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.fundingChart.tooltip.background};
-`;
+`
 
-export default FundingChartTooltip;
+export default FundingChartTooltip

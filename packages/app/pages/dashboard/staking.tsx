@@ -1,49 +1,49 @@
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import DashboardLayout from 'sections/dashboard/DashboardLayout';
-import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio';
-import StakingTabs from 'sections/dashboard/Stake/StakingTabs';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions';
+import DashboardLayout from 'sections/dashboard/DashboardLayout'
+import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
+import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions'
 
-type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element };
+type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
 const StakingPage: StakingComponent = () => {
-	const { t } = useTranslation();
-	const router = useRouter();
-	const dispatch = useAppDispatch();
-	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
+	const { t } = useTranslation()
+	const router = useRouter()
+	const dispatch = useAppDispatch()
+	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress)
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
-			const tab = router.query.tab as StakeTab;
+			const tab = router.query.tab as StakeTab
 			if (Object.values(StakeTab).includes(tab)) {
-				return tab;
+				return tab
 			}
 		}
-		return null;
-	}, [router]);
+		return null
+	}, [router])
 
-	const [currentTab, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking);
+	const [currentTab, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking)
 
 	useEffect(() => {
 		if (!!walletAddress) {
 			dispatch(fetchStakingData()).then(() => {
-				dispatch(fetchClaimableRewards());
-			});
-			dispatch(fetchEscrowData());
+				dispatch(fetchClaimableRewards())
+			})
+			dispatch(fetchEscrowData())
 		}
-	}, [dispatch, walletAddress]);
+	}, [dispatch, walletAddress])
 
 	const handleChangeTab = useCallback(
 		(tab: StakeTab) => () => {
-			setCurrentTab(tab);
+			setCurrentTab(tab)
 		},
 		[]
-	);
+	)
 
 	return (
 		<>
@@ -53,9 +53,9 @@ const StakingPage: StakingComponent = () => {
 			<StakingPortfolio setCurrentTab={setCurrentTab} />
 			<StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />
 		</>
-	);
-};
+	)
+}
 
-StakingPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+StakingPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>
 
-export default StakingPage;
+export default StakingPage

@@ -1,22 +1,22 @@
-import { BarChart, LineChart } from 'echarts/charts';
-import type { BarSeriesOption, LineSeriesOption } from 'echarts/charts';
+import { BarChart, LineChart } from 'echarts/charts'
+import type { BarSeriesOption, LineSeriesOption } from 'echarts/charts'
 import {
 	GridComponent,
 	TitleComponent,
 	LegendComponent,
 	TooltipComponent,
-} from 'echarts/components';
+} from 'echarts/components'
 import type {
 	GridComponentOption,
 	TitleComponentOption,
 	LegendComponentOption,
 	TooltipComponentOption,
-} from 'echarts/components';
-import * as echarts from 'echarts/core';
-import { ECharts } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
+} from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { ECharts } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 
-import { ThemeInterface } from 'styles/theme';
+import { ThemeInterface } from 'styles/theme'
 
 echarts.use([
 	GridComponent,
@@ -26,7 +26,7 @@ echarts.use([
 	BarChart,
 	LineChart,
 	CanvasRenderer,
-]);
+])
 
 export type EChartsOption = echarts.ComposeOption<
 	| GridComponentOption
@@ -35,12 +35,12 @@ export type EChartsOption = echarts.ComposeOption<
 	| TooltipComponentOption
 	| BarSeriesOption
 	| LineSeriesOption
->;
+>
 
-type ChartSpec = { chart: ECharts | null; defaultOptions: EChartsOption };
+type ChartSpec = { chart: ECharts | null; defaultOptions: EChartsOption }
 
 export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): ChartSpec => {
-	if (!dom) return { chart: null, defaultOptions: {} };
+	if (!dom) return { chart: null, defaultOptions: {} }
 
 	const defaultOptions: EChartsOption = {
 		title: {
@@ -92,7 +92,7 @@ export const initChart = (dom: HTMLElement | null, theme: ThemeInterface): Chart
 				fontSize: 15,
 			},
 		},
-	};
-	const chart = echarts.init(dom);
-	return { chart, defaultOptions };
-};
+	}
+	const chart = echarts.init(dom)
+	return { chart, defaultOptions }
+}

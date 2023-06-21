@@ -1,56 +1,56 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { FC, useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { FC, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import LinkIconLight from 'assets/svg/app/link-light.svg';
-import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
-import MoonIcon from 'assets/svg/app/moon.svg';
-import SunIcon from 'assets/svg/app/sun.svg';
-import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg';
-import FullScreenModal from 'components/FullScreenModal';
-import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
-import SegmentedControl from 'components/SegmentedControl';
-import ROUTES from 'constants/routes';
-import Links from 'sections/dashboard/Links';
-import Logo from 'sections/shared/Layout/Logo';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { setTheme } from 'state/preferences/reducer';
-import { selectCurrentTheme } from 'state/preferences/selectors';
+import LinkIconLight from 'assets/svg/app/link-light.svg'
+import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg'
+import MoonIcon from 'assets/svg/app/moon.svg'
+import SunIcon from 'assets/svg/app/sun.svg'
+import KwentaYellowIcon from 'assets/svg/brand/logo-yellow.svg'
+import FullScreenModal from 'components/FullScreenModal'
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import SegmentedControl from 'components/SegmentedControl'
+import ROUTES from 'constants/routes'
+import Links from 'sections/dashboard/Links'
+import Logo from 'sections/shared/Layout/Logo'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { setTheme } from 'state/preferences/reducer'
+import { selectCurrentTheme } from 'state/preferences/selectors'
 
-import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants';
+import { HOMEPAGE_MENU_LINKS, MOBILE_NAV_LINKS } from '../constants'
 
-import { MenuButton } from './menu';
-import MobileSubMenu from './MobileSubMenu';
+import { MenuButton } from './menu'
+import MobileSubMenu from './MobileSubMenu'
 
 type MobileMenuModalProps = {
-	onDismiss(): void;
-};
+	onDismiss(): void
+}
 
 export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
-	const { t } = useTranslation();
-	const router = useRouter();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const router = useRouter()
+	const dispatch = useAppDispatch()
 
 	const menuLinks =
-		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS;
+		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MOBILE_NAV_LINKS
 
-	const currentTheme = useAppSelector(selectCurrentTheme);
+	const currentTheme = useAppSelector(selectCurrentTheme)
 
 	const showStatsPage = useCallback(() => {
-		router.push(ROUTES.Stats.Home);
-		onDismiss();
-	}, [router, onDismiss]);
+		router.push(ROUTES.Stats.Home)
+		onDismiss()
+	}, [router, onDismiss])
 
 	const toggleTheme = useCallback(
 		(index: number) => {
-			dispatch(setTheme(index === 0 ? 'light' : 'dark'));
+			dispatch(setTheme(index === 0 ? 'light' : 'dark'))
 		},
 		[dispatch]
-	);
+	)
 
-	const selectedThemeIndex = useMemo(() => (currentTheme === 'light' ? 0 : 1), [currentTheme]);
+	const selectedThemeIndex = useMemo(() => (currentTheme === 'light' ? 0 : 1), [currentTheme])
 
 	return (
 		<StyledFullScreenModal isOpen>
@@ -113,8 +113,8 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 				</div>
 			</Container>
 		</StyledFullScreenModal>
-	);
-};
+	)
+}
 
 const StyledFullScreenModal = styled(FullScreenModal)`
 	top: 0;
@@ -128,7 +128,7 @@ const StyledFullScreenModal = styled(FullScreenModal)`
 			height: 100%;
 		}
 	}
-`;
+`
 
 const Container = styled.div`
 	height: 100%;
@@ -137,17 +137,17 @@ const Container = styled.div`
 	flex-direction: column;
 	justify-content: space-between;
 	overflow-y: scroll;
-`;
+`
 
 const LogoContainer = styled.div`
 	margin-bottom: 50px;
-`;
+`
 
 const MetaRow = styled(FlexDivRow)`
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 50px;
-`;
+`
 
 const ControlContainer = styled.div`
 	width: 75px;
@@ -161,6 +161,6 @@ const ControlContainer = styled.div`
 		max-width: 35px;
 		padding: 0;
 	}
-`;
+`
 
-export default MobileMenuModal;
+export default MobileMenuModal

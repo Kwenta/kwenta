@@ -1,15 +1,15 @@
-import { FuturesAccountType, FuturesMarketAsset } from '@kwenta/sdk/types';
+import { FuturesAccountType, FuturesMarketAsset } from '@kwenta/sdk/types'
 
-import { EXTERNAL_LINKS } from './links';
+import { EXTERNAL_LINKS } from './links'
 
-const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS;
+const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS
 
 const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
-	prettyURLsDisabled ? `${baseURL}?${queryParam}=${path}` : `${baseURL}/${path}`;
+	prettyURLsDisabled ? `${baseURL}?${queryParam}=${path}` : `${baseURL}/${path}`
 
 export const formatUrl = (route: string, params: Record<string, string>) => {
-	return route + '?' + new URLSearchParams(params);
-};
+	return route + '?' + new URLSearchParams(params)
+}
 
 export const ROUTES = {
 	Home: {
@@ -61,7 +61,7 @@ export const ROUTES = {
 	Earn: {
 		Home: '/earn',
 	},
-};
+}
 
 export const SUB_MENUS = {
 	[ROUTES.Dashboard.Overview]: [
@@ -73,10 +73,10 @@ export const SUB_MENUS = {
 		{ label: 'Overview', link: EXTERNAL_LINKS.Docs.Governance },
 		{ label: 'KIPs', link: EXTERNAL_LINKS.Governance.Kips },
 	],
-};
+}
 
 export const setLastVisited = (baseCurrencyPair: string, accountType: FuturesAccountType): void => {
-	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair, accountType));
-};
+	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair, accountType))
+}
 
-export default ROUTES;
+export default ROUTES

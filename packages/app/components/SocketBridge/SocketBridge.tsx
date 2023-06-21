@@ -1,28 +1,28 @@
-import { Bridge } from '@socket.tech/plugin';
-import { useCallback } from 'react';
-import styled, { useTheme } from 'styled-components';
+import { Bridge } from '@socket.tech/plugin'
+import { useCallback } from 'react'
+import styled, { useTheme } from 'styled-components'
 
-import ArrowIcon from 'assets/svg/app/arrow-down.svg';
-import Connector from 'containers/Connector';
-import { chain } from 'containers/Connector/config';
-import { fetchBalances } from 'state/balances/actions';
-import { selectFuturesType } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import ArrowIcon from 'assets/svg/app/arrow-down.svg'
+import Connector from 'containers/Connector'
+import { chain } from 'containers/Connector/config'
+import { fetchBalances } from 'state/balances/actions'
+import { selectFuturesType } from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
 	customizeSocket,
 	socketDefaultChains,
 	SOCKET_DEST_TOKEN_ADDRESS,
 	SOCKET_SOURCE_TOKEN_ADDRESS,
-} from 'utils/socket';
+} from 'utils/socket'
 
 const SocketBridge = () => {
-	const { activeChain, signer } = Connector.useContainer();
-	const dispatch = useAppDispatch();
-	const customize = customizeSocket(useTheme());
-	const accountType = useAppSelector(selectFuturesType);
+	const { activeChain, signer } = Connector.useContainer()
+	const dispatch = useAppDispatch()
+	const customize = customizeSocket(useTheme())
+	const accountType = useAppSelector(selectFuturesType)
 	const onBridgeSuccess = useCallback(() => {
-		dispatch(fetchBalances());
-	}, [dispatch]);
+		dispatch(fetchBalances())
+	}, [dispatch])
 
 	return (
 		<BridgeContainer>
@@ -48,8 +48,8 @@ const SocketBridge = () => {
 				</StyledDiv>
 			)}
 		</BridgeContainer>
-	);
-};
+	)
+}
 
 export const BridgeContainer = styled.div`
 	p:empty {
@@ -72,7 +72,7 @@ export const BridgeContainer = styled.div`
 		font-size: 17px;
 		font-family: ${(props) => props.theme.fonts.regular};
 	}
-`;
+`
 
 export const StyledDiv = styled.div`
 	svg {
@@ -84,6 +84,6 @@ export const StyledDiv = styled.div`
 	}
 	text-align: center;
 	padding-top: 20px;
-`;
+`
 
-export default SocketBridge;
+export default SocketBridge

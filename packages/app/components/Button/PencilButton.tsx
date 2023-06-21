@@ -1,21 +1,21 @@
-import styled, { useTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components'
 
-import PencilIcon from 'assets/svg/app/pencil.svg';
+import PencilIcon from 'assets/svg/app/pencil.svg'
 
 export type PencilButtonProps = {
-	width?: number;
-	height?: number;
-	style?: React.CSSProperties;
-	fill?: string;
-	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
-};
+	width?: number
+	height?: number
+	style?: React.CSSProperties
+	fill?: string
+	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined
+}
 
 const PencilButton: React.FC<PencilButtonProps> = ({ ...props }) => {
-	const theme = useTheme();
+	const theme = useTheme()
 	return (
 		<PencilIconWithHover fill={theme.colors.selectedTheme.newTheme.pencilIcon.color} {...props} />
-	);
-};
+	)
+}
 
 const PencilIconWithHover = styled(PencilIcon)`
 	cursor: pointer;
@@ -24,6 +24,6 @@ const PencilIconWithHover = styled(PencilIcon)`
 	&:hover {
 		fill: ${({ theme }) => theme.colors.selectedTheme.newTheme.pencilIcon.hover.color};
 	}
-`;
+`
 
-export default PencilButton;
+export default PencilButton

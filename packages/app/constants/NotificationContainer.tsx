@@ -1,16 +1,16 @@
-import { useState, useEffect, memo } from 'react';
-import { createPortal } from 'react-dom';
-import { ToastContainer } from 'react-toastify';
-import styled from 'styled-components';
-import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect, memo } from 'react'
+import { createPortal } from 'react-dom'
+import { ToastContainer } from 'react-toastify'
+import styled from 'styled-components'
+import 'react-toastify/dist/ReactToastify.css'
 
 const NotificationContainer = memo(() => {
-	const [mounted, setMounted] = useState(false);
+	const [mounted, setMounted] = useState(false)
 
 	useEffect(() => {
-		setMounted(true);
-		return () => setMounted(false);
-	}, []);
+		setMounted(true)
+		return () => setMounted(false)
+	}, [])
 
 	return mounted
 		? createPortal(
@@ -23,8 +23,8 @@ const NotificationContainer = memo(() => {
 				/>,
 				document.body
 		  )
-		: null;
-});
+		: null
+})
 
 const StyledToastContainer = styled(ToastContainer)`
 	.Toastify__toast-container {
@@ -47,6 +47,6 @@ const StyledToastContainer = styled(ToastContainer)`
 	.Toastify__close-button > svg {
 		fill: white;
 	}
-`;
+`
 
-export default NotificationContainer;
+export default NotificationContainer

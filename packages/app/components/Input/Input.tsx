@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
 export const inputCSS = css`
 	width: 100%;
@@ -16,10 +16,10 @@ export const inputCSS = css`
 	::placeholder {
 		color: ${(props) => props.theme.colors.selectedTheme.input.placeholder};
 	}
-`;
+`
 
 export const Input = styled.input`
 	${inputCSS};
-`;
+`
 
-export default Input;
+export default Input

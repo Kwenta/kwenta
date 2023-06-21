@@ -1,16 +1,16 @@
-import { PositionSide } from '@kwenta/sdk/types';
-import { wei } from '@synthetixio/wei';
-import React from 'react';
+import { PositionSide } from '@kwenta/sdk/types'
+import { wei } from '@synthetixio/wei'
+import React from 'react'
 
-import StatWithContainer from './StatWithContainer';
+import StatWithContainer from './StatWithContainer'
 
 type PnLsProps = {
-	stopLoss: string;
-	exitPrice: string;
-	entryPrice: string;
-	amountInAsset: string;
-	leverageSide: PositionSide;
-};
+	stopLoss: string
+	exitPrice: string
+	entryPrice: string
+	amountInAsset: string
+	leverageSide: PositionSide
+}
 
 const PnLs: React.FC<PnLsProps> = ({
 	stopLoss,
@@ -21,13 +21,13 @@ const PnLs: React.FC<PnLsProps> = ({
 }) => {
 	let rateOfReturn: any = 0,
 		profit: any = 0,
-		loss: any = 0;
+		loss: any = 0
 
 	const labelsWithStats: any = {
 		'Exit PnL': profit,
 		'Stop PnL': loss,
 		'R:R': rateOfReturn,
-	};
+	}
 
 	// Calculate values for each stat
 	if (leverageSide === 'long') {
@@ -36,7 +36,7 @@ const PnLs: React.FC<PnLsProps> = ({
 				.sub(entryPrice)
 				.mul(amountInAsset)
 				.toNumber()
-				.toFixed(2);
+				.toFixed(2)
 		}
 
 		if (entryPrice !== '' && stopLoss !== '' && amountInAsset !== '') {
@@ -44,7 +44,7 @@ const PnLs: React.FC<PnLsProps> = ({
 				.sub(entryPrice)
 				.mul(amountInAsset)
 				.toNumber()
-				.toFixed(2);
+				.toFixed(2)
 		}
 	} else {
 		if (entryPrice !== '' && exitPrice !== '' && amountInAsset !== '') {
@@ -52,7 +52,7 @@ const PnLs: React.FC<PnLsProps> = ({
 				.sub(exitPrice)
 				.mul(amountInAsset)
 				.toNumber()
-				.toFixed(2);
+				.toFixed(2)
 		}
 
 		if (entryPrice !== '' && stopLoss !== '' && amountInAsset !== '') {
@@ -60,7 +60,7 @@ const PnLs: React.FC<PnLsProps> = ({
 				.sub(stopLoss)
 				.mul(amountInAsset)
 				.toNumber()
-				.toFixed(2);
+				.toFixed(2)
 		}
 	}
 
@@ -68,7 +68,7 @@ const PnLs: React.FC<PnLsProps> = ({
 		labelsWithStats['R:R'] = wei(labelsWithStats['Exit PnL'])
 			.div(wei(labelsWithStats['Stop PnL']).abs())
 			.toNumber()
-			.toFixed(2);
+			.toFixed(2)
 	}
 
 	return (
@@ -77,7 +77,7 @@ const PnLs: React.FC<PnLsProps> = ({
 				<StatWithContainer key={label} label={label} stat={labelsWithStats[label]} type={index} />
 			))}
 		</>
-	);
-};
+	)
+}
 
-export default PnLs;
+export default PnLs

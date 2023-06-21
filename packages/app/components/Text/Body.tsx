@@ -1,17 +1,17 @@
-import { ComponentType, memo } from 'react';
-import styled, { css } from 'styled-components';
+import { ComponentType, memo } from 'react'
+import styled, { css } from 'styled-components'
 
 export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
-	size?: 'xsmall' | 'small' | 'medium' | 'large';
-	weight?: 'regular' | 'bold' | 'black';
-	color?: 'primary' | 'secondary' | 'tertiary' | 'positive' | 'negative' | 'preview';
-	className?: string;
-	fontSize?: number;
-	mono?: boolean;
-	capitalized?: boolean;
-	inline?: boolean;
-	as?: keyof JSX.IntrinsicElements | ComponentType<any>;
-};
+	size?: 'xsmall' | 'small' | 'medium' | 'large'
+	weight?: 'regular' | 'bold' | 'black'
+	color?: 'primary' | 'secondary' | 'tertiary' | 'positive' | 'negative' | 'preview'
+	className?: string
+	fontSize?: number
+	mono?: boolean
+	capitalized?: boolean
+	inline?: boolean
+	as?: keyof JSX.IntrinsicElements | ComponentType<any>
+}
 
 const Body: React.FC<BodyProps> = memo(
 	({
@@ -35,22 +35,22 @@ const Body: React.FC<BodyProps> = memo(
 			{...props}
 		/>
 	)
-);
+)
 
-const sizeMap = { xsmall: 10, small: 12, medium: 13, large: 15 } as const;
+const sizeMap = { xsmall: 10, small: 12, medium: 13, large: 15 } as const
 
 const getFontFamily = (weight: NonNullable<BodyProps['weight']>, mono?: boolean) => {
-	return mono ? (weight !== 'regular' ? 'monoBold' : 'mono') : weight;
-};
+	return mono ? (weight !== 'regular' ? 'monoBold' : 'mono') : weight
+}
 
 const StyledBody = styled.p<{
-	$size: NonNullable<BodyProps['size']>;
-	$weight: NonNullable<BodyProps['weight']>;
-	$color: NonNullable<BodyProps['color']>;
-	$fontSize?: number;
-	$mono?: boolean;
-	$capitalized?: boolean;
-	$inline?: boolean;
+	$size: NonNullable<BodyProps['size']>
+	$weight: NonNullable<BodyProps['weight']>
+	$color: NonNullable<BodyProps['color']>
+	$fontSize?: number
+	$mono?: boolean
+	$capitalized?: boolean
+	$inline?: boolean
 }>`
 	line-height: 1.2;
 	margin: 0;
@@ -68,6 +68,6 @@ const StyledBody = styled.p<{
 			display: inline;
 		`}
 	`}
-`;
+`
 
-export default Body;
+export default Body

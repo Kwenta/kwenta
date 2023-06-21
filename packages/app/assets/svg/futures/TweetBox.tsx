@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import { FC } from 'react'
 
 type TweetBoxProps = {
-	address: string;
-};
+	address: string
+}
 
 const TweetBox: FC<TweetBoxProps> = ({ address }) => {
 	return (
@@ -83,7 +83,7 @@ const TweetBox: FC<TweetBoxProps> = ({ address }) => {
 				</foreignObject>
 			</switch>
 		</svg>
-	);
-};
+	)
+}
 
-export default TweetBox;
+export default TweetBox

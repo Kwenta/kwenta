@@ -1,25 +1,25 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { FuturesMarketAsset, FuturesOrderType, PositionSide } from '@kwenta/sdk/types';
-import { getDisplayAsset, OrderNameByType, formatCurrency } from '@kwenta/sdk/utils';
-import Wei from '@synthetixio/wei';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesMarketAsset, FuturesOrderType, PositionSide } from '@kwenta/sdk/types'
+import { getDisplayAsset, OrderNameByType, formatCurrency } from '@kwenta/sdk/utils'
+import Wei from '@synthetixio/wei'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
-import { FlexDivRowCentered } from 'components/layout/flex';
-import Spacer from 'components/Spacer';
-import { NumericValue } from 'components/Text';
-import { NumberBody } from 'components/Text/NumericValue';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import Spacer from 'components/Spacer'
+import { NumericValue } from 'components/Text'
+import { NumberBody } from 'components/Text/NumericValue'
 
-import PositionType from '../PositionType';
+import PositionType from '../PositionType'
 
 type Props = {
-	marketAsset: FuturesMarketAsset;
-	nativeSizeDelta: Wei;
-	leverageSide: PositionSide;
-	orderType: FuturesOrderType;
-	leverage: Wei;
-};
+	marketAsset: FuturesMarketAsset
+	nativeSizeDelta: Wei
+	leverageSide: PositionSide
+	orderType: FuturesOrderType
+	leverage: Wei
+}
 
 export default function TradeConfirmationSummary({
 	marketAsset,
@@ -28,7 +28,7 @@ export default function TradeConfirmationSummary({
 	orderType,
 	leverage,
 }: Props) {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<OrderSummaryLine>
@@ -63,7 +63,7 @@ export default function TradeConfirmationSummary({
 				/>
 			</InfoBoxContainer>
 		</OrderSummaryLine>
-	);
+	)
 }
 
 const OrderSummaryLine = styled.div`
@@ -71,4 +71,4 @@ const OrderSummaryLine = styled.div`
 	flex-direction: row;
 	justify-content: space-between;
 	gap: 12px;
-`;
+`

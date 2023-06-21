@@ -1,11 +1,11 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next'
 
-import { SplitContainer } from 'components/layout/grid';
+import { SplitContainer } from 'components/layout/grid'
 
-import RedeemInputCard from './InputCards/RedeemInputCard';
+import RedeemInputCard from './InputCards/RedeemInputCard'
 
 const RedemptionTab = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<SplitContainer>
@@ -15,7 +15,7 @@ const RedemptionTab = () => {
 				isVKwenta={false}
 			/>
 		</SplitContainer>
-	);
-};
+	)
+}
 
-export default RedemptionTab;
+export default RedemptionTab

@@ -1,28 +1,28 @@
-import { formatPercent, truncateAddress } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import { FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import { formatPercent, truncateAddress } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import { FC, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CellProps } from 'react-table'
+import styled from 'styled-components'
 
-import Currency from 'components/Currency';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Table, { TableHeader, TableNoResults } from 'components/Table';
-import { CompetitionRound, PIN, Tier } from 'constants/competition';
-import Connector from 'containers/Connector';
-import useENSs from 'hooks/useENSs';
-import useGetFile from 'queries/files/useGetFile';
-import { AccountStat } from 'queries/futures/types';
-import { StyledTrader } from 'sections/leaderboard/trader';
-import { getMedal, getCompetitionDataLocation } from 'utils/competition';
+import Currency from 'components/Currency'
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
+import { CompetitionRound, PIN, Tier } from 'constants/competition'
+import Connector from 'containers/Connector'
+import useENSs from 'hooks/useENSs'
+import useGetFile from 'queries/files/useGetFile'
+import { AccountStat } from 'queries/futures/types'
+import { StyledTrader } from 'sections/leaderboard/trader'
+import { getMedal, getCompetitionDataLocation } from 'utils/competition'
 
 type CompetitionProps = {
-	round: CompetitionRound;
-	activeTier: Tier;
-	compact?: boolean;
-	onClickTrader: (trader: string) => void;
-	searchTerm?: string | undefined;
-};
+	round: CompetitionRound
+	activeTier: Tier
+	compact?: boolean
+	onClickTrader: (trader: string) => void
+	searchTerm?: string | undefined
+}
 
 const Competition: FC<CompetitionProps> = ({
 	round,
@@ -31,28 +31,26 @@ const Competition: FC<CompetitionProps> = ({
 	onClickTrader,
 	searchTerm,
 }: CompetitionProps) => {
-	const { t } = useTranslation();
-	const { walletAddress } = Connector.useContainer();
-	const competitionQuery = useGetFile(getCompetitionDataLocation(round));
+	const { t } = useTranslation()
+	const { walletAddress } = Connector.useContainer()
+	const competitionQuery = useGetFile(getCompetitionDataLocation(round))
 
 	const walletTier = useMemo(() => {
-		const competitionData = competitionQuery?.data ?? [];
-		const walletStat = competitionData.find(
-			({ account }: AccountStat) => account === walletAddress
-		);
-		return walletStat ? walletStat.tier : null;
-	}, [walletAddress, competitionQuery]);
+		const competitionData = competitionQuery?.data ?? []
+		const walletStat = competitionData.find(({ account }: AccountStat) => account === walletAddress)
+		return walletStat ? walletStat.tier : null
+	}, [walletAddress, competitionQuery])
 
 	const traders = useMemo(
 		() => competitionQuery?.data?.map((stat: AccountStat) => stat.account) ?? [],
 		[competitionQuery?.data]
-	);
+	)
 
-	const ensInfoQuery = useENSs(traders);
-	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery]);
+	const ensInfoQuery = useENSs(traders)
+	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery])
 
 	let data = useMemo(() => {
-		const competitionData = competitionQuery?.data ?? [];
+		const competitionData = competitionQuery?.data ?? []
 
 		const cleanCompetitionData: AccountStat[] = competitionData
 			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
@@ -68,24 +66,24 @@ const Competition: FC<CompetitionProps> = ({
 					pnlPct: `(${formatPercent(trader?.pnl_pct)})`,
 					totalVolume: trader.volume,
 					totalTrades: trader.trades,
-				};
+				}
 			})
 			.filter((trader: { tier: string }) => {
-				return compact && !!walletTier ? trader.tier === walletTier : trader.tier === activeTier;
+				return compact && !!walletTier ? trader.tier === walletTier : trader.tier === activeTier
 			})
 			.filter((i: { trader: string; traderEns: string }) =>
 				searchTerm?.length
 					? i.trader.toLowerCase().includes(searchTerm) ||
 					  i.traderEns?.toLowerCase().includes(searchTerm)
 					: true
-			);
+			)
 
 		const pinRow = cleanCompetitionData
 			.filter((trader) => trader.account.toLowerCase() === walletAddress?.toLowerCase())
-			.map((trader) => ({ ...trader, rankText: `${trader.rank}${PIN}` }));
+			.map((trader) => ({ ...trader, rankText: `${trader.rank}${PIN}` }))
 
-		return [...pinRow, ...cleanCompetitionData];
-	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact]);
+		return [...pinRow, ...cleanCompetitionData]
+	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact])
 
 	return (
 		<>
@@ -133,7 +131,7 @@ const Competition: FC<CompetitionProps> = ({
 												</StyledTrader>
 												{getMedal(cellProps.row.original.rank)}
 											</StyledOrderType>
-										);
+										)
 									},
 									width: compact ? 180 : 120,
 								},
@@ -236,29 +234,29 @@ const Competition: FC<CompetitionProps> = ({
 				/>
 			</MobileOrTabletView>
 		</>
-	);
-};
+	)
+}
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
-`;
+`
 
 const TableTitle = styled.div`
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
-`;
+`
 
 const TitleText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const PnlContainer = styled.div<{ direction: 'row' | 'column' }>`
 	display: flex;
 	flex-direction: ${(props) => props.direction};
 	align-items: center;
-`;
+`
 
 const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
@@ -269,7 +267,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 			: props.price < 0
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.button.text.primary};
-`;
+`
 
 const StyledValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
@@ -281,12 +279,12 @@ const StyledValue = styled.div`
 			: props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;
-`;
+`
 
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	display: flex;
 	align-items: center;
-`;
+`
 
-export default Competition;
+export default Competition

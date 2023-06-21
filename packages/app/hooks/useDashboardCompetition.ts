@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 
-import { COMPETITION_DATES } from 'constants/competition';
-import { PERIOD_IN_SECONDS } from '@kwenta/sdk/constants';
-import { calculatedTimeDifference } from '@kwenta/sdk/utils';
+import { COMPETITION_DATES } from 'constants/competition'
+import { PERIOD_IN_SECONDS } from '@kwenta/sdk/constants'
+import { calculatedTimeDifference } from '@kwenta/sdk/utils'
 
-type TCompetitionSate = 'comingSoon' | 'comingToStart' | 'live' | 'comingToEnd' | 'ended';
+type TCompetitionSate = 'comingSoon' | 'comingToStart' | 'live' | 'comingToEnd' | 'ended'
 
 /**
  * @example
@@ -30,39 +30,39 @@ type TCompetitionSate = 'comingSoon' | 'comingToStart' | 'live' | 'comingToEnd' 
  * ```
  */
 export const useDashboardCompetition = () => {
-	const [state, setState] = useState<TCompetitionSate>('comingSoon');
-	const [difference, setDifference] = useState(0);
+	const [state, setState] = useState<TCompetitionSate>('comingSoon')
+	const [difference, setDifference] = useState(0)
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			const now = new Date();
-			const start = new Date(COMPETITION_DATES.START_DATE);
-			const end = new Date(COMPETITION_DATES.END_DATE);
+			const now = new Date()
+			const start = new Date(COMPETITION_DATES.START_DATE)
+			const end = new Date(COMPETITION_DATES.END_DATE)
 
-			let _difference = calculatedTimeDifference(start, now);
+			let _difference = calculatedTimeDifference(start, now)
 			if (_difference > 0) {
 				if (_difference < PERIOD_IN_SECONDS.ONE_DAY) {
-					setState('comingToStart');
-					setDifference(_difference);
+					setState('comingToStart')
+					setDifference(_difference)
 				} else {
-					setState('comingSoon');
+					setState('comingSoon')
 				}
 			} else {
-				_difference = calculatedTimeDifference(end, now);
+				_difference = calculatedTimeDifference(end, now)
 				if (_difference > 0) {
 					if (_difference < PERIOD_IN_SECONDS.ONE_DAY) {
-						setState('comingToEnd');
-						setDifference(_difference);
+						setState('comingToEnd')
+						setDifference(_difference)
 					} else {
-						setState('live');
+						setState('live')
 					}
 				} else {
-					setState('ended');
+					setState('ended')
 				}
 			}
-		}, 1000);
-		return () => clearInterval(interval);
-	}, []);
+		}, 1000)
+		return () => clearInterval(interval)
+	}, [])
 
-	return { state, difference };
-};
+	return { state, difference }
+}

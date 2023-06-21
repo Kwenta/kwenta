@@ -1,44 +1,44 @@
-import Wei, { wei } from '@synthetixio/wei';
-import { FC, memo, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import Wei, { wei } from '@synthetixio/wei'
+import { FC, memo, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import Button from 'components/Button';
-import NumericInput from 'components/Input/NumericInput';
-import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex';
-import Loader from 'components/Loader';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { formatDollars } from '@kwenta/sdk/utils';
-import { CapitalizedText, numericValueCSS } from 'styles/common';
+import Button from 'components/Button'
+import NumericInput from 'components/Input/NumericInput'
+import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
+import Loader from 'components/Loader'
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency'
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatDollars } from '@kwenta/sdk/utils'
+import { CapitalizedText, numericValueCSS } from 'styles/common'
 
 type CurrencyCardInputProps = {
-	label: string;
-	isBase: boolean;
-	disabled?: boolean;
-	amount: string;
-	onAmountChange(value: string): void;
-	hasWalletBalance: boolean;
-	onBalanceClick(): void;
-	isLoading: boolean;
-	disableInput: boolean;
-	currencyKeySelected: boolean;
-	priceRate?: Wei | number | null;
-};
+	label: string
+	isBase: boolean
+	disabled?: boolean
+	amount: string
+	onAmountChange(value: string): void
+	hasWalletBalance: boolean
+	onBalanceClick(): void
+	isLoading: boolean
+	disableInput: boolean
+	currencyKeySelected: boolean
+	priceRate?: Wei | number | null
+}
 
 const CurrencyCardInputLabel: FC<{ label: string }> = memo(({ label }) => {
-	return <InputLabel data-testid="destination">{label}</InputLabel>;
-});
+	return <InputLabel data-testid="destination">{label}</InputLabel>
+})
 
 const CurrencyCardInputMaxButton: FC<{ onClick?: () => void }> = memo(({ onClick }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<MaxButton onClick={onClick} noOutline>
 			<CapitalizedText>{t('exchange.currency-card.max-button')}</CapitalizedText>
 		</MaxButton>
-	);
-});
+	)
+})
 
 const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 	({
@@ -54,7 +54,7 @@ const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 		currencyKeySelected,
 		priceRate,
 	}) => {
-		const { t } = useTranslation();
+		const { t } = useTranslation()
 
 		return (
 			<InputContainer>
@@ -65,7 +65,7 @@ const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 							disabled={disabled}
 							value={amount}
 							onChange={(_, value) => {
-								onAmountChange(value);
+								onAmountChange(value)
 							}}
 							placeholder={t('exchange.currency-card.amount-placeholder')}
 							data-testid="currency-amount"
@@ -84,34 +84,34 @@ const CurrencyCardInput: FC<CurrencyCardInputProps> = memo(
 					{isLoading && <StyledLoader width="24px" height="24px" />}
 				</CurrencyAmountContainer>
 			</InputContainer>
-		);
+		)
 	}
-);
+)
 
 const CurrencyCardInputAmountValue = memo(({ currencyKeySelected, amount, priceRate }: any) => {
-	const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency();
+	const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency()
 
 	const tradeAmount = useMemo(() => {
-		const amountBN = amount === '' ? ZERO_WEI : wei(amount);
-		let current = priceRate ? amountBN.mul(priceRate) : null;
+		const amountBN = amount === '' ? ZERO_WEI : wei(amount)
+		let current = priceRate ? amountBN.mul(priceRate) : null
 
 		if (!!selectPriceCurrencyRate && !!current) {
-			current = getPriceAtCurrentRate(current);
+			current = getPriceAtCurrentRate(current)
 		}
 
-		return current;
-	}, [priceRate, selectPriceCurrencyRate, getPriceAtCurrentRate, amount]);
+		return current
+	}, [priceRate, selectPriceCurrencyRate, getPriceAtCurrentRate, amount])
 
 	return (
 		<CurrencyAmountValue data-testid="amount-value">
 			{currencyKeySelected && !!tradeAmount ? formatDollars(tradeAmount, { sign: '$' }) : null}
 		</CurrencyAmountValue>
-	);
-});
+	)
+})
 
 const InputContainer = styled(FlexDivCol)`
 	row-gap: 21px;
-`;
+`
 
 const InputLabel = styled.div`
 	text-transform: capitalize;
@@ -121,7 +121,7 @@ const InputLabel = styled.div`
 	line-height: 0.75em;
 	padding-top: 6px;
 	margin-left: 16px;
-`;
+`
 
 const MaxButton = styled(Button).attrs({ mono: true })`
 	width: 40px;
@@ -129,7 +129,7 @@ const MaxButton = styled(Button).attrs({ mono: true })`
 	font-size: 11px;
 	padding: 0 10px;
 	margin-left: 15px;
-`;
+`
 
 const CurrencyAmount = styled(NumericInput)`
 	border: 0;
@@ -145,7 +145,7 @@ const CurrencyAmount = styled(NumericInput)`
 		height: 30px;
 		width: 100%;
 	}
-`;
+`
 
 const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
 	background: ${(props) => props.theme.colors.selectedTheme.input.background};
@@ -162,11 +162,11 @@ const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
 		css`
 			pointer-events: none;
 		`}
-`;
+`
 
 const StyledLoader = styled(Loader)`
 	left: 90%;
-`;
+`
 
 const CurrencyAmountValue = styled.div`
 	${numericValueCSS};
@@ -176,6 +176,6 @@ const CurrencyAmountValue = styled.div`
 	width: 150px;
 	overflow: hidden;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
+`
 
-export default CurrencyCardInput;
+export default CurrencyCardInput

@@ -1,9 +1,9 @@
-import { FuturesMarket } from '@kwenta/sdk/types';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { providers } from 'ethers';
+import { FuturesMarket } from '@kwenta/sdk/types'
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import { providers } from 'ethers'
 
-import { ThunkConfig } from 'state/types';
-import { serializeMarkets } from 'utils/futures';
+import { ThunkConfig } from 'state/types'
+import { serializeMarkets } from 'utils/futures'
 
 export const fetchOptimismMarkets = createAsyncThunk<
 	{ markets: FuturesMarket<string>[] },
@@ -11,7 +11,7 @@ export const fetchOptimismMarkets = createAsyncThunk<
 	ThunkConfig
 >('home/fetchOptimismMarkets', async (mainnetL2Provider, { extra: { sdk } }) => {
 	// For the home page we always fetch OP mainnet markets
-	const markets = await sdk.futures.getMarkets({ provider: mainnetL2Provider, networkId: 10 });
-	const serializedMarkets = serializeMarkets(markets);
-	return { markets: serializedMarkets };
-});
+	const markets = await sdk.futures.getMarkets({ provider: mainnetL2Provider, networkId: 10 })
+	const serializedMarkets = serializeMarkets(markets)
+	return { markets: serializedMarkets }
+})

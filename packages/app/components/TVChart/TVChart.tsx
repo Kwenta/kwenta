@@ -1,45 +1,45 @@
-import { NetworkId, ConditionalOrder, PricesListener } from '@kwenta/sdk/types';
-import { formatOrderDisplayType, formatNumber } from '@kwenta/sdk/utils';
-import { useRouter } from 'next/router';
-import { useRef, useContext, useEffect, useCallback, useMemo } from 'react';
-import { ThemeContext } from 'styled-components';
+import { NetworkId, ConditionalOrder, PricesListener } from '@kwenta/sdk/types'
+import { formatOrderDisplayType, formatNumber } from '@kwenta/sdk/utils'
+import { useRouter } from 'next/router'
+import { useRef, useContext, useEffect, useCallback, useMemo } from 'react'
+import { ThemeContext } from 'styled-components'
 
-import Connector from 'containers/Connector';
-import { chain } from 'containers/Connector/config';
-import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
-import { sdk } from 'state/config';
-import { useAppSelector } from 'state/hooks';
-import { selectCurrentTheme } from 'state/preferences/selectors';
-import darkTheme from 'styles/theme/colors/dark';
+import Connector from 'containers/Connector'
+import { chain } from 'containers/Connector/config'
+import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles'
+import { sdk } from 'state/config'
+import { useAppSelector } from 'state/hooks'
+import { selectCurrentTheme } from 'state/preferences/selectors'
+import darkTheme from 'styles/theme/colors/dark'
 
 import {
 	IChartingLibraryWidget,
 	IPositionLineAdapter,
 	widget,
-} from '../../public/static/charting_library';
+} from '../../public/static/charting_library'
 
-import { DEFAULT_RESOLUTION } from './constants';
-import DataFeedFactory from './DataFeed';
-import { ChartPosition } from './types';
+import { DEFAULT_RESOLUTION } from './constants'
+import DataFeedFactory from './DataFeed'
+import { ChartPosition } from './types'
 
 export type ChartProps = {
-	activePosition?: ChartPosition | null;
-	potentialTrade?: ChartPosition | null;
-	openOrders: ConditionalOrder[];
-	showOrderLines: boolean;
-	onChartReady?: () => void;
-	onToggleShowOrderLines?: () => void;
-};
+	activePosition?: ChartPosition | null
+	potentialTrade?: ChartPosition | null
+	openOrders: ConditionalOrder[]
+	showOrderLines: boolean
+	onChartReady?: () => void
+	onToggleShowOrderLines?: () => void
+}
 
 export type Props = ChartProps & {
-	interval: string;
-	containerId: string;
-	libraryPath: string;
-	fullscreen: boolean;
-	autosize: boolean;
-	studiesOverrides: Record<string, any>;
-	overrides: Record<string, string>;
-};
+	interval: string
+	containerId: string
+	libraryPath: string
+	fullscreen: boolean
+	autosize: boolean
+	studiesOverrides: Record<string, any>
+	overrides: Record<string, string>
+}
 
 export function TVChart({
 	interval = DEFAULT_RESOLUTION,
@@ -54,59 +54,59 @@ export function TVChart({
 	showOrderLines,
 	onToggleShowOrderLines,
 	onChartReady = () => {
-		return;
+		return
 	},
 }: Props) {
-	const currentTheme = useAppSelector(selectCurrentTheme);
-	const _widget = useRef<IChartingLibraryWidget | null>(null);
-	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
-	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
-	const _oderLineRefs = useRef<IPositionLineAdapter[]>([]);
-	const _toggleLinesButton = useRef<HTMLElement | null>(null);
-	const _toggleListener = useRef<(() => void) | null>(null);
-	const _priceListener = useRef<PricesListener | undefined>();
+	const currentTheme = useAppSelector(selectCurrentTheme)
+	const _widget = useRef<IChartingLibraryWidget | null>(null)
+	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null)
+	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null)
+	const _oderLineRefs = useRef<IPositionLineAdapter[]>([])
+	const _toggleLinesButton = useRef<HTMLElement | null>(null)
+	const _toggleListener = useRef<(() => void) | null>(null)
+	const _priceListener = useRef<PricesListener | undefined>()
 
-	const router = useRouter();
+	const router = useRouter()
 
-	const { colors } = useContext(ThemeContext);
-	const { network } = Connector.useContainer();
+	const { colors } = useContext(ThemeContext)
+	const { network } = Connector.useContainer()
 
 	const DEFAULT_OVERRIDES = {
 		'paneProperties.background': colors.selectedTheme.newTheme.containers.primary.background,
 		'chartProperties.background': colors.selectedTheme.newTheme.containers.primary.background,
 		'paneProperties.backgroundType': 'solid',
-	};
+	}
 
 	const [marketAsset, marketAssetLoaded] = useMemo(() => {
-		return router.query.asset ? [router.query.asset, true] : [null, false];
-	}, [router.query.asset]);
+		return router.query.asset ? [router.query.asset, true] : [null, false]
+	}, [router.query.asset])
 
 	const clearOrderLines = () => {
 		_oderLineRefs.current?.forEach((ref) => {
-			ref?.remove();
-		});
-		_oderLineRefs.current = [];
-	};
+			ref?.remove()
+		})
+		_oderLineRefs.current = []
+	}
 
 	useEffect(() => {
 		return () => {
 			if (_priceListener.current) {
-				sdk.prices.removePricesListener(_priceListener.current);
+				sdk.prices.removePricesListener(_priceListener.current)
 			}
-		};
-	}, []);
+		}
+	}, [])
 
 	const renderOrderLines = () => {
 		_widget.current?.onChartReady(() => {
 			_widget.current?.chart().dataReady(() => {
-				clearOrderLines();
+				clearOrderLines()
 				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
 					if (order.targetPrice) {
 						const color = order.isSlTp
 							? colors.selectedTheme.chartLine.default
 							: order.side === 'long'
 							? colors.selectedTheme.chartLine.long
-							: colors.selectedTheme.chartLine.short;
+							: colors.selectedTheme.chartLine.short
 
 						const orderLine = _widget.current
 							?.chart()
@@ -123,41 +123,41 @@ export function TVChart({
 							.setBodyBorderColor(color)
 							.setQuantityBackgroundColor(color)
 							.setQuantityBorderColor(color)
-							.setLineLength(25);
+							.setLineLength(25)
 						if (orderLine) {
-							acc.push(orderLine);
+							acc.push(orderLine)
 						}
 					}
-					return acc;
-				}, []);
-			});
-		});
-	};
+					return acc
+				}, [])
+			})
+		})
+	}
 
 	const onToggleOrderLines = () => {
 		if (_oderLineRefs.current.length) {
-			clearOrderLines();
+			clearOrderLines()
 		} else {
-			renderOrderLines();
+			renderOrderLines()
 		}
-	};
+	}
 
 	useEffect(() => {
 		if (showOrderLines) {
-			renderOrderLines();
+			renderOrderLines()
 		}
 		// eslint-disable-next-line
-	}, [openOrders]);
+	}, [openOrders])
 
 	useEffect(() => {
 		if (_toggleLinesButton.current) {
-			_toggleLinesButton.current.textContent = showOrderLines ? 'Hide Orders' : 'Show Orders';
+			_toggleLinesButton.current.textContent = showOrderLines ? 'Hide Orders' : 'Show Orders'
 		}
 		if (_widget.current) {
-			onToggleOrderLines();
+			onToggleOrderLines()
 		}
 		// eslint-disable-next-line
-	}, [showOrderLines]);
+	}, [showOrderLines])
 
 	useEffect(() => {
 		const widgetOptions = {
@@ -193,62 +193,62 @@ export function TVChart({
 				{ text: '30D', resolution: '1H', description: '30 Days' },
 				{ text: '3M', resolution: '1H', description: '3 Months' },
 			],
-		};
+		}
 
 		const clearExistingWidget = () => {
 			if (_widget.current !== null) {
-				clearOrderLines();
-				_widget.current.remove();
-				_widget.current = null;
+				clearOrderLines()
+				_widget.current.remove()
+				_widget.current = null
 			}
 			if (_priceListener.current) {
-				sdk.prices.removePricesListener(_priceListener.current);
+				sdk.prices.removePricesListener(_priceListener.current)
 			}
-		};
+		}
 
-		clearExistingWidget();
+		clearExistingWidget()
 
 		// @ts-ignore complains about `container` item missing
-		const tvWidget = new widget(widgetOptions);
-		_widget.current = tvWidget;
+		const tvWidget = new widget(widgetOptions)
+		_widget.current = tvWidget
 
 		_widget.current?.onChartReady(() => {
-			_widget.current?.applyOverrides(DEFAULT_OVERRIDES);
-			onChartReady();
-		});
+			_widget.current?.applyOverrides(DEFAULT_OVERRIDES)
+			onChartReady()
+		})
 
 		_widget.current?.headerReady().then(() => {
-			if (!_widget.current || !onToggleShowOrderLines) return;
-			_toggleLinesButton.current = _widget.current.createButton();
-			_toggleLinesButton.current.classList.add('custom-button');
-			_toggleLinesButton.current.setAttribute('title', 'Hide / Show Orders');
-			_toggleLinesButton.current.textContent = showOrderLines ? 'Hide Orders' : 'Show Orders';
-			_toggleLinesButton.current.addEventListener('click', onToggleShowOrderLines);
-			_toggleListener.current = onToggleShowOrderLines;
-		});
+			if (!_widget.current || !onToggleShowOrderLines) return
+			_toggleLinesButton.current = _widget.current.createButton()
+			_toggleLinesButton.current.classList.add('custom-button')
+			_toggleLinesButton.current.setAttribute('title', 'Hide / Show Orders')
+			_toggleLinesButton.current.textContent = showOrderLines ? 'Hide Orders' : 'Show Orders'
+			_toggleLinesButton.current.addEventListener('click', onToggleShowOrderLines)
+			_toggleListener.current = onToggleShowOrderLines
+		})
 
 		return () => {
-			clearExistingWidget();
-		};
+			clearExistingWidget()
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network?.id as NetworkId, currentTheme, marketAssetLoaded]);
+	}, [network?.id as NetworkId, currentTheme, marketAssetLoaded])
 
 	useEffect(() => {
 		if (onToggleShowOrderLines) {
 			_toggleListener.current &&
-				_toggleLinesButton.current?.removeEventListener('click', _toggleListener.current);
-			_toggleLinesButton.current?.addEventListener('click', onToggleShowOrderLines);
-			_toggleListener.current = onToggleShowOrderLines;
+				_toggleLinesButton.current?.removeEventListener('click', _toggleListener.current)
+			_toggleLinesButton.current?.addEventListener('click', onToggleShowOrderLines)
+			_toggleListener.current = onToggleShowOrderLines
 		}
-	}, [onToggleShowOrderLines]);
+	}, [onToggleShowOrderLines])
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
 			_widget.current?.chart().dataReady(() => {
-				_entryLine.current?.remove?.();
-				_liquidationLine.current?.remove?.();
-				_entryLine.current = null;
-				_liquidationLine.current = null;
+				_entryLine.current?.remove?.()
+				_liquidationLine.current?.remove?.()
+				_entryLine.current = null
+				_liquidationLine.current = null
 				const setPositionLines = (position: ChartPosition, active: boolean) => {
 					_entryLine.current = _widget.current
 						?.chart()
@@ -260,7 +260,7 @@ export function TVChart({
 						.setExtendLeft(false)
 						.setBodyTextColor(darkTheme.black)
 						.setLineStyle(active ? 0 : 2)
-						.setLineLength(25);
+						.setLineLength(25)
 					if (position.liqPrice) {
 						_liquidationLine.current = _widget.current
 							?.chart()
@@ -276,34 +276,34 @@ export function TVChart({
 							.setBodyBorderColor(colors.selectedTheme.orange)
 							.setQuantityBackgroundColor(colors.selectedTheme.orange)
 							.setQuantityBorderColor(colors.selectedTheme.orange)
-							.setLineLength(25);
+							.setLineLength(25)
 					}
-				};
+				}
 				// Always show potential over existing
 				if (potentialTrade) {
-					setPositionLines(potentialTrade, false);
+					setPositionLines(potentialTrade, false)
 				} else if (activePosition) {
-					setPositionLines(activePosition, true);
+					setPositionLines(activePosition, true)
 				}
-			});
-		});
+			})
+		})
 		// eslint-disable-next-line
-	}, [activePosition, potentialTrade]);
+	}, [activePosition, potentialTrade])
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
-			const symbolInterval = _widget.current?.symbolInterval();
+			const symbolInterval = _widget.current?.symbolInterval()
 			_widget.current?.setSymbol(
 				marketAsset + ':sUSD',
 				symbolInterval?.interval ?? DEFAULT_RESOLUTION,
 				() => {}
-			);
-		});
-	}, [marketAsset]);
+			)
+		})
+	}, [marketAsset])
 
 	const onSubscribe = useCallback((priceListener: PricesListener) => {
-		_priceListener.current = priceListener;
-	}, []);
+		_priceListener.current = priceListener
+	}, [])
 
-	return <ChartBody id={containerId} />;
+	return <ChartBody id={containerId} />
 }

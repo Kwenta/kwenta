@@ -1,77 +1,77 @@
-import { BigNumber } from 'ethers';
-import Wei from '@synthetixio/wei';
+import { BigNumber } from 'ethers'
+import Wei from '@synthetixio/wei'
 
 export type FundingRateInput = {
-	marketAddress: string | undefined;
-	marketKey: FuturesMarketKey;
-	price: Wei | undefined;
-	currentFundingRate: Wei | undefined;
-};
+	marketAddress: string | undefined
+	marketKey: FuturesMarketKey
+	price: Wei | undefined
+	currentFundingRate: Wei | undefined
+}
 
 export type SynthSuspensionReason =
 	| 'system-upgrade'
 	| 'market-closure'
 	| 'circuit-breaker'
-	| 'emergency';
+	| 'emergency'
 
-export type MarketClosureReason = SynthSuspensionReason;
+export type MarketClosureReason = SynthSuspensionReason
 
 export type FuturesMarket<T = Wei> = {
-	market: string;
-	marketKey: FuturesMarketKey;
-	marketName: string;
-	asset: FuturesMarketAsset;
-	assetHex: string;
-	currentFundingRate: T;
-	currentFundingVelocity: T;
+	market: string
+	marketKey: FuturesMarketKey
+	marketName: string
+	asset: FuturesMarketAsset
+	assetHex: string
+	currentFundingRate: T
+	currentFundingVelocity: T
 	feeRates: {
-		makerFee: T;
-		takerFee: T;
-		makerFeeDelayedOrder: T;
-		takerFeeDelayedOrder: T;
-		makerFeeOffchainDelayedOrder: T;
-		takerFeeOffchainDelayedOrder: T;
-	};
+		makerFee: T
+		takerFee: T
+		makerFeeDelayedOrder: T
+		takerFeeDelayedOrder: T
+		makerFeeOffchainDelayedOrder: T
+		takerFeeOffchainDelayedOrder: T
+	}
 	openInterest: {
-		shortPct: number;
-		longPct: number;
-		shortUSD: T;
-		longUSD: T;
-		long: T;
-		short: T;
-	};
-	marketDebt: T;
-	marketSkew: T;
-	marketSize: T;
-	contractMaxLeverage: T;
-	appMaxLeverage: T;
-	minInitialMargin: T;
-	keeperDeposit: T;
-	isSuspended: boolean;
-	marketClosureReason: SynthSuspensionReason;
-	marketLimitUsd: T;
-	marketLimitNative: T;
+		shortPct: number
+		longPct: number
+		shortUSD: T
+		longUSD: T
+		long: T
+		short: T
+	}
+	marketDebt: T
+	marketSkew: T
+	marketSize: T
+	contractMaxLeverage: T
+	appMaxLeverage: T
+	minInitialMargin: T
+	keeperDeposit: T
+	isSuspended: boolean
+	marketClosureReason: SynthSuspensionReason
+	marketLimitUsd: T
+	marketLimitNative: T
 	settings: {
-		maxMarketValue: T;
-		skewScale: T;
-		delayedOrderConfirmWindow: number;
-		offchainDelayedOrderMinAge: number;
-		offchainDelayedOrderMaxAge: number;
-		minDelayTimeDelta: number;
-		maxDelayTimeDelta: number;
-	};
-};
+		maxMarketValue: T
+		skewScale: T
+		delayedOrderConfirmWindow: number
+		offchainDelayedOrderMinAge: number
+		offchainDelayedOrderMaxAge: number
+		minDelayTimeDelta: number
+		maxDelayTimeDelta: number
+	}
+}
 
 export type FundingRateUpdate = {
-	funding: Wei;
-	timestamp: number;
-};
+	funding: Wei
+	timestamp: number
+}
 
 export type FundingRateResponse = {
-	asset: FuturesMarketKey;
-	fundingTitle: string;
-	fundingRate: Wei | null;
-};
+	asset: FuturesMarketKey
+	fundingTitle: string
+	fundingRate: Wei | null
+}
 
 export enum FuturesMarketKey {
 	sBTCPERP = 'sBTCPERP',
@@ -164,51 +164,51 @@ export enum FuturesMarketAsset {
 }
 
 export interface FuturesMarketConfig {
-	key: FuturesMarketKey;
-	asset: FuturesMarketAsset;
-	supports: 'mainnet' | 'testnet' | 'both';
-	version: 1 | 2;
+	key: FuturesMarketKey
+	asset: FuturesMarketAsset
+	supports: 'mainnet' | 'testnet' | 'both'
+	version: 1 | 2
 	pythIds?: {
-		mainnet: string;
-		testnet: string;
-	};
-	disabled?: boolean;
+		mainnet: string
+		testnet: string
+	}
+	disabled?: boolean
 }
 
 export type FuturesVolumes<T = Wei> = {
 	[asset: string]: {
-		volume: T;
-		trades: T;
-	};
-};
+		volume: T
+		trades: T
+	}
+}
 
 export type PositionDetail = {
-	remainingMargin: BigNumber;
-	accessibleMargin: BigNumber;
-	orderPending: boolean;
+	remainingMargin: BigNumber
+	accessibleMargin: BigNumber
+	orderPending: boolean
 	order: {
-		pending: boolean;
-		fee: BigNumber;
-		leverage: BigNumber;
-	};
+		pending: boolean
+		fee: BigNumber
+		leverage: BigNumber
+	}
 	position: {
-		fundingIndex: BigNumber;
-		lastPrice: BigNumber;
-		size: BigNumber;
-		margin: BigNumber;
-	};
-	accruedFunding: BigNumber;
-	notionalValue: BigNumber;
-	liquidationPrice: BigNumber;
-	profitLoss: BigNumber;
-};
+		fundingIndex: BigNumber
+		lastPrice: BigNumber
+		size: BigNumber
+		margin: BigNumber
+	}
+	accruedFunding: BigNumber
+	notionalValue: BigNumber
+	liquidationPrice: BigNumber
+	profitLoss: BigNumber
+}
 
 export enum PositionSide {
 	LONG = 'long',
 	SHORT = 'short',
 }
 
-export type FuturesAccountType = 'cross_margin' | 'smart_margin' | 'isolated_margin';
+export type FuturesAccountType = 'cross_margin' | 'smart_margin' | 'isolated_margin'
 
 export enum ContractOrderType {
 	MARKET = 0,
@@ -220,74 +220,74 @@ export const OrderEnumByType: Record<string, ContractOrderType> = {
 	market: ContractOrderType.MARKET,
 	delayed: ContractOrderType.DELAYED,
 	delayed_offchain: ContractOrderType.DELAYED_OFFCHAIN,
-};
+}
 
 export type FuturesFilledPosition<T = Wei> = {
-	canLiquidatePosition: boolean;
-	side: PositionSide;
-	notionalValue: T;
-	accruedFunding: T;
-	initialMargin: T;
-	profitLoss: T;
-	fundingIndex: number;
-	lastPrice: T;
-	size: T;
-	liquidationPrice: T;
-	initialLeverage: T;
-	leverage: T;
-	pnl: T;
-	pnlPct: T;
-	marginRatio: T;
-};
+	canLiquidatePosition: boolean
+	side: PositionSide
+	notionalValue: T
+	accruedFunding: T
+	initialMargin: T
+	profitLoss: T
+	fundingIndex: number
+	lastPrice: T
+	size: T
+	liquidationPrice: T
+	initialLeverage: T
+	leverage: T
+	pnl: T
+	pnlPct: T
+	marginRatio: T
+}
 
 export type FuturesPositionHistory<T = Wei> = {
-	id: Number;
-	transactionHash: string;
-	timestamp: number;
-	openTimestamp: number;
-	closeTimestamp: number | undefined;
-	market: string;
-	asset: FuturesMarketAsset;
-	marketKey: FuturesMarketKey;
-	account: string;
-	abstractAccount: string;
-	accountType: FuturesAccountType;
-	isOpen: boolean;
-	isLiquidated: boolean;
-	size: T;
-	feesPaid: T;
-	netFunding: T;
-	netTransfers: T;
-	totalDeposits: T;
-	initialMargin: T;
-	margin: T;
-	entryPrice: T;
-	avgEntryPrice: T;
-	exitPrice: T;
-	leverage: T;
-	side: PositionSide;
-	pnl: T;
-	pnlWithFeesPaid: T;
-	totalVolume: T;
-	trades: number;
-};
+	id: Number
+	transactionHash: string
+	timestamp: number
+	openTimestamp: number
+	closeTimestamp: number | undefined
+	market: string
+	asset: FuturesMarketAsset
+	marketKey: FuturesMarketKey
+	account: string
+	abstractAccount: string
+	accountType: FuturesAccountType
+	isOpen: boolean
+	isLiquidated: boolean
+	size: T
+	feesPaid: T
+	netFunding: T
+	netTransfers: T
+	totalDeposits: T
+	initialMargin: T
+	margin: T
+	entryPrice: T
+	avgEntryPrice: T
+	exitPrice: T
+	leverage: T
+	side: PositionSide
+	pnl: T
+	pnlWithFeesPaid: T
+	totalVolume: T
+	trades: number
+}
 
 export type FuturesPosition<T = Wei> = {
-	asset: FuturesMarketAsset;
-	marketKey: FuturesMarketKey;
-	remainingMargin: T;
-	accessibleMargin: T;
-	position: FuturesFilledPosition<T> | null;
+	asset: FuturesMarketAsset
+	marketKey: FuturesMarketKey
+	remainingMargin: T
+	accessibleMargin: T
+	position: FuturesFilledPosition<T> | null
 	// This prevents TS issues when creating a union with the cross margin position type.
-	stopLoss?: ConditionalOrder<T>;
-	takeProfit?: ConditionalOrder<T>;
-};
+	stopLoss?: ConditionalOrder<T>
+	takeProfit?: ConditionalOrder<T>
+}
 
 export type ModifyPositionOptions<T extends boolean> = {
-	delayed?: boolean;
-	offchain?: boolean;
-	estimationOnly?: T;
-};
+	delayed?: boolean
+	offchain?: boolean
+	estimationOnly?: T
+}
 
 // This type exists to rename enum types from the subgraph to display-friendly types
 export type FuturesOrderTypeDisplay =
@@ -299,7 +299,7 @@ export type FuturesOrderTypeDisplay =
 	| 'Delayed'
 	| 'Take Profit'
 	| 'Stop Loss'
-	| 'Delayed Market';
+	| 'Delayed Market'
 
 export enum ConditionalOrderTypeEnum {
 	LIMIT = 0,
@@ -307,60 +307,60 @@ export enum ConditionalOrderTypeEnum {
 }
 
 export type ConditionalOrder<T = Wei> = {
-	id: number;
-	subgraphId: string;
-	account: string;
-	asset: FuturesMarketAsset;
-	market: string;
-	marketKey: FuturesMarketKey;
-	size: T;
-	targetPrice: T | null;
-	desiredFillPrice: T;
-	marginDelta: T;
-	orderType: ConditionalOrderTypeEnum;
-	orderTypeDisplay: FuturesOrderTypeDisplay;
-	sizeTxt?: string;
-	targetPriceTxt?: string;
-	reduceOnly: boolean;
-	side?: PositionSide;
-	isStale?: boolean;
-	isExecutable?: boolean;
-	isCancelling?: boolean;
-	isSlTp?: boolean;
-};
+	id: number
+	subgraphId: string
+	account: string
+	asset: FuturesMarketAsset
+	market: string
+	marketKey: FuturesMarketKey
+	size: T
+	targetPrice: T | null
+	desiredFillPrice: T
+	marginDelta: T
+	orderType: ConditionalOrderTypeEnum
+	orderTypeDisplay: FuturesOrderTypeDisplay
+	sizeTxt?: string
+	targetPriceTxt?: string
+	reduceOnly: boolean
+	side?: PositionSide
+	isStale?: boolean
+	isExecutable?: boolean
+	isCancelling?: boolean
+	isSlTp?: boolean
+}
 
 export type DelayedOrder<T = Wei> = {
-	account: string;
-	marketAddress: string;
-	size: T;
-	commitDeposit: T;
-	keeperDeposit: T;
-	submittedAtTimestamp: number;
-	executableAtTimestamp: number;
-	isOffchain: boolean;
-	desiredFillPrice: T;
-	targetRoundId: T | null;
-	orderType: FuturesOrderTypeDisplay;
-	side: PositionSide;
-};
+	account: string
+	marketAddress: string
+	size: T
+	commitDeposit: T
+	keeperDeposit: T
+	submittedAtTimestamp: number
+	executableAtTimestamp: number
+	isOffchain: boolean
+	desiredFillPrice: T
+	targetRoundId: T | null
+	orderType: FuturesOrderTypeDisplay
+	side: PositionSide
+}
 
 export type FuturesPotentialTradeDetails<T = Wei> = {
-	marketKey: FuturesMarketKey;
-	size: T;
-	sizeDelta: T;
-	liqPrice: T;
-	margin: T;
-	price: T;
-	fee: T;
-	leverage: T;
-	notionalValue: T;
-	side: PositionSide;
-	status: PotentialTradeStatus;
-	showStatus: boolean;
-	statusMessage: string;
-	priceImpact: T;
-	exceedsPriceProtection: boolean;
-};
+	marketKey: FuturesMarketKey
+	size: T
+	sizeDelta: T
+	liqPrice: T
+	margin: T
+	price: T
+	fee: T
+	leverage: T
+	notionalValue: T
+	side: PositionSide
+	status: PotentialTradeStatus
+	showStatus: boolean
+	statusMessage: string
+	priceImpact: T
+	exceedsPriceProtection: boolean
+}
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/interfaces/IFuturesMarketBaseTypes.sol#L6-L19
 export enum PotentialTradeStatus {
@@ -385,35 +385,35 @@ export enum PotentialTradeStatus {
 }
 
 export type PostTradeDetailsResponse = {
-	margin: BigNumber;
-	size: BigNumber;
-	price: BigNumber;
-	liqPrice: BigNumber;
-	fee: BigNumber;
-	status: number;
-};
+	margin: BigNumber
+	size: BigNumber
+	price: BigNumber
+	liqPrice: BigNumber
+	fee: BigNumber
+	status: number
+}
 
-export type SmartMarginOrderType = 'market' | 'stop_market' | 'limit';
-export type FuturesOrderType = SmartMarginOrderType;
+export type SmartMarginOrderType = 'market' | 'stop_market' | 'limit'
+export type FuturesOrderType = SmartMarginOrderType
 
 export type FuturesTrade<T = Wei> = {
-	account: string;
-	margin: T;
-	size: T;
-	asset: FuturesMarketAsset;
-	price: T;
-	txnHash: string;
-	timestamp: number;
-	positionId: string;
-	positionSize: T;
-	positionClosed: boolean;
-	side: PositionSide;
-	pnl: T;
-	feesPaid: T;
-	keeperFeesPaid: T;
-	orderType: FuturesOrderTypeDisplay;
-	accountType: FuturesAccountType;
-};
+	account: string
+	margin: T
+	size: T
+	asset: FuturesMarketAsset
+	price: T
+	txnHash: string
+	timestamp: number
+	positionId: string
+	positionSize: T
+	positionClosed: boolean
+	side: PositionSide
+	pnl: T
+	feesPaid: T
+	keeperFeesPaid: T
+	orderType: FuturesOrderTypeDisplay
+	accountType: FuturesAccountType
+}
 
 export enum AccountExecuteFunctions {
 	ACCOUNT_MODIFY_MARGIN = 0,
@@ -433,57 +433,57 @@ export enum AccountExecuteFunctions {
 }
 
 export type MarginTransfer = {
-	timestamp: number;
-	account: string;
-	size: number;
-	txHash: string;
-	action: string;
-	market?: string;
-	asset?: FuturesMarketAsset;
-};
+	timestamp: number
+	account: string
+	size: number
+	txHash: string
+	action: string
+	market?: string
+	asset?: FuturesMarketAsset
+}
 
 export type MarketWithIdleMargin = {
-	marketAddress: string;
-	marketKey: FuturesMarketKey;
-	position: FuturesPosition;
-};
+	marketAddress: string
+	marketKey: FuturesMarketKey
+	position: FuturesPosition
+}
 
 export type SmartMarginOrderInputs = {
-	sizeDelta: Wei;
-	marginDelta: Wei;
-	desiredFillPrice: Wei;
-	timeDelta?: Wei;
-	keeperEthDeposit?: Wei;
+	sizeDelta: Wei
+	marginDelta: Wei
+	desiredFillPrice: Wei
+	timeDelta?: Wei
+	keeperEthDeposit?: Wei
 	conditionalOrderInputs?: {
-		orderType: ConditionalOrderTypeEnum;
-		price: Wei;
-		feeCap: Wei;
-		reduceOnly: boolean;
-	};
+		orderType: ConditionalOrderTypeEnum
+		price: Wei
+		feeCap: Wei
+		reduceOnly: boolean
+	}
 	stopLoss?: {
-		price: Wei;
-		sizeDelta: Wei;
-		desiredFillPrice: Wei;
-	};
+		price: Wei
+		sizeDelta: Wei
+		desiredFillPrice: Wei
+	}
 	takeProfit?: {
-		price: Wei;
-		sizeDelta: Wei;
-		desiredFillPrice: Wei;
-	};
-};
+		price: Wei
+		sizeDelta: Wei
+		desiredFillPrice: Wei
+	}
+}
 
 export type SLTPOrderInputs = {
-	keeperEthDeposit: Wei;
+	keeperEthDeposit: Wei
 	stopLoss?: {
-		price: Wei;
-		desiredFillPrice: Wei;
-		sizeDelta: Wei;
-		isCancelled?: boolean;
-	};
+		price: Wei
+		desiredFillPrice: Wei
+		sizeDelta: Wei
+		isCancelled?: boolean
+	}
 	takeProfit?: {
-		price: Wei;
-		desiredFillPrice: Wei;
-		sizeDelta: Wei;
-		isCancelled?: boolean;
-	};
-};
+		price: Wei
+		desiredFillPrice: Wei
+		sizeDelta: Wei
+		isCancelled?: boolean
+	}
+}

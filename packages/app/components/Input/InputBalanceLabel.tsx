@@ -1,22 +1,22 @@
-import { formatCurrency } from '@kwenta/sdk/utils';
-import Wei from '@synthetixio/wei';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { formatCurrency } from '@kwenta/sdk/utils'
+import Wei from '@synthetixio/wei'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { FlexDivRowCentered } from 'components/layout/flex';
-import { Body } from 'components/Text';
+import { FlexDivRowCentered } from 'components/layout/flex'
+import { Body } from 'components/Text'
 
 type Props = {
-	balance: Wei;
-	currencyKey: string;
-	onSetAmount: (amount: string) => void;
-};
+	balance: Wei
+	currencyKey: string
+	onSetAmount: (amount: string) => void
+}
 
 export default function InputBalanceLabel({ balance, currencyKey, onSetAmount }: Props) {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
-	const key = currencyKey.toLowerCase();
-	const isUsd = key === 'susd' || key === 'usd';
+	const key = currencyKey.toLowerCase()
+	const isUsd = key === 'susd' || key === 'usd'
 	return (
 		<BalanceContainer>
 			<BalanceText>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
@@ -30,19 +30,19 @@ export default function InputBalanceLabel({ balance, currencyKey, onSetAmount }:
 				{currencyKey}
 			</BalanceButton>
 		</BalanceContainer>
-	);
+	)
 }
 
 export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
-`;
+`
 
 export const BalanceText = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
+`
 
 export const BalanceButton = styled(BalanceText)`
 	padding: 0;
@@ -54,4 +54,4 @@ export const BalanceButton = styled(BalanceText)`
 	&:hover {
 		text-decoration: underline;
 	}
-`;
+`

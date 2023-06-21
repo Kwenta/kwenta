@@ -1,36 +1,36 @@
-import { FuturesMarketAsset } from '@kwenta/sdk/types';
-import { MarketKeyByAsset } from '@kwenta/sdk/utils';
-import { useRouter } from 'next/router';
-import { useEffect, FC, useState, ReactNode } from 'react';
-import styled from 'styled-components';
+import { FuturesMarketAsset } from '@kwenta/sdk/types'
+import { MarketKeyByAsset } from '@kwenta/sdk/utils'
+import { useRouter } from 'next/router'
+import { useEffect, FC, useState, ReactNode } from 'react'
+import styled from 'styled-components'
 
-import Loader from 'components/Loader';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Connector from 'containers/Connector';
-import useIsL2 from 'hooks/useIsL2';
-import useWindowSize from 'hooks/useWindowSize';
-import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal';
-import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard';
-import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal';
-import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal';
-import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal';
-import MarketInfo from 'sections/futures/MarketInfo';
-import MarketHead from 'sections/futures/MarketInfo/MarketHead';
-import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
-import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles';
-import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported';
-import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin';
-import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel';
-import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal';
-import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal';
-import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin';
-import WithdrawSmartMargin from 'sections/futures/TradeCrossMargin/WithdrawSmartMargin';
-import AppLayout from 'sections/shared/Layout/AppLayout';
-import { setOpenModal } from 'state/app/reducer';
-import { selectShowModal, selectShowPositionModal } from 'state/app/selectors';
-import { clearTradeInputs } from 'state/futures/actions';
-import { usePollMarketFuturesData } from 'state/futures/hooks';
-import { setFuturesAccountType, setMarketAsset } from 'state/futures/reducer';
+import Loader from 'components/Loader'
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import Connector from 'containers/Connector'
+import useIsL2 from 'hooks/useIsL2'
+import useWindowSize from 'hooks/useWindowSize'
+import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal'
+import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard'
+import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal'
+import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal'
+import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal'
+import MarketInfo from 'sections/futures/MarketInfo'
+import MarketHead from 'sections/futures/MarketInfo/MarketHead'
+import MobileTrade from 'sections/futures/MobileTrade/MobileTrade'
+import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles'
+import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported'
+import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin'
+import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel'
+import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal'
+import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal'
+import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin'
+import WithdrawSmartMargin from 'sections/futures/TradeCrossMargin/WithdrawSmartMargin'
+import AppLayout from 'sections/shared/Layout/AppLayout'
+import { setOpenModal } from 'state/app/reducer'
+import { selectShowModal, selectShowPositionModal } from 'state/app/selectors'
+import { clearTradeInputs } from 'state/futures/actions'
+import { usePollMarketFuturesData } from 'state/futures/hooks'
+import { setFuturesAccountType, setMarketAsset } from 'state/futures/reducer'
 import {
 	selectActiveIsolatedPositionsCount,
 	selectCMAccountQueryStatus,
@@ -38,45 +38,45 @@ import {
 	selectFuturesType,
 	selectMarketAsset,
 	selectShowCrossMarginOnboard,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { FetchStatus } from 'state/types';
-import { PageContent } from 'styles/common';
-import media from 'styles/media';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { FetchStatus } from 'state/types'
+import { PageContent } from 'styles/common'
+import media from 'styles/media'
 
-type MarketComponent = FC & { getLayout: (page: ReactNode) => JSX.Element };
+type MarketComponent = FC & { getLayout: (page: ReactNode) => JSX.Element }
 
 const Market: MarketComponent = () => {
-	const router = useRouter();
-	const { walletAddress } = Connector.useContainer();
-	const dispatch = useAppDispatch();
-	const { lessThanWidth } = useWindowSize();
-	usePollMarketFuturesData();
+	const router = useRouter()
+	const { walletAddress } = Connector.useContainer()
+	const dispatch = useAppDispatch()
+	const { lessThanWidth } = useWindowSize()
+	usePollMarketFuturesData()
 
-	const routerMarketAsset = router.query.asset as FuturesMarketAsset;
+	const routerMarketAsset = router.query.asset as FuturesMarketAsset
 
-	const setCurrentMarket = useAppSelector(selectMarketAsset);
-	const showOnboard = useAppSelector(selectShowCrossMarginOnboard);
-	const openModal = useAppSelector(selectShowModal);
-	const showPositionModal = useAppSelector(selectShowPositionModal);
-	const accountType = useAppSelector(selectFuturesType);
-	const selectedMarketAsset = useAppSelector(selectMarketAsset);
+	const setCurrentMarket = useAppSelector(selectMarketAsset)
+	const showOnboard = useAppSelector(selectShowCrossMarginOnboard)
+	const openModal = useAppSelector(selectShowModal)
+	const showPositionModal = useAppSelector(selectShowPositionModal)
+	const accountType = useAppSelector(selectFuturesType)
+	const selectedMarketAsset = useAppSelector(selectMarketAsset)
 
 	const routerAccountType =
-		router.query.accountType === 'cross_margin' ? 'cross_margin' : 'isolated_margin';
+		router.query.accountType === 'cross_margin' ? 'cross_margin' : 'isolated_margin'
 
 	useEffect(() => {
 		if (router.isReady && accountType !== routerAccountType) {
-			dispatch(setFuturesAccountType(routerAccountType));
+			dispatch(setFuturesAccountType(routerAccountType))
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.isReady, routerAccountType]);
+	}, [router.isReady, routerAccountType])
 
 	useEffect(() => {
-		dispatch(clearTradeInputs());
+		dispatch(clearTradeInputs())
 		// Clear trade state when switching address
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [walletAddress]);
+	}, [walletAddress])
 
 	useEffect(() => {
 		if (
@@ -84,10 +84,10 @@ const Market: MarketComponent = () => {
 			routerMarketAsset &&
 			MarketKeyByAsset[routerMarketAsset]
 		) {
-			dispatch(setMarketAsset(routerMarketAsset));
-			dispatch(clearTradeInputs());
+			dispatch(setMarketAsset(routerMarketAsset))
+			dispatch(clearTradeInputs())
 		}
-	}, [router, setCurrentMarket, dispatch, routerMarketAsset, selectedMarketAsset]);
+	}, [router, setCurrentMarket, dispatch, routerMarketAsset, selectedMarketAsset])
 
 	return (
 		<>
@@ -134,26 +134,26 @@ const Market: MarketComponent = () => {
 			{openModal === 'futures_confirm_smart_margin_trade' && <TradeConfirmationModalCrossMargin />}
 			{openModal === 'futures_confirm_isolated_margin_trade' && <DelayedOrderConfirmationModal />}
 		</>
-	);
-};
+	)
+}
 
 function TradePanelDesktop() {
-	const router = useRouter();
-	const isL2 = useIsL2();
-	const { walletAddress } = Connector.useContainer();
-	const accountType = useAppSelector(selectFuturesType);
-	const queryStatus = useAppSelector(selectCMAccountQueryStatus);
-	const crossMarginAccount = useAppSelector(selectCrossMarginAccount);
-	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount);
-	const [open, setOpen] = useState(false);
+	const router = useRouter()
+	const isL2 = useIsL2()
+	const { walletAddress } = Connector.useContainer()
+	const accountType = useAppSelector(selectFuturesType)
+	const queryStatus = useAppSelector(selectCMAccountQueryStatus)
+	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
+	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount)
+	const [open, setOpen] = useState(false)
 
 	useEffect(() => setOpen(accountType === 'isolated_margin' && isolatedPositionsCount === 0), [
 		accountType,
 		isolatedPositionsCount,
-	]);
+	])
 
 	if (walletAddress && !isL2) {
-		return <FuturesUnsupportedNetwork />;
+		return <FuturesUnsupportedNetwork />
 	}
 
 	if (
@@ -167,15 +167,15 @@ function TradePanelDesktop() {
 			<LoaderContainer>
 				<Loader inline />
 			</LoaderContainer>
-		);
+		)
 	}
 
-	return open ? <SwitchToSmartMargin onDismiss={() => setOpen(false)} /> : <TradeIsolatedMargin />;
+	return open ? <SwitchToSmartMargin onDismiss={() => setOpen(false)} /> : <TradeIsolatedMargin />
 }
 
-Market.getLayout = (page) => <AppLayout>{page}</AppLayout>;
+Market.getLayout = (page) => <AppLayout>{page}</AppLayout>
 
-export default Market;
+export default Market
 
 const StyledFullHeightContainer = styled.div`
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
@@ -188,22 +188,22 @@ const StyledFullHeightContainer = styled.div`
 	${media.lessThan('xxl')`
 		grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
 	`}
-`;
+`
 
 const LoaderContainer = styled.div`
 	text-align: center;
 	width: 100%;
 	padding: 50px;
-`;
+`
 
 const TabletContainer = styled.div`
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	display: grid;
 	grid-template-columns: ${TRADE_PANEL_WIDTH_MD}px 1fr;
 	height: 100%;
-`;
+`
 
 const TabletRightSection = styled.div`
 	overflow-y: scroll;
 	height: 100%;
-`;
+`

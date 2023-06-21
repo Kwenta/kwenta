@@ -1,21 +1,21 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from 'react'
 
-import TextToggle from 'components/TextToggle';
-import { setSelectedChart } from 'state/futures/reducer';
-import { useAppSelector, useAppDispatch } from 'state/hooks';
+import TextToggle from 'components/TextToggle'
+import { setSelectedChart } from 'state/futures/reducer'
+import { useAppSelector, useAppDispatch } from 'state/hooks'
 
-const CHART_OPTIONS: ('price' | 'funding')[] = ['price', 'funding'];
+const CHART_OPTIONS: ('price' | 'funding')[] = ['price', 'funding']
 
 const ChartToggle = () => {
-	const dispatch = useAppDispatch();
-	const selectedChart = useAppSelector(({ futures }) => futures.selectedChart);
+	const dispatch = useAppDispatch()
+	const selectedChart = useAppSelector(({ futures }) => futures.selectedChart)
 
 	const handleChartChange = useCallback(
 		(chart: 'price' | 'funding') => {
-			dispatch(setSelectedChart(chart));
+			dispatch(setSelectedChart(chart))
 		},
 		[dispatch]
-	);
+	)
 
 	return (
 		<TextToggle
@@ -24,7 +24,7 @@ const ChartToggle = () => {
 			selectedOption={selectedChart}
 			onOptionChange={handleChartChange}
 		/>
-	);
-};
+	)
+}
 
-export default ChartToggle;
+export default ChartToggle

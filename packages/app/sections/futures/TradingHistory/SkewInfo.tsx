@@ -1,15 +1,15 @@
-import { formatCurrency, formatPercent } from '@kwenta/sdk/utils';
-import React from 'react';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { formatCurrency, formatPercent } from '@kwenta/sdk/utils'
+import React from 'react'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { Body } from 'components/Text';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { Body } from 'components/Text'
+import Tooltip from 'components/Tooltip/Tooltip'
+import { selectMarketAsset, selectMarketInfo } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
-import OpenInterestBar from './OpenInterestBar';
+import OpenInterestBar from './OpenInterestBar'
 
 const DEFAULT_DATA = {
 	short: 0,
@@ -18,13 +18,13 @@ const DEFAULT_DATA = {
 	longValue: 0,
 	shortText: '',
 	longText: '',
-};
+}
 
 const SkewInfo: React.FC = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const marketAsset = useAppSelector(selectMarketAsset);
+	const marketInfo = useAppSelector(selectMarketInfo)
+	const marketAsset = useAppSelector(selectMarketAsset)
 
 	const data = useMemo(() => {
 		return marketInfo?.openInterest
@@ -42,8 +42,8 @@ const SkewInfo: React.FC = () => {
 						minDecimals: 0,
 					}),
 			  }
-			: DEFAULT_DATA;
-	}, [marketInfo, marketAsset]);
+			: DEFAULT_DATA
+	}, [marketInfo, marketAsset])
 
 	return (
 		<SkewContainer>
@@ -66,21 +66,21 @@ const SkewInfo: React.FC = () => {
 			</SkewHeader>
 			<OpenInterestBar skew={data} />
 		</SkewContainer>
-	);
-};
+	)
+}
 
-export default SkewInfo;
+export default SkewInfo
 
 const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
-`;
+`
 
 const SkewTooltip = styled(Tooltip).attrs({ width: '310px', height: 'auto' })`
 	left: -30px;
 	z-index: 2;
 	padding: 10px;
 	color: red;
-`;
+`
 
 const SkewContainer = styled.div`
 	height: 55px;
@@ -102,22 +102,22 @@ const SkewContainer = styled.div`
 	span {
 		text-align: left;
 	}
-`;
+`
 
 const SkewHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
 	margin-bottom: 5px;
-`;
+`
 
 const SkewLabel = styled(Body).attrs({ as: 'span' })`
 	text-transform: capitalize;
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const SkewValue = styled(Body).attrs({ mono: true })`
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
+`

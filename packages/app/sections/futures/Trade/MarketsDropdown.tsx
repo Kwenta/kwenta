@@ -1,35 +1,35 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { FuturesMarketAsset } from '@kwenta/sdk/types';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesMarketAsset } from '@kwenta/sdk/types'
 import {
 	getDisplayAsset,
 	AssetDisplayByAsset,
 	MarketKeyByAsset,
 	floorNumber,
 	formatDollars,
-} from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import { useRouter } from 'next/router';
-import React, { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+} from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import { useRouter } from 'next/router'
+import React, { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import FavoriteIcon from 'assets/svg/futures/favorite-star.svg';
-import SelectedIcon from 'assets/svg/futures/selected-fav.svg';
-import MarketBadge from 'components/Badge/MarketBadge';
-import ColoredPrice from 'components/ColoredPrice';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FlexDivRowCentered } from 'components/layout/flex';
-import Spacer from 'components/Spacer';
-import Table, { TableHeader, TableNoResults } from 'components/Table';
-import Search from 'components/Table/Search';
-import { Body } from 'components/Text';
-import NumericValue from 'components/Text/NumericValue';
-import { BANNER_HEIGHT_DESKTOP, BANNER_HEIGHT_MOBILE } from 'constants/announcement';
-import ROUTES from 'constants/routes';
-import { zIndex } from 'constants/ui';
-import useClickOutside from 'hooks/useClickOutside';
-import useLocalStorage from 'hooks/useLocalStorage';
-import { selectShowBanner } from 'state/app/selectors';
+import FavoriteIcon from 'assets/svg/futures/favorite-star.svg'
+import SelectedIcon from 'assets/svg/futures/selected-fav.svg'
+import MarketBadge from 'components/Badge/MarketBadge'
+import ColoredPrice from 'components/ColoredPrice'
+import CurrencyIcon from 'components/Currency/CurrencyIcon'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import Spacer from 'components/Spacer'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
+import Search from 'components/Table/Search'
+import { Body } from 'components/Text'
+import NumericValue from 'components/Text/NumericValue'
+import { BANNER_HEIGHT_DESKTOP, BANNER_HEIGHT_MOBILE } from 'constants/announcement'
+import ROUTES from 'constants/routes'
+import { zIndex } from 'constants/ui'
+import useClickOutside from 'hooks/useClickOutside'
+import useLocalStorage from 'hooks/useLocalStorage'
+import { selectShowBanner } from 'state/app/selectors'
 import {
 	selectMarketAsset,
 	selectMarkets,
@@ -37,90 +37,90 @@ import {
 	selectFuturesType,
 	selectMarketInfo,
 	selectMarkPriceInfos,
-} from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { selectPreviousDayPrices } from 'state/prices/selectors';
-import { FetchStatus } from 'state/types';
-import media from 'styles/media';
-import { getMarketName, getSynthDescription } from 'utils/futures';
+} from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import { selectPreviousDayPrices } from 'state/prices/selectors'
+import { FetchStatus } from 'state/types'
+import media from 'styles/media'
+import { getMarketName, getSynthDescription } from 'utils/futures'
 
 import {
 	MARKETS_DETAILS_HEIGHT_DESKTOP,
 	TRADE_PANEL_WIDTH_LG,
 	TRADE_PANEL_WIDTH_MD,
-} from '../styles';
+} from '../styles'
 
-import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector';
+import MarketsDropdownSelector, { MARKET_SELECTOR_HEIGHT_MOBILE } from './MarketsDropdownSelector'
 
 type MarketsDropdownProps = {
-	mobile?: boolean;
-};
+	mobile?: boolean
+}
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
-	const markPrices = useAppSelector(selectMarkPriceInfos);
-	const pastPrices = useAppSelector(selectPreviousDayPrices);
-	const accountType = useAppSelector(selectFuturesType);
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const futuresMarkets = useAppSelector(selectMarkets);
-	const marketsQueryStatus = useAppSelector(selectMarketsQueryStatus);
+	const markPrices = useAppSelector(selectMarkPriceInfos)
+	const pastPrices = useAppSelector(selectPreviousDayPrices)
+	const accountType = useAppSelector(selectFuturesType)
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const futuresMarkets = useAppSelector(selectMarkets)
+	const marketsQueryStatus = useAppSelector(selectMarketsQueryStatus)
 
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const [open, setOpen] = useState(false);
-	const [search, setSearch] = useState('');
-	const [favMarkets, setFavMarkets] = useLocalStorage<string[]>('favorite-markets', []);
-	const showBanner = useAppSelector(selectShowBanner);
+	const marketInfo = useAppSelector(selectMarketInfo)
+	const [open, setOpen] = useState(false)
+	const [search, setSearch] = useState('')
+	const [favMarkets, setFavMarkets] = useLocalStorage<string[]>('favorite-markets', [])
+	const showBanner = useAppSelector(selectShowBanner)
 
-	const { ref } = useClickOutside(() => setOpen(false));
+	const { ref } = useClickOutside(() => setOpen(false))
 
-	const router = useRouter();
-	const { t } = useTranslation();
+	const router = useRouter()
+	const { t } = useTranslation()
 
 	const onSelectFav = useCallback(
 		(asset: string) => {
-			const index = favMarkets.indexOf(asset);
+			const index = favMarkets.indexOf(asset)
 
 			if (index !== -1) {
-				favMarkets.splice(index, 1);
+				favMarkets.splice(index, 1)
 			} else {
-				favMarkets.push(asset);
+				favMarkets.push(asset)
 			}
-			setFavMarkets([...favMarkets]);
+			setFavMarkets([...favMarkets])
 		},
 		[favMarkets, setFavMarkets]
-	);
+	)
 
 	const getBasePriceRateInfo = useCallback(
 		(asset: FuturesMarketAsset) => {
-			return markPrices[MarketKeyByAsset[asset]];
+			return markPrices[MarketKeyByAsset[asset]]
 		},
 		[markPrices]
-	);
+	)
 
 	const getPastPrice = useCallback(
 		(asset: string) => pastPrices.find((price) => price.synth === getDisplayAsset(asset)),
 		[pastPrices]
-	);
+	)
 
 	const onSelectMarket = useCallback(
 		(asset: string) => {
-			router.push(ROUTES.Markets.MarketPair(asset, accountType));
-			setOpen(false);
+			router.push(ROUTES.Markets.MarketPair(asset, accountType))
+			setOpen(false)
 		},
 		[accountType, router]
-	);
+	)
 
-	const selectedBasePriceRate = getBasePriceRateInfo(marketAsset);
-	const selectedPastPrice = getPastPrice(marketAsset);
+	const selectedBasePriceRate = getBasePriceRateInfo(marketAsset)
+	const selectedPastPrice = getPastPrice(marketAsset)
 
 	const options = useMemo(() => {
-		const lowerSearch = search?.toLowerCase();
+		const lowerSearch = search?.toLowerCase()
 		const markets = lowerSearch
 			? futuresMarkets.filter(
 					(m) =>
 						m.asset.toLowerCase().includes(lowerSearch) ||
 						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)
 			  )
-			: futuresMarkets;
+			: futuresMarkets
 
 		const sortedMarkets = markets
 			.filter((m) => favMarkets.includes(m.asset))
@@ -141,16 +141,16 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 							? 1
 							: -1
 					)
-			);
+			)
 
 		return sortedMarkets.map((market) => {
-			const pastPrice = getPastPrice(market.asset);
-			const basePriceRate = getBasePriceRateInfo(market.asset);
+			const pastPrice = getPastPrice(market.asset)
+			const basePriceRate = getBasePriceRateInfo(market.asset)
 
 			const change =
 				basePriceRate && pastPrice?.rate && basePriceRate.price.gt(0)
 					? wei(basePriceRate.price).sub(pastPrice?.rate).div(basePriceRate.price)
-					: ZERO_WEI;
+					: ZERO_WEI
 
 			return {
 				value: market.asset,
@@ -164,17 +164,17 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				priceDirection: basePriceRate?.change ?? null,
 				isMarketClosed: market.isSuspended,
 				closureReason: market.marketClosureReason,
-			};
-		});
-	}, [search, futuresMarkets, favMarkets, getPastPrice, getBasePriceRateInfo, t]);
+			}
+		})
+	}, [search, futuresMarkets, favMarkets, getPastPrice, getBasePriceRateInfo, t])
 
-	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading;
+	const isFetching = !futuresMarkets.length && marketsQueryStatus.status === FetchStatus.Loading
 
 	const tableHeight: number = useMemo(() => {
-		const BANNER_HEIGHT = mobile ? BANNER_HEIGHT_MOBILE : BANNER_HEIGHT_DESKTOP;
-		const OFFSET = mobile ? 159 : 205;
-		return Math.max(window.innerHeight - OFFSET - Number(showBanner) * BANNER_HEIGHT, 300);
-	}, [mobile, showBanner]);
+		const BANNER_HEIGHT = mobile ? BANNER_HEIGHT_MOBILE : BANNER_HEIGHT_DESKTOP
+		const OFFSET = mobile ? 159 : 205
+		return Math.max(window.innerHeight - OFFSET - Number(showBanner) * BANNER_HEIGHT, 300)
+	}, [mobile, showBanner])
 
 	return (
 		<SelectContainer mobile={mobile} ref={ref} accountType={accountType}>
@@ -222,8 +222,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									Cell: ({ row }: any) => (
 										<div
 											onClick={(e) => {
-												onSelectFav(row.original.asset);
-												e.stopPropagation();
+												onSelectFav(row.original.asset)
+												e.stopPropagation()
 											}}
 											style={{ cursor: 'pointer', zIndex: 200 }}
 										>
@@ -267,7 +267,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 													{cellProps.row.original.price}
 												</ColoredPrice>
 											</div>
-										);
+										)
 									},
 									width: 80,
 								},
@@ -292,7 +292,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 													}
 												/>
 											</div>
-										);
+										)
 									},
 									accessor: 'change',
 									sortType: 'basic',
@@ -317,8 +317,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				</MarketsList>
 			)}
 		</SelectContainer>
-	);
-};
+	)
+}
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	top: 66px;
@@ -341,13 +341,13 @@ const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 		css`
 			width: 100%;
 		`}
-`;
+`
 
 const TableContainer = styled.div`
 	height: 100%;
 	overflow: scroll;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-`;
+`
 
 const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	border: none;
@@ -365,14 +365,14 @@ const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	.table-body-cell {
 		height: 32px;
 	}
-`;
+`
 
 const SearchBarContainer = styled.div`
 	font-size: 13px;
 	width: 100%;
 	height: 38px;
 	top: 0;
-`;
+`
 
 const SelectContainer = styled.div<{ mobile?: boolean; accountType?: string }>`
 	z-index: ${zIndex.MARKET_DROPDOWN};
@@ -391,6 +391,6 @@ const SelectContainer = styled.div<{ mobile?: boolean; accountType?: string }>`
 			right: 0;
 			height: ${MARKET_SELECTOR_HEIGHT_MOBILE + 1}px;
 		`}
-`;
+`
 
-export default MarketsDropdown;
+export default MarketsDropdown

@@ -5,7 +5,7 @@ const keyframes = {
       transform: none;
     }
   }`,
-};
+}
 
 const animations = {
 	show: `
@@ -13,6 +13,6 @@ const animations = {
         animation: show 300ms ease-out forwards;
         ${keyframes.show}
   `,
-};
+}
 
-export default animations;
+export default animations

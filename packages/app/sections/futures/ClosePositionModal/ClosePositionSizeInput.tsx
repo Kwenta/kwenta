@@ -1,32 +1,32 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { PositionSide } from '@kwenta/sdk/types';
-import Wei, { wei } from '@synthetixio/wei';
-import React, { useMemo, memo, useCallback } from 'react';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { PositionSide } from '@kwenta/sdk/types'
+import Wei, { wei } from '@synthetixio/wei'
+import React, { useMemo, memo, useCallback } from 'react'
+import styled from 'styled-components'
 
-import InputTitle from 'components/Input/InputTitle';
-import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRow } from 'components/layout/flex';
-import Spacer from 'components/Spacer';
-import { selectShowPositionModal } from 'state/app/selectors';
-import { editClosePositionSizeDelta } from 'state/futures/actions';
+import InputTitle from 'components/Input/InputTitle'
+import NumericInput from 'components/Input/NumericInput'
+import { FlexDivRow } from 'components/layout/flex'
+import Spacer from 'components/Spacer'
+import { selectShowPositionModal } from 'state/app/selectors'
+import { editClosePositionSizeDelta } from 'state/futures/actions'
 import {
 	selectClosePositionOrderInputs,
 	selectEditPositionModalInfo,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type OrderSizingProps = {
-	maxNativeValue: Wei;
-	isMobile?: boolean;
-};
+	maxNativeValue: Wei
+	isMobile?: boolean
+}
 
 const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, maxNativeValue }) => {
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
-	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs);
-	const { position } = useAppSelector(selectEditPositionModalInfo);
-	const modal = useAppSelector(selectShowPositionModal);
+	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs)
+	const { position } = useAppSelector(selectEditPositionModalInfo)
+	const modal = useAppSelector(selectShowPositionModal)
 
 	const onSizeChange = useCallback(
 		(value: string) => {
@@ -36,24 +36,24 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 						modal.marketKey,
 						position?.position?.side === PositionSide.LONG ? '-' + value : value
 					)
-				);
+				)
 			}
 		},
 		[dispatch, modal, position?.position?.side]
-	);
+	)
 
 	const onChangeValue = useCallback(
 		(_: any, v: string) => {
-			onSizeChange(v);
+			onSizeChange(v)
 		},
 		[onSizeChange]
-	);
+	)
 
 	const nativeSizeDeltaWei = useMemo(() => {
-		return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? ZERO_WEI : wei(nativeSizeDelta);
-	}, [nativeSizeDelta]);
+		return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? ZERO_WEI : wei(nativeSizeDelta)
+	}, [nativeSizeDelta])
 
-	const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei.abs());
+	const invalid = nativeSizeDelta !== '' && maxNativeValue.lt(nativeSizeDeltaWei.abs())
 
 	return (
 		<OrderSizingContainer>
@@ -70,16 +70,16 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 			/>
 			<Spacer height={16} />
 		</OrderSizingContainer>
-	);
-});
+	)
+})
 
-const OrderSizingContainer = styled.div``;
+const OrderSizingContainer = styled.div``
 
 const OrderSizingRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
 	margin-bottom: 8px;
 	cursor: default;
-`;
+`
 
-export default ClosePositionSizeInput;
+export default ClosePositionSizeInput

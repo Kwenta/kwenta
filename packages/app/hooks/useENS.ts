@@ -1,44 +1,44 @@
-import { isAddress } from 'ethers/lib/utils';
-import { useEffect, useState } from 'react';
+import { isAddress } from 'ethers/lib/utils'
+import { useEffect, useState } from 'react'
 
-import { staticMainnetProvider } from 'utils/network';
+import { staticMainnetProvider } from 'utils/network'
 
-type ENSAccount = { ensAddress: string | null; ensName: string | null; ensAvatar: string | null };
+type ENSAccount = { ensAddress: string | null; ensName: string | null; ensAvatar: string | null }
 
 const useENS = (addressOrName: string): ENSAccount => {
-	const [ensAddress, setENSAddress] = useState<string | null>(null);
-	const [ensName, setENSName] = useState<string | null>(null);
-	const [ensAvatar, setENSAvatar] = useState<string | null>(null);
+	const [ensAddress, setENSAddress] = useState<string | null>(null)
+	const [ensName, setENSName] = useState<string | null>(null)
+	const [ensAvatar, setENSAvatar] = useState<string | null>(null)
 
 	useEffect(() => {
-		let mounted = true;
+		let mounted = true
 
-		(async () => {
-			let newEnsName = null;
+		;(async () => {
+			let newEnsName = null
 			if (isAddress(addressOrName)) {
-				setENSAddress(addressOrName);
-				newEnsName = await staticMainnetProvider.lookupAddress(addressOrName);
-				setENSName(newEnsName);
+				setENSAddress(addressOrName)
+				newEnsName = await staticMainnetProvider.lookupAddress(addressOrName)
+				setENSName(newEnsName)
 			} else if (addressOrName.endsWith('.eth')) {
-				newEnsName = await staticMainnetProvider.resolveName(addressOrName);
-				setENSAddress(newEnsName);
-				setENSName(addressOrName);
+				newEnsName = await staticMainnetProvider.resolveName(addressOrName)
+				setENSAddress(newEnsName)
+				setENSName(addressOrName)
 			}
 
 			if (newEnsName && mounted) {
-				setENSAvatar(await staticMainnetProvider.getAvatar(newEnsName));
+				setENSAvatar(await staticMainnetProvider.getAvatar(newEnsName))
 			}
-		})();
+		})()
 
 		return () => {
-			mounted = false;
-			setENSAddress(null);
-			setENSAvatar(null);
-			setENSName(null);
-		};
-	}, [addressOrName]);
+			mounted = false
+			setENSAddress(null)
+			setENSAvatar(null)
+			setENSName(null)
+		}
+	}, [addressOrName])
 
-	return { ensAddress, ensName, ensAvatar };
-};
+	return { ensAddress, ensName, ensAvatar }
+}
 
-export default useENS;
+export default useENS

@@ -1,1 +1,1 @@
-export { default } from './CrossMarginOnboard';
+export { default } from './CrossMarginOnboard'

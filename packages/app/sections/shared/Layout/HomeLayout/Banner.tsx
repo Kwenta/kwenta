@@ -1,8 +1,8 @@
-import { memo, useCallback, useEffect } from 'react';
-import styled from 'styled-components';
+import { memo, useCallback, useEffect } from 'react'
+import styled from 'styled-components'
 
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { Body } from 'components/Text';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import { Body } from 'components/Text'
 import {
 	BANNER_ENABLED,
 	BANNER_HEIGHT_DESKTOP,
@@ -10,26 +10,26 @@ import {
 	BANNER_LINK_URL,
 	BANNER_TEXT,
 	BANNER_WAITING_TIME,
-} from 'constants/announcement';
-import { MARKET_SELECTOR_HEIGHT_MOBILE } from 'sections/futures/Trade/MarketsDropdownSelector';
-import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover';
-import { setShowBanner } from 'state/app/reducer';
-import { selectShowBanner } from 'state/app/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import media from 'styles/media';
-import localStore from 'utils/localStore';
+} from 'constants/announcement'
+import { MARKET_SELECTOR_HEIGHT_MOBILE } from 'sections/futures/Trade/MarketsDropdownSelector'
+import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover'
+import { setShowBanner } from 'state/app/reducer'
+import { selectShowBanner } from 'state/app/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import media from 'styles/media'
+import localStore from 'utils/localStore'
 
 type BannerViewProps = {
-	mode: 'mobile' | 'desktop';
-	onDismiss: (e: any) => void;
-	onDetails: () => void;
-};
+	mode: 'mobile' | 'desktop'
+	onDismiss: (e: any) => void
+	onDetails: () => void
+}
 
 const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) => {
-	const isMobile = mode === 'mobile';
-	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { flex: '0.1' };
-	const closeIconProps = isMobile ? { width: 12, height: 12 } : {};
-	const linkSize = isMobile ? 'small' : 'medium';
+	const isMobile = mode === 'mobile'
+	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { flex: '0.1' }
+	const closeIconProps = isMobile ? { width: 12, height: 12 } : {}
+	const linkSize = isMobile ? 'small' : 'medium'
 
 	return (
 		<FuturesBannerContainer onClick={onDetails}>
@@ -41,39 +41,39 @@ const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) =
 				<CloseIconWithHover onClick={onDismiss} style={closeIconStyle} {...closeIconProps} />
 			</FuturesBannerLinkWrapper>
 		</FuturesBannerContainer>
-	);
-};
+	)
+}
 
 const Banner = memo(() => {
-	const dispatch = useAppDispatch();
-	const showBanner = useAppSelector(selectShowBanner);
-	const storedTime: number = localStore.get('bannerIsClicked') || 0;
+	const dispatch = useAppDispatch()
+	const showBanner = useAppSelector(selectShowBanner)
+	const storedTime: number = localStore.get('bannerIsClicked') || 0
 
 	useEffect(
 		() => {
-			const currentTime = new Date().getTime();
-			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED));
+			const currentTime = new Date().getTime()
+			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED))
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[storedTime]
-	);
+	)
 
 	const handleDismiss = useCallback(
 		(e: any) => {
-			dispatch(setShowBanner(false));
-			localStore.set('bannerIsClicked', new Date().getTime());
-			e.stopPropagation();
+			dispatch(setShowBanner(false))
+			localStore.set('bannerIsClicked', new Date().getTime())
+			e.stopPropagation()
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
-	);
+	)
 
 	const openDetails = useCallback(
 		() => window.open(BANNER_LINK_URL, '_blank', 'noopener noreferrer'),
 		[]
-	);
+	)
 
-	if (!BANNER_ENABLED || !showBanner) return null;
+	if (!BANNER_ENABLED || !showBanner) return null
 
 	return (
 		<>
@@ -84,8 +84,8 @@ const Banner = memo(() => {
 				<BannerView mode="mobile" onDismiss={handleDismiss} onDetails={openDetails} />
 			</MobileOrTabletView>
 		</>
-	);
-});
+	)
+})
 
 const FuturesLink = styled(Body)`
 	margin-right: 5px;
@@ -97,7 +97,7 @@ const FuturesLink = styled(Body)`
 		margin-right: 0px;
 		flex: 1;
 	`};
-`;
+`
 
 const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 	height: ${BANNER_HEIGHT_DESKTOP}px;
@@ -121,7 +121,7 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 		height: ${BANNER_HEIGHT_MOBILE}px;
 		margin-top: ${MARKET_SELECTOR_HEIGHT_MOBILE}px;
 	`}
-`;
+`
 
 const FuturesBannerLinkWrapper = styled.div`
 	width: 100%;
@@ -133,6 +133,6 @@ const FuturesBannerLinkWrapper = styled.div`
 	justify-content: center;
 	align-items: center;
 	padding: 0 10px;
-`;
+`
 
-export default Banner;
+export default Banner

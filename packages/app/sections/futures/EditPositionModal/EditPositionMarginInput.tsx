@@ -1,31 +1,31 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { floorNumber, formatNumber } from '@kwenta/sdk/utils';
-import Wei, { wei } from '@synthetixio/wei';
-import React, { memo, useCallback, useMemo } from 'react';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { floorNumber, formatNumber } from '@kwenta/sdk/utils'
+import Wei, { wei } from '@synthetixio/wei'
+import React, { memo, useCallback, useMemo } from 'react'
 
-import TextButton from 'components/Button/TextButton';
-import InputHeaderRow from 'components/Input/InputHeaderRow';
-import NumericInput from 'components/Input/NumericInput';
-import { getStep } from 'components/Slider/Slider';
-import StyledSlider from 'components/Slider/StyledSlider';
-import Spacer from 'components/Spacer';
-import { selectShowPositionModal } from 'state/app/selectors';
-import { editCrossMarginPositionMargin } from 'state/futures/actions';
-import { selectEditPositionInputs } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import TextButton from 'components/Button/TextButton'
+import InputHeaderRow from 'components/Input/InputHeaderRow'
+import NumericInput from 'components/Input/NumericInput'
+import { getStep } from 'components/Slider/Slider'
+import StyledSlider from 'components/Slider/StyledSlider'
+import Spacer from 'components/Spacer'
+import { selectShowPositionModal } from 'state/app/selectors'
+import { editCrossMarginPositionMargin } from 'state/futures/actions'
+import { selectEditPositionInputs } from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type OrderSizingProps = {
-	isMobile?: boolean;
-	maxUsdInput: Wei;
-	type: 'deposit' | 'withdraw';
-};
+	isMobile?: boolean
+	maxUsdInput: Wei
+	type: 'deposit' | 'withdraw'
+}
 
 const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 	({ isMobile, type, maxUsdInput }) => {
-		const dispatch = useAppDispatch();
+		const dispatch = useAppDispatch()
 
-		const { marginDelta } = useAppSelector(selectEditPositionInputs);
-		const positionModal = useAppSelector(selectShowPositionModal);
+		const { marginDelta } = useAppSelector(selectEditPositionInputs)
+		const positionModal = useAppSelector(selectShowPositionModal)
 
 		const onChangeMargin = useCallback(
 			(value: string) => {
@@ -35,30 +35,30 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 							positionModal.marketKey,
 							type === 'deposit' || !value ? value : '-' + value
 						)
-					);
+					)
 				}
 			},
 			[dispatch, type, positionModal?.marketKey]
-		);
+		)
 
 		const handleSetMax = useCallback(() => {
-			onChangeMargin(String(floorNumber(maxUsdInput)));
-		}, [onChangeMargin, maxUsdInput]);
+			onChangeMargin(String(floorNumber(maxUsdInput)))
+		}, [onChangeMargin, maxUsdInput])
 
-		const onChangeValue = useCallback((_: any, v: string) => onChangeMargin(v), [onChangeMargin]);
+		const onChangeValue = useCallback((_: any, v: string) => onChangeMargin(v), [onChangeMargin])
 		const onChangeSlider = useCallback(
 			(_: any, v: number | number[]) => onChangeMargin(String(v)),
 			[onChangeMargin]
-		);
+		)
 
 		const marginDeltaWei = useMemo(() => {
-			return !marginDelta || isNaN(Number(marginDelta)) ? ZERO_WEI : wei(marginDelta);
-		}, [marginDelta]);
+			return !marginDelta || isNaN(Number(marginDelta)) ? ZERO_WEI : wei(marginDelta)
+		}, [marginDelta])
 
 		const invalid = useMemo(() => wei(marginDeltaWei || 0).gt(maxUsdInput), [
 			marginDeltaWei,
 			maxUsdInput,
-		]);
+		])
 
 		return (
 			<div>
@@ -87,8 +87,8 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 					$currentMark={Number(marginDelta ?? 0)}
 				/>
 			</div>
-		);
+		)
 	}
-);
+)
 
-export default EditPositionMarginInput;
+export default EditPositionMarginInput

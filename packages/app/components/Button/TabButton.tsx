@@ -1,27 +1,27 @@
-import React, { ReactNode } from 'react';
-import styled, { css } from 'styled-components';
+import React, { ReactNode } from 'react'
+import styled, { css } from 'styled-components'
 
-import { FlexDivRowCentered } from 'components/layout/flex';
-import { Body } from 'components/Text';
+import { FlexDivRowCentered } from 'components/layout/flex'
+import { Body } from 'components/Text'
 
-import Button from './Button';
+import Button from './Button'
 
 export type TabButtonProps = {
-	title: string;
-	detail?: string;
-	badgeCount?: number;
-	icon?: any;
-	iconOnly?: boolean;
-	active?: boolean;
-	titleIcon?: ReactNode;
-	disabled?: boolean;
-	inline?: boolean;
-	vertical?: boolean;
-	nofill?: boolean;
-	isRounded?: boolean;
-	onClick?: () => any;
-	flat?: boolean;
-};
+	title: string
+	detail?: string
+	badgeCount?: number
+	icon?: any
+	iconOnly?: boolean
+	active?: boolean
+	titleIcon?: ReactNode
+	disabled?: boolean
+	inline?: boolean
+	vertical?: boolean
+	nofill?: boolean
+	isRounded?: boolean
+	onClick?: () => any
+	flat?: boolean
+}
 
 const InnerButton: React.FC<TabButtonProps> = React.memo(
 	({ title, detail, badgeCount, icon, titleIcon }) => (
@@ -48,7 +48,7 @@ const InnerButton: React.FC<TabButtonProps> = React.memo(
 			</div>
 		</FlexDivRowCentered>
 	)
-);
+)
 
 const TabButton: React.FC<TabButtonProps> = React.memo(
 	({ active, flat = false, onClick, iconOnly, icon, ...props }) =>
@@ -67,14 +67,14 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 				<InnerButton {...props} />
 			</StyledButton>
 		)
-);
+)
 
 const sharedStyle = css<{
-	active?: boolean;
-	$iconOnly?: boolean;
-	$vertical?: boolean;
-	$nofill?: boolean;
-	$flat?: boolean;
+	active?: boolean
+	$iconOnly?: boolean
+	$vertical?: boolean
+	$nofill?: boolean
+	$flat?: boolean
 }>`
 	height: initial;
 	display: flex;
@@ -166,7 +166,7 @@ const sharedStyle = css<{
 				border-right: ${props.theme.colors.selectedTheme.border};
 			}
 		`}
-`;
+`
 
 const InlineTab = styled.div`
 	${sharedStyle}
@@ -174,13 +174,13 @@ const InlineTab = styled.div`
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 0px 20px;
 	transition: all 0.1s ease-in-out;
-`;
+`
 
 const StyledButton = styled(Button).attrs({ size: 'small' })<{
-	$vertical?: boolean;
-	$nofill?: boolean;
-	$flat?: boolean;
-	active?: boolean;
+	$vertical?: boolean
+	$nofill?: boolean
+	$flat?: boolean
+	active?: boolean
 }>`
 	p {
 		text-align: left;
@@ -191,6 +191,6 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 		border-radius: ${props.isRounded ? '100px' : '8px'};
 	`}
 	${sharedStyle}
-`;
+`
 
-export default TabButton;
+export default TabButton

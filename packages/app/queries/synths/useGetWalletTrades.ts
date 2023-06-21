@@ -1,20 +1,20 @@
-import { NetworkId } from '@kwenta/sdk/types';
-import { getMainEndpoint } from '@kwenta/sdk/utils';
-import request, { gql } from 'graphql-request';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { NetworkId } from '@kwenta/sdk/types'
+import { getMainEndpoint } from '@kwenta/sdk/utils'
+import request, { gql } from 'graphql-request'
+import { useQuery, UseQueryOptions } from 'react-query'
 
-import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
-import logError from 'utils/logError';
+import QUERY_KEYS from 'constants/queryKeys'
+import Connector from 'containers/Connector'
+import logError from 'utils/logError'
 
-import { SynthsVolumes } from './type';
+import { SynthsVolumes } from './type'
 
 const useGetWalletTrades = (
 	walletAddress: string,
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
-	const { network } = Connector.useContainer();
-	const synthsEndpoint = getMainEndpoint(network?.id as NetworkId);
+	const { network } = Connector.useContainer()
+	const synthsEndpoint = getMainEndpoint(network?.id as NetworkId)
 
 	return useQuery<any>(
 		QUERY_KEYS.Trades.WalletTrades(walletAddress, network?.id as NetworkId),
@@ -53,16 +53,16 @@ const useGetWalletTrades = (
 						}
 					`,
 					{ walletAddress: walletAddress.toLowerCase() }
-				);
+				)
 
-				return response;
+				return response
 			} catch (e) {
-				logError(e);
-				return null;
+				logError(e)
+				return null
 			}
 		},
 		{ enabled: !!walletAddress, ...options }
-	);
-};
+	)
+}
 
-export default useGetWalletTrades;
+export default useGetWalletTrades

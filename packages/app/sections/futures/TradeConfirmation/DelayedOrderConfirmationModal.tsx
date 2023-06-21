@@ -1,5 +1,5 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { PositionSide } from '@kwenta/sdk/types';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { PositionSide } from '@kwenta/sdk/types'
 import {
 	getDisplayAsset,
 	OrderNameByType,
@@ -7,21 +7,21 @@ import {
 	formatDollars,
 	formatPercent,
 	formatNumber,
-} from '@kwenta/sdk/utils';
-import { FC, useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+} from '@kwenta/sdk/utils'
+import { FC, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import HelpIcon from 'assets/svg/app/question-mark.svg';
-import BaseModal from 'components/BaseModal';
-import Button from 'components/Button';
-import Error from 'components/ErrorView';
-import { ButtonLoader } from 'components/Loader/Loader';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Spacer from 'components/Spacer';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { setOpenModal } from 'state/app/reducer';
-import { modifyIsolatedPosition } from 'state/futures/actions';
+import HelpIcon from 'assets/svg/app/question-mark.svg'
+import BaseModal from 'components/BaseModal'
+import Button from 'components/Button'
+import Error from 'components/ErrorView'
+import { ButtonLoader } from 'components/Loader/Loader'
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import Spacer from 'components/Spacer'
+import Tooltip from 'components/Tooltip/Tooltip'
+import { setOpenModal } from 'state/app/reducer'
+import { modifyIsolatedPosition } from 'state/futures/actions'
 import {
 	selectIsModifyingIsolatedPosition,
 	selectLeverageSide,
@@ -33,48 +33,48 @@ import {
 	selectPosition,
 	selectTradePreview,
 	selectTradeSizeInputs,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { getKnownError } from 'utils/formatters/error';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { getKnownError } from 'utils/formatters/error'
 
-import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
+import BaseDrawer from '../MobileTrade/drawers/BaseDrawer'
 
-import TradeConfirmationRow from './TradeConfirmationRow';
-import TradeConfirmationSummary from './TradeConfirmationSummary';
+import TradeConfirmationRow from './TradeConfirmationRow'
+import TradeConfirmationSummary from './TradeConfirmationSummary'
 
 const DelayedOrderConfirmationModal: FC = () => {
-	const { t } = useTranslation();
-	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer);
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer)
+	const dispatch = useAppDispatch()
 
-	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs);
-	const txError = useAppSelector(selectModifyPositionError);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const position = useAppSelector(selectPosition);
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const submitting = useAppSelector(selectIsModifyingIsolatedPosition);
-	const potentialTradeDetails = useAppSelector(selectTradePreview);
-	const orderType = useAppSelector(selectOrderType);
+	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs)
+	const txError = useAppSelector(selectModifyPositionError)
+	const leverageSide = useAppSelector(selectLeverageSide)
+	const position = useAppSelector(selectPosition)
+	const marketInfo = useAppSelector(selectMarketInfo)
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const submitting = useAppSelector(selectIsModifyingIsolatedPosition)
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+	const orderType = useAppSelector(selectOrderType)
 
 	const positionSize = useMemo(() => {
-		const positionDetails = position?.position;
+		const positionDetails = position?.position
 		return positionDetails
 			? positionDetails.size.mul(positionDetails.side === PositionSide.LONG ? 1 : -1)
-			: ZERO_WEI;
-	}, [position]);
+			: ZERO_WEI
+	}, [position])
 
 	const orderDetails = useMemo(() => {
-		return { nativeSizeDelta, size: (positionSize ?? ZERO_WEI).add(nativeSizeDelta).abs() };
-	}, [nativeSizeDelta, positionSize]);
+		return { nativeSizeDelta, size: (positionSize ?? ZERO_WEI).add(nativeSizeDelta).abs() }
+	}, [nativeSizeDelta, positionSize])
 
 	const isClosing = useMemo(() => {
-		return orderDetails.size.eq(ZERO_WEI);
-	}, [orderDetails]);
+		return orderDetails.size.eq(ZERO_WEI)
+	}, [orderDetails])
 
 	const totalDeposit = useMemo(() => {
-		return (potentialTradeDetails?.fee ?? ZERO_WEI).add(marketInfo?.keeperDeposit ?? ZERO_WEI);
-	}, [potentialTradeDetails?.fee, marketInfo?.keeperDeposit]);
+		return (potentialTradeDetails?.fee ?? ZERO_WEI).add(marketInfo?.keeperDeposit ?? ZERO_WEI)
+	}, [potentialTradeDetails?.fee, marketInfo?.keeperDeposit])
 
 	const dataRows = useMemo(
 		() => [
@@ -131,7 +131,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 			marketInfo?.keeperDeposit,
 			marketInfo?.settings.offchainDelayedOrderMinAge,
 		]
-	);
+	)
 
 	const mobileRows = useMemo(() => {
 		return [
@@ -154,16 +154,16 @@ const DelayedOrderConfirmationModal: FC = () => {
 				value: OrderNameByType[orderType],
 			},
 			...dataRows,
-		];
-	}, [dataRows, marketAsset, leverageSide, orderType, orderDetails.nativeSizeDelta, t]);
+		]
+	}, [dataRows, marketAsset, leverageSide, orderType, orderDetails.nativeSizeDelta, t])
 
 	const onDismiss = useCallback(() => {
-		dispatch(setOpenModal(null));
-	}, [dispatch]);
+		dispatch(setOpenModal(null))
+	}, [dispatch])
 
 	const handleConfirmOrder = () => {
-		dispatch(modifyIsolatedPosition());
-	};
+		dispatch(modifyIsolatedPosition())
+	}
 
 	return (
 		<>
@@ -251,14 +251,14 @@ const DelayedOrderConfirmationModal: FC = () => {
 				/>
 			</MobileOrTabletView>
 		</>
-	);
-};
+	)
+}
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
-`;
+`
 
 const Label = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -268,7 +268,7 @@ const Label = styled.div`
 	flex-direction: row;
 	gap: 4px;
 	align-items: center;
-`;
+`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
@@ -289,7 +289,7 @@ const Value = styled.div`
 	.red {
 		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
-`;
+`
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
@@ -297,21 +297,21 @@ const ConfirmTradeButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 55px;
-`;
+`
 
 const ConfirmTradeButtonMobile = styled(ConfirmTradeButton)`
 	width: 100%;
-`;
+`
 
 const Disclaimer = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin-top: 12px;
 	margin-bottom: 12px;
-`;
+`
 
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-bottom: -1px;
-`;
+`
 
-export default DelayedOrderConfirmationModal;
+export default DelayedOrderConfirmationModal

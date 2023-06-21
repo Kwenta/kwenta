@@ -1,7 +1,7 @@
-import { FC, ReactNode, memo } from 'react';
-import styled, { css } from 'styled-components';
+import { FC, ReactNode, memo } from 'react'
+import styled, { css } from 'styled-components'
 
-import { ButtonLoader } from 'components/Loader/Loader';
+import { ButtonLoader } from 'components/Loader/Loader'
 
 // TODO: Clean up these styles
 export type ButtonVariant =
@@ -15,23 +15,23 @@ export type ButtonVariant =
 	| 'select'
 	| 'yellow'
 	| 'long'
-	| 'short';
+	| 'short'
 
 type BaseButtonProps = {
-	$size: 'xsmall' | 'small' | 'medium' | 'large';
-	$variant: ButtonVariant;
-	isActive?: boolean;
-	isRounded?: boolean;
-	fullWidth?: boolean;
-	noOutline?: boolean;
-	textColor?: 'yellow';
-	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase';
-	$active?: boolean;
-	$mono?: boolean;
-	$fontSize?: number;
-	$capitalized?: boolean;
-	$bold?: boolean;
-};
+	$size: 'xsmall' | 'small' | 'medium' | 'large'
+	$variant: ButtonVariant
+	isActive?: boolean
+	isRounded?: boolean
+	fullWidth?: boolean
+	noOutline?: boolean
+	textColor?: 'yellow'
+	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase'
+	$active?: boolean
+	$mono?: boolean
+	$fontSize?: number
+	$capitalized?: boolean
+	$bold?: boolean
+}
 
 export const border = css`
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
@@ -53,7 +53,7 @@ export const border = css`
 		mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
 		mask-composite: exclude;
 	}
-`;
+`
 
 const sizeMap = {
 	xsmall: {
@@ -80,7 +80,7 @@ const sizeMap = {
 		height: 55,
 		fontSize: 16,
 	},
-} as const;
+} as const
 
 const BaseButton = styled.button<BaseButtonProps>`
 	display: flex;
@@ -218,30 +218,30 @@ const BaseButton = styled.button<BaseButtonProps>`
 			display: none;
 		}
 	}
-`;
+`
 
 type ButtonProps = {
-	children?: ReactNode;
-	loading?: boolean;
-	active?: boolean;
-	mono?: boolean;
-	className?: string;
-	left?: ReactNode;
-	right?: ReactNode;
-	size?: 'xsmall' | 'small' | 'medium' | 'large';
-	variant?: ButtonVariant;
-	fullWidth?: boolean;
-	noOutline?: boolean;
-	textColor?: 'yellow';
-	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase';
-	style?: React.CSSProperties;
-	disabled?: boolean;
-	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
-	isRounded?: boolean;
-	fontSize?: number;
-	capitalized?: boolean;
-	bold?: boolean;
-};
+	children?: ReactNode
+	loading?: boolean
+	active?: boolean
+	mono?: boolean
+	className?: string
+	left?: ReactNode
+	right?: ReactNode
+	size?: 'xsmall' | 'small' | 'medium' | 'large'
+	variant?: ButtonVariant
+	fullWidth?: boolean
+	noOutline?: boolean
+	textColor?: 'yellow'
+	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase'
+	style?: React.CSSProperties
+	disabled?: boolean
+	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined
+	isRounded?: boolean
+	fontSize?: number
+	capitalized?: boolean
+	bold?: boolean
+}
 
 const Button: FC<ButtonProps> = memo(
 	({
@@ -281,8 +281,8 @@ const Button: FC<ButtonProps> = memo(
 					</>
 				)}
 			</BaseButton>
-		);
+		)
 	}
-);
+)
 
-export default Button;
+export default Button

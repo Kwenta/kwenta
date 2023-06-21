@@ -1,5 +1,5 @@
-import { MIN_MARGIN_AMOUNT, ZERO_WEI } from '@kwenta/sdk/constants';
-import { PositionSide } from '@kwenta/sdk/types';
+import { MIN_MARGIN_AMOUNT, ZERO_WEI } from '@kwenta/sdk/constants'
+import { PositionSide } from '@kwenta/sdk/types'
 import {
 	OrderNameByType,
 	formatCurrency,
@@ -7,21 +7,21 @@ import {
 	formatNumber,
 	formatPercent,
 	stripZeros,
-} from '@kwenta/sdk/utils';
-import Wei, { wei } from '@synthetixio/wei';
-import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+} from '@kwenta/sdk/utils'
+import Wei, { wei } from '@synthetixio/wei'
+import { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import HelpIcon from 'assets/svg/app/question-mark.svg';
-import BaseModal from 'components/BaseModal';
-import Button from 'components/Button';
-import ErrorView from 'components/ErrorView';
-import { ButtonLoader } from 'components/Loader/Loader';
-import Spacer from 'components/Spacer';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { NO_VALUE } from 'constants/placeholder';
-import { refetchTradePreview, submitCrossMarginOrder } from 'state/futures/actions';
+import HelpIcon from 'assets/svg/app/question-mark.svg'
+import BaseModal from 'components/BaseModal'
+import Button from 'components/Button'
+import ErrorView from 'components/ErrorView'
+import { ButtonLoader } from 'components/Loader/Loader'
+import Spacer from 'components/Spacer'
+import Tooltip from 'components/Tooltip/Tooltip'
+import { NO_VALUE } from 'constants/placeholder'
+import { refetchTradePreview, submitCrossMarginOrder } from 'state/futures/actions'
 import {
 	selectLeverageSide,
 	selectMarketAsset,
@@ -33,23 +33,23 @@ import {
 	selectSlTpTradeInputs,
 	selectKeeperDepositExceedsBal,
 	selectNewTradeHasSlTp,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks'
 
-import ConfirmSlippage from './ConfirmSlippage';
-import TradeConfirmationRow from './TradeConfirmationRow';
-import TradeConfirmationSummary from './TradeConfirmationSummary';
+import ConfirmSlippage from './ConfirmSlippage'
+import TradeConfirmationRow from './TradeConfirmationRow'
+import TradeConfirmationSummary from './TradeConfirmationSummary'
 
 type Props = {
-	gasFee?: Wei | null;
-	keeperFee?: Wei | null;
-	executionFee: Wei;
-	errorMessage?: string | null | undefined;
-	isSubmitting?: boolean;
-	allowanceValid?: boolean;
-	onApproveAllowance: () => any;
-	onDismiss: () => void;
-};
+	gasFee?: Wei | null
+	keeperFee?: Wei | null
+	executionFee: Wei
+	errorMessage?: string | null | undefined
+	isSubmitting?: boolean
+	allowanceValid?: boolean
+	onApproveAllowance: () => any
+	onDismiss: () => void
+}
 
 export default function TradeConfirmationModal({
 	gasFee,
@@ -61,38 +61,36 @@ export default function TradeConfirmationModal({
 	onApproveAllowance,
 	onDismiss,
 }: Props) {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const potentialTradeDetails = useAppSelector(selectTradePreview);
-	const orderType = useAppSelector(selectOrderType);
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const position = useAppSelector(selectPosition);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const leverageInput = useAppSelector(selectLeverageInput);
-	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal);
-	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs);
-	const hasSlTp = useAppSelector(selectNewTradeHasSlTp);
-	const [overridePriceProtection, setOverridePriceProtection] = useState(false);
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+	const orderType = useAppSelector(selectOrderType)
+	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const position = useAppSelector(selectPosition)
+	const leverageSide = useAppSelector(selectLeverageSide)
+	const leverageInput = useAppSelector(selectLeverageInput)
+	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
+	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs)
+	const hasSlTp = useAppSelector(selectNewTradeHasSlTp)
+	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
 
-	usePollAction('refresh_preview', refetchTradePreview, { intervalTime: 6000 });
+	usePollAction('refresh_preview', refetchTradePreview, { intervalTime: 6000 })
 
-	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch]);
+	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch])
 
 	const totalFee = useMemo(() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee, [
 		potentialTradeDetails?.fee,
 		executionFee,
-	]);
+	])
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(ZERO_WEI)) {
-			return position?.position?.side === PositionSide.LONG
-				? PositionSide.SHORT
-				: PositionSide.LONG;
+			return position?.position?.side === PositionSide.LONG ? PositionSide.SHORT : PositionSide.LONG
 		}
-		return potentialTradeDetails?.size.gte(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT;
-	}, [potentialTradeDetails?.size, position?.position?.side]);
+		return potentialTradeDetails?.size.gte(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT
+	}, [potentialTradeDetails?.size, position?.position?.side])
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
@@ -106,8 +104,8 @@ export default function TradeConfirmationModal({
 								.div(potentialTradeDetails.margin)
 								.abs(),
 			  }
-			: null;
-	}, [potentialTradeDetails, positionSide]);
+			: null
+	}, [potentialTradeDetails, positionSide])
 
 	const dataRows = useMemo(
 		() => [
@@ -177,27 +175,27 @@ export default function TradeConfirmationModal({
 			stopLossPrice,
 			takeProfitPrice,
 		]
-	);
+	)
 
 	const showEthBalWarning = useMemo(() => {
-		return ethBalanceExceeded && (orderType !== 'market' || hasSlTp);
-	}, [ethBalanceExceeded, orderType, hasSlTp]);
+		return ethBalanceExceeded && (orderType !== 'market' || hasSlTp)
+	}, [ethBalanceExceeded, orderType, hasSlTp])
 
 	const ethBalWarningMessage = showEthBalWarning
 		? t('futures.market.trade.confirmation.modal.eth-bal-warning')
-		: null;
+		: null
 
 	const disabledReason = useMemo(() => {
 		if (showEthBalWarning) {
 			return t('futures.market.trade.confirmation.modal.disabled-eth-bal', {
 				depositAmount: stripZeros(keeperFee?.toString()),
-			});
+			})
 		}
 		if (positionDetails?.exceedsPriceProtection && !overridePriceProtection) {
-			return t('futures.market.trade.confirmation.modal.disabled-exceeds-price-protection');
+			return t('futures.market.trade.confirmation.modal.disabled-exceeds-price-protection')
 		}
 		if (positionDetails?.margin.lt(MIN_MARGIN_AMOUNT))
-			return t('futures.market.trade.confirmation.modal.disabled-min-margin');
+			return t('futures.market.trade.confirmation.modal.disabled-min-margin')
 	}, [
 		positionDetails?.margin,
 		t,
@@ -205,11 +203,11 @@ export default function TradeConfirmationModal({
 		keeperFee,
 		overridePriceProtection,
 		positionDetails?.exceedsPriceProtection,
-	]);
+	])
 
 	const buttonText = allowanceValid
 		? t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
-		: t(`futures.market.trade.confirmation.modal.approve-order`);
+		: t(`futures.market.trade.confirmation.modal.approve-order`)
 
 	return (
 		<StyledBaseModal
@@ -227,7 +225,7 @@ export default function TradeConfirmationModal({
 			/>
 			<RowsContainer>
 				{dataRows.map((row, i) => {
-					if (!row) return null;
+					if (!row) return null
 					return (
 						<TradeConfirmationRow key={`datarow-${i}`}>
 							{row.tooltipContent ? (
@@ -251,7 +249,7 @@ export default function TradeConfirmationModal({
 								<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
 							</Value>
 						</TradeConfirmationRow>
-					);
+					)
 				})}
 			</RowsContainer>
 			{positionDetails?.exceedsPriceProtection && (
@@ -277,18 +275,18 @@ export default function TradeConfirmationModal({
 				/>
 			)}
 		</StyledBaseModal>
-	);
+	)
 }
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
-`;
+`
 
 const RowsContainer = styled.div`
 	margin-top: 6px;
-`;
+`
 
 const Label = styled.div`
 	display: flex;
@@ -296,7 +294,7 @@ const Label = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
-`;
+`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
@@ -310,7 +308,7 @@ const Value = styled.div`
 	.red {
 		color: ${(props) => props.theme.colors.selectedTheme.yellow};
 	}
-`;
+`
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
@@ -319,7 +317,7 @@ const ConfirmTradeButton = styled(Button)`
 	white-space: nowrap;
 	height: 55px;
 	font-size: 15px;
-`;
+`
 
 export const MobileConfirmTradeButton = styled(Button)`
 	text-overflow: ellipsis;
@@ -328,8 +326,8 @@ export const MobileConfirmTradeButton = styled(Button)`
 	height: 45px;
 	width: 100%;
 	font-size: 15px;
-`;
+`
 
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-left: 8px;
-`;
+`

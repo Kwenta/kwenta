@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import media from 'styles/media';
+import media from 'styles/media'
 
 export const GridContainer = styled.div`
 	display: flex;
@@ -20,4 +20,4 @@ export const GridContainer = styled.div`
 	${media.lessThan('mdUp')`
 		flex-direction: column;
 	`}
-`;
+`

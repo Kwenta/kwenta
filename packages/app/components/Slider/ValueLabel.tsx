@@ -1,4 +1,4 @@
-import { Tooltip, ValueLabelProps, withStyles } from '@material-ui/core';
+import { Tooltip, ValueLabelProps, withStyles } from '@material-ui/core'
 
 const TextOnlyTooltip = withStyles((theme) => ({
 	tooltip: {
@@ -8,14 +8,14 @@ const TextOnlyTooltip = withStyles((theme) => ({
 		fontSize: '13px',
 		backgroundColor: 'transparent',
 	},
-}))(Tooltip);
+}))(Tooltip)
 
 export default function ValueLabel(props: ValueLabelProps) {
-	const { children, open, value } = props;
+	const { children, open, value } = props
 
 	return (
 		<TextOnlyTooltip open={open} enterTouchDelay={0} placement="bottom" title={value}>
 			{children}
 		</TextOnlyTooltip>
-	);
+	)
 }

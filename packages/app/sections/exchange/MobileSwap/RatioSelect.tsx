@@ -1,24 +1,24 @@
-import { FC, useCallback } from 'react';
-import styled, { css } from 'styled-components';
+import { FC, useCallback } from 'react'
+import styled, { css } from 'styled-components'
 
-import { setRatio } from 'state/exchange/actions';
-import { selectQuoteBalanceWei } from 'state/exchange/selectors';
-import type { SwapRatio } from 'state/exchange/types';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import { setRatio } from 'state/exchange/actions'
+import { selectQuoteBalanceWei } from 'state/exchange/selectors'
+import type { SwapRatio } from 'state/exchange/types'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-const RATIOS: SwapRatio[] = [25, 50, 75, 100];
+const RATIOS: SwapRatio[] = [25, 50, 75, 100]
 
 const RatioSelect: FC = () => {
-	const ratio = useAppSelector(({ exchange }) => exchange.ratio);
-	const dispatch = useAppDispatch();
-	const quoteBalance = useAppSelector(selectQuoteBalanceWei);
+	const ratio = useAppSelector(({ exchange }) => exchange.ratio)
+	const dispatch = useAppDispatch()
+	const quoteBalance = useAppSelector(selectQuoteBalanceWei)
 
 	const onRatioChange = useCallback(
 		(ratio: SwapRatio) => {
-			dispatch(setRatio(ratio));
+			dispatch(setRatio(ratio))
 		},
 		[dispatch]
-	);
+	)
 
 	return (
 		<RatioSelectContainer>
@@ -33,8 +33,8 @@ const RatioSelect: FC = () => {
 				</RatioButton>
 			))}
 		</RatioSelectContainer>
-	);
-};
+	)
+}
 
 const RatioSelectContainer = styled.div`
 	width: 100%;
@@ -48,7 +48,7 @@ const RatioSelectContainer = styled.div`
 	overflow: hidden;
 	margin-bottom: 30px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.tab.background.active};
-`;
+`
 
 const RatioButton = styled.button<{ $selected: boolean }>`
 	height: 100%;
@@ -74,6 +74,6 @@ const RatioButton = styled.button<{ $selected: boolean }>`
 	&:last-of-type {
 		border-radius: 0 10px 10px 0;
 	}
-`;
+`
 
-export default RatioSelect;
+export default RatioSelect

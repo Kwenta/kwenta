@@ -1,25 +1,25 @@
-import { memo, ChangeEvent, FC, useCallback } from 'react';
-import styled from 'styled-components';
+import { memo, ChangeEvent, FC, useCallback } from 'react'
+import styled from 'styled-components'
 
-import SearchIconPath from 'assets/svg/app/search.svg';
-import Input from 'components/Input/Input';
-import media from 'styles/media';
+import SearchIconPath from 'assets/svg/app/search.svg'
+import Input from 'components/Input/Input'
+import media from 'styles/media'
 
 type SearchProps = {
-	value: string | undefined;
-	disabled?: boolean;
-	border?: boolean;
-	autoFocus?: boolean;
-	onChange: (text: string) => void;
-};
+	value: string | undefined
+	disabled?: boolean
+	border?: boolean
+	autoFocus?: boolean
+	onChange: (text: string) => void
+}
 
 const Search: FC<SearchProps> = memo(({ value, disabled, border = true, autoFocus, onChange }) => {
 	const handleOnChange = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
-			onChange(event.target.value);
+			onChange(event.target.value)
 		},
 		[onChange]
-	);
+	)
 
 	return (
 		<SearchBar border={border}>
@@ -33,8 +33,8 @@ const Search: FC<SearchProps> = memo(({ value, disabled, border = true, autoFocu
 				disabled={disabled}
 			/>
 		</SearchBar>
-	);
-});
+	)
+})
 
 const SearchInput = styled(Input)<{ border: boolean }>`
 	position: relative;
@@ -51,7 +51,7 @@ const SearchInput = styled(Input)<{ border: boolean }>`
 	${media.lessThan('sm')`
 		font-size: 13px;
 	`}
-`;
+`
 
 const SearchBar = styled.div<{ border: boolean }>`
 	width: 100%;
@@ -66,6 +66,6 @@ const SearchBar = styled.div<{ border: boolean }>`
 			: props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 	border-radius: 8px;
 	border: ${(props) => (props.border ? props.theme.colors.selectedTheme.input.border : 'none')};
-`;
+`
 
-export default Search;
+export default Search

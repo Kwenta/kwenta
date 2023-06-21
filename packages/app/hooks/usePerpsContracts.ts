@@ -1,21 +1,21 @@
-import { PerpsV2Market, PerpsV2Market__factory } from '@kwenta/sdk/types';
-import { useMemo } from 'react';
+import { PerpsV2Market, PerpsV2Market__factory } from '@kwenta/sdk/types'
+import { useMemo } from 'react'
 
-import Connector from 'containers/Connector';
-import { selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import Connector from 'containers/Connector'
+import { selectMarketInfo } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
 export default function usePerpsContracts(): {
-	perpsMarketContract: PerpsV2Market | null;
+	perpsMarketContract: PerpsV2Market | null
 } {
-	const { signer } = Connector.useContainer();
-	const marketInfo = useAppSelector(selectMarketInfo);
+	const { signer } = Connector.useContainer()
+	const marketInfo = useAppSelector(selectMarketInfo)
 
 	const perpsMarketContract = useMemo(() => {
-		if (!signer || !marketInfo?.market) return null;
+		if (!signer || !marketInfo?.market) return null
 
-		return PerpsV2Market__factory.connect(marketInfo.market, signer);
-	}, [signer, marketInfo?.market]);
+		return PerpsV2Market__factory.connect(marketInfo.market, signer)
+	}, [signer, marketInfo?.market])
 
-	return { perpsMarketContract };
+	return { perpsMarketContract }
 }

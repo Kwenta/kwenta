@@ -1,3 +1,3 @@
 export default function MockValueLabel() {
-	return <div />;
+	return <div />
 }

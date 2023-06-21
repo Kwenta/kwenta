@@ -1,31 +1,31 @@
-import { SECONDS_PER_DAY } from '@kwenta/sdk/constants';
-import { wei } from '@synthetixio/wei';
-import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
-import router from 'next/router';
-import React, { useEffect, useMemo, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import Slider from 'react-slick';
-import styled from 'styled-components';
+import { SECONDS_PER_DAY } from '@kwenta/sdk/constants'
+import { wei } from '@synthetixio/wei'
+import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts'
+import router from 'next/router'
+import React, { useEffect, useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import Slider from 'react-slick'
+import styled from 'styled-components'
 
-import GridSvg from 'assets/svg/app/grid.svg';
-import Button from 'components/Button';
-import ChangePercent from 'components/ChangePercent';
-import Currency from 'components/Currency';
-import { FlexDiv, FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
-import { MobileOnlyView } from 'components/Media';
-import { NotMobileView } from 'components/Media/Media';
-import { TabPanel } from 'components/Tab';
-import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
-import Connector from 'containers/Connector';
-import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import { selectMarketVolumes } from 'state/futures/selectors';
-import { fetchOptimismMarkets } from 'state/home/actions';
-import { selectOptimismMarkets } from 'state/home/selectors';
-import { useAppSelector, usePollAction } from 'state/hooks';
-import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors';
-import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media from 'styles/media';
-import { getSynthDescription } from 'utils/futures';
+import GridSvg from 'assets/svg/app/grid.svg'
+import Button from 'components/Button'
+import ChangePercent from 'components/ChangePercent'
+import Currency from 'components/Currency'
+import { FlexDiv, FlexDivColCentered, FlexDivRow } from 'components/layout/flex'
+import { MobileOnlyView } from 'components/Media'
+import { NotMobileView } from 'components/Media/Media'
+import { TabPanel } from 'components/Tab'
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
+import Connector from 'containers/Connector'
+import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery'
+import { selectMarketVolumes } from 'state/futures/selectors'
+import { fetchOptimismMarkets } from 'state/home/actions'
+import { selectOptimismMarkets } from 'state/home/selectors'
+import { useAppSelector, usePollAction } from 'state/hooks'
+import { selectPreviousDayPrices, selectPrices } from 'state/prices/selectors'
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common'
+import media from 'styles/media'
+import { getSynthDescription } from 'utils/futures'
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -33,11 +33,11 @@ enum MarketsTab {
 }
 
 type PriceChartProps = {
-	asset: string;
-};
+	asset: string
+}
 
 export const PriceChart = ({ asset }: PriceChartProps) => {
-	const chartRef = useRef('0');
+	const chartRef = useRef('0')
 
 	useEffect(() => {
 		const chart = createChart(chartRef.current, {
@@ -82,21 +82,21 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 					visible: false,
 				},
 			},
-		});
+		})
 
 		requestCandlesticks(asset, Math.floor(Date.now() / 1000) - SECONDS_PER_DAY, undefined, 3600)
 			.then((bars) => {
-				let positive = false;
+				let positive = false
 				if (bars !== undefined) {
-					const first = bars[0]?.close ?? 0;
-					const last = bars[bars.length - 1]?.close ?? 0;
-					positive = last - first >= 0;
+					const first = bars[0]?.close ?? 0
+					const last = bars[bars.length - 1]?.close ?? 0
+					positive = last - first >= 0
 				}
 				const results = bars.map((b) => ({
 					value: b.close,
 					time: b.timestamp as UTCTimestamp,
-				}));
-				return { results, positive };
+				}))
+				return { results, positive }
 			})
 			.then(({ results, positive }) => {
 				chart
@@ -109,35 +109,35 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 						lineStyle: 0,
 						lineWidth: 2,
 					})
-					.setData(results);
-			});
+					.setData(results)
+			})
 		// eslint-disable-next-line
-	}, []);
+	}, [])
 
-	return <div ref={(chartRef as unknown) as React.RefObject<HTMLDivElement>}></div>;
-};
+	return <div ref={(chartRef as unknown) as React.RefObject<HTMLDivElement>}></div>
+}
 
 const Assets = () => {
-	const { t } = useTranslation();
-	const { l2Provider } = Connector.useContainer();
-	const activeMarketsTab = MarketsTab.FUTURES;
+	const { t } = useTranslation()
+	const { l2Provider } = Connector.useContainer()
+	const activeMarketsTab = MarketsTab.FUTURES
 
-	const prices = useAppSelector(selectPrices);
-	const futuresMarkets = useAppSelector(selectOptimismMarkets);
-	const pastRates = useAppSelector(selectPreviousDayPrices);
-	const futuresVolumes = useAppSelector(selectMarketVolumes);
+	const prices = useAppSelector(selectPrices)
+	const futuresMarkets = useAppSelector(selectOptimismMarkets)
+	const pastRates = useAppSelector(selectPreviousDayPrices)
+	const futuresVolumes = useAppSelector(selectMarketVolumes)
 	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider), {
 		intervalTime: 600,
-	});
+	})
 
 	const PERPS = useMemo(() => {
 		return futuresMarkets.map((market) => {
-			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0);
-			const description = getSynthDescription(market.asset, t);
-			const volume = futuresVolumes[market.marketKey]?.volume?.toNumber() ?? 0;
+			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0)
+			const description = getSynthDescription(market.asset, t)
+			const volume = futuresVolumes[market.marketKey]?.volume?.toNumber() ?? 0
 			const pastPrice = pastRates.find(
 				(price) => price.synth === market.asset || price.synth === market.asset.slice(1)
-			);
+			)
 			return {
 				key: market.asset,
 				name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
@@ -152,16 +152,16 @@ const Assets = () => {
 				icon: (
 					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
 				),
-			};
-		});
-	}, [futuresMarkets, pastRates, futuresVolumes, t, prices]);
+			}
+		})
+	}, [futuresMarkets, pastRates, futuresVolumes, t, prices])
 
 	const title = (
 		<>
 			<SmallGoldenHeader>{t('homepage.assets.title')}</SmallGoldenHeader>
 			<WhiteHeader>{t('homepage.assets.description')}</WhiteHeader>
 		</>
-	);
+	)
 
 	var settings = {
 		className: 'center',
@@ -175,7 +175,7 @@ const Assets = () => {
 		focusOnSelect: true,
 		nextArrow: <></>,
 		prevArrow: <></>,
-	};
+	}
 
 	return (
 		<Container>
@@ -191,7 +191,7 @@ const Assets = () => {
 										onClick={() => {
 											router.push(
 												`/market/?asset=${key}&accountType=${DEFAULT_FUTURES_MARGIN_TYPE}`
-											);
+											)
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
@@ -244,7 +244,7 @@ const Assets = () => {
 										onClick={() => {
 											router.push(
 												`/market/?asset=${key}&accountType=${DEFAULT_FUTURES_MARGIN_TYPE}`
-											);
+											)
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
@@ -285,12 +285,12 @@ const Assets = () => {
 				</FlexDivColCentered>
 			</NotMobileView>
 		</Container>
-	);
-};
+	)
+}
 
 const SliderContainer = styled.div`
 	margin: auto;
-`;
+`
 
 const StatsCardContainer = styled.div`
 	display: flex !important;
@@ -309,7 +309,7 @@ const StatsCardContainer = styled.div`
 		height: 150px !important;
 		margin: auto;
 	`};
-`;
+`
 
 const StyledSlider = styled(Slider)`
 	margin: auto;
@@ -352,7 +352,7 @@ const StyledSlider = styled(Slider)`
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25), 0px 0px 15px rgba(255, 255, 255, 0.7);
 	}
-`;
+`
 
 const StatsIconContainer = styled(FlexDiv)`
 	justify-content: flex-start;
@@ -363,13 +363,13 @@ const StatsIconContainer = styled(FlexDiv)`
 	${media.lessThan('sm')`
 		padding-left: 0;
 	`};
-`;
+`
 
 const ChartContainer = styled.div`
 	margin-left: -36.5px;
 	margin-top: -20px;
 	overflow: hidden;
-`;
+`
 
 const StatsValueContainer = styled.div`
 	display: flex;
@@ -383,18 +383,18 @@ const StatsValueContainer = styled.div`
 		padding-left: 0px;
 		font-size: 12px;
 	`}
-`;
+`
 
 const StatsNameContainer = styled.div`
 	font-size: 18px;
 	margin-left: -5px;
 	margin-top: 3px;
-`;
+`
 
 const AssetName = styled.div`
 	font-size: 18px;
 	color: ${(props) => props.theme.colors.selectedTheme.white};
-`;
+`
 
 const AssetPrice = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
@@ -404,19 +404,19 @@ const AssetPrice = styled.div`
 	width: 120px;
 	padding-left: 5px;
 	text-align: left;
-`;
+`
 
 const AssetDescription = styled.div`
 	font-size: 11px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
+`
 
 const StatsValue = styled.div`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	letter-spacing: -0.04em;
 	white-space: pre;
-`;
+`
 
 const StyledFlexDivRow = styled(FlexDivRow)`
 	margin: auto;
@@ -431,7 +431,7 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 		overflow-x: hidden;
 		max-width: 100vw;
 	`}
-`;
+`
 
 const StatsCard = styled(Button)`
 	display: grid;
@@ -477,7 +477,7 @@ const StatsCard = styled(Button)`
 			height: 79px;
 		}
 	`}
-`;
+`
 
 const Container = styled.div`
 	margin-bottom: 200px;
@@ -485,12 +485,12 @@ const Container = styled.div`
 		margin-left: -30px;
 		margin-right: -30px;
 	`}
-`;
+`
 
 const StyledCurrencyIcon = styled(Currency.Icon).attrs({ width: 45, height: 45 })`
 	width: 40px;
 	height: 40px;
 	margin-right: 15px;
-`;
+`
 
-export default Assets;
+export default Assets

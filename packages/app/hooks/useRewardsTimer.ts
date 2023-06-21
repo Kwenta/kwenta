@@ -1,5 +1,5 @@
-import { differenceInSeconds } from 'date-fns';
-import React from 'react';
+import { differenceInSeconds } from 'date-fns'
+import React from 'react'
 
 const secondsToDDHHMM = (seconds: number) => {
 	return (
@@ -9,22 +9,22 @@ const secondsToDDHHMM = (seconds: number) => {
 		'h:' +
 		('0' + (Math.floor(seconds / 60) % 60)).slice(-2) +
 		'm'
-	);
-};
+	)
+}
 
 const useRewardsTimer = (deadline: Date | null) => {
-	const [now, setNow] = React.useState(new Date());
+	const [now, setNow] = React.useState(new Date())
 
 	React.useEffect(() => {
-		const interval = setInterval(() => setNow(new Date()), 1000);
+		const interval = setInterval(() => setNow(new Date()), 1000)
 
 		return () => {
-			clearInterval(interval);
-		};
-	}, []);
+			clearInterval(interval)
+		}
+	}, [])
 
-	if (!deadline || deadline < new Date()) return secondsToDDHHMM(0);
-	return secondsToDDHHMM(differenceInSeconds(deadline, now));
-};
+	if (!deadline || deadline < new Date()) return secondsToDDHHMM(0)
+	return secondsToDDHHMM(differenceInSeconds(deadline, now))
+}
 
-export default useRewardsTimer;
+export default useRewardsTimer

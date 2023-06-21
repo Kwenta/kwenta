@@ -1,34 +1,34 @@
-import { useRouter } from 'next/router';
-import { FC, ReactNode, useEffect } from 'react';
+import { useRouter } from 'next/router'
+import { FC, ReactNode, useEffect } from 'react'
 
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import NotificationContainer from 'constants/NotificationContainer';
-import ExchangeContent from 'sections/exchange/ExchangeContent';
-import ExchangeHead from 'sections/exchange/ExchangeHead';
-import AppLayout from 'sections/shared/Layout/AppLayout';
-import { fetchTokenList, resetCurrencies } from 'state/exchange/actions';
-import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks';
-import { selectNetwork } from 'state/wallet/selectors';
-import { MobileScreenContainer } from 'styles/common';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import NotificationContainer from 'constants/NotificationContainer'
+import ExchangeContent from 'sections/exchange/ExchangeContent'
+import ExchangeHead from 'sections/exchange/ExchangeHead'
+import AppLayout from 'sections/shared/Layout/AppLayout'
+import { fetchTokenList, resetCurrencies } from 'state/exchange/actions'
+import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
+import { selectNetwork } from 'state/wallet/selectors'
+import { MobileScreenContainer } from 'styles/common'
 
-type ExchangeComponent = FC & { getLayout: (page: ReactNode) => JSX.Element };
+type ExchangeComponent = FC & { getLayout: (page: ReactNode) => JSX.Element }
 
 const Exchange: ExchangeComponent = () => {
-	const router = useRouter();
-	const dispatch = useAppDispatch();
-	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress);
-	const network = useAppSelector(selectNetwork);
+	const router = useRouter()
+	const dispatch = useAppDispatch()
+	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress)
+	const network = useAppSelector(selectNetwork)
 
-	useFetchAction(fetchTokenList, { dependencies: [network] });
+	useFetchAction(fetchTokenList, { dependencies: [network] })
 
 	useEffect(() => {
-		const quoteCurrencyFromQuery = (router.query.quote as string | undefined) ?? 'sUSD';
-		const baseCurrencyFromQuery = router.query.base as string | undefined;
+		const quoteCurrencyFromQuery = (router.query.quote as string | undefined) ?? 'sUSD'
+		const baseCurrencyFromQuery = router.query.base as string | undefined
 
 		if (!!walletAddress && (!!quoteCurrencyFromQuery || !!baseCurrencyFromQuery)) {
-			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }));
+			dispatch(resetCurrencies({ quoteCurrencyFromQuery, baseCurrencyFromQuery }))
 		}
-	}, [router.query, network, dispatch, walletAddress]);
+	}, [router.query, network, dispatch, walletAddress])
 
 	return (
 		<div>
@@ -43,9 +43,9 @@ const Exchange: ExchangeComponent = () => {
 				</MobileScreenContainer>
 			</MobileOrTabletView>
 		</div>
-	);
-};
+	)
+}
 
-Exchange.getLayout = (page) => <AppLayout>{page}</AppLayout>;
+Exchange.getLayout = (page) => <AppLayout>{page}</AppLayout>
 
-export default Exchange;
+export default Exchange

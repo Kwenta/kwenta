@@ -1,17 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from 'react'
 
-import TextToggle from 'components/TextToggle';
-import { setShowTradeHistory } from 'state/futures/reducer';
-import { selectShowHistory } from 'state/futures/selectors';
-import { useAppSelector, useAppDispatch } from 'state/hooks';
+import TextToggle from 'components/TextToggle'
+import { setShowTradeHistory } from 'state/futures/reducer'
+import { selectShowHistory } from 'state/futures/selectors'
+import { useAppSelector, useAppDispatch } from 'state/hooks'
 
 const HistoryToggle = () => {
-	const dispatch = useAppDispatch();
-	const showHistory = useAppSelector(selectShowHistory);
+	const dispatch = useAppDispatch()
+	const showHistory = useAppSelector(selectShowHistory)
 
 	const handleHistoryChange = useCallback(() => {
-		dispatch(setShowTradeHistory(!showHistory));
-	}, [dispatch, showHistory]);
+		dispatch(setShowTradeHistory(!showHistory))
+	}, [dispatch, showHistory])
 
 	return (
 		<TextToggle
@@ -20,7 +20,7 @@ const HistoryToggle = () => {
 			selectedOption={showHistory ? 'show' : 'hide'}
 			onOptionChange={handleHistoryChange}
 		/>
-	);
-};
+	)
+}
 
-export default HistoryToggle;
+export default HistoryToggle

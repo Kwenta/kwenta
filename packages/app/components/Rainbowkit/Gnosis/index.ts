@@ -1,1 +1,1 @@
-export { default } from './Gnosis';
+export { default } from './Gnosis'

@@ -1,71 +1,71 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit'
 
-import { monitorTransaction } from 'contexts/RelayerContext';
-import { ThunkConfig } from 'state/types';
+import { monitorTransaction } from 'contexts/RelayerContext'
+import { ThunkConfig } from 'state/types'
 
 export const approveLPToken = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/approveLPToken',
 	async (_, { dispatch, extra: { sdk } }) => {
-		const { hash } = await sdk.kwentaToken.approveLPToken();
+		const { hash } = await sdk.kwentaToken.approveLPToken()
 
 		if (hash) {
 			monitorTransaction({
 				txHash: hash,
 				onTxConfirmed: () => {
-					dispatch(getEarnDetails());
+					dispatch(getEarnDetails())
 				},
-			});
+			})
 		}
 	}
-);
+)
 
 export const stakeTokens = createAsyncThunk<void, string, ThunkConfig>(
 	'earn/stakeTokens',
 	async (amount, { dispatch, extra: { sdk } }) => {
-		const { hash } = await sdk.kwentaToken.changePoolTokens(amount, 'stake');
+		const { hash } = await sdk.kwentaToken.changePoolTokens(amount, 'stake')
 
 		if (hash) {
 			monitorTransaction({
 				txHash: hash,
 				onTxConfirmed: () => {
-					dispatch(getEarnDetails());
+					dispatch(getEarnDetails())
 				},
-			});
+			})
 		}
 	}
-);
+)
 
 export const unstakeTokens = createAsyncThunk<void, string, ThunkConfig>(
 	'earn/unstakeTokens',
 	async (amount, { dispatch, extra: { sdk } }) => {
-		const { hash } = await sdk.kwentaToken.changePoolTokens(amount, 'withdraw');
+		const { hash } = await sdk.kwentaToken.changePoolTokens(amount, 'withdraw')
 
 		if (hash) {
 			monitorTransaction({
 				txHash: hash,
 				onTxConfirmed: () => {
-					dispatch(getEarnDetails());
+					dispatch(getEarnDetails())
 				},
-			});
+			})
 		}
 	}
-);
+)
 
 export const claimRewards = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/claimRewards',
 	async (_, { dispatch, extra: { sdk } }) => {
-		const { hash } = await sdk.kwentaToken.claimRewards();
+		const { hash } = await sdk.kwentaToken.claimRewards()
 
 		if (hash) {
 			monitorTransaction({
 				txHash: hash,
 				onTxConfirmed: () => {
-					dispatch(getEarnDetails());
+					dispatch(getEarnDetails())
 				},
-			});
+			})
 		}
 	}
-);
+)
 
 export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkConfig>(
 	'earn/getEarnDetails',
@@ -79,7 +79,7 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 			wethAmount,
 			kwentaAmount,
 			lpTotalSupply,
-		} = await sdk.kwentaToken.getEarnDetails();
+		} = await sdk.kwentaToken.getEarnDetails()
 
 		dispatch({
 			type: 'earn/setEarnDetails',
@@ -95,24 +95,24 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 				kwentaAmount: kwentaAmount.toString(),
 				lpTotalSupply: lpTotalSupply.toString(),
 			},
-		});
+		})
 	}
-);
+)
 
 export const fetchEarnTokenPrices = createAsyncThunk<
 	{
-		kwentaPrice: string;
-		wethPrice: string;
-		opPrice: string;
+		kwentaPrice: string
+		wethPrice: string
+		opPrice: string
 	},
 	void,
 	ThunkConfig
 >('earn/fetchEarnTokenPrices', async (_, { extra: { sdk } }) => {
-	const { kwentaPrice, wethPrice, opPrice } = await sdk.kwentaToken.getEarnTokenPrices();
+	const { kwentaPrice, wethPrice, opPrice } = await sdk.kwentaToken.getEarnTokenPrices()
 
 	return {
 		kwentaPrice: kwentaPrice.toString(),
 		wethPrice: wethPrice.toString(),
 		opPrice: opPrice.toString(),
-	};
-});
+	}
+})

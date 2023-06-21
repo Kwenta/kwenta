@@ -1,33 +1,33 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback } from 'react'
 
-import StakeCard from 'components/StakeCard/StakeCard';
-import { approveLPToken, stakeTokens, unstakeTokens } from 'state/earn/actions';
-import { selectBalance, selectIsApproved, selectLpTokenBalance } from 'state/earn/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import StakeCard from 'components/StakeCard/StakeCard'
+import { approveLPToken, stakeTokens, unstakeTokens } from 'state/earn/actions'
+import { selectBalance, selectIsApproved, selectLpTokenBalance } from 'state/earn/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 const EarnStakeCard: FC = () => {
-	const dispatch = useAppDispatch();
-	const lpTokenBalance = useAppSelector(selectLpTokenBalance);
-	const balance = useAppSelector(selectBalance);
-	const isApproved = useAppSelector(selectIsApproved);
+	const dispatch = useAppDispatch()
+	const lpTokenBalance = useAppSelector(selectLpTokenBalance)
+	const balance = useAppSelector(selectBalance)
+	const isApproved = useAppSelector(selectIsApproved)
 
 	const handleApprove = useCallback(() => {
-		dispatch(approveLPToken());
-	}, [dispatch]);
+		dispatch(approveLPToken())
+	}, [dispatch])
 
 	const handleStake = useCallback(
 		(amount: string) => {
-			dispatch(stakeTokens(amount));
+			dispatch(stakeTokens(amount))
 		},
 		[dispatch]
-	);
+	)
 
 	const handleUnstake = useCallback(
 		(amount: string) => {
-			dispatch(unstakeTokens(amount));
+			dispatch(unstakeTokens(amount))
 		},
 		[dispatch]
-	);
+	)
 
 	return (
 		<StakeCard
@@ -39,7 +39,7 @@ const EarnStakeCard: FC = () => {
 			isApproved={isApproved}
 			onApprove={handleApprove}
 		/>
-	);
-};
+	)
+}
 
-export default EarnStakeCard;
+export default EarnStakeCard

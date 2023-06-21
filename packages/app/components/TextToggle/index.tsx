@@ -1,1 +1,1 @@
-export { default } from './TextToggle';
+export { default } from './TextToggle'

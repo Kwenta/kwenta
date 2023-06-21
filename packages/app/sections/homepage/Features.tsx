@@ -1,33 +1,28 @@
-import Image from 'next/image';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import Image from 'next/image'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import OpenSourceIcon from 'assets/png/features/opensource.png';
-import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg';
-import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg';
-import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
-import MobileIcon from 'assets/svg/features/mobile.svg';
-import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg';
-import ZeroSlippageIcon from 'assets/svg/features/zero-slippage.svg';
-import AelinIcon from 'assets/svg/partners/aelin.svg';
-import ChainLinkIcon from 'assets/svg/partners/chainlink.svg';
-import GraphIcon from 'assets/svg/partners/graph.svg';
-import HopIcon from 'assets/svg/partners/hop.svg';
-import LyraIcon from 'assets/svg/partners/lyra.svg';
-import OptimismIcon from 'assets/svg/partners/optimism.svg';
-import SynthetixIcon from 'assets/svg/partners/synthetix.svg';
-import ThalesIcon from 'assets/svg/partners/thales.svg';
-import {
-	FlexDivCentered,
-	FlexDivCol,
-	FlexDivColCentered,
-	FlexDivRow,
-} from 'components/layout/flex';
-import { GridDivCentered } from 'components/layout/grid';
-import { Copy, Title } from 'sections/homepage/text';
-import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media from 'styles/media';
+import OpenSourceIcon from 'assets/png/features/opensource.png'
+import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg'
+import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg'
+import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg'
+import MobileIcon from 'assets/svg/features/mobile.svg'
+import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg'
+import ZeroSlippageIcon from 'assets/svg/features/zero-slippage.svg'
+import AelinIcon from 'assets/svg/partners/aelin.svg'
+import ChainLinkIcon from 'assets/svg/partners/chainlink.svg'
+import GraphIcon from 'assets/svg/partners/graph.svg'
+import HopIcon from 'assets/svg/partners/hop.svg'
+import LyraIcon from 'assets/svg/partners/lyra.svg'
+import OptimismIcon from 'assets/svg/partners/optimism.svg'
+import SynthetixIcon from 'assets/svg/partners/synthetix.svg'
+import ThalesIcon from 'assets/svg/partners/thales.svg'
+import { FlexDivCentered, FlexDivCol, FlexDivColCentered, FlexDivRow } from 'components/layout/flex'
+import { GridDivCentered } from 'components/layout/grid'
+import { Copy, Title } from 'sections/homepage/text'
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common'
+import media from 'styles/media'
 
 const FEATURES = [
 	{
@@ -73,7 +68,7 @@ const FEATURES = [
 		copy: 'homepage.features.zero-slippage.copy',
 		image: <ZeroSlippageIcon />,
 	},
-];
+]
 
 const PARTNERS = [
 	{
@@ -108,24 +103,24 @@ const PARTNERS = [
 		key: 'chainlink',
 		image: <ChainLinkIcon />,
 	},
-];
+]
 
 const Features = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	const title = (
 		<>
 			<SmallGoldenHeader>{t('homepage.features.title')}</SmallGoldenHeader>
 			<BigWhiteHeader>{t('homepage.features.description')}</BigWhiteHeader>
 		</>
-	);
+	)
 
 	const sectionTitle = (
 		<>
 			<SectionFeatureTitle>{t('homepage.features.partners.title')}</SectionFeatureTitle>
 			<SectionFeatureCopy>{t('homepage.features.partners.copy')}</SectionFeatureCopy>
 		</>
-	);
+	)
 
 	return (
 		<Container>
@@ -153,8 +148,8 @@ const Features = () => {
 				))}
 			</IconGridContainer>
 		</Container>
-	);
-};
+	)
+}
 
 const FeatureCopy = styled(Copy)`
 	font-size: 15px;
@@ -165,7 +160,7 @@ const FeatureCopy = styled(Copy)`
 	${media.lessThan('sm')`
 		width: 183px;
 	`}
-`;
+`
 
 const FeatureTitle = styled(Title)`
 	font-size: 20px;
@@ -177,7 +172,7 @@ const FeatureTitle = styled(Title)`
 	${media.lessThan('sm')`
 		font-size: 20px;
 	`}
-`;
+`
 
 const StyledFlexDivRow = styled(FlexDivRow)`
 	margin: 35px auto 0 auto;
@@ -190,7 +185,7 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 		flex-direction: column;
 		width: 305px;
 	`}
-`;
+`
 
 const FeatureCard = styled(FlexDivRow)`
 	background-color: #1a1a1a;
@@ -209,7 +204,7 @@ const FeatureCard = styled(FlexDivRow)`
 		align-items: center; 
 		padding: 20px;
 	`}
-`;
+`
 
 const IconGridContainer = styled(GridDivCentered)`
 	place-items: center;
@@ -305,7 +300,7 @@ const IconGridContainer = styled(GridDivCentered)`
 			}
 		}
 	`}
-`;
+`
 
 const PartnerIconContainer = styled.div`
 	background-color: #1a1a1a;
@@ -320,11 +315,11 @@ const PartnerIconContainer = styled.div`
 	:hover {
 		background-color: #202020;
 	}
-`;
+`
 
 const Container = styled.div`
 	margin: 140px 0px;
-`;
+`
 
 const FeatureIconContainer = styled.div`
 	img,
@@ -335,7 +330,7 @@ const FeatureIconContainer = styled.div`
 	${media.lessThan('sm')`
 		padding-bottom: 0px;
 	`}
-`;
+`
 
 const FeatureContentContainer = styled(FlexDivCol)`
 	margin-left: 20px;
@@ -347,7 +342,7 @@ const FeatureContentContainer = styled(FlexDivCol)`
 		height: auto;
 		padding-top: 0px;
 	`}
-`;
+`
 
 const FeatureContentTitle = styled(FlexDivRow)`
 	padding-bottom: 5px;
@@ -357,7 +352,7 @@ const FeatureContentTitle = styled(FlexDivRow)`
 	${media.lessThan('sm')`
 		justify-content: space-between;
 	`}
-`;
+`
 
 const ComingSoonTag = styled(FlexDivCentered)`
 	padding: 2px 5px;
@@ -375,7 +370,7 @@ const ComingSoonTag = styled(FlexDivCentered)`
 		margin-left: 0px;
 		padding: 2px 5px;
 	`}
-`;
+`
 
 const SectionFeatureTitle = styled(FeatureTitle)`
 	margin-top: 100px;
@@ -384,7 +379,7 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	${media.lessThan('sm')`
 		width: 100vw;
 	`}
-`;
+`
 
 const SectionFeatureCopy = styled(FeatureCopy)`
 	margin-top: 16px;
@@ -394,12 +389,12 @@ const SectionFeatureCopy = styled(FeatureCopy)`
 	${media.lessThan('sm')`
 		width: 333px;
 	`}
-`;
+`
 
 const BigWhiteHeader = styled(WhiteHeader)`
 	${media.lessThan('sm')`
 		width: 336px;
 	`}
-`;
+`
 
-export default Features;
+export default Features

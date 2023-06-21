@@ -1,17 +1,17 @@
-import Link from 'next/link';
-import React, { ReactNode } from 'react';
-import styled from 'styled-components';
+import Link from 'next/link'
+import React, { ReactNode } from 'react'
+import styled from 'styled-components'
 
-import { linkCSS } from 'styles/common';
+import { linkCSS } from 'styles/common'
 
 type NavButtonProps = {
-	title: string;
-	isActive: boolean;
-	href: string;
-	disabled?: boolean;
-	external?: boolean;
-	children?: ReactNode;
-};
+	title: string
+	isActive: boolean
+	href: string
+	disabled?: boolean
+	external?: boolean
+	children?: ReactNode
+}
 
 const NavButton: React.FC<NavButtonProps> = ({ title, href, external, disabled, ...props }) => {
 	return (
@@ -26,8 +26,8 @@ const NavButton: React.FC<NavButtonProps> = ({ title, href, external, disabled, 
 				</StyledLink>
 			</Link>
 		</div>
-	);
-};
+	)
+}
 
 const StyledLink = styled.a<{ isActive: boolean; disabled?: boolean }>`
 	${linkCSS};
@@ -53,6 +53,6 @@ const StyledLink = styled.a<{ isActive: boolean; disabled?: boolean }>`
 		background: transparent;
 		pointer-events: none;
 	}
-`;
+`
 
-export default NavButton;
+export default NavButton

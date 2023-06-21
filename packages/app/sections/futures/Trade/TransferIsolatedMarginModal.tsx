@@ -1,65 +1,65 @@
-import { ZERO_WEI, MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants';
-import { formatDollars } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import dynamic from 'next/dynamic';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI, MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants'
+import { formatDollars } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import dynamic from 'next/dynamic'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import CaretDownIcon from 'assets/svg/app/caret-down-slim.svg';
-import CaretUpIcon from 'assets/svg/app/caret-up-slim.svg';
-import BaseModal from 'components/BaseModal';
-import Button from 'components/Button';
-import { CardHeader } from 'components/Card';
-import Error from 'components/ErrorView';
-import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRowCentered } from 'components/layout/flex';
-import SegmentedControl from 'components/SegmentedControl';
-import Spacer from 'components/Spacer';
-import { selectSusdBalance } from 'state/balances/selectors';
-import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions';
+import CaretDownIcon from 'assets/svg/app/caret-down-slim.svg'
+import CaretUpIcon from 'assets/svg/app/caret-up-slim.svg'
+import BaseModal from 'components/BaseModal'
+import Button from 'components/Button'
+import { CardHeader } from 'components/Card'
+import Error from 'components/ErrorView'
+import NumericInput from 'components/Input/NumericInput'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import SegmentedControl from 'components/SegmentedControl'
+import Spacer from 'components/Spacer'
+import { selectSusdBalance } from 'state/balances/selectors'
+import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions'
 import {
 	selectAvailableMargin,
 	selectIsolatedTransferError,
 	selectIsSubmittingIsolatedTransfer,
 	selectPosition,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type Props = {
-	onDismiss(): void;
-	defaultTab: 'deposit' | 'withdraw';
-};
+	onDismiss(): void
+	defaultTab: 'deposit' | 'withdraw'
+}
 
-type BalanceStatus = 'low_balance' | 'no_balance' | 'high_balance';
+type BalanceStatus = 'low_balance' | 'no_balance' | 'high_balance'
 
 const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
 	ssr: false,
-});
+})
 
-const PLACEHOLDER = '$0.00';
+const PLACEHOLDER = '$0.00'
 
 const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
-	const position = useAppSelector(selectPosition);
-	const submitting = useAppSelector(selectIsSubmittingIsolatedTransfer);
-	const txError = useAppSelector(selectIsolatedTransferError);
-	const susdBalance = useAppSelector(selectSusdBalance);
-	const availableMargin = useAppSelector(selectAvailableMargin);
+	const position = useAppSelector(selectPosition)
+	const submitting = useAppSelector(selectIsSubmittingIsolatedTransfer)
+	const txError = useAppSelector(selectIsolatedTransferError)
+	const susdBalance = useAppSelector(selectSusdBalance)
+	const availableMargin = useAppSelector(selectAvailableMargin)
 
 	const minDeposit = useMemo(() => {
-		const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI;
-		const min = MIN_MARGIN_AMOUNT.sub(accessibleMargin);
-		return min.lt(ZERO_WEI) ? ZERO_WEI : min;
-	}, [position?.accessibleMargin]);
+		const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI
+		const min = MIN_MARGIN_AMOUNT.sub(accessibleMargin)
+		return min.lt(ZERO_WEI) ? ZERO_WEI : min
+	}, [position?.accessibleMargin])
 
-	const [openSocket, setOpenSocket] = useState(false);
-	const [amount, setAmount] = useState('');
-	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1);
+	const [openSocket, setOpenSocket] = useState(false)
+	const [amount, setAmount] = useState('')
+	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1)
 
-	const susdBal = transferType === 0 ? susdBalance : availableMargin;
+	const susdBal = transferType === 0 ? susdBalance : availableMargin
 
 	const balanceStatus: BalanceStatus = useMemo(
 		() =>
@@ -69,57 +69,57 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 				? 'no_balance'
 				: 'low_balance',
 		[availableMargin, minDeposit, susdBalance]
-	);
+	)
 
 	useEffect(() => {
 		switch (balanceStatus) {
 			case 'no_balance':
 			case 'low_balance':
-				setOpenSocket(true);
-				break;
+				setOpenSocket(true)
+				break
 			case 'high_balance':
-				setOpenSocket(false);
+				setOpenSocket(false)
 		}
-	}, [balanceStatus]);
+	}, [balanceStatus])
 
 	const isDisabled = useMemo(() => {
 		if (!amount || submitting) {
-			return true;
+			return true
 		}
-		const amtWei = wei(amount);
+		const amtWei = wei(amount)
 		if (amtWei.eq(0) || amtWei.gt(susdBal) || (transferType === 0 && amtWei.lt(minDeposit))) {
-			return true;
+			return true
 		}
-		return false;
-	}, [amount, susdBal, minDeposit, transferType, submitting]);
+		return false
+	}, [amount, susdBal, minDeposit, transferType, submitting])
 
 	const computedWithdrawAmount = useMemo(
 		() => (availableMargin.eq(wei(amount || 0)) ? availableMargin : wei(amount || 0)),
 		[amount, availableMargin]
-	);
+	)
 
-	const onChangeShowSocket = useCallback(() => setOpenSocket(!openSocket), [openSocket]);
+	const onChangeShowSocket = useCallback(() => setOpenSocket(!openSocket), [openSocket])
 
 	const handleSetMax = useCallback(() => {
 		if (transferType === 0) {
-			setAmount(susdBal.toString());
+			setAmount(susdBal.toString())
 		} else {
-			setAmount(availableMargin.toString());
+			setAmount(availableMargin.toString())
 		}
-	}, [susdBal, availableMargin, transferType]);
+	}, [susdBal, availableMargin, transferType])
 
 	const onChangeTab = (selection: number) => {
-		setTransferType(selection);
-		setAmount('');
-	};
+		setTransferType(selection)
+		setAmount('')
+	}
 
 	const onDeposit = () => {
-		dispatch(depositIsolatedMargin(wei(amount)));
-	};
+		dispatch(depositIsolatedMargin(wei(amount)))
+	}
 
 	const onWithdraw = () => {
-		dispatch(withdrawIsolatedMargin(computedWithdrawAmount));
-	};
+		dispatch(withdrawIsolatedMargin(computedWithdrawAmount))
+	}
 
 	return (
 		<StyledBaseModal
@@ -189,8 +189,8 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 				<Error containerStyle={{ margin: '16px 0 0 0' }} message={txError} formatter="revert" />
 			)}
 		</StyledBaseModal>
-	);
-};
+	)
+}
 
 export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
@@ -201,14 +201,14 @@ export const StyledBaseModal = styled(BaseModal)`
 	.card-header {
 		padding: 10px 20px 0px;
 	}
-`;
+`
 
 export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 	p {
 		margin: 0;
 	}
-`;
+`
 
 export const BalanceText = styled.p<{ $gold?: boolean }>`
 	color: ${(props) =>
@@ -216,7 +216,7 @@ export const BalanceText = styled.p<{ $gold?: boolean }>`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
+`
 
 export const MaxButton = styled.button`
 	height: 22px;
@@ -229,14 +229,14 @@ export const MaxButton = styled.button`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	cursor: pointer;
-`;
+`
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
 	margin: 10px 0;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: center;
-`;
+`
 
 const Disclaimer = styled.div`
 	font-size: 12px;
@@ -244,11 +244,11 @@ const Disclaimer = styled.div`
 	margin: 10px 0;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: left;
-`;
+`
 
 const StyledSegmentedControl = styled(SegmentedControl)`
 	margin: 16px 0;
-`;
+`
 
 const StyledCardHeader = styled(CardHeader)<{ noBorder: boolean }>`
 	display: flex;
@@ -260,6 +260,6 @@ const StyledCardHeader = styled(CardHeader)<{ noBorder: boolean }>`
 	margin-left: 0px;
 	padding: 0px;
 	cursor: pointer;
-`;
+`
 
-export default TransferIsolatedMarginModal;
+export default TransferIsolatedMarginModal

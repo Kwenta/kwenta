@@ -1,5 +1,5 @@
 const FuturesContainer = () => {
-	return <div></div>;
-};
+	return <div></div>
+}
 
-export default FuturesContainer;
+export default FuturesContainer

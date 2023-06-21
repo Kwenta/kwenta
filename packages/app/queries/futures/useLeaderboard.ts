@@ -1,14 +1,14 @@
-import { NetworkId } from '@kwenta/sdk/types';
-import { getFuturesEndpoint, weiFromWei, truncateAddress } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import request, { gql } from 'graphql-request';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { NetworkId } from '@kwenta/sdk/types'
+import { getFuturesEndpoint, weiFromWei, truncateAddress } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import request, { gql } from 'graphql-request'
+import { useQuery, UseQueryOptions } from 'react-query'
 
-import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
-import logError from 'utils/logError';
+import QUERY_KEYS from 'constants/queryKeys'
+import Connector from 'containers/Connector'
+import logError from 'utils/logError'
 
-import { AccountStat, FuturesStat } from './types';
+import { AccountStat, FuturesStat } from './types'
 
 const mapStat = (stat: FuturesStat, i: number) => ({
 	...stat,
@@ -20,13 +20,13 @@ const mapStat = (stat: FuturesStat, i: number) => ({
 	liquidations: wei(stat.liquidations).toNumber(),
 	rank: i + 1,
 	rankText: (i + 1).toString(),
-});
+})
 
-type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all';
+type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all'
 
 type LeaderboardResult = {
-	[part in LeaderboardPart]: AccountStat[];
-};
+	[part in LeaderboardPart]: AccountStat[]
+}
 
 export const DEFAULT_LEADERBOARD_DATA = {
 	top: [],
@@ -34,11 +34,11 @@ export const DEFAULT_LEADERBOARD_DATA = {
 	wallet: [],
 	search: [],
 	all: [],
-};
+}
 
 const useLeaderboard = (searchTerm: string, options?: UseQueryOptions<LeaderboardResult>) => {
-	const { network, walletAddress } = Connector.useContainer();
-	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId);
+	const { network, walletAddress } = Connector.useContainer()
+	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId)
 
 	return useQuery<LeaderboardResult>(
 		QUERY_KEYS.Futures.Leaderboard(network?.id as NetworkId, searchTerm),
@@ -79,7 +79,7 @@ const useLeaderboard = (searchTerm: string, options?: UseQueryOptions<Leaderboar
 							totalVolume
 						}
 					}
-				`;
+				`
 
 				const response: Record<LeaderboardPart, FuturesStat[]> = await request(
 					futuresEndpoint,
@@ -88,7 +88,7 @@ const useLeaderboard = (searchTerm: string, options?: UseQueryOptions<Leaderboar
 						account: walletAddress ?? '',
 						searchTerm,
 					}
-				);
+				)
 
 				const stats: LeaderboardResult = {
 					top: response.top.map(mapStat),
@@ -96,20 +96,20 @@ const useLeaderboard = (searchTerm: string, options?: UseQueryOptions<Leaderboar
 					wallet: response.wallet.map(mapStat),
 					search: response.search.map(mapStat),
 					all: [],
-				};
+				}
 
-				stats.all = [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search];
+				stats.all = [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search]
 
-				return stats;
+				return stats
 			} catch (e) {
-				logError(e);
-				return DEFAULT_LEADERBOARD_DATA;
+				logError(e)
+				return DEFAULT_LEADERBOARD_DATA
 			}
 		},
 		{
 			...options,
 		}
-	);
-};
+	)
+}
 
-export default useLeaderboard;
+export default useLeaderboard

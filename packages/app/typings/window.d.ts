@@ -1,24 +1,24 @@
-import { NetworkId } from '@kwenta/sdk/types';
-import { ethers } from 'ethers';
+import { NetworkId } from '@kwenta/sdk/types'
+import { ethers } from 'ethers'
 
 declare global {
 	interface Window {
 		web3?: {
 			eth?: {
 				net: {
-					getId: () => NetworkId;
-				};
-			};
+					getId: () => NetworkId
+				}
+			}
 			version: {
-				getNetwork(cb: (err: Error | undefined, networkId: NetworkId) => void): void;
-				network: NetworkId;
-			};
-		};
+				getNetwork(cb: (err: Error | undefined, networkId: NetworkId) => void): void
+				network: NetworkId
+			}
+		}
 		ethereum?: {
-			on: (event: string, cb: () => void) => void;
-			ethereum: ethers.providers.Provider | undefined;
-			networkVersion: NetworkId;
-			isMetaMask: boolean;
-		};
+			on: (event: string, cb: () => void) => void
+			ethereum: ethers.providers.Provider | undefined
+			networkVersion: NetworkId
+			isMetaMask: boolean
+		}
 	}
 }

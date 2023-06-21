@@ -1,10 +1,10 @@
-export const HEADER_HEIGHT = '96px';
-export const HEADER_TOP_PADDING = '31px';
+export const HEADER_HEIGHT = '96px'
+export const HEADER_TOP_PADDING = '31px'
 
-export const SPACING_FROM_HEADER = '0px';
+export const SPACING_FROM_HEADER = '0px'
 
-export const HOURS_TOGGLE_WIDTH = '47px';
-export const HOURS_TOGGLE_HEIGHT = '18px';
+export const HOURS_TOGGLE_WIDTH = '47px'
+export const HOURS_TOGGLE_HEIGHT = '18px'
 
 export enum zIndex {
 	BASE = 1,

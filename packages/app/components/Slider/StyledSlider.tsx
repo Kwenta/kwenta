@@ -1,6 +1,6 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
-import Slider from '.';
+import Slider from '.'
 
 const StyledSlider = styled(Slider)<{ $currentMark: number }>`
 	.MuiSlider-markLabel {
@@ -30,6 +30,6 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
 				display: none;
 			`};
 	}
-`;
+`
 
-export default StyledSlider;
+export default StyledSlider

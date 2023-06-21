@@ -1,7 +1,7 @@
 // Takes a comparitor which should return a bool condition to
 // signal to continue retrying, comparing prev and new query result
 
-import logError from './logError';
+import logError from './logError'
 
 export const refetchWithComparator = async (
 	query: () => Promise<any>,
@@ -11,26 +11,26 @@ export const refetchWithComparator = async (
 	max = 25
 ): Promise<{ data: any; status: string }> => {
 	return new Promise((res) => {
-		let count = 1;
+		let count = 1
 
 		const refetch = async (existingResult: any) => {
 			const timeout = setTimeout(async () => {
 				if (count > max) {
-					clearTimeout(timeout);
-					logError(new Error('refetch timeout'));
-					res({ data: null, status: 'timeout' });
+					clearTimeout(timeout)
+					logError(new Error('refetch timeout'))
+					res({ data: null, status: 'timeout' })
 				} else {
-					const next = await query();
-					count += 1;
+					const next = await query()
+					count += 1
 					if (!comparator(existingResult, next)) {
-						clearTimeout(timeout);
-						res({ data: next, status: 'complete' });
+						clearTimeout(timeout)
+						res({ data: next, status: 'complete' })
 					} else {
-						refetch(existingResult);
+						refetch(existingResult)
 					}
 				}
-			}, interval);
-		};
-		refetch(existingResult);
-	});
-};
+			}, interval)
+		}
+		refetch(existingResult)
+	})
+}

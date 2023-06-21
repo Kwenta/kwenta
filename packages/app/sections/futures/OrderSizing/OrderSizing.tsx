@@ -1,14 +1,14 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { floorNumber, formatCryptoCurrency, formatDollars, isZero } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import React, { useMemo, memo, useCallback } from 'react';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { floorNumber, formatCryptoCurrency, formatDollars, isZero } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import React, { useMemo, memo, useCallback } from 'react'
+import styled from 'styled-components'
 
-import TextButton from 'components/Button/TextButton';
-import InputHeaderRow from 'components/Input/InputHeaderRow';
-import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle';
-import NumericInput from 'components/Input/NumericInput';
-import { editTradeSizeInput } from 'state/futures/actions';
+import TextButton from 'components/Button/TextButton'
+import InputHeaderRow from 'components/Input/InputHeaderRow'
+import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle'
+import NumericInput from 'components/Input/NumericInput'
+import { editTradeSizeInput } from 'state/futures/actions'
 import {
 	selectMarketIndexPrice,
 	selectPosition,
@@ -19,70 +19,70 @@ import {
 	selectLeverageSide,
 	selectAvailableOi,
 	selectTradeSizeInputsDisabled,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import { DenominationToggle } from './DenominationToggle';
+import { DenominationToggle } from './DenominationToggle'
 
 type OrderSizingProps = {
-	isMobile?: boolean;
-};
+	isMobile?: boolean
+}
 
 const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
-	const dispatch = useAppDispatch();
+	const dispatch = useAppDispatch()
 
-	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs);
+	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs)
 
-	const position = useAppSelector(selectPosition);
-	const marketAssetRate = useAppSelector(selectMarketIndexPrice);
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice);
-	const assetInputType = useAppSelector(selectSelectedInputDenomination);
-	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput);
-	const tradeSide = useAppSelector(selectLeverageSide);
-	const availableOi = useAppSelector(selectAvailableOi);
-	const isDisabled = useAppSelector(selectTradeSizeInputsDisabled);
+	const position = useAppSelector(selectPosition)
+	const marketAssetRate = useAppSelector(selectMarketIndexPrice)
+	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const assetInputType = useAppSelector(selectSelectedInputDenomination)
+	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput)
+	const tradeSide = useAppSelector(selectLeverageSide)
+	const availableOi = useAppSelector(selectAvailableOi)
+	const isDisabled = useAppSelector(selectTradeSizeInputsDisabled)
 
 	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
 		orderPrice,
 		marketAssetRate,
-	]);
+	])
 
-	const increasingPosition = !position?.position?.side || position?.position?.side === tradeSide;
+	const increasingPosition = !position?.position?.side || position?.position?.side === tradeSide
 
 	const availableOiUsd = useMemo(() => {
 		return increasingPosition
 			? availableOi[tradeSide].usd
-			: availableOi[tradeSide].usd.add(position?.position?.notionalValue || 0);
-	}, [tradeSide, availableOi, increasingPosition, position?.position?.notionalValue]);
+			: availableOi[tradeSide].usd.add(position?.position?.notionalValue || 0)
+	}, [tradeSide, availableOi, increasingPosition, position?.position?.notionalValue])
 
 	const availableOiNative = useMemo(() => {
 		return increasingPosition
 			? availableOi[tradeSide].native
-			: availableOi[tradeSide].native.add(position?.position?.size || 0);
-	}, [tradeSide, availableOi, increasingPosition, position?.position?.size]);
+			: availableOi[tradeSide].native.add(position?.position?.size || 0)
+	}, [tradeSide, availableOi, increasingPosition, position?.position?.size])
 
 	const maxNativeValue = useMemo(() => {
-		const max = !isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : ZERO_WEI;
-		return max.lt(availableOiNative) ? max : availableOiNative;
-	}, [tradePrice, maxUsdInputAmount, availableOiNative]);
+		const max = !isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : ZERO_WEI
+		return max.lt(availableOiNative) ? max : availableOiNative
+	}, [tradePrice, maxUsdInputAmount, availableOiNative])
 
 	const onSizeChange = useCallback(
 		(value: string, assetType: 'native' | 'usd') => {
-			dispatch(editTradeSizeInput(value, assetType));
+			dispatch(editTradeSizeInput(value, assetType))
 		},
 		[dispatch]
-	);
+	)
 
 	const handleSetMax = useCallback(() => {
-		onSizeChange(String(floorNumber(maxNativeValue)), 'native');
-	}, [onSizeChange, maxNativeValue]);
+		onSizeChange(String(floorNumber(maxNativeValue)), 'native')
+	}, [onSizeChange, maxNativeValue])
 
 	const onChangeValue = useCallback(
 		(_: any, v: string) => {
-			dispatch(editTradeSizeInput(v, assetInputType));
+			dispatch(editTradeSizeInput(v, assetInputType))
 		},
 		[dispatch, assetInputType]
-	);
+	)
 
 	const invalid = useMemo(() => {
 		return (
@@ -93,7 +93,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 				nativeSizeString !== '' &&
 				maxNativeValue.lte(nativeSizeString || 0)) ||
 			availableOiUsd.lt(susdSizeString || 0)
-		);
+		)
 	}, [
 		assetInputType,
 		maxNativeValue,
@@ -101,7 +101,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 		availableOiUsd,
 		maxUsdInputAmount,
 		susdSizeString,
-	]);
+	])
 
 	return (
 		<OrderSizingContainer>
@@ -144,15 +144,15 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 				onChange={onChangeValue}
 			/>
 		</OrderSizingContainer>
-	);
-});
+	)
+})
 
 const OrderSizingContainer = styled.div`
 	margin-bottom: 16px;
-`;
+`
 
 const InputHelpers = styled.div`
 	display: flex;
-`;
+`
 
-export default OrderSizing;
+export default OrderSizing

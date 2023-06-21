@@ -1,9 +1,9 @@
-import { FUTURES_ENDPOINT_OP_MAINNET, KWENTA_TRACKING_CODE } from '@kwenta/sdk/constants';
-import { getFuturesTrades } from '@kwenta/sdk/utils';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { FUTURES_ENDPOINT_OP_MAINNET, KWENTA_TRACKING_CODE } from '@kwenta/sdk/constants'
+import { getFuturesTrades } from '@kwenta/sdk/utils'
+import { useQuery, UseQueryOptions } from 'react-query'
 
-import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults';
-import QUERY_KEYS from 'constants/queryKeys';
+import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults'
+import QUERY_KEYS from 'constants/queryKeys'
 
 const useGetFuturesFeeForAccount = (
 	account: string,
@@ -14,7 +14,7 @@ const useGetFuturesFeeForAccount = (
 	return useQuery<any>(
 		QUERY_KEYS.Staking.FuturesFee(account || null, start, end),
 		async () => {
-			if (!account) return null;
+			if (!account) return null
 
 			const response = await getFuturesTrades(
 				FUTURES_ENDPOINT_OP_MAINNET,
@@ -37,11 +37,11 @@ const useGetFuturesFeeForAccount = (
 					feesPaid: true,
 					keeperFeesPaid: true,
 				}
-			);
-			return response;
+			)
+			return response
 		},
 		{ enabled: !!account, ...options }
-	);
-};
+	)
+}
 
-export default useGetFuturesFeeForAccount;
+export default useGetFuturesFeeForAccount

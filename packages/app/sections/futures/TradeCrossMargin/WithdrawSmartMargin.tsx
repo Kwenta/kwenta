@@ -1,49 +1,49 @@
-import { wei } from '@synthetixio/wei';
-import React, { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { wei } from '@synthetixio/wei'
+import React, { useCallback, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import BaseModal from 'components/BaseModal';
-import Button from 'components/Button';
-import ErrorView from 'components/ErrorView';
-import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRowCentered } from 'components/layout/flex';
-import Loader from 'components/Loader';
-import { formatDollars } from '@kwenta/sdk/utils';
-import { selectTransaction } from 'state/app/selectors';
-import { withdrawCrossMargin } from 'state/futures/actions';
-import { selectIsSubmittingCrossTransfer, selectWithdrawableMargin } from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import BaseModal from 'components/BaseModal'
+import Button from 'components/Button'
+import ErrorView from 'components/ErrorView'
+import NumericInput from 'components/Input/NumericInput'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import Loader from 'components/Loader'
+import { formatDollars } from '@kwenta/sdk/utils'
+import { selectTransaction } from 'state/app/selectors'
+import { withdrawCrossMargin } from 'state/futures/actions'
+import { selectIsSubmittingCrossTransfer, selectWithdrawableMargin } from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type Props = {
-	onDismiss(): void;
-};
+	onDismiss(): void
+}
 
-const PLACEHOLDER = '$0.00';
+const PLACEHOLDER = '$0.00'
 
 export default function WithdrawSmartMargin({ onDismiss }: Props) {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
-	const transactionState = useAppSelector(selectTransaction);
-	const isSubmitting = useAppSelector(selectIsSubmittingCrossTransfer);
-	const totalWithdrawable = useAppSelector(selectWithdrawableMargin);
+	const transactionState = useAppSelector(selectTransaction)
+	const isSubmitting = useAppSelector(selectIsSubmittingCrossTransfer)
+	const totalWithdrawable = useAppSelector(selectWithdrawableMargin)
 
-	const [amount, setAmount] = useState<string>('');
+	const [amount, setAmount] = useState<string>('')
 
 	const disabledReason = useMemo(() => {
-		const amtWei = wei(amount || 0);
+		const amtWei = wei(amount || 0)
 		if (amtWei.gt(totalWithdrawable))
-			return t('futures.market.trade.margin.modal.deposit.exceeds-balance');
-	}, [amount, totalWithdrawable, t]);
+			return t('futures.market.trade.margin.modal.deposit.exceeds-balance')
+	}, [amount, totalWithdrawable, t])
 
 	const withdrawMargin = useCallback(async () => {
-		dispatch(withdrawCrossMargin(wei(amount)));
-	}, [amount, dispatch]);
+		dispatch(withdrawCrossMargin(wei(amount)))
+	}, [amount, dispatch])
 
 	const handleSetMax = React.useCallback(() => {
-		setAmount(totalWithdrawable.toString());
-	}, [totalWithdrawable]);
+		setAmount(totalWithdrawable.toString())
+	}, [totalWithdrawable])
 
 	return (
 		<StyledBaseModal
@@ -90,14 +90,14 @@ export default function WithdrawSmartMargin({ onDismiss }: Props) {
 				/>
 			)}
 		</StyledBaseModal>
-	);
+	)
 }
 
 export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
-`;
+`
 
 export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-top: 12px;
@@ -105,14 +105,14 @@ export const BalanceContainer = styled(FlexDivRowCentered)`
 	p {
 		margin: 0;
 	}
-`;
+`
 
 export const BalanceText = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
-`;
+`
 
 export const MaxButton = styled.button`
 	height: 22px;
@@ -125,8 +125,8 @@ export const MaxButton = styled.button`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	cursor: pointer;
-`;
+`
 
 const InputContainer = styled(NumericInput)`
 	margin-bottom: 10px;
-`;
+`

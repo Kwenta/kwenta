@@ -1,18 +1,18 @@
-import common from './common';
-import darkTheme from './dark';
-import lightTheme from './light';
+import common from './common'
+import darkTheme from './dark'
+import lightTheme from './light'
 
 const goldColors = {
 	color1: '#BE9461',
 	color2: '#9C6C3C',
 	color3: '#E4B378',
 	color4: '#B98C55',
-};
+}
 
 export const themeColors = {
 	dark: darkTheme,
 	light: lightTheme,
-};
+}
 
 const colors = {
 	black: '#000000',
@@ -33,6 +33,6 @@ const colors = {
 	connectedDefault: goldColors.color1,
 	noNetwork: '#EF6868',
 	common,
-};
+}
 
-export default colors;
+export default colors

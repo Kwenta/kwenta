@@ -1,83 +1,83 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { formatDollars, truncateNumbers } from '@kwenta/sdk/utils';
-import { useRouter } from 'next/router';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { useTheme } from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatDollars, truncateNumbers } from '@kwenta/sdk/utils'
+import { useRouter } from 'next/router'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { useTheme } from 'styled-components'
 
-import LinkArrowIcon from 'assets/svg/app/link-arrow.svg';
-import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
-import OptimismLogo from 'assets/svg/providers/optimism.svg';
-import Button from 'components/Button';
-import { FlexDivRow } from 'components/layout/flex';
-import Pill from 'components/Pill';
-import { Body, LogoText } from 'components/Text';
-import ROUTES from 'constants/routes';
-import useClickOutside from 'hooks/useClickOutside';
-import { StakingCard } from 'sections/dashboard/Stake/card';
-import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+import LinkArrowIcon from 'assets/svg/app/link-arrow.svg'
+import KwentaLogo from 'assets/svg/earn/KWENTA.svg'
+import OptimismLogo from 'assets/svg/providers/optimism.svg'
+import Button from 'components/Button'
+import { FlexDivRow } from 'components/layout/flex'
+import Pill from 'components/Pill'
+import { Body, LogoText } from 'components/Text'
+import ROUTES from 'constants/routes'
+import useClickOutside from 'hooks/useClickOutside'
+import { StakingCard } from 'sections/dashboard/Stake/card'
+import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
 	claimMultipleAllRewards,
 	claimMultipleOpRewards,
 	claimMultipleSnxOpRewards,
 	fetchClaimableRewards,
 	fetchStakingData,
-} from 'state/staking/actions';
-import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors';
-import { selectWallet } from 'state/wallet/selectors';
-import media from 'styles/media';
+} from 'state/staking/actions'
+import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors'
+import { selectWallet } from 'state/wallet/selectors'
+import media from 'styles/media'
 
 const BalanceActions: FC = () => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
-	const theme = useTheme();
-	const router = useRouter();
-	const walletAddress = useAppSelector(selectWallet);
-	const opPrice = useAppSelector(selectOpPrice);
-	const kwentaPrice = useAppSelector(selectKwentaPrice);
-	const kwentaRewards = useAppSelector(selectKwentaRewards);
-	const opRewards = useAppSelector(selectOpRewards);
-	const snxOpRewards = useAppSelector(selectSnxOpRewards);
-	const [open, setOpen] = useState(false);
-	const [rewardBalance, setRewardBalance] = useState(ZERO_WEI);
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const theme = useTheme()
+	const router = useRouter()
+	const walletAddress = useAppSelector(selectWallet)
+	const opPrice = useAppSelector(selectOpPrice)
+	const kwentaPrice = useAppSelector(selectKwentaPrice)
+	const kwentaRewards = useAppSelector(selectKwentaRewards)
+	const opRewards = useAppSelector(selectOpRewards)
+	const snxOpRewards = useAppSelector(selectSnxOpRewards)
+	const [open, setOpen] = useState(false)
+	const [rewardBalance, setRewardBalance] = useState(ZERO_WEI)
 
-	const { ref } = useClickOutside(() => setOpen(false));
+	const { ref } = useClickOutside(() => setOpen(false))
 
 	const goToStaking = useCallback(() => {
-		router.push(ROUTES.Dashboard.TradingRewards);
-		setOpen(false);
-	}, [router]);
+		router.push(ROUTES.Dashboard.TradingRewards)
+		setOpen(false)
+	}, [router])
 
 	const handleClaimAll = useCallback(() => {
-		dispatch(claimMultipleAllRewards());
-	}, [dispatch]);
+		dispatch(claimMultipleAllRewards())
+	}, [dispatch])
 
 	const handleClaimOp = useCallback(() => {
-		dispatch(claimMultipleOpRewards());
-	}, [dispatch]);
+		dispatch(claimMultipleOpRewards())
+	}, [dispatch])
 
 	const handleClaimSnxOp = useCallback(() => {
-		dispatch(claimMultipleSnxOpRewards());
-	}, [dispatch]);
+		dispatch(claimMultipleSnxOpRewards())
+	}, [dispatch])
 
 	useEffect(() => {
 		if (!!walletAddress) {
 			dispatch(fetchStakingData()).then(() => {
-				dispatch(fetchClaimableRewards());
-			});
+				dispatch(fetchClaimableRewards())
+			})
 		}
-	}, [dispatch, walletAddress]);
+	}, [dispatch, walletAddress])
 
 	const claimDisabledAll = useMemo(() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0), [
 		opRewards,
 		snxOpRewards,
 		kwentaRewards,
-	]);
+	])
 
-	const claimDisabledOp = useMemo(() => opRewards.lte(0), [opRewards]);
+	const claimDisabledOp = useMemo(() => opRewards.lte(0), [opRewards])
 
-	const claimDisabledSnxOp = useMemo(() => snxOpRewards.lte(0), [snxOpRewards]);
+	const claimDisabledSnxOp = useMemo(() => snxOpRewards.lte(0), [snxOpRewards])
 
 	const REWARDS = [
 		{
@@ -113,7 +113,7 @@ const BalanceActions: FC = () => {
 			onClick: handleClaimSnxOp,
 			isDisabled: claimDisabledSnxOp,
 		},
-	];
+	]
 
 	useEffect(
 		() =>
@@ -121,7 +121,7 @@ const BalanceActions: FC = () => {
 				kwentaPrice.mul(kwentaRewards).add(opPrice.mul(opRewards.add(snxOpRewards)))
 			),
 		[kwentaRewards, kwentaPrice, opPrice, snxOpRewards, opRewards]
-	);
+	)
 
 	return (
 		<>
@@ -198,12 +198,12 @@ const BalanceActions: FC = () => {
 				</RewardsTabContainer>
 			)}
 		</>
-	);
-};
+	)
+}
 
 const ButtonContainer = styled(FlexDivRow)`
 	column-gap: 15px;
-`;
+`
 
 const RewardsTabContainer = styled.div`
 	z-index: 100;
@@ -217,25 +217,25 @@ const RewardsTabContainer = styled.div`
 	${media.greaterThan('mdUp')`
 		margin-top: 56px;
 	`}
-`;
+`
 
 const CardGrid = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	row-gap: 7px;
-`;
+`
 
 const CardsContainer = styled(StakingCard)`
 	display: grid;
 	width: 100%;
 	grid-template-rows: repeat(3, 1fr);
 	grid-gap: 20px;
-`;
+`
 
 const StyledFlexDivRow = styled(FlexDivRow)`
 	column-gap: 50px;
 	align-items: center;
-`;
+`
 
-export default BalanceActions;
+export default BalanceActions

@@ -1,66 +1,66 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { formatDollars, formatNumber } from '@kwenta/sdk/utils';
-import { useRouter } from 'next/router';
-import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
+import { useRouter } from 'next/router'
+import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CellProps } from 'react-table'
+import styled from 'styled-components'
 
-import GridSvg from 'assets/svg/app/grid.svg';
-import Button from 'components/Button';
-import Currency from 'components/Currency';
-import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex';
-import Loader from 'components/Loader';
-import { MobileOnlyView, NotMobileView } from 'components/Media/Media';
-import Table, { TableHeader } from 'components/Table';
-import { Body } from 'components/Text';
-import ROUTES from 'constants/routes';
-import useENS from 'hooks/useENS';
-import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
-import useGetStats from 'queries/futures/useGetStats';
-import { StackSection } from 'sections/homepage/section';
-import { Title } from 'sections/homepage/text';
-import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media from 'styles/media';
+import GridSvg from 'assets/svg/app/grid.svg'
+import Button from 'components/Button'
+import Currency from 'components/Currency'
+import { FlexDivColCentered, FlexDivRow } from 'components/layout/flex'
+import Loader from 'components/Loader'
+import { MobileOnlyView, NotMobileView } from 'components/Media/Media'
+import Table, { TableHeader } from 'components/Table'
+import { Body } from 'components/Text'
+import ROUTES from 'constants/routes'
+import useENS from 'hooks/useENS'
+import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats'
+import useGetStats from 'queries/futures/useGetStats'
+import { StackSection } from 'sections/homepage/section'
+import { Title } from 'sections/homepage/text'
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common'
+import media from 'styles/media'
 
 const ShortList = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
-	const statsQuery = useGetStats(true);
-	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
+	const statsQuery = useGetStats(true)
+	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery])
 
-	const router = useRouter();
+	const router = useRouter()
 	const onClickTrader = (trader: string) => {
-		router.push(ROUTES.Leaderboard.Trader(trader));
-	};
+		router.push(ROUTES.Leaderboard.Trader(trader))
+	}
 
 	const getMedal = (position: number) => {
 		switch (position) {
 			case 1:
-				return <Medal>🥇</Medal>;
+				return <Medal>🥇</Medal>
 			case 2:
-				return <Medal>🥈</Medal>;
+				return <Medal>🥈</Medal>
 			case 3:
-				return <Medal>🥉</Medal>;
+				return <Medal>🥉</Medal>
 			default:
-				return <Medal> {position} </Medal>;
+				return <Medal> {position} </Medal>
 		}
-	};
+	}
 
 	const title = (
 		<>
 			<SmallGoldenHeader>{t('homepage.shortlist.title')}</SmallGoldenHeader>
 			<WhiteHeader>{t('homepage.shortlist.description')}</WhiteHeader>
 		</>
-	);
+	)
 
 	const sectionTitle = (
 		<>
 			<SectionFeatureTitle>{t('homepage.shortlist.stats.title')}</SectionFeatureTitle>
 		</>
-	);
+	)
 
-	const totalTradeStats = useGetFuturesCumulativeStats();
+	const totalTradeStats = useGetFuturesCumulativeStats()
 
 	return (
 		<StackSection>
@@ -90,7 +90,7 @@ const ShortList = () => {
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
 								accessor: 'trader',
 								Cell: (cellProps: CellProps<any>) => {
-									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader)
 									return (
 										<StyledTrader>
 											{ensName ? (
@@ -110,7 +110,7 @@ const ShortList = () => {
 												cellProps.row.original.traderShort
 											)}
 										</StyledTrader>
-									);
+									)
 								},
 								width: 150,
 							},
@@ -169,7 +169,7 @@ const ShortList = () => {
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
 								accessor: 'trader',
 								Cell: (cellProps: CellProps<any>) => {
-									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader)
 									return (
 										<StyledTrader>
 											{ensName ? (
@@ -189,7 +189,7 @@ const ShortList = () => {
 												cellProps.row.original.traderShort
 											)}
 										</StyledTrader>
-									);
+									)
 								},
 								width: 150,
 							},
@@ -240,18 +240,18 @@ const ShortList = () => {
 				</StatsCardContainer>
 			</Container>
 		</StackSection>
-	);
-};
+	)
+}
 
 const StatsName = styled.div`
 	font-size: 15px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
+`
 
 const StatsValue = styled.div`
 	font-size: 32px;
 	color: ${(props) => props.theme.colors.selectedTheme.white};
-`;
+`
 
 const StatsCardContainer = styled(FlexDivRow)`
 	margin-top: 40px;
@@ -265,7 +265,7 @@ const StatsCardContainer = styled(FlexDivRow)`
 		row-gap: 15px;
 		margin-top: 30px;
 	`}
-`;
+`
 
 const StatsCard = styled(Button)`
 	display: flex;
@@ -300,7 +300,7 @@ const StatsCard = styled(Button)`
 		z-index: 20;
 		background-size: cover;
 	}
-`;
+`
 
 const StyledTable = styled(Table)`
 	margin-top: 60px;
@@ -313,11 +313,11 @@ const StyledTable = styled(Table)`
 			padding-left: 0px;
 		}
 	`};
-`;
+`
 
 const Medal = styled.span`
 	font-size: 15px;
-`;
+`
 
 const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
@@ -328,24 +328,24 @@ const ColorCodedPrice = styled(Currency.Price)`
 			? props.theme.colors.red
 			: props.theme.colors.white};
 	font-size: 15px;
-`;
+`
 
 const Container = styled(FlexDivColCentered)`
 	padding-bottom: 140px;
 	justify-content: center;
-`;
+`
 
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
 	width: 45px;
-`;
+`
 
 const StyledTrader = styled.a`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
 	font-size: 15px;
-`;
+`
 
 const FeatureTitle = styled(Title)`
 	font-family: ${(props) => props.theme.fonts.regular};
@@ -355,7 +355,7 @@ const FeatureTitle = styled(Title)`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	width: 150px;
 	letter-spacing: 2px;
-`;
+`
 
 const SectionFeatureTitle = styled(FeatureTitle)`
 	font-size: 20px;
@@ -369,6 +369,6 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	${media.lessThan('sm')`
 		width: 100vw;
 	`}
-`;
+`
 
-export default ShortList;
+export default ShortList

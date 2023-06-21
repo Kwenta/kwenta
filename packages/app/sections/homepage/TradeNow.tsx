@@ -1,18 +1,18 @@
-import Link from 'next/link';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import Link from 'next/link'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { FlexDivColCentered } from 'components/layout/flex';
-import * as Text from 'components/Text';
-import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
-import ROUTES from 'constants/routes';
-import RefButton from 'sections/shared/components/RefButton';
-import { SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media from 'styles/media';
+import { FlexDivColCentered } from 'components/layout/flex'
+import * as Text from 'components/Text'
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
+import ROUTES from 'constants/routes'
+import RefButton from 'sections/shared/components/RefButton'
+import { SmallGoldenHeader, WhiteHeader } from 'styles/common'
+import media from 'styles/media'
 
 const TradeNow = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<Container>
@@ -31,8 +31,8 @@ const TradeNow = () => {
 				</TransparentCard>
 			</FlexDivColCentered>
 		</Container>
-	);
-};
+	)
+}
 
 const TransparentCard = styled.div`
 	display: flex;
@@ -62,14 +62,14 @@ const TransparentCard = styled.div`
 		background-position: -140px 50px, 140px -50px, 0px 0px;
 		background-repeat: no-repeat, no-repeat, repeat;
 	`};
-`;
+`
 
 const Container = styled.div`
 	margin-bottom: 140px;
 	${media.lessThan('sm')`
 		margin-bottom: 105px;
 	`};
-`;
+`
 
 const GrayDescription = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
@@ -81,12 +81,12 @@ const GrayDescription = styled(Text.Body)`
 	${media.lessThan('sm')`
 		font-size: 16px;
 	`};
-`;
+`
 
 const CTAContainer = styled.div`
 	margin-top: 50px;
 	z-index: 1;
-`;
+`
 
 const BigWhiteHeader = styled(WhiteHeader)`
 	font-size: 60px;
@@ -94,6 +94,6 @@ const BigWhiteHeader = styled(WhiteHeader)`
 	${media.lessThan('sm')`
 		font-size: 40px;
 	`};
-`;
+`
 
-export default TradeNow;
+export default TradeNow

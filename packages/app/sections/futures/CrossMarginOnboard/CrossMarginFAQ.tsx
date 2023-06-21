@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { EXTERNAL_LINKS } from 'constants/links';
+import { EXTERNAL_LINKS } from 'constants/links'
 
 export default function CrossMarginFAQ() {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	const onClick = () => {
-		window.open(EXTERNAL_LINKS.Docs.CrossMarginFaq);
-	};
+		window.open(EXTERNAL_LINKS.Docs.CrossMarginFaq)
+	}
 
 	return (
 		<ul>
@@ -25,7 +25,7 @@ export default function CrossMarginFAQ() {
 				<div>↗</div>
 			</FAQListItem>
 		</ul>
-	);
+	)
 }
 
 const FAQListItem = styled.ul`
@@ -43,4 +43,4 @@ const FAQListItem = styled.ul`
 	&:first-child {
 		margin-top: 6px;
 	}
-`;
+`

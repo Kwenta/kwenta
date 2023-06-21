@@ -1,16 +1,16 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 
-import { Pane } from 'sections/futures/mobile';
-import PositionChart from 'sections/futures/PositionChart';
+import { Pane } from 'sections/futures/mobile'
+import PositionChart from 'sections/futures/PositionChart'
 
 const PriceTab: React.FC = () => {
 	return (
 		<StyledPane noPadding>
 			<PositionChart />
 		</StyledPane>
-	);
-};
+	)
+}
 
 const StyledPane = styled(Pane)`
 	#tv_chart_container {
@@ -21,6 +21,6 @@ const StyledPane = styled(Pane)`
 	iframe {
 		max-height: 324px;
 	}
-`;
+`
 
-export default PriceTab;
+export default PriceTab

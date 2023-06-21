@@ -1,24 +1,24 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { PositionSide } from '@kwenta/sdk/types';
-import { MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils';
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { PositionSide } from '@kwenta/sdk/types'
+import { MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils'
+import { FC, useMemo } from 'react'
+import styled from 'styled-components'
 
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { SharePositionParams } from 'state/futures/types';
-import { useAppSelector } from 'state/hooks';
-import media from 'styles/media';
-import { getMarketName } from 'utils/futures';
+import CurrencyIcon from 'components/Currency/CurrencyIcon'
+import { selectMarketAsset } from 'state/futures/selectors'
+import { SharePositionParams } from 'state/futures/types'
+import { useAppSelector } from 'state/hooks'
+import media from 'styles/media'
+import { getMarketName } from 'utils/futures'
 
 const AmountContainer: FC<SharePositionParams> = ({ asset, position }) => {
-	const defaultAsset = useAppSelector(selectMarketAsset);
-	const marketAsset = asset ?? defaultAsset;
-	const marketName = getMarketName(marketAsset);
-	const positionDetails = position ?? null;
-	const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x';
-	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
-	const pnlPct = positionDetails?.pnlPct.mul(100);
+	const defaultAsset = useAppSelector(selectMarketAsset)
+	const marketAsset = asset ?? defaultAsset
+	const marketName = getMarketName(marketAsset)
+	const positionDetails = position ?? null
+	const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x'
+	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT
+	const pnlPct = positionDetails?.pnlPct.mul(100)
 
 	const amount = useMemo(() => {
 		if (pnlPct) {
@@ -26,9 +26,9 @@ const AmountContainer: FC<SharePositionParams> = ({ asset, position }) => {
 				? `+${pnlPct.toNumber().toFixed(2)}%`
 				: pnlPct.eq(0)
 				? `+0.00%`
-				: `${pnlPct.toNumber().toFixed(2)}%`;
+				: `${pnlPct.toNumber().toFixed(2)}%`
 		}
-	}, [pnlPct]);
+	}, [pnlPct])
 
 	return (
 		<Container>
@@ -42,14 +42,14 @@ const AmountContainer: FC<SharePositionParams> = ({ asset, position }) => {
 			</StyledPositionType>
 			<StyledAmount className={amount}>{amount}</StyledAmount>
 		</Container>
-	);
-};
+	)
+}
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	height: 1.94vw;
 	width: auto;
 	margin: -0.3vw 0.5vw 0vw 0vw;
-`;
+`
 
 const StyledPositionLeverage = styled.div`
 	display: flex;
@@ -60,7 +60,7 @@ const StyledPositionLeverage = styled.div`
 	${media.lessThan('md')`
 		font-size: 4vw;
 	`}
-`;
+`
 
 const StyledPositionSide = styled.div`
 	display: flex;
@@ -73,7 +73,7 @@ const StyledPositionSide = styled.div`
 	${media.lessThan('md')`
 		font-size: 4vw;
 	`}
-`;
+`
 
 const StyledPositionDetails = styled.div`
 	margin: ${(props) => (props.className === 'line-separator' ? '0vw 0.7vw 0vw 0.7vw' : '')};
@@ -88,7 +88,7 @@ const StyledPositionDetails = styled.div`
 	${media.lessThan('md')`
 		font-size: 4vw;
 	`}
-`;
+`
 
 const StyledPositionType = styled.div`
 	display: flex;
@@ -98,7 +98,7 @@ const StyledPositionType = styled.div`
 		align-items: center;
 		gap: 2vw;
 	`}
-`;
+`
 
 const StyledAmount = styled.div`
 	position: absolute;
@@ -121,7 +121,7 @@ const StyledAmount = styled.div`
 		position: static;
 		font-size: 10vw;
 	`}
-`;
+`
 
 const Container = styled.div`
 	position: absolute;
@@ -138,6 +138,6 @@ const Container = styled.div`
 		justify-items: center;
 		align-items: center;
 	`}
-`;
+`
 
-export default AmountContainer;
+export default AmountContainer

@@ -1,11 +1,11 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from 'react'
+import styled from 'styled-components'
 
-import TabButton from 'components/Button/TabButton';
+import TabButton from 'components/Button/TabButton'
 
-import FundingTab from './FundingTab';
-import PriceTab from './PriceTab';
-import TradesTab from './TradesTab';
+import FundingTab from './FundingTab'
+import PriceTab from './PriceTab'
+import TradesTab from './TradesTab'
 
 const TABS = [
 	{
@@ -22,10 +22,10 @@ const TABS = [
 		title: 'History',
 		component: <TradesTab />,
 	},
-];
+]
 
 const OverviewTabs: React.FC = () => {
-	const [activeTab, setActiveTab] = React.useState(0);
+	const [activeTab, setActiveTab] = React.useState(0)
 
 	return (
 		<div>
@@ -43,8 +43,8 @@ const OverviewTabs: React.FC = () => {
 			</MainTabButtonsContainer>
 			{TABS[activeTab].component}
 		</div>
-	);
-};
+	)
+}
 
 const MainTabButtonsContainer = styled.div`
 	display: grid;
@@ -52,6 +52,6 @@ const MainTabButtonsContainer = styled.div`
 	grid-gap: 0;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-`;
+`
 
-export default OverviewTabs;
+export default OverviewTabs

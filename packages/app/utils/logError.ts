@@ -1,18 +1,18 @@
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/browser'
 
 export default function logError(err: Error, skipReport = false) {
 	// eslint-disable-next-line no-console
-	console.error(err);
+	console.error(err)
 	if (!sentrySkipFilter(err) && !skipReport) {
-		Sentry.captureException(err);
+		Sentry.captureException(err)
 	}
 }
 
 const sentrySkipFilter = (e: Error) => {
 	return IGNORE_ERRORS.some((text) => {
-		return e?.message?.toLowerCase().includes(text.toLowerCase());
-	});
-};
+		return e?.message?.toLowerCase().includes(text.toLowerCase())
+	})
+}
 
 export const IGNORE_ERRORS = [
 	'Insufficient margin',
@@ -22,4 +22,4 @@ export const IGNORE_ERRORS = [
 	'Unsupported network',
 	'request aborted',
 	'Transaction reverted without a reason string',
-];
+]

@@ -1,71 +1,71 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { formatDollars, formatNumber } from '@kwenta/sdk/utils';
-import { format } from 'date-fns';
-import { useLayoutEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
+import { format } from 'date-fns'
+import { useLayoutEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { SharePositionParams } from 'state/futures/types';
-import media from 'styles/media';
-import getLocale from 'utils/formatters/getLocale';
+import { SharePositionParams } from 'state/futures/types'
+import media from 'styles/media'
+import getLocale from 'utils/formatters/getLocale'
 
 function getColor(props: any) {
-	let color = '';
+	let color = ''
 
 	switch (props.className) {
 		case 'header':
-			color = props.theme.colors.common.tertiaryGray;
-			break;
+			color = props.theme.colors.common.tertiaryGray
+			break
 		case 'time':
-			color = props.theme.colors.common.tertiaryGray;
-			break;
+			color = props.theme.colors.common.tertiaryGray
+			break
 		case 'date-or-price':
-			color = props.theme.colors.white;
-			break;
+			color = props.theme.colors.white
+			break
 
 		default:
-			color = props.theme.colors.common.tertiaryGray;
+			color = props.theme.colors.common.tertiaryGray
 	}
 
-	return color;
+	return color
 }
 
 function getFontSize(props: any) {
-	let fontSize = '';
+	let fontSize = ''
 
 	switch (props.className) {
 		case 'header':
-			fontSize = '0.83vw';
-			break;
+			fontSize = '0.83vw'
+			break
 		case 'time':
-			fontSize = '0.83vw';
-			break;
+			fontSize = '0.83vw'
+			break
 		case 'date-or-price':
-			fontSize = '1.23vw';
-			break;
+			fontSize = '1.23vw'
+			break
 
 		default:
-			fontSize = '0.83vw';
+			fontSize = '0.83vw'
 	}
 
-	return fontSize;
+	return fontSize
 }
 
 function getMobileFontSize(props: any) {
-	let fontSize = '';
+	let fontSize = ''
 
 	switch (props.className) {
 		case 'date-or-price':
-			fontSize = '3vw';
-			break;
+			fontSize = '3vw'
+			break
 		case 'header':
 		case 'time':
 		default:
-			fontSize = '2vw';
-			break;
+			fontSize = '2vw'
+			break
 	}
 
-	return fontSize;
+	return fontSize
 }
 
 function getFontFamily(props: any) {
@@ -73,29 +73,29 @@ function getFontFamily(props: any) {
 		time: props.theme.fonts.regular,
 		header: props.theme.fonts.compressedMedium,
 		'date-or-price': props.theme.fonts.bold,
-	};
+	}
 
 	for (const key of Object.keys(fontFamilyObj)) {
-		if (key === props.className) return fontFamilyObj[props.className];
+		if (key === props.className) return fontFamilyObj[props.className]
 	}
 }
 
 const PositionMetadata: React.FC<SharePositionParams> = ({ positionHistory, marketPrice }) => {
-	const { t } = useTranslation();
-	const [currentTimestamp, setCurrentTimestamp] = useState(0);
+	const { t } = useTranslation()
+	const [currentTimestamp, setCurrentTimestamp] = useState(0)
 
-	const avgEntryPrice = positionHistory?.avgEntryPrice.toNumber().toString() ?? '';
-	const openTimestamp = positionHistory?.openTimestamp ?? 0;
+	const avgEntryPrice = positionHistory?.avgEntryPrice.toNumber().toString() ?? ''
+	const openTimestamp = positionHistory?.openTimestamp ?? 0
 
 	useLayoutEffect(() => {
-		const now = new Date().getTime();
-		setCurrentTimestamp(now);
-	}, []);
+		const now = new Date().getTime()
+		setCurrentTimestamp(now)
+	}, [])
 
-	const openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
-	const openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
-	const createdOnDate = format(currentTimestamp, 'PP', { locale: getLocale() });
-	const createdOnTime = format(currentTimestamp, 'HH:mm:ss', { locale: getLocale() });
+	const openAtDate = format(openTimestamp, 'PP', { locale: getLocale() })
+	const openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() })
+	const createdOnDate = format(currentTimestamp, 'PP', { locale: getLocale() })
+	const createdOnTime = format(currentTimestamp, 'HH:mm:ss', { locale: getLocale() })
 
 	return (
 		<>
@@ -132,8 +132,8 @@ const PositionMetadata: React.FC<SharePositionParams> = ({ positionHistory, mark
 				</ContainerText>
 			</BottomRightContainer>
 		</>
-	);
-};
+	)
+}
 
 const ContainerText = styled.div`
 	font-size: ${(props) => getFontSize(props)};
@@ -148,7 +148,7 @@ const ContainerText = styled.div`
 	${media.lessThan('md')`
 		font-size: ${(props) => getMobileFontSize(props)};
 	`}
-`;
+`
 
 const TopRightContainer = styled.div`
 	position: absolute;
@@ -168,7 +168,7 @@ const TopRightContainer = styled.div`
 		width: 48%;
 		text-align: left;
 	`}
-`;
+`
 
 const TopLeftContainer = styled.div`
 	position: absolute;
@@ -188,7 +188,7 @@ const TopLeftContainer = styled.div`
 		width: 48%;
 		text-align: right;
 	`}
-`;
+`
 
 const BottomRightContainer = styled.div`
 	position: absolute;
@@ -208,7 +208,7 @@ const BottomRightContainer = styled.div`
 		width: 48%;
 		text-align: left;
 	`}
-`;
+`
 
 const BottomLeftContainer = styled.div`
 	position: absolute;
@@ -228,6 +228,6 @@ const BottomLeftContainer = styled.div`
 		width: 48%;
 		text-align: right;
 	`}
-`;
+`
 
-export default PositionMetadata;
+export default PositionMetadata

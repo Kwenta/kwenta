@@ -1,26 +1,26 @@
-import Link from 'next/link';
-import { FC, memo } from 'react';
-import styled from 'styled-components';
+import Link from 'next/link'
+import { FC, memo } from 'react'
+import styled from 'styled-components'
 
-import LogoDarkSvg from 'assets/svg/brand/logo-dark.svg';
-import LogoSvg from 'assets/svg/brand/logo.svg';
-import ROUTES from 'constants/routes';
-import { useAppSelector } from 'state/hooks';
-import { selectCurrentTheme } from 'state/preferences/selectors';
+import LogoDarkSvg from 'assets/svg/brand/logo-dark.svg'
+import LogoSvg from 'assets/svg/brand/logo.svg'
+import ROUTES from 'constants/routes'
+import { useAppSelector } from 'state/hooks'
+import { selectCurrentTheme } from 'state/preferences/selectors'
 
 const SvgLogo = memo(() => {
-	const currentTheme = useAppSelector(selectCurrentTheme);
+	const currentTheme = useAppSelector(selectCurrentTheme)
 
 	if (window.location.pathname === ROUTES.Home.Root) {
-		return <LogoSvg />;
+		return <LogoSvg />
 	}
 
 	if (currentTheme === 'light') {
-		return <LogoDarkSvg />;
+		return <LogoDarkSvg />
 	}
 
-	return <LogoSvg />;
-});
+	return <LogoSvg />
+})
 
 const Logo: FC = memo(() => {
 	return (
@@ -29,8 +29,8 @@ const Logo: FC = memo(() => {
 				<SvgLogo />
 			</LogoContainer>
 		</Link>
-	);
-});
+	)
+})
 
 const LogoContainer = styled.span`
 	display: flex;
@@ -39,6 +39,6 @@ const LogoContainer = styled.span`
 	height: 18px;
 	width: 122px;
 	margin-right: 20px;
-`;
+`
 
-export default Logo;
+export default Logo

@@ -1,34 +1,34 @@
-import { ConditionalOrder, PositionSide } from '@kwenta/sdk/types';
-import { getDisplayAsset, formatCurrency } from '@kwenta/sdk/utils';
-import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import { ConditionalOrder, PositionSide } from '@kwenta/sdk/types'
+import { getDisplayAsset, formatCurrency } from '@kwenta/sdk/utils'
+import React, { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import Button from 'components/Button';
-import { cancelConditionalOrder } from 'state/futures/actions';
-import { useAppDispatch } from 'state/hooks';
+import Button from 'components/Button'
+import { cancelConditionalOrder } from 'state/futures/actions'
+import { useAppDispatch } from 'state/hooks'
 
-import BaseDrawer from './BaseDrawer';
+import BaseDrawer from './BaseDrawer'
 
 type OrderDrawerProps = {
-	open: boolean;
-	order: ConditionalOrder;
-	closeDrawer(): void;
-};
+	open: boolean
+	order: ConditionalOrder
+	closeDrawer(): void
+}
 
 export default function ConditionalOrderDrawer({ open, order, closeDrawer }: OrderDrawerProps) {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 
 	const onCancel = useCallback(
 		(order: ConditionalOrder) => {
-			dispatch(cancelConditionalOrder(order.id));
+			dispatch(cancelConditionalOrder(order.id))
 		},
 		[dispatch]
-	);
+	)
 
 	const items = React.useMemo(() => {
-		if (!order || !order.side || !order.asset) return [];
+		if (!order || !order.side || !order.asset) return []
 
 		return [
 			{
@@ -54,8 +54,8 @@ export default function ConditionalOrderDrawer({ open, order, closeDrawer }: Ord
 				label: t('futures.market.user.open-orders.table.type'),
 				value: order.orderTypeDisplay,
 			},
-		];
-	}, [t, order]);
+		]
+	}, [t, order])
 
 	return (
 		<BaseDrawer
@@ -64,7 +64,7 @@ export default function ConditionalOrderDrawer({ open, order, closeDrawer }: Ord
 			items={items}
 			buttons={<CancelOrderButton onClick={() => onCancel(order)}>Cancel</CancelOrderButton>}
 		/>
-	);
+	)
 }
 
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
@@ -81,7 +81,7 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 		css`
 			color: ${props.theme.colors.common.primaryRed};
 		`}
-`;
+`
 
 const CancelOrderButton = styled(Button)`
 	font-size: 16px;
@@ -106,4 +106,4 @@ const CancelOrderButton = styled(Button)`
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		transform: none;
 	}
-`;
+`

@@ -1,8 +1,8 @@
 // import { ComponentStory } from '@storybook/react';
 
-import { ComponentMeta } from '@storybook/react';
+import { ComponentMeta } from '@storybook/react'
 
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import CurrencyIcon from 'components/Currency/CurrencyIcon'
 
 export default {
 	title: 'Components/CurrencyIcon',
@@ -14,7 +14,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof CurrencyIcon>;
+} as ComponentMeta<typeof CurrencyIcon>
 
 export const All = () => {
 	return (
@@ -41,5 +41,5 @@ export const All = () => {
 			<CurrencyIcon currencyKey="sXMR" />
 			<CurrencyIcon currencyKey="sOP" />
 		</div>
-	);
-};
+	)
+}

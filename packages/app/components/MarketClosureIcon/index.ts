@@ -1,1 +1,1 @@
-export { default } from './MarketClosureIcon';
+export { default } from './MarketClosureIcon'

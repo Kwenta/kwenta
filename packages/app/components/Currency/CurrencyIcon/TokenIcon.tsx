@@ -1,45 +1,45 @@
-import { FC, memo } from 'react';
-import styled from 'styled-components';
+import { FC, memo } from 'react'
+import styled from 'styled-components'
 
-import { FlexDivCentered } from 'components/layout/flex';
-import { useAppSelector } from 'state/hooks';
+import { FlexDivCentered } from 'components/layout/flex'
+import { useAppSelector } from 'state/hooks'
 
 export type TokenIconProps = {
-	currencyKey: string;
-	type?: 'synth' | 'asset' | 'token';
-	className?: string;
-	width?: number;
-	height?: number;
-	isDeprecated?: boolean;
-	style?: any;
-	url?: string;
-};
+	currencyKey: string
+	type?: 'synth' | 'asset' | 'token'
+	className?: string
+	width?: number
+	height?: number
+	isDeprecated?: boolean
+	style?: any
+	url?: string
+}
 
 const TokenIcon: FC<TokenIconProps> = memo(({ currencyKey, isDeprecated, ...props }) => {
-	const tokensMap = useAppSelector(({ exchange }) => exchange.tokensMap);
+	const tokensMap = useAppSelector(({ exchange }) => exchange.tokensMap)
 
 	if (!!tokensMap[currencyKey]) {
 		return (
 			<TokenImage src={tokensMap[currencyKey].logoURI} $isDeprecated={isDeprecated} {...props} />
-		);
+		)
 	} else {
 		return (
 			<Placeholder $isDeprecated={isDeprecated} {...props}>
 				{currencyKey}
 			</Placeholder>
-		);
+		)
 	}
-});
+})
 
 const TokenImage = styled.img<{ $isDeprecated?: boolean }>`
 	border-radius: 100%;
 	border: 2px solid ${(props) => (props.$isDeprecated ? props.theme.colors.red : 'transparent')};
-`;
+`
 
 const Placeholder = styled(FlexDivCentered)<{
-	$isDeprecated?: boolean;
-	height?: string | number;
-	width?: string | number;
+	$isDeprecated?: boolean
+	height?: string | number
+	width?: string | number
 }>`
 	border-radius: 100%;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -54,6 +54,6 @@ const Placeholder = styled(FlexDivCentered)<{
 	margin: 0 auto;
 	height: ${(props) => props.height}px;
 	width: ${(props) => props.width}px;
-`;
+`
 
-export default TokenIcon;
+export default TokenIcon

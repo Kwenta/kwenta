@@ -1,21 +1,21 @@
-import { FC, ReactNode } from 'react';
-import styled, { css } from 'styled-components';
+import { FC, ReactNode } from 'react'
+import styled, { css } from 'styled-components'
 
 type BadgeProps = {
-	color?: 'yellow' | 'red' | 'gray';
-	size?: 'small' | 'regular';
-	dark?: boolean;
-	children?: ReactNode;
-};
+	color?: 'yellow' | 'red' | 'gray'
+	size?: 'small' | 'regular'
+	dark?: boolean
+	children?: ReactNode
+}
 
 const Badge: FC<BadgeProps> = ({ color = 'yellow', size = 'regular', dark, ...props }) => {
-	return <BaseBadge $color={color} $dark={dark} $size={size} {...props} />;
-};
+	return <BaseBadge $color={color} $dark={dark} $size={size} {...props} />
+}
 
 const BaseBadge = styled.span<{
-	$color: 'yellow' | 'red' | 'gray';
-	$dark?: boolean;
-	$size: 'small' | 'regular';
+	$color: 'yellow' | 'red' | 'gray'
+	$dark?: boolean
+	$size: 'small' | 'regular'
 }>`
 	text-transform: uppercase;
 	text-align: center;
@@ -40,6 +40,6 @@ const BaseBadge = styled.span<{
 	user-select: none;
 	display: flex;
 	align-items: center;
-`;
+`
 
-export default Badge;
+export default Badge

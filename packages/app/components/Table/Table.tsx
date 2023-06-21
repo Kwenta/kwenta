@@ -1,29 +1,29 @@
-import React, { FC, useMemo, DependencyList, useEffect, useRef, memo } from 'react';
-import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination } from 'react-table';
-import type { TableInstance, UsePaginationInstanceProps, UsePaginationState } from 'react-table';
-import styled, { css } from 'styled-components';
+import React, { FC, useMemo, DependencyList, useEffect, useRef, memo } from 'react'
+import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination } from 'react-table'
+import type { TableInstance, UsePaginationInstanceProps, UsePaginationState } from 'react-table'
+import styled, { css } from 'styled-components'
 
-import SortDownIcon from 'assets/svg/app/caret-down.svg';
-import SortUpIcon from 'assets/svg/app/caret-up.svg';
-import Loader from 'components/Loader';
-import { Body } from 'components/Text';
-import media from 'styles/media';
+import SortDownIcon from 'assets/svg/app/caret-down.svg'
+import SortUpIcon from 'assets/svg/app/caret-up.svg'
+import Loader from 'components/Loader'
+import { Body } from 'components/Text'
+import media from 'styles/media'
 
-import Pagination from './Pagination';
-import TableBodyRow, { TableCell } from './TableBodyRow';
+import Pagination from './Pagination'
+import TableBodyRow, { TableCell } from './TableBodyRow'
 
-export type TablePalette = 'primary';
+export type TablePalette = 'primary'
 
-const CARD_HEIGHT_MD = '50px';
-const CARD_HEIGHT_LG = '40px';
-const MAX_PAGE_ROWS = 100;
-const MAX_TOTAL_ROWS = 9999;
+const CARD_HEIGHT_MD = '50px'
+const CARD_HEIGHT_LG = '40px'
+const MAX_PAGE_ROWS = 100
+const MAX_TOTAL_ROWS = 9999
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
-	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
-	sortable?: boolean;
-	columns?: Column[];
-};
+	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1)
+	sortable?: boolean
+	columns?: Column[]
+}
 
 /**
  * This type adds typing for the fields returned by the usePagination hook when used in
@@ -32,47 +32,47 @@ type ColumnWithSorting<D extends object = {}> = Column<D> & {
  */
 type TableWithPagination<T extends object> = TableInstance<T> &
 	UsePaginationInstanceProps<T> & {
-		state: UsePaginationState<T>;
-	};
+		state: UsePaginationState<T>
+	}
 
 export function compareNumericString(rowA: Row<any>, rowB: Row<any>, id: string, desc: boolean) {
-	let a = parseFloat(rowA.values[id]);
-	let b = parseFloat(rowB.values[id]);
+	let a = parseFloat(rowA.values[id])
+	let b = parseFloat(rowB.values[id])
 	if (isNaN(a)) {
 		// Blanks and non-numeric strings to bottom
-		a = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+		a = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY
 	}
 	if (isNaN(b)) {
-		b = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
+		b = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY
 	}
-	if (a > b) return 1;
-	if (a < b) return -1;
-	return 0;
+	if (a > b) return 1
+	if (a < b) return -1
+	return 0
 }
 
 type TableProps = {
-	palette?: TablePalette;
-	data: object[];
-	columns: ColumnWithSorting<object>[];
-	columnsDeps?: DependencyList;
-	options?: any;
-	onTableRowClick?: (row: Row<any>) => void;
-	className?: string;
-	isLoading?: boolean;
-	noResultsMessage?: React.ReactNode;
-	showPagination?: boolean;
-	pageSize?: number | null;
-	hiddenColumns?: string[];
-	hideHeaders?: boolean;
-	highlightRowsOnHover?: boolean;
-	sortBy?: object[];
-	showShortList?: boolean;
-	lastRef?: any;
-	compactPagination?: boolean;
-	rowStyle?: Record<string, any>;
-	rounded?: boolean;
-	noBottom?: boolean;
-};
+	palette?: TablePalette
+	data: object[]
+	columns: ColumnWithSorting<object>[]
+	columnsDeps?: DependencyList
+	options?: any
+	onTableRowClick?: (row: Row<any>) => void
+	className?: string
+	isLoading?: boolean
+	noResultsMessage?: React.ReactNode
+	showPagination?: boolean
+	pageSize?: number | null
+	hiddenColumns?: string[]
+	hideHeaders?: boolean
+	highlightRowsOnHover?: boolean
+	sortBy?: object[]
+	showShortList?: boolean
+	lastRef?: any
+	compactPagination?: boolean
+	rowStyle?: Record<string, any>
+	rounded?: boolean
+	noBottom?: boolean
+}
 
 export const Table: FC<TableProps> = memo(
 	({
@@ -102,7 +102,7 @@ export const Table: FC<TableProps> = memo(
 			() => columns,
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 			columnsDeps
-		);
+		)
 
 		const {
 			getTableProps,
@@ -140,23 +140,23 @@ export const Table: FC<TableProps> = memo(
 			useSortBy,
 			usePagination,
 			useFlexLayout
-		) as TableWithPagination<object>;
+		) as TableWithPagination<object>
 
 		useEffect(() => {
-			setHiddenColumns(hiddenColumns);
+			setHiddenColumns(hiddenColumns)
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, []);
+		}, [])
 
 		// reset to the first page
 		// this fires when filters are applied that change the data
 		// if a filter is applied that reduces the data size below max pages for that filter, reset to the first page
 		useEffect(() => {
 			if (pageIndex > pageCount) {
-				gotoPage(0);
+				gotoPage(0)
 			}
-		}, [pageIndex, pageCount, gotoPage]);
+		}, [pageIndex, pageCount, gotoPage])
 
-		const defaultRef = useRef(null);
+		const defaultRef = useRef(null)
 
 		return (
 			<>
@@ -197,7 +197,7 @@ export const Table: FC<TableProps> = memo(
 												</SortIconContainer>
 											)}
 										</TableCellHead>
-									);
+									)
 								})}
 							</div>
 						))}
@@ -208,10 +208,10 @@ export const Table: FC<TableProps> = memo(
 						) : page.length > 0 ? (
 							<TableBody className="table-body" {...getTableBodyProps()}>
 								{page.map((row, idx) => {
-									prepareRow(row);
-									const props = row.getRowProps();
-									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
-									const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined;
+									prepareRow(row)
+									const props = row.getRowProps()
+									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef
+									const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined
 									return (
 										<TableBodyRow
 											rowStyle={rowStyle}
@@ -221,7 +221,7 @@ export const Table: FC<TableProps> = memo(
 											onClick={handleClick}
 											{...props}
 										/>
-									);
+									)
 								})}
 							</TableBody>
 						) : null}
@@ -240,19 +240,19 @@ export const Table: FC<TableProps> = memo(
 					</ReactTable>
 				</TableContainer>
 			</>
-		);
+		)
 	}
-);
+)
 
 const TableContainer = styled.div`
 	overflow-x: auto;
 	height: 100%;
-`;
+`
 
 export const TableBody = styled.div`
 	overflow-y: auto;
 	overflow-x: visible;
-`;
+`
 
 export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	user-select: none;
@@ -263,7 +263,7 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 		padding-right: 18px;
 	}
 	${(props) => (props.hideHeaders ? `display: none` : '')}
-`;
+`
 
 export const TableNoResults = styled.div`
 	height: 52px;
@@ -283,13 +283,13 @@ export const TableNoResults = styled.div`
 		font-size: 16px;
 		font-family: ${(props) => props.theme.fonts.regular};
 	}
-`;
+`
 
 const SortIconContainer = styled.span`
 	display: flex;
 	margin-left: 5px;
 	flex-direction: column;
-`;
+`
 
 const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBottom?: boolean }>`
 	display: flex;
@@ -340,19 +340,19 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBo
 				height: 34px;
 			}
 		`}
-`;
+`
 
 const StyledSortDownIcon = styled(SortDownIcon)`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const StyledSortUpIcon = styled(SortUpIcon)`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 export const TableHeader = styled(Body)<{ $small?: boolean }>`
 	text-transform: capitalize;
@@ -363,6 +363,6 @@ export const TableHeader = styled(Body)<{ $small?: boolean }>`
 		css`
 			font-size: 10px;
 		`}
-`;
+`
 
-export default Table;
+export default Table

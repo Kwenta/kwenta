@@ -1,8 +1,8 @@
-import { BigNumber } from '@ethersproject/bignumber';
-import { formatBytes32String, parseBytes32String } from '@ethersproject/strings';
-import Wei, { wei } from '@synthetixio/wei';
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatBytes32String, parseBytes32String } from '@ethersproject/strings'
+import Wei, { wei } from '@synthetixio/wei'
 
-import { defaultAbiCoder } from 'ethers/lib/utils.js';
+import { defaultAbiCoder } from 'ethers/lib/utils.js'
 
 import {
 	APP_MAX_LEVERAGE,
@@ -15,13 +15,13 @@ import {
 	KWENTA_PYTH_SERVER,
 	PUBLIC_PYTH_SERVER,
 	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
-} from '../constants/futures';
-import { ZERO_WEI } from '../constants/number';
-import { SECONDS_PER_DAY } from '../constants/period';
-import { ETH_UNIT } from '../constants/transactions';
-import { IContext } from '../context';
-import { IPerpsV2MarketConsolidated } from '../contracts/types/PerpsV2Market';
-import { NetworkId, PriceServer } from '../types/common';
+} from '../constants/futures'
+import { ZERO_WEI } from '../constants/number'
+import { SECONDS_PER_DAY } from '../constants/period'
+import { ETH_UNIT } from '../constants/transactions'
+import { IContext } from '../context'
+import { IPerpsV2MarketConsolidated } from '../contracts/types/PerpsV2Market'
+import { NetworkId, PriceServer } from '../types/common'
 import {
 	DelayedOrder,
 	SmartMarginOrderType,
@@ -42,8 +42,8 @@ import {
 	PotentialTradeStatus,
 	MarginTransfer,
 	ConditionalOrderTypeEnum,
-} from '../types/futures';
-import { formatCurrency, formatDollars } from '../utils/number';
+} from '../types/futures'
+import { formatCurrency, formatDollars } from '../utils/number'
 import {
 	FuturesAggregateStatResult,
 	FuturesOrderType as SubgraphOrderType,
@@ -51,15 +51,15 @@ import {
 	FuturesTradeResult,
 	FuturesMarginTransferResult,
 	CrossMarginAccountTransferResult,
-} from '../utils/subgraph';
+} from '../utils/subgraph'
 
 export const getFuturesEndpoint = (networkId: number) => {
-	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10];
-};
+	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10]
+}
 
 export const getMainEndpoint = (networkId: number) => {
-	return MAIN_ENDPOINTS[networkId] || MAIN_ENDPOINTS[10];
-};
+	return MAIN_ENDPOINTS[networkId] || MAIN_ENDPOINTS[10]
+}
 
 export const calculateFundingRate = (
 	minTimestamp: number,
@@ -68,66 +68,66 @@ export const calculateFundingRate = (
 	assetPrice: Wei,
 	currentFundingRate: Wei
 ): Wei | null => {
-	const numUpdates = fundingRates.length;
-	if (numUpdates < 2) return null;
+	const numUpdates = fundingRates.length
+	if (numUpdates < 2) return null
 
 	// variables to keep track
-	let fundingPaid = wei(0);
-	let timeTotal = 0;
-	let lastTimestamp = minTimestamp;
+	let fundingPaid = wei(0)
+	let timeTotal = 0
+	let lastTimestamp = minTimestamp
 
 	// iterate through funding updates
 	for (let ind = 0; ind < numUpdates - 1; ind++) {
-		const minFunding = fundingRates[ind];
-		const maxFunding = fundingRates[ind + 1];
+		const minFunding = fundingRates[ind]
+		const maxFunding = fundingRates[ind + 1]
 
-		const fundingStart = new Wei(minFunding.funding, 18, true);
-		const fundingEnd = new Wei(maxFunding.funding, 18, true);
+		const fundingStart = new Wei(minFunding.funding, 18, true)
+		const fundingEnd = new Wei(maxFunding.funding, 18, true)
 
-		const fundingDiff = fundingStart.sub(fundingEnd);
-		const timeDiff = maxFunding.timestamp - Math.max(minFunding.timestamp, lastTimestamp);
-		const timeMax = maxFunding.timestamp - minFunding.timestamp;
+		const fundingDiff = fundingStart.sub(fundingEnd)
+		const timeDiff = maxFunding.timestamp - Math.max(minFunding.timestamp, lastTimestamp)
+		const timeMax = maxFunding.timestamp - minFunding.timestamp
 
 		if (timeMax > 0) {
-			fundingPaid = fundingPaid.add(fundingDiff.mul(timeDiff).div(timeMax));
-			timeTotal += timeDiff;
+			fundingPaid = fundingPaid.add(fundingDiff.mul(timeDiff).div(timeMax))
+			timeTotal += timeDiff
 		}
-		lastTimestamp = maxFunding.timestamp;
+		lastTimestamp = maxFunding.timestamp
 	}
 
 	// add funding from current rate
-	const timeLeft = Math.max(periodLength - timeTotal, 0);
+	const timeLeft = Math.max(periodLength - timeTotal, 0)
 	if (timeLeft > 0) {
 		fundingPaid = fundingPaid.add(
 			wei(currentFundingRate).mul(timeLeft).div(SECONDS_PER_DAY).mul(assetPrice)
-		);
+		)
 	}
 
-	const fundingRate = fundingPaid.div(assetPrice);
-	return fundingRate;
-};
+	const fundingRate = fundingPaid.div(assetPrice)
+	return fundingRate
+}
 
 export const marketsForNetwork = (networkId: number, logError: IContext['logError']) => {
 	switch (networkId) {
 		case 10:
-			return MAINNET_MARKETS;
+			return MAINNET_MARKETS
 		case 420:
-			return TESTNET_MARKETS;
+			return TESTNET_MARKETS
 		default:
-			logError?.(new Error('Futures is not supported on this network.'));
-			return [];
+			logError?.(new Error('Futures is not supported on this network.'))
+			return []
 	}
-};
+}
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
-	return `${getDisplayAsset(asset)}/sUSD`;
-};
+	return `${getDisplayAsset(asset)}/sUSD`
+}
 
 export const getDisplayAsset = (asset: string | null) => {
-	if (!asset) return null;
-	if (asset === 'STETH') return 'stETH';
-	return asset[0] === 's' ? asset.slice(1) : asset;
-};
+	if (!asset) return null
+	if (asset === 'STETH') return 'stETH'
+	return asset[0] === 's' ? asset.slice(1) : asset
+}
 
 export const calculateVolumes = (
 	futuresHourlyStats: FuturesAggregateStatResult[]
@@ -135,19 +135,19 @@ export const calculateVolumes = (
 	const volumes: FuturesVolumes = futuresHourlyStats.reduce(
 		(acc: FuturesVolumes, { marketKey, volume, trades }) => {
 			const cleanMarketKey =
-				marketKey !== AGGREGATE_ASSET_KEY ? parseBytes32String(marketKey) : marketKey;
+				marketKey !== AGGREGATE_ASSET_KEY ? parseBytes32String(marketKey) : marketKey
 			return {
 				...acc,
 				[cleanMarketKey]: {
 					volume: volume.div(ETH_UNIT).add(acc[cleanMarketKey]?.volume ?? 0),
 					trades: trades.add(acc[cleanMarketKey]?.trades ?? 0),
 				},
-			};
+			}
 		},
 		{}
-	);
-	return volumes;
-};
+	)
+	return volumes
+}
 
 export const mapFuturesPosition = (
 	positionDetail: PositionDetail,
@@ -163,10 +163,10 @@ export const mapFuturesPosition = (
 		notionalValue,
 		liquidationPrice,
 		profitLoss,
-	} = positionDetail;
-	const initialMargin = wei(margin);
-	const pnl = wei(profitLoss).add(wei(accruedFunding));
-	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0);
+	} = positionDetail
+	const initialMargin = wei(margin)
+	const pnl = wei(profitLoss).add(wei(accruedFunding))
+	const pnlPct = initialMargin.gt(0) ? pnl.div(wei(initialMargin)) : wei(0)
 
 	return {
 		asset,
@@ -198,8 +198,8 @@ export const mapFuturesPosition = (
 						? ZERO_WEI
 						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
-	};
-};
+	}
+}
 
 export const mapFuturesPositions = (
 	futuresPositions: FuturesPositionResult[]
@@ -234,10 +234,10 @@ export const mapFuturesPositions = (
 			avgEntryPrice,
 			exitPrice,
 		}: FuturesPositionResult) => {
-			const entryPriceWei = wei(entryPrice).div(ETH_UNIT);
-			const feesWei = wei(feesPaid || 0).div(ETH_UNIT);
-			const sizeWei = wei(size).div(ETH_UNIT);
-			const marginWei = wei(margin).div(ETH_UNIT);
+			const entryPriceWei = wei(entryPrice).div(ETH_UNIT)
+			const feesWei = wei(feesPaid || 0).div(ETH_UNIT)
+			const sizeWei = wei(size).div(ETH_UNIT)
+			const marginWei = wei(margin).div(ETH_UNIT)
 			return {
 				id: Number(id.split('-')[1].toString()),
 				transactionHash: lastTxHash,
@@ -268,10 +268,10 @@ export const mapFuturesPositions = (
 				avgEntryPrice: wei(avgEntryPrice).div(ETH_UNIT),
 				leverage: marginWei.eq(wei(0)) ? wei(0) : sizeWei.mul(entryPriceWei).div(marginWei).abs(),
 				side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
-			};
+			}
 		}
-	);
-};
+	)
+}
 
 // TODO: Move to app
 export const serializePotentialTrade = (
@@ -287,7 +287,7 @@ export const serializePotentialTrade = (
 	leverage: preview.leverage.toString(),
 	notionalValue: preview.notionalValue.toString(),
 	priceImpact: preview.priceImpact.toString(),
-});
+})
 
 // TODO: Move to app
 export const unserializePotentialTrade = (
@@ -303,7 +303,7 @@ export const unserializePotentialTrade = (
 	leverage: wei(preview.leverage),
 	notionalValue: wei(preview.notionalValue),
 	priceImpact: wei(preview.priceImpact),
-});
+})
 
 export const formatDelayedOrder = (
 	account: string,
@@ -319,7 +319,7 @@ export const formatDelayedOrder = (
 		keeperDeposit,
 		executableAtTime,
 		intentionTime,
-	} = order;
+	} = order
 
 	return {
 		account: account,
@@ -334,8 +334,8 @@ export const formatDelayedOrder = (
 		targetRoundId: wei(targetRoundId),
 		orderType: isOffchain ? 'Delayed Market' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-	};
-};
+	}
+}
 
 export const formatPotentialTrade = (
 	preview: PostTradeDetailsResponse,
@@ -343,11 +343,11 @@ export const formatPotentialTrade = (
 	nativeSizeDelta: Wei,
 	leverageSide: PositionSide
 ) => {
-	const { fee, liqPrice, margin, price, size, status } = preview;
+	const { fee, liqPrice, margin, price, size, status } = preview
 
-	const notionalValue = wei(size).mul(wei(price));
-	const leverage = margin.gt(0) ? notionalValue.div(wei(margin)) : ZERO_WEI;
-	const priceImpact = wei(price).sub(skewAdjustedPrice).div(skewAdjustedPrice).abs();
+	const notionalValue = wei(size).mul(wei(price))
+	const leverage = margin.gt(0) ? notionalValue.div(wei(margin)) : ZERO_WEI
+	const priceImpact = wei(price).sub(skewAdjustedPrice).div(skewAdjustedPrice).abs()
 
 	return {
 		fee: wei(fee),
@@ -364,25 +364,25 @@ export const formatPotentialTrade = (
 		statusMessage: getTradeStatusMessage(status),
 		priceImpact: priceImpact,
 		exceedsPriceProtection: priceImpact.mul(100).gt(getDefaultPriceImpact('market')),
-	};
-};
+	}
+}
 
-const SUCCESS = 'Success';
-const UNKNOWN = 'Unknown';
+const SUCCESS = 'Success'
+const UNKNOWN = 'Unknown'
 
 export const getTradeStatusMessage = (status: PotentialTradeStatus): string => {
 	if (typeof status !== 'number') {
-		return UNKNOWN;
+		return UNKNOWN
 	}
 
 	if (status === 0) {
-		return SUCCESS;
+		return SUCCESS
 	} else if (PotentialTradeStatus[status]) {
-		return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
+		return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]]
 	} else {
-		return UNKNOWN;
+		return UNKNOWN
 	}
-};
+}
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/PerpsV2MarketBase.sol#L130-L141
 export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
@@ -400,34 +400,34 @@ export const POTENTIAL_TRADE_STATUS_TO_MESSAGE: { [key: string]: string } = {
 	PRICE_TOO_VOLATILE: 'Price too volatile',
 	PRICE_IMPACT_TOLERANCE_EXCEEDED: 'Price impact tolerance exceeded',
 	INSUFFICIENT_FREE_MARGIN: `You don't have enough sUSD for this trade`,
-};
+}
 
 export const getPythNetworkUrl = (networkId: NetworkId, server: PriceServer = 'KWENTA') => {
-	const defaultPythServer = server === 'KWENTA' ? KWENTA_PYTH_SERVER : PUBLIC_PYTH_SERVER;
-	return networkId === 420 ? 'https://xc-testnet.pyth.network' : defaultPythServer;
-};
+	const defaultPythServer = server === 'KWENTA' ? KWENTA_PYTH_SERVER : PUBLIC_PYTH_SERVER
+	return networkId === 420 ? 'https://xc-testnet.pyth.network' : defaultPythServer
+}
 
-export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id);
+export const normalizePythId = (id: string) => (id.startsWith('0x') ? id : '0x' + id)
 
 export type ConditionalOrderResult = {
-	conditionalOrderType: number;
-	desiredFillPrice: BigNumber;
-	gelatoTaskId: string;
-	marginDelta: BigNumber;
-	marketKey: string;
-	reduceOnly: boolean;
-	sizeDelta: BigNumber;
-	targetPrice: BigNumber;
-};
+	conditionalOrderType: number
+	desiredFillPrice: BigNumber
+	gelatoTaskId: string
+	marginDelta: BigNumber
+	marketKey: string
+	reduceOnly: boolean
+	sizeDelta: BigNumber
+	targetPrice: BigNumber
+}
 
 export const mapConditionalOrderFromContract = (
 	orderDetails: ConditionalOrderResult & { id: number },
 	account: string
 ): ConditionalOrder => {
-	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey;
-	const asset = MarketAssetByKey[marketKey];
-	const sizeDelta = wei(orderDetails.sizeDelta);
-	const size = sizeDelta.abs();
+	const marketKey = parseBytes32String(orderDetails.marketKey) as FuturesMarketKey
+	const asset = MarketAssetByKey[marketKey]
+	const sizeDelta = wei(orderDetails.sizeDelta)
+	const size = sizeDelta.abs()
 
 	return {
 		id: orderDetails.id,
@@ -458,14 +458,14 @@ export const mapConditionalOrderFromContract = (
 		isStale: false,
 		isExecutable: false,
 		isSlTp: size.eq(SL_TP_MAX_SIZE),
-	};
-};
+	}
+}
 
 export const OrderNameByType: Record<FuturesOrderType, FuturesOrderTypeDisplay> = {
 	market: 'Market',
 	stop_market: 'Stop',
 	limit: 'Limit',
-};
+}
 
 const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDisplay => {
 	return orderType === 'NextPrice'
@@ -474,8 +474,8 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 		? 'Stop'
 		: orderType === 'DelayedOffchain'
 		? 'Delayed Market'
-		: orderType;
-};
+		: orderType
+}
 
 export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
 	return futuresTrades.map(
@@ -513,18 +513,18 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				feesPaid: new Wei(feesPaid, 18, true),
 				keeperFeesPaid: new Wei(keeperFeesPaid, 18, true),
 				orderType: mapOrderType(orderType),
-			};
+			}
 		}
-	);
-};
+	)
+}
 
 export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
 	return marginTransfers.map(
 		({ timestamp, account, market, size, asset, txHash }): MarginTransfer => {
-			const sizeWei = new Wei(size);
-			const numTimestamp = wei(timestamp).toNumber();
+			const sizeWei = new Wei(size)
+			const numTimestamp = wei(timestamp).toNumber()
 
 			return {
 				timestamp: numTimestamp,
@@ -534,18 +534,18 @@ export const mapMarginTransfers = (
 				action: sizeWei.gt(0) ? 'deposit' : 'withdraw',
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				txHash,
-			};
+			}
 		}
-	);
-};
+	)
+}
 
 export const mapSmartMarginTransfers = (
 	marginTransfers: CrossMarginAccountTransferResult[]
 ): MarginTransfer[] => {
 	return marginTransfers.map(
 		({ timestamp, account, size, txHash }): MarginTransfer => {
-			const sizeWei = new Wei(size);
-			const numTimestamp = wei(timestamp).toNumber();
+			const sizeWei = new Wei(size)
+			const numTimestamp = wei(timestamp).toNumber()
 
 			return {
 				timestamp: numTimestamp,
@@ -553,17 +553,17 @@ export const mapSmartMarginTransfers = (
 				size: sizeWei.div(ETH_UNIT).toNumber(),
 				action: sizeWei.gt(0) ? 'deposit' : 'withdraw',
 				txHash,
-			};
+			}
 		}
-	);
-};
+	)
+}
 
 type TradeInputParams = {
-	marginDelta: Wei;
-	sizeDelta: Wei;
-	price: Wei;
-	desiredFillPrice: Wei;
-};
+	marginDelta: Wei
+	sizeDelta: Wei
+	price: Wei
+	desiredFillPrice: Wei
+}
 
 export const encodeConditionalOrderParams = (
 	marketKey: FuturesMarketKey,
@@ -582,8 +582,8 @@ export const encodeConditionalOrderParams = (
 			tradeInputs.desiredFillPrice.toBN(),
 			reduceOnly,
 		]
-	);
-};
+	)
+}
 
 export const encodeSubmitOffchainOrderParams = (
 	marketAddress: string,
@@ -593,55 +593,55 @@ export const encodeSubmitOffchainOrderParams = (
 	return defaultAbiCoder.encode(
 		['address', 'int256', 'uint256'],
 		[marketAddress, sizeDelta.toBN(), desiredFillPrice.toBN()]
-	);
-};
+	)
+}
 
 export const encodeCloseOffchainOrderParams = (marketAddress: string, desiredFillPrice: Wei) => {
-	return defaultAbiCoder.encode(['address', 'uint256'], [marketAddress, desiredFillPrice.toBN()]);
-};
+	return defaultAbiCoder.encode(['address', 'uint256'], [marketAddress, desiredFillPrice.toBN()])
+}
 
 export const encodeModidyMarketMarginParams = (marketAddress: string, marginDelta: Wei) => {
-	return defaultAbiCoder.encode(['address', 'int256'], [marketAddress, marginDelta.toBN()]);
-};
+	return defaultAbiCoder.encode(['address', 'int256'], [marketAddress, marginDelta.toBN()])
+}
 
 export const formatOrderDisplayType = (
 	orderType: ConditionalOrderTypeEnum,
 	reduceOnly: boolean
 ) => {
 	if (reduceOnly) {
-		return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Take Profit' : 'Stop Loss';
+		return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Take Profit' : 'Stop Loss'
 	}
-	return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Limit' : 'Stop';
-};
+	return orderType === ConditionalOrderTypeEnum.LIMIT ? 'Limit' : 'Stop'
+}
 
 export const calculateDesiredFillPrice = (
 	sizeDelta: Wei,
 	marketPrice: Wei,
 	priceImpactPercent: Wei
 ) => {
-	const priceImpactDecimalPct = priceImpactPercent.div(100);
+	const priceImpactDecimalPct = priceImpactPercent.div(100)
 	return sizeDelta.lt(0)
 		? marketPrice.mul(wei(1).sub(priceImpactDecimalPct))
-		: marketPrice.mul(priceImpactDecimalPct.add(1));
-};
+		: marketPrice.mul(priceImpactDecimalPct.add(1))
+}
 
 export const getDefaultPriceImpact = (orderType: SmartMarginOrderType) => {
 	switch (orderType) {
 		case 'market':
-			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.MARKET);
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.MARKET)
 		case 'limit':
-			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.LIMIT);
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.LIMIT)
 		case 'stop_market':
-			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP);
+			return wei(DEFAULT_PRICE_IMPACT_DELTA_PERCENT.STOP)
 	}
-};
+}
 
 // Returns the max leverage without buffer
 
 export const appAdjustedLeverage = (marketLeverage: Wei) => {
-	if (marketLeverage.gte(APP_MAX_LEVERAGE)) return APP_MAX_LEVERAGE;
-	return wei(25);
-};
+	if (marketLeverage.gte(APP_MAX_LEVERAGE)) return APP_MAX_LEVERAGE
+	return wei(25)
+}
 
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sBTCPERP]: FuturesMarketAsset.sBTC,
@@ -686,7 +686,7 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sINJPERP]: FuturesMarketAsset.INJ,
 	[FuturesMarketKey.sTRXPERP]: FuturesMarketAsset.TRX,
 	[FuturesMarketKey.sSTETHPERP]: FuturesMarketAsset.STETH,
-} as const;
+} as const
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTCPERP,
@@ -731,7 +731,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.INJ]: FuturesMarketKey.sINJPERP,
 	[FuturesMarketAsset.TRX]: FuturesMarketKey.sTRXPERP,
 	[FuturesMarketAsset.STETH]: FuturesMarketKey.sSTETHPERP,
-} as const;
+} as const
 
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.sBTC]: 'Bitcoin',
@@ -776,6 +776,6 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.INJ]: 'Injective',
 	[FuturesMarketAsset.TRX]: 'Tron',
 	[FuturesMarketAsset.STETH]: 'Lido Staked ETH',
-} as const;
+} as const
 
-export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {};
+export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {}

@@ -6,14 +6,14 @@ export const COMPETITION_DATES = {
 	// note: month starts at 0, not 1.
 	START_DATE: new Date(Date.UTC(2022, 10, 10)),
 	END_DATE: new Date(Date.UTC(2022, 10, 23)),
-};
+}
 
-export const COMPETITION_ENABLED = false;
+export const COMPETITION_ENABLED = false
 
-export type Tier = 'gold' | 'silver' | 'bronze' | null;
+export type Tier = 'gold' | 'silver' | 'bronze' | null
 
-export type CompetitionRound = '1' | '2' | null;
+export type CompetitionRound = '1' | '2' | null
 
-export const COMPETITION_TIERS: Tier[] = ['bronze', 'silver', 'gold'];
+export const COMPETITION_TIERS: Tier[] = ['bronze', 'silver', 'gold']
 
-export const PIN = ' 📌';
+export const PIN = ' 📌'

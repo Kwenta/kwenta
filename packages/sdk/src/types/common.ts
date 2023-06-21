@@ -1,13 +1,13 @@
-import { ethers } from 'ethers';
+import { ethers } from 'ethers'
 
-export type PriceServer = 'KWENTA' | 'PYTH';
+export type PriceServer = 'KWENTA' | 'PYTH'
 
-export type NetworkId = 1 | 5 | 420 | 10 | 42 | 69 | 31337;
+export type NetworkId = 1 | 5 | 420 | 10 | 42 | 69 | 31337
 
 export type NetworkOverrideOptions = {
-	networkId: NetworkId;
-	provider: ethers.providers.Provider;
-};
+	networkId: NetworkId
+	provider: ethers.providers.Provider
+}
 
 export enum TransactionStatus {
 	AwaitingExecution = 'AwaitingExecution',
@@ -24,7 +24,7 @@ export const NetworkIdByName = {
 	kovan: 42,
 	'kovan-ovm': 69,
 	'mainnet-fork': 31337,
-} as const;
+} as const
 
 export const NetworkNameById = {
 	1: 'mainnet',
@@ -34,6 +34,6 @@ export const NetworkNameById = {
 	69: 'kovan-ovm',
 	420: 'goerli-ovm',
 	31337: 'mainnet-fork',
-} as const;
+} as const
 
-export type CurrencyKey = string;
+export type CurrencyKey = string

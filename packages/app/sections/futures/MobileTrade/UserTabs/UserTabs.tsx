@@ -1,24 +1,24 @@
-import React, { useMemo } from 'react';
-import styled from 'styled-components';
+import React, { useMemo } from 'react'
+import styled from 'styled-components'
 
-import TabButton from 'components/Button/TabButton';
+import TabButton from 'components/Button/TabButton'
 import {
 	selectActiveSmartPositionsCount,
 	selectAllConditionalOrders,
 	selectOpenDelayedOrders,
-} from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
-import ConditionalOrdersTab from './ConditionalOrdersTab';
-import OrdersTab from './OrdersTab';
-import PositionsTab from './PositionsTab';
-import TradesTab from './TradesTab';
+import ConditionalOrdersTab from './ConditionalOrdersTab'
+import OrdersTab from './OrdersTab'
+import PositionsTab from './PositionsTab'
+import TradesTab from './TradesTab'
 
 const UserTabs: React.FC = () => {
-	const [activeTab, setActiveTab] = React.useState(0);
-	const openOrders = useAppSelector(selectOpenDelayedOrders);
-	const conditionalOrders = useAppSelector(selectAllConditionalOrders);
-	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount);
+	const [activeTab, setActiveTab] = React.useState(0)
+	const openOrders = useAppSelector(selectOpenDelayedOrders)
+	const conditionalOrders = useAppSelector(selectAllConditionalOrders)
+	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount)
 
 	const TABS = useMemo(() => {
 		return [
@@ -41,8 +41,8 @@ const UserTabs: React.FC = () => {
 				title: 'Trades',
 				component: <TradesTab />,
 			},
-		];
-	}, [conditionalOrders.length, openOrders.length, smartPositionsCount]);
+		]
+	}, [conditionalOrders.length, openOrders.length, smartPositionsCount])
 
 	return (
 		<Container>
@@ -62,23 +62,23 @@ const UserTabs: React.FC = () => {
 			</UserTabsContainer>
 			<div>{TABS[activeTab].component}</div>
 		</Container>
-	);
-};
+	)
+}
 
 const Container = styled.div`
 	min-height: 390px;
-`;
+`
 
 const UserTabsContainer = styled.div`
 	width: 100%;
 	overflow: scroll;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-`;
+`
 
 const TabButtonsContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
-`;
+`
 
-export default UserTabs;
+export default UserTabs

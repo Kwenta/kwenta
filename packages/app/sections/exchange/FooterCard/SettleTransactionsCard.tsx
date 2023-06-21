@@ -1,22 +1,22 @@
-import { FC, useCallback, memo } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import styled from 'styled-components';
+import { FC, useCallback, memo } from 'react'
+import { useTranslation, Trans } from 'react-i18next'
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import { MobileOrTabletView } from 'components/Media';
-import ErrorTooltip from 'components/Tooltip/ErrorTooltip';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { secondsToTime } from '@kwenta/sdk/utils';
-import { MessageContainer, Message, FixedMessageContainerSpacer } from 'sections/exchange/message';
-import TxSettleModal from 'sections/shared/modals/TxSettleModal';
-import { submitSettle } from 'state/exchange/actions';
-import { closeModal } from 'state/exchange/reducer';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
-import { NoTextTransform, ExternalLink } from 'styles/common';
-import logError from 'utils/logError';
+import Button from 'components/Button'
+import { MobileOrTabletView } from 'components/Media'
+import ErrorTooltip from 'components/Tooltip/ErrorTooltip'
+import { EXTERNAL_LINKS } from 'constants/links'
+import { secondsToTime } from '@kwenta/sdk/utils'
+import { MessageContainer, Message, FixedMessageContainerSpacer } from 'sections/exchange/message'
+import TxSettleModal from 'sections/shared/modals/TxSettleModal'
+import { submitSettle } from 'state/exchange/actions'
+import { closeModal } from 'state/exchange/reducer'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { NoTextTransform, ExternalLink } from 'styles/common'
+import logError from 'utils/logError'
 
 const SettleTransactionsCard: FC = memo(() => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	const {
 		baseCurrencyKey,
@@ -30,23 +30,23 @@ const SettleTransactionsCard: FC = memo(() => {
 		numEntries: exchange.numEntries,
 		settlementWaitingPeriod: exchange.settlementWaitingPeriod,
 		txError: exchange.txError,
-	}));
-	const dispatch = useAppDispatch();
+	}))
+	const dispatch = useAppDispatch()
 
 	const settlementDisabledReason =
-		settlementWaitingPeriod > 0 ? t('exchange.summary-info.button.settle-waiting-period') : null;
+		settlementWaitingPeriod > 0 ? t('exchange.summary-info.button.settle-waiting-period') : null
 
 	const handleSettle = useCallback(() => {
 		try {
-			dispatch(submitSettle());
+			dispatch(submitSettle())
 		} catch (e) {
-			logError(e);
+			logError(e)
 		}
-	}, [dispatch]);
+	}, [dispatch])
 
 	const handleCloseModal = useCallback(() => {
-		dispatch(closeModal());
-	}, [dispatch]);
+		dispatch(closeModal())
+	}, [dispatch])
 
 	return (
 		<>
@@ -100,21 +100,21 @@ const SettleTransactionsCard: FC = memo(() => {
 				<TxSettleModal onDismiss={handleCloseModal} txError={txError} attemptRetry={handleSettle} />
 			)}
 		</>
-	);
-});
+	)
+})
 
 const MessageItem = styled(Message)`
 	grid-column-start: 2;
 	text-align: left;
-`;
+`
 
 const UnderlineExternalLink = styled(ExternalLink)`
 	text-decoration: underline;
 	grid-column-start: 2;
-`;
+`
 
 const MessageItems = styled.span`
 	display: grid;
-`;
+`
 
-export default SettleTransactionsCard;
+export default SettleTransactionsCard

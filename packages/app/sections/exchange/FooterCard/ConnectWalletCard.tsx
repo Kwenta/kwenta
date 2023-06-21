@@ -1,22 +1,22 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { FC, memo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { FC, memo } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import {
 	MessageButton,
 	MessageContainer,
 	Message,
 	FixedMessageContainerSpacer,
-} from 'sections/exchange/message';
+} from 'sections/exchange/message'
 
 type ConnectWalletCardProps = {
-	className?: string;
-};
+	className?: string
+}
 
 const ConnectWalletCard: FC<ConnectWalletCardProps> = memo(({ ...rest }) => {
-	const { t } = useTranslation();
-	const { openConnectModal: connectWallet } = useConnectModal();
+	const { t } = useTranslation()
+	const { openConnectModal: connectWallet } = useConnectModal()
 
 	return (
 		<>
@@ -32,7 +32,7 @@ const ConnectWalletCard: FC<ConnectWalletCardProps> = memo(({ ...rest }) => {
 				</MessageButton>
 			</MessageContainer>
 		</>
-	);
-});
+	)
+})
 
-export default ConnectWalletCard;
+export default ConnectWalletCard

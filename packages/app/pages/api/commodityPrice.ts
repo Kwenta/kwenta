@@ -1,25 +1,25 @@
-import axios from 'axios';
-import cors from 'cors';
-import nc from 'next-connect';
+import axios from 'axios'
+import cors from 'cors'
+import nc from 'next-connect'
 
-import { COMMODITIES_BASE_API_URL } from 'queries/rates/constants';
+import { COMMODITIES_BASE_API_URL } from 'queries/rates/constants'
 
 type SpreadProfile = {
-	spreadProfile: string;
-	bidSpread: number;
-	askSpread: number;
-	bid: number;
-	ask: number;
-};
+	spreadProfile: string
+	bidSpread: number
+	askSpread: number
+	bid: number
+	ask: number
+}
 
 type PriceResponse = {
-	spreadProfilePrices: SpreadProfile[];
+	spreadProfilePrices: SpreadProfile[]
 	topo: {
-		platform: string;
-		server: string;
-	};
-	ts: number;
-};
+		platform: string
+		server: string
+	}
+	ts: number
+}
 
 const handler = nc()
 	.use(cors())
@@ -29,26 +29,26 @@ const handler = nc()
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		});
+		})
 
 		const prices: number[] = response.data
 			.map((val: PriceResponse) => {
 				const thisSpread = val.spreadProfilePrices
 					?.filter((spread: any) => spread.spreadProfile === 'Prime')
-					?.shift();
+					?.shift()
 				if (thisSpread) {
-					const thisPrice = (thisSpread.ask + thisSpread.bid) / 2;
-					return thisPrice;
+					const thisPrice = (thisSpread.ask + thisSpread.bid) / 2
+					return thisPrice
 				} else {
-					return null;
+					return null
 				}
 			})
-			.filter((val: number) => !!val);
+			.filter((val: number) => !!val)
 
-		const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+		const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length
 
 		// @ts-ignore
-		res.send(avgPrice);
-	});
+		res.send(avgPrice)
+	})
 
-export default handler;
+export default handler

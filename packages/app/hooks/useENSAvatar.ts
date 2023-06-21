@@ -1,6 +1,6 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query'
 
-import QUERY_KEYS from 'constants/queryKeys';
+import QUERY_KEYS from 'constants/queryKeys'
 
 const useENSAvatar = (
 	provider: any,
@@ -10,15 +10,15 @@ const useENSAvatar = (
 	return useQuery<string | null>(
 		QUERY_KEYS.Network.ENSAvatar(ensName),
 		async () => {
-			if (!ensName?.endsWith('.eth')) return null;
+			if (!ensName?.endsWith('.eth')) return null
 
-			const avatar: string | null = await provider.getAvatar(ensName);
-			return avatar;
+			const avatar: string | null = await provider.getAvatar(ensName)
+			return avatar
 		},
 		{
 			...options,
 		}
-	);
-};
+	)
+}
 
-export default useENSAvatar;
+export default useENSAvatar

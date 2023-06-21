@@ -1,1 +1,1 @@
-export { default } from './FullScreenModal';
+export { default } from './FullScreenModal'

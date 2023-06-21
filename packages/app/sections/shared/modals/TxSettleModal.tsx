@@ -1,24 +1,24 @@
-import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import BaseModal from 'components/BaseModal';
-import Currency from 'components/Currency';
-import { FlexDivColCentered } from 'components/layout/flex';
-import { MessageButton } from 'sections/exchange/message';
-import { useAppSelector } from 'state/hooks';
-import { NoTextTransform } from 'styles/common';
-import { formatRevert } from 'utils/formatters/error';
+import BaseModal from 'components/BaseModal'
+import Currency from 'components/Currency'
+import { FlexDivColCentered } from 'components/layout/flex'
+import { MessageButton } from 'sections/exchange/message'
+import { useAppSelector } from 'state/hooks'
+import { NoTextTransform } from 'styles/common'
+import { formatRevert } from 'utils/formatters/error'
 
 type TxSettleModalProps = {
-	onDismiss: () => void;
-	txError?: string;
-	attemptRetry: () => void;
-};
+	onDismiss: () => void
+	txError?: string
+	attemptRetry: () => void
+}
 
 export const TxSettleModal: FC<TxSettleModalProps> = ({ onDismiss, txError, attemptRetry }) => {
-	const baseCurrencyKey = useAppSelector(({ exchange }) => exchange.baseCurrencyKey);
-	const { t } = useTranslation();
+	const baseCurrencyKey = useAppSelector(({ exchange }) => exchange.baseCurrencyKey)
+	const { t } = useTranslation()
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.settle-transaction.title')}>
@@ -45,8 +45,8 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({ onDismiss, txError, atte
 				</Actions>
 			)}
 		</StyledBaseModal>
-	);
-};
+	)
+}
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
@@ -55,7 +55,7 @@ const StyledBaseModal = styled(BaseModal)`
 	.card-body {
 		padding: 24px;
 	}
-`;
+`
 
 const Currencies = styled.div`
 	display: grid;
@@ -64,27 +64,27 @@ const Currencies = styled.div`
 	justify-content: center;
 	grid-auto-flow: column;
 	align-items: flex-end;
-`;
+`
 
 const CurrencyItem = styled.div`
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
+`
 
 const CurrencyItemTitle = styled.div`
 	padding-bottom: 8px;
 	text-transform: capitalize;
-`;
+`
 
 const Subtitle = styled.div`
 	text-align: center;
 	color: ${(props) => props.theme.colors.silver};
 	padding-bottom: 24px;
-`;
+`
 
 const Actions = styled(FlexDivColCentered)`
 	margin: 8px 0px;
-`;
+`
 
 const Message = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -93,6 +93,6 @@ const Message = styled.div`
 	flex-grow: 1;
 	text-align: center;
 	margin: 16px 0px;
-`;
+`
 
-export default TxSettleModal;
+export default TxSettleModal

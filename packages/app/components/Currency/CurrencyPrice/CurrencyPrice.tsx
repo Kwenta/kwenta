@@ -1,24 +1,24 @@
-import { formatCurrency, FormatCurrencyOptions } from '@kwenta/sdk/utils';
-import { wei, WeiSource } from '@synthetixio/wei';
-import React, { FC, memo } from 'react';
-import styled from 'styled-components';
+import { formatCurrency, FormatCurrencyOptions } from '@kwenta/sdk/utils'
+import { wei, WeiSource } from '@synthetixio/wei'
+import React, { FC, memo } from 'react'
+import styled from 'styled-components'
 
-import ChangePercent from 'components/ChangePercent';
-import { ContainerRowMixin } from 'components/layout/grid';
-import { NumericValue } from 'components/Text';
-import { CurrencyKey } from 'constants/currency';
+import ChangePercent from 'components/ChangePercent'
+import { ContainerRowMixin } from 'components/layout/grid'
+import { NumericValue } from 'components/Text'
+import { CurrencyKey } from 'constants/currency'
 
 type CurrencyPriceProps = {
-	currencyKey?: CurrencyKey;
-	showCurrencyKey?: boolean;
-	price: WeiSource;
-	sign?: string;
-	change?: number;
-	conversionRate?: WeiSource;
-	formatOptions?: FormatCurrencyOptions;
-	colorType?: 'secondary' | 'positive' | 'negative' | 'preview';
-	colored?: boolean;
-};
+	currencyKey?: CurrencyKey
+	showCurrencyKey?: boolean
+	price: WeiSource
+	sign?: string
+	change?: number
+	conversionRate?: WeiSource
+	formatOptions?: FormatCurrencyOptions
+	colorType?: 'secondary' | 'positive' | 'negative' | 'preview'
+	colored?: boolean
+}
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 	({
@@ -33,7 +33,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 		colored = false,
 		...rest
 	}) => {
-		const cleanPrice = wei(price);
+		const cleanPrice = wei(price)
 
 		return (
 			<Container {...rest}>
@@ -52,12 +52,12 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 				</NumericValue>
 				{!!change && <ChangePercent className="percent" value={change} />}
 			</Container>
-		);
+		)
 	}
-);
+)
 
 const Container = styled.span`
 	${ContainerRowMixin};
-`;
+`
 
-export default CurrencyPrice;
+export default CurrencyPrice

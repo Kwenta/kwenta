@@ -1,115 +1,115 @@
-import { suggestedDecimals } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import { suggestedDecimals } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import InputHeaderRow from 'components/Input/InputHeaderRow';
-import InputTitle from 'components/Input/InputTitle';
-import NumericInput from 'components/Input/NumericInput';
-import { FlexDivRow } from 'components/layout/flex';
-import { StyledCaretDownIcon } from 'components/Select/Select';
-import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
-import Spacer from 'components/Spacer';
-import { selectAckedOrdersWarning } from 'state/app/selectors';
-import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
+import Button from 'components/Button'
+import InputHeaderRow from 'components/Input/InputHeaderRow'
+import InputTitle from 'components/Input/InputTitle'
+import NumericInput from 'components/Input/NumericInput'
+import { FlexDivRow } from 'components/layout/flex'
+import { StyledCaretDownIcon } from 'components/Select/Select'
+import SelectorButtons from 'components/SelectorButtons/SelectorButtons'
+import Spacer from 'components/Spacer'
+import { selectAckedOrdersWarning } from 'state/app/selectors'
+import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer'
 import {
 	selectLeverageInput,
 	selectLeverageSide,
 	selectMarketIndexPrice,
 	selectSlTpTradeInputs,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import OrderAcknowledgement from './OrderAcknowledgement';
-import ShowPercentage from './ShowPercentage';
+import OrderAcknowledgement from './OrderAcknowledgement'
+import ShowPercentage from './ShowPercentage'
 
-const TP_OPTIONS = ['5%', '10%', '25%', '50%', '100%'];
-const SL_OPTIONS = ['2%', '5%', '10%', '20%', '50%'];
+const TP_OPTIONS = ['5%', '10%', '25%', '50%', '100%']
+const SL_OPTIONS = ['2%', '5%', '10%', '20%', '50%']
 
 export default function SLTPInputs() {
-	const dispatch = useAppDispatch();
-	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs);
-	const currentPrice = useAppSelector(selectMarketIndexPrice);
-	const leverageSide = useAppSelector(selectLeverageSide);
-	const leverage = useAppSelector(selectLeverageInput);
-	const hideWarning = useAppSelector(selectAckedOrdersWarning);
+	const dispatch = useAppDispatch()
+	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpTradeInputs)
+	const currentPrice = useAppSelector(selectMarketIndexPrice)
+	const leverageSide = useAppSelector(selectLeverageSide)
+	const leverage = useAppSelector(selectLeverageInput)
+	const hideWarning = useAppSelector(selectAckedOrdersWarning)
 
-	const [showInputs, setShowInputs] = useState(false);
-	const [showOrderWarning, setShowOrderWarning] = useState(false);
+	const [showInputs, setShowInputs] = useState(false)
+	const [showOrderWarning, setShowOrderWarning] = useState(false)
 
 	useEffect(() => {
-		if (hideWarning) return;
+		if (hideWarning) return
 		if (showInputs) {
-			setShowOrderWarning(true);
+			setShowOrderWarning(true)
 		} else {
-			setShowOrderWarning(false);
+			setShowOrderWarning(false)
 		}
-	}, [showInputs, hideWarning]);
+	}, [showInputs, hideWarning])
 
 	const leverageWei = useMemo(() => {
-		return leverage && Number(leverage) > 0 ? wei(leverage) : wei(1);
-	}, [leverage]);
+		return leverage && Number(leverage) > 0 ? wei(leverage) : wei(1)
+	}, [leverage])
 
 	const onSelectStopLossPercent = useCallback(
 		(index: number) => {
-			const option = SL_OPTIONS[index];
-			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
-			const relativePercent = wei(percent).div(leverageWei);
+			const option = SL_OPTIONS[index]
+			const percent = Math.abs(Number(option.replace('%', ''))) / 100
+			const relativePercent = wei(percent).div(leverageWei)
 			const stopLoss =
 				leverageSide === 'short'
 					? currentPrice.add(currentPrice.mul(relativePercent))
-					: currentPrice.sub(currentPrice.mul(relativePercent));
-			const dp = suggestedDecimals(stopLoss);
-			dispatch(setCrossMarginTradeStopLoss(stopLoss.toString(dp)));
+					: currentPrice.sub(currentPrice.mul(relativePercent))
+			const dp = suggestedDecimals(stopLoss)
+			dispatch(setCrossMarginTradeStopLoss(stopLoss.toString(dp)))
 		},
 		[currentPrice, dispatch, leverageSide, leverageWei]
-	);
+	)
 
 	const onSelectTakeProfit = useCallback(
 		(index: number) => {
-			const option = TP_OPTIONS[index];
-			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
-			const relativePercent = wei(percent).div(leverageWei);
+			const option = TP_OPTIONS[index]
+			const percent = Math.abs(Number(option.replace('%', ''))) / 100
+			const relativePercent = wei(percent).div(leverageWei)
 			const takeProfit =
 				leverageSide === 'short'
 					? currentPrice.sub(currentPrice.mul(relativePercent))
-					: currentPrice.add(currentPrice.mul(relativePercent));
-			const dp = suggestedDecimals(takeProfit);
-			dispatch(setCrossMarginTradeTakeProfit(takeProfit.toString(dp)));
+					: currentPrice.add(currentPrice.mul(relativePercent))
+			const dp = suggestedDecimals(takeProfit)
+			dispatch(setCrossMarginTradeTakeProfit(takeProfit.toString(dp)))
 		},
 		[currentPrice, dispatch, leverageSide, leverageWei]
-	);
+	)
 
 	const onChangeStopLoss = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(setCrossMarginTradeStopLoss(v));
+			dispatch(setCrossMarginTradeStopLoss(v))
 		},
 		[dispatch]
-	);
+	)
 
 	const onChangeTakeProfit = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(setCrossMarginTradeTakeProfit(v));
+			dispatch(setCrossMarginTradeTakeProfit(v))
 		},
 		[dispatch]
-	);
+	)
 
 	const slInvalid = useMemo(() => {
 		if (leverageSide === 'long') {
-			return !!stopLossPrice && wei(stopLossPrice || 0).gt(currentPrice);
+			return !!stopLossPrice && wei(stopLossPrice || 0).gt(currentPrice)
 		} else {
-			return !!stopLossPrice && wei(stopLossPrice || 0).lt(currentPrice);
+			return !!stopLossPrice && wei(stopLossPrice || 0).lt(currentPrice)
 		}
-	}, [stopLossPrice, currentPrice, leverageSide]);
+	}, [stopLossPrice, currentPrice, leverageSide])
 
 	const tpInvalid = useMemo(() => {
 		if (leverageSide === 'long') {
-			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(currentPrice);
+			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(currentPrice)
 		} else {
-			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(currentPrice);
+			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(currentPrice)
 		}
-	}, [takeProfitPrice, currentPrice, leverageSide]);
+	}, [takeProfitPrice, currentPrice, leverageSide])
 
 	return (
 		<Container>
@@ -182,7 +182,7 @@ export default function SLTPInputs() {
 				)
 			) : null}
 		</Container>
-	);
+	)
 }
 
 const Container = styled.div`
@@ -192,18 +192,18 @@ const Container = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 8px;
 	margin-bottom: 16px;
-`;
+`
 
 const ExpandRow = styled(FlexDivRow)`
 	padding: 0px 2px 0 4px;
 	cursor: pointer;
 	align-items: center;
-`;
+`
 
 const InputsContainer = styled.div`
 	padding: 4px;
-`;
+`
 
 const WarningContainer = styled.div`
 	padding: 10px 0;
-`;
+`

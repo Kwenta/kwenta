@@ -1,37 +1,37 @@
-import { formatShortDateUTC, toJSTimestamp } from '@kwenta/sdk/utils';
-import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from 'styled-components';
+import { formatShortDateUTC, toJSTimestamp } from '@kwenta/sdk/utils'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useTheme } from 'styled-components'
 
-import { MiniLoader } from 'components/Loader';
-import useStatsData from 'hooks/useStatsData';
+import { MiniLoader } from 'components/Loader'
+import useStatsData from 'hooks/useStatsData'
 
-import { initChart } from '../initChart';
-import type { EChartsOption } from '../initChart';
-import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles';
-import { TimeframeSwitcher } from '../TimeframeSwitcher';
+import { initChart } from '../initChart'
+import type { EChartsOption } from '../initChart'
+import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles'
+import { TimeframeSwitcher } from '../TimeframeSwitcher'
 
 export const Trades = () => {
-	const { t } = useTranslation();
-	const theme = useTheme();
-	const { dailyStatsData, dailyStatsIsLoading } = useStatsData();
+	const { t } = useTranslation()
+	const theme = useTheme()
+	const { dailyStatsData, dailyStatsIsLoading } = useStatsData()
 
-	const ref = useRef<HTMLDivElement | null>(null);
+	const ref = useRef<HTMLDivElement | null>(null)
 
-	const [chart, setChart] = useState<any>(null);
-	const [defaultOptions, setDefaultOptions] = useState<any>(null);
+	const [chart, setChart] = useState<any>(null)
+	const [defaultOptions, setDefaultOptions] = useState<any>(null)
 
 	useEffect(() => {
-		if (chart) chart.dispose();
-		const result = initChart(ref?.current, theme);
-		setChart(result.chart);
-		setDefaultOptions(result.defaultOptions);
+		if (chart) chart.dispose()
+		const result = initChart(ref?.current, theme)
+		setChart(result.chart)
+		setDefaultOptions(result.defaultOptions)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [theme]);
+	}, [theme])
 
 	useEffect(() => {
 		if (!ref || !chart || !ref.current || !dailyStatsData || !dailyStatsData.length) {
-			return;
+			return
 		}
 
 		const option: EChartsOption = {
@@ -65,8 +65,8 @@ export const Trades = () => {
 					},
 					axisLabel: {
 						formatter: (value: any) => {
-							const val = Math.floor(value / 1000);
-							return val + (val === 0 ? '' : 'K');
+							const val = Math.floor(value / 1000)
+							return val + (val === 0 ? '' : 'K')
 						},
 					},
 					position: 'right',
@@ -92,10 +92,10 @@ export const Trades = () => {
 					yAxisIndex: 1,
 				},
 			],
-		};
+		}
 
-		chart.setOption(option);
-	}, [ref, chart, t, dailyStatsData, theme, defaultOptions]);
+		chart.setOption(option)
+	}, [ref, chart, t, dailyStatsData, theme, defaultOptions])
 
 	return (
 		<ChartContainer width={1}>
@@ -107,5 +107,5 @@ export const Trades = () => {
 			</ChartHeader>
 			<ChartWrapper ref={ref} />
 		</ChartContainer>
-	);
-};
+	)
+}

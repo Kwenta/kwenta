@@ -1,7 +1,7 @@
-import { ComponentMeta } from '@storybook/react';
-import { wei } from '@synthetixio/wei';
+import { ComponentMeta } from '@storybook/react'
+import { wei } from '@synthetixio/wei'
 
-import StakeCard from 'components/StakeCard/StakeCard';
+import StakeCard from 'components/StakeCard/StakeCard'
 
 export default {
 	title: 'Components/StakeCard',
@@ -13,7 +13,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof StakeCard>;
+} as ComponentMeta<typeof StakeCard>
 
 export const Default = () => {
 	return (
@@ -25,5 +25,5 @@ export const Default = () => {
 			onUnstake={() => {}}
 			isApproved
 		/>
-	);
-};
+	)
+}

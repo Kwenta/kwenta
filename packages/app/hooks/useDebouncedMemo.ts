@@ -1,5 +1,5 @@
-import debounce from 'lodash/debounce';
-import { useState, useEffect, DependencyList, useCallback } from 'react';
+import debounce from 'lodash/debounce'
+import { useState, useEffect, DependencyList, useCallback } from 'react'
 
 // source: https://github.com/SevenOutman/use-debounced-memo
 
@@ -8,17 +8,17 @@ export function useDebouncedMemo<T>(
 	deps: DependencyList | undefined,
 	debounceMs: number
 ): T {
-	const [state, setState] = useState(factory());
+	const [state, setState] = useState(factory())
 
 	// eslint-disable-next-line
-	const debouncedSetState = useCallback(debounce(setState, debounceMs), []);
+	const debouncedSetState = useCallback(debounce(setState, debounceMs), [])
 
 	useEffect(() => {
-		debouncedSetState(factory());
+		debouncedSetState(factory())
 		// eslint-disable-next-line
-	}, deps);
+	}, deps)
 
-	return state;
+	return state
 }
 
-export default useDebouncedMemo;
+export default useDebouncedMemo

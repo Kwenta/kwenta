@@ -1,1 +1,1 @@
-export { default } from './OrderSizing';
+export { default } from './OrderSizing'

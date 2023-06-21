@@ -1,8 +1,8 @@
-import axios from 'axios';
-import cors from 'cors';
-import nc from 'next-connect';
+import axios from 'axios'
+import cors from 'cors'
+import nc from 'next-connect'
 
-import { FOREX_BASE_API_URL } from 'queries/rates/constants';
+import { FOREX_BASE_API_URL } from 'queries/rates/constants'
 
 enum Symbols {
 	USD = 'USD',
@@ -10,16 +10,16 @@ enum Symbols {
 
 type LatestRate = {
 	motd: {
-		msg: string;
-	};
-	url: string;
-	success: boolean;
-	base: string;
-	date: string;
+		msg: string
+	}
+	url: string
+	success: boolean
+	base: string
+	date: string
 	rates: {
-		[key in Symbols]: number;
-	};
-};
+		[key in Symbols]: number
+	}
+}
 
 const handler = nc()
 	.use(cors())
@@ -33,12 +33,12 @@ const handler = nc()
 			headers: {
 				'Content-Type': 'application/json',
 			},
-		});
-		const priceResponse: LatestRate = response.data;
-		const price = priceResponse?.rates[Symbols.USD];
+		})
+		const priceResponse: LatestRate = response.data
+		const price = priceResponse?.rates[Symbols.USD]
 
 		// @ts-ignore
-		res.send(price);
-	});
+		res.send(price)
+	})
 
-export default handler;
+export default handler

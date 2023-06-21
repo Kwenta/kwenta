@@ -1,24 +1,24 @@
-import React, { memo, ChangeEvent } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import React, { memo, ChangeEvent } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import InputHeaderRow from 'components/Input/InputHeaderRow';
-import InputTitle from 'components/Input/InputTitle';
-import NumericInput from 'components/Input/NumericInput';
+import InputHeaderRow from 'components/Input/InputHeaderRow'
+import InputTitle from 'components/Input/InputTitle'
+import NumericInput from 'components/Input/NumericInput'
 
 type Props = {
-	isMobile?: boolean;
-	type: 'take-profit' | 'stop-loss';
-	value: string;
-	invalid: boolean;
-	currentPrice: string;
-	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void;
-	right?: React.ReactNode;
-};
+	isMobile?: boolean
+	type: 'take-profit' | 'stop-loss'
+	value: string
+	invalid: boolean
+	currentPrice: string
+	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void
+	right?: React.ReactNode
+}
 
 const EditStopLossAndTakeProfitInput: React.FC<Props> = memo(
 	({ isMobile, type, value, invalid, currentPrice, onChange, right }) => {
-		const { t } = useTranslation();
+		const { t } = useTranslation()
 
 		return (
 			<div style={{ marginTop: '5px', marginBottom: '10px' }}>
@@ -44,18 +44,18 @@ const EditStopLossAndTakeProfitInput: React.FC<Props> = memo(
 					right={right}
 				/>
 			</div>
-		);
+		)
 	}
-);
+)
 
 const StyledInputHeaderRow = styled(InputHeaderRow)`
 	margin-bottom: 9px;
-`;
+`
 
 const StyledInputTitle = styled(InputTitle)`
 	span {
 		font-family: ${(props) => props.theme.fonts.mono};
 	}
-`;
+`
 
-export default EditStopLossAndTakeProfitInput;
+export default EditStopLossAndTakeProfitInput

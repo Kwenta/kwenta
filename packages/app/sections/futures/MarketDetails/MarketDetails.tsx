@@ -1,45 +1,45 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { getDisplayAsset, formatDollars, formatPercent } from '@kwenta/sdk/utils';
-import { wei } from '@synthetixio/wei';
-import React, { memo, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { getDisplayAsset, formatDollars, formatPercent } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
+import React, { memo, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice';
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
-import { Body } from 'components/Text';
-import { NO_VALUE } from 'constants/placeholder';
-import useWindowSize from 'hooks/useWindowSize';
+import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import { Body } from 'components/Text'
+import { NO_VALUE } from 'constants/placeholder'
+import useWindowSize from 'hooks/useWindowSize'
 import {
 	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
 	selectSelectedInputHours,
 	selectSkewAdjustedPriceInfo,
-} from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { selectPreviousDayPrices } from 'state/prices/selectors';
-import media from 'styles/media';
+} from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import { selectPreviousDayPrices } from 'state/prices/selectors'
+import media from 'styles/media'
 
-import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles';
+import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles'
 
-import ChartToggle from './ChartToggle';
-import HistoryToggle from './HisotryToggle';
-import HoursToggle from './HoursToggle';
-import MarketDetail, { MarketDetailValue } from './MarketDetail';
-import { MarketDataKey } from './utils';
+import ChartToggle from './ChartToggle'
+import HistoryToggle from './HisotryToggle'
+import HoursToggle from './HoursToggle'
+import MarketDetail, { MarketDetailValue } from './MarketDetail'
+import { MarketDataKey } from './utils'
 
 type MarketDetailsProps = {
-	mobile?: boolean;
-};
+	mobile?: boolean
+}
 
 interface OpenInterestDetailProps extends MarketDetailsProps {
-	isLong?: boolean;
+	isLong?: boolean
 }
 
 const MarketDetails: React.FC<MarketDetailsProps> = () => {
-	const { deviceType } = useWindowSize();
-	const mobileOrTablet = deviceType !== 'desktop';
+	const { deviceType } = useWindowSize()
+	const mobileOrTablet = deviceType !== 'desktop'
 
 	const SelectedMarketDetailsView = mobileOrTablet ? (
 		<MarketDetailsContainer mobile={mobileOrTablet}>
@@ -63,7 +63,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = () => {
 			<MarketSkew />
 			<HourlyFundingDetail />
 		</MarketDetailsContainer>
-	);
+	)
 
 	return (
 		<MainContainer mobile={mobileOrTablet}>
@@ -75,11 +75,11 @@ const MarketDetails: React.FC<MarketDetailsProps> = () => {
 				</ToggleContainer>
 			)}
 		</MainContainer>
-	);
-};
+	)
+}
 
 const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
-	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo);
+	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo)
 
 	return (
 		<MarketDetail
@@ -88,11 +88,11 @@ const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			value={markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
 			dataKey={MarketDataKey.marketPrice}
 		/>
-	);
-});
+	)
+})
 
 const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
-	const indexPrice = useAppSelector(selectMarketPriceInfo);
+	const indexPrice = useAppSelector(selectMarketPriceInfo)
 
 	return (
 		<MarketDetail
@@ -100,15 +100,15 @@ const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			dataKey={MarketDataKey.indexPrice}
 			value={indexPrice ? formatDollars(indexPrice.price, { suggestDecimals: true }) : NO_VALUE}
 		/>
-	);
-});
+	)
+})
 
 const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
-	const indexPrice = useAppSelector(selectMarketPriceInfo);
-	const indexPriceWei = indexPrice?.price ?? ZERO_WEI;
-	const pastRates = useAppSelector(selectPreviousDayPrices);
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(marketAsset));
+	const indexPrice = useAppSelector(selectMarketPriceInfo)
+	const indexPriceWei = indexPrice?.price ?? ZERO_WEI
+	const pastRates = useAppSelector(selectPreviousDayPrices)
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(marketAsset))
 
 	return (
 		<MarketDetail
@@ -129,18 +129,18 @@ const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 					: undefined
 			}
 		/>
-	);
-});
+	)
+})
 
 const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
-	const { t } = useTranslation();
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const fundingRate = marketInfo?.currentFundingRate ?? ZERO_WEI;
-	const fundingHours = useAppSelector(selectSelectedInputHours);
+	const { t } = useTranslation()
+	const marketInfo = useAppSelector(selectMarketInfo)
+	const fundingRate = marketInfo?.currentFundingRate ?? ZERO_WEI
+	const fundingHours = useAppSelector(selectSelectedInputHours)
 	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
 		fundingRate,
 		fundingHours,
-	]);
+	])
 
 	return (
 		<MarketDetail
@@ -150,11 +150,11 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			mobile={mobile}
 			extra={<HoursToggle />}
 		/>
-	);
-});
+	)
+})
 
 const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
-	const marketInfo = useAppSelector(selectMarketInfo);
+	const marketInfo = useAppSelector(selectMarketInfo)
 
 	return (
 		<MarketDetail
@@ -180,18 +180,18 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 				</>
 			}
 		/>
-	);
-});
+	)
+})
 
 const OpenInterestDetail: React.FC<OpenInterestDetailProps> = memo(({ mobile, isLong }) => {
-	const marketInfo = useAppSelector(selectMarketInfo);
+	const marketInfo = useAppSelector(selectMarketInfo)
 	const oiCap = marketInfo?.marketLimitUsd
 		? formatDollars(marketInfo?.marketLimitUsd, { truncateOver: 1e3 })
-		: null;
-	const openInterestType = isLong ? 'longUSD' : 'shortUSD';
+		: null
+	const openInterestType = isLong ? 'longUSD' : 'shortUSD'
 	const formattedUSD = marketInfo?.openInterest[openInterestType]
 		? formatDollars(marketInfo?.openInterest[openInterestType], { truncateOver: 1e3 })
-		: NO_VALUE;
+		: NO_VALUE
 
 	const mobileValue = (
 		<FlexDivCol>
@@ -200,13 +200,13 @@ const OpenInterestDetail: React.FC<OpenInterestDetailProps> = memo(({ mobile, is
 				{oiCap}
 			</Body>
 		</FlexDivCol>
-	);
+	)
 
-	const desktopValue = `${formattedUSD}/${oiCap}`;
+	const desktopValue = `${formattedUSD}/${oiCap}`
 
 	const dataKey = `openInterest${isLong ? 'Long' : 'Short'}${
 		mobile ? 'Mobile' : ''
-	}` as keyof typeof MarketDataKey;
+	}` as keyof typeof MarketDataKey
 
 	return (
 		<MarketDetail
@@ -214,8 +214,8 @@ const OpenInterestDetail: React.FC<OpenInterestDetailProps> = memo(({ mobile, is
 			dataKey={MarketDataKey[dataKey]}
 			value={mobile ? mobileValue : desktopValue}
 		/>
-	);
-});
+	)
+})
 
 const MainContainer = styled.div<{ mobile?: boolean }>`
 	display: grid;
@@ -233,7 +233,7 @@ const MainContainer = styled.div<{ mobile?: boolean }>`
 			height: auto;
 			height: ${MARKETS_DETAILS_HEIGHT_DESKTOP * 2}px;
 		`}
-`;
+`
 
 export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	flex: 1;
@@ -311,10 +311,10 @@ export const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 			}
 		`}
 	`}
-`;
+`
 
 const ToggleContainer = styled(FlexDivRowCentered)`
 	padding-right: 17.5px;
-`;
+`
 
-export default MarketDetails;
+export default MarketDetails

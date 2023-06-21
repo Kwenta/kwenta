@@ -8,12 +8,18 @@ importers:
 
   .:
     devDependencies:
+      eslint:
+        specifier: 7.32.0
+        version: 7.32.0
       husky:
         specifier: 8.0.1
         version: 8.0.1
       lint-staged:
         specifier: ^13.0.3
         version: 13.0.3
+      prettier:
+        specifier: 2.0.5
+        version: 2.0.5
 
   packages/app:
     dependencies:

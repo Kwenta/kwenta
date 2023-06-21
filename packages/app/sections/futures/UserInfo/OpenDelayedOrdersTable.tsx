@@ -1,63 +1,60 @@
-import { FuturesMarketKey } from '@kwenta/sdk/types';
-import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils';
-import { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import { FuturesMarketKey } from '@kwenta/sdk/types'
+import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils'
+import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CellProps } from 'react-table'
+import styled from 'styled-components'
 
-import Badge from 'components/Badge';
-import { ButtonLoader } from 'components/Loader/Loader';
-import Pill from 'components/Pill';
-import Table, { TableHeader, TableNoResults } from 'components/Table';
-import { Body } from 'components/Text';
-import {
-	DEFAULT_DELAYED_CANCEL_BUFFER,
-	DEFAULT_DELAYED_EXECUTION_BUFFER,
-} from 'constants/defaults';
-import useInterval from 'hooks/useInterval';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions';
+import Badge from 'components/Badge'
+import { ButtonLoader } from 'components/Loader/Loader'
+import Pill from 'components/Pill'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
+import { Body } from 'components/Text'
+import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults'
+import useInterval from 'hooks/useInterval'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
 import {
 	selectIsCancellingOrder,
 	selectIsExecutingOrder,
 	selectOpenDelayedOrders,
 	selectMarketAsset,
 	selectMarkets,
-} from 'state/futures/selectors';
-import { useAppDispatch, useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import PositionType from '../PositionType';
+import PositionType from '../PositionType'
 
-import TableMarketDetails from './TableMarketDetails';
+import TableMarketDetails from './TableMarketDetails'
 
 type CountdownTimers = Record<
 	FuturesMarketKey,
 	{
-		timeToExecution: number;
-		timePastExecution: number;
+		timeToExecution: number
+		timePastExecution: number
 	}
->;
+>
 
 const OpenDelayedOrdersTable: React.FC = () => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
-	const { switchToL2 } = useNetworkSwitcher();
-	const isL2 = useIsL2();
+	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const { switchToL2 } = useNetworkSwitcher()
+	const isL2 = useIsL2()
 
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders);
-	const futuresMarkets = useAppSelector(selectMarkets);
-	const isCancelling = useAppSelector(selectIsCancellingOrder);
-	const isExecuting = useAppSelector(selectIsExecutingOrder);
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders)
+	const futuresMarkets = useAppSelector(selectMarkets)
+	const isCancelling = useAppSelector(selectIsCancellingOrder)
+	const isExecuting = useAppSelector(selectIsExecutingOrder)
 
-	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>();
+	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>()
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = openDelayedOrders
 			.map((o) => {
-				const market = futuresMarkets.find((m) => m.market === o.marketAddress);
-				const timer = countdownTimers ? countdownTimers[o.marketKey] : null;
+				const market = futuresMarkets.find((m) => m.market === o.marketAddress)
+				const timer = countdownTimers ? countdownTimers[o.marketKey] : null
 				const order = {
 					...o,
 					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
@@ -100,7 +97,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 								marketAddress: o.marketAddress,
 								isOffchain: o.isOffchain,
 							})
-						);
+						)
 					},
 					onExecute: () => {
 						dispatch(
@@ -109,39 +106,39 @@ const OpenDelayedOrdersTable: React.FC = () => {
 								marketAddress: o.marketAddress,
 								isOffchain: o.isOffchain,
 							})
-						);
+						)
 					},
-				};
-				return order;
+				}
+				return order
 			})
 			.sort((a, b) => {
 				return b.asset === marketAsset && a.asset !== marketAsset
 					? 1
 					: b.asset === marketAsset && a.asset === marketAsset
 					? 0
-					: -1;
-			});
-		return ordersWithCancel;
-	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers, dispatch]);
+					: -1
+			})
+		return ordersWithCancel
+	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers, dispatch])
 
 	useInterval(
 		() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
-				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000);
-				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000);
+				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000)
+				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000)
 
 				// Only updated delayed orders
 				acc[order.marketKey] = {
 					timeToExecution: Math.max(timeToExecution, 0),
 					timePastExecution: Math.max(timePastExecution, 0),
-				};
-				return acc;
-			}, {} as CountdownTimers);
-			setCountdownTimers(newCountdownTimers);
+				}
+				return acc
+			}, {} as CountdownTimers)
+			setCountdownTimers(newCountdownTimers)
 		},
 		1000,
 		[rowsData]
-	);
+	)
 
 	return (
 		<Table
@@ -182,7 +179,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 									)
 								}
 							/>
-						);
+						)
 					},
 					sortable: true,
 					width: 60,
@@ -196,7 +193,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 							<div>
 								<PositionType side={cellProps.row.original.side} />
 							</div>
-						);
+						)
 					},
 					sortable: true,
 					width: 40,
@@ -210,7 +207,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 							<div>
 								<div>{cellProps.row.original.sizeTxt}</div>
 							</div>
-						);
+						)
 					},
 					sortable: true,
 					width: 50,
@@ -237,7 +234,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 										</Body>
 									))}
 							</div>
-						);
+						)
 					},
 					sortable: true,
 					width: 50,
@@ -269,20 +266,20 @@ const OpenDelayedOrdersTable: React.FC = () => {
 										</Pill>
 									))}
 							</div>
-						);
+						)
 					},
 					width: 50,
 				},
 			]}
 		/>
-	);
-};
+	)
+}
 
 const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
 	margin-left: 6px;
-`;
+`
 
-export default OpenDelayedOrdersTable;
+export default OpenDelayedOrdersTable

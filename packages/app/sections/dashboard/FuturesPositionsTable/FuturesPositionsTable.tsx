@@ -1,65 +1,65 @@
-import { FuturesAccountType } from '@kwenta/sdk/utils';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import { FuturesAccountType } from '@kwenta/sdk/utils'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { FC, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CellProps } from 'react-table'
+import styled from 'styled-components'
 
-import MarketBadge from 'components/Badge/MarketBadge';
-import ChangePercent from 'components/ChangePercent';
-import Currency from 'components/Currency';
-import { FlexDivRowCentered } from 'components/layout/flex';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Table, { TableNoResults } from 'components/Table';
-import { Body, NumericValue } from 'components/Text';
-import { NO_VALUE } from 'constants/placeholder';
-import ROUTES from 'constants/routes';
-import useIsL2 from 'hooks/useIsL2';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import PositionType from 'sections/futures/PositionType';
+import MarketBadge from 'components/Badge/MarketBadge'
+import ChangePercent from 'components/ChangePercent'
+import Currency from 'components/Currency'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import Table, { TableNoResults } from 'components/Table'
+import { Body, NumericValue } from 'components/Text'
+import { NO_VALUE } from 'constants/placeholder'
+import ROUTES from 'constants/routes'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import PositionType from 'sections/futures/PositionType'
 import {
 	selectCrossMarginPositions,
 	selectIsolatedMarginPositions,
 	selectMarkets,
 	selectPositionHistory,
-} from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
-import { getSynthDescription } from 'utils/futures';
+} from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import { getSynthDescription } from 'utils/futures'
 
-import MobilePositionRow from './MobilePositionRow';
+import MobilePositionRow from './MobilePositionRow'
 
 type FuturesPositionTableProps = {
-	accountType: FuturesAccountType;
-	showCurrentMarket?: boolean;
-	showEmptyTable?: boolean;
-};
+	accountType: FuturesAccountType
+	showCurrentMarket?: boolean
+	showEmptyTable?: boolean
+}
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	accountType,
 	showCurrentMarket = true,
 	showEmptyTable = true,
 }) => {
-	const { t } = useTranslation();
-	const router = useRouter();
-	const { switchToL2 } = useNetworkSwitcher();
+	const { t } = useTranslation()
+	const router = useRouter()
+	const { switchToL2 } = useNetworkSwitcher()
 
-	const isL2 = useIsL2();
+	const isL2 = useIsL2()
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions);
-	const crossMarginPositions = useAppSelector(selectCrossMarginPositions);
-	const positionHistory = useAppSelector(selectPositionHistory);
-	const futuresMarkets = useAppSelector(selectMarkets);
+	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions)
+	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
+	const positionHistory = useAppSelector(selectPositionHistory)
+	const futuresMarkets = useAppSelector(selectMarkets)
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions;
+		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions
 		return positions
 			.map((position) => {
-				const market = futuresMarkets.find((market) => market.asset === position.asset);
-				const description = getSynthDescription(position.asset, t);
+				const market = futuresMarkets.find((market) => market.asset === position.asset)
+				const description = getSynthDescription(position.asset, t)
 				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset;
-				});
+					return ph.isOpen && ph.asset === position.asset
+				})
 
 				return {
 					market: market!,
@@ -68,10 +68,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
-				};
+				}
 			})
-			.filter(({ position, market }) => !!position && !!market);
-	}, [accountType, isolatedPositions, crossMarginPositions, futuresMarkets, t, positionHistory]);
+			.filter(({ position, market }) => !!position && !!market)
+	}, [accountType, isolatedPositions, crossMarginPositions, futuresMarkets, t, positionHistory])
 
 	return (
 		<>
@@ -127,7 +127,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											</StyledText>
 											<StyledValue>{cellProps.row.original.description}</StyledValue>
 										</MarketContainer>
-									);
+									)
 								},
 								width: 180,
 							},
@@ -138,7 +138,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessor: 'position',
 								// @ts-expect-error
 								Cell: (cellProps: CellProps<any>) => {
-									return <PositionType side={cellProps.row.original.position.side} />;
+									return <PositionType side={cellProps.row.original.position.side} />
 								},
 								width: 70,
 							},
@@ -156,7 +156,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											price={cellProps.row.original.position.notionalValue}
 											formatOptions={{ truncateOver: 1e6 }}
 										/>
-									);
+									)
 								},
 								width: 90,
 							},
@@ -171,7 +171,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = {
 										suggestDecimals: true,
-									};
+									}
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<Body>{NO_VALUE}</Body>
 									) : (
@@ -179,7 +179,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											price={cellProps.row.original.avgEntryPrice}
 											formatOptions={formatOptions}
 										/>
-									);
+									)
 								},
 								width: 125,
 							},
@@ -194,13 +194,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Cell: (cellProps: CellProps<any>) => {
 									const formatOptions = {
 										suggestDecimals: true,
-									};
+									}
 									return (
 										<Currency.Price
 											price={cellProps.row.original.position.liquidationPrice}
 											formatOptions={formatOptions}
 										/>
-									);
+									)
 								},
 								width: 115,
 							},
@@ -218,7 +218,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 												<Currency.Price price={cellProps.row.original.position.pnl} colored />
 											</div>
 										</PnlContainer>
-									);
+									)
 								},
 								width: 125,
 							},
@@ -246,7 +246,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 												)}
 											</div>
 										</FlexDivRowCentered>
-									);
+									)
 								},
 								width: 90,
 							},
@@ -266,7 +266,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 												/>
 											</div>
 										</FlexDivRowCentered>
-									);
+									)
 								},
 								width: 115,
 							},
@@ -309,24 +309,24 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				)}
 			</MobileOrTabletView>
 		</>
-	);
-};
+	)
+}
 
 const PnlContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-`;
+`
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 8px;
-`;
+`
 
 const IconContainer = styled.div`
 	grid-column: 1;
 	grid-row: 1 / span 2;
-`;
+`
 
 const StyledValue = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -334,11 +334,11 @@ const StyledValue = styled.div`
 	font-size: 12px;
 	grid-column: 2;
 	grid-row: 2;
-`;
+`
 
 const TableHeader = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
 const StyledText = styled.div`
 	display: flex;
@@ -348,14 +348,14 @@ const StyledText = styled.div`
 	margin-bottom: -4px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
-`;
+`
 
 const MarketContainer = styled.div`
 	display: grid;
 	grid-template-rows: auto auto;
 	grid-template-columns: auto auto;
 	align-items: center;
-`;
+`
 
 const OpenPositionsHeader = styled.div`
 	display: flex;
@@ -371,13 +371,13 @@ const OpenPositionsHeader = styled.div`
 		width: 125px;
 		margin-right: 30px;
 	}
-`;
+`
 
 const OpenPositionsRightHeader = styled.div`
 	display: flex;
 	flex: 1;
 	justify-content: space-between;
-`;
+`
 
 const NoPositionsText = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
@@ -385,6 +385,6 @@ const NoPositionsText = styled.div`
 	font-size: 16px;
 	text-align: center;
 	text-decoration: underline;
-`;
+`
 
-export default FuturesPositionsTable;
+export default FuturesPositionsTable

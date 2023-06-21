@@ -1,12 +1,12 @@
-import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile';
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile'
 
-import PortfolioChart from '../PortfolioChart';
+import PortfolioChart from '../PortfolioChart'
 
 const Portfolio: FC = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<div>
@@ -17,7 +17,7 @@ const Portfolio: FC = () => {
 			</div>
 			<PortfolioChart />
 		</div>
-	);
-};
+	)
+}
 
-export default Portfolio;
+export default Portfolio

@@ -1,13 +1,13 @@
-import router from 'next/router';
-import styled from 'styled-components';
+import router from 'next/router'
+import styled from 'styled-components'
 
-import { Body } from 'components/Text';
-import { EXTERNAL_LINKS } from 'constants/links';
-import ROUTES from 'constants/routes';
-import { FOOTER_HEIGHT } from 'styles/common';
+import { Body } from 'components/Text'
+import { EXTERNAL_LINKS } from 'constants/links'
+import ROUTES from 'constants/routes'
+import { FOOTER_HEIGHT } from 'styles/common'
 
-import GitHashID from './GitHashID';
-import OperationStatus from './OperationStatus';
+import GitHashID from './GitHashID'
+import OperationStatus from './OperationStatus'
 
 const Footer = () => {
 	return (
@@ -26,8 +26,8 @@ const Footer = () => {
 				</FooterLink>
 			</RightContainer>
 		</FooterContainer>
-	);
-};
+	)
+}
 
 const FooterContainer = styled.footer`
 	display: grid;
@@ -39,22 +39,22 @@ const FooterContainer = styled.footer`
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	background-color: ${(props) =>
 		props.theme.colors.selectedTheme.newTheme.containers.primary.background};
-`;
+`
 
 const RightContainer = styled.div`
 	display: flex;
 	justify-content: flex-end;
-`;
+`
 
 const FooterLink = styled.a.attrs({ target: '_blank', rel: '_noreferrer' })`
 	&:not(:last-of-type) {
 		margin-right: 18px;
 	}
-`;
+`
 
 const FooterLinkInternal = styled.div`
 	margin-right: 18px;
 	cursor: pointer;
-`;
+`
 
-export default Footer;
+export default Footer

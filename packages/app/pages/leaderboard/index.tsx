@@ -1,17 +1,17 @@
-import Head from 'next/head';
-import { FC, ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import Head from 'next/head'
+import { FC, ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import Leaderboard from 'sections/leaderboard/Leaderboard';
-import AppLayout from 'sections/shared/Layout/AppLayout';
-import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media'
+import Leaderboard from 'sections/leaderboard/Leaderboard'
+import AppLayout from 'sections/shared/Layout/AppLayout'
+import { PageContent, MainContent, FullHeightContainer } from 'styles/common'
 
-type LeaderComponent = FC & { getLayout: (page: ReactNode) => JSX.Element };
+type LeaderComponent = FC & { getLayout: (page: ReactNode) => JSX.Element }
 
 const Leader: LeaderComponent = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<>
@@ -33,14 +33,14 @@ const Leader: LeaderComponent = () => {
 				</MobileOnlyView>
 			</PageContent>
 		</>
-	);
-};
+	)
+}
 
 const MobileMainContent = styled.div`
 	width: 100%;
 	padding: 15px;
-`;
+`
 
-Leader.getLayout = (page) => <AppLayout>{page}</AppLayout>;
+Leader.getLayout = (page) => <AppLayout>{page}</AppLayout>
 
-export default Leader;
+export default Leader

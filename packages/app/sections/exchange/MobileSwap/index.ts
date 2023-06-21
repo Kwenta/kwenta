@@ -1,1 +1,1 @@
-export { default as MobileSwap } from './MobileSwap';
+export { default as MobileSwap } from './MobileSwap'

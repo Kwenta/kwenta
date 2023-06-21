@@ -1,12 +1,12 @@
-import { Chain, Wallet } from '@rainbow-me/rainbowkit';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import { Chain, Wallet } from '@rainbow-me/rainbowkit'
+import { InjectedConnector } from 'wagmi/connectors/injected'
 
-import FrameIcon from 'assets/png/rainbowkit/frame.png';
+import FrameIcon from 'assets/png/rainbowkit/frame.png'
 
 type FrameOptions = {
-	chains: Chain[];
-	shimDisconnect?: boolean;
-};
+	chains: Chain[]
+	shimDisconnect?: boolean
+}
 
 const Frame = ({ chains, shimDisconnect }: FrameOptions): Wallet => ({
 	id: 'frame',
@@ -18,11 +18,11 @@ const Frame = ({ chains, shimDisconnect }: FrameOptions): Wallet => ({
 			'https://chrome.google.com/webstore/detail/frame-companion/ldcoohedfbjoobcadoglnnmmfbdlmmhf',
 	},
 	createConnector: () => {
-		const connector = new InjectedConnector({ chains, options: { shimDisconnect } });
+		const connector = new InjectedConnector({ chains, options: { shimDisconnect } })
 		return {
 			connector,
-		};
+		}
 	},
-});
+})
 
-export default Frame;
+export default Frame

@@ -1,14 +1,14 @@
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { SplitContainer } from 'components/layout/grid';
-import { Heading, Description } from 'sections/earn/text';
+import { SplitContainer } from 'components/layout/grid'
+import { Heading, Description } from 'sections/earn/text'
 
-import EarnStakeCard from './EarnStakeCard';
-import StakeGrid from './StakeGrid';
+import EarnStakeCard from './EarnStakeCard'
+import StakeGrid from './StakeGrid'
 
 const StepOne = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<StepOneContainer>
@@ -19,11 +19,11 @@ const StepOne = () => {
 				<StakeGrid />
 			</SplitContainer>
 		</StepOneContainer>
-	);
-};
+	)
+}
 
 const StepOneContainer = styled.div`
 	margin-top: 50px;
-`;
+`
 
-export default StepOne;
+export default StepOne

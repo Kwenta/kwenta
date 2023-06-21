@@ -1,21 +1,21 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { memo } from 'react';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { memo } from 'react'
 
 import {
 	selectClosePositionOrderInputs,
 	selectClosePositionPreview,
 	selectSmartMarginKeeperDeposit,
 	selectEditPositionModalInfo,
-} from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+} from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
-import FeesRow from './FeesRow';
+import FeesRow from './FeesRow'
 
 const ClosePositionFeeInfo = memo(() => {
-	const tradePreview = useAppSelector(selectClosePositionPreview);
-	const { market } = useAppSelector(selectEditPositionModalInfo);
-	const keeperEthDeposit = useAppSelector(selectSmartMarginKeeperDeposit);
-	const { orderType } = useAppSelector(selectClosePositionOrderInputs);
+	const tradePreview = useAppSelector(selectClosePositionPreview)
+	const { market } = useAppSelector(selectEditPositionModalInfo)
+	const keeperEthDeposit = useAppSelector(selectSmartMarginKeeperDeposit)
+	const { orderType } = useAppSelector(selectClosePositionOrderInputs)
 
 	return (
 		<FeesRow
@@ -28,7 +28,7 @@ const ClosePositionFeeInfo = memo(() => {
 				taker: market?.feeRates.takerFeeOffchainDelayedOrder ?? ZERO_WEI,
 			}}
 		/>
-	);
-});
+	)
+})
 
-export default ClosePositionFeeInfo;
+export default ClosePositionFeeInfo

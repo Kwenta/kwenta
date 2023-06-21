@@ -1,16 +1,16 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants';
-import { PositionSide } from '@kwenta/sdk/types';
-import { formatDollars, formatNumber } from '@kwenta/sdk/utils';
-import { toPng } from 'html-to-image';
-import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { PositionSide } from '@kwenta/sdk/types'
+import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
+import { toPng } from 'html-to-image'
+import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import TwitterIcon from 'assets/svg/social/twitter.svg';
-import Button from 'components/Button';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { SharePositionParams } from 'state/futures/types';
-import { getMarketName } from 'utils/futures';
+import TwitterIcon from 'assets/svg/social/twitter.svg'
+import Button from 'components/Button'
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import { SharePositionParams } from 'state/futures/types'
+import { getMarketName } from 'utils/futures'
 
 function getTwitterText(
 	side: PositionSide,
@@ -25,49 +25,49 @@ function getTwitterText(
 ${side === 'long' ? 'Long' : 'Short'} $${marketName} ${leverage}: ${pnlPct}
 from ${dollarEntry} to ${dollarCurrent}
 
-https://kwenta.eth.limo`);
+https://kwenta.eth.limo`)
 }
 
 function downloadPng(dataUrl: string) {
-	const link = document.createElement('a');
+	const link = document.createElement('a')
 
-	link.download = 'my-pnl-on-kwenta.png';
-	link.href = dataUrl;
-	link.pathname = 'assets/png/' + link.download;
-	link.click();
+	link.download = 'my-pnl-on-kwenta.png'
+	link.href = dataUrl
+	link.pathname = 'assets/png/' + link.download
+	link.click()
 }
 
 type ShareModalButtonProps = {
-	position: SharePositionParams;
-};
+	position: SharePositionParams
+}
 
 const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	const handleDownloadImage = async () => {
-		let node = document.getElementById('pnl-graphic');
+		let node = document.getElementById('pnl-graphic')
 
 		if (node) {
-			const dataUrl = await toPng(node, { cacheBust: true });
-			downloadPng(dataUrl);
+			const dataUrl = await toPng(node, { cacheBust: true })
+			downloadPng(dataUrl)
 		}
-	};
+	}
 
 	const handleTweet = () => {
-		const positionDetails = position.position ?? null;
-		const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
-		const marketName = getMarketName(position.asset!);
-		const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x';
-		const pnlPct = `+${positionDetails?.pnlPct.mul(100).toNumber().toFixed(2)}%`;
+		const positionDetails = position.position ?? null
+		const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT
+		const marketName = getMarketName(position.asset!)
+		const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x'
+		const pnlPct = `+${positionDetails?.pnlPct.mul(100).toNumber().toFixed(2)}%`
 
 		const avgEntryPrice = position.positionHistory?.avgEntryPrice
 			? formatNumber(position.positionHistory?.avgEntryPrice)
-			: '';
-		const dollarEntry = formatDollars(avgEntryPrice ?? ZERO_WEI, { suggestDecimals: true });
-		const dollarCurrent = formatNumber(position.marketPrice ?? ZERO_WEI);
-		const text = getTwitterText(side, marketName, leverage, pnlPct, dollarEntry, dollarCurrent);
-		window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-	};
+			: ''
+		const dollarEntry = formatDollars(avgEntryPrice ?? ZERO_WEI, { suggestDecimals: true })
+		const dollarCurrent = formatNumber(position.marketPrice ?? ZERO_WEI)
+		const text = getTwitterText(side, marketName, leverage, pnlPct, dollarEntry, dollarCurrent)
+		window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank')
+	}
 
 	return (
 		<>
@@ -92,8 +92,8 @@ const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
 				</ButtonContainer>
 			</MobileOrTabletView>
 		</>
-	);
-};
+	)
+}
 
 const ButtonContainer = styled.div`
 	display: flex;
@@ -104,7 +104,7 @@ const ButtonContainer = styled.div`
 
 	justify-content: center;
 	align-items: center;
-`;
+`
 
 const InnerButtonContainer = styled.div`
 	display: flex;
@@ -112,10 +112,10 @@ const InnerButtonContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	gap: 1vw;
-`;
+`
 
 const StyledTwitterIcon = styled(TwitterIcon)`
 	width: 2.5vw;
-`;
+`
 
-export default ShareModalButton;
+export default ShareModalButton

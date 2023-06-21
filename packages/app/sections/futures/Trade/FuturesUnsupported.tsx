@@ -1,13 +1,13 @@
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import { FlexDivCentered } from 'components/layout/flex';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import Button from 'components/Button'
+import { FlexDivCentered } from 'components/layout/flex'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 
 const FuturesUnsupportedNetwork = () => {
-	const { t } = useTranslation();
-	const { switchToL2 } = useNetworkSwitcher();
+	const { t } = useTranslation()
+	const { switchToL2 } = useNetworkSwitcher()
 	return (
 		<MessageContainer>
 			<Title>{t('futures.page-title')}</Title>
@@ -18,29 +18,29 @@ const FuturesUnsupportedNetwork = () => {
 				</Button>
 			</ButtonContainer>
 		</MessageContainer>
-	);
-};
+	)
+}
 
 const UnsupportedMessage = styled.div`
 	margin-top: 12px;
-`;
+`
 
 const ButtonContainer = styled(FlexDivCentered)`
 	width: 100%;
 	justify-content: center;
 	margin-top: 15px;
-`;
+`
 
 const Title = styled.div`
 	font-family: ${(props) => props.theme.fonts.monoBold};
 	font-size: 23px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`;
+`
 
 const MessageContainer = styled.div`
 	padding: 20px;
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+`
 
-export default FuturesUnsupportedNetwork;
+export default FuturesUnsupportedNetwork

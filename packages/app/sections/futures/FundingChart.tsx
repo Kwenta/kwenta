@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC } from 'react'
 import {
 	LineChart,
 	XAxis,
@@ -7,30 +7,30 @@ import {
 	YAxis,
 	Tooltip,
 	ReferenceLine,
-} from 'recharts';
-import styled, { css } from 'styled-components';
-import { useTheme } from 'styled-components';
+} from 'recharts'
+import styled, { css } from 'styled-components'
+import { useTheme } from 'styled-components'
 
-import { formatChartTime } from '@kwenta/sdk/utils';
-import { fetchFundingRatesHistory } from 'state/futures/actions';
-import { selectMarketAsset } from 'state/futures/selectors';
-import { useAppSelector, usePollAction } from 'state/hooks';
+import { formatChartTime } from '@kwenta/sdk/utils'
+import { fetchFundingRatesHistory } from 'state/futures/actions'
+import { selectMarketAsset } from 'state/futures/selectors'
+import { useAppSelector, usePollAction } from 'state/hooks'
 
-import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip';
+import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip'
 
 type FundingChartProps = {
-	display?: boolean;
-};
+	display?: boolean
+}
 
 const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
-	const theme = useTheme();
-	const marketAsset = useAppSelector(selectMarketAsset);
-	const historicalFundingRates = useAppSelector(({ futures }) => futures.historicalFundingRates);
+	const theme = useTheme()
+	const marketAsset = useAppSelector(selectMarketAsset)
+	const historicalFundingRates = useAppSelector(({ futures }) => futures.historicalFundingRates)
 
 	usePollAction('fetchFundingRatesHistory', () => fetchFundingRatesHistory(marketAsset), {
 		dependencies: [marketAsset],
 		intervalTime: 60 * 60 * 1000,
-	});
+	})
 
 	return (
 		<FundingChartContainer $display={display} minWidth={1} minHeight={1}>
@@ -69,8 +69,8 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 				/>
 			</LineChart>
 		</FundingChartContainer>
-	);
-};
+	)
+}
 
 const FundingChartContainer = styled(ResponsiveContainer)<{ $display: boolean }>`
 	flex: 1;
@@ -79,6 +79,6 @@ const FundingChartContainer = styled(ResponsiveContainer)<{ $display: boolean }>
 		css`
 			display: none;
 		`}
-`;
+`
 
-export default FundingChart;
+export default FundingChart

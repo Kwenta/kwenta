@@ -1,18 +1,18 @@
-import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
-import React from 'react';
-import styled, { css } from 'styled-components';
+import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider'
+import React from 'react'
+import styled, { css } from 'styled-components'
 
-import media from 'styles/media';
+import media from 'styles/media'
 
-import ValueLabel from './ValueLabel';
+import ValueLabel from './ValueLabel'
 
 export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {
-	minValue: number;
-	maxValue: number;
-	steps?: number;
-	onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
-	className?: string;
-};
+	minValue: number
+	maxValue: number
+	steps?: number
+	onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void
+	className?: string
+}
 
 const SliderComponent: React.FC<SliderProps> = ({
 	minValue,
@@ -34,19 +34,19 @@ const SliderComponent: React.FC<SliderProps> = ({
 				{...props}
 			/>
 		</SliderContainer>
-	);
-};
+	)
+}
 
-export default SliderComponent;
+export default SliderComponent
 
 export const getStep = (maxValue: number) => {
-	if (maxValue < 0.01) return 0.0001;
-	if (maxValue < 0.1) return 0.001;
-	if (maxValue < 10) return 0.01;
-	if (maxValue < 100) return 1;
-	if (maxValue < 10000) return 10;
-	return Math.pow(10, Math.floor(Math.log10(maxValue)) - 3);
-};
+	if (maxValue < 0.01) return 0.0001
+	if (maxValue < 0.1) return 0.001
+	if (maxValue < 10) return 0.01
+	if (maxValue < 100) return 1
+	if (maxValue < 10000) return 10
+	return Math.pow(10, Math.floor(Math.log10(maxValue)) - 3)
+}
 
 const styledMarkLabel = css`
 	font-family: ${(props) => props.theme.fonts.mono};
@@ -55,14 +55,14 @@ const styledMarkLabel = css`
 	${media.lessThan('sm')`
 		top: 30px;
 	`}
-`;
+`
 
 const SliderContainer = styled.div`
 	width: 100%;
 	height: 24px;
 	padding: 0px 12px 0px 4px;
 	box-sizing: border-box;
-`;
+`
 
 const StyledSlider = styled(Slider)`
 	color: transparent !important;
@@ -123,4 +123,4 @@ const StyledSlider = styled(Slider)`
 	.MuiSlider-markLabel:nth-child(7) {
 		color: #787878 !important;
 	}
-`;
+`

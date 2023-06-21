@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
-import MarketDetails from 'sections/futures/MarketDetails';
-import { Pane, SectionHeader, SectionTitle } from 'sections/futures/mobile';
+import MarketDetails from 'sections/futures/MarketDetails'
+import { Pane, SectionHeader, SectionTitle } from 'sections/futures/mobile'
 
 const StatsTab: React.FC = () => {
 	return (
@@ -11,7 +11,7 @@ const StatsTab: React.FC = () => {
 			</SectionHeader>
 			<MarketDetails mobile />
 		</Pane>
-	);
-};
+	)
+}
 
-export default StatsTab;
+export default StatsTab

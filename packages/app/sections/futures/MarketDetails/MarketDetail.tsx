@@ -1,37 +1,37 @@
-import { ReactElement, memo, FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { ReactElement, memo, FC, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import { FlexDivRowCentered } from 'components/layout/flex';
-import { Body } from 'components/Text';
-import Tooltip from 'components/Tooltip/Tooltip';
-import { selectMarketInfo } from 'state/futures/selectors';
-import { useAppSelector } from 'state/hooks';
+import { FlexDivRowCentered } from 'components/layout/flex'
+import { Body } from 'components/Text'
+import Tooltip from 'components/Tooltip/Tooltip'
+import { selectMarketInfo } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
-import { isMarketDataKey, marketDataKeyMap } from './utils';
+import { isMarketDataKey, marketDataKeyMap } from './utils'
 
 type MarketDetailProps = {
-	mobile?: boolean;
-	dataKey: string;
-	color?: string;
-	value: string | ReactElement;
-	extra?: ReactElement;
-};
+	mobile?: boolean
+	dataKey: string
+	color?: string
+	value: string | ReactElement
+	extra?: ReactElement
+}
 
 const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, value, extra }) => {
-	const { t } = useTranslation();
-	const marketInfo = useAppSelector(selectMarketInfo);
-	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
+	const { t } = useTranslation()
+	const marketInfo = useAppSelector(selectMarketInfo)
+	const pausedClass = marketInfo?.isSuspended ? 'paused' : ''
 
 	const contentSuffix = useMemo(() => {
 		if (dataKey === marketInfo?.marketName) {
-			return 'market-key';
+			return 'market-key'
 		} else if (isMarketDataKey(dataKey)) {
-			return marketDataKeyMap[dataKey];
+			return marketDataKeyMap[dataKey]
 		} else {
-			return '';
+			return ''
 		}
-	}, [dataKey, marketInfo]);
+	}, [dataKey, marketInfo])
 
 	return (
 		<Container>
@@ -56,24 +56,24 @@ const MarketDetail: FC<MarketDetailProps> = memo(({ mobile, dataKey, color, valu
 			</MarketDetailsTooltip>
 			{extra}
 		</Container>
-	);
-});
+	)
+})
 
-export default MarketDetail;
+export default MarketDetail
 
 // Extend type of cursor to accept different style of cursor. Currently accept only 'help'
 const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
-`;
+`
 
 const MarketDetailsTooltip = styled(Tooltip).attrs({ position: 'fixed', height: 'auto' })<{
-	mobile?: boolean;
+	mobile?: boolean
 }>`
 	z-index: 2;
 	padding: 10px;
 	max-width: 300px;
 	right: ${(props) => props.mobile && '1px'};
-`;
+`
 
 export const MarketDetailValue = ({
 	value,
@@ -81,10 +81,10 @@ export const MarketDetailValue = ({
 	pausedClass = '',
 	mobile = false,
 }: {
-	value: string | ReactElement;
-	color?: string;
-	pausedClass?: 'paused' | '';
-	mobile?: boolean;
+	value: string | ReactElement
+	color?: string
+	pausedClass?: 'paused' | ''
+	mobile?: boolean
 }) => (
 	<Body
 		as="span"
@@ -95,9 +95,9 @@ export const MarketDetailValue = ({
 	>
 		{value}
 	</Body>
-);
+)
 
 const Container = styled(FlexDivRowCentered)`
 	position: relative;
 	overflow: visible;
-`;
+`

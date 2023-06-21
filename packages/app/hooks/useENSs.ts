@@ -1,16 +1,15 @@
-// import reverseRecordsAbi from '@kwenta/sdk/dist/contracts/abis/ReverseRecords.json';
-import { Contract } from 'ethers';
-import { useQuery, UseQueryOptions } from 'react-query';
+import { Contract } from 'ethers'
+import { useQuery, UseQueryOptions } from 'react-query'
 
-import { ENS_REVERSE_LOOKUP } from 'constants/address';
-import QUERY_KEYS from 'constants/queryKeys';
-import { staticMainnetProvider } from 'utils/network';
+import { ENS_REVERSE_LOOKUP } from 'constants/address'
+import QUERY_KEYS from 'constants/queryKeys'
+import { staticMainnetProvider } from 'utils/network'
 
-const ADDRESSES_PER_LOOKUP = 1500;
+const ADDRESSES_PER_LOOKUP = 1500
 
 type EnsInfo = {
-	[account: string]: string;
-};
+	[account: string]: string
+}
 
 const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => {
 	return useQuery<EnsInfo>(
@@ -20,31 +19,31 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 				ENS_REVERSE_LOOKUP,
 				['function getNames(address[] addresses) external view returns (string[] r)'],
 				staticMainnetProvider
-			);
+			)
 
-			let ensPromises = [];
+			let ensPromises = []
 			for (let i = 0; i < addresses.length; i += ADDRESSES_PER_LOOKUP) {
-				const addressesToLookup = addresses.slice(i, i + ADDRESSES_PER_LOOKUP);
-				const ensNamesPromise = ReverseLookup.getNames(addressesToLookup);
-				ensPromises.push(ensNamesPromise);
+				const addressesToLookup = addresses.slice(i, i + ADDRESSES_PER_LOOKUP)
+				const ensNamesPromise = ReverseLookup.getNames(addressesToLookup)
+				ensPromises.push(ensNamesPromise)
 			}
 
-			let ensInfo: EnsInfo = {};
+			let ensInfo: EnsInfo = {}
 
-			const ensPromiseResult = await Promise.all(ensPromises);
+			const ensPromiseResult = await Promise.all(ensPromises)
 			ensPromiseResult.flat(1).forEach((val: string, ind: number) => {
 				if (val !== '') {
-					ensInfo[addresses[ind]] = val;
+					ensInfo[addresses[ind]] = val
 				}
-			});
+			})
 
-			return ensInfo;
+			return ensInfo
 		},
 		{
 			enabled: addresses.length > 0,
 			...options,
 		}
-	);
-};
+	)
+}
 
-export default useENSs;
+export default useENSs

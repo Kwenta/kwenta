@@ -1,6 +1,6 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import SegmentedControl from 'components/SegmentedControl';
+import SegmentedControl from 'components/SegmentedControl'
 
 export default {
 	title: 'Futures/OrderType',
@@ -11,7 +11,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof SegmentedControl>;
+} as ComponentMeta<typeof SegmentedControl>
 
 export const Default: ComponentStory<typeof SegmentedControl> = (args) => (
 	<SegmentedControl
@@ -21,4 +21,4 @@ export const Default: ComponentStory<typeof SegmentedControl> = (args) => (
 		onChange={() => {}}
 		styleType="check"
 	/>
-);
+)

@@ -1,29 +1,29 @@
-import Link from 'next/link';
-import router from 'next/router';
-import { useMemo, memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import Link from 'next/link'
+import router from 'next/router'
+import { useMemo, memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
-import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
-import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
-import DiscordLogo from 'assets/svg/social/discord.svg';
-import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
-import { GridDivCenteredCol } from 'components/layout/grid';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { Body } from 'components/Text';
-import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults';
-import { EXTERNAL_LINKS } from 'constants/links';
-import ROUTES from 'constants/routes';
-import RefButton from 'sections/shared/components/RefButton';
+import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg'
+import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg'
+import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg'
+import DiscordLogo from 'assets/svg/social/discord.svg'
+import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import { GridDivCenteredCol } from 'components/layout/grid'
+import { MobileHiddenView, MobileOnlyView } from 'components/Media'
+import { Body } from 'components/Text'
+import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
+import { EXTERNAL_LINKS } from 'constants/links'
+import ROUTES from 'constants/routes'
+import RefButton from 'sections/shared/components/RefButton'
 
-import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
-import Logo from '../Logo';
+import MobileUserMenu from '../AppLayout/Header/MobileUserMenu'
+import Logo from '../Logo'
 
-export type TPages = 'landing-page' | 'stats-page';
+export type TPages = 'landing-page' | 'stats-page'
 
 const Header = memo(() => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	const LINKS = useMemo(
 		() => [
@@ -61,7 +61,7 @@ const Header = memo(() => {
 			},
 		],
 		[t]
-	);
+	)
 
 	const GOVERNANCE = [
 		{
@@ -74,7 +74,7 @@ const Header = memo(() => {
 			label: t('homepage.nav.governance.kips'),
 			onClick: () => window.open(EXTERNAL_LINKS.Governance.Kips, '_blank'),
 		},
-	];
+	]
 
 	const SOCIALS = [
 		{
@@ -89,7 +89,7 @@ const Header = memo(() => {
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Twitter, '_blank'),
 			icon: <TwitterLogo />,
 		},
-	];
+	]
 
 	return (
 		<>
@@ -141,13 +141,13 @@ const Header = memo(() => {
 				</MobileContainer>
 			</MobileOnlyView>
 		</>
-	);
-});
+	)
+})
 
 const MobileContainer = styled(FlexDivRow)`
 	justify-content: center;
 	align-items: center;
-`;
+`
 
 const StyledMenu = styled.div`
 	position: absolute;
@@ -178,7 +178,7 @@ const StyledMenu = styled.div`
 			visibility: visible;
 		}
 	}
-`;
+`
 
 const StyledMenuItem = styled(Body).attrs({ weight: 'bold' })`
 	cursor: pointer;
@@ -201,7 +201,7 @@ const StyledMenuItem = styled(Body).attrs({ weight: 'bold' })`
 		width: 15px;
 		height: 15px;
 	}
-`;
+`
 
 const Container = styled.header`
 	padding: 15px;
@@ -209,14 +209,14 @@ const Container = styled.header`
 	align-items: center;
 	width: 100%;
 	grid-template-columns: 1fr 1fr 1fr;
-`;
+`
 
 const Links = styled.div`
 	display: flex;
 	flex-direction: row;
 	white-space: nowrap;
 	justify-self: center;
-`;
+`
 
 const StyledTextButton = styled.div`
 	display: flex;
@@ -251,11 +251,11 @@ const StyledTextButton = styled.div`
 	svg {
 		margin-left: 5px;
 	}
-`;
+`
 
 const MenuContainer = styled(GridDivCenteredCol)`
 	grid-gap: 24px;
 	justify-self: end;
-`;
+`
 
-export default Header;
+export default Header

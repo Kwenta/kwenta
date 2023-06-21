@@ -1,10 +1,10 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
-import Button from 'components/Button';
-import { GridDivCenteredRow } from 'components/layout/grid';
-import { zIndex } from 'constants/ui';
-import { FixedFooterMixin } from 'styles/common';
-import media from 'styles/media';
+import Button from 'components/Button'
+import { GridDivCenteredRow } from 'components/layout/grid'
+import { zIndex } from 'constants/ui'
+import { FixedFooterMixin } from 'styles/common'
+import media from 'styles/media'
 
 export const MessageContainer = styled(GridDivCenteredRow)`
 	-webkit-box-align: center;
@@ -20,11 +20,11 @@ export const MessageContainer = styled(GridDivCenteredRow)`
 		display: flex;
 		z-index: ${zIndex.BASE};
 	`}
-`;
+`
 
 export const FixedMessageContainerSpacer = styled.div`
 	height: 70px;
-`;
+`
 
 export const Message = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -32,11 +32,11 @@ export const Message = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	flex-grow: 1;
 	text-align: center;
-`;
+`
 
 export const MessageButton = styled(Button).attrs({
 	size: 'large',
 	noOutline: true,
 	isRounded: true,
 	fullWidth: true,
-})``;
+})``

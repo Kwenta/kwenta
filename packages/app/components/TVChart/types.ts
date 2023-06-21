@@ -1,15 +1,15 @@
-import Wei from '@synthetixio/wei';
+import Wei from '@synthetixio/wei'
 
 export type ChartPosition = {
-	size: Wei;
-	price: Wei;
-	liqPrice?: Wei;
-};
+	size: Wei
+	price: Wei
+	liqPrice?: Wei
+}
 
 export type ChartBar = {
-	high: number;
-	low: number;
-	open: number;
-	close: number;
-	time: number;
-};
+	high: number
+	low: number
+	open: number
+	close: number
+	time: number
+}

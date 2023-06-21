@@ -1,20 +1,20 @@
-import Head from 'next/head';
-import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import Head from 'next/head'
+import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-import HomeLayout from 'sections/shared/Layout/HomeLayout';
-import { Stats } from 'sections/stats';
-import media from 'styles/media';
+import HomeLayout from 'sections/shared/Layout/HomeLayout'
+import { Stats } from 'sections/stats'
+import media from 'styles/media'
 
 type AppLayoutProps = {
-	children: React.ReactNode;
-};
+	children: React.ReactNode
+}
 
-type StatsPageComponent = FC & { layout?: FC<AppLayoutProps> };
+type StatsPageComponent = FC & { layout?: FC<AppLayoutProps> }
 
 const HomePage: StatsPageComponent = () => {
-	const { t } = useTranslation();
+	const { t } = useTranslation()
 
 	return (
 		<>
@@ -25,8 +25,8 @@ const HomePage: StatsPageComponent = () => {
 				<Stats />
 			</HomeLayout>
 		</>
-	);
-};
+	)
+}
 
 export const Container = styled.div`
 	width: 100%;
@@ -35,6 +35,6 @@ export const Container = styled.div`
 	${media.lessThan('sm')`
 		padding: 50px 15px 0 15px;
 	`}
-`;
+`
 
-export default HomePage;
+export default HomePage
