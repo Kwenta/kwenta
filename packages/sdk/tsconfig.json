@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"allowJs": false,
+		"composite": true,
+		"noEmit": false,
+		"outDir": "dist",
+		"rootDir": "src",
+		"skipLibCheck": true,
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"target": "ES6",
+		"esModuleInterop": true,
+		"declaration": true,
+		"resolveJsonModule": true,
+		"strict": true,
+    "useUnknownInCatchVariables": false,
+	},
+	"include": ["src", "src/**/**.json"],
+	"exclude": ["node_modules"],
+}

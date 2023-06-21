@@ -20,8 +20,15 @@ jobs:
       with:
         node-version: 16.x
 
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
+      id: pnpm-install
+      with:
+        version: 8
+        run_install: false
+
     - name: Build code
-      run: npm i --legacy-peer-deps && npm run build && ls 
+      run: pnpm i && cd packages/app && pnpm build
 
     - name: Create Sentry release
       uses: getsentry/action-release@v1
@@ -31,5 +38,5 @@ jobs:
         SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       with:
         environment: production
-        sourcemaps: '.next'
+        sourcemaps: 'packages/app/.next'
         ignore_missing: true

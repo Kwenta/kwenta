@@ -1,0 +1,64 @@
+import { SynthSuspensionReason } from '@kwenta/sdk/types';
+import React, { FC, memo, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
+import { marketIsOpen, marketNextOpen, marketNextTransition } from 'utils/marketHours';
+
+import Badge from './Badge';
+
+type MarketBadgeProps = {
+	currencyKey: string;
+	isFuturesMarketClosed?: boolean;
+	futuresClosureReason?: SynthSuspensionReason;
+	fallbackComponent?: ReactElement;
+};
+
+type TransitionBadgeProps = {
+	isOpen: boolean;
+};
+
+const TransitionBadge: FC<TransitionBadgeProps> = memo(({ isOpen }) => {
+	const { t } = useTranslation();
+
+	return (
+		<StyledBadge color={isOpen ? 'yellow' : 'red'}>
+			{t(`futures.market.state.${isOpen ? 'closes' : 'opens'}-soon`)}
+		</StyledBadge>
+	);
+});
+
+export const MarketBadge: FC<MarketBadgeProps> = memo(
+	({ currencyKey, isFuturesMarketClosed, futuresClosureReason, fallbackComponent }) => {
+		const { t } = useTranslation();
+		const isOpen = marketIsOpen(currencyKey);
+		const nextOpen = marketNextOpen(currencyKey);
+		const nextTransition = marketNextTransition(currencyKey);
+
+		const timerSetting = isOpen === null ? null : isOpen ? nextTransition : nextOpen;
+		const isMarketTransitioning = useIsMarketTransitioning(timerSetting ?? null);
+
+		if (typeof isFuturesMarketClosed !== 'boolean') {
+			return null;
+		}
+
+		if (isFuturesMarketClosed) {
+			const reason = futuresClosureReason || 'unknown';
+			return <Badge color="red">{t(`futures.market.state.${reason}`)}</Badge>;
+		}
+
+		if (isMarketTransitioning && isOpen !== null) {
+			return <TransitionBadge isOpen={isOpen} />;
+		}
+
+		return fallbackComponent ? fallbackComponent : null;
+	}
+);
+
+export default MarketBadge;
+
+const StyledBadge = styled(Badge)`
+	padding: 1px 5px;
+	line-height: 9px;
+`;
