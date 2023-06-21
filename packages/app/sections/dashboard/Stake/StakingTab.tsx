@@ -26,6 +26,7 @@ const StakingTab = () => {
 
 	return (
 		<SplitContainer>
+			<StakeInputCard />
 			<CardGridContainer>
 				<CardGrid>
 					<div>
@@ -47,7 +48,6 @@ const StakingTab = () => {
 					{t('dashboard.stake.tabs.staking.claim')}
 				</Button>
 			</CardGridContainer>
-			<StakeInputCard />
 		</SplitContainer>
 	);
 };

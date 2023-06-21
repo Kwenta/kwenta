@@ -124,12 +124,12 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 	return (
 		<StakingPortfolioContainer>
 			<StakingHeading>
-				<HeadingContainer>
+				<FlexDivCol rowGap="5px">
 					<StyledHeading variant="h4">{t('dashboard.stake.portfolio.title')}</StyledHeading>
 					<Body color="secondary">
 						Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.
 					</Body>
-				</HeadingContainer>
+				</FlexDivCol>
 				<Button
 					size="xsmall"
 					isRounded
@@ -155,22 +155,6 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 					</FlexDivCol>
 				))}
 			</CardsContainer>
-			<Spacer height={30} />
-			<FlexDivRow columnGap="25px" justifyContent="flex-start">
-				<FlexDivCol rowGap="5px">
-					<Body color="primary">APR</Body>
-					<Body color="secondary">15%</Body>
-				</FlexDivCol>
-				<FlexDivCol rowGap="5px">
-					<Body color="primary">Epoch</Body>
-					<FlexDivRowCentered columnGap="3px" justifyContent="flex-start">
-						<Body size="small" color="primary">
-							19
-						</Body>
-						<CaretDownIcon fill={theme.colors.selectedTheme.newTheme.text.primary} />
-					</FlexDivRowCentered>
-				</FlexDivCol>
-			</FlexDivRow>
 		</StakingPortfolioContainer>
 	);
 };
@@ -178,29 +162,25 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
 `;
-const HeadingContainer = styled(FlexDivCol)`
-	column-gap: 10px;
-`;
 
 const StakingHeading = styled(FlexDivRowCentered)`
 	margin-bottom: 30px;
 `;
 
 const StakingPortfolioContainer = styled.div`
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
-	padding: 20px;
-	border-radius: 20px;
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 	${media.lessThan('mdUp')`
 		padding: 15px;
 	`}
 	${media.greaterThan('mdUp')`
 		margin-top: 20px;
-		margin-bottom: 100px;
 	`}
 `;
 
 const CardsContainer = styled(FlexDivRowCentered)`
+	padding: 20px;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
+	border-radius: 20px;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 	width: 100%;
 	justify-content: flex-start;
 	column-gap: 60px;

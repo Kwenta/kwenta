@@ -61,25 +61,19 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 			<StakingTabsHeader>
 				<TabButtons>
 					<TabButton
+						noOutline
 						title={t('dashboard.stake.tabs.staking.title')}
 						onClick={onChangeTab(StakeTab.Staking)}
 						active={currentTab === StakeTab.Staking}
 					/>
 					<TabButton
+						noOutline
 						title={t('dashboard.stake.tabs.escrow.title')}
 						onClick={onChangeTab(StakeTab.Escrow)}
 						active={currentTab === StakeTab.Escrow}
 					/>
 					<TabButton
-						title={
-							window.innerWidth > 768
-								? t('dashboard.stake.tabs.trading-rewards.title')
-								: t('dashboard.stake.tabs.trading-rewards.mobile-title')
-						}
-						onClick={onChangeTab(StakeTab.TradingRewards)}
-						active={currentTab === StakeTab.TradingRewards}
-					/>
-					<TabButton
+						noOutline
 						title={t('dashboard.stake.tabs.redemption.title')}
 						onClick={onChangeTab(StakeTab.Redemption)}
 						active={currentTab === StakeTab.Redemption}
@@ -175,7 +169,8 @@ const PeriodLabel = styled.div`
 const StakingTabsHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 20px;
+	margin-top: 30px;
+	margin-bottom: 30px;
 
 	${media.lessThan('md')`
 		flex-direction: column;
@@ -185,7 +180,6 @@ const StakingTabsHeader = styled.div`
 `;
 
 const StakingTabsContainer = styled.div`
-	margin-bottom: 50px;
 	${media.lessThan('md')`
 		padding: 15px;
 	`}
@@ -193,8 +187,9 @@ const StakingTabsContainer = styled.div`
 
 const TabButtons = styled.div`
 	display: flex;
+
 	& > button:not(:last-of-type) {
-		margin-right: 8px;
+		margin-right: 25px;
 	}
 
 	${media.lessThan('md')`
