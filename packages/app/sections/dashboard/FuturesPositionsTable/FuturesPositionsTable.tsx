@@ -215,7 +215,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<PnlContainer>
 											<ChangePercent value={cellProps.row.original.position.pnlPct} />
 											<div>
-												<Currency.Price price={cellProps.row.original.position.pnl} />
+												<Currency.Price price={cellProps.row.original.position.pnl} colored />
 											</div>
 										</PnlContainer>
 									);
