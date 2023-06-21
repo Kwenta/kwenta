@@ -90,6 +90,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 							{
 								Header: <div>{t('dashboard.overview.synth-balances-table.market')}</div>,
 								accessor: 'market',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['synth']>(
 										cellProps.row.original.synth,
@@ -113,6 +114,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 							{
 								Header: <div>{t('dashboard.overview.synth-balances-table.amount')}</div>,
 								accessor: 'amount',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['balance']>(
 										cellProps.row.original.balance,
@@ -135,6 +137,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 							{
 								Header: <div>{t('dashboard.overview.synth-balances-table.value-in-usd')}</div>,
 								accessor: 'valueInUSD',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['usdBalance']>(
 										cellProps.row.original.usdBalance,
@@ -155,6 +158,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 							{
 								Header: <div>{t('dashboard.overview.synth-balances-table.oracle-price')}</div>,
 								accessor: 'price',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['price']>(
 										cellProps.row.original.price,
@@ -180,6 +184,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 							{
 								Header: <div>{t('dashboard.overview.synth-balances-table.daily-change')}</div>,
 								accessor: 'priceChange',
+								// @ts-expect-error
 								Cell: (cellProps: CellProps<Cell>) => {
 									return conditionalRender<Cell['priceChange']>(
 										cellProps.row.original.priceChange,
@@ -207,6 +212,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 				</div>
 			</MobileHiddenView>
 			<MobileOnlyView>
+				{/*@ts-expect-error*/}
 				<StyledMobileTable
 					data={data}
 					noResultsMessage={

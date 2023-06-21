@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { FC, useEffect } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 import media from 'styles/media';
 
-type EarnPageProps = FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type EarnPageProps = FC & { getLayout: (page: ReactNode) => JSX.Element };
 
 const EarnPage: EarnPageProps = () => {
 	const { t } = useTranslation();

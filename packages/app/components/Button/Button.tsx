@@ -221,6 +221,7 @@ const BaseButton = styled.button<BaseButtonProps>`
 `;
 
 type ButtonProps = {
+	children?: ReactNode;
 	loading?: boolean;
 	active?: boolean;
 	mono?: boolean;

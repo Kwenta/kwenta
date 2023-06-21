@@ -67,6 +67,7 @@ const AllTime: FC<AllTimeProps> = ({
 	return (
 		<>
 			<MobileHiddenView>
+				{/*@ts-expect-error*/}
 				<StyledTable
 					height={tableHeight}
 					compact={compact}
@@ -183,6 +184,7 @@ const AllTime: FC<AllTimeProps> = ({
 				/>
 			</MobileHiddenView>
 			<MobileOnlyView>
+				{/*@ts-expect-error*/}
 				<StyledTable
 					compact={compact}
 					data={data}

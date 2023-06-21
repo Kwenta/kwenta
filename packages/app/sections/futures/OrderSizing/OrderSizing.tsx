@@ -78,7 +78,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 	}, [onSizeChange, maxNativeValue]);
 
 	const onChangeValue = useCallback(
-		(_, v: string) => {
+		(_: any, v: string) => {
 			dispatch(editTradeSizeInput(v, assetInputType));
 		},
 		[dispatch, assetInputType]

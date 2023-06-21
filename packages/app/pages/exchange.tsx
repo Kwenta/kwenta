@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { FC, useEffect } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NotificationContainer from 'constants/NotificationContainer';
@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks';
 import { selectNetwork } from 'state/wallet/selectors';
 import { MobileScreenContainer } from 'styles/common';
 
-type ExchangeComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type ExchangeComponent = FC & { getLayout: (page: ReactNode) => JSX.Element };
 
 const Exchange: ExchangeComponent = () => {
 	const router = useRouter();

@@ -1,11 +1,12 @@
 import Head from 'next/head';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout';
 import History from 'sections/dashboard/History';
 import { usePollDashboardFuturesData } from 'state/futures/hooks';
 
-type HistoryPageProps = React.FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type HistoryPageProps = React.FC & { getLayout: (page: ReactNode) => JSX.Element };
 
 const HistoryPage: HistoryPageProps = () => {
 	const { t } = useTranslation();

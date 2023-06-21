@@ -88,7 +88,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 			}
 		}, [isStakeEnabled, isUnstakeEnabled, onStake, onUnstake, amount, onApprove, isApproved]);
 
-		const handleChange = useCallback((_, newValue: string) => {
+		const handleChange = useCallback((_: any, newValue: string) => {
 			if (newValue !== '' && newValue.indexOf('.') === -1) {
 				setAmount(parseFloat(newValue).toString());
 			} else {

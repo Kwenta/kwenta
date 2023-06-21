@@ -1,3 +1,4 @@
+import { WalletTradesExchangeResult } from '@kwenta/sdk/types';
 import Link from 'next/link';
 import { FC, useMemo, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,6 @@ import Connector from 'containers/Connector';
 import { blockExplorer } from 'containers/Connector/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
-import { WalletTradesExchangeResult } from '@kwenta/sdk/types';
 import { useAppSelector } from 'state/hooks';
 import { selectSynthsMap } from 'state/wallet/selectors';
 import { ExternalLink } from 'styles/common';
@@ -50,6 +50,7 @@ const SpotHistoryTable: FC = () => {
 
 	return (
 		<TableContainer>
+			{/*@ts-expect-error*/}
 			<StyledTable
 				data={filteredHistoricalTrades}
 				showPagination

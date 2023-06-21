@@ -78,9 +78,9 @@ export default class Context implements IContext {
 
 	public async setProvider(provider: ethers.providers.Provider) {
 		this.context.provider = provider;
-		const networkId = ((await provider.getNetwork()).chainId as unknown) as NetworkId;
+		this.multicallProvider.init(provider);
+		const networkId = (await provider.getNetwork()).chainId as NetworkId;
 
-		this.multicallProvider = new EthCallProvider(networkId, provider);
 		this.setNetworkId(networkId);
 
 		return networkId;

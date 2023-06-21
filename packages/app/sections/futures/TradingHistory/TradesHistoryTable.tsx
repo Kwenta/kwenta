@@ -54,7 +54,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 
 	const observer = useRef<IntersectionObserver | null>(null);
 	const lastElementRef = useCallback(
-		(node) => {
+		(node: any) => {
 			if (futuresTradesQuery.isLoading || data.length < 16) return;
 			if (observer) {
 				if (observer.current) {
@@ -99,6 +99,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	return (
 		<HistoryContainer mobile={mobile}>
 			<div style={{ height: '100%' }}>
+				{/* @ts-expect-error */}
 				<StyledTable
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}

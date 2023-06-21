@@ -43,7 +43,7 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 	);
 
 	const onChangeValue = useCallback(
-		(_, v: string) => {
+		(_: any, v: string) => {
 			onSizeChange(v);
 		},
 		[onSizeChange]

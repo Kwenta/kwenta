@@ -1,3 +1,4 @@
+import { suggestedDecimals } from '@kwenta/sdk/utils';
 import { wei } from '@synthetixio/wei';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
@@ -10,7 +11,6 @@ import { FlexDivRow } from 'components/layout/flex';
 import { StyledCaretDownIcon } from 'components/Select/Select';
 import SelectorButtons from 'components/SelectorButtons/SelectorButtons';
 import Spacer from 'components/Spacer';
-import { suggestedDecimals } from '@kwenta/sdk/utils';
 import { selectAckedOrdersWarning } from 'state/app/selectors';
 import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer';
 import {
@@ -52,7 +52,7 @@ export default function SLTPInputs() {
 	}, [leverage]);
 
 	const onSelectStopLossPercent = useCallback(
-		(index) => {
+		(index: number) => {
 			const option = SL_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 			const relativePercent = wei(percent).div(leverageWei);
@@ -67,7 +67,7 @@ export default function SLTPInputs() {
 	);
 
 	const onSelectTakeProfit = useCallback(
-		(index) => {
+		(index: number) => {
 			const option = TP_OPTIONS[index];
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100;
 			const relativePercent = wei(percent).div(leverageWei);

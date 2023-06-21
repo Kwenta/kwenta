@@ -193,11 +193,9 @@ const StakingPortfolioContainer = styled.div`
 	padding: 20px;
 	border-radius: 20px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
-
 	${media.lessThan('mdUp')`
 		padding: 15px;
 	`}
-
 	${media.greaterThan('mdUp')`
 		margin-top: 20px;
 		margin-bottom: 100px;

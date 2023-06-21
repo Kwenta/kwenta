@@ -33,7 +33,7 @@ export default function OrderSizeSlider() {
 	const [usdValue, setUsdValue] = useState(susdSizeString);
 
 	const onChangeMarginPercent = useCallback(
-		(value, commit = false) => {
+		(value: any, commit = false) => {
 			setPercent(value);
 			const fraction = value / 100;
 			const usdAmount = maxUsdInputAmount.mul(fraction).toString();

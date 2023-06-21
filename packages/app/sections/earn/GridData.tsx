@@ -1,4 +1,4 @@
-import { FC, memo } from 'react';
+import { FC, ReactNode, memo } from 'react';
 import styled from 'styled-components';
 
 import { LogoText, Body, Heading } from 'components/Text';
@@ -8,6 +8,7 @@ type GridDataProps = {
 	title: string;
 	value: string;
 	hasKwentaLogo?: boolean;
+	children?: ReactNode;
 };
 
 const GridData: FC<GridDataProps> = memo(({ title, value, hasKwentaLogo, children }) => (

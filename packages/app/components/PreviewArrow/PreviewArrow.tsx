@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { ReactNode, memo } from 'react';
 import styled from 'styled-components';
 
 import { MiniLoader } from 'components/Loader';
@@ -6,6 +6,7 @@ import { MiniLoader } from 'components/Loader';
 type TextColor = 'yellow' | 'red';
 
 type PreviewArrowProps = {
+	children?: ReactNode;
 	color?: TextColor;
 	showPreview: boolean;
 	loading?: boolean;

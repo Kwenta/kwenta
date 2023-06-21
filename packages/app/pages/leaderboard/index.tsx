@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -8,7 +8,7 @@ import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
 
-type LeaderComponent = FC & { getLayout: (page: HTMLElement) => JSX.Element };
+type LeaderComponent = FC & { getLayout: (page: ReactNode) => JSX.Element };
 
 const Leader: LeaderComponent = () => {
 	const { t } = useTranslation();

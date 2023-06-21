@@ -1,10 +1,11 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 type BadgeProps = {
 	color?: 'yellow' | 'red' | 'gray';
 	size?: 'small' | 'regular';
 	dark?: boolean;
+	children?: ReactNode;
 };
 
 const Badge: FC<BadgeProps> = ({ color = 'yellow', size = 'regular', dark, ...props }) => {

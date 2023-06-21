@@ -97,6 +97,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		return (
 			<>
 				<DesktopOnlyView>
+					{/*@ts-expect-error*/}
 					<StyledTable
 						height={tableHeight}
 						compact={compact}
@@ -207,6 +208,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 					/>
 				</DesktopOnlyView>
 				<MobileOrTabletView>
+					{/*@ts-expect-error*/}
 					<StyledTable
 						data={data}
 						compact={compact}

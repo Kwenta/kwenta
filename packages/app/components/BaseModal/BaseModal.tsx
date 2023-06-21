@@ -20,6 +20,7 @@ type BaseModalProps = {
 };
 
 type ModalContentWrapperProps = {
+	children: ReactNode;
 	rndProps?: Props;
 };
 

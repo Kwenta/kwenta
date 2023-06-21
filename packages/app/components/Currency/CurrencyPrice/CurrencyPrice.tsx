@@ -1,3 +1,4 @@
+import { formatCurrency, FormatCurrencyOptions } from '@kwenta/sdk/utils';
 import { wei, WeiSource } from '@synthetixio/wei';
 import React, { FC, memo } from 'react';
 import styled from 'styled-components';
@@ -6,7 +7,6 @@ import ChangePercent from 'components/ChangePercent';
 import { ContainerRowMixin } from 'components/layout/grid';
 import { NumericValue } from 'components/Text';
 import { CurrencyKey } from 'constants/currency';
-import { formatCurrency, FormatCurrencyOptions } from '@kwenta/sdk/utils';
 
 type CurrencyPriceProps = {
 	currencyKey?: CurrencyKey;

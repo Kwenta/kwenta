@@ -1,4 +1,4 @@
-import { memo, FC } from 'react';
+import React, { memo, FC } from 'react';
 import styled, { css } from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
@@ -7,6 +7,7 @@ import { BodyProps } from 'components/Text/Body';
 import { NO_VALUE } from 'constants/placeholder';
 
 type InfoBoxRowProps = {
+	children?: React.ReactNode;
 	title: string;
 	value: React.ReactNode;
 	keyNode?: React.ReactNode;

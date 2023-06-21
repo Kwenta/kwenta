@@ -1,4 +1,4 @@
-import reverseRecordsAbi from '@kwenta/sdk/dist/contracts/abis/ReverseRecords.json';
+// import reverseRecordsAbi from '@kwenta/sdk/dist/contracts/abis/ReverseRecords.json';
 import { Contract } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 
@@ -18,7 +18,7 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 		async () => {
 			const ReverseLookup = new Contract(
 				ENS_REVERSE_LOOKUP,
-				reverseRecordsAbi,
+				['function getNames(address[] addresses) external view returns (string[] r)'],
 				staticMainnetProvider
 			);
 

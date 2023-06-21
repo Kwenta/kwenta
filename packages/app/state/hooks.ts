@@ -24,7 +24,7 @@ type ActionType = AsyncThunkAction<any, any, any> | AppThunk<any>;
 // The sdk would only poll when there are registered listeners
 
 export const useStartPollingAction = () => {
-	const intervalRefs = useRef<Record<string, number>>({});
+	const intervalRefs = useRef<Record<string, ReturnType<typeof setInterval>>>({});
 	const dispatch = useAppDispatch();
 
 	const startPolling = useCallback(

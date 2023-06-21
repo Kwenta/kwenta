@@ -82,6 +82,7 @@ const EscrowTable = () => {
 	return (
 		<EscrowTableContainer $noPadding>
 			<DesktopOnlyView>
+				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
 					compactPagination
@@ -172,6 +173,7 @@ const EscrowTable = () => {
 				/>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
+				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
 					compactPagination

@@ -147,7 +147,6 @@ import {
 	PreviewAction,
 	TradePreviewParams,
 } from './types';
-
 export const fetchMarkets = createAsyncThunk<
 	{ markets: FuturesMarket<string>[]; networkId: NetworkId } | undefined,
 	void,
@@ -1608,19 +1607,20 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 				orderInputs.keeperEthDeposit = keeperEthDeposit;
 			}
 
-			const tx = isClosing
-				? await sdk.futures.closeCrossMarginPosition(
-						{ address: market.market, key: market.marketKey },
-						account,
-						preview.desiredFillPrice
-				  )
-				: await sdk.futures.submitCrossMarginOrder(
-						{ address: market.market, key: market.marketKey },
-						wallet,
-						account,
-						orderInputs,
-						{ cancelPendingReduceOrders: isClosing }
-				  );
+			const tx =
+				isClosing && orderType === 'market'
+					? await sdk.futures.closeCrossMarginPosition(
+							{ address: market.market, key: market.marketKey },
+							account,
+							preview.desiredFillPrice
+					  )
+					: await sdk.futures.submitCrossMarginOrder(
+							{ address: market.market, key: market.marketKey },
+							wallet,
+							account,
+							orderInputs,
+							{ cancelPendingReduceOrders: isClosing }
+					  );
 
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));

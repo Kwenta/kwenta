@@ -1,4 +1,4 @@
-import { memo, FC } from 'react';
+import { memo, FC, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 import HelpIcon from 'assets/svg/app/question-mark.svg';
@@ -13,6 +13,7 @@ type LogoTextProps = {
 	kwentaIcon?: boolean;
 	bold?: boolean;
 	size?: 'medium' | 'large';
+	children?: ReactNode;
 };
 
 export const LogoText: FC<LogoTextProps> = memo(

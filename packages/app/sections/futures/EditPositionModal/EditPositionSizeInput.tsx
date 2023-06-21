@@ -53,13 +53,13 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 		}, [onSizeChange, maxNativeValue]);
 
 		const onChangeValue = useCallback(
-			(_, v: string) => {
+			(_: any, v: string) => {
 				onSizeChange(v);
 			},
 			[onSizeChange]
 		);
 
-		const onChangeSlider = useCallback((_, v: number | number[]) => onSizeChange(String(v)), [
+		const onChangeSlider = useCallback((_: any, v: number | number[]) => onSizeChange(String(v)), [
 			onSizeChange,
 		]);
 

@@ -167,6 +167,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 						<TableHeader>{t('futures.market.user.open-orders.table.market-type')}</TableHeader>
 					),
 					accessor: 'market',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<any>) => {
 						return (
 							<TableMarketDetails
@@ -189,6 +190,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 				{
 					Header: <TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>,
 					accessor: 'side',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<any>) => {
 						return (
 							<div>
@@ -202,6 +204,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 				{
 					Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
 					accessor: 'size',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<any>) => {
 						return (
 							<div>
@@ -215,6 +218,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 				{
 					Header: <TableHeader>{t('futures.market.user.open-orders.table.status')}</TableHeader>,
 					accessor: 'status',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<any>) => {
 						return (
 							<div>
@@ -241,6 +245,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 				{
 					Header: <TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>,
 					accessor: 'actions',
+					// @ts-expect-error
 					Cell: (cellProps: CellProps<any>) => {
 						return (
 							<div>
