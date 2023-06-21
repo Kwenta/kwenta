@@ -62,6 +62,13 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				href: ROUTES.Dashboard.Markets,
 			},
 			{
+				name: Tab.Governance,
+				label: t('dashboard.tabs.governance'),
+				active: activeTab === Tab.Governance,
+				href: EXTERNAL_LINKS.Docs.Governance,
+				external: true,
+			},
+			{
 				name: Tab.Stake,
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
@@ -72,13 +79,6 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				label: t('dashboard.tabs.rewards'),
 				active: activeTab === Tab.Rewards,
 				href: ROUTES.Dashboard.Rewards,
-			},
-			{
-				name: Tab.Governance,
-				label: t('dashboard.tabs.governance'),
-				active: activeTab === Tab.Governance,
-				href: EXTERNAL_LINKS.Docs.Governance,
-				external: true,
 			},
 		],
 		[t, activeTab]
@@ -93,16 +93,12 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 							<StyledTabList>
 								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
 								{TABS.slice(0, 3).map(({ name, label, active, ...rest }) => (
-									<NavLink key={name} title={name} isActive={active} {...rest}>
-										{label}
-									</NavLink>
+									<NavLink key={name} title={label} isActive={active} {...rest} />
 								))}
 
 								<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
 								{TABS.slice(3).map(({ name, label, active, ...rest }) => (
-									<NavLink key={name} title={name} isActive={active} {...rest}>
-										{label}
-									</NavLink>
+									<NavLink key={name} title={label} isActive={active} {...rest} />
 								))}
 							</StyledTabList>
 							<Links />
