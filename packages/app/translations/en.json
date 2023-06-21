@@ -554,12 +554,32 @@
 		"stake": {
 			"portfolio": {
 				"title": "Staking Dashboard",
-				"liquid": "Liquid",
-				"escrow": "Escrow",
-				"staked": "Staked",
-				"staked-escrow": "Staked Escrow",
-				"claimable": "Claimable",
-				"vestable": "Vestable"
+				"balance": {
+					"title": "Balance",
+					"liquid": "Liquid",
+					"escrow": "Escrow"
+				},
+				"escrow": {
+					"title": "Escrow",
+					"staked": "Staked",
+					"vestable": "Vestable"
+				},
+				"rewards": {
+					"title": "Rewards",
+					"claimable": "Claimable"
+				},
+				"early-vest-rewards": {
+					"title": "Early Vest Rewards",
+					"claimable": "Claimable",
+					"epoch": "Epoch"
+				},
+				"cooldown": {
+					"title": "Cooldown",
+					"time-left": "Time Left",
+					"last-date": "Last Date"
+				},
+				"apr": "APR",
+				"epoch": "Epoch"
 			},
 			"tabs": {
 				"staking": {
