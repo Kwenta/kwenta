@@ -1,12 +1,11 @@
 import { FC } from 'react'
 import styled, { css } from 'styled-components'
 
+import GitbookIcon from 'assets/svg/gitbook.svg'
+import DiscordIcon from 'assets/svg/social/discord-2.svg'
+import MirrorIcon from 'assets/svg/social/mirror-2.svg'
+import TwitterIcon from 'assets/svg/social/twitter-2.svg'
 import { EXTERNAL_LINKS } from 'constants/links'
-
-import GitbookIcon from '../../../assets/svg/gitbook.svg'
-import DiscordIcon from '../../../assets/svg/social/discord-2.svg'
-import MirrorIcon from '../../../assets/svg/social/mirror-2.svg'
-import TwitterIcon from '../../../assets/svg/social/twitter-2.svg'
 
 type LinksProps = {
 	isMobile?: boolean
