@@ -1288,7 +1288,6 @@ export const modifyIsolatedPosition = createAsyncThunk<void, void, ThunkConfig>(
 					hash: null,
 				})
 			);
-
 			const tx = await sdk.futures.submitIsolatedMarginOrder(
 				marketInfo.market,
 				wei(nativeSizeDelta),
@@ -1348,35 +1347,6 @@ export const executeDelayedOrder = createAsyncThunk<void, ExecuteDelayedOrderInp
 			dispatch(updateTransactionHash(tx.hash));
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(fetchIsolatedOpenOrders());
-		} catch (err) {
-			dispatch(handleTransactionError(err.message));
-			throw err;
-		}
-	}
-);
-
-export const closeIsolatedMarginPosition = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/closeIsolatedMarginPosition',
-	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState());
-		const closePreview = selectClosePositionPreview(getState());
-		const desiredFillPrice = closePreview?.desiredFillPrice ?? wei(0);
-		if (!marketInfo) throw new Error('Market info not found');
-		try {
-			dispatch(
-				setTransaction({
-					status: TransactionStatus.AwaitingExecution,
-					type: 'close_isolated',
-					hash: null,
-				})
-			);
-			const tx = await sdk.futures.closeIsolatedPosition(marketInfo.market, desiredFillPrice);
-			await monitorAndAwaitTransaction(dispatch, tx);
-			await tx.wait();
-			dispatch(setOpenModal(null));
-			// TODO: More reliable balance updates
-			setTimeout(() => dispatch(fetchBalances()), 1000);
-			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;
@@ -1637,19 +1607,20 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 				orderInputs.keeperEthDeposit = keeperEthDeposit;
 			}
 
-			const tx = isClosing
-				? await sdk.futures.closeCrossMarginPosition(
-						{ address: market.market, key: market.marketKey },
-						account,
-						preview.desiredFillPrice
-				  )
-				: await sdk.futures.submitCrossMarginOrder(
-						{ address: market.market, key: market.marketKey },
-						wallet,
-						account,
-						orderInputs,
-						{ cancelPendingReduceOrders: isClosing }
-				  );
+			const tx =
+				isClosing && orderType === 'market'
+					? await sdk.futures.closeCrossMarginPosition(
+							{ address: market.market, key: market.marketKey },
+							account,
+							preview.desiredFillPrice
+					  )
+					: await sdk.futures.submitCrossMarginOrder(
+							{ address: market.market, key: market.marketKey },
+							wallet,
+							account,
+							orderInputs,
+							{ cancelPendingReduceOrders: isClosing }
+					  );
 
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setOpenModal(null));
@@ -1664,17 +1635,17 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 );
 
 export const submitIsolatedMarginReducePositionOrder = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/submitSmartMarginReducePositionOrder',
+	'futures/submitIsolatedMarginReducePositionOrder',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
 		const { market } = selectEditPositionModalInfo(getState());
 		const closePreview = selectClosePositionPreview(getState());
-		const desiredFillPrice = closePreview?.price ?? wei(0);
 		const { nativeSizeDelta } = selectClosePositionOrderInputs(getState());
 		const wallet = selectWallet(getState());
 
 		try {
 			if (!market) throw new Error('Market info not found');
 			if (!wallet) throw new Error('No wallet connected');
+			if (!closePreview) throw new Error('Failed to generate trade preview');
 			if (!nativeSizeDelta || nativeSizeDelta === '') throw new Error('No size amount set');
 
 			dispatch(
@@ -1688,51 +1659,13 @@ export const submitIsolatedMarginReducePositionOrder = createAsyncThunk<void, vo
 			const tx = await sdk.futures.submitIsolatedMarginOrder(
 				market.market,
 				wei(nativeSizeDelta),
-				desiredFillPrice
+				closePreview.desiredFillPrice
 			);
 
 			await monitorAndAwaitTransaction(dispatch, tx);
 			dispatch(setShowPositionModal(null));
 			dispatch(fetchBalances());
 			dispatch(clearTradeInputs());
-		} catch (err) {
-			dispatch(handleTransactionError(err.message));
-			throw err;
-		}
-	}
-);
-
-export const closeCrossMarginPosition = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/closeCrossMarginPosition',
-	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const { position, market } = selectEditPositionModalInfo(getState());
-		const crossMarginAccount = selectCrossMarginAccount(getState());
-		const closePreview = selectClosePositionPreview(getState());
-		const desiredFillPrice = closePreview?.price ?? wei(0);
-
-		try {
-			if (!position?.position) throw new Error('No position to close');
-			if (!crossMarginAccount) throw new Error('No smart margin account');
-			if (!market) throw new Error('Missing market info');
-
-			dispatch(
-				setTransaction({
-					status: TransactionStatus.AwaitingExecution,
-					type: 'close_cross_margin',
-					hash: null,
-				})
-			);
-			const tx = await sdk.futures.closeCrossMarginPosition(
-				{
-					address: market.market,
-					key: market.marketKey,
-				},
-				crossMarginAccount,
-				desiredFillPrice
-			);
-			await monitorAndAwaitTransaction(dispatch, tx);
-			dispatch(setOpenModal(null));
-			dispatch(fetchBalances());
 		} catch (err) {
 			dispatch(handleTransactionError(err.message));
 			throw err;

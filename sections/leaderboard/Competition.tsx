@@ -15,7 +15,7 @@ import { AccountStat } from 'queries/futures/types';
 import { formatPercent } from 'sdk/utils/number';
 import { StyledTrader } from 'sections/leaderboard/trader';
 import { getMedal, getCompetitionDataLocation } from 'utils/competition';
-import { truncateAddress } from 'utils/formatters/string';
+import { truncateAddress } from 'sdk/utils/string';
 
 type CompetitionProps = {
 	round: CompetitionRound;

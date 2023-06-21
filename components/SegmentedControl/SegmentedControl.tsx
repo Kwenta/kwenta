@@ -1,10 +1,10 @@
 import React, { FC, memo } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export type StyleType = 'tab' | 'check' | 'pill-button' | 'pill-button-large';
 
 interface SegmentedControlProps {
-	values: string[];
+	values: React.ReactNode[];
 	selectedIndex?: number;
 	style?: React.CSSProperties;
 	className?: string;
@@ -12,18 +12,20 @@ interface SegmentedControlProps {
 	suffix?: string;
 	isLarge?: boolean | undefined;
 	onChange(index: number): void;
+	icon?: boolean;
 }
 
 const SegmentedControl: FC<SegmentedControlProps> = memo(
-	({ values, selectedIndex, suffix, onChange, styleType = 'tab', ...props }) => {
+	({ values, selectedIndex, suffix, onChange, styleType = 'tab', icon, ...props }) => {
 		return (
 			<SegmentedControlContainer $length={values.length} styleType={styleType} {...props}>
 				{values.map((value, index) => (
 					<SegmentedControlOption
 						styleType={styleType}
-						key={value}
+						key={index}
 						isSelected={selectedIndex === index}
 						onClick={() => onChange(index)}
+						$icon={icon}
 					>
 						{styleType === 'check' && <CheckBox selected={selectedIndex === index} />}
 						{value}
@@ -57,7 +59,11 @@ const SegmentedControlContainer = styled.div<{ $length: number; styleType: Style
 	border-radius: 8px;
 `;
 
-const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: StyleType }>`
+const SegmentedControlOption = styled.button<{
+	isSelected: boolean;
+	styleType: StyleType;
+	$icon?: boolean;
+}>`
 	font-size: ${(props) =>
 		props.styleType === 'pill-button' || props.styleType === 'pill-button-large' ? '12px' : '13px'};
 	font-family: ${(props) =>
@@ -108,6 +114,20 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean; styleType: S
 		props.isSelected &&
 		(props.styleType === 'pill-button' || props.styleType === 'pill-button-large') &&
 		props.theme.colors.common.darkYellow};
+
+	${(props) =>
+		props.$icon &&
+		css`
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			svg {
+				fill: ${props.theme.colors.selectedTheme.newTheme.button.tab[
+					props.isSelected ? 'active' : 'inactive'
+				]};
+			}
+		`}
 	transition: all 0.1s ease-in-out;
 	&:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.icon.hover};

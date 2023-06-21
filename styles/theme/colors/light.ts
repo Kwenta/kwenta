@@ -27,6 +27,10 @@ const newTheme = {
 				background: common.palette.neutral.n30,
 			},
 		},
+		tab: {
+			active: common.palette.neutral.n1000,
+			inactive: common.palette.neutral.n50,
+		},
 		position: {
 			long: {
 				color: common.palette.green.g900,

@@ -19,7 +19,7 @@ import { useAppSelector } from 'state/hooks';
 import { FetchStatus } from 'state/types';
 import { ExternalLink } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
-import { truncateAddress } from 'utils/formatters/string';
+import { truncateAddress } from 'sdk/utils/string';
 
 const Transfers: FC = () => {
 	const { t } = useTranslation();

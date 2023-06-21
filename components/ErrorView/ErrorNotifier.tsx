@@ -3,7 +3,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import styled, { useTheme } from 'styled-components';
 
 import ErrorIcon from 'assets/svg/app/error.svg';
-import { truncateString } from 'utils/formatters/string';
+import { truncateString } from 'sdk/utils/string';
 
 function ToastContent({ message, errorDetails }: { message: string; errorDetails?: string }) {
 	const [expanded, setExpanded] = useState(false);

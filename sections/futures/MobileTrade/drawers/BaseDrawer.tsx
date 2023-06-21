@@ -63,6 +63,8 @@ const StyledModal = styled(FullScreenModal)`
 `;
 
 const Background = styled.div`
+	display: flex;
+	align-items: flex-end;
 	background-color: rgba(0, 0, 0, 0.5);
 	height: 100%;
 	width: 100%;
@@ -72,6 +74,7 @@ const Foreground = styled.div`
 	background: ${(props) => props.theme.colors.selectedTheme.background};
 	padding: 15px;
 	border-radius: 8px 8px 0 0;
+	width: 100%;
 `;
 
 const Row = styled.div`
