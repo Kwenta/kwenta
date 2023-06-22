@@ -97,7 +97,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	)
 
 	const getPastPrice = useCallback(
-		(asset: string) => pastPrices.find((price) => price.synth === getDisplayAsset(asset)),
+		(asset: string) =>
+			pastPrices.find((price) => price.synth === getDisplayAsset(asset)?.toUpperCase()),
 		[pastPrices]
 	)
 
