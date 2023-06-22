@@ -273,7 +273,7 @@ const Assets = () => {
 												{volume === 0 ? (
 													<>-</>
 												) : (
-													<Currency.Price price={volume} formatOptions={{ minDecimals: 0 }} />
+													<Currency.Price price={volume} formatOptions={{ truncateOver: 1e3 }} />
 												)}
 											</StatsValue>
 										</StatsValueContainer>
