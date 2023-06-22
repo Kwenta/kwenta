@@ -1,7 +1,7 @@
 declare module '*.png' {
-	const content: any;
+	const content: any
 
-	export default content;
+	export default content
 }
 
 declare module '*.svg' {
@@ -10,7 +10,7 @@ declare module '*.svg' {
 	 * `@svgr/webpack` plugin or
 	 * `babel-plugin-inline-react-svg` plugin.
 	 */
-	const content: any;
+	const content: any
 
-	export default content;
+	export default content
 }

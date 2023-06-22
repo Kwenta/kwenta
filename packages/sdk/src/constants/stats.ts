@@ -4,4 +4,4 @@ export const DEFAULT_LEADERBOARD_DATA = {
 	wallet: [],
 	search: [],
 	all: [],
-};
+}

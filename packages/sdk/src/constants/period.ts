@@ -16,7 +16,7 @@ export const PERIOD_DISPLAY: Record<Period, string> = {
 	TWO_WEEKS: '2W',
 	ONE_MONTH: '1M',
 	ONE_YEAR: '1Y',
-};
+}
 
 export const PERIOD_IN_HOURS: Record<Period, number> = {
 	ONE_HOUR: 1,
@@ -26,7 +26,7 @@ export const PERIOD_IN_HOURS: Record<Period, number> = {
 	ONE_WEEK: 168,
 	TWO_WEEKS: 336,
 	ONE_YEAR: 8766,
-};
+}
 
 export const PERIOD_IN_SECONDS: Record<Period, number> = {
 	ONE_HOUR: 60 * 60,
@@ -36,8 +36,8 @@ export const PERIOD_IN_SECONDS: Record<Period, number> = {
 	ONE_WEEK: 168 * 60 * 60,
 	TWO_WEEKS: 336 * 60 * 60,
 	ONE_YEAR: 8766 * 60 * 60,
-};
+}
 
-export const SECONDS_PER_DAY = 24 * 60 * 60;
+export const SECONDS_PER_DAY = 24 * 60 * 60
 
-export const MILLISECONDS_PER_DAY = SECONDS_PER_DAY * 1000;
+export const MILLISECONDS_PER_DAY = SECONDS_PER_DAY * 1000

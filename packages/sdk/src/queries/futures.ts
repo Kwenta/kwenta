@@ -1,21 +1,21 @@
-import { formatBytes32String } from '@ethersproject/strings';
-import request, { gql } from 'graphql-request';
+import { formatBytes32String } from '@ethersproject/strings'
+import request, { gql } from 'graphql-request'
 
-import KwentaSDK from '..';
+import KwentaSDK from '..'
 import {
 	SMART_MARGIN_FRAGMENT,
 	ISOLATED_MARGIN_FRAGMENT,
 	DEFAULT_NUMBER_OF_TRADES,
-} from '../constants/futures';
-import { FuturesMarketAsset, FuturesMarketKey } from '../types/futures';
-import { mapMarginTransfers, mapSmartMarginTransfers } from '../utils/futures';
-import { FuturesAccountType, getFuturesPositions, getFuturesTrades } from '../utils/subgraph';
+} from '../constants/futures'
+import { FuturesMarketAsset, FuturesMarketKey } from '../types/futures'
+import { mapMarginTransfers, mapSmartMarginTransfers } from '../utils/futures'
+import { FuturesAccountType, getFuturesPositions, getFuturesTrades } from '../utils/subgraph'
 
 export const queryAccountsFromSubgraph = async (
 	sdk: KwentaSDK,
 	walletAddress: string | null
 ): Promise<string[]> => {
-	if (!walletAddress) return [];
+	if (!walletAddress) return []
 	const response: any = await request(
 		sdk.futures.futuresGqlEndpoint,
 		gql`
@@ -27,9 +27,9 @@ export const queryAccountsFromSubgraph = async (
 			}
 		`,
 		{ owner: walletAddress }
-	);
-	return response?.crossMarginAccounts.map((cm: { id: string }) => cm.id) || [];
-};
+	)
+	return response?.crossMarginAccounts.map((cm: { id: string }) => cm.id) || []
+}
 
 export const queryCrossMarginAccounts = async (
 	sdk: KwentaSDK,
@@ -38,25 +38,25 @@ export const queryCrossMarginAccounts = async (
 	// TODO: Contract should be updating to support one to many
 	const accounts = await sdk.context.contracts.SmartMarginAccountFactory?.getAccountsOwnedBy(
 		walletAddress
-	);
-	return accounts ?? [];
-};
+	)
+	return accounts ?? []
+}
 
 export const queryTrades = async (
 	sdk: KwentaSDK,
 	params: {
-		walletAddress: string;
-		accountType: FuturesAccountType;
-		marketAsset?: string;
-		pageLength: number;
+		walletAddress: string
+		accountType: FuturesAccountType
+		marketAsset?: string
+		pageLength: number
 	}
 ) => {
 	const filter: Record<string, string> = {
 		account: params.walletAddress,
 		accountType: params.accountType === 'isolated_margin' ? 'isolated_margin' : 'smart_margin',
-	};
+	}
 	if (params.marketAsset) {
-		filter['asset'] = formatBytes32String(params.marketAsset);
+		filter['asset'] = formatBytes32String(params.marketAsset)
 	}
 	return getFuturesTrades(
 		sdk.futures.futuresGqlEndpoint,
@@ -87,8 +87,8 @@ export const queryTrades = async (
 			trackingCode: true,
 			fundingAccrued: true,
 		}
-	);
-};
+	)
+}
 
 export const queryPositionHistory = (sdk: KwentaSDK, account: string) => {
 	return getFuturesPositions(
@@ -132,8 +132,8 @@ export const queryPositionHistory = (sdk: KwentaSDK, account: string) => {
 			lastPrice: true,
 			exitPrice: true,
 		}
-	);
-};
+	)
+}
 
 export const queryCompletePositionHistory = (sdk: KwentaSDK, account: string) => {
 	return getFuturesPositions(
@@ -177,22 +177,22 @@ export const queryCompletePositionHistory = (sdk: KwentaSDK, account: string) =>
 			lastPrice: true,
 			exitPrice: true,
 		}
-	);
-};
+	)
+}
 
 export const queryIsolatedMarginTransfers = async (sdk: KwentaSDK, account: string) => {
 	const response: any = await request(sdk.futures.futuresGqlEndpoint, ISOLATED_MARGIN_FRAGMENT, {
 		walletAddress: account,
-	});
-	return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
-};
+	})
+	return response ? mapMarginTransfers(response.futuresMarginTransfers) : []
+}
 
 export const querySmartMarginTransfers = async (sdk: KwentaSDK, account: string) => {
 	const response: any = await request(sdk.futures.futuresGqlEndpoint, SMART_MARGIN_FRAGMENT, {
 		walletAddress: account,
-	});
-	return response ? mapSmartMarginTransfers(response.smartMarginAccountTransfers) : [];
-};
+	})
+	return response ? mapSmartMarginTransfers(response.smartMarginAccountTransfers) : []
+}
 
 export const queryFuturesTrades = (
 	sdk: KwentaSDK,
@@ -233,8 +233,8 @@ export const queryFuturesTrades = (
 			fundingAccrued: true,
 			trackingCode: true,
 		}
-	);
-};
+	)
+}
 
 export const queryFundingRateHistory = async (
 	sdk: KwentaSDK,
@@ -260,10 +260,10 @@ export const queryFundingRateHistory = async (
 			}
 		`,
 		{ marketAsset: formatBytes32String(marketAsset), minTimestamp, period }
-	);
+	)
 
 	return response.fundingRatePeriods.map((x: any) => ({
 		timestamp: Number(x.timestamp) * 1000,
 		fundingRate: Number(x.fundingRate),
-	}));
-};
+	}))
+}

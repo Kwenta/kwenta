@@ -1,1 +1,1 @@
-export * from './synths';
+export * from './synths'

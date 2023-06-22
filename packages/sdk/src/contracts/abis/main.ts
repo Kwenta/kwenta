@@ -7,4 +7,4 @@ export const StakingRewardsABI = [
 	'function rewardRate() public view returns (uint256)',
 	'function totalSupply() public view returns (uint256)',
 	'function getReward() public',
-];
+]

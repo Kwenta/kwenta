@@ -1,6 +1,6 @@
-import { wei } from '@synthetixio/wei';
-import { ethers } from 'ethers';
-import { gql } from 'graphql-request';
+import { wei } from '@synthetixio/wei'
+import { ethers } from 'ethers'
+import { gql } from 'graphql-request'
 
 import {
 	FuturesMarketAsset,
@@ -8,14 +8,14 @@ import {
 	FuturesMarketKey,
 	SmartMarginOrderType,
 	FuturesOrderType,
-} from '../types/futures';
-import { weiFromWei } from '../utils/number';
+} from '../types/futures'
+import { weiFromWei } from '../utils/number'
 
-export const KWENTA_TRACKING_CODE = ethers.utils.formatBytes32String('KWENTA');
+export const KWENTA_TRACKING_CODE = ethers.utils.formatBytes32String('KWENTA')
 
 // Defaults
 
-export const DEFAULT_NUMBER_OF_TRADES = 32;
+export const DEFAULT_NUMBER_OF_TRADES = 32
 
 export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
 	MARKET: '1',
@@ -23,47 +23,47 @@ export const DEFAULT_PRICE_IMPACT_DELTA_PERCENT = {
 	LIMIT: '4',
 	STOP_LOSS: '5',
 	TAKE_PROFIT: '5',
-};
+}
 
-export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/version/0.0.9/api`;
+export const FUTURES_ENDPOINT_OP_MAINNET = `https://subgraph.satsuma-prod.com/${process.env.NEXT_PUBLIC_SATSUMA_API_KEY}/kwenta/optimism-perps/version/0.0.9/api`
 
 export const FUTURES_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-perps';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-perps'
 
-export const MAIN_ENDPOINT_MAINNET = `https://gateway.thegraph.com/api/${process.env.NEXT_PUBLIC_THEGRAPH_API_KEY}/subgraphs/id/HLy7PdmPJuVGjjmPNz1vW5RCCRpqzRWony2fSn7UKpf9`;
+export const MAIN_ENDPOINT_MAINNET = `https://gateway.thegraph.com/api/${process.env.NEXT_PUBLIC_THEGRAPH_API_KEY}/subgraphs/id/HLy7PdmPJuVGjjmPNz1vW5RCCRpqzRWony2fSn7UKpf9`
 
 export const MAIN_ENDPOINT_OP_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main'
 
 export const MAIN_ENDPOINT_OP_GOERLI =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main'
 
-export const KWENTA_PYTH_SERVER = 'https://price.kwenta.io';
+export const KWENTA_PYTH_SERVER = 'https://price.kwenta.io'
 
-export const PUBLIC_PYTH_SERVER = 'https://xc-mainnet.pyth.network';
+export const PUBLIC_PYTH_SERVER = 'https://xc-mainnet.pyth.network'
 
-export const SL_TP_MAX_SIZE = weiFromWei(ethers.constants.MaxInt256);
+export const SL_TP_MAX_SIZE = weiFromWei(ethers.constants.MaxInt256)
 
-export const ORDERS_FETCH_SIZE = 500;
+export const ORDERS_FETCH_SIZE = 500
 
-export const ISOLATED_MARGIN_ORDER_TYPES: FuturesOrderType[] = ['market'];
-export const CROSS_MARGIN_ORDER_TYPES: SmartMarginOrderType[] = ['market', 'limit', 'stop_market'];
-export const ORDER_KEEPER_ETH_DEPOSIT = wei(0.01);
-export const DEFAULT_DELAYED_LEVERAGE_CAP = wei(100);
-export const MAX_POSITION_BUFFER = 0.01;
-export const MIN_MARGIN_AMOUNT = wei(50);
-export const APP_MAX_LEVERAGE = wei(50);
+export const ISOLATED_MARGIN_ORDER_TYPES: FuturesOrderType[] = ['market']
+export const CROSS_MARGIN_ORDER_TYPES: SmartMarginOrderType[] = ['market', 'limit', 'stop_market']
+export const ORDER_KEEPER_ETH_DEPOSIT = wei(0.01)
+export const DEFAULT_DELAYED_LEVERAGE_CAP = wei(100)
+export const MAX_POSITION_BUFFER = 0.01
+export const MIN_MARGIN_AMOUNT = wei(50)
+export const APP_MAX_LEVERAGE = wei(50)
 
 export const FUTURES_ENDPOINTS: Record<number, string> = {
 	10: FUTURES_ENDPOINT_OP_MAINNET,
 	420: FUTURES_ENDPOINT_OP_GOERLI,
-};
+}
 
 export const MAIN_ENDPOINTS: Record<number, string> = {
 	1: MAIN_ENDPOINT_MAINNET,
 	10: MAIN_ENDPOINT_OP_MAINNET,
 	420: MAIN_ENDPOINT_OP_GOERLI,
-};
+}
 
 export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	// perps v2
@@ -490,38 +490,38 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0xb7abd25a76ddaffdf847224f03198ccb92723f90b2429cf33f0eecb96e352a86',
 		},
 	},
-};
+}
 
 export const MARKET_ASSETS_BY_PYTH_ID = Object.values(MARKETS)
 	.filter((m) => !!m.pythIds)
 	.reduce((acc, m) => {
-		acc[m.pythIds!.mainnet] = m.asset;
-		acc[m.pythIds!.testnet] = m.asset;
-		return acc;
-	}, {} as Record<string, FuturesMarketAsset>);
+		acc[m.pythIds!.mainnet] = m.asset
+		acc[m.pythIds!.testnet] = m.asset
+		return acc
+	}, {} as Record<string, FuturesMarketAsset>)
 
-export const MARKETS_LIST = Object.values(MARKETS).filter((m) => !m.disabled);
+export const MARKETS_LIST = Object.values(MARKETS).filter((m) => !m.disabled)
 
 export const V2_MARKETS = Object.entries(MARKETS).reduce((acc, [key, m]) => {
-	if (m.version === 2) acc[key as FuturesMarketKey] = m;
-	return acc;
-}, {} as Record<FuturesMarketKey, FuturesMarketConfig>);
+	if (m.version === 2) acc[key as FuturesMarketKey] = m
+	return acc
+}, {} as Record<FuturesMarketKey, FuturesMarketConfig>)
 
-export const V2_MARKETS_LIST = Object.values(V2_MARKETS).filter((m) => !m.disabled);
+export const V2_MARKETS_LIST = Object.values(V2_MARKETS).filter((m) => !m.disabled)
 
 export const MAINNET_MARKETS = MARKETS_LIST.filter(
 	(m) => m.supports === 'mainnet' || m.supports === 'both'
-);
+)
 
 export const TESTNET_MARKETS = MARKETS_LIST.filter(
 	(m) => m.supports === 'testnet' || m.supports === 'both'
-);
+)
 
-export const BPS_CONVERSION = 10000;
+export const BPS_CONVERSION = 10000
 
-export const DEFAULT_DESIRED_TIMEDELTA = 0;
+export const DEFAULT_DESIRED_TIMEDELTA = 0
 
-export const AGGREGATE_ASSET_KEY = '0x';
+export const AGGREGATE_ASSET_KEY = '0x'
 
 // subgraph fragments
 export const ISOLATED_MARGIN_FRAGMENT = gql`
@@ -541,7 +541,7 @@ export const ISOLATED_MARGIN_FRAGMENT = gql`
 			txHash
 		}
 	}
-`;
+`
 
 export const SMART_MARGIN_FRAGMENT = gql`
 	query userSmartMarginTransfers($walletAddress: String!) {
@@ -558,4 +558,4 @@ export const SMART_MARGIN_FRAGMENT = gql`
 			txHash
 		}
 	}
-`;
+`

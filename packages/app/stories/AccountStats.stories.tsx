@@ -1,8 +1,9 @@
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
 
 export default {
 	title: 'Futures/AccountStats',
-};
+	component: <div />,
+}
 
 export const Default = () => {
 	return (
@@ -13,5 +14,5 @@ export const Default = () => {
 				<InfoBoxRow title="Margin Usage" value="10%" />
 			</InfoBoxContainer>
 		</div>
-	);
-};
+	)
+}

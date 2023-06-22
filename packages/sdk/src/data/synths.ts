@@ -1,4 +1,4 @@
-import { NetworkId } from '../types/common';
+import { NetworkId } from '../types/common'
 
 export type SynthSymbol =
 	| 'sAAVE'
@@ -15,25 +15,25 @@ export type SynthSymbol =
 	| 'sJPY'
 	| 'sKRW'
 	| 'sLINK'
-	| 'sUSD';
+	| 'sUSD'
 
 export type SynthToken = {
-	name: SynthSymbol;
-	description: string;
-	asset: string;
-	address: string;
-	decimals: 18;
-	category: 'crypto' | 'forex';
-};
+	name: SynthSymbol
+	description: string
+	asset: string
+	address: string
+	decimals: 18
+	category: 'crypto' | 'forex'
+}
 
-export type SynthsMap = Partial<Record<SynthSymbol, SynthToken>>;
+export type SynthsMap = Partial<Record<SynthSymbol, SynthToken>>
 
 type BasicSynth = {
-	name: string;
-	asset: string;
-	addresses: Partial<Record<NetworkId, string>>;
-	category: 'crypto' | 'forex';
-};
+	name: string
+	asset: string
+	addresses: Partial<Record<NetworkId, string>>
+	category: 'crypto' | 'forex'
+}
 
 export const synths: Record<SynthSymbol, BasicSynth> = {
 	sAAVE: {
@@ -166,11 +166,11 @@ export const synths: Record<SynthSymbol, BasicSynth> = {
 		},
 		category: 'forex',
 	},
-};
+}
 
 const synthsByNetwork = (id: NetworkId) =>
 	Object.entries(synths).reduce((acc, [symbol, config]) => {
-		const address = config.addresses[id];
+		const address = config.addresses[id]
 
 		if (address) {
 			acc[symbol as SynthSymbol] = {
@@ -180,11 +180,11 @@ const synthsByNetwork = (id: NetworkId) =>
 				address,
 				decimals: 18,
 				category: config.category,
-			};
+			}
 		}
 
-		return acc;
-	}, {} as Partial<SynthsMap>);
+		return acc
+	}, {} as Partial<SynthsMap>)
 
 const SYNTHS_BY_NETWORK: Partial<Record<NetworkId, { map: SynthsMap; list: SynthToken[] }>> = {
 	1: {
@@ -203,12 +203,12 @@ const SYNTHS_BY_NETWORK: Partial<Record<NetworkId, { map: SynthsMap; list: Synth
 		map: synthsByNetwork(420),
 		list: Object.values(synthsByNetwork(420)),
 	},
-};
+}
 
 export const getSynthsForNetwork = (networkId: NetworkId) => {
-	return SYNTHS_BY_NETWORK[networkId]?.map ?? {};
-};
+	return SYNTHS_BY_NETWORK[networkId]?.map ?? {}
+}
 
 export const getSynthsListForNetwork = (networkId: NetworkId) => {
-	return SYNTHS_BY_NETWORK[networkId]?.list ?? [];
-};
+	return SYNTHS_BY_NETWORK[networkId]?.list ?? []
+}

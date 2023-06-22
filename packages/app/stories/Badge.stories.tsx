@@ -1,30 +1,30 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react'
 
-import Badge from 'components/Badge';
+import Badge from 'components/Badge'
 
 export default {
 	title: 'Components/Badge',
 	component: Badge,
-} as ComponentMeta<typeof Badge>;
+} as Meta<typeof Badge>
 
-const Template: ComponentStory<typeof Badge> = (args) => <Badge {...args}>Badge</Badge>;
+const Template: StoryFn<typeof Badge> = (args) => <Badge {...args}>Badge</Badge>
 
-export const Default = Template.bind({});
+export const Default = Template.bind({})
 
-export const Dark = Template.bind({});
+export const Dark = Template.bind({})
 
 Dark.args = {
 	dark: true,
-};
+}
 
-export const Gray = Template.bind({});
+export const Gray = Template.bind({})
 
 Gray.args = {
 	color: 'gray',
-};
+}
 
-export const Red = Template.bind({});
+export const Red = Template.bind({})
 
 Red.args = {
 	color: 'red',
-};
+}
