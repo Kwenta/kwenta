@@ -104,13 +104,13 @@ const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 })
 
 const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
-	const indexPrice = useAppSelector(selectMarketPriceInfo);
-	const indexPriceWei = indexPrice?.price ?? ZERO_WEI;
-	const pastRates = useAppSelector(selectPreviousDayPrices);
-	const marketAsset = useAppSelector(selectMarketAsset);
+	const indexPrice = useAppSelector(selectMarketPriceInfo)
+	const indexPriceWei = indexPrice?.price ?? ZERO_WEI
+	const pastRates = useAppSelector(selectPreviousDayPrices)
+	const marketAsset = useAppSelector(selectMarketAsset)
 	const pastPrice = pastRates.find(
 		(price) => price.synth === getDisplayAsset(marketAsset)?.toUpperCase()
-	);
+	)
 
 	return (
 		<MarketDetail

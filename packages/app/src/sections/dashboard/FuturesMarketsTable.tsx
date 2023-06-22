@@ -55,13 +55,13 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 			  )
 			: futuresMarkets
 		return markets.map((market) => {
-			const description = getSynthDescription(market.asset, t);
-			const volume = futuresVolumes[market.marketKey]?.volume;
-			const assetPriceInfo = pricesInfo[market.asset];
+			const description = getSynthDescription(market.asset, t)
+			const volume = futuresVolumes[market.marketKey]?.volume
+			const assetPriceInfo = pricesInfo[market.asset]
 			const pastPrice = pastRates.find(
 				(price) => price.synth === getDisplayAsset(market.asset)?.toUpperCase()
-			);
-			const marketPrice = markPrices[market.marketKey] ?? wei(0);
+			)
+			const marketPrice = markPrices[market.marketKey] ?? wei(0)
 
 			return {
 				asset: market.asset,
