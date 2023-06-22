@@ -6,8 +6,8 @@ const customJestConfig = {
 	roots: ['<rootDir>'],
 	modulePaths: ['<rootDir>'],
 	moduleDirectories: ['node_modules'],
-	globalSetup: './src/testing/unit/setup/global.js',
-	setupFilesAfterEnv: ['./src/testing/unit/setup/setup.js'],
+	globalSetup: './testing/unit/setup/global.js',
+	setupFilesAfterEnv: ['./testing/unit/setup/setup.js'],
 	testEnvironment: 'jest-environment-jsdom',
 	transform: {
 		'^.+\\.(svg)$': `jest-transformer-svg`,
