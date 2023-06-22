@@ -13,7 +13,7 @@ import {
 	ResolutionString,
 	SearchSymbolsCallback,
 	SubscribeBarsCallback,
-} from '../../../public/static/charting_library/charting_library'
+} from 'charting_library/charting_library'
 
 import { ChartBar } from './types'
 import { resolutionToSeconds } from './utils'

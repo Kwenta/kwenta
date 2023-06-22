@@ -16,7 +16,7 @@ import {
 	IChartingLibraryWidget,
 	IPositionLineAdapter,
 	widget,
-} from '../../../public/static/charting_library/charting_library'
+} from 'charting_library/charting_library'
 
 import { DEFAULT_RESOLUTION } from './constants'
 import DataFeedFactory from './DataFeed'

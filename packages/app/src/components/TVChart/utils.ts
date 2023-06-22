@@ -1,4 +1,4 @@
-import { ResolutionString } from '../../../public/static/charting_library/charting_library'
+import { ResolutionString } from 'charting_library/charting_library'
 
 export const resolutionToSeconds = (resolution: ResolutionString): number => {
 	if (!isNaN(Number(resolution))) {
