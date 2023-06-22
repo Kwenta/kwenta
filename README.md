@@ -82,7 +82,7 @@ pnpm start
 
 ```bash
 cd packages/app
-npm test:unit
+pnpm test:unit
 ```
 
 For unit tests we use a combination of Jest and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
