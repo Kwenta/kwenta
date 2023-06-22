@@ -150,7 +150,7 @@ export default class PricesService {
 			# last before timestamp
 			${asset}: rateUpdates(
 				first: 1
-				where: { synth: "${getDisplayAsset(asset) ?? asset}", timestamp_gte: $minTimestamp }
+				where: { synth: "${getDisplayAsset(asset)?.toUpperCase() ?? asset}", timestamp_gte: $minTimestamp }
 				orderBy: timestamp
 				orderDirection: asc
 			) {
