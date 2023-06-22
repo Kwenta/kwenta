@@ -58,7 +58,10 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 			const description = getSynthDescription(market.asset, t);
 			const volume = futuresVolumes[market.marketKey]?.volume;
 			const assetPriceInfo = pricesInfo[market.asset];
-			const pastPrice = pastRates.find((price) => price.synth === getDisplayAsset(market.asset));
+
+			const pastPrice = pastRates.find(
+				(price) => price.synth === getDisplayAsset(market.asset)?.toUpperCase()
+			);
 			const marketPrice = markPrices[market.marketKey] ?? wei(0);
 
 			return {
