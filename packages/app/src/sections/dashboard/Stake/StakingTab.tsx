@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from 'components/Button'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { SplitContainer } from 'components/layout/grid'
-import { LogoText } from 'components/Text'
+import { Body, Heading } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { getReward } from 'state/staking/actions'
@@ -24,55 +25,123 @@ const StakingTab = () => {
 		dispatch(getReward())
 	}, [dispatch])
 
+	const DEFAULT_CARDS = [
+		{
+			category: 'Staking',
+			card: [
+				{
+					key: 'staking-staked',
+					title: 'Staked',
+					value: '150.00',
+				},
+				{
+					key: 'staking-staked',
+					title: 'APR',
+					value: formatPercent(apy, { minDecimals: 2 }),
+				},
+			],
+		},
+		{
+			category: t('dashboard.stake.portfolio.rewards.title'),
+			card: [
+				{
+					key: 'rewards-claimable',
+					title: t('dashboard.stake.portfolio.rewards.claimable'),
+					value: truncateNumbers(claimableBalance, 2),
+				},
+			],
+		},
+		{
+			category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
+			card: [
+				{
+					key: 'early-vest-rewards-claimable',
+					title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
+					value: '150.00',
+				},
+				{
+					key: 'early-vest-rewards-epoch',
+					title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
+					value: 31,
+				},
+			],
+		},
+	]
+
 	return (
 		<SplitContainer>
 			<StakeInputCard />
 			<CardGridContainer>
-				<CardGrid>
-					<div>
-						<div className="title">{t('dashboard.stake.tabs.staking.claimable-rewards')}</div>
-						<LogoText yellow>{truncateNumbers(claimableBalance, 4)}</LogoText>
-					</div>
-					<div>
-						<div className="title">{t('dashboard.stake.tabs.staking.annual-percentage-rate')}</div>
-						<div className="value">{formatPercent(apy, { minDecimals: 2 })}</div>
-					</div>
-				</CardGrid>
-				<Button
-					fullWidth
-					variant="flat"
-					size="small"
-					disabled={!getReward || claimableBalance.eq(0)}
-					onClick={handleGetReward}
-				>
-					{t('dashboard.stake.tabs.staking.claim')}
-				</Button>
+				<StyledHeading variant="h4">Staking Rewards</StyledHeading>
+				<Body color="secondary">Stake your escrowed tokens to earn additional rewards.</Body>
+				<CardsContainer>
+					{DEFAULT_CARDS.map(({ category, card }, i) => (
+						<FlexDivCol rowGap="15px" key={i}>
+							<Body size="small">{category}</Body>
+							<FlexDivRow columnGap="15px">
+								{card.map(({ key, title, value }) => (
+									<FlexDivCol key={key} rowGap="5px">
+										<Body size="large" color="secondary">
+											{title}
+										</Body>
+										<Body size="large" color="preview">
+											{value}
+										</Body>
+									</FlexDivCol>
+								))}
+							</FlexDivRow>
+						</FlexDivCol>
+					))}
+				</CardsContainer>
+				<FlexDivRow justifyContent="flex-start" columnGap="10px">
+					<Button
+						variant="yellow"
+						size="small"
+						textTransform="uppercase"
+						isRounded
+						onClick={handleGetReward}
+					>
+						COMPOUND
+					</Button>
+					<Button
+						variant="flat"
+						size="small"
+						textTransform="uppercase"
+						isRounded
+						onClick={handleGetReward}
+					>
+						{t('dashboard.stake.tabs.staking.claim')}
+					</Button>
+					<Button
+						variant="flat"
+						size="small"
+						textTransform="uppercase"
+						isRounded
+						onClick={handleGetReward}
+					>
+						DELEGATE
+					</Button>
+				</FlexDivRow>
 			</CardGridContainer>
 		</SplitContainer>
 	)
 }
 
+const CardsContainer = styled(FlexDivRowCentered)`
+	width: 100%;
+	justify-content: flex-start;
+	column-gap: 50px;
+	margin: 50px 0;
+`
+
+const StyledHeading = styled(Heading)`
+	font-weight: 400;
+`
+
 const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-`
-
-const CardGrid = styled.div`
-	display: grid;
-	grid-template-rows: 1fr 1fr;
-
-	& > div {
-		margin-bottom: 20px;
-	}
-
-	.value {
-		margin-top: 5px;
-	}
-
-	.title {
-		color: ${(props) => props.theme.colors.selectedTheme.title};
-	}
 `
 
 export default StakingTab

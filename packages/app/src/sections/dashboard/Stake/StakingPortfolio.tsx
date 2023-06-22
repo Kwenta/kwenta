@@ -128,7 +128,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 					</Body>
 				</FlexDivCol>
 				<Button
-					size="xsmall"
+					size="small"
 					isRounded
 					textTransform="none"
 					style={{ borderWidth: '0px' }}
@@ -140,12 +140,14 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 			<CardsContainer>
 				{DEFAULT_CARDS.map(({ category, card }, i) => (
 					<FlexDivCol rowGap="15px" key={i}>
-						<Body size="small">{category}</Body>
+						<Body size="large">{category}</Body>
 						<FlexDivRow columnGap="15px">
 							{card.map(({ key, title, value, onClick }) => (
 								<FlexDivCol key={key} onClick={onClick} rowGap="5px">
 									<Body color="secondary">{title}</Body>
-									<Body color="preview">{value}</Body>
+									<Body size="large" color="preview">
+										{value}
+									</Body>
 								</FlexDivCol>
 							))}
 						</FlexDivRow>

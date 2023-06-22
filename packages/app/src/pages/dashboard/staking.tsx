@@ -4,6 +4,7 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'rea
 import { useTranslation } from 'react-i18next'
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
+import RewardsTabs from 'sections/dashboard/RewardsTabs'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -52,6 +53,7 @@ const StakingPage: StakingComponent = () => {
 			</Head>
 			<StakingPortfolio setCurrentTab={setCurrentTab} />
 			<StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />
+			<RewardsTabs />
 		</>
 	)
 }

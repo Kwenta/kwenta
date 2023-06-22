@@ -19,8 +19,6 @@ enum Tab {
 	Markets = 'markets',
 	Governance = 'governance',
 	Stake = 'staking',
-	Earn = 'earn',
-	Rewards = 'rewards',
 }
 
 const Tabs = Object.values(Tab)
@@ -73,12 +71,6 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
 				href: ROUTES.Dashboard.Stake,
-			},
-			{
-				name: Tab.Rewards,
-				label: t('dashboard.tabs.rewards'),
-				active: activeTab === Tab.Rewards,
-				href: ROUTES.Dashboard.Rewards,
 			},
 		],
 		[t, activeTab]
@@ -149,7 +141,7 @@ const StyledLeftSideContent = styled(LeftSideContent)`
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: 150px 1fr 150px;
+	grid-template-columns: 160px 1fr 150px;
 	height: 100%;
 	padding: 0 15px;
 `
