@@ -6,7 +6,6 @@ const conf = {
 			numberOfRuns: 3,
 			settings: {
 				configPath: 'packages/app/testing/lighthouse/mobile.conf.js',
-				plugins: ['lighthouse-plugin-social-sharing'],
 				chromeFlags:
 					'--headless --no-sandbox --ignore-certificate-errors --disable-gpu --incognito --disable-dev-shm-usage',
 			},
