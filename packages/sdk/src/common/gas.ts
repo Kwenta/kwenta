@@ -1,5 +1,5 @@
 // Some of this file is copied from:
-// https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
+// https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/queries/network/useEthGasPriceQuery.ts
 
 import { wei } from '@synthetixio/wei'
 import { ethers } from 'ethers'
@@ -35,7 +35,7 @@ export const getGasPriceFromProvider = async (provider: ethers.providers.Provide
 }
 
 // This is mostly copied over from the Synthetix queries.
-// See: https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/src/queries/network/useEthGasPriceQuery.ts
+// See: https://github.com/Synthetixio/js-monorepo/blob/master/packages/queries/queries/network/useEthGasPriceQuery.ts
 export const getEthGasPrice = async (networkId: NetworkId, provider: ethers.providers.Provider) => {
 	try {
 		// If network is Mainnet then we use EIP1559

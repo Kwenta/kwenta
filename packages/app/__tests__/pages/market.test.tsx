@@ -1,11 +1,10 @@
 import { render } from '@testing-library/react'
 
+import Market from 'pages/market'
 import { TEST_ADDR } from 'testing/unit/constants'
 import mockConnector from 'testing/unit/mocks/mockConnector'
 import MockProviders from 'testing/unit/mocks/MockProviders'
 import { mockGrapqhlRequest, mockReactQuery } from 'testing/unit/mocks/mockQueries'
-
-import Market from '../../pages/market'
 
 describe('Futures market page - cross margin', () => {
 	beforeAll(() => {
