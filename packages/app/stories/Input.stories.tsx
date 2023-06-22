@@ -1,8 +1,8 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
+import { Meta, StoryFn } from '@storybook/react'
+import React from 'react'
 
-import Input from '../components/Input/Input';
-import NumericInput from '../components/Input/NumericInput';
+import Input from '../src/components/Input/Input'
+import NumericInput from '../src/components/Input/NumericInput'
 
 export default {
 	title: 'Components/Input',
@@ -14,14 +14,14 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof Input>;
+} as Meta<typeof Input>
 
-export const Default: ComponentStory<typeof Input> = (args) => <Input {...args} />;
+export const Default: StoryFn<typeof Input> = (args) => <Input {...args} />
 
-export const Numeric: ComponentStory<typeof NumericInput> = (args) => {
-	return <NumericInput {...args} />;
-};
+export const Numeric: StoryFn<typeof NumericInput> = (args) => {
+	return <NumericInput {...args} />
+}
 
 Numeric.args = {
 	right: 'sUSD',
-};
+}

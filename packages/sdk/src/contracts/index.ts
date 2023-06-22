@@ -1,28 +1,27 @@
-import { Contract as EthCallContract } from 'ethcall';
-import { Contract, ethers } from 'ethers';
+import { Contract as EthCallContract } from 'ethcall'
+import { Contract, ethers } from 'ethers'
 
-import { NetworkId } from '../types/common';
+import { NetworkId } from '../types/common'
 
-import ERC20ABI from './abis/ERC20.json';
-import MultipleMerkleDistributorABI from './abis/MultipleMerkleDistributor.json';
-import MultipleMerkleDistributorPerpsV2ABI from './abis/MultipleMerkleDistributorPerpsV2.json';
-import RewardEscrowABI from './abis/RewardEscrow.json';
-import SupplyScheduleABI from './abis/SupplySchedule.json';
-
-import DappMaintenanceABI from './abis/DappMaintenance.json';
-import ExchangeRatesABI from './abis/ExchangeRates.json';
-import FuturesMarketDataABI from './abis/FuturesMarketData.json';
-import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json';
-import KwentaArrakisVaultABI from './abis/KwentaArrakisVault.json';
-import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json';
-import MultipleMerkleDistributorOpABI from './abis/MultipleMerkleDistributorOp.json';
-import PerpsV2MarketABI from './abis/PerpsV2Market.json';
-import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json';
-import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json';
-import StakingRewardsABI from './abis/StakingRewards.json';
-import SynthRedeemerABI from './abis/SynthRedeemer.json';
-import SystemStatusABI from './abis/SystemStatus.json';
-import { ADDRESSES } from './constants';
+import DappMaintenanceABI from './abis/DappMaintenance.json'
+import ERC20ABI from './abis/ERC20.json'
+import ExchangeRatesABI from './abis/ExchangeRates.json'
+import FuturesMarketDataABI from './abis/FuturesMarketData.json'
+import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json'
+import KwentaArrakisVaultABI from './abis/KwentaArrakisVault.json'
+import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json'
+import MultipleMerkleDistributorABI from './abis/MultipleMerkleDistributor.json'
+import MultipleMerkleDistributorOpABI from './abis/MultipleMerkleDistributorOp.json'
+import MultipleMerkleDistributorPerpsV2ABI from './abis/MultipleMerkleDistributorPerpsV2.json'
+import PerpsV2MarketABI from './abis/PerpsV2Market.json'
+import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json'
+import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json'
+import RewardEscrowABI from './abis/RewardEscrow.json'
+import StakingRewardsABI from './abis/StakingRewards.json'
+import SupplyScheduleABI from './abis/SupplySchedule.json'
+import SynthRedeemerABI from './abis/SynthRedeemer.json'
+import SystemStatusABI from './abis/SystemStatus.json'
+import { ADDRESSES } from './constants'
 import {
 	SmartMarginAccountFactory__factory,
 	ExchangeRates__factory,
@@ -48,21 +47,21 @@ import {
 	BatchClaimer__factory,
 	MultipleMerkleDistributorOp__factory,
 	MultipleMerkleDistributorPerpsV2__factory,
-} from './types';
-import { PerpsV2MarketData__factory } from './types/factories/PerpsV2MarketData__factory';
-import { PerpsV2MarketSettings__factory } from './types/factories/PerpsV2MarketSettings__factory';
+} from './types'
+import { PerpsV2MarketData__factory } from './types/factories/PerpsV2MarketData__factory'
+import { PerpsV2MarketSettings__factory } from './types/factories/PerpsV2MarketSettings__factory'
 
 type ContractFactory = {
-	connect: (address: string, provider: ethers.providers.Provider) => Contract;
-};
+	connect: (address: string, provider: ethers.providers.Provider) => Contract
+}
 
 export type AllContractsMap = Record<
 	ContractName,
 	{ addresses: Partial<Record<NetworkId, string>>; Factory: ContractFactory }
->;
+>
 
 export const getPerpsV2MarketMulticall = (marketAddress: string) =>
-	new EthCallContract(marketAddress, PerpsV2MarketABI);
+	new EthCallContract(marketAddress, PerpsV2MarketABI)
 
 export const getContractsByNetwork = (
 	networkId: NetworkId,
@@ -166,8 +165,8 @@ export const getContractsByNetwork = (
 		veKwentaRedeemer: ADDRESSES.veKwentaRedeemer[networkId]
 			? VeKwentaRedeemer__factory.connect(ADDRESSES.veKwentaRedeemer[networkId], provider)
 			: undefined,
-	};
-};
+	}
+}
 
 export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 	return {
@@ -234,9 +233,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 		DappMaintenance: ADDRESSES.DappMaintenance[networkId]
 			? new EthCallContract(ADDRESSES.DappMaintenance[networkId], DappMaintenanceABI)
 			: undefined,
-	};
-};
+	}
+}
 
-export type ContractsMap = ReturnType<typeof getContractsByNetwork>;
-export type MulticallContractsMap = ReturnType<typeof getMulticallContractsByNetwork>;
-export type ContractName = keyof ContractsMap;
+export type ContractsMap = ReturnType<typeof getContractsByNetwork>
+export type MulticallContractsMap = ReturnType<typeof getMulticallContractsByNetwork>
+export type ContractName = keyof ContractsMap

@@ -2,6 +2,7 @@
 	"extends": ["react-app", "plugin:@next/next/recommended"],
 	"plugins": ["prettier"],
 	"rules": {
+		"@next/next/no-html-link-for-pages": ["error", "packages/app/src/pages/"],
 		"react/react-in-jsx-scope": "off",
 		"prettier/prettier": "error",
 		"no-mixed-spaces-and-tabs": ["warn", "smart-tabs"],

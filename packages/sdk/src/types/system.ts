@@ -5,7 +5,7 @@ export enum OperationalStatus {
 }
 
 export type KwentaStatus = {
-	status: OperationalStatus;
-	message: string;
-	lastUpdatedAt?: number;
-};
+	status: OperationalStatus
+	message: string
+	lastUpdatedAt?: number
+}

@@ -1,10 +1,10 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import React from 'react';
-import styled from 'styled-components';
+import { StoryFn, Meta } from '@storybook/react'
+import React from 'react'
+import styled from 'styled-components'
 
-import TabButton from 'components/Button/TabButton';
+import TabButton from 'components/Button/TabButton'
 
-import Button from '../components/Button';
+import Button from '../src/components/Button'
 
 export default {
 	title: 'Components/Button',
@@ -19,61 +19,61 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof Button>;
+} as Meta<typeof Button>
 
-const Template: ComponentStory<typeof Button> = (args) => <Button children="Button" {...args} />;
+const Template: StoryFn<typeof Button> = (args) => <Button children="Button" {...args} />
 
-export const Small = Template.bind({});
+export const Small = Template.bind({})
 
 Small.args = {
 	size: 'small',
-};
+}
 
-export const Medium = Template.bind({});
+export const Medium = Template.bind({})
 
 Medium.args = {
 	size: 'medium',
 	style: { width: '157px' },
-};
+}
 
-export const Danger = Template.bind({});
+export const Danger = Template.bind({})
 
 Danger.args = {
 	size: 'medium',
 	variant: 'danger',
 	fullWidth: true,
 	style: { width: '157px' },
-};
+}
 
-export const Disabled = Template.bind({});
+export const Disabled = Template.bind({})
 
 Disabled.args = {
 	size: 'medium',
 	style: { width: '157px' },
 	disabled: true,
-};
+}
 
-export const Primary = Template.bind({});
+export const Primary = Template.bind({})
 
 Primary.args = {
 	size: 'medium',
 	variant: 'primary',
-};
+}
 
-export const Secondary = Template.bind({});
+export const Secondary = Template.bind({})
 
 Secondary.args = {
 	size: 'medium',
 	variant: 'secondary',
-};
+}
 
-export const Monospace = Template.bind({});
+export const Monospace = Template.bind({})
 
 Monospace.args = {
 	size: 'small',
 	children: '10x',
 	mono: true,
-};
+}
 
 export const Tab = () => {
 	return (
@@ -82,8 +82,8 @@ export const Tab = () => {
 			<TabButton title="Shorts" detail="$0" disabled />
 			<TabButton title="Spot Balances" detail="$0" disabled />
 		</TabGroup>
-	);
-};
+	)
+}
 
 const TabGroup = styled.div`
 	display: flex;
@@ -93,4 +93,4 @@ const TabGroup = styled.div`
 			margin-right: 15px;
 		}
 	}
-`;
+`

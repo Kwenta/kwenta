@@ -1,4 +1,9 @@
-import TabButton from 'components/Button/TabButton';
+import TabButton from 'components/Button/TabButton'
+
+export default {
+	title: 'FuturesTabs',
+	component: <div />,
+}
 
 export const Default = () => {
 	return (
@@ -8,5 +13,5 @@ export const Default = () => {
 			<TabButton title="Trades" />
 			<TabButton title="Transfers" />
 		</div>
-	);
-};
+	)
+}

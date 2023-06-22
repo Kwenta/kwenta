@@ -1,7 +1,7 @@
-import { ComponentMeta } from '@storybook/react';
-import { useReducer } from 'react';
+import { Meta } from '@storybook/react'
+import { useReducer } from 'react'
 
-import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox';
+import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
 
 export default {
 	title: 'Futures/FeeInfoBox',
@@ -12,7 +12,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<any>;
+} as Meta<any>
 
 export const Default = () => {
 	return (
@@ -23,11 +23,11 @@ export const Default = () => {
 			<InfoBoxRow title="Total Fee" value="$100,000.00" />
 			<InfoBoxRow title="Keeper Deposit" value="0.0100 ETH" />
 		</InfoBoxContainer>
-	);
-};
+	)
+}
 
 export const ExpandedRow = () => {
-	const [expanded, setExpanded] = useReducer((s) => !s, false);
+	const [expanded, setExpanded] = useReducer((s) => !s, false)
 
 	return (
 		<InfoBoxContainer>
@@ -45,5 +45,5 @@ export const ExpandedRow = () => {
 			</InfoBoxRow>
 			<InfoBoxRow title="Liquidation Price" value="$100,000" />
 		</InfoBoxContainer>
-	);
-};
+	)
+}
