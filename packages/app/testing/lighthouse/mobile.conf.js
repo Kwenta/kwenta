@@ -11,6 +11,6 @@ const config = {
 		},
 		onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
 	},
-};
+}
 
-module.exports = config;
+module.exports = config
