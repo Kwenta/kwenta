@@ -1,4 +1,4 @@
-// import { ComponentStory } from '@storybook/react';
+// import { StoryFn } from '@storybook/react';
 
 import ChangePercent from 'components/ChangePercent'
 
@@ -7,7 +7,7 @@ export default {
 	component: ChangePercent,
 }
 
-// const Template: ComponentStory<typeof ChangePercent> = (args) => <ChangePercent {...args} />;
+// const Template: StoryFn<typeof ChangePercent> = (args) => <ChangePercent {...args} />;
 
 export const Default = () => {
 	return (

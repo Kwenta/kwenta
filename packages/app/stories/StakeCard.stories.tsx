@@ -1,4 +1,4 @@
-import { ComponentMeta } from '@storybook/react'
+import { Meta } from '@storybook/react'
 import { wei } from '@synthetixio/wei'
 
 import StakeCard from 'components/StakeCard/StakeCard'
@@ -13,7 +13,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof StakeCard>
+} as Meta<typeof StakeCard>
 
 export const Default = () => {
 	return (

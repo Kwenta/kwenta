@@ -1,4 +1,4 @@
-import { ComponentStory } from '@storybook/react'
+import { StoryFn } from '@storybook/react'
 import { wei } from '@synthetixio/wei'
 
 import Spacer from 'components/Spacer'
@@ -9,7 +9,7 @@ export default {
 	component: Text.Body,
 }
 
-export const Default: ComponentStory<typeof Text.Body> = (args) => {
+export const Default: StoryFn<typeof Text.Body> = (args) => {
 	return <Text.Body {...args}>Sample text</Text.Body>
 }
 

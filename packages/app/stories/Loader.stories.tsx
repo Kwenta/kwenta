@@ -1,4 +1,4 @@
-import { ComponentStory } from '@storybook/react'
+import { StoryFn } from '@storybook/react'
 
 import Loader from 'components/Loader'
 
@@ -7,6 +7,6 @@ export default {
 	component: Loader,
 }
 
-const Template: ComponentStory<typeof Loader> = (args) => <Loader {...args} />
+const Template: StoryFn<typeof Loader> = (args) => <Loader {...args} />
 
 export const Default = Template.bind({})

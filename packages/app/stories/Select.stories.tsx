@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import Select from 'components/Select'
 
@@ -12,9 +12,9 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof Select>
+} as Meta<typeof Select>
 
-const Template: ComponentStory<typeof Select> = (args) => <Select {...args} />
+const Template: StoryFn<typeof Select> = (args) => <Select {...args} />
 
 export const Default = Template.bind({})
 

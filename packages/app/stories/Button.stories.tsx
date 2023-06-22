@@ -1,10 +1,10 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { StoryFn, Meta } from '@storybook/react'
 import React from 'react'
 import styled from 'styled-components'
 
 import TabButton from 'components/Button/TabButton'
 
-import Button from '../components/Button'
+import Button from '../src/components/Button'
 
 export default {
 	title: 'Components/Button',
@@ -19,9 +19,9 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof Button>
+} as Meta<typeof Button>
 
-const Template: ComponentStory<typeof Button> = (args) => <Button children="Button" {...args} />
+const Template: StoryFn<typeof Button> = (args) => <Button children="Button" {...args} />
 
 export const Small = Template.bind({})
 

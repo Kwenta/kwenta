@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 import { useState } from 'react'
 
 import SegmentedControl from 'components/SegmentedControl'
@@ -13,9 +13,9 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof SegmentedControl>
+} as Meta<typeof SegmentedControl>
 
-const Template: ComponentStory<typeof SegmentedControl> = (args) => {
+const Template: StoryFn<typeof SegmentedControl> = (args) => {
 	const [currentTab, setCurrentTab] = useState(0)
 
 	return (

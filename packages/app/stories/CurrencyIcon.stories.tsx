@@ -1,6 +1,6 @@
-// import { ComponentStory } from '@storybook/react';
+// import { StoryFn } from '@storybook/react';
 
-import { ComponentMeta } from '@storybook/react'
+import { Meta } from '@storybook/react'
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
 
@@ -14,7 +14,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof CurrencyIcon>
+} as Meta<typeof CurrencyIcon>
 
 export const All = () => {
 	return (

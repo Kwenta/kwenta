@@ -1,13 +1,13 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import Pill from 'components/Pill'
 
 export default {
 	title: 'Components/Pill',
 	component: Pill,
-} as ComponentMeta<typeof Pill>
+} as Meta<typeof Pill>
 
-const Template: ComponentStory<typeof Pill> = (args) => <Pill {...args}>Button</Pill>
+const Template: StoryFn<typeof Pill> = (args) => <Pill {...args}>Button</Pill>
 
 export const Default = Template.bind({})
 

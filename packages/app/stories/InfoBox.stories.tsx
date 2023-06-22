@@ -1,4 +1,4 @@
-import { ComponentMeta } from '@storybook/react'
+import { Meta } from '@storybook/react'
 
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
 
@@ -11,7 +11,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<any>
+} as Meta<any>
 
 export const Default = () => {
 	return (

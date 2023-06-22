@@ -1,4 +1,4 @@
-import { ComponentMeta } from '@storybook/react'
+import { Meta } from '@storybook/react'
 import { CellProps } from 'react-table'
 
 import Table from 'components/Table'
@@ -13,7 +13,7 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof Table>
+} as Meta<typeof Table>
 
 const data = [
 	{ id: 1, name: 'First thing' },

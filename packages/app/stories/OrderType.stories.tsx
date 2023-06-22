@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import SegmentedControl from 'components/SegmentedControl'
 
@@ -11,9 +11,9 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof SegmentedControl>
+} as Meta<typeof SegmentedControl>
 
-export const Default: ComponentStory<typeof SegmentedControl> = (args) => (
+export const Default: StoryFn<typeof SegmentedControl> = (args) => (
 	<SegmentedControl
 		{...args}
 		selectedIndex={0}
