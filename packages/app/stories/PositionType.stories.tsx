@@ -1,9 +1,9 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { StoryFn, Meta } from '@storybook/react'
 
 export default {
 	title: 'Futures/PositionType',
-} as ComponentMeta<any>;
+} as Meta<any>
 
-const Template: ComponentStory<any> = (args) => <div {...args} />;
+const Template: StoryFn<any> = (args) => <div {...args} />
 
-export const Default = Template.bind({});
+export const Default = Template.bind({})

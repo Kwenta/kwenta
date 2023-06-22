@@ -1,26 +1,26 @@
-import Wei from '@synthetixio/wei';
+import Wei from '@synthetixio/wei'
 
-export type ClaimParams = [number, string, string, string[], number];
+export type ClaimParams = [number, string, string, string[], number]
 
 export type EpochData = {
-	merkleRoot: string;
-	tokenTotal: string;
+	merkleRoot: string
+	tokenTotal: string
 	claims: {
 		[address: string]: {
-			index: number;
-			amount: string;
-			proof: string[];
-		};
-	};
-	period: number;
-};
+			index: number
+			amount: string
+			proof: string[]
+		}
+	}
+	period: number
+}
 
 export type EscrowData<T = Wei> = {
-	id: number;
-	date: string;
-	time: string;
-	vestable: T;
-	amount: T;
-	fee: T;
-	status: 'VESTING' | 'VESTED';
-};
+	id: number
+	date: string
+	time: string
+	vestable: T
+	amount: T
+	fee: T
+	status: 'VESTING' | 'VESTED'
+}

@@ -1,7 +1,7 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { useState } from 'react';
+import { Meta, StoryFn } from '@storybook/react'
+import { useState } from 'react'
 
-import SegmentedControl from 'components/SegmentedControl';
+import SegmentedControl from 'components/SegmentedControl'
 
 export default {
 	title: 'Components/SegmentedControl',
@@ -13,10 +13,10 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof SegmentedControl>;
+} as Meta<typeof SegmentedControl>
 
-const Template: ComponentStory<typeof SegmentedControl> = (args) => {
-	const [currentTab, setCurrentTab] = useState(0);
+const Template: StoryFn<typeof SegmentedControl> = (args) => {
+	const [currentTab, setCurrentTab] = useState(0)
 
 	return (
 		<SegmentedControl
@@ -25,13 +25,13 @@ const Template: ComponentStory<typeof SegmentedControl> = (args) => {
 			onChange={setCurrentTab}
 			values={['One', 'Two', 'Three']}
 		/>
-	);
-};
+	)
+}
 
-export const Default = Template.bind({});
+export const Default = Template.bind({})
 
-export const CheckStyle = Template.bind({});
+export const CheckStyle = Template.bind({})
 
 CheckStyle.args = {
 	styleType: 'check',
-};
+}

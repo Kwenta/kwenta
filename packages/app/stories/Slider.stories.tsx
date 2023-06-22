@@ -1,7 +1,7 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
+import { Meta, StoryFn } from '@storybook/react'
+import React from 'react'
 
-import Slider from '../components/Slider/Slider';
+import Slider from '../src/components/Slider/Slider'
 
 export default {
 	title: 'Components/Slider',
@@ -13,11 +13,11 @@ export default {
 			</div>
 		),
 	],
-} as ComponentMeta<typeof Slider>;
+} as Meta<typeof Slider>
 
-export const Default: ComponentStory<typeof Slider> = (args) => {
-	return <Slider {...args} />;
-};
+export const Default: StoryFn<typeof Slider> = (args) => {
+	return <Slider {...args} />
+}
 
 Default.args = {
 	minValue: 0,
@@ -32,4 +32,4 @@ Default.args = {
 	onChange: (_, v) => console.log(`Value: ${v}`),
 	// eslint-disable-next-line
 	onChangeCommitted: (_, v) => console.log(`Value committed: ${v}`),
-};
+}

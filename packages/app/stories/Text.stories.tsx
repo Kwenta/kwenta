@@ -1,17 +1,17 @@
-import { ComponentStory } from '@storybook/react';
-import { wei } from '@synthetixio/wei';
+import { StoryFn } from '@storybook/react'
+import { wei } from '@synthetixio/wei'
 
-import Spacer from 'components/Spacer';
-import * as Text from 'components/Text';
+import Spacer from 'components/Spacer'
+import * as Text from 'components/Text'
 
 export default {
 	title: 'Components/Text',
 	component: Text.Body,
-};
+}
 
-export const Default: ComponentStory<typeof Text.Body> = (args) => {
-	return <Text.Body {...args}>Sample text</Text.Body>;
-};
+export const Default: StoryFn<typeof Text.Body> = (args) => {
+	return <Text.Body {...args}>Sample text</Text.Body>
+}
 
 export const LogoText = () => {
 	return (
@@ -19,8 +19,8 @@ export const LogoText = () => {
 			<Text.LogoText>White logo text</Text.LogoText>
 			<Text.LogoText yellow>White logo text</Text.LogoText>
 		</div>
-	);
-};
+	)
+}
 
 export const Heading = () => {
 	return (
@@ -31,8 +31,8 @@ export const Heading = () => {
 			<Text.Heading variant="h4">Heading 4</Text.Heading>
 			<Text.Heading variant="h5">Heading 5</Text.Heading>
 		</div>
-	);
-};
+	)
+}
 
 export const Body = () => {
 	return (
@@ -67,9 +67,9 @@ export const Body = () => {
 				This is bold monospaced body text
 			</Text.Body>
 		</div>
-	);
-};
+	)
+}
 
 export const NumericValue = () => {
-	return <Text.NumericValue colored value={wei(10)} />;
-};
+	return <Text.NumericValue colored value={wei(10)} />
+}

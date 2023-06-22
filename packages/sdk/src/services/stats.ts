@@ -1,27 +1,27 @@
-import KwentaSDK from '..';
-import { wei } from '@synthetixio/wei';
-import request, { gql } from 'graphql-request';
+import { wei } from '@synthetixio/wei'
+import request, { gql } from 'graphql-request'
 
-import { REQUIRES_L2 } from '../common/errors';
-import { FUTURES_ENDPOINT_OP_MAINNET } from '../constants/futures';
-import { DEFAULT_LEADERBOARD_DATA } from '../constants/stats';
-import { ETH_UNIT } from '../constants/transactions';
-import { AccountStat, FuturesStat } from '../types/stats';
-import { mapStat } from '../utils/stats';
-import { truncateAddress } from '../utils/string';
-import { getFuturesStats } from '../utils/subgraph';
+import KwentaSDK from '..'
+import { REQUIRES_L2 } from '../common/errors'
+import { FUTURES_ENDPOINT_OP_MAINNET } from '../constants/futures'
+import { DEFAULT_LEADERBOARD_DATA } from '../constants/stats'
+import { ETH_UNIT } from '../constants/transactions'
+import { AccountStat, FuturesStat } from '../types/stats'
+import { mapStat } from '../utils/stats'
+import { truncateAddress } from '../utils/string'
+import { getFuturesStats } from '../utils/subgraph'
 
-type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all';
+type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all'
 
 type LeaderboardResult = {
-	[part in LeaderboardPart]: AccountStat[];
-};
+	[part in LeaderboardPart]: AccountStat[]
+}
 
 export default class StatsService {
-	private sdk: KwentaSDK;
+	private sdk: KwentaSDK
 
 	constructor(sdk: KwentaSDK) {
-		this.sdk = sdk;
+		this.sdk = sdk
 	}
 
 	public async getStatsVolumes() {}
@@ -45,7 +45,7 @@ export default class StatsService {
 					totalTrades: true,
 					totalVolume: true,
 				}
-			);
+			)
 
 			const stats = response.map((stat: FuturesStat, i: number) => ({
 				...stat,
@@ -57,12 +57,12 @@ export default class StatsService {
 				liquidations: stat.liquidations.toNumber(),
 				rank: i + 1,
 				rankText: (i + 1).toString(),
-			}));
+			}))
 
-			return stats as AccountStat[];
+			return stats as AccountStat[]
 		} catch (e) {
-			this.sdk.context.logError(e);
-			return [];
+			this.sdk.context.logError(e)
+			return []
 		}
 	}
 
@@ -92,13 +92,13 @@ export default class StatsService {
 						...StatsBody
 					}
 				}
-			`;
+			`
 
 			const response: Record<LeaderboardPart, FuturesStat[]> = await request(
 				this.sdk.futures.futuresGqlEndpoint,
 				query,
 				{ account: this.sdk.context.walletAddress, searchTerm }
-			);
+			)
 
 			const stats: LeaderboardResult = {
 				top: response.top.map(mapStat),
@@ -106,25 +106,25 @@ export default class StatsService {
 				wallet: response.wallet.map(mapStat),
 				search: response.search.map(mapStat),
 				all: [],
-			};
+			}
 
-			stats.all = [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search];
+			stats.all = [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search]
 
-			return stats;
+			return stats
 		} catch (e) {
-			this.sdk.context.logError(e);
-			return DEFAULT_LEADERBOARD_DATA;
+			this.sdk.context.logError(e)
+			return DEFAULT_LEADERBOARD_DATA
 		}
 	}
 
 	public async getFuturesCumulativeStats(homepage: boolean) {
 		if (!this.sdk.context.isL2 && !homepage) {
-			throw new Error(REQUIRES_L2);
+			throw new Error(REQUIRES_L2)
 		}
 
 		const futuresEndpoint = homepage
 			? FUTURES_ENDPOINT_OP_MAINNET
-			: this.sdk.futures.futuresGqlEndpoint;
+			: this.sdk.futures.futuresGqlEndpoint
 
 		try {
 			const response: any = await request(
@@ -140,7 +140,7 @@ export default class StatsService {
 						}
 					}
 				`
-			);
+			)
 
 			return response
 				? {
@@ -154,10 +154,10 @@ export default class StatsService {
 						totalTrades: response.futuresCumulativeStat.totalTrades,
 						totalLiquidations: response.futuresCumulativeStat.totalLiquidations,
 				  }
-				: null;
+				: null
 		} catch (e) {
-			this.sdk.context.logError(e);
-			return null;
+			this.sdk.context.logError(e)
+			return null
 		}
 	}
 }

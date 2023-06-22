@@ -1,10 +1,10 @@
-import MarketDetail from 'sections/futures/MarketDetails/MarketDetail';
-import { MarketDetailsContainer } from 'sections/futures/MarketDetails/MarketDetails';
-import { MarketDataKey } from 'sections/futures/MarketDetails/utils';
+import MarketDetail from 'sections/futures/MarketDetails/MarketDetail'
+import { MarketDetailsContainer } from 'sections/futures/MarketDetails/MarketDetails'
+import { MarketDataKey } from 'sections/futures/MarketDetails/utils'
 
 export default {
 	title: 'Futures/MarketStats',
-};
+}
 
 export const Default = () => {
 	return (
@@ -16,8 +16,8 @@ export const Default = () => {
 			<MarketDetail dataKey={MarketDataKey.openInterestLong} value="0" />
 			<MarketDetail dataKey={MarketDataKey.openInterestShort} value="0" />
 		</MarketDetailsContainer>
-	);
-};
+	)
+}
 
 export const Mobile = () => {
 	return (
@@ -31,5 +31,5 @@ export const Mobile = () => {
 				<MarketDetail dataKey={MarketDataKey.openInterestShort} value="0" />
 			</MarketDetailsContainer>
 		</div>
-	);
-};
+	)
+}
