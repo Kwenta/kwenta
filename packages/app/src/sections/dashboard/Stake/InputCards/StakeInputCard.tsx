@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { FC, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import StakeCard from 'components/StakeCard/StakeCard'
+import StakeCard from 'components/StakeCard'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { approveKwentaToken } from 'state/staking/actions'
 import { stakeKwenta, unstakeKwenta } from 'state/staking/actions'

@@ -1,6 +1,6 @@
 import { FC, useCallback } from 'react'
 
-import StakeCard from 'components/StakeCard/StakeCard'
+import StakeCard from 'components/StakeCard'
 import { approveLPToken, stakeTokens, unstakeTokens } from 'state/earn/actions'
 import { selectBalance, selectIsApproved, selectLpTokenBalance } from 'state/earn/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'

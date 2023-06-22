@@ -16,7 +16,7 @@ import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices } from 'state/prices/selectors'
 import styled, { css } from 'styled-components'
 
-import { getColorFromPriceInfo } from 'components/ColoredPrice/ColoredPrice'
+import { getColorFromPriceInfo } from 'components/ColoredPrice'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import media from 'styles/media'

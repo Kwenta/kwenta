@@ -13,7 +13,7 @@ import { Provider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
 import { WagmiConfig } from 'wagmi'
 
-import ErrorNotifier from 'components/ErrorView/ErrorNotifier'
+import ErrorNotifier from 'components/ErrorNotifier'
 import Connector from 'containers/Connector'
 import { chains, wagmiClient } from 'containers/Connector/config'
 import useMonitorTransactions from 'hooks/useMonitorTransactions'

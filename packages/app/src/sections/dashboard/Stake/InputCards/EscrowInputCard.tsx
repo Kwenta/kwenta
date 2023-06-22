@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei'
 import { FC, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import StakeCard from 'components/StakeCard/StakeCard'
+import StakeCard from 'components/StakeCard'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { approveKwentaToken, stakeEscrow, unstakeEscrow } from 'state/staking/actions'
 import {

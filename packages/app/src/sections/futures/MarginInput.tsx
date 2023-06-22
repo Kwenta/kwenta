@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import InputTitle from 'components/Input/InputTitle'
 import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRow } from 'components/layout/flex'
-import SelectorButtons from 'components/SelectorButtons/SelectorButtons'
+import SelectorButtons from 'components/SelectorButtons'
 import { Body } from 'components/Text'
 import { editCrossMarginTradeMarginDelta } from 'state/futures/actions'
 import {

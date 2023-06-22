@@ -6,7 +6,7 @@ import { selectSelectedInputHours } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import styled from 'styled-components'
 
-import { StyledCaretDownIcon } from 'components/Select/Select'
+import { StyledCaretDownIcon } from 'components/Select'
 import media from 'styles/media'
 
 const HoursToggle: React.FC = () => {

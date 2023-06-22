@@ -28,7 +28,7 @@ import Button from 'components/Button'
 import ErrorView from 'components/ErrorView'
 import { InfoBoxRow } from 'components/InfoBox'
 import { FlexDivRowCentered } from 'components/layout/flex'
-import SelectorButtons from 'components/SelectorButtons/SelectorButtons'
+import SelectorButtons from 'components/SelectorButtons'
 import Spacer from 'components/Spacer'
 
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow'

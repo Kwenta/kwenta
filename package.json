@@ -9,7 +9,7 @@
 		"prepare": "husky install",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
 		"lint": "eslint . --ext ts,.tsx && tsc",
-		"lint:sarif": "node testing/lint.js . --ext ts,.tsx && tsc",
+		"lint:sarif": "node packages/app/testing/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint packages --ext ts,.tsx --fix"
 	},
 	"repository": {

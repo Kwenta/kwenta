@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react'
 import { wei } from '@synthetixio/wei'
 
-import StakeCard from 'components/StakeCard/StakeCard'
+import StakeCard from 'components/StakeCard'
 
 export default {
 	title: 'Components/StakeCard',

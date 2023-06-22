@@ -6,7 +6,7 @@ import styled from 'styled-components'
 
 import Button from 'components/Button'
 import Error from 'components/ErrorView'
-import { ERROR_MESSAGES } from 'components/ErrorView/ErrorNotifier'
+import { ERROR_MESSAGES } from 'components/ErrorNotifier'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { setOpenModal } from 'state/app/reducer'

@@ -58,7 +58,7 @@ import { AppDispatch, AppThunk, RootState } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 
-import { notifyError } from 'components/ErrorView/ErrorNotifier'
+import { notifyError } from 'components/ErrorNotifier'
 import { computeDelayedOrderFee } from 'utils/costCalculations'
 import {
 	formatDelayedOrders,

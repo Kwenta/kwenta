@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import AlertIcon from 'assets/svg/app/alert.svg'
-import Spacer from 'components/Spacer/Spacer'
+import Spacer from 'components/Spacer'
 import { Body } from 'components/Text'
 
 type Props = {

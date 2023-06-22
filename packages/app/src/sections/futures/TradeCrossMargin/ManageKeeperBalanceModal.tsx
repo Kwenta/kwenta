@@ -16,7 +16,7 @@ import styled from 'styled-components'
 
 import Button from 'components/Button'
 import ErrorView from 'components/ErrorView'
-import { notifyError } from 'components/ErrorView/ErrorNotifier'
+import { notifyError } from 'components/ErrorNotifier'
 import NumericInput from 'components/Input/NumericInput'
 import Loader from 'components/Loader'
 import SegmentedControl from 'components/SegmentedControl'

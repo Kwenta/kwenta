@@ -32,7 +32,7 @@ import styled, { css } from 'styled-components'
 
 import FavoriteIcon from 'assets/svg/futures/favorite-star.svg'
 import SelectedIcon from 'assets/svg/futures/selected-fav.svg'
-import MarketBadge from 'components/Badge/MarketBadge'
+import MarketBadge from 'components/MarketBadge'
 import ColoredPrice from 'components/ColoredPrice'
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
 import { FlexDivRowCentered } from 'components/layout/flex'

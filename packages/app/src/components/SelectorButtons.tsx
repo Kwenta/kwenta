@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 
 import Button from 'components/Button'
 import SegmentedControl from 'components/SegmentedControl'
-import { StyleType } from 'components/SegmentedControl/SegmentedControl'
+import { StyleType } from 'components/SegmentedControl'
 
 type Props = {
 	options: string[]

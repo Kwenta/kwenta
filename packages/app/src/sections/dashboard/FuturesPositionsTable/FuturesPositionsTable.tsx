@@ -8,7 +8,7 @@ import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
 import styled from 'styled-components'
 
-import MarketBadge from 'components/Badge/MarketBadge'
+import MarketBadge from 'components/MarketBadge'
 import ChangePercent from 'components/ChangePercent'
 import Currency from 'components/Currency'
 import { FlexDivRowCentered } from 'components/layout/flex'

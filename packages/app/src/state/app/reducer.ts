@@ -1,7 +1,7 @@
 import { TransactionStatus, FuturesMarketKey, OperationalStatus, GasPrice } from '@kwenta/sdk/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { notifyError } from 'components/ErrorView/ErrorNotifier'
+import { notifyError } from 'components/ErrorNotifier'
 import { isUserDeniedError } from 'utils/formatters/error'
 
 import { checkSynthetixStatus, fetchKwentaStatus } from './actions'

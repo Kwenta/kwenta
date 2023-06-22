@@ -9,7 +9,7 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import styled from 'styled-components'
 
 import Badge from 'components/Badge'
-import { ButtonLoader } from 'components/Loader/Loader'
+import { ButtonLoader } from 'components/Loader'
 import Pill from 'components/Pill'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'

@@ -18,7 +18,7 @@ import PolygonIcon from 'assets/svg/providers/polygon.svg'
 import Button from 'components/Button'
 import LabelContainer from 'components/Nav/DropDownLabel'
 import Select from 'components/Select'
-import { IndicatorSeparator, DropdownIndicator } from 'components/Select/Select'
+import { IndicatorSeparator, DropdownIndicator } from 'components/Select'
 import { EXTERNAL_LINKS } from 'constants/links'
 
 type ReactSelectOptionProps = {

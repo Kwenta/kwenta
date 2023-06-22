@@ -1,7 +1,7 @@
 import { FC, ReactNode, memo } from 'react'
 import styled, { css } from 'styled-components'
 
-import { ButtonLoader } from 'components/Loader/Loader'
+import { ButtonLoader } from 'components/Loader'
 
 // TODO: Clean up these styles
 export type ButtonVariant =

@@ -22,7 +22,7 @@ import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/
 import { getSynthDescription } from 'utils/futures'
 import styled from 'styled-components'
 
-import MarketBadge from 'components/Badge/MarketBadge'
+import MarketBadge from 'components/MarketBadge'
 import ChangePercent from 'components/ChangePercent'
 import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
