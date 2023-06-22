@@ -1,4 +1,4 @@
 node_modules
 build
-public/static/charting_library
+packages/app/public/static/charting_library
 dist
