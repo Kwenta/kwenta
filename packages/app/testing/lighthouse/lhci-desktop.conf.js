@@ -5,7 +5,7 @@ const conf = {
 		collect: {
 			numberOfRuns: 3,
 			settings: {
-				configPath: 'tests/lighthouse/desktop.conf.js',
+				configPath: 'packages/app/testing/lighthouse/desktop.conf.js',
 				plugins: ['lighthouse-plugin-field-performance', 'lighthouse-plugin-social-sharing'],
 				chromeFlags:
 					'--headless --no-sandbox --ignore-certificate-errors --disable-gpu --incognito --disable-dev-shm-usage',

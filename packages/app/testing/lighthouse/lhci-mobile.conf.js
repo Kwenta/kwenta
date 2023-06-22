@@ -5,7 +5,7 @@ const conf = {
 		collect: {
 			numberOfRuns: 3,
 			settings: {
-				configPath: 'tests/lighthouse/mobile.conf.js',
+				configPath: 'packages/app/testing/lighthouse/mobile.conf.js',
 				plugins: ['lighthouse-plugin-field-performance', 'lighthouse-plugin-social-sharing'],
 				chromeFlags:
 					'--headless --no-sandbox --ignore-certificate-errors --disable-gpu --incognito --disable-dev-shm-usage',
@@ -72,7 +72,7 @@ const conf = {
 			outputDir: 'lighthouse-mobile-report',
 		},
 	},
-};
+}
 
 if (isDev) {
 	for (const assertionObject of conf.ci.assert.assertMatrix) {

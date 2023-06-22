@@ -1,5 +1,3 @@
-'use strict';
-
 /** @type {LH.Config.Json} */
 const config = {
 	extends: 'lighthouse:default',
