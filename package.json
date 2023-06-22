@@ -8,7 +8,7 @@
 		"check-types": "pnpm run --filter \"@kwenta/*\" check-types",
 		"prepare": "husky install",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
-		"lint": "eslint . --ext ts,.tsx && tsc",
+		"lint": "eslint . --ext ts,.tsx && pnpm check-types",
 		"lint:sarif": "node packages/app/src/testing/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint packages --ext ts,.tsx --fix"
 	},
@@ -51,6 +51,7 @@
 		"eslint-plugin-ui-testing": "^2.0.1",
 		"husky": "8.0.1",
 		"lint-staged": "^13.0.3",
-		"prettier": "2.0.5"
+		"prettier": "2.0.5",
+		"typescript": "^5.1.3"
 	}
 }
