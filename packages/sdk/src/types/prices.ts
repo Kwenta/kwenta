@@ -1,7 +1,7 @@
 import Wei from '@synthetixio/wei'
+import { BigNumberish } from 'ethers'
 
 import { FuturesMarketAsset } from './futures'
-import { BigNumberish } from 'ethers'
 
 export type CurrencyPrice = BigNumberish
 export type SynthPricesTuple = [string[], CurrencyPrice[]]

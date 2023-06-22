@@ -19,6 +19,7 @@ import {
 } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { TFunction } from 'i18next'
+
 import {
 	CrossMarginBalanceInfo,
 	TradeSizeInputs,

@@ -1,10 +1,10 @@
 import React from 'react'
-import { selectFuturesType, selectPosition } from 'state/futures/selectors'
-import { useAppSelector } from 'state/hooks'
 import styled from 'styled-components'
 
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable'
 import { SectionHeader, SectionSeparator, SectionTitle } from 'sections/futures/mobile'
+import { selectFuturesType, selectPosition } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
 const PositionDetails = () => {
 	const position = useAppSelector(selectPosition)

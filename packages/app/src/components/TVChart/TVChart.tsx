@@ -1,5 +1,10 @@
 import { NetworkId, ConditionalOrder, PricesListener } from '@kwenta/sdk/types'
 import { formatOrderDisplayType, formatNumber } from '@kwenta/sdk/utils'
+import {
+	IChartingLibraryWidget,
+	IPositionLineAdapter,
+	widget,
+} from 'charting_library/charting_library'
 import { useRouter } from 'next/router'
 import { useRef, useContext, useEffect, useCallback, useMemo } from 'react'
 import { ThemeContext } from 'styled-components'
@@ -11,12 +16,6 @@ import { sdk } from 'state/config'
 import { useAppSelector } from 'state/hooks'
 import { selectCurrentTheme } from 'state/preferences/selectors'
 import darkTheme from 'styles/theme/colors/dark'
-
-import {
-	IChartingLibraryWidget,
-	IPositionLineAdapter,
-	widget,
-} from 'charting_library/charting_library'
 
 import { DEFAULT_RESOLUTION } from './constants'
 import DataFeedFactory from './DataFeed'

@@ -1,3 +1,4 @@
+import { formatChartTime } from '@kwenta/sdk/utils'
 import { FC } from 'react'
 import {
 	LineChart,
@@ -11,7 +12,6 @@ import {
 import styled, { css } from 'styled-components'
 import { useTheme } from 'styled-components'
 
-import { formatChartTime } from '@kwenta/sdk/utils'
 import { fetchFundingRatesHistory } from 'state/futures/actions'
 import { selectMarketAsset } from 'state/futures/selectors'
 import { useAppSelector, usePollAction } from 'state/hooks'

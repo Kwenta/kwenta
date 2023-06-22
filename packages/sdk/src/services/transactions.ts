@@ -1,18 +1,17 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts'
+import { BigNumber } from '@ethersproject/bignumber'
 import { wei } from '@synthetixio/wei'
 import { ethers } from 'ethers'
 import { omit, clone } from 'lodash'
-import KwentaSDK from '..'
 
+import KwentaSDK from '..'
+import * as sdkErrors from '../common/errors'
 import { getEthGasPrice } from '../common/gas'
 import { TRANSACTION_EVENTS_MAP } from '../constants/transactions'
+import { ContractName } from '../contracts'
 import { NetworkIdByName } from '../types/common'
 import { Emitter } from '../types/transactions'
 import { createEmitter, getRevertReason } from '../utils/transactions'
-
-import * as sdkErrors from '../common/errors'
-import { ContractName } from '../contracts'
-import { BigNumber } from '@ethersproject/bignumber'
 
 const OVMGasPriceOracle = getContractFactory('OVM_GasPriceOracle').attach(
 	predeploys.OVM_GasPriceOracle

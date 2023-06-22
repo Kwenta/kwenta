@@ -1,12 +1,12 @@
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SharePositionParams } from 'state/futures/types'
 import styled from 'styled-components'
 
 import MobilePNLGraphicPNG from 'assets/png/mobile-pnl-graphic.png'
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png'
 import BaseModal from 'components/BaseModal'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import { SharePositionParams } from 'state/futures/types'
 import media from 'styles/media'
 
 import AmountContainer from './AmountContainer'

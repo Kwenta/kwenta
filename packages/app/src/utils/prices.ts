@@ -1,6 +1,7 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { PricesMap } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
+
 import { PricesInfoMap, PricesInfoMapWei } from 'state/prices/types'
 
 export const getPricesInfo = (oldPrices: PricesInfoMap, newPrices: PricesMap<string>) => {

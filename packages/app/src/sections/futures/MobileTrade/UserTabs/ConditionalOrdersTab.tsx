@@ -1,6 +1,8 @@
 import { PositionSide } from '@kwenta/sdk/types'
 import { formatDollars } from '@kwenta/sdk/utils'
 import { useCallback, useMemo } from 'react'
+import styled from 'styled-components'
+
 import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
 import { FlexDiv } from 'components/layout/flex'
@@ -9,6 +11,8 @@ import Spacer from 'components/Spacer'
 import { TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
+import PositionType from 'sections/futures/PositionType'
+import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning'
 import { cancelConditionalOrder } from 'state/futures/actions'
 import {
 	selectAllConditionalOrders,
@@ -16,10 +20,6 @@ import {
 	selectMarketAsset,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import styled from 'styled-components'
-
-import PositionType from 'sections/futures/PositionType'
-import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning'
 
 const ConditionalOrdersTab: React.FC = () => {
 	const dispatch = useAppDispatch()

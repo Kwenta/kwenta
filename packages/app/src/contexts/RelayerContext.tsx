@@ -1,5 +1,6 @@
 import { TransactionStatusData } from '@kwenta/sdk/types'
 import { toast } from 'react-toastify'
+
 import {
 	NotificationSuccess,
 	NotificationPending,

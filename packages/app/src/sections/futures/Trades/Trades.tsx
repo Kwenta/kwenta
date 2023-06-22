@@ -4,11 +4,18 @@ import { useRouter } from 'next/router'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
+import styled from 'styled-components'
+
+import LinkIcon from 'assets/svg/app/link-blue.svg'
+import ColoredPrice from 'components/ColoredPrice'
+import { GridDivCenteredRow } from 'components/layout/grid'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { ETH_UNIT } from 'constants/network'
 import ROUTES from 'constants/routes'
 import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import PositionType from 'sections/futures/PositionType'
 import {
 	selectAllTradesForAccountType,
 	selectFuturesType,
@@ -17,13 +24,6 @@ import {
 } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
-import styled from 'styled-components'
-
-import LinkIcon from 'assets/svg/app/link-blue.svg'
-import ColoredPrice from 'components/ColoredPrice'
-import { GridDivCenteredRow } from 'components/layout/grid'
-import Table, { TableHeader, TableNoResults } from 'components/Table'
-import PositionType from 'sections/futures/PositionType'
 import { ExternalLink } from 'styles/common'
 
 import { TradeStatus } from '../types'

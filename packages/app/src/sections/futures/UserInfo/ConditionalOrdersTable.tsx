@@ -2,8 +2,6 @@ import { formatDollars } from '@kwenta/sdk/utils'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
-import useIsL2 from 'hooks/useIsL2'
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import styled from 'styled-components'
 
 import Badge from 'components/Badge'
@@ -14,6 +12,8 @@ import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import { CustomFontLabel } from 'components/Text/CustomFontLabel'
 import { NO_VALUE } from 'constants/placeholder'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import { cancelConditionalOrder } from 'state/futures/actions'
 import {
 	selectCancellingConditionalOrder,

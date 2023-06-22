@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import styled from 'styled-components'
 
 import Button from 'components/Button'
 import { FlexDivCentered } from 'components/layout/flex'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 
 const FuturesUnsupportedNetwork = () => {
 	const { t } = useTranslation()

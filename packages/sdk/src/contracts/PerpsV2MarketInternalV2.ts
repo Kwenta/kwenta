@@ -1,17 +1,18 @@
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatBytes32String } from '@ethersproject/strings'
 import { wei } from '@synthetixio/wei'
 import BN from 'bn.js'
 import { Contract as MultiCallContract } from 'ethcall'
 import { ethers, Contract } from 'ethers'
-import { BigNumber } from '@ethersproject/bignumber'
-import { formatBytes32String } from '@ethersproject/strings'
-import KwentaSDK from '..'
 
+import KwentaSDK from '..'
 import { KWENTA_TRACKING_CODE } from '../constants/futures'
 import { ZERO_WEI, ZERO_BIG_NUM, UNIT_BIG_NUM, UNIT_BN } from '../constants/number'
-import PerpsV2Market from './abis/PerpsV2Market.json'
-import { PerpsV2Market__factory } from './types'
 import { FuturesMarketKey, PotentialTradeStatus } from '../types/futures'
 import { multiplyDecimal, divideDecimal } from '../utils/number'
+
+import PerpsV2Market from './abis/PerpsV2Market.json'
+import { PerpsV2Market__factory } from './types'
 
 // Need to recreate postTradeDetails from the contract here locally
 // so we can modify margin for use with cross margin

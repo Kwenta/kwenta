@@ -1,15 +1,15 @@
 import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
 import Button from 'components/Button'
 import { SplitContainer } from 'components/layout/grid'
 import { LogoText } from 'components/Text'
+import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { getReward } from 'state/staking/actions'
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors'
-import styled from 'styled-components'
-
-import { StakingCard } from 'sections/dashboard/Stake/card'
 
 import StakeInputCard from './InputCards/StakeInputCard'
 

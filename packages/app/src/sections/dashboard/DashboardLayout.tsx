@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router'
 import { FC, ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { EXTERNAL_LINKS } from 'constants/links'
-import ROUTES from 'constants/routes'
 import styled from 'styled-components'
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import NavLink from 'components/Nav/NavLink'
 import { TabList, TabPanel } from 'components/Tab'
+import { EXTERNAL_LINKS } from 'constants/links'
+import ROUTES from 'constants/routes'
 import AppLayout from 'sections/shared/Layout/AppLayout'
 import { LeftSideContent, PageContent } from 'styles/common'
 

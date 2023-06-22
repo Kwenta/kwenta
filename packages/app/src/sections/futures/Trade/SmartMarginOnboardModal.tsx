@@ -1,3 +1,4 @@
+import { formatDollars } from '@kwenta/sdk/utils'
 import dynamic from 'next/dynamic'
 import React, { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,7 +7,6 @@ import styled from 'styled-components'
 import BaseModal from 'components/BaseModal'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import Spacer from 'components/Spacer'
-import { formatDollars } from '@kwenta/sdk/utils'
 import { selectSusdBalance } from 'state/balances/selectors'
 import { useAppSelector } from 'state/hooks'
 

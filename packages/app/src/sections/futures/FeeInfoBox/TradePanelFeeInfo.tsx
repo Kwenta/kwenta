@@ -2,13 +2,6 @@ import { formatDollars, formatPercent } from '@kwenta/sdk/utils'
 import router from 'next/router'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import Connector from 'containers/Connector'
-import { selectTradePreview } from 'state/futures/selectors'
-import { useAppSelector } from 'state/hooks'
-import {
-	selectStakedEscrowedKwentaBalance,
-	selectStakedKwentaBalance,
-} from 'state/staking/selectors'
 import styled from 'styled-components'
 
 import EligibleIcon from 'assets/svg/app/eligible.svg'
@@ -19,6 +12,13 @@ import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
+import Connector from 'containers/Connector'
+import { selectTradePreview } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
+import {
+	selectStakedEscrowedKwentaBalance,
+	selectStakedKwentaBalance,
+} from 'state/staking/selectors'
 
 import TradeTotalFeesRow from './TradeTotalFeesRow'
 

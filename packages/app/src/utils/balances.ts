@@ -2,6 +2,7 @@ import { SynthBalance, TokenBalances } from '@kwenta/sdk/types'
 import { notNill } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { orderBy } from 'lodash'
+
 import { BalancesActionReturn } from 'state/balances/types'
 
 export const sortWei = (a: Wei, b: Wei, order: 'descending' | 'ascending') => {

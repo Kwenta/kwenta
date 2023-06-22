@@ -1,5 +1,8 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg'
 import BaseModal from 'components/BaseModal'
 import Button from 'components/Button'
 import ErrorView from 'components/ErrorView'
@@ -17,9 +20,6 @@ import {
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
-import styled from 'styled-components'
-
-import CompleteCheck from 'assets/svg/futures/onboard-complete-check.svg'
 
 import CrossMarginFAQ from './CrossMarginFAQ'
 

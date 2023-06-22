@@ -4,6 +4,8 @@ import { formatDollars } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
 import BaseModal from 'components/BaseModal'
 import Button from 'components/Button'
 import ErrorView from 'components/ErrorView'
@@ -33,7 +35,6 @@ import {
 	selectTradePreviewError,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import styled from 'styled-components'
 
 import EditPositionMarginInput from './EditPositionMarginInput'
 

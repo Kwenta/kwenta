@@ -1,7 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatBytes32String, parseBytes32String } from '@ethersproject/strings'
 import Wei, { wei } from '@synthetixio/wei'
-
 import { defaultAbiCoder } from 'ethers/lib/utils.js'
 
 import {

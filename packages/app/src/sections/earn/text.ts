@@ -1,5 +1,6 @@
-import * as Text from 'components/Text'
 import styled from 'styled-components'
+
+import * as Text from 'components/Text'
 
 export const Description = styled(Text.Body)`
 	font-size: 15px;

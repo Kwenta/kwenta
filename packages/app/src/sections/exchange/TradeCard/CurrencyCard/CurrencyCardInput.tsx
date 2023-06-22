@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatDollars } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,8 +10,6 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import Loader from 'components/Loader'
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency'
-import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { formatDollars } from '@kwenta/sdk/utils'
 import { CapitalizedText, numericValueCSS } from 'styles/common'
 
 type CurrencyCardInputProps = {

@@ -2,9 +2,9 @@ import { FUTURES_ENDPOINT_OP_MAINNET } from '@kwenta/sdk/constants'
 import { NetworkId } from '@kwenta/sdk/types'
 import { getFuturesEndpoint, truncateAddress, getFuturesStats } from '@kwenta/sdk/utils'
 import { useQuery, UseQueryOptions } from 'react-query'
+
 import { ETH_UNIT } from 'constants/network'
 import QUERY_KEYS from 'constants/queryKeys'
-
 import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import logError from 'utils/logError'

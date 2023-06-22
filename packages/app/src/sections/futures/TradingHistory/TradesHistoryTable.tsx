@@ -2,15 +2,15 @@ import { formatNumber } from '@kwenta/sdk/utils'
 import { FC, useMemo, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
-import { blockExplorer } from 'containers/Connector/Connector'
-import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades'
-import { selectMarketKey } from 'state/futures/selectors'
-import { useAppSelector } from 'state/hooks'
 import styled, { css } from 'styled-components'
 
 import Table, { TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
+import { blockExplorer } from 'containers/Connector/Connector'
+import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades'
+import { selectMarketKey } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
 type TradesHistoryTableProps = {
 	mobile?: boolean

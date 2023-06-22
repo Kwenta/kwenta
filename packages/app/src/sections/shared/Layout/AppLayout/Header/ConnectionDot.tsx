@@ -1,8 +1,9 @@
 import { NetworkId, NetworkIdByName } from '@kwenta/sdk/types'
 import React from 'react'
+import styled, { useTheme } from 'styled-components'
+
 import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
-import styled, { useTheme } from 'styled-components'
 
 type ConnectionDotProps = {
 	className?: string

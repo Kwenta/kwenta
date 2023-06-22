@@ -10,6 +10,15 @@ import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
+import styled from 'styled-components'
+
+import ChangePercent from 'components/ChangePercent'
+import ColoredPrice from 'components/ColoredPrice'
+import Currency from 'components/Currency'
+import MarketBadge from 'components/MarketBadge'
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import Spacer from 'components/Spacer'
+import Table, { TableHeader } from 'components/Table'
 import ROUTES from 'constants/routes'
 import {
 	selectFuturesType,
@@ -20,15 +29,6 @@ import {
 import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors'
 import { getSynthDescription } from 'utils/futures'
-import styled from 'styled-components'
-
-import MarketBadge from 'components/MarketBadge'
-import ChangePercent from 'components/ChangePercent'
-import ColoredPrice from 'components/ColoredPrice'
-import Currency from 'components/Currency'
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
-import Spacer from 'components/Spacer'
-import Table, { TableHeader } from 'components/Table'
 
 type FuturesMarketsTableProps = {
 	search?: string

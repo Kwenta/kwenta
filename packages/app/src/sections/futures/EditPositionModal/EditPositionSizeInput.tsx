@@ -3,6 +3,8 @@ import { PositionSide } from '@kwenta/sdk/types'
 import { stripZeros, formatNumber, suggestedDecimals } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import React, { useMemo, memo, useCallback } from 'react'
+import styled from 'styled-components'
+
 import TextButton from 'components/Button/TextButton'
 import InputTitle from 'components/Input/InputTitle'
 import NumericInput from 'components/Input/NumericInput'
@@ -14,7 +16,6 @@ import { selectShowPositionModal } from 'state/app/selectors'
 import { editCrossMarginPositionSize } from 'state/futures/actions'
 import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import styled from 'styled-components'
 
 type OrderSizingProps = {
 	type: 'increase' | 'decrease'

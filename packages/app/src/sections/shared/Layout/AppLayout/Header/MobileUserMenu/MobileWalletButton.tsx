@@ -2,10 +2,10 @@ import { NetworkId } from '@kwenta/sdk/types'
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit'
 import React, { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import Connector from 'containers/Connector'
 import styled from 'styled-components'
 
 import Button from 'components/Button'
+import Connector from 'containers/Connector'
 import { isSupportedNetworkId } from 'utils/network'
 
 import ConnectionDot from '../ConnectionDot'

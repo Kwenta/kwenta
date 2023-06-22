@@ -1,10 +1,6 @@
 import { useChainModal } from '@rainbow-me/rainbowkit'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import Connector from 'containers/Connector'
-import { blockExplorer } from 'containers/Connector/Connector'
-import useIsL2 from 'hooks/useIsL2'
-import { ExternalLink } from 'styles/common'
 import styled, { css } from 'styled-components'
 
 import LinkIcon from 'assets/svg/app/link-blue.svg'
@@ -20,6 +16,10 @@ import LabelContainer from 'components/Nav/DropDownLabel'
 import Select from 'components/Select'
 import { IndicatorSeparator, DropdownIndicator } from 'components/Select'
 import { EXTERNAL_LINKS } from 'constants/links'
+import Connector from 'containers/Connector'
+import { blockExplorer } from 'containers/Connector/Connector'
+import useIsL2 from 'hooks/useIsL2'
+import { ExternalLink } from 'styles/common'
 
 type ReactSelectOptionProps = {
 	label: string

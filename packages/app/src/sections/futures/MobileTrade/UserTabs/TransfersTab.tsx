@@ -1,3 +1,4 @@
+import { formatDollars } from '@kwenta/sdk/utils'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -7,7 +8,6 @@ import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
-import { formatDollars } from '@kwenta/sdk/utils'
 import {
 	selectFuturesType,
 	selectIdleMarginTransfers,

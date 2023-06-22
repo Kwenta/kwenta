@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import ROUTES from 'constants/routes'
 import styled from 'styled-components'
 
 import BaseModal from 'components/BaseModal'
 import Button from 'components/Button'
 import { Body } from 'components/Text'
+import ROUTES from 'constants/routes'
 import Connector from 'containers/Connector'
 import localStore from 'utils/localStore'
 import logError from 'utils/logError'

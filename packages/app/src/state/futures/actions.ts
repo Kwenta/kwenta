@@ -41,6 +41,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 import { BigNumber, ethers } from 'ethers'
 import { debounce } from 'lodash'
+
+import { notifyError } from 'components/ErrorNotifier'
 import { unserializeGasPrice } from 'state/app/helpers'
 import {
 	handleTransactionError,
@@ -57,8 +59,6 @@ import { selectLatestEthPrice } from 'state/prices/selectors'
 import { AppDispatch, AppThunk, RootState } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
-
-import { notifyError } from 'components/ErrorNotifier'
 import { computeDelayedOrderFee } from 'utils/costCalculations'
 import {
 	formatDelayedOrders,

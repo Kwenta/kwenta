@@ -6,6 +6,9 @@ import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils.js'
 import { useCallback, useMemo, FC, memo } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+import HelpIcon from 'assets/svg/app/question-mark.svg'
 import Button from 'components/Button'
 import { FlexDivRow } from 'components/layout/flex'
 import { SplitContainer } from 'components/layout/grid'
@@ -22,14 +25,11 @@ import {
 	FuturesFeeProps,
 	TradingRewardProps,
 } from 'queries/staking/utils'
+import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimMultipleKwentaRewards } from 'state/staking/actions'
 import { selectEpochPeriod, selectKwentaRewards, selectResetTime } from 'state/staking/selectors'
 import media from 'styles/media'
-import styled from 'styled-components'
-
-import HelpIcon from 'assets/svg/app/question-mark.svg'
-import { StakingCard } from 'sections/dashboard/Stake/card'
 
 const TradingRewardsTab: FC<TradingRewardProps> = memo(
 	({ period = 0, start = 0, end = Math.floor(Date.now() / 1000) }) => {

@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import Wei, { wei } from '@synthetixio/wei'
 import { ethers, utils } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
@@ -11,7 +12,6 @@ import {
 } from '../constants/number'
 
 import { isFiatCurrency } from './exchange'
-import { BigNumber } from '@ethersproject/bignumber'
 
 export type TruncateUnits = 1e3 | 1e6 | 1e9 | 1e12
 

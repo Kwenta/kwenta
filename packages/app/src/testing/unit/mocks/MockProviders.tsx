@@ -1,11 +1,12 @@
 import mockRouter from 'next-router-mock'
 import { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { ThemeProvider } from 'styled-components'
+import { WagmiConfig } from 'wagmi'
+
 import Connector from 'containers/Connector'
 import { wagmiClient } from 'containers/Connector/config'
 import { themes } from 'styles/theme'
-import { ThemeProvider } from 'styled-components'
-import { WagmiConfig } from 'wagmi'
 
 jest.mock('@rainbow-me/rainbowkit', () => ({
 	wallet: {

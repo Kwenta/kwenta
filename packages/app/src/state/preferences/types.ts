@@ -1,6 +1,5 @@
-import { Language } from 'translations/constants'
-
 import { ThemeName } from 'styles/theme'
+import { Language } from 'translations/constants'
 
 export type PreferncesState = {
 	currentTheme: ThemeName

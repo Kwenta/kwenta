@@ -1,8 +1,8 @@
-const path = require('path');
+const path = require('path')
 const absoluteSynpressNodeModulesPath = path.join(
 	process.cwd(),
-	'/node_modules/@synthetixio/synpress'
-);
+	'/packages/app/node_modules/@synthetixio/synpress'
+)
 
 module.exports = {
 	extends: `${absoluteSynpressNodeModulesPath}/.eslintrc.js`,
@@ -11,4 +11,4 @@ module.exports = {
 		'testing-library/await-async-query': 'off',
 		'testing-library/prefer-screen-queries': 'off',
 	},
-};
+}

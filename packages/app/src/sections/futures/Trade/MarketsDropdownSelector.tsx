@@ -2,14 +2,14 @@ import { FuturesMarketAsset, SynthSuspensionReason } from '@kwenta/sdk/types'
 import { MarketKeyByAsset, formatDollars, formatPercent } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { FC } from 'react'
-import { PricesInfo } from 'state/prices/types'
 import styled, { css } from 'styled-components'
 
-import MarketBadge from 'components/MarketBadge'
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
 import { FlexDivCentered } from 'components/layout/flex'
+import MarketBadge from 'components/MarketBadge'
 import { StyledCaretDownIcon } from 'components/Select'
 import { Body, NumericValue } from 'components/Text'
+import { PricesInfo } from 'state/prices/types'
 import media from 'styles/media'
 
 import {

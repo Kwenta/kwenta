@@ -2,9 +2,9 @@ import { NetworkId, FuturesTrade } from '@kwenta/sdk/types'
 import { getFuturesEndpoint, mapTrades, notNill, getFuturesTrades } from '@kwenta/sdk/utils'
 import { utils as ethersUtils } from 'ethers'
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
+
 import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults'
 import QUERY_KEYS from 'constants/queryKeys'
-
 import Connector from 'containers/Connector'
 import logError from 'utils/logError'
 

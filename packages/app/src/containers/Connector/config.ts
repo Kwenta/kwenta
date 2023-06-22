@@ -9,7 +9,6 @@ import {
 	trustWallet,
 	walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
-import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from 'constants/network'
 import { configureChains, createClient } from 'wagmi'
 import {
 	arbitrum,
@@ -29,6 +28,7 @@ import BinanceIcon from 'assets/png/rainbowkit/binance.png'
 import Frame from 'components/Rainbowkit/Frame'
 import Safe from 'components/Rainbowkit/Gnosis'
 import Tally from 'components/Rainbowkit/Tally'
+import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from 'constants/network'
 
 const bscWithIcon: Chain = {
 	...bsc,

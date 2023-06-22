@@ -1,5 +1,5 @@
-import { BigNumber } from 'ethers'
 import Wei from '@synthetixio/wei'
+import { BigNumber } from 'ethers'
 
 export type FundingRateInput = {
 	marketAddress: string | undefined

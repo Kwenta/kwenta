@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react'
-import { setSelectedChart } from 'state/futures/reducer'
-import { useAppSelector, useAppDispatch } from 'state/hooks'
 
 import TextToggle from 'components/TextToggle'
+import { setSelectedChart } from 'state/futures/reducer'
+import { useAppSelector, useAppDispatch } from 'state/hooks'
 
 const CHART_OPTIONS: ('price' | 'funding')[] = ['price', 'funding']
 

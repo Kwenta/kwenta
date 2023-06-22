@@ -1,8 +1,8 @@
 import { toWei } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
+
 import type { RootState } from 'state/store'
 import { FetchStatus } from 'state/types'
-
 import { unserializeBalances } from 'utils/balances'
 
 export const selectBalancesFetchStatus = (state: RootState) => state.balances.status

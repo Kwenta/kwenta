@@ -2,6 +2,7 @@ import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { floorNumber, formatNumber } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import React, { memo, useCallback, useMemo } from 'react'
+
 import TextButton from 'components/Button/TextButton'
 import InputHeaderRow from 'components/Input/InputHeaderRow'
 import NumericInput from 'components/Input/NumericInput'

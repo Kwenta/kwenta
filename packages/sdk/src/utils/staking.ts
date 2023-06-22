@@ -1,4 +1,6 @@
 import { wei } from '@synthetixio/wei'
+
+import { ZERO_WEI } from '../constants/number'
 import {
 	DECAY_RATE,
 	EPOCH_START,
@@ -7,9 +9,9 @@ import {
 	SUPPLY_RATE,
 	WEEK,
 } from '../constants/staking'
-import { formatShortDate, toJSTimestamp } from './date'
-import { ZERO_WEI } from '../constants/number'
 import { NetworkId } from '../types/common'
+
+import { formatShortDate, toJSTimestamp } from './date'
 
 export function getEpochDetails(networkId: number, epoch: number) {
 	const currentEpochTime = EPOCH_START[networkId]

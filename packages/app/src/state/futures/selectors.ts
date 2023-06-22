@@ -16,10 +16,10 @@ import {
 } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
-import { FuturesAccountTypes } from 'queries/futures/types'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_LEVERAGE } from 'constants/defaults'
 import { ETH_UNIT } from 'constants/network'
+import { FuturesAccountTypes } from 'queries/futures/types'
 import { selectSusdBalance } from 'state/balances/selectors'
 import { accountType, deserializeWeiObject } from 'state/helpers'
 import {

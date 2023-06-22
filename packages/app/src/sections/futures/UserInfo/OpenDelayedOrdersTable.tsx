@@ -3,9 +3,6 @@ import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
-import useInterval from 'hooks/useInterval'
-import useIsL2 from 'hooks/useIsL2'
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import styled from 'styled-components'
 
 import Badge from 'components/Badge'
@@ -14,6 +11,9 @@ import Pill from 'components/Pill'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_DELAYED_EXECUTION_BUFFER } from 'constants/defaults'
+import useInterval from 'hooks/useInterval'
+import useIsL2 from 'hooks/useIsL2'
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
 import {
 	selectIsCancellingOrder,

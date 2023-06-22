@@ -4,17 +4,6 @@ import router from 'next/router'
 import { FC, memo, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
-import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement'
-import ROUTES from 'constants/routes'
-import { selectShowBanner } from 'state/app/selectors'
-import { fetchPositionHistoryForTrader } from 'state/futures/actions'
-import {
-	selectFuturesPositions,
-	selectPositionHistoryForSelectedTrader,
-	selectQueryStatuses,
-} from 'state/futures/selectors'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { FetchStatus } from 'state/types'
 import styled, { css } from 'styled-components'
 
 import Currency from 'components/Currency'
@@ -24,7 +13,18 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import FuturesIcon from 'components/Nav/FuturesIcon'
 import Table, { TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
+import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement'
+import ROUTES from 'constants/routes'
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
+import { selectShowBanner } from 'state/app/selectors'
+import { fetchPositionHistoryForTrader } from 'state/futures/actions'
+import {
+	selectFuturesPositions,
+	selectPositionHistoryForSelectedTrader,
+	selectQueryStatuses,
+} from 'state/futures/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { FetchStatus } from 'state/types'
 import { ExternalLink, FOOTER_HEIGHT } from 'styles/common'
 import media from 'styles/media'
 import { getMarketName } from 'utils/futures'

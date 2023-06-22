@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import FullScreenModal from 'components/FullScreenModal'
-import { zIndex } from 'constants/ui'
 import styled from 'styled-components'
 
+import FullScreenModal from 'components/FullScreenModal'
+import { zIndex } from 'constants/ui'
 import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel'
 
 type TradePanelDrawerProps = {

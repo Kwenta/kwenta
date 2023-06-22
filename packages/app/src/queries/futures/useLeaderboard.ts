@@ -3,8 +3,8 @@ import { getFuturesEndpoint, weiFromWei, truncateAddress } from '@kwenta/sdk/uti
 import { wei } from '@synthetixio/wei'
 import request, { gql } from 'graphql-request'
 import { useQuery, UseQueryOptions } from 'react-query'
-import QUERY_KEYS from 'constants/queryKeys'
 
+import QUERY_KEYS from 'constants/queryKeys'
 import Connector from 'containers/Connector'
 import logError from 'utils/logError'
 

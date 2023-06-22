@@ -1,11 +1,12 @@
 import { useCallback } from 'react'
+import styled from 'styled-components'
+
 import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useWindowSize from 'hooks/useWindowSize'
 import { selectShowBanner } from 'state/app/selectors'
 import { setTradePanelDrawerOpen } from 'state/futures/reducer'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import styled from 'styled-components'
 
 import MarketDetails from '../MarketDetails/MarketDetails'
 import FuturesUnsupportedNetwork from '../Trade/FuturesUnsupported'

@@ -2,6 +2,8 @@ import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { PositionSide } from '@kwenta/sdk/types'
 import Wei, { wei } from '@synthetixio/wei'
 import React, { useMemo, memo, useCallback } from 'react'
+import styled from 'styled-components'
+
 import InputTitle from 'components/Input/InputTitle'
 import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRow } from 'components/layout/flex'
@@ -13,7 +15,6 @@ import {
 	selectEditPositionModalInfo,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import styled from 'styled-components'
 
 type OrderSizingProps = {
 	maxNativeValue: Wei

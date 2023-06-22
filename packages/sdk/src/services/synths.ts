@@ -1,15 +1,13 @@
+import { BigNumber } from '@ethersproject/bignumber'
+import { parseBytes32String } from '@ethersproject/strings'
 import { wei } from '@synthetixio/wei'
-import { ethers } from 'ethers'
 import { orderBy } from 'lodash'
-import KwentaSDK from '..'
 
+import KwentaSDK from '..'
+import * as sdkErrors from '../common/errors'
 import { ZERO_WEI } from '../constants/number'
 import { SynthBalance } from '../types/synths'
 import { notNill } from '../utils/general'
-
-import * as sdkErrors from '../common/errors'
-import { BigNumber } from '@ethersproject/bignumber'
-import { parseBytes32String } from '@ethersproject/strings'
 
 type SynthBalancesTuple = [string[], BigNumber[], BigNumber[]]
 

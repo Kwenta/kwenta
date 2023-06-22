@@ -1,6 +1,7 @@
 import { PositionSide } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
 import { ChangeEvent, useCallback } from 'react'
+
 import { selectShowPositionModal } from 'state/app/selectors'
 import { editClosePositionPrice } from 'state/futures/actions'
 import {

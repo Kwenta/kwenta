@@ -6,6 +6,14 @@ import Link from 'next/link'
 import { FC, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import styled, { useTheme } from 'styled-components'
+
+import Logo from 'assets/svg/brand/logo-only.svg'
+import Button from 'components/Button'
+import Currency from 'components/Currency'
+import { GridDivCenteredRow } from 'components/layout/grid'
+import { MobileHiddenView, MobileOnlyView } from 'components/Media'
+import { Body, NumericValue, Heading } from 'components/Text'
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
 import ROUTES from 'constants/routes'
 import {
@@ -17,14 +25,6 @@ import {
 	selectTotalUnrealizedPnl,
 } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
-import styled, { useTheme } from 'styled-components'
-
-import Logo from 'assets/svg/brand/logo-only.svg'
-import Button from 'components/Button'
-import Currency from 'components/Currency'
-import { GridDivCenteredRow } from 'components/layout/grid'
-import { MobileHiddenView, MobileOnlyView } from 'components/Media'
-import { Body, NumericValue, Heading } from 'components/Text'
 
 import { Timeframe } from './Timeframe'
 

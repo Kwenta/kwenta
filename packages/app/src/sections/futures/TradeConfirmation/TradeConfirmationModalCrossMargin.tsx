@@ -1,6 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { useCallback } from 'react'
 
-import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { setOpenModal } from 'state/app/reducer'
 import { approveCrossMargin } from 'state/futures/actions'
 import {

@@ -3,6 +3,11 @@ import { getDisplayAsset, formatDollars, formatPercent } from '@kwenta/sdk/utils
 import { wei } from '@synthetixio/wei'
 import React, { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { getColorFromPriceInfo } from 'components/ColoredPrice'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import useWindowSize from 'hooks/useWindowSize'
 import {
@@ -14,11 +19,6 @@ import {
 } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices } from 'state/prices/selectors'
-import styled, { css } from 'styled-components'
-
-import { getColorFromPriceInfo } from 'components/ColoredPrice'
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
-import { Body } from 'components/Text'
 import media from 'styles/media'
 
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles'

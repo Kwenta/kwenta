@@ -1,5 +1,6 @@
-import { PricesInfo } from 'state/prices/types'
 import styled from 'styled-components'
+
+import { PricesInfo } from 'state/prices/types'
 
 export const getColorFromPriceInfo = (priceInfo: PricesInfo | undefined) => {
 	return !priceInfo?.change ? 'white' : priceInfo.change === 'up' ? 'green' : 'red'

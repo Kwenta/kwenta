@@ -1,5 +1,5 @@
-import { Contract } from 'ethcall'
 import { BigNumber } from '@ethersproject/bignumber'
+import { Contract } from 'ethcall'
 
 import ERC20ABI from '../contracts/abis/ERC20.json'
 

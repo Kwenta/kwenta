@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import type { ThunkConfig } from 'state/store'
 
+import type { ThunkConfig } from 'state/store'
 import { serializeBalances } from 'utils/balances'
 
 import { ZERO_BALANCES } from './reducer'

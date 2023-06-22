@@ -1,3 +1,5 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatCurrency } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,8 +10,6 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon'
 import NumericInput from 'components/Input/NumericInput'
 import { NO_VALUE } from 'constants/placeholder'
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency'
-import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { formatCurrency } from '@kwenta/sdk/utils'
 import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/mobile'
 
 type MobileCurrencyCardProps = {

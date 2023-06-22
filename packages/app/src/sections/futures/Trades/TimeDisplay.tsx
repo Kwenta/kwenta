@@ -1,7 +1,8 @@
 import { format } from 'date-fns'
 import { FC, useCallback, useMemo, useState, memo } from 'react'
-import getLocale from 'utils/formatters/getLocale'
 import styled, { css } from 'styled-components'
+
+import getLocale from 'utils/formatters/getLocale'
 
 type TimeDisplayProps = {
 	value: any

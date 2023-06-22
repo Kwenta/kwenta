@@ -1,9 +1,5 @@
 import { NetworkId, FuturesMarketAsset, PricesListener } from '@kwenta/sdk/types'
 import { getDisplayAsset } from '@kwenta/sdk/utils'
-
-import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery'
-import { sdk } from 'state/config'
-
 import {
 	HistoryCallback,
 	IBasicDataFeed,
@@ -14,6 +10,9 @@ import {
 	SearchSymbolsCallback,
 	SubscribeBarsCallback,
 } from 'charting_library/charting_library'
+
+import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery'
+import { sdk } from 'state/config'
 
 import { ChartBar } from './types'
 import { resolutionToSeconds } from './utils'

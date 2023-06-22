@@ -2,13 +2,13 @@ import { PositionSide } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
 import { useCallback, useEffect, useState, FC, memo } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+import BaseModal from 'components/BaseModal'
 import PositionButtons from 'sections/futures/PositionButtons'
 import { selectMarketAsset, selectMarketIndexPrice } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { getMarketName } from 'utils/futures'
-import styled from 'styled-components'
-
-import BaseModal from 'components/BaseModal'
 
 import LabelWithInput from './LabelWithInput'
 import PnLs from './PnLs'

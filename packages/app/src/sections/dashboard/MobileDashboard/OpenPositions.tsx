@@ -2,15 +2,15 @@ import { formatDollars } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
 import TabButton from 'components/Button/TabButton'
 import { TabPanel } from 'components/Tab'
 import { FuturesAccountTypes } from 'queries/futures/types'
+import { SectionHeader, SectionTitle } from 'sections/futures/mobile'
 import { selectBalances } from 'state/balances/selectors'
 import { selectFuturesPortfolio, selectActiveSmartPositionsCount } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
-import styled from 'styled-components'
-
-import { SectionHeader, SectionTitle } from 'sections/futures/mobile'
 
 import FuturesPositionsTable from '../FuturesPositionsTable'
 import { MarketsTab } from '../Markets'

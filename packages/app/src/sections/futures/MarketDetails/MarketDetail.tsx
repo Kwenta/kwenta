@@ -1,12 +1,12 @@
 import { ReactElement, memo, FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { selectMarketInfo } from 'state/futures/selectors'
-import { useAppSelector } from 'state/hooks'
 import styled from 'styled-components'
 
 import { FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import Tooltip from 'components/Tooltip/Tooltip'
+import { selectMarketInfo } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 
 import { isMarketDataKey, marketDataKeyMap } from './utils'
 

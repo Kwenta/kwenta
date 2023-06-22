@@ -5,10 +5,19 @@ import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+import LinkArrowIcon from 'assets/svg/app/link-arrow.svg'
+import Button from 'components/Button'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import Pill from 'components/Pill'
+import Spacer from 'components/Spacer'
+import { Body, Heading, LogoText } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
 import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
 import useGetFile from 'queries/files/useGetFile'
+import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
 	claimMultipleAllRewards,
@@ -22,15 +31,6 @@ import {
 	selectSnxOpRewards,
 } from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
-import styled from 'styled-components'
-
-import LinkArrowIcon from 'assets/svg/app/link-arrow.svg'
-import Button from 'components/Button'
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
-import Pill from 'components/Pill'
-import Spacer from 'components/Spacer'
-import { Body, Heading, LogoText } from 'components/Text'
-import { StakingCard } from 'sections/dashboard/Stake/card'
 import media from 'styles/media'
 
 const RewardsTabs: FC = () => {

@@ -1,7 +1,7 @@
-import KwentaSDK from '..'
 import { wei } from '@synthetixio/wei'
 import request, { gql } from 'graphql-request'
 
+import KwentaSDK from '..'
 import { REQUIRES_L2 } from '../common/errors'
 import { FUTURES_ENDPOINT_OP_MAINNET } from '../constants/futures'
 import { DEFAULT_LEADERBOARD_DATA } from '../constants/stats'

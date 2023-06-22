@@ -4,14 +4,14 @@ import { truncateNumbers } from '@kwenta/sdk/utils'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
+import styled from 'styled-components'
+
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
+import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewards } from 'state/staking/actions'
-import styled from 'styled-components'
-
-import { StakingCard } from 'sections/dashboard/Stake/card'
 
 import VestConfirmationModal from './VestConfirmationModal'
 

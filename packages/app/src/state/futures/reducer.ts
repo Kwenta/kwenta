@@ -12,9 +12,9 @@ import {
 } from '@kwenta/sdk/types'
 import { MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants'
 
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
+import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants'
 import {
 	DEFAULT_MAP_BY_NETWORK,
 	DEFAULT_QUERY_STATUS,

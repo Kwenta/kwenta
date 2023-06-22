@@ -2,6 +2,8 @@ import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils'
 import { useState, useMemo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
 import { FlexDiv } from 'components/layout/flex'
 import Pill from 'components/Pill'
 import Spacer from 'components/Spacer'
@@ -11,6 +13,7 @@ import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_DELAYED_EXECUTION_BUFFER } from 
 import useInterval from 'hooks/useInterval'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
+import PositionType from 'sections/futures/PositionType'
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
 import {
 	selectOpenDelayedOrders,
@@ -19,9 +22,6 @@ import {
 	selectIsExecutingOrder,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import styled from 'styled-components'
-
-import PositionType from 'sections/futures/PositionType'
 
 type CountdownTimers = Record<
 	FuturesMarketKey,

@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router'
 import React, { useMemo, useState, useCallback, useEffect, memo } from 'react'
-import useWindowSize from 'hooks/useWindowSize'
 import styled from 'styled-components'
 
 import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg'
@@ -12,6 +11,7 @@ import TabButton from 'components/Button/TabButton'
 import Spacer from 'components/Spacer'
 import { TabPanel } from 'components/Tab'
 import ROUTES from 'constants/routes'
+import useWindowSize from 'hooks/useWindowSize'
 import { fetchAllTradesForAccount } from 'state/futures/actions'
 import {
 	selectActiveSmartPositionsCount,

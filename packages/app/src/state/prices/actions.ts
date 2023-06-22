@@ -1,10 +1,10 @@
 import { SynthPrice, PricesMap, PriceType } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
+
+import { notifyError } from 'components/ErrorNotifier'
 import { selectPrices } from 'state/prices/selectors'
 import { AppThunk } from 'state/store'
 import { ThunkConfig } from 'state/types'
-
-import { notifyError } from 'components/ErrorNotifier'
 import { getPricesInfo } from 'utils/prices'
 
 import { setOffChainPrices, setOnChainPrices } from './reducer'

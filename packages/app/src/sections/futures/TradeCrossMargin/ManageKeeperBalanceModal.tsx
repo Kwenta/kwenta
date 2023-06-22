@@ -3,6 +3,15 @@ import { formatCurrency } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+
+import Button from 'components/Button'
+import { notifyError } from 'components/ErrorNotifier'
+import ErrorView from 'components/ErrorView'
+import NumericInput from 'components/Input/NumericInput'
+import Loader from 'components/Loader'
+import SegmentedControl from 'components/SegmentedControl'
+import Spacer from 'components/Spacer'
 import Connector from 'containers/Connector'
 import { setOpenModal } from 'state/app/reducer'
 import { withdrawAccountKeeperBalance } from 'state/futures/actions'
@@ -12,15 +21,6 @@ import {
 	selectSubmittingFuturesTx,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import styled from 'styled-components'
-
-import Button from 'components/Button'
-import ErrorView from 'components/ErrorView'
-import { notifyError } from 'components/ErrorNotifier'
-import NumericInput from 'components/Input/NumericInput'
-import Loader from 'components/Loader'
-import SegmentedControl from 'components/SegmentedControl'
-import Spacer from 'components/Spacer'
 import logError from 'utils/logError'
 
 import {

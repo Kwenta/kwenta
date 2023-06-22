@@ -1,6 +1,7 @@
 import { FuturesMarket } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { providers } from 'ethers'
+
 import { ThunkConfig } from 'state/types'
 import { serializeMarkets } from 'utils/futures'
 

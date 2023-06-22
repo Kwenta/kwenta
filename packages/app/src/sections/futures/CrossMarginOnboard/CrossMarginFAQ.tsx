@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import { EXTERNAL_LINKS } from 'constants/links'
 import styled from 'styled-components'
+
+import { EXTERNAL_LINKS } from 'constants/links'
 
 export default function CrossMarginFAQ() {
 	const { t } = useTranslation()

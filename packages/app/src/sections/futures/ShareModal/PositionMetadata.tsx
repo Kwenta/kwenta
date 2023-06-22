@@ -3,9 +3,9 @@ import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
 import { format } from 'date-fns'
 import { useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SharePositionParams } from 'state/futures/types'
 import styled from 'styled-components'
 
+import { SharePositionParams } from 'state/futures/types'
 import media from 'styles/media'
 import getLocale from 'utils/formatters/getLocale'
 

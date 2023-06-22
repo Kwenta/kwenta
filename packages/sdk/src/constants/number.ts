@@ -1,6 +1,6 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { wei } from '@synthetixio/wei'
 import BN from 'bn.js'
-import { BigNumber } from '@ethersproject/bignumber'
 
 import { CurrencyKey } from '../types/common'
 
