@@ -1,31 +1,13 @@
-<<<<<<< HEAD:packages/app/sections/dashboard/Stake/StakingPortfolio.tsx
-import { truncateNumbers } from '@kwenta/sdk/utils';
-import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled, { useTheme } from 'styled-components';
-
-import CaretDownIcon from 'assets/svg/app/caret-down-color-slim.svg';
-import Button from 'components/Button/Button';
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex';
-import Spacer from 'components/Spacer';
-import { Body, Heading } from 'components/Text';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { useAppSelector } from 'state/hooks';
-=======
 import { truncateNumbers } from '@kwenta/sdk/utils'
-import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from 'components/Button/Button'
-import { FlexDivRowCentered } from 'components/layout/flex'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import { Body, Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
-import ROUTES from 'constants/routes'
-import { SplitStakingCard } from 'sections/dashboard/Stake/card'
-import { Heading } from 'sections/earn/text'
 import { useAppSelector } from 'state/hooks'
->>>>>>> dev:packages/app/src/sections/dashboard/Stake/StakingPortfolio.tsx
 import {
 	selectClaimableBalance,
 	selectEscrowedKwentaBalance,
@@ -47,14 +29,12 @@ type StakingPortfolioProps = {
 }
 
 const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
-<<<<<<< HEAD:packages/app/sections/dashboard/Stake/StakingPortfolio.tsx
-	const { t } = useTranslation();
-	const theme = useTheme();
-	const kwentaBalance = useAppSelector(selectKwentaBalance);
-	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance);
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance);
-	const claimableBalance = useAppSelector(selectClaimableBalance);
-	const totalVestable = useAppSelector(selectTotalVestable);
+	const { t } = useTranslation()
+	const kwentaBalance = useAppSelector(selectKwentaBalance)
+	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const claimableBalance = useAppSelector(selectClaimableBalance)
+	const totalVestable = useAppSelector(selectTotalVestable)
 
 	const DEFAULT_CARDS = [
 		{
@@ -136,62 +116,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 				},
 			],
 		},
-	];
-=======
-	const { t } = useTranslation()
-	const router = useRouter()
-	const kwentaBalance = useAppSelector(selectKwentaBalance)
-	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance)
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
-	const claimableBalance = useAppSelector(selectClaimableBalance)
-	const totalVestable = useAppSelector(selectTotalVestable)
-
-	const DEFAULT_CARDS = [
-		[
-			{
-				key: 'Liquid',
-				title: t('dashboard.stake.portfolio.liquid'),
-				value: truncateNumbers(kwentaBalance, 2),
-				onClick: () => setCurrentTab(StakeTab.Staking),
-			},
-			{
-				key: 'Escrow',
-				title: t('dashboard.stake.portfolio.escrow'),
-				value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
-				onClick: () => setCurrentTab(StakeTab.Escrow),
-			},
-		],
-		[
-			{
-				key: 'Staked',
-				title: t('dashboard.stake.portfolio.staked'),
-				value: truncateNumbers(stakedKwentaBalance, 2),
-				onClick: () => setCurrentTab(StakeTab.Staking),
-			},
-			{
-				key: 'StakedEscrow',
-				title: t('dashboard.stake.portfolio.staked-escrow'),
-				value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
-				onClick: () => setCurrentTab(StakeTab.Escrow),
-			},
-		],
-		[
-			{
-				key: 'Claimable',
-				title: t('dashboard.stake.portfolio.claimable'),
-				value: truncateNumbers(claimableBalance, 2),
-				onClick: () => setCurrentTab(StakeTab.Staking),
-			},
-			{
-				key: 'Vestable',
-				title: t('dashboard.stake.portfolio.vestable'),
-				value: truncateNumbers(totalVestable, 2),
-				onClick: () => setCurrentTab(StakeTab.Escrow),
-			},
-		],
 	]
->>>>>>> dev:packages/app/src/sections/dashboard/Stake/StakingPortfolio.tsx
 
 	return (
 		<StakingPortfolioContainer>
@@ -231,23 +156,13 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 	)
 }
 
-<<<<<<< HEAD:packages/app/sections/dashboard/Stake/StakingPortfolio.tsx
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
-`;
+`
 
 const StakingHeading = styled(FlexDivRowCentered)`
 	margin-bottom: 30px;
-`;
-=======
-const ButtonContainer = styled(FlexDivRowCentered)`
-	column-gap: 10px;
 `
-
-const StakingHeading = styled(FlexDivRowCentered)`
-	margin-bottom: 15px;
-`
->>>>>>> dev:packages/app/src/sections/dashboard/Stake/StakingPortfolio.tsx
 
 const StakingPortfolioContainer = styled.div`
 	${media.lessThan('mdUp')`
@@ -264,15 +179,8 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	border-radius: 20px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 	width: 100%;
-<<<<<<< HEAD:packages/app/sections/dashboard/Stake/StakingPortfolio.tsx
 	justify-content: flex-start;
 	column-gap: 60px;
-`;
-=======
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(334px, 1fr));
-	grid-gap: 15px;
 `
->>>>>>> dev:packages/app/src/sections/dashboard/Stake/StakingPortfolio.tsx
 
 export default StakingPortfolio
