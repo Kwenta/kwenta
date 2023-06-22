@@ -1,6 +1,6 @@
 import { formatNumber, FormatNumberOptions } from '@kwenta/sdk/utils'
 import { wei, WeiSource } from '@synthetixio/wei'
-import { FC, memo, useMemo } from 'react'
+import React, { FC, memo, ReactNode, useMemo } from 'react'
 import styled from 'styled-components'
 
 import Body, { BodyProps } from './Body'
@@ -11,6 +11,7 @@ type NumericValueProps = BodyProps & {
 	colored?: boolean
 	options?: FormatNumberOptions
 	suffix?: string
+	children?: ReactNode
 }
 
 const NumericValue: FC<NumericValueProps> = memo(
@@ -33,7 +34,7 @@ const NumericValue: FC<NumericValueProps> = memo(
 
 		return (
 			<Body mono color={numberColor} {...props}>
-				{props.children && formatNumber(value, options)}
+				{props.children ?? formatNumber(value, options)}
 				{suffix}
 			</Body>
 		)
