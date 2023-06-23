@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import styled from 'styled-components'
 
 type Props = {
@@ -7,8 +8,14 @@ type Props = {
 export default function ConditionalOrdersWarning({ mobile }: Props) {
 	return (
 		<OrdersWarning mobile={mobile}>
-			Conditional orders are executed based on the onchain Chainlink price which can differ from the
-			offchain prices displayed above.
+			Conditional orders are executed based on the onchain Pyth or Chainlink price. See the{' '}
+			<Link
+				href="https://mirror.xyz/kwenta.eth/kzfQhQL-53VhVttQcIvjWAZxgLO-DgIRWqL6ln1xYJ0"
+				target="_blank"
+			>
+				blog post
+			</Link>{' '}
+			for more details.
 		</OrdersWarning>
 	)
 }
