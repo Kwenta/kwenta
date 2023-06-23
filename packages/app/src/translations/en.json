@@ -627,6 +627,8 @@
 					"total": "Total",
 					"fee": "Fee",
 					"vest": "VEST",
+					"transfer": "TRANSFER",
+					"delegate": "DELEGATE",
 					"modal": {
 						"title": "Early Vesting Fee",
 						"confirm-button": "Confirm",

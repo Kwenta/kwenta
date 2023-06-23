@@ -79,6 +79,34 @@ const EscrowTable = () => {
 	const openConfirmModal = useCallback(() => setConfirmModalOpen(true), [])
 	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), [])
 
+	const EscrowStatsContainer = () => (
+		<EscrowStats>
+			<div>
+				<div>
+					<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
+					<div className="stat-value">
+						{truncateNumbers(totalVestable, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+					</div>
+				</div>
+				<div>
+					<div className="stat-title">{t('dashboard.stake.tabs.escrow.fee')}</div>
+					<div className="stat-value">
+						{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+					</div>
+				</div>
+				<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+					{t('dashboard.stake.tabs.escrow.transfer')}
+				</VestButton>
+				<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+					{t('dashboard.stake.tabs.escrow.delegate')}
+				</VestButton>
+				<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+					{t('dashboard.stake.tabs.escrow.vest')}
+				</VestButton>
+			</div>
+		</EscrowStats>
+	)
+
 	return (
 		<EscrowTableContainer $noPadding>
 			<DesktopOnlyView>
@@ -86,9 +114,10 @@ const EscrowTable = () => {
 				<StyledTable
 					data={escrowData}
 					compactPagination
-					pageSize={10}
+					pageSize={4}
 					showPagination
 					columnsDeps={columnsDeps}
+					children={<EscrowStatsContainer />}
 					columns={[
 						{
 							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
@@ -135,16 +164,6 @@ const EscrowTable = () => {
 								<TableCell>{truncateNumbers(cellProps.row.original.vestable, 4)}</TableCell>
 							),
 							accessor: 'immediatelyVestable',
-							width: 80,
-						},
-						{
-							Header: () => (
-								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
-							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
-							),
-							accessor: 'amount',
 							width: 80,
 						},
 						{
@@ -227,26 +246,6 @@ const EscrowTable = () => {
 					]}
 				/>
 			</MobileOrTabletView>
-			<EscrowStats>
-				<div>
-					<div>
-						<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
-						<div className="stat-value">
-							{truncateNumbers(totalVestable, 4)}{' '}
-							{t('dashboard.stake.tabs.stake-table.kwenta-token')}
-						</div>
-					</div>
-					<div>
-						<div className="stat-title">{t('dashboard.stake.tabs.escrow.fee')}</div>
-						<div className="stat-value">
-							{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
-						</div>
-					</div>
-					<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
-						{t('dashboard.stake.tabs.escrow.vest')}
-					</VestButton>
-				</div>
-			</EscrowStats>
 			{isConfirmModalOpen && (
 				<VestConfirmationModal
 					totalFee={totalFee}
@@ -262,14 +261,16 @@ const EscrowTableContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	margin-bottom: 60px;
+	background: transparent;
+	border: none;
 `
 
 const StyledTable = styled(Table)`
 	width: 100%;
-	border: none;
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
-
+	border-radius: 15px;
 	${TableCellHead} {
 		&:first-child {
 			padding-left: 14px;
@@ -285,8 +286,6 @@ const TableCell = styled.div`
 const EscrowStats = styled.div`
 	display: flex;
 	justify-content: flex-end;
-	padding: 18px;
-	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 
 	.stat-title {
 		font-size: 10px;

@@ -48,7 +48,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 				},
 				{
 					key: 'balance-staked',
-					title: t('dashboard.stake.portfolio.balance.escrow'),
+					title: t('dashboard.stake.portfolio.balance.staked'),
 					value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},

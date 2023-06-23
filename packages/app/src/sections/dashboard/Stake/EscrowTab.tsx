@@ -1,11 +1,10 @@
-import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
-import { useTranslation } from 'react-i18next'
+import { formatPercent } from '@kwenta/sdk/utils'
 import styled from 'styled-components'
 
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body, Heading } from 'components/Text'
 import { useAppSelector } from 'state/hooks'
-import { selectAPY, selectClaimableBalance } from 'state/staking/selectors'
+import { selectAPY } from 'state/staking/selectors'
 import media from 'styles/media'
 
 import { StakingCard } from './card'
@@ -13,48 +12,46 @@ import EscrowTable from './EscrowTable'
 import EscrowInputCard from './InputCards/EscrowInputCard'
 
 const EscrowTab = () => {
-	const { t } = useTranslation()
 	const apy = useAppSelector(selectAPY)
-	const claimableBalance = useAppSelector(selectClaimableBalance)
 
 	const DEFAULT_CARDS = [
 		{
 			category: 'Overview',
 			card: [
 				{
-					key: 'staking-staked',
+					key: 'overview-staked',
 					title: 'Staked',
 					value: '150.00',
 				},
 				{
-					key: 'staking-staked',
+					key: 'overview-apr',
 					title: 'APR',
 					value: formatPercent(apy, { minDecimals: 2 }),
 				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.rewards.title'),
-			card: [
 				{
-					key: 'rewards-claimable',
-					title: t('dashboard.stake.portfolio.rewards.claimable'),
-					value: truncateNumbers(claimableBalance, 2),
+					key: 'overview-vestable',
+					title: 'Vestable',
+					value: '100.00',
 				},
 			],
 		},
 		{
-			category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
+			category: 'Staking V1',
 			card: [
 				{
-					key: 'early-vest-rewards-claimable',
-					title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
+					key: 'staking-v1-staked',
+					title: 'Staked',
 					value: '150.00',
 				},
 				{
-					key: 'early-vest-rewards-epoch',
-					title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
-					value: 31,
+					key: 'staking-v1-apr',
+					title: 'APR',
+					value: '150.00',
+				},
+				{
+					key: 'staking-v1-vestable',
+					title: 'Vestable',
+					value: '100.00',
 				},
 			],
 		},

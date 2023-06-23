@@ -38,14 +38,24 @@ const Pagination: FC<PaginationProps> = React.memo(
 
 		return (
 			<PaginationContainer compact={compact}>
-				<span>
-					<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
-						<LeftEndArrowIcon />
-					</ArrowButton>
-					<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
-						<LeftArrowIcon />
-					</ArrowButton>
-				</span>
+				<div style={{ marginTop: '3px' }}>
+					<span>
+						<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
+							<LeftEndArrowIcon />
+						</ArrowButton>
+						<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
+							<LeftArrowIcon />
+						</ArrowButton>
+					</span>
+					<span>
+						<ArrowButton onClick={nextPage} disabled={!canNextPage}>
+							<RightArrowIcon />
+						</ArrowButton>
+						<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
+							<RightEndArrowIcon />
+						</ArrowButton>
+					</span>
+				</div>
 				<PageInfo>
 					{t('common.pagination.page')}{' '}
 					{t('common.pagination.page-of-total-pages', {
@@ -53,14 +63,6 @@ const Pagination: FC<PaginationProps> = React.memo(
 						totalPages: pageCount,
 					})}
 				</PageInfo>
-				<span>
-					<ArrowButton onClick={nextPage} disabled={!canNextPage}>
-						<RightArrowIcon />
-					</ArrowButton>
-					<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
-						<RightEndArrowIcon />
-					</ArrowButton>
-				</span>
 			</PaginationContainer>
 		)
 	}
@@ -68,6 +70,8 @@ const Pagination: FC<PaginationProps> = React.memo(
 
 const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	margin-left: 10px;
+	font-size: 13px;
 `
 
 const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`

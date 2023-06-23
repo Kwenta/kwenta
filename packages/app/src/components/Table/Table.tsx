@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg'
 import SortUpIcon from 'assets/svg/app/caret-up.svg'
+import { FlexDivRowCentered } from 'components/layout/flex'
 import Loader from 'components/Loader'
 import { Body } from 'components/Text'
 import media from 'styles/media'
@@ -72,6 +73,7 @@ type TableProps = {
 	rowStyle?: Record<string, any>
 	rounded?: boolean
 	noBottom?: boolean
+	children?: React.ReactNode
 }
 
 export const Table: FC<TableProps> = memo(
@@ -97,6 +99,7 @@ export const Table: FC<TableProps> = memo(
 		rowStyle = {},
 		rounded = true,
 		noBottom = false,
+		children = null,
 	}) => {
 		const memoizedColumns = useMemo(
 			() => columns,
@@ -225,24 +228,34 @@ export const Table: FC<TableProps> = memo(
 								})}
 							</TableBody>
 						) : null}
-						{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
-							<Pagination
-								compact={compactPagination}
-								pageIndex={pageIndex}
-								pageCount={pageCount}
-								canNextPage={canNextPage}
-								canPreviousPage={canPreviousPage}
-								setPage={gotoPage}
-								previousPage={previousPage}
-								nextPage={nextPage}
-							/>
-						) : undefined}
 					</ReactTable>
 				</TableContainer>
+				{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
+					<PaginationContainer style={{ marginTop: '25px' }}>
+						<Pagination
+							compact={compactPagination}
+							pageIndex={pageIndex}
+							pageCount={pageCount}
+							canNextPage={canNextPage}
+							canPreviousPage={canPreviousPage}
+							setPage={gotoPage}
+							previousPage={previousPage}
+							nextPage={nextPage}
+						/>
+						{children}
+					</PaginationContainer>
+				) : undefined}
 			</>
 		)
 	}
 )
+
+const PaginationContainer = styled(FlexDivRowCentered)`
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
+	padding: 10px 25px 10px 10px;
+	border-radius: 100px;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
+`
 
 const TableContainer = styled.div`
 	overflow-x: auto;

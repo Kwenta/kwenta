@@ -273,6 +273,7 @@ const RewardsTabContainer = styled.div`
 
 	${media.greaterThan('mdUp')`
 		margin-top: 26px;
+		margin-bottom: 60px;
 	`}
 `
 
