@@ -1,8 +1,7 @@
 {
-	"extends": ["react-app", "plugin:@next/next/recommended"],
+	"extends": ["react-app"],
 	"plugins": ["prettier"],
 	"rules": {
-		"@next/next/no-html-link-for-pages": ["error", "packages/app/src/pages/"],
 		"react/react-in-jsx-scope": "off",
 		"prettier/prettier": "error",
 		"no-mixed-spaces-and-tabs": ["warn", "smart-tabs"],
@@ -19,7 +18,6 @@
 		"jsx-a11y/anchor-is-valid": "off",
 		"jsx-a11y/alt-text": "off",
 		"import/no-anonymous-default-export": "off",
-		"@next/next/no-img-element": "off",
 		"no-console": "error",
 		"no-unused-vars": "off",
 		"@typescript-eslint/no-unused-vars": [
@@ -28,94 +26,6 @@
 				"argsIgnorePattern": "^_",
 				"varsIgnorePattern": "^_",
 				"caughtErrorsIgnorePattern": "^_"
-			}
-		],
-		"import/order": [
-			"warn",
-			{
-				"alphabetize": {
-					"order": "asc",
-					"caseInsensitive": true
-				},
-				"groups": [
-					"builtin", 
-					"external", 
-					"internal", 
-					"parent",
-					"sibling"
-				],
-				"newlines-between": "always",
-				"pathGroups": [
-					{
-						"pattern": "assets/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "components/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "constants/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "containers/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "contexts/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "hooks/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "pages/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "queries/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "sdk/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "sections/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "store/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "state/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "styles/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "translations/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "utils/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "lib/**",
-						"group": "internal"
-					},
-					{
-						"pattern": "testing/**",
-						"group": "internal"
-					}
-				],
-				"pathGroupsExcludedImportTypes": []
 			}
 		]
 	}
