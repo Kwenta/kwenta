@@ -14,6 +14,8 @@ import { setSelectedEpoch } from 'state/staking/reducer'
 import { selectEpochData, selectSelectedEpoch } from 'state/staking/selectors'
 import media from 'styles/media'
 
+import RewardsTabs from '../RewardsTabs'
+
 import EscrowTab from './EscrowTab'
 import RedemptionTab from './RedemptionTab'
 import { StakeTab } from './StakingPortfolio'
@@ -102,6 +104,7 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 			<div>
 				<TabPanel name={StakeTab.Staking} activeTab={currentTab}>
 					<StakingTab />
+					<RewardsTabs />
 				</TabPanel>
 				<TabPanel name={StakeTab.TradingRewards} activeTab={currentTab}>
 					<TradingRewardsTab

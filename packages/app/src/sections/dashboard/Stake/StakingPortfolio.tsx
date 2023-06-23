@@ -128,7 +128,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 					</Body>
 				</FlexDivCol>
 				<Button
-					size="small"
+					size="xsmall"
 					isRounded
 					textTransform="none"
 					style={{ borderWidth: '0px' }}

@@ -1,20 +1,17 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { formatNumber, truncateNumbers } from '@kwenta/sdk/utils'
+import { truncateNumbers } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useMemo } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import LinkArrowIcon from 'assets/svg/app/link-arrow.svg'
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import Pill from 'components/Pill'
-import Spacer from 'components/Spacer'
-import { Body, Heading, LogoText } from 'components/Text'
+import { Body, Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
-import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
 import useGetFile from 'queries/files/useGetFile'
 import { StakingCard } from 'sections/dashboard/Stake/card'
@@ -91,11 +88,44 @@ const RewardsTabs: FC = () => {
 			key: 'trading-rewards',
 			title: t('dashboard.rewards.trading-rewards.title'),
 			copy: t('dashboard.rewards.trading-rewards.copy'),
-			button: t('dashboard.rewards.staking'),
+			button: (
+				<Pill
+					color="yellow"
+					size="large"
+					weight="bold"
+					onClick={handleClaimAll}
+					style={{ width: '100px' }}
+				>
+					{t('dashboard.rewards.claim')}
+				</Pill>
+			),
+			labels: [
+				{
+					label: t('dashboard.rewards.rewards'),
+					value: truncateNumbers(wei(estimatedKwentaReward ?? ZERO_WEI), 4),
+				},
+				{
+					label: 'Fee Paid',
+					value: '$2000.00',
+				},
+				{
+					label: 'Fee Share',
+					value: '100%',
+				},
+			],
+			info: [
+				{
+					label: 'Period',
+					value: 'Epoch 4',
+				},
+				{
+					label: 'Total Pool Fees',
+					value: '$1,000,000.00',
+				},
+			],
 			kwentaIcon: true,
 			linkIcon: true,
 			rewards: kwentaRewards,
-			estimatedRewards: truncateNumbers(wei(estimatedKwentaReward ?? ZERO_WEI), 4),
 			onClick: goToStaking,
 			isDisabled: false,
 		},
@@ -103,7 +133,28 @@ const RewardsTabs: FC = () => {
 			key: 'op-rewards',
 			title: t('dashboard.rewards.op-rewards.title'),
 			copy: t('dashboard.rewards.op-rewards.copy'),
-			button: t('dashboard.rewards.claim'),
+			button: (
+				<Pill
+					color="yellow"
+					size="large"
+					weight="bold"
+					onClick={handleClaimAll}
+					disabled={claimDisabledAll}
+					style={{ width: '100px', borderWidth: '0px' }}
+				/>
+			),
+			labels: [
+				{
+					label: 'Rewards',
+					value: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
+				},
+			],
+			info: [
+				{
+					label: t('dashboard.rewards.estimated'),
+					value: '100.0000',
+				},
+			],
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: opRewards,
@@ -115,7 +166,28 @@ const RewardsTabs: FC = () => {
 			key: 'snx-rewards',
 			title: t('dashboard.rewards.snx-rewards.title'),
 			copy: t('dashboard.rewards.snx-rewards.copy'),
-			button: t('dashboard.rewards.claim'),
+			button: (
+				<Pill
+					color="yellow"
+					size="large"
+					weight="bold"
+					onClick={handleClaimAll}
+					disabled={claimDisabledAll}
+					style={{ width: '100px', borderWidth: '0px' }}
+				/>
+			),
+			labels: [
+				{
+					label: 'Rewards',
+					value: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
+				},
+			],
+			info: [
+				{
+					label: t('dashboard.rewards.estimated'),
+					value: '100.0000',
+				},
+			],
 			kwentaIcon: false,
 			linkIcon: false,
 			rewards: snxOpRewards,
@@ -127,108 +199,62 @@ const RewardsTabs: FC = () => {
 	return (
 		<RewardsTabContainer>
 			<HeaderContainer>
-				<StyledFlexDivCol>
-					<Heading variant="h4" className="title">
-						{t('dashboard.rewards.title')}
-					</Heading>
-					<div className="value">{t('dashboard.rewards.copy')}</div>
-				</StyledFlexDivCol>
-				<Pill
-					color="yellow"
-					size="large"
-					weight="bold"
-					onClick={handleClaimAll}
-					disabled={claimDisabledAll}
+				<StyledHeading variant="h4">{t('dashboard.rewards.title')}</StyledHeading>
+				<Button
+					size="xsmall"
+					isRounded
+					textTransform="none"
+					style={{ borderWidth: '0px' }}
+					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 				>
-					{t('dashboard.rewards.claim-all')}
-				</Pill>
+					Docs →
+				</Button>
 			</HeaderContainer>
 			<CardsContainer>
-				{REWARDS.map((reward) => (
-					<CardGrid key={reward.key}>
+				{REWARDS.map(({ key, title, copy, labels, info, button }) => (
+					<CardGrid key={key}>
 						<div>
-							<Heading variant="h4" className="title">
-								{reward.title}
-							</Heading>
-							<div className="value">{reward.copy}</div>
+							<Body size="medium" color="primary">
+								{title}
+							</Body>
+							<Body size="small" color="secondary">
+								{copy}
+							</Body>
 						</div>
-						<div>
-							<Heading className="title">{t('dashboard.rewards.claimable')}</Heading>
-							<Spacer height={5} />
-							<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
-								{truncateNumbers(reward.rewards, 4)}
-							</LogoText>
-						</div>
-						<div
-							style={{
-								display: 'flex',
-								justifyContent: 'flex-start',
-								columnGap: '25px',
-								alignItems: 'center',
-							}}
-						>
-							<FlexDivCol>
-								<Body size="medium" style={{ marginBottom: '5px' }}>
-									{t('dashboard.rewards.estimated')}
-								</Body>
-								<LogoText kwentaIcon={reward.kwentaIcon} bold={false} size="medium" yellow>
-									{!!reward.estimatedRewards
-										? truncateNumbers(reward.estimatedRewards, 4)
-										: NO_VALUE}
-								</LogoText>
-							</FlexDivCol>
-							<FlexDivCol>
-								<Body size="medium" style={{ marginBottom: '5px' }}>
-									{t('dashboard.rewards.epoch')}
-								</Body>
-								<FlexDivRow
-									className="value"
-									style={{ alignItems: 'center', justifyContent: 'flex-start' }}
-								>
-									{formatNumber(epoch, { minDecimals: 0 })}
-								</FlexDivRow>
-							</FlexDivCol>
-						</div>
-						<Button
-							fullWidth
-							variant="flat"
-							size="small"
-							disabled={reward.isDisabled}
-							onClick={reward.onClick}
-						>
-							{reward.button}
-							{reward.linkIcon ? (
-								<LinkArrowIcon
-									height={8}
-									width={8}
-									fill={'#ffffff'}
-									style={{ marginLeft: '2px' }}
-								/>
-							) : null}
-						</Button>
+						<FlexDivRow justifyContent="flex-start" columnGap="25px">
+							{labels.map(({ label, value }) => (
+								<FlexDivCol rowGap="5px">
+									<Body size="small" color="secondary">
+										{label}
+									</Body>
+									<Body size="medium" color="preview">
+										{value}
+									</Body>
+								</FlexDivCol>
+							))}
+						</FlexDivRow>
+						<FlexDivRowCentered justifyContent="flex-start" columnGap="25px">
+							{info.map(({ label, value }) => (
+								<FlexDivCol rowGap="5px">
+									<Body size="small" color="secondary">
+										{label}
+									</Body>
+									<Body size="small" color="primary">
+										{value}
+									</Body>
+								</FlexDivCol>
+							))}
+						</FlexDivRowCentered>
+						{button}
 					</CardGrid>
 				))}
 			</CardsContainer>
-			<StyledFlexDivCol>
-				<div className="value">
-					<Trans
-						i18nKey={'dashboard.rewards.disclaimer'}
-						components={[
-							<Emphasis
-								href={EXTERNAL_LINKS.Docs.RewardsGuide}
-								target="_blank"
-								rel="noopener noreferrer"
-							/>,
-						]}
-					/>
-				</div>
-			</StyledFlexDivCol>
 		</RewardsTabContainer>
 	)
 }
 
-const Emphasis = styled.a`
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
+const StyledHeading = styled(Heading)`
+	font-weight: 400;
 `
 
 const HeaderContainer = styled(FlexDivRowCentered)`
@@ -255,6 +281,8 @@ const CardGrid = styled(StakingCard)`
 	flex-direction: column;
 	justify-content: space-between;
 	row-gap: 25px;
+	background: transparent;
+	border-width: 0px;
 
 	.title {
 		font-weight: 400;
@@ -271,31 +299,17 @@ const CardGrid = styled(StakingCard)`
 	}
 `
 
-const CardsContainer = styled.div`
-	display: grid;
+const CardsContainer = styled(FlexDivRow)`
 	width: 100%;
-	grid-template-columns: repeat(3, 1fr);
-	grid-gap: 20px;
-	margin-bottom: 20px;
+	justify-content: flex-start;
+	column-gap: 5px;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
+	border-radius: 15px;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 
 	${media.lessThan('mdUp')`
 		grid-template-columns: repeat(1, 1fr);
 	`}
-`
-
-const StyledFlexDivCol = styled(FlexDivCol)`
-	.value {
-		font-size: 13px;
-		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
-		margin-top: 0px;
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
-
-	.title {
-		font-weight: 400;
-		font-size: 16px;
-		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
-	}
 `
 
 export default RewardsTabs
