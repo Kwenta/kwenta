@@ -9,7 +9,7 @@
 		"check-types": "tsc --noEmit",
 		"jest-preview": "jest-preview",
 		"test:unit": "jest --coverage --detectOpenHandles",
-		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
+		"test:e2e": "start-server-and-test 'pnpm build && pnpm start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:only:tests": "synpress run",
 		"test:e2e:open:testrunner": "synpress open",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
@@ -17,7 +17,6 @@
 		"postpublish": "pinst --enable",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./sdk/contracts/types './sdk/contracts/abis/*.json' --show-stack-traces",
 		"preinstall": "pnpm --filter \"@kwenta/sdk\" build"
 	},
 	"dependencies": {

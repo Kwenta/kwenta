@@ -1,4 +1,5 @@
 const path = require('path')
+
 const absoluteSynpressNodeModulesPath = path.join(
 	process.cwd(),
 	'/packages/app/node_modules/@synthetixio/synpress'
