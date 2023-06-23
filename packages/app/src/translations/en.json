@@ -557,7 +557,7 @@
 				"balance": {
 					"title": "Balance",
 					"liquid": "Liquid",
-					"escrow": "Escrow"
+					"staked": "Staked"
 				},
 				"escrow": {
 					"title": "Escrow",
@@ -566,7 +566,8 @@
 				},
 				"rewards": {
 					"title": "Rewards",
-					"claimable": "Claimable"
+					"claimable": "Claimable",
+					"trading": "Trading Rewards"
 				},
 				"early-vest-rewards": {
 					"title": "Early Vest Rewards",
@@ -575,11 +576,8 @@
 				},
 				"cooldown": {
 					"title": "Cooldown",
-					"time-left": "Time Left",
-					"last-date": "Last Date"
-				},
-				"apr": "APR",
-				"epoch": "Epoch"
+					"time-left": "Time Left"
+				}
 			},
 			"tabs": {
 				"staking": {

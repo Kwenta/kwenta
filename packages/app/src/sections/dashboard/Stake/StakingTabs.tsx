@@ -20,7 +20,6 @@ import EscrowTab from './EscrowTab'
 import RedemptionTab from './RedemptionTab'
 import { StakeTab } from './StakingPortfolio'
 import StakingTab from './StakingTab'
-import TradingRewardsTab from './TradingRewardsTab'
 
 type EpochValue = {
 	period: number
@@ -105,13 +104,6 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 				<TabPanel name={StakeTab.Staking} activeTab={currentTab}>
 					<StakingTab />
 					<RewardsTabs />
-				</TabPanel>
-				<TabPanel name={StakeTab.TradingRewards} activeTab={currentTab}>
-					<TradingRewardsTab
-						period={selectedEpoch.period}
-						start={selectedEpoch.start}
-						end={selectedEpoch.end}
-					/>
 				</TabPanel>
 				<TabPanel name={StakeTab.Escrow} activeTab={currentTab}>
 					<EscrowTab />

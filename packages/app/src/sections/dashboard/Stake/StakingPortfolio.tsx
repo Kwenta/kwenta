@@ -47,7 +47,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 				{
-					key: 'balance-escrow',
+					key: 'balance-staked',
 					title: t('dashboard.stake.portfolio.balance.escrow'),
 					value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
 					onClick: () => setCurrentTab(StakeTab.Escrow),
@@ -80,6 +80,12 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 					value: truncateNumbers(claimableBalance, 2),
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
+				{
+					key: 'rewards-trading',
+					title: t('dashboard.stake.portfolio.rewards.trading'),
+					value: truncateNumbers(claimableBalance, 2),
+					onClick: () => setCurrentTab(StakeTab.Staking),
+				},
 			],
 		},
 		{
@@ -106,12 +112,6 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
 					key: 'cooldown-time-left',
 					title: t('dashboard.stake.portfolio.cooldown.time-left'),
 					value: '2D:12H:12:12',
-					onClick: () => setCurrentTab(StakeTab.Staking),
-				},
-				{
-					key: 'cooldown-last-date',
-					title: t('dashboard.stake.portfolio.cooldown.last-date'),
-					value: '22/09/23',
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 			],

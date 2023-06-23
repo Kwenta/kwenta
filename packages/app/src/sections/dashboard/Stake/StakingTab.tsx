@@ -35,7 +35,7 @@ const StakingTab = () => {
 					value: '150.00',
 				},
 				{
-					key: 'staking-staked',
+					key: 'staking-apr',
 					title: 'APR',
 					value: formatPercent(apy, { minDecimals: 2 }),
 				},
@@ -70,7 +70,7 @@ const StakingTab = () => {
 
 	return (
 		<SplitContainer>
-			<StakeInputCard />
+			<StakeInputCard showWarning={true} />
 			<CardGridContainer>
 				<StyledHeading variant="h4">Staking Rewards</StyledHeading>
 				<Body color="secondary">Stake your escrowed tokens to earn additional rewards.</Body>
