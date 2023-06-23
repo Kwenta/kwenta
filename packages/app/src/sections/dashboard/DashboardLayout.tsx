@@ -19,6 +19,7 @@ enum Tab {
 	Markets = 'markets',
 	Governance = 'governance',
 	Stake = 'staking',
+	Migrate = 'migrate',
 }
 
 const Tabs = Object.values(Tab)
@@ -71,6 +72,12 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
 				href: ROUTES.Dashboard.Stake,
+			},
+			{
+				name: Tab.Migrate,
+				label: 'Migrate to V2',
+				active: activeTab === Tab.Migrate,
+				href: ROUTES.Dashboard.Migrate,
 			},
 		],
 		[t, activeTab]

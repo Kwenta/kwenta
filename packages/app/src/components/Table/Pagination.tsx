@@ -6,8 +6,8 @@ import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg'
 import LeftArrowIcon from 'assets/svg/app/caret-left.svg'
 import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg'
 import RightArrowIcon from 'assets/svg/app/caret-right.svg'
+import { FlexDivRowCentered } from 'components/layout/flex'
 import { GridDivCenteredCol } from 'components/layout/grid'
-import { resetButtonCSS } from 'styles/common'
 
 type PaginationProps = {
 	pageIndex: number
@@ -38,24 +38,24 @@ const Pagination: FC<PaginationProps> = React.memo(
 
 		return (
 			<PaginationContainer compact={compact}>
-				<div style={{ marginTop: '3px' }}>
-					<span>
+				<FlexDivRowCentered columnGap="15px">
+					<FlexDivRowCentered columnGap="5px">
 						<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
 							<LeftEndArrowIcon />
 						</ArrowButton>
 						<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
 							<LeftArrowIcon />
 						</ArrowButton>
-					</span>
-					<span>
+					</FlexDivRowCentered>
+					<FlexDivRowCentered columnGap="5px">
 						<ArrowButton onClick={nextPage} disabled={!canNextPage}>
 							<RightArrowIcon />
 						</ArrowButton>
 						<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
 							<RightEndArrowIcon />
 						</ArrowButton>
-					</span>
-				</div>
+					</FlexDivRowCentered>
+				</FlexDivRowCentered>
 				<PageInfo>
 					{t('common.pagination.page')}{' '}
 					{t('common.pagination.page-of-total-pages', {
@@ -83,15 +83,20 @@ const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 `
 
 const ArrowButton = styled.button`
-	${resetButtonCSS};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
+	border: none;
+	border-radius: 100px;
 	padding: 4px;
+	width: 24px;
+	height: 24px;
+
 	&[disabled] {
 		cursor: default;
 		opacity: 0.5;
 	}
 	svg {
-		width: 14px;
-		height: 14px;
+		height: 9px;
+		width: 9px;
 		fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `

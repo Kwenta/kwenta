@@ -82,12 +82,14 @@ const EscrowTab = () => {
 							</FlexDivCol>
 						))}
 					</CardsContainer>
-					<Body size="small" color="secondary">
-						Cooldown
-					</Body>
-					<Body size="small" color="primary">
-						2D:12H:12:12
-					</Body>
+					<FlexDivCol rowGap="5px">
+						<Body size="small" color="secondary">
+							Cooldown
+						</Body>
+						<Body size="small" color="primary">
+							2D:12H:12:12
+						</Body>
+					</FlexDivCol>
 				</CardGridContainer>
 			</GridContainer>
 			<EscrowTable />
@@ -99,7 +101,6 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: flex-start;
 	column-gap: 50px;
-	margin: 50px 0;
 `
 
 const StyledHeading = styled(Heading)`

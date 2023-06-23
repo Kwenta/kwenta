@@ -273,7 +273,7 @@ const StyledTable = styled(Table)`
 	border-radius: 15px;
 	${TableCellHead} {
 		&:first-child {
-			padding-left: 14px;
+			padding-left: 18px;
 		}
 	}
 `
