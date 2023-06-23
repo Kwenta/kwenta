@@ -1,0 +1,74 @@
+{
+	"name": "@kwenta/sdk",
+	"version": "1.0.0",
+	"description": "SDK for headless interaction with Kwenta",
+	"main": "dist/index.js",
+	"directories": {
+		"doc": "docs"
+	},
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc -b",
+		"check-types": "tsc --noEmit",
+		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./src/contracts/types './src/contracts/abis/*.json' --show-stack-traces"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./constants": {
+			"import": "./dist/constants/index.js",
+			"types": "./dist/constants/index.d.ts"
+		},
+		"./utils": {
+			"import": "./dist/utils/index.js",
+			"types": "./dist/utils/index.d.ts"
+		},
+		"./data": {
+			"import": "./dist/data/index.js",
+			"types": "./dist/data/index.d.ts"
+		},
+		"./types": {
+			"import": "./dist/types/index.js",
+			"types": "./dist/types/index.d.ts"
+		}
+	},
+	"files": [
+		"constants",
+		"data",
+		"dist",
+		"types",
+		"utils"
+	],
+	"dependencies": {
+		"@eth-optimism/contracts": "^0.6.0",
+		"@ethersproject/abi": "^5.7.0",
+		"@ethersproject/bignumber": "^5.7.0",
+		"@ethersproject/properties": "^5.7.0",
+		"@ethersproject/providers": "^5.7.2",
+		"@ethersproject/strings": "^5.7.0",
+		"@kwenta/synthswap": "^1.0.3",
+		"@pythnetwork/pyth-evm-js": "^1.17.0",
+		"@synthetixio/wei": "^2.74.4",
+		"axios": "0.27.2",
+		"bn.js": "^5.2.1",
+		"codegen-graph-ts": "^0.1.4",
+		"date-fns": "^2.30.0",
+		"ethcall": "4.7.2",
+		"ethers": "^5.7.2",
+		"graphql-request": "^6.1.0",
+		"lodash": "^4.17.21",
+		"moment": "^2.29.4"
+	},
+	"devDependencies": {
+		"@typechain/ethers-v5": "^11.0.0",
+		"@types/bn.js": "^5.1.1",
+		"@types/lodash": "^4.14.195",
+		"typechain": "^8.2.0",
+		"typescript": "^5.1.3"
+	}
+}

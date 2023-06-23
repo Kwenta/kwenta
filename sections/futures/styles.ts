@@ -1,3 +1,0 @@
-export const MARKETS_DETAILS_HEIGHT_DESKTOP = 67;
-export const TRADE_PANEL_WIDTH_MD = 330;
-export const TRADE_PANEL_WIDTH_LG = 380;
