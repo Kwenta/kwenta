@@ -561,13 +561,16 @@
 				},
 				"escrow": {
 					"title": "Escrow",
+					"title-v2": "Escrow V2",
+					"title-v1": "Escrow V1",
 					"staked": "Staked",
 					"vestable": "Vestable"
 				},
 				"rewards": {
 					"title": "Rewards",
 					"claimable": "Claimable",
-					"trading": "Trading Rewards"
+					"trading": "Trading",
+					"staking": "Staking"
 				},
 				"early-vest-rewards": {
 					"title": "Early Vest Rewards",

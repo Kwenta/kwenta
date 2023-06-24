@@ -1,3 +1,4 @@
+import { truncateNumbers } from '@kwenta/sdk/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useEffect, useMemo, useState } from 'react'
@@ -16,6 +17,15 @@ import EscrowTable from 'sections/dashboard/Stake/EscrowTable'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions'
+import {
+	selectEscrowedKwentaBalance,
+	selectKwentaBalance,
+	selectStakedEscrowedKwentaBalance,
+	selectTotalVestable,
+} from 'state/staking/selectors'
+import { selectWallet } from 'state/wallet/selectors'
+
+import { StakingCards } from './staking'
 
 type MigrateComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
@@ -23,7 +33,11 @@ const MigratePage: MigrateComponent = () => {
 	const { t } = useTranslation()
 	const router = useRouter()
 	const dispatch = useAppDispatch()
-	const walletAddress = useAppSelector(({ wallet }) => wallet.walletAddress)
+	const walletAddress = useAppSelector(selectWallet)
+	const kwentaBalance = useAppSelector(selectKwentaBalance)
+	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const totalVestable = useAppSelector(selectTotalVestable)
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -35,7 +49,7 @@ const MigratePage: MigrateComponent = () => {
 		return null
 	}, [router])
 
-	const [currentTab, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking)
+	const [, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking)
 
 	useEffect(() => {
 		if (!!walletAddress) {
@@ -45,6 +59,77 @@ const MigratePage: MigrateComponent = () => {
 			dispatch(fetchEscrowData())
 		}
 	}, [dispatch, walletAddress])
+
+	const MIGRATE_CARDS: StakingCards[] = [
+		{
+			category: t('dashboard.stake.portfolio.balance.title'),
+			card: [
+				{
+					key: 'balance-liquid',
+					title: t('dashboard.stake.portfolio.balance.liquid'),
+					value: truncateNumbers(kwentaBalance, 2),
+					onClick: () => setCurrentTab(StakeTab.Staking),
+				},
+				{
+					key: 'balance-staked',
+					title: t('dashboard.stake.portfolio.balance.staked'),
+					value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
+					onClick: () => setCurrentTab(StakeTab.Escrow),
+				},
+			],
+		},
+		{
+			category: t('dashboard.stake.portfolio.rewards.title'),
+			card: [
+				{
+					key: 'rewards-claimable',
+					title: t('dashboard.stake.portfolio.rewards.staking'),
+					value: '100.00',
+					onClick: () => setCurrentTab(StakeTab.Staking),
+				},
+				{
+					key: 'rewards-trading',
+					title: t('dashboard.stake.portfolio.rewards.trading'),
+					value: '100.00',
+					onClick: () => setCurrentTab(StakeTab.Staking),
+				},
+			],
+		},
+		{
+			category: t('dashboard.stake.portfolio.escrow.title-v2'),
+			card: [
+				{
+					key: 'escrow-staked',
+					title: t('dashboard.stake.portfolio.escrow.staked'),
+					value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+					onClick: () => setCurrentTab(StakeTab.Escrow),
+				},
+				{
+					key: 'escrow-vestable',
+					title: t('dashboard.stake.portfolio.escrow.vestable'),
+					value: truncateNumbers(totalVestable, 2),
+					onClick: () => setCurrentTab(StakeTab.Escrow),
+				},
+			],
+		},
+		{
+			category: t('dashboard.stake.portfolio.escrow.title-v1'),
+			card: [
+				{
+					key: 'escrow-staked',
+					title: t('dashboard.stake.portfolio.escrow.staked'),
+					value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+					onClick: () => setCurrentTab(StakeTab.Escrow),
+				},
+				{
+					key: 'escrow-vestable',
+					title: t('dashboard.stake.portfolio.escrow.vestable'),
+					value: truncateNumbers(totalVestable, 2),
+					onClick: () => setCurrentTab(StakeTab.Escrow),
+				},
+			],
+		},
+	]
 
 	return (
 		<>
@@ -150,7 +235,7 @@ const MigratePage: MigrateComponent = () => {
 				</StyledStakingCard>
 			</FlexDivRowCentered>
 			<Spacer height={30} />
-			<StakingPortfolio setCurrentTab={setCurrentTab} />
+			<StakingPortfolio cards={MIGRATE_CARDS} />
 			<Spacer height={30} />
 			<EscrowTable />
 		</>
