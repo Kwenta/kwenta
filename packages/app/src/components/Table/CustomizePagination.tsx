@@ -6,8 +6,8 @@ import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg'
 import LeftArrowIcon from 'assets/svg/app/caret-left.svg'
 import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg'
 import RightArrowIcon from 'assets/svg/app/caret-right.svg'
+import { FlexDivRowCentered } from 'components/layout/flex'
 import { GridDivCenteredCol } from 'components/layout/grid'
-import { resetButtonCSS } from 'styles/common'
 
 type PaginationProps = {
 	pageIndex: number
@@ -20,7 +20,7 @@ type PaginationProps = {
 	nextPage: () => void
 }
 
-const Pagination: FC<PaginationProps> = React.memo(
+const CustomizePagination: FC<PaginationProps> = React.memo(
 	({
 		pageIndex,
 		pageCount,
@@ -38,14 +38,24 @@ const Pagination: FC<PaginationProps> = React.memo(
 
 		return (
 			<PaginationContainer compact={compact}>
-				<span>
-					<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
-						<LeftEndArrowIcon />
-					</ArrowButton>
-					<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
-						<LeftArrowIcon />
-					</ArrowButton>
-				</span>
+				<FlexDivRowCentered columnGap="15px">
+					<FlexDivRowCentered columnGap="5px">
+						<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
+							<LeftEndArrowIcon />
+						</ArrowButton>
+						<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
+							<LeftArrowIcon />
+						</ArrowButton>
+					</FlexDivRowCentered>
+					<FlexDivRowCentered columnGap="5px">
+						<ArrowButton onClick={nextPage} disabled={!canNextPage}>
+							<RightArrowIcon />
+						</ArrowButton>
+						<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
+							<RightEndArrowIcon />
+						</ArrowButton>
+					</FlexDivRowCentered>
+				</FlexDivRowCentered>
 				<PageInfo>
 					{t('common.pagination.page')}{' '}
 					{t('common.pagination.page-of-total-pages', {
@@ -53,14 +63,6 @@ const Pagination: FC<PaginationProps> = React.memo(
 						totalPages: pageCount,
 					})}
 				</PageInfo>
-				<span>
-					<ArrowButton onClick={nextPage} disabled={!canNextPage}>
-						<RightArrowIcon />
-					</ArrowButton>
-					<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
-						<RightEndArrowIcon />
-					</ArrowButton>
-				</span>
 			</PaginationContainer>
 		)
 	}
@@ -68,6 +70,8 @@ const Pagination: FC<PaginationProps> = React.memo(
 
 const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	margin-left: 10px;
+	font-size: 13px;
 `
 
 const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
@@ -79,17 +83,22 @@ const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 `
 
 const ArrowButton = styled.button`
-	${resetButtonCSS};
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
+	border: none;
+	border-radius: 100px;
 	padding: 4px;
+	width: 24px;
+	height: 24px;
+
 	&[disabled] {
 		cursor: default;
 		opacity: 0.5;
 	}
 	svg {
-		width: 14px;
-		height: 14px;
+		height: 9px;
+		width: 9px;
 		fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 `
 
-export default Pagination
+export default CustomizePagination

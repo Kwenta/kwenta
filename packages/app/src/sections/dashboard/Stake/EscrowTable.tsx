@@ -114,6 +114,7 @@ const EscrowTable = () => {
 				<StyledTable
 					data={escrowData}
 					compactPagination
+					customizePagination={true}
 					pageSize={4}
 					showPagination
 					columnsDeps={columnsDeps}

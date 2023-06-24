@@ -10,6 +10,7 @@ import Loader from 'components/Loader'
 import { Body } from 'components/Text'
 import media from 'styles/media'
 
+import CustomizePagination from './CustomizePagination'
 import Pagination from './Pagination'
 import TableBodyRow, { TableCell } from './TableBodyRow'
 
@@ -73,6 +74,7 @@ type TableProps = {
 	rowStyle?: Record<string, any>
 	rounded?: boolean
 	noBottom?: boolean
+	customizePagination?: boolean
 	children?: React.ReactNode
 }
 
@@ -99,6 +101,7 @@ export const Table: FC<TableProps> = memo(
 		rowStyle = {},
 		rounded = true,
 		noBottom = false,
+		customizePagination = false,
 		children = null,
 	}) => {
 		const memoizedColumns = useMemo(
@@ -228,11 +231,29 @@ export const Table: FC<TableProps> = memo(
 								})}
 							</TableBody>
 						) : null}
+						{!customizePagination &&
+						showPagination &&
+						!showShortList &&
+						data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
+							<Pagination
+								compact={compactPagination}
+								pageIndex={pageIndex}
+								pageCount={pageCount}
+								canNextPage={canNextPage}
+								canPreviousPage={canPreviousPage}
+								setPage={gotoPage}
+								previousPage={previousPage}
+								nextPage={nextPage}
+							/>
+						) : undefined}
 					</ReactTable>
 				</TableContainer>
-				{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
+				{customizePagination &&
+				showPagination &&
+				!showShortList &&
+				data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
 					<PaginationContainer style={{ marginTop: '25px' }}>
-						<Pagination
+						<CustomizePagination
 							compact={compactPagination}
 							pageIndex={pageIndex}
 							pageCount={pageCount}

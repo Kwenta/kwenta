@@ -251,7 +251,9 @@ const StyledStakingCard = styled(StakingCard)`
 		${(props) => props.theme.colors.selectedTheme.newTheme.pill.yellow.outline.border};
 `
 
-const StakingHeading = styled(FlexDivRowCentered)``
+const StakingHeading = styled(FlexDivRowCentered)`
+	margin-top: 20px;
+`
 
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
