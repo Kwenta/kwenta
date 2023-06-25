@@ -5,13 +5,11 @@ import styled, { css } from 'styled-components'
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg'
 import SortUpIcon from 'assets/svg/app/caret-up.svg'
-import { FlexDivRowCentered } from 'components/layout/flex'
 import Loader from 'components/Loader'
 import { Body } from 'components/Text'
 import media from 'styles/media'
 
-import CustomizePagination from './CustomizePagination'
-import Pagination from './Pagination'
+import PaginationArea from './PaginationArea'
 import TableBodyRow, { TableCell } from './TableBodyRow'
 
 export type TablePalette = 'primary'
@@ -50,6 +48,17 @@ export function compareNumericString(rowA: Row<any>, rowB: Row<any>, id: string,
 	if (a > b) return 1
 	if (a < b) return -1
 	return 0
+}
+
+function calculatePageSize(
+	showPagination: boolean,
+	showShortList: boolean | undefined,
+	pageSize: number | null
+): number {
+	if (showPagination) {
+		return pageSize ? pageSize : MAX_PAGE_ROWS
+	}
+	return showShortList ? pageSize ?? 5 : MAX_TOTAL_ROWS
 }
 
 type TableProps = {
@@ -129,13 +138,7 @@ export const Table: FC<TableProps> = memo(
 				columns: memoizedColumns,
 				data,
 				initialState: {
-					pageSize: showPagination
-						? pageSize
-							? pageSize
-							: MAX_PAGE_ROWS
-						: showShortList
-						? pageSize ?? 5
-						: MAX_TOTAL_ROWS,
+					pageSize: calculatePageSize(showPagination, showShortList, pageSize),
 					hiddenColumns: hiddenColumns,
 					sortBy: sortBy,
 				},
@@ -163,6 +166,10 @@ export const Table: FC<TableProps> = memo(
 		}, [pageIndex, pageCount, gotoPage])
 
 		const defaultRef = useRef(null)
+		const shouldShowPagination = useMemo(
+			() => showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS),
+			[data.length, pageSize, showPagination, showShortList]
+		)
 
 		return (
 			<>
@@ -231,52 +238,40 @@ export const Table: FC<TableProps> = memo(
 								})}
 							</TableBody>
 						) : null}
-						{!customizePagination &&
-						showPagination &&
-						!showShortList &&
-						data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
-							<Pagination
+						{!customizePagination && shouldShowPagination && (
+							<PaginationArea
+								customizePagination={customizePagination}
 								compact={compactPagination}
 								pageIndex={pageIndex}
 								pageCount={pageCount}
 								canNextPage={canNextPage}
 								canPreviousPage={canPreviousPage}
-								setPage={gotoPage}
+								gotoPage={gotoPage}
 								previousPage={previousPage}
 								nextPage={nextPage}
+								children={children}
 							/>
-						) : undefined}
+						)}
 					</ReactTable>
 				</TableContainer>
-				{customizePagination &&
-				showPagination &&
-				!showShortList &&
-				data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
-					<PaginationContainer style={{ marginTop: '25px' }}>
-						<CustomizePagination
-							compact={compactPagination}
-							pageIndex={pageIndex}
-							pageCount={pageCount}
-							canNextPage={canNextPage}
-							canPreviousPage={canPreviousPage}
-							setPage={gotoPage}
-							previousPage={previousPage}
-							nextPage={nextPage}
-						/>
-						{children}
-					</PaginationContainer>
-				) : undefined}
+				{customizePagination && shouldShowPagination && (
+					<PaginationArea
+						customizePagination={customizePagination}
+						compact={compactPagination}
+						pageIndex={pageIndex}
+						pageCount={pageCount}
+						canNextPage={canNextPage}
+						canPreviousPage={canPreviousPage}
+						gotoPage={gotoPage}
+						previousPage={previousPage}
+						nextPage={nextPage}
+						children={children}
+					/>
+				)}
 			</>
 		)
 	}
 )
-
-const PaginationContainer = styled(FlexDivRowCentered)`
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
-	padding: 10px 25px 10px 10px;
-	border-radius: 100px;
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
-`
 
 const TableContainer = styled.div`
 	overflow-x: auto;
