@@ -920,6 +920,7 @@ export const selectEditPositionPreview = createSelector(
 	selectEditPositionInputs,
 	(state: RootState) => state.futures,
 	(type, { nativeSizeDelta }, futures) => {
+		if (isNaN(Number(nativeSizeDelta))) return null
 		const preview = futures[accountType(type)].previews.edit
 		const unserialized = preview ? unserializePotentialTrade(preview) : null
 		if (unserialized) {
