@@ -18,9 +18,10 @@ import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPort
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions'
 import {
-	selectEscrowedKwentaBalance,
+	selectClaimableBalance,
 	selectKwentaBalance,
 	selectStakedEscrowedKwentaBalance,
+	selectStakedKwentaBalance,
 	selectTotalVestable,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
@@ -34,8 +35,9 @@ const MigratePage: MigrateComponent = () => {
 	const router = useRouter()
 	const dispatch = useAppDispatch()
 	const walletAddress = useAppSelector(selectWallet)
+	const claimableBalance = useAppSelector(selectClaimableBalance)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
-	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const totalVestable = useAppSelector(selectTotalVestable)
 
@@ -60,6 +62,33 @@ const MigratePage: MigrateComponent = () => {
 		}
 	}, [dispatch, walletAddress])
 
+	const MIGRATE_STEPS = [
+		{
+			key: 'step-1',
+			copy: t('dashboard.stake.tabs.migrate.step-1-copy'),
+			label: t('dashboard.stake.tabs.migrate.rewards'),
+			value: truncateNumbers(claimableBalance, 2),
+			buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
+			active: true,
+		},
+		{
+			key: 'step-2',
+			copy: t('dashboard.stake.tabs.migrate.step-2-copy'),
+			label: t('dashboard.stake.tabs.migrate.staked'),
+			value: truncateNumbers(stakedKwentaBalance, 2),
+			buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
+			active: false,
+		},
+		{
+			key: 'step-3',
+			copy: t('dashboard.stake.tabs.migrate.step-3-copy'),
+			label: t('dashboard.stake.tabs.migrate.staked'),
+			value: '0.00',
+			buttonLabel: t('dashboard.stake.tabs.migrate.stake'),
+			active: false,
+		},
+	]
+
 	const MIGRATE_CARDS: StakingCards[] = [
 		{
 			category: t('dashboard.stake.portfolio.balance.title'),
@@ -73,7 +102,7 @@ const MigratePage: MigrateComponent = () => {
 				{
 					key: 'balance-staked',
 					title: t('dashboard.stake.portfolio.balance.staked'),
-					value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
+					value: '0.00',
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},
 			],
@@ -101,13 +130,13 @@ const MigratePage: MigrateComponent = () => {
 				{
 					key: 'escrow-staked',
 					title: t('dashboard.stake.portfolio.escrow.staked'),
-					value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+					value: '100.00',
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},
 				{
 					key: 'escrow-vestable',
 					title: t('dashboard.stake.portfolio.escrow.vestable'),
-					value: truncateNumbers(totalVestable, 2),
+					value: '100.00',
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},
 			],
@@ -155,84 +184,28 @@ const MigratePage: MigrateComponent = () => {
 			</StakingHeading>
 			<Spacer height={30} />
 			<FlexDivRowCentered columnGap="15px">
-				<StyledStakingCard>
-					<StyledHeading variant="h4">Step1</StyledHeading>
-					<Body size="small" color="secondary">
-						Claim any remaining rewards
-					</Body>
-					<Spacer height={25} />
-					<FlexDivRowCentered>
-						<FlexDivCol rowGap="5px">
-							<Body size="small" color="secondary">
-								Rewards
-							</Body>
-							<Body size="large" color="preview">
-								100.00
-							</Body>
-						</FlexDivCol>
-						<Pill
-							color="yellow"
-							size="medium"
-							weight="bold"
-							onClick={() => {}}
-							style={{ width: '70px' }}
-						>
-							{t('dashboard.rewards.claim')}
-						</Pill>
-					</FlexDivRowCentered>
-				</StyledStakingCard>
-				<StyledStakingCard style={{ opacity: 0.3 }}>
-					<StyledHeading variant="h4">Step2</StyledHeading>
-					<Body size="small" color="secondary">
-						Unstake V1 liquid balance
-					</Body>
-					<Spacer height={25} />
-					<FlexDivRowCentered>
-						<FlexDivCol rowGap="5px">
-							<Body size="small" color="secondary">
-								Staked
-							</Body>
-							<Body size="large" color="preview">
-								100.00
-							</Body>
-						</FlexDivCol>
-						<Pill
-							color="yellow"
-							size="medium"
-							weight="bold"
-							onClick={() => {}}
-							style={{ width: '70px' }}
-						>
-							Unstake
-						</Pill>
-					</FlexDivRowCentered>
-				</StyledStakingCard>
-				<StyledStakingCard style={{ opacity: 0.3 }}>
-					<StyledHeading variant="h4">Step3</StyledHeading>
-					<Body size="small" color="secondary">
-						Transfer liquid balance to V2
-					</Body>
-					<Spacer height={25} />
-					<FlexDivRowCentered>
-						<FlexDivCol rowGap="5px">
-							<Body size="small" color="secondary">
-								Staked
-							</Body>
-							<Body size="large" color="preview">
-								100.00
-							</Body>
-						</FlexDivCol>
-						<Pill
-							color="yellow"
-							size="medium"
-							weight="bold"
-							onClick={() => {}}
-							style={{ width: '70px' }}
-						>
-							Stake
-						</Pill>
-					</FlexDivRowCentered>
-				</StyledStakingCard>
+				{MIGRATE_STEPS.map(({ key, copy, label, value, buttonLabel, active }, i) => (
+					<StyledStakingCard key={key} $active={active}>
+						<StyledHeading variant="h4">Step {i + 1}</StyledHeading>
+						<Body size="small" color="secondary">
+							{copy}
+						</Body>
+						<Spacer height={25} />
+						<FlexDivRowCentered>
+							<FlexDivCol rowGap="5px">
+								<Body size="small" color="secondary">
+									{label}
+								</Body>
+								<Body size="large" color="preview">
+									{value}
+								</Body>
+							</FlexDivCol>
+							<Pill color="yellow" size="large" weight="bold" onClick={() => {}}>
+								{buttonLabel}
+							</Pill>
+						</FlexDivRowCentered>
+					</StyledStakingCard>
+				))}
 			</FlexDivRowCentered>
 			<Spacer height={30} />
 			<StakingPortfolio cards={MIGRATE_CARDS} />
@@ -242,9 +215,10 @@ const MigratePage: MigrateComponent = () => {
 	)
 }
 
-const StyledStakingCard = styled(StakingCard)`
+const StyledStakingCard = styled(StakingCard)<{ $active: boolean }>`
 	width: 100%;
 	column-gap: 10px;
+	opacity: ${(props) => (props.$active ? '1' : '0.3')};
 	padding: 25px;
 	height: 150px;
 	border: 1px solid

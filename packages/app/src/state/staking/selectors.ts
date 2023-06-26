@@ -193,3 +193,5 @@ export const selectAPY = createSelector(
 		return getApy(Number(totalStakedBalance), weekCounter)
 	}
 )
+
+export const selectEscrowData = (state: RootState) => state.staking.escrowData ?? []

@@ -640,6 +640,16 @@
 						"confirm-text": "You will currently forfeit <0>{{totalFee}}</0> in KWENTA by vesting. Do you still wish to proceed?"
 					}
 				},
+				"migrate": {
+					"step-1-copy": "Claim any remaining rewards",
+					"step-2-copy": "Unstake V1 liquid balance",
+					"step-3-copy": "Trasfer liquid balance to v2",
+					"rewards": "Rewards",
+					"staked": "Staked",
+					"claim": "Claim",
+					"unstake": "Unstake",
+					"stake": "stake"
+				},
 				"redemption": {
 					"title": "Redemption"
 				},

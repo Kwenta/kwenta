@@ -6,19 +6,22 @@ import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
+import Badge from 'components/Badge'
+import { FlexDivRowCentered } from 'components/layout/flex'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewards } from 'state/staking/actions'
+import { selectEscrowData } from 'state/staking/selectors'
 
 import VestConfirmationModal from './VestConfirmationModal'
 
 const EscrowTable = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const escrowData = useAppSelector(({ staking }) => staking.escrowData)
+	const escrowData = useAppSelector(selectEscrowData)
 	const [checkedState, setCheckedState] = useState(escrowData.map((_) => false))
 	const [checkAllState, setCheckAllState] = useState(false)
 	const [isConfirmModalOpen, setConfirmModalOpen] = useState(false)
@@ -145,6 +148,21 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
+								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
+							),
+							Cell: (cellProps: CellProps<EscrowData>) => (
+								<FlexDivRowCentered columnGap="10px">
+									<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
+									<StyledBadge color="yellow" size="small">
+										V1
+									</StyledBadge>
+								</FlexDivRowCentered>
+							),
+							accessor: 'amount',
+							width: 80,
+						},
+						{
+							Header: () => (
 								<TableHeader $small>
 									<div>{t('dashboard.stake.tabs.escrow.time-until-vestable')}</div>
 								</TableHeader>
@@ -257,6 +275,10 @@ const EscrowTable = () => {
 		</EscrowTableContainer>
 	)
 }
+
+const StyledBadge = styled(Badge)`
+	padding: 0 6px;
+`
 
 const EscrowTableContainer = styled(StakingCard)`
 	display: flex;

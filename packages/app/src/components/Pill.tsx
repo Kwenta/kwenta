@@ -53,7 +53,7 @@ const BasePill = styled.button<{
 			? '3.5px 8px'
 			: '10px 15px'};
 		height: ${props.$size === 'small' ? '20px' : props.$size === 'medium' ? '24px' : '36px'};
-		width: ${props.$fullWidth ? '100%' : 'auto'};
+		width: ${props.$fullWidth ? '100%' : props.$size === 'medium' ? '70px' : 'auto'};
 		font-size: ${props.$size === 'small' ? 10 : 12}px;
 		font-family: ${props.$weight && props.theme.fonts[props.$weight]};
 		background: ${props.theme.colors.selectedTheme.newTheme.pill[props.$color].background};
