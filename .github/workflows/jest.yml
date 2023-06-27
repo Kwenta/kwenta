@@ -1,8 +1,13 @@
-name: Jest
-on: push
+name: 'Jest'
+on:
+  - push
+  - pull_request
+
 jobs:
-  test:
+  sentry_release:
+    name: Jest tests
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,9 +26,5 @@ jobs:
           version: 8
           run_install: false
 
-      - name: Install Dependencies
-        run: pnpm install
-
-      - name: Run the tests
-        working-directory: ./packages/app
-        run: pnpm run test:jest
+      - name: Run tests
+        run: cd packages/app && pnpm run test:jest
