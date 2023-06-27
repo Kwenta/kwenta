@@ -17,7 +17,7 @@ import { selectTradePreview } from '../../state/futures/selectors'
 import { PricesInfoMap } from '../../state/prices/types'
 import { PRICES_INITIAL_STATE } from '../../state/prices/reducer'
 
-jest.mock('../../state/config')
+jest.mock('../../state/sdk')
 
 jest.mock('../../queries/futures/useGetFuturesTrades', () => {
 	return jest.fn(() => ({
