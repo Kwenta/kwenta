@@ -3,13 +3,13 @@ import common from './common'
 const newTheme = {
 	containers: {
 		primary: {
-			background: common.palette.neutral.n0,
+			background: common.palette.neutral.n10,
 		},
 		secondary: {
 			background: common.palette.neutral.n0,
 		},
 		cards: {
-			background: common.palette.neutral.n20,
+			background: common.palette.neutral.n0,
 		},
 	},
 	border: {
@@ -258,8 +258,8 @@ const lightTheme = {
 			text: '#fff',
 		},
 		red: {
-			fill: common.palette.alpha.red15,
-			text: common.palette.red.r200,
+			fill: common.palette.red.r100,
+			text: common.palette.red.r900,
 		},
 	},
 	input: {

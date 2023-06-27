@@ -7,7 +7,7 @@ import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import Badge from 'components/Badge'
-import { FlexDivRowCentered } from 'components/layout/flex'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
@@ -17,6 +17,8 @@ import { vestEscrowedRewards } from 'state/staking/actions'
 import { selectEscrowData } from 'state/staking/selectors'
 
 import VestConfirmationModal from './VestConfirmationModal'
+import { Body } from 'components/Text'
+import Button from 'components/Button'
 
 const EscrowTable = () => {
 	const { t } = useTranslation()
@@ -83,31 +85,29 @@ const EscrowTable = () => {
 	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), [])
 
 	const EscrowStatsContainer = () => (
-		<EscrowStats>
-			<div>
-				<div>
-					<div className="stat-title">{t('dashboard.stake.tabs.escrow.total')}</div>
-					<div className="stat-value">
-						{truncateNumbers(totalVestable, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
-					</div>
-				</div>
-				<div>
-					<div className="stat-title">{t('dashboard.stake.tabs.escrow.fee')}</div>
-					<div className="stat-value">
-						{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
-					</div>
-				</div>
-				<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
-					{t('dashboard.stake.tabs.escrow.transfer')}
-				</VestButton>
-				<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
-					{t('dashboard.stake.tabs.escrow.delegate')}
-				</VestButton>
-				<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
-					{t('dashboard.stake.tabs.escrow.vest')}
-				</VestButton>
-			</div>
-		</EscrowStats>
+		<FlexDivRowCentered columnGap="25px" justifyContent="flex-end">
+			<FlexDivCol alignItems="flex-end">
+				<Body color="secondary">{t('dashboard.stake.tabs.escrow.total')}</Body>
+				<Body color="primary">
+					{truncateNumbers(totalVestable, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+				</Body>
+			</FlexDivCol>
+			<FlexDivCol alignItems="flex-end">
+				<Body color="secondary">{t('dashboard.stake.tabs.escrow.fee')}</Body>
+				<Body color="primary">
+					{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+				</Body>
+			</FlexDivCol>
+			<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+				{t('dashboard.stake.tabs.escrow.transfer')}
+			</VestButton>
+			<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+				{t('dashboard.stake.tabs.escrow.delegate')}
+			</VestButton>
+			<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+				{t('dashboard.stake.tabs.escrow.vest')}
+			</VestButton>
+		</FlexDivRowCentered>
 	)
 
 	return (
@@ -137,9 +137,7 @@ const EscrowTable = () => {
 							width: 40,
 						},
 						{
-							Header: () => (
-								<TableHeader $small>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>
-							),
+							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.date}</TableCell>
 							),
@@ -147,9 +145,7 @@ const EscrowTable = () => {
 							width: 65,
 						},
 						{
-							Header: () => (
-								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
-							),
+							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<FlexDivRowCentered columnGap="10px">
 									<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
@@ -163,7 +159,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
-								<TableHeader $small>
+								<TableHeader>
 									<div>{t('dashboard.stake.tabs.escrow.time-until-vestable')}</div>
 								</TableHeader>
 							),
@@ -175,7 +171,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
-								<TableHeader $small>
+								<TableHeader>
 									<div>{t('dashboard.stake.tabs.escrow.immediately-vestable')}</div>
 								</TableHeader>
 							),
@@ -187,7 +183,7 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
-								<TableHeader $small>
+								<TableHeader>
 									<div>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</div>
 								</TableHeader>
 							),
@@ -198,9 +194,7 @@ const EscrowTable = () => {
 							width: 80,
 						},
 						{
-							Header: () => (
-								<TableHeader $small>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>
-							),
+							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.status}</TableCell>
 							),
@@ -237,7 +231,12 @@ const EscrowTable = () => {
 								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
+								<FlexDivRowCentered columnGap="10px">
+									<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
+									<StyledBadge color="yellow" size="small">
+										V1
+									</StyledBadge>
+								</FlexDivRowCentered>
 							),
 							accessor: 'amount',
 							width: 80,
@@ -302,46 +301,19 @@ const StyledTable = styled(Table)`
 `
 
 const TableCell = styled.div`
-	font-size: 11px;
+	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 `
 
-const EscrowStats = styled.div`
-	display: flex;
-	justify-content: flex-end;
-
-	.stat-title {
-		font-size: 10px;
-		color: ${(props) => props.theme.colors.selectedTheme.text.label};
-	}
-
-	.stat-value {
-		font-size: 11px;
-		font-family: ${(props) => props.theme.fonts.mono};
-		color: ${(props) => props.theme.colors.selectedTheme.text.value};
-		margin-top: 4px;
-	}
-
-	& > div {
-		display: flex;
-		align-items: center;
-
-		& > *:not(:last-child) {
-			margin-right: 15px;
-		}
-	}
-`
-
-const VestButton = styled.button`
+const VestButton = styled(Button)`
 	border-width: 1px;
 	border-style: solid;
 	border-color: ${(props) =>
 		props.disabled
 			? props.theme.colors.selectedTheme.gray
 			: props.theme.colors.selectedTheme.yellow};
-	height: 24px;
-	box-sizing: border-box;
-	border-radius: 14px;
+	height: 36px;
+	border-radius: 100px;
 	cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
 	background-color: transparent;
 	color: ${(props) =>
@@ -349,9 +321,8 @@ const VestButton = styled.button`
 			? props.theme.colors.selectedTheme.gray
 			: props.theme.colors.selectedTheme.yellow};
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
-	padding-left: 12px;
-	padding-right: 12px;
+	font-size: 13px;
+	padding: 10px 15px;
 	text-transform: uppercase;
 `
 

@@ -9,9 +9,10 @@ export const FlexDivCentered = styled(FlexDiv)`
 	align-items: center;
 `
 
-export const FlexDivCol = styled(FlexDiv)<{ rowGap?: string }>`
+export const FlexDivCol = styled(FlexDiv)<{ rowGap?: string; alignItems?: string }>`
 	flex-direction: column;
 	row-gap: ${(props) => props.rowGap || 'initial'};
+	align-items: ${(props) => props.alignItems || 'initial'};
 `
 
 export const FlexDivColCentered = styled(FlexDivCol)`

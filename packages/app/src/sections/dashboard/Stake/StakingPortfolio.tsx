@@ -13,7 +13,7 @@ export enum StakeTab {
 	Staking = 'staking',
 	Escrow = 'escrow',
 	TradingRewards = 'trading-rewards',
-	Redemption = 'redemption',
+	Redeem = 'redeem',
 }
 
 type StakingPortfolioProps = {
@@ -32,15 +32,14 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 						Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.
 					</Body>
 				</FlexDivCol>
-				<Button
+				<StyledButton
 					size="xsmall"
 					isRounded
 					textTransform="none"
-					style={{ borderWidth: '0px' }}
 					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 				>
 					Docs →
-				</Button>
+				</StyledButton>
 			</StakingHeading>
 			<CardsContainer>
 				{cards.map(({ category, card }, i) => (
@@ -63,6 +62,10 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 	)
 }
 
+const StyledButton = styled(Button)`
+	border-width: 0px;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+`
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
 `

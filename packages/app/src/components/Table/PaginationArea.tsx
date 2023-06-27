@@ -64,7 +64,7 @@ const PaginationArea: React.FC<PaginationAreaProps> = ({
 
 const PaginationContainer = styled(GridDivCenteredCol)`
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
-	padding: 10px 25px 10px 10px;
+	padding: 20px 25px;
 	border-radius: 100px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 	margin-top: 15px;

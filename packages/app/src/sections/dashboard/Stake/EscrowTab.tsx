@@ -89,12 +89,8 @@ const EscrowTab = () => {
 						))}
 					</CardsContainer>
 					<LabelContainer rowGap="5px">
-						<Body size="small" color="secondary">
-							Cooldown
-						</Body>
-						<Body size="small" color="primary">
-							2D:12H:12:12
-						</Body>
+						<Body color="secondary">Cooldown</Body>
+						<Body color="primary">2D:12H:12:12</Body>
 					</LabelContainer>
 				</CardGridContainer>
 			</GridContainer>

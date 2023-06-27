@@ -190,15 +190,14 @@ const RewardsTabs: FC = () => {
 		<RewardsTabContainer>
 			<HeaderContainer>
 				<StyledHeading variant="h4">{t('dashboard.rewards.title')}</StyledHeading>
-				<Button
+				<StyledButton
 					size="xsmall"
 					isRounded
 					textTransform="none"
-					style={{ borderWidth: '0px' }}
 					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 				>
 					Docs →
-				</Button>
+				</StyledButton>
 			</HeaderContainer>
 			<CardsContainer>
 				{REWARDS.map(({ key, title, copy, labels, info }) => (
@@ -233,19 +232,31 @@ const RewardsTabs: FC = () => {
 						</RewardsContainer>
 					</CardGrid>
 				))}
-				<Pill
-					color="yellow"
-					size="large"
-					weight="bold"
-					onClick={handleClaimAll}
-					style={{ width: '100px', borderWidth: '0px', marginBottom: '20px', marginLeft: '25px' }}
-				>
-					Claim
-				</Pill>
+				<ButtonContainer>
+					<Button
+						variant="yellow"
+						size="small"
+						textTransform="uppercase"
+						isRounded
+						onClick={handleClaimAll}
+					>
+						Claim
+					</Button>
+				</ButtonContainer>
 			</CardsContainer>
 		</RewardsTabContainer>
 	)
 }
+
+const ButtonContainer = styled.div`
+	margin-bottom: 25px;
+	margin-left: 25px;
+`
+
+const StyledButton = styled(Button)`
+	border-width: 0px;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+`
 
 const RewardsContainer = styled(FlexDivCol)`
 	row-gap: 25px;

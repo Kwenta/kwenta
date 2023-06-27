@@ -22,6 +22,7 @@ export type TabButtonProps = {
 	onClick?: () => any
 	flat?: boolean
 	noOutline?: boolean
+	fixedWidth?: number
 }
 
 const InnerButton: React.FC<TabButtonProps> = React.memo(
@@ -64,6 +65,7 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 				$nofill={props.nofill}
 				$flat={flat}
 				$noOutline={noOutline}
+				fixedWidth={props.fixedWidth}
 				onClick={onClick}
 			>
 				<InnerButton {...props} />
@@ -129,6 +131,7 @@ const sharedStyle = css<{
 	&:hover {
 		background: ${(props) =>
 			props.theme.colors.selectedTheme.newTheme.button.default.hover.background};
+		border-width: 1px;
 	}
 
 	.title {
@@ -184,6 +187,7 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$flat?: boolean
 	active?: boolean
 	$noOutline?: boolean
+	fixedWidth?: number
 }>`
 	p {
 		text-align: left;
@@ -198,9 +202,15 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	${(props) =>
 		props.$noOutline &&
 		css`
-			border-width: 0px;
+			border-width: ${props.active ? '1px' : '0px'};
 			border-radius: 100px;
 			padding: 10px 15px;
+		`}
+
+	${(props) =>
+		props.fixedWidth &&
+		css`
+			width: ${props.fixedWidth}px;
 		`}
 `
 

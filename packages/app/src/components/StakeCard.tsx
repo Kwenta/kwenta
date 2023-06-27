@@ -15,6 +15,7 @@ import { numericValueCSS } from 'styles/common'
 import ErrorView from './ErrorView'
 import Spacer from './Spacer'
 import media from 'styles/media'
+import { Body } from './Text'
 
 type StakeCardProps = {
 	title: string
@@ -121,12 +122,12 @@ const StakeCard: FC<StakeCardProps> = memo(
 				<FlexDivCol>
 					<FlexDivCol>
 						<StakeInputHeader>
-							<div>{title}</div>
+							<Body color="secondary">{title}</Body>
 							<StyledFlexDivRowCentered>
-								<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
-								<div className="max" onClick={onMaxClick}>
+								<Body color="secondary">{t('dashboard.stake.tabs.stake-table.balance')}</Body>
+								<PointerBody color="primary" onClick={onMaxClick}>
 									{balanceString}
-								</div>
+								</PointerBody>
 							</StyledFlexDivRowCentered>
 						</StakeInputHeader>
 						<NumericInput value={amount} onChange={handleChange} bold />
@@ -176,11 +177,11 @@ const StakeInputHeader = styled(FlexDivRowCentered)`
 	margin: 25px 0 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.title};
 	font-size: 14px;
-
-	.max {
-		cursor: pointer;
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-		${numericValueCSS};
-	}
 `
+
+const PointerBody = styled(Body)`
+	cursor: pointer;
+	${numericValueCSS};
+`
+
 export default StakeCard

@@ -14,7 +14,7 @@ import { setSelectedEpoch } from 'state/staking/reducer'
 import { selectEpochData, selectSelectedEpoch } from 'state/staking/selectors'
 import media from 'styles/media'
 
-import RewardsTabs from '../RewardsTabs'
+import RewardsTab from '../RewardsTab'
 
 import EscrowTab from './EscrowTab'
 import RedemptionTab from './RedemptionTab'
@@ -63,21 +63,24 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 				<TabButtons>
 					<TabButton
 						noOutline
+						fixedWidth={75}
 						title={t('dashboard.stake.tabs.staking.title')}
 						onClick={onChangeTab(StakeTab.Staking)}
 						active={currentTab === StakeTab.Staking}
 					/>
 					<TabButton
 						noOutline
+						fixedWidth={75}
 						title={t('dashboard.stake.tabs.escrow.title')}
 						onClick={onChangeTab(StakeTab.Escrow)}
 						active={currentTab === StakeTab.Escrow}
 					/>
 					<TabButton
 						noOutline
-						title={t('dashboard.stake.tabs.redemption.title')}
-						onClick={onChangeTab(StakeTab.Redemption)}
-						active={currentTab === StakeTab.Redemption}
+						fixedWidth={75}
+						title={t('dashboard.stake.tabs.redeem.title')}
+						onClick={onChangeTab(StakeTab.Redeem)}
+						active={currentTab === StakeTab.Redeem}
 					/>
 				</TabButtons>
 				<StyledFlexDivRowCentered active={currentTab === StakeTab.TradingRewards}>
@@ -103,12 +106,12 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 			<div>
 				<TabPanel name={StakeTab.Staking} activeTab={currentTab}>
 					<StakingTab />
-					<RewardsTabs />
+					<RewardsTab />
 				</TabPanel>
 				<TabPanel name={StakeTab.Escrow} activeTab={currentTab}>
 					<EscrowTab />
 				</TabPanel>
-				<TabPanel name={StakeTab.Redemption} activeTab={currentTab}>
+				<TabPanel name={StakeTab.Redeem} activeTab={currentTab}>
 					<RedemptionTab />
 				</TabPanel>
 			</div>

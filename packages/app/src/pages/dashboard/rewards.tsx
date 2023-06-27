@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
-import RewardsTabs from 'sections/dashboard/RewardsTabs'
+import RewardsTabs from 'sections/dashboard/RewardsTab'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { fetchClaimableRewards, fetchStakingData } from 'state/staking/actions'
 

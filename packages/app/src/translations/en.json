@@ -650,8 +650,8 @@
 					"unstake": "Unstake",
 					"stake": "stake"
 				},
-				"redemption": {
-					"title": "Redemption"
+				"redeem": {
+					"title": "Redeem"
 				},
 				"stake-table": {
 					"stake": "Stake",

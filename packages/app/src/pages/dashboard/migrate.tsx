@@ -7,7 +7,6 @@ import styled from 'styled-components'
 
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
-import Pill from 'components/Pill'
 import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
@@ -173,15 +172,14 @@ const MigratePage: MigrateComponent = () => {
 						Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.
 					</Body>
 				</FlexDivCol>
-				<Button
+				<StyledButton
 					size="xsmall"
 					isRounded
 					textTransform="none"
-					style={{ borderWidth: '0px' }}
 					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 				>
 					Docs →
-				</Button>
+				</StyledButton>
 			</StakingHeading>
 			<StepsContainer columnGap="15px">
 				{MIGRATE_STEPS.map(({ key, copy, label, value, buttonLabel, active }, i) => (
@@ -200,9 +198,15 @@ const MigratePage: MigrateComponent = () => {
 									{value}
 								</Body>
 							</FlexDivCol>
-							<Pill color="yellow" size="large" weight="bold" onClick={() => {}}>
+							<Button
+								variant="yellow"
+								size="small"
+								textTransform="uppercase"
+								isRounded
+								onClick={() => {}}
+							>
 								{buttonLabel}
-							</Pill>
+							</Button>
 						</FlexDivRowCentered>
 					</StyledStakingCard>
 				))}
@@ -214,6 +218,11 @@ const MigratePage: MigrateComponent = () => {
 		</>
 	)
 }
+
+const StyledButton = styled(Button)`
+	border-width: 0px;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+`
 
 const TableContainer = styled.div`
 	margin-top: 30px;
