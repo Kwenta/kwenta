@@ -63,21 +63,21 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 				<TabButtons>
 					<TabButton
 						noOutline
-						fixedWidth={75}
+						width={75}
 						title={t('dashboard.stake.tabs.staking.title')}
 						onClick={onChangeTab(StakeTab.Staking)}
 						active={currentTab === StakeTab.Staking}
 					/>
 					<TabButton
 						noOutline
-						fixedWidth={75}
+						width={75}
 						title={t('dashboard.stake.tabs.escrow.title')}
 						onClick={onChangeTab(StakeTab.Escrow)}
 						active={currentTab === StakeTab.Escrow}
 					/>
 					<TabButton
 						noOutline
-						fixedWidth={75}
+						width={75}
 						title={t('dashboard.stake.tabs.redeem.title')}
 						onClick={onChangeTab(StakeTab.Redeem)}
 						active={currentTab === StakeTab.Redeem}

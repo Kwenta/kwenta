@@ -22,7 +22,7 @@ export type TabButtonProps = {
 	onClick?: () => any
 	flat?: boolean
 	noOutline?: boolean
-	fixedWidth?: number
+	width?: number
 }
 
 const InnerButton: React.FC<TabButtonProps> = React.memo(
@@ -65,7 +65,7 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 				$nofill={props.nofill}
 				$flat={flat}
 				$noOutline={noOutline}
-				fixedWidth={props.fixedWidth}
+				width={props.width}
 				onClick={onClick}
 			>
 				<InnerButton {...props} />
@@ -187,7 +187,7 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$flat?: boolean
 	active?: boolean
 	$noOutline?: boolean
-	fixedWidth?: number
+	width?: number
 }>`
 	p {
 		text-align: left;
@@ -208,9 +208,9 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 		`}
 
 	${(props) =>
-		props.fixedWidth &&
+		props.width &&
 		css`
-			width: ${props.fixedWidth}px;
+			width: ${props.width}px;
 		`}
 `
 
