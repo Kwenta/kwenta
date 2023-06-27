@@ -10,6 +10,7 @@ import FuturesMarketDataABI from './abis/FuturesMarketData.json'
 import FuturesMarketSettingsABI from './abis/FuturesMarketSettings.json'
 import KwentaArrakisVaultABI from './abis/KwentaArrakisVault.json'
 import KwentaStakingRewardsABI from './abis/KwentaStakingRewards.json'
+import KwentaStakingRewardsV2ABI from './abis/KwentaStakingRewardsV2.json'
 import MultipleMerkleDistributorABI from './abis/MultipleMerkleDistributor.json'
 import MultipleMerkleDistributorOpABI from './abis/MultipleMerkleDistributorOp.json'
 import MultipleMerkleDistributorPerpsV2ABI from './abis/MultipleMerkleDistributorPerpsV2.json'
@@ -17,6 +18,7 @@ import PerpsV2MarketABI from './abis/PerpsV2Market.json'
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json'
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json'
 import RewardEscrowABI from './abis/RewardEscrow.json'
+import RewardEscrowV2ABI from './abis/RewardEscrowV2.json'
 import StakingRewardsABI from './abis/StakingRewards.json'
 import SupplyScheduleABI from './abis/SupplySchedule.json'
 import SynthRedeemerABI from './abis/SynthRedeemer.json'
@@ -165,6 +167,12 @@ export const getContractsByNetwork = (
 		veKwentaRedeemer: ADDRESSES.veKwentaRedeemer[networkId]
 			? VeKwentaRedeemer__factory.connect(ADDRESSES.veKwentaRedeemer[networkId], provider)
 			: undefined,
+		KwentaStakingRewardsV2: ADDRESSES.KwentaStakingRewardsV2[networkId]
+			? KwentaStakingRewards__factory.connect(ADDRESSES.KwentaStakingRewardsV2[networkId], provider)
+			: undefined,
+		RewardEscrowV2: ADDRESSES.RewardEscrowV2[networkId]
+			? RewardEscrow__factory.connect(ADDRESSES.RewardEscrowV2[networkId], provider)
+			: undefined,
 	}
 }
 
@@ -232,6 +240,12 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		DappMaintenance: ADDRESSES.DappMaintenance[networkId]
 			? new EthCallContract(ADDRESSES.DappMaintenance[networkId], DappMaintenanceABI)
+			: undefined,
+		KwentaStakingRewardsV2: ADDRESSES.KwentaStakingRewardsV2[networkId]
+			? new EthCallContract(ADDRESSES.KwentaStakingRewardsV2[networkId], KwentaStakingRewardsV2ABI)
+			: undefined,
+		RewardEscrowV2: ADDRESSES.RewardEscrowV2[networkId]
+			? new EthCallContract(ADDRESSES.RewardEscrowV2[networkId], RewardEscrowV2ABI)
 			: undefined,
 	}
 }
