@@ -8,7 +8,7 @@ on:
       - dev
 
 jobs:
-  build_and_publish:
+  publish:
     name: Publish SDK
     runs-on: ubuntu-latest
     defaults:
