@@ -26,5 +26,8 @@ jobs:
           version: 8
           run_install: false
 
+      - name: Install dependencies
+        run: pnpm i
+
       - name: Run tests
         run: cd packages/app && pnpm run test:jest
