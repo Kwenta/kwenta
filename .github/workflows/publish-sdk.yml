@@ -38,6 +38,6 @@ jobs:
     
     - name: Publish
       run: |
-          diff <(npx npm info . --json | jq '."dist-tags".latest') <(cat package.json | jq '.version') || (pnpm publish)
+          diff <(npx npm info . --json | jq '."dist-tags".latest') <(cat package.json | jq '.version') || (pnpm publish --no-git-checks)
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NODE_TOKEN }}
