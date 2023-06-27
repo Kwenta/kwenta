@@ -16,6 +16,7 @@ import {
 	unstakeEscrow,
 	unstakeKwenta,
 	vestEscrowedRewards,
+	fetchStakingV2Data,
 } from './actions'
 import { StakingState } from './types'
 
@@ -26,6 +27,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	veKwentaBalance: '0',
 	claimableBalance: '0',
 	totalStakedBalance: '0',
+	totalStakedBalanceV2: '0',
 	stakedEscrowedKwentaBalance: '0',
 	stakedKwentaBalance: '0',
 	epochPeriod: 0,
@@ -110,6 +112,9 @@ const stakingSlice = createSlice({
 			state.unstakeStatus = FetchStatus.Idle
 			state.stakeEscrowedStatus = FetchStatus.Idle
 			state.unstakeEscrowedStatus = FetchStatus.Idle
+		})
+		builder.addCase(fetchStakingV2Data.fulfilled, (state, action) => {
+			state.totalStakedBalanceV2 = action.payload.totalStakedBalance
 		})
 		builder.addCase(fetchEscrowData.fulfilled, (state, action) => {
 			state.totalVestable = action.payload.totalVestable

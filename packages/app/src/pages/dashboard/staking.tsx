@@ -8,12 +8,18 @@ import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions'
+import {
+	fetchClaimableRewards,
+	fetchEscrowData,
+	fetchStakingData,
+	fetchStakingV2Data,
+} from 'state/staking/actions'
 import {
 	selectClaimableBalance,
 	selectEscrowedKwentaBalance,
 	selectKwentaBalance,
 	selectStakedEscrowedKwentaBalance,
+	selectStakedKwentaBalanceV2,
 	selectTotalVestable,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
@@ -38,6 +44,7 @@ const StakingPage: StakingComponent = () => {
 	const dispatch = useAppDispatch()
 	const walletAddress = useAppSelector(selectWallet)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
+	const totalStakedBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
 	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const claimableBalance = useAppSelector(selectClaimableBalance)
@@ -58,6 +65,7 @@ const StakingPage: StakingComponent = () => {
 	useEffect(() => {
 		if (!!walletAddress) {
 			dispatch(fetchStakingData()).then(() => {
+				dispatch(fetchStakingV2Data())
 				dispatch(fetchClaimableRewards())
 			})
 			dispatch(fetchEscrowData())
@@ -84,8 +92,8 @@ const StakingPage: StakingComponent = () => {
 				{
 					key: 'balance-staked',
 					title: t('dashboard.stake.portfolio.balance.staked'),
-					value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
-					onClick: () => setCurrentTab(StakeTab.Escrow),
+					value: truncateNumbers(totalStakedBalanceV2, 2),
+					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 			],
 		},

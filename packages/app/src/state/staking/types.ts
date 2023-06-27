@@ -9,6 +9,7 @@ export type StakingState = {
 	escrowedKwentaBalance: string
 	claimableBalance: string
 	totalStakedBalance: string
+	totalStakedBalanceV2: string
 	stakedEscrowedKwentaBalance: string
 	stakedKwentaBalance: string
 	epochPeriod: number

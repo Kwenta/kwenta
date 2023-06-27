@@ -49,6 +49,11 @@ export const selectClaimableBalance = createSelector(
 	toWei
 )
 
+export const selectStakedKwentaBalanceV2 = createSelector(
+	(state: RootState) => state.staking.totalStakedBalanceV2,
+	toWei
+)
+
 export const selectIsKwentaTokenApproved = createSelector(
 	selectKwentaBalance,
 	(state: RootState) => state.staking.kwentaAllowance,
@@ -188,6 +193,14 @@ export const selectEpochPeriod = createSelector(
 
 export const selectAPY = createSelector(
 	(state: RootState) => state.staking.totalStakedBalance,
+	(state: RootState) => state.staking.weekCounter,
+	(totalStakedBalance, weekCounter) => {
+		return getApy(Number(totalStakedBalance), weekCounter)
+	}
+)
+
+export const selectAPYV2 = createSelector(
+	(state: RootState) => state.staking.totalStakedBalanceV2,
 	(state: RootState) => state.staking.weekCounter,
 	(totalStakedBalance, weekCounter) => {
 		return getApy(Number(totalStakedBalance), weekCounter)

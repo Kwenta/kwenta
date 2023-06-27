@@ -58,6 +58,37 @@ export const fetchStakingData = createAsyncThunk<
 	}
 })
 
+export const fetchStakingV2Data = createAsyncThunk<
+	{
+		rewardEscrowBalance: string
+		stakedNonEscrowedBalance: string
+		stakedEscrowedBalance: string
+		claimableBalance: string
+		totalStakedBalance: string
+		kwentaStakingV2Allowance: string
+	},
+	void,
+	ThunkConfig
+>('staking/fetchStakingDataV2', async (_, { extra: { sdk } }) => {
+	const {
+		rewardEscrowBalance,
+		stakedNonEscrowedBalance,
+		stakedEscrowedBalance,
+		claimableBalance,
+		totalStakedBalance,
+		kwentaStakingV2Allowance,
+	} = await sdk.kwentaToken.getStakingV2Data()
+
+	return {
+		rewardEscrowBalance: rewardEscrowBalance.toString(),
+		stakedNonEscrowedBalance: stakedNonEscrowedBalance.toString(),
+		stakedEscrowedBalance: stakedEscrowedBalance.toString(),
+		claimableBalance: claimableBalance.toString(),
+		totalStakedBalance: totalStakedBalance.toString(),
+		kwentaStakingV2Allowance: kwentaStakingV2Allowance.toString(),
+	}
+})
+
 export const approveKwentaToken = createAsyncThunk<
 	void,
 	'kwenta' | 'vKwenta' | 'veKwenta',
@@ -108,6 +139,24 @@ export const fetchEscrowData = createAsyncThunk<
 	}
 })
 
+export const fetchEscrowV2Data = createAsyncThunk<
+	{ escrowData: EscrowData<string>[]; totalVestable: string },
+	void,
+	ThunkConfig
+>('staking/fetchEscrowData', async (_, { extra: { sdk } }) => {
+	const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowV2Data()
+
+	return {
+		escrowData: escrowData.map((e) => ({
+			...e,
+			vestable: e.vestable.toString(),
+			amount: e.amount.toString(),
+			fee: e.fee.toString(),
+		})),
+		totalVestable: totalVestable.toString(),
+	}
+})
+
 export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>(
 	'staking/vestEscrowedRewards',
 	async (ids, { dispatch, extra: { sdk } }) => {
@@ -128,10 +177,48 @@ export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>
 	}
 )
 
+export const vestEscrowedRewardsV2 = createAsyncThunk<void, number[], ThunkConfig>(
+	'staking/vestEscrowedRewards',
+	async (ids, { dispatch, extra: { sdk } }) => {
+		if (ids.length > 0) {
+			const { hash } = await sdk.kwentaToken.vestTokenV2(ids)
+
+			monitorTransaction({
+				txHash: hash,
+				onTxConfirmed: () => {
+					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Success })
+					dispatch(fetchStakingData())
+				},
+				onTxFailed: () => {
+					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Error })
+				},
+			})
+		}
+	}
+)
+
 export const getReward = createAsyncThunk<void, void, ThunkConfig>(
 	'staking/getReward',
 	async (_, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.getReward()
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
+				dispatch(fetchStakingData())
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Error })
+			},
+		})
+	}
+)
+
+export const getRewardV2 = createAsyncThunk<void, void, ThunkConfig>(
+	'staking/getReward',
+	async (_, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.getRewardV2()
 
 		monitorTransaction({
 			txHash: hash,
@@ -354,6 +441,80 @@ export const unstakeKwenta = createAsyncThunk<void, BigNumber, ThunkConfig>(
 	'staking/unstakeKwenta',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.unstakeKwenta(amount)
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Success })
+				dispatch(fetchStakingData())
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Error })
+			},
+		})
+	}
+)
+
+export const stakeEscrowV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
+	'staking/stakeEscrow',
+	async (amount, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.stakeEscrowedKwentaV2(amount)
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setStakeEscrowedStatus', payload: FetchStatus.Success })
+				dispatch(fetchStakingData())
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setStakeEscrowedStatus', payload: FetchStatus.Error })
+			},
+		})
+	}
+)
+
+export const unstakeEscrowV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
+	'staking/unstakeEscrow',
+	async (amount, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.unstakeEscrowedKwentaV2(amount)
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setUnstakeEscrowedStatus', payload: FetchStatus.Success })
+				dispatch(fetchStakingData())
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setUnstakeEscrowedStatus', payload: FetchStatus.Error })
+			},
+		})
+	}
+)
+
+// TODO: Consider merging this with the (stake|unstake)Escrow actions.
+
+export const stakeKwentaV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
+	'staking/stakeKwenta',
+	async (amount, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.stakeKwentaV2(amount)
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setStakeStatus', payload: FetchStatus.Success })
+				dispatch(fetchStakingData())
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setStakeStatus', payload: FetchStatus.Error })
+			},
+		})
+	}
+)
+
+export const unstakeKwentaV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
+	'staking/unstakeKwenta',
+	async (amount, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.unstakeKwentaV2(amount)
 
 		monitorTransaction({
 			txHash: hash,
