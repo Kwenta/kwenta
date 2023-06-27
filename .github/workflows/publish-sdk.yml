@@ -1,0 +1,36 @@
+name: "Publish SDK"
+
+on:
+  push:
+    branches: []
+
+jobs:
+  build_and_publish:
+    name: Publish SDK
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
+      id: pnpm-install
+      with:
+        version: 8
+        run_install: false
+
+    - name: Build code
+      run: pnpm i && cd packages/sdk && pnpm build
+    
+    - name: Publish
+      run: pnpm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NODE_TOKEN }}
