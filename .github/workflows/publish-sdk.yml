@@ -40,4 +40,4 @@ jobs:
         run: |
             diff <(npx npm info . --json | jq '."dist-tags".latest') <(cat package.json | jq '.version') || (pnpm publish --no-git-checks --access public)
         env:
-          NODE_TOKEN: ${{ secrets.NODE_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NODE_TOKEN }}
