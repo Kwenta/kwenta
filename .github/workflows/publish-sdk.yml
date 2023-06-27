@@ -16,28 +16,28 @@ jobs:
         working-directory: ./packages/sdk
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.x
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
 
-    - uses: pnpm/action-setup@v2
-      name: Install pnpm
-      id: pnpm-install
-      with:
-        version: 8
-        run_install: false
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
 
-    - name: Build code
-      run: pnpm i && pnpm build
-    
-    - name: Publish
-      run: |
-          diff <(npx npm info . --json | jq '."dist-tags".latest') <(cat package.json | jq '.version') || (pnpm publish --no-git-checks)
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NODE_TOKEN }}
+      - name: Build code
+        run: pnpm i && pnpm build
+      
+      - name: Publish
+        run: |
+            diff <(npx npm info . --json | jq '."dist-tags".latest') <(cat package.json | jq '.version') || (pnpm publish --no-git-checks --access public)
+        env:
+          NODE_TOKEN: ${{ secrets.NODE_TOKEN }}
