@@ -24,17 +24,19 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
+          always-auth: true
           node-version: 16.x
+          registry-url: https://registry.npmjs.org
 
       - uses: pnpm/action-setup@v2
         name: Install pnpm
         id: pnpm-install
         with:
           version: 8
-          run_install: false
+          run_install: true
 
       - name: Build code
-        run: pnpm i && pnpm build
+        run: pnpm build
       
       - name: Publish
         run: |
