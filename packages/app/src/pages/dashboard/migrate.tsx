@@ -25,10 +25,9 @@ import {
 	selectTotalVestable,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
+import media from 'styles/media'
 
 import { StakingCards } from './staking'
-import media from 'styles/media'
-import Table from 'components/Table/Table'
 
 type MigrateComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
