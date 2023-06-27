@@ -261,14 +261,14 @@ const HeaderContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 22.5px;
 
 	${media.lessThan('mdUp')`
-		flex-direction: column;
-		row-gap: 15px;
+		margin-bottom: 25px;
+		margin-top: 25px;
 	`}
 `
 
 const RewardsTabContainer = styled.div`
 	${media.lessThan('mdUp')`
-		padding: 15px;
+		padding: 0;
 	`}
 
 	${media.greaterThan('mdUp')`
@@ -284,20 +284,6 @@ const CardGrid = styled(StakingCard)`
 	row-gap: 25px;
 	background: transparent;
 	border-width: 0px;
-
-	.title {
-		font-weight: 400;
-		font-size: 16px;
-		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
-	}
-
-	.value {
-		font-size: 13px;
-		line-height: 16px;
-		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
-		margin-top: 0px;
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
 `
 
 const CardsContainer = styled(FlexDivRow)`
@@ -308,8 +294,8 @@ const CardsContainer = styled(FlexDivRow)`
 	border-radius: 15px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 
-	${media.lessThan('mdUp')`
-		grid-template-columns: repeat(1, 1fr);
+	${media.lessThan('md')`
+		flex-direction: column;
 	`}
 `
 

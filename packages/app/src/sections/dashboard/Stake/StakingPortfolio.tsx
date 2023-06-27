@@ -88,6 +88,12 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: flex-start;
 	column-gap: 60px;
+
+	${media.lessThan('md')`
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		row-gap: 25px;
+	`}
 `
 
 export default StakingPortfolio

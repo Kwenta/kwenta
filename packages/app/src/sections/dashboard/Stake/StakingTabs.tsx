@@ -170,7 +170,8 @@ const StakingTabsHeader = styled.div`
 	${media.lessThan('md')`
 		flex-direction: column;
 		row-gap: 10px;
-		margin-bottom: 10px;
+		margin-bottom: 25px;
+		margin-top: 0px;
 	`}
 `
 

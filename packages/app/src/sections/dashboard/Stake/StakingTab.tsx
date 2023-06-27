@@ -13,6 +13,7 @@ import { getReward } from 'state/staking/actions'
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors'
 
 import StakeInputCard from './InputCards/StakeInputCard'
+import media from 'styles/media'
 
 const StakingTab = () => {
 	const { t } = useTranslation()
@@ -132,6 +133,13 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	justify-content: flex-start;
 	column-gap: 50px;
 	margin: 50px 0;
+
+	${media.lessThan('md')`
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		row-gap: 25px;
+		max-width: 360px;
+	`}
 `
 
 const StyledHeading = styled(Heading)`

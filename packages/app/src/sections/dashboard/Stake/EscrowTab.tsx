@@ -88,14 +88,14 @@ const EscrowTab = () => {
 							</FlexDivCol>
 						))}
 					</CardsContainer>
-					<FlexDivCol rowGap="5px">
+					<LabelContainer rowGap="5px">
 						<Body size="small" color="secondary">
 							Cooldown
 						</Body>
 						<Body size="small" color="primary">
 							2D:12H:12:12
 						</Body>
-					</FlexDivCol>
+					</LabelContainer>
 				</CardGridContainer>
 			</GridContainer>
 			<EscrowTable />
@@ -103,14 +103,29 @@ const EscrowTab = () => {
 	)
 }
 
+const LabelContainer = styled(FlexDivCol)`
+	${media.lessThan('md')`
+		margin-top: 25px;
+	`}
+`
+
 const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: flex-start;
 	column-gap: 50px;
+
+	${media.lessThan('md')`
+		flex-direction: column;
+		align-items: flex-start;
+		row-gap: 25px;
+	`}
 `
 
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
+	${media.lessThan('md')`
+		margin-bottom: 25px;
+	`}
 `
 
 const CardGridContainer = styled(StakingCard)`
@@ -123,6 +138,12 @@ const GridContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	column-gap: 15px;
+
+	${media.lessThan('md')`
+		display: grid;
+		grid-template-columns: 1fr;
+		row-gap: 25px;
+	`}
 `
 
 const EscrowTabContainer = styled.div`

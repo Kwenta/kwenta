@@ -14,6 +14,7 @@ import { numericValueCSS } from 'styles/common'
 
 import ErrorView from './ErrorView'
 import Spacer from './Spacer'
+import media from 'styles/media'
 
 type StakeCardProps = {
 	title: string
@@ -166,6 +167,9 @@ const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
 const StakingInputCardContainer = styled(StakingCard)`
 	min-height: 125px;
 	margin-bottom: 0px;
+	${media.lessThan('md')`
+		max-width: 360px;
+	`}
 `
 
 const StakeInputHeader = styled(FlexDivRowCentered)`
