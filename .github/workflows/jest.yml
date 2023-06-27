@@ -1,0 +1,29 @@
+name: Jest
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Run the tests
+        working-directory: ./packages/app
+        run: pnpm run test:jest
