@@ -8,6 +8,9 @@ jobs:
   build_and_publish:
     name: Publish SDK
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/sdk
 
     steps:
     - name: Checkout code
@@ -28,7 +31,7 @@ jobs:
         run_install: false
 
     - name: Build code
-      run: pnpm i && cd packages/sdk && pnpm build
+      run: pnpm i && pnpm build
     
     - name: Publish
       run: pnpm publish
