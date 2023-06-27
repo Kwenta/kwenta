@@ -45,7 +45,6 @@ const StakingPage: StakingComponent = () => {
 	const walletAddress = useAppSelector(selectWallet)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const totalStakedBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
-	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const totalVestable = useAppSelector(selectTotalVestable)

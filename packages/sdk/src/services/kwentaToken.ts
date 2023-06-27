@@ -228,7 +228,7 @@ export default class KwentaTokenService {
 			stakedEscrowedBalance: wei(stakedEscrowedBalance),
 			claimableBalance: wei(claimableBalance),
 			totalStakedBalance: wei(totalStakedBalance),
-			kwentaAllowance: wei(kwentaStakingV2Allowance),
+			kwentaStakingV2Allowance: wei(kwentaStakingV2Allowance),
 		}
 	}
 

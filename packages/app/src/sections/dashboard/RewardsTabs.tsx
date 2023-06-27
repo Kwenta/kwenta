@@ -116,7 +116,7 @@ const RewardsTabs: FC = () => {
 			info: [
 				{
 					label: 'Period',
-					value: 'Epoch 4',
+					value: `Epoch ${Number(epoch)}`,
 				},
 				{
 					label: 'Total Pool Fees',
