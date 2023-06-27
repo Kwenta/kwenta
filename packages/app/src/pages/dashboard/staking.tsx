@@ -16,7 +16,6 @@ import {
 } from 'state/staking/actions'
 import {
 	selectClaimableBalance,
-	selectEscrowedKwentaBalance,
 	selectKwentaBalance,
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalanceV2,

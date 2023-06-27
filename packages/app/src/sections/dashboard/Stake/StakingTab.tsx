@@ -11,9 +11,9 @@ import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { getReward } from 'state/staking/actions'
 import { selectAPY, selectClaimableBalance } from 'state/staking/selectors'
+import media from 'styles/media'
 
 import StakeInputCard from './InputCards/StakeInputCard'
-import media from 'styles/media'
 
 const StakingTab = () => {
 	const { t } = useTranslation()
@@ -78,13 +78,11 @@ const StakingTab = () => {
 				<CardsContainer>
 					{DEFAULT_CARDS.map(({ category, card }, i) => (
 						<FlexDivCol rowGap="15px" key={i}>
-							<Body size="small">{category}</Body>
+							<Body size="large">{category}</Body>
 							<FlexDivRow columnGap="15px">
 								{card.map(({ key, title, value }) => (
 									<FlexDivCol key={key} rowGap="5px">
-										<Body size="large" color="secondary">
-											{title}
-										</Body>
+										<Body color="secondary">{title}</Body>
 										<Body size="large" color="preview">
 											{value}
 										</Body>

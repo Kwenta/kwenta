@@ -166,16 +166,6 @@ const RewardsTabs: FC = () => {
 			key: 'snx-rewards',
 			title: t('dashboard.rewards.snx-rewards.title'),
 			copy: t('dashboard.rewards.snx-rewards.copy'),
-			button: (
-				<Pill
-					color="yellow"
-					size="large"
-					weight="bold"
-					onClick={handleClaimAll}
-					disabled={claimDisabledAll}
-					style={{ width: '100px', borderWidth: '0px' }}
-				/>
-			),
 			labels: [
 				{
 					label: 'Rewards',
@@ -211,47 +201,60 @@ const RewardsTabs: FC = () => {
 				</Button>
 			</HeaderContainer>
 			<CardsContainer>
-				{REWARDS.map(({ key, title, copy, labels, info, button }) => (
+				{REWARDS.map(({ key, title, copy, labels, info }) => (
 					<CardGrid key={key}>
 						<div>
-							<Body size="medium" color="primary">
+							<Body size="large" color="primary">
 								{title}
 							</Body>
-							<Body size="small" color="secondary">
-								{copy}
-							</Body>
+							<Body color="secondary">{copy}</Body>
 						</div>
-						<FlexDivRow justifyContent="flex-start" columnGap="25px">
-							{labels.map(({ label, value }) => (
-								<FlexDivCol rowGap="5px">
-									<Body size="small" color="secondary">
-										{label}
-									</Body>
-									<Body size="medium" color="preview">
-										{value}
-									</Body>
-								</FlexDivCol>
-							))}
-						</FlexDivRow>
-						<FlexDivRowCentered justifyContent="flex-start" columnGap="25px">
-							{info.map(({ label, value }) => (
-								<FlexDivCol rowGap="5px">
-									<Body size="small" color="secondary">
-										{label}
-									</Body>
-									<Body size="small" color="primary">
-										{value}
-									</Body>
-								</FlexDivCol>
-							))}
-						</FlexDivRowCentered>
-						{button}
+						<RewardsContainer>
+							<FlexDivRow justifyContent="flex-start" columnGap="25px">
+								{labels.map(({ label, value }) => (
+									<FlexDivCol rowGap="5px">
+										<Body color="secondary">{label}</Body>
+										<Body size="large" color="preview">
+											{value}
+										</Body>
+									</FlexDivCol>
+								))}
+							</FlexDivRow>
+							<FlexDivRow justifyContent="flex-start" columnGap="25px">
+								{info.map(({ label, value }) => (
+									<FlexDivCol rowGap="5px">
+										<Body color="secondary">{label}</Body>
+										<Body size="large" color="primary">
+											{value}
+										</Body>
+									</FlexDivCol>
+								))}
+							</FlexDivRow>
+						</RewardsContainer>
 					</CardGrid>
 				))}
+				<Pill
+					color="yellow"
+					size="large"
+					weight="bold"
+					onClick={handleClaimAll}
+					style={{ width: '100px', borderWidth: '0px', marginBottom: '20px', marginLeft: '25px' }}
+				>
+					Claim
+				</Pill>
 			</CardsContainer>
 		</RewardsTabContainer>
 	)
 }
+
+const RewardsContainer = styled(FlexDivCol)`
+	row-gap: 25px;
+	${media.lessThan('mdUp')`
+		flex-direction: row;
+		column-gap: 25px;
+		flex-wrap: wrap;
+	`}
+`
 
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
@@ -293,6 +296,7 @@ const CardsContainer = styled(FlexDivRow)`
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
 	border-radius: 15px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
+	flex-wrap: wrap;
 
 	${media.lessThan('md')`
 		flex-direction: column;
