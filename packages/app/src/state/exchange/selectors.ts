@@ -4,7 +4,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
 
 import { selectTotalUSDBalanceWei } from 'state/balances/selectors'
-import { sdk } from 'state/config'
+import sdk from 'state/config'
 import { selectPrices } from 'state/prices/selectors'
 import type { RootState } from 'state/store'
 import { FetchStatus } from 'state/types'

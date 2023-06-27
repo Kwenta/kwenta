@@ -15,7 +15,7 @@ import * as Text from 'components/Text'
 import Connector from 'containers/Connector'
 import { FuturesAccountTypes } from 'queries/futures/types'
 import { selectBalances } from 'state/balances/selectors'
-import { sdk } from 'state/config'
+import sdk from 'state/config'
 import { fetchTokenList } from 'state/exchange/actions'
 import { setFuturesAccountType } from 'state/futures/reducer'
 import {

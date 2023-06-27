@@ -12,7 +12,7 @@ import {
 } from 'charting_library/charting_library'
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery'
-import { sdk } from 'state/config'
+import sdk from 'state/config'
 
 import { ChartBar } from './types'
 import { resolutionToSeconds } from './utils'

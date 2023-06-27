@@ -259,7 +259,7 @@ export default function TradeConfirmationModal({
 				/>
 			)}
 			<ConfirmTradeButton
-				data-testid="trade-open-position-confirm-order-button"
+				data-testid="trade-confirm-order-button"
 				variant={isSubmitting ? 'flat' : leverageSide}
 				onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
 				className={leverageSide}

@@ -79,8 +79,10 @@ export const selectLeverageInput = createSelector(
 	(futures, type) => futures[accountType(type)].leverageInput
 )
 
-export const selectCrossMarginMarginDelta = (state: RootState) =>
-	wei(state.futures.crossMargin.marginDelta || 0)
+export const selectCrossMarginMarginDelta = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => wei(futures.crossMargin.marginDelta || 0)
+)
 
 export const selectMarginDeltaInputValue = (state: RootState) =>
 	state.futures.crossMargin.marginDelta

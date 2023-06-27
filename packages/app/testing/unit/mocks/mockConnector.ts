@@ -4,7 +4,7 @@ import { DEFAULT_NETWORK, MOCK_SIGNER, TEST_ADDR } from '../constants'
 
 import { mockProvider } from './mockEthersProvider'
 
-const DEFAULT_CONNECTOR = {
+export const DEFAULT_CONNECTOR = {
 	activeChain: {
 		id: DEFAULT_NETWORK.id,
 		name: DEFAULT_NETWORK.name,
@@ -24,9 +24,8 @@ const DEFAULT_CONNECTOR = {
 	synthsMap: {},
 	tokensMap: {},
 	staticMainnetProvider: null,
-	defaultSynthetixjs: null,
-	l2Synthetixjs: null,
 	l2SynthsMap: {},
+	providerReady: true,
 }
 
 const mockConnector = (overrides?: Record<string, any>) => {

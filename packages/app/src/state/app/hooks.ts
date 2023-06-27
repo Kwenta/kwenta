@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 import { fetchBalances } from 'state/balances/actions'
-import { sdk } from 'state/config'
+import sdk from 'state/config'
 import { fetchEarnTokenPrices } from 'state/earn/actions'
 import { selectMarkets } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks'

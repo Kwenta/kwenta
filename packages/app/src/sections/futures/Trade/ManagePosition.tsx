@@ -187,7 +187,7 @@ const ManagePosition: React.FC = () => {
 			<div>
 				<ManagePositionContainer>
 					<PlaceOrderButton
-						data-testid="trade-open-position-button"
+						data-testid="trade-panel-submit-button"
 						noOutline
 						fullWidth
 						loading={previewStatus.status === FetchStatus.Loading}
