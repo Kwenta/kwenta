@@ -27,6 +27,8 @@ import {
 import { selectWallet } from 'state/wallet/selectors'
 
 import { StakingCards } from './staking'
+import media from 'styles/media'
+import Table from 'components/Table/Table'
 
 type MigrateComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
@@ -182,8 +184,7 @@ const MigratePage: MigrateComponent = () => {
 					Docs →
 				</Button>
 			</StakingHeading>
-			<Spacer height={30} />
-			<FlexDivRowCentered columnGap="15px">
+			<StepsContainer columnGap="15px">
 				{MIGRATE_STEPS.map(({ key, copy, label, value, buttonLabel, active }, i) => (
 					<StyledStakingCard key={key} $active={active}>
 						<StyledHeading variant="h4">Step {i + 1}</StyledHeading>
@@ -206,14 +207,32 @@ const MigratePage: MigrateComponent = () => {
 						</FlexDivRowCentered>
 					</StyledStakingCard>
 				))}
-			</FlexDivRowCentered>
-			<Spacer height={30} />
+			</StepsContainer>
 			<StakingPortfolio cards={MIGRATE_CARDS} />
-			<Spacer height={30} />
-			<EscrowTable />
+			<TableContainer>
+				<EscrowTable />
+			</TableContainer>
 		</>
 	)
 }
+
+const TableContainer = styled.div`
+	margin-top: 30px;
+	${media.lessThan('mdUp')`
+		margin-top: 0px;
+		padding: 15px;
+	`}
+`
+
+const StepsContainer = styled(FlexDivRowCentered)`
+	margin: 30px 0;
+	${media.lessThan('md')`
+		flex-direction: column;
+		row-gap: 25px;
+		padding: 15px;
+		margin: 0;
+	`}
+`
 
 const StyledStakingCard = styled(StakingCard)<{ $active: boolean }>`
 	width: 100%;
@@ -227,6 +246,10 @@ const StyledStakingCard = styled(StakingCard)<{ $active: boolean }>`
 
 const StakingHeading = styled(FlexDivRowCentered)`
 	margin-top: 20px;
+
+	${media.lessThan('mdUp')`
+		padding: 15px;
+	`}
 `
 
 const StyledHeading = styled(Heading)`
