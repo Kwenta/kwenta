@@ -40,13 +40,6 @@ jest.mock('axios', () => ({
 	create: jest.fn(),
 }))
 
-// jest.mock('@kwenta/sdk/utils/subgraph', () => ({
-// 	__esModule: true,
-// 	getFuturesTrades: () => Promise.resolve([]),
-// 	getFuturesAggregateStats: () => Promise.resolve([]),
-// 	getFuturesPositions: () => Promise.resolve([]),
-// }))
-
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {

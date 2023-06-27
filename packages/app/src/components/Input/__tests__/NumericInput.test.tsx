@@ -26,9 +26,6 @@ describe('NumericInput', () => {
 		expect(onChangeMock).toBeCalledWith(expect.any(Object), '1')
 	})
 	test('ignores non number', async () => {
-		// TODO: Is this the behaviour we want where
-		// typing a non numeric value sets the input to 0?
-
 		const onChangeMock = jest.fn()
 
 		const result = render(

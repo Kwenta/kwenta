@@ -15,7 +15,6 @@ import * as Text from 'components/Text'
 import Connector from 'containers/Connector'
 import { FuturesAccountTypes } from 'queries/futures/types'
 import { selectBalances } from 'state/balances/selectors'
-import sdk from 'state/config'
 import { fetchTokenList } from 'state/exchange/actions'
 import { setFuturesAccountType } from 'state/futures/reducer'
 import {
@@ -24,6 +23,7 @@ import {
 	selectFuturesType,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
+import sdk from 'state/sdk'
 import { selectSynthsMap } from 'state/wallet/selectors'
 import logError from 'utils/logError'
 

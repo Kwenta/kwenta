@@ -17,7 +17,7 @@ import storage from 'redux-persist/lib/storage'
 
 import appReducer from './app/reducer'
 import balancesReducer from './balances/reducer'
-import sdk from './config'
+import sdk from './sdk'
 import earnReducer from './earn/reducer'
 import exchangeReducer from './exchange/reducer'
 import futuresReducer from './futures/reducer'
@@ -28,7 +28,6 @@ import pricesReducer from './prices/reducer'
 import stakingReducer from './staking/reducer'
 import statsReducer from './stats/reducer'
 import walletReducer from './wallet/reducer'
-import { AppState } from './app/types'
 
 const LOG_REDUX = false
 
