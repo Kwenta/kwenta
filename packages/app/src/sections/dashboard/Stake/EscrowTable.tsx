@@ -7,18 +7,18 @@ import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import Badge from 'components/Badge'
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import Button from 'components/Button'
+import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
+import { Body } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewards } from 'state/staking/actions'
 import { selectEscrowData } from 'state/staking/selectors'
 
 import VestConfirmationModal from './VestConfirmationModal'
-import { Body } from 'components/Text'
-import Button from 'components/Button'
 
 const EscrowTable = () => {
 	const { t } = useTranslation()
