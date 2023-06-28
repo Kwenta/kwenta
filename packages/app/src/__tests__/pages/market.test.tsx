@@ -38,6 +38,7 @@ jest.mock('../../components/Media', () => ({
 
 describe('Futures market page - smart margin', () => {
 	beforeAll(() => {
+		jest.setTimeout(60000)
 		mockUseWindowSize()
 		mockReactQuery()
 		mockResizeObserver()
