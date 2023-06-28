@@ -38,7 +38,7 @@ export default function TradeConfirmationSummary({
 						<FlexDivRowCentered>
 							<PositionType side={leverageSide} />
 							<Spacer width={6} />
-							<NumericValue type={'span'} value={nativeSizeDelta} colored>
+							<NumericValue type="span" value={nativeSizeDelta} colored>
 								{formatCurrency(
 									getDisplayAsset(marketAsset) || '',
 									nativeSizeDelta.abs() ?? ZERO_WEI,

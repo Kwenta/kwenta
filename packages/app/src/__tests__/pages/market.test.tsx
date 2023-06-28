@@ -2,6 +2,7 @@ import { FuturesMarket } from '@kwenta/sdk/dist/types'
 import { wei } from '@synthetixio/wei'
 import { fireEvent, render } from '@testing-library/react'
 import { ReactNode } from 'react'
+import { fetchMarkets } from 'state/futures/actions'
 
 import { mockResizeObserver } from '../../../testing/unit/mocks/app'
 import { PRELOADED_STATE } from '../../../testing/unit/mocks/data/app'
@@ -160,10 +161,6 @@ describe('Futures market page - smart margin', () => {
 	})
 
 	test('Trade panel is disabled when market is closed', async () => {
-		// Update the mock to return some different data
-		sdk.futures.getMarkets = () =>
-			Promise.resolve([{ ...SDK_MARKETS[1], isSuspended: true } as FuturesMarket])
-
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
 			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
@@ -172,15 +169,22 @@ describe('Futures market page - smart margin', () => {
 		)
 
 		const marginInput = await findByTestId('set-order-margin-susd-desktop')
-		fireEvent.change(marginInput, { target: { value: '100000' } })
+		fireEvent.change(marginInput, { target: { value: '100' } })
 
 		const sizeInput = await findByTestId('set-order-size-amount-susd-desktop')
-		fireEvent.change(sizeInput, { target: { value: '1000000' } })
+		fireEvent.change(sizeInput, { target: { value: '1000' } })
 
 		const submitButton = await findByTestId('trade-panel-submit-button')
 		expect(submitButton).toBeDisabled()
 
+		sdk.futures.getMarkets = () =>
+			Promise.resolve([{ ...SDK_MARKETS[1], isSuspended: true } as FuturesMarket])
+
+		store.dispatch(fetchMarkets())
+
 		const fillPrice = await findByText('Market suspended')
 		expect(fillPrice).toBeTruthy()
+
+		expect(submitButton).toBeDisabled()
 	})
 })
