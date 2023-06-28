@@ -1,26 +1,24 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { truncateNumbers } from '@kwenta/sdk/utils'
+import { formatDollars, formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { BigNumber } from 'ethers'
-import { useRouter } from 'next/router'
+import { formatEther } from 'ethers/lib/utils.js'
 import { FC, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
-import Pill from 'components/Pill'
 import { Body, Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
-import ROUTES from 'constants/routes'
+import { NO_VALUE } from 'constants/placeholder'
 import useGetFile from 'queries/files/useGetFile'
+import useGetFuturesFee from 'queries/staking/useGetFuturesFee'
+import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount'
+import { FuturesFeeForAccountProps, FuturesFeeProps } from 'queries/staking/utils'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import {
-	claimMultipleAllRewards,
-	claimMultipleOpRewards,
-	claimMultipleSnxOpRewards,
-} from 'state/staking/actions'
+import { claimMultipleAllRewards } from 'state/staking/actions'
 import {
 	selectEpochPeriod,
 	selectKwentaRewards,
@@ -33,28 +31,33 @@ import media from 'styles/media'
 const RewardsTabs: FC = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const router = useRouter()
 	const network = useAppSelector(selectNetwork)
 	const walletAddress = useAppSelector(selectWallet)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const opRewards = useAppSelector(selectOpRewards)
 	const snxOpRewards = useAppSelector(selectSnxOpRewards)
 	const epoch = useAppSelector(selectEpochPeriod)
+	const start = 0
+	const end = Math.floor(Date.now() / 1000)
 
-	const goToStaking = useCallback(() => {
-		router.push(ROUTES.Dashboard.TradingRewards)
-	}, [router])
+	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end)
+	const futuresFeePaid = useMemo(() => {
+		const t: FuturesFeeForAccountProps[] = futuresFeeQuery.data ?? []
+		return t
+			.map((trade) => formatEther(trade.feesPaid.sub(trade.keeperFeesPaid).toString()))
+			.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI)
+	}, [futuresFeeQuery.data])
+
+	const totalFuturesFeeQuery = useGetFuturesFee(start, end)
+	const totalFuturesFeePaid = useMemo(() => {
+		const t: FuturesFeeProps[] = totalFuturesFeeQuery.data ?? []
+		return t
+			.map((trade) => formatEther(trade.feesKwenta.toString()))
+			.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI)
+	}, [totalFuturesFeeQuery.data])
 
 	const handleClaimAll = useCallback(() => {
 		dispatch(claimMultipleAllRewards())
-	}, [dispatch])
-
-	const handleClaimOp = useCallback(() => {
-		dispatch(claimMultipleOpRewards())
-	}, [dispatch])
-
-	const handleClaimOpSnx = useCallback(() => {
-		dispatch(claimMultipleSnxOpRewards())
 	}, [dispatch])
 
 	const estimatedKwentaRewardQuery = useGetFile(
@@ -79,38 +82,29 @@ const RewardsTabs: FC = () => {
 		kwentaRewards,
 	])
 
-	const claimDisabledKwentaOp = useMemo(() => opRewards.lte(0), [opRewards])
-
-	const claimDisabledSnxOp = useMemo(() => snxOpRewards.lte(0), [snxOpRewards])
+	const ratio = useMemo(() => {
+		return futuresFeePaid.gt(0) && totalFuturesFeePaid.gt(0)
+			? futuresFeePaid.div(totalFuturesFeePaid)
+			: ZERO_WEI
+	}, [futuresFeePaid, totalFuturesFeePaid])
 
 	const REWARDS = [
 		{
 			key: 'trading-rewards',
 			title: t('dashboard.rewards.trading-rewards.title'),
 			copy: t('dashboard.rewards.trading-rewards.copy'),
-			button: (
-				<Pill
-					color="yellow"
-					size="large"
-					weight="bold"
-					onClick={handleClaimAll}
-					style={{ width: '100px' }}
-				>
-					{t('dashboard.rewards.claim')}
-				</Pill>
-			),
 			labels: [
 				{
 					label: t('dashboard.rewards.rewards'),
-					value: truncateNumbers(wei(estimatedKwentaReward ?? ZERO_WEI), 4),
+					value: truncateNumbers(kwentaRewards, 4),
 				},
 				{
 					label: 'Fee Paid',
-					value: '$2000.00',
+					value: formatDollars(futuresFeePaid, { minDecimals: 2 }),
 				},
 				{
 					label: 'Fee Share',
-					value: '100%',
+					value: formatPercent(ratio, { minDecimals: 2 }),
 				},
 			],
 			info: [
@@ -120,47 +114,34 @@ const RewardsTabs: FC = () => {
 				},
 				{
 					label: 'Total Pool Fees',
-					value: '$1,000,000.00',
+					value: formatDollars(totalFuturesFeePaid, { minDecimals: 2 }),
+				},
+				{
+					label: t('dashboard.rewards.estimated'),
+					value: truncateNumbers(wei(estimatedKwentaReward ?? ZERO_WEI), 4),
 				},
 			],
 			kwentaIcon: true,
 			linkIcon: true,
-			rewards: kwentaRewards,
-			onClick: goToStaking,
-			isDisabled: false,
 		},
 		{
 			key: 'op-rewards',
 			title: t('dashboard.rewards.op-rewards.title'),
 			copy: t('dashboard.rewards.op-rewards.copy'),
-			button: (
-				<Pill
-					color="yellow"
-					size="large"
-					weight="bold"
-					onClick={handleClaimAll}
-					disabled={claimDisabledAll}
-					style={{ width: '100px', borderWidth: '0px' }}
-				/>
-			),
 			labels: [
 				{
 					label: 'Rewards',
-					value: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
+					value: truncateNumbers(wei(opRewards ?? ZERO_WEI), 4),
 				},
 			],
 			info: [
 				{
 					label: t('dashboard.rewards.estimated'),
-					value: '100.0000',
+					value: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
 				},
 			],
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: opRewards,
-			estimatedRewards: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
-			onClick: handleClaimOp,
-			isDisabled: claimDisabledKwentaOp,
 		},
 		{
 			key: 'snx-rewards',
@@ -169,20 +150,17 @@ const RewardsTabs: FC = () => {
 			labels: [
 				{
 					label: 'Rewards',
-					value: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
+					value: truncateNumbers(wei(snxOpRewards ?? ZERO_WEI), 4),
 				},
 			],
 			info: [
 				{
 					label: t('dashboard.rewards.estimated'),
-					value: '100.0000',
+					value: NO_VALUE,
 				},
 			],
 			kwentaIcon: false,
 			linkIcon: false,
-			rewards: snxOpRewards,
-			onClick: handleClaimOpSnx,
-			isDisabled: claimDisabledSnxOp,
 		},
 	]
 
@@ -238,6 +216,7 @@ const RewardsTabs: FC = () => {
 						size="small"
 						textTransform="uppercase"
 						isRounded
+						disabled={claimDisabledAll}
 						onClick={handleClaimAll}
 					>
 						Claim

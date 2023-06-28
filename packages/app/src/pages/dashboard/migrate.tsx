@@ -164,7 +164,7 @@ const MigratePage: MigrateComponent = () => {
 				{
 					key: 'rewards-trading',
 					title: t('dashboard.stake.portfolio.rewards.trading'),
-					value: truncateNumbers(kwentaRewards, 2),
+					value: truncateNumbers(kwentaRewards, 4),
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 			],

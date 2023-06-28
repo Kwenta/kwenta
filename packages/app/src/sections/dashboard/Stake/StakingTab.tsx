@@ -7,6 +7,7 @@ import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { SplitContainer } from 'components/layout/grid'
 import { Body, Heading } from 'components/Text'
+import { NO_VALUE } from 'constants/placeholder'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { getReward } from 'state/staking/actions'
@@ -58,12 +59,12 @@ const StakingTab = () => {
 				{
 					key: 'early-vest-rewards-claimable',
 					title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
-					value: '150.00',
+					value: NO_VALUE,
 				},
 				{
 					key: 'early-vest-rewards-epoch',
 					title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
-					value: 31,
+					value: NO_VALUE,
 				},
 			],
 		},
