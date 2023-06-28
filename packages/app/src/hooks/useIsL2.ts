@@ -9,7 +9,7 @@ const useIsL2 = () => {
 	const isL2 = useMemo(
 		() =>
 			notNill(activeChain)
-				? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain.id)
+				? [chain.optimism.id, chain.optimismGoerli.id].includes(activeChain.id as 10 | 420)
 				: false,
 		[activeChain]
 	)
