@@ -124,14 +124,21 @@ const EscrowTable = () => {
 					children={<EscrowStatsContainer />}
 					columns={[
 						{
-							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
+							Header: () => (
+								<label>
+									<input type="checkbox" checked={checkAllState} onChange={selectAll} />
+								</label>
+							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
-								<input
-									key={cellProps.row.index}
-									type="checkbox"
-									checked={checkedState[cellProps.row.index]}
-									onChange={handleOnChange(cellProps.row.index)}
-								/>
+								<label>
+									<input
+										key={cellProps.row.index}
+										type="checkbox"
+										checked={checkedState[cellProps.row.index]}
+										onChange={handleOnChange(cellProps.row.index)}
+										id="value"
+									/>
+								</label>
 							),
 							accessor: 'selected',
 							width: 40,
