@@ -66,23 +66,25 @@ const { chains, provider } = configureChains(Object.values(chain), [
 	publicProvider({ stallTimeout: STALL_TIMEOUT, priority: 5 }),
 ])
 
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_V2_ID!
+
 const connectors = connectorsForWallets([
 	{
 		groupName: 'Popular',
 		wallets: [
 			Safe({ chains }),
-			metaMaskWallet({ chains }),
-			rainbowWallet({ chains }),
+			metaMaskWallet({ projectId, chains }),
+			rainbowWallet({ projectId, chains }),
 			coinbaseWallet({ appName: 'Kwenta', chains }),
-			walletConnectWallet({ chains }),
+			walletConnectWallet({ projectId, chains }),
 		],
 	},
 	{
 		groupName: 'More',
 		wallets: [
-			ledgerWallet({ chains }),
+			ledgerWallet({ projectId, chains }),
 			braveWallet({ chains, shimDisconnect: true }),
-			trustWallet({ chains }),
+			trustWallet({ projectId, chains }),
 			Tally({ chains, shimDisconnect: true }),
 			Frame({ chains, shimDisconnect: true }),
 			injectedWallet({ chains, shimDisconnect: true }),
@@ -95,12 +97,5 @@ export const wagmiClient = createClient({
 	connectors,
 	provider,
 })
-
-export const activeChainIds = [
-	chain.optimism.id,
-	chain.mainnet.id,
-	chain.optimismGoerli.id,
-	chain.goerli.id,
-]
 
 export { chains }
