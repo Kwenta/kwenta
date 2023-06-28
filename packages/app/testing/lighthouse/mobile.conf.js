@@ -1,5 +1,3 @@
-'use strict';
-
 /** @type {LH.Config.Json} */
 const config = {
 	extends: 'lighthouse:default',
@@ -13,6 +11,6 @@ const config = {
 		},
 		onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
 	},
-};
+}
 
-module.exports = config;
+module.exports = config

@@ -1,5 +1,6 @@
 import Connector from 'containers/Connector/Connector'
-import { DEFAULT_NETWORK, MOCK_SIGNER, TEST_ADDR } from 'testing/unit/constants'
+
+import { DEFAULT_NETWORK, MOCK_SIGNER, TEST_ADDR } from '../constants'
 
 import { mockProvider } from './mockEthersProvider'
 

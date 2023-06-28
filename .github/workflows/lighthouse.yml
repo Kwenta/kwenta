@@ -21,8 +21,8 @@ jobs:
 
       - name: Run lighthouse
         run: |
-          lhci autorun --config=tests/lighthouse/lhci-desktop.conf.js
-          lhci autorun --config=tests/lighthouse/lhci-mobile.conf.js
+          lhci autorun --config=packages/app/testing/lighthouse/lhci-desktop.conf.js
+          lhci autorun --config=packages/app/testing/lighthouse/lhci-mobile.conf.js
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BASE_URL: ${{ github.event.inputs.url }}

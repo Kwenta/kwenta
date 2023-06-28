@@ -1,15 +1,13 @@
 {
 	"name": "kwenta",
-	"version": "7.3.0",
+	"version": "7.3.1",
 	"description": "Kwenta",
 	"main": "index.js",
 	"scripts": {
-		"pre-commit": "pnpm run --filter \"@kwenta/*\" pre-commit",
 		"check-types": "pnpm run --filter \"@kwenta/*\" check-types",
 		"prepare": "husky install",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
-		"lint": "eslint . --ext ts,.tsx && tsc",
-		"lint:sarif": "node packages/app/testing/lint.js . --ext ts,.tsx && tsc",
+		"lint": "eslint . --ext ts,.tsx && pnpm check-types",
 		"lint:fix": "eslint packages --ext ts,.tsx --fix"
 	},
 	"repository": {
@@ -51,6 +49,7 @@
 		"eslint-plugin-ui-testing": "^2.0.1",
 		"husky": "8.0.1",
 		"lint-staged": "^13.0.3",
-		"prettier": "2.0.5"
+		"prettier": "2.0.5",
+		"typescript": "^5.1.3"
 	}
 }

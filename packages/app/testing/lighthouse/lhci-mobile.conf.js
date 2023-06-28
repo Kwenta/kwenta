@@ -1,12 +1,11 @@
-const isDev = process.env.BASE_URL.includes('vercel') ? true : false;
+const isDev = process.env.BASE_URL.includes('vercel') ? true : false
 
 const conf = {
 	ci: {
 		collect: {
 			numberOfRuns: 3,
 			settings: {
-				configPath: 'tests/lighthouse/mobile.conf.js',
-				plugins: ['lighthouse-plugin-field-performance', 'lighthouse-plugin-social-sharing'],
+				configPath: 'packages/app/testing/lighthouse/mobile.conf.js',
 				chromeFlags:
 					'--headless --no-sandbox --ignore-certificate-errors --disable-gpu --incognito --disable-dev-shm-usage',
 			},
@@ -72,12 +71,12 @@ const conf = {
 			outputDir: 'lighthouse-mobile-report',
 		},
 	},
-};
+}
 
 if (isDev) {
 	for (const assertionObject of conf.ci.assert.assertMatrix) {
-		assertionObject.assertions['is-crawlable'] = 'off';
+		assertionObject.assertions['is-crawlable'] = 'off'
 	}
 }
 
-module.exports = conf;
+module.exports = conf

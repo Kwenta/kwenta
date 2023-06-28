@@ -4,11 +4,11 @@
 const gitRevision = require('child_process')
 	.execSync('git rev-parse --short HEAD')
 	.toString()
-	.trim();
+	.trim()
 
-const { withPlugins } = require('next-compose-plugins');
-const transpile = require('next-transpile-modules');
-const withTM = [transpile(['echarts', 'zrender'])];
+const { withPlugins } = require('next-compose-plugins')
+const transpile = require('next-transpile-modules')
+const withTM = [transpile(['echarts', 'zrender'])]
 
 const baseConfig = {
 	env: {
@@ -19,11 +19,11 @@ const baseConfig = {
 		disableStaticImages: true,
 	},
 	webpack: (config, options) => {
-		config.resolve.mainFields = ['module', 'browser', 'main'];
+		config.resolve.mainFields = ['module', 'browser', 'main']
 		if (!options.isServer) {
 			config.resolve.fallback = {
 				fs: false,
-			};
+			}
 		}
 		config.module.rules.push(
 			{
@@ -52,9 +52,9 @@ const baseConfig = {
 				test: /\.png/,
 				type: 'asset/resource',
 			}
-		);
+		)
 
-		return config;
+		return config
 	},
 	trailingSlash: true,
 	compiler: {
@@ -78,9 +78,9 @@ const baseConfig = {
 				destination: '/exchange/?quote=:quote&base=:base',
 				permanent: true,
 			},
-		];
+		]
 	},
 	productionBrowserSourceMaps: true,
-};
+}
 
-module.exports = withPlugins([baseConfig, ...withTM]);
+module.exports = withPlugins([baseConfig, ...withTM])

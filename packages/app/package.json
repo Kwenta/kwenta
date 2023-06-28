@@ -1,6 +1,6 @@
 {
 	"name": "@kwenta/app",
-	"version": "7.3.0",
+	"version": "7.3.1",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -9,7 +9,7 @@
 		"check-types": "tsc --noEmit",
 		"jest-preview": "jest-preview",
 		"test:unit": "jest --coverage --detectOpenHandles",
-		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
+		"test:e2e": "start-server-and-test 'pnpm build && pnpm start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:only:tests": "synpress run",
 		"test:e2e:open:testrunner": "synpress open",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
@@ -17,7 +17,6 @@
 		"postpublish": "pinst --enable",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./sdk/contracts/types './sdk/contracts/abis/*.json' --show-stack-traces",
 		"preinstall": "pnpm --filter \"@kwenta/sdk\" build"
 	},
 	"dependencies": {
@@ -30,7 +29,7 @@
 		"@material-ui/core": "^4.12.4",
 		"@metamask/detect-provider": "2.0.0",
 		"@pythnetwork/pyth-evm-js": "1.17.0",
-		"@rainbow-me/rainbowkit": "0.8.1",
+		"@rainbow-me/rainbowkit": "0.12.16",
 		"@reach/dialog": "0.18.0",
 		"@reduxjs/toolkit": "^1.9.5",
 		"@sentry/browser": "7.43.0",
@@ -85,7 +84,7 @@
 		"styled-components": "5.3.11",
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
-		"wagmi": "0.9.6",
+		"wagmi": "0.12.18",
 		"zrender": "^5.4.3"
 	},
 	"devDependencies": {

@@ -37,14 +37,15 @@ Kwenta welcomes contributors. Regardless of the time you have available, everyon
 ### Install dependencies
 
 ```bash
-npm install --legacy-peer-deps
+pnpm install
 ```
 
 ### Set up environment variables
 
-Copy the `.env.local.example` file in this directory to `.env.local` (which will be ignored by Git):
+Copy the `.env.local.example` file in the `packages/app` directory to `.env.local` (which will be ignored by Git):
 
 ```bash
+cd packages/app
 cp .env.local.example .env.local
 ```
 
@@ -63,7 +64,8 @@ Required:
 ### Run
 
 ```bash
-npm run dev
+cd packages/app
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -71,19 +73,21 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ### Build
 
 ```bash
-npm run build
-npm start
+cd packages/app
+pnpm build
+pnpm start
 ```
 
 ### Unit Testing
 
 ```bash
-npm run test:unit
+cd packages/app
+pnpm test:unit
 ```
 
 For unit tests we use a combination of Jest and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 
-Page tests should be added to the \_\_tests\_\_ folder at the root as it is not possible co-locate tests and pages in nextjs. Other tests should be co-located in a \_\_tests\_\_ folder next to their related file.
+Page tests should be added to the \_\_tests\_\_ folder at the root as it is not possible to co-locate tests and pages in nextjs. Other tests should be co-located in a \_\_tests\_\_ folder next to their related file.
 
 ### End-2-End testing
 

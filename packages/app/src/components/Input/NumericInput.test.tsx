@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import ContextProvider from 'testing/unit/mocks/MockProviders'
+import ContextProvider from '../../../testing/unit/mocks/MockProviders'
 
 import NumericInput from './NumericInput'
 

@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { weiFromEth } from '@kwenta/sdk/utils'
 
-import { DEFAULT_NETWORK } from 'testing/unit/constants'
+import { DEFAULT_NETWORK } from '../constants'
 
 export type MockEthProvider = Record<string, any>
 
