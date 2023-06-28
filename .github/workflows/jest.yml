@@ -33,3 +33,8 @@ jobs:
 
       - name: Run tests
         run: cd packages/app && pnpm run test:jest
+
+      - name: Upload coverage to codecov.io
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
