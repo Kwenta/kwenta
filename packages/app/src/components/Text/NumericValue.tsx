@@ -11,7 +11,6 @@ type NumericValueProps = BodyProps & {
 	colored?: boolean
 	options?: FormatNumberOptions
 	suffix?: string
-	span?: 'span' | 'p'
 	children?: ReactNode
 }
 
