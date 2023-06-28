@@ -29,7 +29,7 @@ function MarginInfoBox() {
 			<InfoBoxRow
 				title="Account ETH Balance"
 				textValue={formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' })}
-				textValueSpan={
+				textValueIcon={
 					<>
 						{keeperEthBal.gt(0) && (
 							<PencilButton

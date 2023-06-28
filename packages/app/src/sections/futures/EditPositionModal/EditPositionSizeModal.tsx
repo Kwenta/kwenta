@@ -180,7 +180,7 @@ export default function EditPositionSizeModal() {
 					textValue={market?.marketName}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						resultingLeverage && (
 							<PreviewArrow showPreview>{resultingLeverage.toString(2)}x</PreviewArrow>
 						)
@@ -189,7 +189,7 @@ export default function EditPositionSizeModal() {
 					textValue={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						preview?.size && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
@@ -202,7 +202,7 @@ export default function EditPositionSizeModal() {
 					textValue={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{preview ? formatDollars(preview.liqPrice, { suggestDecimals: true }) : '-'}

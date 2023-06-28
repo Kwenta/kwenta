@@ -24,7 +24,7 @@ const AvailableMarginRow = memo(() => {
 		<InfoBoxRow
 			title="Available Margin"
 			textValue={formatDollars(availableMargin, { currencyKey: undefined })}
-			textValueSpan={
+			textValueIcon={
 				<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 					{formatDollars(previewTradeData?.availableMargin)}
 				</PreviewArrow>
@@ -44,7 +44,7 @@ const BuyingPowerRow = memo(() => {
 		<InfoBoxRow
 			title="Buying Power"
 			textValue={formatDollars(buyingPower)}
-			textValueSpan={
+			textValueIcon={
 				previewTradeData?.buyingPower && (
 					<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 						{formatDollars(previewTradeData?.buyingPower)}
@@ -66,7 +66,7 @@ const MarginUsageRow = memo(() => {
 		<InfoBoxRow
 			title="Margin Usage"
 			textValue={formatPercent(marginUsage)}
-			textValueSpan={
+			textValueIcon={
 				<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
 					{formatPercent(previewTradeData?.marginUsage)}
 				</PreviewArrow>

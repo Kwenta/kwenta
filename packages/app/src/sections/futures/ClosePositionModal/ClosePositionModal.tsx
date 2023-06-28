@@ -195,7 +195,7 @@ export default function ClosePositionModal() {
 					textValue={market?.marketName}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						previewTrade?.leverage && (
 							<PreviewArrow showPreview>{previewTrade.leverage.toString(2)}x</PreviewArrow>
 						)
@@ -204,7 +204,7 @@ export default function ClosePositionModal() {
 					textValue={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						previewTrade?.size && (
 							<PreviewArrow showPreview>
 								{previewTrade?.size
@@ -217,7 +217,7 @@ export default function ClosePositionModal() {
 					textValue={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						previewTrade?.liqPrice && (
 							<PreviewArrow showPreview>{formatDollars(previewTrade?.liqPrice)}</PreviewArrow>
 						)

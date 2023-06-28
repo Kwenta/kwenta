@@ -158,7 +158,7 @@ export default function EditPositionMarginModal() {
 					textValue={market?.marketName}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>{preview.leverage.toString(2)}x</PreviewArrow>
 						)
@@ -167,7 +167,7 @@ export default function EditPositionMarginModal() {
 					textValue={position?.position?.leverage.toString(2) + 'x'}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
@@ -180,7 +180,7 @@ export default function EditPositionMarginModal() {
 					textValue={formatDollars(position?.remainingMargin || 0)}
 				/>
 				<InfoBoxRow
-					textValueSpan={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{preview ? formatDollars(preview.liqPrice) : '-'}

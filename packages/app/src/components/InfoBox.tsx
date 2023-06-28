@@ -11,7 +11,7 @@ type InfoBoxRowProps = {
 	title: string
 	keyNode?: React.ReactNode
 	textValue?: string
-	textValueSpan?: React.ReactNode
+	textValueIcon?: React.ReactNode
 	nodeValue?: React.ReactNode
 	spaceBeneath?: boolean
 	compactBox?: boolean
@@ -29,7 +29,7 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 	({
 		title,
 		keyNode,
-		textValueSpan,
+		textValueIcon,
 		textValue,
 		nodeValue,
 		compactBox,
@@ -66,7 +66,7 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 							color={color}
 						>
 							{disabled ? NO_VALUE : textValue}
-							{textValueSpan}
+							{textValueIcon}
 						</ValueText>
 					)}
 				</Row>
