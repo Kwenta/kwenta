@@ -31,6 +31,11 @@ export const selectStakedEscrowedKwentaBalance = createSelector(
 	toWei
 )
 
+export const selectStakedEscrowedKwentaBalanceV2 = createSelector(
+	(state: RootState) => state.staking.stakedEscrowedKwentaBalanceV2,
+	toWei
+)
+
 export const selectStakedKwentaBalance = createSelector(
 	(state: RootState) => state.staking.stakedKwentaBalance,
 	toWei
@@ -54,6 +59,11 @@ export const selectStakedKwentaBalanceV2 = createSelector(
 	toWei
 )
 
+export const selectClaimableBalanceV2 = createSelector(
+	(state: RootState) => state.staking.claimableBalanceV2,
+	toWei
+)
+
 export const selectIsKwentaTokenApproved = createSelector(
 	selectKwentaBalance,
 	(state: RootState) => state.staking.kwentaAllowance,
@@ -70,6 +80,12 @@ export const selectIsVeKwentaTokenApproved = createSelector(
 	selectVeKwentaBalance,
 	(state: RootState) => state.staking.veKwentaAllowance,
 	(veKwentaBalance, veKwentaAllowance) => veKwentaBalance.lte(veKwentaAllowance)
+)
+
+export const selectIsKwentaTokenApprovedV2 = createSelector(
+	selectKwentaBalance,
+	(state: RootState) => state.staking.kwentaStakingV2Allowance ?? '0',
+	(kwentaBalance, kwentaAllowance) => kwentaBalance.lte(kwentaAllowance)
 )
 
 export const selectResetTime = createSelector(
@@ -167,6 +183,11 @@ export const selectSnxOpRewards = createSelector(
 
 export const selectTotalVestable = createSelector(
 	(state: RootState) => state.staking.totalVestable,
+	wei
+)
+
+export const selectTotalVestableV2 = createSelector(
+	(state: RootState) => state.staking.totalVestableV2 ?? '0',
 	wei
 )
 

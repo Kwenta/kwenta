@@ -360,7 +360,7 @@ export default class KwentaTokenService {
 	// In that case, we can safely remove the map object from this method.
 
 	public approveKwentaToken(
-		token: 'kwenta' | 'vKwenta' | 'veKwenta',
+		token: 'kwenta' | 'vKwenta' | 'veKwenta' | 'kwentaStakingV2',
 		amount = ethers.constants.MaxUint256
 	) {
 		const {
@@ -370,12 +370,14 @@ export default class KwentaTokenService {
 			vKwentaRedeemer,
 			veKwentaToken,
 			veKwentaRedeemer,
+			KwentaStakingRewardsV2,
 		} = this.sdk.context.contracts
 
 		const map = {
 			kwenta: { contract: KwentaToken, spender: KwentaStakingRewards },
 			vKwenta: { contract: vKwentaToken, spender: vKwentaRedeemer },
 			veKwenta: { contract: veKwentaToken, spender: veKwentaRedeemer },
+			kwentaStakingV2: { contract: KwentaToken, spender: KwentaStakingRewardsV2 },
 		}
 
 		const { contract, spender } = map[token]
@@ -461,7 +463,7 @@ export default class KwentaTokenService {
 	}
 
 	public unstakeKwenta(amount: string | BigNumber) {
-		return this.performStakeAction('unstake', amount)
+		return this.performStakeAction('unstake', amount, { escrow: false, version: 1 })
 	}
 
 	public stakeEscrowedKwenta(amount: string | BigNumber) {

@@ -17,6 +17,7 @@ import {
 	unstakeKwenta,
 	vestEscrowedRewards,
 	fetchStakingV2Data,
+	fetchEscrowV2Data,
 } from './actions'
 import { StakingState } from './types'
 
@@ -26,16 +27,20 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	vKwentaBalance: '0',
 	veKwentaBalance: '0',
 	claimableBalance: '0',
+	claimableBalanceV2: '0',
 	totalStakedBalance: '0',
 	totalStakedBalanceV2: '0',
 	stakedEscrowedKwentaBalance: '0',
+	stakedEscrowedKwentaBalanceV2: '0',
 	stakedKwentaBalance: '0',
 	epochPeriod: 0,
 	weekCounter: 1,
 	kwentaAllowance: '0',
+	kwentaStakingV2Allowance: '0',
 	vKwentaAllowance: '0',
 	veKwentaAllowance: '0',
 	totalVestable: '0',
+	totalVestableV2: '0',
 	escrowData: [],
 	kwentaRewards: '0',
 	opRewards: '0',
@@ -115,10 +120,16 @@ const stakingSlice = createSlice({
 		})
 		builder.addCase(fetchStakingV2Data.fulfilled, (state, action) => {
 			state.totalStakedBalanceV2 = action.payload.totalStakedBalance
+			state.kwentaStakingV2Allowance = action.payload.kwentaStakingV2Allowance
+			state.claimableBalanceV2 = action.payload.claimableBalance
+			state.stakedEscrowedKwentaBalanceV2 = action.payload.stakedEscrowedBalance
 		})
 		builder.addCase(fetchEscrowData.fulfilled, (state, action) => {
 			state.totalVestable = action.payload.totalVestable
 			state.escrowData = action.payload.escrowData
+		})
+		builder.addCase(fetchEscrowV2Data.fulfilled, (state, action) => {
+			state.totalVestableV2 = action.payload.totalVestable
 		})
 		builder.addCase(fetchClaimableRewards.fulfilled, (state, action) => {
 			state.claimableKwentaRewards = action.payload.claimableKwentaRewards

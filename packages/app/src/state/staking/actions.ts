@@ -91,7 +91,7 @@ export const fetchStakingV2Data = createAsyncThunk<
 
 export const approveKwentaToken = createAsyncThunk<
 	void,
-	'kwenta' | 'vKwenta' | 'veKwenta',
+	'kwenta' | 'vKwenta' | 'veKwenta' | 'kwentaStakingV2',
 	ThunkConfig
 >('staking/approveKwentaToken', async (token, { dispatch, extra: { sdk } }) => {
 	const { hash } = await sdk.kwentaToken.approveKwentaToken(token)
@@ -143,7 +143,7 @@ export const fetchEscrowV2Data = createAsyncThunk<
 	{ escrowData: EscrowData<string>[]; totalVestable: string },
 	void,
 	ThunkConfig
->('staking/fetchEscrowData', async (_, { extra: { sdk } }) => {
+>('staking/fetchEscrowV2Data', async (_, { extra: { sdk } }) => {
 	const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowV2Data()
 
 	return {

@@ -11,10 +11,10 @@ import SegmentedControl from 'components/SegmentedControl'
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { numericValueCSS } from 'styles/common'
+import media from 'styles/media'
 
 import ErrorView from './ErrorView'
 import Spacer from './Spacer'
-import media from 'styles/media'
 import { Body } from './Text'
 
 type StakeCardProps = {

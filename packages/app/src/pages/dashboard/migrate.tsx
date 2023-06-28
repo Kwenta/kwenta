@@ -1,7 +1,8 @@
 import { truncateNumbers } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useEffect, useMemo, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -15,13 +16,29 @@ import { StakingCard } from 'sections/dashboard/Stake/card'
 import EscrowTable from 'sections/dashboard/Stake/EscrowTable'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { fetchClaimableRewards, fetchEscrowData, fetchStakingData } from 'state/staking/actions'
+import {
+	approveKwentaToken,
+	fetchClaimableRewards,
+	fetchEscrowData,
+	fetchEscrowV2Data,
+	fetchStakingData,
+	fetchStakingV2Data,
+	getReward,
+	stakeKwentaV2,
+	unstakeKwenta,
+} from 'state/staking/actions'
 import {
 	selectClaimableBalance,
+	selectClaimableBalanceV2,
+	selectIsKwentaTokenApprovedV2,
 	selectKwentaBalance,
+	selectKwentaRewards,
 	selectStakedEscrowedKwentaBalance,
+	selectStakedEscrowedKwentaBalanceV2,
 	selectStakedKwentaBalance,
+	selectStakedKwentaBalanceV2,
 	selectTotalVestable,
+	selectTotalVestableV2,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
@@ -39,7 +56,17 @@ const MigratePage: MigrateComponent = () => {
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
+	const kwentaStakingV2Approved = useAppSelector(selectIsKwentaTokenApprovedV2)
+	const claimableBalanceV2 = useAppSelector(selectClaimableBalanceV2)
+	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const totalVestable = useAppSelector(selectTotalVestable)
+	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
+	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+
+	const handleGetReward = useCallback(() => {
+		dispatch(getReward())
+	}, [dispatch])
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -51,6 +78,19 @@ const MigratePage: MigrateComponent = () => {
 		return null
 	}, [router])
 
+	const handleUnstakeKwenta = useCallback(
+		() => dispatch(unstakeKwenta(wei(stakedKwentaBalance).toBN())),
+		[dispatch, stakedKwentaBalance]
+	)
+
+	const handleStakeKwentaV2 = useCallback(() => {
+		if (!kwentaStakingV2Approved) {
+			dispatch(approveKwentaToken('kwentaStakingV2'))
+		} else {
+			dispatch(stakeKwentaV2(wei(kwentaBalance).toBN()))
+		}
+	}, [dispatch, kwentaBalance, kwentaStakingV2Approved])
+
 	const [, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking)
 
 	useEffect(() => {
@@ -59,6 +99,8 @@ const MigratePage: MigrateComponent = () => {
 				dispatch(fetchClaimableRewards())
 			})
 			dispatch(fetchEscrowData())
+			dispatch(fetchStakingV2Data())
+			dispatch(fetchEscrowV2Data())
 		}
 	}, [dispatch, walletAddress])
 
@@ -69,7 +111,8 @@ const MigratePage: MigrateComponent = () => {
 			label: t('dashboard.stake.tabs.migrate.rewards'),
 			value: truncateNumbers(claimableBalance, 2),
 			buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
-			active: true,
+			onClick: handleGetReward,
+			active: claimableBalance.gt(0),
 		},
 		{
 			key: 'step-2',
@@ -77,15 +120,17 @@ const MigratePage: MigrateComponent = () => {
 			label: t('dashboard.stake.tabs.migrate.staked'),
 			value: truncateNumbers(stakedKwentaBalance, 2),
 			buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
-			active: false,
+			onClick: handleUnstakeKwenta,
+			active: claimableBalance.lte(0) && stakedKwentaBalance.gt(0),
 		},
 		{
 			key: 'step-3',
 			copy: t('dashboard.stake.tabs.migrate.step-3-copy'),
 			label: t('dashboard.stake.tabs.migrate.staked'),
-			value: '0.00',
-			buttonLabel: t('dashboard.stake.tabs.migrate.stake'),
-			active: false,
+			value: truncateNumbers(stakedKwentaBalanceV2, 2),
+			buttonLabel: kwentaStakingV2Approved ? t('dashboard.stake.tabs.migrate.stake') : 'Approve',
+			onClick: handleStakeKwentaV2,
+			active: claimableBalance.lte(0) && stakedKwentaBalance.lte(0),
 		},
 	]
 
@@ -102,7 +147,7 @@ const MigratePage: MigrateComponent = () => {
 				{
 					key: 'balance-staked',
 					title: t('dashboard.stake.portfolio.balance.staked'),
-					value: '0.00',
+					value: truncateNumbers(stakedKwentaBalanceV2, 2),
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},
 			],
@@ -113,13 +158,13 @@ const MigratePage: MigrateComponent = () => {
 				{
 					key: 'rewards-claimable',
 					title: t('dashboard.stake.portfolio.rewards.staking'),
-					value: '100.00',
+					value: truncateNumbers(claimableBalanceV2, 2),
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 				{
 					key: 'rewards-trading',
 					title: t('dashboard.stake.portfolio.rewards.trading'),
-					value: '100.00',
+					value: truncateNumbers(kwentaRewards, 2),
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 			],
@@ -130,13 +175,13 @@ const MigratePage: MigrateComponent = () => {
 				{
 					key: 'escrow-staked',
 					title: t('dashboard.stake.portfolio.escrow.staked'),
-					value: '100.00',
+					value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},
 				{
 					key: 'escrow-vestable',
 					title: t('dashboard.stake.portfolio.escrow.vestable'),
-					value: '100.00',
+					value: truncateNumbers(totalVestableV2, 2),
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},
 			],
@@ -182,7 +227,7 @@ const MigratePage: MigrateComponent = () => {
 				</StyledButton>
 			</StakingHeading>
 			<StepsContainer columnGap="15px">
-				{MIGRATE_STEPS.map(({ key, copy, label, value, buttonLabel, active }, i) => (
+				{MIGRATE_STEPS.map(({ key, copy, label, value, buttonLabel, active, onClick }, i) => (
 					<StyledStakingCard key={key} $active={active}>
 						<StyledHeading variant="h4">Step {i + 1}</StyledHeading>
 						<Body size="small" color="secondary">
@@ -203,7 +248,7 @@ const MigratePage: MigrateComponent = () => {
 								size="small"
 								textTransform="uppercase"
 								isRounded
-								onClick={() => {}}
+								onClick={onClick}
 							>
 								{buttonLabel}
 							</Button>

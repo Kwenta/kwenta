@@ -8,16 +8,20 @@ export type StakingState = {
 	veKwentaBalance: string
 	escrowedKwentaBalance: string
 	claimableBalance: string
+	claimableBalanceV2: string
 	totalStakedBalance: string
 	totalStakedBalanceV2: string
 	stakedEscrowedKwentaBalance: string
+	stakedEscrowedKwentaBalanceV2: string
 	stakedKwentaBalance: string
 	epochPeriod: number
 	weekCounter: number
 	kwentaAllowance: string
 	vKwentaAllowance: string
 	veKwentaAllowance: string
+	kwentaStakingV2Allowance: string
 	totalVestable: string
+	totalVestableV2: string
 	escrowData: EscrowData<string>[]
 	kwentaRewards: string
 	opRewards: string
