@@ -9,7 +9,6 @@ import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import Spacer from 'components/Spacer'
 import { NumericValue } from 'components/Text'
-import { NumberBody } from 'components/Text/NumericValue'
 
 import PositionType from '../PositionType'
 
@@ -35,11 +34,11 @@ export default function TradeConfirmationSummary({
 			<InfoBoxContainer>
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.size')}
-					value={
+					nodeValue={
 						<FlexDivRowCentered>
 							<PositionType side={leverageSide} />
 							<Spacer width={6} />
-							<NumericValue value={nativeSizeDelta} colored>
+							<NumericValue type={'span'} value={nativeSizeDelta} colored>
 								{formatCurrency(
 									getDisplayAsset(marketAsset) || '',
 									nativeSizeDelta.abs() ?? ZERO_WEI,
@@ -54,12 +53,12 @@ export default function TradeConfirmationSummary({
 
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.leverage')}
-					value={<NumberBody>{leverage.toString(2)}X</NumberBody>}
+					textValue={leverage.toString(2) + 'X'}
 				/>
 				<Spacer height={2} />
 				<InfoBoxRow
 					title={t('futures.market.user.position.modal.order-type')}
-					value={<NumberBody>{OrderNameByType[orderType]}</NumberBody>}
+					textValue={OrderNameByType[orderType]}
 				/>
 			</InfoBoxContainer>
 		</OrderSummaryLine>

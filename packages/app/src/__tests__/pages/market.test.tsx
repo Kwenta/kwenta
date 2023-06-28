@@ -1,21 +1,23 @@
-import { NetworkId } from '@kwenta/sdk/dist/types'
+import { FuturesMarket } from '@kwenta/sdk/dist/types'
+import { wei } from '@synthetixio/wei'
 import { fireEvent, render } from '@testing-library/react'
 import { ReactNode } from 'react'
 
-import { TEST_ADDR } from '../../../testing/unit/constants'
 import { mockResizeObserver } from '../../../testing/unit/mocks/app'
+import { PRELOADED_STATE } from '../../../testing/unit/mocks/data/app'
+import {
+	mockSmartMarginAccount,
+	preloadedStateWithSmartMarginAccount,
+	SDK_MARKETS,
+} from '../../../testing/unit/mocks/data/futures'
 import { mockUseWindowSize } from '../../../testing/unit/mocks/hooks'
-import MockProviders from '../../../testing/unit/mocks/MockProviders'
-import { mockReactQuery } from '../../../testing/unit/mocks/mockQueries'
-
-import Market from '../../pages/market'
 import mockConnector from '../../../testing/unit/mocks/mockConnector'
-import { FUTURES_INITIAL_STATE } from '../../state/futures/reducer'
-import { MOCK_SMART_MARGIN_ACCOUNT } from '../../../testing/unit/mocks/data/futures'
-import { setupStore } from '../../state/store'
+import MockProviders from '../../../testing/unit/mocks/MockProviders'
+import { mockReactQuery } from '../../../testing/unit/mocks/queries'
+import Market from '../../pages/market'
 import { selectTradePreview } from '../../state/futures/selectors'
-import { PricesInfoMap } from '../../state/prices/types'
-import { PRICES_INITIAL_STATE } from '../../state/prices/reducer'
+import sdk from '../../state/sdk'
+import { setupStore } from '../../state/store'
 
 jest.mock('../../state/sdk')
 
@@ -27,25 +29,14 @@ jest.mock('../../queries/futures/useGetFuturesTrades', () => {
 	}))
 })
 
-jest.mock('../../components/Media', (deviceType: 'mobile' | 'desktop' = 'desktop') => ({
+jest.mock('../../components/Media', () => ({
 	...jest.requireActual('../../components/Media'),
 	DesktopOnlyView: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 	MobileOnlyView: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }))
 
-const PRELOADED_STATE = {
-	wallet: { networkId: 10 as NetworkId, walletAddress: TEST_ADDR },
-	prices: {
-		...PRICES_INITIAL_STATE,
-		onChainPrices: { sETH: { price: '1810.50', change: 'up' } } as PricesInfoMap,
-		offChainPrices: { sETH: { price: '1810.50', change: 'up' } } as PricesInfoMap,
-	},
-}
-
 describe('Futures market page - smart margin', () => {
 	beforeAll(() => {
-		// TODO: remove this when we return to writing tests
-		jest.spyOn(console, 'error').mockImplementation(() => {})
 		mockUseWindowSize()
 		mockReactQuery()
 		mockResizeObserver()
@@ -73,21 +64,7 @@ describe('Futures market page - smart margin', () => {
 	})
 
 	test('Submits LONG order with correct desired fill price', async () => {
-		const preLoadedState = {
-			...PRELOADED_STATE,
-			futures: {
-				...FUTURES_INITIAL_STATE,
-				crossMargin: {
-					...FUTURES_INITIAL_STATE.crossMargin,
-					accounts: {
-						[10 as NetworkId]: {
-							[TEST_ADDR]: MOCK_SMART_MARGIN_ACCOUNT,
-						},
-					},
-				},
-			},
-		}
-		const store = setupStore(preLoadedState)
+		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
 			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
 				<Market />
@@ -121,21 +98,7 @@ describe('Futures market page - smart margin', () => {
 	})
 
 	test('Submits SHORT order with correct desired fill price', async () => {
-		const preLoadedState = {
-			...PRELOADED_STATE,
-			futures: {
-				...FUTURES_INITIAL_STATE,
-				crossMargin: {
-					...FUTURES_INITIAL_STATE.crossMargin,
-					accounts: {
-						[10 as NetworkId]: {
-							[TEST_ADDR]: MOCK_SMART_MARGIN_ACCOUNT,
-						},
-					},
-				},
-			},
-		}
-		const store = setupStore(preLoadedState)
+		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
 			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
 				<Market />
@@ -169,5 +132,55 @@ describe('Futures market page - smart margin', () => {
 		expect(selectTradePreview(store.getState())?.desiredFillPrice.toString()).toBe(
 			'1829.279274630724573866'
 		)
+	})
+
+	test('Displays error when trade exceeds max OI', async () => {
+		// Update the mock to return some different data
+		sdk.futures.getMarkets = () =>
+			Promise.resolve([{ ...SDK_MARKETS[1], marketLimitUsd: wei(100000) } as FuturesMarket])
+
+		const store = setupStore(
+			preloadedStateWithSmartMarginAccount(mockSmartMarginAccount('1000000'))
+		)
+		const { findByTestId, findByText } = render(
+			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+				<Market />
+			</MockProviders>
+		)
+
+		const marginInput = await findByTestId('set-order-margin-susd-desktop')
+		fireEvent.change(marginInput, { target: { value: '100000' } })
+
+		const sizeInput = await findByTestId('set-order-size-amount-susd-desktop')
+		fireEvent.change(sizeInput, { target: { value: '1000000' } })
+
+		// OI limit warning displayed
+		const fillPrice = await findByText('Open interest limit exceeded')
+		expect(fillPrice).toBeTruthy()
+	})
+
+	test('Trade panel is disabled when market is closed', async () => {
+		// Update the mock to return some different data
+		sdk.futures.getMarkets = () =>
+			Promise.resolve([{ ...SDK_MARKETS[1], isSuspended: true } as FuturesMarket])
+
+		const store = setupStore(preloadedStateWithSmartMarginAccount())
+		const { findByTestId, findByText } = render(
+			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+				<Market />
+			</MockProviders>
+		)
+
+		const marginInput = await findByTestId('set-order-margin-susd-desktop')
+		fireEvent.change(marginInput, { target: { value: '100000' } })
+
+		const sizeInput = await findByTestId('set-order-size-amount-susd-desktop')
+		fireEvent.change(sizeInput, { target: { value: '1000000' } })
+
+		const submitButton = await findByTestId('trade-panel-submit-button')
+		expect(submitButton).toBeDisabled()
+
+		const fillPrice = await findByText('Market suspended')
+		expect(fillPrice).toBeTruthy()
 	})
 })

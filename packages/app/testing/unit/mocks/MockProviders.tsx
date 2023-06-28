@@ -1,16 +1,16 @@
+import type { PreloadedState } from '@reduxjs/toolkit'
+import i18n from 'i18n'
 import mockRouter from 'next-router-mock'
 import { ReactNode } from 'react'
+import { I18nextProvider } from 'react-i18next'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { Provider as ReduxProvider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
 import { WagmiConfig } from 'wagmi'
-import type { PreloadedState } from '@reduxjs/toolkit'
-import { Provider as ReduxProvider } from 'react-redux'
 
 import { wagmiClient } from 'containers/Connector/config'
-import { themes } from 'styles/theme'
 import { AppStore, RootState, setupStore } from 'state/store'
-import i18n from 'i18n'
-import { I18nextProvider } from 'react-i18next'
+import { themes } from 'styles/theme'
 
 jest.mock('@rainbow-me/rainbowkit', () => ({
 	wallet: {

@@ -1,27 +1,37 @@
+import {
+	FuturesMarketAsset,
+	FuturesMarketKey,
+	NetworkId,
+	SynthSuspensionReason,
+} from '@kwenta/sdk/dist/types'
 import { wei } from '@synthetixio/wei'
 
-export const MOCK_SMART_MARGIN_ACCOUNT = {
-	account: 'TEST_ACCOUNT',
+import { FUTURES_INITIAL_STATE } from 'state/futures/reducer'
+
+import { PRELOADED_STATE, TEST_ADDR } from './app'
+
+export const mockSmartMarginAccount = (freeMargin: string = '1000') => ({
+	account: '0xe1ba3B0A962FbC525a9f9503AEE3310940Bb2a6F',
 	positionHistory: [],
 	trades: [],
 	marginTransfers: [],
 	idleTransfers: [],
 	balanceInfo: {
-		freeMargin: '1000',
+		freeMargin: freeMargin,
 		keeperEthBal: '0.05',
-		allowance: '1000',
+		allowance: freeMargin,
 		walletEthBal: '1',
 	},
 	delayedOrders: [],
 	conditionalOrders: [],
-}
+})
 
 export const SDK_MARKETS = [
 	{
 		market: '0x0940B0A96C5e1ba33AEE331a9f950Bb2a6F2Fb25',
-		marketKey: 'sBNBPERP',
+		marketKey: 'sBNBPERP' as FuturesMarketKey,
 		marketName: 'BNB/sUSD',
-		asset: 'BNB',
+		asset: 'BNB' as FuturesMarketAsset,
 		assetHex: '0x424e420000000000000000000000000000000000000000000000000000000000',
 		currentFundingRate: wei('0.000006647524972557'),
 		currentFundingVelocity: wei('0.000007031227025059'),
@@ -51,7 +61,7 @@ export const SDK_MARKETS = [
 		minInitialMargin: wei('40.000000000000000000'),
 		keeperDeposit: wei('1.490641175532237679'),
 		isSuspended: false,
-		marketClosureReason: 'market-closure',
+		marketClosureReason: 'market-closure' as SynthSuspensionReason,
 		settings: {
 			maxMarketValue: wei('20000.000000000000000000'),
 			skewScale: wei('750000.000000000000000000'),
@@ -66,8 +76,8 @@ export const SDK_MARKETS = [
 	{
 		market: '0x2B3bb4c683BFc5239B029131EEf3B1d214478d93',
 		marketKey: 'sETHPERP',
-		marketName: 'ETH/sUSD',
-		asset: 'sETH',
+		marketName: 'ETH/sUSD' as FuturesMarketKey,
+		asset: 'sETH' as FuturesMarketAsset,
 		assetHex: '0x7345544800000000000000000000000000000000000000000000000000000000',
 		currentFundingRate: wei('-0.000025743917111574'),
 		currentFundingVelocity: wei('-0.000000709004693224'),
@@ -97,7 +107,7 @@ export const SDK_MARKETS = [
 		minInitialMargin: wei('40.000000000000000000'),
 		keeperDeposit: wei('1.490641175532237679'),
 		isSuspended: false,
-		marketClosureReason: 'market-closure',
+		marketClosureReason: 'market-closure' as SynthSuspensionReason,
 		settings: {
 			maxMarketValue: wei('20000.000000000000000000'),
 			skewScale: wei('1000000.000000000000000000'),
@@ -110,9 +120,9 @@ export const SDK_MARKETS = [
 	},
 	{
 		market: '0x59b007E9ea8F89b069c43F8f45834d30853e3699',
-		marketKey: 'sBTCPERP',
+		marketKey: 'sBTCPERP' as FuturesMarketKey,
 		marketName: 'BTC/sUSD',
-		asset: 'sBTC',
+		asset: 'sBTC' as FuturesMarketAsset,
 		assetHex: '0x7342544300000000000000000000000000000000000000000000000000000000',
 		currentFundingRate: wei('0.000048566384344668'),
 		currentFundingVelocity: wei('-0.000000151964222070'),
@@ -142,7 +152,7 @@ export const SDK_MARKETS = [
 		minInitialMargin: wei('40.000000000000000000'),
 		keeperDeposit: wei('1.490641175532237679'),
 		isSuspended: false,
-		marketClosureReason: 'market-closure',
+		marketClosureReason: 'market-closure' as SynthSuspensionReason,
 		settings: {
 			maxMarketValue: wei('2000.000000000000000000'),
 			skewScale: wei('100000.000000000000000000'),
@@ -170,4 +180,21 @@ export const MOCK_TRADE_PREVIEW = {
 	statusMessage: 'Success',
 	priceImpact: '0.000000270556392273',
 	exceedsPriceProtection: false,
+}
+
+export const preloadedStateWithSmartMarginAccount = (mockAccount = mockSmartMarginAccount()) => {
+	return {
+		...PRELOADED_STATE,
+		futures: {
+			...FUTURES_INITIAL_STATE,
+			crossMargin: {
+				...FUTURES_INITIAL_STATE.crossMargin,
+				accounts: {
+					[10 as NetworkId]: {
+						[TEST_ADDR]: mockAccount,
+					},
+				},
+			},
+		},
+	}
 }

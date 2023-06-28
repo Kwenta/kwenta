@@ -28,8 +28,8 @@ function MarginInfoBox() {
 		<>
 			<InfoBoxRow
 				title="Account ETH Balance"
-				value={formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' })}
-				valueNode={
+				textValue={formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' })}
+				textValueSpan={
 					<>
 						{keeperEthBal.gt(0) && (
 							<PencilButton
@@ -42,8 +42,11 @@ function MarginInfoBox() {
 					</>
 				}
 			/>
-			<InfoBoxRow title="Wallet balance" value={formatDollars(walletBal)} />
-			<InfoBoxRow title="Idle Margin" value={formatDollars(idleMarginInMarkets.add(freeMargin))} />
+			<InfoBoxRow title="Wallet balance" textValue={formatDollars(walletBal)} />
+			<InfoBoxRow
+				title="Idle Margin"
+				textValue={formatDollars(idleMarginInMarkets.add(freeMargin))}
+			/>
 
 			{openModal === 'futures_withdraw_keeper_balance' && (
 				<ManageKeeperBalanceModal defaultType="withdraw" />

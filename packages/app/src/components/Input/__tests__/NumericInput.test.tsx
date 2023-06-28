@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { ThemeProvider } from 'styled-components'
+
 import { themes } from 'styles/theme'
 
 import NumericInput from '../NumericInput'

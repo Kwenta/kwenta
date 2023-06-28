@@ -25,6 +25,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 
 import BinanceIcon from 'assets/png/rainbowkit/binance.png'
+
 import Frame from '../../components/Rainbowkit/Frame'
 import Safe from '../../components/Rainbowkit/Gnosis'
 import Tally from '../../components/Rainbowkit/Tally'
