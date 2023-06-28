@@ -1,7 +1,9 @@
 name: 'Jest'
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   sentry_release:
