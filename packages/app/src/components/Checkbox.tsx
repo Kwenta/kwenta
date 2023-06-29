@@ -91,7 +91,7 @@ const Input = styled.input<{ variant: 'item' | 'table' }>`
 	${(props) =>
 		props.variant === 'table' &&
 		css`
-			background-color: ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
+			background-color: ${(props) => props.theme.colors.selectedTheme.newTheme.checkBox.background};
 			width: 13px;
 			height: 13px;
 			border-radius: 4px;
@@ -100,7 +100,7 @@ const Input = styled.input<{ variant: 'item' | 'table' }>`
 				clip-path: none;
 			}
 			&:checked::before {
-				background-color: ${props.theme.colors.selectedTheme.newTheme.pill.yellow.text};
+				background-color: ${props.theme.colors.selectedTheme.newTheme.checkBox.checked};
 				border-radius: 4px;
 			}
 		`}
