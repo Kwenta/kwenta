@@ -10,7 +10,7 @@ import {
 	fetchClaimableRewards,
 	fetchEscrowData,
 	fetchStakingData,
-	getReward,
+	claimStakingRewards,
 	stakeEscrow,
 	stakeKwenta,
 	unstakeEscrow,
@@ -169,7 +169,7 @@ const stakingSlice = createSlice({
 		builder.addCase(unstakeEscrow.rejected, (state) => {
 			state.unstakeEscrowedStatus = FetchStatus.Idle
 		})
-		builder.addCase(getReward.pending, (state) => {
+		builder.addCase(claimStakingRewards.pending, (state) => {
 			state.getRewardStatus = FetchStatus.Loading
 		})
 		builder.addCase(claimMultipleAllRewards.pending, (state) => {

@@ -23,7 +23,7 @@ import {
 	fetchEscrowV2Data,
 	fetchStakingData,
 	fetchStakingV2Data,
-	getReward,
+	claimStakingRewards,
 	stakeKwentaV2,
 	unstakeKwenta,
 } from 'state/staking/actions'
@@ -65,7 +65,7 @@ const MigratePage: MigrateComponent = () => {
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 
 	const handleGetReward = useCallback(() => {
-		dispatch(getReward())
+		dispatch(claimStakingRewards())
 	}, [dispatch])
 
 	const tabQuery = useMemo(() => {

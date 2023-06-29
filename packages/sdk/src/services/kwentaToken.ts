@@ -341,7 +341,7 @@ export default class KwentaTokenService {
 		return { escrowData, totalVestable }
 	}
 
-	public getReward() {
+	public claimStakingRewards() {
 		const { KwentaStakingRewards } = this.sdk.context.contracts
 
 		if (!KwentaStakingRewards) {
@@ -351,7 +351,7 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(KwentaStakingRewards, 'getReward', [])
 	}
 
-	public getRewardV2() {
+	public claimStakingRewardsV2() {
 		const { KwentaStakingRewardsV2 } = this.sdk.context.contracts
 
 		if (!KwentaStakingRewardsV2) {
@@ -361,7 +361,7 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(KwentaStakingRewardsV2, 'getReward', [])
 	}
 
-	public getCompoundReward() {
+	public compoundRewards() {
 		const { KwentaStakingRewardsV2 } = this.sdk.context.contracts
 
 		if (!KwentaStakingRewardsV2) {

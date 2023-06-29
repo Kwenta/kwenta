@@ -200,10 +200,10 @@ export const vestEscrowedRewardsV2 = createAsyncThunk<void, number[], ThunkConfi
 	}
 )
 
-export const getReward = createAsyncThunk<void, void, ThunkConfig>(
+export const claimStakingRewards = createAsyncThunk<void, void, ThunkConfig>(
 	'staking/getReward',
 	async (_, { dispatch, extra: { sdk } }) => {
-		const { hash } = await sdk.kwentaToken.getReward()
+		const { hash } = await sdk.kwentaToken.claimStakingRewards()
 
 		monitorTransaction({
 			txHash: hash,
@@ -218,10 +218,10 @@ export const getReward = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
-export const getRewardV2 = createAsyncThunk<void, void, ThunkConfig>(
+export const claimStakingRewardsV2 = createAsyncThunk<void, void, ThunkConfig>(
 	'staking/getReward',
 	async (_, { dispatch, extra: { sdk } }) => {
-		const { hash } = await sdk.kwentaToken.getRewardV2()
+		const { hash } = await sdk.kwentaToken.claimStakingRewardsV2()
 
 		monitorTransaction({
 			txHash: hash,
@@ -236,16 +236,16 @@ export const getRewardV2 = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
-export const getCompoundReward = createAsyncThunk<void, void, ThunkConfig>(
+export const compoundRewards = createAsyncThunk<void, void, ThunkConfig>(
 	'staking/getReward',
 	async (_, { dispatch, extra: { sdk } }) => {
-		const { hash } = await sdk.kwentaToken.getCompoundReward()
+		const { hash } = await sdk.kwentaToken.compoundRewards()
 
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakingV2Data())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Error })

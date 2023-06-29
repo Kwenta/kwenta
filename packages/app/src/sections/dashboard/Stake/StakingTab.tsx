@@ -10,7 +10,7 @@ import { Body, Heading } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { getCompoundReward, getRewardV2 } from 'state/staking/actions'
+import { claimStakingRewardsV2, compoundRewards } from 'state/staking/actions'
 import {
 	selectAPYV2,
 	selectClaimableBalanceV2,
@@ -29,11 +29,11 @@ const StakingTab = () => {
 	const apy = useAppSelector(selectAPYV2)
 
 	const handleGetReward = useCallback(() => {
-		dispatch(getRewardV2())
+		dispatch(claimStakingRewardsV2())
 	}, [dispatch])
 
 	const handleCompoundReward = useCallback(() => {
-		dispatch(getCompoundReward())
+		dispatch(compoundRewards())
 	}, [dispatch])
 
 	const DEFAULT_CARDS = [
