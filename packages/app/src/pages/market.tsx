@@ -147,10 +147,10 @@ function TradePanelDesktop() {
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount)
 	const [open, setOpen] = useState(false)
 
-	useEffect(() => setOpen(accountType === 'isolated_margin' && isolatedPositionsCount === 0), [
-		accountType,
-		isolatedPositionsCount,
-	])
+	useEffect(
+		() => setOpen(accountType === 'isolated_margin' && isolatedPositionsCount === 0),
+		[accountType, isolatedPositionsCount]
+	)
 
 	if (walletAddress && !isL2) {
 		return <FuturesUnsupportedNetwork />

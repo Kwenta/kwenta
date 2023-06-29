@@ -81,7 +81,7 @@ const Trades = memo(() => {
 					),
 					accessor: 'market',
 					// @ts-expect-error
-					Cell: (cellProps: CellProps<typeof historyData[number]>) => {
+					Cell: (cellProps: CellProps<(typeof historyData)[number]>) => {
 						return (
 							<MarketDetailsContainer
 								onClick={() =>

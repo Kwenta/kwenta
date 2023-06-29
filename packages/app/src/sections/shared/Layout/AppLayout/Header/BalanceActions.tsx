@@ -69,11 +69,10 @@ const BalanceActions: FC = () => {
 		}
 	}, [dispatch, walletAddress])
 
-	const claimDisabledAll = useMemo(() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0), [
-		opRewards,
-		snxOpRewards,
-		kwentaRewards,
-	])
+	const claimDisabledAll = useMemo(
+		() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0),
+		[opRewards, snxOpRewards, kwentaRewards]
+	)
 
 	const claimDisabledOp = useMemo(() => opRewards.lte(0), [opRewards])
 

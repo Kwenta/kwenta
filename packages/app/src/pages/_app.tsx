@@ -44,8 +44,7 @@ type AppPropsWithLayout = AppProps & {
 }
 
 Sentry.init({
-	dsn:
-		'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',
+	dsn: 'https://d48644bc80d04977a26132b346417210@o4504363236851712.ingest.sentry.io/4504363261362177',
 	maxBreadcrumbs: 50,
 	debug: process.env.NODE_ENV !== 'production',
 	enabled: process.env.NODE_ENV === 'production',
