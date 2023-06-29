@@ -2,6 +2,7 @@ import { FuturesMarket } from '@kwenta/sdk/dist/types'
 import { wei } from '@synthetixio/wei'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
+
 import { fetchMarkets } from 'state/futures/actions'
 
 import { mockResizeObserver } from '../../../testing/unit/mocks/app'
