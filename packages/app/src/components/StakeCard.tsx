@@ -167,9 +167,10 @@ const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
 
 const StakingInputCardContainer = styled(StakingCard)`
 	min-height: 125px;
+	flex: 1;
 	margin-bottom: 0px;
-	${media.lessThan('md')`
-		max-width: 360px;
+	${media.lessThan('lg')`
+		width: 100%;
 	`}
 `
 

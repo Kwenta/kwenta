@@ -316,6 +316,8 @@ const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
 const ButtonContainer = styled.div`
 	margin-bottom: 25px;
 	margin-left: 25px;
+	width: 100%;
+	display: flex;
 `
 
 const StyledButton = styled(Button)`
@@ -325,7 +327,7 @@ const StyledButton = styled(Button)`
 
 const RewardsContainer = styled(FlexDivCol)`
 	row-gap: 25px;
-	${media.lessThan('mdUp')`
+	${media.lessThan('lg')`
 		flex-direction: row;
 		column-gap: 25px;
 		flex-wrap: wrap;
@@ -372,11 +374,8 @@ const CardsContainer = styled(FlexDivRow)`
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
 	border-radius: 15px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
+	flex: 1 1 0;
 	flex-wrap: wrap;
-
-	${media.lessThan('md')`
-		flex-direction: column;
-	`}
 `
 
 export default RewardsTabs

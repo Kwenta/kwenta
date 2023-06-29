@@ -89,7 +89,7 @@ const StakingTab = () => {
 					{DEFAULT_CARDS.map(({ category, card }, i) => (
 						<FlexDivCol rowGap="15px" key={i}>
 							<Body size="large">{category}</Body>
-							<FlexDivRow columnGap="15px">
+							<FlexDivRow columnGap="35px" justifyContent="flex-start">
 								{card.map(({ key, title, value }) => (
 									<FlexDivCol key={key} rowGap="5px">
 										<Body color="secondary">{title}</Body>
@@ -140,15 +140,10 @@ const StakingTab = () => {
 const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: flex-start;
+	flex-wrap: wrap;
 	column-gap: 50px;
+	row-gap: 25px;
 	margin: 50px 0;
-
-	${media.lessThan('md')`
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		row-gap: 25px;
-		max-width: 360px;
-	`}
 `
 
 const StyledHeading = styled(Heading)`
@@ -159,6 +154,10 @@ const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	flex: 1;
+	${media.lessThan('lg')`
+		width: 100%;
+	`}
 `
 
 export default StakingTab

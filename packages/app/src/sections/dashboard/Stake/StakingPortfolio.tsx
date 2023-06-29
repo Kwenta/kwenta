@@ -44,7 +44,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 				{cards.map(({ category, card }, i) => (
 					<FlexDivCol rowGap="15px" key={i}>
 						<Body size="large">{category}</Body>
-						<FlexDivRow columnGap="15px">
+						<FlexDivRow columnGap="15px" justifyContent="flex-start">
 							{card.map(({ key, title, value, onClick }) => (
 								<FlexDivCol key={key} onClick={onClick} rowGap="5px">
 									<Body color="secondary">{title}</Body>
@@ -74,10 +74,10 @@ const StakingHeading = styled(FlexDivRowCentered)`
 `
 
 const StakingPortfolioContainer = styled.div`
-	${media.lessThan('mdUp')`
+	${media.lessThan('lg')`
 		padding: 15px;
 	`}
-	${media.greaterThan('mdUp')`
+	${media.greaterThan('lg')`
 		margin-top: 20px;
 	`}
 `
@@ -90,12 +90,8 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: flex-start;
 	column-gap: 60px;
-
-	${media.lessThan('md')`
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		row-gap: 25px;
-	`}
+	row-gap: 25px;
+	flex-wrap: wrap;
 `
 
 export default StakingPortfolio

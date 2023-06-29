@@ -120,7 +120,7 @@ const EscrowTab = () => {
 }
 
 const LabelContainer = styled(FlexDivCol)`
-	${media.lessThan('md')`
+	${media.lessThan('lg')`
 		margin-top: 25px;
 	`}
 `
@@ -129,8 +129,10 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: flex-start;
 	column-gap: 50px;
-
-	${media.lessThan('md')`
+	flex-wrap: wrap;
+	row-gap: 25px;
+	margin-bottom: 25px;
+	${media.lessThan('lg')`
 		flex-direction: column;
 		align-items: flex-start;
 		row-gap: 25px;
@@ -139,7 +141,7 @@ const CardsContainer = styled(FlexDivRowCentered)`
 
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
-	${media.lessThan('md')`
+	${media.lessThan('lg')`
 		margin-bottom: 25px;
 	`}
 `
@@ -148,6 +150,7 @@ const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	flex: 1;
 `
 
 const GridContainer = styled.div`
@@ -155,7 +158,7 @@ const GridContainer = styled.div`
 	grid-template-columns: 1fr 1fr;
 	column-gap: 15px;
 
-	${media.lessThan('md')`
+	${media.lessThan('lg')`
 		display: grid;
 		grid-template-columns: 1fr;
 		row-gap: 25px;
@@ -163,13 +166,13 @@ const GridContainer = styled.div`
 `
 
 const EscrowTabContainer = styled.div`
-	${media.greaterThan('mdUp')`
+	${media.greaterThan('lg')`
 		display: flex;
 		flex-direction: column;
 		row-gap: 15px;
 	`}
 
-	${media.lessThan('mdUp')`
+	${media.lessThan('lg')`
 		& > div:first-child {
 			margin-bottom: 15px;
 		}
