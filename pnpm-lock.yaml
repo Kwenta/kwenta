@@ -15,7 +15,7 @@ importers:
         specifier: 5.60.1
         version: 5.60.1(eslint@8.43.0)(typescript@5.1.6)
       eslint:
-        specifier: ^8.43.0
+        specifier: 8.43.0
         version: 8.43.0
       eslint-config-prettier:
         specifier: 8.8.0
@@ -24,10 +24,10 @@ importers:
         specifier: 7.0.1
         version: 7.0.1(@babel/plugin-syntax-flow@7.22.5)(@babel/plugin-transform-react-jsx@7.22.5)(eslint@8.43.0)(typescript@5.1.6)
       eslint-plugin-chai-friendly:
-        specifier: ^0.7.2
+        specifier: 0.7.2
         version: 0.7.2(eslint@8.43.0)
       eslint-plugin-cypress:
-        specifier: ^2.13.3
+        specifier: 2.13.3
         version: 2.13.3(eslint@8.43.0)
       eslint-plugin-flowtype:
         specifier: 8.0.3
@@ -48,10 +48,10 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(eslint@8.43.0)
       eslint-plugin-testing-library:
-        specifier: ^5.11.0
+        specifier: 5.11.0
         version: 5.11.0(eslint@8.43.0)(typescript@5.1.6)
       eslint-plugin-ui-testing:
-        specifier: ^2.0.1
+        specifier: 2.0.1
         version: 2.0.1(eslint@8.43.0)(typescript@5.1.6)
       husky:
         specifier: 8.0.3
