@@ -979,6 +979,7 @@
 				"last-trades": "last trades",
 				"amount-label": "amount",
 				"price-label": "price",
+				"accrued-funding": "accrued funding",
 				"time-label": "time"
 			},
 			"user": {

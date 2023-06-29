@@ -10,7 +10,6 @@ import LinkIcon from 'assets/svg/app/link-blue.svg'
 import ColoredPrice from 'components/ColoredPrice'
 import { GridDivCenteredRow } from 'components/layout/grid'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
-import { ETH_UNIT } from 'constants/network'
 import ROUTES from 'constants/routes'
 import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
@@ -48,16 +47,18 @@ const Trades = memo(() => {
 
 	const historyData = useMemo(() => {
 		return history.map((trade) => {
-			const pnl = trade?.pnl.div(ETH_UNIT)
-			const feesPaid = trade?.feesPaid.div(ETH_UNIT)
+			const pnl = trade?.pnl
+			const feesPaid = trade?.feesPaid
 			const netPnl = pnl.sub(feesPaid)
+
 			return {
 				...trade,
 				pnl,
 				feesPaid,
 				netPnl,
-				value: Number(trade?.price?.div(ETH_UNIT)),
-				amount: Number(trade?.size.div(ETH_UNIT).abs()),
+				value: Number(trade?.price),
+				funding: Number(trade?.fundingAccrued),
+				amount: Number(trade?.size),
 				time: trade?.timestamp * 1000,
 				id: trade?.txnHash,
 				asset: marketAsset,
@@ -186,6 +187,23 @@ const Trades = memo(() => {
 					),
 					width: 90,
 					sortable: true,
+				},
+				{
+					Header: <TableHeader>{t('futures.market.history.accrued-funding')}</TableHeader>,
+					sortType: 'basic',
+					accessor: 'funding',
+					// @ts-expect-error
+					Cell: (cellProps: CellProps<FuturesTrade>) => (
+						<ColoredPrice
+							priceInfo={{
+								price: cellProps.value,
+								change: cellProps.value > 0 ? 'up' : 'down',
+							}}
+						>
+							{formatDollars(cellProps.value, { suggestDecimals: true })}
+						</ColoredPrice>
+					),
+					width: 100,
 				},
 				{
 					Header: <TableHeader>{t('futures.market.user.trades.table.order-type')}</TableHeader>,

@@ -20,6 +20,7 @@ enum TableColumnAccessor {
 	Amount = 'amount',
 	Price = 'price',
 	Time = 'time',
+	Funding = 'fundingAccrued',
 }
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
@@ -46,6 +47,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 								id: trade?.txnHash,
 								orderType: trade?.orderType,
 								account: trade?.account,
+								fundingAccrued: trade?.fundingAccrued,
 							}
 						})
 				: []
@@ -116,7 +118,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 							Header: <TableHeader>{t('futures.market.history.amount-label')}</TableHeader>,
 							accessor: TableColumnAccessor.Amount,
 							Cell: (cellProps: CellProps<any>) => {
-								const numValue = Math.abs(cellProps.row.original.amount / 1e18)
+								const numValue = Math.abs(cellProps.row.original.amount)
 								const numDecimals =
 									numValue === 0 ? 2 : numValue < 1 ? 4 : numValue >= 100000 ? 0 : 2
 
@@ -148,7 +150,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 									<PriceValue>
 										$
 										{cellProps.row.original.value !== NO_VALUE
-											? formatNumber(cellProps.row.original.value / 1e18, formatOptions)
+											? formatNumber(cellProps.row.original.value, formatOptions)
 											: NO_VALUE}
 									</PriceValue>
 								)
