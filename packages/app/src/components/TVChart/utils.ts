@@ -1,5 +1,7 @@
 import { ResolutionString } from 'charting_library/charting_library'
 
+import { TV_CHART_STATE } from './constants'
+
 export const resolutionToSeconds = (resolution: ResolutionString): number => {
 	if (!isNaN(Number(resolution))) {
 		return Number(resolution) * 60
@@ -25,4 +27,13 @@ export const getSupportedResolution = (period: number): string => {
 	} else {
 		return '1'
 	}
+}
+
+export const saveChartState = (state: object) => {
+	window.localStorage.setItem(TV_CHART_STATE, JSON.stringify(state))
+}
+
+export const loadChartState = () => {
+	const rawChartData = window.localStorage.getItem(TV_CHART_STATE)
+	return rawChartData ? JSON.parse(rawChartData) : {}
 }
