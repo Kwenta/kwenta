@@ -83,7 +83,7 @@ const MigratePage: MigrateComponent = () => {
 		[dispatch, stakedKwentaBalance]
 	)
 
-	const handleStakeKwentaV2 = useCallback(() => {
+	const handleStakeKwenta = useCallback(() => {
 		if (!kwentaStakingV2Approved) {
 			dispatch(approveKwentaToken('kwentaStakingV2'))
 		} else {
@@ -129,7 +129,7 @@ const MigratePage: MigrateComponent = () => {
 			label: t('dashboard.stake.tabs.migrate.staked'),
 			value: truncateNumbers(stakedKwentaBalanceV2, 2),
 			buttonLabel: kwentaStakingV2Approved ? t('dashboard.stake.tabs.migrate.stake') : 'Approve',
-			onClick: handleStakeKwentaV2,
+			onClick: handleStakeKwenta,
 			active: claimableBalance.lte(0) && stakedKwentaBalance.lte(0),
 		},
 	]

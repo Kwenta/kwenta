@@ -16,7 +16,7 @@ import { TableCellHead, TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { vestEscrowedRewards } from 'state/staking/actions'
+import { vestEscrowedRewardsV2 } from 'state/staking/actions'
 import { selectEscrowData } from 'state/staking/selectors'
 
 import VestConfirmationModal from './VestConfirmationModal'
@@ -74,7 +74,7 @@ const EscrowTable = () => {
 
 	const handleVest = useCallback(async () => {
 		if (vestEnabled) {
-			await dispatch(vestEscrowedRewards(ids))
+			await dispatch(vestEscrowedRewardsV2(ids))
 			setCheckedState(escrowData.map((_) => false))
 			setCheckAllState(false)
 		}
@@ -99,10 +99,10 @@ const EscrowTable = () => {
 					{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
 				</Body>
 			</FlexDivCol>
-			<Button size="xsmall" isRounded disabled={!vestEnabled} onClick={openConfirmModal}>
+			<Button size="xsmall" isRounded disabled={true} onClick={() => {}}>
 				{t('dashboard.stake.tabs.escrow.transfer')}
 			</Button>
-			<Button size="xsmall" isRounded disabled={!vestEnabled} onClick={openConfirmModal}>
+			<Button size="xsmall" isRounded disabled={true} onClick={() => {}}>
 				{t('dashboard.stake.tabs.escrow.delegate')}
 			</Button>
 			<Button

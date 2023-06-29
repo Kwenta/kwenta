@@ -236,6 +236,24 @@ export const getRewardV2 = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
+export const getCompoundReward = createAsyncThunk<void, void, ThunkConfig>(
+	'staking/getReward',
+	async (_, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.getCompoundReward()
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
+				dispatch(fetchStakingData())
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Error })
+			},
+		})
+	}
+)
+
 export const fetchClaimableRewards = createAsyncThunk<
 	{
 		claimableKwentaRewards: Awaited<
