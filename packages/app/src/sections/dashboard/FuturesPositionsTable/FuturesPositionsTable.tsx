@@ -234,14 +234,20 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 													<Body>{NO_VALUE}</Body>
 												) : (
 													<div>
-														<Currency.Price price={cellProps.row.original.takeProfit} />
+														<Currency.Price
+															price={cellProps.row.original.takeProfit}
+															formatOptions={{ suggestDecimals: true }}
+														/>
 													</div>
 												)}
 												{cellProps.row.original.stopLoss === undefined ? (
 													<Body>{NO_VALUE}</Body>
 												) : (
 													<div>
-														<Currency.Price price={cellProps.row.original.stopLoss} />
+														<Currency.Price
+															price={cellProps.row.original.stopLoss}
+															formatOptions={{ suggestDecimals: true }}
+														/>
 													</div>
 												)}
 											</div>
