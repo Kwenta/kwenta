@@ -43,7 +43,7 @@ const StakingTab = () => {
 				},
 				{
 					key: 'staking-apr',
-					title: 'APR',
+					title: t('dashboard.stake.portfolio.rewards.apr'),
 					value: formatPercent(apy, { minDecimals: 2 }),
 				},
 			],

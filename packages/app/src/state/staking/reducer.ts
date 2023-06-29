@@ -24,6 +24,7 @@ import { StakingState } from './types'
 export const STAKING_INITIAL_STATE: StakingState = {
 	kwentaBalance: '0',
 	escrowedKwentaBalance: '0',
+	escrowedKwentaBalanceV2: '0',
 	vKwentaBalance: '0',
 	veKwentaBalance: '0',
 	claimableBalance: '0',
@@ -123,6 +124,7 @@ const stakingSlice = createSlice({
 			state.kwentaStakingV2Allowance = action.payload.kwentaStakingV2Allowance
 			state.claimableBalanceV2 = action.payload.claimableBalance
 			state.stakedEscrowedKwentaBalanceV2 = action.payload.stakedEscrowedBalance
+			state.escrowedKwentaBalanceV2 = action.payload.rewardEscrowBalance
 		})
 		builder.addCase(fetchEscrowData.fulfilled, (state, action) => {
 			state.totalVestable = action.payload.totalVestable

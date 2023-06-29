@@ -570,7 +570,8 @@
 					"title": "Rewards",
 					"claimable": "Claimable",
 					"trading": "Trading",
-					"staking": "Staking"
+					"staking": "Staking",
+					"apr": "APR"
 				},
 				"early-vest-rewards": {
 					"title": "Early Vest Rewards",

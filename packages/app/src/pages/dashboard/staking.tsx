@@ -45,10 +45,10 @@ const StakingPage: StakingComponent = () => {
 	const dispatch = useAppDispatch()
 	const walletAddress = useAppSelector(selectWallet)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
-	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
-	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
-	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
-	const claimableBalanceV2 = useAppSelector(selectClaimableBalanceV2)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
+	const totalVestable = useAppSelector(selectTotalVestableV2)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 
 	const tabQuery = useMemo(() => {
@@ -93,7 +93,7 @@ const StakingPage: StakingComponent = () => {
 				{
 					key: 'balance-staked',
 					title: t('dashboard.stake.portfolio.balance.staked'),
-					value: truncateNumbers(stakedKwentaBalanceV2, 2),
+					value: truncateNumbers(stakedKwentaBalance, 2),
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 			],
@@ -104,13 +104,13 @@ const StakingPage: StakingComponent = () => {
 				{
 					key: 'escrow-staked',
 					title: t('dashboard.stake.portfolio.escrow.staked'),
-					value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
+					value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},
 				{
 					key: 'escrow-vestable',
 					title: t('dashboard.stake.portfolio.escrow.vestable'),
-					value: truncateNumbers(totalVestableV2, 2),
+					value: truncateNumbers(totalVestable, 2),
 					onClick: () => setCurrentTab(StakeTab.Escrow),
 				},
 			],
@@ -121,7 +121,7 @@ const StakingPage: StakingComponent = () => {
 				{
 					key: 'rewards-claimable',
 					title: t('dashboard.stake.portfolio.rewards.claimable'),
-					value: truncateNumbers(claimableBalanceV2, 2),
+					value: truncateNumbers(claimableBalance, 2),
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 				{

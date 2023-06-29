@@ -1,4 +1,5 @@
 import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
@@ -6,8 +7,11 @@ import { Body, Heading } from 'components/Text'
 import { useAppSelector } from 'state/hooks'
 import {
 	selectAPY,
+	selectAPYV2,
 	selectStakedEscrowedKwentaBalance,
+	selectStakedEscrowedKwentaBalanceV2,
 	selectTotalVestable,
+	selectTotalVestableV2,
 } from 'state/staking/selectors'
 import media from 'styles/media'
 
@@ -16,9 +20,13 @@ import EscrowTable from './EscrowTable'
 import EscrowInputCard from './InputCards/EscrowInputCard'
 
 const EscrowTab = () => {
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const { t } = useTranslation()
 	const apy = useAppSelector(selectAPY)
+	const apyV2 = useAppSelector(selectAPYV2)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const totalVestable = useAppSelector(selectTotalVestable)
+	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
 
 	const DEFAULT_CARDS = [
 		{
@@ -26,18 +34,18 @@ const EscrowTab = () => {
 			card: [
 				{
 					key: 'overview-staked',
-					title: 'Staked',
-					value: '150.00',
+					title: t('dashboard.stake.portfolio.escrow.staked'),
+					value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
 				},
 				{
 					key: 'overview-apr',
-					title: 'APR',
-					value: '150%',
+					title: t('dashboard.stake.portfolio.rewards.apr'),
+					value: formatPercent(apyV2, { minDecimals: 2 }),
 				},
 				{
 					key: 'overview-vestable',
-					title: 'Vestable',
-					value: '100.00',
+					title: t('dashboard.stake.portfolio.escrow.vestable'),
+					value: truncateNumbers(totalVestableV2, 2),
 				},
 			],
 		},
@@ -46,17 +54,17 @@ const EscrowTab = () => {
 			card: [
 				{
 					key: 'staking-v1-staked',
-					title: 'Staked',
+					title: t('dashboard.stake.portfolio.escrow.staked'),
 					value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
 				},
 				{
 					key: 'staking-v1-apr',
-					title: 'APR',
+					title: t('dashboard.stake.portfolio.rewards.apr'),
 					value: formatPercent(apy, { minDecimals: 2 }),
 				},
 				{
 					key: 'staking-v1-vestable',
-					title: 'Vestable',
+					title: t('dashboard.stake.portfolio.escrow.vestable'),
 					value: truncateNumbers(totalVestable, 2),
 				},
 			],

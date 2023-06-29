@@ -26,6 +26,11 @@ export const selectEscrowedKwentaBalance = createSelector(
 	toWei
 )
 
+export const selectEscrowedKwentaBalanceV2 = createSelector(
+	(state: RootState) => state.staking.escrowedKwentaBalanceV2,
+	toWei
+)
+
 export const selectStakedEscrowedKwentaBalance = createSelector(
 	(state: RootState) => state.staking.stakedEscrowedKwentaBalance,
 	toWei
@@ -44,6 +49,14 @@ export const selectStakedKwentaBalance = createSelector(
 export const selectUnstakedEscrowedKwentaBalance = createSelector(
 	selectEscrowedKwentaBalance,
 	selectStakedEscrowedKwentaBalance,
+	(escrowedKwentaBalance, stakedEscrowedKwentaBalance) => {
+		return escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance)
+	}
+)
+
+export const selectUnstakedEscrowedKwentaBalanceV2 = createSelector(
+	selectEscrowedKwentaBalanceV2,
+	selectStakedEscrowedKwentaBalanceV2,
 	(escrowedKwentaBalance, stakedEscrowedKwentaBalance) => {
 		return escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance)
 	}
