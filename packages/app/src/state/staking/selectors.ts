@@ -68,7 +68,7 @@ export const selectClaimableBalance = createSelector(
 )
 
 export const selectStakedKwentaBalanceV2 = createSelector(
-	(state: RootState) => state.staking.totalStakedBalanceV2,
+	(state: RootState) => state.staking.stakedKwentaBalanceV2,
 	toWei
 )
 

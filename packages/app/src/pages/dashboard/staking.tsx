@@ -1,4 +1,5 @@
-import { formatTruncatedDuration, truncateNumbers } from '@kwenta/sdk/utils'
+import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { formatDollars, formatTruncatedDuration, truncateNumbers } from '@kwenta/sdk/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
@@ -12,6 +13,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
 	fetchClaimableRewards,
 	fetchEscrowData,
+	fetchEscrowV2Data,
 	fetchStakingData,
 	fetchStakingV2Data,
 } from 'state/staking/actions'
@@ -19,12 +21,15 @@ import {
 	selectClaimableBalanceV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
+	selectOpRewards,
+	selectSnxOpRewards,
 	selectStakedEscrowedKwentaBalanceV2,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
+import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors'
 
 type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
@@ -52,6 +57,11 @@ const StakingPage: StakingComponent = () => {
 	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
+	const [rewardBalance, setRewardBalance] = useState(ZERO_WEI)
+	const opRewards = useAppSelector(selectOpRewards)
+	const snxOpRewards = useAppSelector(selectSnxOpRewards)
+	const opPrice = useAppSelector(selectOpPrice)
+	const kwentaPrice = useAppSelector(selectKwentaPrice)
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -68,12 +78,14 @@ const StakingPage: StakingComponent = () => {
 	useEffect(() => {
 		if (!!walletAddress) {
 			dispatch(fetchStakingData()).then(() => {
-				dispatch(fetchStakingV2Data())
 				dispatch(fetchClaimableRewards())
+				dispatch(fetchStakingV2Data())
 			})
 			dispatch(fetchEscrowData())
+			dispatch(fetchEscrowV2Data())
+			setRewardBalance(kwentaPrice.mul(kwentaRewards).add(opPrice.mul(opRewards.add(snxOpRewards))))
 		}
-	}, [dispatch, walletAddress])
+	}, [dispatch, kwentaPrice, kwentaRewards, opPrice, opRewards, snxOpRewards, walletAddress])
 
 	const handleChangeTab = useCallback(
 		(tab: StakeTab) => () => {
@@ -137,7 +149,7 @@ const StakingPage: StakingComponent = () => {
 				{
 					key: 'rewards-trading',
 					title: t('dashboard.stake.portfolio.rewards.trading'),
-					value: truncateNumbers(kwentaRewards, 2),
+					value: formatDollars(rewardBalance, { maxDecimals: 2 }),
 					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 			],

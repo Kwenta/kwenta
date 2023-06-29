@@ -34,6 +34,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	stakedEscrowedKwentaBalance: '0',
 	stakedEscrowedKwentaBalanceV2: '0',
 	stakedKwentaBalance: '0',
+	stakedKwentaBalanceV2: '0',
 	stakedResetTime: 0,
 	epochPeriod: 0,
 	weekCounter: 1,
@@ -121,6 +122,7 @@ const stakingSlice = createSlice({
 			state.unstakeEscrowedStatus = FetchStatus.Idle
 		})
 		builder.addCase(fetchStakingV2Data.fulfilled, (state, action) => {
+			state.stakedKwentaBalanceV2 = action.payload.stakedNonEscrowedBalance
 			state.totalStakedBalanceV2 = action.payload.totalStakedBalance
 			state.kwentaStakingV2Allowance = action.payload.kwentaStakingV2Allowance
 			state.claimableBalanceV2 = action.payload.claimableBalance

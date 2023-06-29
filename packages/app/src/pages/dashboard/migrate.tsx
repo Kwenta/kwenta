@@ -52,17 +52,17 @@ const MigratePage: MigrateComponent = () => {
 	const router = useRouter()
 	const dispatch = useAppDispatch()
 	const walletAddress = useAppSelector(selectWallet)
-	const claimableBalance = useAppSelector(selectClaimableBalance)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
-	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
-	const kwentaStakingV2Approved = useAppSelector(selectIsKwentaTokenApprovedV2)
+	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const claimableBalanceV2 = useAppSelector(selectClaimableBalanceV2)
-	const kwentaRewards = useAppSelector(selectKwentaRewards)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
+	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const totalVestable = useAppSelector(selectTotalVestable)
 	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
-	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+	const kwentaStakingV2Approved = useAppSelector(selectIsKwentaTokenApprovedV2)
+	const kwentaRewards = useAppSelector(selectKwentaRewards)
 
 	const handleGetReward = useCallback(() => {
 		dispatch(getReward())
@@ -97,9 +97,9 @@ const MigratePage: MigrateComponent = () => {
 		if (!!walletAddress) {
 			dispatch(fetchStakingData()).then(() => {
 				dispatch(fetchClaimableRewards())
+				dispatch(fetchStakingV2Data())
 			})
 			dispatch(fetchEscrowData())
-			dispatch(fetchStakingV2Data())
 			dispatch(fetchEscrowV2Data())
 		}
 	}, [dispatch, walletAddress])
