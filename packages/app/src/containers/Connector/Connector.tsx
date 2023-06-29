@@ -3,13 +3,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createContainer } from 'unstated-next'
 import { useAccount, useNetwork, useSigner, useProvider } from 'wagmi'
 
+import { SUPPORTED_NETWORKS } from 'constants/network'
 import { sdk } from 'state/config'
 import { useAppDispatch } from 'state/hooks'
 import { setSigner } from 'state/wallet/actions'
 import { setNetwork } from 'state/wallet/reducer'
 
 import { generateExplorerFunctions, getBaseUrl } from './blockExplorer'
-import { activeChainIds, chain } from './config'
+import { chain } from './config'
 
 export let blockExplorer = generateExplorerFunctions(getBaseUrl(10))
 
@@ -22,7 +23,7 @@ const useConnector = () => {
 	const [providerReady, setProviderReady] = useState(false)
 
 	const network = useMemo(() => {
-		return activeChainIds.includes(activeChain?.id ?? chain.optimism.id)
+		return SUPPORTED_NETWORKS.includes(activeChain?.id ?? chain.optimism.id)
 			? activeChain ?? chain.optimism
 			: chain.optimism
 	}, [activeChain])
