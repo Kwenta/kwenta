@@ -204,18 +204,14 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 		<RewardsTabContainer>
 			<HeaderContainer>
 				<StyledHeading variant="h4">{t('dashboard.rewards.title')}</StyledHeading>
-				<StyledFlexDivRowCentered columnGap="25px">
-					{window.innerWidth < 768 && (
-						<PeriodLabel>{t('dashboard.stake.tabs.staking.current-trading-period')}</PeriodLabel>
-					)}
-
+				<StyledFlexDivRowCentered>
 					<StakingSelect
 						formatOptionLabel={formatOptionLabel}
 						controlHeight={33}
 						options={epochData.sort((a, b) => b.period - a.period)}
 						optionPadding="0px"
 						value={selectedEpoch}
-						menuWidth={100}
+						menuWidth={110}
 						components={{ IndicatorSeparator, DropdownIndicator }}
 						isSearchable={false}
 						variant="flat"
@@ -310,17 +306,11 @@ const StakingSelect = styled(Select)`
 
 const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
 	width: 200px;
-	${media.lessThan('md')`
-		width: unset;
+	column-gap: 25px;
+	${media.lessThan('mdUp')`
+		width: 185px;
+		column-gap: 10px;
 	`}
-`
-
-const PeriodLabel = styled(FlexDivRowCentered)`
-	height: 33px;
-	font-size: 11px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	margin-left: 4px;
-	width: 50%;
 `
 
 const ButtonContainer = styled.div`
