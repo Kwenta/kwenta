@@ -1,6 +1,6 @@
 {
 	"name": "@kwenta/app",
-	"version": "7.3.0",
+	"version": "7.3.1",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -29,7 +29,7 @@
 		"@material-ui/core": "^4.12.4",
 		"@metamask/detect-provider": "2.0.0",
 		"@pythnetwork/pyth-evm-js": "1.17.0",
-		"@rainbow-me/rainbowkit": "0.8.1",
+		"@rainbow-me/rainbowkit": "0.12.16",
 		"@reach/dialog": "0.18.0",
 		"@reduxjs/toolkit": "^1.9.5",
 		"@sentry/browser": "7.43.0",
@@ -84,7 +84,7 @@
 		"styled-components": "5.3.11",
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
-		"wagmi": "0.9.6",
+		"wagmi": "0.12.18",
 		"zrender": "^5.4.3"
 	},
 	"devDependencies": {
