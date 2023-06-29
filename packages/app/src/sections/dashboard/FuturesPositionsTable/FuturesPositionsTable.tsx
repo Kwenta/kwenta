@@ -226,7 +226,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Header: <TableHeader>TP/SL</TableHeader>,
 								accessor: 'tp-sl',
 								// @ts-expect-error
-								Cell: (cellProps: CellProps<typeof data[number]>) => {
+								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
 									return (
 										<FlexDivRowCentered>
 											<div style={{ marginRight: 10 }}>
@@ -234,14 +234,20 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 													<Body>{NO_VALUE}</Body>
 												) : (
 													<div>
-														<Currency.Price price={cellProps.row.original.takeProfit} />
+														<Currency.Price
+															price={cellProps.row.original.takeProfit}
+															formatOptions={{ suggestDecimals: true }}
+														/>
 													</div>
 												)}
 												{cellProps.row.original.stopLoss === undefined ? (
 													<Body>{NO_VALUE}</Body>
 												) : (
 													<div>
-														<Currency.Price price={cellProps.row.original.stopLoss} />
+														<Currency.Price
+															price={cellProps.row.original.stopLoss}
+															formatOptions={{ suggestDecimals: true }}
+														/>
 													</div>
 												)}
 											</div>
@@ -254,7 +260,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Header: <TableHeader>Market Margin</TableHeader>,
 								accessor: 'margin',
 								// @ts-expect-error
-								Cell: (cellProps: CellProps<typeof data[number]>) => {
+								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
 									return (
 										<FlexDivRowCentered>
 											<div style={{ marginRight: 10 }}>

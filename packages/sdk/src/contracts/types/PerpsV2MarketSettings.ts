@@ -540,9 +540,8 @@ export type KeeperLiquidationFeeUpdatedEvent = TypedEvent<
 	KeeperLiquidationFeeUpdatedEventObject
 >
 
-export type KeeperLiquidationFeeUpdatedEventFilter = TypedEventFilter<
-	KeeperLiquidationFeeUpdatedEvent
->
+export type KeeperLiquidationFeeUpdatedEventFilter =
+	TypedEventFilter<KeeperLiquidationFeeUpdatedEvent>
 
 export interface LiquidationBufferRatioUpdatedEventObject {
 	bps: BigNumber
@@ -552,9 +551,8 @@ export type LiquidationBufferRatioUpdatedEvent = TypedEvent<
 	LiquidationBufferRatioUpdatedEventObject
 >
 
-export type LiquidationBufferRatioUpdatedEventFilter = TypedEventFilter<
-	LiquidationBufferRatioUpdatedEvent
->
+export type LiquidationBufferRatioUpdatedEventFilter =
+	TypedEventFilter<LiquidationBufferRatioUpdatedEvent>
 
 export interface LiquidationFeeRatioUpdatedEventObject {
 	bps: BigNumber
@@ -564,9 +562,8 @@ export type LiquidationFeeRatioUpdatedEvent = TypedEvent<
 	LiquidationFeeRatioUpdatedEventObject
 >
 
-export type LiquidationFeeRatioUpdatedEventFilter = TypedEventFilter<
-	LiquidationFeeRatioUpdatedEvent
->
+export type LiquidationFeeRatioUpdatedEventFilter =
+	TypedEventFilter<LiquidationFeeRatioUpdatedEvent>
 
 export interface MaxKeeperFeeUpdatedEventObject {
 	sUSD: BigNumber

@@ -122,7 +122,7 @@ const FuturesHistoryTable: FC = () => {
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.market')}</div>,
 								accessor: 'market',
-								Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
+								Cell: (cellProps: CellProps<(typeof mappedHistoricalTrades)[number]>) => {
 									return conditionalRender(
 										cellProps.row.original.asset,
 										<>
@@ -251,7 +251,7 @@ const FuturesHistoryTable: FC = () => {
 							{
 								Header: <div>{t('dashboard.history.futures-history-table.asset')}</div>,
 								accessor: 'displayAsset',
-								Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
+								Cell: (cellProps: CellProps<(typeof mappedHistoricalTrades)[number]>) => {
 									return conditionalRender(
 										cellProps.row.original.asset,
 										<>
