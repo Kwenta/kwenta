@@ -24,10 +24,8 @@ const useStatsData = () => {
 	const prices = useAppSelector(selectMarkPrices)
 	const minTimestamp = useAppSelector(selectMinTimestamp)
 
-	const {
-		data: dailyStatsData,
-		isLoading: dailyStatsIsLoading,
-	}: UseQueryResult<DailyStat[]> = useGetFile('stats/daily_stats.json')
+	const { data: dailyStatsData, isLoading: dailyStatsIsLoading }: UseQueryResult<DailyStat[]> =
+		useGetFile('stats/daily_stats.json')
 
 	const openInterestData = useMemo(() => {
 		return futuresMarkets.map(({ marketKey, asset, marketSize }) => {

@@ -24,11 +24,8 @@ export default class SynthsService {
 		}
 
 		const balancesMap: Record<string, SynthBalance> = {}
-		const [
-			currencyKeys,
-			synthsBalances,
-			synthsUSDBalances,
-		]: SynthBalancesTuple = await this.sdk.context.contracts.SynthUtil.synthsBalances(walletAddress)
+		const [currencyKeys, synthsBalances, synthsUSDBalances]: SynthBalancesTuple =
+			await this.sdk.context.contracts.SynthUtil.synthsBalances(walletAddress)
 
 		let totalUSDBalance = wei(0)
 
