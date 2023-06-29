@@ -33,6 +33,8 @@ jobs:
 
       - name: Run tests
         run: cd packages/app && pnpm run test:jest
+        env:
+          NEXT_PUBLIC_WALLETCONNECT_V2_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_V2_ID }}
 
       - name: Upload coverage to codecov.io
         uses: codecov/codecov-action@v3
