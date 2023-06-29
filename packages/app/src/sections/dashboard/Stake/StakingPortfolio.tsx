@@ -12,7 +12,6 @@ import media from 'styles/media'
 export enum StakeTab {
 	Staking = 'staking',
 	Escrow = 'escrow',
-	TradingRewards = 'trading-rewards',
 	Redeem = 'redeem',
 }
 

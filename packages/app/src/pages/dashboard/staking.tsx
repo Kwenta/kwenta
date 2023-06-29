@@ -9,6 +9,7 @@ import { NO_VALUE } from 'constants/placeholder'
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
+import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
 	fetchClaimableRewards,
@@ -29,7 +30,6 @@ import {
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
-import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors'
 
 type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 

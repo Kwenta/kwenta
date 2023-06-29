@@ -9,9 +9,12 @@ import styled from 'styled-components'
 
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import LabelContainer from 'components/Nav/DropDownLabel'
+import Select, { DropdownIndicator, IndicatorSeparator } from 'components/Select'
 import { Body, Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
 import { NO_VALUE } from 'constants/placeholder'
+import useIsL2 from 'hooks/useIsL2'
 import useGetFile from 'queries/files/useGetFile'
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee'
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount'
@@ -23,9 +26,23 @@ import {
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimMultipleAllRewards } from 'state/staking/actions'
-import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors'
+import { setSelectedEpoch } from 'state/staking/reducer'
+import {
+	selectEpochData,
+	selectKwentaRewards,
+	selectOpRewards,
+	selectSelectedEpoch,
+	selectSnxOpRewards,
+} from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
+
+type EpochValue = {
+	period: number
+	start: number
+	end: number
+	label: string
+}
 
 const RewardsTabs: FC<TradingRewardProps> = ({
 	period = 0,
@@ -35,6 +52,9 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 	const network = useAppSelector(selectNetwork)
+	const isL2 = useIsL2()
+	const epochData = useAppSelector(selectEpochData)
+	const selectedEpoch = useAppSelector(selectSelectedEpoch)
 	const walletAddress = useAppSelector(selectWallet)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const opRewards = useAppSelector(selectOpRewards)
@@ -164,18 +184,52 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 		},
 	]
 
+	const handleChangeEpoch = useCallback(
+		(value: EpochValue) => () => {
+			dispatch(setSelectedEpoch(value.period))
+		},
+		[dispatch]
+	)
+
+	const formatOptionLabel = useCallback(
+		(option: EpochValue) => (
+			<div onClick={handleChangeEpoch(option)}>
+				<SelectLabelContainer>{option.label}</SelectLabelContainer>
+			</div>
+		),
+		[handleChangeEpoch]
+	)
+
 	return (
 		<RewardsTabContainer>
 			<HeaderContainer>
 				<StyledHeading variant="h4">{t('dashboard.rewards.title')}</StyledHeading>
-				<StyledButton
-					size="xsmall"
-					isRounded
-					textTransform="none"
-					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
-				>
-					Docs →
-				</StyledButton>
+				<StyledFlexDivRowCentered columnGap="25px">
+					{window.innerWidth < 768 && (
+						<PeriodLabel>{t('dashboard.stake.tabs.staking.current-trading-period')}</PeriodLabel>
+					)}
+
+					<StakingSelect
+						formatOptionLabel={formatOptionLabel}
+						controlHeight={33}
+						options={epochData.sort((a, b) => b.period - a.period)}
+						optionPadding="0px"
+						value={selectedEpoch}
+						menuWidth={100}
+						components={{ IndicatorSeparator, DropdownIndicator }}
+						isSearchable={false}
+						variant="flat"
+						isDisabled={!isL2}
+					/>
+					<StyledButton
+						size="xsmall"
+						isRounded
+						textTransform="none"
+						onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
+					>
+						Docs →
+					</StyledButton>
+				</StyledFlexDivRowCentered>
 			</HeaderContainer>
 			<CardsContainer>
 				{REWARDS.map(({ key, title, copy, labels, info }) => (
@@ -226,6 +280,48 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 		</RewardsTabContainer>
 	)
 }
+
+const SelectLabelContainer = styled(LabelContainer)`
+	font-size: 12px;
+`
+
+const StakingSelect = styled(Select)`
+	height: 33px;
+	width: 100%;
+	.react-select__control,
+	.react-select__menu,
+	.react-select__menu-list {
+		border-radius: 20px;
+		background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
+	}
+
+	.react-select__value-container {
+		padding: 0;
+	}
+
+	.react-select__single-value > div > div {
+		font-size: 12px;
+	}
+
+	.react-select__dropdown-indicator {
+		margin-right: 10px;
+	}
+`
+
+const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
+	width: 200px;
+	${media.lessThan('md')`
+		width: unset;
+	`}
+`
+
+const PeriodLabel = styled(FlexDivRowCentered)`
+	height: 33px;
+	font-size: 11px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	margin-left: 4px;
+	width: 50%;
+`
 
 const ButtonContainer = styled.div`
 	margin-bottom: 25px;
