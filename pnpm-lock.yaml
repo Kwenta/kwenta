@@ -186,8 +186,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-i18next:
-        specifier: 12.1.1
-        version: 12.1.1(i18next@19.7.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 13.0.1
+        version: 13.0.1(i18next@19.7.0)(react-dom@18.2.0)(react@18.2.0)
       react-infinite-scroll-component:
         specifier: ^6.1.0
         version: 6.1.0(react@18.2.0)
@@ -17688,10 +17688,10 @@ packages:
       - '@types/react'
     dev: false
 
-  /react-i18next@12.1.1(i18next@19.7.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-mFdieOI0LDy84q3JuZU6Aou1DoWW2fhapcTGeBS8+vWSJuViuoCLQAMYSb0QoHhXS8B0WKUOPpx4cffAP7r/aA==}
+  /react-i18next@13.0.1(i18next@19.7.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-gMO6N2GfSfuH7xlHSsZ/mZf+Py9bLm/+EDKIn5fNTuDTjcCcwmMU5UEuGCDk5mdfivbo7ySyYXBN7B9tbGUxiA==}
     peerDependencies:
-      i18next: '>= 19.0.0'
+      i18next: '>= 23.2.3'
       react: '>= 16.8.0'
       react-dom: '*'
       react-native: '*'
