@@ -125,7 +125,7 @@
 		"pinst": "3.0.0",
 		"postcss": "^8.4.24",
 		"prettier": "2.8.8",
-		"react-test-renderer": "17.0.1",
+		"react-test-renderer": "18.2.0",
 		"storybook": "7.0.24",
 		"typechain": "8.1.1",
 		"typescript": "5.1.6"
