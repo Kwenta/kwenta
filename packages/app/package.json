@@ -75,7 +75,7 @@
 		"redux-logger": "^3.0.6",
 		"redux-persist": "^6.0.0",
 		"slick-carousel": "1.8.1",
-		"styled-components": "5.3.11",
+		"styled-components": "6.0.1",
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
 		"wagmi": "0.12.18",
