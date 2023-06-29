@@ -34,6 +34,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	stakedEscrowedKwentaBalance: '0',
 	stakedEscrowedKwentaBalanceV2: '0',
 	stakedKwentaBalance: '0',
+	stakedResetTime: 0,
 	epochPeriod: 0,
 	weekCounter: 1,
 	kwentaAllowance: '0',
@@ -125,6 +126,7 @@ const stakingSlice = createSlice({
 			state.claimableBalanceV2 = action.payload.claimableBalance
 			state.stakedEscrowedKwentaBalanceV2 = action.payload.stakedEscrowedBalance
 			state.escrowedKwentaBalanceV2 = action.payload.rewardEscrowBalance
+			state.stakedResetTime = action.payload.stakedResetTime
 		})
 		builder.addCase(fetchEscrowData.fulfilled, (state, action) => {
 			state.totalVestable = action.payload.totalVestable

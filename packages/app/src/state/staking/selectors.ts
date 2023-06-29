@@ -110,6 +110,8 @@ export const selectResetTime = createSelector(
 	}
 )
 
+export const selectStakedResetTime = (state: RootState) => state.staking.stakedResetTime
+
 export const selectEpochData = createSelector(
 	(state: RootState) => state.staking.epochPeriod,
 	(state: RootState) => state.wallet.networkId,

@@ -1,15 +1,18 @@
-import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatPercent, formatTruncatedDuration, truncateNumbers } from '@kwenta/sdk/utils'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body, Heading } from 'components/Text'
+import { NO_VALUE } from 'constants/placeholder'
 import { useAppSelector } from 'state/hooks'
 import {
 	selectAPY,
 	selectAPYV2,
 	selectStakedEscrowedKwentaBalance,
 	selectStakedEscrowedKwentaBalanceV2,
+	selectStakedResetTime,
 	selectTotalVestable,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
@@ -27,6 +30,15 @@ const EscrowTab = () => {
 	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const totalVestable = useAppSelector(selectTotalVestable)
 	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
+	const stakedResetTime = useAppSelector(selectStakedResetTime)
+
+	const timeLeft = useMemo(
+		() =>
+			stakedResetTime > new Date().getTime() / 1000
+				? formatTruncatedDuration(stakedResetTime - new Date().getTime() / 1000)
+				: NO_VALUE,
+		[stakedResetTime]
+	)
 
 	const DEFAULT_CARDS = [
 		{
@@ -97,8 +109,8 @@ const EscrowTab = () => {
 						))}
 					</CardsContainer>
 					<LabelContainer rowGap="5px">
-						<Body color="secondary">Cooldown</Body>
-						<Body color="primary">2D:12H:12:12</Body>
+						<Body color="secondary">{t('dashboard.stake.portfolio.cooldown.title')}</Body>
+						<Body color="primary">{timeLeft}</Body>
 					</LabelContainer>
 				</CardGridContainer>
 			</GridContainer>

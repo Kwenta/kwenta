@@ -65,6 +65,7 @@ export const fetchStakingV2Data = createAsyncThunk<
 		stakedEscrowedBalance: string
 		claimableBalance: string
 		totalStakedBalance: string
+		stakedResetTime: number
 		kwentaStakingV2Allowance: string
 	},
 	void,
@@ -76,6 +77,7 @@ export const fetchStakingV2Data = createAsyncThunk<
 		stakedEscrowedBalance,
 		claimableBalance,
 		totalStakedBalance,
+		stakedResetTime,
 		kwentaStakingV2Allowance,
 	} = await sdk.kwentaToken.getStakingV2Data()
 
@@ -85,6 +87,7 @@ export const fetchStakingV2Data = createAsyncThunk<
 		stakedEscrowedBalance: stakedEscrowedBalance.toString(),
 		claimableBalance: claimableBalance.toString(),
 		totalStakedBalance: totalStakedBalance.toString(),
+		stakedResetTime,
 		kwentaStakingV2Allowance: kwentaStakingV2Allowance.toString(),
 	}
 })
