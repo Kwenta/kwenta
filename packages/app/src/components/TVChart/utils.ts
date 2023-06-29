@@ -35,5 +35,5 @@ export const saveChartState = (state: object) => {
 
 export const loadChartState = () => {
 	const rawChartData = window.localStorage.getItem(TV_CHART_STATE)
-	return rawChartData ? JSON.parse(rawChartData) : {}
+	return rawChartData ? JSON.parse(rawChartData) : undefined
 }
