@@ -11,7 +11,11 @@ import { NO_VALUE } from 'constants/placeholder'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { getReward } from 'state/staking/actions'
-import { selectAPY, selectClaimableBalance } from 'state/staking/selectors'
+import {
+	selectAPYV2,
+	selectClaimableBalanceV2,
+	selectStakedKwentaBalanceV2,
+} from 'state/staking/selectors'
 import media from 'styles/media'
 
 import StakeInputCard from './InputCards/StakeInputCard'
@@ -20,8 +24,9 @@ const StakingTab = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
-	const claimableBalance = useAppSelector(selectClaimableBalance)
-	const apy = useAppSelector(selectAPY)
+	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
+	const apy = useAppSelector(selectAPYV2)
 
 	const handleGetReward = useCallback(() => {
 		dispatch(getReward())
@@ -33,8 +38,8 @@ const StakingTab = () => {
 			card: [
 				{
 					key: 'staking-staked',
-					title: 'Staked',
-					value: '150.00',
+					title: t('dashboard.stake.portfolio.balance.staked'),
+					value: truncateNumbers(stakedKwentaBalance, 2),
 				},
 				{
 					key: 'staking-apr',
