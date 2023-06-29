@@ -198,7 +198,7 @@ export function TVChart({
 				{ text: '30D', resolution: '1H', description: '30 Days' },
 				{ text: '3M', resolution: '1H', description: '3 Months' },
 			] as TimeFrameItem[],
-			...(chartData ? { saved_data: JSON.parse(chartData) } : {}),
+			saved_data: chartData,
 		}
 
 		const clearExistingWidget = () => {
@@ -308,9 +308,15 @@ export function TVChart({
 	}, [marketAsset])
 
 	useEffect(() => {
-		_widget.current?.subscribe('onAutoSaveNeeded', () => {
+		const handleAutoSave = () => {
 			_widget.current?.save(saveChartState)
-		})
+		}
+
+		_widget.current?.subscribe('onAutoSaveNeeded', handleAutoSave)
+
+		return () => {
+			_widget.current?.unsubscribe('onAutoSaveNeeded', handleAutoSave)
+		}
 	}, [])
 
 	const onSubscribe = useCallback((priceListener: PricesListener) => {
