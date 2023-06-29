@@ -8,6 +8,7 @@ import {
 	TimeFrameItem,
 	widget,
 } from 'charting_library/charting_library'
+import { isEmpty } from 'lodash/fp'
 import { useRouter } from 'next/router'
 import { useRef, useContext, useEffect, useCallback, useMemo } from 'react'
 import { ThemeContext } from 'styled-components'
@@ -198,7 +199,7 @@ export function TVChart({
 				{ text: '30D', resolution: '1H', description: '30 Days' },
 				{ text: '3M', resolution: '1H', description: '3 Months' },
 			] as TimeFrameItem[],
-			saved_data: chartData,
+			saved_data: isEmpty(chartData) ? undefined : chartData,
 		}
 
 		const clearExistingWidget = () => {
