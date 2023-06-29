@@ -99,15 +99,21 @@ const EscrowTable = () => {
 					{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
 				</Body>
 			</FlexDivCol>
-			<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+			<Button size="xsmall" isRounded disabled={!vestEnabled} onClick={openConfirmModal}>
 				{t('dashboard.stake.tabs.escrow.transfer')}
-			</VestButton>
-			<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+			</Button>
+			<Button size="xsmall" isRounded disabled={!vestEnabled} onClick={openConfirmModal}>
 				{t('dashboard.stake.tabs.escrow.delegate')}
-			</VestButton>
-			<VestButton disabled={!vestEnabled} onClick={openConfirmModal}>
+			</Button>
+			<Button
+				variant="yellow"
+				size="xsmall"
+				isRounded
+				disabled={!vestEnabled}
+				onClick={openConfirmModal}
+			>
 				{t('dashboard.stake.tabs.escrow.vest')}
-			</VestButton>
+			</Button>
 		</FlexDivRowCentered>
 	)
 
@@ -288,11 +294,6 @@ const EscrowTable = () => {
 	)
 }
 
-const StyledCheckbox = styled(Checkbox)`
-	width: 13px;
-	height: 13px;
-`
-
 const StyledBadge = styled(Badge)`
 	padding: 0 6px;
 `
@@ -321,27 +322,6 @@ const StyledTable = styled(Table)`
 const TableCell = styled.div`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-`
-
-const VestButton = styled(Button)`
-	border-width: 1px;
-	border-style: solid;
-	border-color: ${(props) =>
-		props.disabled
-			? props.theme.colors.selectedTheme.gray
-			: props.theme.colors.selectedTheme.yellow};
-	height: 36px;
-	border-radius: 100px;
-	cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-	background-color: transparent;
-	color: ${(props) =>
-		props.disabled
-			? props.theme.colors.selectedTheme.gray
-			: props.theme.colors.selectedTheme.yellow};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 13px;
-	padding: 10px 15px;
-	text-transform: uppercase;
 `
 
 export default EscrowTable
