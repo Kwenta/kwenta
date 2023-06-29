@@ -8,6 +8,7 @@ import styled from 'styled-components'
 
 import Badge from 'components/Badge'
 import Button from 'components/Button'
+import { Checkbox } from 'components/Checkbox'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Table from 'components/Table'
@@ -125,20 +126,25 @@ const EscrowTable = () => {
 					columns={[
 						{
 							Header: () => (
-								<label>
-									<input type="checkbox" checked={checkAllState} onChange={selectAll} />
-								</label>
+								<Checkbox
+									id="header"
+									label=""
+									checked={checkAllState}
+									onChange={selectAll}
+									variant="table"
+									checkSide="right"
+								/>
 							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
-								<label>
-									<input
-										key={cellProps.row.index}
-										type="checkbox"
-										checked={checkedState[cellProps.row.index]}
-										onChange={handleOnChange(cellProps.row.index)}
-										id="value"
-									/>
-								</label>
+								<Checkbox
+									id={cellProps.row.index.toString()}
+									key={cellProps.row.index}
+									checked={checkedState[cellProps.row.index]}
+									onChange={handleOnChange(cellProps.row.index)}
+									label=""
+									variant="table"
+									checkSide="right"
+								/>
 							),
 							accessor: 'selected',
 							width: 40,
@@ -281,6 +287,11 @@ const EscrowTable = () => {
 		</EscrowTableContainer>
 	)
 }
+
+const StyledCheckbox = styled(Checkbox)`
+	width: 13px;
+	height: 13px;
+`
 
 const StyledBadge = styled(Badge)`
 	padding: 0 6px;

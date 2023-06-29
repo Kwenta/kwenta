@@ -172,7 +172,7 @@ const newTheme = {
 		},
 	},
 	checkBox: {
-		border: common.palette.neutral.n400,
+		border: common.palette.neutral.n500,
 	},
 	tabs: {
 		position: {
