@@ -15,20 +15,23 @@ import { NO_VALUE } from 'constants/placeholder'
 import useGetFile from 'queries/files/useGetFile'
 import useGetFuturesFee from 'queries/staking/useGetFuturesFee'
 import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount'
-import { FuturesFeeForAccountProps, FuturesFeeProps } from 'queries/staking/utils'
+import {
+	FuturesFeeForAccountProps,
+	FuturesFeeProps,
+	TradingRewardProps,
+} from 'queries/staking/utils'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimMultipleAllRewards } from 'state/staking/actions'
-import {
-	selectEpochPeriod,
-	selectKwentaRewards,
-	selectOpRewards,
-	selectSnxOpRewards,
-} from 'state/staking/selectors'
+import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
 
-const RewardsTabs: FC = () => {
+const RewardsTabs: FC<TradingRewardProps> = ({
+	period = 0,
+	start = 0,
+	end = Math.floor(Date.now() / 1000),
+}) => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 	const network = useAppSelector(selectNetwork)
@@ -36,9 +39,6 @@ const RewardsTabs: FC = () => {
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const opRewards = useAppSelector(selectOpRewards)
 	const snxOpRewards = useAppSelector(selectSnxOpRewards)
-	const epoch = useAppSelector(selectEpochPeriod)
-	const start = 0
-	const end = Math.floor(Date.now() / 1000)
 
 	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end)
 	const futuresFeePaid = useMemo(() => {
@@ -110,7 +110,7 @@ const RewardsTabs: FC = () => {
 			info: [
 				{
 					label: 'Period',
-					value: `Epoch ${Number(epoch)}`,
+					value: `Epoch ${period}`,
 				},
 				{
 					label: 'Total Pool Fees',

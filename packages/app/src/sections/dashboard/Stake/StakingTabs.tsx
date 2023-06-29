@@ -106,7 +106,11 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 			<div>
 				<TabPanel name={StakeTab.Staking} activeTab={currentTab}>
 					<StakingTab />
-					<RewardsTab />
+					<RewardsTab
+						period={selectedEpoch.period}
+						start={selectedEpoch.start}
+						end={selectedEpoch.end}
+					/>
 				</TabPanel>
 				<TabPanel name={StakeTab.Escrow} activeTab={currentTab}>
 					<EscrowTab />
