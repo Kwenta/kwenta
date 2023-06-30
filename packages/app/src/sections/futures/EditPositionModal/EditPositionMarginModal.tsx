@@ -15,7 +15,6 @@ import PreviewArrow from 'components/PreviewArrow'
 import SegmentedControl from 'components/SegmentedControl'
 import Spacer from 'components/Spacer'
 import { Body } from 'components/Text'
-import { previewErrorI18n } from 'queries/futures/constants'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors'
 import {
