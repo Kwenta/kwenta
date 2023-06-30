@@ -65,10 +65,10 @@ export default function EditPositionSizeModal() {
 		dispatch(submitCrossMarginAdjustPositionSize(overridePriceProtection))
 	}, [dispatch, overridePriceProtection])
 
-	const isLoading = useMemo(
-		() => isSubmitting || isFetchingPreview,
-		[isSubmitting, isFetchingPreview]
-	)
+	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
+		isSubmitting,
+		isFetchingPreview,
+	])
 
 	const maxLeverage = useMemo(
 		() => (editType === 0 ? market?.appMaxLeverage : market?.contractMaxLeverage) ?? wei(1),
@@ -122,10 +122,10 @@ export default function EditPositionSizeModal() {
 		)
 	}, [editType, position?.position?.leverage, maxLeverage, resultingLeverage])
 
-	const invalid = useMemo(
-		() => sizeWei.abs().gt(maxNativeValueWithBuffer),
-		[sizeWei, maxNativeValueWithBuffer]
-	)
+	const invalid = useMemo(() => sizeWei.abs().gt(maxNativeValueWithBuffer), [
+		sizeWei,
+		maxNativeValueWithBuffer,
+	])
 
 	const submitDisabled = useMemo(() => {
 		return (

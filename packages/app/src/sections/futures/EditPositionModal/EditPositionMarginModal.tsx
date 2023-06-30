@@ -60,10 +60,10 @@ export default function EditPositionMarginModal() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const isLoading = useMemo(
-		() => isSubmitting || isFetchingPreview,
-		[isSubmitting, isFetchingPreview]
-	)
+	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
+		isSubmitting,
+		isFetchingPreview,
+	])
 
 	const maxWithdraw = useMemo(() => {
 		const maxSize = position?.remainingMargin.mul(market?.appMaxLeverage ?? 1)
@@ -79,10 +79,11 @@ export default function EditPositionMarginModal() {
 			: remainingMarginMax
 	}, [position?.remainingMargin, position?.position?.notionalValue, market?.appMaxLeverage])
 
-	const maxUsdInputAmount = useMemo(
-		() => (transferType === 0 ? idleMargin : maxWithdraw),
-		[idleMargin, maxWithdraw, transferType]
-	)
+	const maxUsdInputAmount = useMemo(() => (transferType === 0 ? idleMargin : maxWithdraw), [
+		idleMargin,
+		maxWithdraw,
+		transferType,
+	])
 
 	const marginWei = useMemo(
 		() => (!marginDelta || isNaN(Number(marginDelta)) ? wei(0) : wei(marginDelta)),

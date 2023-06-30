@@ -442,38 +442,34 @@ export const setMaxBaseBalance = (): AppThunk => (dispatch, getState) => {
 	}
 }
 
-export const setRatio =
-	(value: SwapRatio): AppThunk =>
-	(dispatch, getState) => {
-		const state = getState()
-		const quoteBalance = selectQuoteBalanceWei(state)
+export const setRatio = (value: SwapRatio): AppThunk => (dispatch, getState) => {
+	const state = getState()
+	const quoteBalance = selectQuoteBalanceWei(state)
 
-		const {
-			exchange: { baseCurrencyKey, txProvider, rate, exchangeFeeRate },
-		} = state
+	const {
+		exchange: { baseCurrencyKey, txProvider, rate, exchangeFeeRate },
+	} = state
 
-		const newQuote = truncateNumbers(quoteBalance.mul(value / 100), DEFAULT_CRYPTO_DECIMALS)
+	const newQuote = truncateNumbers(quoteBalance.mul(value / 100), DEFAULT_CRYPTO_DECIMALS)
 
-		dispatch({ type: 'exchange/setQuoteAmountRaw', payload: newQuote })
+	dispatch({ type: 'exchange/setQuoteAmountRaw', payload: newQuote })
 
-		if (txProvider === 'synthetix' && !!baseCurrencyKey) {
-			const baseAmountNoFee = wei(newQuote).mul(rate ?? 0)
-			const fee = baseAmountNoFee.mul(exchangeFeeRate ?? 0)
-			dispatch({
-				type: 'exchange/setBaseAmountRaw',
-				payload: truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS),
-			})
-		}
-	}
-
-export const setExchangeRates =
-	(exchangeRates: Rates): AppThunk =>
-	(dispatch) => {
+	if (txProvider === 'synthetix' && !!baseCurrencyKey) {
+		const baseAmountNoFee = wei(newQuote).mul(rate ?? 0)
+		const fee = baseAmountNoFee.mul(exchangeFeeRate ?? 0)
 		dispatch({
-			type: 'exchange/setExchangeRates',
-			payload: Object.entries(exchangeRates).reduce((acc, [key, value]) => {
-				acc[key] = value.toString()
-				return acc
-			}, {} as Record<string, string>),
+			type: 'exchange/setBaseAmountRaw',
+			payload: truncateNumbers(baseAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS),
 		})
 	}
+}
+
+export const setExchangeRates = (exchangeRates: Rates): AppThunk => (dispatch) => {
+	dispatch({
+		type: 'exchange/setExchangeRates',
+		payload: Object.entries(exchangeRates).reduce((acc, [key, value]) => {
+			acc[key] = value.toString()
+			return acc
+		}, {} as Record<string, string>),
+	})
+}

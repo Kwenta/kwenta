@@ -283,9 +283,10 @@ export const getCrossMarginAccounts = async function <K extends keyof CrossMargi
 	options: MultiQueryOptions<CrossMarginAccountFilter, CrossMarginAccountResult>,
 	args: CrossMarginAccountArgs<K>
 ): Promise<Pick<CrossMarginAccountResult, K>[]> {
-	const paginatedOptions: Partial<
-		MultiQueryOptions<CrossMarginAccountFilter, CrossMarginAccountResult>
-	> = { ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		CrossMarginAccountFilter,
+		CrossMarginAccountResult
+	>> = { ...options }
 	let paginationKey: keyof CrossMarginAccountFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {
@@ -446,9 +447,10 @@ export const getCrossMarginAccountTransfers = async function <
 	options: MultiQueryOptions<CrossMarginAccountTransferFilter, CrossMarginAccountTransferResult>,
 	args: CrossMarginAccountTransferArgs<K>
 ): Promise<Pick<CrossMarginAccountTransferResult, K>[]> {
-	const paginatedOptions: Partial<
-		MultiQueryOptions<CrossMarginAccountTransferFilter, CrossMarginAccountTransferResult>
-	> = { ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		CrossMarginAccountTransferFilter,
+		CrossMarginAccountTransferResult
+	>> = { ...options }
 	let paginationKey: keyof CrossMarginAccountTransferFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {
@@ -782,9 +784,10 @@ export const getFundingRateUpdates = async function <K extends keyof FundingRate
 	options: MultiQueryOptions<FundingRateUpdateFilter, FundingRateUpdateResult>,
 	args: FundingRateUpdateArgs<K>
 ): Promise<Pick<FundingRateUpdateResult, K>[]> {
-	const paginatedOptions: Partial<
-		MultiQueryOptions<FundingRateUpdateFilter, FundingRateUpdateResult>
-	> = { ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		FundingRateUpdateFilter,
+		FundingRateUpdateResult
+	>> = { ...options }
 	let paginationKey: keyof FundingRateUpdateFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {
@@ -979,9 +982,10 @@ export const getFuturesAggregateStats = async function <K extends keyof FuturesA
 	options: MultiQueryOptions<FuturesAggregateStatFilter, FuturesAggregateStatResult>,
 	args: FuturesAggregateStatArgs<K>
 ): Promise<Pick<FuturesAggregateStatResult, K>[]> {
-	const paginatedOptions: Partial<
-		MultiQueryOptions<FuturesAggregateStatFilter, FuturesAggregateStatResult>
-	> = { ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		FuturesAggregateStatFilter,
+		FuturesAggregateStatResult
+	>> = { ...options }
 	let paginationKey: keyof FuturesAggregateStatFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {
@@ -1134,9 +1138,10 @@ export const getFuturesCumulativeStats = async function <
 	options: MultiQueryOptions<FuturesCumulativeStatFilter, FuturesCumulativeStatResult>,
 	args: FuturesCumulativeStatArgs<K>
 ): Promise<Pick<FuturesCumulativeStatResult, K>[]> {
-	const paginatedOptions: Partial<
-		MultiQueryOptions<FuturesCumulativeStatFilter, FuturesCumulativeStatResult>
-	> = { ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		FuturesCumulativeStatFilter,
+		FuturesCumulativeStatResult
+	>> = { ...options }
 	let paginationKey: keyof FuturesCumulativeStatFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {
@@ -1312,9 +1317,10 @@ export const getFuturesMarginAccounts = async function <K extends keyof FuturesM
 	options: MultiQueryOptions<FuturesMarginAccountFilter, FuturesMarginAccountResult>,
 	args: FuturesMarginAccountArgs<K>
 ): Promise<Pick<FuturesMarginAccountResult, K>[]> {
-	const paginatedOptions: Partial<
-		MultiQueryOptions<FuturesMarginAccountFilter, FuturesMarginAccountResult>
-	> = { ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		FuturesMarginAccountFilter,
+		FuturesMarginAccountResult
+	>> = { ...options }
 	let paginationKey: keyof FuturesMarginAccountFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {
@@ -1506,9 +1512,10 @@ export const getFuturesMarginTransfers = async function <
 	options: MultiQueryOptions<FuturesMarginTransferFilter, FuturesMarginTransferResult>,
 	args: FuturesMarginTransferArgs<K>
 ): Promise<Pick<FuturesMarginTransferResult, K>[]> {
-	const paginatedOptions: Partial<
-		MultiQueryOptions<FuturesMarginTransferFilter, FuturesMarginTransferResult>
-	> = { ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		FuturesMarginTransferFilter,
+		FuturesMarginTransferResult
+	>> = { ...options }
 	let paginationKey: keyof FuturesMarginTransferFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {
@@ -2300,8 +2307,10 @@ export const getFuturesPositions = async function <K extends keyof FuturesPositi
 	options: MultiQueryOptions<FuturesPositionFilter, FuturesPositionResult>,
 	args: FuturesPositionArgs<K>
 ): Promise<Pick<FuturesPositionResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<FuturesPositionFilter, FuturesPositionResult>> =
-		{ ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		FuturesPositionFilter,
+		FuturesPositionResult
+	>> = { ...options }
 	let paginationKey: keyof FuturesPositionFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {
@@ -2918,9 +2927,10 @@ export const getSmartMarginAccounts = async function <K extends keyof SmartMargi
 	options: MultiQueryOptions<SmartMarginAccountFilter, SmartMarginAccountResult>,
 	args: SmartMarginAccountArgs<K>
 ): Promise<Pick<SmartMarginAccountResult, K>[]> {
-	const paginatedOptions: Partial<
-		MultiQueryOptions<SmartMarginAccountFilter, SmartMarginAccountResult>
-	> = { ...options }
+	const paginatedOptions: Partial<MultiQueryOptions<
+		SmartMarginAccountFilter,
+		SmartMarginAccountResult
+	>> = { ...options }
 	let paginationKey: keyof SmartMarginAccountFilter | null = null
 	let paginationValue = ''
 	if (options.first && options.first > MAX_PAGE) {

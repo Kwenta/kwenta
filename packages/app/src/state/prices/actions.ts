@@ -9,16 +9,17 @@ import { getPricesInfo } from 'utils/prices'
 
 import { setOffChainPrices, setOnChainPrices } from './reducer'
 
-export const updatePrices =
-	(newPrices: PricesMap<string>, type: PriceType): AppThunk =>
-	(dispatch, getState) => {
-		const { prices } = getState()
-		if (type === 'off_chain') {
-			dispatch(setOffChainPrices(getPricesInfo(prices.offChainPrices, newPrices)))
-		} else {
-			dispatch(setOnChainPrices(getPricesInfo(prices.onChainPrices, newPrices)))
-		}
+export const updatePrices = (newPrices: PricesMap<string>, type: PriceType): AppThunk => (
+	dispatch,
+	getState
+) => {
+	const { prices } = getState()
+	if (type === 'off_chain') {
+		dispatch(setOffChainPrices(getPricesInfo(prices.offChainPrices, newPrices)))
+	} else {
+		dispatch(setOnChainPrices(getPricesInfo(prices.onChainPrices, newPrices)))
 	}
+}
 
 export const fetchPreviousDayPrices = createAsyncThunk<
 	SynthPrice[],

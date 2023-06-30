@@ -49,10 +49,10 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 
 		const isBase = useMemo(() => side === 'base', [side])
 
-		const hasWalletBalance = useMemo(
-			() => !!walletBalance && !!currencyKey,
-			[walletBalance, currencyKey]
-		)
+		const hasWalletBalance = useMemo(() => !!walletBalance && !!currencyKey, [
+			walletBalance,
+			currencyKey,
+		])
 
 		const hasCurrencySelectCallback = !!onCurrencySelect
 

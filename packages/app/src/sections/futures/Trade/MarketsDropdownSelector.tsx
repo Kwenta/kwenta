@@ -113,8 +113,7 @@ export const ContentContainer = styled(FlexDivCentered)<{ mobile?: boolean }>`
 	cursor: pointer;
 	transition: all 0.2s ease-in-out;
 	&:hover {
-		background: ${(props) =>
-			props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
 	}
 
 	p {

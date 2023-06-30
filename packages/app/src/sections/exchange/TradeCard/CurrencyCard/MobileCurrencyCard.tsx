@@ -39,10 +39,10 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 		const { t } = useTranslation()
 		const { selectPriceCurrencyRate, getPriceAtCurrentRate } = useSelectedPriceCurrency()
 
-		const hasWalletBalance = useMemo(
-			() => !!walletBalance && !!currencyKey,
-			[walletBalance, currencyKey]
-		)
+		const hasWalletBalance = useMemo(() => !!walletBalance && !!currencyKey, [
+			walletBalance,
+			currencyKey,
+		])
 
 		const amountBN = useMemo(() => (amount === '' ? ZERO_WEI : wei(amount)), [amount])
 

@@ -76,10 +76,11 @@ const RewardsTabs: FC = () => {
 		[estimatedOpQuery?.data?.claims, walletAddress]
 	)
 
-	const claimDisabledAll = useMemo(
-		() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0),
-		[opRewards, snxOpRewards, kwentaRewards]
-	)
+	const claimDisabledAll = useMemo(() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0), [
+		opRewards,
+		snxOpRewards,
+		kwentaRewards,
+	])
 
 	const claimDisabledKwentaOp = useMemo(() => opRewards.lte(0), [opRewards])
 

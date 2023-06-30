@@ -226,7 +226,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Header: <TableHeader>TP/SL</TableHeader>,
 								accessor: 'tp-sl',
 								// @ts-expect-error
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<FlexDivRowCentered>
 											<div style={{ marginRight: 10 }}>
@@ -260,7 +260,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								Header: <TableHeader>Market Margin</TableHeader>,
 								accessor: 'margin',
 								// @ts-expect-error
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<FlexDivRowCentered>
 											<div style={{ marginRight: 10 }}>

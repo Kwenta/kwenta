@@ -123,8 +123,7 @@ const CurrencySelector = styled.div<{
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.primary.background};
 
 	&:hover {
-		background: ${(props) =>
-			props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.cell.hover.background};
 	}
 
 	${(props) =>

@@ -284,9 +284,9 @@ export const refetchPosition = createAsyncThunk<
 	)
 
 	if (result.data[0]) {
-		const serialized = serializeWeiObject(
-			result.data[0] as FuturesPosition
-		) as FuturesPosition<string>
+		const serialized = serializeWeiObject(result.data[0] as FuturesPosition) as FuturesPosition<
+			string
+		>
 		return { position: serialized, wallet: account, futuresType: type, networkId }
 	}
 	return null
@@ -637,207 +637,207 @@ export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
-export const editCrossMarginTradeMarginDelta =
-	(marginDelta: string): AppThunk =>
-	(dispatch, getState) => {
-		const orderPrice = selectMarketIndexPrice(getState())
-		const marketInfo = selectMarketInfo(getState())
-		const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState())
+export const editCrossMarginTradeMarginDelta = (marginDelta: string): AppThunk => (
+	dispatch,
+	getState
+) => {
+	const orderPrice = selectMarketIndexPrice(getState())
+	const marketInfo = selectMarketInfo(getState())
+	const { susdSize, nativeSizeDelta } = selectCrossMarginTradeInputs(getState())
 
-		if (!marketInfo) throw new Error('No market selected')
+	if (!marketInfo) throw new Error('No market selected')
 
-		if (!marginDelta || Number(marginDelta) === 0) {
-			dispatch(setCrossMarginMarginDelta(marginDelta))
-			dispatch(setCrossMarginTradePreview({ preview: null, type: 'trade' }))
-			return
-		}
-
-		const marginDelatWei = wei(marginDelta)
-		const leverage = wei(susdSize).div(marginDelatWei.abs())
-
+	if (!marginDelta || Number(marginDelta) === 0) {
 		dispatch(setCrossMarginMarginDelta(marginDelta))
-		if (!leverage.eq(0)) {
-			dispatch(setLeverageInput(leverage.toString(2)))
-		}
-
-		dispatch(
-			stageCrossMarginTradePreview({
-				market: { key: marketInfo.marketKey, address: marketInfo.market },
-				orderPrice,
-				marginDelta: wei(marginDelta || 0),
-				sizeDelta: nativeSizeDelta,
-				action: 'trade',
-			})
-		)
+		dispatch(setCrossMarginTradePreview({ preview: null, type: 'trade' }))
+		return
 	}
 
-export const editCrossMarginTradeSize =
-	(size: string, currencyType: 'usd' | 'native'): AppThunk =>
-	(dispatch, getState) => {
-		const indexPrice = selectMarketIndexPrice(getState())
-		const marginDelta = selectCrossMarginMarginDelta(getState())
-		const orderPrice = selectCrossMarginOrderPrice(getState())
-		const isConditionalOrder = selectIsConditionalOrder(getState())
-		const tradeSide = selectLeverageSide(getState())
-		const marketInfo = selectMarketInfo(getState())
-		const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : indexPrice
+	const marginDelatWei = wei(marginDelta)
+	const leverage = wei(susdSize).div(marginDelatWei.abs())
 
-		if (!marketInfo) throw new Error('No market selected')
-
-		if (size === '' || price.eq(0)) {
-			dispatch(setCrossMarginTradeInputs(ZERO_STATE_TRADE_INPUTS))
-			dispatch(setCrossMarginTradePreview({ preview: null, type: 'trade' }))
-			dispatch(setLeverageInput(''))
-			return
-		}
-
-		const nativeSize =
-			currencyType === 'native' ? size : String(floorNumber(wei(size).div(price), 4))
-		const usdSize = currencyType === 'native' ? String(floorNumber(price.mul(size), 4)) : size
-		const leverage = marginDelta?.gt(0) ? wei(usdSize).div(marginDelta.abs()) : '0'
-		const sizeDeltaWei =
-			tradeSide === PositionSide.LONG ? wei(nativeSize || 0) : wei(nativeSize || 0).neg()
-		dispatch(
-			setCrossMarginTradeInputs({
-				susdSize: usdSize,
-				nativeSize: nativeSize,
-			})
-		)
+	dispatch(setCrossMarginMarginDelta(marginDelta))
+	if (!leverage.eq(0)) {
 		dispatch(setLeverageInput(leverage.toString(2)))
+	}
+
+	dispatch(
+		stageCrossMarginTradePreview({
+			market: { key: marketInfo.marketKey, address: marketInfo.market },
+			orderPrice,
+			marginDelta: wei(marginDelta || 0),
+			sizeDelta: nativeSizeDelta,
+			action: 'trade',
+		})
+	)
+}
+
+export const editCrossMarginTradeSize = (
+	size: string,
+	currencyType: 'usd' | 'native'
+): AppThunk => (dispatch, getState) => {
+	const indexPrice = selectMarketIndexPrice(getState())
+	const marginDelta = selectCrossMarginMarginDelta(getState())
+	const orderPrice = selectCrossMarginOrderPrice(getState())
+	const isConditionalOrder = selectIsConditionalOrder(getState())
+	const tradeSide = selectLeverageSide(getState())
+	const marketInfo = selectMarketInfo(getState())
+	const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : indexPrice
+
+	if (!marketInfo) throw new Error('No market selected')
+
+	if (size === '' || price.eq(0)) {
+		dispatch(setCrossMarginTradeInputs(ZERO_STATE_TRADE_INPUTS))
+		dispatch(setCrossMarginTradePreview({ preview: null, type: 'trade' }))
+		dispatch(setLeverageInput(''))
+		return
+	}
+
+	const nativeSize = currencyType === 'native' ? size : String(floorNumber(wei(size).div(price), 4))
+	const usdSize = currencyType === 'native' ? String(floorNumber(price.mul(size), 4)) : size
+	const leverage = marginDelta?.gt(0) ? wei(usdSize).div(marginDelta.abs()) : '0'
+	const sizeDeltaWei =
+		tradeSide === PositionSide.LONG ? wei(nativeSize || 0) : wei(nativeSize || 0).neg()
+	dispatch(
+		setCrossMarginTradeInputs({
+			susdSize: usdSize,
+			nativeSize: nativeSize,
+		})
+	)
+	dispatch(setLeverageInput(leverage.toString(2)))
+	dispatch(
+		stageCrossMarginTradePreview({
+			market: {
+				key: marketInfo.marketKey,
+				address: marketInfo.market,
+			},
+			orderPrice: price,
+			marginDelta: wei(marginDelta),
+			sizeDelta: sizeDeltaWei,
+			action: 'trade',
+		})
+	)
+}
+
+export const editCrossMarginPositionSize = (
+	marketKey: FuturesMarketKey,
+	nativeSizeDelta: string
+): AppThunk => (dispatch, getState) => {
+	const { marketPrice } = selectEditPositionModalInfo(getState())
+	dispatch(
+		setCrossMarginEditPositionInputs({
+			marginDelta: '',
+			nativeSizeDelta: nativeSizeDelta,
+		})
+	)
+	try {
+		const market = getMarketDetailsByKey(getState, marketKey)
 		dispatch(
 			stageCrossMarginTradePreview({
-				market: {
-					key: marketInfo.marketKey,
-					address: marketInfo.market,
-				},
-				orderPrice: price,
-				marginDelta: wei(marginDelta),
-				sizeDelta: sizeDeltaWei,
-				action: 'trade',
-			})
-		)
-	}
-
-export const editCrossMarginPositionSize =
-	(marketKey: FuturesMarketKey, nativeSizeDelta: string): AppThunk =>
-	(dispatch, getState) => {
-		const { marketPrice } = selectEditPositionModalInfo(getState())
-		dispatch(
-			setCrossMarginEditPositionInputs({
-				marginDelta: '',
-				nativeSizeDelta: nativeSizeDelta,
-			})
-		)
-		try {
-			const market = getMarketDetailsByKey(getState, marketKey)
-			dispatch(
-				stageCrossMarginTradePreview({
-					orderPrice: marketPrice,
-					market,
-					marginDelta: ZERO_WEI,
-					sizeDelta: wei(nativeSizeDelta || 0),
-					action: 'edit',
-				})
-			)
-		} catch (err) {
-			dispatch(handlePreviewError({ error: err.message, previewType: 'edit' }))
-		}
-	}
-
-export const editClosePositionSizeDelta =
-	(marketKey: FuturesMarketKey, nativeSizeDelta: string): AppThunk =>
-	(dispatch, getState) => {
-		dispatch(setClosePositionSizeDelta(nativeSizeDelta))
-
-		if (nativeSizeDelta === '' || !nativeSizeDelta) {
-			dispatch(setIsolatedTradePreview({ preview: null, type: 'close' }))
-			dispatch(setCrossMarginTradePreview({ preview: null, type: 'close' }))
-			return
-		}
-		const { price } = selectClosePositionOrderInputs(getState())
-		const { marketPrice } = selectEditPositionModalInfo(getState())
-		const accountType = selectFuturesType(getState())
-
-		try {
-			const market = getMarketDetailsByKey(getState, marketKey)
-			const smartMarginPrice = isNaN(Number(price)) || !price ? marketPrice : wei(price)
-			const odrderPrice = accountType === 'isolated_margin' ? marketPrice : smartMarginPrice
-			const previewParams: TradePreviewParams = {
+				orderPrice: marketPrice,
 				market,
-				sizeDelta: wei(nativeSizeDelta),
-				orderPrice: odrderPrice,
 				marginDelta: ZERO_WEI,
-				action: 'close',
-			}
-			if (accountType === 'isolated_margin') {
-				dispatch(stageIsolatedMarginTradePreview(previewParams))
-			} else {
-				dispatch(stageCrossMarginTradePreview(previewParams))
-			}
-		} catch (err) {
-			dispatch(handlePreviewError({ error: err.message, previewType: 'close' }))
-		}
-	}
-
-export const editClosePositionPrice =
-	(marketKey: FuturesMarketKey, price: string): AppThunk =>
-	(dispatch, getState) => {
-		const { nativeSizeDelta, orderType } = selectClosePositionOrderInputs(getState())
-		const marketPrice = selectMarketIndexPrice(getState())
-		const { position } = selectEditPositionModalInfo(getState())
-		const closeTradeSide =
-			position?.position?.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT
-		const invalidLabel = orderPriceInvalidLabel(
-			price || '0',
-			closeTradeSide,
-			marketPrice,
-			orderType
-		)
-
-		dispatch(setClosePositionPrice({ value: price, invalidLabel }))
-
-		try {
-			const marketInfo = getMarketDetailsByKey(getState, marketKey)
-			dispatch(
-				stageCrossMarginTradePreview({
-					market: marketInfo,
-					orderPrice: isNaN(Number(price)) || !price ? marketPrice : wei(price),
-					marginDelta: ZERO_WEI,
-					sizeDelta: wei(nativeSizeDelta || 0),
-					action: 'edit',
-				})
-			)
-		} catch (err) {
-			dispatch(handlePreviewError({ error: err.message, previewType: 'close' }))
-		}
-	}
-
-export const editCrossMarginPositionMargin =
-	(marketKey: FuturesMarketKey, marginDelta: string): AppThunk =>
-	(dispatch, getState) => {
-		const { marketPrice } = selectEditPositionModalInfo(getState())
-		dispatch(
-			setCrossMarginEditPositionInputs({
-				marginDelta: marginDelta,
-				nativeSizeDelta: '',
+				sizeDelta: wei(nativeSizeDelta || 0),
+				action: 'edit',
 			})
 		)
-		try {
-			const market = getMarketDetailsByKey(getState, marketKey)
-
-			dispatch(
-				stageCrossMarginTradePreview({
-					market,
-					orderPrice: marketPrice,
-					marginDelta: wei(marginDelta || 0),
-					sizeDelta: ZERO_WEI,
-					action: 'edit',
-				})
-			)
-		} catch (err) {
-			dispatch(handlePreviewError({ error: err.message, previewType: 'edit' }))
-		}
+	} catch (err) {
+		dispatch(handlePreviewError({ error: err.message, previewType: 'edit' }))
 	}
+}
+
+export const editClosePositionSizeDelta = (
+	marketKey: FuturesMarketKey,
+	nativeSizeDelta: string
+): AppThunk => (dispatch, getState) => {
+	dispatch(setClosePositionSizeDelta(nativeSizeDelta))
+
+	if (nativeSizeDelta === '' || !nativeSizeDelta) {
+		dispatch(setIsolatedTradePreview({ preview: null, type: 'close' }))
+		dispatch(setCrossMarginTradePreview({ preview: null, type: 'close' }))
+		return
+	}
+	const { price } = selectClosePositionOrderInputs(getState())
+	const { marketPrice } = selectEditPositionModalInfo(getState())
+	const accountType = selectFuturesType(getState())
+
+	try {
+		const market = getMarketDetailsByKey(getState, marketKey)
+		const smartMarginPrice = isNaN(Number(price)) || !price ? marketPrice : wei(price)
+		const odrderPrice = accountType === 'isolated_margin' ? marketPrice : smartMarginPrice
+		const previewParams: TradePreviewParams = {
+			market,
+			sizeDelta: wei(nativeSizeDelta),
+			orderPrice: odrderPrice,
+			marginDelta: ZERO_WEI,
+			action: 'close',
+		}
+		if (accountType === 'isolated_margin') {
+			dispatch(stageIsolatedMarginTradePreview(previewParams))
+		} else {
+			dispatch(stageCrossMarginTradePreview(previewParams))
+		}
+	} catch (err) {
+		dispatch(handlePreviewError({ error: err.message, previewType: 'close' }))
+	}
+}
+
+export const editClosePositionPrice = (marketKey: FuturesMarketKey, price: string): AppThunk => (
+	dispatch,
+	getState
+) => {
+	const { nativeSizeDelta, orderType } = selectClosePositionOrderInputs(getState())
+	const marketPrice = selectMarketIndexPrice(getState())
+	const { position } = selectEditPositionModalInfo(getState())
+	const closeTradeSide =
+		position?.position?.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT
+	const invalidLabel = orderPriceInvalidLabel(price || '0', closeTradeSide, marketPrice, orderType)
+
+	dispatch(setClosePositionPrice({ value: price, invalidLabel }))
+
+	try {
+		const marketInfo = getMarketDetailsByKey(getState, marketKey)
+		dispatch(
+			stageCrossMarginTradePreview({
+				market: marketInfo,
+				orderPrice: isNaN(Number(price)) || !price ? marketPrice : wei(price),
+				marginDelta: ZERO_WEI,
+				sizeDelta: wei(nativeSizeDelta || 0),
+				action: 'edit',
+			})
+		)
+	} catch (err) {
+		dispatch(handlePreviewError({ error: err.message, previewType: 'close' }))
+	}
+}
+
+export const editCrossMarginPositionMargin = (
+	marketKey: FuturesMarketKey,
+	marginDelta: string
+): AppThunk => (dispatch, getState) => {
+	const { marketPrice } = selectEditPositionModalInfo(getState())
+	dispatch(
+		setCrossMarginEditPositionInputs({
+			marginDelta: marginDelta,
+			nativeSizeDelta: '',
+		})
+	)
+	try {
+		const market = getMarketDetailsByKey(getState, marketKey)
+
+		dispatch(
+			stageCrossMarginTradePreview({
+				market,
+				orderPrice: marketPrice,
+				marginDelta: wei(marginDelta || 0),
+				sizeDelta: ZERO_WEI,
+				action: 'edit',
+			})
+		)
+	} catch (err) {
+		dispatch(handlePreviewError({ error: err.message, previewType: 'edit' }))
+	}
+}
 
 export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
 	const orderPrice = selectCrossMarginOrderPrice(getState())
@@ -880,82 +880,79 @@ const stageIsolatedMarginTradePreview = createAsyncThunk<void, TradePreviewParam
 	}
 )
 
-export const editIsolatedMarginSize =
-	(size: string, currencyType: 'usd' | 'native'): AppThunk =>
-	(dispatch, getState) => {
-		const marketPrice = selectMarketIndexPrice(getState())
-		const position = selectPosition(getState())
-		const marketKey = selectMarketKey(getState())
-		const tradeSide = selectLeverageSide(getState())
+export const editIsolatedMarginSize = (size: string, currencyType: 'usd' | 'native'): AppThunk => (
+	dispatch,
+	getState
+) => {
+	const marketPrice = selectMarketIndexPrice(getState())
+	const position = selectPosition(getState())
+	const marketKey = selectMarketKey(getState())
+	const tradeSide = selectLeverageSide(getState())
 
-		if (
-			size === '' ||
-			marketPrice.eq(0) ||
-			!position?.remainingMargin ||
-			position?.remainingMargin.eq(0)
-		) {
-			dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_TRADE_INPUTS))
-			dispatch(setIsolatedTradePreview({ preview: null, type: 'edit' }))
-			dispatch(setLeverageInput(''))
-			return
-		}
-
-		const market = getMarketDetailsByKey(getState, marketKey)
-
-		const nativeSize = currencyType === 'native' ? size : wei(size).div(marketPrice).toString()
-		const usdSize = currencyType === 'native' ? stripZeros(marketPrice.mul(size).toString()) : size
-		const leverage =
-			Number(usdSize) > 0 && position?.remainingMargin.gt(0)
-				? wei(usdSize).div(position?.remainingMargin).toString(2)
-				: ''
-		const nativeSizeDelta =
-			tradeSide === PositionSide.LONG ? wei(nativeSize) : wei(nativeSize).neg()
-
-		dispatch(setLeverageInput(leverage))
-		dispatch(
-			setIsolatedMarginTradeInputs({
-				susdSize: usdSize,
-				nativeSize: nativeSize,
-			})
-		)
-		dispatch(calculateIsolatedMarginFees())
-		dispatch(incrementIsolatedPreviewCount())
-		dispatch(
-			stageIsolatedMarginTradePreview({
-				market,
-				sizeDelta: nativeSizeDelta,
-				orderPrice: marketPrice,
-				marginDelta: ZERO_WEI,
-				action: 'trade',
-			})
-		)
+	if (
+		size === '' ||
+		marketPrice.eq(0) ||
+		!position?.remainingMargin ||
+		position?.remainingMargin.eq(0)
+	) {
+		dispatch(setIsolatedMarginTradeInputs(ZERO_STATE_TRADE_INPUTS))
+		dispatch(setIsolatedTradePreview({ preview: null, type: 'edit' }))
+		dispatch(setLeverageInput(''))
+		return
 	}
 
-export const editTradeSizeInput =
-	(size: string, currencyType: 'usd' | 'native'): AppThunk =>
-	(dispatch, getState) => {
-		const type = selectFuturesType(getState())
-		if (type === 'cross_margin') {
-			dispatch(editCrossMarginTradeSize(size, currencyType))
-		} else {
-			dispatch(editIsolatedMarginSize(size, currencyType))
-		}
-	}
+	const market = getMarketDetailsByKey(getState, marketKey)
 
-export const changeLeverageSide =
-	(side: PositionSide): AppThunk =>
-	(dispatch, getState) => {
-		const { nativeSizeString } = selectTradeSizeInputs(getState())
-		dispatch(setLeverageSide(side))
-		dispatch(editTradeSizeInput(nativeSizeString, 'native'))
-	}
+	const nativeSize = currencyType === 'native' ? size : wei(size).div(marketPrice).toString()
+	const usdSize = currencyType === 'native' ? stripZeros(marketPrice.mul(size).toString()) : size
+	const leverage =
+		Number(usdSize) > 0 && position?.remainingMargin.gt(0)
+			? wei(usdSize).div(position?.remainingMargin).toString(2)
+			: ''
+	const nativeSizeDelta = tradeSide === PositionSide.LONG ? wei(nativeSize) : wei(nativeSize).neg()
 
-export const setCrossMarginLeverage =
-	(leverage: string): AppThunk =>
-	(dispatch, getState) => {
-		const marketKey = selectMarketKey(getState())
-		dispatch(setCrossMarginLeverageForAsset({ marketKey: marketKey, leverage: leverage }))
+	dispatch(setLeverageInput(leverage))
+	dispatch(
+		setIsolatedMarginTradeInputs({
+			susdSize: usdSize,
+			nativeSize: nativeSize,
+		})
+	)
+	dispatch(calculateIsolatedMarginFees())
+	dispatch(incrementIsolatedPreviewCount())
+	dispatch(
+		stageIsolatedMarginTradePreview({
+			market,
+			sizeDelta: nativeSizeDelta,
+			orderPrice: marketPrice,
+			marginDelta: ZERO_WEI,
+			action: 'trade',
+		})
+	)
+}
+
+export const editTradeSizeInput = (size: string, currencyType: 'usd' | 'native'): AppThunk => (
+	dispatch,
+	getState
+) => {
+	const type = selectFuturesType(getState())
+	if (type === 'cross_margin') {
+		dispatch(editCrossMarginTradeSize(size, currencyType))
+	} else {
+		dispatch(editIsolatedMarginSize(size, currencyType))
 	}
+}
+
+export const changeLeverageSide = (side: PositionSide): AppThunk => (dispatch, getState) => {
+	const { nativeSizeString } = selectTradeSizeInputs(getState())
+	dispatch(setLeverageSide(side))
+	dispatch(editTradeSizeInput(nativeSizeString, 'native'))
+}
+
+export const setCrossMarginLeverage = (leverage: string): AppThunk => (dispatch, getState) => {
+	const marketKey = selectMarketKey(getState())
+	dispatch(setCrossMarginLeverageForAsset({ marketKey: marketKey, leverage: leverage }))
+}
 
 export const debouncedPrepareCrossMarginTradePreview = debounce(
 	(dispatch, inputs: DebouncedPreviewParams) => {
@@ -971,21 +968,19 @@ export const debouncedPrepareIsolatedMarginTradePreview = debounce(
 	500
 )
 
-export const editTradeOrderPrice =
-	(price: string): AppThunk =>
-	(dispatch, getState) => {
-		const rate = selectSkewAdjustedPrice(getState())
-		const orderType = selectOrderType(getState())
-		const side = selectLeverageSide(getState())
-		const inputs = selectCrossMarginTradeInputs(getState())
-		dispatch(setCrossMarginOrderPrice(price))
-		const invalidLabel = orderPriceInvalidLabel(price, side, rate, orderType)
-		dispatch(setCrossMarginOrderPriceInvalidLabel(invalidLabel))
-		if (!invalidLabel && price && inputs.susdSize) {
-			// Recalc the trade
-			dispatch(editCrossMarginTradeSize(inputs.susdSizeString, 'usd'))
-		}
+export const editTradeOrderPrice = (price: string): AppThunk => (dispatch, getState) => {
+	const rate = selectSkewAdjustedPrice(getState())
+	const orderType = selectOrderType(getState())
+	const side = selectLeverageSide(getState())
+	const inputs = selectCrossMarginTradeInputs(getState())
+	dispatch(setCrossMarginOrderPrice(price))
+	const invalidLabel = orderPriceInvalidLabel(price, side, rate, orderType)
+	dispatch(setCrossMarginOrderPriceInvalidLabel(invalidLabel))
+	if (!invalidLabel && price && inputs.susdSize) {
+		// Recalc the trade
+		dispatch(editCrossMarginTradeSize(inputs.susdSizeString, 'usd'))
 	}
+}
 
 export const fetchFuturesPositionHistory = createAsyncThunk<
 	| {
@@ -1087,28 +1082,29 @@ export const fetchAllTradesForAccount = createAsyncThunk<
 	}
 })
 
-export const calculateCrossMarginFees =
-	(params: TradePreviewParams): AppThunk =>
-	(dispatch, getState) => {
-		const markets = selectMarkets(getState())
-		const market = markets.find((m) => m.marketKey === params.market.key)
-		if (!market) throw new Error('Missing market info to compute fee')
-		const keeperBalance = selectKeeperEthBalance(getState())
-		const { delayedOrderFee } = computeDelayedOrderFee(
-			market,
-			params.sizeDelta.mul(params.orderPrice?.abs())
-		)
+export const calculateCrossMarginFees = (params: TradePreviewParams): AppThunk => (
+	dispatch,
+	getState
+) => {
+	const markets = selectMarkets(getState())
+	const market = markets.find((m) => m.marketKey === params.market.key)
+	if (!market) throw new Error('Missing market info to compute fee')
+	const keeperBalance = selectKeeperEthBalance(getState())
+	const { delayedOrderFee } = computeDelayedOrderFee(
+		market,
+		params.sizeDelta.mul(params.orderPrice?.abs())
+	)
 
-		const requiredDeposit = keeperBalance.lt(ORDER_KEEPER_ETH_DEPOSIT)
-			? ORDER_KEEPER_ETH_DEPOSIT.sub(keeperBalance)
-			: wei(0)
+	const requiredDeposit = keeperBalance.lt(ORDER_KEEPER_ETH_DEPOSIT)
+		? ORDER_KEEPER_ETH_DEPOSIT.sub(keeperBalance)
+		: wei(0)
 
-		const fees = {
-			delayedOrderFee: delayedOrderFee.toString(),
-			keeperEthDeposit: requiredDeposit.toString(),
-		}
-		dispatch(setCrossMarginFees(fees))
+	const fees = {
+		delayedOrderFee: delayedOrderFee.toString(),
+		keeperEthDeposit: requiredDeposit.toString(),
 	}
+	dispatch(setCrossMarginFees(fees))
+}
 
 export const calculateKeeperDeposit = (): AppThunk => (dispatch, getState) => {
 	const keeperBalance = selectKeeperEthBalance(getState())

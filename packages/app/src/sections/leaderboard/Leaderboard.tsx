@@ -49,15 +49,13 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const searchEns = useENS(searchTerm)
 
 	const leaderboardQuery = useLeaderboard(searchAddress)
-	const leaderboardData = useMemo(
-		() => leaderboardQuery.data ?? DEFAULT_LEADERBOARD_DATA,
-		[leaderboardQuery]
-	)
+	const leaderboardData = useMemo(() => leaderboardQuery.data ?? DEFAULT_LEADERBOARD_DATA, [
+		leaderboardQuery,
+	])
 
-	const traders = useMemo(
-		() => leaderboardData.all?.map((stat) => stat.account) ?? [],
-		[leaderboardData]
-	)
+	const traders = useMemo(() => leaderboardData.all?.map((stat) => stat.account) ?? [], [
+		leaderboardData,
+	])
 
 	const ensInfoQuery = useENSs(traders)
 	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery])

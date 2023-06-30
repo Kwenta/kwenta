@@ -104,7 +104,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									<TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>
 								),
 								accessor: 'market',
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<MarketContainer>
 											<IconContainer>
@@ -135,7 +135,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</TableHeader>
 								),
 								accessor: 'price',
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									const formatOptions = {
 										suggestDecimals: true,
 									}
@@ -163,7 +163,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</TableHeader>
 								),
 								accessor: 'priceChange',
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<ChangePercent
 											value={cellProps.row.original.priceChange}
@@ -190,7 +190,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</TableHeader>
 								),
 								accessor: 'fundingRate',
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<ChangePercent
 											value={cellProps.row.original.fundingRate}
@@ -218,7 +218,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</TableHeader>
 								),
 								accessor: 'openInterest',
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<OpenInterestContainer>
 											<Currency.Price
@@ -254,7 +254,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</TableHeader>
 								),
 								accessor: 'dailyVolume',
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								Cell: (cellProps: CellProps<typeof data[number]>) => {
 									return (
 										<Currency.Price
 											price={cellProps.row.original.volume}
@@ -295,7 +295,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								</div>
 							),
 							accessor: 'market',
-							Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
 										<MarketContainer>
@@ -330,7 +330,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								</div>
 							),
 							accessor: 'openInterest',
-							Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
 										<Currency.Price
@@ -362,7 +362,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								</div>
 							),
 							accessor: 'dailyVolume',
-							Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+							Cell: (cellProps: CellProps<typeof data[number]>) => {
 								return (
 									<div>
 										<div>

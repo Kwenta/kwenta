@@ -55,10 +55,10 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 			return !marginDelta || isNaN(Number(marginDelta)) ? ZERO_WEI : wei(marginDelta)
 		}, [marginDelta])
 
-		const invalid = useMemo(
-			() => wei(marginDeltaWei || 0).gt(maxUsdInput),
-			[marginDeltaWei, maxUsdInput]
-		)
+		const invalid = useMemo(() => wei(marginDeltaWei || 0).gt(maxUsdInput), [
+			marginDeltaWei,
+			maxUsdInput,
+		])
 
 		return (
 			<div>
