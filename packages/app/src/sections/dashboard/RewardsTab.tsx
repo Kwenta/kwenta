@@ -96,11 +96,10 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 		[estimatedOpQuery?.data?.claims, walletAddress]
 	)
 
-	const claimDisabledAll = useMemo(() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0), [
-		opRewards,
-		snxOpRewards,
-		kwentaRewards,
-	])
+	const claimDisabledAll = useMemo(
+		() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0),
+		[opRewards, snxOpRewards, kwentaRewards]
+	)
 
 	const ratio = useMemo(() => {
 		return futuresFeePaid.gt(0) && totalFuturesFeePaid.gt(0)

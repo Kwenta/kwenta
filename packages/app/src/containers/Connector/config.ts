@@ -7,6 +7,7 @@ import {
 	metaMaskWallet,
 	rainbowWallet,
 	trustWallet,
+	safeWallet,
 	walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { configureChains, createClient } from 'wagmi'
@@ -26,7 +27,6 @@ import { publicProvider } from 'wagmi/providers/public'
 
 import BinanceIcon from 'assets/png/rainbowkit/binance.png'
 import Frame from 'components/Rainbowkit/Frame'
-import Safe from 'components/Rainbowkit/Gnosis'
 import Tally from 'components/Rainbowkit/Tally'
 import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from 'constants/network'
 
@@ -72,7 +72,7 @@ const connectors = connectorsForWallets([
 	{
 		groupName: 'Popular',
 		wallets: [
-			Safe({ chains }),
+			safeWallet({ chains }),
 			metaMaskWallet({ projectId, chains }),
 			rainbowWallet({ projectId, chains }),
 			coinbaseWallet({ appName: 'Kwenta', chains }),

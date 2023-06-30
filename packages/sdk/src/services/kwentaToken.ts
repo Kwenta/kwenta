@@ -193,12 +193,8 @@ export default class KwentaTokenService {
 	}
 
 	public async getStakingV2Data() {
-		const {
-			RewardEscrowV2,
-			KwentaStakingRewardsV2,
-			KwentaToken,
-			SupplySchedule,
-		} = this.sdk.context.multicallContracts
+		const { RewardEscrowV2, KwentaStakingRewardsV2, KwentaToken, SupplySchedule } =
+			this.sdk.context.multicallContracts
 
 		if (!RewardEscrowV2 || !KwentaStakingRewardsV2 || !KwentaToken || !SupplySchedule) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
@@ -506,10 +502,8 @@ export default class KwentaTokenService {
 	}
 
 	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
-		const {
-			MultipleMerkleDistributor,
-			MultipleMerkleDistributorPerpsV2,
-		} = this.sdk.context.multicallContracts
+		const { MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
+			this.sdk.context.multicallContracts
 		const { walletAddress } = this.sdk.context
 
 		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
@@ -679,11 +673,8 @@ export default class KwentaTokenService {
 	}
 
 	public async claimMultipleKwentaRewards(claimableRewards: ClaimParams[][]) {
-		const {
-			BatchClaimer,
-			MultipleMerkleDistributor,
-			MultipleMerkleDistributorPerpsV2,
-		} = this.sdk.context.contracts
+		const { BatchClaimer, MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
+			this.sdk.context.contracts
 
 		if (!BatchClaimer || !MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
@@ -726,10 +717,8 @@ export default class KwentaTokenService {
 	}
 
 	public async claimOpRewards(claimableRewards: ClaimParams[], isSnx: boolean = false) {
-		const {
-			MultipleMerkleDistributorOp,
-			MultipleMerkleDistributorSnxOp,
-		} = this.sdk.context.contracts
+		const { MultipleMerkleDistributorOp, MultipleMerkleDistributorSnxOp } =
+			this.sdk.context.contracts
 
 		if (!MultipleMerkleDistributorOp || !MultipleMerkleDistributorSnxOp) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
@@ -799,12 +788,8 @@ export default class KwentaTokenService {
 		amount: string | BigNumber,
 		options: { escrow: boolean; version?: number } = { escrow: false, version: 1 }
 	) {
-		const {
-			RewardEscrow,
-			RewardEscrowV2,
-			KwentaStakingRewards,
-			KwentaStakingRewardsV2,
-		} = this.sdk.context.contracts
+		const { RewardEscrow, RewardEscrowV2, KwentaStakingRewards, KwentaStakingRewardsV2 } =
+			this.sdk.context.contracts
 
 		if (!RewardEscrow || !RewardEscrowV2 || !KwentaStakingRewards || !KwentaStakingRewardsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)

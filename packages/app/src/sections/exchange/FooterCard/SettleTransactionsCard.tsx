@@ -18,19 +18,14 @@ import logError from 'utils/logError'
 const SettleTransactionsCard: FC = memo(() => {
 	const { t } = useTranslation()
 
-	const {
-		baseCurrencyKey,
-		openModal,
-		numEntries,
-		settlementWaitingPeriod,
-		txError,
-	} = useAppSelector(({ exchange }) => ({
-		baseCurrencyKey: exchange.baseCurrencyKey,
-		openModal: exchange.openModal,
-		numEntries: exchange.numEntries,
-		settlementWaitingPeriod: exchange.settlementWaitingPeriod,
-		txError: exchange.txError,
-	}))
+	const { baseCurrencyKey, openModal, numEntries, settlementWaitingPeriod, txError } =
+		useAppSelector(({ exchange }) => ({
+			baseCurrencyKey: exchange.baseCurrencyKey,
+			openModal: exchange.openModal,
+			numEntries: exchange.numEntries,
+			settlementWaitingPeriod: exchange.settlementWaitingPeriod,
+			txError: exchange.txError,
+		}))
 	const dispatch = useAppDispatch()
 
 	const settlementDisabledReason =
