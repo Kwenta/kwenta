@@ -53,10 +53,8 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 	const theme = useTheme()
 	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe)
 	const accountType = useAppSelector(selectFuturesType)
-	const {
-		isolated_margin: isolatedPortfolioData,
-		cross_margin: smartPortfolioData,
-	} = useAppSelector(selectPortfolioChartData)
+	const { isolated_margin: isolatedPortfolioData, cross_margin: smartPortfolioData } =
+		useAppSelector(selectPortfolioChartData)
 
 	const portfolioData = useMemo(
 		() => (accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData),
@@ -134,14 +132,11 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 
 const PortfolioChart: FC = () => {
 	const { t } = useTranslation()
-	const { isolatedMarginFutures: isolatedTotal, crossMarginFutures: smartTotal } = useAppSelector(
-		selectFuturesPortfolio
-	)
+	const { isolatedMarginFutures: isolatedTotal, crossMarginFutures: smartTotal } =
+		useAppSelector(selectFuturesPortfolio)
 	const accountType = useAppSelector(selectFuturesType)
-	const {
-		isolated_margin: isolatedPortfolioData,
-		cross_margin: smartPortfolioData,
-	} = useAppSelector(selectPortfolioChartData)
+	const { isolated_margin: isolatedPortfolioData, cross_margin: smartPortfolioData } =
+		useAppSelector(selectPortfolioChartData)
 
 	const buyingPower = useAppSelector(selectBuyingPower)
 	const upnl = useAppSelector(selectTotalUnrealizedPnl)
@@ -149,11 +144,10 @@ const PortfolioChart: FC = () => {
 	const [hoverValue, setHoverValue] = useState<number | null>(null)
 	const [hoverTitle, setHoverTitle] = useState<string | null>(null)
 
-	const total = useMemo(() => (accountType === 'isolated_margin' ? isolatedTotal : smartTotal), [
-		accountType,
-		isolatedTotal,
-		smartTotal,
-	])
+	const total = useMemo(
+		() => (accountType === 'isolated_margin' ? isolatedTotal : smartTotal),
+		[accountType, isolatedTotal, smartTotal]
+	)
 
 	const portfolioData = useMemo(() => {
 		return accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData

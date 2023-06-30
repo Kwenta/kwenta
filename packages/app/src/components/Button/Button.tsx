@@ -201,11 +201,11 @@ const BaseButton = styled.button<BaseButtonProps>`
 			width: 100%;
 		`};
 
-		${(props) =>
-			props.$fontSize &&
-			css`
-				font-size: ${props.$fontSize}px;
-			`}
+	${(props) =>
+		props.$fontSize &&
+		css`
+			font-size: ${props.$fontSize}px;
+		`}
 
 	&:disabled {
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};

@@ -273,9 +273,8 @@ export type TradingRewardsDiversionUpdatedEvent = TypedEvent<
 	TradingRewardsDiversionUpdatedEventObject
 >
 
-export type TradingRewardsDiversionUpdatedEventFilter = TypedEventFilter<
-	TradingRewardsDiversionUpdatedEvent
->
+export type TradingRewardsDiversionUpdatedEventFilter =
+	TypedEventFilter<TradingRewardsDiversionUpdatedEvent>
 
 export interface TradingRewardsUpdatedEventObject {
 	newAddress: string

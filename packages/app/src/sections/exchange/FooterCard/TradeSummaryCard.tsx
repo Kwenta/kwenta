@@ -84,9 +84,10 @@ const SubmissionButton = ({ onSubmit }: any) => {
 	const isApproved = useAppSelector(selectIsApproved)
 	const submissionDisabledReason = useAppSelector(selectSubmissionDisabledReason)
 
-	const isSubmissionDisabled = useMemo(() => submissionDisabledReason != null, [
-		submissionDisabledReason,
-	])
+	const isSubmissionDisabled = useMemo(
+		() => submissionDisabledReason != null,
+		[submissionDisabledReason]
+	)
 
 	return (
 		<Button

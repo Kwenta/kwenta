@@ -29,13 +29,13 @@ export const Default = () => {
 				{
 					Header: () => <div>Number</div>,
 					// @ts-expect-error
-					Cell: (cell: CellProps<typeof data[number]>) => <div>{cell.row.original.id}</div>,
+					Cell: (cell: CellProps<(typeof data)[number]>) => <div>{cell.row.original.id}</div>,
 					accessor: 'id',
 				},
 				{
 					Header: () => <div>Name</div>,
 					// @ts-expect-error
-					Cell: (cell: CellProps<typeof data[number]>) => <div>{cell.row.original.name}</div>,
+					Cell: (cell: CellProps<(typeof data)[number]>) => <div>{cell.row.original.name}</div>,
 					accessor: 'name',
 				},
 			]}
