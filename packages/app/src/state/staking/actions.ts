@@ -168,25 +168,17 @@ export const fetchClaimableRewards = createAsyncThunk<
 		staking: { epochPeriod },
 	} = getState()
 
-	const {
-		claimableRewards: claimableKwentaRewardsV1,
-		totalRewards: kwentaRewardsV1,
-	} = await sdk.kwentaToken.getClaimableAllRewards(epochPeriod)
+	const { claimableRewards: claimableKwentaRewardsV1, totalRewards: kwentaRewardsV1 } =
+		await sdk.kwentaToken.getClaimableAllRewards(epochPeriod)
 
-	const {
-		claimableRewards: claimableKwentaRewardsV2,
-		totalRewards: kwentaRewardsV2,
-	} = await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false)
+	const { claimableRewards: claimableKwentaRewardsV2, totalRewards: kwentaRewardsV2 } =
+		await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false)
 
-	const {
-		claimableRewards: claimableOpRewards,
-		totalRewards: opRewards,
-	} = await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false)
+	const { claimableRewards: claimableOpRewards, totalRewards: opRewards } =
+		await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false)
 
-	const {
-		claimableRewards: claimableSnxOpRewards,
-		totalRewards: snxOpRewards,
-	} = await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true)
+	const { claimableRewards: claimableSnxOpRewards, totalRewards: snxOpRewards } =
+		await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true)
 
 	return {
 		claimableKwentaRewards: [claimableKwentaRewardsV1, claimableKwentaRewardsV2],

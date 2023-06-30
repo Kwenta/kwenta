@@ -101,9 +101,8 @@ export type AccountImplementationUpgradedEvent = TypedEvent<
 	AccountImplementationUpgradedEventObject
 >
 
-export type AccountImplementationUpgradedEventFilter = TypedEventFilter<
-	AccountImplementationUpgradedEvent
->
+export type AccountImplementationUpgradedEventFilter =
+	TypedEventFilter<AccountImplementationUpgradedEvent>
 
 export interface NewAccountEventObject {
 	creator: string

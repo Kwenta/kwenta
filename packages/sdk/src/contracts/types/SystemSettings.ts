@@ -662,9 +662,8 @@ export type AggregatorWarningFlagsUpdatedEvent = TypedEvent<
 	AggregatorWarningFlagsUpdatedEventObject
 >
 
-export type AggregatorWarningFlagsUpdatedEventFilter = TypedEventFilter<
-	AggregatorWarningFlagsUpdatedEvent
->
+export type AggregatorWarningFlagsUpdatedEventFilter =
+	TypedEventFilter<AggregatorWarningFlagsUpdatedEvent>
 
 export interface AtomicEquivalentForDexPricingUpdatedEventObject {
 	synthKey: string
@@ -675,9 +674,8 @@ export type AtomicEquivalentForDexPricingUpdatedEvent = TypedEvent<
 	AtomicEquivalentForDexPricingUpdatedEventObject
 >
 
-export type AtomicEquivalentForDexPricingUpdatedEventFilter = TypedEventFilter<
-	AtomicEquivalentForDexPricingUpdatedEvent
->
+export type AtomicEquivalentForDexPricingUpdatedEventFilter =
+	TypedEventFilter<AtomicEquivalentForDexPricingUpdatedEvent>
 
 export interface AtomicExchangeFeeUpdatedEventObject {
 	synthKey: string
@@ -698,9 +696,8 @@ export type AtomicMaxVolumePerBlockUpdatedEvent = TypedEvent<
 	AtomicMaxVolumePerBlockUpdatedEventObject
 >
 
-export type AtomicMaxVolumePerBlockUpdatedEventFilter = TypedEventFilter<
-	AtomicMaxVolumePerBlockUpdatedEvent
->
+export type AtomicMaxVolumePerBlockUpdatedEventFilter =
+	TypedEventFilter<AtomicMaxVolumePerBlockUpdatedEvent>
 
 export interface AtomicTwapWindowUpdatedEventObject {
 	newWindow: BigNumber
@@ -721,9 +718,8 @@ export type AtomicVolatilityConsiderationWindowUpdatedEvent = TypedEvent<
 	AtomicVolatilityConsiderationWindowUpdatedEventObject
 >
 
-export type AtomicVolatilityConsiderationWindowUpdatedEventFilter = TypedEventFilter<
-	AtomicVolatilityConsiderationWindowUpdatedEvent
->
+export type AtomicVolatilityConsiderationWindowUpdatedEventFilter =
+	TypedEventFilter<AtomicVolatilityConsiderationWindowUpdatedEvent>
 
 export interface AtomicVolatilityUpdateThresholdUpdatedEventObject {
 	synthKey: string
@@ -734,9 +730,8 @@ export type AtomicVolatilityUpdateThresholdUpdatedEvent = TypedEvent<
 	AtomicVolatilityUpdateThresholdUpdatedEventObject
 >
 
-export type AtomicVolatilityUpdateThresholdUpdatedEventFilter = TypedEventFilter<
-	AtomicVolatilityUpdateThresholdUpdatedEvent
->
+export type AtomicVolatilityUpdateThresholdUpdatedEventFilter =
+	TypedEventFilter<AtomicVolatilityUpdateThresholdUpdatedEvent>
 
 export interface CacheUpdatedEventObject {
 	name: string
@@ -762,9 +757,8 @@ export type CrossChainSynthTransferEnabledUpdatedEvent = TypedEvent<
 	CrossChainSynthTransferEnabledUpdatedEventObject
 >
 
-export type CrossChainSynthTransferEnabledUpdatedEventFilter = TypedEventFilter<
-	CrossChainSynthTransferEnabledUpdatedEvent
->
+export type CrossChainSynthTransferEnabledUpdatedEventFilter =
+	TypedEventFilter<CrossChainSynthTransferEnabledUpdatedEvent>
 
 export interface CrossDomainMessageGasLimitChangedEventObject {
 	gasLimitType: number
@@ -775,9 +769,8 @@ export type CrossDomainMessageGasLimitChangedEvent = TypedEvent<
 	CrossDomainMessageGasLimitChangedEventObject
 >
 
-export type CrossDomainMessageGasLimitChangedEventFilter = TypedEventFilter<
-	CrossDomainMessageGasLimitChangedEvent
->
+export type CrossDomainMessageGasLimitChangedEventFilter =
+	TypedEventFilter<CrossDomainMessageGasLimitChangedEvent>
 
 export interface DebtSnapshotStaleTimeUpdatedEventObject {
 	debtSnapshotStaleTime: BigNumber
@@ -787,9 +780,8 @@ export type DebtSnapshotStaleTimeUpdatedEvent = TypedEvent<
 	DebtSnapshotStaleTimeUpdatedEventObject
 >
 
-export type DebtSnapshotStaleTimeUpdatedEventFilter = TypedEventFilter<
-	DebtSnapshotStaleTimeUpdatedEvent
->
+export type DebtSnapshotStaleTimeUpdatedEventFilter =
+	TypedEventFilter<DebtSnapshotStaleTimeUpdatedEvent>
 
 export interface EtherWrapperBurnFeeRateUpdatedEventObject {
 	rate: BigNumber
@@ -799,9 +791,8 @@ export type EtherWrapperBurnFeeRateUpdatedEvent = TypedEvent<
 	EtherWrapperBurnFeeRateUpdatedEventObject
 >
 
-export type EtherWrapperBurnFeeRateUpdatedEventFilter = TypedEventFilter<
-	EtherWrapperBurnFeeRateUpdatedEvent
->
+export type EtherWrapperBurnFeeRateUpdatedEventFilter =
+	TypedEventFilter<EtherWrapperBurnFeeRateUpdatedEvent>
 
 export interface EtherWrapperMaxETHUpdatedEventObject {
 	maxETH: BigNumber
@@ -821,9 +812,8 @@ export type EtherWrapperMintFeeRateUpdatedEvent = TypedEvent<
 	EtherWrapperMintFeeRateUpdatedEventObject
 >
 
-export type EtherWrapperMintFeeRateUpdatedEventFilter = TypedEventFilter<
-	EtherWrapperMintFeeRateUpdatedEvent
->
+export type EtherWrapperMintFeeRateUpdatedEventFilter =
+	TypedEventFilter<EtherWrapperMintFeeRateUpdatedEvent>
 
 export interface ExchangeDynamicFeeRoundsUpdatedEventObject {
 	dynamicFeeRounds: BigNumber
@@ -833,9 +823,8 @@ export type ExchangeDynamicFeeRoundsUpdatedEvent = TypedEvent<
 	ExchangeDynamicFeeRoundsUpdatedEventObject
 >
 
-export type ExchangeDynamicFeeRoundsUpdatedEventFilter = TypedEventFilter<
-	ExchangeDynamicFeeRoundsUpdatedEvent
->
+export type ExchangeDynamicFeeRoundsUpdatedEventFilter =
+	TypedEventFilter<ExchangeDynamicFeeRoundsUpdatedEvent>
 
 export interface ExchangeDynamicFeeThresholdUpdatedEventObject {
 	dynamicFeeThreshold: BigNumber
@@ -845,9 +834,8 @@ export type ExchangeDynamicFeeThresholdUpdatedEvent = TypedEvent<
 	ExchangeDynamicFeeThresholdUpdatedEventObject
 >
 
-export type ExchangeDynamicFeeThresholdUpdatedEventFilter = TypedEventFilter<
-	ExchangeDynamicFeeThresholdUpdatedEvent
->
+export type ExchangeDynamicFeeThresholdUpdatedEventFilter =
+	TypedEventFilter<ExchangeDynamicFeeThresholdUpdatedEvent>
 
 export interface ExchangeDynamicFeeWeightDecayUpdatedEventObject {
 	dynamicFeeWeightDecay: BigNumber
@@ -857,9 +845,8 @@ export type ExchangeDynamicFeeWeightDecayUpdatedEvent = TypedEvent<
 	ExchangeDynamicFeeWeightDecayUpdatedEventObject
 >
 
-export type ExchangeDynamicFeeWeightDecayUpdatedEventFilter = TypedEventFilter<
-	ExchangeDynamicFeeWeightDecayUpdatedEvent
->
+export type ExchangeDynamicFeeWeightDecayUpdatedEventFilter =
+	TypedEventFilter<ExchangeDynamicFeeWeightDecayUpdatedEvent>
 
 export interface ExchangeFeeUpdatedEventObject {
 	synthKey: string
@@ -877,9 +864,8 @@ export type ExchangeMaxDynamicFeeUpdatedEvent = TypedEvent<
 	ExchangeMaxDynamicFeeUpdatedEventObject
 >
 
-export type ExchangeMaxDynamicFeeUpdatedEventFilter = TypedEventFilter<
-	ExchangeMaxDynamicFeeUpdatedEvent
->
+export type ExchangeMaxDynamicFeeUpdatedEventFilter =
+	TypedEventFilter<ExchangeMaxDynamicFeeUpdatedEvent>
 
 export interface FeePeriodDurationUpdatedEventObject {
 	newFeePeriodDuration: BigNumber
@@ -940,9 +926,8 @@ export type LiquidationEscrowDurationUpdatedEvent = TypedEvent<
 	LiquidationEscrowDurationUpdatedEventObject
 >
 
-export type LiquidationEscrowDurationUpdatedEventFilter = TypedEventFilter<
-	LiquidationEscrowDurationUpdatedEvent
->
+export type LiquidationEscrowDurationUpdatedEventFilter =
+	TypedEventFilter<LiquidationEscrowDurationUpdatedEvent>
 
 export interface LiquidationPenaltyUpdatedEventObject {
 	newPenalty: BigNumber
@@ -997,9 +982,8 @@ export type PriceDeviationThresholdUpdatedEvent = TypedEvent<
 	PriceDeviationThresholdUpdatedEventObject
 >
 
-export type PriceDeviationThresholdUpdatedEventFilter = TypedEventFilter<
-	PriceDeviationThresholdUpdatedEvent
->
+export type PriceDeviationThresholdUpdatedEventFilter =
+	TypedEventFilter<PriceDeviationThresholdUpdatedEvent>
 
 export interface PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventObject {
 	synthKey: string
@@ -1010,9 +994,8 @@ export type PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent = TypedEvent<
 	PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventObject
 >
 
-export type PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter = TypedEventFilter<
-	PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent
->
+export type PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter =
+	TypedEventFilter<PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent>
 
 export interface RateStalePeriodUpdatedEventObject {
 	rateStalePeriod: BigNumber
@@ -1029,9 +1012,8 @@ export type SelfLiquidationPenaltyUpdatedEvent = TypedEvent<
 	SelfLiquidationPenaltyUpdatedEventObject
 >
 
-export type SelfLiquidationPenaltyUpdatedEventFilter = TypedEventFilter<
-	SelfLiquidationPenaltyUpdatedEvent
->
+export type SelfLiquidationPenaltyUpdatedEventFilter =
+	TypedEventFilter<SelfLiquidationPenaltyUpdatedEvent>
 
 export interface SnxLiquidationPenaltyUpdatedEventObject {
 	newPenalty: BigNumber
@@ -1041,9 +1023,8 @@ export type SnxLiquidationPenaltyUpdatedEvent = TypedEvent<
 	SnxLiquidationPenaltyUpdatedEventObject
 >
 
-export type SnxLiquidationPenaltyUpdatedEventFilter = TypedEventFilter<
-	SnxLiquidationPenaltyUpdatedEvent
->
+export type SnxLiquidationPenaltyUpdatedEventFilter =
+	TypedEventFilter<SnxLiquidationPenaltyUpdatedEvent>
 
 export interface TargetThresholdUpdatedEventObject {
 	newTargetThreshold: BigNumber
@@ -1089,9 +1070,8 @@ export type WrapperMaxTokenAmountUpdatedEvent = TypedEvent<
 	WrapperMaxTokenAmountUpdatedEventObject
 >
 
-export type WrapperMaxTokenAmountUpdatedEventFilter = TypedEventFilter<
-	WrapperMaxTokenAmountUpdatedEvent
->
+export type WrapperMaxTokenAmountUpdatedEventFilter =
+	TypedEventFilter<WrapperMaxTokenAmountUpdatedEvent>
 
 export interface WrapperMintFeeRateUpdatedEventObject {
 	wrapper: string

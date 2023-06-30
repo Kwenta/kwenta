@@ -1,8 +1,11 @@
 import { NetworkId, ConditionalOrder, PricesListener } from '@kwenta/sdk/types'
 import { formatOrderDisplayType, formatNumber } from '@kwenta/sdk/utils'
 import {
+	ChartingLibraryWidgetOptions,
 	IChartingLibraryWidget,
 	IPositionLineAdapter,
+	ResolutionString,
+	TimeFrameItem,
 	widget,
 } from 'charting_library/charting_library'
 import { useRouter } from 'next/router'
@@ -20,6 +23,7 @@ import darkTheme from 'styles/theme/colors/dark'
 import { DEFAULT_RESOLUTION } from './constants'
 import DataFeedFactory from './DataFeed'
 import { ChartPosition } from './types'
+import { loadChartState, saveChartState } from './utils'
 
 export type ChartProps = {
 	activePosition?: ChartPosition | null
@@ -159,10 +163,12 @@ export function TVChart({
 	}, [showOrderLines])
 
 	useEffect(() => {
-		const widgetOptions = {
+		const chartData = loadChartState()
+
+		const widgetOptions: ChartingLibraryWidgetOptions = {
 			symbol: marketAsset + ':sUSD',
 			datafeed: DataFeedFactory((network?.id ?? chain.optimism.id) as NetworkId, onSubscribe),
-			interval: interval,
+			interval: interval as ResolutionString,
 			container: containerId,
 			library_path: libraryPath,
 			locale: 'en',
@@ -177,7 +183,7 @@ export function TVChart({
 			fullscreen: fullscreen,
 			autosize: autosize,
 			studies_overrides: studiesOverrides,
-			theme: 'dark',
+			theme: 'Dark',
 			custom_css_url: './theme.css',
 			loading_screen: {
 				backgroundColor: colors.selectedTheme.newTheme.containers.primary.background,
@@ -191,7 +197,8 @@ export function TVChart({
 				{ text: '5D', resolution: '15', description: '5 Days' },
 				{ text: '30D', resolution: '1H', description: '30 Days' },
 				{ text: '3M', resolution: '1H', description: '3 Months' },
-			],
+			] as TimeFrameItem[],
+			saved_data: chartData,
 		}
 
 		const clearExistingWidget = () => {
@@ -299,6 +306,18 @@ export function TVChart({
 			)
 		})
 	}, [marketAsset])
+
+	useEffect(() => {
+		const handleAutoSave = () => {
+			_widget.current?.save(saveChartState)
+		}
+
+		_widget.current?.subscribe('onAutoSaveNeeded', handleAutoSave)
+
+		return () => {
+			_widget.current?.unsubscribe('onAutoSaveNeeded', handleAutoSave)
+		}
+	}, [])
 
 	const onSubscribe = useCallback((priceListener: PricesListener) => {
 		_priceListener.current = priceListener

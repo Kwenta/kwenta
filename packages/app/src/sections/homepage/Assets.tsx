@@ -114,7 +114,7 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 		// eslint-disable-next-line
 	}, [])
 
-	return <div ref={(chartRef as unknown) as React.RefObject<HTMLDivElement>}></div>
+	return <div ref={chartRef as unknown as React.RefObject<HTMLDivElement>}></div>
 }
 
 const Assets = () => {

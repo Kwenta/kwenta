@@ -76,10 +76,10 @@ export default function ClosePositionModal() {
 		}
 	}, [dispatch, accountType, overridePriceProtection])
 
-	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
-		isSubmitting,
-		isFetchingPreview,
-	])
+	const isLoading = useMemo(
+		() => isSubmitting || isFetchingPreview,
+		[isSubmitting, isFetchingPreview]
+	)
 
 	const maxNativeValue = useMemo(() => {
 		return position?.position?.size ?? ZERO_WEI
