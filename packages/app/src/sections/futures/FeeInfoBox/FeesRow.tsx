@@ -31,7 +31,7 @@ const ExecutionFeeRow = memo(({ executionFee }: { executionFee: Wei }) => {
 	return (
 		<InfoBoxRow
 			title="Execution Fee"
-			value={!!executionFee ? formatDollars(executionFee) : NO_VALUE}
+			textValue={!!executionFee ? formatDollars(executionFee) : NO_VALUE}
 			keyNode={<ExecutionFeeTooltip />}
 			isSubItem
 		/>
@@ -50,7 +50,7 @@ export const KeeperDepositRow = memo(
 			<InfoBoxRow
 				title="Keeper Deposit"
 				isSubItem={isSubItem}
-				value={
+				textValue={
 					smartMarginKeeperDeposit.gt(0)
 						? formatCurrency('ETH', smartMarginKeeperDeposit, { currencyKey: 'ETH' })
 						: NO_VALUE
@@ -64,7 +64,7 @@ const EstimatedTradeFeeRow = memo(({ rates, tradeFee }: { rates: FeeRates; trade
 	return (
 		<InfoBoxRow
 			title={`Est. Trade Fee (${formatPercent(rates.maker)} / ${formatPercent(rates.taker)})`}
-			value={!!tradeFee ? formatDollars(tradeFee, { suggestDecimals: true }) : NO_VALUE}
+			textValue={!!tradeFee ? formatDollars(tradeFee, { suggestDecimals: true }) : NO_VALUE}
 			keyNode={<MarketCostTooltip />}
 			isSubItem
 		/>
@@ -111,7 +111,7 @@ const FeesRow = memo(
 		return (
 			<InfoBoxRow
 				title="Total Fees"
-				value={formatDollars(totalFee)}
+				textValue={formatDollars(totalFee)}
 				expandable
 				expanded={expanded}
 				onToggleExpand={toggleExpanded}

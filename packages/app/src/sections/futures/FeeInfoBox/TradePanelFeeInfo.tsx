@@ -52,7 +52,6 @@ const TradingRewardRow = memo(() => {
 		<InfoBoxRow
 			title="Trading Reward"
 			compactBox
-			value=""
 			keyNode={
 				<CompactBox $isEligible={isRewardEligible} onClick={goToRewards}>
 					<FlexDivRow style={{ marginBottom: '5px' }}>
@@ -90,7 +89,7 @@ const LiquidationRow = memo(() => {
 		<InfoBoxRow
 			title="Liquidation price"
 			color="preview"
-			value={
+			textValue={
 				potentialTradeDetails?.liqPrice
 					? formatDollars(potentialTradeDetails.liqPrice, { suggestDecimals: true })
 					: NO_VALUE
@@ -105,7 +104,7 @@ const PriceImpactRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Price impact"
-			value={
+			textValue={
 				potentialTradeDetails?.priceImpact
 					? formatPercent(potentialTradeDetails.priceImpact)
 					: NO_VALUE
