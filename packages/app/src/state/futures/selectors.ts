@@ -1620,7 +1620,7 @@ export const selectAverageEntryPrice = createSelector(
 			const existingValue = avgEntryPrice.mul(size)
 			const newValue = tradePreview.price.mul(tradePreview.sizeDelta.abs())
 			const totalValue = existingValue.add(newValue)
-			return totalValue.div(tradePreview.size.abs())
+			return tradePreview.size.abs().gt(0) ? totalValue.div(tradePreview.size.abs()) : wei(0)
 		}
 		return null
 	}

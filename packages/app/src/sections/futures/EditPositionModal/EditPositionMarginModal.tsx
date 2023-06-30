@@ -32,7 +32,6 @@ import {
 	selectIdleMargin,
 	selectIsFetchingTradePreview,
 	selectSubmittingFuturesTx,
-	selectTradePreviewError,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
@@ -50,7 +49,6 @@ export default function EditPositionMarginModal() {
 	const idleMargin = useAppSelector(selectIdleMargin)
 	const modal = useAppSelector(selectShowPositionModal)
 	const { market, position } = useAppSelector(selectEditPositionModalInfo)
-	const previewError = useAppSelector(selectTradePreviewError)
 	const allowanceValid = useAppSelector(selectEditMarginAllowanceValid)
 
 	const [transferType, setTransferType] = useState(0)
@@ -96,15 +94,20 @@ export default function EditPositionMarginModal() {
 		[transferType, position?.position?.leverage, market?.appMaxLeverage]
 	)
 
-	const orderError = useMemo(() => {
-		if (previewError) return t(previewErrorI18n(previewError))
+	const previewError = useMemo(() => {
+		if (maxLeverageExceeded) return 'Max leverage exceeded'
 		if (preview?.showStatus) return preview?.statusMessage
 		return null
-	}, [preview?.showStatus, preview?.statusMessage, previewError, t])
+	}, [preview?.showStatus, preview?.statusMessage, maxLeverageExceeded])
+
+	const errorMessage = useMemo(
+		() => previewError || transactionState?.error,
+		[previewError, transactionState?.error]
+	)
 
 	const submitDisabled = useMemo(() => {
-		return marginWei.eq(0) || invalid || isLoading || maxLeverageExceeded || orderError
-	}, [marginWei, invalid, isLoading, maxLeverageExceeded, orderError])
+		return marginWei.eq(0) || invalid || isLoading || !!previewError
+	}, [marginWei, invalid, isLoading, previewError])
 
 	const onChangeTab = (selection: number) => {
 		setTransferType(selection)
@@ -205,13 +208,10 @@ export default function EditPositionMarginModal() {
 					: t('futures.market.trade.edit-position.submit-margin-withdraw')}
 			</Button>
 
-			{(transactionState?.error || orderError || maxLeverageExceeded) && (
+			{errorMessage && (
 				<>
 					<Spacer height={20} />
-					<ErrorView
-						message={transactionState?.error || orderError || 'Max leverage exceeded'}
-						formatter="revert"
-					/>
+					<ErrorView message={errorMessage} formatter="revert" />
 				</>
 			)}
 		</StyledBaseModal>
