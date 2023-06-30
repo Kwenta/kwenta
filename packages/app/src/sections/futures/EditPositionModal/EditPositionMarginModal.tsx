@@ -157,19 +157,19 @@ export default function EditPositionMarginModal() {
 				<InfoBoxRow
 					boldValue
 					title={t('futures.market.trade.edit-position.market')}
-					value={market?.marketName}
+					textValue={market?.marketName}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>{preview.leverage.toString(2)}x</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					value={position?.position?.leverage.toString(2) + 'x'}
+					textValue={position?.position?.leverage.toString(2) + 'x'}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
@@ -179,10 +179,10 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.margin-change')}
-					value={formatDollars(position?.remainingMargin || 0)}
+					textValue={formatDollars(position?.remainingMargin || 0)}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{preview ? formatDollars(preview.liqPrice) : '-'}
@@ -190,7 +190,7 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					value={formatDollars(position?.position?.liquidationPrice || 0)}
+					textValue={formatDollars(position?.position?.liquidationPrice || 0)}
 				/>
 			</InfoBoxContainer>
 			<Spacer height={20} />

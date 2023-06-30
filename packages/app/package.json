@@ -8,7 +8,7 @@
 		"export": "next export",
 		"check-types": "tsc --noEmit",
 		"jest-preview": "jest-preview",
-		"test:unit": "jest --coverage --detectOpenHandles",
+		"test:jest": "jest --coverage --detectOpenHandles",
 		"test:e2e": "start-server-and-test 'pnpm build && pnpm start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:only:tests": "synpress run",
 		"test:e2e:open:testrunner": "synpress open",

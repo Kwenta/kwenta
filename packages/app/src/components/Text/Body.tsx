@@ -5,6 +5,7 @@ export type BodyProps = React.HTMLAttributes<HTMLParagraphElement> & {
 	size?: 'xsmall' | 'small' | 'medium' | 'large'
 	weight?: 'regular' | 'bold' | 'black'
 	color?: 'primary' | 'secondary' | 'tertiary' | 'positive' | 'negative' | 'preview'
+	type?: 'p' | 'span'
 	className?: string
 	fontSize?: number
 	mono?: boolean
@@ -18,23 +19,36 @@ const Body: React.FC<BodyProps> = memo(
 		size = 'medium',
 		weight = 'regular',
 		color = 'primary',
+		type = 'p',
 		fontSize,
 		mono,
 		capitalized,
 		inline,
 		...props
-	}) => (
-		<StyledBody
-			$size={size}
-			$weight={weight}
-			$fontSize={fontSize}
-			$mono={mono}
-			$capitalized={capitalized}
-			$inline={inline}
-			$color={color}
-			{...props}
-		/>
-	)
+	}) =>
+		type === 'p' ? (
+			<StyledBody
+				$size={size}
+				$weight={weight}
+				$fontSize={fontSize}
+				$mono={mono}
+				$capitalized={capitalized}
+				$inline={inline}
+				$color={color}
+				{...props}
+			/>
+		) : (
+			<StyledBodySpan
+				$size={size}
+				$weight={weight}
+				$fontSize={fontSize}
+				$mono={mono}
+				$capitalized={capitalized}
+				$inline={inline}
+				$color={color}
+				{...props}
+			/>
+		)
 )
 
 const sizeMap = { xsmall: 10, small: 12, medium: 13, large: 15 } as const
@@ -43,7 +57,7 @@ const getFontFamily = (weight: NonNullable<BodyProps['weight']>, mono?: boolean)
 	return mono ? (weight !== 'regular' ? 'monoBold' : 'mono') : weight
 }
 
-const StyledBody = styled.p<{
+type StyledBodyProps = {
 	$size: NonNullable<BodyProps['size']>
 	$weight: NonNullable<BodyProps['weight']>
 	$color: NonNullable<BodyProps['color']>
@@ -51,7 +65,9 @@ const StyledBody = styled.p<{
 	$mono?: boolean
 	$capitalized?: boolean
 	$inline?: boolean
-}>`
+}
+
+const BODY_STYLE = css<StyledBodyProps>`
 	line-height: 1.2;
 	margin: 0;
 
@@ -68,6 +84,14 @@ const StyledBody = styled.p<{
 			display: inline;
 		`}
 	`}
+`
+
+const StyledBody = styled.p<StyledBodyProps>`
+	${BODY_STYLE}
+`
+
+const StyledBodySpan = styled.span<StyledBodyProps>`
+	${BODY_STYLE}
 `
 
 export default Body

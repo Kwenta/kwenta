@@ -29,6 +29,8 @@ jobs:
 
     - name: Build code
       run: pnpm i && cd packages/app && pnpm build
+      env: 
+        NEXT_PUBLIC_WALLETCONNECT_V2_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_V2_ID }}
 
     - name: Create Sentry release
       uses: getsentry/action-release@v1

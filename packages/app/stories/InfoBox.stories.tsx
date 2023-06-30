@@ -16,8 +16,8 @@ export default {
 export const Default = () => {
 	return (
 		<InfoBoxContainer>
-			<InfoBoxRow title="First key" value="First value" />
-			<InfoBoxRow title="Second key" value="Second value" />
+			<InfoBoxRow title="First key" textValue="First value" />
+			<InfoBoxRow title="Second key" textValue="Second value" />
 		</InfoBoxContainer>
 	)
 }
@@ -25,9 +25,9 @@ export const Default = () => {
 export const Spaced = () => {
 	return (
 		<InfoBoxContainer>
-			<InfoBoxRow title="First key" value="First value" />
-			<InfoBoxRow title="Second key" value="Second value" spaceBeneath />
-			<InfoBoxRow title="Third key" value="Third value" />
+			<InfoBoxRow title="First key" textValue="First value" />
+			<InfoBoxRow title="Second key" textValue="Second value" spaceBeneath />
+			<InfoBoxRow title="Third key" textValue="Third value" />
 		</InfoBoxContainer>
 	)
 }

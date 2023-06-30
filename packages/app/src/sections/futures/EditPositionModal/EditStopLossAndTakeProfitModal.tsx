@@ -213,7 +213,7 @@ export default function EditStopLossAndTakeProfitModal() {
 			<Spacer height={2} />
 			<InfoBoxRow
 				title={'Market'}
-				value={
+				nodeValue={
 					<FlexDivRowCentered>
 						{market?.marketName}
 						<Spacer width={8} />{' '}
