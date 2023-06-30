@@ -127,22 +127,27 @@ export default function EditPositionSizeModal() {
 		[sizeWei, maxNativeValueWithBuffer]
 	)
 
-	const submitDisabled = useMemo(() => {
-		return (
-			sizeWei.eq(0) ||
-			invalid ||
-			isLoading ||
-			maxLeverageExceeded ||
-			(preview?.exceedsPriceProtection && !overridePriceProtection)
-		)
+	const previewError = useMemo(() => {
+		if (preview?.exceedsPriceProtection && !overridePriceProtection)
+			return 'Exceeds Price Protection'
+		if (maxLeverageExceeded) return 'Max leverage exceeded'
+		if (preview?.statusMessage && preview.statusMessage !== 'Success') return preview?.statusMessage
+		return null
 	}, [
-		sizeWei,
-		invalid,
-		isLoading,
-		maxLeverageExceeded,
+		preview?.statusMessage,
 		preview?.exceedsPriceProtection,
+		maxLeverageExceeded,
 		overridePriceProtection,
 	])
+
+	const errorMessage = useMemo(
+		() => previewError || transactionState?.error,
+		[previewError, transactionState?.error]
+	)
+
+	const submitDisabled = useMemo(() => {
+		return sizeWei.eq(0) || invalid || isLoading || !!previewError
+	}, [sizeWei, invalid, isLoading, previewError])
 
 	const onClose = () => {
 		if (market) {
@@ -248,18 +253,10 @@ export default function EditPositionSizeModal() {
 					: t('futures.market.trade.edit-position.submit-size-decrease')}
 			</Button>
 
-			{(transactionState?.error ||
-				maxLeverageExceeded ||
-				(preview?.exceedsPriceProtection && !overridePriceProtection)) && (
+			{errorMessage && (
 				<>
 					<Spacer height={20} />
-					<ErrorView
-						message={
-							transactionState?.error ||
-							(maxLeverageExceeded ? 'Max leverage exceeded' : 'Exceeds Price Protection')
-						}
-						formatter="revert"
-					/>
+					<ErrorView message={transactionState?.error || errorMessage} formatter="revert" />
 				</>
 			)}
 			<Spacer height={20} />
