@@ -12,22 +12,6 @@ import { wagmiClient } from 'containers/Connector/config'
 import { AppStore, RootState, setupStore } from 'state/store'
 import { themes } from 'styles/theme'
 
-jest.mock('@rainbow-me/rainbowkit', () => ({
-	wallet: {
-		metaMask: () => {},
-		rainbow: () => {},
-		coinbase: () => {},
-		walletConnect: () => {},
-		ledger: () => {},
-		brave: () => {},
-		trust: () => {},
-	},
-	connectorsForWallets: () => {},
-	useConnectModal: () => ({
-		openConnectModal: () => {},
-	}),
-}))
-
 jest.mock('next/router', () => require('next-router-mock'))
 // This is needed for mocking 'next/link':
 jest.mock('next/dist/client/router', () => require('next-router-mock'))
