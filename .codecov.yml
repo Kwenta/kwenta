@@ -1,0 +1,21 @@
+coverage:
+  precision: 2
+  round: down
+  range: '50...85' # Will lift this number as coverage increases
+
+  status:
+    project:
+      default:
+        # basic
+        target: auto
+        threshold: 1%
+        base: auto
+    patch:
+      default:
+        # basic
+        target: 80%
+        threshold: 1%
+        base: auto
+
+ignore:
+  - 'packages/sdk/.*' # Waiting for sdk tests

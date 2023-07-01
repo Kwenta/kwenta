@@ -154,6 +154,7 @@ export const fetchMarkets = createAsyncThunk<
 >('futures/fetchMarkets', async (_, { getState, extra: { sdk } }) => {
 	const supportedNetwork = selectFuturesSupportedNetwork(getState())
 	const networkId = selectNetwork(getState())
+
 	if (!supportedNetwork) return
 	try {
 		const markets = await sdk.futures.getMarkets()

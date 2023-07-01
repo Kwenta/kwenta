@@ -79,8 +79,10 @@ export const selectLeverageInput = createSelector(
 	(futures, type) => futures[accountType(type)].leverageInput
 )
 
-export const selectCrossMarginMarginDelta = (state: RootState) =>
-	wei(state.futures.crossMargin.marginDelta || 0)
+export const selectCrossMarginMarginDelta = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => wei(futures.crossMargin.marginDelta || 0)
+)
 
 export const selectMarginDeltaInputValue = (state: RootState) =>
 	state.futures.crossMargin.marginDelta
@@ -1620,7 +1622,7 @@ export const selectAverageEntryPrice = createSelector(
 			const existingValue = avgEntryPrice.mul(size)
 			const newValue = tradePreview.price.mul(tradePreview.sizeDelta.abs())
 			const totalValue = existingValue.add(newValue)
-			return totalValue.div(tradePreview.size.abs())
+			return tradePreview.size.abs().gt(0) ? totalValue.div(tradePreview.size.abs()) : wei(0)
 		}
 		return null
 	}

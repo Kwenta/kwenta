@@ -1,5 +1,5 @@
 import KwentaSDK from '@kwenta/sdk'
-import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit'
 import type { AnyAction, ThunkAction } from '@reduxjs/toolkit'
 import logger from 'redux-logger'
 import {
@@ -17,7 +17,6 @@ import storage from 'redux-persist/lib/storage'
 
 import appReducer from './app/reducer'
 import balancesReducer from './balances/reducer'
-import { sdk } from './config'
 import earnReducer from './earn/reducer'
 import exchangeReducer from './exchange/reducer'
 import futuresReducer from './futures/reducer'
@@ -25,6 +24,7 @@ import homeReducer from './home/reducer'
 import migrations from './migrations'
 import preferencesReducer from './preferences/reducer'
 import pricesReducer from './prices/reducer'
+import sdk from './sdk'
 import stakingReducer from './staking/reducer'
 import statsReducer from './stats/reducer'
 import walletReducer from './wallet/reducer'
@@ -55,21 +55,26 @@ const combinedReducers = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, combinedReducers)
 
-const store = configureStore({
-	reducer: persistedReducer,
-	middleware: (getDefaultMiddleware) => {
-		const baseMiddleware = getDefaultMiddleware({
-			serializableCheck: {
-				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-			},
-			thunk: { extraArgument: { sdk } },
-		})
-		return LOG_REDUX ? baseMiddleware.concat(logger) : baseMiddleware
-	},
-})
+export const setupStore = (preloadedState?: PreloadedState<any>) =>
+	configureStore({
+		reducer: persistedReducer,
+		middleware: (getDefaultMiddleware) => {
+			const baseMiddleware = getDefaultMiddleware({
+				serializableCheck: {
+					ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+				},
+				thunk: { extraArgument: { sdk } },
+			})
+			return LOG_REDUX ? baseMiddleware.concat(logger) : baseMiddleware
+		},
+		preloadedState,
+	})
+
+const store = setupStore()
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
+export type AppStore = typeof store
 export type ThunkConfig = {
 	dispatch: AppDispatch
 	state: RootState
