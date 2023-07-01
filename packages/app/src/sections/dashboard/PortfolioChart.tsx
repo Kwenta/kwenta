@@ -288,7 +288,7 @@ const TimeframeOverlay = styled.div`
 	max-width: 192px;
 `
 
-const PortfolioTitle = styled(Body).attrs({ variant: 'bold' })`
+const PortfolioTitle = styled(Body).attrs({ weight: 'bold' })`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 16px;
 	margin-bottom: 4px;

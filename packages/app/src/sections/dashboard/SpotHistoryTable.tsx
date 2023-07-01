@@ -2,7 +2,6 @@ import { WalletTradesExchangeResult } from '@kwenta/sdk/types'
 import Link from 'next/link'
 import { FC, useMemo, ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import LinkIcon from 'assets/svg/app/link.svg'
@@ -50,9 +49,8 @@ const SpotHistoryTable: FC = () => {
 
 	return (
 		<TableContainer>
-			{/*@ts-expect-error*/}
 			<StyledTable
-				data={filteredHistoricalTrades}
+				data={filteredHistoricalTrades as any}
 				showPagination
 				isLoading={walletTradesQuery.isLoading}
 				highlightRowsOnHover
@@ -67,9 +65,9 @@ const SpotHistoryTable: FC = () => {
 				sortBy={[{ id: 'dateTime', asec: true }]}
 				columns={[
 					{
-						Header: <div>{t('dashboard.history.spot-history-table.date-time')}</div>,
-						accessor: 'dateTime',
-						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
+						header: () => <div>{t('dashboard.history.spot-history-table.date-time')}</div>,
+						accessorKey: 'dateTime',
+						cell: (cellProps) => {
 							return conditionalRender(
 								cellProps.row.original.timestamp,
 								<StyledTimeDisplay>
@@ -77,12 +75,12 @@ const SpotHistoryTable: FC = () => {
 								</StyledTimeDisplay>
 							)
 						},
-						width: 190,
+						size: 190,
 					},
 					{
-						Header: <div>{t('dashboard.history.spot-history-table.from')}</div>,
-						accessor: 'fromAmount',
-						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
+						header: () => <div>{t('dashboard.history.spot-history-table.from')}</div>,
+						accessorKey: 'fromAmount',
+						cell: (cellProps) => {
 							return conditionalRender(
 								cellProps.row.original.fromSynth && cellProps.row.original.fromAmount,
 								<SynthContainer>
@@ -107,12 +105,12 @@ const SpotHistoryTable: FC = () => {
 								</SynthContainer>
 							)
 						},
-						width: 190,
+						size: 190,
 					},
 					{
-						Header: <div>{t('dashboard.history.spot-history-table.to')}</div>,
-						accessor: 'toAmount',
-						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
+						header: () => <div>{t('dashboard.history.spot-history-table.to')}</div>,
+						accessorKey: 'toAmount',
+						cell: (cellProps) => {
 							return conditionalRender(
 								cellProps.row.original.toSynth && cellProps.row.original.toAmount,
 								<SynthContainer>
@@ -137,12 +135,12 @@ const SpotHistoryTable: FC = () => {
 								</SynthContainer>
 							)
 						},
-						width: 190,
+						size: 190,
 					},
 					{
-						Header: <div>{t('dashboard.history.spot-history-table.usd-value')}</div>,
-						accessor: 'amount',
-						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
+						header: () => <div>{t('dashboard.history.spot-history-table.usd-value')}</div>,
+						accessorKey: 'amount',
+						cell: (cellProps) => {
 							const currencyKey = cellProps.row.original.toSynth?.symbol
 							return conditionalRender(
 								currencyKey,
@@ -158,11 +156,11 @@ const SpotHistoryTable: FC = () => {
 								/>
 							)
 						},
-						width: 190,
+						size: 190,
 					},
 					{
 						id: 'link',
-						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) =>
+						cell: (cellProps) =>
 							network != null && cellProps.row.original.hash ? (
 								<StyledExternalLink href={`${blockExplorer.txLink(cellProps.row.original.hash)}`}>
 									<StyledLinkIcon />
@@ -170,8 +168,8 @@ const SpotHistoryTable: FC = () => {
 							) : (
 								NO_VALUE
 							),
-						width: 50,
-						sortable: false,
+						size: 50,
+						enableSorting: false,
 					},
 				]}
 			/>
@@ -221,7 +219,7 @@ const TableContainer = styled.div`
 
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
-`
+` as typeof Table
 
 const StyledText = styled.div`
 	display: flex;

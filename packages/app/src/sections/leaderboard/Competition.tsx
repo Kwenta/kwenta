@@ -2,7 +2,6 @@ import { formatPercent, truncateAddress } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import Currency from 'components/Currency'
@@ -30,31 +29,33 @@ const Competition: FC<CompetitionProps> = ({
 	compact,
 	onClickTrader,
 	searchTerm,
-}: CompetitionProps) => {
+}) => {
 	const { t } = useTranslation()
 	const { walletAddress } = Connector.useContainer()
 	const competitionQuery = useGetFile(getCompetitionDataLocation(round))
 
+	const competitionData = useMemo(
+		() => (competitionQuery?.data ?? []) as AccountStat[],
+		[competitionQuery]
+	)
+
 	const walletTier = useMemo(() => {
-		const competitionData = competitionQuery?.data ?? []
-		const walletStat = competitionData.find(({ account }: AccountStat) => account === walletAddress)
+		const walletStat = competitionData.find(({ account }) => account === walletAddress)
 		return walletStat ? walletStat.tier : null
-	}, [walletAddress, competitionQuery])
+	}, [walletAddress, competitionData])
 
 	const traders = useMemo(
-		() => competitionQuery?.data?.map((stat: AccountStat) => stat.account) ?? [],
-		[competitionQuery?.data]
+		() => competitionData.map((stat) => stat.account) ?? [],
+		[competitionData]
 	)
 
 	const ensInfoQuery = useENSs(traders)
 	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery])
 
 	let data = useMemo(() => {
-		const competitionData = competitionQuery?.data ?? []
-
-		const cleanCompetitionData: AccountStat[] = competitionData
-			.sort((a: AccountStat, b: AccountStat) => a.rank - b.rank)
-			.map((trader: any) => {
+		const cleanCompetitionData = competitionData
+			.sort((a, b) => a.rank - b.rank)
+			.map((trader) => {
 				return {
 					...trader,
 					trader: trader.account,
@@ -63,15 +64,15 @@ const Competition: FC<CompetitionProps> = ({
 					traderShort: truncateAddress(trader.account),
 					pnl: wei(trader.pnl),
 					pnlNumber: wei(trader.pnl).toNumber(),
-					pnlPct: `(${formatPercent(trader?.pnl_pct)})`,
+					pnlPct: `(${formatPercent(trader.pnl_pct)})`,
 					totalVolume: trader.volume,
 					totalTrades: trader.trades,
 				}
 			})
-			.filter((trader: { tier: string }) => {
+			.filter((trader) => {
 				return compact && !!walletTier ? trader.tier === walletTier : trader.tier === activeTier
 			})
-			.filter((i: { trader: string; traderEns: string }) =>
+			.filter((i) =>
 				searchTerm?.length
 					? i.trader.toLowerCase().includes(searchTerm) ||
 					  i.traderEns?.toLowerCase().includes(searchTerm)
@@ -83,16 +84,14 @@ const Competition: FC<CompetitionProps> = ({
 			.map((trader) => ({ ...trader, rankText: `${trader.rank}${PIN}` }))
 
 		return [...pinRow, ...cleanCompetitionData]
-	}, [competitionQuery, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact])
+	}, [competitionData, ensInfo, searchTerm, activeTier, walletAddress, walletTier, compact])
 
 	return (
 		<>
 			<DesktopOnlyView>
-				{/*@ts-expect-error*/}
 				<StyledTable
 					compact={compact}
 					showPagination={!compact}
-					showShortList={compact}
 					pageSize={10}
 					isLoading={competitionQuery.isLoading}
 					data={data}
@@ -102,26 +101,30 @@ const Competition: FC<CompetitionProps> = ({
 					}
 					columns={[
 						{
-							Header: (
+							header: () => (
 								<TableTitle>
 									<TitleText>{t('leaderboard.competition.title')}</TitleText>
 								</TableTitle>
 							),
-							accessor: 'title',
+							accessorKey: 'title',
 							columns: [
 								{
-									Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-									accessor: 'rank',
-									sortType: 'basic',
-									Cell: (cellProps: CellProps<any>) => (
+									header: () => (
+										<TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>
+									),
+									accessorKey: 'rank',
+									sortingFn: 'basic',
+									cell: (cellProps) => (
 										<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 									),
-									width: compact ? 100 : 60,
+									size: compact ? 100 : 60,
 								},
 								{
-									Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-									accessor: 'trader',
-									Cell: (cellProps: CellProps<any>) => {
+									header: () => (
+										<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+									),
+									accessorKey: 'trader',
+									cell: (cellProps) => {
 										return (
 											<StyledOrderType
 												onClick={() => onClickTrader(cellProps.row.original.account)}
@@ -133,50 +136,53 @@ const Competition: FC<CompetitionProps> = ({
 											</StyledOrderType>
 										)
 									},
-									width: compact ? 180 : 120,
+									size: compact ? 180 : 120,
 								},
 								{
-									Header: (
+									header: () => (
 										<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
 									),
-									accessor: 'totalTrades',
-									sortType: 'basic',
-									width: compact ? 'auto' : 80,
-									sortable: true,
+									accessorKey: 'totalTrades',
+									sortingFn: 'basic',
+									// width: compact ? 'auto' : 80,
+									size: 80,
+									enableSorting: true,
 								},
 								{
-									Header: (
+									header: () => (
 										<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
 									),
-									accessor: 'liquidations',
-									sortType: 'basic',
-									width: compact ? 'auto' : 80,
-									sortable: true,
+									accessorKey: 'liquidations',
+									sortingFn: 'basic',
+									// size: compact ? 'auto' : 80,
+									size: 80,
+									enableSorting: true,
 								},
 								{
-									Header: (
+									header: () => (
 										<TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>
 									),
-									accessor: 'totalVolume',
-									sortType: 'basic',
-									Cell: (cellProps: CellProps<any>) => (
+									accessorKey: 'totalVolume',
+									sortingFn: 'basic',
+									cell: (cellProps) => (
 										<Currency.Price price={cellProps.row.original.totalVolume} />
 									),
-									width: compact ? 'auto' : 100,
-									sortable: true,
+									// width: compact ? 'auto' : 100,
+									size: 100,
+									enableSorting: true,
 								},
 								{
-									Header: <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
-									accessor: 'pnlNumber',
-									sortType: 'basic',
-									Cell: (cellProps: CellProps<any>) => (
+									header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
+									accessorKey: 'pnlNumber',
+									sortingFn: 'basic',
+									cell: (cellProps) => (
 										<PnlContainer direction="column">
 											<ColorCodedPrice price={cellProps.row.original.pnl} />
 											<StyledValue>{cellProps.row.original.pnlPct}</StyledValue>
 										</PnlContainer>
 									),
-									width: compact ? 120 : 100,
-									sortable: true,
+									size: compact ? 120 : 100,
+									enableSorting: true,
 								},
 							],
 						},
@@ -184,7 +190,6 @@ const Competition: FC<CompetitionProps> = ({
 				/>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{/*@ts-expect-error*/}
 				<StyledTable
 					data={data}
 					compact={compact}
@@ -194,17 +199,17 @@ const Competition: FC<CompetitionProps> = ({
 					pageSize={10}
 					columns={[
 						{
-							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-							accessor: 'rank',
-							Cell: (cellProps: CellProps<any>) => (
+							header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+							accessorKey: 'rank',
+							cell: (cellProps) => (
 								<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 							),
-							width: 60,
+							size: 60,
 						},
 						{
-							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-							accessor: 'trader',
-							Cell: (cellProps: CellProps<any>) => (
+							header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
+							accessorKey: 'trader',
+							cell: (cellProps) => (
 								<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.account)}>
 									<StyledValue>
 										{cellProps.row.original.traderEns ?? cellProps.row.original.traderShort}
@@ -212,12 +217,12 @@ const Competition: FC<CompetitionProps> = ({
 									{getMedal(cellProps.row.original.rank)}
 								</StyledOrderType>
 							),
-							width: 150,
+							size: 150,
 						},
 						{
-							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
-							accessor: 'pnl',
-							Cell: (cellProps: CellProps<any>) => (
+							header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
+							accessorKey: 'pnl',
+							cell: (cellProps) => (
 								<PnlContainer direction={'column'}>
 									<ColorCodedPrice
 										currencyKey="sUSD"
@@ -228,7 +233,7 @@ const Competition: FC<CompetitionProps> = ({
 									<StyledValue>{cellProps.row.original.pnlPct}</StyledValue>
 								</PnlContainer>
 							),
-							width: 125,
+							size: 125,
 						},
 					]}
 				/>
@@ -239,7 +244,7 @@ const Competition: FC<CompetitionProps> = ({
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
-`
+` as typeof Table
 
 const TableTitle = styled.div`
 	width: 100%;
@@ -272,10 +277,8 @@ const ColorCodedPrice = styled(Currency.Price)`
 const StyledValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) =>
-		props.color === 'green'
-			? props.theme.colors.selectedTheme.green
-			: props.color === 'red'
-			? props.theme.colors.selectedTheme.red
+		props.color === 'green' || props.color === 'red'
+			? props.theme.colors.selectedTheme[props.color]
 			: props.theme.colors.selectedTheme.button.text.primary};
 	margin: 0;
 	text-align: end;

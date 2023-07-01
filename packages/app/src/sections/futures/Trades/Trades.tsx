@@ -1,9 +1,7 @@
-import { FuturesTrade } from '@kwenta/sdk/types'
 import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import LinkIcon from 'assets/svg/app/link-blue.svg'
@@ -67,7 +65,7 @@ const Trades = memo(() => {
 		})
 	}, [history, marketAsset])
 
-	const columnsDeps = useMemo(() => [historyData], [historyData])
+	// const columnsDeps = useMemo(() => [historyData], [historyData])
 
 	return (
 		<Table
@@ -76,12 +74,11 @@ const Trades = memo(() => {
 			noBottom={true}
 			columns={[
 				{
-					Header: (
+					header: () => (
 						<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
 					),
-					accessor: 'market',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<(typeof historyData)[number]>) => {
+					accessorKey: 'market',
+					cell: (cellProps) => {
 						return (
 							<MarketDetailsContainer
 								onClick={() =>
@@ -103,111 +100,101 @@ const Trades = memo(() => {
 							</MarketDetailsContainer>
 						)
 					},
-					width: 100,
+					size: 100,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
-					accessor: 'time',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<FuturesTrade>) => (
+					header: () => <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
+					accessorKey: 'time',
+					cell: (cellProps) => (
 						<GridDivCenteredRow>
-							<TimeDisplay value={cellProps.value} />
+							<TimeDisplay value={cellProps.getValue()} />
 						</GridDivCenteredRow>
 					),
-					width: 90,
-					sortable: true,
+					size: 90,
+					enableSorting: true,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
-					accessor: 'side',
-					sortType: 'basic',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<FuturesTrade>) => <PositionType side={cellProps.value} />,
-					width: 60,
-					sortable: true,
+					header: () => <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
+					accessorKey: 'side',
+					sortingFn: 'basic',
+					cell: (cellProps) => <PositionType side={cellProps.getValue()} />,
+					size: 60,
+					enableSorting: true,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
-					accessor: 'value',
-					sortType: 'basic',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<FuturesTrade>) => {
-						const formatOptions = {
-							suggestDecimals: true,
-						}
-						return <>{formatDollars(cellProps.value, formatOptions)}</>
+					header: () => <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
+					accessorKey: 'value',
+					sortingFn: 'basic',
+					cell: (cellProps) => {
+						return <>{formatDollars(cellProps.getValue(), { suggestDecimals: true })}</>
 					},
-					width: 90,
-					sortable: true,
+					size: 90,
+					enableSorting: true,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
-					accessor: 'amount',
-					sortType: 'basic',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<FuturesTrade>) => (
-						<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
+					header: () => (
+						<TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>
 					),
-					width: 90,
-					sortable: true,
+					accessorKey: 'amount',
+					sortingFn: 'basic',
+					cell: (cellProps) => (
+						<>{formatCryptoCurrency(cellProps.getValue(), { suggestDecimals: true })}</>
+					),
+					size: 90,
+					enableSorting: true,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
-					accessor: 'netPnl',
-					sortType: 'basic',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<FuturesTrade>) => {
-						const formatOptions = {
-							maxDecimals: 2,
-						}
-						return cellProps.value.eq(0) ? (
+					header: () => <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+					accessorKey: 'netPnl',
+					sortingFn: 'basic',
+					cell: (cellProps) => {
+						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
 							<ColoredPrice
 								priceInfo={{
-									price: cellProps.value,
-									change: cellProps.value.gt(0) ? 'up' : 'down',
+									price: cellProps.getValue(),
+									change: cellProps.getValue().gt(0) ? 'up' : 'down',
 								}}
 							>
-								{formatDollars(cellProps.value, formatOptions)}
+								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
 							</ColoredPrice>
 						)
 					},
-					width: 90,
-					sortable: true,
+					size: 90,
+					enableSorting: true,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
-					sortType: 'basic',
-					accessor: 'feesPaid',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<FuturesTrade>) => (
-						<>{cellProps.value.eq(0) ? '--' : formatDollars(cellProps.value)}</>
+					header: () => <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
+					sortingFn: 'basic',
+					accessorKey: 'feesPaid',
+					cell: (cellProps) => (
+						<>{cellProps.getValue().eq(0) ? '--' : formatDollars(cellProps.getValue())}</>
 					),
-					width: 90,
-					sortable: true,
+					size: 90,
+					enableSorting: true,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.trades.table.order-type')}</TableHeader>,
-					accessor: 'type',
-					sortType: 'basic',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<FuturesTrade>) => <>{cellProps.value}</>,
-					width: 100,
+					header: () => (
+						<TableHeader>{t('futures.market.user.trades.table.order-type')}</TableHeader>
+					),
+					accessorKey: 'type',
+					sortingFn: 'basic',
+					cell: (cellProps) => <>{cellProps.getValue()}</>,
+					size: 100,
 				},
 				{
-					accessor: 'txnHash',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<FuturesTrade>) => (
-						<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
+					accessorKey: 'txnHash',
+					cell: (cellProps) => (
+						<StyledExternalLink href={blockExplorer.txLink(cellProps.getValue())}>
 							<StyledLinkIcon />
 						</StyledExternalLink>
 					),
-					width: 25,
-					sortable: false,
+					size: 25,
+					enableSorting: false,
 				},
 			]}
-			columnsDeps={columnsDeps}
+			// columnsDeps={columnsDeps}
 			data={historyData}
 			isLoading={isLoading && isLoaded}
 			noResultsMessage={

@@ -1,9 +1,8 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import React, { useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import GridSvg from 'assets/svg/app/grid.svg'
@@ -22,6 +21,36 @@ import { StackSection } from 'sections/homepage/section'
 import { Title } from 'sections/homepage/text'
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common'
 import media from 'styles/media'
+
+type TraderENSProps = {
+	trader: string
+	traderShort: string
+}
+
+const TraderENS: FC<TraderENSProps> = ({ trader, traderShort }) => {
+	const { ensName, ensAvatar } = useENS(trader)
+
+	return (
+		<StyledTrader>
+			{ensName ? (
+				<>
+					{ensAvatar && (
+						<img
+							src={ensAvatar}
+							alt={ensName}
+							width={16}
+							height={16}
+							style={{ borderRadius: '50%', marginRight: '8px' }}
+						/>
+					)}
+					{ensName}
+				</>
+			) : (
+				traderShort
+			)}
+		</StyledTrader>
+	)
+}
 
 const ShortList = () => {
 	const { t } = useTranslation()
@@ -67,11 +96,8 @@ const ShortList = () => {
 			<Container>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 				<NotMobileView>
-					{/*@ts-expect-error*/}
 					<StyledTable
-						showPagination
 						isLoading={statsQuery.isLoading}
-						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
 						data={stats}
 						pageSize={5}
@@ -79,78 +105,60 @@ const ShortList = () => {
 						highlightRowsOnHover
 						columns={[
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-								accessor: 'rank',
-								Cell: (cellProps: CellProps<any>) => (
+								header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+								accessorKey: 'rank',
+								cell: (cellProps) => (
 									<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
 								),
-								width: 65,
+								size: 65,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-								accessor: 'trader',
-								Cell: (cellProps: CellProps<any>) => {
-									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader)
+								header: () => (
+									<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+								),
+								accessorKey: 'trader',
+								cell: (cellProps) => {
 									return (
-										<StyledTrader>
-											{ensName ? (
-												<>
-													{ensAvatar && (
-														<img
-															src={ensAvatar}
-															alt={ensName}
-															width={16}
-															height={16}
-															style={{ borderRadius: '50%', marginRight: '8px' }}
-														/>
-													)}
-													{ensName}
-												</>
-											) : (
-												cellProps.row.original.traderShort
-											)}
-										</StyledTrader>
+										<TraderENS
+											trader={cellProps.row.original.trader}
+											traderShort={cellProps.row.original.traderShort}
+										/>
 									)
 								},
-								width: 150,
+								size: 150,
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
 								),
-								accessor: 'totalTrades',
-								Cell: (cellProps: CellProps<any>) => (
-									<Body size="large">{cellProps.row.original.totalTrades}</Body>
-								),
-								width: 100,
+								accessorKey: 'totalTrades',
+								cell: (cellProps) => <Body size="large">{cellProps.row.original.totalTrades}</Body>,
+								size: 100,
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
 								),
-								accessor: 'liquidations',
-								Cell: (cellProps: CellProps<any>) => (
+								accessorKey: 'liquidations',
+								cell: (cellProps) => (
 									<Body size="large">{cellProps.row.original.liquidations}</Body>
 								),
-								width: 100,
+								size: 100,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) => (
-									<ColorCodedPrice price={cellProps.row.original.pnl} />
+								header: () => (
+									<TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>
 								),
-								width: 125,
+								accessorKey: 'pnl',
+								cell: (cellProps) => <ColorCodedPrice price={cellProps.row.original.pnl} />,
+								size: 125,
 							},
 						]}
 					/>
 				</NotMobileView>
 				<MobileOnlyView>
-					{/*@ts-expect-error*/}
 					<StyledTable
-						showPagination
 						isLoading={statsQuery.isLoading}
-						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
 						data={stats}
 						pageSize={5}
@@ -158,48 +166,37 @@ const ShortList = () => {
 						highlightRowsOnHover
 						columns={[
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank-mobile')}</TableHeader>,
-								accessor: 'rank',
-								Cell: (cellProps: CellProps<any>) => (
+								header: () => (
+									<TableHeader>{t('leaderboard.leaderboard.table.rank-mobile')}</TableHeader>
+								),
+								accessorKey: 'rank',
+								cell: (cellProps) => (
 									<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
 								),
-								width: 45,
+								size: 45,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-								accessor: 'trader',
-								Cell: (cellProps: CellProps<any>) => {
-									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader)
+								header: () => (
+									<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+								),
+								accessorKey: 'trader',
+								cell: (cellProps) => {
 									return (
-										<StyledTrader>
-											{ensName ? (
-												<>
-													{ensAvatar && (
-														<img
-															src={ensAvatar}
-															alt={ensName}
-															width={16}
-															height={16}
-															style={{ borderRadius: '50%', marginRight: '8px' }}
-														/>
-													)}
-													{ensName}
-												</>
-											) : (
-												cellProps.row.original.traderShort
-											)}
-										</StyledTrader>
+										<TraderENS
+											trader={cellProps.row.original.trader}
+											traderShort={cellProps.row.original.traderShort}
+										/>
 									)
 								},
-								width: 150,
+								size: 150,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) => (
-									<ColorCodedPrice price={cellProps.row.original.pnl} />
+								header: () => (
+									<TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>
 								),
-								width: 125,
+								accessorKey: 'pnl',
+								cell: (cellProps) => <ColorCodedPrice price={cellProps.row.original.pnl} />,
+								size: 125,
 							},
 						]}
 					/>
@@ -313,7 +310,7 @@ const StyledTable = styled(Table)`
 			padding-left: 0px;
 		}
 	`};
-`
+` as typeof Table
 
 const Medal = styled.span`
 	font-size: 15px;

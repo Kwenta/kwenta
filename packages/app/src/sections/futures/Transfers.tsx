@@ -33,10 +33,10 @@ const Transfers: FC = () => {
 		marginTransfers: { status: marginTransfersStatus },
 	} = useAppSelector(selectQueryStatuses)
 
-	const columnsDeps = useMemo(
-		() => [marketMarginTransfers, idleMarginTransfers, marginTransfersStatus],
-		[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
-	)
+	// const columnsDeps = useMemo(
+	// 	() => [marketMarginTransfers, idleMarginTransfers, marginTransfersStatus],
+	// 	[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
+	// )
 
 	const marginTransfers = useMemo(() => {
 		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers
@@ -49,16 +49,20 @@ const Transfers: FC = () => {
 			noBottom={true}
 			columns={[
 				{
-					Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
-					accessor: 'action',
-					Cell: (cellProps) => <ActionCell>{cellProps.value}</ActionCell>,
-					width: 50,
+					header: () => (
+						<TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>
+					),
+					accessorKey: 'action',
+					cell: (cellProps) => <ActionCell>{cellProps.getValue()}</ActionCell>,
+					size: 50,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
-					accessor: 'amount',
-					sortType: 'basic',
-					Cell: (cellProps: any) => {
+					header: () => (
+						<TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>
+					),
+					accessorKey: 'amount',
+					sortingFn: 'basic',
+					cell: (cellProps: any) => {
 						const formatOptions = {
 							minDecimals: 0,
 						}
@@ -75,32 +79,34 @@ const Transfers: FC = () => {
 							</ColoredPrice>
 						)
 					},
-					sortable: true,
-					width: 50,
+					enableSorting: true,
+					size: 50,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
-					accessor: 'timestamp',
-					Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
-					width: 50,
+					header: () => <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
+					accessorKey: 'timestamp',
+					cell: (cellProps) => <Body>{timePresentation(cellProps.getValue(), t)}</Body>,
+					size: 50,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.transfers.table.transaction')}</TableHeader>,
-					accessor: 'txHash',
-					Cell: (cellProps: any) => {
+					header: () => (
+						<TableHeader>{t('futures.market.user.transfers.table.transaction')}</TableHeader>
+					),
+					accessorKey: 'txHash',
+					cell: (cellProps) => {
 						return (
 							<Body>
-								<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
-									{truncateAddress(cellProps.value)}
+								<StyledExternalLink href={blockExplorer.txLink(cellProps.getValue())}>
+									{truncateAddress(cellProps.getValue())}
 								</StyledExternalLink>
 							</Body>
 						)
 					},
-					width: 50,
+					size: 50,
 				},
 			]}
 			data={marginTransfers}
-			columnsDeps={columnsDeps}
+			// columnsDeps={columnsDeps}
 			isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
 			noResultsMessage={
 				!isL2 ? (

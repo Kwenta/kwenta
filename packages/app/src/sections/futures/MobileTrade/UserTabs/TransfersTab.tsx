@@ -1,4 +1,5 @@
 import { formatDollars } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -57,24 +58,26 @@ const TransfersTab: React.FC = () => {
 					highlightRowsOnHover
 					columns={[
 						{
-							Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
-							accessor: 'action',
-							Cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
-							width: 50,
+							header: () => (
+								<TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>
+							),
+							accessorKey: 'action',
+							cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
+							size: 50,
 						},
 						{
-							Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
-							accessor: 'size',
-							sortType: 'basic',
-							Cell: (cellProps: any) => {
-								const formatOptions = {
-									minDecimals: 0,
-								}
+							header: () => (
+								<TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>
+							),
+							accessorKey: 'size',
+							sortingFn: 'basic',
+							cell: (cellProps) => {
+								const formatOptions = { minDecimals: 0 }
 
 								return (
 									<ColoredPrice
 										priceInfo={{
-											price: cellProps.row.original.size,
+											price: wei(cellProps.row.original.size),
 											change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
 										}}
 									>
@@ -83,18 +86,20 @@ const TransfersTab: React.FC = () => {
 									</ColoredPrice>
 								)
 							},
-							sortable: true,
-							width: 50,
+							enableSorting: true,
+							size: 50,
 						},
 						{
-							Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
-							accessor: 'timestamp',
-							Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
-							width: 50,
+							header: () => (
+								<TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>
+							),
+							accessorKey: 'timestamp',
+							cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
+							size: 50,
 						},
 					]}
 					data={marginTransfers}
-					columnsDeps={columnsDeps}
+					// columnsDeps={columnsDeps}
 					isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
 				/>
 			)}

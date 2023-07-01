@@ -1,58 +1,55 @@
+import { Row, flexRender } from '@tanstack/react-table'
 import React from 'react'
-import { Row, TableRowProps } from 'react-table'
 import styled, { css } from 'styled-components'
+import { genericMemo } from 'types/helpers'
 
 import { FlexDivCentered } from 'components/layout/flex'
 
-type TableBodyRowProps = TableRowProps & {
-	row: Row
+type TableBodyRowProps<T> = {
+	row: Row<T>
 	localRef: any
 	highlightRowsOnHover?: boolean
-	rowStyle: Record<string, any>
 	onClick?: () => void
 }
 
-const TableBodyRow: React.FC<TableBodyRowProps> = React.memo(
-	({ row, localRef, highlightRowsOnHover, onClick, ...props }) => (
+const TableBodyRow = genericMemo(
+	<T,>({ row, localRef, highlightRowsOnHover, onClick }: TableBodyRowProps<T>) => (
 		<BaseTableBodyRow
 			className="table-body-row"
-			{...props}
 			ref={localRef}
 			onClick={onClick}
 			$highlightRowsOnHover={highlightRowsOnHover}
 		>
-			{row.cells.map((cell) => (
-				<TableCell className="table-body-cell" {...cell.getCellProps()}>
-					{cell.render('Cell')}
+			{row.getVisibleCells().map((cell) => (
+				<TableCell className="table-body-cell">
+					{flexRender(cell.column.columnDef.cell, cell.getContext())}
 				</TableCell>
 			))}
 		</BaseTableBodyRow>
 	)
 )
 
-const BaseTableBodyRow = styled.div<{
-	$highlightRowsOnHover?: boolean
-	rowStyle?: Record<string, any>
-}>`
-	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
+const BaseTableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
+	${(props) => css`
+		cursor: ${props.onClick ? 'pointer' : 'default'};
 
-	:not(:last-child) {
-		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	}
+		:not(:last-child) {
+			border-bottom: ${props.theme.colors.selectedTheme.border};
+		}
 
-	padding: 6px 0;
+		padding: 6px 0;
 
-	&:nth-child(odd) {
-		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
-	}
+		&:nth-child(odd) {
+			background-color: ${props.theme.colors.selectedTheme.table.fill};
+		}
 
-	${(props) =>
-		props.$highlightRowsOnHover &&
+		${props.$highlightRowsOnHover &&
 		css`
 			&:hover {
-				background-color: ${(props) => props.theme.colors.selectedTheme.table.hover};
+				background-color: ${props.theme.colors.selectedTheme.table.hover};
 			}
 		`}
+	`}
 `
 
 export const TableCell = styled(FlexDivCentered)`

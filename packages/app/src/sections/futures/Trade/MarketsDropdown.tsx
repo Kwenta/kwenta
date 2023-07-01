@@ -208,19 +208,19 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					<TableContainer>
 						<StyledTable
 							highlightRowsOnHover
-							rowStyle={{ padding: '0' }}
+							// rowStyle={{ padding: '0' }}
 							onTableRowClick={(row) => onSelectMarket(row.original.asset)}
 							columns={[
 								{
-									Header: (
+									header: () => (
 										<TableHeader>
 											<FavoriteIcon height={14} width={14} />
 										</TableHeader>
 									),
-									accessor: 'favorite',
-									sortType: 'basic',
-									sortable: true,
-									Cell: ({ row }: any) => (
+									accessorKey: 'favorite',
+									sortingFn: 'basic',
+									enableSorting: true,
+									cell: ({ row }) => (
 										<div
 											onClick={(e) => {
 												onSelectFav(row.original.asset)
@@ -235,33 +235,33 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											)}
 										</div>
 									),
-									width: 35,
+									size: 35,
 								},
 								{
-									Header: <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
-									accessor: 'label',
-									sortType: 'basic',
-									sortable: true,
-									Cell: ({ row }: any) => (
+									header: () => <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
+									accessorKey: 'label',
+									sortingFn: 'basic',
+									enableSorting: true,
+									cell: ({ row }) => (
 										<FlexDivRowCentered>
 											<CurrencyIcon currencyKey={row.original.key} width={18} height={18} />
 											<Spacer width={10} />
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
-									width: 80,
+									size: 80,
 								},
 								{
-									Header: <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
-									accessor: 'priceNum',
-									sortType: 'basic',
-									sortable: true,
-									Cell: (cellProps: any) => {
+									header: () => <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
+									accessorKey: 'priceNum',
+									sortingFn: 'basic',
+									enableSorting: true,
+									cell: (cellProps) => {
 										return (
 											<div>
 												<ColoredPrice
 													priceInfo={{
-														price: cellProps.row.original.price,
+														price: wei(cellProps.row.original.price),
 														change: cellProps.row.original.priceDirection,
 													}}
 												>
@@ -270,11 +270,11 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											</div>
 										)
 									},
-									width: 80,
+									size: 80,
 								},
 								{
-									Header: <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
-									Cell: ({ row }: any) => {
+									header: () => <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
+									cell: ({ row }) => {
 										return (
 											<div>
 												<MarketBadge
@@ -295,10 +295,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											</div>
 										)
 									},
-									accessor: 'change',
-									sortType: 'basic',
-									sortable: true,
-									width: 50,
+									accessorKey: 'change',
+									sortingFn: 'basic',
+									enableSorting: true,
+									size: 50,
 								},
 							]}
 							data={options}
@@ -366,7 +366,7 @@ const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	.table-body-cell {
 		height: 32px;
 	}
-`
+` as typeof Table
 
 const SearchBarContainer = styled.div`
 	font-size: 13px;

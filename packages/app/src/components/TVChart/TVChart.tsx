@@ -103,13 +103,10 @@ export function TVChart({
 		_widget.current?.onChartReady(() => {
 			_widget.current?.chart().dataReady(() => {
 				clearOrderLines()
-				_oderLineRefs.current = openOrders.reduce<IPositionLineAdapter[]>((acc, order) => {
+				_oderLineRefs.current = openOrders.reduce((acc, order) => {
 					if (order.targetPrice) {
-						const color = order.isSlTp
-							? colors.selectedTheme.chartLine.default
-							: order.side === 'long'
-							? colors.selectedTheme.chartLine.long
-							: colors.selectedTheme.chartLine.short
+						const color =
+							colors.selectedTheme.chartLine[order.isSlTp ? 'default' : order.side ?? 'short']
 
 						const orderLine = _widget.current
 							?.chart()
@@ -132,7 +129,7 @@ export function TVChart({
 						}
 					}
 					return acc
-				}, [])
+				}, [] as IPositionLineAdapter[])
 			})
 		})
 	}

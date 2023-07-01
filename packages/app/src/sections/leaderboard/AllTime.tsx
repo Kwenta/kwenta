@@ -1,6 +1,5 @@
 import { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import Currency from 'components/Currency'
@@ -19,6 +18,53 @@ import { FOOTER_HEIGHT } from 'styles/common'
 import media from 'styles/media'
 import { getMedal } from 'utils/competition'
 import { staticMainnetProvider } from 'utils/network'
+
+type TraderCellProps = {
+	onClickTrader: (trader: string) => void
+	compact?: boolean
+	rank: number
+	traderEns?: string | null
+	traderShort: string
+	trader: string
+}
+
+const TraderCell: FC<TraderCellProps> = ({
+	onClickTrader,
+	compact,
+	rank,
+	traderEns,
+	traderShort,
+	trader,
+}) => {
+	const avatar = useENSAvatar(staticMainnetProvider, traderEns)
+
+	return (
+		<StyledOrderType onClick={() => onClickTrader(trader)}>
+			{compact && rank + '. '}
+			<StyledTrader>
+				{avatar?.data ? (
+					<>
+						{!avatar.isLoading && avatar.data && (
+							<img
+								src={avatar.data}
+								alt={''}
+								width={16}
+								height={16}
+								style={{ borderRadius: '50%', marginRight: '8px' }}
+								// @ts-ignore
+								onError={(err) => (err.target.style.display = 'none')}
+							/>
+						)}
+						{traderEns}
+					</>
+				) : (
+					traderEns ?? traderShort
+				)}
+			</StyledTrader>
+			{getMedal(rank)}
+		</StyledOrderType>
+	)
+}
 
 type AllTimeProps = {
 	stats: AccountStat[]
@@ -67,7 +113,6 @@ const AllTime: FC<AllTimeProps> = ({
 	return (
 		<>
 			<MobileHiddenView>
-				{/*@ts-expect-error*/}
 				<StyledTable
 					height={tableHeight}
 					compact={compact}
@@ -76,98 +121,89 @@ const AllTime: FC<AllTimeProps> = ({
 					data={data}
 					pageSize={10}
 					hideHeaders={compact}
-					hiddenColumns={
-						compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
-					}
-					columnsDeps={[activeTab]}
+					// hiddenColumns={
+					// 	compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
+					// }
+					columnVisibility={{
+						rank: !compact,
+						totalTrades: !compact,
+						liquidations: !compact,
+						totalVolume: !compact,
+						pnl: !compact,
+					}}
+					// columnsDeps={[activeTab]}
 					columns={[
 						{
-							Header: (
+							header: () => (
 								<TableTitle>
 									<TitleText>
 										{activeTab} {t('leaderboard.leaderboard.table.title')}
 									</TitleText>
 								</TableTitle>
 							),
-							accessor: 'title',
+							accessorKey: 'title',
 							columns: [
 								{
-									Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-									accessor: 'rank',
-									Cell: (cellProps: CellProps<any>) => (
+									header: () => (
+										<TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>
+									),
+									accessorKey: 'rank',
+									cell: (cellProps) => (
 										<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 									),
-									width: compact ? 40 : 60,
+									size: compact ? 40 : 60,
 								},
 								{
-									Header: !compact ? (
-										<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
-									) : (
-										<></>
-									),
-									accessor: 'trader',
-									Cell: (cellProps: CellProps<any>) => {
-										const avatar = useENSAvatar(
-											staticMainnetProvider,
-											cellProps.row.original.traderEns
-										)
+									header: () =>
+										!compact ? (
+											<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+										) : (
+											<></>
+										),
+									accessorKey: 'trader',
+									cell: (cellProps) => {
 										return (
-											<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
-												{compact && cellProps.row.original.rank + '. '}
-												<StyledTrader>
-													{avatar?.data ? (
-														<>
-															{!avatar.isLoading && avatar.data && (
-																<img
-																	src={avatar.data}
-																	alt={''}
-																	width={16}
-																	height={16}
-																	style={{ borderRadius: '50%', marginRight: '8px' }}
-																	// @ts-ignore
-																	onError={(err) => (err.target.style.display = 'none')}
-																/>
-															)}
-															{cellProps.row.original.traderEns}
-														</>
-													) : (
-														cellProps.row.original.traderEns ?? cellProps.row.original.traderShort
-													)}
-												</StyledTrader>
-												{getMedal(cellProps.row.original.rank)}
-											</StyledOrderType>
+											<TraderCell
+												onClickTrader={onClickTrader}
+												compact={compact}
+												rank={cellProps.row.original.rank}
+												traderEns={cellProps.row.original.traderEns}
+												traderShort={cellProps.row.original.traderShort}
+												trader={cellProps.row.original.trader}
+											/>
 										)
 									},
-									width: 120,
+									size: 120,
 								},
 								{
-									Header: (
+									header: () => (
 										<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
 									),
-									accessor: 'totalTrades',
-									width: 80,
+									accessorKey: 'totalTrades',
+									size: 80,
 								},
 								{
-									Header: (
+									header: () => (
 										<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
 									),
-									accessor: 'liquidations',
-									width: 80,
+									accessorKey: 'liquidations',
+									size: 80,
 								},
 								{
-									Header: (
+									header: () => (
 										<TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>
 									),
-									accessor: 'totalVolume',
-									Cell: (cellProps: CellProps<any>) => (
+									accessorKey: 'totalVolume',
+									cell: (cellProps) => (
 										<Currency.Price price={cellProps.row.original.totalVolume} />
 									),
-									width: compact ? 'auto' : 100,
+									// size: compact ? 'auto' : 100,
+									size: 100,
 								},
 								{
-									Header: <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
-									accessor: 'pnl',
-									Cell: (cellProps: CellProps<any>) => (
+									header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
+									accessorKey: 'pnl',
+									cell: (cellProps) => (
 										<Currency.Price
 											currencyKey="sUSD"
 											price={cellProps.row.original.pnl}
@@ -176,7 +212,8 @@ const AllTime: FC<AllTimeProps> = ({
 											colored={true}
 										/>
 									),
-									width: compact ? 'auto' : 100,
+									// size: compact ? 'auto' : 100,
+									size: 100,
 								},
 							],
 						},
@@ -184,7 +221,6 @@ const AllTime: FC<AllTimeProps> = ({
 				/>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				{/*@ts-expect-error*/}
 				<StyledTable
 					compact={compact}
 					data={data}
@@ -194,59 +230,42 @@ const AllTime: FC<AllTimeProps> = ({
 					hideHeaders={compact}
 					columns={[
 						{
-							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-							accessor: 'rank',
-							Cell: (cellProps: CellProps<any>) => (
+							header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+							accessorKey: 'rank',
+							cell: (cellProps) => (
 								<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 							),
-							width: 60,
+							size: 60,
 						},
 						{
-							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-							accessor: 'trader',
-							Cell: (cellProps: CellProps<any>) => {
-								const avatar = useENSAvatar(staticMainnetProvider, cellProps.row.original.traderEns)
+							header: () => <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
+							accessorKey: 'trader',
+							cell: (cellProps) => {
 								return (
-									<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
-										{compact && cellProps.row.original.rank + '. '}
-										<StyledTrader>
-											{avatar?.data ? (
-												<>
-													{!avatar.isLoading && avatar.data && (
-														<img
-															src={avatar.data}
-															alt={''}
-															width={16}
-															height={16}
-															style={{ borderRadius: '50%', marginRight: '8px' }}
-															// @ts-ignore
-															onError={(err) => (err.target.style.display = 'none')}
-														/>
-													)}
-													{cellProps.row.original.traderEns}
-												</>
-											) : (
-												cellProps.row.original.traderEns ?? cellProps.row.original.traderShort
-											)}
-										</StyledTrader>
-										{getMedal(cellProps.row.original.rank)}
-									</StyledOrderType>
+									<TraderCell
+										onClickTrader={onClickTrader}
+										compact={compact}
+										rank={cellProps.row.original.rank}
+										traderEns={cellProps.row.original.traderEns}
+										traderShort={cellProps.row.original.traderShort}
+										trader={cellProps.row.original.trader}
+									/>
 								)
 							},
-							width: 150,
+							size: 150,
 						},
 						{
-							Header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
-							accessor: 'pnl',
-							Cell: (cellProps: CellProps<any>) => (
+							header: () => <TableHeader>{t('leaderboard.leaderboard.table.pnl')}</TableHeader>,
+							accessorKey: 'pnl',
+							cell: (cellProps) => (
 								<Currency.Price
 									currencyKey="sUSD"
 									price={cellProps.row.original.pnl}
 									sign="$"
-									colored={true}
+									colored
 								/>
 							),
-							width: 125,
+							size: 125,
 						},
 					]}
 				/>
@@ -272,7 +291,7 @@ const StyledTable = styled(Table)<{ compact: boolean | undefined; height?: numbe
 	${media.lessThan('md')`
 		margin-bottom: 150px;
 	`}
-`
+` as typeof Table
 
 const TableTitle = styled.div`
 	width: 100%;

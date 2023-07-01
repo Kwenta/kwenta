@@ -1,8 +1,7 @@
-import { FuturesTrade, PositionSide } from '@kwenta/sdk/types'
+import { PositionSide } from '@kwenta/sdk/types'
 import { formatCryptoCurrency } from '@kwenta/sdk/utils'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled, { css } from 'styled-components'
 
 import { GridDivCenteredRow } from 'components/layout/grid'
@@ -47,26 +46,24 @@ const TradesTab = () => {
 
 	const historyData = useMemo(() => {
 		return history.map((trade) => {
-			const pnl = trade?.pnl.div(ETH_UNIT)
-			const feesPaid = trade?.feesPaid.div(ETH_UNIT)
+			const pnl = trade.pnl.div(ETH_UNIT)
+			const feesPaid = trade.feesPaid.div(ETH_UNIT)
 			const netPnl = pnl.sub(feesPaid)
 			return {
 				...trade,
 				pnl,
 				feesPaid,
 				netPnl,
-				value: Number(trade?.price?.div(ETH_UNIT)),
-				amount: Number(trade?.size.div(ETH_UNIT).abs()),
-				time: trade?.timestamp * 1000,
-				id: trade?.txnHash,
+				value: Number(trade.price.div(ETH_UNIT)),
+				amount: Number(trade.size.div(ETH_UNIT).abs()),
+				time: trade.timestamp * 1000,
+				id: trade.txnHash,
 				asset: marketAsset,
-				type: trade?.orderType,
+				type: trade.orderType,
 				status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 			}
 		})
 	}, [history, marketAsset])
-
-	const columnsDeps = React.useMemo(() => [historyData], [historyData])
 
 	return (
 		<div>
@@ -87,44 +84,46 @@ const TradesTab = () => {
 					}}
 					columns={[
 						{
-							Header: <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
-							accessor: 'time',
-							// @ts-expect-error
-							Cell: (cellProps: CellProps<FuturesTrade>) => (
+							header: () => <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
+							accessorKey: 'time',
+							cell: (cellProps) => (
 								<GridDivCenteredRow>
-									<TimeDisplay value={cellProps.value} />
+									<TimeDisplay value={cellProps.getValue()} />
 								</GridDivCenteredRow>
 							),
-							width: 80,
-							sortable: true,
+							size: 80,
+							enableSorting: true,
 						},
 						{
-							Header: <TableHeader>{t('futures.market.user.trades.table.side-type')}</TableHeader>,
-							accessor: 'side',
-							sortType: 'basic',
-							// @ts-expect-error
-							Cell: (cellProps: CellProps<FuturesTrade>) => (
+							header: () => (
+								<TableHeader>{t('futures.market.user.trades.table.side-type')}</TableHeader>
+							),
+							accessorKey: 'side',
+							sortingFn: 'basic',
+							cell: (cellProps) => (
 								<div>
-									<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
+									<StyledPositionSide side={cellProps.getValue()}>
+										{cellProps.getValue()}
+									</StyledPositionSide>
 									<div>{cellProps.row.original.orderType}</div>
 								</div>
 							),
-							width: 100,
-							sortable: true,
+							size: 100,
+							enableSorting: true,
 						},
 						{
-							Header: <TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>,
-							accessor: 'amount',
-							sortType: 'basic',
-							// @ts-expect-error
-							Cell: (cellProps: CellProps<FuturesTrade>) => (
-								<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
+							header: () => (
+								<TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>
 							),
-							width: 80,
-							sortable: true,
+							accessorKey: 'amount',
+							sortingFn: 'basic',
+							cell: (cellProps) => (
+								<>{formatCryptoCurrency(cellProps.getValue(), { suggestDecimals: true })}</>
+							),
+							size: 80,
+							enableSorting: true,
 						},
 					]}
-					columnsDeps={columnsDeps}
 					data={historyData}
 					isLoading={tradesQuery.status === FetchStatus.Loading}
 				/>

@@ -1,4 +1,4 @@
-import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider'
+import Slider, { SliderProps as DefaultSliderProps, sliderClasses } from '@mui/base/Slider'
 import React from 'react'
 import styled, { css } from 'styled-components'
 
@@ -28,9 +28,10 @@ const SliderComponent: React.FC<SliderProps> = ({
 				max={maxValue}
 				step={steps}
 				marks
-				valueLabelDisplay="auto"
+				// valueLabelDisplay="auto"
 				defaultValue={defaultValue ?? minValue}
-				ValueLabelComponent={ValueLabel}
+				// ValueLabelComponent={ValueLabel}
+				slots={{ valueLabel: ValueLabel }}
 				{...props}
 			/>
 		</SliderContainer>
@@ -67,11 +68,11 @@ const SliderContainer = styled.div`
 const StyledSlider = styled(Slider)`
 	color: transparent !important;
 
-	.MuiSlider-root {
+	& .${sliderClasses.root} {
 		padding: 10px 0px 10px 4px;
 	}
 
-	.MuiSlider-rail {
+	& .${sliderClasses.rail} {
 		width: 102%;
 		margin-top: -2px;
 		border-radius: 2px;
@@ -81,7 +82,7 @@ const StyledSlider = styled(Slider)`
 		right: 0;
 	}
 
-	.MuiSlider-track {
+	& .${sliderClasses.track} {
 		height: 6px;
 		background-color: ${(props) => props.theme.colors.selectedTheme.slider.track.background};
 		margin-top: -3px;
@@ -91,14 +92,14 @@ const StyledSlider = styled(Slider)`
 		border-bottom-right-radius: 0px;
 	}
 
-	.MuiSlider-markActive {
+	& .${sliderClasses.markActive} {
 		width: 0px;
 		height: 0px;
 		background-color: transparent;
 		opacity: 1;
 	}
 
-	.MuiSlider-thumb {
+	& .${sliderClasses.thumb} {
 		background-color: ${(props) => props.theme.colors.selectedTheme.yellow};
 		border: ${(props) => props.theme.colors.selectedTheme.slider.thumb.border};
 		width: 18px;
@@ -110,17 +111,17 @@ const StyledSlider = styled(Slider)`
 		}
 	}
 
-	.MuiSlider-markLabelActive {
+	& .${sliderClasses.markLabelActive} {
 		${styledMarkLabel}
 		margin-left: 6px;
 	}
 
-	.MuiSlider-markLabel[data-index='1'] {
+	& .${sliderClasses.markLabel}[data-index='1'] {
 		${styledMarkLabel}
 		margin-left: -3px;
 	}
 
-	.MuiSlider-markLabel:nth-child(7) {
+	& .${sliderClasses.markLabel}:nth-child(7) {
 		color: #787878 !important;
 	}
 `

@@ -3,6 +3,7 @@ import Wei from '@synthetixio/wei'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { ExchangeTokens } from 'types/synths'
 
 import TabButton from 'components/Button/TabButton'
 import { TabPanel } from 'components/Tab'
@@ -18,14 +19,7 @@ import { PositionsTab } from '../Overview'
 import SynthBalancesTable from '../SynthBalancesTable'
 
 export type OpenPositionsProps = {
-	exchangeTokens: {
-		synth: string
-		description: string
-		balance: Wei
-		usdBalance: Wei
-		price: Wei
-		priceChange: Wei
-	}[]
+	exchangeTokens: ExchangeTokens
 	exchangeTokenBalances: Wei
 }
 

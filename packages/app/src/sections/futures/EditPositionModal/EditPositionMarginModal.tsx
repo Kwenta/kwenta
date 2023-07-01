@@ -57,8 +57,7 @@ export default function EditPositionMarginModal() {
 
 	useEffect(() => {
 		dispatch(clearTradeInputs())
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [dispatch])
 
 	const isLoading = useMemo(
 		() => isSubmitting || isFetchingPreview,
