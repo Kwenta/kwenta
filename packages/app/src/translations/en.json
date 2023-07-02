@@ -591,7 +591,12 @@
 					"liquid-rewards": "Liquid Rewards",
 					"annual-percentage-rate": "Annual Percentage Rate",
 					"claim": "Claim",
-					"current-trading-period": "Current Trading Period:"
+					"compound": "Compound",
+					"current-trading-period": "Current Trading Period:",
+					"staking-rewards": {
+						"title": "Staking Rewards",
+						"copy": "Stake your escrowed tokens to earn additional rewards."
+					}
 				},
 				"trading-rewards": {
 					"title": "Trading Rewards",
@@ -618,7 +623,11 @@
 					"eligible": "Eligible",
 					"stake-to-earn": "Trade to earn <0>$KWENTA</0> and <0>$OP</> rewards",
 					"stake-to-start": "Trade to earn <0>$KWENTA</0> and <0>$OP</> rewards",
-					"learn-more": "Learn More"
+					"learn-more": "Learn More",
+					"fee-paid": "Fee Paid",
+					"fee-share": "Fee Share",
+					"period": "Period",
+					"total-pool-fees": "Total Pool Fees"
 				},
 				"escrow": {
 					"title": "Escrow",
@@ -642,6 +651,7 @@
 					}
 				},
 				"migrate": {
+					"title": "Migrate to Staking V2",
 					"step-1-copy": "Claim any remaining rewards",
 					"step-2-copy": "Unstake V1 liquid balance",
 					"step-3-copy": "Trasfer liquid balance to v2",
@@ -649,7 +659,8 @@
 					"staked": "Staked",
 					"claim": "Claim",
 					"unstake": "Unstake",
-					"stake": "stake"
+					"stake": "Stake",
+					"approve": "Approve"
 				},
 				"redeem": {
 					"title": "Redeem"

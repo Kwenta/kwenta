@@ -107,81 +107,95 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 			: ZERO_WEI
 	}, [futuresFeePaid, totalFuturesFeePaid])
 
-	const REWARDS = [
-		{
-			key: 'trading-rewards',
-			title: t('dashboard.rewards.trading-rewards.title'),
-			copy: t('dashboard.rewards.trading-rewards.copy'),
-			labels: [
-				{
-					label: t('dashboard.rewards.rewards'),
-					value: truncateNumbers(kwentaRewards, 4),
-				},
-				{
-					label: 'Fee Paid',
-					value: formatDollars(futuresFeePaid, { minDecimals: 2 }),
-				},
-				{
-					label: 'Fee Share',
-					value: formatPercent(ratio, { minDecimals: 2 }),
-				},
-			],
-			info: [
-				{
-					label: 'Period',
-					value: `Epoch ${period}`,
-				},
-				{
-					label: 'Total Pool Fees',
-					value: formatDollars(totalFuturesFeePaid, { minDecimals: 2 }),
-				},
-				{
-					label: t('dashboard.rewards.estimated'),
-					value: truncateNumbers(wei(estimatedKwentaReward ?? ZERO_WEI), 4),
-				},
-			],
-			kwentaIcon: true,
-			linkIcon: true,
-		},
-		{
-			key: 'op-rewards',
-			title: t('dashboard.rewards.op-rewards.title'),
-			copy: t('dashboard.rewards.op-rewards.copy'),
-			labels: [
-				{
-					label: 'Rewards',
-					value: truncateNumbers(wei(opRewards ?? ZERO_WEI), 4),
-				},
-			],
-			info: [
-				{
-					label: t('dashboard.rewards.estimated'),
-					value: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
-				},
-			],
-			kwentaIcon: false,
-			linkIcon: false,
-		},
-		{
-			key: 'snx-rewards',
-			title: t('dashboard.rewards.snx-rewards.title'),
-			copy: t('dashboard.rewards.snx-rewards.copy'),
-			labels: [
-				{
-					label: 'Rewards',
-					value: truncateNumbers(wei(snxOpRewards ?? ZERO_WEI), 4),
-				},
-			],
-			info: [
-				{
-					label: t('dashboard.rewards.estimated'),
-					value: NO_VALUE,
-				},
-			],
-			kwentaIcon: false,
-			linkIcon: false,
-		},
-	]
+	const REWARDS = useMemo(
+		() => [
+			{
+				key: 'trading-rewards',
+				title: t('dashboard.rewards.trading-rewards.title'),
+				copy: t('dashboard.rewards.trading-rewards.copy'),
+				labels: [
+					{
+						label: t('dashboard.stake.portfolio.rewards.title'),
+						value: truncateNumbers(kwentaRewards, 4),
+					},
+					{
+						label: t('dashboard.rewards.trading-rewards.fee-paid'),
+						value: formatDollars(futuresFeePaid, { minDecimals: 2 }),
+					},
+					{
+						label: t('dashboard.rewards.trading-rewards.fee-share'),
+						value: formatPercent(ratio, { minDecimals: 2 }),
+					},
+				],
+				info: [
+					{
+						label: t('dashboard.rewards.trading-rewards.period'),
+						value: `Epoch ${period}`,
+					},
+					{
+						label: t('dashboard.rewards.trading-rewards.total-pool-fees'),
+						value: formatDollars(totalFuturesFeePaid, { minDecimals: 2 }),
+					},
+					{
+						label: t('dashboard.rewards.estimated'),
+						value: truncateNumbers(wei(estimatedKwentaReward ?? ZERO_WEI), 4),
+					},
+				],
+				kwentaIcon: true,
+				linkIcon: true,
+			},
+			{
+				key: 'op-rewards',
+				title: t('dashboard.rewards.op-rewards.title'),
+				copy: t('dashboard.rewards.op-rewards.copy'),
+				labels: [
+					{
+						label: t('dashboard.stake.portfolio.rewards.title'),
+						value: truncateNumbers(wei(opRewards ?? ZERO_WEI), 4),
+					},
+				],
+				info: [
+					{
+						label: t('dashboard.rewards.estimated'),
+						value: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
+					},
+				],
+				kwentaIcon: false,
+				linkIcon: false,
+			},
+			{
+				key: 'snx-rewards',
+				title: t('dashboard.rewards.snx-rewards.title'),
+				copy: t('dashboard.rewards.snx-rewards.copy'),
+				labels: [
+					{
+						label: t('dashboard.stake.portfolio.rewards.title'),
+						value: truncateNumbers(wei(snxOpRewards ?? ZERO_WEI), 4),
+					},
+				],
+				info: [
+					{
+						label: t('dashboard.rewards.estimated'),
+						value: NO_VALUE,
+					},
+				],
+				kwentaIcon: false,
+				linkIcon: false,
+			},
+		],
+		[
+			estimatedKwentaReward,
+			estimatedOp,
+			futuresFeePaid,
+			kwentaRewards,
+			opRewards,
+			period,
+			ratio,
+			snxOpRewards,
+			t,
+			totalFuturesFeePaid,
+		]
+	)
 
 	const handleChangeEpoch = useCallback(
 		(value: EpochValue) => () => {

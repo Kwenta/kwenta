@@ -99,12 +99,6 @@ const EscrowTable = () => {
 					{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
 				</Body>
 			</FlexDivCol>
-			<Button size="xsmall" isRounded disabled={true} onClick={() => {}}>
-				{t('dashboard.stake.tabs.escrow.transfer')}
-			</Button>
-			<Button size="xsmall" isRounded disabled={true} onClick={() => {}}>
-				{t('dashboard.stake.tabs.escrow.delegate')}
-			</Button>
 			<Button
 				variant="yellow"
 				size="xsmall"

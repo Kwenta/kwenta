@@ -10,12 +10,11 @@ import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
 import { StakingCard } from 'sections/dashboard/Stake/card'
-import { numericValueCSS } from 'styles/common'
 import media from 'styles/media'
 
 import ErrorView from './ErrorView'
 import Spacer from './Spacer'
-import { Body } from './Text'
+import { Body, NumericValue } from './Text'
 
 type StakeCardProps = {
 	title: string
@@ -125,9 +124,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 							<Body color="secondary">{title}</Body>
 							<StyledFlexDivRowCentered>
 								<Body color="secondary">{t('dashboard.stake.tabs.stake-table.balance')}</Body>
-								<PointerBody color="primary" onClick={onMaxClick}>
-									{balanceString}
-								</PointerBody>
+								<NumericValueButton onClick={onMaxClick}>{balanceString}</NumericValueButton>
 							</StyledFlexDivRowCentered>
 						</StakeInputHeader>
 						<NumericInput value={amount} onChange={handleChange} bold />
@@ -180,9 +177,8 @@ const StakeInputHeader = styled(FlexDivRowCentered)`
 	font-size: 14px;
 `
 
-const PointerBody = styled(Body)`
+const NumericValueButton = styled(NumericValue)`
 	cursor: pointer;
-	${numericValueCSS};
 `
 
 export default StakeCard

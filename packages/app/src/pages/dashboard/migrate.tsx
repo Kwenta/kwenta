@@ -104,106 +104,133 @@ const MigratePage: MigrateComponent = () => {
 		}
 	}, [dispatch, walletAddress])
 
-	const MIGRATE_STEPS = [
-		{
-			key: 'step-1',
-			copy: t('dashboard.stake.tabs.migrate.step-1-copy'),
-			label: t('dashboard.stake.tabs.migrate.rewards'),
-			value: truncateNumbers(claimableBalance, 2),
-			buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
-			onClick: handleGetReward,
-			active: claimableBalance.gt(0),
-		},
-		{
-			key: 'step-2',
-			copy: t('dashboard.stake.tabs.migrate.step-2-copy'),
-			label: t('dashboard.stake.tabs.migrate.staked'),
-			value: truncateNumbers(stakedKwentaBalance, 2),
-			buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
-			onClick: handleUnstakeKwenta,
-			active: claimableBalance.lte(0) && stakedKwentaBalance.gt(0),
-		},
-		{
-			key: 'step-3',
-			copy: t('dashboard.stake.tabs.migrate.step-3-copy'),
-			label: t('dashboard.stake.tabs.migrate.staked'),
-			value: truncateNumbers(stakedKwentaBalanceV2, 2),
-			buttonLabel: kwentaStakingV2Approved ? t('dashboard.stake.tabs.migrate.stake') : 'Approve',
-			onClick: handleStakeKwenta,
-			active: claimableBalance.lte(0) && stakedKwentaBalance.lte(0),
-		},
-	]
+	const MIGRATE_STEPS = useMemo(
+		() => [
+			{
+				key: 'step-1',
+				copy: t('dashboard.stake.tabs.migrate.step-1-copy'),
+				label: t('dashboard.stake.tabs.migrate.rewards'),
+				value: truncateNumbers(claimableBalance, 2),
+				buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
+				onClick: handleGetReward,
+				active: claimableBalance.gt(0),
+			},
+			{
+				key: 'step-2',
+				copy: t('dashboard.stake.tabs.migrate.step-2-copy'),
+				label: t('dashboard.stake.tabs.migrate.staked'),
+				value: truncateNumbers(stakedKwentaBalance, 2),
+				buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
+				onClick: handleUnstakeKwenta,
+				active: claimableBalance.lte(0) && stakedKwentaBalance.gt(0),
+			},
+			{
+				key: 'step-3',
+				copy: t('dashboard.stake.tabs.migrate.step-3-copy'),
+				label: t('dashboard.stake.tabs.migrate.staked'),
+				value: truncateNumbers(stakedKwentaBalanceV2, 2),
+				buttonLabel: kwentaStakingV2Approved
+					? t('dashboard.stake.tabs.migrate.stake')
+					: t('dashboard.stake.tabs.migrate.approve'),
+				onClick: handleStakeKwenta,
+				active: claimableBalance.lte(0) && stakedKwentaBalance.lte(0),
+			},
+		],
+		[
+			claimableBalance,
+			handleGetReward,
+			handleStakeKwenta,
+			handleUnstakeKwenta,
+			kwentaStakingV2Approved,
+			stakedKwentaBalance,
+			stakedKwentaBalanceV2,
+			t,
+		]
+	)
 
-	const MIGRATE_CARDS: StakingCards[] = [
-		{
-			category: t('dashboard.stake.portfolio.balance.title'),
-			card: [
-				{
-					key: 'balance-liquid',
-					title: t('dashboard.stake.portfolio.balance.liquid'),
-					value: truncateNumbers(kwentaBalance, 2),
-					onClick: () => setCurrentTab(StakeTab.Staking),
-				},
-				{
-					key: 'balance-staked',
-					title: t('dashboard.stake.portfolio.balance.staked'),
-					value: truncateNumbers(stakedKwentaBalanceV2, 2),
-					onClick: () => setCurrentTab(StakeTab.Escrow),
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.rewards.title'),
-			card: [
-				{
-					key: 'rewards-claimable',
-					title: t('dashboard.stake.portfolio.rewards.staking'),
-					value: truncateNumbers(claimableBalanceV2, 2),
-					onClick: () => setCurrentTab(StakeTab.Staking),
-				},
-				{
-					key: 'rewards-trading',
-					title: t('dashboard.stake.portfolio.rewards.trading'),
-					value: truncateNumbers(kwentaRewards, 4),
-					onClick: () => setCurrentTab(StakeTab.Staking),
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.escrow.title-v2'),
-			card: [
-				{
-					key: 'escrow-staked',
-					title: t('dashboard.stake.portfolio.escrow.staked'),
-					value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
-					onClick: () => setCurrentTab(StakeTab.Escrow),
-				},
-				{
-					key: 'escrow-vestable',
-					title: t('dashboard.stake.portfolio.escrow.vestable'),
-					value: truncateNumbers(totalVestableV2, 2),
-					onClick: () => setCurrentTab(StakeTab.Escrow),
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.escrow.title-v1'),
-			card: [
-				{
-					key: 'escrow-staked',
-					title: t('dashboard.stake.portfolio.escrow.staked'),
-					value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
-					onClick: () => setCurrentTab(StakeTab.Escrow),
-				},
-				{
-					key: 'escrow-vestable',
-					title: t('dashboard.stake.portfolio.escrow.vestable'),
-					value: truncateNumbers(totalVestable, 2),
-					onClick: () => setCurrentTab(StakeTab.Escrow),
-				},
-			],
-		},
-	]
+	const MIGRATE_CARDS: StakingCards[] = useMemo(
+		() => [
+			{
+				category: t('dashboard.stake.portfolio.balance.title'),
+				card: [
+					{
+						key: 'balance-liquid',
+						title: t('dashboard.stake.portfolio.balance.liquid'),
+						value: truncateNumbers(kwentaBalance, 2),
+						onClick: () => setCurrentTab(StakeTab.Staking),
+					},
+					{
+						key: 'balance-staked',
+						title: t('dashboard.stake.portfolio.balance.staked'),
+						value: truncateNumbers(stakedKwentaBalanceV2, 2),
+						onClick: () => setCurrentTab(StakeTab.Escrow),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.rewards.title'),
+				card: [
+					{
+						key: 'rewards-claimable',
+						title: t('dashboard.stake.portfolio.rewards.staking'),
+						value: truncateNumbers(claimableBalanceV2, 2),
+						onClick: () => setCurrentTab(StakeTab.Staking),
+					},
+					{
+						key: 'rewards-trading',
+						title: t('dashboard.stake.portfolio.rewards.trading'),
+						value: truncateNumbers(kwentaRewards, 4),
+						onClick: () => setCurrentTab(StakeTab.Staking),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.escrow.title-v2'),
+				card: [
+					{
+						key: 'escrow-staked',
+						title: t('dashboard.stake.portfolio.escrow.staked'),
+						value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
+						onClick: () => setCurrentTab(StakeTab.Escrow),
+					},
+					{
+						key: 'escrow-vestable',
+						title: t('dashboard.stake.portfolio.escrow.vestable'),
+						value: truncateNumbers(totalVestableV2, 2),
+						onClick: () => setCurrentTab(StakeTab.Escrow),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.escrow.title-v1'),
+				card: [
+					{
+						key: 'escrow-staked',
+						title: t('dashboard.stake.portfolio.escrow.staked'),
+						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+						onClick: () => setCurrentTab(StakeTab.Escrow),
+					},
+					{
+						key: 'escrow-vestable',
+						title: t('dashboard.stake.portfolio.escrow.vestable'),
+						value: truncateNumbers(totalVestable, 2),
+						onClick: () => setCurrentTab(StakeTab.Escrow),
+					},
+				],
+			},
+		],
+		[
+			claimableBalanceV2,
+			kwentaBalance,
+			kwentaRewards,
+			stakedEscrowedKwentaBalance,
+			stakedEscrowedKwentaBalanceV2,
+			stakedKwentaBalanceV2,
+			t,
+			totalVestable,
+			totalVestableV2,
+		]
+	)
 
 	return (
 		<>
@@ -212,7 +239,7 @@ const MigratePage: MigrateComponent = () => {
 			</Head>
 			<StakingHeading>
 				<FlexDivCol rowGap="5px">
-					<StyledHeading variant="h4">Migrate to Staking V2</StyledHeading>
+					<StyledHeading variant="h4">{t('dashboard-stake.page-title')}</StyledHeading>
 					<Body color="secondary">
 						Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.
 					</Body>

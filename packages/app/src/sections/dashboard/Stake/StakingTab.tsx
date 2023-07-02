@@ -1,5 +1,5 @@
 import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -36,57 +36,62 @@ const StakingTab = () => {
 		dispatch(compoundRewards())
 	}, [dispatch])
 
-	const DEFAULT_CARDS = [
-		{
-			category: 'Staking',
-			card: [
-				{
-					key: 'staking-staked',
-					title: t('dashboard.stake.portfolio.balance.staked'),
-					value: truncateNumbers(stakedKwentaBalance, 2),
-				},
-				{
-					key: 'staking-apr',
-					title: t('dashboard.stake.portfolio.rewards.apr'),
-					value: formatPercent(apy, { minDecimals: 2 }),
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.rewards.title'),
-			card: [
-				{
-					key: 'rewards-claimable',
-					title: t('dashboard.stake.portfolio.rewards.claimable'),
-					value: truncateNumbers(claimableBalance, 2),
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
-			card: [
-				{
-					key: 'early-vest-rewards-claimable',
-					title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
-					value: NO_VALUE,
-				},
-				{
-					key: 'early-vest-rewards-epoch',
-					title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
-					value: NO_VALUE,
-				},
-			],
-		},
-	]
+	const stakingAndRewardsInfo = useMemo(
+		() => [
+			{
+				category: 'Staking',
+				card: [
+					{
+						key: 'staking-staked',
+						title: t('dashboard.stake.portfolio.balance.staked'),
+						value: truncateNumbers(stakedKwentaBalance, 2),
+					},
+					{
+						key: 'staking-apr',
+						title: t('dashboard.stake.portfolio.rewards.apr'),
+						value: formatPercent(apy, { minDecimals: 2 }),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.rewards.title'),
+				card: [
+					{
+						key: 'rewards-claimable',
+						title: t('dashboard.stake.portfolio.rewards.claimable'),
+						value: truncateNumbers(claimableBalance, 2),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
+				card: [
+					{
+						key: 'early-vest-rewards-claimable',
+						title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
+						value: NO_VALUE,
+					},
+					{
+						key: 'early-vest-rewards-epoch',
+						title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
+						value: NO_VALUE,
+					},
+				],
+			},
+		],
+		[apy, claimableBalance, stakedKwentaBalance, t]
+	)
 
 	return (
 		<SplitContainer>
 			<StakeInputCard showWarning={true} />
 			<CardGridContainer>
-				<StyledHeading variant="h4">Staking Rewards</StyledHeading>
-				<Body color="secondary">Stake your escrowed tokens to earn additional rewards.</Body>
+				<StyledHeading variant="h4">
+					{t('dashboard.stake.tabs.staking.staking-rewards.title')}
+				</StyledHeading>
+				<Body color="secondary">{t('dashboard.stake.tabs.staking.staking-rewards.copy')}</Body>
 				<CardsContainer>
-					{DEFAULT_CARDS.map(({ category, card }, i) => (
+					{stakingAndRewardsInfo.map(({ category, card }, i) => (
 						<FlexDivCol rowGap="15px" key={i}>
 							<Body size="large">{category}</Body>
 							<FlexDivRow columnGap="35px" justifyContent="flex-start">
@@ -110,7 +115,7 @@ const StakingTab = () => {
 						isRounded
 						onClick={handleCompoundReward}
 					>
-						COMPOUND
+						{t('dashboard.stake.tabs.staking.compound')}
 					</Button>
 					<Button
 						variant="flat"
@@ -120,16 +125,6 @@ const StakingTab = () => {
 						onClick={handleGetReward}
 					>
 						{t('dashboard.stake.tabs.staking.claim')}
-					</Button>
-					<Button
-						variant="flat"
-						size="small"
-						textTransform="uppercase"
-						isRounded
-						disabled={true}
-						onClick={() => {}}
-					>
-						DELEGATE
 					</Button>
 				</FlexDivRow>
 			</CardGridContainer>

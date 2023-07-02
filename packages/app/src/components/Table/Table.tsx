@@ -18,6 +18,7 @@ const CARD_HEIGHT_MD = '50px'
 const CARD_HEIGHT_LG = '40px'
 const MAX_PAGE_ROWS = 100
 const MAX_TOTAL_ROWS = 9999
+const SHORT_PAGE_SIZE = 5
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1)
@@ -58,7 +59,7 @@ function calculatePageSize(
 	if (showPagination) {
 		return pageSize ? pageSize : MAX_PAGE_ROWS
 	}
-	return showShortList ? pageSize ?? 5 : MAX_TOTAL_ROWS
+	return showShortList ? pageSize ?? SHORT_PAGE_SIZE : MAX_TOTAL_ROWS
 }
 
 type TableProps = {
