@@ -119,21 +119,21 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 						value: truncateNumbers(kwentaRewards, 4),
 					},
 					{
-						label: t('dashboard.rewards.trading-rewards.fee-paid'),
+						label: t('dashboard.stake.tabs.trading-rewards.fee-paid'),
 						value: formatDollars(futuresFeePaid, { minDecimals: 2 }),
 					},
 					{
-						label: t('dashboard.rewards.trading-rewards.fee-share'),
+						label: t('dashboard.stake.tabs.trading-rewards.fee-share'),
 						value: formatPercent(ratio, { minDecimals: 2 }),
 					},
 				],
 				info: [
 					{
-						label: t('dashboard.rewards.trading-rewards.period'),
+						label: t('dashboard.stake.tabs.trading-rewards.period'),
 						value: `Epoch ${period}`,
 					},
 					{
-						label: t('dashboard.rewards.trading-rewards.total-pool-fees'),
+						label: t('dashboard.stake.tabs.trading-rewards.total-pool-fees'),
 						value: formatDollars(totalFuturesFeePaid, { minDecimals: 2 }),
 					},
 					{
