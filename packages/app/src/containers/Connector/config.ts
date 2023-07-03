@@ -6,7 +6,6 @@ import {
 	ledgerWallet,
 	metaMaskWallet,
 	rainbowWallet,
-	trustWallet,
 	safeWallet,
 	walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
@@ -84,7 +83,6 @@ const connectors = connectorsForWallets([
 		wallets: [
 			ledgerWallet({ projectId, chains }),
 			braveWallet({ chains, shimDisconnect: true }),
-			trustWallet({ projectId, chains }),
 			Tally({ chains, shimDisconnect: true }),
 			Frame({ chains, shimDisconnect: true }),
 			injectedWallet({ chains, shimDisconnect: true }),
