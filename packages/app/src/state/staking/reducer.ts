@@ -45,6 +45,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	totalVestable: '0',
 	totalVestableV2: '0',
 	escrowData: [],
+	escrowV2Data: [],
 	kwentaRewards: '0',
 	opRewards: '0',
 	snxOpRewards: '0',
@@ -136,6 +137,7 @@ const stakingSlice = createSlice({
 		})
 		builder.addCase(fetchEscrowV2Data.fulfilled, (state, action) => {
 			state.totalVestableV2 = action.payload.totalVestable
+			state.escrowV2Data = action.payload.escrowData
 		})
 		builder.addCase(fetchClaimableRewards.fulfilled, (state, action) => {
 			state.claimableKwentaRewards = action.payload.claimableKwentaRewards

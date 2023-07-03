@@ -26,6 +26,7 @@ export type StakingState = {
 	totalVestable: string
 	totalVestableV2: string
 	escrowData: EscrowData<string>[]
+	escrowV2Data: EscrowData<string>[]
 	kwentaRewards: string
 	opRewards: string
 	snxOpRewards: string

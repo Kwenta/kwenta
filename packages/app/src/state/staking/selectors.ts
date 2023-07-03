@@ -244,3 +244,5 @@ export const selectAPYV2 = createSelector(
 )
 
 export const selectEscrowData = (state: RootState) => state.staking.escrowData ?? []
+
+export const selectEscrowV2Data = (state: RootState) => state.staking.escrowV2Data ?? []

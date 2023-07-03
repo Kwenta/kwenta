@@ -17,14 +17,17 @@ import { Body } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewardsV2 } from 'state/staking/actions'
-import { selectEscrowData } from 'state/staking/selectors'
+import { selectEscrowData, selectEscrowV2Data } from 'state/staking/selectors'
 
 import VestConfirmationModal from './VestConfirmationModal'
 
 const EscrowTable = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const escrowData = useAppSelector(selectEscrowData)
+	const escrowV1Data = useAppSelector(selectEscrowData)
+	const escrowV2Data = useAppSelector(selectEscrowV2Data)
+	const escrowData = useMemo(() => [...escrowV1Data, ...escrowV2Data], [escrowV1Data, escrowV2Data])
+
 	const [checkedState, setCheckedState] = useState(escrowData.map((_) => false))
 	const [checkAllState, setCheckAllState] = useState(false)
 	const [isConfirmModalOpen, setConfirmModalOpen] = useState(false)
