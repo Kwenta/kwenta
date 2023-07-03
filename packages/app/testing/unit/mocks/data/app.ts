@@ -1,4 +1,8 @@
+import { NetworkId } from '@kwenta/sdk/dist/types'
 import { Wallet } from 'ethers'
+
+import { PRICES_INITIAL_STATE } from 'state/prices/reducer'
+import { PricesInfoMap } from 'state/prices/types'
 
 export const TEST_ADDR = '0x1c099210997E5C5689189A256C6145ca743B2610'
 export const TEST_PK = 'b826c22c04853f6ba05575275494a3a5c9eff298c36cb58d11370f83c87574e4'
@@ -136,3 +140,12 @@ export const CHAINS = [
 		testnet: true,
 	},
 ]
+
+export const PRELOADED_STATE = {
+	wallet: { networkId: 10 as NetworkId, walletAddress: TEST_ADDR },
+	prices: {
+		...PRICES_INITIAL_STATE,
+		onChainPrices: { sETH: { price: '1810.50', change: 'up' } } as PricesInfoMap,
+		offChainPrices: { sETH: { price: '1810.50', change: 'up' } } as PricesInfoMap,
+	},
+}

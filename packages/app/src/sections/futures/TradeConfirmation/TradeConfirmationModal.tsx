@@ -80,10 +80,10 @@ export default function TradeConfirmationModal({
 
 	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch])
 
-	const totalFee = useMemo(() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee, [
-		potentialTradeDetails?.fee,
-		executionFee,
-	])
+	const totalFee = useMemo(
+		() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee,
+		[potentialTradeDetails?.fee, executionFee]
+	)
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(ZERO_WEI)) {
@@ -259,7 +259,7 @@ export default function TradeConfirmationModal({
 				/>
 			)}
 			<ConfirmTradeButton
-				data-testid="trade-open-position-confirm-order-button"
+				data-testid="trade-confirm-order-button"
 				variant={isSubmitting ? 'flat' : leverageSide}
 				onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
 				className={leverageSide}

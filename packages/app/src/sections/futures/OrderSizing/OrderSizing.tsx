@@ -42,10 +42,10 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 	const availableOi = useAppSelector(selectAvailableOi)
 	const isDisabled = useAppSelector(selectTradeSizeInputsDisabled)
 
-	const tradePrice = useMemo(() => (orderPrice ? wei(orderPrice) : marketAssetRate), [
-		orderPrice,
-		marketAssetRate,
-	])
+	const tradePrice = useMemo(
+		() => (orderPrice ? wei(orderPrice) : marketAssetRate),
+		[orderPrice, marketAssetRate]
+	)
 
 	const increasingPosition = !position?.position?.side || position?.position?.side === tradeSide
 

@@ -30,17 +30,15 @@ const RedeemInputCard: FC<RedeemInputCardProps> = ({ inputLabel, isVKwenta }) =>
 	const isVKwentaApproved = useAppSelector(selectIsVKwentaTokenApproved)
 	const isVeKwentaApproved = useAppSelector(selectIsVeKwentaTokenApproved)
 
-	const isApproved = useMemo(() => (isVKwenta ? isVKwentaApproved : isVeKwentaApproved), [
-		isVKwenta,
-		isVKwentaApproved,
-		isVeKwentaApproved,
-	])
+	const isApproved = useMemo(
+		() => (isVKwenta ? isVKwentaApproved : isVeKwentaApproved),
+		[isVKwenta, isVKwentaApproved, isVeKwentaApproved]
+	)
 
-	const balance = useMemo(() => (isVKwenta ? vKwentaBalance : veKwentaBalance), [
-		isVKwenta,
-		vKwentaBalance,
-		veKwentaBalance,
-	])
+	const balance = useMemo(
+		() => (isVKwenta ? vKwentaBalance : veKwentaBalance),
+		[isVKwenta, vKwentaBalance, veKwentaBalance]
+	)
 
 	const buttonTranslationKey = useMemo(() => {
 		return isApproved

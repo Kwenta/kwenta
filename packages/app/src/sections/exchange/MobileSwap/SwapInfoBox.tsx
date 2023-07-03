@@ -26,7 +26,7 @@ const PriceImpactRow = () => {
 	return (
 		<InfoBoxRow
 			title={t('exchange.currency-card.price-impact')}
-			value={slippagePercent.lt(0) ? formatPercent(slippagePercent) : NO_VALUE}
+			textValue={slippagePercent.lt(0) ? formatPercent(slippagePercent) : NO_VALUE}
 		/>
 	)
 }
@@ -38,7 +38,7 @@ const FeeCostRow = () => {
 	return (
 		<InfoBoxRow
 			title={t('common.summary.fee-cost')}
-			value={!!feeCost ? formatDollars(feeCost, { suggestDecimals: true }) : NO_VALUE}
+			textValue={!!feeCost ? formatDollars(feeCost, { suggestDecimals: true }) : NO_VALUE}
 		/>
 	)
 }
@@ -53,8 +53,7 @@ const FeeRow = () => {
 	return (
 		<InfoBoxRow
 			title={t('exchange.summary-info.fee')}
-			value=""
-			valueNode={
+			nodeValue={
 				<div style={{ display: 'flex' }}>
 					{formatPercent(baseFeeRate ?? ZERO_WEI)}
 					{exchangeFeeRate != null && baseFeeRate != null ? (
@@ -106,7 +105,7 @@ const GasPriceRow = () => {
 					? t('common.summary.gas-prices.max-fee')
 					: t('common.summary.gas-prices.gas-price')
 			}
-			value={gasPriceItem}
+			textValue={gasPriceItem}
 		/>
 	)
 }

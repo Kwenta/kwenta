@@ -9,9 +9,10 @@ import { NO_VALUE } from 'constants/placeholder'
 type InfoBoxRowProps = {
 	children?: React.ReactNode
 	title: string
-	value: React.ReactNode
 	keyNode?: React.ReactNode
-	valueNode?: React.ReactNode
+	textValue?: string
+	textValueIcon?: React.ReactNode
+	nodeValue?: React.ReactNode
 	spaceBeneath?: boolean
 	compactBox?: boolean
 	color?: BodyProps['color']
@@ -27,8 +28,10 @@ type InfoBoxRowProps = {
 export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 	({
 		title,
-		value,
 		keyNode,
+		textValueIcon,
+		textValue,
+		nodeValue,
 		compactBox,
 		disabled,
 		dataTestId,
@@ -38,7 +41,6 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 		onToggleExpand,
 		children,
 		color,
-		valueNode,
 		spaceBeneath,
 		boldValue,
 	}) => (
@@ -53,16 +55,20 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 					<InfoBoxKey>
 						{title}: {keyNode} {expandable ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
 					</InfoBoxKey>
-					<ValueText
-						$bold={boldValue}
-						$isSubItem={isSubItem}
-						data-testid={dataTestId}
-						$disabled={disabled}
-						color={color}
-					>
-						{disabled ? NO_VALUE : value}
-						{valueNode}
-					</ValueText>
+					{nodeValue ? (
+						nodeValue
+					) : (
+						<ValueText
+							$bold={boldValue}
+							$isSubItem={isSubItem}
+							data-testid={dataTestId}
+							$disabled={disabled}
+							color={color}
+						>
+							{disabled ? NO_VALUE : textValue}
+							{textValueIcon}
+						</ValueText>
+					)}
 				</Row>
 			)}
 			{spaceBeneath && <br />}

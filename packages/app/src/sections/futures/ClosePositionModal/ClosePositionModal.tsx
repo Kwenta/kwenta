@@ -76,10 +76,10 @@ export default function ClosePositionModal() {
 		}
 	}, [dispatch, accountType, overridePriceProtection])
 
-	const isLoading = useMemo(() => isSubmitting || isFetchingPreview, [
-		isSubmitting,
-		isFetchingPreview,
-	])
+	const isLoading = useMemo(
+		() => isSubmitting || isFetchingPreview,
+		[isSubmitting, isFetchingPreview]
+	)
 
 	const maxNativeValue = useMemo(() => {
 		return position?.position?.size ?? ZERO_WEI
@@ -192,19 +192,19 @@ export default function ClosePositionModal() {
 				<InfoBoxRow
 					boldValue
 					title={t('futures.market.trade.edit-position.market')}
-					value={market?.marketName}
+					textValue={market?.marketName}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						previewTrade?.leverage && (
 							<PreviewArrow showPreview>{previewTrade.leverage.toString(2)}x</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					value={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
+					textValue={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						previewTrade?.size && (
 							<PreviewArrow showPreview>
 								{previewTrade?.size
@@ -214,25 +214,25 @@ export default function ClosePositionModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.position-size')}
-					value={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
+					textValue={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						previewTrade?.liqPrice && (
 							<PreviewArrow showPreview>{formatDollars(previewTrade?.liqPrice)}</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					value={formatDollars(position?.position?.liquidationPrice || 0)}
+					textValue={formatDollars(position?.position?.liquidationPrice || 0)}
 				/>
 				<InfoBoxRow
 					color={previewTrade?.exceedsPriceProtection ? 'negative' : 'primary'}
 					title={t('futures.market.trade.edit-position.price-impact')}
-					value={formatPercent(previewTrade?.priceImpact || 0)}
+					textValue={formatPercent(previewTrade?.priceImpact || 0)}
 				/>
 				<InfoBoxRow
 					title={t('futures.market.trade.edit-position.fill-price')}
-					value={formatDollars(previewTrade?.price || 0)}
+					textValue={formatDollars(previewTrade?.price || 0)}
 				/>
 			</InfoBoxContainer>
 			{previewTrade?.exceedsPriceProtection && (

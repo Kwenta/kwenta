@@ -361,10 +361,8 @@ export default class KwentaTokenService {
 	}
 
 	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
-		const {
-			MultipleMerkleDistributor,
-			MultipleMerkleDistributorPerpsV2,
-		} = this.sdk.context.multicallContracts
+		const { MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
+			this.sdk.context.multicallContracts
 		const { walletAddress } = this.sdk.context
 
 		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
@@ -534,11 +532,8 @@ export default class KwentaTokenService {
 	}
 
 	public async claimMultipleKwentaRewards(claimableRewards: ClaimParams[][]) {
-		const {
-			BatchClaimer,
-			MultipleMerkleDistributor,
-			MultipleMerkleDistributorPerpsV2,
-		} = this.sdk.context.contracts
+		const { BatchClaimer, MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
+			this.sdk.context.contracts
 
 		if (!BatchClaimer || !MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
@@ -581,10 +576,8 @@ export default class KwentaTokenService {
 	}
 
 	public async claimOpRewards(claimableRewards: ClaimParams[], isSnx: boolean = false) {
-		const {
-			MultipleMerkleDistributorOp,
-			MultipleMerkleDistributorSnxOp,
-		} = this.sdk.context.contracts
+		const { MultipleMerkleDistributorOp, MultipleMerkleDistributorSnxOp } =
+			this.sdk.context.contracts
 
 		if (!MultipleMerkleDistributorOp || !MultipleMerkleDistributorSnxOp) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)

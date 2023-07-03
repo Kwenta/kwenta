@@ -64,10 +64,10 @@ export default function EditStopLossAndTakeProfitModal() {
 		!stopLoss && !takeProfit && !hideOrderWarning
 	)
 
-	const hasInputValues = useMemo(() => takeProfitPrice || stopLossPrice, [
-		takeProfitPrice,
-		stopLossPrice,
-	])
+	const hasInputValues = useMemo(
+		() => takeProfitPrice || stopLossPrice,
+		[takeProfitPrice, stopLossPrice]
+	)
 	const hasOrders = useMemo(() => stopLoss || takeProfit, [stopLoss, takeProfit])
 
 	const leverageWei = useMemo(() => {
@@ -199,9 +199,10 @@ export default function EditStopLossAndTakeProfitModal() {
 		[dispatch]
 	)
 
-	const onSetStopLossAndTakeProfit = useCallback(() => dispatch(updateStopLossAndTakeProfit()), [
-		dispatch,
-	])
+	const onSetStopLossAndTakeProfit = useCallback(
+		() => dispatch(updateStopLossAndTakeProfit()),
+		[dispatch]
+	)
 
 	return (
 		<StyledBaseModal
@@ -212,7 +213,7 @@ export default function EditStopLossAndTakeProfitModal() {
 			<Spacer height={2} />
 			<InfoBoxRow
 				title={'Market'}
-				value={
+				nodeValue={
 					<FlexDivRowCentered>
 						{market?.marketName}
 						<Spacer width={8} />{' '}

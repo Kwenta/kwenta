@@ -541,20 +541,18 @@ export const mapMarginTransfers = (
 export const mapSmartMarginTransfers = (
 	marginTransfers: CrossMarginAccountTransferResult[]
 ): MarginTransfer[] => {
-	return marginTransfers.map(
-		({ timestamp, account, size, txHash }): MarginTransfer => {
-			const sizeWei = new Wei(size)
-			const numTimestamp = wei(timestamp).toNumber()
+	return marginTransfers.map(({ timestamp, account, size, txHash }): MarginTransfer => {
+		const sizeWei = new Wei(size)
+		const numTimestamp = wei(timestamp).toNumber()
 
-			return {
-				timestamp: numTimestamp,
-				account,
-				size: sizeWei.div(ETH_UNIT).toNumber(),
-				action: sizeWei.gt(0) ? 'deposit' : 'withdraw',
-				txHash,
-			}
+		return {
+			timestamp: numTimestamp,
+			account,
+			size: sizeWei.div(ETH_UNIT).toNumber(),
+			action: sizeWei.gt(0) ? 'deposit' : 'withdraw',
+			txHash,
 		}
-	)
+	})
 }
 
 type TradeInputParams = {

@@ -133,7 +133,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
 										),
 										accessor: 'openTimestamp',
-										Cell: (cellProps: CellProps<typeof data[number]>) => {
+										Cell: (cellProps: CellProps<(typeof data)[number]>) => {
 											return (
 												<StyledCell>
 													<TimeDisplay value={cellProps.row.original.openTimestamp} />
@@ -147,7 +147,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>
 										),
 										accessor: 'asset',
-										Cell: (cellProps: CellProps<typeof data[number]>) => (
+										Cell: (cellProps: CellProps<(typeof data)[number]>) => (
 											<CurrencyInfo>
 												<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
 												<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
@@ -161,7 +161,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>
 										),
 										accessor: 'status',
-										Cell: (cellProps: CellProps<typeof data[number]>) => {
+										Cell: (cellProps: CellProps<(typeof data)[number]>) => {
 											return <StyledCell>{cellProps.row.original.status}</StyledCell>
 										},
 										width: compact ? 40 : 100,
@@ -182,7 +182,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											</TableHeader>
 										),
 										accessor: 'totalVolume',
-										Cell: (cellProps: CellProps<typeof data[number]>) => (
+										Cell: (cellProps: CellProps<(typeof data)[number]>) => (
 											<Currency.Price price={cellProps.row.original.totalVolume} />
 										),
 										width: compact ? 40 : 100,
@@ -192,7 +192,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
 										),
 										accessor: 'pnl',
-										Cell: (cellProps: CellProps<typeof data[number]>) => (
+										Cell: (cellProps: CellProps<(typeof data)[number]>) => (
 											<PnlContainer>
 												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
@@ -258,7 +258,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>
 										),
 										accessor: 'status',
-										Cell: (cellProps: CellProps<typeof data[number]>) => {
+										Cell: (cellProps: CellProps<(typeof data)[number]>) => {
 											return <StyledCell>{cellProps.row.original.status}</StyledCell>
 										},
 										width: 30,
@@ -268,7 +268,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
 										),
 										accessor: 'pnl',
-										Cell: (cellProps: CellProps<typeof data[number]>) => (
+										Cell: (cellProps: CellProps<(typeof data)[number]>) => (
 											<PnlContainer>
 												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>

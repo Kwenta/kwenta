@@ -100,11 +100,8 @@ export default class FuturesService {
 				: this.sdk.context.contracts
 
 		const { SystemStatus } = contracts
-		const {
-			ExchangeRates,
-			PerpsV2MarketData,
-			PerpsV2MarketSettings,
-		} = this.sdk.context.multicallContracts
+		const { ExchangeRates, PerpsV2MarketData, PerpsV2MarketSettings } =
+			this.sdk.context.multicallContracts
 
 		if (!SystemStatus || !ExchangeRates || !PerpsV2MarketData || !PerpsV2MarketSettings) {
 			throw new Error(UNSUPPORTED_NETWORK)
