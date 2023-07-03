@@ -16,7 +16,6 @@ import {
 	selectClaimableBalanceV2,
 	selectStakedKwentaBalanceV2,
 } from 'state/staking/selectors'
-import media from 'styles/media'
 
 import StakeInputCard from './InputCards/StakeInputCard'
 
