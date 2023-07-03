@@ -15,9 +15,9 @@ import { ThemeContext } from 'styled-components'
 import Connector from 'containers/Connector'
 import { chain } from 'containers/Connector/config'
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles'
-import { sdk } from 'state/config'
 import { useAppSelector } from 'state/hooks'
 import { selectCurrentTheme } from 'state/preferences/selectors'
+import sdk from 'state/sdk'
 import darkTheme from 'styles/theme/colors/dark'
 
 import { DEFAULT_RESOLUTION } from './constants'
@@ -169,9 +169,9 @@ export function TVChart({
 			container: containerId,
 			library_path: libraryPath,
 			locale: 'en',
-			enabled_features: ['hide_left_toolbar_by_default'],
 			disabled_features: [
 				'header_compare',
+				'hide_left_toolbar_by_default',
 				'study_templates',
 				'header_symbol_search',
 				'display_market_status',
@@ -192,7 +192,7 @@ export function TVChart({
 				{ text: '12H', resolution: '5', description: '1 Day' },
 				{ text: '1D', resolution: '15', description: '1 Day' },
 				{ text: '5D', resolution: '15', description: '5 Days' },
-				{ text: '30D', resolution: '1H', description: '30 Days' },
+				{ text: '1M', resolution: '1H', description: '1 Month' },
 				{ text: '3M', resolution: '1H', description: '3 Months' },
 			] as TimeFrameItem[],
 			saved_data: chartData,

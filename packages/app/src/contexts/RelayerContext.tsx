@@ -7,7 +7,7 @@ import {
 	NotificationError,
 } from 'components/TransactionNotification'
 import { blockExplorer } from 'containers/Connector/Connector'
-import { sdk } from 'state/config'
+import sdk from 'state/sdk'
 
 export const monitorTransaction = ({
 	txHash,

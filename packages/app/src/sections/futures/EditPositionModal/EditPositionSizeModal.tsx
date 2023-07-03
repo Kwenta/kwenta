@@ -127,22 +127,27 @@ export default function EditPositionSizeModal() {
 		[sizeWei, maxNativeValueWithBuffer]
 	)
 
-	const submitDisabled = useMemo(() => {
-		return (
-			sizeWei.eq(0) ||
-			invalid ||
-			isLoading ||
-			maxLeverageExceeded ||
-			(preview?.exceedsPriceProtection && !overridePriceProtection)
-		)
+	const previewError = useMemo(() => {
+		if (preview?.exceedsPriceProtection && !overridePriceProtection)
+			return 'Exceeds Price Protection'
+		if (maxLeverageExceeded) return 'Max leverage exceeded'
+		if (preview?.statusMessage && preview.statusMessage !== 'Success') return preview?.statusMessage
+		return null
 	}, [
-		sizeWei,
-		invalid,
-		isLoading,
-		maxLeverageExceeded,
+		preview?.statusMessage,
 		preview?.exceedsPriceProtection,
+		maxLeverageExceeded,
 		overridePriceProtection,
 	])
+
+	const errorMessage = useMemo(
+		() => previewError || transactionState?.error,
+		[previewError, transactionState?.error]
+	)
+
+	const submitDisabled = useMemo(() => {
+		return sizeWei.eq(0) || invalid || isLoading || !!previewError
+	}, [sizeWei, invalid, isLoading, previewError])
 
 	const onClose = () => {
 		if (market) {
@@ -177,19 +182,19 @@ export default function EditPositionSizeModal() {
 				<InfoBoxRow
 					boldValue
 					title={t('futures.market.trade.edit-position.market')}
-					value={market?.marketName}
+					textValue={market?.marketName}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						resultingLeverage && (
 							<PreviewArrow showPreview>{resultingLeverage.toString(2)}x</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					value={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
+					textValue={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						preview?.size && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
@@ -199,10 +204,10 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.position-size')}
-					value={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
+					textValue={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{preview ? formatDollars(preview.liqPrice, { suggestDecimals: true }) : '-'}
@@ -210,18 +215,18 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					value={formatDollars(position?.position?.liquidationPrice || 0, {
+					textValue={formatDollars(position?.position?.liquidationPrice || 0, {
 						suggestDecimals: true,
 					})}
 				/>
 				<InfoBoxRow
 					color={preview?.exceedsPriceProtection ? 'negative' : 'primary'}
 					title={t('futures.market.trade.edit-position.price-impact')}
-					value={formatPercent(preview?.priceImpact || 0)}
+					textValue={formatPercent(preview?.priceImpact || 0)}
 				/>
 				<InfoBoxRow
 					title={t('futures.market.trade.edit-position.fill-price')}
-					value={formatDollars(preview?.price || 0, { suggestDecimals: true })}
+					textValue={formatDollars(preview?.price || 0, { suggestDecimals: true })}
 				/>
 			</InfoBoxContainer>
 			{preview?.exceedsPriceProtection && (
@@ -248,18 +253,10 @@ export default function EditPositionSizeModal() {
 					: t('futures.market.trade.edit-position.submit-size-decrease')}
 			</Button>
 
-			{(transactionState?.error ||
-				maxLeverageExceeded ||
-				(preview?.exceedsPriceProtection && !overridePriceProtection)) && (
+			{errorMessage && (
 				<>
 					<Spacer height={20} />
-					<ErrorView
-						message={
-							transactionState?.error ||
-							(maxLeverageExceeded ? 'Max leverage exceeded' : 'Exceeds Price Protection')
-						}
-						formatter="revert"
-					/>
+					<ErrorView message={transactionState?.error || errorMessage} formatter="revert" />
 				</>
 			)}
 			<Spacer height={20} />
