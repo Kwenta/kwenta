@@ -1,3 +1,4 @@
+import KwentaSDK from '@kwenta/sdk'
 import { FuturesMarket } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { providers } from 'ethers'
@@ -14,4 +15,14 @@ export const fetchOptimismMarkets = createAsyncThunk<
 	const markets = await sdk.futures.getMarkets({ provider: mainnetL2Provider, networkId: 10 })
 	const serializedMarkets = serializeMarkets(markets)
 	return { markets: serializedMarkets }
+})
+
+export const fetchFuturesStats = createAsyncThunk<
+	Awaited<ReturnType<KwentaSDK['stats']['getFuturesStats']>>,
+	void,
+	ThunkConfig
+>('home/fetchFuturesStats', async (_, { extra: { sdk } }) => {
+	const stats = await sdk.stats.getFuturesStats()
+
+	return stats
 })

@@ -1,7 +1,7 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import React, { FC, useMemo } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -16,9 +16,11 @@ import { Body } from 'components/Text'
 import ROUTES from 'constants/routes'
 import useENS from 'hooks/useENS'
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats'
-import useGetStats from 'queries/futures/useGetStats'
 import { StackSection } from 'sections/homepage/section'
 import { Title } from 'sections/homepage/text'
+import { fetchFuturesStats } from 'state/home/actions'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { FetchStatus } from 'state/types'
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common'
 import media from 'styles/media'
 
@@ -52,29 +54,37 @@ const TraderENS: FC<TraderENSProps> = ({ trader, traderShort }) => {
 	)
 }
 
+const getMedal = (position: number) => {
+	switch (position) {
+		case 1:
+			return <Medal>🥇</Medal>
+		case 2:
+			return <Medal>🥈</Medal>
+		case 3:
+			return <Medal>🥉</Medal>
+		default:
+			return <Medal> {position} </Medal>
+	}
+}
+
 const ShortList = () => {
 	const { t } = useTranslation()
 
-	const statsQuery = useGetStats(true)
-	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery])
+	const { loading, stats } = useAppSelector(({ home }) => ({
+		loading: home.futuresStatsQueryStatus === FetchStatus.Loading,
+		stats: home.futuresStats,
+	}))
 
 	const router = useRouter()
+	const dispatch = useAppDispatch()
+
 	const onClickTrader = (trader: string) => {
 		router.push(ROUTES.Leaderboard.Trader(trader))
 	}
 
-	const getMedal = (position: number) => {
-		switch (position) {
-			case 1:
-				return <Medal>🥇</Medal>
-			case 2:
-				return <Medal>🥈</Medal>
-			case 3:
-				return <Medal>🥉</Medal>
-			default:
-				return <Medal> {position} </Medal>
-		}
-	}
+	useEffect(() => {
+		dispatch(fetchFuturesStats())
+	}, [dispatch])
 
 	const title = (
 		<>
@@ -97,7 +107,7 @@ const ShortList = () => {
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 				<NotMobileView>
 					<StyledTable
-						isLoading={statsQuery.isLoading}
+						isLoading={loading}
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
 						data={stats}
 						pageSize={5}
@@ -158,7 +168,7 @@ const ShortList = () => {
 				</NotMobileView>
 				<MobileOnlyView>
 					<StyledTable
-						isLoading={statsQuery.isLoading}
+						isLoading={loading}
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
 						data={stats}
 						pageSize={5}

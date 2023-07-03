@@ -6,11 +6,11 @@ import media from 'styles/media'
 
 import ValueLabel from './ValueLabel'
 
-export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {
+export type SliderProps = DefaultSliderProps & {
 	minValue: number
 	maxValue: number
 	steps?: number
-	onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void
+	// onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void
 	className?: string
 }
 
