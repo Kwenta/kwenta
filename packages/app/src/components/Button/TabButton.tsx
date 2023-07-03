@@ -6,8 +6,6 @@ import { Body } from 'components/Text'
 
 import Button from './Button'
 
-type TabButtonVariant = 'noOutline'
-
 export type TabButtonProps = {
 	title: string
 	detail?: string
@@ -23,7 +21,7 @@ export type TabButtonProps = {
 	isRounded?: boolean
 	onClick?: () => any
 	flat?: boolean
-	variant?: TabButtonVariant
+	variant?: 'noOutline'
 }
 
 const InnerButton: React.FC<TabButtonProps> = React.memo(
@@ -66,6 +64,7 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 				$nofill={props.nofill}
 				$flat={flat}
 				onClick={onClick}
+				$variant={props.variant}
 			>
 				<InnerButton {...props} />
 			</StyledButton>
@@ -185,7 +184,7 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$nofill?: boolean
 	$flat?: boolean
 	active?: boolean
-	variant?: TabButtonVariant
+	$variant?: 'noOutline' | undefined
 }>`
 	p {
 		text-align: left;
@@ -198,9 +197,9 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	${sharedStyle}
 	
 	${(props) =>
-		props.variant === 'noOutline' &&
+		props.$variant === 'noOutline' &&
 		css`
-			border-width: ${props.active ? '1px' : '0px'};
+			border: none;
 			border-radius: 100px;
 			padding: 10px 15px;
 			width: 75px;

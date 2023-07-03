@@ -107,7 +107,7 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 			: ZERO_WEI
 	}, [futuresFeePaid, totalFuturesFeePaid])
 
-	const REWARDS = useMemo(
+	const rewardsInfo = useMemo(
 		() => [
 			{
 				key: 'trading-rewards',
@@ -241,7 +241,7 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 				</StyledFlexDivRowCentered>
 			</HeaderContainer>
 			<CardsContainer>
-				{REWARDS.map(({ key, title, copy, labels, info }) => (
+				{rewardsInfo.map(({ key, title, copy, labels, info }) => (
 					<CardGrid key={key}>
 						<div>
 							<Body size="large" color="primary">

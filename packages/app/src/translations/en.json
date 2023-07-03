@@ -652,6 +652,7 @@
 				},
 				"migrate": {
 					"title": "Migrate to Staking V2",
+					"copy": "Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.",
 					"step-1-copy": "Claim any remaining rewards",
 					"step-2-copy": "Unstake V1 liquid balance",
 					"step-3-copy": "Trasfer liquid balance to v2",

@@ -52,6 +52,7 @@ const StakingTab = () => {
 						value: formatPercent(apy, { minDecimals: 2 }),
 					},
 				],
+				flex: 1,
 			},
 			{
 				category: t('dashboard.stake.portfolio.rewards.title'),
@@ -62,6 +63,7 @@ const StakingTab = () => {
 						value: truncateNumbers(claimableBalance, 2),
 					},
 				],
+				flex: 0.5,
 			},
 			{
 				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
@@ -77,6 +79,7 @@ const StakingTab = () => {
 						value: NO_VALUE,
 					},
 				],
+				flex: 1,
 			},
 		],
 		[apy, claimableBalance, stakedKwentaBalance, t]
@@ -91,12 +94,12 @@ const StakingTab = () => {
 				</StyledHeading>
 				<Body color="secondary">{t('dashboard.stake.tabs.staking.staking-rewards.copy')}</Body>
 				<CardsContainer>
-					{stakingAndRewardsInfo.map(({ category, card }, i) => (
+					{stakingAndRewardsInfo.map(({ category, card, flex }, i) => (
 						<FlexDivCol rowGap="15px" key={i}>
 							<Body size="large">{category}</Body>
-							<FlexDivRow columnGap="35px" justifyContent="flex-start">
+							<FlexDivRow columnGap="25px" justifyContent="flex-start" style={{ flex }}>
 								{card.map(({ key, title, value }) => (
-									<FlexDivCol key={key} rowGap="5px">
+									<FlexDivCol key={key}>
 										<Body color="secondary">{title}</Body>
 										<Body size="large" color="preview">
 											{value}
@@ -148,11 +151,7 @@ const StyledHeading = styled(Heading)`
 const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
-	flex: 1;
-	${media.lessThan('lg')`
-		width: 100%;
-	`}
+	justify-content: flex-start;
 `
 
 export default StakingTab

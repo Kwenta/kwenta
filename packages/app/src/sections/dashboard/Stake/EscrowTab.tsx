@@ -102,11 +102,11 @@ const EscrowTab = () => {
 					<StyledHeading variant="h4">Escrow</StyledHeading>
 					<CardsContainer>
 						{stakingOverview.map(({ category, card }, i) => (
-							<FlexDivCol rowGap="15px" key={i}>
+							<FlexDivCol rowGap="15px" key={i} style={{ flex: '1' }}>
 								<Body size="large">{category}</Body>
 								<FlexDivRow columnGap="15px">
 									{card.map(({ key, title, value }) => (
-										<FlexDivCol key={key} rowGap="5px">
+										<FlexDivCol key={key} style={{ flex: '1' }}>
 											<Body size="medium" color="secondary">
 												{title}
 											</Body>

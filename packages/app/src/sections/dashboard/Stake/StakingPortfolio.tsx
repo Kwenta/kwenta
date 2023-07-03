@@ -42,7 +42,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 			</StakingHeading>
 			<CardsContainer>
 				{cards.map(({ category, card }, i) => (
-					<FlexDivCol rowGap="15px" key={i}>
+					<StyledFlexDivCol rowGap="15px" key={i}>
 						<Body size="large">{category}</Body>
 						<FlexDivRow columnGap="15px" justifyContent="flex-start">
 							{card.map(({ key, title, value, onClick }) => (
@@ -54,12 +54,18 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 								</FlexDivCol>
 							))}
 						</FlexDivRow>
-					</FlexDivCol>
+					</StyledFlexDivCol>
 				))}
 			</CardsContainer>
 		</StakingPortfolioContainer>
 	)
 }
+
+const StyledFlexDivCol = styled(FlexDivCol)`
+	${media.lessThan('lg')`
+		flex: 1;
+	`}
+`
 
 const StyledButton = styled(Button)`
 	border-width: 0px;
@@ -74,7 +80,7 @@ const StakingHeading = styled(FlexDivRowCentered)`
 `
 
 const StakingPortfolioContainer = styled.div`
-	${media.lessThan('lg')`
+	${media.lessThan('mdUp')`
 		padding: 15px;
 	`}
 	${media.greaterThan('lg')`
@@ -89,7 +95,7 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 	width: 100%;
 	justify-content: flex-start;
-	column-gap: 60px;
+	column-gap: 50px;
 	row-gap: 25px;
 	flex-wrap: wrap;
 `

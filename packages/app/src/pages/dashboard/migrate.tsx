@@ -148,7 +148,7 @@ const MigratePage: MigrateComponent = () => {
 		]
 	)
 
-	const MIGRATE_CARDS: StakingCards[] = useMemo(
+	const migrationInfo: StakingCards[] = useMemo(
 		() => [
 			{
 				category: t('dashboard.stake.portfolio.balance.title'),
@@ -239,10 +239,8 @@ const MigratePage: MigrateComponent = () => {
 			</Head>
 			<StakingHeading>
 				<FlexDivCol rowGap="5px">
-					<StyledHeading variant="h4">{t('dashboard-stake.page-title')}</StyledHeading>
-					<Body color="secondary">
-						Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.
-					</Body>
+					<StyledHeading variant="h4">{t('dashboard.stake.tabs.migrate.title')}</StyledHeading>
+					<Body color="secondary">{t('dashboard.stake.tabs.migrate.copy')}</Body>
 				</FlexDivCol>
 				<StyledButton
 					size="xsmall"
@@ -283,7 +281,7 @@ const MigratePage: MigrateComponent = () => {
 					</StyledStakingCard>
 				))}
 			</StepsContainer>
-			<StakingPortfolio cards={MIGRATE_CARDS} />
+			<StakingPortfolio cards={migrationInfo} />
 			<TableContainer>
 				<EscrowTable />
 			</TableContainer>
@@ -298,7 +296,7 @@ const StyledButton = styled(Button)`
 
 const TableContainer = styled.div`
 	margin-top: 30px;
-	${media.lessThan('mdUp')`
+	${media.lessThan('lg')`
 		margin-top: 0px;
 		padding: 15px;
 	`}
@@ -306,7 +304,7 @@ const TableContainer = styled.div`
 
 const StepsContainer = styled(FlexDivRowCentered)`
 	margin: 30px 0;
-	${media.lessThan('md')`
+	${media.lessThan('lg')`
 		flex-direction: column;
 		row-gap: 25px;
 		padding: 15px;
