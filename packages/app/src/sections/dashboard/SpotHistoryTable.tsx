@@ -1,6 +1,5 @@
-import { WalletTradesExchangeResult } from '@kwenta/sdk/types'
 import Link from 'next/link'
-import { FC, useMemo, ReactElement } from 'react'
+import { FC, useMemo, ReactElement, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -14,8 +13,9 @@ import ROUTES from 'constants/routes'
 import Connector from 'containers/Connector'
 import { blockExplorer } from 'containers/Connector/Connector'
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency'
-import useGetWalletTrades from 'queries/synths/useGetWalletTrades'
-import { useAppSelector } from 'state/hooks'
+import { fetchWalletTrades } from 'state/exchange/actions'
+import { selectWalletTrades, selectWalletTradesLoading } from 'state/exchange/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectSynthsMap } from 'state/wallet/selectors'
 import { ExternalLink } from 'styles/common'
 
@@ -26,33 +26,39 @@ const conditionalRender = <T,>(prop: T, children: ReactElement) =>
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation()
-	const { network, walletAddress } = Connector.useContainer()
+	const { network } = Connector.useContainer()
 	const synthsMap = useAppSelector(selectSynthsMap)
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency()
-	const walletTradesQuery = useGetWalletTrades(walletAddress!)
 
 	const synths = useMemo(() => Object.values(synthsMap) || [], [synthsMap])
-	const trades = useMemo(() => {
-		const t = walletTradesQuery.data?.synthExchanges ?? []
 
-		return t.map((trade: any) => ({ ...trade, hash: trade.id.split('-')[0] }))
-	}, [walletTradesQuery.data])
+	const dispatch = useAppDispatch()
+
+	useEffect(() => {
+		dispatch(fetchWalletTrades())
+	}, [dispatch])
+
+	const walletTrades = useAppSelector(selectWalletTrades)
+	const walletTradesLoading = useAppSelector(selectWalletTradesLoading)
+
+	const trades = useMemo(() => {
+		return walletTrades.map((trade) => ({ ...trade, hash: trade.id.split('-')[0] }))
+	}, [walletTrades])
 
 	const filteredHistoricalTrades = useMemo(
 		() =>
-			trades.filter((trade: any) => {
-				const activeSynths = synths.map((synth) => synth.name)
-				return activeSynths.includes(trade.fromSynth?.symbol)
-			}),
+			trades.filter(
+				(trade) => synths.filter((synth) => synth.name === trade.fromSynth.symbol).length > 0
+			),
 		[trades, synths]
 	)
 
 	return (
 		<TableContainer>
 			<StyledTable
-				data={filteredHistoricalTrades as any}
+				data={filteredHistoricalTrades}
 				showPagination
-				isLoading={walletTradesQuery.isLoading}
+				isLoading={walletTradesLoading}
 				highlightRowsOnHover
 				noResultsMessage={
 					<TableNoResults>
@@ -62,7 +68,7 @@ const SpotHistoryTable: FC = () => {
 						</Link>
 					</TableNoResults>
 				}
-				sortBy={[{ id: 'dateTime', asec: true }]}
+				sortBy={[{ id: 'dateTime', desc: false }]}
 				columns={[
 					{
 						header: () => <div>{t('dashboard.history.spot-history-table.date-time')}</div>,
@@ -71,7 +77,7 @@ const SpotHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.timestamp,
 								<StyledTimeDisplay>
-									<TimeDisplay value={cellProps.row.original.timestamp * 1000} />
+									<TimeDisplay value={Number(cellProps.row.original.timestamp) * 1000} />
 								</StyledTimeDisplay>
 							)
 						},

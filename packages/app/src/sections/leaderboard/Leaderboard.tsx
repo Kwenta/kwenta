@@ -55,7 +55,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	)
 
 	const traders = useMemo(
-		() => leaderboardData.all?.map((stat) => stat.account) ?? [],
+		() => leaderboardData.all?.map((stat: any) => stat.account) ?? [],
 		[leaderboardData]
 	)
 
@@ -64,7 +64,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 
 	const pinRow = useMemo(() => {
 		return leaderboardData.wallet
-			? leaderboardData.wallet.map((trader) => ({ ...trader, rank: 0, rankText: PIN }))
+			? leaderboardData.wallet.map((trader: any) => ({ ...trader, rank: 0, rankText: PIN }))
 			: []
 	}, [leaderboardData.wallet])
 
@@ -195,7 +195,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 						/>
 					) : searchAddress ? (
 						<AllTime
-							stats={stats.search}
+							stats={stats.search as any}
 							isLoading={leaderboardQuery.isLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}
@@ -203,7 +203,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 						/>
 					) : (
 						<AllTime
-							stats={stats[activeTab]}
+							stats={stats[activeTab] as any}
 							isLoading={leaderboardQuery.isLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}

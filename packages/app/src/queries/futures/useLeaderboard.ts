@@ -36,11 +36,11 @@ export const DEFAULT_LEADERBOARD_DATA = {
 	all: [],
 }
 
-const useLeaderboard = (searchTerm: string, options?: UseQueryOptions<LeaderboardResult>) => {
+const useLeaderboard = (searchTerm: string, options?: UseQueryOptions<any>) => {
 	const { network, walletAddress } = Connector.useContainer()
 	const futuresEndpoint = getFuturesEndpoint(network?.id as NetworkId)
 
-	return useQuery<LeaderboardResult>(
+	return useQuery(
 		QUERY_KEYS.Futures.Leaderboard(network?.id as NetworkId, searchTerm),
 		async () => {
 			try {
@@ -90,7 +90,7 @@ const useLeaderboard = (searchTerm: string, options?: UseQueryOptions<Leaderboar
 					}
 				)
 
-				const stats: LeaderboardResult = {
+				const stats = {
 					top: response.top.map(mapStat),
 					bottom: response.bottom.map(mapStat),
 					wallet: response.wallet.map(mapStat),
@@ -98,17 +98,14 @@ const useLeaderboard = (searchTerm: string, options?: UseQueryOptions<Leaderboar
 					all: [],
 				}
 
-				stats.all = [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search]
-
-				return stats
+				return { ...stats, all: [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search] }
 			} catch (e) {
 				logError(e)
 				return DEFAULT_LEADERBOARD_DATA
 			}
 		},
-		{
-			...options,
-		}
+		// @ts-ignore
+		{ ...options }
 	)
 }
 

@@ -97,6 +97,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 			<>
 				<DesktopOnlyView>
 					<StyledTable
+						// @ts-ignore
 						height={tableHeight}
 						compact={compact}
 						showPagination
@@ -208,6 +209,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 				<MobileOrTabletView>
 					<StyledTable
 						data={data}
+						// @ts-ignore
 						compact={compact}
 						hideHeaders={compact}
 						isLoading={false}

@@ -52,7 +52,7 @@ type TableProps<T> = {
 	hiddenColumns?: string[]
 	hideHeaders?: boolean
 	highlightRowsOnHover?: boolean
-	// sortBy?: object[]
+	sortBy?: SortingState
 	showShortList?: boolean
 	lastRef?: any
 	compactPagination?: boolean
@@ -72,14 +72,14 @@ const Table = <T,>({
 	pageSize = undefined,
 	hideHeaders,
 	highlightRowsOnHover,
-	// sortBy = [],
+	sortBy = [],
 	lastRef = null,
 	compactPagination = false,
 	rounded = true,
 	noBottom = false,
 	columnVisibility,
 }: TableProps<T>) => {
-	const [sorting, setSorting] = useState<SortingState>([])
+	const [sorting, setSorting] = useState<SortingState>(sortBy)
 	const [pagination, setPagination] = useState<PaginationState>({
 		pageIndex: 0,
 		pageSize: showPagination ? pageSize ?? MAX_PAGE_ROWS : MAX_TOTAL_ROWS,

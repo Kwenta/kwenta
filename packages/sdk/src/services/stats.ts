@@ -4,17 +4,26 @@ import request, { gql } from 'graphql-request'
 import KwentaSDK from '..'
 import { REQUIRES_L2 } from '../common/errors'
 import { FUTURES_ENDPOINT_OP_MAINNET } from '../constants/futures'
-import { DEFAULT_LEADERBOARD_DATA } from '../constants/stats'
+import {
+	ADDRESSES_PER_LOOKUP,
+	DEFAULT_LEADERBOARD_DATA,
+	ENS_REVERSE_LOOKUP,
+} from '../constants/stats'
 import { ETH_UNIT } from '../constants/transactions'
 import { AccountStat, FuturesStat } from '../types/stats'
 import { mapStat } from '../utils/stats'
 import { truncateAddress } from '../utils/string'
 import { getFuturesStats } from '../utils/subgraph'
+import { Contract } from 'ethers'
 
 type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all'
 
 type LeaderboardResult = {
 	[part in LeaderboardPart]: AccountStat[]
+}
+
+type EnsInfo = {
+	[account: string]: string
 }
 
 export default class StatsService {
@@ -47,7 +56,7 @@ export default class StatsService {
 				}
 			)
 
-			const stats = response.map((stat: FuturesStat, i: number) => ({
+			const stats = response.map((stat, i) => ({
 				...stat,
 				trader: stat.account,
 				traderShort: truncateAddress(stat.account),
@@ -59,7 +68,7 @@ export default class StatsService {
 				rankText: (i + 1).toString(),
 			}))
 
-			return stats as AccountStat[]
+			return stats
 		} catch (e) {
 			this.sdk.context.logError(e)
 			return []
@@ -100,17 +109,14 @@ export default class StatsService {
 				{ account: this.sdk.context.walletAddress, searchTerm }
 			)
 
-			const stats: LeaderboardResult = {
+			const stats = {
 				top: response.top.map(mapStat),
 				bottom: response.bottom.map(mapStat),
 				wallet: response.wallet.map(mapStat),
 				search: response.search.map(mapStat),
-				all: [],
 			}
 
-			stats.all = [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search]
-
-			return stats
+			return { ...stats, all: [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search] }
 		} catch (e) {
 			this.sdk.context.logError(e)
 			return DEFAULT_LEADERBOARD_DATA
@@ -159,5 +165,31 @@ export default class StatsService {
 			this.sdk.context.logError(e)
 			return null
 		}
+	}
+
+	private async getENS(addresses: string[]) {
+		const ReverseLookup = new Contract(
+			ENS_REVERSE_LOOKUP,
+			['function getNames(address[] addresses) external view returns (string[] r)'],
+			this.sdk.context.mainnetProvider
+		)
+
+		let ensPromises = []
+		for (let i = 0; i < addresses.length; i += ADDRESSES_PER_LOOKUP) {
+			const addressesToLookup = addresses.slice(i, i + ADDRESSES_PER_LOOKUP)
+			const ensNamesPromise = ReverseLookup.getNames(addressesToLookup)
+			ensPromises.push(ensNamesPromise)
+		}
+
+		let ensInfo: EnsInfo = {}
+
+		const ensPromiseResult = await Promise.all(ensPromises)
+		ensPromiseResult.flat(1).forEach((val: string, ind: number) => {
+			if (val !== '') {
+				ensInfo[addresses[ind]] = val
+			}
+		})
+
+		return ensInfo
 	}
 }

@@ -1,3 +1,4 @@
+import { SynthExchange } from '@kwenta/sdk/types'
 import { toWei, truncateNumbers } from '@kwenta/sdk/utils'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
@@ -465,6 +466,13 @@ export const setRatio =
 			})
 		}
 	}
+
+export const fetchWalletTrades = createAsyncThunk<SynthExchange[], void, ThunkConfig>(
+	'exchange/fetchWalletTrades',
+	(_, { extra: { sdk } }) => {
+		return sdk.exchange.getWalletTrades()
+	}
+)
 
 export const setExchangeRates =
 	(exchangeRates: Rates): AppThunk =>

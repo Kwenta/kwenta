@@ -1,5 +1,5 @@
 import { SynthSymbol } from '@kwenta/sdk/data'
-import { SynthSuspensionReason, Token } from '@kwenta/sdk/types'
+import { SynthExchange, SynthSuspensionReason, Token } from '@kwenta/sdk/types'
 
 import { FetchStatus } from 'state/types'
 
@@ -47,4 +47,6 @@ export type ExchangeState = {
 			reasonCode: number
 		}
 	>
+	walletTradesStatus: FetchStatus
+	walletTrades: SynthExchange[]
 }

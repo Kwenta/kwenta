@@ -1,4 +1,4 @@
-import { PositionSide } from '@kwenta/sdk/dist/types'
+import { PositionSide } from '@kwenta/sdk/types'
 import { formatDollars } from '@kwenta/sdk/utils'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

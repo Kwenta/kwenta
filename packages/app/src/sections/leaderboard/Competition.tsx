@@ -90,6 +90,7 @@ const Competition: FC<CompetitionProps> = ({
 		<>
 			<DesktopOnlyView>
 				<StyledTable
+					// @ts-ignore
 					compact={compact}
 					showPagination={!compact}
 					pageSize={10}
@@ -192,6 +193,7 @@ const Competition: FC<CompetitionProps> = ({
 			<MobileOrTabletView>
 				<StyledTable
 					data={data}
+					// @ts-ignore
 					compact={compact}
 					hideHeaders={compact}
 					isLoading={false}

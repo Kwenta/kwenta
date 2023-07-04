@@ -67,9 +67,9 @@ const TraderCell: FC<TraderCellProps> = ({
 }
 
 type AllTimeProps = {
-	stats: AccountStat[]
+	stats: (AccountStat & { traderEns: string; rankText: string })[]
 	isLoading: boolean
-	pinRow: AccountStat[]
+	pinRow: (AccountStat & { rankText: string })[]
 	onClickTrader: (trader: string) => void
 	compact?: boolean
 	activeTab?: string
@@ -114,6 +114,7 @@ const AllTime: FC<AllTimeProps> = ({
 		<>
 			<MobileHiddenView>
 				<StyledTable
+					// @ts-ignore
 					height={tableHeight}
 					compact={compact}
 					showPagination
@@ -222,6 +223,7 @@ const AllTime: FC<AllTimeProps> = ({
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<StyledTable
+					// @ts-ignore
 					compact={compact}
 					data={data}
 					showPagination
