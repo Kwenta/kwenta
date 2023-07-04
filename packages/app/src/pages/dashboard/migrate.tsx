@@ -49,7 +49,6 @@ type MigrateComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element
 
 const MigratePage: MigrateComponent = () => {
 	const { t } = useTranslation()
-	const router = useRouter()
 	const dispatch = useAppDispatch()
 	const walletAddress = useAppSelector(selectWallet)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
@@ -68,16 +67,6 @@ const MigratePage: MigrateComponent = () => {
 		dispatch(claimStakingRewards())
 	}, [dispatch])
 
-	const tabQuery = useMemo(() => {
-		if (router.query.tab) {
-			const tab = router.query.tab as StakeTab
-			if (Object.values(StakeTab).includes(tab)) {
-				return tab
-			}
-		}
-		return null
-	}, [router])
-
 	const handleUnstakeKwenta = useCallback(
 		() => dispatch(unstakeKwenta(wei(stakedKwentaBalance).toBN())),
 		[dispatch, stakedKwentaBalance]
@@ -90,8 +79,6 @@ const MigratePage: MigrateComponent = () => {
 			dispatch(stakeKwentaV2(wei(kwentaBalance).toBN()))
 		}
 	}, [dispatch, kwentaBalance, kwentaStakingV2Approved])
-
-	const [, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking)
 
 	useEffect(() => {
 		if (!!walletAddress) {
@@ -157,13 +144,11 @@ const MigratePage: MigrateComponent = () => {
 						key: 'balance-liquid',
 						title: t('dashboard.stake.portfolio.balance.liquid'),
 						value: truncateNumbers(kwentaBalance, 2),
-						onClick: () => setCurrentTab(StakeTab.Staking),
 					},
 					{
 						key: 'balance-staked',
 						title: t('dashboard.stake.portfolio.balance.staked'),
 						value: truncateNumbers(stakedKwentaBalanceV2, 2),
-						onClick: () => setCurrentTab(StakeTab.Escrow),
 					},
 				],
 			},
@@ -174,13 +159,11 @@ const MigratePage: MigrateComponent = () => {
 						key: 'rewards-claimable',
 						title: t('dashboard.stake.portfolio.rewards.staking'),
 						value: truncateNumbers(claimableBalanceV2, 2),
-						onClick: () => setCurrentTab(StakeTab.Staking),
 					},
 					{
 						key: 'rewards-trading',
 						title: t('dashboard.stake.portfolio.rewards.trading'),
 						value: truncateNumbers(kwentaRewards, 4),
-						onClick: () => setCurrentTab(StakeTab.Staking),
 					},
 				],
 			},
@@ -191,13 +174,11 @@ const MigratePage: MigrateComponent = () => {
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
 						value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
-						onClick: () => setCurrentTab(StakeTab.Escrow),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
 						value: truncateNumbers(totalVestableV2, 2),
-						onClick: () => setCurrentTab(StakeTab.Escrow),
 					},
 				],
 			},
@@ -208,13 +189,11 @@ const MigratePage: MigrateComponent = () => {
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
 						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
-						onClick: () => setCurrentTab(StakeTab.Escrow),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
 						value: truncateNumbers(totalVestable, 2),
-						onClick: () => setCurrentTab(StakeTab.Escrow),
 					},
 				],
 			},

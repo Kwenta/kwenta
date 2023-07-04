@@ -41,7 +41,7 @@ type StakingCard = {
 	key: string
 	title: string
 	value: string
-	onClick: () => void
+	onClick?: () => void
 }
 
 export type StakingCards = {
