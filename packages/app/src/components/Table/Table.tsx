@@ -116,7 +116,13 @@ const Table = <T,>({
 					<div key={index} className="table-row" style={{ display: 'flex' }}>
 						{headerGroup.headers.map((header) => {
 							return (
-								<TableCellHead key={header.id} hideHeaders={!!hideHeaders}>
+								<TableCellHead
+									key={header.id}
+									hideHeaders={!!hideHeaders}
+									style={{
+										width: header.getSize(),
+									}}
+								>
 									{flexRender(header.column.columnDef.header, header.getContext())}
 									{header.column.getCanSort() && (
 										<SortIconContainer>
