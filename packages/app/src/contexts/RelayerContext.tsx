@@ -27,12 +27,12 @@ export const monitorTransaction = ({
 	}
 	const emitter = sdk.transactions.hash(txHash)
 	emitter.on('txSent', () => {
-		toast(NotificationPending, { ...toastProps, toastId: txHash })
+		toast(<NotificationPending />, { ...toastProps, toastId: txHash })
 	})
 	emitter.on('txConfirmed', ({ transactionHash }) => {
 		toast.update(transactionHash, {
 			...toastProps,
-			render: NotificationSuccess,
+			render: <NotificationSuccess />,
 			autoClose: 10000,
 		})
 		if (onTxConfirmed != null) {
