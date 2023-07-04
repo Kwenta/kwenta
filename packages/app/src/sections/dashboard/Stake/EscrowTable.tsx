@@ -1,6 +1,7 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { EscrowData } from '@kwenta/sdk/types'
-import { truncateNumbers } from '@kwenta/sdk/utils'
+import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CellProps } from 'react-table'
@@ -18,6 +19,7 @@ import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewardsV2 } from 'state/staking/actions'
 import { selectEscrowData, selectEscrowV2Data } from 'state/staking/selectors'
+import common from 'styles/theme/colors/common'
 
 import VestConfirmationModal from './VestConfirmationModal'
 
@@ -165,9 +167,11 @@ const EscrowTable = () => {
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<FlexDivRowCentered columnGap="10px">
 									<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
-									<StyledBadge color="yellow" size="small">
-										V1
-									</StyledBadge>
+									{cellProps.row.original.version === 1 ? (
+										<StyledBadge color="yellow" size="small">
+											V1
+										</StyledBadge>
+									) : null}
 								</FlexDivRowCentered>
 							),
 							accessor: 'amount',
@@ -203,11 +207,21 @@ const EscrowTable = () => {
 									<div>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
-							),
+							Cell: (cellProps: CellProps<EscrowData>) => {
+								const fee = wei(cellProps.row.original.fee)
+								return (
+									<TableCell color={common.palette.yellow.y500}>
+										{`${truncateNumbers(cellProps.row.original.fee, 2)} (${formatPercent(
+											cellProps.row.original.amount !== null
+												? fee.div(cellProps.row.original.amount)
+												: ZERO_WEI,
+											{ minDecimals: 0 }
+										)}) KWENTA`}
+									</TableCell>
+								)
+							},
 							accessor: 'earlyVestFee',
-							width: 80,
+							width: 90,
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
@@ -318,7 +332,7 @@ const StyledTable = styled(Table)`
 
 const TableCell = styled.div`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	color: ${(props) => props.color || props.theme.colors.selectedTheme.button.text.primary};
 `
 
 export default EscrowTable

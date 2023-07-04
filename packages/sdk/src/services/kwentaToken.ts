@@ -275,6 +275,7 @@ export default class KwentaTokenService {
 					amount: wei(next.escrowAmount),
 					fee: wei(vestingEntries[i].fee),
 					status: date > Date.now() ? 'VESTING' : 'VESTED',
+					version: 1,
 				})
 
 				return acc
@@ -327,6 +328,7 @@ export default class KwentaTokenService {
 					amount: wei(next.escrowAmount),
 					fee: wei(vestingEntries[i].fee),
 					status: date > Date.now() ? 'VESTING' : 'VESTED',
+					version: 2,
 				})
 
 				return acc

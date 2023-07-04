@@ -23,4 +23,5 @@ export type EscrowData<T = Wei> = {
 	amount: T
 	fee: T
 	status: 'VESTING' | 'VESTED'
+	version: 1 | 2
 }
