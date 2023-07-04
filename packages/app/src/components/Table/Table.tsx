@@ -7,7 +7,7 @@ import {
 	PaginationState,
 } from '@tanstack/react-table'
 import type { ColumnDef, Row, SortingState, VisibilityState } from '@tanstack/react-table'
-import React, { useRef, useState } from 'react'
+import React, { DependencyList, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { genericMemo } from 'types/helpers'
 
@@ -59,6 +59,7 @@ type TableProps<T> = {
 	rounded?: boolean
 	noBottom?: boolean
 	columnVisibility?: VisibilityState
+	columnsDeps?: DependencyList
 }
 
 const Table = <T,>({
@@ -78,6 +79,7 @@ const Table = <T,>({
 	rounded = true,
 	noBottom = false,
 	columnVisibility,
+	columnsDeps = [],
 }: TableProps<T>) => {
 	const [sorting, setSorting] = useState<SortingState>(sortBy)
 	const [pagination, setPagination] = useState<PaginationState>({
@@ -85,8 +87,16 @@ const Table = <T,>({
 		pageSize: showPagination ? pageSize ?? MAX_PAGE_ROWS : MAX_TOTAL_ROWS,
 	})
 
+	// FIXME: It is probably better to memoize columns per-component.
+
+	const memoizedColumns = useMemo(
+		() => columns,
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		columnsDeps
+	)
+
 	const table = useReactTable<T>({
-		columns,
+		columns: memoizedColumns,
 		data,
 		enableHiding: true,
 		state: { sorting, columnVisibility, pagination },
@@ -119,9 +129,9 @@ const Table = <T,>({
 								<TableCellHead
 									key={header.id}
 									hideHeaders={!!hideHeaders}
-									style={{
-										width: header.getSize(),
-									}}
+									style={{ width: header.getSize() }}
+									onClick={header.column.getToggleSortingHandler()}
+									$canSort={header.column.getCanSort()}
 								>
 									{flexRender(header.column.columnDef.header, header.getContext())}
 									{header.column.getCanSort() && (
@@ -193,7 +203,7 @@ export const TableBody = styled.div`
 	overflow-x: visible;
 `
 
-export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
+export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean; $canSort: boolean }>`
 	user-select: none;
 	&:first-child {
 		padding-left: 18px;
@@ -202,6 +212,11 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 		padding-right: 18px;
 	}
 	${(props) => (props.hideHeaders ? `display: none` : '')}
+	${(props) =>
+		props.$canSort &&
+		css`
+			cursor: pointer;
+		`}
 `
 
 export const TableNoResults = styled.div`

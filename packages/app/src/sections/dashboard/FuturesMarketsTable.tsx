@@ -6,6 +6,7 @@ import {
 	formatDollars,
 } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
+import { Row } from '@tanstack/react-table'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -34,6 +35,18 @@ type FuturesMarketsTableProps = {
 }
 
 // TODO: Move all sorting functions outside the component and make them generic
+
+const weiSortingFn =
+	<T,>(key: keyof T) =>
+	(rowA: Row<T>, rowB: Row<T>) => {
+		const valA = rowA.original[key]
+		const valB = rowB.original[key]
+
+		const rowOne = valA ? wei(valA) : wei(0)
+		const rowTwo = valB ? wei(valB) : wei(0)
+
+		return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1
+	}
 
 const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => {
 	const { t } = useTranslation()
@@ -146,11 +159,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								},
 								size: 130,
 								enableSorting: true,
-								sortingFn: (rowA, rowB) => {
-									const rowOne = rowA.original.price ?? wei(0)
-									const rowTwo = rowB.original.price ?? wei(0)
-									return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
-								},
+								sortingFn: weiSortingFn('price'),
 							},
 							{
 								header: () => (
@@ -170,11 +179,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								},
 								size: 105,
 								enableSorting: true,
-								sortingFn: (rowA, rowB) => {
-									const rowOne = rowA.original.priceChange ?? wei(0)
-									const rowTwo = rowB.original.priceChange ?? wei(0)
-									return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1
-								},
+								sortingFn: weiSortingFn('priceChange'),
 							},
 							{
 								header: () => (
@@ -195,11 +200,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								},
 								enableSorting: true,
 								size: 125,
-								sortingFn: (rowA: any, rowB: any) => {
-									const rowOne = rowA.original.fundingRate ?? wei(0)
-									const rowTwo = rowB.original.fundingRate ?? wei(0)
-									return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1
-								},
+								sortingFn: weiSortingFn('fundingRate'),
 							},
 							{
 								header: () => (
@@ -226,13 +227,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								},
 								size: 125,
 								enableSorting: true,
-								sortingFn: (rowA, rowB) => {
-									const rowOne =
-										rowA.original.longInterest.add(rowA.original.shortInterest) ?? wei(0)
-									const rowTwo =
-										rowB.original.longInterest.add(rowB.original.shortInterest) ?? wei(0)
-									return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
-								},
+								sortingFn: weiSortingFn('openInterest'),
 							},
 							{
 								header: () => (
@@ -251,11 +246,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								},
 								size: 125,
 								enableSorting: true,
-								sortingFn: (rowA: any, rowB: any) => {
-									const rowOne = rowA.original.volume
-									const rowTwo = rowB.original.volume
-									return rowOne > rowTwo ? 1 : -1
-								},
+								sortingFn: weiSortingFn('volume'),
 							},
 						]}
 					/>
@@ -366,11 +357,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 							},
 							size: 120,
 							enableSorting: true,
-							sortingFn: (rowA, rowB) => {
-								const rowOne = rowA.original.volume
-								const rowTwo = rowB.original.volume
-								return rowOne > rowTwo ? 1 : -1
-							},
+							sortingFn: weiSortingFn('volume'),
 						},
 					]}
 				/>

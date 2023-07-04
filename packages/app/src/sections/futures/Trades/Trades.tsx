@@ -65,7 +65,7 @@ const Trades = memo(() => {
 		})
 	}, [history, marketAsset])
 
-	// const columnsDeps = useMemo(() => [historyData], [historyData])
+	const columnsDeps = useMemo(() => [historyData], [historyData])
 
 	return (
 		<Table
@@ -194,7 +194,7 @@ const Trades = memo(() => {
 					enableSorting: false,
 				},
 			]}
-			// columnsDeps={columnsDeps}
+			columnsDeps={columnsDeps}
 			data={historyData}
 			isLoading={isLoading && isLoaded}
 			noResultsMessage={

@@ -39,7 +39,7 @@ const EscrowTable = () => {
 		}
 	}, [checkAllState, escrowData])
 
-	// const columnsDeps = useMemo(() => [checkedState], [checkedState])
+	const columnsDeps = useMemo(() => [checkedState], [checkedState])
 
 	const { totalVestable, totalFee } = useMemo(
 		() =>
@@ -85,7 +85,7 @@ const EscrowTable = () => {
 					compactPagination
 					pageSize={10}
 					showPagination
-					// columnsDeps={columnsDeps}
+					columnsDeps={columnsDeps}
 					columns={[
 						{
 							header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
@@ -169,7 +169,7 @@ const EscrowTable = () => {
 					compactPagination
 					pageSize={5}
 					showPagination
-					// columnsDeps={columnsDeps}
+					columnsDeps={columnsDeps}
 					columns={[
 						{
 							header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,

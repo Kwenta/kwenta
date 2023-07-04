@@ -142,7 +142,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 	return (
 		<Table
 			data={rowsData}
-			// columnsDeps={[isCancelling, isExecuting]}
+			columnsDeps={[isCancelling, isExecuting]}
 			highlightRowsOnHover
 			showPagination
 			rounded={false}

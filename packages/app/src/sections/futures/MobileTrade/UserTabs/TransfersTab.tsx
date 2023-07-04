@@ -32,10 +32,10 @@ const TransfersTab: React.FC = () => {
 		marginTransfers: { status: marginTransfersStatus },
 	} = useAppSelector(selectQueryStatuses)
 
-	// const columnsDeps = useMemo(
-	// 	() => [marketMarginTransfers, idleMarginTransfers, marginTransfersStatus],
-	// 	[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
-	// )
+	const columnsDeps = useMemo(
+		() => [marketMarginTransfers, idleMarginTransfers, marginTransfersStatus],
+		[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
+	)
 
 	const marginTransfers = useMemo(() => {
 		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers
@@ -99,7 +99,7 @@ const TransfersTab: React.FC = () => {
 						},
 					]}
 					data={marginTransfers}
-					// columnsDeps={columnsDeps}
+					columnsDeps={columnsDeps}
 					isLoading={marginTransfers.length === 0 && marginTransfersStatus === FetchStatus.Loading}
 				/>
 			)}

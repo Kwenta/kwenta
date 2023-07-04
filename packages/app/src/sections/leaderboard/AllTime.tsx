@@ -132,7 +132,7 @@ const AllTime: FC<AllTimeProps> = ({
 						totalVolume: !compact,
 						pnl: !compact,
 					}}
-					// columnsDeps={[activeTab]}
+					columnsDeps={[activeTab]}
 					columns={[
 						{
 							header: () => (
