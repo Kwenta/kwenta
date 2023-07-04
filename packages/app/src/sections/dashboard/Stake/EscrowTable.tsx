@@ -11,7 +11,7 @@ import Badge from 'components/Badge'
 import Button from 'components/Button'
 import { Checkbox } from 'components/Checkbox'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import { LargeScreenView, SmallScreenView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
@@ -118,7 +118,7 @@ const EscrowTable = () => {
 
 	return (
 		<EscrowTableContainer $noPadding>
-			<DesktopOnlyView>
+			<LargeScreenView>
 				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
@@ -233,8 +233,8 @@ const EscrowTable = () => {
 						},
 					]}
 				/>
-			</DesktopOnlyView>
-			<MobileOrTabletView>
+			</LargeScreenView>
+			<SmallScreenView>
 				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
@@ -257,15 +257,15 @@ const EscrowTable = () => {
 							width: 40,
 						},
 						{
-							Header: () => (
-								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
-							),
+							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<FlexDivRowCentered columnGap="10px">
 									<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
-									<StyledBadge color="yellow" size="small">
-										V1
-									</StyledBadge>
+									{cellProps.row.original.version === 1 ? (
+										<StyledBadge color="yellow" size="small">
+											V1
+										</StyledBadge>
+									) : null}
 								</FlexDivRowCentered>
 							),
 							accessor: 'amount',
@@ -273,27 +273,38 @@ const EscrowTable = () => {
 						},
 						{
 							Header: () => (
-								<TableHeader $small>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</TableHeader>
+								<TableHeader>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
-							),
+							Cell: (cellProps: CellProps<EscrowData>) => {
+								const fee = wei(cellProps.row.original.fee)
+								return (
+									<TableCell color={common.palette.yellow.y500}>
+										<span>{truncateNumbers(cellProps.row.original.fee, 2)} KWENTA</span>
+										<span>
+											{formatPercent(
+												cellProps.row.original.amount !== null
+													? fee.div(cellProps.row.original.amount)
+													: ZERO_WEI,
+												{ minDecimals: 0 }
+											)}
+										</span>
+									</TableCell>
+								)
+							},
 							accessor: 'earlyVestFee',
-							width: 80,
+							width: 90,
 						},
 						{
-							Header: () => (
-								<TableHeader $small>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>
-							),
+							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<TableCell>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
-							width: 70,
+							width: 50,
 						},
 					]}
 				/>
-			</MobileOrTabletView>
+			</SmallScreenView>
 			{isConfirmModalOpen && (
 				<VestConfirmationModal
 					totalFee={totalFee}
@@ -333,6 +344,8 @@ const StyledTable = styled(Table)`
 const TableCell = styled.div`
 	font-size: 13px;
 	color: ${(props) => props.color || props.theme.colors.selectedTheme.button.text.primary};
+	display: flex;
+	flex-direction: column;
 `
 
 export default EscrowTable

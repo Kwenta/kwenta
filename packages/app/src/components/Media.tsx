@@ -15,6 +15,14 @@ export const DesktopOnlyView: FC<MediaProps> = memo(({ children }) => (
 	<MediaQuery minWidth={BREAKPOINTS.md}>{children}</MediaQuery>
 ))
 
+export const LargeScreenView: FC<MediaProps> = memo(({ children }) => (
+	<MediaQuery minWidth={BREAKPOINTS.lg}>{children}</MediaQuery>
+))
+
+export const SmallScreenView: FC<MediaProps> = memo(({ children }) => (
+	<MediaQuery maxWidth={BREAKPOINTS.lg}>{children}</MediaQuery>
+))
+
 export const TabletOnlyView: FC<MediaProps> = memo(({ children }) => (
 	<MediaQuery minWidth={BREAKPOINTS.sm} maxWidth={BREAKPOINTS.md - 1}>
 		{children}

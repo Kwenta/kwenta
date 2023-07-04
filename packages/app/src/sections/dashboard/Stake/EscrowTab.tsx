@@ -99,12 +99,12 @@ const EscrowTab = () => {
 			<GridContainer>
 				<EscrowInputCard />
 				<CardGridContainer>
-					<StyledHeading variant="h4">Escrow</StyledHeading>
+					<StyledHeading variant="h4">{t('dashboard.stake.tabs.escrow.title')}</StyledHeading>
 					<CardsContainer>
 						{stakingOverview.map(({ category, card }, i) => (
-							<FlexDivCol rowGap="15px" key={i} style={{ flex: '1' }}>
+							<FlexDivCol rowGap="15px" key={i}>
 								<Body size="large">{category}</Body>
-								<FlexDivRow columnGap="15px">
+								<FlexDivRow columnGap="15px" justifyContent="flex-start">
 									{card.map(({ key, title, value }) => (
 										<FlexDivCol key={key} style={{ flex: '1' }}>
 											<Body size="medium" color="secondary">
@@ -131,6 +131,7 @@ const EscrowTab = () => {
 }
 
 const LabelContainer = styled(FlexDivCol)`
+	margin-bottom: 10px;
 	${media.lessThan('lg')`
 		margin-top: 25px;
 	`}
@@ -139,10 +140,9 @@ const LabelContainer = styled(FlexDivCol)`
 const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 	justify-content: flex-start;
-	column-gap: 50px;
 	flex-wrap: wrap;
+	column-gap: 50px;
 	row-gap: 25px;
-	margin-bottom: 25px;
 	${media.lessThan('lg')`
 		flex-direction: column;
 		align-items: flex-start;
@@ -161,7 +161,6 @@ const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	flex: 1;
 `
 
 const GridContainer = styled.div`

@@ -16,6 +16,7 @@ import {
 	selectClaimableBalanceV2,
 	selectStakedKwentaBalanceV2,
 } from 'state/staking/selectors'
+import media from 'styles/media'
 
 import StakeInputCard from './InputCards/StakeInputCard'
 
@@ -140,6 +141,9 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	column-gap: 50px;
 	row-gap: 25px;
 	margin: 50px 0;
+	${media.lessThan('lg')`
+		margin: 30px 0;
+	`}
 `
 
 const StyledHeading = styled(Heading)`
@@ -149,7 +153,10 @@ const StyledHeading = styled(Heading)`
 const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-start;
+	justify-content: space-between;
+	${media.lessThan('lg')`
+		justify-content: flex-start;
+	`}
 `
 
 export default StakingTab

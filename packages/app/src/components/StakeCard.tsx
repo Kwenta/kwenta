@@ -141,13 +141,10 @@ const StakeCard: FC<StakeCardProps> = memo(
 							? t('dashboard.stake.tabs.stake-table.stake')
 							: t('dashboard.stake.tabs.stake-table.unstake')}
 					</Button>
-					<>
-						<Spacer height={25} />
-						<ErrorView
-							message={'2 week unstaking cooldown lock'}
-							containerStyle={{ margin: '0' }}
-						/>
-					</>
+					<ErrorView
+						message={'2 week unstaking cooldown lock'}
+						containerStyle={{ margin: '0', marginTop: '25px' }}
+					/>
 				</FlexDivCol>
 			</StakingInputCardContainer>
 		)
