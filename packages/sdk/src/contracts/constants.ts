@@ -139,4 +139,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		10: '0x54581A23F62D147AC76d454f0b3eF77F9D766058',
 		420: '0x4259a2004A1E110A86564ff1441c37F1461F344F',
 	},
+	PerpsV3MarketProxy: {
+		420: '0x54D71285871C5a0914F5B53740b70bA3eDb51Fbb',
+	},
 }

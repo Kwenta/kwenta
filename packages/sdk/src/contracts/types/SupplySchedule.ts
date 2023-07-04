@@ -15,7 +15,7 @@ import type {
 } from 'ethers'
 import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import type { Listener, Provider } from '@ethersproject/providers'
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from './common'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface SupplyScheduleInterface extends utils.Interface {
 	functions: {
@@ -114,40 +114,22 @@ export interface SupplyScheduleInterface extends utils.Interface {
 	encodeFunctionData(functionFragment: 'mint', values?: undefined): string
 	encodeFunctionData(functionFragment: 'mintableSupply', values?: undefined): string
 	encodeFunctionData(functionFragment: 'minterReward', values?: undefined): string
-	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [PromiseOrValue<string>]): string
+	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [string]): string
 	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
 	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
-	encodeFunctionData(functionFragment: 'setKwenta', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(
-		functionFragment: 'setMinterReward',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setStakingRewards',
-		values: [PromiseOrValue<string>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setTradingRewards',
-		values: [PromiseOrValue<string>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setTradingRewardsDiversion',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(functionFragment: 'setTreasuryDAO', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(
-		functionFragment: 'setTreasuryDiversion',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'setKwenta', values: [string]): string
+	encodeFunctionData(functionFragment: 'setMinterReward', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setStakingRewards', values: [string]): string
+	encodeFunctionData(functionFragment: 'setTradingRewards', values: [string]): string
+	encodeFunctionData(functionFragment: 'setTradingRewardsDiversion', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setTreasuryDAO', values: [string]): string
+	encodeFunctionData(functionFragment: 'setTreasuryDiversion', values: [BigNumberish]): string
 	encodeFunctionData(functionFragment: 'stakingRewards', values?: undefined): string
 	encodeFunctionData(
 		functionFragment: 'terminalInflationSupply',
-		values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+		values: [BigNumberish, BigNumberish]
 	): string
-	encodeFunctionData(
-		functionFragment: 'tokenDecaySupplyForWeek',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'tokenDecaySupplyForWeek', values: [BigNumberish]): string
 	encodeFunctionData(functionFragment: 'tradingRewards', values?: undefined): string
 	encodeFunctionData(functionFragment: 'tradingRewardsDiversion', values?: undefined): string
 	encodeFunctionData(functionFragment: 'treasuryDAO', values?: undefined): string
@@ -273,8 +255,9 @@ export type TradingRewardsDiversionUpdatedEvent = TypedEvent<
 	TradingRewardsDiversionUpdatedEventObject
 >
 
-export type TradingRewardsDiversionUpdatedEventFilter =
-	TypedEventFilter<TradingRewardsDiversionUpdatedEvent>
+export type TradingRewardsDiversionUpdatedEventFilter = TypedEventFilter<
+	TradingRewardsDiversionUpdatedEvent
+>
 
 export interface TradingRewardsUpdatedEventObject {
 	newAddress: string
@@ -343,9 +326,7 @@ export interface SupplySchedule extends BaseContract {
 
 		TERMINAL_SUPPLY_RATE_ANNUAL(overrides?: CallOverrides): Promise<[BigNumber]>
 
-		acceptOwnership(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 		inflationStartDate(overrides?: CallOverrides): Promise<[BigNumber]>
 
@@ -355,15 +336,15 @@ export interface SupplySchedule extends BaseContract {
 
 		lastMintEvent(overrides?: CallOverrides): Promise<[BigNumber]>
 
-		mint(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>
+		mint(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 		mintableSupply(overrides?: CallOverrides): Promise<[BigNumber]>
 
 		minterReward(overrides?: CallOverrides): Promise<[BigNumber]>
 
 		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_owner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
@@ -371,52 +352,49 @@ export interface SupplySchedule extends BaseContract {
 		owner(overrides?: CallOverrides): Promise<[string]>
 
 		setKwenta(
-			_kwenta: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_kwenta: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setMinterReward(
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setStakingRewards(
-			_stakingRewards: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_stakingRewards: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setTradingRewards(
-			_tradingRewards: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewards: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setTradingRewardsDiversion(
-			_tradingRewardsDiversion: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewardsDiversion: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setTreasuryDAO(
-			_treasuryDAO: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_treasuryDAO: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setTreasuryDiversion(
-			_treasuryDiversion: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_treasuryDiversion: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		stakingRewards(overrides?: CallOverrides): Promise<[string]>
 
 		terminalInflationSupply(
-			totalSupply: PromiseOrValue<BigNumberish>,
-			numOfWeeks: PromiseOrValue<BigNumberish>,
+			totalSupply: BigNumberish,
+			numOfWeeks: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<[BigNumber]>
 
-		tokenDecaySupplyForWeek(
-			counter: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		tokenDecaySupplyForWeek(counter: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
 
 		tradingRewards(overrides?: CallOverrides): Promise<[string]>
 
@@ -449,9 +427,7 @@ export interface SupplySchedule extends BaseContract {
 
 	TERMINAL_SUPPLY_RATE_ANNUAL(overrides?: CallOverrides): Promise<BigNumber>
 
-	acceptOwnership(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	inflationStartDate(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -461,15 +437,15 @@ export interface SupplySchedule extends BaseContract {
 
 	lastMintEvent(overrides?: CallOverrides): Promise<BigNumber>
 
-	mint(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<ContractTransaction>
+	mint(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	mintableSupply(overrides?: CallOverrides): Promise<BigNumber>
 
 	minterReward(overrides?: CallOverrides): Promise<BigNumber>
 
 	nominateNewOwner(
-		_owner: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_owner: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	nominatedOwner(overrides?: CallOverrides): Promise<string>
@@ -477,52 +453,49 @@ export interface SupplySchedule extends BaseContract {
 	owner(overrides?: CallOverrides): Promise<string>
 
 	setKwenta(
-		_kwenta: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_kwenta: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setMinterReward(
-		amount: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setStakingRewards(
-		_stakingRewards: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_stakingRewards: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setTradingRewards(
-		_tradingRewards: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_tradingRewards: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setTradingRewardsDiversion(
-		_tradingRewardsDiversion: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_tradingRewardsDiversion: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setTreasuryDAO(
-		_treasuryDAO: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_treasuryDAO: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setTreasuryDiversion(
-		_treasuryDiversion: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_treasuryDiversion: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	stakingRewards(overrides?: CallOverrides): Promise<string>
 
 	terminalInflationSupply(
-		totalSupply: PromiseOrValue<BigNumberish>,
-		numOfWeeks: PromiseOrValue<BigNumberish>,
+		totalSupply: BigNumberish,
+		numOfWeeks: BigNumberish,
 		overrides?: CallOverrides
 	): Promise<BigNumber>
 
-	tokenDecaySupplyForWeek(
-		counter: PromiseOrValue<BigNumberish>,
-		overrides?: CallOverrides
-	): Promise<BigNumber>
+	tokenDecaySupplyForWeek(counter: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
 	tradingRewards(overrides?: CallOverrides): Promise<string>
 
@@ -571,50 +544,38 @@ export interface SupplySchedule extends BaseContract {
 
 		minterReward(overrides?: CallOverrides): Promise<BigNumber>
 
-		nominateNewOwner(_owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+		nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>
 
 		nominatedOwner(overrides?: CallOverrides): Promise<string>
 
 		owner(overrides?: CallOverrides): Promise<string>
 
-		setKwenta(_kwenta: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+		setKwenta(_kwenta: string, overrides?: CallOverrides): Promise<void>
 
-		setMinterReward(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>
+		setMinterReward(amount: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setStakingRewards(
-			_stakingRewards: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setStakingRewards(_stakingRewards: string, overrides?: CallOverrides): Promise<void>
 
-		setTradingRewards(
-			_tradingRewards: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setTradingRewards(_tradingRewards: string, overrides?: CallOverrides): Promise<void>
 
 		setTradingRewardsDiversion(
-			_tradingRewardsDiversion: PromiseOrValue<BigNumberish>,
+			_tradingRewardsDiversion: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
-		setTreasuryDAO(_treasuryDAO: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+		setTreasuryDAO(_treasuryDAO: string, overrides?: CallOverrides): Promise<void>
 
-		setTreasuryDiversion(
-			_treasuryDiversion: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setTreasuryDiversion(_treasuryDiversion: BigNumberish, overrides?: CallOverrides): Promise<void>
 
 		stakingRewards(overrides?: CallOverrides): Promise<string>
 
 		terminalInflationSupply(
-			totalSupply: PromiseOrValue<BigNumberish>,
-			numOfWeeks: PromiseOrValue<BigNumberish>,
+			totalSupply: BigNumberish,
+			numOfWeeks: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
-		tokenDecaySupplyForWeek(
-			counter: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		tokenDecaySupplyForWeek(counter: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
 		tradingRewards(overrides?: CallOverrides): Promise<string>
 
@@ -690,7 +651,7 @@ export interface SupplySchedule extends BaseContract {
 
 		TERMINAL_SUPPLY_RATE_ANNUAL(overrides?: CallOverrides): Promise<BigNumber>
 
-		acceptOwnership(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		inflationStartDate(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -700,68 +661,59 @@ export interface SupplySchedule extends BaseContract {
 
 		lastMintEvent(overrides?: CallOverrides): Promise<BigNumber>
 
-		mint(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>
+		mint(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		mintableSupply(overrides?: CallOverrides): Promise<BigNumber>
 
 		minterReward(overrides?: CallOverrides): Promise<BigNumber>
 
-		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+		nominateNewOwner(_owner: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
 
 		owner(overrides?: CallOverrides): Promise<BigNumber>
 
-		setKwenta(
-			_kwenta: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+		setKwenta(_kwenta: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		setMinterReward(
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setStakingRewards(
-			_stakingRewards: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_stakingRewards: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setTradingRewards(
-			_tradingRewards: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewards: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setTradingRewardsDiversion(
-			_tradingRewardsDiversion: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewardsDiversion: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setTreasuryDAO(
-			_treasuryDAO: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_treasuryDAO: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setTreasuryDiversion(
-			_treasuryDiversion: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_treasuryDiversion: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		stakingRewards(overrides?: CallOverrides): Promise<BigNumber>
 
 		terminalInflationSupply(
-			totalSupply: PromiseOrValue<BigNumberish>,
-			numOfWeeks: PromiseOrValue<BigNumberish>,
+			totalSupply: BigNumberish,
+			numOfWeeks: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
-		tokenDecaySupplyForWeek(
-			counter: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		tokenDecaySupplyForWeek(counter: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
 		tradingRewards(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -795,9 +747,7 @@ export interface SupplySchedule extends BaseContract {
 
 		TERMINAL_SUPPLY_RATE_ANNUAL(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		acceptOwnership(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
 		inflationStartDate(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
@@ -807,15 +757,15 @@ export interface SupplySchedule extends BaseContract {
 
 		lastMintEvent(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		mint(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<PopulatedTransaction>
+		mint(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
 		mintableSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		minterReward(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_owner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
@@ -823,50 +773,50 @@ export interface SupplySchedule extends BaseContract {
 		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		setKwenta(
-			_kwenta: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_kwenta: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setMinterReward(
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setStakingRewards(
-			_stakingRewards: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_stakingRewards: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setTradingRewards(
-			_tradingRewards: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewards: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setTradingRewardsDiversion(
-			_tradingRewardsDiversion: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewardsDiversion: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setTreasuryDAO(
-			_treasuryDAO: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_treasuryDAO: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setTreasuryDiversion(
-			_treasuryDiversion: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_treasuryDiversion: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		stakingRewards(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		terminalInflationSupply(
-			totalSupply: PromiseOrValue<BigNumberish>,
-			numOfWeeks: PromiseOrValue<BigNumberish>,
+			totalSupply: BigNumberish,
+			numOfWeeks: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
 		tokenDecaySupplyForWeek(
-			counter: PromiseOrValue<BigNumberish>,
+			counter: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 

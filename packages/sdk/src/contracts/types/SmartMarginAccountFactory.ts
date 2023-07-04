@@ -14,7 +14,7 @@ import type {
 } from 'ethers'
 import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import type { Listener, Provider } from '@ethersproject/providers'
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from './common'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface SmartMarginAccountFactoryInterface extends utils.Interface {
 	functions: {
@@ -46,29 +46,20 @@ export interface SmartMarginAccountFactoryInterface extends utils.Interface {
 			| 'upgradeAccountImplementation'
 	): FunctionFragment
 
-	encodeFunctionData(functionFragment: 'accounts', values: [PromiseOrValue<string>]): string
+	encodeFunctionData(functionFragment: 'accounts', values: [string]): string
 	encodeFunctionData(functionFragment: 'canUpgrade', values?: undefined): string
-	encodeFunctionData(functionFragment: 'getAccountOwner', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(
-		functionFragment: 'getAccountsOwnedBy',
-		values: [PromiseOrValue<string>]
-	): string
+	encodeFunctionData(functionFragment: 'getAccountOwner', values: [string]): string
+	encodeFunctionData(functionFragment: 'getAccountsOwnedBy', values: [string]): string
 	encodeFunctionData(functionFragment: 'implementation', values?: undefined): string
 	encodeFunctionData(functionFragment: 'newAccount', values?: undefined): string
 	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
 	encodeFunctionData(functionFragment: 'removeUpgradability', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'transferOwnership',
-		values: [PromiseOrValue<string>]
-	): string
+	encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
 	encodeFunctionData(
 		functionFragment: 'updateAccountOwnership',
-		values: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<string>]
+		values: [string, string, string]
 	): string
-	encodeFunctionData(
-		functionFragment: 'upgradeAccountImplementation',
-		values: [PromiseOrValue<string>]
-	): string
+	encodeFunctionData(functionFragment: 'upgradeAccountImplementation', values: [string]): string
 
 	decodeFunctionResult(functionFragment: 'accounts', data: BytesLike): Result
 	decodeFunctionResult(functionFragment: 'canUpgrade', data: BytesLike): Result
@@ -101,8 +92,9 @@ export type AccountImplementationUpgradedEvent = TypedEvent<
 	AccountImplementationUpgradedEventObject
 >
 
-export type AccountImplementationUpgradedEventFilter =
-	TypedEventFilter<AccountImplementationUpgradedEvent>
+export type AccountImplementationUpgradedEventFilter = TypedEventFilter<
+	AccountImplementationUpgradedEvent
+>
 
 export interface NewAccountEventObject {
 	creator: string
@@ -149,95 +141,81 @@ export interface SmartMarginAccountFactory extends BaseContract {
 	removeListener: OnEvent<this>
 
 	functions: {
-		accounts(
-			accounts: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[boolean] & { exist: boolean }>
+		accounts(accounts: string, overrides?: CallOverrides): Promise<[boolean] & { exist: boolean }>
 
 		canUpgrade(overrides?: CallOverrides): Promise<[boolean]>
 
-		getAccountOwner(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[string]>
+		getAccountOwner(_account: string, overrides?: CallOverrides): Promise<[string]>
 
-		getAccountsOwnedBy(
-			_owner: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[string[]]>
+		getAccountsOwnedBy(_owner: string, overrides?: CallOverrides): Promise<[string[]]>
 
 		implementation(overrides?: CallOverrides): Promise<[string]>
 
-		newAccount(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		newAccount(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 		owner(overrides?: CallOverrides): Promise<[string]>
 
-		removeUpgradability(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		removeUpgradability(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 		transferOwnership(
-			newOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		updateAccountOwnership(
-			_account: PromiseOrValue<string>,
-			_newOwner: PromiseOrValue<string>,
-			_oldOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_account: string,
+			_newOwner: string,
+			_oldOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		upgradeAccountImplementation(
-			_implementation: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_implementation: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 	}
 
-	accounts(accounts: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>
+	accounts(accounts: string, overrides?: CallOverrides): Promise<boolean>
 
 	canUpgrade(overrides?: CallOverrides): Promise<boolean>
 
-	getAccountOwner(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<string>
+	getAccountOwner(_account: string, overrides?: CallOverrides): Promise<string>
 
-	getAccountsOwnedBy(_owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<string[]>
+	getAccountsOwnedBy(_owner: string, overrides?: CallOverrides): Promise<string[]>
 
 	implementation(overrides?: CallOverrides): Promise<string>
 
-	newAccount(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	newAccount(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	owner(overrides?: CallOverrides): Promise<string>
 
-	removeUpgradability(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	removeUpgradability(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	transferOwnership(
-		newOwner: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		newOwner: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	updateAccountOwnership(
-		_account: PromiseOrValue<string>,
-		_newOwner: PromiseOrValue<string>,
-		_oldOwner: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_account: string,
+		_newOwner: string,
+		_oldOwner: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	upgradeAccountImplementation(
-		_implementation: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_implementation: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	callStatic: {
-		accounts(accounts: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>
+		accounts(accounts: string, overrides?: CallOverrides): Promise<boolean>
 
 		canUpgrade(overrides?: CallOverrides): Promise<boolean>
 
-		getAccountOwner(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<string>
+		getAccountOwner(_account: string, overrides?: CallOverrides): Promise<string>
 
-		getAccountsOwnedBy(_owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<string[]>
+		getAccountsOwnedBy(_owner: string, overrides?: CallOverrides): Promise<string[]>
 
 		implementation(overrides?: CallOverrides): Promise<string>
 
@@ -247,19 +225,16 @@ export interface SmartMarginAccountFactory extends BaseContract {
 
 		removeUpgradability(overrides?: CallOverrides): Promise<void>
 
-		transferOwnership(newOwner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+		transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
 
 		updateAccountOwnership(
-			_account: PromiseOrValue<string>,
-			_newOwner: PromiseOrValue<string>,
-			_oldOwner: PromiseOrValue<string>,
+			_account: string,
+			_newOwner: string,
+			_oldOwner: string,
 			overrides?: CallOverrides
 		): Promise<void>
 
-		upgradeAccountImplementation(
-			_implementation: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<void>
+		upgradeAccountImplementation(_implementation: string, overrides?: CallOverrides): Promise<void>
 	}
 
 	filters: {
@@ -269,111 +244,93 @@ export interface SmartMarginAccountFactory extends BaseContract {
 		AccountImplementationUpgraded(implementation?: null): AccountImplementationUpgradedEventFilter
 
 		'NewAccount(address,address,bytes32)'(
-			creator?: PromiseOrValue<string> | null,
-			account?: PromiseOrValue<string> | null,
+			creator?: string | null,
+			account?: string | null,
 			version?: null
 		): NewAccountEventFilter
 		NewAccount(
-			creator?: PromiseOrValue<string> | null,
-			account?: PromiseOrValue<string> | null,
+			creator?: string | null,
+			account?: string | null,
 			version?: null
 		): NewAccountEventFilter
 
 		'OwnershipTransferred(address,address)'(
-			user?: PromiseOrValue<string> | null,
-			newOwner?: PromiseOrValue<string> | null
+			user?: string | null,
+			newOwner?: string | null
 		): OwnershipTransferredEventFilter
 		OwnershipTransferred(
-			user?: PromiseOrValue<string> | null,
-			newOwner?: PromiseOrValue<string> | null
+			user?: string | null,
+			newOwner?: string | null
 		): OwnershipTransferredEventFilter
 	}
 
 	estimateGas: {
-		accounts(accounts: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+		accounts(accounts: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		canUpgrade(overrides?: CallOverrides): Promise<BigNumber>
 
-		getAccountOwner(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+		getAccountOwner(_account: string, overrides?: CallOverrides): Promise<BigNumber>
 
-		getAccountsOwnedBy(
-			_owner: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		getAccountsOwnedBy(_owner: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		implementation(overrides?: CallOverrides): Promise<BigNumber>
 
-		newAccount(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>
+		newAccount(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		owner(overrides?: CallOverrides): Promise<BigNumber>
 
-		removeUpgradability(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+		removeUpgradability(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		transferOwnership(
-			newOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		updateAccountOwnership(
-			_account: PromiseOrValue<string>,
-			_newOwner: PromiseOrValue<string>,
-			_oldOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_account: string,
+			_newOwner: string,
+			_oldOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		upgradeAccountImplementation(
-			_implementation: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_implementation: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 	}
 
 	populateTransaction: {
-		accounts(
-			accounts: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		accounts(accounts: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		canUpgrade(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		getAccountOwner(
-			_account: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		getAccountOwner(_account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		getAccountsOwnedBy(
-			_owner: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		getAccountsOwnedBy(_owner: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		implementation(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		newAccount(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		newAccount(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
 		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		removeUpgradability(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		removeUpgradability(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
 		transferOwnership(
-			newOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		updateAccountOwnership(
-			_account: PromiseOrValue<string>,
-			_newOwner: PromiseOrValue<string>,
-			_oldOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_account: string,
+			_newOwner: string,
+			_oldOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		upgradeAccountImplementation(
-			_implementation: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_implementation: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 	}
 }

@@ -15,7 +15,7 @@ import type {
 } from 'ethers'
 import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import type { Listener, Provider } from '@ethersproject/providers'
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from './common'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface SystemSettingsInterface extends utils.Interface {
 	functions: {
@@ -206,33 +206,24 @@ export interface SystemSettingsInterface extends utils.Interface {
 	encodeFunctionData(functionFragment: 'CONTRACT_NAME', values?: undefined): string
 	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
 	encodeFunctionData(functionFragment: 'aggregatorWarningFlags', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'atomicEquivalentForDexPricing',
-		values: [PromiseOrValue<BytesLike>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'atomicExchangeFeeRate',
-		values: [PromiseOrValue<BytesLike>]
-	): string
+	encodeFunctionData(functionFragment: 'atomicEquivalentForDexPricing', values: [BytesLike]): string
+	encodeFunctionData(functionFragment: 'atomicExchangeFeeRate', values: [BytesLike]): string
 	encodeFunctionData(functionFragment: 'atomicMaxVolumePerBlock', values?: undefined): string
 	encodeFunctionData(functionFragment: 'atomicTwapWindow', values?: undefined): string
 	encodeFunctionData(
 		functionFragment: 'atomicVolatilityConsiderationWindow',
-		values: [PromiseOrValue<BytesLike>]
+		values: [BytesLike]
 	): string
 	encodeFunctionData(
 		functionFragment: 'atomicVolatilityUpdateThreshold',
-		values: [PromiseOrValue<BytesLike>]
+		values: [BytesLike]
 	): string
-	encodeFunctionData(functionFragment: 'collapseFeeRate', values: [PromiseOrValue<string>]): string
+	encodeFunctionData(functionFragment: 'collapseFeeRate', values: [string]): string
 	encodeFunctionData(
 		functionFragment: 'crossChainSynthTransferEnabled',
-		values: [PromiseOrValue<BytesLike>]
+		values: [BytesLike]
 	): string
-	encodeFunctionData(
-		functionFragment: 'crossDomainMessageGasLimit',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'crossDomainMessageGasLimit', values: [BigNumberish]): string
 	encodeFunctionData(functionFragment: 'debtSnapshotStaleTime', values?: undefined): string
 	encodeFunctionData(functionFragment: 'etherWrapperBurnFeeRate', values?: undefined): string
 	encodeFunctionData(functionFragment: 'etherWrapperMaxETH', values?: undefined): string
@@ -240,14 +231,11 @@ export interface SystemSettingsInterface extends utils.Interface {
 	encodeFunctionData(functionFragment: 'exchangeDynamicFeeRounds', values?: undefined): string
 	encodeFunctionData(functionFragment: 'exchangeDynamicFeeThreshold', values?: undefined): string
 	encodeFunctionData(functionFragment: 'exchangeDynamicFeeWeightDecay', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'exchangeFeeRate',
-		values: [PromiseOrValue<BytesLike>]
-	): string
+	encodeFunctionData(functionFragment: 'exchangeFeeRate', values: [BytesLike]): string
 	encodeFunctionData(functionFragment: 'exchangeMaxDynamicFee', values?: undefined): string
 	encodeFunctionData(functionFragment: 'feePeriodDuration', values?: undefined): string
 	encodeFunctionData(functionFragment: 'flagReward', values?: undefined): string
-	encodeFunctionData(functionFragment: 'interactionDelay', values: [PromiseOrValue<string>]): string
+	encodeFunctionData(functionFragment: 'interactionDelay', values: [string]): string
 	encodeFunctionData(functionFragment: 'isResolverCached', values?: undefined): string
 	encodeFunctionData(functionFragment: 'issuanceRatio', values?: undefined): string
 	encodeFunctionData(functionFragment: 'liquidateReward', values?: undefined): string
@@ -256,195 +244,117 @@ export interface SystemSettingsInterface extends utils.Interface {
 	encodeFunctionData(functionFragment: 'liquidationPenalty', values?: undefined): string
 	encodeFunctionData(functionFragment: 'liquidationRatio', values?: undefined): string
 	encodeFunctionData(functionFragment: 'minimumStakeTime', values?: undefined): string
-	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [PromiseOrValue<string>]): string
+	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [string]): string
 	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
 	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
 	encodeFunctionData(functionFragment: 'priceDeviationThresholdFactor', values?: undefined): string
 	encodeFunctionData(
 		functionFragment: 'pureChainlinkPriceForAtomicSwapsEnabled',
-		values: [PromiseOrValue<BytesLike>]
+		values: [BytesLike]
 	): string
 	encodeFunctionData(functionFragment: 'rateStalePeriod', values?: undefined): string
 	encodeFunctionData(functionFragment: 'rebuildCache', values?: undefined): string
 	encodeFunctionData(functionFragment: 'resolver', values?: undefined): string
 	encodeFunctionData(functionFragment: 'resolverAddressesRequired', values?: undefined): string
 	encodeFunctionData(functionFragment: 'selfLiquidationPenalty', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'setAggregatorWarningFlags',
-		values: [PromiseOrValue<string>]
-	): string
+	encodeFunctionData(functionFragment: 'setAggregatorWarningFlags', values: [string]): string
 	encodeFunctionData(
 		functionFragment: 'setAtomicEquivalentForDexPricing',
-		values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+		values: [BytesLike, string]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setAtomicExchangeFeeRate',
-		values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+		values: [BytesLike, BigNumberish]
 	): string
-	encodeFunctionData(
-		functionFragment: 'setAtomicMaxVolumePerBlock',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setAtomicTwapWindow',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'setAtomicMaxVolumePerBlock', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setAtomicTwapWindow', values: [BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'setAtomicVolatilityConsiderationWindow',
-		values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+		values: [BytesLike, BigNumberish]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setAtomicVolatilityUpdateThreshold',
-		values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+		values: [BytesLike, BigNumberish]
 	): string
-	encodeFunctionData(
-		functionFragment: 'setCollapseFeeRate',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'setCollapseFeeRate', values: [string, BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'setCrossChainSynthTransferEnabled',
-		values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+		values: [BytesLike, BigNumberish]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setCrossDomainMessageGasLimit',
-		values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+		values: [BigNumberish, BigNumberish]
 	): string
-	encodeFunctionData(
-		functionFragment: 'setDebtSnapshotStaleTime',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setEtherWrapperBurnFeeRate',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setEtherWrapperMaxETH',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setEtherWrapperMintFeeRate',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'setDebtSnapshotStaleTime', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setEtherWrapperBurnFeeRate', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setEtherWrapperMaxETH', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setEtherWrapperMintFeeRate', values: [BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'setExchangeDynamicFeeRounds',
-		values: [PromiseOrValue<BigNumberish>]
+		values: [BigNumberish]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setExchangeDynamicFeeThreshold',
-		values: [PromiseOrValue<BigNumberish>]
+		values: [BigNumberish]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setExchangeDynamicFeeWeightDecay',
-		values: [PromiseOrValue<BigNumberish>]
+		values: [BigNumberish]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setExchangeFeeRateForSynths',
-		values: [PromiseOrValue<BytesLike>[], PromiseOrValue<BigNumberish>[]]
+		values: [BytesLike[], BigNumberish[]]
 	): string
-	encodeFunctionData(
-		functionFragment: 'setExchangeMaxDynamicFee',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setFeePeriodDuration',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setFlagReward',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'setExchangeMaxDynamicFee', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setFeePeriodDuration', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setFlagReward', values: [BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'setInteractionDelay',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+		values: [string, BigNumberish]
 	): string
-	encodeFunctionData(
-		functionFragment: 'setIssuanceRatio',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setLiquidateReward',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setLiquidationDelay',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'setIssuanceRatio', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setLiquidateReward', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setLiquidationDelay', values: [BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'setLiquidationEscrowDuration',
-		values: [PromiseOrValue<BigNumberish>]
+		values: [BigNumberish]
 	): string
-	encodeFunctionData(
-		functionFragment: 'setLiquidationPenalty',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setLiquidationRatio',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setMinimumStakeTime',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'setLiquidationPenalty', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setLiquidationRatio', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setMinimumStakeTime', values: [BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'setPriceDeviationThresholdFactor',
-		values: [PromiseOrValue<BigNumberish>]
+		values: [BigNumberish]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setPureChainlinkPriceForAtomicSwapsEnabled',
-		values: [PromiseOrValue<BytesLike>, PromiseOrValue<boolean>]
+		values: [BytesLike, boolean]
 	): string
-	encodeFunctionData(
-		functionFragment: 'setRateStalePeriod',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setSelfLiquidationPenalty',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setSnxLiquidationPenalty',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setTargetThreshold',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setTradingRewardsEnabled',
-		values: [PromiseOrValue<boolean>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setWaitingPeriodSecs',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'setRateStalePeriod', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setSelfLiquidationPenalty', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setSnxLiquidationPenalty', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setTargetThreshold', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'setTradingRewardsEnabled', values: [boolean]): string
+	encodeFunctionData(functionFragment: 'setWaitingPeriodSecs', values: [BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'setWrapperBurnFeeRate',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+		values: [string, BigNumberish]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setWrapperMaxTokenAmount',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+		values: [string, BigNumberish]
 	): string
 	encodeFunctionData(
 		functionFragment: 'setWrapperMintFeeRate',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+		values: [string, BigNumberish]
 	): string
 	encodeFunctionData(functionFragment: 'snxLiquidationPenalty', values?: undefined): string
 	encodeFunctionData(functionFragment: 'targetThreshold', values?: undefined): string
 	encodeFunctionData(functionFragment: 'tradingRewardsEnabled', values?: undefined): string
 	encodeFunctionData(functionFragment: 'waitingPeriodSecs', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'wrapperBurnFeeRate',
-		values: [PromiseOrValue<string>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'wrapperMaxTokenAmount',
-		values: [PromiseOrValue<string>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'wrapperMintFeeRate',
-		values: [PromiseOrValue<string>]
-	): string
+	encodeFunctionData(functionFragment: 'wrapperBurnFeeRate', values: [string]): string
+	encodeFunctionData(functionFragment: 'wrapperMaxTokenAmount', values: [string]): string
+	encodeFunctionData(functionFragment: 'wrapperMintFeeRate', values: [string]): string
 
 	decodeFunctionResult(functionFragment: 'CONTRACT_NAME', data: BytesLike): Result
 	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
@@ -662,8 +572,9 @@ export type AggregatorWarningFlagsUpdatedEvent = TypedEvent<
 	AggregatorWarningFlagsUpdatedEventObject
 >
 
-export type AggregatorWarningFlagsUpdatedEventFilter =
-	TypedEventFilter<AggregatorWarningFlagsUpdatedEvent>
+export type AggregatorWarningFlagsUpdatedEventFilter = TypedEventFilter<
+	AggregatorWarningFlagsUpdatedEvent
+>
 
 export interface AtomicEquivalentForDexPricingUpdatedEventObject {
 	synthKey: string
@@ -674,8 +585,9 @@ export type AtomicEquivalentForDexPricingUpdatedEvent = TypedEvent<
 	AtomicEquivalentForDexPricingUpdatedEventObject
 >
 
-export type AtomicEquivalentForDexPricingUpdatedEventFilter =
-	TypedEventFilter<AtomicEquivalentForDexPricingUpdatedEvent>
+export type AtomicEquivalentForDexPricingUpdatedEventFilter = TypedEventFilter<
+	AtomicEquivalentForDexPricingUpdatedEvent
+>
 
 export interface AtomicExchangeFeeUpdatedEventObject {
 	synthKey: string
@@ -696,8 +608,9 @@ export type AtomicMaxVolumePerBlockUpdatedEvent = TypedEvent<
 	AtomicMaxVolumePerBlockUpdatedEventObject
 >
 
-export type AtomicMaxVolumePerBlockUpdatedEventFilter =
-	TypedEventFilter<AtomicMaxVolumePerBlockUpdatedEvent>
+export type AtomicMaxVolumePerBlockUpdatedEventFilter = TypedEventFilter<
+	AtomicMaxVolumePerBlockUpdatedEvent
+>
 
 export interface AtomicTwapWindowUpdatedEventObject {
 	newWindow: BigNumber
@@ -718,8 +631,9 @@ export type AtomicVolatilityConsiderationWindowUpdatedEvent = TypedEvent<
 	AtomicVolatilityConsiderationWindowUpdatedEventObject
 >
 
-export type AtomicVolatilityConsiderationWindowUpdatedEventFilter =
-	TypedEventFilter<AtomicVolatilityConsiderationWindowUpdatedEvent>
+export type AtomicVolatilityConsiderationWindowUpdatedEventFilter = TypedEventFilter<
+	AtomicVolatilityConsiderationWindowUpdatedEvent
+>
 
 export interface AtomicVolatilityUpdateThresholdUpdatedEventObject {
 	synthKey: string
@@ -730,8 +644,9 @@ export type AtomicVolatilityUpdateThresholdUpdatedEvent = TypedEvent<
 	AtomicVolatilityUpdateThresholdUpdatedEventObject
 >
 
-export type AtomicVolatilityUpdateThresholdUpdatedEventFilter =
-	TypedEventFilter<AtomicVolatilityUpdateThresholdUpdatedEvent>
+export type AtomicVolatilityUpdateThresholdUpdatedEventFilter = TypedEventFilter<
+	AtomicVolatilityUpdateThresholdUpdatedEvent
+>
 
 export interface CacheUpdatedEventObject {
 	name: string
@@ -757,8 +672,9 @@ export type CrossChainSynthTransferEnabledUpdatedEvent = TypedEvent<
 	CrossChainSynthTransferEnabledUpdatedEventObject
 >
 
-export type CrossChainSynthTransferEnabledUpdatedEventFilter =
-	TypedEventFilter<CrossChainSynthTransferEnabledUpdatedEvent>
+export type CrossChainSynthTransferEnabledUpdatedEventFilter = TypedEventFilter<
+	CrossChainSynthTransferEnabledUpdatedEvent
+>
 
 export interface CrossDomainMessageGasLimitChangedEventObject {
 	gasLimitType: number
@@ -769,8 +685,9 @@ export type CrossDomainMessageGasLimitChangedEvent = TypedEvent<
 	CrossDomainMessageGasLimitChangedEventObject
 >
 
-export type CrossDomainMessageGasLimitChangedEventFilter =
-	TypedEventFilter<CrossDomainMessageGasLimitChangedEvent>
+export type CrossDomainMessageGasLimitChangedEventFilter = TypedEventFilter<
+	CrossDomainMessageGasLimitChangedEvent
+>
 
 export interface DebtSnapshotStaleTimeUpdatedEventObject {
 	debtSnapshotStaleTime: BigNumber
@@ -780,8 +697,9 @@ export type DebtSnapshotStaleTimeUpdatedEvent = TypedEvent<
 	DebtSnapshotStaleTimeUpdatedEventObject
 >
 
-export type DebtSnapshotStaleTimeUpdatedEventFilter =
-	TypedEventFilter<DebtSnapshotStaleTimeUpdatedEvent>
+export type DebtSnapshotStaleTimeUpdatedEventFilter = TypedEventFilter<
+	DebtSnapshotStaleTimeUpdatedEvent
+>
 
 export interface EtherWrapperBurnFeeRateUpdatedEventObject {
 	rate: BigNumber
@@ -791,8 +709,9 @@ export type EtherWrapperBurnFeeRateUpdatedEvent = TypedEvent<
 	EtherWrapperBurnFeeRateUpdatedEventObject
 >
 
-export type EtherWrapperBurnFeeRateUpdatedEventFilter =
-	TypedEventFilter<EtherWrapperBurnFeeRateUpdatedEvent>
+export type EtherWrapperBurnFeeRateUpdatedEventFilter = TypedEventFilter<
+	EtherWrapperBurnFeeRateUpdatedEvent
+>
 
 export interface EtherWrapperMaxETHUpdatedEventObject {
 	maxETH: BigNumber
@@ -812,8 +731,9 @@ export type EtherWrapperMintFeeRateUpdatedEvent = TypedEvent<
 	EtherWrapperMintFeeRateUpdatedEventObject
 >
 
-export type EtherWrapperMintFeeRateUpdatedEventFilter =
-	TypedEventFilter<EtherWrapperMintFeeRateUpdatedEvent>
+export type EtherWrapperMintFeeRateUpdatedEventFilter = TypedEventFilter<
+	EtherWrapperMintFeeRateUpdatedEvent
+>
 
 export interface ExchangeDynamicFeeRoundsUpdatedEventObject {
 	dynamicFeeRounds: BigNumber
@@ -823,8 +743,9 @@ export type ExchangeDynamicFeeRoundsUpdatedEvent = TypedEvent<
 	ExchangeDynamicFeeRoundsUpdatedEventObject
 >
 
-export type ExchangeDynamicFeeRoundsUpdatedEventFilter =
-	TypedEventFilter<ExchangeDynamicFeeRoundsUpdatedEvent>
+export type ExchangeDynamicFeeRoundsUpdatedEventFilter = TypedEventFilter<
+	ExchangeDynamicFeeRoundsUpdatedEvent
+>
 
 export interface ExchangeDynamicFeeThresholdUpdatedEventObject {
 	dynamicFeeThreshold: BigNumber
@@ -834,8 +755,9 @@ export type ExchangeDynamicFeeThresholdUpdatedEvent = TypedEvent<
 	ExchangeDynamicFeeThresholdUpdatedEventObject
 >
 
-export type ExchangeDynamicFeeThresholdUpdatedEventFilter =
-	TypedEventFilter<ExchangeDynamicFeeThresholdUpdatedEvent>
+export type ExchangeDynamicFeeThresholdUpdatedEventFilter = TypedEventFilter<
+	ExchangeDynamicFeeThresholdUpdatedEvent
+>
 
 export interface ExchangeDynamicFeeWeightDecayUpdatedEventObject {
 	dynamicFeeWeightDecay: BigNumber
@@ -845,8 +767,9 @@ export type ExchangeDynamicFeeWeightDecayUpdatedEvent = TypedEvent<
 	ExchangeDynamicFeeWeightDecayUpdatedEventObject
 >
 
-export type ExchangeDynamicFeeWeightDecayUpdatedEventFilter =
-	TypedEventFilter<ExchangeDynamicFeeWeightDecayUpdatedEvent>
+export type ExchangeDynamicFeeWeightDecayUpdatedEventFilter = TypedEventFilter<
+	ExchangeDynamicFeeWeightDecayUpdatedEvent
+>
 
 export interface ExchangeFeeUpdatedEventObject {
 	synthKey: string
@@ -864,8 +787,9 @@ export type ExchangeMaxDynamicFeeUpdatedEvent = TypedEvent<
 	ExchangeMaxDynamicFeeUpdatedEventObject
 >
 
-export type ExchangeMaxDynamicFeeUpdatedEventFilter =
-	TypedEventFilter<ExchangeMaxDynamicFeeUpdatedEvent>
+export type ExchangeMaxDynamicFeeUpdatedEventFilter = TypedEventFilter<
+	ExchangeMaxDynamicFeeUpdatedEvent
+>
 
 export interface FeePeriodDurationUpdatedEventObject {
 	newFeePeriodDuration: BigNumber
@@ -926,8 +850,9 @@ export type LiquidationEscrowDurationUpdatedEvent = TypedEvent<
 	LiquidationEscrowDurationUpdatedEventObject
 >
 
-export type LiquidationEscrowDurationUpdatedEventFilter =
-	TypedEventFilter<LiquidationEscrowDurationUpdatedEvent>
+export type LiquidationEscrowDurationUpdatedEventFilter = TypedEventFilter<
+	LiquidationEscrowDurationUpdatedEvent
+>
 
 export interface LiquidationPenaltyUpdatedEventObject {
 	newPenalty: BigNumber
@@ -982,8 +907,9 @@ export type PriceDeviationThresholdUpdatedEvent = TypedEvent<
 	PriceDeviationThresholdUpdatedEventObject
 >
 
-export type PriceDeviationThresholdUpdatedEventFilter =
-	TypedEventFilter<PriceDeviationThresholdUpdatedEvent>
+export type PriceDeviationThresholdUpdatedEventFilter = TypedEventFilter<
+	PriceDeviationThresholdUpdatedEvent
+>
 
 export interface PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventObject {
 	synthKey: string
@@ -994,8 +920,9 @@ export type PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent = TypedEvent<
 	PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventObject
 >
 
-export type PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter =
-	TypedEventFilter<PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent>
+export type PureChainlinkPriceForAtomicSwapsEnabledUpdatedEventFilter = TypedEventFilter<
+	PureChainlinkPriceForAtomicSwapsEnabledUpdatedEvent
+>
 
 export interface RateStalePeriodUpdatedEventObject {
 	rateStalePeriod: BigNumber
@@ -1012,8 +939,9 @@ export type SelfLiquidationPenaltyUpdatedEvent = TypedEvent<
 	SelfLiquidationPenaltyUpdatedEventObject
 >
 
-export type SelfLiquidationPenaltyUpdatedEventFilter =
-	TypedEventFilter<SelfLiquidationPenaltyUpdatedEvent>
+export type SelfLiquidationPenaltyUpdatedEventFilter = TypedEventFilter<
+	SelfLiquidationPenaltyUpdatedEvent
+>
 
 export interface SnxLiquidationPenaltyUpdatedEventObject {
 	newPenalty: BigNumber
@@ -1023,8 +951,9 @@ export type SnxLiquidationPenaltyUpdatedEvent = TypedEvent<
 	SnxLiquidationPenaltyUpdatedEventObject
 >
 
-export type SnxLiquidationPenaltyUpdatedEventFilter =
-	TypedEventFilter<SnxLiquidationPenaltyUpdatedEvent>
+export type SnxLiquidationPenaltyUpdatedEventFilter = TypedEventFilter<
+	SnxLiquidationPenaltyUpdatedEvent
+>
 
 export interface TargetThresholdUpdatedEventObject {
 	newTargetThreshold: BigNumber
@@ -1070,8 +999,9 @@ export type WrapperMaxTokenAmountUpdatedEvent = TypedEvent<
 	WrapperMaxTokenAmountUpdatedEventObject
 >
 
-export type WrapperMaxTokenAmountUpdatedEventFilter =
-	TypedEventFilter<WrapperMaxTokenAmountUpdatedEvent>
+export type WrapperMaxTokenAmountUpdatedEventFilter = TypedEventFilter<
+	WrapperMaxTokenAmountUpdatedEvent
+>
 
 export interface WrapperMintFeeRateUpdatedEventObject {
 	wrapper: string
@@ -1111,48 +1041,40 @@ export interface SystemSettings extends BaseContract {
 	functions: {
 		CONTRACT_NAME(overrides?: CallOverrides): Promise<[string]>
 
-		acceptOwnership(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 		aggregatorWarningFlags(overrides?: CallOverrides): Promise<[string]>
 
 		atomicEquivalentForDexPricing(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<[string]>
 
-		atomicExchangeFeeRate(
-			currencyKey: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		atomicExchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
 
 		atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<[BigNumber]>
 
 		atomicTwapWindow(overrides?: CallOverrides): Promise<[BigNumber]>
 
 		atomicVolatilityConsiderationWindow(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<[BigNumber]>
 
 		atomicVolatilityUpdateThreshold(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<[BigNumber]>
 
-		collapseFeeRate(
-			collateral: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
 		crossChainSynthTransferEnabled(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<[BigNumber]>
 
 		crossDomainMessageGasLimit(
-			gasLimitType: PromiseOrValue<BigNumberish>,
+			gasLimitType: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<[BigNumber]>
 
@@ -1170,10 +1092,7 @@ export interface SystemSettings extends BaseContract {
 
 		exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<[BigNumber]>
 
-		exchangeFeeRate(
-			currencyKey: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		exchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>
 
 		exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<[BigNumber]>
 
@@ -1181,10 +1100,7 @@ export interface SystemSettings extends BaseContract {
 
 		flagReward(overrides?: CallOverrides): Promise<[BigNumber]>
 
-		interactionDelay(
-			collateral: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		interactionDelay(collateral: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
 		isResolverCached(overrides?: CallOverrides): Promise<[boolean]>
 
@@ -1203,8 +1119,8 @@ export interface SystemSettings extends BaseContract {
 		minimumStakeTime(overrides?: CallOverrides): Promise<[BigNumber]>
 
 		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_owner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
@@ -1214,15 +1130,13 @@ export interface SystemSettings extends BaseContract {
 		priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<[BigNumber]>
 
 		pureChainlinkPriceForAtomicSwapsEnabled(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<[boolean]>
 
 		rateStalePeriod(overrides?: CallOverrides): Promise<[BigNumber]>
 
-		rebuildCache(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 		resolver(overrides?: CallOverrides): Promise<[string]>
 
@@ -1233,216 +1147,216 @@ export interface SystemSettings extends BaseContract {
 		selfLiquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>
 
 		setAggregatorWarningFlags(
-			_flags: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_flags: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setAtomicEquivalentForDexPricing(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_equivalent: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_equivalent: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setAtomicExchangeFeeRate(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_exchangeFeeRate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_exchangeFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setAtomicMaxVolumePerBlock(
-			_maxVolume: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_maxVolume: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setAtomicTwapWindow(
-			_window: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setAtomicVolatilityConsiderationWindow(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_window: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setAtomicVolatilityUpdateThreshold(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_threshold: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setCollapseFeeRate(
-			_collateral: PromiseOrValue<string>,
-			_collapseFeeRate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_collateral: string,
+			_collapseFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setCrossChainSynthTransferEnabled(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_value: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setCrossDomainMessageGasLimit(
-			_gasLimitType: PromiseOrValue<BigNumberish>,
-			_crossDomainMessageGasLimit: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_gasLimitType: BigNumberish,
+			_crossDomainMessageGasLimit: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setDebtSnapshotStaleTime(
-			_seconds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setEtherWrapperBurnFeeRate(
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setEtherWrapperMaxETH(
-			_maxETH: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_maxETH: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setEtherWrapperMintFeeRate(
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setExchangeDynamicFeeRounds(
-			rounds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			rounds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setExchangeDynamicFeeThreshold(
-			threshold: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setExchangeDynamicFeeWeightDecay(
-			weightDecay: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			weightDecay: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setExchangeFeeRateForSynths(
-			synthKeys: PromiseOrValue<BytesLike>[],
-			exchangeFeeRates: PromiseOrValue<BigNumberish>[],
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			synthKeys: BytesLike[],
+			exchangeFeeRates: BigNumberish[],
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setExchangeMaxDynamicFee(
-			maxFee: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			maxFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setFeePeriodDuration(
-			_feePeriodDuration: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_feePeriodDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setFlagReward(
-			reward: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setInteractionDelay(
-			_collateral: PromiseOrValue<string>,
-			_interactionDelay: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_collateral: string,
+			_interactionDelay: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setIssuanceRatio(
-			ratio: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setLiquidateReward(
-			reward: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setLiquidationDelay(
-			time: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			time: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setLiquidationEscrowDuration(
-			duration: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			duration: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setLiquidationRatio(
-			_liquidationRatio: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_liquidationRatio: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setMinimumStakeTime(
-			_seconds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setPriceDeviationThresholdFactor(
-			_priceDeviationThresholdFactor: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_priceDeviationThresholdFactor: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setPureChainlinkPriceForAtomicSwapsEnabled(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_enabled: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_enabled: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setRateStalePeriod(
-			period: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			period: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setSelfLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setSnxLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setTargetThreshold(
-			percent: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			percent: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setTradingRewardsEnabled(
-			_tradingRewardsEnabled: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewardsEnabled: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setWaitingPeriodSecs(
-			_waitingPeriodSecs: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_waitingPeriodSecs: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setWrapperBurnFeeRate(
-			_wrapper: PromiseOrValue<string>,
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setWrapperMaxTokenAmount(
-			_wrapper: PromiseOrValue<string>,
-			_maxTokenAmount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_maxTokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		setWrapperMintFeeRate(
-			_wrapper: PromiseOrValue<string>,
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		snxLiquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>
@@ -1453,63 +1367,46 @@ export interface SystemSettings extends BaseContract {
 
 		waitingPeriodSecs(overrides?: CallOverrides): Promise<[BigNumber]>
 
-		wrapperBurnFeeRate(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-		wrapperMaxTokenAmount(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-		wrapperMintFeeRate(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<[BigNumber]>
 	}
 
 	CONTRACT_NAME(overrides?: CallOverrides): Promise<string>
 
-	acceptOwnership(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>
 
-	atomicEquivalentForDexPricing(
-		currencyKey: PromiseOrValue<BytesLike>,
-		overrides?: CallOverrides
-	): Promise<string>
+	atomicEquivalentForDexPricing(currencyKey: BytesLike, overrides?: CallOverrides): Promise<string>
 
-	atomicExchangeFeeRate(
-		currencyKey: PromiseOrValue<BytesLike>,
-		overrides?: CallOverrides
-	): Promise<BigNumber>
+	atomicExchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
 	atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>
 
 	atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>
 
 	atomicVolatilityConsiderationWindow(
-		currencyKey: PromiseOrValue<BytesLike>,
+		currencyKey: BytesLike,
 		overrides?: CallOverrides
 	): Promise<BigNumber>
 
 	atomicVolatilityUpdateThreshold(
-		currencyKey: PromiseOrValue<BytesLike>,
+		currencyKey: BytesLike,
 		overrides?: CallOverrides
 	): Promise<BigNumber>
 
-	collapseFeeRate(collateral: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+	collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
 
 	crossChainSynthTransferEnabled(
-		currencyKey: PromiseOrValue<BytesLike>,
+		currencyKey: BytesLike,
 		overrides?: CallOverrides
 	): Promise<BigNumber>
 
 	crossDomainMessageGasLimit(
-		gasLimitType: PromiseOrValue<BigNumberish>,
+		gasLimitType: BigNumberish,
 		overrides?: CallOverrides
 	): Promise<BigNumber>
 
@@ -1527,10 +1424,7 @@ export interface SystemSettings extends BaseContract {
 
 	exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<BigNumber>
 
-	exchangeFeeRate(
-		currencyKey: PromiseOrValue<BytesLike>,
-		overrides?: CallOverrides
-	): Promise<BigNumber>
+	exchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
 	exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -1538,10 +1432,7 @@ export interface SystemSettings extends BaseContract {
 
 	flagReward(overrides?: CallOverrides): Promise<BigNumber>
 
-	interactionDelay(
-		collateral: PromiseOrValue<string>,
-		overrides?: CallOverrides
-	): Promise<BigNumber>
+	interactionDelay(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
 
 	isResolverCached(overrides?: CallOverrides): Promise<boolean>
 
@@ -1560,8 +1451,8 @@ export interface SystemSettings extends BaseContract {
 	minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>
 
 	nominateNewOwner(
-		_owner: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_owner: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	nominatedOwner(overrides?: CallOverrides): Promise<string>
@@ -1571,15 +1462,13 @@ export interface SystemSettings extends BaseContract {
 	priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<BigNumber>
 
 	pureChainlinkPriceForAtomicSwapsEnabled(
-		currencyKey: PromiseOrValue<BytesLike>,
+		currencyKey: BytesLike,
 		overrides?: CallOverrides
 	): Promise<boolean>
 
 	rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>
 
-	rebuildCache(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	resolver(overrides?: CallOverrides): Promise<string>
 
@@ -1588,216 +1477,216 @@ export interface SystemSettings extends BaseContract {
 	selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
 
 	setAggregatorWarningFlags(
-		_flags: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_flags: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setAtomicEquivalentForDexPricing(
-		_currencyKey: PromiseOrValue<BytesLike>,
-		_equivalent: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_currencyKey: BytesLike,
+		_equivalent: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setAtomicExchangeFeeRate(
-		_currencyKey: PromiseOrValue<BytesLike>,
-		_exchangeFeeRate: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_currencyKey: BytesLike,
+		_exchangeFeeRate: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setAtomicMaxVolumePerBlock(
-		_maxVolume: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_maxVolume: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setAtomicTwapWindow(
-		_window: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_window: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setAtomicVolatilityConsiderationWindow(
-		_currencyKey: PromiseOrValue<BytesLike>,
-		_window: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_currencyKey: BytesLike,
+		_window: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setAtomicVolatilityUpdateThreshold(
-		_currencyKey: PromiseOrValue<BytesLike>,
-		_threshold: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_currencyKey: BytesLike,
+		_threshold: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setCollapseFeeRate(
-		_collateral: PromiseOrValue<string>,
-		_collapseFeeRate: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_collateral: string,
+		_collapseFeeRate: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setCrossChainSynthTransferEnabled(
-		_currencyKey: PromiseOrValue<BytesLike>,
-		_value: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_currencyKey: BytesLike,
+		_value: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setCrossDomainMessageGasLimit(
-		_gasLimitType: PromiseOrValue<BigNumberish>,
-		_crossDomainMessageGasLimit: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_gasLimitType: BigNumberish,
+		_crossDomainMessageGasLimit: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setDebtSnapshotStaleTime(
-		_seconds: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_seconds: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setEtherWrapperBurnFeeRate(
-		_rate: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_rate: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setEtherWrapperMaxETH(
-		_maxETH: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_maxETH: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setEtherWrapperMintFeeRate(
-		_rate: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_rate: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setExchangeDynamicFeeRounds(
-		rounds: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		rounds: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setExchangeDynamicFeeThreshold(
-		threshold: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		threshold: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setExchangeDynamicFeeWeightDecay(
-		weightDecay: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		weightDecay: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setExchangeFeeRateForSynths(
-		synthKeys: PromiseOrValue<BytesLike>[],
-		exchangeFeeRates: PromiseOrValue<BigNumberish>[],
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		synthKeys: BytesLike[],
+		exchangeFeeRates: BigNumberish[],
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setExchangeMaxDynamicFee(
-		maxFee: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		maxFee: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setFeePeriodDuration(
-		_feePeriodDuration: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_feePeriodDuration: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setFlagReward(
-		reward: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		reward: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setInteractionDelay(
-		_collateral: PromiseOrValue<string>,
-		_interactionDelay: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_collateral: string,
+		_interactionDelay: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setIssuanceRatio(
-		ratio: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		ratio: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setLiquidateReward(
-		reward: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		reward: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setLiquidationDelay(
-		time: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		time: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setLiquidationEscrowDuration(
-		duration: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		duration: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setLiquidationPenalty(
-		penalty: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		penalty: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setLiquidationRatio(
-		_liquidationRatio: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_liquidationRatio: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setMinimumStakeTime(
-		_seconds: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_seconds: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setPriceDeviationThresholdFactor(
-		_priceDeviationThresholdFactor: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_priceDeviationThresholdFactor: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setPureChainlinkPriceForAtomicSwapsEnabled(
-		_currencyKey: PromiseOrValue<BytesLike>,
-		_enabled: PromiseOrValue<boolean>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_currencyKey: BytesLike,
+		_enabled: boolean,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setRateStalePeriod(
-		period: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		period: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setSelfLiquidationPenalty(
-		penalty: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		penalty: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setSnxLiquidationPenalty(
-		penalty: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		penalty: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setTargetThreshold(
-		percent: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		percent: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setTradingRewardsEnabled(
-		_tradingRewardsEnabled: PromiseOrValue<boolean>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_tradingRewardsEnabled: boolean,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setWaitingPeriodSecs(
-		_waitingPeriodSecs: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_waitingPeriodSecs: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setWrapperBurnFeeRate(
-		_wrapper: PromiseOrValue<string>,
-		_rate: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_wrapper: string,
+		_rate: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setWrapperMaxTokenAmount(
-		_wrapper: PromiseOrValue<string>,
-		_maxTokenAmount: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_wrapper: string,
+		_maxTokenAmount: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	setWrapperMintFeeRate(
-		_wrapper: PromiseOrValue<string>,
-		_rate: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_wrapper: string,
+		_rate: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	snxLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
@@ -1808,14 +1697,11 @@ export interface SystemSettings extends BaseContract {
 
 	waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>
 
-	wrapperBurnFeeRate(wrapper: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+	wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 
-	wrapperMaxTokenAmount(
-		wrapper: PromiseOrValue<string>,
-		overrides?: CallOverrides
-	): Promise<BigNumber>
+	wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 
-	wrapperMintFeeRate(wrapper: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+	wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 
 	callStatic: {
 		CONTRACT_NAME(overrides?: CallOverrides): Promise<string>
@@ -1825,41 +1711,35 @@ export interface SystemSettings extends BaseContract {
 		aggregatorWarningFlags(overrides?: CallOverrides): Promise<string>
 
 		atomicEquivalentForDexPricing(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<string>
 
-		atomicExchangeFeeRate(
-			currencyKey: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		atomicExchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
 		atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>
 
 		atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>
 
 		atomicVolatilityConsiderationWindow(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
 		atomicVolatilityUpdateThreshold(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
-		collapseFeeRate(
-			collateral: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		crossChainSynthTransferEnabled(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
 		crossDomainMessageGasLimit(
-			gasLimitType: PromiseOrValue<BigNumberish>,
+			gasLimitType: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
@@ -1877,10 +1757,7 @@ export interface SystemSettings extends BaseContract {
 
 		exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<BigNumber>
 
-		exchangeFeeRate(
-			currencyKey: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		exchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
 		exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -1888,10 +1765,7 @@ export interface SystemSettings extends BaseContract {
 
 		flagReward(overrides?: CallOverrides): Promise<BigNumber>
 
-		interactionDelay(
-			collateral: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		interactionDelay(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		isResolverCached(overrides?: CallOverrides): Promise<boolean>
 
@@ -1909,7 +1783,7 @@ export interface SystemSettings extends BaseContract {
 
 		minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>
 
-		nominateNewOwner(_owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+		nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>
 
 		nominatedOwner(overrides?: CallOverrides): Promise<string>
 
@@ -1918,7 +1792,7 @@ export interface SystemSettings extends BaseContract {
 		priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<BigNumber>
 
 		pureChainlinkPriceForAtomicSwapsEnabled(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<boolean>
 
@@ -1932,210 +1806,147 @@ export interface SystemSettings extends BaseContract {
 
 		selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
 
-		setAggregatorWarningFlags(
-			_flags: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setAggregatorWarningFlags(_flags: string, overrides?: CallOverrides): Promise<void>
 
 		setAtomicEquivalentForDexPricing(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_equivalent: PromiseOrValue<string>,
+			_currencyKey: BytesLike,
+			_equivalent: string,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setAtomicExchangeFeeRate(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_exchangeFeeRate: PromiseOrValue<BigNumberish>,
+			_currencyKey: BytesLike,
+			_exchangeFeeRate: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
-		setAtomicMaxVolumePerBlock(
-			_maxVolume: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setAtomicMaxVolumePerBlock(_maxVolume: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setAtomicTwapWindow(
-			_window: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setAtomicTwapWindow(_window: BigNumberish, overrides?: CallOverrides): Promise<void>
 
 		setAtomicVolatilityConsiderationWindow(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_window: PromiseOrValue<BigNumberish>,
+			_currencyKey: BytesLike,
+			_window: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setAtomicVolatilityUpdateThreshold(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_threshold: PromiseOrValue<BigNumberish>,
+			_currencyKey: BytesLike,
+			_threshold: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setCollapseFeeRate(
-			_collateral: PromiseOrValue<string>,
-			_collapseFeeRate: PromiseOrValue<BigNumberish>,
+			_collateral: string,
+			_collapseFeeRate: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setCrossChainSynthTransferEnabled(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_value: PromiseOrValue<BigNumberish>,
+			_currencyKey: BytesLike,
+			_value: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setCrossDomainMessageGasLimit(
-			_gasLimitType: PromiseOrValue<BigNumberish>,
-			_crossDomainMessageGasLimit: PromiseOrValue<BigNumberish>,
+			_gasLimitType: BigNumberish,
+			_crossDomainMessageGasLimit: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
-		setDebtSnapshotStaleTime(
-			_seconds: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setDebtSnapshotStaleTime(_seconds: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setEtherWrapperBurnFeeRate(
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setEtherWrapperBurnFeeRate(_rate: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setEtherWrapperMaxETH(
-			_maxETH: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setEtherWrapperMaxETH(_maxETH: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setEtherWrapperMintFeeRate(
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setEtherWrapperMintFeeRate(_rate: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setExchangeDynamicFeeRounds(
-			rounds: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setExchangeDynamicFeeRounds(rounds: BigNumberish, overrides?: CallOverrides): Promise<void>
 
 		setExchangeDynamicFeeThreshold(
-			threshold: PromiseOrValue<BigNumberish>,
+			threshold: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setExchangeDynamicFeeWeightDecay(
-			weightDecay: PromiseOrValue<BigNumberish>,
+			weightDecay: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setExchangeFeeRateForSynths(
-			synthKeys: PromiseOrValue<BytesLike>[],
-			exchangeFeeRates: PromiseOrValue<BigNumberish>[],
+			synthKeys: BytesLike[],
+			exchangeFeeRates: BigNumberish[],
 			overrides?: CallOverrides
 		): Promise<void>
 
-		setExchangeMaxDynamicFee(
-			maxFee: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setExchangeMaxDynamicFee(maxFee: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setFeePeriodDuration(
-			_feePeriodDuration: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setFeePeriodDuration(_feePeriodDuration: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setFlagReward(reward: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>
+		setFlagReward(reward: BigNumberish, overrides?: CallOverrides): Promise<void>
 
 		setInteractionDelay(
-			_collateral: PromiseOrValue<string>,
-			_interactionDelay: PromiseOrValue<BigNumberish>,
+			_collateral: string,
+			_interactionDelay: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
-		setIssuanceRatio(ratio: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>
+		setIssuanceRatio(ratio: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setLiquidateReward(
-			reward: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setLiquidateReward(reward: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setLiquidationDelay(
-			time: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setLiquidationDelay(time: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setLiquidationEscrowDuration(
-			duration: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setLiquidationEscrowDuration(duration: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setLiquidationPenalty(penalty: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setLiquidationRatio(
-			_liquidationRatio: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setLiquidationRatio(_liquidationRatio: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setMinimumStakeTime(
-			_seconds: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setMinimumStakeTime(_seconds: BigNumberish, overrides?: CallOverrides): Promise<void>
 
 		setPriceDeviationThresholdFactor(
-			_priceDeviationThresholdFactor: PromiseOrValue<BigNumberish>,
+			_priceDeviationThresholdFactor: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setPureChainlinkPriceForAtomicSwapsEnabled(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_enabled: PromiseOrValue<boolean>,
+			_currencyKey: BytesLike,
+			_enabled: boolean,
 			overrides?: CallOverrides
 		): Promise<void>
 
-		setRateStalePeriod(
-			period: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setRateStalePeriod(period: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setSelfLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setSelfLiquidationPenalty(penalty: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setSnxLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setSnxLiquidationPenalty(penalty: BigNumberish, overrides?: CallOverrides): Promise<void>
 
-		setTargetThreshold(
-			percent: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setTargetThreshold(percent: BigNumberish, overrides?: CallOverrides): Promise<void>
 
 		setTradingRewardsEnabled(
-			_tradingRewardsEnabled: PromiseOrValue<boolean>,
+			_tradingRewardsEnabled: boolean,
 			overrides?: CallOverrides
 		): Promise<void>
 
-		setWaitingPeriodSecs(
-			_waitingPeriodSecs: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+		setWaitingPeriodSecs(_waitingPeriodSecs: BigNumberish, overrides?: CallOverrides): Promise<void>
 
 		setWrapperBurnFeeRate(
-			_wrapper: PromiseOrValue<string>,
-			_rate: PromiseOrValue<BigNumberish>,
+			_wrapper: string,
+			_rate: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setWrapperMaxTokenAmount(
-			_wrapper: PromiseOrValue<string>,
-			_maxTokenAmount: PromiseOrValue<BigNumberish>,
+			_wrapper: string,
+			_maxTokenAmount: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		setWrapperMintFeeRate(
-			_wrapper: PromiseOrValue<string>,
-			_rate: PromiseOrValue<BigNumberish>,
+			_wrapper: string,
+			_rate: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
@@ -2147,20 +1958,11 @@ export interface SystemSettings extends BaseContract {
 
 		waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>
 
-		wrapperBurnFeeRate(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 
-		wrapperMaxTokenAmount(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 
-		wrapperMintFeeRate(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 	}
 
 	filters: {
@@ -2392,46 +2194,40 @@ export interface SystemSettings extends BaseContract {
 	estimateGas: {
 		CONTRACT_NAME(overrides?: CallOverrides): Promise<BigNumber>
 
-		acceptOwnership(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		aggregatorWarningFlags(overrides?: CallOverrides): Promise<BigNumber>
 
 		atomicEquivalentForDexPricing(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
-		atomicExchangeFeeRate(
-			currencyKey: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		atomicExchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
 		atomicMaxVolumePerBlock(overrides?: CallOverrides): Promise<BigNumber>
 
 		atomicTwapWindow(overrides?: CallOverrides): Promise<BigNumber>
 
 		atomicVolatilityConsiderationWindow(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
 		atomicVolatilityUpdateThreshold(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
-		collapseFeeRate(
-			collateral: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		crossChainSynthTransferEnabled(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
 		crossDomainMessageGasLimit(
-			gasLimitType: PromiseOrValue<BigNumberish>,
+			gasLimitType: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
@@ -2449,10 +2245,7 @@ export interface SystemSettings extends BaseContract {
 
 		exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<BigNumber>
 
-		exchangeFeeRate(
-			currencyKey: PromiseOrValue<BytesLike>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		exchangeFeeRate(currencyKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
 		exchangeMaxDynamicFee(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -2460,10 +2253,7 @@ export interface SystemSettings extends BaseContract {
 
 		flagReward(overrides?: CallOverrides): Promise<BigNumber>
 
-		interactionDelay(
-			collateral: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		interactionDelay(collateral: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		isResolverCached(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -2481,10 +2271,7 @@ export interface SystemSettings extends BaseContract {
 
 		minimumStakeTime(overrides?: CallOverrides): Promise<BigNumber>
 
-		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+		nominateNewOwner(_owner: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -2493,13 +2280,13 @@ export interface SystemSettings extends BaseContract {
 		priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<BigNumber>
 
 		pureChainlinkPriceForAtomicSwapsEnabled(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
 		rateStalePeriod(overrides?: CallOverrides): Promise<BigNumber>
 
-		rebuildCache(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		resolver(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -2508,216 +2295,216 @@ export interface SystemSettings extends BaseContract {
 		selfLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
 
 		setAggregatorWarningFlags(
-			_flags: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_flags: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setAtomicEquivalentForDexPricing(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_equivalent: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_equivalent: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setAtomicExchangeFeeRate(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_exchangeFeeRate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_exchangeFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setAtomicMaxVolumePerBlock(
-			_maxVolume: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_maxVolume: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setAtomicTwapWindow(
-			_window: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setAtomicVolatilityConsiderationWindow(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_window: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setAtomicVolatilityUpdateThreshold(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_threshold: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setCollapseFeeRate(
-			_collateral: PromiseOrValue<string>,
-			_collapseFeeRate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_collateral: string,
+			_collapseFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setCrossChainSynthTransferEnabled(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_value: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setCrossDomainMessageGasLimit(
-			_gasLimitType: PromiseOrValue<BigNumberish>,
-			_crossDomainMessageGasLimit: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_gasLimitType: BigNumberish,
+			_crossDomainMessageGasLimit: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setDebtSnapshotStaleTime(
-			_seconds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setEtherWrapperBurnFeeRate(
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setEtherWrapperMaxETH(
-			_maxETH: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_maxETH: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setEtherWrapperMintFeeRate(
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setExchangeDynamicFeeRounds(
-			rounds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			rounds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setExchangeDynamicFeeThreshold(
-			threshold: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setExchangeDynamicFeeWeightDecay(
-			weightDecay: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			weightDecay: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setExchangeFeeRateForSynths(
-			synthKeys: PromiseOrValue<BytesLike>[],
-			exchangeFeeRates: PromiseOrValue<BigNumberish>[],
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			synthKeys: BytesLike[],
+			exchangeFeeRates: BigNumberish[],
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setExchangeMaxDynamicFee(
-			maxFee: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			maxFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setFeePeriodDuration(
-			_feePeriodDuration: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_feePeriodDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setFlagReward(
-			reward: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setInteractionDelay(
-			_collateral: PromiseOrValue<string>,
-			_interactionDelay: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_collateral: string,
+			_interactionDelay: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setIssuanceRatio(
-			ratio: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setLiquidateReward(
-			reward: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setLiquidationDelay(
-			time: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			time: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setLiquidationEscrowDuration(
-			duration: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			duration: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setLiquidationRatio(
-			_liquidationRatio: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_liquidationRatio: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setMinimumStakeTime(
-			_seconds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setPriceDeviationThresholdFactor(
-			_priceDeviationThresholdFactor: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_priceDeviationThresholdFactor: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setPureChainlinkPriceForAtomicSwapsEnabled(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_enabled: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_enabled: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setRateStalePeriod(
-			period: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			period: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setSelfLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setSnxLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setTargetThreshold(
-			percent: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			percent: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setTradingRewardsEnabled(
-			_tradingRewardsEnabled: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewardsEnabled: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setWaitingPeriodSecs(
-			_waitingPeriodSecs: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_waitingPeriodSecs: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setWrapperBurnFeeRate(
-			_wrapper: PromiseOrValue<string>,
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setWrapperMaxTokenAmount(
-			_wrapper: PromiseOrValue<string>,
-			_maxTokenAmount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_maxTokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		setWrapperMintFeeRate(
-			_wrapper: PromiseOrValue<string>,
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		snxLiquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>
@@ -2728,38 +2515,27 @@ export interface SystemSettings extends BaseContract {
 
 		waitingPeriodSecs(overrides?: CallOverrides): Promise<BigNumber>
 
-		wrapperBurnFeeRate(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 
-		wrapperMaxTokenAmount(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 
-		wrapperMintFeeRate(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<BigNumber>
 	}
 
 	populateTransaction: {
 		CONTRACT_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		acceptOwnership(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
 		aggregatorWarningFlags(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		atomicEquivalentForDexPricing(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
 		atomicExchangeFeeRate(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
@@ -2768,27 +2544,24 @@ export interface SystemSettings extends BaseContract {
 		atomicTwapWindow(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		atomicVolatilityConsiderationWindow(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
 		atomicVolatilityUpdateThreshold(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
-		collapseFeeRate(
-			collateral: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		collapseFeeRate(collateral: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		crossChainSynthTransferEnabled(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
 		crossDomainMessageGasLimit(
-			gasLimitType: PromiseOrValue<BigNumberish>,
+			gasLimitType: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
@@ -2807,7 +2580,7 @@ export interface SystemSettings extends BaseContract {
 		exchangeDynamicFeeWeightDecay(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		exchangeFeeRate(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
@@ -2817,10 +2590,7 @@ export interface SystemSettings extends BaseContract {
 
 		flagReward(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		interactionDelay(
-			collateral: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		interactionDelay(collateral: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
@@ -2839,8 +2609,8 @@ export interface SystemSettings extends BaseContract {
 		minimumStakeTime(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_owner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
@@ -2850,15 +2620,13 @@ export interface SystemSettings extends BaseContract {
 		priceDeviationThresholdFactor(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		pureChainlinkPriceForAtomicSwapsEnabled(
-			currencyKey: PromiseOrValue<BytesLike>,
+			currencyKey: BytesLike,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
 		rateStalePeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		rebuildCache(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
 		resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
@@ -2867,216 +2635,216 @@ export interface SystemSettings extends BaseContract {
 		selfLiquidationPenalty(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		setAggregatorWarningFlags(
-			_flags: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_flags: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setAtomicEquivalentForDexPricing(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_equivalent: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_equivalent: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setAtomicExchangeFeeRate(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_exchangeFeeRate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_exchangeFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setAtomicMaxVolumePerBlock(
-			_maxVolume: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_maxVolume: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setAtomicTwapWindow(
-			_window: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setAtomicVolatilityConsiderationWindow(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_window: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_window: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setAtomicVolatilityUpdateThreshold(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_threshold: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setCollapseFeeRate(
-			_collateral: PromiseOrValue<string>,
-			_collapseFeeRate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_collateral: string,
+			_collapseFeeRate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setCrossChainSynthTransferEnabled(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_value: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setCrossDomainMessageGasLimit(
-			_gasLimitType: PromiseOrValue<BigNumberish>,
-			_crossDomainMessageGasLimit: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_gasLimitType: BigNumberish,
+			_crossDomainMessageGasLimit: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setDebtSnapshotStaleTime(
-			_seconds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setEtherWrapperBurnFeeRate(
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setEtherWrapperMaxETH(
-			_maxETH: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_maxETH: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setEtherWrapperMintFeeRate(
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setExchangeDynamicFeeRounds(
-			rounds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			rounds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setExchangeDynamicFeeThreshold(
-			threshold: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			threshold: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setExchangeDynamicFeeWeightDecay(
-			weightDecay: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			weightDecay: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setExchangeFeeRateForSynths(
-			synthKeys: PromiseOrValue<BytesLike>[],
-			exchangeFeeRates: PromiseOrValue<BigNumberish>[],
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			synthKeys: BytesLike[],
+			exchangeFeeRates: BigNumberish[],
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setExchangeMaxDynamicFee(
-			maxFee: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			maxFee: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setFeePeriodDuration(
-			_feePeriodDuration: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_feePeriodDuration: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setFlagReward(
-			reward: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setInteractionDelay(
-			_collateral: PromiseOrValue<string>,
-			_interactionDelay: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_collateral: string,
+			_interactionDelay: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setIssuanceRatio(
-			ratio: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			ratio: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setLiquidateReward(
-			reward: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			reward: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setLiquidationDelay(
-			time: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			time: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setLiquidationEscrowDuration(
-			duration: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			duration: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setLiquidationRatio(
-			_liquidationRatio: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_liquidationRatio: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setMinimumStakeTime(
-			_seconds: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_seconds: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setPriceDeviationThresholdFactor(
-			_priceDeviationThresholdFactor: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_priceDeviationThresholdFactor: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setPureChainlinkPriceForAtomicSwapsEnabled(
-			_currencyKey: PromiseOrValue<BytesLike>,
-			_enabled: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_currencyKey: BytesLike,
+			_enabled: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setRateStalePeriod(
-			period: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			period: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setSelfLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setSnxLiquidationPenalty(
-			penalty: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			penalty: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setTargetThreshold(
-			percent: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			percent: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setTradingRewardsEnabled(
-			_tradingRewardsEnabled: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_tradingRewardsEnabled: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setWaitingPeriodSecs(
-			_waitingPeriodSecs: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_waitingPeriodSecs: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setWrapperBurnFeeRate(
-			_wrapper: PromiseOrValue<string>,
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setWrapperMaxTokenAmount(
-			_wrapper: PromiseOrValue<string>,
-			_maxTokenAmount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_maxTokenAmount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		setWrapperMintFeeRate(
-			_wrapper: PromiseOrValue<string>,
-			_rate: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_wrapper: string,
+			_rate: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		snxLiquidationPenalty(overrides?: CallOverrides): Promise<PopulatedTransaction>
@@ -3087,19 +2855,10 @@ export interface SystemSettings extends BaseContract {
 
 		waitingPeriodSecs(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		wrapperBurnFeeRate(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		wrapperBurnFeeRate(wrapper: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		wrapperMaxTokenAmount(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		wrapperMaxTokenAmount(wrapper: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		wrapperMintFeeRate(
-			wrapper: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		wrapperMintFeeRate(wrapper: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 	}
 }

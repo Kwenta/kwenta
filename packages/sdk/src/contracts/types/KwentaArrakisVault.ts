@@ -15,7 +15,7 @@ import type {
 } from 'ethers'
 import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
 import type { Listener, Provider } from '@ethersproject/providers'
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from './common'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface KwentaArrakisVaultInterface extends utils.Interface {
 	functions: {
@@ -125,66 +125,37 @@ export interface KwentaArrakisVaultInterface extends utils.Interface {
 
 	encodeFunctionData(functionFragment: 'GELATO', values?: undefined): string
 	encodeFunctionData(functionFragment: 'RESTRICTED_MINT_ENABLED', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'allowance',
-		values: [PromiseOrValue<string>, PromiseOrValue<string>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'approve',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'allowance', values: [string, string]): string
+	encodeFunctionData(functionFragment: 'approve', values: [string, BigNumberish]): string
 	encodeFunctionData(functionFragment: 'arrakisBalance0', values?: undefined): string
 	encodeFunctionData(functionFragment: 'arrakisBalance1', values?: undefined): string
 	encodeFunctionData(functionFragment: 'arrakisFeeBPS', values?: undefined): string
 	encodeFunctionData(functionFragment: 'arrakisTreasury', values?: undefined): string
-	encodeFunctionData(functionFragment: 'balanceOf', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(
-		functionFragment: 'burn',
-		values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-	): string
+	encodeFunctionData(functionFragment: 'balanceOf', values: [string]): string
+	encodeFunctionData(functionFragment: 'burn', values: [BigNumberish, string]): string
 	encodeFunctionData(functionFragment: 'decimals', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'decreaseAllowance',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'decreaseAllowance', values: [string, BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'executiveRebalance',
-		values: [
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<boolean>
-		]
+		values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish, boolean]
 	): string
 	encodeFunctionData(functionFragment: 'gelatoRebalanceBPS', values?: undefined): string
 	encodeFunctionData(functionFragment: 'gelatoSlippageBPS', values?: undefined): string
 	encodeFunctionData(functionFragment: 'gelatoSlippageInterval', values?: undefined): string
 	encodeFunctionData(
 		functionFragment: 'getMintAmounts',
-		values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+		values: [BigNumberish, BigNumberish]
 	): string
 	encodeFunctionData(functionFragment: 'getPositionID', values?: undefined): string
 	encodeFunctionData(functionFragment: 'getUnderlyingBalances', values?: undefined): string
 	encodeFunctionData(
 		functionFragment: 'getUnderlyingBalancesAtPrice',
-		values: [PromiseOrValue<BigNumberish>]
+		values: [BigNumberish]
 	): string
-	encodeFunctionData(
-		functionFragment: 'increaseAllowance',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'increaseAllowance', values: [string, BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'initialize',
-		values: [
-			PromiseOrValue<string>,
-			PromiseOrValue<string>,
-			PromiseOrValue<string>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<string>
-		]
+		values: [string, string, string, BigNumberish, BigNumberish, BigNumberish, string]
 	): string
 	encodeFunctionData(functionFragment: 'lowerTick', values?: undefined): string
 	encodeFunctionData(functionFragment: 'manager', values?: undefined): string
@@ -192,21 +163,12 @@ export interface KwentaArrakisVaultInterface extends utils.Interface {
 	encodeFunctionData(functionFragment: 'managerBalance1', values?: undefined): string
 	encodeFunctionData(functionFragment: 'managerFeeBPS', values?: undefined): string
 	encodeFunctionData(functionFragment: 'managerTreasury', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'mint',
-		values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
-	): string
+	encodeFunctionData(functionFragment: 'mint', values: [BigNumberish, string]): string
 	encodeFunctionData(functionFragment: 'name', values?: undefined): string
 	encodeFunctionData(functionFragment: 'pool', values?: undefined): string
 	encodeFunctionData(
 		functionFragment: 'rebalance',
-		values: [
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<boolean>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<string>
-		]
+		values: [BigNumberish, BigNumberish, boolean, BigNumberish, string]
 	): string
 	encodeFunctionData(functionFragment: 'renounceOwnership', values?: undefined): string
 	encodeFunctionData(functionFragment: 'restrictedMintToggle', values?: undefined): string
@@ -215,35 +177,23 @@ export interface KwentaArrakisVaultInterface extends utils.Interface {
 	encodeFunctionData(functionFragment: 'token0', values?: undefined): string
 	encodeFunctionData(functionFragment: 'token1', values?: undefined): string
 	encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'transfer',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
+	encodeFunctionData(functionFragment: 'transfer', values: [string, BigNumberish]): string
 	encodeFunctionData(
 		functionFragment: 'transferFrom',
-		values: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+		values: [string, string, BigNumberish]
 	): string
-	encodeFunctionData(
-		functionFragment: 'transferOwnership',
-		values: [PromiseOrValue<string>]
-	): string
+	encodeFunctionData(functionFragment: 'transferOwnership', values: [string]): string
 	encodeFunctionData(
 		functionFragment: 'uniswapV3MintCallback',
-		values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+		values: [BigNumberish, BigNumberish, BytesLike]
 	): string
 	encodeFunctionData(
 		functionFragment: 'uniswapV3SwapCallback',
-		values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+		values: [BigNumberish, BigNumberish, BytesLike]
 	): string
 	encodeFunctionData(
 		functionFragment: 'updateManagerParams',
-		values: [
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<string>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>,
-			PromiseOrValue<BigNumberish>
-		]
+		values: [BigNumberish, string, BigNumberish, BigNumberish, BigNumberish]
 	): string
 	encodeFunctionData(functionFragment: 'upperTick', values?: undefined): string
 	encodeFunctionData(functionFragment: 'version', values?: undefined): string
@@ -442,16 +392,12 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		RESTRICTED_MINT_ENABLED(overrides?: CallOverrides): Promise<[number]>
 
-		allowance(
-			owner: PromiseOrValue<string>,
-			spender: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+		allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
 		approve(
-			spender: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		arrakisBalance0(overrides?: CallOverrides): Promise<[BigNumber]>
@@ -462,29 +408,29 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		arrakisTreasury(overrides?: CallOverrides): Promise<[string]>
 
-		balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>
+		balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
 		burn(
-			burnAmount: PromiseOrValue<BigNumberish>,
-			receiver: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			burnAmount: BigNumberish,
+			receiver: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		decimals(overrides?: CallOverrides): Promise<[number]>
 
 		decreaseAllowance(
-			spender: PromiseOrValue<string>,
-			subtractedValue: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			subtractedValue: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		executiveRebalance(
-			newLowerTick: PromiseOrValue<BigNumberish>,
-			newUpperTick: PromiseOrValue<BigNumberish>,
-			swapThresholdPrice: PromiseOrValue<BigNumberish>,
-			swapAmountBPS: PromiseOrValue<BigNumberish>,
-			zeroForOne: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newLowerTick: BigNumberish,
+			newUpperTick: BigNumberish,
+			swapThresholdPrice: BigNumberish,
+			swapAmountBPS: BigNumberish,
+			zeroForOne: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		gelatoRebalanceBPS(overrides?: CallOverrides): Promise<[number]>
@@ -494,8 +440,8 @@ export interface KwentaArrakisVault extends BaseContract {
 		gelatoSlippageInterval(overrides?: CallOverrides): Promise<[number]>
 
 		getMintAmounts(
-			amount0Max: PromiseOrValue<BigNumberish>,
-			amount1Max: PromiseOrValue<BigNumberish>,
+			amount0Max: BigNumberish,
+			amount1Max: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<
 			[BigNumber, BigNumber, BigNumber] & {
@@ -507,7 +453,9 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		getPositionID(overrides?: CallOverrides): Promise<[string] & { positionID: string }>
 
-		getUnderlyingBalances(overrides?: CallOverrides): Promise<
+		getUnderlyingBalances(
+			overrides?: CallOverrides
+		): Promise<
 			[BigNumber, BigNumber] & {
 				amount0Current: BigNumber
 				amount1Current: BigNumber
@@ -515,7 +463,7 @@ export interface KwentaArrakisVault extends BaseContract {
 		>
 
 		getUnderlyingBalancesAtPrice(
-			sqrtRatioX96: PromiseOrValue<BigNumberish>,
+			sqrtRatioX96: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<
 			[BigNumber, BigNumber] & {
@@ -525,20 +473,20 @@ export interface KwentaArrakisVault extends BaseContract {
 		>
 
 		increaseAllowance(
-			spender: PromiseOrValue<string>,
-			addedValue: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			addedValue: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		initialize(
-			_name: PromiseOrValue<string>,
-			_symbol: PromiseOrValue<string>,
-			_pool: PromiseOrValue<string>,
-			_managerFeeBPS: PromiseOrValue<BigNumberish>,
-			_lowerTick: PromiseOrValue<BigNumberish>,
-			_upperTick: PromiseOrValue<BigNumberish>,
-			_manager_: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_name: string,
+			_symbol: string,
+			_pool: string,
+			_managerFeeBPS: BigNumberish,
+			_lowerTick: BigNumberish,
+			_upperTick: BigNumberish,
+			_manager_: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		lowerTick(overrides?: CallOverrides): Promise<[number]>
@@ -554,9 +502,9 @@ export interface KwentaArrakisVault extends BaseContract {
 		managerTreasury(overrides?: CallOverrides): Promise<[string]>
 
 		mint(
-			mintAmount: PromiseOrValue<BigNumberish>,
-			receiver: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			mintAmount: BigNumberish,
+			receiver: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		name(overrides?: CallOverrides): Promise<[string]>
@@ -564,25 +512,21 @@ export interface KwentaArrakisVault extends BaseContract {
 		pool(overrides?: CallOverrides): Promise<[string]>
 
 		rebalance(
-			swapThresholdPrice: PromiseOrValue<BigNumberish>,
-			swapAmountBPS: PromiseOrValue<BigNumberish>,
-			zeroForOne: PromiseOrValue<boolean>,
-			feeAmount: PromiseOrValue<BigNumberish>,
-			paymentToken: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			swapThresholdPrice: BigNumberish,
+			swapAmountBPS: BigNumberish,
+			zeroForOne: boolean,
+			feeAmount: BigNumberish,
+			paymentToken: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
-		renounceOwnership(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 		restrictedMintToggle(overrides?: CallOverrides): Promise<[number]>
 
 		symbol(overrides?: CallOverrides): Promise<[string]>
 
-		toggleRestrictMint(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		toggleRestrictMint(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 		token0(overrides?: CallOverrides): Promise<[string]>
 
@@ -591,73 +535,65 @@ export interface KwentaArrakisVault extends BaseContract {
 		totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>
 
 		transfer(
-			recipient: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			recipient: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		transferFrom(
-			sender: PromiseOrValue<string>,
-			recipient: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			sender: string,
+			recipient: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		transferOwnership(
-			newOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		uniswapV3MintCallback(
-			amount0Owed: PromiseOrValue<BigNumberish>,
-			amount1Owed: PromiseOrValue<BigNumberish>,
-			arg2: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount0Owed: BigNumberish,
+			amount1Owed: BigNumberish,
+			arg2: BytesLike,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		uniswapV3SwapCallback(
-			amount0Delta: PromiseOrValue<BigNumberish>,
-			amount1Delta: PromiseOrValue<BigNumberish>,
-			arg2: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount0Delta: BigNumberish,
+			amount1Delta: BigNumberish,
+			arg2: BytesLike,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		updateManagerParams(
-			newManagerFeeBPS: PromiseOrValue<BigNumberish>,
-			newManagerTreasury: PromiseOrValue<string>,
-			newRebalanceBPS: PromiseOrValue<BigNumberish>,
-			newSlippageBPS: PromiseOrValue<BigNumberish>,
-			newSlippageInterval: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newManagerFeeBPS: BigNumberish,
+			newManagerTreasury: string,
+			newRebalanceBPS: BigNumberish,
+			newSlippageBPS: BigNumberish,
+			newSlippageInterval: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<ContractTransaction>
 
 		upperTick(overrides?: CallOverrides): Promise<[number]>
 
 		version(overrides?: CallOverrides): Promise<[string]>
 
-		withdrawArrakisBalance(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		withdrawArrakisBalance(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-		withdrawManagerBalance(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+		withdrawManagerBalance(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 	}
 
 	GELATO(overrides?: CallOverrides): Promise<string>
 
 	RESTRICTED_MINT_ENABLED(overrides?: CallOverrides): Promise<number>
 
-	allowance(
-		owner: PromiseOrValue<string>,
-		spender: PromiseOrValue<string>,
-		overrides?: CallOverrides
-	): Promise<BigNumber>
+	allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<BigNumber>
 
 	approve(
-		spender: PromiseOrValue<string>,
-		amount: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		spender: string,
+		amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	arrakisBalance0(overrides?: CallOverrides): Promise<BigNumber>
@@ -668,29 +604,29 @@ export interface KwentaArrakisVault extends BaseContract {
 
 	arrakisTreasury(overrides?: CallOverrides): Promise<string>
 
-	balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+	balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>
 
 	burn(
-		burnAmount: PromiseOrValue<BigNumberish>,
-		receiver: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		burnAmount: BigNumberish,
+		receiver: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	decimals(overrides?: CallOverrides): Promise<number>
 
 	decreaseAllowance(
-		spender: PromiseOrValue<string>,
-		subtractedValue: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		spender: string,
+		subtractedValue: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	executiveRebalance(
-		newLowerTick: PromiseOrValue<BigNumberish>,
-		newUpperTick: PromiseOrValue<BigNumberish>,
-		swapThresholdPrice: PromiseOrValue<BigNumberish>,
-		swapAmountBPS: PromiseOrValue<BigNumberish>,
-		zeroForOne: PromiseOrValue<boolean>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		newLowerTick: BigNumberish,
+		newUpperTick: BigNumberish,
+		swapThresholdPrice: BigNumberish,
+		swapAmountBPS: BigNumberish,
+		zeroForOne: boolean,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	gelatoRebalanceBPS(overrides?: CallOverrides): Promise<number>
@@ -700,8 +636,8 @@ export interface KwentaArrakisVault extends BaseContract {
 	gelatoSlippageInterval(overrides?: CallOverrides): Promise<number>
 
 	getMintAmounts(
-		amount0Max: PromiseOrValue<BigNumberish>,
-		amount1Max: PromiseOrValue<BigNumberish>,
+		amount0Max: BigNumberish,
+		amount1Max: BigNumberish,
 		overrides?: CallOverrides
 	): Promise<
 		[BigNumber, BigNumber, BigNumber] & {
@@ -713,7 +649,9 @@ export interface KwentaArrakisVault extends BaseContract {
 
 	getPositionID(overrides?: CallOverrides): Promise<string>
 
-	getUnderlyingBalances(overrides?: CallOverrides): Promise<
+	getUnderlyingBalances(
+		overrides?: CallOverrides
+	): Promise<
 		[BigNumber, BigNumber] & {
 			amount0Current: BigNumber
 			amount1Current: BigNumber
@@ -721,7 +659,7 @@ export interface KwentaArrakisVault extends BaseContract {
 	>
 
 	getUnderlyingBalancesAtPrice(
-		sqrtRatioX96: PromiseOrValue<BigNumberish>,
+		sqrtRatioX96: BigNumberish,
 		overrides?: CallOverrides
 	): Promise<
 		[BigNumber, BigNumber] & {
@@ -731,20 +669,20 @@ export interface KwentaArrakisVault extends BaseContract {
 	>
 
 	increaseAllowance(
-		spender: PromiseOrValue<string>,
-		addedValue: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		spender: string,
+		addedValue: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	initialize(
-		_name: PromiseOrValue<string>,
-		_symbol: PromiseOrValue<string>,
-		_pool: PromiseOrValue<string>,
-		_managerFeeBPS: PromiseOrValue<BigNumberish>,
-		_lowerTick: PromiseOrValue<BigNumberish>,
-		_upperTick: PromiseOrValue<BigNumberish>,
-		_manager_: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		_name: string,
+		_symbol: string,
+		_pool: string,
+		_managerFeeBPS: BigNumberish,
+		_lowerTick: BigNumberish,
+		_upperTick: BigNumberish,
+		_manager_: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	lowerTick(overrides?: CallOverrides): Promise<number>
@@ -760,9 +698,9 @@ export interface KwentaArrakisVault extends BaseContract {
 	managerTreasury(overrides?: CallOverrides): Promise<string>
 
 	mint(
-		mintAmount: PromiseOrValue<BigNumberish>,
-		receiver: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		mintAmount: BigNumberish,
+		receiver: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	name(overrides?: CallOverrides): Promise<string>
@@ -770,25 +708,21 @@ export interface KwentaArrakisVault extends BaseContract {
 	pool(overrides?: CallOverrides): Promise<string>
 
 	rebalance(
-		swapThresholdPrice: PromiseOrValue<BigNumberish>,
-		swapAmountBPS: PromiseOrValue<BigNumberish>,
-		zeroForOne: PromiseOrValue<boolean>,
-		feeAmount: PromiseOrValue<BigNumberish>,
-		paymentToken: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		swapThresholdPrice: BigNumberish,
+		swapAmountBPS: BigNumberish,
+		zeroForOne: boolean,
+		feeAmount: BigNumberish,
+		paymentToken: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
-	renounceOwnership(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	renounceOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	restrictedMintToggle(overrides?: CallOverrides): Promise<number>
 
 	symbol(overrides?: CallOverrides): Promise<string>
 
-	toggleRestrictMint(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	toggleRestrictMint(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	token0(overrides?: CallOverrides): Promise<string>
 
@@ -797,74 +731,62 @@ export interface KwentaArrakisVault extends BaseContract {
 	totalSupply(overrides?: CallOverrides): Promise<BigNumber>
 
 	transfer(
-		recipient: PromiseOrValue<string>,
-		amount: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		recipient: string,
+		amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	transferFrom(
-		sender: PromiseOrValue<string>,
-		recipient: PromiseOrValue<string>,
-		amount: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		sender: string,
+		recipient: string,
+		amount: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	transferOwnership(
-		newOwner: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		newOwner: string,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	uniswapV3MintCallback(
-		amount0Owed: PromiseOrValue<BigNumberish>,
-		amount1Owed: PromiseOrValue<BigNumberish>,
-		arg2: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		amount0Owed: BigNumberish,
+		amount1Owed: BigNumberish,
+		arg2: BytesLike,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	uniswapV3SwapCallback(
-		amount0Delta: PromiseOrValue<BigNumberish>,
-		amount1Delta: PromiseOrValue<BigNumberish>,
-		arg2: PromiseOrValue<BytesLike>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		amount0Delta: BigNumberish,
+		amount1Delta: BigNumberish,
+		arg2: BytesLike,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	updateManagerParams(
-		newManagerFeeBPS: PromiseOrValue<BigNumberish>,
-		newManagerTreasury: PromiseOrValue<string>,
-		newRebalanceBPS: PromiseOrValue<BigNumberish>,
-		newSlippageBPS: PromiseOrValue<BigNumberish>,
-		newSlippageInterval: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
+		newManagerFeeBPS: BigNumberish,
+		newManagerTreasury: string,
+		newRebalanceBPS: BigNumberish,
+		newSlippageBPS: BigNumberish,
+		newSlippageInterval: BigNumberish,
+		overrides?: Overrides & { from?: string }
 	): Promise<ContractTransaction>
 
 	upperTick(overrides?: CallOverrides): Promise<number>
 
 	version(overrides?: CallOverrides): Promise<string>
 
-	withdrawArrakisBalance(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	withdrawArrakisBalance(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-	withdrawManagerBalance(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+	withdrawManagerBalance(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
 	callStatic: {
 		GELATO(overrides?: CallOverrides): Promise<string>
 
 		RESTRICTED_MINT_ENABLED(overrides?: CallOverrides): Promise<number>
 
-		allowance(
-			owner: PromiseOrValue<string>,
-			spender: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<BigNumber>
 
-		approve(
-			spender: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<boolean>
+		approve(spender: string, amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>
 
 		arrakisBalance0(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -874,11 +796,11 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		arrakisTreasury(overrides?: CallOverrides): Promise<string>
 
-		balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+		balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		burn(
-			burnAmount: PromiseOrValue<BigNumberish>,
-			receiver: PromiseOrValue<string>,
+			burnAmount: BigNumberish,
+			receiver: string,
 			overrides?: CallOverrides
 		): Promise<
 			[BigNumber, BigNumber, BigNumber] & {
@@ -891,17 +813,17 @@ export interface KwentaArrakisVault extends BaseContract {
 		decimals(overrides?: CallOverrides): Promise<number>
 
 		decreaseAllowance(
-			spender: PromiseOrValue<string>,
-			subtractedValue: PromiseOrValue<BigNumberish>,
+			spender: string,
+			subtractedValue: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<boolean>
 
 		executiveRebalance(
-			newLowerTick: PromiseOrValue<BigNumberish>,
-			newUpperTick: PromiseOrValue<BigNumberish>,
-			swapThresholdPrice: PromiseOrValue<BigNumberish>,
-			swapAmountBPS: PromiseOrValue<BigNumberish>,
-			zeroForOne: PromiseOrValue<boolean>,
+			newLowerTick: BigNumberish,
+			newUpperTick: BigNumberish,
+			swapThresholdPrice: BigNumberish,
+			swapAmountBPS: BigNumberish,
+			zeroForOne: boolean,
 			overrides?: CallOverrides
 		): Promise<void>
 
@@ -912,8 +834,8 @@ export interface KwentaArrakisVault extends BaseContract {
 		gelatoSlippageInterval(overrides?: CallOverrides): Promise<number>
 
 		getMintAmounts(
-			amount0Max: PromiseOrValue<BigNumberish>,
-			amount1Max: PromiseOrValue<BigNumberish>,
+			amount0Max: BigNumberish,
+			amount1Max: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<
 			[BigNumber, BigNumber, BigNumber] & {
@@ -925,7 +847,9 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		getPositionID(overrides?: CallOverrides): Promise<string>
 
-		getUnderlyingBalances(overrides?: CallOverrides): Promise<
+		getUnderlyingBalances(
+			overrides?: CallOverrides
+		): Promise<
 			[BigNumber, BigNumber] & {
 				amount0Current: BigNumber
 				amount1Current: BigNumber
@@ -933,7 +857,7 @@ export interface KwentaArrakisVault extends BaseContract {
 		>
 
 		getUnderlyingBalancesAtPrice(
-			sqrtRatioX96: PromiseOrValue<BigNumberish>,
+			sqrtRatioX96: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<
 			[BigNumber, BigNumber] & {
@@ -943,19 +867,19 @@ export interface KwentaArrakisVault extends BaseContract {
 		>
 
 		increaseAllowance(
-			spender: PromiseOrValue<string>,
-			addedValue: PromiseOrValue<BigNumberish>,
+			spender: string,
+			addedValue: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<boolean>
 
 		initialize(
-			_name: PromiseOrValue<string>,
-			_symbol: PromiseOrValue<string>,
-			_pool: PromiseOrValue<string>,
-			_managerFeeBPS: PromiseOrValue<BigNumberish>,
-			_lowerTick: PromiseOrValue<BigNumberish>,
-			_upperTick: PromiseOrValue<BigNumberish>,
-			_manager_: PromiseOrValue<string>,
+			_name: string,
+			_symbol: string,
+			_pool: string,
+			_managerFeeBPS: BigNumberish,
+			_lowerTick: BigNumberish,
+			_upperTick: BigNumberish,
+			_manager_: string,
 			overrides?: CallOverrides
 		): Promise<void>
 
@@ -972,8 +896,8 @@ export interface KwentaArrakisVault extends BaseContract {
 		managerTreasury(overrides?: CallOverrides): Promise<string>
 
 		mint(
-			mintAmount: PromiseOrValue<BigNumberish>,
-			receiver: PromiseOrValue<string>,
+			mintAmount: BigNumberish,
+			receiver: string,
 			overrides?: CallOverrides
 		): Promise<
 			[BigNumber, BigNumber, BigNumber] & {
@@ -988,11 +912,11 @@ export interface KwentaArrakisVault extends BaseContract {
 		pool(overrides?: CallOverrides): Promise<string>
 
 		rebalance(
-			swapThresholdPrice: PromiseOrValue<BigNumberish>,
-			swapAmountBPS: PromiseOrValue<BigNumberish>,
-			zeroForOne: PromiseOrValue<boolean>,
-			feeAmount: PromiseOrValue<BigNumberish>,
-			paymentToken: PromiseOrValue<string>,
+			swapThresholdPrice: BigNumberish,
+			swapAmountBPS: BigNumberish,
+			zeroForOne: boolean,
+			feeAmount: BigNumberish,
+			paymentToken: string,
 			overrides?: CallOverrides
 		): Promise<void>
 
@@ -1010,41 +934,37 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		totalSupply(overrides?: CallOverrides): Promise<BigNumber>
 
-		transfer(
-			recipient: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<boolean>
+		transfer(recipient: string, amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>
 
 		transferFrom(
-			sender: PromiseOrValue<string>,
-			recipient: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
+			sender: string,
+			recipient: string,
+			amount: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<boolean>
 
-		transferOwnership(newOwner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+		transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>
 
 		uniswapV3MintCallback(
-			amount0Owed: PromiseOrValue<BigNumberish>,
-			amount1Owed: PromiseOrValue<BigNumberish>,
-			arg2: PromiseOrValue<BytesLike>,
+			amount0Owed: BigNumberish,
+			amount1Owed: BigNumberish,
+			arg2: BytesLike,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		uniswapV3SwapCallback(
-			amount0Delta: PromiseOrValue<BigNumberish>,
-			amount1Delta: PromiseOrValue<BigNumberish>,
-			arg2: PromiseOrValue<BytesLike>,
+			amount0Delta: BigNumberish,
+			amount1Delta: BigNumberish,
+			arg2: BytesLike,
 			overrides?: CallOverrides
 		): Promise<void>
 
 		updateManagerParams(
-			newManagerFeeBPS: PromiseOrValue<BigNumberish>,
-			newManagerTreasury: PromiseOrValue<string>,
-			newRebalanceBPS: PromiseOrValue<BigNumberish>,
-			newSlippageBPS: PromiseOrValue<BigNumberish>,
-			newSlippageInterval: PromiseOrValue<BigNumberish>,
+			newManagerFeeBPS: BigNumberish,
+			newManagerTreasury: string,
+			newRebalanceBPS: BigNumberish,
+			newSlippageBPS: BigNumberish,
+			newSlippageInterval: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<void>
 
@@ -1059,15 +979,11 @@ export interface KwentaArrakisVault extends BaseContract {
 
 	filters: {
 		'Approval(address,address,uint256)'(
-			owner?: PromiseOrValue<string> | null,
-			spender?: PromiseOrValue<string> | null,
+			owner?: string | null,
+			spender?: string | null,
 			value?: null
 		): ApprovalEventFilter
-		Approval(
-			owner?: PromiseOrValue<string> | null,
-			spender?: PromiseOrValue<string> | null,
-			value?: null
-		): ApprovalEventFilter
+		Approval(owner?: string | null, spender?: string | null, value?: null): ApprovalEventFilter
 
 		'Burned(address,uint256,uint256,uint256,uint128)'(
 			receiver?: null,
@@ -1103,12 +1019,12 @@ export interface KwentaArrakisVault extends BaseContract {
 		): MintedEventFilter
 
 		'OwnershipTransferred(address,address)'(
-			previousManager?: PromiseOrValue<string> | null,
-			newManager?: PromiseOrValue<string> | null
+			previousManager?: string | null,
+			newManager?: string | null
 		): OwnershipTransferredEventFilter
 		OwnershipTransferred(
-			previousManager?: PromiseOrValue<string> | null,
-			newManager?: PromiseOrValue<string> | null
+			previousManager?: string | null,
+			newManager?: string | null
 		): OwnershipTransferredEventFilter
 
 		'Rebalance(int24,int24,uint128,uint128)'(
@@ -1125,15 +1041,11 @@ export interface KwentaArrakisVault extends BaseContract {
 		): RebalanceEventFilter
 
 		'Transfer(address,address,uint256)'(
-			from?: PromiseOrValue<string> | null,
-			to?: PromiseOrValue<string> | null,
+			from?: string | null,
+			to?: string | null,
 			value?: null
 		): TransferEventFilter
-		Transfer(
-			from?: PromiseOrValue<string> | null,
-			to?: PromiseOrValue<string> | null,
-			value?: null
-		): TransferEventFilter
+		Transfer(from?: string | null, to?: string | null, value?: null): TransferEventFilter
 
 		'UpdateManagerParams(uint16,address,uint16,uint16,uint32)'(
 			managerFeeBPS?: null,
@@ -1156,16 +1068,12 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		RESTRICTED_MINT_ENABLED(overrides?: CallOverrides): Promise<BigNumber>
 
-		allowance(
-			owner: PromiseOrValue<string>,
-			spender: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+		allowance(owner: string, spender: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		approve(
-			spender: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		arrakisBalance0(overrides?: CallOverrides): Promise<BigNumber>
@@ -1176,29 +1084,29 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		arrakisTreasury(overrides?: CallOverrides): Promise<BigNumber>
 
-		balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+		balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>
 
 		burn(
-			burnAmount: PromiseOrValue<BigNumberish>,
-			receiver: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			burnAmount: BigNumberish,
+			receiver: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		decimals(overrides?: CallOverrides): Promise<BigNumber>
 
 		decreaseAllowance(
-			spender: PromiseOrValue<string>,
-			subtractedValue: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			subtractedValue: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		executiveRebalance(
-			newLowerTick: PromiseOrValue<BigNumberish>,
-			newUpperTick: PromiseOrValue<BigNumberish>,
-			swapThresholdPrice: PromiseOrValue<BigNumberish>,
-			swapAmountBPS: PromiseOrValue<BigNumberish>,
-			zeroForOne: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newLowerTick: BigNumberish,
+			newUpperTick: BigNumberish,
+			swapThresholdPrice: BigNumberish,
+			swapAmountBPS: BigNumberish,
+			zeroForOne: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		gelatoRebalanceBPS(overrides?: CallOverrides): Promise<BigNumber>
@@ -1208,8 +1116,8 @@ export interface KwentaArrakisVault extends BaseContract {
 		gelatoSlippageInterval(overrides?: CallOverrides): Promise<BigNumber>
 
 		getMintAmounts(
-			amount0Max: PromiseOrValue<BigNumberish>,
-			amount1Max: PromiseOrValue<BigNumberish>,
+			amount0Max: BigNumberish,
+			amount1Max: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
@@ -1218,25 +1126,25 @@ export interface KwentaArrakisVault extends BaseContract {
 		getUnderlyingBalances(overrides?: CallOverrides): Promise<BigNumber>
 
 		getUnderlyingBalancesAtPrice(
-			sqrtRatioX96: PromiseOrValue<BigNumberish>,
+			sqrtRatioX96: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<BigNumber>
 
 		increaseAllowance(
-			spender: PromiseOrValue<string>,
-			addedValue: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			addedValue: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		initialize(
-			_name: PromiseOrValue<string>,
-			_symbol: PromiseOrValue<string>,
-			_pool: PromiseOrValue<string>,
-			_managerFeeBPS: PromiseOrValue<BigNumberish>,
-			_lowerTick: PromiseOrValue<BigNumberish>,
-			_upperTick: PromiseOrValue<BigNumberish>,
-			_manager_: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_name: string,
+			_symbol: string,
+			_pool: string,
+			_managerFeeBPS: BigNumberish,
+			_lowerTick: BigNumberish,
+			_upperTick: BigNumberish,
+			_manager_: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		lowerTick(overrides?: CallOverrides): Promise<BigNumber>
@@ -1252,9 +1160,9 @@ export interface KwentaArrakisVault extends BaseContract {
 		managerTreasury(overrides?: CallOverrides): Promise<BigNumber>
 
 		mint(
-			mintAmount: PromiseOrValue<BigNumberish>,
-			receiver: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			mintAmount: BigNumberish,
+			receiver: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		name(overrides?: CallOverrides): Promise<BigNumber>
@@ -1262,23 +1170,21 @@ export interface KwentaArrakisVault extends BaseContract {
 		pool(overrides?: CallOverrides): Promise<BigNumber>
 
 		rebalance(
-			swapThresholdPrice: PromiseOrValue<BigNumberish>,
-			swapAmountBPS: PromiseOrValue<BigNumberish>,
-			zeroForOne: PromiseOrValue<boolean>,
-			feeAmount: PromiseOrValue<BigNumberish>,
-			paymentToken: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			swapThresholdPrice: BigNumberish,
+			swapAmountBPS: BigNumberish,
+			zeroForOne: boolean,
+			feeAmount: BigNumberish,
+			paymentToken: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
-		renounceOwnership(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		restrictedMintToggle(overrides?: CallOverrides): Promise<BigNumber>
 
 		symbol(overrides?: CallOverrides): Promise<BigNumber>
 
-		toggleRestrictMint(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+		toggleRestrictMint(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
 		token0(overrides?: CallOverrides): Promise<BigNumber>
 
@@ -1287,57 +1193,53 @@ export interface KwentaArrakisVault extends BaseContract {
 		totalSupply(overrides?: CallOverrides): Promise<BigNumber>
 
 		transfer(
-			recipient: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			recipient: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		transferFrom(
-			sender: PromiseOrValue<string>,
-			recipient: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			sender: string,
+			recipient: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		transferOwnership(
-			newOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		uniswapV3MintCallback(
-			amount0Owed: PromiseOrValue<BigNumberish>,
-			amount1Owed: PromiseOrValue<BigNumberish>,
-			arg2: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount0Owed: BigNumberish,
+			amount1Owed: BigNumberish,
+			arg2: BytesLike,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		uniswapV3SwapCallback(
-			amount0Delta: PromiseOrValue<BigNumberish>,
-			amount1Delta: PromiseOrValue<BigNumberish>,
-			arg2: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount0Delta: BigNumberish,
+			amount1Delta: BigNumberish,
+			arg2: BytesLike,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		updateManagerParams(
-			newManagerFeeBPS: PromiseOrValue<BigNumberish>,
-			newManagerTreasury: PromiseOrValue<string>,
-			newRebalanceBPS: PromiseOrValue<BigNumberish>,
-			newSlippageBPS: PromiseOrValue<BigNumberish>,
-			newSlippageInterval: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newManagerFeeBPS: BigNumberish,
+			newManagerTreasury: string,
+			newRebalanceBPS: BigNumberish,
+			newSlippageBPS: BigNumberish,
+			newSlippageInterval: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<BigNumber>
 
 		upperTick(overrides?: CallOverrides): Promise<BigNumber>
 
 		version(overrides?: CallOverrides): Promise<BigNumber>
 
-		withdrawArrakisBalance(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+		withdrawArrakisBalance(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 
-		withdrawManagerBalance(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+		withdrawManagerBalance(overrides?: Overrides & { from?: string }): Promise<BigNumber>
 	}
 
 	populateTransaction: {
@@ -1346,15 +1248,15 @@ export interface KwentaArrakisVault extends BaseContract {
 		RESTRICTED_MINT_ENABLED(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		allowance(
-			owner: PromiseOrValue<string>,
-			spender: PromiseOrValue<string>,
+			owner: string,
+			spender: string,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
 		approve(
-			spender: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		arrakisBalance0(overrides?: CallOverrides): Promise<PopulatedTransaction>
@@ -1365,32 +1267,29 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		arrakisTreasury(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		balanceOf(
-			account: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+		balanceOf(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		burn(
-			burnAmount: PromiseOrValue<BigNumberish>,
-			receiver: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			burnAmount: BigNumberish,
+			receiver: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		decreaseAllowance(
-			spender: PromiseOrValue<string>,
-			subtractedValue: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			subtractedValue: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		executiveRebalance(
-			newLowerTick: PromiseOrValue<BigNumberish>,
-			newUpperTick: PromiseOrValue<BigNumberish>,
-			swapThresholdPrice: PromiseOrValue<BigNumberish>,
-			swapAmountBPS: PromiseOrValue<BigNumberish>,
-			zeroForOne: PromiseOrValue<boolean>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newLowerTick: BigNumberish,
+			newUpperTick: BigNumberish,
+			swapThresholdPrice: BigNumberish,
+			swapAmountBPS: BigNumberish,
+			zeroForOne: boolean,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		gelatoRebalanceBPS(overrides?: CallOverrides): Promise<PopulatedTransaction>
@@ -1400,8 +1299,8 @@ export interface KwentaArrakisVault extends BaseContract {
 		gelatoSlippageInterval(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		getMintAmounts(
-			amount0Max: PromiseOrValue<BigNumberish>,
-			amount1Max: PromiseOrValue<BigNumberish>,
+			amount0Max: BigNumberish,
+			amount1Max: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
@@ -1410,25 +1309,25 @@ export interface KwentaArrakisVault extends BaseContract {
 		getUnderlyingBalances(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		getUnderlyingBalancesAtPrice(
-			sqrtRatioX96: PromiseOrValue<BigNumberish>,
+			sqrtRatioX96: BigNumberish,
 			overrides?: CallOverrides
 		): Promise<PopulatedTransaction>
 
 		increaseAllowance(
-			spender: PromiseOrValue<string>,
-			addedValue: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			spender: string,
+			addedValue: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		initialize(
-			_name: PromiseOrValue<string>,
-			_symbol: PromiseOrValue<string>,
-			_pool: PromiseOrValue<string>,
-			_managerFeeBPS: PromiseOrValue<BigNumberish>,
-			_lowerTick: PromiseOrValue<BigNumberish>,
-			_upperTick: PromiseOrValue<BigNumberish>,
-			_manager_: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			_name: string,
+			_symbol: string,
+			_pool: string,
+			_managerFeeBPS: BigNumberish,
+			_lowerTick: BigNumberish,
+			_upperTick: BigNumberish,
+			_manager_: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		lowerTick(overrides?: CallOverrides): Promise<PopulatedTransaction>
@@ -1444,9 +1343,9 @@ export interface KwentaArrakisVault extends BaseContract {
 		managerTreasury(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		mint(
-			mintAmount: PromiseOrValue<BigNumberish>,
-			receiver: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			mintAmount: BigNumberish,
+			receiver: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		name(overrides?: CallOverrides): Promise<PopulatedTransaction>
@@ -1454,25 +1353,21 @@ export interface KwentaArrakisVault extends BaseContract {
 		pool(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		rebalance(
-			swapThresholdPrice: PromiseOrValue<BigNumberish>,
-			swapAmountBPS: PromiseOrValue<BigNumberish>,
-			zeroForOne: PromiseOrValue<boolean>,
-			feeAmount: PromiseOrValue<BigNumberish>,
-			paymentToken: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			swapThresholdPrice: BigNumberish,
+			swapAmountBPS: BigNumberish,
+			zeroForOne: boolean,
+			feeAmount: BigNumberish,
+			paymentToken: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
-		renounceOwnership(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		renounceOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
 		restrictedMintToggle(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		toggleRestrictMint(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		toggleRestrictMint(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
 		token0(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
@@ -1481,56 +1376,52 @@ export interface KwentaArrakisVault extends BaseContract {
 		totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		transfer(
-			recipient: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			recipient: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		transferFrom(
-			sender: PromiseOrValue<string>,
-			recipient: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			sender: string,
+			recipient: string,
+			amount: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		transferOwnership(
-			newOwner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newOwner: string,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		uniswapV3MintCallback(
-			amount0Owed: PromiseOrValue<BigNumberish>,
-			amount1Owed: PromiseOrValue<BigNumberish>,
-			arg2: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount0Owed: BigNumberish,
+			amount1Owed: BigNumberish,
+			arg2: BytesLike,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		uniswapV3SwapCallback(
-			amount0Delta: PromiseOrValue<BigNumberish>,
-			amount1Delta: PromiseOrValue<BigNumberish>,
-			arg2: PromiseOrValue<BytesLike>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			amount0Delta: BigNumberish,
+			amount1Delta: BigNumberish,
+			arg2: BytesLike,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		updateManagerParams(
-			newManagerFeeBPS: PromiseOrValue<BigNumberish>,
-			newManagerTreasury: PromiseOrValue<string>,
-			newRebalanceBPS: PromiseOrValue<BigNumberish>,
-			newSlippageBPS: PromiseOrValue<BigNumberish>,
-			newSlippageInterval: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
+			newManagerFeeBPS: BigNumberish,
+			newManagerTreasury: string,
+			newRebalanceBPS: BigNumberish,
+			newSlippageBPS: BigNumberish,
+			newSlippageInterval: BigNumberish,
+			overrides?: Overrides & { from?: string }
 		): Promise<PopulatedTransaction>
 
 		upperTick(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
 		version(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
-		withdrawArrakisBalance(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		withdrawArrakisBalance(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 
-		withdrawManagerBalance(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+		withdrawManagerBalance(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
 	}
 }

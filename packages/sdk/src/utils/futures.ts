@@ -14,6 +14,7 @@ import {
 	KWENTA_PYTH_SERVER,
 	PUBLIC_PYTH_SERVER,
 	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
+	PERPS_V3_SUBGRAPH_URLS,
 } from '../constants/futures'
 import { ZERO_WEI } from '../constants/number'
 import { SECONDS_PER_DAY } from '../constants/period'
@@ -54,6 +55,10 @@ import {
 
 export const getFuturesEndpoint = (networkId: number) => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10]
+}
+
+export const getPerpsV3SubgraphUrl = (networkId: NetworkId): string => {
+	return PERPS_V3_SUBGRAPH_URLS[networkId] ?? PERPS_V3_SUBGRAPH_URLS[420]
 }
 
 export const getMainEndpoint = (networkId: number) => {
@@ -643,6 +648,7 @@ export const appAdjustedLeverage = (marketLeverage: Wei) => {
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sBTCPERP]: FuturesMarketAsset.sBTC,
 	[FuturesMarketKey.sETHPERP]: FuturesMarketAsset.sETH,
+	[FuturesMarketKey.ETH]: FuturesMarketAsset.ETH,
 	[FuturesMarketKey.sLINKPERP]: FuturesMarketAsset.LINK,
 	[FuturesMarketKey.sSOLPERP]: FuturesMarketAsset.SOL,
 	[FuturesMarketKey.sAVAXPERP]: FuturesMarketAsset.AVAX,
@@ -688,6 +694,7 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTCPERP,
 	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETHPERP,
+	[FuturesMarketAsset.ETH]: FuturesMarketKey.ETH,
 	[FuturesMarketAsset.LINK]: FuturesMarketKey.sLINKPERP,
 	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOLPERP,
 	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAXPERP,
@@ -733,6 +740,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.sBTC]: 'Bitcoin',
 	[FuturesMarketAsset.sETH]: 'Ether',
+	[FuturesMarketAsset.ETH]: 'Ether',
 	[FuturesMarketAsset.LINK]: 'Chainlink',
 	[FuturesMarketAsset.SOL]: 'Solana',
 	[FuturesMarketAsset.AVAX]: 'Avalanche',

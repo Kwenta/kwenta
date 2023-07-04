@@ -10,6 +10,7 @@ import {
 	FuturesOrderType,
 } from '../types/futures'
 import { weiFromWei } from '../utils/number'
+import { NetworkId } from '../types'
 
 export const KWENTA_TRACKING_CODE = ethers.utils.formatBytes32String('KWENTA')
 
@@ -37,6 +38,11 @@ export const MAIN_ENDPOINT_OP_MAINNET =
 
 export const MAIN_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main'
+
+export const PERPS_V3_SUBGRAPH_URLS: Record<number, string> = {
+	// TODO: Update perps v3 subgraph urls
+	420: 'https://api.thegraph.com/subgraphs/name/rickk137/v3-perps-opt-goerli',
+}
 
 export const KWENTA_PYTH_SERVER = 'https://price.kwenta.io'
 
@@ -488,6 +494,18 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 		pythIds: {
 			mainnet: '0x846ae1bdb6300b817cee5fdee2a6da192775030db5615b94a465f53bd40850b5',
 			testnet: '0xb7abd25a76ddaffdf847224f03198ccb92723f90b2429cf33f0eecb96e352a86',
+		},
+	},
+	// Perps v3
+
+	[FuturesMarketKey.ETH]: {
+		key: FuturesMarketKey.ETH,
+		asset: FuturesMarketAsset.ETH,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+			testnet: '0xca80ba6dc32e08d06f1aa886011eed1d77c77be9eb761cc10d72b7d0a2fd57a6',
 		},
 	},
 }

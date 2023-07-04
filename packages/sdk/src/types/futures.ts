@@ -116,6 +116,9 @@ export enum FuturesMarketKey {
 	sFLOKIPERP = 'sFLOKIPERP',
 	sINJPERP = 'sINJPERP',
 	sSTETHPERP = 'sSTETHPERP',
+
+	// Perps V3
+	ETH = 'ETH',
 }
 
 export enum FuturesMarketAsset {
@@ -161,6 +164,9 @@ export enum FuturesMarketAsset {
 	FLOKI = 'FLOKI',
 	INJ = 'INJ',
 	STETH = 'STETH',
+
+	// Perps V3 (Temporary)
+	ETH = 'ETH',
 }
 
 export interface FuturesMarketConfig {
@@ -208,7 +214,7 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
-export type FuturesAccountType = 'cross_margin' | 'smart_margin' | 'isolated_margin'
+export type FuturesAccountType = 'cross_margin' | 'smart_margin' | 'isolated_margin' | 'perps_v3'
 
 export enum ContractOrderType {
 	MARKET = 0,
@@ -486,4 +492,23 @@ export type SLTPOrderInputs = {
 		sizeDelta: Wei
 		isCancelled?: boolean
 	}
+}
+
+export type PerpsV3Market = {
+	id: string
+	perpsMarketId: string
+	marketOwner: string
+	marketName: string
+	marketSymbol: string
+	feedId: string
+	owner: string
+	maxFundingVelocity: string
+	skewScale: string
+	initialMarginFraction: string
+	maintenanceMarginFraction: string
+	liquidationRewardRatioD18: string
+	maxLiquidationLimitAccumulationMultiplier: string
+	lockedOiPercent: string
+	makerFee: string
+	takerFee: string
 }

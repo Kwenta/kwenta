@@ -28,6 +28,7 @@ import sdk from './sdk'
 import stakingReducer from './staking/reducer'
 import statsReducer from './stats/reducer'
 import walletReducer from './wallet/reducer'
+import perpsV3Reducer from './perpsV3/reducer'
 
 const LOG_REDUX = false
 
@@ -45,6 +46,7 @@ const combinedReducers = combineReducers({
 	balances: balancesReducer,
 	exchange: exchangeReducer,
 	futures: futuresReducer,
+	perpsV3: perpsV3Reducer,
 	home: homeReducer,
 	earn: earnReducer,
 	staking: stakingReducer,

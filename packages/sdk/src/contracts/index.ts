@@ -47,6 +47,7 @@ import {
 	BatchClaimer__factory,
 	MultipleMerkleDistributorOp__factory,
 	MultipleMerkleDistributorPerpsV2__factory,
+	PerpsV3MarketProxy__factory,
 } from './types'
 import { PerpsV2MarketData__factory } from './types/factories/PerpsV2MarketData__factory'
 import { PerpsV2MarketSettings__factory } from './types/factories/PerpsV2MarketSettings__factory'
@@ -164,6 +165,9 @@ export const getContractsByNetwork = (
 			: undefined,
 		veKwentaRedeemer: ADDRESSES.veKwentaRedeemer[networkId]
 			? VeKwentaRedeemer__factory.connect(ADDRESSES.veKwentaRedeemer[networkId], provider)
+			: undefined,
+		perpsV3MarketProxy: ADDRESSES.PerpsV3MarketProxy[networkId]
+			? PerpsV3MarketProxy__factory.connect(ADDRESSES.PerpsV3MarketProxy[networkId], provider)
 			: undefined,
 	}
 }

@@ -20,6 +20,8 @@ import {
 	selectFuturesType,
 	selectMarkets,
 } from './selectors'
+import { fetchPerpsV3Account } from 'state/perpsV3/actions'
+import { selectPerpsV3SupportedNetwork } from 'state/perpsV3/selectors'
 
 // TODO: Optimise polling and queries
 
@@ -31,10 +33,16 @@ export const usePollMarketFuturesData = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork)
 	const networkSupportsFutures = useAppSelector(selectFuturesSupportedNetwork)
+	const networkSupportsPerpsV3 = useAppSelector(selectPerpsV3SupportedNetwork)
 
 	useFetchAction(fetchCrossMarginAccount, {
 		dependencies: [networkId, wallet],
-		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
+		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType !== 'cross_margin',
+	})
+
+	useFetchAction(fetchPerpsV3Account, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsPerpsV3 || selectedAccountType !== 'isolated_margin', // TODO: Change to perps v3
 	})
 
 	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] })
@@ -47,12 +55,12 @@ export const usePollMarketFuturesData = () => {
 	usePollAction('fetchIsolatedMarginAccountData', fetchIsolatedMarginAccountData, {
 		intervalTime: 30000,
 		dependencies: [wallet, markets.length],
-		disabled: !wallet || !markets.length || selectedAccountType === 'cross_margin',
+		disabled: !wallet || !markets.length || selectedAccountType !== 'isolated_margin',
 	})
 	usePollAction('fetchCrossMarginAccountData', fetchCrossMarginAccountData, {
 		intervalTime: 30000,
 		dependencies: [markets.length, crossMarginAddress],
-		disabled: !markets.length || !crossMarginAddress || selectedAccountType === 'isolated_margin',
+		disabled: !markets.length || !crossMarginAddress || selectedAccountType !== 'cross_margin',
 	})
 	usePollAction('fetchFuturesPositionHistory', fetchFuturesPositionHistory, {
 		intervalTime: 15000,
@@ -62,13 +70,13 @@ export const usePollMarketFuturesData = () => {
 	usePollAction('fetchIsolatedOpenOrders', fetchIsolatedOpenOrders, {
 		dependencies: [networkId, wallet, markets.length, selectedAccountType],
 		intervalTime: 10000,
-		disabled: !wallet || selectedAccountType === 'cross_margin',
+		disabled: !wallet || selectedAccountType !== 'isolated_margin',
 	})
 
 	usePollAction('fetchCrossMarginOpenOrders', fetchCrossMarginOpenOrders, {
 		dependencies: [networkId, wallet, markets.length, crossMarginAddress],
 		intervalTime: 10000,
-		disabled: !wallet || selectedAccountType === 'isolated_margin',
+		disabled: !wallet || selectedAccountType !== 'cross_margin',
 	})
 
 	usePollAction('fetchAllTradesForAccount', fetchAllTradesForAccount, {

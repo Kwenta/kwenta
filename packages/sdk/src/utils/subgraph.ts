@@ -2962,7 +2962,7 @@ export const getSmartMarginAccounts = async function <K extends keyof SmartMargi
 }
 
 // additional types
-export type FuturesAccountType = 'isolated_margin' | 'cross_margin' | 'smart_margin'
+export type FuturesAccountType = 'isolated_margin' | 'cross_margin' | 'smart_margin' | 'perps_v3' // TODO: Clean up types
 export type FuturesOrderType =
 	| 'NextPrice'
 	| 'Limit'

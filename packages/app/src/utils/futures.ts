@@ -409,3 +409,8 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 			return acc
 		}, [] as DelayedOrderWithDetails[])
 }
+
+export const perpsAccountIdFromAddress = (eoa: string): number => {
+	const numberedId = eoa.replace(/\D/g, '')
+	return Number(numberedId)
+}

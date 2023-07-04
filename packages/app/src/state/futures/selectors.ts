@@ -54,6 +54,7 @@ import {
 	SmartPerpsPortfolio,
 	IsolatedPerpsPortfolio,
 } from './types'
+import { selectV3Markets } from 'state/perpsV3/selectors'
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType
 
@@ -144,10 +145,14 @@ export const selectMarketAsset = createSelector(
 )
 
 export const selectMarkets = createSelector(
+	selectFuturesType,
 	selectNetwork,
+	selectV3Markets,
 	(state: RootState) => state.futures,
-	(network, futures) =>
-		futures.markets[network] ? unserializeMarkets(futures.markets[network]) : []
+	(futuresType, network, v3Markets, futures) => {
+		if (futuresType === 'perps_v3') return v3Markets
+		return futures.markets[network] ? unserializeMarkets(futures.markets[network]) : []
+	}
 )
 
 export const selectMarketVolumes = createSelector(
