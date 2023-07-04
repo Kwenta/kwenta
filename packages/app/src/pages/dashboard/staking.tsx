@@ -19,17 +19,21 @@ import {
 	fetchStakingV2Data,
 } from 'state/staking/actions'
 import {
+	selectClaimableBalance,
 	selectClaimableBalanceV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
 	selectOpRewards,
 	selectSnxOpRewards,
 	selectStakedEscrowedKwentaBalanceV2,
+	selectStakedKwentaBalance,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
+
+import MigratePage from './migrate'
 
 type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
@@ -50,11 +54,13 @@ const StakingPage: StakingComponent = () => {
 	const router = useRouter()
 	const dispatch = useAppDispatch()
 	const walletAddress = useAppSelector(selectWallet)
-	const kwentaBalance = useAppSelector(selectKwentaBalance)
+	const claimableBalanceV1 = useAppSelector(selectClaimableBalance)
+	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
+	const stakedKwentaBalanceV1 = useAppSelector(selectStakedKwentaBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
+	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const totalVestable = useAppSelector(selectTotalVestableV2)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
-	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
 	const [rewardBalance, setRewardBalance] = useState(ZERO_WEI)
@@ -62,6 +68,11 @@ const StakingPage: StakingComponent = () => {
 	const snxOpRewards = useAppSelector(selectSnxOpRewards)
 	const opPrice = useAppSelector(selectOpPrice)
 	const kwentaPrice = useAppSelector(selectKwentaPrice)
+
+	const isMigrationActive = useMemo(
+		() => claimableBalanceV1.gt(ZERO_WEI) || stakedKwentaBalanceV1.gt(ZERO_WEI),
+		[claimableBalanceV1, stakedKwentaBalanceV1]
+	)
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -184,7 +195,9 @@ const StakingPage: StakingComponent = () => {
 		},
 	]
 
-	return (
+	return isMigrationActive ? (
+		<MigratePage />
+	) : (
 		<>
 			<Head>
 				<title>{t('dashboard-stake.page-title')}</title>
