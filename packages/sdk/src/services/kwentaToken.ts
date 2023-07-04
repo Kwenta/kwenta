@@ -304,7 +304,7 @@ export default class KwentaTokenService {
 		const vestingSchedules = schedules.filter((schedule) => schedule.escrowAmount.gt(0))
 
 		const calls = vestingSchedules.map((schedule) =>
-			RewardEscrowMulticall.getVestingEntryClaimable(walletAddress, schedule.entryID)
+			RewardEscrowMulticall.getVestingEntryClaimable(schedule.entryID)
 		)
 
 		const vestingEntries: {

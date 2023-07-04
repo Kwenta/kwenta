@@ -26,6 +26,8 @@ const EscrowTable = () => {
 	const dispatch = useAppDispatch()
 	const escrowV1Data = useAppSelector(selectEscrowData)
 	const escrowV2Data = useAppSelector(selectEscrowV2Data)
+	// eslint-disable-next-line no-console
+	escrowV2Data.map((d) => console.log(`escrowV2Data per row:`, d))
 	const escrowData = useMemo(() => [...escrowV1Data, ...escrowV2Data], [escrowV1Data, escrowV2Data])
 
 	const [checkedState, setCheckedState] = useState(escrowData.map((_) => false))
