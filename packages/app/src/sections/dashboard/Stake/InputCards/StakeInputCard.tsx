@@ -16,10 +16,7 @@ import {
 	selectStakedKwentaBalanceV2,
 } from 'state/staking/selectors'
 
-type StakeInputCardProps = {
-	showWarning?: boolean
-}
-const StakeInputCard: FC<StakeInputCardProps> = ({ showWarning = false }) => {
+const StakeInputCard: FC = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
@@ -70,7 +67,6 @@ const StakeInputCard: FC<StakeInputCardProps> = ({ showWarning = false }) => {
 			isUnstaked={isUnstakedKwenta}
 			isApproved={isKwentaTokenApproved}
 			onApprove={handleApprove}
-			showWarning={showWarning}
 		/>
 	)
 }

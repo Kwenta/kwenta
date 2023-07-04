@@ -240,7 +240,6 @@ const MigratePage: MigrateComponent = () => {
 			<StakingHeading>
 				<FlexDivCol rowGap="5px">
 					<StyledHeading variant="h4">{t('dashboard.stake.tabs.migrate.title')}</StyledHeading>
-					<Body color="secondary">{t('dashboard.stake.tabs.migrate.copy')}</Body>
 				</FlexDivCol>
 				<StyledButton
 					size="xsmall"
@@ -273,6 +272,7 @@ const MigratePage: MigrateComponent = () => {
 								size="small"
 								textTransform="uppercase"
 								isRounded
+								disabled={!active}
 								onClick={onClick}
 							>
 								{buttonLabel}

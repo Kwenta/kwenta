@@ -86,12 +86,11 @@ const StakingTab = () => {
 
 	return (
 		<SplitContainer>
-			<StakeInputCard showWarning={true} />
+			<StakeInputCard />
 			<CardGridContainer>
 				<StyledHeading variant="h4">
 					{t('dashboard.stake.tabs.staking.staking-rewards.title')}
 				</StyledHeading>
-				<Body color="secondary">{t('dashboard.stake.tabs.staking.staking-rewards.copy')}</Body>
 				<CardsContainer>
 					{stakingAndRewardsInfo.map(({ category, card, flex }, i) => (
 						<FlexDivCol rowGap="15px" key={i}>

@@ -130,7 +130,6 @@ const RewardsTabs: FC = () => {
 					<Heading variant="h4" className="title">
 						{t('dashboard.rewards.title')}
 					</Heading>
-					<div className="value">{t('dashboard.rewards.copy')}</div>
 				</StyledFlexDivCol>
 				<Pill
 					color="yellow"

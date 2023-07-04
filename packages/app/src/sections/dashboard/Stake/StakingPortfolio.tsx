@@ -27,9 +27,6 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 			<StakingHeading>
 				<FlexDivCol rowGap="5px">
 					<StyledHeading variant="h4">{t('dashboard.stake.portfolio.title')}</StyledHeading>
-					<Body color="secondary">
-						Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.
-					</Body>
 				</FlexDivCol>
 				<StyledButton
 					size="xsmall"

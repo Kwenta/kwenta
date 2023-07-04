@@ -28,7 +28,6 @@ type StakeCardProps = {
 	isUnstaked?: boolean | undefined
 	isApproved?: boolean
 	onApprove?: () => void
-	showWarning?: boolean
 }
 
 const StakeCard: FC<StakeCardProps> = memo(
@@ -42,7 +41,6 @@ const StakeCard: FC<StakeCardProps> = memo(
 		unstakeEnabled = true,
 		isStaked = false,
 		isUnstaked = false,
-		showWarning = false,
 		isApproved,
 		onApprove,
 	}) => {
@@ -143,15 +141,13 @@ const StakeCard: FC<StakeCardProps> = memo(
 							? t('dashboard.stake.tabs.stake-table.stake')
 							: t('dashboard.stake.tabs.stake-table.unstake')}
 					</Button>
-					{showWarning && (
-						<>
-							<Spacer height={25} />
-							<ErrorView
-								message={'2 week unstaking cooldown lock'}
-								containerStyle={{ margin: '0' }}
-							/>
-						</>
-					)}
+					<>
+						<Spacer height={25} />
+						<ErrorView
+							message={'2 week unstaking cooldown lock'}
+							containerStyle={{ margin: '0' }}
+						/>
+					</>
 				</FlexDivCol>
 			</StakingInputCardContainer>
 		)
