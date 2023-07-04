@@ -1,8 +1,7 @@
 import { truncateNumbers } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import React, { ReactNode, useEffect, useMemo, useState, useCallback } from 'react'
+import React, { ReactNode, useEffect, useMemo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -14,7 +13,7 @@ import { EXTERNAL_LINKS } from 'constants/links'
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import EscrowTable from 'sections/dashboard/Stake/EscrowTable'
-import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
+import StakingPortfolio from 'sections/dashboard/Stake/StakingPortfolio'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
 	approveKwentaToken,
