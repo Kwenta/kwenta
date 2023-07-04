@@ -82,7 +82,6 @@
 		"zrender": "^5.4.3"
 	},
 	"devDependencies": {
-		"@microsoft/eslint-formatter-sarif": "2.1.7",
 		"@next/eslint-plugin-next": "13.4.7",
 		"@storybook/addon-actions": "7.0.24",
 		"@storybook/addon-essentials": "7.0.25",
