@@ -50,6 +50,7 @@ import {
 	MultipleMerkleDistributorOp__factory,
 	MultipleMerkleDistributorPerpsV2__factory,
 	RewardEscrowV2__factory,
+	KwentaStakingRewardsV2__factory,
 } from './types'
 import { PerpsV2MarketData__factory } from './types/factories/PerpsV2MarketData__factory'
 import { PerpsV2MarketSettings__factory } from './types/factories/PerpsV2MarketSettings__factory'
@@ -169,7 +170,10 @@ export const getContractsByNetwork = (
 			? VeKwentaRedeemer__factory.connect(ADDRESSES.veKwentaRedeemer[networkId], provider)
 			: undefined,
 		KwentaStakingRewardsV2: ADDRESSES.KwentaStakingRewardsV2[networkId]
-			? KwentaStakingRewards__factory.connect(ADDRESSES.KwentaStakingRewardsV2[networkId], provider)
+			? KwentaStakingRewardsV2__factory.connect(
+					ADDRESSES.KwentaStakingRewardsV2[networkId],
+					provider
+			  )
 			: undefined,
 		RewardEscrowV2: ADDRESSES.RewardEscrowV2[networkId]
 			? RewardEscrowV2__factory.connect(ADDRESSES.RewardEscrowV2[networkId], provider)

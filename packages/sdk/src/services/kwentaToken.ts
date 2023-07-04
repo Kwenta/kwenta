@@ -212,7 +212,7 @@ export default class KwentaTokenService {
 			cooldownPeriod,
 			kwentaStakingV2Allowance,
 		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
-			RewardEscrowV2.balanceOf(walletAddress),
+			RewardEscrowV2.escrowedBalanceOf(walletAddress),
 			KwentaStakingRewardsV2.nonEscrowedBalanceOf(walletAddress),
 			KwentaStakingRewardsV2.escrowedBalanceOf(walletAddress),
 			KwentaStakingRewardsV2.earned(walletAddress),
