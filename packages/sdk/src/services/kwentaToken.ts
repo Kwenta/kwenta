@@ -795,13 +795,12 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		const contract = options?.escrow
-			? options?.version === 1
-				? RewardEscrow
-				: RewardEscrowV2
-			: options?.version === 1
-			? KwentaStakingRewards
-			: KwentaStakingRewardsV2
+		const contract =
+			options?.version === 1
+				? options?.escrow
+					? KwentaStakingRewards
+					: RewardEscrow
+				: KwentaStakingRewardsV2
 
 		return this.sdk.transactions.createContractTxn(
 			contract,
