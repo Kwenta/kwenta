@@ -182,19 +182,19 @@ export default function EditPositionSizeModal() {
 				<InfoBoxRow
 					boldValue
 					title={t('futures.market.trade.edit-position.market')}
-					value={market?.marketName}
+					textValue={market?.marketName}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						resultingLeverage && (
 							<PreviewArrow showPreview>{resultingLeverage.toString(2)}x</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					value={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
+					textValue={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						preview?.size && (
 							<PreviewArrow showPreview>
 								{position?.remainingMargin
@@ -204,10 +204,10 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.position-size')}
-					value={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
+					textValue={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
-					valueNode={
+					textValueIcon={
 						preview?.leverage && (
 							<PreviewArrow showPreview>
 								{preview ? formatDollars(preview.liqPrice, { suggestDecimals: true }) : '-'}
@@ -215,18 +215,18 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					value={formatDollars(position?.position?.liquidationPrice || 0, {
+					textValue={formatDollars(position?.position?.liquidationPrice || 0, {
 						suggestDecimals: true,
 					})}
 				/>
 				<InfoBoxRow
 					color={preview?.exceedsPriceProtection ? 'negative' : 'primary'}
 					title={t('futures.market.trade.edit-position.price-impact')}
-					value={formatPercent(preview?.priceImpact || 0)}
+					textValue={formatPercent(preview?.priceImpact || 0)}
 				/>
 				<InfoBoxRow
 					title={t('futures.market.trade.edit-position.fill-price')}
-					value={formatDollars(preview?.price || 0, { suggestDecimals: true })}
+					textValue={formatDollars(preview?.price || 0, { suggestDecimals: true })}
 				/>
 			</InfoBoxContainer>
 			{preview?.exceedsPriceProtection && (

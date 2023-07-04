@@ -6,7 +6,6 @@ import {
 	ledgerWallet,
 	metaMaskWallet,
 	rainbowWallet,
-	trustWallet,
 	walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { configureChains, createClient } from 'wagmi'
@@ -25,10 +24,11 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 
 import BinanceIcon from 'assets/png/rainbowkit/binance.png'
-import Frame from 'components/Rainbowkit/Frame'
-import Safe from 'components/Rainbowkit/Gnosis'
-import Tally from 'components/Rainbowkit/Tally'
-import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from 'constants/network'
+
+import Frame from '../../components/Rainbowkit/Frame'
+import Safe from '../../components/Rainbowkit/Gnosis'
+import Tally from '../../components/Rainbowkit/Tally'
+import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from '../../constants/network'
 
 const bscWithIcon: Chain = {
 	...bsc,
@@ -84,7 +84,6 @@ const connectors = connectorsForWallets([
 		wallets: [
 			ledgerWallet({ projectId, chains }),
 			braveWallet({ chains, shimDisconnect: true }),
-			trustWallet({ projectId, chains }),
 			Tally({ chains, shimDisconnect: true }),
 			Frame({ chains, shimDisconnect: true }),
 			injectedWallet({ chains, shimDisconnect: true }),

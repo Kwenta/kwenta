@@ -1,0 +1,42 @@
+name: 'Jest'
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  sentry_release:
+    name: Jest tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm i
+
+      - name: Run tests
+        run: cd packages/app && pnpm run test:jest
+        env:
+          NEXT_PUBLIC_WALLETCONNECT_V2_ID: ${{ secrets.NEXT_PUBLIC_WALLETCONNECT_V2_ID }}
+
+      - name: Upload coverage to codecov.io
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
