@@ -135,10 +135,10 @@ const StakeCard: FC<StakeCardProps> = memo(
 						disabled={isDisabled}
 						onClick={handleSubmit}
 					>
-						{!isApproved
-							? t('dashboard.stake.tabs.stake-table.approve')
-							: activeTab === 0
-							? t('dashboard.stake.tabs.stake-table.stake')
+						{activeTab === 0
+							? !isApproved
+								? t('dashboard.stake.tabs.stake-table.approve')
+								: t('dashboard.stake.tabs.stake-table.stake')
 							: t('dashboard.stake.tabs.stake-table.unstake')}
 					</Button>
 					<ErrorView
