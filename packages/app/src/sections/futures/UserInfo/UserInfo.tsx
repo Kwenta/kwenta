@@ -232,6 +232,7 @@ const TabButtonsContainer = styled.div`
 	display: grid;
 	grid-gap: 15px;
 	grid-template-columns: repeat(2, 1fr);
+	height: 40px;
 
 	button {
 		font-size: 13px;
