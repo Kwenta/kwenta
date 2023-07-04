@@ -21,7 +21,10 @@ const TableBodyRow = genericMemo(
 			$highlightRowsOnHover={highlightRowsOnHover}
 		>
 			{row.getVisibleCells().map((cell) => (
-				<TableCell className="table-body-cell" style={{ width: cell.column.getSize() }}>
+				<TableCell
+					className="table-body-cell"
+					style={{ width: cell.column.getSize(), flex: cell.column.getSize() }}
+				>
 					{flexRender(cell.column.columnDef.cell, cell.getContext())}
 				</TableCell>
 			))}

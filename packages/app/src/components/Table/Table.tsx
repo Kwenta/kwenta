@@ -13,6 +13,7 @@ import { genericMemo } from 'types/helpers'
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg'
 import SortUpIcon from 'assets/svg/app/caret-up.svg'
+import { FlexDiv } from 'components/layout/flex'
 import Loader from 'components/Loader'
 import { Body } from 'components/Text'
 import media from 'styles/media'
@@ -123,13 +124,13 @@ const Table = <T,>({
 		<TableContainer>
 			<ReactTable $rounded={rounded} $noBottom={noBottom} className={className}>
 				{table.getHeaderGroups().map((headerGroup, index) => (
-					<div key={index} className="table-row" style={{ display: 'flex' }}>
+					<FlexDiv key={index} className="table-row">
 						{headerGroup.headers.map((header) => {
 							return (
 								<TableCellHead
 									key={header.id}
 									hideHeaders={!!hideHeaders}
-									style={{ width: header.getSize() }}
+									style={{ width: header.getSize(), flex: header.getSize() }}
 									onClick={header.column.getToggleSortingHandler()}
 									$canSort={header.column.getCanSort()}
 								>
@@ -153,7 +154,7 @@ const Table = <T,>({
 								</TableCellHead>
 							)
 						})}
-					</div>
+					</FlexDiv>
 				))}
 				{isLoading ? (
 					<Loader />
