@@ -246,9 +246,6 @@ importers:
         specifier: ^5.4.3
         version: 5.4.3
     devDependencies:
-      '@microsoft/eslint-formatter-sarif':
-        specifier: 3.0.0
-        version: 3.0.0
       '@next/eslint-plugin-next':
         specifier: 13.4.7
         version: 13.4.7
@@ -4437,18 +4434,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
-
-  /@microsoft/eslint-formatter-sarif@3.0.0:
-    resolution: {integrity: sha512-KIKkT44hEqCzqxODYwFMUvYEK0CrdHx/Ll9xiOWgFbBSRuzbxmVy4d/tzfgoucGz72HJZNOMjuyzFTBKntRK5Q==}
-    engines: {node: '>= 14'}
-    dependencies:
-      eslint: 8.44.0
-      jschardet: 3.0.0
-      lodash: 4.17.21
-      utf8: 3.0.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   /@motionone/animation@10.15.1:
     resolution: {integrity: sha512-mZcJxLjHor+bhcPuIFErMDNyrdb2vJur8lSfMCsuCB4UyV8ILZLvK+t+pg56erv8ud9xQGK/1OGPt10agPrCyQ==}
@@ -15350,11 +15335,6 @@ packages:
 
   /jsbn@0.1.1:
     resolution: {integrity: sha512-UVU9dibq2JcFWxQPA6KCqj5O42VOmAY3zQUfEKxU0KpTGXwNoCjkX1e13eHNvw/xPynt6pU0rZ1htjWTNTSXsg==}
-    dev: true
-
-  /jschardet@3.0.0:
-    resolution: {integrity: sha512-lJH6tJ77V8Nzd5QWRkFYCLc13a3vADkh3r/Fi8HupZGWk2OVVDfnZP8V/VgQgZ+lzW0kG2UGb5hFgt3V3ndotQ==}
-    engines: {node: '>=0.1.90'}
     dev: true
 
   /jscodeshift@0.14.0(@babel/preset-env@7.21.5):
