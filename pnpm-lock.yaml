@@ -105,8 +105,8 @@ importers:
         specifier: 7.57.0
         version: 7.57.0
       '@socket.tech/plugin':
-        specifier: 1.0.14
-        version: 1.0.14(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
+        specifier: 1.0.15
+        version: 1.0.15(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
       '@synthetixio/optimism-networks':
         specifier: 2.74.6
         version: 2.74.6
@@ -5042,8 +5042,8 @@ packages:
     resolution: {integrity: sha512-q1Ufyujcbanzz7OQYjxc1BSbjxwntKYHxWcxqthdXB3kZBBjZ8CUYiIKUYZ6xonoPSXwDH5W6KTCQJMi7ZDrDw==}
     dev: false
 
-  /@socket.tech/plugin@1.0.14(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):
-    resolution: {integrity: sha512-82MgYVbW/Hh9uXWwyFglwqZEPW25PjuRblxFGLc3BtFWfE0hYQ/SFhzd3n/MwS4YPEsPX48EGv93qaQ3AESdVg==}
+  /@socket.tech/plugin@1.0.15(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):
+    resolution: {integrity: sha512-cMLu2DbQmkByH4ruNBBmtoQQM4G5NnmGLrYKC5WNniHOcYXzdFK5d7lywhN7SfoS3s8IGcps5MOKQZtkGzP32Q==}
     peerDependencies:
       react: '>=17.0.1'
       react-dom: '>=17.0.1'
@@ -5051,7 +5051,7 @@ packages:
       '@react-spring/web': 9.7.2(react-dom@18.2.0)(react@18.2.0)
       '@reduxjs/toolkit': 1.9.5(react-redux@8.1.1)(react@18.2.0)
       '@socket.tech/ll-core': 0.1.38
-      '@socket.tech/socket-v2-sdk': 1.21.13
+      '@socket.tech/socket-v2-sdk': 1.23.0
       ethers: 5.7.2
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -5068,8 +5068,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@socket.tech/socket-v2-sdk@1.21.13:
-    resolution: {integrity: sha512-D960C+oHjztRm0/b78GhC1H3I5gEfiGuPEKalxCJeBHa63r5g01u3UiZ+q1RTu565QGXgPaK6O+OCHfxLosKwg==}
+  /@socket.tech/socket-v2-sdk@1.23.0:
+    resolution: {integrity: sha512-S8ny2PxzPPCd2FR0qk0+X+smB6T4+ZA/Mu1RaWXNzatFWVUh8pOtMmQ9XHwzd5nMn45T5Sl3nDyydse5M/xQ3A==}
     dependencies:
       '@socket.tech/ll-core': 0.1.38
       '@socket.tech/ll-core-v2': 0.0.32
