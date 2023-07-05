@@ -5,6 +5,7 @@ export enum Period {
 	ONE_WEEK = 'ONE_WEEK',
 	TWO_WEEKS = 'TWO_WEEKS',
 	ONE_MONTH = 'ONE_MONTH',
+	THREE_MONTHS = 'THREE_MONTHS',
 	ONE_YEAR = 'ONE_YEAR',
 }
 
@@ -15,6 +16,7 @@ export const PERIOD_DISPLAY: Record<Period, string> = {
 	ONE_WEEK: '1W',
 	TWO_WEEKS: '2W',
 	ONE_MONTH: '1M',
+	THREE_MONTHS: '3M',
 	ONE_YEAR: '1Y',
 }
 
@@ -25,6 +27,7 @@ export const PERIOD_IN_HOURS: Record<Period, number> = {
 	ONE_MONTH: 672,
 	ONE_WEEK: 168,
 	TWO_WEEKS: 336,
+	THREE_MONTHS: 2016,
 	ONE_YEAR: 8766,
 }
 
@@ -33,6 +36,7 @@ export const PERIOD_IN_SECONDS: Record<Period, number> = {
 	FOUR_HOURS: 4 * 60 * 60,
 	ONE_DAY: 24 * 60 * 60,
 	ONE_MONTH: 672 * 60 * 60,
+	THREE_MONTHS: 2016 * 60 * 60,
 	ONE_WEEK: 168 * 60 * 60,
 	TWO_WEEKS: 336 * 60 * 60,
 	ONE_YEAR: 8766 * 60 * 60,

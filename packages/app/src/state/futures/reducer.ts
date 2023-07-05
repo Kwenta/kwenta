@@ -1,4 +1,4 @@
-import { Period } from '@kwenta/sdk/constants'
+import { PERIOD_IN_SECONDS, Period } from '@kwenta/sdk/constants'
 import {
 	NetworkId,
 	SmartMarginOrderType,
@@ -171,6 +171,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
+	historicalFundingRatePeriod: Period.TWO_WEEKS,
 	historicalFundingRates: {},
 }
 
@@ -380,6 +381,9 @@ const futuresSlice = createSlice({
 		},
 		setSelectedChart: (state, action: PayloadAction<'price' | 'funding'>) => {
 			state.selectedChart = action.payload
+		},
+		setHistoricalFundingRatePeriod: (state, action: PayloadAction<Period>) => {
+			state.historicalFundingRatePeriod = action.payload
 		},
 	},
 	extraReducers: (builder) => {
@@ -784,6 +788,7 @@ export const {
 	setTradePanelDrawerOpen,
 	setShowTradeHistory,
 	setSelectedChart,
+	setHistoricalFundingRatePeriod,
 } = futuresSlice.actions
 
 const findWalletForAccount = (
