@@ -6,11 +6,7 @@ import moment from 'moment'
 import KwentaSDK from '..'
 import * as sdkErrors from '../common/errors'
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../constants/exchange'
-import {
-	AGGREGATE_ASSET_KEY,
-	FUTURES_ENDPOINT_OP_MAINNET,
-	KWENTA_TRACKING_CODE,
-} from '../constants/futures'
+import { AGGREGATE_ASSET_KEY, KWENTA_TRACKING_CODE } from '../constants/futures'
 import { ZERO_WEI } from '../constants/number'
 import { SECONDS_PER_DAY } from '../constants/period'
 import {
@@ -26,6 +22,7 @@ import { formatTruncatedDuration } from '../utils/date'
 import { client } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
+import { calculateFeesForAccount, calculateTotalFees } from '../utils'
 
 export default class KwentaTokenService {
 	private sdk: KwentaSDK
@@ -739,7 +736,7 @@ export default class KwentaTokenService {
 		}
 
 		const response = await getFuturesAggregateStats(
-			FUTURES_ENDPOINT_OP_MAINNET,
+			this.sdk.futures.futuresGqlEndpoint,
 			{
 				first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 				where: {
@@ -751,17 +748,17 @@ export default class KwentaTokenService {
 				orderDirection: 'desc',
 				orderBy: 'timestamp',
 			},
-			{ timestamp: true, feesKwenta: true }
+			{ feesKwenta: true }
 		)
 
-		return response
+		return response ? calculateTotalFees(response) : wei(0)
 	}
 
 	public async getFuturesFeeForAccount(account: string, start: number, end: number) {
-		if (!account) return null
+		if (!account) return wei(0)
 
 		const response = await getFuturesTrades(
-			FUTURES_ENDPOINT_OP_MAINNET,
+			this.sdk.futures.futuresGqlEndpoint,
 			{
 				first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 				where: {
@@ -774,15 +771,12 @@ export default class KwentaTokenService {
 				orderBy: 'timestamp',
 			},
 			{
-				timestamp: true,
-				account: true,
-				abstractAccount: true,
-				accountType: true,
 				feesPaid: true,
 				keeperFeesPaid: true,
 			}
 		)
-		return response
+
+		return response ? calculateFeesForAccount(response) : wei(0)
 	}
 
 	private performStakeAction(

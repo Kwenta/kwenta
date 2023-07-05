@@ -47,6 +47,8 @@ import {
 	fetchMarginTransfers,
 	fetchCombinedMarginTransfers,
 	fetchFundingRatesHistory,
+	fetchFuturesFees,
+	fetchFuturesFeesForAccount,
 } from './actions'
 import {
 	CrossMarginAccountData,
@@ -102,6 +104,8 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
 		historicalFundingRates: DEFAULT_QUERY_STATUS,
+		futuresFees: DEFAULT_QUERY_STATUS,
+		futuresFeesForAccount: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -172,6 +176,8 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	},
 	tradePanelDrawerOpen: false,
 	historicalFundingRates: {},
+	futuresFees: '0',
+	futuresFeesForAccount: '0',
 }
 
 const futuresSlice = createSlice({
@@ -737,6 +743,36 @@ const futuresSlice = createSlice({
 		})
 		builder.addCase(fetchFundingRatesHistory.fulfilled, (futuresState, { payload }) => {
 			futuresState.historicalFundingRates[payload.marketAsset] = payload.rates
+		})
+
+		// Trading Fees by given epoch
+		builder.addCase(fetchFuturesFees.pending, (futuresState) => {
+			futuresState.queryStatuses.futuresFees = LOADING_STATUS
+		})
+		builder.addCase(fetchFuturesFees.fulfilled, (futuresState, action) => {
+			futuresState.queryStatuses.futuresFees = SUCCESS_STATUS
+			futuresState.futuresFees = action.payload.totalFuturesFeePaid
+		})
+		builder.addCase(fetchFuturesFees.rejected, (futuresState) => {
+			futuresState.queryStatuses.futuresFees = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch fee data',
+			}
+		})
+
+		// Trading Fees by given epoch and trader
+		builder.addCase(fetchFuturesFeesForAccount.pending, (futuresState) => {
+			futuresState.queryStatuses.futuresFees = LOADING_STATUS
+		})
+		builder.addCase(fetchFuturesFeesForAccount.fulfilled, (futuresState, action) => {
+			futuresState.queryStatuses.futuresFees = SUCCESS_STATUS
+			futuresState.futuresFeesForAccount = action.payload.futuresFeePaid
+		})
+		builder.addCase(fetchFuturesFeesForAccount.rejected, (futuresState) => {
+			futuresState.queryStatuses.futuresFees = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch fee data for the account',
+			}
 		})
 	},
 })

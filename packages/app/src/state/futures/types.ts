@@ -117,6 +117,8 @@ export type FuturesQueryStatuses = {
 	selectedTraderPositionHistory: QueryStatus
 	marginTransfers: QueryStatus
 	historicalFundingRates: QueryStatus
+	futuresFees: QueryStatus
+	futuresFeesForAccount: QueryStatus
 }
 
 export type FuturesTransactionType =
@@ -247,6 +249,8 @@ export type FuturesState = {
 	historicalFundingRates: Partial<
 		Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>
 	>
+	futuresFees: string
+	futuresFeesForAccount: string
 }
 
 export type TradePreviewResult = {

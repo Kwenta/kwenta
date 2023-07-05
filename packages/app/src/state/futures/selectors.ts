@@ -1727,3 +1727,7 @@ export const selectMarketSuspended = createSelector(
 	selectMarketInfo,
 	(marketInfo) => marketInfo?.isSuspended
 )
+
+export const selectFuturesFees = (state: RootState) => state.futures.futuresFees
+
+export const selectFuturesFeesForAccount = (state: RootState) => state.futures.futuresFeesForAccount

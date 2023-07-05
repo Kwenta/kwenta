@@ -3,6 +3,10 @@ import { NetworkId } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
 import { BigNumber } from 'ethers'
 
+import useGetFile from 'queries/files/useGetFile'
+import { useAppSelector } from 'state/hooks'
+import { selectNetwork, selectWallet } from 'state/wallet/selectors'
+
 export type TradingRewardProps = {
 	period: number | string
 	start?: number
@@ -60,4 +64,13 @@ export const parseEpochData = (index: number, networkId?: NetworkId) => {
 	const { epochStart, epochEnd } = getEpochDetails(networkId ?? 10, index)
 	const label = `Epoch ${index}`
 	return { period: index, start: epochStart, end: epochEnd, label }
+}
+
+export const useEstimatedReward = (fileName: string) => {
+	const network = useAppSelector(selectNetwork)
+	const walletAddress = useAppSelector(selectWallet)
+	const query = useGetFile(
+		`trading-rewards-snapshots/${network === 420 ? 'goerli-' : ''}${fileName}`
+	)
+	return BigNumber.from(query?.data?.claims[walletAddress!]?.amount ?? 0)
 }

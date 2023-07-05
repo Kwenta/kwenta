@@ -147,6 +147,7 @@ import {
 	PreviewAction,
 	TradePreviewParams,
 } from './types'
+
 export const fetchMarkets = createAsyncThunk<
 	{ markets: FuturesMarket<string>[]; networkId: NetworkId } | undefined,
 	void,
@@ -1084,6 +1085,45 @@ export const fetchAllTradesForAccount = createAsyncThunk<
 		return { trades: serializeTrades(trades), networkId, account, accountType, wallet }
 	} catch (err) {
 		notifyError('Failed to fetch futures trades', err)
+		throw err
+	}
+})
+
+export const fetchFuturesFees = createAsyncThunk<
+	{
+		totalFuturesFeePaid: string
+	},
+	{
+		start: number
+		end: number
+	},
+	ThunkConfig
+>('futures/fetchFuturesFees', async ({ start, end }, { extra: { sdk } }) => {
+	try {
+		const totalFuturesFeePaid = await sdk.kwentaToken.getFuturesFee(start, end)
+		return { totalFuturesFeePaid: totalFuturesFeePaid.toString() }
+	} catch (err) {
+		notifyError('Failed to fetch futures fees', err)
+		throw err
+	}
+})
+
+export const fetchFuturesFeesForAccount = createAsyncThunk<
+	{
+		futuresFeePaid: string
+	},
+	{
+		start: number
+		end: number
+	},
+	ThunkConfig
+>('futures/fetchFuturesFeesForAccount', async ({ start, end }, { getState, extra: { sdk } }) => {
+	try {
+		const wallet = selectWallet(getState())
+		const futuresFeePaid = await sdk.kwentaToken.getFuturesFeeForAccount(wallet!, start, end)
+		return { futuresFeePaid: futuresFeePaid.toString() }
+	} catch (err) {
+		notifyError('Failed to fetch futures fees for the account', err)
 		throw err
 	}
 })

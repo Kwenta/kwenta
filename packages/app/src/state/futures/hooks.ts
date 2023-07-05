@@ -1,5 +1,6 @@
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
 import { fetchStakeMigrateData, fetchStakingData } from 'state/staking/actions'
+import { selectSelectedEpoch } from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 
 import {
@@ -13,6 +14,8 @@ import {
 	fetchMarginTransfers,
 	fetchAllTradesForAccount,
 	fetchCombinedMarginTransfers,
+	fetchFuturesFees,
+	fetchFuturesFeesForAccount,
 } from './actions'
 import {
 	selectCrossMarginAccount,
@@ -122,6 +125,13 @@ export const usePollDashboardFuturesData = () => {
 export const useFetchStakeMigrateData = () => {
 	const networkId = useAppSelector(selectNetwork)
 	const wallet = useAppSelector(selectWallet)
+	const { start, end } = useAppSelector(selectSelectedEpoch)
 
 	useFetchAction(fetchStakeMigrateData, { dependencies: [networkId, wallet] })
+	useFetchAction(() => fetchFuturesFees({ start, end }), {
+		dependencies: [networkId, wallet, start, end],
+	})
+	useFetchAction(() => fetchFuturesFeesForAccount({ start, end }), {
+		dependencies: [networkId, wallet, start, end],
+	})
 }

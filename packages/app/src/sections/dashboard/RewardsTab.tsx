@@ -1,8 +1,6 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { formatDollars, formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
-import { BigNumber } from 'ethers'
-import { formatEther } from 'ethers/lib/utils.js'
 import { FC, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -15,15 +13,9 @@ import { Body, Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
 import { NO_VALUE } from 'constants/placeholder'
 import useIsL2 from 'hooks/useIsL2'
-import useGetFile from 'queries/files/useGetFile'
-import useGetFuturesFee from 'queries/staking/useGetFuturesFee'
-import useGetFuturesFeeForAccount from 'queries/staking/useGetFuturesFeeForAccount'
-import {
-	FuturesFeeForAccountProps,
-	FuturesFeeProps,
-	TradingRewardProps,
-} from 'queries/staking/utils'
+import { TradingRewardProps, useEstimatedReward } from 'queries/staking/utils'
 import { StakingCard } from 'sections/dashboard/Stake/card'
+import { selectFuturesFees, selectFuturesFeesForAccount } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimMultipleAllRewards } from 'state/staking/actions'
 import { setSelectedEpoch } from 'state/staking/reducer'
@@ -34,7 +26,6 @@ import {
 	selectSelectedEpoch,
 	selectSnxOpRewards,
 } from 'state/staking/selectors'
-import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
 
 type EpochValue = {
@@ -44,57 +35,24 @@ type EpochValue = {
 	label: string
 }
 
-const RewardsTabs: FC<TradingRewardProps> = ({
-	period = 0,
-	start = 0,
-	end = Math.floor(Date.now() / 1000),
-}) => {
+const RewardsTabs: FC<TradingRewardProps> = ({ period = 0 }) => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const network = useAppSelector(selectNetwork)
 	const isL2 = useIsL2()
 	const epochData = useAppSelector(selectEpochData)
 	const selectedEpoch = useAppSelector(selectSelectedEpoch)
-	const walletAddress = useAppSelector(selectWallet)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const opRewards = useAppSelector(selectOpRewards)
 	const snxOpRewards = useAppSelector(selectSnxOpRewards)
-
-	const futuresFeeQuery = useGetFuturesFeeForAccount(walletAddress!, start, end)
-	const futuresFeePaid = useMemo(() => {
-		const t: FuturesFeeForAccountProps[] = futuresFeeQuery.data ?? []
-		return t
-			.map((trade) => formatEther(trade.feesPaid.sub(trade.keeperFeesPaid).toString()))
-			.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI)
-	}, [futuresFeeQuery.data])
-
-	const totalFuturesFeeQuery = useGetFuturesFee(start, end)
-	const totalFuturesFeePaid = useMemo(() => {
-		const t: FuturesFeeProps[] = totalFuturesFeeQuery.data ?? []
-		return t
-			.map((trade) => formatEther(trade.feesKwenta.toString()))
-			.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI)
-	}, [totalFuturesFeeQuery.data])
+	const futuresFeePaid = useAppSelector(selectFuturesFeesForAccount)
+	const totalFuturesFeePaid = useAppSelector(selectFuturesFees)
 
 	const handleClaimAll = useCallback(() => {
 		dispatch(claimMultipleAllRewards())
 	}, [dispatch])
 
-	const estimatedKwentaRewardQuery = useGetFile(
-		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current.json`
-	)
-	const estimatedKwentaReward = useMemo(
-		() => BigNumber.from(estimatedKwentaRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
-		[estimatedKwentaRewardQuery?.data?.claims, walletAddress]
-	)
-
-	const estimatedOpQuery = useGetFile(
-		`trading-rewards-snapshots/${network === 420 ? `goerli-` : ''}epoch-current-op.json`
-	)
-	const estimatedOp = useMemo(
-		() => BigNumber.from(estimatedOpQuery?.data?.claims[walletAddress!]?.amount ?? 0),
-		[estimatedOpQuery?.data?.claims, walletAddress]
-	)
+	const estimatedKwentaReward = useEstimatedReward('epoch-current.json')
+	const estimatedOp = useEstimatedReward('epoch-current-op.json')
 
 	const claimDisabledAll = useMemo(
 		() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0),
@@ -102,8 +60,8 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 	)
 
 	const ratio = useMemo(() => {
-		return futuresFeePaid.gt(0) && totalFuturesFeePaid.gt(0)
-			? futuresFeePaid.div(totalFuturesFeePaid)
+		return !!futuresFeePaid && wei(totalFuturesFeePaid).gt(0)
+			? wei(futuresFeePaid).div(totalFuturesFeePaid)
 			: ZERO_WEI
 	}, [futuresFeePaid, totalFuturesFeePaid])
 
