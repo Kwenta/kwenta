@@ -83,10 +83,12 @@ const StakeCard: FC<StakeCardProps> = memo(
 		}, [])
 
 		const handleSubmit = useCallback(() => {
-			if (!isApproved) {
-				onApprove?.()
-			} else if (isStakeEnabled) {
-				onStake(amount)
+			if (isStakeEnabled) {
+				if (isApproved) {
+					onStake(amount)
+				} else {
+					onApprove?.()
+				}
 			} else if (isUnstakeEnabled) {
 				onUnstake(amount)
 			}
@@ -136,9 +138,9 @@ const StakeCard: FC<StakeCardProps> = memo(
 						onClick={handleSubmit}
 					>
 						{activeTab === 0
-							? !isApproved
-								? t('dashboard.stake.tabs.stake-table.approve')
-								: t('dashboard.stake.tabs.stake-table.stake')
+							? isApproved
+								? t('dashboard.stake.tabs.stake-table.stake')
+								: t('dashboard.stake.tabs.stake-table.approve')
 							: t('dashboard.stake.tabs.stake-table.unstake')}
 					</Button>
 					<ErrorView
