@@ -236,7 +236,7 @@ const RewardsTabs: FC<TradingRewardProps> = ({
 						textTransform="none"
 						onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 					>
-						Docs →
+						{t('dashboard.stake.docs')}
 					</StyledButton>
 				</StyledFlexDivRowCentered>
 			</HeaderContainer>

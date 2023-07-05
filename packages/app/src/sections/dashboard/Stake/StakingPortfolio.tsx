@@ -34,7 +34,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 					textTransform="none"
 					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 				>
-					Docs →
+					{t('dashboard.stake.docs')}
 				</StyledButton>
 			</StakingHeading>
 			<CardsContainer>

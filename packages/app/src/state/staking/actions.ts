@@ -160,6 +160,17 @@ export const fetchEscrowV2Data = createAsyncThunk<
 	}
 })
 
+export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
+	'stakeMigrateData/fetch',
+	async (_, { dispatch }) => {
+		await dispatch(fetchStakingData())
+		await dispatch(fetchClaimableRewards())
+		await dispatch(fetchStakingV2Data())
+		await dispatch(fetchEscrowData())
+		await dispatch(fetchEscrowV2Data())
+	}
+)
+
 export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>(
 	'staking/vestEscrowedRewards',
 	async (ids, { dispatch, extra: { sdk } }) => {
@@ -170,7 +181,7 @@ export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>
 				txHash: hash,
 				onTxConfirmed: () => {
 					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Success })
-					dispatch(fetchStakingData())
+					dispatch(fetchStakeMigrateData())
 				},
 				onTxFailed: () => {
 					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Error })
@@ -190,7 +201,7 @@ export const vestEscrowedRewardsV2 = createAsyncThunk<void, number[], ThunkConfi
 				txHash: hash,
 				onTxConfirmed: () => {
 					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Success })
-					dispatch(fetchStakingData())
+					dispatch(fetchStakeMigrateData())
 				},
 				onTxFailed: () => {
 					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Error })
@@ -209,7 +220,7 @@ export const claimStakingRewards = createAsyncThunk<void, void, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Error })
@@ -227,7 +238,7 @@ export const claimStakingRewardsV2 = createAsyncThunk<void, void, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Error })
@@ -245,7 +256,7 @@ export const compoundRewards = createAsyncThunk<void, void, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingV2Data())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Error })
@@ -315,8 +326,7 @@ export const claimMultipleAllRewards = createAsyncThunk<void, void, ThunkConfig>
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setClaimAllRewardsStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
-				dispatch(fetchClaimableRewards())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setClaimAllRewardsStatus', payload: FetchStatus.Error })
@@ -338,8 +348,7 @@ export const claimMultipleKwentaRewards = createAsyncThunk<void, void, ThunkConf
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setClaimKwentaRewardsStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
-				dispatch(fetchClaimableRewards())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setClaimKwentaRewardsStatus', payload: FetchStatus.Error })
@@ -361,8 +370,7 @@ export const claimMultipleOpRewards = createAsyncThunk<void, void, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setClaimOpRewardsStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
-				dispatch(fetchClaimableRewards())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setClaimOpRewardsStatus', payload: FetchStatus.Error })
@@ -384,8 +392,7 @@ export const claimMultipleSnxOpRewards = createAsyncThunk<void, void, ThunkConfi
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setClaimSnxOpRewardsStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
-				dispatch(fetchClaimableRewards())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setClaimSnxOpRewardsStatus', payload: FetchStatus.Error })
@@ -403,7 +410,7 @@ export const stakeEscrow = createAsyncThunk<void, BigNumber, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setStakeEscrowedStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setStakeEscrowedStatus', payload: FetchStatus.Error })
@@ -421,7 +428,7 @@ export const unstakeEscrow = createAsyncThunk<void, BigNumber, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setUnstakeEscrowedStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setUnstakeEscrowedStatus', payload: FetchStatus.Error })
@@ -441,7 +448,7 @@ export const stakeKwenta = createAsyncThunk<void, BigNumber, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setStakeStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setStakeStatus', payload: FetchStatus.Error })
@@ -459,7 +466,7 @@ export const unstakeKwenta = createAsyncThunk<void, BigNumber, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Error })
@@ -477,7 +484,7 @@ export const stakeEscrowV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setStakeEscrowedStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setStakeEscrowedStatus', payload: FetchStatus.Error })
@@ -495,7 +502,7 @@ export const unstakeEscrowV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setUnstakeEscrowedStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setUnstakeEscrowedStatus', payload: FetchStatus.Error })
@@ -515,7 +522,7 @@ export const stakeKwentaV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setStakeStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setStakeStatus', payload: FetchStatus.Error })
@@ -533,7 +540,7 @@ export const unstakeKwentaV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Success })
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
 				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Error })

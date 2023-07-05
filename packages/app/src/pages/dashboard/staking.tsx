@@ -10,14 +10,8 @@ import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
 import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors'
+import { useFetchStakeMigrateData } from 'state/futures/hooks'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import {
-	fetchClaimableRewards,
-	fetchEscrowData,
-	fetchEscrowV2Data,
-	fetchStakingData,
-	fetchStakingV2Data,
-} from 'state/staking/actions'
 import {
 	selectClaimableBalance,
 	selectClaimableBalanceV2,
@@ -69,6 +63,8 @@ const StakingPage: StakingComponent = () => {
 	const opPrice = useAppSelector(selectOpPrice)
 	const kwentaPrice = useAppSelector(selectKwentaPrice)
 
+	useFetchStakeMigrateData()
+
 	const isMigrationActive = useMemo(
 		() => claimableBalanceV1.gt(ZERO_WEI) || stakedKwentaBalanceV1.gt(ZERO_WEI),
 		[claimableBalanceV1, stakedKwentaBalanceV1]
@@ -88,12 +84,6 @@ const StakingPage: StakingComponent = () => {
 
 	useEffect(() => {
 		if (!!walletAddress) {
-			dispatch(fetchStakingData()).then(() => {
-				dispatch(fetchClaimableRewards())
-				dispatch(fetchStakingV2Data())
-			})
-			dispatch(fetchEscrowData())
-			dispatch(fetchEscrowV2Data())
 			setRewardBalance(kwentaPrice.mul(kwentaRewards).add(opPrice.mul(opRewards.add(snxOpRewards))))
 		}
 	}, [dispatch, kwentaPrice, kwentaRewards, opPrice, opRewards, snxOpRewards, walletAddress])
@@ -113,7 +103,7 @@ const StakingPage: StakingComponent = () => {
 		[stakedResetTime]
 	)
 
-	const STAKING_CARDS: StakingCards[] = [
+	const stakingInfo: StakingCards[] = [
 		{
 			category: t('dashboard.stake.portfolio.balance.title'),
 			card: [
@@ -172,13 +162,11 @@ const StakingPage: StakingComponent = () => {
 					key: 'early-vest-rewards-claimable',
 					title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
 					value: NO_VALUE,
-					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 				{
 					key: 'early-vest-rewards-epoch',
 					title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
 					value: NO_VALUE,
-					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 			],
 		},
@@ -189,7 +177,6 @@ const StakingPage: StakingComponent = () => {
 					key: 'cooldown-time-left',
 					title: t('dashboard.stake.portfolio.cooldown.time-left'),
 					value: timeLeft,
-					onClick: () => setCurrentTab(StakeTab.Staking),
 				},
 			],
 		},
@@ -202,7 +189,7 @@ const StakingPage: StakingComponent = () => {
 			<Head>
 				<title>{t('dashboard-stake.page-title')}</title>
 			</Head>
-			<StakingPortfolio cards={STAKING_CARDS} />
+			<StakingPortfolio cards={stakingInfo} />
 			<StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />
 		</>
 	)

@@ -552,6 +552,7 @@
 			}
 		},
 		"stake": {
+			"docs": "Docs →",
 			"portfolio": {
 				"title": "Kwenta Staking",
 				"balance": {
@@ -661,7 +662,8 @@
 					"claim": "Claim",
 					"unstake": "Unstake",
 					"stake": "Stake",
-					"approve": "Approve"
+					"approve": "Approve",
+					"step": "Step <0>{{index}}</0>"
 				},
 				"redeem": {
 					"title": "Redeem"

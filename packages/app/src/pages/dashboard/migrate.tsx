@@ -1,8 +1,8 @@
 import { truncateNumbers } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import Head from 'next/head'
-import React, { ReactNode, useEffect, useMemo, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
+import React, { ReactNode, useMemo, useCallback } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from 'components/Button'
@@ -17,11 +17,6 @@ import StakingPortfolio from 'sections/dashboard/Stake/StakingPortfolio'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
 	approveKwentaToken,
-	fetchClaimableRewards,
-	fetchEscrowData,
-	fetchEscrowV2Data,
-	fetchStakingData,
-	fetchStakingV2Data,
 	claimStakingRewards,
 	stakeKwentaV2,
 	unstakeKwenta,
@@ -39,7 +34,6 @@ import {
 	selectTotalVestable,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
-import { selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
 
 import { StakingCards } from './staking'
@@ -49,7 +43,6 @@ type MigrateComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element
 const MigratePage: MigrateComponent = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const walletAddress = useAppSelector(selectWallet)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const claimableBalanceV2 = useAppSelector(selectClaimableBalanceV2)
@@ -79,18 +72,7 @@ const MigratePage: MigrateComponent = () => {
 		}
 	}, [dispatch, kwentaBalance, kwentaStakingV2Approved])
 
-	useEffect(() => {
-		if (!!walletAddress) {
-			dispatch(fetchStakingData()).then(() => {
-				dispatch(fetchClaimableRewards())
-				dispatch(fetchStakingV2Data())
-			})
-			dispatch(fetchEscrowData())
-			dispatch(fetchEscrowV2Data())
-		}
-	}, [dispatch, walletAddress])
-
-	const MIGRATE_STEPS = useMemo(
+	const migrationSteps = useMemo(
 		() => [
 			{
 				key: 'step-1',
@@ -225,13 +207,19 @@ const MigratePage: MigrateComponent = () => {
 					textTransform="none"
 					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
 				>
-					Docs →
+					{t('dashboard.stake.docs')}
 				</StyledButton>
 			</StakingHeading>
 			<StepsContainer columnGap="15px">
-				{MIGRATE_STEPS.map(({ key, copy, label, value, buttonLabel, active, onClick }, i) => (
+				{migrationSteps.map(({ key, copy, label, value, buttonLabel, active, onClick }, i) => (
 					<StyledStakingCard key={key} $active={active}>
-						<StyledHeading variant="h4">Step {i + 1}</StyledHeading>
+						<StyledHeading variant="h4">
+							<Trans
+								i18nKey="dashboard.stake.tabs.migrate.step"
+								values={{ index: i + 1 }}
+								components={[<span />]}
+							/>
+						</StyledHeading>
 						<Body size="small" color="secondary">
 							{copy}
 						</Body>
