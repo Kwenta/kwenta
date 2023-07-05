@@ -60,17 +60,17 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				href: ROUTES.Dashboard.Markets,
 			},
 			{
+				name: Tab.Stake,
+				label: t('dashboard.tabs.staking'),
+				active: activeTab === Tab.Stake,
+				href: ROUTES.Dashboard.Stake,
+			},
+			{
 				name: Tab.Governance,
 				label: t('dashboard.tabs.governance'),
 				active: activeTab === Tab.Governance,
 				href: EXTERNAL_LINKS.Docs.Governance,
 				external: true,
-			},
-			{
-				name: Tab.Stake,
-				label: t('dashboard.tabs.staking'),
-				active: activeTab === Tab.Stake,
-				href: ROUTES.Dashboard.Stake,
 			},
 		],
 		[t, activeTab]
