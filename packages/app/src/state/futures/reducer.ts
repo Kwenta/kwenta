@@ -1,4 +1,4 @@
-import { PERIOD_IN_SECONDS, Period } from '@kwenta/sdk/constants'
+import { Period } from '@kwenta/sdk/constants'
 import {
 	NetworkId,
 	SmartMarginOrderType,

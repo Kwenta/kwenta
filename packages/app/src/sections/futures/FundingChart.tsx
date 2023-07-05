@@ -40,7 +40,7 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	return (
 		<FundingChartWrapper $display={display}>
 			<FundingPeriodToggle />
-			<div style={{ flex: 1 }}>
+			<FundingChartContainer>
 				<ResponsiveContainer minWidth={1} minHeight={1} height="100%" width="100%">
 					<LineChart
 						data={historicalFundingRates[marketAsset]}
@@ -72,7 +72,7 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 						/>
 					</LineChart>
 				</ResponsiveContainer>
-			</div>
+			</FundingChartContainer>
 		</FundingChartWrapper>
 	)
 }
@@ -88,6 +88,10 @@ const FundingChartWrapper = styled.div<{ $display: boolean }>`
 		css`
 			display: none;
 		`}
+`
+
+const FundingChartContainer = styled.div`
+	flex: 1;
 `
 
 export default FundingChart
