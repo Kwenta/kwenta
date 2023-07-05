@@ -1,4 +1,5 @@
 import { formatChartTime } from '@kwenta/sdk/utils'
+import format from 'date-fns/format'
 import { FC } from 'react'
 import {
 	LineChart,
@@ -21,6 +22,8 @@ import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip'
 type FundingChartProps = {
 	display?: boolean
 }
+
+const formatFundingDate = (date: Date | number) => format(date, 'MMM d')
 
 const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	const theme = useTheme()
@@ -48,7 +51,7 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 					dataKey="timestamp"
 					type="number"
 					scale="time"
-					tickFormatter={formatChartTime}
+					tickFormatter={formatFundingDate}
 					minTickGap={75}
 					domain={['dataMin', 'dataMax']}
 				/>
