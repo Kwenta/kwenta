@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import React, { ReactNode } from 'react'
 import styled from 'styled-components'
+
 import LinkIconLight from 'assets/svg/app/link-light.svg'
+import { FlexDivRowCentered } from 'components/layout/flex'
 import { linkCSS } from 'styles/common'
-import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 
 type NavButtonProps = {
 	title: string
