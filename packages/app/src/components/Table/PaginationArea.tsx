@@ -49,16 +49,19 @@ const PaginationArea: React.FC<PaginationAreaProps> = ({
 	}
 
 	return (
-		<Pagination
-			compact={compact}
-			pageIndex={pageIndex}
-			pageCount={pageCount}
-			canNextPage={canNextPage}
-			canPreviousPage={canPreviousPage}
-			setPage={gotoPage}
-			previousPage={previousPage}
-			nextPage={nextPage}
-		/>
+		<>
+			<Pagination
+				compact={compact}
+				pageIndex={pageIndex}
+				pageCount={pageCount}
+				canNextPage={canNextPage}
+				canPreviousPage={canPreviousPage}
+				setPage={gotoPage}
+				previousPage={previousPage}
+				nextPage={nextPage}
+			/>
+			{children}
+		</>
 	)
 }
 

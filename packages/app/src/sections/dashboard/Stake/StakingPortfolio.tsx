@@ -59,7 +59,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 }
 
 const StyledFlexDivCol = styled(FlexDivCol)`
-	${media.lessThan('lg')`
+	${media.lessThan('sm')`
 		flex: 1;
 	`}
 `
@@ -90,11 +90,13 @@ const CardsContainer = styled(FlexDivRowCentered)`
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
 	border-radius: 20px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
-	width: 100%;
 	justify-content: flex-start;
 	column-gap: 50px;
 	row-gap: 25px;
-	flex-wrap: wrap;
+	flex-flow: row wrap;
+	${media.lessThan('md')`
+		column-gap: 25px;
+	`}
 `
 
 export default StakingPortfolio

@@ -10,7 +10,7 @@ import styled from 'styled-components'
 import Badge from 'components/Badge'
 import Button from 'components/Button'
 import { Checkbox } from 'components/Checkbox'
-import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { LargeScreenView, SmallScreenView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
@@ -19,6 +19,7 @@ import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewardsV2 } from 'state/staking/actions'
 import { selectEscrowData, selectEscrowV2Data } from 'state/staking/selectors'
+import media from 'styles/media'
 import common from 'styles/theme/colors/common'
 
 import VestConfirmationModal from './VestConfirmationModal'
@@ -91,19 +92,21 @@ const EscrowTable = () => {
 	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), [])
 
 	const EscrowStatsContainer = () => (
-		<FlexDivRowCentered columnGap="25px" justifyContent="flex-end">
-			<FlexDivCol alignItems="flex-end">
-				<Body color="secondary">{t('dashboard.stake.tabs.escrow.total')}</Body>
-				<Body color="primary">
-					{truncateNumbers(totalVestable, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
-				</Body>
-			</FlexDivCol>
-			<FlexDivCol alignItems="flex-end">
-				<Body color="secondary">{t('dashboard.stake.tabs.escrow.fee')}</Body>
-				<Body color="primary">
-					{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
-				</Body>
-			</FlexDivCol>
+		<StatsContainer columnGap="25px" justifyContent="flex-end">
+			<LabelContainers columnGap="25px" justifyContent="center">
+				<LabelContainer alignItems="flex-end">
+					<Body color="secondary">{t('dashboard.stake.tabs.escrow.total')}</Body>
+					<Body color="primary">
+						{truncateNumbers(totalVestable, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+					</Body>
+				</LabelContainer>
+				<LabelContainer alignItems="flex-end">
+					<Body color="secondary">{t('dashboard.stake.tabs.escrow.fee')}</Body>
+					<Body color="primary">
+						{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+					</Body>
+				</LabelContainer>
+			</LabelContainers>
 			<Button
 				variant="yellow"
 				size="xsmall"
@@ -113,7 +116,7 @@ const EscrowTable = () => {
 			>
 				{t('dashboard.stake.tabs.escrow.vest')}
 			</Button>
-		</FlexDivRowCentered>
+		</StatsContainer>
 	)
 
 	return (
@@ -242,6 +245,7 @@ const EscrowTable = () => {
 					pageSize={5}
 					showPagination
 					columnsDeps={columnsDeps}
+					children={<EscrowStatsContainer />}
 					columns={[
 						{
 							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
@@ -315,6 +319,37 @@ const EscrowTable = () => {
 		</EscrowTableContainer>
 	)
 }
+
+const LabelContainer = styled(FlexDivCol)`
+	${media.lessThan('lg')`
+		align-items: flex-start;
+		flex: 1
+	`}
+
+	${media.lessThan('sm')`
+		flex: initial;
+	`}
+`
+
+const LabelContainers = styled(FlexDivRow)`
+	${media.lessThan('lg')`
+		justify-content: flex-start;
+		width: 100%;
+	`}
+`
+
+const StatsContainer = styled(FlexDivRowCentered)`
+	${media.lessThan('lg')`
+		flex-direction: column;
+		row-gap: 15px;
+		padding: 15px 0;
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
+		border-bottom-left-radius: 10px;
+		border-bottom-right-radius: 10px;
+		align-items: flex-start;
+		padding-left: 25px;
+	`}
+`
 
 const StyledBadge = styled(Badge)`
 	padding: 0 6px;

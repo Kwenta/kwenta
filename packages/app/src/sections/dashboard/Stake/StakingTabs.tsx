@@ -95,7 +95,7 @@ const TabButtons = styled.div`
 	}
 
 	${media.lessThan('md')`
-		justify-content: space-around;
+		justify-content: flex-start;
 	`}
 `
 
