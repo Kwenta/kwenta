@@ -141,7 +141,7 @@ const StyledLeftSideContent = styled(LeftSideContent)`
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: 160px 1fr 150px;
+	grid-template-columns: 165px 1fr 150px;
 	height: 100%;
 	padding: 0 15px;
 `

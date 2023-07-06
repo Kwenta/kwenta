@@ -144,7 +144,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 							: t('dashboard.stake.tabs.stake-table.unstake')}
 					</Button>
 					<ErrorView
-						message={t('dashboard.stake.portfolio.cooldown.title')}
+						message={t('dashboard.stake.portfolio.cooldown.warning')}
 						containerStyle={{ margin: '0', marginTop: '25px' }}
 					/>
 				</FlexDivCol>
