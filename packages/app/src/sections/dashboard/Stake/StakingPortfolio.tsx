@@ -59,9 +59,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 }
 
 const StyledFlexDivCol = styled(FlexDivCol)`
-	${media.lessThan('sm')`
-		flex: 1;
-	`}
+	width: 135px;
 `
 
 const StyledButton = styled(Button)`
