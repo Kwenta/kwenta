@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 
 import TextToggle from 'components/TextToggle'
-import { setShowTradeHistory } from 'state/futures/reducer'
+import { toggleShowTradeHistory } from 'state/futures/reducer'
 import { selectShowHistory } from 'state/futures/selectors'
 import { useAppSelector, useAppDispatch } from 'state/hooks'
 
@@ -10,8 +10,8 @@ const HistoryToggle = () => {
 	const showHistory = useAppSelector(selectShowHistory)
 
 	const handleHistoryChange = useCallback(() => {
-		dispatch(setShowTradeHistory(!showHistory))
-	}, [dispatch, showHistory])
+		dispatch(toggleShowTradeHistory())
+	}, [dispatch])
 
 	return (
 		<TextToggle

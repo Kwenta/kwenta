@@ -376,8 +376,8 @@ const futuresSlice = createSlice({
 		setTradePanelDrawerOpen: (state, action: PayloadAction<boolean>) => {
 			state.tradePanelDrawerOpen = action.payload
 		},
-		setShowTradeHistory: (state, action: PayloadAction<boolean>) => {
-			state.preferences.showHistory = action.payload
+		toggleShowTradeHistory: (state) => {
+			state.preferences.showHistory = !state.preferences.showHistory
 		},
 		setSelectedChart: (state, action: PayloadAction<'price' | 'funding'>) => {
 			state.selectedChart = action.payload
@@ -786,7 +786,7 @@ export const {
 	setSLTPModalStopLoss,
 	setSLTPModalTakeProfit,
 	setTradePanelDrawerOpen,
-	setShowTradeHistory,
+	toggleShowTradeHistory,
 	setSelectedChart,
 	setHistoricalFundingRatePeriod,
 } = futuresSlice.actions

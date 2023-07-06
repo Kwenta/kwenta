@@ -25,7 +25,7 @@ type FundingChartProps = {
 
 const formatFundingDate = (date: Date | number) => format(date, 'MMM d')
 
-const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
+const FundingChart: FC<FundingChartProps> = ({ display }) => {
 	const theme = useTheme()
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const period = useAppSelector(selectHistoricalFundingRatePeriod)
@@ -41,7 +41,7 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 		<FundingChartWrapper $display={display}>
 			<FundingPeriodToggle />
 			<FundingChartContainer>
-				<ResponsiveContainer minWidth={1} minHeight={1} height="100%" width="100%">
+				<ResponsiveContainer width="100%" height="100%">
 					<LineChart
 						data={historicalFundingRates[marketAsset]}
 						margin={{ top: 30, right: 50, left: 30, bottom: 15 }}
@@ -77,11 +77,10 @@ const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	)
 }
 
-const FundingChartWrapper = styled.div<{ $display: boolean }>`
+const FundingChartWrapper = styled.div<{ $display?: boolean }>`
 	display: flex;
 	flex-direction: column;
-	height: 100%;
-	width: 100%;
+	flex: 1;
 
 	${(props) =>
 		!props.$display &&

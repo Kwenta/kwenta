@@ -36,6 +36,7 @@ const FundingPeriodToggle = () => {
 }
 
 const PeriodToggleContainer = styled.div`
+	width: 100%;
 	display: flex;
 	padding: 15px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.newTheme.border.style};
