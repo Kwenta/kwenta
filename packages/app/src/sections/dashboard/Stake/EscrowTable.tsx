@@ -1,6 +1,6 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { EscrowData } from '@kwenta/sdk/types'
-import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber, formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +11,7 @@ import Badge from 'components/Badge'
 import Button from 'components/Button'
 import { Checkbox } from 'components/Checkbox'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
-import { LargeScreenView, SmallScreenView } from 'components/Media'
+import { DesktopLargeOnlyView, DesktopSmallOnlyView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
@@ -121,7 +121,7 @@ const EscrowTable = () => {
 
 	return (
 		<EscrowTableContainer $noPadding>
-			<LargeScreenView>
+			<DesktopLargeOnlyView>
 				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
@@ -169,7 +169,9 @@ const EscrowTable = () => {
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<FlexDivRowCentered columnGap="10px">
-									<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
+									<TableCell>
+										{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
+									</TableCell>
 									{cellProps.row.original.version === 1 ? (
 										<StyledBadge color="yellow" size="small">
 											V1
@@ -199,7 +201,9 @@ const EscrowTable = () => {
 								</TableHeader>
 							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{truncateNumbers(cellProps.row.original.vestable, 4)}</TableCell>
+								<TableCell>
+									{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
+								</TableCell>
 							),
 							accessor: 'immediatelyVestable',
 							width: 80,
@@ -214,7 +218,9 @@ const EscrowTable = () => {
 								const fee = wei(cellProps.row.original.fee)
 								return (
 									<TableCell color={common.palette.yellow.y500}>
-										{`${truncateNumbers(cellProps.row.original.fee, 2)} (${formatPercent(
+										{`${formatNumber(cellProps.row.original.fee, {
+											suggestDecimals: true,
+										})} (${formatPercent(
 											cellProps.row.original.amount !== null
 												? fee.div(cellProps.row.original.amount)
 												: ZERO_WEI,
@@ -236,8 +242,8 @@ const EscrowTable = () => {
 						},
 					]}
 				/>
-			</LargeScreenView>
-			<SmallScreenView>
+			</DesktopLargeOnlyView>
+			<DesktopSmallOnlyView>
 				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
@@ -248,23 +254,37 @@ const EscrowTable = () => {
 					children={<EscrowStatsContainer />}
 					columns={[
 						{
-							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
+							Header: () => (
+								<Checkbox
+									id="header"
+									label=""
+									checked={checkAllState}
+									onChange={selectAll}
+									variant="table"
+									checkSide="left"
+								/>
+							),
 							Cell: (cellProps: CellProps<EscrowData>) => (
-								<input
+								<Checkbox
+									id={cellProps.row.index.toString()}
 									key={cellProps.row.index}
-									type="checkbox"
 									checked={checkedState[cellProps.row.index]}
 									onChange={handleOnChange(cellProps.row.index)}
+									label=""
+									variant="table"
+									checkSide="left"
 								/>
 							),
 							accessor: 'selected',
-							width: 40,
+							width: 30,
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
 								<FlexDivRowCentered columnGap="10px">
-									<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
+									<TableCell>
+										{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
+									</TableCell>
 									{cellProps.row.original.version === 1 ? (
 										<StyledBadge color="yellow" size="small">
 											V1
@@ -283,7 +303,9 @@ const EscrowTable = () => {
 								const fee = wei(cellProps.row.original.fee)
 								return (
 									<TableCell color={common.palette.yellow.y500}>
-										<span>{truncateNumbers(cellProps.row.original.fee, 2)} KWENTA</span>
+										<span>
+											{formatNumber(cellProps.row.original.fee, { suggestDecimals: true })} KWENTA
+										</span>
 										<span>
 											{formatPercent(
 												cellProps.row.original.amount !== null
@@ -296,7 +318,7 @@ const EscrowTable = () => {
 								)
 							},
 							accessor: 'earlyVestFee',
-							width: 90,
+							width: 100,
 						},
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
@@ -308,7 +330,7 @@ const EscrowTable = () => {
 						},
 					]}
 				/>
-			</SmallScreenView>
+			</DesktopSmallOnlyView>
 			{isConfirmModalOpen && (
 				<VestConfirmationModal
 					totalFee={totalFee}

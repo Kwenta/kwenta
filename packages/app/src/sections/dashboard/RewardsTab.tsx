@@ -35,7 +35,7 @@ type EpochValue = {
 	label: string
 }
 
-const RewardsTabs: FC<TradingRewardProps> = ({ period = 0 }) => {
+const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 	const isL2 = useIsL2()
@@ -349,4 +349,4 @@ const CardsContainer = styled(FlexDivRow)`
 	flex-wrap: wrap;
 `
 
-export default RewardsTabs
+export default RewardsTab

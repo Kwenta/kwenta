@@ -581,7 +581,8 @@
 				},
 				"cooldown": {
 					"title": "Cooldown",
-					"time-left": "Time Left"
+					"time-left": "Time Left",
+					"warning": "2 week unstaking cooldown lock"
 				}
 			},
 			"tabs": {

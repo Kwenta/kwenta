@@ -24,7 +24,6 @@ export const ROUTES = {
 		Stake: normalizeRoute('/dashboard', 'staking', 'tab'),
 		Rewards: normalizeRoute('/dashboard', 'rewards', 'tab'),
 		TradingRewards: formatUrl('/dashboard/staking', { tab: 'trading-rewards' }),
-		Migrate: normalizeRoute('/dashboard', 'migrate', 'tab'),
 	},
 	Exchange: {
 		Home: '/exchange',
