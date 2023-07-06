@@ -75,8 +75,8 @@ importers:
         specifier: ^5.7.2
         version: 5.7.2
       '@gnosis.pm/safe-apps-provider':
-        specifier: ^0.14.0
-        version: 0.14.0
+        specifier: ^0.15.1
+        version: 0.15.1
       '@gnosis.pm/safe-apps-sdk':
         specifier: ^7.8.0
         version: 7.8.0
@@ -3729,8 +3729,8 @@ packages:
     resolution: {integrity: sha512-cEee/Z+I12mZcFJshKcCqC8tuX5hG3s+d+9nZ3LabqKF1vKdF41B92pJVCBggjAGORAeOzyyDDKrZwIkLffeOQ==}
     dev: true
 
-  /@gnosis.pm/safe-apps-provider@0.14.0:
-    resolution: {integrity: sha512-qOkPUfIu9dLoy4Muo40xzswqix7ZoJDmtEl35D+oYYa6JDw8cr4tVkPPjl6eDPNtMLiqGjs1POzHdZrfC8aHVw==}
+  /@gnosis.pm/safe-apps-provider@0.15.1:
+    resolution: {integrity: sha512-jVU0jpXf30HFdLHSHkmscIm04BYSwfoddjcHI4uPolP+u4F+tHRgfah1xo4XNRSCDqs4GTq38d7YAipGTj0CLA==}
     dependencies:
       '@gnosis.pm/safe-apps-sdk': 7.8.0
       events: 3.3.0
