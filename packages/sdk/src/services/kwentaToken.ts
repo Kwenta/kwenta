@@ -477,11 +477,11 @@ export default class KwentaTokenService {
 	}
 
 	public stakeEscrowedKwenta(amount: string | BigNumber) {
-		return this.performStakeAction('stake', amount, { escrow: true, version: 2 })
+		return this.performStakeAction('stake', amount, { escrow: true, version: 1 })
 	}
 
 	public unstakeEscrowedKwenta(amount: string | BigNumber) {
-		return this.performStakeAction('unstake', amount, { escrow: true, version: 2 })
+		return this.performStakeAction('unstake', amount, { escrow: true, version: 1 })
 	}
 
 	public stakeKwentaV2(amount: string | BigNumber) {
@@ -794,8 +794,8 @@ export default class KwentaTokenService {
 		const contract =
 			options?.version === 1
 				? options?.escrow
-					? KwentaStakingRewards
-					: RewardEscrow
+					? RewardEscrow
+					: KwentaStakingRewards
 				: KwentaStakingRewardsV2
 
 		return this.sdk.transactions.createContractTxn(
