@@ -145,7 +145,11 @@ const StakeCard: FC<StakeCardProps> = memo(
 					</Button>
 					<ErrorView
 						message={t('dashboard.stake.portfolio.cooldown.warning')}
-						containerStyle={{ margin: '0', marginTop: '25px' }}
+						containerStyle={{
+							margin: '0',
+							marginTop: '25px',
+							padding: '10px 0',
+						}}
 					/>
 				</FlexDivCol>
 			</StakingInputCardContainer>
