@@ -8,6 +8,7 @@ import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg'
 import RightArrowIcon from 'assets/svg/app/caret-right.svg'
 import { GridDivCenteredCol } from 'components/layout/grid'
 import { resetButtonCSS } from 'styles/common'
+import media from 'styles/media'
 
 type PaginationProps = {
 	pageIndex: number
@@ -38,14 +39,14 @@ const Pagination: FC<PaginationProps> = React.memo(
 
 		return (
 			<PaginationContainer compact={compact}>
-				<span>
+				<ArrowButtonContainer>
 					<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
 						<LeftEndArrowIcon />
 					</ArrowButton>
 					<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
 						<LeftArrowIcon />
 					</ArrowButton>
-				</span>
+				</ArrowButtonContainer>
 				<PageInfo>
 					{t('common.pagination.page')}{' '}
 					{t('common.pagination.page-of-total-pages', {
@@ -53,18 +54,26 @@ const Pagination: FC<PaginationProps> = React.memo(
 						totalPages: pageCount,
 					})}
 				</PageInfo>
-				<span>
+				<ArrowButtonContainer>
 					<ArrowButton onClick={nextPage} disabled={!canNextPage}>
 						<RightArrowIcon />
 					</ArrowButton>
 					<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
 						<RightEndArrowIcon />
 					</ArrowButton>
-				</span>
+				</ArrowButtonContainer>
 			</PaginationContainer>
 		)
 	}
 )
+
+const ArrowButtonContainer = styled.div`
+	${media.lessThan('lg')`
+		display: flex;
+		felx-direction: row;
+		column-gap: 5px;
+	`}
+`
 
 const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -76,6 +85,11 @@ const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 	justify-items: center;
+
+	${media.lessThan('lg')`
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		border-radius: 0px;
+	`}
 `
 
 const ArrowButton = styled.button`
@@ -90,6 +104,20 @@ const ArrowButton = styled.button`
 		height: 14px;
 		fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
+
+	${media.lessThan('lg')`
+		border: none;
+		border-radius: 100px;
+		padding: 4px;
+		width: 24px;
+		height: 24px;
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
+
+		svg {
+			width: 9px;
+			height: 9px;
+		}
+	`}
 `
 
 export default Pagination
