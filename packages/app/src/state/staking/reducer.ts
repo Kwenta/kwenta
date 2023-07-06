@@ -18,7 +18,6 @@ import {
 	vestEscrowedRewards,
 	fetchStakingV2Data,
 	fetchEscrowV2Data,
-	fetchStakeMigrateData,
 } from './actions'
 import { StakingState } from './types'
 

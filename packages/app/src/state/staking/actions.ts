@@ -163,11 +163,11 @@ export const fetchEscrowV2Data = createAsyncThunk<
 export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
 	'stakeMigrateData/fetch',
 	async (_, { dispatch }) => {
-		await dispatch(fetchStakingData())
-		await dispatch(fetchClaimableRewards())
-		await dispatch(fetchStakingV2Data())
-		await dispatch(fetchEscrowData())
-		await dispatch(fetchEscrowV2Data())
+		dispatch(fetchStakingData())
+		dispatch(fetchClaimableRewards())
+		dispatch(fetchStakingV2Data())
+		dispatch(fetchEscrowData())
+		dispatch(fetchEscrowV2Data())
 	}
 )
 
@@ -212,7 +212,7 @@ export const vestEscrowedRewardsV2 = createAsyncThunk<void, number[], ThunkConfi
 )
 
 export const claimStakingRewards = createAsyncThunk<void, void, ThunkConfig>(
-	'staking/getReward',
+	'staking/claimStakingRewards',
 	async (_, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.claimStakingRewards()
 

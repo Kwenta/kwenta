@@ -1,6 +1,6 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { EscrowData } from '@kwenta/sdk/types'
-import { formatNumber, formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber, formatPercent } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -97,14 +97,12 @@ const EscrowTable = () => {
 				<LabelContainer alignItems="flex-end">
 					<Body color="secondary">{t('dashboard.stake.tabs.escrow.total')}</Body>
 					<Body color="primary">
-						{truncateNumbers(totalVestable, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
+						{formatNumber(totalVestable, { suggestDecimals: true })} KWENTA
 					</Body>
 				</LabelContainer>
 				<LabelContainer alignItems="flex-end">
 					<Body color="secondary">{t('dashboard.stake.tabs.escrow.fee')}</Body>
-					<Body color="primary">
-						{truncateNumbers(totalFee, 4)} {t('dashboard.stake.tabs.stake-table.kwenta-token')}
-					</Body>
+					<Body color="primary">{formatNumber(totalFee, { suggestDecimals: true })} KWENTA</Body>
 				</LabelContainer>
 			</LabelContainers>
 			<Button

@@ -103,84 +103,96 @@ const StakingPage: StakingComponent = () => {
 		[stakedResetTime]
 	)
 
-	const stakingInfo: StakingCards[] = [
-		{
-			category: t('dashboard.stake.portfolio.balance.title'),
-			card: [
-				{
-					key: 'balance-liquid',
-					title: t('dashboard.stake.portfolio.balance.liquid'),
-					value: truncateNumbers(kwentaBalance, 2),
-					onClick: () => setCurrentTab(StakeTab.Staking),
-				},
-				{
-					key: 'balance-staked',
-					title: t('dashboard.stake.portfolio.balance.staked'),
-					value: truncateNumbers(stakedKwentaBalance, 2),
-					onClick: () => setCurrentTab(StakeTab.Staking),
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.escrow.title'),
-			card: [
-				{
-					key: 'escrow-staked',
-					title: t('dashboard.stake.portfolio.escrow.staked'),
-					value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
-					onClick: () => setCurrentTab(StakeTab.Escrow),
-				},
-				{
-					key: 'escrow-vestable',
-					title: t('dashboard.stake.portfolio.escrow.vestable'),
-					value: truncateNumbers(totalVestable, 2),
-					onClick: () => setCurrentTab(StakeTab.Escrow),
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.rewards.title'),
-			card: [
-				{
-					key: 'rewards-claimable',
-					title: t('dashboard.stake.portfolio.rewards.claimable'),
-					value: truncateNumbers(claimableBalance, 2),
-					onClick: () => setCurrentTab(StakeTab.Staking),
-				},
-				{
-					key: 'rewards-trading',
-					title: t('dashboard.stake.portfolio.rewards.trading'),
-					value: formatDollars(rewardBalance, { maxDecimals: 2 }),
-					onClick: () => setCurrentTab(StakeTab.Staking),
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
-			card: [
-				{
-					key: 'early-vest-rewards-claimable',
-					title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
-					value: NO_VALUE,
-				},
-				{
-					key: 'early-vest-rewards-epoch',
-					title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
-					value: NO_VALUE,
-				},
-			],
-		},
-		{
-			category: t('dashboard.stake.portfolio.cooldown.title'),
-			card: [
-				{
-					key: 'cooldown-time-left',
-					title: t('dashboard.stake.portfolio.cooldown.time-left'),
-					value: timeLeft,
-				},
-			],
-		},
-	]
+	const stakingInfo: StakingCards[] = useMemo(
+		() => [
+			{
+				category: t('dashboard.stake.portfolio.balance.title'),
+				card: [
+					{
+						key: 'balance-liquid',
+						title: t('dashboard.stake.portfolio.balance.liquid'),
+						value: truncateNumbers(kwentaBalance, 2),
+						onClick: () => setCurrentTab(StakeTab.Staking),
+					},
+					{
+						key: 'balance-staked',
+						title: t('dashboard.stake.portfolio.balance.staked'),
+						value: truncateNumbers(stakedKwentaBalance, 2),
+						onClick: () => setCurrentTab(StakeTab.Staking),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.escrow.title'),
+				card: [
+					{
+						key: 'escrow-staked',
+						title: t('dashboard.stake.portfolio.escrow.staked'),
+						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+						onClick: () => setCurrentTab(StakeTab.Escrow),
+					},
+					{
+						key: 'escrow-vestable',
+						title: t('dashboard.stake.portfolio.escrow.vestable'),
+						value: truncateNumbers(totalVestable, 2),
+						onClick: () => setCurrentTab(StakeTab.Escrow),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.rewards.title'),
+				card: [
+					{
+						key: 'rewards-claimable',
+						title: t('dashboard.stake.portfolio.rewards.claimable'),
+						value: truncateNumbers(claimableBalance, 2),
+						onClick: () => setCurrentTab(StakeTab.Staking),
+					},
+					{
+						key: 'rewards-trading',
+						title: t('dashboard.stake.portfolio.rewards.trading'),
+						value: formatDollars(rewardBalance, { maxDecimals: 2 }),
+						onClick: () => setCurrentTab(StakeTab.Staking),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
+				card: [
+					{
+						key: 'early-vest-rewards-claimable',
+						title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
+						value: NO_VALUE,
+					},
+					{
+						key: 'early-vest-rewards-epoch',
+						title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
+						value: NO_VALUE,
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.cooldown.title'),
+				card: [
+					{
+						key: 'cooldown-time-left',
+						title: t('dashboard.stake.portfolio.cooldown.time-left'),
+						value: timeLeft,
+					},
+				],
+			},
+		],
+		[
+			claimableBalance,
+			kwentaBalance,
+			rewardBalance,
+			stakedEscrowedKwentaBalance,
+			stakedKwentaBalance,
+			t,
+			timeLeft,
+			totalVestable,
+		]
+	)
 
 	return isMigrationActive ? (
 		<MigratePage />
