@@ -65,12 +65,3 @@ export const parseEpochData = (index: number, networkId?: NetworkId) => {
 	const label = `Epoch ${index}`
 	return { period: index, start: epochStart, end: epochEnd, label }
 }
-
-export const useEstimatedReward = (fileName: string) => {
-	const network = useAppSelector(selectNetwork)
-	const walletAddress = useAppSelector(selectWallet)
-	const query = useGetFile(
-		`trading-rewards-snapshots/${network === 420 ? 'goerli-' : ''}${fileName}`
-	)
-	return BigNumber.from(query?.data?.claims[walletAddress!]?.amount ?? 0)
-}
