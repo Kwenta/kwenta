@@ -205,7 +205,7 @@ export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>
 )
 
 export const vestEscrowedRewardsV2 = createAsyncThunk<void, number[], ThunkConfig>(
-	'staking/vestEscrowedRewards',
+	'staking/vestEscrowedRewardsV2',
 	async (ids, { dispatch, extra: { sdk } }) => {
 		if (ids.length > 0) {
 			const { hash } = await sdk.kwentaToken.vestTokenV2(ids)
@@ -243,7 +243,7 @@ export const claimStakingRewards = createAsyncThunk<void, void, ThunkConfig>(
 )
 
 export const claimStakingRewardsV2 = createAsyncThunk<void, void, ThunkConfig>(
-	'staking/getReward',
+	'staking/claimStakingRewardsV2',
 	async (_, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.claimStakingRewardsV2()
 
@@ -489,7 +489,7 @@ export const unstakeKwenta = createAsyncThunk<void, BigNumber, ThunkConfig>(
 )
 
 export const stakeEscrowV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
-	'staking/stakeEscrow',
+	'staking/stakeEscrowV2',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.stakeEscrowedKwentaV2(amount)
 
@@ -507,7 +507,7 @@ export const stakeEscrowV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
 )
 
 export const unstakeEscrowV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
-	'staking/unstakeEscrow',
+	'staking/unstakeEscrowV2',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.unstakeEscrowedKwentaV2(amount)
 
@@ -527,7 +527,7 @@ export const unstakeEscrowV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
 // TODO: Consider merging this with the (stake|unstake)Escrow actions.
 
 export const stakeKwentaV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
-	'staking/stakeKwenta',
+	'staking/stakeKwentaV2',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.stakeKwentaV2(amount)
 
@@ -545,7 +545,7 @@ export const stakeKwentaV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
 )
 
 export const unstakeKwentaV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
-	'staking/unstakeKwenta',
+	'staking/unstakeKwentaV2',
 	async (amount, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.unstakeKwentaV2(amount)
 

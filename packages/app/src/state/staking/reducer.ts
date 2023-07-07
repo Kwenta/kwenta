@@ -19,6 +19,12 @@ import {
 	fetchStakingV2Data,
 	fetchEscrowV2Data,
 	fetchEstimatedRewards,
+	vestEscrowedRewardsV2,
+	stakeKwentaV2,
+	unstakeKwentaV2,
+	unstakeEscrowV2,
+	stakeEscrowV2,
+	claimStakingRewardsV2,
 } from './actions'
 import { StakingState } from './types'
 
@@ -198,6 +204,42 @@ const stakingSlice = createSlice({
 		})
 		builder.addCase(vestEscrowedRewards.rejected, (state) => {
 			state.vestEscrowedRewardsStatus = FetchStatus.Idle
+		})
+		builder.addCase(vestEscrowedRewardsV2.pending, (state) => {
+			state.vestEscrowedRewardsStatus = FetchStatus.Loading
+		})
+		builder.addCase(vestEscrowedRewardsV2.rejected, (state) => {
+			state.vestEscrowedRewardsStatus = FetchStatus.Idle
+		})
+		builder.addCase(stakeKwentaV2.pending, (state) => {
+			state.stakeStatus = FetchStatus.Loading
+		})
+		builder.addCase(stakeKwentaV2.rejected, (state) => {
+			state.stakeStatus = FetchStatus.Idle
+		})
+		builder.addCase(unstakeKwentaV2.pending, (state) => {
+			state.unstakeStatus = FetchStatus.Loading
+		})
+		builder.addCase(unstakeKwentaV2.rejected, (state) => {
+			state.unstakeStatus = FetchStatus.Idle
+		})
+		builder.addCase(stakeEscrowV2.pending, (state) => {
+			state.stakeEscrowedStatus = FetchStatus.Loading
+		})
+		builder.addCase(stakeEscrowV2.rejected, (state) => {
+			state.stakeEscrowedStatus = FetchStatus.Idle
+		})
+		builder.addCase(unstakeEscrowV2.pending, (state) => {
+			state.unstakeEscrowedStatus = FetchStatus.Loading
+		})
+		builder.addCase(unstakeEscrowV2.rejected, (state) => {
+			state.unstakeEscrowedStatus = FetchStatus.Idle
+		})
+		builder.addCase(claimStakingRewardsV2.pending, (state) => {
+			state.getRewardStatus = FetchStatus.Loading
+		})
+		builder.addCase(claimStakingRewardsV2.rejected, (state) => {
+			state.getRewardStatus = FetchStatus.Loading
 		})
 	},
 })
