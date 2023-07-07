@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import HelpIcon from 'assets/svg/app/question-mark.svg'
 import { NO_VALUE } from 'constants/placeholder'
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
@@ -36,6 +37,8 @@ export type StakingCards = {
 	category: string
 	card: StakingCard[]
 	onClick?: () => void
+	icon?: React.ReactNode
+	flex?: number
 }
 
 const StakingPage: StakingComponent = () => {
@@ -131,6 +134,7 @@ const StakingPage: StakingComponent = () => {
 			},
 			{
 				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
+				icon: <HelpIcon />,
 				card: [
 					{
 						key: 'early-vest-rewards-claimable',

@@ -37,9 +37,12 @@ const StakingPortfolio: FC<StakingPortfolioProps> = memo(({ cards }) => {
 				</StyledButton>
 			</StakingHeading>
 			<CardsContainer>
-				{cards.map(({ category, card, onClick }, i) => (
+				{cards.map(({ category, card, onClick, icon }, i) => (
 					<StyledFlexDivCol rowGap="15px" key={i} onClick={onClick}>
-						<Body size="large">{category}</Body>
+						<LabelContainer size="large">
+							{category}
+							{icon}
+						</LabelContainer>
 						<FlexDivRow columnGap="15px" justifyContent="flex-start">
 							{card.map(({ key, title, value, onClick }) => (
 								<FlexDivCol key={key} onClick={onClick} rowGap="5px">
@@ -56,6 +59,13 @@ const StakingPortfolio: FC<StakingPortfolioProps> = memo(({ cards }) => {
 		</StakingPortfolioContainer>
 	)
 })
+
+const LabelContainer = styled(Body)`
+	display: flex;
+	flex-direction: row;
+	column-gap: 5px;
+	align-items: center;
+`
 
 const StyledFlexDivCol = styled(FlexDivCol)`
 	${(props) =>

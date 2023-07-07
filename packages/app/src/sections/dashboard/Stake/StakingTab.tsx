@@ -3,11 +3,13 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import HelpIcon from 'assets/svg/app/question-mark.svg'
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { SplitContainer } from 'components/layout/grid'
 import { Body, Heading } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
+import { StakingCards } from 'pages/dashboard/staking'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimStakingRewardsV2, compoundRewards } from 'state/staking/actions'
@@ -36,10 +38,10 @@ const StakingTab = () => {
 		dispatch(compoundRewards())
 	}, [dispatch])
 
-	const stakingAndRewardsInfo = useMemo(
+	const stakingAndRewardsInfo: StakingCards[] = useMemo(
 		() => [
 			{
-				category: 'Staking',
+				category: t('dashboard.stake.tabs.staking.title'),
 				card: [
 					{
 						key: 'staking-staked',
@@ -67,6 +69,7 @@ const StakingTab = () => {
 			},
 			{
 				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
+				icon: <HelpIcon />,
 				card: [
 					{
 						key: 'early-vest-rewards-claimable',
@@ -93,9 +96,11 @@ const StakingTab = () => {
 					{t('dashboard.stake.tabs.staking.staking-rewards.title')}
 				</StyledHeading>
 				<CardsContainer>
-					{stakingAndRewardsInfo.map(({ category, card, flex }, i) => (
+					{stakingAndRewardsInfo.map(({ category, card, flex, icon }, i) => (
 						<FlexDivCol rowGap="15px" key={i}>
-							<Body size="large">{category}</Body>
+							<LabelContainer size="large">
+								{category} {icon}
+							</LabelContainer>
 							<FlexDivRow columnGap="25px" justifyContent="flex-start" style={{ flex }}>
 								{card.map(({ key, title, value }) => (
 									<FlexDivCol key={key}>
@@ -133,6 +138,13 @@ const StakingTab = () => {
 		</SplitContainer>
 	)
 }
+
+const LabelContainer = styled(Body)`
+	display: flex;
+	flex-direction: row;
+	column-gap: 5px;
+	align-items: center;
+`
 
 const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;

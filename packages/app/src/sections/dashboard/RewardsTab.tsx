@@ -5,6 +5,8 @@ import { FC, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import HelpIcon from 'assets/svg/app/question-mark.svg'
+import OptimismLogo from 'assets/svg/providers/optimism.svg'
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import LabelContainer from 'components/Nav/DropDownLabel'
@@ -37,6 +39,21 @@ type EpochValue = {
 	label: string
 }
 
+type RewardsInfo = {
+	key: string
+	title: string
+	copy: string
+	labels: RewardsCard[]
+	info: RewardsCard[]
+}
+
+type RewardsCard = {
+	label: string
+	value: string
+	labelIcon?: React.ReactNode
+	valueIcon?: React.ReactNode
+}
+
 const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
@@ -66,7 +83,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 			: ZERO_WEI
 	}, [futuresFeePaid, totalFuturesFeePaid])
 
-	const rewardsInfo = useMemo(
+	const rewardsInfo: RewardsInfo[] = useMemo(
 		() => [
 			{
 				key: 'trading-rewards',
@@ -75,10 +92,12 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 				labels: [
 					{
 						label: t('dashboard.stake.portfolio.rewards.title'),
+						labelIcon: <HelpIcon />,
 						value: formatNumber(kwentaRewards, { minDecimals: 4 }),
 					},
 					{
 						label: t('dashboard.stake.tabs.trading-rewards.fee-paid'),
+						labelIcon: <HelpIcon />,
 						value: formatDollars(futuresFeePaid, { minDecimals: 2 }),
 					},
 					{
@@ -100,8 +119,6 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 						value: formatNumber(estimatedKwentaRewards, { minDecimals: 4 }),
 					},
 				],
-				kwentaIcon: true,
-				linkIcon: true,
 			},
 			{
 				key: 'op-rewards',
@@ -111,6 +128,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 					{
 						label: t('dashboard.stake.portfolio.rewards.title'),
 						value: formatNumber(opRewards, { minDecimals: 4 }),
+						valueIcon: <OptimismLogo height={18} width={18} />,
 					},
 				],
 				info: [
@@ -119,8 +137,6 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 						value: formatNumber(estimatedOpRewards, { minDecimals: 4 }),
 					},
 				],
-				kwentaIcon: false,
-				linkIcon: false,
 			},
 			{
 				key: 'snx-rewards',
@@ -130,6 +146,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 					{
 						label: t('dashboard.stake.portfolio.rewards.title'),
 						value: formatNumber(snxOpRewards, { minDecimals: 4 }),
+						valueIcon: <OptimismLogo height={18} width={18} />,
 					},
 				],
 				info: [
@@ -138,8 +155,6 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 						value: NO_VALUE,
 					},
 				],
-				kwentaIcon: false,
-				linkIcon: false,
 			},
 		],
 		[
@@ -210,22 +225,27 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 						</div>
 						<RewardsContainer>
 							<FlexDivRow justifyContent="flex-start" columnGap="25px">
-								{labels.map(({ label, value }) => (
+								{labels.map(({ label, value, labelIcon, valueIcon }) => (
 									<FlexDivCol rowGap="5px">
-										<Body color="secondary">{label}</Body>
-										<Body size="large" color="preview">
+										<IconContainer color="secondary">
+											{label}
+											{labelIcon}
+										</IconContainer>
+										<IconContainer size="large" color="preview">
 											{value}
-										</Body>
+											{valueIcon}
+										</IconContainer>
 									</FlexDivCol>
 								))}
 							</FlexDivRow>
 							<FlexDivRow justifyContent="flex-start" columnGap="25px">
-								{info.map(({ label, value }) => (
+								{info.map(({ label, value, valueIcon }) => (
 									<FlexDivCol rowGap="5px">
 										<Body color="secondary">{label}</Body>
-										<Body size="large" color="primary">
+										<IconContainer size="large" color="primary">
 											{value}
-										</Body>
+											{valueIcon}
+										</IconContainer>
 									</FlexDivCol>
 								))}
 							</FlexDivRow>
@@ -248,6 +268,13 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 		</RewardsTabContainer>
 	)
 }
+
+const IconContainer = styled(Body)`
+	display: flex;
+	flex-direction: row;
+	column-gap: 5px;
+	align-items: center;
+`
 
 const SelectLabelContainer = styled(LabelContainer)`
 	font-size: 12px;
