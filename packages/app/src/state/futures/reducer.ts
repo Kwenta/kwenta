@@ -762,14 +762,14 @@ const futuresSlice = createSlice({
 
 		// Trading Fees by given epoch and trader
 		builder.addCase(fetchFuturesFeesForAccount.pending, (futuresState) => {
-			futuresState.queryStatuses.futuresFees = LOADING_STATUS
+			futuresState.queryStatuses.futuresFeesForAccount = LOADING_STATUS
 		})
 		builder.addCase(fetchFuturesFeesForAccount.fulfilled, (futuresState, action) => {
-			futuresState.queryStatuses.futuresFees = SUCCESS_STATUS
+			futuresState.queryStatuses.futuresFeesForAccount = SUCCESS_STATUS
 			futuresState.futuresFeesForAccount = action.payload.futuresFeePaid
 		})
 		builder.addCase(fetchFuturesFeesForAccount.rejected, (futuresState) => {
-			futuresState.queryStatuses.futuresFees = {
+			futuresState.queryStatuses.futuresFeesForAccount = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch fee data for the account',
 			}

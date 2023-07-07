@@ -1,3 +1,4 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { toWei } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
@@ -256,3 +257,10 @@ export const selectAPYV2 = createSelector(
 export const selectEscrowData = (state: RootState) => state.staking.escrowData ?? []
 
 export const selectEscrowV2Data = (state: RootState) => state.staking.escrowV2Data ?? []
+
+export const selectShowMigrationPage = createSelector(
+	selectClaimableBalance,
+	selectStakedKwentaBalance,
+	(claimableBalanceV1, stakedKwentaBalanceV1) =>
+		claimableBalanceV1.gt(ZERO_WEI) || stakedKwentaBalanceV1.gt(ZERO_WEI)
+)

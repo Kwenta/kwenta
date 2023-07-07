@@ -13,14 +13,13 @@ import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors'
 import { useFetchStakeMigrateData } from 'state/futures/hooks'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
-	selectClaimableBalance,
 	selectClaimableBalanceV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
 	selectOpRewards,
+	selectShowMigrationPage,
 	selectSnxOpRewards,
 	selectStakedEscrowedKwentaBalanceV2,
-	selectStakedKwentaBalance,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
 	selectTotalVestableV2,
@@ -48,9 +47,7 @@ const StakingPage: StakingComponent = () => {
 	const router = useRouter()
 	const dispatch = useAppDispatch()
 	const walletAddress = useAppSelector(selectWallet)
-	const claimableBalanceV1 = useAppSelector(selectClaimableBalance)
 	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
-	const stakedKwentaBalanceV1 = useAppSelector(selectStakedKwentaBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const totalVestable = useAppSelector(selectTotalVestableV2)
@@ -62,13 +59,9 @@ const StakingPage: StakingComponent = () => {
 	const snxOpRewards = useAppSelector(selectSnxOpRewards)
 	const opPrice = useAppSelector(selectOpPrice)
 	const kwentaPrice = useAppSelector(selectKwentaPrice)
+	const isMigrationActive = useAppSelector(selectShowMigrationPage)
 
 	useFetchStakeMigrateData()
-
-	const isMigrationActive = useMemo(
-		() => claimableBalanceV1.gt(ZERO_WEI) || stakedKwentaBalanceV1.gt(ZERO_WEI),
-		[claimableBalanceV1, stakedKwentaBalanceV1]
-	)
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
