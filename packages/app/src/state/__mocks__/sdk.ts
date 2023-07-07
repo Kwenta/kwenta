@@ -7,9 +7,9 @@ export const mockSetSigner = () => Promise.resolve()
 export const mockSubmitCrossMarginOrder = jest.fn(() => ({ test: 'THE TX' }))
 
 const mockFuturesService = {
-	getCrossMarginAccounts: () => ['0x7bCe4eF9d95129011528E502357C7772'],
+	getSmartMarginAccounts: () => ['0x7bCe4eF9d95129011528E502357C7772'],
 	getPreviousDayPrices: () => [],
-	getCrossMarginTradePreview: () => {
+	getSmartMarginTradePreview: () => {
 		return { ...MOCK_TRADE_PREVIEW }
 	},
 	getFuturesPositions: () => [],
@@ -18,8 +18,8 @@ const mockFuturesService = {
 	getConditionalOrders: () => [],
 	getIsolatedMarginTransfers: () => [],
 	getDelayedOrders: () => [],
-	getCrossMarginTransfers: () => [],
-	getCrossMarginBalanceInfo: () => ({
+	getSmartMarginTransfers: () => [],
+	getSmartMarginBalanceInfo: () => ({
 		freeMargin: wei('1000'),
 		keeperEthBal: wei('0.1'),
 		walletEthBal: wei('1'),
@@ -40,6 +40,7 @@ const mockSdk = {
 	transactions: {},
 	kwentaToken: {},
 	system: {},
+	perpsV3: { getMarkets: () => [] },
 	setProvider: mockSetProvider,
 	setSigner: mockSetSigner,
 }
