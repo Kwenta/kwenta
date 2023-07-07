@@ -217,6 +217,25 @@ export const selectTotalVestableV2 = createSelector(
 	wei
 )
 
+export const selectIsTimeLeftInCooldown = createSelector(
+	selectStakedResetTime,
+	(stakedResetTime) => stakedResetTime > new Date().getTime() / 1000
+)
+
+export const selectCanStakeKwenta = createSelector(
+	selectKwentaBalance,
+	selectIsStakingKwenta,
+	(kwentaBalance, isStakingKwenta) => kwentaBalance.gt(0) && !isStakingKwenta
+)
+
+export const selectCanUnstakeKwenta = createSelector(
+	selectStakedKwentaBalanceV2,
+	selectIsUnstakingKwenta,
+	selectIsTimeLeftInCooldown,
+	(stakedKwentaBalance, isUnstakingKwenta, isTimeLeftInCooldown) =>
+		stakedKwentaBalance.gt(0) && !isUnstakingKwenta && !isTimeLeftInCooldown
+)
+
 export const selectCanStakeEscrowedKwenta = createSelector(
 	selectUnstakedEscrowedKwentaBalance,
 	selectIsStakingEscrowedKwenta,
@@ -228,8 +247,9 @@ export const selectCanStakeEscrowedKwenta = createSelector(
 export const selectCanUnstakeEscrowedKwenta = createSelector(
 	selectStakedEscrowedKwentaBalance,
 	selectIsUnstakingEscrowedKwenta,
-	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta) => {
-		return stakedEscrowedKwentaBalance.gt(0) && !isUnstakingEscrowedKwenta
+	selectIsTimeLeftInCooldown,
+	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta, isTimeLeftInCooldown) => {
+		return stakedEscrowedKwentaBalance.gt(0) && !isUnstakingEscrowedKwenta && !isTimeLeftInCooldown
 	}
 )
 
