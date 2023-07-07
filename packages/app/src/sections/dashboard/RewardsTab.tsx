@@ -241,7 +241,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 						disabled={claimDisabledAll}
 						onClick={handleClaimAll}
 					>
-						Claim
+						{t('dashboard.rewards.claim-all')}
 					</Button>
 				</ButtonContainer>
 			</CardsContainer>

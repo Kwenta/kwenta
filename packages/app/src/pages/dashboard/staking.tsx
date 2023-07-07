@@ -1,30 +1,25 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { formatDollars, formatTruncatedDuration, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatTruncatedDuration, truncateNumbers } from '@kwenta/sdk/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { NO_VALUE } from 'constants/placeholder'
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
-import { selectKwentaPrice, selectOpPrice } from 'state/earn/selectors'
 import { useFetchStakeMigrateData } from 'state/futures/hooks'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useAppSelector } from 'state/hooks'
 import {
 	selectClaimableBalanceV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
-	selectOpRewards,
 	selectShowMigrationPage,
-	selectSnxOpRewards,
 	selectStakedEscrowedKwentaBalanceV2,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
-import { selectWallet } from 'state/wallet/selectors'
 
 import MigratePage from './migrate'
 
@@ -45,8 +40,6 @@ export type StakingCards = {
 const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation()
 	const router = useRouter()
-	const dispatch = useAppDispatch()
-	const walletAddress = useAppSelector(selectWallet)
 	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
@@ -54,11 +47,6 @@ const StakingPage: StakingComponent = () => {
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
-	const [rewardBalance, setRewardBalance] = useState(ZERO_WEI)
-	const opRewards = useAppSelector(selectOpRewards)
-	const snxOpRewards = useAppSelector(selectSnxOpRewards)
-	const opPrice = useAppSelector(selectOpPrice)
-	const kwentaPrice = useAppSelector(selectKwentaPrice)
 	const isMigrationActive = useAppSelector(selectShowMigrationPage)
 
 	useFetchStakeMigrateData()
@@ -74,12 +62,6 @@ const StakingPage: StakingComponent = () => {
 	}, [router])
 
 	const [currentTab, setCurrentTab] = useState(tabQuery ?? StakeTab.Staking)
-
-	useEffect(() => {
-		if (!!walletAddress) {
-			setRewardBalance(kwentaPrice.mul(kwentaRewards).add(opPrice.mul(opRewards.add(snxOpRewards))))
-		}
-	}, [dispatch, kwentaPrice, kwentaRewards, opPrice, opRewards, snxOpRewards, walletAddress])
 
 	const handleChangeTab = useCallback(
 		(tab: StakeTab) => () => {
@@ -144,7 +126,7 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'rewards-trading',
 						title: t('dashboard.stake.portfolio.rewards.trading'),
-						value: formatDollars(rewardBalance, { maxDecimals: 2 }),
+						value: truncateNumbers(kwentaRewards, 2),
 						onClick: () => setCurrentTab(StakeTab.Staking),
 					},
 				],
@@ -178,7 +160,7 @@ const StakingPage: StakingComponent = () => {
 		[
 			claimableBalance,
 			kwentaBalance,
-			rewardBalance,
+			kwentaRewards,
 			stakedEscrowedKwentaBalance,
 			stakedKwentaBalance,
 			t,

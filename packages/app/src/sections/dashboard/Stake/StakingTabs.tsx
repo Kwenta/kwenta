@@ -10,7 +10,6 @@ import media from 'styles/media'
 import RewardsTab from '../RewardsTab'
 
 import EscrowTab from './EscrowTab'
-import RedemptionTab from './RedemptionTab'
 import { StakeTab } from './StakingPortfolio'
 import StakingTab from './StakingTab'
 
@@ -39,12 +38,6 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 						onClick={onChangeTab(StakeTab.Escrow)}
 						active={currentTab === StakeTab.Escrow}
 					/>
-					<TabButton
-						variant="noOutline"
-						title={t('dashboard.stake.tabs.redeem.title')}
-						onClick={onChangeTab(StakeTab.Redeem)}
-						active={currentTab === StakeTab.Redeem}
-					/>
 				</TabButtons>
 			</StakingTabsHeader>
 			<div>
@@ -58,9 +51,6 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 				</TabPanel>
 				<TabPanel name={StakeTab.Escrow} activeTab={currentTab}>
 					<EscrowTab />
-				</TabPanel>
-				<TabPanel name={StakeTab.Redeem} activeTab={currentTab}>
-					<RedemptionTab />
 				</TabPanel>
 			</div>
 		</StakingTabsContainer>

@@ -98,7 +98,7 @@ export const selectIsVeKwentaTokenApproved = createSelector(
 
 export const selectIsKwentaTokenApprovedV2 = createSelector(
 	selectKwentaBalance,
-	(state: RootState) => state.staking.kwentaStakingV2Allowance ?? '0',
+	(state: RootState) => state.staking.kwentaStakingV2Allowance,
 	(kwentaBalance, kwentaAllowance) => kwentaBalance.lte(kwentaAllowance)
 )
 

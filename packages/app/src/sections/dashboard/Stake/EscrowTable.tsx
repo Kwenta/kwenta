@@ -223,7 +223,7 @@ const EscrowTable = () => {
 												? fee.div(cellProps.row.original.amount)
 												: ZERO_WEI,
 											{ minDecimals: 0 }
-										)}) KWENTA`}
+										)})`}
 									</TableCell>
 								)
 							},
@@ -302,7 +302,7 @@ const EscrowTable = () => {
 								return (
 									<TableCell color={common.palette.yellow.y500}>
 										<span>
-											{formatNumber(cellProps.row.original.fee, { suggestDecimals: true })} KWENTA
+											{formatNumber(cellProps.row.original.fee, { suggestDecimals: true })}
 										</span>
 										<span>
 											{formatPercent(
