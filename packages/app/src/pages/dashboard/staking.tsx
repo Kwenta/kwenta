@@ -35,6 +35,7 @@ type StakingCard = {
 export type StakingCards = {
 	category: string
 	card: StakingCard[]
+	onClick?: () => void
 }
 
 const StakingPage: StakingComponent = () => {
@@ -82,52 +83,49 @@ const StakingPage: StakingComponent = () => {
 		() => [
 			{
 				category: t('dashboard.stake.portfolio.balance.title'),
+				onClick: () => setCurrentTab(StakeTab.Staking),
 				card: [
 					{
 						key: 'balance-liquid',
 						title: t('dashboard.stake.portfolio.balance.liquid'),
 						value: truncateNumbers(kwentaBalance, 2),
-						onClick: () => setCurrentTab(StakeTab.Staking),
 					},
 					{
 						key: 'balance-staked',
 						title: t('dashboard.stake.portfolio.balance.staked'),
 						value: truncateNumbers(stakedKwentaBalance, 2),
-						onClick: () => setCurrentTab(StakeTab.Staking),
 					},
 				],
 			},
 			{
 				category: t('dashboard.stake.portfolio.escrow.title'),
+				onClick: () => setCurrentTab(StakeTab.Escrow),
 				card: [
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
 						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
-						onClick: () => setCurrentTab(StakeTab.Escrow),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
 						value: truncateNumbers(totalVestable, 2),
-						onClick: () => setCurrentTab(StakeTab.Escrow),
 					},
 				],
 			},
 			{
 				category: t('dashboard.stake.portfolio.rewards.title'),
+				onClick: () => setCurrentTab(StakeTab.Staking),
 				card: [
 					{
 						key: 'rewards-claimable',
 						title: t('dashboard.stake.portfolio.rewards.claimable'),
 						value: truncateNumbers(claimableBalance, 2),
-						onClick: () => setCurrentTab(StakeTab.Staking),
 					},
 					{
 						key: 'rewards-trading',
 						title: t('dashboard.stake.portfolio.rewards.trading'),
 						value: truncateNumbers(kwentaRewards, 2),
-						onClick: () => setCurrentTab(StakeTab.Staking),
 					},
 				],
 			},
@@ -148,6 +146,7 @@ const StakingPage: StakingComponent = () => {
 			},
 			{
 				category: t('dashboard.stake.portfolio.cooldown.title'),
+				onClick: () => setCurrentTab(StakeTab.Staking),
 				card: [
 					{
 						key: 'cooldown-time-left',

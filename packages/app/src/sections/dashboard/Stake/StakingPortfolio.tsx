@@ -1,6 +1,6 @@
 import { FC, memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import Button from 'components/Button/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
@@ -37,8 +37,8 @@ const StakingPortfolio: FC<StakingPortfolioProps> = memo(({ cards }) => {
 				</StyledButton>
 			</StakingHeading>
 			<CardsContainer>
-				{cards.map(({ category, card }, i) => (
-					<StyledFlexDivCol rowGap="15px" key={i}>
+				{cards.map(({ category, card, onClick }, i) => (
+					<StyledFlexDivCol rowGap="15px" key={i} onClick={onClick}>
 						<Body size="large">{category}</Body>
 						<FlexDivRow columnGap="15px" justifyContent="flex-start">
 							{card.map(({ key, title, value, onClick }) => (
@@ -58,6 +58,11 @@ const StakingPortfolio: FC<StakingPortfolioProps> = memo(({ cards }) => {
 })
 
 const StyledFlexDivCol = styled(FlexDivCol)`
+	${(props) =>
+		props.onClick &&
+		css`
+			cursor: pointer;
+		`}
 	${media.lessThan('lg')`
 		width: 135px;
 	`}
