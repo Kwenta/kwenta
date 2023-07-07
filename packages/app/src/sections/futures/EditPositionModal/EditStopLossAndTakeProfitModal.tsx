@@ -12,6 +12,7 @@ import { InfoBoxRow } from 'components/InfoBox'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import SelectorButtons from 'components/SelectorButtons'
 import Spacer from 'components/Spacer'
+import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectAckedOrdersWarning, selectTransaction } from 'state/app/selectors'
@@ -215,7 +216,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				title={'Market'}
 				nodeValue={
 					<FlexDivRowCentered>
-						{market?.marketName}
+						<Body>{market?.marketName}</Body>
 						<Spacer width={8} />{' '}
 						<PositionType side={position?.position?.side || PositionSide.LONG} />
 					</FlexDivRowCentered>
