@@ -19,7 +19,7 @@ const ValueLabelText = styled(Body)`
 // }))(Tooltip)
 
 export default function ValueLabel(props: SliderValueLabelSlotProps) {
-	const { children, open } = props
+	const { children } = props
 
 	return <ValueLabelText>{children}</ValueLabelText>
 }
