@@ -30,6 +30,8 @@ export type StakingState = {
 	kwentaRewards: string
 	opRewards: string
 	snxOpRewards: string
+	estimatedKwentaRewards: string
+	estimatedOpRewards: string
 	claimableKwentaRewards: ClaimParams[][]
 	claimableOpRewards: ClaimParams[]
 	claimableSnxOpRewards: ClaimParams[]

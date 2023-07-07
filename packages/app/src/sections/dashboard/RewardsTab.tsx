@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { formatDollars, formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatDollars, formatNumber, formatPercent } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { FC, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +13,7 @@ import { Body, Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
 import { NO_VALUE } from 'constants/placeholder'
 import useIsL2 from 'hooks/useIsL2'
-import { TradingRewardProps, useEstimatedReward } from 'queries/staking/utils'
+import { TradingRewardProps } from 'queries/staking/utils'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { selectFuturesFees, selectFuturesFeesForAccount } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -21,6 +21,8 @@ import { claimMultipleAllRewards } from 'state/staking/actions'
 import { setSelectedEpoch } from 'state/staking/reducer'
 import {
 	selectEpochData,
+	selectEstimatedKwentaRewards,
+	selectEstimatedOpRewards,
 	selectKwentaRewards,
 	selectOpRewards,
 	selectSelectedEpoch,
@@ -44,15 +46,14 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const opRewards = useAppSelector(selectOpRewards)
 	const snxOpRewards = useAppSelector(selectSnxOpRewards)
+	const estimatedKwentaRewards = useAppSelector(selectEstimatedKwentaRewards)
+	const estimatedOpRewards = useAppSelector(selectEstimatedOpRewards)
 	const futuresFeePaid = useAppSelector(selectFuturesFeesForAccount)
 	const totalFuturesFeePaid = useAppSelector(selectFuturesFees)
 
 	const handleClaimAll = useCallback(() => {
 		dispatch(claimMultipleAllRewards())
 	}, [dispatch])
-
-	const estimatedKwentaReward = useEstimatedReward('epoch-current.json')
-	const estimatedOp = useEstimatedReward('epoch-current-op.json')
 
 	const claimDisabledAll = useMemo(
 		() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0),
@@ -74,7 +75,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 				labels: [
 					{
 						label: t('dashboard.stake.portfolio.rewards.title'),
-						value: truncateNumbers(kwentaRewards, 4),
+						value: formatNumber(kwentaRewards, { minDecimals: 4 }),
 					},
 					{
 						label: t('dashboard.stake.tabs.trading-rewards.fee-paid'),
@@ -96,7 +97,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 					},
 					{
 						label: t('dashboard.rewards.estimated'),
-						value: truncateNumbers(wei(estimatedKwentaReward ?? ZERO_WEI), 4),
+						value: formatNumber(estimatedKwentaRewards, { minDecimals: 4 }),
 					},
 				],
 				kwentaIcon: true,
@@ -109,13 +110,13 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 				labels: [
 					{
 						label: t('dashboard.stake.portfolio.rewards.title'),
-						value: truncateNumbers(wei(opRewards ?? ZERO_WEI), 4),
+						value: formatNumber(opRewards, { minDecimals: 4 }),
 					},
 				],
 				info: [
 					{
 						label: t('dashboard.rewards.estimated'),
-						value: truncateNumbers(wei(estimatedOp ?? ZERO_WEI), 4),
+						value: formatNumber(estimatedOpRewards, { minDecimals: 4 }),
 					},
 				],
 				kwentaIcon: false,
@@ -128,7 +129,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 				labels: [
 					{
 						label: t('dashboard.stake.portfolio.rewards.title'),
-						value: truncateNumbers(wei(snxOpRewards ?? ZERO_WEI), 4),
+						value: formatNumber(snxOpRewards, { minDecimals: 4 }),
 					},
 				],
 				info: [
@@ -142,8 +143,8 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 			},
 		],
 		[
-			estimatedKwentaReward,
-			estimatedOp,
+			estimatedKwentaRewards,
+			estimatedOpRewards,
 			futuresFeePaid,
 			kwentaRewards,
 			opRewards,

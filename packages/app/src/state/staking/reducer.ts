@@ -18,6 +18,7 @@ import {
 	vestEscrowedRewards,
 	fetchStakingV2Data,
 	fetchEscrowV2Data,
+	fetchEstimatedRewards,
 } from './actions'
 import { StakingState } from './types'
 
@@ -49,6 +50,8 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	kwentaRewards: '0',
 	opRewards: '0',
 	snxOpRewards: '0',
+	estimatedKwentaRewards: '0',
+	estimatedOpRewards: '0',
 	claimableKwentaRewards: [],
 	claimableOpRewards: [],
 	claimableSnxOpRewards: [],
@@ -146,6 +149,10 @@ const stakingSlice = createSlice({
 			state.kwentaRewards = action.payload.kwentaRewards
 			state.opRewards = action.payload.opRewards
 			state.snxOpRewards = action.payload.snxOpRewards
+		})
+		builder.addCase(fetchEstimatedRewards.fulfilled, (state, action) => {
+			state.estimatedKwentaRewards = action.payload.estimatedKwentaRewards
+			state.estimatedOpRewards = action.payload.estimatedOpRewards
 		})
 		builder.addCase(stakeKwenta.pending, (state) => {
 			state.stakeStatus = FetchStatus.Loading

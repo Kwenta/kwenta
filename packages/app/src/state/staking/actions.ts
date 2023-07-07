@@ -102,7 +102,7 @@ export const approveKwentaToken = createAsyncThunk<
 	monitorTransaction({
 		txHash: hash,
 		onTxConfirmed: () => {
-			dispatch(fetchStakingData())
+			dispatch(fetchStakeMigrateData())
 		},
 	})
 })
@@ -118,7 +118,7 @@ export const redeemToken = createAsyncThunk<void, 'vKwenta' | 'veKwenta', ThunkC
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
-				dispatch(fetchStakingData())
+				dispatch(fetchStakeMigrateData())
 			},
 		})
 	}
@@ -160,6 +160,18 @@ export const fetchEscrowV2Data = createAsyncThunk<
 	}
 })
 
+export const fetchEstimatedRewards = createAsyncThunk<
+	{ estimatedKwentaRewards: string; estimatedOpRewards: string },
+	void,
+	ThunkConfig
+>('staking/fetchEstimatedRewards', async (_, { extra: { sdk } }) => {
+	const { estimatedKwentaRewards, estimatedOpRewards } = await sdk.kwentaToken.getEstimatedRewards()
+	return {
+		estimatedKwentaRewards: estimatedKwentaRewards.toString(),
+		estimatedOpRewards: estimatedOpRewards.toString(),
+	}
+})
+
 export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
 	'stakeMigrateData/fetch',
 	async (_, { dispatch }) => {
@@ -168,6 +180,7 @@ export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
 		dispatch(fetchStakingV2Data())
 		dispatch(fetchEscrowData())
 		dispatch(fetchEscrowV2Data())
+		dispatch(fetchEstimatedRewards())
 	}
 )
 

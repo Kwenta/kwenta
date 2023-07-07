@@ -500,6 +500,32 @@ export default class KwentaTokenService {
 		return this.performStakeAction('unstake', amount, { escrow: true, version: 2 })
 	}
 
+	public async getEstimatedRewards() {
+		const { networkId, walletAddress } = this.sdk.context
+		const fileNames = ['', '-op'].map(
+			(i) => `trading-rewards-snapshots/${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
+		)
+
+		const responses: EpochData[] = await Promise.all(
+			fileNames.map(async (fileName) => {
+				const response = await client.get(fileName)
+				return { ...response.data }
+			})
+		)
+
+		const [estimatedKwentaRewards, estimatedOpRewards] = responses.map((d) => {
+			const reward = d.claims[walletAddress]
+
+			if (reward) {
+				return weiFromWei(reward.amount)
+			}
+
+			return ZERO_WEI
+		})
+
+		return { estimatedKwentaRewards, estimatedOpRewards }
+	}
+
 	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
 		const { MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
 			this.sdk.context.multicallContracts
