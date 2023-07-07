@@ -27,7 +27,6 @@
 		"@gnosis.pm/safe-apps-sdk": "^7.8.0",
 		"@kwenta/sdk": "workspace:*",
 		"@material-ui/core": "^4.12.4",
-		"@mui/base": "5.0.0-beta.5",
 		"@pythnetwork/pyth-evm-js": "1.17.0",
 		"@rainbow-me/rainbowkit": "0.12.16",
 		"@reach/dialog": "0.18.0",

@@ -1,4 +1,4 @@
-import Slider, { SliderProps as DefaultSliderProps, sliderClasses } from '@mui/base/Slider'
+import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider'
 import React from 'react'
 import styled, { css } from 'styled-components'
 
@@ -6,11 +6,11 @@ import media from 'styles/media'
 
 import ValueLabel from './ValueLabel'
 
-export type SliderProps = DefaultSliderProps & {
+export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {
 	minValue: number
 	maxValue: number
 	steps?: number
-	// onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void
+	onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void
 	className?: string
 }
 
@@ -28,10 +28,9 @@ const SliderComponent: React.FC<SliderProps> = ({
 				max={maxValue}
 				step={steps}
 				marks
-				// valueLabelDisplay="auto"
+				valueLabelDisplay="auto"
 				defaultValue={defaultValue ?? minValue}
-				// ValueLabelComponent={ValueLabel}
-				slots={{ valueLabel: ValueLabel }}
+				ValueLabelComponent={ValueLabel}
 				{...props}
 			/>
 		</SliderContainer>
@@ -68,11 +67,11 @@ const SliderContainer = styled.div`
 const StyledSlider = styled(Slider)`
 	color: transparent !important;
 
-	& .${sliderClasses.root} {
+	.MuiSlider-root {
 		padding: 10px 0px 10px 4px;
 	}
 
-	& .${sliderClasses.rail} {
+	.MuiSlider-rail {
 		width: 102%;
 		margin-top: -2px;
 		border-radius: 2px;
@@ -82,7 +81,7 @@ const StyledSlider = styled(Slider)`
 		right: 0;
 	}
 
-	& .${sliderClasses.track} {
+	.MuiSlider-track {
 		height: 6px;
 		background-color: ${(props) => props.theme.colors.selectedTheme.slider.track.background};
 		margin-top: -3px;
@@ -92,14 +91,14 @@ const StyledSlider = styled(Slider)`
 		border-bottom-right-radius: 0px;
 	}
 
-	& .${sliderClasses.markActive} {
+	.MuiSlider-markActive {
 		width: 0px;
 		height: 0px;
 		background-color: transparent;
 		opacity: 1;
 	}
 
-	& .${sliderClasses.thumb} {
+	.MuiSlider-thumb {
 		background-color: ${(props) => props.theme.colors.selectedTheme.yellow};
 		border: ${(props) => props.theme.colors.selectedTheme.slider.thumb.border};
 		width: 18px;
@@ -111,17 +110,17 @@ const StyledSlider = styled(Slider)`
 		}
 	}
 
-	& .${sliderClasses.markLabelActive} {
+	.MuiSlider-markLabelActive {
 		${styledMarkLabel}
 		margin-left: 6px;
 	}
 
-	& .${sliderClasses.markLabel}[data-index='1'] {
+	.MuiSlider-markLabel[data-index='1'] {
 		${styledMarkLabel}
 		margin-left: -3px;
 	}
 
-	& .${sliderClasses.markLabel}:nth-child(7) {
+	.MuiSlider-markLabel:nth-child(7) {
 		color: #787878 !important;
 	}
 `
