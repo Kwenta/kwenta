@@ -41,7 +41,7 @@ const FundingChart: FC<FundingChartProps> = ({ display }) => {
 		<FundingChartWrapper $display={display}>
 			<FundingPeriodToggle />
 			<FundingChartContainer>
-				<ResponsiveContainer width="100%" height="100%">
+				<ResponsiveContainer width="99%" height="100%">
 					<LineChart
 						data={historicalFundingRates[marketAsset]}
 						margin={{ top: 30, right: 50, left: 30, bottom: 15 }}
