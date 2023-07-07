@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -19,7 +19,7 @@ type StakingPortfolioProps = {
 	cards: StakingCards[]
 }
 
-const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
+const StakingPortfolio: FC<StakingPortfolioProps> = memo(({ cards }) => {
 	const { t } = useTranslation()
 
 	return (
@@ -56,7 +56,7 @@ const StakingPortfolio: FC<StakingPortfolioProps> = ({ cards }) => {
 			</CardsContainer>
 		</StakingPortfolioContainer>
 	)
-}
+})
 
 const StyledFlexDivCol = styled(FlexDivCol)`
 	${media.lessThan('lg')`

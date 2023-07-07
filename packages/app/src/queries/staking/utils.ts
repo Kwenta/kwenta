@@ -3,10 +3,6 @@ import { NetworkId } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
 import { BigNumber } from 'ethers'
 
-import useGetFile from 'queries/files/useGetFile'
-import { useAppSelector } from 'state/hooks'
-import { selectNetwork, selectWallet } from 'state/wallet/selectors'
-
 export type TradingRewardProps = {
 	period: number | string
 	start?: number
