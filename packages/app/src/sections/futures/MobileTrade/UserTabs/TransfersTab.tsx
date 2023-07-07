@@ -1,3 +1,4 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars } from '@kwenta/sdk/utils'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -36,8 +37,11 @@ const TransfersTab: React.FC = () => {
 		[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
 	)
 
+	// TODO: Move to selector
 	const marginTransfers = useMemo(() => {
-		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers
+		return accountType === FuturesMarginType.CROSS_MARGIN
+			? marketMarginTransfers
+			: idleMarginTransfers
 	}, [accountType, idleMarginTransfers, marketMarginTransfers])
 
 	return (

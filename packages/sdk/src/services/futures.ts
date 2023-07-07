@@ -19,13 +19,12 @@ import { SmartMarginAccount__factory, PerpsV2Market__factory } from '../contract
 import { IPerpsV2MarketConsolidated } from '../contracts/types/PerpsV2Market'
 import { IPerpsV2MarketSettings, PerpsV2MarketData } from '../contracts/types/PerpsV2MarketData'
 import {
-	queryCrossMarginAccounts,
+	querySmartMarginAccounts,
 	querySmartMarginTransfers,
 	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
 	queryTrades,
-	queryCompletePositionHistory,
 	queryFundingRateHistory,
 } from '../queries/futures'
 import { NetworkId, NetworkOverrideOptions } from '../types/common'
@@ -46,8 +45,8 @@ import {
 	MarketWithIdleMargin,
 	SmartMarginOrderInputs,
 	ConditionalOrderTypeEnum,
-	FuturesAccountType,
 	SLTPOrderInputs,
+	FuturesMarginType,
 } from '../types/futures'
 import { PricesMap } from '../types/prices'
 import { calculateTimestampForPeriod } from '../utils/date'
@@ -70,6 +69,8 @@ import {
 	marketsForNetwork,
 	MarketKeyByAsset,
 	encodeCloseOffchainOrderParams,
+	marginTypeToSubgraphType,
+	formatPerpsV2Market,
 } from '../utils/futures'
 import { getFuturesAggregateStats } from '../utils/subgraph'
 import { getReasonFromCode } from '../utils/synths'
@@ -153,83 +154,14 @@ export default class FuturesService {
 		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys)
 
 		const futuresMarkets = filteredMarkets.map(
-			(
-				{
-					market,
-					key,
-					asset,
-					currentFundingRate,
-					currentFundingVelocity,
-					feeRates,
-					marketDebt,
-					marketSkew,
-					maxLeverage,
-					marketSize,
-					price,
-				},
-				i: number
-			): FuturesMarket => ({
-				market,
-				marketKey: parseBytes32String(key) as FuturesMarketKey,
-				marketName: getMarketName(parseBytes32String(asset) as FuturesMarketAsset),
-				asset: parseBytes32String(asset) as FuturesMarketAsset,
-				assetHex: asset,
-				currentFundingRate: wei(currentFundingRate).div(24),
-				currentFundingVelocity: wei(currentFundingVelocity).div(24 * 24),
-				feeRates: {
-					makerFee: wei(feeRates.makerFee),
-					takerFee: wei(feeRates.takerFee),
-					makerFeeDelayedOrder: wei(feeRates.makerFeeDelayedOrder),
-					takerFeeDelayedOrder: wei(feeRates.takerFeeDelayedOrder),
-					makerFeeOffchainDelayedOrder: wei(feeRates.makerFeeOffchainDelayedOrder),
-					takerFeeOffchainDelayedOrder: wei(feeRates.takerFeeOffchainDelayedOrder),
-				},
-				openInterest: {
-					shortPct: wei(marketSize).eq(0)
-						? 0
-						: wei(marketSize).sub(marketSkew).div('2').div(marketSize).toNumber(),
-					longPct: wei(marketSize).eq(0)
-						? 0
-						: wei(marketSize).add(marketSkew).div('2').div(marketSize).toNumber(),
-					shortUSD: wei(marketSize).eq(0)
-						? wei(0)
-						: wei(marketSize).sub(marketSkew).div('2').mul(price),
-					longUSD: wei(marketSize).eq(0)
-						? wei(0)
-						: wei(marketSize).add(marketSkew).div('2').mul(price),
-					long: wei(marketSize).add(marketSkew).div('2'),
-					short: wei(marketSize).sub(marketSkew).div('2'),
-				},
-				marketDebt: wei(marketDebt),
-				marketSkew: wei(marketSkew),
-				contractMaxLeverage: wei(maxLeverage),
-				appMaxLeverage: appAdjustedLeverage(wei(maxLeverage)),
-				marketSize: wei(marketSize),
-				marketLimitUsd: wei(marketParameters[i].maxMarketValue).mul(wei(price)),
-				marketLimitNative: wei(marketParameters[i].maxMarketValue),
-				minInitialMargin: wei(minInitialMargin),
-				keeperDeposit: wei(minKeeperFee),
-				isSuspended: suspensions[i],
-				marketClosureReason: getReasonFromCode(reasons[i]) as MarketClosureReason,
-				settings: {
-					maxMarketValue: wei(marketParameters[i].maxMarketValue),
-					skewScale: wei(marketParameters[i].skewScale),
-					delayedOrderConfirmWindow: wei(
-						marketParameters[i].delayedOrderConfirmWindow,
-						0
-					).toNumber(),
-					offchainDelayedOrderMinAge: wei(
-						marketParameters[i].offchainDelayedOrderMinAge,
-						0
-					).toNumber(),
-					offchainDelayedOrderMaxAge: wei(
-						marketParameters[i].offchainDelayedOrderMaxAge,
-						0
-					).toNumber(),
-					minDelayTimeDelta: wei(marketParameters[i].minDelayTimeDelta, 0).toNumber(),
-					maxDelayTimeDelta: wei(marketParameters[i].maxDelayTimeDelta, 0).toNumber(),
-				},
-			})
+			(m, i: number): FuturesMarket =>
+				formatPerpsV2Market(
+					m,
+					marketParameters[i],
+					{ minKeeperFee: wei(minKeeperFee), minInitialMargin: wei(minInitialMargin) },
+					suspensions[i],
+					getReasonFromCode(reasons[i]) as MarketClosureReason
+				)
 		)
 		return futuresMarkets
 	}
@@ -237,7 +169,7 @@ export default class FuturesService {
 	// TODO: types
 	// TODO: Improve the API for fetching positions
 	public async getFuturesPositions(
-		address: string, // Cross margin or EOA address
+		address: string, // Smart margin or EOA address
 		futuresMarkets: { asset: FuturesMarketAsset; marketKey: FuturesMarketKey; address: string }[]
 	) {
 		const marketDataContract = this.sdk.context.multicallContracts.PerpsV2MarketData
@@ -420,9 +352,9 @@ export default class FuturesService {
 		return response ? calculateVolumes(response) : {}
 	}
 
-	public async getCrossMarginAccounts(walletAddress?: string | null): Promise<string[]> {
+	public async getSmartMarginAccounts(walletAddress?: string | null): Promise<string[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress
-		return await queryCrossMarginAccounts(this.sdk, address)
+		return await querySmartMarginAccounts(this.sdk, address)
 	}
 
 	public async getIsolatedMarginTransfers(
@@ -432,24 +364,24 @@ export default class FuturesService {
 		return queryIsolatedMarginTransfers(this.sdk, address)
 	}
 
-	public async getCrossMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
+	public async getSmartMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress
 		return querySmartMarginTransfers(this.sdk, address)
 	}
 
-	public async getCrossMarginAccountBalance(crossMarginAddress: string) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+	public async getSmartMarginAccountBalance(smartMarginAddress: string) {
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.provider
 		)
 
-		const freeMargin = await crossMarginAccountContract.freeMargin()
+		const freeMargin = await smartMarginAccountContract.freeMargin()
 		return wei(freeMargin)
 	}
 
-	public async getCrossMarginBalanceInfo(walletAddress: string, crossMarginAddress: string) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+	public async getSmartMarginBalanceInfo(walletAddress: string, smartMarginAddress: string) {
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.provider
 		)
 		const { SUSD } = this.sdk.context.contracts
@@ -457,10 +389,10 @@ export default class FuturesService {
 
 		// TODO: EthCall
 		const [freeMargin, keeperEthBal, walletEthBal, allowance] = await Promise.all([
-			crossMarginAccountContract.freeMargin(),
-			this.sdk.context.provider.getBalance(crossMarginAddress),
+			smartMarginAccountContract.freeMargin(),
+			this.sdk.context.provider.getBalance(smartMarginAddress),
 			this.sdk.context.provider.getBalance(walletAddress),
-			SUSD.allowance(walletAddress, crossMarginAccountContract.address),
+			SUSD.allowance(walletAddress, smartMarginAccountContract.address),
 		])
 
 		return {
@@ -472,22 +404,22 @@ export default class FuturesService {
 	}
 
 	public async getConditionalOrders(account: string) {
-		const crossMarginAccountMultiCall = new EthCallContract(account, SmartMarginAccountABI)
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
+		const smartMarginAccountMultiCall = new EthCallContract(account, SmartMarginAccountABI)
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
 			account,
 			this.sdk.context.provider
 		)
 
 		const orders = []
 
-		const orderIdBigNum = await crossMarginAccountContract.conditionalOrderId()
+		const orderIdBigNum = await smartMarginAccountContract.conditionalOrderId()
 		const orderId = orderIdBigNum.toNumber()
 		// Limit to the latest 500
 		const start = orderId > ORDERS_FETCH_SIZE ? orderId - ORDERS_FETCH_SIZE : 0
 
 		const orderCalls = Array(orderId)
 			.fill(0)
-			.map((_, i) => crossMarginAccountMultiCall.getConditionalOrder(start + i))
+			.map((_, i) => smartMarginAccountMultiCall.getConditionalOrder(start + i))
 		const contractOrders = (await this.sdk.context.multicallProvider.all(
 			orderCalls
 		)) as ConditionalOrderResult[]
@@ -523,7 +455,7 @@ export default class FuturesService {
 		})
 	}
 
-	public async getIsolatedTradePreview(
+	public async getIsolatedMarginTradePreview(
 		marketAddress: string,
 		marketKey: FuturesMarketKey,
 		orderType: ContractOrderType,
@@ -550,8 +482,8 @@ export default class FuturesService {
 		return formatPotentialTrade(details, skewAdjustedPrice, inputs.sizeDelta, inputs.leverageSide)
 	}
 
-	public async getCrossMarginTradePreview(
-		crossMarginAccount: string,
+	public async getSmartMarginTradePreview(
+		smartMarginAccount: string,
 		marketKey: FuturesMarketKey,
 		marketAddress: string,
 		tradeParams: {
@@ -564,7 +496,7 @@ export default class FuturesService {
 		const marketInternal = this.getInternalFuturesMarket(marketAddress, marketKey)
 
 		const preview = await marketInternal.getTradePreview(
-			crossMarginAccount,
+			smartMarginAccount,
 			tradeParams.sizeDelta.toBN(),
 			tradeParams.marginDelta.toBN(),
 			tradeParams.orderPrice.toBN()
@@ -584,18 +516,13 @@ export default class FuturesService {
 		)
 	}
 
-	public async getCrossMarginKeeperBalance(account: string) {
+	public async getSmartMarginKeeperBalance(account: string) {
 		const bal = await this.sdk.context.provider.getBalance(account)
 		return wei(bal)
 	}
 
-	public async getPositionHistory(walletAddress: string) {
-		const response = await queryPositionHistory(this.sdk, walletAddress)
-		return response ? mapFuturesPositions(response) : []
-	}
-
-	public async getCompletePositionHistory(walletAddress: string) {
-		const response = await queryCompletePositionHistory(this.sdk, walletAddress)
+	public async getPositionHistory(address: string, addressType: 'eoa' | 'account' = 'account') {
+		const response = await queryPositionHistory(this.sdk, address, addressType)
 		return response ? mapFuturesPositions(response) : []
 	}
 
@@ -604,13 +531,13 @@ export default class FuturesService {
 	public async getTradesForMarket(
 		marketAsset: FuturesMarketAsset,
 		walletAddress: string,
-		accountType: FuturesAccountType,
+		accountType: FuturesMarginType,
 		pageLength: number = 16
 	) {
 		const response = await queryTrades(this.sdk, {
 			marketAsset,
 			walletAddress,
-			accountType,
+			accountType: marginTypeToSubgraphType(accountType),
 			pageLength,
 		})
 		return response ? mapTrades(response) : []
@@ -618,12 +545,12 @@ export default class FuturesService {
 
 	public async getAllTrades(
 		walletAddress: string,
-		accountType: FuturesAccountType,
+		accountType: FuturesMarginType,
 		pageLength: number = 16
 	) {
 		const response = await queryTrades(this.sdk, {
 			walletAddress,
-			accountType,
+			accountType: marginTypeToSubgraphType(accountType),
 			pageLength,
 		})
 		return response ? mapTrades(response) : []
@@ -690,52 +617,52 @@ export default class FuturesService {
 
 	// Contract mutations
 
-	public async approveCrossMarginDeposit(
-		crossMarginAddress: string,
+	public async approveSmartMarginDeposit(
+		smartMarginAddress: string,
 		amount: BigNumber = BigNumber.from(ethers.constants.MaxUint256)
 	) {
 		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK)
 		return this.sdk.transactions.createContractTxn(this.sdk.context.contracts.SUSD, 'approve', [
-			crossMarginAddress,
+			smartMarginAddress,
 			amount,
 		])
 	}
 
-	public async depositCrossMarginAccount(crossMarginAddress: string, amount: Wei) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+	public async depositSmartMarginAccount(smartMarginAddress: string, amount: Wei) {
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
 
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
 			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
 			[defaultAbiCoder.encode(['int256'], [amount.toBN()])],
 		])
 	}
 
-	public async withdrawCrossMarginAccount(crossMarginAddress: string, amount: Wei) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+	public async withdrawSmartMarginAccount(smartMarginAddress: string, amount: Wei) {
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
 
-		const { commands, inputs } = await this.batchIdleMarketMarginSweeps(crossMarginAddress)
+		const { commands, inputs } = await this.batchIdleMarketMarginSweeps(smartMarginAddress)
 
 		commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN)
 		inputs.push(defaultAbiCoder.encode(['int256'], [amount.neg().toBN()]))
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
 			commands,
 			inputs,
 		])
 	}
 
 	public async modifySmartMarginMarketMargin(
-		crossMarginAddress: string,
+		smartMarginAddress: string,
 		marketAddress: string,
 		marginDelta: Wei
 	) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
 
@@ -743,7 +670,7 @@ export default class FuturesService {
 		const inputs = []
 
 		if (marginDelta.gt(0)) {
-			const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress)
+			const freeMargin = await this.getSmartMarginAccountBalance(smartMarginAddress)
 			if (marginDelta.gt(freeMargin)) {
 				// Margin delta bigger than account balance,
 				// need to pull some from the users wallet or idle margin
@@ -751,7 +678,7 @@ export default class FuturesService {
 					commands: sweepCommands,
 					inputs: sweepInputs,
 					idleMargin,
-				} = await this.batchIdleMarketMarginSweeps(crossMarginAddress)
+				} = await this.batchIdleMarketMarginSweeps(smartMarginAddress)
 
 				commands.push(...sweepCommands)
 				inputs.push(...sweepInputs)
@@ -771,14 +698,14 @@ export default class FuturesService {
 		commands.push(AccountExecuteFunctions.PERPS_V2_MODIFY_MARGIN)
 		inputs.push(encodeModidyMarketMarginParams(marketAddress, marginDelta))
 
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
 			commands,
 			inputs,
 		])
 	}
 
 	public async modifySmartMarginPositionSize(
-		crossMarginAddress: string,
+		smartMarginAddress: string,
 		market: {
 			key: FuturesMarketKey
 			address: string
@@ -791,7 +718,7 @@ export default class FuturesService {
 		const inputs = []
 
 		if (cancelPendingReduceOrders) {
-			const existingOrders = await this.getConditionalOrders(crossMarginAddress)
+			const existingOrders = await this.getConditionalOrders(smartMarginAddress)
 			const existingOrdersForMarket = existingOrders.filter(
 				(o) => o.marketKey === market.key && o.reduceOnly
 			)
@@ -801,15 +728,15 @@ export default class FuturesService {
 				inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]))
 			})
 		}
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
 
 		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_OFFCHAIN_DELAYED_ORDER)
 		inputs.push(encodeSubmitOffchainOrderParams(market.address, sizeDelta, desiredFillPrice))
 
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
 			commands,
 			inputs,
 		])
@@ -876,7 +803,7 @@ export default class FuturesService {
 		return market.executeOffchainDelayedOrder(account, priceUpdateData, { value: updateFee })
 	}
 
-	public async createCrossMarginAccount() {
+	public async createSmartMarginAccount() {
 		if (!this.sdk.context.contracts.SmartMarginAccountFactory) throw new Error(UNSUPPORTED_NETWORK)
 		return this.sdk.transactions.createContractTxn(
 			this.sdk.context.contracts.SmartMarginAccountFactory,
@@ -885,21 +812,21 @@ export default class FuturesService {
 		)
 	}
 
-	public async submitCrossMarginOrder(
+	public async submitSmartMarginOrder(
 		market: {
 			key: FuturesMarketKey
 			address: string
 		},
 		walletAddress: string,
-		crossMarginAddress: string,
+		smartMarginAddress: string,
 		order: SmartMarginOrderInputs,
 		options?: {
 			cancelPendingReduceOrders?: boolean
 			cancelExpiredDelayedOrders?: boolean
 		}
 	) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
 		const commands = []
@@ -910,8 +837,8 @@ export default class FuturesService {
 			inputs.push(defaultAbiCoder.encode(['address'], [market.address]))
 		}
 
-		const idleMargin = await this.getIdleMargin(walletAddress, crossMarginAddress)
-		const freeMargin = await this.getCrossMarginAccountBalance(crossMarginAddress)
+		const idleMargin = await this.getIdleMargin(walletAddress, smartMarginAddress)
+		const freeMargin = await this.getSmartMarginAccountBalance(smartMarginAddress)
 
 		// Sweep idle margin from other markets to account
 		if (idleMargin.marketsTotal.gt(0)) {
@@ -958,7 +885,7 @@ export default class FuturesService {
 			}
 		}
 
-		const existingOrders = await this.getConditionalOrders(crossMarginAddress)
+		const existingOrders = await this.getConditionalOrders(smartMarginAddress)
 		const existingOrdersForMarket = existingOrders.filter(
 			(o) => o.marketKey === market.key && o.reduceOnly
 		)
@@ -1031,7 +958,7 @@ export default class FuturesService {
 		}
 
 		return this.sdk.transactions.createContractTxn(
-			crossMarginAccountContract,
+			smartMarginAccountContract,
 			'execute',
 			[commands, inputs],
 			{
@@ -1040,23 +967,23 @@ export default class FuturesService {
 		)
 	}
 
-	public async closeCrossMarginPosition(
+	public async closeSmartMarginPosition(
 		market: {
 			address: string
 			key: FuturesMarketKey
 		},
-		crossMarginAddress: string,
+		smartMarginAddress: string,
 		desiredFillPrice: Wei
 	) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
 
 		const commands = []
 		const inputs = []
 
-		const existingOrders = await this.getConditionalOrders(crossMarginAddress)
+		const existingOrders = await this.getConditionalOrders(smartMarginAddress)
 		const existingOrdersForMarket = existingOrders.filter(
 			(o) => o.marketKey === market.key && o.reduceOnly
 		)
@@ -1069,30 +996,30 @@ export default class FuturesService {
 		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_CLOSE_OFFCHAIN_DELAYED_ORDER)
 		inputs.push(encodeCloseOffchainOrderParams(market.address, desiredFillPrice))
 
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
 			commands,
 			inputs,
 		])
 	}
 
-	public async cancelConditionalOrder(crossMarginAddress: string, orderId: number) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+	public async cancelConditionalOrder(smartMarginAddress: string, orderId: number) {
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
 
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
 			[AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER],
 			[defaultAbiCoder.encode(['uint256'], [orderId])],
 		])
 	}
 
-	public async withdrawAccountKeeperBalance(crossMarginAddress: string, amount: Wei) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+	public async withdrawAccountKeeperBalance(smartMarginAddress: string, amount: Wei) {
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
-		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
+		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
 			[AccountExecuteFunctions.ACCOUNT_WITHDRAW_ETH],
 			[defaultAbiCoder.encode(['uint256'], [amount.toBN()])],
 		])
@@ -1100,18 +1027,18 @@ export default class FuturesService {
 
 	public async updateStopLossAndTakeProfit(
 		marketKey: FuturesMarketKey,
-		crossMarginAddress: string,
+		smartMarginAddress: string,
 		params: SLTPOrderInputs
 	) {
-		const crossMarginAccountContract = SmartMarginAccount__factory.connect(
-			crossMarginAddress,
+		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+			smartMarginAddress,
 			this.sdk.context.signer
 		)
 		const commands = []
 		const inputs = []
 
 		if (params.takeProfit || params.stopLoss) {
-			const existingOrders = await this.getConditionalOrders(crossMarginAddress)
+			const existingOrders = await this.getConditionalOrders(smartMarginAddress)
 			const existingOrdersForMarket = existingOrders.filter((o) => o.marketKey === marketKey)
 			const existingStopLosses = existingOrdersForMarket.filter(
 				(o) =>
@@ -1176,7 +1103,7 @@ export default class FuturesService {
 		}
 
 		return this.sdk.transactions.createContractTxn(
-			crossMarginAccountContract,
+			smartMarginAccountContract,
 			'execute',
 			[commands, inputs],
 			{
@@ -1222,8 +1149,8 @@ export default class FuturesService {
 		return market
 	}
 
-	private async batchIdleMarketMarginSweeps(crossMarginAddress: string) {
-		const idleMargin = await this.getIdleMarginInMarkets(crossMarginAddress)
+	private async batchIdleMarketMarginSweeps(smartMarginAddress: string) {
+		const idleMargin = await this.getIdleMarginInMarkets(smartMarginAddress)
 		const commands: number[] = []
 		const inputs: string[] = []
 		// Sweep idle margin from other markets to account

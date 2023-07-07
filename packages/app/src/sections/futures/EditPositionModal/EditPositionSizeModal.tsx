@@ -19,10 +19,10 @@ import { selectTransaction } from 'state/app/selectors'
 import {
 	clearTradeInputs,
 	editCrossMarginPositionSize,
-	submitCrossMarginAdjustPositionSize,
+	submitSmartMarginAdjustPositionSize,
 } from 'state/futures/actions'
 import {
-	selectEditPositionInputs,
+	selectSmartMarginEditPosInputs,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
 	selectIsFetchingTradePreview,
@@ -43,7 +43,7 @@ export default function EditPositionSizeModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx)
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview)
 	const preview = useAppSelector(selectEditPositionPreview)
-	const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs)
+	const { nativeSizeDelta } = useAppSelector(selectSmartMarginEditPosInputs)
 	const { market, position, marketPrice } = useAppSelector(selectEditPositionModalInfo)
 
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
@@ -62,7 +62,7 @@ export default function EditPositionSizeModal() {
 	}
 
 	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustPositionSize(overridePriceProtection))
+		dispatch(submitSmartMarginAdjustPositionSize(overridePriceProtection))
 	}, [dispatch, overridePriceProtection])
 
 	const isLoading = useMemo(

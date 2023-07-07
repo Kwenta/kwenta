@@ -28,14 +28,14 @@ import sdk from './sdk'
 import stakingReducer from './staking/reducer'
 import statsReducer from './stats/reducer'
 import walletReducer from './wallet/reducer'
-import perpsV3Reducer from './perpsV3/reducer'
+import crossMarginReducer from './crossMargin/reducer'
 
 const LOG_REDUX = false
 
 const persistConfig = {
 	key: 'root1',
 	storage,
-	version: 31,
+	version: 32,
 	blacklist: ['app', 'wallet'],
 	migrate: createMigrate(migrations, { debug: true }),
 }
@@ -46,7 +46,7 @@ const combinedReducers = combineReducers({
 	balances: balancesReducer,
 	exchange: exchangeReducer,
 	futures: futuresReducer,
-	perpsV3: perpsV3Reducer,
+	crossMargin: crossMarginReducer,
 	home: homeReducer,
 	earn: earnReducer,
 	staking: stakingReducer,

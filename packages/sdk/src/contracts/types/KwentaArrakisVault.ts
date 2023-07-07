@@ -453,9 +453,7 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		getPositionID(overrides?: CallOverrides): Promise<[string] & { positionID: string }>
 
-		getUnderlyingBalances(
-			overrides?: CallOverrides
-		): Promise<
+		getUnderlyingBalances(overrides?: CallOverrides): Promise<
 			[BigNumber, BigNumber] & {
 				amount0Current: BigNumber
 				amount1Current: BigNumber
@@ -649,9 +647,7 @@ export interface KwentaArrakisVault extends BaseContract {
 
 	getPositionID(overrides?: CallOverrides): Promise<string>
 
-	getUnderlyingBalances(
-		overrides?: CallOverrides
-	): Promise<
+	getUnderlyingBalances(overrides?: CallOverrides): Promise<
 		[BigNumber, BigNumber] & {
 			amount0Current: BigNumber
 			amount1Current: BigNumber
@@ -847,9 +843,7 @@ export interface KwentaArrakisVault extends BaseContract {
 
 		getPositionID(overrides?: CallOverrides): Promise<string>
 
-		getUnderlyingBalances(
-			overrides?: CallOverrides
-		): Promise<
+		getUnderlyingBalances(overrides?: CallOverrides): Promise<
 			[BigNumber, BigNumber] & {
 				amount0Current: BigNumber
 				amount1Current: BigNumber

@@ -21,11 +21,11 @@ import {
 	approveCrossMargin,
 	clearTradeInputs,
 	editCrossMarginPositionMargin,
-	submitCrossMarginAdjustMargin,
+	submitSmartMarginAdjustMargin,
 } from 'state/futures/actions'
 import {
 	selectEditMarginAllowanceValid,
-	selectEditPositionInputs,
+	selectSmartMarginEditPosInputs,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
 	selectIdleMargin,
@@ -44,7 +44,7 @@ export default function EditPositionMarginModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx)
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview)
 	const preview = useAppSelector(selectEditPositionPreview)
-	const { marginDelta } = useAppSelector(selectEditPositionInputs)
+	const { marginDelta } = useAppSelector(selectSmartMarginEditPosInputs)
 	const idleMargin = useAppSelector(selectIdleMargin)
 	const modal = useAppSelector(selectShowPositionModal)
 	const { market, position } = useAppSelector(selectEditPositionModalInfo)
@@ -113,7 +113,7 @@ export default function EditPositionMarginModal() {
 	}
 
 	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustMargin())
+		dispatch(submitSmartMarginAdjustMargin())
 	}, [dispatch])
 
 	const onClose = () => {

@@ -2,7 +2,7 @@ import { ChangeEvent, useCallback } from 'react'
 
 import { editTradeOrderPrice } from 'state/futures/actions'
 import {
-	selectCrossMarginOrderPrice,
+	selectSmartMarginOrderPrice,
 	selectLeverageSide,
 	selectMarketIndexPrice,
 	selectOrderType,
@@ -16,7 +16,7 @@ export default function TradePanelPriceInput() {
 
 	const marketPrice = useAppSelector(selectMarketIndexPrice)
 	const leverageSide = useAppSelector(selectLeverageSide)
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 	const orderType = useAppSelector(selectOrderType)
 
 	const handleOnChange = useCallback(

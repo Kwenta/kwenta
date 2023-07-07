@@ -1,3 +1,5 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
+
 import { Language } from 'translations/constants'
 
 // app defaults
@@ -35,6 +37,6 @@ export const DEFAULT_DELAYED_CANCEL_BUFFER = 15
 
 export const CROSS_MARGIN_ENABLED = true
 
-export const DEFAULT_FUTURES_MARGIN_TYPE = 'cross_margin'
+export const DEFAULT_FUTURES_MARGIN_TYPE = FuturesMarginType.SMART_MARGIN
 
 export const DEFAULT_LEVERAGE = '1'

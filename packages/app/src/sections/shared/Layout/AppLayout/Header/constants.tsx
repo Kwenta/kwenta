@@ -1,3 +1,4 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { FunctionComponent } from 'react'
 
 import { COMPETITION_ENABLED } from 'constants/competition'
@@ -29,7 +30,7 @@ export type MenuLinks = MenuLink[]
 export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 	{
 		i18nLabel: 'homepage.nav.markets',
-		link: ROUTES.Markets.Home('cross_margin'),
+		link: ROUTES.Markets.Home(FuturesMarginType.SMART_MARGIN),
 	},
 	{
 		i18nLabel: 'homepage.nav.stats',
@@ -76,7 +77,7 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 	},
 	{
 		i18nLabel: 'header.nav.markets',
-		link: ROUTES.Markets.Home('cross_margin'),
+		link: ROUTES.Markets.Home(FuturesMarginType.SMART_MARGIN),
 	},
 	{
 		i18nLabel: 'header.nav.exchange',

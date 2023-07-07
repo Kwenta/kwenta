@@ -17,7 +17,7 @@ import { FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
 import Spacer from 'components/Spacer'
 import { selectSusdBalance } from 'state/balances/selectors'
-import { depositIsolatedMargin, withdrawIsolatedMargin } from 'state/futures/actions'
+import { depositCrossMarginMargin, withdrawCrossMargin } from 'state/crossMargin/actions'
 import {
 	selectAvailableMargin,
 	selectIsolatedTransferError,
@@ -114,11 +114,11 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	}
 
 	const onDeposit = () => {
-		dispatch(depositIsolatedMargin(wei(amount)))
+		dispatch(depositCrossMarginMargin(wei(amount)))
 	}
 
 	const onWithdraw = () => {
-		dispatch(withdrawIsolatedMargin(computedWithdrawAmount))
+		dispatch(withdrawCrossMargin(computedWithdrawAmount))
 	}
 
 	return (

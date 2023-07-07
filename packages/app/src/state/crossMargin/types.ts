@@ -12,11 +12,11 @@ import {
 	FuturesMarketKey,
 	FuturesMarketAsset,
 	MarginTransfer,
-	FuturesAccountType,
 	FuturesFilledPosition,
 	FuturesMarket,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
+import { AppFuturesMarginType } from 'state/futures/types'
 
 import { PricesInfo } from 'state/prices/types'
 import { QueryStatus } from 'state/types'
@@ -119,7 +119,7 @@ export type FundingRatePeriods = {
 }
 
 export type AccountContext = {
-	type: FuturesAccountType
+	type: AppFuturesMarginType
 	network: NetworkId
 	wallet: string
 	cmAccount?: string
@@ -137,7 +137,7 @@ export type PerpsV3AccountData = {
 	delayedOrders: DelayedOrderWithDetails<string>[]
 }
 
-export type PerspV3State = {
+export type PerpsV3State = {
 	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
 	tradeInputs: TradeSizeInputs<string>
 	editPositionInputs: EditPositionInputs<string>
@@ -147,7 +147,7 @@ export type PerspV3State = {
 		close: FuturesPotentialTradeDetails<string> | null
 		edit: FuturesPotentialTradeDetails<string> | null
 	}
-	selectedType: FuturesAccountType
+	selectedType: AppFuturesMarginType
 	confirmationModalOpen: boolean
 	closePositionOrderInputs: ClosePositionInputs<string>
 	previewDebounceCount: number

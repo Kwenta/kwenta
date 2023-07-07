@@ -2,161 +2,155 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
-import type { Provider } from "@ethersproject/providers";
-import type {
-  VeKwentaRedeemer,
-  VeKwentaRedeemerInterface,
-} from "../VeKwentaRedeemer";
+import { Contract, Signer, utils } from 'ethers'
+import type { Provider } from '@ethersproject/providers'
+import type { VeKwentaRedeemer, VeKwentaRedeemerInterface } from '../VeKwentaRedeemer'
 
 const _abi = [
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_veKwenta",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_kwenta",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_rewardEscrow",
-        type: "address",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "callerBalance",
-        type: "uint256",
-      },
-    ],
-    name: "InvalidCallerBalance",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "contractBalance",
-        type: "uint256",
-      },
-    ],
-    name: "InvalidContractBalance",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "TransferFailed",
-    type: "error",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "redeemer",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "beneficiary",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "redeemedAmount",
-        type: "uint256",
-      },
-    ],
-    name: "Redeemed",
-    type: "event",
-  },
-  {
-    inputs: [],
-    name: "kwenta",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_beneficiary",
-        type: "address",
-      },
-    ],
-    name: "redeem",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "rewardEscrow",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "veKwenta",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-] as const;
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_veKwenta',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: '_kwenta',
+				type: 'address',
+			},
+			{
+				internalType: 'address',
+				name: '_rewardEscrow',
+				type: 'address',
+			},
+		],
+		stateMutability: 'nonpayable',
+		type: 'constructor',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'caller',
+				type: 'address',
+			},
+			{
+				internalType: 'uint256',
+				name: 'callerBalance',
+				type: 'uint256',
+			},
+		],
+		name: 'InvalidCallerBalance',
+		type: 'error',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'uint256',
+				name: 'contractBalance',
+				type: 'uint256',
+			},
+		],
+		name: 'InvalidContractBalance',
+		type: 'error',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: 'caller',
+				type: 'address',
+			},
+		],
+		name: 'TransferFailed',
+		type: 'error',
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'redeemer',
+				type: 'address',
+			},
+			{
+				indexed: true,
+				internalType: 'address',
+				name: 'beneficiary',
+				type: 'address',
+			},
+			{
+				indexed: false,
+				internalType: 'uint256',
+				name: 'redeemedAmount',
+				type: 'uint256',
+			},
+		],
+		name: 'Redeemed',
+		type: 'event',
+	},
+	{
+		inputs: [],
+		name: 'kwenta',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [
+			{
+				internalType: 'address',
+				name: '_beneficiary',
+				type: 'address',
+			},
+		],
+		name: 'redeem',
+		outputs: [],
+		stateMutability: 'nonpayable',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'rewardEscrow',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+	{
+		inputs: [],
+		name: 'veKwenta',
+		outputs: [
+			{
+				internalType: 'address',
+				name: '',
+				type: 'address',
+			},
+		],
+		stateMutability: 'view',
+		type: 'function',
+	},
+] as const
 
 export class VeKwentaRedeemer__factory {
-  static readonly abi = _abi;
-  static createInterface(): VeKwentaRedeemerInterface {
-    return new utils.Interface(_abi) as VeKwentaRedeemerInterface;
-  }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): VeKwentaRedeemer {
-    return new Contract(address, _abi, signerOrProvider) as VeKwentaRedeemer;
-  }
+	static readonly abi = _abi
+	static createInterface(): VeKwentaRedeemerInterface {
+		return new utils.Interface(_abi) as VeKwentaRedeemerInterface
+	}
+	static connect(address: string, signerOrProvider: Signer | Provider): VeKwentaRedeemer {
+		return new Contract(address, _abi, signerOrProvider) as VeKwentaRedeemer
+	}
 }

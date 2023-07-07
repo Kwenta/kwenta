@@ -9,25 +9,25 @@ import StyledSlider from 'components/Slider/StyledSlider'
 import { editCrossMarginTradeSize } from 'state/futures/actions'
 import {
 	selectAboveMaxLeverage,
-	selectCrossMarginMarginDelta,
+	selectSmartMarginMarginDelta,
 	selectLeverageSide,
 	selectMaxLeverage,
 	selectMaxUsdSizeInput,
 	selectPosition,
-	selectTradeSizeInputs,
+	selectSmartMarginTradeInputs,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 export default function OrderSizeSlider() {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const { susdSizeString } = useAppSelector(selectTradeSizeInputs)
+	const { susdSizeString } = useAppSelector(selectSmartMarginTradeInputs)
 	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage)
 	const maxLeverage = useAppSelector(selectMaxLeverage)
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const position = useAppSelector(selectPosition)
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput)
-	const marginDelta = useAppSelector(selectCrossMarginMarginDelta)
+	const marginDelta = useAppSelector(selectSmartMarginMarginDelta)
 
 	const [percent, setPercent] = useState(0)
 	const [usdValue, setUsdValue] = useState(susdSizeString)

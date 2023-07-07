@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { floorNumber, truncateNumbers } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { Dispatch, FC, memo, SetStateAction, useCallback, useMemo, useState } from 'react'
@@ -20,7 +21,7 @@ import {
 	selectMaxLeverage,
 	selectPosition,
 	selectFuturesType,
-	selectCrossMarginMarginDelta,
+	selectSmartMarginMarginDelta,
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -47,12 +48,14 @@ const LeverageInput: FC = memo(() => {
 	const marketPrice = useAppSelector(selectMarketIndexPrice)
 	const leverageInput = useAppSelector(selectLeverageInput)
 	const futuresType = useAppSelector(selectFuturesType)
-	const crossMarginMarginDelta = useAppSelector(selectCrossMarginMarginDelta)
+	const smartMarginMarginDelta = useAppSelector(selectSmartMarginMarginDelta)
 	const isDisabled = useAppSelector(selectTradeSizeInputsDisabled)
 
 	const availableMargin = useMemo(() => {
-		return futuresType === 'isolated_margin' ? position?.remainingMargin : crossMarginMarginDelta
-	}, [position?.remainingMargin, crossMarginMarginDelta, futuresType])
+		return futuresType === FuturesMarginType.CROSS_MARGIN
+			? position?.remainingMargin
+			: smartMarginMarginDelta
+	}, [position?.remainingMargin, smartMarginMarginDelta, futuresType])
 
 	const leverageButtons = useMemo(
 		() => (maxLeverage.eq(50) ? ['2', '5', '25', '50'] : ['2', '5', '10', '25']),

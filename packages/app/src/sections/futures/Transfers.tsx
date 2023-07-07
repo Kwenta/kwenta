@@ -1,3 +1,4 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars, truncateAddress } from '@kwenta/sdk/utils'
 import { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -39,7 +40,9 @@ const Transfers: FC = () => {
 	)
 
 	const marginTransfers = useMemo(() => {
-		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers
+		return accountType === FuturesMarginType.CROSS_MARGIN
+			? marketMarginTransfers
+			: idleMarginTransfers
 	}, [accountType, marketMarginTransfers, idleMarginTransfers])
 
 	return (

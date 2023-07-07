@@ -1,4 +1,4 @@
-import { FuturesMarket } from '@kwenta/sdk/dist/types'
+import { FuturesMarket } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'

@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { formatBytes32String } from '@ethersproject/strings'
 import Wei, { wei } from '@synthetixio/wei'
 import { Contract as EthCallContract } from 'ethcall'
@@ -31,7 +31,7 @@ import {
 	PositionDetail,
 	PositionSide,
 	MarginTransfer,
-	FuturesAccountType,
+	FuturesMarginType,
 } from '../types/futures'
 import { PricesMap } from '../types/prices'
 import {
@@ -41,10 +41,14 @@ import {
 	mapFuturesPositions,
 	mapTrades,
 	getPerpsV3SubgraphUrl,
+	marginTypeToSubgraphType,
+	PerpsV3SymbolToMarketKey,
+	MarketAssetByKey,
 } from '../utils/futures'
 import { getReasonFromCode } from '../utils/synths'
 import { getPerpsV3Markets, queryPerpsV3Accounts } from '../queries/perpsV3'
 import { weiFromWei } from '../utils'
+import { ZERO_ADDRESS } from '../constants'
 
 export default class PerpsV3Service {
 	private sdk: KwentaSDK
@@ -128,8 +132,9 @@ export default class PerpsV3Service {
 
 		// const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys)
 
-		const futuresMarkets = perpsV3Markets.map(
+		const futuresMarkets = perpsV3Markets.reduce<FuturesMarket[]>(
 			(
+				acc,
 				{
 					perpsMarketId,
 					marketSymbol,
@@ -141,52 +146,59 @@ export default class PerpsV3Service {
 					skewScale,
 				},
 				i: number
-			): FuturesMarket => ({
-				market: marketOwner,
-				marketKey: marketSymbol as FuturesMarketKey,
-				marketName: marketName, // TODO: Map asset
-				asset: marketSymbol as FuturesMarketAsset, // TODO: Map asset
-				assetHex: '', // TODO: Probably remove hex
-				currentFundingRate: wei(0.0001), // TODO: Funding rate
-				currentFundingVelocity: wei(maxFundingVelocity).div(24 * 24), // TODO: Current not max?
-				feeRates: {
-					makerFee: weiFromWei(makerFee),
-					takerFee: weiFromWei(takerFee),
-					makerFeeDelayedOrder: weiFromWei(makerFee),
-					takerFeeDelayedOrder: weiFromWei(takerFee),
-					makerFeeOffchainDelayedOrder: weiFromWei(makerFee),
-					takerFeeOffchainDelayedOrder: weiFromWei(takerFee),
-				},
-				openInterest: {
-					// TODO: Assign open interest
-					shortPct: 0,
-					longPct: 0,
-					shortUSD: wei(0),
-					longUSD: wei(0),
-					long: wei(0),
-					short: wei(0),
-				},
-				marketDebt: wei(0),
-				marketSkew: wei(0),
-				contractMaxLeverage: wei(25), // TODO: Assign leverage
-				appMaxLeverage: appAdjustedLeverage(wei(25)),
-				marketSize: wei(0),
-				marketLimitUsd: wei(1000000), // TODO: Assign limits
-				marketLimitNative: wei(100),
-				minInitialMargin: wei(50), // TODO: Is this still relevant in v3
-				keeperDeposit: wei(4), // TODO: Assign min keeper fee
-				isSuspended: false, // TODO: Assign suspensions
-				marketClosureReason: getReasonFromCode(2) as MarketClosureReason, // TODO: Map closure reason
-				settings: {
-					maxMarketValue: wei(1000), // TODO: Max market value
-					skewScale: weiFromWei(skewScale),
-					delayedOrderConfirmWindow: 20000, // TODO: assign
-					offchainDelayedOrderMinAge: 20000, // TODO: assign
-					offchainDelayedOrderMaxAge: 20000, // TODO: assign
-					minDelayTimeDelta: 100, // TODO: assign
-					maxDelayTimeDelta: 100, // TODO: assign
-				},
-			})
+			) => {
+				const marketKey = PerpsV3SymbolToMarketKey[marketSymbol]
+				if (!marketKey) return acc
+
+				acc.push({
+					market: marketOwner,
+					marketKey: marketKey,
+					marketName: marketName,
+					asset: MarketAssetByKey[marketKey],
+					assetHex: '', // TODO: Probably remove hex
+					currentFundingRate: wei(0.0001), // TODO: Funding rate
+					currentFundingVelocity: wei(maxFundingVelocity).div(24 * 24), // TODO: Current not max?
+					feeRates: {
+						makerFee: weiFromWei(makerFee),
+						takerFee: weiFromWei(takerFee),
+						makerFeeDelayedOrder: weiFromWei(makerFee),
+						takerFeeDelayedOrder: weiFromWei(takerFee),
+						makerFeeOffchainDelayedOrder: weiFromWei(makerFee),
+						takerFeeOffchainDelayedOrder: weiFromWei(takerFee),
+					},
+					openInterest: {
+						// TODO: Assign open interest
+						shortPct: 0,
+						longPct: 0,
+						shortUSD: wei(0),
+						longUSD: wei(0),
+						long: wei(0),
+						short: wei(0),
+					},
+					marketDebt: wei(0),
+					marketSkew: wei(0),
+					contractMaxLeverage: wei(25), // TODO: Assign leverage
+					appMaxLeverage: appAdjustedLeverage(wei(25)),
+					marketSize: wei(0),
+					marketLimitUsd: wei(1000000), // TODO: Assign limits
+					marketLimitNative: wei(100),
+					minInitialMargin: wei(50), // TODO: Is this still relevant in v3
+					keeperDeposit: wei(4), // TODO: Assign min keeper fee
+					isSuspended: false, // TODO: Assign suspensions
+					marketClosureReason: getReasonFromCode(2) as MarketClosureReason, // TODO: Map closure reason
+					settings: {
+						maxMarketValue: wei(1000), // TODO: Max market value
+						skewScale: weiFromWei(skewScale),
+						delayedOrderConfirmWindow: 20000, // TODO: assign
+						offchainDelayedOrderMinAge: 20000, // TODO: assign
+						offchainDelayedOrderMaxAge: 20000, // TODO: assign
+						minDelayTimeDelta: 100, // TODO: assign
+						maxDelayTimeDelta: 100, // TODO: assign
+					},
+				})
+				return acc
+			},
+			[]
 		)
 		return futuresMarkets
 	}
@@ -385,10 +397,12 @@ export default class PerpsV3Service {
 		return accounts.map((a) => a.id)
 	}
 
-	public async getAccountOwner(id: number): Promise<string> {
+	public async getAccountOwner(id: BigNumberish): Promise<string | null> {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
-		return marketProxy.getAccountOwner(id)
+		const owner = await marketProxy.getAccountOwner(id)
+		if (owner === ZERO_ADDRESS) return null
+		return owner
 	}
 
 	public async getMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
@@ -445,7 +459,7 @@ export default class PerpsV3Service {
 	}
 
 	public async getPositionHistory(walletAddress: string) {
-		const response = await queryPositionHistory(this.sdk, walletAddress)
+		const response = await queryPositionHistory(this.sdk, walletAddress, 'eoa')
 		return response ? mapFuturesPositions(response) : []
 	}
 
@@ -454,13 +468,13 @@ export default class PerpsV3Service {
 	public async getTradesForMarket(
 		marketAsset: FuturesMarketAsset,
 		walletAddress: string,
-		accountType: FuturesAccountType,
+		accountType: FuturesMarginType,
 		pageLength: number = 16
 	) {
 		const response = await queryTrades(this.sdk, {
 			marketAsset,
 			walletAddress,
-			accountType,
+			accountType: marginTypeToSubgraphType(accountType),
 			pageLength,
 		})
 		return response ? mapTrades(response) : []
@@ -468,12 +482,12 @@ export default class PerpsV3Service {
 
 	public async getAllTrades(
 		walletAddress: string,
-		accountType: FuturesAccountType,
+		accountType: FuturesMarginType,
 		pageLength: number = 16
 	) {
 		const response = await queryTrades(this.sdk, {
 			walletAddress,
-			accountType,
+			accountType: marginTypeToSubgraphType(accountType),
 			pageLength,
 		})
 		return response ? mapTrades(response) : []
@@ -575,7 +589,7 @@ export default class PerpsV3Service {
 		return market.executeOffchainDelayedOrder(account, priceUpdateData, { value: updateFee })
 	}
 
-	public async createPerpsV3Account(requestedId: number) {
+	public async createPerpsV3Account(requestedId: BigNumberish) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
 		return this.sdk.transactions.createContractTxn(marketProxy, 'createAccount', [requestedId])

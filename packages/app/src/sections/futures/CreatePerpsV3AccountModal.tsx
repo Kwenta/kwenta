@@ -9,18 +9,21 @@ import ErrorView from 'components/ErrorView'
 import Loader from 'components/Loader'
 import ProgressSteps from 'components/ProgressSteps'
 import { setOpenModal } from 'state/app/reducer'
-import { approveCrossMargin, createCrossMarginAccount } from 'state/futures/actions'
 import {
-	selectCMAccountQueryStatus,
+	selectPerpsV3Account,
+	selectCrossMarginSupportedNetwork,
+} from 'state/crossMargin/selectors'
+import { approveCrossMargin, createSmartMarginAccount } from 'state/futures/actions'
+import {
+	selectSmartMarginAccountQueryStatus,
 	selectSmartMarginDepositApproved,
-	selectFuturesSupportedNetwork,
 	selectSubmittingFuturesTx,
 	selectTradePreview,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
+
 import CrossMarginFAQ from './CrossMarginOnboard/CrossMarginFAQ'
-import { selectPerpsV3Account } from 'state/perpsV3/selectors'
 
 type Props = {
 	isOpen: boolean
@@ -29,9 +32,9 @@ type Props = {
 export default function CreatePerpsV3AccountModal({ isOpen }: Props) {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const crossMarginAvailable = useAppSelector(selectFuturesSupportedNetwork)
+	const crossMarginAvailable = useAppSelector(selectCrossMarginSupportedNetwork)
 	const perpsV3Account = useAppSelector(selectPerpsV3Account)
-	const queryStatus = useAppSelector(selectCMAccountQueryStatus)
+	const queryStatus = useAppSelector(selectSmartMarginAccountQueryStatus)
 	const depositApproved = useAppSelector(selectSmartMarginDepositApproved)
 	const txProcessing = useAppSelector(selectSubmittingFuturesTx)
 	const preview = useAppSelector(selectTradePreview)
@@ -47,7 +50,7 @@ export default function CreatePerpsV3AccountModal({ isOpen }: Props) {
 	}
 
 	const createAccount = useCallback(async () => {
-		dispatch(createCrossMarginAccount())
+		dispatch(createSmartMarginAccount())
 	}, [dispatch])
 
 	const onClickApprove = useCallback(async () => {

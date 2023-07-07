@@ -21,7 +21,7 @@ import Wei, { wei } from '@synthetixio/wei'
 import { TFunction } from 'i18next'
 
 import {
-	CrossMarginBalanceInfo,
+	SmartMarginBalanceInfo,
 	TradeSizeInputs,
 	DelayedOrderWithDetails,
 	TransactionEstimation,
@@ -188,8 +188,8 @@ export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMar
 }
 
 export const serializeCmBalanceInfo = (
-	overview: CrossMarginBalanceInfo
-): CrossMarginBalanceInfo<string> => {
+	overview: SmartMarginBalanceInfo
+): SmartMarginBalanceInfo<string> => {
 	return {
 		freeMargin: overview.freeMargin.toString(),
 		keeperEthBal: overview.keeperEthBal.toString(),
@@ -199,8 +199,8 @@ export const serializeCmBalanceInfo = (
 }
 
 export const unserializeCmBalanceInfo = (
-	balanceInfo: CrossMarginBalanceInfo<string>
-): CrossMarginBalanceInfo<Wei> => {
+	balanceInfo: SmartMarginBalanceInfo<string>
+): SmartMarginBalanceInfo<Wei> => {
 	return {
 		freeMargin: wei(balanceInfo.freeMargin),
 		keeperEthBal: wei(balanceInfo.keeperEthBal),
@@ -410,7 +410,7 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 		}, [] as DelayedOrderWithDetails[])
 }
 
-export const perpsAccountIdFromAddress = (eoa: string): number => {
+export const perpsAccountIdFromAddress = (eoa: string): string => {
 	const numberedId = eoa.replace(/\D/g, '')
-	return Number(numberedId)
+	return numberedId.substring(0, 16)
 }

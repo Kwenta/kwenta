@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { isZero } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import React, { useCallback, useMemo } from 'react'
@@ -20,15 +21,15 @@ import {
 	selectTradePreviewError,
 	selectTradePreview,
 	selectTradePreviewStatus,
-	selectTradeSizeInputs,
-	selectIsolatedMarginLeverage,
-	selectCrossMarginOrderPrice,
+	selectSmartMarginTradeInputs,
+	selectCrossMarginLeverage,
+	selectSmartMarginOrderPrice,
 	selectOrderType,
 	selectFuturesType,
 	selectLeverageSide,
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
-	selectCrossMarginAccount,
+	selectSmartMarginAccount,
 	selectPosition,
 	selectMarketPriceInfo,
 } from 'state/futures/selectors'
@@ -40,24 +41,24 @@ const ManagePosition: React.FC = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
-	const { susdSize } = useAppSelector(selectTradeSizeInputs)
+	const { susdSize } = useAppSelector(selectSmartMarginTradeInputs)
 	const maxLeverageValue = useAppSelector(selectMaxLeverage)
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const previewTrade = useAppSelector(selectTradePreview)
 	const previewError = useAppSelector(selectTradePreviewError)
-	const leverage = useAppSelector(selectIsolatedMarginLeverage)
+	const leverage = useAppSelector(selectCrossMarginLeverage)
 	const orderType = useAppSelector(selectOrderType)
 	const openOrder = useAppSelector(selectPendingDelayedOrder)
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput)
 	const isMarketCapReached = useAppSelector(selectIsMarketCapReached)
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey)
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 	const marketAssetRate = useAppSelector(selectMarketIndexPrice)
 	const marketInfo = useAppSelector(selectMarketInfo)
 	const indexPrice = useAppSelector(selectMarketPriceInfo)
 	const previewStatus = useAppSelector(selectTradePreviewStatus)
-	const smartMarginAccount = useAppSelector(selectCrossMarginAccount)
+	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
 	const position = useAppSelector(selectPosition)
 
 	const orderError = useMemo(() => {
@@ -71,13 +72,13 @@ const ManagePosition: React.FC = () => {
 
 	const onSubmit = useCallback(() => {
 		dispatch(setTradePanelDrawerOpen(false))
-		if (selectedAccountType === 'cross_margin' && !smartMarginAccount) {
+		if (selectedAccountType === FuturesMarginType.SMART_MARGIN && !smartMarginAccount) {
 			dispatch(setOpenModal('futures_smart_margin_onboard'))
 			return
 		}
 		dispatch(
 			setOpenModal(
-				selectedAccountType === 'cross_margin'
+				selectedAccountType === FuturesMarginType.SMART_MARGIN
 					? 'futures_confirm_smart_margin_trade'
 					: 'futures_confirm_isolated_margin_trade'
 			)
@@ -153,7 +154,7 @@ const ManagePosition: React.FC = () => {
 				message: ERROR_MESSAGES.ORDER_PENDING,
 			}
 		}
-		if (selectedAccountType === 'cross_margin') {
+		if (selectedAccountType === FuturesMarginType.SMART_MARGIN) {
 			if (previewTrade?.status !== 0 || previewStatus.status === FetchStatus.Loading)
 				return { message: 'awaiting_preview' }
 			if (orderType !== 'market' && isZero(orderPrice)) return { message: 'trade price required' }

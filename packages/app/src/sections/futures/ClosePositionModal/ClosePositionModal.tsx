@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { PositionSide, PotentialTradeStatus } from '@kwenta/sdk/types'
+import { FuturesMarginType, PositionSide, PotentialTradeStatus } from '@kwenta/sdk/types'
 import {
 	floorNumber,
 	formatDollars,
@@ -24,10 +24,10 @@ import { Body } from 'components/Text'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectTransaction } from 'state/app/selectors'
+import { submitCrossMarginReducePositionOrder } from 'state/crossMargin/actions'
 import {
 	editClosePositionPrice,
 	editClosePositionSizeDelta,
-	submitIsolatedMarginReducePositionOrder,
 	submitSmartMarginReducePositionOrder,
 } from 'state/futures/actions'
 import { setClosePositionOrderType } from 'state/futures/reducer'
@@ -69,10 +69,10 @@ export default function ClosePositionModal() {
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
 
 	const submitCloseOrder = useCallback(() => {
-		if (accountType === 'cross_margin') {
+		if (accountType === FuturesMarginType.SMART_MARGIN) {
 			dispatch(submitSmartMarginReducePositionOrder(overridePriceProtection))
 		} else {
-			dispatch(submitIsolatedMarginReducePositionOrder())
+			dispatch(submitCrossMarginReducePositionOrder())
 		}
 	}, [dispatch, accountType, overridePriceProtection])
 
@@ -170,7 +170,7 @@ export default function ClosePositionModal() {
 	return (
 		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
 			<Spacer height={10} />
-			{accountType === 'cross_margin' && (
+			{accountType === FuturesMarginType.SMART_MARGIN && (
 				<>
 					<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
 					<Spacer height={20} />

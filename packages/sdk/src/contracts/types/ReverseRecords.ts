@@ -2,89 +2,73 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BytesLike,
-  CallOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+	BaseContract,
+	BigNumber,
+	BytesLike,
+	CallOverrides,
+	PopulatedTransaction,
+	Signer,
+	utils,
+} from 'ethers'
+import type { FunctionFragment, Result } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export interface ReverseRecordsInterface extends utils.Interface {
-  functions: {
-    "getNames(address[])": FunctionFragment;
-  };
+	functions: {
+		'getNames(address[])': FunctionFragment
+	}
 
-  getFunction(nameOrSignatureOrTopic: "getNames"): FunctionFragment;
+	getFunction(nameOrSignatureOrTopic: 'getNames'): FunctionFragment
 
-  encodeFunctionData(functionFragment: "getNames", values: [string[]]): string;
+	encodeFunctionData(functionFragment: 'getNames', values: [string[]]): string
 
-  decodeFunctionResult(functionFragment: "getNames", data: BytesLike): Result;
+	decodeFunctionResult(functionFragment: 'getNames', data: BytesLike): Result
 
-  events: {};
+	events: {}
 }
 
 export interface ReverseRecords extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+	connect(signerOrProvider: Signer | Provider | string): this
+	attach(addressOrName: string): this
+	deployed(): Promise<this>
 
-  interface: ReverseRecordsInterface;
+	interface: ReverseRecordsInterface
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+	queryFilter<TEvent extends TypedEvent>(
+		event: TypedEventFilter<TEvent>,
+		fromBlockOrBlockhash?: string | number | undefined,
+		toBlock?: string | number | undefined
+	): Promise<Array<TEvent>>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+	listeners<TEvent extends TypedEvent>(
+		eventFilter?: TypedEventFilter<TEvent>
+	): Array<TypedListener<TEvent>>
+	listeners(eventName?: string): Array<Listener>
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+	removeAllListeners(eventName?: string): this
+	off: OnEvent<this>
+	on: OnEvent<this>
+	once: OnEvent<this>
+	removeListener: OnEvent<this>
 
-  functions: {
-    getNames(
-      addresses: string[],
-      overrides?: CallOverrides
-    ): Promise<[string[]] & { r: string[] }>;
-  };
+	functions: {
+		getNames(addresses: string[], overrides?: CallOverrides): Promise<[string[]] & { r: string[] }>
+	}
 
-  getNames(addresses: string[], overrides?: CallOverrides): Promise<string[]>;
+	getNames(addresses: string[], overrides?: CallOverrides): Promise<string[]>
 
-  callStatic: {
-    getNames(addresses: string[], overrides?: CallOverrides): Promise<string[]>;
-  };
+	callStatic: {
+		getNames(addresses: string[], overrides?: CallOverrides): Promise<string[]>
+	}
 
-  filters: {};
+	filters: {}
 
-  estimateGas: {
-    getNames(
-      addresses: string[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
+	estimateGas: {
+		getNames(addresses: string[], overrides?: CallOverrides): Promise<BigNumber>
+	}
 
-  populateTransaction: {
-    getNames(
-      addresses: string[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+	populateTransaction: {
+		getNames(addresses: string[], overrides?: CallOverrides): Promise<PopulatedTransaction>
+	}
 }

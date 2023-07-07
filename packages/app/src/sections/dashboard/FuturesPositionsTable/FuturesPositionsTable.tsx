@@ -1,4 +1,4 @@
-import { FuturesAccountType } from '@kwenta/sdk/utils'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
@@ -18,19 +18,20 @@ import ROUTES from 'constants/routes'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
+import { selectCrossMarginPositions } from 'state/crossMargin/selectors'
 import {
-	selectCrossMarginPositions,
-	selectIsolatedMarginPositions,
+	selectSmartMarginPositions,
 	selectMarkets,
 	selectPositionHistory,
 } from 'state/futures/selectors'
+import { AppFuturesMarginType } from 'state/futures/types'
 import { useAppSelector } from 'state/hooks'
 import { getSynthDescription } from 'utils/futures'
 
 import MobilePositionRow from './MobilePositionRow'
 
 type FuturesPositionTableProps = {
-	accountType: FuturesAccountType
+	accountType: AppFuturesMarginType
 	showCurrentMarket?: boolean
 	showEmptyTable?: boolean
 }
@@ -46,13 +47,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isL2 = useIsL2()
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions)
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
+	const smartMarginPositions = useAppSelector(selectSmartMarginPositions)
 	const positionHistory = useAppSelector(selectPositionHistory)
 	const futuresMarkets = useAppSelector(selectMarkets)
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions
+		const positions =
+			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset)
@@ -71,7 +73,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				}
 			})
 			.filter(({ position, market }) => !!position && !!market)
-	}, [accountType, isolatedPositions, crossMarginPositions, futuresMarkets, t, positionHistory])
+	}, [accountType, crossMarginPositions, smartMarginPositions, futuresMarkets, t, positionHistory])
 
 	return (
 		<>
@@ -79,7 +81,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				<div>
 					<Table
 						data={data}
-						hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
+						hiddenColumns={accountType === FuturesMarginType.SMART_MARGIN ? ['tp-sl'] : []}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}
@@ -94,7 +96,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									{!showCurrentMarket ? (
 										t('dashboard.overview.futures-positions-table.no-result')
 									) : (
-										<Link href={ROUTES.Markets.Home('cross_margin')}>
+										<Link href={ROUTES.Markets.Home(FuturesMarginType.SMART_MARGIN)}>
 											<div>{t('common.perp-cta')}</div>
 										</Link>
 									)}
@@ -293,7 +295,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						<div style={{ margin: '0 15px' }}>
 							{data.length === 0 ? (
 								<NoPositionsText>
-									<Link href={ROUTES.Markets.Home('cross_margin')}>
+									<Link href={ROUTES.Markets.Home(FuturesMarginType.SMART_MARGIN)}>
 										<div>{t('common.perp-cta')}</div>
 									</Link>
 								</NoPositionsText>

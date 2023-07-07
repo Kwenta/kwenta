@@ -21,11 +21,11 @@ import { ButtonLoader } from 'components/Loader'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
-import { refetchTradePreview, submitCrossMarginOrder } from 'state/futures/actions'
+import { refetchTradePreview, submitSmartMarginOrder } from 'state/futures/actions'
 import {
 	selectLeverageSide,
 	selectMarketAsset,
-	selectCrossMarginOrderPrice,
+	selectSmartMarginOrderPrice,
 	selectOrderType,
 	selectPosition,
 	selectTradePreview,
@@ -67,7 +67,7 @@ export default function TradeConfirmationModal({
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const potentialTradeDetails = useAppSelector(selectTradePreview)
 	const orderType = useAppSelector(selectOrderType)
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 	const position = useAppSelector(selectPosition)
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const leverageInput = useAppSelector(selectLeverageInput)
@@ -78,7 +78,7 @@ export default function TradeConfirmationModal({
 
 	usePollAction('refresh_preview', refetchTradePreview, { intervalTime: 6000 })
 
-	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch])
+	const onConfirmOrder = useCallback(() => dispatch(submitSmartMarginOrder(true)), [dispatch])
 
 	const totalFee = useMemo(
 		() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee,

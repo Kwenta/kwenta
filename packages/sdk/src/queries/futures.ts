@@ -31,7 +31,7 @@ export const queryAccountsFromSubgraph = async (
 	return response?.crossMarginAccounts.map((cm: { id: string }) => cm.id) || []
 }
 
-export const queryCrossMarginAccounts = async (
+export const querySmartMarginAccounts = async (
 	sdk: KwentaSDK,
 	walletAddress: string
 ): Promise<string[]> => {
@@ -90,58 +90,16 @@ export const queryTrades = async (
 	)
 }
 
-export const queryPositionHistory = (sdk: KwentaSDK, account: string) => {
+export const queryPositionHistory = (
+	sdk: KwentaSDK,
+	account: string,
+	accountType: 'eoa' | 'account'
+) => {
+	const accountQuery = accountType === 'eoa' ? { account: account } : { abstractAccount: account }
 	return getFuturesPositions(
 		sdk.futures.futuresGqlEndpoint,
 		{
-			where: {
-				abstractAccount: account,
-			},
-			first: 99999,
-			orderBy: 'openTimestamp',
-			orderDirection: 'desc',
-		},
-		{
-			id: true,
-			lastTxHash: true,
-			openTimestamp: true,
-			closeTimestamp: true,
-			timestamp: true,
-			market: true,
-			marketKey: true,
-			asset: true,
-			account: true,
-			abstractAccount: true,
-			accountType: true,
-			isOpen: true,
-			isLiquidated: true,
-			trades: true,
-			totalVolume: true,
-			size: true,
-			initialMargin: true,
-			margin: true,
-			pnl: true,
-			feesPaid: true,
-			netFunding: true,
-			pnlWithFeesPaid: true,
-			netTransfers: true,
-			totalDeposits: true,
-			fundingIndex: true,
-			entryPrice: true,
-			avgEntryPrice: true,
-			lastPrice: true,
-			exitPrice: true,
-		}
-	)
-}
-
-export const queryCompletePositionHistory = (sdk: KwentaSDK, account: string) => {
-	return getFuturesPositions(
-		sdk.futures.futuresGqlEndpoint,
-		{
-			where: {
-				account: account,
-			},
+			where: accountQuery,
 			first: 99999,
 			orderBy: 'openTimestamp',
 			orderDirection: 'desc',

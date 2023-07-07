@@ -1,4 +1,5 @@
 import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars } from '@kwenta/sdk/utils'
 import { memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,12 +21,12 @@ import {
 	selectFuturesType,
 	selectIdleMargin,
 	selectLockedMarginInMarkets,
-	selectWithdrawableMargin,
+	selectWithdrawableSmartMargin,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PencilButton from '../../../components/Button/PencilButton'
-import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox'
+import SmartMarginInfoBox from '../TradeSmartMargin/SmartMarginInfoBox'
 
 import SmartMarginOnboardModal from './SmartMarginOnboardModal'
 
@@ -43,7 +44,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	const walletBal = useAppSelector(selectSusdBalance)
 	const accountType = useAppSelector(selectFuturesType)
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin)
-	const withdrawable = useAppSelector(selectWithdrawableMargin)
+	const withdrawable = useAppSelector(selectWithdrawableSmartMargin)
 	const openModal = useAppSelector(selectShowModal)
 
 	const [expanded, setExpanded] = useState(false)
@@ -53,14 +54,17 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	}, [walletBal, withdrawable])
 
 	const onClickContainer = () => {
-		if (accountType === 'isolated_margin') return
+		if (accountType === FuturesMarginType.CROSS_MARGIN) return
 		setExpanded(!expanded)
 	}
 
 	return (
 		<Container mobile={deviceType === 'mobile'}>
-			<BalanceContainer clickable={accountType === 'cross_margin'} onClick={onClickContainer}>
-				{accountType === 'cross_margin' && isDepositRequired ? (
+			<BalanceContainer
+				clickable={accountType === FuturesMarginType.SMART_MARGIN}
+				onClick={onClickContainer}
+			>
+				{accountType === FuturesMarginType.SMART_MARGIN && isDepositRequired ? (
 					<DepositContainer>
 						<FlexDivCol>
 							<FlexDivRow columnGap="5px" justifyContent="flex-start">
@@ -91,12 +95,12 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 										{t('futures.market.trade.trade-balance.available-margin')}:
 									</Body>
 									<NumericValue size={'medium'} weight="bold">
-										{accountType === 'isolated_margin'
+										{accountType === FuturesMarginType.CROSS_MARGIN
 											? formatDollars(availableIsolatedMargin)
 											: formatDollars(idleMargin)}
 									</NumericValue>
 								</FlexDivRow>
-								{accountType === 'cross_margin' && lockedMargin.gt(0) && (
+								{FuturesMarginType.SMART_MARGIN && lockedMargin.gt(0) && (
 									<FlexDivRow style={{ width: '200px' }}>
 										<Body size={'medium'} color="secondary">
 											{t('futures.market.trade.trade-balance.locked-margin')}:
@@ -123,12 +127,12 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 										{t('futures.market.trade.trade-balance.available-margin')}
 									</Body>
 									<NumericValue size={'large'} weight="bold">
-										{accountType === 'isolated_margin'
+										{accountType === FuturesMarginType.CROSS_MARGIN
 											? formatDollars(availableIsolatedMargin)
 											: formatDollars(idleMargin)}
 									</NumericValue>
 								</FlexDivCol>
-								{accountType === 'cross_margin' && lockedMargin.gt(0) && (
+								{accountType === FuturesMarginType.SMART_MARGIN && lockedMargin.gt(0) && (
 									<StyledFlexDivCol>
 										<FlexDivRowCentered columnGap="5px">
 											<Body size={'medium'} color="secondary">
@@ -152,7 +156,9 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 					</>
 				)}
 
-				{(accountType === 'isolated_margin' || withdrawable.gt(0) || !isDepositRequired) && (
+				{(accountType === FuturesMarginType.CROSS_MARGIN ||
+					withdrawable.gt(0) ||
+					!isDepositRequired) && (
 					<FlexDivRowCentered columnGap="15px">
 						<PencilButton
 							width={16}
@@ -161,7 +167,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 								e.stopPropagation()
 								dispatch(
 									setOpenModal(
-										accountType === 'isolated_margin'
+										accountType === FuturesMarginType.CROSS_MARGIN
 											? 'futures_isolated_transfer'
 											: 'futures_cross_withdraw'
 									)
@@ -175,8 +181,8 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 				)}
 			</BalanceContainer>
 
-			{expanded && accountType === 'cross_margin' && (
-				<DetailsContainer>{<CrossMarginInfoBox />}</DetailsContainer>
+			{expanded && accountType === FuturesMarginType.SMART_MARGIN && (
+				<DetailsContainer>{<SmartMarginInfoBox />}</DetailsContainer>
 			)}
 			{openModal === 'futures_smart_margin_socket' && (
 				<SmartMarginOnboardModal

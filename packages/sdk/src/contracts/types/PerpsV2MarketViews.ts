@@ -2,1085 +2,786 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumber,
-  BigNumberish,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
-} from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  TypedEventFilter,
-  TypedEvent,
-  TypedListener,
-  OnEvent,
-} from "./common";
+	BaseContract,
+	BigNumber,
+	BigNumberish,
+	BytesLike,
+	CallOverrides,
+	ContractTransaction,
+	Overrides,
+	PopulatedTransaction,
+	Signer,
+	utils,
+} from 'ethers'
+import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
 
 export declare namespace IPerpsV2MarketBaseTypes {
-  export type PositionStruct = {
-    id: BigNumberish;
-    lastFundingIndex: BigNumberish;
-    margin: BigNumberish;
-    lastPrice: BigNumberish;
-    size: BigNumberish;
-  };
+	export type PositionStruct = {
+		id: BigNumberish
+		lastFundingIndex: BigNumberish
+		margin: BigNumberish
+		lastPrice: BigNumberish
+		size: BigNumberish
+	}
 
-  export type PositionStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    id: BigNumber;
-    lastFundingIndex: BigNumber;
-    margin: BigNumber;
-    lastPrice: BigNumber;
-    size: BigNumber;
-  };
+	export type PositionStructOutput = [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+		id: BigNumber
+		lastFundingIndex: BigNumber
+		margin: BigNumber
+		lastPrice: BigNumber
+		size: BigNumber
+	}
 }
 
 export interface PerpsV2MarketViewsInterface extends utils.Interface {
-  functions: {
-    "acceptOwnership()": FunctionFragment;
-    "accessibleMargin(address)": FunctionFragment;
-    "accruedFunding(address)": FunctionFragment;
-    "assetPrice()": FunctionFragment;
-    "baseAsset()": FunctionFragment;
-    "canLiquidate(address)": FunctionFragment;
-    "currentFundingRate()": FunctionFragment;
-    "currentFundingVelocity()": FunctionFragment;
-    "fillPrice(int256)": FunctionFragment;
-    "fundingLastRecomputed()": FunctionFragment;
-    "fundingSequence(uint256)": FunctionFragment;
-    "fundingSequenceLength()": FunctionFragment;
-    "isResolverCached()": FunctionFragment;
-    "liquidationFee(address)": FunctionFragment;
-    "liquidationPrice(address)": FunctionFragment;
-    "marketDebt()": FunctionFragment;
-    "marketKey()": FunctionFragment;
-    "marketSize()": FunctionFragment;
-    "marketSizes()": FunctionFragment;
-    "marketSkew()": FunctionFragment;
-    "marketState()": FunctionFragment;
-    "nominateNewOwner(address)": FunctionFragment;
-    "nominatedOwner()": FunctionFragment;
-    "notionalValue(address)": FunctionFragment;
-    "orderFee(int256,uint8)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "positions(address)": FunctionFragment;
-    "postTradeDetails(int256,uint256,uint8,address)": FunctionFragment;
-    "profitLoss(address)": FunctionFragment;
-    "rebuildCache()": FunctionFragment;
-    "remainingMargin(address)": FunctionFragment;
-    "resolver()": FunctionFragment;
-    "resolverAddressesRequired()": FunctionFragment;
-    "unrecordedFunding()": FunctionFragment;
-  };
+	functions: {
+		'acceptOwnership()': FunctionFragment
+		'accessibleMargin(address)': FunctionFragment
+		'accruedFunding(address)': FunctionFragment
+		'assetPrice()': FunctionFragment
+		'baseAsset()': FunctionFragment
+		'canLiquidate(address)': FunctionFragment
+		'currentFundingRate()': FunctionFragment
+		'currentFundingVelocity()': FunctionFragment
+		'fillPrice(int256)': FunctionFragment
+		'fundingLastRecomputed()': FunctionFragment
+		'fundingSequence(uint256)': FunctionFragment
+		'fundingSequenceLength()': FunctionFragment
+		'isResolverCached()': FunctionFragment
+		'liquidationFee(address)': FunctionFragment
+		'liquidationPrice(address)': FunctionFragment
+		'marketDebt()': FunctionFragment
+		'marketKey()': FunctionFragment
+		'marketSize()': FunctionFragment
+		'marketSizes()': FunctionFragment
+		'marketSkew()': FunctionFragment
+		'marketState()': FunctionFragment
+		'nominateNewOwner(address)': FunctionFragment
+		'nominatedOwner()': FunctionFragment
+		'notionalValue(address)': FunctionFragment
+		'orderFee(int256,uint8)': FunctionFragment
+		'owner()': FunctionFragment
+		'positions(address)': FunctionFragment
+		'postTradeDetails(int256,uint256,uint8,address)': FunctionFragment
+		'profitLoss(address)': FunctionFragment
+		'rebuildCache()': FunctionFragment
+		'remainingMargin(address)': FunctionFragment
+		'resolver()': FunctionFragment
+		'resolverAddressesRequired()': FunctionFragment
+		'unrecordedFunding()': FunctionFragment
+	}
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "acceptOwnership"
-      | "accessibleMargin"
-      | "accruedFunding"
-      | "assetPrice"
-      | "baseAsset"
-      | "canLiquidate"
-      | "currentFundingRate"
-      | "currentFundingVelocity"
-      | "fillPrice"
-      | "fundingLastRecomputed"
-      | "fundingSequence"
-      | "fundingSequenceLength"
-      | "isResolverCached"
-      | "liquidationFee"
-      | "liquidationPrice"
-      | "marketDebt"
-      | "marketKey"
-      | "marketSize"
-      | "marketSizes"
-      | "marketSkew"
-      | "marketState"
-      | "nominateNewOwner"
-      | "nominatedOwner"
-      | "notionalValue"
-      | "orderFee"
-      | "owner"
-      | "positions"
-      | "postTradeDetails"
-      | "profitLoss"
-      | "rebuildCache"
-      | "remainingMargin"
-      | "resolver"
-      | "resolverAddressesRequired"
-      | "unrecordedFunding"
-  ): FunctionFragment;
+	getFunction(
+		nameOrSignatureOrTopic:
+			| 'acceptOwnership'
+			| 'accessibleMargin'
+			| 'accruedFunding'
+			| 'assetPrice'
+			| 'baseAsset'
+			| 'canLiquidate'
+			| 'currentFundingRate'
+			| 'currentFundingVelocity'
+			| 'fillPrice'
+			| 'fundingLastRecomputed'
+			| 'fundingSequence'
+			| 'fundingSequenceLength'
+			| 'isResolverCached'
+			| 'liquidationFee'
+			| 'liquidationPrice'
+			| 'marketDebt'
+			| 'marketKey'
+			| 'marketSize'
+			| 'marketSizes'
+			| 'marketSkew'
+			| 'marketState'
+			| 'nominateNewOwner'
+			| 'nominatedOwner'
+			| 'notionalValue'
+			| 'orderFee'
+			| 'owner'
+			| 'positions'
+			| 'postTradeDetails'
+			| 'profitLoss'
+			| 'rebuildCache'
+			| 'remainingMargin'
+			| 'resolver'
+			| 'resolverAddressesRequired'
+			| 'unrecordedFunding'
+	): FunctionFragment
 
-  encodeFunctionData(
-    functionFragment: "acceptOwnership",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "accessibleMargin",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "accruedFunding",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "assetPrice",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "baseAsset", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "canLiquidate",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentFundingRate",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentFundingVelocity",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "fillPrice",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "fundingLastRecomputed",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "fundingSequence",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "fundingSequenceLength",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isResolverCached",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationFee",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidationPrice",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "marketDebt",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "marketKey", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "marketSize",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "marketSizes",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "marketSkew",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "marketState",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominateNewOwner",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "nominatedOwner",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "notionalValue",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "orderFee",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "positions", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "postTradeDetails",
-    values: [BigNumberish, BigNumberish, BigNumberish, string]
-  ): string;
-  encodeFunctionData(functionFragment: "profitLoss", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "rebuildCache",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "remainingMargin",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "resolver", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "resolverAddressesRequired",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unrecordedFunding",
-    values?: undefined
-  ): string;
+	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
+	encodeFunctionData(functionFragment: 'accessibleMargin', values: [string]): string
+	encodeFunctionData(functionFragment: 'accruedFunding', values: [string]): string
+	encodeFunctionData(functionFragment: 'assetPrice', values?: undefined): string
+	encodeFunctionData(functionFragment: 'baseAsset', values?: undefined): string
+	encodeFunctionData(functionFragment: 'canLiquidate', values: [string]): string
+	encodeFunctionData(functionFragment: 'currentFundingRate', values?: undefined): string
+	encodeFunctionData(functionFragment: 'currentFundingVelocity', values?: undefined): string
+	encodeFunctionData(functionFragment: 'fillPrice', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'fundingLastRecomputed', values?: undefined): string
+	encodeFunctionData(functionFragment: 'fundingSequence', values: [BigNumberish]): string
+	encodeFunctionData(functionFragment: 'fundingSequenceLength', values?: undefined): string
+	encodeFunctionData(functionFragment: 'isResolverCached', values?: undefined): string
+	encodeFunctionData(functionFragment: 'liquidationFee', values: [string]): string
+	encodeFunctionData(functionFragment: 'liquidationPrice', values: [string]): string
+	encodeFunctionData(functionFragment: 'marketDebt', values?: undefined): string
+	encodeFunctionData(functionFragment: 'marketKey', values?: undefined): string
+	encodeFunctionData(functionFragment: 'marketSize', values?: undefined): string
+	encodeFunctionData(functionFragment: 'marketSizes', values?: undefined): string
+	encodeFunctionData(functionFragment: 'marketSkew', values?: undefined): string
+	encodeFunctionData(functionFragment: 'marketState', values?: undefined): string
+	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [string]): string
+	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'notionalValue', values: [string]): string
+	encodeFunctionData(functionFragment: 'orderFee', values: [BigNumberish, BigNumberish]): string
+	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+	encodeFunctionData(functionFragment: 'positions', values: [string]): string
+	encodeFunctionData(
+		functionFragment: 'postTradeDetails',
+		values: [BigNumberish, BigNumberish, BigNumberish, string]
+	): string
+	encodeFunctionData(functionFragment: 'profitLoss', values: [string]): string
+	encodeFunctionData(functionFragment: 'rebuildCache', values?: undefined): string
+	encodeFunctionData(functionFragment: 'remainingMargin', values: [string]): string
+	encodeFunctionData(functionFragment: 'resolver', values?: undefined): string
+	encodeFunctionData(functionFragment: 'resolverAddressesRequired', values?: undefined): string
+	encodeFunctionData(functionFragment: 'unrecordedFunding', values?: undefined): string
 
-  decodeFunctionResult(
-    functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "accessibleMargin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "accruedFunding",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "assetPrice", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "baseAsset", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "canLiquidate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currentFundingRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currentFundingVelocity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "fillPrice", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "fundingLastRecomputed",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "fundingSequence",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "fundingSequenceLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isResolverCached",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidationPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "marketDebt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "marketKey", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "marketSize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "marketSizes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "marketSkew", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "marketState",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominateNewOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "nominatedOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "notionalValue",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "orderFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "positions", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "postTradeDetails",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "profitLoss", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "rebuildCache",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "remainingMargin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "resolver", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "resolverAddressesRequired",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unrecordedFunding",
-    data: BytesLike
-  ): Result;
+	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'accessibleMargin', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'accruedFunding', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'assetPrice', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'baseAsset', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'canLiquidate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'currentFundingRate', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'currentFundingVelocity', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'fillPrice', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'fundingLastRecomputed', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'fundingSequence', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'fundingSequenceLength', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'isResolverCached', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidationFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'liquidationPrice', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'marketDebt', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'marketKey', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'marketSize', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'marketSizes', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'marketSkew', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'marketState', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominateNewOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'nominatedOwner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'notionalValue', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'orderFee', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'positions', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'postTradeDetails', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'profitLoss', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'rebuildCache', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'remainingMargin', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'resolver', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'resolverAddressesRequired', data: BytesLike): Result
+	decodeFunctionResult(functionFragment: 'unrecordedFunding', data: BytesLike): Result
 
-  events: {
-    "CacheUpdated(bytes32,address)": EventFragment;
-    "OwnerChanged(address,address)": EventFragment;
-    "OwnerNominated(address)": EventFragment;
-  };
+	events: {
+		'CacheUpdated(bytes32,address)': EventFragment
+		'OwnerChanged(address,address)': EventFragment
+		'OwnerNominated(address)': EventFragment
+	}
 
-  getEvent(nameOrSignatureOrTopic: "CacheUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
+	getEvent(nameOrSignatureOrTopic: 'CacheUpdated'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerChanged'): EventFragment
+	getEvent(nameOrSignatureOrTopic: 'OwnerNominated'): EventFragment
 }
 
 export interface CacheUpdatedEventObject {
-  name: string;
-  destination: string;
+	name: string
+	destination: string
 }
-export type CacheUpdatedEvent = TypedEvent<
-  [string, string],
-  CacheUpdatedEventObject
->;
+export type CacheUpdatedEvent = TypedEvent<[string, string], CacheUpdatedEventObject>
 
-export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>;
+export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>
 
 export interface OwnerChangedEventObject {
-  oldOwner: string;
-  newOwner: string;
+	oldOwner: string
+	newOwner: string
 }
-export type OwnerChangedEvent = TypedEvent<
-  [string, string],
-  OwnerChangedEventObject
->;
+export type OwnerChangedEvent = TypedEvent<[string, string], OwnerChangedEventObject>
 
-export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
+export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>
 
 export interface OwnerNominatedEventObject {
-  newOwner: string;
+	newOwner: string
 }
-export type OwnerNominatedEvent = TypedEvent<
-  [string],
-  OwnerNominatedEventObject
->;
+export type OwnerNominatedEvent = TypedEvent<[string], OwnerNominatedEventObject>
 
-export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
+export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>
 
 export interface PerpsV2MarketViews extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
-
-  interface: PerpsV2MarketViewsInterface;
-
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+	connect(signerOrProvider: Signer | Provider | string): this
+	attach(addressOrName: string): this
+	deployed(): Promise<this>
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+	interface: PerpsV2MarketViewsInterface
 
-  functions: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    accessibleMargin(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { marginAccessible: BigNumber; invalid: boolean }
-    >;
-
-    accruedFunding(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>;
-
-    assetPrice(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-    baseAsset(overrides?: CallOverrides): Promise<[string] & { key: string }>;
-
-    canLiquidate(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    currentFundingRate(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    currentFundingVelocity(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    fillPrice(
-      sizeDelta: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-    fundingLastRecomputed(overrides?: CallOverrides): Promise<[number]>;
-
-    fundingSequence(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    fundingSequenceLength(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<[boolean]>;
-
-    liquidationFee(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    liquidationPrice(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-    marketDebt(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { debt: BigNumber; invalid: boolean }>;
-
-    marketKey(overrides?: CallOverrides): Promise<[string] & { key: string }>;
-
-    marketSize(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    marketSizes(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { long: BigNumber; short: BigNumber }>;
-
-    marketSkew(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    marketState(overrides?: CallOverrides): Promise<[string]>;
-
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
-
-    notionalValue(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { value: BigNumber; invalid: boolean }>;
-
-    orderFee(
-      sizeDelta: BigNumberish,
-      orderType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    positions(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[IPerpsV2MarketBaseTypes.PositionStructOutput]>;
-
-    postTradeDetails(
-      sizeDelta: BigNumberish,
-      tradePrice: BigNumberish,
-      orderType: BigNumberish,
-      sender: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
-        margin: BigNumber;
-        size: BigNumber;
-        price: BigNumber;
-        liqPrice: BigNumber;
-        fee: BigNumber;
-        status: number;
-      }
-    >;
-
-    profitLoss(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>;
-
-    rebuildCache(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    remainingMargin(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
-    >;
-
-    resolver(overrides?: CallOverrides): Promise<[string]>;
-
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<[string[]] & { addresses: string[] }>;
-
-    unrecordedFunding(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>;
-  };
-
-  acceptOwnership(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  accessibleMargin(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, boolean] & { marginAccessible: BigNumber; invalid: boolean }
-  >;
-
-  accruedFunding(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>;
-
-  assetPrice(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-  baseAsset(overrides?: CallOverrides): Promise<string>;
-
-  canLiquidate(account: string, overrides?: CallOverrides): Promise<boolean>;
-
-  currentFundingRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-  currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>;
-
-  fillPrice(
-    sizeDelta: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-  fundingLastRecomputed(overrides?: CallOverrides): Promise<number>;
-
-  fundingSequence(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-  isResolverCached(overrides?: CallOverrides): Promise<boolean>;
-
-  liquidationFee(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  liquidationPrice(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-  marketDebt(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { debt: BigNumber; invalid: boolean }>;
-
-  marketKey(overrides?: CallOverrides): Promise<string>;
-
-  marketSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-  marketSizes(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { long: BigNumber; short: BigNumber }>;
-
-  marketSkew(overrides?: CallOverrides): Promise<BigNumber>;
-
-  marketState(overrides?: CallOverrides): Promise<string>;
-
-  nominateNewOwner(
-    _owner: string,
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
-  notionalValue(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { value: BigNumber; invalid: boolean }>;
-
-  orderFee(
-    sizeDelta: BigNumberish,
-    orderType: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  positions(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<IPerpsV2MarketBaseTypes.PositionStructOutput>;
-
-  postTradeDetails(
-    sizeDelta: BigNumberish,
-    tradePrice: BigNumberish,
-    orderType: BigNumberish,
-    sender: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
-      margin: BigNumber;
-      size: BigNumber;
-      price: BigNumber;
-      liqPrice: BigNumber;
-      fee: BigNumber;
-      status: number;
-    }
-  >;
+	queryFilter<TEvent extends TypedEvent>(
+		event: TypedEventFilter<TEvent>,
+		fromBlockOrBlockhash?: string | number | undefined,
+		toBlock?: string | number | undefined
+	): Promise<Array<TEvent>>
 
-  profitLoss(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>;
+	listeners<TEvent extends TypedEvent>(
+		eventFilter?: TypedEventFilter<TEvent>
+	): Array<TypedListener<TEvent>>
+	listeners(eventName?: string): Array<Listener>
+	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
+	removeAllListeners(eventName?: string): this
+	off: OnEvent<this>
+	on: OnEvent<this>
+	once: OnEvent<this>
+	removeListener: OnEvent<this>
 
-  rebuildCache(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
+	functions: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+		accessibleMargin(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { marginAccessible: BigNumber; invalid: boolean }>
+
+		accruedFunding(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>
 
-  remainingMargin(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
-  >;
+		assetPrice(
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
 
-  resolver(overrides?: CallOverrides): Promise<string>;
-
-  resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-  unrecordedFunding(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>;
-
-  callStatic: {
-    acceptOwnership(overrides?: CallOverrides): Promise<void>;
-
-    accessibleMargin(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { marginAccessible: BigNumber; invalid: boolean }
-    >;
-
-    accruedFunding(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>;
-
-    assetPrice(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-    baseAsset(overrides?: CallOverrides): Promise<string>;
-
-    canLiquidate(account: string, overrides?: CallOverrides): Promise<boolean>;
-
-    currentFundingRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-    currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>;
-
-    fillPrice(
-      sizeDelta: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-    fundingLastRecomputed(overrides?: CallOverrides): Promise<number>;
-
-    fundingSequence(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isResolverCached(overrides?: CallOverrides): Promise<boolean>;
-
-    liquidationFee(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    liquidationPrice(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>;
-
-    marketDebt(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { debt: BigNumber; invalid: boolean }>;
-
-    marketKey(overrides?: CallOverrides): Promise<string>;
-
-    marketSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    marketSizes(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { long: BigNumber; short: BigNumber }>;
-
-    marketSkew(overrides?: CallOverrides): Promise<BigNumber>;
-
-    marketState(overrides?: CallOverrides): Promise<string>;
-
-    nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>;
-
-    nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
-    notionalValue(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { value: BigNumber; invalid: boolean }>;
-
-    orderFee(
-      sizeDelta: BigNumberish,
-      orderType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    positions(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<IPerpsV2MarketBaseTypes.PositionStructOutput>;
-
-    postTradeDetails(
-      sizeDelta: BigNumberish,
-      tradePrice: BigNumberish,
-      orderType: BigNumberish,
-      sender: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
-        margin: BigNumber;
-        size: BigNumber;
-        price: BigNumber;
-        liqPrice: BigNumber;
-        fee: BigNumber;
-        status: number;
-      }
-    >;
-
-    profitLoss(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>;
+		baseAsset(overrides?: CallOverrides): Promise<[string] & { key: string }>
 
-    rebuildCache(overrides?: CallOverrides): Promise<void>;
+		canLiquidate(account: string, overrides?: CallOverrides): Promise<[boolean]>
 
-    remainingMargin(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }
-    >;
+		currentFundingRate(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    resolver(overrides?: CallOverrides): Promise<string>;
+		currentFundingVelocity(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
-
-    unrecordedFunding(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>;
-  };
-
-  filters: {
-    "CacheUpdated(bytes32,address)"(
-      name?: null,
-      destination?: null
-    ): CacheUpdatedEventFilter;
-    CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter;
+		fillPrice(
+			sizeDelta: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
 
-    "OwnerChanged(address,address)"(
-      oldOwner?: null,
-      newOwner?: null
-    ): OwnerChangedEventFilter;
-    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
-
-    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
-    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
-  };
+		fundingLastRecomputed(overrides?: CallOverrides): Promise<[number]>
 
-  estimateGas: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
+		fundingSequence(index: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    accessibleMargin(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		fundingSequenceLength(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    accruedFunding(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		isResolverCached(overrides?: CallOverrides): Promise<[boolean]>
 
-    assetPrice(overrides?: CallOverrides): Promise<BigNumber>;
+		liquidationFee(account: string, overrides?: CallOverrides): Promise<[BigNumber]>
 
-    baseAsset(overrides?: CallOverrides): Promise<BigNumber>;
+		liquidationPrice(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
 
-    canLiquidate(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		marketDebt(
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { debt: BigNumber; invalid: boolean }>
 
-    currentFundingRate(overrides?: CallOverrides): Promise<BigNumber>;
+		marketKey(overrides?: CallOverrides): Promise<[string] & { key: string }>
 
-    currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>;
+		marketSize(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    fillPrice(
-      sizeDelta: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		marketSizes(
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { long: BigNumber; short: BigNumber }>
 
-    fundingLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>;
+		marketSkew(overrides?: CallOverrides): Promise<[BigNumber]>
 
-    fundingSequence(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		marketState(overrides?: CallOverrides): Promise<[string]>
 
-    fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>;
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<ContractTransaction>
 
-    isResolverCached(overrides?: CallOverrides): Promise<BigNumber>;
+		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
 
-    liquidationFee(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		notionalValue(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { value: BigNumber; invalid: boolean }>
 
-    liquidationPrice(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		orderFee(
+			sizeDelta: BigNumberish,
+			orderType: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>
 
-    marketDebt(overrides?: CallOverrides): Promise<BigNumber>;
+		owner(overrides?: CallOverrides): Promise<[string]>
 
-    marketKey(overrides?: CallOverrides): Promise<BigNumber>;
+		positions(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[IPerpsV2MarketBaseTypes.PositionStructOutput]>
 
-    marketSize(overrides?: CallOverrides): Promise<BigNumber>;
+		postTradeDetails(
+			sizeDelta: BigNumberish,
+			tradePrice: BigNumberish,
+			orderType: BigNumberish,
+			sender: string,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+				margin: BigNumber
+				size: BigNumber
+				price: BigNumber
+				liqPrice: BigNumber
+				fee: BigNumber
+				status: number
+			}
+		>
 
-    marketSizes(overrides?: CallOverrides): Promise<BigNumber>;
+		profitLoss(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>
 
-    marketSkew(overrides?: CallOverrides): Promise<BigNumber>;
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    marketState(overrides?: CallOverrides): Promise<BigNumber>;
+		remainingMargin(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }>
 
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
+		resolver(overrides?: CallOverrides): Promise<[string]>
 
-    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
+		resolverAddressesRequired(
+			overrides?: CallOverrides
+		): Promise<[string[]] & { addresses: string[] }>
 
-    notionalValue(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+		unrecordedFunding(
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>
+	}
 
-    orderFee(
-      sizeDelta: BigNumberish,
-      orderType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
+
+	accessibleMargin(
+		account: string,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { marginAccessible: BigNumber; invalid: boolean }>
+
+	accruedFunding(
+		account: string,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
+	assetPrice(
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
 
-    positions(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+	baseAsset(overrides?: CallOverrides): Promise<string>
 
-    postTradeDetails(
-      sizeDelta: BigNumberish,
-      tradePrice: BigNumberish,
-      orderType: BigNumberish,
-      sender: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	canLiquidate(account: string, overrides?: CallOverrides): Promise<boolean>
 
-    profitLoss(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+	currentFundingRate(overrides?: CallOverrides): Promise<BigNumber>
 
-    rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+	currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>
 
-    remainingMargin(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+	fillPrice(
+		sizeDelta: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
 
-    resolver(overrides?: CallOverrides): Promise<BigNumber>;
+	fundingLastRecomputed(overrides?: CallOverrides): Promise<number>
 
-    resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>;
+	fundingSequence(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    unrecordedFunding(overrides?: CallOverrides): Promise<BigNumber>;
-  };
+	fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>
 
-  populateTransaction: {
-    acceptOwnership(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+	isResolverCached(overrides?: CallOverrides): Promise<boolean>
 
-    accessibleMargin(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	liquidationFee(account: string, overrides?: CallOverrides): Promise<BigNumber>
 
-    accruedFunding(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	liquidationPrice(
+		account: string,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
 
-    assetPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	marketDebt(
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { debt: BigNumber; invalid: boolean }>
 
-    baseAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	marketKey(overrides?: CallOverrides): Promise<string>
 
-    canLiquidate(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	marketSize(overrides?: CallOverrides): Promise<BigNumber>
 
-    currentFundingRate(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	marketSizes(
+		overrides?: CallOverrides
+	): Promise<[BigNumber, BigNumber] & { long: BigNumber; short: BigNumber }>
 
-    currentFundingVelocity(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	marketSkew(overrides?: CallOverrides): Promise<BigNumber>
 
-    fillPrice(
-      sizeDelta: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	marketState(overrides?: CallOverrides): Promise<string>
 
-    fundingLastRecomputed(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	nominateNewOwner(
+		_owner: string,
+		overrides?: Overrides & { from?: string }
+	): Promise<ContractTransaction>
 
-    fundingSequence(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	nominatedOwner(overrides?: CallOverrides): Promise<string>
 
-    fundingSequenceLength(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	notionalValue(
+		account: string,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { value: BigNumber; invalid: boolean }>
 
-    isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	orderFee(
+		sizeDelta: BigNumberish,
+		orderType: BigNumberish,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>
 
-    liquidationFee(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	owner(overrides?: CallOverrides): Promise<string>
 
-    liquidationPrice(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+	positions(
+		account: string,
+		overrides?: CallOverrides
+	): Promise<IPerpsV2MarketBaseTypes.PositionStructOutput>
 
-    marketDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	postTradeDetails(
+		sizeDelta: BigNumberish,
+		tradePrice: BigNumberish,
+		orderType: BigNumberish,
+		sender: string,
+		overrides?: CallOverrides
+	): Promise<
+		[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+			margin: BigNumber
+			size: BigNumber
+			price: BigNumber
+			liqPrice: BigNumber
+			fee: BigNumber
+			status: number
+		}
+	>
 
-    marketKey(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	profitLoss(
+		account: string,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>
 
-    marketSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	rebuildCache(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
 
-    marketSizes(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	remainingMargin(
+		account: string,
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }>
 
-    marketSkew(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	resolver(overrides?: CallOverrides): Promise<string>
 
-    marketState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
 
-    nominateNewOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+	unrecordedFunding(
+		overrides?: CallOverrides
+	): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>
 
-    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+	callStatic: {
+		acceptOwnership(overrides?: CallOverrides): Promise<void>
 
-    notionalValue(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		accessibleMargin(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { marginAccessible: BigNumber; invalid: boolean }>
 
-    orderFee(
-      sizeDelta: BigNumberish,
-      orderType: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		accruedFunding(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+		assetPrice(
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
 
-    positions(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		baseAsset(overrides?: CallOverrides): Promise<string>
 
-    postTradeDetails(
-      sizeDelta: BigNumberish,
-      tradePrice: BigNumberish,
-      orderType: BigNumberish,
-      sender: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		canLiquidate(account: string, overrides?: CallOverrides): Promise<boolean>
 
-    profitLoss(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		currentFundingRate(overrides?: CallOverrides): Promise<BigNumber>
 
-    rebuildCache(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
+		currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>
 
-    remainingMargin(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		fillPrice(
+			sizeDelta: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
 
-    resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+		fundingLastRecomputed(overrides?: CallOverrides): Promise<number>
 
-    resolverAddressesRequired(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+		fundingSequence(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
 
-    unrecordedFunding(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
+		fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>
+
+		isResolverCached(overrides?: CallOverrides): Promise<boolean>
+
+		liquidationFee(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationPrice(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { price: BigNumber; invalid: boolean }>
+
+		marketDebt(
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { debt: BigNumber; invalid: boolean }>
+
+		marketKey(overrides?: CallOverrides): Promise<string>
+
+		marketSize(overrides?: CallOverrides): Promise<BigNumber>
+
+		marketSizes(
+			overrides?: CallOverrides
+		): Promise<[BigNumber, BigNumber] & { long: BigNumber; short: BigNumber }>
+
+		marketSkew(overrides?: CallOverrides): Promise<BigNumber>
+
+		marketState(overrides?: CallOverrides): Promise<string>
+
+		nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<string>
+
+		notionalValue(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { value: BigNumber; invalid: boolean }>
+
+		orderFee(
+			sizeDelta: BigNumberish,
+			orderType: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { fee: BigNumber; invalid: boolean }>
+
+		owner(overrides?: CallOverrides): Promise<string>
+
+		positions(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<IPerpsV2MarketBaseTypes.PositionStructOutput>
+
+		postTradeDetails(
+			sizeDelta: BigNumberish,
+			tradePrice: BigNumberish,
+			orderType: BigNumberish,
+			sender: string,
+			overrides?: CallOverrides
+		): Promise<
+			[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, number] & {
+				margin: BigNumber
+				size: BigNumber
+				price: BigNumber
+				liqPrice: BigNumber
+				fee: BigNumber
+				status: number
+			}
+		>
+
+		profitLoss(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { pnl: BigNumber; invalid: boolean }>
+
+		rebuildCache(overrides?: CallOverrides): Promise<void>
+
+		remainingMargin(
+			account: string,
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { marginRemaining: BigNumber; invalid: boolean }>
+
+		resolver(overrides?: CallOverrides): Promise<string>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
+
+		unrecordedFunding(
+			overrides?: CallOverrides
+		): Promise<[BigNumber, boolean] & { funding: BigNumber; invalid: boolean }>
+	}
+
+	filters: {
+		'CacheUpdated(bytes32,address)'(name?: null, destination?: null): CacheUpdatedEventFilter
+		CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter
+
+		'OwnerChanged(address,address)'(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+		OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+
+		'OwnerNominated(address)'(newOwner?: null): OwnerNominatedEventFilter
+		OwnerNominated(newOwner?: null): OwnerNominatedEventFilter
+	}
+
+	estimateGas: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		accessibleMargin(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		accruedFunding(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		assetPrice(overrides?: CallOverrides): Promise<BigNumber>
+
+		baseAsset(overrides?: CallOverrides): Promise<BigNumber>
+
+		canLiquidate(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		currentFundingRate(overrides?: CallOverrides): Promise<BigNumber>
+
+		currentFundingVelocity(overrides?: CallOverrides): Promise<BigNumber>
+
+		fillPrice(sizeDelta: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		fundingLastRecomputed(overrides?: CallOverrides): Promise<BigNumber>
+
+		fundingSequence(index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+
+		fundingSequenceLength(overrides?: CallOverrides): Promise<BigNumber>
+
+		isResolverCached(overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationFee(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		liquidationPrice(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		marketDebt(overrides?: CallOverrides): Promise<BigNumber>
+
+		marketKey(overrides?: CallOverrides): Promise<BigNumber>
+
+		marketSize(overrides?: CallOverrides): Promise<BigNumber>
+
+		marketSizes(overrides?: CallOverrides): Promise<BigNumber>
+
+		marketSkew(overrides?: CallOverrides): Promise<BigNumber>
+
+		marketState(overrides?: CallOverrides): Promise<BigNumber>
+
+		nominateNewOwner(_owner: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
+
+		notionalValue(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		orderFee(
+			sizeDelta: BigNumberish,
+			orderType: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		owner(overrides?: CallOverrides): Promise<BigNumber>
+
+		positions(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		postTradeDetails(
+			sizeDelta: BigNumberish,
+			tradePrice: BigNumberish,
+			orderType: BigNumberish,
+			sender: string,
+			overrides?: CallOverrides
+		): Promise<BigNumber>
+
+		profitLoss(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>
+
+		remainingMargin(account: string, overrides?: CallOverrides): Promise<BigNumber>
+
+		resolver(overrides?: CallOverrides): Promise<BigNumber>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>
+
+		unrecordedFunding(overrides?: CallOverrides): Promise<BigNumber>
+	}
+
+	populateTransaction: {
+		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		accessibleMargin(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		accruedFunding(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		assetPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		baseAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		canLiquidate(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		currentFundingRate(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		currentFundingVelocity(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		fillPrice(sizeDelta: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		fundingLastRecomputed(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		fundingSequence(index: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		fundingSequenceLength(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidationFee(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		liquidationPrice(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		marketDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		marketKey(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		marketSize(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		marketSizes(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		marketSkew(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		marketState(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		nominateNewOwner(
+			_owner: string,
+			overrides?: Overrides & { from?: string }
+		): Promise<PopulatedTransaction>
+
+		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		notionalValue(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		orderFee(
+			sizeDelta: BigNumberish,
+			orderType: BigNumberish,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		positions(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		postTradeDetails(
+			sizeDelta: BigNumberish,
+			tradePrice: BigNumberish,
+			orderType: BigNumberish,
+			sender: string,
+			overrides?: CallOverrides
+		): Promise<PopulatedTransaction>
+
+		profitLoss(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		rebuildCache(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
+
+		remainingMargin(account: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		resolverAddressesRequired(overrides?: CallOverrides): Promise<PopulatedTransaction>
+
+		unrecordedFunding(overrides?: CallOverrides): Promise<PopulatedTransaction>
+	}
 }

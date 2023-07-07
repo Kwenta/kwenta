@@ -11,8 +11,11 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import Loader from 'components/Loader'
 import { selectTransaction } from 'state/app/selectors'
-import { withdrawCrossMargin } from 'state/futures/actions'
-import { selectIsSubmittingCrossTransfer, selectWithdrawableMargin } from 'state/futures/selectors'
+import { withdrawSmartMargin } from 'state/futures/actions'
+import {
+	selectIsSubmittingCrossTransfer,
+	selectWithdrawableSmartMargin,
+} from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type Props = {
@@ -27,7 +30,7 @@ export default function WithdrawSmartMargin({ onDismiss }: Props) {
 
 	const transactionState = useAppSelector(selectTransaction)
 	const isSubmitting = useAppSelector(selectIsSubmittingCrossTransfer)
-	const totalWithdrawable = useAppSelector(selectWithdrawableMargin)
+	const totalWithdrawable = useAppSelector(selectWithdrawableSmartMargin)
 
 	const [amount, setAmount] = useState<string>('')
 
@@ -38,7 +41,7 @@ export default function WithdrawSmartMargin({ onDismiss }: Props) {
 	}, [amount, totalWithdrawable, t])
 
 	const withdrawMargin = useCallback(async () => {
-		dispatch(withdrawCrossMargin(wei(amount)))
+		dispatch(withdrawSmartMargin(wei(amount)))
 	}, [amount, dispatch])
 
 	const handleSetMax = React.useCallback(() => {

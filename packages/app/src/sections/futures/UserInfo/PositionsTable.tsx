@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatPercent } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
 import { FC, useCallback, useMemo, useState } from 'react'
@@ -19,10 +20,10 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import useWindowSize from 'hooks/useWindowSize'
 import PositionType from 'sections/futures/PositionType'
 import { setShowPositionModal } from 'state/app/reducer'
+import { selectCrossMarginPositions } from 'state/crossMargin/selectors'
 import {
-	selectCrossMarginPositions,
+	selectSmartMarginPositions,
 	selectFuturesType,
-	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
 	selectMarkPrices,
@@ -35,7 +36,6 @@ import media from 'styles/media'
 
 import PositionsTab from '../MobileTrade/UserTabs/PositionsTab'
 import ShareModal from '../ShareModal'
-
 import EditPositionButton from './EditPositionButton'
 import TableMarketDetails from './TableMarketDetails'
 
@@ -53,8 +53,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 
 	const isL2 = useIsL2()
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions)
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
+	const smartMarginPositions = useAppSelector(selectSmartMarginPositions)
 	const positionHistory = useAppSelector(selectPositionHistory)
 	const currentMarket = useAppSelector(selectMarketAsset)
 	const futuresMarkets = useAppSelector(selectMarkets)
@@ -64,7 +64,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions
+		const positions =
+			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset)
@@ -91,8 +92,8 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
 	}, [
 		accountType,
+		smartMarginPositions,
 		crossMarginPositions,
-		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
 		markPrices,
@@ -169,7 +170,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									<div>
 										<FlexDivRowCentered justifyContent="flex-start" columnGap="5px">
 											<Currency.Price price={row.position.size} currencyKey={row.market.asset} />
-											{accountType === 'cross_margin' && (
+											{accountType === FuturesMarginType.SMART_MARGIN && (
 												<EditPositionButton
 													modalType={'futures_edit_position_size'}
 													marketKey={row.market.marketKey}
@@ -207,7 +208,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							<FlexDivCol>
 								<FlexDivRow justifyContent="flex-start" columnGap="5px">
 									<NumericValue value={row.remainingMargin} />
-									{accountType === 'cross_margin' && (
+									{accountType === FuturesMarginType.SMART_MARGIN && (
 										<EditPositionButton
 											modalType={'futures_edit_position_margin'}
 											marketKey={row.market.marketKey}
@@ -230,7 +231,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 						<PositionCell>
 							<Currency.Price price={row.position.accruedFunding} colored />
 						</PositionCell>
-						{accountType === 'cross_margin' && (
+						{accountType === FuturesMarginType.SMART_MARGIN && (
 							<PositionCell>
 								<FlexDivCol>
 									<FlexDivRowCentered justifyContent="flex-start" columnGap="5px">
@@ -241,12 +242,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 												<Currency.Price price={row.takeProfit} />
 											</div>
 										)}
-										{accountType === 'cross_margin' && (
-											<EditPositionButton
-												modalType={'futures_edit_stop_loss_take_profit'}
-												marketKey={row.market.marketKey}
-											/>
-										)}
+										<EditPositionButton
+											modalType={'futures_edit_stop_loss_take_profit'}
+											marketKey={row.market.marketKey}
+										/>
 									</FlexDivRowCentered>
 									{row.stopLoss === undefined ? (
 										<Body>{NO_VALUE}</Body>

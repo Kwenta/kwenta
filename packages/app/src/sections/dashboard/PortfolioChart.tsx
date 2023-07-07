@@ -1,5 +1,6 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { Period } from '@kwenta/sdk/constants'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars, formatPercent } from '@kwenta/sdk/utils'
 import { formatChartDate, formatChartTime, formatShortDateWithTime } from '@kwenta/sdk/utils'
 import Link from 'next/link'
@@ -53,12 +54,13 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 	const theme = useTheme()
 	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe)
 	const accountType = useAppSelector(selectFuturesType)
-	const { isolated_margin: isolatedPortfolioData, cross_margin: smartPortfolioData } =
+	const { smart_margin: smartPortfolioData, cross_margin: crossPortfolioData } =
 		useAppSelector(selectPortfolioChartData)
 
 	const portfolioData = useMemo(
-		() => (accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData),
-		[accountType, isolatedPortfolioData, smartPortfolioData]
+		() =>
+			accountType === FuturesMarginType.CROSS_MARGIN ? crossPortfolioData : smartPortfolioData,
+		[accountType, crossPortfolioData, smartPortfolioData]
 	)
 
 	const lineColor = useMemo(() => {
@@ -112,8 +114,8 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 					align="left"
 					formatter={(value) =>
 						value === 'total'
-							? accountType === 'isolated_margin'
-								? 'Isolated Margin'
+							? accountType === 'cross_margin'
+								? 'Cross Margin'
 								: 'Smart Margin'
 							: value
 					}
@@ -132,10 +134,10 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 
 const PortfolioChart: FC = () => {
 	const { t } = useTranslation()
-	const { isolatedMarginFutures: isolatedTotal, crossMarginFutures: smartTotal } =
+	const { crossMargin: crossTotal, smartMargin: smartTotal } =
 		useAppSelector(selectFuturesPortfolio)
 	const accountType = useAppSelector(selectFuturesType)
-	const { isolated_margin: isolatedPortfolioData, cross_margin: smartPortfolioData } =
+	const { cross_margin: crossPortfolioData, smart_margin: smartPortfolioData } =
 		useAppSelector(selectPortfolioChartData)
 
 	const buyingPower = useAppSelector(selectBuyingPower)
@@ -145,13 +147,13 @@ const PortfolioChart: FC = () => {
 	const [hoverTitle, setHoverTitle] = useState<string | null>(null)
 
 	const total = useMemo(
-		() => (accountType === 'isolated_margin' ? isolatedTotal : smartTotal),
-		[accountType, isolatedTotal, smartTotal]
+		() => (accountType === 'cross_margin' ? crossTotal : smartTotal),
+		[accountType, crossTotal, smartTotal]
 	)
 
 	const portfolioData = useMemo(() => {
-		return accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData
-	}, [accountType, isolatedPortfolioData, smartPortfolioData])
+		return accountType === 'cross_margin' ? crossPortfolioData : smartPortfolioData
+	}, [accountType, crossPortfolioData, smartPortfolioData])
 
 	const changeValue = useMemo(() => {
 		if (portfolioData.length < 2) {

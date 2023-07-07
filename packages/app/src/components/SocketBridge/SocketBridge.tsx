@@ -1,3 +1,4 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { Bridge } from '@socket.tech/plugin'
 import { useCallback } from 'react'
 import styled, { useTheme } from 'styled-components'
@@ -42,7 +43,7 @@ const SocketBridge = () => {
 				enableSameChainSwaps={true}
 				onBridgeSuccess={onBridgeSuccess}
 			/>
-			{accountType === 'isolated_margin' && (
+			{accountType === FuturesMarginType.CROSS_MARGIN && (
 				<StyledDiv>
 					<ArrowIcon />
 				</StyledDiv>

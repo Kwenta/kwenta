@@ -6,7 +6,7 @@ import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
 import { selectSusdBalance } from 'state/balances/selectors'
 import {
-	selectCrossMarginBalanceInfo,
+	selectSmartMarginBalanceInfo,
 	selectAvailableMarginInMarkets,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -15,12 +15,12 @@ import PencilButton from '../../../components/Button/PencilButton'
 
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal'
 
-function MarginInfoBox() {
+function SmartMarginInfoBox() {
 	const dispatch = useAppDispatch()
 
-	const { keeperEthBal } = useAppSelector(selectCrossMarginBalanceInfo)
+	const { keeperEthBal } = useAppSelector(selectSmartMarginBalanceInfo)
 	const openModal = useAppSelector(selectShowModal)
-	const { freeMargin } = useAppSelector(selectCrossMarginBalanceInfo)
+	const { freeMargin } = useAppSelector(selectSmartMarginBalanceInfo)
 	const idleMarginInMarkets = useAppSelector(selectAvailableMarginInMarkets)
 	const walletBal = useAppSelector(selectSusdBalance)
 
@@ -55,4 +55,4 @@ function MarginInfoBox() {
 	)
 }
 
-export default memo(MarginInfoBox)
+export default memo(SmartMarginInfoBox)

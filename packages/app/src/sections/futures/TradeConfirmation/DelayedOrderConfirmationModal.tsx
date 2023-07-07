@@ -21,7 +21,8 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { setOpenModal } from 'state/app/reducer'
-import { modifyIsolatedPosition } from 'state/futures/actions'
+import { submitCrossMarginOrder } from 'state/crossMargin/actions'
+import { selectCrossMarginTradeInputs } from 'state/crossMargin/selectors'
 import {
 	selectIsModifyingIsolatedPosition,
 	selectLeverageSide,
@@ -32,7 +33,6 @@ import {
 	selectOrderType,
 	selectPosition,
 	selectTradePreview,
-	selectTradeSizeInputs,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { getKnownError } from 'utils/formatters/error'
@@ -47,7 +47,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer)
 	const dispatch = useAppDispatch()
 
-	const { nativeSizeDelta } = useAppSelector(selectTradeSizeInputs)
+	const { nativeSizeDelta } = useAppSelector(selectCrossMarginTradeInputs)
 	const txError = useAppSelector(selectModifyPositionError)
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const position = useAppSelector(selectPosition)
@@ -162,7 +162,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 	}, [dispatch])
 
 	const handleConfirmOrder = () => {
-		dispatch(modifyIsolatedPosition())
+		dispatch(submitCrossMarginOrder())
 	}
 
 	return (

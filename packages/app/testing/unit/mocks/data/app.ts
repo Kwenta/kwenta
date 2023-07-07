@@ -1,4 +1,4 @@
-import { NetworkId } from '@kwenta/sdk/dist/types'
+import { NetworkId } from '@kwenta/sdk/types'
 import { Wallet } from 'ethers'
 
 import { PRICES_INITIAL_STATE } from 'state/prices/reducer'

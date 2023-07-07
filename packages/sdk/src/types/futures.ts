@@ -116,9 +116,6 @@ export enum FuturesMarketKey {
 	sFLOKIPERP = 'sFLOKIPERP',
 	sINJPERP = 'sINJPERP',
 	sSTETHPERP = 'sSTETHPERP',
-
-	// Perps V3
-	ETH = 'ETH',
 }
 
 export enum FuturesMarketAsset {
@@ -164,9 +161,6 @@ export enum FuturesMarketAsset {
 	FLOKI = 'FLOKI',
 	INJ = 'INJ',
 	STETH = 'STETH',
-
-	// Perps V3 (Temporary)
-	ETH = 'ETH',
 }
 
 export interface FuturesMarketConfig {
@@ -214,7 +208,11 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
-export type FuturesAccountType = 'cross_margin' | 'smart_margin' | 'isolated_margin' | 'perps_v3'
+export enum FuturesMarginType {
+	SMART_MARGIN = 'smart_margin',
+	CROSS_MARGIN = 'cross_margin',
+	ISOLATED_MARGIN_LEGACY = 'isolated_margin_legacy',
+}
 
 export enum ContractOrderType {
 	MARKET = 0,
@@ -257,7 +255,7 @@ export type FuturesPositionHistory<T = Wei> = {
 	marketKey: FuturesMarketKey
 	account: string
 	abstractAccount: string
-	accountType: FuturesAccountType
+	accountType: FuturesMarginType
 	isOpen: boolean
 	isLiquidated: boolean
 	size: T
@@ -418,7 +416,7 @@ export type FuturesTrade<T = Wei> = {
 	feesPaid: T
 	keeperFeesPaid: T
 	orderType: FuturesOrderTypeDisplay
-	accountType: FuturesAccountType
+	accountType: FuturesMarginType
 }
 
 export enum AccountExecuteFunctions {

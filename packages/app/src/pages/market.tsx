@@ -1,11 +1,12 @@
-import { FuturesMarketAsset } from '@kwenta/sdk/types'
+import { FuturesMarginType, FuturesMarketAsset } from '@kwenta/sdk/types'
 import { MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import { useEffect, FC, useState, ReactNode } from 'react'
+import { useEffect, FC, ReactNode, useMemo } from 'react'
 import styled from 'styled-components'
 
 import Loader from 'components/Loader'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import { SUPPORTED_PERPS_TYPES } from 'constants/futures'
 import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useWindowSize from 'hooks/useWindowSize'
@@ -19,12 +20,11 @@ import MarketHead from 'sections/futures/MarketInfo/MarketHead'
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade'
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles'
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported'
-import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin'
-import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel'
+import TradePanel from 'sections/futures/Trade/TradePanel'
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal'
 import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal'
 import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin'
-import WithdrawSmartMargin from 'sections/futures/TradeCrossMargin/WithdrawSmartMargin'
+import WithdrawSmartMargin from 'sections/futures/TradeSmartMargin/WithdrawSmartMargin'
 import AppLayout from 'sections/shared/Layout/AppLayout'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal, selectShowPositionModal } from 'state/app/selectors'
@@ -32,13 +32,13 @@ import { clearTradeInputs } from 'state/futures/actions'
 import { usePollMarketFuturesData } from 'state/futures/hooks'
 import { setFuturesAccountType, setMarketAsset } from 'state/futures/reducer'
 import {
-	selectActiveIsolatedPositionsCount,
-	selectCMAccountQueryStatus,
-	selectCrossMarginAccount,
+	selectSmartMarginAccountQueryStatus,
+	selectSmartMarginAccount,
 	selectFuturesType,
 	selectMarketAsset,
-	selectShowCrossMarginOnboard,
+	selectShowSmartMarginOnboard,
 } from 'state/futures/selectors'
+import { AppFuturesMarginType } from 'state/futures/types'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { PageContent } from 'styles/common'
@@ -56,14 +56,17 @@ const Market: MarketComponent = () => {
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset)
-	const showOnboard = useAppSelector(selectShowCrossMarginOnboard)
+	const showOnboard = useAppSelector(selectShowSmartMarginOnboard)
 	const openModal = useAppSelector(selectShowModal)
 	const showPositionModal = useAppSelector(selectShowPositionModal)
 	const accountType = useAppSelector(selectFuturesType)
 	const selectedMarketAsset = useAppSelector(selectMarketAsset)
 
-	const routerAccountType =
-		router.query.accountType === 'cross_margin' ? 'cross_margin' : 'isolated_margin'
+	const routerAccountType = useMemo(() => {
+		if (SUPPORTED_PERPS_TYPES.includes(router.query.accountType as AppFuturesMarginType))
+			return router.query.accountType as AppFuturesMarginType
+		return FuturesMarginType.SMART_MARGIN
+	}, [router.query.accountType])
 
 	useEffect(() => {
 		if (router.isReady && accountType !== routerAccountType) {
@@ -142,15 +145,8 @@ function TradePanelDesktop() {
 	const isL2 = useIsL2()
 	const { walletAddress } = Connector.useContainer()
 	const accountType = useAppSelector(selectFuturesType)
-	const queryStatus = useAppSelector(selectCMAccountQueryStatus)
-	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
-	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount)
-	const [open, setOpen] = useState(false)
-
-	useEffect(
-		() => setOpen(accountType === 'isolated_margin' && isolatedPositionsCount === 0),
-		[accountType, isolatedPositionsCount]
-	)
+	const queryStatus = useAppSelector(selectSmartMarginAccountQueryStatus)
+	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
 
 	if (walletAddress && !isL2) {
 		return <FuturesUnsupportedNetwork />
@@ -158,9 +154,9 @@ function TradePanelDesktop() {
 
 	if (
 		!router.isReady ||
-		(accountType === 'cross_margin' &&
+		(accountType === FuturesMarginType.SMART_MARGIN &&
 			walletAddress &&
-			!crossMarginAccount &&
+			!smartMarginAccount &&
 			queryStatus.status === FetchStatus.Idle)
 	) {
 		return (
@@ -170,7 +166,7 @@ function TradePanelDesktop() {
 		)
 	}
 
-	return open ? <SwitchToSmartMargin onDismiss={() => setOpen(false)} /> : <TradeIsolatedMargin />
+	return <TradePanel />
 }
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>

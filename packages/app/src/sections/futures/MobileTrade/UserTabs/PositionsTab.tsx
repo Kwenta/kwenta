@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
+import { FuturesMarginType, FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import Router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -20,10 +20,10 @@ import PositionType from 'sections/futures/PositionType'
 import ShareModal from 'sections/futures/ShareModal'
 import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton'
 import { setShowPositionModal } from 'state/app/reducer'
+import { selectCrossMarginPositions } from 'state/crossMargin/selectors'
 import {
-	selectCrossMarginPositions,
+	selectSmartMarginPositions,
 	selectFuturesType,
-	selectIsolatedMarginPositions,
 	selectMarketAsset,
 	selectMarkets,
 	selectMarkPrices,
@@ -40,8 +40,8 @@ const PositionsTab = () => {
 
 	const isL2 = useIsL2()
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions)
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
+	const smartMarginPositions = useAppSelector(selectSmartMarginPositions)
 	const positionHistory = useAppSelector(selectPositionHistory)
 	const currentMarket = useAppSelector(selectMarketAsset)
 	const futuresMarkets = useAppSelector(selectMarkets)
@@ -51,7 +51,8 @@ const PositionsTab = () => {
 	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions
+		const positions =
+			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
 		return positions
 			.map((position) => {
 				const market = futuresMarkets.find((market) => market.asset === position.asset)
@@ -78,8 +79,8 @@ const PositionsTab = () => {
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
 	}, [
 		accountType,
+		smartMarginPositions,
 		crossMarginPositions,
-		isolatedPositions,
 		futuresMarkets,
 		positionHistory,
 		markPrices,
@@ -128,7 +129,9 @@ const PositionsTab = () => {
 								<div>
 									<Body>{row.market.marketName}</Body>
 									<Body capitalized color="secondary">
-										{accountType === 'isolated_margin' ? 'Isolated Margin' : 'Cross-Margin'}
+										{accountType === FuturesMarginType.CROSS_MARGIN
+											? 'Cross Margin'
+											: 'Smart Margin'}
 									</Body>
 								</div>
 							</FlexDiv>
@@ -150,7 +153,7 @@ const PositionsTab = () => {
 								<div>
 									<FlexDivRow justifyContent="start">
 										<Currency.Price price={row.position.size} currencyKey={row.market.asset} />
-										{accountType === 'cross_margin' && (
+										{accountType === FuturesMarginType.SMART_MARGIN && (
 											<>
 												<Spacer width={5} />
 												<EditPositionButton
@@ -189,7 +192,7 @@ const PositionsTab = () => {
 								<Body color="secondary">Market Margin</Body>
 								<FlexDivRow justifyContent="start">
 									<NumericValue value={row.remainingMargin} />
-									{accountType === 'cross_margin' && (
+									{accountType === FuturesMarginType.SMART_MARGIN && (
 										<>
 											<Spacer width={5} />
 											<EditPositionButton
@@ -232,7 +235,7 @@ const PositionsTab = () => {
 									) : (
 										<Currency.Price price={row.stopLoss} colorType="secondary" />
 									)}
-									{accountType === 'cross_margin' && (
+									{accountType === FuturesMarginType.SMART_MARGIN && (
 										<>
 											<Spacer width={5} />
 											<EditPositionButton

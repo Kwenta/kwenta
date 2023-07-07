@@ -28,8 +28,3 @@ export type FuturesCumulativeStats = {
 	totalLiquidations: string
 	averageTradeSize: string
 }
-
-export enum FuturesAccountTypes {
-	ISOLATED_MARGIN = 'isolated_margin',
-	CROSS_MARGIN = 'cross_margin',
-}

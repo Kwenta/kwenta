@@ -42,6 +42,8 @@ import {
 	PotentialTradeStatus,
 	MarginTransfer,
 	ConditionalOrderTypeEnum,
+	FuturesMarginType,
+	MarketClosureReason,
 } from '../types/futures'
 import { formatCurrency, formatDollars } from '../utils/number'
 import {
@@ -51,7 +53,10 @@ import {
 	FuturesTradeResult,
 	FuturesMarginTransferResult,
 	CrossMarginAccountTransferResult,
+	FuturesAccountType,
 } from '../utils/subgraph'
+import { PerpsV2MarketData } from '../contracts/types'
+import { IPerpsV2MarketSettings } from '../contracts/types/PerpsV2MarketData'
 
 export const getFuturesEndpoint = (networkId: number) => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10]
@@ -253,7 +258,7 @@ export const mapFuturesPositions = (
 				marketKey: parseBytes32String(marketKey) as FuturesMarketKey,
 				account,
 				abstractAccount,
-				accountType,
+				accountType: subgraphAccountTypeToMarginType(accountType),
 				isOpen,
 				isLiquidated,
 				size: sizeWei.abs(),
@@ -503,7 +508,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			return {
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				account,
-				accountType,
+				accountType: subgraphAccountTypeToMarginType(accountType),
 				margin: new Wei(margin, 18, true),
 				size: new Wei(size, 18, true),
 				price: new Wei(price, 18, true),
@@ -648,7 +653,6 @@ export const appAdjustedLeverage = (marketLeverage: Wei) => {
 export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sBTCPERP]: FuturesMarketAsset.sBTC,
 	[FuturesMarketKey.sETHPERP]: FuturesMarketAsset.sETH,
-	[FuturesMarketKey.ETH]: FuturesMarketAsset.ETH,
 	[FuturesMarketKey.sLINKPERP]: FuturesMarketAsset.LINK,
 	[FuturesMarketKey.sSOLPERP]: FuturesMarketAsset.SOL,
 	[FuturesMarketKey.sAVAXPERP]: FuturesMarketAsset.AVAX,
@@ -694,7 +698,6 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.sBTC]: FuturesMarketKey.sBTCPERP,
 	[FuturesMarketAsset.sETH]: FuturesMarketKey.sETHPERP,
-	[FuturesMarketAsset.ETH]: FuturesMarketKey.ETH,
 	[FuturesMarketAsset.LINK]: FuturesMarketKey.sLINKPERP,
 	[FuturesMarketAsset.SOL]: FuturesMarketKey.sSOLPERP,
 	[FuturesMarketAsset.AVAX]: FuturesMarketKey.sAVAXPERP,
@@ -740,7 +743,6 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.sBTC]: 'Bitcoin',
 	[FuturesMarketAsset.sETH]: 'Ether',
-	[FuturesMarketAsset.ETH]: 'Ether',
 	[FuturesMarketAsset.LINK]: 'Chainlink',
 	[FuturesMarketAsset.SOL]: 'Solana',
 	[FuturesMarketAsset.AVAX]: 'Avalanche',
@@ -783,4 +785,103 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.STETH]: 'Lido Staked ETH',
 } as const
 
+export const PerpsV3SymbolToMarketKey: Record<string, FuturesMarketKey> = {
+	ETH: FuturesMarketKey.sETHPERP,
+}
+
+export const PerpsV3SymbolToAsset: Record<string, FuturesMarketAsset> = {
+	ETH: FuturesMarketAsset.sETH,
+}
+
+export const MarketKeyToPerpsV3Symbol = {
+	sETHPERP: 'ETH',
+}
+
+export const AssetToPerpsV3Symbol = {
+	sETH: 'ETH',
+}
+
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {}
+
+// TODO: Update these types on the subgraph
+
+export const subgraphAccountTypeToMarginType = (type: FuturesAccountType): FuturesMarginType => {
+	if (type === 'cross_margin' || type === 'smart_margin') return FuturesMarginType.SMART_MARGIN
+	return FuturesMarginType.ISOLATED_MARGIN_LEGACY
+}
+
+export const marginTypeToSubgraphType = (type: FuturesMarginType): FuturesAccountType => {
+	if (type === FuturesMarginType.ISOLATED_MARGIN_LEGACY) return 'isolated_margin'
+	return 'cross_margin'
+}
+
+export const formatPerpsV2Market = (
+	{
+		market,
+		key,
+		asset,
+		currentFundingRate,
+		currentFundingVelocity,
+		feeRates,
+		marketDebt,
+		marketSkew,
+		maxLeverage,
+		marketSize,
+		price,
+	}: PerpsV2MarketData.MarketSummaryStructOutput,
+	marketParameters: IPerpsV2MarketSettings.ParametersStructOutput,
+	globalSettings: {
+		minKeeperFee: Wei
+		minInitialMargin: Wei
+	},
+	isSuspended: boolean,
+	suspendedReason: MarketClosureReason
+) => ({
+	market,
+	marketKey: parseBytes32String(key) as FuturesMarketKey,
+	marketName: getMarketName(parseBytes32String(asset) as FuturesMarketAsset),
+	asset: parseBytes32String(asset) as FuturesMarketAsset,
+	assetHex: asset,
+	currentFundingRate: wei(currentFundingRate).div(24),
+	currentFundingVelocity: wei(currentFundingVelocity).div(24 * 24),
+	feeRates: {
+		makerFee: wei(feeRates.makerFee),
+		takerFee: wei(feeRates.takerFee),
+		makerFeeDelayedOrder: wei(feeRates.makerFeeDelayedOrder),
+		takerFeeDelayedOrder: wei(feeRates.takerFeeDelayedOrder),
+		makerFeeOffchainDelayedOrder: wei(feeRates.makerFeeOffchainDelayedOrder),
+		takerFeeOffchainDelayedOrder: wei(feeRates.takerFeeOffchainDelayedOrder),
+	},
+	openInterest: {
+		shortPct: wei(marketSize).eq(0)
+			? 0
+			: wei(marketSize).sub(marketSkew).div('2').div(marketSize).toNumber(),
+		longPct: wei(marketSize).eq(0)
+			? 0
+			: wei(marketSize).add(marketSkew).div('2').div(marketSize).toNumber(),
+		shortUSD: wei(marketSize).eq(0) ? wei(0) : wei(marketSize).sub(marketSkew).div('2').mul(price),
+		longUSD: wei(marketSize).eq(0) ? wei(0) : wei(marketSize).add(marketSkew).div('2').mul(price),
+		long: wei(marketSize).add(marketSkew).div('2'),
+		short: wei(marketSize).sub(marketSkew).div('2'),
+	},
+	marketDebt: wei(marketDebt),
+	marketSkew: wei(marketSkew),
+	contractMaxLeverage: wei(maxLeverage),
+	appMaxLeverage: appAdjustedLeverage(wei(maxLeverage)),
+	marketSize: wei(marketSize),
+	marketLimitUsd: wei(marketParameters.maxMarketValue).mul(wei(price)),
+	marketLimitNative: wei(marketParameters.maxMarketValue),
+	minInitialMargin: globalSettings.minInitialMargin,
+	keeperDeposit: globalSettings.minKeeperFee,
+	isSuspended: isSuspended,
+	marketClosureReason: suspendedReason,
+	settings: {
+		maxMarketValue: wei(marketParameters.maxMarketValue),
+		skewScale: wei(marketParameters.skewScale),
+		delayedOrderConfirmWindow: wei(marketParameters.delayedOrderConfirmWindow, 0).toNumber(),
+		offchainDelayedOrderMinAge: wei(marketParameters.offchainDelayedOrderMinAge, 0).toNumber(),
+		offchainDelayedOrderMaxAge: wei(marketParameters.offchainDelayedOrderMaxAge, 0).toNumber(),
+		minDelayTimeDelta: wei(marketParameters.minDelayTimeDelta, 0).toNumber(),
+		maxDelayTimeDelta: wei(marketParameters.maxDelayTimeDelta, 0).toNumber(),
+	},
+})

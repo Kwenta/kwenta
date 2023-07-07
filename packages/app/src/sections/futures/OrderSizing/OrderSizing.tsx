@@ -12,8 +12,8 @@ import { editTradeSizeInput } from 'state/futures/actions'
 import {
 	selectMarketIndexPrice,
 	selectPosition,
-	selectTradeSizeInputs,
-	selectCrossMarginOrderPrice,
+	selectSmartMarginTradeInputs,
+	selectSmartMarginOrderPrice,
 	selectSelectedInputDenomination,
 	selectMaxUsdSizeInput,
 	selectLeverageSide,
@@ -31,11 +31,11 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 	const dispatch = useAppDispatch()
 
-	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs)
+	const { susdSizeString, nativeSizeString } = useAppSelector(selectSmartMarginTradeInputs)
 
 	const position = useAppSelector(selectPosition)
 	const marketAssetRate = useAppSelector(selectMarketIndexPrice)
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 	const assetInputType = useAppSelector(selectSelectedInputDenomination)
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput)
 	const tradeSide = useAppSelector(selectLeverageSide)

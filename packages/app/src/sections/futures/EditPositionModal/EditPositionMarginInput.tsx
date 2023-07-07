@@ -11,7 +11,7 @@ import StyledSlider from 'components/Slider/StyledSlider'
 import Spacer from 'components/Spacer'
 import { selectShowPositionModal } from 'state/app/selectors'
 import { editCrossMarginPositionMargin } from 'state/futures/actions'
-import { selectEditPositionInputs } from 'state/futures/selectors'
+import { selectSmartMarginEditPosInputs } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type OrderSizingProps = {
@@ -24,7 +24,7 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 	({ isMobile, type, maxUsdInput }) => {
 		const dispatch = useAppDispatch()
 
-		const { marginDelta } = useAppSelector(selectEditPositionInputs)
+		const { marginDelta } = useAppSelector(selectSmartMarginEditPosInputs)
 		const positionModal = useAppSelector(selectShowPositionModal)
 
 		const onChangeMargin = useCallback(

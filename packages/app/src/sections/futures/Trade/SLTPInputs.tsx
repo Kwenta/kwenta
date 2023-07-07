@@ -12,7 +12,7 @@ import { StyledCaretDownIcon } from 'components/Select'
 import SelectorButtons from 'components/SelectorButtons'
 import Spacer from 'components/Spacer'
 import { selectAckedOrdersWarning } from 'state/app/selectors'
-import { setCrossMarginTradeStopLoss, setCrossMarginTradeTakeProfit } from 'state/futures/reducer'
+import { setSmartMarginTradeStopLoss, setSmartMarginTradeTakeProfit } from 'state/futures/reducer'
 import {
 	selectLeverageInput,
 	selectLeverageSide,
@@ -61,7 +61,7 @@ export default function SLTPInputs() {
 					? currentPrice.add(currentPrice.mul(relativePercent))
 					: currentPrice.sub(currentPrice.mul(relativePercent))
 			const dp = suggestedDecimals(stopLoss)
-			dispatch(setCrossMarginTradeStopLoss(stopLoss.toString(dp)))
+			dispatch(setSmartMarginTradeStopLoss(stopLoss.toString(dp)))
 		},
 		[currentPrice, dispatch, leverageSide, leverageWei]
 	)
@@ -76,21 +76,21 @@ export default function SLTPInputs() {
 					? currentPrice.sub(currentPrice.mul(relativePercent))
 					: currentPrice.add(currentPrice.mul(relativePercent))
 			const dp = suggestedDecimals(takeProfit)
-			dispatch(setCrossMarginTradeTakeProfit(takeProfit.toString(dp)))
+			dispatch(setSmartMarginTradeTakeProfit(takeProfit.toString(dp)))
 		},
 		[currentPrice, dispatch, leverageSide, leverageWei]
 	)
 
 	const onChangeStopLoss = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(setCrossMarginTradeStopLoss(v))
+			dispatch(setSmartMarginTradeStopLoss(v))
 		},
 		[dispatch]
 	)
 
 	const onChangeTakeProfit = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {
-			dispatch(setCrossMarginTradeTakeProfit(v))
+			dispatch(setSmartMarginTradeTakeProfit(v))
 		},
 		[dispatch]
 	)

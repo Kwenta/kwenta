@@ -9,12 +9,12 @@ import ErrorView from 'components/ErrorView'
 import Loader from 'components/Loader'
 import ProgressSteps from 'components/ProgressSteps'
 import { setOpenModal } from 'state/app/reducer'
-import { approveCrossMargin, createCrossMarginAccount } from 'state/futures/actions'
+import { approveCrossMargin, createSmartMarginAccount } from 'state/futures/actions'
 import {
-	selectCMAccountQueryStatus,
+	selectSmartMarginAccountQueryStatus,
 	selectSmartMarginDepositApproved,
-	selectCrossMarginAccount,
-	selectFuturesSupportedNetwork,
+	selectSmartMarginAccount,
+	selectSmartMarginSupportedNetwork,
 	selectSubmittingFuturesTx,
 	selectTradePreview,
 } from 'state/futures/selectors'
@@ -30,9 +30,9 @@ type Props = {
 export default function CrossMarginOnboard({ isOpen }: Props) {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const crossMarginAvailable = useAppSelector(selectFuturesSupportedNetwork)
-	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
-	const queryStatus = useAppSelector(selectCMAccountQueryStatus)
+	const crossMarginAvailable = useAppSelector(selectSmartMarginSupportedNetwork)
+	const crossMarginAccount = useAppSelector(selectSmartMarginAccount)
+	const queryStatus = useAppSelector(selectSmartMarginAccountQueryStatus)
 	const depositApproved = useAppSelector(selectSmartMarginDepositApproved)
 	const txProcessing = useAppSelector(selectSubmittingFuturesTx)
 	const preview = useAppSelector(selectTradePreview)
@@ -48,7 +48,7 @@ export default function CrossMarginOnboard({ isOpen }: Props) {
 	}
 
 	const createAccount = useCallback(async () => {
-		dispatch(createCrossMarginAccount())
+		dispatch(createSmartMarginAccount())
 	}, [dispatch])
 
 	const onClickApprove = useCallback(async () => {

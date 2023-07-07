@@ -3,7 +3,7 @@ import {
 	FuturesMarketKey,
 	NetworkId,
 	SynthSuspensionReason,
-} from '@kwenta/sdk/dist/types'
+} from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
 
 import { FUTURES_INITIAL_STATE } from 'state/futures/reducer'
@@ -188,7 +188,7 @@ export const preloadedStateWithSmartMarginAccount = (mockAccount = mockSmartMarg
 		futures: {
 			...FUTURES_INITIAL_STATE,
 			crossMargin: {
-				...FUTURES_INITIAL_STATE.crossMargin,
+				...FUTURES_INITIAL_STATE.smartMargin,
 				accounts: {
 					[10 as NetworkId]: {
 						[TEST_ADDR]: mockAccount,

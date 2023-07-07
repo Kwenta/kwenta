@@ -496,18 +496,6 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0xb7abd25a76ddaffdf847224f03198ccb92723f90b2429cf33f0eecb96e352a86',
 		},
 	},
-	// Perps v3
-
-	[FuturesMarketKey.ETH]: {
-		key: FuturesMarketKey.ETH,
-		asset: FuturesMarketAsset.ETH,
-		supports: 'both',
-		version: 2,
-		pythIds: {
-			mainnet: '0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
-			testnet: '0xca80ba6dc32e08d06f1aa886011eed1d77c77be9eb761cc10d72b7d0a2fd57a6',
-		},
-	},
 }
 
 export const MARKET_ASSETS_BY_PYTH_ID = Object.values(MARKETS)

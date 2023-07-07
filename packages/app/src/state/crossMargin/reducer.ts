@@ -1,7 +1,6 @@
 import { Period } from '@kwenta/sdk/constants'
 import {
 	NetworkId,
-	FuturesAccountType,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesPotentialTradeDetails,
@@ -24,20 +23,11 @@ import {
 import { FetchStatus } from 'state/types'
 
 import {
-	fetchCrossMarginPositions,
-	fetchIsolatedMarginPositions,
 	fetchDailyVolumes,
 	refetchPosition,
-	fetchIsolatedMarginTradePreview,
 	fetchCrossMarginTradePreview,
-	fetchCrossMarginAccount,
-	fetchFuturesPositionHistory,
-	fetchPositionHistoryForTrader,
-	fetchTradesForSelectedMarket,
-	fetchAllTradesForAccount,
-	fetchIsolatedOpenOrders,
+	fetchSmartMarginAccount,
 	fetchMarginTransfers,
-	fetchCombinedMarginTransfers,
 	fetchFundingRatesHistory,
 } from '../futures/actions'
 import {
@@ -45,12 +35,17 @@ import {
 	InputCurrencyDenomination,
 	PerpsV3AccountData,
 	TradeSizeInputs,
-	PerspV3State,
+	PerpsV3State,
 	PreviewAction,
 } from './types'
-import { fetchPerpsV3PositionHistory, fetchV3Markets } from './actions'
+import {
+	fetchCrossMarginOpenOrders,
+	fetchCrossMarginPositions,
+	fetchPerpsV3PositionHistory,
+	fetchV3Markets,
+} from './actions'
 
-export const FUTURES_INITIAL_STATE: PerspV3State = {
+export const PERPS_V3_INITIAL_STATE: PerpsV3State = {
 	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
 	confirmationModalOpen: false,
 	markets: {
@@ -113,7 +108,7 @@ export const FUTURES_INITIAL_STATE: PerspV3State = {
 
 const futuresSlice = createSlice({
 	name: 'futures',
-	initialState: FUTURES_INITIAL_STATE,
+	initialState: PERPS_V3_INITIAL_STATE,
 	reducers: {
 		setMarketAsset: (state, action) => {
 			state.selectedMarketAsset = action.payload
@@ -257,65 +252,15 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchMarginTransfers.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS
 			if (payload) {
-				const { context, marginTransfers, idleTransfers } = payload
-				const newAccountData =
-					context.type === 'isolated_margin'
-						? { marginTransfers }
-						: {
-								marginTransfers,
-								idleTransfers,
-						  }
-				updateFuturesAccount(
-					futuresState,
-					context.type,
-					context.network,
-					context.wallet,
-					newAccountData
-				)
+				const { context, marginTransfers } = payload
+				const newAccountData = { marginTransfers }
+				updateCrossMarginAccount(futuresState, context.network, context.wallet, newAccountData)
 			}
 		})
 		builder.addCase(fetchMarginTransfers.rejected, (futuresState) => {
 			futuresState.queryStatuses.marginTransfers = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch margin transfers',
-			}
-		})
-
-		// combined margin transfers
-		builder.addCase(fetchCombinedMarginTransfers.pending, (futuresState) => {
-			futuresState.queryStatuses.marginTransfers = LOADING_STATUS
-		})
-		builder.addCase(fetchCombinedMarginTransfers.fulfilled, (futuresState, { payload }) => {
-			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS
-			if (payload) {
-				const { context, isolatedMarginTransfers, smartMarginTransfers, idleTransfers } = payload
-				const newIsolatedAccountData = { marginTransfers: isolatedMarginTransfers }
-				const newSmartAccountData = {
-					marginTransfers: smartMarginTransfers,
-					idleTransfers,
-				}
-
-				updateFuturesAccount(
-					futuresState,
-					'isolated_margin',
-					context.network,
-					context.wallet,
-					newIsolatedAccountData
-				)
-
-				updateFuturesAccount(
-					futuresState,
-					'smart_margin',
-					context.network,
-					context.wallet,
-					newSmartAccountData
-				)
-			}
-		})
-		builder.addCase(fetchCombinedMarginTransfers.rejected, (futuresState) => {
-			futuresState.queryStatuses.marginTransfers = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch combined margin transfers',
 			}
 		})
 
@@ -329,28 +274,10 @@ const futuresSlice = createSlice({
 			const { account, positions, network } = action.payload
 			const wallet = findWalletForAccount(futuresState, account, network)
 			if (wallet) {
-				updateFuturesAccount(futuresState, 'cross_margin', network, wallet, { positions })
+				updateCrossMarginAccount(futuresState, network, wallet, { positions })
 			}
 		})
 		builder.addCase(fetchCrossMarginPositions.rejected, (futuresState) => {
-			futuresState.queryStatuses.perpsV3Positions = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch positions',
-			}
-		})
-
-		// Isolated margin positions
-		builder.addCase(fetchIsolatedMarginPositions.pending, (futuresState) => {
-			futuresState.queryStatuses.perpsV3Positions = LOADING_STATUS
-		})
-		builder.addCase(fetchIsolatedMarginPositions.fulfilled, (futuresState, { payload }) => {
-			futuresState.queryStatuses.perpsV3Positions = SUCCESS_STATUS
-			if (payload) {
-				const { positions, wallet, network } = payload
-				updateFuturesAccount(futuresState, 'isolated_margin', network, wallet, { positions })
-			}
-		})
-		builder.addCase(fetchIsolatedMarginPositions.rejected, (futuresState) => {
 			futuresState.queryStatuses.perpsV3Positions = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch positions',
@@ -374,39 +301,23 @@ const futuresSlice = createSlice({
 		})
 
 		// Fetch Isolated Open Orders
-		builder.addCase(fetchIsolatedOpenOrders.pending, (futuresState) => {
+		builder.addCase(fetchCrossMarginOpenOrders.pending, (futuresState) => {
 			futuresState.queryStatuses.openOrders = LOADING_STATUS
 		})
-		builder.addCase(fetchIsolatedOpenOrders.fulfilled, (futuresState, { payload }) => {
+		builder.addCase(fetchCrossMarginOpenOrders.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.openOrders = SUCCESS_STATUS
 			if (payload) {
 				const { orders: delayedOrders, wallet, networkId } = payload
-				updateFuturesAccount(futuresState, 'isolated_margin', networkId, wallet, {
+				updateCrossMarginAccount(futuresState, networkId, wallet, {
 					delayedOrders,
 				})
 			}
 		})
-		builder.addCase(fetchIsolatedOpenOrders.rejected, (futuresState) => {
+		builder.addCase(fetchCrossMarginOpenOrders.rejected, (futuresState) => {
 			futuresState.queryStatuses.openOrders = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch open orders for isolated margin',
 			}
-		})
-
-		// Fetch Isolated Margin Trade Preview
-		builder.addCase(fetchIsolatedMarginTradePreview.pending, (futuresState) => {
-			futuresState.queryStatuses.perpsV3TradePreview = LOADING_STATUS
-		})
-		builder.addCase(fetchIsolatedMarginTradePreview.fulfilled, (futuresState, { payload }) => {
-			futuresState.previews[payload.type] = payload.preview
-			futuresState.queryStatuses.perpsV3TradePreview = SUCCESS_STATUS
-		})
-		builder.addCase(fetchIsolatedMarginTradePreview.rejected, (futuresState) => {
-			futuresState.queryStatuses.perpsV3TradePreview = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch trade preview',
-			}
-			futuresState.previews.trade = null
 		})
 
 		// Fetch Cross Margin Trade Preview
@@ -419,10 +330,10 @@ const futuresSlice = createSlice({
 		})
 
 		// Fetch cross margin account
-		builder.addCase(fetchCrossMarginAccount.pending, (futuresState) => {
+		builder.addCase(fetchSmartMarginAccount.pending, (futuresState) => {
 			futuresState.queryStatuses.perpsV3Account = LOADING_STATUS
 		})
-		builder.addCase(fetchCrossMarginAccount.fulfilled, (futuresState, action) => {
+		builder.addCase(fetchSmartMarginAccount.fulfilled, (futuresState, action) => {
 			if (action.payload) {
 				const { network, account, wallet } = action.payload
 				futuresState.accounts[network] = {
@@ -435,7 +346,7 @@ const futuresSlice = createSlice({
 			}
 			futuresState.queryStatuses.perpsV3Account = SUCCESS_STATUS
 		})
-		builder.addCase(fetchCrossMarginAccount.rejected, (futuresState) => {
+		builder.addCase(fetchSmartMarginAccount.rejected, (futuresState) => {
 			futuresState.queryStatuses.perpsV3Account = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch account',
@@ -449,72 +360,15 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchPerpsV3PositionHistory.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.positionHistory = SUCCESS_STATUS
 			if (payload) {
-				const { accountType: type, history: positionHistory, networkId, wallet } = payload
-				updateFuturesAccount(futuresState, type, networkId, wallet, {
+				const { history: positionHistory, networkId, wallet } = payload
+				updateCrossMarginAccount(futuresState, networkId, wallet, {
 					positionHistory,
 				})
 			}
 		})
-		builder.addCase(fetchFuturesPositionHistory.rejected, (futuresState) => {
+		builder.addCase(fetchPerpsV3PositionHistory.rejected, (futuresState) => {
 			futuresState.queryStatuses.positionHistory = {
 				error: 'Failed to fetch position history',
-				status: FetchStatus.Error,
-			}
-		})
-
-		// Fetch position history for trader
-		builder.addCase(fetchPositionHistoryForTrader.pending, (futuresState) => {
-			futuresState.queryStatuses.selectedTraderPositionHistory = LOADING_STATUS
-		})
-		builder.addCase(fetchPositionHistoryForTrader.fulfilled, (futuresState, { payload }) => {
-			futuresState.queryStatuses.selectedTraderPositionHistory = SUCCESS_STATUS
-			if (!payload) return
-			futuresState.leaderboard.selectedTraderPositionHistory[payload.networkId] = {
-				...futuresState.leaderboard.selectedTraderPositionHistory[payload.networkId],
-				[payload.address]: payload.history,
-			}
-		})
-		builder.addCase(fetchPositionHistoryForTrader.rejected, (futuresState) => {
-			futuresState.queryStatuses.selectedTraderPositionHistory = {
-				error: 'Failed to fetch traders position history',
-				status: FetchStatus.Error,
-			}
-		})
-
-		// Fetch trades for market
-		builder.addCase(fetchTradesForSelectedMarket.pending, (futuresState) => {
-			futuresState.queryStatuses.trades = LOADING_STATUS
-		})
-		builder.addCase(fetchTradesForSelectedMarket.fulfilled, (futuresState, { payload }) => {
-			futuresState.queryStatuses.trades = SUCCESS_STATUS
-			if (payload) {
-				const { accountType: type, trades, networkId, wallet } = payload
-				mergeTradesForAccount(futuresState, type, networkId, wallet, trades)
-			}
-		})
-		builder.addCase(fetchTradesForSelectedMarket.rejected, (futuresState) => {
-			futuresState.queryStatuses.trades = {
-				error: 'Failed to fetch trades',
-				status: FetchStatus.Error,
-			}
-		})
-
-		// TODO: Combine all with market trades rather than overwrite as the filter is done on selector
-
-		// Fetch all trades for account
-		builder.addCase(fetchAllTradesForAccount.pending, (futuresState) => {
-			futuresState.queryStatuses.trades = LOADING_STATUS
-		})
-		builder.addCase(fetchAllTradesForAccount.fulfilled, (futuresState, { payload }) => {
-			futuresState.queryStatuses.trades = SUCCESS_STATUS
-			if (payload) {
-				const { accountType: type, trades, networkId, wallet } = payload
-				mergeTradesForAccount(futuresState, type, networkId, wallet, trades)
-			}
-		})
-		builder.addCase(fetchAllTradesForAccount.rejected, (futuresState) => {
-			futuresState.queryStatuses.trades = {
-				error: 'Failed to fetch trades',
 				status: FetchStatus.Error,
 			}
 		})
@@ -551,7 +405,7 @@ export const {
 	setPerpsV3Account,
 } = futuresSlice.actions
 
-const findWalletForAccount = (perpsV3State: PerspV3State, account: string, network: NetworkId) => {
+const findWalletForAccount = (perpsV3State: PerpsV3State, account: string, network: NetworkId) => {
 	const entry = Object.entries(perpsV3State.accounts[network]).find(([_, value]) => {
 		return value.account === account
 	})
@@ -559,27 +413,25 @@ const findWalletForAccount = (perpsV3State: PerspV3State, account: string, netwo
 }
 
 const mergeTradesForAccount = (
-	futuresState: PerspV3State,
-	type: FuturesAccountType,
+	perpsV3: PerpsV3State,
 	network: NetworkId,
 	wallet: string,
 	trades: FuturesTrade<string>[]
 ) => {
-	const existingTrades = futuresState.accounts[network]?.[wallet]?.trades ?? []
+	const existingTrades = perpsV3.accounts[network]?.[wallet]?.trades ?? []
 	trades.forEach((t) => {
 		if (!existingTrades.find((et) => et.txnHash === t.txnHash)) {
 			existingTrades.push(t)
 		}
 	})
 	existingTrades.sort((a, b) => b.timestamp - a.timestamp)
-	updateFuturesAccount(futuresState, type, network, wallet, {
+	updateCrossMarginAccount(perpsV3, network, wallet, {
 		trades: trades,
 	})
 }
 
-const updateFuturesAccount = (
-	futuresState: PerspV3State,
-	type: FuturesAccountType,
+const updateCrossMarginAccount = (
+	futuresState: PerpsV3State,
 	network: NetworkId,
 	wallet: string,
 	newAccountData: Partial<PerpsV3AccountData>

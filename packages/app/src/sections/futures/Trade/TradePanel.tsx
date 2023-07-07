@@ -1,4 +1,4 @@
-import { PositionSide } from '@kwenta/sdk/types'
+import { FuturesMarginType, PositionSide } from '@kwenta/sdk/types'
 import { FC, memo, useCallback, useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -83,7 +83,7 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 							<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 						)}
 
-						{accountType === 'cross_margin' && (
+						{accountType === FuturesMarginType.SMART_MARGIN && (
 							<OrderTypeSelector orderType={orderType} setOrderTypeAction={setOrderType} />
 						)}
 
@@ -97,9 +97,9 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 							</>
 						) : (
 							<>
-								{accountType === 'cross_margin' && <MarginInput />}
+								{accountType === FuturesMarginType.SMART_MARGIN && <MarginInput />}
 
-								{orderType !== 'market' && accountType === 'cross_margin' && (
+								{orderType !== 'market' && accountType === FuturesMarginType.SMART_MARGIN && (
 									<>
 										<OrderPriceInput />
 										<Spacer height={16} />
@@ -110,7 +110,7 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 
 								<LeverageInput />
 
-								{accountType === 'cross_margin' && <SLTPInputs />}
+								{accountType === FuturesMarginType.SMART_MARGIN && <SLTPInputs />}
 
 								<ManagePosition />
 
