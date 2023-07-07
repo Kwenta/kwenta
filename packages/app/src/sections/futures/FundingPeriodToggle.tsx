@@ -26,7 +26,7 @@ const FundingPeriodToggle = () => {
 			<Body>Time Range:</Body>
 			<PeriodOptions>
 				{PERIOD_OPTIONS.map((value) => (
-					<ToggleButton $active={value === period} onClick={handlePeriodChange(value)}>
+					<ToggleButton key={value} $active={value === period} onClick={handlePeriodChange(value)}>
 						{PERIOD_DISPLAY[value]}
 					</ToggleButton>
 				))}
