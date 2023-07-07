@@ -1,6 +1,6 @@
 {
 	"name": "@kwenta/sdk",
-	"version": "1.0.1",
+	"version": "0.0.1",
 	"description": "SDK for headless interaction with Kwenta",
 	"main": "dist/index.js",
 	"directories": {
