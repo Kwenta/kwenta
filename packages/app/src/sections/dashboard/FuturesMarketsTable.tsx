@@ -152,7 +152,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								accessorKey: 'price',
 								cell: (cellProps) => {
 									return (
-										<ColoredPrice priceInfo={cellProps.row.original.priceInfo}>
+										<ColoredPrice priceChange={cellProps.row.original.priceInfo?.change}>
 											{formatDollars(cellProps.row.original.price, { suggestDecimals: true })}
 										</ColoredPrice>
 									)

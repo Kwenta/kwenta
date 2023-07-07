@@ -150,7 +150,7 @@ export default function ConditionalOrdersTable() {
 						cell: (cellProps) => {
 							return cellProps.row.original.currentPrice ? (
 								<div>
-									<ColoredPrice priceInfo={cellProps.row.original.currentPrice}>
+									<ColoredPrice priceChange={cellProps.row.original.currentPrice.change}>
 										{formatDollars(cellProps.row.original.currentPrice.price, {
 											suggestDecimals: true,
 										})}

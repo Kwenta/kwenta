@@ -151,12 +151,7 @@ const Trades = memo(() => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<ColoredPrice
-								priceInfo={{
-									price: cellProps.getValue(),
-									change: cellProps.getValue().gt(0) ? 'up' : 'down',
-								}}
-							>
+							<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
 								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
 							</ColoredPrice>
 						)
@@ -184,6 +179,9 @@ const Trades = memo(() => {
 					size: 100,
 				},
 				{
+					header: () => (
+						<TableHeader>{t('futures.market.user.trades.table.transaction')}</TableHeader>
+					),
 					accessorKey: 'txnHash',
 					cell: (cellProps) => (
 						<StyledExternalLink href={blockExplorer.txLink(cellProps.getValue())}>

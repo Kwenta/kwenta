@@ -84,7 +84,7 @@ const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	return (
 		<MarketDetail
 			mobile={mobile}
-			color={getColorFromPriceInfo(markPrice)}
+			color={getColorFromPriceInfo(markPrice?.change)}
 			value={markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
 			dataKey={MarketDataKey.marketPrice}
 		/>

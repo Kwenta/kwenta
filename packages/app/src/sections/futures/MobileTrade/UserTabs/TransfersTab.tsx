@@ -76,10 +76,7 @@ const TransfersTab: React.FC = () => {
 
 								return (
 									<ColoredPrice
-										priceInfo={{
-											price: wei(cellProps.row.original.size),
-											change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
-										}}
+										priceChange={cellProps.row.original.action === 'deposit' ? 'up' : 'down'}
 									>
 										{cellProps.row.original.action === 'deposit' ? '+' : ''}
 										{formatDollars(cellProps.row.original.size, formatOptions)}

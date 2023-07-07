@@ -259,12 +259,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									cell: (cellProps) => {
 										return (
 											<div>
-												<ColoredPrice
-													priceInfo={{
-														price: wei(cellProps.row.original.price),
-														change: cellProps.row.original.priceDirection,
-													}}
-												>
+												<ColoredPrice priceChange={cellProps.row.original.priceDirection}>
 													{cellProps.row.original.price}
 												</ColoredPrice>
 											</div>
