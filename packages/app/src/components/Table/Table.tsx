@@ -7,7 +7,7 @@ import {
 	PaginationState,
 } from '@tanstack/react-table'
 import type { ColumnDef, Row, SortingState, VisibilityState } from '@tanstack/react-table'
-import React, { DependencyList, useMemo, useRef, useState } from 'react'
+import React, { DependencyList, useCallback, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { genericMemo } from 'types/helpers'
 
@@ -120,6 +120,13 @@ const Table = <T,>({
 
 	const defaultRef = useRef(null)
 
+	const handleRowClick = useCallback(
+		(row: Row<T>) => () => {
+			onTableRowClick?.(row)
+		},
+		[onTableRowClick]
+	)
+
 	return (
 		<TableContainer>
 			<ReactTable $rounded={rounded} $noBottom={noBottom} className={className}>
@@ -165,13 +172,12 @@ const Table = <T,>({
 						{table.getRowModel().rows.map((row, idx) => {
 							const localRef =
 								lastRef && idx === table.getState().pagination.pageSize - 1 ? lastRef : defaultRef
-							const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined
 							return (
 								<TableBodyRow
 									localRef={localRef}
 									highlightRowsOnHover={highlightRowsOnHover}
 									row={row}
-									onClick={handleClick}
+									onClick={handleRowClick(row)}
 								/>
 							)
 						})}

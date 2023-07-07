@@ -45,7 +45,7 @@ const weiSortingFn =
 		const rowOne = valA ? wei(valA) : wei(0)
 		const rowTwo = valB ? wei(valB) : wei(0)
 
-		return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1
+		return rowOne.toNumber() > rowTwo.toNumber() ? 1 : -1
 	}
 
 const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => {
@@ -101,6 +101,8 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 		})
 	}, [search, futuresMarkets, t, futuresVolumes, pricesInfo, pastRates, markPrices])
 
+	const sortBy = useMemo(() => [{ id: 'dailyVolume', desc: true }], [])
+
 	return (
 		<>
 			<DesktopOnlyView>
@@ -112,7 +114,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 							router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType))
 						}}
 						highlightRowsOnHover
-						sortBy={[{ id: 'dailyVolume', desc: true }]}
+						sortBy={sortBy}
 						columns={[
 							{
 								header: () => (
@@ -230,6 +232,7 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								sortingFn: weiSortingFn('openInterest'),
 							},
 							{
+								id: 'dailyVolume',
 								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-markets-table.daily-volume')}
