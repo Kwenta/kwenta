@@ -34,8 +34,6 @@ type FuturesMarketsTableProps = {
 	search?: string
 }
 
-// TODO: Move all sorting functions outside the component and make them generic
-
 const weiSortingFn =
 	<T,>(key: keyof T) =>
 	(rowA: Row<T>, rowB: Row<T>) => {
