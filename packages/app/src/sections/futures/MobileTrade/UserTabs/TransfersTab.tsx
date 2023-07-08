@@ -1,5 +1,4 @@
 import { formatDollars } from '@kwenta/sdk/utils'
-import { wei } from '@synthetixio/wei'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
