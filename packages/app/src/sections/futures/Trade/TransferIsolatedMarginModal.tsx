@@ -17,7 +17,7 @@ import { FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
 import Spacer from 'components/Spacer'
 import { selectSusdBalance } from 'state/balances/selectors'
-import { depositCrossMarginMargin, withdrawCrossMargin } from 'state/crossMargin/actions'
+import { depositCrossMarginMargin, withdrawCrossMargin } from 'state/futures/crossMargin/actions'
 import {
 	selectAvailableMargin,
 	selectIsolatedTransferError,

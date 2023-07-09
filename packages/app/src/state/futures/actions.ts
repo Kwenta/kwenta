@@ -49,7 +49,7 @@ import {
 } from 'state/app/reducer'
 import { fetchBalances } from 'state/balances/actions'
 import { ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
-import { fetchV3Markets } from 'state/crossMargin/actions'
+import { fetchV3Markets } from 'state/futures/crossMargin/actions'
 import { serializeWeiObject } from 'state/helpers'
 import { AppDispatch, AppThunk, RootState } from 'state/store'
 import { ThunkConfig } from 'state/types'
@@ -958,7 +958,7 @@ export const withdrawSmartMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			notifyError('No smart margin account')
 			return
 		}
-		await submitSMTransferTransaction(dispatch, sdk, 'withdraw_cross_margin', account, amount)
+		await submitSMTransferTransaction(dispatch, sdk, 'withdraw_smart_margin', account, amount)
 	}
 )
 
@@ -1372,7 +1372,7 @@ export const withdrawAccountKeeperBalance = createAsyncThunk<void, Wei, ThunkCon
 const submitSMTransferTransaction = async (
 	dispatch: AppDispatch,
 	sdk: KwentaSDK,
-	type: 'withdraw_cross_margin' | 'deposit_cross_margin',
+	type: 'withdraw_smart_margin' | 'deposit_smart_margin',
 	account: string,
 	amount: Wei
 ) => {
@@ -1386,7 +1386,7 @@ const submitSMTransferTransaction = async (
 
 	try {
 		const tx =
-			type === 'deposit_cross_margin'
+			type === 'deposit_smart_margin'
 				? await sdk.futures.depositSmartMarginAccount(account, amount)
 				: await sdk.futures.withdrawSmartMarginAccount(account, amount)
 		await monitorAndAwaitTransaction(dispatch, tx)

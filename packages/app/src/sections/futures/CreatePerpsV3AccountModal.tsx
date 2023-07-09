@@ -12,7 +12,7 @@ import { setOpenModal } from 'state/app/reducer'
 import {
 	selectPerpsV3Account,
 	selectCrossMarginSupportedNetwork,
-} from 'state/crossMargin/selectors'
+} from 'state/futures/crossMargin/selectors'
 import { approveCrossMargin, createSmartMarginAccount } from 'state/futures/actions'
 import {
 	selectSmartMarginAccountQueryStatus,

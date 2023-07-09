@@ -35,7 +35,6 @@ import { getKnownError } from 'utils/formatters/error'
 import {
 	unserializeCmBalanceInfo,
 	unserializeFuturesVolumes,
-	unserializeGasEstimate,
 	unserializeTradeInputs,
 	unserializeMarkets,
 	unserializeDelayedOrders,
@@ -51,8 +50,6 @@ import {
 	futuresPositionKeys,
 	MarkPriceInfos,
 	PortfolioValues,
-	SmartPerpsPortfolio,
-	CrossPerpsPortfolio,
 } from './types'
 import {
 	selectAllCrossMarginTrades,
@@ -62,7 +59,9 @@ import {
 	selectCrossMarginPositions,
 	selectCrossMarginTradeInputs,
 	selectV3Markets,
-} from 'state/crossMargin/selectors'
+} from 'state/futures/crossMargin/selectors'
+import { CrossPerpsPortfolio } from './crossMargin/types'
+import { SmartPerpsPortfolio } from './smartMargin.ts/types'
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType
 
@@ -426,8 +425,8 @@ export const selectIsSubmittingCrossTransfer = createSelector(
 	(state: RootState) => state.app,
 	(submitting, app) => {
 		return (
-			(app.transaction?.type === 'deposit_cross_margin' ||
-				app.transaction?.type === 'withdraw_cross_margin') &&
+			(app.transaction?.type === 'deposit_smart_margin' ||
+				app.transaction?.type === 'withdraw_smart_margin') &&
 			submitting
 		)
 	}

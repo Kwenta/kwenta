@@ -28,7 +28,7 @@ import sdk from './sdk'
 import stakingReducer from './staking/reducer'
 import statsReducer from './stats/reducer'
 import walletReducer from './wallet/reducer'
-import crossMarginReducer from './crossMargin/reducer'
+import crossMarginReducer from './futures/crossMargin/reducer'
 
 const LOG_REDUX = false
 

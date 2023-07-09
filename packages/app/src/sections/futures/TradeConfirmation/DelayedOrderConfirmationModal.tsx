@@ -21,8 +21,8 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { setOpenModal } from 'state/app/reducer'
-import { submitCrossMarginOrder } from 'state/crossMargin/actions'
-import { selectCrossMarginTradeInputs } from 'state/crossMargin/selectors'
+import { submitCrossMarginOrder } from 'state/futures/crossMargin/actions'
+import { selectCrossMarginTradeInputs } from 'state/futures/crossMargin/selectors'
 import {
 	selectIsModifyingIsolatedPosition,
 	selectLeverageSide,

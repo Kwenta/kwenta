@@ -29,13 +29,13 @@ import {
 	fetchSmartMarginAccount,
 	fetchMarginTransfers,
 	fetchFundingRatesHistory,
-} from '../futures/actions'
+} from '../actions'
 import {
 	EditPositionInputs,
 	InputCurrencyDenomination,
-	PerpsV3AccountData,
+	CrossMarginAccountData,
 	TradeSizeInputs,
-	PerpsV3State,
+	CrossMarginState,
 	PreviewAction,
 } from './types'
 import {
@@ -45,7 +45,7 @@ import {
 	fetchV3Markets,
 } from './actions'
 
-export const PERPS_V3_INITIAL_STATE: PerpsV3State = {
+export const PERPS_V3_INITIAL_STATE: CrossMarginState = {
 	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
 	confirmationModalOpen: false,
 	markets: {
@@ -405,7 +405,11 @@ export const {
 	setPerpsV3Account,
 } = futuresSlice.actions
 
-const findWalletForAccount = (perpsV3State: PerpsV3State, account: string, network: NetworkId) => {
+const findWalletForAccount = (
+	perpsV3State: CrossMarginState,
+	account: string,
+	network: NetworkId
+) => {
 	const entry = Object.entries(perpsV3State.accounts[network]).find(([_, value]) => {
 		return value.account === account
 	})
@@ -413,7 +417,7 @@ const findWalletForAccount = (perpsV3State: PerpsV3State, account: string, netwo
 }
 
 const mergeTradesForAccount = (
-	perpsV3: PerpsV3State,
+	perpsV3: CrossMarginState,
 	network: NetworkId,
 	wallet: string,
 	trades: FuturesTrade<string>[]
@@ -431,10 +435,10 @@ const mergeTradesForAccount = (
 }
 
 const updateCrossMarginAccount = (
-	futuresState: PerpsV3State,
+	futuresState: CrossMarginState,
 	network: NetworkId,
 	wallet: string,
-	newAccountData: Partial<PerpsV3AccountData>
+	newAccountData: Partial<CrossMarginAccountData>
 ) => {
 	const updatedAccount = {
 		...ZERO_STATE_CM_ACCOUNT,

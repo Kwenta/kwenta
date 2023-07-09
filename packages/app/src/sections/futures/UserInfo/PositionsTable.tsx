@@ -20,7 +20,7 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import useWindowSize from 'hooks/useWindowSize'
 import PositionType from 'sections/futures/PositionType'
 import { setShowPositionModal } from 'state/app/reducer'
-import { selectCrossMarginPositions } from 'state/crossMargin/selectors'
+import { selectCrossMarginPositions } from 'state/futures/crossMargin/selectors'
 import {
 	selectSmartMarginPositions,
 	selectFuturesType,

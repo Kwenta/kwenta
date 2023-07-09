@@ -18,7 +18,7 @@ import ROUTES from 'constants/routes'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
-import { selectCrossMarginPositions } from 'state/crossMargin/selectors'
+import { selectCrossMarginPositions } from 'state/futures/crossMargin/selectors'
 import {
 	selectSmartMarginPositions,
 	selectMarkets,

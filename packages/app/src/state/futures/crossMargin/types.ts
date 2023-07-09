@@ -20,6 +20,7 @@ import { AppFuturesMarginType } from 'state/futures/types'
 
 import { PricesInfo } from 'state/prices/types'
 import { QueryStatus } from 'state/types'
+import { FuturesAccountData } from '../shared.ts/types'
 
 export type TradeSizeInputs<T = Wei> = {
 	nativeSize: T
@@ -93,7 +94,7 @@ export type FuturesQueryStatuses = {
 	historicalFundingRates: QueryStatus
 }
 
-export type PerpsV3TransactionType =
+export type CrossMarginTransactionType =
 	| 'deposit_perps_v3'
 	| 'withdraw_perps_v3'
 	| 'approve_perps_v3'
@@ -103,8 +104,8 @@ export type PerpsV3TransactionType =
 	| 'execute_delayed_perps_v3'
 	| 'create_account_perps_v3'
 
-export type PerpsV3Transaction = {
-	type: PerpsV3TransactionType
+export type CrossMarginTransaction = {
+	type: CrossMarginTransactionType
 	status: TransactionStatus
 	error?: string
 	hash: string | null
@@ -127,17 +128,9 @@ export type AccountContext = {
 
 export type PreviewAction = 'edit' | 'trade' | 'close'
 
-export type PerpsV3AccountData = {
-	account: string
-	position?: FuturesPosition<string>
-	positions?: FuturesPosition<string>[]
-	positionHistory?: FuturesPositionHistory<string>[]
-	trades?: FuturesTrade<string>[]
-	marginTransfers?: MarginTransfer[]
-	delayedOrders: DelayedOrderWithDetails<string>[]
-}
+export type CrossMarginAccountData = FuturesAccountData
 
-export type PerpsV3State = {
+export type CrossMarginState = {
 	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
 	tradeInputs: TradeSizeInputs<string>
 	editPositionInputs: EditPositionInputs<string>
@@ -159,7 +152,7 @@ export type PerpsV3State = {
 	accounts: Record<
 		FuturesNetwork,
 		{
-			[wallet: string]: PerpsV3AccountData
+			[wallet: string]: CrossMarginAccountData
 		}
 	>
 	fundingRates: FundingRate<string>[]
@@ -237,38 +230,11 @@ export type SharePositionParams = {
 	marketPrice?: Wei
 }
 
-export const futuresPositionKeys = new Set([
-	'remainingMargin',
-	'accessibleMargin',
-	'order.fee',
-	'order.leverage',
-	'position.notionalValue',
-	'position.accruedFunding',
-	'position.initialMargin',
-	'position.profitLoss',
-	'position.lastPrice',
-	'position.size',
-	'position.liquidationPrice',
-	'position.initialLeverage',
-	'position.leverage',
-	'position.pnl',
-	'position.pnlPct',
-	'position.marginRatio',
-])
-
-export const futuresPositionHistoryKeys = new Set([
-	'size',
-	'feesPaid',
-	'netFunding',
-	'netTransfers',
-	'totalDeposits',
-	'initialMargin',
-	'margin',
-	'entryPrice',
-	'avgEntryPrice',
-	'exitPrice',
-	'leverage',
-	'pnl',
-	'pnlWithFeesPaid',
-	'totalVolume',
-])
+export type CrossPerpsPortfolio = {
+	account: string
+	timestamp: number
+	assets: {
+		[asset: string]: number
+	}
+	total: number
+}

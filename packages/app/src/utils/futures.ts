@@ -24,7 +24,6 @@ import {
 	SmartMarginBalanceInfo,
 	TradeSizeInputs,
 	DelayedOrderWithDetails,
-	TransactionEstimation,
 	futuresPositionKeys,
 	FundingRate,
 	MarkPrices,
@@ -296,14 +295,6 @@ export const unserializeDelayedOrder = (
 export const unserializeDelayedOrders = (
 	orders: DelayedOrderWithDetails<string>[]
 ): DelayedOrderWithDetails[] => orders.map((o) => unserializeDelayedOrder(o))
-
-export const unserializeGasEstimate = (
-	estimate: TransactionEstimation<string>
-): TransactionEstimation => ({
-	...estimate,
-	limit: wei(estimate.limit),
-	cost: wei(estimate.cost),
-})
 
 export const serializePrices = (prices: PricesMap) => {
 	return Object.entries(prices).reduce<PricesMap<string>>((acc, [key, price]) => {

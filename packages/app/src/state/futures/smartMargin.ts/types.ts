@@ -1,14 +1,9 @@
-import { Period } from '@kwenta/sdk/constants'
 import {
 	NetworkId,
 	TransactionStatus,
 	SmartMarginOrderType,
-	FuturesMarket,
-	FuturesOrderTypeDisplay,
 	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
-	FuturesTrade,
-	FuturesVolumes,
 	PositionSide,
 	ConditionalOrder as SmartMarginOrder,
 	FuturesMarketKey,
@@ -21,7 +16,7 @@ import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
 import { QueryStatus } from 'state/types'
-import { FuturesAccountData, FuturesTransactionType } from './shared.ts/types'
+import { FuturesAccountData, FuturesTransactionType } from '../shared.ts/types'
 
 type excludedOptions = typeof FuturesMarginType.ISOLATED_MARGIN_LEGACY
 export type AppFuturesMarginType = Exclude<FuturesMarginType, excludedOptions>
@@ -74,6 +69,16 @@ export type FuturesAction = {
 	action: 'trade' | 'deposit' | 'withdraw'
 }
 
+export type SmartPerpsPortfolio = {
+	account: string
+	timestamp: number
+	assets: {
+		[asset: string]: number
+	}
+	idle: number
+	total: number
+}
+
 export type PortfolioValues = {
 	timestamp: number
 	total: number
@@ -114,10 +119,6 @@ export type SmartMarginTradeFees<T = Wei> = {
 	keeperEthDeposit: T
 }
 
-type FuturesErrors = {
-	tradePreview?: string | undefined | null
-}
-
 type FuturesNetwork = number
 
 export type InputCurrencyDenomination = 'usd' | 'native'
@@ -136,53 +137,9 @@ export type AccountContext = {
 export type PreviewAction = 'edit' | 'trade' | 'close'
 
 export type SmartMarginAccountData = FuturesAccountData & {
-	account: string
 	idleTransfers: MarginTransfer[]
 	balanceInfo: SmartMarginBalanceInfo<string>
-	delayedOrders: DelayedOrderWithDetails<string>[]
 	conditionalOrders: SmartMarginOrder<string>[]
-}
-
-// TODO: Separate in some way by network and wallet
-// so we can have persisted state between switching
-
-export type FuturesState = {
-	selectedType: AppFuturesMarginType
-	confirmationModalOpen: boolean
-	fundingRates: FundingRate<string>[]
-	smartMargin: SmartMarginState
-	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
-	queryStatuses: FuturesQueryStatuses
-	dailyMarketVolumes: FuturesVolumes<string>
-	errors: FuturesErrors
-	selectedInputDenomination: InputCurrencyDenomination
-	selectedInputHours: number
-	selectedChart: 'price' | 'funding'
-	preferences: {
-		showHistory?: boolean
-	}
-	dashboard: {
-		selectedPortfolioTimeframe: Period
-	}
-	leaderboard: {
-		selectedTrader: string | undefined
-		selectedTraderPositionHistory: Record<
-			FuturesNetwork,
-			{
-				[wallet: string]: FuturesPositionHistory<string>[]
-			}
-		>
-	}
-	tradePanelDrawerOpen: boolean
-	historicalFundingRates: Partial<
-		Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>
-	>
-	closePositionOrderInputs: ClosePositionInputs<string>
-}
-
-export type TradePreviewResult = {
-	data: FuturesPotentialTradeDetails<string> | null
-	error: string | null
 }
 
 export type SmartMarginState = {
@@ -220,75 +177,9 @@ export type SmartMarginState = {
 	}
 }
 
-export type CancelDelayedOrderInputs = {
-	marketAddress: string
-	isOffchain: boolean
-}
-
-export type ExecuteDelayedOrderInputs = {
-	marketKey: FuturesMarketKey
-	marketAddress: string
-	isOffchain: boolean
-}
-
-export type DelayedOrderWithDetails<T = Wei> = {
-	account: string
-	marketAddress: string
-	market: string
-	asset: FuturesMarketAsset
-	marketKey: FuturesMarketKey
-	size: T
-	commitDeposit: T
-	keeperDeposit: T
-	submittedAtTimestamp: number
-	executableAtTimestamp: number
-	isOffchain: boolean
-	desiredFillPrice: T
-	targetRoundId: T | null
-	orderType: FuturesOrderTypeDisplay
-	side: PositionSide
-	isStale?: boolean
-	isExecutable?: boolean
-	isCancelling?: boolean
-}
-
-export type TradePreviewParams = {
-	market: {
-		key: FuturesMarketKey
-		address: string
-	}
-	orderPrice: Wei
-	sizeDelta: Wei
-	marginDelta: Wei
-	action: PreviewAction
-}
-
-export type DebouncedPreviewParams = TradePreviewParams & {
-	debounceCount: number
-}
-
 export type SharePositionParams = {
 	asset?: FuturesMarketAsset
 	position?: FuturesFilledPosition
 	positionHistory?: FuturesPositionHistory
 	marketPrice?: Wei
 }
-
-export const futuresPositionKeys = new Set([
-	'remainingMargin',
-	'accessibleMargin',
-	'order.fee',
-	'order.leverage',
-	'position.notionalValue',
-	'position.accruedFunding',
-	'position.initialMargin',
-	'position.profitLoss',
-	'position.lastPrice',
-	'position.size',
-	'position.liquidationPrice',
-	'position.initialLeverage',
-	'position.leverage',
-	'position.pnl',
-	'position.pnlPct',
-	'position.marginRatio',
-])

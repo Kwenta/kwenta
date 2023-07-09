@@ -22,8 +22,8 @@ import {
 	fetchCrossMarginOpenOrders,
 	fetchCrossMarginPositions,
 	fetchPerpsV3Account,
-} from 'state/crossMargin/actions'
-import { selectCrossMarginSupportedNetwork } from 'state/crossMargin/selectors'
+} from 'state/futures/crossMargin/actions'
+import { selectCrossMarginSupportedNetwork } from 'state/futures/crossMargin/selectors'
 import { FuturesMarginType } from '@kwenta/sdk/types'
 
 // TODO: Optimise polling and queries
