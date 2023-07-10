@@ -1,7 +1,7 @@
 import { formatTruncatedDuration, truncateNumbers } from '@kwenta/sdk/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { ReactNode, useCallback, useMemo, useState } from 'react'
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import HelpIcon from 'assets/svg/app/question-mark.svg'
@@ -10,15 +10,17 @@ import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
 import { useFetchStakeMigrateData } from 'state/futures/hooks'
-import { useAppSelector } from 'state/hooks'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { setStakingMigrationCompleted } from 'state/staking/reducer'
 import {
 	selectClaimableBalanceV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
-	selectShowMigrationPage,
 	selectStakedEscrowedKwentaBalanceV2,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
+	selectStakingMigrationCompleted,
+	selectStakingMigrationRequired,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
 
@@ -44,6 +46,7 @@ export type StakingCards = {
 const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation()
 	const router = useRouter()
+	const dispatch = useAppDispatch()
 	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
@@ -51,9 +54,19 @@ const StakingPage: StakingComponent = () => {
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
-	const isMigrationActive = useAppSelector(selectShowMigrationPage)
+	const isMigrationRequired = useAppSelector(selectStakingMigrationRequired)
+	const isMigrationCompleted = useAppSelector(selectStakingMigrationCompleted)
+
+	// eslint-disable-next-line no-console
+	console.log(`isMigrationCompleted`, isMigrationCompleted)
 
 	useFetchStakeMigrateData()
+
+	useEffect(() => {
+		if (isMigrationRequired) {
+			dispatch(setStakingMigrationCompleted(false))
+		}
+	}, [dispatch, isMigrationRequired])
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -172,9 +185,7 @@ const StakingPage: StakingComponent = () => {
 		]
 	)
 
-	return isMigrationActive ? (
-		<MigratePage />
-	) : (
+	return isMigrationCompleted ? (
 		<>
 			<Head>
 				<title>{t('dashboard-stake.page-title')}</title>
@@ -182,6 +193,8 @@ const StakingPage: StakingComponent = () => {
 			<StakingPortfolio cards={stakingInfo} />
 			<StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />
 		</>
+	) : (
+		<MigratePage />
 	)
 }
 

@@ -36,6 +36,7 @@ export type StakingState = {
 	claimableOpRewards: ClaimParams[]
 	claimableSnxOpRewards: ClaimParams[]
 	selectedEpoch?: number
+	stakingMigrationCompleted: boolean
 	stakeStatus: FetchStatus
 	unstakeStatus: FetchStatus
 	stakeEscrowedStatus: FetchStatus

@@ -278,7 +278,10 @@ export const selectEscrowData = (state: RootState) => state.staking.escrowData ?
 
 export const selectEscrowV2Data = (state: RootState) => state.staking.escrowV2Data ?? []
 
-export const selectShowMigrationPage = createSelector(
+export const selectStakingMigrationCompleted = (state: RootState) =>
+	state.staking.stakingMigrationCompleted
+
+export const selectStakingMigrationRequired = createSelector(
 	selectClaimableBalance,
 	selectStakedKwentaBalance,
 	(claimableBalanceV1, stakedKwentaBalanceV1) =>

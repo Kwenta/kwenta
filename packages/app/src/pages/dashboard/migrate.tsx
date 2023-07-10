@@ -15,16 +15,11 @@ import { StakingCard } from 'sections/dashboard/Stake/card'
 import EscrowTable from 'sections/dashboard/Stake/EscrowTable'
 import StakingPortfolio from 'sections/dashboard/Stake/StakingPortfolio'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import {
-	approveKwentaToken,
-	claimStakingRewards,
-	stakeKwentaV2,
-	unstakeKwenta,
-} from 'state/staking/actions'
+import { claimStakingRewards, unstakeKwenta } from 'state/staking/actions'
+import { setStakingMigrationCompleted } from 'state/staking/reducer'
 import {
 	selectClaimableBalance,
 	selectClaimableBalanceV2,
-	selectIsKwentaTokenApprovedV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
 	selectStakedEscrowedKwentaBalance,
@@ -52,7 +47,6 @@ const MigratePage: MigrateComponent = () => {
 	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const totalVestable = useAppSelector(selectTotalVestable)
 	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
-	const kwentaStakingV2Approved = useAppSelector(selectIsKwentaTokenApprovedV2)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 
 	const handleGetReward = useCallback(() => {
@@ -64,13 +58,9 @@ const MigratePage: MigrateComponent = () => {
 		[dispatch, stakedKwentaBalance]
 	)
 
-	const handleStakeKwenta = useCallback(() => {
-		if (!kwentaStakingV2Approved) {
-			dispatch(approveKwentaToken('kwentaStakingV2'))
-		} else {
-			dispatch(stakeKwentaV2(wei(kwentaBalance).toBN()))
-		}
-	}, [dispatch, kwentaBalance, kwentaStakingV2Approved])
+	const handleDismiss = useCallback(() => {
+		dispatch(setStakingMigrationCompleted(true))
+	}, [dispatch])
 
 	const migrationSteps = useMemo(
 		() => [
@@ -97,19 +87,16 @@ const MigratePage: MigrateComponent = () => {
 				copy: t('dashboard.stake.tabs.migrate.step-3-copy'),
 				label: t('dashboard.stake.tabs.migrate.staked'),
 				value: truncateNumbers(stakedKwentaBalanceV2, 2),
-				buttonLabel: kwentaStakingV2Approved
-					? t('dashboard.stake.tabs.migrate.stake')
-					: t('dashboard.stake.tabs.migrate.approve'),
-				onClick: handleStakeKwenta,
+				buttonLabel: t('dashboard.stake.tabs.migrate.visit-v2'),
+				onClick: handleDismiss,
 				active: claimableBalance.lte(0) && stakedKwentaBalance.lte(0),
 			},
 		],
 		[
 			claimableBalance,
+			handleDismiss,
 			handleGetReward,
-			handleStakeKwenta,
 			handleUnstakeKwenta,
-			kwentaStakingV2Approved,
 			stakedKwentaBalance,
 			stakedKwentaBalanceV2,
 			t,

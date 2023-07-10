@@ -664,7 +664,8 @@
 					"unstake": "Unstake",
 					"stake": "Stake",
 					"approve": "Approve",
-					"step": "Step <0>{{index}}</0>"
+					"step": "Step <0>{{index}}</0>",
+					"visit-v2": "Visit Staking V2"
 				},
 				"redeem": {
 					"title": "Redeem"
