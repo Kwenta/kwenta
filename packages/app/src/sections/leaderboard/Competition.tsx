@@ -150,7 +150,6 @@ const Competition: FC<CompetitionProps> = ({
 									),
 									accessorKey: 'totalTrades',
 									sortingFn: 'basic',
-									// width: compact ? 'auto' : 80,
 									size: 80,
 									enableSorting: true,
 								},
@@ -160,7 +159,6 @@ const Competition: FC<CompetitionProps> = ({
 									),
 									accessorKey: 'liquidations',
 									sortingFn: 'basic',
-									// size: compact ? 'auto' : 80,
 									size: 80,
 									enableSorting: true,
 								},
@@ -173,7 +171,6 @@ const Competition: FC<CompetitionProps> = ({
 									cell: (cellProps) => (
 										<Currency.Price price={cellProps.row.original.totalVolume} />
 									),
-									// width: compact ? 'auto' : 100,
 									size: 100,
 									enableSorting: true,
 								},

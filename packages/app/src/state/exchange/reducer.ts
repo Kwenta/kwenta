@@ -10,7 +10,6 @@ import {
 	fetchNumEntries,
 	fetchTokenList,
 	fetchTransactionFee,
-	fetchWalletTrades,
 	resetCurrencyKeys,
 	submitApprove,
 	submitExchange,
@@ -51,8 +50,6 @@ export const EXCHANGES_INITIAL_STATE: ExchangeState = {
 	isApproved: undefined,
 	allowance: undefined,
 	synthSuspensions: {} as ExchangeState['synthSuspensions'],
-	walletTradesStatus: FetchStatus.Idle,
-	walletTrades: [],
 }
 
 const exchangeSlice = createSlice({
@@ -208,16 +205,6 @@ const exchangeSlice = createSlice({
 			state.oneInchQuoteError = false
 			state.approvalStatus = FetchStatus.Idle
 			state.isSubmitting = false
-		})
-		builder.addCase(fetchWalletTrades.pending, (state) => {
-			state.walletTradesStatus = FetchStatus.Loading
-		})
-		builder.addCase(fetchWalletTrades.fulfilled, (state, action) => {
-			state.walletTradesStatus = FetchStatus.Success
-			state.walletTrades = action.payload
-		})
-		builder.addCase(fetchWalletTrades.rejected, (state) => {
-			state.walletTradesStatus = FetchStatus.Error
 		})
 	},
 })

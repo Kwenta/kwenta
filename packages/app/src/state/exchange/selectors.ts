@@ -229,8 +229,3 @@ export const selectEstimatedBaseTradePrice = createSelector(
 		return tradePrice
 	}
 )
-
-export const selectWalletTrades = (state: RootState) => state.exchange.walletTrades
-
-export const selectWalletTradesLoading = (state: RootState) =>
-	state.exchange.walletTradesStatus === FetchStatus.Loading

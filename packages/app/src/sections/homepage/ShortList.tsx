@@ -1,7 +1,7 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import React, { FC, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -14,7 +14,6 @@ import { MobileOnlyView, NotMobileView } from 'components/Media'
 import Table, { TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
 import ROUTES from 'constants/routes'
-import useENS from 'hooks/useENS'
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats'
 import { StackSection } from 'sections/homepage/section'
 import { Title } from 'sections/homepage/text'
@@ -24,35 +23,7 @@ import { FetchStatus } from 'state/types'
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common'
 import media from 'styles/media'
 
-type TraderENSProps = {
-	trader: string
-	traderShort: string
-}
-
-const TraderENS: FC<TraderENSProps> = ({ trader, traderShort }) => {
-	const { ensName, ensAvatar } = useENS(trader)
-
-	return (
-		<StyledTrader>
-			{ensName ? (
-				<>
-					{ensAvatar && (
-						<img
-							src={ensAvatar}
-							alt={ensName}
-							width={16}
-							height={16}
-							style={{ borderRadius: '50%', marginRight: '8px' }}
-						/>
-					)}
-					{ensName}
-				</>
-			) : (
-				traderShort
-			)}
-		</StyledTrader>
-	)
-}
+import TraderENS from './TraderENS'
 
 const getMedal = (position: number) => {
 	switch (position) {
@@ -346,12 +317,6 @@ const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
 	width: 45px;
-`
-
-const StyledTrader = styled.a`
-	color: ${(props) => props.theme.colors.white};
-	display: flex;
-	font-size: 15px;
 `
 
 const FeatureTitle = styled(Title)`

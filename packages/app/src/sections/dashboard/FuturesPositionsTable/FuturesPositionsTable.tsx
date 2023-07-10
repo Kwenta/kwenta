@@ -78,7 +78,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				<div>
 					<Table
 						data={data}
-						// hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
 						columnVisibility={{ 'tp-sl': accountType !== 'isolated_margin' }}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))

@@ -46,6 +46,8 @@ const weiSortingFn =
 		return rowOne.toNumber() > rowTwo.toNumber() ? 1 : -1
 	}
 
+const sortBy = [{ id: 'dailyVolume', desc: true }]
+
 const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => {
 	const { t } = useTranslation()
 	const router = useRouter()
@@ -98,8 +100,6 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 			}
 		})
 	}, [search, futuresMarkets, t, futuresVolumes, pricesInfo, pastRates, markPrices])
-
-	const sortBy = useMemo(() => [{ id: 'dailyVolume', desc: true }], [])
 
 	return (
 		<>

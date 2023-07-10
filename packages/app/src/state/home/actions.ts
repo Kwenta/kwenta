@@ -3,8 +3,10 @@ import { FuturesMarket } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { providers } from 'ethers'
 
+import { notifyError } from 'components/ErrorNotifier'
 import { ThunkConfig } from 'state/types'
 import { serializeMarkets } from 'utils/futures'
+import logError from 'utils/logError'
 
 export const fetchOptimismMarkets = createAsyncThunk<
 	{ markets: FuturesMarket<string>[] },
@@ -22,7 +24,11 @@ export const fetchFuturesStats = createAsyncThunk<
 	void,
 	ThunkConfig
 >('home/fetchFuturesStats', async (_, { extra: { sdk } }) => {
-	const stats = await sdk.stats.getFuturesStats()
-
-	return stats
+	try {
+		return await sdk.stats.getFuturesStats()
+	} catch (error) {
+		logError(error)
+		notifyError('Failed to fetch futures stats', error)
+		throw error
+	}
 })

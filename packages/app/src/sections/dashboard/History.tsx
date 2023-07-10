@@ -7,7 +7,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import { TabPanel } from 'components/Tab'
 
 import FuturesHistoryTable from './FuturesHistoryTable'
-import SpotHistoryTable from './SpotHistoryTable'
 
 enum HistoryTab {
 	FUTURES = 'futures',
@@ -27,14 +26,6 @@ const History: FC = () => {
 				active: activeMarketsTab === HistoryTab.FUTURES,
 				onClick: () => {
 					setActiveMarketsTab(HistoryTab.FUTURES)
-				},
-			},
-			{
-				name: HistoryTab.SPOT,
-				label: t('dashboard.history.tabs.spot'),
-				active: activeMarketsTab === HistoryTab.SPOT,
-				onClick: () => {
-					setActiveMarketsTab(HistoryTab.SPOT)
 				},
 			},
 		],
@@ -60,10 +51,6 @@ const History: FC = () => {
 
 			<TabPanel name={HistoryTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesHistoryTable />
-			</TabPanel>
-
-			<TabPanel name={HistoryTab.SPOT} activeTab={activeMarketsTab}>
-				<SpotHistoryTable />
 			</TabPanel>
 		</>
 	)
