@@ -3,7 +3,6 @@ import {
 	braveWallet,
 	coinbaseWallet,
 	injectedWallet,
-	ledgerWallet,
 	metaMaskWallet,
 	rainbowWallet,
 	walletConnectWallet,
@@ -82,7 +81,6 @@ const connectors = connectorsForWallets([
 	{
 		groupName: 'More',
 		wallets: [
-			ledgerWallet({ projectId, chains }),
 			braveWallet({ chains, shimDisconnect: true }),
 			Tally({ chains, shimDisconnect: true }),
 			Frame({ chains, shimDisconnect: true }),
