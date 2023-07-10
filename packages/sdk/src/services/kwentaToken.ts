@@ -271,7 +271,7 @@ export default class KwentaTokenService {
 					vestable,
 					amount: wei(next.escrowAmount),
 					fee: wei(vestingEntries[i].fee),
-					status: date > Date.now() ? 'VESTING' : 'VESTED',
+					status: date > Date.now() ? 'Vesting' : 'Vested',
 					version: 1,
 				})
 
@@ -324,7 +324,7 @@ export default class KwentaTokenService {
 					vestable,
 					amount: wei(next.escrowAmount),
 					fee: wei(vestingEntries[i].fee),
-					status: date > Date.now() ? 'VESTING' : 'VESTED',
+					status: date > Date.now() ? 'Vesting' : 'Vested',
 					version: 2,
 				})
 

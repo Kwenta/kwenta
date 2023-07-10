@@ -143,7 +143,7 @@ export const Table: FC<TableProps> = memo(
 					hiddenColumns: hiddenColumns,
 					sortBy: sortBy,
 				},
-				autoResetPage: false,
+				autoResetPage: true,
 				autoResetSortBy: false,
 				...options,
 			},
@@ -170,8 +170,8 @@ export const Table: FC<TableProps> = memo(
 		const shouldShowPagination = useMemo(
 			() =>
 				(showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS)) ||
-				customizePagination,
-			[customizePagination, data.length, pageSize, showPagination, showShortList]
+				!!children,
+			[children, data.length, pageSize, showPagination, showShortList]
 		)
 
 		return (
