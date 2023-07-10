@@ -12,7 +12,7 @@ const ChartWrapper = () => {
 	const selectedChart = useAppSelector(({ futures }) => futures.selectedChart)
 
 	return (
-		<Container>
+		<Container $showHistory={showHistory}>
 			<div className="charts-container">
 				<PositionChart display={selectedChart === 'price'} />
 				<FundingChart display={selectedChart === 'funding'} />
@@ -22,14 +22,13 @@ const ChartWrapper = () => {
 	)
 }
 
-const Container = styled.div`
+const Container = styled.div<{ $showHistory: boolean }>`
 	display: flex;
 	height: 100%;
 	overflow: hidden;
 
 	.charts-container {
-		display: flex;
-		flex: 1;
+		width: ${(props) => (props.$showHistory ? 'calc(100% - 300px)' : '100%')};
 	}
 `
 

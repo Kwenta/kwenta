@@ -41,46 +41,43 @@ const FundingChart: FC<FundingChartProps> = ({ display }) => {
 		<FundingChartWrapper $display={display}>
 			<FundingPeriodToggle />
 			<FundingChartContainer>
-				<ResponsiveContainer width="99%" height="100%">
-					<LineChart
-						data={historicalFundingRates[marketAsset]}
-						margin={{ top: 30, right: 50, left: 30, bottom: 15 }}
-					>
-						<YAxis dataKey="fundingRate" domain={['auto', 0]} tickFormatter={formatFundingRate} />
-						<XAxis
-							dataKey="timestamp"
-							type="number"
-							scale="time"
-							tickFormatter={formatFundingDate}
-							minTickGap={75}
-							domain={['dataMin', 'dataMax']}
-						/>
-						<Tooltip
-							content={<FundingChartTooltip />}
-							formatter={(x) => formatFundingRate(x as any)}
-							isAnimationActive={false}
-						/>
-						<ReferenceLine y={0} stroke={theme.colors.selectedTheme.text.body} />
-						<Line
-							type="monotone"
-							dataKey="fundingRate"
-							stroke={theme.colors.selectedTheme.text.value}
-							strokeWidth={1}
-							strokeLinecap="square"
-							dot={false}
-							isAnimationActive={false}
-						/>
-					</LineChart>
-				</ResponsiveContainer>
+				<LineChart
+					data={historicalFundingRates[marketAsset]}
+					margin={{ top: 30, right: 50, left: 30, bottom: 15 }}
+				>
+					<YAxis dataKey="fundingRate" domain={['auto', 0]} tickFormatter={formatFundingRate} />
+					<XAxis
+						dataKey="timestamp"
+						type="number"
+						scale="time"
+						tickFormatter={formatFundingDate}
+						minTickGap={75}
+						domain={['dataMin', 'dataMax']}
+					/>
+					<Tooltip
+						content={<FundingChartTooltip />}
+						formatter={(x) => formatFundingRate(x as any)}
+						isAnimationActive={false}
+					/>
+					<ReferenceLine y={0} stroke={theme.colors.selectedTheme.text.body} />
+					<Line
+						type="monotone"
+						dataKey="fundingRate"
+						stroke={theme.colors.selectedTheme.text.value}
+						strokeWidth={1}
+						strokeLinecap="square"
+						dot={false}
+						isAnimationActive={false}
+					/>
+				</LineChart>
 			</FundingChartContainer>
 		</FundingChartWrapper>
 	)
 }
 
 const FundingChartWrapper = styled.div<{ $display?: boolean }>`
-	display: flex;
-	flex-direction: column;
-	flex: 1;
+	width: 100%;
+	height: calc(100% - 45px);
 
 	${(props) =>
 		!props.$display &&
@@ -89,7 +86,7 @@ const FundingChartWrapper = styled.div<{ $display?: boolean }>`
 		`}
 `
 
-const FundingChartContainer = styled.div`
+const FundingChartContainer = styled(ResponsiveContainer)`
 	flex: 1;
 `
 
