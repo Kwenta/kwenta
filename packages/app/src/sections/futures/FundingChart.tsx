@@ -50,7 +50,7 @@ const FundingChart: FC<FundingChartProps> = ({ display }) => {
 						domain={['auto', 'auto']}
 						tickFormatter={formatFundingRate}
 						allowDataOverflow
-						tickCount={20}
+						tickCount={10}
 					/>
 					<XAxis
 						dataKey="timestamp"
