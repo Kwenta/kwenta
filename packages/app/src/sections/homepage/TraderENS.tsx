@@ -36,7 +36,7 @@ const TraderENS: FC<TraderENSProps> = memo(({ trader, traderShort }) => {
 const StyledTrader = styled.a`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
-	font-size: 15px;
+	font-size: 13px;
 `
 
 export default TraderENS

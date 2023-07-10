@@ -71,14 +71,12 @@ const TransfersTab: React.FC = () => {
 							accessorKey: 'size',
 							sortingFn: 'basic',
 							cell: (cellProps) => {
-								const formatOptions = { minDecimals: 0 }
-
 								return (
 									<ColoredPrice
 										priceChange={cellProps.row.original.action === 'deposit' ? 'up' : 'down'}
 									>
 										{cellProps.row.original.action === 'deposit' ? '+' : ''}
-										{formatDollars(cellProps.row.original.size, formatOptions)}
+										{formatDollars(cellProps.row.original.size)}
 									</ColoredPrice>
 								)
 							},

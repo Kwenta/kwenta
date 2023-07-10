@@ -49,11 +49,10 @@ export default class StatsService {
 			)
 
 			const stats = response.map((stat, i) => ({
-				...stat,
 				trader: stat.account,
 				traderShort: truncateAddress(stat.account),
-				pnl: stat.pnlWithFeesPaid.div(ETH_UNIT),
-				totalVolume: stat.totalVolume.div(ETH_UNIT),
+				pnl: stat.pnlWithFeesPaid.div(ETH_UNIT).toString(),
+				totalVolume: stat.totalVolume.div(ETH_UNIT).toString(),
 				totalTrades: stat.totalTrades.toNumber(),
 				liquidations: stat.liquidations.toNumber(),
 				rank: i + 1,

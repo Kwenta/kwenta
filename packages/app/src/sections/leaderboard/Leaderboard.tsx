@@ -13,7 +13,7 @@ import useENS from 'hooks/useENS'
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import { setSelectedTrader } from 'state/futures/reducer'
 import { selectSelectedTrader } from 'state/futures/selectors'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
 import { fetchLeaderboard } from 'state/stats/actions'
 import { selectLeaderboard, selectLeaderboardLoading } from 'state/stats/selectors'
 import media from 'styles/media'
@@ -53,9 +53,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	// TODO: Separate search from the general list, to improve performance.
 	// This currently refetches the whole list when we search.
 
-	useEffect(() => {
-		dispatch(fetchLeaderboard(searchTerm))
-	}, [dispatch, searchTerm])
+	useFetchAction(() => fetchLeaderboard(searchTerm), { dependencies: [searchTerm] })
 
 	const pinRow = useMemo(() => {
 		return leaderboardData.wallet.map((trader) => ({ ...trader, rank: 0, rankText: PIN }))

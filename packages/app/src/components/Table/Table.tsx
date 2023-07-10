@@ -164,6 +164,7 @@ const Table = <T,>({
 								lastRef && idx === table.getState().pagination.pageSize - 1 ? lastRef : defaultRef
 							return (
 								<TableBodyRow
+									key={row.id}
 									localRef={localRef}
 									highlightRowsOnHover={highlightRowsOnHover}
 									row={row}

@@ -1,7 +1,7 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
+import { wei } from '@synthetixio/wei'
 import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
+import React, { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -18,7 +18,7 @@ import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativ
 import { StackSection } from 'sections/homepage/section'
 import { Title } from 'sections/homepage/text'
 import { fetchFuturesStats } from 'state/home/actions'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useAppSelector, useFetchAction } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { SmallGoldenHeader, WhiteHeader } from 'styles/common'
 import media from 'styles/media'
@@ -47,15 +47,15 @@ const ShortList = () => {
 	}))
 
 	const router = useRouter()
-	const dispatch = useAppDispatch()
 
-	const onClickTrader = (trader: string) => {
-		router.push(ROUTES.Leaderboard.Trader(trader))
-	}
+	const onClickTrader = useCallback(
+		(trader: string) => {
+			router.push(ROUTES.Leaderboard.Trader(trader))
+		},
+		[router]
+	)
 
-	useEffect(() => {
-		dispatch(fetchFuturesStats())
-	}, [dispatch])
+	useFetchAction(fetchFuturesStats)
 
 	const title = (
 		<>
@@ -131,7 +131,7 @@ const ShortList = () => {
 									<TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>
 								),
 								accessorKey: 'pnl',
-								cell: (cellProps) => <ColorCodedPrice price={cellProps.row.original.pnl} />,
+								cell: (cellProps) => <ColorCodedPrice price={wei(cellProps.row.original.pnl)} />,
 								size: 125,
 							},
 						]}
@@ -190,7 +190,7 @@ const ShortList = () => {
 							{totalTradeStats.isLoading ? (
 								<Loader />
 							) : (
-								formatDollars(totalTradeStats.data?.totalVolume || ZERO_WEI, {
+								formatDollars(wei(totalTradeStats.data?.totalVolume || '0'), {
 									minDecimals: 0,
 								})
 							)}

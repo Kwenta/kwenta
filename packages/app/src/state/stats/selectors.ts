@@ -23,8 +23,10 @@ export const selectMinTimestamp = createSelector(
 	}
 )
 
-export const selectLeaderboard = (state: RootState) =>
-	unserializeLeaderboard(state.stats.leaderboard)
+export const selectLeaderboard = createSelector(
+	(state: RootState) => state.stats.leaderboard,
+	unserializeLeaderboard
+)
 
 export const selectLeaderboardLoading = (state: RootState) =>
 	state.stats.queryStatuses.leaderboard.status === FetchStatus.Loading
