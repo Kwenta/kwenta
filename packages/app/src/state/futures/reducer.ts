@@ -175,6 +175,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
+	historicalFundingRatePeriod: Period.TWO_WEEKS,
 	historicalFundingRates: {},
 	futuresFees: '0',
 	futuresFeesForAccount: '0',
@@ -381,11 +382,14 @@ const futuresSlice = createSlice({
 		setTradePanelDrawerOpen: (state, action: PayloadAction<boolean>) => {
 			state.tradePanelDrawerOpen = action.payload
 		},
-		setShowTradeHistory: (state, action: PayloadAction<boolean>) => {
-			state.preferences.showHistory = action.payload
+		toggleShowTradeHistory: (state) => {
+			state.preferences.showHistory = !state.preferences.showHistory
 		},
 		setSelectedChart: (state, action: PayloadAction<'price' | 'funding'>) => {
 			state.selectedChart = action.payload
+		},
+		setHistoricalFundingRatePeriod: (state, action: PayloadAction<Period>) => {
+			state.historicalFundingRatePeriod = action.payload
 		},
 	},
 	extraReducers: (builder) => {
@@ -818,8 +822,9 @@ export const {
 	setSLTPModalStopLoss,
 	setSLTPModalTakeProfit,
 	setTradePanelDrawerOpen,
-	setShowTradeHistory,
+	toggleShowTradeHistory,
 	setSelectedChart,
+	setHistoricalFundingRatePeriod,
 } = futuresSlice.actions
 
 const findWalletForAccount = (
