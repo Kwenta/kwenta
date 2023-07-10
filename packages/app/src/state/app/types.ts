@@ -1,5 +1,6 @@
 import { TransactionStatus, FuturesMarketKey, KwentaStatus, GasPrice } from '@kwenta/sdk/types'
-import { FuturesTransactionType } from 'state/futures/shared.ts/types'
+
+import { FuturesTransactionType } from 'state/futures/common/types'
 
 export type ModalType =
 	| 'futures_close_position_confirm'

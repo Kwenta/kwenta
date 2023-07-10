@@ -13,16 +13,16 @@ import Spacer from 'components/Spacer'
 import { TabPanel } from 'components/Tab'
 import ROUTES from 'constants/routes'
 import useWindowSize from 'hooks/useWindowSize'
-import { fetchAllTradesForAccount } from 'state/futures/actions'
 import {
 	selectActiveSmartPositionsCount,
 	selectActiveCrossMarginPositionsCount,
 	selectFuturesType,
 	selectMarketAsset,
-	selectOpenDelayedOrders,
 	selectPosition,
 	selectAllConditionalOrders,
 } from 'state/futures/selectors'
+import { fetchAllV2TradesForAccount } from 'state/futures/smartMargin/actions'
+import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks'
 import { selectWallet } from 'state/wallet/selectors'
 
@@ -61,7 +61,7 @@ const UserInfo: React.FC = memo(() => {
 	const conditionalOrders = useAppSelector(selectAllConditionalOrders)
 	const accountType = useAppSelector(selectFuturesType)
 
-	useFetchAction(fetchAllTradesForAccount, {
+	useFetchAction(fetchAllV2TradesForAccount, {
 		dependencies: [walletAddress, accountType, position?.position?.size.toString()],
 		disabled: !walletAddress,
 	})
@@ -85,7 +85,7 @@ const UserInfo: React.FC = memo(() => {
 	}, [])
 
 	const refetchTrades = useCallback(() => {
-		dispatch(fetchAllTradesForAccount())
+		dispatch(fetchAllV2TradesForAccount())
 	}, [dispatch])
 
 	useEffect(() => {

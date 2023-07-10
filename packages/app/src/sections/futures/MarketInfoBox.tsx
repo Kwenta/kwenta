@@ -9,9 +9,8 @@ import {
 	selectBuyingPower,
 	selectMarginUsage,
 	selectMarketSuspended,
-	selectPreviewMarginChange,
-	selectTradePreview,
 } from 'state/futures/selectors'
+import { selectPreviewMarginChange, selectTradePreview } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 const AvailableMarginRow = memo(() => {

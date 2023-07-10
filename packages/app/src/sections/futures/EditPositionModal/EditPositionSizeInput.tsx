@@ -13,11 +13,11 @@ import { getStep } from 'components/Slider/Slider'
 import StyledSlider from 'components/Slider/StyledSlider'
 import Spacer from 'components/Spacer'
 import { selectShowPositionModal } from 'state/app/selectors'
-import { editCrossMarginPositionSize } from 'state/futures/actions'
+import { editCrossMarginPositionSize } from 'state/futures/smartMargin/actions'
 import {
-	selectSmartMarginEditPosInputs,
 	selectEditPositionModalInfo,
-} from 'state/futures/selectors'
+	selectSmartMarginEditPosInputs,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type OrderSizingProps = {

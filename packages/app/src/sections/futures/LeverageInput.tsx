@@ -14,16 +14,16 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex'
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults'
 import { editTradeSizeInput } from 'state/futures/actions'
-import { setLeverageInput } from 'state/futures/reducer'
 import {
 	selectLeverageInput,
 	selectMarketIndexPrice,
 	selectMaxLeverage,
 	selectPosition,
 	selectFuturesType,
-	selectSmartMarginMarginDelta,
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors'
+import { setSmartMarginLeverageInput } from 'state/futures/smartMargin/reducer'
+import { selectSmartMarginMarginDelta } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import LeverageSlider from './LeverageSlider'
@@ -71,7 +71,7 @@ const LeverageInput: FC = memo(() => {
 					: wei(Number(newLeverage)).mul(remainingMargin).div(marketPrice).toString()
 			const floored = floorNumber(Number(newTradeSize), 4)
 			dispatch(editTradeSizeInput(String(floored), 'native'))
-			dispatch(setLeverageInput(newLeverage))
+			dispatch(setSmartMarginLeverageInput(newLeverage))
 		},
 		[marketPrice, dispatch, availableMargin]
 	)

@@ -17,21 +17,21 @@ import Spacer from 'components/Spacer'
 import { Body } from 'components/Text'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors'
+import { clearTradeInputs } from 'state/futures/actions'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
-	approveCrossMargin,
-	clearTradeInputs,
-	editCrossMarginPositionMargin,
+	approveSmartMargin,
+	editSmartMarginPositionMargin,
 	submitSmartMarginAdjustMargin,
-} from 'state/futures/actions'
+} from 'state/futures/smartMargin/actions'
 import {
 	selectEditMarginAllowanceValid,
-	selectSmartMarginEditPosInputs,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
 	selectIdleMargin,
 	selectIsFetchingTradePreview,
-	selectSubmittingFuturesTx,
-} from 'state/futures/selectors'
+	selectSmartMarginEditPosInputs,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import EditPositionMarginInput from './EditPositionMarginInput'
@@ -118,13 +118,13 @@ export default function EditPositionMarginModal() {
 
 	const onClose = () => {
 		if (modal?.marketKey) {
-			dispatch(editCrossMarginPositionMargin(modal.marketKey, ''))
+			dispatch(editSmartMarginPositionMargin(modal.marketKey, ''))
 		}
 		dispatch(setShowPositionModal(null))
 	}
 
 	const handleApproveSmartMargin = useCallback(async () => {
-		dispatch(approveCrossMargin())
+		dispatch(approveSmartMargin())
 	}, [dispatch])
 
 	const depositButtonText = allowanceValid

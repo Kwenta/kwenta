@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import Button from 'components/Button'
-import { cancelConditionalOrder } from 'state/futures/actions'
+import { cancelConditionalOrder } from 'state/futures/smartMargin/actions'
 import { useAppDispatch } from 'state/hooks'
 
 import BaseDrawer from './BaseDrawer'

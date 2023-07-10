@@ -25,22 +25,21 @@ import { previewErrorI18n } from 'queries/futures/constants'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectTransaction } from 'state/app/selectors'
 import { submitCrossMarginReducePositionOrder } from 'state/futures/crossMargin/actions'
+import { selectFuturesType, selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
 	editClosePositionPrice,
 	editClosePositionSizeDelta,
 	submitSmartMarginReducePositionOrder,
-} from 'state/futures/actions'
-import { setClosePositionOrderType } from 'state/futures/reducer'
+} from 'state/futures/smartMargin/actions'
+import { setClosePositionOrderType } from 'state/futures/smartMargin/reducer'
 import {
 	selectClosePositionOrderInputs,
 	selectClosePositionPreview,
 	selectEditPositionModalInfo,
-	selectFuturesType,
 	selectIsFetchingTradePreview,
 	selectKeeperDepositExceedsBal,
-	selectSubmittingFuturesTx,
 	selectTradePreviewError,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import ClosePositionFeeInfo from '../FeeInfoBox/ClosePositionFeeInfo'

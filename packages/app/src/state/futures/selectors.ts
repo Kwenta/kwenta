@@ -6,21 +6,21 @@ import {
 	PositionSide,
 	FuturesMarginType,
 } from '@kwenta/sdk/types'
-import {
-	truncateTimestamp,
-	calculateDesiredFillPrice,
-	getDefaultPriceImpact,
-	unserializePotentialTrade,
-	MarketKeyByAsset,
-	MarketAssetByKey,
-	stripZeros,
-} from '@kwenta/sdk/utils'
+import { truncateTimestamp, MarketKeyByAsset, MarketAssetByKey } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 
-import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_LEVERAGE } from 'constants/defaults'
 import { ETH_UNIT } from 'constants/network'
-import { selectSusdBalance } from 'state/balances/selectors'
+import {
+	selectAllCrossMarginTrades,
+	selectCrossMarginAccountData,
+	selectCrossMarginMarginTransfers,
+	selectCrossMarginPositionHistory,
+	selectCrossMarginPositions,
+	selectV3MarketInfo,
+	selectV3MarketKey,
+	selectV3Markets,
+} from 'state/futures/crossMargin/selectors'
 import { deserializeWeiObject } from 'state/helpers'
 import {
 	selectOffchainPricesInfo,
@@ -28,22 +28,31 @@ import {
 	selectPrices,
 } from 'state/prices/selectors'
 import { RootState } from 'state/store'
-import { FetchStatus } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
-import { computeDelayedOrderFee, sameSide } from 'utils/costCalculations'
 import { getKnownError } from 'utils/formatters/error'
 import {
-	unserializeCmBalanceInfo,
 	unserializeFuturesVolumes,
-	unserializeTradeInputs,
-	unserializeMarkets,
-	unserializeDelayedOrders,
 	updatePositionUpnl,
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeConditionalOrders,
 } from 'utils/futures'
 
+import { CrossPerpsPortfolio } from './crossMargin/types'
+import {
+	selectIdleMarginTransfers,
+	selectMarginDeltaInputValue,
+	selectOpenDelayedOrders,
+	selectPerpsV2Markets,
+	selectSmartMarginAccount,
+	selectSmartMarginAccountData,
+	selectSmartMarginBalanceInfo,
+	selectSmartMarginMarginDelta,
+	selectTradePreview,
+	selectV2MarketInfo,
+	selectV2MarketKey,
+} from './smartMargin/selectors'
+import { SmartPerpsPortfolio } from './smartMargin/types'
 import {
 	FuturesAction,
 	MarkPrices,
@@ -51,72 +60,33 @@ import {
 	MarkPriceInfos,
 	PortfolioValues,
 } from './types'
-import {
-	selectAllCrossMarginTrades,
-	selectCrossMarginAccountData,
-	selectCrossMarginMarginTransfers,
-	selectCrossMarginPositionHistory,
-	selectCrossMarginPositions,
-	selectCrossMarginTradeInputs,
-	selectV3Markets,
-} from 'state/futures/crossMargin/selectors'
-import { CrossPerpsPortfolio } from './crossMargin/types'
-import { SmartPerpsPortfolio } from './smartMargin.ts/types'
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType
 
-export const selectSmartMarginAccount = createSelector(
-	selectWallet,
-	selectNetwork,
-	(state: RootState) => state.futures.smartMargin,
-	(wallet, network, smartMargin) => {
-		return wallet ? smartMargin.accounts[network]?.[wallet]?.account : undefined
-	}
+export const selectFuturesState = createSelector(
+	selectFuturesType,
+	(state: RootState) => state,
+	(type, state) => (type === FuturesMarginType.CROSS_MARGIN ? state.crossMargin : state.smartMargin)
 )
 
-export const selectQueryStatuses = (state: RootState) => state.futures.queryStatuses
+export const selectQueryStatuses = createSelector(
+	selectFuturesState,
+	(state) => state.queryStatuses
+)
 
-export const selectMarketsQueryStatus = (state: RootState) => state.futures.queryStatuses.markets
-
-export const selectSmartMarginAccountQueryStatus = (state: RootState) =>
-	state.futures.queryStatuses.smartMarginAccount
+export const selectMarketsQueryStatus = createSelector(
+	selectQueryStatuses,
+	(statuses) => statuses.markets
+)
 
 export const selectLeverageInput = createSelector(
-	(state: RootState) => state.futures,
-	selectFuturesType,
-	(futures, type) => futures.smartMargin.leverageInput
+	selectFuturesState,
+	(state) => state.leverageInput
 )
-
-export const selectSmartMarginMarginDelta = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => wei(futures.smartMargin.marginDelta || 0)
-)
-
-export const selectMarginDeltaInputValue = (state: RootState) =>
-	state.futures.smartMargin.marginDelta
-
-export const selectSmartMarginSupportedNetwork = (state: RootState) =>
-	state.wallet.networkId === 10 || state.wallet.networkId === 420
-
-export const selectShowSmartMarginOnboard = (state: RootState) =>
-	state.app.showModal === 'futures_smart_margin_onboard'
-
-export const selectEditPositionModalMarket = (state: RootState) =>
-	state.app.showPositionModal?.marketKey
 
 export const selectSelectedTrader = (state: RootState) => state.futures.leaderboard.selectedTrader
 
 export const selectShowHistory = (state: RootState) => !!state.futures.preferences.showHistory
-
-export const selectSmartMarginAccountData = createSelector(
-	selectWallet,
-	selectNetwork,
-	selectSmartMarginSupportedNetwork,
-	(state: RootState) => state.futures.smartMargin,
-	(wallet, network, supportedNetwork, smartMargin) => {
-		return wallet && supportedNetwork ? smartMargin.accounts[network][wallet] : null
-	}
-)
 
 export const selectAccountData = createSelector(
 	selectFuturesType,
@@ -126,34 +96,22 @@ export const selectAccountData = createSelector(
 		type === FuturesMarginType.SMART_MARGIN ? smartAccountData : crossAccountData
 )
 
-export const selectCMBalance = createSelector(selectSmartMarginAccountData, (account) =>
-	wei(account?.balanceInfo.freeMargin || 0)
-)
-
-export const selectMarketKey = createSelector(
-	(state: RootState) => state.futures.smartMargin.selectedMarketAsset,
-	(marketAsset) => MarketKeyByAsset[marketAsset]
-)
-
 export const selectMarketAsset = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => futures.smartMargin.selectedMarketAsset
+	selectFuturesState,
+	(state) => state.selectedMarketAsset
 )
 
 export const selectMarkets = createSelector(
 	selectFuturesType,
-	selectNetwork,
+	selectPerpsV2Markets,
 	selectV3Markets,
-	(state: RootState) => state.futures,
-	(futuresType, network, v3Markets, futures) => {
-		if (futuresType === FuturesMarginType.CROSS_MARGIN) return v3Markets
-		return futures.markets[network] ? unserializeMarkets(futures.markets[network]) : []
+	(futuresType, v2Markets, v3Markets) => {
+		return futuresType === FuturesMarginType.CROSS_MARGIN ? v3Markets : v2Markets
 	}
 )
 
-export const selectMarketVolumes = createSelector(
-	(state: RootState) => state.futures.dailyMarketVolumes,
-	(dailyMarketVolumes) => unserializeFuturesVolumes(dailyMarketVolumes)
+export const selectMarketVolumes = createSelector(selectFuturesState, (state) =>
+	unserializeFuturesVolumes(state.dailyMarketVolumes)
 )
 
 export const selectMarketKeys = createSelector(selectMarkets, (markets) =>
@@ -164,25 +122,19 @@ export const selectMarketAssets = createSelector(selectMarkets, (markets) =>
 	markets.map(({ asset }) => asset)
 )
 
+export const selectMarketKey = createSelector(
+	selectFuturesType,
+	selectV2MarketKey,
+	selectV3MarketKey,
+	(type, v2Key, v3Key) => (type === FuturesMarginType.CROSS_MARGIN ? v3Key : v2Key)
+)
+
 export const selectMarketInfo = createSelector(
-	selectMarkets,
-	selectMarketKey,
-	(markets, selectedMarket) => {
-		return markets.find((market) => market.marketKey === selectedMarket)
-	}
-)
-
-export const selectOrderType = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => futures.smartMargin.orderType
-)
-
-export const selectSmartMarginOrderType = (state: RootState) => state.futures.smartMargin.orderType
-
-export const selectClosePositionOrderInputs = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => {
-		return futures.closePositionOrderInputs
+	selectFuturesType,
+	selectV2MarketInfo,
+	selectV3MarketInfo,
+	(type, v2MarketInfo, v3MarketInfo) => {
+		return type === FuturesMarginType.SMART_MARGIN ? v2MarketInfo : v3MarketInfo
 	}
 )
 
@@ -487,8 +439,10 @@ export const selectIsExecutingOrder = createSelector(
 	}
 )
 
+export const selectLeverageSide = createSelector(selectFuturesState, (state) => state.leverageSide)
+
 export const selectIsMarketCapReached = createSelector(
-	(state: RootState) => state.futures.smartMargin.leverageSide,
+	selectLeverageSide,
 	selectMarketInfo,
 	selectMarketIndexPrice,
 	(leverageSide, marketInfo, marketAssetRate) => {
@@ -511,14 +465,6 @@ export const selectPosition = createSelector(
 			? (deserializeWeiObject(position, futuresPositionKeys) as FuturesPosition)
 			: undefined
 	}
-)
-
-export const selectOrderFeeCap = (state: RootState) =>
-	wei(state.futures.smartMargin.orderFeeCap || '0')
-
-export const selectLeverageSide = createSelector(
-	(state: RootState) => state.futures,
-	(futures) => futures.smartMargin.leverageSide
 )
 
 export const selectMaxLeverage = createSelector(
@@ -553,24 +499,29 @@ export const selectAboveMaxLeverage = createSelector(
 	}
 )
 
-export const selectSmartMarginBalanceInfo = createSelector(
-	selectSmartMarginAccountData,
-	(account) => {
-		return account
-			? unserializeCmBalanceInfo(account.balanceInfo)
-			: {
-					freeMargin: wei(0),
-					keeperEthBal: wei(0),
-					allowance: wei(0),
-			  }
-	}
-)
+export const selectPlaceOrderTranslationKey = createSelector(
+	selectPosition,
+	selectSmartMarginMarginDelta,
+	selectSmartMarginBalanceInfo,
+	selectFuturesType,
+	(state: RootState) => state.smartMargin.orderType,
+	selectIsMarketCapReached,
+	(position, marginDelta, { freeMargin }, selectedType, orderType) => {
+		let remainingMargin
+		if (selectedType === FuturesMarginType.SMART_MARGIN) {
+			remainingMargin = position?.remainingMargin || ZERO_WEI
+		} else {
+			remainingMargin = marginDelta
+		}
 
-export const selectSmartMarginDepositApproved = createSelector(
-	selectSmartMarginAccountData,
-	(account) => {
-		if (!account) return false
-		return wei(account.balanceInfo.allowance || 0).gt(0)
+		if (selectedType === FuturesMarginType.SMART_MARGIN)
+			return remainingMargin.add(freeMargin).lt('50')
+				? 'futures.market.trade.button.deposit-margin-minimum'
+				: 'futures.market.trade.button.place-delayed-order'
+		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order'
+		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order'
+		if (!!position?.position) return 'futures.market.trade.button.modify-position'
+		return 'futures.market.trade.button.open-position'
 	}
 )
 
@@ -601,120 +552,10 @@ export const selectRemainingMarketMargin = createSelector(selectPosition, (posit
 	return position.remainingMargin
 })
 
-export const selectMarginInMarkets = (isSuspended: boolean = false) =>
-	createSelector(selectSmartMarginPositions, selectMarkets, (positions, markets) => {
-		const idleInMarkets = positions
-			.filter((p) => {
-				const market = markets.find((m) => m.marketKey === p.marketKey)
-				return market && market.isSuspended === isSuspended
-			})
-			.filter((p) => !p.position?.size.abs().gt(0) && p.remainingMargin.gt(0))
-			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0))
-		return idleInMarkets
-	})
-
-export const selectAvailableMarginInMarkets = selectMarginInMarkets()
-
-export const selectLockedMarginInMarkets = selectMarginInMarkets(true)
-
-export const selectIdleMargin = createSelector(
-	selectAvailableMarginInMarkets,
-	selectSmartMarginBalanceInfo,
-	selectSusdBalance,
-	(idleInMarkets, { freeMargin }, balance) => {
-		return balance.add(idleInMarkets).add(freeMargin)
-	}
-)
-
-export const selectSmartMarginAllowanceValid = createSelector(
-	selectSmartMarginAccountData,
-	selectSmartMarginBalanceInfo,
-	selectAvailableMarginInMarkets,
-	selectSmartMarginMarginDelta,
-	(account, { freeMargin }, idleInMarkets, marginDelta) => {
-		const totalIdleMargin = freeMargin.add(idleInMarkets)
-		if (!account) return false
-		const marginDeposit = marginDelta.sub(totalIdleMargin)
-		return (
-			totalIdleMargin.gte(marginDelta) || wei(account.balanceInfo.allowance || 0).gte(marginDeposit)
-		)
-	}
-)
-
-export const selectWithdrawableSmartMargin = createSelector(
-	selectAvailableMarginInMarkets,
-	selectSmartMarginBalanceInfo,
-	(idleInMarkets, { freeMargin }) => {
-		return idleInMarkets.add(freeMargin)
-	}
-)
-
-export const selectSmartMarginTradeInputs = createSelector(
-	selectLeverageSide,
-	(state: RootState) => state.futures.smartMargin.tradeInputs,
-	(side, tradeInputs) => {
-		const inputs = unserializeTradeInputs(tradeInputs)
-		const deltas = {
-			susdSizeDelta: side === PositionSide.LONG ? inputs.susdSize : inputs.susdSize.neg(),
-			nativeSizeDelta: side === PositionSide.LONG ? inputs.nativeSize : inputs.nativeSize.neg(),
-		}
-		return {
-			...inputs,
-			...deltas,
-			susdSizeString: tradeInputs.susdSize,
-			nativeSizeString: tradeInputs.nativeSize,
-		}
-	}
-)
-
-export const selectSmartMarginEditPosInputs = (state: RootState) =>
-	state.futures.smartMargin.editPositionInputs
-
-export const selectEditMarginAllowanceValid = createSelector(
-	selectSmartMarginAccountData,
-	selectSmartMarginBalanceInfo,
-	selectAvailableMarginInMarkets,
-	selectSmartMarginEditPosInputs,
-	(account, { freeMargin }, idleInMarkets, { marginDelta }) => {
-		const totalIdleMargin = freeMargin.add(idleInMarkets)
-		if (!account) return false
-		if (isNaN(Number(marginDelta))) return false
-		const marginDelatWei = wei(marginDelta || 0)
-		const marginDeposit = marginDelatWei.sub(totalIdleMargin)
-		return (
-			totalIdleMargin.gte(marginDelatWei) ||
-			wei(account.balanceInfo.allowance || 0).gte(marginDeposit)
-		)
-	}
-)
-
 export const selectSelectedInputDenomination = (state: RootState) =>
 	state.futures.selectedInputDenomination
 
 export const selectSelectedInputHours = (state: RootState) => state.futures.selectedInputHours
-
-export const selectKeeperEthBalance = createSelector(selectSmartMarginAccountData, (account) =>
-	wei(account?.balanceInfo.keeperEthBal || 0)
-)
-
-export const selectWalletEthBalance = createSelector(selectSmartMarginAccountData, (account) =>
-	wei(account?.balanceInfo.walletEthBal || 0)
-)
-
-export const selectSmartMarginKeeperDeposit = createSelector(
-	(state: RootState) => state.futures.smartMargin.fees,
-	(fees) => {
-		return wei(fees.keeperEthDeposit)
-	}
-)
-
-export const selectKeeperDepositExceedsBal = createSelector(
-	selectSmartMarginKeeperDeposit,
-	selectWalletEthBalance,
-	(keeperEthDeposit, walletEthBalance) => {
-		return keeperEthDeposit.gt(walletEthBalance)
-	}
-)
 
 export const selectTradeSizeInputsDisabled = createSelector(
 	selectMarginDeltaInputValue,
@@ -729,232 +570,11 @@ export const selectTradeSizeInputsDisabled = createSelector(
 	}
 )
 
-export const selectEditPositionModalInfo = createSelector(
-	selectFuturesType,
-	selectEditPositionModalMarket,
-	selectSmartMarginPositions,
-	selectCrossMarginPositions,
-	selectMarkets,
-	selectPrices,
-	(type, modalMarketKey, smartPositions, crossPositions, markets, prices) => {
-		const contextPositions =
-			type === FuturesMarginType.CROSS_MARGIN ? crossPositions : smartPositions
-		const position = contextPositions.find((p) => p.marketKey === modalMarketKey)
-		const market = markets.find((m) => m.marketKey === modalMarketKey)
-		if (!market) return { position: null, market: null, marketPrice: wei(0) }
-		const price = prices[market.asset]
-		// Note this assumes the order type is always delayed off chain
-		return { position, market, marketPrice: price.offChain || wei(0) }
-	}
-)
-
-export const selectConditionalOrdersForMarket = createSelector(
-	selectMarketAsset,
-	selectSmartMarginAccountData,
-	selectFuturesType,
-	(asset, account, futuresType) => {
-		if (futuresType !== FuturesMarginType.SMART_MARGIN) return []
-		return account
-			? unserializeConditionalOrders(account.conditionalOrders).filter((o) => o.asset === asset)
-			: []
-	}
-)
-
-export const selectStopLossOrder = createSelector(
-	selectConditionalOrdersForMarket,
-	selectMarketKey,
-	(selectOpenConditionalOrders, marketKey) => {
-		return selectOpenConditionalOrders.find(
-			(o) =>
-				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.STOP && o.reduceOnly
-		)
-	}
-)
-
-export const selectTakeProfitOrder = createSelector(
-	selectConditionalOrdersForMarket,
-	selectMarketKey,
-	(selectOpenConditionalOrders, marketKey) => {
-		return selectOpenConditionalOrders.find(
-			(o) =>
-				o.marketKey === marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT && o.reduceOnly
-		)
-	}
-)
-
-export const selectAllSLTPOrders = createSelector(selectAllConditionalOrders, (orders) => {
-	return orders.filter((o) => o.reduceOnly && o.size.abs().eq(SL_TP_MAX_SIZE))
-})
-
-export const selectSLTPModalExistingPrices = createSelector(
-	selectAllSLTPOrders,
-	selectEditPositionModalInfo,
-	(orders, { market }) => {
-		const sl = orders.find(
-			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
-		)
-		const tp = orders.find(
-			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.LIMIT
-		)
-
-		return {
-			takeProfitPrice: tp?.targetPrice ? stripZeros(tp.targetPrice.toString()) : '',
-			stopLossPrice: sl?.targetPrice ? stripZeros(sl.targetPrice.toString()) : '',
-		}
-	}
-)
-
-export const selectSlTpTradeInputs = createSelector(
-	(state: RootState) => state.futures.smartMargin.tradeInputs,
-	(tradeInputs) => ({
-		stopLossPrice: tradeInputs.stopLossPrice || '',
-		takeProfitPrice: tradeInputs.takeProfitPrice || '',
-	})
-)
-
-export const selectNewTradeHasSlTp = createSelector(
-	(state: RootState) => state.futures.smartMargin.tradeInputs,
-	(tradeInputs) => Number(tradeInputs.stopLossPrice) > 0 || Number(tradeInputs.takeProfitPrice) > 0
-)
-
-export const selectSlTpModalInputs = createSelector(
-	(state: RootState) => state.futures.smartMargin.sltpModalInputs,
-	(inputs) => ({
-		stopLossPrice: inputs.stopLossPrice ?? '',
-		takeProfitPrice: inputs.takeProfitPrice ?? '',
-	})
-)
-
-export const selectSmartMarginOrderPrice = (state: RootState) =>
-	state.futures.smartMargin.orderPrice.price ?? ''
-
-export const selectTradePreview = createSelector(
-	selectSmartMarginTradeInputs,
-	selectSmartMarginOrderPrice,
-	selectOrderType,
-	(state: RootState) => state.futures,
-	({ nativeSizeDelta }, orderPrice, orderType, futures) => {
-		const preview = futures.smartMargin.previews.trade
-		const unserialized = preview ? unserializePotentialTrade(preview) : null
-		if (unserialized) {
-			const priceImpact = getDefaultPriceImpact(orderType)
-			const conditionalOrderPrice = wei(orderPrice || 0)
-			const price =
-				orderType !== 'market' && conditionalOrderPrice.gt(0)
-					? conditionalOrderPrice
-					: unserialized.price
-			const desiredFillPrice = calculateDesiredFillPrice(nativeSizeDelta, price, priceImpact)
-
-			return {
-				...unserialized,
-				desiredFillPrice,
-				leverage: unserialized.margin.gt(0)
-					? unserialized.notionalValue.div(unserialized.margin).abs()
-					: wei(0),
-			}
-		}
-		return null
-	}
-)
-
-export const selectEditPositionPreview = createSelector(
-	selectSmartMarginEditPosInputs,
-	(state: RootState) => state.futures,
-	({ nativeSizeDelta }, futures) => {
-		if (isNaN(Number(nativeSizeDelta))) return null
-		const preview = futures.smartMargin.previews.edit
-		const unserialized = preview ? unserializePotentialTrade(preview) : null
-		if (unserialized) {
-			const priceImpact = getDefaultPriceImpact('market')
-			const desiredFillPrice = calculateDesiredFillPrice(
-				wei(nativeSizeDelta || 0),
-				unserialized.price,
-				priceImpact
-			)
-
-			return {
-				...unserialized,
-				desiredFillPrice,
-				leverage: unserialized.margin.gt(0)
-					? unserialized.notionalValue.div(unserialized.margin).abs()
-					: wei(0),
-			}
-		}
-		return null
-	}
-)
-
-export const selectClosePositionPreview = createSelector(
-	selectFuturesType,
-	selectEditPositionModalInfo,
-	selectClosePositionOrderInputs,
-	(state: RootState) => state.futures,
-	(type, { position }, { price, orderType }, futures) => {
-		const preview = futures.smartMargin.previews.close
-		const unserialized = preview ? unserializePotentialTrade(preview) : null
-		if (unserialized) {
-			const priceImpact = getDefaultPriceImpact(orderType)
-			let orderPrice =
-				(orderType === 'market' ? unserialized.price : wei(price?.value || 0)) ?? wei(0)
-			const desiredFillPrice = calculateDesiredFillPrice(
-				position?.position?.side === PositionSide.LONG ? wei(-1) : wei(1),
-				orderPrice,
-				priceImpact
-			)
-
-			return {
-				...unserialized,
-				desiredFillPrice,
-				leverage: unserialized.margin.gt(0)
-					? unserialized.notionalValue.div(unserialized.margin).abs()
-					: wei(0),
-			}
-		}
-		return null
-	}
-)
-
-export const selectCrossMarginLeverage = createSelector(
-	selectPosition,
-	selectCrossMarginTradeInputs,
-	(position, { susdSize }) => {
-		const remainingMargin = position?.remainingMargin
-		if (!remainingMargin || remainingMargin.eq(0) || !susdSize) return wei(0)
-		return susdSize.div(remainingMargin)
-	}
-)
-
 export const selectNextPriceDisclaimer = createSelector(
 	selectMaxLeverage,
 	selectLeverageInput,
 	(maxLeverage, leverage) => {
 		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage)
-	}
-)
-
-export const selectPlaceOrderTranslationKey = createSelector(
-	selectPosition,
-	selectSmartMarginMarginDelta,
-	selectSmartMarginBalanceInfo,
-	selectFuturesType,
-	(state: RootState) => state.futures.smartMargin.orderType,
-	selectIsMarketCapReached,
-	(position, marginDelta, { freeMargin }, selectedType, orderType) => {
-		let remainingMargin
-		if (selectedType === FuturesMarginType.SMART_MARGIN) {
-			remainingMargin = position?.remainingMargin || ZERO_WEI
-		} else {
-			remainingMargin = marginDelta
-		}
-
-		if (selectedType === FuturesMarginType.SMART_MARGIN)
-			return remainingMargin.add(freeMargin).lt('50')
-				? 'futures.market.trade.button.deposit-margin-minimum'
-				: 'futures.market.trade.button.place-delayed-order'
-		if (orderType === 'limit') return 'futures.market.trade.button.place-limit-order'
-		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order'
-		if (!!position?.position) return 'futures.market.trade.button.modify-position'
-		return 'futures.market.trade.button.open-position'
 	}
 )
 
@@ -1005,58 +625,6 @@ export const selectMarketMarginTransfers = createSelector(
 	}
 )
 
-export const selectIdleMarginTransfers = createSelector(
-	selectWallet,
-	selectNetwork,
-	(state: RootState) => state.futures,
-	(wallet, network, futures) => {
-		if (!wallet) return []
-		const account = futures.smartMargin.accounts[network]?.[wallet]
-		return account?.idleTransfers ?? []
-	}
-)
-
-export const selectOpenDelayedOrders = createSelector(
-	selectAccountData,
-	selectMarkets,
-	(account, markets) => {
-		const orders = unserializeDelayedOrders(account?.delayedOrders ?? [])
-
-		return orders.map((o) => {
-			const timePastExecution = Math.floor((Date.now() - o.executableAtTimestamp) / 1000)
-			const market = markets.find((m) => m.marketKey === o.marketKey)
-			return {
-				...o,
-				isStale:
-					timePastExecution >
-					DEFAULT_DELAYED_CANCEL_BUFFER + (market?.settings.offchainDelayedOrderMaxAge ?? 0),
-			}
-		})
-	}
-)
-
-export const selectTradePreviewError = createSelector(
-	selectFuturesType,
-	(state: RootState) => state.futures,
-	(type, futures) => {
-		// TODO: cross margin error
-		return type === FuturesMarginType.SMART_MARGIN
-			? futures.queryStatuses.smartMarginTradePreview.error
-			: undefined
-	}
-)
-
-export const selectIsFetchingTradePreview = createSelector(
-	selectFuturesType,
-	(state: RootState) => state.futures,
-	(type, futures) => {
-		// TODO: cross margin loading state
-		return type === FuturesMarginType.SMART_MARGIN
-			? futures.queryStatuses.smartMarginTradePreview.status === FetchStatus.Loading
-			: false
-	}
-)
-
 export const selectModifyPositionError = createSelector(
 	(state: RootState) => state.app,
 	(app) => {
@@ -1066,53 +634,11 @@ export const selectModifyPositionError = createSelector(
 	}
 )
 
-export const selectTradePreviewStatus = createSelector(
-	selectFuturesType,
-	(state: RootState) => state.futures,
-	(type, futures) => {
-		// TODO: cross margin loading state
-		return futures.queryStatuses.smartMarginTradePreview
-	}
-)
-
 export const selectPendingDelayedOrder = createSelector(
 	selectOpenDelayedOrders,
 	selectMarketKey,
 	(delayedOrders, marketKey) => {
 		return delayedOrders.find((o) => o.marketKey === marketKey)
-	}
-)
-
-export const selectIsConditionalOrder = createSelector(
-	(state: RootState) => state.futures.smartMargin.orderType,
-	(type) => type === 'limit' || type === 'stop_market'
-)
-
-export const selectDelayedOrderFee = createSelector(
-	selectMarketInfo,
-	selectSmartMarginTradeInputs,
-	selectSkewAdjustedPrice,
-	(market, { nativeSizeDelta }, price) => {
-		if (
-			!market?.marketSkew ||
-			!market?.feeRates.takerFeeOffchainDelayedOrder ||
-			!market?.feeRates.makerFeeOffchainDelayedOrder ||
-			!nativeSizeDelta
-		) {
-			return { commitDeposit: undefined, delayedOrderFee: undefined }
-		}
-
-		const notionalDiff = nativeSizeDelta.mul(price)
-
-		const makerFee = market.feeRates.makerFeeOffchainDelayedOrder
-		const takerFee = market.feeRates.takerFeeOffchainDelayedOrder
-
-		const staticRate = sameSide(notionalDiff, market.marketSkew) ? takerFee : makerFee
-
-		return {
-			commitDeposit: notionalDiff.mul(staticRate).abs(),
-			delayedOrderFee: notionalDiff.mul(staticRate).abs(),
-		}
 	}
 )
 
@@ -1402,9 +928,6 @@ export const selectPortfolioChartData = createSelector(
 	}
 )
 
-export const selectCancellingConditionalOrder = (state: RootState) =>
-	state.futures.smartMargin.cancellingOrder
-
 export const selectHasRemainingMargin = createSelector(
 	selectPosition,
 	selectFuturesType,
@@ -1414,14 +937,6 @@ export const selectHasRemainingMargin = createSelector(
 		return futuresType === FuturesMarginType.SMART_MARGIN
 			? balanceInfo.freeMargin.add(posMargin).gt(0)
 			: posMargin.gt(0)
-	}
-)
-
-export const selectOrderFee = createSelector(
-	selectMarketInfo,
-	selectSmartMarginTradeInputs,
-	(marketInfo, { susdSizeDelta }) => {
-		return computeDelayedOrderFee(marketInfo, susdSizeDelta)
 	}
 )
 
@@ -1463,30 +978,6 @@ export const selectAvailableOi = createSelector(selectMarketInfo, (marketInfo) =
 		},
 	}
 })
-
-export const selectPreviewAvailableMargin = createSelector(
-	selectMarketInfo,
-	selectTradePreview,
-	selectDelayedOrderFee,
-	(marketInfo, tradePreview, delayedOrderFee) => {
-		if (!marketInfo || !tradePreview) return ZERO_WEI
-
-		let inaccessible = tradePreview.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? ZERO_WEI
-		const totalDeposit = !!delayedOrderFee.commitDeposit
-			? delayedOrderFee.commitDeposit.add(marketInfo.keeperDeposit)
-			: ZERO_WEI
-
-		// If the user has a position open, we'll enforce a min initial margin requirement.
-		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
-			inaccessible = marketInfo.minInitialMargin
-		}
-
-		// check if available margin will be less than 0
-		return tradePreview.margin.sub(inaccessible).sub(totalDeposit).gt(0)
-			? tradePreview.margin.sub(inaccessible).sub(totalDeposit).abs()
-			: ZERO_WEI
-	}
-)
 
 export const selectAverageEntryPrice = createSelector(
 	selectTradePreview,
@@ -1548,39 +1039,6 @@ export const selectPositionPreviewData = createSelector(
 		} as PositionPreviewData
 	}
 )
-
-export const selectPreviewMarginChange = createSelector(
-	selectTradePreview,
-	selectPreviewAvailableMargin,
-	selectMarketInfo,
-	(tradePreview, previewAvailableMargin, marketInfo) => {
-		const potentialMarginUsage = tradePreview?.margin.gt(0)
-			? tradePreview!.margin.sub(previewAvailableMargin).div(tradePreview!.margin).abs() ?? ZERO_WEI
-			: ZERO_WEI
-
-		const maxPositionSize =
-			!!tradePreview && !!marketInfo
-				? tradePreview.margin
-						.mul(marketInfo.appMaxLeverage)
-						.mul(tradePreview.side === PositionSide.LONG ? 1 : -1)
-				: null
-
-		const potentialBuyingPower = !!maxPositionSize
-			? maxPositionSize.sub(tradePreview?.notionalValue).abs()
-			: ZERO_WEI
-
-		return {
-			showPreview: !!tradePreview && tradePreview.sizeDelta.abs().gt(0),
-			totalMargin: tradePreview?.margin || ZERO_WEI,
-			availableMargin: previewAvailableMargin.gt(0) ? previewAvailableMargin : ZERO_WEI,
-			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : ZERO_WEI,
-			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
-		}
-	}
-)
-
-export const selectSmartMarginPreviewCount = (state: RootState) =>
-	state.futures.smartMargin.previewDebounceCount
 
 export const selectBuyingPower = createSelector(
 	selectPosition,

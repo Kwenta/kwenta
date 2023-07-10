@@ -12,10 +12,10 @@ import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import {
 	selectFuturesType,
-	selectIdleMarginTransfers,
 	selectMarketMarginTransfers,
 	selectQueryStatuses,
 } from 'state/futures/selectors'
+import { selectIdleMarginTransfers } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink } from 'styles/common'

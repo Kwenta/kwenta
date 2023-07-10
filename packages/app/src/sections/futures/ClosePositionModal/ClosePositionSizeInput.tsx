@@ -9,11 +9,11 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRow } from 'components/layout/flex'
 import Spacer from 'components/Spacer'
 import { selectShowPositionModal } from 'state/app/selectors'
-import { editClosePositionSizeDelta } from 'state/futures/actions'
+import { editClosePositionSizeDelta } from 'state/futures/smartMargin/actions'
 import {
 	selectClosePositionOrderInputs,
 	selectEditPositionModalInfo,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type OrderSizingProps = {

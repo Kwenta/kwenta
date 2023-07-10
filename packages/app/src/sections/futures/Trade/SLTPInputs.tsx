@@ -12,13 +12,16 @@ import { StyledCaretDownIcon } from 'components/Select'
 import SelectorButtons from 'components/SelectorButtons'
 import Spacer from 'components/Spacer'
 import { selectAckedOrdersWarning } from 'state/app/selectors'
-import { setSmartMarginTradeStopLoss, setSmartMarginTradeTakeProfit } from 'state/futures/reducer'
 import {
 	selectLeverageInput,
 	selectLeverageSide,
 	selectMarketIndexPrice,
-	selectSlTpTradeInputs,
 } from 'state/futures/selectors'
+import {
+	setSmartMarginTradeStopLoss,
+	setSmartMarginTradeTakeProfit,
+} from 'state/futures/smartMargin/reducer'
+import { selectSlTpTradeInputs } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import OrderAcknowledgement from './OrderAcknowledgement'

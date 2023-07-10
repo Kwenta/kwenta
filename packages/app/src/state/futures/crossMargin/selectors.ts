@@ -1,7 +1,9 @@
 import { PositionSide } from '@kwenta/sdk/types'
+import { MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
-import { selectPrices } from 'state/prices/selectors'
+import { wei } from '@synthetixio/wei'
 
+import { selectPrices } from 'state/prices/selectors'
 import { RootState } from 'state/store'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 import {
@@ -11,8 +13,13 @@ import {
 	unserializeTrades,
 	updatePositionUpnl,
 } from 'utils/futures'
+
 import { MarkPrices } from './types'
-import { wei } from '@synthetixio/wei'
+
+export const selectV3MarketKey = createSelector(
+	(state: RootState) => state.crossMargin.selectedMarketAsset,
+	(marketAsset) => MarketKeyByAsset[marketAsset]
+)
 
 export const selectV3Markets = createSelector(
 	selectNetwork,
@@ -21,10 +28,18 @@ export const selectV3Markets = createSelector(
 		crossMargin.markets[network] ? unserializeMarkets(crossMargin.markets[network]) : []
 )
 
+export const selectV3MarketInfo = createSelector(
+	selectV3Markets,
+	selectV3MarketKey,
+	(markets, selectedMarket) => {
+		return markets.find((market) => market.marketKey === selectedMarket)
+	}
+)
+
 export const selectCrossMarginSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420
 
-export const selectPerpsV3Account = createSelector(
+export const selectCrossMarginAccount = createSelector(
 	selectWallet,
 	selectNetwork,
 	(state: RootState) => state.crossMargin,
@@ -117,3 +132,8 @@ export const selectCrossMarginPositions = createSelector(
 		return account?.positions?.map((p) => updatePositionUpnl(p, prices, positionHistory)) ?? []
 	}
 )
+
+export const selectOpenDelayedOrdersV3 = createSelector(selectCrossMarginAccount, (_) => {
+	// TODO: Hook up pending v3 orders
+	return []
+})

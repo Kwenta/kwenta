@@ -19,7 +19,9 @@ import appReducer from './app/reducer'
 import balancesReducer from './balances/reducer'
 import earnReducer from './earn/reducer'
 import exchangeReducer from './exchange/reducer'
+import crossMarginReducer from './futures/crossMargin/reducer'
 import futuresReducer from './futures/reducer'
+import smartMarginReducer from './futures/smartMargin/reducer'
 import homeReducer from './home/reducer'
 import migrations from './migrations'
 import preferencesReducer from './preferences/reducer'
@@ -28,7 +30,6 @@ import sdk from './sdk'
 import stakingReducer from './staking/reducer'
 import statsReducer from './stats/reducer'
 import walletReducer from './wallet/reducer'
-import crossMarginReducer from './futures/crossMargin/reducer'
 
 const LOG_REDUX = false
 
@@ -47,6 +48,7 @@ const combinedReducers = combineReducers({
 	exchange: exchangeReducer,
 	futures: futuresReducer,
 	crossMargin: crossMarginReducer,
+	smartMargin: smartMarginReducer,
 	home: homeReducer,
 	earn: earnReducer,
 	staking: stakingReducer,

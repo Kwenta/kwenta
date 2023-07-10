@@ -12,14 +12,16 @@ import { editTradeSizeInput } from 'state/futures/actions'
 import {
 	selectMarketIndexPrice,
 	selectPosition,
-	selectSmartMarginTradeInputs,
-	selectSmartMarginOrderPrice,
 	selectSelectedInputDenomination,
 	selectMaxUsdSizeInput,
 	selectLeverageSide,
 	selectAvailableOi,
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors'
+import {
+	selectSmartMarginOrderPrice,
+	selectSmartMarginTradeInputs,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import { DenominationToggle } from './DenominationToggle'

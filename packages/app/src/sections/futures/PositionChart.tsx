@@ -5,12 +5,14 @@ import styled, { css } from 'styled-components'
 import { FlexDiv } from 'components/layout/flex'
 import TVChart from 'components/TVChart'
 import {
-	selectConditionalOrdersForMarket,
 	selectPosition,
 	selectPositionPreviewData,
 	selectSelectedMarketPositionHistory,
-	selectTradePreview,
 } from 'state/futures/selectors'
+import {
+	selectConditionalOrdersForMarket,
+	selectTradePreview,
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 type PositionChartProps = {

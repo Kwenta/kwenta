@@ -10,7 +10,6 @@ import {
 	FuturesOrderType,
 } from '../types/futures'
 import { weiFromWei } from '../utils/number'
-import { NetworkId } from '../types'
 
 export const KWENTA_TRACKING_CODE = ethers.utils.formatBytes32String('KWENTA')
 

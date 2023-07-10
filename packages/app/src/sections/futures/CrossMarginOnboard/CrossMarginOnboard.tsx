@@ -9,15 +9,15 @@ import ErrorView from 'components/ErrorView'
 import Loader from 'components/Loader'
 import ProgressSteps from 'components/ProgressSteps'
 import { setOpenModal } from 'state/app/reducer'
-import { approveCrossMargin, createSmartMarginAccount } from 'state/futures/actions'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
+import { approveSmartMargin, createSmartMarginAccount } from 'state/futures/smartMargin/actions'
 import {
+	selectSmartMarginAccount,
 	selectSmartMarginAccountQueryStatus,
 	selectSmartMarginDepositApproved,
-	selectSmartMarginAccount,
 	selectSmartMarginSupportedNetwork,
-	selectSubmittingFuturesTx,
 	selectTradePreview,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 
@@ -52,7 +52,7 @@ export default function CrossMarginOnboard({ isOpen }: Props) {
 	}, [dispatch])
 
 	const onClickApprove = useCallback(async () => {
-		dispatch(approveCrossMargin())
+		dispatch(approveSmartMargin())
 	}, [dispatch])
 
 	const renderProgress = (step: number, complete?: boolean) => {

@@ -1,12 +1,12 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { memo } from 'react'
 
+import { selectMarketInfo } from 'state/futures/selectors'
 import {
-	selectSmartMarginKeeperDeposit,
-	selectMarketInfo,
 	selectOrderType,
+	selectSmartMarginKeeperDeposit,
 	selectTradePreview,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import FeesRow from './FeesRow'

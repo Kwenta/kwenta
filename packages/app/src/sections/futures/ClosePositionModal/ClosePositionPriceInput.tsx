@@ -3,11 +3,11 @@ import { wei } from '@synthetixio/wei'
 import { ChangeEvent, useCallback } from 'react'
 
 import { selectShowPositionModal } from 'state/app/selectors'
-import { editClosePositionPrice } from 'state/futures/actions'
+import { editClosePositionPrice } from 'state/futures/smartMargin/actions'
 import {
 	selectClosePositionOrderInputs,
 	selectEditPositionModalInfo,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import OrderPriceInput from '../OrderPriceInput'

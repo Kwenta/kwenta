@@ -9,13 +9,9 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRow } from 'components/layout/flex'
 import SelectorButtons from 'components/SelectorButtons'
 import { Body } from 'components/Text'
-import { editCrossMarginTradeMarginDelta } from 'state/futures/actions'
-import {
-	selectSelectedInputDenomination,
-	selectMarginDeltaInputValue,
-	selectIdleMargin,
-	selectPosition,
-} from 'state/futures/selectors'
+import { selectSelectedInputDenomination, selectPosition } from 'state/futures/selectors'
+import { editCrossMarginTradeMarginDelta } from 'state/futures/smartMargin/actions'
+import { selectIdleMargin, selectMarginDeltaInputValue } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%']

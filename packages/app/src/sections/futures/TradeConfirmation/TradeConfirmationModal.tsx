@@ -21,19 +21,21 @@ import { ButtonLoader } from 'components/Loader'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
-import { refetchTradePreview, submitSmartMarginOrder } from 'state/futures/actions'
 import {
 	selectLeverageSide,
 	selectMarketAsset,
-	selectSmartMarginOrderPrice,
-	selectOrderType,
 	selectPosition,
-	selectTradePreview,
 	selectLeverageInput,
-	selectSlTpTradeInputs,
+} from 'state/futures/selectors'
+import { refetchTradePreview, submitSmartMarginOrder } from 'state/futures/smartMargin/actions'
+import {
 	selectKeeperDepositExceedsBal,
 	selectNewTradeHasSlTp,
-} from 'state/futures/selectors'
+	selectOrderType,
+	selectSlTpTradeInputs,
+	selectSmartMarginOrderPrice,
+	selectTradePreview,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks'
 
 import ConfirmSlippage from './ConfirmSlippage'

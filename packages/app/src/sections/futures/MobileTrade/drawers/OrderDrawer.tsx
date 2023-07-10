@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components'
 
 import Button from 'components/Button'
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
-import { DelayedOrderWithDetails } from 'state/futures/types'
+import { DelayedOrderWithDetails } from 'state/futures/common/types'
 import { useAppDispatch } from 'state/hooks'
 
 import BaseDrawer from './BaseDrawer'

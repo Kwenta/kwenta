@@ -13,7 +13,7 @@ import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
 import Connector from 'containers/Connector'
-import { selectTradePreview } from 'state/futures/selectors'
+import { selectTradePreview } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import {
 	selectStakedEscrowedKwentaBalance,

@@ -30,6 +30,6 @@
     "**/*.ts",
     "**/*.tsx",
     "next.config.js"
-  ],
+, "src/state/futures/common", "src/state/futures/smartMargin"  ],
   "types": ["node", "jest", "@testing-library/jest-dom"],
 }

@@ -20,14 +20,9 @@ import {
 import Wei, { wei } from '@synthetixio/wei'
 import { TFunction } from 'i18next'
 
-import {
-	SmartMarginBalanceInfo,
-	TradeSizeInputs,
-	DelayedOrderWithDetails,
-	futuresPositionKeys,
-	FundingRate,
-	MarkPrices,
-} from 'state/futures/types'
+import { DelayedOrderWithDetails, TradeSizeInputs } from 'state/futures/common/types'
+import { SmartMarginBalanceInfo } from 'state/futures/smartMargin/types'
+import { futuresPositionKeys, FundingRate, MarkPrices } from 'state/futures/types'
 import { deserializeWeiObject } from 'state/helpers'
 
 export const getMarketName = (asset: FuturesMarketAsset) => {

@@ -15,12 +15,8 @@ import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
-import {
-	selectOpenDelayedOrders,
-	selectMarketAsset,
-	selectMarkets,
-	selectIsExecutingOrder,
-} from 'state/futures/selectors'
+import { selectMarketAsset, selectMarkets, selectIsExecutingOrder } from 'state/futures/selectors'
+import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type CountdownTimers = Record<

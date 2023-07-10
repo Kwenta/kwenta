@@ -5,8 +5,8 @@ import TabButton from 'components/Button/TabButton'
 import {
 	selectActiveSmartPositionsCount,
 	selectAllConditionalOrders,
-	selectOpenDelayedOrders,
 } from 'state/futures/selectors'
+import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import ConditionalOrdersTab from './ConditionalOrdersTab'

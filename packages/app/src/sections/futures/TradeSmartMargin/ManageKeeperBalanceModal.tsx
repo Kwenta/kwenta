@@ -14,12 +14,12 @@ import SegmentedControl from 'components/SegmentedControl'
 import Spacer from 'components/Spacer'
 import Connector from 'containers/Connector'
 import { setOpenModal } from 'state/app/reducer'
-import { withdrawAccountKeeperBalance } from 'state/futures/actions'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
+import { withdrawAccountKeeperBalance } from 'state/futures/smartMargin/actions'
 import {
-	selectSmartMarginBalanceInfo,
 	selectConditionalOrdersForMarket,
-	selectSubmittingFuturesTx,
-} from 'state/futures/selectors'
+	selectSmartMarginBalanceInfo,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import logError from 'utils/logError'
 

@@ -20,7 +20,7 @@ import {
 	queryTrades,
 	queryFundingRateHistory,
 } from '../queries/futures'
-import { NetworkId, NetworkOverrideOptions } from '../types/common'
+import { NetworkId } from '../types/common'
 import {
 	FuturesMarket,
 	FuturesMarketAsset,
@@ -65,7 +65,7 @@ export default class PerpsV3Service {
 		return getPerpsV3SubgraphUrl(this.sdk.context.networkId)
 	}
 
-	public async getMarkets(networkOverride?: NetworkOverrideOptions) {
+	public async getMarkets() {
 		const perpsV3Markets = await getPerpsV3Markets(this.sdk)
 		// const enabledMarkets = marketsForNetwork(
 		// 	networkOverride?.networkId || this.sdk.context.networkId,
@@ -151,7 +151,7 @@ export default class PerpsV3Service {
 				if (!marketKey) return acc
 
 				acc.push({
-					market: marketOwner,
+					market: perpsMarketId,
 					marketKey: marketKey,
 					marketName: marketName,
 					asset: MarketAssetByKey[marketKey],
@@ -256,7 +256,11 @@ export default class PerpsV3Service {
 		return queryFundingRateHistory(this.sdk, marketAsset, minTimestamp)
 	}
 
-	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
+	public async getAverageFundingRates(
+		_markets: FuturesMarket[],
+		_prices: PricesMap,
+		_period: Period
+	) {
 		return []
 		// const fundingRateInputs: FundingRateInput[] = markets.map(
 		// 	({ asset, market, currentFundingRate }) => {
@@ -438,10 +442,10 @@ export default class PerpsV3Service {
 	}
 
 	public async getIsolatedTradePreview(
-		marketAddress: string,
-		marketKey: FuturesMarketKey,
-		orderType: ContractOrderType,
-		inputs: {
+		_marketAddress: string,
+		_marketKey: FuturesMarketKey,
+		_orderType: ContractOrderType,
+		_inputs: {
 			sizeDelta: Wei
 			price: Wei
 			leverageSide: PositionSide

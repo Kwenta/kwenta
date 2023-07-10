@@ -1,41 +1,20 @@
 import { Period } from '@kwenta/sdk/constants'
 import {
-	NetworkId,
 	TransactionStatus,
-	FuturesOrderTypeDisplay,
-	FuturesPosition,
 	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
-	FuturesTrade,
 	FuturesVolumes,
 	PositionSide,
 	FuturesMarketKey,
 	FuturesMarketAsset,
-	MarginTransfer,
 	FuturesFilledPosition,
 	FuturesMarket,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
-import { AppFuturesMarginType } from 'state/futures/types'
 
 import { PricesInfo } from 'state/prices/types'
-import { QueryStatus } from 'state/types'
-import { FuturesAccountData } from '../shared.ts/types'
 
-export type TradeSizeInputs<T = Wei> = {
-	nativeSize: T
-	susdSize: T
-}
-
-export type SLTPInputs<T = Wei> = {
-	stopLossPrice?: T
-	takeProfitPrice?: T
-}
-
-export type TradeInputs<T = Wei> = TradeSizeInputs<T> & {
-	stopLossPrice?: T
-	takeProfitPrice?: T
-}
+import { FuturesAccountData, FuturesQueryStatuses, TradeSizeInputs } from '../common/types'
 
 export type EditPositionInputs<T = Wei> = {
 	nativeSizeDelta: T
@@ -56,15 +35,6 @@ export type FundingRate<T = Wei> = {
 	fundingRate: T | null
 }
 
-export type FuturesAction = {
-	account: string
-	timestamp: number
-	asset: FuturesMarketAsset
-	margin: number
-	size: number
-	action: 'trade' | 'deposit' | 'withdraw'
-}
-
 export type PerpsV3Portfolio = {
 	account: string
 	timestamp: number
@@ -77,21 +47,6 @@ export type PerpsV3Portfolio = {
 export type PortfolioValues = {
 	timestamp: number
 	total: number
-}
-
-export type FuturesQueryStatuses = {
-	markets: QueryStatus
-	dailyVolumes: QueryStatus
-	perpsV3Positions: QueryStatus
-	perpsV3PositionHistory: QueryStatus
-	openOrders: QueryStatus
-	perpsV3TradePreview: QueryStatus
-	perpsV3Account: QueryStatus
-	positionHistory: QueryStatus
-	trades: QueryStatus
-	selectedTraderPositionHistory: QueryStatus
-	marginTransfers: QueryStatus
-	historicalFundingRates: QueryStatus
 }
 
 export type CrossMarginTransactionType =
@@ -119,15 +74,6 @@ export type FundingRatePeriods = {
 	[key: number]: string
 }
 
-export type AccountContext = {
-	type: AppFuturesMarginType
-	network: NetworkId
-	wallet: string
-	cmAccount?: string
-}
-
-export type PreviewAction = 'edit' | 'trade' | 'close'
-
 export type CrossMarginAccountData = FuturesAccountData
 
 export type CrossMarginState = {
@@ -140,12 +86,10 @@ export type CrossMarginState = {
 		close: FuturesPotentialTradeDetails<string> | null
 		edit: FuturesPotentialTradeDetails<string> | null
 	}
-	selectedType: AppFuturesMarginType
 	confirmationModalOpen: boolean
 	closePositionOrderInputs: ClosePositionInputs<string>
 	previewDebounceCount: number
 	leverageSide: PositionSide
-	selectedMarketKey: FuturesMarketKey
 	selectedMarketAsset: FuturesMarketAsset
 	leverageInput: string
 	tradeFee: string
@@ -176,51 +120,9 @@ export type CrossMarginState = {
 			}
 		>
 	}
-	tradePanelDrawerOpen: boolean
 	historicalFundingRates: Partial<
 		Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>
 	>
-}
-
-export type TradePreviewResult = {
-	data: FuturesPotentialTradeDetails<string> | null
-	error: string | null
-}
-
-export type DelayedOrderWithDetails<T = Wei> = {
-	account: string
-	marketAddress: string
-	market: string
-	asset: FuturesMarketAsset
-	marketKey: FuturesMarketKey
-	size: T
-	commitDeposit: T
-	keeperDeposit: T
-	submittedAtTimestamp: number
-	executableAtTimestamp: number
-	isOffchain: boolean
-	desiredFillPrice: T
-	targetRoundId: T | null
-	orderType: FuturesOrderTypeDisplay
-	side: PositionSide
-	isStale?: boolean
-	isExecutable?: boolean
-	isCancelling?: boolean
-}
-
-export type TradePreviewParams = {
-	market: {
-		key: FuturesMarketKey
-		address: string
-	}
-	orderPrice: Wei
-	sizeDelta: Wei
-	marginDelta: Wei
-	action: PreviewAction
-}
-
-export type DebouncedPreviewParams = TradePreviewParams & {
-	debounceCount: number
 }
 
 export type SharePositionParams = {

@@ -51,7 +51,6 @@ import {
 import { PricesMap } from '../types/prices'
 import { calculateTimestampForPeriod } from '../utils/date'
 import {
-	appAdjustedLeverage,
 	calculateFundingRate,
 	calculateVolumes,
 	ConditionalOrderResult,
@@ -61,7 +60,6 @@ import {
 	formatDelayedOrder,
 	formatPotentialTrade,
 	getFuturesEndpoint,
-	getMarketName,
 	mapConditionalOrderFromContract,
 	mapFuturesPosition,
 	mapFuturesPositions,

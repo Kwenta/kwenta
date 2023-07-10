@@ -15,20 +15,20 @@ import Spacer from 'components/Spacer'
 import { NO_VALUE } from 'constants/placeholder'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectAckedOrdersWarning, selectTransaction } from 'state/app/selectors'
+import { clearTradeInputs } from 'state/futures/actions'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
 	calculateKeeperDeposit,
-	clearTradeInputs,
 	updateStopLossAndTakeProfit,
-} from 'state/futures/actions'
-import { setSLTPModalStopLoss, setSLTPModalTakeProfit } from 'state/futures/reducer'
+} from 'state/futures/smartMargin/actions'
+import { setSLTPModalStopLoss, setSLTPModalTakeProfit } from 'state/futures/smartMargin/reducer'
 import {
 	selectAllSLTPOrders,
 	selectEditPositionModalInfo,
 	selectKeeperDepositExceedsBal,
 	selectSlTpModalInputs,
 	selectSmartMarginKeeperDeposit,
-	selectSubmittingFuturesTx,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow'

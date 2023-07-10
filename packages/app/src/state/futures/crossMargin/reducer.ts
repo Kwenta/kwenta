@@ -2,15 +2,11 @@ import { Period } from '@kwenta/sdk/constants'
 import {
 	NetworkId,
 	FuturesMarketAsset,
-	FuturesMarketKey,
 	FuturesPotentialTradeDetails,
 	PositionSide,
-	FuturesTrade,
 } from '@kwenta/sdk/types'
-import { MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants'
 import {
 	DEFAULT_MAP_BY_NETWORK,
@@ -22,31 +18,24 @@ import {
 } from 'state/constants'
 import { FetchStatus } from 'state/types'
 
+import { refetchPosition, fetchFundingRatesHistory } from '../actions'
+import { PreviewAction, TradeSizeInputs } from '../common/types'
+
 import {
-	fetchDailyVolumes,
-	refetchPosition,
-	fetchCrossMarginTradePreview,
-	fetchSmartMarginAccount,
-	fetchMarginTransfers,
-	fetchFundingRatesHistory,
-} from '../actions'
+	fetchCrossMarginOpenOrders,
+	fetchCrossMarginPositions,
+	fetchPositionHistoryV3,
+	fetchMarketsV3,
+	fetchPerpsV3Account,
+} from './actions'
 import {
 	EditPositionInputs,
 	InputCurrencyDenomination,
 	CrossMarginAccountData,
-	TradeSizeInputs,
 	CrossMarginState,
-	PreviewAction,
 } from './types'
-import {
-	fetchCrossMarginOpenOrders,
-	fetchCrossMarginPositions,
-	fetchPerpsV3PositionHistory,
-	fetchV3Markets,
-} from './actions'
 
-export const PERPS_V3_INITIAL_STATE: CrossMarginState = {
-	selectedType: DEFAULT_FUTURES_MARGIN_TYPE,
+export const COSS_MARGIN_INITIAL_STATE: CrossMarginState = {
 	confirmationModalOpen: false,
 	markets: {
 		420: [],
@@ -55,7 +44,6 @@ export const PERPS_V3_INITIAL_STATE: CrossMarginState = {
 	dailyMarketVolumes: {},
 	accounts: DEFAULT_MAP_BY_NETWORK,
 	selectedMarketAsset: FuturesMarketAsset.sETH,
-	selectedMarketKey: FuturesMarketKey.sETHPERP,
 	leverageSide: PositionSide.LONG,
 	orderType: 'market',
 	previews: {
@@ -91,30 +79,29 @@ export const PERPS_V3_INITIAL_STATE: CrossMarginState = {
 	queryStatuses: {
 		markets: DEFAULT_QUERY_STATUS,
 		dailyVolumes: DEFAULT_QUERY_STATUS,
-		perpsV3Positions: DEFAULT_QUERY_STATUS,
-		perpsV3PositionHistory: DEFAULT_QUERY_STATUS,
-		perpsV3Account: DEFAULT_QUERY_STATUS,
+		positions: DEFAULT_QUERY_STATUS,
+		account: DEFAULT_QUERY_STATUS,
 		openOrders: DEFAULT_QUERY_STATUS,
-		perpsV3TradePreview: DEFAULT_QUERY_STATUS,
+		crossMarginTradePreview: DEFAULT_QUERY_STATUS,
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
 		historicalFundingRates: DEFAULT_QUERY_STATUS,
+		// TODO: Separate cross / smart query status
+		smartMarginTradePreview: DEFAULT_QUERY_STATUS,
+		smartMarginBalanceInfo: DEFAULT_QUERY_STATUS,
 	},
-	tradePanelDrawerOpen: false,
 	historicalFundingRates: {},
 }
 
-const futuresSlice = createSlice({
-	name: 'futures',
-	initialState: PERPS_V3_INITIAL_STATE,
+const crossMarginSlice = createSlice({
+	name: 'crossMargin',
+	initialState: COSS_MARGIN_INITIAL_STATE,
 	reducers: {
 		setMarketAsset: (state, action) => {
 			state.selectedMarketAsset = action.payload
-			state.selectedMarketKey = MarketKeyByAsset[action.payload as FuturesMarketAsset]
 			state.tradeInputs = ZERO_STATE_TRADE_INPUTS
-			state.selectedMarketAsset = action.payload
 		},
 		setClosePositionSizeDelta: (state, action: PayloadAction<string>) => {
 			state.closePositionOrderInputs.nativeSizeDelta = action.payload
@@ -152,7 +139,7 @@ const futuresSlice = createSlice({
 			const message = Object.values(ORDER_PREVIEW_ERRORS).includes(payload.error)
 				? payload.error
 				: 'Failed to get trade preview'
-			futuresState.queryStatuses.perpsV3TradePreview = {
+			futuresState.queryStatuses.crossMarginTradePreview = {
 				status: FetchStatus.Error,
 				error: message,
 			}
@@ -191,7 +178,7 @@ const futuresSlice = createSlice({
 				trade: null,
 				close: null,
 			}
-			state.queryStatuses.perpsV3TradePreview = DEFAULT_QUERY_STATUS
+			state.queryStatuses.crossMarginTradePreview = DEFAULT_QUERY_STATUS
 		},
 		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
 			state.leaderboard.selectedTrader = action.payload
@@ -202,9 +189,6 @@ const futuresSlice = createSlice({
 		setSelectedPortfolioTimeframe: (state, action: PayloadAction<Period>) => {
 			state.dashboard.selectedPortfolioTimeframe = action.payload
 		},
-		setTradePanelDrawerOpen: (state, action: PayloadAction<boolean>) => {
-			state.tradePanelDrawerOpen = action.payload
-		},
 		setShowTradeHistory: (state, action: PayloadAction<boolean>) => {
 			state.preferences.showHistory = action.payload
 		},
@@ -214,62 +198,28 @@ const futuresSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		// Markets
-		builder.addCase(fetchV3Markets.pending, (futuresState) => {
+		builder.addCase(fetchMarketsV3.pending, (futuresState) => {
 			futuresState.queryStatuses.markets = LOADING_STATUS
 		})
-		builder.addCase(fetchV3Markets.fulfilled, (futuresState, { payload }) => {
+		builder.addCase(fetchMarketsV3.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.markets = SUCCESS_STATUS
 			if (payload) {
 				futuresState.markets[payload.networkId] = payload.markets
 			}
 		})
-		builder.addCase(fetchV3Markets.rejected, (futuresState) => {
+		builder.addCase(fetchMarketsV3.rejected, (futuresState) => {
 			futuresState.queryStatuses.markets = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch markets',
 			}
 		})
 
-		// Daily volumes
-		builder.addCase(fetchDailyVolumes.pending, (futuresState) => {
-			futuresState.queryStatuses.dailyVolumes = LOADING_STATUS
-		})
-		builder.addCase(fetchDailyVolumes.fulfilled, (futuresState, action) => {
-			futuresState.queryStatuses.dailyVolumes = SUCCESS_STATUS
-			futuresState.dailyMarketVolumes = action.payload
-		})
-		builder.addCase(fetchDailyVolumes.rejected, (futuresState) => {
-			futuresState.queryStatuses.dailyVolumes = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch volume data',
-			}
-		})
-
-		// margin transfers
-		builder.addCase(fetchMarginTransfers.pending, (futuresState) => {
-			futuresState.queryStatuses.marginTransfers = LOADING_STATUS
-		})
-		builder.addCase(fetchMarginTransfers.fulfilled, (futuresState, { payload }) => {
-			futuresState.queryStatuses.marginTransfers = SUCCESS_STATUS
-			if (payload) {
-				const { context, marginTransfers } = payload
-				const newAccountData = { marginTransfers }
-				updateCrossMarginAccount(futuresState, context.network, context.wallet, newAccountData)
-			}
-		})
-		builder.addCase(fetchMarginTransfers.rejected, (futuresState) => {
-			futuresState.queryStatuses.marginTransfers = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch margin transfers',
-			}
-		})
-
 		// Cross margin positions
 		builder.addCase(fetchCrossMarginPositions.pending, (futuresState) => {
-			futuresState.queryStatuses.perpsV3Positions = LOADING_STATUS
+			futuresState.queryStatuses.positions = LOADING_STATUS
 		})
 		builder.addCase(fetchCrossMarginPositions.fulfilled, (futuresState, action) => {
-			futuresState.queryStatuses.perpsV3Positions = SUCCESS_STATUS
+			futuresState.queryStatuses.positions = SUCCESS_STATUS
 			if (!action.payload) return
 			const { account, positions, network } = action.payload
 			const wallet = findWalletForAccount(futuresState, account, network)
@@ -278,7 +228,7 @@ const futuresSlice = createSlice({
 			}
 		})
 		builder.addCase(fetchCrossMarginPositions.rejected, (futuresState) => {
-			futuresState.queryStatuses.perpsV3Positions = {
+			futuresState.queryStatuses.positions = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch positions',
 			}
@@ -320,20 +270,20 @@ const futuresSlice = createSlice({
 			}
 		})
 
-		// Fetch Cross Margin Trade Preview
-		builder.addCase(fetchCrossMarginTradePreview.pending, (futuresState) => {
-			futuresState.queryStatuses.perpsV3TradePreview = LOADING_STATUS
-		})
-		builder.addCase(fetchCrossMarginTradePreview.fulfilled, (futuresState, { payload }) => {
-			futuresState.previews[payload.type] = payload.preview
-			futuresState.queryStatuses.perpsV3TradePreview = SUCCESS_STATUS
-		})
+		// TODO: Fetch Cross Margin Trade Preview
+		// builder.addCase(fetchCrossMarginTradePreview.pending, (futuresState) => {
+		// 	futuresState.queryStatuses.crossMarginTradePreview = LOADING_STATUS
+		// })
+		// builder.addCase(fetchCrossMarginTradePreview.fulfilled, (futuresState, { payload }) => {
+		// 	futuresState.previews[payload.type] = payload.preview
+		// 	futuresState.queryStatuses.crossMarginTradePreview = SUCCESS_STATUS
+		// })
 
 		// Fetch cross margin account
-		builder.addCase(fetchSmartMarginAccount.pending, (futuresState) => {
-			futuresState.queryStatuses.perpsV3Account = LOADING_STATUS
+		builder.addCase(fetchPerpsV3Account.pending, (futuresState) => {
+			futuresState.queryStatuses.account = LOADING_STATUS
 		})
-		builder.addCase(fetchSmartMarginAccount.fulfilled, (futuresState, action) => {
+		builder.addCase(fetchPerpsV3Account.fulfilled, (futuresState, action) => {
 			if (action.payload) {
 				const { network, account, wallet } = action.payload
 				futuresState.accounts[network] = {
@@ -344,20 +294,20 @@ const futuresSlice = createSlice({
 					},
 				}
 			}
-			futuresState.queryStatuses.perpsV3Account = SUCCESS_STATUS
+			futuresState.queryStatuses.account = SUCCESS_STATUS
 		})
-		builder.addCase(fetchSmartMarginAccount.rejected, (futuresState) => {
-			futuresState.queryStatuses.perpsV3Account = {
+		builder.addCase(fetchPerpsV3Account.rejected, (futuresState) => {
+			futuresState.queryStatuses.account = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch account',
 			}
 		})
 
 		// Fetch position history
-		builder.addCase(fetchPerpsV3PositionHistory.pending, (futuresState) => {
+		builder.addCase(fetchPositionHistoryV3.pending, (futuresState) => {
 			futuresState.queryStatuses.positionHistory = LOADING_STATUS
 		})
-		builder.addCase(fetchPerpsV3PositionHistory.fulfilled, (futuresState, { payload }) => {
+		builder.addCase(fetchPositionHistoryV3.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.positionHistory = SUCCESS_STATUS
 			if (payload) {
 				const { history: positionHistory, networkId, wallet } = payload
@@ -366,7 +316,7 @@ const futuresSlice = createSlice({
 				})
 			}
 		})
-		builder.addCase(fetchPerpsV3PositionHistory.rejected, (futuresState) => {
+		builder.addCase(fetchPositionHistoryV3.rejected, (futuresState) => {
 			futuresState.queryStatuses.positionHistory = {
 				error: 'Failed to fetch position history',
 				status: FetchStatus.Error,
@@ -386,7 +336,7 @@ const futuresSlice = createSlice({
 	},
 })
 
-export default futuresSlice.reducer
+export default crossMarginSlice.reducer
 
 export const {
 	handlePreviewError,
@@ -399,11 +349,10 @@ export const {
 	setSelectedInputDenomination,
 	setSelectedInputFundingRateHour,
 	setSelectedPortfolioTimeframe,
-	setTradePanelDrawerOpen,
 	setShowTradeHistory,
 	setSelectedChart,
 	setPerpsV3Account,
-} = futuresSlice.actions
+} = crossMarginSlice.actions
 
 const findWalletForAccount = (
 	perpsV3State: CrossMarginState,
@@ -414,24 +363,6 @@ const findWalletForAccount = (
 		return value.account === account
 	})
 	return entry ? entry[0] : undefined
-}
-
-const mergeTradesForAccount = (
-	perpsV3: CrossMarginState,
-	network: NetworkId,
-	wallet: string,
-	trades: FuturesTrade<string>[]
-) => {
-	const existingTrades = perpsV3.accounts[network]?.[wallet]?.trades ?? []
-	trades.forEach((t) => {
-		if (!existingTrades.find((et) => et.txnHash === t.txnHash)) {
-			existingTrades.push(t)
-		}
-	})
-	existingTrades.sort((a, b) => b.timestamp - a.timestamp)
-	updateCrossMarginAccount(perpsV3, network, wallet, {
-		trades: trades,
-	})
 }
 
 const updateCrossMarginAccount = (

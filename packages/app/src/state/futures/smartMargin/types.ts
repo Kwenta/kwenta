@@ -1,5 +1,4 @@
 import {
-	NetworkId,
 	TransactionStatus,
 	SmartMarginOrderType,
 	FuturesPositionHistory,
@@ -10,21 +9,20 @@ import {
 	FuturesMarketAsset,
 	MarginTransfer,
 	FuturesFilledPosition,
-	FuturesMarginType,
+	FuturesMarket,
+	FuturesVolumes,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
 import { QueryStatus } from 'state/types'
-import { FuturesAccountData, FuturesTransactionType } from '../shared.ts/types'
 
-type excludedOptions = typeof FuturesMarginType.ISOLATED_MARGIN_LEGACY
-export type AppFuturesMarginType = Exclude<FuturesMarginType, excludedOptions>
-
-export type TradeSizeInputs<T = Wei> = {
-	nativeSize: T
-	susdSize: T
-}
+import {
+	FuturesAccountData,
+	FuturesTransactionType,
+	HistoricalFundingRates,
+	TradeSizeInputs,
+} from '../common/types'
 
 export type SLTPInputs<T = Wei> = {
 	stopLossPrice?: T
@@ -58,15 +56,6 @@ export type FundingRate<T = Wei> = {
 	asset: FuturesMarketKey
 	fundingTitle: string
 	fundingRate: T | null
-}
-
-export type FuturesAction = {
-	account: string
-	timestamp: number
-	asset: FuturesMarketAsset
-	margin: number
-	size: number
-	action: 'trade' | 'deposit' | 'withdraw'
 }
 
 export type SmartPerpsPortfolio = {
@@ -127,15 +116,6 @@ export type FundingRatePeriods = {
 	[key: number]: string
 }
 
-export type AccountContext = {
-	type: AppFuturesMarginType
-	network: NetworkId
-	wallet: string
-	cmAccount?: string
-}
-
-export type PreviewAction = 'edit' | 'trade' | 'close'
-
 export type SmartMarginAccountData = FuturesAccountData & {
 	idleTransfers: MarginTransfer[]
 	balanceInfo: SmartMarginBalanceInfo<string>
@@ -143,8 +123,15 @@ export type SmartMarginAccountData = FuturesAccountData & {
 }
 
 export type SmartMarginState = {
+	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
+	selectedMarketAsset: FuturesMarketAsset
+	dailyMarketVolumes: FuturesVolumes<string>
+	fundingRates: FundingRate<string>[]
+	historicalFundingRates: HistoricalFundingRates
+	queryStatuses: FuturesQueryStatuses
 	tradeInputs: SmartMarginTradeInputs<string>
 	editPositionInputs: EditPositionInputs<string>
+	closePositionOrderInputs: ClosePositionInputs<string>
 	sltpModalInputs: SLTPInputs<string>
 	marginDelta: string
 	orderType: SmartMarginOrderType
@@ -152,8 +139,6 @@ export type SmartMarginState = {
 	leverageInput: string
 	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>
 	leverageSide: PositionSide
-	selectedMarketKey: FuturesMarketKey
-	selectedMarketAsset: FuturesMarketAsset
 	showSmartMarginOnboard: boolean
 	previews: {
 		trade: FuturesPotentialTradeDetails<string> | null

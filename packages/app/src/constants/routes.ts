@@ -1,6 +1,6 @@
 import { FuturesMarketAsset } from '@kwenta/sdk/types'
 
-import { AppFuturesMarginType } from 'state/futures/types'
+import { AppFuturesMarginType } from 'state/futures/common/types'
 
 import { EXTERNAL_LINKS } from './links'
 

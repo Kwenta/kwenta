@@ -29,16 +29,16 @@ import AppLayout from 'sections/shared/Layout/AppLayout'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal, selectShowPositionModal } from 'state/app/selectors'
 import { clearTradeInputs } from 'state/futures/actions'
+import { AppFuturesMarginType } from 'state/futures/common/types'
 import { usePollMarketFuturesData } from 'state/futures/hooks'
-import { setFuturesAccountType, setMarketAsset } from 'state/futures/reducer'
+import { setFuturesAccountType } from 'state/futures/reducer'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/selectors'
+import { setMarketAsset } from 'state/futures/smartMargin/reducer'
 import {
-	selectSmartMarginAccountQueryStatus,
-	selectSmartMarginAccount,
-	selectFuturesType,
-	selectMarketAsset,
 	selectShowSmartMarginOnboard,
-} from 'state/futures/selectors'
-import { AppFuturesMarginType } from 'state/futures/types'
+	selectSmartMarginAccount,
+	selectSmartMarginAccountQueryStatus,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { PageContent } from 'styles/common'

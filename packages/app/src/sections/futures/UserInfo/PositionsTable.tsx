@@ -36,6 +36,7 @@ import media from 'styles/media'
 
 import PositionsTab from '../MobileTrade/UserTabs/PositionsTab'
 import ShareModal from '../ShareModal'
+
 import EditPositionButton from './EditPositionButton'
 import TableMarketDetails from './TableMarketDetails'
 

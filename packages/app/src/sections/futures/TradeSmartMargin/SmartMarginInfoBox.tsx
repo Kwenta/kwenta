@@ -6,9 +6,9 @@ import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
 import { selectSusdBalance } from 'state/balances/selectors'
 import {
-	selectSmartMarginBalanceInfo,
 	selectAvailableMarginInMarkets,
-} from 'state/futures/selectors'
+	selectSmartMarginBalanceInfo,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PencilButton from '../../../components/Button/PencilButton'

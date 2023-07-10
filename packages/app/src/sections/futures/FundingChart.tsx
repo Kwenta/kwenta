@@ -25,7 +25,9 @@ type FundingChartProps = {
 const FundingChart: FC<FundingChartProps> = ({ display = true }) => {
 	const theme = useTheme()
 	const marketAsset = useAppSelector(selectMarketAsset)
-	const historicalFundingRates = useAppSelector(({ futures }) => futures.historicalFundingRates)
+	const historicalFundingRates = useAppSelector(
+		({ smartMargin }) => smartMargin.historicalFundingRates
+	)
 
 	usePollAction('fetchFundingRatesHistory', () => fetchFundingRatesHistory(marketAsset), {
 		dependencies: [marketAsset],

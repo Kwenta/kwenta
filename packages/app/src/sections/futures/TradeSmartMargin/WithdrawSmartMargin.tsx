@@ -11,11 +11,9 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import Loader from 'components/Loader'
 import { selectTransaction } from 'state/app/selectors'
-import { withdrawSmartMargin } from 'state/futures/actions'
-import {
-	selectIsSubmittingCrossTransfer,
-	selectWithdrawableSmartMargin,
-} from 'state/futures/selectors'
+import { selectIsSubmittingCrossTransfer } from 'state/futures/selectors'
+import { withdrawSmartMargin } from 'state/futures/smartMargin/actions'
+import { selectWithdrawableSmartMargin } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type Props = {

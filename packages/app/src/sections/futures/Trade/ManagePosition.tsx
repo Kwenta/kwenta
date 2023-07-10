@@ -18,21 +18,23 @@ import {
 	selectMarketIndexPrice,
 	selectPlaceOrderTranslationKey,
 	selectMaxLeverage,
-	selectTradePreviewError,
-	selectTradePreview,
-	selectTradePreviewStatus,
-	selectSmartMarginTradeInputs,
-	selectCrossMarginLeverage,
-	selectSmartMarginOrderPrice,
-	selectOrderType,
 	selectFuturesType,
 	selectLeverageSide,
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
-	selectSmartMarginAccount,
-	selectPosition,
 	selectMarketPriceInfo,
+	selectPosition,
 } from 'state/futures/selectors'
+import {
+	selectOrderType,
+	selectSmartMarginAccount,
+	selectSmartMarginLeverage,
+	selectSmartMarginOrderPrice,
+	selectSmartMarginTradeInputs,
+	selectTradePreview,
+	selectTradePreviewError,
+	selectTradePreviewStatus,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { orderPriceInvalidLabel } from 'utils/futures'
@@ -46,7 +48,7 @@ const ManagePosition: React.FC = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const previewTrade = useAppSelector(selectTradePreview)
 	const previewError = useAppSelector(selectTradePreviewError)
-	const leverage = useAppSelector(selectCrossMarginLeverage)
+	const leverage = useAppSelector(selectSmartMarginLeverage)
 	const orderType = useAppSelector(selectOrderType)
 	const openOrder = useAppSelector(selectPendingDelayedOrder)
 	const leverageSide = useAppSelector(selectLeverageSide)

@@ -1,12 +1,8 @@
 import { ChangeEvent, useCallback } from 'react'
 
-import { editTradeOrderPrice } from 'state/futures/actions'
-import {
-	selectSmartMarginOrderPrice,
-	selectLeverageSide,
-	selectMarketIndexPrice,
-	selectOrderType,
-} from 'state/futures/selectors'
+import { selectLeverageSide, selectMarketIndexPrice } from 'state/futures/selectors'
+import { editTradeOrderPrice } from 'state/futures/smartMargin/actions'
+import { selectOrderType, selectSmartMarginOrderPrice } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import OrderPriceInput from '../OrderPriceInput'

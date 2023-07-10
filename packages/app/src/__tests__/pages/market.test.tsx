@@ -4,6 +4,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
 
 import { fetchMarkets } from 'state/futures/actions'
+import { selectTradePreview } from 'state/futures/smartMargin/selectors'
 
 import { mockResizeObserver } from '../../../testing/unit/mocks/app'
 import { PRELOADED_STATE } from '../../../testing/unit/mocks/data/app'
@@ -17,7 +18,6 @@ import mockConnector from '../../../testing/unit/mocks/mockConnector'
 import MockProviders from '../../../testing/unit/mocks/MockProviders'
 import { mockReactQuery } from '../../../testing/unit/mocks/queries'
 import Market from '../../pages/market'
-import { selectTradePreview } from '../../state/futures/selectors'
 import sdk from '../../state/sdk'
 import { setupStore } from '../../state/store'
 

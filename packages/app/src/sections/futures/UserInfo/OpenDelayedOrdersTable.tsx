@@ -18,10 +18,10 @@ import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
 import {
 	selectIsCancellingOrder,
 	selectIsExecutingOrder,
-	selectOpenDelayedOrders,
 	selectMarketAsset,
 	selectMarkets,
 } from 'state/futures/selectors'
+import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PositionType from '../PositionType'

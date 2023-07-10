@@ -4,9 +4,9 @@ import { memo } from 'react'
 import {
 	selectClosePositionOrderInputs,
 	selectClosePositionPreview,
-	selectSmartMarginKeeperDeposit,
 	selectEditPositionModalInfo,
-} from 'state/futures/selectors'
+	selectSmartMarginKeeperDeposit,
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import FeesRow from './FeesRow'

@@ -16,13 +16,12 @@ import useWindowSize from 'hooks/useWindowSize'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
 import { selectSusdBalance } from 'state/balances/selectors'
+import { selectAvailableMargin, selectFuturesType } from 'state/futures/selectors'
 import {
-	selectAvailableMargin,
-	selectFuturesType,
 	selectIdleMargin,
 	selectLockedMarginInMarkets,
 	selectWithdrawableSmartMargin,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PencilButton from '../../../components/Button/PencilButton'

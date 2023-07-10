@@ -18,13 +18,13 @@ import ROUTES from 'constants/routes'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
+import { AppFuturesMarginType } from 'state/futures/common/types'
 import { selectCrossMarginPositions } from 'state/futures/crossMargin/selectors'
 import {
 	selectSmartMarginPositions,
 	selectMarkets,
 	selectPositionHistory,
 } from 'state/futures/selectors'
-import { AppFuturesMarginType } from 'state/futures/types'
 import { useAppSelector } from 'state/hooks'
 import { getSynthDescription } from 'utils/futures'
 

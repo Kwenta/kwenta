@@ -30,10 +30,9 @@ import {
 	selectMarketInfo,
 	selectModifyPositionError,
 	selectNextPriceDisclaimer,
-	selectOrderType,
 	selectPosition,
-	selectTradePreview,
 } from 'state/futures/selectors'
+import { selectOrderType, selectTradePreview } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { getKnownError } from 'utils/formatters/error'
 

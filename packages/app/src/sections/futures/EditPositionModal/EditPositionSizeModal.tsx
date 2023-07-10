@@ -16,18 +16,18 @@ import Spacer from 'components/Spacer'
 import { Body } from 'components/Text'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectTransaction } from 'state/app/selectors'
+import { clearTradeInputs } from 'state/futures/actions'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
-	clearTradeInputs,
 	editCrossMarginPositionSize,
 	submitSmartMarginAdjustPositionSize,
-} from 'state/futures/actions'
+} from 'state/futures/smartMargin/actions'
 import {
-	selectSmartMarginEditPosInputs,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
 	selectIsFetchingTradePreview,
-	selectSubmittingFuturesTx,
-} from 'state/futures/selectors'
+	selectSmartMarginEditPosInputs,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo'

@@ -1,59 +1,16 @@
 import { Period } from '@kwenta/sdk/constants'
 import {
-	NetworkId,
 	TransactionStatus,
-	SmartMarginOrderType,
-	FuturesMarket,
-	FuturesOrderTypeDisplay,
 	FuturesPositionHistory,
-	FuturesPotentialTradeDetails,
-	FuturesTrade,
-	FuturesVolumes,
-	PositionSide,
-	ConditionalOrder as SmartMarginOrder,
 	FuturesMarketKey,
 	FuturesMarketAsset,
-	MarginTransfer,
 	FuturesFilledPosition,
-	FuturesMarginType,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
-import { QueryStatus } from 'state/types'
-import { FuturesAccountData, FuturesTransactionType } from './shared.ts/types'
 
-type excludedOptions = typeof FuturesMarginType.ISOLATED_MARGIN_LEGACY
-export type AppFuturesMarginType = Exclude<FuturesMarginType, excludedOptions>
-
-export type TradeSizeInputs<T = Wei> = {
-	nativeSize: T
-	susdSize: T
-}
-
-export type SLTPInputs<T = Wei> = {
-	stopLossPrice?: T
-	takeProfitPrice?: T
-}
-
-export type SmartMarginTradeInputs<T = Wei> = TradeSizeInputs<T> & {
-	stopLossPrice?: T
-	takeProfitPrice?: T
-}
-
-export type EditPositionInputs<T = Wei> = {
-	nativeSizeDelta: T
-	marginDelta: T
-}
-
-export type ClosePositionInputs<T = Wei> = {
-	nativeSizeDelta: T
-	price?: {
-		value?: string | undefined | null
-		invalidLabel: string | undefined | null
-	}
-	orderType: SmartMarginOrderType
-}
+import { AppFuturesMarginType, FuturesTransactionType } from './common/types'
 
 export type MarkPrices<T = Wei> = Partial<Record<FuturesMarketKey, T>>
 
@@ -79,43 +36,11 @@ export type PortfolioValues = {
 	total: number
 }
 
-export type FuturesQueryStatuses = {
-	markets: QueryStatus
-	smartMarginBalanceInfo: QueryStatus
-	dailyVolumes: QueryStatus
-	smartMarginPositions: QueryStatus
-	smartMarginPositionHistory: QueryStatus
-	openOrders: QueryStatus
-	smartMarginTradePreview: QueryStatus
-	smartMarginAccount: QueryStatus
-	positionHistory: QueryStatus
-	trades: QueryStatus
-	selectedTraderPositionHistory: QueryStatus
-	marginTransfers: QueryStatus
-	historicalFundingRates: QueryStatus
-}
-
 export type FuturesTransaction = {
 	type: FuturesTransactionType
 	status: TransactionStatus
 	error?: string
 	hash: string | null
-}
-
-export type SmartMarginBalanceInfo<T = Wei> = {
-	freeMargin: T
-	keeperEthBal: T
-	allowance: T
-	walletEthBal: T
-}
-
-export type SmartMarginTradeFees<T = Wei> = {
-	delayedOrderFee: T
-	keeperEthDeposit: T
-}
-
-type FuturesErrors = {
-	tradePreview?: string | undefined | null
 }
 
 type FuturesNetwork = number
@@ -126,35 +51,9 @@ export type FundingRatePeriods = {
 	[key: number]: string
 }
 
-export type AccountContext = {
-	type: AppFuturesMarginType
-	network: NetworkId
-	wallet: string
-	cmAccount?: string
-}
-
-export type PreviewAction = 'edit' | 'trade' | 'close'
-
-export type SmartMarginAccountData = FuturesAccountData & {
-	account: string
-	idleTransfers: MarginTransfer[]
-	balanceInfo: SmartMarginBalanceInfo<string>
-	delayedOrders: DelayedOrderWithDetails<string>[]
-	conditionalOrders: SmartMarginOrder<string>[]
-}
-
-// TODO: Separate in some way by network and wallet
-// so we can have persisted state between switching
-
 export type FuturesState = {
 	selectedType: AppFuturesMarginType
 	confirmationModalOpen: boolean
-	fundingRates: FundingRate<string>[]
-	smartMargin: SmartMarginState
-	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
-	queryStatuses: FuturesQueryStatuses
-	dailyMarketVolumes: FuturesVolumes<string>
-	errors: FuturesErrors
 	selectedInputDenomination: InputCurrencyDenomination
 	selectedInputHours: number
 	selectedChart: 'price' | 'funding'
@@ -174,50 +73,6 @@ export type FuturesState = {
 		>
 	}
 	tradePanelDrawerOpen: boolean
-	historicalFundingRates: Partial<
-		Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>
-	>
-	closePositionOrderInputs: ClosePositionInputs<string>
-}
-
-export type TradePreviewResult = {
-	data: FuturesPotentialTradeDetails<string> | null
-	error: string | null
-}
-
-export type SmartMarginState = {
-	tradeInputs: SmartMarginTradeInputs<string>
-	editPositionInputs: EditPositionInputs<string>
-	sltpModalInputs: SLTPInputs<string>
-	marginDelta: string
-	orderType: SmartMarginOrderType
-	orderFeeCap: string
-	leverageInput: string
-	selectedLeverageByAsset: Partial<Record<FuturesMarketKey, string>>
-	leverageSide: PositionSide
-	selectedMarketKey: FuturesMarketKey
-	selectedMarketAsset: FuturesMarketAsset
-	showSmartMarginOnboard: boolean
-	previews: {
-		trade: FuturesPotentialTradeDetails<string> | null
-		close: FuturesPotentialTradeDetails<string> | null
-		edit: FuturesPotentialTradeDetails<string> | null
-	}
-	previewDebounceCount: number
-	fees: SmartMarginTradeFees<string>
-	depositApproved: boolean
-	cancellingOrder: number | undefined
-	accounts: Record<
-		FuturesNetwork,
-		{
-			[wallet: string]: SmartMarginAccountData
-		}
-	>
-
-	orderPrice: {
-		price?: string | undefined | null
-		invalidLabel: string | undefined | null
-	}
 }
 
 export type CancelDelayedOrderInputs = {
@@ -229,42 +84,6 @@ export type ExecuteDelayedOrderInputs = {
 	marketKey: FuturesMarketKey
 	marketAddress: string
 	isOffchain: boolean
-}
-
-export type DelayedOrderWithDetails<T = Wei> = {
-	account: string
-	marketAddress: string
-	market: string
-	asset: FuturesMarketAsset
-	marketKey: FuturesMarketKey
-	size: T
-	commitDeposit: T
-	keeperDeposit: T
-	submittedAtTimestamp: number
-	executableAtTimestamp: number
-	isOffchain: boolean
-	desiredFillPrice: T
-	targetRoundId: T | null
-	orderType: FuturesOrderTypeDisplay
-	side: PositionSide
-	isStale?: boolean
-	isExecutable?: boolean
-	isCancelling?: boolean
-}
-
-export type TradePreviewParams = {
-	market: {
-		key: FuturesMarketKey
-		address: string
-	}
-	orderPrice: Wei
-	sizeDelta: Wei
-	marginDelta: Wei
-	action: PreviewAction
-}
-
-export type DebouncedPreviewParams = TradePreviewParams & {
-	debounceCount: number
 }
 
 export type SharePositionParams = {

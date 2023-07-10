@@ -7,6 +7,7 @@ import {
 import { wei } from '@synthetixio/wei'
 
 import { FUTURES_INITIAL_STATE } from 'state/futures/reducer'
+import { SMART_MARGIN_INITIAL_STATE } from 'state/futures/smartMargin/reducer'
 
 import { PRELOADED_STATE, TEST_ADDR } from './app'
 
@@ -187,12 +188,12 @@ export const preloadedStateWithSmartMarginAccount = (mockAccount = mockSmartMarg
 		...PRELOADED_STATE,
 		futures: {
 			...FUTURES_INITIAL_STATE,
-			crossMargin: {
-				...FUTURES_INITIAL_STATE.smartMargin,
-				accounts: {
-					[10 as NetworkId]: {
-						[TEST_ADDR]: mockAccount,
-					},
+		},
+		smartMargin: {
+			...SMART_MARGIN_INITIAL_STATE,
+			accounts: {
+				[10 as NetworkId]: {
+					[TEST_ADDR]: mockAccount,
 				},
 			},
 		},
