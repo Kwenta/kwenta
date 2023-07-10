@@ -82,51 +82,12 @@ pnpm start
 
 ```bash
 cd packages/app
-pnpm test:unit
+pnpm test:jest
 ```
 
 For unit tests we use a combination of Jest and [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 
-Page tests should be added to the \_\_tests\_\_ folder at the root as it is not possible to co-locate tests and pages in nextjs. Other tests should be co-located in a \_\_tests\_\_ folder next to their related file.
-
-### End-2-End testing
-
-In order to run fully automated end-2-end (e2e) tests Kwenta uses [Synpress](https://github.com/Synthetixio/synpress) (a wrapper around [Cypress](https://www.cypress.io/)).
-
-#### Constraints
-
-The current e2e tests are written to be run on Optimistic Kovan using Chrome as the browser.
-
-#### Setup
-
-- Download and install Google Chrome
-- Setup a test wallet on Optimistic Kovan and fund it with plenty of ETH (to pay for gas) and sUSD
-- Prior to running the tests you must set the environment variables below in the shell from which npm is started. Unfortunately, at this time other methods to set said environment variables (eg. through `.env.local`) don't work in conjunction with Synpress.
-
-```bash
-PRIVATE_KEY=<INSERTPRIVATEKEY>
-NETWORK_NAME=OptimisticKovan
-RPC_URL=https://kovan.optimism.io
-CHAIN_ID=69
-BLOCK_EXPLORER=https://kovan-optimistic.etherscan.io
-IS_TESTNET=true
-```
-
-##### Bash convenience script for setting up the environment
-
-A Bash convenience script [has been made available here](https://gist.github.com/raffiegang/b24a6b97bcd054645abf59be852bc88d).
-
-- Open bash
-- Copy the private key of the test wallet into the file `SYNPRESS_PRIVATEKEY` into the same folder location as the script. While using this method, please don't forget to update your .gitignore file to prevent your private key to be leaked.
-- Run the following command `source ./synpress-envsetter.sh`
-
-#### Run the tests
-
-```bash
-npm run build
-npm start
-npm run test:e2e:only:tests
-```
+Page tests should be added to the `testing` folder at the root as it is not possible to co-locate tests and pages in nextjs. Other tests should be co-located in a \_\_tests\_\_ folder next to their related file.
 
 ## Contact
 
