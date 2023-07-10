@@ -660,7 +660,7 @@
 					"copy": "Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.",
 					"step-1-copy": "Claim any remaining rewards",
 					"step-2-copy": "Unstake V1 liquid balance",
-					"step-3-copy": "Transfer liquid balance to v2",
+					"step-3-copy": "Stake liquid balance on v2",
 					"rewards": "Rewards",
 					"staked": "Staked",
 					"claim": "Claim",
