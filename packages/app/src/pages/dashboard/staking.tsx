@@ -57,9 +57,6 @@ const StakingPage: StakingComponent = () => {
 	const isMigrationRequired = useAppSelector(selectStakingMigrationRequired)
 	const isMigrationCompleted = useAppSelector(selectStakingMigrationCompleted)
 
-	// eslint-disable-next-line no-console
-	console.log(`isMigrationCompleted`, isMigrationCompleted)
-
 	useFetchStakeMigrateData()
 
 	useEffect(() => {

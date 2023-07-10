@@ -19,6 +19,7 @@ export type StakingState = {
 	stakedKwentaBalanceV2: string
 	epochPeriod: number
 	weekCounter: number
+	selectedEscrowVersion: 1 | 2
 	kwentaAllowance: string
 	vKwentaAllowance: string
 	veKwentaAllowance: string

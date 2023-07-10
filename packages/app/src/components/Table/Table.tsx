@@ -168,8 +168,10 @@ export const Table: FC<TableProps> = memo(
 
 		const defaultRef = useRef(null)
 		const shouldShowPagination = useMemo(
-			() => showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS),
-			[data.length, pageSize, showPagination, showShortList]
+			() =>
+				(showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS)) ||
+				customizePagination,
+			[customizePagination, data.length, pageSize, showPagination, showShortList]
 		)
 
 		return (

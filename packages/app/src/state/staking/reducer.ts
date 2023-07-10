@@ -45,6 +45,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	stakedResetTime: 0,
 	epochPeriod: 0,
 	weekCounter: 1,
+	selectedEscrowVersion: 1,
 	kwentaAllowance: '0',
 	kwentaStakingV2Allowance: '0',
 	vKwentaAllowance: '0',
@@ -113,6 +114,9 @@ const stakingSlice = createSlice({
 		},
 		setStakingMigrationCompleted: (state, action) => {
 			state.stakingMigrationCompleted = action.payload
+		},
+		setSelectedEscrowVersion: (state, action) => {
+			state.selectedEscrowVersion = action.payload
 		},
 	},
 	extraReducers: (builder) => {
@@ -249,4 +253,5 @@ const stakingSlice = createSlice({
 })
 
 export default stakingSlice.reducer
-export const { setSelectedEpoch, setStakingMigrationCompleted } = stakingSlice.actions
+export const { setSelectedEpoch, setStakingMigrationCompleted, setSelectedEscrowVersion } =
+	stakingSlice.actions

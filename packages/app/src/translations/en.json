@@ -641,9 +641,12 @@
 					"status": "Status",
 					"total": "Total",
 					"fee": "Fee",
-					"vest": "VEST",
+					"vest-v1": "VEST V1",
+					"vest-v2": "VEST V2",					
 					"transfer": "TRANSFER",
 					"delegate": "DELEGATE",
+					"v1": "V1",
+					"v2": "V2",
 					"modal": {
 						"title": "Early Vesting Fee",
 						"confirm-button": "Confirm",

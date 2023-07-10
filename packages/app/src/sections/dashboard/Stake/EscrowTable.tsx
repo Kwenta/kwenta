@@ -17,8 +17,9 @@ import { TableCellHead, TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { vestEscrowedRewardsV2 } from 'state/staking/actions'
-import { selectEscrowData, selectEscrowV2Data } from 'state/staking/selectors'
+import { vestEscrowedRewards, vestEscrowedRewardsV2 } from 'state/staking/actions'
+import { setSelectedEscrowVersion } from 'state/staking/reducer'
+import { selectCombinedEscrowData, selectSelectedEscrowVersion } from 'state/staking/selectors'
 import media from 'styles/media'
 import common from 'styles/theme/colors/common'
 
@@ -27,20 +28,28 @@ import VestConfirmationModal from './VestConfirmationModal'
 const EscrowTable = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const escrowV1Data = useAppSelector(selectEscrowData)
-	const escrowV2Data = useAppSelector(selectEscrowV2Data)
-	const escrowData = useMemo(() => [...escrowV1Data, ...escrowV2Data], [escrowV1Data, escrowV2Data])
+	const escrowVersion = useAppSelector(selectSelectedEscrowVersion)
+	const escrowData = useAppSelector(selectCombinedEscrowData)
 
 	const [checkedState, setCheckedState] = useState(escrowData.map((_) => false))
 	const [checkAllState, setCheckAllState] = useState(false)
 	const [isConfirmModalOpen, setConfirmModalOpen] = useState(false)
 
 	const handleOnChange = useCallback(
-		(position: number) => () => {
+		(position: number) => {
 			checkedState[position] = !checkedState[position]
 			setCheckedState([...checkedState])
 		},
 		[checkedState]
+	)
+
+	const handleVersionChange = useCallback(
+		(version: number) => {
+			dispatch(setSelectedEscrowVersion(version))
+			setCheckedState(escrowData.map((_) => false))
+			setCheckAllState(false)
+		},
+		[dispatch, escrowData]
 	)
 
 	const selectAll = useCallback(() => {
@@ -80,39 +89,70 @@ const EscrowTable = () => {
 
 	const handleVest = useCallback(async () => {
 		if (vestEnabled) {
-			await dispatch(vestEscrowedRewardsV2(ids))
+			if (escrowVersion === 1) {
+				await dispatch(vestEscrowedRewards(ids))
+			} else if (escrowVersion === 2) {
+				await dispatch(vestEscrowedRewardsV2(ids))
+			}
 			setCheckedState(escrowData.map((_) => false))
 			setCheckAllState(false)
 		}
 
 		setConfirmModalOpen(false)
-	}, [dispatch, escrowData, ids, vestEnabled])
+	}, [dispatch, escrowData, escrowVersion, ids, vestEnabled])
 
 	const openConfirmModal = useCallback(() => setConfirmModalOpen(true), [])
 	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), [])
 
 	const EscrowStatsContainer = () => (
 		<StatsContainer columnGap="25px" justifyContent="flex-end">
-			<LabelContainers columnGap="25px" justifyContent="center">
-				<LabelContainer alignItems="flex-end">
-					<Body color="secondary">{t('dashboard.stake.tabs.escrow.total')}</Body>
-					<Body color="primary">
-						{formatNumber(totalVestable, { suggestDecimals: true })} KWENTA
-					</Body>
-				</LabelContainer>
-				<LabelContainer alignItems="flex-end">
-					<Body color="secondary">{t('dashboard.stake.tabs.escrow.fee')}</Body>
-					<Body color="primary">{formatNumber(totalFee, { suggestDecimals: true })} KWENTA</Body>
-				</LabelContainer>
-			</LabelContainers>
+			<Container columnGap="25px">
+				<LabelContainers columnGap="25px">
+					<LabelContainer columnGap="5px">
+						<Body color="secondary">{t('dashboard.stake.tabs.escrow.total')}</Body>
+						<Body color="primary">{formatNumber(totalVestable, { minDecimals: 4 })} KWENTA</Body>
+					</LabelContainer>
+					<LabelContainer columnGap="5px">
+						<Body color="secondary">{t('dashboard.stake.tabs.escrow.fee')}</Body>
+						<Body color="primary">{formatNumber(totalFee, { minDecimals: 4 })} KWENTA</Body>
+					</LabelContainer>
+				</LabelContainers>
+				<ButtonsContainer>
+					<Button
+						variant={escrowVersion === 1 ? 'yellow' : 'flat'}
+						outlineColor="yellow"
+						size="xsmall"
+						isRounded
+						style={{ padding: '10px 20px' }}
+						onClick={() => handleVersionChange(1)}
+					>
+						{t('dashboard.stake.tabs.escrow.v1')}
+					</Button>
+					<Button
+						variant={escrowVersion === 2 ? 'yellow' : 'flat'}
+						outlineColor="yellow"
+						size="xsmall"
+						isRounded
+						style={{ padding: '10px 20px' }}
+						active={escrowVersion === 2}
+						onClick={() => handleVersionChange(2)}
+					>
+						{t('dashboard.stake.tabs.escrow.v2')}
+					</Button>
+				</ButtonsContainer>
+			</Container>
+
 			<Button
 				variant="yellow"
 				size="xsmall"
 				isRounded
+				style={{ padding: '10px 20px' }}
 				disabled={!vestEnabled}
 				onClick={openConfirmModal}
 			>
-				{t('dashboard.stake.tabs.escrow.vest')}
+				{escrowVersion === 1
+					? t('dashboard.stake.tabs.escrow.vest-v1')
+					: t('dashboard.stake.tabs.escrow.vest-v2')}
 			</Button>
 		</StatsContainer>
 	)
@@ -146,7 +186,7 @@ const EscrowTable = () => {
 									id={cellProps.row.index.toString()}
 									key={cellProps.row.index}
 									checked={checkedState[cellProps.row.index]}
-									onChange={handleOnChange(cellProps.row.index)}
+									onChange={() => handleOnChange(cellProps.row.index)}
 									label=""
 									variant="table"
 									checkSide="right"
@@ -267,7 +307,7 @@ const EscrowTable = () => {
 									id={cellProps.row.index.toString()}
 									key={cellProps.row.index}
 									checked={checkedState[cellProps.row.index]}
-									onChange={handleOnChange(cellProps.row.index)}
+									onChange={() => handleOnChange(cellProps.row.index)}
 									label=""
 									variant="table"
 									checkSide="left"
@@ -340,9 +380,25 @@ const EscrowTable = () => {
 	)
 }
 
-const LabelContainer = styled(FlexDivCol)`
+const Container = styled(FlexDivRow)`
+	align-items: flex-end;
+	${media.lessThan('lg')`
+		justify-content: space-between;
+		width: 100%;
+	`}
+`
+
+const ButtonsContainer = styled(FlexDivRowCentered)`
+	column-gap: 20px;
+	${media.lessThan('sm')`
+		column-gap: 10px;
+	`}
+`
+
+const LabelContainer = styled(FlexDivRow)`
 	${media.lessThan('lg')`
 		align-items: flex-start;
+		justify-content: flex-start;
 		flex: 1
 	`}
 
@@ -351,7 +407,7 @@ const LabelContainer = styled(FlexDivCol)`
 	`}
 `
 
-const LabelContainers = styled(FlexDivRow)`
+const LabelContainers = styled(FlexDivCol)`
 	${media.lessThan('lg')`
 		justify-content: flex-start;
 		width: 100%;
@@ -361,13 +417,14 @@ const LabelContainers = styled(FlexDivRow)`
 const StatsContainer = styled(FlexDivRowCentered)`
 	${media.lessThan('lg')`
 		flex-direction: column;
-		row-gap: 15px;
+		row-gap: 25px;
 		padding: 15px 0;
 		background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
 		border-bottom-left-radius: 10px;
 		border-bottom-right-radius: 10px;
-		align-items: flex-start;
+		align-items: flex-end;
 		padding-left: 25px;
+		padding-right: 25px;
 	`}
 `
 

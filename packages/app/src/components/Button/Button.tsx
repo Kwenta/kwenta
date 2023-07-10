@@ -25,6 +25,7 @@ type BaseButtonProps = {
 	fullWidth?: boolean
 	noOutline?: boolean
 	textColor?: 'yellow'
+	outlineColor?: 'yellow'
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase'
 	$active?: boolean
 	$mono?: boolean
@@ -167,6 +168,13 @@ const BaseButton = styled.button<BaseButtonProps>`
 				display: none;
 			}
 		`}
+	
+	${(props) =>
+		props.$variant === 'yellow' &&
+		props.outlineColor === 'yellow' &&
+		css`
+			border: 1px solid ${props.theme.colors.selectedTheme.button.yellow.text};
+		`}
 
 	font-family: ${(props) =>
 		props.theme.fonts[props.$mono ? 'mono' : props.$bold ? 'bold' : 'regular']};
@@ -233,6 +241,7 @@ type ButtonProps = {
 	fullWidth?: boolean
 	noOutline?: boolean
 	textColor?: 'yellow'
+	outlineColor?: 'yellow'
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase'
 	style?: React.CSSProperties
 	disabled?: boolean
