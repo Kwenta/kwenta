@@ -45,7 +45,13 @@ const FundingChart: FC<FundingChartProps> = ({ display }) => {
 					data={historicalFundingRates[marketAsset]}
 					margin={{ top: 30, right: 50, left: 30, bottom: 15 }}
 				>
-					<YAxis dataKey="fundingRate" domain={['auto', 0]} tickFormatter={formatFundingRate} />
+					<YAxis
+						dataKey="fundingRate"
+						domain={['auto', 'auto']}
+						tickFormatter={formatFundingRate}
+						allowDataOverflow
+						tickCount={20}
+					/>
 					<XAxis
 						dataKey="timestamp"
 						type="number"
