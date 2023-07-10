@@ -23,27 +23,27 @@ export const selectVeKwentaBalance = createSelector(
 )
 
 export const selectEscrowedKwentaBalance = createSelector(
-	(state: RootState) => state.staking.escrowedKwentaBalance,
+	(state: RootState) => state.staking.v1.escrowedKwentaBalance,
 	toWei
 )
 
 export const selectEscrowedKwentaBalanceV2 = createSelector(
-	(state: RootState) => state.staking.escrowedKwentaBalanceV2,
+	(state: RootState) => state.staking.v2.escrowedKwentaBalance,
 	toWei
 )
 
 export const selectStakedEscrowedKwentaBalance = createSelector(
-	(state: RootState) => state.staking.stakedEscrowedKwentaBalance,
+	(state: RootState) => state.staking.v1.stakedEscrowedKwentaBalance,
 	toWei
 )
 
 export const selectStakedEscrowedKwentaBalanceV2 = createSelector(
-	(state: RootState) => state.staking.stakedEscrowedKwentaBalanceV2,
+	(state: RootState) => state.staking.v2.stakedEscrowedKwentaBalance,
 	toWei
 )
 
 export const selectStakedKwentaBalance = createSelector(
-	(state: RootState) => state.staking.stakedKwentaBalance,
+	(state: RootState) => state.staking.v1.stakedKwentaBalance,
 	toWei
 )
 
@@ -64,17 +64,17 @@ export const selectUnstakedEscrowedKwentaBalanceV2 = createSelector(
 )
 
 export const selectClaimableBalance = createSelector(
-	(state: RootState) => state.staking.claimableBalance,
+	(state: RootState) => state.staking.v1.claimableBalance,
 	toWei
 )
 
 export const selectStakedKwentaBalanceV2 = createSelector(
-	(state: RootState) => state.staking.stakedKwentaBalanceV2,
+	(state: RootState) => state.staking.v2.stakedKwentaBalance,
 	toWei
 )
 
 export const selectClaimableBalanceV2 = createSelector(
-	(state: RootState) => state.staking.claimableBalanceV2,
+	(state: RootState) => state.staking.v2.claimableBalance,
 	toWei
 )
 
@@ -208,12 +208,12 @@ export const selectEstimatedOpRewards = createSelector(
 )
 
 export const selectTotalVestable = createSelector(
-	(state: RootState) => state.staking.totalVestable,
+	(state: RootState) => state.staking.v1.totalVestable,
 	wei
 )
 
 export const selectTotalVestableV2 = createSelector(
-	(state: RootState) => state.staking.totalVestableV2 ?? '0',
+	(state: RootState) => state.staking.v2.totalVestable,
 	wei
 )
 
@@ -259,7 +259,7 @@ export const selectEpochPeriod = createSelector(
 )
 
 export const selectAPY = createSelector(
-	(state: RootState) => state.staking.totalStakedBalance,
+	(state: RootState) => state.staking.v1.totalStakedBalance,
 	(state: RootState) => state.staking.weekCounter,
 	(totalStakedBalance, weekCounter) => {
 		return getApy(Number(totalStakedBalance), weekCounter)
@@ -267,16 +267,16 @@ export const selectAPY = createSelector(
 )
 
 export const selectAPYV2 = createSelector(
-	(state: RootState) => state.staking.totalStakedBalanceV2,
+	(state: RootState) => state.staking.v2.totalStakedBalance,
 	(state: RootState) => state.staking.weekCounter,
 	(totalStakedBalance, weekCounter) => {
 		return getApy(Number(totalStakedBalance), weekCounter)
 	}
 )
 
-export const selectEscrowData = (state: RootState) => state.staking.escrowData ?? []
+export const selectEscrowData = (state: RootState) => state.staking.v1.escrowData ?? []
 
-export const selectEscrowV2Data = (state: RootState) => state.staking.escrowV2Data ?? []
+export const selectEscrowV2Data = (state: RootState) => state.staking.v2.escrowData ?? []
 
 export const selectStakingMigrationCompleted = (state: RootState) =>
 	state.staking.stakingMigrationCompleted

@@ -273,7 +273,7 @@ const EscrowTable = () => {
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{cellProps.row.original.status}</TableCell>
+								<TableCell $regular>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
 							width: 70,
@@ -361,7 +361,7 @@ const EscrowTable = () => {
 						{
 							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
 							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{cellProps.row.original.status}</TableCell>
+								<TableCell $regular>{cellProps.row.original.status}</TableCell>
 							),
 							accessor: 'status',
 							width: 50,
@@ -453,8 +453,9 @@ const StyledTable = styled(Table)`
 	}
 `
 
-const TableCell = styled.div`
+const TableCell = styled.div<{ $regular?: boolean }>`
 	font-size: 13px;
+	font-family: ${(props) => props.theme.fonts[props.$regular ? 'regular' : 'mono']};
 	color: ${(props) => props.color || props.theme.colors.selectedTheme.button.text.primary};
 	display: flex;
 	flex-direction: column;

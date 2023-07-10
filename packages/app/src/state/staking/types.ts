@@ -2,21 +2,23 @@ import { EscrowData, ClaimParams } from '@kwenta/sdk/types'
 
 import { FetchStatus } from 'state/types'
 
+export type VersionedStakeData = {
+	escrowedKwentaBalance: string
+	claimableBalance: string
+	totalStakedBalance: string
+	stakedEscrowedKwentaBalance: string
+	stakedKwentaBalance: string
+	totalVestable: string
+	escrowData: EscrowData<string>[]
+}
+
 export type StakingState = {
 	kwentaBalance: string
 	vKwentaBalance: string
 	veKwentaBalance: string
-	escrowedKwentaBalance: string
-	escrowedKwentaBalanceV2: string
-	claimableBalance: string
-	claimableBalanceV2: string
-	totalStakedBalance: string
-	totalStakedBalanceV2: string
+	v1: VersionedStakeData
+	v2: VersionedStakeData
 	stakedResetTime: number
-	stakedEscrowedKwentaBalance: string
-	stakedEscrowedKwentaBalanceV2: string
-	stakedKwentaBalance: string
-	stakedKwentaBalanceV2: string
 	epochPeriod: number
 	weekCounter: number
 	selectedEscrowVersion: 1 | 2
@@ -24,10 +26,6 @@ export type StakingState = {
 	vKwentaAllowance: string
 	veKwentaAllowance: string
 	kwentaStakingV2Allowance: string
-	totalVestable: string
-	totalVestableV2: string
-	escrowData: EscrowData<string>[]
-	escrowV2Data: EscrowData<string>[]
 	kwentaRewards: string
 	opRewards: string
 	snxOpRewards: string

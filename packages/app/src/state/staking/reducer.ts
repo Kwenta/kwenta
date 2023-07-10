@@ -30,18 +30,26 @@ import { StakingState } from './types'
 
 export const STAKING_INITIAL_STATE: StakingState = {
 	kwentaBalance: '0',
-	escrowedKwentaBalance: '0',
-	escrowedKwentaBalanceV2: '0',
 	vKwentaBalance: '0',
 	veKwentaBalance: '0',
-	claimableBalance: '0',
-	claimableBalanceV2: '0',
-	totalStakedBalance: '0',
-	totalStakedBalanceV2: '0',
-	stakedEscrowedKwentaBalance: '0',
-	stakedEscrowedKwentaBalanceV2: '0',
-	stakedKwentaBalance: '0',
-	stakedKwentaBalanceV2: '0',
+	v1: {
+		escrowedKwentaBalance: '0',
+		claimableBalance: '0',
+		totalStakedBalance: '0',
+		stakedEscrowedKwentaBalance: '0',
+		stakedKwentaBalance: '0',
+		totalVestable: '0',
+		escrowData: [],
+	},
+	v2: {
+		escrowedKwentaBalance: '0',
+		claimableBalance: '0',
+		totalStakedBalance: '0',
+		stakedEscrowedKwentaBalance: '0',
+		stakedKwentaBalance: '0',
+		totalVestable: '0',
+		escrowData: [],
+	},
 	stakedResetTime: 0,
 	epochPeriod: 0,
 	weekCounter: 1,
@@ -50,10 +58,6 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	kwentaStakingV2Allowance: '0',
 	vKwentaAllowance: '0',
 	veKwentaAllowance: '0',
-	totalVestable: '0',
-	totalVestableV2: '0',
-	escrowData: [],
-	escrowV2Data: [],
 	kwentaRewards: '0',
 	opRewards: '0',
 	snxOpRewards: '0',
@@ -121,13 +125,13 @@ const stakingSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchStakingData.fulfilled, (state, action) => {
-			state.escrowedKwentaBalance = action.payload.rewardEscrowBalance
-			state.stakedKwentaBalance = action.payload.stakedNonEscrowedBalance
-			state.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
-			state.claimableBalance = action.payload.claimableBalance
+			state.v1.escrowedKwentaBalance = action.payload.rewardEscrowBalance
+			state.v1.stakedKwentaBalance = action.payload.stakedNonEscrowedBalance
+			state.v1.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
+			state.v1.claimableBalance = action.payload.claimableBalance
+			state.v1.totalStakedBalance = action.payload.totalStakedBalance
 			state.kwentaBalance = action.payload.kwentaBalance
 			state.weekCounter = action.payload.weekCounter
-			state.totalStakedBalance = action.payload.totalStakedBalance
 			state.vKwentaBalance = action.payload.vKwentaBalance
 			state.vKwentaAllowance = action.payload.vKwentaAllowance
 			state.kwentaAllowance = action.payload.kwentaAllowance
@@ -140,21 +144,21 @@ const stakingSlice = createSlice({
 			state.unstakeEscrowedStatus = FetchStatus.Idle
 		})
 		builder.addCase(fetchStakingV2Data.fulfilled, (state, action) => {
-			state.stakedKwentaBalanceV2 = action.payload.stakedNonEscrowedBalance
-			state.totalStakedBalanceV2 = action.payload.totalStakedBalance
+			state.v2.escrowedKwentaBalance = action.payload.rewardEscrowBalance
+			state.v2.stakedKwentaBalance = action.payload.stakedNonEscrowedBalance
+			state.v2.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
+			state.v2.claimableBalance = action.payload.claimableBalance
+			state.v2.totalStakedBalance = action.payload.totalStakedBalance
 			state.kwentaStakingV2Allowance = action.payload.kwentaStakingV2Allowance
-			state.claimableBalanceV2 = action.payload.claimableBalance
-			state.stakedEscrowedKwentaBalanceV2 = action.payload.stakedEscrowedBalance
-			state.escrowedKwentaBalanceV2 = action.payload.rewardEscrowBalance
 			state.stakedResetTime = action.payload.stakedResetTime
 		})
 		builder.addCase(fetchEscrowData.fulfilled, (state, action) => {
-			state.totalVestable = action.payload.totalVestable
-			state.escrowData = action.payload.escrowData
+			state.v1.totalVestable = action.payload.totalVestable
+			state.v1.escrowData = action.payload.escrowData
 		})
 		builder.addCase(fetchEscrowV2Data.fulfilled, (state, action) => {
-			state.totalVestableV2 = action.payload.totalVestable
-			state.escrowV2Data = action.payload.escrowData
+			state.v2.totalVestable = action.payload.totalVestable
+			state.v2.escrowData = action.payload.escrowData
 		})
 		builder.addCase(fetchClaimableRewards.fulfilled, (state, action) => {
 			state.claimableKwentaRewards = action.payload.claimableKwentaRewards
