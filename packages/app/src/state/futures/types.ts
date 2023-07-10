@@ -244,6 +244,7 @@ export type FuturesState = {
 		>
 	}
 	tradePanelDrawerOpen: boolean
+	historicalFundingRatePeriod: Period
 	historicalFundingRates: Partial<
 		Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>
 	>

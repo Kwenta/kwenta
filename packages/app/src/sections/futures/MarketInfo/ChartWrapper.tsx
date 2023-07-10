@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 
-import { FlexDivRowCentered } from 'components/layout/flex'
 import { selectShowHistory } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 
@@ -13,17 +12,24 @@ const ChartWrapper = () => {
 	const selectedChart = useAppSelector(({ futures }) => futures.selectedChart)
 
 	return (
-		<Container>
-			<PositionChart display={selectedChart === 'price'} />
-			<FundingChart display={selectedChart === 'funding'} />
-			{showHistory && <TradesHistoryTable />}
+		<Container $showHistory={showHistory}>
+			<div className="charts-container">
+				<PositionChart display={selectedChart === 'price'} />
+				<FundingChart display={selectedChart === 'funding'} />
+			</div>
+			<TradesHistoryTable display={showHistory} />
 		</Container>
 	)
 }
 
-const Container = styled(FlexDivRowCentered)`
+const Container = styled.div<{ $showHistory: boolean }>`
+	display: flex;
 	height: 100%;
 	overflow: hidden;
+
+	.charts-container {
+		width: ${(props) => (props.$showHistory ? 'calc(100% - 300px)' : '100%')};
+	}
 `
 
 export default ChartWrapper

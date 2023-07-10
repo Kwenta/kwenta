@@ -6,7 +6,7 @@ Most of the components in this folder are viewable in our [Storybook]().
 
 ## Folder Structure
 
-We try to ensure that folders are as flat as (reasonbly) possible. For this, reason, most individual components can be found under `{component-name}.tsx`. However in the future, some domain specific components may be found in subfolders like `mobile`, `futures` or `exchange`. The components are only expected to be used in the context of the folders in which they are contained.
+We try to ensure that folders are as flat as (reasonably) possible. For this, reason, most individual components can be found under `{component-name}.tsx`. However in the future, some domain specific components may be found in subfolders like `mobile`, `futures` or `exchange`. The components are only expected to be used in the context of the folders in which they are contained.
 
 ## Checklist
 

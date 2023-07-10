@@ -35,7 +35,7 @@ const TextToggle: React.FC<TextToggleProps<any>> = ({
 	)
 }
 
-const ToggleButton = styled(Body)<{ $active: boolean }>`
+export const ToggleButton = styled(Body)<{ $active: boolean }>`
 	cursor: pointer;
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.disabled};
