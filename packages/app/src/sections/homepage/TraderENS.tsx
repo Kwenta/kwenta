@@ -6,13 +6,14 @@ import useENS from 'hooks/useENS'
 type TraderENSProps = {
 	trader: string
 	traderShort: string
+	shortlist?: boolean
 }
 
-const TraderENS: FC<TraderENSProps> = memo(({ trader, traderShort }) => {
+const TraderENS: FC<TraderENSProps> = memo(({ trader, traderShort, shortlist }) => {
 	const { ensName, ensAvatar } = useENS(trader)
 
 	return (
-		<StyledTrader>
+		<StyledTrader $shortlist={shortlist}>
 			{ensName ? (
 				<>
 					{ensAvatar && (
@@ -33,10 +34,10 @@ const TraderENS: FC<TraderENSProps> = memo(({ trader, traderShort }) => {
 	)
 })
 
-const StyledTrader = styled.a`
+const StyledTrader = styled.a<{ $shortlist?: boolean }>`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
-	font-size: 13px;
+	font-size: ${(props) => (props.$shortlist ? 15 : 13)}px;
 `
 
 export default TraderENS

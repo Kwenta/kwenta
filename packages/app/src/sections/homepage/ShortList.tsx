@@ -103,6 +103,7 @@ const ShortList = () => {
 										<TraderENS
 											trader={cellProps.row.original.trader}
 											traderShort={cellProps.row.original.traderShort}
+											shortlist
 										/>
 									)
 								},
@@ -166,6 +167,7 @@ const ShortList = () => {
 										<TraderENS
 											trader={cellProps.row.original.trader}
 											traderShort={cellProps.row.original.traderShort}
+											shortlist
 										/>
 									)
 								},
