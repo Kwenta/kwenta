@@ -235,7 +235,7 @@ export type FuturesState = {
 		selectedPortfolioTimeframe: Period
 	}
 	leaderboard: {
-		selectedTrader: string | undefined
+		selectedTrader?: { trader: string; traderEns?: string | null }
 		selectedTraderPositionHistory: Record<
 			FuturesNetwork,
 			{

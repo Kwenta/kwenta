@@ -10,21 +10,13 @@ import {
 	ENS_REVERSE_LOOKUP,
 } from '../constants/stats'
 import { ETH_UNIT } from '../constants/transactions'
-import { AccountStat, FuturesStat } from '../types/stats'
+import { EnsInfo, FuturesStat, Leaderboard } from '../types/stats'
 import { mapStat } from '../utils/stats'
 import { truncateAddress } from '../utils/string'
 import { getFuturesStats } from '../utils/subgraph'
 import { Contract } from 'ethers'
 
 type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all'
-
-type LeaderboardResult = {
-	[part in LeaderboardPart]: AccountStat[]
-}
-
-type EnsInfo = {
-	[account: string]: string
-}
 
 export default class StatsService {
 	private sdk: KwentaSDK
@@ -75,7 +67,7 @@ export default class StatsService {
 		}
 	}
 
-	public async getLeaderboard(searchTerm: string) {
+	public async getLeaderboard(searchTerm: string): Promise<Leaderboard> {
 		try {
 			const query = gql`
 				fragment StatsBody on FuturesStat {
@@ -109,11 +101,22 @@ export default class StatsService {
 				{ account: this.sdk.context.walletAddress, searchTerm }
 			)
 
+			// TODO: Improve the time complexity of this operation.
+			// We *should* be able to add the ENS and merge at the same time.
+
+			const ensInfo = await this.batchGetENS(
+				Object.values(response)
+					.flat(1)
+					.map(({ account }) => account)
+			)
+
+			const statTransform = mapStat(ensInfo)
+
 			const stats = {
-				top: response.top.map(mapStat),
-				bottom: response.bottom.map(mapStat),
-				wallet: response.wallet.map(mapStat),
-				search: response.search.map(mapStat),
+				top: response.top.map(statTransform),
+				bottom: response.bottom.map(statTransform),
+				wallet: response.wallet.map(statTransform),
+				search: response.search.map(statTransform),
 			}
 
 			return { ...stats, all: [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search] }
@@ -167,7 +170,7 @@ export default class StatsService {
 		}
 	}
 
-	private async getENS(addresses: string[]) {
+	private async batchGetENS(addresses: string[]) {
 		const ReverseLookup = new Contract(
 			ENS_REVERSE_LOOKUP,
 			['function getNames(address[] addresses) external view returns (string[] r)'],

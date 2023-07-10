@@ -108,16 +108,6 @@ const Table = <T,>({
 		getSortedRowModel: getSortedRowModel(),
 	})
 
-	// reset to the first page
-	// this fires when filters are applied that change the data
-	// if a filter is applied that reduces the data size below max pages for that filter, reset to the first page
-	// TODO: get rid of this, it is a hack. The table should re-render completely when data changes.
-	// useEffect(() => {
-	// 	if (pageIndex > pageCount) {
-	// 		gotoPage(0)
-	// 	}
-	// }, [pageIndex, pageCount, gotoPage])
-
 	const defaultRef = useRef(null)
 
 	const handleRowClick = useCallback(
@@ -186,7 +176,7 @@ const Table = <T,>({
 				{showPagination && data.length > table.getState().pagination.pageSize ? (
 					<Pagination
 						compact={compactPagination}
-						pageIndex={table.getState().pagination.pageIndex + 1}
+						pageIndex={table.getState().pagination.pageIndex}
 						pageCount={table.getPageCount()}
 						canNextPage={table.getCanNextPage()}
 						canPreviousPage={table.getCanPreviousPage()}

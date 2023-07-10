@@ -10,13 +10,12 @@ import Search from 'components/Table/Search'
 import { CompetitionRound, COMPETITION_TIERS, PIN, Tier } from 'constants/competition'
 import ROUTES from 'constants/routes'
 import useENS from 'hooks/useENS'
-import useENSs from 'hooks/useENSs'
-import { AccountStat } from 'queries/futures/types'
-import useLeaderboard, { DEFAULT_LEADERBOARD_DATA } from 'queries/futures/useLeaderboard'
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import { setSelectedTrader } from 'state/futures/reducer'
 import { selectSelectedTrader } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { fetchLeaderboard } from 'state/stats/actions'
+import { selectLeaderboard, selectLeaderboardLoading } from 'state/stats/selectors'
 import media from 'styles/media'
 
 import AllTime from './AllTime'
@@ -48,24 +47,18 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const selectedTrader = useAppSelector(selectSelectedTrader)
 	const searchEns = useENS(searchTerm)
 
-	const leaderboardQuery = useLeaderboard(searchAddress)
-	const leaderboardData = useMemo(
-		() => leaderboardQuery.data ?? DEFAULT_LEADERBOARD_DATA,
-		[leaderboardQuery]
-	)
+	const leaderboardLoading = useAppSelector(selectLeaderboardLoading)
+	const leaderboardData = useAppSelector(selectLeaderboard)
 
-	const traders = useMemo(
-		() => leaderboardData.all?.map((stat: any) => stat.account) ?? [],
-		[leaderboardData]
-	)
+	// TODO: Separate search from the general list, to improve performance.
+	// This currently refetches the whole list when we search.
 
-	const ensInfoQuery = useENSs(traders)
-	const ensInfo = useMemo(() => ensInfoQuery.data ?? {}, [ensInfoQuery])
+	useEffect(() => {
+		dispatch(fetchLeaderboard(searchTerm))
+	}, [dispatch, searchTerm])
 
 	const pinRow = useMemo(() => {
-		return leaderboardData.wallet
-			? leaderboardData.wallet.map((trader: any) => ({ ...trader, rank: 0, rankText: PIN }))
-			: []
+		return leaderboardData.wallet.map((trader) => ({ ...trader, rank: 0, rankText: PIN }))
 	}, [leaderboardData.wallet])
 
 	const urlPath = DOMPurify.sanitize(router.asPath)
@@ -77,7 +70,12 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 
 	useMemo(() => {
 		if (urlPath.startsWith(ROUTES.Leaderboard.Home) && trader) {
-			dispatch(setSelectedTrader(trader))
+			dispatch(
+				setSelectedTrader({
+					trader,
+					traderEns: leaderboardData.all.find((a) => a.account === trader)?.traderEns,
+				})
+			)
 		} else if (urlPath.startsWith(ROUTES.Leaderboard.Home) && compRound) {
 			setCompetitionRound(compRound)
 		} else {
@@ -88,7 +86,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 			setCompetitionRound(null)
 		}
 		return null
-	}, [compRound, trader, urlPath, dispatch])
+	}, [compRound, trader, urlPath, dispatch, leaderboardData.all])
 
 	const onChangeSearch = (text: string) => {
 		setSearchInput(text.toLowerCase())
@@ -102,45 +100,49 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 		}
 	}
 
-	const onClickTrader = (trader: string) => {
-		setSearchInput('')
-		setSearchTerm('')
-		setSearchAddress('')
-		setSelectedTrader(trader)
-		router.push(ROUTES.Leaderboard.Trader(trader))
-	}
+	const onClickTrader = useCallback(
+		(trader: string, traderEns?: string) => {
+			setSearchInput('')
+			setSearchTerm('')
+			setSearchAddress('')
+			dispatch(setSelectedTrader({ trader, traderEns }))
+			router.push(ROUTES.Leaderboard.Trader(trader))
+		},
+		[router, dispatch]
+	)
 
-	const resetSelection = () => {
+	const resetSelection = useCallback(() => {
 		setSearchInput('')
 		setSearchTerm('')
 		setSearchAddress('')
-		setSelectedTrader('')
+		dispatch(setSelectedTrader(undefined))
 
 		if (competitionRound) {
 			router.push(ROUTES.Leaderboard.Competition(competitionRound))
 		} else {
 			router.push(ROUTES.Leaderboard.Home)
 		}
-	}
+	}, [competitionRound, router, dispatch])
+
+	const handleSelectTab = useCallback(
+		(tab: LeaderboardTab) => () => {
+			setActiveTab(tab)
+			dispatch(setSelectedTrader(undefined))
+		},
+		[dispatch]
+	)
+
+	const handleSelectTier = useCallback(
+		(tier: Tier) => () => {
+			setActiveTier(tier)
+			dispatch(setSelectedTrader(undefined))
+		},
+		[dispatch]
+	)
 
 	useEffect(() => {
 		setSearchAddress(searchEns.ensAddress ?? (isAddress(searchTerm) ? searchTerm : ''))
 	}, [searchTerm, searchEns])
-
-	const mapEnsName = useCallback(
-		(stat: AccountStat) => ({ ...stat, traderEns: ensInfo[stat.account] ?? null }),
-		[ensInfo]
-	)
-
-	const stats = useMemo(() => {
-		return {
-			top: leaderboardData.top.map(mapEnsName),
-			bottom: leaderboardData.bottom.map(mapEnsName),
-			wallet: leaderboardData.wallet.map(mapEnsName),
-			search: leaderboardData.search.map(mapEnsName),
-			all: leaderboardData.all.map(mapEnsName),
-		}
-	}, [leaderboardData, mapEnsName])
 
 	return (
 		<>
@@ -154,10 +156,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 										key={tier}
 										title={tier ?? ''}
 										active={activeTier === tier}
-										onClick={() => {
-											setActiveTier(tier)
-											setSelectedTrader('')
-										}}
+										onClick={handleSelectTier(tier)}
 									/>
 							  ))
 							: LEADERBOARD_TABS.map((tab) => (
@@ -165,10 +164,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 										key={tab}
 										title={tab ?? ''}
 										active={activeTab === tab}
-										onClick={() => {
-											setActiveTab(tab)
-											setSelectedTrader('')
-										}}
+										onClick={handleSelectTab(tab)}
 									/>
 							  ))}
 					</TabButtonContainer>
@@ -179,8 +175,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 				<TableContainer compact={compact}>
 					{!compact && selectedTrader ? (
 						<TraderHistory
-							trader={selectedTrader}
-							ensInfo={ensInfo}
+							trader={selectedTrader.trader}
+							traderEns={selectedTrader.traderEns}
 							resetSelection={resetSelection}
 							compact={compact}
 							searchTerm={searchInput}
@@ -195,16 +191,16 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 						/>
 					) : searchAddress ? (
 						<AllTime
-							stats={stats.search as any}
-							isLoading={leaderboardQuery.isLoading}
+							stats={leaderboardData.search}
+							isLoading={leaderboardLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}
 							pinRow={pinRow}
 						/>
 					) : (
 						<AllTime
-							stats={stats[activeTab] as any}
-							isLoading={leaderboardQuery.isLoading}
+							stats={leaderboardData[activeTab]}
+							isLoading={leaderboardLoading}
 							compact={compact}
 							onClickTrader={onClickTrader}
 							pinRow={pinRow}

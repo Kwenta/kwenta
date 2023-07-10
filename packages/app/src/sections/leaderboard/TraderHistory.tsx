@@ -30,21 +30,20 @@ import { getMarketName } from 'utils/futures'
 
 type TraderHistoryProps = {
 	trader: string
-	ensInfo: Record<string, string>
+	traderEns?: string | null
 	resetSelection: Function
 	compact?: boolean
 	searchTerm?: string | undefined
 }
 
 const TraderHistory: FC<TraderHistoryProps> = memo(
-	({ trader, ensInfo, resetSelection, compact, searchTerm }) => {
+	({ trader, traderEns, resetSelection, compact, searchTerm }) => {
 		const { t } = useTranslation()
 		const dispatch = useAppDispatch()
 		const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader)
 		const positions = useAppSelector(selectFuturesPositions)
 		const showBanner = useAppSelector(selectShowBanner)
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses)
-		const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo])
 
 		useEffect(() => {
 			dispatch(fetchPositionHistoryForTrader(trader))
@@ -121,7 +120,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											href={`https://optimistic.etherscan.io/address/${trader}`}
 											hoverUnderline
 										>
-											{traderENSName ?? trader}
+											{traderEns ?? trader}
 										</ExternalLink>
 									</TableTitle>
 								),
@@ -232,7 +231,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											href={`https://optimistic.etherscan.io/address/${trader}`}
 											hoverUnderline
 										>
-											{traderENSName ?? trader}
+											{traderEns ?? trader}
 										</ExternalLink>
 									</TableTitle>
 								),

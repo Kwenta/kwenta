@@ -318,9 +318,6 @@ importers:
       '@types/react-slick':
         specifier: 0.23.10
         version: 0.23.10
-      '@types/react-table':
-        specifier: 7.0.22
-        version: 7.0.22
       '@types/redux-logger':
         specifier: ^3.0.9
         version: 3.0.9
@@ -7161,12 +7158,6 @@ packages:
 
   /@types/react-slick@0.23.10:
     resolution: {integrity: sha512-ZiqdencANDZy6sWOWJ54LDvebuXFEhDlHtXU9FFipQR2BcYU2QJxZhvJPW6YK7cocibUiNn+YvDTbt1HtCIBVA==}
-    dependencies:
-      '@types/react': 18.2.14
-    dev: true
-
-  /@types/react-table@7.0.22:
-    resolution: {integrity: sha512-RAzjB7Udv23QPuIuNNRn8VBldmcFobqpNqLWXh0FXVVyIye76muzfn01WZdcTIEfmQjHts7bjJSQQVabLQgTcA==}
     dependencies:
       '@types/react': 18.2.14
     dev: true

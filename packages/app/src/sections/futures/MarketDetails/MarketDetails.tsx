@@ -5,7 +5,7 @@ import React, { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { getColorFromPriceInfo } from 'components/ColoredPrice'
+import { getColorFromPriceChange } from 'components/ColoredPrice'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
@@ -84,7 +84,7 @@ const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	return (
 		<MarketDetail
 			mobile={mobile}
-			color={getColorFromPriceInfo(markPrice?.change)}
+			color={getColorFromPriceChange(markPrice?.change)}
 			value={markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
 			dataKey={MarketDataKey.marketPrice}
 		/>

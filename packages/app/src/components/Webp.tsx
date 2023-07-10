@@ -1,11 +1,11 @@
 import React from 'react'
-// import { DefaultTheme, IStyledComponent } from 'styled-components'
+import { DefaultTheme, StyledComponent } from 'styled-components'
 
 type WebpProps = {
 	/** (only) png files imported. */
 	srcOrSrcset: any
 	/** styled <img> element. */
-	StyledImg?: any
+	StyledImg?: StyledComponent<'img', DefaultTheme, {}, never>
 }
 
 const Webp: React.FC<WebpProps> = ({ srcOrSrcset, StyledImg }) => {

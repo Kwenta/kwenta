@@ -19,7 +19,7 @@ type CompetitionProps = {
 	round: CompetitionRound
 	activeTier: Tier
 	compact?: boolean
-	onClickTrader: (trader: string) => void
+	onClickTrader: (trader: string, traderEns?: string) => void
 	searchTerm?: string | undefined
 }
 
@@ -128,7 +128,12 @@ const Competition: FC<CompetitionProps> = ({
 									cell: (cellProps) => {
 										return (
 											<StyledOrderType
-												onClick={() => onClickTrader(cellProps.row.original.account)}
+												onClick={() =>
+													onClickTrader(
+														cellProps.row.original.account,
+														cellProps.row.original.traderEns
+													)
+												}
 											>
 												<StyledTrader>
 													{cellProps.row.original.traderEns ?? cellProps.row.original.traderShort}

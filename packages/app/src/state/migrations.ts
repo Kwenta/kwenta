@@ -92,6 +92,12 @@ export const migrations = {
 			app: APP_INITIAL_STATE,
 		}
 	},
+	32: (state: any) => {
+		return {
+			...state,
+			stats: STATS_INITIAL_STATE,
+		}
+	},
 }
 
 export default migrations

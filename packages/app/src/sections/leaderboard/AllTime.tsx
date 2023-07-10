@@ -1,3 +1,5 @@
+import { AccountStat } from '@kwenta/sdk/types'
+import Wei from '@synthetixio/wei'
 import { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -9,7 +11,6 @@ import { TableCell } from 'components/Table/TableBodyRow'
 import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement'
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults'
 import useENSAvatar from 'hooks/useENSAvatar'
-import { AccountStat } from 'queries/futures/types'
 import { StyledTrader } from 'sections/leaderboard/trader'
 import { selectShowBanner } from 'state/app/selectors'
 import { useAppSelector } from 'state/hooks'
@@ -67,9 +68,9 @@ const TraderCell: FC<TraderCellProps> = ({
 }
 
 type AllTimeProps = {
-	stats: (AccountStat & { traderEns: string; rankText: string })[]
+	stats: AccountStat<Wei, number>[]
 	isLoading: boolean
-	pinRow: (AccountStat & { rankText: string })[]
+	pinRow: AccountStat<Wei, number>[]
 	onClickTrader: (trader: string) => void
 	compact?: boolean
 	activeTab?: string
@@ -122,9 +123,6 @@ const AllTime: FC<AllTimeProps> = ({
 					data={data}
 					pageSize={10}
 					hideHeaders={compact}
-					// hiddenColumns={
-					// 	compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
-					// }
 					columnVisibility={{
 						rank: !compact,
 						totalTrades: !compact,
@@ -198,7 +196,6 @@ const AllTime: FC<AllTimeProps> = ({
 									cell: (cellProps) => (
 										<Currency.Price price={cellProps.row.original.totalVolume} />
 									),
-									// size: compact ? 'auto' : 100,
 									size: 100,
 								},
 								{
@@ -207,13 +204,12 @@ const AllTime: FC<AllTimeProps> = ({
 									cell: (cellProps) => (
 										<Currency.Price
 											currencyKey="sUSD"
-											price={cellProps.row.original.pnl}
+											price={cellProps.row.original.pnlWithFeesPaid}
 											sign="$"
 											conversionRate={1}
 											colored={true}
 										/>
 									),
-									// size: compact ? 'auto' : 100,
 									size: 100,
 								},
 							],
@@ -262,7 +258,7 @@ const AllTime: FC<AllTimeProps> = ({
 							cell: (cellProps) => (
 								<Currency.Price
 									currencyKey="sUSD"
-									price={cellProps.row.original.pnl}
+									price={cellProps.row.original.pnlWithFeesPaid}
 									sign="$"
 									colored
 								/>
