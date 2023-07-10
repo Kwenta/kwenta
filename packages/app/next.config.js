@@ -11,6 +11,7 @@ const transpile = require('next-transpile-modules')
 const withTM = [transpile(['echarts', 'zrender'])]
 
 const baseConfig = {
+	output: 'export',
 	env: {
 		GIT_HASH_ID: gitRevision,
 	},
