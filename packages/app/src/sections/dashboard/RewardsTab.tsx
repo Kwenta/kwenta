@@ -3,7 +3,7 @@ import { formatDollars, formatNumber, formatPercent } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { FC, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import HelpIcon from 'assets/svg/app/question-mark.svg'
 import OptimismLogo from 'assets/svg/providers/optimism.svg'
@@ -12,7 +12,6 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import LabelContainer from 'components/Nav/DropDownLabel'
 import Select, { DropdownIndicator, IndicatorSeparator } from 'components/Select'
 import { Body, Heading } from 'components/Text'
-import { EXTERNAL_LINKS } from 'constants/links'
 import { NO_VALUE } from 'constants/placeholder'
 import useIsL2 from 'hooks/useIsL2'
 import { TradingRewardProps } from 'queries/staking/utils'
@@ -191,28 +190,18 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 		<RewardsTabContainer>
 			<HeaderContainer>
 				<StyledHeading variant="h4">{t('dashboard.rewards.title')}</StyledHeading>
-				<StyledFlexDivRowCentered>
-					<StakingSelect
-						formatOptionLabel={formatOptionLabel}
-						controlHeight={33}
-						options={epochData.sort((a, b) => b.period - a.period)}
-						optionPadding="0px"
-						value={selectedEpoch}
-						menuWidth={110}
-						components={{ IndicatorSeparator, DropdownIndicator }}
-						isSearchable={false}
-						variant="flat"
-						isDisabled={!isL2}
-					/>
-					<StyledButton
-						size="xsmall"
-						isRounded
-						textTransform="none"
-						onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
-					>
-						{t('dashboard.stake.docs')}
-					</StyledButton>
-				</StyledFlexDivRowCentered>
+				<StakingSelect
+					formatOptionLabel={formatOptionLabel}
+					controlHeight={33}
+					options={epochData.sort((a, b) => b.period - a.period)}
+					optionPadding="0px"
+					value={selectedEpoch}
+					menuWidth={110}
+					components={{ IndicatorSeparator, DropdownIndicator }}
+					isSearchable={false}
+					variant="flat"
+					isDisabled={!isL2}
+				/>
 			</HeaderContainer>
 			<CardsContainer>
 				{rewardsInfo.map(({ key, title, copy, labels, info }) => (
@@ -269,6 +258,12 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 	)
 }
 
+const selectlabel = css`
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+	font-family: ${(props) => props.theme.fonts.bold};
+`
+
 const IconContainer = styled(Body)`
 	display: flex;
 	flex-direction: row;
@@ -277,17 +272,24 @@ const IconContainer = styled(Body)`
 `
 
 const SelectLabelContainer = styled(LabelContainer)`
-	font-size: 12px;
+	${selectlabel}
+	padding: 6px 12px;
+	height: 32px;
 `
 
 const StakingSelect = styled(Select)`
-	height: 33px;
-	width: 100%;
-	.react-select__control,
+	height: 32px;
+
+	.react-select__control {
+		border-radius: 50px;
+		border-width: 0px;
+		width: 110px;
+	}
 	.react-select__menu,
 	.react-select__menu-list {
 		border-radius: 20px;
-		background: ${(props) => props.theme.colors.selectedTheme.surfaceFill};
+		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
+		border-width: 0px;
 	}
 
 	.react-select__value-container {
@@ -295,7 +297,7 @@ const StakingSelect = styled(Select)`
 	}
 
 	.react-select__single-value > div > div {
-		font-size: 12px;
+		${selectlabel}
 	}
 
 	.react-select__dropdown-indicator {
@@ -303,25 +305,11 @@ const StakingSelect = styled(Select)`
 	}
 `
 
-const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
-	width: 200px;
-	column-gap: 25px;
-	${media.lessThan('mdUp')`
-		width: 185px;
-		column-gap: 10px;
-	`}
-`
-
 const ButtonContainer = styled.div`
 	margin-bottom: 25px;
 	margin-left: 25px;
 	width: 100%;
 	display: flex;
-`
-
-const StyledButton = styled(Button)`
-	border-width: 0px;
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 `
 
 const RewardsContainer = styled(FlexDivCol)`
@@ -339,7 +327,8 @@ const StyledHeading = styled(Heading)`
 
 const HeaderContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 22.5px;
-
+	justify-content: space-between;
+	width: 100%;
 	${media.lessThan('mdUp')`
 		margin-bottom: 25px;
 		margin-top: 25px;
