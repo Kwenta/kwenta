@@ -103,7 +103,7 @@ const StakingTab = () => {
 							</LabelContainer>
 							<FlexDivRow columnGap="25px" justifyContent="flex-start" style={{ flex }}>
 								{card.map(({ key, title, value }) => (
-									<FlexDivCol key={key}>
+									<FlexDivCol rowGap="5px" key={key}>
 										<Body color="secondary">{title}</Body>
 										<Body size="large" color="preview">
 											{value}

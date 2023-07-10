@@ -106,7 +106,7 @@ const EscrowTab = () => {
 								<Body size="large">{category}</Body>
 								<FlexDivRow columnGap="15px" justifyContent="flex-start">
 									{card.map(({ key, title, value }) => (
-										<FlexDivCol key={key} style={{ flex: '1' }}>
+										<FlexDivCol key={key} rowGap="5px" style={{ flex: '1' }}>
 											<Body size="medium" color="secondary">
 												{title}
 											</Body>
