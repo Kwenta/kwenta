@@ -2,7 +2,6 @@ import { FuturesMarketKey } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils'
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import Badge from 'components/Badge'
@@ -160,63 +159,65 @@ const OpenDelayedOrdersTable: React.FC = () => {
 			}
 			columns={[
 				{
-					Header: (
+					header: () => (
 						<TableHeader>{t('futures.market.user.open-orders.table.market-type')}</TableHeader>
 					),
-					accessor: 'market',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<any>) => {
+					accessorKey: 'market',
+					cell: (cellProps) => {
 						return (
 							<TableMarketDetails
 								marketName={cellProps.row.original.market}
 								infoLabel={cellProps.row.original.orderType}
 								marketKey={cellProps.row.original.marketKey}
 								badge={
-									cellProps.row.original.isStale && (
+									cellProps.row.original.isStale ? (
 										<ExpiredBadge color="red">
 											{t('futures.market.user.open-orders.badges.expired')}
 										</ExpiredBadge>
-									)
+									) : undefined
 								}
 							/>
 						)
 					},
-					sortable: true,
-					width: 60,
+					enableSorting: true,
+					size: 60,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>,
-					accessor: 'side',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<any>) => {
+					header: () => (
+						<TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>
+					),
+					accessorKey: 'side',
+					cell: (cellProps) => {
 						return (
 							<div>
 								<PositionType side={cellProps.row.original.side} />
 							</div>
 						)
 					},
-					sortable: true,
-					width: 40,
+					enableSorting: true,
+					size: 40,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
-					accessor: 'size',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<any>) => {
+					header: () => (
+						<TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>
+					),
+					accessorKey: 'size',
+					cell: (cellProps) => {
 						return (
 							<div>
 								<div>{cellProps.row.original.sizeTxt}</div>
 							</div>
 						)
 					},
-					sortable: true,
-					width: 50,
+					enableSorting: true,
+					size: 50,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.status')}</TableHeader>,
-					accessor: 'status',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<any>) => {
+					header: () => (
+						<TableHeader>{t('futures.market.user.open-orders.table.status')}</TableHeader>
+					),
+					accessorKey: 'status',
+					cell: (cellProps) => {
 						return (
 							<div>
 								{cellProps.row.original.show &&
@@ -236,14 +237,15 @@ const OpenDelayedOrdersTable: React.FC = () => {
 							</div>
 						)
 					},
-					sortable: true,
-					width: 50,
+					enableSorting: true,
+					size: 50,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>,
-					accessor: 'actions',
-					// @ts-expect-error
-					Cell: (cellProps: CellProps<any>) => {
+					header: () => (
+						<TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>
+					),
+					accessorKey: 'actions',
+					cell: (cellProps) => {
 						return (
 							<div>
 								{cellProps.row.original.show &&
@@ -268,7 +270,7 @@ const OpenDelayedOrdersTable: React.FC = () => {
 							</div>
 						)
 					},
-					width: 50,
+					size: 50,
 				},
 			]}
 		/>

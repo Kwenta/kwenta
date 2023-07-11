@@ -1,10 +1,19 @@
-import React, { FC, useMemo, DependencyList, useEffect, useRef, memo } from 'react'
-import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination } from 'react-table'
-import type { TableInstance, UsePaginationInstanceProps, UsePaginationState } from 'react-table'
+import {
+	useReactTable,
+	getCoreRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	flexRender,
+	PaginationState,
+} from '@tanstack/react-table'
+import type { ColumnDef, Row, SortingState, VisibilityState } from '@tanstack/react-table'
+import React, { DependencyList, useCallback, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { genericMemo } from 'types/helpers'
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg'
 import SortUpIcon from 'assets/svg/app/caret-up.svg'
+import { FlexDiv } from 'components/layout/flex'
 import Loader from 'components/Loader'
 import { Body } from 'components/Text'
 import media from 'styles/media'
@@ -12,32 +21,14 @@ import media from 'styles/media'
 import Pagination from './Pagination'
 import TableBodyRow, { TableCell } from './TableBodyRow'
 
-export type TablePalette = 'primary'
-
 const CARD_HEIGHT_MD = '50px'
 const CARD_HEIGHT_LG = '40px'
 const MAX_PAGE_ROWS = 100
 const MAX_TOTAL_ROWS = 9999
 
-type ColumnWithSorting<D extends object = {}> = Column<D> & {
-	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1)
-	sortable?: boolean
-	columns?: Column[]
-}
-
-/**
- * This type adds typing for the fields returned by the usePagination hook when used in
- * conjunction with useTable, to compensate for deficiencies of @types/react-table.
- * This should be fixed in react-table v8-- see: https://github.com/TanStack/table/issues/3064
- */
-type TableWithPagination<T extends object> = TableInstance<T> &
-	UsePaginationInstanceProps<T> & {
-		state: UsePaginationState<T>
-	}
-
-export function compareNumericString(rowA: Row<any>, rowB: Row<any>, id: string, desc: boolean) {
-	let a = parseFloat(rowA.values[id])
-	let b = parseFloat(rowB.values[id])
+export function compareNumericString(rowA: Row<any>, rowB: Row<object>, id: string, desc: boolean) {
+	let a = parseFloat(rowA.getValue(id))
+	let b = parseFloat(rowB.getValue(id))
 	if (isNaN(a)) {
 		// Blanks and non-numeric strings to bottom
 		a = desc ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY
@@ -50,199 +41,155 @@ export function compareNumericString(rowA: Row<any>, rowB: Row<any>, id: string,
 	return 0
 }
 
-type TableProps = {
-	palette?: TablePalette
-	data: object[]
-	columns: ColumnWithSorting<object>[]
-	columnsDeps?: DependencyList
-	options?: any
-	onTableRowClick?: (row: Row<any>) => void
+type TableProps<T> = {
+	data: T[]
+	columns: ColumnDef<T, any>[]
+	onTableRowClick?: (row: Row<T>) => void
 	className?: string
 	isLoading?: boolean
 	noResultsMessage?: React.ReactNode
 	showPagination?: boolean
-	pageSize?: number | null
+	pageSize?: number
 	hiddenColumns?: string[]
 	hideHeaders?: boolean
 	highlightRowsOnHover?: boolean
-	sortBy?: object[]
+	sortBy?: SortingState
 	showShortList?: boolean
 	lastRef?: any
 	compactPagination?: boolean
-	rowStyle?: Record<string, any>
 	rounded?: boolean
 	noBottom?: boolean
+	columnVisibility?: VisibilityState
+	columnsDeps?: DependencyList
 }
 
-export const Table: FC<TableProps> = memo(
-	({
-		columns = [],
-		columnsDeps = [],
-		data = [],
-		options = {},
-		noResultsMessage = null,
-		onTableRowClick = undefined,
-		palette = 'primary',
-		isLoading = false,
-		className,
-		showPagination = false,
-		pageSize = null,
-		hiddenColumns = [],
-		hideHeaders,
-		highlightRowsOnHover,
-		showShortList,
-		sortBy = [],
-		lastRef = null,
-		compactPagination = false,
-		rowStyle = {},
-		rounded = true,
-		noBottom = false,
-	}) => {
-		const memoizedColumns = useMemo(
-			() => columns,
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			columnsDeps
-		)
+const Table = <T,>({
+	columns = [],
+	data = [],
+	noResultsMessage = null,
+	onTableRowClick = undefined,
+	isLoading = false,
+	className,
+	showPagination = false,
+	pageSize = undefined,
+	hideHeaders,
+	highlightRowsOnHover,
+	sortBy = [],
+	lastRef = null,
+	compactPagination = false,
+	rounded = true,
+	noBottom = false,
+	columnVisibility,
+	columnsDeps = [],
+}: TableProps<T>) => {
+	const [sorting, setSorting] = useState<SortingState>(sortBy)
+	const [pagination, setPagination] = useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: showPagination ? pageSize ?? MAX_PAGE_ROWS : MAX_TOTAL_ROWS,
+	})
 
-		const {
-			getTableProps,
-			getTableBodyProps,
-			headerGroups,
-			page,
-			prepareRow,
-			canPreviousPage,
-			canNextPage,
-			pageCount,
-			gotoPage,
-			nextPage,
-			previousPage,
-			state: { pageIndex },
-			setHiddenColumns,
-		} = useTable(
-			{
-				columns: memoizedColumns,
-				data,
-				initialState: {
-					pageSize: showPagination
-						? pageSize
-							? pageSize
-							: MAX_PAGE_ROWS
-						: showShortList
-						? pageSize ?? 5
-						: MAX_TOTAL_ROWS,
-					hiddenColumns: hiddenColumns,
-					sortBy: sortBy,
-				},
-				autoResetPage: false,
-				autoResetSortBy: false,
-				...options,
-			},
-			useSortBy,
-			usePagination,
-			useFlexLayout
-		) as TableWithPagination<object>
+	// FIXME: It is probably better to memoize columns per-component.
 
-		useEffect(() => {
-			setHiddenColumns(hiddenColumns)
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [])
+	const memoizedColumns = useMemo(
+		() => columns,
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		columnsDeps
+	)
 
-		// reset to the first page
-		// this fires when filters are applied that change the data
-		// if a filter is applied that reduces the data size below max pages for that filter, reset to the first page
-		useEffect(() => {
-			if (pageIndex > pageCount) {
-				gotoPage(0)
-			}
-		}, [pageIndex, pageCount, gotoPage])
+	const table = useReactTable<T>({
+		columns: memoizedColumns,
+		data,
+		enableHiding: true,
+		state: { sorting, columnVisibility, pagination },
+		onSortingChange: setSorting,
+		onPaginationChange: setPagination,
+		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+	})
 
-		const defaultRef = useRef(null)
+	const defaultRef = useRef(null)
 
-		return (
-			<>
-				<TableContainer>
-					<ReactTable
-						{...getTableProps()}
-						palette={palette}
-						$rounded={rounded}
-						$noBottom={noBottom}
-						className={className}
-					>
-						{headerGroups.map((headerGroup: any, index) => (
-							<div key={index} className="table-row" style={{ display: 'flex' }}>
-								{headerGroup.headers.map((column: any) => {
-									return (
-										<TableCellHead
-											key={column.id}
-											hideHeaders={hideHeaders}
-											{...column.getHeaderProps(
-												column.sortable ? column.getSortByToggleProps() : undefined
+	const handleRowClick = useCallback(
+		(row: Row<T>) => () => {
+			onTableRowClick?.(row)
+		},
+		[onTableRowClick]
+	)
+
+	return (
+		<TableContainer>
+			<ReactTable $rounded={rounded} $noBottom={noBottom} className={className}>
+				{table.getHeaderGroups().map((headerGroup) => (
+					<FlexDiv key={headerGroup.id} className="table-row">
+						{headerGroup.headers.map((header) => {
+							return (
+								<TableCellHead
+									key={header.id}
+									hideHeaders={!!hideHeaders}
+									style={{ width: header.getSize(), flex: header.getSize() }}
+									onClick={header.column.getToggleSortingHandler()}
+									$canSort={header.column.getCanSort()}
+								>
+									{flexRender(header.column.columnDef.header, header.getContext())}
+									{header.column.getCanSort() && (
+										<SortIconContainer>
+											{header.column.getIsSorted() ? (
+												header.column.getIsSorted() === 'desc' ? (
+													<StyledSortDownIcon />
+												) : (
+													<StyledSortUpIcon />
+												)
+											) : (
+												<>
+													<StyledSortUpIcon />
+													<StyledSortDownIcon />
+												</>
 											)}
-										>
-											{column.render('Header')}
-											{column.sortable && (
-												<SortIconContainer>
-													{column.isSorted ? (
-														column.isSortedDesc ? (
-															<StyledSortDownIcon />
-														) : (
-															<StyledSortUpIcon />
-														)
-													) : (
-														<>
-															<StyledSortUpIcon />
-															<StyledSortDownIcon />
-														</>
-													)}
-												</SortIconContainer>
-											)}
-										</TableCellHead>
-									)
-								})}
-							</div>
-						))}
-						{isLoading ? (
-							<Loader />
-						) : !!noResultsMessage && !isLoading && data.length === 0 ? (
-							noResultsMessage
-						) : page.length > 0 ? (
-							<TableBody className="table-body" {...getTableBodyProps()}>
-								{page.map((row, idx) => {
-									prepareRow(row)
-									const props = row.getRowProps()
-									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef
-									const handleClick = onTableRowClick ? () => onTableRowClick(row) : undefined
-									return (
-										<TableBodyRow
-											rowStyle={rowStyle}
-											localRef={localRef}
-											highlightRowsOnHover={highlightRowsOnHover}
-											row={row}
-											onClick={handleClick}
-											{...props}
-										/>
-									)
-								})}
-							</TableBody>
-						) : null}
-						{showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS) ? (
-							<Pagination
-								compact={compactPagination}
-								pageIndex={pageIndex}
-								pageCount={pageCount}
-								canNextPage={canNextPage}
-								canPreviousPage={canPreviousPage}
-								setPage={gotoPage}
-								previousPage={previousPage}
-								nextPage={nextPage}
-							/>
-						) : undefined}
-					</ReactTable>
-				</TableContainer>
-			</>
-		)
-	}
-)
+										</SortIconContainer>
+									)}
+								</TableCellHead>
+							)
+						})}
+					</FlexDiv>
+				))}
+				{isLoading ? (
+					<Loader />
+				) : !!noResultsMessage && data.length === 0 ? (
+					noResultsMessage
+				) : (
+					<TableBody className="table-body">
+						{table.getRowModel().rows.map((row, idx) => {
+							const localRef =
+								lastRef && idx === table.getState().pagination.pageSize - 1 ? lastRef : defaultRef
+							return (
+								<TableBodyRow
+									key={row.id}
+									localRef={localRef}
+									highlightRowsOnHover={highlightRowsOnHover}
+									row={row}
+									onClick={handleRowClick(row)}
+								/>
+							)
+						})}
+					</TableBody>
+				)}
+				{showPagination && data.length > table.getState().pagination.pageSize ? (
+					<Pagination
+						compact={compactPagination}
+						pageIndex={table.getState().pagination.pageIndex}
+						pageCount={table.getPageCount()}
+						canNextPage={table.getCanNextPage()}
+						canPreviousPage={table.getCanPreviousPage()}
+						setPage={table.setPageIndex}
+						previousPage={table.previousPage}
+						nextPage={table.nextPage}
+					/>
+				) : undefined}
+			</ReactTable>
+		</TableContainer>
+	)
+}
 
 const TableContainer = styled.div`
 	overflow-x: auto;
@@ -254,7 +201,7 @@ export const TableBody = styled.div`
 	overflow-x: visible;
 `
 
-export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
+export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean; $canSort: boolean }>`
 	user-select: none;
 	&:first-child {
 		padding-left: 18px;
@@ -263,6 +210,11 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 		padding-right: 18px;
 	}
 	${(props) => (props.hideHeaders ? `display: none` : '')}
+	${(props) =>
+		props.$canSort &&
+		css`
+			cursor: pointer;
+		`}
 `
 
 export const TableNoResults = styled.div`
@@ -291,7 +243,7 @@ const SortIconContainer = styled.span`
 	flex-direction: column;
 `
 
-const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBottom?: boolean }>`
+const ReactTable = styled.div<{ $rounded?: boolean; $noBottom?: boolean }>`
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -315,31 +267,29 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBo
 					border-right: none;
 			  `};
 
-	${(props) =>
-		props.palette === 'primary' &&
-		css`
-			${TableBody} {
-				max-height: calc(100% - ${CARD_HEIGHT_LG});
-				${media.lessThan('xxl')`
-					max-height: calc(100% - ${CARD_HEIGHT_MD});
-				`}
-			}
-			${TableCell} {
-				color: ${(props) => props.theme.colors.selectedTheme.text.value};
-				font-size: 13px;
-				height: ${CARD_HEIGHT_LG};
-				${media.lessThan('xxl')`
-					height: ${CARD_HEIGHT_MD};
-				`}
-				font-family: ${(props) => props.theme.fonts.mono};
-			}
-			${TableCellHead} {
-				color: ${(props) => props.theme.colors.selectedTheme.text.label};
-				font-family: ${(props) => props.theme.fonts.regular};
-				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-				height: 34px;
-			}
+	${TableBody} {
+		max-height: calc(100% - ${CARD_HEIGHT_LG});
+		${media.lessThan('xxl')`
+			max-height: calc(100% - ${CARD_HEIGHT_MD});
 		`}
+	}
+
+	${TableCell} {
+		color: ${(props) => props.theme.colors.selectedTheme.text.value};
+		font-size: 13px;
+		height: ${CARD_HEIGHT_LG};
+		${media.lessThan('xxl')`
+			height: ${CARD_HEIGHT_MD};
+		`}
+		font-family: ${(props) => props.theme.fonts.mono};
+	}
+
+	${TableCellHead} {
+		color: ${(props) => props.theme.colors.selectedTheme.text.label};
+		font-family: ${(props) => props.theme.fonts.regular};
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+		height: 34px;
+	}
 `
 
 const StyledSortDownIcon = styled(SortDownIcon)`
@@ -365,4 +315,4 @@ export const TableHeader = styled(Body)<{ $small?: boolean }>`
 		`}
 `
 
-export default Table
+export default genericMemo(Table)

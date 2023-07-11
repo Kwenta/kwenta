@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import ChangePercent from 'components/ChangePercent'
@@ -79,7 +78,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				<div>
 					<Table
 						data={data}
-						hiddenColumns={accountType === 'isolated_margin' ? ['tp-sl'] : []}
+						columnVisibility={{ 'tp-sl': accountType !== 'isolated_margin' }}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}
@@ -104,14 +103,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						highlightRowsOnHover
 						columns={[
 							{
-								Header: (
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-positions-table.market')}
 									</TableHeader>
 								),
-								accessor: 'market',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<any>) => {
+								accessorKey: 'market',
+								cell: (cellProps) => {
 									return (
 										<MarketContainer>
 											<IconContainer>
@@ -129,28 +127,26 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										</MarketContainer>
 									)
 								},
-								width: 180,
+								size: 180,
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>{t('dashboard.overview.futures-positions-table.side')}</TableHeader>
 								),
-								accessor: 'position',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<any>) => {
+								accessorKey: 'position',
+								cell: (cellProps) => {
 									return <PositionType side={cellProps.row.original.position.side} />
 								},
-								width: 70,
+								size: 70,
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-positions-table.notionalValue')}
 									</TableHeader>
 								),
-								accessor: 'notionalValue',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<any>) => {
+								accessorKey: 'notionalValue',
+								cell: (cellProps) => {
 									return (
 										<Currency.Price
 											price={cellProps.row.original.position.notionalValue}
@@ -158,59 +154,50 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										/>
 									)
 								},
-								width: 90,
+								size: 90,
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-positions-table.avg-entry')}
 									</TableHeader>
 								),
-								accessor: 'avgEntryPrice',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = {
-										suggestDecimals: true,
-									}
+								accessorKey: 'avgEntryPrice',
+								cell: (cellProps) => {
 									return cellProps.row.original.avgEntryPrice === undefined ? (
 										<Body>{NO_VALUE}</Body>
 									) : (
 										<Currency.Price
 											price={cellProps.row.original.avgEntryPrice}
-											formatOptions={formatOptions}
+											formatOptions={{ suggestDecimals: true }}
 										/>
 									)
 								},
-								width: 125,
+								size: 125,
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-positions-table.liquidationPrice')}
 									</TableHeader>
 								),
-								accessor: 'liquidationPrice',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = {
-										suggestDecimals: true,
-									}
+								accessorKey: 'liquidationPrice',
+								cell: (cellProps) => {
 									return (
 										<Currency.Price
 											price={cellProps.row.original.position.liquidationPrice}
-											formatOptions={formatOptions}
+											formatOptions={{ suggestDecimals: true }}
 										/>
 									)
 								},
-								width: 115,
+								size: 115,
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>
 								),
-								accessor: 'pnl',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<any>) => {
+								accessorKey: 'pnl',
+								cell: (cellProps) => {
 									return (
 										<PnlContainer>
 											<ChangePercent value={cellProps.row.original.position.pnlPct} />
@@ -220,13 +207,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										</PnlContainer>
 									)
 								},
-								width: 125,
+								size: 125,
 							},
 							{
-								Header: <TableHeader>TP/SL</TableHeader>,
-								accessor: 'tp-sl',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								header: () => <TableHeader>TP/SL</TableHeader>,
+								accessorKey: 'tp-sl',
+								cell: (cellProps) => {
 									return (
 										<FlexDivRowCentered>
 											<div style={{ marginRight: 10 }}>
@@ -254,13 +240,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										</FlexDivRowCentered>
 									)
 								},
-								width: 90,
+								size: 90,
 							},
 							{
-								Header: <TableHeader>Market Margin</TableHeader>,
-								accessor: 'margin',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<(typeof data)[number]>) => {
+								header: () => <TableHeader>Market Margin</TableHeader>,
+								accessorKey: 'margin',
+								cell: (cellProps) => {
 									return (
 										<FlexDivRowCentered>
 											<div style={{ marginRight: 10 }}>
@@ -274,7 +259,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										</FlexDivRowCentered>
 									)
 								},
-								width: 115,
+								size: 115,
 							},
 						]}
 					/>

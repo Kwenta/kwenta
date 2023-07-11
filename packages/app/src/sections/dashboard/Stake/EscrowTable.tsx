@@ -1,9 +1,7 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { EscrowData } from '@kwenta/sdk/types'
 import { truncateNumbers } from '@kwenta/sdk/utils'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
@@ -82,7 +80,6 @@ const EscrowTable = () => {
 	return (
 		<EscrowTableContainer $noPadding>
 			<DesktopOnlyView>
-				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
 					compactPagination
@@ -91,8 +88,8 @@ const EscrowTable = () => {
 					columnsDeps={columnsDeps}
 					columns={[
 						{
-							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
+							cell: (cellProps) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
@@ -100,80 +97,73 @@ const EscrowTable = () => {
 									onChange={handleOnChange(cellProps.row.index)}
 								/>
 							),
-							accessor: 'selected',
-							width: 40,
+							accessorKey: 'selected',
+							size: 40,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{cellProps.row.original.date}</TableCell>
-							),
-							accessor: 'date',
-							width: 65,
+							cell: (cellProps) => <TableCell>{cellProps.row.original.date}</TableCell>,
+							accessorKey: 'date',
+							size: 65,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>
 									<div>{t('dashboard.stake.tabs.escrow.time-until-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{cellProps.row.original.time}</TableCell>
-							),
-							accessor: 'timeUntilVestable',
-							width: 80,
+							cell: (cellProps) => <TableCell>{cellProps.row.original.time}</TableCell>,
+							accessorKey: 'timeUntilVestable',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>
 									<div>{t('dashboard.stake.tabs.escrow.immediately-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							cell: (cellProps) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.vestable, 4)}</TableCell>
 							),
-							accessor: 'immediatelyVestable',
-							width: 80,
+							accessorKey: 'immediatelyVestable',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							cell: (cellProps) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
 							),
-							accessor: 'amount',
-							width: 80,
+							accessorKey: 'amount',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>
 									<div>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							cell: (cellProps) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
 							),
-							accessor: 'earlyVestFee',
-							width: 80,
+							accessorKey: 'earlyVestFee',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{cellProps.row.original.status}</TableCell>
-							),
-							accessor: 'status',
-							width: 70,
+							cell: (cellProps) => <TableCell>{cellProps.row.original.status}</TableCell>,
+							accessorKey: 'status',
+							size: 70,
 						},
 					]}
 				/>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
 					compactPagination
@@ -182,8 +172,8 @@ const EscrowTable = () => {
 					columnsDeps={columnsDeps}
 					columns={[
 						{
-							Header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							header: () => <input type="checkbox" checked={checkAllState} onChange={selectAll} />,
+							cell: (cellProps) => (
 								<input
 									key={cellProps.row.index}
 									type="checkbox"
@@ -191,38 +181,36 @@ const EscrowTable = () => {
 									onChange={handleOnChange(cellProps.row.index)}
 								/>
 							),
-							accessor: 'selected',
-							width: 40,
+							accessorKey: 'selected',
+							size: 40,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							cell: (cellProps) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.amount, 4)}</TableCell>
 							),
-							accessor: 'amount',
-							width: 80,
+							accessorKey: 'amount',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							cell: (cellProps) => (
 								<TableCell>{truncateNumbers(cellProps.row.original.fee, 4)}</TableCell>
 							),
-							accessor: 'earlyVestFee',
-							width: 80,
+							accessorKey: 'earlyVestFee',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader $small>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{cellProps.row.original.status}</TableCell>
-							),
-							accessor: 'status',
-							width: 70,
+							cell: (cellProps) => <TableCell>{cellProps.row.original.status}</TableCell>,
+							accessorKey: 'status',
+							size: 70,
 						},
 					]}
 				/>
@@ -275,7 +263,7 @@ const StyledTable = styled(Table)`
 			padding-left: 14px;
 		}
 	}
-`
+` as typeof Table
 
 const TableCell = styled.div`
 	font-size: 11px;

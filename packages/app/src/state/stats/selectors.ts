@@ -1,6 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit'
 
 import { RootState } from 'state/store'
+import { FetchStatus } from 'state/types'
+
+import { unserializeLeaderboard } from './utils'
 
 export const selectSelectedTimeframe = (state: RootState) => state.stats.selectedTimeframe
 
@@ -19,3 +22,13 @@ export const selectMinTimestamp = createSelector(
 		return Math.floor(currentTimestamp - timeframeSeconds)
 	}
 )
+
+export const selectLeaderboard = createSelector(
+	(state: RootState) => state.stats.leaderboard,
+	unserializeLeaderboard
+)
+
+export const selectLeaderboardLoading = (state: RootState) =>
+	state.stats.queryStatuses.leaderboard.status === FetchStatus.Loading
+
+export const selectLeaderboardSearchTerm = (state: RootState) => state.stats.leaderboardSearchTerm

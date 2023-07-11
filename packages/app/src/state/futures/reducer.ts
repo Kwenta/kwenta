@@ -361,7 +361,10 @@ const futuresSlice = createSlice({
 		setCrossMarginOrderCancelling: (state, { payload }: PayloadAction<number | undefined>) => {
 			state.crossMargin.cancellingOrder = payload
 		},
-		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
+		setSelectedTrader: (
+			state,
+			action: PayloadAction<{ trader: string; traderEns?: string | null } | undefined>
+		) => {
 			state.leaderboard.selectedTrader = action.payload
 		},
 		incrementIsolatedPreviewCount: (state) => {

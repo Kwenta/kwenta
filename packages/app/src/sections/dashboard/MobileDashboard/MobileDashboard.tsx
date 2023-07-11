@@ -1,12 +1,15 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FC } from 'react'
+import { ExchangeTokens } from 'types/synths'
 
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 
-import OpenPositions, { OpenPositionsProps } from './OpenPositions'
+import OpenPositions from './OpenPositions'
 import Portfolio from './Portfolio'
 
-type MobileDashboardProps = Pick<OpenPositionsProps, 'exchangeTokens'>
+type MobileDashboardProps = {
+	exchangeTokens: ExchangeTokens
+}
 
 const MobileDashboard: FC<MobileDashboardProps> = ({ exchangeTokens }) => {
 	const exchangeTokenBalances = exchangeTokens.reduce(
