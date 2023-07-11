@@ -188,7 +188,7 @@ const Trades = memo(() => {
 							<StyledLinkIcon />
 						</StyledExternalLink>
 					),
-					size: 25,
+					size: 80,
 					enableSorting: false,
 				},
 			]}

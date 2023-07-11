@@ -48,7 +48,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const [activeTier, setActiveTier] = useState<Tier>('bronze')
 	const [competitionRound, setCompetitionRound] = useState<CompetitionRound>()
 	const [searchInput, setSearchInput] = useState('')
-	// const [searchTerm, setSearchTerm] = useState('')
 	const searchTerm = useAppSelector(selectLeaderboardSearchTerm)
 	const [searchAddress, setSearchAddress] = useState('')
 	const selectedTrader = useAppSelector(selectSelectedTrader)
