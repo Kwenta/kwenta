@@ -1066,3 +1066,6 @@ export const selectMarketSuspended = createSelector(
 	selectMarketInfo,
 	(marketInfo) => marketInfo?.isSuspended
 )
+
+export const selectHistoricalFundingRatePeriod = (state: RootState) =>
+	state.futures.historicalFundingRatePeriod

@@ -1,3 +1,4 @@
+import { PERIOD_IN_SECONDS, Period } from '@kwenta/sdk/constants'
 import {
 	FuturesPosition,
 	FuturesPositionHistory,
@@ -137,8 +138,8 @@ export const fetchFuturesPositionHistory = createAsyncThunk<void, void, ThunkCon
 	async (_, { getState, dispatch }) => {
 		const accountType = selectFuturesAccount(getState())
 		accountType === FuturesMarginType.CROSS_MARGIN
-			? dispatch(fetchPositionHistoryV3)
-			: dispatch(fetchPositionHistoryV2)
+			? dispatch(fetchPositionHistoryV3())
+			: dispatch(fetchPositionHistoryV2())
 	}
 )
 
@@ -214,9 +215,12 @@ export const executeDelayedOrder = createAsyncThunk<void, ExecuteDelayedOrderInp
 
 export const fetchFundingRatesHistory = createAsyncThunk<
 	{ marketAsset: FuturesMarketAsset; rates: any },
-	FuturesMarketAsset,
+	{ marketAsset: FuturesMarketAsset; period: Period },
 	ThunkConfig
->('futures/fetchFundingRatesHistory', async (marketAsset, { extra: { sdk } }) => {
-	const rates = await sdk.futures.getMarketFundingRatesHistory(marketAsset)
+>('futures/fetchFundingRatesHistory', async ({ marketAsset, period }, { extra: { sdk } }) => {
+	const rates = await sdk.futures.getMarketFundingRatesHistory(
+		marketAsset,
+		PERIOD_IN_SECONDS[period]
+	)
 	return { marketAsset, rates }
 })

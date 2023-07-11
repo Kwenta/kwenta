@@ -1,0 +1,42 @@
+name: "Publish SDK"
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    name: Publish SDK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/sdk
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          always-auth: true
+          node-version: 16.x
+          registry-url: https://registry.npmjs.org
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: true
+
+      - name: Build code
+        run: pnpm build
+      
+      - name: Publish
+        run: |
+            diff <(npx npm info . --json | jq '."dist-tags".latest') <(cat package.json | jq '.version') || (pnpm publish --no-git-checks --access public)
+        env:
+          NPM_TOKEN: ${{ secrets.NODE_TOKEN }}

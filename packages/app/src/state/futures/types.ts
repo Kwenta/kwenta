@@ -57,6 +57,7 @@ export type FuturesState = {
 	selectedInputDenomination: InputCurrencyDenomination
 	selectedInputHours: number
 	selectedChart: 'price' | 'funding'
+	historicalFundingRatePeriod: Period
 	preferences: {
 		showHistory?: boolean
 	}

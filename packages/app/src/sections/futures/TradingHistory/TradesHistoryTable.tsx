@@ -14,6 +14,7 @@ import { useAppSelector } from 'state/hooks'
 
 type TradesHistoryTableProps = {
 	mobile?: boolean
+	display?: boolean
 }
 
 enum TableColumnAccessor {
@@ -22,7 +23,7 @@ enum TableColumnAccessor {
 	Time = 'time',
 }
 
-const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
+const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) => {
 	const { t } = useTranslation()
 	const marketKey = useAppSelector(selectMarketKey)
 	const futuresTradesQuery = useGetFuturesTrades(marketKey)
@@ -97,7 +98,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 	}
 
 	return (
-		<HistoryContainer mobile={mobile}>
+		<HistoryContainer $display={mobile || display} mobile={mobile}>
 			<div style={{ height: '100%' }}>
 				{/* @ts-expect-error */}
 				<StyledTable
@@ -178,7 +179,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile }) => {
 
 export default TradesHistoryTable
 
-const HistoryContainer = styled.div<{ mobile?: boolean }>`
+const HistoryContainer = styled.div<{ mobile?: boolean; $display?: boolean }>`
 	box-sizing: border-box;
 	border-left: ${(props) => props.theme.colors.selectedTheme.border};
 	height: 100%;
@@ -192,6 +193,12 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 			border: none;
 			border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 		`};
+
+	${(props) =>
+		!props.$display &&
+		css`
+			display: none;
+		`}
 `
 
 const TableAlignment = css`

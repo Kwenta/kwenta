@@ -53,7 +53,7 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Consider experimenting with WebSockets for realtime data (again).
 - [ ] Remove walletAddress from connector and change references to the redux state wallet, this means we're always taking the sdk as source of truth for the wallet and avoids race conditions where queries are attempted before the signer is set.
 - [ ] Add query statuses for all key queries and create derived query statuses for components which rely on completion of multiple queries
-- [ ] Make all sdk number params consistent, e.g. use Wei everywhere insreads of BigNumber or string
+- [ ] Make all sdk number params consistent, e.g. use Wei everywhere instead of BigNumber or string
 - [ ] Remove Duplicated types.
 - [ ] Create a standard way of passing in numeric values (particularly amounts) to the SDK. Weigh pros and cons of (`Wei`, `ethers.BigNumber` and `string`).
 - [ ] Create interfaces for all the services, so we don't have to colocate method types and logic, especially when the types are verbose.
