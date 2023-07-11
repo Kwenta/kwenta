@@ -1,4 +1,5 @@
 import { FuturesMarketKey } from '@kwenta/sdk/types'
+import styled from 'styled-components'
 
 import PencilButton from 'components/Button/PencilButton'
 import { setShowPositionModal } from 'state/app/reducer'
@@ -14,16 +15,24 @@ export default function EditPositionButton({
 }) {
 	const dispatch = useAppDispatch()
 	return (
-		<PencilButton
-			width={9}
-			onClick={() =>
-				dispatch(
-					setShowPositionModal({
-						type: modalType,
-						marketKey: marketKey,
-					})
-				)
-			}
-		/>
+		<Container>
+			<PencilButton
+				width={9}
+				onClick={() =>
+					dispatch(
+						setShowPositionModal({
+							type: modalType,
+							marketKey: marketKey,
+						})
+					)
+				}
+			/>
+		</Container>
 	)
 }
+
+const Container = styled.button`
+	border: 0;
+	background: none;
+	padding: 0;
+`
