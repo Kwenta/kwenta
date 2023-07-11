@@ -15,8 +15,8 @@ import ROUTES from 'constants/routes'
 import { selectTradePreview } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import {
-	selectStakedEscrowedKwentaBalance,
-	selectStakedKwentaBalance,
+	selectStakedEscrowedKwentaBalanceV2,
+	selectStakedKwentaBalanceV2,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
 
@@ -36,8 +36,8 @@ export const TradePanelFeeInfo = memo(() => {
 const TradingRewardRow = memo(() => {
 	const { t } = useTranslation()
 	const walletAddress = useAppSelector(selectWallet)
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
 
 	const isRewardEligible = useMemo(
 		() => !!walletAddress && stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0),
