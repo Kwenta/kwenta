@@ -19,8 +19,6 @@
 		"@eth-optimism/contracts": "0.5.37",
 		"@ethersproject/bignumber": "^5.7.0",
 		"@ethersproject/providers": "^5.7.2",
-		"@gnosis.pm/safe-apps-provider": "^0.14.0",
-		"@gnosis.pm/safe-apps-sdk": "^7.8.0",
 		"@kwenta/sdk": "workspace:*",
 		"@material-ui/core": "^4.12.4",
 		"@pythnetwork/pyth-evm-js": "1.17.0",
