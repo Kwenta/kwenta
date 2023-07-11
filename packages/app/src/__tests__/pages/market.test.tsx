@@ -49,7 +49,7 @@ describe('Futures market page - smart margin', () => {
 	test('Calculates correct fees from trade preview', async () => {
 		const { findByTestId, findByText } = render(
 			<MockProviders
-				route="market/?accountType=cross_margin&asset=sETH"
+				route="market/?accountType=smart_margin&asset=sETH"
 				preloadedState={PRELOADED_STATE}
 			>
 				<Market />
@@ -69,7 +69,7 @@ describe('Futures market page - smart margin', () => {
 	test('Submits LONG order with correct desired fill price', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
-			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
 		)
@@ -103,7 +103,7 @@ describe('Futures market page - smart margin', () => {
 	test('Submits SHORT order with correct desired fill price', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
-			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
 		)
@@ -146,7 +146,7 @@ describe('Futures market page - smart margin', () => {
 			preloadedStateWithSmartMarginAccount(mockSmartMarginAccount('1000000'))
 		)
 		const { findByTestId, findByText } = render(
-			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
 		)
@@ -166,7 +166,7 @@ describe('Futures market page - smart margin', () => {
 		sdk.futures.getMarkets = () => Promise.resolve([...SDK_MARKETS] as FuturesMarket[])
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
-			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
 		)
