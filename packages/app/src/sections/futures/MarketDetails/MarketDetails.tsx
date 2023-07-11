@@ -24,7 +24,7 @@ import media from 'styles/media'
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles'
 
 import ChartToggle from './ChartToggle'
-import HistoryToggle from './HisotryToggle'
+import HistoryToggle from './HistoryToggle'
 import HoursToggle from './HoursToggle'
 import MarketDetail, { MarketDetailValue } from './MarketDetail'
 import { MarketDataKey } from './utils'

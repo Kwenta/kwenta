@@ -2,6 +2,8 @@ import KwentaSDK from '@kwenta/sdk'
 import {
 	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
 	ORDER_KEEPER_ETH_DEPOSIT,
+	PERIOD_IN_SECONDS,
+	Period,
 	SL_TP_MAX_SIZE,
 	ZERO_ADDRESS,
 	ZERO_WEI,
@@ -1887,10 +1889,13 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 
 export const fetchFundingRatesHistory = createAsyncThunk<
 	{ marketAsset: FuturesMarketAsset; rates: any },
-	FuturesMarketAsset,
+	{ marketAsset: FuturesMarketAsset; period: Period },
 	ThunkConfig
->('futures/fetchFundingRatesHistory', async (marketAsset, { extra: { sdk } }) => {
-	const rates = await sdk.futures.getMarketFundingRatesHistory(marketAsset)
+>('futures/fetchFundingRatesHistory', async ({ marketAsset, period }, { extra: { sdk } }) => {
+	const rates = await sdk.futures.getMarketFundingRatesHistory(
+		marketAsset,
+		PERIOD_IN_SECONDS[period]
+	)
 	return { marketAsset, rates }
 })
 
