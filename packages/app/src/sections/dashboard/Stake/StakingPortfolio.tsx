@@ -9,11 +9,6 @@ import MigrationSteps from './MigrationSteps'
 import { StakingHeading } from './StakingHeading'
 import { StakingCards } from './types'
 
-export enum StakeTab {
-	Staking = 'staking',
-	Escrow = 'escrow',
-}
-
 type StakingPortfolioProps = {
 	title: string
 	cardsInfo: StakingCards[]

@@ -34,3 +34,9 @@ export type RewardsInfo = {
 	labels: RewardsCard[]
 	info: RewardsCard[]
 }
+
+export enum StakeTab {
+	Staking = 'staking',
+	Escrow = 'escrow',
+	Delegate = 'delegate',
+}
