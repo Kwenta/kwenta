@@ -167,7 +167,6 @@ const EscrowTable = () => {
 					columnsDeps={columnsDeps}
 					paginationVariant="staking"
 					paginationExtra={<EscrowStatsContainer />}
-					paginationOutsideTable={true}
 					columns={[
 						{
 							Header: () => (
@@ -289,7 +288,6 @@ const EscrowTable = () => {
 					showPagination
 					columnsDeps={columnsDeps}
 					paginationVariant="default"
-					paginationOutsideTable={false}
 					paginationExtra={<EscrowStatsContainer />}
 					columns={[
 						{

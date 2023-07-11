@@ -85,7 +85,6 @@ type TableProps = {
 	rounded?: boolean
 	noBottom?: boolean
 	paginationVariant?: 'default' | 'staking'
-	paginationOutsideTable?: boolean
 	paginationExtra?: React.ReactNode
 }
 
@@ -113,7 +112,6 @@ export const Table: FC<TableProps> = memo(
 		rounded = true,
 		noBottom = false,
 		paginationVariant = 'default',
-		paginationOutsideTable = false,
 		paginationExtra,
 	}) => {
 		const memoizedColumns = useMemo(
@@ -169,20 +167,9 @@ export const Table: FC<TableProps> = memo(
 		}, [pageIndex, pageCount, gotoPage])
 
 		const defaultRef = useRef(null)
-		const showPaginationInsideTable = useMemo(
-			() =>
-				showPagination &&
-				!showShortList &&
-				(paginationExtra || data.length > (pageSize ?? MAX_PAGE_ROWS)) &&
-				!paginationOutsideTable,
-			[
-				data.length,
-				pageSize,
-				paginationExtra,
-				paginationOutsideTable,
-				showPagination,
-				showShortList,
-			]
+		const shouldShowPagination = useMemo(
+			() => showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS),
+			[data.length, pageSize, showPagination, showShortList]
 		)
 
 		return (
@@ -252,7 +239,7 @@ export const Table: FC<TableProps> = memo(
 								})}
 							</TableBody>
 						) : null}
-						{showPaginationInsideTable ? (
+						{(shouldShowPagination || paginationExtra) && paginationVariant !== 'staking' ? (
 							<Pagination
 								compact={compactPagination}
 								pageIndex={pageIndex}
@@ -268,7 +255,7 @@ export const Table: FC<TableProps> = memo(
 						) : undefined}
 					</ReactTable>
 				</TableContainer>
-				{paginationOutsideTable && (
+				{paginationVariant === 'staking' ? (
 					<Pagination
 						compact={compactPagination}
 						pageIndex={pageIndex}
@@ -281,7 +268,7 @@ export const Table: FC<TableProps> = memo(
 						variant={paginationVariant}
 						extra={paginationExtra}
 					/>
-				)}
+				) : null}
 			</>
 		)
 	}
