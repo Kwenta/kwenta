@@ -21,17 +21,17 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 
-import CrossMarginFAQ from './CrossMarginFAQ'
+import SmartMarginFAQ from './SmartMarginFAQ'
 
 type Props = {
 	isOpen: boolean
 }
 
-export default function CrossMarginOnboard({ isOpen }: Props) {
+export default function SmartMarginOnboard({ isOpen }: Props) {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const crossMarginAvailable = useAppSelector(selectSmartMarginSupportedNetwork)
-	const crossMarginAccount = useAppSelector(selectSmartMarginAccount)
+	const smartMarginAvailable = useAppSelector(selectSmartMarginSupportedNetwork)
+	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
 	const queryStatus = useAppSelector(selectSmartMarginAccountQueryStatus)
 	const depositApproved = useAppSelector(selectSmartMarginDepositApproved)
 	const txProcessing = useAppSelector(selectSubmittingFuturesTx)
@@ -64,10 +64,10 @@ export default function CrossMarginOnboard({ isOpen }: Props) {
 	}
 
 	const renderContent = () => {
-		if (!crossMarginAvailable) {
+		if (!smartMarginAvailable) {
 			return <ErrorView message={t('futures.modals.onboard.unsupported-network')} />
 		}
-		if (!crossMarginAccount && queryStatus.status === FetchStatus.Loading) {
+		if (!smartMarginAccount && queryStatus.status === FetchStatus.Loading) {
 			return (
 				<LoaderContainer>
 					<Loader />
@@ -90,13 +90,13 @@ export default function CrossMarginOnboard({ isOpen }: Props) {
 			)
 		}
 
-		if (crossMarginAccount && !depositApproved) {
+		if (smartMarginAccount && !depositApproved) {
 			return (
 				<>
 					<Intro>{t('futures.modals.onboard.step2-intro')}</Intro>
 					<div>
 						<FAQHeader>FAQ:</FAQHeader>
-						<CrossMarginFAQ />
+						<SmartMarginFAQ />
 					</div>
 					{renderProgress(2)}
 					<StyledButton variant="flat" onClick={onClickApprove} disabled={txProcessing}>
@@ -141,7 +141,7 @@ export default function CrossMarginOnboard({ isOpen }: Props) {
 				<Intro>{t('futures.modals.onboard.step1-intro')}</Intro>
 				<div>
 					<FAQHeader>FAQ:</FAQHeader>
-					<CrossMarginFAQ />
+					<SmartMarginFAQ />
 				</div>
 				{renderProgress(1)}
 				<StyledButton noOutline onClick={createAccount} disabled={txProcessing}>

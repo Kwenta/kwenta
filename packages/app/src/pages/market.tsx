@@ -11,7 +11,7 @@ import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useWindowSize from 'hooks/useWindowSize'
 import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal'
-import CrossMarginOnboard from 'sections/futures/CrossMarginOnboard'
+import SmartMarginOnboard from 'sections/futures/SmartMarginOnboard'
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal'
 import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal'
 import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal'
@@ -95,7 +95,7 @@ const Market: MarketComponent = () => {
 	return (
 		<>
 			<MarketHead />
-			<CrossMarginOnboard isOpen={showOnboard} />
+			<SmartMarginOnboard isOpen={showOnboard} />
 			<DesktopOnlyView>
 				{lessThanWidth('lg') ? (
 					<PageContent>

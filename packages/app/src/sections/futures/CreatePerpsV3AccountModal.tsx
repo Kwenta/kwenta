@@ -23,7 +23,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 
-import CrossMarginFAQ from './CrossMarginOnboard/CrossMarginFAQ'
+import CrossMarginFAQ from './SmartMarginOnboard/SmartMarginFAQ'
 
 type Props = {
 	isOpen: boolean
