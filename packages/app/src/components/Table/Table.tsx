@@ -155,7 +155,7 @@ const Table = <T,>({
 					))}
 					{isLoading ? (
 						<Loader />
-					) : !!noResultsMessage && !isLoading && data.length === 0 ? (
+					) : !!noResultsMessage && data.length === 0 ? (
 						noResultsMessage
 					) : (
 						<TableBody className="table-body">
