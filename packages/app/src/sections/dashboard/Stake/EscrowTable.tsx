@@ -15,7 +15,6 @@ import { DesktopLargeOnlyView, DesktopSmallOnlyView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
-import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewards, vestEscrowedRewardsV2 } from 'state/staking/actions'
 import { setSelectedEscrowVersion } from 'state/staking/reducer'
@@ -158,7 +157,7 @@ const EscrowTable = () => {
 	)
 
 	return (
-		<EscrowTableContainer $noPadding>
+		<EscrowTableContainer>
 			<DesktopLargeOnlyView>
 				{/*@ts-expect-error*/}
 				<StyledTable
@@ -432,7 +431,7 @@ const StyledBadge = styled(Badge)`
 	padding: 0 6px;
 `
 
-const EscrowTableContainer = styled(StakingCard)`
+const EscrowTableContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;

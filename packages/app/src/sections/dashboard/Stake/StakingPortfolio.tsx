@@ -1,13 +1,13 @@
 import { FC, memo } from 'react'
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import Button from 'components/Button/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
-import { Body, Heading } from 'components/Text'
-import { EXTERNAL_LINKS } from 'constants/links'
+import { Body } from 'components/Text'
 import { StakingCards } from 'pages/dashboard/staking'
 import media from 'styles/media'
+
+import MigrationSteps from './MigrationSteps'
+import { StakingHeading } from './StakingHeading'
 
 export enum StakeTab {
 	Staking = 'staking',
@@ -15,50 +15,41 @@ export enum StakeTab {
 }
 
 type StakingPortfolioProps = {
-	cards: StakingCards[]
+	title: string
+	cardsInfo: StakingCards[]
+	isMigrationCompleted?: boolean
 }
 
-const StakingPortfolio: FC<StakingPortfolioProps> = memo(({ cards }) => {
-	const { t } = useTranslation()
-
-	return (
-		<StakingPortfolioContainer>
-			<StakingHeading>
-				<FlexDivCol rowGap="5px">
-					<StyledHeading variant="h4">{t('dashboard.stake.portfolio.title')}</StyledHeading>
-				</FlexDivCol>
-				<StyledButton
-					size="xsmall"
-					isRounded
-					textTransform="none"
-					onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}
-				>
-					{t('dashboard.stake.docs')}
-				</StyledButton>
-			</StakingHeading>
-			<CardsContainer>
-				{cards.map(({ category, card, onClick, icon }, i) => (
-					<StyledFlexDivCol rowGap="15px" key={i} onClick={onClick}>
-						<LabelContainer size="large">
-							{category}
-							{icon}
-						</LabelContainer>
-						<FlexDivRow columnGap="15px" justifyContent="flex-start">
-							{card.map(({ key, title, value, onClick }) => (
-								<FlexDivCol key={key} onClick={onClick} rowGap="5px">
-									<Body color="secondary">{title}</Body>
-									<Body size="large" color="preview">
-										{value}
-									</Body>
-								</FlexDivCol>
-							))}
-						</FlexDivRow>
-					</StyledFlexDivCol>
-				))}
-			</CardsContainer>
-		</StakingPortfolioContainer>
-	)
-})
+const StakingPortfolio: FC<StakingPortfolioProps> = memo(
+	({ title, cardsInfo, isMigrationCompleted = true }) => {
+		return (
+			<StakingPortfolioContainer>
+				<StakingHeading title={title} />
+				{!isMigrationCompleted && <MigrationSteps />}
+				<CardsContainer>
+					{cardsInfo.map(({ category, card, onClick, icon }, i) => (
+						<StyledFlexDivCol rowGap="15px" key={i} onClick={onClick}>
+							<LabelContainer size="large">
+								{category}
+								{icon}
+							</LabelContainer>
+							<FlexDivRow columnGap="15px" justifyContent="flex-start">
+								{card.map(({ key, title, value, onClick }) => (
+									<FlexDivCol key={key} onClick={onClick} rowGap="5px">
+										<Body color="secondary">{title}</Body>
+										<Body size="large" color="preview">
+											{value}
+										</Body>
+									</FlexDivCol>
+								))}
+							</FlexDivRow>
+						</StyledFlexDivCol>
+					))}
+				</CardsContainer>
+			</StakingPortfolioContainer>
+		)
+	}
+)
 
 const LabelContainer = styled(Body)`
 	display: flex;
@@ -76,18 +67,6 @@ const StyledFlexDivCol = styled(FlexDivCol)`
 	${media.lessThan('lg')`
 		width: 135px;
 	`}
-`
-
-const StyledButton = styled(Button)`
-	border-width: 0px;
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
-`
-const StyledHeading = styled(Heading)`
-	font-weight: 400;
-`
-
-const StakingHeading = styled(FlexDivRowCentered)`
-	margin-bottom: 30px;
 `
 
 const StakingPortfolioContainer = styled.div`

@@ -3,10 +3,12 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import HelpIcon from 'assets/svg/app/question-mark.svg'
 import { NO_VALUE } from 'constants/placeholder'
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
+import EscrowTable from 'sections/dashboard/Stake/EscrowTable'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
 import { useFetchStakeMigrateData } from 'state/futures/hooks'
@@ -23,8 +25,7 @@ import {
 	selectStakingMigrationRequired,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
-
-import MigratePage from './migrate'
+import media from 'styles/media'
 
 type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
@@ -182,18 +183,124 @@ const StakingPage: StakingComponent = () => {
 		]
 	)
 
-	return isMigrationCompleted ? (
+	const migrationInfo: StakingCards[] = useMemo(
+		() => [
+			{
+				category: t('dashboard.stake.portfolio.balance.title'),
+				card: [
+					{
+						key: 'balance-liquid',
+						title: t('dashboard.stake.portfolio.balance.liquid'),
+						value: truncateNumbers(kwentaBalance, 2),
+					},
+					{
+						key: 'balance-staked',
+						title: t('dashboard.stake.portfolio.balance.staked'),
+						value: truncateNumbers(stakedKwentaBalance, 2),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.rewards.title'),
+				card: [
+					{
+						key: 'rewards-claimable',
+						title: t('dashboard.stake.portfolio.rewards.staking'),
+						value: truncateNumbers(claimableBalance, 2),
+					},
+					{
+						key: 'rewards-trading',
+						title: t('dashboard.stake.portfolio.rewards.trading'),
+						value: truncateNumbers(kwentaRewards, 4),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.escrow.title-v2'),
+				card: [
+					{
+						key: 'escrow-staked',
+						title: t('dashboard.stake.portfolio.escrow.staked'),
+						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+					},
+					{
+						key: 'escrow-vestable',
+						title: t('dashboard.stake.portfolio.escrow.vestable'),
+						value: truncateNumbers(totalVestable, 2),
+					},
+				],
+			},
+			{
+				category: t('dashboard.stake.portfolio.escrow.title-v1'),
+				card: [
+					{
+						key: 'escrow-staked',
+						title: t('dashboard.stake.portfolio.escrow.staked'),
+						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+					},
+					{
+						key: 'escrow-vestable',
+						title: t('dashboard.stake.portfolio.escrow.vestable'),
+						value: truncateNumbers(totalVestable, 2),
+					},
+				],
+			},
+		],
+		[
+			claimableBalance,
+			kwentaBalance,
+			kwentaRewards,
+			stakedEscrowedKwentaBalance,
+			stakedKwentaBalance,
+			t,
+			totalVestable,
+		]
+	)
+
+	const { title, cardsInfo, stakingComponent } = useMemo(() => {
+		if (isMigrationCompleted) {
+			return {
+				title: t('dashboard.stake.portfolio.title'),
+				cardsInfo: stakingInfo,
+				stakingComponent: <StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />,
+			}
+		} else {
+			return {
+				title: t('dashboard.stake.tabs.migrate.title'),
+				cardsInfo: migrationInfo,
+				stakingComponent: (
+					<>
+						<TableContainer>
+							<EscrowTable />
+						</TableContainer>
+					</>
+				),
+			}
+		}
+	}, [currentTab, handleChangeTab, isMigrationCompleted, migrationInfo, stakingInfo, t])
+
+	return (
 		<>
 			<Head>
 				<title>{t('dashboard-stake.page-title')}</title>
 			</Head>
-			<StakingPortfolio cards={stakingInfo} />
-			<StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />
+			<StakingPortfolio
+				title={title}
+				cardsInfo={cardsInfo}
+				isMigrationCompleted={isMigrationCompleted}
+			/>
+			{stakingComponent}
 		</>
-	) : (
-		<MigratePage />
 	)
 }
+
+const TableContainer = styled.div`
+	margin-top: 30px;
+	${media.lessThan('lg')`
+		margin-top: 0px;
+		padding: 15px;
+	`}
+`
 
 StakingPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>
 
