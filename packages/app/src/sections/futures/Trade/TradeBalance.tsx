@@ -167,8 +167,8 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 								dispatch(
 									setOpenModal(
 										accountType === FuturesMarginType.CROSS_MARGIN
-											? 'futures_isolated_transfer'
-											: 'futures_cross_withdraw'
+											? 'futures_deposit_withdraw_cross_margin'
+											: 'futures_withdraw_smart_margin'
 									)
 								)
 							}}

@@ -82,7 +82,7 @@ const ManagePosition: React.FC = () => {
 			setOpenModal(
 				selectedAccountType === FuturesMarginType.SMART_MARGIN
 					? 'futures_confirm_smart_margin_trade'
-					: 'futures_confirm_isolated_margin_trade'
+					: 'futures_confirm_cross_margin_trade'
 			)
 		)
 	}, [selectedAccountType, smartMarginAccount, dispatch])

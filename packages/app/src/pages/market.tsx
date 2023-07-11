@@ -124,18 +124,18 @@ const Market: MarketComponent = () => {
 			)}
 			{showPositionModal?.type === 'futures_edit_position_size' && <EditPositionSizeModal />}
 			{showPositionModal?.type === 'futures_edit_position_margin' && <EditPositionMarginModal />}
-			{openModal === 'futures_isolated_transfer' && (
+			{openModal === 'futures_deposit_withdraw_cross_margin' && (
 				<TransferIsolatedMarginModal
 					defaultTab="deposit"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
-			{openModal === 'futures_cross_withdraw' && (
+			{openModal === 'futures_withdraw_smart_margin' && (
 				<WithdrawSmartMargin onDismiss={() => dispatch(setOpenModal(null))} />
 			)}
 
 			{openModal === 'futures_confirm_smart_margin_trade' && <TradeConfirmationModalCrossMargin />}
-			{openModal === 'futures_confirm_isolated_margin_trade' && <DelayedOrderConfirmationModal />}
+			{openModal === 'futures_confirm_cross_margin_trade' && <DelayedOrderConfirmationModal />}
 		</>
 	)
 }
