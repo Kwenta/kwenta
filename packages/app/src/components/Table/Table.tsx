@@ -120,8 +120,8 @@ const Table = <T,>({
 	return (
 		<TableContainer>
 			<ReactTable $rounded={rounded} $noBottom={noBottom} className={className}>
-				{table.getHeaderGroups().map((headerGroup, index) => (
-					<FlexDiv key={index} className="table-row">
+				{table.getHeaderGroups().map((headerGroup) => (
+					<FlexDiv key={headerGroup.id} className="table-row">
 						{headerGroup.headers.map((header) => {
 							return (
 								<TableCellHead

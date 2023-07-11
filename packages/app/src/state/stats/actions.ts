@@ -5,11 +5,15 @@ import { notifyError } from 'components/ErrorNotifier'
 import { ThunkConfig } from 'state/types'
 import logError from 'utils/logError'
 
+import { selectLeaderboardSearchTerm } from './selectors'
+
 export const fetchLeaderboard = createAsyncThunk<
 	Awaited<ReturnType<KwentaSDK['stats']['getLeaderboard']>>,
-	string,
+	void,
 	ThunkConfig
->('stats/fetchLeaderboard', async (searchTerm, { extra: { sdk } }) => {
+>('stats/fetchLeaderboard', async (_, { getState, extra: { sdk } }) => {
+	const searchTerm = selectLeaderboardSearchTerm(getState())
+
 	try {
 		return await sdk.stats.getLeaderboard(searchTerm)
 	} catch (error) {

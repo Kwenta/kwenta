@@ -14,6 +14,7 @@ export const STATS_INITIAL_STATE: StatsState = {
 	},
 	selectedTimeframe: '1M',
 	leaderboard: DEFAULT_LEADERBOARD_DATA,
+	leaderboardSearchTerm: '',
 }
 
 const statsSlice = createSlice({
@@ -22,6 +23,9 @@ const statsSlice = createSlice({
 	reducers: {
 		setSelectedTimeframe: (state, action: PayloadAction<StatsTimeframe>) => {
 			state.selectedTimeframe = action.payload
+		},
+		setLeaderboardSearchTerm: (state, action: PayloadAction<string>) => {
+			state.leaderboardSearchTerm = action.payload
 		},
 	},
 	extraReducers: (builder) => {
@@ -41,6 +45,6 @@ const statsSlice = createSlice({
 	},
 })
 
-export const { setSelectedTimeframe } = statsSlice.actions
+export const { setSelectedTimeframe, setLeaderboardSearchTerm } = statsSlice.actions
 
 export default statsSlice.reducer

@@ -11,4 +11,5 @@ export type StatsState = {
 	queryStatuses: StatsQueryStatuses
 	selectedTimeframe: StatsTimeframe
 	leaderboard: Awaited<ReturnType<KwentaSDK['stats']['getLeaderboard']>>
+	leaderboardSearchTerm: string
 }

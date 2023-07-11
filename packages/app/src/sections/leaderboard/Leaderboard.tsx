@@ -15,7 +15,13 @@ import { setSelectedTrader } from 'state/futures/reducer'
 import { selectSelectedTrader } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
 import { fetchLeaderboard } from 'state/stats/actions'
-import { selectLeaderboard, selectLeaderboardLoading } from 'state/stats/selectors'
+import { setLeaderboardSearchTerm } from 'state/stats/reducer'
+import {
+	selectLeaderboard,
+	selectLeaderboardLoading,
+	selectLeaderboardSearchTerm,
+} from 'state/stats/selectors'
+import { selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
 
 import AllTime from './AllTime'
@@ -42,15 +48,17 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const [activeTier, setActiveTier] = useState<Tier>('bronze')
 	const [competitionRound, setCompetitionRound] = useState<CompetitionRound>()
 	const [searchInput, setSearchInput] = useState('')
-	const [searchTerm, setSearchTerm] = useState('')
+	// const [searchTerm, setSearchTerm] = useState('')
+	const searchTerm = useAppSelector(selectLeaderboardSearchTerm)
 	const [searchAddress, setSearchAddress] = useState('')
 	const selectedTrader = useAppSelector(selectSelectedTrader)
 	const searchEns = useENS(searchTerm)
 
 	const leaderboardLoading = useAppSelector(selectLeaderboardLoading)
 	const leaderboardData = useAppSelector(selectLeaderboard)
+	const walletAddress = useAppSelector(selectWallet)
 
-	useFetchAction(() => fetchLeaderboard(searchTerm), { dependencies: [searchTerm] })
+	useFetchAction(fetchLeaderboard, { dependencies: [searchTerm], disabled: !walletAddress })
 
 	const pinRow = useMemo(() => {
 		return leaderboardData.wallet.map((trader) => ({ ...trader, rank: 0, rankText: PIN }))
@@ -63,7 +71,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 			? (DOMPurify.sanitize(router.query.competitionRound) as CompetitionRound)
 			: null
 
-	useMemo(() => {
+	useEffect(() => {
 		if (urlPath.startsWith(ROUTES.Leaderboard.Home) && trader) {
 			dispatch(
 				setSelectedTrader({
@@ -75,30 +83,32 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 			setCompetitionRound(compRound)
 		} else {
 			setSearchInput('')
-			setSearchTerm('')
+			dispatch(setLeaderboardSearchTerm(''))
 			setSearchAddress('')
 			dispatch(setSelectedTrader(undefined))
 			setCompetitionRound(null)
 		}
-		return null
 	}, [compRound, trader, urlPath, dispatch, leaderboardData.all])
 
-	const onChangeSearch = (text: string) => {
-		setSearchInput(text.toLowerCase())
+	const onChangeSearch = useCallback(
+		(text: string) => {
+			setSearchInput(text.toLowerCase())
 
-		if (isAddress(text)) {
-			setSearchTerm(getAddress(text))
-		} else if (text.endsWith('.eth')) {
-			setSearchTerm(text)
-		} else {
-			setSearchTerm('')
-		}
-	}
+			if (isAddress(text)) {
+				dispatch(setLeaderboardSearchTerm(getAddress(text)))
+			} else if (text.endsWith('.eth')) {
+				dispatch(setLeaderboardSearchTerm(text))
+			} else {
+				dispatch(setLeaderboardSearchTerm(''))
+			}
+		},
+		[dispatch]
+	)
 
 	const onClickTrader = useCallback(
 		(trader: string, traderEns?: string) => {
 			setSearchInput('')
-			setSearchTerm('')
+			dispatch(setLeaderboardSearchTerm(''))
 			setSearchAddress('')
 			dispatch(setSelectedTrader({ trader, traderEns }))
 			router.push(ROUTES.Leaderboard.Trader(trader))
@@ -108,7 +118,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 
 	const resetSelection = useCallback(() => {
 		setSearchInput('')
-		setSearchTerm('')
+		dispatch(setLeaderboardSearchTerm(''))
 		setSearchAddress('')
 		dispatch(setSelectedTrader(undefined))
 
@@ -122,17 +132,17 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const handleSelectTab = useCallback(
 		(tab: LeaderboardTab) => () => {
 			setActiveTab(tab)
-			dispatch(setSelectedTrader(undefined))
+			setSelectedTrader(undefined)
 		},
-		[dispatch]
+		[]
 	)
 
 	const handleSelectTier = useCallback(
 		(tier: Tier) => () => {
 			setActiveTier(tier)
-			dispatch(setSelectedTrader(undefined))
+			setSelectedTrader(undefined)
 		},
-		[dispatch]
+		[]
 	)
 
 	useEffect(() => {
@@ -182,7 +192,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 							activeTier={activeTier}
 							compact={compact}
 							onClickTrader={onClickTrader}
-							searchTerm={searchTerm !== '' ? searchTerm : searchInput}
+							searchTerm={searchTerm || searchInput}
 						/>
 					) : searchAddress ? (
 						<AllTime

@@ -30,3 +30,5 @@ export const selectLeaderboard = createSelector(
 
 export const selectLeaderboardLoading = (state: RootState) =>
 	state.stats.queryStatuses.leaderboard.status === FetchStatus.Loading
+
+export const selectLeaderboardSearchTerm = (state: RootState) => state.stats.leaderboardSearchTerm

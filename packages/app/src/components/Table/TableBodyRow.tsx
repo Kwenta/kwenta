@@ -22,6 +22,7 @@ const TableBodyRow = genericMemo(
 		>
 			{row.getVisibleCells().map((cell) => (
 				<TableCell
+					key={cell.id}
 					className="table-body-cell"
 					style={{ width: cell.column.getSize(), flex: cell.column.getSize() }}
 				>

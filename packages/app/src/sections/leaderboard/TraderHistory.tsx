@@ -31,7 +31,7 @@ import { getMarketName } from 'utils/futures'
 type TraderHistoryProps = {
 	trader: string
 	traderEns?: string | null
-	resetSelection: Function
+	resetSelection: () => void
 	compact?: boolean
 	searchTerm?: string | undefined
 }
@@ -79,7 +79,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 							: '0%',
 					}
 				})
-				.filter((i: { marketShortName: string; status: string }) =>
+				.filter((i) =>
 					searchTerm?.length
 						? i.marketShortName.toLowerCase().includes(searchTerm) ||
 						  i.status.toLowerCase().includes(searchTerm)
@@ -108,11 +108,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 							{
 								header: () => (
 									<TableTitle>
-										<TitleText
-											onClick={() => {
-												resetSelection()
-											}}
-										>
+										<TitleText onClick={resetSelection}>
 											{t('leaderboard.trader-history.table.back')}
 										</TitleText>
 										<TitleSeparator>&gt;</TitleSeparator>
