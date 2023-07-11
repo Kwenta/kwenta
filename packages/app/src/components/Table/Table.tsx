@@ -1,4 +1,11 @@
-import { useReactTable, getCoreRowModel, flexRender, PaginationState } from '@tanstack/react-table'
+import {
+	useReactTable,
+	getCoreRowModel,
+	flexRender,
+	PaginationState,
+	getPaginationRowModel,
+	getSortedRowModel,
+} from '@tanstack/react-table'
 import type { ColumnDef, Row, SortingState, VisibilityState } from '@tanstack/react-table'
 import React, { DependencyList, useCallback, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
@@ -18,6 +25,7 @@ const CARD_HEIGHT_MD = '50px'
 const CARD_HEIGHT_LG = '40px'
 const MAX_PAGE_ROWS = 100
 const MAX_TOTAL_ROWS = 9999
+const SHORT_PAGE_SIZE = 5
 
 export function compareNumericString(rowA: Row<any>, rowB: Row<object>, id: string, desc: boolean) {
 	let a = parseFloat(rowA.getValue(id))
@@ -32,6 +40,17 @@ export function compareNumericString(rowA: Row<any>, rowB: Row<object>, id: stri
 	if (a > b) return 1
 	if (a < b) return -1
 	return 0
+}
+
+function calculatePageSize(
+	showPagination: boolean,
+	showShortList: boolean | undefined,
+	pageSize: number | undefined
+): number {
+	if (showPagination) {
+		return pageSize ? pageSize : MAX_PAGE_ROWS
+	}
+	return showShortList ? pageSize ?? SHORT_PAGE_SIZE : MAX_TOTAL_ROWS
 }
 
 type TableProps<T> = {
@@ -83,7 +102,7 @@ const Table = <T,>({
 	const [sorting, setSorting] = useState<SortingState>(sortBy)
 	const [pagination, setPagination] = useState<PaginationState>({
 		pageIndex: 0,
-		pageSize: showPagination ? pageSize ?? MAX_PAGE_ROWS : MAX_TOTAL_ROWS,
+		pageSize: calculatePageSize(showPagination, showShortList, pageSize),
 	})
 
 	// FIXME: It is probably better to memoize columns per-component.
@@ -101,12 +120,15 @@ const Table = <T,>({
 		onSortingChange: setSorting,
 		onPaginationChange: setPagination,
 		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
 	})
 
 	const defaultRef = useRef(null)
+
 	const shouldShowPagination = useMemo(
-		() => showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS),
-		[data.length, pageSize, showPagination, showShortList]
+		() => showPagination && !showShortList && data.length > table.getState().pagination.pageSize,
+		[data.length, showPagination, showShortList, table]
 	)
 
 	const handleRowClick = useCallback(
