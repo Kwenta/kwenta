@@ -1,6 +1,6 @@
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
-import { fetchStakeMigrateData, fetchStakingData } from 'state/staking/actions'
-import { selectSelectedEpoch } from 'state/staking/selectors'
+import { fetchStakeMigrateData, fetchStakingV2Data } from 'state/staking/actions'
+import { selectSelectedEpoch, selectStakingSupportedNetwork } from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 
 import {
@@ -40,8 +40,11 @@ export const usePollMarketFuturesData = () => {
 		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
 	})
 
-	useFetchAction(fetchStakeMigrateData, { dependencies: [networkId, wallet] })
-	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] })
+	useFetchAction(fetchStakingV2Data, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsCrossMargin,
+	})
+
 	useFetchAction(fetchMarginTransfers, { dependencies: [networkId, wallet, selectedAccountType] })
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
@@ -126,8 +129,12 @@ export const useFetchStakeMigrateData = () => {
 	const networkId = useAppSelector(selectNetwork)
 	const wallet = useAppSelector(selectWallet)
 	const { start, end } = useAppSelector(selectSelectedEpoch)
+	const networkSupportsStaking = useAppSelector(selectStakingSupportedNetwork)
 
-	useFetchAction(fetchStakeMigrateData, { dependencies: [networkId, wallet] })
+	useFetchAction(fetchStakeMigrateData, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsStaking,
+	})
 	useFetchAction(() => fetchFuturesFees({ start, end }), {
 		dependencies: [networkId, wallet, start, end],
 	})

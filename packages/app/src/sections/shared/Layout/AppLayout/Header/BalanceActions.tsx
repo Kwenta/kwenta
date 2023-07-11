@@ -22,7 +22,6 @@ import {
 	claimMultipleOpRewards,
 	claimMultipleSnxOpRewards,
 	fetchClaimableRewards,
-	fetchStakingData,
 } from 'state/staking/actions'
 import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
@@ -63,9 +62,7 @@ const BalanceActions: FC = () => {
 
 	useEffect(() => {
 		if (!!walletAddress) {
-			dispatch(fetchStakingData()).then(() => {
-				dispatch(fetchClaimableRewards())
-			})
+			dispatch(fetchClaimableRewards())
 		}
 	}, [dispatch, walletAddress])
 

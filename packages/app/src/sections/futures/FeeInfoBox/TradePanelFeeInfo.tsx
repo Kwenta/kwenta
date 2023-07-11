@@ -12,13 +12,13 @@ import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
-import Connector from 'containers/Connector'
 import { selectTradePreview } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import {
 	selectStakedEscrowedKwentaBalance,
 	selectStakedKwentaBalance,
 } from 'state/staking/selectors'
+import { selectWallet } from 'state/wallet/selectors'
 
 import TradeTotalFeesRow from './TradeTotalFeesRow'
 
@@ -35,7 +35,7 @@ export const TradePanelFeeInfo = memo(() => {
 
 const TradingRewardRow = memo(() => {
 	const { t } = useTranslation()
-	const { walletAddress } = Connector.useContainer()
+	const walletAddress = useAppSelector(selectWallet)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 
