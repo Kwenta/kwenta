@@ -173,7 +173,7 @@ export default class StatsService {
 		const ReverseLookup = new Contract(
 			ENS_REVERSE_LOOKUP,
 			['function getNames(address[] addresses) external view returns (string[] r)'],
-			this.sdk.context.mainnetProvider
+			this.sdk.context.l1MainnetProvider
 		)
 
 		let ensPromises = []

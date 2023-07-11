@@ -30,7 +30,7 @@ export default class Context implements IContext {
 	public contracts: ContractsMap
 	public multicallContracts: MulticallContractsMap
 	public events = new EventEmitter().setMaxListeners(100)
-	public mainnetProvider: ethers.providers.Provider
+	public l1MainnetProvider: ethers.providers.Provider
 
 	constructor(context: IContext) {
 		this.context = { ...DEFAULT_CONTEXT, ...context }
@@ -45,7 +45,7 @@ export default class Context implements IContext {
 
 		this.contracts = getContractsByNetwork(context.networkId, context.provider)
 		this.multicallContracts = getMulticallContractsByNetwork(context.networkId)
-		this.mainnetProvider = new ethers.providers.InfuraProvider()
+		this.l1MainnetProvider = new ethers.providers.InfuraProvider()
 	}
 
 	get networkId() {
