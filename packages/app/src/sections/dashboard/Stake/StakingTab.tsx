@@ -9,7 +9,6 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import { SplitContainer } from 'components/layout/grid'
 import { Body, Heading } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
-import { StakingCards } from 'pages/dashboard/staking'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimStakingRewardsV2, compoundRewards } from 'state/staking/actions'
@@ -21,6 +20,7 @@ import {
 import media from 'styles/media'
 
 import StakeInputCard from './InputCards/StakeInputCard'
+import { StakingCards } from './types'
 
 const StakingTab = () => {
 	const { t } = useTranslation()

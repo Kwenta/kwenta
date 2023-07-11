@@ -3,11 +3,11 @@ import styled, { css } from 'styled-components'
 
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
-import { StakingCards } from 'pages/dashboard/staking'
 import media from 'styles/media'
 
 import MigrationSteps from './MigrationSteps'
 import { StakingHeading } from './StakingHeading'
+import { StakingCards } from './types'
 
 export enum StakeTab {
 	Staking = 'staking',

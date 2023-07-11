@@ -96,6 +96,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		420: '0x1653a3a3c4ccee0538685f1600a30df5e3ee830a',
 	},
 	KwentaStakingRewardsV2: {
+		10: '0xe5bB889B1f0B6B4B7384Bd19cbb37adBDDa941a6',
 		420: '0x3e5371D909Bf1996c95e9D179b0Bc91C26fb1279',
 	},
 	RewardEscrow: {
@@ -103,6 +104,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		420: '0xaFD87d1a62260bD5714C55a1BB4057bDc8dFA413',
 	},
 	RewardEscrowV2: {
+		10: '0xd5fE5beAa04270B32f81Bf161768c44DF9880D11',
 		420: '0xf211F298C6985fF4cF6f9488e065292B818163F8',
 	},
 	SupplySchedule: {

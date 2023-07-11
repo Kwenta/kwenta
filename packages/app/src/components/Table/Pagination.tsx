@@ -10,6 +10,8 @@ import { GridDivCenteredCol } from 'components/layout/grid'
 import { resetButtonCSS } from 'styles/common'
 import media from 'styles/media'
 
+import StakingPagination from './StakingPagination'
+
 type PaginationProps = {
 	pageIndex: number
 	pageCount: number
@@ -19,6 +21,8 @@ type PaginationProps = {
 	setPage: (page: number) => void
 	previousPage: () => void
 	nextPage: () => void
+	variant?: 'default' | 'staking'
+	extra?: React.ReactNode
 }
 
 const Pagination: FC<PaginationProps> = React.memo(
@@ -31,38 +35,55 @@ const Pagination: FC<PaginationProps> = React.memo(
 		setPage,
 		nextPage,
 		previousPage,
+		variant = 'default',
+		extra,
 	}) => {
 		const { t } = useTranslation()
 
 		const firstPage = () => setPage(0)
 		const toLastPage = () => setPage(pageCount - 1)
 
-		return (
-			<PaginationContainer compact={compact}>
-				<ArrowButtonContainer>
-					<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
-						<LeftEndArrowIcon />
-					</ArrowButton>
-					<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
-						<LeftArrowIcon />
-					</ArrowButton>
-				</ArrowButtonContainer>
-				<PageInfo>
-					{t('common.pagination.page')}{' '}
-					{t('common.pagination.page-of-total-pages', {
-						page: pageIndex + 1,
-						totalPages: pageCount,
-					})}
-				</PageInfo>
-				<ArrowButtonContainer>
-					<ArrowButton onClick={nextPage} disabled={!canNextPage}>
-						<RightArrowIcon />
-					</ArrowButton>
-					<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
-						<RightEndArrowIcon />
-					</ArrowButton>
-				</ArrowButtonContainer>
-			</PaginationContainer>
+		return variant === 'default' ? (
+			<>
+				<PaginationContainer compact={compact}>
+					<ArrowButtonContainer>
+						<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
+							<LeftEndArrowIcon />
+						</ArrowButton>
+						<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
+							<LeftArrowIcon />
+						</ArrowButton>
+					</ArrowButtonContainer>
+					<PageInfo>
+						{t('common.pagination.page')}{' '}
+						{t('common.pagination.page-of-total-pages', {
+							page: pageIndex + 1,
+							totalPages: pageCount,
+						})}
+					</PageInfo>
+					<ArrowButtonContainer>
+						<ArrowButton onClick={nextPage} disabled={!canNextPage}>
+							<RightArrowIcon />
+						</ArrowButton>
+						<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
+							<RightEndArrowIcon />
+						</ArrowButton>
+					</ArrowButtonContainer>
+				</PaginationContainer>
+				{extra}
+			</>
+		) : (
+			<StakingPagination
+				compact={compact}
+				pageIndex={pageIndex}
+				pageCount={pageCount}
+				canNextPage={canNextPage}
+				canPreviousPage={canPreviousPage}
+				setPage={setPage}
+				previousPage={previousPage}
+				nextPage={nextPage}
+				extra={extra}
+			/>
 		)
 	}
 )

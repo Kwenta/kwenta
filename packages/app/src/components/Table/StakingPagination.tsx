@@ -18,9 +18,10 @@ type PaginationProps = {
 	setPage: (page: number) => void
 	previousPage: () => void
 	nextPage: () => void
+	extra?: React.ReactNode
 }
 
-const CustomizePagination: FC<PaginationProps> = React.memo(
+const StakingPagination: FC<PaginationProps> = React.memo(
 	({
 		pageIndex,
 		pageCount,
@@ -30,6 +31,7 @@ const CustomizePagination: FC<PaginationProps> = React.memo(
 		setPage,
 		nextPage,
 		previousPage,
+		extra,
 	}) => {
 		const { t } = useTranslation()
 
@@ -37,36 +39,47 @@ const CustomizePagination: FC<PaginationProps> = React.memo(
 		const toLastPage = () => setPage(pageCount - 1)
 
 		return (
-			<PaginationContainer compact={compact}>
-				<FlexDivRowCentered columnGap="15px">
-					<FlexDivRowCentered columnGap="5px">
-						<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
-							<LeftEndArrowIcon />
-						</ArrowButton>
-						<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
-							<LeftArrowIcon />
-						</ArrowButton>
+			<PaginationContainer>
+				<PageInfoContainer compact={compact}>
+					<FlexDivRowCentered columnGap="15px">
+						<FlexDivRowCentered columnGap="5px">
+							<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
+								<LeftEndArrowIcon />
+							</ArrowButton>
+							<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
+								<LeftArrowIcon />
+							</ArrowButton>
+						</FlexDivRowCentered>
+						<FlexDivRowCentered columnGap="5px">
+							<ArrowButton onClick={nextPage} disabled={!canNextPage}>
+								<RightArrowIcon />
+							</ArrowButton>
+							<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
+								<RightEndArrowIcon />
+							</ArrowButton>
+						</FlexDivRowCentered>
 					</FlexDivRowCentered>
-					<FlexDivRowCentered columnGap="5px">
-						<ArrowButton onClick={nextPage} disabled={!canNextPage}>
-							<RightArrowIcon />
-						</ArrowButton>
-						<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
-							<RightEndArrowIcon />
-						</ArrowButton>
-					</FlexDivRowCentered>
-				</FlexDivRowCentered>
-				<PageInfo>
-					{t('common.pagination.page')}{' '}
-					{t('common.pagination.page-of-total-pages', {
-						page: pageIndex + 1,
-						totalPages: pageCount,
-					})}
-				</PageInfo>
+					<PageInfo>
+						{t('common.pagination.page')}{' '}
+						{t('common.pagination.page-of-total-pages', {
+							page: pageIndex + 1,
+							totalPages: pageCount,
+						})}
+					</PageInfo>
+					{extra}
+				</PageInfoContainer>
 			</PaginationContainer>
 		)
 	}
 )
+
+const PaginationContainer = styled(GridDivCenteredCol)`
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
+	padding: 20px 25px;
+	border-radius: 100px;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
+	margin-top: 15px;
+`
 
 const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -74,7 +87,7 @@ const PageInfo = styled.span`
 	font-size: 13px;
 `
 
-const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
+const PageInfoContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 	grid-template-columns: auto 1fr auto;
 	padding: ${(props) => (props.compact ? '10px' : '15px')} 12px;
 	border-bottom-left-radius: 4px;
@@ -100,4 +113,4 @@ const ArrowButton = styled.button`
 	}
 `
 
-export default CustomizePagination
+export default StakingPagination

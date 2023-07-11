@@ -301,4 +301,5 @@ export const selectCombinedEscrowData = createSelector(
 export const selectTradingRewardsSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10
 
-export const selectStakingSupportedNetwork = (state: RootState) => state.wallet.networkId === 420
+export const selectStakingSupportedNetwork = (state: RootState) =>
+	state.wallet.networkId === 10 || state.wallet.networkId === 420

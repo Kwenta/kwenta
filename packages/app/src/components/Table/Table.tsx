@@ -9,7 +9,7 @@ import Loader from 'components/Loader'
 import { Body } from 'components/Text'
 import media from 'styles/media'
 
-import PaginationArea from './PaginationArea'
+import Pagination from './Pagination'
 import TableBodyRow, { TableCell } from './TableBodyRow'
 
 export type TablePalette = 'primary'
@@ -84,8 +84,9 @@ type TableProps = {
 	rowStyle?: Record<string, any>
 	rounded?: boolean
 	noBottom?: boolean
-	customizePagination?: boolean
-	children?: React.ReactNode
+	paginationVariant?: 'default' | 'staking'
+	paginationOutsideTable?: boolean
+	paginationExtra?: React.ReactNode
 }
 
 export const Table: FC<TableProps> = memo(
@@ -111,8 +112,9 @@ export const Table: FC<TableProps> = memo(
 		rowStyle = {},
 		rounded = true,
 		noBottom = false,
-		customizePagination = false,
-		children = null,
+		paginationVariant = 'default',
+		paginationOutsideTable = false,
+		paginationExtra,
 	}) => {
 		const memoizedColumns = useMemo(
 			() => columns,
@@ -167,11 +169,20 @@ export const Table: FC<TableProps> = memo(
 		}, [pageIndex, pageCount, gotoPage])
 
 		const defaultRef = useRef(null)
-		const shouldShowPagination = useMemo(
+		const showPaginationInsideTable = useMemo(
 			() =>
-				(showPagination && !showShortList && data.length > (pageSize ?? MAX_PAGE_ROWS)) ||
-				!!children,
-			[children, data.length, pageSize, showPagination, showShortList]
+				showPagination &&
+				!showShortList &&
+				(paginationExtra || data.length > (pageSize ?? MAX_PAGE_ROWS)) &&
+				!paginationOutsideTable,
+			[
+				data.length,
+				pageSize,
+				paginationExtra,
+				paginationOutsideTable,
+				showPagination,
+				showShortList,
+			]
 		)
 
 		return (
@@ -241,34 +252,34 @@ export const Table: FC<TableProps> = memo(
 								})}
 							</TableBody>
 						) : null}
-						{!customizePagination && shouldShowPagination && (
-							<PaginationArea
-								customizePagination={customizePagination}
+						{showPaginationInsideTable ? (
+							<Pagination
 								compact={compactPagination}
 								pageIndex={pageIndex}
 								pageCount={pageCount}
 								canNextPage={canNextPage}
 								canPreviousPage={canPreviousPage}
-								gotoPage={gotoPage}
+								setPage={gotoPage}
 								previousPage={previousPage}
 								nextPage={nextPage}
-								children={children}
+								variant={paginationVariant}
+								extra={paginationExtra}
 							/>
-						)}
+						) : undefined}
 					</ReactTable>
 				</TableContainer>
-				{customizePagination && shouldShowPagination && (
-					<PaginationArea
-						customizePagination={customizePagination}
+				{paginationOutsideTable && (
+					<Pagination
 						compact={compactPagination}
 						pageIndex={pageIndex}
 						pageCount={pageCount}
 						canNextPage={canNextPage}
 						canPreviousPage={canPreviousPage}
-						gotoPage={gotoPage}
+						setPage={gotoPage}
 						previousPage={previousPage}
 						nextPage={nextPage}
-						children={children}
+						variant={paginationVariant}
+						extra={paginationExtra}
 					/>
 				)}
 			</>
@@ -327,7 +338,6 @@ const ReactTable = styled.div<{ palette: TablePalette; $rounded?: boolean; $noBo
 	display: flex;
 	flex-direction: column;
 	width: 100%;
-	height: 100%;
 	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};

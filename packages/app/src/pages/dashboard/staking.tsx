@@ -11,6 +11,7 @@ import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import EscrowTable from 'sections/dashboard/Stake/EscrowTable'
 import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPortfolio'
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
+import { StakingCards } from 'sections/dashboard/Stake/types'
 import { useFetchStakeMigrateData } from 'state/futures/hooks'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { setStakingMigrationCompleted } from 'state/staking/reducer'
@@ -28,21 +29,6 @@ import {
 import media from 'styles/media'
 
 type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
-
-type StakingCard = {
-	key: string
-	title: string
-	value: string
-	onClick?: () => void
-}
-
-export type StakingCards = {
-	category: string
-	card: StakingCard[]
-	onClick?: () => void
-	icon?: React.ReactNode
-	flex?: number
-}
 
 const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation()

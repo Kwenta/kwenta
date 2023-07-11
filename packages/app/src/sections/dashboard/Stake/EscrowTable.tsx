@@ -140,7 +140,6 @@ const EscrowTable = () => {
 					</Button>
 				</ButtonsContainer>
 			</Container>
-
 			<Button
 				variant="yellow"
 				size="xsmall"
@@ -163,11 +162,12 @@ const EscrowTable = () => {
 				<StyledTable
 					data={escrowData}
 					compactPagination
-					customizePagination={true}
 					pageSize={4}
 					showPagination
 					columnsDeps={columnsDeps}
-					children={<EscrowStatsContainer />}
+					paginationVariant="staking"
+					paginationExtra={<EscrowStatsContainer />}
+					paginationOutsideTable={true}
 					columns={[
 						{
 							Header: () => (
@@ -288,7 +288,9 @@ const EscrowTable = () => {
 					pageSize={5}
 					showPagination
 					columnsDeps={columnsDeps}
-					children={<EscrowStatsContainer />}
+					paginationVariant="default"
+					paginationOutsideTable={false}
+					paginationExtra={<EscrowStatsContainer />}
 					columns={[
 						{
 							Header: () => (
@@ -417,13 +419,11 @@ const StatsContainer = styled(FlexDivRowCentered)`
 	${media.lessThan('lg')`
 		flex-direction: column;
 		row-gap: 25px;
-		padding: 15px 0;
+		padding: 15px 15px;
 		background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
 		border-bottom-left-radius: 10px;
 		border-bottom-right-radius: 10px;
 		align-items: flex-end;
-		padding-left: 25px;
-		padding-right: 25px;
 	`}
 `
 
