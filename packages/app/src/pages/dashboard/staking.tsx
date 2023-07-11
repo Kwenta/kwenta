@@ -19,11 +19,13 @@ import {
 	selectClaimableBalanceV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
+	selectStakedEscrowedKwentaBalance,
 	selectStakedEscrowedKwentaBalanceV2,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
 	selectStakingMigrationCompleted,
 	selectStakingMigrationRequired,
+	selectTotalVestable,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
 import media from 'styles/media'
@@ -39,6 +41,8 @@ const StakingPage: StakingComponent = () => {
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const totalVestable = useAppSelector(selectTotalVestableV2)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+	const totalVestableV1 = useAppSelector(selectTotalVestable)
+	const stakedEscrowedKwentaBalanceV1 = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
 	const isMigrationRequired = useAppSelector(selectStakingMigrationRequired)
@@ -222,12 +226,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+						value: truncateNumbers(stakedEscrowedKwentaBalanceV1, 2),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestable, 2),
+						value: truncateNumbers(totalVestableV1, 2),
 					},
 				],
 			},
@@ -237,9 +241,11 @@ const StakingPage: StakingComponent = () => {
 			kwentaBalance,
 			kwentaRewards,
 			stakedEscrowedKwentaBalance,
+			stakedEscrowedKwentaBalanceV1,
 			stakedKwentaBalance,
 			t,
 			totalVestable,
+			totalVestableV1,
 		]
 	)
 
