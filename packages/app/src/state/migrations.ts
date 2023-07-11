@@ -97,6 +97,7 @@ export const migrations = {
 			...state,
 			futures: FUTURES_INITIAL_STATE,
 			staking: STAKING_INITIAL_STATE,
+			stats: STATS_INITIAL_STATE,
 		}
 	},
 }

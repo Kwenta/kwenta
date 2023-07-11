@@ -171,7 +171,10 @@ const sharedStyle = css<{
 		`}
 `
 
-const InlineTab = styled.div`
+const InlineTab = styled.div<{
+	active?: boolean
+	$iconOnly?: boolean
+}>`
 	${sharedStyle}
 	cursor: pointer;
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};

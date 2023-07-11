@@ -996,7 +996,7 @@
 					"insufficient-margin": "Leverage cannot be increased, it exceeds the minimum margin requirement of $40",
 					"insufficient-free-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
 				},
-				"edit-position":{
+				"edit-position": {
 					"market": "Market",
 					"current-size": "Current size",
 					"leverage-change": "Leverage",
@@ -1123,6 +1123,7 @@
 						"side-type": "Side/Type",
 						"no-results": "You have no trade history",
 						"order-type": "order type",
+						"transaction": "Transaction",
 						"trade-types": {
 							"exit": "exit",
 							"liquidated": "liquidated",

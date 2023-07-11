@@ -1,10 +1,8 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { EscrowData } from '@kwenta/sdk/types'
 import { formatNumber, formatPercent } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import Badge from 'components/Badge'
@@ -158,7 +156,6 @@ const EscrowTable = () => {
 	return (
 		<EscrowTableContainer>
 			<DesktopLargeOnlyView>
-				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
 					compactPagination
@@ -169,7 +166,7 @@ const EscrowTable = () => {
 					paginationExtra={<EscrowStatsContainer />}
 					columns={[
 						{
-							Header: () => (
+							header: () => (
 								<Checkbox
 									id="header"
 									label=""
@@ -179,7 +176,7 @@ const EscrowTable = () => {
 									checkSide="right"
 								/>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							cell: (cellProps) => (
 								<Checkbox
 									id={cellProps.row.index.toString()}
 									key={cellProps.row.index}
@@ -190,20 +187,18 @@ const EscrowTable = () => {
 									checkSide="right"
 								/>
 							),
-							accessor: 'selected',
-							width: 40,
+							accessorKey: 'selected',
+							size: 40,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{cellProps.row.original.date}</TableCell>
-							),
-							accessor: 'date',
-							width: 65,
+							header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>,
+							cell: (cellProps) => <TableCell>{cellProps.row.original.date}</TableCell>,
+							accessorKey: 'date',
+							size: 65,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
+							cell: (cellProps) => (
 								<FlexDivRowCentered columnGap="10px">
 									<TableCell>
 										{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
@@ -215,42 +210,40 @@ const EscrowTable = () => {
 									) : null}
 								</FlexDivRowCentered>
 							),
-							accessor: 'amount',
-							width: 80,
+							accessorKey: 'amount',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader>
 									<div>{t('dashboard.stake.tabs.escrow.time-until-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell>{cellProps.row.original.time}</TableCell>
-							),
-							accessor: 'timeUntilVestable',
-							width: 80,
+							cell: (cellProps) => <TableCell>{cellProps.row.original.time}</TableCell>,
+							accessorKey: 'timeUntilVestable',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader>
 									<div>{t('dashboard.stake.tabs.escrow.immediately-vestable')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							cell: (cellProps) => (
 								<TableCell>
 									{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
 								</TableCell>
 							),
-							accessor: 'immediatelyVestable',
-							width: 80,
+							accessorKey: 'immediatelyVestable',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader>
 									<div>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</div>
 								</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => {
+							cell: (cellProps) => {
 								const fee = wei(cellProps.row.original.fee)
 								return (
 									<TableCell color={common.palette.yellow.y500}>
@@ -265,22 +258,19 @@ const EscrowTable = () => {
 									</TableCell>
 								)
 							},
-							accessor: 'earlyVestFee',
-							width: 90,
+							accessorKey: 'earlyVestFee',
+							size: 90,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell $regular>{cellProps.row.original.status}</TableCell>
-							),
-							accessor: 'status',
-							width: 70,
+							header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
+							cell: (cellProps) => <TableCell $regular>{cellProps.row.original.status}</TableCell>,
+							accessorKey: 'status',
+							size: 70,
 						},
 					]}
 				/>
 			</DesktopLargeOnlyView>
 			<DesktopSmallOnlyView>
-				{/*@ts-expect-error*/}
 				<StyledTable
 					data={escrowData}
 					compactPagination
@@ -291,7 +281,7 @@ const EscrowTable = () => {
 					paginationExtra={<EscrowStatsContainer />}
 					columns={[
 						{
-							Header: () => (
+							header: () => (
 								<Checkbox
 									id="header"
 									label=""
@@ -301,7 +291,7 @@ const EscrowTable = () => {
 									checkSide="left"
 								/>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							cell: (cellProps) => (
 								<Checkbox
 									id={cellProps.row.index.toString()}
 									key={cellProps.row.index}
@@ -312,12 +302,12 @@ const EscrowTable = () => {
 									checkSide="left"
 								/>
 							),
-							accessor: 'selected',
-							width: 30,
+							accessorKey: 'selected',
+							size: 30,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowData>) => (
+							header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
+							cell: (cellProps) => (
 								<FlexDivRowCentered columnGap="10px">
 									<TableCell>
 										{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
@@ -329,14 +319,14 @@ const EscrowTable = () => {
 									) : null}
 								</FlexDivRowCentered>
 							),
-							accessor: 'amount',
-							width: 80,
+							accessorKey: 'amount',
+							size: 80,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<TableHeader>{t('dashboard.stake.tabs.escrow.early-vest-fee')}</TableHeader>
 							),
-							Cell: (cellProps: CellProps<EscrowData>) => {
+							cell: (cellProps) => {
 								const fee = wei(cellProps.row.original.fee)
 								return (
 									<TableCell color={common.palette.yellow.y500}>
@@ -354,16 +344,14 @@ const EscrowTable = () => {
 									</TableCell>
 								)
 							},
-							accessor: 'earlyVestFee',
-							width: 100,
+							accessorKey: 'earlyVestFee',
+							size: 100,
 						},
 						{
-							Header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
-							Cell: (cellProps: CellProps<EscrowData>) => (
-								<TableCell $regular>{cellProps.row.original.status}</TableCell>
-							),
-							accessor: 'status',
-							width: 50,
+							header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.status')}</TableHeader>,
+							cell: (cellProps) => <TableCell $regular>{cellProps.row.original.status}</TableCell>,
+							accessorKey: 'status',
+							size: 50,
 						},
 					]}
 				/>
@@ -448,7 +436,7 @@ const StyledTable = styled(Table)`
 			padding-left: 18px;
 		}
 	}
-`
+` as typeof Table
 
 const TableCell = styled.div<{ $regular?: boolean }>`
 	font-size: 13px;
