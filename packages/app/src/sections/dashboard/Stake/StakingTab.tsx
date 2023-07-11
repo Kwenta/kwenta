@@ -120,6 +120,7 @@ const StakingTab = () => {
 						size="small"
 						textTransform="uppercase"
 						isRounded
+						disabled={claimableBalance.eq(0)}
 						onClick={handleCompoundReward}
 					>
 						{t('dashboard.stake.tabs.staking.compound')}
@@ -129,6 +130,7 @@ const StakingTab = () => {
 						size="small"
 						textTransform="uppercase"
 						isRounded
+						disabled={claimableBalance.eq(0)}
 						onClick={handleGetReward}
 					>
 						{t('dashboard.stake.tabs.staking.claim')}
