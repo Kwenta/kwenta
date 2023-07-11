@@ -50,9 +50,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const leaderboardLoading = useAppSelector(selectLeaderboardLoading)
 	const leaderboardData = useAppSelector(selectLeaderboard)
 
-	// TODO: Separate search from the general list, to improve performance.
-	// This currently refetches the whole list when we search.
-
 	useFetchAction(() => fetchLeaderboard(searchTerm), { dependencies: [searchTerm] })
 
 	const pinRow = useMemo(() => {

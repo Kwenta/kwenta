@@ -317,13 +317,15 @@ const FuturesHistoryTable: FC = () => {
 								header: () => <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
 								accessorKey: 'netPnl',
 								cell: (cellProps) => {
+									const value = cellProps.getValue()
+
 									return conditionalRender(
-										cellProps.getValue(),
-										cellProps.getValue().eq(wei(0)) ? (
+										value,
+										value.eq(wei(0)) ? (
 											<PNL normal>--</PNL>
 										) : (
-											<PNL negative={cellProps.getValue().lt(wei(0))}>
-												{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
+											<PNL negative={value.lt(wei(0))}>
+												{formatDollars(value, { maxDecimals: 2 })}
 											</PNL>
 										)
 									)
