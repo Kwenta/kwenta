@@ -116,7 +116,11 @@ export const approveKwentaToken = createAsyncThunk<
 	monitorTransaction({
 		txHash: hash,
 		onTxConfirmed: () => {
+			dispatch({ type: 'staking/setApproveKwentaStatus', payload: FetchStatus.Success })
 			dispatch(fetchStakeMigrateData())
+		},
+		onTxFailed: () => {
+			dispatch({ type: 'staking/setApproveKwentaStatus', payload: FetchStatus.Error })
 		},
 	})
 })
@@ -294,18 +298,18 @@ export const claimStakingRewardsV2 = createAsyncThunk<void, void, ThunkConfig>(
 )
 
 export const compoundRewards = createAsyncThunk<void, void, ThunkConfig>(
-	'staking/getReward',
+	'staking/compoundRewards',
 	async (_, { dispatch, extra: { sdk } }) => {
 		const { hash } = await sdk.kwentaToken.compoundRewards()
 
 		monitorTransaction({
 			txHash: hash,
 			onTxConfirmed: () => {
-				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
+				dispatch({ type: 'staking/setCompoundRewardsStatus', payload: FetchStatus.Success })
 				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {
-				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Error })
+				dispatch({ type: 'staking/setCompoundRewardsStatus', payload: FetchStatus.Error })
 			},
 		})
 	}

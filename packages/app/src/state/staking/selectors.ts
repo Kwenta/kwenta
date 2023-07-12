@@ -138,6 +138,11 @@ export const selectIsUnstakingKwenta = createSelector(
 	(unstakeStatus) => unstakeStatus === FetchStatus.Loading
 )
 
+export const selectIsApprovingKwenta = createSelector(
+	(state: RootState) => state.staking.approveKwentaStatus,
+	(approveKwentaStatus) => approveKwentaStatus === FetchStatus.Loading
+)
+
 export const selectIsStakedKwenta = createSelector(
 	(state: RootState) => state.staking.stakeStatus,
 	(stakeStatus) => stakeStatus === FetchStatus.Success || stakeStatus === FetchStatus.Error
@@ -180,6 +185,10 @@ export const selectIsClaimingRewards = createSelector(
 	(claimKwentaRewardsStatus) => claimKwentaRewardsStatus === FetchStatus.Loading
 )
 
+export const selectIsCompoundingRewards = createSelector(
+	(state: RootState) => state.staking.compoundRewardsStatus,
+	(compoundRewardsStatus) => compoundRewardsStatus === FetchStatus.Loading
+)
 export const selectIsVestingEscrowedRewards = createSelector(
 	(state: RootState) => state.staking.vestEscrowedRewardsStatus,
 	(vestEscrowedRewardsStatus) => vestEscrowedRewardsStatus === FetchStatus.Loading

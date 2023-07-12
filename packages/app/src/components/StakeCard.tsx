@@ -28,6 +28,9 @@ type StakeCardProps = {
 	isUnstaked?: boolean | undefined
 	isApproved?: boolean
 	onApprove?: () => void
+	isStaking?: boolean
+	isUnstaking?: boolean
+	isApproving?: boolean
 }
 
 const StakeCard: FC<StakeCardProps> = memo(
@@ -43,6 +46,9 @@ const StakeCard: FC<StakeCardProps> = memo(
 		isUnstaked = false,
 		isApproved,
 		onApprove,
+		isStaking = false,
+		isUnstaking = false,
+		isApproving = false,
 	}) => {
 		const { t } = useTranslation()
 
@@ -72,6 +78,10 @@ const StakeCard: FC<StakeCardProps> = memo(
 		const balanceString = useMemo(() => {
 			return truncateNumbers(balance, DEFAULT_CRYPTO_DECIMALS)
 		}, [balance])
+
+		const isLoading = useMemo(() => {
+			return activeTab === 0 ? (isApproved ? isStaking : isApproving) : isUnstaking
+		}, [activeTab, isApproved, isApproving, isStaking, isUnstaking])
 
 		const onMaxClick = useCallback(() => {
 			setAmount(truncateNumbers(balance, DEFAULT_TOKEN_DECIMALS))
@@ -135,6 +145,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 						variant="flat"
 						size="small"
 						disabled={isDisabled}
+						loading={isLoading}
 						onClick={handleSubmit}
 					>
 						{activeTab === 0

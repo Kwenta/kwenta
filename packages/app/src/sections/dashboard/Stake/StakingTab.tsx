@@ -16,6 +16,8 @@ import { claimStakingRewardsV2, compoundRewards } from 'state/staking/actions'
 import {
 	selectAPYV2,
 	selectClaimableBalanceV2,
+	selectIsCompoundingRewards,
+	selectIsGettingReward,
 	selectStakedKwentaBalanceV2,
 } from 'state/staking/selectors'
 import media from 'styles/media'
@@ -29,6 +31,8 @@ const StakingTab = () => {
 
 	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
+	const isClaimingReward = useAppSelector(selectIsGettingReward)
+	const isCompoundingReward = useAppSelector(selectIsCompoundingRewards)
 	const apy = useAppSelector(selectAPYV2)
 
 	const handleGetReward = useCallback(() => {
@@ -131,7 +135,8 @@ const StakingTab = () => {
 						size="small"
 						textTransform="uppercase"
 						isRounded
-						disabled={claimableBalance.eq(0)}
+						loading={isCompoundingReward}
+						disabled={claimableBalance.eq(0) || isCompoundingReward}
 						onClick={handleCompoundReward}
 					>
 						{t('dashboard.stake.tabs.staking.compound')}
@@ -141,7 +146,8 @@ const StakingTab = () => {
 						size="small"
 						textTransform="uppercase"
 						isRounded
-						disabled={claimableBalance.eq(0)}
+						loading={isClaimingReward}
+						disabled={claimableBalance.eq(0) || isClaimingReward}
 						onClick={handleGetReward}
 					>
 						{t('dashboard.stake.tabs.staking.claim')}

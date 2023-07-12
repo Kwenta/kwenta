@@ -46,4 +46,6 @@ export type StakingState = {
 	claimSnxOpRewardsStatus: FetchStatus
 	claimAllRewardsStatus: FetchStatus
 	vestEscrowedRewardsStatus: FetchStatus
+	approveKwentaStatus: FetchStatus
+	compoundRewardsStatus: FetchStatus
 }
