@@ -15,11 +15,13 @@ import { useFetchStakeMigrateData } from 'state/futures/hooks'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { setStakingMigrationCompleted } from 'state/staking/reducer'
 import {
+	selectClaimableBalance,
 	selectClaimableBalanceV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
 	selectStakedEscrowedKwentaBalance,
 	selectStakedEscrowedKwentaBalanceV2,
+	selectStakedKwentaBalance,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
 	selectStakingMigrationCompleted,
@@ -35,13 +37,15 @@ const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation()
 	const router = useRouter()
 	const dispatch = useAppDispatch()
-	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
+	const claimableBalance = useAppSelector(selectClaimableBalance)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
+	const totalVestable = useAppSelector(selectTotalVestable)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const claimableBalanceV2 = useAppSelector(selectClaimableBalanceV2)
+	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
+	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
+	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
-	const totalVestable = useAppSelector(selectTotalVestableV2)
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
-	const totalVestableV1 = useAppSelector(selectTotalVestable)
-	const stakedEscrowedKwentaBalanceV1 = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
 	const isMigrationRequired = useAppSelector(selectStakingMigrationRequired)
@@ -96,7 +100,7 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'balance-staked',
 						title: t('dashboard.stake.portfolio.balance.staked'),
-						value: truncateNumbers(stakedKwentaBalance, 2),
+						value: truncateNumbers(stakedKwentaBalanceV2, 2),
 					},
 				],
 			},
@@ -107,12 +111,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+						value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestable, 2),
+						value: truncateNumbers(totalVestableV2, 2),
 					},
 				],
 			},
@@ -123,7 +127,7 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'rewards-claimable',
 						title: t('dashboard.stake.portfolio.rewards.claimable'),
-						value: truncateNumbers(claimableBalance, 2),
+						value: truncateNumbers(claimableBalanceV2, 2),
 					},
 					{
 						key: 'rewards-trading',
@@ -160,14 +164,14 @@ const StakingPage: StakingComponent = () => {
 			},
 		],
 		[
-			claimableBalance,
+			claimableBalanceV2,
 			kwentaBalance,
 			kwentaRewards,
-			stakedEscrowedKwentaBalance,
-			stakedKwentaBalance,
+			stakedEscrowedKwentaBalanceV2,
+			stakedKwentaBalanceV2,
 			t,
 			timeLeft,
-			totalVestable,
+			totalVestableV2,
 		]
 	)
 
@@ -183,7 +187,7 @@ const StakingPage: StakingComponent = () => {
 					},
 					{
 						key: 'balance-staked',
-						title: t('dashboard.stake.portfolio.balance.staked'),
+						title: t('dashboard.stake.portfolio.balance.staked-v1'),
 						value: truncateNumbers(stakedKwentaBalance, 2),
 					},
 				],
@@ -193,7 +197,7 @@ const StakingPage: StakingComponent = () => {
 				card: [
 					{
 						key: 'rewards-claimable',
-						title: t('dashboard.stake.portfolio.rewards.staking'),
+						title: t('dashboard.stake.portfolio.rewards.staking-v1'),
 						value: truncateNumbers(claimableBalance, 2),
 					},
 					{
@@ -209,12 +213,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+						value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestable, 2),
+						value: truncateNumbers(totalVestableV2, 2),
 					},
 				],
 			},
@@ -224,26 +228,26 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalanceV1, 2),
+						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestableV1, 2),
+						value: truncateNumbers(totalVestable, 2),
 					},
 				],
 			},
 		],
 		[
-			claimableBalance,
-			kwentaBalance,
-			kwentaRewards,
-			stakedEscrowedKwentaBalance,
-			stakedEscrowedKwentaBalanceV1,
-			stakedKwentaBalance,
 			t,
+			kwentaBalance,
+			stakedKwentaBalance,
+			claimableBalance,
+			kwentaRewards,
+			stakedEscrowedKwentaBalanceV2,
+			totalVestableV2,
+			stakedEscrowedKwentaBalance,
 			totalVestable,
-			totalVestableV1,
 		]
 	)
 

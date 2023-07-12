@@ -558,7 +558,8 @@
 				"balance": {
 					"title": "Balance",
 					"liquid": "Liquid",
-					"staked": "Staked"
+					"staked": "Staked",
+					"staked-v1": "Staked V1"
 				},
 				"escrow": {
 					"title": "Escrow",
@@ -572,6 +573,7 @@
 					"claimable": "Claimable",
 					"trading": "Trading",
 					"staking": "Staking",
+					"staking-v1": "Staking V1",
 					"apr": "APR"
 				},
 				"early-vest-rewards": {
