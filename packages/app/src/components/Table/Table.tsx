@@ -7,7 +7,7 @@ import {
 	getSortedRowModel,
 } from '@tanstack/react-table'
 import type { ColumnDef, Row, SortingState, VisibilityState } from '@tanstack/react-table'
-import React, { DependencyList, useCallback, useMemo, useRef, useState } from 'react'
+import React, { DependencyList, FC, useCallback, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { genericMemo } from 'types/helpers'
 
@@ -18,7 +18,7 @@ import Loader from 'components/Loader'
 import { Body } from 'components/Text'
 import media from 'styles/media'
 
-import Pagination from './Pagination'
+import Pagination, { PaginationProps } from './Pagination'
 import TableBodyRow, { TableCell } from './TableBodyRow'
 
 const CARD_HEIGHT_MD = '50px'
@@ -73,8 +73,8 @@ type TableProps<T> = {
 	noBottom?: boolean
 	columnVisibility?: VisibilityState
 	columnsDeps?: DependencyList
-	paginationVariant?: 'default' | 'staking'
 	paginationExtra?: React.ReactNode
+	CustomPagination?: FC<PaginationProps>
 }
 
 const Table = <T,>({
@@ -96,8 +96,8 @@ const Table = <T,>({
 	noBottom = false,
 	columnVisibility,
 	columnsDeps = [],
-	paginationVariant = 'default',
 	paginationExtra,
+	CustomPagination,
 }: TableProps<T>) => {
 	const [sorting, setSorting] = useState<SortingState>(sortBy)
 	const [pagination, setPagination] = useState<PaginationState>({
@@ -196,7 +196,7 @@ const Table = <T,>({
 							})}
 						</TableBody>
 					)}
-					{(shouldShowPagination || paginationExtra) && paginationVariant !== 'staking' ? (
+					{(shouldShowPagination || paginationExtra) && !CustomPagination ? (
 						<Pagination
 							compact={compactPagination}
 							pageIndex={table.getState().pagination.pageIndex}
@@ -206,14 +206,13 @@ const Table = <T,>({
 							setPage={table.setPageIndex}
 							previousPage={table.previousPage}
 							nextPage={table.nextPage}
-							variant={paginationVariant}
 							extra={paginationExtra}
 						/>
 					) : undefined}
 				</ReactTable>
 			</TableContainer>
-			{paginationVariant === 'staking' && (
-				<Pagination
+			{CustomPagination && (
+				<CustomPagination
 					compact={compactPagination}
 					pageIndex={table.getState().pagination.pageIndex}
 					pageCount={table.getPageCount()}
@@ -222,7 +221,6 @@ const Table = <T,>({
 					setPage={table.setPageIndex}
 					previousPage={table.previousPage}
 					nextPage={table.nextPage}
-					variant={paginationVariant}
 					extra={paginationExtra}
 				/>
 			)}

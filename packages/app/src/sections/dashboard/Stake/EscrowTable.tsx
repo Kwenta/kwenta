@@ -12,6 +12,7 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import { DesktopLargeOnlyView, DesktopSmallOnlyView } from 'components/Media'
 import Table from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
+import StakingPagination from 'components/Table/StakingPagination'
 import { Body } from 'components/Text'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewards, vestEscrowedRewardsV2 } from 'state/staking/actions'
@@ -157,7 +158,7 @@ const EscrowTable = () => {
 					pageSize={4}
 					showPagination
 					columnsDeps={columnsDeps}
-					paginationVariant="staking"
+					CustomPagination={StakingPagination}
 					paginationExtra={<EscrowStatsContainer />}
 					columns={[
 						{
@@ -273,7 +274,6 @@ const EscrowTable = () => {
 					pageSize={5}
 					showPagination
 					columnsDeps={columnsDeps}
-					paginationVariant="default"
 					paginationExtra={<EscrowStatsContainer />}
 					columns={[
 						{

@@ -10,9 +10,7 @@ import { GridDivCenteredCol } from 'components/layout/grid'
 import { resetButtonCSS } from 'styles/common'
 import media from 'styles/media'
 
-import StakingPagination from './StakingPagination'
-
-type PaginationProps = {
+export type PaginationProps = {
 	pageIndex: number
 	pageCount: number
 	canNextPage: boolean
@@ -21,7 +19,6 @@ type PaginationProps = {
 	setPage: (page: number) => void
 	previousPage: () => void
 	nextPage: () => void
-	variant?: 'default' | 'staking'
 	extra?: React.ReactNode
 }
 
@@ -35,7 +32,6 @@ const Pagination: FC<PaginationProps> = React.memo(
 		setPage,
 		nextPage,
 		previousPage,
-		variant = 'default',
 		extra,
 	}) => {
 		const { t } = useTranslation()
@@ -43,7 +39,7 @@ const Pagination: FC<PaginationProps> = React.memo(
 		const firstPage = () => setPage(0)
 		const toLastPage = () => setPage(pageCount - 1)
 
-		return variant === 'default' ? (
+		return (
 			<>
 				<PaginationContainer compact={compact}>
 					<ArrowButtonContainer>
@@ -72,18 +68,6 @@ const Pagination: FC<PaginationProps> = React.memo(
 				</PaginationContainer>
 				{extra}
 			</>
-		) : (
-			<StakingPagination
-				compact={compact}
-				pageIndex={pageIndex}
-				pageCount={pageCount}
-				canNextPage={canNextPage}
-				canPreviousPage={canPreviousPage}
-				setPage={setPage}
-				previousPage={previousPage}
-				nextPage={nextPage}
-				extra={extra}
-			/>
 		)
 	}
 )
