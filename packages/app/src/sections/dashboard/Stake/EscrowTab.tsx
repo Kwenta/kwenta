@@ -126,24 +126,19 @@ const CardsContainer = styled(FlexDivRowCentered)`
 		align-items: flex-start;
 		row-gap: 25px;
 	`}
-	${media.lessThan('lg')`
-		margin-bottom: 25px;
-	`}
 `
 
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
-	${media.lessThan('lg')`
-		margin-bottom: 25px;
-	`}
 `
 
 const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	row-gap: 50px;
-	${media.lessThan('lg')`
+	row-gap: 60px;
+
+	${media.lessThan('xl')`
 		row-gap: 25px;
 	`}
 `
