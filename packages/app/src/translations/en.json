@@ -580,7 +580,7 @@
 					"title": "Early Vest Rewards",
 					"claimable": "Claimable",
 					"epoch": "Epoch",
-					"early-vest-rewards-tooltip": "This is early vest rewards tooltip"
+					"early-vest-rewards-tooltip": "Coming soon: Early vest fee rewards will be distributed once per epoch to V2 stakers."
 				},
 				"cooldown": {
 					"title": "Cooldown",

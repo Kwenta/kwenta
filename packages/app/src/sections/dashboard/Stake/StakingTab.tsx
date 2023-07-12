@@ -78,7 +78,7 @@ const StakingTab = () => {
 					<CustomStyledTooltip
 						width="260px"
 						height="auto"
-						content={t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+						content={t('dashboard.stake.portfolio.early-vest-rewards.early-vest-rewards-tooltip')}
 					>
 						<WithCursor cursor="help">
 							<HelpIcon />
