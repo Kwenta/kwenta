@@ -16,6 +16,7 @@ export type ButtonVariant =
 	| 'yellow'
 	| 'long'
 	| 'short'
+	| 'staking-button'
 
 type BaseButtonProps = {
 	$size: 'xsmall' | 'small' | 'medium' | 'large'
@@ -152,9 +153,8 @@ const BaseButton = styled.button<BaseButtonProps>`
 			}
 		`}
 	
-
 	${(props) =>
-		props.$variant === 'yellow' &&
+		(props.$variant === 'yellow' || props.$variant === 'staking-button') &&
 		css`
 			background: ${props.theme.colors.selectedTheme.button.yellow.fill};
 			border: 1px solid ${props.theme.colors.selectedTheme.button.yellow.border};
@@ -167,13 +167,11 @@ const BaseButton = styled.button<BaseButtonProps>`
 			&::before {
 				display: none;
 			}
-		`}
-	
-	${(props) =>
-		props.$variant === 'yellow' &&
-		props.outlineColor === 'yellow' &&
-		css`
-			border: 1px solid ${props.theme.colors.selectedTheme.button.yellow.text};
+
+			${props.$variant === 'staking-button' &&
+			css`
+				border: 1px solid ${props.theme.colors.selectedTheme.button.yellow.text};
+			`}
 		`}
 
 	font-family: ${(props) =>

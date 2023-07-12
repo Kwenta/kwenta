@@ -115,41 +115,36 @@ const EscrowTable = () => {
 					</LabelContainer>
 				</LabelContainers>
 				<ButtonsContainer>
-					<Button
-						variant={escrowVersion === 1 ? 'yellow' : 'flat'}
-						outlineColor="yellow"
+					<StyledButton
+						variant={escrowVersion === 1 ? 'staking-button' : 'flat'}
 						size="xsmall"
 						isRounded
-						style={{ padding: '10px 20px' }}
 						onClick={() => handleVersionChange(1)}
 					>
 						{t('dashboard.stake.tabs.escrow.v1')}
-					</Button>
-					<Button
-						variant={escrowVersion === 2 ? 'yellow' : 'flat'}
-						outlineColor="yellow"
+					</StyledButton>
+					<StyledButton
+						variant={escrowVersion === 2 ? 'staking-button' : 'flat'}
 						size="xsmall"
 						isRounded
-						style={{ padding: '10px 20px' }}
 						active={escrowVersion === 2}
 						onClick={() => handleVersionChange(2)}
 					>
 						{t('dashboard.stake.tabs.escrow.v2')}
-					</Button>
+					</StyledButton>
 				</ButtonsContainer>
 			</Container>
-			<Button
+			<StyledButton
 				variant="yellow"
 				size="xsmall"
 				isRounded
-				style={{ padding: '10px 20px' }}
 				disabled={!vestEnabled}
 				onClick={openConfirmModal}
 			>
 				{escrowVersion === 1
 					? t('dashboard.stake.tabs.escrow.vest-v1')
 					: t('dashboard.stake.tabs.escrow.vest-v2')}
-			</Button>
+			</StyledButton>
 		</StatsContainer>
 	)
 
@@ -367,6 +362,9 @@ const EscrowTable = () => {
 	)
 }
 
+const StyledButton = styled(Button)`
+	padding: 10px 20px;
+`
 const Container = styled(FlexDivRow)`
 	align-items: flex-end;
 	${media.lessThan('lg')`

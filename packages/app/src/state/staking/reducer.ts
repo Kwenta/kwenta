@@ -251,7 +251,7 @@ const stakingSlice = createSlice({
 			state.getRewardStatus = FetchStatus.Loading
 		})
 		builder.addCase(claimStakingRewardsV2.rejected, (state) => {
-			state.getRewardStatus = FetchStatus.Loading
+			state.getRewardStatus = FetchStatus.Error
 		})
 	},
 })
