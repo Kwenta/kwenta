@@ -189,6 +189,7 @@ const EscrowTable = () => {
 							),
 							accessorKey: 'selected',
 							size: 40,
+							enableSorting: false,
 						},
 						{
 							header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.date')}</TableHeader>,
@@ -201,7 +202,7 @@ const EscrowTable = () => {
 							cell: (cellProps) => (
 								<FlexDivRowCentered columnGap="10px">
 									<TableCell>
-										{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
+										{formatNumber(cellProps.row.original.amount, { minDecimals: 4 })}
 									</TableCell>
 									{cellProps.row.original.version === 1 ? (
 										<StyledBadge color="yellow" size="small">
@@ -231,7 +232,7 @@ const EscrowTable = () => {
 							),
 							cell: (cellProps) => (
 								<TableCell>
-									{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
+									{formatNumber(cellProps.row.original.amount, { minDecimals: 4 })}
 								</TableCell>
 							),
 							accessorKey: 'immediatelyVestable',
@@ -248,7 +249,7 @@ const EscrowTable = () => {
 								return (
 									<TableCell color={common.palette.yellow.y500}>
 										{`${formatNumber(cellProps.row.original.fee, {
-											suggestDecimals: true,
+											minDecimals: 4,
 										})} (${formatPercent(
 											cellProps.row.original.amount !== null
 												? fee.div(cellProps.row.original.amount)
@@ -304,13 +305,14 @@ const EscrowTable = () => {
 							),
 							accessorKey: 'selected',
 							size: 30,
+							enableSorting: false,
 						},
 						{
 							header: () => <TableHeader>{t('dashboard.stake.tabs.escrow.amount')}</TableHeader>,
 							cell: (cellProps) => (
 								<FlexDivRowCentered columnGap="10px">
 									<TableCell>
-										{formatNumber(cellProps.row.original.amount, { suggestDecimals: true })}
+										{formatNumber(cellProps.row.original.amount, { minDecimals: 4 })}
 									</TableCell>
 									{cellProps.row.original.version === 1 ? (
 										<StyledBadge color="yellow" size="small">
@@ -320,7 +322,7 @@ const EscrowTable = () => {
 								</FlexDivRowCentered>
 							),
 							accessorKey: 'amount',
-							size: 80,
+							size: 90,
 						},
 						{
 							header: () => (
@@ -330,9 +332,7 @@ const EscrowTable = () => {
 								const fee = wei(cellProps.row.original.fee)
 								return (
 									<TableCell color={common.palette.yellow.y500}>
-										<span>
-											{formatNumber(cellProps.row.original.fee, { suggestDecimals: true })}
-										</span>
+										<span>{formatNumber(cellProps.row.original.fee, { minDecimals: 4 })}</span>
 										<span>
 											{formatPercent(
 												cellProps.row.original.amount !== null
