@@ -92,7 +92,8 @@ const BigWhiteHeader = styled(WhiteHeader)`
 	font-size: 60px;
 	width: 600px;
 	${media.lessThan('sm')`
-		font-size: 40px;
+		font-size: 25px;
+		width: 300px;
 	`};
 `
 
