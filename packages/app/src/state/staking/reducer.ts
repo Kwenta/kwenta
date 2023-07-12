@@ -152,6 +152,10 @@ const stakingSlice = createSlice({
 			state.unstakeStatus = FetchStatus.Idle
 			state.stakeEscrowedStatus = FetchStatus.Idle
 			state.unstakeEscrowedStatus = FetchStatus.Idle
+			state.vestEscrowedRewardsStatus = FetchStatus.Idle
+			state.getRewardStatus = FetchStatus.Idle
+			state.compoundRewardsStatus = FetchStatus.Idle
+			state.approveKwentaStatus = FetchStatus.Idle
 		})
 		builder.addCase(fetchStakingV2Data.fulfilled, (state, action) => {
 			state.v2.escrowedKwentaBalance = action.payload.rewardEscrowBalance
@@ -177,6 +181,10 @@ const stakingSlice = createSlice({
 			state.kwentaRewards = action.payload.kwentaRewards
 			state.opRewards = action.payload.opRewards
 			state.snxOpRewards = action.payload.snxOpRewards
+			state.claimKwentaRewardsStatus = FetchStatus.Idle
+			state.claimAllRewardsStatus = FetchStatus.Idle
+			state.claimOpRewardsStatus = FetchStatus.Idle
+			state.claimSnxOpRewardsStatus = FetchStatus.Idle
 		})
 		builder.addCase(fetchEstimatedRewards.fulfilled, (state, action) => {
 			state.estimatedKwentaRewards = action.payload.estimatedKwentaRewards
