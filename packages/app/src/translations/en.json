@@ -577,7 +577,8 @@
 				"early-vest-rewards": {
 					"title": "Early Vest Rewards",
 					"claimable": "Claimable",
-					"epoch": "Epoch"
+					"epoch": "Epoch",
+					"early-vest-rewards-tooltip": "This is early vest rewards tooltip"
 				},
 				"cooldown": {
 					"title": "Cooldown",

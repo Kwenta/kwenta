@@ -7,7 +7,7 @@ import { useAppSelector } from 'state/hooks'
 import { selectSelectedEpoch } from 'state/staking/selectors'
 import media from 'styles/media'
 
-import RewardsTab from '../RewardsTab'
+import RewardsTab from './RewardsTab'
 
 import EscrowTab from './EscrowTab'
 import { StakeTab } from './StakingPortfolio'

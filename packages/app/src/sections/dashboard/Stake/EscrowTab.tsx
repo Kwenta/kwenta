@@ -1,18 +1,16 @@
-import { formatPercent, formatTruncatedDuration, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body, Heading } from 'components/Text'
-import { NO_VALUE } from 'constants/placeholder'
 import { useAppSelector } from 'state/hooks'
 import {
 	selectAPY,
 	selectAPYV2,
 	selectStakedEscrowedKwentaBalance,
 	selectStakedEscrowedKwentaBalanceV2,
-	selectStakedResetTime,
 	selectTotalVestable,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
@@ -30,15 +28,6 @@ const EscrowTab = () => {
 	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const totalVestable = useAppSelector(selectTotalVestable)
 	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
-	const stakedResetTime = useAppSelector(selectStakedResetTime)
-
-	const timeLeft = useMemo(
-		() =>
-			stakedResetTime > new Date().getTime() / 1000
-				? formatTruncatedDuration(stakedResetTime - new Date().getTime() / 1000)
-				: NO_VALUE,
-		[stakedResetTime]
-	)
 
 	const stakingOverview = useMemo(
 		() => [
@@ -137,6 +126,9 @@ const CardsContainer = styled(FlexDivRowCentered)`
 		align-items: flex-start;
 		row-gap: 25px;
 	`}
+	${media.lessThan('lg')`
+		margin-bottom: 25px;
+	`}
 `
 
 const StyledHeading = styled(Heading)`
@@ -151,6 +143,9 @@ const CardGridContainer = styled(StakingCard)`
 	flex-direction: column;
 	justify-content: flex-start;
 	row-gap: 50px;
+	${media.lessThan('lg')`
+		row-gap: 25px;
+	`}
 `
 
 const GridContainer = styled.div`

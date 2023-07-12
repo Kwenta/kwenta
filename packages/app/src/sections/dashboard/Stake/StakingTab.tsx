@@ -8,6 +8,7 @@ import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { SplitContainer } from 'components/layout/grid'
 import { Body, Heading } from 'components/Text'
+import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -69,7 +70,17 @@ const StakingTab = () => {
 			},
 			{
 				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
-				icon: <HelpIcon />,
+				icon: (
+					<CustomStyledTooltip
+						width="260px"
+						height="auto"
+						content={t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+					>
+						<WithCursor cursor="help">
+							<HelpIcon />
+						</WithCursor>
+					</CustomStyledTooltip>
+				),
 				card: [
 					{
 						key: 'early-vest-rewards-claimable',
@@ -140,6 +151,22 @@ const StakingTab = () => {
 		</SplitContainer>
 	)
 }
+
+const CustomStyledTooltip = styled(Tooltip)`
+	padding: 10px;
+	white-space: normal;
+	top: -120px;
+	left: -200px;
+	${media.lessThan('md')`
+		width: 200px;
+		left: -120px;
+		top: -130px;
+	`}
+`
+
+const WithCursor = styled.div<{ cursor: 'help' }>`
+	cursor: ${(props) => props.cursor};
+`
 
 const LabelContainer = styled(Body)`
 	display: flex;

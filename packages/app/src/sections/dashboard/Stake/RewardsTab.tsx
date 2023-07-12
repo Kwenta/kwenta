@@ -12,6 +12,7 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import LabelContainer from 'components/Nav/DropDownLabel'
 import Select, { DropdownIndicator, IndicatorSeparator } from 'components/Select'
 import { Body, Heading } from 'components/Text'
+import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
 import useIsL2 from 'hooks/useIsL2'
 import { TradingRewardProps } from 'queries/staking/utils'
@@ -31,27 +32,7 @@ import {
 } from 'state/staking/selectors'
 import media from 'styles/media'
 
-type EpochValue = {
-	period: number
-	start: number
-	end: number
-	label: string
-}
-
-type RewardsInfo = {
-	key: string
-	title: string
-	copy: string
-	labels: RewardsCard[]
-	info: RewardsCard[]
-}
-
-type RewardsCard = {
-	label: string
-	value: string
-	labelIcon?: React.ReactNode
-	valueIcon?: React.ReactNode
-}
+import { EpochValue, RewardsInfo } from './types'
 
 const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 	const { t } = useTranslation()
@@ -95,7 +76,17 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 					},
 					{
 						label: t('dashboard.stake.tabs.trading-rewards.fee-paid'),
-						labelIcon: <HelpIcon />,
+						labelIcon: (
+							<CustomStyledTooltip
+								width="200px"
+								height="auto"
+								content={t('dashboard.stake.tabs.trading-rewards.trading-rewards-tooltip')}
+							>
+								<WithCursor cursor="help">
+									<HelpIcon />
+								</WithCursor>
+							</CustomStyledTooltip>
+						),
 						value: formatDollars(futuresFeePaid, { minDecimals: 2 }),
 					},
 					{
@@ -114,7 +105,17 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 					},
 					{
 						label: t('dashboard.rewards.estimated'),
-						labelIcon: <HelpIcon />,
+						labelIcon: (
+							<CustomStyledTooltip
+								width="260px"
+								height="auto"
+								content={t('dashboard.stake.tabs.trading-rewards.estimated-info')}
+							>
+								<WithCursor cursor="help">
+									<HelpIcon />
+								</WithCursor>
+							</CustomStyledTooltip>
+						),
 						value: formatNumber(estimatedKwentaRewards, { minDecimals: 4 }),
 					},
 				],
@@ -260,6 +261,20 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 		</RewardsTabContainer>
 	)
 }
+
+const CustomStyledTooltip = styled(Tooltip)`
+	padding: 10px;
+	white-space: normal;
+	left: -80px;
+	${media.lessThan('md')`
+		width: 200px;
+		left: -150px;
+	`}
+`
+
+const WithCursor = styled.div<{ cursor: 'help' }>`
+	cursor: ${(props) => props.cursor};
+`
 
 const selectlabel = css`
 	font-size: 12px;
