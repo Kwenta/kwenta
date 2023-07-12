@@ -91,7 +91,6 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 				labels: [
 					{
 						label: t('dashboard.stake.portfolio.rewards.title'),
-						labelIcon: <HelpIcon />,
 						value: formatNumber(kwentaRewards, { minDecimals: 4 }),
 					},
 					{
@@ -115,6 +114,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 					},
 					{
 						label: t('dashboard.rewards.estimated'),
+						labelIcon: <HelpIcon />,
 						value: formatNumber(estimatedKwentaRewards, { minDecimals: 4 }),
 					},
 				],
@@ -228,9 +228,12 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 								))}
 							</FlexDivRow>
 							<FlexDivRow justifyContent="flex-start" columnGap="25px">
-								{info.map(({ label, value, valueIcon }) => (
+								{info.map(({ label, labelIcon, value, valueIcon }) => (
 									<FlexDivCol rowGap="5px">
-										<Body color="secondary">{label}</Body>
+										<IconContainer color="secondary">
+											{label}
+											{labelIcon}
+										</IconContainer>
 										<IconContainer size="large" color="primary">
 											{value}
 											{valueIcon}

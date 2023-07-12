@@ -5,7 +5,6 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'rea
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import HelpIcon from 'assets/svg/app/question-mark.svg'
 import { NO_VALUE } from 'constants/placeholder'
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import EscrowTable from 'sections/dashboard/Stake/EscrowTable'
@@ -135,7 +134,6 @@ const StakingPage: StakingComponent = () => {
 			},
 			{
 				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
-				icon: <HelpIcon />,
 				card: [
 					{
 						key: 'early-vest-rewards-claimable',

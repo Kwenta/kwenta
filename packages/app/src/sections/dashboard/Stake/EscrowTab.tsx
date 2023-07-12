@@ -119,23 +119,12 @@ const EscrowTab = () => {
 							</FlexDivCol>
 						))}
 					</CardsContainer>
-					<LabelContainer rowGap="5px">
-						<Body color="secondary">{t('dashboard.stake.portfolio.cooldown.title')}</Body>
-						<Body color="primary">{timeLeft}</Body>
-					</LabelContainer>
 				</CardGridContainer>
 			</GridContainer>
 			<EscrowTable />
 		</EscrowTabContainer>
 	)
 }
-
-const LabelContainer = styled(FlexDivCol)`
-	margin-bottom: 10px;
-	${media.lessThan('lg')`
-		margin-top: 25px;
-	`}
-`
 
 const CardsContainer = styled(FlexDivRowCentered)`
 	width: 100%;
@@ -160,7 +149,8 @@ const StyledHeading = styled(Heading)`
 const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	justify-content: flex-start;
+	row-gap: 50px;
 `
 
 const GridContainer = styled.div`

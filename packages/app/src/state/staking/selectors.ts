@@ -268,9 +268,10 @@ export const selectAPY = createSelector(
 
 export const selectAPYV2 = createSelector(
 	(state: RootState) => state.staking.v2.totalStakedBalance,
+	(state: RootState) => state.staking.v1.totalStakedBalance,
 	(state: RootState) => state.staking.weekCounter,
-	(totalStakedBalance, weekCounter) => {
-		return getApy(Number(totalStakedBalance), weekCounter)
+	(totalStakedBalance, totalStakedBalanceV1, weekCounter) => {
+		return getApy(Number(totalStakedBalance) + Number(totalStakedBalanceV1), weekCounter)
 	}
 )
 
