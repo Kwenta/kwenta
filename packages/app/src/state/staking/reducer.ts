@@ -176,28 +176,31 @@ const stakingSlice = createSlice({
 			state.stakeStatus = FetchStatus.Loading
 		})
 		builder.addCase(stakeKwenta.rejected, (state) => {
-			state.stakeStatus = FetchStatus.Idle
+			state.stakeStatus = FetchStatus.Error
 		})
 		builder.addCase(unstakeKwenta.pending, (state) => {
 			state.unstakeStatus = FetchStatus.Loading
 		})
 		builder.addCase(unstakeKwenta.rejected, (state) => {
-			state.unstakeStatus = FetchStatus.Idle
+			state.unstakeStatus = FetchStatus.Error
 		})
 		builder.addCase(stakeEscrow.pending, (state) => {
 			state.stakeEscrowedStatus = FetchStatus.Loading
 		})
 		builder.addCase(stakeEscrow.rejected, (state) => {
-			state.stakeEscrowedStatus = FetchStatus.Idle
+			state.stakeEscrowedStatus = FetchStatus.Error
 		})
 		builder.addCase(unstakeEscrow.pending, (state) => {
 			state.unstakeEscrowedStatus = FetchStatus.Loading
 		})
 		builder.addCase(unstakeEscrow.rejected, (state) => {
-			state.unstakeEscrowedStatus = FetchStatus.Idle
+			state.unstakeEscrowedStatus = FetchStatus.Error
 		})
 		builder.addCase(claimStakingRewards.pending, (state) => {
 			state.getRewardStatus = FetchStatus.Loading
+		})
+		builder.addCase(claimStakingRewards.rejected, (state) => {
+			state.getRewardStatus = FetchStatus.Error
 		})
 		builder.addCase(claimMultipleAllRewards.pending, (state) => {
 			state.claimAllRewardsStatus = FetchStatus.Loading
@@ -218,37 +221,37 @@ const stakingSlice = createSlice({
 			state.vestEscrowedRewardsStatus = FetchStatus.Loading
 		})
 		builder.addCase(vestEscrowedRewards.rejected, (state) => {
-			state.vestEscrowedRewardsStatus = FetchStatus.Idle
+			state.vestEscrowedRewardsStatus = FetchStatus.Error
 		})
 		builder.addCase(vestEscrowedRewardsV2.pending, (state) => {
 			state.vestEscrowedRewardsStatus = FetchStatus.Loading
 		})
 		builder.addCase(vestEscrowedRewardsV2.rejected, (state) => {
-			state.vestEscrowedRewardsStatus = FetchStatus.Idle
+			state.vestEscrowedRewardsStatus = FetchStatus.Error
 		})
 		builder.addCase(stakeKwentaV2.pending, (state) => {
 			state.stakeStatus = FetchStatus.Loading
 		})
 		builder.addCase(stakeKwentaV2.rejected, (state) => {
-			state.stakeStatus = FetchStatus.Idle
+			state.stakeStatus = FetchStatus.Error
 		})
 		builder.addCase(unstakeKwentaV2.pending, (state) => {
 			state.unstakeStatus = FetchStatus.Loading
 		})
 		builder.addCase(unstakeKwentaV2.rejected, (state) => {
-			state.unstakeStatus = FetchStatus.Idle
+			state.unstakeStatus = FetchStatus.Error
 		})
 		builder.addCase(stakeEscrowV2.pending, (state) => {
 			state.stakeEscrowedStatus = FetchStatus.Loading
 		})
 		builder.addCase(stakeEscrowV2.rejected, (state) => {
-			state.stakeEscrowedStatus = FetchStatus.Idle
+			state.stakeEscrowedStatus = FetchStatus.Error
 		})
 		builder.addCase(unstakeEscrowV2.pending, (state) => {
 			state.unstakeEscrowedStatus = FetchStatus.Loading
 		})
 		builder.addCase(unstakeEscrowV2.rejected, (state) => {
-			state.unstakeEscrowedStatus = FetchStatus.Idle
+			state.unstakeEscrowedStatus = FetchStatus.Error
 		})
 		builder.addCase(claimStakingRewardsV2.pending, (state) => {
 			state.getRewardStatus = FetchStatus.Loading

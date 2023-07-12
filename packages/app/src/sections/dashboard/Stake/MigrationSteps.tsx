@@ -14,6 +14,8 @@ import { claimStakingRewards, unstakeKwenta } from 'state/staking/actions'
 import { setStakingMigrationCompleted } from 'state/staking/reducer'
 import {
 	selectClaimableBalance,
+	selectIsGettingReward,
+	selectIsUnstakingKwenta,
 	selectStakedKwentaBalance,
 	selectStakedKwentaBalanceV2,
 } from 'state/staking/selectors'
@@ -25,6 +27,8 @@ const MigrationSteps: FC = memo(() => {
 	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
+	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
+	const isClaimingReward = useAppSelector(selectIsGettingReward)
 
 	const handleGetReward = useCallback(() => {
 		dispatch(claimStakingRewards())
@@ -49,6 +53,7 @@ const MigrationSteps: FC = memo(() => {
 				buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
 				onClick: handleGetReward,
 				active: claimableBalance.gt(0),
+				loading: isClaimingReward,
 			},
 			{
 				key: 'step-2',
@@ -58,6 +63,7 @@ const MigrationSteps: FC = memo(() => {
 				buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
 				onClick: handleUnstakeKwenta,
 				active: claimableBalance.lte(0) && stakedKwentaBalance.gt(0),
+				loading: isUnstakingKwenta,
 			},
 			{
 				key: 'step-3',
@@ -74,6 +80,8 @@ const MigrationSteps: FC = memo(() => {
 			handleDismiss,
 			handleGetReward,
 			handleUnstakeKwenta,
+			isClaimingReward,
+			isUnstakingKwenta,
 			stakedKwentaBalance,
 			stakedKwentaBalanceV2,
 			t,
@@ -82,41 +90,44 @@ const MigrationSteps: FC = memo(() => {
 
 	return (
 		<StepsContainer columnGap="15px">
-			{migrationSteps.map(({ key, copy, label, value, buttonLabel, active, onClick }, i) => (
-				<StyledStakingCard key={key} $active={active}>
-					<StyledHeading variant="h4">
-						<Trans
-							i18nKey="dashboard.stake.tabs.migrate.step"
-							values={{ index: i + 1 }}
-							components={[<span />]}
-						/>
-					</StyledHeading>
-					<Body size="small" color="secondary">
-						{copy}
-					</Body>
-					<Spacer height={25} />
-					<FlexDivRowCentered>
-						<FlexDivCol rowGap="5px">
-							<Body size="small" color="secondary">
-								{label}
-							</Body>
-							<Body size="large" color="preview">
-								{value}
-							</Body>
-						</FlexDivCol>
-						<Button
-							variant="yellow"
-							size="small"
-							textTransform="uppercase"
-							isRounded
-							disabled={!active}
-							onClick={onClick}
-						>
-							{buttonLabel}
-						</Button>
-					</FlexDivRowCentered>
-				</StyledStakingCard>
-			))}
+			{migrationSteps.map(
+				({ key, copy, label, value, buttonLabel, active, onClick, loading }, i) => (
+					<StyledStakingCard key={key} $active={active}>
+						<StyledHeading variant="h4">
+							<Trans
+								i18nKey="dashboard.stake.tabs.migrate.step"
+								values={{ index: i + 1 }}
+								components={[<span />]}
+							/>
+						</StyledHeading>
+						<Body size="small" color="secondary">
+							{copy}
+						</Body>
+						<Spacer height={25} />
+						<FlexDivRowCentered>
+							<FlexDivCol rowGap="5px">
+								<Body size="small" color="secondary">
+									{label}
+								</Body>
+								<Body size="large" color="preview">
+									{value}
+								</Body>
+							</FlexDivCol>
+							<Button
+								variant="yellow"
+								size="small"
+								textTransform="uppercase"
+								isRounded
+								disabled={!active || loading}
+								loading={loading}
+								onClick={onClick}
+							>
+								{buttonLabel}
+							</Button>
+						</FlexDivRowCentered>
+					</StyledStakingCard>
+				)
+			)}
 		</StepsContainer>
 	)
 })
