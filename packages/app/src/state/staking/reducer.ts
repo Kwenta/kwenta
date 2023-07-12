@@ -202,6 +202,9 @@ const stakingSlice = createSlice({
 		builder.addCase(claimMultipleAllRewards.pending, (state) => {
 			state.claimAllRewardsStatus = FetchStatus.Loading
 		})
+		builder.addCase(claimMultipleAllRewards.rejected, (state) => {
+			state.claimAllRewardsStatus = FetchStatus.Error
+		})
 		builder.addCase(claimMultipleKwentaRewards.pending, (state) => {
 			state.claimKwentaRewardsStatus = FetchStatus.Loading
 		})

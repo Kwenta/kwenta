@@ -25,6 +25,7 @@ import {
 	selectEpochData,
 	selectEstimatedKwentaRewards,
 	selectEstimatedOpRewards,
+	selectIsClaimingAllRewards,
 	selectKwentaRewards,
 	selectOpRewards,
 	selectSelectedEpoch,
@@ -47,14 +48,15 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 	const estimatedOpRewards = useAppSelector(selectEstimatedOpRewards)
 	const futuresFeePaid = useAppSelector(selectFuturesFeesForAccount)
 	const totalFuturesFeePaid = useAppSelector(selectFuturesFees)
+	const isClaimingAllRewards = useAppSelector(selectIsClaimingAllRewards)
 
 	const handleClaimAll = useCallback(() => {
 		dispatch(claimMultipleAllRewards())
 	}, [dispatch])
 
 	const claimDisabledAll = useMemo(
-		() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0),
-		[opRewards, snxOpRewards, kwentaRewards]
+		() => kwentaRewards.add(opRewards).add(snxOpRewards).eq(0) || isClaimingAllRewards,
+		[kwentaRewards, opRewards, snxOpRewards, isClaimingAllRewards]
 	)
 
 	const ratio = useMemo(() => {
@@ -251,6 +253,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 						size="small"
 						textTransform="uppercase"
 						isRounded
+						loading={isClaimingAllRewards}
 						disabled={claimDisabledAll}
 						onClick={handleClaimAll}
 					>

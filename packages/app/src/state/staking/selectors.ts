@@ -304,3 +304,8 @@ export const selectTradingRewardsSupportedNetwork = (state: RootState) =>
 
 export const selectStakingSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420
+
+export const selectIsClaimingAllRewards = createSelector(
+	(state: RootState) => state.staking.claimAllRewardsStatus,
+	(claimAllRewardsStatus) => claimAllRewardsStatus === FetchStatus.Loading
+)
