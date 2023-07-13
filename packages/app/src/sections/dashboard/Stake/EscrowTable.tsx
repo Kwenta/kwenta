@@ -10,7 +10,7 @@ import Button from 'components/Button'
 import { Checkbox } from 'components/Checkbox'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { DesktopLargeOnlyView, DesktopSmallOnlyView } from 'components/Media'
-import Table from 'components/Table'
+import Table, { TableNoResults } from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
 import StakingPagination from 'components/Table/StakingPagination'
 import { Body } from 'components/Text'
@@ -160,6 +160,9 @@ const EscrowTable = () => {
 					columnsDeps={columnsDeps}
 					CustomPagination={StakingPagination}
 					paginationExtra={<EscrowStatsContainer />}
+					noResultsMessage={
+						<TableNoResults>{t('dashboard.stake.tabs.escrow.no-entries')}</TableNoResults>
+					}
 					columns={[
 						{
 							header: () => (
