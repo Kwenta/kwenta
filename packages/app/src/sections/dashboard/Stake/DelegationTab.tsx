@@ -9,27 +9,23 @@ import { FlexDivCol, FlexDivRow } from 'components/layout/flex'
 import Table, { TableCellHead, TableHeader, TableNoResults } from 'components/Table'
 import { TableCell } from 'components/Table/TableBodyRow'
 import { Body, Heading } from 'components/Text'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { approveOperator } from 'state/staking/actions'
+import { selectIsApprovingOperator } from 'state/staking/selectors'
 import media from 'styles/media'
+
+type DelegateActions = 'approve' | 'revoke'
 
 const DelegationTab = () => {
 	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const isApprovingOperator = useAppSelector(selectIsApprovingOperator)
+	const [delegateAction, setDelegateAction] = useState<DelegateActions>('approve')
 
 	const data = useMemo(
 		() => [
 			{
-				address: '0x425109d8900Bdb1e7eefb60Bc6e73E60574e0615',
-			},
-			{
-				address: '0x425109d8900Bdb1e7eefb60Bc6e73E60574e0615',
-			},
-			{
-				address: '0x425109d8900Bdb1e7eefb60Bc6e73E60574e0615',
-			},
-			{
-				address: '0x425109d8900Bdb1e7eefb60Bc6e73E60574e0615',
-			},
-			{
-				address: '0x425109d8900Bdb1e7eefb60Bc6e73E60574e0615',
+				address: '0xC2ecD777d06FFDF8B3179286BEabF52B67E9d991',
 			},
 			{
 				address: '0x425109d8900Bdb1e7eefb60Bc6e73E60574e0615',
@@ -50,11 +46,22 @@ const DelegationTab = () => {
 	)
 
 	const columnsDeps = useMemo(() => [checkedState], [checkedState])
-	const [searchInput, setSearchInput] = useState('')
+	const [delegatedAddress, setdelegatedAddress] = useState('')
 
 	const onChange = useCallback((text: string) => {
-		setSearchInput(text.toLowerCase())
+		setdelegatedAddress(text.toLowerCase().trim())
 	}, [])
+
+	const handleApproveOperator = useCallback(
+		(delegatedAddress: string, action: DelegateActions) => {
+			setDelegateAction(action)
+			dispatch(
+				approveOperator({ delegatedAddress, isApproval: action === 'approve' ? true : false })
+			)
+			setCheckedState(data.map((_) => false))
+		},
+		[data, dispatch]
+	)
 
 	return (
 		<DelegationContainer>
@@ -69,14 +76,21 @@ const DelegationTab = () => {
 						<SearchBar>
 							<SearchInput
 								autoFocus={true}
-								value={searchInput}
+								value={delegatedAddress}
 								onChange={(e) => onChange(e.target.value)}
 								placeholder="Type the address..."
 							/>
 						</SearchBar>
 					</SearchBarContainer>
 				</FlexDivCol>
-				<Button fullWidth variant="flat" size="small" loading={false} onClick={() => {}}>
+				<Button
+					fullWidth
+					variant="flat"
+					size="small"
+					loading={isApprovingOperator && delegateAction === 'approve'}
+					disabled={delegatedAddress.length !== 42}
+					onClick={() => handleApproveOperator(delegatedAddress, 'approve')}
+				>
 					{t('dashboard.stake.tabs.delegate.title')}
 				</Button>
 			</CardGridContainer>
@@ -133,9 +147,11 @@ const DelegationTab = () => {
 						size="small"
 						textTransform="uppercase"
 						isRounded
-						loading={false}
-						disabled={false}
-						onClick={() => {}}
+						loading={isApprovingOperator && delegateAction === 'revoke'}
+						disabled={checkedState.every((checked) => !checked)}
+						onClick={() => {
+							handleApproveOperator(data.filter((_, i) => !!checkedState[i])[0].address, 'revoke')
+						}}
 					>
 						{t('dashboard.stake.tabs.delegate.revoke')}
 					</Button>

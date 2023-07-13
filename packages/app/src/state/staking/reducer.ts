@@ -27,6 +27,7 @@ import {
 	claimStakingRewardsV2,
 	approveKwentaToken,
 	compoundRewards,
+	approveOperator,
 } from './actions'
 import { StakingState } from './types'
 
@@ -81,6 +82,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	vestEscrowedRewardsStatus: FetchStatus.Idle,
 	approveKwentaStatus: FetchStatus.Idle,
 	compoundRewardsStatus: FetchStatus.Idle,
+	approveOperatorStatus: FetchStatus.Idle,
 }
 
 const stakingSlice = createSlice({
@@ -123,6 +125,9 @@ const stakingSlice = createSlice({
 		setCompoundRewardsStatus: (state, action) => {
 			state.compoundRewardsStatus = action.payload
 		},
+		setApproveOperatorStatus: (state, action) => {
+			state.approveOperatorStatus = action.payload
+		},
 		setSelectedEpoch: (state, action) => {
 			state.selectedEpoch = action.payload
 		},
@@ -156,6 +161,7 @@ const stakingSlice = createSlice({
 			state.getRewardStatus = FetchStatus.Idle
 			state.compoundRewardsStatus = FetchStatus.Idle
 			state.approveKwentaStatus = FetchStatus.Idle
+			state.approveOperatorStatus = FetchStatus.Idle
 		})
 		builder.addCase(fetchStakingV2Data.fulfilled, (state, action) => {
 			state.v2.escrowedKwentaBalance = action.payload.rewardEscrowBalance
@@ -195,6 +201,12 @@ const stakingSlice = createSlice({
 		})
 		builder.addCase(approveKwentaToken.rejected, (state) => {
 			state.approveKwentaStatus = FetchStatus.Error
+		})
+		builder.addCase(approveOperator.pending, (state) => {
+			state.approveOperatorStatus = FetchStatus.Loading
+		})
+		builder.addCase(approveOperator.rejected, (state) => {
+			state.approveOperatorStatus = FetchStatus.Error
 		})
 		builder.addCase(compoundRewards.pending, (state) => {
 			state.compoundRewardsStatus = FetchStatus.Loading

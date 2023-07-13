@@ -175,6 +175,11 @@ export const selectIsUnstakedEscrowedKwenta = createSelector(
 		unstakeEscrowedStatus === FetchStatus.Success || unstakeEscrowedStatus === FetchStatus.Error
 )
 
+export const selectIsApprovingOperator = createSelector(
+	(state: RootState) => state.staking.approveOperatorStatus,
+	(approveOperatorStatus) => approveOperatorStatus === FetchStatus.Loading
+)
+
 export const selectIsGettingReward = createSelector(
 	(state: RootState) => state.staking.getRewardStatus,
 	(getRewardStatus) => getRewardStatus === FetchStatus.Loading

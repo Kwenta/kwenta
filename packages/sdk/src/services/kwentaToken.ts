@@ -366,6 +366,19 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(KwentaStakingRewardsV2, 'compound', [])
 	}
 
+	public approveOperator(delegatedAddress: string, isApproval: boolean) {
+		const { KwentaStakingRewardsV2 } = this.sdk.context.contracts
+
+		if (!KwentaStakingRewardsV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		return this.sdk.transactions.createContractTxn(KwentaStakingRewardsV2, 'approveOperator', [
+			delegatedAddress,
+			isApproval,
+		])
+	}
+
 	// TODO: Replace this with separate functions that use `approveToken`
 	// In that case, we can safely remove the map object from this method.
 

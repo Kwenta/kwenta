@@ -48,4 +48,5 @@ export type StakingState = {
 	vestEscrowedRewardsStatus: FetchStatus
 	approveKwentaStatus: FetchStatus
 	compoundRewardsStatus: FetchStatus
+	approveOperatorStatus: FetchStatus
 }

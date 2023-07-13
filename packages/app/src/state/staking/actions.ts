@@ -106,6 +106,28 @@ export const fetchStakingV2Data = createAsyncThunk<
 	}
 })
 
+export const approveOperator = createAsyncThunk<
+	void,
+	{ delegatedAddress: string; isApproval: boolean },
+	ThunkConfig
+>(
+	'staking/approveOperator',
+	async ({ delegatedAddress, isApproval }, { dispatch, extra: { sdk } }) => {
+		const { hash } = await sdk.kwentaToken.approveOperator(delegatedAddress, isApproval)
+
+		monitorTransaction({
+			txHash: hash,
+			onTxConfirmed: () => {
+				dispatch({ type: 'staking/setApproveOperatorStatus', payload: FetchStatus.Success })
+				dispatch(fetchStakeMigrateData())
+			},
+			onTxFailed: () => {
+				dispatch({ type: 'staking/setApproveOperatorStatus', payload: FetchStatus.Error })
+			},
+		})
+	}
+)
+
 export const approveKwentaToken = createAsyncThunk<
 	void,
 	'kwenta' | 'vKwenta' | 'veKwenta' | 'kwentaStakingV2',
