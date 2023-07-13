@@ -22,6 +22,7 @@ const DelegationTab = () => {
 	const isApprovingOperator = useAppSelector(selectIsApprovingOperator)
 	const [delegateAction, setDelegateAction] = useState<DelegateActions>('approve')
 
+	// TODO: Replace with real data
 	const data = useMemo(
 		() => [
 			{
@@ -35,6 +36,7 @@ const DelegationTab = () => {
 	)
 
 	const [checkedState, setCheckedState] = useState(data.map((_) => false))
+	const [delegatedAddress, setdelegatedAddress] = useState('')
 
 	const handleOnChange = useCallback(
 		(position: number) => {
@@ -46,7 +48,6 @@ const DelegationTab = () => {
 	)
 
 	const columnsDeps = useMemo(() => [checkedState], [checkedState])
-	const [delegatedAddress, setdelegatedAddress] = useState('')
 
 	const onChange = useCallback((text: string) => {
 		setdelegatedAddress(text.toLowerCase().trim())
@@ -72,16 +73,16 @@ const DelegationTab = () => {
 				</FlexDivCol>
 				<FlexDivCol rowGap="10px" style={{ marginBottom: '10px' }}>
 					<Body color="secondary">{t('dashboard.stake.tabs.delegate.address')}</Body>
-					<SearchBarContainer>
-						<SearchBar>
-							<SearchInput
+					<InputBarContainer>
+						<InputBar>
+							<AddressInput
 								autoFocus={true}
 								value={delegatedAddress}
 								onChange={(e) => onChange(e.target.value)}
 								placeholder="Type the address..."
 							/>
-						</SearchBar>
-					</SearchBarContainer>
+						</InputBar>
+					</InputBarContainer>
 				</FlexDivCol>
 				<Button
 					fullWidth
@@ -173,7 +174,7 @@ const DelegationContainer = styled.div`
 	`}
 `
 
-const SearchInput = styled(Input)`
+const AddressInput = styled(Input)`
 	position: relative;
 	height: 38px;
 	border-radius: 8px;
@@ -187,7 +188,7 @@ const SearchInput = styled(Input)`
 	`}
 `
 
-const SearchBar = styled.div`
+const InputBar = styled.div`
 	width: 100%;
 	overflow-x: auto;
 	position: relative;
@@ -199,7 +200,7 @@ const SearchBar = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.input.border};
 `
 
-const SearchBarContainer = styled.div`
+const InputBarContainer = styled.div`
 	display: flex;
 	height: 100%;
 	width: 100%;
