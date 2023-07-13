@@ -49,20 +49,25 @@ const DelegationTab = () => {
 			)
 			// TODO: Only for testing
 			if (action === 'approve') {
-				setData((data) => [
-					...data,
+				setData((oldData) => [
+					...oldData,
 					{
 						address: delegatedAddress,
 					},
 				])
-				setCheckedState((data) => data.map((_) => false))
+				setCheckedState((prevCheckedState) => [...prevCheckedState, false])
 			} else {
+				const index = data.findIndex((item) => item.address === delegatedAddress)
 				setData((data) => data.filter((_) => _.address !== delegatedAddress))
-				setCheckedState((data) => data.map((_) => false))
+				setCheckedState((prevCheckedState) => {
+					const newCheckedState = [...prevCheckedState]
+					newCheckedState.splice(index, 1)
+					return newCheckedState
+				})
 			}
 			setCheckedState((data) => data.map((_) => false))
 		},
-		[dispatch]
+		[data, dispatch]
 	)
 
 	return (
@@ -256,10 +261,9 @@ const CardGridContainer = styled(FlexDivCol)`
 	border-radius: 15px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 	justify-content: space-between;
-	row-gap: 50px;
+	row-gap: 25px;
 	${media.lessThan('lg')`
 		justify-content: flex-start;
-		row-gap: 25px;
 	`}
 `
 
