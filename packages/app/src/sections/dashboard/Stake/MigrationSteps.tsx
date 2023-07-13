@@ -133,7 +133,7 @@ const MigrationSteps: FC = memo(() => {
 })
 
 const StepsContainer = styled(FlexDivRowCentered)`
-	margin: 30px 0;
+	margin: 30px 0 15px;
 	${media.lessThan('lg')`
 		flex-direction: column;
 		row-gap: 25px;

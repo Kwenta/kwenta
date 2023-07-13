@@ -289,7 +289,7 @@ const StakingPage: StakingComponent = () => {
 }
 
 const TableContainer = styled.div`
-	margin-top: 30px;
+	margin-top: 15px;
 	${media.lessThan('lg')`
 		margin-top: 0px;
 		padding: 15px;
