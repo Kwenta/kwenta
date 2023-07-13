@@ -45,7 +45,7 @@ const TradingRewardRow = memo(() => {
 	)
 
 	const goToRewards = useCallback(() => {
-		router.push(ROUTES.Dashboard.Rewards)
+		router.push(ROUTES.Dashboard.Stake)
 	}, [])
 
 	return (
