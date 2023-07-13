@@ -231,7 +231,7 @@ const EscrowTable = () => {
 							),
 							cell: (cellProps) => (
 								<TableCell>
-									{formatNumber(cellProps.row.original.amount, { minDecimals: 4 })}
+									{formatNumber(cellProps.row.original.vestable, { minDecimals: 4 })}
 								</TableCell>
 							),
 							accessorKey: 'immediatelyVestable',
