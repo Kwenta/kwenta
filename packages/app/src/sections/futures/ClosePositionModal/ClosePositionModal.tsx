@@ -43,9 +43,9 @@ import {
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
+import AcceptWarningView from '../../../components/AcceptWarningView'
 import ClosePositionFeeInfo from '../FeeInfoBox/ClosePositionFeeInfo'
 import OrderTypeSelector from '../Trade/OrderTypeSelector'
-import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage'
 
 import ClosePositionPriceInput from './ClosePositionPriceInput'
 import ClosePositionSizeInput from './ClosePositionSizeInput'
@@ -238,7 +238,8 @@ export default function ClosePositionModal() {
 			{previewTrade?.exceedsPriceProtection && (
 				<>
 					<Spacer height={20} />
-					<ConfirmSlippage
+					<AcceptWarningView
+						message="This trade incurs high slippage, proceed anyway?"
 						checked={overridePriceProtection}
 						onChangeChecked={(checked) => setOverridePriceProtection(checked)}
 					/>

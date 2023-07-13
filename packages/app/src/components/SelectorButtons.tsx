@@ -6,11 +6,17 @@ import { StyleType } from 'components/SegmentedControl'
 
 type Props = {
 	options: string[]
+	disabled?: boolean
 	onSelect: (index: number) => void
 	type?: StyleType
 }
 
-export default function SelectorButtons({ onSelect, options, type = 'pill-button' }: Props) {
+export default function SelectorButtons({
+	onSelect,
+	disabled,
+	options,
+	type = 'pill-button',
+}: Props) {
 	return (
 		<Container $flex={type === 'pill-button'}>
 			{type === 'pill-button' ? (
@@ -18,6 +24,7 @@ export default function SelectorButtons({ onSelect, options, type = 'pill-button
 			) : (
 				options.map((option, i) => (
 					<Button
+						disabled={disabled}
 						capitalized={i === 0}
 						bold={false}
 						size="xsmall"

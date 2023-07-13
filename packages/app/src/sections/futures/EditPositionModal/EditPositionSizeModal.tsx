@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import AcceptWarningView from 'components/AcceptWarningView'
 import BaseModal from 'components/BaseModal'
 import Button from 'components/Button'
 import ErrorView from 'components/ErrorView'
@@ -31,7 +32,6 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo'
-import ConfirmSlippage from '../TradeConfirmation/ConfirmSlippage'
 
 import EditPositionSizeInput from './EditPositionSizeInput'
 
@@ -232,7 +232,8 @@ export default function EditPositionSizeModal() {
 			{preview?.exceedsPriceProtection && (
 				<>
 					<Spacer height={20} />
-					<ConfirmSlippage
+					<AcceptWarningView
+						message="This trade incurs high slippage, proceed anyway?"
 						checked={overridePriceProtection}
 						onChangeChecked={(checked) => setOverridePriceProtection(checked)}
 					/>

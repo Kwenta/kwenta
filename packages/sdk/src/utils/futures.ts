@@ -346,7 +346,7 @@ export const formatPotentialTrade = (
 
 	const notionalValue = wei(size).mul(wei(price))
 	const leverage = margin.gt(0) ? notionalValue.div(wei(margin)) : ZERO_WEI
-	const priceImpact = wei(price).sub(skewAdjustedPrice).div(skewAdjustedPrice).abs()
+	const priceImpact = wei(price).sub(skewAdjustedPrice).div(skewAdjustedPrice)
 
 	return {
 		fee: wei(fee),

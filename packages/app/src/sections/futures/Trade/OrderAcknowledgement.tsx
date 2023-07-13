@@ -36,7 +36,7 @@ export default function OrderAcknowledgement({ onClick, inContainer }: Props) {
 				/>
 			</FlexDivRowCentered>
 			<Spacer height={12} />
-			<Button variant="yellow" size="small" onClick={onClick}>
+			<Button data-testid="sl-tp-ack-proceed" variant="yellow" size="small" onClick={onClick}>
 				Proceed
 			</Button>
 		</ContentContainer>
