@@ -263,9 +263,10 @@ export const TableNoResults = styled.div`
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.bold};
+	color: ${(props) => props.theme.colors.selectedTheme.text.label};
+	font-size: 13px;
+	font-family: ${(props) => props.theme.fonts.regular};
+
 	div {
 		text-decoration: underline;
 		cursor: pointer;

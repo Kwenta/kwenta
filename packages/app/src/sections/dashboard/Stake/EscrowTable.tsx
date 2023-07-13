@@ -278,6 +278,9 @@ const EscrowTable = () => {
 					showPagination
 					columnsDeps={columnsDeps}
 					paginationExtra={<EscrowStatsContainer />}
+					noResultsMessage={
+						<TableNoResults>{t('dashboard.stake.tabs.escrow.no-entries')}</TableNoResults>
+					}
 					columns={[
 						{
 							header: () => (
