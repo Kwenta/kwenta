@@ -138,6 +138,7 @@ const StakingPage: StakingComponent = () => {
 			},
 			{
 				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
+				onClick: () => setCurrentTab(StakeTab.Staking),
 				card: [
 					{
 						key: 'early-vest-rewards-claimable',
@@ -153,7 +154,6 @@ const StakingPage: StakingComponent = () => {
 			},
 			{
 				category: t('dashboard.stake.portfolio.cooldown.title'),
-				onClick: () => setCurrentTab(StakeTab.Staking),
 				card: [
 					{
 						key: 'cooldown-time-left',
