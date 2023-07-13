@@ -379,21 +379,10 @@ export default class KwentaTokenService {
 		])
 	}
 
-	public async fetchApprovedOperators(delegatedAddress: string) {
-		const { KwentaStakingRewardsV2 } = this.sdk.context.contracts
-
-		if (!KwentaStakingRewardsV2) {
-			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
-		}
-		const { walletAddress } = this.sdk.context
-
-		const isApprovedOperator = await KwentaStakingRewardsV2._operatorApprovals(
-			walletAddress,
-			delegatedAddress
-		)
-
+	public async fetchApprovedOperators() {
+		// TODO: Implement this when subgraph query is available
 		return {
-			isApprovedOperator,
+			operators: [],
 		}
 	}
 

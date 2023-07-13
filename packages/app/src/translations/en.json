@@ -695,7 +695,8 @@
 					"manage-copy": "Manage delegated addresses",
 					"address": "Address",
 					"revoke": "Revoke",
-					"no-result": "You have no delegated addresses"
+					"no-result": "You have no delegated addresses",
+					"warning": "This is a Delegation Warning"
 				}
 			}
 		},

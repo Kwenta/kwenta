@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import Button from 'components/Button'
 import { Checkbox } from 'components/Checkbox'
+import ErrorView from 'components/ErrorView'
 import Input from 'components/Input/Input'
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex'
 import Table, { TableCellHead, TableHeader, TableNoResults } from 'components/Table'
@@ -21,8 +22,6 @@ const DelegationTab = () => {
 	const dispatch = useAppDispatch()
 	const isApprovingOperator = useAppSelector(selectIsApprovingOperator)
 	const approvedOperators = useAppSelector(selectApprovedOperators)
-	// eslint-disable-next-line no-console
-	console.log(`approvedOperators: ${approvedOperators}`)
 	const [delegateAction, setDelegateAction] = useState<DelegateActions>('approve')
 	const [delegatedAddress, setdelegatedAddress] = useState('')
 	// TODO: Replace with real data
@@ -52,15 +51,20 @@ const DelegationTab = () => {
 			dispatch(
 				approveOperator({ delegatedAddress, isApproval: action === 'approve' ? true : false })
 			)
-			// TODO: Only for testing
+			// TODO: Only for testing the add/remove operator functionality
 			if (action === 'approve') {
-				setData((oldData) => [
-					...oldData,
-					{
-						address: delegatedAddress,
-					},
-				])
-				setCheckedState((prevCheckedState) => [...prevCheckedState, false])
+				const exists = data.some((d) =>
+					Object.values(d).toString().toLowerCase().includes(delegatedAddress)
+				)
+				if (!exists) {
+					setCheckedState((prevCheckedState) => [...prevCheckedState, false])
+					setData((oldData) => [
+						...oldData,
+						{
+							address: delegatedAddress,
+						},
+					])
+				}
 			} else {
 				const index = data.findIndex((item) => item.address === delegatedAddress)
 				setData((data) => data.filter((_) => _.address !== delegatedAddress))
@@ -105,6 +109,14 @@ const DelegationTab = () => {
 				>
 					{t('dashboard.stake.tabs.delegate.title')}
 				</Button>
+				<ErrorView
+					message={t('dashboard.stake.tabs.delegate.warning')}
+					messageType="warn"
+					containerStyle={{
+						margin: '0',
+						padding: '10px 0',
+					}}
+				/>
 			</CardGridContainer>
 			<CardGridContainer>
 				<FlexDivCol rowGap="5px">
@@ -192,6 +204,7 @@ const AddressInput = styled(Input)`
 	padding: 10px 0px;
 	font-size: 14px;
 	background: ${(props) => props.theme.colors.selectedTheme.input.background};
+	font-family: ${(props) => props.theme.fonts.mono};
 	border: none;
 
 	${media.lessThan('sm')`
@@ -225,7 +238,7 @@ const TableContainer = styled.div`
 
 const mobileTableStyle = css`
 	${media.lessThan('sm')`
-		font-size: 11px;
+		font-size: 10px;
 		&:first-child {
 			padding-left: 10px;
 		}
@@ -243,7 +256,7 @@ const StyledTable = styled(Table)`
 
 	${TableCell} {
 		font-size: 12px;
-		font-family: ${(props) => props.theme.fonts.regular};
+		font-family: ${(props) => props.theme.fonts.mono};
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 		height: 16px;
 		${mobileTableStyle}

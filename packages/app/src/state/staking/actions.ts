@@ -132,15 +132,16 @@ export const fetchApprovedOperators = createAsyncThunk<{ operators: string[] }, 
 	'staking/fetchApprovedOperators',
 	async (_, { extra: { sdk } }) => {
 		try {
-			// const response = await sdk.kwentaToken.fetchApprovedOperators()
+			const { operators } = await sdk.kwentaToken.fetchApprovedOperators()
+			// TODO: Remove the placeholder data when the real data is available
+			const placeholders = [
+				'0xF5cAD67a16Bb2db15bA76D665E62B2eB641de451',
+				'0xfA6390064efF628a91826f44Dab6685e4c1fF073',
+				'0xC2ecD777d06FFDF8B3179286BEabF52B67E9d991',
+			]
 			return {
-				operators: [
-					'0xF5cAD67a16Bb2db15bA76D665E62B2eB641de451',
-					'0xfA6390064efF628a91826f44Dab6685e4c1fF073',
-					'0xC2ecD777d06FFDF8B3179286BEabF52B67E9d991',
-				],
+				operators: [...operators, ...placeholders],
 			}
-			// eslint-disable-next-line no-unreachable
 		} catch (err) {
 			logError(err)
 			notifyError('Failed to fetch approved operators', err)
