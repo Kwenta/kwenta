@@ -1,7 +1,7 @@
 import { formatNumber, formatTruncatedDuration } from '@kwenta/sdk/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -12,8 +12,7 @@ import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPort
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
 import { StakingCards } from 'sections/dashboard/Stake/types'
 import { useFetchStakeMigrateData } from 'state/futures/hooks'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { setStakingMigrationCompleted } from 'state/staking/reducer'
+import { useAppSelector } from 'state/hooks'
 import {
 	selectClaimableBalance,
 	selectClaimableBalanceV2,
@@ -24,7 +23,6 @@ import {
 	selectStakedKwentaBalance,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
-	selectStakingMigrationCompleted,
 	selectStakingMigrationRequired,
 	selectTotalVestable,
 	selectTotalVestableV2,
@@ -36,7 +34,6 @@ type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element
 const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation()
 	const router = useRouter()
-	const dispatch = useAppDispatch()
 	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const totalVestable = useAppSelector(selectTotalVestable)
@@ -49,15 +46,8 @@ const StakingPage: StakingComponent = () => {
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
 	const isMigrationRequired = useAppSelector(selectStakingMigrationRequired)
-	const isMigrationCompleted = useAppSelector(selectStakingMigrationCompleted)
 
 	useFetchStakeMigrateData()
-
-	useEffect(() => {
-		if (isMigrationRequired) {
-			dispatch(setStakingMigrationCompleted(false))
-		}
-	}, [dispatch, isMigrationRequired])
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -252,13 +242,7 @@ const StakingPage: StakingComponent = () => {
 	)
 
 	const { title, cardsInfo, stakingComponent } = useMemo(() => {
-		if (isMigrationCompleted) {
-			return {
-				title: t('dashboard.stake.portfolio.title'),
-				cardsInfo: stakingInfo,
-				stakingComponent: <StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />,
-			}
-		} else {
+		if (isMigrationRequired) {
 			return {
 				title: t('dashboard.stake.tabs.migrate.title'),
 				cardsInfo: migrationInfo,
@@ -270,8 +254,14 @@ const StakingPage: StakingComponent = () => {
 					</>
 				),
 			}
+		} else {
+			return {
+				title: t('dashboard.stake.portfolio.title'),
+				cardsInfo: stakingInfo,
+				stakingComponent: <StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />,
+			}
 		}
-	}, [currentTab, handleChangeTab, isMigrationCompleted, migrationInfo, stakingInfo, t])
+	}, [currentTab, handleChangeTab, isMigrationRequired, migrationInfo, stakingInfo, t])
 
 	return (
 		<>
@@ -281,7 +271,7 @@ const StakingPage: StakingComponent = () => {
 			<StakingPortfolio
 				title={title}
 				cardsInfo={cardsInfo}
-				isMigrationCompleted={isMigrationCompleted}
+				isMigrationRequired={isMigrationRequired}
 			/>
 			{stakingComponent}
 		</>

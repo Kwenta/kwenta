@@ -17,15 +17,15 @@ export enum StakeTab {
 type StakingPortfolioProps = {
 	title: string
 	cardsInfo: StakingCards[]
-	isMigrationCompleted?: boolean
+	isMigrationRequired?: boolean
 }
 
 const StakingPortfolio: FC<StakingPortfolioProps> = memo(
-	({ title, cardsInfo, isMigrationCompleted = true }) => {
+	({ title, cardsInfo, isMigrationRequired = false }) => {
 		return (
 			<StakingPortfolioContainer>
 				<StakingHeading title={title} />
-				{!isMigrationCompleted && <MigrationSteps />}
+				{isMigrationRequired && <MigrationSteps />}
 				<CardsContainer>
 					{cardsInfo.map(({ category, card, onClick, icon }, i) => (
 						<StyledFlexDivCol rowGap="15px" key={i} onClick={onClick}>

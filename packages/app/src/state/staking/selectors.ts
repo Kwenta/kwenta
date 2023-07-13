@@ -294,8 +294,11 @@ export const selectStakingMigrationCompleted = (state: RootState) =>
 export const selectStakingMigrationRequired = createSelector(
 	selectClaimableBalance,
 	selectStakedKwentaBalance,
-	(claimableBalanceV1, stakedKwentaBalanceV1) =>
-		claimableBalanceV1.gt(ZERO_WEI) || stakedKwentaBalanceV1.gt(ZERO_WEI)
+	selectUnstakedEscrowedKwentaBalance,
+	(claimableBalanceV1, stakedKwentaBalanceV1, unstakedEscrowedKwenta) =>
+		claimableBalanceV1.gt(ZERO_WEI) ||
+		stakedKwentaBalanceV1.gt(ZERO_WEI) ||
+		unstakedEscrowedKwenta.gt(ZERO_WEI)
 )
 
 export const selectSelectedEscrowVersion = (state: RootState) =>
