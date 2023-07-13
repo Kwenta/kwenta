@@ -21,7 +21,7 @@ import MobileTrade from 'sections/futures/MobileTrade/MobileTrade'
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles'
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported'
 import TradePanel from 'sections/futures/Trade/TradePanel'
-import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal'
+import DepositWithdrawCrossMarginModal from 'sections/futures/Trade/DepositWithdrawCrossMargin'
 import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal'
 import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin'
 import WithdrawSmartMargin from 'sections/futures/TradeSmartMargin/WithdrawSmartMargin'
@@ -43,6 +43,9 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { PageContent } from 'styles/common'
 import media from 'styles/media'
+import CreatePerpsV3AccountModal from 'sections/futures/CreatePerpsV3AccountModal'
+import { selectShowCrossMarginOnboard } from 'state/futures/crossMargin/selectors'
+import TradePanelCrossMargin from 'sections/futures/Trade/TradePanelCrossMargin'
 
 type MarketComponent = FC & { getLayout: (page: ReactNode) => JSX.Element }
 
@@ -57,6 +60,7 @@ const Market: MarketComponent = () => {
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset)
 	const showOnboard = useAppSelector(selectShowSmartMarginOnboard)
+	const showCrossMarginOnboard = useAppSelector(selectShowCrossMarginOnboard)
 	const openModal = useAppSelector(selectShowModal)
 	const showPositionModal = useAppSelector(selectShowPositionModal)
 	const accountType = useAppSelector(selectFuturesType)
@@ -92,10 +96,13 @@ const Market: MarketComponent = () => {
 		}
 	}, [router, setCurrentMarket, dispatch, routerMarketAsset, selectedMarketAsset])
 
+	console.log('openModal', openModal)
+
 	return (
 		<>
 			<MarketHead />
 			<SmartMarginOnboard isOpen={showOnboard} />
+			<CreatePerpsV3AccountModal isOpen={showCrossMarginOnboard} />
 			<DesktopOnlyView>
 				{lessThanWidth('lg') ? (
 					<PageContent>
@@ -125,7 +132,7 @@ const Market: MarketComponent = () => {
 			{showPositionModal?.type === 'futures_edit_position_size' && <EditPositionSizeModal />}
 			{showPositionModal?.type === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_deposit_withdraw_cross_margin' && (
-				<TransferIsolatedMarginModal
+				<DepositWithdrawCrossMarginModal
 					defaultTab="deposit"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
@@ -166,7 +173,7 @@ function TradePanelDesktop() {
 		)
 	}
 
-	return <TradePanel />
+	return accountType === FuturesMarginType.CROSS_MARGIN ? <TradePanelCrossMargin /> : <TradePanel />
 }
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>

@@ -101,7 +101,7 @@ import {
 	selectSmartMarginSupportedNetwork,
 	selectIsConditionalOrder,
 	selectKeeperEthBalance,
-	selectLeverageSide,
+	selectSmartMarginLeverageSide,
 	selectV2MarketAsset,
 	selectPerpsV2Markets,
 	selectOrderType,
@@ -370,7 +370,7 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 				: params.marginDelta
 
 		try {
-			const leverageSide = selectLeverageSide(getState())
+			const leverageSide = selectSmartMarginLeverageSide(getState())
 			const preview = await sdk.futures.getSmartMarginTradePreview(
 				account || ZERO_ADDRESS,
 				params.market.key,
@@ -465,7 +465,7 @@ export const editCrossMarginTradeSize =
 		const marginDelta = selectSmartMarginMarginDelta(getState())
 		const orderPrice = selectSmartMarginOrderPrice(getState())
 		const isConditionalOrder = selectIsConditionalOrder(getState())
-		const tradeSide = selectLeverageSide(getState())
+		const tradeSide = selectSmartMarginLeverageSide(getState())
 		const marketInfo = selectV2MarketInfo(getState())
 		const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : indexPrice
 
@@ -678,7 +678,7 @@ export const editTradeOrderPrice =
 	(dispatch, getState) => {
 		const rate = selectSkewAdjustedPrice(getState())
 		const orderType = selectOrderType(getState())
-		const side = selectLeverageSide(getState())
+		const side = selectSmartMarginLeverageSide(getState())
 		const inputs = selectSmartMarginTradeInputs(getState())
 		dispatch(setSmartMarginOrderPrice(price))
 		const invalidLabel = orderPriceInvalidLabel(price, side, rate, orderType)

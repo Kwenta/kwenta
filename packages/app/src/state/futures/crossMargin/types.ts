@@ -74,7 +74,9 @@ export type FundingRatePeriods = {
 	[key: number]: string
 }
 
-export type CrossMarginAccountData = FuturesAccountData
+export type CrossMarginAccountData = FuturesAccountData & {
+	balances: { [asset: string]: { balance: Wei; allowance: Wei } }
+}
 
 export type CrossMarginState = {
 	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
@@ -93,6 +95,7 @@ export type CrossMarginState = {
 	selectedMarketAsset: FuturesMarketAsset
 	leverageInput: string
 	tradeFee: string
+	perpsV3MarketProxyAddress: string | undefined
 	accounts: Record<
 		FuturesNetwork,
 		{

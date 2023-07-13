@@ -111,6 +111,9 @@ export const getContractsByNetwork = (
 		SUSD: ADDRESSES.SUSD[networkId]
 			? ERC20__factory.connect(ADDRESSES.SUSD[networkId], provider)
 			: undefined,
+		SNXUSD: ADDRESSES.SNXUSD[networkId]
+			? ERC20__factory.connect(ADDRESSES.SNXUSD[networkId], provider)
+			: undefined,
 		SmartMarginAccountFactory: ADDRESSES.SmartMarginAccountFactory[networkId]
 			? SmartMarginAccountFactory__factory.connect(
 					ADDRESSES.SmartMarginAccountFactory[networkId],
@@ -236,6 +239,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		DappMaintenance: ADDRESSES.DappMaintenance[networkId]
 			? new EthCallContract(ADDRESSES.DappMaintenance[networkId], DappMaintenanceABI)
+			: undefined,
+		SNXUSD: ADDRESSES.SNXUSD[networkId]
+			? new EthCallContract(ADDRESSES.SNXUSD[networkId], ERC20ABI)
 			: undefined,
 	}
 }

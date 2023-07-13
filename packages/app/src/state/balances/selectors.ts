@@ -3,7 +3,7 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import type { RootState } from 'state/store'
 import { FetchStatus } from 'state/types'
-import { unserializeBalances } from 'utils/balances'
+import { unserializeBalances, unserializeV3Balances } from 'utils/balances'
 
 export const selectBalancesFetchStatus = (state: RootState) => state.balances.status
 
@@ -22,6 +22,11 @@ export const selectSusdBalance = createSelector(
 	(susdWalletBalance) => toWei(susdWalletBalance)
 )
 
+export const selectSNXUSDBalance = createSelector(
+	(state: RootState) => state.balances.synthV3Balances.SNXUSD?.balance ?? '0',
+	(bal) => toWei(bal)
+)
+
 export const selectBalances = createSelector(
 	(state: RootState) => state.balances,
 	(balances) => {
@@ -32,4 +37,9 @@ export const selectBalances = createSelector(
 			balances.susdWalletBalance || '0'
 		)
 	}
+)
+
+export const selectSynthV3Balances = createSelector(
+	(state: RootState) => state.balances.synthV3Balances,
+	(synthV3Balances) => unserializeV3Balances(synthV3Balances)
 )

@@ -49,6 +49,8 @@ import { getReasonFromCode } from '../utils/synths'
 import { getPerpsV3Markets, queryPerpsV3Accounts } from '../queries/perpsV3'
 import { weiFromWei } from '../utils'
 import { ZERO_ADDRESS } from '../constants'
+import { SynthV3Asset } from '../types'
+import { V3_SYNTH_MARKET_IDS } from '../constants/perpsv3'
 
 export default class PerpsV3Service {
 	private sdk: KwentaSDK
@@ -159,12 +161,12 @@ export default class PerpsV3Service {
 					currentFundingRate: wei(0.0001), // TODO: Funding rate
 					currentFundingVelocity: wei(maxFundingVelocity).div(24 * 24), // TODO: Current not max?
 					feeRates: {
-						makerFee: weiFromWei(makerFee),
-						takerFee: weiFromWei(takerFee),
-						makerFeeDelayedOrder: weiFromWei(makerFee),
-						takerFeeDelayedOrder: weiFromWei(takerFee),
-						makerFeeOffchainDelayedOrder: weiFromWei(makerFee),
-						takerFeeOffchainDelayedOrder: weiFromWei(takerFee),
+						makerFee: weiFromWei(makerFee || 0),
+						takerFee: weiFromWei(takerFee || 0),
+						makerFeeDelayedOrder: weiFromWei(makerFee || 0),
+						takerFeeDelayedOrder: weiFromWei(takerFee || 0),
+						makerFeeOffchainDelayedOrder: weiFromWei(makerFee || 0),
+						takerFeeOffchainDelayedOrder: weiFromWei(takerFee || 0),
 					},
 					openInterest: {
 						// TODO: Assign open interest
@@ -510,24 +512,37 @@ export default class PerpsV3Service {
 		return wei(orderFee.fee)
 	}
 
+	public async getDepositAllowances(walletAddress: string) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		const susdContract = this.sdk.context.contracts.SNXUSD
+		if (!susdContract || !marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		const snxusd = await susdContract.allowance(walletAddress, marketProxy.address)
+		return { snxusd: wei(snxusd) }
+	}
+
 	// Contract mutations
 
 	public async approveDeposit(
-		crossMarginAddress: string,
+		asset: SynthV3Asset,
 		amount: BigNumber = BigNumber.from(ethers.constants.MaxUint256)
 	) {
-		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK)
-		return this.sdk.transactions.createContractTxn(this.sdk.context.contracts.SUSD, 'approve', [
-			crossMarginAddress,
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		const assetContract = this.sdk.context.contracts[asset]
+		if (!assetContract || !marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		return this.sdk.transactions.createContractTxn(assetContract, 'approve', [
+			marketProxy.address,
 			amount,
 		])
 	}
 
-	public async depositToAccount(marketAddress: string, amount: Wei) {
-		// TODO: Accept account
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
-		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [amount.toBN()])
-		return txn
+	public async depositToMarket(accountId: string, asset: SynthV3Asset, amount: Wei) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		return this.sdk.transactions.createContractTxn(marketProxy, 'modifyCollateral', [
+			accountId,
+			V3_SYNTH_MARKET_IDS[asset],
+			amount.toBN(),
+		])
 	}
 
 	public async withdrawFromAccount(marketAddress: string, amount: Wei) {

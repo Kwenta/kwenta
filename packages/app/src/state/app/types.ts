@@ -10,6 +10,7 @@ export type ModalType =
 	| 'futures_confirm_cross_margin_trade'
 	| 'futures_withdraw_keeper_balance'
 	| 'futures_smart_margin_onboard'
+	| 'futures_cross_margin_onboard'
 	| 'futures_smart_margin_socket'
 	| null
 

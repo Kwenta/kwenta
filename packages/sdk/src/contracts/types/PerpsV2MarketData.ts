@@ -2,608 +2,718 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-	BaseContract,
-	BigNumber,
-	BigNumberish,
-	BytesLike,
-	CallOverrides,
-	PopulatedTransaction,
-	Signer,
-	utils,
-} from 'ethers'
-import type { FunctionFragment, Result } from '@ethersproject/abi'
-import type { Listener, Provider } from '@ethersproject/providers'
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
+} from "ethers";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
+  TypedListener,
+  OnEvent,
+} from "./common";
 
 export declare namespace PerpsV2MarketData {
-	export type FeeRatesStruct = {
-		takerFee: BigNumberish
-		makerFee: BigNumberish
-		takerFeeDelayedOrder: BigNumberish
-		makerFeeDelayedOrder: BigNumberish
-		takerFeeOffchainDelayedOrder: BigNumberish
-		makerFeeOffchainDelayedOrder: BigNumberish
-	}
+  export type FeeRatesStruct = {
+    takerFee: BigNumberish;
+    makerFee: BigNumberish;
+    takerFeeDelayedOrder: BigNumberish;
+    makerFeeDelayedOrder: BigNumberish;
+    takerFeeOffchainDelayedOrder: BigNumberish;
+    makerFeeOffchainDelayedOrder: BigNumberish;
+  };
 
-	export type FeeRatesStructOutput = [
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber
-	] & {
-		takerFee: BigNumber
-		makerFee: BigNumber
-		takerFeeDelayedOrder: BigNumber
-		makerFeeDelayedOrder: BigNumber
-		takerFeeOffchainDelayedOrder: BigNumber
-		makerFeeOffchainDelayedOrder: BigNumber
-	}
+  export type FeeRatesStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    takerFee: BigNumber;
+    makerFee: BigNumber;
+    takerFeeDelayedOrder: BigNumber;
+    makerFeeDelayedOrder: BigNumber;
+    takerFeeOffchainDelayedOrder: BigNumber;
+    makerFeeOffchainDelayedOrder: BigNumber;
+  };
 
-	export type MarketSummaryStruct = {
-		market: string
-		asset: BytesLike
-		key: BytesLike
-		maxLeverage: BigNumberish
-		price: BigNumberish
-		marketSize: BigNumberish
-		marketSkew: BigNumberish
-		marketDebt: BigNumberish
-		currentFundingRate: BigNumberish
-		currentFundingVelocity: BigNumberish
-		feeRates: PerpsV2MarketData.FeeRatesStruct
-	}
+  export type MarketSummaryStruct = {
+    market: string;
+    asset: BytesLike;
+    key: BytesLike;
+    maxLeverage: BigNumberish;
+    price: BigNumberish;
+    marketSize: BigNumberish;
+    marketSkew: BigNumberish;
+    marketDebt: BigNumberish;
+    currentFundingRate: BigNumberish;
+    currentFundingVelocity: BigNumberish;
+    feeRates: PerpsV2MarketData.FeeRatesStruct;
+  };
 
-	export type MarketSummaryStructOutput = [
-		string,
-		string,
-		string,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		PerpsV2MarketData.FeeRatesStructOutput
-	] & {
-		market: string
-		asset: string
-		key: string
-		maxLeverage: BigNumber
-		price: BigNumber
-		marketSize: BigNumber
-		marketSkew: BigNumber
-		marketDebt: BigNumber
-		currentFundingRate: BigNumber
-		currentFundingVelocity: BigNumber
-		feeRates: PerpsV2MarketData.FeeRatesStructOutput
-	}
+  export type MarketSummaryStructOutput = [
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    PerpsV2MarketData.FeeRatesStructOutput
+  ] & {
+    market: string;
+    asset: string;
+    key: string;
+    maxLeverage: BigNumber;
+    price: BigNumber;
+    marketSize: BigNumber;
+    marketSkew: BigNumber;
+    marketDebt: BigNumber;
+    currentFundingRate: BigNumber;
+    currentFundingVelocity: BigNumber;
+    feeRates: PerpsV2MarketData.FeeRatesStructOutput;
+  };
 
-	export type FuturesGlobalsStruct = {
-		minInitialMargin: BigNumberish
-		liquidationFeeRatio: BigNumberish
-		minKeeperFee: BigNumberish
-		maxKeeperFee: BigNumberish
-	}
+  export type FuturesGlobalsStruct = {
+    minInitialMargin: BigNumberish;
+    liquidationFeeRatio: BigNumberish;
+    minKeeperFee: BigNumberish;
+    maxKeeperFee: BigNumberish;
+  };
 
-	export type FuturesGlobalsStructOutput = [BigNumber, BigNumber, BigNumber, BigNumber] & {
-		minInitialMargin: BigNumber
-		liquidationFeeRatio: BigNumber
-		minKeeperFee: BigNumber
-		maxKeeperFee: BigNumber
-	}
+  export type FuturesGlobalsStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    minInitialMargin: BigNumber;
+    liquidationFeeRatio: BigNumber;
+    minKeeperFee: BigNumber;
+    maxKeeperFee: BigNumber;
+  };
 
-	export type MarketLimitsStruct = {
-		maxLeverage: BigNumberish
-		maxMarketValue: BigNumberish
-	}
+  export type MarketLimitsStruct = {
+    maxLeverage: BigNumberish;
+    maxMarketValue: BigNumberish;
+  };
 
-	export type MarketLimitsStructOutput = [BigNumber, BigNumber] & {
-		maxLeverage: BigNumber
-		maxMarketValue: BigNumber
-	}
+  export type MarketLimitsStructOutput = [BigNumber, BigNumber] & {
+    maxLeverage: BigNumber;
+    maxMarketValue: BigNumber;
+  };
 
-	export type FundingParametersStruct = {
-		maxFundingVelocity: BigNumberish
-		skewScale: BigNumberish
-	}
+  export type FundingParametersStruct = {
+    maxFundingVelocity: BigNumberish;
+    skewScale: BigNumberish;
+  };
 
-	export type FundingParametersStructOutput = [BigNumber, BigNumber] & {
-		maxFundingVelocity: BigNumber
-		skewScale: BigNumber
-	}
+  export type FundingParametersStructOutput = [BigNumber, BigNumber] & {
+    maxFundingVelocity: BigNumber;
+    skewScale: BigNumber;
+  };
 
-	export type SidesStruct = { long: BigNumberish; short: BigNumberish }
+  export type SidesStruct = { long: BigNumberish; short: BigNumberish };
 
-	export type SidesStructOutput = [BigNumber, BigNumber] & {
-		long: BigNumber
-		short: BigNumber
-	}
+  export type SidesStructOutput = [BigNumber, BigNumber] & {
+    long: BigNumber;
+    short: BigNumber;
+  };
 
-	export type MarketSizeDetailsStruct = {
-		marketSize: BigNumberish
-		sides: PerpsV2MarketData.SidesStruct
-		marketDebt: BigNumberish
-		marketSkew: BigNumberish
-	}
+  export type MarketSizeDetailsStruct = {
+    marketSize: BigNumberish;
+    sides: PerpsV2MarketData.SidesStruct;
+    marketDebt: BigNumberish;
+    marketSkew: BigNumberish;
+  };
 
-	export type MarketSizeDetailsStructOutput = [
-		BigNumber,
-		PerpsV2MarketData.SidesStructOutput,
-		BigNumber,
-		BigNumber
-	] & {
-		marketSize: BigNumber
-		sides: PerpsV2MarketData.SidesStructOutput
-		marketDebt: BigNumber
-		marketSkew: BigNumber
-	}
+  export type MarketSizeDetailsStructOutput = [
+    BigNumber,
+    PerpsV2MarketData.SidesStructOutput,
+    BigNumber,
+    BigNumber
+  ] & {
+    marketSize: BigNumber;
+    sides: PerpsV2MarketData.SidesStructOutput;
+    marketDebt: BigNumber;
+    marketSkew: BigNumber;
+  };
 
-	export type PriceDetailsStruct = { price: BigNumberish; invalid: boolean }
+  export type PriceDetailsStruct = { price: BigNumberish; invalid: boolean };
 
-	export type PriceDetailsStructOutput = [BigNumber, boolean] & {
-		price: BigNumber
-		invalid: boolean
-	}
+  export type PriceDetailsStructOutput = [BigNumber, boolean] & {
+    price: BigNumber;
+    invalid: boolean;
+  };
 
-	export type MarketDataStruct = {
-		market: string
-		baseAsset: BytesLike
-		marketKey: BytesLike
-		feeRates: PerpsV2MarketData.FeeRatesStruct
-		limits: PerpsV2MarketData.MarketLimitsStruct
-		fundingParameters: PerpsV2MarketData.FundingParametersStruct
-		marketSizeDetails: PerpsV2MarketData.MarketSizeDetailsStruct
-		priceDetails: PerpsV2MarketData.PriceDetailsStruct
-	}
+  export type MarketDataStruct = {
+    market: string;
+    baseAsset: BytesLike;
+    marketKey: BytesLike;
+    feeRates: PerpsV2MarketData.FeeRatesStruct;
+    limits: PerpsV2MarketData.MarketLimitsStruct;
+    fundingParameters: PerpsV2MarketData.FundingParametersStruct;
+    marketSizeDetails: PerpsV2MarketData.MarketSizeDetailsStruct;
+    priceDetails: PerpsV2MarketData.PriceDetailsStruct;
+  };
 
-	export type MarketDataStructOutput = [
-		string,
-		string,
-		string,
-		PerpsV2MarketData.FeeRatesStructOutput,
-		PerpsV2MarketData.MarketLimitsStructOutput,
-		PerpsV2MarketData.FundingParametersStructOutput,
-		PerpsV2MarketData.MarketSizeDetailsStructOutput,
-		PerpsV2MarketData.PriceDetailsStructOutput
-	] & {
-		market: string
-		baseAsset: string
-		marketKey: string
-		feeRates: PerpsV2MarketData.FeeRatesStructOutput
-		limits: PerpsV2MarketData.MarketLimitsStructOutput
-		fundingParameters: PerpsV2MarketData.FundingParametersStructOutput
-		marketSizeDetails: PerpsV2MarketData.MarketSizeDetailsStructOutput
-		priceDetails: PerpsV2MarketData.PriceDetailsStructOutput
-	}
+  export type MarketDataStructOutput = [
+    string,
+    string,
+    string,
+    PerpsV2MarketData.FeeRatesStructOutput,
+    PerpsV2MarketData.MarketLimitsStructOutput,
+    PerpsV2MarketData.FundingParametersStructOutput,
+    PerpsV2MarketData.MarketSizeDetailsStructOutput,
+    PerpsV2MarketData.PriceDetailsStructOutput
+  ] & {
+    market: string;
+    baseAsset: string;
+    marketKey: string;
+    feeRates: PerpsV2MarketData.FeeRatesStructOutput;
+    limits: PerpsV2MarketData.MarketLimitsStructOutput;
+    fundingParameters: PerpsV2MarketData.FundingParametersStructOutput;
+    marketSizeDetails: PerpsV2MarketData.MarketSizeDetailsStructOutput;
+    priceDetails: PerpsV2MarketData.PriceDetailsStructOutput;
+  };
 
-	export type PositionDataStruct = {
-		position: IPerpsV2MarketBaseTypes.PositionStruct
-		notionalValue: BigNumberish
-		profitLoss: BigNumberish
-		accruedFunding: BigNumberish
-		remainingMargin: BigNumberish
-		accessibleMargin: BigNumberish
-		liquidationPrice: BigNumberish
-		canLiquidatePosition: boolean
-	}
+  export type PositionDataStruct = {
+    position: IPerpsV2MarketBaseTypes.PositionStruct;
+    notionalValue: BigNumberish;
+    profitLoss: BigNumberish;
+    accruedFunding: BigNumberish;
+    remainingMargin: BigNumberish;
+    accessibleMargin: BigNumberish;
+    liquidationPrice: BigNumberish;
+    canLiquidatePosition: boolean;
+  };
 
-	export type PositionDataStructOutput = [
-		IPerpsV2MarketBaseTypes.PositionStructOutput,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		boolean
-	] & {
-		position: IPerpsV2MarketBaseTypes.PositionStructOutput
-		notionalValue: BigNumber
-		profitLoss: BigNumber
-		accruedFunding: BigNumber
-		remainingMargin: BigNumber
-		accessibleMargin: BigNumber
-		liquidationPrice: BigNumber
-		canLiquidatePosition: boolean
-	}
+  export type PositionDataStructOutput = [
+    IPerpsV2MarketBaseTypes.PositionStructOutput,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    boolean
+  ] & {
+    position: IPerpsV2MarketBaseTypes.PositionStructOutput;
+    notionalValue: BigNumber;
+    profitLoss: BigNumber;
+    accruedFunding: BigNumber;
+    remainingMargin: BigNumber;
+    accessibleMargin: BigNumber;
+    liquidationPrice: BigNumber;
+    canLiquidatePosition: boolean;
+  };
 }
 
 export declare namespace IPerpsV2MarketSettings {
-	export type ParametersStruct = {
-		takerFee: BigNumberish
-		makerFee: BigNumberish
-		takerFeeDelayedOrder: BigNumberish
-		makerFeeDelayedOrder: BigNumberish
-		takerFeeOffchainDelayedOrder: BigNumberish
-		makerFeeOffchainDelayedOrder: BigNumberish
-		maxLeverage: BigNumberish
-		maxMarketValue: BigNumberish
-		maxFundingVelocity: BigNumberish
-		skewScale: BigNumberish
-		nextPriceConfirmWindow: BigNumberish
-		delayedOrderConfirmWindow: BigNumberish
-		minDelayTimeDelta: BigNumberish
-		maxDelayTimeDelta: BigNumberish
-		offchainDelayedOrderMinAge: BigNumberish
-		offchainDelayedOrderMaxAge: BigNumberish
-		offchainMarketKey: BytesLike
-		offchainPriceDivergence: BigNumberish
-		liquidationPremiumMultiplier: BigNumberish
-		liquidationBufferRatio: BigNumberish
-		maxLiquidationDelta: BigNumberish
-		maxPD: BigNumberish
-	}
+  export type ParametersStruct = {
+    takerFee: BigNumberish;
+    makerFee: BigNumberish;
+    takerFeeDelayedOrder: BigNumberish;
+    makerFeeDelayedOrder: BigNumberish;
+    takerFeeOffchainDelayedOrder: BigNumberish;
+    makerFeeOffchainDelayedOrder: BigNumberish;
+    maxLeverage: BigNumberish;
+    maxMarketValue: BigNumberish;
+    maxFundingVelocity: BigNumberish;
+    skewScale: BigNumberish;
+    nextPriceConfirmWindow: BigNumberish;
+    delayedOrderConfirmWindow: BigNumberish;
+    minDelayTimeDelta: BigNumberish;
+    maxDelayTimeDelta: BigNumberish;
+    offchainDelayedOrderMinAge: BigNumberish;
+    offchainDelayedOrderMaxAge: BigNumberish;
+    offchainMarketKey: BytesLike;
+    offchainPriceDivergence: BigNumberish;
+    liquidationPremiumMultiplier: BigNumberish;
+    liquidationBufferRatio: BigNumberish;
+    maxLiquidationDelta: BigNumberish;
+    maxPD: BigNumberish;
+  };
 
-	export type ParametersStructOutput = [
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		string,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber
-	] & {
-		takerFee: BigNumber
-		makerFee: BigNumber
-		takerFeeDelayedOrder: BigNumber
-		makerFeeDelayedOrder: BigNumber
-		takerFeeOffchainDelayedOrder: BigNumber
-		makerFeeOffchainDelayedOrder: BigNumber
-		maxLeverage: BigNumber
-		maxMarketValue: BigNumber
-		maxFundingVelocity: BigNumber
-		skewScale: BigNumber
-		nextPriceConfirmWindow: BigNumber
-		delayedOrderConfirmWindow: BigNumber
-		minDelayTimeDelta: BigNumber
-		maxDelayTimeDelta: BigNumber
-		offchainDelayedOrderMinAge: BigNumber
-		offchainDelayedOrderMaxAge: BigNumber
-		offchainMarketKey: string
-		offchainPriceDivergence: BigNumber
-		liquidationPremiumMultiplier: BigNumber
-		liquidationBufferRatio: BigNumber
-		maxLiquidationDelta: BigNumber
-		maxPD: BigNumber
-	}
+  export type ParametersStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    takerFee: BigNumber;
+    makerFee: BigNumber;
+    takerFeeDelayedOrder: BigNumber;
+    makerFeeDelayedOrder: BigNumber;
+    takerFeeOffchainDelayedOrder: BigNumber;
+    makerFeeOffchainDelayedOrder: BigNumber;
+    maxLeverage: BigNumber;
+    maxMarketValue: BigNumber;
+    maxFundingVelocity: BigNumber;
+    skewScale: BigNumber;
+    nextPriceConfirmWindow: BigNumber;
+    delayedOrderConfirmWindow: BigNumber;
+    minDelayTimeDelta: BigNumber;
+    maxDelayTimeDelta: BigNumber;
+    offchainDelayedOrderMinAge: BigNumber;
+    offchainDelayedOrderMaxAge: BigNumber;
+    offchainMarketKey: string;
+    offchainPriceDivergence: BigNumber;
+    liquidationPremiumMultiplier: BigNumber;
+    liquidationBufferRatio: BigNumber;
+    maxLiquidationDelta: BigNumber;
+    maxPD: BigNumber;
+  };
 }
 
 export declare namespace IPerpsV2MarketBaseTypes {
-	export type PositionStruct = {
-		id: BigNumberish
-		lastFundingIndex: BigNumberish
-		margin: BigNumberish
-		lastPrice: BigNumberish
-		size: BigNumberish
-	}
+  export type PositionStruct = {
+    id: BigNumberish;
+    lastFundingIndex: BigNumberish;
+    margin: BigNumberish;
+    lastPrice: BigNumberish;
+    size: BigNumberish;
+  };
 
-	export type PositionStructOutput = [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-		id: BigNumber
-		lastFundingIndex: BigNumber
-		margin: BigNumber
-		lastPrice: BigNumber
-		size: BigNumber
-	}
+  export type PositionStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    id: BigNumber;
+    lastFundingIndex: BigNumber;
+    margin: BigNumber;
+    lastPrice: BigNumber;
+    size: BigNumber;
+  };
 }
 
 export interface PerpsV2MarketDataInterface extends utils.Interface {
-	functions: {
-		'allMarketSummaries()': FunctionFragment
-		'allProxiedMarketSummaries()': FunctionFragment
-		'globals()': FunctionFragment
-		'marketDetails(address)': FunctionFragment
-		'marketDetailsForKey(bytes32)': FunctionFragment
-		'marketSummaries(address[])': FunctionFragment
-		'marketSummariesForKeys(bytes32[])': FunctionFragment
-		'parameters(bytes32)': FunctionFragment
-		'positionDetails(address,address)': FunctionFragment
-		'positionDetailsForMarketKey(bytes32,address)': FunctionFragment
-		'resolverProxy()': FunctionFragment
-	}
+  functions: {
+    "allMarketSummaries()": FunctionFragment;
+    "allProxiedMarketSummaries()": FunctionFragment;
+    "globals()": FunctionFragment;
+    "marketDetails(address)": FunctionFragment;
+    "marketDetailsForKey(bytes32)": FunctionFragment;
+    "marketSummaries(address[])": FunctionFragment;
+    "marketSummariesForKeys(bytes32[])": FunctionFragment;
+    "parameters(bytes32)": FunctionFragment;
+    "positionDetails(address,address)": FunctionFragment;
+    "positionDetailsForMarketKey(bytes32,address)": FunctionFragment;
+    "resolverProxy()": FunctionFragment;
+  };
 
-	getFunction(
-		nameOrSignatureOrTopic:
-			| 'allMarketSummaries'
-			| 'allProxiedMarketSummaries'
-			| 'globals'
-			| 'marketDetails'
-			| 'marketDetailsForKey'
-			| 'marketSummaries'
-			| 'marketSummariesForKeys'
-			| 'parameters'
-			| 'positionDetails'
-			| 'positionDetailsForMarketKey'
-			| 'resolverProxy'
-	): FunctionFragment
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "allMarketSummaries"
+      | "allProxiedMarketSummaries"
+      | "globals"
+      | "marketDetails"
+      | "marketDetailsForKey"
+      | "marketSummaries"
+      | "marketSummariesForKeys"
+      | "parameters"
+      | "positionDetails"
+      | "positionDetailsForMarketKey"
+      | "resolverProxy"
+  ): FunctionFragment;
 
-	encodeFunctionData(functionFragment: 'allMarketSummaries', values?: undefined): string
-	encodeFunctionData(functionFragment: 'allProxiedMarketSummaries', values?: undefined): string
-	encodeFunctionData(functionFragment: 'globals', values?: undefined): string
-	encodeFunctionData(functionFragment: 'marketDetails', values: [string]): string
-	encodeFunctionData(functionFragment: 'marketDetailsForKey', values: [BytesLike]): string
-	encodeFunctionData(functionFragment: 'marketSummaries', values: [string[]]): string
-	encodeFunctionData(functionFragment: 'marketSummariesForKeys', values: [BytesLike[]]): string
-	encodeFunctionData(functionFragment: 'parameters', values: [BytesLike]): string
-	encodeFunctionData(functionFragment: 'positionDetails', values: [string, string]): string
-	encodeFunctionData(
-		functionFragment: 'positionDetailsForMarketKey',
-		values: [BytesLike, string]
-	): string
-	encodeFunctionData(functionFragment: 'resolverProxy', values?: undefined): string
+  encodeFunctionData(
+    functionFragment: "allMarketSummaries",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "allProxiedMarketSummaries",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "globals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "marketDetails",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "marketDetailsForKey",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "marketSummaries",
+    values: [string[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "marketSummariesForKeys",
+    values: [BytesLike[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "parameters",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "positionDetails",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "positionDetailsForMarketKey",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "resolverProxy",
+    values?: undefined
+  ): string;
 
-	decodeFunctionResult(functionFragment: 'allMarketSummaries', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'allProxiedMarketSummaries', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'globals', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'marketDetails', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'marketDetailsForKey', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'marketSummaries', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'marketSummariesForKeys', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'parameters', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'positionDetails', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'positionDetailsForMarketKey', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'resolverProxy', data: BytesLike): Result
+  decodeFunctionResult(
+    functionFragment: "allMarketSummaries",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "allProxiedMarketSummaries",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "globals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "marketDetails",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "marketDetailsForKey",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "marketSummaries",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "marketSummariesForKeys",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "parameters", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "positionDetails",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "positionDetailsForMarketKey",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "resolverProxy",
+    data: BytesLike
+  ): Result;
 
-	events: {}
+  events: {};
 }
 
 export interface PerpsV2MarketData extends BaseContract {
-	connect(signerOrProvider: Signer | Provider | string): this
-	attach(addressOrName: string): this
-	deployed(): Promise<this>
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-	interface: PerpsV2MarketDataInterface
+  interface: PerpsV2MarketDataInterface;
 
-	queryFilter<TEvent extends TypedEvent>(
-		event: TypedEventFilter<TEvent>,
-		fromBlockOrBlockhash?: string | number | undefined,
-		toBlock?: string | number | undefined
-	): Promise<Array<TEvent>>
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
 
-	listeners<TEvent extends TypedEvent>(
-		eventFilter?: TypedEventFilter<TEvent>
-	): Array<TypedListener<TEvent>>
-	listeners(eventName?: string): Array<Listener>
-	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
-	removeAllListeners(eventName?: string): this
-	off: OnEvent<this>
-	on: OnEvent<this>
-	once: OnEvent<this>
-	removeListener: OnEvent<this>
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-	functions: {
-		allMarketSummaries(
-			overrides?: CallOverrides
-		): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>
+  functions: {
+    allMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>;
 
-		allProxiedMarketSummaries(
-			overrides?: CallOverrides
-		): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>
+    allProxiedMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>;
 
-		globals(overrides?: CallOverrides): Promise<[PerpsV2MarketData.FuturesGlobalsStructOutput]>
+    globals(
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.FuturesGlobalsStructOutput]>;
 
-		marketDetails(
-			market: string,
-			overrides?: CallOverrides
-		): Promise<[PerpsV2MarketData.MarketDataStructOutput]>
+    marketDetails(
+      market: string,
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.MarketDataStructOutput]>;
 
-		marketDetailsForKey(
-			marketKey: BytesLike,
-			overrides?: CallOverrides
-		): Promise<[PerpsV2MarketData.MarketDataStructOutput]>
+    marketDetailsForKey(
+      marketKey: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.MarketDataStructOutput]>;
 
-		marketSummaries(
-			markets: string[],
-			overrides?: CallOverrides
-		): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>
+    marketSummaries(
+      markets: string[],
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>;
 
-		marketSummariesForKeys(
-			marketKeys: BytesLike[],
-			overrides?: CallOverrides
-		): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>
+    marketSummariesForKeys(
+      marketKeys: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.MarketSummaryStructOutput[]]>;
 
-		parameters(
-			marketKey: BytesLike,
-			overrides?: CallOverrides
-		): Promise<[IPerpsV2MarketSettings.ParametersStructOutput]>
+    parameters(
+      marketKey: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[IPerpsV2MarketSettings.ParametersStructOutput]>;
 
-		positionDetails(
-			market: string,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<[PerpsV2MarketData.PositionDataStructOutput]>
+    positionDetails(
+      market: string,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.PositionDataStructOutput]>;
 
-		positionDetailsForMarketKey(
-			marketKey: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<[PerpsV2MarketData.PositionDataStructOutput]>
+    positionDetailsForMarketKey(
+      marketKey: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[PerpsV2MarketData.PositionDataStructOutput]>;
 
-		resolverProxy(overrides?: CallOverrides): Promise<[string]>
-	}
+    resolverProxy(overrides?: CallOverrides): Promise<[string]>;
+  };
 
-	allMarketSummaries(
-		overrides?: CallOverrides
-	): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>
+  allMarketSummaries(
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
-	allProxiedMarketSummaries(
-		overrides?: CallOverrides
-	): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>
+  allProxiedMarketSummaries(
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
-	globals(overrides?: CallOverrides): Promise<PerpsV2MarketData.FuturesGlobalsStructOutput>
+  globals(
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.FuturesGlobalsStructOutput>;
 
-	marketDetails(
-		market: string,
-		overrides?: CallOverrides
-	): Promise<PerpsV2MarketData.MarketDataStructOutput>
+  marketDetails(
+    market: string,
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.MarketDataStructOutput>;
 
-	marketDetailsForKey(
-		marketKey: BytesLike,
-		overrides?: CallOverrides
-	): Promise<PerpsV2MarketData.MarketDataStructOutput>
+  marketDetailsForKey(
+    marketKey: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.MarketDataStructOutput>;
 
-	marketSummaries(
-		markets: string[],
-		overrides?: CallOverrides
-	): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>
+  marketSummaries(
+    markets: string[],
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
-	marketSummariesForKeys(
-		marketKeys: BytesLike[],
-		overrides?: CallOverrides
-	): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>
+  marketSummariesForKeys(
+    marketKeys: BytesLike[],
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
-	parameters(
-		marketKey: BytesLike,
-		overrides?: CallOverrides
-	): Promise<IPerpsV2MarketSettings.ParametersStructOutput>
+  parameters(
+    marketKey: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<IPerpsV2MarketSettings.ParametersStructOutput>;
 
-	positionDetails(
-		market: string,
-		account: string,
-		overrides?: CallOverrides
-	): Promise<PerpsV2MarketData.PositionDataStructOutput>
+  positionDetails(
+    market: string,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.PositionDataStructOutput>;
 
-	positionDetailsForMarketKey(
-		marketKey: BytesLike,
-		account: string,
-		overrides?: CallOverrides
-	): Promise<PerpsV2MarketData.PositionDataStructOutput>
+  positionDetailsForMarketKey(
+    marketKey: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<PerpsV2MarketData.PositionDataStructOutput>;
 
-	resolverProxy(overrides?: CallOverrides): Promise<string>
+  resolverProxy(overrides?: CallOverrides): Promise<string>;
 
-	callStatic: {
-		allMarketSummaries(
-			overrides?: CallOverrides
-		): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>
+  callStatic: {
+    allMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
-		allProxiedMarketSummaries(
-			overrides?: CallOverrides
-		): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>
+    allProxiedMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
-		globals(overrides?: CallOverrides): Promise<PerpsV2MarketData.FuturesGlobalsStructOutput>
+    globals(
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.FuturesGlobalsStructOutput>;
 
-		marketDetails(
-			market: string,
-			overrides?: CallOverrides
-		): Promise<PerpsV2MarketData.MarketDataStructOutput>
+    marketDetails(
+      market: string,
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.MarketDataStructOutput>;
 
-		marketDetailsForKey(
-			marketKey: BytesLike,
-			overrides?: CallOverrides
-		): Promise<PerpsV2MarketData.MarketDataStructOutput>
+    marketDetailsForKey(
+      marketKey: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.MarketDataStructOutput>;
 
-		marketSummaries(
-			markets: string[],
-			overrides?: CallOverrides
-		): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>
+    marketSummaries(
+      markets: string[],
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
-		marketSummariesForKeys(
-			marketKeys: BytesLike[],
-			overrides?: CallOverrides
-		): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>
+    marketSummariesForKeys(
+      marketKeys: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.MarketSummaryStructOutput[]>;
 
-		parameters(
-			marketKey: BytesLike,
-			overrides?: CallOverrides
-		): Promise<IPerpsV2MarketSettings.ParametersStructOutput>
+    parameters(
+      marketKey: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<IPerpsV2MarketSettings.ParametersStructOutput>;
 
-		positionDetails(
-			market: string,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<PerpsV2MarketData.PositionDataStructOutput>
+    positionDetails(
+      market: string,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.PositionDataStructOutput>;
 
-		positionDetailsForMarketKey(
-			marketKey: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<PerpsV2MarketData.PositionDataStructOutput>
+    positionDetailsForMarketKey(
+      marketKey: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PerpsV2MarketData.PositionDataStructOutput>;
 
-		resolverProxy(overrides?: CallOverrides): Promise<string>
-	}
+    resolverProxy(overrides?: CallOverrides): Promise<string>;
+  };
 
-	filters: {}
+  filters: {};
 
-	estimateGas: {
-		allMarketSummaries(overrides?: CallOverrides): Promise<BigNumber>
+  estimateGas: {
+    allMarketSummaries(overrides?: CallOverrides): Promise<BigNumber>;
 
-		allProxiedMarketSummaries(overrides?: CallOverrides): Promise<BigNumber>
+    allProxiedMarketSummaries(overrides?: CallOverrides): Promise<BigNumber>;
 
-		globals(overrides?: CallOverrides): Promise<BigNumber>
+    globals(overrides?: CallOverrides): Promise<BigNumber>;
 
-		marketDetails(market: string, overrides?: CallOverrides): Promise<BigNumber>
+    marketDetails(
+      market: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-		marketDetailsForKey(marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+    marketDetailsForKey(
+      marketKey: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-		marketSummaries(markets: string[], overrides?: CallOverrides): Promise<BigNumber>
+    marketSummaries(
+      markets: string[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-		marketSummariesForKeys(marketKeys: BytesLike[], overrides?: CallOverrides): Promise<BigNumber>
+    marketSummariesForKeys(
+      marketKeys: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-		parameters(marketKey: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+    parameters(
+      marketKey: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-		positionDetails(market: string, account: string, overrides?: CallOverrides): Promise<BigNumber>
+    positionDetails(
+      market: string,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-		positionDetailsForMarketKey(
-			marketKey: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+    positionDetailsForMarketKey(
+      marketKey: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-		resolverProxy(overrides?: CallOverrides): Promise<BigNumber>
-	}
+    resolverProxy(overrides?: CallOverrides): Promise<BigNumber>;
+  };
 
-	populateTransaction: {
-		allMarketSummaries(overrides?: CallOverrides): Promise<PopulatedTransaction>
+  populateTransaction: {
+    allMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		allProxiedMarketSummaries(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    allProxiedMarketSummaries(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		globals(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    globals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		marketDetails(market: string, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    marketDetails(
+      market: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		marketDetailsForKey(
-			marketKey: BytesLike,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+    marketDetailsForKey(
+      marketKey: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		marketSummaries(markets: string[], overrides?: CallOverrides): Promise<PopulatedTransaction>
+    marketSummaries(
+      markets: string[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		marketSummariesForKeys(
-			marketKeys: BytesLike[],
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+    marketSummariesForKeys(
+      marketKeys: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		parameters(marketKey: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
+    parameters(
+      marketKey: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		positionDetails(
-			market: string,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+    positionDetails(
+      market: string,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		positionDetailsForMarketKey(
-			marketKey: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+    positionDetailsForMarketKey(
+      marketKey: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		resolverProxy(overrides?: CallOverrides): Promise<PopulatedTransaction>
-	}
+    resolverProxy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+  };
 }

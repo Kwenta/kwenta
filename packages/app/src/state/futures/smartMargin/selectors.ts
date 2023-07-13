@@ -17,7 +17,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER } from 'constants/defaults'
-import { selectSusdBalance } from 'state/balances/selectors'
+import { selectSNXUSDBalance } from 'state/balances/selectors'
 import { deserializeWeiObject } from 'state/helpers'
 import {
 	selectOffchainPricesInfo,
@@ -443,7 +443,7 @@ export const selectPosition = createSelector(
 
 export const selectOrderFeeCap = (state: RootState) => wei(state.smartMargin.orderFeeCap || '0')
 
-export const selectLeverageSide = createSelector(
+export const selectSmartMarginLeverageSide = createSelector(
 	(state: RootState) => state.smartMargin,
 	(smartMargin) => smartMargin.leverageSide
 )
@@ -528,7 +528,7 @@ export const selectLockedMarginInMarkets = selectMarginInMarkets(true)
 export const selectIdleMargin = createSelector(
 	selectAvailableMarginInMarkets,
 	selectSmartMarginBalanceInfo,
-	selectSusdBalance,
+	selectSNXUSDBalance,
 	(idleInMarkets, { freeMargin }, balance) => {
 		return balance.add(idleInMarkets).add(freeMargin)
 	}
@@ -558,7 +558,7 @@ export const selectWithdrawableSmartMargin = createSelector(
 )
 
 export const selectSmartMarginTradeInputs = createSelector(
-	selectLeverageSide,
+	selectSmartMarginLeverageSide,
 	(state: RootState) => state.smartMargin.tradeInputs,
 	(side, tradeInputs) => {
 		const inputs = unserializeTradeInputs(tradeInputs)

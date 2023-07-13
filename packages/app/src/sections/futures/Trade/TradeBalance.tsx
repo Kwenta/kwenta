@@ -15,7 +15,7 @@ import Tooltip from 'components/Tooltip/Tooltip'
 import useWindowSize from 'hooks/useWindowSize'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
-import { selectSusdBalance } from 'state/balances/selectors'
+import { selectSNXUSDBalance } from 'state/balances/selectors'
 import { selectAvailableMargin, selectFuturesType } from 'state/futures/selectors'
 import {
 	selectIdleMargin,
@@ -40,7 +40,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 
 	const idleMargin = useAppSelector(selectIdleMargin)
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
-	const walletBal = useAppSelector(selectSusdBalance)
+	const walletBal = useAppSelector(selectSNXUSDBalance)
 	const accountType = useAppSelector(selectFuturesType)
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin)
 	const withdrawable = useAppSelector(selectWithdrawableSmartMargin)

@@ -1,7 +1,7 @@
-import { PositionSide } from '@kwenta/sdk/types'
+import { PositionSide, SynthV3Asset } from '@kwenta/sdk/types'
 import { MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
-import { wei } from '@synthetixio/wei'
+import Wei, { wei } from '@synthetixio/wei'
 
 import { selectPrices } from 'state/prices/selectors'
 import { RootState } from 'state/store'
@@ -15,6 +15,7 @@ import {
 } from 'utils/futures'
 
 import { MarkPrices } from './types'
+import { selectSynthV3Balances } from 'state/balances/selectors'
 
 export const selectV3MarketKey = createSelector(
 	(state: RootState) => state.crossMargin.selectedMarketAsset,
@@ -55,6 +56,27 @@ export const selectCrossMarginAccountData = createSelector(
 	(state: RootState) => state.crossMargin,
 	(wallet, network, supportedNetwork, crossMargin) => {
 		return wallet && supportedNetwork ? crossMargin.accounts[network][wallet] : null
+	}
+)
+
+export const selectV3ProxyAddress = createSelector(
+	(state: RootState) => state.crossMargin,
+	(crossMargin) => crossMargin.perpsV3MarketProxyAddress
+)
+
+export const selectDepositAllowances = createSelector(
+	selectV3ProxyAddress,
+	selectSynthV3Balances,
+	(proxyAddress, balancesAndAllowances) => {
+		if (!proxyAddress) return {}
+		return Object.keys(balancesAndAllowances).reduce<Partial<Record<SynthV3Asset, Wei>>>(
+			(acc, asset) => {
+				const key = asset as SynthV3Asset
+				acc[key] = balancesAndAllowances[key]!.allowances[proxyAddress]
+				return acc
+			},
+			{}
+		)
 	}
 )
 
@@ -137,3 +159,14 @@ export const selectOpenDelayedOrdersV3 = createSelector(selectCrossMarginAccount
 	// TODO: Hook up pending v3 orders
 	return []
 })
+
+export const selectShowCrossMarginOnboard = (state: RootState) =>
+	state.app.showModal === 'futures_cross_margin_onboard'
+
+export const selectWithdrawableCrossMargin = createSelector(
+	(state: RootState) => state.crossMargin,
+	(_) => {
+		// TODO: Hook up withdrawable cross margin
+		return wei(0)
+	}
+)

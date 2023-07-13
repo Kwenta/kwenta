@@ -16,15 +16,21 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
 import Spacer from 'components/Spacer'
-import { selectSusdBalance } from 'state/balances/selectors'
-import { depositCrossMarginMargin, withdrawCrossMargin } from 'state/futures/crossMargin/actions'
+import { selectSNXUSDBalance } from 'state/balances/selectors'
+import {
+	approveCrossMarginDeposit,
+	depositCrossMarginMargin,
+	withdrawCrossMargin,
+} from 'state/futures/crossMargin/actions'
 import {
 	selectAvailableMargin,
+	selectIsApprovingCrossDeposit,
 	selectIsolatedTransferError,
 	selectIsSubmittingIsolatedTransfer,
 	selectPosition,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { selectDepositAllowances } from 'state/futures/crossMargin/selectors'
 
 type Props = {
 	onDismiss(): void
@@ -39,15 +45,17 @@ const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
 
 const PLACEHOLDER = '$0.00'
 
-const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
+const DepositWithdrawCrossMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
 	const position = useAppSelector(selectPosition)
 	const submitting = useAppSelector(selectIsSubmittingIsolatedTransfer)
+	const approving = useAppSelector(selectIsApprovingCrossDeposit)
 	const txError = useAppSelector(selectIsolatedTransferError)
-	const susdBalance = useAppSelector(selectSusdBalance)
+	const usdBalance = useAppSelector(selectSNXUSDBalance)
 	const availableMargin = useAppSelector(selectAvailableMargin)
+	const allowances = useAppSelector(selectDepositAllowances)
 
 	const minDeposit = useMemo(() => {
 		const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI
@@ -59,17 +67,24 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	const [amount, setAmount] = useState('')
 	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1)
 
-	const susdBal = transferType === 0 ? susdBalance : availableMargin
+	const susdBal = transferType === 0 ? usdBalance : availableMargin
 
 	const balanceStatus: BalanceStatus = useMemo(
 		() =>
-			availableMargin.gt(ZERO_WEI) || susdBalance.gt(minDeposit)
+			availableMargin.gt(ZERO_WEI) || usdBalance.gt(minDeposit)
 				? 'high_balance'
-				: susdBalance.eq(ZERO_WEI)
+				: usdBalance.eq(ZERO_WEI)
 				? 'no_balance'
 				: 'low_balance',
-		[availableMargin, minDeposit, susdBalance]
+		[availableMargin, minDeposit, usdBalance]
 	)
+
+	const requiresApproval = useMemo(() => {
+		if (transferType === 0) {
+			return !allowances.SNXUSD?.gt(amount || 0)
+		}
+		return false
+	}, [allowances, amount, transferType])
 
 	useEffect(() => {
 		switch (balanceStatus) {
@@ -83,7 +98,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 	}, [balanceStatus])
 
 	const isDisabled = useMemo(() => {
-		if (!amount || submitting) {
+		if (!amount || submitting || approving) {
 			return true
 		}
 		const amtWei = wei(amount)
@@ -91,7 +106,7 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 			return true
 		}
 		return false
-	}, [amount, susdBal, minDeposit, transferType, submitting])
+	}, [amount, susdBal, minDeposit, transferType, submitting, approving])
 
 	const computedWithdrawAmount = useMemo(
 		() => (availableMargin.eq(wei(amount || 0)) ? availableMargin : wei(amount || 0)),
@@ -113,8 +128,12 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 		setAmount('')
 	}
 
-	const onDeposit = () => {
-		dispatch(depositCrossMarginMargin(wei(amount)))
+	const onDepositOrApprove = () => {
+		if (!allowances.SNXUSD?.gt(amount)) {
+			dispatch(approveCrossMarginDeposit())
+		} else {
+			dispatch(depositCrossMarginMargin(wei(amount)))
+		}
 	}
 
 	const onWithdraw = () => {
@@ -178,11 +197,13 @@ const TransferIsolatedMarginModal: React.FC<Props> = ({ onDismiss, defaultTab })
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={isDisabled}
 				fullWidth
-				onClick={transferType === 0 ? onDeposit : onWithdraw}
+				onClick={transferType === 0 ? onDepositOrApprove : onWithdraw}
 				variant="flat"
 			>
 				{transferType === 0
-					? t('futures.market.trade.margin.modal.deposit.button')
+					? requiresApproval
+						? t('futures.market.trade.margin.modal.deposit.approve-button')
+						: t('futures.market.trade.margin.modal.deposit.button')
 					: t('futures.market.trade.margin.modal.withdraw.button')}
 			</Button>
 			{txError && (
@@ -262,4 +283,4 @@ const StyledCardHeader = styled(CardHeader)<{ noBorder: boolean }>`
 	cursor: pointer;
 `
 
-export default TransferIsolatedMarginModal
+export default DepositWithdrawCrossMarginModal

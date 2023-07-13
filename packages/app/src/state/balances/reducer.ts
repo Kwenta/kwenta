@@ -2,8 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { FetchStatus } from 'state/types'
 
-import { fetchBalances } from './actions'
+import { fetchBalances, fetchV3BalancesAndAllowances } from './actions'
 import { BalancesState } from './types'
+import { SynthV3Asset } from '@kwenta/sdk/dist/types'
 
 export const ZERO_BALANCES = {
 	synthBalances: [],
@@ -11,6 +12,7 @@ export const ZERO_BALANCES = {
 	totalUSDBalance: '0',
 	susdWalletBalance: '0',
 	tokenBalances: {},
+	synthV3Balances: {},
 }
 
 export const BALANCES_INITIAL_STATE: BalancesState = {
@@ -45,6 +47,23 @@ const balancesSlice = createSlice({
 		})
 		builder.addCase(fetchBalances.rejected, (state) => {
 			state.status = FetchStatus.Error
+		})
+
+		builder.addCase(fetchV3BalancesAndAllowances.fulfilled, (state, action) => {
+			if (action.payload) {
+				Object.keys(action.payload).forEach((asset) => {
+					const assetKey = asset as SynthV3Asset
+					if (state.synthV3Balances[assetKey]) {
+						state.synthV3Balances[assetKey].balance = action.payload![assetKey]!.balance
+						state.synthV3Balances[assetKey].allowances = action.payload![assetKey]!.allowances
+					} else {
+						state.synthV3Balances[assetKey] = {
+							balance: action.payload![assetKey]!.balance,
+							allowances: action.payload![assetKey]!.allowances,
+						}
+					}
+				})
+			}
 		})
 	},
 })

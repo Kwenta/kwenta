@@ -2,3382 +2,4174 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-	BaseContract,
-	BigNumber,
-	BigNumberish,
-	BytesLike,
-	CallOverrides,
-	ContractTransaction,
-	Overrides,
-	PayableOverrides,
-	PopulatedTransaction,
-	Signer,
-	utils,
-} from 'ethers'
-import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
-import type { Listener, Provider } from '@ethersproject/providers'
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common'
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PayableOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
+} from "ethers";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
+  TypedListener,
+  OnEvent,
+} from "./common";
 
 export declare namespace IAccountModule {
-	export type AccountPermissionsStruct = {
-		user: string
-		permissions: BytesLike[]
-	}
+  export type AccountPermissionsStruct = {
+    user: string;
+    permissions: BytesLike[];
+  };
 
-	export type AccountPermissionsStructOutput = [string, string[]] & {
-		user: string
-		permissions: string[]
-	}
+  export type AccountPermissionsStructOutput = [string, string[]] & {
+    user: string;
+    permissions: string[];
+  };
 }
 
 export declare namespace AsyncOrder {
-	export type DataStruct = {
-		accountId: BigNumberish
-		marketId: BigNumberish
-		sizeDelta: BigNumberish
-		settlementStrategyId: BigNumberish
-		settlementTime: BigNumberish
-		acceptablePrice: BigNumberish
-		trackingCode: BytesLike
-	}
+  export type DataStruct = {
+    accountId: BigNumberish;
+    marketId: BigNumberish;
+    sizeDelta: BigNumberish;
+    settlementStrategyId: BigNumberish;
+    settlementTime: BigNumberish;
+    acceptablePrice: BigNumberish;
+    trackingCode: BytesLike;
+  };
 
-	export type DataStructOutput = [
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		string
-	] & {
-		accountId: BigNumber
-		marketId: BigNumber
-		sizeDelta: BigNumber
-		settlementStrategyId: BigNumber
-		settlementTime: BigNumber
-		acceptablePrice: BigNumber
-		trackingCode: string
-	}
+  export type DataStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string
+  ] & {
+    accountId: BigNumber;
+    marketId: BigNumber;
+    sizeDelta: BigNumber;
+    settlementStrategyId: BigNumber;
+    settlementTime: BigNumber;
+    acceptablePrice: BigNumber;
+    trackingCode: string;
+  };
 
-	export type OrderCommitmentRequestStruct = {
-		marketId: BigNumberish
-		accountId: BigNumberish
-		sizeDelta: BigNumberish
-		settlementStrategyId: BigNumberish
-		acceptablePrice: BigNumberish
-		trackingCode: BytesLike
-	}
+  export type OrderCommitmentRequestStruct = {
+    marketId: BigNumberish;
+    accountId: BigNumberish;
+    sizeDelta: BigNumberish;
+    settlementStrategyId: BigNumberish;
+    acceptablePrice: BigNumberish;
+    trackingCode: BytesLike;
+  };
 
-	export type OrderCommitmentRequestStructOutput = [
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		string
-	] & {
-		marketId: BigNumber
-		accountId: BigNumber
-		sizeDelta: BigNumber
-		settlementStrategyId: BigNumber
-		acceptablePrice: BigNumber
-		trackingCode: string
-	}
+  export type OrderCommitmentRequestStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string
+  ] & {
+    marketId: BigNumber;
+    accountId: BigNumber;
+    sizeDelta: BigNumber;
+    settlementStrategyId: BigNumber;
+    acceptablePrice: BigNumber;
+    trackingCode: string;
+  };
 }
 
 export declare namespace IPerpsMarketModule {
-	export type MarketSummaryStruct = {
-		skew: BigNumberish
-		size: BigNumberish
-		maxOpenInterest: BigNumberish
-		currentFundingRate: BigNumberish
-		currentFundingVelocity: BigNumberish
-		indexPrice: BigNumberish
-	}
+  export type MarketSummaryStruct = {
+    skew: BigNumberish;
+    size: BigNumberish;
+    maxOpenInterest: BigNumberish;
+    currentFundingRate: BigNumberish;
+    currentFundingVelocity: BigNumberish;
+    indexPrice: BigNumberish;
+  };
 
-	export type MarketSummaryStructOutput = [
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		BigNumber
-	] & {
-		skew: BigNumber
-		size: BigNumber
-		maxOpenInterest: BigNumber
-		currentFundingRate: BigNumber
-		currentFundingVelocity: BigNumber
-		indexPrice: BigNumber
-	}
+  export type MarketSummaryStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    skew: BigNumber;
+    size: BigNumber;
+    maxOpenInterest: BigNumber;
+    currentFundingRate: BigNumber;
+    currentFundingVelocity: BigNumber;
+    indexPrice: BigNumber;
+  };
 }
 
 export declare namespace SettlementStrategy {
-	export type DataStruct = {
-		strategyType: BigNumberish
-		settlementDelay: BigNumberish
-		settlementWindowDuration: BigNumberish
-		priceWindowDuration: BigNumberish
-		priceVerificationContract: string
-		feedId: BytesLike
-		url: string
-		settlementReward: BigNumberish
-		priceDeviationTolerance: BigNumberish
-		disabled: boolean
-	}
+  export type DataStruct = {
+    strategyType: BigNumberish;
+    settlementDelay: BigNumberish;
+    settlementWindowDuration: BigNumberish;
+    priceWindowDuration: BigNumberish;
+    priceVerificationContract: string;
+    feedId: BytesLike;
+    url: string;
+    settlementReward: BigNumberish;
+    priceDeviationTolerance: BigNumberish;
+    disabled: boolean;
+  };
 
-	export type DataStructOutput = [
-		number,
-		BigNumber,
-		BigNumber,
-		BigNumber,
-		string,
-		string,
-		string,
-		BigNumber,
-		BigNumber,
-		boolean
-	] & {
-		strategyType: number
-		settlementDelay: BigNumber
-		settlementWindowDuration: BigNumber
-		priceWindowDuration: BigNumber
-		priceVerificationContract: string
-		feedId: string
-		url: string
-		settlementReward: BigNumber
-		priceDeviationTolerance: BigNumber
-		disabled: boolean
-	}
+  export type DataStructOutput = [
+    number,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    boolean
+  ] & {
+    strategyType: number;
+    settlementDelay: BigNumber;
+    settlementWindowDuration: BigNumber;
+    priceWindowDuration: BigNumber;
+    priceVerificationContract: string;
+    feedId: string;
+    url: string;
+    settlementReward: BigNumber;
+    priceDeviationTolerance: BigNumber;
+    disabled: boolean;
+  };
 }
 
 export interface PerpsV3MarketProxyInterface extends utils.Interface {
-	functions: {
-		'createAccount()': FunctionFragment
-		'createAccount(uint128)': FunctionFragment
-		'getAccountLastInteraction(uint128)': FunctionFragment
-		'getAccountOwner(uint128)': FunctionFragment
-		'getAccountPermissions(uint128)': FunctionFragment
-		'getAccountTokenAddress()': FunctionFragment
-		'grantPermission(uint128,bytes32,address)': FunctionFragment
-		'hasPermission(uint128,bytes32,address)': FunctionFragment
-		'isAuthorized(uint128,bytes32,address)': FunctionFragment
-		'notifyAccountTransfer(address,uint128)': FunctionFragment
-		'renouncePermission(uint128,bytes32)': FunctionFragment
-		'revokePermission(uint128,bytes32,address)': FunctionFragment
-		'getAssociatedSystem(bytes32)': FunctionFragment
-		'initOrUpgradeNft(bytes32,string,string,string,address)': FunctionFragment
-		'initOrUpgradeToken(bytes32,string,string,uint8,address)': FunctionFragment
-		'registerUnmanagedSystem(bytes32,address)': FunctionFragment
-		'acceptOwnership()': FunctionFragment
-		'getImplementation()': FunctionFragment
-		'nominateNewOwner(address)': FunctionFragment
-		'nominatedOwner()': FunctionFragment
-		'owner()': FunctionFragment
-		'renounceNomination()': FunctionFragment
-		'simulateUpgradeTo(address)': FunctionFragment
-		'upgradeTo(address)': FunctionFragment
-		'acceptMarketOwnership(uint128)': FunctionFragment
-		'createMarket(string,string,address)': FunctionFragment
-		'getMarketOwner(uint128)': FunctionFragment
-		'minimumCredit(uint128)': FunctionFragment
-		'name(uint128)': FunctionFragment
-		'nominateMarketOwner(uint128,address)': FunctionFragment
-		'reportedDebt(uint128)': FunctionFragment
-		'setSpotMarket(address)': FunctionFragment
-		'setSynthetix(address)': FunctionFragment
-		'supportsInterface(bytes4)': FunctionFragment
-		'symbol(uint128)': FunctionFragment
-		'updatePriceData(uint128,bytes32)': FunctionFragment
-		'getAsyncOrderClaim(uint128,uint128)': FunctionFragment
-		'getAvailableMargin(uint128)': FunctionFragment
-		'getOpenPosition(uint128,uint128)': FunctionFragment
-		'modifyCollateral(uint128,uint128,int256)': FunctionFragment
-		'totalAccountOpenInterest(uint128)': FunctionFragment
-		'totalCollateralValue(uint128)': FunctionFragment
-		'currentFundingRate(uint128)': FunctionFragment
-		'currentFundingVelocity(uint128)': FunctionFragment
-		'fillPrice(uint128,int256,uint256)': FunctionFragment
-		'getMarketSummary(uint128)': FunctionFragment
-		'indexPrice(uint128)': FunctionFragment
-		'maxOpenInterest(uint128)': FunctionFragment
-		'size(uint128)': FunctionFragment
-		'skew(uint128)': FunctionFragment
-		'PRECISION()': FunctionFragment
-		'cancelOrder(uint128,uint128)': FunctionFragment
-		'commitOrder((uint128,uint128,int128,uint128,uint256,bytes32))': FunctionFragment
-		'getOrder(uint128,uint128)': FunctionFragment
-		'settle(uint128,uint128)': FunctionFragment
-		'settlePythOrder(bytes,bytes)': FunctionFragment
-		'addToFeatureFlagAllowlist(bytes32,address)': FunctionFragment
-		'getDeniers(bytes32)': FunctionFragment
-		'getFeatureFlagAllowAll(bytes32)': FunctionFragment
-		'getFeatureFlagAllowlist(bytes32)': FunctionFragment
-		'getFeatureFlagDenyAll(bytes32)': FunctionFragment
-		'isFeatureAllowed(bytes32,address)': FunctionFragment
-		'removeFromFeatureFlagAllowlist(bytes32,address)': FunctionFragment
-		'setDeniers(bytes32,address[])': FunctionFragment
-		'setFeatureFlagAllowAll(bytes32,bool)': FunctionFragment
-		'setFeatureFlagDenyAll(bytes32,bool)': FunctionFragment
-		'liquidate(uint128)': FunctionFragment
-		'liquidateFlagged()': FunctionFragment
-		'addSettlementStrategy(uint128,(uint8,uint256,uint256,uint256,address,bytes32,string,uint256,uint256,bool))': FunctionFragment
-		'getFundingParameters(uint128)': FunctionFragment
-		'getLiquidationParameters(uint128)': FunctionFragment
-		'getLockedOiPercent(uint128)': FunctionFragment
-		'getMaxMarketValue(uint128)': FunctionFragment
-		'getOrderFees(uint128)': FunctionFragment
-		'getSettlementStrategy(uint128,uint256)': FunctionFragment
-		'setFundingParameters(uint128,uint256,uint256)': FunctionFragment
-		'setLiquidationParameters(uint128,uint256,uint256,uint256,uint256,uint256)': FunctionFragment
-		'setLockedOiPercent(uint128,uint256)': FunctionFragment
-		'setMaxMarketValue(uint128,uint256)': FunctionFragment
-		'setOrderFees(uint128,uint256,uint256)': FunctionFragment
-		'setSettlementStrategyEnabled(uint128,uint256,bool)': FunctionFragment
-		'getLiquidationRewardGuards()': FunctionFragment
-		'getMaxCollateralAmount(uint128)': FunctionFragment
-		'getSynthDeductionPriority()': FunctionFragment
-		'setLiquidationRewardGuards(uint256,uint256)': FunctionFragment
-		'setMaxCollateralAmount(uint128,uint256)': FunctionFragment
-		'setSynthDeductionPriority(uint128[])': FunctionFragment
-	}
+  functions: {
+    "createAccount(uint128)": FunctionFragment;
+    "getAccountLastInteraction(uint128)": FunctionFragment;
+    "getAccountOwner(uint128)": FunctionFragment;
+    "getAccountPermissions(uint128)": FunctionFragment;
+    "getAccountTokenAddress()": FunctionFragment;
+    "grantPermission(uint128,bytes32,address)": FunctionFragment;
+    "hasPermission(uint128,bytes32,address)": FunctionFragment;
+    "isAuthorized(uint128,bytes32,address)": FunctionFragment;
+    "notifyAccountTransfer(address,uint128)": FunctionFragment;
+    "renouncePermission(uint128,bytes32)": FunctionFragment;
+    "revokePermission(uint128,bytes32,address)": FunctionFragment;
+    "getAssociatedSystem(bytes32)": FunctionFragment;
+    "initOrUpgradeNft(bytes32,string,string,string,address)": FunctionFragment;
+    "initOrUpgradeToken(bytes32,string,string,uint8,address)": FunctionFragment;
+    "registerUnmanagedSystem(bytes32,address)": FunctionFragment;
+    "acceptOwnership()": FunctionFragment;
+    "getImplementation()": FunctionFragment;
+    "nominateNewOwner(address)": FunctionFragment;
+    "nominatedOwner()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "renounceNomination()": FunctionFragment;
+    "simulateUpgradeTo(address)": FunctionFragment;
+    "upgradeTo(address)": FunctionFragment;
+    "acceptMarketOwnership(uint128)": FunctionFragment;
+    "createMarket(string,string,address)": FunctionFragment;
+    "getMarketOwner(uint128)": FunctionFragment;
+    "minimumCredit(uint128)": FunctionFragment;
+    "name(uint128)": FunctionFragment;
+    "nominateMarketOwner(uint128,address)": FunctionFragment;
+    "reportedDebt(uint128)": FunctionFragment;
+    "setSpotMarket(address)": FunctionFragment;
+    "setSynthetix(address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "symbol(uint128)": FunctionFragment;
+    "updatePriceData(uint128,bytes32)": FunctionFragment;
+    "getAsyncOrderClaim(uint128,uint128)": FunctionFragment;
+    "getAvailableMargin(uint128)": FunctionFragment;
+    "getOpenPosition(uint128,uint128)": FunctionFragment;
+    "modifyCollateral(uint128,uint128,int256)": FunctionFragment;
+    "totalAccountOpenInterest(uint128)": FunctionFragment;
+    "totalCollateralValue(uint128)": FunctionFragment;
+    "currentFundingRate(uint128)": FunctionFragment;
+    "currentFundingVelocity(uint128)": FunctionFragment;
+    "fillPrice(uint128,int256,uint256)": FunctionFragment;
+    "getMarketSummary(uint128)": FunctionFragment;
+    "indexPrice(uint128)": FunctionFragment;
+    "maxOpenInterest(uint128)": FunctionFragment;
+    "size(uint128)": FunctionFragment;
+    "skew(uint128)": FunctionFragment;
+    "PRECISION()": FunctionFragment;
+    "cancelOrder(uint128,uint128)": FunctionFragment;
+    "commitOrder((uint128,uint128,int128,uint128,uint256,bytes32))": FunctionFragment;
+    "getOrder(uint128,uint128)": FunctionFragment;
+    "settle(uint128,uint128)": FunctionFragment;
+    "settlePythOrder(bytes,bytes)": FunctionFragment;
+    "addToFeatureFlagAllowlist(bytes32,address)": FunctionFragment;
+    "getDeniers(bytes32)": FunctionFragment;
+    "getFeatureFlagAllowAll(bytes32)": FunctionFragment;
+    "getFeatureFlagAllowlist(bytes32)": FunctionFragment;
+    "getFeatureFlagDenyAll(bytes32)": FunctionFragment;
+    "isFeatureAllowed(bytes32,address)": FunctionFragment;
+    "removeFromFeatureFlagAllowlist(bytes32,address)": FunctionFragment;
+    "setDeniers(bytes32,address[])": FunctionFragment;
+    "setFeatureFlagAllowAll(bytes32,bool)": FunctionFragment;
+    "setFeatureFlagDenyAll(bytes32,bool)": FunctionFragment;
+    "liquidate(uint128)": FunctionFragment;
+    "liquidateFlagged()": FunctionFragment;
+    "addSettlementStrategy(uint128,(uint8,uint256,uint256,uint256,address,bytes32,string,uint256,uint256,bool))": FunctionFragment;
+    "getFundingParameters(uint128)": FunctionFragment;
+    "getLiquidationParameters(uint128)": FunctionFragment;
+    "getLockedOiPercent(uint128)": FunctionFragment;
+    "getMaxMarketValue(uint128)": FunctionFragment;
+    "getOrderFees(uint128)": FunctionFragment;
+    "getSettlementStrategy(uint128,uint256)": FunctionFragment;
+    "setFundingParameters(uint128,uint256,uint256)": FunctionFragment;
+    "setLiquidationParameters(uint128,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "setLockedOiPercent(uint128,uint256)": FunctionFragment;
+    "setMaxMarketValue(uint128,uint256)": FunctionFragment;
+    "setOrderFees(uint128,uint256,uint256)": FunctionFragment;
+    "setSettlementStrategyEnabled(uint128,uint256,bool)": FunctionFragment;
+    "getLiquidationRewardGuards()": FunctionFragment;
+    "getMaxCollateralAmount(uint128)": FunctionFragment;
+    "getSynthDeductionPriority()": FunctionFragment;
+    "setLiquidationRewardGuards(uint256,uint256)": FunctionFragment;
+    "setMaxCollateralAmount(uint128,uint256)": FunctionFragment;
+    "setSynthDeductionPriority(uint128[])": FunctionFragment;
+  };
 
-	getFunction(
-		nameOrSignatureOrTopic:
-			| 'createAccount()'
-			| 'createAccount(uint128)'
-			| 'getAccountLastInteraction'
-			| 'getAccountOwner'
-			| 'getAccountPermissions'
-			| 'getAccountTokenAddress'
-			| 'grantPermission'
-			| 'hasPermission'
-			| 'isAuthorized'
-			| 'notifyAccountTransfer'
-			| 'renouncePermission'
-			| 'revokePermission'
-			| 'getAssociatedSystem'
-			| 'initOrUpgradeNft'
-			| 'initOrUpgradeToken'
-			| 'registerUnmanagedSystem'
-			| 'acceptOwnership'
-			| 'getImplementation'
-			| 'nominateNewOwner'
-			| 'nominatedOwner'
-			| 'owner'
-			| 'renounceNomination'
-			| 'simulateUpgradeTo'
-			| 'upgradeTo'
-			| 'acceptMarketOwnership'
-			| 'createMarket'
-			| 'getMarketOwner'
-			| 'minimumCredit'
-			| 'name'
-			| 'nominateMarketOwner'
-			| 'reportedDebt'
-			| 'setSpotMarket'
-			| 'setSynthetix'
-			| 'supportsInterface'
-			| 'symbol'
-			| 'updatePriceData'
-			| 'getAsyncOrderClaim'
-			| 'getAvailableMargin'
-			| 'getOpenPosition'
-			| 'modifyCollateral'
-			| 'totalAccountOpenInterest'
-			| 'totalCollateralValue'
-			| 'currentFundingRate'
-			| 'currentFundingVelocity'
-			| 'fillPrice'
-			| 'getMarketSummary'
-			| 'indexPrice'
-			| 'maxOpenInterest'
-			| 'size'
-			| 'skew'
-			| 'PRECISION'
-			| 'cancelOrder'
-			| 'commitOrder'
-			| 'getOrder'
-			| 'settle'
-			| 'settlePythOrder'
-			| 'addToFeatureFlagAllowlist'
-			| 'getDeniers'
-			| 'getFeatureFlagAllowAll'
-			| 'getFeatureFlagAllowlist'
-			| 'getFeatureFlagDenyAll'
-			| 'isFeatureAllowed'
-			| 'removeFromFeatureFlagAllowlist'
-			| 'setDeniers'
-			| 'setFeatureFlagAllowAll'
-			| 'setFeatureFlagDenyAll'
-			| 'liquidate'
-			| 'liquidateFlagged'
-			| 'addSettlementStrategy'
-			| 'getFundingParameters'
-			| 'getLiquidationParameters'
-			| 'getLockedOiPercent'
-			| 'getMaxMarketValue'
-			| 'getOrderFees'
-			| 'getSettlementStrategy'
-			| 'setFundingParameters'
-			| 'setLiquidationParameters'
-			| 'setLockedOiPercent'
-			| 'setMaxMarketValue'
-			| 'setOrderFees'
-			| 'setSettlementStrategyEnabled'
-			| 'getLiquidationRewardGuards'
-			| 'getMaxCollateralAmount'
-			| 'getSynthDeductionPriority'
-			| 'setLiquidationRewardGuards'
-			| 'setMaxCollateralAmount'
-			| 'setSynthDeductionPriority'
-	): FunctionFragment
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "createAccount"
+      | "getAccountLastInteraction"
+      | "getAccountOwner"
+      | "getAccountPermissions"
+      | "getAccountTokenAddress"
+      | "grantPermission"
+      | "hasPermission"
+      | "isAuthorized"
+      | "notifyAccountTransfer"
+      | "renouncePermission"
+      | "revokePermission"
+      | "getAssociatedSystem"
+      | "initOrUpgradeNft"
+      | "initOrUpgradeToken"
+      | "registerUnmanagedSystem"
+      | "acceptOwnership"
+      | "getImplementation"
+      | "nominateNewOwner"
+      | "nominatedOwner"
+      | "owner"
+      | "renounceNomination"
+      | "simulateUpgradeTo"
+      | "upgradeTo"
+      | "acceptMarketOwnership"
+      | "createMarket"
+      | "getMarketOwner"
+      | "minimumCredit"
+      | "name"
+      | "nominateMarketOwner"
+      | "reportedDebt"
+      | "setSpotMarket"
+      | "setSynthetix"
+      | "supportsInterface"
+      | "symbol"
+      | "updatePriceData"
+      | "getAsyncOrderClaim"
+      | "getAvailableMargin"
+      | "getOpenPosition"
+      | "modifyCollateral"
+      | "totalAccountOpenInterest"
+      | "totalCollateralValue"
+      | "currentFundingRate"
+      | "currentFundingVelocity"
+      | "fillPrice"
+      | "getMarketSummary"
+      | "indexPrice"
+      | "maxOpenInterest"
+      | "size"
+      | "skew"
+      | "PRECISION"
+      | "cancelOrder"
+      | "commitOrder"
+      | "getOrder"
+      | "settle"
+      | "settlePythOrder"
+      | "addToFeatureFlagAllowlist"
+      | "getDeniers"
+      | "getFeatureFlagAllowAll"
+      | "getFeatureFlagAllowlist"
+      | "getFeatureFlagDenyAll"
+      | "isFeatureAllowed"
+      | "removeFromFeatureFlagAllowlist"
+      | "setDeniers"
+      | "setFeatureFlagAllowAll"
+      | "setFeatureFlagDenyAll"
+      | "liquidate"
+      | "liquidateFlagged"
+      | "addSettlementStrategy"
+      | "getFundingParameters"
+      | "getLiquidationParameters"
+      | "getLockedOiPercent"
+      | "getMaxMarketValue"
+      | "getOrderFees"
+      | "getSettlementStrategy"
+      | "setFundingParameters"
+      | "setLiquidationParameters"
+      | "setLockedOiPercent"
+      | "setMaxMarketValue"
+      | "setOrderFees"
+      | "setSettlementStrategyEnabled"
+      | "getLiquidationRewardGuards"
+      | "getMaxCollateralAmount"
+      | "getSynthDeductionPriority"
+      | "setLiquidationRewardGuards"
+      | "setMaxCollateralAmount"
+      | "setSynthDeductionPriority"
+  ): FunctionFragment;
 
-	encodeFunctionData(functionFragment: 'createAccount()', values?: undefined): string
-	encodeFunctionData(functionFragment: 'createAccount(uint128)', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getAccountLastInteraction', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getAccountOwner', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getAccountPermissions', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getAccountTokenAddress', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'grantPermission',
-		values: [BigNumberish, BytesLike, string]
-	): string
-	encodeFunctionData(
-		functionFragment: 'hasPermission',
-		values: [BigNumberish, BytesLike, string]
-	): string
-	encodeFunctionData(
-		functionFragment: 'isAuthorized',
-		values: [BigNumberish, BytesLike, string]
-	): string
-	encodeFunctionData(
-		functionFragment: 'notifyAccountTransfer',
-		values: [string, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'renouncePermission',
-		values: [BigNumberish, BytesLike]
-	): string
-	encodeFunctionData(
-		functionFragment: 'revokePermission',
-		values: [BigNumberish, BytesLike, string]
-	): string
-	encodeFunctionData(functionFragment: 'getAssociatedSystem', values: [BytesLike]): string
-	encodeFunctionData(
-		functionFragment: 'initOrUpgradeNft',
-		values: [BytesLike, string, string, string, string]
-	): string
-	encodeFunctionData(
-		functionFragment: 'initOrUpgradeToken',
-		values: [BytesLike, string, string, BigNumberish, string]
-	): string
-	encodeFunctionData(
-		functionFragment: 'registerUnmanagedSystem',
-		values: [BytesLike, string]
-	): string
-	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
-	encodeFunctionData(functionFragment: 'getImplementation', values?: undefined): string
-	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [string]): string
-	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
-	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
-	encodeFunctionData(functionFragment: 'renounceNomination', values?: undefined): string
-	encodeFunctionData(functionFragment: 'simulateUpgradeTo', values: [string]): string
-	encodeFunctionData(functionFragment: 'upgradeTo', values: [string]): string
-	encodeFunctionData(functionFragment: 'acceptMarketOwnership', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'createMarket', values: [string, string, string]): string
-	encodeFunctionData(functionFragment: 'getMarketOwner', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'minimumCredit', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'name', values: [BigNumberish]): string
-	encodeFunctionData(
-		functionFragment: 'nominateMarketOwner',
-		values: [BigNumberish, string]
-	): string
-	encodeFunctionData(functionFragment: 'reportedDebt', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'setSpotMarket', values: [string]): string
-	encodeFunctionData(functionFragment: 'setSynthetix', values: [string]): string
-	encodeFunctionData(functionFragment: 'supportsInterface', values: [BytesLike]): string
-	encodeFunctionData(functionFragment: 'symbol', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'updatePriceData', values: [BigNumberish, BytesLike]): string
-	encodeFunctionData(
-		functionFragment: 'getAsyncOrderClaim',
-		values: [BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(functionFragment: 'getAvailableMargin', values: [BigNumberish]): string
-	encodeFunctionData(
-		functionFragment: 'getOpenPosition',
-		values: [BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'modifyCollateral',
-		values: [BigNumberish, BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(functionFragment: 'totalAccountOpenInterest', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'totalCollateralValue', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'currentFundingRate', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'currentFundingVelocity', values: [BigNumberish]): string
-	encodeFunctionData(
-		functionFragment: 'fillPrice',
-		values: [BigNumberish, BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(functionFragment: 'getMarketSummary', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'indexPrice', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'maxOpenInterest', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'size', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'skew', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'PRECISION', values?: undefined): string
-	encodeFunctionData(functionFragment: 'cancelOrder', values: [BigNumberish, BigNumberish]): string
-	encodeFunctionData(
-		functionFragment: 'commitOrder',
-		values: [AsyncOrder.OrderCommitmentRequestStruct]
-	): string
-	encodeFunctionData(functionFragment: 'getOrder', values: [BigNumberish, BigNumberish]): string
-	encodeFunctionData(functionFragment: 'settle', values: [BigNumberish, BigNumberish]): string
-	encodeFunctionData(functionFragment: 'settlePythOrder', values: [BytesLike, BytesLike]): string
-	encodeFunctionData(
-		functionFragment: 'addToFeatureFlagAllowlist',
-		values: [BytesLike, string]
-	): string
-	encodeFunctionData(functionFragment: 'getDeniers', values: [BytesLike]): string
-	encodeFunctionData(functionFragment: 'getFeatureFlagAllowAll', values: [BytesLike]): string
-	encodeFunctionData(functionFragment: 'getFeatureFlagAllowlist', values: [BytesLike]): string
-	encodeFunctionData(functionFragment: 'getFeatureFlagDenyAll', values: [BytesLike]): string
-	encodeFunctionData(functionFragment: 'isFeatureAllowed', values: [BytesLike, string]): string
-	encodeFunctionData(
-		functionFragment: 'removeFromFeatureFlagAllowlist',
-		values: [BytesLike, string]
-	): string
-	encodeFunctionData(functionFragment: 'setDeniers', values: [BytesLike, string[]]): string
-	encodeFunctionData(
-		functionFragment: 'setFeatureFlagAllowAll',
-		values: [BytesLike, boolean]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setFeatureFlagDenyAll',
-		values: [BytesLike, boolean]
-	): string
-	encodeFunctionData(functionFragment: 'liquidate', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'liquidateFlagged', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'addSettlementStrategy',
-		values: [BigNumberish, SettlementStrategy.DataStruct]
-	): string
-	encodeFunctionData(functionFragment: 'getFundingParameters', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getLiquidationParameters', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getLockedOiPercent', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getMaxMarketValue', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getOrderFees', values: [BigNumberish]): string
-	encodeFunctionData(
-		functionFragment: 'getSettlementStrategy',
-		values: [BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setFundingParameters',
-		values: [BigNumberish, BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setLiquidationParameters',
-		values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish, BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setLockedOiPercent',
-		values: [BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setMaxMarketValue',
-		values: [BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setOrderFees',
-		values: [BigNumberish, BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setSettlementStrategyEnabled',
-		values: [BigNumberish, BigNumberish, boolean]
-	): string
-	encodeFunctionData(functionFragment: 'getLiquidationRewardGuards', values?: undefined): string
-	encodeFunctionData(functionFragment: 'getMaxCollateralAmount', values: [BigNumberish]): string
-	encodeFunctionData(functionFragment: 'getSynthDeductionPriority', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'setLiquidationRewardGuards',
-		values: [BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setMaxCollateralAmount',
-		values: [BigNumberish, BigNumberish]
-	): string
-	encodeFunctionData(
-		functionFragment: 'setSynthDeductionPriority',
-		values: [BigNumberish[]]
-	): string
+  encodeFunctionData(
+    functionFragment: "createAccount",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAccountLastInteraction",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAccountOwner",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAccountPermissions",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAccountTokenAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantPermission",
+    values: [BigNumberish, BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasPermission",
+    values: [BigNumberish, BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isAuthorized",
+    values: [BigNumberish, BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "notifyAccountTransfer",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renouncePermission",
+    values: [BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokePermission",
+    values: [BigNumberish, BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAssociatedSystem",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initOrUpgradeNft",
+    values: [BytesLike, string, string, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initOrUpgradeToken",
+    values: [BytesLike, string, string, BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerUnmanagedSystem",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "acceptOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getImplementation",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nominateNewOwner",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nominatedOwner",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "renounceNomination",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "simulateUpgradeTo",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "acceptMarketOwnership",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createMarket",
+    values: [string, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMarketOwner",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "minimumCredit",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "name", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "nominateMarketOwner",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "reportedDebt",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSpotMarket",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSynthetix",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "symbol",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePriceData",
+    values: [BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAsyncOrderClaim",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAvailableMargin",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOpenPosition",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "modifyCollateral",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalAccountOpenInterest",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalCollateralValue",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentFundingRate",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentFundingVelocity",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "fillPrice",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMarketSummary",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "indexPrice",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxOpenInterest",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "size", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "skew", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "PRECISION", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "cancelOrder",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "commitOrder",
+    values: [AsyncOrder.OrderCommitmentRequestStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOrder",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "settle",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "settlePythOrder",
+    values: [BytesLike, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addToFeatureFlagAllowlist",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDeniers",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFeatureFlagAllowAll",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFeatureFlagAllowlist",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFeatureFlagDenyAll",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isFeatureAllowed",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeFromFeatureFlagAllowlist",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setDeniers",
+    values: [BytesLike, string[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFeatureFlagAllowAll",
+    values: [BytesLike, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFeatureFlagDenyAll",
+    values: [BytesLike, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "liquidate",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "liquidateFlagged",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addSettlementStrategy",
+    values: [BigNumberish, SettlementStrategy.DataStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFundingParameters",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLiquidationParameters",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLockedOiPercent",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMaxMarketValue",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOrderFees",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSettlementStrategy",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFundingParameters",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLiquidationParameters",
+    values: [
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLockedOiPercent",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxMarketValue",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setOrderFees",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSettlementStrategyEnabled",
+    values: [BigNumberish, BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLiquidationRewardGuards",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMaxCollateralAmount",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSynthDeductionPriority",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLiquidationRewardGuards",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxCollateralAmount",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSynthDeductionPriority",
+    values: [BigNumberish[]]
+  ): string;
 
-	decodeFunctionResult(functionFragment: 'createAccount()', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'createAccount(uint128)', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getAccountLastInteraction', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getAccountOwner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getAccountPermissions', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getAccountTokenAddress', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'grantPermission', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'hasPermission', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'isAuthorized', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'notifyAccountTransfer', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'renouncePermission', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'revokePermission', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getAssociatedSystem', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'initOrUpgradeNft', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'initOrUpgradeToken', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'registerUnmanagedSystem', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getImplementation', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'nominateNewOwner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'nominatedOwner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'renounceNomination', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'simulateUpgradeTo', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'upgradeTo', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'acceptMarketOwnership', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'createMarket', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getMarketOwner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'minimumCredit', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'nominateMarketOwner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'reportedDebt', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setSpotMarket', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setSynthetix', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'supportsInterface', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'updatePriceData', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getAsyncOrderClaim', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getAvailableMargin', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getOpenPosition', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'modifyCollateral', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'totalAccountOpenInterest', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'totalCollateralValue', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'currentFundingRate', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'currentFundingVelocity', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'fillPrice', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getMarketSummary', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'indexPrice', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'maxOpenInterest', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'size', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'skew', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'PRECISION', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'cancelOrder', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'commitOrder', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getOrder', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'settle', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'settlePythOrder', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'addToFeatureFlagAllowlist', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getDeniers', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getFeatureFlagAllowAll', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getFeatureFlagAllowlist', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getFeatureFlagDenyAll', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'isFeatureAllowed', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'removeFromFeatureFlagAllowlist', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setDeniers', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setFeatureFlagAllowAll', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setFeatureFlagDenyAll', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'liquidate', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'liquidateFlagged', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'addSettlementStrategy', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getFundingParameters', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getLiquidationParameters', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getLockedOiPercent', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getMaxMarketValue', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getOrderFees', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getSettlementStrategy', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setFundingParameters', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setLiquidationParameters', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setLockedOiPercent', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setMaxMarketValue', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setOrderFees', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setSettlementStrategyEnabled', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getLiquidationRewardGuards', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getMaxCollateralAmount', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'getSynthDeductionPriority', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setLiquidationRewardGuards', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setMaxCollateralAmount', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setSynthDeductionPriority', data: BytesLike): Result
+  decodeFunctionResult(
+    functionFragment: "createAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAccountLastInteraction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAccountOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAccountPermissions",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAccountTokenAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "grantPermission",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hasPermission",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isAuthorized",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "notifyAccountTransfer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renouncePermission",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "revokePermission",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAssociatedSystem",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initOrUpgradeNft",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initOrUpgradeToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerUnmanagedSystem",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "acceptOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getImplementation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "nominateNewOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "nominatedOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceNomination",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "simulateUpgradeTo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "acceptMarketOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createMarket",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMarketOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "minimumCredit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nominateMarketOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "reportedDebt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSpotMarket",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSynthetix",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePriceData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAsyncOrderClaim",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAvailableMargin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getOpenPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "modifyCollateral",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalAccountOpenInterest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalCollateralValue",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentFundingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentFundingVelocity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "fillPrice", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMarketSummary",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "indexPrice", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "maxOpenInterest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "size", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "skew", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "PRECISION", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "cancelOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "commitOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getOrder", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "settle", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "settlePythOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addToFeatureFlagAllowlist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getDeniers", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getFeatureFlagAllowAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getFeatureFlagAllowlist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getFeatureFlagDenyAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isFeatureAllowed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeFromFeatureFlagAllowlist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setDeniers", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setFeatureFlagAllowAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFeatureFlagDenyAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "liquidate", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "liquidateFlagged",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addSettlementStrategy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getFundingParameters",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLiquidationParameters",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLockedOiPercent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxMarketValue",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getOrderFees",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSettlementStrategy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFundingParameters",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLiquidationParameters",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLockedOiPercent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxMarketValue",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setOrderFees",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSettlementStrategyEnabled",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLiquidationRewardGuards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxCollateralAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSynthDeductionPriority",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLiquidationRewardGuards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxCollateralAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSynthDeductionPriority",
+    data: BytesLike
+  ): Result;
 
-	events: {
-		'AccountCreated(uint128,address)': EventFragment
-		'PermissionGranted(uint128,bytes32,address,address)': EventFragment
-		'PermissionRevoked(uint128,bytes32,address,address)': EventFragment
-		'AssociatedSystemSet(bytes32,bytes32,address,address)': EventFragment
-		'OwnerChanged(address,address)': EventFragment
-		'OwnerNominated(address)': EventFragment
-		'Upgraded(address,address)': EventFragment
-		'MarketOwnerChanged(uint128,address,address)': EventFragment
-		'MarketOwnerNominated(uint128,address)': EventFragment
-		'MarketPriceDataUpdated(uint128,bytes32)': EventFragment
-		'MarketRegistered(uint128,address,string,string)': EventFragment
-		'CollateralModified(uint128,uint128,int256,address)': EventFragment
-		'OrderCanceled(uint128,uint128,uint256,uint256)': EventFragment
-		'OrderCommitted(uint128,uint128,uint8,int128,uint256,uint256,uint256,bytes32,address)': EventFragment
-		'OrderSettled(uint128,uint128,uint256,int256,int128,uint256,uint256,bytes32,address)': EventFragment
-		'FeatureFlagAllowAllSet(bytes32,bool)': EventFragment
-		'FeatureFlagAllowlistAdded(bytes32,address)': EventFragment
-		'FeatureFlagAllowlistRemoved(bytes32,address)': EventFragment
-		'FeatureFlagDeniersReset(bytes32,address[])': EventFragment
-		'FeatureFlagDenyAllSet(bytes32,bool)': EventFragment
-		'FundingParametersSet(uint128,uint256,uint256)': EventFragment
-		'LiquidationParametersSet(uint128,uint256,uint256,uint256,uint256,uint256)': EventFragment
-		'LockedOiPercentSet(uint128,uint256)': EventFragment
-		'MaxMarketValueSet(uint128,uint256)': EventFragment
-		'OrderFeesSet(uint128,uint256,uint256)': EventFragment
-		'SettlementStrategyAdded(uint128,tuple,uint256)': EventFragment
-		'SettlementStrategyEnabled(uint128,uint256,bool)': EventFragment
-		'LiquidationRewardGuardsSet(uint256,uint256)': EventFragment
-		'MaxCollateralAmountSet(uint128,uint256)': EventFragment
-		'SynthDeductionPrioritySet(uint128[])': EventFragment
-	}
+  events: {
+    "AccountCreated(uint128,address)": EventFragment;
+    "PermissionGranted(uint128,bytes32,address,address)": EventFragment;
+    "PermissionRevoked(uint128,bytes32,address,address)": EventFragment;
+    "AssociatedSystemSet(bytes32,bytes32,address,address)": EventFragment;
+    "OwnerChanged(address,address)": EventFragment;
+    "OwnerNominated(address)": EventFragment;
+    "Upgraded(address,address)": EventFragment;
+    "MarketOwnerChanged(uint128,address,address)": EventFragment;
+    "MarketOwnerNominated(uint128,address)": EventFragment;
+    "MarketPriceDataUpdated(uint128,bytes32)": EventFragment;
+    "MarketRegistered(uint128,address,string,string)": EventFragment;
+    "CollateralModified(uint128,uint128,int256,address)": EventFragment;
+    "OrderCanceled(uint128,uint128,uint256,uint256)": EventFragment;
+    "OrderCommitted(uint128,uint128,uint8,int128,uint256,uint256,uint256,bytes32,address)": EventFragment;
+    "OrderSettled(uint128,uint128,uint256,int256,int128,uint256,uint256,bytes32,address)": EventFragment;
+    "FeatureFlagAllowAllSet(bytes32,bool)": EventFragment;
+    "FeatureFlagAllowlistAdded(bytes32,address)": EventFragment;
+    "FeatureFlagAllowlistRemoved(bytes32,address)": EventFragment;
+    "FeatureFlagDeniersReset(bytes32,address[])": EventFragment;
+    "FeatureFlagDenyAllSet(bytes32,bool)": EventFragment;
+    "FundingParametersSet(uint128,uint256,uint256)": EventFragment;
+    "LiquidationParametersSet(uint128,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "LockedOiPercentSet(uint128,uint256)": EventFragment;
+    "MaxMarketValueSet(uint128,uint256)": EventFragment;
+    "OrderFeesSet(uint128,uint256,uint256)": EventFragment;
+    "SettlementStrategyAdded(uint128,tuple,uint256)": EventFragment;
+    "SettlementStrategyEnabled(uint128,uint256,bool)": EventFragment;
+    "LiquidationRewardGuardsSet(uint256,uint256)": EventFragment;
+    "MaxCollateralAmountSet(uint128,uint256)": EventFragment;
+    "SynthDeductionPrioritySet(uint128[])": EventFragment;
+  };
 
-	getEvent(nameOrSignatureOrTopic: 'AccountCreated'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'PermissionGranted'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'PermissionRevoked'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'AssociatedSystemSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'OwnerChanged'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'OwnerNominated'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'Upgraded'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'MarketOwnerChanged'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'MarketOwnerNominated'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'MarketPriceDataUpdated'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'MarketRegistered'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'CollateralModified'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'OrderCanceled'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'OrderCommitted'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'OrderSettled'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'FeatureFlagAllowAllSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'FeatureFlagAllowlistAdded'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'FeatureFlagAllowlistRemoved'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'FeatureFlagDeniersReset'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'FeatureFlagDenyAllSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'FundingParametersSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'LiquidationParametersSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'LockedOiPercentSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'MaxMarketValueSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'OrderFeesSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'SettlementStrategyAdded'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'SettlementStrategyEnabled'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'LiquidationRewardGuardsSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'MaxCollateralAmountSet'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'SynthDeductionPrioritySet'): EventFragment
+  getEvent(nameOrSignatureOrTopic: "AccountCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PermissionGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PermissionRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AssociatedSystemSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MarketOwnerChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MarketOwnerNominated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MarketPriceDataUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MarketRegistered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "CollateralModified"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderCanceled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderCommitted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderSettled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeatureFlagAllowAllSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeatureFlagAllowlistAdded"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "FeatureFlagAllowlistRemoved"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeatureFlagDeniersReset"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeatureFlagDenyAllSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FundingParametersSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidationParametersSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LockedOiPercentSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MaxMarketValueSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OrderFeesSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SettlementStrategyAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SettlementStrategyEnabled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidationRewardGuardsSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MaxCollateralAmountSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SynthDeductionPrioritySet"): EventFragment;
 }
 
 export interface AccountCreatedEventObject {
-	accountId: BigNumber
-	owner: string
+  accountId: BigNumber;
+  owner: string;
 }
-export type AccountCreatedEvent = TypedEvent<[BigNumber, string], AccountCreatedEventObject>
+export type AccountCreatedEvent = TypedEvent<
+  [BigNumber, string],
+  AccountCreatedEventObject
+>;
 
-export type AccountCreatedEventFilter = TypedEventFilter<AccountCreatedEvent>
+export type AccountCreatedEventFilter = TypedEventFilter<AccountCreatedEvent>;
 
 export interface PermissionGrantedEventObject {
-	accountId: BigNumber
-	permission: string
-	user: string
-	sender: string
+  accountId: BigNumber;
+  permission: string;
+  user: string;
+  sender: string;
 }
 export type PermissionGrantedEvent = TypedEvent<
-	[BigNumber, string, string, string],
-	PermissionGrantedEventObject
->
+  [BigNumber, string, string, string],
+  PermissionGrantedEventObject
+>;
 
-export type PermissionGrantedEventFilter = TypedEventFilter<PermissionGrantedEvent>
+export type PermissionGrantedEventFilter =
+  TypedEventFilter<PermissionGrantedEvent>;
 
 export interface PermissionRevokedEventObject {
-	accountId: BigNumber
-	permission: string
-	user: string
-	sender: string
+  accountId: BigNumber;
+  permission: string;
+  user: string;
+  sender: string;
 }
 export type PermissionRevokedEvent = TypedEvent<
-	[BigNumber, string, string, string],
-	PermissionRevokedEventObject
->
+  [BigNumber, string, string, string],
+  PermissionRevokedEventObject
+>;
 
-export type PermissionRevokedEventFilter = TypedEventFilter<PermissionRevokedEvent>
+export type PermissionRevokedEventFilter =
+  TypedEventFilter<PermissionRevokedEvent>;
 
 export interface AssociatedSystemSetEventObject {
-	kind: string
-	id: string
-	proxy: string
-	impl: string
+  kind: string;
+  id: string;
+  proxy: string;
+  impl: string;
 }
 export type AssociatedSystemSetEvent = TypedEvent<
-	[string, string, string, string],
-	AssociatedSystemSetEventObject
->
+  [string, string, string, string],
+  AssociatedSystemSetEventObject
+>;
 
-export type AssociatedSystemSetEventFilter = TypedEventFilter<AssociatedSystemSetEvent>
+export type AssociatedSystemSetEventFilter =
+  TypedEventFilter<AssociatedSystemSetEvent>;
 
 export interface OwnerChangedEventObject {
-	oldOwner: string
-	newOwner: string
+  oldOwner: string;
+  newOwner: string;
 }
-export type OwnerChangedEvent = TypedEvent<[string, string], OwnerChangedEventObject>
+export type OwnerChangedEvent = TypedEvent<
+  [string, string],
+  OwnerChangedEventObject
+>;
 
-export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>
+export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
 
 export interface OwnerNominatedEventObject {
-	newOwner: string
+  newOwner: string;
 }
-export type OwnerNominatedEvent = TypedEvent<[string], OwnerNominatedEventObject>
+export type OwnerNominatedEvent = TypedEvent<
+  [string],
+  OwnerNominatedEventObject
+>;
 
-export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>
+export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
 
 export interface UpgradedEventObject {
-	self: string
-	implementation: string
+  self: string;
+  implementation: string;
 }
-export type UpgradedEvent = TypedEvent<[string, string], UpgradedEventObject>
+export type UpgradedEvent = TypedEvent<[string, string], UpgradedEventObject>;
 
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 
 export interface MarketOwnerChangedEventObject {
-	perpsMarketId: BigNumber
-	oldOwner: string
-	newOwner: string
+  perpsMarketId: BigNumber;
+  oldOwner: string;
+  newOwner: string;
 }
 export type MarketOwnerChangedEvent = TypedEvent<
-	[BigNumber, string, string],
-	MarketOwnerChangedEventObject
->
+  [BigNumber, string, string],
+  MarketOwnerChangedEventObject
+>;
 
-export type MarketOwnerChangedEventFilter = TypedEventFilter<MarketOwnerChangedEvent>
+export type MarketOwnerChangedEventFilter =
+  TypedEventFilter<MarketOwnerChangedEvent>;
 
 export interface MarketOwnerNominatedEventObject {
-	perpsMarketId: BigNumber
-	newNominatedOwner: string
+  perpsMarketId: BigNumber;
+  newNominatedOwner: string;
 }
 export type MarketOwnerNominatedEvent = TypedEvent<
-	[BigNumber, string],
-	MarketOwnerNominatedEventObject
->
+  [BigNumber, string],
+  MarketOwnerNominatedEventObject
+>;
 
-export type MarketOwnerNominatedEventFilter = TypedEventFilter<MarketOwnerNominatedEvent>
+export type MarketOwnerNominatedEventFilter =
+  TypedEventFilter<MarketOwnerNominatedEvent>;
 
 export interface MarketPriceDataUpdatedEventObject {
-	perpsMarketId: BigNumber
-	feedId: string
+  perpsMarketId: BigNumber;
+  feedId: string;
 }
 export type MarketPriceDataUpdatedEvent = TypedEvent<
-	[BigNumber, string],
-	MarketPriceDataUpdatedEventObject
->
+  [BigNumber, string],
+  MarketPriceDataUpdatedEventObject
+>;
 
-export type MarketPriceDataUpdatedEventFilter = TypedEventFilter<MarketPriceDataUpdatedEvent>
+export type MarketPriceDataUpdatedEventFilter =
+  TypedEventFilter<MarketPriceDataUpdatedEvent>;
 
 export interface MarketRegisteredEventObject {
-	perpsMarketId: BigNumber
-	marketOwner: string
-	marketName: string
-	marketSymbol: string
+  perpsMarketId: BigNumber;
+  marketOwner: string;
+  marketName: string;
+  marketSymbol: string;
 }
 export type MarketRegisteredEvent = TypedEvent<
-	[BigNumber, string, string, string],
-	MarketRegisteredEventObject
->
+  [BigNumber, string, string, string],
+  MarketRegisteredEventObject
+>;
 
-export type MarketRegisteredEventFilter = TypedEventFilter<MarketRegisteredEvent>
+export type MarketRegisteredEventFilter =
+  TypedEventFilter<MarketRegisteredEvent>;
 
 export interface CollateralModifiedEventObject {
-	accountId: BigNumber
-	synthMarketId: BigNumber
-	amountDelta: BigNumber
-	sender: string
+  accountId: BigNumber;
+  synthMarketId: BigNumber;
+  amountDelta: BigNumber;
+  sender: string;
 }
 export type CollateralModifiedEvent = TypedEvent<
-	[BigNumber, BigNumber, BigNumber, string],
-	CollateralModifiedEventObject
->
+  [BigNumber, BigNumber, BigNumber, string],
+  CollateralModifiedEventObject
+>;
 
-export type CollateralModifiedEventFilter = TypedEventFilter<CollateralModifiedEvent>
+export type CollateralModifiedEventFilter =
+  TypedEventFilter<CollateralModifiedEvent>;
 
 export interface OrderCanceledEventObject {
-	marketId: BigNumber
-	accountId: BigNumber
-	settlementTime: BigNumber
-	acceptablePrice: BigNumber
+  marketId: BigNumber;
+  accountId: BigNumber;
+  settlementTime: BigNumber;
+  acceptablePrice: BigNumber;
 }
 export type OrderCanceledEvent = TypedEvent<
-	[BigNumber, BigNumber, BigNumber, BigNumber],
-	OrderCanceledEventObject
->
+  [BigNumber, BigNumber, BigNumber, BigNumber],
+  OrderCanceledEventObject
+>;
 
-export type OrderCanceledEventFilter = TypedEventFilter<OrderCanceledEvent>
+export type OrderCanceledEventFilter = TypedEventFilter<OrderCanceledEvent>;
 
 export interface OrderCommittedEventObject {
-	marketId: BigNumber
-	accountId: BigNumber
-	orderType: number
-	sizeDelta: BigNumber
-	acceptablePrice: BigNumber
-	settlementTime: BigNumber
-	expirationTime: BigNumber
-	trackingCode: string
-	sender: string
+  marketId: BigNumber;
+  accountId: BigNumber;
+  orderType: number;
+  sizeDelta: BigNumber;
+  acceptablePrice: BigNumber;
+  settlementTime: BigNumber;
+  expirationTime: BigNumber;
+  trackingCode: string;
+  sender: string;
 }
 export type OrderCommittedEvent = TypedEvent<
-	[BigNumber, BigNumber, number, BigNumber, BigNumber, BigNumber, BigNumber, string, string],
-	OrderCommittedEventObject
->
+  [
+    BigNumber,
+    BigNumber,
+    number,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    string
+  ],
+  OrderCommittedEventObject
+>;
 
-export type OrderCommittedEventFilter = TypedEventFilter<OrderCommittedEvent>
+export type OrderCommittedEventFilter = TypedEventFilter<OrderCommittedEvent>;
 
 export interface OrderSettledEventObject {
-	marketId: BigNumber
-	accountId: BigNumber
-	fillPrice: BigNumber
-	accountPnlRealized: BigNumber
-	newSize: BigNumber
-	collectedFees: BigNumber
-	settelementReward: BigNumber
-	trackingCode: string
-	settler: string
+  marketId: BigNumber;
+  accountId: BigNumber;
+  fillPrice: BigNumber;
+  accountPnlRealized: BigNumber;
+  newSize: BigNumber;
+  collectedFees: BigNumber;
+  settelementReward: BigNumber;
+  trackingCode: string;
+  settler: string;
 }
 export type OrderSettledEvent = TypedEvent<
-	[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, string, string],
-	OrderSettledEventObject
->
+  [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    string
+  ],
+  OrderSettledEventObject
+>;
 
-export type OrderSettledEventFilter = TypedEventFilter<OrderSettledEvent>
+export type OrderSettledEventFilter = TypedEventFilter<OrderSettledEvent>;
 
 export interface FeatureFlagAllowAllSetEventObject {
-	feature: string
-	allowAll: boolean
+  feature: string;
+  allowAll: boolean;
 }
 export type FeatureFlagAllowAllSetEvent = TypedEvent<
-	[string, boolean],
-	FeatureFlagAllowAllSetEventObject
->
+  [string, boolean],
+  FeatureFlagAllowAllSetEventObject
+>;
 
-export type FeatureFlagAllowAllSetEventFilter = TypedEventFilter<FeatureFlagAllowAllSetEvent>
+export type FeatureFlagAllowAllSetEventFilter =
+  TypedEventFilter<FeatureFlagAllowAllSetEvent>;
 
 export interface FeatureFlagAllowlistAddedEventObject {
-	feature: string
-	account: string
+  feature: string;
+  account: string;
 }
 export type FeatureFlagAllowlistAddedEvent = TypedEvent<
-	[string, string],
-	FeatureFlagAllowlistAddedEventObject
->
+  [string, string],
+  FeatureFlagAllowlistAddedEventObject
+>;
 
-export type FeatureFlagAllowlistAddedEventFilter = TypedEventFilter<FeatureFlagAllowlistAddedEvent>
+export type FeatureFlagAllowlistAddedEventFilter =
+  TypedEventFilter<FeatureFlagAllowlistAddedEvent>;
 
 export interface FeatureFlagAllowlistRemovedEventObject {
-	feature: string
-	account: string
+  feature: string;
+  account: string;
 }
 export type FeatureFlagAllowlistRemovedEvent = TypedEvent<
-	[string, string],
-	FeatureFlagAllowlistRemovedEventObject
->
+  [string, string],
+  FeatureFlagAllowlistRemovedEventObject
+>;
 
 export type FeatureFlagAllowlistRemovedEventFilter =
-	TypedEventFilter<FeatureFlagAllowlistRemovedEvent>
+  TypedEventFilter<FeatureFlagAllowlistRemovedEvent>;
 
 export interface FeatureFlagDeniersResetEventObject {
-	feature: string
-	deniers: string[]
+  feature: string;
+  deniers: string[];
 }
 export type FeatureFlagDeniersResetEvent = TypedEvent<
-	[string, string[]],
-	FeatureFlagDeniersResetEventObject
->
+  [string, string[]],
+  FeatureFlagDeniersResetEventObject
+>;
 
-export type FeatureFlagDeniersResetEventFilter = TypedEventFilter<FeatureFlagDeniersResetEvent>
+export type FeatureFlagDeniersResetEventFilter =
+  TypedEventFilter<FeatureFlagDeniersResetEvent>;
 
 export interface FeatureFlagDenyAllSetEventObject {
-	feature: string
-	denyAll: boolean
+  feature: string;
+  denyAll: boolean;
 }
 export type FeatureFlagDenyAllSetEvent = TypedEvent<
-	[string, boolean],
-	FeatureFlagDenyAllSetEventObject
->
+  [string, boolean],
+  FeatureFlagDenyAllSetEventObject
+>;
 
-export type FeatureFlagDenyAllSetEventFilter = TypedEventFilter<FeatureFlagDenyAllSetEvent>
+export type FeatureFlagDenyAllSetEventFilter =
+  TypedEventFilter<FeatureFlagDenyAllSetEvent>;
 
 export interface FundingParametersSetEventObject {
-	marketId: BigNumber
-	skewScale: BigNumber
-	maxFundingVelocity: BigNumber
+  marketId: BigNumber;
+  skewScale: BigNumber;
+  maxFundingVelocity: BigNumber;
 }
 export type FundingParametersSetEvent = TypedEvent<
-	[BigNumber, BigNumber, BigNumber],
-	FundingParametersSetEventObject
->
+  [BigNumber, BigNumber, BigNumber],
+  FundingParametersSetEventObject
+>;
 
-export type FundingParametersSetEventFilter = TypedEventFilter<FundingParametersSetEvent>
+export type FundingParametersSetEventFilter =
+  TypedEventFilter<FundingParametersSetEvent>;
 
 export interface LiquidationParametersSetEventObject {
-	marketId: BigNumber
-	initialMarginFraction: BigNumber
-	maintenanceMarginFraction: BigNumber
-	liquidationRewardRatioD18: BigNumber
-	maxLiquidationLimitAccumulationMultiplier: BigNumber
-	maxSecondsInLiquidationWindow: BigNumber
+  marketId: BigNumber;
+  initialMarginFraction: BigNumber;
+  maintenanceMarginFraction: BigNumber;
+  liquidationRewardRatioD18: BigNumber;
+  maxLiquidationLimitAccumulationMultiplier: BigNumber;
+  maxSecondsInLiquidationWindow: BigNumber;
 }
 export type LiquidationParametersSetEvent = TypedEvent<
-	[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
-	LiquidationParametersSetEventObject
->
+  [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+  LiquidationParametersSetEventObject
+>;
 
-export type LiquidationParametersSetEventFilter = TypedEventFilter<LiquidationParametersSetEvent>
+export type LiquidationParametersSetEventFilter =
+  TypedEventFilter<LiquidationParametersSetEvent>;
 
 export interface LockedOiPercentSetEventObject {
-	marketId: BigNumber
-	lockedOiPercent: BigNumber
+  marketId: BigNumber;
+  lockedOiPercent: BigNumber;
 }
 export type LockedOiPercentSetEvent = TypedEvent<
-	[BigNumber, BigNumber],
-	LockedOiPercentSetEventObject
->
+  [BigNumber, BigNumber],
+  LockedOiPercentSetEventObject
+>;
 
-export type LockedOiPercentSetEventFilter = TypedEventFilter<LockedOiPercentSetEvent>
+export type LockedOiPercentSetEventFilter =
+  TypedEventFilter<LockedOiPercentSetEvent>;
 
 export interface MaxMarketValueSetEventObject {
-	marketId: BigNumber
-	maxMarketValue: BigNumber
+  marketId: BigNumber;
+  maxMarketValue: BigNumber;
 }
 export type MaxMarketValueSetEvent = TypedEvent<
-	[BigNumber, BigNumber],
-	MaxMarketValueSetEventObject
->
+  [BigNumber, BigNumber],
+  MaxMarketValueSetEventObject
+>;
 
-export type MaxMarketValueSetEventFilter = TypedEventFilter<MaxMarketValueSetEvent>
+export type MaxMarketValueSetEventFilter =
+  TypedEventFilter<MaxMarketValueSetEvent>;
 
 export interface OrderFeesSetEventObject {
-	marketId: BigNumber
-	makerFeeRatio: BigNumber
-	takerFeeRatio: BigNumber
+  marketId: BigNumber;
+  makerFeeRatio: BigNumber;
+  takerFeeRatio: BigNumber;
 }
 export type OrderFeesSetEvent = TypedEvent<
-	[BigNumber, BigNumber, BigNumber],
-	OrderFeesSetEventObject
->
+  [BigNumber, BigNumber, BigNumber],
+  OrderFeesSetEventObject
+>;
 
-export type OrderFeesSetEventFilter = TypedEventFilter<OrderFeesSetEvent>
+export type OrderFeesSetEventFilter = TypedEventFilter<OrderFeesSetEvent>;
 
 export interface SettlementStrategyAddedEventObject {
-	marketId: BigNumber
-	strategy: SettlementStrategy.DataStructOutput
-	strategyId: BigNumber
+  marketId: BigNumber;
+  strategy: SettlementStrategy.DataStructOutput;
+  strategyId: BigNumber;
 }
 export type SettlementStrategyAddedEvent = TypedEvent<
-	[BigNumber, SettlementStrategy.DataStructOutput, BigNumber],
-	SettlementStrategyAddedEventObject
->
+  [BigNumber, SettlementStrategy.DataStructOutput, BigNumber],
+  SettlementStrategyAddedEventObject
+>;
 
-export type SettlementStrategyAddedEventFilter = TypedEventFilter<SettlementStrategyAddedEvent>
+export type SettlementStrategyAddedEventFilter =
+  TypedEventFilter<SettlementStrategyAddedEvent>;
 
 export interface SettlementStrategyEnabledEventObject {
-	marketId: BigNumber
-	strategyId: BigNumber
-	enabled: boolean
+  marketId: BigNumber;
+  strategyId: BigNumber;
+  enabled: boolean;
 }
 export type SettlementStrategyEnabledEvent = TypedEvent<
-	[BigNumber, BigNumber, boolean],
-	SettlementStrategyEnabledEventObject
->
+  [BigNumber, BigNumber, boolean],
+  SettlementStrategyEnabledEventObject
+>;
 
-export type SettlementStrategyEnabledEventFilter = TypedEventFilter<SettlementStrategyEnabledEvent>
+export type SettlementStrategyEnabledEventFilter =
+  TypedEventFilter<SettlementStrategyEnabledEvent>;
 
 export interface LiquidationRewardGuardsSetEventObject {
-	minLiquidationRewardUsd: BigNumber
-	maxLiquidationRewardUsd: BigNumber
+  minLiquidationRewardUsd: BigNumber;
+  maxLiquidationRewardUsd: BigNumber;
 }
 export type LiquidationRewardGuardsSetEvent = TypedEvent<
-	[BigNumber, BigNumber],
-	LiquidationRewardGuardsSetEventObject
->
+  [BigNumber, BigNumber],
+  LiquidationRewardGuardsSetEventObject
+>;
 
 export type LiquidationRewardGuardsSetEventFilter =
-	TypedEventFilter<LiquidationRewardGuardsSetEvent>
+  TypedEventFilter<LiquidationRewardGuardsSetEvent>;
 
 export interface MaxCollateralAmountSetEventObject {
-	synthMarketId: BigNumber
-	collateralAmount: BigNumber
+  synthMarketId: BigNumber;
+  collateralAmount: BigNumber;
 }
 export type MaxCollateralAmountSetEvent = TypedEvent<
-	[BigNumber, BigNumber],
-	MaxCollateralAmountSetEventObject
->
+  [BigNumber, BigNumber],
+  MaxCollateralAmountSetEventObject
+>;
 
-export type MaxCollateralAmountSetEventFilter = TypedEventFilter<MaxCollateralAmountSetEvent>
+export type MaxCollateralAmountSetEventFilter =
+  TypedEventFilter<MaxCollateralAmountSetEvent>;
 
 export interface SynthDeductionPrioritySetEventObject {
-	newSynthDeductionPriority: BigNumber[]
+  newSynthDeductionPriority: BigNumber[];
 }
 export type SynthDeductionPrioritySetEvent = TypedEvent<
-	[BigNumber[]],
-	SynthDeductionPrioritySetEventObject
->
+  [BigNumber[]],
+  SynthDeductionPrioritySetEventObject
+>;
 
-export type SynthDeductionPrioritySetEventFilter = TypedEventFilter<SynthDeductionPrioritySetEvent>
+export type SynthDeductionPrioritySetEventFilter =
+  TypedEventFilter<SynthDeductionPrioritySetEvent>;
 
 export interface PerpsV3MarketProxy extends BaseContract {
-	connect(signerOrProvider: Signer | Provider | string): this
-	attach(addressOrName: string): this
-	deployed(): Promise<this>
-
-	interface: PerpsV3MarketProxyInterface
-
-	queryFilter<TEvent extends TypedEvent>(
-		event: TypedEventFilter<TEvent>,
-		fromBlockOrBlockhash?: string | number | undefined,
-		toBlock?: string | number | undefined
-	): Promise<Array<TEvent>>
-
-	listeners<TEvent extends TypedEvent>(
-		eventFilter?: TypedEventFilter<TEvent>
-	): Array<TypedListener<TEvent>>
-	listeners(eventName?: string): Array<Listener>
-	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
-	removeAllListeners(eventName?: string): this
-	off: OnEvent<this>
-	on: OnEvent<this>
-	once: OnEvent<this>
-	removeListener: OnEvent<this>
-
-	functions: {
-		'createAccount()'(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
-
-		'createAccount(uint128)'(
-			requestedAccountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		getAccountLastInteraction(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
-
-		getAccountOwner(accountId: BigNumberish, overrides?: CallOverrides): Promise<[string]>
-
-		getAccountPermissions(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<
-			[IAccountModule.AccountPermissionsStructOutput[]] & {
-				accountPerms: IAccountModule.AccountPermissionsStructOutput[]
-			}
-		>
-
-		getAccountTokenAddress(overrides?: CallOverrides): Promise<[string]>
-
-		grantPermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		hasPermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<[boolean]>
-
-		isAuthorized(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<[boolean]>
-
-		notifyAccountTransfer(
-			to: string,
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		renouncePermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		revokePermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		getAssociatedSystem(
-			id: BytesLike,
-			overrides?: CallOverrides
-		): Promise<[string, string] & { addr: string; kind: string }>
-
-		initOrUpgradeNft(
-			id: BytesLike,
-			name: string,
-			symbol: string,
-			uri: string,
-			impl: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		initOrUpgradeToken(
-			id: BytesLike,
-			name: string,
-			symbol: string,
-			decimals: BigNumberish,
-			impl: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		registerUnmanagedSystem(
-			id: BytesLike,
-			endpoint: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
-
-		getImplementation(overrides?: CallOverrides): Promise<[string]>
-
-		nominateNewOwner(
-			newNominatedOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
-
-		owner(overrides?: CallOverrides): Promise<[string]>
-
-		renounceNomination(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
-
-		simulateUpgradeTo(
-			newImplementation: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		upgradeTo(
-			newImplementation: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		acceptMarketOwnership(
-			perpsMarketId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		createMarket(
-			marketName: string,
-			marketSymbol: string,
-			marketOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		getMarketOwner(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<[string]>
-
-		minimumCredit(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		name(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<[string]>
-
-		nominateMarketOwner(
-			perpsMarketId: BigNumberish,
-			newNominatedOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		reportedDebt(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		setSpotMarket(
-			spotMarket: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setSynthetix(
-			synthetix: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
-
-		symbol(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<[string]>
-
-		updatePriceData(
-			perpsMarketId: BigNumberish,
-			feedId: BytesLike,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		getAsyncOrderClaim(
-			accountId: BigNumberish,
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[AsyncOrder.DataStructOutput]>
-
-		getAvailableMargin(accountId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		getOpenPosition(
-			accountId: BigNumberish,
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber, BigNumber, BigNumber]>
-
-		modifyCollateral(
-			accountId: BigNumberish,
-			synthMarketId: BigNumberish,
-			amountDelta: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		totalAccountOpenInterest(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
-
-		totalCollateralValue(accountId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		currentFundingRate(marketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		currentFundingVelocity(marketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		fillPrice(
-			marketId: BigNumberish,
-			orderSize: BigNumberish,
-			price: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
-
-		getMarketSummary(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<
-			[IPerpsMarketModule.MarketSummaryStructOutput] & {
-				summary: IPerpsMarketModule.MarketSummaryStructOutput
-			}
-		>
-
-		indexPrice(marketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		maxOpenInterest(marketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		size(marketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		skew(marketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		PRECISION(overrides?: CallOverrides): Promise<[BigNumber]>
-
-		cancelOrder(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		commitOrder(
-			commitment: AsyncOrder.OrderCommitmentRequestStruct,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		getOrder(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[AsyncOrder.DataStructOutput]>
-
-		settle(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[void]>
-
-		settlePythOrder(
-			result: BytesLike,
-			extraData: BytesLike,
-			overrides?: PayableOverrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		addToFeatureFlagAllowlist(
-			feature: BytesLike,
-			account: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		getDeniers(feature: BytesLike, overrides?: CallOverrides): Promise<[string[]]>
-
-		getFeatureFlagAllowAll(feature: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
-
-		getFeatureFlagAllowlist(feature: BytesLike, overrides?: CallOverrides): Promise<[string[]]>
-
-		getFeatureFlagDenyAll(feature: BytesLike, overrides?: CallOverrides): Promise<[boolean]>
-
-		isFeatureAllowed(
-			feature: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<[boolean]>
-
-		removeFromFeatureFlagAllowlist(
-			feature: BytesLike,
-			account: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setDeniers(
-			feature: BytesLike,
-			deniers: string[],
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setFeatureFlagAllowAll(
-			feature: BytesLike,
-			allowAll: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setFeatureFlagDenyAll(
-			feature: BytesLike,
-			denyAll: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		liquidate(
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		liquidateFlagged(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
-
-		addSettlementStrategy(
-			marketId: BigNumberish,
-			strategy: SettlementStrategy.DataStruct,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		getFundingParameters(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<
-			[BigNumber, BigNumber] & {
-				skewScale: BigNumber
-				maxFundingVelocity: BigNumber
-			}
-		>
-
-		getLiquidationParameters(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<
-			[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-				initialMarginFraction: BigNumber
-				maintenanceMarginFraction: BigNumber
-				liquidationRewardRatioD18: BigNumber
-				maxLiquidationLimitAccumulationMultiplier: BigNumber
-				maxSecondsInLiquidationWindow: BigNumber
-			}
-		>
-
-		getLockedOiPercent(marketId: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		getMaxMarketValue(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber] & { maxMarketValue: BigNumber }>
-
-		getOrderFees(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber, BigNumber] & { makerFee: BigNumber; takerFee: BigNumber }>
-
-		getSettlementStrategy(
-			marketId: BigNumberish,
-			strategyId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<
-			[SettlementStrategy.DataStructOutput] & {
-				settlementStrategy: SettlementStrategy.DataStructOutput
-			}
-		>
-
-		setFundingParameters(
-			marketId: BigNumberish,
-			skewScale: BigNumberish,
-			maxFundingVelocity: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setLiquidationParameters(
-			marketId: BigNumberish,
-			initialMarginFraction: BigNumberish,
-			maintenanceMarginFraction: BigNumberish,
-			liquidationRewardRatioD18: BigNumberish,
-			maxLiquidationLimitAccumulationMultiplier: BigNumberish,
-			maxSecondsInLiquidationWindow: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setLockedOiPercent(
-			marketId: BigNumberish,
-			lockedOiPercent: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setMaxMarketValue(
-			marketId: BigNumberish,
-			maxMarketValue: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setOrderFees(
-			marketId: BigNumberish,
-			makerFeeRatio: BigNumberish,
-			takerFeeRatio: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setSettlementStrategyEnabled(
-			marketId: BigNumberish,
-			strategyId: BigNumberish,
-			enabled: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		getLiquidationRewardGuards(overrides?: CallOverrides): Promise<
-			[BigNumber, BigNumber] & {
-				minLiquidationRewardUsd: BigNumber
-				maxLiquidationRewardUsd: BigNumber
-			}
-		>
-
-		getMaxCollateralAmount(
-			synthMarketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
-
-		getSynthDeductionPriority(overrides?: CallOverrides): Promise<[BigNumber[]]>
-
-		setLiquidationRewardGuards(
-			minLiquidationRewardUsd: BigNumberish,
-			maxLiquidationRewardUsd: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setMaxCollateralAmount(
-			synthMarketId: BigNumberish,
-			collateralAmount: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-
-		setSynthDeductionPriority(
-			newSynthDeductionPriority: BigNumberish[],
-			overrides?: Overrides & { from?: string }
-		): Promise<ContractTransaction>
-	}
-
-	'createAccount()'(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
-
-	'createAccount(uint128)'(
-		requestedAccountId: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	getAccountLastInteraction(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	getAccountOwner(accountId: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-	getAccountPermissions(
-		accountId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<IAccountModule.AccountPermissionsStructOutput[]>
-
-	getAccountTokenAddress(overrides?: CallOverrides): Promise<string>
-
-	grantPermission(
-		accountId: BigNumberish,
-		permission: BytesLike,
-		user: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	hasPermission(
-		accountId: BigNumberish,
-		permission: BytesLike,
-		user: string,
-		overrides?: CallOverrides
-	): Promise<boolean>
-
-	isAuthorized(
-		accountId: BigNumberish,
-		permission: BytesLike,
-		user: string,
-		overrides?: CallOverrides
-	): Promise<boolean>
-
-	notifyAccountTransfer(
-		to: string,
-		accountId: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	renouncePermission(
-		accountId: BigNumberish,
-		permission: BytesLike,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	revokePermission(
-		accountId: BigNumberish,
-		permission: BytesLike,
-		user: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	getAssociatedSystem(
-		id: BytesLike,
-		overrides?: CallOverrides
-	): Promise<[string, string] & { addr: string; kind: string }>
-
-	initOrUpgradeNft(
-		id: BytesLike,
-		name: string,
-		symbol: string,
-		uri: string,
-		impl: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	initOrUpgradeToken(
-		id: BytesLike,
-		name: string,
-		symbol: string,
-		decimals: BigNumberish,
-		impl: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	registerUnmanagedSystem(
-		id: BytesLike,
-		endpoint: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	acceptOwnership(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
-
-	getImplementation(overrides?: CallOverrides): Promise<string>
-
-	nominateNewOwner(
-		newNominatedOwner: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	nominatedOwner(overrides?: CallOverrides): Promise<string>
-
-	owner(overrides?: CallOverrides): Promise<string>
-
-	renounceNomination(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
-
-	simulateUpgradeTo(
-		newImplementation: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	upgradeTo(
-		newImplementation: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	acceptMarketOwnership(
-		perpsMarketId: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	createMarket(
-		marketName: string,
-		marketSymbol: string,
-		marketOwner: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	getMarketOwner(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-	minimumCredit(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	name(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-	nominateMarketOwner(
-		perpsMarketId: BigNumberish,
-		newNominatedOwner: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	reportedDebt(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	setSpotMarket(
-		spotMarket: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setSynthetix(
-		synthetix: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>
-
-	symbol(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-	updatePriceData(
-		perpsMarketId: BigNumberish,
-		feedId: BytesLike,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	getAsyncOrderClaim(
-		accountId: BigNumberish,
-		marketId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<AsyncOrder.DataStructOutput>
-
-	getAvailableMargin(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	getOpenPosition(
-		accountId: BigNumberish,
-		marketId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<[BigNumber, BigNumber, BigNumber]>
-
-	modifyCollateral(
-		accountId: BigNumberish,
-		synthMarketId: BigNumberish,
-		amountDelta: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	totalAccountOpenInterest(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	totalCollateralValue(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	currentFundingRate(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	currentFundingVelocity(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	fillPrice(
-		marketId: BigNumberish,
-		orderSize: BigNumberish,
-		price: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<BigNumber>
-
-	getMarketSummary(
-		marketId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<IPerpsMarketModule.MarketSummaryStructOutput>
-
-	indexPrice(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	maxOpenInterest(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	size(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	skew(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	PRECISION(overrides?: CallOverrides): Promise<BigNumber>
-
-	cancelOrder(
-		marketId: BigNumberish,
-		accountId: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	commitOrder(
-		commitment: AsyncOrder.OrderCommitmentRequestStruct,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	getOrder(
-		marketId: BigNumberish,
-		accountId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<AsyncOrder.DataStructOutput>
-
-	settle(marketId: BigNumberish, accountId: BigNumberish, overrides?: CallOverrides): Promise<void>
-
-	settlePythOrder(
-		result: BytesLike,
-		extraData: BytesLike,
-		overrides?: PayableOverrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	addToFeatureFlagAllowlist(
-		feature: BytesLike,
-		account: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	getDeniers(feature: BytesLike, overrides?: CallOverrides): Promise<string[]>
-
-	getFeatureFlagAllowAll(feature: BytesLike, overrides?: CallOverrides): Promise<boolean>
-
-	getFeatureFlagAllowlist(feature: BytesLike, overrides?: CallOverrides): Promise<string[]>
-
-	getFeatureFlagDenyAll(feature: BytesLike, overrides?: CallOverrides): Promise<boolean>
-
-	isFeatureAllowed(feature: BytesLike, account: string, overrides?: CallOverrides): Promise<boolean>
-
-	removeFromFeatureFlagAllowlist(
-		feature: BytesLike,
-		account: string,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setDeniers(
-		feature: BytesLike,
-		deniers: string[],
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setFeatureFlagAllowAll(
-		feature: BytesLike,
-		allowAll: boolean,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setFeatureFlagDenyAll(
-		feature: BytesLike,
-		denyAll: boolean,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	liquidate(
-		accountId: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	liquidateFlagged(overrides?: Overrides & { from?: string }): Promise<ContractTransaction>
-
-	addSettlementStrategy(
-		marketId: BigNumberish,
-		strategy: SettlementStrategy.DataStruct,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	getFundingParameters(
-		marketId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<
-		[BigNumber, BigNumber] & {
-			skewScale: BigNumber
-			maxFundingVelocity: BigNumber
-		}
-	>
-
-	getLiquidationParameters(
-		marketId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<
-		[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-			initialMarginFraction: BigNumber
-			maintenanceMarginFraction: BigNumber
-			liquidationRewardRatioD18: BigNumber
-			maxLiquidationLimitAccumulationMultiplier: BigNumber
-			maxSecondsInLiquidationWindow: BigNumber
-		}
-	>
-
-	getLockedOiPercent(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	getMaxMarketValue(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	getOrderFees(
-		marketId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<[BigNumber, BigNumber] & { makerFee: BigNumber; takerFee: BigNumber }>
-
-	getSettlementStrategy(
-		marketId: BigNumberish,
-		strategyId: BigNumberish,
-		overrides?: CallOverrides
-	): Promise<SettlementStrategy.DataStructOutput>
-
-	setFundingParameters(
-		marketId: BigNumberish,
-		skewScale: BigNumberish,
-		maxFundingVelocity: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setLiquidationParameters(
-		marketId: BigNumberish,
-		initialMarginFraction: BigNumberish,
-		maintenanceMarginFraction: BigNumberish,
-		liquidationRewardRatioD18: BigNumberish,
-		maxLiquidationLimitAccumulationMultiplier: BigNumberish,
-		maxSecondsInLiquidationWindow: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setLockedOiPercent(
-		marketId: BigNumberish,
-		lockedOiPercent: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setMaxMarketValue(
-		marketId: BigNumberish,
-		maxMarketValue: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setOrderFees(
-		marketId: BigNumberish,
-		makerFeeRatio: BigNumberish,
-		takerFeeRatio: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setSettlementStrategyEnabled(
-		marketId: BigNumberish,
-		strategyId: BigNumberish,
-		enabled: boolean,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	getLiquidationRewardGuards(overrides?: CallOverrides): Promise<
-		[BigNumber, BigNumber] & {
-			minLiquidationRewardUsd: BigNumber
-			maxLiquidationRewardUsd: BigNumber
-		}
-	>
-
-	getMaxCollateralAmount(synthMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-	getSynthDeductionPriority(overrides?: CallOverrides): Promise<BigNumber[]>
-
-	setLiquidationRewardGuards(
-		minLiquidationRewardUsd: BigNumberish,
-		maxLiquidationRewardUsd: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setMaxCollateralAmount(
-		synthMarketId: BigNumberish,
-		collateralAmount: BigNumberish,
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	setSynthDeductionPriority(
-		newSynthDeductionPriority: BigNumberish[],
-		overrides?: Overrides & { from?: string }
-	): Promise<ContractTransaction>
-
-	callStatic: {
-		'createAccount()'(overrides?: CallOverrides): Promise<BigNumber>
-
-		'createAccount(uint128)'(
-			requestedAccountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		getAccountLastInteraction(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getAccountOwner(accountId: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-		getAccountPermissions(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<IAccountModule.AccountPermissionsStructOutput[]>
-
-		getAccountTokenAddress(overrides?: CallOverrides): Promise<string>
-
-		grantPermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		hasPermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<boolean>
-
-		isAuthorized(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<boolean>
-
-		notifyAccountTransfer(
-			to: string,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		renouncePermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		revokePermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		getAssociatedSystem(
-			id: BytesLike,
-			overrides?: CallOverrides
-		): Promise<[string, string] & { addr: string; kind: string }>
-
-		initOrUpgradeNft(
-			id: BytesLike,
-			name: string,
-			symbol: string,
-			uri: string,
-			impl: string,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		initOrUpgradeToken(
-			id: BytesLike,
-			name: string,
-			symbol: string,
-			decimals: BigNumberish,
-			impl: string,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		registerUnmanagedSystem(
-			id: BytesLike,
-			endpoint: string,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		acceptOwnership(overrides?: CallOverrides): Promise<void>
-
-		getImplementation(overrides?: CallOverrides): Promise<string>
-
-		nominateNewOwner(newNominatedOwner: string, overrides?: CallOverrides): Promise<void>
-
-		nominatedOwner(overrides?: CallOverrides): Promise<string>
-
-		owner(overrides?: CallOverrides): Promise<string>
-
-		renounceNomination(overrides?: CallOverrides): Promise<void>
-
-		simulateUpgradeTo(newImplementation: string, overrides?: CallOverrides): Promise<void>
-
-		upgradeTo(newImplementation: string, overrides?: CallOverrides): Promise<void>
-
-		acceptMarketOwnership(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<void>
-
-		createMarket(
-			marketName: string,
-			marketSymbol: string,
-			marketOwner: string,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getMarketOwner(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-		minimumCredit(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		name(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-		nominateMarketOwner(
-			perpsMarketId: BigNumberish,
-			newNominatedOwner: string,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		reportedDebt(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		setSpotMarket(spotMarket: string, overrides?: CallOverrides): Promise<void>
-
-		setSynthetix(synthetix: string, overrides?: CallOverrides): Promise<void>
-
-		supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>
-
-		symbol(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<string>
-
-		updatePriceData(
-			perpsMarketId: BigNumberish,
-			feedId: BytesLike,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		getAsyncOrderClaim(
-			accountId: BigNumberish,
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<AsyncOrder.DataStructOutput>
-
-		getAvailableMargin(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getOpenPosition(
-			accountId: BigNumberish,
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber, BigNumber, BigNumber]>
-
-		modifyCollateral(
-			accountId: BigNumberish,
-			synthMarketId: BigNumberish,
-			amountDelta: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		totalAccountOpenInterest(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		totalCollateralValue(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		currentFundingRate(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		currentFundingVelocity(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		fillPrice(
-			marketId: BigNumberish,
-			orderSize: BigNumberish,
-			price: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getMarketSummary(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<IPerpsMarketModule.MarketSummaryStructOutput>
-
-		indexPrice(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		maxOpenInterest(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		size(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		skew(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		PRECISION(overrides?: CallOverrides): Promise<BigNumber>
-
-		cancelOrder(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		commitOrder(
-			commitment: AsyncOrder.OrderCommitmentRequestStruct,
-			overrides?: CallOverrides
-		): Promise<
-			[AsyncOrder.DataStructOutput, BigNumber] & {
-				retOrder: AsyncOrder.DataStructOutput
-				fees: BigNumber
-			}
-		>
-
-		getOrder(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<AsyncOrder.DataStructOutput>
-
-		settle(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		settlePythOrder(
-			result: BytesLike,
-			extraData: BytesLike,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		addToFeatureFlagAllowlist(
-			feature: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		getDeniers(feature: BytesLike, overrides?: CallOverrides): Promise<string[]>
-
-		getFeatureFlagAllowAll(feature: BytesLike, overrides?: CallOverrides): Promise<boolean>
-
-		getFeatureFlagAllowlist(feature: BytesLike, overrides?: CallOverrides): Promise<string[]>
-
-		getFeatureFlagDenyAll(feature: BytesLike, overrides?: CallOverrides): Promise<boolean>
-
-		isFeatureAllowed(
-			feature: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<boolean>
-
-		removeFromFeatureFlagAllowlist(
-			feature: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setDeniers(feature: BytesLike, deniers: string[], overrides?: CallOverrides): Promise<void>
-
-		setFeatureFlagAllowAll(
-			feature: BytesLike,
-			allowAll: boolean,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setFeatureFlagDenyAll(
-			feature: BytesLike,
-			denyAll: boolean,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		liquidate(accountId: BigNumberish, overrides?: CallOverrides): Promise<void>
-
-		liquidateFlagged(overrides?: CallOverrides): Promise<void>
-
-		addSettlementStrategy(
-			marketId: BigNumberish,
-			strategy: SettlementStrategy.DataStruct,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getFundingParameters(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<
-			[BigNumber, BigNumber] & {
-				skewScale: BigNumber
-				maxFundingVelocity: BigNumber
-			}
-		>
-
-		getLiquidationParameters(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<
-			[BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-				initialMarginFraction: BigNumber
-				maintenanceMarginFraction: BigNumber
-				liquidationRewardRatioD18: BigNumber
-				maxLiquidationLimitAccumulationMultiplier: BigNumber
-				maxSecondsInLiquidationWindow: BigNumber
-			}
-		>
-
-		getLockedOiPercent(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getMaxMarketValue(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getOrderFees(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<[BigNumber, BigNumber] & { makerFee: BigNumber; takerFee: BigNumber }>
-
-		getSettlementStrategy(
-			marketId: BigNumberish,
-			strategyId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<SettlementStrategy.DataStructOutput>
-
-		setFundingParameters(
-			marketId: BigNumberish,
-			skewScale: BigNumberish,
-			maxFundingVelocity: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setLiquidationParameters(
-			marketId: BigNumberish,
-			initialMarginFraction: BigNumberish,
-			maintenanceMarginFraction: BigNumberish,
-			liquidationRewardRatioD18: BigNumberish,
-			maxLiquidationLimitAccumulationMultiplier: BigNumberish,
-			maxSecondsInLiquidationWindow: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setLockedOiPercent(
-			marketId: BigNumberish,
-			lockedOiPercent: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setMaxMarketValue(
-			marketId: BigNumberish,
-			maxMarketValue: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setOrderFees(
-			marketId: BigNumberish,
-			makerFeeRatio: BigNumberish,
-			takerFeeRatio: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setSettlementStrategyEnabled(
-			marketId: BigNumberish,
-			strategyId: BigNumberish,
-			enabled: boolean,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		getLiquidationRewardGuards(overrides?: CallOverrides): Promise<
-			[BigNumber, BigNumber] & {
-				minLiquidationRewardUsd: BigNumber
-				maxLiquidationRewardUsd: BigNumber
-			}
-		>
-
-		getMaxCollateralAmount(
-			synthMarketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getSynthDeductionPriority(overrides?: CallOverrides): Promise<BigNumber[]>
-
-		setLiquidationRewardGuards(
-			minLiquidationRewardUsd: BigNumberish,
-			maxLiquidationRewardUsd: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setMaxCollateralAmount(
-			synthMarketId: BigNumberish,
-			collateralAmount: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<void>
-
-		setSynthDeductionPriority(
-			newSynthDeductionPriority: BigNumberish[],
-			overrides?: CallOverrides
-		): Promise<void>
-	}
-
-	filters: {
-		'AccountCreated(uint128,address)'(
-			accountId?: BigNumberish | null,
-			owner?: string | null
-		): AccountCreatedEventFilter
-		AccountCreated(
-			accountId?: BigNumberish | null,
-			owner?: string | null
-		): AccountCreatedEventFilter
-
-		'PermissionGranted(uint128,bytes32,address,address)'(
-			accountId?: BigNumberish | null,
-			permission?: BytesLike | null,
-			user?: string | null,
-			sender?: null
-		): PermissionGrantedEventFilter
-		PermissionGranted(
-			accountId?: BigNumberish | null,
-			permission?: BytesLike | null,
-			user?: string | null,
-			sender?: null
-		): PermissionGrantedEventFilter
-
-		'PermissionRevoked(uint128,bytes32,address,address)'(
-			accountId?: BigNumberish | null,
-			permission?: BytesLike | null,
-			user?: string | null,
-			sender?: null
-		): PermissionRevokedEventFilter
-		PermissionRevoked(
-			accountId?: BigNumberish | null,
-			permission?: BytesLike | null,
-			user?: string | null,
-			sender?: null
-		): PermissionRevokedEventFilter
-
-		'AssociatedSystemSet(bytes32,bytes32,address,address)'(
-			kind?: BytesLike | null,
-			id?: BytesLike | null,
-			proxy?: null,
-			impl?: null
-		): AssociatedSystemSetEventFilter
-		AssociatedSystemSet(
-			kind?: BytesLike | null,
-			id?: BytesLike | null,
-			proxy?: null,
-			impl?: null
-		): AssociatedSystemSetEventFilter
-
-		'OwnerChanged(address,address)'(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
-		OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
-
-		'OwnerNominated(address)'(newOwner?: null): OwnerNominatedEventFilter
-		OwnerNominated(newOwner?: null): OwnerNominatedEventFilter
-
-		'Upgraded(address,address)'(self?: string | null, implementation?: null): UpgradedEventFilter
-		Upgraded(self?: string | null, implementation?: null): UpgradedEventFilter
-
-		'MarketOwnerChanged(uint128,address,address)'(
-			perpsMarketId?: BigNumberish | null,
-			oldOwner?: null,
-			newOwner?: null
-		): MarketOwnerChangedEventFilter
-		MarketOwnerChanged(
-			perpsMarketId?: BigNumberish | null,
-			oldOwner?: null,
-			newOwner?: null
-		): MarketOwnerChangedEventFilter
-
-		'MarketOwnerNominated(uint128,address)'(
-			perpsMarketId?: BigNumberish | null,
-			newNominatedOwner?: null
-		): MarketOwnerNominatedEventFilter
-		MarketOwnerNominated(
-			perpsMarketId?: BigNumberish | null,
-			newNominatedOwner?: null
-		): MarketOwnerNominatedEventFilter
-
-		'MarketPriceDataUpdated(uint128,bytes32)'(
-			perpsMarketId?: BigNumberish | null,
-			feedId?: null
-		): MarketPriceDataUpdatedEventFilter
-		MarketPriceDataUpdated(
-			perpsMarketId?: BigNumberish | null,
-			feedId?: null
-		): MarketPriceDataUpdatedEventFilter
-
-		'MarketRegistered(uint128,address,string,string)'(
-			perpsMarketId?: BigNumberish | null,
-			marketOwner?: string | null,
-			marketName?: null,
-			marketSymbol?: null
-		): MarketRegisteredEventFilter
-		MarketRegistered(
-			perpsMarketId?: BigNumberish | null,
-			marketOwner?: string | null,
-			marketName?: null,
-			marketSymbol?: null
-		): MarketRegisteredEventFilter
-
-		'CollateralModified(uint128,uint128,int256,address)'(
-			accountId?: BigNumberish | null,
-			synthMarketId?: BigNumberish | null,
-			amountDelta?: BigNumberish | null,
-			sender?: null
-		): CollateralModifiedEventFilter
-		CollateralModified(
-			accountId?: BigNumberish | null,
-			synthMarketId?: BigNumberish | null,
-			amountDelta?: BigNumberish | null,
-			sender?: null
-		): CollateralModifiedEventFilter
-
-		'OrderCanceled(uint128,uint128,uint256,uint256)'(
-			marketId?: BigNumberish | null,
-			accountId?: BigNumberish | null,
-			settlementTime?: null,
-			acceptablePrice?: null
-		): OrderCanceledEventFilter
-		OrderCanceled(
-			marketId?: BigNumberish | null,
-			accountId?: BigNumberish | null,
-			settlementTime?: null,
-			acceptablePrice?: null
-		): OrderCanceledEventFilter
-
-		'OrderCommitted(uint128,uint128,uint8,int128,uint256,uint256,uint256,bytes32,address)'(
-			marketId?: BigNumberish | null,
-			accountId?: BigNumberish | null,
-			orderType?: BigNumberish | null,
-			sizeDelta?: null,
-			acceptablePrice?: null,
-			settlementTime?: null,
-			expirationTime?: null,
-			trackingCode?: null,
-			sender?: null
-		): OrderCommittedEventFilter
-		OrderCommitted(
-			marketId?: BigNumberish | null,
-			accountId?: BigNumberish | null,
-			orderType?: BigNumberish | null,
-			sizeDelta?: null,
-			acceptablePrice?: null,
-			settlementTime?: null,
-			expirationTime?: null,
-			trackingCode?: null,
-			sender?: null
-		): OrderCommittedEventFilter
-
-		'OrderSettled(uint128,uint128,uint256,int256,int128,uint256,uint256,bytes32,address)'(
-			marketId?: BigNumberish | null,
-			accountId?: BigNumberish | null,
-			fillPrice?: null,
-			accountPnlRealized?: null,
-			newSize?: null,
-			collectedFees?: null,
-			settelementReward?: null,
-			trackingCode?: BytesLike | null,
-			settler?: null
-		): OrderSettledEventFilter
-		OrderSettled(
-			marketId?: BigNumberish | null,
-			accountId?: BigNumberish | null,
-			fillPrice?: null,
-			accountPnlRealized?: null,
-			newSize?: null,
-			collectedFees?: null,
-			settelementReward?: null,
-			trackingCode?: BytesLike | null,
-			settler?: null
-		): OrderSettledEventFilter
-
-		'FeatureFlagAllowAllSet(bytes32,bool)'(
-			feature?: BytesLike | null,
-			allowAll?: null
-		): FeatureFlagAllowAllSetEventFilter
-		FeatureFlagAllowAllSet(
-			feature?: BytesLike | null,
-			allowAll?: null
-		): FeatureFlagAllowAllSetEventFilter
-
-		'FeatureFlagAllowlistAdded(bytes32,address)'(
-			feature?: BytesLike | null,
-			account?: null
-		): FeatureFlagAllowlistAddedEventFilter
-		FeatureFlagAllowlistAdded(
-			feature?: BytesLike | null,
-			account?: null
-		): FeatureFlagAllowlistAddedEventFilter
-
-		'FeatureFlagAllowlistRemoved(bytes32,address)'(
-			feature?: BytesLike | null,
-			account?: null
-		): FeatureFlagAllowlistRemovedEventFilter
-		FeatureFlagAllowlistRemoved(
-			feature?: BytesLike | null,
-			account?: null
-		): FeatureFlagAllowlistRemovedEventFilter
-
-		'FeatureFlagDeniersReset(bytes32,address[])'(
-			feature?: BytesLike | null,
-			deniers?: null
-		): FeatureFlagDeniersResetEventFilter
-		FeatureFlagDeniersReset(
-			feature?: BytesLike | null,
-			deniers?: null
-		): FeatureFlagDeniersResetEventFilter
-
-		'FeatureFlagDenyAllSet(bytes32,bool)'(
-			feature?: BytesLike | null,
-			denyAll?: null
-		): FeatureFlagDenyAllSetEventFilter
-		FeatureFlagDenyAllSet(
-			feature?: BytesLike | null,
-			denyAll?: null
-		): FeatureFlagDenyAllSetEventFilter
-
-		'FundingParametersSet(uint128,uint256,uint256)'(
-			marketId?: null,
-			skewScale?: null,
-			maxFundingVelocity?: null
-		): FundingParametersSetEventFilter
-		FundingParametersSet(
-			marketId?: null,
-			skewScale?: null,
-			maxFundingVelocity?: null
-		): FundingParametersSetEventFilter
-
-		'LiquidationParametersSet(uint128,uint256,uint256,uint256,uint256,uint256)'(
-			marketId?: null,
-			initialMarginFraction?: null,
-			maintenanceMarginFraction?: null,
-			liquidationRewardRatioD18?: null,
-			maxLiquidationLimitAccumulationMultiplier?: null,
-			maxSecondsInLiquidationWindow?: null
-		): LiquidationParametersSetEventFilter
-		LiquidationParametersSet(
-			marketId?: null,
-			initialMarginFraction?: null,
-			maintenanceMarginFraction?: null,
-			liquidationRewardRatioD18?: null,
-			maxLiquidationLimitAccumulationMultiplier?: null,
-			maxSecondsInLiquidationWindow?: null
-		): LiquidationParametersSetEventFilter
-
-		'LockedOiPercentSet(uint128,uint256)'(
-			marketId?: null,
-			lockedOiPercent?: null
-		): LockedOiPercentSetEventFilter
-		LockedOiPercentSet(marketId?: null, lockedOiPercent?: null): LockedOiPercentSetEventFilter
-
-		'MaxMarketValueSet(uint128,uint256)'(
-			marketId?: null,
-			maxMarketValue?: null
-		): MaxMarketValueSetEventFilter
-		MaxMarketValueSet(marketId?: null, maxMarketValue?: null): MaxMarketValueSetEventFilter
-
-		'OrderFeesSet(uint128,uint256,uint256)'(
-			marketId?: null,
-			makerFeeRatio?: null,
-			takerFeeRatio?: null
-		): OrderFeesSetEventFilter
-		OrderFeesSet(
-			marketId?: null,
-			makerFeeRatio?: null,
-			takerFeeRatio?: null
-		): OrderFeesSetEventFilter
-
-		'SettlementStrategyAdded(uint128,tuple,uint256)'(
-			marketId?: BigNumberish | null,
-			strategy?: null,
-			strategyId?: BigNumberish | null
-		): SettlementStrategyAddedEventFilter
-		SettlementStrategyAdded(
-			marketId?: BigNumberish | null,
-			strategy?: null,
-			strategyId?: BigNumberish | null
-		): SettlementStrategyAddedEventFilter
-
-		'SettlementStrategyEnabled(uint128,uint256,bool)'(
-			marketId?: null,
-			strategyId?: null,
-			enabled?: null
-		): SettlementStrategyEnabledEventFilter
-		SettlementStrategyEnabled(
-			marketId?: null,
-			strategyId?: null,
-			enabled?: null
-		): SettlementStrategyEnabledEventFilter
-
-		'LiquidationRewardGuardsSet(uint256,uint256)'(
-			minLiquidationRewardUsd?: BigNumberish | null,
-			maxLiquidationRewardUsd?: BigNumberish | null
-		): LiquidationRewardGuardsSetEventFilter
-		LiquidationRewardGuardsSet(
-			minLiquidationRewardUsd?: BigNumberish | null,
-			maxLiquidationRewardUsd?: BigNumberish | null
-		): LiquidationRewardGuardsSetEventFilter
-
-		'MaxCollateralAmountSet(uint128,uint256)'(
-			synthMarketId?: BigNumberish | null,
-			collateralAmount?: null
-		): MaxCollateralAmountSetEventFilter
-		MaxCollateralAmountSet(
-			synthMarketId?: BigNumberish | null,
-			collateralAmount?: null
-		): MaxCollateralAmountSetEventFilter
-
-		'SynthDeductionPrioritySet(uint128[])'(
-			newSynthDeductionPriority?: null
-		): SynthDeductionPrioritySetEventFilter
-		SynthDeductionPrioritySet(
-			newSynthDeductionPriority?: null
-		): SynthDeductionPrioritySetEventFilter
-	}
-
-	estimateGas: {
-		'createAccount()'(overrides?: Overrides & { from?: string }): Promise<BigNumber>
-
-		'createAccount(uint128)'(
-			requestedAccountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		getAccountLastInteraction(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getAccountOwner(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getAccountPermissions(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getAccountTokenAddress(overrides?: CallOverrides): Promise<BigNumber>
-
-		grantPermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		hasPermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		isAuthorized(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		notifyAccountTransfer(
-			to: string,
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		renouncePermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		revokePermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		getAssociatedSystem(id: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-		initOrUpgradeNft(
-			id: BytesLike,
-			name: string,
-			symbol: string,
-			uri: string,
-			impl: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		initOrUpgradeToken(
-			id: BytesLike,
-			name: string,
-			symbol: string,
-			decimals: BigNumberish,
-			impl: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		registerUnmanagedSystem(
-			id: BytesLike,
-			endpoint: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<BigNumber>
-
-		getImplementation(overrides?: CallOverrides): Promise<BigNumber>
-
-		nominateNewOwner(
-			newNominatedOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
-
-		owner(overrides?: CallOverrides): Promise<BigNumber>
-
-		renounceNomination(overrides?: Overrides & { from?: string }): Promise<BigNumber>
-
-		simulateUpgradeTo(
-			newImplementation: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		upgradeTo(
-			newImplementation: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		acceptMarketOwnership(
-			perpsMarketId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		createMarket(
-			marketName: string,
-			marketSymbol: string,
-			marketOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		getMarketOwner(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		minimumCredit(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		name(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		nominateMarketOwner(
-			perpsMarketId: BigNumberish,
-			newNominatedOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		reportedDebt(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		setSpotMarket(spotMarket: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
-
-		setSynthetix(synthetix: string, overrides?: Overrides & { from?: string }): Promise<BigNumber>
-
-		supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-		symbol(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		updatePriceData(
-			perpsMarketId: BigNumberish,
-			feedId: BytesLike,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		getAsyncOrderClaim(
-			accountId: BigNumberish,
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getAvailableMargin(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getOpenPosition(
-			accountId: BigNumberish,
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		modifyCollateral(
-			accountId: BigNumberish,
-			synthMarketId: BigNumberish,
-			amountDelta: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		totalAccountOpenInterest(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		totalCollateralValue(accountId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		currentFundingRate(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		currentFundingVelocity(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		fillPrice(
-			marketId: BigNumberish,
-			orderSize: BigNumberish,
-			price: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getMarketSummary(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		indexPrice(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		maxOpenInterest(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		size(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		skew(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		PRECISION(overrides?: CallOverrides): Promise<BigNumber>
-
-		cancelOrder(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		commitOrder(
-			commitment: AsyncOrder.OrderCommitmentRequestStruct,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		getOrder(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		settle(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		settlePythOrder(
-			result: BytesLike,
-			extraData: BytesLike,
-			overrides?: PayableOverrides & { from?: string }
-		): Promise<BigNumber>
-
-		addToFeatureFlagAllowlist(
-			feature: BytesLike,
-			account: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		getDeniers(feature: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-		getFeatureFlagAllowAll(feature: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-		getFeatureFlagAllowlist(feature: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-		getFeatureFlagDenyAll(feature: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
-
-		isFeatureAllowed(
-			feature: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		removeFromFeatureFlagAllowlist(
-			feature: BytesLike,
-			account: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setDeniers(
-			feature: BytesLike,
-			deniers: string[],
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setFeatureFlagAllowAll(
-			feature: BytesLike,
-			allowAll: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setFeatureFlagDenyAll(
-			feature: BytesLike,
-			denyAll: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		liquidate(
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		liquidateFlagged(overrides?: Overrides & { from?: string }): Promise<BigNumber>
-
-		addSettlementStrategy(
-			marketId: BigNumberish,
-			strategy: SettlementStrategy.DataStruct,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		getFundingParameters(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getLiquidationParameters(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getLockedOiPercent(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getMaxMarketValue(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getOrderFees(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
-
-		getSettlementStrategy(
-			marketId: BigNumberish,
-			strategyId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		setFundingParameters(
-			marketId: BigNumberish,
-			skewScale: BigNumberish,
-			maxFundingVelocity: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setLiquidationParameters(
-			marketId: BigNumberish,
-			initialMarginFraction: BigNumberish,
-			maintenanceMarginFraction: BigNumberish,
-			liquidationRewardRatioD18: BigNumberish,
-			maxLiquidationLimitAccumulationMultiplier: BigNumberish,
-			maxSecondsInLiquidationWindow: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setLockedOiPercent(
-			marketId: BigNumberish,
-			lockedOiPercent: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setMaxMarketValue(
-			marketId: BigNumberish,
-			maxMarketValue: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setOrderFees(
-			marketId: BigNumberish,
-			makerFeeRatio: BigNumberish,
-			takerFeeRatio: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setSettlementStrategyEnabled(
-			marketId: BigNumberish,
-			strategyId: BigNumberish,
-			enabled: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		getLiquidationRewardGuards(overrides?: CallOverrides): Promise<BigNumber>
-
-		getMaxCollateralAmount(
-			synthMarketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-
-		getSynthDeductionPriority(overrides?: CallOverrides): Promise<BigNumber>
-
-		setLiquidationRewardGuards(
-			minLiquidationRewardUsd: BigNumberish,
-			maxLiquidationRewardUsd: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setMaxCollateralAmount(
-			synthMarketId: BigNumberish,
-			collateralAmount: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-
-		setSynthDeductionPriority(
-			newSynthDeductionPriority: BigNumberish[],
-			overrides?: Overrides & { from?: string }
-		): Promise<BigNumber>
-	}
-
-	populateTransaction: {
-		'createAccount()'(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
-
-		'createAccount(uint128)'(
-			requestedAccountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		getAccountLastInteraction(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getAccountOwner(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getAccountPermissions(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getAccountTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		grantPermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		hasPermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		isAuthorized(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		notifyAccountTransfer(
-			to: string,
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		renouncePermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		revokePermission(
-			accountId: BigNumberish,
-			permission: BytesLike,
-			user: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		getAssociatedSystem(id: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		initOrUpgradeNft(
-			id: BytesLike,
-			name: string,
-			symbol: string,
-			uri: string,
-			impl: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		initOrUpgradeToken(
-			id: BytesLike,
-			name: string,
-			symbol: string,
-			decimals: BigNumberish,
-			impl: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		registerUnmanagedSystem(
-			id: BytesLike,
-			endpoint: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		acceptOwnership(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
-
-		getImplementation(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		nominateNewOwner(
-			newNominatedOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		renounceNomination(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
-
-		simulateUpgradeTo(
-			newImplementation: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		upgradeTo(
-			newImplementation: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		acceptMarketOwnership(
-			perpsMarketId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		createMarket(
-			marketName: string,
-			marketSymbol: string,
-			marketOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		getMarketOwner(
-			perpsMarketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		minimumCredit(
-			perpsMarketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		name(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		nominateMarketOwner(
-			perpsMarketId: BigNumberish,
-			newNominatedOwner: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		reportedDebt(
-			perpsMarketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		setSpotMarket(
-			spotMarket: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setSynthetix(
-			synthetix: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		supportsInterface(
-			interfaceId: BytesLike,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		symbol(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		updatePriceData(
-			perpsMarketId: BigNumberish,
-			feedId: BytesLike,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		getAsyncOrderClaim(
-			accountId: BigNumberish,
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getAvailableMargin(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getOpenPosition(
-			accountId: BigNumberish,
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		modifyCollateral(
-			accountId: BigNumberish,
-			synthMarketId: BigNumberish,
-			amountDelta: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		totalAccountOpenInterest(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		totalCollateralValue(
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		currentFundingRate(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		currentFundingVelocity(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		fillPrice(
-			marketId: BigNumberish,
-			orderSize: BigNumberish,
-			price: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getMarketSummary(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		indexPrice(marketId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		maxOpenInterest(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		size(marketId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		skew(marketId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		PRECISION(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		cancelOrder(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		commitOrder(
-			commitment: AsyncOrder.OrderCommitmentRequestStruct,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		getOrder(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		settle(
-			marketId: BigNumberish,
-			accountId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		settlePythOrder(
-			result: BytesLike,
-			extraData: BytesLike,
-			overrides?: PayableOverrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		addToFeatureFlagAllowlist(
-			feature: BytesLike,
-			account: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		getDeniers(feature: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		getFeatureFlagAllowAll(
-			feature: BytesLike,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getFeatureFlagAllowlist(
-			feature: BytesLike,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getFeatureFlagDenyAll(
-			feature: BytesLike,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		isFeatureAllowed(
-			feature: BytesLike,
-			account: string,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		removeFromFeatureFlagAllowlist(
-			feature: BytesLike,
-			account: string,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setDeniers(
-			feature: BytesLike,
-			deniers: string[],
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setFeatureFlagAllowAll(
-			feature: BytesLike,
-			allowAll: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setFeatureFlagDenyAll(
-			feature: BytesLike,
-			denyAll: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		liquidate(
-			accountId: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		liquidateFlagged(overrides?: Overrides & { from?: string }): Promise<PopulatedTransaction>
-
-		addSettlementStrategy(
-			marketId: BigNumberish,
-			strategy: SettlementStrategy.DataStruct,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		getFundingParameters(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getLiquidationParameters(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getLockedOiPercent(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getMaxMarketValue(
-			marketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getOrderFees(marketId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		getSettlementStrategy(
-			marketId: BigNumberish,
-			strategyId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		setFundingParameters(
-			marketId: BigNumberish,
-			skewScale: BigNumberish,
-			maxFundingVelocity: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setLiquidationParameters(
-			marketId: BigNumberish,
-			initialMarginFraction: BigNumberish,
-			maintenanceMarginFraction: BigNumberish,
-			liquidationRewardRatioD18: BigNumberish,
-			maxLiquidationLimitAccumulationMultiplier: BigNumberish,
-			maxSecondsInLiquidationWindow: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setLockedOiPercent(
-			marketId: BigNumberish,
-			lockedOiPercent: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setMaxMarketValue(
-			marketId: BigNumberish,
-			maxMarketValue: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setOrderFees(
-			marketId: BigNumberish,
-			makerFeeRatio: BigNumberish,
-			takerFeeRatio: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setSettlementStrategyEnabled(
-			marketId: BigNumberish,
-			strategyId: BigNumberish,
-			enabled: boolean,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		getLiquidationRewardGuards(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		getMaxCollateralAmount(
-			synthMarketId: BigNumberish,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-
-		getSynthDeductionPriority(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		setLiquidationRewardGuards(
-			minLiquidationRewardUsd: BigNumberish,
-			maxLiquidationRewardUsd: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setMaxCollateralAmount(
-			synthMarketId: BigNumberish,
-			collateralAmount: BigNumberish,
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-
-		setSynthDeductionPriority(
-			newSynthDeductionPriority: BigNumberish[],
-			overrides?: Overrides & { from?: string }
-		): Promise<PopulatedTransaction>
-	}
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
+
+  interface: PerpsV3MarketProxyInterface;
+
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
+
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
+
+  functions: {
+    createAccount(
+      requestedAccountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getAccountLastInteraction(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getAccountOwner(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getAccountPermissions(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [IAccountModule.AccountPermissionsStructOutput[]] & {
+        accountPerms: IAccountModule.AccountPermissionsStructOutput[];
+      }
+    >;
+
+    getAccountTokenAddress(overrides?: CallOverrides): Promise<[string]>;
+
+    grantPermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    hasPermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    isAuthorized(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    notifyAccountTransfer(
+      to: string,
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    renouncePermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    revokePermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getAssociatedSystem(
+      id: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string, string] & { addr: string; kind: string }>;
+
+    initOrUpgradeNft(
+      id: BytesLike,
+      name: string,
+      symbol: string,
+      uri: string,
+      impl: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    initOrUpgradeToken(
+      id: BytesLike,
+      name: string,
+      symbol: string,
+      decimals: BigNumberish,
+      impl: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    registerUnmanagedSystem(
+      id: BytesLike,
+      endpoint: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getImplementation(overrides?: CallOverrides): Promise<[string]>;
+
+    nominateNewOwner(
+      newNominatedOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    renounceNomination(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    simulateUpgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    acceptMarketOwnership(
+      perpsMarketId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    createMarket(
+      marketName: string,
+      marketSymbol: string,
+      marketOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getMarketOwner(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    minimumCredit(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    name(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    nominateMarketOwner(
+      perpsMarketId: BigNumberish,
+      newNominatedOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    reportedDebt(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    setSpotMarket(
+      spotMarket: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setSynthetix(
+      synthetix: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    symbol(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    updatePriceData(
+      perpsMarketId: BigNumberish,
+      feedId: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getAsyncOrderClaim(
+      accountId: BigNumberish,
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[AsyncOrder.DataStructOutput]>;
+
+    getAvailableMargin(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getOpenPosition(
+      accountId: BigNumberish,
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    modifyCollateral(
+      accountId: BigNumberish,
+      synthMarketId: BigNumberish,
+      amountDelta: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    totalAccountOpenInterest(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    totalCollateralValue(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    currentFundingRate(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    currentFundingVelocity(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    fillPrice(
+      marketId: BigNumberish,
+      orderSize: BigNumberish,
+      price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getMarketSummary(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [IPerpsMarketModule.MarketSummaryStructOutput] & {
+        summary: IPerpsMarketModule.MarketSummaryStructOutput;
+      }
+    >;
+
+    indexPrice(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    maxOpenInterest(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    size(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    skew(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    PRECISION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    cancelOrder(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    commitOrder(
+      commitment: AsyncOrder.OrderCommitmentRequestStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getOrder(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[AsyncOrder.DataStructOutput]>;
+
+    settle(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    settlePythOrder(
+      result: BytesLike,
+      extraData: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    addToFeatureFlagAllowlist(
+      feature: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getDeniers(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
+    getFeatureFlagAllowAll(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    getFeatureFlagAllowlist(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
+    getFeatureFlagDenyAll(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    isFeatureAllowed(
+      feature: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    removeFromFeatureFlagAllowlist(
+      feature: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setDeniers(
+      feature: BytesLike,
+      deniers: string[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setFeatureFlagAllowAll(
+      feature: BytesLike,
+      allowAll: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setFeatureFlagDenyAll(
+      feature: BytesLike,
+      denyAll: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    liquidate(
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    liquidateFlagged(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    addSettlementStrategy(
+      marketId: BigNumberish,
+      strategy: SettlementStrategy.DataStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getFundingParameters(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        skewScale: BigNumber;
+        maxFundingVelocity: BigNumber;
+      }
+    >;
+
+    getLiquidationParameters(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        initialMarginFraction: BigNumber;
+        maintenanceMarginFraction: BigNumber;
+        liquidationRewardRatioD18: BigNumber;
+        maxLiquidationLimitAccumulationMultiplier: BigNumber;
+        maxSecondsInLiquidationWindow: BigNumber;
+      }
+    >;
+
+    getLockedOiPercent(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getMaxMarketValue(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { maxMarketValue: BigNumber }>;
+
+    getOrderFees(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { makerFee: BigNumber; takerFee: BigNumber }
+    >;
+
+    getSettlementStrategy(
+      marketId: BigNumberish,
+      strategyId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [SettlementStrategy.DataStructOutput] & {
+        settlementStrategy: SettlementStrategy.DataStructOutput;
+      }
+    >;
+
+    setFundingParameters(
+      marketId: BigNumberish,
+      skewScale: BigNumberish,
+      maxFundingVelocity: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setLiquidationParameters(
+      marketId: BigNumberish,
+      initialMarginFraction: BigNumberish,
+      maintenanceMarginFraction: BigNumberish,
+      liquidationRewardRatioD18: BigNumberish,
+      maxLiquidationLimitAccumulationMultiplier: BigNumberish,
+      maxSecondsInLiquidationWindow: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setLockedOiPercent(
+      marketId: BigNumberish,
+      lockedOiPercent: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setMaxMarketValue(
+      marketId: BigNumberish,
+      maxMarketValue: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setOrderFees(
+      marketId: BigNumberish,
+      makerFeeRatio: BigNumberish,
+      takerFeeRatio: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setSettlementStrategyEnabled(
+      marketId: BigNumberish,
+      strategyId: BigNumberish,
+      enabled: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    getLiquidationRewardGuards(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        minLiquidationRewardUsd: BigNumber;
+        maxLiquidationRewardUsd: BigNumber;
+      }
+    >;
+
+    getMaxCollateralAmount(
+      synthMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getSynthDeductionPriority(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    setLiquidationRewardGuards(
+      minLiquidationRewardUsd: BigNumberish,
+      maxLiquidationRewardUsd: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setMaxCollateralAmount(
+      synthMarketId: BigNumberish,
+      collateralAmount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setSynthDeductionPriority(
+      newSynthDeductionPriority: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+  };
+
+  createAccount(
+    requestedAccountId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getAccountLastInteraction(
+    accountId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getAccountOwner(
+    accountId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getAccountPermissions(
+    accountId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<IAccountModule.AccountPermissionsStructOutput[]>;
+
+  getAccountTokenAddress(overrides?: CallOverrides): Promise<string>;
+
+  grantPermission(
+    accountId: BigNumberish,
+    permission: BytesLike,
+    user: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  hasPermission(
+    accountId: BigNumberish,
+    permission: BytesLike,
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isAuthorized(
+    accountId: BigNumberish,
+    permission: BytesLike,
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  notifyAccountTransfer(
+    to: string,
+    accountId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  renouncePermission(
+    accountId: BigNumberish,
+    permission: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  revokePermission(
+    accountId: BigNumberish,
+    permission: BytesLike,
+    user: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getAssociatedSystem(
+    id: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<[string, string] & { addr: string; kind: string }>;
+
+  initOrUpgradeNft(
+    id: BytesLike,
+    name: string,
+    symbol: string,
+    uri: string,
+    impl: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  initOrUpgradeToken(
+    id: BytesLike,
+    name: string,
+    symbol: string,
+    decimals: BigNumberish,
+    impl: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  registerUnmanagedSystem(
+    id: BytesLike,
+    endpoint: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  acceptOwnership(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getImplementation(overrides?: CallOverrides): Promise<string>;
+
+  nominateNewOwner(
+    newNominatedOwner: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  nominatedOwner(overrides?: CallOverrides): Promise<string>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  renounceNomination(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  simulateUpgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  upgradeTo(
+    newImplementation: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  acceptMarketOwnership(
+    perpsMarketId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  createMarket(
+    marketName: string,
+    marketSymbol: string,
+    marketOwner: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getMarketOwner(
+    perpsMarketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  minimumCredit(
+    perpsMarketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  name(perpsMarketId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  nominateMarketOwner(
+    perpsMarketId: BigNumberish,
+    newNominatedOwner: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  reportedDebt(
+    perpsMarketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  setSpotMarket(
+    spotMarket: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setSynthetix(
+    synthetix: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  symbol(
+    perpsMarketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  updatePriceData(
+    perpsMarketId: BigNumberish,
+    feedId: BytesLike,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getAsyncOrderClaim(
+    accountId: BigNumberish,
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<AsyncOrder.DataStructOutput>;
+
+  getAvailableMargin(
+    accountId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getOpenPosition(
+    accountId: BigNumberish,
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+  modifyCollateral(
+    accountId: BigNumberish,
+    synthMarketId: BigNumberish,
+    amountDelta: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  totalAccountOpenInterest(
+    accountId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  totalCollateralValue(
+    accountId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  currentFundingRate(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  currentFundingVelocity(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  fillPrice(
+    marketId: BigNumberish,
+    orderSize: BigNumberish,
+    price: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getMarketSummary(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<IPerpsMarketModule.MarketSummaryStructOutput>;
+
+  indexPrice(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  maxOpenInterest(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  size(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+  skew(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+  PRECISION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  cancelOrder(
+    marketId: BigNumberish,
+    accountId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  commitOrder(
+    commitment: AsyncOrder.OrderCommitmentRequestStruct,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getOrder(
+    marketId: BigNumberish,
+    accountId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<AsyncOrder.DataStructOutput>;
+
+  settle(
+    marketId: BigNumberish,
+    accountId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  settlePythOrder(
+    result: BytesLike,
+    extraData: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  addToFeatureFlagAllowlist(
+    feature: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getDeniers(feature: BytesLike, overrides?: CallOverrides): Promise<string[]>;
+
+  getFeatureFlagAllowAll(
+    feature: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  getFeatureFlagAllowlist(
+    feature: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
+  getFeatureFlagDenyAll(
+    feature: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isFeatureAllowed(
+    feature: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  removeFromFeatureFlagAllowlist(
+    feature: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setDeniers(
+    feature: BytesLike,
+    deniers: string[],
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setFeatureFlagAllowAll(
+    feature: BytesLike,
+    allowAll: boolean,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setFeatureFlagDenyAll(
+    feature: BytesLike,
+    denyAll: boolean,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  liquidate(
+    accountId: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  liquidateFlagged(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  addSettlementStrategy(
+    marketId: BigNumberish,
+    strategy: SettlementStrategy.DataStruct,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getFundingParameters(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & {
+      skewScale: BigNumber;
+      maxFundingVelocity: BigNumber;
+    }
+  >;
+
+  getLiquidationParameters(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      initialMarginFraction: BigNumber;
+      maintenanceMarginFraction: BigNumber;
+      liquidationRewardRatioD18: BigNumber;
+      maxLiquidationLimitAccumulationMultiplier: BigNumber;
+      maxSecondsInLiquidationWindow: BigNumber;
+    }
+  >;
+
+  getLockedOiPercent(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getMaxMarketValue(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getOrderFees(
+    marketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { makerFee: BigNumber; takerFee: BigNumber }
+  >;
+
+  getSettlementStrategy(
+    marketId: BigNumberish,
+    strategyId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<SettlementStrategy.DataStructOutput>;
+
+  setFundingParameters(
+    marketId: BigNumberish,
+    skewScale: BigNumberish,
+    maxFundingVelocity: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setLiquidationParameters(
+    marketId: BigNumberish,
+    initialMarginFraction: BigNumberish,
+    maintenanceMarginFraction: BigNumberish,
+    liquidationRewardRatioD18: BigNumberish,
+    maxLiquidationLimitAccumulationMultiplier: BigNumberish,
+    maxSecondsInLiquidationWindow: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setLockedOiPercent(
+    marketId: BigNumberish,
+    lockedOiPercent: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setMaxMarketValue(
+    marketId: BigNumberish,
+    maxMarketValue: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setOrderFees(
+    marketId: BigNumberish,
+    makerFeeRatio: BigNumberish,
+    takerFeeRatio: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setSettlementStrategyEnabled(
+    marketId: BigNumberish,
+    strategyId: BigNumberish,
+    enabled: boolean,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  getLiquidationRewardGuards(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & {
+      minLiquidationRewardUsd: BigNumber;
+      maxLiquidationRewardUsd: BigNumber;
+    }
+  >;
+
+  getMaxCollateralAmount(
+    synthMarketId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getSynthDeductionPriority(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+  setLiquidationRewardGuards(
+    minLiquidationRewardUsd: BigNumberish,
+    maxLiquidationRewardUsd: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setMaxCollateralAmount(
+    synthMarketId: BigNumberish,
+    collateralAmount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setSynthDeductionPriority(
+    newSynthDeductionPriority: BigNumberish[],
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  callStatic: {
+    createAccount(
+      requestedAccountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getAccountLastInteraction(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAccountOwner(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getAccountPermissions(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<IAccountModule.AccountPermissionsStructOutput[]>;
+
+    getAccountTokenAddress(overrides?: CallOverrides): Promise<string>;
+
+    grantPermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasPermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isAuthorized(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    notifyAccountTransfer(
+      to: string,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    renouncePermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokePermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getAssociatedSystem(
+      id: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string, string] & { addr: string; kind: string }>;
+
+    initOrUpgradeNft(
+      id: BytesLike,
+      name: string,
+      symbol: string,
+      uri: string,
+      impl: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initOrUpgradeToken(
+      id: BytesLike,
+      name: string,
+      symbol: string,
+      decimals: BigNumberish,
+      impl: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    registerUnmanagedSystem(
+      id: BytesLike,
+      endpoint: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
+
+    getImplementation(overrides?: CallOverrides): Promise<string>;
+
+    nominateNewOwner(
+      newNominatedOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    nominatedOwner(overrides?: CallOverrides): Promise<string>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    renounceNomination(overrides?: CallOverrides): Promise<void>;
+
+    simulateUpgradeTo(
+      newImplementation: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    acceptMarketOwnership(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    createMarket(
+      marketName: string,
+      marketSymbol: string,
+      marketOwner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMarketOwner(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    minimumCredit(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    name(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    nominateMarketOwner(
+      perpsMarketId: BigNumberish,
+      newNominatedOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    reportedDebt(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    setSpotMarket(spotMarket: string, overrides?: CallOverrides): Promise<void>;
+
+    setSynthetix(synthetix: string, overrides?: CallOverrides): Promise<void>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    symbol(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    updatePriceData(
+      perpsMarketId: BigNumberish,
+      feedId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getAsyncOrderClaim(
+      accountId: BigNumberish,
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<AsyncOrder.DataStructOutput>;
+
+    getAvailableMargin(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getOpenPosition(
+      accountId: BigNumberish,
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    modifyCollateral(
+      accountId: BigNumberish,
+      synthMarketId: BigNumberish,
+      amountDelta: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    totalAccountOpenInterest(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalCollateralValue(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentFundingRate(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentFundingVelocity(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    fillPrice(
+      marketId: BigNumberish,
+      orderSize: BigNumberish,
+      price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMarketSummary(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<IPerpsMarketModule.MarketSummaryStructOutput>;
+
+    indexPrice(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    maxOpenInterest(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    size(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    skew(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    PRECISION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    cancelOrder(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    commitOrder(
+      commitment: AsyncOrder.OrderCommitmentRequestStruct,
+      overrides?: CallOverrides
+    ): Promise<
+      [AsyncOrder.DataStructOutput, BigNumber] & {
+        retOrder: AsyncOrder.DataStructOutput;
+        fees: BigNumber;
+      }
+    >;
+
+    getOrder(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<AsyncOrder.DataStructOutput>;
+
+    settle(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    settlePythOrder(
+      result: BytesLike,
+      extraData: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addToFeatureFlagAllowlist(
+      feature: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getDeniers(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    getFeatureFlagAllowAll(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    getFeatureFlagAllowlist(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    getFeatureFlagDenyAll(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isFeatureAllowed(
+      feature: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    removeFromFeatureFlagAllowlist(
+      feature: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setDeniers(
+      feature: BytesLike,
+      deniers: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setFeatureFlagAllowAll(
+      feature: BytesLike,
+      allowAll: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setFeatureFlagDenyAll(
+      feature: BytesLike,
+      denyAll: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    liquidate(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    liquidateFlagged(overrides?: CallOverrides): Promise<void>;
+
+    addSettlementStrategy(
+      marketId: BigNumberish,
+      strategy: SettlementStrategy.DataStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFundingParameters(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        skewScale: BigNumber;
+        maxFundingVelocity: BigNumber;
+      }
+    >;
+
+    getLiquidationParameters(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        initialMarginFraction: BigNumber;
+        maintenanceMarginFraction: BigNumber;
+        liquidationRewardRatioD18: BigNumber;
+        maxLiquidationLimitAccumulationMultiplier: BigNumber;
+        maxSecondsInLiquidationWindow: BigNumber;
+      }
+    >;
+
+    getLockedOiPercent(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMaxMarketValue(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getOrderFees(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { makerFee: BigNumber; takerFee: BigNumber }
+    >;
+
+    getSettlementStrategy(
+      marketId: BigNumberish,
+      strategyId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<SettlementStrategy.DataStructOutput>;
+
+    setFundingParameters(
+      marketId: BigNumberish,
+      skewScale: BigNumberish,
+      maxFundingVelocity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setLiquidationParameters(
+      marketId: BigNumberish,
+      initialMarginFraction: BigNumberish,
+      maintenanceMarginFraction: BigNumberish,
+      liquidationRewardRatioD18: BigNumberish,
+      maxLiquidationLimitAccumulationMultiplier: BigNumberish,
+      maxSecondsInLiquidationWindow: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setLockedOiPercent(
+      marketId: BigNumberish,
+      lockedOiPercent: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxMarketValue(
+      marketId: BigNumberish,
+      maxMarketValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setOrderFees(
+      marketId: BigNumberish,
+      makerFeeRatio: BigNumberish,
+      takerFeeRatio: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setSettlementStrategyEnabled(
+      marketId: BigNumberish,
+      strategyId: BigNumberish,
+      enabled: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getLiquidationRewardGuards(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        minLiquidationRewardUsd: BigNumber;
+        maxLiquidationRewardUsd: BigNumber;
+      }
+    >;
+
+    getMaxCollateralAmount(
+      synthMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSynthDeductionPriority(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+    setLiquidationRewardGuards(
+      minLiquidationRewardUsd: BigNumberish,
+      maxLiquidationRewardUsd: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxCollateralAmount(
+      synthMarketId: BigNumberish,
+      collateralAmount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setSynthDeductionPriority(
+      newSynthDeductionPriority: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
+
+  filters: {
+    "AccountCreated(uint128,address)"(
+      accountId?: BigNumberish | null,
+      owner?: string | null
+    ): AccountCreatedEventFilter;
+    AccountCreated(
+      accountId?: BigNumberish | null,
+      owner?: string | null
+    ): AccountCreatedEventFilter;
+
+    "PermissionGranted(uint128,bytes32,address,address)"(
+      accountId?: BigNumberish | null,
+      permission?: BytesLike | null,
+      user?: string | null,
+      sender?: null
+    ): PermissionGrantedEventFilter;
+    PermissionGranted(
+      accountId?: BigNumberish | null,
+      permission?: BytesLike | null,
+      user?: string | null,
+      sender?: null
+    ): PermissionGrantedEventFilter;
+
+    "PermissionRevoked(uint128,bytes32,address,address)"(
+      accountId?: BigNumberish | null,
+      permission?: BytesLike | null,
+      user?: string | null,
+      sender?: null
+    ): PermissionRevokedEventFilter;
+    PermissionRevoked(
+      accountId?: BigNumberish | null,
+      permission?: BytesLike | null,
+      user?: string | null,
+      sender?: null
+    ): PermissionRevokedEventFilter;
+
+    "AssociatedSystemSet(bytes32,bytes32,address,address)"(
+      kind?: BytesLike | null,
+      id?: BytesLike | null,
+      proxy?: null,
+      impl?: null
+    ): AssociatedSystemSetEventFilter;
+    AssociatedSystemSet(
+      kind?: BytesLike | null,
+      id?: BytesLike | null,
+      proxy?: null,
+      impl?: null
+    ): AssociatedSystemSetEventFilter;
+
+    "OwnerChanged(address,address)"(
+      oldOwner?: null,
+      newOwner?: null
+    ): OwnerChangedEventFilter;
+    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
+
+    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
+    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
+
+    "Upgraded(address,address)"(
+      self?: string | null,
+      implementation?: null
+    ): UpgradedEventFilter;
+    Upgraded(self?: string | null, implementation?: null): UpgradedEventFilter;
+
+    "MarketOwnerChanged(uint128,address,address)"(
+      perpsMarketId?: BigNumberish | null,
+      oldOwner?: null,
+      newOwner?: null
+    ): MarketOwnerChangedEventFilter;
+    MarketOwnerChanged(
+      perpsMarketId?: BigNumberish | null,
+      oldOwner?: null,
+      newOwner?: null
+    ): MarketOwnerChangedEventFilter;
+
+    "MarketOwnerNominated(uint128,address)"(
+      perpsMarketId?: BigNumberish | null,
+      newNominatedOwner?: null
+    ): MarketOwnerNominatedEventFilter;
+    MarketOwnerNominated(
+      perpsMarketId?: BigNumberish | null,
+      newNominatedOwner?: null
+    ): MarketOwnerNominatedEventFilter;
+
+    "MarketPriceDataUpdated(uint128,bytes32)"(
+      perpsMarketId?: BigNumberish | null,
+      feedId?: null
+    ): MarketPriceDataUpdatedEventFilter;
+    MarketPriceDataUpdated(
+      perpsMarketId?: BigNumberish | null,
+      feedId?: null
+    ): MarketPriceDataUpdatedEventFilter;
+
+    "MarketRegistered(uint128,address,string,string)"(
+      perpsMarketId?: BigNumberish | null,
+      marketOwner?: string | null,
+      marketName?: null,
+      marketSymbol?: null
+    ): MarketRegisteredEventFilter;
+    MarketRegistered(
+      perpsMarketId?: BigNumberish | null,
+      marketOwner?: string | null,
+      marketName?: null,
+      marketSymbol?: null
+    ): MarketRegisteredEventFilter;
+
+    "CollateralModified(uint128,uint128,int256,address)"(
+      accountId?: BigNumberish | null,
+      synthMarketId?: BigNumberish | null,
+      amountDelta?: BigNumberish | null,
+      sender?: null
+    ): CollateralModifiedEventFilter;
+    CollateralModified(
+      accountId?: BigNumberish | null,
+      synthMarketId?: BigNumberish | null,
+      amountDelta?: BigNumberish | null,
+      sender?: null
+    ): CollateralModifiedEventFilter;
+
+    "OrderCanceled(uint128,uint128,uint256,uint256)"(
+      marketId?: BigNumberish | null,
+      accountId?: BigNumberish | null,
+      settlementTime?: null,
+      acceptablePrice?: null
+    ): OrderCanceledEventFilter;
+    OrderCanceled(
+      marketId?: BigNumberish | null,
+      accountId?: BigNumberish | null,
+      settlementTime?: null,
+      acceptablePrice?: null
+    ): OrderCanceledEventFilter;
+
+    "OrderCommitted(uint128,uint128,uint8,int128,uint256,uint256,uint256,bytes32,address)"(
+      marketId?: BigNumberish | null,
+      accountId?: BigNumberish | null,
+      orderType?: BigNumberish | null,
+      sizeDelta?: null,
+      acceptablePrice?: null,
+      settlementTime?: null,
+      expirationTime?: null,
+      trackingCode?: null,
+      sender?: null
+    ): OrderCommittedEventFilter;
+    OrderCommitted(
+      marketId?: BigNumberish | null,
+      accountId?: BigNumberish | null,
+      orderType?: BigNumberish | null,
+      sizeDelta?: null,
+      acceptablePrice?: null,
+      settlementTime?: null,
+      expirationTime?: null,
+      trackingCode?: null,
+      sender?: null
+    ): OrderCommittedEventFilter;
+
+    "OrderSettled(uint128,uint128,uint256,int256,int128,uint256,uint256,bytes32,address)"(
+      marketId?: BigNumberish | null,
+      accountId?: BigNumberish | null,
+      fillPrice?: null,
+      accountPnlRealized?: null,
+      newSize?: null,
+      collectedFees?: null,
+      settelementReward?: null,
+      trackingCode?: BytesLike | null,
+      settler?: null
+    ): OrderSettledEventFilter;
+    OrderSettled(
+      marketId?: BigNumberish | null,
+      accountId?: BigNumberish | null,
+      fillPrice?: null,
+      accountPnlRealized?: null,
+      newSize?: null,
+      collectedFees?: null,
+      settelementReward?: null,
+      trackingCode?: BytesLike | null,
+      settler?: null
+    ): OrderSettledEventFilter;
+
+    "FeatureFlagAllowAllSet(bytes32,bool)"(
+      feature?: BytesLike | null,
+      allowAll?: null
+    ): FeatureFlagAllowAllSetEventFilter;
+    FeatureFlagAllowAllSet(
+      feature?: BytesLike | null,
+      allowAll?: null
+    ): FeatureFlagAllowAllSetEventFilter;
+
+    "FeatureFlagAllowlistAdded(bytes32,address)"(
+      feature?: BytesLike | null,
+      account?: null
+    ): FeatureFlagAllowlistAddedEventFilter;
+    FeatureFlagAllowlistAdded(
+      feature?: BytesLike | null,
+      account?: null
+    ): FeatureFlagAllowlistAddedEventFilter;
+
+    "FeatureFlagAllowlistRemoved(bytes32,address)"(
+      feature?: BytesLike | null,
+      account?: null
+    ): FeatureFlagAllowlistRemovedEventFilter;
+    FeatureFlagAllowlistRemoved(
+      feature?: BytesLike | null,
+      account?: null
+    ): FeatureFlagAllowlistRemovedEventFilter;
+
+    "FeatureFlagDeniersReset(bytes32,address[])"(
+      feature?: BytesLike | null,
+      deniers?: null
+    ): FeatureFlagDeniersResetEventFilter;
+    FeatureFlagDeniersReset(
+      feature?: BytesLike | null,
+      deniers?: null
+    ): FeatureFlagDeniersResetEventFilter;
+
+    "FeatureFlagDenyAllSet(bytes32,bool)"(
+      feature?: BytesLike | null,
+      denyAll?: null
+    ): FeatureFlagDenyAllSetEventFilter;
+    FeatureFlagDenyAllSet(
+      feature?: BytesLike | null,
+      denyAll?: null
+    ): FeatureFlagDenyAllSetEventFilter;
+
+    "FundingParametersSet(uint128,uint256,uint256)"(
+      marketId?: null,
+      skewScale?: null,
+      maxFundingVelocity?: null
+    ): FundingParametersSetEventFilter;
+    FundingParametersSet(
+      marketId?: null,
+      skewScale?: null,
+      maxFundingVelocity?: null
+    ): FundingParametersSetEventFilter;
+
+    "LiquidationParametersSet(uint128,uint256,uint256,uint256,uint256,uint256)"(
+      marketId?: null,
+      initialMarginFraction?: null,
+      maintenanceMarginFraction?: null,
+      liquidationRewardRatioD18?: null,
+      maxLiquidationLimitAccumulationMultiplier?: null,
+      maxSecondsInLiquidationWindow?: null
+    ): LiquidationParametersSetEventFilter;
+    LiquidationParametersSet(
+      marketId?: null,
+      initialMarginFraction?: null,
+      maintenanceMarginFraction?: null,
+      liquidationRewardRatioD18?: null,
+      maxLiquidationLimitAccumulationMultiplier?: null,
+      maxSecondsInLiquidationWindow?: null
+    ): LiquidationParametersSetEventFilter;
+
+    "LockedOiPercentSet(uint128,uint256)"(
+      marketId?: null,
+      lockedOiPercent?: null
+    ): LockedOiPercentSetEventFilter;
+    LockedOiPercentSet(
+      marketId?: null,
+      lockedOiPercent?: null
+    ): LockedOiPercentSetEventFilter;
+
+    "MaxMarketValueSet(uint128,uint256)"(
+      marketId?: null,
+      maxMarketValue?: null
+    ): MaxMarketValueSetEventFilter;
+    MaxMarketValueSet(
+      marketId?: null,
+      maxMarketValue?: null
+    ): MaxMarketValueSetEventFilter;
+
+    "OrderFeesSet(uint128,uint256,uint256)"(
+      marketId?: null,
+      makerFeeRatio?: null,
+      takerFeeRatio?: null
+    ): OrderFeesSetEventFilter;
+    OrderFeesSet(
+      marketId?: null,
+      makerFeeRatio?: null,
+      takerFeeRatio?: null
+    ): OrderFeesSetEventFilter;
+
+    "SettlementStrategyAdded(uint128,tuple,uint256)"(
+      marketId?: BigNumberish | null,
+      strategy?: null,
+      strategyId?: BigNumberish | null
+    ): SettlementStrategyAddedEventFilter;
+    SettlementStrategyAdded(
+      marketId?: BigNumberish | null,
+      strategy?: null,
+      strategyId?: BigNumberish | null
+    ): SettlementStrategyAddedEventFilter;
+
+    "SettlementStrategyEnabled(uint128,uint256,bool)"(
+      marketId?: null,
+      strategyId?: null,
+      enabled?: null
+    ): SettlementStrategyEnabledEventFilter;
+    SettlementStrategyEnabled(
+      marketId?: null,
+      strategyId?: null,
+      enabled?: null
+    ): SettlementStrategyEnabledEventFilter;
+
+    "LiquidationRewardGuardsSet(uint256,uint256)"(
+      minLiquidationRewardUsd?: BigNumberish | null,
+      maxLiquidationRewardUsd?: BigNumberish | null
+    ): LiquidationRewardGuardsSetEventFilter;
+    LiquidationRewardGuardsSet(
+      minLiquidationRewardUsd?: BigNumberish | null,
+      maxLiquidationRewardUsd?: BigNumberish | null
+    ): LiquidationRewardGuardsSetEventFilter;
+
+    "MaxCollateralAmountSet(uint128,uint256)"(
+      synthMarketId?: BigNumberish | null,
+      collateralAmount?: null
+    ): MaxCollateralAmountSetEventFilter;
+    MaxCollateralAmountSet(
+      synthMarketId?: BigNumberish | null,
+      collateralAmount?: null
+    ): MaxCollateralAmountSetEventFilter;
+
+    "SynthDeductionPrioritySet(uint128[])"(
+      newSynthDeductionPriority?: null
+    ): SynthDeductionPrioritySetEventFilter;
+    SynthDeductionPrioritySet(
+      newSynthDeductionPriority?: null
+    ): SynthDeductionPrioritySetEventFilter;
+  };
+
+  estimateGas: {
+    createAccount(
+      requestedAccountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getAccountLastInteraction(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAccountOwner(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAccountPermissions(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAccountTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
+    grantPermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    hasPermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isAuthorized(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    notifyAccountTransfer(
+      to: string,
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    renouncePermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    revokePermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getAssociatedSystem(
+      id: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    initOrUpgradeNft(
+      id: BytesLike,
+      name: string,
+      symbol: string,
+      uri: string,
+      impl: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    initOrUpgradeToken(
+      id: BytesLike,
+      name: string,
+      symbol: string,
+      decimals: BigNumberish,
+      impl: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    registerUnmanagedSystem(
+      id: BytesLike,
+      endpoint: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getImplementation(overrides?: CallOverrides): Promise<BigNumber>;
+
+    nominateNewOwner(
+      newNominatedOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceNomination(
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    simulateUpgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    acceptMarketOwnership(
+      perpsMarketId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    createMarket(
+      marketName: string,
+      marketSymbol: string,
+      marketOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getMarketOwner(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    minimumCredit(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    name(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    nominateMarketOwner(
+      perpsMarketId: BigNumberish,
+      newNominatedOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    reportedDebt(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    setSpotMarket(
+      spotMarket: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setSynthetix(
+      synthetix: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    symbol(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    updatePriceData(
+      perpsMarketId: BigNumberish,
+      feedId: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getAsyncOrderClaim(
+      accountId: BigNumberish,
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAvailableMargin(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getOpenPosition(
+      accountId: BigNumberish,
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    modifyCollateral(
+      accountId: BigNumberish,
+      synthMarketId: BigNumberish,
+      amountDelta: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    totalAccountOpenInterest(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalCollateralValue(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentFundingRate(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    currentFundingVelocity(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    fillPrice(
+      marketId: BigNumberish,
+      orderSize: BigNumberish,
+      price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMarketSummary(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    indexPrice(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    maxOpenInterest(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    size(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    skew(marketId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    PRECISION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    cancelOrder(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    commitOrder(
+      commitment: AsyncOrder.OrderCommitmentRequestStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getOrder(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    settle(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    settlePythOrder(
+      result: BytesLike,
+      extraData: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    addToFeatureFlagAllowlist(
+      feature: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getDeniers(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFeatureFlagAllowAll(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFeatureFlagAllowlist(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getFeatureFlagDenyAll(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isFeatureAllowed(
+      feature: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    removeFromFeatureFlagAllowlist(
+      feature: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setDeniers(
+      feature: BytesLike,
+      deniers: string[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setFeatureFlagAllowAll(
+      feature: BytesLike,
+      allowAll: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setFeatureFlagDenyAll(
+      feature: BytesLike,
+      denyAll: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    liquidate(
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    liquidateFlagged(
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    addSettlementStrategy(
+      marketId: BigNumberish,
+      strategy: SettlementStrategy.DataStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getFundingParameters(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getLiquidationParameters(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getLockedOiPercent(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMaxMarketValue(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getOrderFees(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSettlementStrategy(
+      marketId: BigNumberish,
+      strategyId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    setFundingParameters(
+      marketId: BigNumberish,
+      skewScale: BigNumberish,
+      maxFundingVelocity: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setLiquidationParameters(
+      marketId: BigNumberish,
+      initialMarginFraction: BigNumberish,
+      maintenanceMarginFraction: BigNumberish,
+      liquidationRewardRatioD18: BigNumberish,
+      maxLiquidationLimitAccumulationMultiplier: BigNumberish,
+      maxSecondsInLiquidationWindow: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setLockedOiPercent(
+      marketId: BigNumberish,
+      lockedOiPercent: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setMaxMarketValue(
+      marketId: BigNumberish,
+      maxMarketValue: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setOrderFees(
+      marketId: BigNumberish,
+      makerFeeRatio: BigNumberish,
+      takerFeeRatio: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setSettlementStrategyEnabled(
+      marketId: BigNumberish,
+      strategyId: BigNumberish,
+      enabled: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    getLiquidationRewardGuards(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMaxCollateralAmount(
+      synthMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSynthDeductionPriority(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setLiquidationRewardGuards(
+      minLiquidationRewardUsd: BigNumberish,
+      maxLiquidationRewardUsd: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setMaxCollateralAmount(
+      synthMarketId: BigNumberish,
+      collateralAmount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setSynthDeductionPriority(
+      newSynthDeductionPriority: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    createAccount(
+      requestedAccountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getAccountLastInteraction(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAccountOwner(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAccountPermissions(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAccountTokenAddress(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantPermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    hasPermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isAuthorized(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    notifyAccountTransfer(
+      to: string,
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    renouncePermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    revokePermission(
+      accountId: BigNumberish,
+      permission: BytesLike,
+      user: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getAssociatedSystem(
+      id: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initOrUpgradeNft(
+      id: BytesLike,
+      name: string,
+      symbol: string,
+      uri: string,
+      impl: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    initOrUpgradeToken(
+      id: BytesLike,
+      name: string,
+      symbol: string,
+      decimals: BigNumberish,
+      impl: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    registerUnmanagedSystem(
+      id: BytesLike,
+      endpoint: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getImplementation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    nominateNewOwner(
+      newNominatedOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceNomination(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    simulateUpgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeTo(
+      newImplementation: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    acceptMarketOwnership(
+      perpsMarketId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    createMarket(
+      marketName: string,
+      marketSymbol: string,
+      marketOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getMarketOwner(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    minimumCredit(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    name(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    nominateMarketOwner(
+      perpsMarketId: BigNumberish,
+      newNominatedOwner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    reportedDebt(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setSpotMarket(
+      spotMarket: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setSynthetix(
+      synthetix: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    symbol(
+      perpsMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    updatePriceData(
+      perpsMarketId: BigNumberish,
+      feedId: BytesLike,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getAsyncOrderClaim(
+      accountId: BigNumberish,
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAvailableMargin(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getOpenPosition(
+      accountId: BigNumberish,
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    modifyCollateral(
+      accountId: BigNumberish,
+      synthMarketId: BigNumberish,
+      amountDelta: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    totalAccountOpenInterest(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalCollateralValue(
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentFundingRate(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentFundingVelocity(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    fillPrice(
+      marketId: BigNumberish,
+      orderSize: BigNumberish,
+      price: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMarketSummary(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    indexPrice(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    maxOpenInterest(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    size(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    skew(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    PRECISION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    cancelOrder(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    commitOrder(
+      commitment: AsyncOrder.OrderCommitmentRequestStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getOrder(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    settle(
+      marketId: BigNumberish,
+      accountId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    settlePythOrder(
+      result: BytesLike,
+      extraData: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    addToFeatureFlagAllowlist(
+      feature: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getDeniers(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFeatureFlagAllowAll(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFeatureFlagAllowlist(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFeatureFlagDenyAll(
+      feature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isFeatureAllowed(
+      feature: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    removeFromFeatureFlagAllowlist(
+      feature: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setDeniers(
+      feature: BytesLike,
+      deniers: string[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setFeatureFlagAllowAll(
+      feature: BytesLike,
+      allowAll: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setFeatureFlagDenyAll(
+      feature: BytesLike,
+      denyAll: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    liquidate(
+      accountId: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    liquidateFlagged(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    addSettlementStrategy(
+      marketId: BigNumberish,
+      strategy: SettlementStrategy.DataStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getFundingParameters(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLiquidationParameters(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLockedOiPercent(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMaxMarketValue(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getOrderFees(
+      marketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSettlementStrategy(
+      marketId: BigNumberish,
+      strategyId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setFundingParameters(
+      marketId: BigNumberish,
+      skewScale: BigNumberish,
+      maxFundingVelocity: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setLiquidationParameters(
+      marketId: BigNumberish,
+      initialMarginFraction: BigNumberish,
+      maintenanceMarginFraction: BigNumberish,
+      liquidationRewardRatioD18: BigNumberish,
+      maxLiquidationLimitAccumulationMultiplier: BigNumberish,
+      maxSecondsInLiquidationWindow: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setLockedOiPercent(
+      marketId: BigNumberish,
+      lockedOiPercent: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxMarketValue(
+      marketId: BigNumberish,
+      maxMarketValue: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setOrderFees(
+      marketId: BigNumberish,
+      makerFeeRatio: BigNumberish,
+      takerFeeRatio: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setSettlementStrategyEnabled(
+      marketId: BigNumberish,
+      strategyId: BigNumberish,
+      enabled: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    getLiquidationRewardGuards(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMaxCollateralAmount(
+      synthMarketId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSynthDeductionPriority(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setLiquidationRewardGuards(
+      minLiquidationRewardUsd: BigNumberish,
+      maxLiquidationRewardUsd: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setMaxCollateralAmount(
+      synthMarketId: BigNumberish,
+      collateralAmount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setSynthDeductionPriority(
+      newSynthDeductionPriority: BigNumberish[],
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+  };
 }

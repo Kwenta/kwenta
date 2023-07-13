@@ -24,6 +24,7 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 
 import CrossMarginFAQ from './SmartMarginOnboard/SmartMarginFAQ'
+import { createPerpsV3Account } from 'state/futures/crossMargin/actions'
 
 type Props = {
 	isOpen: boolean
@@ -34,118 +35,23 @@ export default function CreatePerpsV3AccountModal({ isOpen }: Props) {
 	const dispatch = useAppDispatch()
 	const crossMarginAvailable = useAppSelector(selectCrossMarginSupportedNetwork)
 	const perpsV3Account = useAppSelector(selectCrossMarginAccount)
-	const queryStatus = useAppSelector(selectSmartMarginAccountQueryStatus)
-	const depositApproved = useAppSelector(selectSmartMarginDepositApproved)
 	const txProcessing = useAppSelector(selectSubmittingFuturesTx)
 	const preview = useAppSelector(selectTradePreview)
 
 	const onClose = () => dispatch(setOpenModal(null))
 
-	const onComplete = () => {
-		if (preview) {
-			dispatch(setOpenModal('futures_confirm_smart_margin_trade'))
-		} else {
-			onClose()
-		}
-	}
-
 	const createAccount = useCallback(async () => {
-		dispatch(createSmartMarginAccount())
+		dispatch(createPerpsV3Account())
 	}, [dispatch])
-
-	const onClickApprove = useCallback(async () => {
-		dispatch(approveSmartMargin())
-	}, [dispatch])
-
-	const renderProgress = (step: number, complete?: boolean) => {
-		return (
-			<ProgressContainer>
-				<ProgressSteps step={step} totalSteps={3} complete={complete} />
-			</ProgressContainer>
-		)
-	}
 
 	const renderContent = () => {
 		if (!crossMarginAvailable) {
 			return <ErrorView message={t('futures.modals.onboard.unsupported-network')} />
 		}
-		if (!perpsV3Account && queryStatus.status === FetchStatus.Loading) {
-			return (
-				<LoaderContainer>
-					<Loader />
-				</LoaderContainer>
-			)
-		}
-
-		if (depositApproved) {
-			return (
-				<>
-					<Intro>{t('futures.modals.onboard.step3-complete')}</Intro>
-					<Complete>
-						<CompleteCheck />
-					</Complete>
-					{renderProgress(3, true)}
-					<StyledButton variant="flat" onClick={onComplete}>
-						Done
-					</StyledButton>
-				</>
-			)
-		}
-
-		if (perpsV3Account && !depositApproved) {
-			return (
-				<>
-					<Intro>{t('futures.modals.onboard.step2-intro')}</Intro>
-					<div>
-						<FAQHeader>FAQ:</FAQHeader>
-						<CrossMarginFAQ />
-					</div>
-					{renderProgress(2)}
-					<StyledButton variant="flat" onClick={onClickApprove} disabled={txProcessing}>
-						{txProcessing ? <Loader /> : 'Approve'}
-					</StyledButton>
-				</>
-			)
-		}
-
-		// TODO: Replace with bridge option
-
-		// if (crossMarginAccount) {
-		// 	return (
-		// 		<>
-		// 			<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
-		// 			<InputBalanceLabel
-		// 				balance={susdBal || ZERO_WEI}
-		// 				currencyKey="sUSD"
-		// 				onSetAmount={setDepositAmount}
-		// 			/>
-		// 			<NumericInput placeholder="0.00" value={depositAmount} onChange={onEditAmount} />
-		// 			{renderProgress(3)}
-		// 			{isDepositDisabled && (
-		// 				<MinimumAmountDisclaimer>
-		// 					{t('futures.market.trade.margin.modal.deposit.disclaimer')}
-		// 				</MinimumAmountDisclaimer>
-		// 			)}
-		// 			<StyledButton
-		// 				disabled={isDepositDisabled || txProcessing}
-		// 				variant="flat"
-		// 				textTransform="none"
-		// 				onClick={depositToAccount}
-		// 			>
-		// 				{txProcessing ? <Loader /> : 'Deposit sUSD'}
-		// 			</StyledButton>
-		// 		</>
-		// 	);
-		// }
 
 		return (
 			<>
 				<Intro>{t('futures.modals.onboard.step1-intro')}</Intro>
-				<div>
-					<FAQHeader>FAQ:</FAQHeader>
-					<CrossMarginFAQ />
-				</div>
-				{renderProgress(1)}
 				<StyledButton noOutline onClick={createAccount} disabled={txProcessing}>
 					{txProcessing ? <Loader /> : 'Create Account'}
 				</StyledButton>
@@ -154,7 +60,11 @@ export default function CreatePerpsV3AccountModal({ isOpen }: Props) {
 	}
 
 	return (
-		<StyledBaseModal onDismiss={onClose} isOpen={isOpen} title={t('futures.modals.onboard.title')}>
+		<StyledBaseModal
+			onDismiss={onClose}
+			isOpen={isOpen}
+			title={t('futures.modals.onboard.cm-title')}
+		>
 			{renderContent()}
 		</StyledBaseModal>
 	)

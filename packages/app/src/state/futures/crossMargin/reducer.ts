@@ -55,6 +55,7 @@ export const COSS_MARGIN_INITIAL_STATE: CrossMarginState = {
 		nativeSizeDelta: '',
 	},
 	previewDebounceCount: 0,
+	perpsV3MarketProxyAddress: undefined,
 	tradeInputs: ZERO_STATE_TRADE_INPUTS,
 	editPositionInputs: {
 		nativeSizeDelta: '',
@@ -106,7 +107,7 @@ const crossMarginSlice = createSlice({
 		setClosePositionSizeDelta: (state, action: PayloadAction<string>) => {
 			state.closePositionOrderInputs.nativeSizeDelta = action.payload
 		},
-		setLeverageSide: (state, action) => {
+		setCrossMarginLeverageSide: (state, action) => {
 			state.leverageSide = action.payload
 		},
 		setTradeInputs: (state, action: PayloadAction<TradeSizeInputs<string>>) => {
@@ -126,6 +127,9 @@ const crossMarginSlice = createSlice({
 		},
 		setLeverageInput: (state, action: PayloadAction<string>) => {
 			state.leverageInput = action.payload
+		},
+		setPerpsV3MarketProxyAddress: (state, action: PayloadAction<string | undefined>) => {
+			state.perpsV3MarketProxyAddress = action.payload
 		},
 		handlePreviewError: (
 			futuresState,
@@ -342,7 +346,7 @@ export const {
 	handlePreviewError,
 	setMarketAsset,
 	setClosePositionSizeDelta,
-	setLeverageSide,
+	setCrossMarginLeverageSide,
 	setLeverageInput,
 	clearAllTradePreviews,
 	setSelectedTrader,
@@ -352,6 +356,7 @@ export const {
 	setShowTradeHistory,
 	setSelectedChart,
 	setPerpsV3Account,
+	setPerpsV3MarketProxyAddress,
 } = crossMarginSlice.actions
 
 const findWalletForAccount = (

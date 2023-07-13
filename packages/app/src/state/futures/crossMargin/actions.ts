@@ -4,6 +4,8 @@ import {
 	FuturesPosition,
 	FuturesPositionHistory,
 	NetworkId,
+	PositionSide,
+	SynthV3Asset,
 	TransactionStatus,
 } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
@@ -13,7 +15,7 @@ import { debounce } from 'lodash'
 import { notifyError } from 'components/ErrorNotifier'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import { handleTransactionError, setOpenModal, setTransaction } from 'state/app/reducer'
-import { fetchBalances } from 'state/balances/actions'
+import { fetchBalances, fetchV3BalancesAndAllowances } from 'state/balances/actions'
 import { selectMarketInfo } from 'state/futures/selectors'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
@@ -32,13 +34,20 @@ import {
 	DelayedOrderWithDetails,
 } from '../common/types'
 
-import { setPerpsV3Account } from './reducer'
+import {
+	setCrossMarginLeverageSide,
+	setPerpsV3Account,
+	setPerpsV3MarketProxyAddress,
+} from './reducer'
 import {
 	selectCrossMarginAccount,
 	selectCrossMarginSupportedNetwork,
+	selectCrossMarginTradeInputs,
 	selectOpenDelayedOrdersV3,
 	selectV3Markets,
 } from './selectors'
+import { editCrossMarginTradeSize } from '../smartMargin/actions'
+import { AppThunk } from 'state/store'
 
 export const fetchMarketsV3 = createAsyncThunk<
 	{ markets: FuturesMarket<string>[]; networkId: NetworkId } | undefined,
@@ -67,6 +76,7 @@ export const fetchPerpsV3Account = createAsyncThunk<
 	const wallet = selectWallet(getState())
 	const supportedNetwork = selectCrossMarginSupportedNetwork(getState())
 	const network = selectNetwork(getState())
+
 	if (!wallet || !supportedNetwork) return undefined
 
 	const accounts = getState().crossMargin.accounts
@@ -78,6 +88,7 @@ export const fetchPerpsV3Account = createAsyncThunk<
 
 	try {
 		const owner = await sdk.perpsV3.getAccountOwner(id)
+
 		if (owner) {
 			// Account already created
 			if (owner.toLowerCase() !== wallet.toLowerCase()) {
@@ -93,6 +104,17 @@ export const fetchPerpsV3Account = createAsyncThunk<
 		rejectWithValue(err.message)
 	}
 })
+
+export const fetchPerpsV3Balances = createAsyncThunk<void, void, ThunkConfig>(
+	'balances/fetchPerpsV3Balances',
+	async (_, { dispatch, extra: { sdk } }) => {
+		const spender = sdk.context.contracts.perpsV3MarketProxy?.address
+		if (spender) {
+			dispatch(fetchV3BalancesAndAllowances([spender]))
+			dispatch(setPerpsV3MarketProxyAddress(spender))
+		}
+	}
+)
 
 export const fetchCrossMarginPositions = createAsyncThunk<
 	{ positions: FuturesPosition<string>[]; account: string; network: NetworkId } | undefined,
@@ -203,12 +225,28 @@ export const fetchMarginTransfersV3 = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
+export const fetchCrossMarginAccountData = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/fetchCrossMarginAccountData',
+	async (_, { dispatch }) => {
+		dispatch(fetchCrossMarginPositions())
+		dispatch(fetchPerpsV3Balances())
+	}
+)
+
 export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/clearTradeInputs',
 	async () => {
 		// TODO: Clear trade inputs for cross margin
 	}
 )
+
+export const changeCrossMarginLeverageSide =
+	(side: PositionSide): AppThunk =>
+	(dispatch, getState) => {
+		const { nativeSizeString } = selectCrossMarginTradeInputs(getState())
+		dispatch(setCrossMarginLeverageSide(side))
+		dispatch(editCrossMarginTradeSize(nativeSizeString, 'native'))
+	}
 
 export const createPerpsV3Account = createAsyncThunk<
 	{ account: string; wallet: string; network: NetworkId } | undefined,
@@ -255,8 +293,32 @@ export const createPerpsV3Account = createAsyncThunk<
 			const tx = await sdk.perpsV3.createPerpsV3Account(id)
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchPerpsV3Account())
+			dispatch(setOpenModal(null))
 		} catch (err) {
 			dispatch(handleTransactionError(err.message))
+		}
+	}
+)
+
+export const approveCrossMarginDeposit = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/approveCrossMarginDeposit',
+	async (_, { getState, dispatch, extra: { sdk } }) => {
+		const marketInfo = selectMarketInfo(getState())
+		if (!marketInfo) throw new Error('Market info not found')
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'approve_cross_margin',
+					hash: null,
+				})
+			)
+			const tx = await sdk.perpsV3.approveDeposit(SynthV3Asset.SNXUSD)
+			await monitorAndAwaitTransaction(dispatch, tx)
+			dispatch(fetchPerpsV3Balances())
+		} catch (err) {
+			dispatch(handleTransactionError(err.message))
+			throw err
 		}
 	}
 )
@@ -265,7 +327,9 @@ export const depositCrossMarginMargin = createAsyncThunk<void, Wei, ThunkConfig>
 	'futures/depositCrossMarginMargin',
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState())
+		const accountId = selectCrossMarginAccount(getState())
 		if (!marketInfo) throw new Error('Market info not found')
+		if (!accountId) throw new Error('Account id not found')
 		try {
 			dispatch(
 				setTransaction({
@@ -274,11 +338,11 @@ export const depositCrossMarginMargin = createAsyncThunk<void, Wei, ThunkConfig>
 					hash: null,
 				})
 			)
-			const tx = await sdk.futures.depositIsolatedMargin(marketInfo.market, amount)
+			const tx = await sdk.perpsV3.depositToMarket(accountId, SynthV3Asset.SNXUSD, amount)
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(setOpenModal(null))
 			dispatch(refetchPosition())
-			dispatch(fetchBalances())
+			dispatch(fetchPerpsV3Balances())
 			dispatch(fetchMarginTransfersV3())
 		} catch (err) {
 			dispatch(handleTransactionError(err.message))
@@ -304,7 +368,7 @@ export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(refetchPosition())
 			dispatch(setOpenModal(null))
-			dispatch(fetchBalances())
+			dispatch(fetchPerpsV3Balances())
 			dispatch(fetchMarginTransfersV3())
 		} catch (err) {
 			dispatch(handleTransactionError(err.message))

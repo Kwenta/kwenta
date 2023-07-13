@@ -1,11 +1,15 @@
 import { FuturesMarginType } from '@kwenta/sdk/types'
 
 import {
+	fetchCrossMarginAccountData,
 	fetchCrossMarginOpenOrders,
 	fetchCrossMarginPositions,
 	fetchPerpsV3Account,
 } from 'state/futures/crossMargin/actions'
-import { selectCrossMarginSupportedNetwork } from 'state/futures/crossMargin/selectors'
+import {
+	selectCrossMarginAccount,
+	selectCrossMarginSupportedNetwork,
+} from 'state/futures/crossMargin/selectors'
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
 import { fetchStakingData } from 'state/staking/actions'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
@@ -34,13 +38,14 @@ export const usePollMarketFuturesData = () => {
 	const markets = useAppSelector(selectMarkets)
 	const wallet = useAppSelector(selectWallet)
 	const smartMarginAddress = useAppSelector(selectSmartMarginAccount)
+	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
 
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const networkSupportsSmartMargin = useAppSelector(selectSmartMarginSupportedNetwork)
 	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork)
 
 	useFetchAction(fetchSmartMarginAccount, {
-		dependencies: [networkId, wallet],
+		dependencies: [networkId, wallet, selectedAccountType],
 		disabled:
 			!wallet ||
 			!networkSupportsSmartMargin ||
@@ -48,7 +53,7 @@ export const usePollMarketFuturesData = () => {
 	})
 
 	useFetchAction(fetchPerpsV3Account, {
-		dependencies: [networkId, wallet],
+		dependencies: [networkId, wallet, selectedAccountType],
 		disabled:
 			!wallet ||
 			!networkSupportsCrossMargin ||
@@ -74,6 +79,14 @@ export const usePollMarketFuturesData = () => {
 			!markets.length ||
 			!smartMarginAddress ||
 			selectedAccountType !== FuturesMarginType.SMART_MARGIN,
+	})
+	usePollAction('fetchCrossMarginAccountData', fetchCrossMarginAccountData, {
+		intervalTime: 30000,
+		dependencies: [markets.length, crossMarginAccount],
+		disabled:
+			!markets.length ||
+			!crossMarginAccount ||
+			selectedAccountType !== FuturesMarginType.CROSS_MARGIN,
 	})
 	usePollAction('fetchFuturesPositionHistory', fetchFuturesPositionHistory, {
 		intervalTime: 15000,

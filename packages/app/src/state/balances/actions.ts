@@ -1,10 +1,12 @@
+import { SynthV3Asset, SynthV3BalancesAndAllowances } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import type { ThunkConfig } from 'state/store'
-import { serializeBalances } from 'utils/balances'
+import { serializeBalances, serializeV3Balances } from 'utils/balances'
 
 import { ZERO_BALANCES } from './reducer'
 import { BalancesActionReturn } from './types'
+import { notifyError } from 'components/ErrorNotifier'
 
 export const fetchBalances = createAsyncThunk<BalancesActionReturn<string>, void, ThunkConfig>(
 	'balances/fetchBalances',
@@ -19,3 +21,20 @@ export const fetchBalances = createAsyncThunk<BalancesActionReturn<string>, void
 		return serializeBalances(balancesMap, totalUSDBalance, tokenBalances, susdWalletBalance)
 	}
 )
+
+export const fetchV3BalancesAndAllowances = createAsyncThunk<
+	Partial<SynthV3BalancesAndAllowances<string>> | undefined,
+	string[],
+	ThunkConfig
+>('balances/fetchV3BalancesAndAllowances', async (spenders, { getState, extra: { sdk } }) => {
+	const { wallet } = getState()
+	try {
+		if (!wallet.walletAddress) return
+		const res = await sdk.synths.getSynthV3BalancesAndAllowances(wallet.walletAddress, spenders)
+		console.log('res', res, serializeV3Balances(res))
+		return serializeV3Balances(res)
+	} catch (e) {
+		notifyError('Error fetching v3 balances', e)
+		throw e
+	}
+})
