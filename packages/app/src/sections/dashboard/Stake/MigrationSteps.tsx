@@ -1,4 +1,4 @@
-import { truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { useMemo, useCallback, FC, memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -49,7 +49,7 @@ const MigrationSteps: FC = memo(() => {
 				key: 'step-1',
 				copy: t('dashboard.stake.tabs.migrate.step-1-copy'),
 				label: t('dashboard.stake.tabs.migrate.rewards'),
-				value: truncateNumbers(claimableBalance, 2),
+				value: formatNumber(claimableBalance, { suggestDecimals: true }),
 				buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
 				onClick: handleGetReward,
 				active: claimableBalance.gt(0),
@@ -59,7 +59,7 @@ const MigrationSteps: FC = memo(() => {
 				key: 'step-2',
 				copy: t('dashboard.stake.tabs.migrate.step-2-copy'),
 				label: t('dashboard.stake.tabs.migrate.staked'),
-				value: truncateNumbers(stakedKwentaBalance, 2),
+				value: formatNumber(stakedKwentaBalance, { suggestDecimals: true }),
 				buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
 				onClick: handleUnstakeKwenta,
 				active: claimableBalance.lte(0) && stakedKwentaBalance.gt(0),
@@ -69,7 +69,7 @@ const MigrationSteps: FC = memo(() => {
 				key: 'step-3',
 				copy: t('dashboard.stake.tabs.migrate.step-3-copy'),
 				label: t('dashboard.stake.tabs.migrate.staked'),
-				value: truncateNumbers(stakedKwentaBalanceV2, 2),
+				value: formatNumber(stakedKwentaBalanceV2, { suggestDecimals: true }),
 				buttonLabel: t('dashboard.stake.tabs.migrate.visit-v2'),
 				onClick: handleDismiss,
 				active: claimableBalance.lte(0) && stakedKwentaBalance.lte(0),

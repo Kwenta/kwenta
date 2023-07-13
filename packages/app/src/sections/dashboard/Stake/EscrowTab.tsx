@@ -1,4 +1,4 @@
-import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber, formatPercent } from '@kwenta/sdk/utils'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -37,7 +37,7 @@ const EscrowTab = () => {
 					{
 						key: 'overview-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
+						value: formatNumber(stakedEscrowedKwentaBalanceV2, { suggestDecimals: true }),
 					},
 					{
 						key: 'overview-apr',
@@ -47,7 +47,7 @@ const EscrowTab = () => {
 					{
 						key: 'overview-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestableV2, 2),
+						value: formatNumber(totalVestableV2, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -57,7 +57,7 @@ const EscrowTab = () => {
 					{
 						key: 'staking-v1-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+						value: formatNumber(stakedEscrowedKwentaBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'staking-v1-apr',
@@ -67,7 +67,7 @@ const EscrowTab = () => {
 					{
 						key: 'staking-v1-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestable, 2),
+						value: formatNumber(totalVestable, { suggestDecimals: true }),
 					},
 				],
 			},
