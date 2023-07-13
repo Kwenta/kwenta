@@ -206,9 +206,6 @@ importers:
       react-slick:
         specifier: 0.29.0
         version: 0.29.0(react-dom@18.2.0)(react@18.2.0)
-      react-table:
-        specifier: 7.7.0
-        version: 7.7.0(react@18.2.0)
       react-toastify:
         specifier: ^9.1.3
         version: 9.1.3(react-dom@18.2.0)(react@18.2.0)
@@ -16529,14 +16526,6 @@ packages:
       invariant: 2.2.4
       react: 18.2.0
       tslib: 2.6.0
-    dev: false
-
-  /react-table@7.7.0(react@18.2.0):
-    resolution: {integrity: sha512-jBlj70iBwOTvvImsU9t01LjFjy4sXEtclBovl3mTiqjz23Reu0DKnRza4zlLtOPACx6j2/7MrQIthIK1Wi+LIA==}
-    peerDependencies:
-      react: ^16.8.3 || ^17.0.0-0
-    dependencies:
-      react: 18.2.0
     dev: false
 
   /react-test-renderer@17.0.1(react@18.2.0):
