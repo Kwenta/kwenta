@@ -38,26 +38,16 @@ const DelegationTab = () => {
 		[]
 	)
 
-	const [checkAllState, setCheckAllState] = useState(false)
 	const [checkedState, setCheckedState] = useState(data.map((_) => false))
 
 	const handleOnChange = useCallback(
 		(position: number) => {
-			checkedState[position] = !checkedState[position]
-			setCheckedState([...checkedState])
+			setCheckedState([
+				...checkedState.map((_, index) => (index === position ? !checkedState[position] : false)),
+			])
 		},
 		[checkedState]
 	)
-
-	const selectAll = useCallback(() => {
-		if (checkAllState) {
-			setCheckedState(data.map((_) => false))
-			setCheckAllState(false)
-		} else {
-			setCheckedState(data.map((_) => true))
-			setCheckAllState(true)
-		}
-	}, [checkAllState, data])
 
 	const columnsDeps = useMemo(() => [checkedState], [checkedState])
 	const [searchInput, setSearchInput] = useState('')
@@ -109,22 +99,13 @@ const DelegationTab = () => {
 						}
 						columns={[
 							{
-								header: () => (
-									<Checkbox
-										id="header"
-										label=""
-										checked={checkAllState}
-										onChange={selectAll}
-										variant="table"
-										checkSide="left"
-									/>
-								),
+								header: () => <></>,
 								cell: (cellProps) => (
 									<Checkbox
 										id={cellProps.row.index.toString()}
 										key={cellProps.row.index}
 										checked={checkedState[cellProps.row.index]}
-										onChange={() => handleOnChange(cellProps.row.index)}
+										onChange={() => {}}
 										label=""
 										variant="table"
 										checkSide="left"
