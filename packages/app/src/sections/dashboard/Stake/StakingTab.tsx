@@ -1,4 +1,4 @@
-import { formatPercent, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber, formatPercent } from '@kwenta/sdk/utils'
 import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -51,7 +51,7 @@ const StakingTab = () => {
 					{
 						key: 'staking-staked',
 						title: t('dashboard.stake.portfolio.balance.staked'),
-						value: truncateNumbers(stakedKwentaBalance, 2),
+						value: formatNumber(stakedKwentaBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'staking-apr',
@@ -67,7 +67,7 @@ const StakingTab = () => {
 					{
 						key: 'rewards-claimable',
 						title: t('dashboard.stake.portfolio.rewards.claimable'),
-						value: truncateNumbers(claimableBalance, 2),
+						value: formatNumber(claimableBalance, { suggestDecimals: true }),
 					},
 				],
 				flex: 0.5,

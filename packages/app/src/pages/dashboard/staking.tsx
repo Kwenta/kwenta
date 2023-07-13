@@ -1,4 +1,4 @@
-import { formatTruncatedDuration, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber, formatTruncatedDuration } from '@kwenta/sdk/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
@@ -95,12 +95,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'balance-liquid',
 						title: t('dashboard.stake.portfolio.balance.liquid'),
-						value: truncateNumbers(kwentaBalance, 2),
+						value: formatNumber(kwentaBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'balance-staked',
 						title: t('dashboard.stake.portfolio.balance.staked'),
-						value: truncateNumbers(stakedKwentaBalanceV2, 2),
+						value: formatNumber(stakedKwentaBalanceV2, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -111,12 +111,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
+						value: formatNumber(stakedEscrowedKwentaBalanceV2, { suggestDecimals: true }),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestableV2, 2),
+						value: formatNumber(totalVestableV2, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -127,12 +127,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'rewards-claimable',
 						title: t('dashboard.stake.portfolio.rewards.claimable'),
-						value: truncateNumbers(claimableBalanceV2, 2),
+						value: formatNumber(claimableBalanceV2, { suggestDecimals: true }),
 					},
 					{
 						key: 'rewards-trading',
 						title: t('dashboard.stake.portfolio.rewards.trading'),
-						value: truncateNumbers(kwentaRewards, 2),
+						value: formatNumber(kwentaRewards, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -183,12 +183,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'balance-liquid',
 						title: t('dashboard.stake.portfolio.balance.liquid'),
-						value: truncateNumbers(kwentaBalance, 2),
+						value: formatNumber(kwentaBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'balance-staked',
 						title: t('dashboard.stake.portfolio.balance.staked-v1'),
-						value: truncateNumbers(stakedKwentaBalance, 2),
+						value: formatNumber(stakedKwentaBalance, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -198,12 +198,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'rewards-claimable',
 						title: t('dashboard.stake.portfolio.rewards.staking-v1'),
-						value: truncateNumbers(claimableBalance, 2),
+						value: formatNumber(claimableBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'rewards-trading',
 						title: t('dashboard.stake.portfolio.rewards.trading'),
-						value: truncateNumbers(kwentaRewards, 4),
+						value: formatNumber(kwentaRewards, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -213,12 +213,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalanceV2, 2),
+						value: formatNumber(stakedEscrowedKwentaBalanceV2, { suggestDecimals: true }),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestableV2, 2),
+						value: formatNumber(totalVestableV2, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -228,12 +228,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
+						value: formatNumber(stakedEscrowedKwentaBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: truncateNumbers(totalVestable, 2),
+						value: formatNumber(totalVestable, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -289,7 +289,7 @@ const StakingPage: StakingComponent = () => {
 }
 
 const TableContainer = styled.div`
-	margin-top: 30px;
+	margin-top: 15px;
 	${media.lessThan('lg')`
 		margin-top: 0px;
 		padding: 15px;
