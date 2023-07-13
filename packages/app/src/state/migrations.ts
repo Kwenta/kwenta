@@ -92,7 +92,7 @@ export const migrations = {
 			app: APP_INITIAL_STATE,
 		}
 	},
-	33: (state: any) => {
+	34: (state: any) => {
 		return {
 			...state,
 			futures: FUTURES_INITIAL_STATE,
