@@ -648,6 +648,7 @@
 					"vest-v2": "VEST V2",					
 					"transfer": "TRANSFER",
 					"delegate": "DELEGATE",
+					"no-entries": "You have no escrowed entries.",
 					"v1": "V1",
 					"v2": "V2",
 					"modal": {
