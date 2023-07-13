@@ -237,8 +237,8 @@ importers:
         specifier: 0.12.18
         version: 0.12.18(ethers@5.7.2)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.6)
       zrender:
-        specifier: ^5.4.3
-        version: 5.4.3
+        specifier: ^5.4.4
+        version: 5.4.4
     devDependencies:
       '@next/eslint-plugin-next':
         specifier: 13.4.7
@@ -19596,6 +19596,12 @@ packages:
 
   /zrender@5.4.3:
     resolution: {integrity: sha512-DRUM4ZLnoaT0PBVvGBDO9oWIDBKFdAVieNWxWwK0niYzJCMwGchRk21/hsE+RKkIveH3XHCyvXcJDkgLVvfizQ==}
+    dependencies:
+      tslib: 2.3.0
+    dev: false
+
+  /zrender@5.4.4:
+    resolution: {integrity: sha512-0VxCNJ7AGOMCWeHVyTrGzUgrK4asT4ml9PEkeGirAkKNYXYzoPJCLvmyfdoOXcjTHPs10OZVMfD1Rwg16AZyYw==}
     dependencies:
       tslib: 2.3.0
     dev: false
