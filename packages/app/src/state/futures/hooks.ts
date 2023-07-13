@@ -7,7 +7,12 @@ import {
 } from 'state/futures/crossMargin/actions'
 import { selectCrossMarginSupportedNetwork } from 'state/futures/crossMargin/selectors'
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
-import { fetchStakingData } from 'state/staking/actions'
+import { fetchStakeMigrateData, fetchStakingV2Data } from 'state/staking/actions'
+import {
+	selectSelectedEpoch,
+	selectStakingSupportedNetwork,
+	selectTradingRewardsSupportedNetwork,
+} from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 
 import {
@@ -18,6 +23,8 @@ import {
 import { selectFuturesType, selectMarkets } from './selectors'
 import {
 	fetchAllV2TradesForAccount,
+	fetchFuturesFees,
+	fetchFuturesFeesForAccount,
 	fetchSmartMarginAccount,
 	fetchSmartMarginAccountData,
 	fetchSmartMarginOpenOrders,
@@ -34,6 +41,7 @@ export const usePollMarketFuturesData = () => {
 	const markets = useAppSelector(selectMarkets)
 	const wallet = useAppSelector(selectWallet)
 	const smartMarginAddress = useAppSelector(selectSmartMarginAccount)
+	const networkSupportsTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const networkSupportsSmartMargin = useAppSelector(selectSmartMarginSupportedNetwork)
@@ -55,7 +63,11 @@ export const usePollMarketFuturesData = () => {
 			selectedAccountType !== FuturesMarginType.CROSS_MARGIN,
 	})
 
-	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] })
+	useFetchAction(fetchStakingV2Data, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsTradingRewards,
+	})
+
 	useFetchAction(fetchMarginTransfers, { dependencies: [networkId, wallet, selectedAccountType] })
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
@@ -141,5 +153,23 @@ export const usePollDashboardFuturesData = () => {
 		dependencies: [networkId, wallet, selectedAccountType, crossMarginAddress],
 		intervalTime: 30000,
 		disabled: !wallet,
+	})
+}
+
+export const useFetchStakeMigrateData = () => {
+	const networkId = useAppSelector(selectNetwork)
+	const wallet = useAppSelector(selectWallet)
+	const { start, end } = useAppSelector(selectSelectedEpoch)
+	const networkSupportsStaking = useAppSelector(selectStakingSupportedNetwork)
+
+	useFetchAction(fetchStakeMigrateData, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsStaking,
+	})
+	useFetchAction(() => fetchFuturesFees({ start, end }), {
+		dependencies: [networkId, wallet, start, end],
+	})
+	useFetchAction(() => fetchFuturesFeesForAccount({ start, end }), {
+		dependencies: [networkId, wallet, start, end],
 	})
 }

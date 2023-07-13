@@ -1,5 +1,4 @@
 import { Meta } from '@storybook/react'
-import { CellProps } from 'react-table'
 
 import Table from 'components/Table'
 
@@ -27,16 +26,14 @@ export const Default = () => {
 			data={data}
 			columns={[
 				{
-					Header: () => <div>Number</div>,
-					// @ts-expect-error
-					Cell: (cell: CellProps<(typeof data)[number]>) => <div>{cell.row.original.id}</div>,
-					accessor: 'id',
+					header: () => <div>Number</div>,
+					cell: (cell) => <div>{cell.row.original.id}</div>,
+					accessorKey: 'id',
 				},
 				{
-					Header: () => <div>Name</div>,
-					// @ts-expect-error
-					Cell: (cell: CellProps<(typeof data)[number]>) => <div>{cell.row.original.name}</div>,
-					accessor: 'name',
+					header: () => <div>Name</div>,
+					cell: (cell) => <div>{cell.row.original.name}</div>,
+					accessorKey: 'name',
 				},
 			]}
 		/>

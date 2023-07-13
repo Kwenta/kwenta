@@ -23,7 +23,7 @@ export const SplitContainer = styled.div`
 	grid-gap: 15px;
 	margin-top: 10px;
 
-	${media.greaterThan('mdUp')`
+	${media.greaterThan('lg')`
 		grid-template-columns: 1fr 1fr;
 	`}
 `

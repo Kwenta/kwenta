@@ -63,10 +63,6 @@ const DASHBOARD_LINKS = [
 		link: ROUTES.Dashboard.Stake,
 		i18nLabel: 'dashboard.tabs.staking',
 	},
-	{
-		link: ROUTES.Dashboard.Rewards,
-		i18nLabel: 'dashboard.tabs.rewards',
-	},
 ]
 
 export const getMenuLinks = (isMobile: boolean): MenuLinks => [

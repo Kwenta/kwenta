@@ -21,6 +21,7 @@ export type TabButtonProps = {
 	isRounded?: boolean
 	onClick?: () => any
 	flat?: boolean
+	variant?: 'noOutline'
 }
 
 const InnerButton: React.FC<TabButtonProps> = React.memo(
@@ -63,6 +64,7 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 				$nofill={props.nofill}
 				$flat={flat}
 				onClick={onClick}
+				$variant={props.variant}
 			>
 				<InnerButton {...props} />
 			</StyledButton>
@@ -127,6 +129,7 @@ const sharedStyle = css<{
 	&:hover {
 		background: ${(props) =>
 			props.theme.colors.selectedTheme.newTheme.button.default.hover.background};
+		border-width: 1px;
 	}
 
 	.title {
@@ -168,7 +171,10 @@ const sharedStyle = css<{
 		`}
 `
 
-const InlineTab = styled.div`
+const InlineTab = styled.div<{
+	active?: boolean
+	$iconOnly?: boolean
+}>`
 	${sharedStyle}
 	cursor: pointer;
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
@@ -181,6 +187,7 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$nofill?: boolean
 	$flat?: boolean
 	active?: boolean
+	$variant?: 'noOutline' | undefined
 }>`
 	p {
 		text-align: left;
@@ -191,6 +198,15 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 		border-radius: ${props.isRounded ? '100px' : '8px'};
 	`}
 	${sharedStyle}
+	
+	${(props) =>
+		props.$variant === 'noOutline' &&
+		css`
+			border: none;
+			border-radius: 100px;
+			padding: 10px 15px;
+			width: 75px;
+		`}
 `
 
 export default TabButton

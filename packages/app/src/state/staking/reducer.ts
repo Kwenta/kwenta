@@ -10,37 +10,65 @@ import {
 	fetchClaimableRewards,
 	fetchEscrowData,
 	fetchStakingData,
-	getReward,
+	claimStakingRewards,
 	stakeEscrow,
 	stakeKwenta,
 	unstakeEscrow,
 	unstakeKwenta,
 	vestEscrowedRewards,
+	fetchStakingV2Data,
+	fetchEscrowV2Data,
+	fetchEstimatedRewards,
+	vestEscrowedRewardsV2,
+	stakeKwentaV2,
+	unstakeKwentaV2,
+	unstakeEscrowV2,
+	stakeEscrowV2,
+	claimStakingRewardsV2,
+	approveKwentaToken,
+	compoundRewards,
 } from './actions'
 import { StakingState } from './types'
 
 export const STAKING_INITIAL_STATE: StakingState = {
 	kwentaBalance: '0',
-	escrowedKwentaBalance: '0',
 	vKwentaBalance: '0',
 	veKwentaBalance: '0',
-	claimableBalance: '0',
-	totalStakedBalance: '0',
-	stakedEscrowedKwentaBalance: '0',
-	stakedKwentaBalance: '0',
+	v1: {
+		escrowedKwentaBalance: '0',
+		claimableBalance: '0',
+		totalStakedBalance: '0',
+		stakedEscrowedKwentaBalance: '0',
+		stakedKwentaBalance: '0',
+		totalVestable: '0',
+		escrowData: [],
+	},
+	v2: {
+		escrowedKwentaBalance: '0',
+		claimableBalance: '0',
+		totalStakedBalance: '0',
+		stakedEscrowedKwentaBalance: '0',
+		stakedKwentaBalance: '0',
+		totalVestable: '0',
+		escrowData: [],
+	},
+	stakedResetTime: 0,
 	epochPeriod: 0,
 	weekCounter: 1,
+	selectedEscrowVersion: 1,
 	kwentaAllowance: '0',
+	kwentaStakingV2Allowance: '0',
 	vKwentaAllowance: '0',
 	veKwentaAllowance: '0',
-	totalVestable: '0',
-	escrowData: [],
 	kwentaRewards: '0',
 	opRewards: '0',
 	snxOpRewards: '0',
+	estimatedKwentaRewards: '0',
+	estimatedOpRewards: '0',
 	claimableKwentaRewards: [],
 	claimableOpRewards: [],
 	claimableSnxOpRewards: [],
+	stakingMigrationCompleted: true,
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
 	stakeEscrowedStatus: FetchStatus.Idle,
@@ -51,6 +79,8 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	claimSnxOpRewardsStatus: FetchStatus.Idle,
 	claimAllRewardsStatus: FetchStatus.Idle,
 	vestEscrowedRewardsStatus: FetchStatus.Idle,
+	approveKwentaStatus: FetchStatus.Idle,
+	compoundRewardsStatus: FetchStatus.Idle,
 }
 
 const stakingSlice = createSlice({
@@ -87,19 +117,31 @@ const stakingSlice = createSlice({
 		setVestEscrowedRewardsStatus: (state, action) => {
 			state.vestEscrowedRewardsStatus = action.payload
 		},
+		setApproveKwentaStatus: (state, action) => {
+			state.approveKwentaStatus = action.payload
+		},
+		setCompoundRewardsStatus: (state, action) => {
+			state.compoundRewardsStatus = action.payload
+		},
 		setSelectedEpoch: (state, action) => {
 			state.selectedEpoch = action.payload
+		},
+		setStakingMigrationCompleted: (state, action) => {
+			state.stakingMigrationCompleted = action.payload
+		},
+		setSelectedEscrowVersion: (state, action) => {
+			state.selectedEscrowVersion = action.payload
 		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchStakingData.fulfilled, (state, action) => {
-			state.escrowedKwentaBalance = action.payload.rewardEscrowBalance
-			state.stakedKwentaBalance = action.payload.stakedNonEscrowedBalance
-			state.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
-			state.claimableBalance = action.payload.claimableBalance
+			state.v1.escrowedKwentaBalance = action.payload.rewardEscrowBalance
+			state.v1.stakedKwentaBalance = action.payload.stakedNonEscrowedBalance
+			state.v1.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
+			state.v1.claimableBalance = action.payload.claimableBalance
+			state.v1.totalStakedBalance = action.payload.totalStakedBalance
 			state.kwentaBalance = action.payload.kwentaBalance
 			state.weekCounter = action.payload.weekCounter
-			state.totalStakedBalance = action.payload.totalStakedBalance
 			state.vKwentaBalance = action.payload.vKwentaBalance
 			state.vKwentaAllowance = action.payload.vKwentaAllowance
 			state.kwentaAllowance = action.payload.kwentaAllowance
@@ -110,10 +152,27 @@ const stakingSlice = createSlice({
 			state.unstakeStatus = FetchStatus.Idle
 			state.stakeEscrowedStatus = FetchStatus.Idle
 			state.unstakeEscrowedStatus = FetchStatus.Idle
+			state.vestEscrowedRewardsStatus = FetchStatus.Idle
+			state.getRewardStatus = FetchStatus.Idle
+			state.compoundRewardsStatus = FetchStatus.Idle
+			state.approveKwentaStatus = FetchStatus.Idle
+		})
+		builder.addCase(fetchStakingV2Data.fulfilled, (state, action) => {
+			state.v2.escrowedKwentaBalance = action.payload.rewardEscrowBalance
+			state.v2.stakedKwentaBalance = action.payload.stakedNonEscrowedBalance
+			state.v2.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
+			state.v2.claimableBalance = action.payload.claimableBalance
+			state.v2.totalStakedBalance = action.payload.totalStakedBalance
+			state.kwentaStakingV2Allowance = action.payload.kwentaStakingV2Allowance
+			state.stakedResetTime = action.payload.stakedResetTime
 		})
 		builder.addCase(fetchEscrowData.fulfilled, (state, action) => {
-			state.totalVestable = action.payload.totalVestable
-			state.escrowData = action.payload.escrowData
+			state.v1.totalVestable = action.payload.totalVestable
+			state.v1.escrowData = action.payload.escrowData
+		})
+		builder.addCase(fetchEscrowV2Data.fulfilled, (state, action) => {
+			state.v2.totalVestable = action.payload.totalVestable
+			state.v2.escrowData = action.payload.escrowData
 		})
 		builder.addCase(fetchClaimableRewards.fulfilled, (state, action) => {
 			state.claimableKwentaRewards = action.payload.claimableKwentaRewards
@@ -122,36 +181,62 @@ const stakingSlice = createSlice({
 			state.kwentaRewards = action.payload.kwentaRewards
 			state.opRewards = action.payload.opRewards
 			state.snxOpRewards = action.payload.snxOpRewards
+			state.claimKwentaRewardsStatus = FetchStatus.Idle
+			state.claimAllRewardsStatus = FetchStatus.Idle
+			state.claimOpRewardsStatus = FetchStatus.Idle
+			state.claimSnxOpRewardsStatus = FetchStatus.Idle
+		})
+		builder.addCase(fetchEstimatedRewards.fulfilled, (state, action) => {
+			state.estimatedKwentaRewards = action.payload.estimatedKwentaRewards
+			state.estimatedOpRewards = action.payload.estimatedOpRewards
+		})
+		builder.addCase(approveKwentaToken.pending, (state) => {
+			state.approveKwentaStatus = FetchStatus.Loading
+		})
+		builder.addCase(approveKwentaToken.rejected, (state) => {
+			state.approveKwentaStatus = FetchStatus.Error
+		})
+		builder.addCase(compoundRewards.pending, (state) => {
+			state.compoundRewardsStatus = FetchStatus.Loading
+		})
+		builder.addCase(compoundRewards.rejected, (state) => {
+			state.compoundRewardsStatus = FetchStatus.Error
 		})
 		builder.addCase(stakeKwenta.pending, (state) => {
 			state.stakeStatus = FetchStatus.Loading
 		})
 		builder.addCase(stakeKwenta.rejected, (state) => {
-			state.stakeStatus = FetchStatus.Idle
+			state.stakeStatus = FetchStatus.Error
 		})
 		builder.addCase(unstakeKwenta.pending, (state) => {
 			state.unstakeStatus = FetchStatus.Loading
 		})
 		builder.addCase(unstakeKwenta.rejected, (state) => {
-			state.unstakeStatus = FetchStatus.Idle
+			state.unstakeStatus = FetchStatus.Error
 		})
 		builder.addCase(stakeEscrow.pending, (state) => {
 			state.stakeEscrowedStatus = FetchStatus.Loading
 		})
 		builder.addCase(stakeEscrow.rejected, (state) => {
-			state.stakeEscrowedStatus = FetchStatus.Idle
+			state.stakeEscrowedStatus = FetchStatus.Error
 		})
 		builder.addCase(unstakeEscrow.pending, (state) => {
 			state.unstakeEscrowedStatus = FetchStatus.Loading
 		})
 		builder.addCase(unstakeEscrow.rejected, (state) => {
-			state.unstakeEscrowedStatus = FetchStatus.Idle
+			state.unstakeEscrowedStatus = FetchStatus.Error
 		})
-		builder.addCase(getReward.pending, (state) => {
+		builder.addCase(claimStakingRewards.pending, (state) => {
 			state.getRewardStatus = FetchStatus.Loading
+		})
+		builder.addCase(claimStakingRewards.rejected, (state) => {
+			state.getRewardStatus = FetchStatus.Error
 		})
 		builder.addCase(claimMultipleAllRewards.pending, (state) => {
 			state.claimAllRewardsStatus = FetchStatus.Loading
+		})
+		builder.addCase(claimMultipleAllRewards.rejected, (state) => {
+			state.claimAllRewardsStatus = FetchStatus.Error
 		})
 		builder.addCase(claimMultipleKwentaRewards.pending, (state) => {
 			state.claimKwentaRewardsStatus = FetchStatus.Loading
@@ -166,10 +251,47 @@ const stakingSlice = createSlice({
 			state.vestEscrowedRewardsStatus = FetchStatus.Loading
 		})
 		builder.addCase(vestEscrowedRewards.rejected, (state) => {
-			state.vestEscrowedRewardsStatus = FetchStatus.Idle
+			state.vestEscrowedRewardsStatus = FetchStatus.Error
+		})
+		builder.addCase(vestEscrowedRewardsV2.pending, (state) => {
+			state.vestEscrowedRewardsStatus = FetchStatus.Loading
+		})
+		builder.addCase(vestEscrowedRewardsV2.rejected, (state) => {
+			state.vestEscrowedRewardsStatus = FetchStatus.Error
+		})
+		builder.addCase(stakeKwentaV2.pending, (state) => {
+			state.stakeStatus = FetchStatus.Loading
+		})
+		builder.addCase(stakeKwentaV2.rejected, (state) => {
+			state.stakeStatus = FetchStatus.Error
+		})
+		builder.addCase(unstakeKwentaV2.pending, (state) => {
+			state.unstakeStatus = FetchStatus.Loading
+		})
+		builder.addCase(unstakeKwentaV2.rejected, (state) => {
+			state.unstakeStatus = FetchStatus.Error
+		})
+		builder.addCase(stakeEscrowV2.pending, (state) => {
+			state.stakeEscrowedStatus = FetchStatus.Loading
+		})
+		builder.addCase(stakeEscrowV2.rejected, (state) => {
+			state.stakeEscrowedStatus = FetchStatus.Error
+		})
+		builder.addCase(unstakeEscrowV2.pending, (state) => {
+			state.unstakeEscrowedStatus = FetchStatus.Loading
+		})
+		builder.addCase(unstakeEscrowV2.rejected, (state) => {
+			state.unstakeEscrowedStatus = FetchStatus.Error
+		})
+		builder.addCase(claimStakingRewardsV2.pending, (state) => {
+			state.getRewardStatus = FetchStatus.Loading
+		})
+		builder.addCase(claimStakingRewardsV2.rejected, (state) => {
+			state.getRewardStatus = FetchStatus.Error
 		})
 	},
 })
 
 export default stakingSlice.reducer
-export const { setSelectedEpoch } = stakingSlice.actions
+export const { setSelectedEpoch, setStakingMigrationCompleted, setSelectedEscrowVersion } =
+	stakingSlice.actions

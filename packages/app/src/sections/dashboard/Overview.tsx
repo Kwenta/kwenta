@@ -6,6 +6,7 @@ import Wei from '@synthetixio/wei'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { ExchangeTokens } from 'types/synths'
 
 import TabButton from 'components/Button/TabButton'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
@@ -34,6 +35,8 @@ export enum PositionsTab {
 	SPOT = 'spot',
 }
 
+// TODO: Extract initExchangeTokens to SDK/Redux
+
 const Overview: FC = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
@@ -53,7 +56,7 @@ const Overview: FC = () => {
 	// Only available on Optimism mainnet
 	const oneInchEnabled = network.id === 10
 
-	const [exchangeTokens, setExchangeTokens] = useState<any>([])
+	const [exchangeTokens, setExchangeTokens] = useState<ExchangeTokens>([])
 	const [search, setSearch] = useState('')
 
 	useFetchAction(fetchTokenList, { dependencies: [network] })
@@ -92,7 +95,7 @@ const Overview: FC = () => {
 					const usdBalance = balance.mul(price)
 
 					return {
-						synth: currencyKey,
+						synth: currencyKey as SynthSymbol,
 						description: name,
 						balance,
 						usdBalance,

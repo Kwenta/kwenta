@@ -6,11 +6,15 @@ import styled from 'styled-components'
 
 import Button from 'components/Button'
 import NumericInput from 'components/Input/NumericInput'
-import { FlexDivRowCentered } from 'components/layout/flex'
+import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
 import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
 import { StakingCard } from 'sections/dashboard/Stake/card'
-import { numericValueCSS } from 'styles/common'
+import media from 'styles/media'
+
+import ErrorView from './ErrorView'
+import Spacer from './Spacer'
+import { Body, NumericValue } from './Text'
 
 type StakeCardProps = {
 	title: string
@@ -24,6 +28,9 @@ type StakeCardProps = {
 	isUnstaked?: boolean | undefined
 	isApproved?: boolean
 	onApprove?: () => void
+	isStaking?: boolean
+	isUnstaking?: boolean
+	isApproving?: boolean
 }
 
 const StakeCard: FC<StakeCardProps> = memo(
@@ -39,6 +46,9 @@ const StakeCard: FC<StakeCardProps> = memo(
 		isUnstaked = false,
 		isApproved,
 		onApprove,
+		isStaking = false,
+		isUnstaking = false,
+		isApproving = false,
 	}) => {
 		const { t } = useTranslation()
 
@@ -69,6 +79,10 @@ const StakeCard: FC<StakeCardProps> = memo(
 			return truncateNumbers(balance, DEFAULT_CRYPTO_DECIMALS)
 		}, [balance])
 
+		const isLoading = useMemo(() => {
+			return activeTab === 0 ? (isApproved ? isStaking : isApproving) : isUnstaking
+		}, [activeTab, isApproved, isApproving, isStaking, isUnstaking])
+
 		const onMaxClick = useCallback(() => {
 			setAmount(truncateNumbers(balance, DEFAULT_TOKEN_DECIMALS))
 		}, [balance])
@@ -79,10 +93,12 @@ const StakeCard: FC<StakeCardProps> = memo(
 		}, [])
 
 		const handleSubmit = useCallback(() => {
-			if (!isApproved) {
-				onApprove?.()
-			} else if (isStakeEnabled) {
-				onStake(amount)
+			if (isStakeEnabled) {
+				if (isApproved) {
+					onStake(amount)
+				} else {
+					onApprove?.()
+				}
 			} else if (isUnstakeEnabled) {
 				onUnstake(amount)
 			}
@@ -112,25 +128,41 @@ const StakeCard: FC<StakeCardProps> = memo(
 					onChange={handleTabChange}
 					selectedIndex={activeTab}
 				/>
-				<StakeInputContainer>
-					<StakeInputHeader>
-						<div>{title}</div>
-						<StyledFlexDivRowCentered>
-							<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
-							<div className="max" onClick={onMaxClick}>
-								{balanceString}
-							</div>
-						</StyledFlexDivRowCentered>
-					</StakeInputHeader>
-					<NumericInput value={amount} onChange={handleChange} bold />
-				</StakeInputContainer>
-				<Button fullWidth variant="flat" size="small" disabled={isDisabled} onClick={handleSubmit}>
-					{!isApproved
-						? t('dashboard.stake.tabs.stake-table.approve')
-						: activeTab === 0
-						? t('dashboard.stake.tabs.stake-table.stake')
-						: t('dashboard.stake.tabs.stake-table.unstake')}
-				</Button>
+				<FlexDivCol>
+					<FlexDivCol>
+						<StakeInputHeader>
+							<Body color="secondary">{title}</Body>
+							<StyledFlexDivRowCentered>
+								<Body color="secondary">{t('dashboard.stake.tabs.stake-table.balance')}</Body>
+								<NumericValueButton onClick={onMaxClick}>{balanceString}</NumericValueButton>
+							</StyledFlexDivRowCentered>
+						</StakeInputHeader>
+						<NumericInput value={amount} onChange={handleChange} bold />
+					</FlexDivCol>
+					<Spacer height={25} />
+					<Button
+						fullWidth
+						variant="flat"
+						size="small"
+						disabled={isDisabled}
+						loading={isLoading}
+						onClick={handleSubmit}
+					>
+						{activeTab === 0
+							? isApproved
+								? t('dashboard.stake.tabs.stake-table.stake')
+								: t('dashboard.stake.tabs.stake-table.approve')
+							: t('dashboard.stake.tabs.stake-table.unstake')}
+					</Button>
+					<ErrorView
+						message={t('dashboard.stake.portfolio.cooldown.warning')}
+						containerStyle={{
+							margin: '0',
+							marginTop: '25px',
+							padding: '10px 0',
+						}}
+					/>
+				</FlexDivCol>
 			</StakingInputCardContainer>
 		)
 	}
@@ -142,29 +174,21 @@ const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
 
 const StakingInputCardContainer = styled(StakingCard)`
 	min-height: 125px;
-	max-height: 250px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+	flex: 1;
+	margin-bottom: 0px;
+	${media.lessThan('lg')`
+		width: 100%;
+	`}
 `
 
-const StakeInputHeader = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 10px;
+const StakeInputHeader = styled(FlexDivRowCentered)`
+	margin: 25px 0 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.title};
 	font-size: 14px;
-
-	.max {
-		cursor: pointer;
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-		${numericValueCSS};
-	}
 `
 
-const StakeInputContainer = styled.div`
-	margin: 20px 0;
+const NumericValueButton = styled(NumericValue)`
+	cursor: pointer;
 `
 
 export default StakeCard

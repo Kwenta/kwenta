@@ -438,10 +438,9 @@
 		"tabs": {
 			"overview": "Overview",
 			"history": "History",
-			"rewards": "Rewards",
 			"markets": "Markets",
 			"governance": "Governance",
-			"staking": "Staking",
+			"staking": "Staking & Rewards",
 			"earn": "Earn"
 		},
 		"overview": {
@@ -527,7 +526,7 @@
 			}
 		},
 		"rewards": {
-			"title": "Rewards",
+			"title": "Trading Rewards",
 			"copy": "Earn rewards by trading on Kwenta and get boosted rewards for staking.",
 			"claimable": "Claimable",
 			"estimated": "Estimated",
@@ -537,6 +536,7 @@
 			"claim": "Claim",
 			"claim-all": "Claim All",
 			"learn-more": "Learn more",
+			"rewards": "Rewards",
 			"disclaimer": "Disclaimer: The estimated epoch reward values presented are not indicative of the the final rewards value. Please be aware that these estimations may fluctuate due to factors such as: future fees paid and the staking contributions of other participants leading up to the epoch-ending snapshot. For additional insights on rewards, <0>kindly refer to our blog.<0>",
 			"trading-rewards": {
 				"title": "Kwenta Trading Rewards",
@@ -552,14 +552,41 @@
 			}
 		},
 		"stake": {
+			"docs": "Docs →",
 			"portfolio": {
-				"title": "Staking Dashboard",
-				"liquid": "Liquid",
-				"escrow": "Escrow",
-				"staked": "Staked",
-				"staked-escrow": "Staked Escrow",
-				"claimable": "Claimable",
-				"vestable": "Vestable"
+				"title": "Kwenta Staking",
+				"balance": {
+					"title": "Balance",
+					"liquid": "Liquid",
+					"staked": "Staked",
+					"staked-v1": "Staked V1"
+				},
+				"escrow": {
+					"title": "Escrow",
+					"title-v2": "Escrow V2",
+					"title-v1": "Escrow V1",
+					"staked": "Staked",
+					"vestable": "Vestable"
+				},
+				"rewards": {
+					"title": "Rewards",
+					"claimable": "Claimable",
+					"trading": "Trading",
+					"staking": "Staking",
+					"staking-v1": "Staking V1",
+					"apr": "APR"
+				},
+				"early-vest-rewards": {
+					"title": "Early Vest Rewards",
+					"claimable": "Claimable",
+					"epoch": "Epoch",
+					"early-vest-rewards-tooltip": "Coming soon: Early vest fee rewards will be distributed once per epoch to V2 stakers."
+				},
+				"cooldown": {
+					"title": "Cooldown",
+					"time-left": "Time Left",
+					"warning": "Staked Kwenta incurs a 14d cooldown"
+				}
 			},
 			"tabs": {
 				"staking": {
@@ -569,7 +596,12 @@
 					"liquid-rewards": "Liquid Rewards",
 					"annual-percentage-rate": "Annual Percentage Rate",
 					"claim": "Claim",
-					"current-trading-period": "Current Trading Period:"
+					"compound": "Compound",
+					"current-trading-period": "Current Trading Period:",
+					"staking-rewards": {
+						"title": "Staking Rewards",
+						"copy": "Stake your escrowed tokens to earn additional rewards."
+					}
 				},
 				"trading-rewards": {
 					"title": "Trading Rewards",
@@ -596,7 +628,11 @@
 					"eligible": "Eligible",
 					"stake-to-earn": "Trade to earn <0>$KWENTA</0> and <0>$OP</> rewards",
 					"stake-to-start": "Trade to earn <0>$KWENTA</0> and <0>$OP</> rewards",
-					"learn-more": "Learn More"
+					"learn-more": "Learn More",
+					"fee-paid": "Fee Paid",
+					"fee-share": "Fee Share",
+					"period": "Period",
+					"total-pool-fees": "Total Pool Fees"
 				},
 				"escrow": {
 					"title": "Escrow",
@@ -608,7 +644,12 @@
 					"status": "Status",
 					"total": "Total",
 					"fee": "Fee",
-					"vest": "VEST",
+					"vest-v1": "VEST V1",
+					"vest-v2": "VEST V2",					
+					"transfer": "TRANSFER",
+					"delegate": "DELEGATE",
+					"v1": "V1",
+					"v2": "V2",
 					"modal": {
 						"title": "Early Vesting Fee",
 						"confirm-button": "Confirm",
@@ -617,8 +658,23 @@
 						"confirm-text": "You will currently forfeit <0>{{totalFee}}</0> in KWENTA by vesting. Do you still wish to proceed?"
 					}
 				},
-				"redemption": {
-					"title": "Redemption"
+				"migrate": {
+					"title": "Migrate to Staking V2",
+					"copy": "Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.",
+					"step-1-copy": "Claim any remaining rewards",
+					"step-2-copy": "Unstake V1 liquid balance",
+					"step-3-copy": "Stake liquid balance on v2",
+					"rewards": "Rewards",
+					"staked": "Staked",
+					"claim": "Claim",
+					"unstake": "Unstake",
+					"stake": "Stake",
+					"approve": "Approve",
+					"step": "Step <0>{{index}}</0>",
+					"visit-v2": "Visit Staking V2"
+				},
+				"redeem": {
+					"title": "Redeem"
 				},
 				"stake-table": {
 					"stake": "Stake",
@@ -943,7 +999,7 @@
 					"insufficient-margin": "Leverage cannot be increased, it exceeds the minimum margin requirement of $40",
 					"insufficient-free-margin": "Leverage cannot be modified, please deposit more margin or reduce open position sizes"
 				},
-				"edit-position":{
+				"edit-position": {
 					"market": "Market",
 					"current-size": "Current size",
 					"leverage-change": "Leverage",
@@ -1070,6 +1126,7 @@
 						"side-type": "Side/Type",
 						"no-results": "You have no trade history",
 						"order-type": "order type",
+						"transaction": "Transaction",
 						"trade-types": {
 							"exit": "exit",
 							"liquidated": "liquidated",

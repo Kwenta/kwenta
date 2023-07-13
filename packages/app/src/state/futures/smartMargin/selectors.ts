@@ -65,7 +65,7 @@ export const selectMarketsQueryStatus = (state: RootState) =>
 	state.smartMargin.queryStatuses.markets
 
 export const selectSmartMarginAccountQueryStatus = (state: RootState) =>
-	state.smartMargin.queryStatuses.smartMarginAccount
+	state.smartMargin.queryStatuses.account
 
 export const selectLeverageInput = createSelector(
 	(state: RootState) => state.smartMargin,
@@ -828,14 +828,14 @@ export const selectIdleMarginTransfers = createSelector(
 export const selectTradePreviewError = createSelector(
 	(state: RootState) => state.smartMargin,
 	(smartMargin) => {
-		return smartMargin.queryStatuses.smartMarginTradePreview.error
+		return smartMargin.queryStatuses.tradePreview.error
 	}
 )
 
 export const selectIsFetchingTradePreview = createSelector(
 	(state: RootState) => state.smartMargin,
 	(smartMargin) => {
-		return smartMargin.queryStatuses.smartMarginTradePreview.status === FetchStatus.Loading
+		return smartMargin.queryStatuses.tradePreview.status === FetchStatus.Loading
 	}
 )
 
@@ -851,7 +851,7 @@ export const selectModifyPositionError = createSelector(
 export const selectTradePreviewStatus = createSelector(
 	(state: RootState) => state.smartMargin,
 	(smartMargin) => {
-		return smartMargin.queryStatuses.smartMarginTradePreview
+		return smartMargin.queryStatuses.tradePreview
 	}
 )
 
@@ -1146,3 +1146,8 @@ export const selectMarketSuspended = createSelector(
 	selectV2MarketInfo,
 	(marketInfo) => marketInfo?.isSuspended
 )
+
+export const selectFuturesFees = (state: RootState) => state.smartMargin.futuresFees
+
+export const selectFuturesFeesForAccount = (state: RootState) =>
+	state.smartMargin.futuresFeesForAccount

@@ -89,7 +89,7 @@ const ConditionalOrdersTab: React.FC = () => {
 							<OrderRow>
 								<Body color="secondary">Chainlink Price</Body>
 								{order.currentPrice?.price ? (
-									<ColoredPrice priceInfo={order.currentPrice}>
+									<ColoredPrice priceChange={order.currentPrice.change}>
 										{formatDollars(order.currentPrice.price)}
 									</ColoredPrice>
 								) : (

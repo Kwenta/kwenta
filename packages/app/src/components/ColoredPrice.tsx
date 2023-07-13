@@ -1,16 +1,16 @@
 import styled from 'styled-components'
 
-import { PricesInfo } from 'state/prices/types'
+import { PriceChange } from 'state/prices/types'
 
-export const getColorFromPriceInfo = (priceInfo: PricesInfo | undefined) => {
-	return !priceInfo?.change ? 'white' : priceInfo.change === 'up' ? 'green' : 'red'
+export const getColorFromPriceChange = (change?: PriceChange) => {
+	return !change ? 'white' : change === 'up' ? 'green' : 'red'
 }
 
-const ColoredPrice = styled.div<{ priceInfo: PricesInfo | undefined }>`
+const ColoredPrice = styled.div<{ priceChange?: PriceChange }>`
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => {
-		const color = getColorFromPriceInfo(props.priceInfo)
+		const color = getColorFromPriceChange(props.priceChange)
 		return props.theme.colors.selectedTheme[color]
 	}};
 `

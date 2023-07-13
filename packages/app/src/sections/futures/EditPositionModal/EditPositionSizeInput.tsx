@@ -105,8 +105,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 					defaultValue={0}
 					value={nativeSizeDeltaWei.abs().toNumber()}
 					onChange={onChangeSlider}
-					valueLabelDisplay="auto"
-					valueLabelFormat={(v) => formatNumber(v)}
+					valueLabelFormat={(v: number) => formatNumber(v)}
 					$currentMark={Number(nativeSizeDelta ?? 0)}
 				/>
 			</OrderSizingContainer>

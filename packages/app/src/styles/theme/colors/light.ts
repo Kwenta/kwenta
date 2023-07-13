@@ -3,13 +3,13 @@ import common from './common'
 const newTheme = {
 	containers: {
 		primary: {
-			background: common.palette.neutral.n0,
+			background: common.palette.neutral.n10,
 		},
 		secondary: {
 			background: common.palette.neutral.n0,
 		},
 		cards: {
-			background: common.palette.neutral.n20,
+			background: common.palette.neutral.n0,
 		},
 	},
 	border: {
@@ -173,7 +173,9 @@ const newTheme = {
 		},
 	},
 	checkBox: {
-		border: common.palette.neutral.n100,
+		border: common.palette.neutral.n50,
+		background: common.palette.neutral.n20,
+		checked: common.light.yellow,
 	},
 	tabs: {
 		position: {
@@ -205,7 +207,7 @@ const newTheme = {
 
 const lightTheme = {
 	...common.light,
-	table: { fill: common.palette.neutral.n10, hover: common.palette.neutral.n20 },
+	table: { fill: common.palette.neutral.n0, hover: common.palette.neutral.n20 },
 	gold: '#724713',
 	badge: {
 		red: { background: '#FF8D8D', text: 'black' },
@@ -258,8 +260,8 @@ const lightTheme = {
 			text: '#fff',
 		},
 		red: {
-			fill: common.palette.alpha.red15,
-			text: common.palette.red.r200,
+			fill: common.palette.red.r100,
+			text: common.palette.red.r900,
 		},
 	},
 	input: {

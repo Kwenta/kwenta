@@ -16,6 +16,7 @@ export type ButtonVariant =
 	| 'yellow'
 	| 'long'
 	| 'short'
+	| 'staking-button'
 
 type BaseButtonProps = {
 	$size: 'xsmall' | 'small' | 'medium' | 'large'
@@ -25,6 +26,7 @@ type BaseButtonProps = {
 	fullWidth?: boolean
 	noOutline?: boolean
 	textColor?: 'yellow'
+	outlineColor?: 'yellow'
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase'
 	$active?: boolean
 	$mono?: boolean
@@ -151,9 +153,8 @@ const BaseButton = styled.button<BaseButtonProps>`
 			}
 		`}
 	
-
 	${(props) =>
-		props.$variant === 'yellow' &&
+		(props.$variant === 'yellow' || props.$variant === 'staking-button') &&
 		css`
 			background: ${props.theme.colors.selectedTheme.button.yellow.fill};
 			border: 1px solid ${props.theme.colors.selectedTheme.button.yellow.border};
@@ -166,6 +167,11 @@ const BaseButton = styled.button<BaseButtonProps>`
 			&::before {
 				display: none;
 			}
+
+			${props.$variant === 'staking-button' &&
+			css`
+				border: 1px solid ${props.theme.colors.selectedTheme.button.yellow.text};
+			`}
 		`}
 
 	font-family: ${(props) =>
@@ -233,6 +239,7 @@ type ButtonProps = {
 	fullWidth?: boolean
 	noOutline?: boolean
 	textColor?: 'yellow'
+	outlineColor?: 'yellow'
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase'
 	style?: React.CSSProperties
 	disabled?: boolean

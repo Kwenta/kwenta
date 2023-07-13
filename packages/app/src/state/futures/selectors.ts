@@ -278,7 +278,7 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 		const { selectedTrader } = futures.leaderboard
 		if (!selectedTrader) return []
 		const history =
-			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? []
+			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader.trader] ?? []
 		return unserializePositionHistory(history)
 	}
 )

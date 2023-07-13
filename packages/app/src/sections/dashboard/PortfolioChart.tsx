@@ -210,7 +210,7 @@ const PortfolioChart: FC = () => {
 									<Timeframe />
 								</TimeframeOverlay>
 							</TopBar>
-							<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
+							<PriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
 						</ChartContainer>
 					) : (
 						<ChartContainer>
@@ -235,7 +235,7 @@ const PortfolioChart: FC = () => {
 									<Timeframe />
 								</TimeframeOverlay>
 							</TopBar>
-							<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
+							<PriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
 						</ChartContainer>
 					</MobileChartGrid>
 				) : (
@@ -269,8 +269,6 @@ const TopBar = styled.div`
 	padding: 8px 8px 0 0;
 `
 
-const StyledPriceChart = styled(PriceChart)``
-
 const ChartOverlay = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -290,7 +288,7 @@ const TimeframeOverlay = styled.div`
 	max-width: 192px;
 `
 
-const PortfolioTitle = styled(Body).attrs({ variant: 'bold' })`
+const PortfolioTitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 16px;
 	margin-bottom: 4px;
