@@ -4,18 +4,19 @@ import request, { gql } from 'graphql-request'
 import KwentaSDK from '..'
 import { REQUIRES_L2 } from '../common/errors'
 import { FUTURES_ENDPOINT_OP_MAINNET } from '../constants/futures'
-import { DEFAULT_LEADERBOARD_DATA } from '../constants/stats'
+import {
+	ADDRESSES_PER_LOOKUP,
+	DEFAULT_LEADERBOARD_DATA,
+	ENS_REVERSE_LOOKUP,
+} from '../constants/stats'
 import { ETH_UNIT } from '../constants/transactions'
-import { AccountStat, FuturesStat } from '../types/stats'
+import { EnsInfo, FuturesStat, Leaderboard } from '../types/stats'
 import { mapStat } from '../utils/stats'
 import { truncateAddress } from '../utils/string'
 import { getFuturesStats } from '../utils/subgraph'
+import { Contract } from 'ethers'
 
 type LeaderboardPart = 'top' | 'bottom' | 'wallet' | 'search' | 'all'
-
-type LeaderboardResult = {
-	[part in LeaderboardPart]: AccountStat[]
-}
 
 export default class StatsService {
 	private sdk: KwentaSDK
@@ -47,26 +48,25 @@ export default class StatsService {
 				}
 			)
 
-			const stats = response.map((stat: FuturesStat, i: number) => ({
-				...stat,
+			const stats = response.map((stat, i) => ({
 				trader: stat.account,
 				traderShort: truncateAddress(stat.account),
-				pnl: stat.pnlWithFeesPaid.div(ETH_UNIT),
-				totalVolume: stat.totalVolume.div(ETH_UNIT),
+				pnl: stat.pnlWithFeesPaid.div(ETH_UNIT).toString(),
+				totalVolume: stat.totalVolume.div(ETH_UNIT).toString(),
 				totalTrades: stat.totalTrades.toNumber(),
 				liquidations: stat.liquidations.toNumber(),
 				rank: i + 1,
 				rankText: (i + 1).toString(),
 			}))
 
-			return stats as AccountStat[]
+			return stats
 		} catch (e) {
 			this.sdk.context.logError(e)
 			return []
 		}
 	}
 
-	public async getLeaderboard(searchTerm: string) {
+	public async getLeaderboard(searchTerm: string): Promise<Leaderboard> {
 		try {
 			const query = gql`
 				fragment StatsBody on FuturesStat {
@@ -100,17 +100,25 @@ export default class StatsService {
 				{ account: this.sdk.context.walletAddress, searchTerm }
 			)
 
-			const stats: LeaderboardResult = {
-				top: response.top.map(mapStat),
-				bottom: response.bottom.map(mapStat),
-				wallet: response.wallet.map(mapStat),
-				search: response.search.map(mapStat),
-				all: [],
+			// TODO: Improve the time complexity of this operation.
+			// We *should* be able to add the ENS and merge at the same time.
+
+			const ensInfo = await this.batchGetENS(
+				Object.values(response)
+					.flat(1)
+					.map(({ account }) => account)
+			)
+
+			const statTransform = mapStat(ensInfo)
+
+			const stats = {
+				top: response.top.map(statTransform),
+				bottom: response.bottom.map(statTransform),
+				wallet: response.wallet.map(statTransform),
+				search: response.search.map(statTransform),
 			}
 
-			stats.all = [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search]
-
-			return stats
+			return { ...stats, all: [...stats.top, ...stats.bottom, ...stats.wallet, ...stats.search] }
 		} catch (e) {
 			this.sdk.context.logError(e)
 			return DEFAULT_LEADERBOARD_DATA
@@ -159,5 +167,31 @@ export default class StatsService {
 			this.sdk.context.logError(e)
 			return null
 		}
+	}
+
+	private async batchGetENS(addresses: string[]) {
+		const ReverseLookup = new Contract(
+			ENS_REVERSE_LOOKUP,
+			['function getNames(address[] addresses) external view returns (string[] r)'],
+			this.sdk.context.l1MainnetProvider
+		)
+
+		let ensPromises = []
+		for (let i = 0; i < addresses.length; i += ADDRESSES_PER_LOOKUP) {
+			const addressesToLookup = addresses.slice(i, i + ADDRESSES_PER_LOOKUP)
+			const ensNamesPromise = ReverseLookup.getNames(addressesToLookup)
+			ensPromises.push(ensNamesPromise)
+		}
+
+		let ensInfo: EnsInfo = {}
+
+		const ensPromiseResult = await Promise.all(ensPromises)
+		ensPromiseResult.flat(1).forEach((val: string, ind: number) => {
+			if (val !== '') {
+				ensInfo[addresses[ind]] = val
+			}
+		})
+
+		return ensInfo
 	}
 }

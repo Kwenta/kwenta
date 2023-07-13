@@ -1,6 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { NetworkId } from '@kwenta/sdk/types'
-import { formatShortDate, toJSTimestamp } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { BigNumber } from 'ethers'
 
@@ -59,8 +58,6 @@ export function getApy(totalStakedBalance: number, weekCounter: number) {
 
 export const parseEpochData = (index: number, networkId?: NetworkId) => {
 	const { epochStart, epochEnd } = getEpochDetails(networkId ?? 10, index)
-	const startDate = formatShortDate(new Date(toJSTimestamp(epochStart)))
-	const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)))
-	const label = `Epoch ${index}: ${startDate} - ${endDate}`
+	const label = `Epoch ${index}`
 	return { period: index, start: epochStart, end: epochEnd, label }
 }

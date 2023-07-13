@@ -1,5 +1,10 @@
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
-import { fetchStakingData } from 'state/staking/actions'
+import { fetchStakeMigrateData, fetchStakingV2Data } from 'state/staking/actions'
+import {
+	selectSelectedEpoch,
+	selectStakingSupportedNetwork,
+	selectTradingRewardsSupportedNetwork,
+} from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 
 import {
@@ -13,6 +18,8 @@ import {
 	fetchMarginTransfers,
 	fetchAllTradesForAccount,
 	fetchCombinedMarginTransfers,
+	fetchFuturesFees,
+	fetchFuturesFeesForAccount,
 } from './actions'
 import {
 	selectCrossMarginAccount,
@@ -31,13 +38,18 @@ export const usePollMarketFuturesData = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork)
 	const networkSupportsFutures = useAppSelector(selectFuturesSupportedNetwork)
+	const networkSupportsTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	useFetchAction(fetchCrossMarginAccount, {
 		dependencies: [networkId, wallet],
 		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
 	})
 
-	useFetchAction(fetchStakingData, { dependencies: [networkId, wallet] })
+	useFetchAction(fetchStakingV2Data, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsTradingRewards,
+	})
+
 	useFetchAction(fetchMarginTransfers, { dependencies: [networkId, wallet, selectedAccountType] })
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
 		dependencies: [networkId],
@@ -115,5 +127,23 @@ export const usePollDashboardFuturesData = () => {
 		dependencies: [networkId, wallet, selectedAccountType, crossMarginAddress],
 		intervalTime: 30000,
 		disabled: !wallet,
+	})
+}
+
+export const useFetchStakeMigrateData = () => {
+	const networkId = useAppSelector(selectNetwork)
+	const wallet = useAppSelector(selectWallet)
+	const { start, end } = useAppSelector(selectSelectedEpoch)
+	const networkSupportsStaking = useAppSelector(selectStakingSupportedNetwork)
+
+	useFetchAction(fetchStakeMigrateData, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsStaking,
+	})
+	useFetchAction(() => fetchFuturesFees({ start, end }), {
+		dependencies: [networkId, wallet, start, end],
+	})
+	useFetchAction(() => fetchFuturesFeesForAccount({ start, end }), {
+		dependencies: [networkId, wallet, start, end],
 	})
 }

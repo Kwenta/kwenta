@@ -4,7 +4,7 @@ import QUERY_KEYS from 'constants/queryKeys'
 
 const useENSAvatar = (
 	provider: any,
-	ensName: string | null,
+	ensName?: string | null,
 	options?: UseQueryOptions<any | null>
 ) => {
 	return useQuery<string | null>(

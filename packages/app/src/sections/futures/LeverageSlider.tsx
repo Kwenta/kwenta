@@ -28,8 +28,7 @@ const LeverageSlider: FC<LeverageSliderProps> = memo(
 					{ value: minValue ?? 0, label: `${minValue}x` },
 					{ value: maxValue ?? 10, label: `${maxValue}x` },
 				]}
-				valueLabelDisplay="auto"
-				valueLabelFormat={(v) => `${v}x`}
+				valueLabelFormat={(v: number) => `${v}x`}
 				$currentMark={value ?? defaultValue ?? 0}
 			/>
 		)

@@ -330,7 +330,7 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 		const { selectedTrader } = futures.leaderboard
 		if (!selectedTrader) return []
 		const history =
-			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? []
+			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader.trader] ?? []
 		return unserializePositionHistory(history)
 	}
 )
@@ -1727,6 +1727,10 @@ export const selectMarketSuspended = createSelector(
 	selectMarketInfo,
 	(marketInfo) => marketInfo?.isSuspended
 )
+
+export const selectFuturesFees = (state: RootState) => state.futures.futuresFees
+
+export const selectFuturesFeesForAccount = (state: RootState) => state.futures.futuresFeesForAccount
 
 export const selectHistoricalFundingRatePeriod = (state: RootState) =>
 	state.futures.historicalFundingRatePeriod

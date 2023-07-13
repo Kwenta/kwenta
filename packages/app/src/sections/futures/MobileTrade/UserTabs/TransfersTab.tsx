@@ -57,40 +57,39 @@ const TransfersTab: React.FC = () => {
 					highlightRowsOnHover
 					columns={[
 						{
-							Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
-							accessor: 'action',
-							Cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
-							width: 50,
+							header: () => (
+								<TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>
+							),
+							accessorKey: 'action',
+							cell: (cellProps: any) => <ActionCell>{cellProps.value}</ActionCell>,
+							size: 50,
 						},
 						{
-							Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
-							accessor: 'size',
-							sortType: 'basic',
-							Cell: (cellProps: any) => {
-								const formatOptions = {
-									minDecimals: 0,
-								}
-
+							header: () => (
+								<TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>
+							),
+							accessorKey: 'size',
+							sortingFn: 'basic',
+							cell: (cellProps) => {
 								return (
 									<ColoredPrice
-										priceInfo={{
-											price: cellProps.row.original.size,
-											change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
-										}}
+										priceChange={cellProps.row.original.action === 'deposit' ? 'up' : 'down'}
 									>
 										{cellProps.row.original.action === 'deposit' ? '+' : ''}
-										{formatDollars(cellProps.row.original.size, formatOptions)}
+										{formatDollars(cellProps.row.original.size)}
 									</ColoredPrice>
 								)
 							},
-							sortable: true,
-							width: 50,
+							enableSorting: true,
+							size: 50,
 						},
 						{
-							Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
-							accessor: 'timestamp',
-							Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
-							width: 50,
+							header: () => (
+								<TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>
+							),
+							accessorKey: 'timestamp',
+							cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
+							size: 50,
 						},
 					]}
 					data={marginTransfers}

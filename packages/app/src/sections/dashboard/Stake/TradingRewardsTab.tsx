@@ -235,7 +235,6 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 						<Button
 							fullWidth
 							variant="flat"
-							size="small"
 							onClick={() =>
 								window.open(EXTERNAL_LINKS.Docs.TradingRewardsV2, '_blank', 'noopener noreferrer')
 							}

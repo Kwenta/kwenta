@@ -4,7 +4,6 @@ import { getDisplayAsset, formatNumber } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { FC, ReactElement, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps, Row } from 'react-table'
 import styled from 'styled-components'
 
 import ChangePercent from 'components/ChangePercent'
@@ -20,21 +19,12 @@ import { selectSynthsMap } from 'state/wallet/selectors'
 import { sortWei } from 'utils/balances'
 import { isDecimalFour } from 'utils/futures'
 
-type Cell = {
-	synth: SynthSymbol
-	description: string | undefined
-	balance: Wei
-	usdBalance: Wei
-	price: Wei | null
-	priceChange: Wei | undefined
-}
-
 const conditionalRender = <T,>(prop: T, children: ReactElement) =>
 	!prop ? <Body>{NO_VALUE}</Body> : children
 
 type SynthBalancesTableProps = {
 	exchangeTokens: {
-		synth: string
+		synth: SynthSymbol
 		description: string
 		balance: Wei
 		usdBalance: Wei
@@ -60,7 +50,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 			const description = synthsMap[currencyKey as SynthSymbol]?.description ?? ''
 
 			return {
-				synth: currencyKey,
+				synth: currencyKey as SynthSymbol,
 				description,
 				balance,
 				usdBalance,
@@ -90,11 +80,10 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 						}
 						columns={[
 							{
-								Header: <div>{t('dashboard.overview.synth-balances-table.market')}</div>,
-								accessor: 'market',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<Cell>) => {
-									return conditionalRender<Cell['synth']>(
+								header: () => <div>{t('dashboard.overview.synth-balances-table.market')}</div>,
+								accessorKey: 'market',
+								cell: (cellProps) => {
+									return conditionalRender(
 										cellProps.row.original.synth,
 										<MarketContainer>
 											<IconContainer>
@@ -111,58 +100,53 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 										</MarketContainer>
 									)
 								},
-								width: 198,
+								size: 198,
 							},
 							{
-								Header: <div>{t('dashboard.overview.synth-balances-table.amount')}</div>,
-								accessor: 'amount',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<Cell>) => {
-									return conditionalRender<Cell['balance']>(
+								header: () => <div>{t('dashboard.overview.synth-balances-table.amount')}</div>,
+								accessorKey: 'amount',
+								cell: (cellProps) => {
+									return conditionalRender(
 										cellProps.row.original.balance,
 										<AmountCol>
 											<Body mono>{formatNumber(cellProps.row.original.balance ?? 0)}</Body>
 										</AmountCol>
 									)
 								},
-								width: 198,
-								sortable: true,
-								sortType: useMemo(
-									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-										const rowOne = rowA.original.balance ?? wei(0)
-										const rowTwo = rowB.original.balance ?? wei(0)
-										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
-									},
-									[]
-								),
+								size: 198,
+								enableSorting: true,
+								sortingFn: (rowA, rowB) => {
+									const rowOne = rowA.original.balance ?? wei(0)
+									const rowTwo = rowB.original.balance ?? wei(0)
+									return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
+								},
 							},
 							{
-								Header: <div>{t('dashboard.overview.synth-balances-table.value-in-usd')}</div>,
-								accessor: 'valueInUSD',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<Cell>) => {
-									return conditionalRender<Cell['usdBalance']>(
+								header: () => (
+									<div>{t('dashboard.overview.synth-balances-table.value-in-usd')}</div>
+								),
+								accessorKey: 'valueInUSD',
+								cell: (cellProps) => {
+									return conditionalRender(
 										cellProps.row.original.usdBalance,
 										<Currency.Price price={cellProps.row.original.usdBalance} />
 									)
 								},
-								width: 198,
-								sortable: true,
-								sortType: useMemo(
-									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-										const rowOne = rowA.original.usdBalance ?? wei(0)
-										const rowTwo = rowB.original.usdBalance ?? wei(0)
-										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
-									},
-									[]
-								),
+								size: 198,
+								enableSorting: true,
+								sortingFn: (rowA, rowB) => {
+									const rowOne = rowA.original.usdBalance ?? wei(0)
+									const rowTwo = rowB.original.usdBalance ?? wei(0)
+									return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
+								},
 							},
 							{
-								Header: <div>{t('dashboard.overview.synth-balances-table.oracle-price')}</div>,
-								accessor: 'price',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<Cell>) => {
-									return conditionalRender<Cell['price']>(
+								header: () => (
+									<div>{t('dashboard.overview.synth-balances-table.oracle-price')}</div>
+								),
+								accessorKey: 'price',
+								cell: (cellProps) => {
+									return conditionalRender(
 										cellProps.row.original.price,
 										<Currency.Price
 											price={cellProps.row.original.price!}
@@ -172,23 +156,21 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 										/>
 									)
 								},
-								width: 198,
-								sortable: true,
-								sortType: useMemo(
-									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-										const rowOne = rowA.original.price ?? ZERO_WEI
-										const rowTwo = rowB.original.price ?? ZERO_WEI
-										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
-									},
-									[]
-								),
+								size: 198,
+								enableSorting: true,
+								sortingFn: (rowA, rowB) => {
+									const rowOne = rowA.original.price ?? ZERO_WEI
+									const rowTwo = rowB.original.price ?? ZERO_WEI
+									return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
+								},
 							},
 							{
-								Header: <div>{t('dashboard.overview.synth-balances-table.daily-change')}</div>,
-								accessor: 'priceChange',
-								// @ts-expect-error
-								Cell: (cellProps: CellProps<Cell>) => {
-									return conditionalRender<Cell['priceChange']>(
+								header: () => (
+									<div>{t('dashboard.overview.synth-balances-table.daily-change')}</div>
+								),
+								accessorKey: 'priceChange',
+								cell: (cellProps) => {
+									return conditionalRender(
 										cellProps.row.original.priceChange,
 										<ChangePercent
 											value={cellProps.row.original.priceChange ?? ZERO_WEI}
@@ -197,24 +179,20 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 										/>
 									)
 								},
-								sortable: true,
-								sortType: useMemo(
-									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-										const rowOne = rowA.original.priceChange ?? ZERO_WEI
-										const rowTwo = rowB.original.priceChange ?? ZERO_WEI
+								enableSorting: true,
+								sortingFn: (rowA, rowB) => {
+									const rowOne = rowA.original.priceChange ?? ZERO_WEI
+									const rowTwo = rowB.original.priceChange ?? ZERO_WEI
 
-										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
-									},
-									[]
-								),
-								width: 105,
+									return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
+								},
+								size: 105,
 							},
 						]}
 					/>
 				</div>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				{/*@ts-expect-error*/}
 				<StyledMobileTable
 					data={data}
 					noResultsMessage={
@@ -224,14 +202,14 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 					}
 					columns={[
 						{
-							Header: () => (
+							header: () => (
 								<div>
 									<div>Market</div>
 									<div>Oracle</div>
 								</div>
 							),
-							accessor: 'market',
-							Cell: (cellProps: CellProps<Cell>) => {
+							accessorKey: 'market',
+							cell: (cellProps) => {
 								return (
 									<div>
 										<MarketContainer>
@@ -249,17 +227,17 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 									</div>
 								)
 							},
-							width: 130,
+							size: 130,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<div>
 									<div>Amount</div>
 									<div>USD Value</div>
 								</div>
 							),
-							accessor: 'amount',
-							Cell: (cellProps: CellProps<Cell>) => {
+							accessorKey: 'amount',
+							cell: (cellProps) => {
 								return (
 									<div>
 										<div>{formatNumber(cellProps.row.original.balance ?? 0)}</div>
@@ -267,17 +245,17 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 									</div>
 								)
 							},
-							width: 120,
+							size: 120,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<div>
 									<div>24H Change</div>
 								</div>
 							),
-							accessor: 'priceChange',
-							Cell: (cellProps: CellProps<Cell>) => {
-								return conditionalRender<Cell['priceChange']>(
+							accessorKey: 'priceChange',
+							cell: (cellProps) => {
+								return conditionalRender(
 									cellProps.row.original.priceChange,
 									<ChangePercent
 										value={cellProps.row.original.priceChange ?? ZERO_WEI}
@@ -286,14 +264,14 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({ exchangeTokens }) => 
 									/>
 								)
 							},
-							sortable: true,
-							sortType: (rowA: Row<Cell>, rowB: Row<Cell>) => {
+							enableSorting: true,
+							sortingFn: (rowA, rowB) => {
 								const rowOne = rowA.original.priceChange ?? ZERO_WEI
 								const rowTwo = rowB.original.priceChange ?? ZERO_WEI
 
 								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
 							},
-							width: 120,
+							size: 120,
 						},
 					]}
 				/>
@@ -348,6 +326,6 @@ const StyledMobileTable = styled(Table)`
 	border-top: none;
 	border-right: none;
 	border-left: none;
-`
+` as typeof Table
 
 export default SynthBalancesTable

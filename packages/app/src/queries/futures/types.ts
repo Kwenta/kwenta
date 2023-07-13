@@ -18,7 +18,11 @@ export type AccountStat = {
 	totalTrades: number
 	totalVolume: Wei
 	liquidations: number
-	pnl: Wei
+	pnl: number
+	pnl_pct: number
+	volume: number
+	trades: number
+	tier: 'gold' | 'silver' | 'bronze'
 }
 
 export type FuturesCumulativeStats = {
