@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatBytes32String, parseBytes32String } from '@ethersproject/strings'
 import Wei, { wei } from '@synthetixio/wei'
-import { defaultAbiCoder } from 'ethers/lib/utils.js'
+import { defaultAbiCoder, formatEther } from 'ethers/lib/utils.js'
 
 import {
 	APP_MAX_LEVERAGE,
@@ -580,6 +580,22 @@ export const encodeConditionalOrderParams = (
 			reduceOnly,
 		]
 	)
+}
+
+export const calculateTotalFees = (totalFees: Pick<FuturesAggregateStatResult, 'feesKwenta'>[]) => {
+	const fees = totalFees
+		.map(({ feesKwenta }) => formatEther(feesKwenta.toString()))
+		.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI)
+	return fees ?? ZERO_WEI
+}
+
+export const calculateFeesForAccount = (
+	feesForAccount: Pick<FuturesTradeResult, 'feesPaid' | 'keeperFeesPaid'>[]
+) => {
+	const fees = feesForAccount
+		.map((trade) => formatEther(trade.feesPaid.sub(trade.keeperFeesPaid).toString()))
+		.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI)
+	return fees ?? ZERO_WEI
 }
 
 export const encodeSubmitOffchainOrderParams = (

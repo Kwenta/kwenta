@@ -1,5 +1,5 @@
 import { FC, memo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { Body } from 'components/Text'
 
@@ -8,18 +8,35 @@ type CheckboxProps = {
 	label: string
 	checked: boolean
 	checkSide?: 'left' | 'right'
+	variant?: 'item' | 'table'
 	onChange: () => void
 }
 
 export const Checkbox: FC<CheckboxProps> = memo(
-	({ id, label, checked, onChange, checkSide = 'left', ...props }) => (
+	({ id, label, checked, onChange, checkSide = 'left', variant = 'item', ...props }) => (
 		<CheckboxContainer>
 			{checkSide === 'left' && (
-				<Input type="checkbox" id={id} name={id} checked={checked} onChange={onChange} {...props} />
+				<Input
+					type="checkbox"
+					id={id}
+					name={id}
+					checked={checked}
+					onChange={onChange}
+					variant={variant}
+					{...props}
+				/>
 			)}
 			<Label htmlFor={id}>{<Body color="secondary">{label}</Body>}</Label>
 			{checkSide === 'right' && (
-				<Input type="checkbox" id={id} name={id} checked={checked} onChange={onChange} {...props} />
+				<Input
+					type="checkbox"
+					id={id}
+					name={id}
+					checked={checked}
+					onChange={onChange}
+					variant={variant}
+					{...props}
+				/>
 			)}
 		</CheckboxContainer>
 	)
@@ -34,7 +51,7 @@ const CheckboxContainer = styled.div`
 	gap: 8px;
 `
 
-const Input = styled.input`
+const Input = styled.input<{ variant: 'item' | 'table' }>`
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	-o-appearance: none;
@@ -66,9 +83,27 @@ const Input = styled.input`
 		box-shadow: inset 1em 1em var(--form-control-color);
 		background-color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 	}
+
 	&:checked::before {
 		transform: scale(1);
 	}
+
+	${(props) =>
+		props.variant === 'table' &&
+		css`
+			background-color: ${(props) => props.theme.colors.selectedTheme.newTheme.checkBox.background};
+			width: 13px;
+			height: 13px;
+			border-radius: 4px;
+
+			&::before {
+				clip-path: none;
+			}
+			&:checked::before {
+				background-color: ${props.theme.colors.selectedTheme.newTheme.checkBox.checked};
+				border-radius: 4px;
+			}
+		`}
 `
 
 const Label = styled.label`

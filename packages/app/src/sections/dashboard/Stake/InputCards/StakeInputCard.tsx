@@ -1,20 +1,22 @@
 import { wei } from '@synthetixio/wei'
 import _ from 'lodash'
-import { FC, useCallback, useMemo } from 'react'
+import { FC, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import StakeCard from 'components/StakeCard'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { approveKwentaToken } from 'state/staking/actions'
-import { stakeKwenta, unstakeKwenta } from 'state/staking/actions'
+import { approveKwentaToken, stakeKwentaV2, unstakeKwentaV2 } from 'state/staking/actions'
 import {
-	selectIsKwentaTokenApproved,
+	selectCanStakeKwenta,
+	selectCanUnstakeKwenta,
+	selectIsApprovingKwenta,
+	selectIsKwentaTokenApprovedV2,
 	selectIsStakedKwenta,
 	selectIsStakingKwenta,
 	selectIsUnstakedKwenta,
 	selectIsUnstakingKwenta,
 	selectKwentaBalance,
-	selectStakedKwentaBalance,
+	selectStakedKwentaBalanceV2,
 } from 'state/staking/selectors'
 
 const StakeInputCard: FC = () => {
@@ -22,38 +24,33 @@ const StakeInputCard: FC = () => {
 	const dispatch = useAppDispatch()
 
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
-	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved)
-	const isStakingKwenta = useAppSelector(selectIsStakingKwenta)
-	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
+	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApprovedV2)
 	const isStakedKwenta = useAppSelector(selectIsStakedKwenta)
 	const isUnstakedKwenta = useAppSelector(selectIsUnstakedKwenta)
+	const stakeEnabled = useAppSelector(selectCanStakeKwenta)
+	const unstakeEnabled = useAppSelector(selectCanUnstakeKwenta)
+	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
+	const isStakingKwenta = useAppSelector(selectIsStakingKwenta)
+	const isApprovingKwenta = useAppSelector(selectIsApprovingKwenta)
 
 	const handleApprove = useCallback(() => {
-		dispatch(approveKwentaToken('kwenta'))
+		dispatch(approveKwentaToken('kwentaStakingV2'))
 	}, [dispatch])
 
 	const handleStakeKwenta = useCallback(
 		(amount: string) => {
-			dispatch(stakeKwenta(wei(amount).toBN()))
+			dispatch(stakeKwentaV2(wei(amount).toBN()))
 		},
 		[dispatch]
 	)
 
 	const handleUnstakeKwenta = useCallback(
 		(amount: string) => {
-			dispatch(unstakeKwenta(wei(amount).toBN()))
+			dispatch(unstakeKwentaV2(wei(amount).toBN()))
 		},
 		[dispatch]
 	)
-
-	const stakeEnabled = useMemo(() => {
-		return kwentaBalance.gt(0) && !isStakingKwenta
-	}, [kwentaBalance, isStakingKwenta])
-
-	const unstakeEnabled = useMemo(() => {
-		return stakedKwentaBalance.gt(0) && !isUnstakingKwenta
-	}, [stakedKwentaBalance, isUnstakingKwenta])
 
 	return (
 		<StakeCard
@@ -68,6 +65,9 @@ const StakeInputCard: FC = () => {
 			isUnstaked={isUnstakedKwenta}
 			isApproved={isKwentaTokenApproved}
 			onApprove={handleApprove}
+			isStaking={isStakingKwenta}
+			isUnstaking={isUnstakingKwenta}
+			isApproving={isApprovingKwenta}
 		/>
 	)
 }

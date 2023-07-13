@@ -21,11 +21,8 @@ import {
 	claimMultipleAllRewards,
 	claimMultipleOpRewards,
 	claimMultipleSnxOpRewards,
-	fetchClaimableRewards,
-	fetchStakingData,
 } from 'state/staking/actions'
 import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors'
-import { selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
 
 const BalanceActions: FC = () => {
@@ -33,7 +30,6 @@ const BalanceActions: FC = () => {
 	const dispatch = useAppDispatch()
 	const theme = useTheme()
 	const router = useRouter()
-	const walletAddress = useAppSelector(selectWallet)
 	const opPrice = useAppSelector(selectOpPrice)
 	const kwentaPrice = useAppSelector(selectKwentaPrice)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
@@ -60,14 +56,6 @@ const BalanceActions: FC = () => {
 	const handleClaimSnxOp = useCallback(() => {
 		dispatch(claimMultipleSnxOpRewards())
 	}, [dispatch])
-
-	useEffect(() => {
-		if (!!walletAddress) {
-			dispatch(fetchStakingData()).then(() => {
-				dispatch(fetchClaimableRewards())
-			})
-		}
-	}, [dispatch, walletAddress])
 
 	const claimDisabledAll = useMemo(
 		() => kwentaRewards.add(opRewards).add(snxOpRewards).lte(0),
