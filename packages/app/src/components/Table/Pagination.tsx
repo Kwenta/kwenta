@@ -86,7 +86,7 @@ const PageInfo = styled.span`
 
 const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 	grid-template-columns: auto 1fr auto;
-	padding: ${(props) => (props.compact ? '10px' : '15px')} 12px;
+	padding: ${(props) => (props.compact ? '5px' : '15p')} 12px;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 	justify-items: center;
@@ -100,6 +100,7 @@ const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 const ArrowButton = styled.button`
 	${resetButtonCSS};
 	padding: 4px;
+	padding-bottom: 0px;
 	&[disabled] {
 		cursor: default;
 		opacity: 0.5;

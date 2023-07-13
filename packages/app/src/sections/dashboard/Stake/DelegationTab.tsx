@@ -1,12 +1,11 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import Button from 'components/Button'
 import { Checkbox } from 'components/Checkbox'
 import Input from 'components/Input/Input'
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex'
-import { SplitContainer } from 'components/layout/grid'
 import Table, { TableCellHead, TableHeader, TableNoResults } from 'components/Table'
 import { TableCell } from 'components/Table/TableBodyRow'
 import { Body, Heading } from 'components/Text'
@@ -68,7 +67,7 @@ const DelegationTab = () => {
 	}, [])
 
 	return (
-		<SplitContainer>
+		<DelegationContainer>
 			<CardGridContainer>
 				<FlexDivCol rowGap="5px">
 					<StyledHeading variant="h4">{t('dashboard.stake.tabs.delegate.title')}</StyledHeading>
@@ -103,6 +102,7 @@ const DelegationTab = () => {
 						highlightRowsOnHover
 						compactPagination
 						pageSize={3}
+						onTableRowClick={(row) => handleOnChange(row.index)}
 						columnsDeps={columnsDeps}
 						noResultsMessage={
 							<TableNoResults>{t('dashboard.stake.tabs.delegate.no-result')}</TableNoResults>
@@ -141,7 +141,7 @@ const DelegationTab = () => {
 								accessorKey: 'delegatedAddress',
 								size: 360,
 								enableSorting: false,
-								cell: (cellProps: any) => <TableCell>{cellProps.row.original.address}</TableCell>,
+								cell: (cellProps) => <TableCell>{cellProps.row.original.address}</TableCell>,
 							},
 						]}
 					/>
@@ -160,9 +160,21 @@ const DelegationTab = () => {
 					</Button>
 				</FlexDivRow>
 			</CardGridContainer>
-		</SplitContainer>
+		</DelegationContainer>
 	)
 }
+
+const DelegationContainer = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 15px;
+
+	${media.lessThan('lg')`
+		display: grid;
+		grid-template-columns: 1fr;
+		row-gap: 25px;
+	`}
+`
 
 const SearchInput = styled(Input)`
 	position: relative;
@@ -197,26 +209,43 @@ const SearchBarContainer = styled.div`
 `
 
 const TableContainer = styled.div`
-	padding-top: 30px;
-	padding-bottom: 30px;
+	${media.lessThan('sm')`
+		max-width: 310px;
+	`}
+`
+
+const mobileTableStyle = css`
+	${media.lessThan('sm')`
+		font-size: 11px;
+		&:first-child {
+			padding-left: 10px;
+		}
+		&:last-child {
+			padding-left: 4px;
+		}
+	`}
 `
 
 const StyledTable = styled(Table)`
 	width: 100%;
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
-	border-radius: 15px;
+	border-radius: 8px;
+
 	${TableCell} {
 		font-size: 12px;
 		font-family: ${(props) => props.theme.fonts.regular};
 		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-		height: 20px;
+		height: 16px;
+		${mobileTableStyle}
 	}
+
 	${TableCellHead} {
 		padding-left: 18px;
-		height: 35px;
+		height: 28px;
+		${mobileTableStyle}
 	}
-`
+` as typeof Table
 
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
@@ -228,8 +257,10 @@ const CardGridContainer = styled(FlexDivCol)`
 	border-radius: 15px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 	justify-content: space-between;
+	row-gap: 50px;
 	${media.lessThan('lg')`
 		justify-content: flex-start;
+		row-gap: 25px;
 	`}
 `
 
