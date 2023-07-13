@@ -41,7 +41,7 @@ const BalanceActions: FC = () => {
 	const { ref } = useClickOutside(() => setOpen(false))
 
 	const goToStaking = useCallback(() => {
-		router.push(ROUTES.Dashboard.TradingRewards)
+		router.push(ROUTES.Dashboard.Stake)
 		setOpen(false)
 	}, [router])
 
