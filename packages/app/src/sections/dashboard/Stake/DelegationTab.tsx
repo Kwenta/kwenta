@@ -21,24 +21,14 @@ const DelegationTab = () => {
 	const dispatch = useAppDispatch()
 	const isApprovingOperator = useAppSelector(selectIsApprovingOperator)
 	const [delegateAction, setDelegateAction] = useState<DelegateActions>('approve')
-
+	const [delegatedAddress, setdelegatedAddress] = useState('')
 	// TODO: Replace with real data
-	const data = useMemo(
-		() => [
-			{
-				address: '0xC2ecD777d06FFDF8B3179286BEabF52B67E9d991',
-			},
-			{
-				address: '0x425109d8900Bdb1e7eefb60Bc6e73E60574e0615',
-			},
-		],
-		[]
-	)
+	const [data, setData] = useState<Record<string, string>[]>([])
 
 	const [checkedState, setCheckedState] = useState(data.map((_) => false))
-	const [delegatedAddress, setdelegatedAddress] = useState('')
+	const columnsDeps = useMemo(() => [checkedState], [checkedState])
 
-	const handleOnChange = useCallback(
+	const handleOnSelectedRow = useCallback(
 		(position: number) => {
 			setCheckedState([
 				...checkedState.map((_, index) => (index === position ? !checkedState[position] : false)),
@@ -47,9 +37,7 @@ const DelegationTab = () => {
 		[checkedState]
 	)
 
-	const columnsDeps = useMemo(() => [checkedState], [checkedState])
-
-	const onChange = useCallback((text: string) => {
+	const onInputChange = useCallback((text: string) => {
 		setdelegatedAddress(text.toLowerCase().trim())
 	}, [])
 
@@ -59,9 +47,22 @@ const DelegationTab = () => {
 			dispatch(
 				approveOperator({ delegatedAddress, isApproval: action === 'approve' ? true : false })
 			)
-			setCheckedState(data.map((_) => false))
+			// TODO: Only for testing
+			if (action === 'approve') {
+				setData((data) => [
+					...data,
+					{
+						address: delegatedAddress,
+					},
+				])
+				setCheckedState((data) => data.map((_) => false))
+			} else {
+				setData((data) => data.filter((_) => _.address !== delegatedAddress))
+				setCheckedState((data) => data.map((_) => false))
+			}
+			setCheckedState((data) => data.map((_) => false))
 		},
-		[data, dispatch]
+		[dispatch]
 	)
 
 	return (
@@ -78,7 +79,7 @@ const DelegationTab = () => {
 							<AddressInput
 								autoFocus={true}
 								value={delegatedAddress}
-								onChange={(e) => onChange(e.target.value)}
+								onChange={(e) => onInputChange(e.target.value)}
 								placeholder="Type the address..."
 							/>
 						</InputBar>
@@ -107,7 +108,7 @@ const DelegationTab = () => {
 						highlightRowsOnHover
 						compactPagination
 						pageSize={3}
-						onTableRowClick={(row) => handleOnChange(row.index)}
+						onTableRowClick={(row) => handleOnSelectedRow(row.index)}
 						columnsDeps={columnsDeps}
 						noResultsMessage={
 							<TableNoResults>{t('dashboard.stake.tabs.delegate.no-result')}</TableNoResults>
