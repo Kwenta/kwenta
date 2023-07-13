@@ -694,7 +694,8 @@
 					"manage": "Manage",
 					"manage-copy": "Manage delegated addresses",
 					"address": "Address",
-					"revoke": "Revoke"
+					"revoke": "Revoke",
+					"no-result": "You have no delegated addresses"
 				}
 			}
 		},

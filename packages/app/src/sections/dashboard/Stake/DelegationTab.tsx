@@ -7,7 +7,7 @@ import { Checkbox } from 'components/Checkbox'
 import Input from 'components/Input/Input'
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex'
 import { SplitContainer } from 'components/layout/grid'
-import Table, { TableCellHead, TableHeader } from 'components/Table'
+import Table, { TableCellHead, TableHeader, TableNoResults } from 'components/Table'
 import { TableCell } from 'components/Table/TableBodyRow'
 import { Body, Heading } from 'components/Text'
 import media from 'styles/media'
@@ -99,10 +99,14 @@ const DelegationTab = () => {
 				<TableContainer>
 					<StyledTable
 						data={data}
+						showPagination
+						highlightRowsOnHover
 						compactPagination
 						pageSize={3}
-						showPagination
 						columnsDeps={columnsDeps}
+						noResultsMessage={
+							<TableNoResults>{t('dashboard.stake.tabs.delegate.no-result')}</TableNoResults>
+						}
 						columns={[
 							{
 								header: () => (
@@ -134,12 +138,10 @@ const DelegationTab = () => {
 								header: () => (
 									<TableHeader>{t('dashboard.stake.tabs.delegate.address')}</TableHeader>
 								),
-								cell: (cellProps) => (
-									<TableCell>{cellProps.row.original.address as string}</TableCell>
-								),
-								accessorKey: 'address',
+								accessorKey: 'delegatedAddress',
 								size: 360,
 								enableSorting: false,
+								cell: (cellProps: any) => <TableCell>{cellProps.row.original.address}</TableCell>,
 							},
 						]}
 					/>
