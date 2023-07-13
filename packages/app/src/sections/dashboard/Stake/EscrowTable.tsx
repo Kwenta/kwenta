@@ -161,9 +161,7 @@ const EscrowTable = () => {
 					CustomPagination={StakingPagination}
 					paginationExtra={<EscrowStatsContainer />}
 					noResultsMessage={
-						<TableNoResults $variant="staking">
-							{t('dashboard.stake.tabs.escrow.no-entries')}
-						</TableNoResults>
+						<TableNoResults>{t('dashboard.stake.tabs.escrow.no-entries')}</TableNoResults>
 					}
 					columns={[
 						{
@@ -281,9 +279,7 @@ const EscrowTable = () => {
 					columnsDeps={columnsDeps}
 					paginationExtra={<EscrowStatsContainer />}
 					noResultsMessage={
-						<TableNoResults $variant="staking">
-							{t('dashboard.stake.tabs.escrow.no-entries')}
-						</TableNoResults>
+						<TableNoResults>{t('dashboard.stake.tabs.escrow.no-entries')}</TableNoResults>
 					}
 					columns={[
 						{
