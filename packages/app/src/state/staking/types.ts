@@ -34,6 +34,7 @@ export type StakingState = {
 	claimableKwentaRewards: ClaimParams[][]
 	claimableOpRewards: ClaimParams[]
 	claimableSnxOpRewards: ClaimParams[]
+	approvedOperators: string[]
 	selectedEpoch?: number
 	stakingMigrationCompleted: boolean
 	stakeStatus: FetchStatus

@@ -11,7 +11,7 @@ import { TableCell } from 'components/Table/TableBodyRow'
 import { Body, Heading } from 'components/Text'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { approveOperator } from 'state/staking/actions'
-import { selectIsApprovingOperator } from 'state/staking/selectors'
+import { selectApprovedOperators, selectIsApprovingOperator } from 'state/staking/selectors'
 import media from 'styles/media'
 
 type DelegateActions = 'approve' | 'revoke'
@@ -20,10 +20,15 @@ const DelegationTab = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 	const isApprovingOperator = useAppSelector(selectIsApprovingOperator)
+	const approvedOperators = useAppSelector(selectApprovedOperators)
+	// eslint-disable-next-line no-console
+	console.log(`approvedOperators: ${approvedOperators}`)
 	const [delegateAction, setDelegateAction] = useState<DelegateActions>('approve')
 	const [delegatedAddress, setdelegatedAddress] = useState('')
 	// TODO: Replace with real data
-	const [data, setData] = useState<Record<string, string>[]>([])
+	const [data, setData] = useState<Record<string, string>[]>(
+		approvedOperators.map((o) => ({ address: o }))
+	)
 
 	const [checkedState, setCheckedState] = useState(data.map((_) => false))
 	const columnsDeps = useMemo(() => [checkedState], [checkedState])

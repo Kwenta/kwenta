@@ -323,3 +323,5 @@ export const selectIsClaimingAllRewards = createSelector(
 	(state: RootState) => state.staking.claimAllRewardsStatus,
 	(claimAllRewardsStatus) => claimAllRewardsStatus === FetchStatus.Loading
 )
+
+export const selectApprovedOperators = (state: RootState) => state.staking.approvedOperators ?? []

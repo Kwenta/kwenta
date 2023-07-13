@@ -128,6 +128,27 @@ export const approveOperator = createAsyncThunk<
 	}
 )
 
+export const fetchApprovedOperators = createAsyncThunk<{ operators: string[] }, void, ThunkConfig>(
+	'staking/fetchApprovedOperators',
+	async (_, { extra: { sdk } }) => {
+		try {
+			// const response = await sdk.kwentaToken.fetchApprovedOperators()
+			return {
+				operators: [
+					'0xF5cAD67a16Bb2db15bA76D665E62B2eB641de451',
+					'0xfA6390064efF628a91826f44Dab6685e4c1fF073',
+					'0xC2ecD777d06FFDF8B3179286BEabF52B67E9d991',
+				],
+			}
+			// eslint-disable-next-line no-unreachable
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch approved operators', err)
+			throw err
+		}
+	}
+)
+
 export const approveKwentaToken = createAsyncThunk<
 	void,
 	'kwenta' | 'vKwenta' | 'veKwenta' | 'kwentaStakingV2',
@@ -240,6 +261,7 @@ export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
 		dispatch(fetchEscrowData())
 		dispatch(fetchEscrowV2Data())
 		dispatch(fetchEstimatedRewards())
+		dispatch(fetchApprovedOperators())
 	}
 )
 
