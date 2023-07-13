@@ -696,7 +696,7 @@
 					"address": "Address",
 					"revoke": "Revoke",
 					"no-result": "You have no delegated addresses",
-					"warning": "This is a Delegation Warning"
+					"warning": "Coming soon"
 				}
 			}
 		},
