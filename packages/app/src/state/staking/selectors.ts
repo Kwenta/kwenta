@@ -3,6 +3,7 @@ import { toWei } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
 
+import { STAKING_DISABLED } from 'constants/ui'
 import { getApy, getEpochDetails, parseEpochData } from 'queries/staking/utils'
 import { RootState } from 'state/store'
 import { FetchStatus } from 'state/types'
@@ -234,7 +235,7 @@ export const selectIsTimeLeftInCooldown = createSelector(
 export const selectCanStakeKwenta = createSelector(
 	selectKwentaBalance,
 	selectIsStakingKwenta,
-	(kwentaBalance, isStakingKwenta) => kwentaBalance.gt(0) && !isStakingKwenta
+	(kwentaBalance, isStakingKwenta) => kwentaBalance.gt(0) && !isStakingKwenta && !STAKING_DISABLED
 )
 
 export const selectCanUnstakeKwenta = createSelector(
@@ -242,14 +243,14 @@ export const selectCanUnstakeKwenta = createSelector(
 	selectIsUnstakingKwenta,
 	selectIsTimeLeftInCooldown,
 	(stakedKwentaBalance, isUnstakingKwenta, isTimeLeftInCooldown) =>
-		stakedKwentaBalance.gt(0) && !isUnstakingKwenta && !isTimeLeftInCooldown
+		stakedKwentaBalance.gt(0) && !isUnstakingKwenta && !isTimeLeftInCooldown && !STAKING_DISABLED
 )
 
 export const selectCanStakeEscrowedKwenta = createSelector(
 	selectUnstakedEscrowedKwentaBalance,
 	selectIsStakingEscrowedKwenta,
 	(unstakedEscrowedKwentaBalance, isStakingEscrowedKwenta) => {
-		return unstakedEscrowedKwentaBalance.gt(0) && !isStakingEscrowedKwenta
+		return unstakedEscrowedKwentaBalance.gt(0) && !isStakingEscrowedKwenta && !STAKING_DISABLED
 	}
 )
 
@@ -258,7 +259,12 @@ export const selectCanUnstakeEscrowedKwenta = createSelector(
 	selectIsUnstakingEscrowedKwenta,
 	selectIsTimeLeftInCooldown,
 	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta, isTimeLeftInCooldown) => {
-		return stakedEscrowedKwentaBalance.gt(0) && !isUnstakingEscrowedKwenta && !isTimeLeftInCooldown
+		return (
+			stakedEscrowedKwentaBalance.gt(0) &&
+			!isUnstakingEscrowedKwenta &&
+			!isTimeLeftInCooldown &&
+			!STAKING_DISABLED
+		)
 	}
 )
 
