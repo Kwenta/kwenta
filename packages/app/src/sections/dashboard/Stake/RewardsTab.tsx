@@ -14,6 +14,7 @@ import Select, { DropdownIndicator, IndicatorSeparator } from 'components/Select
 import { Body, Heading } from 'components/Text'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
+import { STAKING_DISABLED } from 'constants/ui'
 import useIsL2 from 'hooks/useIsL2'
 import { TradingRewardProps } from 'queries/staking/utils'
 import { StakingCard } from 'sections/dashboard/Stake/card'
@@ -55,7 +56,10 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 	}, [dispatch])
 
 	const claimDisabledAll = useMemo(
-		() => kwentaRewards.add(opRewards).add(snxOpRewards).eq(0) || isClaimingAllRewards,
+		() =>
+			kwentaRewards.add(opRewards).add(snxOpRewards).eq(0) ||
+			isClaimingAllRewards ||
+			STAKING_DISABLED,
 		[kwentaRewards, opRewards, snxOpRewards, isClaimingAllRewards]
 	)
 

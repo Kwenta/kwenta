@@ -14,3 +14,5 @@ export enum zIndex {
 	DRAWER = 65,
 	MARKET_DROPDOWN = 40,
 }
+
+export const STAKING_DISABLED = true

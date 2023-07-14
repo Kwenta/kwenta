@@ -14,6 +14,7 @@ import Table, { TableNoResults } from 'components/Table'
 import { TableCellHead, TableHeader } from 'components/Table'
 import StakingPagination from 'components/Table/StakingPagination'
 import { Body } from 'components/Text'
+import { STAKING_DISABLED } from 'constants/ui'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewards, vestEscrowedRewardsV2 } from 'state/staking/actions'
 import { setSelectedEscrowVersion } from 'state/staking/reducer'
@@ -80,7 +81,7 @@ const EscrowTable = () => {
 
 	const { ids, vestEnabled } = useMemo(() => {
 		const ids = escrowData.filter((_, i) => !!checkedState[i]).map((d) => d.id)
-		const vestEnabled = ids.length > 0
+		const vestEnabled = ids.length > 0 && !STAKING_DISABLED
 
 		return { ids, vestEnabled }
 	}, [escrowData, checkedState])
@@ -231,7 +232,7 @@ const EscrowTable = () => {
 							),
 							cell: (cellProps) => (
 								<TableCell>
-									{formatNumber(cellProps.row.original.amount, { minDecimals: 4 })}
+									{formatNumber(cellProps.row.original.vestable, { minDecimals: 4 })}
 								</TableCell>
 							),
 							accessorKey: 'immediatelyVestable',

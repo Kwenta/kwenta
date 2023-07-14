@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { memo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 
@@ -48,14 +49,21 @@ const Banner = memo(() => {
 	const dispatch = useAppDispatch()
 	const showBanner = useAppSelector(selectShowBanner)
 	const storedTime: number = localStore.get('bannerIsClicked') || 0
+	const router = useRouter()
 
 	useEffect(
 		() => {
 			const currentTime = new Date().getTime()
-			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED))
+			dispatch(
+				setShowBanner(
+					currentTime - storedTime >= BANNER_WAITING_TIME &&
+						BANNER_ENABLED &&
+						router.pathname.includes('staking')
+				)
+			)
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[storedTime]
+		[storedTime, router.pathname]
 	)
 
 	const handleDismiss = useCallback(
