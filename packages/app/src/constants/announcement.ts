@@ -7,7 +7,7 @@ export const BANNER_ENABLED = true
 export const BANNER_LINK_URL =
 	'https://mirror.xyz/kwenta.eth/Z7hEjkIUDwSXI1VcpG6Z90cAufXWeoC6Gg-TWcIr6jQ'
 // Sets the text displayed on the home page banner
-export const BANNER_TEXT = 'The staking rewards contracts are currently paused.'
+export const BANNER_TEXT = 'The staking contracts are currently paused.'
 // Sets the height of the banner component on desktop
 export const BANNER_HEIGHT_DESKTOP = 50
 // Sets the height of the banner component on mobile
