@@ -1,8 +1,7 @@
 import { MILLISECONDS_PER_DAY } from '@kwenta/sdk/constants'
 
 // Shows or hides the home page banner entirely when set to true/false
-export const BANNER_ENABLED =
-	typeof window !== 'undefined' && window.location.href.includes('/dashboard/staking')
+export const BANNER_ENABLED = true
 // Sets the link destination for the banner component, or renders the banner as
 // plain, un-clickable text if set to a falsey value (`false`, `null`, '', etc...)
 export const BANNER_LINK_URL =
