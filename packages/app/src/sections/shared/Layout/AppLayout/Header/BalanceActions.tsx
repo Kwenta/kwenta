@@ -24,6 +24,7 @@ import {
 } from 'state/staking/actions'
 import { selectKwentaRewards, selectOpRewards, selectSnxOpRewards } from 'state/staking/selectors'
 import media from 'styles/media'
+import { EXTERNAL_LINKS } from 'constants/links'
 
 const BalanceActions: FC = () => {
 	const { t } = useTranslation()
@@ -165,7 +166,9 @@ const BalanceActions: FC = () => {
 								size="large"
 								roundedCorner={false}
 								weight="bold"
-								onClick={() => router.push(ROUTES.Dashboard.Rewards)}
+								onClick={() =>
+									window.open(EXTERNAL_LINKS.Docs.RewardsGuide, '_blank', 'noopener noreferrer')
+								}
 							>
 								{t('dashboard.rewards.learn-more')}
 							</Pill>
