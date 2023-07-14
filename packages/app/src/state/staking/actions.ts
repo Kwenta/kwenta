@@ -8,8 +8,6 @@ import { monitorTransaction } from 'contexts/RelayerContext'
 import { FetchStatus, ThunkConfig } from 'state/types'
 import logError from 'utils/logError'
 
-import { setStakingMigrationCompleted } from './reducer'
-
 export const fetchStakingData = createAsyncThunk<
 	{
 		rewardEscrowBalance: string
@@ -293,7 +291,6 @@ export const claimStakingRewardsV2 = createAsyncThunk<void, void, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
-				dispatch(setStakingMigrationCompleted(true))
 				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {

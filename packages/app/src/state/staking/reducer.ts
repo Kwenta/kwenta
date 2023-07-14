@@ -69,8 +69,6 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	claimableKwentaRewards: [],
 	claimableOpRewards: [],
 	claimableSnxOpRewards: [],
-	stakingMigrationCompleted: true,
-	stakingMigrationRegistered: false,
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
 	stakeEscrowedStatus: FetchStatus.Idle,
@@ -127,12 +125,6 @@ const stakingSlice = createSlice({
 		},
 		setSelectedEpoch: (state, action) => {
 			state.selectedEpoch = action.payload
-		},
-		setStakingMigrationCompleted: (state, action) => {
-			state.stakingMigrationCompleted = action.payload
-		},
-		setStakingMigrationRegistered: (state, action) => {
-			state.stakingMigrationRegistered = action.payload
 		},
 		setSelectedEscrowVersion: (state, action) => {
 			state.selectedEscrowVersion = action.payload
@@ -299,9 +291,4 @@ const stakingSlice = createSlice({
 })
 
 export default stakingSlice.reducer
-export const {
-	setSelectedEpoch,
-	setStakingMigrationCompleted,
-	setSelectedEscrowVersion,
-	setStakingMigrationRegistered,
-} = stakingSlice.actions
+export const { setSelectedEpoch, setSelectedEscrowVersion } = stakingSlice.actions
