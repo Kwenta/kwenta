@@ -304,8 +304,9 @@ export const selectStakingV2Claimed = createSelector(
 	selectEscrowedKwentaBalanceV2,
 	selectTotalVestedAccountBalanceV2,
 	(claimableBalanceV2, escrowedKwentaBalanceV2, totalVestedAccountBalanceV2) =>
-		claimableBalanceV2 &&
-		(escrowedKwentaBalanceV2.gt(ZERO_WEI) || totalVestedAccountBalanceV2.gt(ZERO_WEI))
+		(claimableBalanceV2.gt(ZERO_WEI) &&
+			(escrowedKwentaBalanceV2.gt(ZERO_WEI) || totalVestedAccountBalanceV2.gt(ZERO_WEI))) ||
+		claimableBalanceV2.eq(ZERO_WEI)
 )
 
 export const selectStakingMigrationRequired = createSelector(
