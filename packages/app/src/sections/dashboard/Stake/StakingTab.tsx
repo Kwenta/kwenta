@@ -10,6 +10,7 @@ import { SplitContainer } from 'components/layout/grid'
 import { Body, Heading } from 'components/Text'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
+import { STAKING_DISABLED } from 'constants/ui'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimStakingRewardsV2, compoundRewards } from 'state/staking/actions'
@@ -136,7 +137,7 @@ const StakingTab = () => {
 						textTransform="uppercase"
 						isRounded
 						loading={isCompoundingReward}
-						disabled={claimableBalance.eq(0) || isCompoundingReward}
+						disabled={claimableBalance.eq(0) || isCompoundingReward || STAKING_DISABLED}
 						onClick={handleCompoundReward}
 					>
 						{t('dashboard.stake.tabs.staking.compound')}
@@ -147,7 +148,7 @@ const StakingTab = () => {
 						textTransform="uppercase"
 						isRounded
 						loading={isClaimingReward}
-						disabled={claimableBalance.eq(0) || isClaimingReward}
+						disabled={claimableBalance.eq(0) || isClaimingReward || STAKING_DISABLED}
 						onClick={handleGetReward}
 					>
 						{t('dashboard.stake.tabs.staking.claim')}

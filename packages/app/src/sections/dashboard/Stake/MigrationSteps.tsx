@@ -8,6 +8,7 @@ import Button from 'components/Button'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
+import { STAKING_DISABLED } from 'constants/ui'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimStakingRewards, unstakeKwenta } from 'state/staking/actions'
@@ -52,7 +53,7 @@ const MigrationSteps: FC = memo(() => {
 				value: formatNumber(claimableBalance, { suggestDecimals: true }),
 				buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
 				onClick: handleGetReward,
-				active: claimableBalance.gt(0),
+				active: claimableBalance.gt(0) && !STAKING_DISABLED,
 				loading: isClaimingReward,
 			},
 			{
