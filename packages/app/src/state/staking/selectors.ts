@@ -33,6 +33,11 @@ export const selectEscrowedKwentaBalanceV2 = createSelector(
 	toWei
 )
 
+export const selectTotalVestedAccountBalanceV2 = createSelector(
+	(state: RootState) => state.staking.v2.totalVestedAccountBalance,
+	toWei
+)
+
 export const selectStakedEscrowedKwentaBalance = createSelector(
 	(state: RootState) => state.staking.v1.stakedEscrowedKwentaBalance,
 	toWei
@@ -294,14 +299,21 @@ export const selectEscrowData = (state: RootState) => state.staking.v1.escrowDat
 
 export const selectEscrowV2Data = (state: RootState) => state.staking.v2.escrowData ?? []
 
-export const selectStakingMigrationCompleted = (state: RootState) =>
-	state.staking.stakingMigrationCompleted
+export const selectStakingV2Claimed = createSelector(
+	selectClaimableBalanceV2,
+	selectEscrowedKwentaBalanceV2,
+	selectTotalVestedAccountBalanceV2,
+	(claimableBalanceV2, escrowedKwentaBalanceV2, totalVestedAccountBalanceV2) =>
+		claimableBalanceV2 &&
+		(escrowedKwentaBalanceV2.gt(ZERO_WEI) || totalVestedAccountBalanceV2.gt(ZERO_WEI))
+)
 
 export const selectStakingMigrationRequired = createSelector(
 	selectClaimableBalance,
 	selectStakedKwentaBalance,
-	(claimableBalanceV1, stakedKwentaBalanceV1) =>
-		claimableBalanceV1.gt(ZERO_WEI) || stakedKwentaBalanceV1.gt(ZERO_WEI)
+	selectStakingV2Claimed,
+	(claimableBalanceV1, stakedKwentaBalanceV1, stakingV2Claimed) =>
+		claimableBalanceV1.gt(ZERO_WEI) || stakedKwentaBalanceV1.gt(ZERO_WEI) || !stakingV2Claimed
 )
 
 export const selectSelectedEscrowVersion = (state: RootState) =>

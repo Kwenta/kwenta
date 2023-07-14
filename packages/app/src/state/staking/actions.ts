@@ -8,6 +8,8 @@ import { monitorTransaction } from 'contexts/RelayerContext'
 import { FetchStatus, ThunkConfig } from 'state/types'
 import logError from 'utils/logError'
 
+import { setStakingMigrationCompleted } from './reducer'
+
 export const fetchStakingData = createAsyncThunk<
 	{
 		rewardEscrowBalance: string
@@ -75,6 +77,7 @@ export const fetchStakingV2Data = createAsyncThunk<
 		totalStakedBalance: string
 		stakedResetTime: number
 		kwentaStakingV2Allowance: string
+		totalVestedAccountBalance: string
 	},
 	void,
 	ThunkConfig
@@ -88,6 +91,7 @@ export const fetchStakingV2Data = createAsyncThunk<
 			totalStakedBalance,
 			stakedResetTime,
 			kwentaStakingV2Allowance,
+			totalVestedAccountBalance,
 		} = await sdk.kwentaToken.getStakingV2Data()
 
 		return {
@@ -98,6 +102,7 @@ export const fetchStakingV2Data = createAsyncThunk<
 			totalStakedBalance: totalStakedBalance.toString(),
 			stakedResetTime,
 			kwentaStakingV2Allowance: kwentaStakingV2Allowance.toString(),
+			totalVestedAccountBalance: totalVestedAccountBalance.toString(),
 		}
 	} catch (err) {
 		logError(err)
@@ -288,6 +293,7 @@ export const claimStakingRewardsV2 = createAsyncThunk<void, void, ThunkConfig>(
 			txHash: hash,
 			onTxConfirmed: () => {
 				dispatch({ type: 'staking/setGetRewardStatus', payload: FetchStatus.Success })
+				dispatch(setStakingMigrationCompleted(true))
 				dispatch(fetchStakeMigrateData())
 			},
 			onTxFailed: () => {

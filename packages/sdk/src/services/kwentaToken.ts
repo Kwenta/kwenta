@@ -208,6 +208,7 @@ export default class KwentaTokenService {
 			lastStakedTime,
 			cooldownPeriod,
 			kwentaStakingV2Allowance,
+			totalVestedAccountBalance,
 		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
 			RewardEscrowV2.escrowedBalanceOf(walletAddress),
 			KwentaStakingRewardsV2.nonEscrowedBalanceOf(walletAddress),
@@ -217,6 +218,7 @@ export default class KwentaTokenService {
 			KwentaStakingRewardsV2.userLastStakeTime(walletAddress),
 			KwentaStakingRewardsV2.cooldownPeriod(),
 			KwentaToken.allowance(walletAddress, KwentaStakingRewardsV2.address),
+			RewardEscrowV2.totalVestedAccountBalance(walletAddress),
 		])
 
 		return {
@@ -227,6 +229,7 @@ export default class KwentaTokenService {
 			totalStakedBalance: wei(totalStakedBalance),
 			stakedResetTime: Number(lastStakedTime) + Number(cooldownPeriod),
 			kwentaStakingV2Allowance: wei(kwentaStakingV2Allowance),
+			totalVestedAccountBalance: wei(totalVestedAccountBalance),
 		}
 	}
 

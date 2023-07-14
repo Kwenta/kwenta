@@ -51,6 +51,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 		stakedKwentaBalance: '0',
 		totalVestable: '0',
 		escrowData: [],
+		totalVestedAccountBalance: '0',
 	},
 	stakedResetTime: 0,
 	epochPeriod: 0,
@@ -69,6 +70,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	claimableOpRewards: [],
 	claimableSnxOpRewards: [],
 	stakingMigrationCompleted: true,
+	stakingMigrationRegistered: false,
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
 	stakeEscrowedStatus: FetchStatus.Idle,
@@ -129,6 +131,9 @@ const stakingSlice = createSlice({
 		setStakingMigrationCompleted: (state, action) => {
 			state.stakingMigrationCompleted = action.payload
 		},
+		setStakingMigrationRegistered: (state, action) => {
+			state.stakingMigrationRegistered = action.payload
+		},
 		setSelectedEscrowVersion: (state, action) => {
 			state.selectedEscrowVersion = action.payload
 		},
@@ -163,6 +168,7 @@ const stakingSlice = createSlice({
 			state.v2.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
 			state.v2.claimableBalance = action.payload.claimableBalance
 			state.v2.totalStakedBalance = action.payload.totalStakedBalance
+			state.v2.totalVestedAccountBalance = action.payload.totalVestedAccountBalance
 			state.kwentaStakingV2Allowance = action.payload.kwentaStakingV2Allowance
 			state.stakedResetTime = action.payload.stakedResetTime
 		})
@@ -293,5 +299,9 @@ const stakingSlice = createSlice({
 })
 
 export default stakingSlice.reducer
-export const { setSelectedEpoch, setStakingMigrationCompleted, setSelectedEscrowVersion } =
-	stakingSlice.actions
+export const {
+	setSelectedEpoch,
+	setStakingMigrationCompleted,
+	setSelectedEscrowVersion,
+	setStakingMigrationRegistered,
+} = stakingSlice.actions

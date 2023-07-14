@@ -10,6 +10,7 @@ export type VersionedStakeData = {
 	stakedKwentaBalance: string
 	totalVestable: string
 	escrowData: EscrowData<string>[]
+	totalVestedAccountBalance?: string
 }
 
 export type StakingState = {
@@ -36,6 +37,7 @@ export type StakingState = {
 	claimableSnxOpRewards: ClaimParams[]
 	selectedEpoch?: number
 	stakingMigrationCompleted: boolean
+	stakingMigrationRegistered: boolean
 	stakeStatus: FetchStatus
 	unstakeStatus: FetchStatus
 	stakeEscrowedStatus: FetchStatus
