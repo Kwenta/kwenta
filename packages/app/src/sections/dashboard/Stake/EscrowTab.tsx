@@ -12,6 +12,7 @@ import {
 	selectStakedEscrowedKwentaBalanceV2,
 	selectTotalVestable,
 	selectTotalVestableV2,
+	selectUnstakedEscrowedKwentaBalance,
 } from 'state/staking/selectors'
 import media from 'styles/media'
 
@@ -24,6 +25,7 @@ const EscrowTab = () => {
 	const apyV2 = useAppSelector(selectAPYV2)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalance)
 	const totalVestable = useAppSelector(selectTotalVestable)
 	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
 
@@ -58,6 +60,11 @@ const EscrowTab = () => {
 						value: formatNumber(stakedEscrowedKwentaBalance, { suggestDecimals: true }),
 					},
 					{
+						key: 'staking-v1-staked',
+						title: t('dashboard.stake.portfolio.escrow.unstaked'),
+						value: formatNumber(unstakedEscrowedKwentaBalance, { suggestDecimals: true }),
+					},
+					{
 						key: 'staking-v1-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
 						value: formatNumber(totalVestable, { suggestDecimals: true }),
@@ -72,6 +79,7 @@ const EscrowTab = () => {
 			t,
 			totalVestable,
 			totalVestableV2,
+			unstakedEscrowedKwentaBalance,
 		]
 	)
 
