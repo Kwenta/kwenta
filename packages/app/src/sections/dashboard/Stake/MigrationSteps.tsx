@@ -8,85 +8,37 @@ import Button from 'components/Button'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
-import { STAKING_DISABLED } from 'constants/ui'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { claimStakingRewards, unstakeKwenta } from 'state/staking/actions'
-import { setStakingMigrationCompleted } from 'state/staking/reducer'
-import {
-	selectClaimableBalance,
-	selectIsGettingReward,
-	selectIsUnstakingKwenta,
-	selectStakedKwentaBalance,
-	selectStakedKwentaBalanceV2,
-} from 'state/staking/selectors'
+import { unstakeKwenta } from 'state/staking/actions'
+import { selectIsUnstakingKwenta, selectStakedKwentaBalanceV2 } from 'state/staking/selectors'
 import media from 'styles/media'
 
 const MigrationSteps: FC = memo(() => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const claimableBalance = useAppSelector(selectClaimableBalance)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
 	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
-	const isClaimingReward = useAppSelector(selectIsGettingReward)
-
-	const handleGetReward = useCallback(() => {
-		dispatch(claimStakingRewards())
-	}, [dispatch])
 
 	const handleUnstakeKwenta = useCallback(
-		() => dispatch(unstakeKwenta(wei(stakedKwentaBalance).toBN())),
-		[dispatch, stakedKwentaBalance]
+		() => dispatch(unstakeKwenta(wei(stakedKwentaBalanceV2).toBN())),
+		[dispatch, stakedKwentaBalanceV2]
 	)
-
-	const handleDismiss = useCallback(() => {
-		dispatch(setStakingMigrationCompleted(true))
-	}, [dispatch])
 
 	const migrationSteps = useMemo(
 		() => [
 			{
-				key: 'step-1',
-				copy: t('dashboard.stake.tabs.migrate.step-1-copy'),
-				label: t('dashboard.stake.tabs.migrate.rewards'),
-				value: formatNumber(claimableBalance, { suggestDecimals: true }),
-				buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
-				onClick: handleGetReward,
-				active: claimableBalance.gt(0) && !STAKING_DISABLED,
-				loading: isClaimingReward,
-			},
-			{
 				key: 'step-2',
 				copy: t('dashboard.stake.tabs.migrate.step-2-copy'),
 				label: t('dashboard.stake.tabs.migrate.staked'),
-				value: formatNumber(stakedKwentaBalance, { suggestDecimals: true }),
+				value: formatNumber(stakedKwentaBalanceV2, { suggestDecimals: true }),
 				buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
 				onClick: handleUnstakeKwenta,
-				active: claimableBalance.lte(0) && stakedKwentaBalance.gt(0),
+				active: stakedKwentaBalanceV2.gt(0),
 				loading: isUnstakingKwenta,
 			},
-			{
-				key: 'step-3',
-				copy: t('dashboard.stake.tabs.migrate.step-3-copy'),
-				label: t('dashboard.stake.tabs.migrate.staked'),
-				value: formatNumber(stakedKwentaBalanceV2, { suggestDecimals: true }),
-				buttonLabel: t('dashboard.stake.tabs.migrate.visit-v2'),
-				onClick: handleDismiss,
-				active: claimableBalance.lte(0) && stakedKwentaBalance.lte(0),
-			},
 		],
-		[
-			claimableBalance,
-			handleDismiss,
-			handleGetReward,
-			handleUnstakeKwenta,
-			isClaimingReward,
-			isUnstakingKwenta,
-			stakedKwentaBalance,
-			stakedKwentaBalanceV2,
-			t,
-		]
+		[handleUnstakeKwenta, isUnstakingKwenta, stakedKwentaBalanceV2, t]
 	)
 
 	return (

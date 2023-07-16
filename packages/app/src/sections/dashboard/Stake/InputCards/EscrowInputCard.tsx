@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import StakeCard from 'components/StakeCard'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { approveKwentaToken, stakeEscrowV2, unstakeEscrowV2 } from 'state/staking/actions'
+import { approveKwentaToken, stakeEscrow, unstakeEscrow } from 'state/staking/actions'
 import {
 	selectCanStakeEscrowedKwenta,
 	selectCanUnstakeEscrowedKwenta,
@@ -14,17 +14,17 @@ import {
 	selectIsStakingEscrowedKwenta,
 	selectIsUnstakedEscrowedKwenta,
 	selectIsUnstakingEscrowedKwenta,
-	selectStakedEscrowedKwentaBalanceV2,
-	selectUnstakedEscrowedKwentaBalanceV2,
+	selectStakedEscrowedKwentaBalance,
+	selectUnstakedEscrowedKwentaBalance,
 } from 'state/staking/selectors'
 
 const EscrowInputCard: FC = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApprovedV2)
-	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalanceV2)
+	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalance)
 	const stakeEnabled = useAppSelector(selectCanStakeEscrowedKwenta)
 	const unstakeEnabled = useAppSelector(selectCanUnstakeEscrowedKwenta)
 	const isStakedEscrowedKwenta = useAppSelector(selectIsStakedEscrowedKwenta)
@@ -34,19 +34,19 @@ const EscrowInputCard: FC = () => {
 	const isApprovingKwenta = useAppSelector(selectIsApprovingKwenta)
 
 	const handleApprove = useCallback(() => {
-		dispatch(approveKwentaToken('kwentaStakingV2'))
+		dispatch(approveKwentaToken('kwenta'))
 	}, [dispatch])
 
 	const handleStakeEscrow = useCallback(
 		(amount: string) => {
-			dispatch(stakeEscrowV2(wei(amount).toBN()))
+			dispatch(stakeEscrow(wei(amount).toBN()))
 		},
 		[dispatch]
 	)
 
 	const handleUnstakeEscrow = useCallback(
 		(amount: string) => {
-			dispatch(unstakeEscrowV2(wei(amount).toBN()))
+			dispatch(unstakeEscrow(wei(amount).toBN()))
 		},
 		[dispatch]
 	)

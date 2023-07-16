@@ -15,4 +15,4 @@ export enum zIndex {
 	MARKET_DROPDOWN = 40,
 }
 
-export const STAKING_DISABLED = true
+export const STAKING_DISABLED = false

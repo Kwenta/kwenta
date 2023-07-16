@@ -294,6 +294,11 @@ export const selectEscrowData = (state: RootState) => state.staking.v1.escrowDat
 
 export const selectEscrowV2Data = (state: RootState) => state.staking.v2.escrowData ?? []
 
+export const selectStakingRollbackRequired = createSelector(
+	selectStakedKwentaBalanceV2,
+	(stakedKwentaBalance) => stakedKwentaBalance.gt(ZERO_WEI)
+)
+
 export const selectStakingMigrationCompleted = (state: RootState) =>
 	state.staking.stakingMigrationCompleted
 
