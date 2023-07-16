@@ -6,7 +6,7 @@ export const BANNER_ENABLED = true
 // plain, un-clickable text if set to a falsey value (`false`, `null`, '', etc...)
 export const BANNER_LINK_URL = ''
 // Sets the text displayed on the home page banner
-export const BANNER_TEXT = 'The staking contracts are currently paused.'
+export const BANNER_TEXT = 'StakingV2 - Migration Postponed'
 // Sets the height of the banner component on desktop
 export const BANNER_HEIGHT_DESKTOP = 50
 // Sets the height of the banner component on mobile
