@@ -12,6 +12,7 @@ import Button from 'components/Button'
 import { FlexDivRow } from 'components/layout/flex'
 import Pill from 'components/Pill'
 import { Body, LogoText } from 'components/Text'
+import { EXTERNAL_LINKS } from 'constants/links'
 import ROUTES from 'constants/routes'
 import useClickOutside from 'hooks/useClickOutside'
 import { StakingCard } from 'sections/dashboard/Stake/card'
@@ -158,23 +159,41 @@ const BalanceActions: FC = () => {
 								</StyledFlexDivRow>
 							</CardGrid>
 						))}
-						<Pill
-							color="yellow"
-							fullWidth={true}
-							size="large"
-							roundedCorner={false}
-							weight="bold"
-							onClick={handleClaimAll}
-							disabled={claimDisabledAll}
-						>
-							{t('dashboard.rewards.claim-all')}
-						</Pill>
+						<ButtonContainer>
+							<Pill
+								color="gray"
+								fullWidth={true}
+								size="large"
+								roundedCorner={false}
+								weight="bold"
+								onClick={() =>
+									window.open(EXTERNAL_LINKS.Docs.RewardsGuide, '_blank', 'noopener noreferrer')
+								}
+							>
+								{t('dashboard.rewards.learn-more')}
+							</Pill>
+							<Pill
+								color="yellow"
+								fullWidth={true}
+								size="large"
+								roundedCorner={false}
+								weight="bold"
+								onClick={handleClaimAll}
+								disabled={claimDisabledAll}
+							>
+								{t('dashboard.rewards.claim-all')}
+							</Pill>
+						</ButtonContainer>
 					</CardsContainer>
 				</RewardsTabContainer>
 			)}
 		</>
 	)
 }
+
+const ButtonContainer = styled(FlexDivRow)`
+	column-gap: 15px;
+`
 
 const RewardsTabContainer = styled.div`
 	z-index: 100;
