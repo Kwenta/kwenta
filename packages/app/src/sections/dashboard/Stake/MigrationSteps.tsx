@@ -10,7 +10,7 @@ import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { unstakeKwenta, vestEscrowedRewards } from 'state/staking/actions'
+import { unstakeKwenta, vestEscrowedRewardsV2 } from 'state/staking/actions'
 import {
 	selectIsUnstakingKwenta,
 	selectIsVestingEscrowedRewards,
@@ -35,7 +35,7 @@ const MigrationSteps: FC = memo(() => {
 	)
 
 	const handleVest = useCallback(
-		() => dispatch(vestEscrowedRewards(escrowV2Entries)),
+		() => dispatch(vestEscrowedRewardsV2(escrowV2Entries)),
 		[dispatch, escrowV2Entries]
 	)
 
