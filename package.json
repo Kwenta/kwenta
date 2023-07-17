@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "7.4.0",
+	"version": "7.4.4",
 	"description": "Kwenta",
 	"main": "index.js",
 	"scripts": {

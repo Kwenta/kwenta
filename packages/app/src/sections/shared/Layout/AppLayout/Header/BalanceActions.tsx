@@ -158,39 +158,23 @@ const BalanceActions: FC = () => {
 								</StyledFlexDivRow>
 							</CardGrid>
 						))}
-						<ButtonContainer>
-							<Pill
-								color="gray"
-								fullWidth={true}
-								size="large"
-								roundedCorner={false}
-								weight="bold"
-								onClick={() => router.push(ROUTES.Dashboard.Rewards)}
-							>
-								{t('dashboard.rewards.learn-more')}
-							</Pill>
-							<Pill
-								color="yellow"
-								fullWidth={true}
-								size="large"
-								roundedCorner={false}
-								weight="bold"
-								onClick={handleClaimAll}
-								disabled={claimDisabledAll}
-							>
-								{t('dashboard.rewards.claim-all')}
-							</Pill>
-						</ButtonContainer>
+						<Pill
+							color="yellow"
+							fullWidth={true}
+							size="large"
+							roundedCorner={false}
+							weight="bold"
+							onClick={handleClaimAll}
+							disabled={claimDisabledAll}
+						>
+							{t('dashboard.rewards.claim-all')}
+						</Pill>
 					</CardsContainer>
 				</RewardsTabContainer>
 			)}
 		</>
 	)
 }
-
-const ButtonContainer = styled(FlexDivRow)`
-	column-gap: 15px;
-`
 
 const RewardsTabContainer = styled.div`
 	z-index: 100;
