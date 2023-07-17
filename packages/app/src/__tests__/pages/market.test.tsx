@@ -201,6 +201,22 @@ describe('Futures market page - smart margin', () => {
 
 		expect(submitButton).toBeDisabled()
 	})
+})
+
+describe('Futures market page - stop loss validation', () => {
+	beforeAll(() => {
+		jest.setTimeout(60000)
+		mockUseWindowSize()
+		mockReactQuery()
+		mockResizeObserver()
+		mockConnector()
+	})
+
+	beforeEach(() => {
+		// Reset the SDK mock
+		// @ts-ignore
+		sdk.futures = mockFuturesService()
+	})
 
 	test('Restricts stop loss for LONG trade at correct price depending on leverage', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
