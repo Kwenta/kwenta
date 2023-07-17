@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { EscrowData } from '@kwenta/sdk/types'
 import { toWei } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
@@ -238,12 +239,19 @@ export const selectCanStakeKwenta = createSelector(
 	(kwentaBalance, isStakingKwenta) => kwentaBalance.gt(0) && !isStakingKwenta && !STAKING_DISABLED
 )
 
-export const selectCanUnstakeKwenta = createSelector(
+export const selectCanUnstakeKwentaV2 = createSelector(
 	selectStakedKwentaBalanceV2,
 	selectIsUnstakingKwenta,
 	selectIsTimeLeftInCooldown,
 	(stakedKwentaBalance, isUnstakingKwenta, isTimeLeftInCooldown) =>
 		stakedKwentaBalance.gt(0) && !isUnstakingKwenta && !isTimeLeftInCooldown && !STAKING_DISABLED
+)
+
+export const selectCanUnstakeKwenta = createSelector(
+	selectStakedKwentaBalance,
+	selectIsUnstakingKwenta,
+	(stakedKwentaBalance, isUnstakingKwenta) =>
+		stakedKwentaBalance.gt(0) && !isUnstakingKwenta && !STAKING_DISABLED
 )
 
 export const selectCanStakeEscrowedKwenta = createSelector(
@@ -256,6 +264,14 @@ export const selectCanStakeEscrowedKwenta = createSelector(
 
 export const selectCanUnstakeEscrowedKwenta = createSelector(
 	selectStakedEscrowedKwentaBalance,
+	selectIsUnstakingEscrowedKwenta,
+	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta) => {
+		return stakedEscrowedKwentaBalance.gt(0) && !isUnstakingEscrowedKwenta && !STAKING_DISABLED
+	}
+)
+
+export const selectCanUnstakeEscrowedKwentaV2 = createSelector(
+	selectStakedEscrowedKwentaBalanceV2,
 	selectIsUnstakingEscrowedKwenta,
 	selectIsTimeLeftInCooldown,
 	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta, isTimeLeftInCooldown) => {
@@ -293,6 +309,17 @@ export const selectAPYV2 = createSelector(
 export const selectEscrowData = (state: RootState) => state.staking.v1.escrowData ?? []
 
 export const selectEscrowV2Data = (state: RootState) => state.staking.v2.escrowData ?? []
+
+export const selectVestEscrowV2Entries = createSelector(selectEscrowV2Data, (escrowData) =>
+	escrowData.map((entry: EscrowData<string>) => entry.id)
+)
+
+export const selectStakingRollbackRequired = createSelector(
+	selectStakedKwentaBalanceV2,
+	selectTotalVestableV2,
+	(stakedKwentaBalance, totalVestable) =>
+		stakedKwentaBalance.gt(ZERO_WEI) || totalVestable.gt(ZERO_WEI)
+)
 
 export const selectStakingMigrationCompleted = (state: RootState) =>
 	state.staking.stakingMigrationCompleted

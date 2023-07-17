@@ -1,7 +1,7 @@
-import { formatNumber, formatTruncatedDuration } from '@kwenta/sdk/utils'
+import { formatNumber } from '@kwenta/sdk/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -12,20 +12,16 @@ import StakingPortfolio, { StakeTab } from 'sections/dashboard/Stake/StakingPort
 import StakingTabs from 'sections/dashboard/Stake/StakingTabs'
 import { StakingCards } from 'sections/dashboard/Stake/types'
 import { useFetchStakeMigrateData } from 'state/futures/hooks'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { setStakingMigrationCompleted } from 'state/staking/reducer'
+import { useAppSelector } from 'state/hooks'
 import {
 	selectClaimableBalance,
-	selectClaimableBalanceV2,
 	selectKwentaBalance,
 	selectKwentaRewards,
 	selectStakedEscrowedKwentaBalance,
 	selectStakedEscrowedKwentaBalanceV2,
 	selectStakedKwentaBalance,
 	selectStakedKwentaBalanceV2,
-	selectStakedResetTime,
-	selectStakingMigrationCompleted,
-	selectStakingMigrationRequired,
+	selectStakingRollbackRequired,
 	selectTotalVestable,
 	selectTotalVestableV2,
 } from 'state/staking/selectors'
@@ -36,28 +32,18 @@ type StakingComponent = React.FC & { getLayout: (page: ReactNode) => JSX.Element
 const StakingPage: StakingComponent = () => {
 	const { t } = useTranslation()
 	const router = useRouter()
-	const dispatch = useAppDispatch()
 	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const totalVestable = useAppSelector(selectTotalVestable)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
-	const claimableBalanceV2 = useAppSelector(selectClaimableBalanceV2)
 	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
 	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
 	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
-	const stakedResetTime = useAppSelector(selectStakedResetTime)
-	const isMigrationRequired = useAppSelector(selectStakingMigrationRequired)
-	const isMigrationCompleted = useAppSelector(selectStakingMigrationCompleted)
+	const isRollbackRequired = useAppSelector(selectStakingRollbackRequired)
 
 	useFetchStakeMigrateData()
-
-	useEffect(() => {
-		if (isMigrationRequired) {
-			dispatch(setStakingMigrationCompleted(false))
-		}
-	}, [dispatch, isMigrationRequired])
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -78,14 +64,6 @@ const StakingPage: StakingComponent = () => {
 		[]
 	)
 
-	const timeLeft = useMemo(
-		() =>
-			stakedResetTime > new Date().getTime() / 1000
-				? formatTruncatedDuration(stakedResetTime - new Date().getTime() / 1000)
-				: NO_VALUE,
-		[stakedResetTime]
-	)
-
 	const stakingInfo: StakingCards[] = useMemo(
 		() => [
 			{
@@ -100,7 +78,7 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'balance-staked',
 						title: t('dashboard.stake.portfolio.balance.staked'),
-						value: formatNumber(stakedKwentaBalanceV2, { suggestDecimals: true }),
+						value: formatNumber(stakedKwentaBalance, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -111,12 +89,12 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'escrow-staked',
 						title: t('dashboard.stake.portfolio.escrow.staked'),
-						value: formatNumber(stakedEscrowedKwentaBalanceV2, { suggestDecimals: true }),
+						value: formatNumber(stakedEscrowedKwentaBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'escrow-vestable',
 						title: t('dashboard.stake.portfolio.escrow.vestable'),
-						value: formatNumber(totalVestableV2, { suggestDecimals: true }),
+						value: formatNumber(totalVestable, { suggestDecimals: true }),
 					},
 				],
 			},
@@ -127,7 +105,7 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'rewards-claimable',
 						title: t('dashboard.stake.portfolio.rewards.claimable'),
-						value: formatNumber(claimableBalanceV2, { suggestDecimals: true }),
+						value: formatNumber(claimableBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'rewards-trading',
@@ -158,24 +136,23 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'cooldown-time-left',
 						title: t('dashboard.stake.portfolio.cooldown.time-left'),
-						value: timeLeft,
+						value: NO_VALUE,
 					},
 				],
 			},
 		],
 		[
-			claimableBalanceV2,
+			claimableBalance,
 			kwentaBalance,
 			kwentaRewards,
-			stakedEscrowedKwentaBalanceV2,
-			stakedKwentaBalanceV2,
+			stakedEscrowedKwentaBalance,
+			stakedKwentaBalance,
 			t,
-			timeLeft,
-			totalVestableV2,
+			totalVestable,
 		]
 	)
 
-	const migrationInfo: StakingCards[] = useMemo(
+	const rollbackInfo: StakingCards[] = useMemo(
 		() => [
 			{
 				category: t('dashboard.stake.portfolio.balance.title'),
@@ -187,19 +164,14 @@ const StakingPage: StakingComponent = () => {
 					},
 					{
 						key: 'balance-staked',
-						title: t('dashboard.stake.portfolio.balance.staked-v1'),
-						value: formatNumber(stakedKwentaBalance, { suggestDecimals: true }),
+						title: t('dashboard.stake.portfolio.balance.staked-v2'),
+						value: formatNumber(stakedKwentaBalanceV2, { suggestDecimals: true }),
 					},
 				],
 			},
 			{
 				category: t('dashboard.stake.portfolio.rewards.title'),
 				card: [
-					{
-						key: 'rewards-claimable',
-						title: t('dashboard.stake.portfolio.rewards.staking-v1'),
-						value: formatNumber(claimableBalance, { suggestDecimals: true }),
-					},
 					{
 						key: 'rewards-trading',
 						title: t('dashboard.stake.portfolio.rewards.trading'),
@@ -241,8 +213,7 @@ const StakingPage: StakingComponent = () => {
 		[
 			t,
 			kwentaBalance,
-			stakedKwentaBalance,
-			claimableBalance,
+			stakedKwentaBalanceV2,
 			kwentaRewards,
 			stakedEscrowedKwentaBalanceV2,
 			totalVestableV2,
@@ -252,16 +223,10 @@ const StakingPage: StakingComponent = () => {
 	)
 
 	const { title, cardsInfo, stakingComponent } = useMemo(() => {
-		if (isMigrationCompleted) {
+		if (isRollbackRequired) {
 			return {
-				title: t('dashboard.stake.portfolio.title'),
-				cardsInfo: stakingInfo,
-				stakingComponent: <StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />,
-			}
-		} else {
-			return {
-				title: t('dashboard.stake.tabs.migrate.title'),
-				cardsInfo: migrationInfo,
+				title: t('dashboard.stake.tabs.revert.title'),
+				cardsInfo: rollbackInfo,
 				stakingComponent: (
 					<>
 						<TableContainer>
@@ -270,8 +235,14 @@ const StakingPage: StakingComponent = () => {
 					</>
 				),
 			}
+		} else {
+			return {
+				title: t('dashboard.stake.portfolio.title'),
+				cardsInfo: stakingInfo,
+				stakingComponent: <StakingTabs currentTab={currentTab} onChangeTab={handleChangeTab} />,
+			}
 		}
-	}, [currentTab, handleChangeTab, isMigrationCompleted, migrationInfo, stakingInfo, t])
+	}, [currentTab, handleChangeTab, isRollbackRequired, rollbackInfo, stakingInfo, t])
 
 	return (
 		<>
@@ -281,7 +252,7 @@ const StakingPage: StakingComponent = () => {
 			<StakingPortfolio
 				title={title}
 				cardsInfo={cardsInfo}
-				isMigrationCompleted={isMigrationCompleted}
+				isRollbackRequired={isRollbackRequired}
 			/>
 			{stakingComponent}
 		</>

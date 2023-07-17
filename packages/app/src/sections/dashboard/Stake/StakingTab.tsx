@@ -13,13 +13,12 @@ import { NO_VALUE } from 'constants/placeholder'
 import { STAKING_DISABLED } from 'constants/ui'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { claimStakingRewardsV2, compoundRewards } from 'state/staking/actions'
+import { claimStakingRewards } from 'state/staking/actions'
 import {
-	selectAPYV2,
-	selectClaimableBalanceV2,
-	selectIsCompoundingRewards,
+	selectAPY,
+	selectClaimableBalance,
 	selectIsGettingReward,
-	selectStakedKwentaBalanceV2,
+	selectStakedKwentaBalance,
 } from 'state/staking/selectors'
 import media from 'styles/media'
 
@@ -30,18 +29,13 @@ const StakingTab = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
-	const claimableBalance = useAppSelector(selectClaimableBalanceV2)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
+	const claimableBalance = useAppSelector(selectClaimableBalance)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const isClaimingReward = useAppSelector(selectIsGettingReward)
-	const isCompoundingReward = useAppSelector(selectIsCompoundingRewards)
-	const apy = useAppSelector(selectAPYV2)
+	const apy = useAppSelector(selectAPY)
 
 	const handleGetReward = useCallback(() => {
-		dispatch(claimStakingRewardsV2())
-	}, [dispatch])
-
-	const handleCompoundReward = useCallback(() => {
-		dispatch(compoundRewards())
+		dispatch(claimStakingRewards())
 	}, [dispatch])
 
 	const stakingAndRewardsInfo: StakingCards[] = useMemo(
@@ -131,17 +125,6 @@ const StakingTab = () => {
 					))}
 				</CardsContainer>
 				<FlexDivRow justifyContent="flex-start" columnGap="10px">
-					<Button
-						variant="yellow"
-						size="small"
-						textTransform="uppercase"
-						isRounded
-						loading={isCompoundingReward}
-						disabled={claimableBalance.eq(0) || isCompoundingReward || STAKING_DISABLED}
-						onClick={handleCompoundReward}
-					>
-						{t('dashboard.stake.tabs.staking.compound')}
-					</Button>
 					<Button
 						variant="flat"
 						size="small"

@@ -559,7 +559,8 @@
 					"title": "Balance",
 					"liquid": "Liquid",
 					"staked": "Staked",
-					"staked-v1": "Staked V1"
+					"staked-v1": "Staked V1",
+					"staked-v2": "Staked V2"
 				},
 				"escrow": {
 					"title": "Escrow",
@@ -674,6 +675,15 @@
 					"approve": "Approve",
 					"step": "Step <0>{{index}}</0>",
 					"visit-v2": "Visit Staking V2"
+				},
+				"revert": {
+					"title": "Revert to Staking V1",
+					"step-1-copy": "Unstake V2 liquid balance.",
+					"step-2-copy": "Reclaim any remaining v2 escrow entries (no vesting penalty will be incurred)",
+					"reclaim": "Reclaim",
+					"unstake": "Unstake",
+					"staked": "Staked",
+					"reclaimable": "Reclaimable"
 				},
 				"redeem": {
 					"title": "Redeem"
