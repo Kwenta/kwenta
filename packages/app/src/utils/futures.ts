@@ -413,7 +413,7 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 // Disable stop loss when it is within 3% of the liquidation price
 const SL_LIQ_DISABLED_PERCENT = 0.03
 
-// Warn users when their stop loss is within 75% of their liquidation price
+// Warn users when their stop loss is within 7.5% of their liquidation price
 const SL_LIQ_PERCENT_WARN = 0.075
 
 export const minMaxSLPrice = (liqPrice: Wei | undefined, leverageSide: PositionSide) => {
