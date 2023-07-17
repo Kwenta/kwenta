@@ -89,7 +89,7 @@ export const fetchPerpsV3Account = createAsyncThunk<
 		}
 		return undefined
 	} catch (err) {
-		notifyError('Failed to fetch smart margin account', err)
+		notifyError('Failed to fetch cross margin account', err)
 		rejectWithValue(err.message)
 	}
 })

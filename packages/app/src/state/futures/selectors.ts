@@ -508,7 +508,7 @@ export const selectPlaceOrderTranslationKey = createSelector(
 	selectIsMarketCapReached,
 	(position, marginDelta, { freeMargin }, selectedType, orderType) => {
 		let remainingMargin
-		if (selectedType === FuturesMarginType.SMART_MARGIN) {
+		if (selectedType === FuturesMarginType.CROSS_MARGIN) {
 			remainingMargin = position?.remainingMargin || ZERO_WEI
 		} else {
 			remainingMargin = marginDelta

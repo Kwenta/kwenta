@@ -18,11 +18,11 @@ export const getPerpsV3Markets = async (sdk: KwentaSDK): Promise<PerpsV3Market[]
 					owner
 					maxFundingVelocity
 					skewScale
-					initialMarginFraction
-					maintenanceMarginFraction
+					initialMarginRatioD18
+					maintenanceMarginRatioD18
 					liquidationRewardRatioD18
 					maxLiquidationLimitAccumulationMultiplier
-					lockedOiPercent
+					lockedOiRatioD18
 					makerFee
 					takerFee
 				}

@@ -6,7 +6,6 @@ import styled from 'styled-components'
 
 import Loader from 'components/Loader'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
-import { SUPPORTED_PERPS_TYPES } from 'constants/futures'
 import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useWindowSize from 'hooks/useWindowSize'
@@ -30,6 +29,7 @@ import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal, selectShowPositionModal } from 'state/app/selectors'
 import { clearTradeInputs } from 'state/futures/actions'
 import { AppFuturesMarginType } from 'state/futures/common/types'
+import { selectCrossMarginSupportedNetwork } from 'state/futures/crossMargin/selectors'
 import { usePollMarketFuturesData } from 'state/futures/hooks'
 import { setFuturesAccountType } from 'state/futures/reducer'
 import { selectFuturesType, selectMarketAsset } from 'state/futures/selectors'
@@ -61,12 +61,14 @@ const Market: MarketComponent = () => {
 	const showPositionModal = useAppSelector(selectShowPositionModal)
 	const accountType = useAppSelector(selectFuturesType)
 	const selectedMarketAsset = useAppSelector(selectMarketAsset)
+	const crossMarginSupported = useAppSelector(selectCrossMarginSupportedNetwork)
 
 	const routerAccountType = useMemo(() => {
-		if (SUPPORTED_PERPS_TYPES.includes(router.query.accountType as AppFuturesMarginType))
+		if (router.query.accountType === 'cross_margin' && crossMarginSupported) {
 			return router.query.accountType as AppFuturesMarginType
+		}
 		return FuturesMarginType.SMART_MARGIN
-	}, [router.query.accountType])
+	}, [router.query.accountType, crossMarginSupported])
 
 	useEffect(() => {
 		if (router.isReady && accountType !== routerAccountType) {
