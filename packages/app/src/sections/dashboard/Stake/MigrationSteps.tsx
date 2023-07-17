@@ -10,7 +10,7 @@ import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { unstakeKwenta, unstakeKwentaV2, vestEscrowedRewardsV2 } from 'state/staking/actions'
+import { unstakeKwentaV2, vestEscrowedRewardsV2 } from 'state/staking/actions'
 import {
 	selectIsUnstakingKwenta,
 	selectIsVestingEscrowedRewards,
