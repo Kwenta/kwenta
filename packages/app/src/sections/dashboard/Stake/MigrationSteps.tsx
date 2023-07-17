@@ -10,7 +10,7 @@ import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { unstakeKwenta, vestEscrowedRewardsV2 } from 'state/staking/actions'
+import { unstakeKwenta, unstakeKwentaV2, vestEscrowedRewardsV2 } from 'state/staking/actions'
 import {
 	selectIsUnstakingKwenta,
 	selectIsVestingEscrowedRewards,
@@ -30,7 +30,7 @@ const MigrationSteps: FC = memo(() => {
 	const isVestingEscrowedRewards = useAppSelector(selectIsVestingEscrowedRewards)
 
 	const handleUnstakeKwenta = useCallback(
-		() => dispatch(unstakeKwenta(wei(stakedKwentaBalanceV2).toBN())),
+		() => dispatch(unstakeKwentaV2(wei(stakedKwentaBalanceV2).toBN())),
 		[dispatch, stakedKwentaBalanceV2]
 	)
 
@@ -58,7 +58,7 @@ const MigrationSteps: FC = memo(() => {
 				value: formatNumber(totalVestableV2, { suggestDecimals: true }),
 				buttonLabel: t('dashboard.stake.tabs.revert.vest'),
 				onClick: handleVest,
-				active: totalVestableV2.gt(0),
+				active: stakedKwentaBalanceV2.eq(0) && totalVestableV2.gt(0),
 				loading: isVestingEscrowedRewards,
 			},
 		],
