@@ -678,12 +678,12 @@
 				},
 				"revert": {
 					"title": "Revert to Staking V1",
-					"step-1-copy": "Unstake V2 liquid balance",
-					"step-2-copy": "Vest any remaining V2 escrowed entries",
-					"vest": "Vest",
+					"step-1-copy": "Unstake V2 liquid balance.",
+					"step-2-copy": "Reclaim any remaining v2 escrow entries (no vesting penalty will be incurred)",
+					"reclaim": "Reclaim",
 					"unstake": "Unstake",
 					"staked": "Staked",
-					"vestable": "Vestable"
+					"reclaimable": "Reclaimable"
 				},
 				"redeem": {
 					"title": "Redeem"

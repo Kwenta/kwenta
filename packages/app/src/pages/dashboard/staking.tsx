@@ -1,4 +1,4 @@
-import { formatNumber, formatTruncatedDuration } from '@kwenta/sdk/utils'
+import { formatNumber } from '@kwenta/sdk/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
@@ -21,7 +21,6 @@ import {
 	selectStakedEscrowedKwentaBalanceV2,
 	selectStakedKwentaBalance,
 	selectStakedKwentaBalanceV2,
-	selectStakedResetTime,
 	selectStakingRollbackRequired,
 	selectTotalVestable,
 	selectTotalVestableV2,
@@ -42,7 +41,6 @@ const StakingPage: StakingComponent = () => {
 	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
-	const stakedResetTime = useAppSelector(selectStakedResetTime)
 	const isRollbackRequired = useAppSelector(selectStakingRollbackRequired)
 
 	useFetchStakeMigrateData()
@@ -64,14 +62,6 @@ const StakingPage: StakingComponent = () => {
 			setCurrentTab(tab)
 		},
 		[]
-	)
-
-	const timeLeft = useMemo(
-		() =>
-			stakedResetTime > new Date().getTime() / 1000
-				? formatTruncatedDuration(stakedResetTime - new Date().getTime() / 1000)
-				: NO_VALUE,
-		[stakedResetTime]
 	)
 
 	const stakingInfo: StakingCards[] = useMemo(
@@ -146,7 +136,7 @@ const StakingPage: StakingComponent = () => {
 					{
 						key: 'cooldown-time-left',
 						title: t('dashboard.stake.portfolio.cooldown.time-left'),
-						value: timeLeft,
+						value: NO_VALUE,
 					},
 				],
 			},
@@ -158,7 +148,6 @@ const StakingPage: StakingComponent = () => {
 			stakedEscrowedKwentaBalance,
 			stakedKwentaBalance,
 			t,
-			timeLeft,
 			totalVestable,
 		]
 	)

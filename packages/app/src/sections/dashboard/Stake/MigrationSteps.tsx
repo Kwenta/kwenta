@@ -54,9 +54,9 @@ const MigrationSteps: FC = memo(() => {
 			{
 				key: 'step-2',
 				copy: t('dashboard.stake.tabs.revert.step-2-copy'),
-				label: t('dashboard.stake.tabs.revert.vestable'),
+				label: t('dashboard.stake.tabs.revert.reclaimable'),
 				value: formatNumber(totalVestableV2, { suggestDecimals: true }),
-				buttonLabel: t('dashboard.stake.tabs.revert.vest'),
+				buttonLabel: t('dashboard.stake.tabs.revert.reclaim'),
 				onClick: handleVest,
 				active: stakedKwentaBalanceV2.eq(0) && totalVestableV2.gt(0),
 				loading: isVestingEscrowedRewards,

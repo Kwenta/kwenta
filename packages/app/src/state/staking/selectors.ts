@@ -265,6 +265,14 @@ export const selectCanStakeEscrowedKwenta = createSelector(
 export const selectCanUnstakeEscrowedKwenta = createSelector(
 	selectStakedEscrowedKwentaBalance,
 	selectIsUnstakingEscrowedKwenta,
+	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta) => {
+		return stakedEscrowedKwentaBalance.gt(0) && !isUnstakingEscrowedKwenta && !STAKING_DISABLED
+	}
+)
+
+export const selectCanUnstakeEscrowedKwentaV2 = createSelector(
+	selectStakedEscrowedKwentaBalanceV2,
+	selectIsUnstakingEscrowedKwenta,
 	selectIsTimeLeftInCooldown,
 	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta, isTimeLeftInCooldown) => {
 		return (
