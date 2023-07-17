@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
+import { FlexDivCol } from 'components/layout/flex'
 import { MobileHiddenView } from 'components/Media'
 
 import Banner from '../../HomeLayout/Banner'
@@ -12,14 +13,16 @@ import WalletButtons from './WalletButtons'
 const Header: FC = () => {
 	return (
 		<MobileHiddenView>
-			<Container>
-				<LogoNav>
-					<Logo />
-					<Nav />
-				</LogoNav>
-				<WalletButtons />
-			</Container>
-			<Banner />
+			<FlexDivCol>
+				<Container>
+					<LogoNav>
+						<Logo />
+						<Nav />
+					</LogoNav>
+					<WalletButtons />
+				</Container>
+				<Banner />
+			</FlexDivCol>
 		</MobileHiddenView>
 	)
 }

@@ -566,6 +566,7 @@
 					"title-v2": "Escrow V2",
 					"title-v1": "Escrow V1",
 					"staked": "Staked",
+					"unstaked": "Unstaked",
 					"vestable": "Vestable"
 				},
 				"rewards": {

@@ -7,12 +7,12 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import { Body, Heading } from 'components/Text'
 import { useAppSelector } from 'state/hooks'
 import {
-	selectAPY,
 	selectAPYV2,
 	selectStakedEscrowedKwentaBalance,
 	selectStakedEscrowedKwentaBalanceV2,
 	selectTotalVestable,
 	selectTotalVestableV2,
+	selectUnstakedEscrowedKwentaBalance,
 } from 'state/staking/selectors'
 import media from 'styles/media'
 
@@ -22,10 +22,10 @@ import EscrowInputCard from './InputCards/EscrowInputCard'
 
 const EscrowTab = () => {
 	const { t } = useTranslation()
-	const apy = useAppSelector(selectAPY)
 	const apyV2 = useAppSelector(selectAPYV2)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalance)
 	const totalVestable = useAppSelector(selectTotalVestable)
 	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
 
@@ -60,9 +60,9 @@ const EscrowTab = () => {
 						value: formatNumber(stakedEscrowedKwentaBalance, { suggestDecimals: true }),
 					},
 					{
-						key: 'staking-v1-apr',
-						title: t('dashboard.stake.portfolio.rewards.apr'),
-						value: formatPercent(apy, { minDecimals: 2 }),
+						key: 'staking-v1-staked',
+						title: t('dashboard.stake.portfolio.escrow.unstaked'),
+						value: formatNumber(unstakedEscrowedKwentaBalance, { suggestDecimals: true }),
 					},
 					{
 						key: 'staking-v1-vestable',
@@ -73,13 +73,13 @@ const EscrowTab = () => {
 			},
 		],
 		[
-			apy,
 			apyV2,
 			stakedEscrowedKwentaBalance,
 			stakedEscrowedKwentaBalanceV2,
 			t,
 			totalVestable,
 			totalVestableV2,
+			unstakedEscrowedKwentaBalance,
 		]
 	)
 

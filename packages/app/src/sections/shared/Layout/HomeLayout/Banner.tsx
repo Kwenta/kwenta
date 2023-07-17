@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { memo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 
@@ -22,7 +23,7 @@ import localStore from 'utils/localStore'
 type BannerViewProps = {
 	mode: 'mobile' | 'desktop'
 	onDismiss: (e: any) => void
-	onDetails: () => void
+	onDetails?: () => void
 }
 
 const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) => {
@@ -32,7 +33,7 @@ const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) =
 	const linkSize = isMobile ? 'small' : 'medium'
 
 	return (
-		<FuturesBannerContainer onClick={onDetails}>
+		<FuturesBannerContainer onClick={onDetails} hasDetails={!!BANNER_LINK_URL}>
 			<FuturesBannerLinkWrapper>
 				<FuturesLink size={linkSize}>
 					<strong>Important: </strong>
@@ -48,14 +49,21 @@ const Banner = memo(() => {
 	const dispatch = useAppDispatch()
 	const showBanner = useAppSelector(selectShowBanner)
 	const storedTime: number = localStore.get('bannerIsClicked') || 0
+	const router = useRouter()
 
 	useEffect(
 		() => {
 			const currentTime = new Date().getTime()
-			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED))
+			dispatch(
+				setShowBanner(
+					currentTime - storedTime >= BANNER_WAITING_TIME &&
+						BANNER_ENABLED &&
+						router.pathname.includes('staking')
+				)
+			)
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[storedTime]
+		[storedTime, router.pathname]
 	)
 
 	const handleDismiss = useCallback(
@@ -69,7 +77,7 @@ const Banner = memo(() => {
 	)
 
 	const openDetails = useCallback(
-		() => window.open(BANNER_LINK_URL, '_blank', 'noopener noreferrer'),
+		() => BANNER_LINK_URL && window.open(BANNER_LINK_URL, '_blank', 'noopener noreferrer'),
 		[]
 	)
 
@@ -99,14 +107,14 @@ const FuturesLink = styled(Body)`
 	`};
 `
 
-const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
+const FuturesBannerContainer = styled.div<{ $compact?: boolean; hasDetails?: boolean }>`
 	height: ${BANNER_HEIGHT_DESKTOP}px;
 	width: 100%;
 	display: flex;
 	align-items: center;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.background};
 	margin-bottom: 0;
-	cursor: pointer;
+	cursor: ${(props) => (props.hasDetails ? 'pointer' : 'auto')};
 
 	${media.lessThan('md')`
 		position: relative;
