@@ -5,9 +5,9 @@ export const BANNER_ENABLED = true
 // Sets the link destination for the banner component, or renders the banner as
 // plain, un-clickable text if set to a falsey value (`false`, `null`, '', etc...)
 export const BANNER_LINK_URL =
-	'https://mirror.xyz/kwenta.eth/jCT9MCu_NpylWOQHUuzz25sbMFvR9W8RI_y_5mYYOhY'
+	'https://mirror.xyz/kwenta.eth/xFomD0VE0H7o2sQ9zGeLyYPwCmtp8tLMXNTGtWy2UOQ'
 // Sets the text displayed on the home page banner
-export const BANNER_TEXT = 'StakingV2 - Migration Postponed'
+export const BANNER_TEXT = 'Staking V2 - Reverse Migration'
 // Sets the height of the banner component on desktop
 export const BANNER_HEIGHT_DESKTOP = 50
 // Sets the height of the banner component on mobile
