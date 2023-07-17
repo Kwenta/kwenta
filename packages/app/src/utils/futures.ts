@@ -447,12 +447,10 @@ export const stopLossValidity = (
 	let invalid = false
 	if (side === 'long') {
 		invalid =
-			(!!stopLossPrice && wei(stopLossPrice || 0).gt(currentPrice)) ||
-			wei(stopLossPrice || 0).lt(minMaxStopPrice || 0)
+			wei(stopLossPrice || 0).gt(currentPrice) || wei(stopLossPrice || 0).lt(minMaxStopPrice || 0)
 	} else {
 		invalid =
-			(!!stopLossPrice && wei(stopLossPrice || 0).lt(currentPrice)) ||
-			wei(stopLossPrice || 0).gt(minMaxStopPrice || 0)
+			wei(stopLossPrice || 0).lt(currentPrice) || wei(stopLossPrice || 0).gt(minMaxStopPrice || 0)
 	}
 
 	const percent = wei(stopLossPrice || 0)

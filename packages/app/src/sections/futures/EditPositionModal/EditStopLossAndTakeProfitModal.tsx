@@ -100,6 +100,7 @@ export default function EditStopLossAndTakeProfitModal() {
 
 	const isActive = useMemo(
 		() =>
+			!(slValidity.showWarning && !acceptedSLRisk) &&
 			!slValidity.invalid &&
 			!tpInvalid &&
 			!ethBalanceExceeded &&
@@ -110,11 +111,13 @@ export default function EditStopLossAndTakeProfitModal() {
 				: hasInputValues),
 		[
 			ethBalanceExceeded,
+			acceptedSLRisk,
 			hasChangeOrders,
 			hasInputValues,
 			hasOrders,
 			stopLossPrice,
 			takeProfitPrice,
+			slValidity.showWarning,
 			slValidity.invalid,
 			tpInvalid,
 		]

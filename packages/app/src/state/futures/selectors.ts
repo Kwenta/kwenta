@@ -1749,13 +1749,12 @@ export const selectTradePanelSLValidity = createSelector(
 export const selectModalSLValidity = createSelector(
 	selectSlTpModalInputs,
 	selectEditPositionModalInfo,
-	selectMarketIndexPrice,
-	({ stopLossPrice }, { position }, currentPrice) => {
+	({ stopLossPrice }, { position, marketPrice }) => {
 		return stopLossValidity(
 			stopLossPrice,
 			position?.position?.liquidationPrice,
 			position?.position?.side || PositionSide.LONG,
-			currentPrice
+			marketPrice
 		)
 	}
 )
