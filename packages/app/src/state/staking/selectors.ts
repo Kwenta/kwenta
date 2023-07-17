@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { EscrowData } from '@kwenta/sdk/types'
 import { toWei } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
@@ -294,9 +295,15 @@ export const selectEscrowData = (state: RootState) => state.staking.v1.escrowDat
 
 export const selectEscrowV2Data = (state: RootState) => state.staking.v2.escrowData ?? []
 
+export const selectVestEscrowV2Entries = createSelector(selectEscrowV2Data, (escrowData) =>
+	escrowData.map((entry: EscrowData<string>) => entry.id)
+)
+
 export const selectStakingRollbackRequired = createSelector(
 	selectStakedKwentaBalanceV2,
-	(stakedKwentaBalance) => stakedKwentaBalance.gt(ZERO_WEI)
+	selectTotalVestableV2,
+	(stakedKwentaBalance, totalVestable) =>
+		stakedKwentaBalance.gt(ZERO_WEI) || totalVestable.gt(ZERO_WEI)
 )
 
 export const selectStakingMigrationCompleted = (state: RootState) =>

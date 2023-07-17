@@ -10,35 +10,67 @@ import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { unstakeKwenta } from 'state/staking/actions'
-import { selectIsUnstakingKwenta, selectStakedKwentaBalanceV2 } from 'state/staking/selectors'
+import { unstakeKwenta, vestEscrowedRewards } from 'state/staking/actions'
+import {
+	selectIsUnstakingKwenta,
+	selectIsVestingEscrowedRewards,
+	selectStakedKwentaBalanceV2,
+	selectTotalVestableV2,
+	selectVestEscrowV2Entries,
+} from 'state/staking/selectors'
 import media from 'styles/media'
 
 const MigrationSteps: FC = memo(() => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
+	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
+	const escrowV2Entries = useAppSelector(selectVestEscrowV2Entries)
 	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
+	const isVestingEscrowedRewards = useAppSelector(selectIsVestingEscrowedRewards)
 
 	const handleUnstakeKwenta = useCallback(
 		() => dispatch(unstakeKwenta(wei(stakedKwentaBalanceV2).toBN())),
 		[dispatch, stakedKwentaBalanceV2]
 	)
 
+	const handleVest = useCallback(
+		() => dispatch(vestEscrowedRewards(escrowV2Entries)),
+		[dispatch, escrowV2Entries]
+	)
+
 	const migrationSteps = useMemo(
 		() => [
 			{
-				key: 'step-2',
-				copy: t('dashboard.stake.tabs.migrate.step-2-copy'),
-				label: t('dashboard.stake.tabs.migrate.staked'),
+				key: 'step-1',
+				copy: t('dashboard.stake.tabs.revert.step-1-copy'),
+				label: t('dashboard.stake.tabs.revert.staked'),
 				value: formatNumber(stakedKwentaBalanceV2, { suggestDecimals: true }),
-				buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
+				buttonLabel: t('dashboard.stake.tabs.revert.unstake'),
 				onClick: handleUnstakeKwenta,
 				active: stakedKwentaBalanceV2.gt(0),
 				loading: isUnstakingKwenta,
 			},
+			{
+				key: 'step-2',
+				copy: t('dashboard.stake.tabs.revert.step-2-copy'),
+				label: t('dashboard.stake.tabs.revert.vestable'),
+				value: formatNumber(totalVestableV2, { suggestDecimals: true }),
+				buttonLabel: t('dashboard.stake.tabs.revert.vest'),
+				onClick: handleVest,
+				active: totalVestableV2.gt(0),
+				loading: isVestingEscrowedRewards,
+			},
 		],
-		[handleUnstakeKwenta, isUnstakingKwenta, stakedKwentaBalanceV2, t]
+		[
+			handleUnstakeKwenta,
+			handleVest,
+			isUnstakingKwenta,
+			isVestingEscrowedRewards,
+			stakedKwentaBalanceV2,
+			t,
+			totalVestableV2,
+		]
 	)
 
 	return (

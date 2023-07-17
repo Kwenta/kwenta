@@ -677,7 +677,13 @@
 					"visit-v2": "Visit Staking V2"
 				},
 				"revert": {
-					"title": "Revert to Staking V1"
+					"title": "Revert to Staking V1",
+					"step-1-copy": "Unstake V2 liquid balance",
+					"step-2-copy": "Vest any remaining V2 escrowed entries",
+					"vest": "Vest",
+					"unstake": "Unstake",
+					"staked": "Staked",
+					"vestable": "Vestable"
 				},
 				"redeem": {
 					"title": "Redeem"

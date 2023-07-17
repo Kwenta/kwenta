@@ -18,7 +18,7 @@ import { STAKING_DISABLED } from 'constants/ui'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewards, vestEscrowedRewardsV2 } from 'state/staking/actions'
 import { setSelectedEscrowVersion } from 'state/staking/reducer'
-import { selectEscrowData, selectSelectedEscrowVersion } from 'state/staking/selectors'
+import { selectCombinedEscrowData, selectSelectedEscrowVersion } from 'state/staking/selectors'
 import media from 'styles/media'
 import common from 'styles/theme/colors/common'
 
@@ -28,7 +28,7 @@ const EscrowTable = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 	const escrowVersion = useAppSelector(selectSelectedEscrowVersion)
-	const escrowData = useAppSelector(selectEscrowData)
+	const escrowData = useAppSelector(selectCombinedEscrowData)
 
 	const [checkedState, setCheckedState] = useState(escrowData.map((_) => false))
 	const [checkAllState, setCheckAllState] = useState(false)
@@ -124,6 +124,15 @@ const EscrowTable = () => {
 						onClick={() => handleVersionChange(1)}
 					>
 						{t('dashboard.stake.tabs.escrow.v1')}
+					</StyledButton>
+					<StyledButton
+						variant={escrowVersion === 2 ? 'staking-button' : 'flat'}
+						size="xsmall"
+						isRounded
+						active={escrowVersion === 2}
+						onClick={() => handleVersionChange(2)}
+					>
+						{t('dashboard.stake.tabs.escrow.v2')}
 					</StyledButton>
 				</ButtonsContainer>
 			</Container>

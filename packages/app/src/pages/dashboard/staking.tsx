@@ -18,11 +18,13 @@ import {
 	selectKwentaBalance,
 	selectKwentaRewards,
 	selectStakedEscrowedKwentaBalance,
+	selectStakedEscrowedKwentaBalanceV2,
 	selectStakedKwentaBalance,
 	selectStakedKwentaBalanceV2,
 	selectStakedResetTime,
 	selectStakingRollbackRequired,
 	selectTotalVestable,
+	selectTotalVestableV2,
 } from 'state/staking/selectors'
 import media from 'styles/media'
 
@@ -36,6 +38,8 @@ const StakingPage: StakingComponent = () => {
 	const totalVestable = useAppSelector(selectTotalVestable)
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
 	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
+	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
+	const stakedEscrowedKwentaBalanceV2 = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
@@ -187,6 +191,21 @@ const StakingPage: StakingComponent = () => {
 				],
 			},
 			{
+				category: t('dashboard.stake.portfolio.escrow.title-v2'),
+				card: [
+					{
+						key: 'escrow-staked',
+						title: t('dashboard.stake.portfolio.escrow.staked'),
+						value: formatNumber(stakedEscrowedKwentaBalanceV2, { suggestDecimals: true }),
+					},
+					{
+						key: 'escrow-vestable',
+						title: t('dashboard.stake.portfolio.escrow.vestable'),
+						value: formatNumber(totalVestableV2, { suggestDecimals: true }),
+					},
+				],
+			},
+			{
 				category: t('dashboard.stake.portfolio.escrow.title-v1'),
 				card: [
 					{
@@ -207,6 +226,8 @@ const StakingPage: StakingComponent = () => {
 			kwentaBalance,
 			stakedKwentaBalanceV2,
 			kwentaRewards,
+			stakedEscrowedKwentaBalanceV2,
+			totalVestableV2,
 			stakedEscrowedKwentaBalance,
 			totalVestable,
 		]

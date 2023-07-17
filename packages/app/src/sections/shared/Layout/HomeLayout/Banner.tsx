@@ -27,13 +27,18 @@ type BannerViewProps = {
 }
 
 const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) => {
+	const router = useRouter()
 	const isMobile = mode === 'mobile'
 	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { flex: '0.1' }
 	const closeIconProps = isMobile ? { width: 12, height: 12 } : {}
 	const linkSize = isMobile ? 'small' : 'medium'
 
 	return (
-		<FuturesBannerContainer onClick={onDetails} hasDetails={!!BANNER_LINK_URL}>
+		<FuturesBannerContainer
+			onClick={onDetails}
+			$hasDetails={!!BANNER_LINK_URL}
+			$compact={isMobile && !router.pathname.includes('market')}
+		>
 			<FuturesBannerLinkWrapper>
 				<FuturesLink size={linkSize}>
 					<strong>Important: </strong>
@@ -107,14 +112,14 @@ const FuturesLink = styled(Body)`
 	`};
 `
 
-const FuturesBannerContainer = styled.div<{ $compact?: boolean; hasDetails?: boolean }>`
+const FuturesBannerContainer = styled.div<{ $hasDetails?: boolean; $compact?: boolean }>`
 	height: ${BANNER_HEIGHT_DESKTOP}px;
 	width: 100%;
 	display: flex;
 	align-items: center;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.background};
 	margin-bottom: 0;
-	cursor: ${(props) => (props.hasDetails ? 'pointer' : 'auto')};
+	cursor: ${(props) => (props.$hasDetails ? 'pointer' : 'auto')};
 
 	${media.lessThan('md')`
 		position: relative;
@@ -127,8 +132,9 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean; hasDetails?: boo
 		border-radius: 0px;
 		gap: 5px;
 		height: ${BANNER_HEIGHT_MOBILE}px;
-		margin-top: ${MARKET_SELECTOR_HEIGHT_MOBILE}px;
 	`}
+
+	margin-top: ${(props) => (props.$compact ? 0 : MARKET_SELECTOR_HEIGHT_MOBILE)}px;
 `
 
 const FuturesBannerLinkWrapper = styled.div`
