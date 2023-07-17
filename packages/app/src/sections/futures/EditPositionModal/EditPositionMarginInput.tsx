@@ -82,8 +82,7 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 					defaultValue={0}
 					value={Math.abs(Number(marginDelta))}
 					onChange={onChangeSlider}
-					valueLabelDisplay="auto"
-					valueLabelFormat={(v) => formatNumber(v)}
+					valueLabelFormat={(v: number) => formatNumber(v)}
 					$currentMark={Number(marginDelta ?? 0)}
 				/>
 			</div>

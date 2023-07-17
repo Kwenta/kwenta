@@ -9,6 +9,7 @@ import PricesService from './services/prices'
 import SynthsService from './services/synths'
 import SystemService from './services/system'
 import TransactionsService from './services/transactions'
+import StatsService from './services/stats'
 
 export default class KwentaSDK {
 	public context: Context
@@ -20,6 +21,7 @@ export default class KwentaSDK {
 	public transactions: TransactionsService
 	public kwentaToken: KwentaTokenService
 	public prices: PricesService
+	public stats: StatsService
 	public system: SystemService
 
 	constructor(context: IContext) {
@@ -30,6 +32,7 @@ export default class KwentaSDK {
 		this.synths = new SynthsService(this)
 		this.transactions = new TransactionsService(this)
 		this.kwentaToken = new KwentaTokenService(this)
+		this.stats = new StatsService(this)
 		this.system = new SystemService(this)
 		this.perpsV3 = new PerpsV3(this)
 	}

@@ -44,6 +44,7 @@ import {
 	marginTypeToSubgraphType,
 	PerpsV3SymbolToMarketKey,
 	MarketAssetByKey,
+	mapPerpsV3Position,
 } from '../utils/futures'
 import { getReasonFromCode } from '../utils/synths'
 import { getPerpsV3Markets, queryPerpsV3Accounts } from '../queries/perpsV3'
@@ -207,43 +208,29 @@ export default class PerpsV3Service {
 
 	// TODO: types
 	// TODO: Improve the API for fetching positions
-	public async getFuturesPositions(
+	public async getPositions(
 		address: string, // Cross margin or EOA address
-		futuresMarkets: { asset: FuturesMarketAsset; marketKey: FuturesMarketKey; address: string }[]
+		marketIds: number[]
 	) {
-		const marketDataContract = this.sdk.context.multicallContracts.PerpsV2MarketData
+		const proxy = this.sdk.context.multicallContracts.PerpsV2MarketData
 
-		if (!this.sdk.context.isL2 || !marketDataContract) {
+		if (!this.sdk.context.isL2 || !proxy) {
 			throw new Error(UNSUPPORTED_NETWORK)
 		}
 
-		const positionCalls = []
-		const liquidationCalls = []
-
-		for (const { address: marketAddress, marketKey } of futuresMarkets) {
-			positionCalls.push(
-				marketDataContract.positionDetailsForMarketKey(formatBytes32String(marketKey), address)
-			)
-			const marketContract = new EthCallContract(marketAddress, PerpsMarketABI)
-			liquidationCalls.push(marketContract.canLiquidate(address))
-		}
+		const positionCalls = marketIds.map((id) => proxy.getOpenPosition(address, id))
 
 		// TODO: Combine these two?
-		const positionDetails = (await this.sdk.context.multicallProvider.all(
-			positionCalls
-		)) as PositionDetail[]
-		const canLiquidateState = (await this.sdk.context.multicallProvider.all(
-			liquidationCalls
-		)) as boolean[]
+		const positionDetails = (await this.sdk.context.multicallProvider.all(positionCalls)) as [
+			BigNumber,
+			BigNumber,
+			BigNumber
+		][]
 
 		// map the positions using the results
 		const positions = await Promise.all(
-			positionDetails.map(async (position, ind) => {
-				const canLiquidate = canLiquidateState[ind]
-				const marketKey = futuresMarkets[ind].marketKey
-				const asset = futuresMarkets[ind].asset
-
-				return mapFuturesPosition(position, canLiquidate, asset, marketKey)
+			positionDetails.map(async (res, i) => {
+				return mapPerpsV3Position(marketIds[i], ...res)
 			})
 		)
 

@@ -1,7 +1,6 @@
-import { formatNumber } from '@kwenta/sdk/utils'
+import { formatNumber, notNill } from '@kwenta/sdk/utils'
 import { FC, useMemo, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled, { css } from 'styled-components'
 
 import Table, { TableHeader } from 'components/Table'
@@ -38,15 +37,15 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 			futuresTradesPages.length > 0
 				? futuresTradesPages
 						.flat()
-						.filter((value) => !!value)
+						.filter(notNill)
 						.map((trade) => {
 							return {
-								value: Number(trade?.price),
-								amount: Number(trade?.size),
-								time: Number(trade?.timestamp),
-								id: trade?.txnHash,
-								orderType: trade?.orderType,
-								account: trade?.account,
+								value: Number(trade.price),
+								amount: Number(trade.size),
+								time: Number(trade.timestamp),
+								id: trade.txnHash,
+								orderType: trade.orderType,
+								account: trade.account,
 							}
 						})
 				: []
@@ -75,104 +74,88 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 		[futuresTradesQuery, data]
 	)
 
-	const calTimeDelta = (time: number) => {
-		const timeDelta = (Date.now() - time * 1000) / 1000
+	const calTimeDelta = useCallback(
+		(time: number) => {
+			const timeDelta = (Date.now() - time * 1000) / 1000
 
-		if (timeDelta === 0) {
-			return NO_VALUE
-		} else if (timeDelta < 60) {
-			// less than 1m
-			return `${t('common.time.n-sec-ago', { timeDelta: Math.floor(timeDelta) })}`
-		} else if (timeDelta < 3600) {
-			// less than 1h
-			return `${t('common.time.n-min-ago', { timeDelta: Math.floor(timeDelta / 60) })}`
-		} else if (timeDelta < 86400) {
-			// less than 1d
-			return `${t('common.time.n-hr-ago', { timeDelta: Math.floor(timeDelta / 3600) })}`
-		} else {
-			// greater than 1d
-			return `${t('common.time.n-day-ago', {
-				timeDelta: Math.floor(timeDelta / 86400),
-			})}`
-		}
-	}
+			if (timeDelta === 0) {
+				return NO_VALUE
+			} else if (timeDelta < 60) {
+				// less than 1m
+				return `${t('common.time.n-sec-ago', { timeDelta: Math.floor(timeDelta) })}`
+			} else if (timeDelta < 3600) {
+				// less than 1h
+				return `${t('common.time.n-min-ago', { timeDelta: Math.floor(timeDelta / 60) })}`
+			} else if (timeDelta < 86400) {
+				// less than 1d
+				return `${t('common.time.n-hr-ago', { timeDelta: Math.floor(timeDelta / 3600) })}`
+			} else {
+				// greater than 1d
+				return `${t('common.time.n-day-ago', {
+					timeDelta: Math.floor(timeDelta / 86400),
+				})}`
+			}
+		},
+		[t]
+	)
 
 	return (
 		<HistoryContainer $display={mobile || display} mobile={mobile}>
-			<div style={{ height: '100%' }}>
-				{/* @ts-expect-error */}
-				<StyledTable
-					data={data}
-					isLoading={futuresTradesQuery.isLoading}
-					lastRef={lastElementRef}
-					$mobile={mobile}
-					onTableRowClick={(_row) => {
-						return _row.original.id !== NO_VALUE
-							? window.open(`${blockExplorer.addressLink(_row.original.account)}`)
-							: undefined
-					}}
-					highlightRowsOnHover
-					columns={[
-						{
-							Header: <TableHeader>{t('futures.market.history.amount-label')}</TableHeader>,
-							accessor: TableColumnAccessor.Amount,
-							Cell: (cellProps: CellProps<any>) => {
-								const numValue = Math.abs(cellProps.row.original.amount / 1e18)
-								const numDecimals =
-									numValue === 0 ? 2 : numValue < 1 ? 4 : numValue >= 100000 ? 0 : 2
+			<StyledTable
+				data={data}
+				isLoading={futuresTradesQuery.isLoading}
+				lastRef={lastElementRef}
+				onTableRowClick={(_row) => {
+					return _row.original.id !== NO_VALUE
+						? window.open(`${blockExplorer.addressLink(_row.original.account)}`)
+						: undefined
+				}}
+				highlightRowsOnHover
+				columns={[
+					{
+						header: () => <TableHeader>{t('futures.market.history.amount-label')}</TableHeader>,
+						accessorKey: TableColumnAccessor.Amount,
+						cell: (cellProps) => {
+							const numValue = Math.abs(cellProps.row.original.amount / 1e18)
+							const numDecimals = numValue === 0 ? 2 : numValue < 1 ? 4 : numValue >= 100000 ? 0 : 2
 
-								const normal = cellProps.row.original.orderType === 'Liquidation'
-								const negative = cellProps.row.original.amount > 0
+							const normal = cellProps.row.original.orderType === 'Liquidation'
+							const negative = cellProps.row.original.amount > 0
 
-								return (
-									<DirectionalValue negative={negative} normal={normal}>
-										{cellProps.row.original.amount !== NO_VALUE
-											? `${formatNumber(numValue, {
-													minDecimals: numDecimals,
-													truncateOver: 1e6,
-											  })} ${normal ? '💀' : ''}`
-											: NO_VALUE}
-									</DirectionalValue>
-								)
-							},
-							width: 110,
+							return (
+								<DirectionalValue negative={negative} normal={normal}>
+									{formatNumber(numValue, {
+										minDecimals: numDecimals,
+										truncateOver: 1e6,
+									})}{' '}
+									{normal ? '💀' : ''}
+								</DirectionalValue>
+							)
 						},
-						{
-							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
-							accessor: TableColumnAccessor.Price,
-							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = {
-									suggestDecimals: true,
-								}
-
-								return (
-									<PriceValue>
-										$
-										{cellProps.row.original.value !== NO_VALUE
-											? formatNumber(cellProps.row.original.value / 1e18, formatOptions)
-											: NO_VALUE}
-									</PriceValue>
-								)
-							},
-							width: 100,
+						size: 110,
+					},
+					{
+						header: () => <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
+						accessorKey: TableColumnAccessor.Price,
+						cell: (cellProps) => {
+							return (
+								<PriceValue>
+									${formatNumber(cellProps.row.original.value / 1e18, { suggestDecimals: true })}
+								</PriceValue>
+							)
 						},
-						{
-							Header: <TableHeader>{t('futures.market.history.time-label')}</TableHeader>,
-							accessor: TableColumnAccessor.Time,
-							Cell: (cellProps: CellProps<any>) => {
-								return (
-									<TimeValue>
-										{cellProps.row.original.time !== NO_VALUE
-											? calTimeDelta(cellProps.row.original.time)
-											: NO_VALUE}
-									</TimeValue>
-								)
-							},
-							width: 70,
+						size: 100,
+					},
+					{
+						header: () => <TableHeader>{t('futures.market.history.time-label')}</TableHeader>,
+						accessorKey: TableColumnAccessor.Time,
+						cell: (cellProps) => {
+							return <TimeValue>{calTimeDelta(cellProps.row.original.time)}</TimeValue>
 						},
-					]}
-				/>
-			</div>
+						size: 70,
+					},
+				]}
+			/>
 		</HistoryContainer>
 	)
 }
@@ -217,7 +200,7 @@ const TableAlignment = css`
 	}
 `
 
-const StyledTable = styled(Table)<{ $mobile?: boolean }>`
+const StyledTable = styled(Table)`
 	border: none;
 	height: 100%;
 
@@ -229,12 +212,7 @@ const StyledTable = styled(Table)<{ $mobile?: boolean }>`
 	.table-body-cell {
 		height: 30px;
 	}
-	${(props) =>
-		props.$mobile &&
-		css`
-			height: 100%;
-		`};
-`
+` as typeof Table
 
 const PriceValue = styled(Body).attrs({ mono: true })`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
@@ -250,7 +228,5 @@ const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boole
 	color: ${(props) =>
 		props.normal
 			? props.theme.colors.selectedTheme.button.text.primary
-			: props.negative
-			? props.theme.colors.selectedTheme.green
-			: props.theme.colors.selectedTheme.red};
+			: props.theme.colors.selectedTheme[props.negative ? 'green' : 'red']};
 `

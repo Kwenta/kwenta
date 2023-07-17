@@ -19,8 +19,6 @@ enum Tab {
 	Markets = 'markets',
 	Governance = 'governance',
 	Stake = 'staking',
-	Earn = 'earn',
-	Rewards = 'rewards',
 }
 
 const Tabs = Object.values(Tab)
@@ -68,12 +66,6 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				href: ROUTES.Dashboard.Stake,
 			},
 			{
-				name: Tab.Rewards,
-				label: t('dashboard.tabs.rewards'),
-				active: activeTab === Tab.Rewards,
-				href: ROUTES.Dashboard.Rewards,
-			},
-			{
 				name: Tab.Governance,
 				label: t('dashboard.tabs.governance'),
 				active: activeTab === Tab.Governance,
@@ -93,16 +85,12 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 							<StyledTabList>
 								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
 								{TABS.slice(0, 3).map(({ name, label, active, ...rest }) => (
-									<NavLink key={name} title={name} isActive={active} {...rest}>
-										{label}
-									</NavLink>
+									<NavLink key={name} title={label} isActive={active} {...rest} />
 								))}
 
 								<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
 								{TABS.slice(3).map(({ name, label, active, ...rest }) => (
-									<NavLink key={name} title={name} isActive={active} {...rest}>
-										{label}
-									</NavLink>
+									<NavLink key={name} title={label} isActive={active} {...rest} />
 								))}
 							</StyledTabList>
 							<Links />
@@ -153,7 +141,7 @@ const StyledLeftSideContent = styled(LeftSideContent)`
 
 const StyledFullHeightContainer = styled.div`
 	display: grid;
-	grid-template-columns: 150px 1fr 150px;
+	grid-template-columns: 165px 1fr 150px;
 	height: 100%;
 	padding: 0 15px;
 `

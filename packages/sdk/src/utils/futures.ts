@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatBytes32String, parseBytes32String } from '@ethersproject/strings'
 import Wei, { wei } from '@synthetixio/wei'
-import { defaultAbiCoder } from 'ethers/lib/utils.js'
+import { defaultAbiCoder, formatEther } from 'ethers/lib/utils.js'
 
 import {
 	APP_MAX_LEVERAGE,
@@ -44,6 +44,7 @@ import {
 	ConditionalOrderTypeEnum,
 	FuturesMarginType,
 	MarketClosureReason,
+	PerpsV3Position,
 } from '../types/futures'
 import { formatCurrency, formatDollars } from '../utils/number'
 import {
@@ -208,6 +209,26 @@ export const mapFuturesPosition = (
 						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
 	}
+}
+
+export const mapPerpsV3Position = (
+	marketId: number,
+	pnl: BigNumber,
+	funding: BigNumber,
+	size: BigNumber
+): PerpsV3Position | null => {
+	const pnlWei = wei(pnl)
+	const pnlPct = wei(0) // TODO: [PERPS_V3] Calculate PNL %
+	return wei(size).eq(ZERO_WEI)
+		? null
+		: {
+				side: wei(size).gt(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT,
+				accruedFunding: wei(funding),
+				profitLoss: wei(pnlWei),
+				size: wei(size).abs(),
+				pnl: pnlWei,
+				pnlPct,
+		  }
 }
 
 export const mapFuturesPositions = (
@@ -590,6 +611,22 @@ export const encodeConditionalOrderParams = (
 			reduceOnly,
 		]
 	)
+}
+
+export const calculateTotalFees = (totalFees: Pick<FuturesAggregateStatResult, 'feesKwenta'>[]) => {
+	const fees = totalFees
+		.map(({ feesKwenta }) => formatEther(feesKwenta.toString()))
+		.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI)
+	return fees ?? ZERO_WEI
+}
+
+export const calculateFeesForAccount = (
+	feesForAccount: Pick<FuturesTradeResult, 'feesPaid' | 'keeperFeesPaid'>[]
+) => {
+	const fees = feesForAccount
+		.map((trade) => formatEther(trade.feesPaid.sub(trade.keeperFeesPaid).toString()))
+		.reduce((acc, curr) => acc.add(wei(curr)), ZERO_WEI)
+	return fees ?? ZERO_WEI
 }
 
 export const encodeSubmitOffchainOrderParams = (

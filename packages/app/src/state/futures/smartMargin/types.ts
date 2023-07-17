@@ -15,10 +15,10 @@ import {
 import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
-import { QueryStatus } from 'state/types'
 
 import {
 	FuturesAccountData,
+	FuturesQueryStatuses,
 	FuturesTransactionType,
 	HistoricalFundingRates,
 	TradeSizeInputs,
@@ -71,22 +71,6 @@ export type SmartPerpsPortfolio = {
 export type PortfolioValues = {
 	timestamp: number
 	total: number
-}
-
-export type FuturesQueryStatuses = {
-	markets: QueryStatus
-	smartMarginBalanceInfo: QueryStatus
-	dailyVolumes: QueryStatus
-	smartMarginPositions: QueryStatus
-	smartMarginPositionHistory: QueryStatus
-	openOrders: QueryStatus
-	smartMarginTradePreview: QueryStatus
-	smartMarginAccount: QueryStatus
-	positionHistory: QueryStatus
-	trades: QueryStatus
-	selectedTraderPositionHistory: QueryStatus
-	marginTransfers: QueryStatus
-	historicalFundingRates: QueryStatus
 }
 
 export type FuturesTransaction = {
@@ -160,6 +144,8 @@ export type SmartMarginState = {
 		price?: string | undefined | null
 		invalidLabel: string | undefined | null
 	}
+	futuresFees: string
+	futuresFeesForAccount: string
 }
 
 export type SharePositionParams = {

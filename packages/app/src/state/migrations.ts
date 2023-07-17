@@ -86,12 +86,14 @@ export const migrations = {
 			futures: FUTURES_INITIAL_STATE,
 		}
 	},
-	33: (state: any) => {
+	34: (state: any) => {
 		return {
 			...state,
 			app: APP_INITIAL_STATE,
 			futures: FUTURES_INITIAL_STATE,
 			balances: BALANCES_INITIAL_STATE,
+			staking: STAKING_INITIAL_STATE,
+			stats: STATS_INITIAL_STATE,
 		}
 	},
 }

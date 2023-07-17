@@ -19,7 +19,7 @@ export const ZERO_STATE_ISOLATED_ACCOUNT = {
 	positionHistory: [],
 }
 
-export const ZERO_STATE_CM_ACCOUNT = {
+export const ZERO_STATE_ACCOUNT = {
 	position: undefined,
 	balanceInfo: {
 		freeMargin: '0',
@@ -33,6 +33,11 @@ export const ZERO_STATE_CM_ACCOUNT = {
 	delayedOrders: [],
 	conditionalOrders: [],
 	positionHistory: [],
+}
+
+export const ZERO_STATE_CM_ACCOUNT = {
+	...ZERO_STATE_ACCOUNT,
+	balances: {},
 }
 
 export const DEFAULT_QUERY_STATUS = {

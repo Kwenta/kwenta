@@ -1,24 +1,25 @@
-import Wei from '@synthetixio/wei'
-
-export type FuturesStat = {
+export type FuturesStat<T = string, K = string> = {
 	account: string
-	pnlWithFeesPaid: Wei
-	liquidations: Wei
-	totalTrades: Wei
-	totalVolume: Wei
-	pnl?: Wei
+	pnlWithFeesPaid: T
+	liquidations: K
+	totalTrades: K
+	totalVolume: T
 }
 
-export type AccountStat = {
-	rank: number
-	account: string
+export type AccountStat<T = string, K = string> = FuturesStat<T, K> & {
 	trader: string
 	traderShort: string
+	rank: number
+	rankText: string
 	traderEns?: string | null
-	totalTrades: number
-	totalVolume: Wei
-	liquidations: number
-	pnl: Wei
+}
+
+export type Leaderboard<T = string, K = string> = {
+	top: AccountStat<T, K>[]
+	bottom: AccountStat<T, K>[]
+	wallet: AccountStat<T, K>[]
+	search: AccountStat<T, K>[]
+	all: AccountStat<T, K>[]
 }
 
 export type FuturesCumulativeStats = {
@@ -27,4 +28,8 @@ export type FuturesCumulativeStats = {
 	totalVolume: string
 	totalLiquidations: string
 	averageTradeSize: string
+}
+
+export type EnsInfo = {
+	[account: string]: string
 }

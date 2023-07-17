@@ -38,7 +38,8 @@ export const selectV3MarketInfo = createSelector(
 )
 
 export const selectCrossMarginSupportedNetwork = (state: RootState) =>
-	state.wallet.networkId === 10 || state.wallet.networkId === 420
+	// TODO: Add support for mainnet
+	state.wallet.networkId === 420
 
 export const selectCrossMarginAccount = createSelector(
 	selectWallet,

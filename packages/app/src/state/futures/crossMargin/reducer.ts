@@ -73,24 +73,21 @@ export const COSS_MARGIN_INITIAL_STATE: CrossMarginState = {
 	dashboard: {
 		selectedPortfolioTimeframe: Period.ONE_WEEK,
 	},
-	leaderboard: {
-		selectedTrader: undefined,
-		selectedTraderPositionHistory: DEFAULT_MAP_BY_NETWORK,
-	},
 	queryStatuses: {
 		markets: DEFAULT_QUERY_STATUS,
 		dailyVolumes: DEFAULT_QUERY_STATUS,
 		positions: DEFAULT_QUERY_STATUS,
 		account: DEFAULT_QUERY_STATUS,
 		openOrders: DEFAULT_QUERY_STATUS,
-		crossMarginTradePreview: DEFAULT_QUERY_STATUS,
+		tradePreview: DEFAULT_QUERY_STATUS,
 		positionHistory: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
 		historicalFundingRates: DEFAULT_QUERY_STATUS,
+		futuresFees: DEFAULT_QUERY_STATUS,
+		futuresFeesForAccount: DEFAULT_QUERY_STATUS,
 		// TODO: Separate cross / smart query status
-		smartMarginTradePreview: DEFAULT_QUERY_STATUS,
 		smartMarginBalanceInfo: DEFAULT_QUERY_STATUS,
 	},
 	historicalFundingRates: {},
@@ -143,7 +140,7 @@ const crossMarginSlice = createSlice({
 			const message = Object.values(ORDER_PREVIEW_ERRORS).includes(payload.error)
 				? payload.error
 				: 'Failed to get trade preview'
-			futuresState.queryStatuses.crossMarginTradePreview = {
+			futuresState.queryStatuses.tradePreview = {
 				status: FetchStatus.Error,
 				error: message,
 			}
@@ -182,10 +179,7 @@ const crossMarginSlice = createSlice({
 				trade: null,
 				close: null,
 			}
-			state.queryStatuses.crossMarginTradePreview = DEFAULT_QUERY_STATUS
-		},
-		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
-			state.leaderboard.selectedTrader = action.payload
+			state.queryStatuses.tradePreview = DEFAULT_QUERY_STATUS
 		},
 		incrementPreviewCount: (state) => {
 			state.previewDebounceCount = state.previewDebounceCount + 1
@@ -349,7 +343,6 @@ export const {
 	setCrossMarginLeverageSide,
 	setLeverageInput,
 	clearAllTradePreviews,
-	setSelectedTrader,
 	setSelectedInputDenomination,
 	setSelectedInputFundingRateHour,
 	setSelectedPortfolioTimeframe,

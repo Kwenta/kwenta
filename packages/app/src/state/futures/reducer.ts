@@ -40,7 +40,10 @@ const futuresSlice = createSlice({
 		setSelectedInputFundingRateHour: (state, action: PayloadAction<number>) => {
 			state.selectedInputHours = action.payload
 		},
-		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
+		setSelectedTrader: (
+			state,
+			action: PayloadAction<{ trader: string; traderEns: string | undefined | null } | undefined>
+		) => {
 			state.leaderboard.selectedTrader = action.payload
 		},
 		setSelectedPortfolioTimeframe: (state, action: PayloadAction<Period>) => {

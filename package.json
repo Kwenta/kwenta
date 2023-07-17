@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "7.3.5",
+	"version": "7.3.6",
 	"description": "Kwenta",
 	"main": "index.js",
 	"scripts": {
@@ -8,7 +8,8 @@
 		"prepare": "husky install",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
 		"lint": "eslint . --ext ts,.tsx && pnpm check-types",
-		"lint:fix": "eslint packages --ext ts,.tsx --fix"
+		"lint:fix": "eslint packages --ext ts,.tsx --fix",
+		"dev": "pnpm run --filter \"@kwenta/*\" --stream --parallel dev"
 	},
 	"repository": {
 		"type": "git",

@@ -31,7 +31,6 @@ export const fetchV3BalancesAndAllowances = createAsyncThunk<
 	try {
 		if (!wallet.walletAddress) return
 		const res = await sdk.synths.getSynthV3BalancesAndAllowances(wallet.walletAddress, spenders)
-		console.log('res', res, serializeV3Balances(res))
 		return serializeV3Balances(res)
 	} catch (e) {
 		notifyError('Error fetching v3 balances', e)

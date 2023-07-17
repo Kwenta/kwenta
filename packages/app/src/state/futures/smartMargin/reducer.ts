@@ -16,7 +16,7 @@ import {
 	LOADING_STATUS,
 	SUCCESS_STATUS,
 	ZERO_CM_FEES,
-	ZERO_STATE_CM_ACCOUNT,
+	ZERO_STATE_ACCOUNT,
 	ZERO_STATE_TRADE_INPUTS,
 } from 'state/constants'
 import { FetchStatus } from 'state/types'
@@ -37,6 +37,8 @@ import {
 	fetchAllV2TradesForAccount,
 	fetchMarginTransfersV2,
 	fetchFundingRatesHistory,
+	fetchFuturesFees,
+	fetchFuturesFeesForAccount,
 } from './actions'
 import {
 	SmartMarginAccountData,
@@ -57,16 +59,17 @@ export const SMART_MARGIN_INITIAL_STATE: SmartMarginState = {
 		markets: DEFAULT_QUERY_STATUS,
 		smartMarginBalanceInfo: DEFAULT_QUERY_STATUS,
 		dailyVolumes: DEFAULT_QUERY_STATUS,
-		smartMarginPositions: DEFAULT_QUERY_STATUS,
-		smartMarginPositionHistory: DEFAULT_QUERY_STATUS,
-		openOrders: DEFAULT_QUERY_STATUS,
-		smartMarginTradePreview: DEFAULT_QUERY_STATUS,
-		smartMarginAccount: DEFAULT_QUERY_STATUS,
+		positions: DEFAULT_QUERY_STATUS,
 		positionHistory: DEFAULT_QUERY_STATUS,
+		openOrders: DEFAULT_QUERY_STATUS,
+		tradePreview: DEFAULT_QUERY_STATUS,
+		account: DEFAULT_QUERY_STATUS,
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
 		historicalFundingRates: DEFAULT_QUERY_STATUS,
+		futuresFees: DEFAULT_QUERY_STATUS,
+		futuresFeesForAccount: DEFAULT_QUERY_STATUS,
 	},
 	accounts: DEFAULT_MAP_BY_NETWORK,
 	selectedMarketAsset: FuturesMarketAsset.sETH,
@@ -108,6 +111,8 @@ export const SMART_MARGIN_INITIAL_STATE: SmartMarginState = {
 			invalidLabel: undefined,
 		},
 	},
+	futuresFees: '0',
+	futuresFeesForAccount: '0',
 }
 
 const smartMarginSlice = createSlice({
@@ -196,7 +201,7 @@ const smartMarginSlice = createSlice({
 			const message = Object.values(ORDER_PREVIEW_ERRORS).includes(payload.error)
 				? payload.error
 				: 'Failed to get trade preview'
-			smartMargin.queryStatuses.smartMarginTradePreview = {
+			smartMargin.queryStatuses.tradePreview = {
 				status: FetchStatus.Error,
 				error: message,
 			}
@@ -213,7 +218,7 @@ const smartMarginSlice = createSlice({
 					...smartMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_CM_ACCOUNT,
+						...ZERO_STATE_ACCOUNT,
 					},
 				}
 			}
@@ -224,7 +229,7 @@ const smartMarginSlice = createSlice({
 				trade: null,
 				close: null,
 			}
-			smartMargin.queryStatuses.smartMarginTradePreview = DEFAULT_QUERY_STATUS
+			smartMargin.queryStatuses.tradePreview = DEFAULT_QUERY_STATUS
 		},
 		setSmartMarginTradePreview: (
 			smartMargin,
@@ -325,10 +330,10 @@ const smartMarginSlice = createSlice({
 
 		// Cross margin positions
 		builder.addCase(fetchSmartMarginPositions.pending, (futuresState) => {
-			futuresState.queryStatuses.smartMarginPositions = LOADING_STATUS
+			futuresState.queryStatuses.positions = LOADING_STATUS
 		})
 		builder.addCase(fetchSmartMarginPositions.fulfilled, (smartMargin, action) => {
-			smartMargin.queryStatuses.smartMarginPositions = SUCCESS_STATUS
+			smartMargin.queryStatuses.positions = SUCCESS_STATUS
 			if (!action.payload) return
 			const { account, positions, network } = action.payload
 			const wallet = findWalletForAccount(smartMargin, account, network)
@@ -337,7 +342,7 @@ const smartMarginSlice = createSlice({
 			}
 		})
 		builder.addCase(fetchSmartMarginPositions.rejected, (smartMargin) => {
-			smartMargin.queryStatuses.smartMarginPositions = {
+			smartMargin.queryStatuses.positions = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch positions',
 			}
@@ -382,18 +387,18 @@ const smartMarginSlice = createSlice({
 			}
 		})
 
-		// Fetch Cross Margin Trade Preview
+		// Fetch Smart Margin Trade Preview
 		builder.addCase(fetchSmartMarginTradePreview.pending, (futuresState) => {
-			futuresState.queryStatuses.smartMarginTradePreview = LOADING_STATUS
+			futuresState.queryStatuses.tradePreview = LOADING_STATUS
 		})
 		builder.addCase(fetchSmartMarginTradePreview.fulfilled, (smartMargin, { payload }) => {
 			smartMargin.previews[payload.type] = payload.preview
-			smartMargin.queryStatuses.smartMarginTradePreview = SUCCESS_STATUS
+			smartMargin.queryStatuses.tradePreview = SUCCESS_STATUS
 		})
 
-		// Fetch cross margin account
+		// Fetch smart margin account
 		builder.addCase(fetchSmartMarginAccount.pending, (futuresState) => {
-			futuresState.queryStatuses.smartMarginAccount = LOADING_STATUS
+			futuresState.queryStatuses.account = LOADING_STATUS
 		})
 		builder.addCase(fetchSmartMarginAccount.fulfilled, (smartMargin, action) => {
 			if (action.payload) {
@@ -402,14 +407,14 @@ const smartMarginSlice = createSlice({
 					...smartMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_CM_ACCOUNT,
+						...ZERO_STATE_ACCOUNT,
 					},
 				}
 			}
-			smartMargin.queryStatuses.smartMarginAccount = SUCCESS_STATUS
+			smartMargin.queryStatuses.account = SUCCESS_STATUS
 		})
 		builder.addCase(fetchSmartMarginAccount.rejected, (futuresState) => {
-			futuresState.queryStatuses.smartMarginAccount = {
+			futuresState.queryStatuses.account = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch cross margin account',
 			}
@@ -483,6 +488,35 @@ const smartMarginSlice = createSlice({
 		builder.addCase(fetchFundingRatesHistory.fulfilled, (futuresState, { payload }) => {
 			futuresState.historicalFundingRates[payload.marketAsset] = payload.rates
 		})
+
+		builder.addCase(fetchFuturesFees.pending, (futuresState) => {
+			futuresState.queryStatuses.futuresFees = LOADING_STATUS
+		})
+		builder.addCase(fetchFuturesFees.fulfilled, (futuresState, action) => {
+			futuresState.queryStatuses.futuresFees = SUCCESS_STATUS
+			futuresState.futuresFees = action.payload.totalFuturesFeePaid
+		})
+		builder.addCase(fetchFuturesFees.rejected, (futuresState) => {
+			futuresState.queryStatuses.futuresFees = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch fee data',
+			}
+		})
+
+		// Trading Fees by given epoch and trader
+		builder.addCase(fetchFuturesFeesForAccount.pending, (futuresState) => {
+			futuresState.queryStatuses.futuresFeesForAccount = LOADING_STATUS
+		})
+		builder.addCase(fetchFuturesFeesForAccount.fulfilled, (futuresState, action) => {
+			futuresState.queryStatuses.futuresFeesForAccount = SUCCESS_STATUS
+			futuresState.futuresFeesForAccount = action.payload.futuresFeePaid
+		})
+		builder.addCase(fetchFuturesFeesForAccount.rejected, (futuresState) => {
+			futuresState.queryStatuses.futuresFeesForAccount = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch fee data for the account',
+			}
+		})
 	},
 })
 
@@ -552,7 +586,7 @@ export const updateSmartMarginAccount = (
 	newAccountData: Partial<SmartMarginAccountData>
 ) => {
 	const updatedAccount = {
-		...ZERO_STATE_CM_ACCOUNT,
+		...ZERO_STATE_ACCOUNT,
 		...smartMarginState.accounts[network]?.[wallet],
 		...newAccountData,
 	}

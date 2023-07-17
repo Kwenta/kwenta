@@ -59,13 +59,14 @@ export type FuturesQueryStatuses = {
 	positions: QueryStatus
 	positionHistory: QueryStatus
 	openOrders: QueryStatus
-	smartMarginTradePreview: QueryStatus
-	crossMarginTradePreview: QueryStatus
+	tradePreview: QueryStatus
 	account: QueryStatus
 	trades: QueryStatus
 	selectedTraderPositionHistory: QueryStatus
 	marginTransfers: QueryStatus
 	historicalFundingRates: QueryStatus
+	futuresFees: QueryStatus
+	futuresFeesForAccount: QueryStatus
 }
 
 export type TradeSizeInputs<T = Wei> = {

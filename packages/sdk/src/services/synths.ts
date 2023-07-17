@@ -72,8 +72,6 @@ export default class SynthsService {
 	): Promise<SynthV3BalancesAndAllowances> {
 		const { SNXUSD } = this.sdk.context.multicallContracts
 
-		console.log('SNXUSD', SNXUSD)
-
 		if (!SNXUSD) throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		const [balance, ...allowances] = (await this.sdk.context.multicallProvider.all([
 			SNXUSD.balanceOf(walletAddress),

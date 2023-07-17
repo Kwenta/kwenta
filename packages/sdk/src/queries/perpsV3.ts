@@ -30,8 +30,6 @@ export const getPerpsV3Markets = async (sdk: KwentaSDK): Promise<PerpsV3Market[]
 		`
 	)
 
-	console.log('response, ', response)
-
 	return response.markets
 }
 

@@ -287,6 +287,15 @@ export type FuturesPosition<T = Wei> = {
 	takeProfit?: ConditionalOrder<T>
 }
 
+export type PerpsV3Position<T = Wei> = {
+	side: PositionSide
+	accruedFunding: T
+	profitLoss: T
+	size: T
+	pnl: T
+	pnlPct: T
+}
+
 export type ModifyPositionOptions<T extends boolean> = {
 	delayed?: boolean
 	offchain?: boolean

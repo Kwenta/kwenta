@@ -114,15 +114,6 @@ export type CrossMarginState = {
 	dashboard: {
 		selectedPortfolioTimeframe: Period
 	}
-	leaderboard: {
-		selectedTrader: string | undefined
-		selectedTraderPositionHistory: Record<
-			FuturesNetwork,
-			{
-				[wallet: string]: FuturesPositionHistory<string>[]
-			}
-		>
-	}
 	historicalFundingRates: Partial<
 		Record<FuturesMarketAsset, { timestamp: string; funding: string }[]>
 	>

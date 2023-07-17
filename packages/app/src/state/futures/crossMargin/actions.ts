@@ -16,7 +16,7 @@ import { notifyError } from 'components/ErrorNotifier'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import { handleTransactionError, setOpenModal, setTransaction } from 'state/app/reducer'
 import { fetchBalances, fetchV3BalancesAndAllowances } from 'state/balances/actions'
-import { selectMarketInfo } from 'state/futures/selectors'
+import { selectMarketInfo, selectMarkets } from 'state/futures/selectors'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 import {
@@ -100,7 +100,7 @@ export const fetchPerpsV3Account = createAsyncThunk<
 		}
 		return undefined
 	} catch (err) {
-		notifyError('Failed to fetch smart margin account', err)
+		notifyError('Failed to fetch cross margin account', err)
 		rejectWithValue(err.message)
 	}
 })
@@ -120,14 +120,19 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 	{ positions: FuturesPosition<string>[]; account: string; network: NetworkId } | undefined,
 	void,
 	ThunkConfig
->('futures/fetchCrossMarginPositions', async (_, { getState }) => {
+>('futures/fetchCrossMarginPositions', async (_, { extra: { sdk }, getState }) => {
 	const supportedNetwork = selectCrossMarginSupportedNetwork(getState())
 	const network = selectNetwork(getState())
 	const account = selectCrossMarginAccount(getState())
+	const markets = selectMarkets(getState())
 
 	if (!supportedNetwork || !account) return
 	try {
-		// TODO: Fetch positions
+		// const positions = await sdk.perpsV3.getPositions(
+		// 	account,
+		// 	markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
+		// )
+
 		return { positions: [], account, network }
 	} catch (err) {
 		logError(err)

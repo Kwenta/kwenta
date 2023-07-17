@@ -837,6 +837,45 @@ export const fetchMarginTransfersV2 = createAsyncThunk<
 	}
 })
 
+export const fetchFuturesFees = createAsyncThunk<
+	{
+		totalFuturesFeePaid: string
+	},
+	{
+		start: number
+		end: number
+	},
+	ThunkConfig
+>('futures/fetchFuturesFees', async ({ start, end }, { extra: { sdk } }) => {
+	try {
+		const totalFuturesFeePaid = await sdk.kwentaToken.getFuturesFee(start, end)
+		return { totalFuturesFeePaid: totalFuturesFeePaid.toString() }
+	} catch (err) {
+		notifyError('Failed to fetch futures fees', err)
+		throw err
+	}
+})
+
+export const fetchFuturesFeesForAccount = createAsyncThunk<
+	{
+		futuresFeePaid: string
+	},
+	{
+		start: number
+		end: number
+	},
+	ThunkConfig
+>('futures/fetchFuturesFeesForAccount', async ({ start, end }, { getState, extra: { sdk } }) => {
+	try {
+		const wallet = selectWallet(getState())
+		const futuresFeePaid = await sdk.kwentaToken.getFuturesFeeForAccount(wallet!, start, end)
+		return { futuresFeePaid: futuresFeePaid.toString() }
+	} catch (err) {
+		notifyError('Failed to fetch futures fees for the account', err)
+		throw err
+	}
+})
+
 // Contract Mutations
 
 export const createSmartMarginAccount = createAsyncThunk<
