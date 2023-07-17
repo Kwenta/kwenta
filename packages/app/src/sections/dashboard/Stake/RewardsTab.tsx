@@ -220,7 +220,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 							<Body color="secondary">{copy}</Body>
 						</div>
 						<RewardsContainer>
-							<FlexDivRow justifyContent="flex-start" columnGap="25px">
+							<FlexDivRow justifyContent="flex-start" columnGap="15px">
 								{labels.map(({ label, value, labelIcon, valueIcon }) => (
 									<FlexDivCol rowGap="5px">
 										<IconContainer color="secondary">
@@ -234,7 +234,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 									</FlexDivCol>
 								))}
 							</FlexDivRow>
-							<FlexDivRow justifyContent="flex-start" columnGap="25px">
+							<FlexDivRow justifyContent="flex-start" columnGap="15px">
 								{info.map(({ label, labelIcon, value, valueIcon }) => (
 									<FlexDivCol rowGap="5px">
 										<IconContainer color="secondary">
@@ -294,6 +294,7 @@ const IconContainer = styled(Body)`
 	flex-direction: row;
 	column-gap: 5px;
 	align-items: center;
+	width: 95px;
 `
 
 const SelectLabelContainer = styled(LabelContainer)`
@@ -339,6 +340,7 @@ const ButtonContainer = styled.div`
 
 const RewardsContainer = styled(FlexDivCol)`
 	row-gap: 25px;
+	max-width: 300px;
 	${media.lessThan('lg')`
 		flex-direction: row;
 		column-gap: 25px;
