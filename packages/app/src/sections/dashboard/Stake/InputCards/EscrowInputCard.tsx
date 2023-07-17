@@ -9,7 +9,7 @@ import {
 	selectCanStakeEscrowedKwenta,
 	selectCanUnstakeEscrowedKwenta,
 	selectIsApprovingKwenta,
-	selectIsKwentaTokenApprovedV2,
+	selectIsKwentaTokenApproved,
 	selectIsStakedEscrowedKwenta,
 	selectIsStakingEscrowedKwenta,
 	selectIsUnstakedEscrowedKwenta,
@@ -23,7 +23,7 @@ const EscrowInputCard: FC = () => {
 	const dispatch = useAppDispatch()
 
 	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
-	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApprovedV2)
+	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved)
 	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalance)
 	const stakeEnabled = useAppSelector(selectCanStakeEscrowedKwenta)
 	const unstakeEnabled = useAppSelector(selectCanUnstakeEscrowedKwenta)
