@@ -50,6 +50,7 @@ const MigrationSteps: FC = memo(() => {
 				onClick: handleUnstakeKwenta,
 				active: stakedKwentaBalanceV2.gt(0),
 				loading: isUnstakingKwenta,
+				visible: true,
 			},
 			{
 				key: 'step-2',
@@ -60,6 +61,7 @@ const MigrationSteps: FC = memo(() => {
 				onClick: handleVest,
 				active: stakedKwentaBalanceV2.eq(0) && totalVestableV2.gt(0),
 				loading: isVestingEscrowedRewards,
+				visible: totalVestableV2.gt(0),
 			},
 		],
 		[
@@ -75,8 +77,9 @@ const MigrationSteps: FC = memo(() => {
 
 	return (
 		<StepsContainer columnGap="15px">
-			{migrationSteps.map(
-				({ key, copy, label, value, buttonLabel, active, onClick, loading }, i) => (
+			{migrationSteps
+				.filter(({ visible }) => visible)
+				.map(({ key, copy, label, value, buttonLabel, active, onClick, loading }, i) => (
 					<StyledStakingCard key={key} $active={active}>
 						<StyledHeading variant="h4">
 							<Trans
@@ -111,8 +114,7 @@ const MigrationSteps: FC = memo(() => {
 							</Button>
 						</FlexDivRowCentered>
 					</StyledStakingCard>
-				)
-			)}
+				))}
 		</StepsContainer>
 	)
 })
