@@ -25,7 +25,7 @@ export const requestCandlesticks = async (
 				params: {
 					from: minTimestamp,
 					to: maxTimestamp,
-					symbol: `${currencyKey}`,
+					symbol: `${currencyKey}/USD`,
 					resolution: getSupportedResolution(period),
 				},
 			})
