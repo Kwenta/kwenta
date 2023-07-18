@@ -103,7 +103,7 @@ import {
 	selectKeeperEthBalance,
 	selectSmartMarginLeverageSide,
 	selectV2MarketAsset,
-	selectPerpsV2Markets,
+	selectV2Markets,
 	selectOrderType,
 	selectOrderFeeCap,
 	selectPosition,
@@ -189,7 +189,7 @@ export const fetchSmartMarginPositions = createAsyncThunk<
 	const account = selectSmartMarginAccount(getState())
 	const supportedNetwork = selectSmartMarginSupportedNetwork(getState())
 	const network = selectNetwork(getState())
-	const markets = selectPerpsV2Markets(getState())
+	const markets = selectV2Markets(getState())
 
 	if (!account || !supportedNetwork) return
 	try {
@@ -308,7 +308,7 @@ export const fetchSmartMarginOpenOrders = createAsyncThunk<
 	const account = selectSmartMarginAccount(getState())
 	const supportedNetwork = selectSmartMarginSupportedNetwork(getState())
 	const network = selectNetwork(getState())
-	const markets = selectPerpsV2Markets(getState())
+	const markets = selectV2Markets(getState())
 	const existingOrders = selectOpenDelayedOrders(getState())
 
 	const marketAddresses = markets.map((market) => market.market)
@@ -772,7 +772,7 @@ export const fetchAllV2TradesForAccount = createAsyncThunk<
 export const calculateSmartMarginFees =
 	(params: TradePreviewParams): AppThunk =>
 	(dispatch, getState) => {
-		const markets = selectPerpsV2Markets(getState())
+		const markets = selectV2Markets(getState())
 		const market = markets.find((m) => m.marketKey === params.market.key)
 		if (!market) throw new Error('Missing market info to compute fee')
 		const keeperBalance = selectKeeperEthBalance(getState())
@@ -1421,7 +1421,7 @@ export const fetchFundingRatesHistory = createAsyncThunk<
 })
 
 const getMarketDetailsByKey = (getState: () => RootState, key: FuturesMarketKey) => {
-	const markets = selectPerpsV2Markets(getState())
+	const markets = selectV2Markets(getState())
 	const market = markets.find((m) => {
 		return m.marketKey === key
 	})

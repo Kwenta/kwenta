@@ -80,7 +80,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 			</div>
 
 			<TabPanel name={PositionsTab.SMART_MARGIN} activeTab={activePositionsTab}>
-				<FuturesPositionsTable accountType={FuturesMarginType.CROSS_MARGIN} />
+				<FuturesPositionsTable accountType={FuturesMarginType.SMART_MARGIN} />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>

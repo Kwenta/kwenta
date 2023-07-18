@@ -43,7 +43,7 @@ import {
 	selectIdleMarginTransfers,
 	selectMarginDeltaInputValue,
 	selectOpenDelayedOrders,
-	selectPerpsV2Markets,
+	selectV2Markets,
 	selectSmartMarginAccount,
 	selectSmartMarginAccountData,
 	selectSmartMarginBalanceInfo,
@@ -103,7 +103,7 @@ export const selectMarketAsset = createSelector(
 
 export const selectMarkets = createSelector(
 	selectFuturesType,
-	selectPerpsV2Markets,
+	selectV2Markets,
 	selectV3Markets,
 	(futuresType, v2Markets, v3Markets) => {
 		return futuresType === FuturesMarginType.CROSS_MARGIN ? v3Markets : v2Markets
