@@ -264,7 +264,8 @@ export default function TradeConfirmationModal({
 			{positionDetails?.exceedsPriceProtection && (
 				<AcceptWarningView
 					id="pp-override"
-					message="This trade incurs high slippage, proceed anyway?"
+					style={{ margin: '10px 0 0 0' }}
+					message={t('futures.market.trade.confirmation.modal.slippage-warning')}
 					checked={overridePriceProtection}
 					onChangeChecked={(checked) => setOverridePriceProtection(checked)}
 				/>

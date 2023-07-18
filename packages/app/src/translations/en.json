@@ -964,7 +964,8 @@
 						"disabled-exceeds-price-protection": "Price protection exceeded ",
 						"eth-bal-warning": "The limit order service requires some ETH to cover gas. The 0.01 ETH deposit will cover many orders and you can withdraw any unused balance.",
 						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool.",
-						"stop-loss-warning": "Stop loss is close to the liquidation price and cannot be guaranteed to execute before you get liquidated, proceed anyway?"
+						"stop-loss-warning": "Stop loss is close to the liquidation price and cannot be guaranteed to execute before you get liquidated, proceed anyway?",
+						"slippage-warning": "This trade incurs high slippage, proceed anyway?"
 					}
 				},
 				"leverage": {

@@ -233,7 +233,7 @@ export default function EditPositionSizeModal() {
 				<>
 					<Spacer height={20} />
 					<AcceptWarningView
-						message="This trade incurs high slippage, proceed anyway?"
+						message={t('futures.market.trade.confirmation.modal.slippage-warning')}
 						checked={overridePriceProtection}
 						onChangeChecked={(checked) => setOverridePriceProtection(checked)}
 					/>

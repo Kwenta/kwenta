@@ -29,7 +29,7 @@ export default function AcceptWarningView({ checked, id, onChangeChecked, style,
 const Container = styled.div<{ style?: Record<string, string> }>`
 	color: ${(props) => props.theme.colors.selectedTheme.button.yellow.text};
 	font-size: 12px;
-	margin: ${(props) => props.style?.margin ?? '0 0 16px 0'};
+	margin: ${(props) => props.style?.margin ?? '0'};
 	padding: 15px;
 	border: 1px solid rgba(239, 104, 104, 0);
 	background: ${(props) => props.theme.colors.selectedTheme.button.yellow.fill};
