@@ -172,7 +172,7 @@ const EscrowTable = () => {
 									label=""
 									checked={checkAllState}
 									onChange={selectAll}
-									variant="table"
+									variant="fill"
 									checkSide="right"
 								/>
 							),
@@ -183,7 +183,7 @@ const EscrowTable = () => {
 									checked={checkedState[cellProps.row.index]}
 									onChange={() => handleOnChange(cellProps.row.index)}
 									label=""
-									variant="table"
+									variant="fill"
 									checkSide="right"
 								/>
 							),
@@ -290,7 +290,7 @@ const EscrowTable = () => {
 									label=""
 									checked={checkAllState}
 									onChange={selectAll}
-									variant="table"
+									variant="fill"
 									checkSide="left"
 								/>
 							),
@@ -301,7 +301,7 @@ const EscrowTable = () => {
 									checked={checkedState[cellProps.row.index]}
 									onChange={() => handleOnChange(cellProps.row.index)}
 									label=""
-									variant="table"
+									variant="fill"
 									checkSide="left"
 								/>
 							),
