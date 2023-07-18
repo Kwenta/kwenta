@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { useEffect, FC, useState, ReactNode } from 'react'
 import styled from 'styled-components'
 
-import { FlexDivCol, FlexDivRow } from 'components/layout/flex'
 import Loader from 'components/Loader'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Connector from 'containers/Connector'
@@ -21,7 +20,6 @@ import MobileTrade from 'sections/futures/MobileTrade/MobileTrade'
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles'
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported'
 import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin'
-import TradeBalance from 'sections/futures/Trade/TradeBalance'
 import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel'
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal'
 import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal'
@@ -156,14 +154,7 @@ function TradePanelDesktop() {
 	)
 
 	if (walletAddress && !isL2 && openModal !== 'futures_smart_margin_socket') {
-		return (
-			<Container>
-				<BalanceContainer>
-					<TradeBalance />
-				</BalanceContainer>
-				<FuturesUnsupportedNetwork />
-			</Container>
-		)
+		return <FuturesUnsupportedNetwork />
 	}
 
 	if (
@@ -186,21 +177,6 @@ function TradePanelDesktop() {
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>
 
 export default Market
-
-const BalanceContainer = styled(FlexDivRow)`
-	align-items: center;
-	top: 0;
-	margin-top: 8px;
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-`
-const Container = styled(FlexDivCol)`
-	border-right: ${(props) => props.theme.colors.selectedTheme.border};
-	row-gap: '50px';
-
-	${media.lessThan('lg')`
-		row-gap: 0;
-	`}
-`
 
 const StyledFullHeightContainer = styled.div`
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
