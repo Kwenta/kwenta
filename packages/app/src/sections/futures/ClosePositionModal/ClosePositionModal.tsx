@@ -219,7 +219,9 @@ export default function ClosePositionModal() {
 				<InfoBoxRow
 					textValueIcon={
 						previewTrade?.liqPrice && (
-							<PreviewArrow showPreview>{formatDollars(previewTrade?.liqPrice)}</PreviewArrow>
+							<PreviewArrow showPreview>
+								{formatDollars(previewTrade?.liqPrice, { suggestDecimals: true })}
+							</PreviewArrow>
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
@@ -228,11 +230,14 @@ export default function ClosePositionModal() {
 				<InfoBoxRow
 					color={previewTrade?.exceedsPriceProtection ? 'negative' : 'primary'}
 					title={t('futures.market.trade.edit-position.price-impact')}
-					textValue={formatPercent(previewTrade?.priceImpact || 0)}
+					textValue={formatPercent(previewTrade?.priceImpact || 0, {
+						suggestDecimals: true,
+						maxDecimals: 4,
+					})}
 				/>
 				<InfoBoxRow
 					title={t('futures.market.trade.edit-position.fill-price')}
-					textValue={formatDollars(previewTrade?.price || 0)}
+					textValue={formatDollars(previewTrade?.price || 0, { suggestDecimals: true })}
 				/>
 			</InfoBoxContainer>
 			{previewTrade?.exceedsPriceProtection && (

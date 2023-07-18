@@ -106,7 +106,10 @@ const PriceImpactRow = memo(() => {
 			title="Price impact"
 			textValue={
 				potentialTradeDetails?.priceImpact
-					? formatPercent(potentialTradeDetails.priceImpact, { suggestDecimals: true })
+					? formatPercent(potentialTradeDetails.priceImpact, {
+							suggestDecimals: true,
+							maxDecimals: 4,
+					  })
 					: NO_VALUE
 			}
 		/>

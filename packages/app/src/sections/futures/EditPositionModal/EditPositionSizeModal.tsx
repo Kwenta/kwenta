@@ -222,7 +222,10 @@ export default function EditPositionSizeModal() {
 				<InfoBoxRow
 					color={preview?.exceedsPriceProtection ? 'negative' : 'primary'}
 					title={t('futures.market.trade.edit-position.price-impact')}
-					textValue={formatPercent(preview?.priceImpact || 0)}
+					textValue={formatPercent(preview?.priceImpact || 0, {
+						suggestDecimals: true,
+						maxDecimals: 4,
+					})}
 				/>
 				<InfoBoxRow
 					title={t('futures.market.trade.edit-position.fill-price')}

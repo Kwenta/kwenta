@@ -152,6 +152,7 @@ export default function TradeConfirmationModal({
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
 				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI, {
 					suggestDecimals: true,
+					maxDecimals: 4,
 				})}`,
 				color: positionDetails?.exceedsPriceProtection ? 'red' : '',
 			},
