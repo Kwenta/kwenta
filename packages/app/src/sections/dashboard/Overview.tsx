@@ -165,7 +165,7 @@ const Overview: FC = () => {
 					))}
 				</TabButtonsContainer>
 				<TabPanel name={PositionsTab.SMART_MARGIN} activeTab={activePositionsTab}>
-					<FuturesPositionsTable accountType={FuturesMarginType.CROSS_MARGIN} />
+					<FuturesPositionsTable accountType={FuturesMarginType.SMART_MARGIN} />
 				</TabPanel>
 
 				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>

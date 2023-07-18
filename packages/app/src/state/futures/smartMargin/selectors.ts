@@ -104,7 +104,7 @@ export const selectCMBalance = createSelector(selectSmartMarginAccountData, (acc
 
 export const selectV2MarketAsset = (state: RootState) => state.smartMargin.selectedMarketAsset
 
-export const selectPerpsV2Markets = createSelector(
+export const selectV2Markets = createSelector(
 	selectNetwork,
 	(state: RootState) => state.smartMargin,
 	(network, smartMargin) => {
@@ -117,16 +117,16 @@ export const selectPerpsV2MarketVolumes = createSelector(
 	(dailyMarketVolumes) => unserializeFuturesVolumes(dailyMarketVolumes)
 )
 
-export const selectMarketKeys = createSelector(selectPerpsV2Markets, (markets) =>
+export const selectMarketKeys = createSelector(selectV2Markets, (markets) =>
 	markets.map(({ asset }) => MarketKeyByAsset[asset])
 )
 
-export const selectMarketAssets = createSelector(selectPerpsV2Markets, (markets) =>
+export const selectMarketAssets = createSelector(selectV2Markets, (markets) =>
 	markets.map(({ asset }) => asset)
 )
 
 export const selectV2MarketInfo = createSelector(
-	selectPerpsV2Markets,
+	selectV2Markets,
 	selectV2MarketKey,
 	(markets, selectedMarket) => {
 		return markets.find((market) => market.marketKey === selectedMarket)
@@ -201,25 +201,21 @@ export const selectMarketPrices = createSelector(
 	}
 )
 
-export const selectMarkPrices = createSelector(
-	selectPerpsV2Markets,
-	selectPrices,
-	(markets, prices) => {
-		const markPrices: MarkPrices = {}
-		return markets.reduce((acc, market) => {
-			const price = prices[market.asset]?.offChain ?? wei(0)
-			return {
-				...acc,
-				[market.marketKey]: wei(price).mul(
-					wei(market.marketSkew).div(market.settings.skewScale).add(1)
-				),
-			}
-		}, markPrices)
-	}
-)
+export const selectMarkPrices = createSelector(selectV2Markets, selectPrices, (markets, prices) => {
+	const markPrices: MarkPrices = {}
+	return markets.reduce((acc, market) => {
+		const price = prices[market.asset]?.offChain ?? wei(0)
+		return {
+			...acc,
+			[market.marketKey]: wei(price).mul(
+				wei(market.marketSkew).div(market.settings.skewScale).add(1)
+			),
+		}
+	}, markPrices)
+})
 
 export const selectMarkPriceInfos = createSelector(
-	selectPerpsV2Markets,
+	selectV2Markets,
 	selectOffchainPricesInfo,
 	(markets, prices) => {
 		const markPrices: MarkPriceInfos = {}
@@ -510,7 +506,7 @@ export const selectRemainingMarketMargin = createSelector(selectPosition, (posit
 })
 
 export const selectMarginInMarkets = (isSuspended: boolean = false) =>
-	createSelector(selectSmartMarginPositions, selectPerpsV2Markets, (positions, markets) => {
+	createSelector(selectSmartMarginPositions, selectV2Markets, (positions, markets) => {
 		const idleInMarkets = positions
 			.filter((p) => {
 				const market = markets.find((m) => m.marketKey === p.marketKey)
@@ -622,7 +618,7 @@ export const selectKeeperDepositExceedsBal = createSelector(
 export const selectEditPositionModalInfo = createSelector(
 	selectEditPositionModalMarket,
 	selectSmartMarginPositions,
-	selectPerpsV2Markets,
+	selectV2Markets,
 	selectPrices,
 	(modalMarketKey, smartPositions, markets, prices) => {
 		const position = smartPositions.find((p) => p.marketKey === modalMarketKey)
@@ -857,7 +853,7 @@ export const selectTradePreviewStatus = createSelector(
 
 export const selectOpenDelayedOrders = createSelector(
 	selectSmartMarginAccountData,
-	selectPerpsV2Markets,
+	selectV2Markets,
 	(account, markets) => {
 		const orders = unserializeDelayedOrders(account?.delayedOrders ?? [])
 
@@ -915,7 +911,7 @@ export const selectDelayedOrderFee = createSelector(
 	}
 )
 
-export const selectOpenInterest = createSelector(selectPerpsV2Markets, (futuresMarkets) =>
+export const selectOpenInterest = createSelector(selectV2Markets, (futuresMarkets) =>
 	futuresMarkets.reduce(
 		(total, { openInterest }) => total.add(openInterest.shortUSD).add(openInterest.longUSD),
 		wei(0)
@@ -933,7 +929,7 @@ export const selectUsersTradesForMarket = createSelector(
 
 export const selectAllSmartMarginTrades = createSelector(
 	selectSmartMarginAccountData,
-	selectPerpsV2Markets,
+	selectV2Markets,
 	(smartMarginAccountData, markets) => {
 		const trades = unserializeTrades(smartMarginAccountData?.trades ?? [])
 		return trades.map((t) => {
