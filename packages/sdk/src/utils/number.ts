@@ -181,7 +181,7 @@ export const formatPercent = (
 	value: WeiSource,
 	options?: { minDecimals?: number; suggestDecimals?: boolean; maxDecimals?: number }
 ) => {
-	let decimals = suggestedDecimals ? suggestedDecimals(value) : options?.minDecimals ?? 2
+	let decimals = options?.suggestDecimals ? suggestedDecimals(value) : options?.minDecimals ?? 2
 	if (options?.maxDecimals) {
 		decimals = Math.min(decimals, options.maxDecimals)
 	}

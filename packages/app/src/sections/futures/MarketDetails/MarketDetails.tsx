@@ -118,7 +118,10 @@ const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			dataKey={MarketDataKey.dailyChange}
 			value={
 				indexPriceWei.gt(0) && pastPrice?.rate
-					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? ZERO_WEI)
+					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? ZERO_WEI, {
+							suggestDecimals: false,
+							maxDecimals: 2,
+					  })
 					: NO_VALUE
 			}
 			color={
@@ -147,7 +150,11 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	return (
 		<MarketDetail
 			dataKey={t('futures.market.info.hourly-funding')}
-			value={fundingValue ? formatPercent(fundingValue ?? ZERO_WEI, { minDecimals: 6 }) : NO_VALUE}
+			value={
+				fundingValue
+					? formatPercent(fundingValue ?? ZERO_WEI, { suggestDecimals: true, maxDecimals: 6 })
+					: NO_VALUE
+			}
 			color={fundingValue?.gt(ZERO_WEI) ? 'green' : fundingValue?.lt(ZERO_WEI) ? 'red' : undefined}
 			mobile={mobile}
 			extra={<HoursToggle />}
@@ -167,6 +174,7 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 					<MarketDetailValue
 						color="green"
 						value={formatPercent(marketInfo ? marketInfo?.openInterest.longPct : 0, {
+							suggestDecimals: false,
 							minDecimals: 0,
 						})}
 						mobile={mobile}
@@ -175,6 +183,7 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 					<MarketDetailValue
 						color="red"
 						value={formatPercent(marketInfo ? marketInfo?.openInterest.shortPct : 0, {
+							suggestDecimals: false,
 							minDecimals: 0,
 						})}
 						mobile={mobile}
