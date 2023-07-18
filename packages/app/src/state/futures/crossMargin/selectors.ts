@@ -50,6 +50,15 @@ export const selectCrossMarginAccount = createSelector(
 	}
 )
 
+export const selectAccountContext = createSelector(
+	selectWallet,
+	selectNetwork,
+	selectCrossMarginAccount,
+	(wallet, network, accountId) => {
+		return { wallet, network, accountId }
+	}
+)
+
 export const selectCrossMarginAccountData = createSelector(
 	selectWallet,
 	selectNetwork,
@@ -57,6 +66,13 @@ export const selectCrossMarginAccountData = createSelector(
 	(state: RootState) => state.crossMargin,
 	(wallet, network, supportedNetwork, crossMargin) => {
 		return wallet && supportedNetwork ? crossMargin.accounts[network][wallet] : null
+	}
+)
+
+export const selectCrossMarginAvailableMargin = createSelector(
+	selectCrossMarginAccountData,
+	(account) => {
+		return wei(account?.availableMargin || 0)
 	}
 )
 

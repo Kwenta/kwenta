@@ -17,6 +17,7 @@ import MultipleMerkleDistributorPerpsV2ABI from './abis/MultipleMerkleDistributo
 import PerpsV2MarketABI from './abis/PerpsV2Market.json'
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json'
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json'
+import PerpsV3MarketProxy from './abis/PerpsV3MarketProxy.json'
 import RewardEscrowABI from './abis/RewardEscrow.json'
 import RewardEscrowV2ABI from './abis/RewardEscrowV2.json'
 import StakingRewardsABI from './abis/StakingRewards.json'
@@ -261,6 +262,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		RewardEscrowV2: ADDRESSES.RewardEscrowV2[networkId]
 			? new EthCallContract(ADDRESSES.RewardEscrowV2[networkId], RewardEscrowV2ABI)
+			: undefined,
+		perpsV3MarketProxy: ADDRESSES.PerpsV3MarketProxy[networkId]
+			? new EthCallContract(ADDRESSES.PerpsV3MarketProxy[networkId], PerpsV3MarketProxy)
 			: undefined,
 	}
 }

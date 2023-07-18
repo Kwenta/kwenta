@@ -15,6 +15,7 @@ import Wei from '@synthetixio/wei'
 import { PricesInfo } from 'state/prices/types'
 
 import { FuturesAccountData, FuturesQueryStatuses, TradeSizeInputs } from '../common/types'
+import { QueryStatus } from 'state/types'
 
 export type EditPositionInputs<T = Wei> = {
 	nativeSizeDelta: T
@@ -74,8 +75,13 @@ export type FundingRatePeriods = {
 	[key: number]: string
 }
 
+export type CrossMarginQueryStatuses = FuturesQueryStatuses & {
+	availableMargin: QueryStatus
+}
+
 export type CrossMarginAccountData = FuturesAccountData & {
-	balances: { [asset: string]: { balance: Wei; allowance: Wei } }
+	balances: { [asset: string]: { balance: string; allowance: string } }
+	availableMargin: string
 }
 
 export type CrossMarginState = {
@@ -103,7 +109,7 @@ export type CrossMarginState = {
 		}
 	>
 	fundingRates: FundingRate<string>[]
-	queryStatuses: FuturesQueryStatuses
+	queryStatuses: CrossMarginQueryStatuses
 	dailyMarketVolumes: FuturesVolumes<string>
 	selectedInputDenomination: InputCurrencyDenomination
 	selectedInputHours: number

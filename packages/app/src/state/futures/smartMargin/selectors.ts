@@ -482,28 +482,6 @@ export const selectSmartMarginDepositApproved = createSelector(
 	}
 )
 
-export const selectAvailableMargin = createSelector(
-	selectV2MarketInfo,
-	selectPosition,
-	(marketInfo, position) => {
-		if (!marketInfo || !position) return ZERO_WEI
-		if (!position?.position) return position.remainingMargin
-
-		let inaccessible =
-			position.position.notionalValue.div(marketInfo.appMaxLeverage).abs() ?? ZERO_WEI
-
-		// If the user has a position open, we'll enforce a min initial margin requirement.
-		if (inaccessible.gt(0) && inaccessible.lt(marketInfo.minInitialMargin)) {
-			inaccessible = marketInfo.minInitialMargin
-		}
-
-		// check if available margin will be less than 0
-		return position.remainingMargin.sub(inaccessible).gt(0)
-			? position.remainingMargin.sub(inaccessible).abs()
-			: ZERO_WEI
-	}
-)
-
 export const selectRemainingMarketMargin = createSelector(selectPosition, (position) => {
 	if (!position) return ZERO_WEI
 	return position.remainingMargin
@@ -1126,19 +1104,6 @@ export const selectBuyingPower = createSelector(
 	(position, maxLeverage) => {
 		const totalMargin = position?.remainingMargin ?? ZERO_WEI
 		return totalMargin.gt(ZERO_WEI) ? totalMargin.mul(maxLeverage ?? ZERO_WEI) : ZERO_WEI
-	}
-)
-
-export const selectMarginUsage = createSelector(
-	selectAvailableMargin,
-	selectPosition,
-	(availableMargin, position) => {
-		const totalMargin = position?.remainingMargin ?? ZERO_WEI
-		return availableMargin.gt(ZERO_WEI)
-			? totalMargin.sub(availableMargin).div(totalMargin)
-			: totalMargin.gt(ZERO_WEI)
-			? wei(1)
-			: ZERO_WEI
 	}
 )
 

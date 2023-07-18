@@ -15,7 +15,7 @@ import { debounce } from 'lodash'
 import { notifyError } from 'components/ErrorNotifier'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import { handleTransactionError, setOpenModal, setTransaction } from 'state/app/reducer'
-import { fetchBalances, fetchV3BalancesAndAllowances } from 'state/balances/actions'
+import { fetchV3BalancesAndAllowances } from 'state/balances/actions'
 import { selectMarketInfo, selectMarkets } from 'state/futures/selectors'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
@@ -40,6 +40,7 @@ import {
 	setPerpsV3MarketProxyAddress,
 } from './reducer'
 import {
+	selectAccountContext,
 	selectCrossMarginAccount,
 	selectCrossMarginSupportedNetwork,
 	selectCrossMarginTradeInputs,
@@ -122,18 +123,18 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 	ThunkConfig
 >('futures/fetchCrossMarginPositions', async (_, { extra: { sdk }, getState }) => {
 	const supportedNetwork = selectCrossMarginSupportedNetwork(getState())
-	const network = selectNetwork(getState())
-	const account = selectCrossMarginAccount(getState())
+	const { network, accountId } = selectAccountContext(getState())
+
 	const markets = selectMarkets(getState())
 
-	if (!supportedNetwork || !account) return
+	if (!supportedNetwork || !accountId) return
 	try {
-		// const positions = await sdk.perpsV3.getPositions(
-		// 	account,
-		// 	markets.map((m) => ({ asset: m.asset, marketKey: m.marketKey, address: m.market }))
-		// )
+		const positions = await sdk.perpsV3.getPositions(
+			accountId,
+			markets.map((m) => Number(m.market))
+		)
 
-		return { positions: [], account, network }
+		return { positions: [], account: accountId, network }
 	} catch (err) {
 		logError(err)
 		notifyError('Failed to fetch isolated margin positions', err)
@@ -153,13 +154,17 @@ export const fetchPositionHistoryV3 = createAsyncThunk<
 	ThunkConfig
 >('futures/fetchPositionHistoryV3', async (_, { getState, extra: { sdk } }) => {
 	try {
-		const account = selectCrossMarginAccount(getState())
-		const networkId = selectNetwork(getState())
-		const wallet = selectWallet(getState())
+		const { wallet, network, accountId } = selectAccountContext(getState())
+
 		const futuresSupported = selectCrossMarginSupportedNetwork(getState())
-		if (!wallet || !account || !futuresSupported) return
-		const history = await sdk.futures.getPositionHistory(account)
-		return { account, wallet, networkId, history: serializePositionHistory(history) }
+		if (!wallet || !accountId || !futuresSupported) return
+		const history = await sdk.futures.getPositionHistory(accountId)
+		return {
+			account: accountId,
+			wallet,
+			networkId: network,
+			history: serializePositionHistory(history),
+		}
 	} catch (err) {
 		notifyError('Failed to fetch perps v3 position history', err)
 		throw err
@@ -185,9 +190,8 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 	void,
 	ThunkConfig
 >('futures/fetchCrossMarginOpenOrders', async (_, { dispatch, getState, extra: { sdk } }) => {
-	const wallet = selectWallet(getState())
+	const { wallet, network } = selectAccountContext(getState())
 	const supportedNetwork = selectCrossMarginSupportedNetwork(getState())
-	const network = selectNetwork(getState())
 	const markets = selectV3Markets(getState())
 	const existingOrders = selectOpenDelayedOrdersV3(getState())
 	if (!wallet || !supportedNetwork || !markets.length) return
@@ -230,11 +234,31 @@ export const fetchMarginTransfersV3 = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
+export const fetchAvailableMargin = createAsyncThunk<
+	{ wallet: string; network: NetworkId; availableMargin: string } | undefined,
+	void,
+	ThunkConfig
+>('futures/fetchAvailableMargin', async (_, { getState, extra: { sdk } }) => {
+	const supportedNetwork = selectCrossMarginSupportedNetwork(getState())
+	const { wallet, network, accountId } = selectAccountContext(getState())
+
+	if (!supportedNetwork || !wallet || !accountId) return
+	try {
+		const availableMargin = await sdk.perpsV3.getAvailableMargin(accountId)
+		return { wallet, network, availableMargin: availableMargin.toString() }
+	} catch (err) {
+		logError(err)
+		notifyError('Failed to fetch available margin', err)
+		throw err
+	}
+})
+
 export const fetchCrossMarginAccountData = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchCrossMarginAccountData',
 	async (_, { dispatch }) => {
 		dispatch(fetchCrossMarginPositions())
 		dispatch(fetchPerpsV3Balances())
+		dispatch(fetchAvailableMargin())
 	}
 )
 

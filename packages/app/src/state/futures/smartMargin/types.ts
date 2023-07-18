@@ -18,9 +18,9 @@ import { PricesInfo } from 'state/prices/types'
 
 import {
 	FuturesAccountData,
-	FuturesQueryStatuses,
 	FuturesTransactionType,
 	HistoricalFundingRates,
+	SmartMarginQueryStatuses,
 	TradeSizeInputs,
 } from '../common/types'
 
@@ -112,7 +112,7 @@ export type SmartMarginState = {
 	dailyMarketVolumes: FuturesVolumes<string>
 	fundingRates: FundingRate<string>[]
 	historicalFundingRates: HistoricalFundingRates
-	queryStatuses: FuturesQueryStatuses
+	queryStatuses: SmartMarginQueryStatuses
 	tradeInputs: SmartMarginTradeInputs<string>
 	editPositionInputs: EditPositionInputs<string>
 	closePositionOrderInputs: ClosePositionInputs<string>

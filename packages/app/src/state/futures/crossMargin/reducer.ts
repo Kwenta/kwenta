@@ -27,6 +27,7 @@ import {
 	fetchPositionHistoryV3,
 	fetchMarketsV3,
 	fetchPerpsV3Account,
+	fetchAvailableMargin,
 } from './actions'
 import {
 	EditPositionInputs,
@@ -87,8 +88,7 @@ export const COSS_MARGIN_INITIAL_STATE: CrossMarginState = {
 		historicalFundingRates: DEFAULT_QUERY_STATUS,
 		futuresFees: DEFAULT_QUERY_STATUS,
 		futuresFeesForAccount: DEFAULT_QUERY_STATUS,
-		// TODO: Separate cross / smart query status
-		smartMarginBalanceInfo: DEFAULT_QUERY_STATUS,
+		availableMargin: DEFAULT_QUERY_STATUS,
 	},
 	historicalFundingRates: {},
 }
@@ -298,6 +298,25 @@ const crossMarginSlice = createSlice({
 			futuresState.queryStatuses.account = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch account',
+			}
+		})
+
+		builder.addCase(fetchAvailableMargin.pending, (futuresState) => {
+			futuresState.queryStatuses.availableMargin = LOADING_STATUS
+		})
+		builder.addCase(fetchAvailableMargin.fulfilled, (futuresState, { payload }) => {
+			if (payload) {
+				const { wallet, availableMargin, network } = payload
+				updateCrossMarginAccount(futuresState, network, wallet, {
+					availableMargin,
+				})
+			}
+			futuresState.queryStatuses.availableMargin = SUCCESS_STATUS
+		})
+		builder.addCase(fetchAvailableMargin.rejected, (futuresState) => {
+			futuresState.queryStatuses.availableMargin = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch available margin',
 			}
 		})
 

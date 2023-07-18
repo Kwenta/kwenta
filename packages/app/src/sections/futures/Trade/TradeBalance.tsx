@@ -16,7 +16,8 @@ import useWindowSize from 'hooks/useWindowSize'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
 import { selectSNXUSDBalance } from 'state/balances/selectors'
-import { selectAvailableMargin, selectFuturesType } from 'state/futures/selectors'
+import { selectCrossMarginAvailableMargin } from 'state/futures/crossMargin/selectors'
+import { selectFuturesType } from 'state/futures/selectors'
 import {
 	selectIdleMargin,
 	selectLockedMarginInMarkets,
@@ -42,7 +43,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
 	const walletBal = useAppSelector(selectSNXUSDBalance)
 	const accountType = useAppSelector(selectFuturesType)
-	const availableIsolatedMargin = useAppSelector(selectAvailableMargin)
+	const availableIsolatedMargin = useAppSelector(selectCrossMarginAvailableMargin)
 	const withdrawable = useAppSelector(selectWithdrawableSmartMargin)
 	const openModal = useAppSelector(selectShowModal)
 

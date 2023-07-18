@@ -70,70 +70,6 @@ export default class PerpsV3Service {
 
 	public async getMarkets() {
 		const perpsV3Markets = await getPerpsV3Markets(this.sdk)
-		// const enabledMarkets = marketsForNetwork(
-		// 	networkOverride?.networkId || this.sdk.context.networkId,
-		// 	this.sdk.context.logError
-		// )
-		// const contracts =
-		// 	networkOverride && networkOverride?.networkId !== this.sdk.context.networkId
-		// 		? getContractsByNetwork(networkOverride.networkId, networkOverride.provider)
-		// 		: this.sdk.context.contracts
-
-		// const { SystemStatus } = contracts
-		// const {
-		// 	ExchangeRates,
-		// 	PerpsV2MarketData,
-		// 	PerpsV2MarketSettings,
-		// } = this.sdk.context.multicallContracts
-
-		// if (!SystemStatus || !ExchangeRates || !PerpsV2MarketData || !PerpsV2MarketSettings) {
-		// 	throw new Error(UNSUPPORTED_NETWORK)
-		// }
-
-		// const futuresData = await this.sdk.context.multicallProvider.all([
-		// 	PerpsV2MarketData.allProxiedMarketSummaries(),
-		// 	PerpsV2MarketSettings.minInitialMargin(),
-		// 	PerpsV2MarketSettings.minKeeperFee(),
-		// ])
-
-		// const { markets, minInitialMargin, minKeeperFee } = {
-		// 	markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
-		// 	minInitialMargin: futuresData[1] as BigNumber,
-		// 	minKeeperFee: futuresData[2] as BigNumber,
-		// }
-
-		// const filteredMarkets = markets.filter((m) => {
-		// 	const marketKey = parseBytes32String(m.key) as FuturesMarketKey
-		// 	const market = enabledMarkets.find((market) => {
-		// 		return marketKey === market.key
-		// 	})
-		// 	return !!market
-		// })
-
-		// const marketKeys = filteredMarkets.map((m) => {
-		// 	return m.key
-		// })
-
-		// const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key))
-
-		// let marketParameters: IPerpsV2MarketSettings.ParametersStructOutput[] = []
-
-		// if (this.sdk.context.isMainnet) {
-		// 	marketParameters = await this.sdk.context.multicallProvider.all(parametersCalls)
-		// } else {
-		// 	const firstResponses = await this.sdk.context.multicallProvider.all(
-		// 		parametersCalls.slice(0, 20)
-		// 	)
-		// 	const secondResponses = await this.sdk.context.multicallProvider.all(
-		// 		parametersCalls.slice(20, parametersCalls.length)
-		// 	)
-		// 	marketParameters = [
-		// 		...firstResponses,
-		// 		...secondResponses,
-		// 	] as IPerpsV2MarketSettings.ParametersStructOutput[]
-		// }
-
-		// const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys)
 
 		const futuresMarkets = perpsV3Markets.reduce<FuturesMarket[]>(
 			(
@@ -212,7 +148,7 @@ export default class PerpsV3Service {
 		address: string, // Cross margin or EOA address
 		marketIds: number[]
 	) {
-		const proxy = this.sdk.context.multicallContracts.PerpsV2MarketData
+		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
 
 		if (!this.sdk.context.isL2 || !proxy) {
 			throw new Error(UNSUPPORTED_NETWORK)
@@ -234,7 +170,7 @@ export default class PerpsV3Service {
 			})
 		)
 
-		return positions
+		return positions.filter((position) => !!position)
 	}
 
 	public async getMarketFundingRatesHistory(
@@ -403,13 +339,11 @@ export default class PerpsV3Service {
 		return queryIsolatedMarginTransfers(this.sdk, address)
 	}
 
-	public async getAccountCollateral(crossMarginAddress: string) {
-		// TODO: Get collateral balances
-		return {}
-	}
-
-	public async getAvailableMargin(walletAddress: string, crossMarginAddress: string) {
-		return wei(0)
+	public async getAvailableMargin(accountId: string) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		const availableMargin = await marketProxy.getAvailableMargin(accountId)
+		return wei(availableMargin)
 	}
 
 	// Perps V2 read functions

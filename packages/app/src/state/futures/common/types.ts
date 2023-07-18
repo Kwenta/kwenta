@@ -54,7 +54,6 @@ export type HistoricalFundingRates = Partial<
 
 export type FuturesQueryStatuses = {
 	markets: QueryStatus
-	smartMarginBalanceInfo: QueryStatus
 	dailyVolumes: QueryStatus
 	positions: QueryStatus
 	positionHistory: QueryStatus
@@ -67,6 +66,10 @@ export type FuturesQueryStatuses = {
 	historicalFundingRates: QueryStatus
 	futuresFees: QueryStatus
 	futuresFeesForAccount: QueryStatus
+}
+
+export type SmartMarginQueryStatuses = FuturesQueryStatuses & {
+	smartMarginBalanceInfo: QueryStatus
 }
 
 export type TradeSizeInputs<T = Wei> = {

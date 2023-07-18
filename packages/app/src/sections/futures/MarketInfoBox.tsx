@@ -4,17 +4,13 @@ import styled from 'styled-components'
 
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
 import PreviewArrow from 'components/PreviewArrow'
-import {
-	selectAvailableMargin,
-	selectBuyingPower,
-	selectMarginUsage,
-	selectMarketSuspended,
-} from 'state/futures/selectors'
+import { selectCrossMarginAvailableMargin } from 'state/futures/crossMargin/selectors'
+import { selectBuyingPower, selectMarketSuspended } from 'state/futures/selectors'
 import { selectPreviewMarginChange, selectTradePreview } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 const AvailableMarginRow = memo(() => {
-	const availableMargin = useAppSelector(selectAvailableMargin)
+	const availableMargin = useAppSelector(selectCrossMarginAvailableMargin)
 	const potentialTrade = useAppSelector(selectTradePreview)
 	const previewTradeData = useAppSelector(selectPreviewMarginChange)
 	const marketSuspended = useAppSelector(selectMarketSuspended)
@@ -55,32 +51,11 @@ const BuyingPowerRow = memo(() => {
 	)
 })
 
-const MarginUsageRow = memo(() => {
-	const previewTradeData = useAppSelector(selectPreviewMarginChange)
-	const potentialTrade = useAppSelector(selectTradePreview)
-	const marginUsage = useAppSelector(selectMarginUsage)
-	const marketSuspended = useAppSelector(selectMarketSuspended)
-
-	return (
-		<InfoBoxRow
-			title="Margin Usage"
-			textValue={formatPercent(marginUsage)}
-			textValueIcon={
-				<PreviewArrow showPreview={previewTradeData.showPreview && !potentialTrade?.showStatus}>
-					{formatPercent(previewTradeData?.marginUsage)}
-				</PreviewArrow>
-			}
-			disabled={marketSuspended}
-		/>
-	)
-})
-
 const MarketInfoBox: React.FC = memo(() => {
 	return (
 		<MarketInfoBoxContainer>
 			<AvailableMarginRow />
 			<BuyingPowerRow />
-			<MarginUsageRow />
 		</MarketInfoBoxContainer>
 	)
 })

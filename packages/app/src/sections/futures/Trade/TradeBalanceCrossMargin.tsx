@@ -14,9 +14,10 @@ import { setOpenModal } from 'state/app/reducer'
 import { selectSNXUSDBalance } from 'state/balances/selectors'
 import {
 	selectCrossMarginAccount,
+	selectCrossMarginAvailableMargin,
 	selectWithdrawableCrossMargin,
 } from 'state/futures/crossMargin/selectors'
-import { selectAvailableMargin, selectFuturesType } from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PencilButton from '../../../components/Button/PencilButton'
@@ -31,7 +32,7 @@ const TradeBalanceCrossMargin: React.FC<TradeBalanceProps> = memo(({ isMobile = 
 	const { deviceType } = useWindowSize()
 
 	const accountType = useAppSelector(selectFuturesType)
-	const availableCrossMargin = useAppSelector(selectAvailableMargin)
+	const availableCrossMargin = useAppSelector(selectCrossMarginAvailableMargin)
 	const withdrawable = useAppSelector(selectWithdrawableCrossMargin)
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
 	const walletBal = useAppSelector(selectSNXUSDBalance)

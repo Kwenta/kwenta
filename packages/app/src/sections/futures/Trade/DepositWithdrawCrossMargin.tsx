@@ -23,14 +23,16 @@ import {
 	withdrawCrossMargin,
 } from 'state/futures/crossMargin/actions'
 import {
-	selectAvailableMargin,
 	selectIsApprovingCrossDeposit,
 	selectIsolatedTransferError,
 	selectIsSubmittingIsolatedTransfer,
 	selectPosition,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { selectDepositAllowances } from 'state/futures/crossMargin/selectors'
+import {
+	selectCrossMarginAvailableMargin,
+	selectDepositAllowances,
+} from 'state/futures/crossMargin/selectors'
 
 type Props = {
 	onDismiss(): void
@@ -54,7 +56,7 @@ const DepositWithdrawCrossMarginModal: React.FC<Props> = ({ onDismiss, defaultTa
 	const approving = useAppSelector(selectIsApprovingCrossDeposit)
 	const txError = useAppSelector(selectIsolatedTransferError)
 	const usdBalance = useAppSelector(selectSNXUSDBalance)
-	const availableMargin = useAppSelector(selectAvailableMargin)
+	const availableMargin = useAppSelector(selectCrossMarginAvailableMargin)
 	const allowances = useAppSelector(selectDepositAllowances)
 
 	const minDeposit = useMemo(() => {
