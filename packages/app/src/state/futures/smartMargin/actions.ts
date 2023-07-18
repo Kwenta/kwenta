@@ -69,10 +69,10 @@ import { refetchWithComparator } from 'utils/queries'
 
 import {
 	AccountContext,
-	DebouncedPreviewParams,
+	DebouncedSMPreviewParams,
 	DelayedOrderWithDetails,
 	PreviewAction,
-	TradePreviewParams,
+	SmartMarginTradePreviewParams,
 } from '../common/types'
 
 import {
@@ -339,7 +339,7 @@ export const fetchSmartMarginOpenOrders = createAsyncThunk<
 
 export const fetchSmartMarginTradePreview = createAsyncThunk<
 	{ preview: FuturesPotentialTradeDetails<string> | null; type: PreviewAction },
-	DebouncedPreviewParams,
+	DebouncedSMPreviewParams,
 	ThunkConfig
 >(
 	'futures/fetchSmartMarginTradePreview',
@@ -458,7 +458,7 @@ export const editCrossMarginTradeMarginDelta =
 		)
 	}
 
-export const editCrossMarginTradeSize =
+export const editSmartMarginTradeSize =
 	(size: string, currencyType: 'usd' | 'native'): AppThunk =>
 	(dispatch, getState) => {
 		const indexPrice = selectMarketIndexPrice(getState())
@@ -547,7 +547,7 @@ export const editClosePositionSizeDelta =
 			const market = getMarketDetailsByKey(getState, marketKey)
 			const smartMarginPrice = isNaN(Number(price)) || !price ? marketPrice : wei(price)
 			const odrderPrice = smartMarginPrice
-			const previewParams: TradePreviewParams = {
+			const previewParams: SmartMarginTradePreviewParams = {
 				market,
 				sizeDelta: wei(nativeSizeDelta),
 				orderPrice: odrderPrice,
@@ -642,21 +642,16 @@ export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
 	)
 }
 
-const stageCrossMarginTradePreview = createAsyncThunk<void, TradePreviewParams, ThunkConfig>(
-	'futures/stageCrossMarginTradePreview',
-	async (inputs, { dispatch, getState }) => {
-		dispatch(calculateSmartMarginFees(inputs))
-		dispatch(incrementCrossPreviewCount())
-		const debounceCount = selectSmartMarginPreviewCount(getState())
-		debouncedPrepareCrossMarginTradePreview(dispatch, { ...inputs, debounceCount })
-	}
-)
-
-export const editSmartMarginTradeSize =
-	(size: string, currencyType: 'usd' | 'native'): AppThunk =>
-	(dispatch) => {
-		dispatch(editCrossMarginTradeSize(size, currencyType))
-	}
+const stageCrossMarginTradePreview = createAsyncThunk<
+	void,
+	SmartMarginTradePreviewParams,
+	ThunkConfig
+>('futures/stageCrossMarginTradePreview', async (inputs, { dispatch, getState }) => {
+	dispatch(calculateSmartMarginFees(inputs))
+	dispatch(incrementCrossPreviewCount())
+	const debounceCount = selectSmartMarginPreviewCount(getState())
+	debouncedPrepareCrossMarginTradePreview(dispatch, { ...inputs, debounceCount })
+})
 
 export const changeLeverageSide =
 	(side: PositionSide): AppThunk =>
@@ -667,7 +662,7 @@ export const changeLeverageSide =
 	}
 
 export const debouncedPrepareCrossMarginTradePreview = debounce(
-	(dispatch, inputs: DebouncedPreviewParams) => {
+	(dispatch, inputs: DebouncedSMPreviewParams) => {
 		dispatch(fetchSmartMarginTradePreview(inputs))
 	},
 	500
@@ -685,7 +680,7 @@ export const editTradeOrderPrice =
 		dispatch(setSmartMarginOrderPriceInvalidLabel(invalidLabel))
 		if (!invalidLabel && price && inputs.susdSize) {
 			// Recalc the trade
-			dispatch(editCrossMarginTradeSize(inputs.susdSizeString, 'usd'))
+			dispatch(editSmartMarginTradeSize(inputs.susdSizeString, 'usd'))
 		}
 	}
 
@@ -770,7 +765,7 @@ export const fetchAllV2TradesForAccount = createAsyncThunk<
 })
 
 export const calculateSmartMarginFees =
-	(params: TradePreviewParams): AppThunk =>
+	(params: SmartMarginTradePreviewParams): AppThunk =>
 	(dispatch, getState) => {
 		const markets = selectV2Markets(getState())
 		const market = markets.find((m) => m.marketKey === params.market.key)

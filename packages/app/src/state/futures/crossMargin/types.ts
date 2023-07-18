@@ -13,9 +13,9 @@ import {
 import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
+import { QueryStatus } from 'state/types'
 
 import { FuturesAccountData, FuturesQueryStatuses, TradeSizeInputs } from '../common/types'
-import { QueryStatus } from 'state/types'
 
 export type EditPositionInputs<T = Wei> = {
 	nativeSizeDelta: T

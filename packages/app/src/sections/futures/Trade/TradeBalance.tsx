@@ -16,8 +16,8 @@ import useWindowSize from 'hooks/useWindowSize'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
 import { selectSNXUSDBalance } from 'state/balances/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
 import { selectCrossMarginAvailableMargin } from 'state/futures/crossMargin/selectors'
-import { selectFuturesType } from 'state/futures/selectors'
 import {
 	selectIdleMargin,
 	selectLockedMarginInMarkets,

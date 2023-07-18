@@ -1,10 +1,10 @@
+import { SynthV3Asset } from '@kwenta/sdk/types'
 import { createSlice } from '@reduxjs/toolkit'
 
 import { FetchStatus } from 'state/types'
 
 import { fetchBalances, fetchV3BalancesAndAllowances } from './actions'
 import { BalancesState } from './types'
-import { SynthV3Asset } from '@kwenta/sdk/dist/types'
 
 export const ZERO_BALANCES = {
 	synthBalances: [],

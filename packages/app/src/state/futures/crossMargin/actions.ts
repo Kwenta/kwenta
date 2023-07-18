@@ -8,15 +8,23 @@ import {
 	SynthV3Asset,
 	TransactionStatus,
 } from '@kwenta/sdk/types'
+import { floorNumber } from '@kwenta/sdk/utils'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import Wei from '@synthetixio/wei'
+import Wei, { wei } from '@synthetixio/wei'
 import { debounce } from 'lodash'
 
 import { notifyError } from 'components/ErrorNotifier'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import { handleTransactionError, setOpenModal, setTransaction } from 'state/app/reducer'
 import { fetchV3BalancesAndAllowances } from 'state/balances/actions'
-import { selectMarketInfo, selectMarkets } from 'state/futures/selectors'
+import { ZERO_STATE_TRADE_INPUTS } from 'state/constants'
+import {
+	selectLeverageSide,
+	selectMarketInfo,
+	selectMarkets,
+	selectTradePrice,
+} from 'state/futures/selectors'
+import { AppThunk } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 import {
@@ -28,27 +36,34 @@ import {
 } from 'utils/futures'
 import logError from 'utils/logError'
 
+import { selectMarketIndexPrice } from '../common/selectors'
 import {
 	AppFuturesMarginType,
-	DebouncedPreviewParams,
+	CrossMarginTradePreviewParams,
+	DebouncedCMPreviewParams,
+	DebouncedSMPreviewParams,
 	DelayedOrderWithDetails,
 } from '../common/types'
 
 import {
+	incrementPreviewCrossMarginCount,
+	setCrossMarginLeverageInput,
 	setCrossMarginLeverageSide,
+	setCrossMarginTradeInputs,
+	setCrossMarginTradePreview,
 	setPerpsV3Account,
 	setPerpsV3MarketProxyAddress,
 } from './reducer'
 import {
 	selectAccountContext,
 	selectCrossMarginAccount,
+	selectCrossMarginAvailableMargin,
 	selectCrossMarginSupportedNetwork,
 	selectCrossMarginTradeInputs,
 	selectOpenDelayedOrdersV3,
+	selectV3MarketInfo,
 	selectV3Markets,
 } from './selectors'
-import { editCrossMarginTradeSize } from '../smartMargin/actions'
-import { AppThunk } from 'state/store'
 
 export const fetchMarketsV3 = createAsyncThunk<
 	{ markets: FuturesMarket<string>[]; networkId: NetworkId } | undefined,
@@ -214,14 +229,14 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 
 export const fetchCrossMarginTradePreview = createAsyncThunk<
 	void,
-	DebouncedPreviewParams,
+	DebouncedCMPreviewParams,
 	ThunkConfig
 >('futures/fetchCrossMarginTradePreview', async () => {
 	// TODO: Fetch cross margin trade preview
 })
 
 export const debouncedPrepareCrossMarginTradePreview = debounce(
-	(dispatch, inputs: DebouncedPreviewParams) => {
+	(dispatch, inputs: DebouncedCMPreviewParams) => {
 		dispatch(fetchCrossMarginTradePreview(inputs))
 	},
 	500
@@ -268,6 +283,59 @@ export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 		// TODO: Clear trade inputs for cross margin
 	}
 )
+
+export const editCrossMarginTradeSize =
+	(size: string, currencyType: 'usd' | 'native'): AppThunk =>
+	(dispatch, getState) => {
+		const indexPrice = selectMarketIndexPrice(getState())
+		const tradeSide = selectLeverageSide(getState())
+		const marketInfo = selectV3MarketInfo(getState())
+		const availableMargin = selectCrossMarginAvailableMargin(getState())
+
+		if (!marketInfo) throw new Error('No market selected')
+
+		if (size === '' || indexPrice.eq(0)) {
+			dispatch(setCrossMarginTradeInputs(ZERO_STATE_TRADE_INPUTS))
+			dispatch(setCrossMarginTradePreview({ preview: null, type: 'trade' }))
+			dispatch(setCrossMarginLeverageInput(''))
+			return
+		}
+
+		const nativeSize =
+			currencyType === 'native' ? size : String(floorNumber(wei(size).div(indexPrice), 4))
+		const usdSize = currencyType === 'native' ? String(floorNumber(indexPrice.mul(size), 4)) : size
+		const leverage = availableMargin?.gt(0) ? wei(usdSize).div(availableMargin.abs()) : '0'
+		const sizeDeltaWei =
+			tradeSide === PositionSide.LONG ? wei(nativeSize || 0) : wei(nativeSize || 0).neg()
+		dispatch(
+			setCrossMarginTradeInputs({
+				susdSize: usdSize,
+				nativeSize: nativeSize,
+			})
+		)
+		dispatch(setCrossMarginLeverageInput(leverage.toString(2)))
+		dispatch(
+			stageCrossMarginTradePreview({
+				market: {
+					key: marketInfo.marketKey,
+					address: marketInfo.market,
+				},
+				orderPrice: indexPrice,
+				sizeDelta: sizeDeltaWei,
+				action: 'trade',
+			})
+		)
+	}
+
+const stageCrossMarginTradePreview = createAsyncThunk<
+	void,
+	CrossMarginTradePreviewParams,
+	ThunkConfig
+>('futures/stageCrossMarginTradePreview', async (inputs, { dispatch, getState }) => {
+	dispatch(incrementPreviewCrossMarginCount())
+	const debounceCount = getState().crossMargin.previewDebounceCount
+	debouncedPrepareCrossMarginTradePreview(dispatch, { ...inputs, debounceCount })
+})
 
 export const changeCrossMarginLeverageSide =
 	(side: PositionSide): AppThunk =>

@@ -14,12 +14,8 @@ import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
-import {
-	selectAllTradesForAccountType,
-	selectFuturesType,
-	selectMarketAsset,
-	selectQueryStatuses,
-} from 'state/futures/selectors'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
+import { selectAllTradesForAccountType, selectQueryStatuses } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink } from 'styles/common'

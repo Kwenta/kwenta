@@ -21,6 +21,7 @@ import { selectNetwork } from 'state/wallet/selectors'
 import { serializePositionHistory } from 'utils/futures'
 import { refetchWithComparator } from 'utils/queries'
 
+import { selectFuturesType } from './common/selectors'
 import { AppFuturesMarginType } from './common/types'
 import { selectFuturesAccount, selectMarketInfo, selectPosition } from './selectors'
 import {
@@ -129,8 +130,13 @@ export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 
 export const editTradeSizeInput =
 	(size: string, currencyType: 'usd' | 'native'): AppThunk =>
-	(dispatch) => {
-		dispatch(editSmartMarginTradeSize(size, currencyType))
+	(dispatch, getState) => {
+		const type = selectFuturesType(getState())
+		if (type === FuturesMarginType.CROSS_MARGIN) {
+			dispatch(editSmartMarginTradeSize(size, currencyType))
+		} else {
+			dispatch(editSmartMarginTradeSize(size, currencyType))
+		}
 	}
 
 export const fetchFuturesPositionHistory = createAsyncThunk<void, void, ThunkConfig>(

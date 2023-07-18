@@ -107,7 +107,7 @@ const crossMarginSlice = createSlice({
 		setCrossMarginLeverageSide: (state, action) => {
 			state.leverageSide = action.payload
 		},
-		setTradeInputs: (state, action: PayloadAction<TradeSizeInputs<string>>) => {
+		setCrossMarginTradeInputs: (state, action: PayloadAction<TradeSizeInputs<string>>) => {
 			state.tradeInputs = action.payload
 		},
 		setEditPositionInputs: (state, action: PayloadAction<EditPositionInputs<string>>) => {
@@ -122,7 +122,7 @@ const crossMarginSlice = createSlice({
 		setTradeFee: (state, action: PayloadAction<string>) => {
 			state.tradeFee = action.payload
 		},
-		setLeverageInput: (state, action: PayloadAction<string>) => {
+		setCrossMarginLeverageInput: (state, action: PayloadAction<string>) => {
 			state.leverageInput = action.payload
 		},
 		setPerpsV3MarketProxyAddress: (state, action: PayloadAction<string | undefined>) => {
@@ -162,7 +162,7 @@ const crossMarginSlice = createSlice({
 				}
 			}
 		},
-		setTradePreview: (
+		setCrossMarginTradePreview: (
 			state,
 			{
 				payload,
@@ -181,7 +181,7 @@ const crossMarginSlice = createSlice({
 			}
 			state.queryStatuses.tradePreview = DEFAULT_QUERY_STATUS
 		},
-		incrementPreviewCount: (state) => {
+		incrementPreviewCrossMarginCount: (state) => {
 			state.previewDebounceCount = state.previewDebounceCount + 1
 		},
 		setSelectedPortfolioTimeframe: (state, action: PayloadAction<Period>) => {
@@ -360,7 +360,7 @@ export const {
 	setMarketAsset,
 	setClosePositionSizeDelta,
 	setCrossMarginLeverageSide,
-	setLeverageInput,
+	setCrossMarginLeverageInput,
 	clearAllTradePreviews,
 	setSelectedInputDenomination,
 	setSelectedInputFundingRateHour,
@@ -369,6 +369,9 @@ export const {
 	setSelectedChart,
 	setPerpsV3Account,
 	setPerpsV3MarketProxyAddress,
+	setCrossMarginTradeInputs,
+	setCrossMarginTradePreview,
+	incrementPreviewCrossMarginCount,
 } = crossMarginSlice.actions
 
 const findWalletForAccount = (

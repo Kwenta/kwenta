@@ -13,11 +13,10 @@ import Spacer from 'components/Spacer'
 import { TabPanel } from 'components/Tab'
 import ROUTES from 'constants/routes'
 import useWindowSize from 'hooks/useWindowSize'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import {
 	selectActiveSmartPositionsCount,
 	selectActiveCrossMarginPositionsCount,
-	selectFuturesType,
-	selectMarketAsset,
 	selectPosition,
 	selectAllConditionalOrders,
 } from 'state/futures/selectors'

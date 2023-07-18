@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import Error from 'components/ErrorView'
 import { changeCrossMarginLeverageSide } from 'state/futures/crossMargin/actions'
+import { selectCrossMarginTradeInputs } from 'state/futures/crossMargin/selectors'
 import { selectLeverageSide } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectPricesConnectionError } from 'state/prices/selectors'
@@ -16,7 +17,6 @@ import PositionButtons from '../PositionButtons'
 import CloseOnlyPrompt from './CloseOnlyPrompt'
 import ManagePosition from './ManagePosition'
 import MarketsDropdown from './MarketsDropdown'
-import TradeBalance from './TradeBalance'
 import TradeBalanceCrossMargin from './TradeBalanceCrossMargin'
 
 type Props = {

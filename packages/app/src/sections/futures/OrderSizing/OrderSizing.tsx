@@ -9,19 +9,17 @@ import InputHeaderRow from 'components/Input/InputHeaderRow'
 import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle'
 import NumericInput from 'components/Input/NumericInput'
 import { editTradeSizeInput } from 'state/futures/actions'
+import { selectMarketIndexPrice } from 'state/futures/common/selectors'
 import {
-	selectMarketIndexPrice,
 	selectPosition,
 	selectSelectedInputDenomination,
 	selectMaxUsdSizeInput,
 	selectLeverageSide,
 	selectAvailableOi,
 	selectTradeSizeInputsDisabled,
+	selectTradeSizeInputs,
+	selectTradePrice,
 } from 'state/futures/selectors'
-import {
-	selectSmartMarginOrderPrice,
-	selectSmartMarginTradeInputs,
-} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import { DenominationToggle } from './DenominationToggle'
@@ -33,11 +31,11 @@ type OrderSizingProps = {
 const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 	const dispatch = useAppDispatch()
 
-	const { susdSizeString, nativeSizeString } = useAppSelector(selectSmartMarginTradeInputs)
+	const { susdSizeString, nativeSizeString } = useAppSelector(selectTradeSizeInputs)
 
 	const position = useAppSelector(selectPosition)
 	const marketAssetRate = useAppSelector(selectMarketIndexPrice)
-	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
+	const orderPrice = useAppSelector(selectTradePrice)
 	const assetInputType = useAppSelector(selectSelectedInputDenomination)
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput)
 	const tradeSide = useAppSelector(selectLeverageSide)

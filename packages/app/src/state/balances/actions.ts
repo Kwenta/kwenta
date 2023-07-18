@@ -1,12 +1,12 @@
 import { SynthV3Asset, SynthV3BalancesAndAllowances } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
+import { notifyError } from 'components/ErrorNotifier'
 import type { ThunkConfig } from 'state/store'
 import { serializeBalances, serializeV3Balances } from 'utils/balances'
 
 import { ZERO_BALANCES } from './reducer'
 import { BalancesActionReturn } from './types'
-import { notifyError } from 'components/ErrorNotifier'
 
 export const fetchBalances = createAsyncThunk<BalancesActionReturn<string>, void, ThunkConfig>(
 	'balances/fetchBalances',

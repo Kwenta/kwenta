@@ -30,11 +30,10 @@ import { zIndex } from 'constants/ui'
 import useClickOutside from 'hooks/useClickOutside'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { selectShowBanner } from 'state/app/selectors'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import {
-	selectMarketAsset,
 	selectMarkets,
 	selectMarketsQueryStatus,
-	selectFuturesType,
 	selectMarketInfo,
 	selectMarkPriceInfos,
 } from 'state/futures/selectors'

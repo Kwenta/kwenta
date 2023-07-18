@@ -3,6 +3,7 @@ import { MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 
+import { selectSynthV3Balances } from 'state/balances/selectors'
 import { selectPrices } from 'state/prices/selectors'
 import { RootState } from 'state/store'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
@@ -15,7 +16,6 @@ import {
 } from 'utils/futures'
 
 import { MarkPrices } from './types'
-import { selectSynthV3Balances } from 'state/balances/selectors'
 
 export const selectV3MarketKey = createSelector(
 	(state: RootState) => state.crossMargin.selectedMarketAsset,

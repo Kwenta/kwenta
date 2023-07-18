@@ -84,18 +84,25 @@ export type EditPositionInputs<T = Wei> = {
 
 export type PreviewAction = 'edit' | 'trade' | 'close'
 
-export type TradePreviewParams = {
+export type CrossMarginTradePreviewParams = {
 	market: {
 		key: FuturesMarketKey
 		address: string
 	}
 	orderPrice: Wei
 	sizeDelta: Wei
-	marginDelta: Wei
 	action: PreviewAction
 }
 
-export type DebouncedPreviewParams = TradePreviewParams & {
+export type SmartMarginTradePreviewParams = CrossMarginTradePreviewParams & {
+	marginDelta: Wei
+}
+
+export type DebouncedSMPreviewParams = SmartMarginTradePreviewParams & {
+	debounceCount: number
+}
+
+export type DebouncedCMPreviewParams = CrossMarginTradePreviewParams & {
 	debounceCount: number
 }
 

@@ -14,12 +14,11 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex'
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults'
 import { editTradeSizeInput } from 'state/futures/actions'
+import { selectFuturesType, selectMarketIndexPrice } from 'state/futures/common/selectors'
 import {
 	selectLeverageInput,
-	selectMarketIndexPrice,
 	selectMaxLeverage,
 	selectPosition,
-	selectFuturesType,
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors'
 import { setSmartMarginLeverageInput } from 'state/futures/smartMargin/reducer'

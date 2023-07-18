@@ -1,6 +1,7 @@
 import { ChangeEvent, useCallback } from 'react'
 
-import { selectLeverageSide, selectMarketIndexPrice } from 'state/futures/selectors'
+import { selectMarketIndexPrice } from 'state/futures/common/selectors'
+import { selectLeverageSide } from 'state/futures/selectors'
 import { editTradeOrderPrice } from 'state/futures/smartMargin/actions'
 import { selectOrderType, selectSmartMarginOrderPrice } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'

@@ -10,11 +10,8 @@ import { Body } from 'components/Text'
 import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
-import {
-	selectFuturesType,
-	selectMarketMarginTransfers,
-	selectQueryStatuses,
-} from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors'
 import { selectIdleMarginTransfers } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'

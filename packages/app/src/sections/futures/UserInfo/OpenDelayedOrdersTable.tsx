@@ -14,10 +14,10 @@ import useInterval from 'hooks/useInterval'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import {
 	selectIsCancellingOrder,
 	selectIsExecutingOrder,
-	selectMarketAsset,
 	selectMarkets,
 } from 'state/futures/selectors'
 import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'

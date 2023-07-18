@@ -7,7 +7,7 @@ import ArrowIcon from 'assets/svg/app/arrow-down.svg'
 import Connector from 'containers/Connector'
 import { chain } from 'containers/Connector/config'
 import { fetchBalances } from 'state/balances/actions'
-import { selectFuturesType } from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import {
 	customizeSocket,

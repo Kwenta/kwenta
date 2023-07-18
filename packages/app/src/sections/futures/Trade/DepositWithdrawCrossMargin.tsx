@@ -23,16 +23,16 @@ import {
 	withdrawCrossMargin,
 } from 'state/futures/crossMargin/actions'
 import {
+	selectCrossMarginAvailableMargin,
+	selectDepositAllowances,
+} from 'state/futures/crossMargin/selectors'
+import {
 	selectIsApprovingCrossDeposit,
 	selectIsolatedTransferError,
 	selectIsSubmittingIsolatedTransfer,
 	selectPosition,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import {
-	selectCrossMarginAvailableMargin,
-	selectDepositAllowances,
-} from 'state/futures/crossMargin/selectors'
 
 type Props = {
 	onDismiss(): void

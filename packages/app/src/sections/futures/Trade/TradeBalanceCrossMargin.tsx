@@ -12,12 +12,12 @@ import { Body, NumericValue } from 'components/Text'
 import useWindowSize from 'hooks/useWindowSize'
 import { setOpenModal } from 'state/app/reducer'
 import { selectSNXUSDBalance } from 'state/balances/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
 import {
 	selectCrossMarginAccount,
 	selectCrossMarginAvailableMargin,
 	selectWithdrawableCrossMargin,
 } from 'state/futures/crossMargin/selectors'
-import { selectFuturesType } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PencilButton from '../../../components/Button/PencilButton'

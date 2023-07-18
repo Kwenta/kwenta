@@ -24,8 +24,9 @@ import { Body } from 'components/Text'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectTransaction } from 'state/app/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
 import { submitCrossMarginReducePositionOrder } from 'state/futures/crossMargin/actions'
-import { selectFuturesType, selectSubmittingFuturesTx } from 'state/futures/selectors'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
 	editClosePositionPrice,
 	editClosePositionSizeDelta,

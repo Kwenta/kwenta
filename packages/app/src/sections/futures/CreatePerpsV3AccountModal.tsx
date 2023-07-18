@@ -9,6 +9,7 @@ import ErrorView from 'components/ErrorView'
 import Loader from 'components/Loader'
 import ProgressSteps from 'components/ProgressSteps'
 import { setOpenModal } from 'state/app/reducer'
+import { createPerpsV3Account } from 'state/futures/crossMargin/actions'
 import {
 	selectCrossMarginAccount,
 	selectCrossMarginSupportedNetwork,
@@ -24,7 +25,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 
 import CrossMarginFAQ from './SmartMarginOnboard/SmartMarginFAQ'
-import { createPerpsV3Account } from 'state/futures/crossMargin/actions'
 
 type Props = {
 	isOpen: boolean

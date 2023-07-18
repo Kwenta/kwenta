@@ -5,7 +5,7 @@ import { FC, useMemo } from 'react'
 import styled from 'styled-components'
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
-import { selectMarketAsset } from 'state/futures/selectors'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import { SharePositionParams } from 'state/futures/types'
 import { useAppSelector } from 'state/hooks'
 import media from 'styles/media'

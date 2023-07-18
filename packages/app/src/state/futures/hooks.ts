@@ -24,7 +24,8 @@ import {
 	fetchSharedFuturesData,
 	fetchMarginTransfers,
 } from './actions'
-import { selectFuturesType, selectMarkets } from './selectors'
+import { selectFuturesType } from './common/selectors'
+import { selectMarkets } from './selectors'
 import {
 	fetchAllV2TradesForAccount,
 	fetchFuturesFees,

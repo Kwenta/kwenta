@@ -11,12 +11,8 @@ import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
 import { TradeStatus } from 'sections/futures/types'
-import {
-	selectAllTradesForAccountType,
-	selectFuturesType,
-	selectMarketAsset,
-	selectQueryStatuses,
-} from 'state/futures/selectors'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
+import { selectAllTradesForAccountType, selectQueryStatuses } from 'state/futures/selectors'
 import { fetchAllV2TradesForAccount } from 'state/futures/smartMargin/actions'
 import { useAppSelector, useFetchAction } from 'state/hooks'
 import { FetchStatus } from 'state/types'

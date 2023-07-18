@@ -11,14 +11,13 @@ import { ERROR_MESSAGES } from 'components/ErrorNotifier'
 import Error from 'components/ErrorView'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { setOpenModal } from 'state/app/reducer'
+import { selectFuturesType, selectMarketIndexPrice } from 'state/futures/common/selectors'
 import { setTradePanelDrawerOpen } from 'state/futures/reducer'
 import {
 	selectMarketInfo,
 	selectIsMarketCapReached,
-	selectMarketIndexPrice,
 	selectPlaceOrderTranslationKey,
 	selectMaxLeverage,
-	selectFuturesType,
 	selectLeverageSide,
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
