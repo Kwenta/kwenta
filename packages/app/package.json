@@ -36,7 +36,7 @@
 		"codegen-graph-ts": "^0.1.4",
 		"cors": "^2.8.5",
 		"crypto-browserify": "^3.12.0",
-		"date-fns": "2.21.3",
+		"date-fns": "2.30.0",
 		"date-fns-tz": "2.0.0",
 		"echarts": "5.4.2",
 		"eslint-config-next": "^13.4.8",

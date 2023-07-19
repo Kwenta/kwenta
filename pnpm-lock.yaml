@@ -126,11 +126,11 @@ importers:
         specifier: ^3.12.0
         version: 3.12.0
       date-fns:
-        specifier: 2.21.3
-        version: 2.21.3
+        specifier: 2.30.0
+        version: 2.30.0
       date-fns-tz:
         specifier: 2.0.0
-        version: 2.0.0(date-fns@2.21.3)
+        version: 2.0.0(date-fns@2.30.0)
       echarts:
         specifier: 5.4.2
         version: 5.4.2
@@ -6549,7 +6549,7 @@ packages:
     resolution: {integrity: sha512-9DSw2ZRzV0Tmpa6PHHJbMcZn79HHus+BBBohcOaDzkK/G3zMjDUDYjJIWBFLbkh+1+/IOS0A59BpQfdr37hASg==}
     deprecated: This is a stub types definition for date-fns (https://github.com/date-fns/date-fns). date-fns provides its own type definitions, so you don't need @types/date-fns installed!
     dependencies:
-      date-fns: 2.21.3
+      date-fns: 2.30.0
     dev: true
 
   /@types/debug@4.1.8:
@@ -9712,24 +9712,19 @@ packages:
       whatwg-url: 12.0.1
     dev: false
 
-  /date-fns-tz@2.0.0(date-fns@2.21.3):
+  /date-fns-tz@2.0.0(date-fns@2.30.0):
     resolution: {integrity: sha512-OAtcLdB9vxSXTWHdT8b398ARImVwQMyjfYGkKD2zaGpHseG2UPHbHjXELReErZFxWdSLph3c2zOaaTyHfOhERQ==}
     peerDependencies:
       date-fns: '>=2.0.0'
     dependencies:
-      date-fns: 2.21.3
+      date-fns: 2.30.0
     dev: false
-
-  /date-fns@2.21.3:
-    resolution: {integrity: sha512-HeYdzCaFflc1i4tGbj7JKMjM4cKGYoyxwcIIkHzNgCkX8xXDNJDZXgDDVchIWpN4eQc3lH37WarduXFZJOtxfw==}
-    engines: {node: '>=0.11'}
 
   /date-fns@2.30.0:
     resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
     engines: {node: '>=0.11'}
     dependencies:
       '@babel/runtime': 7.22.5
-    dev: false
 
   /debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
