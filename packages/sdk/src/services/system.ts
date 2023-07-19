@@ -1,7 +1,7 @@
 import KwentaSDK from '..'
 import { UNSUPPORTED_NETWORK } from '../common/errors'
 import { KwentaStatus } from '../types/system'
-import { client } from '../utils/files'
+import { getClient } from '../utils/files'
 import { StatusMap } from '../utils/system'
 
 export default class SystemService {
@@ -27,6 +27,7 @@ export default class SystemService {
 	}
 
 	public async getKwentaStatus(): Promise<KwentaStatus> {
+		const client = getClient()
 		const response = await client.get('kwenta-status.json', {
 			headers: { 'Cache-Control': 'no-cache' },
 		})

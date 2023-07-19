@@ -19,7 +19,7 @@ import {
 import { ContractName } from '../contracts'
 import { ClaimParams, EpochData, EscrowData } from '../types/kwentaToken'
 import { formatTruncatedDuration } from '../utils/date'
-import { client } from '../utils/files'
+import { getClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
 import { calculateFeesForAccount, calculateTotalFees } from '../utils'
@@ -503,11 +503,12 @@ export default class KwentaTokenService {
 	public async getEstimatedRewards() {
 		const { networkId, walletAddress } = this.sdk.context
 		const fileNames = ['', '-op'].map(
-			(i) => `trading-rewards-snapshots/${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
+			(i) => `${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
 		)
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName) => {
+				const client = getClient(true)
 				const response = await client.get(fileName)
 				return { ...response.data }
 			})
@@ -541,14 +542,12 @@ export default class KwentaTokenService {
 			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH)
 
 		const fileNames = adjustedPeriods.map(
-			(i) =>
-				`trading-rewards-snapshots/${
-					this.sdk.context.networkId === 420 ? `goerli-` : ''
-				}epoch-${i}.json`
+			(i) => `${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${i}.json`
 		)
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
+				const client = getClient(true)
 				const response = await client.get(fileName)
 				const period = isOldDistributor
 					? index >= 5
@@ -629,7 +628,7 @@ export default class KwentaTokenService {
 
 		const fileNames = adjustedPeriods.map(
 			(i) =>
-				`trading-rewards-snapshots/${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${
+				`${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${
 					isSnx ? i - OP_REWARDS_CUTOFF_EPOCH : i
 				}${isOp ? (isSnx ? '-snx-op' : '-op') : ''}.json`
 		)
@@ -637,6 +636,7 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				try {
+					const client = getClient(true)
 					const response = await client.get(fileName)
 					const period = isOldDistributor
 						? index >= 5
