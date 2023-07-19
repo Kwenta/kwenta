@@ -43,6 +43,7 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeConditionalOrders,
+	stopLossValidity,
 } from 'utils/futures'
 
 import {
@@ -1734,3 +1735,26 @@ export const selectFuturesFeesForAccount = (state: RootState) => state.futures.f
 
 export const selectHistoricalFundingRatePeriod = (state: RootState) =>
 	state.futures.historicalFundingRatePeriod
+
+export const selectTradePanelSLValidity = createSelector(
+	selectSlTpTradeInputs,
+	selectTradePreview,
+	selectMarketIndexPrice,
+	selectLeverageSide,
+	({ stopLossPrice }, preview, currentPrice, leverageSide) => {
+		return stopLossValidity(stopLossPrice, preview?.liqPrice, leverageSide, currentPrice)
+	}
+)
+
+export const selectModalSLValidity = createSelector(
+	selectSlTpModalInputs,
+	selectEditPositionModalInfo,
+	({ stopLossPrice }, { position, marketPrice }) => {
+		return stopLossValidity(
+			stopLossPrice,
+			position?.position?.liquidationPrice,
+			position?.position?.side || PositionSide.LONG,
+			marketPrice
+		)
+	}
+)

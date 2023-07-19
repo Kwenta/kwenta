@@ -177,9 +177,17 @@ export const formatCurrency = (
 export const formatDollars = (value: WeiSource, options?: FormatCurrencyOptions) =>
 	formatCurrency('sUSD', value, { sign: '$', ...options })
 
-export const formatPercent = (value: WeiSource, options?: { minDecimals: number }) => {
-	const decimals = options?.minDecimals ?? 2
-
+export const formatPercent = (
+	value: WeiSource,
+	options?: { minDecimals?: number; suggestDecimals?: boolean; maxDecimals?: number }
+) => {
+	let decimals = options?.suggestDecimals ? suggestedDecimals(value) : options?.minDecimals ?? 2
+	if (options?.maxDecimals) {
+		decimals = Math.min(decimals, options.maxDecimals)
+	}
+	if (options?.minDecimals) {
+		decimals = Math.max(decimals, options.minDecimals)
+	}
 	return `${wei(value).mul(100).toString(decimals)}%`
 }
 
