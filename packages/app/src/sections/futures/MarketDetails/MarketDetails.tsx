@@ -119,7 +119,6 @@ const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			value={
 				indexPriceWei.gt(0) && pastPrice?.rate
 					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? ZERO_WEI, {
-							suggestDecimals: false,
 							maxDecimals: 2,
 					  })
 					: NO_VALUE
@@ -174,7 +173,6 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 					<MarketDetailValue
 						color="green"
 						value={formatPercent(marketInfo ? marketInfo?.openInterest.longPct : 0, {
-							suggestDecimals: false,
 							minDecimals: 0,
 						})}
 						mobile={mobile}
@@ -183,7 +181,6 @@ const MarketSkew: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 					<MarketDetailValue
 						color="red"
 						value={formatPercent(marketInfo ? marketInfo?.openInterest.shortPct : 0, {
-							suggestDecimals: false,
 							minDecimals: 0,
 						})}
 						mobile={mobile}
