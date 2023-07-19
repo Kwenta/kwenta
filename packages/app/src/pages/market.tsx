@@ -153,7 +153,12 @@ function TradePanelDesktop() {
 		[accountType, isolatedPositionsCount]
 	)
 
-	if (walletAddress && !isL2 && openModal !== 'futures_smart_margin_socket') {
+	if (
+		walletAddress &&
+		!isL2 &&
+		openModal !== 'futures_smart_margin_socket' &&
+		openModal !== 'futures_isolated_transfer'
+	) {
 		return <FuturesUnsupportedNetwork />
 	}
 
