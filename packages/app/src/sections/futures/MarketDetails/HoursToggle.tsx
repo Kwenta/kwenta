@@ -44,13 +44,14 @@ const HoursToggle: React.FC = () => {
 		</ToggleContainer>
 	)
 }
-
+//  solid ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
 const ToggleTableRow = styled.div`
 	margin: auto;
 	padding: 1.5px 6px;
 	height: ${HOURS_TOGGLE_HEIGHT};
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].background};
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
+	border-width: 0px;
+
 	:last-child {
 		border-radius: 0px 0px 9px 9px;
 	}
