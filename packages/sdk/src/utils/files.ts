@@ -6,12 +6,13 @@ import {
 	TRADING_REWARDS_AWS_BUCKET,
 } from '../constants/files'
 
-export const getClient = (useAWS: boolean = false) => {
-	const baseURL = useAWS
-		? TRADING_REWARDS_AWS_BUCKET
-		: `${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/`
+const createClient = (baseURL: string) => {
 	return axios.create({
 		baseURL,
 		timeout: 5000,
 	})
 }
+
+export const awsClient = createClient(TRADING_REWARDS_AWS_BUCKET)
+
+export const fleekClient = createClient(`${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/`)

@@ -19,7 +19,7 @@ import {
 import { ContractName } from '../contracts'
 import { ClaimParams, EpochData, EscrowData } from '../types/kwentaToken'
 import { formatTruncatedDuration } from '../utils/date'
-import { getClient } from '../utils/files'
+import { awsClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
 import { calculateFeesForAccount, calculateTotalFees } from '../utils'
@@ -508,8 +508,7 @@ export default class KwentaTokenService {
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName) => {
-				const client = getClient(true)
-				const response = await client.get(fileName)
+				const response = await awsClient.get(fileName)
 				return { ...response.data }
 			})
 		)
@@ -547,8 +546,7 @@ export default class KwentaTokenService {
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
-				const client = getClient(true)
-				const response = await client.get(fileName)
+				const response = await awsClient.get(fileName)
 				const period = isOldDistributor
 					? index >= 5
 						? index >= 10
@@ -636,8 +634,7 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				try {
-					const client = getClient(true)
-					const response = await client.get(fileName)
+					const response = await awsClient.get(fileName)
 					const period = isOldDistributor
 						? index >= 5
 							? index >= 10
