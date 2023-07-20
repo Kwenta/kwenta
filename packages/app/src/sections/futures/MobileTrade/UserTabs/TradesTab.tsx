@@ -106,9 +106,7 @@ const TradesTab = () => {
 							enableSorting: true,
 						},
 						{
-							header: () => (
-								<TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>
-							),
+							header: () => <TableHeader>{t('futures.market.user.trades.table.size')}</TableHeader>,
 							accessorKey: 'amount',
 							sortingFn: 'basic',
 							cell: (cellProps) => (

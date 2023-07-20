@@ -1,18 +1,20 @@
-import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils'
+import { formatDollars } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import LinkIcon from 'assets/svg/app/link-blue.svg'
+import HelpIcon from 'assets/svg/app/question-mark.svg'
 import ColoredPrice from 'components/ColoredPrice'
+import Currency from 'components/Currency'
+import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import { GridDivCenteredRow } from 'components/layout/grid'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
 import ROUTES from 'constants/routes'
 import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
-import PositionType from 'sections/futures/PositionType'
 import {
 	selectAllTradesForAccountType,
 	selectFuturesType,
@@ -54,9 +56,10 @@ const Trades = memo(() => {
 				pnl,
 				feesPaid,
 				netPnl,
+				notionalValue: trade?.price.mul(trade?.size.abs()),
 				value: Number(trade?.price),
 				funding: Number(trade?.fundingAccrued),
-				amount: Number(trade?.size),
+				amount: trade?.size.abs(),
 				time: trade?.timestamp * 1000,
 				id: trade?.txnHash,
 				asset: marketAsset,
@@ -82,18 +85,19 @@ const Trades = memo(() => {
 					cell: (cellProps) => {
 						return (
 							<MarketDetailsContainer
-								onClick={() =>
-									cellProps.row.original.market
-										? router.push(
-												ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
-										  )
-										: undefined
-								}
+								onClick={(e) => {
+									cellProps.row.original.market &&
+										router.push(
+											ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
+										)
+									e.stopPropagation()
+								}}
 							>
 								{cellProps.row.original.market ? (
 									<TableMarketDetails
 										marketName={cellProps.row.original.market?.marketName}
 										marketKey={cellProps.row.original.market?.marketKey}
+										side={cellProps.row.original.side}
 									/>
 								) : (
 									'-'
@@ -101,7 +105,7 @@ const Trades = memo(() => {
 							</MarketDetailsContainer>
 						)
 					},
-					size: 100,
+					size: 110,
 				},
 				{
 					header: () => <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
@@ -115,33 +119,36 @@ const Trades = memo(() => {
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
-					accessorKey: 'side',
-					sortingFn: 'basic',
-					cell: (cellProps) => <PositionType side={cellProps.getValue()} />,
-					size: 60,
-					enableSorting: true,
-				},
-				{
 					header: () => <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
 					accessorKey: 'value',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
-						return <>{formatDollars(cellProps.getValue(), { suggestDecimals: true })}</>
+						return <Currency.Price price={cellProps.getValue()} />
 					},
 					size: 90,
 					enableSorting: true,
 				},
 				{
-					header: () => (
-						<TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>
-					),
+					header: () => <TableHeader>{t('futures.market.user.trades.table.size')}</TableHeader>,
 					accessorKey: 'amount',
 					sortingFn: 'basic',
-					cell: (cellProps) => (
-						<>{formatCryptoCurrency(cellProps.getValue(), { suggestDecimals: true })}</>
-					),
-					size: 90,
+					cell: (cellProps) => {
+						return (
+							<FlexDivCol>
+								<Currency.Price
+									price={cellProps.getValue()}
+									currencyKey={cellProps.row.original.market?.marketName.replace('/sUSD', '')}
+									showCurrencyKey
+								/>
+								<Currency.Price
+									price={cellProps.row.original.notionalValue}
+									formatOptions={{ truncateOver: 1e6 }}
+									colorType="secondary"
+								/>
+							</FlexDivCol>
+						)
+					},
+					size: 120,
 					enableSorting: true,
 				},
 				{
@@ -152,12 +159,15 @@ const Trades = memo(() => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
-								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
-							</ColoredPrice>
+							<FlexDivRowCentered columnGap="5px">
+								<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
+									{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
+								</ColoredPrice>
+								<HelpIcon />
+							</FlexDivRowCentered>
 						)
 					},
-					size: 90,
+					size: 110,
 					enableSorting: true,
 				},
 				{
@@ -167,7 +177,7 @@ const Trades = memo(() => {
 					cell: (cellProps) => (
 						<>{cellProps.getValue().eq(0) ? '--' : formatDollars(cellProps.getValue())}</>
 					),
-					size: 90,
+					size: 110,
 					enableSorting: true,
 				},
 				{
@@ -179,7 +189,7 @@ const Trades = memo(() => {
 							{formatDollars(cellProps.getValue(), { suggestDecimals: true })}
 						</ColoredPrice>
 					),
-					size: 100,
+					size: 110,
 				},
 				{
 					header: () => (
@@ -188,25 +198,15 @@ const Trades = memo(() => {
 					accessorKey: 'type',
 					sortingFn: 'basic',
 					cell: (cellProps) => <>{cellProps.getValue()}</>,
-					size: 100,
-				},
-				{
-					header: () => (
-						<TableHeader>{t('futures.market.user.trades.table.transaction')}</TableHeader>
-					),
-					accessorKey: 'txnHash',
-					cell: (cellProps) => (
-						<StyledExternalLink href={blockExplorer.txLink(cellProps.getValue())}>
-							<StyledLinkIcon />
-						</StyledExternalLink>
-					),
-					size: 80,
-					enableSorting: false,
+					size: 90,
 				},
 			]}
 			columnsDeps={columnsDeps}
 			data={historyData}
 			isLoading={isLoading && isLoaded}
+			onTableRowClick={(row) =>
+				window.open(blockExplorer.txLink(row.original.txnHash), '_blank', 'noopener noreferrer')
+			}
 			noResultsMessage={
 				!isL2 ? (
 					<TableNoResults>
@@ -222,27 +222,6 @@ const Trades = memo(() => {
 })
 
 export default Trades
-
-const StyledExternalLink = styled(ExternalLink)`
-	padding: 10px;
-	&:hover {
-		svg {
-			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-			}
-		}
-	}
-`
-
-const StyledLinkIcon = styled(LinkIcon)`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	width: 14px;
-	height: 14px;
-
-	path {
-		fill: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
-`
 
 const MarketDetailsContainer = styled.div`
 	cursor: pointer;

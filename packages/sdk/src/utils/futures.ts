@@ -472,7 +472,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 		: orderType === 'StopMarket'
 		? 'Stop'
 		: orderType === 'DelayedOffchain'
-		? 'Delayed Market'
+		? 'Market'
 		: orderType
 }
 

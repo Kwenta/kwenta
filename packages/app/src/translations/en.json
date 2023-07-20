@@ -1131,7 +1131,7 @@
 					"tab": "Trades",
 					"table": {
 						"id": "ID",
-						"trade-size": "trade size",
+						"size": "size",
 						"pnl": "P&L",
 						"status": "status",
 						"date": "date",
