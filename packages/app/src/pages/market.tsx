@@ -154,8 +154,9 @@ function TradePanelDesktop() {
 	const accountType = useAppSelector(selectFuturesType)
 	const queryStatus = useAppSelector(selectSmartMarginAccountQueryStatus)
 	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
+	const openModal = useAppSelector(selectShowModal)
 
-	if (walletAddress && !isL2) {
+	if (walletAddress && !isL2 && openModal !== 'futures_smart_margin_socket') {
 		return <FuturesUnsupportedNetwork />
 	}
 

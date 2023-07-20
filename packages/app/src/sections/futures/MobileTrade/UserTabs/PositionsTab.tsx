@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import UploadIcon from 'assets/svg/futures/upload-icon.svg'
 import Currency from 'components/Currency'
 import { FlexDiv, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import Pill from 'components/Pill'
@@ -139,10 +138,7 @@ const PositionsTab = () => {
 									Close
 								</Pill>
 								<Pill size="medium" onClick={() => handleOpenShareModal(row.share)}>
-									<FlexDivRowCentered>
-										<UploadIcon width={6} style={{ marginRight: '2px', marginBottom: '1px' }} />
-										Share
-									</FlexDivRowCentered>
+									<FlexDivRowCentered>Share</FlexDivRowCentered>
 								</Pill>
 							</FlexDivRowCentered>
 						</PositionMeta>

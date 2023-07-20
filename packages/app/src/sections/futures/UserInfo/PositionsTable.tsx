@@ -311,9 +311,7 @@ const PositionRowDesktop = styled.div`
 	&:nth-child(odd) {
 		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
-	:not(:last-child) {
-		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	}
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `
 
 const HeadersRow = styled(PositionRowDesktop)`
@@ -323,6 +321,9 @@ const HeadersRow = styled(PositionRowDesktop)`
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	:not(:last-child) {
 		border-bottom: 0;
+	}
+	&:first-child {
+		background-color: transparent;
 	}
 `
 

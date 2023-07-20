@@ -1,7 +1,7 @@
 import KwentaSDK from '..'
 import { UNSUPPORTED_NETWORK } from '../common/errors'
 import { KwentaStatus } from '../types/system'
-import { client } from '../utils/files'
+import { fleekClient } from '../utils/files'
 import { StatusMap } from '../utils/system'
 
 export default class SystemService {
@@ -27,7 +27,7 @@ export default class SystemService {
 	}
 
 	public async getKwentaStatus(): Promise<KwentaStatus> {
-		const response = await client.get('kwenta-status.json', {
+		const response = await fleekClient.get('kwenta-status.json', {
 			headers: { 'Cache-Control': 'no-cache' },
 		})
 

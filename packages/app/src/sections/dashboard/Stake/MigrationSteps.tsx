@@ -1,4 +1,4 @@
-import { truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { useMemo, useCallback, FC, memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -10,88 +10,76 @@ import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { claimStakingRewards, unstakeKwenta } from 'state/staking/actions'
-import { setStakingMigrationCompleted } from 'state/staking/reducer'
+import { unstakeKwentaV2, vestEscrowedRewardsV2 } from 'state/staking/actions'
 import {
-	selectClaimableBalance,
-	selectIsGettingReward,
 	selectIsUnstakingKwenta,
-	selectStakedKwentaBalance,
+	selectIsVestingEscrowedRewards,
 	selectStakedKwentaBalanceV2,
+	selectTotalVestableV2,
+	selectVestEscrowV2Entries,
 } from 'state/staking/selectors'
 import media from 'styles/media'
 
 const MigrationSteps: FC = memo(() => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const claimableBalance = useAppSelector(selectClaimableBalance)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const stakedKwentaBalanceV2 = useAppSelector(selectStakedKwentaBalanceV2)
+	const totalVestableV2 = useAppSelector(selectTotalVestableV2)
+	const escrowV2Entries = useAppSelector(selectVestEscrowV2Entries)
 	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
-	const isClaimingReward = useAppSelector(selectIsGettingReward)
-
-	const handleGetReward = useCallback(() => {
-		dispatch(claimStakingRewards())
-	}, [dispatch])
+	const isVestingEscrowedRewards = useAppSelector(selectIsVestingEscrowedRewards)
 
 	const handleUnstakeKwenta = useCallback(
-		() => dispatch(unstakeKwenta(wei(stakedKwentaBalance).toBN())),
-		[dispatch, stakedKwentaBalance]
+		() => dispatch(unstakeKwentaV2(wei(stakedKwentaBalanceV2).toBN())),
+		[dispatch, stakedKwentaBalanceV2]
 	)
 
-	const handleDismiss = useCallback(() => {
-		dispatch(setStakingMigrationCompleted(true))
-	}, [dispatch])
+	const handleVest = useCallback(
+		() => dispatch(vestEscrowedRewardsV2(escrowV2Entries)),
+		[dispatch, escrowV2Entries]
+	)
 
 	const migrationSteps = useMemo(
 		() => [
 			{
 				key: 'step-1',
-				copy: t('dashboard.stake.tabs.migrate.step-1-copy'),
-				label: t('dashboard.stake.tabs.migrate.rewards'),
-				value: truncateNumbers(claimableBalance, 2),
-				buttonLabel: t('dashboard.stake.tabs.migrate.claim'),
-				onClick: handleGetReward,
-				active: claimableBalance.gt(0),
-				loading: isClaimingReward,
+				copy: t('dashboard.stake.tabs.revert.step-1-copy'),
+				label: t('dashboard.stake.tabs.revert.staked'),
+				value: formatNumber(stakedKwentaBalanceV2, { suggestDecimals: true }),
+				buttonLabel: t('dashboard.stake.tabs.revert.unstake'),
+				onClick: handleUnstakeKwenta,
+				active: stakedKwentaBalanceV2.gt(0),
+				loading: isUnstakingKwenta,
+				visible: true,
 			},
 			{
 				key: 'step-2',
-				copy: t('dashboard.stake.tabs.migrate.step-2-copy'),
-				label: t('dashboard.stake.tabs.migrate.staked'),
-				value: truncateNumbers(stakedKwentaBalance, 2),
-				buttonLabel: t('dashboard.stake.tabs.migrate.unstake'),
-				onClick: handleUnstakeKwenta,
-				active: claimableBalance.lte(0) && stakedKwentaBalance.gt(0),
-				loading: isUnstakingKwenta,
-			},
-			{
-				key: 'step-3',
-				copy: t('dashboard.stake.tabs.migrate.step-3-copy'),
-				label: t('dashboard.stake.tabs.migrate.staked'),
-				value: truncateNumbers(stakedKwentaBalanceV2, 2),
-				buttonLabel: t('dashboard.stake.tabs.migrate.visit-v2'),
-				onClick: handleDismiss,
-				active: claimableBalance.lte(0) && stakedKwentaBalance.lte(0),
+				copy: t('dashboard.stake.tabs.revert.step-2-copy'),
+				label: t('dashboard.stake.tabs.revert.reclaimable'),
+				value: formatNumber(totalVestableV2, { suggestDecimals: true }),
+				buttonLabel: t('dashboard.stake.tabs.revert.reclaim'),
+				onClick: handleVest,
+				active: stakedKwentaBalanceV2.eq(0) && totalVestableV2.gt(0),
+				loading: isVestingEscrowedRewards,
+				visible: totalVestableV2.gt(0),
 			},
 		],
 		[
-			claimableBalance,
-			handleDismiss,
-			handleGetReward,
 			handleUnstakeKwenta,
-			isClaimingReward,
+			handleVest,
 			isUnstakingKwenta,
-			stakedKwentaBalance,
+			isVestingEscrowedRewards,
 			stakedKwentaBalanceV2,
 			t,
+			totalVestableV2,
 		]
 	)
 
 	return (
 		<StepsContainer columnGap="15px">
-			{migrationSteps.map(
-				({ key, copy, label, value, buttonLabel, active, onClick, loading }, i) => (
+			{migrationSteps
+				.filter(({ visible }) => visible)
+				.map(({ key, copy, label, value, buttonLabel, active, onClick, loading }, i) => (
 					<StyledStakingCard key={key} $active={active}>
 						<StyledHeading variant="h4">
 							<Trans
@@ -126,14 +114,13 @@ const MigrationSteps: FC = memo(() => {
 							</Button>
 						</FlexDivRowCentered>
 					</StyledStakingCard>
-				)
-			)}
+				))}
 		</StepsContainer>
 	)
 })
 
 const StepsContainer = styled(FlexDivRowCentered)`
-	margin: 30px 0;
+	margin: 30px 0 15px;
 	${media.lessThan('lg')`
 		flex-direction: column;
 		row-gap: 25px;
