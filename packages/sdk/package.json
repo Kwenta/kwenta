@@ -11,7 +11,8 @@
 		"dev": "tsc -b -w",
 		"build": "tsc -b",
 		"check-types": "tsc --noEmit",
-		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./src/contracts/types './src/contracts/abis/*.json' --show-stack-traces"
+		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./src/contracts/types './src/contracts/abis/*.json' --show-stack-traces",
+		"generate-docs": "typedoc"
 	},
 	"keywords": [],
 	"author": "",
