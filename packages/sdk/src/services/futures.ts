@@ -542,6 +542,7 @@ export default class FuturesService {
 	}
 
 	// Perps V2 read functions
+
 	public async getDelayedOrder(account: string, marketAddress: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider)
 		const order = await market.delayedOrders(account)
@@ -626,6 +627,14 @@ export default class FuturesService {
 
 	// TODO: Support pagination
 
+	/**
+	 * @desc Get the trade history for a given account on a specific market
+	 * @param marketAsset Market asset
+	 * @param walletAddress Account address
+	 * @param accountType Account type (smart or isolated)
+	 * @param pageLength Number of trades to fetch
+	 * @returns Array of trades for the account on the given market.
+	 */
 	public async getTradesForMarket(
 		marketAsset: FuturesMarketAsset,
 		walletAddress: string,
@@ -641,6 +650,19 @@ export default class FuturesService {
 		return response ? mapTrades(response) : []
 	}
 
+	/**
+	 * @desc Get the trade history for a given account
+	 * @param walletAddress Account address
+	 * @param accountType Account type (smart or isolated)
+	 * @param pageLength Number of trades to fetch
+	 * @returns Array of trades for the account on the given market.
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const trades = await sdk.futures.getAllTrades('0x...', FuturesMarginType.SMART_MARGIN)
+	 * console.log(trades)
+	 * ```
+	 */
 	public async getAllTrades(
 		walletAddress: string,
 		accountType: FuturesMarginType,
@@ -706,6 +728,18 @@ export default class FuturesService {
 		)
 	}
 
+	/**
+	 * @desc Get idle margin for given wallet address or smart margin account address
+	 * @param eoa Wallet address
+	 * @param account Smart margin account address
+	 * @returns Total idle margin, idle margin in markets, total wallet balance and the markets with idle margin for the given address(es).
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const idleMargin = await sdk.futures.getIdleMargin('0x...')
+	 * console.log(idleMargin)
+	 * ```
+	 */
 	public async getIdleMargin(eoa: string, account?: string) {
 		const idleMargin = await this.getIdleMarginInMarkets(account || eoa)
 
