@@ -543,12 +543,24 @@ export default class FuturesService {
 
 	// Perps V2 read functions
 
+	/**
+	 * @desc Get delayed orders associated with a given wallet address, for a specific market
+	 * @param account Wallet address
+	 * @param marketAddress Array of futures market addresses
+	 * @returns Delayed order for the given market address, associated with the given wallet address
+	 */
 	public async getDelayedOrder(account: string, marketAddress: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider)
 		const order = await market.delayedOrders(account)
 		return formatDelayedOrder(account, marketAddress, order)
 	}
 
+	/**
+	 * @desc Get delayed orders associated with a given wallet address
+	 * @param account Wallet address
+	 * @param marketAddresses Array of futures market addresses
+	 * @returns Array of delayed orders for the given market addresses, associated with the given wallet address
+	 */
 	public async getDelayedOrders(account: string, marketAddresses: string[]) {
 		const marketContracts = marketAddresses.map(getPerpsV2MarketMulticall)
 
@@ -559,6 +571,14 @@ export default class FuturesService {
 		return orders.map((order, i) => formatDelayedOrder(account, marketAddresses[i], order))
 	}
 
+	/**
+	 * @desc Generate a trade preview for a potential trade with an isolated margin account.
+	 * @param marketAddress Futures market address
+	 * @param marketKey Futures market key
+	 * @param orderType Order type (market, delayed, delayed offchain)
+	 * @param inputs Object containing size delta, order price, and leverage side
+	 * @returns Object containing details about the potential trade
+	 */
 	public async getIsolatedMarginTradePreview(
 		marketAddress: string,
 		marketKey: FuturesMarketKey,
@@ -586,6 +606,14 @@ export default class FuturesService {
 		return formatPotentialTrade(details, skewAdjustedPrice, inputs.sizeDelta, inputs.leverageSide)
 	}
 
+	/**
+	 * @desc Generate a trade preview for a potential trade with a smart margin account.
+	 * @param smartMarginAccount Smart margin account address
+	 * @param marketKey Futures market key
+	 * @param marketAddress Futures market address
+	 * @param tradeParams Object containing size delta, margin delta, order price, and leverage side
+	 * @returns Object containing details about the potential trade
+	 */
 	public async getSmartMarginTradePreview(
 		smartMarginAccount: string,
 		marketKey: FuturesMarketKey,
@@ -620,6 +648,12 @@ export default class FuturesService {
 		)
 	}
 
+	/**
+	 * @desc Get futures positions history for a given wallet address or smart margin account
+	 * @param address Wallet address or smart margin account address
+	 * @param addressType Address type (EOA or smart margin account)
+	 * @returns Array of historical futures positions associated with the given address
+	 */
 	public async getPositionHistory(address: string, addressType: 'eoa' | 'account' = 'account') {
 		const response = await queryPositionHistory(this.sdk, address, addressType)
 		return response ? mapFuturesPositions(response) : []
@@ -767,6 +801,12 @@ export default class FuturesService {
 
 	// Contract mutations
 
+	/**
+	 * @desc Approve a smart margin account deposit
+	 * @param smartMarginAddress Smart margin account address
+	 * @param amount Amount to approve
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async approveSmartMarginDeposit(
 		smartMarginAddress: string,
 		amount: BigNumber = BigNumber.from(ethers.constants.MaxUint256)
@@ -778,6 +818,12 @@ export default class FuturesService {
 		])
 	}
 
+	/**
+	 * @desc Deposit sUSD into a smart margin account
+	 * @param smartMarginAddress Smart margin account address
+	 * @param amount Amount to deposit
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async depositSmartMarginAccount(smartMarginAddress: string, amount: Wei) {
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
 			smartMarginAddress,
@@ -790,6 +836,12 @@ export default class FuturesService {
 		])
 	}
 
+	/**
+	 * @desc Withdraw sUSD from a smart margin account
+	 * @param smartMarginAddress Smart margin account address
+	 * @param amount Amount to withdraw
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async withdrawSmartMarginAccount(smartMarginAddress: string, amount: Wei) {
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
 			smartMarginAddress,
@@ -806,6 +858,13 @@ export default class FuturesService {
 		])
 	}
 
+	/**
+	 * @desc Modify the margin for a specific market in a smart margin account
+	 * @param smartMarginAddress Smart margin account address
+	 * @param marketAddress Market address
+	 * @param marginDelta Amount to modify the margin by (can be positive or negative)
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async modifySmartMarginMarketMargin(
 		smartMarginAddress: string,
 		marketAddress: string,
@@ -854,12 +913,18 @@ export default class FuturesService {
 		])
 	}
 
+	/**
+	 * @desc Modify the position size for a specific market in a smart margin account
+	 * @param smartMarginAddress Smart margin account address
+	 * @param market Object containing the market key and address
+	 * @param sizeDelta Intended size change (positive or negative)
+	 * @param desiredFillPrice Desired fill price
+	 * @param cancelPendingReduceOrders Boolean describing if pending reduce orders should be cancelled
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async modifySmartMarginPositionSize(
 		smartMarginAddress: string,
-		market: {
-			key: FuturesMarketKey
-			address: string
-		},
+		market: { key: FuturesMarketKey; address: string },
 		sizeDelta: Wei,
 		desiredFillPrice: Wei,
 		cancelPendingReduceOrders?: boolean
@@ -869,15 +934,16 @@ export default class FuturesService {
 
 		if (cancelPendingReduceOrders) {
 			const existingOrders = await this.getConditionalOrders(smartMarginAddress)
-			const existingOrdersForMarket = existingOrders.filter(
-				(o) => o.marketKey === market.key && o.reduceOnly
-			)
-			// Remove all pending reduce only orders if instructed
-			existingOrdersForMarket.forEach((o) => {
-				commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER)
-				inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]))
+
+			existingOrders.forEach((o) => {
+				// Remove all pending reduce only orders if instructed
+				if (o.marketKey === market.key && o.reduceOnly) {
+					commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER)
+					inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]))
+				}
 			})
 		}
+
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
 			smartMarginAddress,
 			this.sdk.context.signer
@@ -892,12 +958,24 @@ export default class FuturesService {
 		])
 	}
 
+	/**
+	 * @desc Deposit margin for use in an isolated margin market
+	 * @param marketAddress Market address
+	 * @param amount Amount to deposit
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async depositIsolatedMargin(marketAddress: string, amount: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
 		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [amount.toBN()])
 		return txn
 	}
 
+	/**
+	 * @desc Withdraw margin from an isolated margin market
+	 * @param marketAddress Market address
+	 * @param amount Amount to withdraw
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async withdrawIsolatedMargin(marketAddress: string, amount: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
 		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [
@@ -906,11 +984,29 @@ export default class FuturesService {
 		return txn
 	}
 
+	/**
+	 * @desc Close an open position in an isolated margin market
+	 * @param marketAddress Market address
+	 * @param priceImpactDelta Price impact delta
+	 * @returns ethers.js ContractTransaction object
+	 */
 	public async closeIsolatedPosition(marketAddress: string, priceImpactDelta: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
 		return market.closePositionWithTracking(priceImpactDelta.toBN(), KWENTA_TRACKING_CODE)
 	}
 
+	/**
+	 * @desc Get idle margin for given wallet address or smart margin account address
+	 * @param eoa Wallet address
+	 * @param account Smart margin account address
+	 * @returns Total idle margin, idle margin in markets, total wallet balance and the markets with idle margin for the given address(es).
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const idleMargin = await sdk.futures.getIdleMargin('0x...')
+	 * console.log(idleMargin)
+	 * ```
+	 */
 	public async submitIsolatedMarginOrder(
 		marketAddress: string,
 		sizeDelta: Wei,
@@ -925,6 +1021,13 @@ export default class FuturesService {
 		)
 	}
 
+	/**
+	 * @desc Cancels a pending/expired delayed order, for the given market and account
+	 * @param marketAddress Market address
+	 * @param account Wallet address
+	 * @param isOffchain Boolean describing if the order is offchain or not
+	 * @returns ethers.js ContractTransaction object
+	 */
 	public async cancelDelayedOrder(marketAddress: string, account: string, isOffchain: boolean) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
 		return isOffchain
@@ -932,6 +1035,12 @@ export default class FuturesService {
 			: market.cancelDelayedOrder(account)
 	}
 
+	/**
+	 * @desc Executes a pending delayed order, for the given market and account
+	 * @param marketAddress Market address
+	 * @param account Wallet address
+	 * @returns ethers.js ContractTransaction object
+	 */
 	public async executeDelayedOrder(marketAddress: string, account: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
 		return market.executeDelayedOrder(account)
@@ -953,6 +1062,10 @@ export default class FuturesService {
 		return market.executeOffchainDelayedOrder(account, priceUpdateData, { value: updateFee })
 	}
 
+	/**
+	 * @desc Creates a smart margin account
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async createSmartMarginAccount() {
 		if (!this.sdk.context.contracts.SmartMarginAccountFactory) throw new Error(UNSUPPORTED_NETWORK)
 		return this.sdk.transactions.createContractTxn(
@@ -962,11 +1075,20 @@ export default class FuturesService {
 		)
 	}
 
+	/**
+	 * @desc Get idle margin for given wallet address or smart margin account address
+	 * @param eoa Wallet address
+	 * @param account Smart margin account address
+	 * @returns Total idle margin, idle margin in markets, total wallet balance and the markets with idle margin for the given address(es).
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const idleMargin = await sdk.futures.getIdleMargin('0x...')
+	 * console.log(idleMargin)
+	 * ```
+	 */
 	public async submitSmartMarginOrder(
-		market: {
-			key: FuturesMarketKey
-			address: string
-		},
+		market: { key: FuturesMarketKey; address: string },
 		walletAddress: string,
 		smartMarginAddress: string,
 		order: SmartMarginOrderInputs,
@@ -987,8 +1109,10 @@ export default class FuturesService {
 			inputs.push(defaultAbiCoder.encode(['address'], [market.address]))
 		}
 
-		const idleMargin = await this.getIdleMargin(walletAddress, smartMarginAddress)
-		const freeMargin = await this.getSmartMarginAccountBalance(smartMarginAddress)
+		const [idleMargin, freeMargin] = await Promise.all([
+			this.getIdleMargin(walletAddress, smartMarginAddress),
+			this.getSmartMarginAccountBalance(smartMarginAddress),
+		])
 
 		// Sweep idle margin from other markets to account
 		if (idleMargin.marketsTotal.gt(0)) {
@@ -1035,11 +1159,6 @@ export default class FuturesService {
 			}
 		}
 
-		const existingOrders = await this.getConditionalOrders(smartMarginAddress)
-		const existingOrdersForMarket = existingOrders.filter(
-			(o) => o.marketKey === market.key && o.reduceOnly
-		)
-
 		if (order.takeProfit || order.stopLoss) {
 			if (order.takeProfit) {
 				commands.push(AccountExecuteFunctions.GELATO_PLACE_CONDITIONAL_ORDER)
@@ -1073,6 +1192,11 @@ export default class FuturesService {
 				inputs.push(encodedParams)
 			}
 		}
+
+		const existingOrders = await this.getConditionalOrders(smartMarginAddress)
+		const existingOrdersForMarket = existingOrders.filter(
+			(o) => o.marketKey === market.key && o.reduceOnly
+		)
 
 		if (options?.cancelPendingReduceOrders) {
 			// Remove all pending reduce only orders if instructed
@@ -1111,12 +1235,17 @@ export default class FuturesService {
 			smartMarginAccountContract,
 			'execute',
 			[commands, inputs],
-			{
-				value: order.keeperEthDeposit?.toBN() ?? '0',
-			}
+			{ value: order.keeperEthDeposit?.toBN() ?? '0' }
 		)
 	}
 
+	/**
+	 * @desc Closes a smart margin position
+	 * @param market Object containing market address and key
+	 * @param smartMarginAddress Smart margin account address
+	 * @param desiredFillPrice Desired fill price
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async closeSmartMarginPosition(
 		market: {
 			address: string
@@ -1134,13 +1263,12 @@ export default class FuturesService {
 		const inputs = []
 
 		const existingOrders = await this.getConditionalOrders(smartMarginAddress)
-		const existingOrdersForMarket = existingOrders.filter(
-			(o) => o.marketKey === market.key && o.reduceOnly
-		)
 
-		existingOrdersForMarket.forEach((o) => {
-			commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER)
-			inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]))
+		existingOrders.forEach((o) => {
+			if (o.marketKey === market.key && o.reduceOnly) {
+				commands.push(AccountExecuteFunctions.GELATO_CANCEL_CONDITIONAL_ORDER)
+				inputs.push(defaultAbiCoder.encode(['uint256'], [o.id]))
+			}
 		})
 
 		commands.push(AccountExecuteFunctions.PERPS_V2_SUBMIT_CLOSE_OFFCHAIN_DELAYED_ORDER)
@@ -1152,6 +1280,12 @@ export default class FuturesService {
 		])
 	}
 
+	/**
+	 * @desc Cancels a conditional order
+	 * @param smartMarginAddress Smart margin account address
+	 * @param orderId Conditional order id
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async cancelConditionalOrder(smartMarginAddress: string, orderId: number) {
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
 			smartMarginAddress,
@@ -1164,17 +1298,31 @@ export default class FuturesService {
 		])
 	}
 
+	/**
+	 * @desc Withdraws given smarkt margin account's keeper balance
+	 * @param smartMarginAddress Smart margin account address
+	 * @param amount Amount to withdraw
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async withdrawAccountKeeperBalance(smartMarginAddress: string, amount: Wei) {
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
 			smartMarginAddress,
 			this.sdk.context.signer
 		)
+
 		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
 			[AccountExecuteFunctions.ACCOUNT_WITHDRAW_ETH],
 			[defaultAbiCoder.encode(['uint256'], [amount.toBN()])],
 		])
 	}
 
+	/**
+	 * @desc Updates the stop loss and take profit values for a given smart margin account, based on the specified market.
+	 * @param marketKey Market key
+	 * @param smartMarginAddress Smart margin account address
+	 * @param params Object containing the stop loss and take profit values
+	 * @returns ethers.js TransactionResponse object
+	 */
 	public async updateStopLossAndTakeProfit(
 		marketKey: FuturesMarketKey,
 		smartMarginAddress: string,
@@ -1259,6 +1407,13 @@ export default class FuturesService {
 		)
 	}
 
+	/**
+	 * @desc Adjusts the given price, based on the current market skew.
+	 * @param price Price to adjust
+	 * @param marketAddress Market address
+	 * @param marketKey Market key
+	 * @returns Adjusted price, based on the given market's skew.
+	 */
 	public async getSkewAdjustedPrice(price: Wei, marketAddress: string, marketKey: string) {
 		const marketContract = new EthCallContract(marketAddress, PerpsMarketABI)
 		const { PerpsV2MarketSettings } = this.sdk.context.multicallContracts
