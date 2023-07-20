@@ -20,7 +20,7 @@ In certain situations where the SDK needs to inform a client about data changes 
 
 ## Contracts
 
-Closely related to the context (see section above), when the network changes, we update a list of available contracts on said network internally, to be used on subsequent contract calls.
+Based on the currently selected networkId, we maintain a list of available contracts in the context, used for subsequent contract calls. When there is an attempt to access a contract that is not available on the network, an error is thrown.
 
 ## Synths
 
@@ -36,10 +36,6 @@ The following tasks are expected to be completed before the SDK can be considere
 
 ## General
 
-- [x] Remove code that refers to `@synthetixio/*` packages.
-- [x] Add contract typings.
-- [x] Implement `Context` class.
-- [ ] Cache redux state and hydrate on load
 - [ ] Ensure type correctness of all SDK methods.
 - [ ] Set up foundation for retries on select methods.
 - [ ] Set up service for interacting with our subgraphs.
@@ -48,10 +44,8 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Create a contracts class in sdk context where we can cache more dynamic contracts such as markets
 - [ ] Ensure types are added to all redux actions and reducers
 - [ ] Remove old unused code
-- [ ] Ensure consistent logic patterns across various pages, sdk states and services
 - [ ] Ensure all data is correctly refetched after some mutation e.g. polling for contract and subgraph changes after a transaction
 - [ ] Consider experimenting with WebSockets for realtime data (again).
-- [ ] Remove walletAddress from connector and change references to the redux state wallet, this means we're always taking the sdk as source of truth for the wallet and avoids race conditions where queries are attempted before the signer is set.
 - [ ] Add query statuses for all key queries and create derived query statuses for components which rely on completion of multiple queries
 - [ ] Make all sdk number params consistent, e.g. use Wei everywhere instead of BigNumber or string
 - [ ] Remove Duplicated types.
@@ -71,7 +65,6 @@ The following tasks are expected to be completed before the SDK can be considere
 - [ ] Experiment with exchange contexts (store an instance of from/to pairings, so that the client doesn't have to pass it every time).
 - [ ] Reduce number of queries, by storing more data in class instance.
 - [ ] Write tests for simple functions.
-- [ ] Remove duplicate calls in `getSlippagePercent`
 - [ ] Consider making the provision of the `txProvider` the client's responsibility. It is a little cumbersome to have to call `this.getTxProvider` in nearly every method.
 - [ ] Consider ditching currency keys for simple token addresses. The client can choose to load a token list for UI purposes, but the SDK should not be concerned with such details. For balances, we can fetch them as needed.
 
