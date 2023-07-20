@@ -253,6 +253,7 @@ export default class FuturesService {
 	 * const prices =
 	 * const fundingRates = await sdk.synths.getAverageFundingRates(markets, prices, Period.ONE_DAY)
 	 * console.log(fundingRates)
+	 * ```
 	 */
 	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
 		const fundingRateInputs: FundingRateInput[] = markets.map(
