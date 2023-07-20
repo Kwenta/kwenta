@@ -3,7 +3,6 @@ import { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
 import { FC, memo, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled, { css } from 'styled-components'
 
 import Currency from 'components/Currency'
@@ -31,21 +30,20 @@ import { getMarketName } from 'utils/futures'
 
 type TraderHistoryProps = {
 	trader: string
-	ensInfo: Record<string, string>
-	resetSelection: Function
+	traderEns?: string | null
+	resetSelection: () => void
 	compact?: boolean
 	searchTerm?: string | undefined
 }
 
 const TraderHistory: FC<TraderHistoryProps> = memo(
-	({ trader, ensInfo, resetSelection, compact, searchTerm }) => {
+	({ trader, traderEns, resetSelection, compact, searchTerm }) => {
 		const { t } = useTranslation()
 		const dispatch = useAppDispatch()
 		const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader)
 		const positions = useAppSelector(selectFuturesPositions)
 		const showBanner = useAppSelector(selectShowBanner)
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses)
-		const traderENSName = useMemo(() => ensInfo[trader] ?? null, [trader, ensInfo])
 
 		useEffect(() => {
 			dispatch(fetchPositionHistoryForTrader(trader))
@@ -81,7 +79,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 							: '0%',
 					}
 				})
-				.filter((i: { marketShortName: string; status: string }) =>
+				.filter((i) =>
 					searchTerm?.length
 						? i.marketShortName.toLowerCase().includes(searchTerm) ||
 						  i.status.toLowerCase().includes(searchTerm)
@@ -97,8 +95,8 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		return (
 			<>
 				<DesktopOnlyView>
-					{/*@ts-expect-error*/}
 					<StyledTable
+						// @ts-ignore
 						height={tableHeight}
 						compact={compact}
 						showPagination
@@ -108,13 +106,9 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						hideHeaders={compact}
 						columns={[
 							{
-								Header: (
+								header: () => (
 									<TableTitle>
-										<TitleText
-											onClick={() => {
-												resetSelection()
-											}}
-										>
+										<TitleText onClick={resetSelection}>
 											{t('leaderboard.trader-history.table.back')}
 										</TitleText>
 										<TitleSeparator>&gt;</TitleSeparator>
@@ -122,77 +116,77 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											href={`https://optimistic.etherscan.io/address/${trader}`}
 											hoverUnderline
 										>
-											{traderENSName ?? trader}
+											{traderEns ?? trader}
 										</ExternalLink>
 									</TableTitle>
 								),
-								accessor: 'title',
+								accessorKey: 'title',
 								columns: [
 									{
-										Header: (
+										header: () => (
 											<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
 										),
-										accessor: 'openTimestamp',
-										Cell: (cellProps: CellProps<typeof data[number]>) => {
+										accessorKey: 'openTimestamp',
+										cell: (cellProps) => {
 											return (
 												<StyledCell>
 													<TimeDisplay value={cellProps.row.original.openTimestamp} />
 												</StyledCell>
 											)
 										},
-										width: compact ? 40 : 100,
+										size: compact ? 40 : 100,
 									},
 									{
-										Header: (
+										header: () => (
 											<TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>
 										),
-										accessor: 'asset',
-										Cell: (cellProps: CellProps<typeof data[number]>) => (
+										accessorKey: 'asset',
+										cell: (cellProps) => (
 											<CurrencyInfo>
 												<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
 												<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
 												<StyledFuturesIcon type={cellProps.row.original.accountType} />
 											</CurrencyInfo>
 										),
-										width: compact ? 40 : 100,
+										size: compact ? 40 : 100,
 									},
 									{
-										Header: (
+										header: () => (
 											<TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>
 										),
-										accessor: 'status',
-										Cell: (cellProps: CellProps<typeof data[number]>) => {
+										accessorKey: 'status',
+										cell: (cellProps) => {
 											return <StyledCell>{cellProps.row.original.status}</StyledCell>
 										},
-										width: compact ? 40 : 100,
+										size: compact ? 40 : 100,
 									},
 									{
-										Header: (
+										header: () => (
 											<TableHeader>
 												{t('leaderboard.trader-history.table.total-trades')}
 											</TableHeader>
 										),
-										accessor: 'trades',
-										width: compact ? 40 : 100,
+										accessorKey: 'trades',
+										size: compact ? 40 : 100,
 									},
 									{
-										Header: (
+										header: () => (
 											<TableHeader>
 												{t('leaderboard.trader-history.table.total-volume')}
 											</TableHeader>
 										),
-										accessor: 'totalVolume',
-										Cell: (cellProps: CellProps<typeof data[number]>) => (
+										accessorKey: 'totalVolume',
+										cell: (cellProps) => (
 											<Currency.Price price={cellProps.row.original.totalVolume} />
 										),
-										width: compact ? 40 : 100,
+										size: compact ? 40 : 100,
 									},
 									{
-										Header: (
+										header: () => (
 											<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
 										),
-										accessor: 'pnl',
-										Cell: (cellProps: CellProps<typeof data[number]>) => (
+										accessorKey: 'pnl',
+										cell: (cellProps) => (
 											<PnlContainer>
 												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
@@ -200,7 +194,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												</StyledValue>
 											</PnlContainer>
 										),
-										width: compact ? 40 : 100,
+										size: compact ? 40 : 100,
 									},
 								],
 							},
@@ -208,9 +202,9 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 					/>
 				</DesktopOnlyView>
 				<MobileOrTabletView>
-					{/*@ts-expect-error*/}
 					<StyledTable
 						data={data}
+						// @ts-ignore
 						compact={compact}
 						hideHeaders={compact}
 						isLoading={false}
@@ -218,7 +212,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						pageSize={10}
 						columns={[
 							{
-								Header: (
+								header: () => (
 									<TableTitle>
 										<TitleText
 											onClick={() => {
@@ -233,42 +227,42 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											href={`https://optimistic.etherscan.io/address/${trader}`}
 											hoverUnderline
 										>
-											{traderENSName ?? trader}
+											{traderEns ?? trader}
 										</ExternalLink>
 									</TableTitle>
 								),
-								accessor: 'title',
+								accessorKey: 'title',
 								columns: [
 									{
-										Header: (
+										header: () => (
 											<TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>
 										),
-										accessor: 'asset',
-										Cell: (cellProps: CellProps<any>) => (
+										accessorKey: 'asset',
+										cell: (cellProps) => (
 											<CurrencyInfo>
 												<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
 												<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
 												<StyledFuturesIcon type={cellProps.row.original.accountType} />
 											</CurrencyInfo>
 										),
-										width: 50,
+										size: 50,
 									},
 									{
-										Header: (
+										header: () => (
 											<TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>
 										),
-										accessor: 'status',
-										Cell: (cellProps: CellProps<typeof data[number]>) => {
+										accessorKey: 'status',
+										cell: (cellProps) => {
 											return <StyledCell>{cellProps.row.original.status}</StyledCell>
 										},
-										width: 30,
+										size: 30,
 									},
 									{
-										Header: (
+										header: () => (
 											<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
 										),
-										accessor: 'pnl',
-										Cell: (cellProps: CellProps<typeof data[number]>) => (
+										accessorKey: 'pnl',
+										cell: (cellProps) => (
 											<PnlContainer>
 												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
@@ -276,7 +270,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												</StyledValue>
 											</PnlContainer>
 										),
-										width: 40,
+										size: 40,
 									},
 								],
 							},
@@ -299,7 +293,7 @@ const StyledTable = styled(Table)<{ compact?: boolean; height?: number }>`
 	${media.lessThan('md')`
 		margin-bottom: 150px;
 	`}
-`
+` as typeof Table
 
 const TableTitle = styled.div`
 	width: 100%;

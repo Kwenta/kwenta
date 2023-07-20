@@ -47,6 +47,8 @@ import {
 	fetchMarginTransfers,
 	fetchCombinedMarginTransfers,
 	fetchFundingRatesHistory,
+	fetchFuturesFees,
+	fetchFuturesFeesForAccount,
 } from './actions'
 import {
 	CrossMarginAccountData,
@@ -102,6 +104,8 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
 		historicalFundingRates: DEFAULT_QUERY_STATUS,
+		futuresFees: DEFAULT_QUERY_STATUS,
+		futuresFeesForAccount: DEFAULT_QUERY_STATUS,
 	},
 	transactionEstimations: {} as TransactionEstimations,
 	crossMargin: {
@@ -171,7 +175,10 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 		leverageInput: '0',
 	},
 	tradePanelDrawerOpen: false,
+	historicalFundingRatePeriod: Period.TWO_WEEKS,
 	historicalFundingRates: {},
+	futuresFees: '0',
+	futuresFeesForAccount: '0',
 }
 
 const futuresSlice = createSlice({
@@ -360,7 +367,10 @@ const futuresSlice = createSlice({
 		setCrossMarginOrderCancelling: (state, { payload }: PayloadAction<number | undefined>) => {
 			state.crossMargin.cancellingOrder = payload
 		},
-		setSelectedTrader: (state, action: PayloadAction<string | undefined>) => {
+		setSelectedTrader: (
+			state,
+			action: PayloadAction<{ trader: string; traderEns?: string | null } | undefined>
+		) => {
 			state.leaderboard.selectedTrader = action.payload
 		},
 		incrementIsolatedPreviewCount: (state) => {
@@ -375,11 +385,14 @@ const futuresSlice = createSlice({
 		setTradePanelDrawerOpen: (state, action: PayloadAction<boolean>) => {
 			state.tradePanelDrawerOpen = action.payload
 		},
-		setShowTradeHistory: (state, action: PayloadAction<boolean>) => {
-			state.preferences.showHistory = action.payload
+		toggleShowTradeHistory: (state) => {
+			state.preferences.showHistory = !state.preferences.showHistory
 		},
 		setSelectedChart: (state, action: PayloadAction<'price' | 'funding'>) => {
 			state.selectedChart = action.payload
+		},
+		setHistoricalFundingRatePeriod: (state, action: PayloadAction<Period>) => {
+			state.historicalFundingRatePeriod = action.payload
 		},
 	},
 	extraReducers: (builder) => {
@@ -738,6 +751,36 @@ const futuresSlice = createSlice({
 		builder.addCase(fetchFundingRatesHistory.fulfilled, (futuresState, { payload }) => {
 			futuresState.historicalFundingRates[payload.marketAsset] = payload.rates
 		})
+
+		// Trading Fees by given epoch
+		builder.addCase(fetchFuturesFees.pending, (futuresState) => {
+			futuresState.queryStatuses.futuresFees = LOADING_STATUS
+		})
+		builder.addCase(fetchFuturesFees.fulfilled, (futuresState, action) => {
+			futuresState.queryStatuses.futuresFees = SUCCESS_STATUS
+			futuresState.futuresFees = action.payload.totalFuturesFeePaid
+		})
+		builder.addCase(fetchFuturesFees.rejected, (futuresState) => {
+			futuresState.queryStatuses.futuresFees = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch fee data',
+			}
+		})
+
+		// Trading Fees by given epoch and trader
+		builder.addCase(fetchFuturesFeesForAccount.pending, (futuresState) => {
+			futuresState.queryStatuses.futuresFeesForAccount = LOADING_STATUS
+		})
+		builder.addCase(fetchFuturesFeesForAccount.fulfilled, (futuresState, action) => {
+			futuresState.queryStatuses.futuresFeesForAccount = SUCCESS_STATUS
+			futuresState.futuresFeesForAccount = action.payload.futuresFeePaid
+		})
+		builder.addCase(fetchFuturesFeesForAccount.rejected, (futuresState) => {
+			futuresState.queryStatuses.futuresFeesForAccount = {
+				status: FetchStatus.Error,
+				error: 'Failed to fetch fee data for the account',
+			}
+		})
 	},
 })
 
@@ -782,8 +825,9 @@ export const {
 	setSLTPModalStopLoss,
 	setSLTPModalTakeProfit,
 	setTradePanelDrawerOpen,
-	setShowTradeHistory,
+	toggleShowTradeHistory,
 	setSelectedChart,
+	setHistoricalFundingRatePeriod,
 } = futuresSlice.actions
 
 const findWalletForAccount = (

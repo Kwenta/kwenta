@@ -59,9 +59,10 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 			[onSizeChange]
 		)
 
-		const onChangeSlider = useCallback((_: any, v: number | number[]) => onSizeChange(String(v)), [
-			onSizeChange,
-		])
+		const onChangeSlider = useCallback(
+			(_: any, v: number | number[]) => onSizeChange(String(v)),
+			[onSizeChange]
+		)
 
 		const nativeSizeDeltaWei = useMemo(() => {
 			return !nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? ZERO_WEI : wei(nativeSizeDelta)
@@ -101,8 +102,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 					defaultValue={0}
 					value={nativeSizeDeltaWei.abs().toNumber()}
 					onChange={onChangeSlider}
-					valueLabelDisplay="auto"
-					valueLabelFormat={(v) => formatNumber(v)}
+					valueLabelFormat={(v: number) => formatNumber(v)}
 					$currentMark={Number(nativeSizeDelta ?? 0)}
 				/>
 			</OrderSizingContainer>

@@ -42,6 +42,7 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeConditionalOrders,
+	stopLossValidity,
 } from 'utils/futures'
 
 import {
@@ -78,8 +79,10 @@ export const selectLeverageInput = createSelector(
 	(futures, type) => futures[accountType(type)].leverageInput
 )
 
-export const selectCrossMarginMarginDelta = (state: RootState) =>
-	wei(state.futures.crossMargin.marginDelta || 0)
+export const selectCrossMarginMarginDelta = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => wei(futures.crossMargin.marginDelta || 0)
+)
 
 export const selectMarginDeltaInputValue = (state: RootState) =>
 	state.futures.crossMargin.marginDelta
@@ -327,7 +330,7 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 		const { selectedTrader } = futures.leaderboard
 		if (!selectedTrader) return []
 		const history =
-			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader] ?? []
+			futures.leaderboard.selectedTraderPositionHistory[networkId]?.[selectedTrader.trader] ?? []
 		return unserializePositionHistory(history)
 	}
 )
@@ -1619,7 +1622,7 @@ export const selectAverageEntryPrice = createSelector(
 			const existingValue = avgEntryPrice.mul(size)
 			const newValue = tradePreview.price.mul(tradePreview.sizeDelta.abs())
 			const totalValue = existingValue.add(newValue)
-			return totalValue.div(tradePreview.size.abs())
+			return tradePreview.size.abs().gt(0) ? totalValue.div(tradePreview.size.abs()) : wei(0)
 		}
 		return null
 	}
@@ -1723,4 +1726,34 @@ export const selectMarginUsage = createSelector(
 export const selectMarketSuspended = createSelector(
 	selectMarketInfo,
 	(marketInfo) => marketInfo?.isSuspended
+)
+
+export const selectFuturesFees = (state: RootState) => state.futures.futuresFees
+
+export const selectFuturesFeesForAccount = (state: RootState) => state.futures.futuresFeesForAccount
+
+export const selectHistoricalFundingRatePeriod = (state: RootState) =>
+	state.futures.historicalFundingRatePeriod
+
+export const selectTradePanelSLValidity = createSelector(
+	selectSlTpTradeInputs,
+	selectTradePreview,
+	selectMarketIndexPrice,
+	selectLeverageSide,
+	({ stopLossPrice }, preview, currentPrice, leverageSide) => {
+		return stopLossValidity(stopLossPrice, preview?.liqPrice, leverageSide, currentPrice)
+	}
+)
+
+export const selectModalSLValidity = createSelector(
+	selectSlTpModalInputs,
+	selectEditPositionModalInfo,
+	({ stopLossPrice }, { position, marketPrice }) => {
+		return stopLossValidity(
+			stopLossPrice,
+			position?.position?.liquidationPrice,
+			position?.position?.side || PositionSide.LONG,
+			marketPrice
+		)
+	}
 )

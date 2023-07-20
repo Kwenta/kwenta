@@ -9,7 +9,6 @@ import { wei } from '@synthetixio/wei'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import ChangePercent from 'components/ChangePercent'
@@ -29,10 +28,13 @@ import {
 import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors'
 import { getSynthDescription } from 'utils/futures'
+import { weiSortingFn } from 'utils/table'
 
 type FuturesMarketsTableProps = {
 	search?: string
 }
+
+const sortBy = [{ id: 'dailyVolume', desc: true }]
 
 const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => {
 	const { t } = useTranslation()
@@ -72,7 +74,9 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.rate,
 				priceChange:
-					pastPrice?.rate && marketPrice.gt(0) && marketPrice.sub(pastPrice?.rate).div(marketPrice),
+					pastPrice?.rate && marketPrice.gt(0)
+						? marketPrice.sub(pastPrice?.rate).div(marketPrice)
+						: wei(0),
 				fundingRate: market.currentFundingRate ?? null,
 				openInterest: market.marketSize.mul(marketPrice),
 				openInterestNative: market.marketSize,
@@ -89,7 +93,6 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 		<>
 			<DesktopOnlyView>
 				<TableContainer>
-					{/*@ts-expect-error*/}
 					<StyledTable
 						data={data}
 						showPagination
@@ -97,14 +100,14 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 							router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType))
 						}}
 						highlightRowsOnHover
-						sortBy={[{ id: 'dailyVolume', desc: true }]}
+						sortBy={sortBy}
 						columns={[
 							{
-								Header: (
+								header: () => (
 									<TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>
 								),
-								accessor: 'market',
-								Cell: (cellProps: CellProps<typeof data[number]>) => {
+								accessorKey: 'market',
+								cell: (cellProps) => {
 									return (
 										<MarketContainer>
 											<IconContainer>
@@ -125,45 +128,35 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 										</MarketContainer>
 									)
 								},
-								width: 190,
-								sortable: true,
+								size: 190,
+								enableSorting: true,
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-markets-table.mark-price')}
 									</TableHeader>
 								),
-								accessor: 'price',
-								Cell: (cellProps: CellProps<typeof data[number]>) => {
-									const formatOptions = {
-										suggestDecimals: true,
-									}
+								accessorKey: 'price',
+								cell: (cellProps) => {
 									return (
-										<ColoredPrice priceInfo={cellProps.row.original.priceInfo}>
-											{formatDollars(cellProps.row.original.price, formatOptions)}
+										<ColoredPrice priceChange={cellProps.row.original.priceInfo?.change}>
+											{formatDollars(cellProps.row.original.price, { suggestDecimals: true })}
 										</ColoredPrice>
 									)
 								},
-								width: 130,
-								sortable: true,
-								sortType: useMemo(
-									() => (rowA: any, rowB: any) => {
-										const rowOne = rowA.original.price ?? wei(0)
-										const rowTwo = rowB.original.price ?? wei(0)
-										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
-									},
-									[]
-								),
+								size: 130,
+								enableSorting: true,
+								sortingFn: weiSortingFn('price'),
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-markets-table.daily-change')}
 									</TableHeader>
 								),
-								accessor: 'priceChange',
-								Cell: (cellProps: CellProps<typeof data[number]>) => {
+								accessorKey: 'priceChange',
+								cell: (cellProps) => {
 									return (
 										<ChangePercent
 											value={cellProps.row.original.priceChange}
@@ -172,25 +165,18 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 										/>
 									)
 								},
-								width: 105,
-								sortable: true,
-								sortType: useMemo(
-									() => (rowA: any, rowB: any) => {
-										const rowOne = rowA.original.priceChange ?? wei(0)
-										const rowTwo = rowB.original.priceChange ?? wei(0)
-										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1
-									},
-									[]
-								),
+								size: 105,
+								enableSorting: true,
+								sortingFn: weiSortingFn('priceChange'),
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-markets-table.funding-rate')}
 									</TableHeader>
 								),
-								accessor: 'fundingRate',
-								Cell: (cellProps: CellProps<typeof data[number]>) => {
+								accessorKey: 'fundingRate',
+								cell: (cellProps) => {
 									return (
 										<ChangePercent
 											value={cellProps.row.original.fundingRate}
@@ -200,25 +186,18 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 										/>
 									)
 								},
-								sortable: true,
-								width: 125,
-								sortType: useMemo(
-									() => (rowA: any, rowB: any) => {
-										const rowOne = rowA.original.fundingRate ?? wei(0)
-										const rowTwo = rowB.original.fundingRate ?? wei(0)
-										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1
-									},
-									[]
-								),
+								enableSorting: true,
+								size: 125,
+								sortingFn: weiSortingFn('fundingRate'),
 							},
 							{
-								Header: (
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-markets-table.open-interest')}
 									</TableHeader>
 								),
-								accessor: 'openInterest',
-								Cell: (cellProps: CellProps<typeof data[number]>) => {
+								accessorKey: 'openInterest',
+								cell: (cellProps) => {
 									return (
 										<OpenInterestContainer>
 											<Currency.Price
@@ -234,27 +213,19 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 										</OpenInterestContainer>
 									)
 								},
-								width: 125,
-								sortable: true,
-								sortType: useMemo(
-									() => (rowA: any, rowB: any) => {
-										const rowOne =
-											rowA.original.longInterest.add(rowA.original.shortInterest) ?? wei(0)
-										const rowTwo =
-											rowB.original.longInterest.add(rowB.original.shortInterest) ?? wei(0)
-										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1
-									},
-									[]
-								),
+								size: 125,
+								enableSorting: true,
+								sortingFn: weiSortingFn('openInterest'),
 							},
 							{
-								Header: (
+								id: 'dailyVolume',
+								header: () => (
 									<TableHeader>
 										{t('dashboard.overview.futures-markets-table.daily-volume')}
 									</TableHeader>
 								),
-								accessor: 'dailyVolume',
-								Cell: (cellProps: CellProps<typeof data[number]>) => {
+								accessorKey: 'dailyVolume',
+								cell: (cellProps) => {
 									return (
 										<Currency.Price
 											price={cellProps.row.original.volume}
@@ -262,23 +233,15 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 										/>
 									)
 								},
-								width: 125,
-								sortable: true,
-								sortType: useMemo(
-									() => (rowA: any, rowB: any) => {
-										const rowOne = rowA.original.volume
-										const rowTwo = rowB.original.volume
-										return rowOne > rowTwo ? 1 : -1
-									},
-									[]
-								),
+								size: 125,
+								enableSorting: true,
+								sortingFn: weiSortingFn('volume'),
 							},
 						]}
 					/>
 				</TableContainer>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				{/*@ts-expect-error*/}
 				<StyledMobileTable
 					data={data}
 					showPagination
@@ -288,14 +251,14 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 					sortBy={[{ id: 'dailyVolume', desc: true }]}
 					columns={[
 						{
-							Header: () => (
+							header: () => (
 								<div>
 									<TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>
 									<TableHeader>{t('dashboard.overview.futures-markets-table.oracle')}</TableHeader>
 								</div>
 							),
-							accessor: 'market',
-							Cell: (cellProps: CellProps<typeof data[number]>) => {
+							accessorKey: 'market',
+							cell: (cellProps) => {
 								return (
 									<div>
 										<MarketContainer>
@@ -315,11 +278,11 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</div>
 								)
 							},
-							width: 145,
-							sortable: true,
+							size: 145,
+							enableSorting: true,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<div>
 									<TableHeader>
 										{t('dashboard.overview.futures-markets-table.open-interest')}
@@ -329,8 +292,8 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</TableHeader>
 								</div>
 							),
-							accessor: 'openInterest',
-							Cell: (cellProps: CellProps<typeof data[number]>) => {
+							accessorKey: 'openInterest',
+							cell: (cellProps) => {
 								return (
 									<div>
 										<Currency.Price
@@ -348,10 +311,10 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</div>
 								)
 							},
-							width: 130,
+							size: 130,
 						},
 						{
-							Header: () => (
+							header: () => (
 								<div>
 									<TableHeader>
 										{t('dashboard.overview.futures-markets-table.daily-change')}
@@ -361,8 +324,8 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</TableHeader>
 								</div>
 							),
-							accessor: 'dailyVolume',
-							Cell: (cellProps: CellProps<typeof data[number]>) => {
+							accessorKey: 'dailyVolume',
+							cell: (cellProps) => {
 								return (
 									<div>
 										<div>
@@ -381,16 +344,9 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 									</div>
 								)
 							},
-							sortable: true,
-							sortType: useMemo(
-								() => (rowA: any, rowB: any) => {
-									const rowOne = rowA.original.volume
-									const rowTwo = rowB.original.volume
-									return rowOne > rowTwo ? 1 : -1
-								},
-								[]
-							),
-							width: 120,
+							size: 120,
+							enableSorting: true,
+							sortingFn: weiSortingFn('volume'),
 						},
 					]}
 				/>
@@ -434,7 +390,7 @@ const TableContainer = styled.div`
 
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
-`
+` as typeof Table
 
 const StyledText = styled.div`
 	display: flex;
@@ -459,6 +415,6 @@ const StyledMobileTable = styled(StyledTable)`
 	border-top: none;
 	border-left: none;
 	border-right: none;
-`
+` as typeof Table
 
 export default FuturesMarketsTable

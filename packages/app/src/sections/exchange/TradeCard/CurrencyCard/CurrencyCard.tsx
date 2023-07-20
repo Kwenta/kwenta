@@ -49,18 +49,16 @@ const CurrencyCard: FC<CurrencyCardProps> = memo(
 
 		const isBase = useMemo(() => side === 'base', [side])
 
-		const hasWalletBalance = useMemo(() => !!walletBalance && !!currencyKey, [
-			walletBalance,
-			currencyKey,
-		])
+		const hasWalletBalance = useMemo(
+			() => !!walletBalance && !!currencyKey,
+			[walletBalance, currencyKey]
+		)
 
 		const hasCurrencySelectCallback = !!onCurrencySelect
 
 		const tokenName = useMemo(() => {
-			return currencyKey && currencyKey[0] === 's'
-				? t('common.currency.synthetic-currency-name', { currencyName })
-				: currencyName || t('exchange.currency-card.synth-name')
-		}, [currencyKey, currencyName, t])
+			return currencyName || t('exchange.currency-card.synth-name')
+		}, [currencyName, t])
 
 		return (
 			<CardContainer>

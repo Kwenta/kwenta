@@ -2,6 +2,8 @@ import Link from 'next/link'
 import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 
+import LinkIconLight from 'assets/svg/app/link-light.svg'
+import { FlexDivRowCentered } from 'components/layout/flex'
 import { linkCSS } from 'styles/common'
 
 type NavButtonProps = {
@@ -16,15 +18,25 @@ type NavButtonProps = {
 const NavButton: React.FC<NavButtonProps> = ({ title, href, external, disabled, ...props }) => {
 	return (
 		<div>
-			<Link href={href} passHref>
+			{external ? (
 				<StyledLink
-					target={external ? '_blank' : '_self'}
+					href={href}
+					target="_blank"
+					rel="noopener noreferrer"
 					className={disabled ? 'disabled' : undefined}
 					{...props}
 				>
-					{title}
+					<FlexDivRowCentered columnGap="5px">
+						{title} <LinkIconLight />
+					</FlexDivRowCentered>
 				</StyledLink>
-			</Link>
+			) : (
+				<Link href={href} passHref>
+					<StyledLink className={disabled ? 'disabled' : undefined} {...props}>
+						{title}
+					</StyledLink>
+				</Link>
+			)}
 		</div>
 	)
 }

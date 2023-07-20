@@ -3,10 +3,9 @@ import {
 	braveWallet,
 	coinbaseWallet,
 	injectedWallet,
-	ledgerWallet,
 	metaMaskWallet,
 	rainbowWallet,
-	trustWallet,
+	safeWallet,
 	walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { configureChains, createClient } from 'wagmi'
@@ -26,7 +25,6 @@ import { publicProvider } from 'wagmi/providers/public'
 
 import BinanceIcon from 'assets/png/rainbowkit/binance.png'
 import Frame from 'components/Rainbowkit/Frame'
-import Safe from 'components/Rainbowkit/Gnosis'
 import Tally from 'components/Rainbowkit/Tally'
 import { BLAST_NETWORK_LOOKUP, STALL_TIMEOUT } from 'constants/network'
 
@@ -50,18 +48,20 @@ const { chains, provider } = configureChains(Object.values(chain), [
 	infuraProvider({
 		apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID!,
 		stallTimeout: STALL_TIMEOUT,
-		priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 0 : 2,
+		priority: process.env.NEXT_PUBLIC_PROVIDER_ID === 'INFURA' ? 1 : 3,
 	}),
 	jsonRpcProvider({
 		rpc: (networkChain) => ({
-			http: !BLAST_NETWORK_LOOKUP[networkChain.id]
+			http: process.env.NEXT_PUBLIC_DEVNET_ENABLED
+				? process.env.NEXT_PUBLIC_DEVNET_RPC_URL!
+				: !BLAST_NETWORK_LOOKUP[networkChain.id]
 				? networkChain.rpcUrls.default.http[0]
 				: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
 						process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
 				  }`,
 		}),
 		stallTimeout: STALL_TIMEOUT,
-		priority: 1,
+		priority: process.env.NEXT_PUBLIC_DEVNET_ENABLED ? 0 : 2,
 	}),
 	publicProvider({ stallTimeout: STALL_TIMEOUT, priority: 5 }),
 ])
@@ -72,7 +72,7 @@ const connectors = connectorsForWallets([
 	{
 		groupName: 'Popular',
 		wallets: [
-			Safe({ chains }),
+			safeWallet({ chains }),
 			metaMaskWallet({ projectId, chains }),
 			rainbowWallet({ projectId, chains }),
 			coinbaseWallet({ appName: 'Kwenta', chains }),
@@ -82,9 +82,7 @@ const connectors = connectorsForWallets([
 	{
 		groupName: 'More',
 		wallets: [
-			ledgerWallet({ projectId, chains }),
 			braveWallet({ chains, shimDisconnect: true }),
-			trustWallet({ projectId, chains }),
 			Tally({ chains, shimDisconnect: true }),
 			Frame({ chains, shimDisconnect: true }),
 			injectedWallet({ chains, shimDisconnect: true }),

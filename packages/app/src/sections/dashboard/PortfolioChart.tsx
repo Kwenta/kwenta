@@ -53,10 +53,8 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 	const theme = useTheme()
 	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe)
 	const accountType = useAppSelector(selectFuturesType)
-	const {
-		isolated_margin: isolatedPortfolioData,
-		cross_margin: smartPortfolioData,
-	} = useAppSelector(selectPortfolioChartData)
+	const { isolated_margin: isolatedPortfolioData, cross_margin: smartPortfolioData } =
+		useAppSelector(selectPortfolioChartData)
 
 	const portfolioData = useMemo(
 		() => (accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData),
@@ -134,14 +132,11 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 
 const PortfolioChart: FC = () => {
 	const { t } = useTranslation()
-	const { isolatedMarginFutures: isolatedTotal, crossMarginFutures: smartTotal } = useAppSelector(
-		selectFuturesPortfolio
-	)
+	const { isolatedMarginFutures: isolatedTotal, crossMarginFutures: smartTotal } =
+		useAppSelector(selectFuturesPortfolio)
 	const accountType = useAppSelector(selectFuturesType)
-	const {
-		isolated_margin: isolatedPortfolioData,
-		cross_margin: smartPortfolioData,
-	} = useAppSelector(selectPortfolioChartData)
+	const { isolated_margin: isolatedPortfolioData, cross_margin: smartPortfolioData } =
+		useAppSelector(selectPortfolioChartData)
 
 	const buyingPower = useAppSelector(selectBuyingPower)
 	const upnl = useAppSelector(selectTotalUnrealizedPnl)
@@ -149,11 +144,10 @@ const PortfolioChart: FC = () => {
 	const [hoverValue, setHoverValue] = useState<number | null>(null)
 	const [hoverTitle, setHoverTitle] = useState<string | null>(null)
 
-	const total = useMemo(() => (accountType === 'isolated_margin' ? isolatedTotal : smartTotal), [
-		accountType,
-		isolatedTotal,
-		smartTotal,
-	])
+	const total = useMemo(
+		() => (accountType === 'isolated_margin' ? isolatedTotal : smartTotal),
+		[accountType, isolatedTotal, smartTotal]
+	)
 
 	const portfolioData = useMemo(() => {
 		return accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData
@@ -214,7 +208,7 @@ const PortfolioChart: FC = () => {
 									<Timeframe />
 								</TimeframeOverlay>
 							</TopBar>
-							<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
+							<PriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
 						</ChartContainer>
 					) : (
 						<ChartContainer>
@@ -239,7 +233,7 @@ const PortfolioChart: FC = () => {
 									<Timeframe />
 								</TimeframeOverlay>
 							</TopBar>
-							<StyledPriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
+							<PriceChart setHoverValue={setHoverValue} setHoverTitle={setHoverTitle} />
 						</ChartContainer>
 					</MobileChartGrid>
 				) : (
@@ -273,8 +267,6 @@ const TopBar = styled.div`
 	padding: 8px 8px 0 0;
 `
 
-const StyledPriceChart = styled(PriceChart)``
-
 const ChartOverlay = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -294,7 +286,7 @@ const TimeframeOverlay = styled.div`
 	max-width: 192px;
 `
 
-const PortfolioTitle = styled(Body).attrs({ variant: 'bold' })`
+const PortfolioTitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 16px;
 	margin-bottom: 4px;

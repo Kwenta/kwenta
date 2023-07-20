@@ -252,7 +252,7 @@ export const queryFundingRateHistory = async (
 			) {
 				fundingRatePeriods(
 					where: { asset: $marketAsset, timestamp_gt: $minTimestamp, period: $period }
-					first: 1000
+					first: 2000
 				) {
 					timestamp
 					fundingRate

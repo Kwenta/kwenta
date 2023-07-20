@@ -1,4 +1,4 @@
-import { toWei, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber, toWei, truncateNumbers } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,11 +6,13 @@ import styled from 'styled-components'
 
 import Button from 'components/Button'
 import NumericInput from 'components/Input/NumericInput'
-import { FlexDivRowCentered } from 'components/layout/flex'
+import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
-import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
 import { StakingCard } from 'sections/dashboard/Stake/card'
-import { numericValueCSS } from 'styles/common'
+import media from 'styles/media'
+
+import { Body, NumericValue } from './Text'
 
 type StakeCardProps = {
 	title: string
@@ -24,6 +26,9 @@ type StakeCardProps = {
 	isUnstaked?: boolean | undefined
 	isApproved?: boolean
 	onApprove?: () => void
+	isStaking?: boolean
+	isUnstaking?: boolean
+	isApproving?: boolean
 }
 
 const StakeCard: FC<StakeCardProps> = memo(
@@ -39,9 +44,11 @@ const StakeCard: FC<StakeCardProps> = memo(
 		isUnstaked = false,
 		isApproved,
 		onApprove,
+		isStaking = false,
+		isUnstaking = false,
+		isApproving = false,
 	}) => {
 		const { t } = useTranslation()
-
 		const [amount, setAmount] = useState('')
 		const [activeTab, setActiveTab] = useState(0)
 
@@ -66,8 +73,12 @@ const StakeCard: FC<StakeCardProps> = memo(
 		}, [activeTab, isStakeEnabled, isUnstakeEnabled])
 
 		const balanceString = useMemo(() => {
-			return truncateNumbers(balance, DEFAULT_CRYPTO_DECIMALS)
+			return formatNumber(balance, { suggestDecimals: true })
 		}, [balance])
+
+		const isLoading = useMemo(() => {
+			return activeTab === 0 ? (isApproved ? isStaking : isApproving) : isUnstaking
+		}, [activeTab, isApproved, isApproving, isStaking, isUnstaking])
 
 		const onMaxClick = useCallback(() => {
 			setAmount(truncateNumbers(balance, DEFAULT_TOKEN_DECIMALS))
@@ -79,10 +90,12 @@ const StakeCard: FC<StakeCardProps> = memo(
 		}, [])
 
 		const handleSubmit = useCallback(() => {
-			if (!isApproved) {
-				onApprove?.()
-			} else if (isStakeEnabled) {
-				onStake(amount)
+			if (isStakeEnabled) {
+				if (isApproved) {
+					onStake(amount)
+				} else {
+					onApprove?.()
+				}
 			} else if (isUnstakeEnabled) {
 				onUnstake(amount)
 			}
@@ -103,7 +116,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 		}, [activeTab, isStaked, isUnstaked])
 
 		return (
-			<StakingInputCardContainer>
+			<CardGridContainer>
 				<SegmentedControl
 					values={[
 						t('dashboard.stake.tabs.stake-table.stake'),
@@ -112,26 +125,33 @@ const StakeCard: FC<StakeCardProps> = memo(
 					onChange={handleTabChange}
 					selectedIndex={activeTab}
 				/>
-				<StakeInputContainer>
-					<StakeInputHeader>
-						<div>{title}</div>
-						<StyledFlexDivRowCentered>
-							<div>{t('dashboard.stake.tabs.stake-table.balance')}</div>
-							<div className="max" onClick={onMaxClick}>
-								{balanceString}
-							</div>
-						</StyledFlexDivRowCentered>
-					</StakeInputHeader>
-					<NumericInput value={amount} onChange={handleChange} bold />
-				</StakeInputContainer>
-				<Button fullWidth variant="flat" size="small" disabled={isDisabled} onClick={handleSubmit}>
-					{!isApproved
-						? t('dashboard.stake.tabs.stake-table.approve')
-						: activeTab === 0
-						? t('dashboard.stake.tabs.stake-table.stake')
-						: t('dashboard.stake.tabs.stake-table.unstake')}
-				</Button>
-			</StakingInputCardContainer>
+				<FlexDivCol rowGap="50px" style={{ marginTop: '15px' }}>
+					<FlexDivCol>
+						<StakeInputHeader>
+							<Body color="secondary">{title}</Body>
+							<StyledFlexDivRowCentered>
+								<Body color="secondary">{t('dashboard.stake.tabs.stake-table.balance')}</Body>
+								<NumericValueButton onClick={onMaxClick}>{balanceString}</NumericValueButton>
+							</StyledFlexDivRowCentered>
+						</StakeInputHeader>
+						<NumericInput value={amount} onChange={handleChange} bold />
+					</FlexDivCol>
+					<Button
+						fullWidth
+						variant="flat"
+						size="small"
+						disabled={isDisabled}
+						loading={isLoading}
+						onClick={handleSubmit}
+					>
+						{activeTab === 0
+							? isApproved
+								? t('dashboard.stake.tabs.stake-table.stake')
+								: t('dashboard.stake.tabs.stake-table.approve')
+							: t('dashboard.stake.tabs.stake-table.unstake')}
+					</Button>
+				</FlexDivCol>
+			</CardGridContainer>
 		)
 	}
 )
@@ -140,31 +160,23 @@ const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
 	column-gap: 5px;
 `
 
-const StakingInputCardContainer = styled(StakingCard)`
-	min-height: 125px;
-	max-height: 250px;
+const CardGridContainer = styled(StakingCard)`
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	${media.lessThan('lg')`
+		justify-content: flex-start;
+	`}
 `
 
-const StakeInputHeader = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 10px;
+const StakeInputHeader = styled(FlexDivRowCentered)`
+	margin: 25px 0 10px;
 	color: ${(props) => props.theme.colors.selectedTheme.title};
 	font-size: 14px;
-
-	.max {
-		cursor: pointer;
-		color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-		${numericValueCSS};
-	}
 `
 
-const StakeInputContainer = styled.div`
-	margin: 20px 0;
+const NumericValueButton = styled(NumericValue)`
+	cursor: pointer;
 `
 
 export default StakeCard

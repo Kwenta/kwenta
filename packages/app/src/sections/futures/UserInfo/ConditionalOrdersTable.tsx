@@ -1,7 +1,7 @@
+import { PositionSide } from '@kwenta/sdk/types'
 import { formatDollars } from '@kwenta/sdk/utils'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import Badge from 'components/Badge'
@@ -75,82 +75,82 @@ export default function ConditionalOrdersTable() {
 				}
 				columns={[
 					{
-						Header: (
+						header: () => (
 							<TableHeader>{t('futures.market.user.open-orders.table.market-type')}</TableHeader>
 						),
-						accessor: 'market',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
+						accessorKey: 'market',
+						cell: (cellProps) => {
 							return (
 								<TableMarketDetails
 									marketName={cellProps.row.original.market}
 									infoLabel={cellProps.row.original.orderTypeDisplay}
 									marketKey={cellProps.row.original.marketKey}
 									badge={
-										cellProps.row.original.isStale && (
+										cellProps.row.original.isStale ? (
 											<ExpiredBadge color="red">
 												{t('futures.market.user.open-orders.badges.expired')}
 											</ExpiredBadge>
-										)
+										) : undefined
 									}
 								/>
 							)
 						},
-						sortable: true,
-						width: 70,
+						enableSorting: true,
+						size: 70,
 					},
 					{
-						Header: <TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>,
-						accessor: 'side',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
-							return <PositionType side={cellProps.row.original.side} />
+						header: () => (
+							<TableHeader>{t('futures.market.user.open-orders.table.side')}</TableHeader>
+						),
+						accessorKey: 'side',
+						cell: (cellProps) => {
+							return <PositionType side={cellProps.row.original.side ?? PositionSide.LONG} />
 						},
-						sortable: true,
-						width: 40,
+						enableSorting: true,
+						size: 40,
 					},
 					{
-						Header: <TableHeader>{t('futures.market.user.open-orders.table.type')}</TableHeader>,
-						accessor: 'type',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
+						header: () => (
+							<TableHeader>{t('futures.market.user.open-orders.table.type')}</TableHeader>
+						),
+						accessorKey: 'type',
+						cell: (cellProps) => {
 							return <Body>{cellProps.row.original.orderTypeDisplay}</Body>
 						},
-						sortable: true,
-						width: 50,
+						enableSorting: true,
+						size: 50,
 					},
 					{
-						Header: (
+						header: () => (
 							<TableHeader>{t('futures.market.user.open-orders.table.reduce-only')}</TableHeader>
 						),
-						accessor: 'reduceOnly',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
+						accessorKey: 'reduceOnly',
+						cell: (cellProps) => {
 							return <Body>{cellProps.row.original.reduceOnly ? 'Yes' : 'No'}</Body>
 						},
-						sortable: true,
-						width: 50,
+						enableSorting: true,
+						size: 50,
 					},
 					{
-						Header: <TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>,
-						accessor: 'size',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
-							return <CustomFontLabel text={cellProps.row.original.sizeTxt} />
+						header: () => (
+							<TableHeader>{t('futures.market.user.open-orders.table.size')}</TableHeader>
+						),
+						accessorKey: 'size',
+						cell: (cellProps) => {
+							return <CustomFontLabel text={cellProps.row.original.sizeTxt ?? NO_VALUE} />
 						},
-						sortable: true,
-						width: 50,
+						enableSorting: true,
+						size: 50,
 					},
 					{
-						Header: (
+						header: () => (
 							<TableHeader>{t('futures.market.user.open-orders.table.current-price')}</TableHeader>
 						),
-						accessor: 'clPrice',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
+						accessorKey: 'clPrice',
+						cell: (cellProps) => {
 							return cellProps.row.original.currentPrice ? (
 								<div>
-									<ColoredPrice priceInfo={cellProps.row.original.currentPrice}>
+									<ColoredPrice priceChange={cellProps.row.original.currentPrice.change}>
 										{formatDollars(cellProps.row.original.currentPrice.price, {
 											suggestDecimals: true,
 										})}
@@ -160,14 +160,15 @@ export default function ConditionalOrdersTable() {
 								NO_VALUE
 							)
 						},
-						sortable: true,
-						width: 50,
+						enableSorting: true,
+						size: 50,
 					},
 					{
-						Header: <TableHeader>{t('futures.market.user.open-orders.table.price')}</TableHeader>,
-						accessor: 'price',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
+						header: () => (
+							<TableHeader>{t('futures.market.user.open-orders.table.price')}</TableHeader>
+						),
+						accessorKey: 'price',
+						cell: (cellProps) => {
 							return (
 								<div>
 									<Currency.Price
@@ -177,29 +178,29 @@ export default function ConditionalOrdersTable() {
 								</div>
 							)
 						},
-						sortable: true,
-						width: 50,
+						enableSorting: true,
+						size: 50,
 					},
 					{
-						Header: (
+						header: () => (
 							<TableHeader>
 								{t('futures.market.user.open-orders.table.reserved-margin')}
 							</TableHeader>
 						),
-						accessor: 'marginDelta',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
+						accessorKey: 'marginDelta',
+						cell: (cellProps) => {
 							const { marginDelta } = cellProps.row.original
 							return <div>{formatDollars(marginDelta?.gt(0) ? marginDelta : '0')}</div>
 						},
-						sortable: true,
-						width: 50,
+						enableSorting: true,
+						size: 50,
 					},
 					{
-						Header: <TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>,
-						accessor: 'actions',
-						// @ts-expect-error
-						Cell: (cellProps: CellProps<any>) => {
+						header: () => (
+							<TableHeader>{t('futures.market.user.open-orders.table.actions')}</TableHeader>
+						),
+						accessorKey: 'actions',
+						cell: (cellProps) => {
 							const cancellingRow = cellProps.row.original.isCancelling
 							return (
 								<div style={{ display: 'flex' }}>
@@ -214,7 +215,7 @@ export default function ConditionalOrdersTable() {
 								</div>
 							)
 						},
-						width: 50,
+						size: 50,
 					},
 				]}
 			/>

@@ -5,6 +5,7 @@ import Wei from '@synthetixio/wei'
 import { FC, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { ExchangeTokens } from 'types/synths'
 
 import TabButton from 'components/Button/TabButton'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
@@ -15,7 +16,6 @@ import * as Text from 'components/Text'
 import Connector from 'containers/Connector'
 import { FuturesAccountTypes } from 'queries/futures/types'
 import { selectBalances } from 'state/balances/selectors'
-import { sdk } from 'state/config'
 import { fetchTokenList } from 'state/exchange/actions'
 import { setFuturesAccountType } from 'state/futures/reducer'
 import {
@@ -24,6 +24,7 @@ import {
 	selectFuturesType,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
+import sdk from 'state/sdk'
 import { selectSynthsMap } from 'state/wallet/selectors'
 import logError from 'utils/logError'
 
@@ -38,6 +39,8 @@ export enum PositionsTab {
 	ISOLATED_MARGIN = 'isolated margin',
 	SPOT = 'spot',
 }
+
+// TODO: Extract initExchangeTokens to SDK/Redux
 
 const Overview: FC = () => {
 	const { t } = useTranslation()
@@ -65,7 +68,7 @@ const Overview: FC = () => {
 	// Only available on Optimism mainnet
 	const oneInchEnabled = network.id === 10
 
-	const [exchangeTokens, setExchangeTokens] = useState<any>([])
+	const [exchangeTokens, setExchangeTokens] = useState<ExchangeTokens>([])
 	const [search, setSearch] = useState('')
 
 	useFetchAction(fetchTokenList, { dependencies: [network] })
@@ -104,7 +107,7 @@ const Overview: FC = () => {
 					const usdBalance = balance.mul(price)
 
 					return {
-						synth: currencyKey,
+						synth: currencyKey as SynthSymbol,
 						description: name,
 						balance,
 						usdBalance,

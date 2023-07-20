@@ -1,6 +1,6 @@
 {
 	"name": "@kwenta/sdk",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"description": "SDK for headless interaction with Kwenta",
 	"main": "dist/index.js",
 	"directories": {
@@ -8,6 +8,7 @@
 	},
 	"types": "dist/index.d.ts",
 	"scripts": {
+		"dev": "tsc -b -w",
 		"build": "tsc -b",
 		"check-types": "tsc --noEmit",
 		"generate-contract-types": "typechain --target ethers-v5 --out-dir ./src/contracts/types './src/contracts/abis/*.json' --show-stack-traces"

@@ -12,13 +12,13 @@ import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
-import Connector from 'containers/Connector'
 import { selectTradePreview } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import {
-	selectStakedEscrowedKwentaBalance,
-	selectStakedKwentaBalance,
+	selectStakedEscrowedKwentaBalanceV2,
+	selectStakedKwentaBalanceV2,
 } from 'state/staking/selectors'
+import { selectWallet } from 'state/wallet/selectors'
 
 import TradeTotalFeesRow from './TradeTotalFeesRow'
 
@@ -35,9 +35,9 @@ export const TradePanelFeeInfo = memo(() => {
 
 const TradingRewardRow = memo(() => {
 	const { t } = useTranslation()
-	const { walletAddress } = Connector.useContainer()
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
+	const walletAddress = useAppSelector(selectWallet)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
 
 	const isRewardEligible = useMemo(
 		() => !!walletAddress && stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0),
@@ -45,14 +45,13 @@ const TradingRewardRow = memo(() => {
 	)
 
 	const goToRewards = useCallback(() => {
-		router.push(ROUTES.Dashboard.Rewards)
+		router.push(ROUTES.Dashboard.Stake)
 	}, [])
 
 	return (
 		<InfoBoxRow
 			title="Trading Reward"
 			compactBox
-			value=""
 			keyNode={
 				<CompactBox $isEligible={isRewardEligible} onClick={goToRewards}>
 					<FlexDivRow style={{ marginBottom: '5px' }}>
@@ -90,7 +89,7 @@ const LiquidationRow = memo(() => {
 		<InfoBoxRow
 			title="Liquidation price"
 			color="preview"
-			value={
+			textValue={
 				potentialTradeDetails?.liqPrice
 					? formatDollars(potentialTradeDetails.liqPrice, { suggestDecimals: true })
 					: NO_VALUE
@@ -105,9 +104,12 @@ const PriceImpactRow = memo(() => {
 	return (
 		<InfoBoxRow
 			title="Price impact"
-			value={
+			textValue={
 				potentialTradeDetails?.priceImpact
-					? formatPercent(potentialTradeDetails.priceImpact)
+					? formatPercent(potentialTradeDetails.priceImpact, {
+							suggestDecimals: true,
+							maxDecimals: 4,
+					  })
 					: NO_VALUE
 			}
 		/>

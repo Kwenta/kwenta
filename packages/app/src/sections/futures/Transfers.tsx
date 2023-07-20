@@ -49,54 +49,57 @@ const Transfers: FC = () => {
 			noBottom={true}
 			columns={[
 				{
-					Header: <TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>,
-					accessor: 'action',
-					Cell: (cellProps) => <ActionCell>{cellProps.value}</ActionCell>,
-					width: 50,
+					header: () => (
+						<TableHeader>{t('futures.market.user.transfers.table.action')}</TableHeader>
+					),
+					accessorKey: 'action',
+					cell: (cellProps) => <ActionCell>{cellProps.getValue()}</ActionCell>,
+					size: 50,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>,
-					accessor: 'amount',
-					sortType: 'basic',
-					Cell: (cellProps: any) => {
+					header: () => (
+						<TableHeader>{t('futures.market.user.transfers.table.amount')}</TableHeader>
+					),
+					accessorKey: 'amount',
+					sortingFn: 'basic',
+					cell: (cellProps: any) => {
 						const formatOptions = {
 							minDecimals: 0,
 						}
 
 						return (
 							<ColoredPrice
-								priceInfo={{
-									price: cellProps.row.original.size,
-									change: cellProps.row.original.action === 'deposit' ? 'up' : 'down',
-								}}
+								priceChange={cellProps.row.original.action === 'deposit' ? 'up' : 'down'}
 							>
 								{cellProps.row.original.action === 'deposit' ? '+' : ''}
 								{formatDollars(cellProps.row.original.size, formatOptions)}
 							</ColoredPrice>
 						)
 					},
-					sortable: true,
-					width: 50,
+					enableSorting: true,
+					size: 50,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
-					accessor: 'timestamp',
-					Cell: (cellProps: any) => <Body>{timePresentation(cellProps.value, t)}</Body>,
-					width: 50,
+					header: () => <TableHeader>{t('futures.market.user.transfers.table.date')}</TableHeader>,
+					accessorKey: 'timestamp',
+					cell: (cellProps) => <Body>{timePresentation(cellProps.getValue(), t)}</Body>,
+					size: 50,
 				},
 				{
-					Header: <TableHeader>{t('futures.market.user.transfers.table.transaction')}</TableHeader>,
-					accessor: 'txHash',
-					Cell: (cellProps: any) => {
+					header: () => (
+						<TableHeader>{t('futures.market.user.transfers.table.transaction')}</TableHeader>
+					),
+					accessorKey: 'txHash',
+					cell: (cellProps) => {
 						return (
 							<Body>
-								<StyledExternalLink href={blockExplorer.txLink(cellProps.value)}>
-									{truncateAddress(cellProps.value)}
+								<StyledExternalLink href={blockExplorer.txLink(cellProps.getValue())}>
+									{truncateAddress(cellProps.getValue())}
 								</StyledExternalLink>
 							</Body>
 						)
 					},
-					width: 50,
+					size: 50,
 				},
 			]}
 			data={marginTransfers}

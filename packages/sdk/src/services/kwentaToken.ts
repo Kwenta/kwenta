@@ -6,11 +6,7 @@ import moment from 'moment'
 import KwentaSDK from '..'
 import * as sdkErrors from '../common/errors'
 import { ETH_COINGECKO_ADDRESS, KWENTA_ADDRESS, OP_ADDRESS } from '../constants/exchange'
-import {
-	AGGREGATE_ASSET_KEY,
-	FUTURES_ENDPOINT_OP_MAINNET,
-	KWENTA_TRACKING_CODE,
-} from '../constants/futures'
+import { AGGREGATE_ASSET_KEY, KWENTA_TRACKING_CODE } from '../constants/futures'
 import { ZERO_WEI } from '../constants/number'
 import { SECONDS_PER_DAY } from '../constants/period'
 import {
@@ -23,9 +19,10 @@ import {
 import { ContractName } from '../contracts'
 import { ClaimParams, EpochData, EscrowData } from '../types/kwentaToken'
 import { formatTruncatedDuration } from '../utils/date'
-import { client } from '../utils/files'
+import { awsClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
+import { calculateFeesForAccount, calculateTotalFees } from '../utils'
 
 export default class KwentaTokenService {
 	private sdk: KwentaSDK
@@ -192,6 +189,47 @@ export default class KwentaTokenService {
 		}
 	}
 
+	public async getStakingV2Data() {
+		const { RewardEscrowV2, KwentaStakingRewardsV2, KwentaToken, SupplySchedule } =
+			this.sdk.context.multicallContracts
+
+		if (!RewardEscrowV2 || !KwentaStakingRewardsV2 || !KwentaToken || !SupplySchedule) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		const { walletAddress } = this.sdk.context
+
+		const [
+			rewardEscrowBalance,
+			stakedNonEscrowedBalance,
+			stakedEscrowedBalance,
+			claimableBalance,
+			totalStakedBalance,
+			lastStakedTime,
+			cooldownPeriod,
+			kwentaStakingV2Allowance,
+		]: BigNumber[] = await this.sdk.context.multicallProvider.all([
+			RewardEscrowV2.escrowedBalanceOf(walletAddress),
+			KwentaStakingRewardsV2.nonEscrowedBalanceOf(walletAddress),
+			KwentaStakingRewardsV2.escrowedBalanceOf(walletAddress),
+			KwentaStakingRewardsV2.earned(walletAddress),
+			KwentaStakingRewardsV2.totalSupply(),
+			KwentaStakingRewardsV2.userLastStakeTime(walletAddress),
+			KwentaStakingRewardsV2.cooldownPeriod(),
+			KwentaToken.allowance(walletAddress, KwentaStakingRewardsV2.address),
+		])
+
+		return {
+			rewardEscrowBalance: wei(rewardEscrowBalance),
+			stakedNonEscrowedBalance: wei(stakedNonEscrowedBalance),
+			stakedEscrowedBalance: wei(stakedEscrowedBalance),
+			claimableBalance: wei(claimableBalance),
+			totalStakedBalance: wei(totalStakedBalance),
+			stakedResetTime: Number(lastStakedTime) + Number(cooldownPeriod),
+			kwentaStakingV2Allowance: wei(kwentaStakingV2Allowance),
+		}
+	}
+
 	public async getEscrowData() {
 		const { RewardEscrow } = this.sdk.context.contracts
 		const { RewardEscrow: RewardEscrowMulticall } = this.sdk.context.multicallContracts
@@ -233,7 +271,8 @@ export default class KwentaTokenService {
 					vestable,
 					amount: wei(next.escrowAmount),
 					fee: wei(vestingEntries[i].fee),
-					status: date > Date.now() ? 'VESTING' : 'VESTED',
+					status: date > Date.now() ? 'Vesting' : 'Vested',
+					version: 1,
 				})
 
 				return acc
@@ -244,7 +283,60 @@ export default class KwentaTokenService {
 		return { escrowData, totalVestable }
 	}
 
-	public getReward() {
+	public async getEscrowV2Data() {
+		const { RewardEscrowV2 } = this.sdk.context.contracts
+		const { RewardEscrowV2: RewardEscrowMulticall } = this.sdk.context.multicallContracts
+
+		if (!RewardEscrowV2 || !RewardEscrowMulticall) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		const { walletAddress } = this.sdk.context
+
+		const schedules = await RewardEscrowV2.getVestingSchedules(
+			walletAddress,
+			0,
+			DEFAULT_NUMBER_OF_FUTURES_FEE
+		)
+
+		const vestingSchedules = schedules.filter((schedule) => schedule.escrowAmount.gt(0))
+
+		const calls = vestingSchedules.map((schedule) =>
+			RewardEscrowMulticall.getVestingEntryClaimable(schedule.entryID)
+		)
+
+		const vestingEntries: {
+			quantity: BigNumber
+			fee: BigNumber
+		}[] = await this.sdk.context.multicallProvider.all(calls)
+
+		const { escrowData, totalVestable } = vestingSchedules.reduce(
+			(acc, next, i) => {
+				const vestable = wei(vestingEntries[i].quantity)
+				const date = Number(next.endTime) * 1000
+
+				acc.totalVestable = acc.totalVestable.add(vestable)
+
+				acc.escrowData.push({
+					id: Number(next.entryID),
+					date: moment(date).format('MM/DD/YY'),
+					time: formatTruncatedDuration(Number(next.endTime) - new Date().getTime() / 1000),
+					vestable,
+					amount: wei(next.escrowAmount),
+					fee: wei(vestingEntries[i].fee),
+					status: date > Date.now() ? 'Vesting' : 'Vested',
+					version: 2,
+				})
+
+				return acc
+			},
+			{ escrowData: [] as EscrowData[], totalVestable: wei(0) }
+		)
+
+		return { escrowData, totalVestable }
+	}
+
+	public claimStakingRewards() {
 		const { KwentaStakingRewards } = this.sdk.context.contracts
 
 		if (!KwentaStakingRewards) {
@@ -254,11 +346,31 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(KwentaStakingRewards, 'getReward', [])
 	}
 
+	public claimStakingRewardsV2() {
+		const { KwentaStakingRewardsV2 } = this.sdk.context.contracts
+
+		if (!KwentaStakingRewardsV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		return this.sdk.transactions.createContractTxn(KwentaStakingRewardsV2, 'getReward', [])
+	}
+
+	public compoundRewards() {
+		const { KwentaStakingRewardsV2 } = this.sdk.context.contracts
+
+		if (!KwentaStakingRewardsV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		return this.sdk.transactions.createContractTxn(KwentaStakingRewardsV2, 'compound', [])
+	}
+
 	// TODO: Replace this with separate functions that use `approveToken`
 	// In that case, we can safely remove the map object from this method.
 
 	public approveKwentaToken(
-		token: 'kwenta' | 'vKwenta' | 'veKwenta',
+		token: 'kwenta' | 'vKwenta' | 'veKwenta' | 'kwentaStakingV2',
 		amount = ethers.constants.MaxUint256
 	) {
 		const {
@@ -268,12 +380,14 @@ export default class KwentaTokenService {
 			vKwentaRedeemer,
 			veKwentaToken,
 			veKwentaRedeemer,
+			KwentaStakingRewardsV2,
 		} = this.sdk.context.contracts
 
 		const map = {
 			kwenta: { contract: KwentaToken, spender: KwentaStakingRewards },
 			vKwenta: { contract: vKwentaToken, spender: vKwentaRedeemer },
 			veKwenta: { contract: veKwentaToken, spender: veKwentaRedeemer },
+			kwentaStakingV2: { contract: KwentaToken, spender: KwentaStakingRewardsV2 },
 		}
 
 		const { contract, spender } = map[token]
@@ -344,27 +458,77 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(RewardEscrow, 'vest', [ids])
 	}
 
+	public vestTokenV2(ids: number[]) {
+		const { RewardEscrowV2 } = this.sdk.context.contracts
+
+		if (!RewardEscrowV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		return this.sdk.transactions.createContractTxn(RewardEscrowV2, 'vest', [ids])
+	}
+
 	public stakeKwenta(amount: string | BigNumber) {
 		return this.performStakeAction('stake', amount)
 	}
 
 	public unstakeKwenta(amount: string | BigNumber) {
-		return this.performStakeAction('unstake', amount)
+		return this.performStakeAction('unstake', amount, { escrow: false, version: 1 })
 	}
 
 	public stakeEscrowedKwenta(amount: string | BigNumber) {
-		return this.performStakeAction('stake', amount, { escrow: true })
+		return this.performStakeAction('stake', amount, { escrow: true, version: 1 })
 	}
 
 	public unstakeEscrowedKwenta(amount: string | BigNumber) {
-		return this.performStakeAction('unstake', amount, { escrow: true })
+		return this.performStakeAction('unstake', amount, { escrow: true, version: 1 })
+	}
+
+	public stakeKwentaV2(amount: string | BigNumber) {
+		return this.performStakeAction('stake', amount, { escrow: false, version: 2 })
+	}
+
+	public unstakeKwentaV2(amount: string | BigNumber) {
+		return this.performStakeAction('unstake', amount, { escrow: false, version: 2 })
+	}
+
+	public stakeEscrowedKwentaV2(amount: string | BigNumber) {
+		return this.performStakeAction('stake', amount, { escrow: true, version: 2 })
+	}
+
+	public unstakeEscrowedKwentaV2(amount: string | BigNumber) {
+		return this.performStakeAction('unstake', amount, { escrow: true, version: 2 })
+	}
+
+	public async getEstimatedRewards() {
+		const { networkId, walletAddress } = this.sdk.context
+		const fileNames = ['', '-op'].map(
+			(i) => `${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
+		)
+
+		const responses: EpochData[] = await Promise.all(
+			fileNames.map(async (fileName) => {
+				const response = await awsClient.get(fileName)
+				return { ...response.data }
+			})
+		)
+
+		const [estimatedKwentaRewards, estimatedOpRewards] = responses.map((d) => {
+			const reward = d.claims[walletAddress]
+
+			if (reward) {
+				return weiFromWei(reward.amount)
+			}
+
+			return ZERO_WEI
+		})
+
+		return { estimatedKwentaRewards, estimatedOpRewards }
 	}
 
 	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
-		const {
-			MultipleMerkleDistributor,
-			MultipleMerkleDistributorPerpsV2,
-		} = this.sdk.context.multicallContracts
+		const { MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
+			this.sdk.context.multicallContracts
 		const { walletAddress } = this.sdk.context
 
 		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
@@ -377,15 +541,12 @@ export default class KwentaTokenService {
 			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH)
 
 		const fileNames = adjustedPeriods.map(
-			(i) =>
-				`trading-rewards-snapshots/${
-					this.sdk.context.networkId === 420 ? `goerli-` : ''
-				}epoch-${i}.json`
+			(i) => `${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${i}.json`
 		)
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
-				const response = await client.get(fileName)
+				const response = await awsClient.get(fileName)
 				const period = isOldDistributor
 					? index >= 5
 						? index >= 10
@@ -465,7 +626,7 @@ export default class KwentaTokenService {
 
 		const fileNames = adjustedPeriods.map(
 			(i) =>
-				`trading-rewards-snapshots/${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${
+				`${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${
 					isSnx ? i - OP_REWARDS_CUTOFF_EPOCH : i
 				}${isOp ? (isSnx ? '-snx-op' : '-op') : ''}.json`
 		)
@@ -473,7 +634,7 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				try {
-					const response = await client.get(fileName)
+					const response = await awsClient.get(fileName)
 					const period = isOldDistributor
 						? index >= 5
 							? index >= 10
@@ -534,11 +695,8 @@ export default class KwentaTokenService {
 	}
 
 	public async claimMultipleKwentaRewards(claimableRewards: ClaimParams[][]) {
-		const {
-			BatchClaimer,
-			MultipleMerkleDistributor,
-			MultipleMerkleDistributorPerpsV2,
-		} = this.sdk.context.contracts
+		const { BatchClaimer, MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
+			this.sdk.context.contracts
 
 		if (!BatchClaimer || !MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
@@ -581,10 +739,8 @@ export default class KwentaTokenService {
 	}
 
 	public async claimOpRewards(claimableRewards: ClaimParams[], isSnx: boolean = false) {
-		const {
-			MultipleMerkleDistributorOp,
-			MultipleMerkleDistributorSnxOp,
-		} = this.sdk.context.contracts
+		const { MultipleMerkleDistributorOp, MultipleMerkleDistributorSnxOp } =
+			this.sdk.context.contracts
 
 		if (!MultipleMerkleDistributorOp || !MultipleMerkleDistributorSnxOp) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
@@ -603,7 +759,7 @@ export default class KwentaTokenService {
 		}
 
 		const response = await getFuturesAggregateStats(
-			FUTURES_ENDPOINT_OP_MAINNET,
+			this.sdk.futures.futuresGqlEndpoint,
 			{
 				first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 				where: {
@@ -615,17 +771,17 @@ export default class KwentaTokenService {
 				orderDirection: 'desc',
 				orderBy: 'timestamp',
 			},
-			{ timestamp: true, feesKwenta: true }
+			{ feesKwenta: true }
 		)
 
-		return response
+		return response ? calculateTotalFees(response) : wei(0)
 	}
 
 	public async getFuturesFeeForAccount(account: string, start: number, end: number) {
-		if (!account) return null
+		if (!account) return wei(0)
 
 		const response = await getFuturesTrades(
-			FUTURES_ENDPOINT_OP_MAINNET,
+			this.sdk.futures.futuresGqlEndpoint,
 			{
 				first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 				where: {
@@ -638,29 +794,32 @@ export default class KwentaTokenService {
 				orderBy: 'timestamp',
 			},
 			{
-				timestamp: true,
-				account: true,
-				abstractAccount: true,
-				accountType: true,
 				feesPaid: true,
 				keeperFeesPaid: true,
 			}
 		)
-		return response
+
+		return response ? calculateFeesForAccount(response) : wei(0)
 	}
 
 	private performStakeAction(
 		action: 'stake' | 'unstake',
 		amount: string | BigNumber,
-		options: { escrow: boolean } = { escrow: false }
+		options: { escrow: boolean; version?: number } = { escrow: false, version: 1 }
 	) {
-		const { RewardEscrow, KwentaStakingRewards } = this.sdk.context.contracts
+		const { RewardEscrow, RewardEscrowV2, KwentaStakingRewards, KwentaStakingRewardsV2 } =
+			this.sdk.context.contracts
 
-		if (!RewardEscrow || !KwentaStakingRewards) {
+		if (!RewardEscrow || !RewardEscrowV2 || !KwentaStakingRewards || !KwentaStakingRewardsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		const contract = options?.escrow ? RewardEscrow : KwentaStakingRewards
+		const contract =
+			options?.version === 1
+				? options?.escrow
+					? RewardEscrow
+					: KwentaStakingRewards
+				: KwentaStakingRewardsV2
 
 		return this.sdk.transactions.createContractTxn(
 			contract,

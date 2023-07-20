@@ -1,145 +1,95 @@
-import { truncateNumbers } from '@kwenta/sdk/utils'
-import { useRouter } from 'next/router'
-import { FC } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import { FC, memo } from 'react'
+import styled, { css } from 'styled-components'
 
-import Button from 'components/Button/Button'
-import { FlexDivRowCentered } from 'components/layout/flex'
-import { EXTERNAL_LINKS } from 'constants/links'
-import ROUTES from 'constants/routes'
-import { SplitStakingCard } from 'sections/dashboard/Stake/card'
-import { Heading } from 'sections/earn/text'
-import { useAppSelector } from 'state/hooks'
-import {
-	selectClaimableBalance,
-	selectEscrowedKwentaBalance,
-	selectKwentaBalance,
-	selectStakedEscrowedKwentaBalance,
-	selectStakedKwentaBalance,
-	selectTotalVestable,
-} from 'state/staking/selectors'
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
+import { Body } from 'components/Text'
 import media from 'styles/media'
+
+import MigrationSteps from './MigrationSteps'
+import { StakingHeading } from './StakingHeading'
+import { StakingCards } from './types'
 
 export enum StakeTab {
 	Staking = 'staking',
 	Escrow = 'escrow',
-	TradingRewards = 'trading-rewards',
-	Redemption = 'redemption',
 }
 
 type StakingPortfolioProps = {
-	setCurrentTab(tab: StakeTab): void
+	title: string
+	cardsInfo: StakingCards[]
+	isRollbackRequired?: boolean
 }
 
-const StakingPortfolio: FC<StakingPortfolioProps> = ({ setCurrentTab }) => {
-	const { t } = useTranslation()
-	const router = useRouter()
-	const kwentaBalance = useAppSelector(selectKwentaBalance)
-	const escrowedKwentaBalance = useAppSelector(selectEscrowedKwentaBalance)
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
-	const claimableBalance = useAppSelector(selectClaimableBalance)
-	const totalVestable = useAppSelector(selectTotalVestable)
+const StakingPortfolio: FC<StakingPortfolioProps> = memo(
+	({ title, cardsInfo, isRollbackRequired = false }) => {
+		return (
+			<StakingPortfolioContainer>
+				<StakingHeading title={title} />
+				{isRollbackRequired && <MigrationSteps />}
+				<CardsContainer>
+					{cardsInfo.map(({ category, card, onClick, icon }, i) => (
+						<StyledFlexDivCol rowGap="15px" key={i} onClick={onClick}>
+							<LabelContainer size="large">
+								{category}
+								{icon}
+							</LabelContainer>
+							<FlexDivRow columnGap="15px" justifyContent="flex-start">
+								{card.map(({ key, title, value, onClick }) => (
+									<FlexDivCol key={key} onClick={onClick} rowGap="5px">
+										<Body color="secondary">{title}</Body>
+										<Body size="large" color="preview">
+											{value}
+										</Body>
+									</FlexDivCol>
+								))}
+							</FlexDivRow>
+						</StyledFlexDivCol>
+					))}
+				</CardsContainer>
+			</StakingPortfolioContainer>
+		)
+	}
+)
 
-	const DEFAULT_CARDS = [
-		[
-			{
-				key: 'Liquid',
-				title: t('dashboard.stake.portfolio.liquid'),
-				value: truncateNumbers(kwentaBalance, 2),
-				onClick: () => setCurrentTab(StakeTab.Staking),
-			},
-			{
-				key: 'Escrow',
-				title: t('dashboard.stake.portfolio.escrow'),
-				value: truncateNumbers(escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance), 2),
-				onClick: () => setCurrentTab(StakeTab.Escrow),
-			},
-		],
-		[
-			{
-				key: 'Staked',
-				title: t('dashboard.stake.portfolio.staked'),
-				value: truncateNumbers(stakedKwentaBalance, 2),
-				onClick: () => setCurrentTab(StakeTab.Staking),
-			},
-			{
-				key: 'StakedEscrow',
-				title: t('dashboard.stake.portfolio.staked-escrow'),
-				value: truncateNumbers(stakedEscrowedKwentaBalance, 2),
-				onClick: () => setCurrentTab(StakeTab.Escrow),
-			},
-		],
-		[
-			{
-				key: 'Claimable',
-				title: t('dashboard.stake.portfolio.claimable'),
-				value: truncateNumbers(claimableBalance, 2),
-				onClick: () => setCurrentTab(StakeTab.Staking),
-			},
-			{
-				key: 'Vestable',
-				title: t('dashboard.stake.portfolio.vestable'),
-				value: truncateNumbers(totalVestable, 2),
-				onClick: () => setCurrentTab(StakeTab.Escrow),
-			},
-		],
-	]
-
-	return (
-		<StakingPortfolioContainer>
-			<StakingHeading>
-				<Heading>{t('dashboard.stake.portfolio.title')}</Heading>
-				<ButtonContainer>
-					<Button size="small" onClick={() => router.push(ROUTES.Dashboard.Earn)}>
-						Earn Page
-					</Button>
-					<Button size="small" onClick={() => window.open(EXTERNAL_LINKS.Docs.Staking, '_blank')}>
-						Staking Docs
-					</Button>
-				</ButtonContainer>
-			</StakingHeading>
-			<CardsContainer>
-				{DEFAULT_CARDS.map((card, i) => (
-					<SplitStakingCard key={i}>
-						{card.map(({ key, title, value, onClick }) => (
-							<div key={key} onClick={onClick}>
-								<div className="title">{title}</div>
-								<div className="value">{value}</div>
-							</div>
-						))}
-					</SplitStakingCard>
-				))}
-			</CardsContainer>
-		</StakingPortfolioContainer>
-	)
-}
-
-const ButtonContainer = styled(FlexDivRowCentered)`
-	column-gap: 10px;
+const LabelContainer = styled(Body)`
+	display: flex;
+	flex-direction: row;
+	column-gap: 5px;
+	align-items: center;
 `
 
-const StakingHeading = styled(FlexDivRowCentered)`
-	margin-bottom: 15px;
+const StyledFlexDivCol = styled(FlexDivCol)`
+	${(props) =>
+		props.onClick &&
+		css`
+			cursor: pointer;
+		`}
+	${media.lessThan('lg')`
+		width: 135px;
+	`}
 `
 
 const StakingPortfolioContainer = styled.div`
 	${media.lessThan('mdUp')`
 		padding: 15px;
 	`}
-
-	${media.greaterThan('mdUp')`
+	${media.greaterThan('lg')`
 		margin-top: 20px;
-		margin-bottom: 100px;
 	`}
 `
 
-const CardsContainer = styled.div`
-	width: 100%;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(334px, 1fr));
-	grid-gap: 15px;
+const CardsContainer = styled(FlexDivRowCentered)`
+	padding: 20px;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
+	border-radius: 20px;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
+	justify-content: flex-start;
+	column-gap: 50px;
+	row-gap: 25px;
+	flex-flow: row wrap;
+	${media.lessThan('md')`
+		column-gap: 25px;
+	`}
 `
 
 export default StakingPortfolio

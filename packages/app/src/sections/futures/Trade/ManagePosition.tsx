@@ -31,6 +31,7 @@ import {
 	selectCrossMarginAccount,
 	selectPosition,
 	selectMarketPriceInfo,
+	selectTradePanelSLValidity,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
@@ -59,6 +60,7 @@ const ManagePosition: React.FC = () => {
 	const previewStatus = useAppSelector(selectTradePreviewStatus)
 	const smartMarginAccount = useAppSelector(selectCrossMarginAccount)
 	const position = useAppSelector(selectPosition)
+	const stopLossInvlid = useAppSelector(selectTradePanelSLValidity)
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError))
@@ -159,6 +161,13 @@ const ManagePosition: React.FC = () => {
 			if (orderType !== 'market' && isZero(orderPrice)) return { message: 'trade price required' }
 		}
 
+		if (stopLossInvlid.invalid) {
+			return {
+				show: 'warn',
+				message: 'Invalid Stop Loss Price',
+			}
+		}
+
 		return null
 	}, [
 		susdSize,
@@ -179,6 +188,7 @@ const ManagePosition: React.FC = () => {
 		leverage,
 		indexPrice,
 		previewTrade,
+		stopLossInvlid,
 		marketInfo?.appMaxLeverage,
 	])
 
@@ -187,7 +197,7 @@ const ManagePosition: React.FC = () => {
 			<div>
 				<ManagePositionContainer>
 					<PlaceOrderButton
-						data-testid="trade-open-position-button"
+						data-testid="trade-panel-submit-button"
 						noOutline
 						fullWidth
 						loading={previewStatus.status === FetchStatus.Loading}

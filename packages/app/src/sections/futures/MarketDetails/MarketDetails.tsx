@@ -5,7 +5,7 @@ import React, { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { getColorFromPriceInfo } from 'components/ColoredPrice'
+import { getColorFromPriceChange } from 'components/ColoredPrice'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
@@ -24,7 +24,7 @@ import media from 'styles/media'
 import { MARKETS_DETAILS_HEIGHT_DESKTOP } from '../styles'
 
 import ChartToggle from './ChartToggle'
-import HistoryToggle from './HisotryToggle'
+import HistoryToggle from './HistoryToggle'
 import HoursToggle from './HoursToggle'
 import MarketDetail, { MarketDetailValue } from './MarketDetail'
 import { MarketDataKey } from './utils'
@@ -84,7 +84,7 @@ const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	return (
 		<MarketDetail
 			mobile={mobile}
-			color={getColorFromPriceInfo(markPrice)}
+			color={getColorFromPriceChange(markPrice?.change)}
 			value={markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
 			dataKey={MarketDataKey.marketPrice}
 		/>
@@ -118,7 +118,9 @@ const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			dataKey={MarketDataKey.dailyChange}
 			value={
 				indexPriceWei.gt(0) && pastPrice?.rate
-					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? ZERO_WEI)
+					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? ZERO_WEI, {
+							maxDecimals: 2,
+					  })
 					: NO_VALUE
 			}
 			color={
@@ -139,15 +141,19 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const marketInfo = useAppSelector(selectMarketInfo)
 	const fundingRate = marketInfo?.currentFundingRate ?? ZERO_WEI
 	const fundingHours = useAppSelector(selectSelectedInputHours)
-	const fundingValue = useMemo(() => fundingRate.mul(wei(fundingHours)), [
-		fundingRate,
-		fundingHours,
-	])
+	const fundingValue = useMemo(
+		() => fundingRate.mul(wei(fundingHours)),
+		[fundingRate, fundingHours]
+	)
 
 	return (
 		<MarketDetail
 			dataKey={t('futures.market.info.hourly-funding')}
-			value={fundingValue ? formatPercent(fundingValue ?? ZERO_WEI, { minDecimals: 6 }) : NO_VALUE}
+			value={
+				fundingValue
+					? formatPercent(fundingValue ?? ZERO_WEI, { suggestDecimals: true, maxDecimals: 6 })
+					: NO_VALUE
+			}
 			color={fundingValue?.gt(ZERO_WEI) ? 'green' : fundingValue?.lt(ZERO_WEI) ? 'red' : undefined}
 			mobile={mobile}
 			extra={<HoursToggle />}

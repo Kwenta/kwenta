@@ -11,7 +11,6 @@ import * as _ from 'lodash/fp'
 import Link from 'next/link'
 import { FC, useMemo, ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CellProps } from 'react-table'
 import styled from 'styled-components'
 
 import Currency from 'components/Currency'
@@ -54,32 +53,33 @@ const FuturesHistoryTable: FC = () => {
 
 	const mappedHistoricalTrades = useMemo(
 		() =>
-			trades
-				.map((trade) => {
-					return {
-						...trade,
-						netPnl: trade.pnl.sub(trade.feesPaid),
-						displayAsset: getDisplayAsset(trade.asset),
-						market: getMarketName(trade.asset),
-						price: Number(trade.price),
-						size: Number(trade.size.abs()),
-						timestamp: trade.timestamp * 1000,
-						date: formatShortDateWithoutYear(new Date(trade.timestamp * 1000)),
-						id: trade.txnHash,
-						status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-					}
-				})
-				.sort((a, b) => b.timestamp - a.timestamp),
-		[trades]
+			isL2
+				? trades
+						.map((trade) => {
+							return {
+								...trade,
+								netPnl: trade.pnl.sub(trade.feesPaid),
+								displayAsset: getDisplayAsset(trade.asset),
+								market: getMarketName(trade.asset),
+								price: trade.price,
+								size: trade.size.abs(),
+								timestamp: trade.timestamp * 1000,
+								date: formatShortDateWithoutYear(new Date(trade.timestamp * 1000)),
+								id: trade.txnHash,
+								status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+							}
+						})
+						.sort((a, b) => b.timestamp - a.timestamp)
+				: [],
+		[isL2, trades]
 	)
 
 	return (
 		<>
 			<DesktopOnlyView>
 				<TableContainer>
-					{/* @ts-expect-error */}
 					<StyledTable
-						data={isL2 ? mappedHistoricalTrades : []}
+						data={mappedHistoricalTrades}
 						showPagination
 						pageSize={16}
 						isLoading={tradesQueryStatus.status === FetchStatus.Loading}
@@ -101,9 +101,9 @@ const FuturesHistoryTable: FC = () => {
 						highlightRowsOnHover
 						columns={[
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.date-time')}</div>,
-								accessor: 'dateTime',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.date-time')}</div>,
+								accessorKey: 'dateTime',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.timestamp,
 										<StyledTimeDisplay>
@@ -111,12 +111,12 @@ const FuturesHistoryTable: FC = () => {
 										</StyledTimeDisplay>
 									)
 								},
-								width: 100,
+								size: 100,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.market')}</div>,
-								accessor: 'market',
-								Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.market')}</div>,
+								accessorKey: 'market',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.asset,
 										<>
@@ -127,69 +127,69 @@ const FuturesHistoryTable: FC = () => {
 															MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
 														}
 													/>
-													<StyledText>{cellProps.value}</StyledText>
+													<StyledText>{cellProps.getValue()}</StyledText>
 													<FuturesIcon type={cellProps.row.original.accountType} />
 												</SynthContainer>
 											)}
 										</>
 									)
 								},
-								width: 120,
+								size: 120,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.side')}</div>,
-								accessor: 'side',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.side')}</div>,
+								accessorKey: 'side',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.side,
-										<PositionType side={cellProps.value} />
+										<PositionType side={cellProps.getValue()} />
 									)
 								},
-								width: 70,
+								size: 70,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.size')}</div>,
-								accessor: 'size',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.size')}</div>,
+								accessorKey: 'size',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.size,
-										<>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</>
+										<>{formatCryptoCurrency(cellProps.getValue(), { suggestDecimals: true })}</>
 									)
 								},
-								width: 100,
+								size: 100,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.price')}</div>,
-								accessor: 'price',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.price')}</div>,
+								accessorKey: 'price',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.price,
-										<>{formatDollars(cellProps.value, { suggestDecimals: true })}</>
+										<>{formatDollars(cellProps.getValue(), { suggestDecimals: true })}</>
 									)
 								},
-								width: 120,
+								size: 120,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
-								accessor: 'netPnl',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
+								accessorKey: 'netPnl',
+								cell: (cellProps) => {
 									return conditionalRender(
-										cellProps.value,
-										cellProps.value.eq(wei(0)) ? (
+										cellProps.getValue(),
+										cellProps.getValue().eq(wei(0)) ? (
 											<PNL normal>--</PNL>
 										) : (
-											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value, { maxDecimals: 2 })}
+											<PNL negative={cellProps.getValue().lt(wei(0))}>
+												{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
 											</PNL>
 										)
 									)
 								},
-								width: 120,
+								size: 120,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.fees')}</div>,
-								accessor: 'fees',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.fees')}</div>,
+								accessorKey: 'fees',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.feesPaid,
 										<Currency.Price
@@ -200,18 +200,18 @@ const FuturesHistoryTable: FC = () => {
 										/>
 									)
 								},
-								width: 120,
+								size: 120,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.type')}</div>,
-								accessor: 'orderType',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.type')}</div>,
+								accessorKey: 'orderType',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.orderType,
 										<StyledText>{cellProps.row.original.orderType}</StyledText>
 									)
 								},
-								width: 80,
+								size: 80,
 							},
 						]}
 					/>
@@ -219,9 +219,8 @@ const FuturesHistoryTable: FC = () => {
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<TableContainer>
-					{/* @ts-expect-error */}
 					<MobileStyledTable
-						data={isL2 ? mappedHistoricalTrades : []}
+						data={mappedHistoricalTrades}
 						onTableRowClick={(row) => {
 							setSelectedTrade(row.original)
 						}}
@@ -243,9 +242,9 @@ const FuturesHistoryTable: FC = () => {
 						}
 						columns={[
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.asset')}</div>,
-								accessor: 'displayAsset',
-								Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.asset')}</div>,
+								accessorKey: 'displayAsset',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.asset,
 										<>
@@ -257,7 +256,7 @@ const FuturesHistoryTable: FC = () => {
 														}
 													/>
 													<MobileMarketContainer>
-														<StyledText>{cellProps.value}</StyledText>
+														<StyledText>{cellProps.getValue()}</StyledText>
 														<FuturesIcon type={cellProps.row.original.accountType} />
 													</MobileMarketContainer>
 													<StyledText>{cellProps.row.original.date}</StyledText>
@@ -266,62 +265,66 @@ const FuturesHistoryTable: FC = () => {
 										</>
 									)
 								},
-								width: 60,
+								size: 60,
 							},
 							{
-								Header: () => (
+								header: () => (
 									<div>
 										<div>{t('dashboard.history.futures-history-table.side')}</div>
 										<div>{t('dashboard.history.futures-history-table.type')}</div>
 									</div>
 								),
-								accessor: 'side',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								accessorKey: 'side',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.side,
 										<div>
-											<PositionType side={cellProps.value} mobile />
+											<PositionType side={cellProps.getValue()} mobile />
 											<div>{cellProps.row.original.orderType}</div>
 										</div>
 									)
 								},
-								width: 60,
+								size: 60,
 							},
 							{
-								Header: () => (
+								header: () => (
 									<div>
 										<div>{t('dashboard.history.futures-history-table.size')}</div>
 										<div>{t('dashboard.history.futures-history-table.price')}</div>
 									</div>
 								),
-								accessor: 'size',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								accessorKey: 'size',
+								cell: (cellProps) => {
 									return conditionalRender(
 										cellProps.row.original.price,
 										<div>
-											<div>{formatCryptoCurrency(cellProps.value, { suggestDecimals: true })}</div>
+											<div>
+												{formatCryptoCurrency(cellProps.getValue(), { suggestDecimals: true })}
+											</div>
 											<div>{formatDollars(cellProps.row.original.price ?? 0)}</div>
 										</div>
 									)
 								},
-								width: 60,
+								size: 60,
 							},
 							{
-								Header: <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
-								accessor: 'netPnl',
-								Cell: (cellProps: CellProps<FuturesTrade>) => {
+								header: () => <div>{t('dashboard.history.futures-history-table.pnl')}</div>,
+								accessorKey: 'netPnl',
+								cell: (cellProps) => {
+									const value = cellProps.getValue()
+
 									return conditionalRender(
-										cellProps.value,
-										cellProps.value.eq(wei(0)) ? (
+										value,
+										value.eq(wei(0)) ? (
 											<PNL normal>--</PNL>
 										) : (
-											<PNL negative={cellProps.value.lt(wei(0))}>
-												{formatDollars(cellProps.value, { maxDecimals: 2 })}
+											<PNL negative={value.lt(wei(0))}>
+												{formatDollars(value, { maxDecimals: 2 })}
 											</PNL>
 										)
 									)
 								},
-								width: 60,
+								size: 60,
 							},
 						]}
 					/>
@@ -359,7 +362,7 @@ const TableContainer = styled.div`
 
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
-`
+` as typeof Table
 
 const MobileStyledTable = styled(Table)`
 	margin-bottom: 20px;
@@ -367,7 +370,7 @@ const MobileStyledTable = styled(Table)`
 	border-top: none;
 	border-left: none;
 	border-right: none;
-`
+` as typeof Table
 
 const StyledText = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};

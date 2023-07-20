@@ -1,4 +1,4 @@
-import { truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import React from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -10,6 +10,8 @@ import { FlexDivRowCentered } from 'components/layout/flex'
 import Spacer from 'components/Spacer'
 import { Body } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
+import { useAppSelector } from 'state/hooks'
+import { selectIsVestingEscrowedRewards } from 'state/staking/selectors'
 import { ExternalLink } from 'styles/common'
 
 type Props = {
@@ -30,6 +32,7 @@ const LinkText = () => {
 
 const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVest }) => {
 	const { t } = useTranslation()
+	const isVestingEscrowedRewards = useAppSelector(selectIsVestingEscrowedRewards)
 
 	return (
 		<StyledBaseModal
@@ -47,7 +50,7 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 				<BalanceText>
 					<Trans
 						i18nKey="dashboard.stake.tabs.escrow.modal.confirm-text"
-						values={{ totalFee: truncateNumbers(totalFee, 4) }}
+						values={{ totalFee: formatNumber(totalFee, { suggestDecimals: true }) }}
 						components={[<b />]}
 					/>
 				</BalanceText>
@@ -59,6 +62,7 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 				data-testid="dashboard.stake.tabs.escrow.modal.confirm-button"
 				variant="flat"
 				disabled={false}
+				loading={isVestingEscrowedRewards}
 				fullWidth
 				onClick={handleVest}
 			>

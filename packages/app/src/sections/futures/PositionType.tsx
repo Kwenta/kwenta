@@ -1,7 +1,7 @@
 import { PositionSide } from '@kwenta/sdk/types'
 import styled, { css } from 'styled-components'
 
-import { Body } from 'components/Text'
+import Body from 'components/Text/Body'
 
 type PositionProps = {
 	side: PositionSide
@@ -16,11 +16,12 @@ const PositionType: React.FC<PositionProps> = ({ side = PositionSide.LONG, mobil
 	)
 }
 
-const StyledText = styled(Body).attrs({ weight: 'bold', capitalized: true })<{
+const StyledText = styled(Body).attrs({ weight: 'bold', capitalized: true, type: 'span' })<{
 	side: PositionSide
 }>`
 	padding: 3px 5px;
 	border-radius: 4px;
+
 
 	${(props) =>
 		props.side === PositionSide.LONG

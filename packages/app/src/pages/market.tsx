@@ -143,16 +143,17 @@ function TradePanelDesktop() {
 	const { walletAddress } = Connector.useContainer()
 	const accountType = useAppSelector(selectFuturesType)
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus)
+	const openModal = useAppSelector(selectShowModal)
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount)
 	const [open, setOpen] = useState(false)
 
-	useEffect(() => setOpen(accountType === 'isolated_margin' && isolatedPositionsCount === 0), [
-		accountType,
-		isolatedPositionsCount,
-	])
+	useEffect(
+		() => setOpen(accountType === 'isolated_margin' && isolatedPositionsCount === 0),
+		[accountType, isolatedPositionsCount]
+	)
 
-	if (walletAddress && !isL2) {
+	if (walletAddress && !isL2 && openModal !== 'futures_smart_margin_socket') {
 		return <FuturesUnsupportedNetwork />
 	}
 

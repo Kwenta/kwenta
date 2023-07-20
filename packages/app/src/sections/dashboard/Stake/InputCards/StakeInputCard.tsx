@@ -1,13 +1,15 @@
 import { wei } from '@synthetixio/wei'
 import _ from 'lodash'
-import { FC, useCallback, useMemo } from 'react'
+import { FC, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import StakeCard from 'components/StakeCard'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { approveKwentaToken } from 'state/staking/actions'
-import { stakeKwenta, unstakeKwenta } from 'state/staking/actions'
+import { approveKwentaToken, stakeKwenta, unstakeKwenta } from 'state/staking/actions'
 import {
+	selectCanStakeKwenta,
+	selectCanUnstakeKwenta,
+	selectIsApprovingKwenta,
 	selectIsKwentaTokenApproved,
 	selectIsStakedKwenta,
 	selectIsStakingKwenta,
@@ -24,10 +26,13 @@ const StakeInputCard: FC = () => {
 	const kwentaBalance = useAppSelector(selectKwentaBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const isKwentaTokenApproved = useAppSelector(selectIsKwentaTokenApproved)
-	const isStakingKwenta = useAppSelector(selectIsStakingKwenta)
-	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
 	const isStakedKwenta = useAppSelector(selectIsStakedKwenta)
 	const isUnstakedKwenta = useAppSelector(selectIsUnstakedKwenta)
+	const stakeEnabled = useAppSelector(selectCanStakeKwenta)
+	const unstakeEnabled = useAppSelector(selectCanUnstakeKwenta)
+	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
+	const isStakingKwenta = useAppSelector(selectIsStakingKwenta)
+	const isApprovingKwenta = useAppSelector(selectIsApprovingKwenta)
 
 	const handleApprove = useCallback(() => {
 		dispatch(approveKwentaToken('kwenta'))
@@ -47,14 +52,6 @@ const StakeInputCard: FC = () => {
 		[dispatch]
 	)
 
-	const stakeEnabled = useMemo(() => {
-		return kwentaBalance.gt(0) && !isStakingKwenta
-	}, [kwentaBalance, isStakingKwenta])
-
-	const unstakeEnabled = useMemo(() => {
-		return stakedKwentaBalance.gt(0) && !isUnstakingKwenta
-	}, [stakedKwentaBalance, isUnstakingKwenta])
-
 	return (
 		<StakeCard
 			title={t('dashboard.stake.tabs.stake-table.kwenta-token')}
@@ -68,6 +65,9 @@ const StakeInputCard: FC = () => {
 			isUnstaked={isUnstakedKwenta}
 			isApproved={isKwentaTokenApproved}
 			onApprove={handleApprove}
+			isStaking={isStakingKwenta}
+			isUnstaking={isUnstakingKwenta}
+			isApproving={isApprovingKwenta}
 		/>
 	)
 }

@@ -2,8 +2,8 @@ import styled, { css } from 'styled-components'
 
 export const StakingCard = styled.div<{ $noPadding?: boolean }>`
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.containers.cards.background};
-	padding: 20px;
-	border-radius: 20px;
+	padding: 25px;
+	border-radius: 15px;
 	border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.border.color};
 
 	.title {

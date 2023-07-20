@@ -44,6 +44,8 @@ import { Token, TokenBalances } from '../types/tokens'
 import { synthToAsset } from '../utils/exchange'
 import { getProxySynthSymbol, getReasonFromCode } from '../utils/synths'
 import { getTransactionPrice, normalizeGasLimit } from '../utils/transactions'
+import { getMainEndpoint } from '../utils/futures'
+import { queryWalletTrades } from '../queries/exchange'
 
 export default class ExchangeService {
 	private tokensMap: any = {}
@@ -106,16 +108,14 @@ export default class ExchangeService {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
 
 		if (txProvider === '1inch') {
-			const {
-				quoteTradePrice: totalTradePrice,
-				baseTradePrice: estimatedBaseTradePrice,
-			} = await this.getTradePrices(
-				txProvider,
-				quoteCurrencyKey,
-				baseCurrencyKey,
-				quoteAmountWei,
-				baseAmountWei
-			)
+			const { quoteTradePrice: totalTradePrice, baseTradePrice: estimatedBaseTradePrice } =
+				await this.getTradePrices(
+					txProvider,
+					quoteCurrencyKey,
+					baseCurrencyKey,
+					quoteAmountWei,
+					baseAmountWei
+				)
 
 			if (totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
 				return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg()
@@ -196,10 +196,11 @@ export default class ExchangeService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		const maxSecsLeftInWaitingPeriod = (await this.sdk.context.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
-			this.sdk.context.walletAddress,
-			ethers.utils.formatBytes32String(currencyKey)
-		)) as ethers.BigNumberish
+		const maxSecsLeftInWaitingPeriod =
+			(await this.sdk.context.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
+				this.sdk.context.walletAddress,
+				ethers.utils.formatBytes32String(currencyKey)
+			)) as ethers.BigNumberish
 
 		return Number(maxSecsLeftInWaitingPeriod)
 	}
@@ -844,6 +845,14 @@ export default class ExchangeService {
 		}
 
 		return ret
+	}
+
+	get mainGqlEndpoint() {
+		return getMainEndpoint(this.sdk.context.networkId)
+	}
+
+	public getWalletTrades() {
+		return queryWalletTrades(this.sdk, this.sdk.context.walletAddress)
 	}
 
 	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {

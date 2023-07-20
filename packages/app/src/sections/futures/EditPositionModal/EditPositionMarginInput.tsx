@@ -55,10 +55,10 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 			return !marginDelta || isNaN(Number(marginDelta)) ? ZERO_WEI : wei(marginDelta)
 		}, [marginDelta])
 
-		const invalid = useMemo(() => wei(marginDeltaWei || 0).gt(maxUsdInput), [
-			marginDeltaWei,
-			maxUsdInput,
-		])
+		const invalid = useMemo(
+			() => wei(marginDeltaWei || 0).gt(maxUsdInput),
+			[marginDeltaWei, maxUsdInput]
+		)
 
 		return (
 			<div>
@@ -82,8 +82,7 @@ const EditPositionMarginInput: React.FC<OrderSizingProps> = memo(
 					defaultValue={0}
 					value={Math.abs(Number(marginDelta))}
 					onChange={onChangeSlider}
-					valueLabelDisplay="auto"
-					valueLabelFormat={(v) => formatNumber(v)}
+					valueLabelFormat={(v: number) => formatNumber(v)}
 					$currentMark={Number(marginDelta ?? 0)}
 				/>
 			</div>
