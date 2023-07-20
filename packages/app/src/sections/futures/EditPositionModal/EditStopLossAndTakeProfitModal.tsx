@@ -1,10 +1,11 @@
 import { ConditionalOrderTypeEnum, PositionSide } from '@kwenta/sdk/types'
-import { formatDollars, stripZeros, suggestedDecimals } from '@kwenta/sdk/utils'
+import { stripZeros, suggestedDecimals } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import AcceptWarningView from 'components/AcceptWarningView'
 import BaseModal from 'components/BaseModal'
 import Button from 'components/Button'
 import ErrorView from 'components/ErrorView'
@@ -13,11 +14,10 @@ import { FlexDivRowCentered } from 'components/layout/flex'
 import SelectorButtons from 'components/SelectorButtons'
 import Spacer from 'components/Spacer'
 import { Body } from 'components/Text'
-import { NO_VALUE } from 'constants/placeholder'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectAckedOrdersWarning, selectTransaction } from 'state/app/selectors'
 import { clearTradeInputs } from 'state/futures/actions'
-import { selectSubmittingFuturesTx } from 'state/futures/selectors'
+import { selectModalSLValidity, selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
 	calculateKeeperDeposit,
 	updateStopLossAndTakeProfit,
@@ -35,7 +35,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { KeeperDepositRow } from '../FeeInfoBox/FeesRow'
 import PositionType from '../PositionType'
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement'
-import ShowPercentage from '../Trade/ShowPercentage'
 
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput'
 
@@ -53,6 +52,9 @@ export default function EditStopLossAndTakeProfitModal() {
 	const keeperDeposit = useAppSelector(selectSmartMarginKeeperDeposit)
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
 	const hideOrderWarning = useAppSelector(selectAckedOrdersWarning)
+	const slValidity = useAppSelector(selectModalSLValidity)
+
+	const [acceptedSLRisk, setAcceptedSLRisk] = useState(false)
 
 	const stopLoss = exsistingSLTPOrders.find(
 		(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
@@ -83,14 +85,6 @@ export default function EditStopLossAndTakeProfitModal() {
 		return hasOrders && (tpOrderPrice !== takeProfitPrice || slOrderPrice !== stopLossPrice)
 	}, [hasOrders, stopLoss?.targetPrice, stopLossPrice, takeProfit?.targetPrice, takeProfitPrice])
 
-	const slInvalid = useMemo(() => {
-		if (position?.position?.side === 'long') {
-			return !!stopLossPrice && wei(stopLossPrice || 0).gt(marketPrice)
-		} else {
-			return !!stopLossPrice && wei(stopLossPrice || 0).lt(marketPrice)
-		}
-	}, [stopLossPrice, marketPrice, position?.position?.side])
-
 	const tpInvalid = useMemo(() => {
 		if (position?.position?.side === 'long') {
 			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(marketPrice)
@@ -105,7 +99,8 @@ export default function EditStopLossAndTakeProfitModal() {
 
 	const isActive = useMemo(
 		() =>
-			!slInvalid &&
+			!(slValidity.showWarning && !acceptedSLRisk) &&
+			!slValidity.invalid &&
 			!tpInvalid &&
 			!ethBalanceExceeded &&
 			(hasOrders
@@ -115,12 +110,14 @@ export default function EditStopLossAndTakeProfitModal() {
 				: hasInputValues),
 		[
 			ethBalanceExceeded,
+			acceptedSLRisk,
 			hasChangeOrders,
 			hasInputValues,
 			hasOrders,
 			stopLossPrice,
 			takeProfitPrice,
-			slInvalid,
+			slValidity.showWarning,
+			slValidity.invalid,
 			tpInvalid,
 		]
 	)
@@ -150,6 +147,7 @@ export default function EditStopLossAndTakeProfitModal() {
 
 	const onSelectStopLossPercent = useCallback(
 		(index: number) => {
+			if (slValidity.disabled) return
 			const option = SL_OPTIONS[index]
 			if (option === 'none') {
 				dispatch(setSLTPModalStopLoss(''))
@@ -164,7 +162,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				dispatch(setSLTPModalStopLoss(stopLoss.toString(dp)))
 			}
 		},
-		[marketPrice, dispatch, position?.position?.side, leverageWei]
+		[marketPrice, dispatch, position?.position?.side, leverageWei, slValidity.disabled]
 	)
 
 	const onSelectTakeProfit = useCallback(
@@ -231,19 +229,11 @@ export default function EditStopLossAndTakeProfitModal() {
 					<EditStopLossAndTakeProfitInput
 						type={'take-profit'}
 						invalid={tpInvalid}
-						currentPrice={
-							marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
-						}
+						currentPrice={marketPrice}
 						value={takeProfitPrice}
+						positionSide={position?.position?.side || PositionSide.LONG}
+						leverage={position?.position?.leverage || wei(1)}
 						onChange={onChangeTakeProfit}
-						right={
-							<ShowPercentage
-								targetPrice={takeProfitPrice}
-								currentPrice={marketPrice}
-								leverageSide={position?.position?.side}
-								leverageWei={leverageWei}
-							/>
-						}
 					/>
 
 					<SelectorButtons
@@ -256,24 +246,19 @@ export default function EditStopLossAndTakeProfitModal() {
 
 					<EditStopLossAndTakeProfitInput
 						type={'stop-loss'}
-						invalid={slInvalid}
-						currentPrice={
-							marketPrice ? formatDollars(marketPrice, { suggestDecimals: true }) : NO_VALUE
-						}
+						disabled={!!slValidity.disabled}
+						disabledReason={slValidity.disabled ? 'Leverage Too High' : undefined}
+						positionSide={position?.position?.side || PositionSide.LONG}
+						leverage={position?.position?.leverage || wei(1)}
+						invalid={slValidity.invalid}
+						currentPrice={marketPrice}
+						minMaxPrice={slValidity.minMaxStopPrice}
 						value={stopLossPrice}
 						onChange={onChangeStopLoss}
-						right={
-							<ShowPercentage
-								targetPrice={stopLossPrice}
-								isStopLoss={true}
-								currentPrice={marketPrice}
-								leverageSide={position?.position?.side}
-								leverageWei={leverageWei}
-							/>
-						}
 					/>
 
 					<SelectorButtons
+						disabled={slValidity.disabled}
 						onSelect={onSelectStopLossPercent}
 						options={SL_OPTIONS}
 						type={'pill-button-large'}
@@ -287,6 +272,15 @@ export default function EditStopLossAndTakeProfitModal() {
 					/>
 
 					<Spacer height={4} />
+					{slValidity.showWarning && (
+						<AcceptWarningView
+							id="sl-risk-warning"
+							style={{ margin: '0 0 20px 0' }}
+							message={t('futures.market.trade.confirmation.modal.stop-loss-warning')}
+							checked={acceptedSLRisk}
+							onChangeChecked={(checked) => setAcceptedSLRisk(checked)}
+						/>
+					)}
 
 					<Button
 						loading={isSubmitting}

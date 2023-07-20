@@ -2,6 +2,7 @@ import {
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	NetworkId,
+	PositionSide,
 	SynthSuspensionReason,
 } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
@@ -171,15 +172,15 @@ export const MOCK_TRADE_PREVIEW = {
 	liqPrice: wei('1684.972418555525651097'),
 	margin: wei('99.800035754443902007'),
 	price: wei('1847.756843061337953400'),
-	size: '0.541100000000000000',
-	sizeDelta: '0.541100000000000000',
-	side: 'long',
-	leverage: '10.018245186209463524',
-	notionalValue: '999.821227780489966584',
+	size: wei('0.541100000000000000'),
+	sizeDelta: wei('0.541100000000000000'),
+	side: PositionSide.LONG,
+	leverage: wei('10.018245186209463524'),
+	notionalValue: wei('999.821227780489966584'),
 	status: 0,
 	showStatus: false,
 	statusMessage: 'Success',
-	priceImpact: '0.000000270556392273',
+	priceImpact: wei('0.000000270556392273'),
 	exceedsPriceProtection: false,
 }
 

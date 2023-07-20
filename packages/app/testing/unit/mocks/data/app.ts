@@ -141,11 +141,13 @@ export const CHAINS = [
 	},
 ]
 
+export const DEFAULT_ETH_PRICE = '1810.50'
+
 export const PRELOADED_STATE = {
 	wallet: { networkId: 10 as NetworkId, walletAddress: TEST_ADDR },
 	prices: {
 		...PRICES_INITIAL_STATE,
-		onChainPrices: { sETH: { price: '1810.50', change: 'up' } } as PricesInfoMap,
-		offChainPrices: { sETH: { price: '1810.50', change: 'up' } } as PricesInfoMap,
+		onChainPrices: { sETH: { price: DEFAULT_ETH_PRICE, change: 'up' } } as PricesInfoMap,
+		offChainPrices: { sETH: { price: DEFAULT_ETH_PRICE, change: 'up' } } as PricesInfoMap,
 	},
 }

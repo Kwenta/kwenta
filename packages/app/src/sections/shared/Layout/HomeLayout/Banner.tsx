@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { memo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 
@@ -22,17 +23,22 @@ import localStore from 'utils/localStore'
 type BannerViewProps = {
 	mode: 'mobile' | 'desktop'
 	onDismiss: (e: any) => void
-	onDetails: () => void
+	onDetails?: () => void
 }
 
 const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) => {
+	const router = useRouter()
 	const isMobile = mode === 'mobile'
 	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { flex: '0.1' }
 	const closeIconProps = isMobile ? { width: 12, height: 12 } : {}
 	const linkSize = isMobile ? 'small' : 'medium'
 
 	return (
-		<FuturesBannerContainer onClick={onDetails}>
+		<FuturesBannerContainer
+			onClick={onDetails}
+			$hasDetails={!!BANNER_LINK_URL}
+			$compact={!router.pathname.includes('market')}
+		>
 			<FuturesBannerLinkWrapper>
 				<FuturesLink size={linkSize}>
 					<strong>Important: </strong>
@@ -48,14 +54,21 @@ const Banner = memo(() => {
 	const dispatch = useAppDispatch()
 	const showBanner = useAppSelector(selectShowBanner)
 	const storedTime: number = localStore.get('bannerIsClicked') || 0
+	const router = useRouter()
 
 	useEffect(
 		() => {
 			const currentTime = new Date().getTime()
-			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED))
+			dispatch(
+				setShowBanner(
+					currentTime - storedTime >= BANNER_WAITING_TIME &&
+						BANNER_ENABLED &&
+						router.pathname.includes('staking')
+				)
+			)
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[storedTime]
+		[storedTime, router.pathname]
 	)
 
 	const handleDismiss = useCallback(
@@ -69,7 +82,7 @@ const Banner = memo(() => {
 	)
 
 	const openDetails = useCallback(
-		() => window.open(BANNER_LINK_URL, '_blank', 'noopener noreferrer'),
+		() => BANNER_LINK_URL && window.open(BANNER_LINK_URL, '_blank', 'noopener noreferrer'),
 		[]
 	)
 
@@ -99,14 +112,14 @@ const FuturesLink = styled(Body)`
 	`};
 `
 
-const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
+const FuturesBannerContainer = styled.div<{ $hasDetails?: boolean; $compact?: boolean }>`
 	height: ${BANNER_HEIGHT_DESKTOP}px;
 	width: 100%;
 	display: flex;
 	align-items: center;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.background};
-	margin-bottom: 0;
-	cursor: pointer;
+	margin-bottom: 15px;
+	cursor: ${(props) => (props.$hasDetails ? 'pointer' : 'auto')};
 
 	${media.lessThan('md')`
 		position: relative;
@@ -119,8 +132,9 @@ const FuturesBannerContainer = styled.div<{ $compact?: boolean }>`
 		border-radius: 0px;
 		gap: 5px;
 		height: ${BANNER_HEIGHT_MOBILE}px;
-		margin-top: ${MARKET_SELECTOR_HEIGHT_MOBILE}px;
 	`}
+
+	margin-top: ${(props) => (props.$compact ? 0 : MARKET_SELECTOR_HEIGHT_MOBILE)}px;
 `
 
 const FuturesBannerLinkWrapper = styled.div`

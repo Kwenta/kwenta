@@ -26,6 +26,7 @@ import {
 	selectMarketAsset,
 	selectPosition,
 	selectLeverageInput,
+	selectTradePanelSLValidity,
 } from 'state/futures/selectors'
 import { refetchTradePreview, submitSmartMarginOrder } from 'state/futures/smartMargin/actions'
 import {
@@ -38,7 +39,8 @@ import {
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks'
 
-import ConfirmSlippage from './ConfirmSlippage'
+import AcceptWarningView from '../../../components/AcceptWarningView'
+
 import TradeConfirmationRow from './TradeConfirmationRow'
 import TradeConfirmationSummary from './TradeConfirmationSummary'
 
@@ -76,7 +78,10 @@ export default function TradeConfirmationModal({
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs)
 	const hasSlTp = useAppSelector(selectNewTradeHasSlTp)
+	const slValidity = useAppSelector(selectTradePanelSLValidity)
+
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
+	const [acceptedSLRisk, setAcceptedSLRisk] = useState(false)
 
 	usePollAction('refresh_preview', refetchTradePreview, { intervalTime: 6000 })
 
@@ -113,11 +118,13 @@ export default function TradeConfirmationModal({
 		() => [
 			{
 				label: 'stop loss',
-				value: stopLossPrice ? formatDollars(stopLossPrice) : NO_VALUE,
+				value: stopLossPrice ? formatDollars(stopLossPrice, { suggestDecimals: true }) : NO_VALUE,
 			},
 			{
 				label: 'take profit',
-				value: takeProfitPrice ? formatDollars(takeProfitPrice) : NO_VALUE,
+				value: takeProfitPrice
+					? formatDollars(takeProfitPrice, { suggestDecimals: true })
+					: NO_VALUE,
 			},
 			{
 				label: 'liquidation price',
@@ -145,7 +152,10 @@ export default function TradeConfirmationModal({
 			{
 				label: 'price impact',
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
-				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI)}`,
+				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI, {
+					suggestDecimals: true,
+					maxDecimals: 4,
+				})}`,
 				color: positionDetails?.exceedsPriceProtection ? 'red' : '',
 			},
 			{
@@ -255,9 +265,21 @@ export default function TradeConfirmationModal({
 				})}
 			</RowsContainer>
 			{positionDetails?.exceedsPriceProtection && (
-				<ConfirmSlippage
+				<AcceptWarningView
+					id="pp-override"
+					style={{ margin: '10px 0 0 0' }}
+					message={t('futures.market.trade.confirmation.modal.slippage-warning')}
 					checked={overridePriceProtection}
 					onChangeChecked={(checked) => setOverridePriceProtection(checked)}
+				/>
+			)}
+			{slValidity.showWarning && (
+				<AcceptWarningView
+					id="sl-risk-warning"
+					style={{ margin: '10px 0 0 0' }}
+					message={t('futures.market.trade.confirmation.modal.stop-loss-warning')}
+					checked={acceptedSLRisk}
+					onChangeChecked={(checked) => setAcceptedSLRisk(checked)}
 				/>
 			)}
 			<ConfirmTradeButton
@@ -265,7 +287,12 @@ export default function TradeConfirmationModal({
 				variant={isSubmitting ? 'flat' : leverageSide}
 				onClick={allowanceValid ? onConfirmOrder : onApproveAllowance}
 				className={leverageSide}
-				disabled={!positionDetails || isSubmitting || !!disabledReason}
+				disabled={
+					!positionDetails ||
+					isSubmitting ||
+					!!disabledReason ||
+					(slValidity.showWarning && !acceptedSLRisk)
+				}
 			>
 				{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}
 			</ConfirmTradeButton>

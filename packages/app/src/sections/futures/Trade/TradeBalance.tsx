@@ -89,7 +89,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 					<>
 						{isMobile ? (
 							<FlexDivCol rowGap="5px">
-								<FlexDivRow style={{ width: '200px' }}>
+								<FlexDivRow style={{ width: '170px' }}>
 									<Body size={'medium'} color="secondary">
 										{t('futures.market.trade.trade-balance.available-margin')}:
 									</Body>
@@ -100,7 +100,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 									</NumericValue>
 								</FlexDivRow>
 								{FuturesMarginType.SMART_MARGIN && lockedMargin.gt(0) && (
-									<FlexDivRow style={{ width: '200px' }}>
+									<FlexDivRow style={{ width: '170px' }}>
 										<Body size={'medium'} color="secondary">
 											{t('futures.market.trade.trade-balance.locked-margin')}:
 										</Body>

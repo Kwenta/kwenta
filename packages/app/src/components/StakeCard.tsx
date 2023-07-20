@@ -1,4 +1,4 @@
-import { toWei, truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber, toWei, truncateNumbers } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,12 +8,10 @@ import Button from 'components/Button'
 import NumericInput from 'components/Input/NumericInput'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
-import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import media from 'styles/media'
 
-import ErrorView from './ErrorView'
-import Spacer from './Spacer'
 import { Body, NumericValue } from './Text'
 
 type StakeCardProps = {
@@ -51,7 +49,6 @@ const StakeCard: FC<StakeCardProps> = memo(
 		isApproving = false,
 	}) => {
 		const { t } = useTranslation()
-
 		const [amount, setAmount] = useState('')
 		const [activeTab, setActiveTab] = useState(0)
 
@@ -76,7 +73,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 		}, [activeTab, isStakeEnabled, isUnstakeEnabled])
 
 		const balanceString = useMemo(() => {
-			return truncateNumbers(balance, DEFAULT_CRYPTO_DECIMALS)
+			return formatNumber(balance, { suggestDecimals: true })
 		}, [balance])
 
 		const isLoading = useMemo(() => {
@@ -119,7 +116,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 		}, [activeTab, isStaked, isUnstaked])
 
 		return (
-			<StakingInputCardContainer>
+			<CardGridContainer>
 				<SegmentedControl
 					values={[
 						t('dashboard.stake.tabs.stake-table.stake'),
@@ -128,7 +125,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 					onChange={handleTabChange}
 					selectedIndex={activeTab}
 				/>
-				<FlexDivCol>
+				<FlexDivCol rowGap="50px" style={{ marginTop: '15px' }}>
 					<FlexDivCol>
 						<StakeInputHeader>
 							<Body color="secondary">{title}</Body>
@@ -139,7 +136,6 @@ const StakeCard: FC<StakeCardProps> = memo(
 						</StakeInputHeader>
 						<NumericInput value={amount} onChange={handleChange} bold />
 					</FlexDivCol>
-					<Spacer height={25} />
 					<Button
 						fullWidth
 						variant="flat"
@@ -154,16 +150,8 @@ const StakeCard: FC<StakeCardProps> = memo(
 								: t('dashboard.stake.tabs.stake-table.approve')
 							: t('dashboard.stake.tabs.stake-table.unstake')}
 					</Button>
-					<ErrorView
-						message={t('dashboard.stake.portfolio.cooldown.warning')}
-						containerStyle={{
-							margin: '0',
-							marginTop: '25px',
-							padding: '10px 0',
-						}}
-					/>
 				</FlexDivCol>
-			</StakingInputCardContainer>
+			</CardGridContainer>
 		)
 	}
 )
@@ -172,12 +160,12 @@ const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
 	column-gap: 5px;
 `
 
-const StakingInputCardContainer = styled(StakingCard)`
-	min-height: 125px;
-	flex: 1;
-	margin-bottom: 0px;
+const CardGridContainer = styled(StakingCard)`
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 	${media.lessThan('lg')`
-		width: 100%;
+		justify-content: flex-start;
 	`}
 `
 

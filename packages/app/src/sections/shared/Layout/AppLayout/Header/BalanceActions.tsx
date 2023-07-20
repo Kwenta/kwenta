@@ -12,6 +12,7 @@ import Button from 'components/Button'
 import { FlexDivRow } from 'components/layout/flex'
 import Pill from 'components/Pill'
 import { Body, LogoText } from 'components/Text'
+import { EXTERNAL_LINKS } from 'constants/links'
 import ROUTES from 'constants/routes'
 import useClickOutside from 'hooks/useClickOutside'
 import { StakingCard } from 'sections/dashboard/Stake/card'
@@ -41,7 +42,7 @@ const BalanceActions: FC = () => {
 	const { ref } = useClickOutside(() => setOpen(false))
 
 	const goToStaking = useCallback(() => {
-		router.push(ROUTES.Dashboard.TradingRewards)
+		router.push(ROUTES.Dashboard.Stake)
 		setOpen(false)
 	}, [router])
 
@@ -165,7 +166,9 @@ const BalanceActions: FC = () => {
 								size="large"
 								roundedCorner={false}
 								weight="bold"
-								onClick={() => router.push(ROUTES.Dashboard.Rewards)}
+								onClick={() =>
+									window.open(EXTERNAL_LINKS.Docs.RewardsGuide, '_blank', 'noopener noreferrer')
+								}
 							>
 								{t('dashboard.rewards.learn-more')}
 							</Pill>
