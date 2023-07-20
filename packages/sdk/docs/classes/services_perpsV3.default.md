@@ -65,27 +65,27 @@
 
 #### Defined in
 
-[services/perpsV3.ts:60](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L60)
+[packages/sdk/src/services/perpsV3.ts:60](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L60)
 
 ## Properties
 
 ### internalFuturesMarkets
 
-• **internalFuturesMarkets**: `Partial`<`Record`<`NetworkId`, { `[marketAddress: string]`: `PerpsV2MarketInternal`;  }\>\> = `{}`
+• **internalFuturesMarkets**: `Partial`<`Record`<[`NetworkId`](../modules/types_common.md#networkid), { `[marketAddress: string]`: `PerpsV2MarketInternal`;  }\>\> = `{}`
 
 #### Defined in
 
-[services/perpsV3.ts:56](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L56)
+[packages/sdk/src/services/perpsV3.ts:56](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L56)
 
 ___
 
 ### markets
 
-• **markets**: `undefined` \| `FuturesMarket`[]
+• **markets**: `undefined` \| [`FuturesMarket`](../modules/types_futures.md#futuresmarket)[]
 
 #### Defined in
 
-[services/perpsV3.ts:55](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L55)
+[packages/sdk/src/services/perpsV3.ts:55](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L55)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:54](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L54)
+[packages/sdk/src/services/perpsV3.ts:54](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L54)
 
 ## Accessors
 
@@ -109,7 +109,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:64](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L64)
+[packages/sdk/src/services/perpsV3.ts:64](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L64)
 
 ## Methods
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:515](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L515)
+[packages/sdk/src/services/perpsV3.ts:515](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L515)
 
 ___
 
@@ -152,7 +152,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:568](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L568)
+[packages/sdk/src/services/perpsV3.ts:568](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L568)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:542](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L542)
+[packages/sdk/src/services/perpsV3.ts:542](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L542)
 
 ___
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:596](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L596)
+[packages/sdk/src/services/perpsV3.ts:596](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L596)
 
 ___
 
@@ -214,7 +214,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:526](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L526)
+[packages/sdk/src/services/perpsV3.ts:526](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L526)
 
 ___
 
@@ -226,7 +226,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `marketKey` | `FuturesMarketKey` |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
 | `marketAddress` | `string` |
 | `account` | `string` |
 
@@ -236,7 +236,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:580](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L580)
+[packages/sdk/src/services/perpsV3.ts:580](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L580)
 
 ___
 
@@ -257,7 +257,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:575](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L575)
+[packages/sdk/src/services/perpsV3.ts:575](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L575)
 
 ___
 
@@ -277,7 +277,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:417](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L417)
+[packages/sdk/src/services/perpsV3.ts:417](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L417)
 
 ___
 
@@ -297,29 +297,29 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:404](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L404)
+[packages/sdk/src/services/perpsV3.ts:404](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L404)
 
 ___
 
 ### getAllTrades
 
-▸ **getAllTrades**(`walletAddress`, `accountType`, `pageLength?`): `Promise`<`FuturesTrade`[]\>
+▸ **getAllTrades**(`walletAddress`, `accountType`, `pageLength?`): `Promise`<[`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 #### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
 | `walletAddress` | `string` | `undefined` |
-| `accountType` | `FuturesMarginType` | `undefined` |
+| `accountType` | [`FuturesMarginType`](../enums/types_futures.FuturesMarginType.md) | `undefined` |
 | `pageLength` | `number` | `16` |
 
 #### Returns
 
-`Promise`<`FuturesTrade`[]\>
+`Promise`<[`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 #### Defined in
 
-[services/perpsV3.ts:487](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L487)
+[packages/sdk/src/services/perpsV3.ts:487](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L487)
 
 ___
 
@@ -340,7 +340,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:422](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L422)
+[packages/sdk/src/services/perpsV3.ts:422](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L422)
 
 ___
 
@@ -352,8 +352,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `_markets` | `FuturesMarket`[] |
-| `_prices` | `Partial`<`Record`<`AssetKey`, `Wei`\>\> |
+| `_markets` | [`FuturesMarket`](../modules/types_futures.md#futuresmarket)[] |
+| `_prices` | `Partial`<`Record`<[`AssetKey`](../modules/types_prices.md#assetkey), `Wei`\>\> |
 | `_period` | `Period` |
 
 #### Returns
@@ -362,27 +362,27 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:259](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L259)
+[packages/sdk/src/services/perpsV3.ts:259](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L259)
 
 ___
 
 ### getDailyVolumes
 
-▸ **getDailyVolumes**(): `Promise`<`FuturesVolumes`\>
+▸ **getDailyVolumes**(): `Promise`<[`FuturesVolumes`](../modules/types_futures.md#futuresvolumes)\>
 
 #### Returns
 
-`Promise`<`FuturesVolumes`\>
+`Promise`<[`FuturesVolumes`](../modules/types_futures.md#futuresvolumes)\>
 
 #### Defined in
 
-[services/perpsV3.ts:370](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L370)
+[packages/sdk/src/services/perpsV3.ts:370](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L370)
 
 ___
 
 ### getDelayedOrder
 
-▸ **getDelayedOrder**(`account`, `marketAddress`): `Promise`<`DelayedOrder`\>
+▸ **getDelayedOrder**(`account`, `marketAddress`): `Promise`<[`DelayedOrder`](../modules/types_futures.md#delayedorder)\>
 
 #### Parameters
 
@@ -393,17 +393,17 @@ ___
 
 #### Returns
 
-`Promise`<`DelayedOrder`\>
+`Promise`<[`DelayedOrder`](../modules/types_futures.md#delayedorder)\>
 
 #### Defined in
 
-[services/perpsV3.ts:427](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L427)
+[packages/sdk/src/services/perpsV3.ts:427](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L427)
 
 ___
 
 ### getDelayedOrders
 
-▸ **getDelayedOrders**(`account`, `marketAddresses`): `Promise`<`DelayedOrder`[]\>
+▸ **getDelayedOrders**(`account`, `marketAddresses`): `Promise`<[`DelayedOrder`](../modules/types_futures.md#delayedorder)[]\>
 
 #### Parameters
 
@@ -414,54 +414,54 @@ ___
 
 #### Returns
 
-`Promise`<`DelayedOrder`[]\>
+`Promise`<[`DelayedOrder`](../modules/types_futures.md#delayedorder)[]\>
 
 #### Defined in
 
-[services/perpsV3.ts:433](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L433)
+[packages/sdk/src/services/perpsV3.ts:433](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L433)
 
 ___
 
 ### getFuturesPositions
 
-▸ **getFuturesPositions**(`address`, `futuresMarkets`): `Promise`<`FuturesPosition`[]\>
+▸ **getFuturesPositions**(`address`, `futuresMarkets`): `Promise`<[`FuturesPosition`](../modules/types_futures.md#futuresposition)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `address` | `string` |
-| `futuresMarkets` | { `address`: `string` ; `asset`: `FuturesMarketAsset` ; `marketKey`: `FuturesMarketKey`  }[] |
+| `futuresMarkets` | { `address`: `string` ; `asset`: [`FuturesMarketAsset`](../enums/types_futures.FuturesMarketAsset.md) ; `marketKey`: [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md)  }[] |
 
 #### Returns
 
-`Promise`<`FuturesPosition`[]\>
+`Promise`<[`FuturesPosition`](../modules/types_futures.md#futuresposition)[]\>
 
 #### Defined in
 
-[services/perpsV3.ts:208](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L208)
+[packages/sdk/src/services/perpsV3.ts:208](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L208)
 
 ___
 
 ### getFuturesTrades
 
-▸ **getFuturesTrades**(`marketKey`, `minTs`, `maxTs`): `Promise`<``null`` \| `FuturesTrade`[]\>
+▸ **getFuturesTrades**(`marketKey`, `minTs`, `maxTs`): `Promise`<``null`` \| [`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `marketKey` | `FuturesMarketKey` |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
 | `minTs` | `number` |
 | `maxTs` | `number` |
 
 #### Returns
 
-`Promise`<``null`` \| `FuturesTrade`[]\>
+`Promise`<``null`` \| [`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 #### Defined in
 
-[services/perpsV3.ts:501](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L501)
+[packages/sdk/src/services/perpsV3.ts:501](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L501)
 
 ___
 
@@ -474,10 +474,10 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `_marketAddress` | `string` |
-| `_marketKey` | `FuturesMarketKey` |
-| `_orderType` | `ContractOrderType` |
+| `_marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
+| `_orderType` | [`ContractOrderType`](../enums/types_futures.ContractOrderType.md) |
 | `_inputs` | `Object` |
-| `_inputs.leverageSide` | `PositionSide` |
+| `_inputs.leverageSide` | [`PositionSide`](../enums/types_futures.PositionSide.md) |
 | `_inputs.price` | `Wei` |
 | `_inputs.sizeDelta` | `Wei` |
 
@@ -487,13 +487,13 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:444](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L444)
+[packages/sdk/src/services/perpsV3.ts:444](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L444)
 
 ___
 
 ### getMarginTransfers
 
-▸ **getMarginTransfers**(`walletAddress?`): `Promise`<`MarginTransfer`[]\>
+▸ **getMarginTransfers**(`walletAddress?`): `Promise`<[`MarginTransfer`](../modules/types_futures.md#margintransfer)[]\>
 
 #### Parameters
 
@@ -503,11 +503,11 @@ ___
 
 #### Returns
 
-`Promise`<`MarginTransfer`[]\>
+`Promise`<[`MarginTransfer`](../modules/types_futures.md#margintransfer)[]\>
 
 #### Defined in
 
-[services/perpsV3.ts:412](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L412)
+[packages/sdk/src/services/perpsV3.ts:412](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L412)
 
 ___
 
@@ -519,7 +519,7 @@ ___
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
-| `marketAsset` | `FuturesMarketAsset` | `undefined` |
+| `marketAsset` | [`FuturesMarketAsset`](../enums/types_futures.FuturesMarketAsset.md) | `undefined` |
 | `periodLength` | `number` | `PERIOD_IN_SECONDS.TWO_WEEKS` |
 
 #### Returns
@@ -528,21 +528,21 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:251](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L251)
+[packages/sdk/src/services/perpsV3.ts:251](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L251)
 
 ___
 
 ### getMarkets
 
-▸ **getMarkets**(): `Promise`<`FuturesMarket`[]\>
+▸ **getMarkets**(): `Promise`<[`FuturesMarket`](../modules/types_futures.md#futuresmarket)[]\>
 
 #### Returns
 
-`Promise`<`FuturesMarket`[]\>
+`Promise`<[`FuturesMarket`](../modules/types_futures.md#futuresmarket)[]\>
 
 #### Defined in
 
-[services/perpsV3.ts:68](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L68)
+[packages/sdk/src/services/perpsV3.ts:68](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L68)
 
 ___
 
@@ -563,7 +563,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:507](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L507)
+[packages/sdk/src/services/perpsV3.ts:507](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L507)
 
 ___
 
@@ -583,13 +583,13 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:398](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L398)
+[packages/sdk/src/services/perpsV3.ts:398](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L398)
 
 ___
 
 ### getPositionHistory
 
-▸ **getPositionHistory**(`walletAddress`): `Promise`<`FuturesPositionHistory`[]\>
+▸ **getPositionHistory**(`walletAddress`): `Promise`<[`FuturesPositionHistory`](../modules/types_futures.md#futurespositionhistory)[]\>
 
 #### Parameters
 
@@ -599,11 +599,11 @@ ___
 
 #### Returns
 
-`Promise`<`FuturesPositionHistory`[]\>
+`Promise`<[`FuturesPositionHistory`](../modules/types_futures.md#futurespositionhistory)[]\>
 
 #### Defined in
 
-[services/perpsV3.ts:465](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L465)
+[packages/sdk/src/services/perpsV3.ts:465](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L465)
 
 ___
 
@@ -625,30 +625,30 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:602](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L602)
+[packages/sdk/src/services/perpsV3.ts:602](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L602)
 
 ___
 
 ### getTradesForMarket
 
-▸ **getTradesForMarket**(`marketAsset`, `walletAddress`, `accountType`, `pageLength?`): `Promise`<`FuturesTrade`[]\>
+▸ **getTradesForMarket**(`marketAsset`, `walletAddress`, `accountType`, `pageLength?`): `Promise`<[`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 #### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
-| `marketAsset` | `FuturesMarketAsset` | `undefined` |
+| `marketAsset` | [`FuturesMarketAsset`](../enums/types_futures.FuturesMarketAsset.md) | `undefined` |
 | `walletAddress` | `string` | `undefined` |
-| `accountType` | `FuturesMarginType` | `undefined` |
+| `accountType` | [`FuturesMarginType`](../enums/types_futures.FuturesMarginType.md) | `undefined` |
 | `pageLength` | `number` | `16` |
 
 #### Returns
 
-`Promise`<`FuturesTrade`[]\>
+`Promise`<[`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 #### Defined in
 
-[services/perpsV3.ts:472](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L472)
+[packages/sdk/src/services/perpsV3.ts:472](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L472)
 
 ___
 
@@ -671,7 +671,7 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:547](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L547)
+[packages/sdk/src/services/perpsV3.ts:547](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L547)
 
 ___
 
@@ -692,4 +692,4 @@ ___
 
 #### Defined in
 
-[services/perpsV3.ts:533](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/perpsV3.ts#L533)
+[packages/sdk/src/services/perpsV3.ts:533](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/perpsV3.ts#L533)

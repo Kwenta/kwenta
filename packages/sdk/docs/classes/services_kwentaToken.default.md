@@ -67,7 +67,7 @@
 
 #### Defined in
 
-[services/kwentaToken.ts:30](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L30)
+[packages/sdk/src/services/kwentaToken.ts:30](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L30)
 
 ## Properties
 
@@ -77,7 +77,7 @@
 
 #### Defined in
 
-[services/kwentaToken.ts:28](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L28)
+[packages/sdk/src/services/kwentaToken.ts:28](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L28)
 
 ## Methods
 
@@ -98,7 +98,7 @@
 
 #### Defined in
 
-[services/kwentaToken.ts:372](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L372)
+[packages/sdk/src/services/kwentaToken.ts:372](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L372)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:46](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L46)
+[packages/sdk/src/services/kwentaToken.ts:46](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L46)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:402](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L402)
+[packages/sdk/src/services/kwentaToken.ts:402](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L402)
 
 ___
 
@@ -155,7 +155,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:34](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L34)
+[packages/sdk/src/services/kwentaToken.ts:34](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L34)
 
 ___
 
@@ -167,7 +167,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `claimableRewards` | `ClaimParams`[][] |
+| `claimableRewards` | [`ClaimParams`](../modules/types_kwentaToken.md#claimparams)[][] |
 
 #### Returns
 
@@ -175,7 +175,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:714](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L714)
+[packages/sdk/src/services/kwentaToken.ts:714](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L714)
 
 ___
 
@@ -187,7 +187,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `claimableRewards` | `ClaimParams`[][] |
+| `claimableRewards` | [`ClaimParams`](../modules/types_kwentaToken.md#claimparams)[][] |
 
 #### Returns
 
@@ -195,7 +195,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:700](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L700)
+[packages/sdk/src/services/kwentaToken.ts:700](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L700)
 
 ___
 
@@ -207,7 +207,7 @@ ___
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
-| `claimableRewards` | `ClaimParams`[] | `undefined` |
+| `claimableRewards` | [`ClaimParams`](../modules/types_kwentaToken.md#claimparams)[] | `undefined` |
 | `isSnx` | `boolean` | `false` |
 
 #### Returns
@@ -216,7 +216,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:744](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L744)
+[packages/sdk/src/services/kwentaToken.ts:744](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L744)
 
 ___
 
@@ -230,7 +230,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:108](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L108)
+[packages/sdk/src/services/kwentaToken.ts:108](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L108)
 
 ___
 
@@ -244,7 +244,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:339](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L339)
+[packages/sdk/src/services/kwentaToken.ts:339](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L339)
 
 ___
 
@@ -258,7 +258,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:349](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L349)
+[packages/sdk/src/services/kwentaToken.ts:349](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L349)
 
 ___
 
@@ -272,13 +272,13 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:359](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L359)
+[packages/sdk/src/services/kwentaToken.ts:359](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L359)
 
 ___
 
 ### getClaimableAllRewards
 
-▸ **getClaimableAllRewards**(`epochPeriod`, `isOldDistributor?`, `isOp?`, `isSnx?`): `Promise`<{ `claimableRewards`: `ClaimParams`[] ; `totalRewards`: `Wei`  }\>
+▸ **getClaimableAllRewards**(`epochPeriod`, `isOldDistributor?`, `isOp?`, `isSnx?`): `Promise`<{ `claimableRewards`: [`ClaimParams`](../modules/types_kwentaToken.md#claimparams)[] ; `totalRewards`: `Wei`  }\>
 
 #### Parameters
 
@@ -291,17 +291,17 @@ ___
 
 #### Returns
 
-`Promise`<{ `claimableRewards`: `ClaimParams`[] ; `totalRewards`: `Wei`  }\>
+`Promise`<{ `claimableRewards`: [`ClaimParams`](../modules/types_kwentaToken.md#claimparams)[] ; `totalRewards`: `Wei`  }\>
 
 #### Defined in
 
-[services/kwentaToken.ts:599](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L599)
+[packages/sdk/src/services/kwentaToken.ts:599](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L599)
 
 ___
 
 ### getClaimableRewards
 
-▸ **getClaimableRewards**(`epochPeriod`, `isOldDistributor?`): `Promise`<{ `claimableRewards`: `ClaimParams`[] ; `totalRewards`: `Wei`  }\>
+▸ **getClaimableRewards**(`epochPeriod`, `isOldDistributor?`): `Promise`<{ `claimableRewards`: [`ClaimParams`](../modules/types_kwentaToken.md#claimparams)[] ; `totalRewards`: `Wei`  }\>
 
 #### Parameters
 
@@ -312,11 +312,11 @@ ___
 
 #### Returns
 
-`Promise`<{ `claimableRewards`: `ClaimParams`[] ; `totalRewards`: `Wei`  }\>
+`Promise`<{ `claimableRewards`: [`ClaimParams`](../modules/types_kwentaToken.md#claimparams)[] ; `totalRewards`: `Wei`  }\>
 
 #### Defined in
 
-[services/kwentaToken.ts:529](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L529)
+[packages/sdk/src/services/kwentaToken.ts:529](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L529)
 
 ___
 
@@ -330,7 +330,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:50](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L50)
+[packages/sdk/src/services/kwentaToken.ts:50](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L50)
 
 ___
 
@@ -344,35 +344,35 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:95](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L95)
+[packages/sdk/src/services/kwentaToken.ts:95](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L95)
 
 ___
 
 ### getEscrowData
 
-▸ **getEscrowData**(): `Promise`<{ `escrowData`: `EscrowData`[] ; `totalVestable`: `Wei`  }\>
+▸ **getEscrowData**(): `Promise`<{ `escrowData`: [`EscrowData`](../modules/types_kwentaToken.md#escrowdata)[] ; `totalVestable`: `Wei`  }\>
 
 #### Returns
 
-`Promise`<{ `escrowData`: `EscrowData`[] ; `totalVestable`: `Wei`  }\>
+`Promise`<{ `escrowData`: [`EscrowData`](../modules/types_kwentaToken.md#escrowdata)[] ; `totalVestable`: `Wei`  }\>
 
 #### Defined in
 
-[services/kwentaToken.ts:233](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L233)
+[packages/sdk/src/services/kwentaToken.ts:233](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L233)
 
 ___
 
 ### getEscrowV2Data
 
-▸ **getEscrowV2Data**(): `Promise`<{ `escrowData`: `EscrowData`[] ; `totalVestable`: `Wei`  }\>
+▸ **getEscrowV2Data**(): `Promise`<{ `escrowData`: [`EscrowData`](../modules/types_kwentaToken.md#escrowdata)[] ; `totalVestable`: `Wei`  }\>
 
 #### Returns
 
-`Promise`<{ `escrowData`: `EscrowData`[] ; `totalVestable`: `Wei`  }\>
+`Promise`<{ `escrowData`: [`EscrowData`](../modules/types_kwentaToken.md#escrowdata)[] ; `totalVestable`: `Wei`  }\>
 
 #### Defined in
 
-[services/kwentaToken.ts:286](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L286)
+[packages/sdk/src/services/kwentaToken.ts:286](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L286)
 
 ___
 
@@ -386,7 +386,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:503](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L503)
+[packages/sdk/src/services/kwentaToken.ts:503](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L503)
 
 ___
 
@@ -407,7 +407,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:759](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L759)
+[packages/sdk/src/services/kwentaToken.ts:759](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L759)
 
 ___
 
@@ -429,7 +429,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:783](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L783)
+[packages/sdk/src/services/kwentaToken.ts:783](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L783)
 
 ___
 
@@ -443,7 +443,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:118](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L118)
+[packages/sdk/src/services/kwentaToken.ts:118](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L118)
 
 ___
 
@@ -457,7 +457,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:192](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L192)
+[packages/sdk/src/services/kwentaToken.ts:192](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L192)
 
 ___
 
@@ -481,7 +481,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:808](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L808)
+[packages/sdk/src/services/kwentaToken.ts:808](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L808)
 
 ___
 
@@ -503,7 +503,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:426](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L426)
+[packages/sdk/src/services/kwentaToken.ts:426](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L426)
 
 ___
 
@@ -517,7 +517,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:443](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L443)
+[packages/sdk/src/services/kwentaToken.ts:443](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L443)
 
 ___
 
@@ -531,7 +531,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:447](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L447)
+[packages/sdk/src/services/kwentaToken.ts:447](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L447)
 
 ___
 
@@ -551,7 +551,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:479](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L479)
+[packages/sdk/src/services/kwentaToken.ts:479](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L479)
 
 ___
 
@@ -571,7 +571,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:495](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L495)
+[packages/sdk/src/services/kwentaToken.ts:495](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L495)
 
 ___
 
@@ -591,7 +591,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:471](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L471)
+[packages/sdk/src/services/kwentaToken.ts:471](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L471)
 
 ___
 
@@ -611,7 +611,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:487](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L487)
+[packages/sdk/src/services/kwentaToken.ts:487](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L487)
 
 ___
 
@@ -631,7 +631,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:483](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L483)
+[packages/sdk/src/services/kwentaToken.ts:483](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L483)
 
 ___
 
@@ -651,7 +651,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:499](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L499)
+[packages/sdk/src/services/kwentaToken.ts:499](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L499)
 
 ___
 
@@ -671,7 +671,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:475](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L475)
+[packages/sdk/src/services/kwentaToken.ts:475](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L475)
 
 ___
 
@@ -691,7 +691,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:491](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L491)
+[packages/sdk/src/services/kwentaToken.ts:491](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L491)
 
 ___
 
@@ -711,7 +711,7 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:451](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L451)
+[packages/sdk/src/services/kwentaToken.ts:451](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L451)
 
 ___
 
@@ -731,4 +731,4 @@ ___
 
 #### Defined in
 
-[services/kwentaToken.ts:461](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/kwentaToken.ts#L461)
+[packages/sdk/src/services/kwentaToken.ts:461](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/kwentaToken.ts#L461)

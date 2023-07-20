@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[services/stats.ts:24](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/stats.ts#L24)
+[packages/sdk/src/services/stats.ts:24](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/stats.ts#L24)
 
 ## Properties
 
@@ -47,13 +47,13 @@
 
 #### Defined in
 
-[services/stats.ts:22](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/stats.ts#L22)
+[packages/sdk/src/services/stats.ts:22](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/stats.ts#L22)
 
 ## Methods
 
 ### batchGetENS
 
-▸ `Private` **batchGetENS**(`addresses`): `Promise`<`EnsInfo`\>
+▸ `Private` **batchGetENS**(`addresses`): `Promise`<[`EnsInfo`](../modules/types_stats.md#ensinfo)\>
 
 #### Parameters
 
@@ -63,11 +63,11 @@
 
 #### Returns
 
-`Promise`<`EnsInfo`\>
+`Promise`<[`EnsInfo`](../modules/types_stats.md#ensinfo)\>
 
 #### Defined in
 
-[services/stats.ts:172](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/stats.ts#L172)
+[packages/sdk/src/services/stats.ts:172](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/stats.ts#L172)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[services/stats.ts:128](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/stats.ts#L128)
+[packages/sdk/src/services/stats.ts:128](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/stats.ts#L128)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[services/stats.ts:32](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/stats.ts#L32)
+[packages/sdk/src/services/stats.ts:32](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/stats.ts#L32)
 
 ___
 
@@ -115,13 +115,13 @@ ___
 
 #### Defined in
 
-[services/stats.ts:30](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/stats.ts#L30)
+[packages/sdk/src/services/stats.ts:30](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/stats.ts#L30)
 
 ___
 
 ### getLeaderboard
 
-▸ **getLeaderboard**(`searchTerm`): `Promise`<`Leaderboard`\>
+▸ **getLeaderboard**(`searchTerm`): `Promise`<[`Leaderboard`](../modules/types_stats.md#leaderboard)\>
 
 #### Parameters
 
@@ -131,11 +131,11 @@ ___
 
 #### Returns
 
-`Promise`<`Leaderboard`\>
+`Promise`<[`Leaderboard`](../modules/types_stats.md#leaderboard)\>
 
 #### Defined in
 
-[services/stats.ts:69](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/stats.ts#L69)
+[packages/sdk/src/services/stats.ts:69](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/stats.ts#L69)
 
 ___
 
@@ -149,4 +149,4 @@ ___
 
 #### Defined in
 
-[services/stats.ts:28](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/stats.ts#L28)
+[packages/sdk/src/services/stats.ts:28](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/stats.ts#L28)

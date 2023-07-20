@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[services/system.ts:10](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/system.ts#L10)
+[packages/sdk/src/services/system.ts:10](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/system.ts#L10)
 
 ## Properties
 
@@ -43,21 +43,21 @@
 
 #### Defined in
 
-[services/system.ts:8](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/system.ts#L8)
+[packages/sdk/src/services/system.ts:8](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/system.ts#L8)
 
 ## Methods
 
 ### getKwentaStatus
 
-▸ **getKwentaStatus**(): `Promise`<`KwentaStatus`\>
+▸ **getKwentaStatus**(): `Promise`<[`KwentaStatus`](../modules/types_system.md#kwentastatus)\>
 
 #### Returns
 
-`Promise`<`KwentaStatus`\>
+`Promise`<[`KwentaStatus`](../modules/types_system.md#kwentastatus)\>
 
 #### Defined in
 
-[services/system.ts:29](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/system.ts#L29)
+[packages/sdk/src/services/system.ts:29](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/system.ts#L29)
 
 ___
 
@@ -71,4 +71,4 @@ ___
 
 #### Defined in
 
-[services/system.ts:14](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/system.ts#L14)
+[packages/sdk/src/services/system.ts:14](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/system.ts#L14)

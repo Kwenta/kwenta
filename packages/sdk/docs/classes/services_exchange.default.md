@@ -92,7 +92,7 @@
 
 #### Defined in
 
-[services/exchange.ts:56](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L56)
+[packages/sdk/src/services/exchange.ts:56](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L56)
 
 ## Properties
 
@@ -102,7 +102,7 @@
 
 #### Defined in
 
-[services/exchange.ts:53](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L53)
+[packages/sdk/src/services/exchange.ts:53](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L53)
 
 ___
 
@@ -112,17 +112,17 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:54](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L54)
+[packages/sdk/src/services/exchange.ts:54](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L54)
 
 ___
 
 ### tokenList
 
-• `Private` **tokenList**: `Token`[] = `[]`
+• `Private` **tokenList**: [`Token`](../modules/types_tokens.md#token)[] = `[]`
 
 #### Defined in
 
-[services/exchange.ts:52](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L52)
+[packages/sdk/src/services/exchange.ts:52](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L52)
 
 ___
 
@@ -132,21 +132,21 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:51](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L51)
+[packages/sdk/src/services/exchange.ts:51](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L51)
 
 ## Accessors
 
 ### exchangeRates
 
-• `get` **exchangeRates**(): `Partial`<`Record`<`AssetKey`, `Wei`\>\>
+• `get` **exchangeRates**(): `Partial`<`Record`<[`AssetKey`](../modules/types_prices.md#assetkey), `Wei`\>\>
 
 #### Returns
 
-`Partial`<`Record`<`AssetKey`, `Wei`\>\>
+`Partial`<`Record`<[`AssetKey`](../modules/types_prices.md#assetkey), `Wei`\>\>
 
 #### Defined in
 
-[services/exchange.ts:60](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L60)
+[packages/sdk/src/services/exchange.ts:60](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L60)
 
 ___
 
@@ -160,7 +160,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:850](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L850)
+[packages/sdk/src/services/exchange.ts:850](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L850)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:881](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L881)
+[packages/sdk/src/services/exchange.ts:881](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L881)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:756](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L756)
+[packages/sdk/src/services/exchange.ts:756](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L756)
 
 ___
 
@@ -202,7 +202,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:794](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L794)
+[packages/sdk/src/services/exchange.ts:794](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L794)
 
 ## Methods
 
@@ -223,13 +223,13 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:405](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L405)
+[packages/sdk/src/services/exchange.ts:405](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L405)
 
 ___
 
 ### batchGetCoingeckoPrices
 
-▸ **batchGetCoingeckoPrices**(`tokenAddresses`, `include24hrChange?`): `Promise`<`PriceResponse`\>
+▸ **batchGetCoingeckoPrices**(`tokenAddresses`, `include24hrChange?`): `Promise`<[`PriceResponse`](../modules/types_exchange.md#priceresponse)\>
 
 #### Parameters
 
@@ -240,11 +240,11 @@ ___
 
 #### Returns
 
-`Promise`<`PriceResponse`\>
+`Promise`<[`PriceResponse`](../modules/types_exchange.md#priceresponse)\>
 
 #### Defined in
 
-[services/exchange.ts:744](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L744)
+[packages/sdk/src/services/exchange.ts:744](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L744)
 
 ___
 
@@ -265,7 +265,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:587](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L587)
+[packages/sdk/src/services/exchange.ts:587](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L587)
 
 ___
 
@@ -286,7 +286,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:858](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L858)
+[packages/sdk/src/services/exchange.ts:858](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L858)
 
 ___
 
@@ -306,7 +306,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:1137](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L1137)
+[packages/sdk/src/services/exchange.ts:1137](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L1137)
 
 ___
 
@@ -326,7 +326,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:583](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L583)
+[packages/sdk/src/services/exchange.ts:583](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L583)
 
 ___
 
@@ -346,7 +346,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:391](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L391)
+[packages/sdk/src/services/exchange.ts:391](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L391)
 
 ___
 
@@ -367,13 +367,13 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:128](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L128)
+[packages/sdk/src/services/exchange.ts:128](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L128)
 
 ___
 
 ### getCoingeckoPrices
 
-▸ **getCoingeckoPrices**(`quoteCurrencyKey`, `baseCurrencyKey`): `Promise`<`PriceResponse`\>
+▸ **getCoingeckoPrices**(`quoteCurrencyKey`, `baseCurrencyKey`): `Promise`<[`PriceResponse`](../modules/types_exchange.md#priceresponse)\>
 
 #### Parameters
 
@@ -384,11 +384,11 @@ ___
 
 #### Returns
 
-`Promise`<`PriceResponse`\>
+`Promise`<[`PriceResponse`](../modules/types_exchange.md#priceresponse)\>
 
 #### Defined in
 
-[services/exchange.ts:736](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L736)
+[packages/sdk/src/services/exchange.ts:736](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L736)
 
 ___
 
@@ -400,7 +400,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `coingeckoPrices` | ``null`` \| `PriceResponse` |
+| `coingeckoPrices` | ``null`` \| [`PriceResponse`](../modules/types_exchange.md#priceresponse) |
 | `baseAddress` | ``null`` \| `string` |
 
 #### Returns
@@ -409,7 +409,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:1057](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L1057)
+[packages/sdk/src/services/exchange.ts:1057](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L1057)
 
 ___
 
@@ -429,7 +429,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:605](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L605)
+[packages/sdk/src/services/exchange.ts:605](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L605)
 
 ___
 
@@ -450,7 +450,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:147](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L147)
+[packages/sdk/src/services/exchange.ts:147](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L147)
 
 ___
 
@@ -474,7 +474,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:760](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L760)
+[packages/sdk/src/services/exchange.ts:760](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L760)
 
 ___
 
@@ -486,7 +486,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `rates` | ``null`` \| `Rates` |
+| `rates` | ``null`` \| [`Rates`](../modules/types_exchange.md#rates) |
 | `base` | `string` |
 | `quote` | ``null`` \| `string` |
 
@@ -496,7 +496,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:1073](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L1073)
+[packages/sdk/src/services/exchange.ts:1073](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L1073)
 
 ___
 
@@ -508,7 +508,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `rates` | ``null`` \| `Rates` |
+| `rates` | ``null`` \| [`Rates`](../modules/types_exchange.md#rates) |
 | `base` | `string` |
 | `quote` | ``null`` \| `string` |
 
@@ -518,7 +518,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:1084](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L1084)
+[packages/sdk/src/services/exchange.ts:1084](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L1084)
 
 ___
 
@@ -540,7 +540,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:568](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L568)
+[packages/sdk/src/services/exchange.ts:568](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L568)
 
 ___
 
@@ -560,7 +560,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:194](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L194)
+[packages/sdk/src/services/exchange.ts:194](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L194)
 
 ___
 
@@ -583,7 +583,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:980](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L980)
+[packages/sdk/src/services/exchange.ts:980](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L980)
 
 ___
 
@@ -603,7 +603,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:378](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L378)
+[packages/sdk/src/services/exchange.ts:378](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L378)
 
 ___
 
@@ -617,7 +617,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:972](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L972)
+[packages/sdk/src/services/exchange.ts:972](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L972)
 
 ___
 
@@ -639,7 +639,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:609](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L609)
+[packages/sdk/src/services/exchange.ts:609](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L609)
 
 ___
 
@@ -668,13 +668,13 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:885](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L885)
+[packages/sdk/src/services/exchange.ts:885](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L885)
 
 ___
 
 ### getOneInchSwapParams
 
-▸ `Private` **getOneInchSwapParams**(`quoteTokenAddress`, `baseTokenAddress`, `amount`, `quoteDecimals`): `Promise`<`OneInchSwapResponse`\>
+▸ `Private` **getOneInchSwapParams**(`quoteTokenAddress`, `baseTokenAddress`, `amount`, `quoteDecimals`): `Promise`<[`OneInchSwapResponse`](../modules/types_1inch.md#oneinchswapresponse)\>
 
 #### Parameters
 
@@ -687,11 +687,11 @@ ___
 
 #### Returns
 
-`Promise`<`OneInchSwapResponse`\>
+`Promise`<[`OneInchSwapResponse`](../modules/types_1inch.md#oneinchswapresponse)\>
 
 #### Defined in
 
-[services/exchange.ts:898](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L898)
+[packages/sdk/src/services/exchange.ts:898](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L898)
 
 ___
 
@@ -705,21 +705,21 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:180](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L180)
+[packages/sdk/src/services/exchange.ts:180](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L180)
 
 ___
 
 ### getOneInchTokens
 
-▸ **getOneInchTokens**(): `Promise`<{ `tokenList`: `Token`[] ; `tokensMap`: `any`  }\>
+▸ **getOneInchTokens**(): `Promise`<{ `tokenList`: [`Token`](../modules/types_tokens.md#token)[] ; `tokensMap`: `any`  }\>
 
 #### Returns
 
-`Promise`<{ `tokenList`: `Token`[] ; `tokensMap`: `any`  }\>
+`Promise`<{ `tokenList`: [`Token`](../modules/types_tokens.md#token)[] ; `tokensMap`: `any`  }\>
 
 #### Defined in
 
-[services/exchange.ts:798](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L798)
+[packages/sdk/src/services/exchange.ts:798](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L798)
 
 ___
 
@@ -740,7 +740,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:959](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L959)
+[packages/sdk/src/services/exchange.ts:959](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L959)
 
 ___
 
@@ -754,7 +754,7 @@ ___
 | :------ | :------ |
 | `currencyKey` | `string` |
 | `txProvider` | `undefined` \| ``"synthetix"`` \| ``"1inch"`` \| ``"synthswap"`` |
-| `coinGeckoPrices` | `PriceResponse` |
+| `coinGeckoPrices` | [`PriceResponse`](../modules/types_exchange.md#priceresponse) |
 
 #### Returns
 
@@ -762,7 +762,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:658](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L658)
+[packages/sdk/src/services/exchange.ts:658](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L658)
 
 ___
 
@@ -782,7 +782,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:872](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L872)
+[packages/sdk/src/services/exchange.ts:872](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L872)
 
 ___
 
@@ -803,21 +803,21 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:160](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L160)
+[packages/sdk/src/services/exchange.ts:160](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L160)
 
 ___
 
 ### getRedeemableDeprecatedSynths
 
-▸ **getRedeemableDeprecatedSynths**(): `Promise`<{ `balances`: `DeprecatedSynthBalance`[] = cryptoBalances; `totalUSDBalance`: `Wei`  }\>
+▸ **getRedeemableDeprecatedSynths**(): `Promise`<{ `balances`: [`DeprecatedSynthBalance`](../modules/types_synths.md#deprecatedsynthbalance)[] = cryptoBalances; `totalUSDBalance`: `Wei`  }\>
 
 #### Returns
 
-`Promise`<{ `balances`: `DeprecatedSynthBalance`[] = cryptoBalances; `totalUSDBalance`: `Wei`  }\>
+`Promise`<{ `balances`: [`DeprecatedSynthBalance`](../modules/types_synths.md#deprecatedsynthbalance)[] = cryptoBalances; `totalUSDBalance`: `Wei`  }\>
 
 #### Defined in
 
-[services/exchange.ts:681](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L681)
+[packages/sdk/src/services/exchange.ts:681](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L681)
 
 ___
 
@@ -840,21 +840,21 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:102](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L102)
+[packages/sdk/src/services/exchange.ts:102](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L102)
 
 ___
 
 ### getSynthSuspensions
 
-▸ **getSynthSuspensions**(): `Promise`<`Record`<`string`, { `isSuspended`: `boolean` ; `reason`: ``null`` \| `SynthSuspensionReason` ; `reasonCode`: `number`  }\>\>
+▸ **getSynthSuspensions**(): `Promise`<`Record`<`string`, { `isSuspended`: `boolean` ; `reason`: ``null`` \| [`SynthSuspensionReason`](../modules/types_futures.md#synthsuspensionreason) ; `reasonCode`: `number`  }\>\>
 
 #### Returns
 
-`Promise`<`Record`<`string`, { `isSuspended`: `boolean` ; `reason`: ``null`` \| `SynthSuspensionReason` ; `reasonCode`: `number`  }\>\>
+`Promise`<`Record`<`string`, { `isSuspended`: `boolean` ; `reason`: ``null`` \| [`SynthSuspensionReason`](../modules/types_futures.md#synthsuspensionreason) ; `reasonCode`: `number`  }\>\>
 
 #### Defined in
 
-[services/exchange.ts:808](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L808)
+[packages/sdk/src/services/exchange.ts:808](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L808)
 
 ___
 
@@ -868,7 +868,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:790](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L790)
+[packages/sdk/src/services/exchange.ts:790](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L790)
 
 ___
 
@@ -889,13 +889,13 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:1045](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L1045)
+[packages/sdk/src/services/exchange.ts:1045](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L1045)
 
 ___
 
 ### getTokenBalances
 
-▸ **getTokenBalances**(`walletAddress`): `Promise`<`TokenBalances`\>
+▸ **getTokenBalances**(`walletAddress`): `Promise`<[`TokenBalances`](../modules/types_tokens.md#tokenbalances)\>
 
 #### Parameters
 
@@ -905,11 +905,11 @@ ___
 
 #### Returns
 
-`Promise`<`TokenBalances`\>
+`Promise`<[`TokenBalances`](../modules/types_tokens.md#tokenbalances)\>
 
 #### Defined in
 
-[services/exchange.ts:1102](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L1102)
+[packages/sdk/src/services/exchange.ts:1102](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L1102)
 
 ___
 
@@ -929,7 +929,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:868](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L868)
+[packages/sdk/src/services/exchange.ts:868](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L868)
 
 ___
 
@@ -953,7 +953,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:76](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L76)
+[packages/sdk/src/services/exchange.ts:76](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L76)
 
 ___
 
@@ -976,7 +976,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:503](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L503)
+[packages/sdk/src/services/exchange.ts:503](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L503)
 
 ___
 
@@ -997,21 +997,21 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:64](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L64)
+[packages/sdk/src/services/exchange.ts:64](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L64)
 
 ___
 
 ### getWalletTrades
 
-▸ **getWalletTrades**(): `Promise`<`SynthExchange`[]\>
+▸ **getWalletTrades**(): `Promise`<[`SynthExchange`](../modules/types_exchange.md#synthexchange)[]\>
 
 #### Returns
 
-`Promise`<`SynthExchange`[]\>
+`Promise`<[`SynthExchange`](../modules/types_exchange.md#synthexchange)[]\>
 
 #### Defined in
 
-[services/exchange.ts:854](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L854)
+[packages/sdk/src/services/exchange.ts:854](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L854)
 
 ___
 
@@ -1034,7 +1034,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:446](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L446)
+[packages/sdk/src/services/exchange.ts:446](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L446)
 
 ___
 
@@ -1054,7 +1054,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:423](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L423)
+[packages/sdk/src/services/exchange.ts:423](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L423)
 
 ___
 
@@ -1074,7 +1074,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:1041](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L1041)
+[packages/sdk/src/services/exchange.ts:1041](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L1041)
 
 ___
 
@@ -1097,7 +1097,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:927](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L927)
+[packages/sdk/src/services/exchange.ts:927](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L927)
 
 ___
 
@@ -1120,7 +1120,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:344](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L344)
+[packages/sdk/src/services/exchange.ts:344](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L344)
 
 ___
 
@@ -1143,7 +1143,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:362](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L362)
+[packages/sdk/src/services/exchange.ts:362](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L362)
 
 ___
 
@@ -1166,7 +1166,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:321](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L321)
+[packages/sdk/src/services/exchange.ts:321](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L321)
 
 ___
 
@@ -1178,8 +1178,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `fromToken` | `Token` |
-| `toToken` | `Token` |
+| `fromToken` | [`Token`](../modules/types_tokens.md#token) |
+| `toToken` | [`Token`](../modules/types_tokens.md#token) |
 | `fromAmount` | `string` |
 | `metaOnly?` | ``"meta_tx"`` \| ``"estimate_gas"`` |
 
@@ -1189,7 +1189,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:208](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L208)
+[packages/sdk/src/services/exchange.ts:208](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L208)
 
 ___
 
@@ -1201,8 +1201,8 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `fromToken` | `Token` |
-| `toToken` | `Token` |
+| `fromToken` | [`Token`](../modules/types_tokens.md#token) |
+| `toToken` | [`Token`](../modules/types_tokens.md#token) |
 | `fromAmount` | `string` |
 
 #### Returns
@@ -1211,7 +1211,7 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:955](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L955)
+[packages/sdk/src/services/exchange.ts:955](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L955)
 
 ___
 
@@ -1232,4 +1232,4 @@ ___
 
 #### Defined in
 
-[services/exchange.ts:727](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/exchange.ts#L727)
+[packages/sdk/src/services/exchange.ts:727](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/exchange.ts#L727)

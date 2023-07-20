@@ -80,27 +80,27 @@
 
 #### Defined in
 
-[services/futures.ts:84](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L84)
+[packages/sdk/src/services/futures.ts:84](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L84)
 
 ## Properties
 
 ### internalFuturesMarkets
 
-• **internalFuturesMarkets**: `Partial`<`Record`<`NetworkId`, { `[marketAddress: string]`: `PerpsV2MarketInternal`;  }\>\> = `{}`
+• **internalFuturesMarkets**: `Partial`<`Record`<[`NetworkId`](../modules/types_common.md#networkid), { `[marketAddress: string]`: `PerpsV2MarketInternal`;  }\>\> = `{}`
 
 #### Defined in
 
-[services/futures.ts:80](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L80)
+[packages/sdk/src/services/futures.ts:80](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L80)
 
 ___
 
 ### markets
 
-• **markets**: `undefined` \| `FuturesMarket`[]
+• **markets**: `undefined` \| [`FuturesMarket`](../modules/types_futures.md#futuresmarket)[]
 
 #### Defined in
 
-[services/futures.ts:79](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L79)
+[packages/sdk/src/services/futures.ts:79](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L79)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[services/futures.ts:78](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L78)
+[packages/sdk/src/services/futures.ts:78](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L78)
 
 ## Accessors
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[services/futures.ts:88](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L88)
+[packages/sdk/src/services/futures.ts:88](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L88)
 
 ## Methods
 
@@ -151,13 +151,13 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:810](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L810)
+[packages/sdk/src/services/futures.ts:811](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L811)
 
 ___
 
 ### batchIdleMarketMarginSweeps
 
-▸ `Private` **batchIdleMarketMarginSweeps**(`smartMarginAddress`): `Promise`<{ `commands`: `number`[] ; `idleMargin`: { `marketsWithIdleMargin`: `MarketWithIdleMargin`[] ; `totalIdleInMarkets`: `Wei`  } ; `inputs`: `string`[]  }\>
+▸ `Private` **batchIdleMarketMarginSweeps**(`smartMarginAddress`): `Promise`<{ `commands`: `number`[] ; `idleMargin`: { `marketsWithIdleMargin`: [`MarketWithIdleMargin`](../modules/types_futures.md#marketwithidlemargin)[] ; `totalIdleInMarkets`: `Wei`  } ; `inputs`: `string`[]  }\>
 
 #### Parameters
 
@@ -167,11 +167,11 @@ ___
 
 #### Returns
 
-`Promise`<{ `commands`: `number`[] ; `idleMargin`: { `marketsWithIdleMargin`: `MarketWithIdleMargin`[] ; `totalIdleInMarkets`: `Wei`  } ; `inputs`: `string`[]  }\>
+`Promise`<{ `commands`: `number`[] ; `idleMargin`: { `marketsWithIdleMargin`: [`MarketWithIdleMargin`](../modules/types_futures.md#marketwithidlemargin)[] ; `totalIdleInMarkets`: `Wei`  } ; `inputs`: `string`[]  }\>
 
 #### Defined in
 
-[services/futures.ts:1454](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1454)
+[packages/sdk/src/services/futures.ts:1455](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1455)
 
 ___
 
@@ -198,7 +198,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:1289](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1289)
+[packages/sdk/src/services/futures.ts:1290](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1290)
 
 ___
 
@@ -226,7 +226,7 @@ ethers.js ContractTransaction object
 
 #### Defined in
 
-[services/futures.ts:1031](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1031)
+[packages/sdk/src/services/futures.ts:1032](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1032)
 
 ___
 
@@ -253,7 +253,7 @@ ethers.js ContractTransaction object
 
 #### Defined in
 
-[services/futures.ts:993](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L993)
+[packages/sdk/src/services/futures.ts:994](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L994)
 
 ___
 
@@ -271,7 +271,7 @@ Closes a smart margin position
 | :------ | :------ | :------ |
 | `market` | `Object` | Object containing market address and key |
 | `market.address` | `string` | - |
-| `market.key` | `FuturesMarketKey` | - |
+| `market.key` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) | - |
 | `smartMarginAddress` | `string` | Smart margin account address |
 | `desiredFillPrice` | `Wei` | Desired fill price |
 
@@ -283,7 +283,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:1249](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1249)
+[packages/sdk/src/services/futures.ts:1250](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1250)
 
 ___
 
@@ -303,7 +303,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:1069](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1069)
+[packages/sdk/src/services/futures.ts:1070](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1070)
 
 ___
 
@@ -330,7 +330,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:967](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L967)
+[packages/sdk/src/services/futures.ts:968](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L968)
 
 ___
 
@@ -357,7 +357,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:827](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L827)
+[packages/sdk/src/services/futures.ts:828](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L828)
 
 ___
 
@@ -369,7 +369,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `marketKey` | `FuturesMarketKey` |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
 | `marketAddress` | `string` |
 | `account` | `string` |
 
@@ -379,7 +379,7 @@ ___
 
 #### Defined in
 
-[services/futures.ts:1049](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1049)
+[packages/sdk/src/services/futures.ts:1050](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1050)
 
 ___
 
@@ -406,13 +406,13 @@ ethers.js ContractTransaction object
 
 #### Defined in
 
-[services/futures.ts:1044](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1044)
+[packages/sdk/src/services/futures.ts:1045](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1045)
 
 ___
 
 ### getAllTrades
 
-▸ **getAllTrades**(`walletAddress`, `accountType`, `pageLength?`): `Promise`<`FuturesTrade`[]\>
+▸ **getAllTrades**(`walletAddress`, `accountType`, `pageLength?`): `Promise`<[`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 **`Desc`**
 
@@ -431,24 +431,24 @@ console.log(trades)
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
 | `walletAddress` | `string` | `undefined` | Account address |
-| `accountType` | `FuturesMarginType` | `undefined` | Account type (smart or isolated) |
+| `accountType` | [`FuturesMarginType`](../enums/types_futures.FuturesMarginType.md) | `undefined` | Account type (smart or isolated) |
 | `pageLength` | `number` | `16` | Number of trades to fetch |
 
 #### Returns
 
-`Promise`<`FuturesTrade`[]\>
+`Promise`<[`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 Array of trades for the account on the given market.
 
 #### Defined in
 
-[services/futures.ts:700](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L700)
+[packages/sdk/src/services/futures.ts:701](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L701)
 
 ___
 
 ### getAverageFundingRates
 
-▸ **getAverageFundingRates**(`markets`, `prices`, `period`): `Promise`<`FundingRateResponse`[]\>
+▸ **getAverageFundingRates**(`markets`, `prices`, `period`): `Promise`<[`FundingRateResponse`](../modules/types_futures.md#fundingrateresponse)[]\>
 
 **`Desc`**
 
@@ -462,28 +462,29 @@ const markets = await sdk.futures.getMarkets()
 const prices =
 const fundingRates = await sdk.synths.getAverageFundingRates(markets, prices, Period.ONE_DAY)
 console.log(fundingRates)
+```
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `markets` | `FuturesMarket`[] | Futures markets array |
-| `prices` | `Partial`<`Record`<`AssetKey`, `Wei`\>\> | Prices map |
+| `markets` | [`FuturesMarket`](../modules/types_futures.md#futuresmarket)[] | Futures markets array |
+| `prices` | `Partial`<`Record`<[`AssetKey`](../modules/types_prices.md#assetkey), `Wei`\>\> | Prices map |
 | `period` | `Period` | Period enum member |
 
 #### Returns
 
-`Promise`<`FundingRateResponse`[]\>
+`Promise`<[`FundingRateResponse`](../modules/types_futures.md#fundingrateresponse)[]\>
 
 #### Defined in
 
-[services/futures.ts:257](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L257)
+[packages/sdk/src/services/futures.ts:258](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L258)
 
 ___
 
 ### getConditionalOrders
 
-▸ **getConditionalOrders**(`account`): `Promise`<`ConditionalOrder`[]\>
+▸ **getConditionalOrders**(`account`): `Promise`<[`ConditionalOrder`](../modules/types_futures.md#conditionalorder)[]\>
 
 **`Desc`**
 
@@ -505,19 +506,19 @@ console.log(orders)
 
 #### Returns
 
-`Promise`<`ConditionalOrder`[]\>
+`Promise`<[`ConditionalOrder`](../modules/types_futures.md#conditionalorder)[]\>
 
 Array of conditional orders created by the given smart margin account
 
 #### Defined in
 
-[services/futures.ts:510](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L510)
+[packages/sdk/src/services/futures.ts:511](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L511)
 
 ___
 
 ### getDailyVolumes
 
-▸ **getDailyVolumes**(): `Promise`<`FuturesVolumes`\>
+▸ **getDailyVolumes**(): `Promise`<[`FuturesVolumes`](../modules/types_futures.md#futuresvolumes)\>
 
 **`Desc`**
 
@@ -533,19 +534,19 @@ console.log(dailyVolumes)
 
 #### Returns
 
-`Promise`<`FuturesVolumes`\>
+`Promise`<[`FuturesVolumes`](../modules/types_futures.md#futuresvolumes)\>
 
 Object with the daily number of trades and volumes for all markets
 
 #### Defined in
 
-[services/futures.ts:371](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L371)
+[packages/sdk/src/services/futures.ts:372](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L372)
 
 ___
 
 ### getDelayedOrder
 
-▸ **getDelayedOrder**(`account`, `marketAddress`): `Promise`<`DelayedOrder`\>
+▸ **getDelayedOrder**(`account`, `marketAddress`): `Promise`<[`DelayedOrder`](../modules/types_futures.md#delayedorder)\>
 
 **`Desc`**
 
@@ -560,19 +561,19 @@ Get delayed orders associated with a given wallet address, for a specific market
 
 #### Returns
 
-`Promise`<`DelayedOrder`\>
+`Promise`<[`DelayedOrder`](../modules/types_futures.md#delayedorder)\>
 
 Delayed order for the given market address, associated with the given wallet address
 
 #### Defined in
 
-[services/futures.ts:552](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L552)
+[packages/sdk/src/services/futures.ts:553](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L553)
 
 ___
 
 ### getDelayedOrders
 
-▸ **getDelayedOrders**(`account`, `marketAddresses`): `Promise`<`DelayedOrder`[]\>
+▸ **getDelayedOrders**(`account`, `marketAddresses`): `Promise`<[`DelayedOrder`](../modules/types_futures.md#delayedorder)[]\>
 
 **`Desc`**
 
@@ -587,64 +588,64 @@ Get delayed orders associated with a given wallet address
 
 #### Returns
 
-`Promise`<`DelayedOrder`[]\>
+`Promise`<[`DelayedOrder`](../modules/types_futures.md#delayedorder)[]\>
 
 Array of delayed orders for the given market addresses, associated with the given wallet address
 
 #### Defined in
 
-[services/futures.ts:564](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L564)
+[packages/sdk/src/services/futures.ts:565](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L565)
 
 ___
 
 ### getFuturesPositions
 
-▸ **getFuturesPositions**(`address`, `futuresMarkets`): `Promise`<`FuturesPosition`[]\>
+▸ **getFuturesPositions**(`address`, `futuresMarkets`): `Promise`<[`FuturesPosition`](../modules/types_futures.md#futuresposition)[]\>
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `address` | `string` | Smart margin or EOA address |
-| `futuresMarkets` | { `address`: `string` ; `asset`: `FuturesMarketAsset` ; `marketKey`: `FuturesMarketKey`  }[] | Array of objects with market address, market key, and asset |
+| `futuresMarkets` | { `address`: `string` ; `asset`: [`FuturesMarketAsset`](../enums/types_futures.FuturesMarketAsset.md) ; `marketKey`: [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md)  }[] | Array of objects with market address, market key, and asset |
 
 #### Returns
 
-`Promise`<`FuturesPosition`[]\>
+`Promise`<[`FuturesPosition`](../modules/types_futures.md#futuresposition)[]\>
 
 Array of futures positions associated with the given address
 
 #### Defined in
 
-[services/futures.ts:184](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L184)
+[packages/sdk/src/services/futures.ts:184](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L184)
 
 ___
 
 ### getFuturesTrades
 
-▸ **getFuturesTrades**(`marketKey`, `minTs`, `maxTs`): `Promise`<``null`` \| `FuturesTrade`[]\>
+▸ **getFuturesTrades**(`marketKey`, `minTs`, `maxTs`): `Promise`<``null`` \| [`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `marketKey` | `FuturesMarketKey` |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
 | `minTs` | `number` |
 | `maxTs` | `number` |
 
 #### Returns
 
-`Promise`<``null`` \| `FuturesTrade`[]\>
+`Promise`<``null`` \| [`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 #### Defined in
 
-[services/futures.ts:790](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L790)
+[packages/sdk/src/services/futures.ts:791](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L791)
 
 ___
 
 ### getIdleMargin
 
-▸ **getIdleMargin**(`eoa`, `account?`): `Promise`<{ `marketsTotal`: `Wei` = idleMargin.totalIdleInMarkets; `marketsWithMargin`: `MarketWithIdleMargin`[] = idleMargin.marketsWithIdleMargin; `total`: `Wei` ; `walletTotal`: `Wei` = susdWalletBalance }\>
+▸ **getIdleMargin**(`eoa`, `account?`): `Promise`<{ `marketsTotal`: `Wei` = idleMargin.totalIdleInMarkets; `marketsWithMargin`: [`MarketWithIdleMargin`](../modules/types_futures.md#marketwithidlemargin)[] = idleMargin.marketsWithIdleMargin; `total`: `Wei` ; `walletTotal`: `Wei` = susdWalletBalance }\>
 
 **`Desc`**
 
@@ -667,19 +668,19 @@ console.log(idleMargin)
 
 #### Returns
 
-`Promise`<{ `marketsTotal`: `Wei` = idleMargin.totalIdleInMarkets; `marketsWithMargin`: `MarketWithIdleMargin`[] = idleMargin.marketsWithIdleMargin; `total`: `Wei` ; `walletTotal`: `Wei` = susdWalletBalance }\>
+`Promise`<{ `marketsTotal`: `Wei` = idleMargin.totalIdleInMarkets; `marketsWithMargin`: [`MarketWithIdleMargin`](../modules/types_futures.md#marketwithidlemargin)[] = idleMargin.marketsWithIdleMargin; `total`: `Wei` ; `walletTotal`: `Wei` = susdWalletBalance }\>
 
 Total idle margin, idle margin in markets, total wallet balance and the markets with idle margin for the given address(es).
 
 #### Defined in
 
-[services/futures.ts:777](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L777)
+[packages/sdk/src/services/futures.ts:778](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L778)
 
 ___
 
 ### getIdleMarginInMarkets
 
-▸ **getIdleMarginInMarkets**(`accountOrEoa`): `Promise`<{ `marketsWithIdleMargin`: `MarketWithIdleMargin`[] ; `totalIdleInMarkets`: `Wei`  }\>
+▸ **getIdleMarginInMarkets**(`accountOrEoa`): `Promise`<{ `marketsWithIdleMargin`: [`MarketWithIdleMargin`](../modules/types_futures.md#marketwithidlemargin)[] ; `totalIdleInMarkets`: `Wei`  }\>
 
 **`Desc`**
 
@@ -701,13 +702,13 @@ console.log(idleMargin)
 
 #### Returns
 
-`Promise`<{ `marketsWithIdleMargin`: `MarketWithIdleMargin`[] ; `totalIdleInMarkets`: `Wei`  }\>
+`Promise`<{ `marketsWithIdleMargin`: [`MarketWithIdleMargin`](../modules/types_futures.md#marketwithidlemargin)[] ; `totalIdleInMarkets`: `Wei`  }\>
 
 Total idle margin in markets and an array of markets with idle margin
 
 #### Defined in
 
-[services/futures.ts:724](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L724)
+[packages/sdk/src/services/futures.ts:725](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L725)
 
 ___
 
@@ -720,7 +721,7 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `marketAddress` | `string` |
-| `marketKey` | `FuturesMarketKey` |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
 
 #### Returns
 
@@ -728,13 +729,13 @@ ___
 
 #### Defined in
 
-[services/futures.ts:1435](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1435)
+[packages/sdk/src/services/futures.ts:1436](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1436)
 
 ___
 
 ### getIsolatedMarginTradePreview
 
-▸ **getIsolatedMarginTradePreview**(`marketAddress`, `marketKey`, `orderType`, `inputs`): `Promise`<{ `exceedsPriceProtection`: `boolean` ; `fee`: `Wei` ; `leverage`: `Wei` = leverage; `liqPrice`: `Wei` ; `margin`: `Wei` ; `notionalValue`: `Wei` = notionalValue; `price`: `Wei` ; `priceImpact`: `Wei` = priceImpact; `showStatus`: `boolean` ; `side`: `PositionSide` = leverageSide; `size`: `Wei` ; `sizeDelta`: `Wei` = nativeSizeDelta; `status`: `number` ; `statusMessage`: `string`  }\>
+▸ **getIsolatedMarginTradePreview**(`marketAddress`, `marketKey`, `orderType`, `inputs`): `Promise`<{ `exceedsPriceProtection`: `boolean` ; `fee`: `Wei` ; `leverage`: `Wei` = leverage; `liqPrice`: `Wei` ; `margin`: `Wei` ; `notionalValue`: `Wei` = notionalValue; `price`: `Wei` ; `priceImpact`: `Wei` = priceImpact; `showStatus`: `boolean` ; `side`: [`PositionSide`](../enums/types_futures.PositionSide.md) = leverageSide; `size`: `Wei` ; `sizeDelta`: `Wei` = nativeSizeDelta; `status`: `number` ; `statusMessage`: `string`  }\>
 
 **`Desc`**
 
@@ -745,28 +746,28 @@ Generate a trade preview for a potential trade with an isolated margin account.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `marketAddress` | `string` | Futures market address |
-| `marketKey` | `FuturesMarketKey` | Futures market key |
-| `orderType` | `ContractOrderType` | Order type (market, delayed, delayed offchain) |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) | Futures market key |
+| `orderType` | [`ContractOrderType`](../enums/types_futures.ContractOrderType.md) | Order type (market, delayed, delayed offchain) |
 | `inputs` | `Object` | Object containing size delta, order price, and leverage side |
-| `inputs.leverageSide` | `PositionSide` | - |
+| `inputs.leverageSide` | [`PositionSide`](../enums/types_futures.PositionSide.md) | - |
 | `inputs.price` | `Wei` | - |
 | `inputs.sizeDelta` | `Wei` | - |
 
 #### Returns
 
-`Promise`<{ `exceedsPriceProtection`: `boolean` ; `fee`: `Wei` ; `leverage`: `Wei` = leverage; `liqPrice`: `Wei` ; `margin`: `Wei` ; `notionalValue`: `Wei` = notionalValue; `price`: `Wei` ; `priceImpact`: `Wei` = priceImpact; `showStatus`: `boolean` ; `side`: `PositionSide` = leverageSide; `size`: `Wei` ; `sizeDelta`: `Wei` = nativeSizeDelta; `status`: `number` ; `statusMessage`: `string`  }\>
+`Promise`<{ `exceedsPriceProtection`: `boolean` ; `fee`: `Wei` ; `leverage`: `Wei` = leverage; `liqPrice`: `Wei` ; `margin`: `Wei` ; `notionalValue`: `Wei` = notionalValue; `price`: `Wei` ; `priceImpact`: `Wei` = priceImpact; `showStatus`: `boolean` ; `side`: [`PositionSide`](../enums/types_futures.PositionSide.md) = leverageSide; `size`: `Wei` ; `sizeDelta`: `Wei` = nativeSizeDelta; `status`: `number` ; `statusMessage`: `string`  }\>
 
 Object containing details about the potential trade
 
 #### Defined in
 
-[services/futures.ts:582](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L582)
+[packages/sdk/src/services/futures.ts:583](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L583)
 
 ___
 
 ### getIsolatedMarginTransfers
 
-▸ **getIsolatedMarginTransfers**(`walletAddress?`): `Promise`<`MarginTransfer`[]\>
+▸ **getIsolatedMarginTransfers**(`walletAddress?`): `Promise`<[`MarginTransfer`](../modules/types_futures.md#margintransfer)[]\>
 
 **`Desc`**
 
@@ -788,13 +789,13 @@ console.log(transfers)
 
 #### Returns
 
-`Promise`<`MarginTransfer`[]\>
+`Promise`<[`MarginTransfer`](../modules/types_futures.md#margintransfer)[]\>
 
 Array of past isolated margin transfers for the given wallet address
 
 #### Defined in
 
-[services/futures.ts:425](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L425)
+[packages/sdk/src/services/futures.ts:426](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L426)
 
 ___
 
@@ -818,7 +819,7 @@ console.log(fundingRateHistory)
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `marketAsset` | `FuturesMarketAsset` | `undefined` | Futures market asset |
+| `marketAsset` | [`FuturesMarketAsset`](../enums/types_futures.FuturesMarketAsset.md) | `undefined` | Futures market asset |
 | `periodLength` | `number` | `PERIOD_IN_SECONDS.TWO_WEEKS` | Period length in seconds |
 
 #### Returns
@@ -829,13 +830,13 @@ Funding rate history for the given market
 
 #### Defined in
 
-[services/futures.ts:236](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L236)
+[packages/sdk/src/services/futures.ts:236](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L236)
 
 ___
 
 ### getMarkets
 
-▸ **getMarkets**(`networkOverride?`): `Promise`<{ `appMaxLeverage`: `Wei` ; `asset`: `FuturesMarketAsset` ; `assetHex`: `string` = asset; `contractMaxLeverage`: `Wei` ; `currentFundingRate`: `Wei` ; `currentFundingVelocity`: `Wei` ; `feeRates`: { `makerFee`: `Wei` ; `makerFeeDelayedOrder`: `Wei` ; `makerFeeOffchainDelayedOrder`: `Wei` ; `takerFee`: `Wei` ; `takerFeeDelayedOrder`: `Wei` ; `takerFeeOffchainDelayedOrder`: `Wei`  } ; `isSuspended`: `boolean` = isSuspended; `keeperDeposit`: `Wei` = globalSettings.minKeeperFee; `market`: `string` ; `marketClosureReason`: `SynthSuspensionReason` = suspendedReason; `marketDebt`: `Wei` ; `marketKey`: `FuturesMarketKey` ; `marketLimitNative`: `Wei` ; `marketLimitUsd`: `Wei` ; `marketName`: `string` ; `marketSize`: `Wei` ; `marketSkew`: `Wei` ; `minInitialMargin`: `Wei` = globalSettings.minInitialMargin; `openInterest`: { `long`: `Wei` ; `longPct`: `number` ; `longUSD`: `Wei` ; `short`: `Wei` ; `shortPct`: `number` ; `shortUSD`: `Wei`  } ; `settings`: { `delayedOrderConfirmWindow`: `number` ; `maxDelayTimeDelta`: `number` ; `maxMarketValue`: `Wei` ; `minDelayTimeDelta`: `number` ; `offchainDelayedOrderMaxAge`: `number` ; `offchainDelayedOrderMinAge`: `number` ; `skewScale`: `Wei`  }  }[]\>
+▸ **getMarkets**(`networkOverride?`): `Promise`<{ `appMaxLeverage`: `Wei` ; `asset`: [`FuturesMarketAsset`](../enums/types_futures.FuturesMarketAsset.md) ; `assetHex`: `string` = asset; `contractMaxLeverage`: `Wei` ; `currentFundingRate`: `Wei` ; `currentFundingVelocity`: `Wei` ; `feeRates`: { `makerFee`: `Wei` ; `makerFeeDelayedOrder`: `Wei` ; `makerFeeOffchainDelayedOrder`: `Wei` ; `takerFee`: `Wei` ; `takerFeeDelayedOrder`: `Wei` ; `takerFeeOffchainDelayedOrder`: `Wei`  } ; `isSuspended`: `boolean` = isSuspended; `keeperDeposit`: `Wei` = globalSettings.minKeeperFee; `market`: `string` ; `marketClosureReason`: [`SynthSuspensionReason`](../modules/types_futures.md#synthsuspensionreason) = suspendedReason; `marketDebt`: `Wei` ; `marketKey`: [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) ; `marketLimitNative`: `Wei` ; `marketLimitUsd`: `Wei` ; `marketName`: `string` ; `marketSize`: `Wei` ; `marketSkew`: `Wei` ; `minInitialMargin`: `Wei` = globalSettings.minInitialMargin; `openInterest`: { `long`: `Wei` ; `longPct`: `number` ; `longUSD`: `Wei` ; `short`: `Wei` ; `shortPct`: `number` ; `shortUSD`: `Wei`  } ; `settings`: { `delayedOrderConfirmWindow`: `number` ; `maxDelayTimeDelta`: `number` ; `maxMarketValue`: `Wei` ; `minDelayTimeDelta`: `number` ; `offchainDelayedOrderMaxAge`: `number` ; `offchainDelayedOrderMinAge`: `number` ; `skewScale`: `Wei`  }  }[]\>
 
 **`Desc`**
 
@@ -855,17 +856,17 @@ console.log(markets)
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `networkOverride?` | `NetworkOverrideOptions` | Network override options |
+| `networkOverride?` | [`NetworkOverrideOptions`](../modules/types_common.md#networkoverrideoptions) | Network override options |
 
 #### Returns
 
-`Promise`<{ `appMaxLeverage`: `Wei` ; `asset`: `FuturesMarketAsset` ; `assetHex`: `string` = asset; `contractMaxLeverage`: `Wei` ; `currentFundingRate`: `Wei` ; `currentFundingVelocity`: `Wei` ; `feeRates`: { `makerFee`: `Wei` ; `makerFeeDelayedOrder`: `Wei` ; `makerFeeOffchainDelayedOrder`: `Wei` ; `takerFee`: `Wei` ; `takerFeeDelayedOrder`: `Wei` ; `takerFeeOffchainDelayedOrder`: `Wei`  } ; `isSuspended`: `boolean` = isSuspended; `keeperDeposit`: `Wei` = globalSettings.minKeeperFee; `market`: `string` ; `marketClosureReason`: `SynthSuspensionReason` = suspendedReason; `marketDebt`: `Wei` ; `marketKey`: `FuturesMarketKey` ; `marketLimitNative`: `Wei` ; `marketLimitUsd`: `Wei` ; `marketName`: `string` ; `marketSize`: `Wei` ; `marketSkew`: `Wei` ; `minInitialMargin`: `Wei` = globalSettings.minInitialMargin; `openInterest`: { `long`: `Wei` ; `longPct`: `number` ; `longUSD`: `Wei` ; `short`: `Wei` ; `shortPct`: `number` ; `shortUSD`: `Wei`  } ; `settings`: { `delayedOrderConfirmWindow`: `number` ; `maxDelayTimeDelta`: `number` ; `maxMarketValue`: `Wei` ; `minDelayTimeDelta`: `number` ; `offchainDelayedOrderMaxAge`: `number` ; `offchainDelayedOrderMinAge`: `number` ; `skewScale`: `Wei`  }  }[]\>
+`Promise`<{ `appMaxLeverage`: `Wei` ; `asset`: [`FuturesMarketAsset`](../enums/types_futures.FuturesMarketAsset.md) ; `assetHex`: `string` = asset; `contractMaxLeverage`: `Wei` ; `currentFundingRate`: `Wei` ; `currentFundingVelocity`: `Wei` ; `feeRates`: { `makerFee`: `Wei` ; `makerFeeDelayedOrder`: `Wei` ; `makerFeeOffchainDelayedOrder`: `Wei` ; `takerFee`: `Wei` ; `takerFeeDelayedOrder`: `Wei` ; `takerFeeOffchainDelayedOrder`: `Wei`  } ; `isSuspended`: `boolean` = isSuspended; `keeperDeposit`: `Wei` = globalSettings.minKeeperFee; `market`: `string` ; `marketClosureReason`: [`SynthSuspensionReason`](../modules/types_futures.md#synthsuspensionreason) = suspendedReason; `marketDebt`: `Wei` ; `marketKey`: [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) ; `marketLimitNative`: `Wei` ; `marketLimitUsd`: `Wei` ; `marketName`: `string` ; `marketSize`: `Wei` ; `marketSkew`: `Wei` ; `minInitialMargin`: `Wei` = globalSettings.minInitialMargin; `openInterest`: { `long`: `Wei` ; `longPct`: `number` ; `longUSD`: `Wei` ; `short`: `Wei` ; `shortPct`: `number` ; `shortUSD`: `Wei`  } ; `settings`: { `delayedOrderConfirmWindow`: `number` ; `maxDelayTimeDelta`: `number` ; `maxMarketValue`: `Wei` ; `minDelayTimeDelta`: `number` ; `offchainDelayedOrderMaxAge`: `number` ; `offchainDelayedOrderMinAge`: `number` ; `skewScale`: `Wei`  }  }[]\>
 
 Futures markets array
 
 #### Defined in
 
-[services/futures.ts:105](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L105)
+[packages/sdk/src/services/futures.ts:105](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L105)
 
 ___
 
@@ -886,13 +887,13 @@ ___
 
 #### Defined in
 
-[services/futures.ts:796](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L796)
+[packages/sdk/src/services/futures.ts:797](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L797)
 
 ___
 
 ### getPositionHistory
 
-▸ **getPositionHistory**(`address`, `addressType?`): `Promise`<`FuturesPositionHistory`[]\>
+▸ **getPositionHistory**(`address`, `addressType?`): `Promise`<[`FuturesPositionHistory`](../modules/types_futures.md#futurespositionhistory)[]\>
 
 **`Desc`**
 
@@ -907,13 +908,13 @@ Get futures positions history for a given wallet address or smart margin account
 
 #### Returns
 
-`Promise`<`FuturesPositionHistory`[]\>
+`Promise`<[`FuturesPositionHistory`](../modules/types_futures.md#futurespositionhistory)[]\>
 
 Array of historical futures positions associated with the given address
 
 #### Defined in
 
-[services/futures.ts:657](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L657)
+[packages/sdk/src/services/futures.ts:658](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L658)
 
 ___
 
@@ -941,7 +942,7 @@ Adjusted price, based on the given market's skew.
 
 #### Defined in
 
-[services/futures.ts:1417](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1417)
+[packages/sdk/src/services/futures.ts:1418](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1418)
 
 ___
 
@@ -975,7 +976,7 @@ Balance of the given smart margin account
 
 #### Defined in
 
-[services/futures.ts:459](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L459)
+[packages/sdk/src/services/futures.ts:460](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L460)
 
 ___
 
@@ -1009,7 +1010,7 @@ Array of smart margin account addresses
 
 #### Defined in
 
-[services/futures.ts:409](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L409)
+[packages/sdk/src/services/futures.ts:410](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L410)
 
 ___
 
@@ -1036,13 +1037,13 @@ Free margin and keeper balance (in ETH) for given smart margin address, as well 
 
 #### Defined in
 
-[services/futures.ts:475](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L475)
+[packages/sdk/src/services/futures.ts:476](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L476)
 
 ___
 
 ### getSmartMarginTradePreview
 
-▸ **getSmartMarginTradePreview**(`smartMarginAccount`, `marketKey`, `marketAddress`, `tradeParams`): `Promise`<{ `exceedsPriceProtection`: `boolean` ; `fee`: `Wei` ; `leverage`: `Wei` = leverage; `liqPrice`: `Wei` ; `margin`: `Wei` ; `notionalValue`: `Wei` = notionalValue; `price`: `Wei` ; `priceImpact`: `Wei` = priceImpact; `showStatus`: `boolean` ; `side`: `PositionSide` = leverageSide; `size`: `Wei` ; `sizeDelta`: `Wei` = nativeSizeDelta; `status`: `number` ; `statusMessage`: `string`  }\>
+▸ **getSmartMarginTradePreview**(`smartMarginAccount`, `marketKey`, `marketAddress`, `tradeParams`): `Promise`<{ `exceedsPriceProtection`: `boolean` ; `fee`: `Wei` ; `leverage`: `Wei` = leverage; `liqPrice`: `Wei` ; `margin`: `Wei` ; `notionalValue`: `Wei` = notionalValue; `price`: `Wei` ; `priceImpact`: `Wei` = priceImpact; `showStatus`: `boolean` ; `side`: [`PositionSide`](../enums/types_futures.PositionSide.md) = leverageSide; `size`: `Wei` ; `sizeDelta`: `Wei` = nativeSizeDelta; `status`: `number` ; `statusMessage`: `string`  }\>
 
 **`Desc`**
 
@@ -1053,29 +1054,29 @@ Generate a trade preview for a potential trade with a smart margin account.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `smartMarginAccount` | `string` | Smart margin account address |
-| `marketKey` | `FuturesMarketKey` | Futures market key |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) | Futures market key |
 | `marketAddress` | `string` | Futures market address |
 | `tradeParams` | `Object` | Object containing size delta, margin delta, order price, and leverage side |
-| `tradeParams.leverageSide` | `PositionSide` | - |
+| `tradeParams.leverageSide` | [`PositionSide`](../enums/types_futures.PositionSide.md) | - |
 | `tradeParams.marginDelta` | `Wei` | - |
 | `tradeParams.orderPrice` | `Wei` | - |
 | `tradeParams.sizeDelta` | `Wei` | - |
 
 #### Returns
 
-`Promise`<{ `exceedsPriceProtection`: `boolean` ; `fee`: `Wei` ; `leverage`: `Wei` = leverage; `liqPrice`: `Wei` ; `margin`: `Wei` ; `notionalValue`: `Wei` = notionalValue; `price`: `Wei` ; `priceImpact`: `Wei` = priceImpact; `showStatus`: `boolean` ; `side`: `PositionSide` = leverageSide; `size`: `Wei` ; `sizeDelta`: `Wei` = nativeSizeDelta; `status`: `number` ; `statusMessage`: `string`  }\>
+`Promise`<{ `exceedsPriceProtection`: `boolean` ; `fee`: `Wei` ; `leverage`: `Wei` = leverage; `liqPrice`: `Wei` ; `margin`: `Wei` ; `notionalValue`: `Wei` = notionalValue; `price`: `Wei` ; `priceImpact`: `Wei` = priceImpact; `showStatus`: `boolean` ; `side`: [`PositionSide`](../enums/types_futures.PositionSide.md) = leverageSide; `size`: `Wei` ; `sizeDelta`: `Wei` = nativeSizeDelta; `status`: `number` ; `statusMessage`: `string`  }\>
 
 Object containing details about the potential trade
 
 #### Defined in
 
-[services/futures.ts:617](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L617)
+[packages/sdk/src/services/futures.ts:618](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L618)
 
 ___
 
 ### getSmartMarginTransfers
 
-▸ **getSmartMarginTransfers**(`walletAddress?`): `Promise`<`MarginTransfer`[]\>
+▸ **getSmartMarginTransfers**(`walletAddress?`): `Promise`<[`MarginTransfer`](../modules/types_futures.md#margintransfer)[]\>
 
 **`Desc`**
 
@@ -1097,19 +1098,19 @@ console.log(transfers)
 
 #### Returns
 
-`Promise`<`MarginTransfer`[]\>
+`Promise`<[`MarginTransfer`](../modules/types_futures.md#margintransfer)[]\>
 
 Array of past smart margin transfers for the given wallet address
 
 #### Defined in
 
-[services/futures.ts:443](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L443)
+[packages/sdk/src/services/futures.ts:444](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L444)
 
 ___
 
 ### getTradesForMarket
 
-▸ **getTradesForMarket**(`marketAsset`, `walletAddress`, `accountType`, `pageLength?`): `Promise`<`FuturesTrade`[]\>
+▸ **getTradesForMarket**(`marketAsset`, `walletAddress`, `accountType`, `pageLength?`): `Promise`<[`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 **`Desc`**
 
@@ -1119,20 +1120,20 @@ Get the trade history for a given account on a specific market
 
 | Name | Type | Default value | Description |
 | :------ | :------ | :------ | :------ |
-| `marketAsset` | `FuturesMarketAsset` | `undefined` | Market asset |
+| `marketAsset` | [`FuturesMarketAsset`](../enums/types_futures.FuturesMarketAsset.md) | `undefined` | Market asset |
 | `walletAddress` | `string` | `undefined` | Account address |
-| `accountType` | `FuturesMarginType` | `undefined` | Account type (smart or isolated) |
+| `accountType` | [`FuturesMarginType`](../enums/types_futures.FuturesMarginType.md) | `undefined` | Account type (smart or isolated) |
 | `pageLength` | `number` | `16` | Number of trades to fetch |
 
 #### Returns
 
-`Promise`<`FuturesTrade`[]\>
+`Promise`<[`FuturesTrade`](../modules/types_futures.md#futurestrade)[]\>
 
 Array of trades for the account on the given market.
 
 #### Defined in
 
-[services/futures.ts:672](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L672)
+[packages/sdk/src/services/futures.ts:673](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L673)
 
 ___
 
@@ -1160,7 +1161,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:868](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L868)
+[packages/sdk/src/services/futures.ts:869](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L869)
 
 ___
 
@@ -1179,7 +1180,7 @@ Modify the position size for a specific market in a smart margin account
 | `smartMarginAddress` | `string` | Smart margin account address |
 | `market` | `Object` | Object containing the market key and address |
 | `market.address` | `string` | - |
-| `market.key` | `FuturesMarketKey` | - |
+| `market.key` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) | - |
 | `sizeDelta` | `Wei` | Intended size change (positive or negative) |
 | `desiredFillPrice` | `Wei` | Desired fill price |
 | `cancelPendingReduceOrders?` | `boolean` | Boolean describing if pending reduce orders should be cancelled |
@@ -1192,7 +1193,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:925](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L925)
+[packages/sdk/src/services/futures.ts:926](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L926)
 
 ___
 
@@ -1228,7 +1229,7 @@ Total idle margin, idle margin in markets, total wallet balance and the markets 
 
 #### Defined in
 
-[services/futures.ts:1010](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1010)
+[packages/sdk/src/services/futures.ts:1011](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1011)
 
 ___
 
@@ -1254,10 +1255,10 @@ console.log(idleMargin)
 | :------ | :------ |
 | `market` | `Object` |
 | `market.address` | `string` |
-| `market.key` | `FuturesMarketKey` |
+| `market.key` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
 | `walletAddress` | `string` |
 | `smartMarginAddress` | `string` |
-| `order` | `SmartMarginOrderInputs` |
+| `order` | [`SmartMarginOrderInputs`](../modules/types_futures.md#smartmarginorderinputs) |
 | `options?` | `Object` |
 | `options.cancelExpiredDelayedOrders?` | `boolean` |
 | `options.cancelPendingReduceOrders?` | `boolean` |
@@ -1270,7 +1271,7 @@ Total idle margin, idle margin in markets, total wallet balance and the markets 
 
 #### Defined in
 
-[services/futures.ts:1090](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1090)
+[packages/sdk/src/services/futures.ts:1091](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1091)
 
 ___
 
@@ -1286,9 +1287,9 @@ Updates the stop loss and take profit values for a given smart margin account, b
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `marketKey` | `FuturesMarketKey` | Market key |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) | Market key |
 | `smartMarginAddress` | `string` | Smart margin account address |
-| `params` | `SLTPOrderInputs` | Object containing the stop loss and take profit values |
+| `params` | [`SLTPOrderInputs`](../modules/types_futures.md#sltporderinputs) | Object containing the stop loss and take profit values |
 
 #### Returns
 
@@ -1298,7 +1299,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:1326](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1326)
+[packages/sdk/src/services/futures.ts:1327](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1327)
 
 ___
 
@@ -1325,7 +1326,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:1307](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L1307)
+[packages/sdk/src/services/futures.ts:1308](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L1308)
 
 ___
 
@@ -1352,7 +1353,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:979](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L979)
+[packages/sdk/src/services/futures.ts:980](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L980)
 
 ___
 
@@ -1379,4 +1380,4 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[services/futures.ts:845](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/services/futures.ts#L845)
+[packages/sdk/src/services/futures.ts:846](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/futures.ts#L846)

@@ -38,21 +38,21 @@
 
 | Name | Type |
 | :------ | :------ |
-| `context` | `IContext` |
+| `context` | [`IContext`](../interfaces/context.IContext.md) |
 
 #### Defined in
 
-[index.ts:27](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L27)
+[packages/sdk/src/index.ts:27](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L27)
 
 ## Properties
 
 ### context
 
-• **context**: `default`
+• **context**: [`default`](context.default.md)
 
 #### Defined in
 
-[index.ts:15](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L15)
+[packages/sdk/src/index.ts:15](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L15)
 
 ___
 
@@ -62,7 +62,7 @@ ___
 
 #### Defined in
 
-[index.ts:17](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L17)
+[packages/sdk/src/index.ts:17](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L17)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[index.ts:18](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L18)
+[packages/sdk/src/index.ts:18](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L18)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[index.ts:22](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L22)
+[packages/sdk/src/index.ts:22](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L22)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[index.ts:19](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L19)
+[packages/sdk/src/index.ts:19](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L19)
 
 ___
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[index.ts:23](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L23)
+[packages/sdk/src/index.ts:23](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L23)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[index.ts:24](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L24)
+[packages/sdk/src/index.ts:24](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L24)
 
 ___
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-[index.ts:20](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L20)
+[packages/sdk/src/index.ts:20](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L20)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[index.ts:25](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L25)
+[packages/sdk/src/index.ts:25](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L25)
 
 ___
 
@@ -142,13 +142,13 @@ ___
 
 #### Defined in
 
-[index.ts:21](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L21)
+[packages/sdk/src/index.ts:21](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L21)
 
 ## Methods
 
 ### setProvider
 
-▸ **setProvider**(`provider`): `Promise`<`NetworkId`\>
+▸ **setProvider**(`provider`): `Promise`<[`NetworkId`](../modules/types_common.md#networkid)\>
 
 #### Parameters
 
@@ -158,11 +158,11 @@ ___
 
 #### Returns
 
-`Promise`<`NetworkId`\>
+`Promise`<[`NetworkId`](../modules/types_common.md#networkid)\>
 
 #### Defined in
 
-[index.ts:40](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L40)
+[packages/sdk/src/index.ts:40](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L40)
 
 ___
 
@@ -182,4 +182,4 @@ ___
 
 #### Defined in
 
-[index.ts:44](https://github.com/Kwenta/kwenta/blob/8de1d12fe/packages/sdk/src/index.ts#L44)
+[packages/sdk/src/index.ts:44](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/index.ts#L44)
