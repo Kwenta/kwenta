@@ -13,6 +13,7 @@ import PerpsMarketABI from '../contracts/abis/PerpsV2Market.json'
 import PerpsV2MarketInternal from '../contracts/PerpsV2MarketInternalV2'
 import { PerpsV2Market__factory } from '../contracts/types'
 import { IPerpsV2MarketConsolidated } from '../contracts/types/PerpsV2Market'
+import { SettlementStrategy } from '../contracts/types/PerpsV3MarketProxy'
 import {
 	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
@@ -27,9 +28,6 @@ import {
 	FuturesMarketKey,
 	FuturesVolumes,
 	MarketClosureReason,
-	ContractOrderType,
-	PositionDetail,
-	PositionSide,
 	MarginTransfer,
 	FuturesMarginType,
 } from '../types/futures'
@@ -37,7 +35,6 @@ import { PricesMap } from '../types/prices'
 import {
 	appAdjustedLeverage,
 	formatDelayedOrder,
-	mapFuturesPosition,
 	mapFuturesPositions,
 	mapTrades,
 	getPerpsV3SubgraphUrl,
@@ -45,13 +42,18 @@ import {
 	PerpsV3SymbolToMarketKey,
 	MarketAssetByKey,
 	mapPerpsV3Position,
+	sameSide,
 } from '../utils/futures'
 import { getReasonFromCode } from '../utils/synths'
-import { getPerpsV3Markets, queryPerpsV3Accounts } from '../queries/perpsV3'
+import {
+	queryPerpsV3Markets,
+	queryPerpsV3Accounts,
+	querySettlementStrategies,
+} from '../queries/perpsV3'
 import { weiFromWei } from '../utils'
 import { ZERO_ADDRESS } from '../constants'
 import { SynthV3Asset } from '../types'
-import { V3_SYNTH_MARKET_IDS } from '../constants/perpsv3'
+import { V3_PERPS_ID_TO_MARKET_KEY, V3_SYNTH_MARKET_IDS, V3MarketId } from '../constants/perpsv3'
 
 export default class PerpsV3Service {
 	private sdk: KwentaSDK
@@ -69,7 +71,9 @@ export default class PerpsV3Service {
 	}
 
 	public async getMarkets() {
-		const perpsV3Markets = await getPerpsV3Markets(this.sdk)
+		const perpsV3Markets = await queryPerpsV3Markets(this.sdk)
+		const _settlementStrategies = await this.getSettlementStrategies()
+		// TODO: Combine settlement strategies with market data
 
 		const futuresMarkets = perpsV3Markets.reduce<FuturesMarket[]>(
 			(
@@ -179,6 +183,10 @@ export default class PerpsV3Service {
 	) {
 		const minTimestamp = Math.floor(Date.now() / 1000) - periodLength
 		return queryFundingRateHistory(this.sdk, marketAsset, minTimestamp)
+	}
+
+	public async getSettlementStrategies() {
+		return querySettlementStrategies(this.sdk)
 	}
 
 	public async getAverageFundingRates(
@@ -353,35 +361,46 @@ export default class PerpsV3Service {
 		return formatDelayedOrder(account, marketAddress, order)
 	}
 
-	public async getDelayedOrders(account: string, marketAddresses: string[]) {
-		const marketContracts = marketAddresses.map(getPerpsV2MarketMulticall)
+	public async getDelayedOrders(account: string, marketIds: BigNumberish[]) {
+		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
+		if (!proxy) throw new Error(UNSUPPORTED_NETWORK)
 
 		const orders = (await this.sdk.context.multicallProvider.all(
-			marketContracts.map((market) => market.delayedOrders(account))
+			marketIds.map((market) => proxy.getOrder(market, account))
 		)) as IPerpsV2MarketConsolidated.DelayedOrderStructOutput[]
-		return orders.map((order, ind) => {
-			return formatDelayedOrder(account, marketAddresses[ind], order)
-		})
+		return []
+		// return orders.map((order, ind) => {
+		// 	return formatDelayedOrder(account, marketAddresses[ind], order)
+		// })
 	}
 
-	public async getIsolatedTradePreview(
-		_marketAddress: string,
-		_marketKey: FuturesMarketKey,
-		_orderType: ContractOrderType,
-		_inputs: {
-			sizeDelta: Wei
-			price: Wei
-			leverageSide: PositionSide
-		}
-	) {
-		const fillPrice = wei(0)
-		const liqPrice = wei(0)
-		const leverage = wei(0)
+	public async getTradePreview(marketId: V3MarketId, size: Wei) {
+		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
+		const price = this.sdk.prices.getOffchainPrice(V3_PERPS_ID_TO_MARKET_KEY[marketId])
+		if (!proxy) throw new Error(UNSUPPORTED_NETWORK)
+		if (!price) throw new Error('No price for market')
+		const [fees, skew, fill, settlementStrategy] = (await this.sdk.context.multicallProvider.all([
+			proxy.getOrderFees(marketId),
+			proxy.skew(marketId),
+			proxy.fillPrice(marketId, size.toBN(), price.toBN()),
+			proxy.getSettlementStrategy(marketId, 0),
+		])) as [
+			{ makerFee: BigNumber; takerFee: BigNumber },
+			BigNumber,
+			BigNumber,
+			SettlementStrategy.DataStructOutput
+		]
+
+		const notional = size.mul(price)
+		const feeSide = sameSide(notional, wei(skew)) ? wei(fees.takerFee) : wei(fees.makerFee)
+		const fee = notional.mul(feeSide)
+		const fillPrice = wei(fill)
+		const settlementFee = wei(settlementStrategy.settlementReward)
 
 		return {
 			fillPrice,
-			liqPrice,
-			leverage,
+			fee,
+			settlementFee,
 		}
 	}
 
@@ -492,10 +511,10 @@ export default class PerpsV3Service {
 		const commitment = {
 			marketId: marketId,
 			accountId,
-			sizeDelta: sizeDelta.toBN,
+			sizeDelta: sizeDelta.toBN(),
 			settlementStrategyId: 0,
 			acceptablePrice: acceptablePrice.toBN(),
-			trackingCode: ethers.constants.HashZero,
+			trackingCode: KWENTA_TRACKING_CODE,
 		}
 
 		return this.sdk.transactions.createContractTxn(marketProxy, 'commitOrder', [commitment])

@@ -9,6 +9,7 @@ import {
 	FuturesMarketAsset,
 	FuturesFilledPosition,
 	FuturesMarket,
+	PotentialTradeStatus,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
@@ -84,15 +85,30 @@ export type CrossMarginAccountData = FuturesAccountData & {
 	availableMargin: string
 }
 
+export type CrossMarginTradePreview<T = Wei> = {
+	marketId: number
+	sizeDelta: T
+	fillPrice: T
+	fee: T
+	leverage: T
+	notionalValue: T
+	settlementFee: T
+	side: PositionSide
+	status: PotentialTradeStatus
+	showStatus?: boolean
+	statusMessage?: string
+	priceImpact: T
+}
+
 export type CrossMarginState = {
 	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
 	tradeInputs: TradeSizeInputs<string>
 	editPositionInputs: EditPositionInputs<string>
 	orderType: 'market'
 	previews: {
-		trade: FuturesPotentialTradeDetails<string> | null
-		close: FuturesPotentialTradeDetails<string> | null
-		edit: FuturesPotentialTradeDetails<string> | null
+		trade: CrossMarginTradePreview<string> | null
+		close: CrossMarginTradePreview<string> | null
+		edit: CrossMarginTradePreview<string> | null
 	}
 	confirmationModalOpen: boolean
 	closePositionOrderInputs: ClosePositionInputs<string>

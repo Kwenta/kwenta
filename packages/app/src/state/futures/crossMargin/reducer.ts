@@ -29,11 +29,13 @@ import {
 	fetchPerpsV3Account,
 	fetchAvailableMargin,
 } from './actions'
+import { fetchCrossMarginTradePreview } from './actions'
 import {
 	EditPositionInputs,
 	InputCurrencyDenomination,
 	CrossMarginAccountData,
 	CrossMarginState,
+	CrossMarginTradePreview,
 } from './types'
 
 export const COSS_MARGIN_INITIAL_STATE: CrossMarginState = {
@@ -167,7 +169,7 @@ const crossMarginSlice = createSlice({
 			{
 				payload,
 			}: PayloadAction<{
-				preview: FuturesPotentialTradeDetails<string> | null
+				preview: CrossMarginTradePreview<string> | null
 				type: PreviewAction
 			}>
 		) => {
@@ -268,14 +270,20 @@ const crossMarginSlice = createSlice({
 			}
 		})
 
-		// TODO: Fetch Cross Margin Trade Preview
-		// builder.addCase(fetchCrossMarginTradePreview.pending, (futuresState) => {
-		// 	futuresState.queryStatuses.crossMarginTradePreview = LOADING_STATUS
-		// })
-		// builder.addCase(fetchCrossMarginTradePreview.fulfilled, (futuresState, { payload }) => {
-		// 	futuresState.previews[payload.type] = payload.preview
-		// 	futuresState.queryStatuses.crossMarginTradePreview = SUCCESS_STATUS
-		// })
+		// Fetch cross margin trade preview
+		builder.addCase(fetchCrossMarginTradePreview.pending, (futuresState) => {
+			futuresState.queryStatuses.tradePreview = LOADING_STATUS
+		})
+		builder.addCase(fetchCrossMarginTradePreview.fulfilled, (futuresState, { payload }) => {
+			futuresState.previews[payload.type] = payload.preview
+			futuresState.queryStatuses.tradePreview = SUCCESS_STATUS
+		})
+		builder.addCase(fetchCrossMarginTradePreview.rejected, (futuresState) => {
+			futuresState.queryStatuses.openOrders = {
+				status: FetchStatus.Error,
+				error: 'Failed to generate trade preview',
+			}
+		})
 
 		// Fetch cross margin account
 		builder.addCase(fetchPerpsV3Account.pending, (futuresState) => {

@@ -387,14 +387,6 @@ export const selectIsolatedTransferError = createSelector(
 	}
 )
 
-export const selectIsModifyingIsolatedPosition = createSelector(
-	selectSubmittingFuturesTx,
-	(state: RootState) => state.app,
-	(submitting, app) => {
-		return app.transaction?.type === 'modify_isolated' && submitting
-	}
-)
-
 export const selectIsCancellingOrder = createSelector(
 	selectSubmittingFuturesTx,
 	(state: RootState) => state.app,
@@ -444,13 +436,13 @@ export const selectSmartMarginLeverageSide = createSelector(
 	(smartMargin) => smartMargin.leverageSide
 )
 
-export const selectMaxLeverage = createSelector(selectV2MarketInfo, (market) => {
+export const selectSmartMarginMaxLeverage = createSelector(selectV2MarketInfo, (market) => {
 	let adjustedMaxLeverage = market?.appMaxLeverage ?? wei(1)
 	return adjustedMaxLeverage
 })
 
 export const selectAboveMaxLeverage = createSelector(
-	selectMaxLeverage,
+	selectSmartMarginMaxLeverage,
 	selectPosition,
 	(maxLeverage, position) => {
 		return position?.position?.leverage && maxLeverage.lt(position.position.leverage)
@@ -944,7 +936,7 @@ export const selectOrderFee = createSelector(
 )
 
 export const selectMaxUsdSizeInput = createSelector(
-	selectMaxLeverage,
+	selectSmartMarginMaxLeverage,
 	selectMarginDeltaInputValue,
 	(maxLeverage, marginDelta) => {
 		return maxLeverage.mul(marginDelta || 0)
@@ -1096,7 +1088,7 @@ export const selectSmartMarginPreviewCount = (state: RootState) =>
 
 export const selectBuyingPower = createSelector(
 	selectPosition,
-	selectMaxLeverage,
+	selectSmartMarginMaxLeverage,
 	(position, maxLeverage) => {
 		const totalMargin = position?.remainingMargin ?? ZERO_WEI
 		return totalMargin.gt(ZERO_WEI) ? totalMargin.mul(maxLeverage ?? ZERO_WEI) : ZERO_WEI

@@ -32,7 +32,7 @@ import {
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import { KeeperDepositRow } from '../FeeInfoBox/FeesRow'
+import { KeeperDepositRow } from '../FeeInfoBox/FeeRows'
 import PositionType from '../PositionType'
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement'
 import ShowPercentage from '../Trade/ShowPercentage'

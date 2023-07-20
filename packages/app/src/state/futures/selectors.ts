@@ -16,6 +16,7 @@ import {
 	selectCrossMarginAccountData,
 	selectCrossMarginAvailableMargin,
 	selectCrossMarginMarginTransfers,
+	selectCrossMarginMaxLeverage,
 	selectCrossMarginPositionHistory,
 	selectCrossMarginPositions,
 	selectCrossMarginTradeInputs,
@@ -57,6 +58,7 @@ import {
 	selectSmartMarginTradeInputs,
 	selectSmartMarginOrderPrice,
 	selectMarketIndexPrice,
+	selectSmartMarginMaxLeverage,
 } from './smartMargin/selectors'
 import { SmartPerpsPortfolio } from './smartMargin/types'
 import {
@@ -398,14 +400,6 @@ export const selectIsolatedTransferError = createSelector(
 	}
 )
 
-export const selectIsModifyingIsolatedPosition = createSelector(
-	selectSubmittingFuturesTx,
-	(state: RootState) => state.app,
-	(submitting, app) => {
-		return app.transaction?.type === 'modify_isolated' && submitting
-	}
-)
-
 export const selectIsCancellingOrder = createSelector(
 	selectSubmittingFuturesTx,
 	(state: RootState) => state.app,
@@ -451,26 +445,11 @@ export const selectPosition = createSelector(
 )
 
 export const selectMaxLeverage = createSelector(
-	selectPosition,
-	selectMarketInfo,
-	selectLeverageSide,
+	selectCrossMarginMaxLeverage,
+	selectSmartMarginMaxLeverage,
 	selectFuturesType,
-	(position, market, leverageSide, futuresType) => {
-		const positionLeverage = position?.position?.leverage ?? wei(0)
-		const positionSide = position?.position?.side
-		let adjustedMaxLeverage = market?.appMaxLeverage ?? wei(1)
-
-		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage
-		if (futuresType === FuturesMarginType.SMART_MARGIN) return adjustedMaxLeverage
-		if (positionSide === leverageSide) {
-			return adjustedMaxLeverage?.sub(positionLeverage).gte(0)
-				? adjustedMaxLeverage.sub(positionLeverage)
-				: wei(0)
-		} else {
-			return positionLeverage.add(adjustedMaxLeverage).gte(0)
-				? positionLeverage.add(adjustedMaxLeverage)
-				: wei(0)
-		}
+	(cmMax, smMax, type) => {
+		return type === FuturesMarginType.CROSS_MARGIN ? cmMax : smMax
 	}
 )
 
@@ -909,26 +888,25 @@ export const selectPortfolioChartData = createSelector(
 
 export const selectHasRemainingMargin = createSelector(
 	selectPosition,
+	selectCrossMarginAvailableMargin,
 	selectFuturesType,
 	selectSmartMarginBalanceInfo,
-	(position, futuresType, balanceInfo) => {
+	(position, availableMargin, futuresType, balanceInfo) => {
 		const posMargin = position?.remainingMargin ?? ZERO_WEI
 		return futuresType === FuturesMarginType.SMART_MARGIN
 			? balanceInfo.freeMargin.add(posMargin).gt(0)
-			: posMargin.gt(0)
+			: availableMargin.gt(0)
 	}
 )
 
 export const selectMaxUsdSizeInput = createSelector(
 	selectFuturesType,
-	selectPosition,
+	selectCrossMarginAvailableMargin,
 	selectMaxLeverage,
 	selectMarginDeltaInputValue,
-	(futuresType, position, maxLeverage, marginDelta) => {
+	(futuresType, availableMargin, maxLeverage, marginDelta) => {
 		const margin =
-			futuresType === FuturesMarginType.SMART_MARGIN
-				? marginDelta || 0
-				: position?.remainingMargin ?? wei(0)
+			futuresType === FuturesMarginType.SMART_MARGIN ? marginDelta || 0 : availableMargin
 		return maxLeverage.mul(margin)
 	}
 )

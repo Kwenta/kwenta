@@ -17,7 +17,6 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectPricesConnectionError } from 'state/prices/selectors'
 
-import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo'
 import LeverageInput from '../LeverageInput'
 import MarginInput from '../MarginInput'
 import OrderSizing from '../OrderSizing'
@@ -29,6 +28,7 @@ import MarketsDropdown from './MarketsDropdown'
 import OrderAcknowledgement from './OrderAcknowledgement'
 import OrderTypeSelector from './OrderTypeSelector'
 import SLTPInputs from './SLTPInputs'
+import SmartMarginTradePanelPreview from './SmartMarginTradePanelPreview'
 import TradeBalance from './TradeBalance'
 import OrderPriceInput from './TradePanelPriceInput'
 
@@ -121,8 +121,7 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 								{accountType === FuturesMarginType.SMART_MARGIN && <SLTPInputs />}
 
 								<ManagePosition />
-
-								<TradePanelFeeInfo />
+								<SmartMarginTradePanelPreview />
 							</>
 						)}
 					</MainPanelContent>

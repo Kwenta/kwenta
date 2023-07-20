@@ -9,14 +9,14 @@ import { selectLeverageSide } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectPricesConnectionError } from 'state/prices/selectors'
 
-import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo'
 import LeverageInput from '../LeverageInput'
 import OrderSizing from '../OrderSizing'
 import PositionButtons from '../PositionButtons'
 
 import CloseOnlyPrompt from './CloseOnlyPrompt'
-import ManagePosition from './ManagePosition'
+import CrossMarginTradePanelPreview from './CrossMarginTradePanelPreview'
 import MarketsDropdown from './MarketsDropdown'
+import SubmitCrossMarginTradeButton from './SubmitCrossMarginTrade'
 import TradeBalanceCrossMargin from './TradeBalanceCrossMargin'
 
 type Props = {
@@ -67,8 +67,8 @@ const TradePanelCrossMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 
 						<OrderSizing />
 						<LeverageInput />
-						<ManagePosition />
-						<TradePanelFeeInfo />
+						<SubmitCrossMarginTradeButton />
+						<CrossMarginTradePanelPreview />
 					</MainPanelContent>
 				</>
 			)}

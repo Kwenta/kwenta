@@ -3,7 +3,7 @@ import request, { gql } from 'graphql-request'
 import KwentaSDK from '..'
 import { PerpsV3Market } from '../types'
 
-export const getPerpsV3Markets = async (sdk: KwentaSDK): Promise<PerpsV3Market[]> => {
+export const queryPerpsV3Markets = async (sdk: KwentaSDK): Promise<PerpsV3Market[]> => {
 	const response: any = await request(
 		sdk.perpsV3.subgraphUrl,
 		gql`
@@ -18,11 +18,11 @@ export const getPerpsV3Markets = async (sdk: KwentaSDK): Promise<PerpsV3Market[]
 					owner
 					maxFundingVelocity
 					skewScale
-					initialMarginRatioD18
-					maintenanceMarginRatioD18
+					initialMarginFraction
+					maintenanceMarginFraction
 					liquidationRewardRatioD18
 					maxLiquidationLimitAccumulationMultiplier
-					lockedOiRatioD18
+					lockedOiPercent
 					makerFee
 					takerFee
 				}
@@ -60,4 +60,27 @@ export const queryPerpsV3Accounts = async (
 	)
 
 	return response.accounts
+}
+
+export const querySettlementStrategies = async (sdk: KwentaSDK): Promise<PerpsV3Market[]> => {
+	const response: any = await request(
+		sdk.perpsV3.subgraphUrl,
+		gql`
+			query GetSettlementStrategies {
+				settlementStrategies(orderBy: "marketId", orderDirection: "desc") {
+					id
+					marketId
+					strategyId
+					strategyType
+					settlementDelay
+					settlementWindowDuration
+					url
+					settlementReward
+					priceDeviationTolerance
+				}
+			}
+		`
+	)
+
+	return response.settlementStrategies
 }

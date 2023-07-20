@@ -5,6 +5,7 @@ import {
 	FuturesPositionHistory,
 	NetworkId,
 	PositionSide,
+	PotentialTradeStatus,
 	SynthV3Asset,
 	TransactionStatus,
 } from '@kwenta/sdk/types'
@@ -18,12 +19,7 @@ import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import { handleTransactionError, setOpenModal, setTransaction } from 'state/app/reducer'
 import { fetchV3BalancesAndAllowances } from 'state/balances/actions'
 import { ZERO_STATE_TRADE_INPUTS } from 'state/constants'
-import {
-	selectLeverageSide,
-	selectMarketInfo,
-	selectMarkets,
-	selectTradePrice,
-} from 'state/futures/selectors'
+import { selectLeverageSide, selectMarketInfo, selectMarkets } from 'state/futures/selectors'
 import { AppThunk } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
@@ -41,7 +37,6 @@ import {
 	AppFuturesMarginType,
 	CrossMarginTradePreviewParams,
 	DebouncedCMPreviewParams,
-	DebouncedSMPreviewParams,
 	DelayedOrderWithDetails,
 } from '../common/types'
 
@@ -60,10 +55,13 @@ import {
 	selectCrossMarginAvailableMargin,
 	selectCrossMarginSupportedNetwork,
 	selectCrossMarginTradeInputs,
+	selectCrossMarginTradePreview,
 	selectOpenDelayedOrdersV3,
+	selectV3MarketId,
 	selectV3MarketInfo,
 	selectV3Markets,
 } from './selectors'
+import { CrossMarginTradePreview } from './types'
 
 export const fetchMarketsV3 = createAsyncThunk<
 	{ markets: FuturesMarket<string>[]; networkId: NetworkId } | undefined,
@@ -205,34 +203,66 @@ export const fetchCrossMarginOpenOrders = createAsyncThunk<
 	void,
 	ThunkConfig
 >('futures/fetchCrossMarginOpenOrders', async (_, { dispatch, getState, extra: { sdk } }) => {
-	const { wallet, network } = selectAccountContext(getState())
+	const { accountId, network, wallet } = selectAccountContext(getState())
 	const supportedNetwork = selectCrossMarginSupportedNetwork(getState())
 	const markets = selectV3Markets(getState())
 	const existingOrders = selectOpenDelayedOrdersV3(getState())
-	if (!wallet || !supportedNetwork || !markets.length) return
+	if (!accountId || !supportedNetwork || !markets.length || !wallet) return
 
-	const marketAddresses = markets.map((market) => market.market)
+	try {
+		const marketIds = markets.map((market) => market.market)
+		const orders: DelayedOrder[] = await sdk.perpsV3.getDelayedOrders(accountId, marketIds)
 
-	const orders: DelayedOrder[] = await sdk.futures.getDelayedOrders(wallet, marketAddresses)
-	const nonzeroOrders = formatDelayedOrders(orders, markets)
-	const orderDropped = existingOrders.length > nonzeroOrders.length
-	if (orderDropped) {
-		dispatch(fetchCrossMarginPositions())
-	}
+		const nonzeroOrders = formatDelayedOrders(orders, markets)
+		const orderDropped = existingOrders.length > nonzeroOrders.length
+		if (orderDropped) {
+			dispatch(fetchCrossMarginPositions())
+		}
 
-	return {
-		networkId: network,
-		orders: serializeDelayedOrders(nonzeroOrders),
-		wallet: wallet,
+		return {
+			networkId: network,
+			orders: serializeDelayedOrders(nonzeroOrders),
+			wallet: wallet,
+		}
+	} catch (err) {
+		notifyError('Failed to fetch open orders', err)
+		throw err
 	}
 })
 
 export const fetchCrossMarginTradePreview = createAsyncThunk<
-	void,
+	{ preview: CrossMarginTradePreview<string>; type: 'trade' },
 	DebouncedCMPreviewParams,
 	ThunkConfig
->('futures/fetchCrossMarginTradePreview', async () => {
+>('futures/fetchCrossMarginTradePreview', async (params, { getState, extra: { sdk } }) => {
 	// TODO: Fetch cross margin trade preview
+	const marketPrice = params.orderPrice
+	const marketId = selectV3MarketId(getState())
+	const availableMargin = selectCrossMarginAvailableMargin(getState())
+	try {
+		if (!marketId) throw new Error('No market selected')
+		const preview = await sdk.perpsV3.getTradePreview(Number(marketId), params.sizeDelta)
+		const priceImpact = preview.fillPrice.sub(marketPrice).div(marketPrice).abs()
+
+		const notional = preview.fillPrice.mul(params.sizeDelta).abs()
+
+		const populatedPreview = {
+			settlementFee: preview.settlementFee.toString(),
+			marketId: Number(marketId),
+			fee: preview.fee.toString(),
+			fillPrice: preview.fillPrice.toString(),
+			priceImpact: priceImpact.toString(),
+			sizeDelta: params.sizeDelta.toString(),
+			leverage: notional.gt(0) ? availableMargin.div(notional).toString() : '0',
+			notionalValue: notional.toString(),
+			side: params.sizeDelta.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+			status: PotentialTradeStatus.OK,
+		}
+		return { preview: populatedPreview, type: 'trade' }
+	} catch (err) {
+		notifyError(err.message, err)
+		throw err
+	}
 })
 
 export const debouncedPrepareCrossMarginTradePreview = debounce(
@@ -307,6 +337,7 @@ export const editCrossMarginTradeSize =
 		const leverage = availableMargin?.gt(0) ? wei(usdSize).div(availableMargin.abs()) : '0'
 		const sizeDeltaWei =
 			tradeSide === PositionSide.LONG ? wei(nativeSize || 0) : wei(nativeSize || 0).neg()
+
 		dispatch(
 			setCrossMarginTradeInputs({
 				susdSize: usdSize,
@@ -476,7 +507,33 @@ export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 
 export const submitCrossMarginOrder = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/submitCrossMarginOrder',
-	async () => {
+	async (_, { dispatch, getState, extra: { sdk } }) => {
+		const { nativeSizeDelta } = selectCrossMarginTradeInputs(getState())
+		const marketId = selectV3MarketId(getState())
+		const accountId = selectCrossMarginAccount(getState())
+		const preview = selectCrossMarginTradePreview(getState())
+
+		if (!marketId || !accountId || !preview) throw new Error('Invalid order submission')
+
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'submit_cross_order',
+					hash: null,
+				})
+			)
+			const tx = await sdk.perpsV3.submitOrder(
+				marketId,
+				accountId,
+				wei(nativeSizeDelta || 0),
+				preview.desiredFillPrice
+			)
+			await monitorAndAwaitTransaction(dispatch, tx)
+		} catch (err) {
+			dispatch(handleTransactionError(err.message))
+			throw err
+		}
 		// TODO: Handle perps v3 order submission
 	}
 )

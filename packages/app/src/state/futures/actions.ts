@@ -13,7 +13,11 @@ import { notifyError } from 'components/ErrorNotifier'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import { handleTransactionError, setTransaction, updateTransactionHash } from 'state/app/reducer'
 import { ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
-import { fetchMarketsV3, fetchPositionHistoryV3 } from 'state/futures/crossMargin/actions'
+import {
+	editCrossMarginTradeSize,
+	fetchMarketsV3,
+	fetchPositionHistoryV3,
+} from 'state/futures/crossMargin/actions'
 import { serializeWeiObject } from 'state/helpers'
 import { AppThunk } from 'state/store'
 import { ThunkConfig } from 'state/types'
@@ -133,7 +137,7 @@ export const editTradeSizeInput =
 	(dispatch, getState) => {
 		const type = selectFuturesType(getState())
 		if (type === FuturesMarginType.CROSS_MARGIN) {
-			dispatch(editSmartMarginTradeSize(size, currencyType))
+			dispatch(editCrossMarginTradeSize(size, currencyType))
 		} else {
 			dispatch(editSmartMarginTradeSize(size, currencyType))
 		}

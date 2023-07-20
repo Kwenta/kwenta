@@ -20,14 +20,18 @@ import {
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
 
-import TradeTotalFeesRow from './TradeTotalFeesRow'
+import SmartMarginTradeFees from '../FeeInfoBox/SmartMarginTradeFees'
 
-export const TradePanelFeeInfo = memo(() => {
+import { LiquidationRow, PriceImpactRow } from './PreviewRows'
+
+export const SmartMarginTradePanelPreview = memo(() => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+
 	return (
 		<FeeInfoBoxContainer>
-			<TradeTotalFeesRow />
-			<LiquidationRow />
-			<PriceImpactRow />
+			<SmartMarginTradeFees />
+			<LiquidationRow liqPrice={potentialTradeDetails?.liqPrice} />
+			<PriceImpactRow priceImpact={potentialTradeDetails?.priceImpact} />
 			<TradingRewardRow />
 		</FeeInfoBoxContainer>
 	)
@@ -82,37 +86,6 @@ const TradingRewardRow = memo(() => {
 	)
 })
 
-const LiquidationRow = memo(() => {
-	const potentialTradeDetails = useAppSelector(selectTradePreview)
-
-	return (
-		<InfoBoxRow
-			title="Liquidation price"
-			color="preview"
-			textValue={
-				potentialTradeDetails?.liqPrice
-					? formatDollars(potentialTradeDetails.liqPrice, { suggestDecimals: true })
-					: NO_VALUE
-			}
-		/>
-	)
-})
-
-const PriceImpactRow = memo(() => {
-	const potentialTradeDetails = useAppSelector(selectTradePreview)
-
-	return (
-		<InfoBoxRow
-			title="Price impact"
-			textValue={
-				potentialTradeDetails?.priceImpact
-					? formatPercent(potentialTradeDetails.priceImpact)
-					: NO_VALUE
-			}
-		/>
-	)
-})
-
 const FeeInfoBoxContainer = styled.div`
 	margin-bottom: 16px;
 `
@@ -135,4 +108,4 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 		`}
 `
 
-export default TradePanelFeeInfo
+export default SmartMarginTradePanelPreview

@@ -23,7 +23,7 @@ import DepositWithdrawCrossMarginModal from 'sections/futures/Trade/DepositWithd
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported'
 import TradePanel from 'sections/futures/Trade/TradePanel'
 import TradePanelCrossMargin from 'sections/futures/Trade/TradePanelCrossMargin'
-import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal'
+import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/CrossMarginOrderConfirmation'
 import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin'
 import WithdrawSmartMargin from 'sections/futures/TradeSmartMargin/WithdrawSmartMargin'
 import AppLayout from 'sections/shared/Layout/AppLayout'

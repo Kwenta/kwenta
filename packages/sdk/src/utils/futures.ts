@@ -922,3 +922,7 @@ export const formatPerpsV2Market = (
 		maxDelayTimeDelta: wei(marketParameters.maxDelayTimeDelta, 0).toNumber(),
 	},
 })
+
+export const sameSide = (a: Wei, b: Wei) => {
+	return a.gt(wei(0)) === b.gt(wei(0))
+}

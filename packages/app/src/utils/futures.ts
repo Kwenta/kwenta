@@ -25,6 +25,8 @@ import { SmartMarginBalanceInfo } from 'state/futures/smartMargin/types'
 import { futuresPositionKeys, FundingRate, MarkPrices } from 'state/futures/types'
 import { deserializeWeiObject } from 'state/helpers'
 
+import { CrossMarginTradePreview } from '../state/futures/crossMargin/types'
+
 export const getMarketName = (asset: FuturesMarketAsset) => {
 	return `${getDisplayAsset(asset)}/sUSD`
 }
@@ -400,3 +402,31 @@ export const perpsAccountIdFromAddress = (eoa: string): string => {
 	const numberedId = eoa.replace(/\D/g, '')
 	return numberedId.substring(0, 16)
 }
+
+// TODO: Move to app
+export const serializeCrossMarginTradePreview = (
+	preview: CrossMarginTradePreview
+): CrossMarginTradePreview<string> => ({
+	...preview,
+	settlementFee: preview.settlementFee.toString(),
+	sizeDelta: preview.sizeDelta.toString(),
+	fillPrice: preview.fillPrice.toString(),
+	fee: preview.fee.toString(),
+	leverage: preview.leverage.toString(),
+	notionalValue: preview.notionalValue.toString(),
+	priceImpact: preview.priceImpact.toString(),
+})
+
+// TODO: Move to app
+export const unserializeCrossMarginTradePreview = (
+	preview: CrossMarginTradePreview<string>
+): CrossMarginTradePreview => ({
+	...preview,
+	settlementFee: wei(preview.settlementFee),
+	sizeDelta: wei(preview.sizeDelta),
+	fillPrice: wei(preview.fillPrice),
+	fee: wei(preview.fee),
+	leverage: wei(preview.leverage),
+	notionalValue: wei(preview.notionalValue),
+	priceImpact: wei(preview.priceImpact),
+})

@@ -1,5 +1,9 @@
 import { PositionSide, SynthV3Asset } from '@kwenta/sdk/types'
-import { MarketKeyByAsset } from '@kwenta/sdk/utils'
+import {
+	MarketKeyByAsset,
+	calculateDesiredFillPrice,
+	getDefaultPriceImpact,
+} from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 
@@ -14,6 +18,8 @@ import {
 	unserializeTrades,
 	updatePositionUpnl,
 } from 'utils/futures'
+
+import { unserializeCrossMarginTradePreview } from '../../../utils/futures'
 
 import { MarkPrices } from './types'
 
@@ -35,6 +41,11 @@ export const selectV3MarketInfo = createSelector(
 	(markets, selectedMarket) => {
 		return markets.find((market) => market.marketKey === selectedMarket)
 	}
+)
+
+export const selectV3MarketId = createSelector(
+	selectV3MarketInfo,
+	(marketInfo) => marketInfo?.market
 )
 
 export const selectCrossMarginSupportedNetwork = (state: RootState) =>
@@ -187,3 +198,28 @@ export const selectWithdrawableCrossMargin = createSelector(
 		return wei(0)
 	}
 )
+
+export const selectCrossMarginTradePreview = createSelector(
+	selectCrossMarginTradeInputs,
+	(state: RootState) => state.crossMargin.previews.trade,
+	({ nativeSizeDelta }, preview) => {
+		const priceImpact = getDefaultPriceImpact('market')
+		const desiredFillPrice = calculateDesiredFillPrice(
+			nativeSizeDelta,
+			wei(preview?.fillPrice || 0),
+			priceImpact
+		)
+
+		const unserialized = preview ? unserializeCrossMarginTradePreview(preview) : undefined
+		return {
+			...unserialized,
+			desiredFillPrice,
+		}
+	}
+)
+
+// TODO: Correct max leverage calc for V3
+export const selectCrossMarginMaxLeverage = createSelector(selectV3MarketInfo, (market) => {
+	let adjustedMaxLeverage = market?.appMaxLeverage ?? wei(1)
+	return adjustedMaxLeverage
+})
