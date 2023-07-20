@@ -1,0 +1,131 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>@kwenta/sdk</title><meta name="description" content="Documentation for @kwenta/sdk"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base=".">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">@kwenta/sdk</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<h2>@kwenta/sdk</h2></div>
+<div class="tsd-panel tsd-typography"><a id="md:kwenta-sdk" class="tsd-anchor"></a><h1><a href="#md:kwenta-sdk">Kwenta SDK</a></h1><p>Note: This document is a work in progress, as the implementation of the Kwenta SDK is still in progress. Interfaces, types and overall structure are subject to change.</p>
+<a id="md:architecture" class="tsd-anchor"></a><h1><a href="#md:architecture">Architecture</a></h1><p>The SDK is a collection of multiple classes, objects and functions which can generally be categorized as follows:</p>
+<a id="md:context" class="tsd-anchor"></a><h2><a href="#md:context">Context</a></h2><p>The context class (pending implementation) contains attributes that are used by other classes, especially services (see the section below), to determine what context they are being called in. For example, the context class contains information about the provider, signer, wallet address and network ID.</p>
+<a id="md:services" class="tsd-anchor"></a><h2><a href="#md:services">Services</a></h2><p>Services are collection of methods that function together to enable. We have services for futures, exchange, synths and transactions. A service&#39;s methods are available under <code>sdk.[service-name]</code>. While services function independently for the most part, they may also call methods on other services.</p>
+<a id="md:events" class="tsd-anchor"></a><h2><a href="#md:events">Events</a></h2><p>In certain situations where the SDK needs to inform a client about data changes (for example, exchange rate updates), we emit events that clients can listen to.</p>
+<a id="md:contracts" class="tsd-anchor"></a><h2><a href="#md:contracts">Contracts</a></h2><p>Based on the currently selected networkId, we maintain a list of available contracts in the context, used for subsequent contract calls. When there is an attempt to access a contract that is not available on the network, an error is thrown.</p>
+<a id="md:synths" class="tsd-anchor"></a><h2><a href="#md:synths">Synths</a></h2><p>Similarly to contracts, we maintain a list of synths on the current network, which is used for fetching balances, synth names etc.</p>
+<a id="md:testing" class="tsd-anchor"></a><h1><a href="#md:testing">Testing</a></h1><p>One of the main benefits of extracting Kwenta&#39;s logic into an SDK is the ability to test business logic independently of the UI. The <code>tests</code> folder will contain a number of unit and integration tests that will help us remain confident in the functionality of the SDK, as well as our ability to output sensible errors when one or more of our dependencies do not behave as expected. These tests will also be updated frequently as new features are added and bugs are fixed.</p>
+<a id="md:checklist" class="tsd-anchor"></a><h1><a href="#md:checklist">Checklist</a></h1><p>The following tasks are expected to be completed before the SDK can be considered feature-complete. This list will likely grow as new features are added.</p>
+<a id="md:general" class="tsd-anchor"></a><h2><a href="#md:general">General</a></h2><ul>
+<li><input disabled="" type="checkbox"> Ensure type correctness of all SDK methods.</li>
+<li><input disabled="" type="checkbox"> Set up foundation for retries on select methods.</li>
+<li><input disabled="" type="checkbox"> Set up service for interacting with our subgraphs.</li>
+<li><input disabled="" type="checkbox"> Remove Duplicated types and move most data types to sdk.</li>
+<li><input disabled="" type="checkbox"> Cache contract data where possible, especially settings, config etc which doesn&#39;t change very often</li>
+<li><input disabled="" type="checkbox"> Create a contracts class in sdk context where we can cache more dynamic contracts such as markets</li>
+<li><input disabled="" type="checkbox"> Ensure types are added to all redux actions and reducers</li>
+<li><input disabled="" type="checkbox"> Remove old unused code</li>
+<li><input disabled="" type="checkbox"> Ensure all data is correctly refetched after some mutation e.g. polling for contract and subgraph changes after a transaction</li>
+<li><input disabled="" type="checkbox"> Consider experimenting with WebSockets for realtime data (again).</li>
+<li><input disabled="" type="checkbox"> Add query statuses for all key queries and create derived query statuses for components which rely on completion of multiple queries</li>
+<li><input disabled="" type="checkbox"> Make all sdk number params consistent, e.g. use Wei everywhere instead of BigNumber or string</li>
+<li><input disabled="" type="checkbox"> Remove Duplicated types.</li>
+<li><input disabled="" type="checkbox"> Create a standard way of passing in numeric values (particularly amounts) to the SDK. Weigh pros and cons of (<code>Wei</code>, <code>ethers.BigNumber</code> and <code>string</code>).</li>
+<li><input disabled="" type="checkbox"> Create interfaces for all the services, so we don&#39;t have to colocate method types and logic, especially when the types are verbose.</li>
+<li><input disabled="" type="checkbox"> Add acknowledgement for features gotten from Synthetix codebase.</li>
+<li><input disabled="" type="checkbox"> Switch to relative imports</li>
+<li><input disabled="" type="checkbox"> Create <code>package.json</code> and set up TypeScript build.</li>
+<li><input disabled="" type="checkbox"> Set up monorepos with Lerna, NX, Yarn Workspaces (or the npm equivalent).</li>
+</ul>
+<a id="md:exchange" class="tsd-anchor"></a><h2><a href="#md:exchange">Exchange</a></h2><ul>
+<li><input disabled="" type="checkbox"> Refactor <code>handleExchange</code> method.</li>
+<li><input disabled="" type="checkbox"> Rename quote/base to from/to.</li>
+<li><input disabled="" type="checkbox"> Update the write transactions to use the typed calls</li>
+<li><input disabled="" type="checkbox"> Ensure all methods use from/to in correct order.</li>
+<li><input disabled="" type="checkbox"> Experiment with exchange contexts (store an instance of from/to pairings, so that the client doesn&#39;t have to pass it every time).</li>
+<li><input disabled="" type="checkbox"> Reduce number of queries, by storing more data in class instance.</li>
+<li><input disabled="" type="checkbox"> Write tests for simple functions.</li>
+<li><input disabled="" type="checkbox"> Consider making the provision of the <code>txProvider</code> the client&#39;s responsibility. It is a little cumbersome to have to call <code>this.getTxProvider</code> in nearly every method.</li>
+<li><input disabled="" type="checkbox"> Consider ditching currency keys for simple token addresses. The client can choose to load a token list for UI purposes, but the SDK should not be concerned with such details. For balances, we can fetch them as needed.</li>
+</ul>
+<a id="md:futures" class="tsd-anchor"></a><h2><a href="#md:futures">Futures</a></h2><ul>
+<li><input disabled="" type="checkbox"> Separate methods for isolated and cross-margin accounts.</li>
+<li><input disabled="" type="checkbox"> Implement methods for fetching orders, past trades and transfers from the subgraph.</li>
+<li><input disabled="" type="checkbox"> Query cross margin accounts from sdk and cache them there.</li>
+</ul>
+<a id="md:kwenta-token" class="tsd-anchor"></a><h2><a href="#md:kwenta-token">Kwenta Token</a></h2><ul>
+<li><input disabled="" type="checkbox"> Consider breaking up <code>getEarnDetails</code> and <code>getStakingData</code> functions.</li>
+</ul>
+<a id="md:design-considerations" class="tsd-anchor"></a><h1><a href="#md:design-considerations">Design Considerations</a></h1><a id="md:general-1" class="tsd-anchor"></a><h2><a href="#md:general-1">General</a></h2><ul>
+<li>It is important to understand that checking if certain context properties are initialized cannot be done directly by checking if the property is undefined. This is because the getter throws an error on attempting to access these values when they are undefined.</li>
+</ul>
+<a id="md:exchange-1" class="tsd-anchor"></a><h2><a href="#md:exchange-1">Exchange</a></h2><a id="md:futures-1" class="tsd-anchor"></a><h2><a href="#md:futures-1">Futures</a></h2><a id="md:notes" class="tsd-anchor"></a><h1><a href="#md:notes">Notes</a></h1><ul>
+<li>The <code>ExchangeService</code> class is still structured very similarly to the <code>useExchange</code> hook. It is important to change this, as they are two different paradigms. Without doing this, it is impossible to be efficient with requests and eliminate the overdependence of certain methods on others.</li>
+</ul>
+</div></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)" id="icon-chevronDown"></path></svg>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li>
+<ul>
+<li><a href="#md:kwenta-sdk"><span>Kwenta SDK</span></a></li>
+<li><a href="#md:architecture"><span>Architecture</span></a></li>
+<li>
+<ul>
+<li><a href="#md:context"><span>Context</span></a></li>
+<li><a href="#md:services"><span>Services</span></a></li>
+<li><a href="#md:events"><span>Events</span></a></li>
+<li><a href="#md:contracts"><span>Contracts</span></a></li>
+<li><a href="#md:synths"><span>Synths</span></a></li></ul></li>
+<li><a href="#md:testing"><span>Testing</span></a></li>
+<li><a href="#md:checklist"><span>Checklist</span></a></li>
+<li>
+<ul>
+<li><a href="#md:general"><span>General</span></a></li>
+<li><a href="#md:exchange"><span>Exchange</span></a></li>
+<li><a href="#md:futures"><span>Futures</span></a></li>
+<li><a href="#md:kwenta-token"><span>Kwenta <wbr/>Token</span></a></li></ul></li>
+<li><a href="#md:design-considerations"><span>Design <wbr/>Considerations</span></a></li>
+<li>
+<ul>
+<li><a href="#md:general-1"><span>General</span></a></li>
+<li><a href="#md:exchange-1"><span>Exchange</span></a></li>
+<li><a href="#md:futures-1"><span>Futures</span></a></li></ul></li>
+<li><a href="#md:notes"><span>Notes</span></a></li></ul></li></ul></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="index.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>@kwenta/sdk</span></a>
+<ul class="tsd-small-nested-navigation">
+<li><a href="modules/index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>index</span></a></li>
+<li><a href="modules/services_exchange.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/exchange</span></a></li>
+<li><a href="modules/services_futures.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/futures</span></a></li>
+<li><a href="modules/services_kwentaToken.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/kwenta<wbr/>Token</span></a></li>
+<li><a href="modules/services_perpsV3.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/perps<wbr/>V3</span></a></li>
+<li><a href="modules/services_prices.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/prices</span></a></li>
+<li><a href="modules/services_stats.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/stats</span></a></li>
+<li><a href="modules/services_synths.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/synths</span></a></li>
+<li><a href="modules/services_system.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/system</span></a></li>
+<li><a href="modules/services_transactions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>services/transactions</span></a></li></ul></nav></div></div></div>
+<div class="tsd-generator">
+<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<div class="overlay"></div></body></html>

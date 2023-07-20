@@ -1,0 +1,5 @@
+{
+  "entryPoints": ["src/index.ts", "src/services/*.ts"],
+  "out": "docs",
+  "plugin": ["typedoc-plugin-markdown"]
+}

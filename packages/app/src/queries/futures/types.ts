@@ -1,14 +1,5 @@
 import Wei from '@synthetixio/wei'
 
-export type FuturesStat = {
-	account: string
-	pnlWithFeesPaid: Wei
-	liquidations: Wei
-	totalTrades: Wei
-	totalVolume: Wei
-	pnl?: Wei
-}
-
 export type AccountStat = {
 	rank: number
 	account: string
