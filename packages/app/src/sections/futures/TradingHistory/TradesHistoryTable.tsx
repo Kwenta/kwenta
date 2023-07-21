@@ -42,7 +42,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 						.map((trade) => {
 							return {
 								value: Number(trade?.price),
-								amount: Number(trade?.size),
+								amount: trade?.size,
 								time: Number(trade?.timestamp),
 								id: trade?.txnHash,
 								orderType: trade?.orderType,
@@ -118,16 +118,13 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 						header: () => <TableHeader>{t('futures.market.history.amount-label')}</TableHeader>,
 						accessorKey: TableColumnAccessor.Amount,
 						cell: (cellProps) => {
-							const numValue = Math.abs(cellProps.row.original.amount / 1e18)
-							const numDecimals = numValue === 0 ? 2 : numValue < 1 ? 4 : numValue >= 100000 ? 0 : 2
-
 							const normal = cellProps.row.original.orderType === 'Liquidation'
-							const negative = cellProps.row.original.amount > 0
+							const negative = cellProps.getValue() > 0
 
 							return (
 								<DirectionalValue negative={negative} normal={normal}>
-									{formatNumber(numValue, {
-										minDecimals: numDecimals,
+									{formatNumber(cellProps.getValue().abs(), {
+										suggestDecimals: true,
 										truncateOver: 1e6,
 									})}{' '}
 									{normal ? '💀' : ''}
