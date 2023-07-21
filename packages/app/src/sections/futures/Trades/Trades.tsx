@@ -1,6 +1,6 @@
 import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import { memo, useMemo } from 'react'
+import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -29,7 +29,11 @@ import TableMarketDetails from '../UserInfo/TableMarketDetails'
 
 import TimeDisplay from './TimeDisplay'
 
-const Trades = memo(() => {
+type TradesProps = {
+	rounded?: boolean
+	noBottom?: boolean
+}
+const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 	const { t } = useTranslation()
 	const { switchToL2 } = useNetworkSwitcher()
 	const router = useRouter()
@@ -70,8 +74,8 @@ const Trades = memo(() => {
 	return (
 		<Table
 			highlightRowsOnHover
-			rounded={false}
-			noBottom={true}
+			rounded={rounded}
+			noBottom={noBottom}
 			columns={[
 				{
 					header: () => (
