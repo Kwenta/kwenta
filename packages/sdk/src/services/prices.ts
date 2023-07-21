@@ -142,11 +142,11 @@ export default class PricesService {
 		const synths = [...synthsRates[0], ...ADDITIONAL_SYNTHS]
 		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyPrice[]
 
-		synths.forEach((currencyKeyBytes32, idx: number) => {
+		synths.forEach((currencyKeyBytes32, i) => {
 			const currencyKey = parseBytes32String(currencyKeyBytes32)
 			const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey]
 
-			const rate = Number(formatEther(rates[idx]))
+			const rate = Number(formatEther(rates[i]))
 			const price = wei(rate)
 
 			synthPrices[currencyKey] = price
