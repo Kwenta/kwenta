@@ -19,7 +19,7 @@ import {
 import { ContractName } from '../contracts'
 import { ClaimParams, EpochData, EscrowData } from '../types/kwentaToken'
 import { formatTruncatedDuration } from '../utils/date'
-import { awsClient } from '../utils/files'
+import { awsClient, fleekClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
 import { calculateFeesForAccount, calculateTotalFees } from '../utils'
@@ -503,12 +503,12 @@ export default class KwentaTokenService {
 	public async getEstimatedRewards() {
 		const { networkId, walletAddress } = this.sdk.context
 		const fileNames = ['', '-op'].map(
-			(i) => `${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
+			(i) => `trading-rewards-snapshots/${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
 		)
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName) => {
-				const response = await awsClient.get(fileName)
+				const response = await fleekClient.get(fileName)
 				return { ...response.data }
 			})
 		)
