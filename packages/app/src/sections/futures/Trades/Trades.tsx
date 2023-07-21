@@ -211,8 +211,8 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 	) : (
 		<Table
 			highlightRowsOnHover
-			rounded={false}
-			noBottom={true}
+			rounded={rounded}
+			noBottom={noBottom}
 			columns={[
 				{
 					header: () => (
