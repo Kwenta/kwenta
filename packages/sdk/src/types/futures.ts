@@ -413,6 +413,7 @@ export type FuturesTrade<T = Wei> = {
 	keeperFeesPaid: T
 	orderType: FuturesOrderTypeDisplay
 	accountType: FuturesAccountType
+	fundingAccrued: T
 }
 
 export enum AccountExecuteFunctions {
