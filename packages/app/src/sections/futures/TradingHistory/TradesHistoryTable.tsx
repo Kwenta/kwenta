@@ -20,6 +20,7 @@ enum TableColumnAccessor {
 	Amount = 'amount',
 	Price = 'price',
 	Time = 'time',
+	Funding = 'fundingAccrued',
 }
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) => {
@@ -40,12 +41,13 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 						.filter(notNill)
 						.map((trade) => {
 							return {
-								value: Number(trade.price),
-								amount: Number(trade.size),
-								time: Number(trade.timestamp),
-								id: trade.txnHash,
-								orderType: trade.orderType,
-								account: trade.account,
+								value: Number(trade?.price),
+								amount: Number(trade?.size),
+								time: Number(trade?.timestamp),
+								id: trade?.txnHash,
+								orderType: trade?.orderType,
+								account: trade?.account,
+								fundingAccrued: trade?.fundingAccrued,
 							}
 						})
 				: []
@@ -140,7 +142,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 						cell: (cellProps) => {
 							return (
 								<PriceValue>
-									${formatNumber(cellProps.row.original.value / 1e18, { suggestDecimals: true })}
+									${formatNumber(cellProps.row.original.value, { suggestDecimals: true })}
 								</PriceValue>
 							)
 						},

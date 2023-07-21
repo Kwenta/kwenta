@@ -42,7 +42,7 @@ import {
 	MarginTransfer,
 	ConditionalOrderTypeEnum,
 } from '../types/futures'
-import { formatCurrency, formatDollars } from '../utils/number'
+import { formatCurrency, formatDollars, weiFromWei } from '../utils/number'
 import {
 	FuturesAggregateStatResult,
 	FuturesOrderType as SubgraphOrderType,
@@ -472,7 +472,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 		: orderType === 'StopMarket'
 		? 'Stop'
 		: orderType === 'DelayedOffchain'
-		? 'Delayed Market'
+		? 'Market'
 		: orderType
 }
 
@@ -494,24 +494,26 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			keeperFeesPaid,
 			orderType,
 			accountType,
+			fundingAccrued,
 		}) => {
 			return {
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				account,
 				accountType,
-				margin: new Wei(margin, 18, true),
-				size: new Wei(size, 18, true),
-				price: new Wei(price, 18, true),
+				margin: weiFromWei(margin),
+				size: weiFromWei(size),
+				price: weiFromWei(price),
 				txnHash: id.split('-')[0].toString(),
 				timestamp: timestamp.toNumber(),
 				positionId,
-				positionSize: new Wei(positionSize, 18, true),
+				positionSize: weiFromWei(positionSize),
 				positionClosed,
 				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-				pnl: new Wei(pnl, 18, true),
-				feesPaid: new Wei(feesPaid, 18, true),
-				keeperFeesPaid: new Wei(keeperFeesPaid, 18, true),
+				pnl: weiFromWei(pnl),
+				feesPaid: weiFromWei(feesPaid),
+				keeperFeesPaid: weiFromWei(keeperFeesPaid),
 				orderType: mapOrderType(orderType),
+				fundingAccrued: weiFromWei(fundingAccrued),
 			}
 		}
 	)

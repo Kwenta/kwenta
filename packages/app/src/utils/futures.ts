@@ -366,6 +366,7 @@ export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] 
 		pnl: t.pnl.toString(),
 		feesPaid: t.feesPaid.toString(),
 		keeperFeesPaid: t.keeperFeesPaid.toString(),
+		fundingAccrued: t.fundingAccrued.toString(),
 	}))
 }
 
@@ -379,6 +380,7 @@ export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<
 		pnl: wei(t.pnl),
 		feesPaid: wei(t.feesPaid),
 		keeperFeesPaid: wei(t.keeperFeesPaid),
+		fundingAccrued: wei(t.fundingAccrued),
 	}))
 }
 
@@ -410,8 +412,8 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 		}, [] as DelayedOrderWithDetails[])
 }
 
-// Disable stop loss when it is within 3% of the liquidation price
-const SL_LIQ_DISABLED_PERCENT = 0.03
+// Disable stop loss when it is within 1% of the liquidation price
+const SL_LIQ_DISABLED_PERCENT = 0.01
 
 // Warn users when their stop loss is within 7.5% of their liquidation price
 const SL_LIQ_PERCENT_WARN = 0.075
