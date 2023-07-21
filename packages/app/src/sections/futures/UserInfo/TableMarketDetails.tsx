@@ -26,7 +26,7 @@ const TableMarketDetails = memo(({ marketKey, marketName, side, infoLabel, badge
 					{badge}
 				</StyledText>
 				{infoLabel && <StyledValue>{infoLabel}</StyledValue>}
-				{side && <PositionType side={side} variant={'trades'} />}
+				{side && <PositionType side={side} variant={'text'} />}
 			</div>
 		</MarketContainer>
 	)

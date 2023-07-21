@@ -6,13 +6,13 @@ import Body from 'components/Text/Body'
 type PositionProps = {
 	side: PositionSide
 	mobile?: boolean
-	variant?: 'trades' | 'default'
+	variant?: 'badge' | 'text'
 }
 
 const PositionType: React.FC<PositionProps> = ({
 	side = PositionSide.LONG,
 	mobile = false,
-	variant = 'default',
+	variant = 'badge',
 }) => {
 	return mobile ? (
 		<MobileStyledText side={side}>{side}</MobileStyledText>
@@ -25,7 +25,7 @@ const PositionType: React.FC<PositionProps> = ({
 
 const StyledText = styled(Body).attrs({ weight: 'bold', capitalized: true, type: 'span' })<{
 	side: PositionSide
-	variant: 'trades' | 'default'
+	variant: 'badge' | 'text'
 }>`
 	padding: 3px 5px;
 	border-radius: 4px;
@@ -43,7 +43,7 @@ const StyledText = styled(Body).attrs({ weight: 'bold', capitalized: true, type:
 	};
 
 	${(props) =>
-		props.variant === 'trades' &&
+		props.variant === 'text' &&
 		css`
 			padding: 0;
 			background: transparent;

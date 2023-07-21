@@ -177,21 +177,10 @@ const Trades = memo(() => {
 					cell: (cellProps) => {
 						return (
 							<FlexDivCol>
-								{cellProps.getValue().eq(0) ? (
-									<>
-										<>'--'</>
-										<Body mono color="secondary">
-											{formatDollars(cellProps.getValue(), { suggestDecimals: true })}
-										</Body>
-									</>
-								) : (
-									<>
-										<Currency.Price price={cellProps.getValue()} />
-										<Body mono color="secondary">
-											{formatDollars(cellProps.row.original.funding, { suggestDecimals: true })}
-										</Body>
-									</>
-								)}
+								<Currency.Price price={cellProps.getValue()} />
+								<Body mono color="secondary">
+									{formatDollars(cellProps.row.original.funding, { suggestDecimals: true })}
+								</Body>
 							</FlexDivCol>
 						)
 					},
