@@ -28,7 +28,6 @@ import PencilButton from '../../../components/Button/PencilButton'
 import CrossMarginInfoBox from '../TradeCrossMargin/CrossMarginInfoBox'
 
 import SmartMarginOnboardModal from './SmartMarginOnboardModal'
-import TransferIsolatedMarginModal from './TransferIsolatedMarginModal'
 
 type TradeBalanceProps = {
 	isMobile?: boolean
@@ -182,12 +181,6 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 					onDismiss={() => {
 						dispatch(setOpenModal(null))
 					}}
-				/>
-			)}
-			{openModal === 'futures_isolated_transfer' && (
-				<TransferIsolatedMarginModal
-					defaultTab="deposit"
-					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
 		</Container>
