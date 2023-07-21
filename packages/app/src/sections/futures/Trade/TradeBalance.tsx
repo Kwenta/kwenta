@@ -160,9 +160,11 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 							onClick={(e) => {
 								e.stopPropagation()
 								dispatch(
-									accountType === 'isolated_margin'
-										? setOpenModal('futures_isolated_transfer')
-										: setOpenModal('futures_cross_withdraw')
+									setOpenModal(
+										accountType === 'isolated_margin'
+											? 'futures_isolated_transfer'
+											: 'futures_cross_withdraw'
+									)
 								)
 							}}
 						/>
