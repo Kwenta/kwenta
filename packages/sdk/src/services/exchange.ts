@@ -1121,11 +1121,11 @@ export default class ExchangeService {
 
 		const tokenBalances: TokenBalances = {}
 
-		data.forEach((value, index) => {
+		data.forEach((value, i) => {
 			if (value.lte(0)) return
-			const token = tokensMap[symbols[index]]
+			const token = tokensMap[symbols[i]]
 
-			tokenBalances[symbols[index]] = {
+			tokenBalances[symbols[i]] = {
 				balance: wei(value, token.decimals ?? 18),
 				token,
 			}
