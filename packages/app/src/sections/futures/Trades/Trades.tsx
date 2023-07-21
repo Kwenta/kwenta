@@ -95,7 +95,7 @@ const Trades = memo(() => {
 							>
 								{cellProps.row.original.market ? (
 									<TableMarketDetails
-										marketName={cellProps.row.original.market?.marketName}
+										marketName={cellProps.row.original.displayAsset!}
 										marketKey={cellProps.row.original.market?.marketKey}
 										side={cellProps.row.original.side}
 									/>
