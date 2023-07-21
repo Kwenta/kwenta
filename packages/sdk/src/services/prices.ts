@@ -62,12 +62,32 @@ export default class PricesService {
 		return this.sdk.context.isMainnet ? PYTH_IDS.mainnet : PYTH_IDS.testnet
 	}
 
+	/**
+	 * @desc Get offchain price for a given market
+	 * @param marketKey - Futures market key
+	 * @returns Offchain price for specified market
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK();
+	 * const price = sdk.prices.getOffchainPrice(FuturesMarketKey.sBTCPERP);
+	 * console.log(price);
+	 * ```
+	 */
 	public getOffchainPrice(marketKey: FuturesMarketKey) {
 		const price = this.offChainPrices[MarketAssetByKey[marketKey]]
 		if (!price) throw new Error(`No price data for ${marketKey}`)
 		return price
 	}
 
+	/**
+	 * @desc Start polling pyth price updates
+	 * @param intervalTime - Polling interval in milliseconds
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK();
+	 * await sdk.prices.startPriceUpdates(10000);
+	 * ```
+	 */
 	public async startPriceUpdates(intervalTime: number) {
 		// Poll the onchain prices
 		if (!this.ratesInterval) {
@@ -182,6 +202,11 @@ export default class PricesService {
 		) as SynthPrice[]
 	}
 
+	/**
+	 * @desc Get pyth price update data for a given market
+	 * @param marketKey Futures market key
+	 * @returns Pyth price update data
+	 */
 	public async getPythPriceUpdateData(marketKey: FuturesMarketKey) {
 		const pythIds = MARKETS[marketKey]?.pythIds
 		const pythId = pythIds ? pythIds[this.sdk.context.isMainnet ? 'mainnet' : 'testnet'] : null
