@@ -404,7 +404,7 @@ export default class ExchangeService {
 
 	public async approveSwap(quoteCurrencyKey: string, baseCurrencyKey: string) {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
-		const quoteCurrencyContract = this.getQuoteCurrencyContract(quoteCurrencyKey)
+		const quoteCurrencyContract = this.getCurrencyContract(quoteCurrencyKey)
 		const approveAddress = await this.getApproveAddress(txProvider)
 
 		if (quoteCurrencyContract) {
@@ -575,9 +575,7 @@ export default class ExchangeService {
 			this.getPriceRate(quoteCurrencyKey, txProvider, coinGeckoPrices),
 		])
 
-		const feeAmountInQuoteCurrency = wei(quoteAmount).mul(exchangeFeeRate)
-
-		return feeAmountInQuoteCurrency.mul(quotePriceRate)
+		return wei(quoteAmount).mul(exchangeFeeRate).mul(quotePriceRate)
 	}
 
 	public getApproveAddress(txProvider: ReturnType<ExchangeService['getTxProvider']>) {
@@ -588,7 +586,7 @@ export default class ExchangeService {
 		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
 
 		const [quoteCurrencyContract, approveAddress] = await Promise.all([
-			this.getQuoteCurrencyContract(quoteCurrencyKey),
+			this.getCurrencyContract(quoteCurrencyKey),
 			this.getApproveAddress(txProvider),
 		])
 
@@ -855,6 +853,54 @@ export default class ExchangeService {
 		return queryWalletTrades(this.sdk, this.sdk.context.walletAddress)
 	}
 
+	/**
+	 * Get token balances for the given wallet address
+	 * @param walletAddress Wallet address
+	 * @returns Token balances for the given wallet address
+	 */
+	public async getTokenBalances(walletAddress: string): Promise<TokenBalances> {
+		if (!this.sdk.context.isMainnet) return {}
+
+		const filteredTokens: Token[] = []
+		const symbols: string[] = []
+		const tokensMap: Record<string, Token> = {}
+
+		this.tokenList.forEach((token) => {
+			if (!FILTERED_TOKENS.includes(token.address.toLowerCase())) {
+				symbols.push(token.symbol)
+				tokensMap[token.symbol] = token
+				filteredTokens.push(token)
+			}
+		})
+
+		const calls = []
+
+		for (const { address, symbol } of filteredTokens) {
+			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
+				calls.push(this.sdk.context.multicallProvider.getEthBalance(walletAddress))
+			} else {
+				const tokenContract = new EthCallContract(address, erc20Abi)
+				calls.push(tokenContract.balanceOf(walletAddress))
+			}
+		}
+
+		const data = (await this.sdk.context.multicallProvider.all(calls)) as BigNumber[]
+
+		const tokenBalances: TokenBalances = {}
+
+		data.forEach((value, i) => {
+			if (value.lte(0)) return
+			const token = tokensMap[symbols[i]]
+
+			tokenBalances[symbols[i]] = {
+				balance: wei(value, token.decimals ?? 18),
+				token,
+			}
+		})
+
+		return tokenBalances
+	}
+
 	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
 		if (this.sdk.context.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
 			return false
@@ -869,9 +915,9 @@ export default class ExchangeService {
 		return get(this.allTokensMap, [currencyKey, 'decimals'], undefined)
 	}
 
-	private getQuoteCurrencyContract(quoteCurrencyKey: string) {
-		if (this.allTokensMap[quoteCurrencyKey]) {
-			const quoteTknAddress = this.getTokenAddress(quoteCurrencyKey, true)
+	private getCurrencyContract(currencyKey: string) {
+		if (this.allTokensMap[currencyKey]) {
+			const quoteTknAddress = this.getTokenAddress(currencyKey, true)
 			return this.createERC20Contract(quoteTknAddress)
 		}
 
@@ -1091,47 +1137,6 @@ export default class ExchangeService {
 		const quoteRate = !rates || !quote || !rates[quote] ? wei(0) : rates[quote]
 
 		return [baseRate, quoteRate]
-	}
-
-	// TODO: This is temporary.
-	// We should consider either having another service for this
-	// It does not quite fit into the synths service.
-	// One idea is to create a "tokens" service that handles everything
-	// related to 1inch tokens.
-
-	public async getTokenBalances(walletAddress: string): Promise<TokenBalances> {
-		if (!this.sdk.context.isMainnet) return {}
-		const filteredTokens = this.tokenList.filter(
-			(t) => !FILTERED_TOKENS.includes(t.address.toLowerCase())
-		)
-		const symbols = filteredTokens.map((token) => token.symbol)
-		const tokensMap = keyBy(filteredTokens, 'symbol')
-		const calls = []
-
-		for (const { address, symbol } of filteredTokens) {
-			if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
-				calls.push(this.sdk.context.multicallProvider.getEthBalance(walletAddress))
-			} else {
-				const tokenContract = new EthCallContract(address, erc20Abi)
-				calls.push(tokenContract.balanceOf(walletAddress))
-			}
-		}
-
-		const data = (await this.sdk.context.multicallProvider.all(calls)) as BigNumber[]
-
-		const tokenBalances: TokenBalances = {}
-
-		data.forEach((value, i) => {
-			if (value.lte(0)) return
-			const token = tokensMap[symbols[i]]
-
-			tokenBalances[symbols[i]] = {
-				balance: wei(value, token.decimals ?? 18),
-				token,
-			}
-		})
-
-		return tokenBalances
 	}
 
 	private createERC20Contract(tokenAddress: string) {
