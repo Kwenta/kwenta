@@ -338,23 +338,20 @@ export const fetchClaimableRewards = createAsyncThunk<
 			staking: { epochPeriod },
 		} = getState()
 
-		const { claimableRewards: claimableKwentaRewardsV1, totalRewards: kwentaRewardsV1 } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod)
-
 		const { claimableRewards: claimableKwentaRewardsV2, totalRewards: kwentaRewardsV2 } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false, 18)
 
 		const { claimableRewards: claimableOpRewards, totalRewards: opRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false, 9)
 
 		const { claimableRewards: claimableSnxOpRewards, totalRewards: snxOpRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true, 9)
 
 		return {
-			claimableKwentaRewards: [claimableKwentaRewardsV1, claimableKwentaRewardsV2],
+			claimableKwentaRewards: [claimableKwentaRewardsV2],
 			claimableOpRewards,
 			claimableSnxOpRewards,
-			kwentaRewards: kwentaRewardsV1.add(kwentaRewardsV2).toString(),
+			kwentaRewards: kwentaRewardsV2.toString(),
 			opRewards: opRewards.toString(),
 			snxOpRewards: snxOpRewards.toString(),
 		}
