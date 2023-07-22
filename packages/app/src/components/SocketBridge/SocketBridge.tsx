@@ -2,7 +2,6 @@ import { Bridge } from '@socket.tech/plugin'
 import { useCallback } from 'react'
 import styled, { useTheme } from 'styled-components'
 
-import ArrowIcon from 'assets/svg/app/arrow-down.svg'
 import Connector from 'containers/Connector'
 import { chain } from 'containers/Connector/config'
 import { fetchBalances } from 'state/balances/actions'
@@ -40,9 +39,6 @@ const SocketBridge = () => {
 				enableSameChainSwaps={true}
 				onBridgeSuccess={onBridgeSuccess}
 			/>
-			<StyledDiv>
-				<ArrowIcon />
-			</StyledDiv>
 		</BridgeContainer>
 	)
 }

@@ -1,12 +1,10 @@
-import { ZERO_WEI, MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants'
 import { formatDollars } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import dynamic from 'next/dynamic'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import CaretDownIcon from 'assets/svg/app/caret-down-slim.svg'
 import CaretUpIcon from 'assets/svg/app/caret-up-slim.svg'
 import BaseModal from 'components/BaseModal'
 import Button from 'components/Button'
@@ -18,21 +16,14 @@ import SegmentedControl from 'components/SegmentedControl'
 import Spacer from 'components/Spacer'
 import { selectTransaction } from 'state/app/selectors'
 import { selectSusdBalance } from 'state/balances/selectors'
-import { depositCrossMargin, withdrawCrossMargin } from 'state/futures/actions'
-import {
-	selectAvailableMargin,
-	selectIsSubmittingCrossTransfer,
-	selectPosition,
-	selectWithdrawableMargin,
-} from 'state/futures/selectors'
+import { withdrawCrossMargin } from 'state/futures/actions'
+import { selectIsSubmittingCrossTransfer, selectWithdrawableMargin } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type Props = {
 	onDismiss(): void
 	defaultTab: 'deposit' | 'withdraw'
 }
-
-type BalanceStatus = 'low_balance' | 'no_balance' | 'high_balance'
 
 const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
 	ssr: false,
@@ -44,63 +35,20 @@ const TransferSmartMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) =>
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
-	const position = useAppSelector(selectPosition)
 	const submitting = useAppSelector(selectIsSubmittingCrossTransfer)
 	const totalWithdrawable = useAppSelector(selectWithdrawableMargin)
 	const transactionState = useAppSelector(selectTransaction)
 	const susdBalance = useAppSelector(selectSusdBalance)
-	const availableMargin = useAppSelector(selectAvailableMargin)
 
-	const minDeposit = useMemo(() => {
-		const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI
-		const min = MIN_MARGIN_AMOUNT.sub(accessibleMargin)
-		return min.lt(ZERO_WEI) ? ZERO_WEI : min
-	}, [position?.accessibleMargin])
-
-	const [openSocket, setOpenSocket] = useState(false)
 	const [amount, setAmount] = useState('')
 	const [transferType, setTransferType] = useState(defaultTab === 'deposit' ? 0 : 1)
 
 	const susdBal = transferType === 0 ? susdBalance : totalWithdrawable
 
-	const balanceStatus: BalanceStatus = useMemo(
-		() =>
-			availableMargin.gt(ZERO_WEI) || susdBalance.gt(minDeposit)
-				? 'high_balance'
-				: susdBalance.eq(ZERO_WEI)
-				? 'no_balance'
-				: 'low_balance',
-		[availableMargin, minDeposit, susdBalance]
-	)
-
-	useEffect(() => {
-		switch (balanceStatus) {
-			case 'no_balance':
-			case 'low_balance':
-				setOpenSocket(true)
-				break
-			case 'high_balance':
-				setOpenSocket(false)
-		}
-	}, [balanceStatus])
-
 	const isDisabled = useMemo(() => {
-		if (!amount || submitting) {
-			return true
-		}
-		const amtWei = wei(amount)
-		if (amtWei.eq(0) || amtWei.gt(susdBal) || (transferType === 0 && amtWei.lt(minDeposit))) {
-			return true
-		}
-		return false
-	}, [amount, susdBal, minDeposit, transferType, submitting])
-
-	const computedWithdrawAmount = useMemo(
-		() => (availableMargin.eq(wei(amount || 0)) ? availableMargin : wei(amount || 0)),
-		[amount, availableMargin]
-	)
-
-	const onChangeShowSocket = useCallback(() => setOpenSocket(!openSocket), [openSocket])
+		const amtWei = wei(amount || 0)
+		return submitting || amtWei.eq(0) || amtWei.gt(totalWithdrawable)
+	}, [amount, submitting, totalWithdrawable])
 
 	const handleSetMax = useCallback(() => {
 		if (transferType === 0) {
@@ -115,12 +63,8 @@ const TransferSmartMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) =>
 		setAmount('')
 	}
 
-	const onDeposit = () => {
-		dispatch(depositCrossMargin(wei(amount)))
-	}
-
 	const onWithdraw = () => {
-		dispatch(withdrawCrossMargin(computedWithdrawAmount))
+		dispatch(withdrawCrossMargin(wei(amount)))
 	}
 
 	return (
@@ -133,24 +77,19 @@ const TransferSmartMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) =>
 			isOpen
 			onDismiss={onDismiss}
 		>
-			{balanceStatus === 'high_balance' ? (
-				<StyledSegmentedControl
-					values={['Deposit', 'Withdraw']}
-					selectedIndex={transferType}
-					onChange={onChangeTab}
-				/>
-			) : balanceStatus === 'no_balance' ? (
-				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.no-balance')}</Disclaimer>
-			) : (
-				<Disclaimer>{t('futures.market.trade.margin.modal.bridge.low-balance')}</Disclaimer>
-			)}
+			<StyledSegmentedControl
+				values={['Deposit', 'Withdraw']}
+				selectedIndex={transferType}
+				onChange={onChangeTab}
+			/>
 			{transferType === 0 && (
 				<>
-					<StyledCardHeader onClick={onChangeShowSocket} noBorder={openSocket}>
+					<StyledCardHeader noBorder>
 						<BalanceText>{t('futures.market.trade.margin.modal.bridge.title')}</BalanceText>
-						{openSocket ? <CaretUpIcon /> : <CaretDownIcon />}
+						<CaretUpIcon />
 					</StyledCardHeader>
-					{openSocket ? <SocketBridge /> : <Spacer height={20} />}
+					<SocketBridge />
+					<Spacer height={20} />
 				</>
 			)}
 			<BalanceContainer>
@@ -159,34 +98,39 @@ const TransferSmartMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) =>
 					<span>{formatDollars(susdBal)}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
-			<NumericInput
-				dataTestId="futures-market-trade-deposit-margin-input"
-				placeholder={PLACEHOLDER}
-				value={amount}
-				onChange={(_, v) => setAmount(v)}
-				right={
-					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
-				}
-			/>
 			{transferType === 0 ? (
-				<MinimumAmountDisclaimer>
-					{t('futures.market.trade.margin.modal.deposit.disclaimer')}
-				</MinimumAmountDisclaimer>
+				<>
+					<Spacer height={20} />
+					<MinimumAmountDisclaimer>
+						{t('futures.market.trade.margin.modal.deposit.disclaimer')}
+					</MinimumAmountDisclaimer>
+				</>
 			) : (
-				<Spacer height={20} />
+				<>
+					<NumericInput
+						dataTestId="futures-market-trade-deposit-margin-input"
+						placeholder={PLACEHOLDER}
+						value={amount}
+						onChange={(_, v) => setAmount(v)}
+						right={
+							<MaxButton onClick={handleSetMax}>
+								{t('futures.market.trade.margin.modal.max')}
+							</MaxButton>
+						}
+					/>
+					<Spacer height={20} />
+					<Button
+						data-testid="futures-market-trade-deposit-margin-button"
+						disabled={isDisabled}
+						fullWidth
+						onClick={onWithdraw}
+						variant="flat"
+					>
+						{t('futures.market.trade.margin.modal.withdraw.button')}
+					</Button>
+				</>
 			)}
 
-			<Button
-				data-testid="futures-market-trade-deposit-margin-button"
-				disabled={isDisabled}
-				fullWidth
-				onClick={transferType === 0 ? onDeposit : onWithdraw}
-				variant="flat"
-			>
-				{transferType === 0
-					? t('futures.market.trade.margin.modal.deposit.button')
-					: t('futures.market.trade.margin.modal.withdraw.button')}
-			</Button>
 			{transactionState?.error && (
 				<Error
 					containerStyle={{ margin: '16px 0 0 0' }}
@@ -239,17 +183,8 @@ export const MaxButton = styled.button`
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
-	margin: 10px 0;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-align: center;
-`
-
-const Disclaimer = styled.div`
-	font-size: 12px;
-	line-height: 120%;
-	margin: 10px 0;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-	text-align: left;
 `
 
 const StyledSegmentedControl = styled(SegmentedControl)`
