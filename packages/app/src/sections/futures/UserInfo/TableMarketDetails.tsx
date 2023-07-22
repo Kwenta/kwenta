@@ -1,17 +1,20 @@
-import { FuturesMarketKey } from '@kwenta/sdk/types'
+import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import { memo, ReactElement } from 'react'
 import styled from 'styled-components'
 
 import Currency from 'components/Currency'
 
+import PositionType from '../PositionType'
+
 type Props = {
 	marketKey: FuturesMarketKey
 	marketName: string
+	side?: PositionSide
 	infoLabel?: string
 	badge?: ReactElement
 }
 
-const TableMarketDetails = memo(({ marketKey, marketName, infoLabel, badge }: Props) => {
+const TableMarketDetails = memo(({ marketKey, marketName, side, infoLabel, badge }: Props) => {
 	return (
 		<MarketContainer>
 			<IconContainer>
@@ -23,6 +26,7 @@ const TableMarketDetails = memo(({ marketKey, marketName, infoLabel, badge }: Pr
 					{badge}
 				</StyledText>
 				{infoLabel && <StyledValue>{infoLabel}</StyledValue>}
+				{side && <PositionType side={side} variant={'text'} />}
 			</div>
 		</MarketContainer>
 	)

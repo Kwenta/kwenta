@@ -1049,6 +1049,7 @@
 				"last-trades": "last trades",
 				"amount-label": "amount",
 				"price-label": "price",
+				"accrued-funding": "accrued funding",
 				"time-label": "time"
 			},
 			"user": {
@@ -1130,16 +1131,19 @@
 					"tab": "Trades",
 					"table": {
 						"id": "ID",
-						"trade-size": "trade size",
-						"pnl": "P&L",
+						"size": "size",
+						"pnl": "PnL",
 						"status": "status",
 						"date": "date",
 						"fees": "fees",
 						"price": "price",
 						"side": "side",
 						"side-type": "Side/Type",
+						"market-side": "Market/Side",
+						"price-type": "Price/Type",
 						"no-results": "You have no trade history",
 						"order-type": "order type",
+						"fees-funding": "Fees/Funding",
 						"transaction": "Transaction",
 						"trade-types": {
 							"exit": "exit",

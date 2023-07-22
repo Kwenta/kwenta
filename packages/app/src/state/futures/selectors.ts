@@ -18,7 +18,6 @@ import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_LEVERAGE } from 'constants/defaults'
-import { ETH_UNIT } from 'constants/network'
 import { FuturesAccountTypes } from 'queries/futures/types'
 import { selectSusdBalance } from 'state/balances/selectors'
 import { accountType, deserializeWeiObject } from 'state/helpers'
@@ -1304,7 +1303,7 @@ export const selectIsolatedPortfolioValues = createSelector(
 			account,
 			timestamp,
 			asset,
-			margin: margin.div(ETH_UNIT).toNumber(),
+			margin: margin.toNumber(),
 			size: 0,
 		}))
 
@@ -1374,7 +1373,7 @@ export const selectSmartMarginPortfolioValues = createSelector(
 			account,
 			timestamp,
 			asset,
-			margin: margin.div(ETH_UNIT).toNumber(),
+			margin: margin.toNumber(),
 			size: 0,
 		}))
 

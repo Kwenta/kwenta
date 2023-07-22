@@ -18,7 +18,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import FuturesIcon from 'components/Nav/FuturesIcon'
 import Table, { TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
-import { ETH_UNIT } from 'constants/network'
 import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
 import useIsL2 from 'hooks/useIsL2'
@@ -57,18 +56,13 @@ const FuturesHistoryTable: FC = () => {
 			isL2
 				? trades
 						.map((trade) => {
-							const pnl = trade.pnl.div(ETH_UNIT)
-							const feesPaid = trade.feesPaid.div(ETH_UNIT)
-							const netPnl = pnl.sub(feesPaid)
 							return {
 								...trade,
-								pnl,
-								feesPaid,
-								netPnl,
+								netPnl: trade.pnl.sub(trade.feesPaid),
 								displayAsset: getDisplayAsset(trade.asset),
 								market: getMarketName(trade.asset),
-								price: trade.price.div(ETH_UNIT),
-								size: trade.size.div(ETH_UNIT).abs(),
+								price: trade.price,
+								size: trade.size.abs(),
 								timestamp: trade.timestamp * 1000,
 								date: formatShortDateWithoutYear(new Date(trade.timestamp * 1000)),
 								id: trade.txnHash,
