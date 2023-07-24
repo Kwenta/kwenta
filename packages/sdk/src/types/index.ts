@@ -10,6 +10,7 @@ export * from './synths'
 export * from './system'
 export * from './tokens'
 export * from './transactions'
+export * from './permit2'
 
 // TODO: We should fix the potential namespace clash with "FuturesMarket"
 // if we decide to expose all the generated contract types to the frontend.
