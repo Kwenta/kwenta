@@ -73,6 +73,7 @@ import {
 } from '../utils/futures'
 import { getFuturesAggregateStats } from '../utils/subgraph'
 import { getReasonFromCode } from '../utils/synths'
+import { PERMIT2_ADDRESS } from '../constants'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
@@ -460,7 +461,7 @@ export default class FuturesService {
 			crossMarginAccountContract.freeMargin(),
 			this.sdk.context.provider.getBalance(crossMarginAddress),
 			this.sdk.context.provider.getBalance(walletAddress),
-			SUSD.allowance(walletAddress, crossMarginAccountContract.address),
+			SUSD.allowance(walletAddress, PERMIT2_ADDRESS),
 		])
 
 		return {
@@ -691,12 +692,11 @@ export default class FuturesService {
 	// Contract mutations
 
 	public async approveCrossMarginDeposit(
-		crossMarginAddress: string,
 		amount: BigNumber = BigNumber.from(ethers.constants.MaxUint256)
 	) {
 		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK)
 		return this.sdk.transactions.createContractTxn(this.sdk.context.contracts.SUSD, 'approve', [
-			crossMarginAddress,
+			PERMIT2_ADDRESS,
 			amount,
 		])
 	}
