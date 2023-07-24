@@ -1251,7 +1251,7 @@ export const approveCrossMargin = createAsyncThunk<void, void, ThunkConfig>(
 					hash: null,
 				})
 			)
-			const tx = await sdk.futures.approveCrossMarginDeposit(account)
+			const tx = await sdk.futures.approveCrossMarginDeposit()
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchCrossMarginBalanceInfo())
 		} catch (err) {
