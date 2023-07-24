@@ -48,8 +48,8 @@ export const OpenInterest = () => {
 				openInterest,
 				icon: SYNTH_ICONS[MarketKeyByAsset[asset]],
 				richLabel: {
-					width: 40,
-					height: 40,
+					width: 36,
+					height: 36,
 					backgroundColor: {
 						image: SYNTH_ICONS[MarketKeyByAsset[asset]],
 					},
@@ -93,7 +93,7 @@ export const OpenInterest = () => {
 					rich: {
 						syntheticAsset: {
 							fontFamily: theme.fonts.regular,
-							fontSize: 15,
+							fontSize: 12,
 							color: theme.colors.common.primaryWhite,
 							width: 35,
 							height: 23,
@@ -141,6 +141,7 @@ export const OpenInterest = () => {
 		}
 
 		chart.setOption(option)
+		chart.resize()
 	}, [ref, chart, t, openInterestData, openInterestStats, theme, defaultOptions])
 
 	return (
