@@ -55,6 +55,7 @@
 		"@kwenta/synthswap": "^1.0.3",
 		"@pythnetwork/pyth-evm-js": "^1.17.0",
 		"@synthetixio/wei": "^2.74.4",
+		"@uniswap/permit2-sdk": "^1.2.0",
 		"axios": "0.27.2",
 		"bn.js": "^5.2.1",
 		"codegen-graph-ts": "^0.1.4",
