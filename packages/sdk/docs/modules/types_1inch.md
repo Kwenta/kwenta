@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/1inch.ts:27](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/1inch.ts#L27)
+[packages/sdk/src/types/1inch.ts:27](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/1inch.ts#L27)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/1inch.ts:9](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/1inch.ts#L9)
+[packages/sdk/src/types/1inch.ts:9](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/1inch.ts#L9)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/1inch.ts:16](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/1inch.ts#L16)
+[packages/sdk/src/types/1inch.ts:16](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/1inch.ts#L16)
 
 ___
 
@@ -70,4 +70,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/1inch.ts:31](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/1inch.ts#L31)
+[packages/sdk/src/types/1inch.ts:31](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/1inch.ts#L31)

@@ -31,7 +31,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:423](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L423)
+[packages/sdk/src/types/futures.ts:423](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L423)
 
 ___
 
@@ -41,7 +41,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:424](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L424)
+[packages/sdk/src/types/futures.ts:424](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L424)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:436](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L436)
+[packages/sdk/src/types/futures.ts:436](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L436)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:435](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L435)
+[packages/sdk/src/types/futures.ts:435](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L435)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:433](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L433)
+[packages/sdk/src/types/futures.ts:433](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L433)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:434](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L434)
+[packages/sdk/src/types/futures.ts:434](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L434)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:430](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L430)
+[packages/sdk/src/types/futures.ts:430](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L430)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:425](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L425)
+[packages/sdk/src/types/futures.ts:425](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L425)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:427](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L427)
+[packages/sdk/src/types/futures.ts:427](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L427)
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:431](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L431)
+[packages/sdk/src/types/futures.ts:431](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L431)
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:432](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L432)
+[packages/sdk/src/types/futures.ts:432](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L432)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:428](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L428)
+[packages/sdk/src/types/futures.ts:428](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L428)
 
 ___
 
@@ -151,7 +151,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:429](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L429)
+[packages/sdk/src/types/futures.ts:429](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L429)
 
 ___
 
@@ -161,4 +161,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:426](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/futures.ts#L426)
+[packages/sdk/src/types/futures.ts:426](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/futures.ts#L426)

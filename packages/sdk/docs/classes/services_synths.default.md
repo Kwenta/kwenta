@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/synths.ts:17](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/synths.ts#L17)
+[packages/sdk/src/services/synths.ts:17](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/synths.ts#L17)
 
 ## Properties
 
@@ -42,7 +42,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/synths.ts:15](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/synths.ts#L15)
+[packages/sdk/src/services/synths.ts:15](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/synths.ts#L15)
 
 ## Methods
 
@@ -50,16 +50,22 @@
 
 ▸ **getSynthBalances**(`walletAddress`): `Promise`<{ `balances`: [`SynthBalance`](../modules/types_synths.md#synthbalance)[] ; `balancesMap`: `Record`<`string`, [`SynthBalance`](../modules/types_synths.md#synthbalance)\> ; `susdWalletBalance`: `Wei` ; `totalUSDBalance`: `Wei`  }\>
 
+**`Desc`**
+
+Get synth balances for a given wallet address
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `walletAddress` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `walletAddress` | `string` | Wallet address |
 
 #### Returns
 
 `Promise`<{ `balances`: [`SynthBalance`](../modules/types_synths.md#synthbalance)[] ; `balancesMap`: `Record`<`string`, [`SynthBalance`](../modules/types_synths.md#synthbalance)\> ; `susdWalletBalance`: `Wei` ; `totalUSDBalance`: `Wei`  }\>
 
+Synth balances for the given wallet address
+
 #### Defined in
 
-[packages/sdk/src/services/synths.ts:21](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/synths.ts#L21)
+[packages/sdk/src/services/synths.ts:26](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/synths.ts#L26)

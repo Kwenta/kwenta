@@ -27,7 +27,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/stats.ts:9](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/stats.ts#L9)
+[packages/sdk/src/types/stats.ts:9](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/stats.ts#L9)
 
 ___
 
@@ -41,7 +41,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/stats.ts:33](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/stats.ts#L33)
+[packages/sdk/src/types/stats.ts:33](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/stats.ts#L33)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/stats.ts:25](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/stats.ts#L25)
+[packages/sdk/src/types/stats.ts:25](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/stats.ts#L25)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/stats.ts:1](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/stats.ts#L1)
+[packages/sdk/src/types/stats.ts:1](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/stats.ts#L1)
 
 ___
 
@@ -115,4 +115,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/stats.ts:17](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/stats.ts#L17)
+[packages/sdk/src/types/stats.ts:17](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/stats.ts#L17)

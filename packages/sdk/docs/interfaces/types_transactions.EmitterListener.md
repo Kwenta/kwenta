@@ -22,4 +22,4 @@
 
 #### Defined in
 
-[packages/sdk/src/types/transactions.ts:13](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/transactions.ts#L13)
+[packages/sdk/src/types/transactions.ts:13](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/transactions.ts#L13)

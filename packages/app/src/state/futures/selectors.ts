@@ -808,7 +808,7 @@ export const selectSmartMarginPortfolioValues = createSelector(
 		const accountHistory = actions.reduce((acc, action) => {
 			if (acc.length === 0) {
 				const newTotal = action.size !== 0 ? action.size : action.margin
-				const isIdle = action.size !== 0 && !action.asset ? true : false
+				const isIdle = action.size !== 0 && !action.asset
 				const lastAction = isIdle
 					? {
 							account: action.account,

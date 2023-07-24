@@ -61,35 +61,41 @@ export default class ExchangeService {
 		return this.sdk.prices.currentPrices.onChain
 	}
 
-	public getTxProvider(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (!baseCurrencyKey || !quoteCurrencyKey) return undefined
+	/**
+	 * @desc - Get the provider to be used for transactions on a currency pair.
+	 * @param fromCurrencyKey The currency key of the source token.
+	 * @param toCurrencyKey The currency key of the destination token.
+	 * @returns Returns one of '1inch', 'synthetix', or 'synthswap'.
+	 */
+	public getTxProvider(fromCurrencyKey: string, toCurrencyKey: string) {
+		if (!toCurrencyKey || !fromCurrencyKey) return undefined
 		if (
-			this.synthsMap?.[baseCurrencyKey as SynthSymbol] &&
-			this.synthsMap?.[quoteCurrencyKey as SynthSymbol]
+			this.synthsMap?.[toCurrencyKey as SynthSymbol] &&
+			this.synthsMap?.[fromCurrencyKey as SynthSymbol]
 		)
 			return 'synthetix'
-		if (this.tokensMap[baseCurrencyKey] && this.tokensMap[quoteCurrencyKey]) return '1inch'
+		if (this.tokensMap[toCurrencyKey] && this.tokensMap[fromCurrencyKey]) return '1inch'
 
 		return 'synthswap'
 	}
 
 	public async getTradePrices(
 		txProvider: ReturnType<ExchangeService['getTxProvider']>,
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmountWei: Wei,
-		baseAmountWei: Wei
+		fromCurrencyKey: string,
+		toCurrencyKey: string,
+		fromAmount: Wei,
+		toAmount: Wei
 	) {
-		const coinGeckoPrices = await this.getCoingeckoPrices(quoteCurrencyKey, baseCurrencyKey)
+		const coinGeckoPrices = await this.getCoingeckoPrices(fromCurrencyKey, toCurrencyKey)
 
 		const [quotePriceRate, basePriceRate] = await Promise.all(
-			[quoteCurrencyKey, baseCurrencyKey].map((currencyKey) =>
+			[fromCurrencyKey, toCurrencyKey].map((currencyKey) =>
 				this.getPriceRate(currencyKey, txProvider, coinGeckoPrices)
 			)
 		)
 
-		let quoteTradePrice = quoteAmountWei.mul(quotePriceRate || 0)
-		let baseTradePrice = baseAmountWei.mul(basePriceRate || 0)
+		let quoteTradePrice = fromAmount.mul(quotePriceRate || 0)
+		let baseTradePrice = toAmount.mul(basePriceRate || 0)
 
 		if (this.sUSDRate) {
 			quoteTradePrice = quoteTradePrice.div(this.sUSDRate)
@@ -100,22 +106,16 @@ export default class ExchangeService {
 	}
 
 	public async getSlippagePercent(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmountWei: Wei,
-		baseAmountWei: Wei
+		fromCurrencyKey: string,
+		toCurrencyKey: string,
+		fromAmount: Wei,
+		toAmount: Wei
 	) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
+		const txProvider = this.getTxProvider(fromCurrencyKey, toCurrencyKey)
 
 		if (txProvider === '1inch') {
 			const { quoteTradePrice: totalTradePrice, baseTradePrice: estimatedBaseTradePrice } =
-				await this.getTradePrices(
-					txProvider,
-					quoteCurrencyKey,
-					baseCurrencyKey,
-					quoteAmountWei,
-					baseAmountWei
-				)
+				await this.getTradePrices(txProvider, fromCurrencyKey, toCurrencyKey, fromAmount, toAmount)
 
 			if (totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
 				return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg()
@@ -125,17 +125,17 @@ export default class ExchangeService {
 		return undefined
 	}
 
-	public async getBaseFeeRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
+	public async getBaseFeeRate(fromCurrencyKey: string, toCurrencyKey: string) {
 		if (!this.sdk.context.contracts.SystemSettings) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
 		const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = await Promise.all([
 			this.sdk.context.contracts.SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(baseCurrencyKey)
+				ethers.utils.formatBytes32String(toCurrencyKey)
 			),
 			this.sdk.context.contracts.SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(quoteCurrencyKey)
+				ethers.utils.formatBytes32String(fromCurrencyKey)
 			),
 		])
 
@@ -144,39 +144,49 @@ export default class ExchangeService {
 			: wei(0)
 	}
 
-	public async getExchangeFeeRate(quoteCurrencyKey: string, baseCurrencyKey: string) {
+	/**
+	 * @desc - Get the fee rate for exchanging between two currencies.
+	 * @param fromCurrencyKey The currency key of the source token.
+	 * @param toCurrencyKey The currency key of the destination token.
+	 * @returns Returns the fee rate.
+	 */
+	public async getExchangeFeeRate(fromCurrencyKey: string, toCurrencyKey: string) {
 		if (!this.sdk.context.contracts.Exchanger) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
 		const exchangeFeeRate = await this.sdk.context.contracts.Exchanger.feeRateForExchange(
-			ethers.utils.formatBytes32String(quoteCurrencyKey),
-			ethers.utils.formatBytes32String(baseCurrencyKey)
+			ethers.utils.formatBytes32String(fromCurrencyKey),
+			ethers.utils.formatBytes32String(toCurrencyKey)
 		)
 
 		return wei(exchangeFeeRate)
 	}
 
-	public async getRate(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey)
-		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey)
+	public async getRate(fromCurrencyKey: string, toCurrencyKey: string) {
+		const fromTokenAddress = this.getTokenAddress(fromCurrencyKey)
+		const toTokenAddress = this.getTokenAddress(toCurrencyKey)
 
 		const [[quoteRate, baseRate], coinGeckoPrices] = await Promise.all([
-			this.getPairRates(quoteCurrencyKey, baseCurrencyKey),
-			this.getCoingeckoPrices(quoteCurrencyKey, baseCurrencyKey),
+			this.getPairRates(fromCurrencyKey, toCurrencyKey),
+			this.getCoingeckoPrices(fromCurrencyKey, toCurrencyKey),
 		])
 
 		const base = baseRate.lte(0)
-			? this.getCoingeckoPricesForCurrencies(coinGeckoPrices, baseCurrencyTokenAddress)
+			? this.getCoingeckoPricesForCurrencies(coinGeckoPrices, toTokenAddress)
 			: baseRate
 
 		const quote = quoteRate.lte(0)
-			? this.getCoingeckoPricesForCurrencies(coinGeckoPrices, quoteCurrencyTokenAddress)
+			? this.getCoingeckoPricesForCurrencies(coinGeckoPrices, fromTokenAddress)
 			: quoteRate
 
 		return base.gt(0) && quote.gt(0) ? quote.div(base) : wei(0)
 	}
 
+	/**
+	 * @desc Get the list of whitelisted tokens on 1inch.
+	 * @returns Returns the list of tokens currently whitelisted on 1inch.
+	 */
 	public async getOneInchTokenList() {
 		const response = await axios.get<OneInchTokenListResponse>(this.oneInchApiUrl + 'tokens')
 
@@ -319,16 +329,16 @@ export default class ExchangeService {
 	}
 
 	public async swapOneInchMeta(
-		quoteTokenAddress: string,
-		baseTokenAddress: string,
+		fromTokenAddress: string,
+		toTokenAddress: string,
 		amount: string,
-		quoteDecimals: number
+		fromTokenDecimals: number
 	) {
 		const params = await this.getOneInchSwapParams(
-			quoteTokenAddress,
-			baseTokenAddress,
+			fromTokenAddress,
+			toTokenAddress,
 			amount,
-			quoteDecimals
+			fromTokenDecimals
 		)
 
 		const { from, to, data, value } = params.tx
@@ -342,16 +352,16 @@ export default class ExchangeService {
 	}
 
 	public async swapOneInch(
-		quoteTokenAddress: string,
-		baseTokenAddress: string,
+		fromTokenAddress: string,
+		toTokenAddress: string,
 		amount: string,
-		quoteDecimals: number
+		fromTokenDecimals: number
 	) {
 		const params = await this.getOneInchSwapParams(
-			quoteTokenAddress,
-			baseTokenAddress,
+			fromTokenAddress,
+			toTokenAddress,
 			amount,
-			quoteDecimals
+			fromTokenDecimals
 		)
 
 		const { from, to, data, value } = params.tx
@@ -360,16 +370,16 @@ export default class ExchangeService {
 	}
 
 	public async swapOneInchGasEstimate(
-		quoteTokenAddress: string,
-		baseTokenAddress: string,
+		fromTokenAddress: string,
+		toTokenAddress: string,
 		amount: string,
-		quoteDecimals: number
+		fromTokenDecimals: number
 	) {
 		const params = await this.getOneInchSwapParams(
-			quoteTokenAddress,
-			baseTokenAddress,
+			fromTokenAddress,
+			toTokenAddress,
 			amount,
-			quoteDecimals
+			fromTokenDecimals
 		)
 
 		return params.tx.gas
@@ -402,14 +412,14 @@ export default class ExchangeService {
 		return wei(value) ?? wei(0)
 	}
 
-	public async approveSwap(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
-		const quoteCurrencyContract = this.getCurrencyContract(quoteCurrencyKey)
+	public async approveSwap(fromCurrencyKey: string, toCurrencyKey: string) {
+		const txProvider = this.getTxProvider(fromCurrencyKey, toCurrencyKey)
+		const fromCurrencyContract = this.getCurrencyContract(fromCurrencyKey)
 		const approveAddress = await this.getApproveAddress(txProvider)
 
-		if (quoteCurrencyContract) {
+		if (fromCurrencyContract) {
 			const { hash } = await this.sdk.transactions.createContractTxn(
-				quoteCurrencyContract,
+				fromCurrencyContract,
 				'approve',
 				[approveAddress, ethers.constants.MaxUint256]
 			)
@@ -420,15 +430,15 @@ export default class ExchangeService {
 		return undefined
 	}
 
-	public async handleSettle(baseCurrencyKey: string) {
+	public async handleSettle(toCurrencyKey: string) {
 		if (!this.sdk.context.isL2) {
 			throw new Error(sdkErrors.REQUIRES_L2)
 		}
 
-		const numEntries = await this.getNumEntries(baseCurrencyKey)
+		const numEntries = await this.getNumEntries(toCurrencyKey)
 
 		if (numEntries > 12) {
-			const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey)
+			const destinationCurrencyKey = ethers.utils.formatBytes32String(toCurrencyKey)
 
 			const { hash } = await this.sdk.transactions.createSynthetixTxn('Exchanger', 'settle', [
 				this.sdk.context.walletAddress,
@@ -444,40 +454,35 @@ export default class ExchangeService {
 	// TODO: Refactor handleExchange
 
 	public async handleExchange(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmount: string,
-		baseAmount: string
+		fromCurrencyKey: string,
+		toCurrencyKey: string,
+		fromAmount: string,
+		toAmount: string
 	) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
-		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey)
-		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey)
-		const quoteDecimals = this.getTokenDecimals(quoteCurrencyKey)
+		const txProvider = this.getTxProvider(fromCurrencyKey, toCurrencyKey)
+		const fromTokenAddress = this.getTokenAddress(fromCurrencyKey)
+		const toTokenAddress = this.getTokenAddress(toCurrencyKey)
+		const fromTokenDecimals = this.getTokenDecimals(fromCurrencyKey)
 
 		let tx: ethers.ContractTransaction | null = null
 
 		if (txProvider === '1inch' && !!this.tokensMap) {
-			tx = await this.swapOneInch(
-				quoteCurrencyTokenAddress,
-				baseCurrencyTokenAddress,
-				quoteAmount,
-				quoteDecimals
-			)
+			tx = await this.swapOneInch(fromTokenAddress, toTokenAddress, fromAmount, fromTokenDecimals)
 		} else if (txProvider === 'synthswap') {
 			// @ts-ignore TODO: Fix variable types
 			tx = await this.swapSynthSwap(
-				this.allTokensMap[quoteCurrencyKey],
-				this.allTokensMap[baseCurrencyKey],
-				quoteAmount
+				this.allTokensMap[fromCurrencyKey],
+				this.allTokensMap[toCurrencyKey],
+				fromAmount
 			)
 		} else {
-			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
+			const isAtomic = this.checkIsAtomic(fromCurrencyKey, toCurrencyKey)
 
 			const exchangeParams = this.getExchangeParams(
-				quoteCurrencyKey,
-				baseCurrencyKey,
-				wei(quoteAmount),
-				wei(baseAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
+				fromCurrencyKey,
+				toCurrencyKey,
+				wei(fromAmount),
+				wei(toAmount).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
 				isAtomic
 			)
 
@@ -501,22 +506,22 @@ export default class ExchangeService {
 	}
 
 	public async getTransactionFee(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
-		quoteAmount: string,
-		baseAmount: string
+		fromCurrencyKey: string,
+		toCurrencyKey: string,
+		fromAmount: string,
+		toAmount: string
 	) {
 		const gasPrices = await getEthGasPrice(this.sdk.context.networkId, this.sdk.context.provider)
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
+		const txProvider = this.getTxProvider(fromCurrencyKey, toCurrencyKey)
 		const ethPriceRate = this.getExchangeRatesForCurrencies(this.exchangeRates, 'sETH', 'sUSD')
 		const gasPrice = gasPrices.fast
 
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
 			const gasInfo = await this.getGasEstimateForExchange(
 				txProvider,
-				quoteCurrencyKey,
-				baseCurrencyKey,
-				quoteAmount
+				fromCurrencyKey,
+				toCurrencyKey,
+				fromAmount
 			)
 
 			return getTransactionPrice(
@@ -530,13 +535,13 @@ export default class ExchangeService {
 				throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 			}
 
-			const isAtomic = this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
+			const isAtomic = this.checkIsAtomic(fromCurrencyKey, toCurrencyKey)
 
 			const exchangeParams = this.getExchangeParams(
-				quoteCurrencyKey,
-				baseCurrencyKey,
-				wei(quoteAmount || 0),
-				wei(baseAmount || 0).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
+				fromCurrencyKey,
+				toCurrencyKey,
+				wei(fromAmount || 0),
+				wei(toAmount || 0).mul(wei(1).sub(ATOMIC_EXCHANGE_SLIPPAGE)),
 				isAtomic
 			)
 
@@ -565,33 +570,33 @@ export default class ExchangeService {
 		}
 	}
 
-	public async getFeeCost(quoteCurrencyKey: string, baseCurrencyKey: string, quoteAmount: string) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
+	public async getFeeCost(fromCurrencyKey: string, toCurrencyKey: string, fromAmount: string) {
+		const txProvider = this.getTxProvider(fromCurrencyKey, toCurrencyKey)
 
-		const coinGeckoPrices = await this.getCoingeckoPrices(quoteCurrencyKey, baseCurrencyKey)
+		const coinGeckoPrices = await this.getCoingeckoPrices(fromCurrencyKey, toCurrencyKey)
 
-		const [exchangeFeeRate, quotePriceRate] = await Promise.all([
-			this.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
-			this.getPriceRate(quoteCurrencyKey, txProvider, coinGeckoPrices),
+		const [exchangeFeeRate, fromPriceRate] = await Promise.all([
+			this.getExchangeFeeRate(fromCurrencyKey, toCurrencyKey),
+			this.getPriceRate(fromCurrencyKey, txProvider, coinGeckoPrices),
 		])
 
-		return wei(quoteAmount).mul(exchangeFeeRate).mul(quotePriceRate)
+		return wei(fromAmount).mul(exchangeFeeRate).mul(fromPriceRate)
 	}
 
 	public getApproveAddress(txProvider: ReturnType<ExchangeService['getTxProvider']>) {
 		return txProvider !== '1inch' ? SYNTH_SWAP_OPTIMISM_ADDRESS : this.getOneInchApproveAddress()
 	}
 
-	public async checkAllowance(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
+	public async checkAllowance(fromCurrencyKey: string, toCurrencyKey: string) {
+		const txProvider = this.getTxProvider(fromCurrencyKey, toCurrencyKey)
 
-		const [quoteCurrencyContract, approveAddress] = await Promise.all([
-			this.getCurrencyContract(quoteCurrencyKey),
+		const [fromCurrencyContract, approveAddress] = await Promise.all([
+			this.getCurrencyContract(fromCurrencyKey),
 			this.getApproveAddress(txProvider),
 		])
 
-		if (!!quoteCurrencyContract) {
-			const allowance = (await quoteCurrencyContract.allowance(
+		if (!!fromCurrencyContract) {
+			const allowance = (await fromCurrencyContract.allowance(
 				this.sdk.context.walletAddress,
 				approveAddress
 			)) as ethers.BigNumber
@@ -604,25 +609,25 @@ export default class ExchangeService {
 		return this.allTokensMap?.[currencyKey]?.name
 	}
 
-	public async getOneInchQuote(baseCurrencyKey: string, quoteCurrencyKey: string, amount: string) {
+	public async getOneInchQuote(toCurrencyKey: string, fromCurrencyKey: string, amount: string) {
 		const sUSD = this.tokensMap['sUSD']
-		const decimals = this.getTokenDecimals(quoteCurrencyKey)
-		const quoteTokenAddress = this.getTokenAddress(quoteCurrencyKey)
-		const baseTokenAddress = this.getTokenAddress(baseCurrencyKey)
-		const txProvider = this.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
+		const decimals = this.getTokenDecimals(fromCurrencyKey)
+		const fromTokenAddress = this.getTokenAddress(fromCurrencyKey)
+		const toTokenAddress = this.getTokenAddress(toCurrencyKey)
+		const txProvider = this.getTxProvider(fromCurrencyKey, toCurrencyKey)
 
-		const synth = this.tokensMap[quoteCurrencyKey] || this.tokensMap[baseCurrencyKey]
+		const synth = this.tokensMap[fromCurrencyKey] || this.tokensMap[toCurrencyKey]
 
 		const synthUsdRate = synth ? this.getPairRates(synth, 'sUSD') : null
 
-		if (!quoteCurrencyKey || !baseCurrencyKey || !sUSD || !amount.length || wei(amount).eq(0)) {
+		if (!fromCurrencyKey || !toCurrencyKey || !sUSD || !amount.length || wei(amount).eq(0)) {
 			return ''
 		}
 
 		if (txProvider === '1inch') {
 			const estimatedAmount = await this.quoteOneInch(
-				quoteTokenAddress,
-				baseTokenAddress,
+				fromTokenAddress,
+				toTokenAddress,
 				amount,
 				decimals
 			)
@@ -630,12 +635,12 @@ export default class ExchangeService {
 			return estimatedAmount
 		}
 
-		if (this.tokensMap[quoteCurrencyKey]) {
+		if (this.tokensMap[fromCurrencyKey]) {
 			const usdAmount = wei(amount).div(synthUsdRate)
 
 			const estimatedAmount = await this.quoteOneInch(
 				sUSD.address,
-				baseTokenAddress,
+				toTokenAddress,
 				usdAmount.toString(),
 				decimals
 			)
@@ -643,7 +648,7 @@ export default class ExchangeService {
 			return estimatedAmount
 		} else {
 			const estimatedAmount = await this.quoteOneInch(
-				quoteTokenAddress,
+				fromTokenAddress,
 				sUSD.address,
 				amount,
 				decimals
@@ -670,7 +675,7 @@ export default class ExchangeService {
 				return wei(0)
 			}
 		} else {
-			return this.checkIsAtomic(currencyKey, 'sUSD')
+			return this.checkIsAtomic('sUSD', currencyKey)
 				? await this.getAtomicRates(currencyKey)
 				: this.getExchangeRatesForCurrencies(this.exchangeRates, currencyKey, 'sUSD')
 		}
@@ -722,8 +727,8 @@ export default class ExchangeService {
 		return { balances: cryptoBalances, totalUSDBalance }
 	}
 
-	public validCurrencyKeys(quoteCurrencyKey?: string, baseCurrencyKey?: string) {
-		return [quoteCurrencyKey, baseCurrencyKey].map((currencyKey) => {
+	public validCurrencyKeys(fromCurrencyKey?: string, toCurrencyKey?: string) {
+		return [fromCurrencyKey, toCurrencyKey].map((currencyKey) => {
 			return (
 				!!currencyKey &&
 				(!!this.synthsMap[currencyKey as SynthSymbol] || !!this.tokensMap[currencyKey])
@@ -731,10 +736,10 @@ export default class ExchangeService {
 		})
 	}
 
-	public async getCoingeckoPrices(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey, true).toLowerCase()
-		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey).toLowerCase()
-		const tokenAddresses = [quoteCurrencyTokenAddress, baseCurrencyTokenAddress]
+	public async getCoingeckoPrices(fromCurrencyKey: string, toCurrencyKey: string) {
+		const fromTokenAddress = this.getTokenAddress(fromCurrencyKey, true).toLowerCase()
+		const toTokenAddress = this.getTokenAddress(toCurrencyKey).toLowerCase()
+		const tokenAddresses = [fromTokenAddress, toTokenAddress]
 
 		return this.batchGetCoingeckoPrices(tokenAddresses)
 	}
@@ -756,14 +761,14 @@ export default class ExchangeService {
 	}
 
 	private getExchangeParams(
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
+		fromCurrencyKey: string,
+		toCurrencyKey: string,
 		sourceAmount: Wei,
 		minAmount: Wei,
 		isAtomic: boolean
 	) {
-		const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey)
-		const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey)
+		const sourceCurrencyKey = ethers.utils.formatBytes32String(fromCurrencyKey)
+		const destinationCurrencyKey = ethers.utils.formatBytes32String(toCurrencyKey)
 		const sourceAmountBN = sourceAmount.toBN()
 
 		if (isAtomic) {
@@ -901,12 +906,12 @@ export default class ExchangeService {
 		return tokenBalances
 	}
 
-	private checkIsAtomic(baseCurrencyKey: string, quoteCurrencyKey: string) {
-		if (this.sdk.context.isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
+	private checkIsAtomic(fromCurrencyKey: string, toCurrencyKey: string) {
+		if (this.sdk.context.isL2 || !toCurrencyKey || !fromCurrencyKey) {
 			return false
 		}
 
-		return [baseCurrencyKey, quoteCurrencyKey].every((currency) =>
+		return [toCurrencyKey, fromCurrencyKey].every((currency) =>
 			ATOMIC_EXCHANGES_L1.includes(currency)
 		)
 	}
@@ -917,8 +922,8 @@ export default class ExchangeService {
 
 	private getCurrencyContract(currencyKey: string) {
 		if (this.allTokensMap[currencyKey]) {
-			const quoteTknAddress = this.getTokenAddress(currencyKey, true)
-			return this.createERC20Contract(quoteTknAddress)
+			const tokenAddress = this.getTokenAddress(currencyKey, true)
+			return this.createERC20Contract(tokenAddress)
 		}
 
 		return null
@@ -929,29 +934,29 @@ export default class ExchangeService {
 	}
 
 	private getOneInchQuoteSwapParams(
-		quoteTokenAddress: string,
-		baseTokenAddress: string,
+		fromTokenAddress: string,
+		toTokenAddress: string,
 		amount: string,
 		decimals: number
 	) {
 		return {
-			fromTokenAddress: quoteTokenAddress,
-			toTokenAddress: baseTokenAddress,
+			fromTokenAddress,
+			toTokenAddress,
 			amount: wei(amount, decimals).toString(0, true),
 		}
 	}
 
 	private async getOneInchSwapParams(
-		quoteTokenAddress: string,
-		baseTokenAddress: string,
+		fromTokenAddress: string,
+		toTokenAddress: string,
 		amount: string,
-		quoteDecimals: number
+		fromTokenDecimals: number
 	) {
 		const params = this.getOneInchQuoteSwapParams(
-			quoteTokenAddress,
-			baseTokenAddress,
+			fromTokenAddress,
+			toTokenAddress,
 			amount,
-			quoteDecimals
+			fromTokenDecimals
 		)
 
 		const res = await axios.get<OneInchSwapResponse>(this.oneInchApiUrl + 'swap', {
@@ -971,14 +976,14 @@ export default class ExchangeService {
 	}
 
 	private async quoteOneInch(
-		quoteTokenAddress: string,
-		baseTokenAddress: string,
+		fromTokenAddress: string,
+		toTokenAddress: string,
 		amount: string,
 		decimals: number
 	) {
 		const params = this.getOneInchQuoteSwapParams(
-			quoteTokenAddress,
-			baseTokenAddress,
+			fromTokenAddress,
+			toTokenAddress,
 			amount,
 			decimals
 		)
@@ -1002,16 +1007,16 @@ export default class ExchangeService {
 		return this.swapSynthSwap(fromToken, toToken, fromAmount, 'estimate_gas')
 	}
 
-	private async getPairRates(quoteCurrencyKey: string, baseCurrencyKey: string) {
-		return this.checkIsAtomic(baseCurrencyKey, quoteCurrencyKey)
+	private async getPairRates(fromCurrencyKey: string, toCurrencyKey: string) {
+		return this.checkIsAtomic(fromCurrencyKey, toCurrencyKey)
 			? await Promise.all([
-					this.getAtomicRates(quoteCurrencyKey),
-					this.getAtomicRates(baseCurrencyKey),
+					this.getAtomicRates(fromCurrencyKey),
+					this.getAtomicRates(toCurrencyKey),
 			  ])
 			: this.getExchangeRatesTupleForCurrencies(
 					this.sdk.prices.currentPrices.onChain,
-					quoteCurrencyKey,
-					baseCurrencyKey
+					fromCurrencyKey,
+					toCurrencyKey
 			  )
 	}
 
@@ -1025,26 +1030,26 @@ export default class ExchangeService {
 
 	private async getGasEstimateForExchange(
 		txProvider: ReturnType<ExchangeService['getTxProvider']>,
-		quoteCurrencyKey: string,
-		baseCurrencyKey: string,
+		fromCurrencyKey: string,
+		toCurrencyKey: string,
 		quoteAmount: string
 	) {
 		if (!this.sdk.context.isL2) return null
 
-		const quoteCurrencyTokenAddress = this.getTokenAddress(quoteCurrencyKey)
-		const baseCurrencyTokenAddress = this.getTokenAddress(baseCurrencyKey)
-		const quoteDecimals = this.getTokenDecimals(quoteCurrencyKey)
+		const fromTokenAddress = this.getTokenAddress(fromCurrencyKey)
+		const toTokenAddress = this.getTokenAddress(toCurrencyKey)
+		const quoteDecimals = this.getTokenDecimals(fromCurrencyKey)
 
 		if (txProvider === 'synthswap') {
 			const [gasEstimate, metaTx] = await Promise.all([
 				this.swapSynthSwapGasEstimate(
-					this.allTokensMap[quoteCurrencyKey],
-					this.allTokensMap[baseCurrencyKey],
+					this.allTokensMap[fromCurrencyKey],
+					this.allTokensMap[toCurrencyKey],
 					quoteAmount
 				),
 				this.swapSynthSwap(
-					this.allTokensMap[quoteCurrencyKey],
-					this.allTokensMap[baseCurrencyKey],
+					this.allTokensMap[fromCurrencyKey],
+					this.allTokensMap[toCurrencyKey],
 					quoteAmount,
 					'meta_tx'
 				),
@@ -1060,18 +1065,8 @@ export default class ExchangeService {
 			return { limit: normalizeGasLimit(Number(gasEstimate)), l1Fee }
 		} else if (txProvider === '1inch') {
 			const [estimate, metaTx] = await Promise.all([
-				this.swapOneInchGasEstimate(
-					quoteCurrencyTokenAddress,
-					baseCurrencyTokenAddress,
-					quoteAmount,
-					quoteDecimals
-				),
-				this.swapOneInchMeta(
-					quoteCurrencyTokenAddress,
-					baseCurrencyTokenAddress,
-					quoteAmount,
-					quoteDecimals
-				),
+				this.swapOneInchGasEstimate(fromTokenAddress, toTokenAddress, quoteAmount, quoteDecimals),
+				this.swapOneInchMeta(fromTokenAddress, toTokenAddress, quoteAmount, quoteDecimals),
 			])
 
 			const l1Fee = await this.sdk.transactions.getOptimismLayerOneFees({

@@ -33,10 +33,7 @@ export const fetchTransactionFee = createAsyncThunk<
 	const isApproved = selectIsApproved(getState())
 	const insufficientBalance = selectInsufficientBalance(getState())
 	if (!isApproved || insufficientBalance) {
-		return {
-			transactionFee: '0',
-			feeCost: '0',
-		}
+		return { transactionFee: '0', feeCost: '0' }
 	}
 
 	if (baseCurrencyKey && quoteCurrencyKey) {
@@ -144,7 +141,7 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 
 		if (walletAddress) {
 			if (quoteCurrencyKey && baseCurrencyKey) {
-				txProvider = sdk.exchange.getTxProvider(baseCurrencyKey, quoteCurrencyKey)
+				txProvider = sdk.exchange.getTxProvider(quoteCurrencyKey, baseCurrencyKey)
 
 				// TODO: We should not have to do this.
 				// But we need the coingecko prices to generate the rates.
@@ -154,8 +151,8 @@ export const resetCurrencyKeys = createAsyncThunk<any, void, ThunkConfig>(
 				)
 
 				;[baseFeeRate, rate, exchangeFeeRate, quotePriceRate, basePriceRate] = await Promise.all([
-					sdk.exchange.getBaseFeeRate(baseCurrencyKey, quoteCurrencyKey),
-					sdk.exchange.getRate(baseCurrencyKey, quoteCurrencyKey),
+					sdk.exchange.getBaseFeeRate(quoteCurrencyKey, baseCurrencyKey),
+					sdk.exchange.getRate(quoteCurrencyKey, baseCurrencyKey),
 					sdk.exchange.getExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey),
 					sdk.exchange.getPriceRate(quoteCurrencyKey, txProvider, coinGeckoPrices),
 					sdk.exchange.getPriceRate(baseCurrencyKey, txProvider, coinGeckoPrices),

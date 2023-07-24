@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:13](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L13)
+[packages/sdk/src/types/prices.ts:13](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L13)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:6](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L6)
+[packages/sdk/src/types/prices.ts:6](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L6)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:8](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L8)
+[packages/sdk/src/types/prices.ts:8](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L8)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:24](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L24)
+[packages/sdk/src/types/prices.ts:24](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L24)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:15](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L15)
+[packages/sdk/src/types/prices.ts:15](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L15)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:26](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L26)
+[packages/sdk/src/types/prices.ts:26](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L26)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:17](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L17)
+[packages/sdk/src/types/prices.ts:17](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L17)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:19](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L19)
+[packages/sdk/src/types/prices.ts:19](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L19)
 
 ___
 
@@ -153,4 +153,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/prices.ts:7](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/types/prices.ts#L7)
+[packages/sdk/src/types/prices.ts:7](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/prices.ts#L7)

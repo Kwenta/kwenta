@@ -64,7 +64,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:48](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L48)
+[packages/sdk/src/services/prices.ts:48](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L48)
 
 ## Properties
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:46](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L46)
+[packages/sdk/src/services/prices.ts:46](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L46)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:43](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L43)
+[packages/sdk/src/services/prices.ts:43](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L43)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:39](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L39)
+[packages/sdk/src/services/prices.ts:39](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L39)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:40](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L40)
+[packages/sdk/src/services/prices.ts:40](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L40)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:42](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L42)
+[packages/sdk/src/services/prices.ts:42](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L42)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:41](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L41)
+[packages/sdk/src/services/prices.ts:41](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L41)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:38](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L38)
+[packages/sdk/src/services/prices.ts:38](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L38)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:45](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L45)
+[packages/sdk/src/services/prices.ts:45](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L45)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:271](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L271)
+[packages/sdk/src/services/prices.ts:296](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L296)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:44](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L44)
+[packages/sdk/src/services/prices.ts:44](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L44)
 
 ## Accessors
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:54](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L54)
+[packages/sdk/src/services/prices.ts:54](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L54)
 
 ___
 
@@ -197,7 +197,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:61](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L61)
+[packages/sdk/src/services/prices.ts:61](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L61)
 
 ## Methods
 
@@ -218,7 +218,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:209](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L209)
+[packages/sdk/src/services/prices.ts:234](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L234)
 
 ___
 
@@ -238,7 +238,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:194](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L194)
+[packages/sdk/src/services/prices.ts:219](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L219)
 
 ___
 
@@ -258,7 +258,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:266](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L266)
+[packages/sdk/src/services/prices.ts:291](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L291)
 
 ___
 
@@ -272,7 +272,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:139](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L139)
+[packages/sdk/src/services/prices.ts:159](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L159)
 
 ___
 
@@ -280,19 +280,33 @@ ___
 
 ▸ **getOffchainPrice**(`marketKey`): `Wei`
 
+**`Desc`**
+
+Get offchain price for a given market
+
+**`Example`**
+
+```ts
+const sdk = new KwentaSDK();
+const price = sdk.prices.getOffchainPrice(FuturesMarketKey.sBTCPERP);
+console.log(price);
+```
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) | Futures market key |
 
 #### Returns
 
 `Wei`
 
+Offchain price for specified market
+
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:65](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L65)
+[packages/sdk/src/services/prices.ts:76](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L76)
 
 ___
 
@@ -306,7 +320,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:110](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L110)
+[packages/sdk/src/services/prices.ts:130](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L130)
 
 ___
 
@@ -327,7 +341,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:144](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L144)
+[packages/sdk/src/services/prices.ts:164](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L164)
 
 ___
 
@@ -335,19 +349,25 @@ ___
 
 ▸ **getPythPriceUpdateData**(`marketKey`): `Promise`<`string`[]\>
 
+**`Desc`**
+
+Get pyth price update data for a given market
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) | Futures market key |
 
 #### Returns
 
 `Promise`<`string`[]\>
 
+Pyth price update data
+
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:185](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L185)
+[packages/sdk/src/services/prices.ts:210](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L210)
 
 ___
 
@@ -361,7 +381,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:249](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L249)
+[packages/sdk/src/services/prices.ts:274](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L274)
 
 ___
 
@@ -381,7 +401,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:100](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L100)
+[packages/sdk/src/services/prices.ts:120](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L120)
 
 ___
 
@@ -401,7 +421,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:88](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L88)
+[packages/sdk/src/services/prices.ts:108](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L108)
 
 ___
 
@@ -415,7 +435,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:106](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L106)
+[packages/sdk/src/services/prices.ts:126](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L126)
 
 ___
 
@@ -435,7 +455,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:92](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L92)
+[packages/sdk/src/services/prices.ts:112](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L112)
 
 ___
 
@@ -449,7 +469,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:96](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L96)
+[packages/sdk/src/services/prices.ts:116](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L116)
 
 ___
 
@@ -463,7 +483,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:243](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L243)
+[packages/sdk/src/services/prices.ts:268](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L268)
 
 ___
 
@@ -483,7 +503,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:234](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L234)
+[packages/sdk/src/services/prices.ts:259](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L259)
 
 ___
 
@@ -491,11 +511,22 @@ ___
 
 ▸ **startPriceUpdates**(`intervalTime`): `Promise`<`void`\>
 
+**`Desc`**
+
+Start polling pyth price updates
+
+**`Example`**
+
+```ts
+const sdk = new KwentaSDK();
+await sdk.prices.startPriceUpdates(10000);
+```
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `intervalTime` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `intervalTime` | `number` | Polling interval in milliseconds |
 
 #### Returns
 
@@ -503,7 +534,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:71](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L71)
+[packages/sdk/src/services/prices.ts:91](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L91)
 
 ___
 
@@ -517,7 +548,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:279](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L279)
+[packages/sdk/src/services/prices.ts:304](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L304)
 
 ___
 
@@ -531,4 +562,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:261](https://github.com/Kwenta/kwenta/blob/935f91508/packages/sdk/src/services/prices.ts#L261)
+[packages/sdk/src/services/prices.ts:286](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/services/prices.ts#L286)
