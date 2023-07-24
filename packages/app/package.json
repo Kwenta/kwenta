@@ -38,7 +38,7 @@
 		"crypto-browserify": "^3.12.0",
 		"date-fns": "2.21.3",
 		"date-fns-tz": "2.0.0",
-		"echarts": "5.4.2",
+		"echarts": "5.4.3",
 		"eslint-config-next": "^13.4.8",
 		"ethcall": "4.7.2",
 		"ethers": "5.7.2",
