@@ -1,10 +1,11 @@
 import { MarketKeyByAsset, getDisplayAsset, formatDollars } from '@kwenta/sdk/utils'
 import { WeiSource } from '@synthetixio/wei'
-import { useEffect, useRef, useMemo, FC, useState } from 'react'
+import { useEffect, useRef, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import useStatsData from 'hooks/useStatsData'
+import useWindowSize from 'hooks/useWindowSize'
 import { SYNTH_ICONS } from 'utils/icons'
 
 import { initChart } from '../initChart'
@@ -20,14 +21,13 @@ type RichLabel = {
 }
 
 type RichLabelMap = Record<string, RichLabel>
-type OpenInterestProps = { mobile: boolean }
 
-export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
+export const OpenInterest = () => {
 	const { t } = useTranslation()
 	const theme = useTheme()
 
 	const { openInterestData } = useStatsData()
-
+	const { deviceType } = useWindowSize()
 	const ref = useRef<HTMLDivElement | null>(null)
 
 	const [chart, setChart] = useState<any>(null)
@@ -57,8 +57,12 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 			}))
 			.sort((a, b) => b.openInterest - a.openInterest)
 
-		return mobile ? sortedData.slice(0, 5) : sortedData
-	}, [mobile, openInterestData])
+		return deviceType === 'mobile'
+			? sortedData.slice(0, 5)
+			: deviceType === 'tablet'
+			? sortedData.slice(0, 15)
+			: sortedData.slice(0, 25)
+	}, [deviceType, openInterestData])
 
 	useEffect(() => {
 		if (!ref || !chart || !ref.current || !openInterestData || !openInterestData.length) {
@@ -111,7 +115,8 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 					},
 				},
 				axisLabel: {
-					formatter: (value: WeiSource) => formatDollars(value, { truncateOver: 1e3 }),
+					formatter: (value: WeiSource) =>
+						formatDollars(value, { truncateOver: 1e3, maxDecimals: 0 }),
 				},
 				position: 'right',
 			},
