@@ -1,7 +1,7 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
 import { wei } from '@synthetixio/wei'
-import { ethers } from 'ethers'
+import { TypedDataDomain, TypedDataField, ethers } from 'ethers'
 import { omit, clone } from 'lodash'
 
 import KwentaSDK from '..'
@@ -157,5 +157,17 @@ export default class TransactionsService {
 
 	public getGasPrice() {
 		return getEthGasPrice(this.sdk.context.networkId, this.sdk.context.provider)
+	}
+
+	public async signTypedData({
+		domain,
+		types,
+		message,
+	}: {
+		domain: TypedDataDomain
+		types: Record<string, Array<TypedDataField>>
+		message: Record<string, any>
+	}) {
+		return this.sdk.context.signer._signTypedData(domain, types, message)
 	}
 }
