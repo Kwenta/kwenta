@@ -27,7 +27,7 @@
 		"@reduxjs/toolkit": "^1.9.5",
 		"@sentry/browser": "7.60.0",
 		"@sentry/tracing": "7.60.0",
-		"@socket.tech/plugin": "1.0.15",
+		"@socket.tech/plugin": "1.1.2",
 		"@synthetixio/optimism-networks": "2.74.6",
 		"@synthetixio/wei": "2.74.4",
 		"@tanstack/react-table": "8.9.3",

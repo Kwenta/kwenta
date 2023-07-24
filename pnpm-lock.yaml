@@ -99,8 +99,8 @@ importers:
         specifier: 7.60.0
         version: 7.60.0
       '@socket.tech/plugin':
-        specifier: 1.0.15
-        version: 1.0.15(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
+        specifier: 1.1.2
+        version: 1.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
       '@synthetixio/optimism-networks':
         specifier: 2.74.6
         version: 2.74.6
@@ -4454,6 +4454,10 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
 
+  /@popperjs/core@2.11.8:
+    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+    dev: false
+
   /@pythnetwork/price-service-client@1.6.0:
     resolution: {integrity: sha512-FwhSlCrCSdW0eaaM2/+nk2iOhrHgfkwNLp/b9wggRwDoPW4a8Keum460eYSt3mqhUTu8iIWoc3G7bqYEhex8CQ==}
     dependencies:
@@ -4758,8 +4762,8 @@ packages:
     resolution: {integrity: sha512-kSQpArl54ja107ke2C1jJCZzkllGzkXZVB+OSjcqOz9eMzr4Ffw2zYxqYfLrfxAPsQmxIc1FvCNtD70mLJZWFw==}
     dev: false
 
-  /@socket.tech/plugin@1.0.15(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):
-    resolution: {integrity: sha512-cMLu2DbQmkByH4ruNBBmtoQQM4G5NnmGLrYKC5WNniHOcYXzdFK5d7lywhN7SfoS3s8IGcps5MOKQZtkGzP32Q==}
+  /@socket.tech/plugin@1.1.2(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):
+    resolution: {integrity: sha512-0LDQTRx3Iw/piB4RiKhK/n/Be6VPwqNxFxXhVSPifVSz6IKdQVz+3VulrSJV0s5tv9cahTS5BaIBhOtuDzpB+A==}
     peerDependencies:
       react: '>=17.0.1'
       react-dom: '>=17.0.1'
@@ -4767,7 +4771,8 @@ packages:
       '@react-spring/web': 9.7.3(react-dom@18.2.0)(react@18.2.0)
       '@reduxjs/toolkit': 1.9.5(react-redux@8.1.1)(react@18.2.0)
       '@socket.tech/ll-core': 0.1.44
-      '@socket.tech/socket-v2-sdk': 1.23.0
+      '@socket.tech/socket-v2-sdk': 1.23.1
+      '@tippyjs/react': 4.2.6(react-dom@18.2.0)(react@18.2.0)
       ethers: 5.7.2
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -4784,8 +4789,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@socket.tech/socket-v2-sdk@1.23.0:
-    resolution: {integrity: sha512-S8ny2PxzPPCd2FR0qk0+X+smB6T4+ZA/Mu1RaWXNzatFWVUh8pOtMmQ9XHwzd5nMn45T5Sl3nDyydse5M/xQ3A==}
+  /@socket.tech/socket-v2-sdk@1.23.1:
+    resolution: {integrity: sha512-x79vgmEuFHrK5cLnbsGR1fmxkUUuhl/0IHsvMCoaOxlCmwmZAfTt2ICxC8EyRGiEjVh1gLYrbCOYWgDXw362mQ==}
     dependencies:
       '@socket.tech/ll-core': 0.1.44
       '@socket.tech/ll-core-v2': 0.0.32
@@ -6387,6 +6392,17 @@ packages:
     dependencies:
       '@testing-library/dom': 9.3.1
     dev: true
+
+  /@tippyjs/react@4.2.6(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-91RicDR+H7oDSyPycI13q3b7o4O60wa2oRbjlz2fyRLmHImc4vyDwuUP8NtZaN0VARJY5hybvDYrFzhY9+Lbyw==}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      tippy.js: 6.3.7
+    dev: false
 
   /@tootallnate/once@2.0.0:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
@@ -17128,6 +17144,12 @@ packages:
 
   /tiny-warning@1.0.3:
     resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
+    dev: false
+
+  /tippy.js@6.3.7:
+    resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
+    dependencies:
+      '@popperjs/core': 2.11.8
     dev: false
 
   /titleize@3.0.0:
