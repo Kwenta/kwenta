@@ -225,7 +225,7 @@ BaseContract.callStatic
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1229](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1229)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1229](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1229)
 
 ___
 
@@ -306,7 +306,7 @@ BaseContract.estimateGas
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1598](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1598)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1598](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1598)
 
 ___
 
@@ -341,7 +341,7 @@ BaseContract.filters
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1458](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1458)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1458](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1458)
 
 ___
 
@@ -408,7 +408,7 @@ BaseContract.functions
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:742](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L742)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:742](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L742)
 
 ___
 
@@ -422,7 +422,7 @@ BaseContract.interface
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:721](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L721)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:721](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L721)
 
 ___
 
@@ -436,7 +436,7 @@ BaseContract.off
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:737](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L737)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:737](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L737)
 
 ___
 
@@ -450,7 +450,7 @@ BaseContract.on
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:738](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L738)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:738](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L738)
 
 ___
 
@@ -464,7 +464,7 @@ BaseContract.once
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:739](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L739)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:739](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L739)
 
 ___
 
@@ -531,7 +531,7 @@ BaseContract.populateTransaction
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1810](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1810)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1810](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1810)
 
 ___
 
@@ -559,7 +559,7 @@ BaseContract.removeListener
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:740](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L740)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:740](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L740)
 
 ___
 
@@ -682,7 +682,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:995](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L995)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:995](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L995)
 
 ___
 
@@ -703,7 +703,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1002](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1002)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1002](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1002)
 
 ___
 
@@ -723,7 +723,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1007](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1007)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1007](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1007)
 
 ___
 
@@ -747,7 +747,7 @@ BaseContract.attach
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:718](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L718)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:718](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L718)
 
 ___
 
@@ -767,7 +767,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1011](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1011)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1011](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1011)
 
 ___
 
@@ -788,7 +788,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1013](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1013)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1013](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1013)
 
 ___
 
@@ -809,7 +809,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1015](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1015)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1015](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1015)
 
 ___
 
@@ -830,7 +830,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1020](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1020)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1020](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1020)
 
 ___
 
@@ -851,7 +851,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1025](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1025)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1025](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1025)
 
 ___
 
@@ -873,7 +873,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1030](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1030)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1030](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1030)
 
 ___
 
@@ -897,7 +897,7 @@ BaseContract.connect
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:717](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L717)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:717](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L717)
 
 ___
 
@@ -917,7 +917,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1036](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1036)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1036](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1036)
 
 ___
 
@@ -937,7 +937,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1038](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1038)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1038](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1038)
 
 ___
 
@@ -958,7 +958,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1040](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1040)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1040](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1040)
 
 ___
 
@@ -976,7 +976,7 @@ BaseContract.deployed
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:719](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L719)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:719](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L719)
 
 ___
 
@@ -1022,7 +1022,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1045](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1045)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1045](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1045)
 
 ___
 
@@ -1044,7 +1044,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1050](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1050)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1050](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1050)
 
 ___
 
@@ -1089,7 +1089,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1056](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1056)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1056](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1056)
 
 ___
 
@@ -1110,7 +1110,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1061](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1061)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1061](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1061)
 
 ___
 
@@ -1131,7 +1131,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1066](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1066)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1066](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1066)
 
 ___
 
@@ -1151,7 +1151,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1071](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1071)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1071](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1071)
 
 ___
 
@@ -1171,7 +1171,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1073](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1073)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1073](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1073)
 
 ___
 
@@ -1192,7 +1192,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1075](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1075)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1075](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1075)
 
 ___
 
@@ -1212,7 +1212,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1080](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1080)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1080](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1080)
 
 ___
 
@@ -1233,7 +1233,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1082](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1082)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1082](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1082)
 
 ___
 
@@ -1254,7 +1254,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1084](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1084)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1084](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1084)
 
 ___
 
@@ -1275,7 +1275,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1089](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1089)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1089](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1089)
 
 ___
 
@@ -1296,7 +1296,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1094](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1094)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1094](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1094)
 
 ___
 
@@ -1350,7 +1350,7 @@ BaseContract.listeners
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:729](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L729)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:729](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L729)
 
 ▸ **listeners**(`eventName?`): `Listener`[]
 
@@ -1370,7 +1370,7 @@ BaseContract.listeners
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:732](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L732)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:732](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L732)
 
 ___
 
@@ -1390,7 +1390,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1099](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1099)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1099](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1099)
 
 ___
 
@@ -1410,7 +1410,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1103](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1103)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1103](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1103)
 
 ___
 
@@ -1430,7 +1430,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1105](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1105)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1105](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1105)
 
 ___
 
@@ -1450,7 +1450,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1107](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1107)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1107](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1107)
 
 ___
 
@@ -1470,7 +1470,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1111](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1111)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1111](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1111)
 
 ___
 
@@ -1492,7 +1492,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1113](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1113)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1113](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1113)
 
 ___
 
@@ -1515,7 +1515,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1119](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1119)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1119](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1119)
 
 ___
 
@@ -1536,7 +1536,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1126](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1126)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1126](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1126)
 
 ___
 
@@ -1558,7 +1558,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1131](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1131)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1131](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1131)
 
 ___
 
@@ -1579,7 +1579,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1137](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1137)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1137](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1137)
 
 ___
 
@@ -1603,7 +1603,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1142](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1142)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1142](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1142)
 
 ___
 
@@ -1624,7 +1624,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1159](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1159)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1159](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1159)
 
 ___
 
@@ -1656,7 +1656,7 @@ BaseContract.queryFilter
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:723](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L723)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:723](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L723)
 
 ___
 
@@ -1676,7 +1676,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1164](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1164)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1164](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1164)
 
 ___
 
@@ -1697,7 +1697,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1168](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1168)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1168](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1168)
 
 ___
 
@@ -1727,7 +1727,7 @@ BaseContract.removeAllListeners
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:733](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L733)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:733](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L733)
 
 ▸ **removeAllListeners**(`eventName?`): [`PerpsV2Market`](types.PerpsV2Market.md)
 
@@ -1747,7 +1747,7 @@ BaseContract.removeAllListeners
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:736](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L736)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:736](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L736)
 
 ___
 
@@ -1770,7 +1770,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1175](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1175)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1175](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1175)
 
 ___
 
@@ -1792,7 +1792,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1182](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1182)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1182](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1182)
 
 ___
 
@@ -1815,7 +1815,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1188](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1188)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1188](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1188)
 
 ___
 
@@ -1839,7 +1839,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1195](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1195)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1195](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1195)
 
 ___
 
@@ -1861,7 +1861,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1203](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1203)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1203](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1203)
 
 ___
 
@@ -1884,7 +1884,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1209](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1209)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1209](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1209)
 
 ___
 
@@ -1905,7 +1905,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1216](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1216)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1216](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1216)
 
 ___
 
@@ -1925,7 +1925,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1221](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1221)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1221](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1221)
 
 ___
 
@@ -1945,4 +1945,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/PerpsV2Market.ts:1225](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1225)
+[packages/sdk/src/contracts/types/PerpsV2Market.ts:1225](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/contracts/types/PerpsV2Market.ts#L1225)

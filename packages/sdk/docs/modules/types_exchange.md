@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/exchange.ts:4](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/exchange.ts#L4)
+[packages/sdk/src/types/exchange.ts:4](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/exchange.ts#L4)
 
 ___
 
@@ -28,7 +28,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/exchange.ts:6](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/exchange.ts#L6)
+[packages/sdk/src/types/exchange.ts:6](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/exchange.ts#L6)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/exchange.ts:8](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/exchange.ts#L8)
+[packages/sdk/src/types/exchange.ts:8](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/exchange.ts#L8)

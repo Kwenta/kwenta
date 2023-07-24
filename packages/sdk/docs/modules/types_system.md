@@ -28,4 +28,4 @@
 
 #### Defined in
 
-[packages/sdk/src/types/system.ts:7](https://github.com/Kwenta/kwenta/blob/84039a5ef/packages/sdk/src/types/system.ts#L7)
+[packages/sdk/src/types/system.ts:7](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/system.ts#L7)

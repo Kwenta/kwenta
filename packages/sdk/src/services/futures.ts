@@ -76,8 +76,8 @@ import { getReasonFromCode } from '../utils/synths'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
-	public markets: FuturesMarket[] | undefined
-	public internalFuturesMarkets: Partial<
+	private markets: FuturesMarket[] | undefined
+	private internalFuturesMarkets: Partial<
 		Record<NetworkId, { [marketAddress: string]: PerpsV2MarketInternal }>
 	> = {}
 
