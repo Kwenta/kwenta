@@ -192,14 +192,7 @@ export default class PricesService {
 				minTimestamp: minTimestamp,
 			}
 		)
-		const prices = (response ? Object.values(response).flat() : []) as SynthPrice[]
-
-		//TODO: remove this once the rates are fixed
-		return prices.map((price) =>
-			price.synth === MarketAssetByKey[FuturesMarketKey.sPEPEPERP]
-				? { ...price, rate: wei(price.rate.toString()).div(1e10).toString() }
-				: price
-		) as SynthPrice[]
+		return (response ? Object.values(response).flat() : []) as SynthPrice[]
 	}
 
 	/**

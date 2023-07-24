@@ -24,6 +24,7 @@ import {
 	selectMaxUsdSizeInput,
 	selectMarketPriceInfo,
 	selectPosition,
+	selectTradePanelSLValidity,
 } from 'state/futures/selectors'
 import {
 	selectOrderType,
@@ -62,6 +63,7 @@ const ManagePosition: React.FC = () => {
 	const previewStatus = useAppSelector(selectTradePreviewStatus)
 	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
 	const position = useAppSelector(selectPosition)
+	const stopLossInvlid = useAppSelector(selectTradePanelSLValidity)
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError))
@@ -162,6 +164,13 @@ const ManagePosition: React.FC = () => {
 			if (orderType !== 'market' && isZero(orderPrice)) return { message: 'trade price required' }
 		}
 
+		if (stopLossInvlid.invalid) {
+			return {
+				show: 'warn',
+				message: 'Invalid Stop Loss Price',
+			}
+		}
+
 		return null
 	}, [
 		susdSize,
@@ -182,6 +191,7 @@ const ManagePosition: React.FC = () => {
 		leverage,
 		indexPrice,
 		previewTrade,
+		stopLossInvlid,
 		marketInfo?.appMaxLeverage,
 	])
 

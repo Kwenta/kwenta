@@ -1,23 +1,15 @@
-import React, { memo, ChangeEvent } from 'react'
+import { formatDollars } from '@kwenta/sdk/utils'
+import React, { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import InputHeaderRow from 'components/Input/InputHeaderRow'
 import InputTitle from 'components/Input/InputTitle'
-import NumericInput from 'components/Input/NumericInput'
 
-type Props = {
-	isMobile?: boolean
-	type: 'take-profit' | 'stop-loss'
-	value: string
-	invalid: boolean
-	currentPrice: string
-	onChange: (_: ChangeEvent<HTMLInputElement>, v: string) => void
-	right?: React.ReactNode
-}
+import SLTPInputField, { SLTPInputFieldProps } from '../Trade/SLTPInputField'
 
-const EditStopLossAndTakeProfitInput: React.FC<Props> = memo(
-	({ isMobile, type, value, invalid, currentPrice, onChange, right }) => {
+const EditStopLossAndTakeProfitInput: React.FC<SLTPInputFieldProps> = memo(
+	({ type, currentPrice, ...props }) => {
 		const { t } = useTranslation()
 
 		return (
@@ -26,22 +18,17 @@ const EditStopLossAndTakeProfitInput: React.FC<Props> = memo(
 					label={type === 'take-profit' ? 'Take Profit' : 'Stop Loss'}
 					rightElement={
 						<StyledInputTitle>
-							{t('futures.market.trade.edit-sl-tp.last-price')}: <span>{currentPrice}</span>
+							{t('futures.market.trade.edit-sl-tp.last-price')}:{' '}
+							<span>{formatDollars(currentPrice)}</span>
 						</StyledInputTitle>
 					}
 				/>
 
-				<NumericInput
-					invalid={invalid}
-					dataTestId={'edit-position-size-input' + (isMobile ? '-mobile' : '-desktop')}
-					value={value}
-					onChange={onChange}
-					placeholder={
-						type === 'take-profit'
-							? t('futures.market.trade.edit-sl-tp.no-tp')
-							: t('futures.market.trade.edit-sl-tp.no-sl')
-					}
-					right={right}
+				<SLTPInputField
+					{...props}
+					type={'stop-loss'}
+					currentPrice={currentPrice}
+					dataTestId={'trade-panel-stop-loss-input'}
 				/>
 			</div>
 		)

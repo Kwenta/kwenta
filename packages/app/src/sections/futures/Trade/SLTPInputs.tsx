@@ -1,12 +1,12 @@
 import { suggestedDecimals } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 import Button from 'components/Button'
 import InputHeaderRow from 'components/Input/InputHeaderRow'
 import InputTitle from 'components/Input/InputTitle'
-import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRow } from 'components/layout/flex'
 import { StyledCaretDownIcon } from 'components/Select'
 import SelectorButtons from 'components/SelectorButtons'
@@ -16,6 +16,7 @@ import {
 	selectLeverageInput,
 	selectLeverageSide,
 	selectMarketIndexPrice,
+	selectTradePanelSLValidity,
 } from 'state/futures/selectors'
 import {
 	setSmartMarginTradeStopLoss,
@@ -25,7 +26,7 @@ import { selectSlTpTradeInputs } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import OrderAcknowledgement from './OrderAcknowledgement'
-import ShowPercentage from './ShowPercentage'
+import SLTPInputField from './SLTPInputField'
 
 const TP_OPTIONS = ['5%', '10%', '25%', '50%', '100%']
 const SL_OPTIONS = ['2%', '5%', '10%', '20%', '50%']
@@ -37,6 +38,7 @@ export default function SLTPInputs() {
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const leverage = useAppSelector(selectLeverageInput)
 	const hideWarning = useAppSelector(selectAckedOrdersWarning)
+	const slValidity = useSelector(selectTradePanelSLValidity)
 
 	const [showInputs, setShowInputs] = useState(false)
 	const [showOrderWarning, setShowOrderWarning] = useState(false)
@@ -56,6 +58,7 @@ export default function SLTPInputs() {
 
 	const onSelectStopLossPercent = useCallback(
 		(index: number) => {
+			if (slValidity.disabled) return
 			const option = SL_OPTIONS[index]
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100
 			const relativePercent = wei(percent).div(leverageWei)
@@ -66,7 +69,7 @@ export default function SLTPInputs() {
 			const dp = suggestedDecimals(stopLoss)
 			dispatch(setSmartMarginTradeStopLoss(stopLoss.toString(dp)))
 		},
-		[currentPrice, dispatch, leverageSide, leverageWei]
+		[currentPrice, dispatch, leverageSide, leverageWei, slValidity.disabled]
 	)
 
 	const onSelectTakeProfit = useCallback(
@@ -98,14 +101,6 @@ export default function SLTPInputs() {
 		[dispatch]
 	)
 
-	const slInvalid = useMemo(() => {
-		if (leverageSide === 'long') {
-			return !!stopLossPrice && wei(stopLossPrice || 0).gt(currentPrice)
-		} else {
-			return !!stopLossPrice && wei(stopLossPrice || 0).lt(currentPrice)
-		}
-	}, [stopLossPrice, currentPrice, leverageSide])
-
 	const tpInvalid = useMemo(() => {
 		if (leverageSide === 'long') {
 			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(currentPrice)
@@ -119,6 +114,7 @@ export default function SLTPInputs() {
 			<ExpandRow onClick={() => setShowInputs(!showInputs)}>
 				<InputTitle margin="1px 0 0 0">Stop Loss / Take Profit</InputTitle>
 				<Button
+					data-testid="expand-sl-tp-button"
 					style={{
 						height: '20px',
 						borderRadius: '4px',
@@ -143,22 +139,21 @@ export default function SLTPInputs() {
 								<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
 							}
 						/>
-						<NumericInput
-							invalid={slInvalid}
-							dataTestId={'trade-panel-stop-loss-input'}
+
+						<SLTPInputField
+							disabled={!!slValidity.disabled}
+							disabledReason={slValidity.disabled ? 'Leverage Too High' : undefined}
+							invalid={slValidity.invalid}
 							value={stopLossPrice}
-							placeholder={'0.00'}
+							type={'stop-loss'}
+							minMaxPrice={slValidity.minMaxStopPrice}
+							currentPrice={currentPrice}
+							positionSide={leverageSide}
+							leverage={leverageWei}
+							dataTestId={'trade-panel-stop-loss-input'}
 							onChange={onChangeStopLoss}
-							right={
-								<ShowPercentage
-									targetPrice={stopLossPrice}
-									isStopLoss={true}
-									currentPrice={currentPrice}
-									leverageSide={leverageSide}
-									leverageWei={leverageWei}
-								/>
-							}
 						/>
+
 						<Spacer height={12} />
 
 						<InputHeaderRow
@@ -166,20 +161,15 @@ export default function SLTPInputs() {
 							rightElement={<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />}
 						/>
 
-						<NumericInput
+						<SLTPInputField
 							invalid={tpInvalid}
-							dataTestId={'trade-panel-take-profit-input'}
 							value={takeProfitPrice}
-							placeholder={'0.00'}
+							type={'take-profit'}
+							currentPrice={currentPrice}
+							positionSide={leverageSide}
+							leverage={leverageWei}
+							dataTestId={'trade-panel-take-profit-input'}
 							onChange={onChangeTakeProfit}
-							right={
-								<ShowPercentage
-									targetPrice={takeProfitPrice}
-									currentPrice={currentPrice}
-									leverageSide={leverageSide}
-									leverageWei={leverageWei}
-								/>
-							}
 						/>
 					</InputsContainer>
 				)

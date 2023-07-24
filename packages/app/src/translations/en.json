@@ -559,13 +559,15 @@
 					"title": "Balance",
 					"liquid": "Liquid",
 					"staked": "Staked",
-					"staked-v1": "Staked V1"
+					"staked-v1": "Staked V1",
+					"staked-v2": "Staked V2"
 				},
 				"escrow": {
 					"title": "Escrow",
 					"title-v2": "Escrow V2",
 					"title-v1": "Escrow V1",
 					"staked": "Staked",
+					"unstaked": "Unstaked",
 					"vestable": "Vestable"
 				},
 				"rewards": {
@@ -648,6 +650,7 @@
 					"vest-v2": "VEST V2",					
 					"transfer": "TRANSFER",
 					"delegate": "DELEGATE",
+					"no-entries": "You have no escrowed entries.",
 					"v1": "V1",
 					"v2": "V2",
 					"modal": {
@@ -672,6 +675,15 @@
 					"approve": "Approve",
 					"step": "Step <0>{{index}}</0>",
 					"visit-v2": "Visit Staking V2"
+				},
+				"revert": {
+					"title": "Revert to Staking V1",
+					"step-1-copy": "Unstake V2 liquid balance.",
+					"step-2-copy": "Reclaim any remaining v2 escrow entries (no vesting penalty will be incurred)",
+					"reclaim": "Reclaim",
+					"unstake": "Unstake",
+					"staked": "Staked",
+					"reclaimable": "Reclaimable"
 				},
 				"redeem": {
 					"title": "Redeem"
@@ -961,7 +973,9 @@
 						"disabled-eth-bal": "Min ETH {{depositAmount}} balance required",
 						"disabled-exceeds-price-protection": "Price protection exceeded ",
 						"eth-bal-warning": "The limit order service requires some ETH to cover gas. The 0.01 ETH deposit will cover many orders and you can withdraw any unused balance.",
-						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool."
+						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool.",
+						"stop-loss-warning": "Stop loss is close to the liquidation price and cannot be guaranteed to execute before you get liquidated, proceed anyway?",
+						"slippage-warning": "This trade incurs high slippage, proceed anyway?"
 					}
 				},
 				"leverage": {

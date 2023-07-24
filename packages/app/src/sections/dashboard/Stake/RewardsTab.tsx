@@ -14,6 +14,7 @@ import Select, { DropdownIndicator, IndicatorSeparator } from 'components/Select
 import { Body, Heading } from 'components/Text'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
+import { STAKING_DISABLED } from 'constants/ui'
 import useIsL2 from 'hooks/useIsL2'
 import { TradingRewardProps } from 'queries/staking/utils'
 import { StakingCard } from 'sections/dashboard/Stake/card'
@@ -55,7 +56,10 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 	}, [dispatch])
 
 	const claimDisabledAll = useMemo(
-		() => kwentaRewards.add(opRewards).add(snxOpRewards).eq(0) || isClaimingAllRewards,
+		() =>
+			kwentaRewards.add(opRewards).add(snxOpRewards).eq(0) ||
+			isClaimingAllRewards ||
+			STAKING_DISABLED,
 		[kwentaRewards, opRewards, snxOpRewards, isClaimingAllRewards]
 	)
 
@@ -216,7 +220,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 							<Body color="secondary">{copy}</Body>
 						</div>
 						<RewardsContainer>
-							<FlexDivRow justifyContent="flex-start" columnGap="25px">
+							<FlexDivRow justifyContent="flex-start" columnGap="15px">
 								{labels.map(({ label, value, labelIcon, valueIcon }) => (
 									<FlexDivCol rowGap="5px">
 										<IconContainer color="secondary">
@@ -230,7 +234,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 									</FlexDivCol>
 								))}
 							</FlexDivRow>
-							<FlexDivRow justifyContent="flex-start" columnGap="25px">
+							<FlexDivRow justifyContent="flex-start" columnGap="15px">
 								{info.map(({ label, labelIcon, value, valueIcon }) => (
 									<FlexDivCol rowGap="5px">
 										<IconContainer color="secondary">
@@ -290,6 +294,7 @@ const IconContainer = styled(Body)`
 	flex-direction: row;
 	column-gap: 5px;
 	align-items: center;
+	width: 95px;
 `
 
 const SelectLabelContainer = styled(LabelContainer)`
@@ -335,6 +340,7 @@ const ButtonContainer = styled.div`
 
 const RewardsContainer = styled(FlexDivCol)`
 	row-gap: 25px;
+	max-width: 300px;
 	${media.lessThan('lg')`
 		flex-direction: row;
 		column-gap: 25px;
