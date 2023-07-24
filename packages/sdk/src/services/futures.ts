@@ -73,7 +73,8 @@ import {
 } from '../utils/futures'
 import { getFuturesAggregateStats } from '../utils/subgraph'
 import { getReasonFromCode } from '../utils/synths'
-import { PERMIT2_ADDRESS } from '../constants'
+import { PERMIT2_ADDRESS, PERMIT_STRUCT } from '../constants'
+import { getPermit2TypedData } from '../utils'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
@@ -707,9 +708,23 @@ export default class FuturesService {
 			this.sdk.context.signer
 		)
 
+		const walletAddress = await this.sdk.context.signer.getAddress()
+		const permit2Data = await getPermit2TypedData(
+			this.sdk.context.provider,
+			this.sdk.context.contracts.SUSD!.address,
+			walletAddress,
+			crossMarginAddress,
+			amount.toBN()
+		)
+
+		const signedMessage = await this.sdk.transactions.signTypedData(permit2Data)
+
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
-			[defaultAbiCoder.encode(['int256'], [amount.toBN()])],
+			[AccountExecuteFunctions.PERMIT2_PERMIT, AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
+			[
+				defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [permit2Data, signedMessage]),
+				defaultAbiCoder.encode(['int256'], [amount.toBN()]),
+			],
 		])
 	}
 

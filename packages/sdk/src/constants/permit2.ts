@@ -15,4 +15,7 @@ const PermitSingleDetails = [
 
 const MAX_UINT256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
-export { MAX_UINT256, PERMIT2_ADDRESS, PermitSingleDetails, PermitSingleMessage }
+const PERMIT_STRUCT =
+	'((address token,uint160 amount,uint48 expiration,uint48 nonce) details,address spender,uint256 sigDeadline)'
+
+export { MAX_UINT256, PERMIT2_ADDRESS, PermitSingleDetails, PermitSingleMessage, PERMIT_STRUCT }
