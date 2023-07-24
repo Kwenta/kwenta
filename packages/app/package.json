@@ -48,10 +48,10 @@
 		"lightweight-charts": "4.0.1",
 		"lodash": "4.17.21",
 		"moment-business-time": "2.0.0",
-		"next": "^13.4.8",
+		"next": "13.4.12",
 		"next-compose-plugins": "2.2.1",
 		"next-connect": "^0.13.0",
-		"next-transpile-modules": "10.0.0",
+		"next-transpile-modules": "10.0.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-i18next": "12.1.1",
@@ -72,7 +72,7 @@
 		"styled-media-query": "2.1.2",
 		"unstated-next": "1.1.0",
 		"wagmi": "0.12.18",
-		"zrender": "^5.4.3"
+		"zrender": "5.4.4"
 	},
 	"devDependencies": {
 		"@next/eslint-plugin-next": "13.4.12",
@@ -111,7 +111,7 @@
 		"jest-transformer-svg": "^2.0.1",
 		"next-router-mock": "0.9.3",
 		"pinst": "3.0.0",
-		"postcss": "^8.4.24",
+		"postcss": "8.4.27",
 		"prettier": "2.8.8",
 		"react-test-renderer": "17.0.1",
 		"storybook": "7.0.27",
