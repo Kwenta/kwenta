@@ -424,6 +424,9 @@ importers:
         specifier: ^2.29.4
         version: 2.29.4
     devDependencies:
+      '@ethersproject/abstract-signer':
+        specifier: 5.7.0
+        version: 5.7.0
       '@typechain/ethers-v5':
         specifier: ^11.0.0
         version: 11.0.0(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.2.0)(typescript@5.1.3)
