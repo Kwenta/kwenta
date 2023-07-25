@@ -297,6 +297,9 @@ const TableContainer = styled.div`
 	overflow: auto;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	height: calc(100% - ${FOOTER_HEIGHT}px);
+	${media.lessThan('xl')`
+		height: 100%;
+	`}
 `
 
 const PositionRowDesktop = styled.div`
