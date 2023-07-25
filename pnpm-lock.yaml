@@ -114,8 +114,8 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0(react@18.2.0)
       axios:
-        specifier: 0.27.2
-        version: 0.27.2
+        specifier: 1.4.0
+        version: 1.4.0
       codegen-graph-ts:
         specifier: ^0.1.4
         version: 0.1.4
@@ -394,8 +394,8 @@ importers:
         specifier: ^2.74.4
         version: 2.74.4
       axios:
-        specifier: 0.27.2
-        version: 0.27.2
+        specifier: 1.4.0
+        version: 1.4.0
       bn.js:
         specifier: ^5.2.1
         version: 5.2.1
@@ -8308,6 +8308,16 @@ packages:
 
   /axios@1.1.0:
     resolution: {integrity: sha512-hsJgcqz4JY7f+HZ4cWTrPZ6tZNCNFPTRx1MjRqu/hbpgpHdSCUpLVuplc+jE/h7dOvyANtw/ERA3HC2Rz/QoMg==}
+    dependencies:
+      follow-redirects: 1.15.2
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /axios@1.4.0:
+    resolution: {integrity: sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==}
     dependencies:
       follow-redirects: 1.15.2
       form-data: 4.0.0
