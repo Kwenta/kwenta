@@ -294,19 +294,15 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 }
 
 const TableContainer = styled.div`
-	overflow: scroll;
+	overflow: auto;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-	height: calc(100% - ${FOOTER_HEIGHT * 2 + 4}px);
-	${media.lessThan('xl')`
-		height: calc(100% - ${FOOTER_HEIGHT}px);
-	`}
+	height: calc(100% - ${FOOTER_HEIGHT}px);
 `
 
 const PositionRowDesktop = styled.div`
 	display: grid;
 	grid-template-columns: 75px 60px minmax(130px, 1fr) 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
 	grid-gap: 10px;
-	height: 100%;
 	height: 54px;
 	padding: 0 10px;
 	&:nth-child(even) {
