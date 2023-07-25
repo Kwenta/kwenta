@@ -79,6 +79,7 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 							placeholder={t('exchange.currency-card.amount-placeholder')}
 							disabled={disabled}
 							roundedCorner={false}
+							noShadow
 						/>
 						<SwapCurrencyPrice data-testid="amount-value">
 							{!!currencyKey && tradeAmount != null
@@ -93,7 +94,7 @@ const MobileCurrencyCard: FC<MobileCurrencyCardProps> = memo(
 					>
 						{!!currencyKey && <CurrencyIcon currencyKey={currencyKey} width={20} height={20} />}
 						<div className="label">{currencyKey ?? 'Select'}</div>
-						{hasCurrencySelectCallback && <CaretDownIcon />}
+						{hasCurrencySelectCallback && <CaretDownIcon width="9" />}
 					</MobileCurrencySelector>
 				</MainInput>
 			</div>
@@ -107,7 +108,7 @@ const MobileCurrencySelector = styled.button<{
 	background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 	padding: 6px;
 	padding-left: 5px;
-	border-radius: 12px;
+	border-radius: 8px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	display: flex;
@@ -141,8 +142,14 @@ const SwapTextInput = styled(NumericInput)`
 	background-color: transparent;
 	border: none;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	margin-bottom: 10px;
 	height: initial;
+
+	& > input {
+		font-family: ${(props) => props.theme.fonts.regular};
+		font-size: 19px;
+		line-height: 1;
+		margin-bottom: 4px;
+	}
 `
 
 const SwapCurrencyPrice = styled.div`

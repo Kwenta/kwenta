@@ -9,10 +9,9 @@ import Button from 'components/Button'
 import NumericInput from 'components/Input/NumericInput'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import Loader from 'components/Loader'
-import Pill from 'components/Pill'
 import { Body } from 'components/Text'
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency'
-import { CapitalizedText, numericValueCSS } from 'styles/common'
+import { numericValueCSS } from 'styles/common'
 
 type CurrencyCardInputProps = {
 	label: string
@@ -115,10 +114,8 @@ const InputContainer = styled(FlexDivCol)`
 	row-gap: 21px;
 `
 
-const InputLabel = styled(Body).attrs({ weight: 'bold', capitalized: true })`
-	text-transform: capitalize;
+const InputLabel = styled(Body).attrs({ weight: 'bold', capitalized: true, size: 'large' })`
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.sectionHeader};
-	font-size: 15px;
 	line-height: 0.75em;
 	padding-top: 6px;
 	margin-left: 16px;
