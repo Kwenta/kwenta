@@ -12,6 +12,12 @@ import { initChart } from '../initChart'
 import type { EChartsOption } from '../initChart'
 import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles'
 
+const displayAssetLimits = {
+	mobile: 4,
+	tablet: 14,
+	desktop: 24,
+}
+
 type RichLabel = {
 	width: number
 	height: number
@@ -28,6 +34,7 @@ export const OpenInterest = () => {
 
 	const { openInterestData } = useStatsData()
 	const { deviceType } = useWindowSize()
+
 	const ref = useRef<HTMLDivElement | null>(null)
 
 	const [chart, setChart] = useState<any>(null)
@@ -42,6 +49,8 @@ export const OpenInterest = () => {
 	}, [theme])
 
 	const openInterestStats = useMemo(() => {
+		const limit = displayAssetLimits[deviceType] || displayAssetLimits['desktop']
+
 		const sortedData = openInterestData
 			.map(({ asset, openInterest }) => ({
 				asset: getDisplayAsset(asset) ?? asset,
@@ -57,11 +66,17 @@ export const OpenInterest = () => {
 			}))
 			.sort((a, b) => b.openInterest - a.openInterest)
 
-		return deviceType === 'mobile'
-			? sortedData.slice(0, 5)
-			: deviceType === 'tablet'
-			? sortedData.slice(0, 15)
-			: sortedData.slice(0, 25)
+		const others = {
+			asset: 'Others',
+			openInterest: sortedData.slice(limit).reduce((total, item) => total + item.openInterest, 0),
+			richLabel: {
+				height: 36,
+			} as RichLabel,
+		}
+
+		return others.openInterest > 0
+			? [...sortedData.slice(0, limit), others]
+			: sortedData.slice(0, limit)
 	}, [deviceType, openInterestData])
 
 	useEffect(() => {
