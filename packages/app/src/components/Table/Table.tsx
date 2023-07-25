@@ -329,6 +329,7 @@ const ReactTable = styled.div<{ $rounded?: boolean; $noBottom?: boolean }>`
 		font-family: ${(props) => props.theme.fonts.regular};
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 		height: 34px;
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 `
 
