@@ -41,7 +41,7 @@
 		"echarts": "5.4.3",
 		"eslint-config-next": "13.4.12",
 		"ethcall": "4.7.2",
-		"ethers": "5.7.2",
+		"ethers": "6.6.5",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
 		"isomorphic-dompurify": "^0.26.0",
