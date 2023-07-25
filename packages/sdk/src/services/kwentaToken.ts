@@ -597,7 +597,8 @@ export default class KwentaTokenService {
 		epochPeriod: number,
 		isOldDistributor: boolean = true,
 		isOp: boolean = false,
-		isSnx: boolean = false
+		isSnx: boolean = false,
+		cutoffPeriod: number = 0
 	) {
 		const {
 			MultipleMerkleDistributor,
@@ -634,6 +635,7 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				try {
+					if (index < cutoffPeriod) return null
 					const response = await awsClient.get(fileName)
 					const period = isOldDistributor
 						? index >= 5
