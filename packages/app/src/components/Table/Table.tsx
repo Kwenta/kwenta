@@ -73,6 +73,7 @@ type TableProps<T> = {
 	noBottom?: boolean
 	columnVisibility?: VisibilityState
 	columnsDeps?: DependencyList
+	autoResetPageIndex?: boolean
 	paginationExtra?: React.ReactNode
 	CustomPagination?: FC<PaginationProps>
 }
@@ -95,6 +96,7 @@ const Table = <T,>({
 	rounded = true,
 	noBottom = false,
 	columnVisibility,
+	autoResetPageIndex = true,
 	columnsDeps = [],
 	paginationExtra,
 	CustomPagination,
@@ -116,6 +118,7 @@ const Table = <T,>({
 		columns: memoizedColumns,
 		data,
 		enableHiding: true,
+		autoResetPageIndex,
 		state: { sorting, columnVisibility, pagination },
 		onSortingChange: setSorting,
 		onPaginationChange: setPagination,
@@ -326,6 +329,7 @@ const ReactTable = styled.div<{ $rounded?: boolean; $noBottom?: boolean }>`
 		font-family: ${(props) => props.theme.fonts.regular};
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 		height: 34px;
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 `
 
