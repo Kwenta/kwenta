@@ -145,7 +145,6 @@ const SwapTextInput = styled(NumericInput)`
 	height: initial;
 
 	& > input {
-		font-family: ${(props) => props.theme.fonts.regular};
 		font-size: 19px;
 		line-height: 1;
 		margin-bottom: 4px;
