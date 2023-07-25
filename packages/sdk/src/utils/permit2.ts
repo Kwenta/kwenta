@@ -1,13 +1,8 @@
 import { BigNumber } from 'ethers'
-import {
-	MAX_UINT256,
-	PERMIT2_ADDRESS,
-	PermitSingleDetails,
-	PermitSingleMessage,
-} from '../constants'
+import { PERMIT2_ADDRESS, PermitSingleDetails, PermitSingleMessage } from '../constants'
 import { PermitToken, TPermit2Domain, TPermitSingleMessage } from '../types'
 import { Provider } from '@ethersproject/providers'
-import { AllowanceProvider, MaxUint48 } from '@uniswap/permit2-sdk'
+import { AllowanceProvider, MaxUint48, MaxUint160 } from '@uniswap/permit2-sdk'
 
 const getPermit2Domain = (token: PermitToken): TPermit2Domain => {
 	const { address: name, chainId, address } = token
@@ -63,7 +58,7 @@ const getPermit2TypedData = async (
 
 	const details = {
 		token: tokenAddress,
-		amount: amount?.toHexString() ?? MAX_UINT256,
+		amount: amount?.toHexString() ?? MaxUint160.toHexString(),
 		expiration: deadline?.toHexString() ?? MaxUint48.toHexString(),
 		nonce: await getPermit2Nonce(provider, owner, tokenAddress, spender),
 	}
