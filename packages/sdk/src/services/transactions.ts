@@ -162,12 +162,12 @@ export default class TransactionsService {
 	public async signTypedData({
 		domain,
 		types,
-		message,
+		values,
 	}: {
 		domain: TypedDataDomain
 		types: Record<string, Array<TypedDataField>>
-		message: Record<string, any>
+		values: Record<string, any>
 	}) {
-		return this.sdk.context.signer._signTypedData(domain, types, message)
+		return this.sdk.context.signer._signTypedData(domain, types, values)
 	}
 }

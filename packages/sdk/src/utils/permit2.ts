@@ -1,14 +1,13 @@
 import { BigNumber } from 'ethers'
-import { PERMIT2_ADDRESS, PermitSingleDetails, PermitSingleMessage } from '../constants'
-import { PermitToken, TPermit2Domain, TPermitSingleMessage } from '../types'
+import { PERMIT2_ADDRESS } from '../constants'
 import { Provider } from '@ethersproject/providers'
-import { AllowanceProvider, MaxUint48, MaxUint160 } from '@uniswap/permit2-sdk'
-
-const getPermit2Domain = (token: PermitToken): TPermit2Domain => {
-	const { address: name, chainId, address } = token
-	const domain: TPermit2Domain = { name, chainId, verifyingContract: address }
-	return domain
-}
+import {
+	AllowanceProvider,
+	MaxUint48,
+	MaxUint160,
+	AllowanceTransfer,
+	PermitSingle,
+} from '@uniswap/permit2-sdk'
 
 const getPermit2Nonce = async (
 	provider: Provider,
@@ -32,20 +31,6 @@ const getPermit2Amount = async (
 	return allowance.amount
 }
 
-const createTypedPermitSingleData = (message: TPermitSingleMessage, domain: TPermit2Domain) => {
-	const typedData = {
-		types: {
-			PermitSingle: PermitSingleMessage,
-			PermitDetails: PermitSingleDetails,
-		},
-		primaryType: 'Permit2',
-		domain,
-		message,
-	}
-
-	return typedData
-}
-
 const getPermit2TypedData = async (
 	provider: Provider,
 	tokenAddress: string,
@@ -63,25 +48,13 @@ const getPermit2TypedData = async (
 		nonce: await getPermit2Nonce(provider, owner, tokenAddress, spender),
 	}
 
-	const message: TPermitSingleMessage = {
+	const message: PermitSingle = {
 		details,
 		spender,
 		sigDeadline: deadline?.toHexString() ?? MaxUint48.toHexString(),
 	}
 
-	const token: PermitToken = {
-		address: tokenAddress,
-		chainId,
-		name: 'Permit2',
-	}
-
-	const domain = getPermit2Domain(token)
-
-	return {
-		data: createTypedPermitSingleData(message, domain),
-		message,
-		domain,
-	}
+	return AllowanceTransfer.getPermitData(message, PERMIT2_ADDRESS, chainId)
 }
 
 export { getPermit2TypedData, getPermit2Amount }

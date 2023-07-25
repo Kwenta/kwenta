@@ -1299,7 +1299,7 @@ export default class FuturesService {
 		const walletAddress = await this.sdk.context.signer.getAddress()
 
 		// Skip amount, we will use the permit to approve the max amount
-		const { data, message } = await getPermit2TypedData(
+		const data = await getPermit2TypedData(
 			this.sdk.context.provider,
 			this.sdk.context.contracts.SUSD!.address,
 			walletAddress,
@@ -1310,7 +1310,7 @@ export default class FuturesService {
 
 		return {
 			commands: [AccountExecuteFunctions.PERMIT2_PERMIT],
-			inputs: [defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [message, signedMessage])],
+			inputs: [defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [data.values, signedMessage])],
 		}
 	}
 }
