@@ -2,6 +2,7 @@ import router from 'next/router'
 import styled from 'styled-components'
 
 import DocsIcon from 'assets/svg/app/docs.svg'
+import StatsIcon from 'assets/svg/app/stats.svg'
 import SupportIcon from 'assets/svg/app/support.svg'
 import { FlexDivRow } from 'components/layout/flex'
 import { Body } from 'components/Text'
@@ -11,6 +12,7 @@ import { FOOTER_HEIGHT } from 'styles/common'
 
 import GitHashID from './GitHashID'
 import OperationStatus from './OperationStatus'
+import { Stats } from 'sections/stats'
 
 const Footer = () => {
 	return (
@@ -19,6 +21,7 @@ const Footer = () => {
 			<GitHashID />
 			<RightContainer>
 				<FooterLinkInternal onClick={() => router.push(ROUTES.Stats.Home)}>
+					<StatsIcon />
 					<Body color="secondary">Stats</Body>
 				</FooterLinkInternal>
 				<FooterLink href={EXTERNAL_LINKS.Docs.DocsRoot}>
