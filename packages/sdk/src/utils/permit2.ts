@@ -7,7 +7,7 @@ import {
 } from '../constants'
 import { PermitToken, TPermit2Domain, TPermitSingleMessage } from '../types'
 import { Provider } from '@ethersproject/providers'
-import { AllowanceProvider } from '@uniswap/permit2-sdk'
+import { AllowanceProvider, MaxUint48 } from '@uniswap/permit2-sdk'
 
 const getPermit2Domain = (token: PermitToken): TPermit2Domain => {
 	const { address: name, chainId, address } = token
@@ -53,14 +53,14 @@ const getPermit2TypedData = async (
 	const details = {
 		token: tokenAddress,
 		amount: amount?.toHexString() ?? MAX_UINT256,
-		expiration: deadline?.toHexString() ?? MAX_UINT256,
+		expiration: deadline?.toHexString() ?? MaxUint48.toHexString(),
 		nonce: await getPermit2Nonce(provider, owner, tokenAddress, spender),
 	}
 
 	const message: TPermitSingleMessage = {
 		details,
 		spender,
-		sigDeadline: deadline?.toHexString() ?? MAX_UINT256,
+		sigDeadline: deadline?.toHexString() ?? MaxUint48.toHexString(),
 	}
 
 	const token: PermitToken = {
@@ -71,7 +71,11 @@ const getPermit2TypedData = async (
 
 	const domain = getPermit2Domain(token)
 
-	return createTypedPermitSingleData(message, domain)
+	return {
+		data: createTypedPermitSingleData(message, domain),
+		message,
+		domain,
+	}
 }
 
 export { getPermit2TypedData }
