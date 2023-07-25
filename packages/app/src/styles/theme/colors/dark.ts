@@ -73,6 +73,7 @@ const newTheme = {
 		negative: common.palette.red.r300,
 		preview: common.palette.yellow.y500,
 		warning: common.palette.yellow.y500,
+		sectionHeader: common.palette.yellow.y500,
 	},
 	banner: {
 		yellow: {
@@ -210,6 +211,9 @@ const newTheme = {
 			background: common.palette.neutral.n700,
 			border: common.palette.neutral.n600,
 		},
+	},
+	exchange: {
+		card: common.palette.neutral.n900,
 	},
 }
 

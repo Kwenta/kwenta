@@ -9,6 +9,8 @@ import Button from 'components/Button'
 import NumericInput from 'components/Input/NumericInput'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import Loader from 'components/Loader'
+import Pill from 'components/Pill'
+import { Body } from 'components/Text'
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency'
 import { CapitalizedText, numericValueCSS } from 'styles/common'
 
@@ -35,7 +37,7 @@ const CurrencyCardInputMaxButton: FC<{ onClick?: () => void }> = memo(({ onClick
 
 	return (
 		<MaxButton onClick={onClick} noOutline>
-			<CapitalizedText>{t('exchange.currency-card.max-button')}</CapitalizedText>
+			{t('exchange.currency-card.max-button')}
 		</MaxButton>
 	)
 })
@@ -113,11 +115,10 @@ const InputContainer = styled(FlexDivCol)`
 	row-gap: 21px;
 `
 
-const InputLabel = styled.div`
+const InputLabel = styled(Body).attrs({ weight: 'bold', capitalized: true })`
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.sectionHeader};
+	font-size: 15px;
 	line-height: 0.75em;
 	padding-top: 6px;
 	margin-left: 16px;
@@ -129,6 +130,9 @@ const MaxButton = styled(Button).attrs({ mono: true })`
 	font-size: 11px;
 	padding: 0 10px;
 	margin-left: 15px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
+	border-radius: 10.5px;
+	font-variant: all-small-caps;
 `
 
 const CurrencyAmount = styled(NumericInput)`

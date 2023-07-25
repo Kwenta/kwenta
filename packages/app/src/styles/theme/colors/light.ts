@@ -75,6 +75,7 @@ const newTheme = {
 		negative: common.palette.red.r700,
 		preview: common.palette.yellow.y800,
 		warning: common.palette.yellow.y800,
+		sectionHeader: common.palette.yellow.y900,
 	},
 	pill: {
 		yellow: {
@@ -211,6 +212,9 @@ const newTheme = {
 			background: common.palette.neutral.n10,
 			border: common.palette.neutral.n50,
 		},
+	},
+	exchange: {
+		card: common.palette.neutral.n20,
 	},
 }
 
