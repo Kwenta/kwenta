@@ -26,6 +26,17 @@ const getPermit2Nonce = async (
 	return allowance.nonce
 }
 
+const getPermit2Amount = async (
+	provider: Provider,
+	owner: string,
+	token: string,
+	spender: string
+): Promise<BigNumber> => {
+	const allowanceProvider = new AllowanceProvider(provider, PERMIT2_ADDRESS)
+	const allowance = await allowanceProvider.getAllowanceData(token, owner, spender)
+	return allowance.amount
+}
+
 const createTypedPermitSingleData = (message: TPermitSingleMessage, domain: TPermit2Domain) => {
 	const typedData = {
 		types: {
@@ -78,4 +89,4 @@ const getPermit2TypedData = async (
 	}
 }
 
-export { getPermit2TypedData }
+export { getPermit2TypedData, getPermit2Amount }

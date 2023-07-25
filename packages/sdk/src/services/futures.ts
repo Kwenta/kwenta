@@ -74,7 +74,7 @@ import {
 import { getFuturesAggregateStats } from '../utils/subgraph'
 import { getReasonFromCode } from '../utils/synths'
 import { PERMIT2_ADDRESS, PERMIT_STRUCT } from '../constants'
-import { getPermit2TypedData } from '../utils'
+import { getPermit2Amount, getPermit2TypedData } from '../utils'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
@@ -708,23 +708,32 @@ export default class FuturesService {
 			this.sdk.context.signer
 		)
 
+		const commands = []
+		const inputs = []
+
 		const walletAddress = await this.sdk.context.signer.getAddress()
-		const permit2Data = await getPermit2TypedData(
+		const permitAmount = await getPermit2Amount(
 			this.sdk.context.provider,
-			this.sdk.context.contracts.SUSD!.address,
 			walletAddress,
-			crossMarginAddress,
-			amount.toBN()
+			this.sdk.context.contracts.SUSD!.address,
+			crossMarginAddress
 		)
 
-		const signedMessage = await this.sdk.transactions.signTypedData(permit2Data)
+		if (permitAmount.lt(amount.toBN())) {
+			const { commands: permitCommands, inputs: permitInputs } = await this.signPermit(
+				crossMarginAddress
+			)
+
+			commands.push(...permitCommands)
+			inputs.push(...permitInputs)
+		}
+
+		commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN)
+		inputs.push(defaultAbiCoder.encode(['int256'], [amount.toBN()]))
 
 		return this.sdk.transactions.createContractTxn(crossMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.PERMIT2_PERMIT, AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
-			[
-				defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [permit2Data, signedMessage]),
-				defaultAbiCoder.encode(['int256'], [amount.toBN()]),
-			],
+			commands,
+			inputs,
 		])
 	}
 
@@ -777,6 +786,23 @@ export default class FuturesService {
 					: wei(0)
 				if (depositAmount.gt(0)) {
 					// If we don't have enough from idle market margin then we pull from the wallet
+					const walletAddress = await this.sdk.context.signer.getAddress()
+					const permitAmount = await getPermit2Amount(
+						this.sdk.context.provider,
+						walletAddress,
+						this.sdk.context.contracts.SUSD!.address,
+						crossMarginAddress
+					)
+
+					if (permitAmount.lt(depositAmount.toBN())) {
+						const { commands: permitCommands, inputs: permitInputs } = await this.signPermit(
+							crossMarginAddress
+						)
+
+						commands.push(...permitCommands)
+						inputs.push(...permitInputs)
+					}
+
 					commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN)
 					inputs.push(defaultAbiCoder.encode(['int256'], [depositAmount.toBN()]))
 				}
@@ -942,6 +968,22 @@ export default class FuturesService {
 				? order.marginDelta.sub(totalFreeMargin).abs()
 				: wei(0)
 			if (depositAmount.gt(0)) {
+				const walletAddress = await this.sdk.context.signer.getAddress()
+				const permitAmount = await getPermit2Amount(
+					this.sdk.context.provider,
+					walletAddress,
+					this.sdk.context.contracts.SUSD!.address,
+					crossMarginAddress
+				)
+
+				if (permitAmount.lt(depositAmount.toBN())) {
+					const { commands: permitCommands, inputs: permitInputs } = await this.signPermit(
+						crossMarginAddress
+					)
+
+					commands.push(...permitCommands)
+					inputs.push(...permitInputs)
+				}
 				// If there's not enough idle margin to cover the margin delta we pull it from the wallet
 				commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN)
 				inputs.push(defaultAbiCoder.encode(['int256'], [depositAmount.toBN()]))
@@ -1250,5 +1292,25 @@ export default class FuturesService {
 		}
 
 		return { commands, inputs, idleMargin }
+	}
+
+	private async signPermit(crossMarginAddress: string) {
+		// If we don't have enough from idle market margin then we pull from the wallet
+		const walletAddress = await this.sdk.context.signer.getAddress()
+
+		// Skip amount, we will use the permit to approve the max amount
+		const { data, message } = await getPermit2TypedData(
+			this.sdk.context.provider,
+			this.sdk.context.contracts.SUSD!.address,
+			walletAddress,
+			crossMarginAddress
+		)
+
+		const signedMessage = await this.sdk.transactions.signTypedData(data)
+
+		return {
+			commands: [AccountExecuteFunctions.PERMIT2_PERMIT],
+			inputs: [defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [message, signedMessage])],
+		}
 	}
 }
