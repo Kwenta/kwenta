@@ -103,7 +103,7 @@
 		"@types/styled-components": "^5.1.26",
 		"@types/testing-library__jest-dom": "^5.14.6",
 		"css-loader": "^6.8.1",
-		"eslint-config-turbo": "1.10.6",
+		"eslint-config-turbo": "1.10.11",
 		"html-to-image": "1.11.11",
 		"jest": "28.1.0",
 		"jest-environment-jsdom": "28.1.0",
