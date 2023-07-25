@@ -65,7 +65,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:60](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L60)
+[packages/sdk/src/services/perpsV3.ts:60](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L60)
 
 ## Properties
 
@@ -75,7 +75,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:56](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L56)
+[packages/sdk/src/services/perpsV3.ts:56](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L56)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:55](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L55)
+[packages/sdk/src/services/perpsV3.ts:55](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L55)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:54](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L54)
+[packages/sdk/src/services/perpsV3.ts:54](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L54)
 
 ## Accessors
 
@@ -109,7 +109,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:64](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L64)
+[packages/sdk/src/services/perpsV3.ts:64](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L64)
 
 ## Methods
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:515](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L515)
+[packages/sdk/src/services/perpsV3.ts:515](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L515)
 
 ___
 
@@ -152,7 +152,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:568](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L568)
+[packages/sdk/src/services/perpsV3.ts:568](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L568)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:542](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L542)
+[packages/sdk/src/services/perpsV3.ts:542](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L542)
 
 ___
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:596](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L596)
+[packages/sdk/src/services/perpsV3.ts:596](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L596)
 
 ___
 
@@ -214,7 +214,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:526](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L526)
+[packages/sdk/src/services/perpsV3.ts:526](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L526)
 
 ___
 
@@ -236,7 +236,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:580](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L580)
+[packages/sdk/src/services/perpsV3.ts:580](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L580)
 
 ___
 
@@ -257,7 +257,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:575](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L575)
+[packages/sdk/src/services/perpsV3.ts:575](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L575)
 
 ___
 
@@ -277,7 +277,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:417](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L417)
+[packages/sdk/src/services/perpsV3.ts:417](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L417)
 
 ___
 
@@ -297,7 +297,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:404](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L404)
+[packages/sdk/src/services/perpsV3.ts:404](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L404)
 
 ___
 
@@ -319,7 +319,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:487](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L487)
+[packages/sdk/src/services/perpsV3.ts:487](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L487)
 
 ___
 
@@ -340,7 +340,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:422](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L422)
+[packages/sdk/src/services/perpsV3.ts:422](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L422)
 
 ___
 
@@ -362,7 +362,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:259](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L259)
+[packages/sdk/src/services/perpsV3.ts:259](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L259)
 
 ___
 
@@ -376,7 +376,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:370](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L370)
+[packages/sdk/src/services/perpsV3.ts:370](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L370)
 
 ___
 
@@ -397,7 +397,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:427](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L427)
+[packages/sdk/src/services/perpsV3.ts:427](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L427)
 
 ___
 
@@ -418,7 +418,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:433](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L433)
+[packages/sdk/src/services/perpsV3.ts:433](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L433)
 
 ___
 
@@ -439,7 +439,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:208](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L208)
+[packages/sdk/src/services/perpsV3.ts:208](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L208)
 
 ___
 
@@ -461,7 +461,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:501](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L501)
+[packages/sdk/src/services/perpsV3.ts:501](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L501)
 
 ___
 
@@ -487,7 +487,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:444](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L444)
+[packages/sdk/src/services/perpsV3.ts:444](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L444)
 
 ___
 
@@ -507,7 +507,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:412](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L412)
+[packages/sdk/src/services/perpsV3.ts:412](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L412)
 
 ___
 
@@ -528,7 +528,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:251](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L251)
+[packages/sdk/src/services/perpsV3.ts:251](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L251)
 
 ___
 
@@ -542,7 +542,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:68](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L68)
+[packages/sdk/src/services/perpsV3.ts:68](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L68)
 
 ___
 
@@ -563,7 +563,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:507](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L507)
+[packages/sdk/src/services/perpsV3.ts:507](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L507)
 
 ___
 
@@ -583,7 +583,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:398](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L398)
+[packages/sdk/src/services/perpsV3.ts:398](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L398)
 
 ___
 
@@ -603,7 +603,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:465](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L465)
+[packages/sdk/src/services/perpsV3.ts:465](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L465)
 
 ___
 
@@ -625,7 +625,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:602](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L602)
+[packages/sdk/src/services/perpsV3.ts:602](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L602)
 
 ___
 
@@ -648,7 +648,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:472](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L472)
+[packages/sdk/src/services/perpsV3.ts:472](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L472)
 
 ___
 
@@ -671,7 +671,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:547](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L547)
+[packages/sdk/src/services/perpsV3.ts:547](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L547)
 
 ___
 
@@ -692,4 +692,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/perpsV3.ts:533](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/perpsV3.ts#L533)
+[packages/sdk/src/services/perpsV3.ts:533](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/perpsV3.ts#L533)

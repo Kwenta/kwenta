@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/synths.ts:17](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/synths.ts#L17)
+[packages/sdk/src/services/synths.ts:17](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/synths.ts#L17)
 
 ## Properties
 
@@ -42,7 +42,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/synths.ts:15](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/synths.ts#L15)
+[packages/sdk/src/services/synths.ts:15](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/synths.ts#L15)
 
 ## Methods
 
@@ -68,4 +68,4 @@ Synth balances for the given wallet address
 
 #### Defined in
 
-[packages/sdk/src/services/synths.ts:26](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/synths.ts#L26)
+[packages/sdk/src/services/synths.ts:26](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/synths.ts#L26)

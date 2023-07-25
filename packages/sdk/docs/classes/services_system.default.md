@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/system.ts:10](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/system.ts#L10)
+[packages/sdk/src/services/system.ts:10](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/system.ts#L10)
 
 ## Properties
 
@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/system.ts:8](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/system.ts#L8)
+[packages/sdk/src/services/system.ts:8](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/system.ts#L8)
 
 ## Methods
 
@@ -57,7 +57,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/system.ts:29](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/system.ts#L29)
+[packages/sdk/src/services/system.ts:29](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/system.ts#L29)
 
 ___
 
@@ -71,4 +71,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/system.ts:14](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/system.ts#L14)
+[packages/sdk/src/services/system.ts:14](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/system.ts#L14)

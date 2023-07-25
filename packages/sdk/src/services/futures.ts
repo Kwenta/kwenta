@@ -180,6 +180,14 @@ export default class FuturesService {
 	 * @param address Smart margin or EOA address
 	 * @param futuresMarkets Array of objects with market address, market key, and asset
 	 * @returns Array of futures positions associated with the given address
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const markets = await sdk.futures.getMarkets()
+	 * const marketDetails = markets.map((m) => ({ address: m.market, marketKey: m.marketKey, asset: m.asset }))
+	 * const positions = await sdk.futures.getFuturesPositions('0x...', marketDetails)
+	 * console.log(positions)
+	 * ```
 	 */
 	public async getFuturesPositions(
 		address: string, // Smart margin or EOA address
@@ -472,6 +480,12 @@ export default class FuturesService {
 	 * @param walletAddress Wallet address
 	 * @param smartMarginAddress Smart margin account address
 	 * @returns Free margin and keeper balance (in ETH) for given smart margin address, as well as the wallet balance (in ETH), and sUSD allowance for the given wallet address.
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const balanceInfo = await sdk.futures.getSmartMarginBalanceInfo('0x...', '0x...')
+	 * console.log(balanceInfo)
+	 * ```
 	 */
 	public async getSmartMarginBalanceInfo(walletAddress: string, smartMarginAddress: string) {
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
@@ -549,6 +563,12 @@ export default class FuturesService {
 	 * @param account Wallet address
 	 * @param marketAddress Array of futures market addresses
 	 * @returns Delayed order for the given market address, associated with the given wallet address
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const order = await sdk.futures.getDelayedOrder('0x...', '0x...')
+	 * console.log(order)
+	 * ```
 	 */
 	public async getDelayedOrder(account: string, marketAddress: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider)
@@ -579,6 +599,18 @@ export default class FuturesService {
 	 * @param orderType Order type (market, delayed, delayed offchain)
 	 * @param inputs Object containing size delta, order price, and leverage side
 	 * @returns Object containing details about the potential trade
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const preview = await sdk.futures.getIsolatedMarginTradePreview(
+	 *   '0x...',
+	 *   '0x...',
+	 *   FuturesMarketKey.sBTCPERP,
+	 *   ContractOrderType.MARKET,
+	 *   { sizeDelta: wei(1), price: wei(10000), leverageSide: PositionSide.SHORT }
+	 * )
+	 * console.log(preview)
+	 * ```
 	 */
 	public async getIsolatedMarginTradePreview(
 		marketAddress: string,
@@ -614,6 +646,22 @@ export default class FuturesService {
 	 * @param marketAddress Futures market address
 	 * @param tradeParams Object containing size delta, margin delta, order price, and leverage side
 	 * @returns Object containing details about the potential trade
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const preview = await sdk.futures.getSmartMarginTradePreview(
+	 *  '0x...',
+	 *  FuturesMarketKey.sBTCPERP,
+	 *  '0x...',
+	 * 	{
+	 * 		sizeDelta: wei(1),
+	 * 		marginDelta: wei(1),
+	 * 		orderPrice: wei(10000),
+	 * 		leverageSide: PositionSide.SHORT,
+	 * 	}
+	 * )
+	 * console.log(preview)
+	 * ```
 	 */
 	public async getSmartMarginTradePreview(
 		smartMarginAccount: string,
@@ -654,6 +702,12 @@ export default class FuturesService {
 	 * @param address Wallet address or smart margin account address
 	 * @param addressType Address type (EOA or smart margin account)
 	 * @returns Array of historical futures positions associated with the given address
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const positionHistory = await sdk.futures.getPositionHistory('0x...')
+	 * console.log(positionHistory)
+	 * ```
 	 */
 	public async getPositionHistory(address: string, addressType: 'eoa' | 'account' = 'account') {
 		const response = await queryPositionHistory(this.sdk, address, addressType)
@@ -669,6 +723,16 @@ export default class FuturesService {
 	 * @param accountType Account type (smart or isolated)
 	 * @param pageLength Number of trades to fetch
 	 * @returns Array of trades for the account on the given market.
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const trades = await sdk.futures.getTradesForMarket(
+	 *  FuturesMarketAsset.sBTC,
+	 *  '0x...',
+	 *  FuturesMarginType.SMART_MARGIN
+	 * )
+	 * console.log(trades)
+	 * ```
 	 */
 	public async getTradesForMarket(
 		marketAsset: FuturesMarketAsset,
@@ -788,12 +852,37 @@ export default class FuturesService {
 	}
 
 	// This is on an interval of 15 seconds.
+	/**
+	 * @desc Get futures trades for a given market
+	 * @param marketKey Futures market key
+	 * @param minTs Minimum timestamp
+	 * @param maxTs Maximum timestamp
+	 * @returns Array of trades for the given market
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const trades = await sdk.futures.getFuturesTrades(FuturesMarketKey.sBTCPERP, 0, 0)
+	 * console.log(trades)
+	 * ```
+	 */
 	public async getFuturesTrades(marketKey: FuturesMarketKey, minTs: number, maxTs: number) {
 		const response = await queryFuturesTrades(this.sdk, marketKey, minTs, maxTs)
 		return response ? mapTrades(response) : null
 	}
 
 	// TODO: Get delayed order fee
+	/**
+	 * @desc Get order fee, based on the specified market and given order size
+	 * @param marketAddress Market address
+	 * @param size Size of the order
+	 * @returns Fee for the given order size, based on the specified market
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const fee = await sdk.futures.getOrderFee('0x...', wei(1))
+	 * console.log(fee)
+	 * ```
+	 */
 	public async getOrderFee(marketAddress: string, size: Wei) {
 		const marketContract = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
 		const orderFee = await marketContract.orderFee(size.toBN(), 0)
@@ -922,6 +1011,18 @@ export default class FuturesService {
 	 * @param desiredFillPrice Desired fill price
 	 * @param cancelPendingReduceOrders Boolean describing if pending reduce orders should be cancelled
 	 * @returns ethers.js TransactionResponse object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.modifySmartMarginPositionSize(
+	 *   '0x...',
+	 *   { key: FuturesMarketKey.sBTCPERP, address: '0x...' },
+	 *   wei(1),
+	 *   wei(10000),
+	 *   true
+	 * )
+	 * console.log(txn)
+	 * ```
 	 */
 	public async modifySmartMarginPositionSize(
 		smartMarginAddress: string,
@@ -964,6 +1065,12 @@ export default class FuturesService {
 	 * @param marketAddress Market address
 	 * @param amount Amount to deposit
 	 * @returns ethers.js TransactionResponse object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.depositIsolatedMargin('0x...', wei(1))
+	 * console.log(txn)
+	 * ```
 	 */
 	public async depositIsolatedMargin(marketAddress: string, amount: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
@@ -976,6 +1083,12 @@ export default class FuturesService {
 	 * @param marketAddress Market address
 	 * @param amount Amount to withdraw
 	 * @returns ethers.js TransactionResponse object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.withdrawIsolatedMargin('0x...', wei(1))
+	 * console.log(txn)
+	 * ```
 	 */
 	public async withdrawIsolatedMargin(marketAddress: string, amount: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
@@ -990,6 +1103,12 @@ export default class FuturesService {
 	 * @param marketAddress Market address
 	 * @param priceImpactDelta Price impact delta
 	 * @returns ethers.js ContractTransaction object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.closeIsolatedPosition('0x...', wei(1))
+	 * console.log(txn)
+	 * ```
 	 */
 	public async closeIsolatedPosition(marketAddress: string, priceImpactDelta: Wei) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
@@ -1028,6 +1147,12 @@ export default class FuturesService {
 	 * @param account Wallet address
 	 * @param isOffchain Boolean describing if the order is offchain or not
 	 * @returns ethers.js ContractTransaction object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.cancelDelayedOrder('0x...', '0x...', true)
+	 * console.log(txn)
+	 * ```
 	 */
 	public async cancelDelayedOrder(marketAddress: string, account: string, isOffchain: boolean) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
@@ -1041,12 +1166,31 @@ export default class FuturesService {
 	 * @param marketAddress Market address
 	 * @param account Wallet address
 	 * @returns ethers.js ContractTransaction object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.executeDelayedOrder('0x...', '0x...')
+	 * console.log(txn)
+	 * ```
 	 */
 	public async executeDelayedOrder(marketAddress: string, account: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
 		return market.executeDelayedOrder(account)
 	}
 
+	/**
+	 * @desc Executes a pending delayed order, for the given market and account
+	 * @param marketKey Futures market key
+	 * @param marketAddress Market address
+	 * @param account Wallet address
+	 * @returns ethers.js ContractTransaction object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.executeDelayedOffchainOrder(FuturesMarketKey.sETHPERP, '0x...', '0x...')
+	 * console.log(txn)
+	 * ```
+	 */
 	public async executeDelayedOffchainOrder(
 		marketKey: FuturesMarketKey,
 		marketAddress: string,
@@ -1066,6 +1210,12 @@ export default class FuturesService {
 	/**
 	 * @desc Creates a smart margin account
 	 * @returns ethers.js TransactionResponse object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.createSmartMarginAccount()
+	 * console.log(txn)
+	 * ```
 	 */
 	public async createSmartMarginAccount() {
 		if (!this.sdk.context.contracts.SmartMarginAccountFactory) throw new Error(UNSUPPORTED_NETWORK)
@@ -1246,12 +1396,19 @@ export default class FuturesService {
 	 * @param smartMarginAddress Smart margin account address
 	 * @param desiredFillPrice Desired fill price
 	 * @returns ethers.js TransactionResponse object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.closeSmartMarginPosition(
+	 *  { address: '0x...', key: FuturesMarketKey.sBTCPERP },
+	 *  '0x...',
+	 *  wei(10000)
+	 * )
+	 * console.log(txn)
+	 * ```
 	 */
 	public async closeSmartMarginPosition(
-		market: {
-			address: string
-			key: FuturesMarketKey
-		},
+		market: { address: string; key: FuturesMarketKey },
 		smartMarginAddress: string,
 		desiredFillPrice: Wei
 	) {
@@ -1286,6 +1443,12 @@ export default class FuturesService {
 	 * @param smartMarginAddress Smart margin account address
 	 * @param orderId Conditional order id
 	 * @returns ethers.js TransactionResponse object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.cancelConditionalOrder('0x...', 1)
+	 * console.log(txn)
+	 * ```
 	 */
 	public async cancelConditionalOrder(smartMarginAddress: string, orderId: number) {
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
@@ -1304,6 +1467,12 @@ export default class FuturesService {
 	 * @param smartMarginAddress Smart margin account address
 	 * @param amount Amount to withdraw
 	 * @returns ethers.js TransactionResponse object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.withdrawAccountKeeperBalance('0x...', wei(1))
+	 * console.log(txn)
+	 * ```
 	 */
 	public async withdrawAccountKeeperBalance(smartMarginAddress: string, amount: Wei) {
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
@@ -1323,6 +1492,30 @@ export default class FuturesService {
 	 * @param smartMarginAddress Smart margin account address
 	 * @param params Object containing the stop loss and take profit values
 	 * @returns ethers.js TransactionResponse object
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const txn = await sdk.futures.updateStopLossAndTakeProfit(
+	 *   FuturesMarketKey.sBTCPERP,
+	 *   '0x...',
+	 *   {
+	 *     stopLoss: {
+	 * 	     price: wei(10000),
+	 * 	     sizeDelta: wei(1),
+	 * 	     desiredFillPrice: wei(10000),
+	 * 	     isCancelled: false,
+	 *     },
+	 *     takeProfit: {
+	 * 	     price: wei(10000),
+	 * 	     sizeDelta: wei(1),
+	 * 	     desiredFillPrice: wei(10000),
+	 * 	     isCancelled: false,
+	 *     },
+	 *     keeperEthDeposit: wei(0.1),
+	 *   }
+	 * )
+	 * console.log(txn)
+	 * ```
 	 */
 	public async updateStopLossAndTakeProfit(
 		marketKey: FuturesMarketKey,
@@ -1414,6 +1607,12 @@ export default class FuturesService {
 	 * @param marketAddress Market address
 	 * @param marketKey Market key
 	 * @returns Adjusted price, based on the given market's skew.
+	 * @example
+	 * ```ts
+	 * const sdk = new KwentaSDK()
+	 * const adjustedPrice = await sdk.futures.getSkewAdjustedPrice(wei(10000), '0x...', FuturesMarketKey.sBTCPERP)
+	 * console.log(adjustedPrice)
+	 * ```
 	 */
 	public async getSkewAdjustedPrice(price: Wei, marketAddress: string, marketKey: string) {
 		const marketContract = new EthCallContract(marketAddress, PerpsMarketABI)

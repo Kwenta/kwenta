@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/staking.ts:9](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/staking.ts#L9)
+[packages/sdk/src/types/staking.ts:9](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/staking.ts#L9)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/staking.ts:18](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/staking.ts#L18)
+[packages/sdk/src/types/staking.ts:18](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/staking.ts#L18)
 
 ___
 
@@ -64,4 +64,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/staking.ts:3](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/staking.ts#L3)
+[packages/sdk/src/types/staking.ts:3](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/staking.ts#L3)

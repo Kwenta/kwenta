@@ -26,7 +26,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/transactions.ts:45](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/transactions.ts#L45)
+[packages/sdk/src/types/transactions.ts:45](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/transactions.ts#L45)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/transactions.ts:38](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/transactions.ts#L38)
+[packages/sdk/src/types/transactions.ts:38](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/transactions.ts#L38)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/transactions.ts:31](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/transactions.ts#L31)
+[packages/sdk/src/types/transactions.ts:31](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/transactions.ts#L31)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/transactions.ts:24](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/transactions.ts#L24)
+[packages/sdk/src/types/transactions.ts:24](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/transactions.ts#L24)
 
 ___
 
@@ -99,4 +99,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/transactions.ts:3](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/transactions.ts#L3)
+[packages/sdk/src/types/transactions.ts:3](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/transactions.ts#L3)

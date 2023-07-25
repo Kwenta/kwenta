@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:24](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/stats.ts#L24)
+[packages/sdk/src/services/stats.ts:24](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L24)
 
 ## Properties
 
@@ -47,7 +47,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:22](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/stats.ts#L22)
+[packages/sdk/src/services/stats.ts:22](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L22)
 
 ## Methods
 
@@ -67,7 +67,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:172](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/stats.ts#L172)
+[packages/sdk/src/services/stats.ts:172](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L172)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:128](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/stats.ts#L128)
+[packages/sdk/src/services/stats.ts:128](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L128)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:32](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/stats.ts#L32)
+[packages/sdk/src/services/stats.ts:32](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L32)
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:30](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/stats.ts#L30)
+[packages/sdk/src/services/stats.ts:30](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L30)
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:69](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/stats.ts#L69)
+[packages/sdk/src/services/stats.ts:69](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L69)
 
 ___
 
@@ -149,4 +149,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:28](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/stats.ts#L28)
+[packages/sdk/src/services/stats.ts:28](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L28)

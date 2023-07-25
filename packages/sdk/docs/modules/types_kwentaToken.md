@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/kwentaToken.ts:3](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/kwentaToken.ts#L3)
+[packages/sdk/src/types/kwentaToken.ts:3](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/kwentaToken.ts#L3)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/kwentaToken.ts:5](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/kwentaToken.ts#L5)
+[packages/sdk/src/types/kwentaToken.ts:5](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/kwentaToken.ts#L5)
 
 ___
 
@@ -66,4 +66,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/kwentaToken.ts:18](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/kwentaToken.ts#L18)
+[packages/sdk/src/types/kwentaToken.ts:18](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/kwentaToken.ts#L18)

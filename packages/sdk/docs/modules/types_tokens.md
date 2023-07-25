@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/tokens.ts:13](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/tokens.ts#L13)
+[packages/sdk/src/types/tokens.ts:13](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/tokens.ts#L13)
 
 ___
 
@@ -45,4 +45,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/tokens.ts:5](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/types/tokens.ts#L5)
+[packages/sdk/src/types/tokens.ts:5](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/tokens.ts#L5)

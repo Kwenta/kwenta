@@ -92,7 +92,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:56](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L56)
+[packages/sdk/src/services/exchange.ts:56](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L56)
 
 ## Properties
 
@@ -102,7 +102,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:53](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L53)
+[packages/sdk/src/services/exchange.ts:53](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L53)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:54](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L54)
+[packages/sdk/src/services/exchange.ts:54](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L54)
 
 ___
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:52](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L52)
+[packages/sdk/src/services/exchange.ts:52](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L52)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:51](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L51)
+[packages/sdk/src/services/exchange.ts:51](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L51)
 
 ## Accessors
 
@@ -146,7 +146,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:60](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L60)
+[packages/sdk/src/services/exchange.ts:60](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L60)
 
 ___
 
@@ -160,7 +160,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:853](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L853)
+[packages/sdk/src/services/exchange.ts:853](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L853)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:932](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L932)
+[packages/sdk/src/services/exchange.ts:932](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L932)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:759](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L759)
+[packages/sdk/src/services/exchange.ts:759](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L759)
 
 ___
 
@@ -202,7 +202,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:797](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L797)
+[packages/sdk/src/services/exchange.ts:797](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L797)
 
 ## Methods
 
@@ -223,7 +223,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:415](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L415)
+[packages/sdk/src/services/exchange.ts:415](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L415)
 
 ___
 
@@ -244,7 +244,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:747](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L747)
+[packages/sdk/src/services/exchange.ts:747](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L747)
 
 ___
 
@@ -265,7 +265,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:590](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L590)
+[packages/sdk/src/services/exchange.ts:590](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L590)
 
 ___
 
@@ -286,7 +286,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:909](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L909)
+[packages/sdk/src/services/exchange.ts:909](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L909)
 
 ___
 
@@ -306,7 +306,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1137](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1137)
+[packages/sdk/src/services/exchange.ts:1137](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1137)
 
 ___
 
@@ -326,7 +326,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:586](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L586)
+[packages/sdk/src/services/exchange.ts:586](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L586)
 
 ___
 
@@ -346,7 +346,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:401](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L401)
+[packages/sdk/src/services/exchange.ts:401](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L401)
 
 ___
 
@@ -367,7 +367,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:128](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L128)
+[packages/sdk/src/services/exchange.ts:128](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L128)
 
 ___
 
@@ -388,7 +388,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:739](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L739)
+[packages/sdk/src/services/exchange.ts:739](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L739)
 
 ___
 
@@ -409,7 +409,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1098](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1098)
+[packages/sdk/src/services/exchange.ts:1098](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1098)
 
 ___
 
@@ -429,7 +429,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:923](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L923)
+[packages/sdk/src/services/exchange.ts:923](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L923)
 
 ___
 
@@ -449,7 +449,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:608](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L608)
+[packages/sdk/src/services/exchange.ts:608](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L608)
 
 ___
 
@@ -476,7 +476,7 @@ Returns the fee rate.
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:153](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L153)
+[packages/sdk/src/services/exchange.ts:153](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L153)
 
 ___
 
@@ -500,7 +500,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:763](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L763)
+[packages/sdk/src/services/exchange.ts:763](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L763)
 
 ___
 
@@ -522,7 +522,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1114](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1114)
+[packages/sdk/src/services/exchange.ts:1114](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1114)
 
 ___
 
@@ -544,7 +544,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1125](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1125)
+[packages/sdk/src/services/exchange.ts:1125](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1125)
 
 ___
 
@@ -566,7 +566,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:573](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L573)
+[packages/sdk/src/services/exchange.ts:573](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L573)
 
 ___
 
@@ -586,7 +586,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:204](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L204)
+[packages/sdk/src/services/exchange.ts:204](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L204)
 
 ___
 
@@ -609,7 +609,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1031](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1031)
+[packages/sdk/src/services/exchange.ts:1031](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1031)
 
 ___
 
@@ -629,7 +629,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:388](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L388)
+[packages/sdk/src/services/exchange.ts:388](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L388)
 
 ___
 
@@ -643,7 +643,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1023](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1023)
+[packages/sdk/src/services/exchange.ts:1023](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1023)
 
 ___
 
@@ -665,7 +665,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:612](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L612)
+[packages/sdk/src/services/exchange.ts:612](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L612)
 
 ___
 
@@ -694,7 +694,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:936](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L936)
+[packages/sdk/src/services/exchange.ts:936](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L936)
 
 ___
 
@@ -717,7 +717,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:949](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L949)
+[packages/sdk/src/services/exchange.ts:949](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L949)
 
 ___
 
@@ -737,7 +737,7 @@ Returns the list of tokens currently whitelisted on 1inch.
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:190](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L190)
+[packages/sdk/src/services/exchange.ts:190](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L190)
 
 ___
 
@@ -751,7 +751,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:801](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L801)
+[packages/sdk/src/services/exchange.ts:801](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L801)
 
 ___
 
@@ -772,7 +772,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1010](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1010)
+[packages/sdk/src/services/exchange.ts:1010](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1010)
 
 ___
 
@@ -794,7 +794,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:661](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L661)
+[packages/sdk/src/services/exchange.ts:661](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L661)
 
 ___
 
@@ -815,7 +815,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:166](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L166)
+[packages/sdk/src/services/exchange.ts:166](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L166)
 
 ___
 
@@ -829,7 +829,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:684](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L684)
+[packages/sdk/src/services/exchange.ts:684](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L684)
 
 ___
 
@@ -852,7 +852,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:108](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L108)
+[packages/sdk/src/services/exchange.ts:108](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L108)
 
 ___
 
@@ -866,7 +866,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:811](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L811)
+[packages/sdk/src/services/exchange.ts:811](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L811)
 
 ___
 
@@ -880,7 +880,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:793](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L793)
+[packages/sdk/src/services/exchange.ts:793](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L793)
 
 ___
 
@@ -901,7 +901,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1086](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1086)
+[packages/sdk/src/services/exchange.ts:1086](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1086)
 
 ___
 
@@ -925,7 +925,7 @@ Token balances for the given wallet address
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:866](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L866)
+[packages/sdk/src/services/exchange.ts:866](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L866)
 
 ___
 
@@ -945,7 +945,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:919](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L919)
+[packages/sdk/src/services/exchange.ts:919](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L919)
 
 ___
 
@@ -969,7 +969,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:82](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L82)
+[packages/sdk/src/services/exchange.ts:82](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L82)
 
 ___
 
@@ -992,7 +992,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:508](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L508)
+[packages/sdk/src/services/exchange.ts:508](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L508)
 
 ___
 
@@ -1019,7 +1019,7 @@ Returns one of '1inch', 'synthetix', or 'synthswap'.
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:70](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L70)
+[packages/sdk/src/services/exchange.ts:70](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L70)
 
 ___
 
@@ -1033,7 +1033,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:857](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L857)
+[packages/sdk/src/services/exchange.ts:857](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L857)
 
 ___
 
@@ -1056,7 +1056,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:456](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L456)
+[packages/sdk/src/services/exchange.ts:456](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L456)
 
 ___
 
@@ -1076,7 +1076,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:433](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L433)
+[packages/sdk/src/services/exchange.ts:433](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L433)
 
 ___
 
@@ -1096,7 +1096,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1082](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1082)
+[packages/sdk/src/services/exchange.ts:1082](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1082)
 
 ___
 
@@ -1119,7 +1119,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:978](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L978)
+[packages/sdk/src/services/exchange.ts:978](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L978)
 
 ___
 
@@ -1142,7 +1142,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:354](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L354)
+[packages/sdk/src/services/exchange.ts:354](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L354)
 
 ___
 
@@ -1165,7 +1165,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:372](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L372)
+[packages/sdk/src/services/exchange.ts:372](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L372)
 
 ___
 
@@ -1188,7 +1188,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:331](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L331)
+[packages/sdk/src/services/exchange.ts:331](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L331)
 
 ___
 
@@ -1211,7 +1211,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:218](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L218)
+[packages/sdk/src/services/exchange.ts:218](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L218)
 
 ___
 
@@ -1233,7 +1233,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:1006](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L1006)
+[packages/sdk/src/services/exchange.ts:1006](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L1006)
 
 ___
 
@@ -1254,4 +1254,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/exchange.ts:730](https://github.com/Kwenta/kwenta/blob/28493a909/packages/sdk/src/services/exchange.ts#L730)
+[packages/sdk/src/services/exchange.ts:730](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/exchange.ts#L730)
