@@ -122,6 +122,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									</TableTitle>
 								),
 								accessorKey: 'title',
+								enableSorting: false,
 								columns: [
 									{
 										header: () => (
@@ -234,6 +235,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									</TableTitle>
 								),
 								accessorKey: 'title',
+								enableSorting: false,
 								columns: [
 									{
 										header: () => (
