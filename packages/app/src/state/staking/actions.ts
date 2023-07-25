@@ -339,13 +339,13 @@ export const fetchClaimableRewards = createAsyncThunk<
 		} = getState()
 
 		const { claimableRewards: claimableKwentaRewardsV2, totalRewards: kwentaRewardsV2 } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false, 18)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false, 9)
 
 		const { claimableRewards: claimableOpRewards, totalRewards: opRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false, 9)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false)
 
 		const { claimableRewards: claimableSnxOpRewards, totalRewards: snxOpRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true, 9)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true)
 
 		return {
 			claimableKwentaRewards: [claimableKwentaRewardsV2],
