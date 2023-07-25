@@ -309,7 +309,7 @@ const PositionRowDesktop = styled.div`
 	height: 100%;
 	height: 54px;
 	padding: 0 10px;
-	&:nth-child(odd) {
+	&:nth-child(even) {
 		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
@@ -324,7 +324,7 @@ const HeadersRow = styled(PositionRowDesktop)`
 		border-bottom: 0;
 	}
 	&:first-child {
-		background-color: transparent;
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 `
 
