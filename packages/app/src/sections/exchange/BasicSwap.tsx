@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import * as Text from 'components/Text'
 import { FullHeightContainer, MainContent } from 'styles/common'
 
+import SwapInfoBox from './MobileSwap/SwapInfoBox'
 import SwapCurrencies from './SwapCurrencies'
 import BaseCurrencyCard from './TradeCard/Cards/BaseCurrencyCard'
 import FooterCard from './TradeCard/Cards/FooterCard'
@@ -23,6 +24,7 @@ const BasicSwap: FC = memo(() => {
 						<SwapCurrencies />
 						<BaseCurrencyCard />
 					</DesktopCardsContainer>
+					<SwapInfoBox />
 					<FooterCard />
 				</PageWidthContainer>
 			</MainContent>
@@ -51,6 +53,7 @@ const DesktopCardsContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.newTheme.border.style};
 	box-sizing: border-box;
 	position: relative;
+	margin-bottom: 25px;
 `
 
 const PageWidthContainer = styled.div`

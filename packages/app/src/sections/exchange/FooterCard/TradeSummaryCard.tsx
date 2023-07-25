@@ -4,23 +4,13 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from 'components/Button'
-import Card, { CardBody } from 'components/Card'
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import Card from 'components/Card'
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip'
 import { MessageContainer } from 'sections/exchange/message'
-import { SummaryItems } from 'sections/exchange/summary'
-import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary'
-import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary'
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect'
-import PriceImpactSummary from 'sections/shared/components/PriceImpactSummary'
 import TxApproveModal from 'sections/shared/modals/TxApproveModal'
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal'
 import { submitApprove, submitExchange } from 'state/exchange/actions'
-import {
-	selectIsApproved,
-	selectShowFee,
-	selectSubmissionDisabledReason,
-} from 'state/exchange/selectors'
+import { selectIsApproved, selectSubmissionDisabledReason } from 'state/exchange/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 const TradeSummaryCard: FC = memo(() => {
@@ -43,39 +33,12 @@ const TradeSummaryCard: FC = memo(() => {
 
 	return (
 		<>
-			<MobileOrTabletView>
-				<MobileCard className="trade-summary-card">
-					<CardBody>
-						<SummaryItemsWrapper />
-					</CardBody>
-				</MobileCard>
-			</MobileOrTabletView>
 			<MessageContainer className="footer-card">
-				<DesktopOnlyView>
-					<SummaryItemsWrapper />
-				</DesktopOnlyView>
 				<TradeErrorTooltip {...{ onSubmit, isApproved }} />
 			</MessageContainer>
 			{openModal === 'confirm' && <TxConfirmationModal attemptRetry={onSubmit} />}
 			{openModal === 'approve' && <TxApproveModal attemptRetry={handleApprove} />}
 		</>
-	)
-})
-
-const SummaryItemsWrapper = memo(() => {
-	const showFee = useAppSelector(selectShowFee)
-
-	return (
-		<SummaryItems>
-			<GasPriceSelect />
-			<PriceImpactSummary />
-			{showFee && (
-				<>
-					<FeeRateSummaryItem />
-					<FeeCostSummaryItem />
-				</>
-			)}
-		</SummaryItems>
 	)
 })
 
