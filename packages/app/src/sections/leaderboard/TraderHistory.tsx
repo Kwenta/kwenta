@@ -104,6 +104,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						isLoading={queryStatus.status === FetchStatus.Loading}
 						data={data}
 						hideHeaders={compact}
+						autoResetPageIndex={false}
 						columns={[
 							{
 								header: () => (
@@ -121,6 +122,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									</TableTitle>
 								),
 								accessorKey: 'title',
+								enableSorting: false,
 								columns: [
 									{
 										header: () => (
@@ -210,6 +212,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						isLoading={false}
 						showPagination
 						pageSize={10}
+						autoResetPageIndex={false}
 						columns={[
 							{
 								header: () => (
@@ -232,6 +235,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									</TableTitle>
 								),
 								accessorKey: 'title',
+								enableSorting: false,
 								columns: [
 									{
 										header: () => (
