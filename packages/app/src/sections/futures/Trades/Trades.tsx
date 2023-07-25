@@ -10,6 +10,7 @@ import Currency from 'components/Currency'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
+import Tooltip from 'components/Tooltip/Tooltip'
 import ROUTES from 'constants/routes'
 import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
@@ -152,7 +153,22 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					size: 160,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ marginLeft: '5px' }}>
+							{t('futures.market.user.trades.table.pnl')}
+							<TooltipContainer>
+								<CustomStyledTooltip
+									preset="bottom"
+									width="200px"
+									content={t('futures.market.user.trades.table.pnl-tooltip')}
+								>
+									<WithCursor cursor="help">
+										<HelpIcon />
+									</WithCursor>
+								</CustomStyledTooltip>
+							</TooltipContainer>
+						</TableHeader>
+					),
 					accessorKey: 'netPnl',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
@@ -163,7 +179,6 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 								<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
 									{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
 								</ColoredPrice>
-								<HelpIcon />
 							</FlexDivRowCentered>
 						)
 					},
@@ -265,19 +280,31 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					size: 160,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ marginLeft: '5px' }}>
+							{t('futures.market.user.trades.table.pnl')}
+							<TooltipContainer>
+								<CustomStyledTooltip
+									preset="bottom"
+									width="260px"
+									content={t('futures.market.user.trades.table.pnl-tooltip')}
+								>
+									<WithCursor cursor="help">
+										<HelpIcon />
+									</WithCursor>
+								</CustomStyledTooltip>
+							</TooltipContainer>
+						</TableHeader>
+					),
 					accessorKey: 'netPnl',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<FlexDivRowCentered columnGap="5px">
-								<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
-									{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
-								</ColoredPrice>
-								<HelpIcon />
-							</FlexDivRowCentered>
+							<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
+								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
+							</ColoredPrice>
 						)
 					},
 					enableSorting: true,
@@ -329,4 +356,19 @@ export default Trades
 
 const MarketDetailsContainer = styled.div`
 	cursor: pointer;
+`
+
+const TooltipContainer = styled.div`
+	margin-top: 1.5px;
+	margin-left: 5px;
+`
+
+const CustomStyledTooltip = styled(Tooltip)`
+	padding: 10px;
+	white-space: normal;
+	text-transform: none;
+`
+
+const WithCursor = styled.div<{ cursor: 'help' }>`
+	cursor: ${(props) => props.cursor};
 `

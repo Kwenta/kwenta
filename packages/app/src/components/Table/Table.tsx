@@ -346,6 +346,9 @@ const StyledSortUpIcon = styled(SortUpIcon)`
 `
 
 export const TableHeader = styled(Body)<{ $small?: boolean }>`
+	display: flex;
+	flex-direction: row;
+	column-gap: 2px;
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
 
