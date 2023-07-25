@@ -12,7 +12,6 @@ import { FOOTER_HEIGHT } from 'styles/common'
 
 import GitHashID from './GitHashID'
 import OperationStatus from './OperationStatus'
-import { Stats } from 'sections/stats'
 
 const Footer = () => {
 	return (
