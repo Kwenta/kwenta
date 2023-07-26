@@ -150,6 +150,11 @@ export const selectMarkets = createSelector(
 		futures.markets[network] ? unserializeMarkets(futures.markets[network]) : []
 )
 
+export const selectOptimismMarkets = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => (futures.markets[10] ? unserializeMarkets(futures.markets[10]) : [])
+)
+
 export const selectMarketVolumes = createSelector(
 	(state: RootState) => state.futures.dailyMarketVolumes,
 	(dailyMarketVolumes) => unserializeFuturesVolumes(dailyMarketVolumes)
@@ -256,6 +261,23 @@ export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (mar
 		}
 	}, markPrices)
 })
+
+export const selectOptimismMarkPrices = createSelector(
+	selectOptimismMarkets,
+	selectPrices,
+	(optimismMarkets, prices) => {
+		const markPrices: MarkPrices = {}
+		return optimismMarkets.reduce((acc, market) => {
+			const price = prices[market.asset]?.offChain ?? wei(0)
+			return {
+				...acc,
+				[market.marketKey]: wei(price).mul(
+					wei(market.marketSkew).div(market.settings.skewScale).add(1)
+				),
+			}
+		}, markPrices)
+	}
+)
 
 export const selectMarkPriceInfos = createSelector(
 	selectMarkets,
