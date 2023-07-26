@@ -20,6 +20,7 @@ const HistoryPage: HistoryPageProps = () => {
 				<title>{t('dashboard-history.page-title')}</title>
 			</Head>
 			<MobileHiddenView>
+				<Spacer height={15} />
 				<Trades rounded={true} noBottom={false} />
 				<Spacer height={50} />
 			</MobileHiddenView>

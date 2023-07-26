@@ -119,13 +119,15 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 				},
 				{
 					header: () => (
-						<TableHeader>{t('futures.market.user.trades.table.price-type')}</TableHeader>
+						<TableHeader style={{ width: '90%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.price-type')}
+						</TableHeader>
 					),
 					accessorKey: 'value',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return (
-							<FlexDivCol>
+							<FlexDivCol style={{ width: '90%', textAlign: 'right' }}>
 								<Currency.Price price={cellProps.getValue()} />
 								<Body color="secondary">{cellProps.row.original.type}</Body>
 							</FlexDivCol>
@@ -134,12 +136,16 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.size')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '90%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.size')}
+						</TableHeader>
+					),
 					accessorKey: 'amount',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return (
-							<FlexDivCol>
+							<FlexDivCol style={{ width: '90%', textAlign: 'right' }}>
 								{formatNumber(cellProps.getValue(), { suggestDecimals: true })}
 								<Currency.Price
 									price={cellProps.row.original.notionalValue}
@@ -150,23 +156,11 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 						)
 					},
 					enableSorting: true,
-					size: 160,
 				},
 				{
 					header: () => (
-						<TableHeader style={{ marginLeft: '5px' }}>
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
 							{t('futures.market.user.trades.table.pnl')}
-							<TooltipContainer>
-								<CustomStyledTooltip
-									preset="bottom"
-									width="200px"
-									content={t('futures.market.user.trades.table.pnl-tooltip')}
-								>
-									<WithCursor cursor="help">
-										<HelpIcon />
-									</WithCursor>
-								</CustomStyledTooltip>
-							</TooltipContainer>
 						</TableHeader>
 					),
 					accessorKey: 'netPnl',
@@ -175,22 +169,30 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<FlexDivRowCentered columnGap="5px">
-								<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
-									{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
-								</ColoredPrice>
-							</FlexDivRowCentered>
+							<ColoredPrice
+								priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}
+								style={{ width: '80%', textAlign: 'right' }}
+							>
+								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
+							</ColoredPrice>
 						)
 					},
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.fees')}
+						</TableHeader>
+					),
 					sortingFn: 'basic',
 					accessorKey: 'feesPaid',
-					cell: (cellProps) => <Currency.Price price={cellProps.getValue()} />,
+					cell: (cellProps) => (
+						<div style={{ width: '80%', textAlign: 'right' }}>
+							<Currency.Price price={cellProps.getValue()} />
+						</div>
+					),
 					enableSorting: true,
-					size: 90,
 				},
 			]}
 			columnsDeps={columnsDeps}
@@ -252,21 +254,33 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.price')}
+						</TableHeader>
+					),
 					accessorKey: 'value',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
-						return <Currency.Price price={cellProps.getValue()} />
+						return (
+							<div style={{ width: '60%', textAlign: 'right' }}>
+								<Currency.Price price={cellProps.getValue()} />
+							</div>
+						)
 					},
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.size')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.size')}
+						</TableHeader>
+					),
 					accessorKey: 'amount',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return (
-							<FlexDivCol>
+							<FlexDivCol style={{ width: '80%', textAlign: 'right' }}>
 								{formatNumber(cellProps.getValue(), { suggestDecimals: true })}
 								<Currency.Price
 									price={cellProps.row.original.notionalValue}
@@ -277,23 +291,11 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 						)
 					},
 					enableSorting: true,
-					size: 160,
 				},
 				{
 					header: () => (
-						<TableHeader style={{ marginLeft: '5px' }}>
+						<TableHeader style={{ width: '70%', textAlign: 'right' }}>
 							{t('futures.market.user.trades.table.pnl')}
-							<TooltipContainer>
-								<CustomStyledTooltip
-									preset="bottom"
-									width="260px"
-									content={t('futures.market.user.trades.table.pnl-tooltip')}
-								>
-									<WithCursor cursor="help">
-										<HelpIcon />
-									</WithCursor>
-								</CustomStyledTooltip>
-							</TooltipContainer>
 						</TableHeader>
 					),
 					accessorKey: 'netPnl',
@@ -302,7 +304,10 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
+							<ColoredPrice
+								priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}
+								style={{ width: '70%', textAlign: 'right' }}
+							>
 								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
 							</ColoredPrice>
 						)
@@ -310,14 +315,20 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.fees')}
+						</TableHeader>
+					),
 					sortingFn: 'basic',
 					accessorKey: 'feesPaid',
 					cell: (cellProps) => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<Currency.Price price={cellProps.getValue()} />
+							<FlexDivCol style={{ width: '60%', textAlign: 'right' }}>
+								<Currency.Price price={cellProps.getValue()} />
+							</FlexDivCol>
 						)
 					},
 					enableSorting: true,
@@ -356,19 +367,4 @@ export default Trades
 
 const MarketDetailsContainer = styled.div`
 	cursor: pointer;
-`
-
-const TooltipContainer = styled.div`
-	margin-top: 1.5px;
-	margin-left: 5px;
-`
-
-const CustomStyledTooltip = styled(Tooltip)`
-	padding: 10px;
-	white-space: normal;
-	text-transform: none;
-`
-
-const WithCursor = styled.div<{ cursor: 'help' }>`
-	cursor: ${(props) => props.cursor};
 `

@@ -1144,7 +1144,6 @@
 						"no-results": "You have no trade history",
 						"order-type": "order type",
 						"fees-funding": "Fees/Funding",
-						"pnl-tooltip": "PNL is calculated using (entry price - exit price) * size",
 						"transaction": "Transaction",
 						"trade-types": {
 							"exit": "exit",
