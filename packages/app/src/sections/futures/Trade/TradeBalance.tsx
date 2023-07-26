@@ -15,7 +15,6 @@ import useWindowSize from 'hooks/useWindowSize'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
 import { ModalType } from 'state/app/types'
-import { selectSusdBalance } from 'state/balances/selectors'
 import {
 	selectAvailableMargin,
 	selectFuturesType,
@@ -66,9 +65,8 @@ const TradeBalance = memo(() => {
 
 	const { deviceType } = useWindowSize()
 	const accountType = useAppSelector(selectFuturesType)
-	const idleMargin = useAppSelector(selectIdleMargin)
+	const availableCrossMargin = useAppSelector(selectIdleMargin)
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
-	const walletBal = useAppSelector(selectSusdBalance)
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin)
 	const withdrawable = useAppSelector(selectWithdrawableMargin)
 	const openModal = useAppSelector(selectShowModal)
@@ -84,8 +82,8 @@ const TradeBalance = memo(() => {
 	const isCrossMarginAccount = useMemo(() => accountType === 'cross_margin', [accountType])
 
 	const isDepositRequired = useMemo(() => {
-		return walletBal.lt(MIN_MARGIN_AMOUNT) && withdrawable.eq(0) && lockedMargin.eq(0)
-	}, [lockedMargin, walletBal, withdrawable])
+		return availableCrossMargin.lt(MIN_MARGIN_AMOUNT) && withdrawable.eq(0) && lockedMargin.eq(0)
+	}, [availableCrossMargin, lockedMargin, withdrawable])
 
 	const onClickContainer = useCallback(() => {
 		if (!isCrossMarginAccount) return
@@ -100,12 +98,12 @@ const TradeBalance = memo(() => {
 						<FlexDivCol>
 							<FlexDivRow columnGap="5px" justifyContent="flex-start">
 								<Body size={size} color="secondary">
-									{walletBal.lt(0.01) ? (
+									{availableCrossMargin.lt(0.01) ? (
 										t('futures.market.trade.trade-balance.no-available-margin')
 									) : (
 										<Trans
 											i18nKey="futures.market.trade.trade-balance.only-available-margin"
-											values={{ balance: formatDollars(walletBal) }}
+											values={{ balance: formatDollars(availableCrossMargin) }}
 										/>
 									)}
 								</Body>
@@ -115,7 +113,7 @@ const TradeBalance = memo(() => {
 								{t('futures.market.trade.trade-balance.min-margin')}
 							</Body>
 						</FlexDivCol>
-						{walletBal.lt(0.01) ? (
+						{availableCrossMargin.lt(0.01) ? (
 							<Button
 								variant="yellow"
 								size="xsmall"
@@ -142,7 +140,7 @@ const TradeBalance = memo(() => {
 									</Body>
 									<NumericValue size={'medium'} weight="bold">
 										{isCrossMarginAccount
-											? formatDollars(idleMargin)
+											? formatDollars(availableCrossMargin)
 											: formatDollars(availableIsolatedMargin)}
 									</NumericValue>
 								</FlexDivRow>
@@ -173,9 +171,9 @@ const TradeBalance = memo(() => {
 										{t('futures.market.trade.trade-balance.available-margin')}
 									</Body>
 									<NumericValue size={'large'} weight="bold">
-										{accountType === 'isolated_margin'
-											? formatDollars(availableIsolatedMargin)
-											: formatDollars(idleMargin)}
+										{isCrossMarginAccount
+											? formatDollars(availableCrossMargin)
+											: formatDollars(availableIsolatedMargin)}
 									</NumericValue>
 								</FlexDivCol>
 								{isCrossMarginAccount && lockedMargin.gt(0) && (
