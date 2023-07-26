@@ -19,19 +19,19 @@ import {
 import { SwapRatio } from './types'
 
 export const fetchTransactionFee = createAsyncThunk<
-	{
-		transactionFee?: string
-		feeCost?: string
-	},
+	{ transactionFee?: string; feeCost?: string },
 	void,
 	ThunkConfig
 >('exchange/fetchTransactionFee', async (_, { getState, extra: { sdk } }) => {
+	const state = getState()
+
 	const {
 		exchange: { quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount },
-	} = getState()
+	} = state
 
-	const isApproved = selectIsApproved(getState())
-	const insufficientBalance = selectInsufficientBalance(getState())
+	const isApproved = selectIsApproved(state)
+	const insufficientBalance = selectInsufficientBalance(state)
+
 	if (!isApproved || insufficientBalance) {
 		return {
 			transactionFee: '0',
