@@ -1,15 +1,22 @@
 import { MarketKeyByAsset, getDisplayAsset, formatDollars } from '@kwenta/sdk/utils'
 import { WeiSource } from '@synthetixio/wei'
-import { useEffect, useRef, useMemo, FC, useState } from 'react'
+import { useEffect, useRef, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import useStatsData from 'hooks/useStatsData'
+import useWindowSize from 'hooks/useWindowSize'
 import { SYNTH_ICONS } from 'utils/icons'
 
 import { initChart } from '../initChart'
 import type { EChartsOption } from '../initChart'
 import { ChartContainer, ChartHeader, ChartTitle, ChartWrapper } from '../stats.styles'
+
+const displayAssetLimits = {
+	mobile: 4,
+	tablet: 14,
+	desktop: 24,
+}
 
 type RichLabel = {
 	width: number
@@ -20,13 +27,13 @@ type RichLabel = {
 }
 
 type RichLabelMap = Record<string, RichLabel>
-type OpenInterestProps = { mobile: boolean }
 
-export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
+export const OpenInterest = () => {
 	const { t } = useTranslation()
 	const theme = useTheme()
 
 	const { openInterestData } = useStatsData()
+	const { deviceType } = useWindowSize()
 
 	const ref = useRef<HTMLDivElement | null>(null)
 
@@ -42,14 +49,16 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 	}, [theme])
 
 	const openInterestStats = useMemo(() => {
+		const limit = displayAssetLimits[deviceType] || displayAssetLimits['desktop']
+
 		const sortedData = openInterestData
 			.map(({ asset, openInterest }) => ({
 				asset: getDisplayAsset(asset) ?? asset,
 				openInterest,
 				icon: SYNTH_ICONS[MarketKeyByAsset[asset]],
 				richLabel: {
-					width: 40,
-					height: 40,
+					width: 36,
+					height: 36,
 					backgroundColor: {
 						image: SYNTH_ICONS[MarketKeyByAsset[asset]],
 					},
@@ -57,8 +66,18 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 			}))
 			.sort((a, b) => b.openInterest - a.openInterest)
 
-		return mobile ? sortedData.slice(0, 5) : sortedData
-	}, [mobile, openInterestData])
+		const others = {
+			asset: 'Others',
+			openInterest: sortedData.slice(limit).reduce((total, item) => total + item.openInterest, 0),
+			richLabel: {
+				height: 36,
+			} as RichLabel,
+		}
+
+		return others.openInterest > 0
+			? [...sortedData.slice(0, limit), others]
+			: sortedData.slice(0, limit)
+	}, [deviceType, openInterestData])
 
 	useEffect(() => {
 		if (!ref || !chart || !ref.current || !openInterestData || !openInterestData.length) {
@@ -89,7 +108,7 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 					rich: {
 						syntheticAsset: {
 							fontFamily: theme.fonts.regular,
-							fontSize: 15,
+							fontSize: 12,
 							color: theme.colors.common.primaryWhite,
 							width: 35,
 							height: 23,
@@ -111,7 +130,8 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 					},
 				},
 				axisLabel: {
-					formatter: (value: WeiSource) => formatDollars(value, { truncateOver: 1e3 }),
+					formatter: (value: WeiSource) =>
+						formatDollars(value, { truncateOver: 1e3, maxDecimals: 0 }),
 				},
 				position: 'right',
 			},
@@ -136,6 +156,7 @@ export const OpenInterest: FC<OpenInterestProps> = ({ mobile }) => {
 		}
 
 		chart.setOption(option)
+		chart.resize()
 	}, [ref, chart, t, openInterestData, openInterestStats, theme, defaultOptions])
 
 	return (

@@ -95,6 +95,7 @@ export const Trades = () => {
 		}
 
 		chart.setOption(option)
+		chart.resize()
 	}, [ref, chart, t, dailyStatsData, theme, defaultOptions])
 
 	return (

@@ -82,6 +82,7 @@ export const Volume = () => {
 			legend: undefined,
 		}
 		chart.setOption(option)
+		chart.resize()
 	}, [chart, t, dailyStatsData, theme, defaultOptions])
 
 	return (
