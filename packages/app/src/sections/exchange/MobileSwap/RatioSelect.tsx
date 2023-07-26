@@ -47,7 +47,8 @@ const RatioSelectContainer = styled.div`
 	height: 30px;
 	overflow: hidden;
 	margin-bottom: 30px;
-	background-color: ${(props) => props.theme.colors.selectedTheme.tab.background.active};
+	background-color: ${(props) =>
+		props.theme.colors.selectedTheme.newTheme.exchange.ratioSelect.background};
 `
 
 const RatioButton = styled.button<{ $selected: boolean }>`
@@ -56,7 +57,7 @@ const RatioButton = styled.button<{ $selected: boolean }>`
 	border-right: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 12px;
+	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	background-color: transparent;
 
