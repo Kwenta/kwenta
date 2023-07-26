@@ -55,7 +55,7 @@ const FeeRow = () => {
 		<InfoBoxRow
 			title={t('exchange.summary-info.fee')}
 			nodeValue={
-				<Body>
+				<Body mono>
 					{formatPercent(baseFeeRate ?? ZERO_WEI)}
 					{exchangeFeeRate != null && baseFeeRate != null ? (
 						wei(exchangeFeeRate)
@@ -126,7 +126,7 @@ const SwapInfoBoxContainer = styled(InfoBoxContainer)`
 	margin-bottom: 15px;
 `
 
-const StyledDynamicFee = styled.span`
+const StyledDynamicFee = styled(Body).attrs({ as: 'span', mono: true })`
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
 `
 

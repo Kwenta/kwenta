@@ -1,10 +1,8 @@
 import { secondsToTime } from '@kwenta/sdk/utils'
 import { FC, useMemo, memo, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 import Button from 'components/Button'
-import Card from 'components/Card'
 import ErrorTooltip from 'components/Tooltip/ErrorTooltip'
 import { MessageContainer } from 'sections/exchange/message'
 import TxApproveModal from 'sections/shared/modals/TxApproveModal'
@@ -100,9 +98,5 @@ const TradeErrorTooltip: FC<TradeErrorTooltipProps> = memo(({ onSubmit }) => {
 		</ErrorTooltip>
 	)
 })
-
-const MobileCard = styled(Card)`
-	margin: 2px auto 20px auto;
-`
 
 export default TradeSummaryCard
