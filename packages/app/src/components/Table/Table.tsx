@@ -243,6 +243,7 @@ export const TableBody = styled.div`
 
 export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean; $canSort: boolean }>`
 	user-select: none;
+	padding-left: 8px;
 	&:first-child {
 		padding-left: 18px;
 	}
