@@ -62,18 +62,18 @@ export default function EditPositionMarginModal() {
 	)
 
 	const maxWithdraw = useMemo(() => {
-		const maxSize = position?.remainingMargin.mul(market?.appMaxLeverage ?? 1)
-		const currentSize = position?.position?.notionalValue
+		const maxSize = position?.remainingMargin?.mul(market?.appMaxLeverage ?? 1)
+		const currentSize = position?.notionalValue
 		const max = maxSize?.sub(currentSize).div(market?.appMaxLeverage ?? 1) ?? wei(0)
-		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0)
-		const remainingMarginMax = position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0)
+		const resultingMarginMax = position?.remainingMargin?.sub(max) ?? wei(0)
+		const remainingMarginMax = position?.remainingMargin?.sub(MIN_MARGIN_AMOUNT) ?? wei(0)
 
 		return max.lt(0) || remainingMarginMax.lt(0)
 			? ZERO_WEI
 			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
 			? max
 			: remainingMarginMax
-	}, [position?.remainingMargin, position?.position?.notionalValue, market?.appMaxLeverage])
+	}, [position?.remainingMargin, position?.notionalValue, market?.appMaxLeverage])
 
 	const maxUsdInputAmount = useMemo(
 		() => (transferType === 0 ? idleMargin : maxWithdraw),
@@ -88,8 +88,8 @@ export default function EditPositionMarginModal() {
 	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount])
 
 	const maxLeverageExceeded = useMemo(
-		() => transferType === 1 && position?.position?.leverage.gt(market?.appMaxLeverage ?? 1),
-		[transferType, position?.position?.leverage, market?.appMaxLeverage]
+		() => transferType === 1 && position?.leverage?.gt(market?.appMaxLeverage ?? 1),
+		[transferType, position?.leverage, market?.appMaxLeverage]
 	)
 
 	const previewError = useMemo(() => {
@@ -164,7 +164,7 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					textValue={position?.position?.leverage.toString(2) + 'x'}
+					textValue={position?.leverage?.toString(2) + 'x'}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -188,7 +188,7 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					textValue={formatDollars(position?.position?.liquidationPrice || 0)}
+					textValue={formatDollars(position?.liquidationPrice || 0)}
 				/>
 			</InfoBoxContainer>
 			<Spacer height={20} />

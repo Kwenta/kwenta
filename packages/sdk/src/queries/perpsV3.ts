@@ -1,9 +1,9 @@
 import request, { gql } from 'graphql-request'
 
 import KwentaSDK from '..'
-import { PerpsV3Market } from '../types'
+import { PerpsV3SubgraphMarket, SettlementSubgraphType } from '../types'
 
-export const queryPerpsV3Markets = async (sdk: KwentaSDK): Promise<PerpsV3Market[]> => {
+export const queryPerpsV3Markets = async (sdk: KwentaSDK): Promise<PerpsV3SubgraphMarket[]> => {
 	const response: any = await request(
 		sdk.perpsV3.subgraphUrl,
 		gql`
@@ -62,7 +62,9 @@ export const queryPerpsV3Accounts = async (
 	return response.accounts
 }
 
-export const querySettlementStrategies = async (sdk: KwentaSDK): Promise<PerpsV3Market[]> => {
+export const querySettlementStrategies = async (
+	sdk: KwentaSDK
+): Promise<SettlementSubgraphType[]> => {
 	const response: any = await request(
 		sdk.perpsV3.subgraphUrl,
 		gql`

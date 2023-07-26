@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { FuturesMarginType, PositionSide, PotentialTradeStatus } from '@kwenta/sdk/types'
+import { PositionSide, PotentialTradeStatus } from '@kwenta/sdk/types'
 import {
 	floorNumber,
 	formatDollars,
@@ -8,7 +8,7 @@ import {
 	stripZeros,
 } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -24,57 +24,46 @@ import { Body } from 'components/Text'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectTransaction } from 'state/app/selectors'
-import { selectFuturesType } from 'state/futures/common/selectors'
 import { submitCrossMarginReducePositionOrder } from 'state/futures/crossMargin/actions'
+import {
+	selectCloseCMPositionOrderInputs,
+	selectCloseCMPositionPreview,
+} from 'state/futures/crossMargin/selectors'
 import { selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
 	editClosePositionPrice,
 	editClosePositionSizeDelta,
-	submitSmartMarginReducePositionOrder,
 } from 'state/futures/smartMargin/actions'
-import { setClosePositionOrderType } from 'state/futures/smartMargin/reducer'
 import {
-	selectCloseSMPositionOrderInputs,
-	selectClosePositionPreview,
 	selectEditPositionModalInfo,
 	selectIsFetchingTradePreview,
-	selectKeeperDepositExceedsBal,
 	selectTradePreviewError,
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import AcceptWarningView from '../../../components/AcceptWarningView'
 import ClosePositionFeeInfo from '../FeeInfoBox/ClosePositionFeeInfo'
-import OrderTypeSelector from '../Trade/OrderTypeSelector'
 
-import ClosePositionPriceInput from './ClosePositionPriceInput'
 import ClosePositionSizeInput from './ClosePositionSizeInput'
 
 const CLOSE_PERCENT_OPTIONS = ['25%', '50%', '75%', '100%']
 
-export default function ClosePositionModal() {
+// TODO: Share some logic between close modals
+
+export default function CloseCrossMarginPositionModal() {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
 	const transactionState = useAppSelector(selectTransaction)
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx)
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview)
-	const previewTrade = useAppSelector(selectClosePositionPreview)
+	const previewTrade = useAppSelector(selectCloseCMPositionPreview)
 	const previewError = useAppSelector(selectTradePreviewError)
-	const accountType = useAppSelector(selectFuturesType)
-	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
-	const { nativeSizeDelta, orderType, price } = useAppSelector(selectCloseSMPositionOrderInputs)
+	const { nativeSizeDelta } = useAppSelector(selectCloseCMPositionOrderInputs)
 	const { market, position } = useAppSelector(selectEditPositionModalInfo)
 
-	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
-
 	const submitCloseOrder = useCallback(() => {
-		if (accountType === FuturesMarginType.SMART_MARGIN) {
-			dispatch(submitSmartMarginReducePositionOrder(overridePriceProtection))
-		} else {
-			dispatch(submitCrossMarginReducePositionOrder())
-		}
-	}, [dispatch, accountType, overridePriceProtection])
+		dispatch(submitCrossMarginReducePositionOrder())
+	}, [dispatch])
 
 	const isLoading = useMemo(
 		() => isSubmitting || isFetchingPreview,
@@ -100,44 +89,16 @@ export default function ClosePositionModal() {
 		return null
 	}, [previewTrade?.showStatus, previewTrade?.statusMessage, previewError, t])
 
-	const showEthBalWarning = useMemo(() => {
-		return ethBalanceExceeded && orderType !== 'market'
-	}, [ethBalanceExceeded, orderType])
-
-	const ethBalWarningMessage = showEthBalWarning
-		? t('futures.market.trade.confirmation.modal.eth-bal-warning')
-		: null
-
 	const submitDisabled = useMemo(() => {
-		if (
-			(orderType === 'limit' || orderType === 'stop_market') &&
-			(!price?.value || Number(price.value) === 0 || showEthBalWarning)
-		) {
-			return true
-		}
-
-		if (previewTrade?.exceedsPriceProtection && !overridePriceProtection) return true
+		return false
 		return (
 			sizeWei.eq(0) ||
 			invalidSize ||
-			price?.invalidLabel ||
 			isLoading ||
 			orderError ||
 			previewTrade?.status !== PotentialTradeStatus.OK
 		)
-	}, [
-		showEthBalWarning,
-		sizeWei,
-		invalidSize,
-		isLoading,
-		orderError,
-		price?.invalidLabel,
-		price?.value,
-		orderType,
-		previewTrade?.status,
-		overridePriceProtection,
-		previewTrade?.exceedsPriceProtection,
-	])
+	}, [sizeWei, invalidSize, isLoading, orderError, previewTrade?.status])
 
 	const onClose = () => {
 		if (market) {
@@ -155,7 +116,7 @@ export default function ClosePositionModal() {
 			const size =
 				percent === 1 ? position.size.abs() : floorNumber(position.size.abs().mul(percent))
 
-			const sizeDelta = position.side === PositionSide.LONG ? wei(size).neg() : wei(size)
+			const sizeDelta = position?.side === PositionSide.LONG ? wei(size).neg() : wei(size)
 			const decimals = sizeDelta.abs().eq(position.size.abs()) ? undefined : 4
 
 			dispatch(
@@ -168,22 +129,10 @@ export default function ClosePositionModal() {
 	return (
 		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
 			<Spacer height={10} />
-			{accountType === FuturesMarginType.SMART_MARGIN && (
-				<>
-					<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
-					<Spacer height={20} />
-				</>
-			)}
 
 			<ClosePositionSizeInput maxNativeValue={maxNativeValue} />
 			<SelectorButtons options={CLOSE_PERCENT_OPTIONS} onSelect={onSelectPercent} />
 
-			{(orderType === 'limit' || orderType === 'stop_market') && (
-				<>
-					<Spacer height={20} />
-					<ClosePositionPriceInput />
-				</>
-			)}
 			<Spacer height={20} />
 
 			<InfoBoxContainer>
@@ -199,14 +148,14 @@ export default function ClosePositionModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					textValue={position?.leverage ? position.leverage.toString(2) + 'x' : '-'}
+					textValue={position?.leverage ? position.leverage?.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
 					textValueIcon={
-						previewTrade?.size && (
+						previewTrade?.sizeDelta && (
 							<PreviewArrow showPreview>
-								{previewTrade?.size
-									? formatNumber(previewTrade.size.abs(), { suggestDecimals: true })
+								{previewTrade?.sizeDelta
+									? formatNumber(previewTrade.sizeDelta.abs(), { suggestDecimals: true })
 									: '-'}
 							</PreviewArrow>
 						)
@@ -215,18 +164,6 @@ export default function ClosePositionModal() {
 					textValue={formatNumber(position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
-					textValueIcon={
-						previewTrade?.liqPrice && (
-							<PreviewArrow showPreview>
-								{formatDollars(previewTrade?.liqPrice, { suggestDecimals: true })}
-							</PreviewArrow>
-						)
-					}
-					title={t('futures.market.trade.edit-position.liquidation')}
-					textValue={formatDollars(position?.liquidationPrice || 0)}
-				/>
-				<InfoBoxRow
-					color={previewTrade?.exceedsPriceProtection ? 'negative' : 'primary'}
 					title={t('futures.market.trade.edit-position.price-impact')}
 					textValue={formatPercent(previewTrade?.priceImpact || 0, {
 						suggestDecimals: true,
@@ -238,16 +175,7 @@ export default function ClosePositionModal() {
 					textValue={formatDollars(previewTrade?.price || 0, { suggestDecimals: true })}
 				/>
 			</InfoBoxContainer>
-			{previewTrade?.exceedsPriceProtection && (
-				<>
-					<Spacer height={20} />
-					<AcceptWarningView
-						message={t('futures.market.trade.confirmation.modal.slippage-warning')}
-						checked={overridePriceProtection}
-						onChangeChecked={(checked) => setOverridePriceProtection(checked)}
-					/>
-				</>
-			)}
+
 			<Spacer height={20} />
 
 			<Button
@@ -261,11 +189,11 @@ export default function ClosePositionModal() {
 				{t('futures.market.trade.edit-position.submit-close')}
 			</Button>
 
-			{(orderError || transactionState?.error || ethBalWarningMessage) && (
+			{(orderError || transactionState?.error) && (
 				<ErrorView
 					containerStyle={{ margin: '16px 0' }}
-					messageType={ethBalWarningMessage ? 'warn' : 'error'}
-					message={orderError || transactionState?.error || ethBalWarningMessage}
+					messageType={'error'}
+					message={orderError || transactionState?.error}
 					formatter="revert"
 				/>
 			)}

@@ -31,7 +31,7 @@ import {
 	ConditionalOrder,
 	FuturesOrderType,
 	FuturesOrderTypeDisplay,
-	FuturesPosition,
+	PerpsV2Position,
 	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
@@ -45,6 +45,10 @@ import {
 	FuturesMarginType,
 	MarketClosureReason,
 	PerpsV3Position,
+	PerpsV3AsyncOrder,
+	PerpsV3SettlementStrategy,
+	SettlementSubgraphType,
+	PerpsMarketV2,
 } from '../types/futures'
 import { formatCurrency, formatDollars } from '../utils/number'
 import {
@@ -58,6 +62,7 @@ import {
 } from '../utils/subgraph'
 import { PerpsV2MarketData } from '../contracts/types'
 import { IPerpsV2MarketSettings } from '../contracts/types/PerpsV2MarketData'
+import { AsyncOrder } from '../contracts/types/PerpsV3MarketProxy'
 
 export const getFuturesEndpoint = (networkId: number) => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10]
@@ -164,7 +169,7 @@ export const mapFuturesPosition = (
 	canLiquidatePosition: boolean,
 	asset: FuturesMarketAsset,
 	marketKey: FuturesMarketKey
-): FuturesPosition => {
+): PerpsV2Position => {
 	const {
 		remainingMargin,
 		accessibleMargin,
@@ -222,6 +227,7 @@ export const mapPerpsV3Position = (
 	return wei(size).eq(ZERO_WEI)
 		? null
 		: {
+				marketId,
 				side: wei(size).gt(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT,
 				accruedFunding: wei(funding),
 				profitLoss: wei(pnlWei),
@@ -335,7 +341,7 @@ export const unserializePotentialTrade = (
 	priceImpact: wei(preview.priceImpact),
 })
 
-export const formatDelayedOrder = (
+export const formatV2DelayedOrder = (
 	account: string,
 	marketAddress: string,
 	order: IPerpsV2MarketConsolidated.DelayedOrderStructOutput
@@ -364,6 +370,35 @@ export const formatDelayedOrder = (
 		targetRoundId: wei(targetRoundId),
 		orderType: isOffchain ? 'Delayed Market' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+	}
+}
+
+export const formatV3AsyncOrder = (order: AsyncOrder.DataStructOutput): PerpsV3AsyncOrder => {
+	const { accountId, marketId, sizeDelta, settlementStrategyId, settlementTime, acceptablePrice } =
+		order
+
+	return {
+		accountId: accountId.toNumber(),
+		marketId: marketId.toNumber(),
+		sizeDelta: wei(sizeDelta),
+		settlementTime: settlementTime.toNumber(),
+		settlementStrategyId: settlementStrategyId.toNumber(),
+		acceptablePrice: wei(acceptablePrice),
+		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+	}
+}
+
+export const formatSettlementStrategy = (
+	strategy: SettlementSubgraphType
+): PerpsV3SettlementStrategy => {
+	return {
+		...strategy,
+		marketId: Number(strategy.marketId),
+		strategyId: Number(strategy.strategyId),
+		settlementDelay: wei(strategy.settlementDelay),
+		settlementWindowDuration: wei(strategy.settlementWindowDuration),
+		settlementReward: wei(strategy.settlementReward),
+		priceDeviationTolerance: wei(strategy.priceDeviationTolerance),
 	}
 }
 
@@ -873,8 +908,9 @@ export const formatPerpsV2Market = (
 	},
 	isSuspended: boolean,
 	suspendedReason: MarketClosureReason
-) => ({
-	market,
+): PerpsMarketV2 => ({
+	version: 2,
+	marketAddress: market,
 	marketKey: parseBytes32String(key) as FuturesMarketKey,
 	marketName: getMarketName(parseBytes32String(asset) as FuturesMarketAsset),
 	asset: parseBytes32String(asset) as FuturesMarketAsset,

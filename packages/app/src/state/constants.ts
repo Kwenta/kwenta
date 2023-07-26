@@ -39,6 +39,7 @@ export const ZERO_STATE_CM_ACCOUNT = {
 	...ZERO_STATE_ACCOUNT,
 	balances: {},
 	availableMargin: '0',
+	asyncOrders: [],
 }
 
 export const DEFAULT_QUERY_STATUS = {

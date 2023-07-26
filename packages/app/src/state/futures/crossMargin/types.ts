@@ -2,14 +2,15 @@ import { Period } from '@kwenta/sdk/constants'
 import {
 	TransactionStatus,
 	FuturesPositionHistory,
-	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 	PositionSide,
 	FuturesMarketKey,
 	FuturesMarketAsset,
-	FuturesFilledPosition,
-	FuturesMarket,
 	PotentialTradeStatus,
+	PerpsV3AsyncOrder,
+	PerpsMarketV3,
+	PerpsMarketV2,
+	PerpsV3Position,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
@@ -81,8 +82,12 @@ export type CrossMarginQueryStatuses = FuturesQueryStatuses & {
 }
 
 export type CrossMarginAccountData = FuturesAccountData & {
+	asyncOrders: PerpsV3AsyncOrder<string>[]
 	balances: { [asset: string]: { balance: string; allowance: string } }
 	availableMargin: string
+	position?: PerpsV3Position<string>
+	positions?: PerpsV3Position<string>[]
+	positionHistory: FuturesPositionHistory<string>[]
 }
 
 export type CrossMarginTradePreview<T = Wei> = {
@@ -101,7 +106,7 @@ export type CrossMarginTradePreview<T = Wei> = {
 }
 
 export type CrossMarginState = {
-	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
+	markets: Record<FuturesNetwork, PerpsMarketV3<string>[]>
 	tradeInputs: TradeSizeInputs<string>
 	editPositionInputs: EditPositionInputs<string>
 	orderType: 'market'
@@ -141,13 +146,6 @@ export type CrossMarginState = {
 	>
 }
 
-export type SharePositionParams = {
-	asset?: FuturesMarketAsset
-	position?: FuturesFilledPosition
-	positionHistory?: FuturesPositionHistory
-	marketPrice?: Wei
-}
-
 export type CrossPerpsPortfolio = {
 	account: string
 	timestamp: number
@@ -155,4 +153,19 @@ export type CrossPerpsPortfolio = {
 		[asset: string]: number
 	}
 	total: number
+}
+
+export type AsyncOrderWithDetails = {
+	account: number
+	size: Wei
+	executableStartTime: number
+	expirationTime: number
+	settlementFee: Wei
+	marginDelta: Wei
+	desiredFillPrice: Wei
+	side: PositionSide
+	isStale: boolean
+	isExecutable: boolean
+	settlementWindowDuration: number
+	market: PerpsMarketV3 | PerpsMarketV2
 }

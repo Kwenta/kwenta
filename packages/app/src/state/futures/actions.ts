@@ -1,6 +1,5 @@
 import { PERIOD_IN_SECONDS, Period } from '@kwenta/sdk/constants'
 import {
-	FuturesPosition,
 	FuturesPositionHistory,
 	FuturesMarketAsset,
 	NetworkId,
@@ -15,19 +14,16 @@ import { handleTransactionError, setTransaction, updateTransactionHash } from 's
 import { ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
 import {
 	editCrossMarginTradeSize,
-	fetchMarketsV3,
+	fetchV3Markets,
 	fetchPositionHistoryV3,
 } from 'state/futures/crossMargin/actions'
-import { serializeWeiObject } from 'state/helpers'
 import { AppThunk } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork } from 'state/wallet/selectors'
 import { serializePositionHistory } from 'utils/futures'
-import { refetchWithComparator } from 'utils/queries'
 
 import { selectFuturesType } from './common/selectors'
-import { AppFuturesMarginType } from './common/types'
-import { selectFuturesAccount, selectMarketInfo, selectPosition } from './selectors'
+import { selectFuturesAccount } from './selectors'
 import {
 	editSmartMarginTradeSize,
 	fetchDailyVolumesV2,
@@ -45,7 +41,6 @@ import {
 	setSmartMarginEditPositionInputs,
 } from './smartMargin/reducer'
 import { selectSmartMarginSupportedNetwork } from './smartMargin/selectors'
-import { CancelDelayedOrderInputs, ExecuteDelayedOrderInputs } from './types'
 
 export const fetchMarkets = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchMarkets',
@@ -53,47 +48,10 @@ export const fetchMarkets = createAsyncThunk<void, void, ThunkConfig>(
 		if (getState().futures.selectedType === FuturesMarginType.SMART_MARGIN) {
 			dispatch(fetchMarketsV2())
 		} else {
-			dispatch(fetchMarketsV3())
+			dispatch(fetchV3Markets())
 		}
 	}
 )
-
-export const refetchPosition = createAsyncThunk<
-	{
-		position: FuturesPosition<string>
-		wallet: string
-		futuresType: AppFuturesMarginType
-		networkId: NetworkId
-	} | null,
-	AppFuturesMarginType,
-	ThunkConfig
->('futures/refetchPosition', async (type, { getState, extra: { sdk } }) => {
-	const account = selectFuturesAccount(getState())
-	if (!account) throw new Error('No wallet connected')
-	const marketInfo = selectMarketInfo(getState())
-	const networkId = selectNetwork(getState())
-	const position = selectPosition(getState())
-	if (!marketInfo || !position) throw new Error('Market or position not found')
-
-	const result = await refetchWithComparator(
-		() =>
-			sdk.futures.getFuturesPositions(account!, [
-				{ asset: marketInfo.asset, marketKey: marketInfo.marketKey, address: marketInfo.market },
-			]),
-		position?.remainingMargin?.toString(),
-		(existing, next) => {
-			return existing === next[0]?.remainingMargin.toString()
-		}
-	)
-
-	if (result.data[0]) {
-		const serialized = serializeWeiObject(
-			result.data[0] as FuturesPosition
-		) as FuturesPosition<string>
-		return { position: serialized, wallet: account, futuresType: type, networkId }
-	}
-	return null
-})
 
 export const fetchDailyVolumes = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchDailyVolumes',
@@ -172,9 +130,9 @@ export const fetchPositionHistoryForTrader = createAsyncThunk<
 
 // Contract Mutations
 
-export const cancelDelayedOrder = createAsyncThunk<void, CancelDelayedOrderInputs, ThunkConfig>(
+export const cancelDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
 	'futures/cancelDelayedOrder',
-	async ({ marketAddress, isOffchain }, { getState, dispatch, extra: { sdk } }) => {
+	async (marketAddress, { getState, dispatch, extra: { sdk } }) => {
 		const account = selectFuturesAccount(getState())
 		if (!account) throw new Error('No wallet connected')
 		try {
@@ -185,33 +143,7 @@ export const cancelDelayedOrder = createAsyncThunk<void, CancelDelayedOrderInput
 					hash: null,
 				})
 			)
-			const tx = await sdk.futures.cancelDelayedOrder(marketAddress, account, isOffchain)
-			await monitorAndAwaitTransaction(dispatch, tx)
-			dispatch(fetchSmartMarginOpenOrders())
-		} catch (err) {
-			dispatch(handleTransactionError(err.message))
-			throw err
-		}
-	}
-)
-
-export const executeDelayedOrder = createAsyncThunk<void, ExecuteDelayedOrderInputs, ThunkConfig>(
-	'futures/executeDelayedOrder',
-	async ({ marketKey, marketAddress, isOffchain }, { getState, dispatch, extra: { sdk } }) => {
-		const account = selectFuturesAccount(getState())
-		if (!account) throw new Error('No wallet connected')
-		try {
-			dispatch(
-				setTransaction({
-					status: TransactionStatus.AwaitingExecution,
-					type: 'execute_delayed_isolated',
-					hash: null,
-				})
-			)
-			const tx = isOffchain
-				? await sdk.futures.executeDelayedOffchainOrder(marketKey, marketAddress, account)
-				: await sdk.futures.executeDelayedOrder(marketAddress, account)
-			dispatch(updateTransactionHash(tx.hash))
+			const tx = await sdk.futures.cancelDelayedOrder(marketAddress, account, true)
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchSmartMarginOpenOrders())
 		} catch (err) {

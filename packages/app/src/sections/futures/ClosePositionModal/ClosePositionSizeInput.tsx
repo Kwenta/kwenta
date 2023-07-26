@@ -11,7 +11,7 @@ import Spacer from 'components/Spacer'
 import { selectShowPositionModal } from 'state/app/selectors'
 import { editClosePositionSizeDelta } from 'state/futures/smartMargin/actions'
 import {
-	selectClosePositionOrderInputs,
+	selectCloseSMPositionOrderInputs,
 	selectEditPositionModalInfo,
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -24,7 +24,7 @@ type OrderSizingProps = {
 const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, maxNativeValue }) => {
 	const dispatch = useAppDispatch()
 
-	const { nativeSizeDelta } = useAppSelector(selectClosePositionOrderInputs)
+	const { nativeSizeDelta } = useAppSelector(selectCloseSMPositionOrderInputs)
 	const { position } = useAppSelector(selectEditPositionModalInfo)
 	const modal = useAppSelector(selectShowPositionModal)
 
@@ -34,12 +34,12 @@ const ClosePositionSizeInput: React.FC<OrderSizingProps> = memo(({ isMobile, max
 				dispatch(
 					editClosePositionSizeDelta(
 						modal.marketKey,
-						position?.position?.side === PositionSide.LONG ? '-' + value : value
+						position?.side === PositionSide.LONG ? '-' + value : value
 					)
 				)
 			}
 		},
-		[dispatch, modal, position?.position?.side]
+		[dispatch, modal, position?.side]
 	)
 
 	const onChangeValue = useCallback(

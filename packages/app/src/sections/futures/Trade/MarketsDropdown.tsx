@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { FuturesMarketAsset } from '@kwenta/sdk/types'
+import { FuturesMarket, FuturesMarketAsset } from '@kwenta/sdk/types'
 import {
 	getDisplayAsset,
 	AssetDisplayByAsset,
@@ -115,7 +115,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const options = useMemo(() => {
 		const lowerSearch = search?.toLowerCase()
 		const markets = lowerSearch
-			? futuresMarkets.filter(
+			? (futuresMarkets as FuturesMarket[]).filter(
 					(m) =>
 						m.asset.toLowerCase().includes(lowerSearch) ||
 						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)

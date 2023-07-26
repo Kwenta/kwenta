@@ -1,10 +1,5 @@
 import { Period } from '@kwenta/sdk/constants'
-import {
-	NetworkId,
-	FuturesMarketAsset,
-	FuturesPotentialTradeDetails,
-	PositionSide,
-} from '@kwenta/sdk/types'
+import { NetworkId, FuturesMarketAsset, PositionSide } from '@kwenta/sdk/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { ORDER_PREVIEW_ERRORS } from 'queries/futures/constants'
@@ -18,14 +13,14 @@ import {
 } from 'state/constants'
 import { FetchStatus } from 'state/types'
 
-import { refetchPosition, fetchFundingRatesHistory } from '../actions'
+import { fetchFundingRatesHistory } from '../actions'
 import { PreviewAction, TradeSizeInputs } from '../common/types'
 
 import {
 	fetchCrossMarginOpenOrders,
 	fetchCrossMarginPositions,
 	fetchPositionHistoryV3,
-	fetchMarketsV3,
+	fetchV3Markets,
 	fetchPerpsV3Account,
 	fetchAvailableMargin,
 } from './actions'
@@ -198,16 +193,16 @@ const crossMarginSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		// Markets
-		builder.addCase(fetchMarketsV3.pending, (futuresState) => {
+		builder.addCase(fetchV3Markets.pending, (futuresState) => {
 			futuresState.queryStatuses.markets = LOADING_STATUS
 		})
-		builder.addCase(fetchMarketsV3.fulfilled, (futuresState, { payload }) => {
+		builder.addCase(fetchV3Markets.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.markets = SUCCESS_STATUS
 			if (payload) {
 				futuresState.markets[payload.networkId] = payload.markets
 			}
 		})
-		builder.addCase(fetchMarketsV3.rejected, (futuresState) => {
+		builder.addCase(fetchV3Markets.rejected, (futuresState) => {
 			futuresState.queryStatuses.markets = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch markets',
@@ -234,21 +229,22 @@ const crossMarginSlice = createSlice({
 			}
 		})
 
+		// TODO: Refetch cross margin position
 		// Refetch selected position
-		builder.addCase(refetchPosition.fulfilled, (futuresState, { payload }) => {
-			if (payload) {
-				const { position, wallet, networkId } = payload
-				const account = futuresState.accounts[networkId]?.[wallet]
+		// builder.addCase(refetchPosition.fulfilled, (futuresState, { payload }) => {
+		// 	if (payload) {
+		// 		const { position, wallet, networkId } = payload
+		// 		const account = futuresState.accounts[networkId]?.[wallet]
 
-				const existingPositions = account?.positions ?? []
-				const index = existingPositions.findIndex((p) => p.marketKey === position.marketKey)
-				existingPositions[index] = position
-				futuresState.accounts[networkId][wallet] = {
-					...account,
-					positions: existingPositions,
-				}
-			}
-		})
+		// 		const existingPositions = account?.positions ?? []
+		// 		const index = existingPositions.findIndex((p) => p.marketKey === position.marketKey)
+		// 		existingPositions[index] = position
+		// 		futuresState.accounts[networkId][wallet] = {
+		// 			...account,
+		// 			positions: existingPositions,
+		// 		}
+		// 	}
+		// })
 
 		// Fetch Isolated Open Orders
 		builder.addCase(fetchCrossMarginOpenOrders.pending, (futuresState) => {
@@ -257,9 +253,9 @@ const crossMarginSlice = createSlice({
 		builder.addCase(fetchCrossMarginOpenOrders.fulfilled, (futuresState, { payload }) => {
 			futuresState.queryStatuses.openOrders = SUCCESS_STATUS
 			if (payload) {
-				const { orders: delayedOrders, wallet, networkId } = payload
+				const { orders: asyncOrders, wallet, networkId } = payload
 				updateCrossMarginAccount(futuresState, networkId, wallet, {
-					delayedOrders,
+					asyncOrders,
 				})
 			}
 		})

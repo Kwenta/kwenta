@@ -1,4 +1,4 @@
-import { FuturesMarket, PositionSide } from '@kwenta/sdk/types'
+import { FuturesMarket, PerpsMarketV2, PositionSide } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
@@ -148,7 +148,7 @@ describe('Futures market page - smart margin', () => {
 	test('Displays error when trade exceeds max OI', async () => {
 		// Update the mock to return some different data
 		sdk.futures.getMarkets = () =>
-			Promise.resolve([{ ...SDK_MARKETS[1], marketLimitUsd: wei(100000) } as FuturesMarket])
+			Promise.resolve([{ ...SDK_MARKETS[1], marketLimitUsd: wei(100000) } as PerpsMarketV2])
 
 		const store = setupStore(
 			preloadedStateWithSmartMarginAccount(mockSmartMarginAccount('1000000'))
@@ -171,7 +171,7 @@ describe('Futures market page - smart margin', () => {
 	})
 
 	test('Trade panel is disabled when market is closed', async () => {
-		sdk.futures.getMarkets = () => Promise.resolve([...SDK_MARKETS] as FuturesMarket[])
+		sdk.futures.getMarkets = () => Promise.resolve([...SDK_MARKETS] as PerpsMarketV2[])
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
 			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
@@ -192,7 +192,7 @@ describe('Futures market page - smart margin', () => {
 		expect(submitButton).toBeEnabled()
 
 		sdk.futures.getMarkets = () =>
-			Promise.resolve([{ ...SDK_MARKETS[1], isSuspended: true } as FuturesMarket])
+			Promise.resolve([{ ...SDK_MARKETS[1], isSuspended: true } as PerpsMarketV2])
 
 		waitFor(() => store.dispatch(fetchMarkets()))
 

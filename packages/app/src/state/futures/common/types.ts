@@ -3,8 +3,6 @@ import {
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesOrderTypeDisplay,
-	FuturesPosition,
-	FuturesPositionHistory,
 	FuturesTrade,
 	MarginTransfer,
 	NetworkId,
@@ -19,12 +17,8 @@ export type AppFuturesMarginType = Exclude<FuturesMarginType, excludedOptions>
 
 export type FuturesAccountData = {
 	account: string
-	position?: FuturesPosition<string>
-	positions?: FuturesPosition<string>[]
-	positionHistory?: FuturesPositionHistory<string>[]
 	trades?: FuturesTrade<string>[]
 	marginTransfers?: MarginTransfer[]
-	delayedOrders: DelayedOrderWithDetails<string>[]
 }
 
 export type DelayedOrderWithDetails<T = Wei> = {
@@ -84,17 +78,24 @@ export type EditPositionInputs<T = Wei> = {
 
 export type PreviewAction = 'edit' | 'trade' | 'close'
 
-export type CrossMarginTradePreviewParams = {
-	market: {
-		key: FuturesMarketKey
-		address: string
-	}
+export type TradePreviewParams = {
 	orderPrice: Wei
 	sizeDelta: Wei
 	action: PreviewAction
 }
 
-export type SmartMarginTradePreviewParams = CrossMarginTradePreviewParams & {
+export type CrossMarginTradePreviewParams = TradePreviewParams & {
+	market: {
+		key: FuturesMarketKey
+		id: number
+	}
+}
+
+export type SmartMarginTradePreviewParams = TradePreviewParams & {
+	market: {
+		key: FuturesMarketKey
+		address: string
+	}
 	marginDelta: Wei
 }
 

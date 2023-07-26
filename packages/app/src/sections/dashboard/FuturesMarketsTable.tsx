@@ -1,4 +1,4 @@
-import { FuturesMarketAsset } from '@kwenta/sdk/types'
+import { FuturesMarket, FuturesMarketAsset } from '@kwenta/sdk/types'
 import {
 	AssetDisplayByAsset,
 	MarketKeyByAsset,
@@ -45,8 +45,8 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 
 	let data = useMemo(() => {
 		const lowerSearch = search?.toLowerCase()
-		const markets = lowerSearch
-			? futuresMarkets.filter(
+		const markets: FuturesMarket[] = lowerSearch
+			? (futuresMarkets as FuturesMarket[]).filter(
 					(m) =>
 						m.asset.toLowerCase().includes(lowerSearch) ||
 						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)

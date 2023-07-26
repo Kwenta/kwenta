@@ -32,7 +32,6 @@ import {
 	FundingRateInput,
 	FundingRateResponse,
 	FundingRateUpdate,
-	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesVolumes,
@@ -47,6 +46,7 @@ import {
 	ConditionalOrderTypeEnum,
 	SLTPOrderInputs,
 	FuturesMarginType,
+	PerpsMarketV2,
 } from '../types/futures'
 import { PricesMap } from '../types/prices'
 import { calculateTimestampForPeriod } from '../utils/date'
@@ -57,7 +57,7 @@ import {
 	encodeConditionalOrderParams,
 	encodeModidyMarketMarginParams,
 	encodeSubmitOffchainOrderParams,
-	formatDelayedOrder,
+	formatV2DelayedOrder,
 	formatPotentialTrade,
 	getFuturesEndpoint,
 	mapConditionalOrderFromContract,
@@ -75,7 +75,7 @@ import { getReasonFromCode } from '../utils/synths'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
-	public markets: FuturesMarket[] | undefined
+	public markets: PerpsMarketV2[] | undefined
 	public internalFuturesMarkets: Partial<
 		Record<NetworkId, { [marketAddress: string]: PerpsV2MarketInternal }>
 	> = {}
@@ -152,7 +152,7 @@ export default class FuturesService {
 		const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys)
 
 		const futuresMarkets = filteredMarkets.map(
-			(m, i: number): FuturesMarket =>
+			(m, i: number): PerpsMarketV2 =>
 				formatPerpsV2Market(
 					m,
 					marketParameters[i],
@@ -217,9 +217,9 @@ export default class FuturesService {
 		return queryFundingRateHistory(this.sdk, marketAsset, minTimestamp)
 	}
 
-	public async getAverageFundingRates(markets: FuturesMarket[], prices: PricesMap, period: Period) {
+	public async getAverageFundingRates(markets: PerpsMarketV2[], prices: PricesMap, period: Period) {
 		const fundingRateInputs: FundingRateInput[] = markets.map(
-			({ asset, market, currentFundingRate }) => {
+			({ asset, marketAddress: market, currentFundingRate }) => {
 				const price = prices[asset]
 				return {
 					marketAddress: market,
@@ -439,7 +439,7 @@ export default class FuturesService {
 	public async getDelayedOrder(account: string, marketAddress: string) {
 		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider)
 		const order = await market.delayedOrders(account)
-		return formatDelayedOrder(account, marketAddress, order)
+		return formatV2DelayedOrder(account, marketAddress, order)
 	}
 
 	public async getDelayedOrders(account: string, marketAddresses: string[]) {
@@ -449,7 +449,7 @@ export default class FuturesService {
 			marketContracts.map((market) => market.delayedOrders(account))
 		)) as IPerpsV2MarketConsolidated.DelayedOrderStructOutput[]
 		return orders.map((order, ind) => {
-			return formatDelayedOrder(account, marketAddresses[ind], order)
+			return formatV2DelayedOrder(account, marketAddresses[ind], order)
 		})
 	}
 
@@ -561,7 +561,7 @@ export default class FuturesService {
 			filteredMarkets?.map((m) => ({
 				asset: m.asset,
 				marketKey: m.marketKey,
-				address: m.market,
+				address: m.marketAddress,
 			})) ?? []
 		const positions = await this.getFuturesPositions(accountOrEoa, marketParams)
 		const positionsWithIdleMargin = positions.filter(
@@ -578,7 +578,7 @@ export default class FuturesService {
 
 				if (market) {
 					acc.push({
-						marketAddress: market.market,
+						marketAddress: market.marketAddress,
 						marketKey: market.marketKey,
 						position: p,
 					})

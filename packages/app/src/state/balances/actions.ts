@@ -1,4 +1,4 @@
-import { SynthV3Asset, SynthV3BalancesAndAllowances } from '@kwenta/sdk/types'
+import { SynthV3BalancesAndAllowances } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import { notifyError } from 'components/ErrorNotifier'

@@ -1,12 +1,12 @@
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { FuturesPositionTablePosition } from 'types/futures'
 
 import MobilePNLGraphicPNG from 'assets/png/mobile-pnl-graphic.png'
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png'
 import BaseModal from 'components/BaseModal'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
-import { SharePositionParams } from 'state/futures/types'
 import media from 'styles/media'
 
 import AmountContainer from './AmountContainer'
@@ -14,7 +14,7 @@ import PositionMetadata from './PositionMetadata'
 import ShareModalButton from './ShareModalButton'
 
 type ShareModalProps = {
-	sharePosition: SharePositionParams
+	sharePosition: FuturesPositionTablePosition
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -38,11 +38,8 @@ const ShareModal: FC<ShareModalProps> = ({ sharePosition, setShowShareModal }) =
 								<PNLImage src={MobilePNLGraphicPNG} aria-label="pnl-graphic" />
 							</MobileOrTabletView>
 						</PNLImageFrame>
-						<AmountContainer asset={sharePosition.asset} position={sharePosition.position} />
-						<PositionMetadata
-							positionHistory={sharePosition.positionHistory}
-							marketPrice={sharePosition.marketPrice}
-						/>
+						<AmountContainer position={sharePosition} />
+						<PositionMetadata position={sharePosition} />
 					</PNLGraphic>
 					<ShareModalButton position={sharePosition} />
 				</ModalWindow>

@@ -9,6 +9,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useWindowSize from 'hooks/useWindowSize'
+import CloseCrossMarginPositionModal from 'sections/futures/ClosePositionModal/CloseCrossMarginPositionModal'
 import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal'
 import CreatePerpsV3AccountModal from 'sections/futures/CreatePerpsV3AccountModal'
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal'
@@ -125,7 +126,10 @@ const Market: MarketComponent = () => {
 			<MobileOrTabletView>
 				<MobileTrade />
 			</MobileOrTabletView>
-			{showPositionModal?.type === 'futures_close_position' && <ClosePositionModal />}
+			{showPositionModal?.type === 'smart_margin_close_position' && <ClosePositionModal />}
+			{showPositionModal?.type === 'cross_margin_close_position' && (
+				<CloseCrossMarginPositionModal />
+			)}
 			{showPositionModal?.type === 'futures_edit_stop_loss_take_profit' && (
 				<EditStopLossAndTakeProfitModal />
 			)}

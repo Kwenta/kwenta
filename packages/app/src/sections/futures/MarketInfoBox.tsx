@@ -1,4 +1,4 @@
-import { formatDollars, formatPercent } from '@kwenta/sdk/utils'
+import { formatDollars } from '@kwenta/sdk/utils'
 import React, { memo } from 'react'
 import styled from 'styled-components'
 

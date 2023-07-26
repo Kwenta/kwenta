@@ -30,7 +30,8 @@ export const mockSmartMarginAccount = (freeMargin: string = '1000') => ({
 
 export const SDK_MARKETS = [
 	{
-		market: '0x0940B0A96C5e1ba33AEE331a9f950Bb2a6F2Fb25',
+		version: 2,
+		marketAddress: '0x0940B0A96C5e1ba33AEE331a9f950Bb2a6F2Fb25',
 		marketKey: 'sBNBPERP' as FuturesMarketKey,
 		marketName: 'BNB/sUSD',
 		asset: 'BNB' as FuturesMarketAsset,
@@ -76,7 +77,8 @@ export const SDK_MARKETS = [
 	},
 
 	{
-		market: '0x2B3bb4c683BFc5239B029131EEf3B1d214478d93',
+		version: 2,
+		marketAddress: '0x2B3bb4c683BFc5239B029131EEf3B1d214478d93',
 		marketKey: 'sETHPERP',
 		marketName: 'ETH/sUSD' as FuturesMarketKey,
 		asset: 'sETH' as FuturesMarketAsset,
@@ -121,7 +123,8 @@ export const SDK_MARKETS = [
 		},
 	},
 	{
-		market: '0x59b007E9ea8F89b069c43F8f45834d30853e3699',
+		version: 2,
+		marketAddress: '0x59b007E9ea8F89b069c43F8f45834d30853e3699',
 		marketKey: 'sBTCPERP' as FuturesMarketKey,
 		marketName: 'BTC/sUSD',
 		asset: 'sBTC' as FuturesMarketAsset,

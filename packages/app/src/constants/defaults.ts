@@ -33,7 +33,7 @@ export const DEFAULT_LEADERBOARD_ROWS = 20
 
 // for perps v2
 export const DEFAULT_DELAYED_EXECUTION_BUFFER = 15
-export const DEFAULT_DELAYED_CANCEL_BUFFER = 15
+export const DEFAULT_DELAYED_CANCEL_BUFFER = 10
 
 export const CROSS_MARGIN_ENABLED = true
 

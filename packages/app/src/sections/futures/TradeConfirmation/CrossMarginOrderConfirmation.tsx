@@ -57,6 +57,7 @@ const CrossMarginOrderConfirmationModal: FC = () => {
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const submitting = useAppSelector(selectSubmittingFuturesTx)
 	const preview = useAppSelector(selectCrossMarginTradePreview)
+	const settlementStrategy = marketInfo?.settlementStrategies[0]
 
 	const positionSize = useMemo(() => {
 		const positionDetails = position?.position
@@ -95,9 +96,12 @@ const CrossMarginOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.time-delay'),
-				value: `${formatNumber(marketInfo?.settings.offchainDelayedOrderMinAge ?? ZERO_WEI, {
-					maxDecimals: 0,
-				})} sec`,
+				value: `${formatNumber(
+					settlementStrategy?.settlementDelay ? settlementStrategy.settlementDelay : ZERO_WEI,
+					{
+						maxDecimals: 0,
+					}
+				)} sec`,
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
