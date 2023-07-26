@@ -112,12 +112,18 @@ const GasPriceRow = () => {
 }
 
 const SwapInfoBox: React.FC = () => {
+	const isL2 = useIsL2()
+
 	return (
 		<SwapInfoBoxContainer>
 			<GasPriceRow />
 			<PriceImpactRow />
-			<FeeRow />
-			<FeeCostRow />
+			{!isL2 ? (
+				<>
+					<FeeRow />
+					<FeeCostRow />
+				</>
+			) : null}
 		</SwapInfoBoxContainer>
 	)
 }
