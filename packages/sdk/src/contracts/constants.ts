@@ -71,7 +71,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	},
 	SmartMarginAccount: {
 		10: '0x3BC8D34314E77c2E36948Fd8F4B353f1baDc3F6C',
-		420: '0xf9CC1eD5EC9b8DFb9273fdDABD07C7bB37938285',
+		420: '0x0fCeF9608B9F7a8C57D53B98E78fA64b4D786a9F',
 	},
 	SmartMarginAccountFactory: {
 		10: '0x8234F990b149Ae59416dc260305E565e5DAfEb54',
@@ -79,7 +79,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	},
 	SmartMarginEvents: {
 		10: '0x11193470df30B37Af9fc5Ec696c240D878bdfb42',
-		420: '0xa7AE3969A128048290968b41865Eaa53B20FA69e',
+		420: '0xe32F27B27F4ea5f10f269b52223910bA83e2933C',
 	},
 	KwentaArrakisVault: {
 		10: '0x56dEa47c40877c2aaC2a689aC56aa56cAE4938d2',
