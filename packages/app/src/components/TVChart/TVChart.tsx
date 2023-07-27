@@ -1,5 +1,5 @@
 import { NetworkId, ConditionalOrder, PricesListener } from '@kwenta/sdk/types'
-import { formatOrderDisplayType, formatNumber } from '@kwenta/sdk/utils'
+import { formatOrderDisplayType, formatNumber, suggestedDecimals } from '@kwenta/sdk/utils'
 import {
 	ChartingLibraryWidgetOptions,
 	IChartingLibraryWidget,
@@ -30,6 +30,7 @@ export type ChartProps = {
 	potentialTrade?: ChartPosition | null
 	openOrders: ConditionalOrder[]
 	showOrderLines: boolean
+	initialPrice: string
 	onChartReady?: () => void
 	onToggleShowOrderLines?: () => void
 }
@@ -55,6 +56,7 @@ export function TVChart({
 	potentialTrade,
 	openOrders,
 	showOrderLines,
+	initialPrice,
 	onToggleShowOrderLines,
 	onChartReady = () => {
 		return
@@ -90,6 +92,8 @@ export function TVChart({
 		})
 		_oderLineRefs.current = []
 	}
+
+	const chartScale = 10 ** suggestedDecimals(initialPrice)
 
 	useEffect(() => {
 		return () => {
@@ -164,7 +168,11 @@ export function TVChart({
 
 		const widgetOptions: ChartingLibraryWidgetOptions = {
 			symbol: marketAsset + ':sUSD',
-			datafeed: DataFeedFactory((network?.id ?? chain.optimism.id) as NetworkId, onSubscribe),
+			datafeed: DataFeedFactory(
+				(network?.id ?? chain.optimism.id) as NetworkId,
+				chartScale,
+				onSubscribe
+			),
 			interval: interval as ResolutionString,
 			container: containerId,
 			library_path: libraryPath,
@@ -234,7 +242,7 @@ export function TVChart({
 			clearExistingWidget()
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network?.id as NetworkId, currentTheme, marketAssetLoaded])
+	}, [network?.id as NetworkId, currentTheme, marketAssetLoaded, chartScale])
 
 	useEffect(() => {
 		if (onToggleShowOrderLines) {

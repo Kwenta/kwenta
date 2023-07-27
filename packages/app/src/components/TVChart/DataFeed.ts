@@ -55,29 +55,6 @@ const splitBaseQuote = (symbolName: string) => {
 	return { base, quote }
 }
 
-// TODO: Make this dynamic
-const getPriceScale = (asset: string | null) => {
-	switch (asset) {
-		case 'BTC':
-		case 'BNB':
-		case 'ETH':
-		case 'ETHBTC':
-		case 'stETH':
-		case 'XAU':
-			return 100
-		case 'DOGE':
-		case 'FTM':
-		case 'AUD':
-			return 10000
-		case 'SHIB':
-		case 'FLOKI':
-		case 'PEPE':
-			return 1000000000
-		default:
-			return 1000
-	}
-}
-
 const fetchCombinedCandles = async (
 	base: string,
 	from: number,
@@ -157,6 +134,7 @@ const subscribeOffChainPrices = (
 
 const DataFeedFactory = (
 	networkId: NetworkId,
+	chartScale: number,
 	onSubscribe: (priceListener: PricesListener) => void
 ): IBasicDataFeed => {
 	_latestChartBar.current = undefined
@@ -178,7 +156,7 @@ const DataFeedFactory = (
 				ticker: symbolName,
 				exchange: '',
 				minmov: 1,
-				pricescale: getPriceScale(asset),
+				pricescale: chartScale,
 				has_intraday: true,
 				intraday_multipliers: supportedResolutions,
 				supported_resolution: supportedResolutions,
