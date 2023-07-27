@@ -18,7 +18,8 @@ export const requestCandlesticks = async (
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId)
 	const pythTvEndpoint = DEFAULT_PYTH_TV_ENDPOINT
-	const prefix = currencyKey === 'XAU' || currencyKey === 'XAG' ? 'Metal' : 'Crypto'
+	const metalAssets = ['XAU', 'XAG']
+	const prefix = metalAssets.includes(currencyKey!) ? 'Metal' : 'Crypto'
 
 	if (period <= 3600) {
 		const response = await axios
