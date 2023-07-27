@@ -1,6 +1,6 @@
 {
 	"name": "@kwenta/app",
-	"version": "7.4.8",
+	"version": "7.4.12",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -40,7 +40,6 @@
 		"date-fns-tz": "2.0.0",
 		"echarts": "5.4.3",
 		"eslint-config-next": "13.4.12",
-		"ethcall": "4.7.2",
 		"ethers": "5.7.2",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
