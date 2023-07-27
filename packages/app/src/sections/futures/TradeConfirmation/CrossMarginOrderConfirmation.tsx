@@ -30,7 +30,6 @@ import {
 } from 'state/futures/crossMargin/selectors'
 import {
 	selectLeverageSide,
-	selectMarketInfo,
 	selectModifyPositionError,
 	selectNextPriceDisclaimer,
 	selectPosition,
@@ -123,13 +122,7 @@ const CrossMarginOrderConfirmationModal: FC = () => {
 				value: formatDollars(totalDeposit),
 			},
 		],
-		[
-			t,
-			preview,
-			totalDeposit,
-			preview?.settlementFee,
-			marketInfo?.settings.offchainDelayedOrderMinAge,
-		]
+		[t, preview, totalDeposit, preview?.settlementFee, settlementStrategy?.settlementDelay]
 	)
 
 	const mobileRows = useMemo(() => {
@@ -154,7 +147,7 @@ const CrossMarginOrderConfirmationModal: FC = () => {
 			},
 			...dataRows,
 		]
-	}, [dataRows, marketAsset, leverageSide, orderDetails.nativeSizeDelta, t])
+	}, [t, dataRows, marketAsset, leverageSide, orderDetails.nativeSizeDelta])
 
 	const onDismiss = useCallback(() => {
 		dispatch(setOpenModal(null))

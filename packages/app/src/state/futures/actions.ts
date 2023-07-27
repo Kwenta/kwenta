@@ -10,7 +10,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import { notifyError } from 'components/ErrorNotifier'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
-import { handleTransactionError, setTransaction, updateTransactionHash } from 'state/app/reducer'
+import { handleTransactionError, setTransaction } from 'state/app/reducer'
 import { ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
 import {
 	editCrossMarginTradeSize,

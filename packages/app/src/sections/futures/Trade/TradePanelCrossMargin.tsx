@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components'
 
 import Error from 'components/ErrorView'
 import { changeCrossMarginLeverageSide } from 'state/futures/crossMargin/actions'
-import { selectCrossMarginTradeInputs } from 'state/futures/crossMargin/selectors'
 import { selectLeverageSide } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectPricesConnectionError } from 'state/prices/selectors'

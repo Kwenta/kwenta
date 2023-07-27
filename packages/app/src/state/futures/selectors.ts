@@ -6,11 +6,10 @@ import {
 	FuturesMarginType,
 	FuturesMarket,
 } from '@kwenta/sdk/types'
-import { truncateTimestamp, MarketKeyByAsset, MarketAssetByKey } from '@kwenta/sdk/utils'
+import { truncateTimestamp, MarketAssetByKey } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 
-import { ETH_UNIT } from 'constants/network'
 import {
 	selectAllCrossMarginTrades,
 	selectCrossMarginAccountData,
@@ -49,7 +48,7 @@ import { CrossPerpsPortfolio } from './crossMargin/types'
 import {
 	selectIdleMarginTransfers,
 	selectMarginDeltaInputValue,
-	selectOpenDelayedOrders,
+	selectSmartMarginDelayedOrders,
 	selectV2Markets,
 	selectSmartMarginAccount,
 	selectSmartMarginAccountData,
@@ -109,16 +108,9 @@ export const selectMarkets = createSelector(
 	}
 )
 
-export const selectMarketVolumes = createSelector(selectFuturesState, (state) =>
-	unserializeFuturesVolumes(state.dailyMarketVolumes)
-)
-
-export const selectMarketKeys = createSelector(selectMarkets, (markets) =>
-	markets.map(({ asset }) => MarketKeyByAsset[asset])
-)
-
-export const selectMarketAssets = createSelector(selectMarkets, (markets) =>
-	markets.map(({ asset }) => asset)
+export const selectMarketVolumes = createSelector(
+	(state: RootState) => state.smartMargin.dailyMarketVolumes,
+	(dailyMarketVolumes) => unserializeFuturesVolumes(dailyMarketVolumes)
 )
 
 export const selectMarketKey = createSelector(
@@ -532,7 +524,7 @@ export const selectModifyPositionError = createSelector(
 )
 
 export const selectPendingDelayedOrder = createSelector(
-	selectOpenDelayedOrders,
+	selectSmartMarginDelayedOrders,
 	selectMarketKey,
 	(delayedOrders, marketKey) => {
 		return delayedOrders.find((o) => o.market.marketKey === marketKey)
@@ -593,7 +585,7 @@ export const selectCrossMarginPortfolioValues = createSelector(
 			account,
 			timestamp,
 			asset,
-			margin: margin.div(ETH_UNIT).toNumber(),
+			margin: margin.toNumber(),
 			size: 0,
 		}))
 
@@ -663,7 +655,7 @@ export const selectSmartMarginPortfolioValues = createSelector(
 			account,
 			timestamp,
 			asset,
-			margin: margin.div(ETH_UNIT).toNumber(),
+			margin: margin.toNumber(),
 			size: 0,
 		}))
 
@@ -963,7 +955,7 @@ export const selectModalSLValidity = createSelector(
 
 export const selectPendingOrdersCount = createSelector(
 	selectPendingAsyncOrdersCount,
-	selectOpenDelayedOrders,
+	selectSmartMarginDelayedOrders,
 	selectFuturesType,
 	(asyncCount, delayedOrders, type) =>
 		type === FuturesMarginType.CROSS_MARGIN ? asyncCount : delayedOrders.length

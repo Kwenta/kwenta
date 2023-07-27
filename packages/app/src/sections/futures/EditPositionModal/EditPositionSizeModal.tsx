@@ -103,7 +103,7 @@ export default function EditPositionSizeModal() {
 			return position.size.sub(safeSize)
 		}
 		return ZERO_WEI
-	}, [maxLeverage, position, editType, marketPrice, position?.remainingMargin])
+	}, [maxLeverage, position, editType, marketPrice])
 
 	const maxNativeValueWithBuffer = useMemo(() => {
 		if (editType === 1) return maxNativeValue

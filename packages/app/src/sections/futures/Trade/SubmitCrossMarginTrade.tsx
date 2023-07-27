@@ -1,5 +1,4 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { FuturesMarginType } from '@kwenta/sdk/types'
 import { isZero } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import React, { useCallback, useMemo } from 'react'
@@ -166,7 +165,6 @@ const SubmitCrossMarginTradeButton: React.FC = () => {
 		maxUsdInputAmount,
 		isMarketCapReached,
 		increasingPosition,
-		previewStatus,
 		maxLeverageValue,
 		leverage,
 		indexPrice,

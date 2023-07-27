@@ -114,17 +114,31 @@ export const selectV2Markets = createSelector(
 	}
 )
 
+export const selectOptimismMarkets = createSelector(
+	(state: RootState) => state.smartMargin,
+	(smartMargin) => unserializeV2Markets(smartMargin.markets[10] ?? [])
+)
+
+export const selectOptimismMarkPrices = createSelector(
+	selectOptimismMarkets,
+	selectPrices,
+	(optimismMarkets, prices) => {
+		const markPrices: MarkPrices = {}
+		return optimismMarkets.reduce((acc, market) => {
+			const price = prices[market.asset]?.offChain ?? wei(0)
+			return {
+				...acc,
+				[market.marketKey]: wei(price).mul(
+					wei(market.marketSkew).div(market.settings.skewScale).add(1)
+				),
+			}
+		}, markPrices)
+	}
+)
+
 export const selectPerpsV2MarketVolumes = createSelector(
 	(state: RootState) => state.smartMargin.dailyMarketVolumes,
 	(dailyMarketVolumes) => unserializeFuturesVolumes(dailyMarketVolumes)
-)
-
-export const selectMarketKeys = createSelector(selectV2Markets, (markets) =>
-	markets.map(({ asset }) => MarketKeyByAsset[asset])
-)
-
-export const selectMarketAssets = createSelector(selectV2Markets, (markets) =>
-	markets.map(({ asset }) => asset)
 )
 
 export const selectV2MarketInfo = createSelector(
@@ -834,7 +848,7 @@ export const selectTradePreviewStatus = createSelector(
 	}
 )
 
-export const selectOpenDelayedOrders = createSelector(
+export const selectSmartMarginDelayedOrders = createSelector(
 	selectSmartMarginAccountData,
 	selectV2Markets,
 	(account, markets) => {
@@ -873,7 +887,7 @@ export const selectOpenDelayedOrders = createSelector(
 )
 
 export const selectPendingDelayedOrder = createSelector(
-	selectOpenDelayedOrders,
+	selectSmartMarginDelayedOrders,
 	selectV2MarketKey,
 	(delayedOrders, marketKey) => {
 		return delayedOrders.find((o) => o.market.marketKey === marketKey)

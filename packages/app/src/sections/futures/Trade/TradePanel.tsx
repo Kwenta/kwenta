@@ -9,11 +9,7 @@ import { selectFuturesType } from 'state/futures/common/selectors'
 import { selectLeverageSide } from 'state/futures/selectors'
 import { changeLeverageSide } from 'state/futures/smartMargin/actions'
 import { setOrderType } from 'state/futures/smartMargin/reducer'
-import {
-	selectOrderType,
-	selectSmartMarginOrderPrice,
-	selectSmartMarginTradeInputs,
-} from 'state/futures/smartMargin/selectors'
+import { selectOrderType } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectPricesConnectionError } from 'state/prices/selectors'
 
@@ -45,8 +41,6 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 	const orderType = useAppSelector(selectOrderType)
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError)
 	const hideOrderWarning = useAppSelector(selectAckedOrdersWarning)
-	const { susdSizeString, nativeSizeString } = useAppSelector(selectSmartMarginTradeInputs)
-	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 
 	const [showOrderWarning, setShowOrderWarning] = useState(false)
 

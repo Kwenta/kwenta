@@ -45,7 +45,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = () => {
 		<MarketDetailsContainer mobile={mobileOrTablet}>
 			<IndexPriceDetail mobile={mobileOrTablet} />
 			<MarketSkew mobile={mobileOrTablet} />
-			<HourlyFundingDetail mobile={deviceType === 'mobile'} />
+			<HourlyFundingDetail mobile={mobileOrTablet} />
 			<MarketPriceDetail mobile={mobileOrTablet} />
 			<DailyChangeDetail mobile={mobileOrTablet} />
 			<FlexDivRow columnGap="25px">

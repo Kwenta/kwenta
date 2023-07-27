@@ -17,13 +17,9 @@ import { cancelDelayedOrder } from 'state/futures/actions'
 import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import { cancelAsyncOrder, executeAsyncOrder } from 'state/futures/crossMargin/actions'
 import { selectAsyncCrossMarginOrders } from 'state/futures/crossMargin/selectors'
-import {
-	selectIsCancellingOrder,
-	selectIsExecutingOrder,
-	selectMarkets,
-} from 'state/futures/selectors'
+import { selectIsCancellingOrder, selectIsExecutingOrder } from 'state/futures/selectors'
 import { executeDelayedOrder } from 'state/futures/smartMargin/actions'
-import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
+import { selectSmartMarginDelayedOrders } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PositionType from '../PositionType'
@@ -45,19 +41,20 @@ const OpenDelayedOrdersTable: React.FC = memo(() => {
 	const isL2 = useIsL2()
 
 	const marketAsset = useAppSelector(selectMarketAsset)
-	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders)
-	const futuresMarkets = useAppSelector(selectMarkets)
+	const smartMarginOrders = useAppSelector(selectSmartMarginDelayedOrders)
 	const isCancelling = useAppSelector(selectIsCancellingOrder)
 	const isExecuting = useAppSelector(selectIsExecutingOrder)
 	const crossMarginOrders = useAppSelector(selectAsyncCrossMarginOrders)
 	const futuresType = useAppSelector(selectFuturesType)
 
 	const orders = useMemo(
-		() => (futuresType === FuturesMarginType.CROSS_MARGIN ? crossMarginOrders : openDelayedOrders),
-		[futuresType, crossMarginOrders, openDelayedOrders]
+		() => (futuresType === FuturesMarginType.CROSS_MARGIN ? crossMarginOrders : smartMarginOrders),
+		[futuresType, crossMarginOrders, smartMarginOrders]
 	)
 
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>()
+
+	// TODO: Share logic between mobile and desktop
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = orders
@@ -122,7 +119,7 @@ const OpenDelayedOrdersTable: React.FC = memo(() => {
 					: -1
 			})
 		return ordersWithCancel
-	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers, crossMarginOrders, dispatch])
+	}, [orders, marketAsset, countdownTimers, dispatch])
 
 	useInterval(
 		() => {

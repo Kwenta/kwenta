@@ -125,7 +125,7 @@ import {
 	selectClosePositionPreview,
 	selectMarketIndexPrice,
 	selectV2MarketInfo,
-	selectOpenDelayedOrders,
+	selectSmartMarginDelayedOrders,
 } from './selectors'
 import { SmartMarginBalanceInfo } from './types'
 
@@ -315,7 +315,7 @@ export const fetchSmartMarginOpenOrders = createAsyncThunk<
 	const supportedNetwork = selectSmartMarginSupportedNetwork(getState())
 	const network = selectNetwork(getState())
 	const markets = selectV2Markets(getState())
-	const existingOrders = selectOpenDelayedOrders(getState())
+	const existingOrders = selectSmartMarginDelayedOrders(getState())
 
 	const marketAddresses = markets.map((market) => market.marketAddress)
 
@@ -969,7 +969,7 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState())
 		const wallet = selectWallet(getState())
 		const position = selectPosition(getState())
-		const openDelayedOrders = selectOpenDelayedOrders(getState())
+		const openDelayedOrders = selectSmartMarginDelayedOrders(getState())
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState())
 
 		try {

@@ -1,5 +1,4 @@
 import {
-	DelayedOrder,
 	PerpsV2Position,
 	FuturesPositionHistory,
 	NetworkId,
@@ -26,7 +25,7 @@ import {
 } from 'state/app/reducer'
 import { fetchV3BalancesAndAllowances } from 'state/balances/actions'
 import { ZERO_STATE_TRADE_INPUTS } from 'state/constants'
-import { selectLeverageSide, selectMarketInfo, selectMarkets } from 'state/futures/selectors'
+import { selectLeverageSide, selectMarketInfo } from 'state/futures/selectors'
 import { AppThunk } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
@@ -68,7 +67,6 @@ import {
 	selectV3MarketInfo,
 	selectV3Markets,
 	selectCloseCMPositionModalInfo,
-	selectCloseCMPositionOrderInputs,
 } from './selectors'
 import { CrossMarginTradePreview } from './types'
 
@@ -557,7 +555,6 @@ export const submitCrossMarginReducePositionOrder = createAsyncThunk<void, void,
 		const { market, position, marketPrice } = selectCloseCMPositionModalInfo(getState())
 		const accountId = selectCrossMarginAccount(getState())
 		// TODO: Support partial close
-		const { nativeSizeDelta } = selectCloseCMPositionOrderInputs(getState())
 
 		try {
 			if (!position) throw new Error('Missing position data')

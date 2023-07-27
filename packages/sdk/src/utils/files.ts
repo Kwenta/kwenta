@@ -9,7 +9,7 @@ import {
 const createClient = (baseURL: string) => {
 	return axios.create({
 		baseURL,
-		timeout: 5000,
+		timeout: 30000,
 	})
 }
 

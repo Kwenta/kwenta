@@ -83,15 +83,11 @@ const exchangeSlice = createSlice({
 			state.baseAmount = action.payload
 		},
 		setQuoteCurrencyKey: (state, action) => {
-			state.baseAmount = ''
-
 			state.quoteCurrencyKey = action.payload
 			state.baseCurrencyKey =
 				state.baseCurrencyKey === action.payload ? undefined : state.baseCurrencyKey
 		},
 		setBaseCurrencyKey: (state, action) => {
-			state.quoteAmount = ''
-
 			state.baseCurrencyKey = action.payload
 			state.quoteCurrencyKey =
 				state.quoteCurrencyKey === action.payload ? undefined : state.quoteCurrencyKey

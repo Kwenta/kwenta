@@ -69,12 +69,13 @@ const newTheme = {
 	text: {
 		primary: common.palette.neutral.n900,
 		secondary: common.palette.neutral.n400,
-		tertiary: common.palette.neutral,
+		tertiary: common.palette.neutral.n600,
 		disabled: common.palette.neutral.n100,
 		positive: common.palette.green.g800,
 		negative: common.palette.red.r700,
 		preview: common.palette.yellow.y800,
 		warning: common.palette.yellow.y800,
+		sectionHeader: common.palette.yellow.y900,
 	},
 	pill: {
 		yellow: {
@@ -210,6 +211,12 @@ const newTheme = {
 		tooltip: {
 			background: common.palette.neutral.n10,
 			border: common.palette.neutral.n50,
+		},
+	},
+	exchange: {
+		card: common.palette.neutral.n20,
+		ratioSelect: {
+			background: common.palette.neutral.n30,
 		},
 	},
 }

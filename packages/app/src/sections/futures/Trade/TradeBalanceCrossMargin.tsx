@@ -123,7 +123,16 @@ const TradeBalanceCrossMargin: React.FC<TradeBalanceProps> = memo(({ isMobile = 
 				</FlexDivCol>
 			</FlexDivRow>
 		)
-	}, [crossMarginAccount, isDepositRequired, availableCrossMargin, isMobile, expanded, walletBal])
+	}, [
+		t,
+		crossMarginAccount,
+		isDepositRequired,
+		availableCrossMargin,
+		isMobile,
+		expanded,
+		walletBal,
+		dispatch,
+	])
 
 	return (
 		<Container mobile={deviceType === 'mobile'}>
@@ -151,11 +160,6 @@ const DepositContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 `
 
-const StyledFlexDivCol = styled(FlexDivCol)`
-	border-left: ${(props) => props.theme.colors.selectedTheme.border};
-	padding-left: 10px;
-`
-
 const Container = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	padding: 13px 15px;
@@ -165,10 +169,6 @@ const Container = styled.div<{ mobile?: boolean }>`
 const BalanceContainer = styled(FlexDivRowCentered)<{ clickable: boolean }>`
 	cursor: ${(props) => (props.clickable ? 'pointer' : 'default')};
 	width: 100%;
-`
-
-const DetailsContainer = styled.div`
-	margin-top: 15px;
 `
 
 export default TradeBalanceCrossMargin

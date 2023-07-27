@@ -1,6 +1,6 @@
 import { FuturesMarginType, FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -16,16 +16,12 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
 import { cancelDelayedOrder } from 'state/futures/actions'
 import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
-import {
-	selectMarkets,
-	selectIsExecutingOrder,
-	selectIsCancellingOrder,
-} from 'state/futures/selectors'
-import { executeDelayedOrder } from 'state/futures/smartMargin/actions'
-import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { cancelAsyncOrder, executeAsyncOrder } from 'state/futures/crossMargin/actions'
 import { selectAsyncCrossMarginOrders } from 'state/futures/crossMargin/selectors'
+import { selectIsExecutingOrder, selectIsCancellingOrder } from 'state/futures/selectors'
+import { executeDelayedOrder } from 'state/futures/smartMargin/actions'
+import { selectSmartMarginDelayedOrders } from 'state/futures/smartMargin/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type CountdownTimers = Record<
 	FuturesMarketKey,
@@ -39,26 +35,18 @@ const OrdersTab: React.FC = () => {
 	const isL2 = useIsL2()
 
 	const marketAsset = useAppSelector(selectMarketAsset)
-	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders)
+	const smartMarginOrders = useAppSelector(selectSmartMarginDelayedOrders)
 	const crossMarginOrders = useAppSelector(selectAsyncCrossMarginOrders)
-	const futuresMarkets = useAppSelector(selectMarkets)
 	const isExecuting = useAppSelector(selectIsExecutingOrder)
 	const futuresType = useAppSelector(selectFuturesType)
 	const isCancelling = useAppSelector(selectIsCancellingOrder)
 
 	const orders = useMemo(
-		() => (futuresType === FuturesMarginType.CROSS_MARGIN ? crossMarginOrders : openDelayedOrders),
-		[futuresType, crossMarginOrders, openDelayedOrders]
+		() => (futuresType === FuturesMarginType.CROSS_MARGIN ? crossMarginOrders : smartMarginOrders),
+		[futuresType, crossMarginOrders, smartMarginOrders]
 	)
 
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>()
-
-	const handleExecute = useCallback(
-		(marketKey: FuturesMarketKey, marketAddress: string) => () => {
-			dispatch(executeDelayedOrder({ marketKey, marketAddress }))
-		},
-		[dispatch]
-	)
 
 	const rowsData = useMemo(() => {
 		const ordersWithCancel = orders
@@ -123,7 +111,7 @@ const OrdersTab: React.FC = () => {
 					: -1
 			})
 		return ordersWithCancel
-	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers, crossMarginOrders, dispatch])
+	}, [marketAsset, countdownTimers, orders, dispatch])
 
 	// TODO: Combine this with the one in OpenDelayedOrdersTable
 
