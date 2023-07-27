@@ -117,6 +117,13 @@ export enum FuturesMarketKey {
 	sINJPERP = 'sINJPERP',
 	sSTETHPERP = 'sSTETHPERP',
 	sETHBTCPERP = 'sETHBTCPERP',
+	sXMRPERP = 'sXMRPERP',
+	sMAVPERP = 'sMAVPERP',
+	sETCPERP = 'sETCPERP',
+	sCOMPPERP = 'sCOMPPERP',
+	sYFIPERP = 'sYFIPERP',
+	sMKRPERP = 'sMKRPERP',
+	sRPLPERP = 'sRPLPERP',
 }
 
 export enum FuturesMarketAsset {
@@ -163,6 +170,13 @@ export enum FuturesMarketAsset {
 	INJ = 'INJ',
 	STETH = 'STETH',
 	ETHBTC = 'ETHBTC',
+	XMR = 'XMR',
+	MAV = 'MAV',
+	ETC = 'ETC',
+	COMP = 'COMP',
+	YFI = 'YFI',
+	MKR = 'MKR',
+	RPL = 'RPL',
 }
 
 export interface FuturesMarketConfig {

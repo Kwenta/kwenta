@@ -500,6 +500,76 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0x754a0a0800247d77751e35efb91638c828046103be3bb3d26989e65bf4010859',
 		},
 	},
+	[FuturesMarketKey.sXMRPERP]: {
+		key: FuturesMarketKey.sXMRPERP,
+		asset: FuturesMarketAsset.XMR,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x46b8cc9347f04391764a0361e0b17c3ba394b001e7c304f7650f6376e37c321d',
+			testnet: '0xa7e2e2f7d47b17d18e6d49c427f21fb30c0a85e621a8502c3c4e486f3ab543c8',
+		},
+	},
+	[FuturesMarketKey.sMAVPERP]: {
+		key: FuturesMarketKey.sMAVPERP,
+		asset: FuturesMarketAsset.MAV,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x5b131ede5d017511cf5280b9ebf20708af299266a033752b64180c4201363b11',
+			testnet: '0x01a33b54c2911e1f58fdc02bc03e3778508bb9a84571afca33e2757791eb1269',
+		},
+	},
+	[FuturesMarketKey.sETCPERP]: {
+		key: FuturesMarketKey.sETCPERP,
+		asset: FuturesMarketAsset.ETC,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x7f5cc8d963fc5b3d2ae41fe5685ada89fd4f14b435f8050f28c7fd409f40c2d8',
+			testnet: '0xd77bfe9814f5a4718e1420881093efa8c0fe1a783472899f27ad4c7a58ef4d27',
+		},
+	},
+	[FuturesMarketKey.sCOMPPERP]: {
+		key: FuturesMarketKey.sCOMPPERP,
+		asset: FuturesMarketAsset.COMP,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x4a8e42861cabc5ecb50996f92e7cfa2bce3fd0a2423b0c44c9b423fb2bd25478',
+			testnet: '0x4e149083ba3766e716b77c1a6f7744709a075bed2ac08dc485543616454a6404',
+		},
+	},
+	[FuturesMarketKey.sYFIPERP]: {
+		key: FuturesMarketKey.sYFIPERP,
+		asset: FuturesMarketAsset.YFI,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x425f4b198ab2504936886c1e93511bb6720fbcf2045a4f3c0723bb213846022f',
+			testnet: '0xc9c8430ee6c26e218abe9f1c9cb88a664f7096d4934d8dfda17bc5d79e918848',
+		},
+	},
+	[FuturesMarketKey.sMKRPERP]: {
+		key: FuturesMarketKey.sMKRPERP,
+		asset: FuturesMarketAsset.MKR,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x9375299e31c0deb9c6bc378e6329aab44cb48ec655552a70d4b9050346a30378',
+			testnet: '0xc4d994230a6db7909135e4673287fb672f45ea92fb40b1bc9adf101ecf877ab7',
+		},
+	},
+	[FuturesMarketKey.sRPLPERP]: {
+		key: FuturesMarketKey.sRPLPERP,
+		asset: FuturesMarketAsset.RPL,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x24f94ac0fd8638e3fc41aab2e4df933e63f763351b640bf336a6ec70651c4503',
+			testnet: '0x9c48c155a80410aaa3699f6257d2255f6c95d0879766db1a187a249096ed2e94',
+		},
+	},
 }
 
 export const MARKET_ASSETS_BY_PYTH_ID = Object.values(MARKETS)

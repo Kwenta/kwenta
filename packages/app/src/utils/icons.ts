@@ -16,10 +16,12 @@ import BLURIcon from 'assets/png/currencies/sBLUR.png'
 import BNBIcon from 'assets/png/currencies/sBNB.png'
 import BTCIcon from 'assets/png/currencies/sBTC.png'
 import CHFIcon from 'assets/png/currencies/sCHF.png'
+import COMPIcon from 'assets/png/currencies/sCOMP.png'
 import CRVIcon from 'assets/png/currencies/sCRV.png'
 import DOGEIcon from 'assets/png/currencies/sDOGE.png'
 import DOTIcon from 'assets/png/currencies/sDOT.png'
 import DYDXIcon from 'assets/png/currencies/sDYDX.png'
+import ETCIcon from 'assets/png/currencies/sETC.png'
 import ETHIcon from 'assets/png/currencies/sETH.png'
 import ETHBTCIcon from 'assets/png/currencies/sETHBTC.png'
 import EURIcon from 'assets/png/currencies/sEUR.png'
@@ -37,11 +39,14 @@ import LDOIcon from 'assets/png/currencies/sLDO.png'
 import LINKIcon from 'assets/png/currencies/sLINK.png'
 import LTCIcon from 'assets/png/currencies/sLTC.png'
 import MATICIcon from 'assets/png/currencies/sMATIC.png'
+import MAVIcon from 'assets/png/currencies/sMAV.png'
+import MKRIcon from 'assets/png/currencies/sMKR.png'
 import NEARIcon from 'assets/png/currencies/sNEAR.png'
 import SNXIcon from 'assets/png/currencies/SNX.png'
 import OILIcon from 'assets/png/currencies/sOIL.png'
 import OPIcon from 'assets/png/currencies/sOP.png'
 import PEPEIcon from 'assets/png/currencies/sPEPE.png'
+import RPLIcon from 'assets/png/currencies/sRPL.png'
 import SHIBIcon from 'assets/png/currencies/sSHIB.png'
 import SOLIcon from 'assets/png/currencies/sSOL.png'
 import STETHIcon from 'assets/png/currencies/sstETH.png'
@@ -53,6 +58,7 @@ import XAGIcon from 'assets/png/currencies/sXAG.png'
 import XAUIcon from 'assets/png/currencies/sXAU.png'
 import XMRIcon from 'assets/png/currencies/sXMR.png'
 import XRPIcon from 'assets/png/currencies/sXRP.png'
+import YFIIcon from 'assets/png/currencies/sYFI.png'
 import WBTCIcon from 'assets/png/currencies/WBTC.png'
 import { SynthsName } from 'constants/currency'
 
@@ -70,11 +76,14 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sBLURPERP: BLURIcon,
 	sBNBPERP: BNBIcon,
 	sBTCPERP: BTCIcon,
+	sCOMPPERP: COMPIcon,
 	sCRVPERP: CRVIcon,
 	sDOGEPERP: DOGEIcon,
 	sDOTPERP: DOTIcon,
 	sDYDXPERP: DYDXIcon,
 	sETHPERP: ETHIcon,
+	sETHBTCPERP: ETHBTCIcon,
+	sETCPERP: ETCIcon,
 	sEURPERP: EURIcon,
 	sFILPERP: FILIcon,
 	sFLOKIPERP: FLOKIIcon,
@@ -87,9 +96,12 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sLDOPERP: LDOIcon,
 	sLTCPERP: LTCIcon,
 	sMATICPERP: MATICIcon,
+	sMAVPERP: MAVIcon,
+	sMKRPERP: MKRIcon,
 	sNEARPERP: NEARIcon,
 	sOPPERP: OPIcon,
 	sPEPEPERP: PEPEIcon,
+	sRPLPERP: RPLIcon,
 	sSHIBPERP: SHIBIcon,
 	sSOLPERP: SOLIcon,
 	sSTETHPERP: STETHIcon,
@@ -100,7 +112,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sXAGPERP: XAGIcon,
 	sXMRPERP: XMRIcon,
 	sXRPPERP: XRPIcon,
-	sETHBTCPERP: ETHBTCIcon,
+	sYFIPERP: YFIIcon,
 	sAAVE: AAVEIcon,
 	sADA: ADAIcon,
 	sAPE: APEIcon,
