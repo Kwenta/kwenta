@@ -319,7 +319,7 @@ export const fetchClaimableRewards = createAsyncThunk<
 	{
 		claimableKwentaRewards: Awaited<
 			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards'][]
+		>['claimableRewards']
 		claimableOpRewards: Awaited<
 			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
 		>['claimableRewards']
@@ -339,16 +339,16 @@ export const fetchClaimableRewards = createAsyncThunk<
 		} = getState()
 
 		const { claimableRewards: claimableKwentaRewardsV2, totalRewards: kwentaRewardsV2 } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false, 9)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, 9)
 
 		const { claimableRewards: claimableOpRewards, totalRewards: opRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, false)
 
 		const { claimableRewards: claimableSnxOpRewards, totalRewards: snxOpRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true)
+			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, true)
 
 		return {
-			claimableKwentaRewards: [claimableKwentaRewardsV2],
+			claimableKwentaRewards: claimableKwentaRewardsV2,
 			claimableOpRewards,
 			claimableSnxOpRewards,
 			kwentaRewards: kwentaRewardsV2.toString(),
@@ -370,7 +370,7 @@ export const claimMultipleAllRewards = createAsyncThunk<void, void, ThunkConfig>
 		} = getState()
 
 		const { hash } = await sdk.kwentaToken.claimMultipleAllRewards([
-			...claimableKwentaRewards,
+			claimableKwentaRewards,
 			claimableOpRewards,
 			claimableSnxOpRewards,
 		])
