@@ -82,6 +82,7 @@ export type CrossMarginQueryStatuses = FuturesQueryStatuses & {
 }
 
 export type CrossMarginAccountData = FuturesAccountData & {
+	account: number
 	asyncOrders: PerpsV3AsyncOrder<string>[]
 	balances: { [asset: string]: { balance: string; allowance: string } }
 	availableMargin: string

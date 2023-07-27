@@ -146,7 +146,7 @@ const crossMarginSlice = createSlice({
 
 		setPerpsV3Account: (
 			state,
-			action: PayloadAction<{ wallet: string; account: string; network: NetworkId }>
+			action: PayloadAction<{ wallet: string; account: number; network: NetworkId }>
 		) => {
 			const { account, wallet, network } = action.payload
 			if (!state.accounts[network]?.[wallet]?.account) {
@@ -380,7 +380,7 @@ export const {
 
 const findWalletForAccount = (
 	perpsV3State: CrossMarginState,
-	account: string,
+	account: number,
 	network: NetworkId
 ) => {
 	const entry = Object.entries(perpsV3State.accounts[network]).find(([_, value]) => {

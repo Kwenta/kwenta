@@ -102,6 +102,7 @@ export type FundingRatePeriods = {
 }
 
 export type SmartMarginAccountData = FuturesAccountData & {
+	account: string
 	idleTransfers: MarginTransfer[]
 	balanceInfo: SmartMarginBalanceInfo<string>
 	conditionalOrders: SmartMarginOrder<string>[]

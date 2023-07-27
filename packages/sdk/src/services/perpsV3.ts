@@ -150,19 +150,14 @@ export default class PerpsV3Service {
 		return futuresMarkets
 	}
 
-	// TODO: types
-	// TODO: Improve the API for fetching positions
-	public async getPositions(
-		address: string, // Cross margin or EOA address
-		marketIds: number[]
-	) {
+	public async getPositions(accountId: number, marketIds: number[]) {
 		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
 
 		if (!this.sdk.context.isL2 || !proxy) {
 			throw new Error(UNSUPPORTED_NETWORK)
 		}
 
-		const positionCalls = marketIds.map((id) => proxy.getOpenPosition(address, id))
+		const positionCalls = marketIds.map((id) => proxy.getOpenPosition(accountId, id))
 
 		// TODO: Combine these two?
 		const positionDetails = (await this.sdk.context.multicallProvider.all(positionCalls)) as [
@@ -362,26 +357,26 @@ export default class PerpsV3Service {
 		return queryIsolatedMarginTransfers(this.sdk, address)
 	}
 
-	public async getAvailableMargin(accountId: string) {
+	public async getAvailableMargin(accountId: number) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
 		const availableMargin = await marketProxy.getAvailableMargin(accountId)
 		return wei(availableMargin)
 	}
 
-	public async getPendingAsyncOrder(account: string, marketAddress: string) {
+	public async getPendingAsyncOrder(accountId: number, marketAddress: string) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
-		const order = await marketProxy.getOrder(account, marketAddress)
+		const order = await marketProxy.getOrder(accountId, marketAddress)
 		return formatV3AsyncOrder(order)
 	}
 
-	public async getPendingAsyncOrders(account: string, marketIds: BigNumberish[]) {
+	public async getPendingAsyncOrders(accountId: number, marketIds: BigNumberish[]) {
 		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
 		if (!proxy) throw new Error(UNSUPPORTED_NETWORK)
 
 		const orders = (await this.sdk.context.multicallProvider.all(
-			marketIds.map((market) => proxy.getOrder(market, account))
+			marketIds.map((market) => proxy.getOrder(market, accountId))
 		)) as AsyncOrder.DataStructOutput[]
 		return orders.filter((o) => o.sizeDelta.abs().gt(0)).map(formatV3AsyncOrder)
 	}
@@ -485,23 +480,12 @@ export default class PerpsV3Service {
 		])
 	}
 
-	public async depositToMarket(accountId: string, asset: SynthV3Asset, amount: Wei) {
-		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
-		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
-		return this.sdk.transactions.createContractTxn(marketProxy, 'modifyCollateral', [
-			accountId,
-			V3_SYNTH_MARKET_IDS[asset],
-			amount.toBN(),
-		])
+	public async depositToAccount(accountId: number, marketId: number, amount: Wei) {
+		return this.modifyCollateral(accountId, marketId, amount)
 	}
 
-	public async withdrawFromAccount(marketAddress: string, amount: Wei) {
-		// TODO: Accept account
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
-		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [
-			amount.neg().toBN(),
-		])
-		return txn
+	public async withdrawFromAccount(accountId: number, marketId: number, amount: Wei) {
+		return this.modifyCollateral(accountId, marketId, amount.neg())
 	}
 
 	public async closePosition(marketAddress: string, priceImpactDelta: Wei) {
@@ -511,7 +495,7 @@ export default class PerpsV3Service {
 
 	public async submitOrder(
 		marketId: number,
-		accountId: string,
+		accountId: number,
 		sizeDelta: Wei,
 		acceptablePrice: Wei,
 		settlementStrategyId: number
@@ -531,10 +515,13 @@ export default class PerpsV3Service {
 		return this.sdk.transactions.createContractTxn(marketProxy, 'commitOrder', [commitment])
 	}
 
-	public async cancelAsyncOrder(marketId: number, account: string) {
+	public async cancelAsyncOrder(marketId: number, accountId: number) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
-		return this.sdk.transactions.createContractTxn(marketProxy, 'cancelOrder', [marketId, account])
+		return this.sdk.transactions.createContractTxn(marketProxy, 'cancelOrder', [
+			marketId,
+			accountId,
+		])
 	}
 
 	public async executeAsyncOrder(marketKey: FuturesMarketKey, marketId: number, accountId: number) {
@@ -576,5 +563,17 @@ export default class PerpsV3Service {
 		const scaleWei = wei(skewScale)
 
 		return price.mul(skewWei.div(scaleWei).add(1))
+	}
+
+	// private helpers
+
+	private modifyCollateral(accountId: number, marketId: number, amount: Wei) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		return this.sdk.transactions.createContractTxn(marketProxy, 'modifyCollateral', [
+			accountId,
+			marketId,
+			amount.toBN(),
+		])
 	}
 }

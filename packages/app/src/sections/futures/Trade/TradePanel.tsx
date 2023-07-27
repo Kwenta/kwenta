@@ -25,7 +25,7 @@ import OrderAcknowledgement from './OrderAcknowledgement'
 import OrderTypeSelector from './OrderTypeSelector'
 import SLTPInputs from './SLTPInputs'
 import SmartMarginTradePanelPreview from './SmartMarginTradePanelPreview'
-import TradeBalance from './TradeBalance'
+import TradeBalance from './TradeBalanceSmartMargin'
 import OrderPriceInput from './TradePanelPriceInput'
 
 type Props = {

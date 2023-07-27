@@ -280,10 +280,10 @@ export const selectShowCrossMarginOnboard = (state: RootState) =>
 	state.app.showModal === 'futures_cross_margin_onboard'
 
 export const selectWithdrawableCrossMargin = createSelector(
-	(state: RootState) => state.crossMargin,
-	(_) => {
-		// TODO: Hook up withdrawable cross margin
-		return wei(0)
+	selectCrossMarginAvailableMargin,
+	(available) => {
+		// TODO: Calculate withdrawable based on maintenance margin
+		return available
 	}
 )
 

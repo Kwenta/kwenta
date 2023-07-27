@@ -16,7 +16,6 @@ type excludedOptions = typeof FuturesMarginType.ISOLATED_MARGIN_LEGACY
 export type AppFuturesMarginType = Exclude<FuturesMarginType, excludedOptions>
 
 export type FuturesAccountData = {
-	account: string
 	trades?: FuturesTrade<string>[]
 	marginTransfers?: MarginTransfer[]
 }

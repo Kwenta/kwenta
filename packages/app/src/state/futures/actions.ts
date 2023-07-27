@@ -40,7 +40,10 @@ import {
 	setSmartMarginTradeInputs,
 	setSmartMarginEditPositionInputs,
 } from './smartMargin/reducer'
-import { selectSmartMarginSupportedNetwork } from './smartMargin/selectors'
+import {
+	selectSmartMarginAccount,
+	selectSmartMarginSupportedNetwork,
+} from './smartMargin/selectors'
 
 export const fetchMarkets = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchMarkets',
@@ -133,7 +136,7 @@ export const fetchPositionHistoryForTrader = createAsyncThunk<
 export const cancelDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
 	'futures/cancelDelayedOrder',
 	async (marketAddress, { getState, dispatch, extra: { sdk } }) => {
-		const account = selectFuturesAccount(getState())
+		const account = selectSmartMarginAccount(getState())
 		if (!account) throw new Error('No wallet connected')
 		try {
 			dispatch(

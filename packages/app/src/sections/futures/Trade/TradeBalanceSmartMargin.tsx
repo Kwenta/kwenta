@@ -156,9 +156,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 					</>
 				)}
 
-				{(accountType === FuturesMarginType.CROSS_MARGIN ||
-					withdrawable.gt(0) ||
-					!isDepositRequired) && (
+				{(withdrawable.gt(0) || !isDepositRequired) && (
 					<FlexDivRowCentered columnGap="15px">
 						<PencilButton
 							width={16}

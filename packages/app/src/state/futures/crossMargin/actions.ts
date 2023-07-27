@@ -44,7 +44,6 @@ import {
 	CrossMarginTradePreviewParams,
 	DebouncedCMPreviewParams,
 } from '../common/types'
-import { selectV2MarketInfo } from '../smartMargin/selectors'
 import { ExecuteAsyncOrderInputs } from '../types'
 
 import {
@@ -90,7 +89,7 @@ export const fetchV3Markets = createAsyncThunk<
 })
 
 export const fetchPerpsV3Account = createAsyncThunk<
-	{ account: string; wallet: string; network: NetworkId } | undefined,
+	{ account: number; wallet: string; network: NetworkId } | undefined,
 	void,
 	ThunkConfig
 >('futures/fetchPerpsV3Account', async (_, { getState, extra: { sdk }, rejectWithValue }) => {
@@ -117,7 +116,7 @@ export const fetchPerpsV3Account = createAsyncThunk<
 				notifyError(errMessage)
 				rejectWithValue(errMessage)
 			}
-			return { account: id, wallet, network }
+			return { account: Number(id), wallet, network }
 		}
 		return undefined
 	} catch (err) {
@@ -138,7 +137,7 @@ export const fetchPerpsV3Balances = createAsyncThunk<void, void, ThunkConfig>(
 )
 
 export const fetchCrossMarginPositions = createAsyncThunk<
-	{ positions: PerpsV3Position<string>[]; account: string; network: NetworkId } | undefined,
+	{ positions: PerpsV3Position<string>[]; account: number; network: NetworkId } | undefined,
 	void,
 	ThunkConfig
 >('futures/fetchCrossMarginPositions', async (_, { extra: { sdk }, getState }) => {
@@ -164,25 +163,26 @@ export const fetchCrossMarginPositions = createAsyncThunk<
 export const fetchPositionHistoryV3 = createAsyncThunk<
 	| {
 			history: FuturesPositionHistory<string>[]
-			account: string
+			account: number
 			wallet: string
 			networkId: NetworkId
 	  }
 	| undefined,
 	void,
 	ThunkConfig
->('futures/fetchPositionHistoryV3', async (_, { getState, extra: { sdk } }) => {
+>('futures/fetchPositionHistoryV3', async (_, { getState, extra: { sdk: _sdk } }) => {
 	try {
 		const { wallet, network, accountId } = selectAccountContext(getState())
 
 		const futuresSupported = selectCrossMarginSupportedNetwork(getState())
 		if (!wallet || !accountId || !futuresSupported) return
-		const history = await sdk.futures.getPositionHistory(accountId)
+		// TODO: V3 position history
+		// const history = await sdk.futures.getPositionHistory(accountId)
 		return {
 			account: accountId,
 			wallet,
 			networkId: network,
-			history: serializePositionHistory(history),
+			history: serializePositionHistory([]),
 		}
 	} catch (err) {
 		notifyError('Failed to fetch perps v3 position history', err)
@@ -417,7 +417,7 @@ export const createPerpsV3Account = createAsyncThunk<
 				rejectWithValue('Account id already registered')
 				return
 			} else if (owner) {
-				dispatch(setPerpsV3Account({ account: id.toString(), wallet: wallet, network }))
+				dispatch(setPerpsV3Account({ account: id, wallet: wallet, network }))
 				return
 			}
 
@@ -466,7 +466,7 @@ export const depositCrossMarginMargin = createAsyncThunk<void, Wei, ThunkConfig>
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
 		const marketInfo = selectMarketInfo(getState())
 		const accountId = selectCrossMarginAccount(getState())
-		if (!marketInfo) throw new Error('Market info not found')
+		if (!marketInfo || marketInfo?.version !== 3) throw new Error('Market info not found')
 		if (!accountId) throw new Error('Account id not found')
 		try {
 			dispatch(
@@ -476,7 +476,7 @@ export const depositCrossMarginMargin = createAsyncThunk<void, Wei, ThunkConfig>
 					hash: null,
 				})
 			)
-			const tx = await sdk.perpsV3.depositToMarket(accountId, SynthV3Asset.SNXUSD, amount)
+			const tx = await sdk.perpsV3.depositToAccount(accountId, marketInfo.marketId, amount)
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(setOpenModal(null))
 			dispatch(refetchPosition())
@@ -492,8 +492,8 @@ export const depositCrossMarginMargin = createAsyncThunk<void, Wei, ThunkConfig>
 export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	'futures/withdrawCrossMargin',
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectV2MarketInfo(getState())
-		if (!marketInfo) throw new Error('Market info not found')
+		const marketInfo = selectV3MarketInfo(getState())
+		if (!marketInfo || marketInfo?.version !== 3) throw new Error('Market info not found')
 		try {
 			dispatch(
 				setTransaction({
@@ -502,7 +502,11 @@ export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 					hash: null,
 				})
 			)
-			const tx = await sdk.futures.withdrawIsolatedMargin(marketInfo.marketAddress, amount)
+			const tx = await sdk.perpsV3.withdrawFromAccount(
+				marketInfo.marketId,
+				marketInfo.marketId,
+				amount
+			)
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(refetchPosition())
 			dispatch(setOpenModal(null))
