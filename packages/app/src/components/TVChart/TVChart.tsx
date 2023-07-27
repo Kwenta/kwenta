@@ -93,7 +93,8 @@ export function TVChart({
 		_oderLineRefs.current = []
 	}
 
-	const decimals = Number(initialPrice) > 100 ? 2 : suggestedDecimals(initialPrice)
+	const decimals =
+		Number(initialPrice) > 100 && Number(initialPrice) < 1000 ? 3 : suggestedDecimals(initialPrice)
 	const chartScale = 10 ** decimals
 
 	useEffect(() => {
