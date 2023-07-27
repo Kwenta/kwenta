@@ -23,7 +23,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:168](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/futures.ts#L168)
+[packages/sdk/src/types/futures.ts:168](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/futures.ts#L168)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:175](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/futures.ts#L175)
+[packages/sdk/src/types/futures.ts:175](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/futures.ts#L175)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:167](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/futures.ts#L167)
+[packages/sdk/src/types/futures.ts:167](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/futures.ts#L167)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:171](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/futures.ts#L171)
+[packages/sdk/src/types/futures.ts:171](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/futures.ts#L171)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:169](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/futures.ts#L169)
+[packages/sdk/src/types/futures.ts:169](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/futures.ts#L169)
 
 ___
 
@@ -80,4 +80,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:170](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/futures.ts#L170)
+[packages/sdk/src/types/futures.ts:170](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/futures.ts#L170)

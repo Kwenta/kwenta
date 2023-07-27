@@ -10,13 +10,8 @@
 
 - [constructor](services_stats.default.md#constructor)
 
-### Properties
-
-- [sdk](services_stats.default.md#sdk)
-
 ### Methods
 
-- [batchGetENS](services_stats.default.md#batchgetens)
 - [getFuturesCumulativeStats](services_stats.default.md#getfuturescumulativestats)
 - [getFuturesStats](services_stats.default.md#getfuturesstats)
 - [getFuturesTradersStats](services_stats.default.md#getfuturestradersstats)
@@ -37,39 +32,9 @@
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:24](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L24)
-
-## Properties
-
-### sdk
-
-• `Private` **sdk**: [`default`](index.default.md)
-
-#### Defined in
-
-[packages/sdk/src/services/stats.ts:22](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L22)
+[packages/sdk/src/services/stats.ts:24](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/stats.ts#L24)
 
 ## Methods
-
-### batchGetENS
-
-▸ `Private` **batchGetENS**(`addresses`): `Promise`<[`EnsInfo`](../modules/types_stats.md#ensinfo)\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `addresses` | `string`[] |
-
-#### Returns
-
-`Promise`<[`EnsInfo`](../modules/types_stats.md#ensinfo)\>
-
-#### Defined in
-
-[packages/sdk/src/services/stats.ts:172](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L172)
-
-___
 
 ### getFuturesCumulativeStats
 
@@ -87,7 +52,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:128](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L128)
+[packages/sdk/src/services/stats.ts:128](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/stats.ts#L128)
 
 ___
 
@@ -101,7 +66,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:32](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L32)
+[packages/sdk/src/services/stats.ts:32](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/stats.ts#L32)
 
 ___
 
@@ -115,7 +80,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:30](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L30)
+[packages/sdk/src/services/stats.ts:30](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/stats.ts#L30)
 
 ___
 
@@ -135,7 +100,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:69](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L69)
+[packages/sdk/src/services/stats.ts:69](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/stats.ts#L69)
 
 ___
 
@@ -149,4 +114,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/stats.ts:28](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/stats.ts#L28)
+[packages/sdk/src/services/stats.ts:28](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/stats.ts#L28)

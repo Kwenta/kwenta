@@ -10,10 +10,6 @@
 
 - [constructor](services_system.default.md#constructor)
 
-### Properties
-
-- [sdk](services_system.default.md#sdk)
-
 ### Methods
 
 - [getKwentaStatus](services_system.default.md#getkwentastatus)
@@ -33,17 +29,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/system.ts:10](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/system.ts#L10)
-
-## Properties
-
-### sdk
-
-• `Private` **sdk**: [`default`](index.default.md)
-
-#### Defined in
-
-[packages/sdk/src/services/system.ts:8](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/system.ts#L8)
+[packages/sdk/src/services/system.ts:10](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/system.ts#L10)
 
 ## Methods
 
@@ -57,7 +43,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/system.ts:29](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/system.ts#L29)
+[packages/sdk/src/services/system.ts:29](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/system.ts#L29)
 
 ___
 
@@ -71,4 +57,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/system.ts:14](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/system.ts#L14)
+[packages/sdk/src/services/system.ts:14](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/system.ts#L14)

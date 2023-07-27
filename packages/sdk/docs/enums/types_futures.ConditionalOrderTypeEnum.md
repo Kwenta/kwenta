@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:309](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/futures.ts#L309)
+[packages/sdk/src/types/futures.ts:309](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/futures.ts#L309)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/futures.ts:310](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/futures.ts#L310)
+[packages/sdk/src/types/futures.ts:310](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/futures.ts#L310)

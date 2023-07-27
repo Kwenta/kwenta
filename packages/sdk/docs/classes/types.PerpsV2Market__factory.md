@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts:1426](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts#L1426)
+[packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts:1426](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts#L1426)
 
 ## Methods
 
@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts:1430](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts#L1430)
+[packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts:1430](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts#L1430)
 
 ___
 
@@ -68,4 +68,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts:1427](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts#L1427)
+[packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts:1427](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/contracts/types/factories/PerpsV2Market__factory.ts#L1427)

@@ -12,16 +12,7 @@
 
 ### Properties
 
-- [connectionMonitorId](services_prices.default.md#connectionmonitorid)
-- [lastConnectionTime](services_prices.default.md#lastconnectiontime)
-- [offChainPrices](services_prices.default.md#offchainprices)
-- [onChainPrices](services_prices.default.md#onchainprices)
-- [pyth](services_prices.default.md#pyth)
-- [ratesInterval](services_prices.default.md#ratesinterval)
-- [sdk](services_prices.default.md#sdk)
-- [server](services_prices.default.md#server)
 - [throttleOffChainPricesUpdate](services_prices.default.md#throttleoffchainpricesupdate)
-- [wsConnected](services_prices.default.md#wsconnected)
 
 ### Accessors
 
@@ -30,25 +21,17 @@
 
 ### Methods
 
-- [connectToPyth](services_prices.default.md#connecttopyth)
-- [formatOffChainPrices](services_prices.default.md#formatoffchainprices)
-- [formatPythPrice](services_prices.default.md#formatpythprice)
 - [getOffChainPrices](services_prices.default.md#getoffchainprices)
 - [getOffchainPrice](services_prices.default.md#getoffchainprice)
 - [getOnChainPrices](services_prices.default.md#getonchainprices)
 - [getPreviousDayPrices](services_prices.default.md#getpreviousdayprices)
 - [getPythPriceUpdateData](services_prices.default.md#getpythpriceupdatedata)
-- [monitorConnection](services_prices.default.md#monitorconnection)
 - [onPricesConnectionUpdated](services_prices.default.md#onpricesconnectionupdated)
 - [onPricesUpdated](services_prices.default.md#onpricesupdated)
 - [removeConnectionListeners](services_prices.default.md#removeconnectionlisteners)
 - [removePricesListener](services_prices.default.md#removepriceslistener)
 - [removePricesListeners](services_prices.default.md#removepriceslisteners)
-- [setEventListeners](services_prices.default.md#seteventlisteners)
-- [setWsConnected](services_prices.default.md#setwsconnected)
 - [startPriceUpdates](services_prices.default.md#startpriceupdates)
-- [subscribeToPythPriceUpdates](services_prices.default.md#subscribetopythpriceupdates)
-- [switchConnection](services_prices.default.md#switchconnection)
 
 ## Constructors
 
@@ -64,89 +47,9 @@
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:48](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L48)
+[packages/sdk/src/services/prices.ts:48](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L48)
 
 ## Properties
-
-### connectionMonitorId
-
-• `Private` `Optional` **connectionMonitorId**: `Timeout`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:46](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L46)
-
-___
-
-### lastConnectionTime
-
-• `Private` **lastConnectionTime**: `number`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:43](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L43)
-
-___
-
-### offChainPrices
-
-• `Private` **offChainPrices**: `Partial`<`Record`<[`AssetKey`](../modules/types_prices.md#assetkey), `Wei`\>\> = `{}`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:39](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L39)
-
-___
-
-### onChainPrices
-
-• `Private` **onChainPrices**: `Partial`<`Record`<[`AssetKey`](../modules/types_prices.md#assetkey), `Wei`\>\> = `{}`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:40](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L40)
-
-___
-
-### pyth
-
-• `Private` **pyth**: `EvmPriceServiceConnection`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:42](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L42)
-
-___
-
-### ratesInterval
-
-• `Private` `Optional` **ratesInterval**: `Timeout`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:41](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L41)
-
-___
-
-### sdk
-
-• `Private` **sdk**: [`default`](index.default.md)
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:38](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L38)
-
-___
-
-### server
-
-• `Private` **server**: [`PriceServer`](../modules/types_common.md#priceserver) = `DEFAULT_PRICE_SERVER`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:45](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L45)
-
-___
 
 ### throttleOffChainPricesUpdate
 
@@ -154,17 +57,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:289](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L289)
-
-___
-
-### wsConnected
-
-• `Private` **wsConnected**: `boolean` = `false`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:44](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L44)
+[packages/sdk/src/services/prices.ts:289](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L289)
 
 ## Accessors
 
@@ -183,7 +76,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:54](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L54)
+[packages/sdk/src/services/prices.ts:54](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L54)
 
 ___
 
@@ -197,70 +90,9 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:61](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L61)
+[packages/sdk/src/services/prices.ts:61](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L61)
 
 ## Methods
-
-### connectToPyth
-
-▸ `Private` **connectToPyth**(`networkId`, `server`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `networkId` | [`NetworkId`](../modules/types_common.md#networkid) |
-| `server` | [`PriceServer`](../modules/types_common.md#priceserver) |
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:227](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L227)
-
-___
-
-### formatOffChainPrices
-
-▸ `Private` **formatOffChainPrices**(`pythPrices`): `Record`<`string`, `Wei`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `pythPrices` | `PriceFeed`[] |
-
-#### Returns
-
-`Record`<`string`, `Wei`\>
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:212](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L212)
-
-___
-
-### formatPythPrice
-
-▸ `Private` **formatPythPrice**(`priceFeed`): `Wei`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `priceFeed` | `PriceFeed` |
-
-#### Returns
-
-`Wei`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:284](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L284)
-
-___
 
 ### getOffChainPrices
 
@@ -272,7 +104,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:159](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L159)
+[packages/sdk/src/services/prices.ts:159](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L159)
 
 ___
 
@@ -306,7 +138,7 @@ Offchain price for specified market
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:76](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L76)
+[packages/sdk/src/services/prices.ts:76](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L76)
 
 ___
 
@@ -320,7 +152,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:130](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L130)
+[packages/sdk/src/services/prices.ts:130](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L130)
 
 ___
 
@@ -341,7 +173,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:164](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L164)
+[packages/sdk/src/services/prices.ts:164](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L164)
 
 ___
 
@@ -367,21 +199,7 @@ Pyth price update data
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:203](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L203)
-
-___
-
-### monitorConnection
-
-▸ `Private` **monitorConnection**(): `void`
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:267](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L267)
+[packages/sdk/src/services/prices.ts:203](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L203)
 
 ___
 
@@ -401,7 +219,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:120](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L120)
+[packages/sdk/src/services/prices.ts:120](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L120)
 
 ___
 
@@ -421,7 +239,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:108](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L108)
+[packages/sdk/src/services/prices.ts:108](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L108)
 
 ___
 
@@ -435,7 +253,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:126](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L126)
+[packages/sdk/src/services/prices.ts:126](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L126)
 
 ___
 
@@ -455,7 +273,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:112](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L112)
+[packages/sdk/src/services/prices.ts:112](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L112)
 
 ___
 
@@ -469,41 +287,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:116](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L116)
-
-___
-
-### setEventListeners
-
-▸ `Private` **setEventListeners**(): `void`
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:261](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L261)
-
-___
-
-### setWsConnected
-
-▸ `Private` **setWsConnected**(`connected`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `connected` | `boolean` |
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:252](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L252)
+[packages/sdk/src/services/prices.ts:116](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L116)
 
 ___
 
@@ -534,32 +318,4 @@ await sdk.prices.startPriceUpdates(10000);
 
 #### Defined in
 
-[packages/sdk/src/services/prices.ts:91](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L91)
-
-___
-
-### subscribeToPythPriceUpdates
-
-▸ `Private` **subscribeToPythPriceUpdates**(): `Promise`<`void`\>
-
-#### Returns
-
-`Promise`<`void`\>
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:297](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L297)
-
-___
-
-### switchConnection
-
-▸ `Private` **switchConnection**(): `void`
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[packages/sdk/src/services/prices.ts:279](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/prices.ts#L279)
+[packages/sdk/src/services/prices.ts:91](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/prices.ts#L91)

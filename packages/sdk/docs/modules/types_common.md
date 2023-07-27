@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/common.ts:39](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/common.ts#L39)
+[packages/sdk/src/types/common.ts:39](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/common.ts#L39)
 
 ___
 
@@ -38,7 +38,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/common.ts:5](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/common.ts#L5)
+[packages/sdk/src/types/common.ts:5](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/common.ts#L5)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/common.ts:7](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/common.ts#L7)
+[packages/sdk/src/types/common.ts:7](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/common.ts#L7)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/common.ts:3](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/common.ts#L3)
+[packages/sdk/src/types/common.ts:3](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/common.ts#L3)
 
 ## Variables
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/common.ts:19](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/common.ts#L19)
+[packages/sdk/src/types/common.ts:19](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/common.ts#L19)
 
 ___
 
@@ -109,4 +109,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/common.ts:29](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/common.ts#L29)
+[packages/sdk/src/types/common.ts:29](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/common.ts#L29)

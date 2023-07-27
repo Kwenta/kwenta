@@ -10,10 +10,6 @@
 
 - [constructor](services_transactions.default.md#constructor)
 
-### Properties
-
-- [sdk](services_transactions.default.md#sdk)
-
 ### Methods
 
 - [createContractTxn](services_transactions.default.md#createcontracttxn)
@@ -39,17 +35,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:29](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L29)
-
-## Properties
-
-### sdk
-
-• `Private` **sdk**: [`default`](index.default.md)
-
-#### Defined in
-
-[packages/sdk/src/services/transactions.ts:27](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L27)
+[packages/sdk/src/services/transactions.ts:29](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L29)
 
 ## Methods
 
@@ -74,7 +60,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:78](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L78)
+[packages/sdk/src/services/transactions.ts:78](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L78)
 
 ___
 
@@ -95,7 +81,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:95](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L95)
+[packages/sdk/src/services/transactions.ts:95](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L95)
 
 ___
 
@@ -119,7 +105,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:110](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L110)
+[packages/sdk/src/services/transactions.ts:110](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L110)
 
 ___
 
@@ -139,7 +125,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:126](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L126)
+[packages/sdk/src/services/transactions.ts:126](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L126)
 
 ___
 
@@ -153,7 +139,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:158](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L158)
+[packages/sdk/src/services/transactions.ts:158](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L158)
 
 ___
 
@@ -173,7 +159,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:132](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L132)
+[packages/sdk/src/services/transactions.ts:132](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L132)
 
 ___
 
@@ -193,7 +179,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:34](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L34)
+[packages/sdk/src/services/transactions.ts:34](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L34)
 
 ___
 
@@ -214,4 +200,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/transactions.ts:40](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/transactions.ts#L40)
+[packages/sdk/src/services/transactions.ts:40](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/transactions.ts#L40)

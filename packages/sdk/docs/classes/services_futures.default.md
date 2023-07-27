@@ -10,12 +10,6 @@
 
 - [constructor](services_futures.default.md#constructor)
 
-### Properties
-
-- [internalFuturesMarkets](services_futures.default.md#internalfuturesmarkets)
-- [markets](services_futures.default.md#markets)
-- [sdk](services_futures.default.md#sdk)
-
 ### Accessors
 
 - [futuresGqlEndpoint](services_futures.default.md#futuresgqlendpoint)
@@ -23,7 +17,6 @@
 ### Methods
 
 - [approveSmartMarginDeposit](services_futures.default.md#approvesmartmargindeposit)
-- [batchIdleMarketMarginSweeps](services_futures.default.md#batchidlemarketmarginsweeps)
 - [cancelConditionalOrder](services_futures.default.md#cancelconditionalorder)
 - [cancelDelayedOrder](services_futures.default.md#canceldelayedorder)
 - [closeIsolatedPosition](services_futures.default.md#closeisolatedposition)
@@ -43,7 +36,6 @@
 - [getFuturesTrades](services_futures.default.md#getfuturestrades)
 - [getIdleMargin](services_futures.default.md#getidlemargin)
 - [getIdleMarginInMarkets](services_futures.default.md#getidlemargininmarkets)
-- [getInternalFuturesMarket](services_futures.default.md#getinternalfuturesmarket)
 - [getIsolatedMarginTradePreview](services_futures.default.md#getisolatedmargintradepreview)
 - [getIsolatedMarginTransfers](services_futures.default.md#getisolatedmargintransfers)
 - [getMarketFundingRatesHistory](services_futures.default.md#getmarketfundingrateshistory)
@@ -80,37 +72,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:84](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L84)
-
-## Properties
-
-### internalFuturesMarkets
-
-• `Private` **internalFuturesMarkets**: `Partial`<`Record`<[`NetworkId`](../modules/types_common.md#networkid), { `[marketAddress: string]`: `PerpsV2MarketInternal`;  }\>\> = `{}`
-
-#### Defined in
-
-[packages/sdk/src/services/futures.ts:80](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L80)
-
-___
-
-### markets
-
-• `Private` **markets**: `undefined` \| [`FuturesMarket`](../modules/types_futures.md#futuresmarket)[]
-
-#### Defined in
-
-[packages/sdk/src/services/futures.ts:79](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L79)
-
-___
-
-### sdk
-
-• `Private` **sdk**: [`default`](index.default.md)
-
-#### Defined in
-
-[packages/sdk/src/services/futures.ts:78](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L78)
+[packages/sdk/src/services/futures.ts:84](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L84)
 
 ## Accessors
 
@@ -124,7 +86,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:88](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L88)
+[packages/sdk/src/services/futures.ts:88](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L88)
 
 ## Methods
 
@@ -151,27 +113,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:900](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L900)
-
-___
-
-### batchIdleMarketMarginSweeps
-
-▸ `Private` **batchIdleMarketMarginSweeps**(`smartMarginAddress`): `Promise`<{ `commands`: `number`[] ; `idleMargin`: { `marketsWithIdleMargin`: [`MarketWithIdleMargin`](../modules/types_futures.md#marketwithidlemargin)[] ; `totalIdleInMarkets`: `Wei`  } ; `inputs`: `string`[]  }\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `smartMarginAddress` | `string` |
-
-#### Returns
-
-`Promise`<{ `commands`: `number`[] ; `idleMargin`: { `marketsWithIdleMargin`: [`MarketWithIdleMargin`](../modules/types_futures.md#marketwithidlemargin)[] ; `totalIdleInMarkets`: `Wei`  } ; `inputs`: `string`[]  }\>
-
-#### Defined in
-
-[packages/sdk/src/services/futures.ts:1654](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1654)
+[packages/sdk/src/services/futures.ts:900](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L900)
 
 ___
 
@@ -206,7 +148,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1453](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1453)
+[packages/sdk/src/services/futures.ts:1453](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1453)
 
 ___
 
@@ -242,7 +184,7 @@ ethers.js ContractTransaction object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1157](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1157)
+[packages/sdk/src/services/futures.ts:1157](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1157)
 
 ___
 
@@ -277,7 +219,7 @@ ethers.js ContractTransaction object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1113](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1113)
+[packages/sdk/src/services/futures.ts:1113](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1113)
 
 ___
 
@@ -319,7 +261,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1410](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1410)
+[packages/sdk/src/services/futures.ts:1410](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1410)
 
 ___
 
@@ -347,7 +289,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1220](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1220)
+[packages/sdk/src/services/futures.ts:1220](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1220)
 
 ___
 
@@ -382,7 +324,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1075](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1075)
+[packages/sdk/src/services/futures.ts:1075](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1075)
 
 ___
 
@@ -409,7 +351,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:917](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L917)
+[packages/sdk/src/services/futures.ts:917](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L917)
 
 ___
 
@@ -445,7 +387,7 @@ ethers.js ContractTransaction object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1194](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1194)
+[packages/sdk/src/services/futures.ts:1194](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1194)
 
 ___
 
@@ -480,7 +422,7 @@ ethers.js ContractTransaction object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1176](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1176)
+[packages/sdk/src/services/futures.ts:1176](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1176)
 
 ___
 
@@ -516,7 +458,7 @@ Array of trades for the account on the given market.
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:765](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L765)
+[packages/sdk/src/services/futures.ts:765](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L765)
 
 ___
 
@@ -552,7 +494,7 @@ console.log(fundingRates)
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:266](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L266)
+[packages/sdk/src/services/futures.ts:266](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L266)
 
 ___
 
@@ -586,7 +528,7 @@ Array of conditional orders created by the given smart margin account
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:525](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L525)
+[packages/sdk/src/services/futures.ts:525](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L525)
 
 ___
 
@@ -614,7 +556,7 @@ Object with the daily number of trades and volumes for all markets
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:380](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L380)
+[packages/sdk/src/services/futures.ts:380](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L380)
 
 ___
 
@@ -649,7 +591,7 @@ Delayed order for the given market address, associated with the given wallet add
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:573](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L573)
+[packages/sdk/src/services/futures.ts:573](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L573)
 
 ___
 
@@ -676,7 +618,7 @@ Array of delayed orders for the given market addresses, associated with the give
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:585](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L585)
+[packages/sdk/src/services/futures.ts:585](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L585)
 
 ___
 
@@ -709,7 +651,7 @@ Array of futures positions associated with the given address
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:192](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L192)
+[packages/sdk/src/services/futures.ts:192](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L192)
 
 ___
 
@@ -745,7 +687,7 @@ Array of trades for the given market
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:868](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L868)
+[packages/sdk/src/services/futures.ts:868](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L868)
 
 ___
 
@@ -780,7 +722,7 @@ Total idle margin, idle margin in markets, total wallet balance and the markets 
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:842](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L842)
+[packages/sdk/src/services/futures.ts:842](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L842)
 
 ___
 
@@ -814,28 +756,7 @@ Total idle margin in markets and an array of markets with idle margin
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:789](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L789)
-
-___
-
-### getInternalFuturesMarket
-
-▸ `Private` **getInternalFuturesMarket**(`marketAddress`, `marketKey`): `FuturesMarketInternal`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `marketAddress` | `string` |
-| `marketKey` | [`FuturesMarketKey`](../enums/types_futures.FuturesMarketKey.md) |
-
-#### Returns
-
-`FuturesMarketInternal`
-
-#### Defined in
-
-[packages/sdk/src/services/futures.ts:1635](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1635)
+[packages/sdk/src/services/futures.ts:789](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L789)
 
 ___
 
@@ -881,7 +802,7 @@ Object containing details about the potential trade
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:615](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L615)
+[packages/sdk/src/services/futures.ts:615](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L615)
 
 ___
 
@@ -915,7 +836,7 @@ Array of past isolated margin transfers for the given wallet address
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:434](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L434)
+[packages/sdk/src/services/futures.ts:434](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L434)
 
 ___
 
@@ -950,7 +871,7 @@ Funding rate history for the given market
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:244](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L244)
+[packages/sdk/src/services/futures.ts:244](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L244)
 
 ___
 
@@ -986,7 +907,7 @@ Futures markets array
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:105](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L105)
+[packages/sdk/src/services/futures.ts:105](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L105)
 
 ___
 
@@ -1021,7 +942,7 @@ Fee for the given order size, based on the specified market
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:886](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L886)
+[packages/sdk/src/services/futures.ts:886](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L886)
 
 ___
 
@@ -1056,7 +977,7 @@ Array of historical futures positions associated with the given address
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:712](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L712)
+[packages/sdk/src/services/futures.ts:712](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L712)
 
 ___
 
@@ -1092,7 +1013,7 @@ Adjusted price, based on the given market's skew.
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1617](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1617)
+[packages/sdk/src/services/futures.ts:1617](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1617)
 
 ___
 
@@ -1126,7 +1047,7 @@ Balance of the given smart margin account
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:468](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L468)
+[packages/sdk/src/services/futures.ts:468](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L468)
 
 ___
 
@@ -1160,7 +1081,7 @@ Array of smart margin account addresses
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:418](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L418)
+[packages/sdk/src/services/futures.ts:418](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L418)
 
 ___
 
@@ -1195,7 +1116,7 @@ Free margin and keeper balance (in ETH) for given smart margin address, as well 
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:490](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L490)
+[packages/sdk/src/services/futures.ts:490](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L490)
 
 ___
 
@@ -1246,7 +1167,7 @@ Object containing details about the potential trade
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:666](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L666)
+[packages/sdk/src/services/futures.ts:666](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L666)
 
 ___
 
@@ -1280,7 +1201,7 @@ Array of past smart margin transfers for the given wallet address
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:452](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L452)
+[packages/sdk/src/services/futures.ts:452](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L452)
 
 ___
 
@@ -1321,7 +1242,7 @@ Array of trades for the account on the given market.
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:737](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L737)
+[packages/sdk/src/services/futures.ts:737](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L737)
 
 ___
 
@@ -1349,7 +1270,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:958](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L958)
+[packages/sdk/src/services/futures.ts:958](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L958)
 
 ___
 
@@ -1395,7 +1316,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1027](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1027)
+[packages/sdk/src/services/futures.ts:1027](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1027)
 
 ___
 
@@ -1431,7 +1352,7 @@ Total idle margin, idle margin in markets, total wallet balance and the markets 
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1130](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1130)
+[packages/sdk/src/services/futures.ts:1130](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1130)
 
 ___
 
@@ -1473,7 +1394,7 @@ Total idle margin, idle margin in markets, total wallet balance and the markets 
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1241](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1241)
+[packages/sdk/src/services/futures.ts:1241](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1241)
 
 ___
 
@@ -1527,7 +1448,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1520](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1520)
+[packages/sdk/src/services/futures.ts:1520](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1520)
 
 ___
 
@@ -1562,7 +1483,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1477](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1477)
+[packages/sdk/src/services/futures.ts:1477](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1477)
 
 ___
 
@@ -1597,7 +1518,7 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:1093](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L1093)
+[packages/sdk/src/services/futures.ts:1093](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L1093)
 
 ___
 
@@ -1624,4 +1545,4 @@ ethers.js TransactionResponse object
 
 #### Defined in
 
-[packages/sdk/src/services/futures.ts:935](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/futures.ts#L935)
+[packages/sdk/src/services/futures.ts:935](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/futures.ts#L935)

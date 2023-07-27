@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[packages/sdk/src/types/synths.ts:13](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/synths.ts#L13)
+[packages/sdk/src/types/synths.ts:13](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/synths.ts#L13)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/synths.ts:41](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/synths.ts#L41)
+[packages/sdk/src/types/synths.ts:41](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/synths.ts#L41)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/synths.ts:5](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/synths.ts#L5)
+[packages/sdk/src/types/synths.ts:5](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/synths.ts#L5)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/synths.ts:11](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/synths.ts#L11)
+[packages/sdk/src/types/synths.ts:11](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/synths.ts#L11)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/synths.ts:19](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/synths.ts#L19)
+[packages/sdk/src/types/synths.ts:19](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/synths.ts#L19)
 
 ___
 
@@ -128,4 +128,4 @@ ___
 
 #### Defined in
 
-[packages/sdk/src/types/synths.ts:26](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/types/synths.ts#L26)
+[packages/sdk/src/types/synths.ts:26](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/types/synths.ts#L26)

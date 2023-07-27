@@ -1,5 +1,7 @@
 {
-  "entryPoints": ["src/index.ts", "src/services/*.ts", "src/types/*.ts", "src/context.ts"],
-  "out": "docs",
-  "plugin": ["typedoc-plugin-markdown"]
+	"entryPoints": ["src/index.ts", "src/services/*.ts", "src/types/*.ts", "src/context.ts"],
+	"out": "docs",
+	"plugin": ["typedoc-plugin-markdown"],
+	"excludePrivate": true
 }
+

@@ -10,10 +10,6 @@
 
 - [constructor](services_synths.default.md#constructor)
 
-### Properties
-
-- [sdk](services_synths.default.md#sdk)
-
 ### Methods
 
 - [getSynthBalances](services_synths.default.md#getsynthbalances)
@@ -32,17 +28,7 @@
 
 #### Defined in
 
-[packages/sdk/src/services/synths.ts:17](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/synths.ts#L17)
-
-## Properties
-
-### sdk
-
-• `Private` **sdk**: [`default`](index.default.md)
-
-#### Defined in
-
-[packages/sdk/src/services/synths.ts:15](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/synths.ts#L15)
+[packages/sdk/src/services/synths.ts:17](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/synths.ts#L17)
 
 ## Methods
 
@@ -68,4 +54,4 @@ Synth balances for the given wallet address
 
 #### Defined in
 
-[packages/sdk/src/services/synths.ts:26](https://github.com/Kwenta/kwenta/blob/616d9e548/packages/sdk/src/services/synths.ts#L26)
+[packages/sdk/src/services/synths.ts:26](https://github.com/Kwenta/kwenta/blob/60f0875a3/packages/sdk/src/services/synths.ts#L26)
