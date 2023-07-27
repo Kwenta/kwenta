@@ -6,11 +6,10 @@ import {
 	PositionSide,
 	FuturesMarginType,
 } from '@kwenta/sdk/types'
-import { truncateTimestamp, MarketKeyByAsset, MarketAssetByKey } from '@kwenta/sdk/utils'
+import { truncateTimestamp, MarketAssetByKey } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 
-import { ETH_UNIT } from 'constants/network'
 import {
 	selectAllCrossMarginTrades,
 	selectCrossMarginAccountData,
@@ -37,6 +36,7 @@ import {
 	unserializeTrades,
 	unserializeConditionalOrders,
 	stopLossValidity,
+	unserializeMarkets,
 } from 'utils/futures'
 
 import { CrossPerpsPortfolio } from './crossMargin/types'
@@ -114,16 +114,13 @@ export const selectMarkets = createSelector(
 	}
 )
 
-export const selectMarketVolumes = createSelector(selectFuturesState, (state) =>
-	unserializeFuturesVolumes(state.dailyMarketVolumes)
+export const selectOptimismMarkets = createSelector(selectFuturesState, (futures) =>
+	futures.markets[10] ? unserializeMarkets(futures.markets[10]) : []
 )
 
-export const selectMarketKeys = createSelector(selectMarkets, (markets) =>
-	markets.map(({ asset }) => MarketKeyByAsset[asset])
-)
-
-export const selectMarketAssets = createSelector(selectMarkets, (markets) =>
-	markets.map(({ asset }) => asset)
+export const selectMarketVolumes = createSelector(
+	(state: RootState) => state.smartMargin.dailyMarketVolumes,
+	(dailyMarketVolumes) => unserializeFuturesVolumes(dailyMarketVolumes)
 )
 
 export const selectMarketKey = createSelector(
@@ -208,6 +205,23 @@ export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (mar
 		}
 	}, markPrices)
 })
+
+export const selectOptimismMarkPrices = createSelector(
+	selectOptimismMarkets,
+	selectPrices,
+	(optimismMarkets, prices) => {
+		const markPrices: MarkPrices = {}
+		return optimismMarkets.reduce((acc, market) => {
+			const price = prices[market.asset]?.offChain ?? wei(0)
+			return {
+				...acc,
+				[market.marketKey]: wei(price).mul(
+					wei(market.marketSkew).div(market.settings.skewScale).add(1)
+				),
+			}
+		}, markPrices)
+	}
+)
 
 export const selectMarkPriceInfos = createSelector(
 	selectMarkets,
@@ -715,7 +729,7 @@ export const selectCrossMarginPortfolioValues = createSelector(
 			account,
 			timestamp,
 			asset,
-			margin: margin.div(ETH_UNIT).toNumber(),
+			margin: margin.toNumber(),
 			size: 0,
 		}))
 
@@ -785,7 +799,7 @@ export const selectSmartMarginPortfolioValues = createSelector(
 			account,
 			timestamp,
 			asset,
-			margin: margin.div(ETH_UNIT).toNumber(),
+			margin: margin.toNumber(),
 			size: 0,
 		}))
 

@@ -10,6 +10,8 @@ import MenuIcon from 'assets/svg/app/menu.svg'
 import Button from 'components/Button'
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
 import ROUTES from 'constants/routes'
+import { zIndex } from 'constants/ui'
+import { MOBILE_FOOTER_HEIGHT } from 'constants/ui'
 import { setTradePanelDrawerOpen } from 'state/futures/reducer'
 import { setLeverageSide } from 'state/futures/smartMargin/reducer'
 import { useAppDispatch } from 'state/hooks'
@@ -83,8 +85,8 @@ const MobileFooterContainer = styled.div`
 	border-top: ${(props) => props.theme.colors.selectedTheme.newTheme.border.style};
 	padding: 15px 20px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
-	z-index: 51;
-	min-height: 71px;
+	z-index: ${zIndex.MOBILE_FOOTER};
+	height: ${MOBILE_FOOTER_HEIGHT};
 `
 
 const MobileFooterIconContainer = styled.div`

@@ -117,14 +117,6 @@ export const selectPerpsV2MarketVolumes = createSelector(
 	(dailyMarketVolumes) => unserializeFuturesVolumes(dailyMarketVolumes)
 )
 
-export const selectMarketKeys = createSelector(selectV2Markets, (markets) =>
-	markets.map(({ asset }) => MarketKeyByAsset[asset])
-)
-
-export const selectMarketAssets = createSelector(selectV2Markets, (markets) =>
-	markets.map(({ asset }) => asset)
-)
-
 export const selectV2MarketInfo = createSelector(
 	selectV2Markets,
 	selectV2MarketKey,

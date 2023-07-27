@@ -352,6 +352,7 @@ export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] 
 		pnl: t.pnl.toString(),
 		feesPaid: t.feesPaid.toString(),
 		keeperFeesPaid: t.keeperFeesPaid.toString(),
+		fundingAccrued: t.fundingAccrued.toString(),
 	}))
 }
 
@@ -365,6 +366,7 @@ export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<
 		pnl: wei(t.pnl),
 		feesPaid: wei(t.feesPaid),
 		keeperFeesPaid: wei(t.keeperFeesPaid),
+		fundingAccrued: wei(t.fundingAccrued),
 	}))
 }
 

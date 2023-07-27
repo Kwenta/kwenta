@@ -11,25 +11,6 @@ import { STATS_INITIAL_STATE } from './stats/reducer'
 import { WALLET_INITIAL_STATE } from './wallet/reducer'
 
 export const migrations = {
-	4: (state: any) => {
-		return {
-			...state,
-			futures: FUTURES_INITIAL_STATE,
-			prices: PRICES_INITIAL_STATE,
-		}
-	},
-	5: (state: any) => {
-		return {
-			...state,
-			futures: FUTURES_INITIAL_STATE,
-		}
-	},
-	6: (state: any) => {
-		return {
-			...state,
-			prices: PRICES_INITIAL_STATE,
-		}
-	},
 	7: (state: any) => {
 		return {
 			...state,
@@ -61,18 +42,6 @@ export const migrations = {
 			staking: STAKING_INITIAL_STATE,
 		}
 	},
-	24: (state: any) => {
-		return {
-			...state,
-			futures: FUTURES_INITIAL_STATE,
-		}
-	},
-	25: (state: any) => {
-		return {
-			...state,
-			staking: STAKING_INITIAL_STATE,
-		}
-	},
 	29: (state: any) => {
 		return {
 			...state,
@@ -80,13 +49,7 @@ export const migrations = {
 			home: HOME_INITIAL_STATE,
 		}
 	},
-	30: (state: any) => {
-		return {
-			...state,
-			futures: FUTURES_INITIAL_STATE,
-		}
-	},
-	32: (state: any) => {
+	31: (state: any) => {
 		return {
 			...state,
 			app: APP_INITIAL_STATE,
@@ -99,6 +62,12 @@ export const migrations = {
 			futures: FUTURES_INITIAL_STATE,
 			staking: STAKING_INITIAL_STATE,
 			stats: STATS_INITIAL_STATE,
+		}
+	},
+	34: (state: any) => {
+		return {
+			...state,
+			futures: FUTURES_INITIAL_STATE,
 		}
 	},
 }

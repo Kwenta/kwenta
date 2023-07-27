@@ -1,19 +1,19 @@
-import { formatCryptoCurrency, formatDollars } from '@kwenta/sdk/utils'
+import { formatDollars, formatNumber, getDisplayAsset } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import { memo, useMemo } from 'react'
+import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import LinkIcon from 'assets/svg/app/link-blue.svg'
 import ColoredPrice from 'components/ColoredPrice'
-import { GridDivCenteredRow } from 'components/layout/grid'
+import Currency from 'components/Currency'
+import { FlexDivCol } from 'components/layout/flex'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
-import { ETH_UNIT } from 'constants/network'
+import { Body } from 'components/Text'
 import ROUTES from 'constants/routes'
 import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
-import PositionType from 'sections/futures/PositionType'
+import useWindowSize from 'hooks/useWindowSize'
 import {
 	selectAllTradesForAccountType,
 	selectFuturesType,
@@ -22,18 +22,21 @@ import {
 } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
-import { ExternalLink } from 'styles/common'
 
 import { TradeStatus } from '../types'
 import TableMarketDetails from '../UserInfo/TableMarketDetails'
 
 import TimeDisplay from './TimeDisplay'
 
-const Trades = memo(() => {
+type TradesProps = {
+	rounded?: boolean
+	noBottom?: boolean
+}
+const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 	const { t } = useTranslation()
 	const { switchToL2 } = useNetworkSwitcher()
 	const router = useRouter()
-
+	const { lessThanWidth } = useWindowSize()
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const accountType = useAppSelector(selectFuturesType)
 	const history = useAppSelector(selectAllTradesForAccountType)
@@ -46,19 +49,23 @@ const Trades = memo(() => {
 
 	const historyData = useMemo(() => {
 		return history.map((trade) => {
-			const pnl = trade?.pnl.div(ETH_UNIT)
-			const feesPaid = trade?.feesPaid.div(ETH_UNIT)
+			const pnl = trade?.pnl
+			const feesPaid = trade?.feesPaid
 			const netPnl = pnl.sub(feesPaid)
+
 			return {
 				...trade,
 				pnl,
 				feesPaid,
 				netPnl,
-				value: Number(trade?.price?.div(ETH_UNIT)),
-				amount: Number(trade?.size.div(ETH_UNIT).abs()),
+				notionalValue: trade?.price.mul(trade?.size.abs()),
+				value: Number(trade?.price),
+				funding: Number(trade?.fundingAccrued),
+				amount: trade?.size.abs(),
 				time: trade?.timestamp * 1000,
 				id: trade?.txnHash,
 				asset: marketAsset,
+				displayAsset: getDisplayAsset(trade?.asset),
 				type: trade?.orderType,
 				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 			}
@@ -67,32 +74,33 @@ const Trades = memo(() => {
 
 	const columnsDeps = useMemo(() => [historyData], [historyData])
 
-	return (
+	return lessThanWidth('xl') ? (
 		<Table
 			highlightRowsOnHover
-			rounded={false}
-			noBottom={true}
+			rounded={rounded}
+			noBottom={noBottom}
 			columns={[
 				{
 					header: () => (
-						<TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>
+						<TableHeader>{t('futures.market.user.trades.table.market-side')}</TableHeader>
 					),
 					accessorKey: 'market',
 					cell: (cellProps) => {
 						return (
 							<MarketDetailsContainer
-								onClick={() =>
-									cellProps.row.original.market
-										? router.push(
-												ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
-										  )
-										: undefined
-								}
+								onClick={(e) => {
+									cellProps.row.original.market &&
+										router.push(
+											ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
+										)
+									e.stopPropagation()
+								}}
 							>
 								{cellProps.row.original.market ? (
 									<TableMarketDetails
-										marketName={cellProps.row.original.market?.marketName}
+										marketName={cellProps.row.original.displayAsset!}
 										marketKey={cellProps.row.original.market?.marketKey}
+										side={cellProps.row.original.side}
 									/>
 								) : (
 									'-'
@@ -100,73 +108,227 @@ const Trades = memo(() => {
 							</MarketDetailsContainer>
 						)
 					},
-					size: 100,
 				},
 				{
 					header: () => <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
 					accessorKey: 'time',
-					cell: (cellProps) => (
-						<GridDivCenteredRow>
-							<TimeDisplay value={cellProps.getValue()} />
-						</GridDivCenteredRow>
-					),
-					size: 90,
-					enableSorting: true,
-				},
-				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.side')}</TableHeader>,
-					accessorKey: 'side',
-					sortingFn: 'basic',
-					cell: (cellProps) => <PositionType side={cellProps.getValue()} />,
-					size: 60,
-					enableSorting: true,
-				},
-				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
-					accessorKey: 'value',
-					sortingFn: 'basic',
-					cell: (cellProps) => {
-						return <>{formatDollars(cellProps.getValue(), { suggestDecimals: true })}</>
-					},
-					size: 90,
+					cell: (cellProps) => <TimeDisplay value={cellProps.getValue()} />,
 					enableSorting: true,
 				},
 				{
 					header: () => (
-						<TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>
+						<TableHeader style={{ width: '90%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.price-type')}
+						</TableHeader>
 					),
-					accessorKey: 'amount',
+					accessorKey: 'value',
 					sortingFn: 'basic',
-					cell: (cellProps) => (
-						<>{formatCryptoCurrency(cellProps.getValue(), { suggestDecimals: true })}</>
-					),
-					size: 90,
+					cell: (cellProps) => {
+						return (
+							<FlexDivCol style={{ width: '90%', textAlign: 'right' }}>
+								<Currency.Price price={cellProps.getValue()} />
+								<Body color="secondary">{cellProps.row.original.type}</Body>
+							</FlexDivCol>
+						)
+					},
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '90%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.size')}
+						</TableHeader>
+					),
+					accessorKey: 'amount',
+					sortingFn: 'basic',
+					cell: (cellProps) => {
+						return (
+							<FlexDivCol style={{ width: '90%', textAlign: 'right' }}>
+								{formatNumber(cellProps.getValue(), { suggestDecimals: true })}
+								<Currency.Price
+									price={cellProps.row.original.notionalValue}
+									formatOptions={{ truncateOver: 1e6 }}
+									colorType="secondary"
+								/>
+							</FlexDivCol>
+						)
+					},
+					enableSorting: true,
+				},
+				{
+					header: () => (
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.pnl')}
+						</TableHeader>
+					),
 					accessorKey: 'netPnl',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
+							<ColoredPrice
+								priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}
+								style={{ width: '80%', textAlign: 'right' }}
+							>
 								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
 							</ColoredPrice>
 						)
 					},
-					size: 90,
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.fees')}
+						</TableHeader>
+					),
 					sortingFn: 'basic',
 					accessorKey: 'feesPaid',
 					cell: (cellProps) => (
-						<>{cellProps.getValue().eq(0) ? '--' : formatDollars(cellProps.getValue())}</>
+						<div style={{ width: '80%', textAlign: 'right' }}>
+							<Currency.Price price={cellProps.getValue()} />
+						</div>
 					),
-					size: 90,
+					enableSorting: true,
+				},
+			]}
+			columnsDeps={columnsDeps}
+			data={historyData}
+			isLoading={isLoading && isLoaded}
+			onTableRowClick={(row) =>
+				window.open(blockExplorer.txLink(row.original.txnHash), '_blank', 'noopener noreferrer')
+			}
+			noResultsMessage={
+				!isL2 ? (
+					<TableNoResults>
+						{t('common.l2-cta')}
+						<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+					</TableNoResults>
+				) : isLoaded && historyData?.length === 0 ? (
+					<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
+				) : undefined
+			}
+		/>
+	) : (
+		<Table
+			highlightRowsOnHover
+			rounded={rounded}
+			noBottom={noBottom}
+			columns={[
+				{
+					header: () => (
+						<TableHeader>{t('futures.market.user.trades.table.market-side')}</TableHeader>
+					),
+					accessorKey: 'market',
+					cell: (cellProps) => {
+						return (
+							<MarketDetailsContainer
+								onClick={(e) => {
+									cellProps.row.original.market &&
+										router.push(
+											ROUTES.Markets.MarketPair(cellProps.row.original.market.asset, accountType)
+										)
+									e.stopPropagation()
+								}}
+							>
+								{cellProps.row.original.market ? (
+									<TableMarketDetails
+										marketName={cellProps.row.original.market?.marketName}
+										marketKey={cellProps.row.original.market?.marketKey}
+										side={cellProps.row.original.side}
+									/>
+								) : (
+									'-'
+								)}
+							</MarketDetailsContainer>
+						)
+					},
+				},
+				{
+					header: () => <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
+					accessorKey: 'time',
+					cell: (cellProps) => <TimeDisplay value={cellProps.getValue()} />,
+					enableSorting: true,
+				},
+				{
+					header: () => (
+						<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.price')}
+						</TableHeader>
+					),
+					accessorKey: 'value',
+					sortingFn: 'basic',
+					cell: (cellProps) => {
+						return (
+							<div style={{ width: '60%', textAlign: 'right' }}>
+								<Currency.Price price={cellProps.getValue()} />
+							</div>
+						)
+					},
+					enableSorting: true,
+				},
+				{
+					header: () => (
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.size')}
+						</TableHeader>
+					),
+					accessorKey: 'amount',
+					sortingFn: 'basic',
+					cell: (cellProps) => {
+						return (
+							<FlexDivCol style={{ width: '80%', textAlign: 'right' }}>
+								{formatNumber(cellProps.getValue(), { suggestDecimals: true })}
+								<Currency.Price
+									price={cellProps.row.original.notionalValue}
+									formatOptions={{ truncateOver: 1e6 }}
+									colorType="secondary"
+								/>
+							</FlexDivCol>
+						)
+					},
+					enableSorting: true,
+				},
+				{
+					header: () => (
+						<TableHeader style={{ width: '70%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.pnl')}
+						</TableHeader>
+					),
+					accessorKey: 'netPnl',
+					sortingFn: 'basic',
+					cell: (cellProps) => {
+						return cellProps.getValue().eq(0) ? (
+							'--'
+						) : (
+							<ColoredPrice
+								priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}
+								style={{ width: '70%', textAlign: 'right' }}
+							>
+								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
+							</ColoredPrice>
+						)
+					},
+					enableSorting: true,
+				},
+				{
+					header: () => (
+						<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.fees')}
+						</TableHeader>
+					),
+					sortingFn: 'basic',
+					accessorKey: 'feesPaid',
+					cell: (cellProps) => {
+						return cellProps.getValue().eq(0) ? (
+							'--'
+						) : (
+							<FlexDivCol style={{ width: '60%', textAlign: 'right' }}>
+								<Currency.Price price={cellProps.getValue()} />
+							</FlexDivCol>
+						)
+					},
 					enableSorting: true,
 				},
 				{
@@ -176,25 +338,15 @@ const Trades = memo(() => {
 					accessorKey: 'type',
 					sortingFn: 'basic',
 					cell: (cellProps) => <>{cellProps.getValue()}</>,
-					size: 100,
-				},
-				{
-					header: () => (
-						<TableHeader>{t('futures.market.user.trades.table.transaction')}</TableHeader>
-					),
-					accessorKey: 'txnHash',
-					cell: (cellProps) => (
-						<StyledExternalLink href={blockExplorer.txLink(cellProps.getValue())}>
-							<StyledLinkIcon />
-						</StyledExternalLink>
-					),
-					size: 80,
-					enableSorting: false,
+					size: 90,
 				},
 			]}
 			columnsDeps={columnsDeps}
 			data={historyData}
 			isLoading={isLoading && isLoaded}
+			onTableRowClick={(row) =>
+				window.open(blockExplorer.txLink(row.original.txnHash), '_blank', 'noopener noreferrer')
+			}
 			noResultsMessage={
 				!isL2 ? (
 					<TableNoResults>
@@ -210,27 +362,6 @@ const Trades = memo(() => {
 })
 
 export default Trades
-
-const StyledExternalLink = styled(ExternalLink)`
-	padding: 10px;
-	&:hover {
-		svg {
-			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
-			}
-		}
-	}
-`
-
-const StyledLinkIcon = styled(LinkIcon)`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	width: 14px;
-	height: 14px;
-
-	path {
-		fill: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
-`
 
 const MarketDetailsContainer = styled.div`
 	cursor: pointer;

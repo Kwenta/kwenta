@@ -280,6 +280,10 @@ const PositionItem = styled.div`
 		padding: 16px 0;
 	`}
 
+	${media.greaterThan('lg')`
+	padding: 8px 0;
+`}
+
 	&:not(:last-of-type) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	}

@@ -6,7 +6,6 @@ import styled, { css } from 'styled-components'
 
 import { GridDivCenteredRow } from 'components/layout/grid'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
-import { ETH_UNIT } from 'constants/network'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
@@ -46,18 +45,13 @@ const TradesTab = () => {
 
 	const historyData = useMemo(() => {
 		return history.map((trade) => {
-			const pnl = trade.pnl.div(ETH_UNIT)
-			const feesPaid = trade.feesPaid.div(ETH_UNIT)
-			const netPnl = pnl.sub(feesPaid)
 			return {
 				...trade,
-				pnl,
-				feesPaid,
-				netPnl,
-				value: Number(trade.price.div(ETH_UNIT)),
-				amount: Number(trade.size.div(ETH_UNIT).abs()),
-				time: trade.timestamp * 1000,
-				id: trade.txnHash,
+				netPnl: trade.pnl.sub(trade.feesPaid),
+				value: Number(trade?.price),
+				amount: Number(trade?.size.abs()),
+				time: trade?.timestamp * 1000,
+				id: trade?.txnHash,
 				asset: marketAsset,
 				type: trade.orderType,
 				status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
@@ -112,9 +106,7 @@ const TradesTab = () => {
 							enableSorting: true,
 						},
 						{
-							header: () => (
-								<TableHeader>{t('futures.market.user.trades.table.trade-size')}</TableHeader>
-							),
+							header: () => <TableHeader>{t('futures.market.user.trades.table.size')}</TableHeader>,
 							accessorKey: 'amount',
 							sortingFn: 'basic',
 							cell: (cellProps) => (

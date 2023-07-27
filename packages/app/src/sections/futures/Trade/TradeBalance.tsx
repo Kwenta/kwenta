@@ -49,8 +49,8 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 	const [expanded, setExpanded] = useState(false)
 
 	const isDepositRequired = useMemo(() => {
-		return walletBal.lt(MIN_MARGIN_AMOUNT) && withdrawable.eq(0)
-	}, [walletBal, withdrawable])
+		return walletBal.lt(MIN_MARGIN_AMOUNT) && withdrawable.eq(0) && lockedMargin.eq(0)
+	}, [lockedMargin, walletBal, withdrawable])
 
 	const onClickContainer = () => {
 		if (accountType === FuturesMarginType.CROSS_MARGIN) return

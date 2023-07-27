@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import { border } from 'components/Button'
 import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
-import { zIndex } from 'constants/ui'
+import { MOBILE_FOOTER_HEIGHT, zIndex } from 'constants/ui'
 import media from 'styles/media'
 
 export const linkCSS = css<{ underline?: boolean; hoverUnderline?: boolean }>`
@@ -95,9 +95,9 @@ export const FullScreenContainer = styled.div`
 
 export const MobileScreenContainer = styled.div`
 	width: 100%;
+	overflow-y: auto;
 	height: 100%;
-	overflow-y: scroll;
-	padding-bottom: 80px;
+	padding-bottom: ${MOBILE_FOOTER_HEIGHT};
 `
 
 export const FullHeightContainer = styled(FlexDiv)`
