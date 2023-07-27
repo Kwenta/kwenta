@@ -18,6 +18,7 @@ export const requestCandlesticks = async (
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId)
 	const pythTvEndpoint = DEFAULT_PYTH_TV_ENDPOINT
+	const prefix = currencyKey === 'XAU' || currencyKey === 'XAG' ? 'Metal' : 'Crypto'
 
 	if (period <= 3600) {
 		const response = await axios
@@ -25,7 +26,7 @@ export const requestCandlesticks = async (
 				params: {
 					from: minTimestamp,
 					to: maxTimestamp,
-					symbol: `Crypto.${currencyKey}/USD`,
+					symbol: `${prefix}.${currencyKey}/USD`,
 					resolution: getSupportedResolution(period),
 				},
 			})
