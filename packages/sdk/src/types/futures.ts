@@ -116,6 +116,7 @@ export enum FuturesMarketKey {
 	sFLOKIPERP = 'sFLOKIPERP',
 	sINJPERP = 'sINJPERP',
 	sSTETHPERP = 'sSTETHPERP',
+	sETHBTCPERP = 'sETHBTCPERP',
 }
 
 export enum FuturesMarketAsset {
@@ -161,6 +162,7 @@ export enum FuturesMarketAsset {
 	FLOKI = 'FLOKI',
 	INJ = 'INJ',
 	STETH = 'STETH',
+	ETHBTC = 'ETHBTC',
 }
 
 export interface FuturesMarketConfig {

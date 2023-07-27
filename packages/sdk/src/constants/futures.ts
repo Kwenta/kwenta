@@ -490,6 +490,16 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0xb7abd25a76ddaffdf847224f03198ccb92723f90b2429cf33f0eecb96e352a86',
 		},
 	},
+	[FuturesMarketKey.sETHBTCPERP]: {
+		key: FuturesMarketKey.sETHBTCPERP,
+		asset: FuturesMarketAsset.ETHBTC,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xc96458d393fe9deb7a7d63a0ac41e2898a67a7750dbd166673279e06c868df0a',
+			testnet: '0x754a0a0800247d77751e35efb91638c828046103be3bb3d26989e65bf4010859',
+		},
+	},
 }
 
 export const MARKET_ASSETS_BY_PYTH_ID = Object.values(MARKETS)

@@ -61,6 +61,7 @@ const getPriceScale = (asset: string | null) => {
 		case 'BTC':
 		case 'BNB':
 		case 'ETH':
+		case 'ETHBTC':
 		case 'stETH':
 		case 'XAU':
 			return 100

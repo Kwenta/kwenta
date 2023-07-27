@@ -100,6 +100,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sXAGPERP: XAGIcon,
 	sXMRPERP: XMRIcon,
 	sXRPPERP: XRPIcon,
+	sETHBTCPERP: ETHBTCIcon,
 	sAAVE: AAVEIcon,
 	sADA: ADAIcon,
 	sAPE: APEIcon,
