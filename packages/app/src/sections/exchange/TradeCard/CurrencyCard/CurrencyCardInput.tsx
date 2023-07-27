@@ -141,7 +141,6 @@ const CurrencyAmount = styled(NumericInput)`
 
 	input {
 		font-size: 30px;
-		line-height: 2.25em;
 		letter-spacing: -1px;
 		height: 30px;
 		width: 100%;
