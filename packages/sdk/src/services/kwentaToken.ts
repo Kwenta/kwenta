@@ -23,6 +23,7 @@ import { awsClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
 import { calculateFeesForAccount, calculateTotalFees } from '../utils'
+import { ADDRESSES } from '../constants'
 
 export default class KwentaTokenService {
 	private sdk: KwentaSDK
@@ -142,7 +143,7 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		const { walletAddress } = this.sdk.context
+		const { walletAddress, networkId } = this.sdk.context
 
 		const [
 			rewardEscrowBalance,
@@ -166,10 +167,10 @@ export default class KwentaTokenService {
 			SupplySchedule.weekCounter(),
 			KwentaStakingRewards.totalSupply(),
 			vKwentaToken.balanceOf(walletAddress),
-			vKwentaToken.allowance(walletAddress, vKwentaRedeemer.address),
-			KwentaToken.allowance(walletAddress, KwentaStakingRewards.address),
+			vKwentaToken.allowance(walletAddress, ADDRESSES.vKwentaRedeemer[networkId]),
+			KwentaToken.allowance(walletAddress, ADDRESSES.KwentaStakingRewards[networkId]),
 			veKwentaToken.balanceOf(walletAddress),
-			veKwentaToken.allowance(walletAddress, veKwentaRedeemer.address),
+			veKwentaToken.allowance(walletAddress, ADDRESSES.veKwentaRedeemer[networkId]),
 		])
 
 		return {
@@ -197,7 +198,7 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		const { walletAddress } = this.sdk.context
+		const { walletAddress, networkId } = this.sdk.context
 
 		const [
 			rewardEscrowBalance,
@@ -216,7 +217,7 @@ export default class KwentaTokenService {
 			KwentaStakingRewardsV2.totalSupply(),
 			KwentaStakingRewardsV2.userLastStakeTime(walletAddress),
 			KwentaStakingRewardsV2.cooldownPeriod(),
-			KwentaToken.allowance(walletAddress, KwentaStakingRewardsV2.address),
+			KwentaToken.allowance(walletAddress, ADDRESSES.KwentaStakingRewardsV2[networkId]),
 		])
 
 		return {

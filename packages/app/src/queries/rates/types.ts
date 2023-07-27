@@ -22,3 +22,5 @@ export type PythResponse = {
 	v: number[]
 	s: string
 }
+
+export type AssetTypes = Record<string, string[]>
