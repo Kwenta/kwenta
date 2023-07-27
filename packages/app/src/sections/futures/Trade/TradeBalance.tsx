@@ -82,8 +82,8 @@ const TradeBalance = memo(() => {
 	const isCrossMarginAccount = useMemo(() => accountType === 'cross_margin', [accountType])
 
 	const isDepositRequired = useMemo(() => {
-		return availableCrossMargin.lt(MIN_MARGIN_AMOUNT) && withdrawable.eq(0) && lockedMargin.eq(0)
-	}, [availableCrossMargin, lockedMargin, withdrawable])
+		return isCrossMarginAccount && availableCrossMargin.lt(MIN_MARGIN_AMOUNT) && lockedMargin.eq(0)
+	}, [availableCrossMargin, lockedMargin])
 
 	const onClickContainer = useCallback(() => {
 		if (!isCrossMarginAccount) return
@@ -93,7 +93,7 @@ const TradeBalance = memo(() => {
 	return (
 		<Container mobile={isMobile}>
 			<BalanceContainer clickable={isCrossMarginAccount} onClick={onClickContainer}>
-				{isCrossMarginAccount && isDepositRequired ? (
+				{isDepositRequired ? (
 					<DepositContainer>
 						<FlexDivCol>
 							<FlexDivRow columnGap="5px" justifyContent="flex-start">
@@ -133,7 +133,7 @@ const TradeBalance = memo(() => {
 				) : (
 					<>
 						{isMobile ? (
-							<FlexDivCol rowGap="5px">
+							<DepositContainer>
 								<FlexDivRow style={{ width: '170px' }}>
 									<Body size={'medium'} color="secondary">
 										{t('futures.market.trade.trade-balance.available-margin')}:
@@ -163,9 +163,16 @@ const TradeBalance = memo(() => {
 										</FlexDivRowCentered>
 									</FlexDivRow>
 								)}
-							</FlexDivCol>
+								<BrdigeAndWithdrawButton
+									modalType={
+										isCrossMarginAccount ? 'futures_cross_withdraw' : 'futures_isolated_transfer'
+									}
+									onPillClick={onClickContainer}
+									expanded={expanded}
+								/>
+							</DepositContainer>
 						) : (
-							<FlexDivRow columnGap="10px" justifyContent="flex-start">
+							<DepositContainer>
 								<FlexDivCol>
 									<Body size={'medium'} color="secondary">
 										{t('futures.market.trade.trade-balance.available-margin')}
@@ -195,19 +202,16 @@ const TradeBalance = memo(() => {
 										</NumericValue>
 									</StyledFlexDivCol>
 								)}
-							</FlexDivRow>
+								<BrdigeAndWithdrawButton
+									modalType={
+										isCrossMarginAccount ? 'futures_cross_withdraw' : 'futures_isolated_transfer'
+									}
+									onPillClick={onClickContainer}
+									expanded={expanded}
+								/>
+							</DepositContainer>
 						)}
 					</>
-				)}
-
-				{(!isCrossMarginAccount || withdrawable.gt(0) || !isDepositRequired) && (
-					<BrdigeAndWithdrawButton
-						modalType={
-							isCrossMarginAccount ? 'futures_cross_withdraw' : 'futures_isolated_transfer'
-						}
-						onPillClick={onClickContainer}
-						expanded={expanded}
-					/>
 				)}
 			</BalanceContainer>
 
