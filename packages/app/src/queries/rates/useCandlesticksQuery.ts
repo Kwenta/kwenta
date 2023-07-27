@@ -7,6 +7,7 @@ import { DEFAULT_NETWORK_ID } from 'constants/defaults'
 import logError from 'utils/logError'
 
 import { DEFAULT_PYTH_TV_ENDPOINT } from './constants'
+import { AssetTypes } from './types'
 import { mapCandles, mapPythCandles } from './utils'
 
 export const requestCandlesticks = async (
@@ -18,8 +19,14 @@ export const requestCandlesticks = async (
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId)
 	const pythTvEndpoint = DEFAULT_PYTH_TV_ENDPOINT
-	const metalAssets = ['XAU', 'XAG']
-	const prefix = metalAssets.includes(currencyKey!) ? 'Metal' : 'Crypto'
+	const nonCryptoTypes: AssetTypes = {
+		Metal: ['XAU', 'XAG'],
+		FX: ['EUR', 'GBP', 'AUD'],
+	}
+
+	let prefix =
+		Object.keys(nonCryptoTypes).find((type) => nonCryptoTypes[type].includes(currencyKey!)) ||
+		'Crypto'
 
 	if (period <= 3600) {
 		const response = await axios
