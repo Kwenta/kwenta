@@ -235,7 +235,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											)}
 										</div>
 									),
-									size: 35,
+									size: 30,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
@@ -249,7 +249,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
-									size: 80,
+									size: 70,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
@@ -265,7 +265,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											</div>
 										)
 									},
-									size: 80,
+									size: 95,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
