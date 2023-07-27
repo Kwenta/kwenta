@@ -137,9 +137,6 @@ importers:
       eslint-config-next:
         specifier: 13.4.12
         version: 13.4.12(eslint@8.45.0)(typescript@5.1.6)
-      ethcall:
-        specifier: 4.7.2
-        version: 4.7.2
       ethers:
         specifier: 5.7.2
         version: 5.7.2
@@ -8048,6 +8045,7 @@ packages:
 
   /@types/node@17.0.45:
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
+    dev: true
 
   /@types/node@18.15.13:
     resolution: {integrity: sha512-N+0kuo9KgrUQ1Sn/ifDXsvg0TTleP7rIy4zOBGECxAljqvqfqpTfzx0Q1NUedOixRMBfe2Whhb056a42cWs26Q==}
@@ -12290,20 +12288,6 @@ packages:
     resolution: {integrity: sha512-Z3ymjopaoft7JDoxZcEb3pwdGh7yiYMhOwm2doUt6ASXlMavpNlK6Cre0+IMl2VSGyEU9rkiperQhp5iRxn5Pg==}
     dependencies:
       fast-safe-stringify: 2.1.1
-    dev: false
-
-  /ethcall@4.7.2:
-    resolution: {integrity: sha512-GyIBiRzJXfHt6CoLFhq5wPrKoqVpkKgzun2h6zZF1/tc+JDLmqcBkVkSKijV/NvzKQUBfAi5ziUZ36Alx4NO9A==}
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@types/node': 17.0.45
-      abi-coder: 4.1.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
     dev: false
 
   /ethcall@5.0.1:
