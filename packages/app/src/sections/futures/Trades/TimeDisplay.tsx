@@ -1,8 +1,8 @@
-import { Body } from 'components/Text'
 import { format } from 'date-fns'
 import { FC, useCallback, useMemo, useState, memo } from 'react'
 import styled, { css } from 'styled-components'
 
+import { Body } from 'components/Text'
 import getLocale from 'utils/formatters/getLocale'
 
 type TimeDisplayProps = {
