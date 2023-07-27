@@ -1,13 +1,12 @@
-import { formatDollars, getDisplayAsset } from '@kwenta/sdk/utils'
+import { formatDollars, formatNumber, getDisplayAsset } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import { memo, useMemo } from 'react'
+import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import HelpIcon from 'assets/svg/app/question-mark.svg'
 import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
-import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
+import { FlexDivCol } from 'components/layout/flex'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import ROUTES from 'constants/routes'
@@ -29,7 +28,11 @@ import TableMarketDetails from '../UserInfo/TableMarketDetails'
 
 import TimeDisplay from './TimeDisplay'
 
-const Trades = memo(() => {
+type TradesProps = {
+	rounded?: boolean
+	noBottom?: boolean
+}
+const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 	const { t } = useTranslation()
 	const { switchToL2 } = useNetworkSwitcher()
 	const router = useRouter()
@@ -74,8 +77,8 @@ const Trades = memo(() => {
 	return lessThanWidth('xl') ? (
 		<Table
 			highlightRowsOnHover
-			rounded={false}
-			noBottom={true}
+			rounded={rounded}
+			noBottom={noBottom}
 			columns={[
 				{
 					header: () => (
@@ -114,13 +117,15 @@ const Trades = memo(() => {
 				},
 				{
 					header: () => (
-						<TableHeader>{t('futures.market.user.trades.table.price-type')}</TableHeader>
+						<TableHeader style={{ width: '90%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.price-type')}
+						</TableHeader>
 					),
 					accessorKey: 'value',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return (
-							<FlexDivCol>
+							<FlexDivCol style={{ width: '90%', textAlign: 'right' }}>
 								<Currency.Price price={cellProps.getValue()} />
 								<Body color="secondary">{cellProps.row.original.type}</Body>
 							</FlexDivCol>
@@ -129,17 +134,17 @@ const Trades = memo(() => {
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.size')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '90%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.size')}
+						</TableHeader>
+					),
 					accessorKey: 'amount',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return (
-							<FlexDivCol>
-								<Currency.Price
-									price={cellProps.getValue()}
-									currencyKey={cellProps.row.original.displayAsset!}
-									showCurrencyKey
-								/>
+							<FlexDivCol style={{ width: '90%', textAlign: 'right' }}>
+								{formatNumber(cellProps.getValue(), { suggestDecimals: true })}
 								<Currency.Price
 									price={cellProps.row.original.notionalValue}
 									formatOptions={{ truncateOver: 1e6 }}
@@ -151,39 +156,40 @@ const Trades = memo(() => {
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.pnl')}
+						</TableHeader>
+					),
 					accessorKey: 'netPnl',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<FlexDivRowCentered columnGap="5px">
-								<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
-									{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
-								</ColoredPrice>
-								<HelpIcon />
-							</FlexDivRowCentered>
+							<ColoredPrice
+								priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}
+								style={{ width: '80%', textAlign: 'right' }}
+							>
+								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
+							</ColoredPrice>
 						)
 					},
 					enableSorting: true,
 				},
 				{
 					header: () => (
-						<TableHeader>{t('futures.market.user.trades.table.fees-funding')}</TableHeader>
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.fees')}
+						</TableHeader>
 					),
 					sortingFn: 'basic',
 					accessorKey: 'feesPaid',
-					cell: (cellProps) => {
-						return (
-							<FlexDivCol>
-								<Currency.Price price={cellProps.getValue()} />
-								<Body mono color="secondary">
-									{formatDollars(cellProps.row.original.funding, { suggestDecimals: true })}
-								</Body>
-							</FlexDivCol>
-						)
-					},
+					cell: (cellProps) => (
+						<div style={{ width: '80%', textAlign: 'right' }}>
+							<Currency.Price price={cellProps.getValue()} />
+						</div>
+					),
 					enableSorting: true,
 				},
 			]}
@@ -207,8 +213,8 @@ const Trades = memo(() => {
 	) : (
 		<Table
 			highlightRowsOnHover
-			rounded={false}
-			noBottom={true}
+			rounded={rounded}
+			noBottom={noBottom}
 			columns={[
 				{
 					header: () => (
@@ -246,26 +252,34 @@ const Trades = memo(() => {
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.price')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.price')}
+						</TableHeader>
+					),
 					accessorKey: 'value',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
-						return <Currency.Price price={cellProps.getValue()} />
+						return (
+							<div style={{ width: '60%', textAlign: 'right' }}>
+								<Currency.Price price={cellProps.getValue()} />
+							</div>
+						)
 					},
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.size')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.size')}
+						</TableHeader>
+					),
 					accessorKey: 'amount',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return (
-							<FlexDivCol>
-								<Currency.Price
-									price={cellProps.getValue()}
-									currencyKey={cellProps.row.original.displayAsset!}
-									showCurrencyKey
-								/>
+							<FlexDivCol style={{ width: '80%', textAlign: 'right' }}>
+								{formatNumber(cellProps.getValue(), { suggestDecimals: true })}
 								<Currency.Price
 									price={cellProps.row.original.notionalValue}
 									formatOptions={{ truncateOver: 1e6 }}
@@ -277,45 +291,45 @@ const Trades = memo(() => {
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.pnl')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '70%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.pnl')}
+						</TableHeader>
+					),
 					accessorKey: 'netPnl',
 					sortingFn: 'basic',
 					cell: (cellProps) => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<FlexDivRowCentered columnGap="5px">
-								<ColoredPrice priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}>
-									{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
-								</ColoredPrice>
-								<HelpIcon />
-							</FlexDivRowCentered>
+							<ColoredPrice
+								priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}
+								style={{ width: '70%', textAlign: 'right' }}
+							>
+								{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}
+							</ColoredPrice>
 						)
 					},
 					enableSorting: true,
 				},
 				{
-					header: () => <TableHeader>{t('futures.market.user.trades.table.fees')}</TableHeader>,
+					header: () => (
+						<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+							{t('futures.market.user.trades.table.fees')}
+						</TableHeader>
+					),
 					sortingFn: 'basic',
 					accessorKey: 'feesPaid',
 					cell: (cellProps) => {
 						return cellProps.getValue().eq(0) ? (
 							'--'
 						) : (
-							<Currency.Price price={cellProps.getValue()} />
+							<FlexDivCol style={{ width: '60%', textAlign: 'right' }}>
+								<Currency.Price price={cellProps.getValue()} />
+							</FlexDivCol>
 						)
 					},
 					enableSorting: true,
-				},
-				{
-					header: () => <TableHeader>{t('futures.market.history.accrued-funding')}</TableHeader>,
-					sortingFn: 'basic',
-					accessorKey: 'funding',
-					cell: (cellProps) => (
-						<ColoredPrice priceChange={cellProps.getValue() > 0 ? 'up' : 'down'}>
-							{formatDollars(cellProps.getValue(), { suggestDecimals: true })}
-						</ColoredPrice>
-					),
 				},
 				{
 					header: () => (
@@ -324,6 +338,7 @@ const Trades = memo(() => {
 					accessorKey: 'type',
 					sortingFn: 'basic',
 					cell: (cellProps) => <>{cellProps.getValue()}</>,
+					size: 90,
 				},
 			]}
 			columnsDeps={columnsDeps}

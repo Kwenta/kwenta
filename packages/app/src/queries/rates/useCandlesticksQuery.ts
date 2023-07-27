@@ -6,7 +6,7 @@ import { getSupportedResolution } from 'components/TVChart/utils'
 import { DEFAULT_NETWORK_ID } from 'constants/defaults'
 import logError from 'utils/logError'
 
-import { DEFAULT_PYTH_TV_ENDPOINT } from './constants'
+import { DEFAULT_PYTH_TV_ENDPOINT, NON_CRYPTO_ASSET_TYPES } from './constants'
 import { mapCandles, mapPythCandles } from './utils'
 
 export const requestCandlesticks = async (
@@ -19,13 +19,18 @@ export const requestCandlesticks = async (
 	const ratesEndpoint = getRatesEndpoint(networkId)
 	const pythTvEndpoint = DEFAULT_PYTH_TV_ENDPOINT
 
+	let prefix =
+		Object.keys(NON_CRYPTO_ASSET_TYPES).find((type) =>
+			NON_CRYPTO_ASSET_TYPES[type].includes(currencyKey!)
+		) || 'Crypto'
+
 	if (period <= 3600) {
 		const response = await axios
 			.get(pythTvEndpoint, {
 				params: {
 					from: minTimestamp,
 					to: maxTimestamp,
-					symbol: `${currencyKey}/USD`,
+					symbol: `${prefix}.${currencyKey}/USD`,
 					resolution: getSupportedResolution(period),
 				},
 			})
