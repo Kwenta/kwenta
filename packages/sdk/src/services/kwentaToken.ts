@@ -527,11 +527,10 @@ export default class KwentaTokenService {
 	}
 
 	public async getClaimableRewards(epochPeriod: number) {
-		const { MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
-			this.sdk.context.multicallContracts
+		const { MultipleMerkleDistributorPerpsV2 } = this.sdk.context.multicallContracts
 		const { walletAddress } = this.sdk.context
 
-		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
+		if (!MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
@@ -671,17 +670,18 @@ export default class KwentaTokenService {
 		return { claimableRewards, totalRewards }
 	}
 
-	public async claimMultipleKwentaRewards(claimableRewards: ClaimParams[]) {
-		const { BatchClaimer, MultipleMerkleDistributorPerpsV2 } = this.sdk.context.contracts
+	public async claimKwentaRewards(claimableRewards: ClaimParams[]) {
+		const { MultipleMerkleDistributorPerpsV2 } = this.sdk.context.contracts
 
-		if (!BatchClaimer || !MultipleMerkleDistributorPerpsV2) {
+		if (!MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
-			[MultipleMerkleDistributorPerpsV2.address],
-			claimableRewards,
-		])
+		return this.sdk.transactions.createContractTxn(
+			MultipleMerkleDistributorPerpsV2,
+			'claimMultiple',
+			[claimableRewards]
+		)
 	}
 
 	public async claimMultipleAllRewards(claimableRewards: ClaimParams[][]) {

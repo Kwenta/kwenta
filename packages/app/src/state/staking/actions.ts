@@ -395,7 +395,7 @@ export const claimMultipleKwentaRewards = createAsyncThunk<void, void, ThunkConf
 			staking: { claimableKwentaRewards },
 		} = getState()
 
-		const { hash } = await sdk.kwentaToken.claimMultipleKwentaRewards(claimableKwentaRewards)
+		const { hash } = await sdk.kwentaToken.claimKwentaRewards(claimableKwentaRewards)
 
 		monitorTransaction({
 			txHash: hash,
