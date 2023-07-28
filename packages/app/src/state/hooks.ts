@@ -1,4 +1,5 @@
 import { AsyncThunkAction } from '@reduxjs/toolkit'
+import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef } from 'react'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
@@ -69,13 +70,18 @@ const DEFAULT_INTERVAL = 20000
 export const usePollAction = (
 	actionName: string,
 	action: () => ActionType,
-	options?: { dependencies?: any[]; disabled?: boolean; intervalTime?: number }
+	options?: {
+		dependencies?: any[]
+		disabled?: boolean
+		intervalTime?: number
+	}
 ) => {
 	const { providerReady } = Connector.useContainer()
 	const startPolling = useStartPollingAction()
+	const router = useRouter()
 
 	useEffect(() => {
-		if (!options?.disabled && providerReady) {
+		if (!options?.disabled && providerReady && router.isReady) {
 			startPolling(actionName, action, options?.intervalTime || DEFAULT_INTERVAL)
 		}
 		// eslint-disable-next-line

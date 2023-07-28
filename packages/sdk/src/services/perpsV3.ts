@@ -46,15 +46,11 @@ import {
 	formatSettlementStrategy,
 } from '../utils/futures'
 import { getReasonFromCode } from '../utils/synths'
-import {
-	queryPerpsV3Markets,
-	queryPerpsV3Accounts,
-	querySettlementStrategies,
-} from '../queries/perpsV3'
+import { queryPerpsV3Markets, querySettlementStrategies } from '../queries/perpsV3'
 import { weiFromWei } from '../utils'
 import { ZERO_ADDRESS } from '../constants'
 import { SynthV3Asset } from '../types'
-import { V3_PERPS_ID_TO_MARKET_KEY, V3_SYNTH_MARKET_IDS, V3MarketId } from '../constants/perpsv3'
+import { V3_PERPS_ID_TO_MARKET_KEY, V3MarketId } from '../constants/perpsv3'
 
 export default class PerpsV3Service {
 	private sdk: KwentaSDK
@@ -77,6 +73,7 @@ export default class PerpsV3Service {
 
 	public async getMarkets() {
 		const perpsV3Markets = await queryPerpsV3Markets(this.sdk)
+		// TODO: Combine settlement strategies and markets query
 		const strategies = await this.getSettlementStrategies()
 
 		const futuresMarkets = perpsV3Markets.reduce<PerpsMarketV3[]>(
@@ -338,10 +335,21 @@ export default class PerpsV3Service {
 		// return response ? calculateVolumes(response) : {}
 	}
 
-	public async getPerpsV3AccountIds(walletAddress?: string | null): Promise<string[]> {
+	public async getPerpsV3AccountIds(walletAddress?: string | null): Promise<number[]> {
+		const accountProxy = this.sdk.context.contracts.perpsV3AccountProxy
+		const accountMulticall = this.sdk.context.multicallContracts.perpsV3AccountProxy
+		if (!accountProxy || !accountMulticall) throw new Error(UNSUPPORTED_NETWORK)
 		if (!walletAddress) return []
-		const accounts = await queryPerpsV3Accounts(this.sdk, walletAddress.toLowerCase())
-		return accounts.map((a) => a.id)
+		const accountCount = await accountProxy.balanceOf(walletAddress)
+		const calls =
+			Number(accountCount) > 0
+				? [...Array(Number(accountCount)).keys()].map((index) => {
+						return accountMulticall.tokenOfOwnerByIndex(walletAddress, index)
+				  })
+				: []
+
+		const accountIds = (await this.sdk.context.multicallProvider.all(calls)) as BigNumber[]
+		return accountIds.map((id) => id.toNumber())
 	}
 
 	public async getAccountOwner(id: BigNumberish): Promise<string | null> {
@@ -543,10 +551,11 @@ export default class PerpsV3Service {
 		)
 	}
 
-	public async createPerpsV3Account(requestedId: BigNumberish) {
+	public async createAccount(requestedId?: BigNumberish) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
-		return this.sdk.transactions.createContractTxn(marketProxy, 'createAccount', [requestedId])
+		const id = requestedId ?? Date.now()
+		return this.sdk.transactions.createContractTxn(marketProxy, 'createAccount', [id])
 	}
 
 	public getSkewAdjustedPrice = async (price: Wei, marketAddress: string, marketKey: string) => {

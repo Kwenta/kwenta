@@ -30,7 +30,6 @@ import { AppThunk } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 import {
-	perpsAccountIdFromAddress,
 	serializePositionHistory,
 	serializeV3AsyncOrder,
 	serializeV3Market,
@@ -69,6 +68,14 @@ import {
 } from './selectors'
 import { CrossMarginTradePreview } from './types'
 
+export const fetchCrossMarginMarketData = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/fetchCrossMarginMarketData',
+	async (_, { dispatch }) => {
+		await dispatch(fetchV3Markets())
+		// TODO: fetch v3 volume data
+	}
+)
+
 export const fetchV3Markets = createAsyncThunk<
 	{ markets: PerpsMarketV3<string>[]; networkId: NetworkId } | undefined,
 	void,
@@ -104,19 +111,12 @@ export const fetchPerpsV3Account = createAsyncThunk<
 	// Already have an account fetched and persisted for this address
 	if (accounts[network]?.[wallet]?.account) return
 
-	const id = perpsAccountIdFromAddress(wallet)
-
 	try {
-		const owner = await sdk.perpsV3.getAccountOwner(id)
-
-		if (owner) {
-			// Account already created
-			if (owner.toLowerCase() !== wallet.toLowerCase()) {
-				const errMessage = 'Account id registered with a different wallet'
-				notifyError(errMessage)
-				rejectWithValue(errMessage)
-			}
-			return { account: Number(id), wallet, network }
+		// TODO: Support multiple accounts
+		const accountIds = await sdk.perpsV3.getPerpsV3AccountIds(wallet)
+		const defaultAccount = accountIds[0]
+		if (defaultAccount) {
+			return { account: defaultAccount, wallet, network }
 		}
 		return undefined
 	} catch (err) {
@@ -399,25 +399,18 @@ export const createPerpsV3Account = createAsyncThunk<
 		if (!wallet || !supportedNetwork) return undefined
 		const accounts = getState().crossMargin.accounts
 
-		// Already have an accoutn fetched and persisted for this address
+		// Already have an account fetched and persisted for this address
 		if (accounts[network]?.[wallet]?.account) {
 			notifyError('There is already an account associated with this wallet')
 			rejectWithValue('Account already created')
 		}
 
-		const id = perpsAccountIdFromAddress(wallet)
-
 		try {
-			// Check if this wallet has already registered an account from Kwenta
-			// as we want to maintain one to one eoa account mapping for now
+			const accountIds = await sdk.perpsV3.getPerpsV3AccountIds(wallet)
 
-			const owner = await sdk.perpsV3.getAccountOwner(id)
-			if (owner && owner.toLowerCase() !== wallet.toLowerCase()) {
-				notifyError('Another wallet is already registered with account id ' + id)
-				rejectWithValue('Account id already registered')
-				return
-			} else if (owner) {
-				dispatch(setPerpsV3Account({ account: id, wallet: wallet, network }))
+			if (accountIds.length > 0) {
+				// Already have an account, no need to create one
+				dispatch(setPerpsV3Account({ account: accountIds[0], wallet: wallet, network }))
 				return
 			}
 
@@ -428,7 +421,7 @@ export const createPerpsV3Account = createAsyncThunk<
 					hash: null,
 				})
 			)
-			const tx = await sdk.perpsV3.createPerpsV3Account(id)
+			const tx = await sdk.perpsV3.createAccount()
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchPerpsV3Account())
 			dispatch(setOpenModal(null))

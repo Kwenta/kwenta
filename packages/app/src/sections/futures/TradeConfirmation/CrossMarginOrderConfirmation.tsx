@@ -122,7 +122,7 @@ const CrossMarginOrderConfirmationModal: FC = () => {
 				value: formatDollars(totalDeposit),
 			},
 		],
-		[t, preview, totalDeposit, preview?.settlementFee, settlementStrategy?.settlementDelay]
+		[t, preview, totalDeposit, settlementStrategy?.settlementDelay]
 	)
 
 	const mobileRows = useMemo(() => {

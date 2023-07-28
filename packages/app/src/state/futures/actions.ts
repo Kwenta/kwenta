@@ -64,14 +64,6 @@ export const fetchDailyVolumes = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
-export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/fetchSharedFuturesData',
-	async (_, { dispatch }) => {
-		await dispatch(fetchMarkets())
-		dispatch(fetchDailyVolumes())
-	}
-)
-
 export const fetchMarginTransfers = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/fetchMarginTransfers',
 	async (_, { dispatch }) => {

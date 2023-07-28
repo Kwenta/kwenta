@@ -19,6 +19,7 @@ export { PerpsV2Market__factory } from "./PerpsV2Market__factory";
 export { PerpsV2MarketData__factory } from "./PerpsV2MarketData__factory";
 export { PerpsV2MarketSettings__factory } from "./PerpsV2MarketSettings__factory";
 export { PerpsV2MarketViews__factory } from "./PerpsV2MarketViews__factory";
+export { PerpsV3AccountProxy__factory } from "./PerpsV3AccountProxy__factory";
 export { PerpsV3MarketProxy__factory } from "./PerpsV3MarketProxy__factory";
 export { Pyth__factory } from "./Pyth__factory";
 export { ReverseRecords__factory } from "./ReverseRecords__factory";

@@ -48,7 +48,6 @@ import {
 } from 'state/app/reducer'
 import { fetchBalances } from 'state/balances/actions'
 import { ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
-import { fetchV3Markets } from 'state/futures/crossMargin/actions'
 import { serializeWeiObject } from 'state/helpers'
 import { AppDispatch, AppThunk, RootState } from 'state/store'
 import { ThunkConfig } from 'state/types'
@@ -291,11 +290,10 @@ export const fetchSmartMarginAccountData = createAsyncThunk<void, void, ThunkCon
 	}
 )
 
-export const fetchSharedFuturesData = createAsyncThunk<void, void, ThunkConfig>(
-	'futures/fetchSharedFuturesData',
+export const fetchSmartMarginMarketData = createAsyncThunk<void, void, ThunkConfig>(
+	'futures/fetchSmartMarginMarketData',
 	async (_, { dispatch }) => {
 		await dispatch(fetchMarketsV2())
-		await dispatch(fetchV3Markets())
 		dispatch(fetchDailyVolumesV2())
 	}
 )

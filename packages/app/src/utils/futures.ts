@@ -497,11 +497,6 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: PerpsMarket
 		}, [] as DelayedOrderWithDetails[])
 }
 
-export const perpsAccountIdFromAddress = (eoa: string): number => {
-	const numberedId = eoa.replace(/\D/g, '')
-	return Number(numberedId.substring(0, 16))
-}
-
 export const serializeCrossMarginTradePreview = (
 	preview: CrossMarginTradePreview
 ): CrossMarginTradePreview<string> => ({
