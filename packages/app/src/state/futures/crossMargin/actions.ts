@@ -1,3 +1,4 @@
+import { V3_SYNTH_MARKET_IDS } from '@kwenta/sdk/constants'
 import {
 	PerpsV2Position,
 	FuturesPositionHistory,
@@ -457,9 +458,7 @@ export const approveCrossMarginDeposit = createAsyncThunk<void, void, ThunkConfi
 export const depositCrossMarginMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	'futures/depositCrossMarginMargin',
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState())
 		const accountId = selectCrossMarginAccount(getState())
-		if (!marketInfo || marketInfo?.version !== 3) throw new Error('Market info not found')
 		if (!accountId) throw new Error('Account id not found')
 		try {
 			dispatch(
@@ -469,7 +468,7 @@ export const depositCrossMarginMargin = createAsyncThunk<void, Wei, ThunkConfig>
 					hash: null,
 				})
 			)
-			const tx = await sdk.perpsV3.depositToAccount(accountId, marketInfo.marketId, amount)
+			const tx = await sdk.perpsV3.depositToAccount(accountId, V3_SYNTH_MARKET_IDS.SNXUSD, amount)
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(setOpenModal(null))
 			dispatch(refetchPosition())
@@ -485,8 +484,8 @@ export const depositCrossMarginMargin = createAsyncThunk<void, Wei, ThunkConfig>
 export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	'futures/withdrawCrossMargin',
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectV3MarketInfo(getState())
-		if (!marketInfo || marketInfo?.version !== 3) throw new Error('Market info not found')
+		const accountId = selectCrossMarginAccount(getState())
+		if (!accountId) throw new Error('Account id not found')
 		try {
 			dispatch(
 				setTransaction({
@@ -496,8 +495,8 @@ export const withdrawCrossMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 				})
 			)
 			const tx = await sdk.perpsV3.withdrawFromAccount(
-				marketInfo.marketId,
-				marketInfo.marketId,
+				accountId,
+				V3_SYNTH_MARKET_IDS.SNXUSD,
 				amount
 			)
 			await monitorAndAwaitTransaction(dispatch, tx)

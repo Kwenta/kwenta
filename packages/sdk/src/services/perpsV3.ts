@@ -50,7 +50,11 @@ import { queryPerpsV3Markets, querySettlementStrategies } from '../queries/perps
 import { weiFromWei } from '../utils'
 import { ZERO_ADDRESS } from '../constants'
 import { SynthV3Asset } from '../types'
-import { V3_PERPS_ID_TO_MARKET_KEY, V3MarketId } from '../constants/perpsv3'
+import {
+	V3_PERPS_ID_TO_V2_MARKET_KEY,
+	V3PerpsMarketId,
+	V3SynthMarketId,
+} from '../constants/perpsv3'
 
 export default class PerpsV3Service {
 	private sdk: KwentaSDK
@@ -390,12 +394,12 @@ export default class PerpsV3Service {
 	}
 
 	public async getTradePreview(
-		marketId: V3MarketId,
+		marketId: V3PerpsMarketId,
 		size: Wei,
 		settlementStrategy: PerpsV3SettlementStrategy
 	) {
 		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
-		const price = this.sdk.prices.getOffchainPrice(V3_PERPS_ID_TO_MARKET_KEY[marketId])
+		const price = this.sdk.prices.getOffchainPrice(V3_PERPS_ID_TO_V2_MARKET_KEY[marketId])
 		if (!proxy) throw new Error(UNSUPPORTED_NETWORK)
 		if (!price) throw new Error('No price for market')
 		const [fees, skew, fill] = (await this.sdk.context.multicallProvider.all([
@@ -488,12 +492,12 @@ export default class PerpsV3Service {
 		])
 	}
 
-	public async depositToAccount(accountId: number, marketId: number, amount: Wei) {
-		return this.modifyCollateral(accountId, marketId, amount)
+	public async depositToAccount(accountId: number, synthId: V3SynthMarketId, amount: Wei) {
+		return this.modifyCollateral(accountId, synthId, amount)
 	}
 
-	public async withdrawFromAccount(accountId: number, marketId: number, amount: Wei) {
-		return this.modifyCollateral(accountId, marketId, amount.neg())
+	public async withdrawFromAccount(accountId: number, synthId: V3SynthMarketId, amount: Wei) {
+		return this.modifyCollateral(accountId, synthId, amount.neg())
 	}
 
 	public async closePosition(marketAddress: string, priceImpactDelta: Wei) {
@@ -576,12 +580,13 @@ export default class PerpsV3Service {
 
 	// private helpers
 
-	private modifyCollateral(accountId: number, marketId: number, amount: Wei) {
+	private modifyCollateral(accountId: number, synthId: V3SynthMarketId, amount: Wei) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+
 		return this.sdk.transactions.createContractTxn(marketProxy, 'modifyCollateral', [
 			accountId,
-			marketId,
+			synthId,
 			amount.toBN(),
 		])
 	}

@@ -198,6 +198,7 @@ const DepositWithdrawCrossMarginModal: React.FC<Props> = ({ onDismiss, defaultTa
 			<Button
 				data-testid="futures-market-trade-deposit-margin-button"
 				disabled={isDisabled}
+				loading={submitting || approving}
 				fullWidth
 				onClick={transferType === 0 ? onDepositOrApprove : onWithdraw}
 				variant="flat"
