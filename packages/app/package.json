@@ -112,7 +112,7 @@
 		"prettier": "2.8.8",
 		"react-test-renderer": "17.0.1",
 		"storybook": "7.0.27",
-		"typechain": "8.1.1",
+		"typechain": "8.3.1",
 		"typescript": "5.1.6"
 	},
 	"engines": {
