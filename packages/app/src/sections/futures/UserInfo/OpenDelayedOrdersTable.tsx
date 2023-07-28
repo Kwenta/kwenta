@@ -126,9 +126,6 @@ const OpenDelayedOrdersTable: React.FC = memo(() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
 				const timeToExecution = Math.floor(order.executableStartTime - Date.now() / 1000)
 				const timePastExecution = Math.floor(Date.now() / 1000 - order.executableStartTime)
-				// console.log('Date.now()', Date.now())
-				// console.log('order.executableStartTime', order.executableStartTime)
-				// console.log('timePastExecution', timePastExecution)
 
 				// Only updated delayed orders
 				acc[order.market.marketKey] = {

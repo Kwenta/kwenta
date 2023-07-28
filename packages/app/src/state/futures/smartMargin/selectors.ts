@@ -859,7 +859,7 @@ export const selectSmartMarginDelayedOrders = createSelector(
 			const market = markets.find((m) => m.marketKey === o.marketKey)
 
 			if (market) {
-				const timePastExecution = Math.floor((Date.now() - o.executableAtTimestamp) / 1000)
+				const timePastExecution = Math.floor(Date.now() - o.executableAtTimestamp)
 				const expirationTime = o.executableAtTimestamp + market.settings.offchainDelayedOrderMaxAge
 				const executable = timePastExecution <= market.settings.offchainDelayedOrderMaxAge
 
@@ -867,7 +867,7 @@ export const selectSmartMarginDelayedOrders = createSelector(
 					market,
 					account: Number(account.account),
 					size: o.size,
-					executableStartTime: o.executableAtTimestamp,
+					executableStartTime: o.executableAtTimestamp / 1000,
 					expirationTime: expirationTime,
 					marginDelta: wei(0),
 					desiredFillPrice: wei(o.desiredFillPrice),
