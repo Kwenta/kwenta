@@ -6,6 +6,7 @@ import {
 	MarketKeyByAsset,
 	floorNumber,
 	formatDollars,
+	getMarketName,
 } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { useRouter } from 'next/router'
@@ -42,7 +43,7 @@ import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices } from 'state/prices/selectors'
 import { FetchStatus } from 'state/types'
 import media from 'styles/media'
-import { getMarketName, getSynthDescription } from 'utils/futures'
+import { getSynthDescription } from 'utils/futures'
 
 import {
 	MARKETS_DETAILS_HEIGHT_DESKTOP,
@@ -235,7 +236,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											)}
 										</div>
 									),
-									size: 35,
+									size: 30,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
@@ -249,7 +250,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
-									size: 80,
+									size: 65,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
@@ -265,10 +266,14 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											</div>
 										)
 									},
-									size: 80,
+									size: 100,
 								},
 								{
-									header: () => <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
+									header: () => (
+										<TableHeader style={{ width: '70px', textAlign: 'right' }}>
+											{t('futures.markets-drop-down.change')}
+										</TableHeader>
+									),
 									cell: ({ row }) => {
 										return (
 											<div>
@@ -284,6 +289,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 																row.original.change ? row.original.change * 100 : '0',
 																2
 															)}
+															style={{ textAlign: 'right', width: '60px' }}
 														/>
 													}
 												/>
@@ -293,7 +299,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									accessorKey: 'change',
 									sortingFn: 'basic',
 									enableSorting: true,
-									size: 50,
+									size: 60,
 								},
 							]}
 							data={options}
