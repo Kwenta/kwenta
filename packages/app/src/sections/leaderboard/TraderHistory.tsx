@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { getMarketName } from '@kwenta/sdk/dist/utils'
+import { getMarketName } from '@kwenta/sdk/utils'
 import { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
 import { FC, memo, useEffect, useMemo } from 'react'
