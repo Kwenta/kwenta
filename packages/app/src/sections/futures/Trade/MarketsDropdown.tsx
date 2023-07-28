@@ -234,7 +234,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											)}
 										</div>
 									),
-									size: 35,
+									size: 30,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
@@ -248,7 +248,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
-									size: 80,
+									size: 65,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
@@ -264,10 +264,14 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											</div>
 										)
 									},
-									size: 80,
+									size: 100,
 								},
 								{
-									header: () => <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
+									header: () => (
+										<TableHeader style={{ width: '70px', textAlign: 'right' }}>
+											{t('futures.markets-drop-down.change')}
+										</TableHeader>
+									),
 									cell: ({ row }) => {
 										return (
 											<div>
@@ -283,6 +287,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 																row.original.change ? row.original.change * 100 : '0',
 																2
 															)}
+															style={{ textAlign: 'right', width: '60px' }}
 														/>
 													}
 												/>
@@ -292,7 +297,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									accessorKey: 'change',
 									sortingFn: 'basic',
 									enableSorting: true,
-									size: 50,
+									size: 60,
 								},
 							]}
 							data={options}

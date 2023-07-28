@@ -957,6 +957,7 @@
 					"available-margin": "Available Margin",
 					"locked-margin": "Locked Margin",
 					"no-available-margin": "No available margin",
+					"only-available-margin": "Only {{balance}} available margin",
 					"min-margin": "Min. $50 sUSD required to trade",
 					"tooltip": "Margin currently locked in closed markets. It will become available once the market reopens.",
 					"deposit": "Deposit"

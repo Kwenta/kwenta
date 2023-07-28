@@ -141,7 +141,7 @@ const Market: MarketComponent = () => {
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
-			{openModal === 'futures_withdraw_smart_margin' && (
+			{openModal === 'futures_deposit_withdraw_smart_margin' && (
 				<TransferSmartMarginModal
 					defaultTab="withdraw"
 					onDismiss={() => dispatch(setOpenModal(null))}
@@ -167,7 +167,7 @@ function TradePanelDesktop() {
 		walletAddress &&
 		!isL2 &&
 		openModal !== 'futures_smart_margin_socket' &&
-		openModal !== 'futures_withdraw_smart_margin'
+		openModal !== 'futures_deposit_withdraw_smart_margin'
 	) {
 		return <FuturesUnsupportedNetwork />
 	}
