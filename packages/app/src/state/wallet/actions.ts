@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/browser'
 import { ethers } from 'ethers'
 
 import { fetchBalances } from 'state/balances/actions'
-import { fetchStakingData } from 'state/staking/actions'
+import { fetchEscrowData, fetchStakingData } from 'state/staking/actions'
 import type { ThunkConfig } from 'state/types'
 
 import { setWalletAddress } from './reducer'
@@ -14,6 +14,7 @@ export const resetWalletAddress = createAsyncThunk<void, string | undefined, Thu
 		dispatch(setWalletAddress(walletAddress))
 		dispatch(fetchBalances())
 		dispatch(fetchStakingData())
+		dispatch(fetchEscrowData())
 	}
 )
 

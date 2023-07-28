@@ -137,8 +137,15 @@ export const fetchEscrowData = createAsyncThunk<
 	{ escrowData: EscrowData<string>[]; totalVestable: string },
 	void,
 	ThunkConfig
->('staking/fetchEscrowData', async (_, { extra: { sdk } }) => {
+>('staking/fetchEscrowData', async (_, { getState, extra: { sdk } }) => {
 	try {
+		const { wallet } = getState()
+		if (!wallet.walletAddress)
+			return {
+				escrowData: [],
+				totalVestable: '0',
+			}
+
 		const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowData()
 
 		return {
