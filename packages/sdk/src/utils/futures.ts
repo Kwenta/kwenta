@@ -119,6 +119,7 @@ export const marketsForNetwork = (networkId: number, logError: IContext['logErro
 }
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
+	if (asset === 'ETHBTC') return 'ETH/BTC'
 	return `${getDisplayAsset(asset)}/sUSD`
 }
 
