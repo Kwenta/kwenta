@@ -1,5 +1,9 @@
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
-import { fetchStakeMigrateData, fetchStakingV2Data } from 'state/staking/actions'
+import {
+	fetchClaimableRewards,
+	fetchStakeMigrateData,
+	fetchStakingData,
+} from 'state/staking/actions'
 import {
 	selectSelectedEpoch,
 	selectStakingSupportedNetwork,
@@ -45,7 +49,12 @@ export const usePollMarketFuturesData = () => {
 		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
 	})
 
-	useFetchAction(fetchStakingV2Data, {
+	useFetchAction(fetchStakingData, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsTradingRewards,
+	})
+
+	useFetchAction(fetchClaimableRewards, {
 		dependencies: [networkId, wallet],
 		disabled: !wallet || !networkSupportsTradingRewards,
 	})
@@ -97,6 +106,7 @@ export const usePollDashboardFuturesData = () => {
 	const crossMarginAddress = useAppSelector(selectCrossMarginAccount)
 	const networkSupportsCrossMargin = useAppSelector(selectFuturesSupportedNetwork)
 	const selectedAccountType = useAppSelector(selectFuturesType)
+	const networkSupportsTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	useFetchAction(fetchCombinedMarginTransfers, {
 		dependencies: [networkId, wallet],
@@ -106,6 +116,11 @@ export const usePollDashboardFuturesData = () => {
 	useFetchAction(fetchCrossMarginAccount, {
 		dependencies: [networkId, wallet],
 		disabled: !wallet || !networkSupportsCrossMargin || selectedAccountType === 'isolated_margin',
+	})
+
+	useFetchAction(fetchClaimableRewards, {
+		dependencies: [networkId, wallet],
+		disabled: !wallet || !networkSupportsTradingRewards,
 	})
 
 	usePollAction('fetchSharedFuturesData', fetchSharedFuturesData, {
