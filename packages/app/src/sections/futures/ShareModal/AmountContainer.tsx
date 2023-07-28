@@ -1,6 +1,6 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { PositionSide } from '@kwenta/sdk/types'
-import { MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils'
+import { MarketKeyByAsset, formatNumber, getMarketName } from '@kwenta/sdk/utils'
 import { FC, useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -9,7 +9,6 @@ import { selectMarketAsset } from 'state/futures/selectors'
 import { SharePositionParams } from 'state/futures/types'
 import { useAppSelector } from 'state/hooks'
 import media from 'styles/media'
-import { getMarketName } from 'utils/futures'
 
 const AmountContainer: FC<SharePositionParams> = ({ asset, position }) => {
 	const defaultAsset = useAppSelector(selectMarketAsset)

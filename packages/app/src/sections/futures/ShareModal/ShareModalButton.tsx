@@ -1,6 +1,6 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { PositionSide } from '@kwenta/sdk/types'
-import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
+import { formatDollars, formatNumber, getMarketName } from '@kwenta/sdk/utils'
 import { toPng } from 'html-to-image'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,7 +10,6 @@ import TwitterIcon from 'assets/svg/social/twitter.svg'
 import Button from 'components/Button'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import { SharePositionParams } from 'state/futures/types'
-import { getMarketName } from 'utils/futures'
 
 function getTwitterText(
 	side: PositionSide,
