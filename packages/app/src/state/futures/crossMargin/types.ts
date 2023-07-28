@@ -2,17 +2,20 @@ import { Period } from '@kwenta/sdk/constants'
 import {
 	TransactionStatus,
 	FuturesPositionHistory,
-	FuturesPotentialTradeDetails,
 	FuturesVolumes,
 	PositionSide,
 	FuturesMarketKey,
 	FuturesMarketAsset,
-	FuturesFilledPosition,
-	FuturesMarket,
+	PotentialTradeStatus,
+	PerpsV3AsyncOrder,
+	PerpsMarketV3,
+	PerpsMarketV2,
+	PerpsV3Position,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
+import { QueryStatus } from 'state/types'
 
 import { FuturesAccountData, FuturesQueryStatuses, TradeSizeInputs } from '../common/types'
 
@@ -74,17 +77,44 @@ export type FundingRatePeriods = {
 	[key: number]: string
 }
 
-export type CrossMarginAccountData = FuturesAccountData
+export type CrossMarginQueryStatuses = FuturesQueryStatuses & {
+	availableMargin: QueryStatus
+}
+
+export type CrossMarginAccountData = FuturesAccountData & {
+	account: number
+	asyncOrders: PerpsV3AsyncOrder<string>[]
+	balances: { [asset: string]: { balance: string; allowance: string } }
+	availableMargin: string
+	position?: PerpsV3Position<string>
+	positions?: PerpsV3Position<string>[]
+	positionHistory: FuturesPositionHistory<string>[]
+}
+
+export type CrossMarginTradePreview<T = Wei> = {
+	marketId: number
+	sizeDelta: T
+	fillPrice: T
+	fee: T
+	leverage: T
+	notionalValue: T
+	settlementFee: T
+	side: PositionSide
+	status: PotentialTradeStatus
+	showStatus?: boolean
+	statusMessage?: string
+	priceImpact: T
+}
 
 export type CrossMarginState = {
-	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
+	markets: Record<FuturesNetwork, PerpsMarketV3<string>[]>
 	tradeInputs: TradeSizeInputs<string>
 	editPositionInputs: EditPositionInputs<string>
 	orderType: 'market'
 	previews: {
-		trade: FuturesPotentialTradeDetails<string> | null
-		close: FuturesPotentialTradeDetails<string> | null
-		edit: FuturesPotentialTradeDetails<string> | null
+		trade: CrossMarginTradePreview<string> | null
+		close: CrossMarginTradePreview<string> | null
+		edit: CrossMarginTradePreview<string> | null
 	}
 	confirmationModalOpen: boolean
 	closePositionOrderInputs: ClosePositionInputs<string>
@@ -93,6 +123,7 @@ export type CrossMarginState = {
 	selectedMarketAsset: FuturesMarketAsset
 	leverageInput: string
 	tradeFee: string
+	perpsV3MarketProxyAddress: string | undefined
 	accounts: Record<
 		FuturesNetwork,
 		{
@@ -100,7 +131,7 @@ export type CrossMarginState = {
 		}
 	>
 	fundingRates: FundingRate<string>[]
-	queryStatuses: FuturesQueryStatuses
+	queryStatuses: CrossMarginQueryStatuses
 	dailyMarketVolumes: FuturesVolumes<string>
 	selectedInputDenomination: InputCurrencyDenomination
 	selectedInputHours: number
@@ -116,13 +147,6 @@ export type CrossMarginState = {
 	>
 }
 
-export type SharePositionParams = {
-	asset?: FuturesMarketAsset
-	position?: FuturesFilledPosition
-	positionHistory?: FuturesPositionHistory
-	marketPrice?: Wei
-}
-
 export type CrossPerpsPortfolio = {
 	account: string
 	timestamp: number
@@ -130,4 +154,19 @@ export type CrossPerpsPortfolio = {
 		[asset: string]: number
 	}
 	total: number
+}
+
+export type AsyncOrderWithDetails = {
+	account: number
+	size: Wei
+	executableStartTime: number
+	expirationTime: number
+	settlementFee: Wei
+	marginDelta: Wei
+	desiredFillPrice: Wei
+	side: PositionSide
+	isStale: boolean
+	isExecutable: boolean
+	settlementWindowDuration: number
+	market: PerpsMarketV3 | PerpsMarketV2
 }

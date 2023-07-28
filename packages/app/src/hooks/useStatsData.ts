@@ -2,7 +2,10 @@ import { useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
 
 import useGetFile from 'queries/files/useGetFile'
-import { selectMarkPrices, selectMarkets } from 'state/futures/selectors'
+import {
+	selectOptimismMarkPrices,
+	selectOptimismMarkets,
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { selectMinTimestamp } from 'state/stats/selectors'
 
@@ -20,8 +23,8 @@ export type DailyStat = {
 }
 
 const useStatsData = () => {
-	const futuresMarkets = useAppSelector(selectMarkets)
-	const prices = useAppSelector(selectMarkPrices)
+	const futuresMarkets = useAppSelector(selectOptimismMarkets)
+	const prices = useAppSelector(selectOptimismMarkPrices)
 	const minTimestamp = useAppSelector(selectMinTimestamp)
 
 	const { data: dailyStatsData, isLoading: dailyStatsIsLoading }: UseQueryResult<DailyStat[]> =

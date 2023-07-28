@@ -1,4 +1,9 @@
-import { SynthBalance, TokenBalances } from '@kwenta/sdk/types'
+import {
+	SynthBalance,
+	SynthV3Asset,
+	SynthV3BalancesAndAllowances,
+	TokenBalances,
+} from '@kwenta/sdk/types'
 import { notNill } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { orderBy } from 'lodash'
@@ -15,6 +20,47 @@ export const sortWei = (a: Wei, b: Wei, order: 'descending' | 'ascending') => {
 	} else {
 		return 0
 	}
+}
+
+export const serializeV3Balances = (
+	v3Balances: SynthV3BalancesAndAllowances
+): Partial<SynthV3BalancesAndAllowances<string>> => {
+	return Object.keys(v3Balances).reduce<Partial<SynthV3BalancesAndAllowances<string>>>(
+		(acc, asset) => {
+			const key = asset as SynthV3Asset
+			acc[key] = {
+				balance: v3Balances[key].balance.toString(),
+				allowances: Object.keys(v3Balances[key].allowances).reduce<Record<string, string>>(
+					(acc, spender) => {
+						acc[spender as SynthV3Asset] = v3Balances[key].allowances[spender].toString()
+						return acc
+					},
+					{}
+				),
+			}
+			return acc
+		},
+		{}
+	)
+}
+
+export const unserializeV3Balances = (
+	v3Balances: Partial<SynthV3BalancesAndAllowances<string>>
+): Partial<SynthV3BalancesAndAllowances> => {
+	return Object.keys(v3Balances).reduce<Partial<SynthV3BalancesAndAllowances>>((acc, asset) => {
+		const key = asset as SynthV3Asset
+		acc[key] = {
+			balance: wei(v3Balances[key]!.balance),
+			allowances: Object.keys(v3Balances[key]!.allowances).reduce<Record<string, Wei>>(
+				(acc, spender) => {
+					acc[spender as SynthV3Asset] = wei(v3Balances[key]!.allowances[spender])
+					return acc
+				},
+				{}
+			),
+		}
+		return acc
+	}, {})
 }
 
 export const serializeBalances = (

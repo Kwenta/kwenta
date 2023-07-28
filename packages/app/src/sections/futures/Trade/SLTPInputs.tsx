@@ -12,10 +12,10 @@ import { StyledCaretDownIcon } from 'components/Select'
 import SelectorButtons from 'components/SelectorButtons'
 import Spacer from 'components/Spacer'
 import { selectAckedOrdersWarning } from 'state/app/selectors'
+import { selectMarketIndexPrice } from 'state/futures/common/selectors'
 import {
 	selectLeverageInput,
 	selectLeverageSide,
-	selectMarketIndexPrice,
 	selectTradePanelSLValidity,
 } from 'state/futures/selectors'
 import {

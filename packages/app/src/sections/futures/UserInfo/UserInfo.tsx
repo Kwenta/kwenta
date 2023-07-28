@@ -13,16 +13,15 @@ import Spacer from 'components/Spacer'
 import { TabPanel } from 'components/Tab'
 import ROUTES from 'constants/routes'
 import useWindowSize from 'hooks/useWindowSize'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
+import { selectActiveCrossMarginPositionsCount } from 'state/futures/crossMargin/selectors'
 import {
-	selectActiveSmartPositionsCount,
-	selectActiveCrossMarginPositionsCount,
-	selectFuturesType,
-	selectMarketAsset,
 	selectPosition,
 	selectAllConditionalOrders,
+	selectPendingOrdersCount,
 } from 'state/futures/selectors'
 import { fetchAllV2TradesForAccount } from 'state/futures/smartMargin/actions'
-import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
+import { selectActiveSmartPositionsCount } from 'state/futures/smartMargin/selectors'
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks'
 import { selectWallet } from 'state/wallet/selectors'
 
@@ -57,7 +56,7 @@ const UserInfo: React.FC = memo(() => {
 	const crossPositionsCount = useAppSelector(selectActiveCrossMarginPositionsCount)
 	const walletAddress = useAppSelector(selectWallet)
 
-	const openOrders = useAppSelector(selectOpenDelayedOrders)
+	const pendingOrdersCount = useAppSelector(selectPendingOrdersCount)
 	const conditionalOrders = useAppSelector(selectAllConditionalOrders)
 	const accountType = useAppSelector(selectFuturesType)
 
@@ -112,7 +111,7 @@ const UserInfo: React.FC = memo(() => {
 			{
 				name: FuturesTab.ORDERS,
 				label: 'Pending',
-				badge: openOrders?.length,
+				badge: pendingOrdersCount,
 				active: activeTab === FuturesTab.ORDERS,
 				icon: <OpenPositionsIcon />,
 				onClick: () =>
@@ -160,7 +159,7 @@ const UserInfo: React.FC = memo(() => {
 			activeTab,
 			router,
 			marketAsset,
-			openOrders?.length,
+			pendingOrdersCount,
 			accountType,
 			crossPositionsCount,
 			smartPositionsCount,

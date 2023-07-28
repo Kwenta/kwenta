@@ -21,9 +21,9 @@ import { ButtonLoader } from 'components/Loader'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import {
 	selectLeverageSide,
-	selectMarketAsset,
 	selectPosition,
 	selectLeverageInput,
 	selectTradePanelSLValidity,

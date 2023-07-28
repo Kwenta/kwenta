@@ -138,7 +138,7 @@ export default function SmartMarginOnboard({ isOpen }: Props) {
 
 		return (
 			<>
-				<Intro>{t('futures.modals.onboard.step1-intro')}</Intro>
+				<Intro>{t('futures.modals.onboard.cm-intro')}</Intro>
 				<div>
 					<FAQHeader>FAQ:</FAQHeader>
 					<SmartMarginFAQ />
@@ -152,7 +152,11 @@ export default function SmartMarginOnboard({ isOpen }: Props) {
 	}
 
 	return (
-		<StyledBaseModal onDismiss={onClose} isOpen={isOpen} title={t('futures.modals.onboard.title')}>
+		<StyledBaseModal
+			onDismiss={onClose}
+			isOpen={isOpen}
+			title={t('futures.modals.onboard.cm-title')}
+		>
 			{renderContent()}
 		</StyledBaseModal>
 	)

@@ -10,8 +10,8 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import useWindowSize from 'hooks/useWindowSize'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import {
-	selectMarketAsset,
 	selectMarketInfo,
 	selectMarketPriceInfo,
 	selectSelectedInputHours,
@@ -45,7 +45,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = () => {
 		<MarketDetailsContainer mobile={mobileOrTablet}>
 			<IndexPriceDetail mobile={mobileOrTablet} />
 			<MarketSkew mobile={mobileOrTablet} />
-			<HourlyFundingDetail mobile={deviceType === 'mobile'} />
+			<HourlyFundingDetail mobile={mobileOrTablet} />
 			<MarketPriceDetail mobile={mobileOrTablet} />
 			<DailyChangeDetail mobile={mobileOrTablet} />
 			<FlexDivRow columnGap="25px">

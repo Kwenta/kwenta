@@ -11,7 +11,7 @@ import { selectShowModal } from 'state/app/selectors'
 import { selectMarketInfo, selectPosition } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import TransferIsolatedMarginModal from './TransferIsolatedMarginModal'
+import DepositWithdrawCrossMarginModal from './DepositWithdrawCrossMargin'
 
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation()
@@ -49,14 +49,14 @@ const MarketActions: React.FC = () => {
 				</MarketActionButton>
 			</MarketActionsContainer>
 			{openModal === 'futures_deposit_withdraw_cross_margin' && (
-				<TransferIsolatedMarginModal
+				<DepositWithdrawCrossMarginModal
 					defaultTab="deposit"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
 
 			{openModal === 'futures_deposit_withdraw_cross_margin' && (
-				<TransferIsolatedMarginModal
+				<DepositWithdrawCrossMarginModal
 					defaultTab="withdraw"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>

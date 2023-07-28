@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { FuturesMarketAsset } from '@kwenta/sdk/types'
+import { FuturesMarket, FuturesMarketAsset } from '@kwenta/sdk/types'
 import {
 	getDisplayAsset,
 	AssetDisplayByAsset,
@@ -30,11 +30,10 @@ import { zIndex } from 'constants/ui'
 import useClickOutside from 'hooks/useClickOutside'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { selectShowBanner } from 'state/app/selectors'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import {
-	selectMarketAsset,
 	selectMarkets,
 	selectMarketsQueryStatus,
-	selectFuturesType,
 	selectMarketInfo,
 	selectMarkPriceInfos,
 } from 'state/futures/selectors'
@@ -116,7 +115,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const options = useMemo(() => {
 		const lowerSearch = search?.toLowerCase()
 		const markets = lowerSearch
-			? futuresMarkets.filter(
+			? (futuresMarkets as FuturesMarket[]).filter(
 					(m) =>
 						m.asset.toLowerCase().includes(lowerSearch) ||
 						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)
@@ -235,7 +234,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											)}
 										</div>
 									),
-									size: 35,
+									size: 30,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
@@ -249,7 +248,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											<Body>{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
-									size: 80,
+									size: 65,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
@@ -265,10 +264,14 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											</div>
 										)
 									},
-									size: 80,
+									size: 100,
 								},
 								{
-									header: () => <TableHeader>{t('futures.markets-drop-down.change')}</TableHeader>,
+									header: () => (
+										<TableHeader style={{ width: '70px', textAlign: 'right' }}>
+											{t('futures.markets-drop-down.change')}
+										</TableHeader>
+									),
 									cell: ({ row }) => {
 										return (
 											<div>
@@ -284,6 +287,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 																row.original.change ? row.original.change * 100 : '0',
 																2
 															)}
+															style={{ textAlign: 'right', width: '60px' }}
 														/>
 													}
 												/>
@@ -293,7 +297,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									accessorKey: 'change',
 									sortingFn: 'basic',
 									enableSorting: true,
-									size: 50,
+									size: 60,
 								},
 							]}
 							data={options}

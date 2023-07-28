@@ -17,10 +17,10 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media'
 import { Body, NumericValue, Heading } from 'components/Text'
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
 import ROUTES from 'constants/routes'
+import { selectFuturesType } from 'state/futures/common/selectors'
 import {
 	selectBuyingPower,
 	selectFuturesPortfolio,
-	selectFuturesType,
 	selectPortfolioChartData,
 	selectSelectedPortfolioTimeframe,
 	selectTotalUnrealizedPnl,

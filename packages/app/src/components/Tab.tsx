@@ -37,5 +37,6 @@ const TabPanelContainer = styled.div<{ $fullHeight?: boolean }>`
 		props.$fullHeight &&
 		css`
 			height: 100%;
+			overflow: auto;
 		`}
 `

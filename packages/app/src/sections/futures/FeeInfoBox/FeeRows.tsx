@@ -95,12 +95,12 @@ type FeeRates = {
 type FeesRowProps = {
 	tradeFee: Wei
 	orderType: SmartMarginOrderType
-	smartMarginKeeperDeposit: Wei
+	smartMarginKeeperDeposit?: Wei
 	executionFee: Wei
 	rates: FeeRates
 }
 
-const FeesRow = memo(
+const FeeRows = memo(
 	({ tradeFee, smartMarginKeeperDeposit, orderType, executionFee, rates }: FeesRowProps) => {
 		const [expanded, toggleExpanded] = useReducer((s) => !s, false)
 
@@ -118,7 +118,7 @@ const FeesRow = memo(
 			>
 				<ExecutionFeeRow executionFee={executionFee} />
 				<EstimatedTradeFeeRow rates={rates} tradeFee={tradeFee} />
-				{(orderType === 'limit' || orderType === 'stop_market') && (
+				{(orderType === 'limit' || orderType === 'stop_market') && smartMarginKeeperDeposit && (
 					<KeeperDepositRow isSubItem smartMarginKeeperDeposit={smartMarginKeeperDeposit} />
 				)}
 			</InfoBoxRow>
@@ -126,7 +126,7 @@ const FeesRow = memo(
 	}
 )
 
-export default FeesRow
+export default FeeRows
 
 const StyledHelpIcon = styled(HelpIcon)`
 	margin-left: 4px;

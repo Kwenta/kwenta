@@ -4,7 +4,6 @@ import {
 	FuturesPositionHistory,
 	FuturesMarketKey,
 	FuturesMarketAsset,
-	FuturesFilledPosition,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
@@ -76,22 +75,14 @@ export type FuturesState = {
 	tradePanelDrawerOpen: boolean
 }
 
-export type CancelDelayedOrderInputs = {
-	marketAddress: string
-	isOffchain: boolean
-}
-
 export type ExecuteDelayedOrderInputs = {
 	marketKey: FuturesMarketKey
 	marketAddress: string
-	isOffchain: boolean
 }
 
-export type SharePositionParams = {
-	asset?: FuturesMarketAsset
-	position?: FuturesFilledPosition
-	positionHistory?: FuturesPositionHistory
-	marketPrice?: Wei
+export type ExecuteAsyncOrderInputs = {
+	marketKey: FuturesMarketKey
+	marketId: number
 }
 
 export const futuresPositionKeys = new Set([

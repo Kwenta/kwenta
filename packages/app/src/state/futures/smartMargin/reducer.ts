@@ -16,7 +16,7 @@ import {
 	LOADING_STATUS,
 	SUCCESS_STATUS,
 	ZERO_CM_FEES,
-	ZERO_STATE_CM_ACCOUNT,
+	ZERO_STATE_ACCOUNT,
 	ZERO_STATE_TRADE_INPUTS,
 } from 'state/constants'
 import { FetchStatus } from 'state/types'
@@ -218,7 +218,7 @@ const smartMarginSlice = createSlice({
 					...smartMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_CM_ACCOUNT,
+						...ZERO_STATE_ACCOUNT,
 					},
 				}
 			}
@@ -407,7 +407,7 @@ const smartMarginSlice = createSlice({
 					...smartMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_CM_ACCOUNT,
+						...ZERO_STATE_ACCOUNT,
 					},
 				}
 			}
@@ -586,7 +586,7 @@ export const updateSmartMarginAccount = (
 	newAccountData: Partial<SmartMarginAccountData>
 ) => {
 	const updatedAccount = {
-		...ZERO_STATE_CM_ACCOUNT,
+		...ZERO_STATE_ACCOUNT,
 		...smartMarginState.accounts[network]?.[wallet],
 		...newAccountData,
 	}

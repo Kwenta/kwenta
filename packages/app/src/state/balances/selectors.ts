@@ -1,9 +1,10 @@
 import { toWei } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
+import { wei } from '@synthetixio/wei'
 
 import type { RootState } from 'state/store'
 import { FetchStatus } from 'state/types'
-import { unserializeBalances } from 'utils/balances'
+import { unserializeBalances, unserializeV3Balances } from 'utils/balances'
 
 export const selectBalancesFetchStatus = (state: RootState) => state.balances.status
 
@@ -32,4 +33,14 @@ export const selectBalances = createSelector(
 			balances.susdWalletBalance || '0'
 		)
 	}
+)
+
+export const selectSynthV3Balances = createSelector(
+	(state: RootState) => state.balances.synthV3Balances,
+	(synthV3Balances) => unserializeV3Balances(synthV3Balances)
+)
+
+export const selectSNXUSDBalance = createSelector(
+	selectSynthV3Balances,
+	(synthV3Balances) => synthV3Balances.SNXUSD?.balance ?? wei('0')
 )

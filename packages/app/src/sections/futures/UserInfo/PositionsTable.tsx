@@ -1,10 +1,10 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesMarginType } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatPercent } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import { FC, useCallback, useMemo, useState } from 'react'
+import { FC, memo, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { FuturesPositionTablePosition } from 'types/futures'
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg'
 import Currency from 'components/Currency'
@@ -20,16 +20,9 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import useWindowSize from 'hooks/useWindowSize'
 import PositionType from 'sections/futures/PositionType'
 import { setShowPositionModal } from 'state/app/reducer'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import { selectCrossMarginPositions } from 'state/futures/crossMargin/selectors'
-import {
-	selectSmartMarginPositions,
-	selectFuturesType,
-	selectMarketAsset,
-	selectMarkets,
-	selectMarkPrices,
-	selectPositionHistory,
-} from 'state/futures/selectors'
-import { SharePositionParams } from 'state/futures/types'
+import { selectSmartMarginPositions } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FOOTER_HEIGHT } from 'styles/common'
 import media from 'styles/media'
@@ -40,12 +33,11 @@ import ShareModal from '../ShareModal'
 import EditPositionButton from './EditPositionButton'
 import TableMarketDetails from './TableMarketDetails'
 
-type FuturesPositionTableProps = {
-	showCurrentMarket?: boolean
-	showEmptyTable?: boolean
+type Props = {
+	positions: FuturesPositionTablePosition[]
 }
 
-const PositionsTable: FC<FuturesPositionTableProps> = () => {
+const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 	const { t } = useTranslation()
 	const router = useRouter()
 	const dispatch = useAppDispatch()
@@ -54,54 +46,16 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 
 	const isL2 = useIsL2()
 
-	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
-	const smartMarginPositions = useAppSelector(selectSmartMarginPositions)
-	const positionHistory = useAppSelector(selectPositionHistory)
 	const currentMarket = useAppSelector(selectMarketAsset)
-	const futuresMarkets = useAppSelector(selectMarkets)
-	const markPrices = useAppSelector(selectMarkPrices)
 	const accountType = useAppSelector(selectFuturesType)
 	const [showShareModal, setShowShareModal] = useState(false)
-	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
+	const [sharePosition, setSharePosition] = useState<FuturesPositionTablePosition | null>(null)
 
 	let data = useMemo(() => {
-		const positions =
-			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
-		return positions
-			.map((position) => {
-				const market = futuresMarkets.find((market) => market.asset === position.asset)
-				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset
-				})
-				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI
-				return {
-					market: market!,
-					remainingMargin: position.remainingMargin,
-					position: position.position!,
-					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss?.targetPrice,
-					takeProfit: position.takeProfit?.targetPrice,
-					share: {
-						asset: position.asset,
-						position: position.position!,
-						positionHistory: thisPositionHistory!,
-						marketPrice: markPrice,
-					},
-				}
-			})
-			.filter(({ position, market }) => !!position && !!market)
-			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
-	}, [
-		accountType,
-		smartMarginPositions,
-		crossMarginPositions,
-		futuresMarkets,
-		positionHistory,
-		markPrices,
-		currentMarket,
-	])
+		return positions.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
+	}, [positions, currentMarket])
 
-	const handleOpenShareModal = useCallback((share: SharePositionParams) => {
+	const handleOpenShareModal = useCallback((share: FuturesPositionTablePosition) => {
 		setSharePosition(share)
 		setShowShareModal((s) => !s)
 	}, [])
@@ -162,7 +116,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 							</MarketDetailsContainer>
 						</PositionCell>
 						<PositionCell>
-							<PositionType side={row.position.side} />
+							<PositionType side={row.side} />
 						</PositionCell>
 
 						<PositionCell>
@@ -170,7 +124,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 								<ColWithButton>
 									<div>
 										<FlexDivRowCentered justifyContent="flex-start" columnGap="5px">
-											<Currency.Price price={row.position.size} currencyKey={row.market.asset} />
+											<Currency.Price price={row.size} currencyKey={row.market.asset} />
 											{accountType === FuturesMarginType.SMART_MARGIN && (
 												<EditPositionButton
 													modalType={'futures_edit_position_size'}
@@ -179,7 +133,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											)}
 										</FlexDivRowCentered>
 										<Currency.Price
-											price={row.position.notionalValue}
+											price={row.notionalValue}
 											formatOptions={{ truncateOver: 1e6 }}
 											colorType="secondary"
 										/>
@@ -200,7 +154,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 						</PositionCell>
 						<PositionCell>
 							<Currency.Price
-								price={row.position.liquidationPrice}
+								price={row.liquidationPrice}
 								formatOptions={{ suggestDecimals: true }}
 								colorType="preview"
 							/>
@@ -216,27 +170,27 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 										/>
 									)}
 								</FlexDivRow>
-								<NumericValue value={row.position.leverage} color="secondary" suffix="x" />
+								<NumericValue value={row.leverage} color="secondary" suffix="x" />
 							</FlexDivCol>
 						</PositionCell>
 						<PositionCell>
 							<FlexDivRowCentered columnGap="5px">
 								<PnlContainer>
-									<Currency.Price price={row.position.pnl} colored />
-									<NumericValue value={row.position.pnlPct} colored>
-										{formatPercent(row.position.pnlPct)}
+									<Currency.Price price={row.pnl} colored />
+									<NumericValue value={row.pnlPct} colored>
+										{formatPercent(row.pnlPct)}
 									</NumericValue>
 								</PnlContainer>
 							</FlexDivRowCentered>
 						</PositionCell>
 						<PositionCell>
-							<Currency.Price price={row.position.accruedFunding} colored />
+							<Currency.Price price={row.accruedFunding} colored />
 						</PositionCell>
 						{accountType === FuturesMarginType.SMART_MARGIN && (
 							<PositionCell>
 								<FlexDivCol>
 									<FlexDivRowCentered justifyContent="flex-start" columnGap="5px">
-										{row.takeProfit === undefined ? (
+										{!row.takeProfit ? (
 											<Body>{NO_VALUE}</Body>
 										) : (
 											<div>
@@ -248,7 +202,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 											marketKey={row.market.marketKey}
 										/>
 									</FlexDivRowCentered>
-									{row.stopLoss === undefined ? (
+									{!row.stopLoss ? (
 										<Body>{NO_VALUE}</Body>
 									) : (
 										<div>
@@ -265,7 +219,10 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									onClick={() =>
 										dispatch(
 											setShowPositionModal({
-												type: 'futures_close_position',
+												type:
+													row.market.version === 3
+														? 'cross_margin_close_position'
+														: 'smart_margin_close_position',
 												marketKey: row.market.marketKey,
 											})
 										)
@@ -276,7 +233,7 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 									Close
 								</Pill>
 								<Spacer width={4} />
-								<Pill onClick={() => handleOpenShareModal(row.share)} size="small">
+								<Pill onClick={() => handleOpenShareModal(row)} size="small">
 									<FlexDivRowCentered>
 										<UploadIcon width={8} />
 									</FlexDivRowCentered>
@@ -291,14 +248,37 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 			)}
 		</>
 	)
-}
+})
+
+export const CrossMarginPostitionsTable = memo(() => {
+	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
+
+	return <PositionsTable positions={crossMarginPositions} />
+})
+
+export const SmartMarginPostitionsTable = memo(() => {
+	const smartMarginPositions = useAppSelector(selectSmartMarginPositions)
+
+	return <PositionsTable positions={smartMarginPositions} />
+})
+
+const SelectedPositionsTable = memo(() => {
+	const type = useAppSelector(selectFuturesType)
+	return type === FuturesMarginType.CROSS_MARGIN ? (
+		<CrossMarginPostitionsTable />
+	) : (
+		<SmartMarginPostitionsTable />
+	)
+})
+
+export default SelectedPositionsTable
 
 const TableContainer = styled.div`
-	overflow: scroll;
+	overflow: auto;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-	height: calc(100% - ${FOOTER_HEIGHT * 2 + 4}px);
+	height: calc(100% - ${FOOTER_HEIGHT}px);
 	${media.lessThan('xl')`
-		height: calc(100% - ${FOOTER_HEIGHT}px);
+		height: 100%;
 	`}
 `
 
@@ -306,10 +286,9 @@ const PositionRowDesktop = styled.div`
 	display: grid;
 	grid-template-columns: 75px 60px minmax(130px, 1fr) 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
 	grid-gap: 10px;
-	height: 100%;
 	height: 54px;
 	padding: 0 10px;
-	&:nth-child(odd) {
+	&:nth-child(even) {
 		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
@@ -324,7 +303,7 @@ const HeadersRow = styled(PositionRowDesktop)`
 		border-bottom: 0;
 	}
 	&:first-child {
-		background-color: transparent;
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 `
 
@@ -351,5 +330,3 @@ const ColWithButton = styled.div`
 		display: block;
 	`}
 `
-
-export default PositionsTable

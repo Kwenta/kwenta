@@ -162,7 +162,6 @@ export declare namespace SettlementStrategy {
 
 export interface PerpsV3MarketProxyInterface extends utils.Interface {
   functions: {
-    "createAccount()": FunctionFragment;
     "createAccount(uint128)": FunctionFragment;
     "getAccountLastInteraction(uint128)": FunctionFragment;
     "getAccountOwner(uint128)": FunctionFragment;
@@ -253,8 +252,7 @@ export interface PerpsV3MarketProxyInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "createAccount()"
-      | "createAccount(uint128)"
+      | "createAccount"
       | "getAccountLastInteraction"
       | "getAccountOwner"
       | "getAccountPermissions"
@@ -343,11 +341,7 @@ export interface PerpsV3MarketProxyInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "createAccount()",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createAccount(uint128)",
+    functionFragment: "createAccount",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -681,11 +675,7 @@ export interface PerpsV3MarketProxyInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "createAccount()",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "createAccount(uint128)",
+    functionFragment: "createAccount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1483,11 +1473,7 @@ export interface PerpsV3MarketProxy extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    "createAccount()"(
-      overrides?: Overrides & { from?: string }
-    ): Promise<ContractTransaction>;
-
-    "createAccount(uint128)"(
+    createAccount(
       requestedAccountId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
@@ -1986,11 +1972,7 @@ export interface PerpsV3MarketProxy extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  "createAccount()"(
-    overrides?: Overrides & { from?: string }
-  ): Promise<ContractTransaction>;
-
-  "createAccount(uint128)"(
+  createAccount(
     requestedAccountId: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
@@ -2463,9 +2445,7 @@ export interface PerpsV3MarketProxy extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    "createAccount()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "createAccount(uint128)"(
+    createAccount(
       requestedAccountId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -3266,11 +3246,7 @@ export interface PerpsV3MarketProxy extends BaseContract {
   };
 
   estimateGas: {
-    "createAccount()"(
-      overrides?: Overrides & { from?: string }
-    ): Promise<BigNumber>;
-
-    "createAccount(uint128)"(
+    createAccount(
       requestedAccountId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
@@ -3728,11 +3704,7 @@ export interface PerpsV3MarketProxy extends BaseContract {
   };
 
   populateTransaction: {
-    "createAccount()"(
-      overrides?: Overrides & { from?: string }
-    ): Promise<PopulatedTransaction>;
-
-    "createAccount(uint128)"(
+    createAccount(
       requestedAccountId: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;

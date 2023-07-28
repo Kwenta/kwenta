@@ -44,3 +44,15 @@ export type DeprecatedSynthBalance = {
 	balance: Wei
 	usdBalance: Wei
 }
+
+export enum SynthV3Asset {
+	SNXUSD = 'SNXUSD',
+}
+
+export type SynthV3BalancesAndAllowances<T = Wei> = Record<
+	SynthV3Asset,
+	{
+		balance: T
+		allowances: Record<string, T>
+	}
+>

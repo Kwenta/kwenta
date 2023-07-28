@@ -2,20 +2,20 @@ import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { memo } from 'react'
 
 import {
-	selectClosePositionOrderInputs,
+	selectCloseSMPositionOrderInputs,
 	selectClosePositionPreview,
 	selectEditPositionModalInfo,
 	selectSmartMarginKeeperDeposit,
 } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
-import FeesRow from './FeesRow'
+import FeesRow from './FeeRows'
 
 const ClosePositionFeeInfo = memo(() => {
 	const tradePreview = useAppSelector(selectClosePositionPreview)
 	const { market } = useAppSelector(selectEditPositionModalInfo)
 	const keeperEthDeposit = useAppSelector(selectSmartMarginKeeperDeposit)
-	const { orderType } = useAppSelector(selectClosePositionOrderInputs)
+	const { orderType } = useAppSelector(selectCloseSMPositionOrderInputs)
 
 	return (
 		<FeesRow

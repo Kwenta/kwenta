@@ -32,7 +32,7 @@ import {
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import { KeeperDepositRow } from '../FeeInfoBox/FeesRow'
+import { KeeperDepositRow } from '../FeeInfoBox/FeeRows'
 import PositionType from '../PositionType'
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement'
 
@@ -74,8 +74,8 @@ export default function EditStopLossAndTakeProfitModal() {
 	const hasOrders = useMemo(() => stopLoss || takeProfit, [stopLoss, takeProfit])
 
 	const leverageWei = useMemo(() => {
-		return position?.position?.leverage.gt(0) ? wei(position.position.leverage) : wei(1)
-	}, [position?.position?.leverage])
+		return position?.leverage?.gt(0) ? wei(position.leverage) : wei(1)
+	}, [position?.leverage])
 
 	const hasChangeOrders = useMemo(() => {
 		const tpOrderPrice = takeProfit?.targetPrice
@@ -86,12 +86,12 @@ export default function EditStopLossAndTakeProfitModal() {
 	}, [hasOrders, stopLoss?.targetPrice, stopLossPrice, takeProfit?.targetPrice, takeProfitPrice])
 
 	const tpInvalid = useMemo(() => {
-		if (position?.position?.side === 'long') {
+		if (position?.side === 'long') {
 			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(marketPrice)
 		} else {
 			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(marketPrice)
 		}
-	}, [takeProfitPrice, marketPrice, position?.position?.side])
+	}, [takeProfitPrice, marketPrice, position?.side])
 
 	const ethBalWarningMessage = ethBalanceExceeded
 		? t('futures.market.trade.confirmation.modal.eth-bal-warning')
@@ -155,14 +155,14 @@ export default function EditStopLossAndTakeProfitModal() {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100
 				const relativePercent = wei(percent).div(leverageWei)
 				const stopLoss =
-					position?.position?.side === 'short'
+					position?.side === 'short'
 						? marketPrice.add(marketPrice.mul(relativePercent))
 						: marketPrice.sub(marketPrice.mul(relativePercent))
 				const dp = suggestedDecimals(stopLoss)
 				dispatch(setSLTPModalStopLoss(stopLoss.toString(dp)))
 			}
 		},
-		[marketPrice, dispatch, position?.position?.side, leverageWei, slValidity.disabled]
+		[marketPrice, dispatch, position?.side, leverageWei, slValidity.disabled]
 	)
 
 	const onSelectTakeProfit = useCallback(
@@ -174,14 +174,14 @@ export default function EditStopLossAndTakeProfitModal() {
 				const percent = Math.abs(Number(option.replace('%', ''))) / 100
 				const relativePercent = wei(percent).div(leverageWei)
 				const takeProfit =
-					position?.position?.side === 'short'
+					position?.side === 'short'
 						? marketPrice.sub(marketPrice.mul(relativePercent))
 						: marketPrice.add(marketPrice.mul(relativePercent))
 				const dp = suggestedDecimals(takeProfit)
 				dispatch(setSLTPModalTakeProfit(takeProfit.toString(dp)))
 			}
 		},
-		[marketPrice, dispatch, position?.position?.side, leverageWei]
+		[marketPrice, dispatch, position?.side, leverageWei]
 	)
 
 	const onChangeStopLoss = useCallback(
@@ -215,8 +215,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				nodeValue={
 					<FlexDivRowCentered>
 						<Body>{market?.marketName}</Body>
-						<Spacer width={8} />{' '}
-						<PositionType side={position?.position?.side || PositionSide.LONG} />
+						<Spacer width={8} /> <PositionType side={position?.side || PositionSide.LONG} />
 					</FlexDivRowCentered>
 				}
 			/>
@@ -231,8 +230,8 @@ export default function EditStopLossAndTakeProfitModal() {
 						invalid={tpInvalid}
 						currentPrice={marketPrice}
 						value={takeProfitPrice}
-						positionSide={position?.position?.side || PositionSide.LONG}
-						leverage={position?.position?.leverage || wei(1)}
+						positionSide={position?.side || PositionSide.LONG}
+						leverage={position?.leverage || wei(1)}
 						onChange={onChangeTakeProfit}
 					/>
 
@@ -248,8 +247,8 @@ export default function EditStopLossAndTakeProfitModal() {
 						type={'stop-loss'}
 						disabled={!!slValidity.disabled}
 						disabledReason={slValidity.disabled ? 'Leverage Too High' : undefined}
-						positionSide={position?.position?.side || PositionSide.LONG}
-						leverage={position?.position?.leverage || wei(1)}
+						positionSide={position?.side || PositionSide.LONG}
+						leverage={position?.leverage || wei(1)}
 						invalid={slValidity.invalid}
 						currentPrice={marketPrice}
 						minMaxPrice={slValidity.minMaxStopPrice}

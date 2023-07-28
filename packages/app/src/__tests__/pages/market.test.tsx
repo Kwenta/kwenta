@@ -1,4 +1,4 @@
-import { FuturesMarket, PositionSide } from '@kwenta/sdk/types'
+import { PerpsMarketV2, PositionSide } from '@kwenta/sdk/types'
 import { wei } from '@synthetixio/wei'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { ReactNode } from 'react'
@@ -148,7 +148,7 @@ describe('Futures market page - smart margin', () => {
 	test('Displays error when trade exceeds max OI', async () => {
 		// Update the mock to return some different data
 		sdk.futures.getMarkets = () =>
-			Promise.resolve([{ ...SDK_MARKETS[1], marketLimitUsd: wei(100000) } as FuturesMarket])
+			Promise.resolve([{ ...SDK_MARKETS[1], marketLimitUsd: wei(100000) } as PerpsMarketV2])
 
 		const store = setupStore(
 			preloadedStateWithSmartMarginAccount(mockSmartMarginAccount('1000000'))
@@ -171,7 +171,7 @@ describe('Futures market page - smart margin', () => {
 	})
 
 	test('Trade panel is disabled when market is closed', async () => {
-		sdk.futures.getMarkets = () => Promise.resolve([...SDK_MARKETS] as FuturesMarket[])
+		sdk.futures.getMarkets = () => Promise.resolve([...SDK_MARKETS] as PerpsMarketV2[])
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
 			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
@@ -192,7 +192,7 @@ describe('Futures market page - smart margin', () => {
 		expect(submitButton).toBeEnabled()
 
 		sdk.futures.getMarkets = () =>
-			Promise.resolve([{ ...SDK_MARKETS[1], isSuspended: true } as FuturesMarket])
+			Promise.resolve([{ ...SDK_MARKETS[1], isSuspended: true } as PerpsMarketV2])
 
 		waitFor(() => store.dispatch(fetchMarkets()))
 
@@ -248,7 +248,7 @@ describe('Futures market page - stop loss validation', () => {
 		fireEvent.change(stopLossInput, { target: { value: '1700' } })
 
 		// Min / Max SL is shown when invalid
-		const slMinMaxLabel = await findByText('Min: 1,735.52')
+		const slMinMaxLabel = await findByText('Min: 1,701.82')
 		expect(slMinMaxLabel).toBeTruthy()
 		expect(submitButton).toBeDisabled()
 
@@ -295,11 +295,11 @@ describe('Futures market page - stop loss validation', () => {
 		fireEvent.click(approveButton)
 
 		const stopLossInput = await findByTestId('trade-panel-stop-loss-input')
-		fireEvent.change(stopLossInput, { target: { value: '2150' } })
+		fireEvent.change(stopLossInput, { target: { value: '2160' } })
 
 		// Min / Max SL is shown when invalid
-		// Liqudation price is 2,172.46 and stop is limited to 2,100.07
-		const slMinMaxLabel = await findByText('Max: 2,107.29')
+		// Liqudation price is 2,172.46 and stop is limited to 2,172.29
+		const slMinMaxLabel = await findByText('Max: 2,150.74')
 		expect(slMinMaxLabel).toBeTruthy()
 
 		expect(submitButton).toBeDisabled()
@@ -320,16 +320,16 @@ describe('Futures market page - stop loss validation', () => {
 		sdk.futures.getSmartMarginTradePreview = () =>
 			Promise.resolve({
 				...MOCK_TRADE_PREVIEW,
-				liqPrice: wei('1760'),
+				liqPrice: wei('1795'),
 				size: wei('1.1'),
-				leverage: wei('20'),
+				leverage: wei('40'),
 			})
 
 		const marginInput = await findByTestId('set-order-margin-susd-desktop')
 		fireEvent.change(marginInput, { target: { value: '100' } })
 
 		const sizeInput = await findByTestId('set-order-size-amount-susd-desktop')
-		fireEvent.change(sizeInput, { target: { value: '2000' } })
+		fireEvent.change(sizeInput, { target: { value: '4000' } })
 
 		const fees = await findByText('$1.69')
 		expect(fees).toBeTruthy()

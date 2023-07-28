@@ -9,16 +9,16 @@ import {
 } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
-import FeesRow from './FeesRow'
+import FeeRows from './FeeRows'
 
-const TradeTotalFeesRow = memo(() => {
+const SmartMarginTradeFees = memo(() => {
 	const tradePreview = useAppSelector(selectTradePreview)
 	const marketInfo = useAppSelector(selectMarketInfo)
 	const keeperEthDeposit = useAppSelector(selectSmartMarginKeeperDeposit)
 	const orderType = useAppSelector(selectOrderType)
 
 	return (
-		<FeesRow
+		<FeeRows
 			executionFee={marketInfo?.keeperDeposit ?? ZERO_WEI}
 			tradeFee={tradePreview?.fee ?? ZERO_WEI}
 			orderType={orderType}
@@ -31,4 +31,4 @@ const TradeTotalFeesRow = memo(() => {
 	)
 })
 
-export default TradeTotalFeesRow
+export default SmartMarginTradeFees

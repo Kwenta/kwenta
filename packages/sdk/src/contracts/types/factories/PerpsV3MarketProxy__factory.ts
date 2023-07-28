@@ -198,19 +198,6 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "createAccount",
-    outputs: [
-      {
-        internalType: "uint128",
-        name: "accountId",
-        type: "uint128",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint128",

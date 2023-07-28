@@ -1,6 +1,6 @@
-import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
+import { FuturesMarginType, FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatCurrency, suggestedDecimals } from '@kwenta/sdk/utils'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -14,9 +14,13 @@ import useInterval from 'hooks/useInterval'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
-import { cancelDelayedOrder, executeDelayedOrder } from 'state/futures/actions'
-import { selectMarketAsset, selectMarkets, selectIsExecutingOrder } from 'state/futures/selectors'
-import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
+import { cancelDelayedOrder } from 'state/futures/actions'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
+import { cancelAsyncOrder, executeAsyncOrder } from 'state/futures/crossMargin/actions'
+import { selectAsyncCrossMarginOrders } from 'state/futures/crossMargin/selectors'
+import { selectIsExecutingOrder, selectIsCancellingOrder } from 'state/futures/selectors'
+import { executeDelayedOrder } from 'state/futures/smartMargin/actions'
+import { selectSmartMarginDelayedOrders } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type CountdownTimers = Record<
@@ -31,35 +35,27 @@ const OrdersTab: React.FC = () => {
 	const isL2 = useIsL2()
 
 	const marketAsset = useAppSelector(selectMarketAsset)
-	const openDelayedOrders = useAppSelector(selectOpenDelayedOrders)
-	const futuresMarkets = useAppSelector(selectMarkets)
+	const smartMarginOrders = useAppSelector(selectSmartMarginDelayedOrders)
+	const crossMarginOrders = useAppSelector(selectAsyncCrossMarginOrders)
 	const isExecuting = useAppSelector(selectIsExecutingOrder)
+	const futuresType = useAppSelector(selectFuturesType)
+	const isCancelling = useAppSelector(selectIsCancellingOrder)
+
+	const orders = useMemo(
+		() => (futuresType === FuturesMarginType.CROSS_MARGIN ? crossMarginOrders : smartMarginOrders),
+		[futuresType, crossMarginOrders, smartMarginOrders]
+	)
 
 	const [countdownTimers, setCountdownTimers] = useState<CountdownTimers>()
 
-	const handleCancel = useCallback(
-		(marketAddress: string, isOffchain: boolean) => () => {
-			dispatch(cancelDelayedOrder({ marketAddress, isOffchain }))
-		},
-		[dispatch]
-	)
-
-	const handleExecute = useCallback(
-		(marketKey: FuturesMarketKey, marketAddress: string, isOffchain: boolean) => () => {
-			dispatch(executeDelayedOrder({ marketKey, marketAddress, isOffchain }))
-		},
-		[dispatch]
-	)
-
 	const rowsData = useMemo(() => {
-		const ordersWithCancel = openDelayedOrders
+		const ordersWithCancel = orders
 			.map((o) => {
-				const market = futuresMarkets.find((m) => m.market === o.marketAddress)
-				const timer = countdownTimers ? countdownTimers[o.marketKey] : null
+				const timer = countdownTimers ? countdownTimers[o.market.marketKey] : null
 				const order = {
 					...o,
-					sizeTxt: formatCurrency(o.asset, o.size.abs(), {
-						currencyKey: getDisplayAsset(o.asset) ?? '',
+					sizeTxt: formatCurrency(o.market.asset, o.size.abs(), {
+						currencyKey: getDisplayAsset(o.market.asset) ?? '',
 						minDecimals: suggestedDecimals(o.size),
 					}),
 					timeToExecution: timer?.timeToExecution,
@@ -67,52 +63,66 @@ const OrdersTab: React.FC = () => {
 					show: !!timer,
 					isStale:
 						timer &&
-						market?.settings &&
+						o.market.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution >
-							DEFAULT_DELAYED_CANCEL_BUFFER +
-								(o.isOffchain
-									? market.settings.offchainDelayedOrderMaxAge
-									: market.settings.maxDelayTimeDelta),
+						timer.timePastExecution > DEFAULT_DELAYED_CANCEL_BUFFER + o.settlementWindowDuration,
 					isFailed:
 						timer &&
-						market?.settings &&
+						o.market.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution >
-							DEFAULT_DELAYED_EXECUTION_BUFFER +
-								(o.isOffchain
-									? market.settings.offchainDelayedOrderMinAge
-									: market.settings.minDelayTimeDelta),
+						timer.timePastExecution > DEFAULT_DELAYED_EXECUTION_BUFFER,
 					isExecutable:
 						timer &&
-						market?.settings &&
 						timer.timeToExecution === 0 &&
-						timer.timePastExecution <=
-							(o.isOffchain
-								? market.settings.offchainDelayedOrderMaxAge
-								: market.settings.maxDelayTimeDelta),
-					totalDeposit: o.commitDeposit.add(o.keeperDeposit),
+						timer.timePastExecution <= o.settlementWindowDuration,
+					totalDeposit: o.settlementFee,
+					onCancel: () => {
+						if (o.market.version === 2) {
+							dispatch(cancelDelayedOrder(o.market.marketAddress))
+						} else {
+							dispatch(cancelAsyncOrder(o.market.marketId))
+						}
+					},
+					onExecute: () => {
+						if (o.market.version === 2) {
+							dispatch(
+								executeDelayedOrder({
+									marketKey: o.market.marketKey,
+									marketAddress: o.market.marketAddress,
+								})
+							)
+						} else {
+							dispatch(
+								executeAsyncOrder({
+									marketKey: o.market.marketKey,
+									marketId: o.market.marketId,
+								})
+							)
+						}
+					},
 				}
 				return order
 			})
 			.sort((a, b) => {
-				return b.asset === marketAsset && a.asset !== marketAsset
+				return b.market.asset === marketAsset && a.market.asset !== marketAsset
 					? 1
-					: b.asset === marketAsset && a.asset === marketAsset
+					: b.market.asset === marketAsset && a.market.asset === marketAsset
 					? 0
 					: -1
 			})
 		return ordersWithCancel
-	}, [openDelayedOrders, futuresMarkets, marketAsset, countdownTimers])
+	}, [marketAsset, countdownTimers, orders, dispatch])
+
+	// TODO: Combine this with the one in OpenDelayedOrdersTable
 
 	useInterval(
 		() => {
 			const newCountdownTimers = rowsData.reduce((acc, order) => {
-				const timeToExecution = Math.floor((order.executableAtTimestamp - Date.now()) / 1000)
-				const timePastExecution = Math.floor((Date.now() - order.executableAtTimestamp) / 1000)
+				const timeToExecution = Math.floor(order.executableStartTime - Date.now() / 1000)
+				const timePastExecution = Math.floor(Date.now() / 1000 - order.executableStartTime)
 
 				// Only updated delayed orders
-				acc[order.marketKey] = {
+				acc[order.market.marketKey] = {
 					timeToExecution: Math.max(timeToExecution, 0),
 					timePastExecution: Math.max(timePastExecution, 0),
 				}
@@ -123,7 +133,6 @@ const OrdersTab: React.FC = () => {
 		1000,
 		[rowsData]
 	)
-
 	return (
 		<OrdersTabContainer>
 			{!isL2 ? (
@@ -142,7 +151,7 @@ const OrdersTab: React.FC = () => {
 								<div>
 									<Body>{order.market}</Body>
 									<Body capitalized color="secondary">
-										{order.orderType}
+										Market
 									</Body>
 								</div>
 							</FlexDiv>
@@ -150,8 +159,14 @@ const OrdersTab: React.FC = () => {
 								{order.show && order.isStale && (
 									<Pill
 										size="medium"
-										onClick={handleCancel(order.marketAddress, order.isOffchain)}
-										disabled={order.isCancelling}
+										onClick={() => {
+											if (order.market.version === 2) {
+												dispatch(cancelDelayedOrder(order.market.marketAddress))
+											} else {
+												dispatch(cancelAsyncOrder(order.market.marketId))
+											}
+										}}
+										disabled={isCancelling}
 										color="red"
 									>
 										Cancel
@@ -162,11 +177,23 @@ const OrdersTab: React.FC = () => {
 										<Spacer width={10} />
 										<Pill
 											size="medium"
-											onClick={handleExecute(
-												order.marketKey,
-												order.marketAddress,
-												order.isOffchain
-											)}
+											onClick={() => {
+												if (order.market.version === 2) {
+													dispatch(
+														executeDelayedOrder({
+															marketKey: order.market.marketKey,
+															marketAddress: order.market.marketAddress,
+														})
+													)
+												} else {
+													dispatch(
+														executeAsyncOrder({
+															marketKey: order.market.marketKey,
+															marketId: order.market.marketId,
+														})
+													)
+												}
+											}}
 											disabled={isExecuting}
 										>
 											Execute

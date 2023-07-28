@@ -21,18 +21,20 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { setOpenModal } from 'state/app/reducer'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import { submitCrossMarginOrder } from 'state/futures/crossMargin/actions'
-import { selectCrossMarginTradeInputs } from 'state/futures/crossMargin/selectors'
 import {
-	selectIsModifyingIsolatedPosition,
+	selectCrossMarginTradeInputs,
+	selectCrossMarginTradePreview,
+	selectV3MarketInfo,
+} from 'state/futures/crossMargin/selectors'
+import {
 	selectLeverageSide,
-	selectMarketAsset,
-	selectMarketInfo,
 	selectModifyPositionError,
 	selectNextPriceDisclaimer,
 	selectPosition,
+	selectSubmittingFuturesTx,
 } from 'state/futures/selectors'
-import { selectOrderType, selectTradePreview } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { getKnownError } from 'utils/formatters/error'
 
@@ -41,7 +43,7 @@ import BaseDrawer from '../MobileTrade/drawers/BaseDrawer'
 import TradeConfirmationRow from './TradeConfirmationRow'
 import TradeConfirmationSummary from './TradeConfirmationSummary'
 
-const DelayedOrderConfirmationModal: FC = () => {
+const CrossMarginOrderConfirmationModal: FC = () => {
 	const { t } = useTranslation()
 	const isDisclaimerDisplayed = useAppSelector(selectNextPriceDisclaimer)
 	const dispatch = useAppDispatch()
@@ -50,11 +52,11 @@ const DelayedOrderConfirmationModal: FC = () => {
 	const txError = useAppSelector(selectModifyPositionError)
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const position = useAppSelector(selectPosition)
-	const marketInfo = useAppSelector(selectMarketInfo)
+	const marketInfo = useAppSelector(selectV3MarketInfo)
 	const marketAsset = useAppSelector(selectMarketAsset)
-	const submitting = useAppSelector(selectIsModifyingIsolatedPosition)
-	const potentialTradeDetails = useAppSelector(selectTradePreview)
-	const orderType = useAppSelector(selectOrderType)
+	const submitting = useAppSelector(selectSubmittingFuturesTx)
+	const preview = useAppSelector(selectCrossMarginTradePreview)
+	const settlementStrategy = marketInfo?.settlementStrategies[0]
 
 	const positionSize = useMemo(() => {
 		const positionDetails = position?.position
@@ -72,48 +74,45 @@ const DelayedOrderConfirmationModal: FC = () => {
 	}, [orderDetails])
 
 	const totalDeposit = useMemo(() => {
-		return (potentialTradeDetails?.fee ?? ZERO_WEI).add(marketInfo?.keeperDeposit ?? ZERO_WEI)
-	}, [potentialTradeDetails?.fee, marketInfo?.keeperDeposit])
+		return (preview?.fee ?? ZERO_WEI).add(preview?.settlementFee ?? ZERO_WEI)
+	}, [preview?.fee, preview?.settlementFee])
 
 	const dataRows = useMemo(
 		() => [
 			{
 				label: t('futures.market.user.position.modal.estimated-fill'),
 				tooltipContent: t('futures.market.trade.delayed-order.description'),
-				value: formatDollars(potentialTradeDetails?.price ?? ZERO_WEI, {
+				value: formatDollars(preview?.fillPrice ?? ZERO_WEI, {
 					suggestDecimals: true,
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.estimated-price-impact'),
-				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI)}`,
-				color: potentialTradeDetails?.priceImpact.abs().gt(0.45) // TODO: Make this configurable
+				value: `${formatPercent(preview?.priceImpact ?? ZERO_WEI)}`,
+				color: preview?.priceImpact?.abs().gt(0.45) // TODO: Make this configurable
 					? 'red'
 					: '',
 			},
 			{
-				label: t('futures.market.user.position.modal.liquidation-price'),
-				value: formatDollars(potentialTradeDetails?.liqPrice ?? ZERO_WEI, {
-					suggestDecimals: true,
-				}),
-			},
-			{
 				label: t('futures.market.user.position.modal.time-delay'),
-				value: `${formatNumber(marketInfo?.settings.offchainDelayedOrderMinAge ?? ZERO_WEI, {
-					maxDecimals: 0,
-				})} sec`,
+				value: `${formatNumber(
+					settlementStrategy?.settlementDelay ? settlementStrategy.settlementDelay : ZERO_WEI,
+					{
+						maxDecimals: 0,
+					}
+				)} sec`,
 			},
 			{
 				label: t('futures.market.user.position.modal.fee-estimated'),
 				tooltipContent: t('futures.market.trade.fees.tooltip'),
-				value: formatDollars(potentialTradeDetails?.fee ?? ZERO_WEI, {
+				value: formatDollars(preview?.fee ?? ZERO_WEI, {
 					minDecimals: 2,
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.keeper-deposit'),
 				tooltipContent: t('futures.market.trade.fees.keeper-tooltip'),
-				value: formatDollars(marketInfo?.keeperDeposit ?? ZERO_WEI, {
+				value: formatDollars(preview?.settlementFee ?? ZERO_WEI, {
 					minDecimals: 2,
 				}),
 			},
@@ -123,13 +122,7 @@ const DelayedOrderConfirmationModal: FC = () => {
 				value: formatDollars(totalDeposit),
 			},
 		],
-		[
-			t,
-			potentialTradeDetails,
-			totalDeposit,
-			marketInfo?.keeperDeposit,
-			marketInfo?.settings.offchainDelayedOrderMinAge,
-		]
+		[t, preview, totalDeposit, settlementStrategy?.settlementDelay]
 	)
 
 	const mobileRows = useMemo(() => {
@@ -150,11 +143,11 @@ const DelayedOrderConfirmationModal: FC = () => {
 			},
 			{
 				label: t('futures.market.user.position.modal.order-type'),
-				value: OrderNameByType[orderType],
+				value: OrderNameByType['market'],
 			},
 			...dataRows,
 		]
-	}, [dataRows, marketAsset, leverageSide, orderType, orderDetails.nativeSizeDelta, t])
+	}, [t, dataRows, marketAsset, leverageSide, orderDetails.nativeSizeDelta])
 
 	const onDismiss = useCallback(() => {
 		dispatch(setOpenModal(null))
@@ -181,8 +174,8 @@ const DelayedOrderConfirmationModal: FC = () => {
 						marketAsset={marketAsset}
 						nativeSizeDelta={orderDetails.nativeSizeDelta}
 						leverageSide={leverageSide}
-						orderType={orderType}
-						leverage={potentialTradeDetails?.leverage ?? ZERO_WEI}
+						orderType={'market'}
+						leverage={preview?.leverage ?? ZERO_WEI}
 					/>
 					{dataRows.map((row, i) => (
 						<TradeConfirmationRow key={`datarow-${i}`} className={i === 0 ? '' : 'border'}>
@@ -313,4 +306,4 @@ const StyledHelpIcon = styled(HelpIcon)`
 	margin-bottom: -1px;
 `
 
-export default DelayedOrderConfirmationModal
+export default CrossMarginOrderConfirmationModal

@@ -5,14 +5,14 @@ import styled, { css } from 'styled-components'
 import Error from 'components/ErrorView'
 import Spacer from 'components/Spacer'
 import { selectAckedOrdersWarning } from 'state/app/selectors'
-import { selectFuturesType, selectLeverageSide } from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { selectLeverageSide } from 'state/futures/selectors'
 import { changeLeverageSide } from 'state/futures/smartMargin/actions'
 import { setOrderType } from 'state/futures/smartMargin/reducer'
 import { selectOrderType } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectPricesConnectionError } from 'state/prices/selectors'
 
-import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo'
 import LeverageInput from '../LeverageInput'
 import MarginInput from '../MarginInput'
 import OrderSizing from '../OrderSizing'
@@ -24,7 +24,8 @@ import MarketsDropdown from './MarketsDropdown'
 import OrderAcknowledgement from './OrderAcknowledgement'
 import OrderTypeSelector from './OrderTypeSelector'
 import SLTPInputs from './SLTPInputs'
-import TradeBalance from './TradeBalance'
+import SmartMarginTradePanelPreview from './SmartMarginTradePanelPreview'
+import TradeBalance from './TradeBalanceSmartMargin'
 import OrderPriceInput from './TradePanelPriceInput'
 
 type Props = {
@@ -114,8 +115,7 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 								{accountType === FuturesMarginType.SMART_MARGIN && <SLTPInputs />}
 
 								<ManagePosition />
-
-								<TradePanelFeeInfo />
+								<SmartMarginTradePanelPreview />
 							</>
 						)}
 					</MainPanelContent>

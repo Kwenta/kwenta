@@ -1,3 +1,4 @@
+import { defaultAbiCoder } from '@ethersproject/abi'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { formatBytes32String } from '@ethersproject/strings'
 import Wei, { wei } from '@synthetixio/wei'
@@ -8,11 +9,9 @@ import KwentaSDK from '..'
 import { UNSUPPORTED_NETWORK } from '../common/errors'
 import { KWENTA_TRACKING_CODE } from '../constants/futures'
 import { Period, PERIOD_IN_SECONDS } from '../constants/period'
-import { getPerpsV2MarketMulticall } from '../contracts'
 import PerpsMarketABI from '../contracts/abis/PerpsV2Market.json'
-import PerpsV2MarketInternal from '../contracts/PerpsV2MarketInternalV2'
 import { PerpsV2Market__factory } from '../contracts/types'
-import { IPerpsV2MarketConsolidated } from '../contracts/types/PerpsV2Market'
+import { AsyncOrder } from '../contracts/types/PerpsV3MarketProxy'
 import {
 	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
@@ -20,42 +19,53 @@ import {
 	queryTrades,
 	queryFundingRateHistory,
 } from '../queries/futures'
-import { NetworkId } from '../types/common'
 import {
 	FuturesMarket,
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesVolumes,
 	MarketClosureReason,
-	ContractOrderType,
-	PositionDetail,
-	PositionSide,
 	MarginTransfer,
 	FuturesMarginType,
+	PerpsV3SettlementStrategy,
+	PerpsMarketV3,
+	PerpsV3Position,
 } from '../types/futures'
 import { PricesMap } from '../types/prices'
 import {
 	appAdjustedLeverage,
-	formatDelayedOrder,
-	mapFuturesPosition,
 	mapFuturesPositions,
 	mapTrades,
 	getPerpsV3SubgraphUrl,
 	marginTypeToSubgraphType,
 	PerpsV3SymbolToMarketKey,
 	MarketAssetByKey,
+	mapPerpsV3Position,
+	sameSide,
+	formatV3AsyncOrder,
+	formatSettlementStrategy,
 } from '../utils/futures'
 import { getReasonFromCode } from '../utils/synths'
-import { getPerpsV3Markets, queryPerpsV3Accounts } from '../queries/perpsV3'
+import { queryPerpsV3Markets, querySettlementStrategies } from '../queries/perpsV3'
 import { weiFromWei } from '../utils'
 import { ZERO_ADDRESS } from '../constants'
+import { SynthV3Asset } from '../types'
+import {
+	V3_PERPS_ID_TO_V2_MARKET_KEY,
+	V3PerpsMarketId,
+	V3SynthMarketId,
+} from '../constants/perpsv3'
 
 export default class PerpsV3Service {
 	private sdk: KwentaSDK
 	public markets: FuturesMarket[] | undefined
-	public internalFuturesMarkets: Partial<
-		Record<NetworkId, { [marketAddress: string]: PerpsV2MarketInternal }>
-	> = {}
+	private settlementStrategies: {
+		lastUpdated: number
+		strategies: PerpsV3SettlementStrategy[]
+	} = {
+		lastUpdated: 0,
+		strategies: [],
+	}
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk
@@ -66,105 +76,43 @@ export default class PerpsV3Service {
 	}
 
 	public async getMarkets() {
-		const perpsV3Markets = await getPerpsV3Markets(this.sdk)
-		// const enabledMarkets = marketsForNetwork(
-		// 	networkOverride?.networkId || this.sdk.context.networkId,
-		// 	this.sdk.context.logError
-		// )
-		// const contracts =
-		// 	networkOverride && networkOverride?.networkId !== this.sdk.context.networkId
-		// 		? getContractsByNetwork(networkOverride.networkId, networkOverride.provider)
-		// 		: this.sdk.context.contracts
+		const perpsV3Markets = await queryPerpsV3Markets(this.sdk)
+		// TODO: Combine settlement strategies and markets query
+		const strategies = await this.getSettlementStrategies()
 
-		// const { SystemStatus } = contracts
-		// const {
-		// 	ExchangeRates,
-		// 	PerpsV2MarketData,
-		// 	PerpsV2MarketSettings,
-		// } = this.sdk.context.multicallContracts
-
-		// if (!SystemStatus || !ExchangeRates || !PerpsV2MarketData || !PerpsV2MarketSettings) {
-		// 	throw new Error(UNSUPPORTED_NETWORK)
-		// }
-
-		// const futuresData = await this.sdk.context.multicallProvider.all([
-		// 	PerpsV2MarketData.allProxiedMarketSummaries(),
-		// 	PerpsV2MarketSettings.minInitialMargin(),
-		// 	PerpsV2MarketSettings.minKeeperFee(),
-		// ])
-
-		// const { markets, minInitialMargin, minKeeperFee } = {
-		// 	markets: futuresData[0] as PerpsV2MarketData.MarketSummaryStructOutput[],
-		// 	minInitialMargin: futuresData[1] as BigNumber,
-		// 	minKeeperFee: futuresData[2] as BigNumber,
-		// }
-
-		// const filteredMarkets = markets.filter((m) => {
-		// 	const marketKey = parseBytes32String(m.key) as FuturesMarketKey
-		// 	const market = enabledMarkets.find((market) => {
-		// 		return marketKey === market.key
-		// 	})
-		// 	return !!market
-		// })
-
-		// const marketKeys = filteredMarkets.map((m) => {
-		// 	return m.key
-		// })
-
-		// const parametersCalls = marketKeys.map((key: string) => PerpsV2MarketSettings.parameters(key))
-
-		// let marketParameters: IPerpsV2MarketSettings.ParametersStructOutput[] = []
-
-		// if (this.sdk.context.isMainnet) {
-		// 	marketParameters = await this.sdk.context.multicallProvider.all(parametersCalls)
-		// } else {
-		// 	const firstResponses = await this.sdk.context.multicallProvider.all(
-		// 		parametersCalls.slice(0, 20)
-		// 	)
-		// 	const secondResponses = await this.sdk.context.multicallProvider.all(
-		// 		parametersCalls.slice(20, parametersCalls.length)
-		// 	)
-		// 	marketParameters = [
-		// 		...firstResponses,
-		// 		...secondResponses,
-		// 	] as IPerpsV2MarketSettings.ParametersStructOutput[]
-		// }
-
-		// const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(marketKeys)
-
-		const futuresMarkets = perpsV3Markets.reduce<FuturesMarket[]>(
+		const futuresMarkets = perpsV3Markets.reduce<PerpsMarketV3[]>(
 			(
 				acc,
 				{
 					perpsMarketId,
 					marketSymbol,
 					marketName,
-					marketOwner,
 					maxFundingVelocity,
 					makerFee,
 					takerFee,
 					skewScale,
-				},
-				i: number
+				}
 			) => {
 				const marketKey = PerpsV3SymbolToMarketKey[marketSymbol]
 				if (!marketKey) return acc
 
 				acc.push({
-					market: perpsMarketId,
+					version: 3,
+					marketId: Number(perpsMarketId),
 					marketKey: marketKey,
 					marketName: marketName,
+					settlementStrategies: strategies.filter((s) => s.marketId === Number(perpsMarketId)),
 					asset: MarketAssetByKey[marketKey],
 					assetHex: '', // TODO: Probably remove hex
 					currentFundingRate: wei(0.0001), // TODO: Funding rate
 					currentFundingVelocity: wei(maxFundingVelocity).div(24 * 24), // TODO: Current not max?
 					feeRates: {
-						makerFee: weiFromWei(makerFee),
-						takerFee: weiFromWei(takerFee),
-						makerFeeDelayedOrder: weiFromWei(makerFee),
-						takerFeeDelayedOrder: weiFromWei(takerFee),
-						makerFeeOffchainDelayedOrder: weiFromWei(makerFee),
-						takerFeeOffchainDelayedOrder: weiFromWei(takerFee),
+						makerFee: weiFromWei(makerFee || 0),
+						takerFee: weiFromWei(takerFee || 0),
+						makerFeeDelayedOrder: weiFromWei(makerFee || 0),
+						takerFeeDelayedOrder: weiFromWei(takerFee || 0),
+						makerFeeOffchainDelayedOrder: weiFromWei(makerFee || 0),
+						takerFeeOffchainDelayedOrder: weiFromWei(takerFee || 0),
 					},
 					openInterest: {
 						// TODO: Assign open interest
@@ -203,46 +151,29 @@ export default class PerpsV3Service {
 		return futuresMarkets
 	}
 
-	// TODO: types
-	// TODO: Improve the API for fetching positions
-	public async getFuturesPositions(
-		address: string, // Cross margin or EOA address
-		futuresMarkets: { asset: FuturesMarketAsset; marketKey: FuturesMarketKey; address: string }[]
-	) {
-		const marketDataContract = this.sdk.context.multicallContracts.PerpsV2MarketData
+	public async getPositions(accountId: number, marketIds: number[]) {
+		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
 
-		if (!this.sdk.context.isL2 || !marketDataContract) {
+		if (!this.sdk.context.isL2 || !proxy) {
 			throw new Error(UNSUPPORTED_NETWORK)
 		}
 
-		const positionCalls = []
-		const liquidationCalls = []
-
-		for (const { address: marketAddress, marketKey } of futuresMarkets) {
-			positionCalls.push(
-				marketDataContract.positionDetailsForMarketKey(formatBytes32String(marketKey), address)
-			)
-			const marketContract = new EthCallContract(marketAddress, PerpsMarketABI)
-			liquidationCalls.push(marketContract.canLiquidate(address))
-		}
+		const positionCalls = marketIds.map((id) => proxy.getOpenPosition(accountId, id))
 
 		// TODO: Combine these two?
-		const positionDetails = (await this.sdk.context.multicallProvider.all(
-			positionCalls
-		)) as PositionDetail[]
-		const canLiquidateState = (await this.sdk.context.multicallProvider.all(
-			liquidationCalls
-		)) as boolean[]
+		const positionDetails = (await this.sdk.context.multicallProvider.all(positionCalls)) as [
+			BigNumber,
+			BigNumber,
+			BigNumber
+		][]
 
 		// map the positions using the results
 		const positions = await Promise.all(
-			positionDetails.map(async (position, ind) => {
-				const canLiquidate = canLiquidateState[ind]
-				const marketKey = futuresMarkets[ind].marketKey
-				const asset = futuresMarkets[ind].asset
-
-				return mapFuturesPosition(position, canLiquidate, asset, marketKey)
-			})
+			positionDetails.reduce<PerpsV3Position[]>((acc, res, i) => {
+				const pos = mapPerpsV3Position(marketIds[i], ...res)
+				if (pos) acc.push(pos)
+				return acc
+			}, [])
 		)
 
 		return positions
@@ -254,6 +185,19 @@ export default class PerpsV3Service {
 	) {
 		const minTimestamp = Math.floor(Date.now() / 1000) - periodLength
 		return queryFundingRateHistory(this.sdk, marketAsset, minTimestamp)
+	}
+
+	public async getSettlementStrategies() {
+		if (this.settlementStrategies.lastUpdated > Date.now() - PERIOD_IN_SECONDS.ONE_HOUR * 1000) {
+			return this.settlementStrategies.strategies
+		}
+		const strategies = await querySettlementStrategies(this.sdk)
+		const formattedStrats = strategies.map(formatSettlementStrategy)
+		this.settlementStrategies = {
+			lastUpdated: Date.now(),
+			strategies: formattedStrats,
+		}
+		return formattedStrats
 	}
 
 	public async getAverageFundingRates(
@@ -395,10 +339,21 @@ export default class PerpsV3Service {
 		// return response ? calculateVolumes(response) : {}
 	}
 
-	public async getPerpsV3AccountIds(walletAddress?: string | null): Promise<string[]> {
+	public async getPerpsV3AccountIds(walletAddress?: string | null): Promise<number[]> {
+		const accountProxy = this.sdk.context.contracts.perpsV3AccountProxy
+		const accountMulticall = this.sdk.context.multicallContracts.perpsV3AccountProxy
+		if (!accountProxy || !accountMulticall) throw new Error(UNSUPPORTED_NETWORK)
 		if (!walletAddress) return []
-		const accounts = await queryPerpsV3Accounts(this.sdk, walletAddress.toLowerCase())
-		return accounts.map((a) => a.id)
+		const accountCount = await accountProxy.balanceOf(walletAddress)
+		const calls =
+			Number(accountCount) > 0
+				? [...Array(Number(accountCount)).keys()].map((index) => {
+						return accountMulticall.tokenOfOwnerByIndex(walletAddress, index)
+				  })
+				: []
+
+		const accountIds = (await this.sdk.context.multicallProvider.all(calls)) as BigNumber[]
+		return accountIds.map((id) => id.toNumber())
 	}
 
 	public async getAccountOwner(id: BigNumberish): Promise<string | null> {
@@ -414,51 +369,55 @@ export default class PerpsV3Service {
 		return queryIsolatedMarginTransfers(this.sdk, address)
 	}
 
-	public async getAccountCollateral(crossMarginAddress: string) {
-		// TODO: Get collateral balances
-		return {}
+	public async getAvailableMargin(accountId: number) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		const availableMargin = await marketProxy.getAvailableMargin(accountId)
+		return wei(availableMargin)
 	}
 
-	public async getAvailableMargin(walletAddress: string, crossMarginAddress: string) {
-		return wei(0)
+	public async getPendingAsyncOrder(accountId: number, marketAddress: string) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		const order = await marketProxy.getOrder(accountId, marketAddress)
+		return formatV3AsyncOrder(order)
 	}
 
-	// Perps V2 read functions
-	public async getDelayedOrder(account: string, marketAddress: string) {
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.provider)
-		const order = await market.delayedOrders(account)
-		return formatDelayedOrder(account, marketAddress, order)
-	}
-
-	public async getDelayedOrders(account: string, marketAddresses: string[]) {
-		const marketContracts = marketAddresses.map(getPerpsV2MarketMulticall)
+	public async getPendingAsyncOrders(accountId: number, marketIds: BigNumberish[]) {
+		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
+		if (!proxy) throw new Error(UNSUPPORTED_NETWORK)
 
 		const orders = (await this.sdk.context.multicallProvider.all(
-			marketContracts.map((market) => market.delayedOrders(account))
-		)) as IPerpsV2MarketConsolidated.DelayedOrderStructOutput[]
-		return orders.map((order, ind) => {
-			return formatDelayedOrder(account, marketAddresses[ind], order)
-		})
+			marketIds.map((market) => proxy.getOrder(market, accountId))
+		)) as AsyncOrder.DataStructOutput[]
+		return orders.filter((o) => o.sizeDelta.abs().gt(0)).map(formatV3AsyncOrder)
 	}
 
-	public async getIsolatedTradePreview(
-		_marketAddress: string,
-		_marketKey: FuturesMarketKey,
-		_orderType: ContractOrderType,
-		_inputs: {
-			sizeDelta: Wei
-			price: Wei
-			leverageSide: PositionSide
-		}
+	public async getTradePreview(
+		marketId: V3PerpsMarketId,
+		size: Wei,
+		settlementStrategy: PerpsV3SettlementStrategy
 	) {
-		const fillPrice = wei(0)
-		const liqPrice = wei(0)
-		const leverage = wei(0)
+		const proxy = this.sdk.context.multicallContracts.perpsV3MarketProxy
+		const price = this.sdk.prices.getOffchainPrice(V3_PERPS_ID_TO_V2_MARKET_KEY[marketId])
+		if (!proxy) throw new Error(UNSUPPORTED_NETWORK)
+		if (!price) throw new Error('No price for market')
+		const [fees, skew, fill] = (await this.sdk.context.multicallProvider.all([
+			proxy.getOrderFees(marketId),
+			proxy.skew(marketId),
+			proxy.fillPrice(marketId, size.toBN(), price.toBN()),
+		])) as [{ makerFee: BigNumber; takerFee: BigNumber }, BigNumber, BigNumber]
+
+		const notional = size.mul(price)
+		const feeSide = sameSide(notional, wei(skew)) ? wei(fees.takerFee) : wei(fees.makerFee)
+		const fee = notional.mul(feeSide)
+		const fillPrice = wei(fill)
+		const settlementFee = wei(settlementStrategy.settlementReward)
 
 		return {
 			fillPrice,
-			liqPrice,
-			leverage,
+			fee,
+			settlementFee,
 		}
 	}
 
@@ -510,33 +469,35 @@ export default class PerpsV3Service {
 		return wei(orderFee.fee)
 	}
 
+	public async getDepositAllowances(walletAddress: string) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		const susdContract = this.sdk.context.contracts.SNXUSD
+		if (!susdContract || !marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		const snxusd = await susdContract.allowance(walletAddress, marketProxy.address)
+		return { snxusd: wei(snxusd) }
+	}
+
 	// Contract mutations
 
 	public async approveDeposit(
-		crossMarginAddress: string,
+		asset: SynthV3Asset,
 		amount: BigNumber = BigNumber.from(ethers.constants.MaxUint256)
 	) {
-		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK)
-		return this.sdk.transactions.createContractTxn(this.sdk.context.contracts.SUSD, 'approve', [
-			crossMarginAddress,
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		const assetContract = this.sdk.context.contracts[asset]
+		if (!assetContract || !marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		return this.sdk.transactions.createContractTxn(assetContract, 'approve', [
+			marketProxy.address,
 			amount,
 		])
 	}
 
-	public async depositToAccount(marketAddress: string, amount: Wei) {
-		// TODO: Accept account
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
-		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [amount.toBN()])
-		return txn
+	public async depositToAccount(accountId: number, synthId: V3SynthMarketId, amount: Wei) {
+		return this.modifyCollateral(accountId, synthId, amount)
 	}
 
-	public async withdrawFromAccount(marketAddress: string, amount: Wei) {
-		// TODO: Accept account
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
-		const txn = this.sdk.transactions.createContractTxn(market, 'transferMargin', [
-			amount.neg().toBN(),
-		])
-		return txn
+	public async withdrawFromAccount(accountId: number, synthId: V3SynthMarketId, amount: Wei) {
+		return this.modifyCollateral(accountId, synthId, amount.neg())
 	}
 
 	public async closePosition(marketAddress: string, priceImpactDelta: Wei) {
@@ -545,10 +506,11 @@ export default class PerpsV3Service {
 	}
 
 	public async submitOrder(
-		marketId: string,
-		accountId: string,
+		marketId: number,
+		accountId: number,
 		sizeDelta: Wei,
-		acceptablePrice: Wei
+		acceptablePrice: Wei,
+		settlementStrategyId: number
 	) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
@@ -556,47 +518,48 @@ export default class PerpsV3Service {
 		const commitment = {
 			marketId: marketId,
 			accountId,
-			sizeDelta: sizeDelta.toBN,
-			settlementStrategyId: 0,
+			sizeDelta: sizeDelta.toBN(),
+			settlementStrategyId,
 			acceptablePrice: acceptablePrice.toBN(),
-			trackingCode: ethers.constants.HashZero,
+			trackingCode: KWENTA_TRACKING_CODE,
 		}
 
 		return this.sdk.transactions.createContractTxn(marketProxy, 'commitOrder', [commitment])
 	}
 
-	public async cancelDelayedOrder(marketAddress: string, account: string, isOffchain: boolean) {
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
-		return isOffchain
-			? market.cancelOffchainDelayedOrder(account)
-			: market.cancelDelayedOrder(account)
+	public async cancelAsyncOrder(marketId: number, accountId: number) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+		return this.sdk.transactions.createContractTxn(marketProxy, 'cancelOrder', [
+			marketId,
+			accountId,
+		])
 	}
 
-	public async executeDelayedOrder(marketAddress: string, account: string) {
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
-		return market.executeDelayedOrder(account)
-	}
-
-	public async executeDelayedOffchainOrder(
-		marketKey: FuturesMarketKey,
-		marketAddress: string,
-		account: string
-	) {
+	public async executeAsyncOrder(marketKey: FuturesMarketKey, marketId: number, accountId: number) {
 		const { Pyth } = this.sdk.context.contracts
-		const market = PerpsV2Market__factory.connect(marketAddress, this.sdk.context.signer)
-		if (!Pyth) throw new Error(UNSUPPORTED_NETWORK)
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		if (!Pyth || !marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+
+		const extraData = defaultAbiCoder.encode(['uint128', 'uint128'], [marketId, accountId])
 
 		// get price update data
 		const priceUpdateData = await this.sdk.prices.getPythPriceUpdateData(marketKey)
 		const updateFee = await Pyth.getUpdateFee(priceUpdateData)
 
-		return market.executeOffchainDelayedOrder(account, priceUpdateData, { value: updateFee })
+		return this.sdk.transactions.createContractTxn(
+			marketProxy,
+			'settlePythOrder',
+			[priceUpdateData[0], extraData],
+			{ value: updateFee }
+		)
 	}
 
-	public async createPerpsV3Account(requestedId: BigNumberish) {
+	public async createAccount(requestedId?: BigNumberish) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
-		return this.sdk.transactions.createContractTxn(marketProxy, 'createAccount', [requestedId])
+		const id = requestedId ?? Date.now()
+		return this.sdk.transactions.createContractTxn(marketProxy, 'createAccount', [id])
 	}
 
 	public getSkewAdjustedPrice = async (price: Wei, marketAddress: string, marketKey: string) => {
@@ -613,5 +576,18 @@ export default class PerpsV3Service {
 		const scaleWei = wei(skewScale)
 
 		return price.mul(skewWei.div(scaleWei).add(1))
+	}
+
+	// private helpers
+
+	private modifyCollateral(accountId: number, synthId: V3SynthMarketId, amount: Wei) {
+		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
+		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
+
+		return this.sdk.transactions.createContractTxn(marketProxy, 'modifyCollateral', [
+			accountId,
+			synthId,
+			amount.toBN(),
+		])
 	}
 }

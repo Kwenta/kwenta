@@ -13,7 +13,8 @@ import styled, { css } from 'styled-components'
 import { useTheme } from 'styled-components'
 
 import { fetchFundingRatesHistory } from 'state/futures/actions'
-import { selectHistoricalFundingRatePeriod, selectMarketAsset } from 'state/futures/selectors'
+import { selectMarketAsset } from 'state/futures/common/selectors'
+import { selectHistoricalFundingRatePeriod } from 'state/futures/selectors'
 import { useAppSelector, usePollAction } from 'state/hooks'
 
 import FundingChartTooltip, { formatFundingRate } from './FundingChartTooltip'
