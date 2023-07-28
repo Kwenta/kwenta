@@ -8,8 +8,8 @@ import { monitorTransaction } from 'contexts/RelayerContext'
 import { FetchStatus, ThunkConfig } from 'state/types'
 import logError from 'utils/logError'
 
-import { ZERO_STAKING_DATA } from './reducer'
-import { StakingAction } from './types'
+import { ZERO_STAKING_DATA, ZERO_STAKING_V2_DATA } from './reducer'
+import { StakingAction, StakingActionV2 } from './types'
 
 export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfig>(
 	'staking/fetchStakingData',
@@ -26,28 +26,20 @@ export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfi
 				kwentaBalance,
 				weekCounter,
 				totalStakedBalance,
-				vKwentaBalance,
-				vKwentaAllowance,
 				kwentaAllowance,
 				epochPeriod,
-				veKwentaBalance,
-				veKwentaAllowance,
 			} = await sdk.kwentaToken.getStakingData()
 
 			return {
-				rewardEscrowBalance: rewardEscrowBalance.toString(),
-				stakedNonEscrowedBalance: stakedNonEscrowedBalance.toString(),
-				stakedEscrowedBalance: stakedEscrowedBalance.toString(),
+				escrowedKwentaBalance: rewardEscrowBalance.toString(),
+				stakedKwentaBalance: stakedNonEscrowedBalance.toString(),
+				stakedEscrowedKwentaBalance: stakedEscrowedBalance.toString(),
 				claimableBalance: claimableBalance.toString(),
 				kwentaBalance: kwentaBalance.toString(),
 				weekCounter,
 				totalStakedBalance: totalStakedBalance.toString(),
-				vKwentaBalance: vKwentaBalance.toString(),
-				vKwentaAllowance: vKwentaAllowance.toString(),
 				kwentaAllowance: kwentaAllowance.toString(),
 				epochPeriod,
-				veKwentaBalance: veKwentaBalance.toString(),
-				veKwentaAllowance: veKwentaAllowance.toString(),
 			}
 		} catch (err) {
 			logError(err)
@@ -57,45 +49,39 @@ export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfi
 	}
 )
 
-export const fetchStakingV2Data = createAsyncThunk<
-	{
-		rewardEscrowBalance: string
-		stakedNonEscrowedBalance: string
-		stakedEscrowedBalance: string
-		claimableBalance: string
-		totalStakedBalance: string
-		stakedResetTime: number
-		kwentaStakingV2Allowance: string
-	},
-	void,
-	ThunkConfig
->('staking/fetchStakingDataV2', async (_, { extra: { sdk } }) => {
-	try {
-		const {
-			rewardEscrowBalance,
-			stakedNonEscrowedBalance,
-			stakedEscrowedBalance,
-			claimableBalance,
-			totalStakedBalance,
-			stakedResetTime,
-			kwentaStakingV2Allowance,
-		} = await sdk.kwentaToken.getStakingV2Data()
+export const fetchStakingV2Data = createAsyncThunk<StakingActionV2, void, ThunkConfig>(
+	'staking/fetchStakingDataV2',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const { wallet } = getState()
+			if (!wallet.walletAddress) return ZERO_STAKING_V2_DATA
 
-		return {
-			rewardEscrowBalance: rewardEscrowBalance.toString(),
-			stakedNonEscrowedBalance: stakedNonEscrowedBalance.toString(),
-			stakedEscrowedBalance: stakedEscrowedBalance.toString(),
-			claimableBalance: claimableBalance.toString(),
-			totalStakedBalance: totalStakedBalance.toString(),
-			stakedResetTime,
-			kwentaStakingV2Allowance: kwentaStakingV2Allowance.toString(),
+			const {
+				rewardEscrowBalance,
+				stakedNonEscrowedBalance,
+				stakedEscrowedBalance,
+				claimableBalance,
+				totalStakedBalance,
+				stakedResetTime,
+				kwentaStakingV2Allowance,
+			} = await sdk.kwentaToken.getStakingV2Data()
+
+			return {
+				escrowedKwentaBalance: rewardEscrowBalance.toString(),
+				stakedKwentaBalance: stakedNonEscrowedBalance.toString(),
+				stakedEscrowedKwentaBalance: stakedEscrowedBalance.toString(),
+				claimableBalance: claimableBalance.toString(),
+				totalStakedBalance: totalStakedBalance.toString(),
+				stakedResetTime,
+				kwentaStakingV2Allowance: kwentaStakingV2Allowance.toString(),
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch staking V2 data', err)
+			throw err
 		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to fetch staking V2 data', err)
-		throw err
 	}
-})
+)
 
 export const approveKwentaToken = createAsyncThunk<
 	void,
@@ -168,8 +154,15 @@ export const fetchEscrowV2Data = createAsyncThunk<
 	{ escrowData: EscrowData<string>[]; totalVestable: string },
 	void,
 	ThunkConfig
->('staking/fetchEscrowV2Data', async (_, { extra: { sdk } }) => {
+>('staking/fetchEscrowV2Data', async (_, { getState, extra: { sdk } }) => {
 	try {
+		const { wallet } = getState()
+		if (!wallet.walletAddress)
+			return {
+				escrowData: [],
+				totalVestable: '0',
+			}
+
 		const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowV2Data()
 
 		return {

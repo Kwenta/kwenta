@@ -2,29 +2,38 @@ import { EscrowData, ClaimParams } from '@kwenta/sdk/types'
 
 import { FetchStatus } from 'state/types'
 
-export type VersionedStakeData = {
+type StakeBalance = {
 	escrowedKwentaBalance: string
-	claimableBalance: string
-	totalStakedBalance: string
-	stakedEscrowedKwentaBalance: string
 	stakedKwentaBalance: string
+	totalStakedBalance: string
+	claimableBalance: string
+	stakedEscrowedKwentaBalance: string
+}
+
+type EscrowBalance = {
 	totalVestable: string
 	escrowData: EscrowData<string>[]
 }
 
-export type StakingState = {
+type StakingTransaction = {
 	kwentaBalance: string
-	vKwentaBalance: string
-	veKwentaBalance: string
+	kwentaAllowance: string
+	epochPeriod: number
+	weekCounter: number
+}
+
+type StakingTransactionV2 = {
+	stakedResetTime: number
+	kwentaStakingV2Allowance: string
+}
+
+export type VersionedStakeData = StakeBalance & EscrowBalance
+
+export type StakingState = StakingTransaction & {
 	v1: VersionedStakeData
 	v2: VersionedStakeData
 	stakedResetTime: number
-	epochPeriod: number
-	weekCounter: number
 	selectedEscrowVersion: 1 | 2
-	kwentaAllowance: string
-	vKwentaAllowance: string
-	veKwentaAllowance: string
 	kwentaStakingV2Allowance: string
 	kwentaRewards: string
 	opRewards: string
@@ -50,18 +59,6 @@ export type StakingState = {
 	compoundRewardsStatus: FetchStatus
 }
 
-export type StakingAction = {
-	rewardEscrowBalance: string
-	stakedNonEscrowedBalance: string
-	stakedEscrowedBalance: string
-	claimableBalance: string
-	kwentaBalance: string
-	weekCounter: number
-	totalStakedBalance: string
-	vKwentaBalance: string
-	vKwentaAllowance: string
-	kwentaAllowance: string
-	epochPeriod: number
-	veKwentaBalance: string
-	veKwentaAllowance: string
-}
+export type StakingAction = StakeBalance & StakingTransaction
+
+export type StakingActionV2 = StakeBalance & StakingTransactionV2
