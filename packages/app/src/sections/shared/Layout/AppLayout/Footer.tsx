@@ -1,6 +1,10 @@
 import router from 'next/router'
 import styled from 'styled-components'
 
+import DocsIcon from 'assets/svg/app/docs.svg'
+import StatsIcon from 'assets/svg/app/stats.svg'
+import SupportIcon from 'assets/svg/app/support.svg'
+import { FlexDivRow } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
 import ROUTES from 'constants/routes'
@@ -16,12 +20,15 @@ const Footer = () => {
 			<GitHashID />
 			<RightContainer>
 				<FooterLinkInternal onClick={() => router.push(ROUTES.Stats.Home)}>
+					<StatsIcon />
 					<Body color="secondary">Stats</Body>
 				</FooterLinkInternal>
 				<FooterLink href={EXTERNAL_LINKS.Docs.DocsRoot}>
+					<DocsIcon />
 					<Body color="secondary">Docs</Body>
 				</FooterLink>
 				<FooterLink href={EXTERNAL_LINKS.Social.Discord}>
+					<SupportIcon />
 					<Body color="secondary">Support</Body>
 				</FooterLink>
 			</RightContainer>
@@ -50,11 +57,17 @@ const FooterLink = styled.a.attrs({ target: '_blank', rel: '_noreferrer' })`
 	&:not(:last-of-type) {
 		margin-right: 18px;
 	}
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	column-gap: 5px;
 `
 
-const FooterLinkInternal = styled.div`
+const FooterLinkInternal = styled(FlexDivRow)`
 	margin-right: 18px;
 	cursor: pointer;
+	align-items: center;
+	column-gap: 5px;
 `
 
 export default Footer

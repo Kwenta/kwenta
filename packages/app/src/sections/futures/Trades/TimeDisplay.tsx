@@ -2,6 +2,7 @@ import { format } from 'date-fns'
 import { FC, useCallback, useMemo, useState, memo } from 'react'
 import styled, { css } from 'styled-components'
 
+import { Body } from 'components/Text'
 import getLocale from 'utils/formatters/getLocale'
 
 type TimeDisplayProps = {
@@ -29,8 +30,10 @@ const TimeDisplay: FC<TimeDisplayProps> = memo(({ value, horizontal }) => {
 
 	return (
 		<TimeDisplayContainer horizontal={horizontal} onClick={handleOnClick}>
-			<div>{date}</div>
-			<div>{show12hr ? time12hr : time24hr}</div>
+			<Body mono>{date}</Body>
+			<Body mono color="secondary">
+				{show12hr ? time12hr : time24hr}
+			</Body>
 		</TimeDisplayContainer>
 	)
 })

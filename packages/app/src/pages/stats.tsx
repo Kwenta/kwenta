@@ -5,6 +5,8 @@ import styled from 'styled-components'
 
 import HomeLayout from 'sections/shared/Layout/HomeLayout'
 import { Stats } from 'sections/stats'
+import { fetchMarkets } from 'state/futures/actions'
+import { useFetchAction } from 'state/hooks'
 import media from 'styles/media'
 
 type AppLayoutProps = {
@@ -15,6 +17,7 @@ type StatsPageComponent = FC & { layout?: FC<AppLayoutProps> }
 
 const HomePage: StatsPageComponent = () => {
 	const { t } = useTranslation()
+	useFetchAction(fetchMarkets)
 
 	return (
 		<>

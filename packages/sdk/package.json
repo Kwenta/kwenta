@@ -1,6 +1,6 @@
 {
 	"name": "@kwenta/sdk",
-	"version": "0.0.1",
+	"version": "1.0.3",
 	"description": "SDK for headless interaction with Kwenta",
 	"main": "dist/index.js",
 	"directories": {
@@ -59,7 +59,7 @@
 		"bn.js": "^5.2.1",
 		"codegen-graph-ts": "^0.1.4",
 		"date-fns": "^2.30.0",
-		"ethcall": "4.7.2",
+		"ethcall": "5.0.1",
 		"ethers": "^5.7.2",
 		"graphql-request": "^6.1.0",
 		"lodash": "^4.17.21",

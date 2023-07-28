@@ -42,7 +42,7 @@ import {
 	MarginTransfer,
 	ConditionalOrderTypeEnum,
 } from '../types/futures'
-import { formatCurrency, formatDollars } from '../utils/number'
+import { formatCurrency, formatDollars, weiFromWei } from '../utils/number'
 import {
 	FuturesAggregateStatResult,
 	FuturesOrderType as SubgraphOrderType,
@@ -119,6 +119,7 @@ export const marketsForNetwork = (networkId: number, logError: IContext['logErro
 }
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
+	if (asset === 'ETHBTC') return 'ETH/BTC'
 	return `${getDisplayAsset(asset)}/sUSD`
 }
 
@@ -472,7 +473,7 @@ const mapOrderType = (orderType: Partial<SubgraphOrderType>): FuturesOrderTypeDi
 		: orderType === 'StopMarket'
 		? 'Stop'
 		: orderType === 'DelayedOffchain'
-		? 'Delayed Market'
+		? 'Market'
 		: orderType
 }
 
@@ -494,24 +495,26 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			keeperFeesPaid,
 			orderType,
 			accountType,
+			fundingAccrued,
 		}) => {
 			return {
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				account,
 				accountType,
-				margin: new Wei(margin, 18, true),
-				size: new Wei(size, 18, true),
-				price: new Wei(price, 18, true),
+				margin: weiFromWei(margin),
+				size: weiFromWei(size),
+				price: weiFromWei(price),
 				txnHash: id.split('-')[0].toString(),
 				timestamp: timestamp.toNumber(),
 				positionId,
-				positionSize: new Wei(positionSize, 18, true),
+				positionSize: weiFromWei(positionSize),
 				positionClosed,
 				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-				pnl: new Wei(pnl, 18, true),
-				feesPaid: new Wei(feesPaid, 18, true),
-				keeperFeesPaid: new Wei(keeperFeesPaid, 18, true),
+				pnl: weiFromWei(pnl),
+				feesPaid: weiFromWei(feesPaid),
+				keeperFeesPaid: weiFromWei(keeperFeesPaid),
 				orderType: mapOrderType(orderType),
+				fundingAccrued: weiFromWei(fundingAccrued),
 			}
 		}
 	)
@@ -699,6 +702,14 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sINJPERP]: FuturesMarketAsset.INJ,
 	[FuturesMarketKey.sTRXPERP]: FuturesMarketAsset.TRX,
 	[FuturesMarketKey.sSTETHPERP]: FuturesMarketAsset.STETH,
+	[FuturesMarketKey.sETHBTCPERP]: FuturesMarketAsset.ETHBTC,
+	[FuturesMarketKey.sXMRPERP]: FuturesMarketAsset.XMR,
+	[FuturesMarketKey.sMAVPERP]: FuturesMarketAsset.MAV,
+	[FuturesMarketKey.sETCPERP]: FuturesMarketAsset.ETC,
+	[FuturesMarketKey.sCOMPPERP]: FuturesMarketAsset.COMP,
+	[FuturesMarketKey.sYFIPERP]: FuturesMarketAsset.YFI,
+	[FuturesMarketKey.sMKRPERP]: FuturesMarketAsset.MKR,
+	[FuturesMarketKey.sRPLPERP]: FuturesMarketAsset.RPL,
 } as const
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -744,11 +755,19 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.INJ]: FuturesMarketKey.sINJPERP,
 	[FuturesMarketAsset.TRX]: FuturesMarketKey.sTRXPERP,
 	[FuturesMarketAsset.STETH]: FuturesMarketKey.sSTETHPERP,
+	[FuturesMarketAsset.ETHBTC]: FuturesMarketKey.sETHBTCPERP,
+	[FuturesMarketAsset.XMR]: FuturesMarketKey.sXMRPERP,
+	[FuturesMarketAsset.MAV]: FuturesMarketKey.sMAVPERP,
+	[FuturesMarketAsset.ETC]: FuturesMarketKey.sETCPERP,
+	[FuturesMarketAsset.COMP]: FuturesMarketKey.sCOMPPERP,
+	[FuturesMarketAsset.YFI]: FuturesMarketKey.sYFIPERP,
+	[FuturesMarketAsset.MKR]: FuturesMarketKey.sMKRPERP,
+	[FuturesMarketAsset.RPL]: FuturesMarketKey.sRPLPERP,
 } as const
 
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.sBTC]: 'Bitcoin',
-	[FuturesMarketAsset.sETH]: 'Ether',
+	[FuturesMarketAsset.sETH]: 'Ethereum',
 	[FuturesMarketAsset.LINK]: 'Chainlink',
 	[FuturesMarketAsset.SOL]: 'Solana',
 	[FuturesMarketAsset.AVAX]: 'Avalanche',
@@ -789,6 +808,14 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.INJ]: 'Injective',
 	[FuturesMarketAsset.TRX]: 'Tron',
 	[FuturesMarketAsset.STETH]: 'Lido Staked ETH',
+	[FuturesMarketAsset.ETHBTC]: 'Ether/Bitcoin Ratio',
+	[FuturesMarketAsset.XMR]: 'Monero',
+	[FuturesMarketAsset.MAV]: 'Maverick',
+	[FuturesMarketAsset.ETC]: 'Ethereum Classic',
+	[FuturesMarketAsset.COMP]: 'Compound',
+	[FuturesMarketAsset.YFI]: 'Yearn.Finance',
+	[FuturesMarketAsset.MKR]: 'Maker',
+	[FuturesMarketAsset.RPL]: 'Rocket Pool',
 } as const
 
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {}

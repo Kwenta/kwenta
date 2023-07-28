@@ -14,7 +14,6 @@ type PaginationProps = {
 	pageCount: number
 	canNextPage: boolean
 	canPreviousPage: boolean
-	compact: boolean
 	setPage: (page: number) => void
 	previousPage: () => void
 	nextPage: () => void
@@ -27,7 +26,6 @@ const StakingPagination: FC<PaginationProps> = React.memo(
 		pageCount,
 		canNextPage = true,
 		canPreviousPage = true,
-		compact = false,
 		setPage,
 		nextPage,
 		previousPage,
@@ -40,7 +38,7 @@ const StakingPagination: FC<PaginationProps> = React.memo(
 
 		return (
 			<PaginationContainer>
-				<PageInfoContainer compact={compact}>
+				<PageInfoContainer>
 					<FlexDivRowCentered columnGap="15px">
 						<FlexDivRowCentered columnGap="5px">
 							<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
@@ -87,9 +85,8 @@ const PageInfo = styled.span`
 	font-size: 13px;
 `
 
-const PageInfoContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
+const PageInfoContainer = styled(GridDivCenteredCol)`
 	grid-template-columns: auto 1fr auto;
-	padding: ${(props) => (props.compact ? '10px' : '15px')} 12px;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 `

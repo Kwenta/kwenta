@@ -294,11 +294,11 @@ const PositionsTable: FC<FuturesPositionTableProps> = () => {
 }
 
 const TableContainer = styled.div`
-	overflow: scroll;
+	overflow: auto;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-	height: calc(100% - ${FOOTER_HEIGHT * 2 + 4}px);
+	height: calc(100% - ${FOOTER_HEIGHT}px);
 	${media.lessThan('xl')`
-		height: calc(100% - ${FOOTER_HEIGHT}px);
+		height: 100%;
 	`}
 `
 
@@ -306,15 +306,12 @@ const PositionRowDesktop = styled.div`
 	display: grid;
 	grid-template-columns: 75px 60px minmax(130px, 1fr) 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
 	grid-gap: 10px;
-	height: 100%;
 	height: 54px;
 	padding: 0 10px;
-	&:nth-child(odd) {
+	&:nth-child(even) {
 		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
-	:not(:last-child) {
-		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-	}
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `
 
 const HeadersRow = styled(PositionRowDesktop)`
@@ -324,6 +321,9 @@ const HeadersRow = styled(PositionRowDesktop)`
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	:not(:last-child) {
 		border-bottom: 0;
+	}
+	&:first-child {
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 `
 

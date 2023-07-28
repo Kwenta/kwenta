@@ -69,12 +69,13 @@ const newTheme = {
 	text: {
 		primary: common.palette.neutral.n900,
 		secondary: common.palette.neutral.n400,
-		tertiary: common.palette.neutral,
+		tertiary: common.palette.neutral.n600,
 		disabled: common.palette.neutral.n100,
 		positive: common.palette.green.g800,
 		negative: common.palette.red.r700,
 		preview: common.palette.yellow.y800,
 		warning: common.palette.yellow.y800,
+		sectionHeader: common.palette.yellow.y900,
 	},
 	pill: {
 		yellow: {
@@ -173,9 +174,18 @@ const newTheme = {
 		},
 	},
 	checkBox: {
-		border: common.palette.neutral.n50,
-		background: common.palette.neutral.n20,
-		checked: common.light.yellow,
+		default: {
+			text: common.palette.neutral.n900,
+			border: common.palette.neutral.n500,
+			background: common.palette.neutral.n700,
+			checked: common.palette.yellow.y500,
+		},
+		yellow: {
+			text: common.palette.yellow.y500,
+			border: common.palette.yellow.y500,
+			background: common.palette.neutral.n700,
+			checked: common.palette.yellow.y500,
+		},
 	},
 	tabs: {
 		position: {
@@ -201,6 +211,12 @@ const newTheme = {
 		tooltip: {
 			background: common.palette.neutral.n10,
 			border: common.palette.neutral.n50,
+		},
+	},
+	exchange: {
+		card: common.palette.neutral.n20,
+		ratioSelect: {
+			background: common.palette.neutral.n30,
 		},
 	},
 }

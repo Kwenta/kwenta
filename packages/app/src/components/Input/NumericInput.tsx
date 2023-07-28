@@ -19,6 +19,7 @@ type NumericInputProps = Omit<
 	max?: number
 	maxLength?: number | 'none'
 	roundedCorner?: boolean
+	noShadow?: boolean
 }
 
 const INVALID_CHARS = ['-', '+', 'e']
@@ -40,6 +41,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 		className,
 		roundedCorner = true,
 		disabled,
+		noShadow,
 		...props
 	}) => {
 		const handleChange = useCallback(
@@ -68,6 +70,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 				className={className}
 				$roundedCorner={roundedCorner}
 				$disabled={disabled}
+				$noShadow={noShadow}
 			>
 				{left && (
 					<>
@@ -108,12 +111,17 @@ const InputContainer = styled.div<{
 	$length: number
 	$roundedCorner?: boolean
 	$disabled?: boolean
+	$noShadow?: boolean
 }>`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	background: ${(props) => props.theme.colors.selectedTheme.input.background};
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
+	${(props) =>
+		!props.$noShadow &&
+		css`
+			box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
+		`}
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-color: ${(props) =>
 		props.$invalid

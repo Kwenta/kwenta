@@ -18,7 +18,6 @@ import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER, DEFAULT_LEVERAGE } from 'constants/defaults'
-import { ETH_UNIT } from 'constants/network'
 import { FuturesAccountTypes } from 'queries/futures/types'
 import { selectSusdBalance } from 'state/balances/selectors'
 import { accountType, deserializeWeiObject } from 'state/helpers'
@@ -43,6 +42,7 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	unserializeConditionalOrders,
+	stopLossValidity,
 } from 'utils/futures'
 
 import {
@@ -148,6 +148,11 @@ export const selectMarkets = createSelector(
 	(state: RootState) => state.futures,
 	(network, futures) =>
 		futures.markets[network] ? unserializeMarkets(futures.markets[network]) : []
+)
+
+export const selectOptimismMarkets = createSelector(
+	(state: RootState) => state.futures,
+	(futures) => (futures.markets[10] ? unserializeMarkets(futures.markets[10]) : [])
 )
 
 export const selectMarketVolumes = createSelector(
@@ -256,6 +261,23 @@ export const selectMarkPrices = createSelector(selectMarkets, selectPrices, (mar
 		}
 	}, markPrices)
 })
+
+export const selectOptimismMarkPrices = createSelector(
+	selectOptimismMarkets,
+	selectPrices,
+	(optimismMarkets, prices) => {
+		const markPrices: MarkPrices = {}
+		return optimismMarkets.reduce((acc, market) => {
+			const price = prices[market.asset]?.offChain ?? wei(0)
+			return {
+				...acc,
+				[market.marketKey]: wei(price).mul(
+					wei(market.marketSkew).div(market.settings.skewScale).add(1)
+				),
+			}
+		}, markPrices)
+	}
+)
 
 export const selectMarkPriceInfos = createSelector(
 	selectMarkets,
@@ -1303,7 +1325,7 @@ export const selectIsolatedPortfolioValues = createSelector(
 			account,
 			timestamp,
 			asset,
-			margin: margin.div(ETH_UNIT).toNumber(),
+			margin: margin.toNumber(),
 			size: 0,
 		}))
 
@@ -1373,7 +1395,7 @@ export const selectSmartMarginPortfolioValues = createSelector(
 			account,
 			timestamp,
 			asset,
-			margin: margin.div(ETH_UNIT).toNumber(),
+			margin: margin.toNumber(),
 			size: 0,
 		}))
 
@@ -1734,3 +1756,26 @@ export const selectFuturesFeesForAccount = (state: RootState) => state.futures.f
 
 export const selectHistoricalFundingRatePeriod = (state: RootState) =>
 	state.futures.historicalFundingRatePeriod
+
+export const selectTradePanelSLValidity = createSelector(
+	selectSlTpTradeInputs,
+	selectTradePreview,
+	selectMarketIndexPrice,
+	selectLeverageSide,
+	({ stopLossPrice }, preview, currentPrice, leverageSide) => {
+		return stopLossValidity(stopLossPrice, preview?.liqPrice, leverageSide, currentPrice)
+	}
+)
+
+export const selectModalSLValidity = createSelector(
+	selectSlTpModalInputs,
+	selectEditPositionModalInfo,
+	({ stopLossPrice }, { position, marketPrice }) => {
+		return stopLossValidity(
+			stopLossPrice,
+			position?.position?.liquidationPrice,
+			position?.position?.side || PositionSide.LONG,
+			marketPrice
+		)
+	}
+)

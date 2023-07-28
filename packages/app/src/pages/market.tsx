@@ -22,9 +22,9 @@ import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported
 import SwitchToSmartMargin from 'sections/futures/Trade/SwitchToSmartMargin'
 import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel'
 import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal'
+import TransferSmartMarginModal from 'sections/futures/Trade/TransferSmartMarginModal'
 import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal'
 import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin'
-import WithdrawSmartMargin from 'sections/futures/TradeCrossMargin/WithdrawSmartMargin'
 import AppLayout from 'sections/shared/Layout/AppLayout'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal, selectShowPositionModal } from 'state/app/selectors'
@@ -128,7 +128,10 @@ const Market: MarketComponent = () => {
 				/>
 			)}
 			{openModal === 'futures_cross_withdraw' && (
-				<WithdrawSmartMargin onDismiss={() => dispatch(setOpenModal(null))} />
+				<TransferSmartMarginModal
+					defaultTab="withdraw"
+					onDismiss={() => dispatch(setOpenModal(null))}
+				/>
 			)}
 
 			{openModal === 'futures_confirm_smart_margin_trade' && <TradeConfirmationModalCrossMargin />}
@@ -143,6 +146,7 @@ function TradePanelDesktop() {
 	const { walletAddress } = Connector.useContainer()
 	const accountType = useAppSelector(selectFuturesType)
 	const queryStatus = useAppSelector(selectCMAccountQueryStatus)
+	const openModal = useAppSelector(selectShowModal)
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
 	const isolatedPositionsCount = useAppSelector(selectActiveIsolatedPositionsCount)
 	const [open, setOpen] = useState(false)
@@ -152,7 +156,12 @@ function TradePanelDesktop() {
 		[accountType, isolatedPositionsCount]
 	)
 
-	if (walletAddress && !isL2) {
+	if (
+		walletAddress &&
+		!isL2 &&
+		openModal !== 'futures_smart_margin_socket' &&
+		openModal !== 'futures_cross_withdraw'
+	) {
 		return <FuturesUnsupportedNetwork />
 	}
 

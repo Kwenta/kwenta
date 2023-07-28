@@ -45,7 +45,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = () => {
 		<MarketDetailsContainer mobile={mobileOrTablet}>
 			<IndexPriceDetail mobile={mobileOrTablet} />
 			<MarketSkew mobile={mobileOrTablet} />
-			<HourlyFundingDetail mobile={deviceType === 'mobile'} />
+			<HourlyFundingDetail mobile={mobileOrTablet} />
 			<MarketPriceDetail mobile={mobileOrTablet} />
 			<DailyChangeDetail mobile={mobileOrTablet} />
 			<FlexDivRow columnGap="25px">
@@ -118,7 +118,9 @@ const DailyChangeDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 			dataKey={MarketDataKey.dailyChange}
 			value={
 				indexPriceWei.gt(0) && pastPrice?.rate
-					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? ZERO_WEI)
+					? formatPercent(indexPriceWei.sub(pastPrice.rate).div(indexPriceWei) ?? ZERO_WEI, {
+							maxDecimals: 2,
+					  })
 					: NO_VALUE
 			}
 			color={
@@ -147,7 +149,11 @@ const HourlyFundingDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	return (
 		<MarketDetail
 			dataKey={t('futures.market.info.hourly-funding')}
-			value={fundingValue ? formatPercent(fundingValue ?? ZERO_WEI, { minDecimals: 6 }) : NO_VALUE}
+			value={
+				fundingValue
+					? formatPercent(fundingValue ?? ZERO_WEI, { suggestDecimals: true, maxDecimals: 6 })
+					: NO_VALUE
+			}
 			color={fundingValue?.gt(ZERO_WEI) ? 'green' : fundingValue?.lt(ZERO_WEI) ? 'red' : undefined}
 			mobile={mobile}
 			extra={<HoursToggle />}

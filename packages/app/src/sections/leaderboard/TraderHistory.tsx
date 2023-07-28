@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { getMarketName } from '@kwenta/sdk/utils'
 import { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
 import { FC, memo, useEffect, useMemo } from 'react'
@@ -26,7 +27,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink, FOOTER_HEIGHT } from 'styles/common'
 import media from 'styles/media'
-import { getMarketName } from 'utils/futures'
 
 type TraderHistoryProps = {
 	trader: string
@@ -104,6 +104,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						isLoading={queryStatus.status === FetchStatus.Loading}
 						data={data}
 						hideHeaders={compact}
+						autoResetPageIndex={false}
 						columns={[
 							{
 								header: () => (
@@ -121,6 +122,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									</TableTitle>
 								),
 								accessorKey: 'title',
+								enableSorting: false,
 								columns: [
 									{
 										header: () => (
@@ -210,6 +212,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						isLoading={false}
 						showPagination
 						pageSize={10}
+						autoResetPageIndex={false}
 						columns={[
 							{
 								header: () => (
@@ -232,6 +235,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									</TableTitle>
 								),
 								accessorKey: 'title',
+								enableSorting: false,
 								columns: [
 									{
 										header: () => (

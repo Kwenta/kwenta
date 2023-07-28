@@ -14,8 +14,8 @@ import {
 import {
 	AssetDisplayByAsset,
 	MarketKeyByAsset,
-	getDisplayAsset,
 	formatNumber,
+	getMarketName,
 } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { TFunction } from 'i18next'
@@ -30,10 +30,6 @@ import {
 	MarkPrices,
 } from 'state/futures/types'
 import { deserializeWeiObject } from 'state/helpers'
-
-export const getMarketName = (asset: FuturesMarketAsset) => {
-	return `${getDisplayAsset(asset)}/sUSD`
-}
 
 export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => {
 	const assetDisplayName = AssetDisplayByAsset[synth]
@@ -366,6 +362,7 @@ export const serializeTrades = (trades: FuturesTrade[]): FuturesTrade<string>[] 
 		pnl: t.pnl.toString(),
 		feesPaid: t.feesPaid.toString(),
 		keeperFeesPaid: t.keeperFeesPaid.toString(),
+		fundingAccrued: t.fundingAccrued.toString(),
 	}))
 }
 
@@ -379,6 +376,7 @@ export const unserializeTrades = (trades: FuturesTrade<string>[]): FuturesTrade<
 		pnl: wei(t.pnl),
 		feesPaid: wei(t.feesPaid),
 		keeperFeesPaid: wei(t.keeperFeesPaid),
+		fundingAccrued: wei(t.fundingAccrued),
 	}))
 }
 
@@ -408,4 +406,61 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 			})
 			return acc
 		}, [] as DelayedOrderWithDetails[])
+}
+
+// Disable stop loss when it is within 1% of the liquidation price
+const SL_LIQ_DISABLED_PERCENT = 0.01
+
+// Warn users when their stop loss is within 7.5% of their liquidation price
+const SL_LIQ_PERCENT_WARN = 0.075
+
+export const minMaxSLPrice = (liqPrice: Wei | undefined, leverageSide: PositionSide) => {
+	return leverageSide === PositionSide.LONG
+		? liqPrice?.mul(1 + SL_LIQ_DISABLED_PERCENT)
+		: liqPrice?.mul(1 - SL_LIQ_DISABLED_PERCENT)
+}
+
+export const stopLossValidity = (
+	stopLossPrice: string,
+	liqPrice: Wei | undefined,
+	side: PositionSide,
+	currentPrice: Wei
+) => {
+	const minMaxStopPrice = minMaxSLPrice(liqPrice, side)
+
+	const disabled =
+		(side === PositionSide.LONG && minMaxStopPrice?.gt(currentPrice || 0)) ||
+		(side === PositionSide.SHORT && minMaxStopPrice?.lt(currentPrice || 0))
+
+	if (stopLossPrice === '' || stopLossPrice === undefined)
+		return {
+			invalid: false,
+			disabled: disabled,
+			minMaxStopPrice,
+		}
+
+	if (!minMaxStopPrice || !liqPrice || liqPrice.eq(0))
+		return { invalid: false, disabled, minMaxStopPrice, invalidReason: 'no_liquidation_price' }
+
+	let invalid = false
+	if (side === 'long') {
+		invalid =
+			wei(stopLossPrice || 0).gt(currentPrice) || wei(stopLossPrice || 0).lt(minMaxStopPrice || 0)
+	} else {
+		invalid =
+			wei(stopLossPrice || 0).lt(currentPrice) || wei(stopLossPrice || 0).gt(minMaxStopPrice || 0)
+	}
+
+	const percent = wei(stopLossPrice || 0)
+		.div(liqPrice)
+		.sub(1)
+		.abs()
+
+	return {
+		invalid,
+		minMaxStopPrice,
+		disabled,
+		invalidReason: invalid ? 'exceeds_max_stop' : undefined,
+		showWarning: percent.lt(SL_LIQ_PERCENT_WARN),
+	}
 }

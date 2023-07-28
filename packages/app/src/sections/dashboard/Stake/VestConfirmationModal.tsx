@@ -1,4 +1,4 @@
-import { truncateNumbers } from '@kwenta/sdk/utils'
+import { formatNumber } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import React from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -50,7 +50,7 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 				<BalanceText>
 					<Trans
 						i18nKey="dashboard.stake.tabs.escrow.modal.confirm-text"
-						values={{ totalFee: truncateNumbers(totalFee, 4) }}
+						values={{ totalFee: formatNumber(totalFee, { suggestDecimals: true }) }}
 						components={[<b />]}
 					/>
 				</BalanceText>

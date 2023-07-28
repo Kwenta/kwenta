@@ -7,7 +7,7 @@ import { DEFAULT_NETWORK_ID } from 'constants/defaults'
 import logError from 'utils/logError'
 
 import { DEFAULT_PYTH_TV_ENDPOINT } from './constants'
-import { mapCandles, mapPythCandles } from './utils'
+import { formatPythSymbol, mapCandles, mapPythCandles } from './utils'
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
@@ -25,7 +25,7 @@ export const requestCandlesticks = async (
 				params: {
 					from: minTimestamp,
 					to: maxTimestamp,
-					symbol: `${currencyKey}/USD`,
+					symbol: formatPythSymbol(currencyKey!),
 					resolution: getSupportedResolution(period),
 				},
 			})

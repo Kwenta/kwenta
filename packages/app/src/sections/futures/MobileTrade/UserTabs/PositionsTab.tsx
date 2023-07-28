@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import UploadIcon from 'assets/svg/futures/upload-icon.svg'
 import Currency from 'components/Currency'
 import { FlexDiv, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import Pill from 'components/Pill'
@@ -128,7 +127,7 @@ const PositionsTab = () => {
 								<div>
 									<Body>{row.market.marketName}</Body>
 									<Body capitalized color="secondary">
-										{accountType === 'isolated_margin' ? 'Isolated Margin' : 'Cross-Margin'}
+										{accountType === 'isolated_margin' ? 'Isolated Margin' : 'Smart Margin'}
 									</Body>
 								</div>
 							</FlexDiv>
@@ -137,10 +136,7 @@ const PositionsTab = () => {
 									Close
 								</Pill>
 								<Pill size="medium" onClick={() => handleOpenShareModal(row.share)}>
-									<FlexDivRowCentered>
-										<UploadIcon width={6} style={{ marginRight: '2px', marginBottom: '1px' }} />
-										Share
-									</FlexDivRowCentered>
+									<FlexDivRowCentered>Share</FlexDivRowCentered>
 								</Pill>
 							</FlexDivRowCentered>
 						</PositionMeta>
@@ -280,6 +276,10 @@ const PositionItem = styled.div`
 	${media.greaterThan('md')`
 		padding: 16px 0;
 	`}
+
+	${media.greaterThan('lg')`
+	padding: 8px 0;
+`}
 
 	&:not(:last-of-type) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};

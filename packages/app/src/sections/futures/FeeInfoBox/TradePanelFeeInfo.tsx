@@ -45,7 +45,7 @@ const TradingRewardRow = memo(() => {
 	)
 
 	const goToRewards = useCallback(() => {
-		router.push(ROUTES.Dashboard.Rewards)
+		router.push(ROUTES.Dashboard.Stake)
 	}, [])
 
 	return (
@@ -106,7 +106,10 @@ const PriceImpactRow = memo(() => {
 			title="Price impact"
 			textValue={
 				potentialTradeDetails?.priceImpact
-					? formatPercent(potentialTradeDetails.priceImpact)
+					? formatPercent(potentialTradeDetails.priceImpact, {
+							suggestDecimals: true,
+							maxDecimals: 4,
+					  })
 					: NO_VALUE
 			}
 		/>

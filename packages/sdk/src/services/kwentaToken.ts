@@ -19,10 +19,11 @@ import {
 import { ContractName } from '../contracts'
 import { ClaimParams, EpochData, EscrowData } from '../types/kwentaToken'
 import { formatTruncatedDuration } from '../utils/date'
-import { client } from '../utils/files'
+import { awsClient, fleekClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
 import { calculateFeesForAccount, calculateTotalFees } from '../utils'
+import { ADDRESSES } from '../constants'
 
 export default class KwentaTokenService {
 	private sdk: KwentaSDK
@@ -142,7 +143,7 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		const { walletAddress } = this.sdk.context
+		const { walletAddress, networkId } = this.sdk.context
 
 		const [
 			rewardEscrowBalance,
@@ -166,10 +167,10 @@ export default class KwentaTokenService {
 			SupplySchedule.weekCounter(),
 			KwentaStakingRewards.totalSupply(),
 			vKwentaToken.balanceOf(walletAddress),
-			vKwentaToken.allowance(walletAddress, vKwentaRedeemer.address),
-			KwentaToken.allowance(walletAddress, KwentaStakingRewards.address),
+			vKwentaToken.allowance(walletAddress, ADDRESSES.vKwentaRedeemer[networkId]),
+			KwentaToken.allowance(walletAddress, ADDRESSES.KwentaStakingRewards[networkId]),
 			veKwentaToken.balanceOf(walletAddress),
-			veKwentaToken.allowance(walletAddress, veKwentaRedeemer.address),
+			veKwentaToken.allowance(walletAddress, ADDRESSES.veKwentaRedeemer[networkId]),
 		])
 
 		return {
@@ -197,7 +198,7 @@ export default class KwentaTokenService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		const { walletAddress } = this.sdk.context
+		const { walletAddress, networkId } = this.sdk.context
 
 		const [
 			rewardEscrowBalance,
@@ -216,7 +217,7 @@ export default class KwentaTokenService {
 			KwentaStakingRewardsV2.totalSupply(),
 			KwentaStakingRewardsV2.userLastStakeTime(walletAddress),
 			KwentaStakingRewardsV2.cooldownPeriod(),
-			KwentaToken.allowance(walletAddress, KwentaStakingRewardsV2.address),
+			KwentaToken.allowance(walletAddress, ADDRESSES.KwentaStakingRewardsV2[networkId]),
 		])
 
 		return {
@@ -508,7 +509,7 @@ export default class KwentaTokenService {
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName) => {
-				const response = await client.get(fileName)
+				const response = await fleekClient.get(fileName)
 				return { ...response.data }
 			})
 		)
@@ -541,15 +542,12 @@ export default class KwentaTokenService {
 			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH)
 
 		const fileNames = adjustedPeriods.map(
-			(i) =>
-				`trading-rewards-snapshots/${
-					this.sdk.context.networkId === 420 ? `goerli-` : ''
-				}epoch-${i}.json`
+			(i) => `${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${i}.json`
 		)
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
-				const response = await client.get(fileName)
+				const response = await awsClient.get(fileName)
 				const period = isOldDistributor
 					? index >= 5
 						? index >= 10
@@ -600,7 +598,8 @@ export default class KwentaTokenService {
 		epochPeriod: number,
 		isOldDistributor: boolean = true,
 		isOp: boolean = false,
-		isSnx: boolean = false
+		isSnx: boolean = false,
+		cutoffPeriod: number = 0
 	) {
 		const {
 			MultipleMerkleDistributor,
@@ -629,7 +628,7 @@ export default class KwentaTokenService {
 
 		const fileNames = adjustedPeriods.map(
 			(i) =>
-				`trading-rewards-snapshots/${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${
+				`${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${
 					isSnx ? i - OP_REWARDS_CUTOFF_EPOCH : i
 				}${isOp ? (isSnx ? '-snx-op' : '-op') : ''}.json`
 		)
@@ -637,7 +636,8 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				try {
-					const response = await client.get(fileName)
+					if (index < cutoffPeriod) return null
+					const response = await awsClient.get(fileName)
 					const period = isOldDistributor
 						? index >= 5
 							? index >= 10

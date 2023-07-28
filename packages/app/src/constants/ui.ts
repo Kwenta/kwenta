@@ -5,6 +5,7 @@ export const SPACING_FROM_HEADER = '0px'
 
 export const HOURS_TOGGLE_WIDTH = '47px'
 export const HOURS_TOGGLE_HEIGHT = '18px'
+export const MOBILE_FOOTER_HEIGHT = '71px'
 
 export enum zIndex {
 	BASE = 1,
@@ -14,3 +15,5 @@ export enum zIndex {
 	DRAWER = 65,
 	MARKET_DROPDOWN = 40,
 }
+
+export const STAKING_DISABLED = false
