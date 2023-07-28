@@ -34,7 +34,7 @@ const MobileTrade: React.FC = () => {
 		<>
 			<MobileContainer mobile={deviceType === 'mobile'} id="mobile-view" showBanner={showBanner}>
 				{deviceType === 'mobile' && <MarketsDropdown mobile={deviceType === 'mobile'} />}
-				{deviceType === 'mobile' && <TradeBalance isMobile={true} />}
+				{deviceType === 'mobile' && <TradeBalance />}
 				<MarketDetails mobile />
 			</MobileContainer>
 			<OverviewTabs />

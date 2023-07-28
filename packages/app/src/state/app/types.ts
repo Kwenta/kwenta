@@ -4,7 +4,7 @@ import { FuturesTransactionType } from 'state/futures/common/types'
 
 export type ModalType =
 	| 'futures_close_position_confirm'
-	| 'futures_withdraw_smart_margin'
+	| 'futures_deposit_withdraw_smart_margin'
 	| 'futures_deposit_withdraw_cross_margin'
 	| 'futures_confirm_smart_margin_trade'
 	| 'futures_confirm_cross_margin_trade'
