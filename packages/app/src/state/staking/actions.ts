@@ -8,63 +8,54 @@ import { monitorTransaction } from 'contexts/RelayerContext'
 import { FetchStatus, ThunkConfig } from 'state/types'
 import logError from 'utils/logError'
 
-export const fetchStakingData = createAsyncThunk<
-	{
-		rewardEscrowBalance: string
-		stakedNonEscrowedBalance: string
-		stakedEscrowedBalance: string
-		claimableBalance: string
-		kwentaBalance: string
-		weekCounter: number
-		totalStakedBalance: string
-		vKwentaBalance: string
-		vKwentaAllowance: string
-		kwentaAllowance: string
-		epochPeriod: number
-		veKwentaBalance: string
-		veKwentaAllowance: string
-	},
-	void,
-	ThunkConfig
->('staking/fetchStakingData', async (_, { extra: { sdk } }) => {
-	try {
-		const {
-			rewardEscrowBalance,
-			stakedNonEscrowedBalance,
-			stakedEscrowedBalance,
-			claimableBalance,
-			kwentaBalance,
-			weekCounter,
-			totalStakedBalance,
-			vKwentaBalance,
-			vKwentaAllowance,
-			kwentaAllowance,
-			epochPeriod,
-			veKwentaBalance,
-			veKwentaAllowance,
-		} = await sdk.kwentaToken.getStakingData()
+import { ZERO_STAKING_DATA } from './reducer'
+import { StakingAction } from './types'
 
-		return {
-			rewardEscrowBalance: rewardEscrowBalance.toString(),
-			stakedNonEscrowedBalance: stakedNonEscrowedBalance.toString(),
-			stakedEscrowedBalance: stakedEscrowedBalance.toString(),
-			claimableBalance: claimableBalance.toString(),
-			kwentaBalance: kwentaBalance.toString(),
-			weekCounter,
-			totalStakedBalance: totalStakedBalance.toString(),
-			vKwentaBalance: vKwentaBalance.toString(),
-			vKwentaAllowance: vKwentaAllowance.toString(),
-			kwentaAllowance: kwentaAllowance.toString(),
-			epochPeriod,
-			veKwentaBalance: veKwentaBalance.toString(),
-			veKwentaAllowance: veKwentaAllowance.toString(),
+export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfig>(
+	'staking/fetchStakingData',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const { wallet } = getState()
+			if (!wallet.walletAddress) return ZERO_STAKING_DATA
+
+			const {
+				rewardEscrowBalance,
+				stakedNonEscrowedBalance,
+				stakedEscrowedBalance,
+				claimableBalance,
+				kwentaBalance,
+				weekCounter,
+				totalStakedBalance,
+				vKwentaBalance,
+				vKwentaAllowance,
+				kwentaAllowance,
+				epochPeriod,
+				veKwentaBalance,
+				veKwentaAllowance,
+			} = await sdk.kwentaToken.getStakingData()
+
+			return {
+				rewardEscrowBalance: rewardEscrowBalance.toString(),
+				stakedNonEscrowedBalance: stakedNonEscrowedBalance.toString(),
+				stakedEscrowedBalance: stakedEscrowedBalance.toString(),
+				claimableBalance: claimableBalance.toString(),
+				kwentaBalance: kwentaBalance.toString(),
+				weekCounter,
+				totalStakedBalance: totalStakedBalance.toString(),
+				vKwentaBalance: vKwentaBalance.toString(),
+				vKwentaAllowance: vKwentaAllowance.toString(),
+				kwentaAllowance: kwentaAllowance.toString(),
+				epochPeriod,
+				veKwentaBalance: veKwentaBalance.toString(),
+				veKwentaAllowance: veKwentaAllowance.toString(),
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch staking data', err)
+			throw err
 		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to fetch staking data', err)
-		throw err
 	}
-})
+)
 
 export const fetchStakingV2Data = createAsyncThunk<
 	{

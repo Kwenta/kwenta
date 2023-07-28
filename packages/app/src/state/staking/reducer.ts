@@ -83,6 +83,22 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	compoundRewardsStatus: FetchStatus.Idle,
 }
 
+export const ZERO_STAKING_DATA = {
+	rewardEscrowBalance: '0',
+	stakedNonEscrowedBalance: '0',
+	stakedEscrowedBalance: '0',
+	claimableBalance: '0',
+	kwentaBalance: '0',
+	weekCounter: 1,
+	totalStakedBalance: '0',
+	vKwentaBalance: '0',
+	vKwentaAllowance: '0',
+	kwentaAllowance: '0',
+	epochPeriod: 0,
+	veKwentaBalance: '0',
+	veKwentaAllowance: '0',
+}
+
 const stakingSlice = createSlice({
 	name: 'staking',
 	initialState: STAKING_INITIAL_STATE,

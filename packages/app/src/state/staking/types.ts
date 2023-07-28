@@ -49,3 +49,19 @@ export type StakingState = {
 	approveKwentaStatus: FetchStatus
 	compoundRewardsStatus: FetchStatus
 }
+
+export type StakingAction = {
+	rewardEscrowBalance: string
+	stakedNonEscrowedBalance: string
+	stakedEscrowedBalance: string
+	claimableBalance: string
+	kwentaBalance: string
+	weekCounter: number
+	totalStakedBalance: string
+	vKwentaBalance: string
+	vKwentaAllowance: string
+	kwentaAllowance: string
+	epochPeriod: number
+	veKwentaBalance: string
+	veKwentaAllowance: string
+}
