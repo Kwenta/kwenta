@@ -18,7 +18,7 @@ import Wei, { wei } from '@synthetixio/wei'
 import { FuturesPositionTablePosition } from 'types/futures'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER } from 'constants/defaults'
-import { selectSNXUSDBalance } from 'state/balances/selectors'
+import { selectSusdBalance } from 'state/balances/selectors'
 import { deserializeWeiObject } from 'state/helpers'
 import {
 	selectOffchainPricesInfo,
@@ -521,7 +521,7 @@ export const selectLockedMarginInMarkets = selectMarginInMarkets(true)
 export const selectIdleMargin = createSelector(
 	selectAvailableMarginInMarkets,
 	selectSmartMarginBalanceInfo,
-	selectSNXUSDBalance,
+	selectSusdBalance,
 	(idleInMarkets, { freeMargin }, balance) => {
 		return balance.add(idleInMarkets).add(freeMargin)
 	}

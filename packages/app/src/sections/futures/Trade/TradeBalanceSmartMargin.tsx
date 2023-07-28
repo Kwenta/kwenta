@@ -15,9 +15,8 @@ import Tooltip from 'components/Tooltip/Tooltip'
 import useWindowSize from 'hooks/useWindowSize'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
-import { selectSNXUSDBalance } from 'state/balances/selectors'
+import { selectSusdBalance } from 'state/balances/selectors'
 import { selectFuturesType } from 'state/futures/common/selectors'
-import { selectCrossMarginAvailableMargin } from 'state/futures/crossMargin/selectors'
 import {
 	selectIdleMargin,
 	selectLockedMarginInMarkets,
@@ -41,9 +40,8 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 
 	const idleMargin = useAppSelector(selectIdleMargin)
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
-	const walletBal = useAppSelector(selectSNXUSDBalance)
+	const walletBal = useAppSelector(selectSusdBalance)
 	const accountType = useAppSelector(selectFuturesType)
-	const availableIsolatedMargin = useAppSelector(selectCrossMarginAvailableMargin)
 	const withdrawable = useAppSelector(selectWithdrawableSmartMargin)
 	const openModal = useAppSelector(selectShowModal)
 
@@ -95,9 +93,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 										{t('futures.market.trade.trade-balance.available-margin')}:
 									</Body>
 									<NumericValue size={'medium'} weight="bold">
-										{accountType === FuturesMarginType.CROSS_MARGIN
-											? formatDollars(availableIsolatedMargin)
-											: formatDollars(idleMargin)}
+										{formatDollars(idleMargin)}
 									</NumericValue>
 								</FlexDivRow>
 								{FuturesMarginType.SMART_MARGIN && lockedMargin.gt(0) && (
@@ -127,9 +123,7 @@ const TradeBalance: React.FC<TradeBalanceProps> = memo(({ isMobile = false }) =>
 										{t('futures.market.trade.trade-balance.available-margin')}
 									</Body>
 									<NumericValue size={'large'} weight="bold">
-										{accountType === FuturesMarginType.CROSS_MARGIN
-											? formatDollars(availableIsolatedMargin)
-											: formatDollars(idleMargin)}
+										{formatDollars(idleMargin)}
 									</NumericValue>
 								</FlexDivCol>
 								{accountType === FuturesMarginType.SMART_MARGIN && lockedMargin.gt(0) && (
