@@ -11,12 +11,10 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon'
 import { FlexDiv } from 'components/layout/flex'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import FuturesIcon from 'components/Nav/FuturesIcon'
-import Table, { TableHeader } from 'components/Table'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
-import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement'
 import ROUTES from 'constants/routes'
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
-import { selectShowBanner } from 'state/app/selectors'
 import { fetchPositionHistoryForTrader } from 'state/futures/actions'
 import {
 	selectFuturesPositions,
@@ -25,7 +23,7 @@ import {
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
-import { ExternalLink, FOOTER_HEIGHT } from 'styles/common'
+import { ExternalLink } from 'styles/common'
 import media from 'styles/media'
 
 type TraderHistoryProps = {
@@ -42,7 +40,6 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		const dispatch = useAppDispatch()
 		const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader)
 		const positions = useAppSelector(selectFuturesPositions)
-		const showBanner = useAppSelector(selectShowBanner)
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses)
 
 		useEffect(() => {
@@ -87,17 +84,11 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 				)
 		}, [positionHistory, positions, searchTerm])
 
-		const tableHeight = useMemo(
-			() => window.innerHeight - FOOTER_HEIGHT - 161 - Number(showBanner) * BANNER_HEIGHT_DESKTOP,
-			[showBanner]
-		)
-
 		return (
 			<>
 				<DesktopOnlyView>
 					<StyledTable
 						// @ts-ignore
-						height={tableHeight}
 						compact={compact}
 						showPagination
 						pageSize={10}
@@ -202,6 +193,14 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 								],
 							},
 						]}
+						noResultsMessage={
+							queryStatus.status !== FetchStatus.Loading &&
+							data?.length === 0 && (
+								<TableNoResults>
+									{t('dashboard.history.positions-history-table.no-result')}
+								</TableNoResults>
+							)
+						}
 					/>
 				</DesktopOnlyView>
 				<MobileOrTabletView>
