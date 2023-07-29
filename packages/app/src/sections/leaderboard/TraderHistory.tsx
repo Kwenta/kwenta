@@ -105,6 +105,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						data={data}
 						hideHeaders={compact}
 						autoResetPageIndex={false}
+						compactPagination={true}
 						columns={[
 							{
 								header: () => (

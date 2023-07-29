@@ -21,7 +21,6 @@ import {
 	selectLeaderboardLoading,
 	selectLeaderboardSearchTerm,
 } from 'state/stats/selectors'
-import { selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
 
 import AllTime from './AllTime'
@@ -55,9 +54,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 
 	const leaderboardLoading = useAppSelector(selectLeaderboardLoading)
 	const leaderboardData = useAppSelector(selectLeaderboard)
-	const walletAddress = useAppSelector(selectWallet)
 
-	useFetchAction(fetchLeaderboard, { dependencies: [searchTerm], disabled: !walletAddress })
+	useFetchAction(fetchLeaderboard, { dependencies: [searchTerm] })
 
 	const pinRow = useMemo(() => {
 		return leaderboardData.wallet.map((trader) => ({ ...trader, rank: 0, rankText: PIN }))

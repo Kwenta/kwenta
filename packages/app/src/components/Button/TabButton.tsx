@@ -205,7 +205,7 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 			border: none;
 			border-radius: 100px;
 			padding: 10px 15px;
-			width: 75px;
+			width: 80px;
 		`}
 `
 
