@@ -29,24 +29,24 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 				<TabButtons>
 					<TabButton
 						variant="noOutline"
-						title={t('dashboard.history.tabs.trades')}
-						onClick={onChangeTab(HistoryTab.Trades)}
-						active={currentTab === HistoryTab.Trades}
-					/>
-					<TabButton
-						variant="noOutline"
 						title={t('dashboard.history.tabs.positions')}
 						onClick={onChangeTab(HistoryTab.Positions)}
 						active={currentTab === HistoryTab.Positions}
 					/>
+					<TabButton
+						variant="noOutline"
+						title={t('dashboard.history.tabs.trades')}
+						onClick={onChangeTab(HistoryTab.Trades)}
+						active={currentTab === HistoryTab.Trades}
+					/>
 				</TabButtons>
 			</StakingTabsHeader>
 			<div>
-				<TabPanel name={HistoryTab.Trades} activeTab={currentTab}>
-					<Trades rounded={true} noBottom={false} />
-				</TabPanel>
 				<TabPanel name={HistoryTab.Positions} activeTab={currentTab}>
 					<TraderHistory trader={walletAddress!} resetSelection={() => {}} compact={true} />
+				</TabPanel>
+				<TabPanel name={HistoryTab.Trades} activeTab={currentTab}>
+					<Trades rounded={true} noBottom={false} />
 				</TabPanel>
 			</div>
 		</StakingTabsContainer>
