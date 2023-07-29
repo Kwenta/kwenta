@@ -29,6 +29,7 @@ import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors'
 import { getSynthDescription } from 'utils/futures'
 import { weiSortingFn } from 'utils/table'
+import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex'
 
 type FuturesMarketsTableProps = {
 	search?: string
@@ -203,12 +204,12 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 											<Currency.Price
 												price={cellProps.row.original.longInterest}
 												colorType="positive"
-												formatOptions={{ truncateOver: 1e3 }}
+												formatOptions={{ truncateOver: 1e3, maxDecimals: 0, suggestDecimals: true }}
 											/>
 											<Currency.Price
 												price={cellProps.row.original.shortInterest}
 												colorType="negative"
-												formatOptions={{ truncateOver: 1e3 }}
+												formatOptions={{ truncateOver: 1e3, maxDecimals: 0, suggestDecimals: true }}
 											/>
 										</OpenInterestContainer>
 									)
@@ -392,12 +393,8 @@ const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 ` as typeof Table
 
-const StyledText = styled.div`
-	display: flex;
-	align-items: center;
-	margin-bottom: -4px;
-	grid-column: 2;
-	grid-row: 1;
+const StyledText = styled(FlexDivRowCentered)`
+	justify-content: space-between;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `
@@ -405,8 +402,9 @@ const StyledText = styled.div`
 const MarketContainer = styled.div`
 	display: grid;
 	grid-template-rows: auto auto;
-	grid-template-columns: auto auto;
+	grid-template-columns: 40px auto;
 	align-items: center;
+	width: 200px;
 `
 
 const StyledMobileTable = styled(StyledTable)`
