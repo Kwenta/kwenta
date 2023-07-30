@@ -55,10 +55,8 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						? positions.find((p) => p.marketKey === stat.marketKey)
 						: null
 
-					const pnlWithFeesPaid = stat.pnl
-						.sub(stat.feesPaid)
-						.add(stat.netFunding)
-						.add(thisPosition?.position?.accruedFunding ?? ZERO_WEI)
+					const funding = stat.netFunding.add(thisPosition?.position?.accruedFunding ?? ZERO_WEI)
+					const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
 
 					return {
 						...stat,
@@ -66,6 +64,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
 						marketShortName: getMarketName(stat.asset),
 						status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
+						funding,
 						pnl: pnlWithFeesPaid,
 						pnlPct: totalDeposit.gt(0)
 							? `(${pnlWithFeesPaid
@@ -188,6 +187,14 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												</StyledValue>
 											</PnlContainer>
 										),
+										size: compact ? 40 : 100,
+									},
+									{
+										header: () => (
+											<TableHeader>{t('leaderboard.trader-history.table.funding')}</TableHeader>
+										),
+										accessorKey: 'funding',
+										cell: (cellProps) => <Currency.Price price={cellProps.getValue()} colored />,
 										size: compact ? 40 : 100,
 									},
 								],

@@ -1229,7 +1229,8 @@
 				"liquidated": "Liquidated",
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"total-pnl": "Realized P&L"
+				"total-pnl": "Realized P&L",
+				"funding": "Funding"
 			}
 		},
 		"competition": {
