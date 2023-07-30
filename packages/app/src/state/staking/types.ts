@@ -10,11 +10,6 @@ type StakeBalance = {
 	stakedEscrowedKwentaBalance: string
 }
 
-type EscrowBalance = {
-	totalVestable: string
-	escrowData: EscrowData<string>[]
-}
-
 type StakingTransaction = {
 	kwentaBalance: string
 	kwentaAllowance: string
@@ -27,37 +22,49 @@ type StakingTransactionV2 = {
 	kwentaStakingV2Allowance: string
 }
 
-export type VersionedStakeData = StakeBalance & EscrowBalance
+export type EstimatedRewards = {
+	estimatedKwentaRewards: string
+	estimatedOpRewards: string
+}
 
-export type StakingState = StakingTransaction & {
-	v1: VersionedStakeData
-	v2: VersionedStakeData
-	stakedResetTime: number
-	selectedEscrowVersion: 1 | 2
-	kwentaStakingV2Allowance: string
+export type ClaimableRewards = {
 	kwentaRewards: string
 	opRewards: string
 	snxOpRewards: string
-	estimatedKwentaRewards: string
-	estimatedOpRewards: string
 	claimableKwentaRewards: ClaimParams[][]
 	claimableOpRewards: ClaimParams[]
 	claimableSnxOpRewards: ClaimParams[]
-	selectedEpoch?: number
-	stakingMigrationCompleted: boolean
-	stakeStatus: FetchStatus
-	unstakeStatus: FetchStatus
-	stakeEscrowedStatus: FetchStatus
-	unstakeEscrowedStatus: FetchStatus
-	getRewardStatus: FetchStatus
-	claimKwentaRewardsStatus: FetchStatus
-	claimOpRewardsStatus: FetchStatus
-	claimSnxOpRewardsStatus: FetchStatus
-	claimAllRewardsStatus: FetchStatus
-	vestEscrowedRewardsStatus: FetchStatus
-	approveKwentaStatus: FetchStatus
-	compoundRewardsStatus: FetchStatus
 }
+
+export type EscrowBalance = {
+	totalVestable: string
+	escrowData: EscrowData<string>[]
+}
+
+export type VersionedStakeData = StakeBalance & EscrowBalance
+
+export type StakingState = StakingTransaction &
+	StakingTransactionV2 &
+	EstimatedRewards &
+	ClaimableRewards & {
+		v1: VersionedStakeData
+		v2: VersionedStakeData
+		selectedEscrowVersion: 1 | 2
+		selectedEpoch?: number
+		stakingMigrationCompleted: boolean
+		stakeStatus: FetchStatus
+		unstakeStatus: FetchStatus
+		stakeEscrowedStatus: FetchStatus
+		unstakeEscrowedStatus: FetchStatus
+		getRewardStatus: FetchStatus
+		claimKwentaRewardsStatus: FetchStatus
+		claimOpRewardsStatus: FetchStatus
+		claimSnxOpRewardsStatus: FetchStatus
+		claimAllRewardsStatus: FetchStatus
+		vestEscrowedRewardsStatus: FetchStatus
+		approveKwentaStatus: FetchStatus
+		compoundRewardsStatus: FetchStatus
+	}
 
 export type StakingAction = StakeBalance & StakingTransaction
 

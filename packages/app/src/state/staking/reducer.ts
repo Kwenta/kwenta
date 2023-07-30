@@ -38,7 +38,7 @@ const ZERO_STAKE_BALANCE = {
 	stakedEscrowedKwentaBalance: '0',
 }
 
-const ZERO_ESCROW_BALANCE = {
+export const ZERO_ESCROW_BALANCE = {
 	totalVestable: '0',
 	escrowData: [],
 }
@@ -60,6 +60,11 @@ const INITIAL_STAKE_V2_TRANSACTION = {
 	kwentaStakingV2Allowance: '0',
 }
 
+export const ZERO_ESTIMATED_REWARDS = {
+	estimatedKwentaRewards: '0',
+	estimatedOpRewards: '0',
+}
+
 export const ZERO_STAKING_DATA = {
 	...ZERO_STAKE_BALANCE,
 	...INITIAL_STAKE_TRANSACTION,
@@ -68,6 +73,15 @@ export const ZERO_STAKING_DATA = {
 export const ZERO_STAKING_V2_DATA = {
 	...ZERO_STAKE_BALANCE,
 	...INITIAL_STAKE_V2_TRANSACTION,
+}
+
+export const ZERO_CLAIMABLE_REWARDS = {
+	kwentaRewards: '0',
+	opRewards: '0',
+	snxOpRewards: '0',
+	claimableKwentaRewards: [],
+	claimableOpRewards: [],
+	claimableSnxOpRewards: [],
 }
 
 export const STAKING_INITIAL_STATE: StakingState = {
@@ -79,15 +93,9 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	},
 	...INITIAL_STAKE_TRANSACTION,
 	...INITIAL_STAKE_V2_TRANSACTION,
+	...ZERO_ESTIMATED_REWARDS,
+	...ZERO_CLAIMABLE_REWARDS,
 	selectedEscrowVersion: 1,
-	kwentaRewards: '0',
-	opRewards: '0',
-	snxOpRewards: '0',
-	estimatedKwentaRewards: '0',
-	estimatedOpRewards: '0',
-	claimableKwentaRewards: [],
-	claimableOpRewards: [],
-	claimableSnxOpRewards: [],
 	stakingMigrationCompleted: true,
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
