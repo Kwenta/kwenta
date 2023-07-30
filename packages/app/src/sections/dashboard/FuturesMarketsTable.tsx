@@ -14,6 +14,7 @@ import styled from 'styled-components'
 import ChangePercent from 'components/ChangePercent'
 import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
+import { FlexDivRowCentered } from 'components/layout/flex'
 import MarketBadge from 'components/MarketBadge'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Spacer from 'components/Spacer'
@@ -29,7 +30,6 @@ import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors'
 import { getSynthDescription } from 'utils/futures'
 import { weiSortingFn } from 'utils/table'
-import { FlexDiv, FlexDivRowCentered } from 'components/layout/flex'
 
 type FuturesMarketsTableProps = {
 	search?: string
