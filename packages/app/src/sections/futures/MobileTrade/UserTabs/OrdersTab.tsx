@@ -149,7 +149,7 @@ const OrdersTab: React.FC = () => {
 							<FlexDiv>
 								<div className="position-side-bar" />
 								<div>
-									<Body>{order.market}</Body>
+									<Body>{order.market.marketName}</Body>
 									<Body capitalized color="secondary">
 										Market
 									</Body>
