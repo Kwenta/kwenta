@@ -4,7 +4,6 @@ import React, { useMemo, useState, useCallback, useEffect, memo } from 'react'
 import styled from 'styled-components'
 
 import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg'
-import TransfersIcon from 'assets/svg/futures/deposit-withdraw-arrows.svg'
 import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg'
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg'
 import PositionIcon from 'assets/svg/futures/icon-position.svg'
@@ -26,7 +25,6 @@ import { selectWallet } from 'state/wallet/selectors'
 
 import ProfitCalculator from '../ProfitCalculator'
 import Trades from '../Trades'
-import Transfers from '../Transfers'
 
 import ConditionalOrdersTable from './ConditionalOrdersTable'
 import OpenDelayedOrdersTable from './OpenDelayedOrdersTable'
@@ -38,7 +36,6 @@ enum FuturesTab {
 	CONDITIONAL_ORDERS = 'conditional_orders',
 	TRADES = 'trades',
 	CALCULATOR = 'calculator',
-	TRANSFERS = 'transfers',
 	SHARE = 'share',
 }
 
@@ -141,18 +138,6 @@ const UserInfo: React.FC = memo(() => {
 						scroll: false,
 					}),
 			},
-			{
-				name: FuturesTab.TRANSFERS,
-				label: 'Transfers',
-				badge: undefined,
-				disabled: accountType === FuturesMarginType.CROSS_MARGIN, // leave this until we determine a disbaled state
-				active: activeTab === FuturesTab.TRANSFERS,
-				icon: <TransfersIcon width={11} height={11} />,
-				onClick: () =>
-					router.push(ROUTES.Markets.Transfers(marketAsset, accountType), undefined, {
-						scroll: false,
-					}),
-			},
 		],
 		[
 			activeTab,
@@ -210,9 +195,6 @@ const UserInfo: React.FC = memo(() => {
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab} fullHeight>
 				<Trades />
-			</TabPanel>
-			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab} fullHeight>
-				<Transfers />
 			</TabPanel>
 
 			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}
