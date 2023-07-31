@@ -504,7 +504,7 @@ export default class KwentaTokenService {
 	public async getEstimatedRewards() {
 		const { networkId, walletAddress } = this.sdk.context
 		const fileNames = ['', '-op'].map(
-			(i) => `trading-rewards-snapshots/${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
+			(i) => `/${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
 		)
 
 		const responses: EpochData[] = await Promise.all(
