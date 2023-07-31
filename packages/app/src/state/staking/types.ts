@@ -31,7 +31,7 @@ export type StakingState = {
 	snxOpRewards: string
 	estimatedKwentaRewards: string
 	estimatedOpRewards: string
-	claimableKwentaRewards: ClaimParams[][]
+	claimableKwentaRewards: ClaimParams[]
 	claimableOpRewards: ClaimParams[]
 	claimableSnxOpRewards: ClaimParams[]
 	selectedEpoch?: number
