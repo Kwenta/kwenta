@@ -26,13 +26,13 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 			<StakingTabsHeader>
 				<TabButtons>
 					<TabButton
-						variant="noOutline"
+						nofill={true}
 						title={t('dashboard.stake.tabs.staking.title')}
 						onClick={onChangeTab(StakeTab.Staking)}
 						active={currentTab === StakeTab.Staking}
 					/>
 					<TabButton
-						variant="noOutline"
+						nofill={true}
 						title={t('dashboard.stake.tabs.escrow.title')}
 						onClick={onChangeTab(StakeTab.Escrow)}
 						active={currentTab === StakeTab.Escrow}

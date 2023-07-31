@@ -28,13 +28,13 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 			<StakingTabsHeader>
 				<TabButtons>
 					<TabButton
-						variant="noOutline"
+						nofill={true}
 						title={t('dashboard.history.tabs.positions')}
 						onClick={onChangeTab(HistoryTab.Positions)}
 						active={currentTab === HistoryTab.Positions}
 					/>
 					<TabButton
-						variant="noOutline"
+						nofill={true}
 						title={t('dashboard.history.tabs.trades')}
 						onClick={onChangeTab(HistoryTab.Trades)}
 						active={currentTab === HistoryTab.Trades}

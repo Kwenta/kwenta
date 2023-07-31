@@ -244,12 +244,14 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 							</MarketDetailsContainer>
 						)
 					},
+					size: 90,
 				},
 				{
 					header: () => <TableHeader>{t('futures.market.user.trades.table.date')}</TableHeader>,
 					accessorKey: 'time',
 					cell: (cellProps) => <TimeDisplay value={cellProps.getValue()} />,
 					enableSorting: true,
+					size: 90,
 				},
 				{
 					header: () => (
@@ -262,11 +264,14 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					cell: (cellProps) => {
 						return (
 							<div style={{ width: '60%', textAlign: 'right' }}>
-								<Currency.Price price={cellProps.getValue()} />
+								<ColoredPrice>
+									{formatDollars(cellProps.getValue(), { suggestDecimals: true })}
+								</ColoredPrice>
 							</div>
 						)
 					},
 					enableSorting: true,
+					size: 125,
 				},
 				{
 					header: () => (
@@ -289,6 +294,7 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 						)
 					},
 					enableSorting: true,
+					size: 100,
 				},
 				{
 					header: () => (
@@ -311,6 +317,7 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 						)
 					},
 					enableSorting: true,
+					size: 100,
 				},
 				{
 					header: () => (
@@ -330,6 +337,7 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 						)
 					},
 					enableSorting: true,
+					size: 100,
 				},
 				{
 					header: () => (
@@ -338,7 +346,7 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					accessorKey: 'type',
 					sortingFn: 'basic',
 					cell: (cellProps) => <>{cellProps.getValue()}</>,
-					size: 90,
+					size: 60,
 				},
 			]}
 			columnsDeps={columnsDeps}

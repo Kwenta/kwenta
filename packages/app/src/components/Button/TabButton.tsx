@@ -21,7 +21,6 @@ export type TabButtonProps = {
 	isRounded?: boolean
 	onClick?: () => any
 	flat?: boolean
-	variant?: 'noOutline'
 }
 
 const InnerButton: React.FC<TabButtonProps> = React.memo(
@@ -64,7 +63,6 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 				$nofill={props.nofill}
 				$flat={flat}
 				onClick={onClick}
-				$variant={props.variant}
 			>
 				<InnerButton {...props} />
 			</StyledButton>
@@ -184,10 +182,9 @@ const InlineTab = styled.div<{
 
 const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$vertical?: boolean
+	isRounded?: boolean
 	$nofill?: boolean
 	$flat?: boolean
-	active?: boolean
-	$variant?: 'noOutline' | undefined
 }>`
 	p {
 		text-align: left;
@@ -200,12 +197,11 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	${sharedStyle}
 	
 	${(props) =>
-		props.$variant === 'noOutline' &&
+		props.$nofill &&
 		css`
-			border: none;
 			border-radius: 100px;
 			padding: 10px 15px;
-			width: 80px;
+			min-width: 100px;
 		`}
 `
 
