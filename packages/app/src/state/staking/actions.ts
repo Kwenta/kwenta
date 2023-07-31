@@ -1,110 +1,98 @@
-import KwentaSDK from '@kwenta/sdk'
-import { EscrowData } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { BigNumber } from 'ethers'
 
 import { notifyError } from 'components/ErrorNotifier'
 import { monitorTransaction } from 'contexts/RelayerContext'
 import { FetchStatus, ThunkConfig } from 'state/types'
+import { selectWallet } from 'state/wallet/selectors'
 import logError from 'utils/logError'
 
-export const fetchStakingData = createAsyncThunk<
-	{
-		rewardEscrowBalance: string
-		stakedNonEscrowedBalance: string
-		stakedEscrowedBalance: string
-		claimableBalance: string
-		kwentaBalance: string
-		weekCounter: number
-		totalStakedBalance: string
-		vKwentaBalance: string
-		vKwentaAllowance: string
-		kwentaAllowance: string
-		epochPeriod: number
-		veKwentaBalance: string
-		veKwentaAllowance: string
-	},
-	void,
-	ThunkConfig
->('staking/fetchStakingData', async (_, { extra: { sdk } }) => {
-	try {
-		const {
-			rewardEscrowBalance,
-			stakedNonEscrowedBalance,
-			stakedEscrowedBalance,
-			claimableBalance,
-			kwentaBalance,
-			weekCounter,
-			totalStakedBalance,
-			vKwentaBalance,
-			vKwentaAllowance,
-			kwentaAllowance,
-			epochPeriod,
-			veKwentaBalance,
-			veKwentaAllowance,
-		} = await sdk.kwentaToken.getStakingData()
+import {
+	ZERO_CLAIMABLE_REWARDS,
+	ZERO_ESCROW_BALANCE,
+	ZERO_ESTIMATED_REWARDS,
+	ZERO_STAKING_DATA,
+	ZERO_STAKING_V2_DATA,
+} from './reducer'
+import {
+	ClaimableRewards,
+	EscrowBalance,
+	EstimatedRewards,
+	StakingAction,
+	StakingActionV2,
+} from './types'
 
-		return {
-			rewardEscrowBalance: rewardEscrowBalance.toString(),
-			stakedNonEscrowedBalance: stakedNonEscrowedBalance.toString(),
-			stakedEscrowedBalance: stakedEscrowedBalance.toString(),
-			claimableBalance: claimableBalance.toString(),
-			kwentaBalance: kwentaBalance.toString(),
-			weekCounter,
-			totalStakedBalance: totalStakedBalance.toString(),
-			vKwentaBalance: vKwentaBalance.toString(),
-			vKwentaAllowance: vKwentaAllowance.toString(),
-			kwentaAllowance: kwentaAllowance.toString(),
-			epochPeriod,
-			veKwentaBalance: veKwentaBalance.toString(),
-			veKwentaAllowance: veKwentaAllowance.toString(),
+export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfig>(
+	'staking/fetchStakingData',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const wallet = selectWallet(getState())
+			if (!wallet) return ZERO_STAKING_DATA
+
+			const {
+				rewardEscrowBalance,
+				stakedNonEscrowedBalance,
+				stakedEscrowedBalance,
+				claimableBalance,
+				kwentaBalance,
+				weekCounter,
+				totalStakedBalance,
+				kwentaAllowance,
+				epochPeriod,
+			} = await sdk.kwentaToken.getStakingData()
+
+			return {
+				escrowedKwentaBalance: rewardEscrowBalance.toString(),
+				stakedKwentaBalance: stakedNonEscrowedBalance.toString(),
+				stakedEscrowedKwentaBalance: stakedEscrowedBalance.toString(),
+				claimableBalance: claimableBalance.toString(),
+				kwentaBalance: kwentaBalance.toString(),
+				weekCounter,
+				totalStakedBalance: totalStakedBalance.toString(),
+				kwentaAllowance: kwentaAllowance.toString(),
+				epochPeriod,
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch staking data', err)
+			throw err
 		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to fetch staking data', err)
-		throw err
 	}
-})
+)
 
-export const fetchStakingV2Data = createAsyncThunk<
-	{
-		rewardEscrowBalance: string
-		stakedNonEscrowedBalance: string
-		stakedEscrowedBalance: string
-		claimableBalance: string
-		totalStakedBalance: string
-		stakedResetTime: number
-		kwentaStakingV2Allowance: string
-	},
-	void,
-	ThunkConfig
->('staking/fetchStakingDataV2', async (_, { extra: { sdk } }) => {
-	try {
-		const {
-			rewardEscrowBalance,
-			stakedNonEscrowedBalance,
-			stakedEscrowedBalance,
-			claimableBalance,
-			totalStakedBalance,
-			stakedResetTime,
-			kwentaStakingV2Allowance,
-		} = await sdk.kwentaToken.getStakingV2Data()
+export const fetchStakingV2Data = createAsyncThunk<StakingActionV2, void, ThunkConfig>(
+	'staking/fetchStakingDataV2',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const wallet = selectWallet(getState())
+			if (!wallet) return ZERO_STAKING_V2_DATA
 
-		return {
-			rewardEscrowBalance: rewardEscrowBalance.toString(),
-			stakedNonEscrowedBalance: stakedNonEscrowedBalance.toString(),
-			stakedEscrowedBalance: stakedEscrowedBalance.toString(),
-			claimableBalance: claimableBalance.toString(),
-			totalStakedBalance: totalStakedBalance.toString(),
-			stakedResetTime,
-			kwentaStakingV2Allowance: kwentaStakingV2Allowance.toString(),
+			const {
+				rewardEscrowBalance,
+				stakedNonEscrowedBalance,
+				stakedEscrowedBalance,
+				claimableBalance,
+				totalStakedBalance,
+				stakedResetTime,
+				kwentaStakingV2Allowance,
+			} = await sdk.kwentaToken.getStakingV2Data()
+
+			return {
+				escrowedKwentaBalance: rewardEscrowBalance.toString(),
+				stakedKwentaBalance: stakedNonEscrowedBalance.toString(),
+				stakedEscrowedKwentaBalance: stakedEscrowedBalance.toString(),
+				claimableBalance: claimableBalance.toString(),
+				totalStakedBalance: totalStakedBalance.toString(),
+				stakedResetTime,
+				kwentaStakingV2Allowance: kwentaStakingV2Allowance.toString(),
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch staking V2 data', err)
+			throw err
 		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to fetch staking V2 data', err)
-		throw err
 	}
-})
+)
 
 export const approveKwentaToken = createAsyncThunk<
 	void,
@@ -142,82 +130,88 @@ export const redeemToken = createAsyncThunk<void, 'vKwenta' | 'veKwenta', ThunkC
 	}
 )
 
-export const fetchEscrowData = createAsyncThunk<
-	{ escrowData: EscrowData<string>[]; totalVestable: string },
-	void,
-	ThunkConfig
->('staking/fetchEscrowData', async (_, { extra: { sdk } }) => {
-	try {
-		const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowData()
+export const fetchEscrowData = createAsyncThunk<EscrowBalance, void, ThunkConfig>(
+	'staking/fetchEscrowData',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const wallet = selectWallet(getState())
+			if (!wallet) return ZERO_ESCROW_BALANCE
 
-		return {
-			escrowData: escrowData.map((e) => ({
-				...e,
-				vestable: e.vestable.toString(),
-				amount: e.amount.toString(),
-				fee: e.fee.toString(),
-			})),
-			totalVestable: totalVestable.toString(),
+			const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowData()
+
+			return {
+				escrowData: escrowData.map((e) => ({
+					...e,
+					vestable: e.vestable.toString(),
+					amount: e.amount.toString(),
+					fee: e.fee.toString(),
+				})),
+				totalVestable: totalVestable.toString(),
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch escrow data', err)
+			throw err
 		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to fetch escrow data', err)
-		throw err
 	}
-})
+)
 
-export const fetchEscrowV2Data = createAsyncThunk<
-	{ escrowData: EscrowData<string>[]; totalVestable: string },
-	void,
-	ThunkConfig
->('staking/fetchEscrowV2Data', async (_, { extra: { sdk } }) => {
-	try {
-		const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowV2Data()
+export const fetchEscrowV2Data = createAsyncThunk<EscrowBalance, void, ThunkConfig>(
+	'staking/fetchEscrowV2Data',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const wallet = selectWallet(getState())
+			if (!wallet) return ZERO_ESCROW_BALANCE
 
-		return {
-			escrowData: escrowData.map((e) => ({
-				...e,
-				vestable: e.vestable.toString(),
-				amount: e.amount.toString(),
-				fee: e.fee.toString(),
-			})),
-			totalVestable: totalVestable.toString(),
+			const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowV2Data()
+
+			return {
+				escrowData: escrowData.map((e) => ({
+					...e,
+					vestable: e.vestable.toString(),
+					amount: e.amount.toString(),
+					fee: e.fee.toString(),
+				})),
+				totalVestable: totalVestable.toString(),
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch escrow V2 data', err)
+			throw err
 		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to fetch escrow V2 data', err)
-		throw err
 	}
-})
+)
 
-export const fetchEstimatedRewards = createAsyncThunk<
-	{ estimatedKwentaRewards: string; estimatedOpRewards: string },
-	void,
-	ThunkConfig
->('staking/fetchEstimatedRewards', async (_, { extra: { sdk } }) => {
-	try {
-		const { estimatedKwentaRewards, estimatedOpRewards } =
-			await sdk.kwentaToken.getEstimatedRewards()
-		return {
-			estimatedKwentaRewards: estimatedKwentaRewards.toString(),
-			estimatedOpRewards: estimatedOpRewards.toString(),
+export const fetchEstimatedRewards = createAsyncThunk<EstimatedRewards, void, ThunkConfig>(
+	'staking/fetchEstimatedRewards',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const wallet = selectWallet(getState())
+			if (!wallet) return ZERO_ESTIMATED_REWARDS
+
+			const { estimatedKwentaRewards, estimatedOpRewards } =
+				await sdk.kwentaToken.getEstimatedRewards()
+			return {
+				estimatedKwentaRewards: estimatedKwentaRewards.toString(),
+				estimatedOpRewards: estimatedOpRewards.toString(),
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch estimated rewards', err)
+			throw err
 		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to fetch estimated rewards', err)
-		throw err
 	}
-})
+)
 
 export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
 	'staking/fetchMigrateData',
 	async (_, { dispatch }) => {
-		dispatch(fetchStakingData())
-		dispatch(fetchClaimableRewards())
+		await dispatch(fetchStakingData())
 		dispatch(fetchStakingV2Data())
 		dispatch(fetchEscrowData())
 		dispatch(fetchEscrowV2Data())
 		dispatch(fetchEstimatedRewards())
+		dispatch(fetchClaimableRewards())
 	}
 )
 
@@ -315,52 +309,41 @@ export const compoundRewards = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
-export const fetchClaimableRewards = createAsyncThunk<
-	{
-		claimableKwentaRewards: Awaited<
-			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards']
-		claimableOpRewards: Awaited<
-			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards']
-		claimableSnxOpRewards: Awaited<
-			ReturnType<KwentaSDK['kwentaToken']['getClaimableRewards']>
-		>['claimableRewards']
-		kwentaRewards: string
-		opRewards: string
-		snxOpRewards: string
-	},
-	void,
-	ThunkConfig
->('staking/fetchClaimableRewards', async (_, { getState, extra: { sdk } }) => {
-	try {
-		const {
-			staking: { epochPeriod },
-		} = getState()
+export const fetchClaimableRewards = createAsyncThunk<ClaimableRewards, void, ThunkConfig>(
+	'staking/fetchClaimableRewards',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const {
+				staking: { epochPeriod },
+			} = getState()
+			const wallet = selectWallet(getState())
 
-		const { claimableRewards: claimableKwentaRewards, totalRewards: kwentaRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, 9)
+			if (!wallet) return ZERO_CLAIMABLE_REWARDS
 
-		const { claimableRewards: claimableOpRewards, totalRewards: opRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, false)
+			const { claimableRewards: claimableKwentaRewards, totalRewards: kwentaRewards } =
+				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, 9)
 
-		const { claimableRewards: claimableSnxOpRewards, totalRewards: snxOpRewards } =
-			await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, true)
+			const { claimableRewards: claimableOpRewards, totalRewards: opRewards } =
+				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, false)
 
-		return {
-			claimableKwentaRewards,
-			claimableOpRewards,
-			claimableSnxOpRewards,
-			kwentaRewards: kwentaRewards.toString(),
-			opRewards: opRewards.toString(),
-			snxOpRewards: snxOpRewards.toString(),
+			const { claimableRewards: claimableSnxOpRewards, totalRewards: snxOpRewards } =
+				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, true)
+
+			return {
+				claimableKwentaRewards,
+				claimableOpRewards,
+				claimableSnxOpRewards,
+				kwentaRewards: kwentaRewards.toString(),
+				opRewards: opRewards.toString(),
+				snxOpRewards: snxOpRewards.toString(),
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch claimable rewards', err)
+			throw err
 		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to fetch claimable rewards', err)
-		throw err
 	}
-})
+)
 
 export const claimMultipleAllRewards = createAsyncThunk<void, void, ThunkConfig>(
 	'staking/claimMultipleAllRewards',

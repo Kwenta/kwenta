@@ -30,44 +30,72 @@ import {
 } from './actions'
 import { StakingState } from './types'
 
-export const STAKING_INITIAL_STATE: StakingState = {
+const ZERO_STAKE_BALANCE = {
+	escrowedKwentaBalance: '0',
+	stakedKwentaBalance: '0',
+	totalStakedBalance: '0',
+	claimableBalance: '0',
+	stakedEscrowedKwentaBalance: '0',
+}
+
+export const ZERO_ESCROW_BALANCE = {
+	totalVestable: '0',
+	escrowData: [],
+}
+
+const ZERO_VERSIONED_STAKE_DATA = {
+	...ZERO_STAKE_BALANCE,
+	...ZERO_ESCROW_BALANCE,
+}
+
+const INITIAL_STAKE_INFO = {
 	kwentaBalance: '0',
-	vKwentaBalance: '0',
-	veKwentaBalance: '0',
-	v1: {
-		escrowedKwentaBalance: '0',
-		claimableBalance: '0',
-		totalStakedBalance: '0',
-		stakedEscrowedKwentaBalance: '0',
-		stakedKwentaBalance: '0',
-		totalVestable: '0',
-		escrowData: [],
-	},
-	v2: {
-		escrowedKwentaBalance: '0',
-		claimableBalance: '0',
-		totalStakedBalance: '0',
-		stakedEscrowedKwentaBalance: '0',
-		stakedKwentaBalance: '0',
-		totalVestable: '0',
-		escrowData: [],
-	},
-	stakedResetTime: 0,
+	kwentaAllowance: '0',
 	epochPeriod: 0,
 	weekCounter: 1,
-	selectedEscrowVersion: 1,
-	kwentaAllowance: '0',
+}
+
+const INITIAL_STAKE_V2_INFO = {
+	stakedResetTime: 0,
 	kwentaStakingV2Allowance: '0',
-	vKwentaAllowance: '0',
-	veKwentaAllowance: '0',
+}
+
+export const ZERO_ESTIMATED_REWARDS = {
+	estimatedKwentaRewards: '0',
+	estimatedOpRewards: '0',
+}
+
+export const ZERO_STAKING_DATA = {
+	...ZERO_STAKE_BALANCE,
+	...INITIAL_STAKE_INFO,
+}
+
+export const ZERO_STAKING_V2_DATA = {
+	...ZERO_STAKE_BALANCE,
+	...INITIAL_STAKE_V2_INFO,
+}
+
+export const ZERO_CLAIMABLE_REWARDS = {
 	kwentaRewards: '0',
 	opRewards: '0',
 	snxOpRewards: '0',
-	estimatedKwentaRewards: '0',
-	estimatedOpRewards: '0',
 	claimableKwentaRewards: [],
 	claimableOpRewards: [],
 	claimableSnxOpRewards: [],
+}
+
+export const STAKING_INITIAL_STATE: StakingState = {
+	v1: {
+		...ZERO_VERSIONED_STAKE_DATA,
+	},
+	v2: {
+		...ZERO_VERSIONED_STAKE_DATA,
+	},
+	...INITIAL_STAKE_INFO,
+	...INITIAL_STAKE_V2_INFO,
+	...ZERO_ESTIMATED_REWARDS,
+	...ZERO_CLAIMABLE_REWARDS,
+	selectedEscrowVersion: 1,
 	stakingMigrationCompleted: true,
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
@@ -135,19 +163,15 @@ const stakingSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchStakingData.fulfilled, (state, action) => {
-			state.v1.escrowedKwentaBalance = action.payload.rewardEscrowBalance
-			state.v1.stakedKwentaBalance = action.payload.stakedNonEscrowedBalance
-			state.v1.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
+			state.v1.escrowedKwentaBalance = action.payload.escrowedKwentaBalance
+			state.v1.stakedKwentaBalance = action.payload.stakedKwentaBalance
+			state.v1.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedKwentaBalance
 			state.v1.claimableBalance = action.payload.claimableBalance
 			state.v1.totalStakedBalance = action.payload.totalStakedBalance
 			state.kwentaBalance = action.payload.kwentaBalance
 			state.weekCounter = action.payload.weekCounter
-			state.vKwentaBalance = action.payload.vKwentaBalance
-			state.vKwentaAllowance = action.payload.vKwentaAllowance
 			state.kwentaAllowance = action.payload.kwentaAllowance
 			state.epochPeriod = action.payload.epochPeriod
-			state.veKwentaBalance = action.payload.veKwentaBalance
-			state.veKwentaAllowance = action.payload.veKwentaAllowance
 			state.stakeStatus = FetchStatus.Idle
 			state.unstakeStatus = FetchStatus.Idle
 			state.stakeEscrowedStatus = FetchStatus.Idle
@@ -158,9 +182,9 @@ const stakingSlice = createSlice({
 			state.approveKwentaStatus = FetchStatus.Idle
 		})
 		builder.addCase(fetchStakingV2Data.fulfilled, (state, action) => {
-			state.v2.escrowedKwentaBalance = action.payload.rewardEscrowBalance
-			state.v2.stakedKwentaBalance = action.payload.stakedNonEscrowedBalance
-			state.v2.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedBalance
+			state.v2.escrowedKwentaBalance = action.payload.escrowedKwentaBalance
+			state.v2.stakedKwentaBalance = action.payload.stakedKwentaBalance
+			state.v2.stakedEscrowedKwentaBalance = action.payload.stakedEscrowedKwentaBalance
 			state.v2.claimableBalance = action.payload.claimableBalance
 			state.v2.totalStakedBalance = action.payload.totalStakedBalance
 			state.kwentaStakingV2Allowance = action.payload.kwentaStakingV2Allowance
