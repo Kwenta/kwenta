@@ -127,7 +127,7 @@ const PositionsTab = () => {
 								<div>
 									<Body>{row.market.marketName}</Body>
 									<Body capitalized color="secondary">
-										{accountType === 'isolated_margin' ? 'Isolated Margin' : 'Cross-Margin'}
+										{accountType === 'isolated_margin' ? 'Isolated Margin' : 'Smart Margin'}
 									</Body>
 								</div>
 							</FlexDiv>

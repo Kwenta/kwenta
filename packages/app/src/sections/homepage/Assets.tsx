@@ -1,4 +1,5 @@
 import { SECONDS_PER_DAY } from '@kwenta/sdk/constants'
+import { MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts'
 import router from 'next/router'
@@ -149,9 +150,7 @@ const Assets = () => {
 						? marketPrice.sub(pastPrice.rate).div(marketPrice)
 						: 0,
 				image: <PriceChart asset={market.asset} />,
-				icon: (
-					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
-				),
+				icon: <StyledCurrencyIcon currencyKey={MarketKeyByAsset[market.asset]} />,
 			}
 		})
 	}, [futuresMarkets, pastRates, futuresVolumes, t, prices])

@@ -6,6 +6,7 @@ import { FlexDiv } from 'components/layout/flex'
 import TVChart from 'components/TVChart'
 import {
 	selectConditionalOrdersForMarket,
+	selectMarketIndexPrice,
 	selectPosition,
 	selectPositionPreviewData,
 	selectSelectedMarketPositionHistory,
@@ -23,6 +24,7 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 	const previewTrade = useAppSelector(selectTradePreview)
 	const subgraphPosition = useAppSelector(selectSelectedMarketPositionHistory)
 	const positionPreview = useAppSelector(selectPositionPreviewData)
+	const initialPrice = useAppSelector(selectMarketIndexPrice)
 
 	const [showOrderLines, setShowOrderLines] = useState(true)
 	const [isChartReady, setIsChartReady] = useState(false)
@@ -52,6 +54,7 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 			<TVChart
 				openOrders={openOrders}
 				activePosition={activePosition}
+				initialPrice={initialPrice.toString()}
 				potentialTrade={
 					previewTrade
 						? {
