@@ -55,7 +55,7 @@ export const selectSmartMarginAccount = createSelector(
 	}
 )
 
-export const selectQueryStatuses = (state: RootState) => state.smartMargin.queryStatuses
+export const selectSmartMarginQueryStatuses = (state: RootState) => state.smartMargin.queryStatuses
 
 export const selectMarketsQueryStatus = (state: RootState) =>
 	state.smartMargin.queryStatuses.markets

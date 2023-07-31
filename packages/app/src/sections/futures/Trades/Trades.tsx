@@ -15,7 +15,8 @@ import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import useWindowSize from 'hooks/useWindowSize'
 import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
-import { selectAllTradesForAccountType, selectQueryStatuses } from 'state/futures/selectors'
+import { selectAllTradesForAccountType } from 'state/futures/selectors'
+import { selectSmartMarginQueryStatuses } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 
@@ -36,7 +37,7 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const accountType = useAppSelector(selectFuturesType)
 	const history = useAppSelector(selectAllTradesForAccountType)
-	const { trades } = useAppSelector(selectQueryStatuses)
+	const { trades } = useAppSelector(selectSmartMarginQueryStatuses)
 
 	const isLoading = !history.length && trades.status === FetchStatus.Loading
 	const isLoaded = trades.status === FetchStatus.Success
