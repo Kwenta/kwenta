@@ -40,7 +40,6 @@ export type FormatNumberOptions = {
 	prefix?: string
 	suffix?: string
 	suggestDecimals?: boolean
-	showExactValue?: boolean
 } & TruncatedOptions
 
 export type FormatCurrencyOptions = {
