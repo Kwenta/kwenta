@@ -48,14 +48,14 @@ const ZERO_VERSIONED_STAKE_DATA = {
 	...ZERO_ESCROW_BALANCE,
 }
 
-const INITIAL_STAKE_TRANSACTION = {
+const INITIAL_STAKE_INFO = {
 	kwentaBalance: '0',
 	kwentaAllowance: '0',
 	epochPeriod: 0,
 	weekCounter: 1,
 }
 
-const INITIAL_STAKE_V2_TRANSACTION = {
+const INITIAL_STAKE_V2_INFO = {
 	stakedResetTime: 0,
 	kwentaStakingV2Allowance: '0',
 }
@@ -67,12 +67,12 @@ export const ZERO_ESTIMATED_REWARDS = {
 
 export const ZERO_STAKING_DATA = {
 	...ZERO_STAKE_BALANCE,
-	...INITIAL_STAKE_TRANSACTION,
+	...INITIAL_STAKE_INFO,
 }
 
 export const ZERO_STAKING_V2_DATA = {
 	...ZERO_STAKE_BALANCE,
-	...INITIAL_STAKE_V2_TRANSACTION,
+	...INITIAL_STAKE_V2_INFO,
 }
 
 export const ZERO_CLAIMABLE_REWARDS = {
@@ -91,8 +91,8 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	v2: {
 		...ZERO_VERSIONED_STAKE_DATA,
 	},
-	...INITIAL_STAKE_TRANSACTION,
-	...INITIAL_STAKE_V2_TRANSACTION,
+	...INITIAL_STAKE_INFO,
+	...INITIAL_STAKE_V2_INFO,
 	...ZERO_ESTIMATED_REWARDS,
 	...ZERO_CLAIMABLE_REWARDS,
 	selectedEscrowVersion: 1,

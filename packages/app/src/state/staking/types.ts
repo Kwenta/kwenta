@@ -10,14 +10,14 @@ type StakeBalance = {
 	stakedEscrowedKwentaBalance: string
 }
 
-type StakingTransaction = {
+type StakingMiscInfo = {
 	kwentaBalance: string
 	kwentaAllowance: string
 	epochPeriod: number
 	weekCounter: number
 }
 
-type StakingTransactionV2 = {
+type StakingMiscInfoV2 = {
 	stakedResetTime: number
 	kwentaStakingV2Allowance: string
 }
@@ -43,8 +43,8 @@ export type EscrowBalance = {
 
 export type VersionedStakeData = StakeBalance & EscrowBalance
 
-export type StakingState = StakingTransaction &
-	StakingTransactionV2 &
+export type StakingState = StakingMiscInfo &
+	StakingMiscInfoV2 &
 	EstimatedRewards &
 	ClaimableRewards & {
 		v1: VersionedStakeData
@@ -66,6 +66,6 @@ export type StakingState = StakingTransaction &
 		compoundRewardsStatus: FetchStatus
 	}
 
-export type StakingAction = StakeBalance & StakingTransaction
+export type StakingAction = StakeBalance & StakingMiscInfo
 
-export type StakingActionV2 = StakeBalance & StakingTransactionV2
+export type StakingActionV2 = StakeBalance & StakingMiscInfoV2
