@@ -7,7 +7,7 @@ import {
 } from '@kwenta/sdk/types'
 import { truncateTimestamp } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
-import Wei, { wei } from '@synthetixio/wei'
+import { wei } from '@synthetixio/wei'
 
 import {
 	selectAllCrossMarginTrades,
