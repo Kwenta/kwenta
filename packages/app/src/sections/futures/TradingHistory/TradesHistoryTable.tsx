@@ -50,6 +50,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 								fundingAccrued: trade?.fundingAccrued,
 							}
 						})
+						.filter((trade) => trade.amount.abs().gt(0.000001))
 				: []
 		return [...new Set(futuresTrades)]
 	}, [futuresTradesQuery.data])
@@ -127,7 +128,6 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 										suggestDecimals: true,
 										truncateOver: 1e6,
 										maxDecimals: 6,
-										showExactValue: false,
 									})}{' '}
 									{normal ? '💀' : ''}
 								</DirectionalValue>

@@ -92,7 +92,6 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	const suffix = options?.suffix
 	const truncateThreshold = options?.truncateOver ?? 0
 	const suggestDecimals = options?.suggestDecimals
-	const showExactValue = options?.showExactValue ?? true
 	let truncation = options?.truncation
 
 	let weiValue = wei(0)
@@ -120,11 +119,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 			  )
 			: truncation
 
-	const weiBeforeAsString = truncation
-		? weiValue.abs().div(truncation.divisor)
-		: showExactValue
-		? weiValue.abs()
-		: parseFloat(weiValue.abs().toString()).toFixed(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
+	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs()
 
 	const defaultDecimals = truncation
 		? truncation.decimals
