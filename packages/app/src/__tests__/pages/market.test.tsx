@@ -248,7 +248,7 @@ describe('Futures market page - stop loss validation', () => {
 		fireEvent.change(stopLossInput, { target: { value: '1700' } })
 
 		// Min / Max SL is shown when invalid
-		const slMinMaxLabel = await findByText('Min: 1,701.82')
+		const slMinMaxLabel = await findByText('Min: 1,735.52')
 		expect(slMinMaxLabel).toBeTruthy()
 		expect(submitButton).toBeDisabled()
 
@@ -299,7 +299,7 @@ describe('Futures market page - stop loss validation', () => {
 
 		// Min / Max SL is shown when invalid
 		// Liqudation price is 2,172.46 and stop is limited to 2,172.29
-		const slMinMaxLabel = await findByText('Max: 2,150.74')
+		const slMinMaxLabel = await findByText('Max: 2,107.29')
 		expect(slMinMaxLabel).toBeTruthy()
 
 		expect(submitButton).toBeDisabled()
