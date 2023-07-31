@@ -1,11 +1,10 @@
-import { FuturesMarginType, PositionSide } from '@kwenta/sdk/types'
+import { PositionSide } from '@kwenta/sdk/types'
 import { FC, memo, useCallback, useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
 import Error from 'components/ErrorView'
 import Spacer from 'components/Spacer'
 import { selectAckedOrdersWarning } from 'state/app/selectors'
-import { selectFuturesType } from 'state/futures/common/selectors'
 import { selectLeverageSide } from 'state/futures/selectors'
 import { changeLeverageSide } from 'state/futures/smartMargin/actions'
 import { setOrderType } from 'state/futures/smartMargin/reducer'
@@ -37,7 +36,6 @@ const TradePanelSmartMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 	const dispatch = useAppDispatch()
 
 	const leverageSide = useAppSelector(selectLeverageSide)
-	const accountType = useAppSelector(selectFuturesType)
 	const orderType = useAppSelector(selectOrderType)
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError)
 	const hideOrderWarning = useAppSelector(selectAckedOrdersWarning)
@@ -84,10 +82,7 @@ const TradePanelSmartMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 						{pricesConnectionError && (
 							<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 						)}
-
-						{accountType === FuturesMarginType.SMART_MARGIN && (
-							<OrderTypeSelector orderType={orderType} setOrderTypeAction={setOrderType} />
-						)}
+						<OrderTypeSelector orderType={orderType} setOrderTypeAction={setOrderType} />
 
 						{showOrderWarning ? (
 							<>
@@ -99,21 +94,12 @@ const TradePanelSmartMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 							</>
 						) : (
 							<>
-								{accountType === FuturesMarginType.SMART_MARGIN && <MarginInput />}
-
-								{orderType !== 'market' && accountType === FuturesMarginType.SMART_MARGIN && (
-									<>
-										<OrderPriceInput />
-										<Spacer height={16} />
-									</>
-								)}
-
+								<MarginInput />
+								<OrderPriceInput />
+								<Spacer height={16} />
 								<OrderSizing />
-
 								<LeverageInput />
-
-								{accountType === FuturesMarginType.SMART_MARGIN && <SLTPInputs />}
-
+								<SLTPInputs />
 								<ManagePosition />
 								<SmartMarginTradePanelPreview />
 							</>

@@ -16,6 +16,7 @@ const customJestConfig = {
 	transform: {
 		'^.+\\.(svg)$': `jest-transformer-svg`,
 	},
+	maxWorkers: 2,
 }
 
 const getCustomConfig = async () => {
