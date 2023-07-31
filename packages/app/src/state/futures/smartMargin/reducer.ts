@@ -64,7 +64,6 @@ export const SMART_MARGIN_INITIAL_STATE: SmartMarginState = {
 		openOrders: DEFAULT_QUERY_STATUS,
 		tradePreview: DEFAULT_QUERY_STATUS,
 		account: DEFAULT_QUERY_STATUS,
-		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
 		historicalFundingRates: DEFAULT_QUERY_STATUS,

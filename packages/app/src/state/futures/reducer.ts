@@ -2,8 +2,15 @@ import { Period } from '@kwenta/sdk/constants'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
-import { DEFAULT_MAP_BY_NETWORK } from 'state/constants'
+import {
+	DEFAULT_MAP_BY_NETWORK,
+	DEFAULT_QUERY_STATUS,
+	LOADING_STATUS,
+	SUCCESS_STATUS,
+} from 'state/constants'
+import { FetchStatus } from 'state/types'
 
+import { fetchPositionHistoryForTrader } from './actions'
 import { AppFuturesMarginType } from './common/types'
 import { InputCurrencyDenomination, FuturesState } from './types'
 
@@ -25,6 +32,9 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	},
 	tradePanelDrawerOpen: false,
 	historicalFundingRatePeriod: Period.TWO_WEEKS,
+	queryStatuses: {
+		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
+	},
 }
 
 const futuresSlice = createSlice({
@@ -61,6 +71,27 @@ const futuresSlice = createSlice({
 		setHistoricalFundingRatePeriod: (state, action: PayloadAction<Period>) => {
 			state.historicalFundingRatePeriod = action.payload
 		},
+	},
+
+	extraReducers(builder) {
+		// Fetch position history for trader
+		builder.addCase(fetchPositionHistoryForTrader.pending, (futuresState) => {
+			futuresState.queryStatuses.selectedTraderPositionHistory = LOADING_STATUS
+		})
+		builder.addCase(fetchPositionHistoryForTrader.fulfilled, (futuresState, { payload }) => {
+			futuresState.queryStatuses.selectedTraderPositionHistory = SUCCESS_STATUS
+			if (!payload) return
+			futuresState.leaderboard.selectedTraderPositionHistory[payload.networkId] = {
+				...futuresState.leaderboard.selectedTraderPositionHistory[payload.networkId],
+				[payload.address]: payload.history,
+			}
+		})
+		builder.addCase(fetchPositionHistoryForTrader.rejected, (futuresState) => {
+			futuresState.queryStatuses.selectedTraderPositionHistory = {
+				error: 'Failed to fetch traders position history',
+				status: FetchStatus.Error,
+			}
+		})
 	},
 })
 

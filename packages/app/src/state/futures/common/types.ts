@@ -54,7 +54,6 @@ export type FuturesQueryStatuses = {
 	tradePreview: QueryStatus
 	account: QueryStatus
 	trades: QueryStatus
-	selectedTraderPositionHistory: QueryStatus
 	marginTransfers: QueryStatus
 	historicalFundingRates: QueryStatus
 	futuresFees: QueryStatus

@@ -8,6 +8,7 @@ import {
 import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
+import { QueryStatus } from 'state/types'
 
 import { AppFuturesMarginType, FuturesTransactionType } from './common/types'
 
@@ -73,6 +74,9 @@ export type FuturesState = {
 		>
 	}
 	tradePanelDrawerOpen: boolean
+	queryStatuses: {
+		selectedTraderPositionHistory: QueryStatus
+	}
 }
 
 export type ExecuteDelayedOrderInputs = {

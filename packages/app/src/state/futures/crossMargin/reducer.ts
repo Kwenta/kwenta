@@ -79,7 +79,6 @@ export const COSS_MARGIN_INITIAL_STATE: CrossMarginState = {
 		openOrders: DEFAULT_QUERY_STATUS,
 		tradePreview: DEFAULT_QUERY_STATUS,
 		positionHistory: DEFAULT_QUERY_STATUS,
-		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
 		historicalFundingRates: DEFAULT_QUERY_STATUS,

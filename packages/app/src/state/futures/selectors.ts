@@ -76,7 +76,11 @@ import { FuturesAction, PortfolioValues } from './types'
 
 export const selectQueryStatuses = createSelector(
 	selectFuturesState,
-	(state) => state.queryStatuses
+	(state: RootState) => state.futures.queryStatuses,
+	(selectedFuturesState, globalFuturesState) => ({
+		...selectedFuturesState.queryStatuses,
+		...globalFuturesState,
+	})
 )
 
 export const selectMarketsQueryStatus = createSelector(
