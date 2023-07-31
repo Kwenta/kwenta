@@ -24,8 +24,8 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 	const walletAddress = useAppSelector(selectWallet)
 
 	return (
-		<StakingTabsContainer>
-			<StakingTabsHeader>
+		<HistoryTabsContainer>
+			<HistoryTabsHeader>
 				<TabButtons>
 					<TabButton
 						nofill={true}
@@ -40,7 +40,7 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 						active={currentTab === HistoryTab.Trades}
 					/>
 				</TabButtons>
-			</StakingTabsHeader>
+			</HistoryTabsHeader>
 			<div>
 				<TabPanel name={HistoryTab.Positions} activeTab={currentTab}>
 					<TraderHistory trader={walletAddress!} resetSelection={() => {}} compact={true} />
@@ -49,11 +49,11 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 					<Trades rounded={true} noBottom={false} />
 				</TabPanel>
 			</div>
-		</StakingTabsContainer>
+		</HistoryTabsContainer>
 	)
 }
 
-const StakingTabsHeader = styled.div`
+const HistoryTabsHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 15px;
@@ -66,7 +66,7 @@ const StakingTabsHeader = styled.div`
 	`}
 `
 
-const StakingTabsContainer = styled.div`
+const HistoryTabsContainer = styled.div`
 	${media.lessThan('md')`
 		padding: 15px;
 	`}
