@@ -201,7 +201,7 @@ const TableAlignment = css`
 
 const StyledTable = styled(Table)`
 	border: none;
-	height: 100%;
+	overflow-y: auto;
 
 	.table-row,
 	.table-body-row {
