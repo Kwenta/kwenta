@@ -142,7 +142,9 @@ const Table = <T,>({
 	)
 
 	useEffect(() => {
-		lastRef(defaultRef.current)
+		if (typeof lastRef === 'function' && data.length > 0) {
+			lastRef(defaultRef.current)
+		}
 	}, [lastRef, defaultRef, data.length])
 
 	return (
