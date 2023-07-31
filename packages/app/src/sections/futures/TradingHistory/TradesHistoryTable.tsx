@@ -127,6 +127,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 										suggestDecimals: true,
 										truncateOver: 1e6,
 										maxDecimals: 6,
+										showExactValue: false,
 									})}{' '}
 									{normal ? '💀' : ''}
 								</DirectionalValue>
