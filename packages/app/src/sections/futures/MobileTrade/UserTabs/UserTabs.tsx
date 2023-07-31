@@ -2,8 +2,11 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import TabButton from 'components/Button/TabButton'
-import { selectAllConditionalOrders, selectPendingOrdersCount } from 'state/futures/selectors'
-import { selectActiveSmartPositionsCount } from 'state/futures/smartMargin/selectors'
+import { selectPendingOrdersCount } from 'state/futures/selectors'
+import {
+	selectActiveSmartPositionsCount,
+	selectAllConditionalOrders,
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import ConditionalOrdersTab from './ConditionalOrdersTab'

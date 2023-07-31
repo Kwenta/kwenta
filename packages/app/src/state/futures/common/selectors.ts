@@ -2,7 +2,7 @@ import { FuturesMarginType } from '@kwenta/sdk/types'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
 
-import { selectPrices } from 'state/prices/selectors'
+import { selectOffchainPricesInfo, selectPrices } from 'state/prices/selectors'
 import { RootState } from 'state/store'
 
 export const selectFuturesType = (state: RootState) => state.futures.selectedType
@@ -25,5 +25,14 @@ export const selectMarketIndexPrice = createSelector(
 		const price = prices[marketAsset]
 		// Note this assumes the order type is always delayed off chain
 		return price?.offChain ?? price?.onChain ?? wei(0)
+	}
+)
+
+export const selectMarketPriceInfo = createSelector(
+	selectMarketAsset,
+	selectOffchainPricesInfo,
+	(asset, pricesInfo) => {
+		if (!asset || !pricesInfo[asset]) return
+		return pricesInfo[asset]
 	}
 )

@@ -14,9 +14,11 @@ import { NO_VALUE } from 'constants/placeholder'
 import PositionType from 'sections/futures/PositionType'
 import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning'
 import { selectMarketAsset } from 'state/futures/common/selectors'
-import { selectAllConditionalOrders } from 'state/futures/selectors'
 import { cancelConditionalOrder } from 'state/futures/smartMargin/actions'
-import { selectCancellingConditionalOrder } from 'state/futures/smartMargin/selectors'
+import {
+	selectAllConditionalOrders,
+	selectCancellingConditionalOrder,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 const ConditionalOrdersTab: React.FC = () => {

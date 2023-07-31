@@ -11,7 +11,7 @@ const PositionDetails = () => {
 	const position = useAppSelector(selectPosition)
 	const accountType = useAppSelector(selectFuturesType)
 
-	return position?.position ? (
+	return position ? (
 		<>
 			<PositionDetailsContainer>
 				<SectionHeader>

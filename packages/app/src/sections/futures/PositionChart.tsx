@@ -4,13 +4,11 @@ import styled, { css } from 'styled-components'
 
 import { FlexDiv } from 'components/layout/flex'
 import TVChart from 'components/TVChart'
-import {
-	selectPosition,
-	selectPositionPreviewData,
-	selectSelectedMarketPositionHistory,
-} from 'state/futures/selectors'
+import { selectMarketIndexPrice } from 'state/futures/common/selectors'
+import { selectPosition, selectSelectedMarketPositionHistory } from 'state/futures/selectors'
 import {
 	selectConditionalOrdersForMarket,
+	selectPositionPreviewData,
 	selectTradePreview,
 } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
@@ -25,6 +23,7 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 	const previewTrade = useAppSelector(selectTradePreview)
 	const subgraphPosition = useAppSelector(selectSelectedMarketPositionHistory)
 	const positionPreview = useAppSelector(selectPositionPreviewData)
+	const initialPrice = useAppSelector(selectMarketIndexPrice)
 
 	const [showOrderLines, setShowOrderLines] = useState(true)
 	const [isChartReady, setIsChartReady] = useState(false)
@@ -32,16 +31,16 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 	const modifiedAverage = positionPreview?.avgEntryPrice ?? ZERO_WEI
 
 	const activePosition = useMemo(() => {
-		if (!position?.position) {
+		if (!position) {
 			return null
 		}
 
 		return {
 			// As there's often a delay in subgraph sync we use the contract last
 			// price until we get average price to keep it snappy on opening a position
-			price: subgraphPosition?.avgEntryPrice ?? position.position.lastPrice,
-			size: position.position.size,
-			liqPrice: position.position?.liquidationPrice,
+			price: subgraphPosition?.avgEntryPrice ?? position.lastPrice,
+			size: position.size,
+			liqPrice: position.liquidationPrice,
 		}
 	}, [subgraphPosition, position])
 
@@ -54,6 +53,7 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 			<TVChart
 				openOrders={openOrders}
 				activePosition={activePosition}
+				initialPrice={initialPrice.toString()}
 				potentialTrade={
 					previewTrade
 						? {

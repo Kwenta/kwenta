@@ -15,13 +15,12 @@ import ROUTES from 'constants/routes'
 import useWindowSize from 'hooks/useWindowSize'
 import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import { selectActiveCrossMarginPositionsCount } from 'state/futures/crossMargin/selectors'
-import {
-	selectPosition,
-	selectAllConditionalOrders,
-	selectPendingOrdersCount,
-} from 'state/futures/selectors'
+import { selectPosition, selectPendingOrdersCount } from 'state/futures/selectors'
 import { fetchAllV2TradesForAccount } from 'state/futures/smartMargin/actions'
-import { selectActiveSmartPositionsCount } from 'state/futures/smartMargin/selectors'
+import {
+	selectActiveSmartPositionsCount,
+	selectAllConditionalOrders,
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks'
 import { selectWallet } from 'state/wallet/selectors'
 
@@ -61,7 +60,7 @@ const UserInfo: React.FC = memo(() => {
 	const accountType = useAppSelector(selectFuturesType)
 
 	useFetchAction(fetchAllV2TradesForAccount, {
-		dependencies: [walletAddress, accountType, position?.position?.size.toString()],
+		dependencies: [walletAddress, accountType, position?.size.toString()],
 		disabled: !walletAddress,
 	})
 
@@ -90,7 +89,7 @@ const UserInfo: React.FC = memo(() => {
 	useEffect(() => {
 		refetchTrades()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [position?.marketKey])
+	}, [position?.market.marketKey])
 
 	const TABS = useMemo(
 		() => [

@@ -30,7 +30,6 @@ import {
 	selectIsApprovingCrossDeposit,
 	selectIsolatedTransferError,
 	selectIsSubmittingIsolatedTransfer,
-	selectPosition,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
@@ -51,7 +50,6 @@ const DepositWithdrawCrossMarginModal: React.FC<Props> = ({ onDismiss, defaultTa
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
-	const position = useAppSelector(selectPosition)
 	const submitting = useAppSelector(selectIsSubmittingIsolatedTransfer)
 	const approving = useAppSelector(selectIsApprovingCrossDeposit)
 	const txError = useAppSelector(selectIsolatedTransferError)
@@ -60,10 +58,9 @@ const DepositWithdrawCrossMarginModal: React.FC<Props> = ({ onDismiss, defaultTa
 	const allowances = useAppSelector(selectDepositAllowances)
 
 	const minDeposit = useMemo(() => {
-		const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI
-		const min = MIN_MARGIN_AMOUNT.sub(accessibleMargin)
-		return min.lt(ZERO_WEI) ? ZERO_WEI : min
-	}, [position?.accessibleMargin])
+		// TODO: Calculate min deposit based on accessible margin
+		return MIN_MARGIN_AMOUNT
+	}, [])
 
 	const [openSocket, setOpenSocket] = useState(false)
 	const [amount, setAmount] = useState('')

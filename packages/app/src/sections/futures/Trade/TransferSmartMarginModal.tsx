@@ -17,9 +17,9 @@ import Spacer from 'components/Spacer'
 import { selectTransaction } from 'state/app/selectors'
 import { selectSusdBalance } from 'state/balances/selectors'
 import { selectIsSubmittingCrossTransfer } from 'state/futures/selectors'
+import { withdrawSmartMargin } from 'state/futures/smartMargin/actions'
 import { selectWithdrawableSmartMargin } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { withdrawSmartMargin } from 'state/futures/smartMargin/actions'
 
 type Props = {
 	onDismiss(): void

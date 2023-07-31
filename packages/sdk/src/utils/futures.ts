@@ -135,6 +135,7 @@ export const marketsForNetwork = (networkId: number, logError: IContext['logErro
 }
 
 export const getMarketName = (asset: FuturesMarketAsset | null) => {
+	if (asset === 'ETHBTC') return 'ETH/BTC'
 	return `${getDisplayAsset(asset)}/sUSD`
 }
 
@@ -767,6 +768,14 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sINJPERP]: FuturesMarketAsset.INJ,
 	[FuturesMarketKey.sTRXPERP]: FuturesMarketAsset.TRX,
 	[FuturesMarketKey.sSTETHPERP]: FuturesMarketAsset.STETH,
+	[FuturesMarketKey.sETHBTCPERP]: FuturesMarketAsset.ETHBTC,
+	[FuturesMarketKey.sXMRPERP]: FuturesMarketAsset.XMR,
+	[FuturesMarketKey.sMAVPERP]: FuturesMarketAsset.MAV,
+	[FuturesMarketKey.sETCPERP]: FuturesMarketAsset.ETC,
+	[FuturesMarketKey.sCOMPPERP]: FuturesMarketAsset.COMP,
+	[FuturesMarketKey.sYFIPERP]: FuturesMarketAsset.YFI,
+	[FuturesMarketKey.sMKRPERP]: FuturesMarketAsset.MKR,
+	[FuturesMarketKey.sRPLPERP]: FuturesMarketAsset.RPL,
 } as const
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -812,11 +821,19 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.INJ]: FuturesMarketKey.sINJPERP,
 	[FuturesMarketAsset.TRX]: FuturesMarketKey.sTRXPERP,
 	[FuturesMarketAsset.STETH]: FuturesMarketKey.sSTETHPERP,
+	[FuturesMarketAsset.ETHBTC]: FuturesMarketKey.sETHBTCPERP,
+	[FuturesMarketAsset.XMR]: FuturesMarketKey.sXMRPERP,
+	[FuturesMarketAsset.MAV]: FuturesMarketKey.sMAVPERP,
+	[FuturesMarketAsset.ETC]: FuturesMarketKey.sETCPERP,
+	[FuturesMarketAsset.COMP]: FuturesMarketKey.sCOMPPERP,
+	[FuturesMarketAsset.YFI]: FuturesMarketKey.sYFIPERP,
+	[FuturesMarketAsset.MKR]: FuturesMarketKey.sMKRPERP,
+	[FuturesMarketAsset.RPL]: FuturesMarketKey.sRPLPERP,
 } as const
 
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.sBTC]: 'Bitcoin',
-	[FuturesMarketAsset.sETH]: 'Ether',
+	[FuturesMarketAsset.sETH]: 'Ethereum',
 	[FuturesMarketAsset.LINK]: 'Chainlink',
 	[FuturesMarketAsset.SOL]: 'Solana',
 	[FuturesMarketAsset.AVAX]: 'Avalanche',
@@ -857,6 +874,14 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.INJ]: 'Injective',
 	[FuturesMarketAsset.TRX]: 'Tron',
 	[FuturesMarketAsset.STETH]: 'Lido Staked ETH',
+	[FuturesMarketAsset.ETHBTC]: 'Ether/Bitcoin Ratio',
+	[FuturesMarketAsset.XMR]: 'Monero',
+	[FuturesMarketAsset.MAV]: 'Maverick',
+	[FuturesMarketAsset.ETC]: 'Ethereum Classic',
+	[FuturesMarketAsset.COMP]: 'Compound',
+	[FuturesMarketAsset.YFI]: 'Yearn.Finance',
+	[FuturesMarketAsset.MKR]: 'Maker',
+	[FuturesMarketAsset.RPL]: 'Rocket Pool',
 } as const
 
 export const PerpsV3SymbolToMarketKey: Record<string, FuturesMarketKey> = {

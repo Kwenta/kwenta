@@ -26,7 +26,7 @@ import {
 } from 'state/app/reducer'
 import { fetchV3BalancesAndAllowances } from 'state/balances/actions'
 import { ZERO_STATE_TRADE_INPUTS } from 'state/constants'
-import { selectLeverageSide, selectMarketInfo } from 'state/futures/selectors'
+import { selectLeverageSide } from 'state/futures/selectors'
 import { AppThunk } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
@@ -435,7 +435,7 @@ export const createPerpsV3Account = createAsyncThunk<
 export const approveCrossMarginDeposit = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/approveCrossMarginDeposit',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectMarketInfo(getState())
+		const marketInfo = selectV3MarketInfo(getState())
 		if (!marketInfo) throw new Error('Market info not found')
 		try {
 			dispatch(

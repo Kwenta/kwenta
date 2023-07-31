@@ -10,25 +10,24 @@ import { ERROR_MESSAGES } from 'components/ErrorNotifier'
 import Error from 'components/ErrorView'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { setOpenModal } from 'state/app/reducer'
-import { selectMarketIndexPrice } from 'state/futures/common/selectors'
+import { selectMarketIndexPrice, selectMarketPriceInfo } from 'state/futures/common/selectors'
 import {
 	selectCrossMarginAccount,
+	selectCrossMarginPosition,
 	selectCrossMarginTradeInputs,
 	selectV3MarketInfo,
 } from 'state/futures/crossMargin/selectors'
 import { setTradePanelDrawerOpen } from 'state/futures/reducer'
 import {
-	selectIsMarketCapReached,
-	selectPlaceOrderTranslationKey,
 	selectMaxLeverage,
 	selectLeverageSide,
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
-	selectMarketPriceInfo,
-	selectPosition,
 } from 'state/futures/selectors'
 import {
+	selectIsMarketCapReached,
 	selectOrderType,
+	selectPlaceOrderTranslationKey,
 	selectSmartMarginLeverage,
 	selectSmartMarginOrderPrice,
 	selectTradePreview,
@@ -60,7 +59,7 @@ const SubmitCrossMarginTradeButton: React.FC = () => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo)
 	const previewStatus = useAppSelector(selectTradePreviewStatus)
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
-	const position = useAppSelector(selectPosition)
+	const position = useAppSelector(selectCrossMarginPosition)
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError))
@@ -69,7 +68,7 @@ const SubmitCrossMarginTradeButton: React.FC = () => {
 		return null
 	}, [previewTrade?.statusMessage, previewError, t])
 
-	const increasingPosition = !position?.position?.side || position?.position?.side === leverageSide
+	const increasingPosition = !position?.side || position?.side === leverageSide
 
 	const onSubmit = useCallback(() => {
 		dispatch(setTradePanelDrawerOpen(false))

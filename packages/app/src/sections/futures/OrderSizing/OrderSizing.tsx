@@ -47,19 +47,19 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 		[orderPrice, marketAssetRate]
 	)
 
-	const increasingPosition = !position?.position?.side || position?.position?.side === tradeSide
+	const increasingPosition = !position?.side || position?.side === tradeSide
 
 	const availableOiUsd = useMemo(() => {
 		return increasingPosition
 			? availableOi[tradeSide].usd
-			: availableOi[tradeSide].usd.add(position?.position?.notionalValue || 0)
-	}, [tradeSide, availableOi, increasingPosition, position?.position?.notionalValue])
+			: availableOi[tradeSide].usd.add(position?.notionalValue || 0)
+	}, [tradeSide, availableOi, increasingPosition, position?.notionalValue])
 
 	const availableOiNative = useMemo(() => {
 		return increasingPosition
 			? availableOi[tradeSide].native
-			: availableOi[tradeSide].native.add(position?.position?.size || 0)
-	}, [tradeSide, availableOi, increasingPosition, position?.position?.size])
+			: availableOi[tradeSide].native.add(position?.size || 0)
+	}, [tradeSide, availableOi, increasingPosition, position?.size])
 
 	const maxNativeValue = useMemo(() => {
 		const max = !isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : ZERO_WEI

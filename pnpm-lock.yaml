@@ -331,8 +331,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(jest@28.1.0)(react@18.2.0)
       next-router-mock:
-        specifier: 0.9.3
-        version: 0.9.3(next@13.4.12)(react@18.2.0)
+        specifier: 0.9.7
+        version: 0.9.7(next@13.4.8)(react@18.2.0)
       pinst:
         specifier: 3.0.0
         version: 3.0.0
@@ -15529,8 +15529,8 @@ packages:
       trouter: 3.2.1
     dev: false
 
-  /next-router-mock@0.9.3(next@13.4.12)(react@18.2.0):
-    resolution: {integrity: sha512-jl8eFe71LpMVGeBMpoxILkGfEgGY7IfLy8XPyv05/o61p5oQRNpoMmk46VMxRIpt0fI8XcvznBZKpDK6vbYQcQ==}
+  /next-router-mock@0.9.7(next@13.4.8)(react@18.2.0):
+    resolution: {integrity: sha512-y5ioLCIsdkJKwcoPnrUyocNEJT22RK4wKSg6LO0Q2XkBBvkYprEWy5FiCZt+CA8+qpfxpBlNca76F+glEohbRA==}
     peerDependencies:
       next: '>=10.0.0'
       react: '>=17.0.0'

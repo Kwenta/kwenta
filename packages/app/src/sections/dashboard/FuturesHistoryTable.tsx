@@ -5,6 +5,7 @@ import {
 	formatCryptoCurrency,
 	formatDollars,
 	formatShortDateWithoutYear,
+	getMarketName,
 } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import * as _ from 'lodash/fp'
@@ -31,7 +32,6 @@ import { selectFuturesType } from 'state/futures/common/selectors'
 import { selectAllUsersTrades, selectQueryStatuses } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
-import { getMarketName } from 'utils/futures'
 
 import TimeDisplay from '../futures/Trades/TimeDisplay'
 

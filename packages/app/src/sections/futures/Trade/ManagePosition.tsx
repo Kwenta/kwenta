@@ -11,22 +11,24 @@ import { ERROR_MESSAGES } from 'components/ErrorNotifier'
 import Error from 'components/ErrorView'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { setOpenModal } from 'state/app/reducer'
-import { selectFuturesType, selectMarketIndexPrice } from 'state/futures/common/selectors'
+import {
+	selectFuturesType,
+	selectMarketIndexPrice,
+	selectMarketPriceInfo,
+} from 'state/futures/common/selectors'
 import { setTradePanelDrawerOpen } from 'state/futures/reducer'
 import {
-	selectMarketInfo,
-	selectIsMarketCapReached,
-	selectPlaceOrderTranslationKey,
 	selectMaxLeverage,
 	selectLeverageSide,
 	selectPendingDelayedOrder,
 	selectMaxUsdSizeInput,
-	selectMarketPriceInfo,
-	selectPosition,
 	selectTradePanelSLValidity,
 } from 'state/futures/selectors'
 import {
+	selectIsMarketCapReached,
 	selectOrderType,
+	selectPlaceOrderTranslationKey,
+	selectSmartMarginPosition,
 	selectSmartMarginAccount,
 	selectSmartMarginLeverage,
 	selectSmartMarginOrderPrice,
@@ -34,6 +36,7 @@ import {
 	selectTradePreview,
 	selectTradePreviewError,
 	selectTradePreviewStatus,
+	selectV2MarketInfo,
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
@@ -57,11 +60,11 @@ const ManagePosition: React.FC = () => {
 	const placeOrderTranslationKey = useAppSelector(selectPlaceOrderTranslationKey)
 	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 	const marketAssetRate = useAppSelector(selectMarketIndexPrice)
-	const marketInfo = useAppSelector(selectMarketInfo)
+	const marketInfo = useAppSelector(selectV2MarketInfo)
 	const indexPrice = useAppSelector(selectMarketPriceInfo)
 	const previewStatus = useAppSelector(selectTradePreviewStatus)
 	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
-	const position = useAppSelector(selectPosition)
+	const position = useAppSelector(selectSmartMarginPosition)
 	const stopLossInvlid = useAppSelector(selectTradePanelSLValidity)
 
 	const orderError = useMemo(() => {
@@ -71,7 +74,7 @@ const ManagePosition: React.FC = () => {
 		return null
 	}, [previewTrade?.statusMessage, previewError, t])
 
-	const increasingPosition = !position?.position?.side || position?.position?.side === leverageSide
+	const increasingPosition = !position?.side || position?.side === leverageSide
 
 	const onSubmit = useCallback(() => {
 		dispatch(setTradePanelDrawerOpen(false))

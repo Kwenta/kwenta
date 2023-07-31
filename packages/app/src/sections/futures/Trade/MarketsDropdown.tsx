@@ -6,6 +6,7 @@ import {
 	MarketKeyByAsset,
 	floorNumber,
 	formatDollars,
+	getMarketName,
 } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { useRouter } from 'next/router'
@@ -41,7 +42,7 @@ import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices } from 'state/prices/selectors'
 import { FetchStatus } from 'state/types'
 import media from 'styles/media'
-import { getMarketName, getSynthDescription } from 'utils/futures'
+import { getSynthDescription } from 'utils/futures'
 
 import {
 	MARKETS_DETAILS_HEIGHT_DESKTOP,

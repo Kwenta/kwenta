@@ -19,12 +19,12 @@ import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
 import ROUTES from 'constants/routes'
 import { selectFuturesType } from 'state/futures/common/selectors'
 import {
-	selectBuyingPower,
 	selectFuturesPortfolio,
 	selectPortfolioChartData,
 	selectSelectedPortfolioTimeframe,
 	selectTotalUnrealizedPnl,
 } from 'state/futures/selectors'
+import { selectBuyingPower } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import { Timeframe } from './Timeframe'

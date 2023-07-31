@@ -19,8 +19,8 @@ import {
 import {
 	AssetDisplayByAsset,
 	MarketKeyByAsset,
-	getDisplayAsset,
 	formatNumber,
+	getMarketName,
 } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { TFunction } from 'i18next'
@@ -31,10 +31,6 @@ import { futuresPositionKeys, FundingRate, MarkPrices } from 'state/futures/type
 import { deserializeWeiObject } from 'state/helpers'
 
 import { CrossMarginTradePreview } from '../state/futures/crossMargin/types'
-
-export const getMarketName = (asset: FuturesMarketAsset) => {
-	return `${getDisplayAsset(asset)}/sUSD`
-}
 
 export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => {
 	const assetDisplayName = AssetDisplayByAsset[synth]

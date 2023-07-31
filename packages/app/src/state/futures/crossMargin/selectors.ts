@@ -1,3 +1,4 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { PositionSide, SynthV3Asset } from '@kwenta/sdk/types'
 import {
 	MarketKeyByAsset,
@@ -23,6 +24,7 @@ import {
 } from 'utils/futures'
 
 import { unserializeCrossMarginTradePreview } from '../../../utils/futures'
+import { selectMarketIndexPrice, selectMarketPriceInfo } from '../common/selectors'
 import { MarkPriceInfos } from '../types'
 
 import { AsyncOrderWithDetails, MarkPrices } from './types'
@@ -234,6 +236,15 @@ export const selectCrossMarginPositions = createSelector(
 	}
 )
 
+export const selectCrossMarginPosition = createSelector(
+	selectCrossMarginPositions,
+	selectV3MarketInfo,
+	(positions, market) => {
+		const position = positions.find((p) => p.market.marketKey === market?.marketKey)
+		return position
+	}
+)
+
 export const selectAsyncCrossMarginOrders = createSelector(
 	selectV3Markets,
 	selectCrossMarginAccountData,
@@ -375,5 +386,32 @@ export const selectActiveCrossMarginPositionsCount = createSelector(
 	selectCrossMarginPositions,
 	(positions) => {
 		return positions.filter((p) => !!p).length
+	}
+)
+
+export const selectV3SkewAdjustedPrice = createSelector(
+	selectMarketIndexPrice,
+	selectV3MarketInfo,
+	(price, marketInfo) => {
+		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return price
+		return price
+			? wei(price).mul(wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1))
+			: ZERO_WEI
+	}
+)
+
+export const selectV3SkewAdjustedPriceInfo = createSelector(
+	selectMarketPriceInfo,
+	selectV3MarketInfo,
+	(priceInfo, marketInfo) => {
+		if (!marketInfo?.marketSkew || !marketInfo?.settings.skewScale) return priceInfo
+		return priceInfo
+			? {
+					price: wei(priceInfo.price).mul(
+						wei(marketInfo.marketSkew).div(marketInfo.settings.skewScale).add(1)
+					),
+					change: priceInfo?.change,
+			  }
+			: undefined
 	}
 )

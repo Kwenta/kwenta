@@ -67,6 +67,7 @@ import {
 import logError from 'utils/logError'
 import { refetchWithComparator } from 'utils/queries'
 
+import { selectMarketIndexPrice } from '../common/selectors'
 import {
 	AccountContext,
 	DebouncedSMPreviewParams,
@@ -107,7 +108,7 @@ import {
 	selectV2Markets,
 	selectOrderType,
 	selectOrderFeeCap,
-	selectPosition,
+	selectSmartMarginPosition,
 	selectSmartMarginTradeInputs,
 	selectIdleMargin,
 	selectSlTpTradeInputs,
@@ -119,12 +120,11 @@ import {
 	selectEditPositionModalInfo,
 	selectSlTpModalInputs,
 	selectSmartMarginKeeperDeposit,
-	selectSkewAdjustedPrice,
 	selectEditPositionPreview,
 	selectClosePositionPreview,
-	selectMarketIndexPrice,
 	selectV2MarketInfo,
 	selectSmartMarginDelayedOrders,
+	selectV2SkewAdjustedPrice,
 } from './selectors'
 import { SmartMarginBalanceInfo } from './types'
 
@@ -222,7 +222,7 @@ export const refetchSmartMarginPosition = createAsyncThunk<
 	if (!account) throw new Error('No wallet connected')
 	const marketInfo = selectV2MarketInfo(getState())
 	const networkId = selectNetwork(getState())
-	const position = selectPosition(getState())
+	const position = selectSmartMarginPosition(getState())
 	if (!marketInfo || !position) throw new Error('Market or position not found')
 
 	const result = await refetchWithComparator(
@@ -673,7 +673,7 @@ export const debouncedPrepareCrossMarginTradePreview = debounce(
 export const editTradeOrderPrice =
 	(price: string): AppThunk =>
 	(dispatch, getState) => {
-		const rate = selectSkewAdjustedPrice(getState())
+		const rate = selectV2SkewAdjustedPrice(getState())
 		const orderType = selectOrderType(getState())
 		const side = selectSmartMarginLeverageSide(getState())
 		const inputs = selectSmartMarginTradeInputs(getState())
@@ -966,7 +966,7 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 		const preview = selectTradePreview(getState())
 		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState())
 		const wallet = selectWallet(getState())
-		const position = selectPosition(getState())
+		const position = selectSmartMarginPosition(getState())
 		const openDelayedOrders = selectSmartMarginDelayedOrders(getState())
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState())
 
@@ -1038,9 +1038,8 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 				orderInputs.keeperEthDeposit = keeperEthDeposit
 			}
 
-			let existingSize = position?.position?.size ?? wei(0)
-			existingSize =
-				position?.position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize
+			let existingSize = position?.size ?? wei(0)
+			existingSize = position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize
 			const isClosing = existingSize.add(tradeInputs.nativeSizeDelta).eq(0)
 
 			const staleOrder = openDelayedOrders.find(

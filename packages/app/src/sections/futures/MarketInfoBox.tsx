@@ -5,8 +5,12 @@ import styled from 'styled-components'
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
 import PreviewArrow from 'components/PreviewArrow'
 import { selectCrossMarginAvailableMargin } from 'state/futures/crossMargin/selectors'
-import { selectBuyingPower, selectMarketSuspended } from 'state/futures/selectors'
-import { selectPreviewMarginChange, selectTradePreview } from 'state/futures/smartMargin/selectors'
+import { selectMarketSuspended } from 'state/futures/selectors'
+import {
+	selectBuyingPower,
+	selectPreviewMarginChange,
+	selectTradePreview,
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 const AvailableMarginRow = memo(() => {
