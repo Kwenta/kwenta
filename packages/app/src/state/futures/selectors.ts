@@ -380,8 +380,9 @@ export const selectFuturesPortfolio = createSelector(
 	selectCrossMarginPositions,
 	selectSmartMarginBalanceInfo,
 	(smartPositions, crossPositions, { freeMargin }) => {
+		// TODO: Update this for cross margin
 		const crossValue =
-			crossPositions.reduce((sum, { remainingMargin }) => sum.add(remainingMargin), wei(0)) ??
+			crossPositions.reduce((sum, { remainingMargin }) => sum.add(remainingMargin ?? 0), wei(0)) ??
 			wei(0)
 		const smartValue =
 			smartPositions.reduce((sum, { remainingMargin }) => sum.add(remainingMargin), wei(0)) ??

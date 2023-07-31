@@ -292,6 +292,7 @@ export const selectSmartMarginPositions = createSelector(
 
 					const position = {
 						...pos.position,
+						remainingMargin: pos.remainingMargin,
 						stopLossOrder: stopLoss,
 						takeProfitOrder: takeProfit,
 						avgEntryPrice: history?.avgEntryPrice ?? ZERO_WEI,
