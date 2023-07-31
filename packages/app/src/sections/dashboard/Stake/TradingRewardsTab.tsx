@@ -59,7 +59,7 @@ const TradingRewardsTab: FC<TradingRewardProps> = memo(
 		}, [totalFuturesFeeQuery.data])
 
 		const estimatedRewardQuery = useGetFile(
-			`trading-rewards-snapshots/${network.id === 420 ? `goerli-` : ''}epoch-current.json`
+			`/${network.id === 420 ? `goerli-` : ''}epoch-current.json`
 		)
 		const estimatedReward = useMemo(
 			() => BigNumber.from(estimatedRewardQuery?.data?.claims[walletAddress!]?.amount ?? 0),
