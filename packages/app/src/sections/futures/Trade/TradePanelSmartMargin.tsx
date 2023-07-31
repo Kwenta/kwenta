@@ -33,7 +33,7 @@ type Props = {
 	closeDrawer?: () => void
 }
 
-const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
+const TradePanelSmartMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 	const dispatch = useAppDispatch()
 
 	const leverageSide = useAppSelector(selectLeverageSide)
@@ -142,4 +142,4 @@ const MainPanelContent = styled.div<{ $mobile?: boolean }>`
 		`}
 `
 
-export default TradePanel
+export default TradePanelSmartMargin

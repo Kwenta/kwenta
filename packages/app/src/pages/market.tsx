@@ -22,8 +22,8 @@ import SmartMarginOnboard from 'sections/futures/SmartMarginOnboard'
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles'
 import DepositWithdrawCrossMarginModal from 'sections/futures/Trade/DepositWithdrawCrossMargin'
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported'
-import TradePanel from 'sections/futures/Trade/TradePanel'
 import TradePanelCrossMargin from 'sections/futures/Trade/TradePanelCrossMargin'
+import TradePanelSmartMargin from 'sections/futures/Trade/TradePanelSmartMargin'
 import TransferSmartMarginModal from 'sections/futures/Trade/TransferSmartMarginModal'
 import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/CrossMarginOrderConfirmation'
 import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin'
@@ -186,7 +186,11 @@ function TradePanelDesktop() {
 		)
 	}
 
-	return accountType === FuturesMarginType.CROSS_MARGIN ? <TradePanelCrossMargin /> : <TradePanel />
+	return accountType === FuturesMarginType.CROSS_MARGIN ? (
+		<TradePanelCrossMargin />
+	) : (
+		<TradePanelSmartMargin />
+	)
 }
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>
