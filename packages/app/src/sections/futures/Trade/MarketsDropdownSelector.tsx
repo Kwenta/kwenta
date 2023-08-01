@@ -54,7 +54,7 @@ const MarketsDropdownSelector: FC<Props> = (props) => (
 				<MobileRightContainer>
 					<div>
 						<NumericValue value={props.priceDetails.priceInfo}>
-							{formatDollars(props.priceDetails.priceInfo?.price ?? '0')}
+							{formatDollars(props.priceDetails.priceInfo?.price ?? '0', { suggestDecimals: true })}
 						</NumericValue>
 						<NumericValue value={props.priceDetails.oneDayChange} colored>
 							{formatPercent(props.priceDetails.oneDayChange)}
