@@ -20,7 +20,6 @@ import {
 	selectFuturesType,
 	selectIdleMargin,
 	selectLockedMarginInMarkets,
-	selectWithdrawableMargin,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
@@ -68,7 +67,6 @@ const TradeBalance = memo(() => {
 	const availableCrossMargin = useAppSelector(selectIdleMargin)
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
 	const availableIsolatedMargin = useAppSelector(selectAvailableMargin)
-	const withdrawable = useAppSelector(selectWithdrawableMargin)
 	const openModal = useAppSelector(selectShowModal)
 
 	const [expanded, setExpanded] = useState(false)
@@ -83,7 +81,7 @@ const TradeBalance = memo(() => {
 
 	const isDepositRequired = useMemo(() => {
 		return isCrossMarginAccount && availableCrossMargin.lt(MIN_MARGIN_AMOUNT) && lockedMargin.eq(0)
-	}, [availableCrossMargin, lockedMargin])
+	}, [availableCrossMargin, isCrossMarginAccount, lockedMargin])
 
 	const onClickContainer = useCallback(() => {
 		if (!isCrossMarginAccount) return
