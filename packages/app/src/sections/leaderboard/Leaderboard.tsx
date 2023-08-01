@@ -11,8 +11,12 @@ import { CompetitionRound, COMPETITION_TIERS, PIN, Tier } from 'constants/compet
 import ROUTES from 'constants/routes'
 import useENS from 'hooks/useENS'
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
+import { fetchPositionHistoryForTrader } from 'state/futures/actions'
 import { setSelectedTrader } from 'state/futures/reducer'
-import { selectSelectedTrader } from 'state/futures/selectors'
+import {
+	selectPositionHistoryForSelectedTrader,
+	selectSelectedTrader,
+} from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
 import { fetchLeaderboard } from 'state/stats/actions'
 import { setLeaderboardSearchTerm } from 'state/stats/reducer'
@@ -50,6 +54,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const searchTerm = useAppSelector(selectLeaderboardSearchTerm)
 	const [searchAddress, setSearchAddress] = useState('')
 	const selectedTrader = useAppSelector(selectSelectedTrader)
+	const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader)
 	const searchEns = useENS(searchTerm)
 
 	const leaderboardLoading = useAppSelector(selectLeaderboardLoading)
@@ -144,7 +149,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 
 	useEffect(() => {
 		setSearchAddress(searchEns.ensAddress ?? (isAddress(searchTerm) ? searchTerm : ''))
-	}, [searchTerm, searchEns])
+		dispatch(fetchPositionHistoryForTrader(trader))
+	}, [searchTerm, searchEns, dispatch, trader])
 
 	return (
 		<>
@@ -179,6 +185,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 						<TraderHistory
 							trader={selectedTrader.trader}
 							traderEns={selectedTrader.traderEns}
+							positionHistory={positionHistory}
 							resetSelection={resetSelection}
 							compact={compact}
 							searchTerm={searchInput}

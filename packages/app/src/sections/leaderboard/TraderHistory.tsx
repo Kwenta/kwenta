@@ -1,8 +1,9 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesPositionHistory } from '@kwenta/sdk/dist/types'
 import { getMarketName } from '@kwenta/sdk/utils'
 import { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
-import { FC, memo, useEffect, useMemo } from 'react'
+import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -14,13 +15,8 @@ import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import ROUTES from 'constants/routes'
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
-import { fetchPositionHistoryForTrader } from 'state/futures/actions'
-import {
-	selectFuturesPositions,
-	selectPositionHistoryForSelectedTrader,
-	selectQueryStatuses,
-} from 'state/futures/selectors'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { selectFuturesPositions, selectQueryStatuses } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink } from 'styles/common'
 import media from 'styles/media'
@@ -28,22 +24,17 @@ import media from 'styles/media'
 type TraderHistoryProps = {
 	trader: string
 	traderEns?: string | null
+	positionHistory: FuturesPositionHistory[]
 	resetSelection: () => void
 	compact?: boolean
 	searchTerm?: string | undefined
 }
 
 const TraderHistory: FC<TraderHistoryProps> = memo(
-	({ trader, traderEns, resetSelection, compact, searchTerm }) => {
+	({ trader, traderEns, positionHistory, resetSelection, compact, searchTerm }) => {
 		const { t } = useTranslation()
-		const dispatch = useAppDispatch()
-		const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader)
 		const positions = useAppSelector(selectFuturesPositions)
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses)
-
-		useEffect(() => {
-			dispatch(fetchPositionHistoryForTrader(trader))
-		}, [trader, dispatch])
 
 		let data = useMemo(() => {
 			return positionHistory
