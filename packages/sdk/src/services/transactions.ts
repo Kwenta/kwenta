@@ -1,7 +1,7 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
 import { wei } from '@synthetixio/wei'
-import { ethers } from 'ethers'
+import { TypedDataDomain, TypedDataField, ethers } from 'ethers'
 import { omit, clone } from 'lodash'
 
 import KwentaSDK from '..'
@@ -37,42 +37,45 @@ export default class TransactionsService {
 		return emitter
 	}
 
-	watchTransaction(transactionHash: string, emitter: Emitter): void {
+	async watchTransaction(transactionHash: string, emitter: Emitter) {
 		emitter.emit(TRANSACTION_EVENTS_MAP.txSent, { transactionHash })
-		this.sdk.context.provider
-			.waitForTransaction(transactionHash)
-			.then(({ status, blockNumber, transactionHash }) => {
-				if (status === 1) {
-					emitter.emit(TRANSACTION_EVENTS_MAP.txConfirmed, {
-						status,
-						blockNumber,
-						transactionHash,
-					})
-				} else {
-					setTimeout(() => {
-						this.sdk.context.provider.getNetwork().then(({ chainId }) => {
-							try {
-								getRevertReason({
-									txHash: transactionHash,
-									networkId: chainId,
-									blockNumber,
-									provider: this.sdk.context.provider,
-								}).then((revertReason) =>
-									emitter.emit(TRANSACTION_EVENTS_MAP.txFailed, {
-										transactionHash,
-										failureReason: revertReason,
-									})
-								)
-							} catch (e) {
-								emitter.emit(TRANSACTION_EVENTS_MAP.txFailed, {
-									transactionHash,
-									failureReason: 'Transaction reverted for an unknown reason',
-								})
-							}
-						})
-					}, 5000)
-				}
+
+		const {
+			status,
+			blockNumber,
+			transactionHash: hash,
+		} = await this.sdk.context.provider.waitForTransaction(transactionHash)
+
+		if (status === 1) {
+			emitter.emit(TRANSACTION_EVENTS_MAP.txConfirmed, {
+				status,
+				blockNumber,
+				transactionHash: hash,
 			})
+		} else {
+			setTimeout(async () => {
+				const { chainId } = await this.sdk.context.provider.getNetwork()
+
+				try {
+					const revertReason = await getRevertReason({
+						txHash: transactionHash,
+						networkId: chainId,
+						blockNumber,
+						provider: this.sdk.context.provider,
+					})
+
+					emitter.emit(TRANSACTION_EVENTS_MAP.txFailed, {
+						transactionHash,
+						failureReason: revertReason,
+					})
+				} catch (e) {
+					emitter.emit(TRANSACTION_EVENTS_MAP.txFailed, {
+						transactionHash,
+						failureReason: 'Transaction reverted for an unknown reason',
+					})
+				}
+			}, 5000)
+		}
 	}
 
 	public createContractTxn(
@@ -157,5 +160,17 @@ export default class TransactionsService {
 
 	public getGasPrice() {
 		return getEthGasPrice(this.sdk.context.networkId, this.sdk.context.provider)
+	}
+
+	public async signTypedData({
+		domain,
+		types,
+		values,
+	}: {
+		domain: TypedDataDomain
+		types: Record<string, Array<TypedDataField>>
+		values: Record<string, any>
+	}) {
+		return this.sdk.context.signer._signTypedData(domain, types, values)
 	}
 }

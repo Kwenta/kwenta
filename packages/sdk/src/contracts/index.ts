@@ -118,6 +118,15 @@ export const getContractsByNetwork = (
 		SUSD: ADDRESSES.SUSD[networkId]
 			? ERC20__factory.connect(ADDRESSES.SUSD[networkId], provider)
 			: undefined,
+		USDC: ADDRESSES.USDC[networkId]
+			? ERC20__factory.connect(ADDRESSES.USDC[networkId], provider)
+			: undefined,
+		USDT: ADDRESSES.USDT[networkId]
+			? ERC20__factory.connect(ADDRESSES.USDT[networkId], provider)
+			: undefined,
+		DAI: ADDRESSES.DAI[networkId]
+			? ERC20__factory.connect(ADDRESSES.DAI[networkId], provider)
+			: undefined,
 		SNXUSD: ADDRESSES.SNXUSD[networkId]
 			? ERC20__factory.connect(ADDRESSES.SNXUSD[networkId], provider)
 			: undefined,

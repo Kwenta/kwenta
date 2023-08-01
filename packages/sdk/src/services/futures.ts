@@ -47,6 +47,7 @@ import {
 	SLTPOrderInputs,
 	FuturesMarginType,
 	PerpsMarketV2,
+	SwapDepositToken,
 } from '../types/futures'
 import { PricesMap } from '../types/prices'
 import { calculateTimestampForPeriod } from '../utils/date'
@@ -72,6 +73,8 @@ import {
 } from '../utils/futures'
 import { getFuturesAggregateStats } from '../utils/subgraph'
 import { getReasonFromCode } from '../utils/synths'
+import { getPermit2Amount, getPermit2TypedData } from '../utils/permit2'
+import { PERMIT2_ADDRESS, PERMIT_STRUCT } from '../constants/permit2'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
@@ -382,15 +385,27 @@ export default class FuturesService {
 			smartMarginAddress,
 			this.sdk.context.provider
 		)
-		const { SUSD } = this.sdk.context.contracts
-		if (!SUSD) throw new Error(UNSUPPORTED_NETWORK)
+		const { SUSD, USDC, USDT, DAI } = this.sdk.context.contracts
+
+		if (!SUSD || !USDC || !USDT || !DAI) throw new Error(UNSUPPORTED_NETWORK)
 
 		// TODO: EthCall
-		const [freeMargin, keeperEthBal, walletEthBal, allowance] = await Promise.all([
+		const [
+			freeMargin,
+			keeperEthBal,
+			walletEthBal,
+			allowance,
+			usdcAllowance,
+			usdtAllowance,
+			daiAllowance,
+		] = await Promise.all([
 			smartMarginAccountContract.freeMargin(),
 			this.sdk.context.provider.getBalance(smartMarginAddress),
 			this.sdk.context.provider.getBalance(walletAddress),
 			SUSD.allowance(walletAddress, smartMarginAccountContract.address),
+			USDC.allowance(walletAddress, PERMIT2_ADDRESS),
+			USDT.allowance(walletAddress, PERMIT2_ADDRESS),
+			DAI.allowance(walletAddress, PERMIT2_ADDRESS),
 		])
 
 		return {
@@ -398,6 +413,9 @@ export default class FuturesService {
 			keeperEthBal: wei(keeperEthBal),
 			walletEthBal: wei(walletEthBal),
 			allowance: wei(allowance),
+			usdcAllowance: wei(usdcAllowance),
+			usdtAllowance: wei(usdtAllowance),
+			daiAllowance: wei(daiAllowance),
 		}
 	}
 
@@ -617,25 +635,62 @@ export default class FuturesService {
 
 	public async approveSmartMarginDeposit(
 		smartMarginAddress: string,
-		amount: BigNumber = BigNumber.from(ethers.constants.MaxUint256)
+		amount: BigNumber = BigNumber.from(ethers.constants.MaxUint256),
+		token: SwapDepositToken = SwapDepositToken.SUSD
 	) {
-		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK)
-		return this.sdk.transactions.createContractTxn(this.sdk.context.contracts.SUSD, 'approve', [
-			smartMarginAddress,
+		const tokenContract = this.sdk.context.contracts[token]
+
+		if (!tokenContract) throw new Error(UNSUPPORTED_NETWORK)
+
+		return this.sdk.transactions.createContractTxn(tokenContract, 'approve', [
+			token === SwapDepositToken.SUSD ? smartMarginAddress : PERMIT2_ADDRESS,
 			amount,
 		])
 	}
 
-	public async depositSmartMarginAccount(smartMarginAddress: string, amount: Wei) {
+	public async depositSmartMarginAccount(
+		smartMarginAddress: string,
+		amount: Wei,
+		token: SwapDepositToken = SwapDepositToken.SUSD
+	) {
+		const tokenContract = this.sdk.context.contracts[token]
+
+		if (!tokenContract) throw new Error(UNSUPPORTED_NETWORK)
+
+		const walletAddress = await this.sdk.context.signer.getAddress()
+
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
 			smartMarginAddress,
 			this.sdk.context.signer
 		)
 
-		return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
-			[defaultAbiCoder.encode(['int256'], [amount.toBN()])],
-		])
+		if (token === SwapDepositToken.SUSD) {
+			return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
+				[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
+				[defaultAbiCoder.encode(['int256'], [amount.toBN()])],
+			])
+		} else {
+			const permitAmount = await getPermit2Amount(
+				this.sdk.context.provider,
+				walletAddress,
+				tokenContract.address,
+				smartMarginAddress
+			)
+
+			if (amount.toBN().lte(permitAmount)) {
+				const { commands, inputs } = await this.signPermit(
+					smartMarginAddress,
+					tokenContract.address
+				)
+
+				return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
+					commands,
+					inputs,
+				])
+			} else {
+				throw new Error('Deposit failed: Deposit amount is greater than permitted amount')
+			}
+		}
 	}
 
 	public async withdrawSmartMarginAccount(smartMarginAddress: string, amount: Wei) {
@@ -1160,5 +1215,25 @@ export default class FuturesService {
 		}
 
 		return { commands, inputs, idleMargin }
+	}
+
+	private async signPermit(smartMarginAddress: string, tokenAddress: string) {
+		// If we don't have enough from idle market margin then we pull from the wallet
+		const walletAddress = await this.sdk.context.signer.getAddress()
+
+		// Skip amount, we will use the permit to approve the max amount
+		const data = await getPermit2TypedData(
+			this.sdk.context.provider,
+			tokenAddress,
+			walletAddress,
+			smartMarginAddress
+		)
+
+		const signedMessage = await this.sdk.transactions.signTypedData(data)
+
+		return {
+			commands: [AccountExecuteFunctions.PERMIT2_PERMIT],
+			inputs: [defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [data.values, signedMessage])],
+		}
 	}
 }

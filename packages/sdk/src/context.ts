@@ -2,6 +2,7 @@ import { EventEmitter } from 'events'
 
 import { Provider as EthCallProvider } from 'ethcall'
 import { ethers } from 'ethers'
+import { TypedDataSigner } from '@ethersproject/abstract-signer'
 
 import * as sdkErrors from './common/errors'
 import {
@@ -15,7 +16,7 @@ import { NetworkId } from './types/common'
 export interface IContext {
 	provider: ethers.providers.Provider
 	networkId: NetworkId
-	signer?: ethers.Signer
+	signer?: ethers.Signer & TypedDataSigner
 	walletAddress?: string
 	logError?: (err: Error, skipReport?: boolean) => void
 }
@@ -97,7 +98,7 @@ export default class Context implements IContext {
 
 	public async setSigner(signer: ethers.Signer) {
 		this.context.walletAddress = await signer.getAddress()
-		this.context.signer = signer
+		this.context.signer = signer as ethers.Signer & TypedDataSigner
 	}
 
 	public logError(err: Error, skipReport = false) {

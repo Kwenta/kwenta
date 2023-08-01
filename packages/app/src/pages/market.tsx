@@ -79,14 +79,12 @@ const Market: MarketComponent = () => {
 		if (router.isReady && accountType !== routerAccountType) {
 			dispatch(setFuturesAccountType(routerAccountType))
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.isReady, routerAccountType])
+	}, [dispatch, accountType, router.isReady, routerAccountType])
 
 	useEffect(() => {
 		dispatch(clearTradeInputs())
 		// Clear trade state when switching address
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [walletAddress])
+	}, [dispatch, walletAddress])
 
 	useEffect(() => {
 		if (

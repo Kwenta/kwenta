@@ -505,6 +505,8 @@ export enum AccountExecuteFunctions {
 	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 11,
 	GELATO_PLACE_CONDITIONAL_ORDER = 12,
 	GELATO_CANCEL_CONDITIONAL_ORDER = 13,
+	UNISWAP_V3_SWAP = 14,
+	PERMIT2_PERMIT = 15,
 }
 
 export type MarginTransfer = {
@@ -580,4 +582,11 @@ export type PerpsV3SubgraphMarket = {
 	lockedOiPercent: string
 	makerFee: string
 	takerFee: string
+}
+
+export enum SwapDepositToken {
+	SUSD = 'SUSD',
+	USDC = 'USDC',
+	USDT = 'USDT',
+	DAI = 'DAI',
 }
