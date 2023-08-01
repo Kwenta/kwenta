@@ -7,7 +7,7 @@ import {
 	getSortedRowModel,
 } from '@tanstack/react-table'
 import type { ColumnDef, Row, SortingState, VisibilityState } from '@tanstack/react-table'
-import React, { DependencyList, FC, useCallback, useMemo, useRef, useState } from 'react'
+import React, { DependencyList, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { genericMemo } from 'types/helpers'
 
@@ -140,6 +140,12 @@ const Table = <T,>({
 		},
 		[onTableRowClick]
 	)
+
+	useEffect(() => {
+		if (typeof lastRef === 'function' && data.length > 0) {
+			lastRef(defaultRef.current)
+		}
+	}, [lastRef, data.length])
 
 	return (
 		<>
