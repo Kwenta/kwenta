@@ -30,7 +30,7 @@ import media from 'styles/media'
 
 import AllTime from './AllTime'
 import Competition from './Competition'
-import TraderHistory from './TraderHistory'
+import TraderHistory from '../futures/TraderHistory'
 
 type LeaderboardProps = {
 	compact?: boolean

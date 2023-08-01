@@ -4,8 +4,8 @@ import styled from 'styled-components'
 
 import TabButton from 'components/Button/TabButton'
 import { TabPanel } from 'components/Tab'
+import TraderHistory from 'sections/futures/TraderHistory'
 import Trades from 'sections/futures/Trades'
-import TraderHistory from 'sections/leaderboard/TraderHistory'
 import { fetchPositionHistoryForTrader } from 'state/futures/actions'
 import { selectUsersPositionHistory } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -37,15 +37,13 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 			<HistoryTabsHeader>
 				<TabButtons>
 					<TabButton
-						nofill={true}
-						isRounded={true}
+						variant="noOutline"
 						title={t('dashboard.history.tabs.positions')}
 						onClick={onChangeTab(HistoryTab.Positions)}
 						active={currentTab === HistoryTab.Positions}
 					/>
 					<TabButton
-						nofill={true}
-						isRounded={true}
+						variant="noOutline"
 						title={t('dashboard.history.tabs.trades')}
 						onClick={onChangeTab(HistoryTab.Trades)}
 						active={currentTab === HistoryTab.Trades}
