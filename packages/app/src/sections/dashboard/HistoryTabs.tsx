@@ -6,6 +6,7 @@ import TabButton from 'components/Button/TabButton'
 import { TabPanel } from 'components/Tab'
 import Trades from 'sections/futures/Trades'
 import TraderHistory from 'sections/leaderboard/TraderHistory'
+import { fetchPositionHistoryForTrader } from 'state/futures/actions'
 import { setSelectedTrader } from 'state/futures/reducer'
 import { selectPositionHistoryForSelectedTrader } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
@@ -34,6 +35,7 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 				trader: walletAddress ?? '',
 			})
 		)
+		dispatch(fetchPositionHistoryForTrader(walletAddress ?? ''))
 	}, [dispatch, walletAddress])
 
 	return (
