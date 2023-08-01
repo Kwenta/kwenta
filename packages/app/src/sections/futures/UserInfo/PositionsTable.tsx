@@ -194,7 +194,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 											<Body>{NO_VALUE}</Body>
 										) : (
 											<div>
-												<Currency.Price price={row.takeProfit} />
+												<Currency.Price price={row.takeProfit.targetPrice} />
 											</div>
 										)}
 										<EditPositionButton
@@ -206,7 +206,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 										<Body>{NO_VALUE}</Body>
 									) : (
 										<div>
-											<Currency.Price price={row.stopLoss} />
+											<Currency.Price price={row.stopLoss.targetPrice} />
 										</div>
 									)}
 								</FlexDivCol>

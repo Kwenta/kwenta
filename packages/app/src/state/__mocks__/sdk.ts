@@ -1,7 +1,7 @@
 import { wei } from '@synthetixio/wei'
 
-import { MOCK_TRADE_PREVIEW, SDK_MARKETS } from '../../../testing/unit/mocks/data/futures'
 import { mockTxResponse } from '../../../testing/unit/mocks/data/app'
+import { MOCK_TRADE_PREVIEW, SDK_MARKETS } from '../../../testing/unit/mocks/data/futures'
 
 export const mockSetProvider = () => Promise.resolve('10')
 export const mockSetSigner = () => Promise.resolve()

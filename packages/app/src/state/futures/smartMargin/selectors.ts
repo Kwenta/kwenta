@@ -290,11 +290,11 @@ export const selectSmartMarginPositions = createSelector(
 							o.orderType === ConditionalOrderTypeEnum.LIMIT
 					)
 
-					const position = {
+					const position: FuturesPositionTablePosition = {
 						...pos.position,
 						remainingMargin: pos.remainingMargin,
-						stopLossOrder: stopLoss,
-						takeProfitOrder: takeProfit,
+						stopLoss: stopLoss,
+						takeProfit: takeProfit,
 						avgEntryPrice: history?.avgEntryPrice ?? ZERO_WEI,
 						market,
 					}
