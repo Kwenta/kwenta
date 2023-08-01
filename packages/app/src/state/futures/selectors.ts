@@ -357,6 +357,17 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 	}
 )
 
+export const selectUsersPositionHistory = createSelector(
+	selectNetwork,
+	selectWallet,
+	(state: RootState) => state.futures,
+	(networkId, wallet, futures) => {
+		if (!wallet) return []
+		const history = futures.leaderboard.selectedTraderPositionHistory[networkId]?.[wallet] ?? []
+		return unserializePositionHistory(history)
+	}
+)
+
 export const selectCrossMarginPositions = createSelector(
 	selectCrossMarginAccountData,
 	selectAllConditionalOrders,
