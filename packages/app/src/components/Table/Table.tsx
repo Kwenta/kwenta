@@ -145,7 +145,7 @@ const Table = <T,>({
 		if (typeof lastRef === 'function' && data.length > 0) {
 			lastRef(defaultRef.current)
 		}
-	}, [lastRef, defaultRef, data.length])
+	}, [lastRef, data.length])
 
 	return (
 		<>
