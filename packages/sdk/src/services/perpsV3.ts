@@ -376,10 +376,10 @@ export default class PerpsV3Service {
 		return wei(availableMargin)
 	}
 
-	public async getPendingAsyncOrder(accountId: number, marketAddress: string) {
+	public async getPendingAsyncOrder(accountId: number) {
 		const marketProxy = this.sdk.context.contracts.perpsV3MarketProxy
 		if (!marketProxy) throw new Error(UNSUPPORTED_NETWORK)
-		const order = await marketProxy.getOrder(accountId, marketAddress)
+		const order = await marketProxy.getOrder(accountId)
 		return formatV3AsyncOrder(order)
 	}
 
@@ -390,7 +390,7 @@ export default class PerpsV3Service {
 		const orders = (await this.sdk.context.multicallProvider.all(
 			marketIds.map((market) => proxy.getOrder(market, accountId))
 		)) as AsyncOrder.DataStructOutput[]
-		return orders.filter((o) => o.sizeDelta.abs().gt(0)).map(formatV3AsyncOrder)
+		return orders.filter((o) => o.request.sizeDelta.abs().gt(0)).map(formatV3AsyncOrder)
 	}
 
 	public async getTradePreview(
