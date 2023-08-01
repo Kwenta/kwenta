@@ -704,8 +704,8 @@
 		},
 		"history": {
 			"tabs": {
-				"futures": "Futures History",
-				"spot": "Spot History"
+				"positions": "Positions",
+				"trades": "Trades"
 			},
 			"spot-history-table": {
 				"date-time": "Date/Time",
@@ -715,17 +715,8 @@
 				"no-trade-history": "You have no synth trading history",
 				"no-trade-history-link": "Visit the Kwenta exchange to swap synths"
 			},
-			"futures-history-table": {
-				"asset": "Asset",
-				"size": "Size",
-				"pnl": "P&L",
-				"date-time": "Date/Time",
-				"fees": "Fees",
-				"price": "Price",
-				"side": "Side",
-				"market": "Market",
-				"type": "Type",
-				"no-result": "You have no futures trading history"
+			"positions-history-table": {
+				"no-result": "You have no futures positions history"
 			}
 		},
 		"deprecated": {
@@ -1238,7 +1229,8 @@
 				"liquidated": "Liquidated",
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"total-pnl": "Realized P&L"
+				"total-pnl": "Realized P&L",
+				"funding": "Funding"
 			}
 		},
 		"competition": {

@@ -11,8 +11,12 @@ import { CompetitionRound, COMPETITION_TIERS, PIN, Tier } from 'constants/compet
 import ROUTES from 'constants/routes'
 import useENS from 'hooks/useENS'
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
+import { fetchPositionHistoryForTrader } from 'state/futures/actions'
 import { setSelectedTrader } from 'state/futures/reducer'
-import { selectSelectedTrader } from 'state/futures/selectors'
+import {
+	selectPositionHistoryForSelectedTrader,
+	selectSelectedTrader,
+} from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
 import { fetchLeaderboard } from 'state/stats/actions'
 import { setLeaderboardSearchTerm } from 'state/stats/reducer'
@@ -26,7 +30,7 @@ import media from 'styles/media'
 
 import AllTime from './AllTime'
 import Competition from './Competition'
-import TraderHistory from './TraderHistory'
+import TraderHistory from '../futures/TraderHistory'
 
 type LeaderboardProps = {
 	compact?: boolean
@@ -50,14 +54,18 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const [searchInput, setSearchInput] = useState('')
 	const searchTerm = useAppSelector(selectLeaderboardSearchTerm)
 	const [searchAddress, setSearchAddress] = useState('')
+	const wallet = useAppSelector(selectWallet)
 	const selectedTrader = useAppSelector(selectSelectedTrader)
+	const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader)
 	const searchEns = useENS(searchTerm)
 
 	const leaderboardLoading = useAppSelector(selectLeaderboardLoading)
 	const leaderboardData = useAppSelector(selectLeaderboard)
-	const walletAddress = useAppSelector(selectWallet)
 
-	useFetchAction(fetchLeaderboard, { dependencies: [searchTerm], disabled: !walletAddress })
+	useFetchAction(fetchLeaderboard, {
+		dependencies: [searchTerm, wallet],
+		disabled: !wallet,
+	})
 
 	const pinRow = useMemo(() => {
 		return leaderboardData.wallet.map((trader) => ({ ...trader, rank: 0, rankText: PIN }))
@@ -146,7 +154,11 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 
 	useEffect(() => {
 		setSearchAddress(searchEns.ensAddress ?? (isAddress(searchTerm) ? searchTerm : ''))
-	}, [searchTerm, searchEns])
+	}, [searchTerm, searchEns, dispatch, trader])
+
+	useEffect(() => {
+		dispatch(fetchPositionHistoryForTrader(trader))
+	}, [dispatch, trader])
 
 	return (
 		<>
@@ -181,6 +193,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 						<TraderHistory
 							trader={selectedTrader.trader}
 							traderEns={selectedTrader.traderEns}
+							positionHistory={positionHistory}
 							resetSelection={resetSelection}
 							compact={compact}
 							searchTerm={searchInput}

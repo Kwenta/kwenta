@@ -41,7 +41,7 @@ const Pagination: FC<PaginationProps> = React.memo(
 
 		return (
 			<>
-				<PaginationContainer compact={compact}>
+				<PaginationContainer $compact={compact} $bottomBorder={!!extra}>
 					<ArrowButtonContainer>
 						<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
 							<LeftEndArrowIcon />
@@ -84,15 +84,20 @@ const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `
 
-const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
+const PaginationContainer = styled(GridDivCenteredCol)<{
+	$compact: boolean
+	$bottomBorder: boolean
+}>`
 	grid-template-columns: auto 1fr auto;
-	padding: ${(props) => (props.compact ? '10px' : '15px')} 12px;
+	padding: ${(props) => (props.$compact ? '10px' : '15px')} 12px;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 	justify-items: center;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+	border-bottom: ${(props) =>
+		props.$bottomBorder ? props.theme.colors.selectedTheme.border : 'none'};
 
 	${media.lessThan('lg')`
-		border: ${(props) => props.theme.colors.selectedTheme.border};
 		border-radius: 0px;
 	`}
 `
