@@ -11,7 +11,7 @@ import { FUTURES_INITIAL_STATE } from 'state/futures/reducer'
 
 import { PRELOADED_STATE, TEST_ADDR } from './app'
 
-export const mockSmartMarginAccount = (freeMargin: string = '1000') => ({
+export const mockSmartMarginAccount = (freeMargin: string = '1000', keeperEthBal = '0.05') => ({
 	account: '0xe1ba3B0A962FbC525a9f9503AEE3310940Bb2a6F',
 	positionHistory: [],
 	trades: [],
@@ -19,7 +19,7 @@ export const mockSmartMarginAccount = (freeMargin: string = '1000') => ({
 	idleTransfers: [],
 	balanceInfo: {
 		freeMargin: freeMargin,
-		keeperEthBal: '0.05',
+		keeperEthBal: keeperEthBal,
 		allowance: freeMargin,
 		walletEthBal: '1',
 	},

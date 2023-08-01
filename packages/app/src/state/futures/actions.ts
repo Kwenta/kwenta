@@ -1,7 +1,7 @@
 import KwentaSDK from '@kwenta/sdk'
 import {
 	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
-	ORDER_KEEPER_ETH_DEPOSIT,
+	MIN_ACCOUNT_KEEPER_BAL,
 	PERIOD_IN_SECONDS,
 	Period,
 	SL_TP_MAX_SIZE,
@@ -55,7 +55,7 @@ import {
 	updateTransactionStatus,
 } from 'state/app/reducer'
 import { fetchBalances } from 'state/balances/actions'
-import { ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
+import { EST_KEEPER_GAS_FEE, ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
 import { serializeWeiObject } from 'state/helpers'
 import { selectLatestEthPrice } from 'state/prices/selectors'
 import { AppDispatch, AppThunk, RootState } from 'state/store'
@@ -137,6 +137,7 @@ import {
 	selectEditPositionPreview,
 	selectClosePositionPreview,
 	selectMarketIndexPrice,
+	selectAllConditionalOrders,
 } from './selectors'
 import {
 	AccountContext,
@@ -868,7 +869,8 @@ export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
 const stageCrossMarginTradePreview = createAsyncThunk<void, TradePreviewParams, ThunkConfig>(
 	'futures/stageCrossMarginTradePreview',
 	async (inputs, { dispatch, getState }) => {
-		dispatch(calculateCrossMarginFees(inputs))
+		const openOrders = selectAllConditionalOrders(getState())
+		dispatch(calculateCrossMarginFees(inputs, openOrders.length))
 		dispatch(incrementCrossPreviewCount())
 		const debounceCount = selectCrossPreviewCount(getState())
 		debouncedPrepareCrossMarginTradePreview(dispatch, { ...inputs, debounceCount })
@@ -1131,7 +1133,7 @@ export const fetchFuturesFeesForAccount = createAsyncThunk<
 })
 
 export const calculateCrossMarginFees =
-	(params: TradePreviewParams): AppThunk =>
+	(params: TradePreviewParams, pendingOrdersCount: number): AppThunk =>
 	(dispatch, getState) => {
 		const markets = selectMarkets(getState())
 		const market = markets.find((m) => m.marketKey === params.market.key)
@@ -1141,10 +1143,12 @@ export const calculateCrossMarginFees =
 			market,
 			params.sizeDelta.mul(params.orderPrice?.abs())
 		)
-
-		const requiredDeposit = keeperBalance.lt(ORDER_KEEPER_ETH_DEPOSIT)
-			? ORDER_KEEPER_ETH_DEPOSIT.sub(keeperBalance)
-			: wei(0)
+		// Calculate required ETH based on pending orders
+		const reservedEth = pendingOrdersCount * EST_KEEPER_GAS_FEE
+		const requiredEth = wei(
+			Math.max(reservedEth + EST_KEEPER_GAS_FEE, MIN_ACCOUNT_KEEPER_BAL.toNumber())
+		)
+		const requiredDeposit = keeperBalance.lt(requiredEth) ? requiredEth.sub(keeperBalance) : wei(0)
 
 		const fees = {
 			delayedOrderFee: delayedOrderFee.toString(),
@@ -1155,8 +1159,8 @@ export const calculateCrossMarginFees =
 
 export const calculateKeeperDeposit = (): AppThunk => (dispatch, getState) => {
 	const keeperBalance = selectKeeperEthBalance(getState())
-	const requiredDeposit = keeperBalance.lt(ORDER_KEEPER_ETH_DEPOSIT)
-		? ORDER_KEEPER_ETH_DEPOSIT.sub(keeperBalance)
+	const requiredDeposit = keeperBalance.lt(MIN_ACCOUNT_KEEPER_BAL)
+		? MIN_ACCOUNT_KEEPER_BAL.sub(keeperBalance)
 		: wei(0)
 
 	dispatch(setKeeperDeposit(requiredDeposit.toString()))
