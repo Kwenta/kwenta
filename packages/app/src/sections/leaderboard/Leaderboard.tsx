@@ -154,8 +154,11 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 
 	useEffect(() => {
 		setSearchAddress(searchEns.ensAddress ?? (isAddress(searchTerm) ? searchTerm : ''))
-		dispatch(fetchPositionHistoryForTrader(trader))
 	}, [searchTerm, searchEns, dispatch, trader])
+
+	useEffect(() => {
+		dispatch(fetchPositionHistoryForTrader(trader))
+	}, [dispatch, trader])
 
 	return (
 		<>
