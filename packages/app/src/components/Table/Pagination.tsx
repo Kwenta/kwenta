@@ -90,6 +90,7 @@ const PaginationContainer = styled(GridDivCenteredCol)<{ compact: boolean }>`
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
 	justify-items: center;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 
 	${media.lessThan('lg')`
 		border: ${(props) => props.theme.colors.selectedTheme.border};

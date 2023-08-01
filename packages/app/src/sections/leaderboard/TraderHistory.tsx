@@ -138,7 +138,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										),
 										accessorKey: 'status',
 										cell: (cellProps) => {
-											return <StyledCell>{cellProps.row.original.status}</StyledCell>
+											return <Body color="primary">{cellProps.row.original.status}</Body>
 										},
 										size: 30,
 									},
@@ -265,7 +265,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										),
 										accessorKey: 'status',
 										cell: (cellProps) => {
-											return <StyledCell>{cellProps.row.original.status}</StyledCell>
+											return <Body color="primary">{cellProps.row.original.status}</Body>
 										},
 										size: 30,
 									},

@@ -112,11 +112,11 @@ const sharedStyle = css<{
 	&:disabled {
 		background-color: transparent;
 		p {
-			color: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		}
 		svg {
 			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
+				fill: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 			}
 		}
 
@@ -136,7 +136,7 @@ const sharedStyle = css<{
 		color: ${(props) =>
 			props.active
 				? props.theme.colors.selectedTheme.button.text.primary
-				: props.theme.colors.selectedTheme.gray};
+				: props.theme.colors.selectedTheme.newTheme.text.secondary};
 	}
 
 	.detail {
