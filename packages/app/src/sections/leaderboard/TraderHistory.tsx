@@ -8,7 +8,7 @@ import styled, { css } from 'styled-components'
 
 import Currency from 'components/Currency'
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
-import { FlexDiv, FlexDivColCentered } from 'components/layout/flex'
+import { FlexDiv } from 'components/layout/flex'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
@@ -126,7 +126,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												</StyledCell>
 											)
 										},
-										size: 90,
+										size: 100,
 									},
 									{
 										header: () => (
@@ -139,7 +139,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
 											</CurrencyInfo>
 										),
-										size: 120,
+										size: 150,
 									},
 									{
 										header: () => (
@@ -149,66 +149,64 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										cell: (cellProps) => {
 											return <StyledCell>{cellProps.row.original.status}</StyledCell>
 										},
-										size: 85,
+										size: 30,
 									},
 									{
 										header: () => (
-											<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+											<RightAlignedTableHeader>
 												{t('leaderboard.trader-history.table.total-trades')}
-											</TableHeader>
+											</RightAlignedTableHeader>
 										),
 										accessorKey: 'trades',
 										cell: (cellProps) => (
-											<div style={{ width: '60%', textAlign: 'right' }}>{cellProps.getValue()}</div>
+											<RightAlignedContainer>{cellProps.getValue()}</RightAlignedContainer>
 										),
-										size: 70,
+										size: 130,
 									},
 									{
 										header: () => (
-											<TableHeader style={{ width: '90%', textAlign: 'right' }}>
+											<RightAlignedTableHeader>
 												{t('leaderboard.trader-history.table.total-volume')}
-											</TableHeader>
+											</RightAlignedTableHeader>
 										),
 										accessorKey: 'totalVolume',
 										cell: (cellProps) => (
-											<div style={{ width: '90%', textAlign: 'right' }}>
+											<RightAlignedContainer>
 												<Currency.Price price={cellProps.getValue()} />
-											</div>
+											</RightAlignedContainer>
 										),
-										size: 80,
+										size: 130,
 									},
 									{
 										header: () => (
-											<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+											<RightAlignedTableHeader>
 												{t('leaderboard.trader-history.table.total-pnl')}
-											</TableHeader>
+											</RightAlignedTableHeader>
 										),
 										accessorKey: 'pnl',
 										cell: (cellProps) => (
-											<PnlContainer>
-												<div style={{ width: '100%', textAlign: 'right' }}>
-													<Currency.Price price={cellProps.row.original.pnl} colored />
-													<StyledValue $value={cellProps.row.original.pnl}>
-														{cellProps.row.original.pnlPct}
-													</StyledValue>
-												</div>
-											</PnlContainer>
+											<RightAlignedContainer>
+												<Currency.Price price={cellProps.row.original.pnl} colored />
+												<StyledValue $value={cellProps.row.original.pnl}>
+													{cellProps.row.original.pnlPct}
+												</StyledValue>
+											</RightAlignedContainer>
 										),
-										size: 110,
+										size: 130,
 									},
 									{
 										header: () => (
-											<TableHeader style={{ width: '60%', textAlign: 'right' }}>
+											<RightAlignedTableHeader>
 												{t('leaderboard.trader-history.table.funding')}
-											</TableHeader>
+											</RightAlignedTableHeader>
 										),
 										accessorKey: 'funding',
 										cell: (cellProps) => (
-											<div style={{ width: '60%', textAlign: 'right' }}>
+											<RightAlignedContainer>
 												<Currency.Price price={cellProps.getValue()} colored />
-											</div>
+											</RightAlignedContainer>
 										),
-										size: 90,
+										size: 130,
 									},
 								],
 							},
@@ -286,12 +284,12 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										),
 										accessorKey: 'pnl',
 										cell: (cellProps) => (
-											<PnlContainer>
+											<RightAlignedContainer>
 												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
-											</PnlContainer>
+											</RightAlignedContainer>
 										),
 										size: 40,
 									},
@@ -304,6 +302,16 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		)
 	}
 )
+
+const RightAlignedTableHeader = styled(TableHeader)`
+	width: 90%;
+	text-align: right;
+`
+
+const RightAlignedContainer = styled.div`
+	width: 90%;
+	text-align: right;
+`
 
 const StyledTable = styled(Table)<{ compact?: boolean; height?: number }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
@@ -360,12 +368,6 @@ const CurrencyInfo = styled(FlexDiv)`
 const StyledSubtitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-transform: capitalize;
-`
-
-const PnlContainer = styled(FlexDivColCentered)`
-	justify-content: flex-end;
-	width: 60%;
-	text-align: right;
 `
 
 const valueColor = css<{ $value: WeiSource }>`
