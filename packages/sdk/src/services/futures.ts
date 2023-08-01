@@ -9,7 +9,13 @@ import { orderBy } from 'lodash'
 
 import KwentaSDK from '..'
 import { UNSUPPORTED_NETWORK } from '../common/errors'
-import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from '../constants/futures'
+import {
+	AMOUNT_OUT_MIN,
+	KWENTA_TRACKING_CODE,
+	LOW_FEE_TIER,
+	ORDERS_FETCH_SIZE,
+	SL_TP_MAX_SIZE,
+} from '../constants/futures'
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from '../constants/period'
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from '../contracts'
 import PerpsMarketABI from '../contracts/abis/PerpsV2Market.json'
@@ -654,8 +660,9 @@ export default class FuturesService {
 		token: SwapDepositToken = SwapDepositToken.SUSD
 	) {
 		const tokenContract = this.sdk.context.contracts[token]
+		const { SUSD } = this.sdk.context.contracts
 
-		if (!tokenContract) throw new Error(UNSUPPORTED_NETWORK)
+		if (!tokenContract || !SUSD) throw new Error(UNSUPPORTED_NETWORK)
 
 		const walletAddress = await this.sdk.context.signer.getAddress()
 
@@ -678,14 +685,22 @@ export default class FuturesService {
 			)
 
 			if (amount.toBN().lte(permitAmount)) {
-				const { commands, inputs } = await this.signPermit(
-					smartMarginAddress,
-					tokenContract.address
-				)
+				const { command, input } = await this.signPermit(smartMarginAddress, tokenContract.address)
+
+				const path =
+					defaultAbiCoder.encode(['bytes20'], [SUSD.address]) +
+					defaultAbiCoder.encode(['bytes3'], [LOW_FEE_TIER]) +
+					defaultAbiCoder.encode(['bytes20'], [tokenContract.address])
 
 				return this.sdk.transactions.createContractTxn(smartMarginAccountContract, 'execute', [
-					commands,
-					inputs,
+					[...command, AccountExecuteFunctions.UNISWAP_V3_SWAP],
+					[
+						...input,
+						defaultAbiCoder.encode(
+							['uint256', 'uint256', 'bytes'],
+							[amount.toBN(), ethers.BigNumber.from(AMOUNT_OUT_MIN), path]
+						),
+					],
 				])
 			} else {
 				throw new Error('Deposit failed: Deposit amount is greater than permitted amount')
@@ -1232,8 +1247,8 @@ export default class FuturesService {
 		const signedMessage = await this.sdk.transactions.signTypedData(data)
 
 		return {
-			commands: [AccountExecuteFunctions.PERMIT2_PERMIT],
-			inputs: [defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [data.values, signedMessage])],
+			command: [AccountExecuteFunctions.PERMIT2_PERMIT],
+			input: [defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [data.values, signedMessage])],
 		}
 	}
 }

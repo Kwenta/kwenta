@@ -608,6 +608,10 @@ export const DEFAULT_DESIRED_TIMEDELTA = 0
 
 export const AGGREGATE_ASSET_KEY = '0x'
 
+export const LOW_FEE_TIER = 500
+
+export const AMOUNT_OUT_MIN = 1
+
 // subgraph fragments
 export const ISOLATED_MARGIN_FRAGMENT = gql`
 	query userFuturesMarginTransfers($walletAddress: String!) {
