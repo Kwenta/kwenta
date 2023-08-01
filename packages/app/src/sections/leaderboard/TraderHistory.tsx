@@ -126,6 +126,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												</StyledCell>
 											)
 										},
+										size: 90,
 									},
 									{
 										header: () => (
@@ -138,7 +139,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
 											</CurrencyInfo>
 										),
-										size: 220,
+										size: 120,
 									},
 									{
 										header: () => (
@@ -148,7 +149,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										cell: (cellProps) => {
 											return <StyledCell>{cellProps.row.original.status}</StyledCell>
 										},
-										size: 150,
+										size: 85,
 									},
 									{
 										header: () => (
@@ -160,7 +161,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										cell: (cellProps) => (
 											<div style={{ width: '60%', textAlign: 'right' }}>{cellProps.getValue()}</div>
 										),
-										size: 120,
+										size: 70,
 									},
 									{
 										header: () => (
@@ -174,7 +175,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												<Currency.Price price={cellProps.getValue()} />
 											</div>
 										),
-										size: 220,
+										size: 80,
 									},
 									{
 										header: () => (
@@ -193,7 +194,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												</div>
 											</PnlContainer>
 										),
-										size: 320,
+										size: 110,
 									},
 									{
 										header: () => (
@@ -207,6 +208,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												<Currency.Price price={cellProps.getValue()} colored />
 											</div>
 										),
+										size: 90,
 									},
 								],
 							},

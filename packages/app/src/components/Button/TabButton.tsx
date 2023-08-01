@@ -62,6 +62,7 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 				$vertical={props.vertical}
 				$nofill={props.nofill}
 				$flat={flat}
+				$isRounded={props.isRounded}
 				onClick={onClick}
 			>
 				<InnerButton {...props} />
@@ -182,7 +183,7 @@ const InlineTab = styled.div<{
 
 const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$vertical?: boolean
-	isRounded?: boolean
+	$isRounded?: boolean
 	$nofill?: boolean
 	$flat?: boolean
 }>`
@@ -192,14 +193,13 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 
 	${(props) => css`
 		flex-direction: ${props.$vertical ? 'column' : 'row'};
-		border-radius: ${props.isRounded ? '100px' : '8px'};
+		border-radius: ${props.$isRounded ? '100px' : '8px'};
 	`}
 	${sharedStyle}
 	
 	${(props) =>
 		props.$nofill &&
 		css`
-			border-radius: 100px;
 			padding: 10px 15px;
 			min-width: 100px;
 		`}

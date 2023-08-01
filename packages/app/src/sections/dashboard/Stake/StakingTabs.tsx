@@ -27,12 +27,14 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 				<TabButtons>
 					<TabButton
 						nofill={true}
+						isRounded={true}
 						title={t('dashboard.stake.tabs.staking.title')}
 						onClick={onChangeTab(StakeTab.Staking)}
 						active={currentTab === StakeTab.Staking}
 					/>
 					<TabButton
 						nofill={true}
+						isRounded={true}
 						title={t('dashboard.stake.tabs.escrow.title')}
 						onClick={onChangeTab(StakeTab.Escrow)}
 						active={currentTab === StakeTab.Escrow}

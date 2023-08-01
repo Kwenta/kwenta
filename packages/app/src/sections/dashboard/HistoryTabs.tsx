@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -5,7 +6,8 @@ import TabButton from 'components/Button/TabButton'
 import { TabPanel } from 'components/Tab'
 import Trades from 'sections/futures/Trades'
 import TraderHistory from 'sections/leaderboard/TraderHistory'
-import { useAppSelector } from 'state/hooks'
+import { setSelectedTrader } from 'state/futures/reducer'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
 
@@ -21,7 +23,16 @@ type HistoryTabsProp = {
 
 const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => {
 	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
 	const walletAddress = useAppSelector(selectWallet)
+
+	useEffect(() => {
+		dispatch(
+			setSelectedTrader({
+				trader: walletAddress ?? '',
+			})
+		)
+	}, [dispatch, walletAddress])
 
 	return (
 		<HistoryTabsContainer>
@@ -29,12 +40,14 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 				<TabButtons>
 					<TabButton
 						nofill={true}
+						isRounded={true}
 						title={t('dashboard.history.tabs.positions')}
 						onClick={onChangeTab(HistoryTab.Positions)}
 						active={currentTab === HistoryTab.Positions}
 					/>
 					<TabButton
 						nofill={true}
+						isRounded={true}
 						title={t('dashboard.history.tabs.trades')}
 						onClick={onChangeTab(HistoryTab.Trades)}
 						active={currentTab === HistoryTab.Trades}
@@ -43,7 +56,7 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 			</HistoryTabsHeader>
 			<div>
 				<TabPanel name={HistoryTab.Positions} activeTab={currentTab}>
-					<TraderHistory trader={walletAddress!} resetSelection={() => {}} compact={true} />
+					<TraderHistory trader={walletAddress ?? ''} resetSelection={() => {}} compact={true} />
 				</TabPanel>
 				<TabPanel name={HistoryTab.Trades} activeTab={currentTab}>
 					<Trades rounded={true} noBottom={false} />

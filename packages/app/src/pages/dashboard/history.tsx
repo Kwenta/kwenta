@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { MobileHiddenView, MobileOnlyView } from 'components/Media'
@@ -8,16 +8,11 @@ import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import HistoryTabs, { HistoryTab } from 'sections/dashboard/HistoryTabs'
 import TradesTab from 'sections/futures/MobileTrade/UserTabs/TradesTab'
 import { usePollDashboardFuturesData } from 'state/futures/hooks'
-import { setSelectedTrader } from 'state/futures/reducer'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { selectWallet } from 'state/wallet/selectors'
 
 type HistoryPageProps = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
 const HistoryPage: HistoryPageProps = () => {
 	const { t } = useTranslation()
-	const dispatch = useAppDispatch()
-	const walletAddress = useAppSelector(selectWallet)
 
 	usePollDashboardFuturesData()
 
@@ -29,14 +24,6 @@ const HistoryPage: HistoryPageProps = () => {
 		},
 		[]
 	)
-
-	useEffect(() => {
-		dispatch(
-			setSelectedTrader({
-				trader: walletAddress!,
-			})
-		)
-	}, [dispatch, walletAddress])
 
 	return (
 		<>
