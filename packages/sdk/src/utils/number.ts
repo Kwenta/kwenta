@@ -86,7 +86,6 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 	return formatted
 }
 
-// TODO: implement max decimals
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix
 	const suffix = options?.suffix
