@@ -16,7 +16,7 @@
 		"preinstall": "pnpm --filter \"@kwenta/sdk\" build"
 	},
 	"dependencies": {
-		"@eth-optimism/contracts": "0.5.37",
+		"@eth-optimism/contracts": "0.6.0",
 		"@ethersproject/bignumber": "^5.7.0",
 		"@ethersproject/providers": "^5.7.2",
 		"@kwenta/sdk": "workspace:*",

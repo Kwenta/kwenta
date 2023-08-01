@@ -66,8 +66,8 @@ importers:
   packages/app:
     dependencies:
       '@eth-optimism/contracts':
-        specifier: 0.5.37
-        version: 0.5.37(ethers@5.7.2)
+        specifier: 0.6.0
+        version: 0.6.0(ethers@5.7.2)
       '@ethersproject/bignumber':
         specifier: ^5.7.0
         version: 5.7.0
@@ -332,7 +332,7 @@ importers:
         version: 2.0.1(jest@28.1.0)(react@18.2.0)
       next-router-mock:
         specifier: 0.9.7
-        version: 0.9.7(next@13.4.8)(react@18.2.0)
+        version: 0.9.7(next@13.4.12)(react@18.2.0)
       pinst:
         specifier: 3.0.0
         version: 3.0.0
@@ -4619,20 +4619,6 @@ packages:
     resolution: {integrity: sha512-Ag+9YM4ocKQx9AarydN0KY2j0ErMHNIocPDrVo8zAE44xLTjEtz81OdR68/cydGtk6m6jDb5Za3r2useMzYmSw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  /@eth-optimism/contracts@0.5.37(ethers@5.7.2):
-    resolution: {integrity: sha512-HbNUUDIM1dUAM0hWPfGp3l9/Zte40zi8QhVbUSIwdYRA7jG7cZgbteqavrjW8wwFqxkWX9IrtA0KAR7pNlSAIQ==}
-    peerDependencies:
-      ethers: ^5
-    dependencies:
-      '@eth-optimism/core-utils': 0.10.1
-      '@ethersproject/abstract-provider': 5.7.0
-      '@ethersproject/abstract-signer': 5.7.0
-      ethers: 5.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
   /@eth-optimism/contracts@0.6.0(ethers@5.7.2):
     resolution: {integrity: sha512-vQ04wfG9kMf1Fwy3FEMqH2QZbgS0gldKhcBeBUPfO8zu68L61VI97UDXmsMQXzTsEAxK8HnokW3/gosl4/NW3w==}
     peerDependencies:
@@ -4642,30 +4628,6 @@ packages:
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
       ethers: 5.7.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-    dev: false
-
-  /@eth-optimism/core-utils@0.10.1:
-    resolution: {integrity: sha512-IJvG5UtYvyz6An9QdohlCLoeB3NBFxx2lRJKlPzvYYlfugUNNCHsajRIWIwJTcPRRma0WPd46JUsKACLJDdNrA==}
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/abstract-provider': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/constants': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/hash': 5.7.0
-      '@ethersproject/keccak256': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@ethersproject/rlp': 5.7.0
-      '@ethersproject/transactions': 5.7.0
-      '@ethersproject/web': 5.7.1
-      bufio: 1.2.0
-      chai: 4.3.7
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -15501,7 +15463,7 @@ packages:
       trouter: 3.2.1
     dev: false
 
-  /next-router-mock@0.9.7(next@13.4.8)(react@18.2.0):
+  /next-router-mock@0.9.7(next@13.4.12)(react@18.2.0):
     resolution: {integrity: sha512-y5ioLCIsdkJKwcoPnrUyocNEJT22RK4wKSg6LO0Q2XkBBvkYprEWy5FiCZt+CA8+qpfxpBlNca76F+glEohbRA==}
     peerDependencies:
       next: '>=10.0.0'
