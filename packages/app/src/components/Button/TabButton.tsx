@@ -196,13 +196,6 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 		border-radius: ${props.$isRounded ? '100px' : '8px'};
 	`}
 	${sharedStyle}
-	
-	${(props) =>
-		props.$nofill &&
-		css`
-			padding: 10px 15px;
-			min-width: 100px;
-		`}
 `
 
 export default TabButton

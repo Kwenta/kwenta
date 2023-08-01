@@ -92,7 +92,7 @@ const TabButtons = styled.div`
 	display: flex;
 
 	& > button:not(:last-of-type) {
-		margin-right: 15px;
+		margin-right: 25px;
 	}
 
 	${media.lessThan('md')`
