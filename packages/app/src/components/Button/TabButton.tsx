@@ -63,6 +63,7 @@ const TabButton: React.FC<TabButtonProps> = React.memo(
 				$vertical={props.vertical}
 				$nofill={props.nofill}
 				$flat={flat}
+				$isRounded={props.isRounded}
 				onClick={onClick}
 				$variant={props.variant}
 			>
@@ -113,11 +114,11 @@ const sharedStyle = css<{
 	&:disabled {
 		background-color: transparent;
 		p {
-			color: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
+			color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		}
 		svg {
 			path {
-				fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
+				fill: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 			}
 		}
 
@@ -137,7 +138,7 @@ const sharedStyle = css<{
 		color: ${(props) =>
 			props.active
 				? props.theme.colors.selectedTheme.button.text.primary
-				: props.theme.colors.selectedTheme.gray};
+				: props.theme.colors.selectedTheme.newTheme.text.secondary};
 	}
 
 	.detail {
@@ -184,9 +185,9 @@ const InlineTab = styled.div<{
 
 const StyledButton = styled(Button).attrs({ size: 'small' })<{
 	$vertical?: boolean
+	$isRounded?: boolean
 	$nofill?: boolean
 	$flat?: boolean
-	active?: boolean
 	$variant?: 'noOutline' | undefined
 }>`
 	p {
@@ -195,17 +196,15 @@ const StyledButton = styled(Button).attrs({ size: 'small' })<{
 
 	${(props) => css`
 		flex-direction: ${props.$vertical ? 'column' : 'row'};
-		border-radius: ${props.isRounded ? '100px' : '8px'};
+		border-radius: ${props.$isRounded ? '100px' : '8px'};
 	`}
 	${sharedStyle}
-	
+
 	${(props) =>
 		props.$variant === 'noOutline' &&
 		css`
 			border: none;
 			border-radius: 100px;
-			padding: 10px 15px;
-			width: 75px;
 		`}
 `
 
