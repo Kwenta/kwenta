@@ -1,4 +1,5 @@
 import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
+import Wei from '@synthetixio/wei'
 import { memo, ReactElement } from 'react'
 import styled from 'styled-components'
 
@@ -12,23 +13,27 @@ type Props = {
 	side?: PositionSide
 	infoLabel?: string
 	badge?: ReactElement
+	price?: Wei
 }
 
-const TableMarketDetails = memo(({ marketKey, marketName, side, infoLabel, badge }: Props) => {
-	return (
-		<MarketContainer>
-			<StyledCurrencyIcon currencyKey={marketKey} />
-			<div>
-				<StyledText>
-					{marketName}
-					{badge}
-				</StyledText>
-				{infoLabel && <StyledValue>{infoLabel}</StyledValue>}
-				{side && <PositionType side={side} variant={'text'} />}
-			</div>
-		</MarketContainer>
-	)
-})
+const TableMarketDetails = memo(
+	({ marketKey, marketName, side, infoLabel, badge, price }: Props) => {
+		return (
+			<MarketContainer>
+				<StyledCurrencyIcon currencyKey={marketKey} />
+				<div>
+					<StyledText>
+						{marketName}
+						{badge}
+					</StyledText>
+					{infoLabel && <StyledValue>{infoLabel}</StyledValue>}
+					{side && <PositionType side={side} variant={'text'} />}
+					{price && <Currency.Price price={price} colored />}
+				</div>
+			</MarketContainer>
+		)
+	}
+)
 
 export default TableMarketDetails
 

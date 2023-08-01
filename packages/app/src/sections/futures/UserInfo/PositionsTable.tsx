@@ -93,8 +93,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 				<div>Market</div>
 				<div>Side</div>
 				<div>Size</div>
-				<div>Avg. Entry</div>
-				<div>Liq. Price</div>
+				<div>Avg. Entry/Liq. Price</div>
 				<div>Market Margin</div>
 				<div>uP&L</div>
 				<div>Funding</div>
@@ -114,6 +113,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 								<TableMarketDetails
 									marketName={getDisplayAsset(row.market.asset) ?? ''}
 									marketKey={row.market.marketKey}
+									price={row.share.marketPrice}
 								/>
 							</MarketDetailsContainer>
 						</PositionCell>
@@ -151,10 +151,17 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 							{!row.activePosition.details?.avgEntryPrice ? (
 								<Body>{NO_VALUE}</Body>
 							) : (
-								<Currency.Price
-									price={row.activePosition.details.avgEntryPrice}
-									formatOptions={{ suggestDecimals: true }}
-								/>
+								<FlexDivCol>
+									<Currency.Price
+										price={row.activePosition.details.avgEntryPrice}
+										formatOptions={{ suggestDecimals: true }}
+									/>
+									<Currency.Price
+										price={row.activePosition.liquidationPrice}
+										formatOptions={{ suggestDecimals: true }}
+										colorType="preview"
+									/>
+								</FlexDivCol>
 							)}
 						</PositionCell>
 						<PositionCell>
@@ -289,7 +296,7 @@ const TableContainer = styled.div`
 
 const PositionRowDesktop = styled.div`
 	display: grid;
-	grid-template-columns: 75px 60px minmax(130px, 1fr) 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
+	grid-template-columns: 1fr 1fr 1fr minmax(130px, 1fr) 1fr 1fr 1fr 1fr 1fr 64px;
 	grid-gap: 10px;
 	height: 54px;
 	padding: 0 10px;
