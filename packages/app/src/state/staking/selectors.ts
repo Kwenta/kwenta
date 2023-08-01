@@ -14,16 +14,6 @@ export const selectKwentaBalance = createSelector(
 	toWei
 )
 
-export const selectVKwentaBalance = createSelector(
-	(state: RootState) => state.staking.vKwentaBalance,
-	toWei
-)
-
-export const selectVeKwentaBalance = createSelector(
-	(state: RootState) => state.staking.veKwentaBalance,
-	toWei
-)
-
 export const selectEscrowedKwentaBalance = createSelector(
 	(state: RootState) => state.staking.v1.escrowedKwentaBalance,
 	toWei
@@ -84,18 +74,6 @@ export const selectIsKwentaTokenApproved = createSelector(
 	selectKwentaBalance,
 	(state: RootState) => state.staking.kwentaAllowance,
 	(kwentaBalance, kwentaAllowance) => kwentaBalance.lte(kwentaAllowance)
-)
-
-export const selectIsVKwentaTokenApproved = createSelector(
-	selectVKwentaBalance,
-	(state: RootState) => state.staking.vKwentaAllowance,
-	(vKwentaBalance, vKwentaAllowance) => vKwentaBalance.lte(vKwentaAllowance)
-)
-
-export const selectIsVeKwentaTokenApproved = createSelector(
-	selectVeKwentaBalance,
-	(state: RootState) => state.staking.veKwentaAllowance,
-	(veKwentaBalance, veKwentaAllowance) => veKwentaBalance.lte(veKwentaAllowance)
 )
 
 export const selectIsKwentaTokenApprovedV2 = createSelector(

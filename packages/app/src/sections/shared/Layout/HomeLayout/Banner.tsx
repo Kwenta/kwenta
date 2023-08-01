@@ -54,21 +54,14 @@ const Banner = memo(() => {
 	const dispatch = useAppDispatch()
 	const showBanner = useAppSelector(selectShowBanner)
 	const storedTime: number = localStore.get('bannerIsClicked') || 0
-	const router = useRouter()
 
 	useEffect(
 		() => {
 			const currentTime = new Date().getTime()
-			dispatch(
-				setShowBanner(
-					currentTime - storedTime >= BANNER_WAITING_TIME &&
-						BANNER_ENABLED &&
-						router.pathname.includes('staking')
-				)
-			)
+			dispatch(setShowBanner(currentTime - storedTime >= BANNER_WAITING_TIME && BANNER_ENABLED))
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[storedTime, router.pathname]
+		[storedTime]
 	)
 
 	const handleDismiss = useCallback(
