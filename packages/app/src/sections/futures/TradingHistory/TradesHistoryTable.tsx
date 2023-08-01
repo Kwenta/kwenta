@@ -126,6 +126,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 									{formatNumber(cellProps.getValue().abs(), {
 										suggestDecimals: true,
 										truncateOver: 1e6,
+										maxDecimals: 6,
 									})}{' '}
 									{normal ? '💀' : ''}
 								</DirectionalValue>
