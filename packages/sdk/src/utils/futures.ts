@@ -49,6 +49,7 @@ import {
 	PerpsV3SettlementStrategy,
 	SettlementSubgraphType,
 	PerpsMarketV2,
+	SwapDepositToken,
 } from '../types/futures'
 import { formatCurrency, formatDollars, weiFromWei } from '../utils/number'
 import {
@@ -63,6 +64,12 @@ import {
 import { PerpsV2MarketData } from '../contracts/types'
 import { IPerpsV2MarketSettings } from '../contracts/types/PerpsV2MarketData'
 import { AsyncOrder } from '../contracts/types/PerpsV3MarketProxy'
+import { Token } from '@uniswap/sdk-core'
+import { FeeAmount, computePoolAddress } from '@uniswap/v3-sdk'
+import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
+import Quoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
+import { ethers } from 'ethers'
+import { ADDRESSES } from '../constants'
 
 export const getFuturesEndpoint = (networkId: number) => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10]
@@ -988,4 +995,58 @@ export const formatPerpsV2Market = (
 
 export const sameSide = (a: Wei, b: Wei) => {
 	return a.gt(wei(0)) === b.gt(wei(0))
+}
+
+const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6'
+export const POOL_FACTORY_CONTRACT_ADDRESS = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
+
+const uniswapTokenBySwapDepositToken = {
+	[SwapDepositToken.SUSD]: new Token(10, ADDRESSES.SUSD['10'], 18),
+	[SwapDepositToken.USDC]: new Token(10, ADDRESSES.USDC['10'], 18),
+	[SwapDepositToken.USDT]: new Token(10, ADDRESSES.USDT['10'], 18),
+	[SwapDepositToken.DAI]: new Token(10, ADDRESSES.DAI['10'], 18),
+}
+
+export const getQuote = async (
+	provider: ethers.providers.Provider,
+	token: SwapDepositToken,
+	amountIn: ethers.BigNumber,
+	decimals = 18
+) => {
+	const quoterContract = new ethers.Contract(QUOTER_CONTRACT_ADDRESS, Quoter.abi, provider)
+
+	const currentPoolAddress = computePoolAddress({
+		factoryAddress: POOL_FACTORY_CONTRACT_ADDRESS,
+		tokenA: uniswapTokenBySwapDepositToken[token],
+		tokenB: uniswapTokenBySwapDepositToken[SwapDepositToken.SUSD],
+		fee: FeeAmount.LOW,
+	})
+
+	const poolContract = new ethers.Contract(currentPoolAddress, IUniswapV3PoolABI.abi, provider)
+
+	const [token0, token1, fee] = await Promise.all([
+		poolContract.token0(),
+		poolContract.token1(),
+		poolContract.fee(),
+	])
+
+	const quotedAmountOut = await quoterContract.callStatic.quoteExactInputSingle(
+		token0,
+		token1,
+		fee,
+		fromReadableAmount(amountIn.toNumber(), decimals).toString(),
+		0
+	)
+
+	return quotedAmountOut
+}
+
+const READABLE_FORM_LEN = 4
+
+export function fromReadableAmount(amount: number, decimals: number) {
+	return ethers.utils.parseUnits(amount.toString(), decimals)
+}
+
+export function toReadableAmount(rawAmount: number, decimals: number) {
+	return ethers.utils.formatUnits(rawAmount, decimals).slice(0, READABLE_FORM_LEN)
 }

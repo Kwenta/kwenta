@@ -76,6 +76,7 @@ import {
 	encodeCloseOffchainOrderParams,
 	marginTypeToSubgraphType,
 	formatPerpsV2Market,
+	getQuote,
 } from '../utils/futures'
 import { getFuturesAggregateStats } from '../utils/subgraph'
 import { getReasonFromCode } from '../utils/synths'
@@ -687,6 +688,8 @@ export default class FuturesService {
 			if (amount.toBN().lte(permitAmount)) {
 				const { command, input } = await this.signPermit(smartMarginAddress, tokenContract.address)
 
+				const amountOutMin = await getQuote(this.sdk.context.provider, token, amount.toBN(), 18)
+
 				const path =
 					defaultAbiCoder.encode(['bytes20'], [SUSD.address]) +
 					defaultAbiCoder.encode(['bytes3'], [LOW_FEE_TIER]) +
@@ -698,7 +701,7 @@ export default class FuturesService {
 						...input,
 						defaultAbiCoder.encode(
 							['uint256', 'uint256', 'bytes'],
-							[amount.toBN(), ethers.BigNumber.from(AMOUNT_OUT_MIN), path]
+							[amount.toBN(), amountOutMin, path]
 						),
 					],
 				])
