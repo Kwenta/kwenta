@@ -52,6 +52,7 @@ const TradeBalanceCrossMargin: React.FC<TradeBalanceProps> = memo(({ isMobile = 
 		if (!crossMarginAccount) {
 			return (
 				<Button
+					data-testid="create-cross-margin-account-button"
 					variant="yellow"
 					onClick={() => dispatch(setOpenModal('futures_cross_margin_onboard'))}
 				>
