@@ -61,7 +61,7 @@ const AllTime: FC<AllTimeProps> = ({
 			<MobileHiddenView>
 				<StyledTable
 					// @ts-ignore
-					compact={true}
+					compact={compact}
 					showPagination
 					isLoading={isLoading}
 					data={data}
