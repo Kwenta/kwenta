@@ -3,10 +3,11 @@ import { FuturesPositionHistory } from '@kwenta/sdk/dist/types'
 import { getMarketName, MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
-import { FC, memo, useMemo } from 'react'
+import { FC, memo, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import UploadIcon from 'assets/svg/futures/upload-icon.svg'
 import Currency from 'components/Currency'
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
 import { FlexDiv } from 'components/layout/flex'
@@ -20,6 +21,9 @@ import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink } from 'styles/common'
 import media from 'styles/media'
+import Pill from 'components/Pill'
+import { SharePositionParams } from 'state/futures/types'
+import ShareModal from './ShareModal'
 
 type TraderHistoryProps = {
 	trader: string
@@ -35,6 +39,8 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		const { t } = useTranslation()
 		const positions = useAppSelector(selectFuturesPositions)
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses)
+		const [showShareModal, setShowShareModal] = useState(false)
+		const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
 
 		let data = useMemo(() => {
 			return positionHistory
@@ -63,6 +69,12 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									.toNumber()
 									.toFixed(2)}%)`
 							: '0%',
+						share: {
+							asset: stat.asset,
+							position: thisPosition?.position!,
+							positionHistory: stat,
+							marketPrice: stat.exitPrice,
+						},
 					}
 				})
 				.filter((i) =>
@@ -72,6 +84,11 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						: true
 				)
 		}, [positionHistory, positions, searchTerm])
+
+		const handleOpenShareModal = useCallback((share: SharePositionParams) => {
+			setSharePosition(share)
+			setShowShareModal((s) => !s)
+		}, [])
 
 		return (
 			<>
@@ -199,6 +216,18 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										),
 										size: 130,
 									},
+									{
+										header: () => <CenterAlignedTableHeader>Share</CenterAlignedTableHeader>,
+										accessorKey: 'share',
+										cell: (cellProps) => (
+											<CenterAlignedContainer>
+												<Pill onClick={() => handleOpenShareModal(cellProps.row.original.share)}>
+													<UploadIcon width={8} />
+												</Pill>
+											</CenterAlignedContainer>
+										),
+										size: 60,
+									},
 								],
 							},
 						]}
@@ -289,6 +318,9 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						]}
 					/>
 				</MobileOrTabletView>
+				{showShareModal && (
+					<ShareModal sharePosition={sharePosition!} setShowShareModal={setShowShareModal} />
+				)}
 			</>
 		)
 	}
@@ -302,6 +334,18 @@ const RightAlignedTableHeader = styled(TableHeader)`
 const RightAlignedContainer = styled.div`
 	width: 90%;
 	text-align: right;
+`
+
+const CenterAlignedTableHeader = styled(TableHeader)`
+	width: 80%;
+	padding-left: 20px;
+	text-align: center;
+`
+
+const CenterAlignedContainer = styled.div`
+	width: 100%;
+	padding-left: 10px;
+	text-align: center;
 `
 
 const StyledTable = styled(Table)<{ compact?: boolean; height?: number }>`
