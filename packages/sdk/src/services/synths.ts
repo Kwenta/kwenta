@@ -18,6 +18,11 @@ export default class SynthsService {
 		this.sdk = sdk
 	}
 
+	/**
+	 * @desc Get synth balances for a given wallet address
+	 * @param walletAddress Wallet address
+	 * @returns Synth balances for the given wallet address
+	 */
 	public async getSynthBalances(walletAddress: string) {
 		if (!this.sdk.context.contracts.SynthUtil) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
@@ -29,12 +34,12 @@ export default class SynthsService {
 
 		let totalUSDBalance = wei(0)
 
-		currencyKeys.forEach((currencyKeyBytes32, idx) => {
-			const balance = wei(synthsBalances[idx])
+		currencyKeys.forEach((currencyKeyBytes32, i) => {
+			const balance = wei(synthsBalances[i])
 
 			if (balance.gt(0)) {
 				const synthName = parseBytes32String(currencyKeyBytes32)
-				const usdBalance = wei(synthsUSDBalances[idx])
+				const usdBalance = wei(synthsUSDBalances[i])
 
 				balancesMap[synthName] = { currencyKey: synthName, balance, usdBalance }
 

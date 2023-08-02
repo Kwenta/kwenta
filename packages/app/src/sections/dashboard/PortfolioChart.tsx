@@ -1,6 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { Period } from '@kwenta/sdk/constants'
-import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars, formatPercent } from '@kwenta/sdk/utils'
 import { formatChartDate, formatChartTime, formatShortDateWithTime } from '@kwenta/sdk/utils'
 import Link from 'next/link'
@@ -54,13 +53,11 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 	const theme = useTheme()
 	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe)
 	const accountType = useAppSelector(selectFuturesType)
-	const { smart_margin: smartPortfolioData, cross_margin: crossPortfolioData } =
-		useAppSelector(selectPortfolioChartData)
+	const portfolioChartData = useAppSelector(selectPortfolioChartData)
 
 	const portfolioData = useMemo(
-		() =>
-			accountType === FuturesMarginType.CROSS_MARGIN ? crossPortfolioData : smartPortfolioData,
-		[accountType, crossPortfolioData, smartPortfolioData]
+		() => portfolioChartData[accountType],
+		[portfolioChartData, accountType]
 	)
 
 	const lineColor = useMemo(() => {
@@ -68,7 +65,7 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 			portfolioData.length > 2
 				? portfolioData[portfolioData.length - 1].total - portfolioData[0].total < 0
 				: false
-		return isNegative ? theme.colors.selectedTheme.red : theme.colors.selectedTheme.green
+		return theme.colors.selectedTheme[isNegative ? 'red' : 'green']
 	}, [portfolioData, theme])
 
 	return (

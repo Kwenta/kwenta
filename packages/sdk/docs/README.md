@@ -1,3 +1,5 @@
+@kwenta/sdk / [Modules](modules.md)
+
 # Kwenta SDK
 
 Note: This document is a work in progress, as the implementation of the Kwenta SDK is still in progress. Interfaces, types and overall structure are subject to change.
