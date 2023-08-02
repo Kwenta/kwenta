@@ -132,8 +132,10 @@ export const useFetchStakeMigrateData = () => {
 	})
 	useFetchAction(() => fetchFuturesFees({ start, end }), {
 		dependencies: [networkId, wallet, start, end],
+		disabled: !wallet || !networkSupportsStaking,
 	})
 	useFetchAction(() => fetchFuturesFeesForAccount({ start, end }), {
 		dependencies: [networkId, wallet, start, end],
+		disabled: !wallet || !networkSupportsStaking,
 	})
 }
