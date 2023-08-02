@@ -1,4 +1,4 @@
-import { formatCurrency, formatDollars } from '@kwenta/sdk/utils'
+import { formatDollars } from '@kwenta/sdk/utils'
 import React, { memo } from 'react'
 
 import { InfoBoxRow } from 'components/InfoBox'
@@ -11,14 +11,12 @@ import {
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import PencilButton from '../../../components/Button/PencilButton'
-
 import ManageKeeperBalanceModal from './ManageKeeperBalanceModal'
+import SwapDepositTokenSelector from './SwapDepositTokenSelector'
 
 function SmartMarginInfoBox() {
 	const dispatch = useAppDispatch()
 
-	const { keeperEthBal } = useAppSelector(selectSmartMarginBalanceInfo)
 	const openModal = useAppSelector(selectShowModal)
 	const { freeMargin } = useAppSelector(selectSmartMarginBalanceInfo)
 	const idleMarginInMarkets = useAppSelector(selectAvailableMarginInMarkets)
@@ -27,22 +25,10 @@ function SmartMarginInfoBox() {
 	return (
 		<>
 			<InfoBoxRow
-				title="Account ETH Balance"
-				textValue={formatCurrency('ETH', keeperEthBal, { currencyKey: 'ETH' })}
-				textValueIcon={
-					<>
-						{keeperEthBal.gt(0) && (
-							<PencilButton
-								width={10}
-								height={10}
-								onClick={() => dispatch(setOpenModal('futures_withdraw_keeper_balance'))}
-								style={{ cursor: 'pointer', marginLeft: '10px' }}
-							/>
-						)}
-					</>
-				}
+				title="Wallet balance"
+				keyNode={<SwapDepositTokenSelector />}
+				textValue={formatDollars(walletBal)}
 			/>
-			<InfoBoxRow title="Wallet balance" textValue={formatDollars(walletBal)} />
 			<InfoBoxRow
 				title="Idle Margin"
 				textValue={formatDollars(idleMarginInMarkets.add(freeMargin))}

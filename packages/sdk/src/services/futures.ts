@@ -10,7 +10,6 @@ import { orderBy } from 'lodash'
 import KwentaSDK from '..'
 import { UNSUPPORTED_NETWORK } from '../common/errors'
 import {
-	AMOUNT_OUT_MIN,
 	KWENTA_TRACKING_CODE,
 	LOW_FEE_TIER,
 	ORDERS_FETCH_SIZE,
@@ -420,9 +419,12 @@ export default class FuturesService {
 			keeperEthBal: wei(keeperEthBal),
 			walletEthBal: wei(walletEthBal),
 			allowance: wei(allowance),
-			usdcAllowance: wei(usdcAllowance),
-			usdtAllowance: wei(usdtAllowance),
-			daiAllowance: wei(daiAllowance),
+			allowances: {
+				[SwapDepositToken.SUSD]: wei(allowance),
+				[SwapDepositToken.USDC]: wei(usdcAllowance),
+				[SwapDepositToken.USDT]: wei(usdtAllowance),
+				[SwapDepositToken.DAI]: wei(daiAllowance),
+			},
 		}
 	}
 

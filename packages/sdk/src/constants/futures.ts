@@ -8,6 +8,7 @@ import {
 	FuturesMarketKey,
 	SmartMarginOrderType,
 	FuturesOrderType,
+	SwapDepositToken,
 } from '../types/futures'
 import { weiFromWei } from '../utils/number'
 
@@ -648,3 +649,10 @@ export const SMART_MARGIN_FRAGMENT = gql`
 		}
 	}
 `
+
+export const SWAP_DEPOSIT_TOKENS = [
+	SwapDepositToken.SUSD,
+	SwapDepositToken.USDC,
+	SwapDepositToken.USDT,
+	SwapDepositToken.DAI,
+]

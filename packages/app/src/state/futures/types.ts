@@ -4,6 +4,7 @@ import {
 	FuturesPositionHistory,
 	FuturesMarketKey,
 	FuturesMarketAsset,
+	SwapDepositToken,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
@@ -58,6 +59,7 @@ export type FuturesState = {
 	selectedInputHours: number
 	selectedChart: 'price' | 'funding'
 	historicalFundingRatePeriod: Period
+	selectedSwapDepositToken: SwapDepositToken
 	preferences: {
 		showHistory?: boolean
 	}
