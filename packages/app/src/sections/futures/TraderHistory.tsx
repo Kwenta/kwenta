@@ -1,6 +1,6 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesPositionHistory } from '@kwenta/sdk/dist/types'
-import { getMarketName } from '@kwenta/sdk/utils'
+import { getMarketName, MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
 import { FC, memo, useMemo } from 'react'
@@ -51,7 +51,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 					return {
 						...stat,
 						rank: i + 1,
-						currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
+						currencyIconKey: MarketKeyByAsset[stat.asset],
 						marketShortName: getMarketName(stat.asset),
 						status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
 						funding,
