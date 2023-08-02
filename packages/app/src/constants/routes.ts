@@ -1,4 +1,6 @@
-import { FuturesAccountType, FuturesMarketAsset } from '@kwenta/sdk/types'
+import { FuturesMarketAsset } from '@kwenta/sdk/types'
+
+import { AppFuturesMarginType } from 'state/futures/common/types'
 
 import { EXTERNAL_LINKS } from './links'
 
@@ -32,22 +34,23 @@ export const ROUTES = {
 		Into: (currencyKey: string) => `/exchange/?quote=${currencyKey}`,
 	},
 	Markets: {
-		Home: (accountType: FuturesAccountType) => formatUrl('/market', { accountType, asset: 'sETH' }),
-		MarketPair: (asset: FuturesMarketAsset | string, accountType: FuturesAccountType) =>
+		Home: (accountType: AppFuturesMarginType) =>
+			formatUrl('/market', { accountType, asset: 'sETH' }),
+		MarketPair: (asset: FuturesMarketAsset | string, accountType: AppFuturesMarginType) =>
 			formatUrl('/market', { asset, accountType }),
-		Position: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+		Position: (asset: FuturesMarketAsset, accountType: AppFuturesMarginType) =>
 			formatUrl('/market', {
 				asset,
 				accountType,
 				tab: 'position',
 			}),
-		Orders: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+		Orders: (asset: FuturesMarketAsset, accountType: AppFuturesMarginType) =>
 			formatUrl('/market', { asset, accountType, tab: 'orders' }),
-		ConditionalOrders: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+		ConditionalOrders: (asset: FuturesMarketAsset, accountType: AppFuturesMarginType) =>
 			formatUrl('/market', { asset, accountType, tab: 'conditional_orders' }),
-		Trades: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+		Trades: (asset: FuturesMarketAsset, accountType: AppFuturesMarginType) =>
 			formatUrl('/market', { asset, accountType, tab: 'trades' }),
-		Transfers: (asset: FuturesMarketAsset, accountType: FuturesAccountType) =>
+		Transfers: (asset: FuturesMarketAsset, accountType: AppFuturesMarginType) =>
 			formatUrl('/market', { asset, accountType, tab: 'transfers' }),
 	},
 	Stats: {
@@ -75,7 +78,10 @@ export const SUB_MENUS = {
 	],
 }
 
-export const setLastVisited = (baseCurrencyPair: string, accountType: FuturesAccountType): void => {
+export const setLastVisited = (
+	baseCurrencyPair: string,
+	accountType: AppFuturesMarginType
+): void => {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair, accountType))
 }
 

@@ -17,12 +17,14 @@ import MultipleMerkleDistributorPerpsV2ABI from './abis/MultipleMerkleDistributo
 import PerpsV2MarketABI from './abis/PerpsV2Market.json'
 import PerpsV2MarketDataABI from './abis/PerpsV2MarketData.json'
 import PerpsV2MarketSettingsABI from './abis/PerpsV2MarketSettings.json'
+import PerpsV3MarketProxyABI from './abis/PerpsV3MarketProxy.json'
 import RewardEscrowABI from './abis/RewardEscrow.json'
 import RewardEscrowV2ABI from './abis/RewardEscrowV2.json'
 import StakingRewardsABI from './abis/StakingRewards.json'
 import SupplyScheduleABI from './abis/SupplySchedule.json'
 import SynthRedeemerABI from './abis/SynthRedeemer.json'
 import SystemStatusABI from './abis/SystemStatus.json'
+import PerpsV3AccountProxyABI from './abis/PerpsV3AccountProxy.json'
 import { ADDRESSES } from './constants'
 import {
 	SmartMarginAccountFactory__factory,
@@ -49,8 +51,10 @@ import {
 	BatchClaimer__factory,
 	MultipleMerkleDistributorOp__factory,
 	MultipleMerkleDistributorPerpsV2__factory,
+	PerpsV3MarketProxy__factory,
 	RewardEscrowV2__factory,
 	KwentaStakingRewardsV2__factory,
+	PerpsV3AccountProxy__factory,
 } from './types'
 import { PerpsV2MarketData__factory } from './types/factories/PerpsV2MarketData__factory'
 import { PerpsV2MarketSettings__factory } from './types/factories/PerpsV2MarketSettings__factory'
@@ -113,6 +117,9 @@ export const getContractsByNetwork = (
 			: undefined,
 		SUSD: ADDRESSES.SUSD[networkId]
 			? ERC20__factory.connect(ADDRESSES.SUSD[networkId], provider)
+			: undefined,
+		SNXUSD: ADDRESSES.SNXUSD[networkId]
+			? ERC20__factory.connect(ADDRESSES.SNXUSD[networkId], provider)
 			: undefined,
 		SmartMarginAccountFactory: ADDRESSES.SmartMarginAccountFactory[networkId]
 			? SmartMarginAccountFactory__factory.connect(
@@ -177,6 +184,12 @@ export const getContractsByNetwork = (
 			: undefined,
 		RewardEscrowV2: ADDRESSES.RewardEscrowV2[networkId]
 			? RewardEscrowV2__factory.connect(ADDRESSES.RewardEscrowV2[networkId], provider)
+			: undefined,
+		perpsV3MarketProxy: ADDRESSES.PerpsV3MarketProxy[networkId]
+			? PerpsV3MarketProxy__factory.connect(ADDRESSES.PerpsV3MarketProxy[networkId], provider)
+			: undefined,
+		perpsV3AccountProxy: ADDRESSES.PerpsV3AccountProxy[networkId]
+			? PerpsV3AccountProxy__factory.connect(ADDRESSES.PerpsV3AccountProxy[networkId], provider)
 			: undefined,
 	}
 }
@@ -246,11 +259,20 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 		DappMaintenance: ADDRESSES.DappMaintenance[networkId]
 			? new EthCallContract(ADDRESSES.DappMaintenance[networkId], DappMaintenanceABI)
 			: undefined,
+		SNXUSD: ADDRESSES.SNXUSD[networkId]
+			? new EthCallContract(ADDRESSES.SNXUSD[networkId], ERC20ABI)
+			: undefined,
 		KwentaStakingRewardsV2: ADDRESSES.KwentaStakingRewardsV2[networkId]
 			? new EthCallContract(ADDRESSES.KwentaStakingRewardsV2[networkId], KwentaStakingRewardsV2ABI)
 			: undefined,
 		RewardEscrowV2: ADDRESSES.RewardEscrowV2[networkId]
 			? new EthCallContract(ADDRESSES.RewardEscrowV2[networkId], RewardEscrowV2ABI)
+			: undefined,
+		perpsV3MarketProxy: ADDRESSES.PerpsV3MarketProxy[networkId]
+			? new EthCallContract(ADDRESSES.PerpsV3MarketProxy[networkId], PerpsV3MarketProxyABI)
+			: undefined,
+		perpsV3AccountProxy: ADDRESSES.PerpsV3AccountProxy[networkId]
+			? new EthCallContract(ADDRESSES.PerpsV3AccountProxy[networkId], PerpsV3AccountProxyABI)
 			: undefined,
 	}
 }

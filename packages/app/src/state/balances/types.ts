@@ -1,7 +1,9 @@
-import { SynthBalance, TokenBalances } from '@kwenta/sdk/types'
+import { SynthBalance, SynthV3BalancesAndAllowances, TokenBalances } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
 import { FetchStatus } from 'state/types'
+
+// TODO: Separate balances by network and wallet
 
 export type BalancesState = {
 	status: FetchStatus
@@ -11,6 +13,7 @@ export type BalancesState = {
 	totalUSDBalance?: string
 	susdWalletBalance?: string
 	tokenBalances: TokenBalances<string>
+	synthV3Balances: Partial<SynthV3BalancesAndAllowances<string>>
 }
 
 export type BalancesActionReturn<T = Wei> = {

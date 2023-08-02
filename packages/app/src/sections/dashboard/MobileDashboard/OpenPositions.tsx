@@ -1,3 +1,4 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { useMemo, useState } from 'react'
@@ -7,10 +8,10 @@ import { ExchangeTokens } from 'types/synths'
 
 import TabButton from 'components/Button/TabButton'
 import { TabPanel } from 'components/Tab'
-import { FuturesAccountTypes } from 'queries/futures/types'
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile'
 import { selectBalances } from 'state/balances/selectors'
-import { selectFuturesPortfolio, selectActiveSmartPositionsCount } from 'state/futures/selectors'
+import { selectFuturesPortfolio } from 'state/futures/selectors'
+import { selectActiveSmartPositionsCount } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import FuturesPositionsTable from '../FuturesPositionsTable'
@@ -41,7 +42,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 				label: t('dashboard.overview.positions-tabs.smart-margin'),
 				badge: smartPositionsCount,
 				active: activePositionsTab === PositionsTab.SMART_MARGIN,
-				detail: formatDollars(portfolio.crossMarginFutures),
+				detail: formatDollars(portfolio.smartMargin),
 				disabled: false,
 				onClick: () => setActivePositionsTab(PositionsTab.SMART_MARGIN),
 			},
@@ -58,7 +59,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 			t,
 			activePositionsTab,
 			smartPositionsCount,
-			portfolio.crossMarginFutures,
+			portfolio.smartMargin,
 			balances.totalUSDBalance,
 			exchangeTokenBalances,
 			setActivePositionsTab,
@@ -80,7 +81,7 @@ const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeT
 			</div>
 
 			<TabPanel name={PositionsTab.SMART_MARGIN} activeTab={activePositionsTab}>
-				<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
+				<FuturesPositionsTable accountType={FuturesMarginType.SMART_MARGIN} />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activePositionsTab}>

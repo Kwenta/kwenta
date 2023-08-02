@@ -2,656 +2,662 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from 'ethers'
-import type { Provider } from '@ethersproject/providers'
-import type { SupplySchedule, SupplyScheduleInterface } from '../SupplySchedule'
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
+import type {
+  SupplySchedule,
+  SupplyScheduleInterface,
+} from "../SupplySchedule";
 
 const _abi = [
-	{
-		inputs: [
-			{
-				internalType: 'address',
-				name: '_owner',
-				type: 'address',
-			},
-			{
-				internalType: 'address',
-				name: '_treasuryDAO',
-				type: 'address',
-			},
-		],
-		stateMutability: 'nonpayable',
-		type: 'constructor',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'address',
-				name: 'newAddress',
-				type: 'address',
-			},
-		],
-		name: 'KwentaUpdated',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'uint256',
-				name: 'newRewardAmount',
-				type: 'uint256',
-			},
-		],
-		name: 'MinterRewardUpdated',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'address',
-				name: 'oldOwner',
-				type: 'address',
-			},
-			{
-				indexed: false,
-				internalType: 'address',
-				name: 'newOwner',
-				type: 'address',
-			},
-		],
-		name: 'OwnerChanged',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'address',
-				name: 'newOwner',
-				type: 'address',
-			},
-		],
-		name: 'OwnerNominated',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'address',
-				name: 'newAddress',
-				type: 'address',
-			},
-		],
-		name: 'StakingRewardsUpdated',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'uint256',
-				name: 'supplyMinted',
-				type: 'uint256',
-			},
-			{
-				indexed: false,
-				internalType: 'uint256',
-				name: 'numberOfWeeksIssued',
-				type: 'uint256',
-			},
-			{
-				indexed: false,
-				internalType: 'uint256',
-				name: 'lastMintEvent',
-				type: 'uint256',
-			},
-		],
-		name: 'SupplyMinted',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'uint256',
-				name: 'newPercentage',
-				type: 'uint256',
-			},
-		],
-		name: 'TradingRewardsDiversionUpdated',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'address',
-				name: 'newAddress',
-				type: 'address',
-			},
-		],
-		name: 'TradingRewardsUpdated',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'address',
-				name: 'treasuryDAO',
-				type: 'address',
-			},
-		],
-		name: 'TreasuryDAOSet',
-		type: 'event',
-	},
-	{
-		anonymous: false,
-		inputs: [
-			{
-				indexed: false,
-				internalType: 'uint256',
-				name: 'newPercentage',
-				type: 'uint256',
-			},
-		],
-		name: 'TreasuryDiversionUpdated',
-		type: 'event',
-	},
-	{
-		inputs: [],
-		name: 'DECAY_RATE',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'INITIAL_SUPPLY',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'INITIAL_WEEKLY_SUPPLY',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'MAX_MINTER_REWARD',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'MINT_BUFFER',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'MINT_PERIOD_DURATION',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'SUPPLY_DECAY_END',
-		outputs: [
-			{
-				internalType: 'uint8',
-				name: '',
-				type: 'uint8',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'SUPPLY_DECAY_START',
-		outputs: [
-			{
-				internalType: 'uint8',
-				name: '',
-				type: 'uint8',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'TERMINAL_SUPPLY_RATE_ANNUAL',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'acceptOwnership',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'inflationStartDate',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'isMintable',
-		outputs: [
-			{
-				internalType: 'bool',
-				name: '',
-				type: 'bool',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'kwenta',
-		outputs: [
-			{
-				internalType: 'contract IKwenta',
-				name: '',
-				type: 'address',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'lastMintEvent',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'mint',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'mintableSupply',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'minterReward',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'address',
-				name: '_owner',
-				type: 'address',
-			},
-		],
-		name: 'nominateNewOwner',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'nominatedOwner',
-		outputs: [
-			{
-				internalType: 'address',
-				name: '',
-				type: 'address',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'owner',
-		outputs: [
-			{
-				internalType: 'address',
-				name: '',
-				type: 'address',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'contract IKwenta',
-				name: '_kwenta',
-				type: 'address',
-			},
-		],
-		name: 'setKwenta',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'uint256',
-				name: 'amount',
-				type: 'uint256',
-			},
-		],
-		name: 'setMinterReward',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'address',
-				name: '_stakingRewards',
-				type: 'address',
-			},
-		],
-		name: 'setStakingRewards',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'address',
-				name: '_tradingRewards',
-				type: 'address',
-			},
-		],
-		name: 'setTradingRewards',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'uint256',
-				name: '_tradingRewardsDiversion',
-				type: 'uint256',
-			},
-		],
-		name: 'setTradingRewardsDiversion',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'address',
-				name: '_treasuryDAO',
-				type: 'address',
-			},
-		],
-		name: 'setTreasuryDAO',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'uint256',
-				name: '_treasuryDiversion',
-				type: 'uint256',
-			},
-		],
-		name: 'setTreasuryDiversion',
-		outputs: [],
-		stateMutability: 'nonpayable',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'stakingRewards',
-		outputs: [
-			{
-				internalType: 'contract IStakingRewards',
-				name: '',
-				type: 'address',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'uint256',
-				name: 'totalSupply',
-				type: 'uint256',
-			},
-			{
-				internalType: 'uint256',
-				name: 'numOfWeeks',
-				type: 'uint256',
-			},
-		],
-		name: 'terminalInflationSupply',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'pure',
-		type: 'function',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'uint256',
-				name: 'counter',
-				type: 'uint256',
-			},
-		],
-		name: 'tokenDecaySupplyForWeek',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'pure',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'tradingRewards',
-		outputs: [
-			{
-				internalType: 'contract IMultipleMerkleDistributor',
-				name: '',
-				type: 'address',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'tradingRewardsDiversion',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'treasuryDAO',
-		outputs: [
-			{
-				internalType: 'address',
-				name: '',
-				type: 'address',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'treasuryDiversion',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'weekCounter',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-	{
-		inputs: [],
-		name: 'weeksSinceLastIssuance',
-		outputs: [
-			{
-				internalType: 'uint256',
-				name: '',
-				type: 'uint256',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-]
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_treasuryDAO",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newAddress",
+        type: "address",
+      },
+    ],
+    name: "KwentaUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newRewardAmount",
+        type: "uint256",
+      },
+    ],
+    name: "MinterRewardUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "oldOwner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnerChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnerNominated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newAddress",
+        type: "address",
+      },
+    ],
+    name: "StakingRewardsUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "supplyMinted",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "numberOfWeeksIssued",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "lastMintEvent",
+        type: "uint256",
+      },
+    ],
+    name: "SupplyMinted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "TradingRewardsDiversionUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newAddress",
+        type: "address",
+      },
+    ],
+    name: "TradingRewardsUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "treasuryDAO",
+        type: "address",
+      },
+    ],
+    name: "TreasuryDAOSet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newPercentage",
+        type: "uint256",
+      },
+    ],
+    name: "TreasuryDiversionUpdated",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "DECAY_RATE",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "INITIAL_SUPPLY",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "INITIAL_WEEKLY_SUPPLY",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "MAX_MINTER_REWARD",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "MINT_BUFFER",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "MINT_PERIOD_DURATION",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "SUPPLY_DECAY_END",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "SUPPLY_DECAY_START",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "TERMINAL_SUPPLY_RATE_ANNUAL",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "acceptOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "inflationStartDate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isMintable",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "kwenta",
+    outputs: [
+      {
+        internalType: "contract IKwenta",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastMintEvent",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "mintableSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "minterReward",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+    ],
+    name: "nominateNewOwner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "nominatedOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IKwenta",
+        name: "_kwenta",
+        type: "address",
+      },
+    ],
+    name: "setKwenta",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "setMinterReward",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_stakingRewards",
+        type: "address",
+      },
+    ],
+    name: "setStakingRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_tradingRewards",
+        type: "address",
+      },
+    ],
+    name: "setTradingRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_tradingRewardsDiversion",
+        type: "uint256",
+      },
+    ],
+    name: "setTradingRewardsDiversion",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_treasuryDAO",
+        type: "address",
+      },
+    ],
+    name: "setTreasuryDAO",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_treasuryDiversion",
+        type: "uint256",
+      },
+    ],
+    name: "setTreasuryDiversion",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "stakingRewards",
+    outputs: [
+      {
+        internalType: "contract IStakingRewards",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "totalSupply",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "numOfWeeks",
+        type: "uint256",
+      },
+    ],
+    name: "terminalInflationSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "counter",
+        type: "uint256",
+      },
+    ],
+    name: "tokenDecaySupplyForWeek",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "tradingRewards",
+    outputs: [
+      {
+        internalType: "contract IMultipleMerkleDistributor",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "tradingRewardsDiversion",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "treasuryDAO",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "treasuryDiversion",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "weekCounter",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "weeksSinceLastIssuance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;
 
 export class SupplySchedule__factory {
-	static readonly abi = _abi
-	static createInterface(): SupplyScheduleInterface {
-		return new utils.Interface(_abi) as SupplyScheduleInterface
-	}
-	static connect(address: string, signerOrProvider: Signer | Provider): SupplySchedule {
-		return new Contract(address, _abi, signerOrProvider) as SupplySchedule
-	}
+  static readonly abi = _abi;
+  static createInterface(): SupplyScheduleInterface {
+    return new utils.Interface(_abi) as SupplyScheduleInterface;
+  }
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): SupplySchedule {
+    return new Contract(address, _abi, signerOrProvider) as SupplySchedule;
+  }
 }

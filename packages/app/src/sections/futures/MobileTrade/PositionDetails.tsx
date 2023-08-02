@@ -3,14 +3,15 @@ import styled from 'styled-components'
 
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable'
 import { SectionHeader, SectionSeparator, SectionTitle } from 'sections/futures/mobile'
-import { selectFuturesType, selectPosition } from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { selectPosition } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 
 const PositionDetails = () => {
 	const position = useAppSelector(selectPosition)
 	const accountType = useAppSelector(selectFuturesType)
 
-	return position?.position ? (
+	return position ? (
 		<>
 			<PositionDetailsContainer>
 				<SectionHeader>

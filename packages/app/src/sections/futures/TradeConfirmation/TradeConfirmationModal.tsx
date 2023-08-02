@@ -21,20 +21,22 @@ import { ButtonLoader } from 'components/Loader'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
-import { refetchTradePreview, submitCrossMarginOrder } from 'state/futures/actions'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import {
 	selectLeverageSide,
-	selectMarketAsset,
-	selectCrossMarginOrderPrice,
-	selectOrderType,
 	selectPosition,
-	selectTradePreview,
 	selectLeverageInput,
-	selectSlTpTradeInputs,
-	selectKeeperDepositExceedsBal,
-	selectNewTradeHasSlTp,
 	selectTradePanelSLValidity,
 } from 'state/futures/selectors'
+import { refetchTradePreview, submitSmartMarginOrder } from 'state/futures/smartMargin/actions'
+import {
+	selectKeeperDepositExceedsBal,
+	selectNewTradeHasSlTp,
+	selectOrderType,
+	selectSlTpTradeInputs,
+	selectSmartMarginOrderPrice,
+	selectTradePreview,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks'
 
 import AcceptWarningView from '../../../components/AcceptWarningView'
@@ -69,7 +71,7 @@ export default function TradeConfirmationModal({
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const potentialTradeDetails = useAppSelector(selectTradePreview)
 	const orderType = useAppSelector(selectOrderType)
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 	const position = useAppSelector(selectPosition)
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const leverageInput = useAppSelector(selectLeverageInput)
@@ -83,7 +85,7 @@ export default function TradeConfirmationModal({
 
 	usePollAction('refresh_preview', refetchTradePreview, { intervalTime: 6000 })
 
-	const onConfirmOrder = useCallback(() => dispatch(submitCrossMarginOrder(true)), [dispatch])
+	const onConfirmOrder = useCallback(() => dispatch(submitSmartMarginOrder(true)), [dispatch])
 
 	const totalFee = useMemo(
 		() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee,
@@ -92,10 +94,10 @@ export default function TradeConfirmationModal({
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(ZERO_WEI)) {
-			return position?.position?.side === PositionSide.LONG ? PositionSide.SHORT : PositionSide.LONG
+			return position?.side === PositionSide.LONG ? PositionSide.SHORT : PositionSide.LONG
 		}
 		return potentialTradeDetails?.size.gte(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT
-	}, [potentialTradeDetails?.size, position?.position?.side])
+	}, [potentialTradeDetails?.size, position?.side])
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails

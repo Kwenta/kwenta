@@ -69,7 +69,11 @@ const DEFAULT_INTERVAL = 20000
 export const usePollAction = (
 	actionName: string,
 	action: () => ActionType,
-	options?: { dependencies?: any[]; disabled?: boolean; intervalTime?: number }
+	options?: {
+		dependencies?: any[]
+		disabled?: boolean
+		intervalTime?: number
+	}
 ) => {
 	const { providerReady } = Connector.useContainer()
 	const startPolling = useStartPollingAction()

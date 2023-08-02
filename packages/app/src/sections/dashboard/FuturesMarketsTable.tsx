@@ -1,4 +1,4 @@
-import { FuturesMarketAsset } from '@kwenta/sdk/types'
+import { FuturesMarket, FuturesMarketAsset } from '@kwenta/sdk/types'
 import {
 	AssetDisplayByAsset,
 	MarketKeyByAsset,
@@ -20,12 +20,8 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Spacer from 'components/Spacer'
 import Table, { TableHeader } from 'components/Table'
 import ROUTES from 'constants/routes'
-import {
-	selectFuturesType,
-	selectMarkets,
-	selectMarketVolumes,
-	selectMarkPrices,
-} from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { selectMarkets, selectMarketVolumes, selectMarkPrices } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors'
 import { getSynthDescription } from 'utils/futures'
@@ -50,8 +46,8 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 
 	let data = useMemo(() => {
 		const lowerSearch = search?.toLowerCase()
-		const markets = lowerSearch
-			? futuresMarkets.filter(
+		const markets: FuturesMarket[] = lowerSearch
+			? (futuresMarkets as FuturesMarket[]).filter(
 					(m) =>
 						m.asset.toLowerCase().includes(lowerSearch) ||
 						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)

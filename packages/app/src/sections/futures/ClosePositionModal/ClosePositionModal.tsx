@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { PositionSide, PotentialTradeStatus } from '@kwenta/sdk/types'
+import { FuturesMarginType, PositionSide, PotentialTradeStatus } from '@kwenta/sdk/types'
 import {
 	floorNumber,
 	formatDollars,
@@ -24,23 +24,23 @@ import { Body } from 'components/Text'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectTransaction } from 'state/app/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { submitCrossMarginReducePositionOrder } from 'state/futures/crossMargin/actions'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
 	editClosePositionPrice,
 	editClosePositionSizeDelta,
-	submitIsolatedMarginReducePositionOrder,
 	submitSmartMarginReducePositionOrder,
-} from 'state/futures/actions'
-import { setClosePositionOrderType } from 'state/futures/reducer'
+} from 'state/futures/smartMargin/actions'
+import { setClosePositionOrderType } from 'state/futures/smartMargin/reducer'
 import {
-	selectClosePositionOrderInputs,
+	selectCloseSMPositionOrderInputs,
 	selectClosePositionPreview,
 	selectEditPositionModalInfo,
-	selectFuturesType,
 	selectIsFetchingTradePreview,
 	selectKeeperDepositExceedsBal,
-	selectSubmittingFuturesTx,
 	selectTradePreviewError,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import AcceptWarningView from '../../../components/AcceptWarningView'
@@ -63,16 +63,16 @@ export default function ClosePositionModal() {
 	const previewError = useAppSelector(selectTradePreviewError)
 	const accountType = useAppSelector(selectFuturesType)
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
-	const { nativeSizeDelta, orderType, price } = useAppSelector(selectClosePositionOrderInputs)
+	const { nativeSizeDelta, orderType, price } = useAppSelector(selectCloseSMPositionOrderInputs)
 	const { market, position } = useAppSelector(selectEditPositionModalInfo)
 
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
 
 	const submitCloseOrder = useCallback(() => {
-		if (accountType === 'cross_margin') {
+		if (accountType === FuturesMarginType.SMART_MARGIN) {
 			dispatch(submitSmartMarginReducePositionOrder(overridePriceProtection))
 		} else {
-			dispatch(submitIsolatedMarginReducePositionOrder())
+			dispatch(submitCrossMarginReducePositionOrder())
 		}
 	}, [dispatch, accountType, overridePriceProtection])
 
@@ -82,8 +82,8 @@ export default function ClosePositionModal() {
 	)
 
 	const maxNativeValue = useMemo(() => {
-		return position?.position?.size ?? ZERO_WEI
-	}, [position?.position?.size])
+		return position?.size ?? ZERO_WEI
+	}, [position?.size])
 
 	const sizeWei = useMemo(
 		() => (!nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? wei(0) : wei(nativeSizeDelta)),
@@ -149,28 +149,26 @@ export default function ClosePositionModal() {
 
 	const onSelectPercent = useCallback(
 		(index: number) => {
-			if (!position?.position?.size || !market?.marketKey) return
+			if (!position?.size || !market?.marketKey) return
 			const option = CLOSE_PERCENT_OPTIONS[index]
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100
 			const size =
-				percent === 1
-					? position.position.size.abs()
-					: floorNumber(position.position.size.abs().mul(percent))
+				percent === 1 ? position.size.abs() : floorNumber(position.size.abs().mul(percent))
 
-			const sizeDelta = position?.position.side === PositionSide.LONG ? wei(size).neg() : wei(size)
-			const decimals = sizeDelta.abs().eq(position.position.size.abs()) ? undefined : 4
+			const sizeDelta = position.side === PositionSide.LONG ? wei(size).neg() : wei(size)
+			const decimals = sizeDelta.abs().eq(position.size.abs()) ? undefined : 4
 
 			dispatch(
 				editClosePositionSizeDelta(market.marketKey, stripZeros(sizeDelta.toString(decimals)))
 			)
 		},
-		[dispatch, position?.position?.size, position?.position?.side, market?.marketKey]
+		[dispatch, position?.size, position?.side, market?.marketKey]
 	)
 
 	return (
 		<StyledBaseModal title="Close full or partial position" isOpen onDismiss={onClose}>
 			<Spacer height={10} />
-			{accountType === 'cross_margin' && (
+			{accountType === FuturesMarginType.SMART_MARGIN && (
 				<>
 					<OrderTypeSelector orderType={orderType} setOrderTypeAction={setClosePositionOrderType} />
 					<Spacer height={20} />
@@ -201,7 +199,7 @@ export default function ClosePositionModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					textValue={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
+					textValue={position?.leverage ? position.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -214,7 +212,7 @@ export default function ClosePositionModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.position-size')}
-					textValue={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
+					textValue={formatNumber(position?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -225,7 +223,7 @@ export default function ClosePositionModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					textValue={formatDollars(position?.position?.liquidationPrice || 0)}
+					textValue={formatDollars(position?.liquidationPrice || 0)}
 				/>
 				<InfoBoxRow
 					color={previewTrade?.exceedsPriceProtection ? 'negative' : 'primary'}

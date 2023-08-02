@@ -38,6 +38,11 @@ export const MAIN_ENDPOINT_OP_MAINNET =
 export const MAIN_ENDPOINT_OP_GOERLI =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-goerli-main'
 
+export const PERPS_V3_SUBGRAPH_URLS: Record<number, string> = {
+	// TODO: Update perps v3 subgraph urls
+	420: 'https://api.thegraph.com/subgraphs/name/rickk137/v3-perps-opt-goerli',
+}
+
 export const KWENTA_PYTH_SERVER = 'https://price.kwenta.io'
 
 export const PUBLIC_PYTH_SERVER = 'https://xc-mainnet.pyth.network'
@@ -48,7 +53,7 @@ export const ORDERS_FETCH_SIZE = 500
 
 export const ISOLATED_MARGIN_ORDER_TYPES: FuturesOrderType[] = ['market']
 export const CROSS_MARGIN_ORDER_TYPES: SmartMarginOrderType[] = ['market', 'limit', 'stop_market']
-export const ORDER_KEEPER_ETH_DEPOSIT = wei(0.01)
+export const MIN_ACCOUNT_KEEPER_BAL = wei(0.01)
 export const DEFAULT_DELAYED_LEVERAGE_CAP = wei(100)
 export const MAX_POSITION_BUFFER = 0.01
 export const MIN_MARGIN_AMOUNT = wei(50)

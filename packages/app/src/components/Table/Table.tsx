@@ -190,9 +190,9 @@ const Table = <T,>({
 						noResultsMessage
 					) : (
 						<TableBody className="table-body">
-							{table.getRowModel().rows.map((row, idx) => {
+							{table.getRowModel().rows.map((row, i) => {
 								const localRef =
-									lastRef && idx === table.getState().pagination.pageSize - 1 ? lastRef : defaultRef
+									lastRef && i === table.getState().pagination.pageSize - 1 ? lastRef : defaultRef
 								return (
 									<TableBodyRow
 										key={row.id}

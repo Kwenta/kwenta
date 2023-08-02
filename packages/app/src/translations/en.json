@@ -950,7 +950,8 @@
 					"no-available-margin": "No available margin",
 					"only-available-margin": "Only {{balance}} available margin",
 					"min-margin": "Min. $50 sUSD required to trade",
-					"tooltip": "Margin currently locked in closed markets. It will become available once the market reopens."
+					"tooltip": "Margin currently locked in closed markets. It will become available once the market reopens.",
+					"deposit": "Deposit"
 				},
 				"confirmation": {
 					"modal": {
@@ -1191,7 +1192,9 @@
 				}
 			},
 			"onboard": {
-				"title": "Smart Margin",
+				"sm-title": "Smart Margin",
+				"cm-title": "Cross Margin",
+				"cm-intro": "Start by creating your cross margin account",
 				"step1-intro": "Start by creating your smart margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
 				"step3-intro": "Lastly, deposit sUSD to begin trading",
@@ -1199,7 +1202,8 @@
 				"faq1": "What is smart margin?",
 				"faq2": "Is smart margin better than isolated margin?",
 				"faq3": "How will a smart margin account affect my trading?",
-				"unsupported-network": "Smart margin is not supported on this network"
+				"unsupported-network": "Smart margin is not supported on this network",
+				"deposit": "Deposit"
 			}
 		}
 	},

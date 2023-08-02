@@ -151,3 +151,15 @@ export const PRELOADED_STATE = {
 		offChainPrices: { sETH: { price: DEFAULT_ETH_PRICE, change: 'up' } } as PricesInfoMap,
 	},
 }
+
+export const createState = (networkId: number) => {
+	return {
+		...PRELOADED_STATE,
+		wallet: { networkId: networkId as NetworkId, walletAddress: TEST_ADDR },
+	}
+}
+
+export const mockTxResponse = (hash: string) => ({
+	hash,
+	wait: () => Promise.resolve({ hash }),
+})

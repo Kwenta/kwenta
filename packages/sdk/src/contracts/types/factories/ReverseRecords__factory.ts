@@ -2,49 +2,55 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from 'ethers'
-import type { Provider } from '@ethersproject/providers'
-import type { ReverseRecords, ReverseRecordsInterface } from '../ReverseRecords'
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
+import type {
+  ReverseRecords,
+  ReverseRecordsInterface,
+} from "../ReverseRecords";
 
 const _abi = [
-	{
-		inputs: [
-			{
-				internalType: 'contract ENS',
-				name: '_ens',
-				type: 'address',
-			},
-		],
-		stateMutability: 'nonpayable',
-		type: 'constructor',
-	},
-	{
-		inputs: [
-			{
-				internalType: 'address[]',
-				name: 'addresses',
-				type: 'address[]',
-			},
-		],
-		name: 'getNames',
-		outputs: [
-			{
-				internalType: 'string[]',
-				name: 'r',
-				type: 'string[]',
-			},
-		],
-		stateMutability: 'view',
-		type: 'function',
-	},
-]
+  {
+    inputs: [
+      {
+        internalType: "contract ENS",
+        name: "_ens",
+        type: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "addresses",
+        type: "address[]",
+      },
+    ],
+    name: "getNames",
+    outputs: [
+      {
+        internalType: "string[]",
+        name: "r",
+        type: "string[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;
 
 export class ReverseRecords__factory {
-	static readonly abi = _abi
-	static createInterface(): ReverseRecordsInterface {
-		return new utils.Interface(_abi) as ReverseRecordsInterface
-	}
-	static connect(address: string, signerOrProvider: Signer | Provider): ReverseRecords {
-		return new Contract(address, _abi, signerOrProvider) as ReverseRecords
-	}
+  static readonly abi = _abi;
+  static createInterface(): ReverseRecordsInterface {
+    return new utils.Interface(_abi) as ReverseRecordsInterface;
+  }
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): ReverseRecords {
+    return new Contract(address, _abi, signerOrProvider) as ReverseRecords;
+  }
 }

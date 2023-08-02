@@ -60,6 +60,9 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		10: '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9',
 		420: '0xebaeaad9236615542844adc5c149f86c36ad1136',
 	},
+	SNXUSD: {
+		420: '0xe487Ad4291019b33e2230F8E2FB1fb6490325260',
+	},
 	Synthetix: {
 		1: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
 		5: '0x51f44ca59b867E005e48FA573Cb8df83FC7f7597',
@@ -146,5 +149,11 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	DappMaintenance: {
 		10: '0x54581A23F62D147AC76d454f0b3eF77F9D766058',
 		420: '0x4259a2004A1E110A86564ff1441c37F1461F344F',
+	},
+	PerpsV3MarketProxy: {
+		420: '0xf272382cB3BE898A8CdB1A23BE056fA2Fcf4513b',
+	},
+	PerpsV3AccountProxy: {
+		420: '0x01C2f64ABd46AF20950736f3C3e1a9cfc5c36c82',
 	},
 }

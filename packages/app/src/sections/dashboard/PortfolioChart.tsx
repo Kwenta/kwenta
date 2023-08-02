@@ -16,14 +16,14 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media'
 import { Body, NumericValue, Heading } from 'components/Text'
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
 import ROUTES from 'constants/routes'
+import { selectFuturesType } from 'state/futures/common/selectors'
 import {
-	selectBuyingPower,
 	selectFuturesPortfolio,
-	selectFuturesType,
 	selectPortfolioChartData,
 	selectSelectedPortfolioTimeframe,
 	selectTotalUnrealizedPnl,
 } from 'state/futures/selectors'
+import { selectBuyingPower } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import { Timeframe } from './Timeframe'
@@ -53,12 +53,11 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 	const theme = useTheme()
 	const portfolioTimeframe = useAppSelector(selectSelectedPortfolioTimeframe)
 	const accountType = useAppSelector(selectFuturesType)
-	const { isolated_margin: isolatedPortfolioData, cross_margin: smartPortfolioData } =
-		useAppSelector(selectPortfolioChartData)
+	const portfolioChartData = useAppSelector(selectPortfolioChartData)
 
 	const portfolioData = useMemo(
-		() => (accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData),
-		[accountType, isolatedPortfolioData, smartPortfolioData]
+		() => portfolioChartData[accountType],
+		[portfolioChartData, accountType]
 	)
 
 	const lineColor = useMemo(() => {
@@ -66,7 +65,7 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 			portfolioData.length > 2
 				? portfolioData[portfolioData.length - 1].total - portfolioData[0].total < 0
 				: false
-		return isNegative ? theme.colors.selectedTheme.red : theme.colors.selectedTheme.green
+		return theme.colors.selectedTheme[isNegative ? 'red' : 'green']
 	}, [portfolioData, theme])
 
 	return (
@@ -112,8 +111,8 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 					align="left"
 					formatter={(value) =>
 						value === 'total'
-							? accountType === 'isolated_margin'
-								? 'Isolated Margin'
+							? accountType === 'cross_margin'
+								? 'Cross Margin'
 								: 'Smart Margin'
 							: value
 					}
@@ -132,10 +131,10 @@ const PriceChart: FC<PriceChartProps> = ({ setHoverValue, setHoverTitle }) => {
 
 const PortfolioChart: FC = () => {
 	const { t } = useTranslation()
-	const { isolatedMarginFutures: isolatedTotal, crossMarginFutures: smartTotal } =
+	const { crossMargin: crossTotal, smartMargin: smartTotal } =
 		useAppSelector(selectFuturesPortfolio)
 	const accountType = useAppSelector(selectFuturesType)
-	const { isolated_margin: isolatedPortfolioData, cross_margin: smartPortfolioData } =
+	const { cross_margin: crossPortfolioData, smart_margin: smartPortfolioData } =
 		useAppSelector(selectPortfolioChartData)
 
 	const buyingPower = useAppSelector(selectBuyingPower)
@@ -145,13 +144,13 @@ const PortfolioChart: FC = () => {
 	const [hoverTitle, setHoverTitle] = useState<string | null>(null)
 
 	const total = useMemo(
-		() => (accountType === 'isolated_margin' ? isolatedTotal : smartTotal),
-		[accountType, isolatedTotal, smartTotal]
+		() => (accountType === 'cross_margin' ? crossTotal : smartTotal),
+		[accountType, crossTotal, smartTotal]
 	)
 
 	const portfolioData = useMemo(() => {
-		return accountType === 'isolated_margin' ? isolatedPortfolioData : smartPortfolioData
-	}, [accountType, isolatedPortfolioData, smartPortfolioData])
+		return accountType === 'cross_margin' ? crossPortfolioData : smartPortfolioData
+	}, [accountType, crossPortfolioData, smartPortfolioData])
 
 	const changeValue = useMemo(() => {
 		if (portfolioData.length < 2) {
