@@ -59,7 +59,7 @@ export const migrations = {
 			stats: STATS_INITIAL_STATE,
 		}
 	},
-	34: (state: any) => {
+	35: (state: any) => {
 		return {
 			...state,
 			futures: FUTURES_INITIAL_STATE,

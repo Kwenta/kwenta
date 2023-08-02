@@ -37,7 +37,7 @@ const TradePanelCrossMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 	)
 
 	return (
-		<TradePanelContainer $mobile={mobile}>
+		<TradePanelContainer $mobile={mobile} data-testid="cross-margin-trade-panel">
 			{!mobile && (
 				<>
 					<MarketsDropdown />

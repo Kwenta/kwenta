@@ -61,3 +61,5 @@ export const DEFAULT_MAP_BY_NETWORK = {
 	420: {},
 	10: {},
 }
+
+export const EST_KEEPER_GAS_FEE = 0.002

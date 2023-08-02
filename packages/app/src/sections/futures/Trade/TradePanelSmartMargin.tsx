@@ -91,7 +91,12 @@ const TradePanelSmartMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 						) : (
 							<>
 								<MarginInput />
-								<OrderPriceInput />
+								{orderType !== 'market' && (
+									<>
+										<OrderPriceInput />
+										<Spacer height={16} />
+									</>
+								)}
 								<Spacer height={16} />
 								<OrderSizing />
 								<LeverageInput />

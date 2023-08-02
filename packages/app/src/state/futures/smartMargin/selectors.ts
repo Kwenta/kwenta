@@ -1,5 +1,10 @@
 import { SL_TP_MAX_SIZE, ZERO_WEI } from '@kwenta/sdk/constants'
-import { TransactionStatus, ConditionalOrderTypeEnum, PositionSide } from '@kwenta/sdk/types'
+import {
+	TransactionStatus,
+	ConditionalOrderTypeEnum,
+	PositionSide,
+	FuturesMarketKey,
+} from '@kwenta/sdk/types'
 import {
 	calculateDesiredFillPrice,
 	getDefaultPriceImpact,
@@ -14,6 +19,7 @@ import { FuturesPositionTablePosition } from 'types/futures'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER } from 'constants/defaults'
 import { selectSusdBalance } from 'state/balances/selectors'
+import { EST_KEEPER_GAS_FEE } from 'state/constants'
 import {
 	selectOffchainPricesInfo,
 	selectOnChainPricesInfo,
@@ -244,6 +250,35 @@ export const selectAllConditionalOrders = createSelector(
 	}
 )
 
+type OrdersReducerType = { increase: number; reduce: number; sltp: boolean }
+
+export const selectRequiredEthForPendingOrders = createSelector(
+	selectAllConditionalOrders,
+	(orders) => {
+		const filtered = orders.reduce((acc, o) => {
+			const market = acc[o.marketKey] ?? { sltp: false, increase: 0, reduce: 0 }
+			if (o.isSlTp) {
+				market.sltp = true
+			} else if (o.orderType === ConditionalOrderTypeEnum.STOP) {
+				market.reduce += 1
+			} else {
+				market.increase += 1
+			}
+			acc[o.marketKey] = market
+			return acc
+		}, {} as Partial<Record<FuturesMarketKey, OrdersReducerType>>)
+
+		return Object.values(filtered).reduce((acc, m) => {
+			acc =
+				acc +
+				m.increase * EST_KEEPER_GAS_FEE +
+				m.reduce * EST_KEEPER_GAS_FEE +
+				(m.sltp ? EST_KEEPER_GAS_FEE : 0)
+			return acc
+		}, 0)
+	}
+)
+
 export const selectSmartMarginPositionHistory = createSelector(
 	selectSmartMarginAccountData,
 	(accountData) => {
@@ -290,11 +325,11 @@ export const selectSmartMarginPositions = createSelector(
 							o.orderType === ConditionalOrderTypeEnum.LIMIT
 					)
 
-					const position = {
+					const position: FuturesPositionTablePosition = {
 						...pos.position,
 						remainingMargin: pos.remainingMargin,
-						stopLossOrder: stopLoss,
-						takeProfitOrder: takeProfit,
+						stopLoss: stopLoss,
+						takeProfit: takeProfit,
 						avgEntryPrice: history?.avgEntryPrice ?? ZERO_WEI,
 						market,
 					}
@@ -652,9 +687,12 @@ export const selectSLTPModalExistingPrices = createSelector(
 
 export const selectSlTpTradeInputs = createSelector(
 	(state: RootState) => state.smartMargin.tradeInputs,
-	(tradeInputs) => ({
-		stopLossPrice: tradeInputs.stopLossPrice || '',
-		takeProfitPrice: tradeInputs.takeProfitPrice || '',
+	({ stopLossPrice, takeProfitPrice }) => ({
+		stopLossPrice: stopLossPrice || '',
+		takeProfitPrice: takeProfitPrice || '',
+		stopLossPriceWei: stopLossPrice && stopLossPrice !== '' ? wei(stopLossPrice) : undefined,
+		takeProfitPriceWei:
+			takeProfitPrice && takeProfitPrice !== '' ? wei(takeProfitPrice) : undefined,
 	})
 )
 

@@ -76,7 +76,7 @@ describe('Futures market page - smart margin', () => {
 
 	test('Submits LONG order with correct desired fill price', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
-		const { findByTestId, findByText } = render(
+		const { findByTestId, findByText, findAllByText } = render(
 			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
@@ -97,9 +97,9 @@ describe('Futures market page - smart margin', () => {
 		const confirmButton = await findByTestId('trade-confirm-order-button')
 		fireEvent.click(confirmButton)
 
-		// Preview generated fill price displayed in confirmation view
-		const fillPrice = await findByText('$1,847.76')
-		expect(fillPrice).toBeTruthy()
+		// Preview generated fill price displayed in confirmation view and trade panel
+		const fillPrice = await findAllByText('$1,847.76')
+		expect(fillPrice.length).toEqual(2)
 
 		// Desired fill price is higher than fill price by 1%
 		// (as a long order the price is worse to account for slippage in delayed order)
@@ -110,7 +110,7 @@ describe('Futures market page - smart margin', () => {
 
 	test('Submits SHORT order with correct desired fill price', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
-		const { findByTestId, findByText } = render(
+		const { findByTestId, findByText, findAllByText } = render(
 			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
@@ -134,9 +134,9 @@ describe('Futures market page - smart margin', () => {
 		const confirmButton = await findByTestId('trade-confirm-order-button')
 		fireEvent.click(confirmButton)
 
-		// Preview generated fill price displayed in confirmation view
-		const fillPrice = await findByText('$1,847.76')
-		expect(fillPrice).toBeTruthy()
+		// Preview generated fill price displayed in confirmation view and trade panel
+		const fillPrice = await findAllByText('$1,847.76')
+		expect(fillPrice.length).toEqual(2)
 
 		// Desired fill price is lower than fill price by 1%
 		// (as a short order the price is worse to account for slippage in delayed order)

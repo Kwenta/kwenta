@@ -384,14 +384,13 @@ export const formatV2DelayedOrder = (
 }
 
 export const formatV3AsyncOrder = (order: AsyncOrder.DataStructOutput): PerpsV3AsyncOrder => {
-	const { accountId, marketId, sizeDelta, settlementStrategyId, settlementTime, acceptablePrice } =
-		order
+	const { accountId, marketId, sizeDelta, settlementStrategyId, acceptablePrice } = order.request
 
 	return {
 		accountId: accountId.toNumber(),
 		marketId: marketId.toNumber(),
 		sizeDelta: wei(sizeDelta),
-		settlementTime: settlementTime.toNumber(),
+		settlementTime: order.settlementTime.toNumber(),
 		settlementStrategyId: settlementStrategyId.toNumber(),
 		acceptablePrice: wei(acceptablePrice),
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,

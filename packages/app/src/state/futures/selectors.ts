@@ -237,6 +237,17 @@ export const selectFuturesPositions = createSelector(
 	}
 )
 
+export const selectUsersPositionHistory = createSelector(
+	selectNetwork,
+	selectWallet,
+	(state: RootState) => state.futures,
+	(networkId, wallet, futures) => {
+		if (!wallet) return []
+		const history = futures.leaderboard.selectedTraderPositionHistory[networkId]?.[wallet] ?? []
+		return unserializePositionHistory(history)
+	}
+)
+
 export const selectTotalUnrealizedPnl = createSelector(selectFuturesPositions, (positions) => {
 	return positions.reduce((acc, p) => {
 		return acc.add(p?.pnl ?? ZERO_WEI)

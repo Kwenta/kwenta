@@ -12,12 +12,8 @@ import {
 	selectCrossMarginSupportedNetwork,
 } from 'state/futures/crossMargin/selectors'
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
-import { fetchStakeMigrateData, fetchStakingV2Data } from 'state/staking/actions'
-import {
-	selectSelectedEpoch,
-	selectStakingSupportedNetwork,
-	selectTradingRewardsSupportedNetwork,
-} from 'state/staking/selectors'
+import { fetchStakeMigrateData } from 'state/staking/actions'
+import { selectSelectedEpoch, selectStakingSupportedNetwork } from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 
 import { fetchFuturesPositionHistory, fetchMarginTransfers } from './actions'
@@ -45,7 +41,6 @@ export const usePollMarketFuturesData = () => {
 	const wallet = useAppSelector(selectWallet)
 	const smartMarginAddress = useAppSelector(selectSmartMarginAccount)
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
-	const networkSupportsTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const networkSupportsSmartMargin = useAppSelector(selectSmartMarginSupportedNetwork)
@@ -65,11 +60,6 @@ export const usePollMarketFuturesData = () => {
 			!wallet ||
 			!networkSupportsCrossMargin ||
 			selectedAccountType !== FuturesMarginType.CROSS_MARGIN,
-	})
-
-	useFetchAction(fetchStakingV2Data, {
-		dependencies: [networkId, wallet],
-		disabled: !wallet || !networkSupportsTradingRewards,
 	})
 
 	useFetchAction(fetchMarginTransfers, { dependencies: [networkId, wallet, selectedAccountType] })

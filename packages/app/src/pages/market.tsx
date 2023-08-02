@@ -6,6 +6,7 @@ import styled from 'styled-components'
 
 import Loader from 'components/Loader'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import { CROSS_MARGIN_ENABLED } from 'constants/defaults'
 import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useWindowSize from 'hooks/useWindowSize'
@@ -66,14 +67,18 @@ const Market: MarketComponent = () => {
 	const showPositionModal = useAppSelector(selectShowPositionModal)
 	const accountType = useAppSelector(selectFuturesType)
 	const selectedMarketAsset = useAppSelector(selectMarketAsset)
-	const crossMarginSupported = useAppSelector(selectCrossMarginSupportedNetwork)
+	const crossMarginSupportedNetwork = useAppSelector(selectCrossMarginSupportedNetwork)
 
 	const routerAccountType = useMemo(() => {
-		if (router.query.accountType === 'cross_margin' && crossMarginSupported) {
+		if (
+			router.query.accountType === 'cross_margin' &&
+			crossMarginSupportedNetwork &&
+			CROSS_MARGIN_ENABLED
+		) {
 			return router.query.accountType as AppFuturesMarginType
 		}
 		return FuturesMarginType.SMART_MARGIN
-	}, [router.query.accountType, crossMarginSupported])
+	}, [router.query.accountType, crossMarginSupportedNetwork])
 
 	useEffect(() => {
 		if (router.isReady && accountType !== routerAccountType) {

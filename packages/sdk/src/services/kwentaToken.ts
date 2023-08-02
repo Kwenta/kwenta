@@ -19,7 +19,7 @@ import {
 import { ContractName } from '../contracts'
 import { ClaimParams, EpochData, EscrowData } from '../types/kwentaToken'
 import { formatTruncatedDuration } from '../utils/date'
-import { awsClient, fleekClient } from '../utils/files'
+import { awsClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
 import { calculateFeesForAccount, calculateTotalFees } from '../utils'
@@ -504,12 +504,12 @@ export default class KwentaTokenService {
 	public async getEstimatedRewards() {
 		const { networkId, walletAddress } = this.sdk.context
 		const fileNames = ['', '-op'].map(
-			(i) => `trading-rewards-snapshots/${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
+			(i) => `/${networkId === 420 ? 'goerli-' : ''}epoch-current${i}.json`
 		)
 
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName) => {
-				const response = await fleekClient.get(fileName)
+				const response = await awsClient.get(fileName)
 				return { ...response.data }
 			})
 		)
@@ -527,19 +527,16 @@ export default class KwentaTokenService {
 		return { estimatedKwentaRewards, estimatedOpRewards }
 	}
 
-	public async getClaimableRewards(epochPeriod: number, isOldDistributor: boolean = true) {
-		const { MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
-			this.sdk.context.multicallContracts
+	public async getClaimableRewards(epochPeriod: number) {
+		const { MultipleMerkleDistributorPerpsV2 } = this.sdk.context.multicallContracts
 		const { walletAddress } = this.sdk.context
 
-		if (!MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
+		if (!MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
 		const periods = Array.from(new Array(Number(epochPeriod)), (_, i) => i)
-		const adjustedPeriods = isOldDistributor
-			? periods.slice(0, TRADING_REWARDS_CUTOFF_EPOCH)
-			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH)
+		const adjustedPeriods = periods.slice(TRADING_REWARDS_CUTOFF_EPOCH)
 
 		const fileNames = adjustedPeriods.map(
 			(i) => `${this.sdk.context.networkId === 420 ? `goerli-` : ''}epoch-${i}.json`
@@ -548,13 +545,7 @@ export default class KwentaTokenService {
 		const responses: EpochData[] = await Promise.all(
 			fileNames.map(async (fileName, index) => {
 				const response = await awsClient.get(fileName)
-				const period = isOldDistributor
-					? index >= 5
-						? index >= 10
-							? index + 2
-							: index + 1
-						: index
-					: index + TRADING_REWARDS_CUTOFF_EPOCH
+				const period = index + TRADING_REWARDS_CUTOFF_EPOCH
 				return { ...response.data, period }
 			})
 		)
@@ -572,11 +563,7 @@ export default class KwentaTokenService {
 			.filter((x): x is ClaimParams => !!x)
 
 		const claimed: boolean[] = await this.sdk.context.multicallProvider.all(
-			rewards.map((reward) =>
-				isOldDistributor
-					? MultipleMerkleDistributor.isClaimed(reward[0], reward[4])
-					: MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4])
-			)
+			rewards.map((reward) => MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4]))
 		)
 
 		const { totalRewards, claimableRewards } = rewards.reduce(
@@ -596,13 +583,11 @@ export default class KwentaTokenService {
 
 	public async getClaimableAllRewards(
 		epochPeriod: number,
-		isOldDistributor: boolean = true,
 		isOp: boolean = false,
 		isSnx: boolean = false,
 		cutoffPeriod: number = 0
 	) {
 		const {
-			MultipleMerkleDistributor,
 			MultipleMerkleDistributorPerpsV2,
 			MultipleMerkleDistributorOp,
 			MultipleMerkleDistributorSnxOp,
@@ -610,7 +595,6 @@ export default class KwentaTokenService {
 		const { walletAddress } = this.sdk.context
 
 		if (
-			!MultipleMerkleDistributor ||
 			!MultipleMerkleDistributorPerpsV2 ||
 			!MultipleMerkleDistributorOp ||
 			!MultipleMerkleDistributorSnxOp
@@ -620,9 +604,7 @@ export default class KwentaTokenService {
 
 		const periods = Array.from(new Array(Number(epochPeriod)), (_, i) => i)
 
-		const adjustedPeriods = isOldDistributor
-			? periods.slice(0, TRADING_REWARDS_CUTOFF_EPOCH)
-			: isOp
+		const adjustedPeriods = isOp
 			? periods.slice(OP_REWARDS_CUTOFF_EPOCH)
 			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH)
 
@@ -638,13 +620,7 @@ export default class KwentaTokenService {
 				try {
 					if (index < cutoffPeriod) return null
 					const response = await awsClient.get(fileName)
-					const period = isOldDistributor
-						? index >= 5
-							? index >= 10
-								? index + 2
-								: index + 1
-							: index
-						: isOp
+					const period = isOp
 						? isSnx
 							? index
 							: index + OP_REWARDS_CUTOFF_EPOCH
@@ -672,9 +648,7 @@ export default class KwentaTokenService {
 
 		const claimed: boolean[] = await this.sdk.context.multicallProvider.all(
 			rewards.map((reward) =>
-				isOldDistributor
-					? MultipleMerkleDistributor.isClaimed(reward[0], reward[4])
-					: isOp
+				isOp
 					? isSnx
 						? MultipleMerkleDistributorSnxOp.isClaimed(reward[0], reward[4])
 						: MultipleMerkleDistributorOp.isClaimed(reward[0], reward[4])
@@ -697,24 +671,23 @@ export default class KwentaTokenService {
 		return { claimableRewards, totalRewards }
 	}
 
-	public async claimMultipleKwentaRewards(claimableRewards: ClaimParams[][]) {
-		const { BatchClaimer, MultipleMerkleDistributor, MultipleMerkleDistributorPerpsV2 } =
-			this.sdk.context.contracts
+	public async claimKwentaRewards(claimableRewards: ClaimParams[]) {
+		const { MultipleMerkleDistributorPerpsV2 } = this.sdk.context.contracts
 
-		if (!BatchClaimer || !MultipleMerkleDistributor || !MultipleMerkleDistributorPerpsV2) {
+		if (!MultipleMerkleDistributorPerpsV2) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
-		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
-			[MultipleMerkleDistributor.address, MultipleMerkleDistributorPerpsV2.address],
-			claimableRewards,
-		])
+		return this.sdk.transactions.createContractTxn(
+			MultipleMerkleDistributorPerpsV2,
+			'claimMultiple',
+			[claimableRewards]
+		)
 	}
 
 	public async claimMultipleAllRewards(claimableRewards: ClaimParams[][]) {
 		const {
 			BatchClaimer,
-			MultipleMerkleDistributor,
 			MultipleMerkleDistributorPerpsV2,
 			MultipleMerkleDistributorOp,
 			MultipleMerkleDistributorSnxOp,
@@ -722,7 +695,6 @@ export default class KwentaTokenService {
 
 		if (
 			!BatchClaimer ||
-			!MultipleMerkleDistributor ||
 			!MultipleMerkleDistributorPerpsV2 ||
 			!MultipleMerkleDistributorOp ||
 			!MultipleMerkleDistributorSnxOp
@@ -732,7 +704,6 @@ export default class KwentaTokenService {
 
 		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
 			[
-				MultipleMerkleDistributor.address,
 				MultipleMerkleDistributorPerpsV2.address,
 				MultipleMerkleDistributorOp.address,
 				MultipleMerkleDistributorSnxOp.address,
