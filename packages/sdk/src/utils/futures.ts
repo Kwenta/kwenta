@@ -775,6 +775,7 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sYFIPERP]: FuturesMarketAsset.YFI,
 	[FuturesMarketKey.sMKRPERP]: FuturesMarketAsset.MKR,
 	[FuturesMarketKey.sRPLPERP]: FuturesMarketAsset.RPL,
+	[FuturesMarketKey.sWLDPERP]: FuturesMarketAsset.WLD,
 } as const
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -828,6 +829,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.YFI]: FuturesMarketKey.sYFIPERP,
 	[FuturesMarketAsset.MKR]: FuturesMarketKey.sMKRPERP,
 	[FuturesMarketAsset.RPL]: FuturesMarketKey.sRPLPERP,
+	[FuturesMarketAsset.WLD]: FuturesMarketKey.sWLDPERP,
 } as const
 
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
@@ -881,6 +883,7 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.YFI]: 'Yearn.Finance',
 	[FuturesMarketAsset.MKR]: 'Maker',
 	[FuturesMarketAsset.RPL]: 'Rocket Pool',
+	[FuturesMarketAsset.WLD]: 'Worldcoin',
 } as const
 
 export const PerpsV3SymbolToMarketKey: Record<string, FuturesMarketKey> = {

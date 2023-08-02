@@ -60,6 +60,7 @@ import XMRIcon from 'assets/png/currencies/sXMR.png'
 import XRPIcon from 'assets/png/currencies/sXRP.png'
 import YFIIcon from 'assets/png/currencies/sYFI.png'
 import WBTCIcon from 'assets/png/currencies/WBTC.png'
+import WLDIcon from 'assets/png/currencies/sWLD.png'
 import { SynthsName } from 'constants/currency'
 
 export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
@@ -108,6 +109,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sSUIPERP: SUIIcon,
 	sTRXPERP: TRXIcon,
 	sUNIPERP: UNIIcon,
+	sWLDPERP: WLDIcon,
 	sXAUPERP: XAUIcon,
 	sXAGPERP: XAGIcon,
 	sXMRPERP: XMRIcon,
