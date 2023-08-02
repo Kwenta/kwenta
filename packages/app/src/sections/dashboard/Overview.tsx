@@ -1,5 +1,6 @@
 import { ETH_ADDRESS, ETH_COINGECKO_ADDRESS, ZERO_WEI } from '@kwenta/sdk/constants'
 import { SynthSymbol } from '@kwenta/sdk/data'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars, toWei } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { FC, useEffect, useMemo, useState } from 'react'
@@ -14,15 +15,11 @@ import { TabPanel } from 'components/Tab'
 import Search from 'components/Table/Search'
 import * as Text from 'components/Text'
 import Connector from 'containers/Connector'
-import { FuturesAccountTypes } from 'queries/futures/types'
 import { selectBalances } from 'state/balances/selectors'
 import { fetchTokenList } from 'state/exchange/actions'
 import { setFuturesAccountType } from 'state/futures/reducer'
-import {
-	selectActiveSmartPositionsCount,
-	selectFuturesPortfolio,
-	selectFuturesType,
-} from 'state/futures/selectors'
+import { selectFuturesPortfolio } from 'state/futures/selectors'
+import { selectActiveSmartPositionsCount } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
 import sdk from 'state/sdk'
 import { selectSynthsMap } from 'state/wallet/selectors'
@@ -36,7 +33,6 @@ import SynthBalancesTable from './SynthBalancesTable'
 
 export enum PositionsTab {
 	SMART_MARGIN = 'smart margin',
-	ISOLATED_MARGIN = 'isolated margin',
 	SPOT = 'spot',
 }
 
@@ -46,20 +42,13 @@ const Overview: FC = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 
-	const accountType = useAppSelector(selectFuturesType)
 	const balances = useAppSelector(selectBalances)
 	const portfolio = useAppSelector(selectFuturesPortfolio)
 	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount)
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
-		accountType === 'isolated_margin' ? PositionsTab.ISOLATED_MARGIN : PositionsTab.SMART_MARGIN
+		PositionsTab.SMART_MARGIN
 	)
-
-	useEffect(() => {
-		accountType === 'isolated_margin'
-			? setActivePositionsTab(PositionsTab.ISOLATED_MARGIN)
-			: setActivePositionsTab(PositionsTab.SMART_MARGIN)
-	}, [accountType, setActivePositionsTab])
 
 	const { network } = Connector.useContainer()
 	const synthsMap = useAppSelector(selectSynthsMap)
@@ -137,13 +126,13 @@ const Overview: FC = () => {
 				name: PositionsTab.SMART_MARGIN,
 				label: t('dashboard.overview.positions-tabs.smart-margin'),
 				badge: smartPositionsCount,
-				titleIcon: <FuturesIcon type="cross_margin" />,
+				titleIcon: <FuturesIcon type={FuturesMarginType.SMART_MARGIN} />,
 				active: activePositionsTab === PositionsTab.SMART_MARGIN,
-				detail: formatDollars(portfolio.crossMarginFutures),
+				detail: formatDollars(portfolio.smartMargin),
 				disabled: false,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SMART_MARGIN)
-					dispatch(setFuturesAccountType(FuturesAccountTypes.CROSS_MARGIN))
+					dispatch(setFuturesAccountType(FuturesMarginType.SMART_MARGIN))
 				},
 			},
 			{
@@ -162,7 +151,7 @@ const Overview: FC = () => {
 		exchangeTokens,
 		balances.totalUSDBalance,
 		activePositionsTab,
-		portfolio.crossMarginFutures,
+		portfolio.smartMargin,
 		setActivePositionsTab,
 	])
 
@@ -177,7 +166,7 @@ const Overview: FC = () => {
 					))}
 				</TabButtonsContainer>
 				<TabPanel name={PositionsTab.SMART_MARGIN} activeTab={activePositionsTab}>
-					<FuturesPositionsTable accountType={FuturesAccountTypes.CROSS_MARGIN} />
+					<FuturesPositionsTable accountType={FuturesMarginType.SMART_MARGIN} />
 				</TabPanel>
 
 				<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>

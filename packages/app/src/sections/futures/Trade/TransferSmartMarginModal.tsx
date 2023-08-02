@@ -16,8 +16,9 @@ import SegmentedControl from 'components/SegmentedControl'
 import Spacer from 'components/Spacer'
 import { selectTransaction } from 'state/app/selectors'
 import { selectSusdBalance } from 'state/balances/selectors'
-import { withdrawCrossMargin } from 'state/futures/actions'
-import { selectIsSubmittingCrossTransfer, selectWithdrawableMargin } from 'state/futures/selectors'
+import { selectIsSubmittingCrossTransfer } from 'state/futures/selectors'
+import { withdrawSmartMargin } from 'state/futures/smartMargin/actions'
+import { selectWithdrawableSmartMargin } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type Props = {
@@ -36,7 +37,7 @@ const TransferSmartMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) =>
 	const dispatch = useAppDispatch()
 
 	const submitting = useAppSelector(selectIsSubmittingCrossTransfer)
-	const totalWithdrawable = useAppSelector(selectWithdrawableMargin)
+	const totalWithdrawable = useAppSelector(selectWithdrawableSmartMargin)
 	const transactionState = useAppSelector(selectTransaction)
 	const susdBalance = useAppSelector(selectSusdBalance)
 
@@ -64,7 +65,7 @@ const TransferSmartMarginModal: React.FC<Props> = ({ onDismiss, defaultTab }) =>
 	}
 
 	const onWithdraw = () => {
-		dispatch(withdrawCrossMargin(wei(amount)))
+		dispatch(withdrawSmartMargin(wei(amount)))
 	}
 
 	return (

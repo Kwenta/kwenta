@@ -1,8 +1,9 @@
-import { FuturesFilledPosition, FuturesMarket, PositionSide } from '@kwenta/sdk/types'
+import { FuturesMarket, PositionSide } from '@kwenta/sdk/types'
 import { getMarketName, MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { memo, FC } from 'react'
 import styled, { css } from 'styled-components'
+import { FuturesPositionTablePosition } from 'types/futures'
 
 import { border } from 'components/Button'
 import ChangePercent from 'components/ChangePercent'
@@ -15,7 +16,7 @@ import { isDecimalFour } from 'utils/futures'
 type MobilePositionRowProps = {
 	row: {
 		market?: FuturesMarket
-		position: FuturesFilledPosition | null
+		position: FuturesPositionTablePosition | null
 		avgEntryPrice?: Wei
 	}
 	onClick(): void

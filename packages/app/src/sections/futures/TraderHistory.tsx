@@ -6,12 +6,14 @@ import router from 'next/router'
 import { FC, memo, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { FuturesPositionTablePosition } from 'types/futures'
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg'
 import Currency from 'components/Currency'
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
 import { FlexDiv } from 'components/layout/flex'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import Pill from 'components/Pill'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import ROUTES from 'constants/routes'
@@ -21,8 +23,7 @@ import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink } from 'styles/common'
 import media from 'styles/media'
-import Pill from 'components/Pill'
-import { SharePositionParams } from 'state/futures/types'
+
 import ShareModal from './ShareModal'
 
 type TraderHistoryProps = {
@@ -40,7 +41,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		const positions = useAppSelector(selectFuturesPositions)
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses)
 		const [showShareModal, setShowShareModal] = useState(false)
-		const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
+		const [sharePosition, setSharePosition] = useState<FuturesPositionTablePosition | null>(null)
 
 		let data = useMemo(() => {
 			return positionHistory
@@ -48,10 +49,10 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 				.map((stat, i) => {
 					const totalDeposit = stat.initialMargin.add(stat.totalDeposits)
 					const thisPosition = stat.isOpen
-						? positions.find((p) => p.marketKey === stat.marketKey)
+						? positions.find((p) => p.market.marketKey === stat.marketKey)
 						: null
 
-					const funding = stat.netFunding.add(thisPosition?.position?.accruedFunding ?? ZERO_WEI)
+					const funding = stat.netFunding.add(thisPosition?.accruedFunding ?? ZERO_WEI)
 					const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
 
 					return {
@@ -71,7 +72,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 							: '0%',
 						share: {
 							asset: stat.asset,
-							position: thisPosition?.position!,
+							position: thisPosition!,
 							positionHistory: stat,
 							marketPrice: stat.exitPrice,
 						},
@@ -85,7 +86,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 				)
 		}, [positionHistory, positions, searchTerm])
 
-		const handleOpenShareModal = useCallback((share: SharePositionParams) => {
+		const handleOpenShareModal = useCallback((share: FuturesPositionTablePosition) => {
 			setSharePosition(share)
 			setShowShareModal((s) => !s)
 		}, [])
@@ -221,7 +222,11 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										accessorKey: 'share',
 										cell: (cellProps) => (
 											<CenterAlignedContainer>
-												<Pill onClick={() => handleOpenShareModal(cellProps.row.original.share)}>
+												<Pill
+													onClick={() =>
+														handleOpenShareModal(cellProps.row.original.share.position)
+													}
+												>
 													<UploadIcon width={8} />
 												</Pill>
 											</CenterAlignedContainer>

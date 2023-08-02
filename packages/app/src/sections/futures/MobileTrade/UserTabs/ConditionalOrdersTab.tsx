@@ -13,12 +13,12 @@ import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import PositionType from 'sections/futures/PositionType'
 import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning'
-import { cancelConditionalOrder } from 'state/futures/actions'
+import { selectMarketAsset } from 'state/futures/common/selectors'
+import { cancelConditionalOrder } from 'state/futures/smartMargin/actions'
 import {
 	selectAllConditionalOrders,
 	selectCancellingConditionalOrder,
-	selectMarketAsset,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 const ConditionalOrdersTab: React.FC = () => {

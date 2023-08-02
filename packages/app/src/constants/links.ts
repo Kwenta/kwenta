@@ -53,7 +53,7 @@ export const EXTERNAL_LINKS = {
 		Home: 'https://optimism.io/',
 	},
 	Trade: {
-		PerpsV2: 'https://kwenta.eth.limo/market/?accountType=cross_margin&asset=sETH',
+		PerpsV2: 'https://kwenta.eth.limo/market/?accountType=smart_margin&asset=sETH',
 		Spot: 'https://kwenta.eth.limo/exchange/',
 		V1: 'https://v1.kwenta.eth.limo/dashboard',
 	},

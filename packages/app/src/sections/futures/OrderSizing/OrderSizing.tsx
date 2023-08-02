@@ -9,16 +9,16 @@ import InputHeaderRow from 'components/Input/InputHeaderRow'
 import InputTitle, { InputTitleSpan } from 'components/Input/InputTitle'
 import NumericInput from 'components/Input/NumericInput'
 import { editTradeSizeInput } from 'state/futures/actions'
+import { selectMarketIndexPrice } from 'state/futures/common/selectors'
 import {
-	selectMarketIndexPrice,
 	selectPosition,
-	selectTradeSizeInputs,
-	selectCrossMarginOrderPrice,
 	selectSelectedInputDenomination,
 	selectMaxUsdSizeInput,
 	selectLeverageSide,
 	selectAvailableOi,
 	selectTradeSizeInputsDisabled,
+	selectTradeSizeInputs,
+	selectTradePrice,
 } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
@@ -35,7 +35,7 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 
 	const position = useAppSelector(selectPosition)
 	const marketAssetRate = useAppSelector(selectMarketIndexPrice)
-	const orderPrice = useAppSelector(selectCrossMarginOrderPrice)
+	const orderPrice = useAppSelector(selectTradePrice)
 	const assetInputType = useAppSelector(selectSelectedInputDenomination)
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput)
 	const tradeSide = useAppSelector(selectLeverageSide)
@@ -47,19 +47,19 @@ const OrderSizing: React.FC<OrderSizingProps> = memo(({ isMobile }) => {
 		[orderPrice, marketAssetRate]
 	)
 
-	const increasingPosition = !position?.position?.side || position?.position?.side === tradeSide
+	const increasingPosition = !position?.side || position?.side === tradeSide
 
 	const availableOiUsd = useMemo(() => {
 		return increasingPosition
 			? availableOi[tradeSide].usd
-			: availableOi[tradeSide].usd.add(position?.position?.notionalValue || 0)
-	}, [tradeSide, availableOi, increasingPosition, position?.position?.notionalValue])
+			: availableOi[tradeSide].usd.add(position?.notionalValue || 0)
+	}, [tradeSide, availableOi, increasingPosition, position?.notionalValue])
 
 	const availableOiNative = useMemo(() => {
 		return increasingPosition
 			? availableOi[tradeSide].native
-			: availableOi[tradeSide].native.add(position?.position?.size || 0)
-	}, [tradeSide, availableOi, increasingPosition, position?.position?.size])
+			: availableOi[tradeSide].native.add(position?.size || 0)
+	}, [tradeSide, availableOi, increasingPosition, position?.size])
 
 	const maxNativeValue = useMemo(() => {
 		const max = !isZero(tradePrice) ? maxUsdInputAmount.div(tradePrice) : ZERO_WEI
