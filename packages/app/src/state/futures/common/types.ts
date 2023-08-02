@@ -95,6 +95,8 @@ export type SmartMarginTradePreviewParams = TradePreviewParams & {
 		address: string
 	}
 	marginDelta: Wei
+	isConditional?: boolean
+	hasStopOrTakeProfit?: boolean
 }
 
 export type DebouncedSMPreviewParams = SmartMarginTradePreviewParams & {

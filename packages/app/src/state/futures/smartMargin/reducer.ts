@@ -247,7 +247,7 @@ const smartMarginSlice = createSlice({
 		) => {
 			smartMargin.cancellingOrder = payload
 		},
-		incrementCrossPreviewCount: (smartMargin) => {
+		incrementSmartMarginPreviewCount: (smartMargin) => {
 			smartMargin.previewDebounceCount = smartMargin.previewDebounceCount + 1
 		},
 	},
@@ -544,7 +544,7 @@ export const {
 	setSmartMarginTradePreview,
 	setSmartMarginOrderCancelling,
 	setSmartMarginEditPositionInputs,
-	incrementCrossPreviewCount,
+	incrementSmartMarginPreviewCount,
 	setSLTPModalStopLoss,
 	setSLTPModalTakeProfit,
 } = smartMarginSlice.actions

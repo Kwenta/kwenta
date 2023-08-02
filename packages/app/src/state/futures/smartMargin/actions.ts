@@ -1,7 +1,7 @@
 import KwentaSDK from '@kwenta/sdk'
 import {
 	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
-	ORDER_KEEPER_ETH_DEPOSIT,
+	MIN_ACCOUNT_KEEPER_BAL,
 	SL_TP_MAX_SIZE,
 	ZERO_ADDRESS,
 	ZERO_WEI,
@@ -47,7 +47,7 @@ import {
 	updateTransactionHash,
 } from 'state/app/reducer'
 import { fetchBalances } from 'state/balances/actions'
-import { ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
+import { EST_KEEPER_GAS_FEE, ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
 import { serializeWeiObject } from 'state/helpers'
 import { AppDispatch, AppThunk, RootState } from 'state/store'
 import { ThunkConfig } from 'state/types'
@@ -90,7 +90,7 @@ import {
 	setSmartMarginLeverageInput,
 	setLeverageSide,
 	setSmartMarginEditPositionInputs,
-	incrementCrossPreviewCount,
+	incrementSmartMarginPreviewCount,
 	setClosePositionSizeDelta,
 	setClosePositionPrice,
 	clearSmartMarginTradePreviews,
@@ -125,6 +125,7 @@ import {
 	selectV2MarketInfo,
 	selectSmartMarginDelayedOrders,
 	selectV2SkewAdjustedPrice,
+	selectRequiredEthForPendingOrders,
 } from './selectors'
 import { SmartMarginBalanceInfo } from './types'
 
@@ -354,7 +355,6 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 		const position = positions.find((p) => p.market.marketKey === params.market.key)
 
 		const marketMargin = position?.remainingMargin ?? wei(0)
-
 		if (
 			// Require both size and margin for a trade
 			(params.action === 'trade' && (params.sizeDelta.eq(0) || params.marginDelta.eq(0))) ||
@@ -382,6 +382,7 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 
 			// Check the preview hasn't been cleared before query resolves
 			const count = selectSmartMarginPreviewCount(getState())
+
 			if (count !== params.debounceCount) {
 				const existing = selectTradePreview(getState())
 				const returnPreview = existing ? serializePotentialTrade(existing) : null
@@ -426,11 +427,14 @@ export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	}
 )
 
-export const editCrossMarginTradeMarginDelta =
+export const editSmartMarginTradeMarginDelta =
 	(marginDelta: string): AppThunk =>
 	(dispatch, getState) => {
 		const orderPrice = selectMarketIndexPrice(getState())
 		const marketInfo = selectV2MarketInfo(getState())
+		const isConditional = selectIsConditionalOrder(getState())
+		const { stopLossPriceWei, takeProfitPriceWei } = selectSlTpTradeInputs(getState())
+
 		const { susdSize, nativeSizeDelta } = selectSmartMarginTradeInputs(getState())
 
 		if (!marketInfo) throw new Error('No market selected')
@@ -456,6 +460,8 @@ export const editCrossMarginTradeMarginDelta =
 				marginDelta: wei(marginDelta || 0),
 				sizeDelta: nativeSizeDelta,
 				action: 'trade',
+				isConditional,
+				hasStopOrTakeProfit: !!stopLossPriceWei || !!takeProfitPriceWei,
 			})
 		)
 	}
@@ -466,10 +472,11 @@ export const editSmartMarginTradeSize =
 		const indexPrice = selectMarketIndexPrice(getState())
 		const marginDelta = selectSmartMarginMarginDelta(getState())
 		const orderPrice = selectSmartMarginOrderPrice(getState())
-		const isConditionalOrder = selectIsConditionalOrder(getState())
+		const isConditional = selectIsConditionalOrder(getState())
 		const tradeSide = selectSmartMarginLeverageSide(getState())
 		const marketInfo = selectV2MarketInfo(getState())
-		const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : indexPrice
+		const price = isConditional && Number(orderPrice) > 0 ? wei(orderPrice) : indexPrice
+		const { stopLossPriceWei, takeProfitPriceWei } = selectSlTpTradeInputs(getState())
 
 		if (!marketInfo) throw new Error('No market selected')
 
@@ -503,6 +510,8 @@ export const editSmartMarginTradeSize =
 				marginDelta: wei(marginDelta),
 				sizeDelta: sizeDeltaWei,
 				action: 'trade',
+				isConditional,
+				hasStopOrTakeProfit: !!stopLossPriceWei || !!takeProfitPriceWei,
 			})
 		)
 	}
@@ -542,7 +551,7 @@ export const editClosePositionSizeDelta =
 			dispatch(setSmartMarginTradePreview({ preview: null, type: 'close' }))
 			return
 		}
-		const { price } = selectCloseSMPositionOrderInputs(getState())
+		const { price, orderType } = selectCloseSMPositionOrderInputs(getState())
 		const { marketPrice } = selectEditPositionModalInfo(getState())
 
 		try {
@@ -555,6 +564,7 @@ export const editClosePositionSizeDelta =
 				orderPrice: odrderPrice,
 				marginDelta: ZERO_WEI,
 				action: 'close',
+				isConditional: orderType !== 'market',
 			}
 			dispatch(stageSmartMarginTradePreview(previewParams))
 		} catch (err) {
@@ -588,6 +598,7 @@ export const editClosePositionPrice =
 					marginDelta: ZERO_WEI,
 					sizeDelta: wei(nativeSizeDelta || 0),
 					action: 'edit',
+					isConditional: orderType !== 'market',
 				})
 			)
 		} catch (err) {
@@ -630,6 +641,8 @@ export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
 	const isConditionalOrder = selectIsConditionalOrder(getState())
 	const price = isConditionalOrder && Number(orderPrice) > 0 ? wei(orderPrice) : indexPrice
 	const { nativeSizeDelta } = selectSmartMarginTradeInputs(getState())
+	const isConditional = selectIsConditionalOrder(getState())
+	const { stopLossPriceWei, takeProfitPriceWei } = selectSlTpTradeInputs(getState())
 
 	if (!marketInfo) throw new Error('No market selected')
 
@@ -640,6 +653,8 @@ export const refetchTradePreview = (): AppThunk => (dispatch, getState) => {
 			marginDelta,
 			sizeDelta: nativeSizeDelta,
 			action: 'trade',
+			isConditional,
+			hasStopOrTakeProfit: !!stopLossPriceWei || !!takeProfitPriceWei,
 		})
 	)
 }
@@ -650,9 +665,9 @@ const stageSmartMarginTradePreview = createAsyncThunk<
 	ThunkConfig
 >('futures/stageSmartMarginTradePreview', async (inputs, { dispatch, getState }) => {
 	dispatch(calculateSmartMarginFees(inputs))
-	dispatch(incrementCrossPreviewCount())
+	dispatch(incrementSmartMarginPreviewCount())
 	const debounceCount = selectSmartMarginPreviewCount(getState())
-	debouncedPrepareCrossMarginTradePreview(dispatch, { ...inputs, debounceCount })
+	debouncedPrepareSmartMarginTradePreview(dispatch, { ...inputs, debounceCount })
 })
 
 export const changeLeverageSide =
@@ -663,7 +678,7 @@ export const changeLeverageSide =
 		dispatch(editSmartMarginTradeSize(nativeSizeString, 'native'))
 	}
 
-export const debouncedPrepareCrossMarginTradePreview = debounce(
+export const debouncedPrepareSmartMarginTradePreview = debounce(
 	(dispatch, inputs: DebouncedSMPreviewParams) => {
 		dispatch(fetchSmartMarginTradePreview(inputs))
 	},
@@ -773,14 +788,20 @@ export const calculateSmartMarginFees =
 		const market = markets.find((m) => m.marketKey === params.market.key)
 		if (!market) throw new Error('Missing market info to compute fee')
 		const keeperBalance = selectKeeperEthBalance(getState())
+		const reservedEth = selectRequiredEthForPendingOrders(getState())
 		const { delayedOrderFee } = computeDelayedOrderFee(
 			market,
 			params.sizeDelta.mul(params.orderPrice?.abs())
 		)
 
-		const requiredDeposit = keeperBalance.lt(ORDER_KEEPER_ETH_DEPOSIT)
-			? ORDER_KEEPER_ETH_DEPOSIT.sub(keeperBalance)
-			: wei(0)
+		let newOrders = params.isConditional ? 1 : 0
+		newOrders += params.hasStopOrTakeProfit ? 1 : 0
+
+		const extraGas = newOrders * EST_KEEPER_GAS_FEE
+
+		// Calculate required ETH based on pending orders
+		const requiredEth = wei(Math.max(reservedEth + extraGas, MIN_ACCOUNT_KEEPER_BAL.toNumber()))
+		const requiredDeposit = keeperBalance.lt(requiredEth) ? requiredEth.sub(keeperBalance) : wei(0)
 
 		const fees = {
 			delayedOrderFee: delayedOrderFee.toString(),
@@ -791,8 +812,8 @@ export const calculateSmartMarginFees =
 
 export const calculateKeeperDeposit = (): AppThunk => (dispatch, getState) => {
 	const keeperBalance = selectKeeperEthBalance(getState())
-	const requiredDeposit = keeperBalance.lt(ORDER_KEEPER_ETH_DEPOSIT)
-		? ORDER_KEEPER_ETH_DEPOSIT.sub(keeperBalance)
+	const requiredDeposit = keeperBalance.lt(MIN_ACCOUNT_KEEPER_BAL)
+		? MIN_ACCOUNT_KEEPER_BAL.sub(keeperBalance)
 		: wei(0)
 
 	dispatch(setKeeperDeposit(requiredDeposit.toString()))

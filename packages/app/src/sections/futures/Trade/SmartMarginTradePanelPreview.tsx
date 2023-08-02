@@ -20,7 +20,7 @@ import { selectWallet } from 'state/wallet/selectors'
 
 import SmartMarginTradeFees from '../FeeInfoBox/SmartMarginTradeFees'
 
-import { LiquidationRow, PriceImpactRow } from './PreviewRows'
+import { FillPriceRow, LiquidationRow, PriceImpactRow } from './PreviewRows'
 
 export const SmartMarginTradePanelPreview = memo(() => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview)
@@ -29,6 +29,7 @@ export const SmartMarginTradePanelPreview = memo(() => {
 		<FeeInfoBoxContainer>
 			<SmartMarginTradeFees />
 			<LiquidationRow liqPrice={potentialTradeDetails?.liqPrice} />
+			<FillPriceRow fillPrice={potentialTradeDetails?.price} />
 			<PriceImpactRow priceImpact={potentialTradeDetails?.priceImpact} />
 			<TradingRewardRow />
 		</FeeInfoBoxContainer>

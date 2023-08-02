@@ -10,7 +10,7 @@ import { FlexDivRow } from 'components/layout/flex'
 import SelectorButtons from 'components/SelectorButtons'
 import { Body } from 'components/Text'
 import { selectSelectedInputDenomination, selectPosition } from 'state/futures/selectors'
-import { editCrossMarginTradeMarginDelta } from 'state/futures/smartMargin/actions'
+import { editSmartMarginTradeMarginDelta } from 'state/futures/smartMargin/actions'
 import { selectIdleMargin, selectMarginDeltaInputValue } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
@@ -30,14 +30,14 @@ const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
 	const position = useAppSelector(selectPosition)
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		dispatch(editCrossMarginTradeMarginDelta(v))
+		dispatch(editSmartMarginTradeMarginDelta(v))
 	}
 
 	const onSelectPercent = (index: number) => {
 		const percent = PERCENT_OPTIONS[index].replace('%', '')
 		const margin = idleMargin.div(100).mul(percent)
 
-		dispatch(editCrossMarginTradeMarginDelta(floorNumber(margin).toString()))
+		dispatch(editSmartMarginTradeMarginDelta(floorNumber(margin).toString()))
 	}
 
 	const belowMinMargin = useMemo(
