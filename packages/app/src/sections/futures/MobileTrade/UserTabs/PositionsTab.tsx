@@ -1,9 +1,9 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesMarginType, FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import Router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { FuturesPositionTablePosition } from 'types/futures'
 
 import Currency from 'components/Currency'
 import { FlexDiv, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
@@ -19,16 +19,9 @@ import PositionType from 'sections/futures/PositionType'
 import ShareModal from 'sections/futures/ShareModal'
 import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton'
 import { setShowPositionModal } from 'state/app/reducer'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import { selectCrossMarginPositions } from 'state/futures/crossMargin/selectors'
-import {
-	selectSmartMarginPositions,
-	selectFuturesType,
-	selectMarketAsset,
-	selectMarkets,
-	selectMarkPrices,
-	selectPositionHistory,
-} from 'state/futures/selectors'
-import { SharePositionParams } from 'state/futures/types'
+import { selectSmartMarginPositions } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import media from 'styles/media'
 
@@ -41,56 +34,34 @@ const PositionsTab = () => {
 
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
 	const smartMarginPositions = useAppSelector(selectSmartMarginPositions)
-	const positionHistory = useAppSelector(selectPositionHistory)
 	const currentMarket = useAppSelector(selectMarketAsset)
-	const futuresMarkets = useAppSelector(selectMarkets)
-	const markPrices = useAppSelector(selectMarkPrices)
 	const accountType = useAppSelector(selectFuturesType)
 	const [showShareModal, setShowShareModal] = useState(false)
-	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
+	const [sharePosition, setSharePosition] = useState<FuturesPositionTablePosition | null>(null)
 
 	let data = useMemo(() => {
 		const positions =
 			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
 		return positions
 			.map((position) => {
-				const market = futuresMarkets.find((market) => market.asset === position.asset)
-				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset
-				})
-				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI
 				return {
-					market: market!,
+					market: position.market,
 					remainingMargin: position.remainingMargin,
-					position: position.position!,
-					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
+					position: position,
+					avgEntryPrice: position.history?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
-					share: {
-						asset: position.asset,
-						position: position.position!,
-						positionHistory: thisPositionHistory!,
-						marketPrice: markPrice,
-					},
 				}
 			})
 			.filter(({ position, market }) => !!position && !!market)
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
-	}, [
-		accountType,
-		smartMarginPositions,
-		crossMarginPositions,
-		futuresMarkets,
-		positionHistory,
-		markPrices,
-		currentMarket,
-	])
+	}, [accountType, smartMarginPositions, crossMarginPositions, currentMarket])
 
 	const handleOpenPositionCloseModal = useCallback(
 		(marketKey: FuturesMarketKey) => () => {
 			dispatch(
 				setShowPositionModal({
-					type: 'futures_close_position',
+					type: 'smart_margin_close_position',
 					marketKey,
 				})
 			)
@@ -98,7 +69,7 @@ const PositionsTab = () => {
 		[dispatch]
 	)
 
-	const handleOpenShareModal = useCallback((share: SharePositionParams) => {
+	const handleOpenShareModal = useCallback((share: FuturesPositionTablePosition) => {
 		setSharePosition(share)
 		setShowShareModal((s) => !s)
 	}, [])
@@ -138,7 +109,7 @@ const PositionsTab = () => {
 								<Pill size="medium" onClick={handleOpenPositionCloseModal(row.market.marketKey)}>
 									Close
 								</Pill>
-								<Pill size="medium" onClick={() => handleOpenShareModal(row.share)}>
+								<Pill size="medium" onClick={() => handleOpenShareModal(row.position)}>
 									<FlexDivRowCentered>Share</FlexDivRowCentered>
 								</Pill>
 							</FlexDivRowCentered>
@@ -279,6 +250,10 @@ const PositionItem = styled.div`
 	${media.greaterThan('md')`
 		padding: 16px 0;
 	`}
+
+	${media.greaterThan('lg')`
+	padding: 8px 0;
+`}
 
 	&:not(:last-of-type) {
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};

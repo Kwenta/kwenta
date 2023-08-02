@@ -20,7 +20,7 @@ export const Stats: FC = () => {
 					<Volume />
 					<Trades />
 					<Traders />
-					<OpenInterest mobile={false} />
+					<OpenInterest />
 				</StatsContainer>
 			</DesktopOnlyView>
 			<MobileOrTabletView>
@@ -28,7 +28,7 @@ export const Stats: FC = () => {
 					<Volume />
 					<Trades />
 					<Traders />
-					<OpenInterest mobile />
+					<OpenInterest />
 				</StatsContainer>
 			</MobileOrTabletView>
 		</StatsContext.Provider>

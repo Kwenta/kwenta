@@ -28,7 +28,7 @@ import {
 	BalanceContainer,
 	BalanceText,
 	MaxButton,
-} from '../Trade/TransferIsolatedMarginModal'
+} from '../Trade/DepositWithdrawCrossMargin'
 
 type TransferType = 'deposit' | 'withdraw'
 

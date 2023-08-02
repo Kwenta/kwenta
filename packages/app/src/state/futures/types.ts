@@ -4,11 +4,11 @@ import {
 	FuturesPositionHistory,
 	FuturesMarketKey,
 	FuturesMarketAsset,
-	FuturesFilledPosition,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
+import { QueryStatus } from 'state/types'
 
 import { AppFuturesMarginType, FuturesTransactionType } from './common/types'
 
@@ -74,24 +74,19 @@ export type FuturesState = {
 		>
 	}
 	tradePanelDrawerOpen: boolean
-}
-
-export type CancelDelayedOrderInputs = {
-	marketAddress: string
-	isOffchain: boolean
+	queryStatuses: {
+		selectedTraderPositionHistory: QueryStatus
+	}
 }
 
 export type ExecuteDelayedOrderInputs = {
 	marketKey: FuturesMarketKey
 	marketAddress: string
-	isOffchain: boolean
 }
 
-export type SharePositionParams = {
-	asset?: FuturesMarketAsset
-	position?: FuturesFilledPosition
-	positionHistory?: FuturesPositionHistory
-	marketPrice?: Wei
+export type ExecuteAsyncOrderInputs = {
+	marketKey: FuturesMarketKey
+	marketId: number
 }
 
 export const futuresPositionKeys = new Set([

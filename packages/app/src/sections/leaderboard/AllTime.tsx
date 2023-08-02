@@ -92,6 +92,7 @@ const AllTime: FC<AllTimeProps> = ({
 								</TableTitle>
 							),
 							accessorKey: 'title',
+							enableSorting: false,
 							columns: [
 								{
 									header: () => (
@@ -180,6 +181,7 @@ const AllTime: FC<AllTimeProps> = ({
 						{
 							header: () => <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
 							accessorKey: 'rank',
+							enableSorting: false,
 							cell: (cellProps) => (
 								<StyledOrderType>{cellProps.row.original.rankText}</StyledOrderType>
 							),

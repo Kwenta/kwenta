@@ -1,4 +1,3 @@
-import { formatDollars, formatPercent } from '@kwenta/sdk/utils'
 import router from 'next/router'
 import React, { memo, useCallback, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -10,24 +9,28 @@ import Badge from 'components/Badge'
 import { InfoBoxRow } from 'components/InfoBox'
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
-import { NO_VALUE } from 'constants/placeholder'
 import ROUTES from 'constants/routes'
 import { selectTradePreview } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import {
-	selectStakedEscrowedKwentaBalanceV2,
-	selectStakedKwentaBalanceV2,
+	selectStakedEscrowedKwentaBalance,
+	selectStakedKwentaBalance,
 } from 'state/staking/selectors'
 import { selectWallet } from 'state/wallet/selectors'
 
-import TradeTotalFeesRow from './TradeTotalFeesRow'
+import SmartMarginTradeFees from '../FeeInfoBox/SmartMarginTradeFees'
 
-export const TradePanelFeeInfo = memo(() => {
+import { FillPriceRow, LiquidationRow, PriceImpactRow } from './PreviewRows'
+
+export const SmartMarginTradePanelPreview = memo(() => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+
 	return (
 		<FeeInfoBoxContainer>
-			<TradeTotalFeesRow />
-			<LiquidationRow />
-			<PriceImpactRow />
+			<SmartMarginTradeFees />
+			<LiquidationRow liqPrice={potentialTradeDetails?.liqPrice} />
+			<FillPriceRow fillPrice={potentialTradeDetails?.price} />
+			<PriceImpactRow priceImpact={potentialTradeDetails?.priceImpact} />
 			<TradingRewardRow />
 		</FeeInfoBoxContainer>
 	)
@@ -36,8 +39,8 @@ export const TradePanelFeeInfo = memo(() => {
 const TradingRewardRow = memo(() => {
 	const { t } = useTranslation()
 	const walletAddress = useAppSelector(selectWallet)
-	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalanceV2)
-	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalanceV2)
+	const stakedEscrowedKwentaBalance = useAppSelector(selectStakedEscrowedKwentaBalance)
+	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 
 	const isRewardEligible = useMemo(
 		() => !!walletAddress && stakedKwentaBalance.add(stakedEscrowedKwentaBalance).gt(0),
@@ -82,40 +85,6 @@ const TradingRewardRow = memo(() => {
 	)
 })
 
-const LiquidationRow = memo(() => {
-	const potentialTradeDetails = useAppSelector(selectTradePreview)
-
-	return (
-		<InfoBoxRow
-			title="Liquidation price"
-			color="preview"
-			textValue={
-				potentialTradeDetails?.liqPrice
-					? formatDollars(potentialTradeDetails.liqPrice, { suggestDecimals: true })
-					: NO_VALUE
-			}
-		/>
-	)
-})
-
-const PriceImpactRow = memo(() => {
-	const potentialTradeDetails = useAppSelector(selectTradePreview)
-
-	return (
-		<InfoBoxRow
-			title="Price impact"
-			textValue={
-				potentialTradeDetails?.priceImpact
-					? formatPercent(potentialTradeDetails.priceImpact, {
-							suggestDecimals: true,
-							maxDecimals: 4,
-					  })
-					: NO_VALUE
-			}
-		/>
-	)
-})
-
 const FeeInfoBoxContainer = styled.div`
 	margin-bottom: 16px;
 `
@@ -138,4 +107,4 @@ const CompactBox = styled.div<{ $isEligible: boolean }>`
 		`}
 `
 
-export default TradePanelFeeInfo
+export default SmartMarginTradePanelPreview

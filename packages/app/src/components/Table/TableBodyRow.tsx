@@ -44,7 +44,7 @@ const BaseTableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 
 		padding: 6px 0;
 
-		&:nth-child(odd) {
+		&:nth-child(even) {
 			background-color: ${props.theme.colors.selectedTheme.table.fill};
 		}
 

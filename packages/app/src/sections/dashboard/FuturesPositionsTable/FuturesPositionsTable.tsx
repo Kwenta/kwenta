@@ -18,9 +18,8 @@ import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
 import { AppFuturesMarginType } from 'state/futures/common/types'
-import { selectCrossMarginPositions, selectV3Markets } from 'state/futures/crossMargin/selectors'
-import { selectSmartMarginPositions, selectPositionHistory } from 'state/futures/selectors'
-import { selectV2Markets } from 'state/futures/smartMargin/selectors'
+import { selectCrossMarginPositions } from 'state/futures/crossMargin/selectors'
+import { selectSmartMarginPositions } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { getSynthDescription } from 'utils/futures'
 
@@ -45,41 +44,25 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
 	const smartMarginPositions = useAppSelector(selectSmartMarginPositions)
-	const positionHistory = useAppSelector(selectPositionHistory)
-	const v2Markets = useAppSelector(selectV2Markets)
-	const v3Markets = useAppSelector(selectV3Markets)
 
 	let data = useMemo(() => {
 		const positions =
 			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
-		const markets = accountType === FuturesMarginType.SMART_MARGIN ? v2Markets : v3Markets
 		return positions
 			.map((position) => {
-				const market = markets.find((market) => market.asset === position.asset)
-				const description = getSynthDescription(position.asset, t)
-				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset
-				})
+				const description = getSynthDescription(position.market.asset, t)
 
 				return {
-					market: market!,
-					position: position.position!,
+					market: position.market,
+					position: position,
 					description,
-					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
+					avgEntryPrice: position?.avgEntryPrice,
 					stopLoss: position.stopLoss?.targetPrice,
 					takeProfit: position.takeProfit?.targetPrice,
 				}
 			})
 			.filter(({ position, market }) => !!position && !!market)
-	}, [
-		accountType,
-		crossMarginPositions,
-		smartMarginPositions,
-		v2Markets,
-		v3Markets,
-		t,
-		positionHistory,
-	])
+	}, [accountType, crossMarginPositions, smartMarginPositions, t])
 
 	return (
 		<>

@@ -7,7 +7,7 @@ import {
 	getSortedRowModel,
 } from '@tanstack/react-table'
 import type { ColumnDef, Row, SortingState, VisibilityState } from '@tanstack/react-table'
-import React, { DependencyList, FC, useCallback, useMemo, useRef, useState } from 'react'
+import React, { DependencyList, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { genericMemo } from 'types/helpers'
 
@@ -73,6 +73,7 @@ type TableProps<T> = {
 	noBottom?: boolean
 	columnVisibility?: VisibilityState
 	columnsDeps?: DependencyList
+	autoResetPageIndex?: boolean
 	paginationExtra?: React.ReactNode
 	CustomPagination?: FC<PaginationProps>
 }
@@ -95,6 +96,7 @@ const Table = <T,>({
 	rounded = true,
 	noBottom = false,
 	columnVisibility,
+	autoResetPageIndex = true,
 	columnsDeps = [],
 	paginationExtra,
 	CustomPagination,
@@ -116,6 +118,7 @@ const Table = <T,>({
 		columns: memoizedColumns,
 		data,
 		enableHiding: true,
+		autoResetPageIndex,
 		state: { sorting, columnVisibility, pagination },
 		onSortingChange: setSorting,
 		onPaginationChange: setPagination,
@@ -137,6 +140,12 @@ const Table = <T,>({
 		},
 		[onTableRowClick]
 	)
+
+	useEffect(() => {
+		if (typeof lastRef === 'function' && data.length > 0) {
+			lastRef(defaultRef.current)
+		}
+	}, [lastRef, data.length])
 
 	return (
 		<>
@@ -240,6 +249,7 @@ export const TableBody = styled.div`
 
 export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean; $canSort: boolean }>`
 	user-select: none;
+	padding-left: 8px;
 	&:first-child {
 		padding-left: 18px;
 	}
@@ -326,6 +336,7 @@ const ReactTable = styled.div<{ $rounded?: boolean; $noBottom?: boolean }>`
 		font-family: ${(props) => props.theme.fonts.regular};
 		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 		height: 34px;
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 `
 

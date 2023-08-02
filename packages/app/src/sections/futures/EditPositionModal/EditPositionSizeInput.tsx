@@ -39,7 +39,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 		const onSizeChange = useCallback(
 			(value: string) => {
 				if (modal) {
-					const side = position?.position?.side
+					const side = position?.side
 					const sizeDelta =
 						(side === PositionSide.LONG && type === 'decrease') ||
 						(side === PositionSide.SHORT && type === 'increase')
@@ -48,7 +48,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 					dispatch(editCrossMarginPositionSize(modal.marketKey, sizeDelta))
 				}
 			},
-			[dispatch, type, modal, position?.position?.side]
+			[dispatch, type, modal, position?.side]
 		)
 
 		const handleSetMax = useCallback(() => {

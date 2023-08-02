@@ -704,8 +704,8 @@
 		},
 		"history": {
 			"tabs": {
-				"futures": "Futures History",
-				"spot": "Spot History"
+				"positions": "Positions",
+				"trades": "Trades"
 			},
 			"spot-history-table": {
 				"date-time": "Date/Time",
@@ -715,17 +715,8 @@
 				"no-trade-history": "You have no synth trading history",
 				"no-trade-history-link": "Visit the Kwenta exchange to swap synths"
 			},
-			"futures-history-table": {
-				"asset": "Asset",
-				"size": "Size",
-				"pnl": "P&L",
-				"date-time": "Date/Time",
-				"fees": "Fees",
-				"price": "Price",
-				"side": "Side",
-				"market": "Market",
-				"type": "Type",
-				"no-result": "You have no futures trading history"
+			"positions-history-table": {
+				"no-result": "You have no futures positions history"
 			}
 		},
 		"deprecated": {
@@ -957,8 +948,10 @@
 					"available-margin": "Available Margin",
 					"locked-margin": "Locked Margin",
 					"no-available-margin": "No available margin",
+					"only-available-margin": "Only {{balance}} available margin",
 					"min-margin": "Min. $50 sUSD required to trade",
-					"tooltip": "Margin currently locked in closed markets. It will become available once the market reopens."
+					"tooltip": "Margin currently locked in closed markets. It will become available once the market reopens.",
+					"deposit": "Deposit"
 				},
 				"confirmation": {
 					"modal": {
@@ -1049,6 +1042,7 @@
 				"last-trades": "last trades",
 				"amount-label": "amount",
 				"price-label": "price",
+				"accrued-funding": "accrued funding",
 				"time-label": "time"
 			},
 			"user": {
@@ -1130,16 +1124,19 @@
 					"tab": "Trades",
 					"table": {
 						"id": "ID",
-						"trade-size": "trade size",
-						"pnl": "P&L",
+						"size": "size",
+						"pnl": "PnL",
 						"status": "status",
 						"date": "date",
 						"fees": "fees",
 						"price": "price",
 						"side": "side",
 						"side-type": "Side/Type",
+						"market-side": "Market/Side",
+						"price-type": "Price/Type",
 						"no-results": "You have no trade history",
 						"order-type": "order type",
+						"fees-funding": "Fees/Funding",
 						"transaction": "Transaction",
 						"trade-types": {
 							"exit": "exit",
@@ -1195,7 +1192,9 @@
 				}
 			},
 			"onboard": {
-				"title": "Smart Margin",
+				"sm-title": "Smart Margin",
+				"cm-title": "Cross Margin",
+				"cm-intro": "Start by creating your cross margin account",
 				"step1-intro": "Start by creating your smart margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
 				"step3-intro": "Lastly, deposit sUSD to begin trading",
@@ -1203,7 +1202,8 @@
 				"faq1": "What is smart margin?",
 				"faq2": "Is smart margin better than isolated margin?",
 				"faq3": "How will a smart margin account affect my trading?",
-				"unsupported-network": "Smart margin is not supported on this network"
+				"unsupported-network": "Smart margin is not supported on this network",
+				"deposit": "Deposit"
 			}
 		}
 	},
@@ -1233,7 +1233,8 @@
 				"liquidated": "Liquidated",
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"total-pnl": "Realized P&L"
+				"total-pnl": "Realized P&L",
+				"funding": "Funding"
 			}
 		},
 		"competition": {

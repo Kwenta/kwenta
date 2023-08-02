@@ -9,7 +9,7 @@ import {
 } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
-import FeesRow from './FeesRow'
+import FeesRow from './FeeRows'
 
 const EditPositionFeeInfo = memo(() => {
 	const tradePreview = useAppSelector(selectEditPositionPreview)

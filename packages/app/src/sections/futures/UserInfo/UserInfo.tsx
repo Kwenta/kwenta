@@ -4,7 +4,6 @@ import React, { useMemo, useState, useCallback, useEffect, memo } from 'react'
 import styled from 'styled-components'
 
 import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg'
-import TransfersIcon from 'assets/svg/futures/deposit-withdraw-arrows.svg'
 import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg'
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg'
 import PositionIcon from 'assets/svg/futures/icon-position.svg'
@@ -13,22 +12,19 @@ import Spacer from 'components/Spacer'
 import { TabPanel } from 'components/Tab'
 import ROUTES from 'constants/routes'
 import useWindowSize from 'hooks/useWindowSize'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
+import { selectActiveCrossMarginPositionsCount } from 'state/futures/crossMargin/selectors'
+import { selectPosition, selectPendingOrdersCount } from 'state/futures/selectors'
+import { fetchAllV2TradesForAccount } from 'state/futures/smartMargin/actions'
 import {
 	selectActiveSmartPositionsCount,
-	selectActiveCrossMarginPositionsCount,
-	selectFuturesType,
-	selectMarketAsset,
-	selectPosition,
 	selectAllConditionalOrders,
-} from 'state/futures/selectors'
-import { fetchAllV2TradesForAccount } from 'state/futures/smartMargin/actions'
-import { selectOpenDelayedOrders } from 'state/futures/smartMargin/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks'
 import { selectWallet } from 'state/wallet/selectors'
 
 import ProfitCalculator from '../ProfitCalculator'
 import Trades from '../Trades'
-import Transfers from '../Transfers'
 
 import ConditionalOrdersTable from './ConditionalOrdersTable'
 import OpenDelayedOrdersTable from './OpenDelayedOrdersTable'
@@ -40,7 +36,6 @@ enum FuturesTab {
 	CONDITIONAL_ORDERS = 'conditional_orders',
 	TRADES = 'trades',
 	CALCULATOR = 'calculator',
-	TRANSFERS = 'transfers',
 	SHARE = 'share',
 }
 
@@ -57,12 +52,12 @@ const UserInfo: React.FC = memo(() => {
 	const crossPositionsCount = useAppSelector(selectActiveCrossMarginPositionsCount)
 	const walletAddress = useAppSelector(selectWallet)
 
-	const openOrders = useAppSelector(selectOpenDelayedOrders)
+	const pendingOrdersCount = useAppSelector(selectPendingOrdersCount)
 	const conditionalOrders = useAppSelector(selectAllConditionalOrders)
 	const accountType = useAppSelector(selectFuturesType)
 
 	useFetchAction(fetchAllV2TradesForAccount, {
-		dependencies: [walletAddress, accountType, position?.position?.size.toString()],
+		dependencies: [walletAddress, accountType, position?.size.toString()],
 		disabled: !walletAddress,
 	})
 
@@ -91,7 +86,7 @@ const UserInfo: React.FC = memo(() => {
 	useEffect(() => {
 		refetchTrades()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [position?.marketKey])
+	}, [position?.market.marketKey])
 
 	const TABS = useMemo(
 		() => [
@@ -112,7 +107,7 @@ const UserInfo: React.FC = memo(() => {
 			{
 				name: FuturesTab.ORDERS,
 				label: 'Pending',
-				badge: openOrders?.length,
+				badge: pendingOrdersCount,
 				active: activeTab === FuturesTab.ORDERS,
 				icon: <OpenPositionsIcon />,
 				onClick: () =>
@@ -143,24 +138,12 @@ const UserInfo: React.FC = memo(() => {
 						scroll: false,
 					}),
 			},
-			{
-				name: FuturesTab.TRANSFERS,
-				label: 'Transfers',
-				badge: undefined,
-				disabled: accountType === FuturesMarginType.CROSS_MARGIN, // leave this until we determine a disbaled state
-				active: activeTab === FuturesTab.TRANSFERS,
-				icon: <TransfersIcon width={11} height={11} />,
-				onClick: () =>
-					router.push(ROUTES.Markets.Transfers(marketAsset, accountType), undefined, {
-						scroll: false,
-					}),
-			},
 		],
 		[
 			activeTab,
 			router,
 			marketAsset,
-			openOrders?.length,
+			pendingOrdersCount,
 			accountType,
 			crossPositionsCount,
 			smartPositionsCount,
@@ -212,9 +195,6 @@ const UserInfo: React.FC = memo(() => {
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab} fullHeight>
 				<Trades />
-			</TabPanel>
-			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab} fullHeight>
-				<Transfers />
 			</TabPanel>
 
 			{openProfitCalcModal && <ProfitCalculator setOpenProfitCalcModal={setOpenProfitCalcModal} />}

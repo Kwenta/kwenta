@@ -1,4 +1,4 @@
-import { FuturesMarketAsset } from '@kwenta/sdk/types'
+import { FuturesMarket, FuturesMarketAsset } from '@kwenta/sdk/types'
 import {
 	AssetDisplayByAsset,
 	MarketKeyByAsset,
@@ -14,17 +14,14 @@ import styled from 'styled-components'
 import ChangePercent from 'components/ChangePercent'
 import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
+import { FlexDivRowCentered } from 'components/layout/flex'
 import MarketBadge from 'components/MarketBadge'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Spacer from 'components/Spacer'
 import Table, { TableHeader } from 'components/Table'
 import ROUTES from 'constants/routes'
-import {
-	selectFuturesType,
-	selectMarkets,
-	selectMarketVolumes,
-	selectMarkPrices,
-} from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { selectMarkets, selectMarketVolumes, selectMarkPrices } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { selectPreviousDayPrices, selectOffchainPricesInfo } from 'state/prices/selectors'
 import { getSynthDescription } from 'utils/futures'
@@ -49,8 +46,8 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 
 	let data = useMemo(() => {
 		const lowerSearch = search?.toLowerCase()
-		const markets = lowerSearch
-			? futuresMarkets.filter(
+		const markets: FuturesMarket[] = lowerSearch
+			? (futuresMarkets as FuturesMarket[]).filter(
 					(m) =>
 						m.asset.toLowerCase().includes(lowerSearch) ||
 						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)
@@ -392,12 +389,8 @@ const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 ` as typeof Table
 
-const StyledText = styled.div`
-	display: flex;
-	align-items: center;
-	margin-bottom: -4px;
-	grid-column: 2;
-	grid-row: 1;
+const StyledText = styled(FlexDivRowCentered)`
+	justify-content: space-between;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
 `
@@ -405,8 +398,9 @@ const StyledText = styled.div`
 const MarketContainer = styled.div`
 	display: grid;
 	grid-template-rows: auto auto;
-	grid-template-columns: auto auto;
+	grid-template-columns: 40px auto;
 	align-items: center;
+	width: 200px;
 `
 
 const StyledMobileTable = styled(StyledTable)`

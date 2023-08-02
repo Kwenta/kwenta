@@ -20,6 +20,7 @@ enum TableColumnAccessor {
 	Amount = 'amount',
 	Price = 'price',
 	Time = 'time',
+	Funding = 'fundingAccrued',
 }
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) => {
@@ -40,14 +41,16 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 						.filter(notNill)
 						.map((trade) => {
 							return {
-								value: Number(trade.price),
-								amount: Number(trade.size),
-								time: Number(trade.timestamp),
-								id: trade.txnHash,
-								orderType: trade.orderType,
-								account: trade.account,
+								value: Number(trade?.price),
+								amount: trade?.size,
+								time: Number(trade?.timestamp),
+								id: trade?.txnHash,
+								orderType: trade?.orderType,
+								account: trade?.account,
+								fundingAccrued: trade?.fundingAccrued,
 							}
 						})
+						.filter((trade) => trade.amount.abs().gt(0.000001))
 				: []
 		return [...new Set(futuresTrades)]
 	}, [futuresTradesQuery.data])
@@ -116,17 +119,15 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 						header: () => <TableHeader>{t('futures.market.history.amount-label')}</TableHeader>,
 						accessorKey: TableColumnAccessor.Amount,
 						cell: (cellProps) => {
-							const numValue = Math.abs(cellProps.row.original.amount / 1e18)
-							const numDecimals = numValue === 0 ? 2 : numValue < 1 ? 4 : numValue >= 100000 ? 0 : 2
-
 							const normal = cellProps.row.original.orderType === 'Liquidation'
-							const negative = cellProps.row.original.amount > 0
+							const negative = cellProps.getValue() > 0
 
 							return (
 								<DirectionalValue negative={negative} normal={normal}>
-									{formatNumber(numValue, {
-										minDecimals: numDecimals,
+									{formatNumber(cellProps.getValue().abs(), {
+										suggestDecimals: true,
 										truncateOver: 1e6,
+										maxDecimals: 6,
 									})}{' '}
 									{normal ? '💀' : ''}
 								</DirectionalValue>
@@ -140,7 +141,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 						cell: (cellProps) => {
 							return (
 								<PriceValue>
-									${formatNumber(cellProps.row.original.value / 1e18, { suggestDecimals: true })}
+									${formatNumber(cellProps.row.original.value, { suggestDecimals: true })}
 								</PriceValue>
 							)
 						},
@@ -202,7 +203,7 @@ const TableAlignment = css`
 
 const StyledTable = styled(Table)`
 	border: none;
-	height: 100%;
+	overflow-y: auto;
 
 	.table-row,
 	.table-body-row {

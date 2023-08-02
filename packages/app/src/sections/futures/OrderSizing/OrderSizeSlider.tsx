@@ -7,7 +7,6 @@ import ErrorView from 'components/ErrorView'
 import { FlexDivRow } from 'components/layout/flex'
 import StyledSlider from 'components/Slider/StyledSlider'
 import {
-	selectAboveMaxLeverage,
 	selectLeverageSide,
 	selectMaxLeverage,
 	selectMaxUsdSizeInput,
@@ -15,6 +14,7 @@ import {
 } from 'state/futures/selectors'
 import { editSmartMarginTradeSize } from 'state/futures/smartMargin/actions'
 import {
+	selectAboveMaxLeverage,
 	selectSmartMarginMarginDelta,
 	selectSmartMarginTradeInputs,
 } from 'state/futures/smartMargin/selectors'
@@ -61,7 +61,7 @@ export default function OrderSizeSlider() {
 		// eslint-disable-next-line
 	}, [susdSizeString])
 
-	if (aboveMaxLeverage && position?.position?.side === leverageSide) {
+	if (aboveMaxLeverage && position?.side === leverageSide) {
 		return (
 			<ErrorView
 				message={t('futures.market.trade.input.max-leverage-error', {

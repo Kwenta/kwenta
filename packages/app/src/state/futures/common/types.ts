@@ -3,8 +3,6 @@ import {
 	FuturesMarketAsset,
 	FuturesMarketKey,
 	FuturesOrderTypeDisplay,
-	FuturesPosition,
-	FuturesPositionHistory,
 	FuturesTrade,
 	MarginTransfer,
 	NetworkId,
@@ -18,13 +16,8 @@ type excludedOptions = typeof FuturesMarginType.ISOLATED_MARGIN_LEGACY
 export type AppFuturesMarginType = Exclude<FuturesMarginType, excludedOptions>
 
 export type FuturesAccountData = {
-	account: string
-	position?: FuturesPosition<string>
-	positions?: FuturesPosition<string>[]
-	positionHistory?: FuturesPositionHistory<string>[]
 	trades?: FuturesTrade<string>[]
 	marginTransfers?: MarginTransfer[]
-	delayedOrders: DelayedOrderWithDetails<string>[]
 }
 
 export type DelayedOrderWithDetails<T = Wei> = {
@@ -54,7 +47,6 @@ export type HistoricalFundingRates = Partial<
 
 export type FuturesQueryStatuses = {
 	markets: QueryStatus
-	smartMarginBalanceInfo: QueryStatus
 	dailyVolumes: QueryStatus
 	positions: QueryStatus
 	positionHistory: QueryStatus
@@ -62,11 +54,14 @@ export type FuturesQueryStatuses = {
 	tradePreview: QueryStatus
 	account: QueryStatus
 	trades: QueryStatus
-	selectedTraderPositionHistory: QueryStatus
 	marginTransfers: QueryStatus
 	historicalFundingRates: QueryStatus
 	futuresFees: QueryStatus
 	futuresFeesForAccount: QueryStatus
+}
+
+export type SmartMarginQueryStatuses = FuturesQueryStatuses & {
+	smartMarginBalanceInfo: QueryStatus
 }
 
 export type TradeSizeInputs<T = Wei> = {
@@ -82,17 +77,33 @@ export type EditPositionInputs<T = Wei> = {
 export type PreviewAction = 'edit' | 'trade' | 'close'
 
 export type TradePreviewParams = {
+	orderPrice: Wei
+	sizeDelta: Wei
+	action: PreviewAction
+}
+
+export type CrossMarginTradePreviewParams = TradePreviewParams & {
+	market: {
+		key: FuturesMarketKey
+		id: number
+	}
+}
+
+export type SmartMarginTradePreviewParams = TradePreviewParams & {
 	market: {
 		key: FuturesMarketKey
 		address: string
 	}
-	orderPrice: Wei
-	sizeDelta: Wei
 	marginDelta: Wei
-	action: PreviewAction
+	isConditional?: boolean
+	hasStopOrTakeProfit?: boolean
 }
 
-export type DebouncedPreviewParams = TradePreviewParams & {
+export type DebouncedSMPreviewParams = SmartMarginTradePreviewParams & {
+	debounceCount: number
+}
+
+export type DebouncedCMPreviewParams = CrossMarginTradePreviewParams & {
 	debounceCount: number
 }
 

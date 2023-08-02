@@ -6,10 +6,13 @@ import styled from 'styled-components'
 
 import Loader from 'components/Loader'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
+import { CROSS_MARGIN_ENABLED } from 'constants/defaults'
 import Connector from 'containers/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useWindowSize from 'hooks/useWindowSize'
+import CloseCrossMarginPositionModal from 'sections/futures/ClosePositionModal/CloseCrossMarginPositionModal'
 import ClosePositionModal from 'sections/futures/ClosePositionModal/ClosePositionModal'
+import CreatePerpsV3AccountModal from 'sections/futures/CreatePerpsV3AccountModal'
 import EditPositionMarginModal from 'sections/futures/EditPositionModal/EditPositionMarginModal'
 import EditPositionSizeModal from 'sections/futures/EditPositionModal/EditPositionSizeModal'
 import EditStopLossAndTakeProfitModal from 'sections/futures/EditPositionModal/EditStopLossAndTakeProfitModal'
@@ -18,21 +21,23 @@ import MarketHead from 'sections/futures/MarketInfo/MarketHead'
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade'
 import SmartMarginOnboard from 'sections/futures/SmartMarginOnboard'
 import { TRADE_PANEL_WIDTH_LG, TRADE_PANEL_WIDTH_MD } from 'sections/futures/styles'
+import DepositWithdrawCrossMarginModal from 'sections/futures/Trade/DepositWithdrawCrossMargin'
 import FuturesUnsupportedNetwork from 'sections/futures/Trade/FuturesUnsupported'
-import TradePanel from 'sections/futures/Trade/TradePanel'
-import TransferIsolatedMarginModal from 'sections/futures/Trade/TransferIsolatedMarginModal'
-import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/DelayedOrderConfirmationModal'
+import TradePanelCrossMargin from 'sections/futures/Trade/TradePanelCrossMargin'
+import TradePanelSmartMargin from 'sections/futures/Trade/TradePanelSmartMargin'
+import TransferSmartMarginModal from 'sections/futures/Trade/TransferSmartMarginModal'
+import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/CrossMarginOrderConfirmation'
 import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin'
-import WithdrawSmartMargin from 'sections/futures/TradeSmartMargin/WithdrawSmartMargin'
 import AppLayout from 'sections/shared/Layout/AppLayout'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal, selectShowPositionModal } from 'state/app/selectors'
 import { clearTradeInputs } from 'state/futures/actions'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import { AppFuturesMarginType } from 'state/futures/common/types'
 import { selectCrossMarginSupportedNetwork } from 'state/futures/crossMargin/selectors'
+import { selectShowCrossMarginOnboard } from 'state/futures/crossMargin/selectors'
 import { usePollMarketFuturesData } from 'state/futures/hooks'
 import { setFuturesAccountType } from 'state/futures/reducer'
-import { selectFuturesType, selectMarketAsset } from 'state/futures/selectors'
 import { setMarketAsset } from 'state/futures/smartMargin/reducer'
 import {
 	selectShowSmartMarginOnboard,
@@ -57,18 +62,23 @@ const Market: MarketComponent = () => {
 
 	const setCurrentMarket = useAppSelector(selectMarketAsset)
 	const showOnboard = useAppSelector(selectShowSmartMarginOnboard)
+	const showCrossMarginOnboard = useAppSelector(selectShowCrossMarginOnboard)
 	const openModal = useAppSelector(selectShowModal)
 	const showPositionModal = useAppSelector(selectShowPositionModal)
 	const accountType = useAppSelector(selectFuturesType)
 	const selectedMarketAsset = useAppSelector(selectMarketAsset)
-	const crossMarginSupported = useAppSelector(selectCrossMarginSupportedNetwork)
+	const crossMarginSupportedNetwork = useAppSelector(selectCrossMarginSupportedNetwork)
 
 	const routerAccountType = useMemo(() => {
-		if (router.query.accountType === 'cross_margin' && crossMarginSupported) {
+		if (
+			router.query.accountType === 'cross_margin' &&
+			crossMarginSupportedNetwork &&
+			CROSS_MARGIN_ENABLED
+		) {
 			return router.query.accountType as AppFuturesMarginType
 		}
 		return FuturesMarginType.SMART_MARGIN
-	}, [router.query.accountType, crossMarginSupported])
+	}, [router.query.accountType, crossMarginSupportedNetwork])
 
 	useEffect(() => {
 		if (router.isReady && accountType !== routerAccountType) {
@@ -98,6 +108,7 @@ const Market: MarketComponent = () => {
 		<>
 			<MarketHead />
 			<SmartMarginOnboard isOpen={showOnboard} />
+			<CreatePerpsV3AccountModal isOpen={showCrossMarginOnboard} />
 			<DesktopOnlyView>
 				{lessThanWidth('lg') ? (
 					<PageContent>
@@ -120,20 +131,26 @@ const Market: MarketComponent = () => {
 			<MobileOrTabletView>
 				<MobileTrade />
 			</MobileOrTabletView>
-			{showPositionModal?.type === 'futures_close_position' && <ClosePositionModal />}
+			{showPositionModal?.type === 'smart_margin_close_position' && <ClosePositionModal />}
+			{showPositionModal?.type === 'cross_margin_close_position' && (
+				<CloseCrossMarginPositionModal />
+			)}
 			{showPositionModal?.type === 'futures_edit_stop_loss_take_profit' && (
 				<EditStopLossAndTakeProfitModal />
 			)}
 			{showPositionModal?.type === 'futures_edit_position_size' && <EditPositionSizeModal />}
 			{showPositionModal?.type === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_deposit_withdraw_cross_margin' && (
-				<TransferIsolatedMarginModal
+				<DepositWithdrawCrossMarginModal
 					defaultTab="deposit"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
-			{openModal === 'futures_withdraw_smart_margin' && (
-				<WithdrawSmartMargin onDismiss={() => dispatch(setOpenModal(null))} />
+			{openModal === 'futures_deposit_withdraw_smart_margin' && (
+				<TransferSmartMarginModal
+					defaultTab="withdraw"
+					onDismiss={() => dispatch(setOpenModal(null))}
+				/>
 			)}
 
 			{openModal === 'futures_confirm_smart_margin_trade' && <TradeConfirmationModalCrossMargin />}
@@ -151,7 +168,12 @@ function TradePanelDesktop() {
 	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
 	const openModal = useAppSelector(selectShowModal)
 
-	if (walletAddress && !isL2 && openModal !== 'futures_smart_margin_socket') {
+	if (
+		walletAddress &&
+		!isL2 &&
+		openModal !== 'futures_smart_margin_socket' &&
+		openModal !== 'futures_deposit_withdraw_smart_margin'
+	) {
 		return <FuturesUnsupportedNetwork />
 	}
 
@@ -169,7 +191,11 @@ function TradePanelDesktop() {
 		)
 	}
 
-	return <TradePanel />
+	return accountType === FuturesMarginType.CROSS_MARGIN ? (
+		<TradePanelCrossMargin />
+	) : (
+		<TradePanelSmartMargin />
+	)
 }
 
 Market.getLayout = (page) => <AppLayout>{page}</AppLayout>

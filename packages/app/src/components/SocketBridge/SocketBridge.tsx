@@ -1,14 +1,11 @@
-import { FuturesMarginType } from '@kwenta/sdk/types'
 import { Bridge } from '@socket.tech/plugin'
 import { useCallback } from 'react'
 import styled, { useTheme } from 'styled-components'
 
-import ArrowIcon from 'assets/svg/app/arrow-down.svg'
 import Connector from 'containers/Connector'
 import { chain } from 'containers/Connector/config'
 import { fetchBalances } from 'state/balances/actions'
-import { selectFuturesType } from 'state/futures/selectors'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { useAppDispatch } from 'state/hooks'
 import {
 	customizeSocket,
 	socketDefaultChains,
@@ -20,7 +17,6 @@ const SocketBridge = () => {
 	const { activeChain, signer } = Connector.useContainer()
 	const dispatch = useAppDispatch()
 	const customize = customizeSocket(useTheme())
-	const accountType = useAppSelector(selectFuturesType)
 	const onBridgeSuccess = useCallback(() => {
 		dispatch(fetchBalances())
 	}, [dispatch])
@@ -43,11 +39,6 @@ const SocketBridge = () => {
 				enableSameChainSwaps={true}
 				onBridgeSuccess={onBridgeSuccess}
 			/>
-			{accountType === FuturesMarginType.CROSS_MARGIN && (
-				<StyledDiv>
-					<ArrowIcon />
-				</StyledDiv>
-			)}
 		</BridgeContainer>
 	)
 }

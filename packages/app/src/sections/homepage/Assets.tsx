@@ -1,4 +1,5 @@
 import { SECONDS_PER_DAY } from '@kwenta/sdk/constants'
+import { getDisplayAsset, MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts'
 import router from 'next/router'
@@ -84,7 +85,12 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 			},
 		})
 
-		requestCandlesticks(asset, Math.floor(Date.now() / 1000) - SECONDS_PER_DAY, undefined, 3600)
+		requestCandlesticks(
+			getDisplayAsset(asset),
+			Math.floor(Date.now() / 1000) - SECONDS_PER_DAY,
+			undefined,
+			3600
+		)
 			.then((bars) => {
 				let positive = false
 				if (bars !== undefined) {
@@ -149,9 +155,7 @@ const Assets = () => {
 						? marketPrice.sub(pastPrice.rate).div(marketPrice)
 						: 0,
 				image: <PriceChart asset={market.asset} />,
-				icon: (
-					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
-				),
+				icon: <StyledCurrencyIcon currencyKey={MarketKeyByAsset[market.asset]} />,
 			}
 		})
 	}, [futuresMarkets, pastRates, futuresVolumes, t, prices])

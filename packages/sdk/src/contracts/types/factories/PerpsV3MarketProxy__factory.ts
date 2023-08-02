@@ -809,8 +809,30 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "InvalidMarketOwner",
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "marketId",
+        type: "uint128",
+      },
+    ],
+    name: "InvalidMarket",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "parameter",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "reason",
+        type: "string",
+      },
+    ],
+    name: "InvalidParameter",
     type: "error",
   },
   {
@@ -819,28 +841,31 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "OverflowUint256ToInt256",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "OverflowUint256ToUint128",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PerpsMarketNotInitialized",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "uint128",
-        name: "perpsMarketId",
+        name: "globalPerpsMarketId",
         type: "uint128",
       },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "oldOwner",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
     ],
-    name: "MarketOwnerChanged",
+    name: "FactoryInitialized",
     type: "event",
   },
   {
@@ -851,50 +876,6 @@ const _abi = [
         internalType: "uint128",
         name: "perpsMarketId",
         type: "uint128",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "newNominatedOwner",
-        type: "address",
-      },
-    ],
-    name: "MarketOwnerNominated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint128",
-        name: "perpsMarketId",
-        type: "uint128",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "feedId",
-        type: "bytes32",
-      },
-    ],
-    name: "MarketPriceDataUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint128",
-        name: "perpsMarketId",
-        type: "uint128",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "marketOwner",
-        type: "address",
       },
       {
         indexed: false,
@@ -909,24 +890,16 @@ const _abi = [
         type: "string",
       },
     ],
-    name: "MarketRegistered",
+    name: "MarketCreated",
     type: "event",
   },
   {
     inputs: [
       {
         internalType: "uint128",
-        name: "perpsMarketId",
+        name: "requestedMarketId",
         type: "uint128",
       },
-    ],
-    name: "acceptMarketOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "string",
         name: "marketName",
@@ -936,11 +909,6 @@ const _abi = [
         internalType: "string",
         name: "marketSymbol",
         type: "string",
-      },
-      {
-        internalType: "address",
-        name: "marketOwner",
-        type: "address",
       },
     ],
     name: "createMarket",
@@ -955,22 +923,16 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "initializeFactory",
+    outputs: [
       {
         internalType: "uint128",
-        name: "perpsMarketId",
+        name: "",
         type: "uint128",
       },
     ],
-    name: "getMarketOwner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -1009,24 +971,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint128",
-        name: "perpsMarketId",
-        type: "uint128",
-      },
-      {
-        internalType: "address",
-        name: "newNominatedOwner",
-        type: "address",
-      },
-    ],
-    name: "nominateMarketOwner",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -1091,43 +1035,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint128",
-        name: "perpsMarketId",
-        type: "uint128",
-      },
-    ],
-    name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint128",
-        name: "perpsMarketId",
-        type: "uint128",
-      },
-      {
-        internalType: "bytes32",
-        name: "feedId",
-        type: "bytes32",
-      },
-    ],
-    name: "updatePriceData",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -1204,17 +1111,6 @@ const _abi = [
     inputs: [
       {
         internalType: "uint128",
-        name: "marketId",
-        type: "uint128",
-      },
-    ],
-    name: "InvalidMarket",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint128",
         name: "synthMarketId",
         type: "uint128",
       },
@@ -1244,12 +1140,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "OverflowUint256ToInt256",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "OverflowUint256ToUint128",
+    name: "PendingOrderExists",
     type: "error",
   },
   {
@@ -1290,13 +1181,13 @@ const _abi = [
         type: "uint128",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "int256",
         name: "amountDelta",
         type: "int256",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
         name: "sender",
         type: "address",
@@ -1312,55 +1203,13 @@ const _abi = [
         name: "accountId",
         type: "uint128",
       },
-      {
-        internalType: "uint128",
-        name: "marketId",
-        type: "uint128",
-      },
     ],
-    name: "getAsyncOrderClaim",
+    name: "getAvailableMargin",
     outputs: [
       {
-        components: [
-          {
-            internalType: "uint128",
-            name: "accountId",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "marketId",
-            type: "uint128",
-          },
-          {
-            internalType: "int128",
-            name: "sizeDelta",
-            type: "int128",
-          },
-          {
-            internalType: "uint128",
-            name: "settlementStrategyId",
-            type: "uint128",
-          },
-          {
-            internalType: "uint256",
-            name: "settlementTime",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "acceptablePrice",
-            type: "uint256",
-          },
-          {
-            internalType: "bytes32",
-            name: "trackingCode",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct AsyncOrder.Data",
-        name: "",
-        type: "tuple",
+        internalType: "int256",
+        name: "availableMargin",
+        type: "int256",
       },
     ],
     stateMutability: "view",
@@ -1373,13 +1222,18 @@ const _abi = [
         name: "accountId",
         type: "uint128",
       },
+      {
+        internalType: "uint128",
+        name: "synthMarketId",
+        type: "uint128",
+      },
     ],
-    name: "getAvailableMargin",
+    name: "getCollateralAmount",
     outputs: [
       {
-        internalType: "int256",
+        internalType: "uint256",
         name: "",
-        type: "int256",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -1402,17 +1256,60 @@ const _abi = [
     outputs: [
       {
         internalType: "int256",
-        name: "",
+        name: "totalPnl",
         type: "int256",
       },
       {
         internalType: "int256",
-        name: "",
+        name: "accruedFunding",
         type: "int256",
       },
       {
+        internalType: "int128",
+        name: "positionSize",
+        type: "int128",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "accountId",
+        type: "uint128",
+      },
+    ],
+    name: "getRequiredMargins",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "requiredInitialMargin",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "requiredMaintenanceMargin",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "accountId",
+        type: "uint128",
+      },
+    ],
+    name: "getWithdrawableMargin",
+    outputs: [
+      {
         internalType: "int256",
-        name: "",
+        name: "withdrawableMargin",
         type: "int256",
       },
     ],
@@ -1526,9 +1423,9 @@ const _abi = [
         type: "uint128",
       },
       {
-        internalType: "int256",
+        internalType: "int128",
         name: "orderSize",
-        type: "int256",
+        type: "int128",
       },
       {
         internalType: "uint256",
@@ -1644,6 +1541,30 @@ const _abi = [
         type: "uint128",
       },
     ],
+    name: "metadata",
+    outputs: [
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "marketId",
+        type: "uint128",
+      },
+    ],
     name: "size",
     outputs: [
       {
@@ -1709,23 +1630,317 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "leftover",
-        type: "uint256",
-      },
-    ],
-    name: "InsufficientMarginError",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
         internalType: "uint128",
         name: "settlementStrategyId",
         type: "uint128",
       },
     ],
     name: "InvalidSettlementStrategy",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "marketId",
+        type: "uint128",
+      },
+      {
+        internalType: "uint256",
+        name: "maxMarketSize",
+        type: "uint256",
+      },
+      {
+        internalType: "int256",
+        name: "newSideSize",
+        type: "int256",
+      },
+    ],
+    name: "MaxOpenInterestReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "OverflowInt256ToInt128",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroSizeOrder",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint128",
+        name: "marketId",
+        type: "uint128",
+      },
+      {
+        indexed: true,
+        internalType: "uint128",
+        name: "accountId",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "enum SettlementStrategy.Type",
+        name: "orderType",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "int128",
+        name: "sizeDelta",
+        type: "int128",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "acceptablePrice",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "settlementTime",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "expirationTime",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "trackingCode",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "OrderCommitted",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint128",
+            name: "marketId",
+            type: "uint128",
+          },
+          {
+            internalType: "uint128",
+            name: "accountId",
+            type: "uint128",
+          },
+          {
+            internalType: "int128",
+            name: "sizeDelta",
+            type: "int128",
+          },
+          {
+            internalType: "uint128",
+            name: "settlementStrategyId",
+            type: "uint128",
+          },
+          {
+            internalType: "uint256",
+            name: "acceptablePrice",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes32",
+            name: "trackingCode",
+            type: "bytes32",
+          },
+          {
+            internalType: "address",
+            name: "referrer",
+            type: "address",
+          },
+        ],
+        internalType: "struct AsyncOrder.OrderCommitmentRequest",
+        name: "commitment",
+        type: "tuple",
+      },
+    ],
+    name: "commitOrder",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "settlementTime",
+            type: "uint256",
+          },
+          {
+            components: [
+              {
+                internalType: "uint128",
+                name: "marketId",
+                type: "uint128",
+              },
+              {
+                internalType: "uint128",
+                name: "accountId",
+                type: "uint128",
+              },
+              {
+                internalType: "int128",
+                name: "sizeDelta",
+                type: "int128",
+              },
+              {
+                internalType: "uint128",
+                name: "settlementStrategyId",
+                type: "uint128",
+              },
+              {
+                internalType: "uint256",
+                name: "acceptablePrice",
+                type: "uint256",
+              },
+              {
+                internalType: "bytes32",
+                name: "trackingCode",
+                type: "bytes32",
+              },
+              {
+                internalType: "address",
+                name: "referrer",
+                type: "address",
+              },
+            ],
+            internalType: "struct AsyncOrder.OrderCommitmentRequest",
+            name: "request",
+            type: "tuple",
+          },
+        ],
+        internalType: "struct AsyncOrder.Data",
+        name: "retOrder",
+        type: "tuple",
+      },
+      {
+        internalType: "uint256",
+        name: "fees",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "marketId",
+        type: "uint128",
+      },
+      {
+        internalType: "int128",
+        name: "sizeDelta",
+        type: "int128",
+      },
+    ],
+    name: "computeOrderFees",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "orderFees",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "accountId",
+        type: "uint128",
+      },
+    ],
+    name: "getOrder",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "settlementTime",
+            type: "uint256",
+          },
+          {
+            components: [
+              {
+                internalType: "uint128",
+                name: "marketId",
+                type: "uint128",
+              },
+              {
+                internalType: "uint128",
+                name: "accountId",
+                type: "uint128",
+              },
+              {
+                internalType: "int128",
+                name: "sizeDelta",
+                type: "int128",
+              },
+              {
+                internalType: "uint128",
+                name: "settlementStrategyId",
+                type: "uint128",
+              },
+              {
+                internalType: "uint256",
+                name: "acceptablePrice",
+                type: "uint256",
+              },
+              {
+                internalType: "bytes32",
+                name: "trackingCode",
+                type: "bytes32",
+              },
+              {
+                internalType: "address",
+                name: "referrer",
+                type: "address",
+              },
+            ],
+            internalType: "struct AsyncOrder.OrderCommitmentRequest",
+            name: "request",
+            type: "tuple",
+          },
+        ],
+        internalType: "struct AsyncOrder.Data",
+        name: "order",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "leftover",
+        type: "uint256",
+      },
+    ],
+    name: "InsufficientMarginError",
     type: "error",
   },
   {
@@ -1760,29 +1975,8 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "uint128",
-        name: "marketId",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "accountId",
-        type: "uint128",
-      },
-    ],
-    name: "OrderAlreadyCommitted",
-    type: "error",
-  },
-  {
     inputs: [],
     name: "OrderNotValid",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "OverflowInt256ToInt128",
     type: "error",
   },
   {
@@ -1850,110 +2044,57 @@ const _abi = [
         name: "settlementTime",
         type: "uint256",
       },
-      {
-        internalType: "uint256",
-        name: "settlementExpiration",
-        type: "uint256",
-      },
     ],
-    name: "SettlementWindowNotExpired",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ZeroSizeOrder",
+    name: "SettlementWindowNotOpen",
     type: "error",
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "uint128",
         name: "marketId",
         type: "uint128",
       },
       {
-        indexed: true,
-        internalType: "uint128",
-        name: "accountId",
-        type: "uint128",
-      },
-      {
         indexed: false,
         internalType: "uint256",
-        name: "settlementTime",
+        name: "price",
         type: "uint256",
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "acceptablePrice",
-        type: "uint256",
-      },
-    ],
-    name: "OrderCanceled",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint128",
-        name: "marketId",
-        type: "uint128",
-      },
-      {
-        indexed: true,
-        internalType: "uint128",
-        name: "accountId",
-        type: "uint128",
-      },
-      {
-        indexed: true,
-        internalType: "enum SettlementStrategy.Type",
-        name: "orderType",
-        type: "uint8",
+        internalType: "int256",
+        name: "skew",
+        type: "int256",
       },
       {
         indexed: false,
-        internalType: "int128",
+        internalType: "uint256",
+        name: "size",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "int256",
         name: "sizeDelta",
-        type: "int128",
+        type: "int256",
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "acceptablePrice",
-        type: "uint256",
+        internalType: "int256",
+        name: "currentFundingRate",
+        type: "int256",
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "settlementTime",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "expirationTime",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "trackingCode",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "sender",
-        type: "address",
+        internalType: "int256",
+        name: "currentFundingVelocity",
+        type: "int256",
       },
     ],
-    name: "OrderCommitted",
+    name: "MarketUpdated",
     type: "event",
   },
   {
@@ -1980,8 +2121,14 @@ const _abi = [
       {
         indexed: false,
         internalType: "int256",
-        name: "accountPnlRealized",
+        name: "pnl",
         type: "int256",
+      },
+      {
+        indexed: false,
+        internalType: "int128",
+        name: "sizeDelta",
+        type: "int128",
       },
       {
         indexed: false,
@@ -1992,13 +2139,25 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
+        name: "totalFees",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "referralFees",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
         name: "collectedFees",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "settelementReward",
+        name: "settlementReward",
         type: "uint256",
       },
       {
@@ -2032,183 +2191,6 @@ const _abi = [
   },
   {
     inputs: [
-      {
-        internalType: "uint128",
-        name: "marketId",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "accountId",
-        type: "uint128",
-      },
-    ],
-    name: "cancelOrder",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: "uint128",
-            name: "marketId",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "accountId",
-            type: "uint128",
-          },
-          {
-            internalType: "int128",
-            name: "sizeDelta",
-            type: "int128",
-          },
-          {
-            internalType: "uint128",
-            name: "settlementStrategyId",
-            type: "uint128",
-          },
-          {
-            internalType: "uint256",
-            name: "acceptablePrice",
-            type: "uint256",
-          },
-          {
-            internalType: "bytes32",
-            name: "trackingCode",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct AsyncOrder.OrderCommitmentRequest",
-        name: "commitment",
-        type: "tuple",
-      },
-    ],
-    name: "commitOrder",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint128",
-            name: "accountId",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "marketId",
-            type: "uint128",
-          },
-          {
-            internalType: "int128",
-            name: "sizeDelta",
-            type: "int128",
-          },
-          {
-            internalType: "uint128",
-            name: "settlementStrategyId",
-            type: "uint128",
-          },
-          {
-            internalType: "uint256",
-            name: "settlementTime",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "acceptablePrice",
-            type: "uint256",
-          },
-          {
-            internalType: "bytes32",
-            name: "trackingCode",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct AsyncOrder.Data",
-        name: "retOrder",
-        type: "tuple",
-      },
-      {
-        internalType: "uint256",
-        name: "fees",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint128",
-        name: "marketId",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "accountId",
-        type: "uint128",
-      },
-    ],
-    name: "getOrder",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint128",
-            name: "accountId",
-            type: "uint128",
-          },
-          {
-            internalType: "uint128",
-            name: "marketId",
-            type: "uint128",
-          },
-          {
-            internalType: "int128",
-            name: "sizeDelta",
-            type: "int128",
-          },
-          {
-            internalType: "uint128",
-            name: "settlementStrategyId",
-            type: "uint128",
-          },
-          {
-            internalType: "uint256",
-            name: "settlementTime",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "acceptablePrice",
-            type: "uint256",
-          },
-          {
-            internalType: "bytes32",
-            name: "trackingCode",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct AsyncOrder.Data",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint128",
-        name: "marketId",
-        type: "uint128",
-      },
       {
         internalType: "uint128",
         name: "accountId",
@@ -2535,6 +2517,62 @@ const _abi = [
     type: "error",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint128",
+        name: "accountId",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "reward",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "fullLiquidation",
+        type: "bool",
+      },
+    ],
+    name: "AccountLiquidated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint128",
+        name: "accountId",
+        type: "uint128",
+      },
+      {
+        indexed: true,
+        internalType: "uint128",
+        name: "marketId",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountLiquidated",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "int128",
+        name: "currentPositionSize",
+        type: "int128",
+      },
+    ],
+    name: "PositionLiquidated",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "uint128",
@@ -2555,26 +2593,10 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "marketOwner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-    ],
-    name: "OnlyMarketOwner",
-    type: "error",
-  },
-  {
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint128",
         name: "marketId",
         type: "uint128",
@@ -2599,7 +2621,7 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint128",
         name: "marketId",
         type: "uint128",
@@ -2607,13 +2629,13 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "initialMarginFraction",
+        name: "initialMarginRatioD18",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "maintenanceMarginFraction",
+        name: "maintenanceMarginRatioD18",
         type: "uint256",
       },
       {
@@ -2634,6 +2656,12 @@ const _abi = [
         name: "maxSecondsInLiquidationWindow",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "minimumPositionMargin",
+        type: "uint256",
+      },
     ],
     name: "LiquidationParametersSet",
     type: "event",
@@ -2642,7 +2670,7 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint128",
         name: "marketId",
         type: "uint128",
@@ -2650,18 +2678,37 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "lockedOiPercent",
+        name: "lockedOiRatioD18",
         type: "uint256",
       },
     ],
-    name: "LockedOiPercentSet",
+    name: "LockedOiRatioSet",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "uint128",
+        name: "marketId",
+        type: "uint128",
+      },
+      {
         indexed: false,
+        internalType: "bytes32",
+        name: "feedId",
+        type: "bytes32",
+      },
+    ],
+    name: "MarketPriceDataUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "uint128",
         name: "marketId",
         type: "uint128",
@@ -2669,18 +2716,18 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "maxMarketValue",
+        name: "maxMarketSize",
         type: "uint256",
       },
     ],
-    name: "MaxMarketValueSet",
+    name: "MaxMarketSizeSet",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint128",
         name: "marketId",
         type: "uint128",
@@ -2782,7 +2829,7 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "uint128",
         name: "marketId",
         type: "uint128",
@@ -2915,12 +2962,12 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "initialMarginFraction",
+        name: "initialMarginRatioD18",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "maintenanceMarginFraction",
+        name: "maintenanceMarginRatioD18",
         type: "uint256",
       },
       {
@@ -2950,7 +2997,7 @@ const _abi = [
         type: "uint128",
       },
     ],
-    name: "getLockedOiPercent",
+    name: "getLockedOiRatio",
     outputs: [
       {
         internalType: "uint256",
@@ -2969,11 +3016,11 @@ const _abi = [
         type: "uint128",
       },
     ],
-    name: "getMaxMarketValue",
+    name: "getMaxMarketSize",
     outputs: [
       {
         internalType: "uint256",
-        name: "maxMarketValue",
+        name: "maxMarketSize",
         type: "uint256",
       },
     ],
@@ -3112,12 +3159,12 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "initialMarginFraction",
+        name: "initialMarginRatioD18",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "maintenanceMarginFraction",
+        name: "maintenanceMarginRatioD18",
         type: "uint256",
       },
       {
@@ -3135,6 +3182,11 @@ const _abi = [
         name: "maxSecondsInLiquidationWindow",
         type: "uint256",
       },
+      {
+        internalType: "uint256",
+        name: "minimumPositionMargin",
+        type: "uint256",
+      },
     ],
     name: "setLiquidationParameters",
     outputs: [],
@@ -3150,11 +3202,11 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "lockedOiPercent",
+        name: "lockedOiRatioD18",
         type: "uint256",
       },
     ],
-    name: "setLockedOiPercent",
+    name: "setLockedOiRatio",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -3168,11 +3220,11 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "maxMarketValue",
+        name: "maxMarketSize",
         type: "uint256",
       },
     ],
-    name: "setMaxMarketValue",
+    name: "setMaxMarketSize",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -3224,6 +3276,59 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "perpsMarketId",
+        type: "uint128",
+      },
+      {
+        internalType: "bytes32",
+        name: "feedId",
+        type: "bytes32",
+      },
+    ],
+    name: "updatePriceData",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "invalidFeeCollector",
+        type: "address",
+      },
+    ],
+    name: "InvalidFeeCollectorInterface",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "shareRatioD18",
+        type: "uint256",
+      },
+    ],
+    name: "InvalidReferrerShareRatio",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "feeCollector",
+        type: "address",
+      },
+    ],
+    name: "FeeCollectorSet",
+    type: "event",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -3266,6 +3371,25 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address",
+        name: "referrer",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "shareRatioD18",
+        type: "uint256",
+      },
+    ],
+    name: "ReferrerShareUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint128[]",
         name: "newSynthDeductionPriority",
         type: "uint128[]",
@@ -3273,6 +3397,19 @@ const _abi = [
     ],
     name: "SynthDeductionPrioritySet",
     type: "event",
+  },
+  {
+    inputs: [],
+    name: "getFeeCollector",
+    outputs: [
+      {
+        internalType: "address",
+        name: "feeCollector",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
@@ -3312,6 +3449,25 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "referrer",
+        type: "address",
+      },
+    ],
+    name: "getReferrerShare",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "shareRatioD18",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getSynthDeductionPriority",
     outputs: [
@@ -3322,6 +3478,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "feeCollector",
+        type: "address",
+      },
+    ],
+    name: "setFeeCollector",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -3369,6 +3538,37 @@ const _abi = [
       },
     ],
     name: "setSynthDeductionPriority",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalGlobalCollateralValue",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "totalCollateralValue",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "referrer",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "shareRatioD18",
+        type: "uint256",
+      },
+    ],
+    name: "updateReferrerShare",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

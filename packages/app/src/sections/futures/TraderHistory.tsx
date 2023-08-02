@@ -1,7 +1,9 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesPositionHistory } from '@kwenta/sdk/dist/types'
+import { getMarketName, MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
-import { FC, memo, useEffect, useMemo } from 'react'
+import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -9,45 +11,30 @@ import Currency from 'components/Currency'
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
 import { FlexDiv } from 'components/layout/flex'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
-import FuturesIcon from 'components/Nav/FuturesIcon'
-import Table, { TableHeader } from 'components/Table'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
-import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement'
 import ROUTES from 'constants/routes'
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
-import { selectShowBanner } from 'state/app/selectors'
-import { fetchPositionHistoryForTrader } from 'state/futures/actions'
-import {
-	selectFuturesPositions,
-	selectPositionHistoryForSelectedTrader,
-	selectQueryStatuses,
-} from 'state/futures/selectors'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { selectFuturesPositions, selectQueryStatuses } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
-import { ExternalLink, FOOTER_HEIGHT } from 'styles/common'
+import { ExternalLink } from 'styles/common'
 import media from 'styles/media'
-import { getMarketName } from 'utils/futures'
 
 type TraderHistoryProps = {
 	trader: string
 	traderEns?: string | null
+	positionHistory: FuturesPositionHistory[]
 	resetSelection: () => void
 	compact?: boolean
 	searchTerm?: string | undefined
 }
 
 const TraderHistory: FC<TraderHistoryProps> = memo(
-	({ trader, traderEns, resetSelection, compact, searchTerm }) => {
+	({ trader, traderEns, positionHistory, resetSelection, compact, searchTerm }) => {
 		const { t } = useTranslation()
-		const dispatch = useAppDispatch()
-		const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader)
 		const positions = useAppSelector(selectFuturesPositions)
-		const showBanner = useAppSelector(selectShowBanner)
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses)
-
-		useEffect(() => {
-			dispatch(fetchPositionHistoryForTrader(trader))
-		}, [trader, dispatch])
 
 		let data = useMemo(() => {
 			return positionHistory
@@ -55,20 +42,19 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 				.map((stat, i) => {
 					const totalDeposit = stat.initialMargin.add(stat.totalDeposits)
 					const thisPosition = stat.isOpen
-						? positions.find((p) => p.marketKey === stat.marketKey)
+						? positions.find((p) => p.market.marketKey === stat.marketKey)
 						: null
 
-					const pnlWithFeesPaid = stat.pnl
-						.sub(stat.feesPaid)
-						.add(stat.netFunding)
-						.add(thisPosition?.position?.accruedFunding ?? ZERO_WEI)
+					const funding = stat.netFunding.add(thisPosition?.accruedFunding ?? ZERO_WEI)
+					const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
 
 					return {
 						...stat,
 						rank: i + 1,
-						currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
+						currencyIconKey: MarketKeyByAsset[stat.asset],
 						marketShortName: getMarketName(stat.asset),
 						status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
+						funding,
 						pnl: pnlWithFeesPaid,
 						pnlPct: totalDeposit.gt(0)
 							? `(${pnlWithFeesPaid
@@ -87,23 +73,19 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 				)
 		}, [positionHistory, positions, searchTerm])
 
-		const tableHeight = useMemo(
-			() => window.innerHeight - FOOTER_HEIGHT - 161 - Number(showBanner) * BANNER_HEIGHT_DESKTOP,
-			[showBanner]
-		)
-
 		return (
 			<>
 				<DesktopOnlyView>
 					<StyledTable
 						// @ts-ignore
-						height={tableHeight}
 						compact={compact}
 						showPagination
 						pageSize={10}
 						isLoading={queryStatus.status === FetchStatus.Loading}
 						data={data}
 						hideHeaders={compact}
+						autoResetPageIndex={false}
+						compactPagination={true}
 						columns={[
 							{
 								header: () => (
@@ -121,6 +103,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									</TableTitle>
 								),
 								accessorKey: 'title',
+								enableSorting: false,
 								columns: [
 									{
 										header: () => (
@@ -134,7 +117,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 												</StyledCell>
 											)
 										},
-										size: compact ? 40 : 100,
+										size: 100,
 									},
 									{
 										header: () => (
@@ -145,10 +128,9 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<CurrencyInfo>
 												<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
 												<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
-												<StyledFuturesIcon type={cellProps.row.original.accountType} />
 											</CurrencyInfo>
 										),
-										size: compact ? 40 : 100,
+										size: 150,
 									},
 									{
 										header: () => (
@@ -156,49 +138,78 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										),
 										accessorKey: 'status',
 										cell: (cellProps) => {
-											return <StyledCell>{cellProps.row.original.status}</StyledCell>
+											return <Body color="primary">{cellProps.row.original.status}</Body>
 										},
-										size: compact ? 40 : 100,
+										size: 30,
 									},
 									{
 										header: () => (
-											<TableHeader>
+											<RightAlignedTableHeader>
 												{t('leaderboard.trader-history.table.total-trades')}
-											</TableHeader>
+											</RightAlignedTableHeader>
 										),
 										accessorKey: 'trades',
-										size: compact ? 40 : 100,
+										cell: (cellProps) => (
+											<RightAlignedContainer>{cellProps.getValue()}</RightAlignedContainer>
+										),
+										size: 130,
 									},
 									{
 										header: () => (
-											<TableHeader>
+											<RightAlignedTableHeader>
 												{t('leaderboard.trader-history.table.total-volume')}
-											</TableHeader>
+											</RightAlignedTableHeader>
 										),
 										accessorKey: 'totalVolume',
 										cell: (cellProps) => (
-											<Currency.Price price={cellProps.row.original.totalVolume} />
+											<RightAlignedContainer>
+												<Currency.Price price={cellProps.getValue()} />
+											</RightAlignedContainer>
 										),
-										size: compact ? 40 : 100,
+										size: 130,
 									},
 									{
 										header: () => (
-											<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
+											<RightAlignedTableHeader>
+												{t('leaderboard.trader-history.table.total-pnl')}
+											</RightAlignedTableHeader>
 										),
 										accessorKey: 'pnl',
 										cell: (cellProps) => (
-											<PnlContainer>
+											<RightAlignedContainer>
 												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
-											</PnlContainer>
+											</RightAlignedContainer>
 										),
-										size: compact ? 40 : 100,
+										size: 130,
+									},
+									{
+										header: () => (
+											<RightAlignedTableHeader>
+												{t('leaderboard.trader-history.table.funding')}
+											</RightAlignedTableHeader>
+										),
+										accessorKey: 'funding',
+										cell: (cellProps) => (
+											<RightAlignedContainer>
+												<Currency.Price price={cellProps.getValue()} colored />
+											</RightAlignedContainer>
+										),
+										size: 130,
 									},
 								],
 							},
 						]}
+						noResultsMessage={
+							queryStatus.status !== FetchStatus.Loading &&
+							data?.length === 0 && (
+								<TableNoResults>
+									{t('dashboard.history.positions-history-table.no-result')}
+								</TableNoResults>
+							)
+						}
 					/>
 				</DesktopOnlyView>
 				<MobileOrTabletView>
@@ -210,6 +221,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						isLoading={false}
 						showPagination
 						pageSize={10}
+						autoResetPageIndex={false}
 						columns={[
 							{
 								header: () => (
@@ -232,6 +244,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 									</TableTitle>
 								),
 								accessorKey: 'title',
+								enableSorting: false,
 								columns: [
 									{
 										header: () => (
@@ -242,7 +255,6 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 											<CurrencyInfo>
 												<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
 												<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
-												<StyledFuturesIcon type={cellProps.row.original.accountType} />
 											</CurrencyInfo>
 										),
 										size: 50,
@@ -253,7 +265,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										),
 										accessorKey: 'status',
 										cell: (cellProps) => {
-											return <StyledCell>{cellProps.row.original.status}</StyledCell>
+											return <Body color="primary">{cellProps.row.original.status}</Body>
 										},
 										size: 30,
 									},
@@ -263,12 +275,12 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 										),
 										accessorKey: 'pnl',
 										cell: (cellProps) => (
-											<PnlContainer>
+											<RightAlignedContainer>
 												<Currency.Price price={cellProps.row.original.pnl} colored />
 												<StyledValue $value={cellProps.row.original.pnl}>
 													{cellProps.row.original.pnlPct}
 												</StyledValue>
-											</PnlContainer>
+											</RightAlignedContainer>
 										),
 										size: 40,
 									},
@@ -281,6 +293,16 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 		)
 	}
 )
+
+const RightAlignedTableHeader = styled(TableHeader)`
+	width: 90%;
+	text-align: right;
+`
+
+const RightAlignedContainer = styled.div`
+	width: 90%;
+	text-align: right;
+`
 
 const StyledTable = styled(Table)<{ compact?: boolean; height?: number }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
@@ -339,12 +361,6 @@ const StyledSubtitle = styled(Body)`
 	text-transform: capitalize;
 `
 
-const PnlContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-`
-
 const valueColor = css<{ $value: WeiSource }>`
 	color: ${(props) =>
 		wei(props.$value).gt(0)
@@ -358,12 +374,7 @@ const StyledValue = styled.div<{ $value: WeiSource }>`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	margin: 0;
-	text-align: end;
 	${valueColor}
-`
-
-const StyledFuturesIcon = styled(FuturesIcon)`
-	margin-left: 5px;
 `
 
 export default TraderHistory

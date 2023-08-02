@@ -86,7 +86,6 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 	return formatted
 }
 
-// TODO: implement max decimals
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix
 	const suffix = options?.suffix
@@ -121,19 +120,17 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs()
 
-	const decimals = truncation
+	const defaultDecimals = truncation
 		? truncation.decimals
 		: suggestDecimals
 		? suggestedDecimals(weiBeforeAsString)
 		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 
-	let weiAsStringWithDecimals = weiBeforeAsString.toString(decimals)
+	const decimals = options?.maxDecimals
+		? Math.min(defaultDecimals, options.maxDecimals)
+		: defaultDecimals
 
-	if (options?.maxDecimals || options?.maxDecimals === 0) {
-		weiAsStringWithDecimals = wei(weiAsStringWithDecimals).toString(options.maxDecimals)
-	}
-
-	const withCommas = commifyAndPadDecimals(weiAsStringWithDecimals, decimals)
+	const withCommas = commifyAndPadDecimals(weiBeforeAsString.toString(decimals), decimals)
 
 	formattedValue.push(withCommas)
 
@@ -223,7 +220,8 @@ export const suggestedDecimals = (value: WeiSource) => {
 	if (value >= 0.01) return 5
 	if (value >= 0.001) return 6
 	if (value >= 0.0001) return 7
-	return 8
+	if (value >= 0.00001) return 8
+	return 11
 }
 
 export const floorNumber = (num: WeiSource, decimals?: number) => {

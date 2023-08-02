@@ -12,7 +12,7 @@ import MarketDetails from '../MarketDetails/MarketDetails'
 import FuturesUnsupportedNetwork from '../Trade/FuturesUnsupported'
 import MarketsDropdown from '../Trade/MarketsDropdown'
 import { MARKET_SELECTOR_HEIGHT_MOBILE } from '../Trade/MarketsDropdownSelector'
-import TradeBalance from '../Trade/TradeBalance'
+import TradeBalance from '../Trade/TradeBalanceSmartMargin'
 
 import TradePanelDrawer from './drawers/TradePanelDrawer'
 import OverviewTabs from './OverviewTabs'
@@ -34,7 +34,7 @@ const MobileTrade: React.FC = () => {
 		<>
 			<MobileContainer mobile={deviceType === 'mobile'} id="mobile-view" showBanner={showBanner}>
 				{deviceType === 'mobile' && <MarketsDropdown mobile={deviceType === 'mobile'} />}
-				{deviceType === 'mobile' && <TradeBalance isMobile={true} />}
+				{deviceType === 'mobile' && <TradeBalance />}
 				<MarketDetails mobile />
 			</MobileContainer>
 			<OverviewTabs />

@@ -16,7 +16,7 @@ import {
 	LOADING_STATUS,
 	SUCCESS_STATUS,
 	ZERO_CM_FEES,
-	ZERO_STATE_CM_ACCOUNT,
+	ZERO_STATE_ACCOUNT,
 	ZERO_STATE_TRADE_INPUTS,
 } from 'state/constants'
 import { FetchStatus } from 'state/types'
@@ -64,7 +64,6 @@ export const SMART_MARGIN_INITIAL_STATE: SmartMarginState = {
 		openOrders: DEFAULT_QUERY_STATUS,
 		tradePreview: DEFAULT_QUERY_STATUS,
 		account: DEFAULT_QUERY_STATUS,
-		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 		trades: DEFAULT_QUERY_STATUS,
 		marginTransfers: DEFAULT_QUERY_STATUS,
 		historicalFundingRates: DEFAULT_QUERY_STATUS,
@@ -218,7 +217,7 @@ const smartMarginSlice = createSlice({
 					...smartMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_CM_ACCOUNT,
+						...ZERO_STATE_ACCOUNT,
 					},
 				}
 			}
@@ -248,7 +247,7 @@ const smartMarginSlice = createSlice({
 		) => {
 			smartMargin.cancellingOrder = payload
 		},
-		incrementCrossPreviewCount: (smartMargin) => {
+		incrementSmartMarginPreviewCount: (smartMargin) => {
 			smartMargin.previewDebounceCount = smartMargin.previewDebounceCount + 1
 		},
 	},
@@ -407,7 +406,7 @@ const smartMarginSlice = createSlice({
 					...smartMargin.accounts[network],
 					[wallet]: {
 						account: account,
-						...ZERO_STATE_CM_ACCOUNT,
+						...ZERO_STATE_ACCOUNT,
 					},
 				}
 			}
@@ -545,7 +544,7 @@ export const {
 	setSmartMarginTradePreview,
 	setSmartMarginOrderCancelling,
 	setSmartMarginEditPositionInputs,
-	incrementCrossPreviewCount,
+	incrementSmartMarginPreviewCount,
 	setSLTPModalStopLoss,
 	setSLTPModalTakeProfit,
 } = smartMarginSlice.actions
@@ -586,7 +585,7 @@ export const updateSmartMarginAccount = (
 	newAccountData: Partial<SmartMarginAccountData>
 ) => {
 	const updatedAccount = {
-		...ZERO_STATE_CM_ACCOUNT,
+		...ZERO_STATE_ACCOUNT,
 		...smartMarginState.accounts[network]?.[wallet],
 		...newAccountData,
 	}

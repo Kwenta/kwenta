@@ -7,6 +7,7 @@ import styled from 'styled-components'
 
 import TimerIcon from 'assets/svg/app/timer.svg'
 import { InfoBoxContainer, InfoBoxRow } from 'components/InfoBox'
+import { Body } from 'components/Text'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
 import useIsL1 from 'hooks/useIsL1'
@@ -54,7 +55,7 @@ const FeeRow = () => {
 		<InfoBoxRow
 			title={t('exchange.summary-info.fee')}
 			nodeValue={
-				<div style={{ display: 'flex' }}>
+				<Body mono>
 					{formatPercent(baseFeeRate ?? ZERO_WEI)}
 					{exchangeFeeRate != null && baseFeeRate != null ? (
 						wei(exchangeFeeRate)
@@ -77,7 +78,7 @@ const FeeRow = () => {
 							</>
 						) : null
 					) : null}
-				</div>
+				</Body>
 			}
 		/>
 	)
@@ -111,12 +112,18 @@ const GasPriceRow = () => {
 }
 
 const SwapInfoBox: React.FC = () => {
+	const isL2 = useIsL2()
+
 	return (
 		<SwapInfoBoxContainer>
 			<GasPriceRow />
 			<PriceImpactRow />
-			<FeeRow />
-			<FeeCostRow />
+			{!isL2 ? (
+				<>
+					<FeeRow />
+					<FeeCostRow />
+				</>
+			) : null}
 		</SwapInfoBoxContainer>
 	)
 }
@@ -125,9 +132,8 @@ const SwapInfoBoxContainer = styled(InfoBoxContainer)`
 	margin-bottom: 15px;
 `
 
-const StyledDynamicFee = styled.span`
+const StyledDynamicFee = styled(Body).attrs({ as: 'span', mono: true })`
 	color: ${(props) => props.theme.colors.selectedTheme.yellow};
-	margin-left: 5px;
 `
 
 const StyledTimerIcon = styled(TimerIcon)`

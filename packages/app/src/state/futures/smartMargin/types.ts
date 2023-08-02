@@ -8,19 +8,20 @@ import {
 	FuturesMarketKey,
 	FuturesMarketAsset,
 	MarginTransfer,
-	FuturesFilledPosition,
-	FuturesMarket,
 	FuturesVolumes,
+	PerpsMarketV2,
+	PerpsV2Position,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
 import { PricesInfo } from 'state/prices/types'
 
 import {
+	DelayedOrderWithDetails,
 	FuturesAccountData,
-	FuturesQueryStatuses,
 	FuturesTransactionType,
 	HistoricalFundingRates,
+	SmartMarginQueryStatuses,
 	TradeSizeInputs,
 } from '../common/types'
 
@@ -101,18 +102,23 @@ export type FundingRatePeriods = {
 }
 
 export type SmartMarginAccountData = FuturesAccountData & {
+	account: string
 	idleTransfers: MarginTransfer[]
 	balanceInfo: SmartMarginBalanceInfo<string>
 	conditionalOrders: SmartMarginOrder<string>[]
+	delayedOrders: DelayedOrderWithDetails<string>[]
+	position?: PerpsV2Position<string>
+	positions?: PerpsV2Position<string>[]
+	positionHistory?: FuturesPositionHistory<string>[]
 }
 
 export type SmartMarginState = {
-	markets: Record<FuturesNetwork, FuturesMarket<string>[]>
+	markets: Record<FuturesNetwork, PerpsMarketV2<string>[]>
 	selectedMarketAsset: FuturesMarketAsset
 	dailyMarketVolumes: FuturesVolumes<string>
 	fundingRates: FundingRate<string>[]
 	historicalFundingRates: HistoricalFundingRates
-	queryStatuses: FuturesQueryStatuses
+	queryStatuses: SmartMarginQueryStatuses
 	tradeInputs: SmartMarginTradeInputs<string>
 	editPositionInputs: EditPositionInputs<string>
 	closePositionOrderInputs: ClosePositionInputs<string>
@@ -146,11 +152,4 @@ export type SmartMarginState = {
 	}
 	futuresFees: string
 	futuresFeesForAccount: string
-}
-
-export type SharePositionParams = {
-	asset?: FuturesMarketAsset
-	position?: FuturesFilledPosition
-	positionHistory?: FuturesPositionHistory
-	marketPrice?: Wei
 }

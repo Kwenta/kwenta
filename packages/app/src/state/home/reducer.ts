@@ -1,5 +1,5 @@
 import KwentaSDK from '@kwenta/sdk'
-import { FuturesMarket } from '@kwenta/sdk/types'
+import { PerpsMarketV2 } from '@kwenta/sdk/types'
 import { createSlice } from '@reduxjs/toolkit'
 
 import { FetchStatus } from 'state/types'
@@ -7,7 +7,7 @@ import { FetchStatus } from 'state/types'
 import { fetchFuturesStats, fetchOptimismMarkets } from './actions'
 
 type HomeState = {
-	optimismMarkets: FuturesMarket<string>[]
+	optimismMarkets: PerpsMarketV2<string>[]
 	marketsQueryStatus: FetchStatus
 	futuresStatsQueryStatus: FetchStatus
 	futuresStats: Awaited<ReturnType<KwentaSDK['stats']['getFuturesStats']>>

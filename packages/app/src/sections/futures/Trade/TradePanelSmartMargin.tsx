@@ -1,18 +1,17 @@
-import { FuturesMarginType, PositionSide } from '@kwenta/sdk/types'
+import { PositionSide } from '@kwenta/sdk/types'
 import { FC, memo, useCallback, useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
 import Error from 'components/ErrorView'
 import Spacer from 'components/Spacer'
 import { selectAckedOrdersWarning } from 'state/app/selectors'
-import { selectFuturesType, selectLeverageSide } from 'state/futures/selectors'
+import { selectLeverageSide } from 'state/futures/selectors'
 import { changeLeverageSide } from 'state/futures/smartMargin/actions'
 import { setOrderType } from 'state/futures/smartMargin/reducer'
 import { selectOrderType } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectPricesConnectionError } from 'state/prices/selectors'
 
-import TradePanelFeeInfo from '../FeeInfoBox/TradePanelFeeInfo'
 import LeverageInput from '../LeverageInput'
 import MarginInput from '../MarginInput'
 import OrderSizing from '../OrderSizing'
@@ -24,7 +23,8 @@ import MarketsDropdown from './MarketsDropdown'
 import OrderAcknowledgement from './OrderAcknowledgement'
 import OrderTypeSelector from './OrderTypeSelector'
 import SLTPInputs from './SLTPInputs'
-import TradeBalance from './TradeBalance'
+import SmartMarginTradePanelPreview from './SmartMarginTradePanelPreview'
+import TradeBalance from './TradeBalanceSmartMargin'
 import OrderPriceInput from './TradePanelPriceInput'
 
 type Props = {
@@ -32,11 +32,10 @@ type Props = {
 	closeDrawer?: () => void
 }
 
-const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
+const TradePanelSmartMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 	const dispatch = useAppDispatch()
 
 	const leverageSide = useAppSelector(selectLeverageSide)
-	const accountType = useAppSelector(selectFuturesType)
 	const orderType = useAppSelector(selectOrderType)
 	const pricesConnectionError = useAppSelector(selectPricesConnectionError)
 	const hideOrderWarning = useAppSelector(selectAckedOrdersWarning)
@@ -83,10 +82,7 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 						{pricesConnectionError && (
 							<Error message="Failed to connect to price feed. Please try disabling any ad blockers and refresh." />
 						)}
-
-						{accountType === FuturesMarginType.SMART_MARGIN && (
-							<OrderTypeSelector orderType={orderType} setOrderTypeAction={setOrderType} />
-						)}
+						<OrderTypeSelector orderType={orderType} setOrderTypeAction={setOrderType} />
 
 						{showOrderWarning ? (
 							<>
@@ -98,24 +94,19 @@ const TradePanel: FC<Props> = memo(({ mobile, closeDrawer }) => {
 							</>
 						) : (
 							<>
-								{accountType === FuturesMarginType.SMART_MARGIN && <MarginInput />}
-
-								{orderType !== 'market' && accountType === FuturesMarginType.SMART_MARGIN && (
+								<MarginInput />
+								{orderType !== 'market' && (
 									<>
 										<OrderPriceInput />
 										<Spacer height={16} />
 									</>
 								)}
-
+								<Spacer height={16} />
 								<OrderSizing />
-
 								<LeverageInput />
-
-								{accountType === FuturesMarginType.SMART_MARGIN && <SLTPInputs />}
-
+								<SLTPInputs />
 								<ManagePosition />
-
-								<TradePanelFeeInfo />
+								<SmartMarginTradePanelPreview />
 							</>
 						)}
 					</MainPanelContent>
@@ -142,4 +133,4 @@ const MainPanelContent = styled.div<{ $mobile?: boolean }>`
 		`}
 `
 
-export default TradePanel
+export default TradePanelSmartMargin

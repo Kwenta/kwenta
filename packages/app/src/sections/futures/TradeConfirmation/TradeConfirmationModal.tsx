@@ -21,9 +21,9 @@ import { ButtonLoader } from 'components/Loader'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import {
 	selectLeverageSide,
-	selectMarketAsset,
 	selectPosition,
 	selectLeverageInput,
 	selectTradePanelSLValidity,
@@ -94,10 +94,10 @@ export default function TradeConfirmationModal({
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(ZERO_WEI)) {
-			return position?.position?.side === PositionSide.LONG ? PositionSide.SHORT : PositionSide.LONG
+			return position?.side === PositionSide.LONG ? PositionSide.SHORT : PositionSide.LONG
 		}
 		return potentialTradeDetails?.size.gte(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT
-	}, [potentialTradeDetails?.size, position?.position?.side])
+	}, [potentialTradeDetails?.size, position?.side])
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails
