@@ -128,7 +128,9 @@ const PositionMetadata: React.FC<SharePositionParams> = ({ positionHistory, mark
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
 				<ContainerText className="date-or-price">
-					{formatNumber(marketPrice ?? ZERO_WEI)}
+					{formatDollars(marketPrice ?? ZERO_WEI, {
+						suggestDecimals: true,
+					})}
 				</ContainerText>
 			</BottomRightContainer>
 		</>
