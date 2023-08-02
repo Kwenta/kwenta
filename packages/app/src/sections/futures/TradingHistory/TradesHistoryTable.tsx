@@ -50,6 +50,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ mobile, display }) =>
 								fundingAccrued: trade?.fundingAccrued,
 							}
 						})
+						.filter((trade) => trade.amount.abs().gt(0.000001))
 				: []
 		return [...new Set(futuresTrades)]
 	}, [futuresTradesQuery.data])
@@ -202,7 +203,7 @@ const TableAlignment = css`
 
 const StyledTable = styled(Table)`
 	border: none;
-	height: 100%;
+	overflow-y: auto;
 
 	.table-row,
 	.table-body-row {

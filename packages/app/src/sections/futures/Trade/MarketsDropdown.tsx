@@ -275,7 +275,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									),
 									cell: ({ row }) => {
 										return (
-											<div>
+											<BadgeContainer>
 												<MarketBadge
 													currencyKey={row.original.asset}
 													isFuturesMarketClosed={row.original.isMarketClosed}
@@ -288,11 +288,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 																row.original.change ? row.original.change * 100 : '0',
 																2
 															)}
-															style={{ textAlign: 'right', width: '60px' }}
 														/>
 													}
 												/>
-											</div>
+											</BadgeContainer>
 										)
 									},
 									accessorKey: 'change',
@@ -320,6 +319,12 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		</SelectContainer>
 	)
 }
+
+const BadgeContainer = styled(FlexDivRowCentered)`
+	text-align: right;
+	width: 60px;
+	justify-content: flex-end;
+`
 
 const MarketsList = styled.div<{ mobile?: boolean; height: number }>`
 	top: 66px;
