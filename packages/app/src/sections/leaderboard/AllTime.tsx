@@ -37,7 +37,6 @@ const AllTime: FC<AllTimeProps> = ({
 }) => {
 	const { t } = useTranslation()
 	const walletAddress = useAppSelector(selectWallet)
-	const showBanner = useAppSelector(selectShowBanner)
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i) => {
@@ -57,18 +56,12 @@ const AllTime: FC<AllTimeProps> = ({
 		return [...pinRow, ...stats]
 	}, [stats, pinRow])
 
-	const tableHeight = useMemo(
-		() => window.innerHeight - FOOTER_HEIGHT - 161 - Number(showBanner) * BANNER_HEIGHT_DESKTOP,
-		[showBanner]
-	)
-
 	return (
 		<>
 			<MobileHiddenView>
 				<StyledTable
 					// @ts-ignore
-					height={tableHeight}
-					compact={compact}
+					compact={true}
 					showPagination
 					isLoading={isLoading}
 					data={data}
@@ -81,6 +74,7 @@ const AllTime: FC<AllTimeProps> = ({
 						totalVolume: !compact,
 						pnl: !compact,
 					}}
+					compactPagination={true}
 					columnsDeps={[activeTab]}
 					columns={[
 						{
