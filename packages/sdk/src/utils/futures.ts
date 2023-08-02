@@ -69,7 +69,7 @@ import { TradeType, CurrencyAmount, Percent, Token } from '@uniswap/sdk-core'
 // import IUniswapV3PoolABI from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json'
 // import Quoter from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json'
 import { ethers } from 'ethers'
-import { AlphaRouter, SwapType, SwapOptionsSwapRouter02 } from '@uniswap/smart-order-router'
+import { AlphaRouter, SwapType } from '@uniswap/smart-order-router'
 import { ADDRESSES } from '../constants'
 import { BaseProvider } from '@ethersproject/providers'
 
@@ -999,34 +999,29 @@ export const sameSide = (a: Wei, b: Wei) => {
 	return a.gt(wei(0)) === b.gt(wei(0))
 }
 
-// const QUOTER_CONTRACT_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6'
-// export const POOL_FACTORY_CONTRACT_ADDRESS = '0x1F98431c8aD98523631AE4a59f267346ea31F984'
-
 const uniswapTokenBySwapDepositToken = {
 	[SwapDepositToken.SUSD]: new Token(10, ADDRESSES.SUSD['10'], 18),
-	[SwapDepositToken.USDC]: new Token(10, ADDRESSES.USDC['10'], 18),
+	[SwapDepositToken.USDC]: new Token(10, ADDRESSES.USDC['10'], 6),
 	[SwapDepositToken.USDT]: new Token(10, ADDRESSES.USDT['10'], 18),
 	[SwapDepositToken.DAI]: new Token(10, ADDRESSES.DAI['10'], 18),
+}
+
+export const getDecimalsForSwapDepositToken = (token: SwapDepositToken) => {
+	return ['USDC', 'USDT'].includes(token) ? 6 : 18
 }
 
 export const getQuote = async (
 	provider: ethers.providers.Provider,
 	token: SwapDepositToken,
 	amountIn: ethers.BigNumber,
-	decimals = 18,
-	walletAddress = ''
+	walletAddress: string
 ) => {
 	const router = new AlphaRouter({
 		chainId: 10,
 		provider: provider as BaseProvider,
 	})
 
-	const options: SwapOptionsSwapRouter02 = {
-		recipient: walletAddress,
-		slippageTolerance: new Percent(50, 10_000),
-		deadline: Math.floor(Date.now() / 1000 + 1800),
-		type: SwapType.SWAP_ROUTER_02,
-	}
+	const decimals = getDecimalsForSwapDepositToken(token)
 
 	const route = await router.route(
 		CurrencyAmount.fromRawAmount(
@@ -1034,38 +1029,16 @@ export const getQuote = async (
 			fromReadableAmount(amountIn.toNumber(), decimals).toString()
 		),
 		uniswapTokenBySwapDepositToken[SwapDepositToken.SUSD],
-		TradeType.EXACT_INPUT,
-		options
+		TradeType.EXACT_OUTPUT,
+		{
+			recipient: walletAddress,
+			slippageTolerance: new Percent(50, 10_000),
+			deadline: Math.floor(Date.now() / 1000 + 1800),
+			type: SwapType.SWAP_ROUTER_02,
+		}
 	)
 
-	return route?.quote
-
-	// const quoterContract = new ethers.Contract(QUOTER_CONTRACT_ADDRESS, Quoter.abi, provider)
-
-	// const currentPoolAddress = computePoolAddress({
-	// 	factoryAddress: POOL_FACTORY_CONTRACT_ADDRESS,
-	// 	tokenA: uniswapTokenBySwapDepositToken[token],
-	// 	tokenB: uniswapTokenBySwapDepositToken[SwapDepositToken.SUSD],
-	// 	fee: FeeAmount.LOW,
-	// })
-
-	// const poolContract = new ethers.Contract(currentPoolAddress, IUniswapV3PoolABI.abi, provider)
-
-	// const [token0, token1, fee] = await Promise.all([
-	// 	poolContract.token0(),
-	// 	poolContract.token1(),
-	// 	poolContract.fee(),
-	// ])
-
-	// const quotedAmountOut = await quoterContract.callStatic.quoteExactInputSingle(
-	// 	token0,
-	// 	token1,
-	// 	fee,
-	// 	fromReadableAmount(amountIn.toNumber(), decimals).toString(),
-	// 	0
-	// )
-
-	// return quotedAmountOut
+	return route?.quote.toExact()
 }
 
 const READABLE_FORM_LEN = 4

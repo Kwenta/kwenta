@@ -73,6 +73,9 @@ const futuresSlice = createSlice({
 		setHistoricalFundingRatePeriod: (state, action: PayloadAction<Period>) => {
 			state.historicalFundingRatePeriod = action.payload
 		},
+		setSelectedSwapDepositToken: (state, action: PayloadAction<SwapDepositToken>) => {
+			state.selectedSwapDepositToken = action.payload
+		},
 	},
 
 	extraReducers(builder) {
@@ -109,4 +112,5 @@ export const {
 	toggleShowTradeHistory,
 	setSelectedChart,
 	setHistoricalFundingRatePeriod,
+	setSelectedSwapDepositToken,
 } = futuresSlice.actions

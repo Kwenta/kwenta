@@ -6,6 +6,8 @@ import { Body } from 'components/Text'
 import { BodyProps } from 'components/Text/Body'
 import { NO_VALUE } from 'constants/placeholder'
 
+import { FlexDivRow } from './layout/flex'
+
 type InfoBoxRowProps = {
 	children?: React.ReactNode
 	title: string
@@ -52,9 +54,10 @@ export const InfoBoxRow: FC<InfoBoxRowProps> = memo(
 					$isSubItem={isSubItem}
 					onClick={expandable ? () => onToggleExpand?.(title) : undefined}
 				>
-					<InfoBoxKey>
-						{title}: {keyNode} {expandable ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
-					</InfoBoxKey>
+					<InfoBoxKeyContainer>
+						<InfoBoxKey>{title}: </InfoBoxKey>
+						{keyNode} {expandable ? expanded ? <HideIcon /> : <ExpandIcon /> : null}
+					</InfoBoxKeyContainer>
 					{nodeValue ? (
 						nodeValue
 					) : (
@@ -97,6 +100,8 @@ export const InfoBoxContainer = styled.div`
 	border-radius: 8px;
 	padding: 12px 14px;
 `
+
+const InfoBoxKeyContainer = styled(FlexDivRow)``
 
 const InfoBoxKey = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};

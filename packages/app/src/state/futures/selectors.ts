@@ -814,3 +814,6 @@ export const selectPendingOrdersCount = createSelector(
 	(asyncCount, delayedOrders, type) =>
 		type === FuturesMarginType.CROSS_MARGIN ? asyncCount : delayedOrders.length
 )
+
+export const selectSelectedSwapDepositToken = (state: RootState) =>
+	state.futures.selectedSwapDepositToken

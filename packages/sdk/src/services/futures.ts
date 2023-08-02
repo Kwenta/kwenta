@@ -690,7 +690,18 @@ export default class FuturesService {
 			if (amount.toBN().lte(permitAmount)) {
 				const { command, input } = await this.signPermit(smartMarginAddress, tokenContract.address)
 
-				const amountOutMin = await getQuote(this.sdk.context.provider, token, amount.toBN(), 18)
+				const amountOutMin = await getQuote(
+					this.sdk.context.provider,
+					token,
+					amount.toBN(),
+					this.sdk.context.walletAddress
+				)
+
+				if (!amountOutMin) {
+					throw new Error('Deposit failed: Could not get Uniswap quote for swap deposit')
+				}
+
+				console.log('amountOutMin: ', amountOutMin)
 
 				const path =
 					defaultAbiCoder.encode(['bytes20'], [SUSD.address]) +

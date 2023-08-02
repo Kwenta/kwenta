@@ -1,48 +1,50 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useReducer } from 'react'
 import styled from 'styled-components'
 
 import { StyledCaretDownIcon } from 'components/Select'
-import { FUNDING_RATE_PERIODS } from 'constants/funding'
-import { HOURS_TOGGLE_HEIGHT, HOURS_TOGGLE_WIDTH, zIndex } from 'constants/ui'
-import { setSelectedInputFundingRateHour } from 'state/futures/reducer'
-import { selectSelectedInputHours } from 'state/futures/selectors'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
-import media from 'styles/media'
+import { HOURS_TOGGLE_HEIGHT, zIndex } from 'constants/ui'
 
-// TODO: This component should be standardized and moved to the components folder.
-// We should also consider using react-select for this.
+// TODO: This component is not generic enough.
+// This is because it will most likely be removed in favour of react-select.
 
-const getLabelByValue = (value: number) => FUNDING_RATE_PERIODS[value] ?? '1H'
+type SmallToggleProps<T extends string> = {
+	value: T
+	options: T[]
+	getLabelByValue?: (value: T) => string
+	iconMap?: Record<T, React.ReactNode>
+	onOptionClick: (value: T) => void
+}
 
-const HoursToggle: React.FC = () => {
-	const dispatch = useAppDispatch()
-	const fundingHours = useAppSelector(selectSelectedInputHours)
-	const [open, setOpen] = useState(false)
+const SmallToggle = <T extends string>({
+	value,
+	options,
+	getLabelByValue,
+	iconMap,
+	onOptionClick,
+}: SmallToggleProps<T>) => {
+	const [open, toggleOpen] = useReducer((o) => !o, false)
 
-	const updatePeriod = useCallback(
-		(v: number) => {
-			dispatch(setSelectedInputFundingRateHour(v))
-			setOpen((o) => !o)
+	const handleOptionClick = useCallback(
+		(option: T) => () => {
+			onOptionClick(option)
+			toggleOpen()
 		},
-		[dispatch]
+		[onOptionClick, toggleOpen]
 	)
-
-	const toggleOpen = useCallback(() => {
-		setOpen((o) => !o)
-	}, [])
 
 	return (
 		<ToggleContainer open={open}>
 			<ToggleTable>
 				<ToggleTableHeader style={{ borderBottomWidth: open ? '1px' : '0' }} onClick={toggleOpen}>
-					{getLabelByValue(fundingHours)}
-					<StyledCaretDownIcon width={12} $flip={open} />
+					{iconMap?.[value]}
+					{getLabelByValue?.(value) ?? value}
+					<StyledCaretDownIcon width={12} $flip={open} style={{ marginLeft: 2 }} />
 				</ToggleTableHeader>
 				{open && (
 					<ToggleTableRows>
-						{Object.entries(FUNDING_RATE_PERIODS).map(([key, value]) => (
-							<ToggleTableRow key={key} onClick={() => updatePeriod(Number(key))}>
-								{value}
+						{options.map((option) => (
+							<ToggleTableRow key={option} onClick={handleOptionClick(option)}>
+								{option}
 							</ToggleTableRow>
 						))}
 					</ToggleTableRows>
@@ -86,9 +88,10 @@ const ToggleTableHeader = styled.div`
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
-	height: ${HOURS_TOGGLE_HEIGHT};
 	border-bottom-style: solid;
 	border-bottom-color: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
+	padding: 3px 5px;
+	font-size: 12px;
 `
 
 const ToggleTable = styled.div`
@@ -100,7 +103,6 @@ const ToggleTable = styled.div`
 		border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
 	}
 	border-radius: 9px;
-	width: ${HOURS_TOGGLE_WIDTH};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 `
@@ -108,14 +110,9 @@ const ToggleTable = styled.div`
 const ToggleContainer = styled.div<{ open: boolean }>`
 	margin-left: 8px;
 	cursor: pointer;
-	margin-top: ${(props) => (props.open ? '84px' : '12px')};
 
-	${media.lessThan('lg')`
-               position: absolute;
-               right: -50px;
-               z-index: ${zIndex.HEADER};
-               width: ${HOURS_TOGGLE_WIDTH};
-       `}
+	position: absolute;
+	z-index: ${zIndex.HEADER};
 `
 
-export default HoursToggle
+export default SmallToggle

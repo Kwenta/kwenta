@@ -1,6 +1,6 @@
 import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants'
 import { formatDollars } from '@kwenta/sdk/utils'
-import { FC, memo, useCallback, useMemo, useState } from 'react'
+import { FC, memo, useCallback, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -62,7 +62,7 @@ const TradeBalance = memo(() => {
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
 	const openModal = useAppSelector(selectShowModal)
 
-	const [expanded, setExpanded] = useState(false)
+	// const [expanded, setExpanded] = useState(false)
 
 	const { isMobile, size } = useMemo(() => {
 		const isMobile = deviceType === 'mobile'
@@ -75,12 +75,16 @@ const TradeBalance = memo(() => {
 	}, [accountMargin, lockedMargin])
 
 	const onClickContainer = useCallback(() => {
-		setExpanded(!expanded)
-	}, [expanded])
+		// setExpanded(!expanded)
+	}, [])
+
+	const dismissModal = useCallback(() => {
+		dispatch(setOpenModal(null))
+	}, [dispatch])
 
 	return (
 		<Container mobile={isMobile}>
-			<BalanceContainer clickable onClick={onClickContainer}>
+			<BalanceContainer clickable={false}>
 				{isDepositRequired ? (
 					<DepositContainer>
 						<FlexDivCol>
@@ -95,7 +99,6 @@ const TradeBalance = memo(() => {
 										/>
 									)}
 								</Body>
-								<StyledCaretDownIcon $flip={expanded} />
 							</FlexDivRow>
 							<Body size={size} color="preview">
 								{t('futures.market.trade.trade-balance.min-margin')}
@@ -114,7 +117,7 @@ const TradeBalance = memo(() => {
 							<BrdigeAndWithdrawButton
 								modalType="futures_deposit_withdraw_smart_margin"
 								onPillClick={onClickContainer}
-								expanded={expanded}
+								expanded
 							/>
 						)}
 					</DepositContainer>
@@ -152,7 +155,7 @@ const TradeBalance = memo(() => {
 								<BrdigeAndWithdrawButton
 									modalType={'futures_deposit_withdraw_smart_margin'}
 									onPillClick={onClickContainer}
-									expanded={expanded}
+									expanded
 								/>
 							</DepositContainer>
 						) : (
@@ -187,7 +190,7 @@ const TradeBalance = memo(() => {
 								<BrdigeAndWithdrawButton
 									modalType={'futures_deposit_withdraw_smart_margin'}
 									onPillClick={onClickContainer}
-									expanded={expanded}
+									expanded
 								/>
 							</DepositContainer>
 						)}
@@ -195,13 +198,12 @@ const TradeBalance = memo(() => {
 				)}
 			</BalanceContainer>
 
-			{expanded && <DetailsContainer>{<SmartMarginInfoBox />}</DetailsContainer>}
+			<DetailsContainer>
+				<SmartMarginInfoBox />
+			</DetailsContainer>
+
 			{openModal === 'futures_smart_margin_socket' && (
-				<SmartMarginOnboardModal
-					onDismiss={() => {
-						dispatch(setOpenModal(null))
-					}}
-				/>
+				<SmartMarginOnboardModal onDismiss={dismissModal} />
 			)}
 		</Container>
 	)
