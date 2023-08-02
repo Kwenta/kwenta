@@ -221,7 +221,7 @@ describe('Futures market page - stop loss validation', () => {
 	test('Restricts stop loss for LONG trade at correct price depending on leverage', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
-			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
 		)
@@ -260,7 +260,7 @@ describe('Futures market page - stop loss validation', () => {
 	test('Restricts stop loss for SHORT trade at correct price depending on leverage', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
-			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
 		)
@@ -312,7 +312,7 @@ describe('Futures market page - stop loss validation', () => {
 	test('Stop loss becomes disabled above a certain leverage', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
-			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
 		)
@@ -352,7 +352,7 @@ describe('Futures market page - stop loss validation', () => {
 	test('Displays stop-loss warning in confirmation view when within 5% of liquidation price', async () => {
 		const store = setupStore(preloadedStateWithSmartMarginAccount())
 		const { findByTestId, findByText } = render(
-			<MockProviders route="market/?accountType=cross_margin&asset=sETH" store={store}>
+			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />
 			</MockProviders>
 		)

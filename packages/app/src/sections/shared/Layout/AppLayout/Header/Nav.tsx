@@ -37,7 +37,7 @@ const Nav: FC = memo(() => {
 	const getLink = useCallback(
 		(link: string) => {
 			return link.indexOf('/market') === 0
-				? `/market/?accountType=cross_margin&asset=${marketAsset}`
+				? `/market/?accountType=smart_margin&asset=${marketAsset}`
 				: link
 		},
 		[marketAsset]
