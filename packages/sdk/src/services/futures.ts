@@ -807,8 +807,8 @@ export default class FuturesService {
 
 		return positions.reduce(
 			(acc, p) => {
-				if (p.position?.size.abs().gt(0)) {
-					acc.totalIdleInMarkets = acc.totalIdleInMarkets.add(p.position.size)
+				if (p.remainingMargin.abs().gt(0) && p.position?.size.eq(0)) {
+					acc.totalIdleInMarkets = acc.totalIdleInMarkets.add(p.remainingMargin)
 				}
 
 				const market = filteredMarkets.find((m) => m.marketKey === p.marketKey)
