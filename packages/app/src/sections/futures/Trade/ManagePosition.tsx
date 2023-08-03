@@ -28,7 +28,7 @@ import {
 	selectIsMarketCapReached,
 	selectOrderType,
 	selectPlaceOrderTranslationKey,
-	selectSmartMarginPosition,
+	selectSelectedSmartMarginPosition,
 	selectSmartMarginAccount,
 	selectSmartMarginLeverage,
 	selectSmartMarginOrderPrice,
@@ -64,7 +64,7 @@ const ManagePosition: React.FC = () => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo)
 	const previewStatus = useAppSelector(selectTradePreviewStatus)
 	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
-	const position = useAppSelector(selectSmartMarginPosition)
+	const position = useAppSelector(selectSelectedSmartMarginPosition)
 	const stopLossInvlid = useAppSelector(selectTradePanelSLValidity)
 
 	const orderError = useMemo(() => {
@@ -74,7 +74,8 @@ const ManagePosition: React.FC = () => {
 		return null
 	}, [previewTrade?.statusMessage, previewError, t])
 
-	const increasingPosition = !position?.side || position?.side === leverageSide
+	const increasingPosition =
+		!position?.activePosition.side || position?.activePosition.side === leverageSide
 
 	const onSubmit = useCallback(() => {
 		dispatch(setTradePanelDrawerOpen(false))

@@ -20,7 +20,7 @@ export default function ClosePositionPriceInput() {
 	const { position, marketPrice } = useAppSelector(selectEditPositionModalInfo)
 
 	const positionSide =
-		position?.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT
+		position?.activePosition.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT
 
 	const handleOnChange = useCallback(
 		(_: ChangeEvent<HTMLInputElement>, v: string) => {

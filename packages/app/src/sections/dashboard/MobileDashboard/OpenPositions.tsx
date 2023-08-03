@@ -11,7 +11,7 @@ import { TabPanel } from 'components/Tab'
 import { SectionHeader, SectionTitle } from 'sections/futures/mobile'
 import { selectBalances } from 'state/balances/selectors'
 import { selectFuturesPortfolio } from 'state/futures/selectors'
-import { selectActiveSmartPositionsCount } from 'state/futures/smartMargin/selectors'
+import { selectActiveSmartMarginPositionsCount } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import FuturesPositionsTable from '../FuturesPositionsTable'
@@ -26,7 +26,7 @@ export type OpenPositionsProps = {
 
 const OpenPositions: React.FC<OpenPositionsProps> = ({ exchangeTokens, exchangeTokenBalances }) => {
 	const { t } = useTranslation()
-	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount)
+	const smartPositionsCount = useAppSelector(selectActiveSmartMarginPositionsCount)
 
 	const portfolio = useAppSelector(selectFuturesPortfolio)
 	const balances = useAppSelector(selectBalances)

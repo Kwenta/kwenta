@@ -15,7 +15,7 @@ import {
 	selectCrossMarginAvailableMargin,
 	selectCrossMarginMarginTransfers,
 	selectCrossMarginMaxLeverage,
-	selectCrossMarginPosition,
+	selectSelectedCrossMarginPosition,
 	selectCrossMarginPositionHistory,
 	selectCrossMarginPositions,
 	selectCrossMarginTradeInputs,
@@ -47,13 +47,12 @@ import {
 } from './common/selectors'
 import { CrossPerpsPortfolio } from './crossMargin/types'
 import {
-	selectIdleMarginTransfers,
+	selectAccountMarginTransfers,
 	selectMarginDeltaInputValue,
 	selectSmartMarginDelayedOrders,
 	selectV2Markets,
 	selectSmartMarginAccount,
 	selectSmartMarginAccountData,
-	selectSmartMarginBalanceInfo,
 	selectTradePreview,
 	selectV2MarketKey,
 	selectSmartMarginTradeInputs,
@@ -64,12 +63,13 @@ import {
 	selectEditPositionModalInfo,
 	selectMarkPricesV2,
 	selectMarkPriceInfosV2,
-	selectSmartMarginPositions,
+	selectSmartMarginActivePositions,
 	selectAllSmartMarginTrades,
 	selectV2MarketInfo,
-	selectSmartMarginPosition,
+	selectSelectedSmartMarginPosition,
 	selectV2SkewAdjustedPrice,
 	selectV2SkewAdjustedPriceInfo,
+	selectIdleAccountMargin,
 } from './smartMargin/selectors'
 import { SmartPerpsPortfolio } from './smartMargin/types'
 import { FuturesAction, PortfolioValues } from './types'
@@ -169,8 +169,8 @@ export const selectFuturesAccount = createSelector(
 )
 
 export const selectPosition = createSelector(
-	selectSmartMarginPosition,
-	selectCrossMarginPosition,
+	selectSelectedSmartMarginPosition,
+	selectSelectedCrossMarginPosition,
 	selectFuturesType,
 	(v2, v3, type) => {
 		return type === FuturesMarginType.CROSS_MARGIN ? v3 : v2
@@ -229,7 +229,7 @@ export const selectPositionHistoryForSelectedTrader = createSelector(
 )
 
 export const selectFuturesPositions = createSelector(
-	selectSmartMarginPositions,
+	selectSmartMarginActivePositions,
 	selectCrossMarginPositions,
 	(state: RootState) => state.futures.selectedType,
 	(smartPositions, crossPositions, selectedType) => {
@@ -250,7 +250,7 @@ export const selectUsersPositionHistory = createSelector(
 
 export const selectTotalUnrealizedPnl = createSelector(selectFuturesPositions, (positions) => {
 	return positions.reduce((acc, p) => {
-		return acc.add(p?.pnl ?? ZERO_WEI)
+		return acc.add(p?.activePosition?.pnl ?? ZERO_WEI)
 	}, ZERO_WEI)
 })
 
@@ -391,10 +391,10 @@ export const selectNextPriceDisclaimer = createSelector(
 )
 
 export const selectFuturesPortfolio = createSelector(
-	selectSmartMarginPositions,
+	selectSmartMarginActivePositions,
 	selectCrossMarginPositions,
-	selectSmartMarginBalanceInfo,
-	(smartPositions, crossPositions, { freeMargin }) => {
+	selectIdleAccountMargin,
+	(smartPositions, crossPositions, idleMargin) => {
 		// TODO: Update this for cross margin
 		const crossValue =
 			crossPositions.reduce((sum, { remainingMargin }) => sum.add(remainingMargin ?? 0), wei(0)) ??
@@ -402,11 +402,11 @@ export const selectFuturesPortfolio = createSelector(
 		const smartValue =
 			smartPositions.reduce((sum, { remainingMargin }) => sum.add(remainingMargin), wei(0)) ??
 			wei(0)
-		const totalValue = smartValue.add(crossValue).add(freeMargin)
+		const totalValue = smartValue.add(crossValue).add(idleMargin)
 
 		return {
 			total: totalValue,
-			smartMargin: smartValue.add(freeMargin),
+			smartMargin: smartValue.add(idleMargin),
 			crossMargin: crossValue,
 		}
 	}
@@ -415,7 +415,7 @@ export const selectFuturesPortfolio = createSelector(
 export const selectSmartMarginTransfers = createSelector(
 	selectSmartMarginAccountData,
 	(account) => {
-		return account?.marginTransfers ?? []
+		return account?.marketMarginTransfers ?? []
 	}
 )
 
@@ -572,15 +572,16 @@ export const selectCrossMarginPortfolioValues = createSelector(
 export const selectSmartMarginPortfolioValues = createSelector(
 	selectAllSmartMarginTrades,
 	selectSmartMarginTransfers,
-	selectIdleMarginTransfers,
+	selectAccountMarginTransfers,
 	selectFuturesPortfolio,
-	(trades, transfers, idleTransfers, portfolioTotal) => {
+	(trades, transfers, accountTransfers, portfolioTotal) => {
 		const tradeActions = trades.map(({ account, timestamp, asset, margin }) => ({
 			account,
 			timestamp,
 			asset,
 			margin: margin.toNumber(),
 			size: 0,
+			type: 'trade',
 		}))
 
 		const transferActions = transfers.map(({ account, timestamp, asset, size }) => ({
@@ -589,41 +590,47 @@ export const selectSmartMarginPortfolioValues = createSelector(
 			asset,
 			size,
 			margin: 0,
+			type: 'market_transfer',
 		}))
 
-		const idleTransferActions = idleTransfers.map(({ account, timestamp, asset, size }) => ({
+		const accountTransferActions = accountTransfers.map(({ account, timestamp, asset, size }) => ({
 			account,
 			timestamp,
 			asset,
 			size,
 			margin: 0,
+			type: 'account_transfer',
 		}))
 
-		const actions = [...tradeActions, ...transferActions, ...idleTransferActions]
-			.filter((action): action is FuturesAction => !!action)
-			.sort((a, b) => a.timestamp - b.timestamp)
+		const actions = [...tradeActions, ...transferActions, ...accountTransferActions]
+			.filter((action) => !!action)
+			.sort((a, b) => {
+				if (a.timestamp === b.timestamp) return a.type === 'account_transfer' ? -1 : 1
+				return a.timestamp - b.timestamp
+			})
 
 		const accountHistory = actions.reduce((acc, action) => {
 			if (acc.length === 0) {
 				const newTotal = action.size !== 0 ? action.size : action.margin
-				const isIdle = action.size !== 0 && !action.asset
-				const lastAction = isIdle
-					? {
-							account: action.account,
-							timestamp: action.timestamp,
-							assets: {},
-							idle: newTotal,
-							total: newTotal,
-					  }
-					: {
-							account: action.account,
-							timestamp: action.timestamp,
-							assets: {
-								[action.asset]: newTotal,
-							},
-							idle: 0,
-							total: newTotal,
-					  }
+				const lastAction =
+					action.type === 'account_transfer' || !action.asset
+						? {
+								account: action.account,
+								timestamp: action.timestamp,
+								assets: {},
+								idle: newTotal,
+								total: newTotal,
+						  }
+						: {
+								account: action.account,
+								timestamp: action.timestamp,
+								assets: {
+									[action.asset]: newTotal,
+								},
+								idle: 0,
+								total: newTotal,
+						  }
+
 				return [lastAction]
 			} else {
 				const lastAction = acc[acc.length - 1]
@@ -713,6 +720,7 @@ export const selectPortfolioChartData = createSelector(
 					}
 				}
 			}
+
 			portfolioData.push(portfolioValues[portfolioValues.length - 1])
 			return portfolioData
 		}
@@ -811,8 +819,8 @@ export const selectModalSLValidity = createSelector(
 	({ stopLossPrice }, { position, marketPrice }) => {
 		return stopLossValidity(
 			stopLossPrice,
-			position?.liquidationPrice,
-			position?.side || PositionSide.LONG,
+			position?.activePosition?.liquidationPrice,
+			position?.activePosition?.side || PositionSide.LONG,
 			marketPrice
 		)
 	}

@@ -13,7 +13,7 @@ export const ZERO_CM_FEES = {
 export const ZERO_STATE_ISOLATED_ACCOUNT = {
 	position: undefined,
 	trades: [],
-	marginTransfers: [],
+	marketMarginTransfers: [],
 	positions: [],
 	delayedOrders: [],
 	positionHistory: [],
@@ -29,7 +29,7 @@ export const ZERO_STATE_ACCOUNT = {
 	},
 	trades: [],
 	positions: [],
-	idleTransfers: [],
+	accountTransfers: [],
 	delayedOrders: [],
 	conditionalOrders: [],
 	positionHistory: [],

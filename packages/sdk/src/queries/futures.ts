@@ -145,7 +145,7 @@ export const queryIsolatedMarginTransfers = async (sdk: KwentaSDK, account: stri
 	return response ? mapMarginTransfers(response.futuresMarginTransfers) : []
 }
 
-export const querySmartMarginTransfers = async (sdk: KwentaSDK, account: string) => {
+export const querySmartMarginAccountTransfers = async (sdk: KwentaSDK, account: string) => {
 	const response: any = await request(sdk.futures.futuresGqlEndpoint, SMART_MARGIN_FRAGMENT, {
 		walletAddress: account,
 	})
