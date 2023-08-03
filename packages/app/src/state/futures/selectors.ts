@@ -9,6 +9,7 @@ import { truncateTimestamp } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
 
+import { selectSNXUSDBalance, selectSusdBalance } from 'state/balances/selectors'
 import {
 	selectAllCrossMarginTrades,
 	selectCrossMarginAccountData,
@@ -73,7 +74,6 @@ import {
 } from './smartMargin/selectors'
 import { SmartPerpsPortfolio } from './smartMargin/types'
 import { FuturesAction, PortfolioValues } from './types'
-import { selectSNXUSDBalance, selectSusdBalance } from 'state/balances/selectors'
 
 export const selectQueryStatuses = createSelector(
 	selectFuturesState,
