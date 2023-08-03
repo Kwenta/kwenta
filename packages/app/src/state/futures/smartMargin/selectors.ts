@@ -812,12 +812,11 @@ export const selectClosePositionPreview = createSelector(
 )
 
 export const selectSmartMarginLeverage = createSelector(
-	selectSelectedSmartMarginPosition,
+	selectTotalAvailableMargin,
 	selectSmartMarginTradeInputs,
-	(position, { susdSize }) => {
-		const remainingMargin = position?.remainingMargin
-		if (!remainingMargin || remainingMargin.eq(0) || !susdSize) return wei(0)
-		return susdSize.div(remainingMargin)
+	(availableMargin, { susdSize }) => {
+		if (!availableMargin || availableMargin.eq(0) || !susdSize) return wei(0)
+		return susdSize.div(availableMargin)
 	}
 )
 
