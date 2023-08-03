@@ -5,6 +5,7 @@ import { InfoBoxRow } from 'components/InfoBox'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
 import { selectSNXUSDBalance } from 'state/balances/selectors'
+import { selectSwapDepositBalance } from 'state/futures/selectors'
 import {
 	selectAvailableMarginInMarkets,
 	selectSmartMarginBalanceInfo,
@@ -20,14 +21,14 @@ function SmartMarginInfoBox() {
 	const openModal = useAppSelector(selectShowModal)
 	const { freeMargin } = useAppSelector(selectSmartMarginBalanceInfo)
 	const idleMarginInMarkets = useAppSelector(selectAvailableMarginInMarkets)
-	const walletBal = useAppSelector(selectSNXUSDBalance)
+	const swapDepositBalance = useAppSelector(selectSwapDepositBalance)
 
 	return (
 		<>
 			<InfoBoxRow
 				title="Wallet balance"
 				keyNode={<SwapDepositTokenSelector />}
-				textValue={formatDollars(walletBal)}
+				textValue={formatDollars(swapDepositBalance)}
 			/>
 			<InfoBoxRow
 				title="Idle Margin"

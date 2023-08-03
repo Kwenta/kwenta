@@ -11,6 +11,7 @@ import {
 	FuturesVolumes,
 	PerpsMarketV2,
 	PerpsV2Position,
+	SwapDepositToken,
 } from '@kwenta/sdk/types'
 import Wei from '@synthetixio/wei'
 
@@ -86,6 +87,8 @@ export type SmartMarginBalanceInfo<T = Wei> = {
 	keeperEthBal: T
 	allowance: T
 	walletEthBal: T
+	balances: Record<SwapDepositToken, T>
+	allowances: Record<SwapDepositToken, T>
 }
 
 export type SmartMarginTradeFees<T = Wei> = {

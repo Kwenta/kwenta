@@ -400,17 +400,25 @@ export default class FuturesService {
 			freeMargin,
 			keeperEthBal,
 			walletEthBal,
+			susdBalance,
 			allowance,
+			usdcBalance,
 			usdcAllowance,
+			usdtBalance,
 			usdtAllowance,
+			daiBalance,
 			daiAllowance,
 		] = await Promise.all([
 			smartMarginAccountContract.freeMargin(),
 			this.sdk.context.provider.getBalance(smartMarginAddress),
 			this.sdk.context.provider.getBalance(walletAddress),
+			SUSD.balanceOf(walletAddress),
 			SUSD.allowance(walletAddress, smartMarginAccountContract.address),
+			USDC.balanceOf(walletAddress),
 			USDC.allowance(walletAddress, PERMIT2_ADDRESS),
+			USDT.balanceOf(walletAddress),
 			USDT.allowance(walletAddress, PERMIT2_ADDRESS),
+			DAI.balanceOf(walletAddress),
 			DAI.allowance(walletAddress, PERMIT2_ADDRESS),
 		])
 
@@ -419,6 +427,12 @@ export default class FuturesService {
 			keeperEthBal: wei(keeperEthBal),
 			walletEthBal: wei(walletEthBal),
 			allowance: wei(allowance),
+			balances: {
+				[SwapDepositToken.SUSD]: wei(susdBalance),
+				[SwapDepositToken.USDC]: wei(usdcBalance),
+				[SwapDepositToken.USDT]: wei(usdtBalance),
+				[SwapDepositToken.DAI]: wei(daiBalance),
+			},
 			allowances: {
 				[SwapDepositToken.SUSD]: wei(allowance),
 				[SwapDepositToken.USDC]: wei(usdcAllowance),

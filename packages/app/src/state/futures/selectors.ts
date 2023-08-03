@@ -828,3 +828,9 @@ export const selectPendingOrdersCount = createSelector(
 
 export const selectSelectedSwapDepositToken = (state: RootState) =>
 	state.futures.selectedSwapDepositToken
+
+export const selectSwapDepositBalance = createSelector(
+	selectSmartMarginBalanceInfo,
+	selectSelectedSwapDepositToken,
+	(smartMarginBalanceInfo, swapDepositToken) => smartMarginBalanceInfo.balances[swapDepositToken]
+)

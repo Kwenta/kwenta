@@ -495,6 +495,18 @@ export const selectSmartMarginBalanceInfo = createSelector(
 					freeMargin: wei(0),
 					keeperEthBal: wei(0),
 					allowance: wei(0),
+					balances: {
+						SUSD: wei(0),
+						USDC: wei(0),
+						USDT: wei(0),
+						DAI: wei(0),
+					},
+					allowances: {
+						SUSD: wei(0),
+						USDC: wei(0),
+						USDT: wei(0),
+						DAI: wei(0),
+					},
 			  }
 	}
 )
