@@ -3,6 +3,10 @@ import { BigNumber } from 'ethers'
 
 import { notifyError } from 'components/ErrorNotifier'
 import { monitorTransaction } from 'contexts/RelayerContext'
+import {
+	selectStakingSupportedNetwork,
+	selectTradingRewardsSupportedNetwork,
+} from 'state/staking/selectors'
 import { FetchStatus, ThunkConfig } from 'state/types'
 import { selectWallet } from 'state/wallet/selectors'
 import logError from 'utils/logError'
@@ -27,7 +31,8 @@ export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfi
 	async (_, { getState, extra: { sdk } }) => {
 		try {
 			const wallet = selectWallet(getState())
-			if (!wallet) return ZERO_STAKING_DATA
+			const supportedNetwork = selectStakingSupportedNetwork(getState())
+			if (!wallet || !supportedNetwork) return ZERO_STAKING_DATA
 
 			const {
 				rewardEscrowBalance,
@@ -65,7 +70,8 @@ export const fetchStakingV2Data = createAsyncThunk<StakingActionV2, void, ThunkC
 	async (_, { getState, extra: { sdk } }) => {
 		try {
 			const wallet = selectWallet(getState())
-			if (!wallet) return ZERO_STAKING_V2_DATA
+			const supportedNetwork = selectStakingSupportedNetwork(getState())
+			if (!wallet || !supportedNetwork) return ZERO_STAKING_V2_DATA
 
 			const {
 				rewardEscrowBalance,
@@ -135,7 +141,8 @@ export const fetchEscrowData = createAsyncThunk<EscrowBalance, void, ThunkConfig
 	async (_, { getState, extra: { sdk } }) => {
 		try {
 			const wallet = selectWallet(getState())
-			if (!wallet) return ZERO_ESCROW_BALANCE
+			const supportedNetwork = selectStakingSupportedNetwork(getState())
+			if (!wallet || !supportedNetwork) return ZERO_ESCROW_BALANCE
 
 			const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowData()
 
@@ -161,7 +168,8 @@ export const fetchEscrowV2Data = createAsyncThunk<EscrowBalance, void, ThunkConf
 	async (_, { getState, extra: { sdk } }) => {
 		try {
 			const wallet = selectWallet(getState())
-			if (!wallet) return ZERO_ESCROW_BALANCE
+			const supportedNetwork = selectStakingSupportedNetwork(getState())
+			if (!wallet || !supportedNetwork) return ZERO_ESCROW_BALANCE
 
 			const { escrowData, totalVestable } = await sdk.kwentaToken.getEscrowV2Data()
 
@@ -187,7 +195,8 @@ export const fetchEstimatedRewards = createAsyncThunk<EstimatedRewards, void, Th
 	async (_, { getState, extra: { sdk } }) => {
 		try {
 			const wallet = selectWallet(getState())
-			if (!wallet) return ZERO_ESTIMATED_REWARDS
+			const supportedNetwork = selectStakingSupportedNetwork(getState())
+			if (!wallet || !supportedNetwork) return ZERO_ESTIMATED_REWARDS
 
 			const { estimatedKwentaRewards, estimatedOpRewards } =
 				await sdk.kwentaToken.getEstimatedRewards()
@@ -313,12 +322,11 @@ export const fetchClaimableRewards = createAsyncThunk<ClaimableRewards, void, Th
 	'staking/fetchClaimableRewards',
 	async (_, { getState, extra: { sdk } }) => {
 		try {
-			const {
-				staking: { epochPeriod },
-			} = getState()
 			const wallet = selectWallet(getState())
+			const supportedNetwork = selectTradingRewardsSupportedNetwork(getState())
+			if (!wallet || !supportedNetwork) return ZERO_CLAIMABLE_REWARDS
 
-			if (!wallet) return ZERO_CLAIMABLE_REWARDS
+			const { epochPeriod } = await sdk.kwentaToken.getStakingData()
 
 			const { claimableRewards: claimableKwentaRewards, totalRewards: kwentaRewards } =
 				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, 9)

@@ -1,14 +1,5 @@
 import Wei from '@synthetixio/wei'
 
-export type FuturesStat = {
-	account: string
-	pnlWithFeesPaid: Wei
-	liquidations: Wei
-	totalTrades: Wei
-	totalVolume: Wei
-	pnl?: Wei
-}
-
 export type AccountStat = {
 	rank: number
 	account: string
@@ -31,9 +22,4 @@ export type FuturesCumulativeStats = {
 	totalVolume: string
 	totalLiquidations: string
 	averageTradeSize: string
-}
-
-export enum FuturesAccountTypes {
-	ISOLATED_MARGIN = 'isolated_margin',
-	CROSS_MARGIN = 'cross_margin',
 }

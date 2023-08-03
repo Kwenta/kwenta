@@ -2,7 +2,10 @@ import { useMemo } from 'react'
 import { UseQueryResult } from 'react-query'
 
 import useGetFile from 'queries/files/useGetFile'
-import { selectOptimismMarkPrices, selectOptimismMarkets } from 'state/futures/selectors'
+import {
+	selectOptimismMarkPrices,
+	selectOptimismMarkets,
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { selectMinTimestamp } from 'state/stats/selectors'
 

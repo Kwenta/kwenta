@@ -1,1 +1,1 @@
-export { default } from './TradePanel'
+export { default } from './TradePanelSmartMargin'

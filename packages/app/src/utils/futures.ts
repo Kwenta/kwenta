@@ -4,12 +4,17 @@ import {
 	FuturesMarketAsset,
 	ConditionalOrder,
 	FuturesOrderType,
-	FuturesPosition,
+	PerpsV2Position,
 	FuturesPositionHistory,
 	FuturesTrade,
 	FuturesVolumes,
 	PositionSide,
 	PricesMap,
+	PerpsV3AsyncOrder,
+	PerpsV3SettlementStrategy,
+	PerpsMarketV2,
+	PerpsMarketV3,
+	PerpsV3Position,
 } from '@kwenta/sdk/types'
 import {
 	AssetDisplayByAsset,
@@ -20,16 +25,12 @@ import {
 import Wei, { wei } from '@synthetixio/wei'
 import { TFunction } from 'i18next'
 
-import {
-	CrossMarginBalanceInfo,
-	TradeSizeInputs,
-	DelayedOrderWithDetails,
-	TransactionEstimation,
-	futuresPositionKeys,
-	FundingRate,
-	MarkPrices,
-} from 'state/futures/types'
+import { DelayedOrderWithDetails, TradeSizeInputs } from 'state/futures/common/types'
+import { SmartMarginBalanceInfo } from 'state/futures/smartMargin/types'
+import { futuresPositionKeys, FundingRate, MarkPrices } from 'state/futures/types'
 import { deserializeWeiObject } from 'state/helpers'
+
+import { CrossMarginTradePreview } from '../state/futures/crossMargin/types'
 
 export const getSynthDescription = (synth: FuturesMarketAsset, t: TFunction) => {
 	const assetDisplayName = AssetDisplayByAsset[synth]
@@ -64,14 +65,14 @@ export const orderPriceInvalidLabel = (
 }
 
 export const updatePositionUpnl = (
-	positionDetails: FuturesPosition<string>,
+	positionDetails: PerpsV2Position<string>,
 	prices: MarkPrices,
 	positionHistory: FuturesPositionHistory[]
-): FuturesPosition => {
+): PerpsV2Position => {
 	const deserializedPositionDetails = deserializeWeiObject(
 		positionDetails,
 		futuresPositionKeys
-	) as FuturesPosition
+	) as PerpsV2Position
 	const offChainPrice = prices[MarketKeyByAsset[deserializedPositionDetails.asset]]
 	const position = deserializedPositionDetails.position
 	const thisPositionHistory = positionHistory.find(
@@ -138,10 +139,6 @@ export const serializeMarket = (market: FuturesMarket): FuturesMarket<string> =>
 	}
 }
 
-export const serializeMarkets = (markets: FuturesMarket[]): FuturesMarket<string>[] => {
-	return markets.map((m) => serializeMarket(m))
-}
-
 export const unserializeMarket = (m: FuturesMarket<string>): FuturesMarket => {
 	return {
 		...m,
@@ -179,13 +176,75 @@ export const unserializeMarket = (m: FuturesMarket<string>): FuturesMarket => {
 	}
 }
 
-export const unserializeMarkets = (markets: FuturesMarket<string>[]): FuturesMarket[] => {
-	return markets.map((m) => unserializeMarket(m))
+export const serializeV2Market = (m: PerpsMarketV2): PerpsMarketV2<string> => {
+	return {
+		...serializeMarket(m),
+		version: 2,
+		marketAddress: m.marketAddress,
+	}
+}
+
+export const unserializeV2Market = (m: PerpsMarketV2<string>): PerpsMarketV2 => {
+	return {
+		...unserializeMarket(m),
+		version: 2,
+		marketAddress: m.marketAddress,
+	}
+}
+
+export const serializeV3Market = (m: PerpsMarketV3): PerpsMarketV3<string> => {
+	return {
+		...serializeMarket(m),
+		marketId: m.marketId,
+		version: 3,
+		settlementStrategies: m.settlementStrategies.map(serializeSettlementStrategy),
+	}
+}
+
+export const unserializeV3Market = (m: PerpsMarketV3<string>): PerpsMarketV3 => {
+	return {
+		...unserializeMarket(m),
+		marketId: m.marketId,
+		version: 3,
+		settlementStrategies: m.settlementStrategies.map(unserializeSettlementStrategy),
+	}
+}
+
+export const serializeV2Markets = (markets: PerpsMarketV2[]): PerpsMarketV2<string>[] => {
+	return markets.map((m) => serializeV2Market(m))
+}
+
+export const unserializeV2Markets = (markets: PerpsMarketV2<string>[]): PerpsMarketV2[] => {
+	return markets.map((m) => unserializeV2Market(m))
+}
+
+export const serializeSettlementStrategy = (
+	strat: PerpsV3SettlementStrategy
+): PerpsV3SettlementStrategy<string> => {
+	return {
+		...strat,
+		settlementDelay: strat.settlementDelay.toString(),
+		settlementWindowDuration: strat.settlementWindowDuration.toString(),
+		settlementReward: strat.settlementReward.toString(),
+		priceDeviationTolerance: strat.priceDeviationTolerance.toString(),
+	}
+}
+
+export const unserializeSettlementStrategy = (
+	strat: PerpsV3SettlementStrategy<string>
+): PerpsV3SettlementStrategy => {
+	return {
+		...strat,
+		settlementDelay: wei(strat.settlementDelay),
+		settlementWindowDuration: wei(strat.settlementWindowDuration),
+		settlementReward: wei(strat.settlementReward),
+		priceDeviationTolerance: wei(strat.priceDeviationTolerance),
+	}
 }
 
 export const serializeCmBalanceInfo = (
-	overview: CrossMarginBalanceInfo
-): CrossMarginBalanceInfo<string> => {
+	overview: SmartMarginBalanceInfo
+): SmartMarginBalanceInfo<string> => {
 	return {
 		freeMargin: overview.freeMargin.toString(),
 		keeperEthBal: overview.keeperEthBal.toString(),
@@ -195,8 +254,8 @@ export const serializeCmBalanceInfo = (
 }
 
 export const unserializeCmBalanceInfo = (
-	balanceInfo: CrossMarginBalanceInfo<string>
-): CrossMarginBalanceInfo<Wei> => {
+	balanceInfo: SmartMarginBalanceInfo<string>
+): SmartMarginBalanceInfo<Wei> => {
 	return {
 		freeMargin: wei(balanceInfo.freeMargin),
 		keeperEthBal: wei(balanceInfo.keeperEthBal),
@@ -293,12 +352,16 @@ export const unserializeDelayedOrders = (
 	orders: DelayedOrderWithDetails<string>[]
 ): DelayedOrderWithDetails[] => orders.map((o) => unserializeDelayedOrder(o))
 
-export const unserializeGasEstimate = (
-	estimate: TransactionEstimation<string>
-): TransactionEstimation => ({
-	...estimate,
-	limit: wei(estimate.limit),
-	cost: wei(estimate.cost),
+export const serializeV3AsyncOrder = (order: PerpsV3AsyncOrder): PerpsV3AsyncOrder<string> => ({
+	...order,
+	sizeDelta: order.sizeDelta.toString(),
+	acceptablePrice: order.sizeDelta.toString(),
+})
+
+export const unserializeV3AsyncOrder = (order: PerpsV3AsyncOrder<string>): PerpsV3AsyncOrder => ({
+	...order,
+	sizeDelta: wei(order.sizeDelta),
+	acceptablePrice: wei(order.sizeDelta),
 })
 
 export const serializePrices = (prices: PricesMap) => {
@@ -306,6 +369,28 @@ export const serializePrices = (prices: PricesMap) => {
 		acc[key as FuturesMarketAsset] = price.toString()
 		return acc
 	}, {})
+}
+
+export const serializeV3Positions = (positions: PerpsV3Position[]): PerpsV3Position<string>[] => {
+	return positions.map((p) => ({
+		...p,
+		accruedFunding: p.accruedFunding.toString(),
+		profitLoss: p.profitLoss.toString(),
+		size: p.size.toString(),
+		pnl: p.pnl.toString(),
+		pnlPct: p.pnlPct.toString(),
+	}))
+}
+
+export const unserializeV3Positions = (positions: PerpsV3Position<string>[]): PerpsV3Position[] => {
+	return positions.map((p) => ({
+		...p,
+		accruedFunding: wei(p.accruedFunding),
+		profitLoss: wei(p.profitLoss),
+		size: wei(p.size),
+		pnl: wei(p.pnl),
+		pnlPct: wei(p.pnlPct),
+	}))
 }
 
 export const serializePositionHistory = (
@@ -384,11 +469,11 @@ export const unserializeFundingRates = (rates: FundingRate<string>[]): FundingRa
 	return rates.map((r) => ({ ...r, fundingRate: r.fundingRate ? wei(r.fundingRate) : null }))
 }
 
-export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMarket[]) => {
+export const formatDelayedOrders = (orders: DelayedOrder[], markets: PerpsMarketV2[]) => {
 	return orders
 		.filter((o) => o.size.abs().gt(0))
 		.reduce((acc, o) => {
-			const market = markets.find((m) => m.market === o.marketAddress)
+			const market = markets.find((m) => m.marketAddress === o.marketAddress)
 			if (!market) return acc
 
 			acc.push({
@@ -408,8 +493,33 @@ export const formatDelayedOrders = (orders: DelayedOrder[], markets: FuturesMark
 		}, [] as DelayedOrderWithDetails[])
 }
 
-// Disable stop loss when it is within 1% of the liquidation price
-const SL_LIQ_DISABLED_PERCENT = 0.01
+export const serializeCrossMarginTradePreview = (
+	preview: CrossMarginTradePreview
+): CrossMarginTradePreview<string> => ({
+	...preview,
+	settlementFee: preview.settlementFee.toString(),
+	sizeDelta: preview.sizeDelta.toString(),
+	fillPrice: preview.fillPrice.toString(),
+	fee: preview.fee.toString(),
+	leverage: preview.leverage.toString(),
+	notionalValue: preview.notionalValue.toString(),
+	priceImpact: preview.priceImpact.toString(),
+})
+
+export const unserializeCrossMarginTradePreview = (
+	preview: CrossMarginTradePreview<string>
+): CrossMarginTradePreview => ({
+	...preview,
+	settlementFee: wei(preview.settlementFee),
+	sizeDelta: wei(preview.sizeDelta),
+	fillPrice: wei(preview.fillPrice),
+	fee: wei(preview.fee),
+	leverage: wei(preview.leverage),
+	notionalValue: wei(preview.notionalValue),
+	priceImpact: wei(preview.priceImpact),
+})
+// Disable stop loss when it is within 3% of the liquidation price
+const SL_LIQ_DISABLED_PERCENT = 0.03
 
 // Warn users when their stop loss is within 7.5% of their liquidation price
 const SL_LIQ_PERCENT_WARN = 0.075

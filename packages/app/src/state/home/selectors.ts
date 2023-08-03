@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit'
 
 import { RootState } from 'state/store'
-import { unserializeMarkets } from 'utils/futures'
+import { unserializeV2Markets } from 'utils/futures'
 
 export const selectOptimismMarkets = createSelector(
 	(state: RootState) => state.home.optimismMarkets,
-	(optimismMarkets) => unserializeMarkets(optimismMarkets)
+	(optimismMarkets) => unserializeV2Markets(optimismMarkets)
 )

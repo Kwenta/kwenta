@@ -2,15 +2,14 @@ import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { useCallback } from 'react'
 
 import { setOpenModal } from 'state/app/reducer'
-import { approveCrossMargin } from 'state/futures/actions'
+import { selectMarketInfo, selectSubmittingFuturesTx } from 'state/futures/selectors'
+import { approveSmartMargin } from 'state/futures/smartMargin/actions'
 import {
-	selectSmartMarginKeeperDeposit,
 	selectIsConditionalOrder,
-	selectMarketInfo,
 	selectNewTradeHasSlTp,
 	selectSmartMarginAllowanceValid,
-	selectSubmittingFuturesTx,
-} from 'state/futures/selectors'
+	selectSmartMarginKeeperDeposit,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import TradeConfirmationModal from './TradeConfirmationModal'
@@ -32,7 +31,7 @@ export default function TradeConfirmationModalCrossMargin() {
 	}, [dispatch])
 
 	const handleApproveSmartMargin = useCallback(async () => {
-		dispatch(approveCrossMargin())
+		dispatch(approveSmartMargin())
 	}, [dispatch])
 
 	return (

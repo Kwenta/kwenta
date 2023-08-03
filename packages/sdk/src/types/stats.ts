@@ -30,11 +30,6 @@ export type FuturesCumulativeStats = {
 	averageTradeSize: string
 }
 
-export enum FuturesAccountTypes {
-	ISOLATED_MARGIN = 'isolated_margin',
-	CROSS_MARGIN = 'cross_margin',
-}
-
 export type EnsInfo = {
 	[account: string]: string
 }

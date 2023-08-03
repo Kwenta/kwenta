@@ -6,28 +6,30 @@ import styled from 'styled-components'
 import ErrorView from 'components/ErrorView'
 import { FlexDivRow } from 'components/layout/flex'
 import StyledSlider from 'components/Slider/StyledSlider'
-import { editCrossMarginTradeSize } from 'state/futures/actions'
 import {
-	selectAboveMaxLeverage,
-	selectCrossMarginMarginDelta,
 	selectLeverageSide,
 	selectMaxLeverage,
 	selectMaxUsdSizeInput,
 	selectPosition,
-	selectTradeSizeInputs,
 } from 'state/futures/selectors'
+import { editSmartMarginTradeSize } from 'state/futures/smartMargin/actions'
+import {
+	selectAboveMaxLeverage,
+	selectSmartMarginMarginDelta,
+	selectSmartMarginTradeInputs,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 export default function OrderSizeSlider() {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const { susdSizeString } = useAppSelector(selectTradeSizeInputs)
+	const { susdSizeString } = useAppSelector(selectSmartMarginTradeInputs)
 	const aboveMaxLeverage = useAppSelector(selectAboveMaxLeverage)
 	const maxLeverage = useAppSelector(selectMaxLeverage)
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const position = useAppSelector(selectPosition)
 	const maxUsdInputAmount = useAppSelector(selectMaxUsdSizeInput)
-	const marginDelta = useAppSelector(selectCrossMarginMarginDelta)
+	const marginDelta = useAppSelector(selectSmartMarginMarginDelta)
 
 	const [percent, setPercent] = useState(0)
 	const [usdValue, setUsdValue] = useState(susdSizeString)
@@ -40,7 +42,7 @@ export default function OrderSizeSlider() {
 			const usdValue = Number(usdAmount).toFixed(0)
 			setUsdValue(usdValue)
 			if (commit) {
-				dispatch(editCrossMarginTradeSize(usdValue, 'usd'))
+				dispatch(editSmartMarginTradeSize(usdValue, 'usd'))
 			}
 		},
 		[maxUsdInputAmount, dispatch]
@@ -59,7 +61,7 @@ export default function OrderSizeSlider() {
 		// eslint-disable-next-line
 	}, [susdSizeString])
 
-	if (aboveMaxLeverage && position?.position?.side === leverageSide) {
+	if (aboveMaxLeverage && position?.side === leverageSide) {
 		return (
 			<ErrorView
 				message={t('futures.market.trade.input.max-leverage-error', {

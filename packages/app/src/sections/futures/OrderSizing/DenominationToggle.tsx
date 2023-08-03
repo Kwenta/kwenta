@@ -3,8 +3,9 @@ import { memo, useCallback } from 'react'
 
 import SwitchAssetArrows from 'assets/svg/futures/switch-arrows.svg'
 import InputButton from 'components/Input/InputButton'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import { setSelectedInputDenomination } from 'state/futures/reducer'
-import { selectMarketAsset, selectSelectedInputDenomination } from 'state/futures/selectors'
+import { selectSelectedInputDenomination } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 export const DenominationToggle = memo(() => {

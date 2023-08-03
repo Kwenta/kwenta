@@ -42,10 +42,10 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 				.map((stat, i) => {
 					const totalDeposit = stat.initialMargin.add(stat.totalDeposits)
 					const thisPosition = stat.isOpen
-						? positions.find((p) => p.marketKey === stat.marketKey)
+						? positions.find((p) => p.market.marketKey === stat.marketKey)
 						: null
 
-					const funding = stat.netFunding.add(thisPosition?.position?.accruedFunding ?? ZERO_WEI)
+					const funding = stat.netFunding.add(thisPosition?.accruedFunding ?? ZERO_WEI)
 					const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
 
 					return {
