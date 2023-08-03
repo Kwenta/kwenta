@@ -1222,7 +1222,7 @@
 				"total-pnl": "P&L ($)",
 				"percent-pnl": "P&L (%)",
 				"rank-mobile": "#",
-				"no-result": "No results found"
+				"no-result": "No results found. Connect a wallet."
 			}
 		},
 		"trader-history": {
