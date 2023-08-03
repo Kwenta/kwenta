@@ -19,7 +19,7 @@ import { selectBalances } from 'state/balances/selectors'
 import { fetchTokenList } from 'state/exchange/actions'
 import { setFuturesAccountType } from 'state/futures/reducer'
 import { selectFuturesPortfolio } from 'state/futures/selectors'
-import { selectActiveSmartPositionsCount } from 'state/futures/smartMargin/selectors'
+import { selectActiveSmartMarginPositionsCount } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
 import sdk from 'state/sdk'
 import { selectSynthsMap } from 'state/wallet/selectors'
@@ -44,7 +44,7 @@ const Overview: FC = () => {
 
 	const balances = useAppSelector(selectBalances)
 	const portfolio = useAppSelector(selectFuturesPortfolio)
-	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount)
+	const smartPositionsCount = useAppSelector(selectActiveSmartMarginPositionsCount)
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
 		PositionsTab.SMART_MARGIN

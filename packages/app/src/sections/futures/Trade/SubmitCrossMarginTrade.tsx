@@ -13,7 +13,7 @@ import { setOpenModal } from 'state/app/reducer'
 import { selectMarketIndexPrice, selectMarketPriceInfo } from 'state/futures/common/selectors'
 import {
 	selectCrossMarginAccount,
-	selectCrossMarginPosition,
+	selectSelectedCrossMarginPosition,
 	selectCrossMarginTradeInputs,
 	selectV3MarketInfo,
 } from 'state/futures/crossMargin/selectors'
@@ -59,7 +59,7 @@ const SubmitCrossMarginTradeButton: React.FC = () => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo)
 	const previewStatus = useAppSelector(selectTradePreviewStatus)
 	const crossMarginAccount = useAppSelector(selectCrossMarginAccount)
-	const position = useAppSelector(selectCrossMarginPosition)
+	const position = useAppSelector(selectSelectedCrossMarginPosition)
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError))
@@ -68,7 +68,8 @@ const SubmitCrossMarginTradeButton: React.FC = () => {
 		return null
 	}, [previewTrade?.statusMessage, previewError, t])
 
-	const increasingPosition = !position?.side || position?.side === leverageSide
+	const increasingPosition =
+		!position?.activePosition.side || position?.activePosition.side === leverageSide
 
 	const onSubmit = useCallback(() => {
 		dispatch(setTradePanelDrawerOpen(false))

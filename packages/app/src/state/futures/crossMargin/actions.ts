@@ -556,7 +556,10 @@ export const submitCrossMarginReducePositionOrder = createAsyncThunk<void, void,
 			if (!position) throw new Error('Missing position data')
 			if (!accountId) throw new Error('Account not found')
 
-			const sizeDelta = position.side === PositionSide.LONG ? position.size.neg() : position.size
+			const sizeDelta =
+				position.activePosition.side === PositionSide.LONG
+					? position.activePosition.size.neg()
+					: position.activePosition.size
 			const priceImpact = getDefaultPriceImpact('market')
 			const desiredFillPrice = calculateDesiredFillPrice(
 				sizeDelta,

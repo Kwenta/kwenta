@@ -67,7 +67,7 @@ import {
 import logError from 'utils/logError'
 import { refetchWithComparator } from 'utils/queries'
 
-import { selectMarketIndexPrice } from '../common/selectors'
+import { selectFuturesType, selectMarketIndexPrice } from '../common/selectors'
 import {
 	AccountContext,
 	DebouncedSMPreviewParams,
@@ -108,15 +108,15 @@ import {
 	selectV2Markets,
 	selectOrderType,
 	selectOrderFeeCap,
-	selectSmartMarginPosition,
+	selectSelectedSmartMarginPosition,
 	selectSmartMarginTradeInputs,
-	selectIdleMargin,
+	selectTotalAvailableMargin,
 	selectSlTpTradeInputs,
 	selectSmartMarginEditPosInputs,
 	selectSmartMarginPreviewCount,
 	selectTradePreview,
 	selectCloseSMPositionOrderInputs,
-	selectSmartMarginPositions,
+	selectSmartMarginActivePositions,
 	selectEditPositionModalInfo,
 	selectSlTpModalInputs,
 	selectSmartMarginKeeperDeposit,
@@ -223,7 +223,7 @@ export const refetchSmartMarginPosition = createAsyncThunk<
 	if (!account) throw new Error('No wallet connected')
 	const marketInfo = selectV2MarketInfo(getState())
 	const networkId = selectNetwork(getState())
-	const position = selectSmartMarginPosition(getState())
+	const position = selectSelectedSmartMarginPosition(getState())
 	if (!marketInfo || !position) throw new Error('Market or position not found')
 
 	const result = await refetchWithComparator(
@@ -350,8 +350,8 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 	'futures/fetchSmartMarginTradePreview',
 	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const account = selectSmartMarginAccount(getState())
-		const freeMargin = selectIdleMargin(getState())
-		const positions = selectSmartMarginPositions(getState())
+		const freeMargin = selectTotalAvailableMargin(getState())
+		const positions = selectSmartMarginActivePositions(getState())
 		const position = positions.find((p) => p.market.marketKey === params.market.key)
 
 		const marketMargin = position?.remainingMargin ?? wei(0)
@@ -367,7 +367,9 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 		// If this is a trade with no existsing position size then we need to subtract
 		// remaining idle market margin to get an accurate preview
 		const marginDelta =
-			(!position || position.size.abs().eq(0)) && marketMargin.gt(0) && params.action === 'trade'
+			(!position || position.activePosition.size.abs().eq(0)) &&
+			marketMargin.gt(0) &&
+			params.action === 'trade'
 				? params.marginDelta.sub(marketMargin)
 				: params.marginDelta
 
@@ -579,7 +581,7 @@ export const editClosePositionPrice =
 		const marketPrice = selectMarketIndexPrice(getState())
 		const { position } = selectEditPositionModalInfo(getState())
 		const closeTradeSide =
-			position?.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT
+			position?.activePosition.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT
 		const invalidLabel = orderPriceInvalidLabel(
 			price || '0',
 			closeTradeSide,
@@ -821,30 +823,31 @@ export const calculateKeeperDeposit = (): AppThunk => (dispatch, getState) => {
 
 export const fetchMarginTransfersV2 = createAsyncThunk<
 	| {
-			marginTransfers: MarginTransfer[]
-			idleTransfers: MarginTransfer[]
+			marketMarginTransfers: MarginTransfer[]
+			accountTransfers: MarginTransfer[]
 			context: AccountContext
 	  }
 	| undefined,
 	void,
 	ThunkConfig
 >('futures/fetchMarginTransfersV2', async (_, { getState, extra: { sdk } }) => {
-	const { wallet, futures } = getState()
+	const wallet = selectWallet(getState())
+	const selectedType = selectFuturesType(getState())
 	const supportedNetwork = selectSmartMarginSupportedNetwork(getState())
 	const network = selectNetwork(getState())
 	const cmAccount = selectSmartMarginAccount(getState())
-	if (!wallet.walletAddress || !supportedNetwork) return
+	if (!wallet || !supportedNetwork) return
 	try {
-		const transfers = await sdk.futures.getIsolatedMarginTransfers(cmAccount)
-		const idleTransfers = await sdk.futures.getSmartMarginTransfers(cmAccount)
+		const marketTransfers = await sdk.futures.getMarketMarginTransfers(cmAccount)
+		const accountTransfers = await sdk.futures.getSmartMarginAccountTransfers(cmAccount)
 
 		return {
-			marginTransfers: transfers,
-			idleTransfers: idleTransfers,
+			marketMarginTransfers: marketTransfers,
+			accountTransfers: accountTransfers,
 			context: {
-				wallet: wallet.walletAddress,
+				wallet: wallet,
 				network: network,
-				type: futures.selectedType,
+				type: selectedType,
 				cmAccount,
 			},
 		}
@@ -987,7 +990,7 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 		const preview = selectTradePreview(getState())
 		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState())
 		const wallet = selectWallet(getState())
-		const position = selectSmartMarginPosition(getState())
+		const position = selectSelectedSmartMarginPosition(getState())
 		const openDelayedOrders = selectSmartMarginDelayedOrders(getState())
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState())
 
@@ -1059,8 +1062,9 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 				orderInputs.keeperEthDeposit = keeperEthDeposit
 			}
 
-			let existingSize = position?.size ?? wei(0)
-			existingSize = position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize
+			let existingSize = position?.activePosition.size ?? wei(0)
+			existingSize =
+				position?.activePosition.side === PositionSide.SHORT ? existingSize.neg() : existingSize
 			const isClosing = existingSize.add(tradeInputs.nativeSizeDelta).eq(0)
 
 			const staleOrder = openDelayedOrders.find(
@@ -1148,8 +1152,9 @@ export const submitSmartMarginAdjustPositionSize = createAsyncThunk<void, boolea
 				})
 			)
 
-			let existingSize = position?.size ?? wei(0)
-			existingSize = position?.side === PositionSide.SHORT ? existingSize.neg() : existingSize
+			let existingSize = position?.activePosition.size ?? wei(0)
+			existingSize =
+				position?.activePosition.side === PositionSide.SHORT ? existingSize.neg() : existingSize
 			const isClosing = existingSize.add(nativeSizeDelta).eq(0)
 
 			const tx = await sdk.futures.modifySmartMarginPositionSize(
@@ -1196,7 +1201,7 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 
 			const isClosing = wei(nativeSizeDelta)
 				.abs()
-				.eq(position?.size.abs() || 0)
+				.eq(position?.activePosition.size.abs() || 0)
 
 			dispatch(
 				setTransaction({
@@ -1380,7 +1385,7 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 			if (!wallet) throw new Error('No wallet connected')
 
 			const maxSizeDelta =
-				position?.side === PositionSide.LONG ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE
+				position?.activePosition.side === PositionSide.LONG ? SL_TP_MAX_SIZE.neg() : SL_TP_MAX_SIZE
 
 			const desiredSLFillPrice = calculateDesiredFillPrice(
 				maxSizeDelta,

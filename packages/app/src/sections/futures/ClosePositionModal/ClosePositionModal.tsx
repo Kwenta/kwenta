@@ -82,8 +82,8 @@ export default function ClosePositionModal() {
 	)
 
 	const maxNativeValue = useMemo(() => {
-		return position?.size ?? ZERO_WEI
-	}, [position?.size])
+		return position?.activePosition?.size ?? ZERO_WEI
+	}, [position?.activePosition?.size])
 
 	const sizeWei = useMemo(
 		() => (!nativeSizeDelta || isNaN(Number(nativeSizeDelta)) ? wei(0) : wei(nativeSizeDelta)),
@@ -149,20 +149,23 @@ export default function ClosePositionModal() {
 
 	const onSelectPercent = useCallback(
 		(index: number) => {
-			if (!position?.size || !market?.marketKey) return
+			if (!position?.activePosition?.size || !market?.marketKey) return
 			const option = CLOSE_PERCENT_OPTIONS[index]
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100
 			const size =
-				percent === 1 ? position.size.abs() : floorNumber(position.size.abs().mul(percent))
+				percent === 1
+					? position.activePosition.size.abs()
+					: floorNumber(position.activePosition.size.abs().mul(percent))
 
-			const sizeDelta = position.side === PositionSide.LONG ? wei(size).neg() : wei(size)
-			const decimals = sizeDelta.abs().eq(position.size.abs()) ? undefined : 4
+			const sizeDelta =
+				position.activePosition?.side === PositionSide.LONG ? wei(size).neg() : wei(size)
+			const decimals = sizeDelta.abs().eq(position.activePosition.size.abs()) ? undefined : 4
 
 			dispatch(
 				editClosePositionSizeDelta(market.marketKey, stripZeros(sizeDelta.toString(decimals)))
 			)
 		},
-		[dispatch, position?.size, position?.side, market?.marketKey]
+		[dispatch, position?.activePosition?.size, position?.activePosition?.side, market?.marketKey]
 	)
 
 	return (
@@ -199,7 +202,11 @@ export default function ClosePositionModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					textValue={position?.leverage ? position.leverage.toString(2) + 'x' : '-'}
+					textValue={
+						position?.activePosition?.leverage
+							? position.activePosition?.leverage.toString(2) + 'x'
+							: '-'
+					}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -212,7 +219,7 @@ export default function ClosePositionModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.position-size')}
-					textValue={formatNumber(position?.size || 0, { suggestDecimals: true })}
+					textValue={formatNumber(position?.activePosition?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -223,7 +230,7 @@ export default function ClosePositionModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					textValue={formatDollars(position?.liquidationPrice || 0)}
+					textValue={formatDollars(position?.activePosition?.liquidationPrice || 0)}
 				/>
 				<InfoBoxRow
 					color={previewTrade?.exceedsPriceProtection ? 'negative' : 'primary'}

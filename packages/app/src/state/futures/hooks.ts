@@ -125,7 +125,7 @@ export const usePollDashboardFuturesData = () => {
 	const networkId = useAppSelector(selectNetwork)
 	const markets = useAppSelector(selectMarkets)
 	const wallet = useAppSelector(selectWallet)
-	const crossMarginAddress = useAppSelector(selectSmartMarginAccount)
+	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
 	const networkSupportsCrossMargin = useAppSelector(selectSmartMarginSupportedNetwork)
 	const networkSupportsSmartMargin = useAppSelector(selectSmartMarginSupportedNetwork)
 	const selectedAccountType = useAppSelector(selectFuturesType)
@@ -137,10 +137,7 @@ export const usePollDashboardFuturesData = () => {
 
 	useFetchAction(fetchSmartMarginAccount, {
 		dependencies: [networkId, wallet],
-		disabled:
-			!wallet ||
-			!networkSupportsCrossMargin ||
-			selectedAccountType === FuturesMarginType.CROSS_MARGIN,
+		disabled: !wallet || !networkSupportsCrossMargin,
 	})
 
 	usePollAction('fetchSmartMarginMarketData', fetchSmartMarginMarketData, {
@@ -157,7 +154,7 @@ export const usePollDashboardFuturesData = () => {
 
 	usePollAction('fetchSmartMarginAccountData', fetchSmartMarginAccountData, {
 		intervalTime: 30000,
-		dependencies: [wallet, markets.length, networkId],
+		dependencies: [smartMarginAccount, markets.length, networkId],
 		disabled: !markets.length || !wallet,
 	})
 
@@ -168,7 +165,7 @@ export const usePollDashboardFuturesData = () => {
 	// 	disabled: !markets.length || !crossMarginAddress,
 	// })
 	usePollAction('fetchAllV2TradesForAccount', fetchAllV2TradesForAccount, {
-		dependencies: [networkId, wallet, selectedAccountType, crossMarginAddress],
+		dependencies: [networkId, wallet, selectedAccountType, smartMarginAccount],
 		intervalTime: 30000,
 		disabled: !wallet,
 	})

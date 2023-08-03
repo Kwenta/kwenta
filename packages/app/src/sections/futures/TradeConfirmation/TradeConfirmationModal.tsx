@@ -94,10 +94,12 @@ export default function TradeConfirmationModal({
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(ZERO_WEI)) {
-			return position?.side === PositionSide.LONG ? PositionSide.SHORT : PositionSide.LONG
+			return position?.activePosition?.side === PositionSide.LONG
+				? PositionSide.SHORT
+				: PositionSide.LONG
 		}
 		return potentialTradeDetails?.size.gte(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT
-	}, [potentialTradeDetails?.size, position?.side])
+	}, [potentialTradeDetails?.size, position?.activePosition])
 
 	const positionDetails = useMemo(() => {
 		return potentialTradeDetails

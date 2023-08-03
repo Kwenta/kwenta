@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { FuturesPositionTablePosition } from 'types/futures'
+import { FuturesPositionTablePositionActive } from 'types/futures'
 
 import MobilePNLGraphicPNG from 'assets/png/mobile-pnl-graphic.png'
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png'
@@ -14,7 +14,7 @@ import PositionMetadata from './PositionMetadata'
 import ShareModalButton from './ShareModalButton'
 
 type ShareModalProps = {
-	sharePosition: FuturesPositionTablePosition
+	sharePosition: FuturesPositionTablePositionActive
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>
 }
 

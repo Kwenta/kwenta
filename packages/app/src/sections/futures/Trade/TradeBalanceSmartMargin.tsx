@@ -15,7 +15,10 @@ import useWindowSize from 'hooks/useWindowSize'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
 import { ModalType } from 'state/app/types'
-import { selectIdleMargin, selectLockedMarginInMarkets } from 'state/futures/smartMargin/selectors'
+import {
+	selectTotalAvailableMargin,
+	selectLockedMarginInMarkets,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PencilButton from '../../../components/Button/PencilButton'
@@ -58,7 +61,7 @@ const TradeBalance = memo(() => {
 	const dispatch = useAppDispatch()
 
 	const { deviceType } = useWindowSize()
-	const accountMargin = useAppSelector(selectIdleMargin)
+	const accountMargin = useAppSelector(selectTotalAvailableMargin)
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
 	const openModal = useAppSelector(selectShowModal)
 

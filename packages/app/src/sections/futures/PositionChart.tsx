@@ -38,9 +38,9 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 		return {
 			// As there's often a delay in subgraph sync we use the contract last
 			// price until we get average price to keep it snappy on opening a position
-			price: subgraphPosition?.avgEntryPrice ?? position.lastPrice,
-			size: position.size,
-			liqPrice: position.liquidationPrice,
+			price: subgraphPosition?.avgEntryPrice ?? position.activePosition.lastPrice,
+			size: position.activePosition.size,
+			liqPrice: position.activePosition.liquidationPrice,
 		}
 	}, [subgraphPosition, position])
 

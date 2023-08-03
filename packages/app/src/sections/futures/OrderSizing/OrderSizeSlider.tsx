@@ -61,7 +61,7 @@ export default function OrderSizeSlider() {
 		// eslint-disable-next-line
 	}, [susdSizeString])
 
-	if (aboveMaxLeverage && position?.side === leverageSide) {
+	if (aboveMaxLeverage && position?.activePosition.side === leverageSide) {
 		return (
 			<ErrorView
 				message={t('futures.market.trade.input.max-leverage-error', {
