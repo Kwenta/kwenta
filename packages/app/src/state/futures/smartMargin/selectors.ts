@@ -512,7 +512,7 @@ export const selectSmartMarginDepositApproved = createSelector(
 	}
 )
 
-export const selectMarginInMarkets = (isSuspended: boolean = false) =>
+export const selectIdleMarginInMarkets = (isSuspended: boolean = false) =>
 	createSelector(selectAllSmartMarginPositions, (positions) => {
 		const idleInMarkets = positions
 			.filter((p) => {
@@ -523,9 +523,9 @@ export const selectMarginInMarkets = (isSuspended: boolean = false) =>
 		return idleInMarkets
 	})
 
-export const selectAvailableMarginInMarkets = selectMarginInMarkets()
+export const selectAvailableMarginInMarkets = selectIdleMarginInMarkets()
 
-export const selectLockedMarginInMarkets = selectMarginInMarkets(true)
+export const selectLockedMarginInMarkets = selectIdleMarginInMarkets(true)
 
 export const selectIdleAccountMargin = createSelector(
 	selectAvailableMarginInMarkets,
@@ -633,9 +633,8 @@ export const selectKeeperDepositExceedsBal = createSelector(
 export const selectEditPositionModalInfo = createSelector(
 	selectEditPositionModalMarket,
 	selectSmartMarginActivePositions,
-	selectV2Markets,
 	selectPrices,
-	(modalMarketKey, smartPositions, markets, prices) => {
+	(modalMarketKey, smartPositions, prices) => {
 		const position = smartPositions.find((p) => p.market.marketKey === modalMarketKey)
 		if (!position || position.market.version === 3)
 			return { position: null, market: null, marketPrice: wei(0) }

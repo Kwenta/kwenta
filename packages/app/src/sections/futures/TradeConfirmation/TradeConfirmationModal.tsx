@@ -202,7 +202,7 @@ export default function TradeConfirmationModal({
 	const disabledReason = useMemo(() => {
 		if (showEthBalWarning) {
 			return t('futures.market.trade.confirmation.modal.disabled-eth-bal', {
-				depositAmount: stripZeros(keeperFee?.toString()),
+				depositAmount: formatNumber(stripZeros(keeperFee?.toString()), { suggestDecimals: true }),
 			})
 		}
 		if (positionDetails?.exceedsPriceProtection && !overridePriceProtection) {
