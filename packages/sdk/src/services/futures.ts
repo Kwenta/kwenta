@@ -805,26 +805,26 @@ export default class FuturesService {
 
 		const positions = await this.getFuturesPositions(accountOrEoa, marketParams)
 
-		return positions.reduce(
-			(acc, p) => {
-				if (p.position?.size.abs().gt(0)) {
-					acc.totalIdleInMarkets = acc.totalIdleInMarkets.add(p.position.size)
-				}
+		return positions
+			.filter((p) => p.remainingMargin.abs().gt(0) && (!p.position || p.position?.size.eq(0)))
+			.reduce(
+				(acc, p) => {
+					acc.totalIdleInMarkets = acc.totalIdleInMarkets.add(p.remainingMargin)
 
-				const market = filteredMarkets.find((m) => m.marketKey === p.marketKey)
+					const market = filteredMarkets.find((m) => m.marketKey === p.marketKey)
 
-				if (market) {
-					acc.marketsWithIdleMargin.push({
-						marketAddress: market.marketAddress,
-						marketKey: market.marketKey,
-						position: p,
-					})
-				}
+					if (market) {
+						acc.marketsWithIdleMargin.push({
+							marketAddress: market.marketAddress,
+							marketKey: market.marketKey,
+							position: p,
+						})
+					}
 
-				return acc
-			},
-			{ totalIdleInMarkets: wei(0), marketsWithIdleMargin: [] as MarketWithIdleMargin[] }
-		)
+					return acc
+				},
+				{ totalIdleInMarkets: wei(0), marketsWithIdleMargin: [] as MarketWithIdleMargin[] }
+			)
 	}
 
 	/**
@@ -841,7 +841,6 @@ export default class FuturesService {
 	 */
 	public async getIdleMargin(eoa: string, account?: string) {
 		const idleMargin = await this.getIdleMarginInMarkets(account || eoa)
-
 		const { susdWalletBalance } = await this.sdk.synths.getSynthBalances(eoa)
 		return {
 			total: idleMargin.totalIdleInMarkets.add(susdWalletBalance),
@@ -937,7 +936,6 @@ export default class FuturesService {
 			smartMarginAddress,
 			this.sdk.context.signer
 		)
-
 		const { commands, inputs } = await this.batchIdleMarketMarginSweeps(smartMarginAddress)
 
 		commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN)
@@ -1655,6 +1653,7 @@ export default class FuturesService {
 		const idleMargin = await this.getIdleMarginInMarkets(smartMarginAddress)
 		const commands: number[] = []
 		const inputs: string[] = []
+
 		// Sweep idle margin from other markets to account
 		if (idleMargin.totalIdleInMarkets.gt(0)) {
 			idleMargin.marketsWithIdleMargin.forEach((m) => {
