@@ -73,6 +73,7 @@ import {
 } from './smartMargin/selectors'
 import { SmartPerpsPortfolio } from './smartMargin/types'
 import { FuturesAction, PortfolioValues } from './types'
+import { selectSNXUSDBalance, selectSusdBalance } from 'state/balances/selectors'
 
 export const selectQueryStatuses = createSelector(
 	selectFuturesState,

@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import BaseModal from 'components/BaseModal'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import Spacer from 'components/Spacer'
-import { selectSNXUSDBalance } from 'state/balances/selectors'
+import { selectSusdBalance } from 'state/balances/selectors'
 import { useAppSelector } from 'state/hooks'
 
 type Props = {
@@ -21,7 +21,7 @@ const SocketBridge = dynamic(() => import('../../../components/SocketBridge'), {
 const SmartMarginOnboardModal: React.FC<Props> = memo(({ onDismiss }) => {
 	const { t } = useTranslation()
 
-	const susdBalance = useAppSelector(selectSNXUSDBalance)
+	const susdBalance = useAppSelector(selectSusdBalance)
 
 	return (
 		<StyledBaseModal
