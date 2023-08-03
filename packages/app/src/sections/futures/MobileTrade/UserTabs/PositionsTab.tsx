@@ -187,13 +187,13 @@ const PositionsTab = () => {
 									{row.takeProfit === undefined ? (
 										<Body>{NO_VALUE}</Body>
 									) : (
-										<Currency.Price price={row.takeProfit} />
+										<Currency.Price price={row.takeProfit.targetPrice} />
 									)}
 									<Body>/</Body>
 									{row.stopLoss === undefined ? (
 										<Body color="secondary">{NO_VALUE}</Body>
 									) : (
-										<Currency.Price price={row.stopLoss} colorType="secondary" />
+										<Currency.Price price={row.stopLoss.targetPrice} colorType="secondary" />
 									)}
 									{accountType === FuturesMarginType.SMART_MARGIN && (
 										<>
