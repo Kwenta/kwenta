@@ -1217,7 +1217,8 @@
 				"pnl": "P&L",
 				"total-pnl": "P&L ($)",
 				"percent-pnl": "P&L (%)",
-				"rank-mobile": "#"
+				"rank-mobile": "#",
+				"no-result": "No results found"
 			}
 		},
 		"trader-history": {
