@@ -2,956 +2,1103 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-	BaseContract,
-	BigNumber,
-	BigNumberish,
-	BytesLike,
-	CallOverrides,
-	ContractTransaction,
-	Overrides,
-	PopulatedTransaction,
-	Signer,
-	utils,
-} from 'ethers'
-import type { FunctionFragment, Result, EventFragment } from '@ethersproject/abi'
-import type { Listener, Provider } from '@ethersproject/providers'
-import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from './common'
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
+} from "ethers";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type {
+  TypedEventFilter,
+  TypedEvent,
+  TypedListener,
+  OnEvent,
+} from "./common";
 
 export interface SynthInterface extends utils.Interface {
-	functions: {
-		'CONTRACT_NAME()': FunctionFragment
-		'DECIMALS()': FunctionFragment
-		'FEE_ADDRESS()': FunctionFragment
-		'acceptOwnership()': FunctionFragment
-		'allowance(address,address)': FunctionFragment
-		'approve(address,uint256)': FunctionFragment
-		'balanceOf(address)': FunctionFragment
-		'burn(address,uint256)': FunctionFragment
-		'currencyKey()': FunctionFragment
-		'decimals()': FunctionFragment
-		'isResolverCached()': FunctionFragment
-		'issue(address,uint256)': FunctionFragment
-		'messageSender()': FunctionFragment
-		'name()': FunctionFragment
-		'nominateNewOwner(address)': FunctionFragment
-		'nominatedOwner()': FunctionFragment
-		'owner()': FunctionFragment
-		'proxy()': FunctionFragment
-		'rebuildCache()': FunctionFragment
-		'resolver()': FunctionFragment
-		'resolverAddressesRequired()': FunctionFragment
-		'setMessageSender(address)': FunctionFragment
-		'setProxy(address)': FunctionFragment
-		'setTokenState(address)': FunctionFragment
-		'setTotalSupply(uint256)': FunctionFragment
-		'symbol()': FunctionFragment
-		'tokenState()': FunctionFragment
-		'totalSupply()': FunctionFragment
-		'transfer(address,uint256)': FunctionFragment
-		'transferAndSettle(address,uint256)': FunctionFragment
-		'transferFrom(address,address,uint256)': FunctionFragment
-		'transferFromAndSettle(address,address,uint256)': FunctionFragment
-		'transferableSynths(address)': FunctionFragment
-	}
+  functions: {
+    "CONTRACT_NAME()": FunctionFragment;
+    "DECIMALS()": FunctionFragment;
+    "FEE_ADDRESS()": FunctionFragment;
+    "acceptOwnership()": FunctionFragment;
+    "allowance(address,address)": FunctionFragment;
+    "approve(address,uint256)": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
+    "burn(address,uint256)": FunctionFragment;
+    "currencyKey()": FunctionFragment;
+    "decimals()": FunctionFragment;
+    "isResolverCached()": FunctionFragment;
+    "issue(address,uint256)": FunctionFragment;
+    "messageSender()": FunctionFragment;
+    "name()": FunctionFragment;
+    "nominateNewOwner(address)": FunctionFragment;
+    "nominatedOwner()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "proxy()": FunctionFragment;
+    "rebuildCache()": FunctionFragment;
+    "resolver()": FunctionFragment;
+    "resolverAddressesRequired()": FunctionFragment;
+    "setMessageSender(address)": FunctionFragment;
+    "setProxy(address)": FunctionFragment;
+    "setTokenState(address)": FunctionFragment;
+    "setTotalSupply(uint256)": FunctionFragment;
+    "symbol()": FunctionFragment;
+    "tokenState()": FunctionFragment;
+    "totalSupply()": FunctionFragment;
+    "transfer(address,uint256)": FunctionFragment;
+    "transferAndSettle(address,uint256)": FunctionFragment;
+    "transferFrom(address,address,uint256)": FunctionFragment;
+    "transferFromAndSettle(address,address,uint256)": FunctionFragment;
+    "transferableSynths(address)": FunctionFragment;
+  };
 
-	getFunction(
-		nameOrSignatureOrTopic:
-			| 'CONTRACT_NAME'
-			| 'DECIMALS'
-			| 'FEE_ADDRESS'
-			| 'acceptOwnership'
-			| 'allowance'
-			| 'approve'
-			| 'balanceOf'
-			| 'burn'
-			| 'currencyKey'
-			| 'decimals'
-			| 'isResolverCached'
-			| 'issue'
-			| 'messageSender'
-			| 'name'
-			| 'nominateNewOwner'
-			| 'nominatedOwner'
-			| 'owner'
-			| 'proxy'
-			| 'rebuildCache'
-			| 'resolver'
-			| 'resolverAddressesRequired'
-			| 'setMessageSender'
-			| 'setProxy'
-			| 'setTokenState'
-			| 'setTotalSupply'
-			| 'symbol'
-			| 'tokenState'
-			| 'totalSupply'
-			| 'transfer'
-			| 'transferAndSettle'
-			| 'transferFrom'
-			| 'transferFromAndSettle'
-			| 'transferableSynths'
-	): FunctionFragment
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "CONTRACT_NAME"
+      | "DECIMALS"
+      | "FEE_ADDRESS"
+      | "acceptOwnership"
+      | "allowance"
+      | "approve"
+      | "balanceOf"
+      | "burn"
+      | "currencyKey"
+      | "decimals"
+      | "isResolverCached"
+      | "issue"
+      | "messageSender"
+      | "name"
+      | "nominateNewOwner"
+      | "nominatedOwner"
+      | "owner"
+      | "proxy"
+      | "rebuildCache"
+      | "resolver"
+      | "resolverAddressesRequired"
+      | "setMessageSender"
+      | "setProxy"
+      | "setTokenState"
+      | "setTotalSupply"
+      | "symbol"
+      | "tokenState"
+      | "totalSupply"
+      | "transfer"
+      | "transferAndSettle"
+      | "transferFrom"
+      | "transferFromAndSettle"
+      | "transferableSynths"
+  ): FunctionFragment;
 
-	encodeFunctionData(functionFragment: 'CONTRACT_NAME', values?: undefined): string
-	encodeFunctionData(functionFragment: 'DECIMALS', values?: undefined): string
-	encodeFunctionData(functionFragment: 'FEE_ADDRESS', values?: undefined): string
-	encodeFunctionData(functionFragment: 'acceptOwnership', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'allowance',
-		values: [PromiseOrValue<string>, PromiseOrValue<string>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'approve',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(functionFragment: 'balanceOf', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(
-		functionFragment: 'burn',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(functionFragment: 'currencyKey', values?: undefined): string
-	encodeFunctionData(functionFragment: 'decimals', values?: undefined): string
-	encodeFunctionData(functionFragment: 'isResolverCached', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'issue',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(functionFragment: 'messageSender', values?: undefined): string
-	encodeFunctionData(functionFragment: 'name', values?: undefined): string
-	encodeFunctionData(functionFragment: 'nominateNewOwner', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(functionFragment: 'nominatedOwner', values?: undefined): string
-	encodeFunctionData(functionFragment: 'owner', values?: undefined): string
-	encodeFunctionData(functionFragment: 'proxy', values?: undefined): string
-	encodeFunctionData(functionFragment: 'rebuildCache', values?: undefined): string
-	encodeFunctionData(functionFragment: 'resolver', values?: undefined): string
-	encodeFunctionData(functionFragment: 'resolverAddressesRequired', values?: undefined): string
-	encodeFunctionData(functionFragment: 'setMessageSender', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(functionFragment: 'setProxy', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(functionFragment: 'setTokenState', values: [PromiseOrValue<string>]): string
-	encodeFunctionData(
-		functionFragment: 'setTotalSupply',
-		values: [PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(functionFragment: 'symbol', values?: undefined): string
-	encodeFunctionData(functionFragment: 'tokenState', values?: undefined): string
-	encodeFunctionData(functionFragment: 'totalSupply', values?: undefined): string
-	encodeFunctionData(
-		functionFragment: 'transfer',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'transferAndSettle',
-		values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'transferFrom',
-		values: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'transferFromAndSettle',
-		values: [PromiseOrValue<string>, PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-	): string
-	encodeFunctionData(
-		functionFragment: 'transferableSynths',
-		values: [PromiseOrValue<string>]
-	): string
+  encodeFunctionData(
+    functionFragment: "CONTRACT_NAME",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "DECIMALS", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "FEE_ADDRESS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "acceptOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "allowance",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "approve",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "burn",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currencyKey",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isResolverCached",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "issue",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "messageSender",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "nominateNewOwner",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "nominatedOwner",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "proxy", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "rebuildCache",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "resolver", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "resolverAddressesRequired",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMessageSender",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "setProxy", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setTokenState",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTotalSupply",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "tokenState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalSupply",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transfer",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferAndSettle",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferFrom",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferFromAndSettle",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferableSynths",
+    values: [string]
+  ): string;
 
-	decodeFunctionResult(functionFragment: 'CONTRACT_NAME', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'DECIMALS', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'FEE_ADDRESS', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'acceptOwnership', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'allowance', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'approve', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'burn', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'currencyKey', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'decimals', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'isResolverCached', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'issue', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'messageSender', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'nominateNewOwner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'nominatedOwner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'proxy', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'rebuildCache', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'resolver', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'resolverAddressesRequired', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setMessageSender', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setProxy', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setTokenState', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'setTotalSupply', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'symbol', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'tokenState', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'totalSupply', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'transfer', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'transferAndSettle', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'transferFrom', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'transferFromAndSettle', data: BytesLike): Result
-	decodeFunctionResult(functionFragment: 'transferableSynths', data: BytesLike): Result
+  decodeFunctionResult(
+    functionFragment: "CONTRACT_NAME",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "DECIMALS", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "FEE_ADDRESS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "acceptOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "currencyKey",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isResolverCached",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "issue", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "messageSender",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "nominateNewOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "nominatedOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "proxy", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "rebuildCache",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "resolver", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "resolverAddressesRequired",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMessageSender",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setProxy", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTotalSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "tokenState", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferAndSettle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferFromAndSettle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferableSynths",
+    data: BytesLike
+  ): Result;
 
-	events: {
-		'Approval(address,address,uint256)': EventFragment
-		'Burned(address,uint256)': EventFragment
-		'CacheUpdated(bytes32,address)': EventFragment
-		'Issued(address,uint256)': EventFragment
-		'OwnerChanged(address,address)': EventFragment
-		'OwnerNominated(address)': EventFragment
-		'ProxyUpdated(address)': EventFragment
-		'TokenStateUpdated(address)': EventFragment
-		'Transfer(address,address,uint256)': EventFragment
-	}
+  events: {
+    "Approval(address,address,uint256)": EventFragment;
+    "Burned(address,uint256)": EventFragment;
+    "CacheUpdated(bytes32,address)": EventFragment;
+    "Issued(address,uint256)": EventFragment;
+    "OwnerChanged(address,address)": EventFragment;
+    "OwnerNominated(address)": EventFragment;
+    "ProxyUpdated(address)": EventFragment;
+    "TokenStateUpdated(address)": EventFragment;
+    "Transfer(address,address,uint256)": EventFragment;
+  };
 
-	getEvent(nameOrSignatureOrTopic: 'Approval'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'Burned'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'CacheUpdated'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'Issued'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'OwnerChanged'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'OwnerNominated'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'ProxyUpdated'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'TokenStateUpdated'): EventFragment
-	getEvent(nameOrSignatureOrTopic: 'Transfer'): EventFragment
+  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Burned"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "CacheUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Issued"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProxyUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokenStateUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
 export interface ApprovalEventObject {
-	owner: string
-	spender: string
-	value: BigNumber
+  owner: string;
+  spender: string;
+  value: BigNumber;
 }
-export type ApprovalEvent = TypedEvent<[string, string, BigNumber], ApprovalEventObject>
+export type ApprovalEvent = TypedEvent<
+  [string, string, BigNumber],
+  ApprovalEventObject
+>;
 
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>
+export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 
 export interface BurnedEventObject {
-	account: string
-	value: BigNumber
+  account: string;
+  value: BigNumber;
 }
-export type BurnedEvent = TypedEvent<[string, BigNumber], BurnedEventObject>
+export type BurnedEvent = TypedEvent<[string, BigNumber], BurnedEventObject>;
 
-export type BurnedEventFilter = TypedEventFilter<BurnedEvent>
+export type BurnedEventFilter = TypedEventFilter<BurnedEvent>;
 
 export interface CacheUpdatedEventObject {
-	name: string
-	destination: string
+  name: string;
+  destination: string;
 }
-export type CacheUpdatedEvent = TypedEvent<[string, string], CacheUpdatedEventObject>
+export type CacheUpdatedEvent = TypedEvent<
+  [string, string],
+  CacheUpdatedEventObject
+>;
 
-export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>
+export type CacheUpdatedEventFilter = TypedEventFilter<CacheUpdatedEvent>;
 
 export interface IssuedEventObject {
-	account: string
-	value: BigNumber
+  account: string;
+  value: BigNumber;
 }
-export type IssuedEvent = TypedEvent<[string, BigNumber], IssuedEventObject>
+export type IssuedEvent = TypedEvent<[string, BigNumber], IssuedEventObject>;
 
-export type IssuedEventFilter = TypedEventFilter<IssuedEvent>
+export type IssuedEventFilter = TypedEventFilter<IssuedEvent>;
 
 export interface OwnerChangedEventObject {
-	oldOwner: string
-	newOwner: string
+  oldOwner: string;
+  newOwner: string;
 }
-export type OwnerChangedEvent = TypedEvent<[string, string], OwnerChangedEventObject>
+export type OwnerChangedEvent = TypedEvent<
+  [string, string],
+  OwnerChangedEventObject
+>;
 
-export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>
+export type OwnerChangedEventFilter = TypedEventFilter<OwnerChangedEvent>;
 
 export interface OwnerNominatedEventObject {
-	newOwner: string
+  newOwner: string;
 }
-export type OwnerNominatedEvent = TypedEvent<[string], OwnerNominatedEventObject>
+export type OwnerNominatedEvent = TypedEvent<
+  [string],
+  OwnerNominatedEventObject
+>;
 
-export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>
+export type OwnerNominatedEventFilter = TypedEventFilter<OwnerNominatedEvent>;
 
 export interface ProxyUpdatedEventObject {
-	proxyAddress: string
+  proxyAddress: string;
 }
-export type ProxyUpdatedEvent = TypedEvent<[string], ProxyUpdatedEventObject>
+export type ProxyUpdatedEvent = TypedEvent<[string], ProxyUpdatedEventObject>;
 
-export type ProxyUpdatedEventFilter = TypedEventFilter<ProxyUpdatedEvent>
+export type ProxyUpdatedEventFilter = TypedEventFilter<ProxyUpdatedEvent>;
 
 export interface TokenStateUpdatedEventObject {
-	newTokenState: string
+  newTokenState: string;
 }
-export type TokenStateUpdatedEvent = TypedEvent<[string], TokenStateUpdatedEventObject>
+export type TokenStateUpdatedEvent = TypedEvent<
+  [string],
+  TokenStateUpdatedEventObject
+>;
 
-export type TokenStateUpdatedEventFilter = TypedEventFilter<TokenStateUpdatedEvent>
+export type TokenStateUpdatedEventFilter =
+  TypedEventFilter<TokenStateUpdatedEvent>;
 
 export interface TransferEventObject {
-	from: string
-	to: string
-	value: BigNumber
+  from: string;
+  to: string;
+  value: BigNumber;
 }
-export type TransferEvent = TypedEvent<[string, string, BigNumber], TransferEventObject>
+export type TransferEvent = TypedEvent<
+  [string, string, BigNumber],
+  TransferEventObject
+>;
 
-export type TransferEventFilter = TypedEventFilter<TransferEvent>
+export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export interface Synth extends BaseContract {
-	connect(signerOrProvider: Signer | Provider | string): this
-	attach(addressOrName: string): this
-	deployed(): Promise<this>
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-	interface: SynthInterface
+  interface: SynthInterface;
 
-	queryFilter<TEvent extends TypedEvent>(
-		event: TypedEventFilter<TEvent>,
-		fromBlockOrBlockhash?: string | number | undefined,
-		toBlock?: string | number | undefined
-	): Promise<Array<TEvent>>
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
 
-	listeners<TEvent extends TypedEvent>(
-		eventFilter?: TypedEventFilter<TEvent>
-	): Array<TypedListener<TEvent>>
-	listeners(eventName?: string): Array<Listener>
-	removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this
-	removeAllListeners(eventName?: string): this
-	off: OnEvent<this>
-	on: OnEvent<this>
-	once: OnEvent<this>
-	removeListener: OnEvent<this>
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-	functions: {
-		CONTRACT_NAME(overrides?: CallOverrides): Promise<[string]>
+  functions: {
+    CONTRACT_NAME(overrides?: CallOverrides): Promise<[string]>;
 
-		DECIMALS(overrides?: CallOverrides): Promise<[number]>
+    DECIMALS(overrides?: CallOverrides): Promise<[number]>;
 
-		FEE_ADDRESS(overrides?: CallOverrides): Promise<[string]>
+    FEE_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
 
-		acceptOwnership(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		allowance(
-			owner: PromiseOrValue<string>,
-			spender: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    approve(
+      spender: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    burn(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		approve(
-			spender: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
-
-		balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>
-
-		burn(
-			account: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    currencyKey(overrides?: CallOverrides): Promise<[string]>;
 
-		currencyKey(overrides?: CallOverrides): Promise<[string]>
+    decimals(overrides?: CallOverrides): Promise<[number]>;
 
-		decimals(overrides?: CallOverrides): Promise<[number]>
+    isResolverCached(overrides?: CallOverrides): Promise<[boolean]>;
 
-		isResolverCached(overrides?: CallOverrides): Promise<[boolean]>
+    issue(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		issue(
-			account: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    messageSender(overrides?: CallOverrides): Promise<[string]>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
+
+    nominateNewOwner(
+      _owner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		messageSender(overrides?: CallOverrides): Promise<[string]>
+    nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    proxy(overrides?: CallOverrides): Promise<[string]>;
+
+    rebuildCache(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		name(overrides?: CallOverrides): Promise<[string]>
-
-		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    resolver(overrides?: CallOverrides): Promise<[string]>;
 
-		nominatedOwner(overrides?: CallOverrides): Promise<[string]>
+    resolverAddressesRequired(
+      overrides?: CallOverrides
+    ): Promise<[string[]] & { addresses: string[] }>;
 
-		owner(overrides?: CallOverrides): Promise<[string]>
-
-		proxy(overrides?: CallOverrides): Promise<[string]>
+    setMessageSender(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		rebuildCache(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    setProxy(
+      _proxy: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		resolver(overrides?: CallOverrides): Promise<[string]>
+    setTokenState(
+      _tokenState: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		resolverAddressesRequired(
-			overrides?: CallOverrides
-		): Promise<[string[]] & { addresses: string[] }>
+    setTotalSupply(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		setMessageSender(
-			sender: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    symbol(overrides?: CallOverrides): Promise<[string]>;
 
-		setProxy(
-			_proxy: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    tokenState(overrides?: CallOverrides): Promise<[string]>;
 
-		setTokenState(
-			_tokenState: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-		setTotalSupply(
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    transfer(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		symbol(overrides?: CallOverrides): Promise<[string]>
+    transferAndSettle(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		tokenState(overrides?: CallOverrides): Promise<[string]>
+    transferFrom(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>
+    transferFromAndSettle(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-		transfer(
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+    transferableSynths(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+  };
 
-		transferAndSettle(
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+  CONTRACT_NAME(overrides?: CallOverrides): Promise<string>;
 
-		transferFrom(
-			from: PromiseOrValue<string>,
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+  DECIMALS(overrides?: CallOverrides): Promise<number>;
 
-		transferFromAndSettle(
-			from: PromiseOrValue<string>,
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<ContractTransaction>
+  FEE_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-		transferableSynths(
-			account: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<[BigNumber]>
-	}
+  acceptOwnership(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	CONTRACT_NAME(overrides?: CallOverrides): Promise<string>
+  allowance(
+    owner: string,
+    spender: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-	DECIMALS(overrides?: CallOverrides): Promise<number>
+  approve(
+    spender: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	FEE_ADDRESS(overrides?: CallOverrides): Promise<string>
+  balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-	acceptOwnership(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  burn(
+    account: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	allowance(
-		owner: PromiseOrValue<string>,
-		spender: PromiseOrValue<string>,
-		overrides?: CallOverrides
-	): Promise<BigNumber>
+  currencyKey(overrides?: CallOverrides): Promise<string>;
 
-	approve(
-		spender: PromiseOrValue<string>,
-		value: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  decimals(overrides?: CallOverrides): Promise<number>;
 
-	balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+  isResolverCached(overrides?: CallOverrides): Promise<boolean>;
 
-	burn(
-		account: PromiseOrValue<string>,
-		amount: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  issue(
+    account: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	currencyKey(overrides?: CallOverrides): Promise<string>
+  messageSender(overrides?: CallOverrides): Promise<string>;
 
-	decimals(overrides?: CallOverrides): Promise<number>
+  name(overrides?: CallOverrides): Promise<string>;
 
-	isResolverCached(overrides?: CallOverrides): Promise<boolean>
+  nominateNewOwner(
+    _owner: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	issue(
-		account: PromiseOrValue<string>,
-		amount: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  nominatedOwner(overrides?: CallOverrides): Promise<string>;
 
-	messageSender(overrides?: CallOverrides): Promise<string>
+  owner(overrides?: CallOverrides): Promise<string>;
 
-	name(overrides?: CallOverrides): Promise<string>
+  proxy(overrides?: CallOverrides): Promise<string>;
 
-	nominateNewOwner(
-		_owner: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  rebuildCache(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	nominatedOwner(overrides?: CallOverrides): Promise<string>
+  resolver(overrides?: CallOverrides): Promise<string>;
 
-	owner(overrides?: CallOverrides): Promise<string>
+  resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
 
-	proxy(overrides?: CallOverrides): Promise<string>
+  setMessageSender(
+    sender: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	rebuildCache(
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  setProxy(
+    _proxy: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	resolver(overrides?: CallOverrides): Promise<string>
+  setTokenState(
+    _tokenState: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
+  setTotalSupply(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	setMessageSender(
-		sender: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  symbol(overrides?: CallOverrides): Promise<string>;
 
-	setProxy(
-		_proxy: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  tokenState(overrides?: CallOverrides): Promise<string>;
 
-	setTokenState(
-		_tokenState: PromiseOrValue<string>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-	setTotalSupply(
-		amount: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  transfer(
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	symbol(overrides?: CallOverrides): Promise<string>
+  transferAndSettle(
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	tokenState(overrides?: CallOverrides): Promise<string>
+  transferFrom(
+    from: string,
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+  transferFromAndSettle(
+    from: string,
+    to: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
-	transfer(
-		to: PromiseOrValue<string>,
-		value: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  transferableSynths(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-	transferAndSettle(
-		to: PromiseOrValue<string>,
-		value: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+  callStatic: {
+    CONTRACT_NAME(overrides?: CallOverrides): Promise<string>;
 
-	transferFrom(
-		from: PromiseOrValue<string>,
-		to: PromiseOrValue<string>,
-		value: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+    DECIMALS(overrides?: CallOverrides): Promise<number>;
 
-	transferFromAndSettle(
-		from: PromiseOrValue<string>,
-		to: PromiseOrValue<string>,
-		value: PromiseOrValue<BigNumberish>,
-		overrides?: Overrides & { from?: PromiseOrValue<string> }
-	): Promise<ContractTransaction>
+    FEE_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-	transferableSynths(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
 
-	callStatic: {
-		CONTRACT_NAME(overrides?: CallOverrides): Promise<string>
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-		DECIMALS(overrides?: CallOverrides): Promise<number>
+    approve(
+      spender: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-		FEE_ADDRESS(overrides?: CallOverrides): Promise<string>
+    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-		acceptOwnership(overrides?: CallOverrides): Promise<void>
+    burn(
+      account: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-		allowance(
-			owner: PromiseOrValue<string>,
-			spender: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+    currencyKey(overrides?: CallOverrides): Promise<string>;
 
-		approve(
-			spender: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<boolean>
+    decimals(overrides?: CallOverrides): Promise<number>;
 
-		balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+    isResolverCached(overrides?: CallOverrides): Promise<boolean>;
 
-		burn(
-			account: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+    issue(
+      account: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-		currencyKey(overrides?: CallOverrides): Promise<string>
+    messageSender(overrides?: CallOverrides): Promise<string>;
 
-		decimals(overrides?: CallOverrides): Promise<number>
+    name(overrides?: CallOverrides): Promise<string>;
 
-		isResolverCached(overrides?: CallOverrides): Promise<boolean>
+    nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>;
 
-		issue(
-			account: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<void>
+    nominatedOwner(overrides?: CallOverrides): Promise<string>;
 
-		messageSender(overrides?: CallOverrides): Promise<string>
+    owner(overrides?: CallOverrides): Promise<string>;
 
-		name(overrides?: CallOverrides): Promise<string>
+    proxy(overrides?: CallOverrides): Promise<string>;
 
-		nominateNewOwner(_owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+    rebuildCache(overrides?: CallOverrides): Promise<void>;
 
-		nominatedOwner(overrides?: CallOverrides): Promise<string>
+    resolver(overrides?: CallOverrides): Promise<string>;
 
-		owner(overrides?: CallOverrides): Promise<string>
+    resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>;
 
-		proxy(overrides?: CallOverrides): Promise<string>
+    setMessageSender(sender: string, overrides?: CallOverrides): Promise<void>;
 
-		rebuildCache(overrides?: CallOverrides): Promise<void>
+    setProxy(_proxy: string, overrides?: CallOverrides): Promise<void>;
 
-		resolver(overrides?: CallOverrides): Promise<string>
+    setTokenState(
+      _tokenState: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-		resolverAddressesRequired(overrides?: CallOverrides): Promise<string[]>
+    setTotalSupply(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    symbol(overrides?: CallOverrides): Promise<string>;
 
-		setMessageSender(sender: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+    tokenState(overrides?: CallOverrides): Promise<string>;
 
-		setProxy(_proxy: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-		setTokenState(_tokenState: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>
+    transfer(
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-		setTotalSupply(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>
+    transferAndSettle(
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-		symbol(overrides?: CallOverrides): Promise<string>
+    transferFrom(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-		tokenState(overrides?: CallOverrides): Promise<string>
+    transferFromAndSettle(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-		totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+    transferableSynths(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+  };
 
-		transfer(
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<boolean>
+  filters: {
+    "Approval(address,address,uint256)"(
+      owner?: string | null,
+      spender?: string | null,
+      value?: null
+    ): ApprovalEventFilter;
+    Approval(
+      owner?: string | null,
+      spender?: string | null,
+      value?: null
+    ): ApprovalEventFilter;
 
-		transferAndSettle(
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<boolean>
+    "Burned(address,uint256)"(
+      account?: string | null,
+      value?: null
+    ): BurnedEventFilter;
+    Burned(account?: string | null, value?: null): BurnedEventFilter;
 
-		transferFrom(
-			from: PromiseOrValue<string>,
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<boolean>
+    "CacheUpdated(bytes32,address)"(
+      name?: null,
+      destination?: null
+    ): CacheUpdatedEventFilter;
+    CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter;
 
-		transferFromAndSettle(
-			from: PromiseOrValue<string>,
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: CallOverrides
-		): Promise<boolean>
+    "Issued(address,uint256)"(
+      account?: string | null,
+      value?: null
+    ): IssuedEventFilter;
+    Issued(account?: string | null, value?: null): IssuedEventFilter;
 
-		transferableSynths(
-			account: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-	}
+    "OwnerChanged(address,address)"(
+      oldOwner?: null,
+      newOwner?: null
+    ): OwnerChangedEventFilter;
+    OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter;
 
-	filters: {
-		'Approval(address,address,uint256)'(
-			owner?: PromiseOrValue<string> | null,
-			spender?: PromiseOrValue<string> | null,
-			value?: null
-		): ApprovalEventFilter
-		Approval(
-			owner?: PromiseOrValue<string> | null,
-			spender?: PromiseOrValue<string> | null,
-			value?: null
-		): ApprovalEventFilter
+    "OwnerNominated(address)"(newOwner?: null): OwnerNominatedEventFilter;
+    OwnerNominated(newOwner?: null): OwnerNominatedEventFilter;
 
-		'Burned(address,uint256)'(
-			account?: PromiseOrValue<string> | null,
-			value?: null
-		): BurnedEventFilter
-		Burned(account?: PromiseOrValue<string> | null, value?: null): BurnedEventFilter
+    "ProxyUpdated(address)"(proxyAddress?: null): ProxyUpdatedEventFilter;
+    ProxyUpdated(proxyAddress?: null): ProxyUpdatedEventFilter;
 
-		'CacheUpdated(bytes32,address)'(name?: null, destination?: null): CacheUpdatedEventFilter
-		CacheUpdated(name?: null, destination?: null): CacheUpdatedEventFilter
+    "TokenStateUpdated(address)"(
+      newTokenState?: null
+    ): TokenStateUpdatedEventFilter;
+    TokenStateUpdated(newTokenState?: null): TokenStateUpdatedEventFilter;
 
-		'Issued(address,uint256)'(
-			account?: PromiseOrValue<string> | null,
-			value?: null
-		): IssuedEventFilter
-		Issued(account?: PromiseOrValue<string> | null, value?: null): IssuedEventFilter
+    "Transfer(address,address,uint256)"(
+      from?: string | null,
+      to?: string | null,
+      value?: null
+    ): TransferEventFilter;
+    Transfer(
+      from?: string | null,
+      to?: string | null,
+      value?: null
+    ): TransferEventFilter;
+  };
 
-		'OwnerChanged(address,address)'(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
-		OwnerChanged(oldOwner?: null, newOwner?: null): OwnerChangedEventFilter
+  estimateGas: {
+    CONTRACT_NAME(overrides?: CallOverrides): Promise<BigNumber>;
 
-		'OwnerNominated(address)'(newOwner?: null): OwnerNominatedEventFilter
-		OwnerNominated(newOwner?: null): OwnerNominatedEventFilter
+    DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
 
-		'ProxyUpdated(address)'(proxyAddress?: null): ProxyUpdatedEventFilter
-		ProxyUpdated(proxyAddress?: null): ProxyUpdatedEventFilter
+    FEE_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
 
-		'TokenStateUpdated(address)'(newTokenState?: null): TokenStateUpdatedEventFilter
-		TokenStateUpdated(newTokenState?: null): TokenStateUpdatedEventFilter
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		'Transfer(address,address,uint256)'(
-			from?: PromiseOrValue<string> | null,
-			to?: PromiseOrValue<string> | null,
-			value?: null
-		): TransferEventFilter
-		Transfer(
-			from?: PromiseOrValue<string> | null,
-			to?: PromiseOrValue<string> | null,
-			value?: null
-		): TransferEventFilter
-	}
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-	estimateGas: {
-		CONTRACT_NAME(overrides?: CallOverrides): Promise<BigNumber>
+    approve(
+      spender: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		DECIMALS(overrides?: CallOverrides): Promise<BigNumber>
+    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-		FEE_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>
+    burn(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		acceptOwnership(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>
+    currencyKey(overrides?: CallOverrides): Promise<BigNumber>;
 
-		allowance(
-			owner: PromiseOrValue<string>,
-			spender: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
-		approve(
-			spender: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    isResolverCached(overrides?: CallOverrides): Promise<BigNumber>;
 
-		balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>
+    issue(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		burn(
-			account: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    messageSender(overrides?: CallOverrides): Promise<BigNumber>;
 
-		currencyKey(overrides?: CallOverrides): Promise<BigNumber>
+    name(overrides?: CallOverrides): Promise<BigNumber>;
 
-		decimals(overrides?: CallOverrides): Promise<BigNumber>
+    nominateNewOwner(
+      _owner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		isResolverCached(overrides?: CallOverrides): Promise<BigNumber>
+    nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
-		issue(
-			account: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-		messageSender(overrides?: CallOverrides): Promise<BigNumber>
+    proxy(overrides?: CallOverrides): Promise<BigNumber>;
 
-		name(overrides?: CallOverrides): Promise<BigNumber>
+    rebuildCache(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
 
-		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    resolver(overrides?: CallOverrides): Promise<BigNumber>;
 
-		nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>
+    resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>;
 
-		owner(overrides?: CallOverrides): Promise<BigNumber>
+    setMessageSender(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		proxy(overrides?: CallOverrides): Promise<BigNumber>
+    setProxy(
+      _proxy: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		rebuildCache(overrides?: Overrides & { from?: PromiseOrValue<string> }): Promise<BigNumber>
+    setTokenState(
+      _tokenState: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		resolver(overrides?: CallOverrides): Promise<BigNumber>
+    setTotalSupply(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		resolverAddressesRequired(overrides?: CallOverrides): Promise<BigNumber>
+    symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
-		setMessageSender(
-			sender: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    tokenState(overrides?: CallOverrides): Promise<BigNumber>;
 
-		setProxy(
-			_proxy: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-		setTokenState(
-			_tokenState: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    transfer(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		setTotalSupply(
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    transferAndSettle(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		symbol(overrides?: CallOverrides): Promise<BigNumber>
+    transferFrom(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		tokenState(overrides?: CallOverrides): Promise<BigNumber>
+    transferFromAndSettle(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
 
-		totalSupply(overrides?: CallOverrides): Promise<BigNumber>
+    transferableSynths(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+  };
 
-		transfer(
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+  populateTransaction: {
+    CONTRACT_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		transferAndSettle(
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		transferFrom(
-			from: PromiseOrValue<string>,
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    FEE_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		transferFromAndSettle(
-			from: PromiseOrValue<string>,
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<BigNumber>
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		transferableSynths(
-			account: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<BigNumber>
-	}
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-	populateTransaction: {
-		CONTRACT_NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    approve(
+      spender: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    balanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		FEE_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    burn(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		acceptOwnership(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    currencyKey(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		allowance(
-			owner: PromiseOrValue<string>,
-			spender: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		approve(
-			spender: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		balanceOf(
-			account: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
+    issue(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		burn(
-			account: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    messageSender(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		currencyKey(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    nominateNewOwner(
+      _owner: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		isResolverCached(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		issue(
-			account: PromiseOrValue<string>,
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		messageSender(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    proxy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		name(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    rebuildCache(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		nominateNewOwner(
-			_owner: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    resolverAddressesRequired(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-		owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    setMessageSender(
+      sender: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		proxy(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    setProxy(
+      _proxy: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		rebuildCache(
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    setTokenState(
+      _tokenState: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		resolver(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    setTotalSupply(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		resolverAddressesRequired(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		setMessageSender(
-			sender: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    tokenState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		setProxy(
-			_proxy: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-		setTokenState(
-			_tokenState: PromiseOrValue<string>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    transfer(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		setTotalSupply(
-			amount: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
+    transferAndSettle(
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    transferFrom(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		tokenState(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    transferFromAndSettle(
+      from: string,
+      to: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
 
-		totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>
-
-		transfer(
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
-
-		transferAndSettle(
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
-
-		transferFrom(
-			from: PromiseOrValue<string>,
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
-
-		transferFromAndSettle(
-			from: PromiseOrValue<string>,
-			to: PromiseOrValue<string>,
-			value: PromiseOrValue<BigNumberish>,
-			overrides?: Overrides & { from?: PromiseOrValue<string> }
-		): Promise<PopulatedTransaction>
-
-		transferableSynths(
-			account: PromiseOrValue<string>,
-			overrides?: CallOverrides
-		): Promise<PopulatedTransaction>
-	}
+    transferableSynths(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+  };
 }

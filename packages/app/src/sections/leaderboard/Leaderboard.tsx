@@ -28,9 +28,10 @@ import {
 import { selectWallet } from 'state/wallet/selectors'
 import media from 'styles/media'
 
+import TraderHistory from '../futures/TraderHistory'
+
 import AllTime from './AllTime'
 import Competition from './Competition'
-import TraderHistory from '../futures/TraderHistory'
 
 type LeaderboardProps = {
 	compact?: boolean

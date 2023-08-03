@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { floorNumber, truncateNumbers } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { Dispatch, FC, memo, SetStateAction, useCallback, useMemo, useState } from 'react'
@@ -13,16 +14,15 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivCol, FlexDivRow } from 'components/layout/flex'
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults'
 import { editTradeSizeInput } from 'state/futures/actions'
-import { setLeverageInput } from 'state/futures/reducer'
+import { selectFuturesType, selectMarketIndexPrice } from 'state/futures/common/selectors'
 import {
 	selectLeverageInput,
-	selectMarketIndexPrice,
 	selectMaxLeverage,
 	selectPosition,
-	selectFuturesType,
-	selectCrossMarginMarginDelta,
 	selectTradeSizeInputsDisabled,
 } from 'state/futures/selectors'
+import { setSmartMarginLeverageInput } from 'state/futures/smartMargin/reducer'
+import { selectSmartMarginMarginDelta } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import LeverageSlider from './LeverageSlider'
@@ -47,12 +47,14 @@ const LeverageInput: FC = memo(() => {
 	const marketPrice = useAppSelector(selectMarketIndexPrice)
 	const leverageInput = useAppSelector(selectLeverageInput)
 	const futuresType = useAppSelector(selectFuturesType)
-	const crossMarginMarginDelta = useAppSelector(selectCrossMarginMarginDelta)
+	const smartMarginMarginDelta = useAppSelector(selectSmartMarginMarginDelta)
 	const isDisabled = useAppSelector(selectTradeSizeInputsDisabled)
 
 	const availableMargin = useMemo(() => {
-		return futuresType === 'isolated_margin' ? position?.remainingMargin : crossMarginMarginDelta
-	}, [position?.remainingMargin, crossMarginMarginDelta, futuresType])
+		return futuresType === FuturesMarginType.CROSS_MARGIN
+			? position?.remainingMargin
+			: smartMarginMarginDelta
+	}, [position?.remainingMargin, smartMarginMarginDelta, futuresType])
 
 	const leverageButtons = useMemo(
 		() => (maxLeverage.eq(50) ? ['2', '5', '25', '50'] : ['2', '5', '10', '25']),
@@ -68,7 +70,7 @@ const LeverageInput: FC = memo(() => {
 					: wei(Number(newLeverage)).mul(remainingMargin).div(marketPrice).toString()
 			const floored = floorNumber(Number(newTradeSize), 4)
 			dispatch(editTradeSizeInput(String(floored), 'native'))
-			dispatch(setLeverageInput(newLeverage))
+			dispatch(setSmartMarginLeverageInput(newLeverage))
 		},
 		[marketPrice, dispatch, availableMargin]
 	)

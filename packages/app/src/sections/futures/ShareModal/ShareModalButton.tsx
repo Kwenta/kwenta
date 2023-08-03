@@ -5,11 +5,11 @@ import { toPng } from 'html-to-image'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { FuturesPositionTablePosition } from 'types/futures'
 
 import TwitterIcon from 'assets/svg/social/twitter.svg'
 import Button from 'components/Button'
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
-import { SharePositionParams } from 'state/futures/types'
 
 function getTwitterText(
 	side: PositionSide,
@@ -37,7 +37,7 @@ function downloadPng(dataUrl: string) {
 }
 
 type ShareModalButtonProps = {
-	position: SharePositionParams
+	position: FuturesPositionTablePosition
 }
 
 const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
@@ -53,17 +53,16 @@ const ShareModalButton: FC<ShareModalButtonProps> = ({ position }) => {
 	}
 
 	const handleTweet = () => {
-		const positionDetails = position.position ?? null
-		const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT
-		const marketName = getMarketName(position.asset!)
-		const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x'
-		const pnlPct = `+${positionDetails?.pnlPct.mul(100).toNumber().toFixed(2)}%`
+		const side = position?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT
+		const marketName = getMarketName(position.market.asset!)
+		const leverage = formatNumber(position?.leverage ?? ZERO_WEI) + 'x'
+		const pnlPct = `+${position?.pnlPct.mul(100).toNumber().toFixed(2)}%`
 
-		const avgEntryPrice = position.positionHistory?.avgEntryPrice
-			? formatNumber(position.positionHistory?.avgEntryPrice)
+		const avgEntryPrice = position.history?.avgEntryPrice
+			? formatNumber(position.history?.avgEntryPrice)
 			: ''
 		const dollarEntry = formatDollars(avgEntryPrice ?? ZERO_WEI, { suggestDecimals: true })
-		const dollarCurrent = formatNumber(position.marketPrice ?? ZERO_WEI)
+		const dollarCurrent = formatNumber(position.lastPrice ?? ZERO_WEI)
 		const text = getTwitterText(side, marketName, leverage, pnlPct, dollarEntry, dollarCurrent)
 		window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank')
 	}

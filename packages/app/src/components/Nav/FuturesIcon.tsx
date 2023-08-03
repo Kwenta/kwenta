@@ -1,4 +1,4 @@
-import { FuturesAccountType } from '@kwenta/sdk/utils'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 
 import CrossMarginIconDark from 'assets/svg/futures/cross-margin-icon-dark.svg'
 import CrossMarginIconLight from 'assets/svg/futures/cross-margin-icon-light.svg'
@@ -8,7 +8,7 @@ import { useAppSelector } from 'state/hooks'
 import { selectCurrentTheme } from 'state/preferences/selectors'
 
 type IconProps = {
-	type: FuturesAccountType
+	type: FuturesMarginType
 }
 
 export default function FuturesIcon(props: IconProps) {
@@ -17,7 +17,7 @@ export default function FuturesIcon(props: IconProps) {
 	const CrossMarginIcon = currentTheme === 'dark' ? CrossMarginIconDark : CrossMarginIconLight
 	const IsolatedMarginIcon =
 		currentTheme === 'dark' ? IsolatedMarginIconDark : IsolatedMarginIconLight
-	return props.type === 'cross_margin' || props.type === 'smart_margin' ? (
+	return props.type === FuturesMarginType.SMART_MARGIN ? (
 		<CrossMarginIcon {...props} />
 	) : (
 		<IsolatedMarginIcon {...props} />

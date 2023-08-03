@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import Context, { IContext } from './context'
 import ExchangeService from './services/exchange'
 import FuturesService from './services/futures'
+import PerpsV3 from './services/perpsV3'
 import KwentaTokenService from './services/kwentaToken'
 import PricesService from './services/prices'
 import SynthsService from './services/synths'
@@ -15,6 +16,7 @@ export default class KwentaSDK {
 
 	public exchange: ExchangeService
 	public futures: FuturesService
+	public perpsV3: PerpsV3
 	public synths: SynthsService
 	public transactions: TransactionsService
 	public kwentaToken: KwentaTokenService
@@ -32,6 +34,7 @@ export default class KwentaSDK {
 		this.kwentaToken = new KwentaTokenService(this)
 		this.stats = new StatsService(this)
 		this.system = new SystemService(this)
+		this.perpsV3 = new PerpsV3(this)
 	}
 
 	public setProvider(provider: ethers.providers.Provider) {

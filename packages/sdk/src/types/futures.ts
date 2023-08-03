@@ -17,7 +17,6 @@ export type SynthSuspensionReason =
 export type MarketClosureReason = SynthSuspensionReason
 
 export type FuturesMarket<T = Wei> = {
-	market: string
 	marketKey: FuturesMarketKey
 	marketName: string
 	asset: FuturesMarketAsset
@@ -60,6 +59,17 @@ export type FuturesMarket<T = Wei> = {
 		minDelayTimeDelta: number
 		maxDelayTimeDelta: number
 	}
+}
+
+export type PerpsMarketV2<T = Wei> = FuturesMarket<T> & {
+	version: 2
+	marketAddress: string
+}
+
+export type PerpsMarketV3<T = Wei> = FuturesMarket<T> & {
+	version: 3
+	marketId: number
+	settlementStrategies: PerpsV3SettlementStrategy<T>[]
 }
 
 export type FundingRateUpdate = {
@@ -124,6 +134,7 @@ export enum FuturesMarketKey {
 	sYFIPERP = 'sYFIPERP',
 	sMKRPERP = 'sMKRPERP',
 	sRPLPERP = 'sRPLPERP',
+	sWLDPERP = 'sWLDPERP',
 }
 
 export enum FuturesMarketAsset {
@@ -177,6 +188,7 @@ export enum FuturesMarketAsset {
 	YFI = 'YFI',
 	MKR = 'MKR',
 	RPL = 'RPL',
+	WLD = 'WLD',
 }
 
 export interface FuturesMarketConfig {
@@ -224,7 +236,11 @@ export enum PositionSide {
 	SHORT = 'short',
 }
 
-export type FuturesAccountType = 'cross_margin' | 'smart_margin' | 'isolated_margin'
+export enum FuturesMarginType {
+	SMART_MARGIN = 'smart_margin',
+	CROSS_MARGIN = 'cross_margin',
+	ISOLATED_MARGIN_LEGACY = 'isolated_margin_legacy',
+}
 
 export enum ContractOrderType {
 	MARKET = 0,
@@ -267,7 +283,7 @@ export type FuturesPositionHistory<T = Wei> = {
 	marketKey: FuturesMarketKey
 	account: string
 	abstractAccount: string
-	accountType: FuturesAccountType
+	accountType: FuturesMarginType
 	isOpen: boolean
 	isLiquidated: boolean
 	size: T
@@ -288,7 +304,7 @@ export type FuturesPositionHistory<T = Wei> = {
 	trades: number
 }
 
-export type FuturesPosition<T = Wei> = {
+export type PerpsV2Position<T = Wei> = {
 	asset: FuturesMarketAsset
 	marketKey: FuturesMarketKey
 	remainingMargin: T
@@ -297,6 +313,16 @@ export type FuturesPosition<T = Wei> = {
 	// This prevents TS issues when creating a union with the cross margin position type.
 	stopLoss?: ConditionalOrder<T>
 	takeProfit?: ConditionalOrder<T>
+}
+
+export type PerpsV3Position<T = Wei> = {
+	marketId: number
+	side: PositionSide
+	accruedFunding: T
+	profitLoss: T
+	size: T
+	pnl: T
+	pnlPct: T
 }
 
 export type ModifyPositionOptions<T extends boolean> = {
@@ -360,6 +386,16 @@ export type DelayedOrder<T = Wei> = {
 	side: PositionSide
 }
 
+export type PerpsV3AsyncOrder<T = Wei> = {
+	accountId: number
+	marketId: number
+	sizeDelta: T
+	settlementTime: number
+	settlementStrategyId: number
+	acceptablePrice: T
+	side: PositionSide
+}
+
 export type FuturesPotentialTradeDetails<T = Wei> = {
 	marketKey: FuturesMarketKey
 	size: T
@@ -376,6 +412,30 @@ export type FuturesPotentialTradeDetails<T = Wei> = {
 	statusMessage: string
 	priceImpact: T
 	exceedsPriceProtection: boolean
+}
+
+export type SettlementSubgraphType = {
+	id: string
+	marketId: string
+	strategyId: string
+	strategyType: string
+	settlementDelay: string
+	priceDeviationTolerance: string
+	settlementWindowDuration: string
+	url: string
+	settlementReward: string
+}
+
+export type PerpsV3SettlementStrategy<T = Wei> = {
+	id: string
+	marketId: number
+	strategyId: number
+	strategyType: string
+	settlementDelay: T
+	settlementWindowDuration: T
+	url: string
+	settlementReward: T
+	priceDeviationTolerance: T
 }
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/interfaces/IFuturesMarketBaseTypes.sol#L6-L19
@@ -428,7 +488,7 @@ export type FuturesTrade<T = Wei> = {
 	feesPaid: T
 	keeperFeesPaid: T
 	orderType: FuturesOrderTypeDisplay
-	accountType: FuturesAccountType
+	accountType: FuturesMarginType
 	fundingAccrued: T
 }
 
@@ -462,7 +522,7 @@ export type MarginTransfer = {
 export type MarketWithIdleMargin = {
 	marketAddress: string
 	marketKey: FuturesMarketKey
-	position: FuturesPosition
+	position: PerpsV2Position
 }
 
 export type SmartMarginOrderInputs = {
@@ -503,4 +563,23 @@ export type SLTPOrderInputs = {
 		sizeDelta: Wei
 		isCancelled?: boolean
 	}
+}
+
+export type PerpsV3SubgraphMarket = {
+	id: string
+	perpsMarketId: string
+	marketOwner: string
+	marketName: string
+	marketSymbol: string
+	feedId: string
+	owner: string
+	maxFundingVelocity: string
+	skewScale: string
+	initialMarginFraction: string
+	maintenanceMarginFraction: string
+	liquidationRewardRatioD18: string
+	maxLiquidationLimitAccumulationMultiplier: string
+	lockedOiPercent: string
+	makerFee: string
+	takerFee: string
 }

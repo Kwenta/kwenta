@@ -14,6 +14,7 @@ import {
 	KWENTA_PYTH_SERVER,
 	PUBLIC_PYTH_SERVER,
 	DEFAULT_PRICE_IMPACT_DELTA_PERCENT,
+	PERPS_V3_SUBGRAPH_URLS,
 } from '../constants/futures'
 import { ZERO_WEI } from '../constants/number'
 import { SECONDS_PER_DAY } from '../constants/period'
@@ -30,7 +31,7 @@ import {
 	ConditionalOrder,
 	FuturesOrderType,
 	FuturesOrderTypeDisplay,
-	FuturesPosition,
+	PerpsV2Position,
 	FuturesPositionHistory,
 	FuturesPotentialTradeDetails,
 	FuturesTrade,
@@ -41,6 +42,13 @@ import {
 	PotentialTradeStatus,
 	MarginTransfer,
 	ConditionalOrderTypeEnum,
+	FuturesMarginType,
+	MarketClosureReason,
+	PerpsV3Position,
+	PerpsV3AsyncOrder,
+	PerpsV3SettlementStrategy,
+	SettlementSubgraphType,
+	PerpsMarketV2,
 } from '../types/futures'
 import { formatCurrency, formatDollars, weiFromWei } from '../utils/number'
 import {
@@ -50,10 +58,18 @@ import {
 	FuturesTradeResult,
 	FuturesMarginTransferResult,
 	CrossMarginAccountTransferResult,
+	FuturesAccountType,
 } from '../utils/subgraph'
+import { PerpsV2MarketData } from '../contracts/types'
+import { IPerpsV2MarketSettings } from '../contracts/types/PerpsV2MarketData'
+import { AsyncOrder } from '../contracts/types/PerpsV3MarketProxy'
 
 export const getFuturesEndpoint = (networkId: number) => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10]
+}
+
+export const getPerpsV3SubgraphUrl = (networkId: NetworkId): string => {
+	return PERPS_V3_SUBGRAPH_URLS[networkId] ?? PERPS_V3_SUBGRAPH_URLS[420]
 }
 
 export const getMainEndpoint = (networkId: number) => {
@@ -154,7 +170,7 @@ export const mapFuturesPosition = (
 	canLiquidatePosition: boolean,
 	asset: FuturesMarketAsset,
 	marketKey: FuturesMarketKey
-): FuturesPosition => {
+): PerpsV2Position => {
 	const {
 		remainingMargin,
 		accessibleMargin,
@@ -199,6 +215,27 @@ export const mapFuturesPosition = (
 						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
 	}
+}
+
+export const mapPerpsV3Position = (
+	marketId: number,
+	pnl: BigNumber,
+	funding: BigNumber,
+	size: BigNumber
+): PerpsV3Position | null => {
+	const pnlWei = wei(pnl)
+	const pnlPct = wei(0) // TODO: [PERPS_V3] Calculate PNL %
+	return wei(size).eq(ZERO_WEI)
+		? null
+		: {
+				marketId,
+				side: wei(size).gt(ZERO_WEI) ? PositionSide.LONG : PositionSide.SHORT,
+				accruedFunding: wei(funding),
+				profitLoss: wei(pnlWei),
+				size: wei(size).abs(),
+				pnl: pnlWei,
+				pnlPct,
+		  }
 }
 
 export const mapFuturesPositions = (
@@ -249,7 +286,7 @@ export const mapFuturesPositions = (
 				marketKey: parseBytes32String(marketKey) as FuturesMarketKey,
 				account,
 				abstractAccount,
-				accountType,
+				accountType: subgraphAccountTypeToMarginType(accountType),
 				isOpen,
 				isLiquidated,
 				size: sizeWei.abs(),
@@ -305,7 +342,7 @@ export const unserializePotentialTrade = (
 	priceImpact: wei(preview.priceImpact),
 })
 
-export const formatDelayedOrder = (
+export const formatV2DelayedOrder = (
 	account: string,
 	marketAddress: string,
 	order: IPerpsV2MarketConsolidated.DelayedOrderStructOutput
@@ -334,6 +371,34 @@ export const formatDelayedOrder = (
 		targetRoundId: wei(targetRoundId),
 		orderType: isOffchain ? 'Delayed Market' : 'Delayed',
 		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+	}
+}
+
+export const formatV3AsyncOrder = (order: AsyncOrder.DataStructOutput): PerpsV3AsyncOrder => {
+	const { accountId, marketId, sizeDelta, settlementStrategyId, acceptablePrice } = order.request
+
+	return {
+		accountId: accountId.toNumber(),
+		marketId: marketId.toNumber(),
+		sizeDelta: wei(sizeDelta),
+		settlementTime: order.settlementTime.toNumber(),
+		settlementStrategyId: settlementStrategyId.toNumber(),
+		acceptablePrice: wei(acceptablePrice),
+		side: wei(sizeDelta).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+	}
+}
+
+export const formatSettlementStrategy = (
+	strategy: SettlementSubgraphType
+): PerpsV3SettlementStrategy => {
+	return {
+		...strategy,
+		marketId: Number(strategy.marketId),
+		strategyId: Number(strategy.strategyId),
+		settlementDelay: wei(strategy.settlementDelay),
+		settlementWindowDuration: wei(strategy.settlementWindowDuration),
+		settlementReward: wei(strategy.settlementReward),
+		priceDeviationTolerance: wei(strategy.priceDeviationTolerance),
 	}
 }
 
@@ -500,7 +565,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			return {
 				asset: parseBytes32String(asset) as FuturesMarketAsset,
 				account,
-				accountType,
+				accountType: subgraphAccountTypeToMarginType(accountType),
 				margin: weiFromWei(margin),
 				size: weiFromWei(size),
 				price: weiFromWei(price),
@@ -710,6 +775,7 @@ export const MarketAssetByKey: Record<FuturesMarketKey, FuturesMarketAsset> = {
 	[FuturesMarketKey.sYFIPERP]: FuturesMarketAsset.YFI,
 	[FuturesMarketKey.sMKRPERP]: FuturesMarketAsset.MKR,
 	[FuturesMarketKey.sRPLPERP]: FuturesMarketAsset.RPL,
+	[FuturesMarketKey.sWLDPERP]: FuturesMarketAsset.WLD,
 } as const
 
 export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
@@ -763,6 +829,7 @@ export const MarketKeyByAsset: Record<FuturesMarketAsset, FuturesMarketKey> = {
 	[FuturesMarketAsset.YFI]: FuturesMarketKey.sYFIPERP,
 	[FuturesMarketAsset.MKR]: FuturesMarketKey.sMKRPERP,
 	[FuturesMarketAsset.RPL]: FuturesMarketKey.sRPLPERP,
+	[FuturesMarketAsset.WLD]: FuturesMarketKey.sWLDPERP,
 } as const
 
 export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
@@ -816,6 +883,111 @@ export const AssetDisplayByAsset: Record<FuturesMarketAsset, string> = {
 	[FuturesMarketAsset.YFI]: 'Yearn.Finance',
 	[FuturesMarketAsset.MKR]: 'Maker',
 	[FuturesMarketAsset.RPL]: 'Rocket Pool',
+	[FuturesMarketAsset.WLD]: 'Worldcoin',
 } as const
 
+export const PerpsV3SymbolToMarketKey: Record<string, FuturesMarketKey> = {
+	ETH: FuturesMarketKey.sETHPERP,
+}
+
+export const PerpsV3SymbolToAsset: Record<string, FuturesMarketAsset> = {
+	ETH: FuturesMarketAsset.sETH,
+}
+
+export const MarketKeyToPerpsV3Symbol = {
+	sETHPERP: 'ETH',
+}
+
+export const AssetToPerpsV3Symbol = {
+	sETH: 'ETH',
+}
+
 export const marketOverrides: Partial<Record<FuturesMarketKey, Record<string, any>>> = {}
+
+// TODO: Update these types on the subgraph
+
+export const subgraphAccountTypeToMarginType = (type: FuturesAccountType): FuturesMarginType => {
+	if (type === 'cross_margin' || type === 'smart_margin') return FuturesMarginType.SMART_MARGIN
+	return FuturesMarginType.ISOLATED_MARGIN_LEGACY
+}
+
+export const marginTypeToSubgraphType = (type: FuturesMarginType): FuturesAccountType => {
+	if (type === FuturesMarginType.ISOLATED_MARGIN_LEGACY) return 'isolated_margin'
+	return 'cross_margin'
+}
+
+export const formatPerpsV2Market = (
+	{
+		market,
+		key,
+		asset,
+		currentFundingRate,
+		currentFundingVelocity,
+		feeRates,
+		marketDebt,
+		marketSkew,
+		maxLeverage,
+		marketSize,
+		price,
+	}: PerpsV2MarketData.MarketSummaryStructOutput,
+	marketParameters: IPerpsV2MarketSettings.ParametersStructOutput,
+	globalSettings: {
+		minKeeperFee: Wei
+		minInitialMargin: Wei
+	},
+	isSuspended: boolean,
+	suspendedReason: MarketClosureReason
+): PerpsMarketV2 => ({
+	version: 2,
+	marketAddress: market,
+	marketKey: parseBytes32String(key) as FuturesMarketKey,
+	marketName: getMarketName(parseBytes32String(asset) as FuturesMarketAsset),
+	asset: parseBytes32String(asset) as FuturesMarketAsset,
+	assetHex: asset,
+	currentFundingRate: wei(currentFundingRate).div(24),
+	currentFundingVelocity: wei(currentFundingVelocity).div(24 * 24),
+	feeRates: {
+		makerFee: wei(feeRates.makerFee),
+		takerFee: wei(feeRates.takerFee),
+		makerFeeDelayedOrder: wei(feeRates.makerFeeDelayedOrder),
+		takerFeeDelayedOrder: wei(feeRates.takerFeeDelayedOrder),
+		makerFeeOffchainDelayedOrder: wei(feeRates.makerFeeOffchainDelayedOrder),
+		takerFeeOffchainDelayedOrder: wei(feeRates.takerFeeOffchainDelayedOrder),
+	},
+	openInterest: {
+		shortPct: wei(marketSize).eq(0)
+			? 0
+			: wei(marketSize).sub(marketSkew).div('2').div(marketSize).toNumber(),
+		longPct: wei(marketSize).eq(0)
+			? 0
+			: wei(marketSize).add(marketSkew).div('2').div(marketSize).toNumber(),
+		shortUSD: wei(marketSize).eq(0) ? wei(0) : wei(marketSize).sub(marketSkew).div('2').mul(price),
+		longUSD: wei(marketSize).eq(0) ? wei(0) : wei(marketSize).add(marketSkew).div('2').mul(price),
+		long: wei(marketSize).add(marketSkew).div('2'),
+		short: wei(marketSize).sub(marketSkew).div('2'),
+	},
+	marketDebt: wei(marketDebt),
+	marketSkew: wei(marketSkew),
+	contractMaxLeverage: wei(maxLeverage),
+	appMaxLeverage: appAdjustedLeverage(wei(maxLeverage)),
+	marketSize: wei(marketSize),
+	marketLimitUsd: wei(marketParameters.maxMarketValue).mul(wei(price)),
+	marketLimitNative: wei(marketParameters.maxMarketValue),
+	minInitialMargin: globalSettings.minInitialMargin,
+	keeperDeposit: globalSettings.minKeeperFee,
+	isSuspended: isSuspended,
+	marketClosureReason: suspendedReason,
+	settings: {
+		maxMarketValue: wei(marketParameters.maxMarketValue),
+		skewScale: wei(marketParameters.skewScale),
+		delayedOrderConfirmWindow: wei(marketParameters.delayedOrderConfirmWindow, 0).toNumber(),
+		offchainDelayedOrderMinAge: wei(marketParameters.offchainDelayedOrderMinAge, 0).toNumber(),
+		offchainDelayedOrderMaxAge: wei(marketParameters.offchainDelayedOrderMaxAge, 0).toNumber(),
+		minDelayTimeDelta: wei(marketParameters.minDelayTimeDelta, 0).toNumber(),
+		maxDelayTimeDelta: wei(marketParameters.maxDelayTimeDelta, 0).toNumber(),
+	},
+})
+
+export const sameSide = (a: Wei, b: Wei) => {
+	return a.gt(wei(0)) === b.gt(wei(0))
+}

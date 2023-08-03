@@ -1,5 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { FuturesMarketAsset } from '@kwenta/sdk/types'
+import { FuturesMarket, FuturesMarketAsset } from '@kwenta/sdk/types'
 import {
 	getDisplayAsset,
 	AssetDisplayByAsset,
@@ -31,11 +31,10 @@ import { zIndex } from 'constants/ui'
 import useClickOutside from 'hooks/useClickOutside'
 import useLocalStorage from 'hooks/useLocalStorage'
 import { selectShowBanner } from 'state/app/selectors'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import {
-	selectMarketAsset,
 	selectMarkets,
 	selectMarketsQueryStatus,
-	selectFuturesType,
 	selectMarketInfo,
 	selectMarkPriceInfos,
 } from 'state/futures/selectors'
@@ -117,7 +116,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const options = useMemo(() => {
 		const lowerSearch = search?.toLowerCase()
 		const markets = lowerSearch
-			? futuresMarkets.filter(
+			? (futuresMarkets as FuturesMarket[]).filter(
 					(m) =>
 						m.asset.toLowerCase().includes(lowerSearch) ||
 						AssetDisplayByAsset[m.asset]?.toLocaleLowerCase().includes(lowerSearch)

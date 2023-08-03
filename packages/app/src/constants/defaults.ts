@@ -1,3 +1,5 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
+
 import { Language } from 'translations/constants'
 
 // app defaults
@@ -31,10 +33,10 @@ export const DEFAULT_LEADERBOARD_ROWS = 20
 
 // for perps v2
 export const DEFAULT_DELAYED_EXECUTION_BUFFER = 15
-export const DEFAULT_DELAYED_CANCEL_BUFFER = 15
+export const DEFAULT_DELAYED_CANCEL_BUFFER = 10
 
-export const CROSS_MARGIN_ENABLED = true
+export const CROSS_MARGIN_ENABLED = process.env.NODE_ENV !== 'production'
 
-export const DEFAULT_FUTURES_MARGIN_TYPE = 'cross_margin'
+export const DEFAULT_FUTURES_MARGIN_TYPE = FuturesMarginType.SMART_MARGIN
 
 export const DEFAULT_LEVERAGE = '1'
