@@ -89,19 +89,18 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 
 	return (
 		<>
-			<HeadersRow>
-				<div>Market</div>
-				<div>Side</div>
-				<div>Size</div>
-				<div>Avg. Entry/Liq. Price</div>
-				<div>Market Margin</div>
-				<div>uP&L</div>
-				<div>Funding</div>
-				<div>TP/SL</div>
-				<div>Actions</div>
-			</HeadersRow>
-
 			<TableContainer>
+				<HeadersRow>
+					<div>Market</div>
+					<div>Side</div>
+					<div>Size</div>
+					<div>Avg. Entry/Liq. Price</div>
+					<div>Market Margin</div>
+					<div>uP&L</div>
+					<div>Funding</div>
+					<div>TP/SL</div>
+					<div>Actions</div>
+				</HeadersRow>
 				{data.map((row) => (
 					<PositionRowDesktop key={row.market.asset}>
 						<PositionCell>
@@ -292,36 +291,36 @@ const TableContainer = styled.div`
 	${media.lessThan('xl')`
 		height: 100%;
 	`}
-`
-
-const PositionRowDesktop = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr minmax(130px, 1fr) 1fr 1fr 1fr 1fr 1fr 64px;
-	grid-gap: 10px;
-	height: 54px;
-	padding: 0 10px;
-	&:nth-child(even) {
-		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
-	}
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-`
-
-const HeadersRow = styled(PositionRowDesktop)`
-	height: ${FOOTER_HEIGHT}px;
-	padding: 7px 10px 0 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
-	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-	:not(:last-child) {
-		border-bottom: 0;
-	}
-	&:first-child {
-		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
-	}
+	grid-template-columns: 2fr 1fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr;
+	align-content: flex-start;
 `
 
 const PositionCell = styled.div`
 	display: flex;
 	align-items: center;
+	height: 54px;
+	padding: 0 10px;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+`
+
+const PositionRowDesktop = styled.div`
+	display: contents;
+	&:nth-child(even) > ${PositionCell} {
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
+	}
+`
+
+const HeadersRow = styled.div`
+	display: contents;
+	& > div {
+		display: flex;
+		align-items: center;
+		padding: 0 10px;
+		height: ${FOOTER_HEIGHT}px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
 `
 
 const PnlContainer = styled.div`
