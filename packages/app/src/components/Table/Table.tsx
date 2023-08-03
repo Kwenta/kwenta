@@ -185,9 +185,11 @@ const Table = <T,>({
 						</FlexDiv>
 					))}
 					{isLoading ? (
-						<Loader />
+						<LoadingContainer>
+							<Loader />
+						</LoadingContainer>
 					) : !!noResultsMessage && data.length === 0 ? (
-						noResultsMessage
+						<NoResultsContainer>{noResultsMessage}</NoResultsContainer>
 					) : (
 						<TableBody className="table-body">
 							{table.getRowModel().rows.map((row, i) => {
@@ -264,8 +266,15 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean; $canSort:
 		`}
 `
 
+const NoResultsContainer = styled(Body)`
+	padding: 50px 0;
+`
+
+const LoadingContainer = styled(Body)`
+	padding: 100px 0;
+`
+
 export const TableNoResults = styled.div`
-	height: 52px;
 	height: 100%;
 	padding: 16px;
 	display: flex;
