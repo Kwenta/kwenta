@@ -3,18 +3,22 @@ import { PositionSide } from '@kwenta/sdk/types'
 import { MarketKeyByAsset, formatNumber, getMarketName } from '@kwenta/sdk/utils'
 import { FC, useMemo } from 'react'
 import styled from 'styled-components'
+import { FuturesPositionTablePosition } from 'types/futures'
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon'
-import { selectMarketAsset } from 'state/futures/selectors'
-import { SharePositionParams } from 'state/futures/types'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import { useAppSelector } from 'state/hooks'
 import media from 'styles/media'
 
-const AmountContainer: FC<SharePositionParams> = ({ asset, position }) => {
+type Props = {
+	position?: FuturesPositionTablePosition
+}
+
+const AmountContainer: FC<Props> = ({ position }) => {
 	const defaultAsset = useAppSelector(selectMarketAsset)
-	const marketAsset = asset ?? defaultAsset
+	const marketAsset = position?.market.asset ?? defaultAsset
 	const marketName = getMarketName(marketAsset)
-	const positionDetails = position ?? null
+	const positionDetails = position?.activePosition ?? null
 	const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x'
 	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT
 	const pnlPct = positionDetails?.pnlPct.mul(100)

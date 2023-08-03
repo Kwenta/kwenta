@@ -3,7 +3,8 @@ import Head from 'next/head'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { selectMarketAsset, selectSkewAdjustedPrice } from 'state/futures/selectors'
+import { selectMarketAsset } from 'state/futures/common/selectors'
+import { selectSkewAdjustedPrice } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 
 const MarketHead: FC = () => {

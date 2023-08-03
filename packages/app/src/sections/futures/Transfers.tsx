@@ -1,3 +1,4 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars, truncateAddress } from '@kwenta/sdk/utils'
 import { FC, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,12 +10,9 @@ import { Body } from 'components/Text'
 import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
-import {
-	selectFuturesType,
-	selectIdleMarginTransfers,
-	selectMarketMarginTransfers,
-	selectQueryStatuses,
-} from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors'
+import { selectAccountMarginTransfers } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink } from 'styles/common'
@@ -27,7 +25,7 @@ const Transfers: FC = () => {
 	const isL2 = useIsL2()
 	const accountType = useAppSelector(selectFuturesType)
 	const marketMarginTransfers = useAppSelector(selectMarketMarginTransfers)
-	const idleMarginTransfers = useAppSelector(selectIdleMarginTransfers)
+	const idleMarginTransfers = useAppSelector(selectAccountMarginTransfers)
 
 	const {
 		marginTransfers: { status: marginTransfersStatus },
@@ -39,7 +37,9 @@ const Transfers: FC = () => {
 	)
 
 	const marginTransfers = useMemo(() => {
-		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers
+		return accountType === FuturesMarginType.CROSS_MARGIN
+			? marketMarginTransfers
+			: idleMarginTransfers
 	}, [accountType, marketMarginTransfers, idleMarginTransfers])
 
 	return (

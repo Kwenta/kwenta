@@ -14,12 +14,12 @@ import { CustomFontLabel } from 'components/Text/CustomFontLabel'
 import { NO_VALUE } from 'constants/placeholder'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
-import { cancelConditionalOrder } from 'state/futures/actions'
+import { selectMarketAsset } from 'state/futures/common/selectors'
+import { cancelConditionalOrder } from 'state/futures/smartMargin/actions'
 import {
-	selectCancellingConditionalOrder,
-	selectMarketAsset,
 	selectAllConditionalOrders,
-} from 'state/futures/selectors'
+	selectCancellingConditionalOrder,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PositionType from '../PositionType'

@@ -54,6 +54,7 @@ import SUIIcon from 'assets/png/currencies/sSUI.png'
 import TRXIcon from 'assets/png/currencies/sTRX.png'
 import UNIIcon from 'assets/png/currencies/sUNI.png'
 import USDIcon from 'assets/png/currencies/sUSD.png'
+import WLDIcon from 'assets/png/currencies/sWLD.png'
 import XAGIcon from 'assets/png/currencies/sXAG.png'
 import XAUIcon from 'assets/png/currencies/sXAU.png'
 import XMRIcon from 'assets/png/currencies/sXMR.png'
@@ -108,6 +109,7 @@ export const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = 
 	sSUIPERP: SUIIcon,
 	sTRXPERP: TRXIcon,
 	sUNIPERP: UNIIcon,
+	sWLDPERP: WLDIcon,
 	sXAUPERP: XAUIcon,
 	sXAGPERP: XAGIcon,
 	sXMRPERP: XMRIcon,

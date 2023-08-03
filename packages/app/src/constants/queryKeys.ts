@@ -1,5 +1,5 @@
 import { Period } from '@kwenta/sdk/constants'
-import { NetworkId, FuturesAccountType, FuturesMarketAsset } from '@kwenta/sdk/types'
+import { NetworkId, FuturesMarketAsset } from '@kwenta/sdk/types'
 
 import { CurrencyKey } from './currency'
 
@@ -239,25 +239,6 @@ export const QUERY_KEYS = {
 		TotalLiquidations: ['futures', 'totalLiquidations'],
 		TotalTrades: (networkId: NetworkId) => ['futures', 'totalTrades', networkId],
 		TotalVolume: ['futures', 'totalVolume'],
-		PotentialTrade: (
-			networkId: NetworkId,
-			market: string | null,
-			tradeSize: string,
-			walletAddress: string,
-			selectedAccountType: FuturesAccountType,
-			marginDelta: string,
-			leverageSide: string
-		) => [
-			'futures',
-			'potentialTrade',
-			tradeSize,
-			networkId,
-			market,
-			walletAddress,
-			selectedAccountType,
-			marginDelta,
-			leverageSide,
-		],
 		MarketLimit: (networkId: NetworkId, market: string | null) => [
 			'futures',
 			'marketLimit',

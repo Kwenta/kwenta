@@ -17,18 +17,18 @@ import Spacer from 'components/Spacer'
 import { Body } from 'components/Text'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectTransaction } from 'state/app/selectors'
+import { clearTradeInputs } from 'state/futures/actions'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
-	clearTradeInputs,
 	editCrossMarginPositionSize,
-	submitCrossMarginAdjustPositionSize,
-} from 'state/futures/actions'
+	submitSmartMarginAdjustPositionSize,
+} from 'state/futures/smartMargin/actions'
 import {
-	selectEditPositionInputs,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
 	selectIsFetchingTradePreview,
-	selectSubmittingFuturesTx,
-} from 'state/futures/selectors'
+	selectSmartMarginEditPosInputs,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import EditPositionFeeInfo from '../FeeInfoBox/EditPositionFeeInfo'
@@ -43,11 +43,13 @@ export default function EditPositionSizeModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx)
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview)
 	const preview = useAppSelector(selectEditPositionPreview)
-	const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs)
+	const { nativeSizeDelta } = useAppSelector(selectSmartMarginEditPosInputs)
 	const { market, position, marketPrice } = useAppSelector(selectEditPositionModalInfo)
 
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
 	const [editType, setEditType] = useState(0)
+
+	const activePostiion = useMemo(() => position?.activePosition, [position?.activePosition])
 
 	useEffect(() => {
 		dispatch(clearTradeInputs())
@@ -62,7 +64,7 @@ export default function EditPositionSizeModal() {
 	}
 
 	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustPositionSize(overridePriceProtection))
+		dispatch(submitSmartMarginAdjustPositionSize(overridePriceProtection))
 	}, [dispatch, overridePriceProtection])
 
 	const isLoading = useMemo(
@@ -77,33 +79,33 @@ export default function EditPositionSizeModal() {
 
 	const resultingLeverage = useMemo(() => {
 		if (!preview || !position) return
-		return position.remainingMargin.gt(0)
+		return position.remainingMargin?.gt(0)
 			? preview.size.mul(marketPrice).div(position.remainingMargin).abs()
 			: wei(0)
 	}, [preview, position, marketPrice])
 
 	const maxNativeIncreaseValue = useMemo(() => {
 		if (!marketPrice || marketPrice.eq(0)) return ZERO_WEI
-		const totalMax = position?.remainingMargin.mul(maxLeverage) ?? ZERO_WEI
-		let max = totalMax.sub(position?.position?.notionalValue ?? 0)
+		const totalMax = position?.remainingMargin?.mul(maxLeverage) ?? ZERO_WEI
+		let max = totalMax.sub(activePostiion?.notionalValue ?? 0)
 		max = max.gt(0) ? max : ZERO_WEI
 		return max.div(marketPrice)
-	}, [marketPrice, position?.remainingMargin, position?.position?.notionalValue, maxLeverage])
+	}, [marketPrice, position?.remainingMargin, activePostiion?.notionalValue, maxLeverage])
 
 	const maxNativeValue = useMemo(() => {
-		return editType === 0 ? maxNativeIncreaseValue : position?.position?.size ?? ZERO_WEI
-	}, [editType, maxNativeIncreaseValue, position?.position?.size])
+		return editType === 0 ? maxNativeIncreaseValue : activePostiion?.size ?? ZERO_WEI
+	}, [editType, maxNativeIncreaseValue, activePostiion?.size])
 
 	const minNativeValue = useMemo(() => {
 		if (editType === 0) return ZERO_WEI
 		// If a user is over max leverage they can only
 		// decrease to a value below max leverage
-		if (position?.position && position?.position?.leverage.gt(maxLeverage)) {
-			const safeSize = position.remainingMargin.mul(maxLeverage).div(marketPrice)
-			return position.position.size.sub(safeSize)
+		if (position && position?.activePosition?.leverage?.gt(maxLeverage)) {
+			const safeSize = position.remainingMargin?.mul(maxLeverage).div(marketPrice)
+			return position.activePosition.size.sub(safeSize)
 		}
 		return ZERO_WEI
-	}, [maxLeverage, position?.position, editType, marketPrice, position?.remainingMargin])
+	}, [maxLeverage, position, editType, marketPrice])
 
 	const maxNativeValueWithBuffer = useMemo(() => {
 		if (editType === 1) return maxNativeValue
@@ -117,10 +119,10 @@ export default function EditPositionSizeModal() {
 
 	const maxLeverageExceeded = useMemo(() => {
 		return (
-			(editType === 0 && position?.position?.leverage.gt(maxLeverage)) ||
+			(editType === 0 && activePostiion?.leverage?.gt(maxLeverage)) ||
 			(editType === 1 && resultingLeverage?.gt(maxLeverage))
 		)
-	}, [editType, position?.position?.leverage, maxLeverage, resultingLeverage])
+	}, [editType, activePostiion?.leverage, maxLeverage, resultingLeverage])
 
 	const invalid = useMemo(
 		() => sizeWei.abs().gt(maxNativeValueWithBuffer),
@@ -191,7 +193,7 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					textValue={position?.position ? position?.position?.leverage.toString(2) + 'x' : '-'}
+					textValue={activePostiion?.leverage ? activePostiion.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -204,7 +206,7 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.position-size')}
-					textValue={formatNumber(position?.position?.size || 0, { suggestDecimals: true })}
+					textValue={formatNumber(activePostiion?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -215,7 +217,7 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					textValue={formatDollars(position?.position?.liquidationPrice || 0, {
+					textValue={formatDollars(activePostiion?.liquidationPrice || 0, {
 						suggestDecimals: true,
 					})}
 				/>

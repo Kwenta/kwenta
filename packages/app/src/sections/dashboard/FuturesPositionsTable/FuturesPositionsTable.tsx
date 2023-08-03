@@ -1,4 +1,4 @@
-import { FuturesAccountType } from '@kwenta/sdk/utils'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
@@ -17,19 +17,16 @@ import ROUTES from 'constants/routes'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
-import {
-	selectCrossMarginPositions,
-	selectIsolatedMarginPositions,
-	selectMarkets,
-	selectPositionHistory,
-} from 'state/futures/selectors'
+import { AppFuturesMarginType } from 'state/futures/common/types'
+import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/selectors'
+import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { getSynthDescription } from 'utils/futures'
 
 import MobilePositionRow from './MobilePositionRow'
 
 type FuturesPositionTableProps = {
-	accountType: FuturesAccountType
+	accountType: AppFuturesMarginType
 	showCurrentMarket?: boolean
 	showEmptyTable?: boolean
 }
@@ -45,32 +42,21 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const isL2 = useIsL2()
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions)
-	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
-	const positionHistory = useAppSelector(selectPositionHistory)
-	const futuresMarkets = useAppSelector(selectMarkets)
+	const crossMarginPositions = useAppSelector(selectCrossMarginActivePositions)
+	const smartMarginPositions = useAppSelector(selectSmartMarginActivePositions)
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions
-		return positions
-			.map((position) => {
-				const market = futuresMarkets.find((market) => market.asset === position.asset)
-				const description = getSynthDescription(position.asset, t)
-				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset
-				})
+		const positions =
+			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
+		return positions.map((position) => {
+			const description = getSynthDescription(position.market.asset, t)
 
-				return {
-					market: market!,
-					position: position.position!,
-					description,
-					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss?.targetPrice,
-					takeProfit: position.takeProfit?.targetPrice,
-				}
-			})
-			.filter(({ position, market }) => !!position && !!market)
-	}, [accountType, isolatedPositions, crossMarginPositions, futuresMarkets, t, positionHistory])
+			return {
+				...position,
+				description,
+			}
+		})
+	}, [accountType, crossMarginPositions, smartMarginPositions, t])
 
 	return (
 		<>
@@ -78,7 +64,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				<div>
 					<Table
 						data={data}
-						columnVisibility={{ 'tp-sl': accountType !== 'isolated_margin' }}
+						columnVisibility={{ 'tp-sl': accountType === FuturesMarginType.SMART_MARGIN }}
 						onTableRowClick={(row) =>
 							router.push(ROUTES.Markets.MarketPair(row.original.market.asset, accountType))
 						}
@@ -93,7 +79,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									{!showCurrentMarket ? (
 										t('dashboard.overview.futures-positions-table.no-result')
 									) : (
-										<Link href={ROUTES.Markets.Home('cross_margin')}>
+										<Link href={ROUTES.Markets.Home(FuturesMarginType.SMART_MARGIN)}>
 											<div>{t('common.perp-cta')}</div>
 										</Link>
 									)}
@@ -135,7 +121,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessorKey: 'position',
 								cell: (cellProps) => {
-									return <PositionType side={cellProps.row.original.position.side} />
+									return <PositionType side={cellProps.row.original.activePosition.side} />
 								},
 								size: 70,
 							},
@@ -149,7 +135,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								cell: (cellProps) => {
 									return (
 										<Currency.Price
-											price={cellProps.row.original.position.notionalValue}
+											price={cellProps.row.original.activePosition.notionalValue}
 											formatOptions={{ truncateOver: 1e6 }}
 										/>
 									)
@@ -164,11 +150,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessorKey: 'avgEntryPrice',
 								cell: (cellProps) => {
-									return cellProps.row.original.avgEntryPrice === undefined ? (
+									return cellProps.row.original.activePosition.details?.avgEntryPrice ===
+										undefined ? (
 										<Body>{NO_VALUE}</Body>
 									) : (
 										<Currency.Price
-											price={cellProps.row.original.avgEntryPrice}
+											price={cellProps.row.original.activePosition.details?.avgEntryPrice}
 											formatOptions={{ suggestDecimals: true }}
 										/>
 									)
@@ -185,7 +172,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								cell: (cellProps) => {
 									return (
 										<Currency.Price
-											price={cellProps.row.original.position.liquidationPrice}
+											price={cellProps.row.original.activePosition.liquidationPrice}
 											formatOptions={{ suggestDecimals: true }}
 										/>
 									)
@@ -200,9 +187,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								cell: (cellProps) => {
 									return (
 										<PnlContainer>
-											<ChangePercent value={cellProps.row.original.position.pnlPct} />
+											<ChangePercent value={cellProps.row.original.activePosition.pnlPct} />
 											<div>
-												<Currency.Price price={cellProps.row.original.position.pnl} colored />
+												<Currency.Price price={cellProps.row.original.activePosition.pnl} colored />
 											</div>
 										</PnlContainer>
 									)
@@ -221,7 +208,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 												) : (
 													<div>
 														<Currency.Price
-															price={cellProps.row.original.takeProfit}
+															price={cellProps.row.original.takeProfit.targetPrice}
 															formatOptions={{ suggestDecimals: true }}
 														/>
 													</div>
@@ -231,7 +218,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 												) : (
 													<div>
 														<Currency.Price
-															price={cellProps.row.original.stopLoss}
+															price={cellProps.row.original.stopLoss.targetPrice}
 															formatOptions={{ suggestDecimals: true }}
 														/>
 													</div>
@@ -249,9 +236,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									return (
 										<FlexDivRowCentered>
 											<div style={{ marginRight: 10 }}>
-												<NumericValue value={cellProps.row.original.position.initialMargin} />
+												<NumericValue value={cellProps.row.original.activePosition.initialMargin} />
 												<NumericValue
-													value={cellProps.row.original.position.leverage}
+													value={cellProps.row.original.activePosition.leverage}
 													color="secondary"
 													suffix="x"
 												/>
@@ -278,7 +265,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						<div style={{ margin: '0 15px' }}>
 							{data.length === 0 ? (
 								<NoPositionsText>
-									<Link href={ROUTES.Markets.Home('cross_margin')}>
+									<Link href={ROUTES.Markets.Home(FuturesMarginType.SMART_MARGIN)}>
 										<div>{t('common.perp-cta')}</div>
 									</Link>
 								</NoPositionsText>
@@ -291,7 +278,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											)
 										}
 										key={row.market?.asset}
-										row={row}
+										position={row}
 									/>
 								))
 							)}

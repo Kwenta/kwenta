@@ -1,9 +1,9 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
+import { FuturesMarginType, FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import Router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { FuturesPositionTablePositionActive } from 'types/futures'
 
 import Currency from 'components/Currency'
 import { FlexDiv, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
@@ -19,16 +19,9 @@ import PositionType from 'sections/futures/PositionType'
 import ShareModal from 'sections/futures/ShareModal'
 import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton'
 import { setShowPositionModal } from 'state/app/reducer'
-import {
-	selectCrossMarginPositions,
-	selectFuturesType,
-	selectIsolatedMarginPositions,
-	selectMarketAsset,
-	selectMarkets,
-	selectMarkPrices,
-	selectPositionHistory,
-} from 'state/futures/selectors'
-import { SharePositionParams } from 'state/futures/types'
+import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
+import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/selectors'
+import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import media from 'styles/media'
 
@@ -39,57 +32,26 @@ const PositionsTab = () => {
 
 	const isL2 = useIsL2()
 
-	const isolatedPositions = useAppSelector(selectIsolatedMarginPositions)
-	const crossMarginPositions = useAppSelector(selectCrossMarginPositions)
-	const positionHistory = useAppSelector(selectPositionHistory)
+	const crossMarginPositions = useAppSelector(selectCrossMarginActivePositions)
+	const smartMarginPositions = useAppSelector(selectSmartMarginActivePositions)
 	const currentMarket = useAppSelector(selectMarketAsset)
-	const futuresMarkets = useAppSelector(selectMarkets)
-	const markPrices = useAppSelector(selectMarkPrices)
 	const accountType = useAppSelector(selectFuturesType)
 	const [showShareModal, setShowShareModal] = useState(false)
-	const [sharePosition, setSharePosition] = useState<SharePositionParams | null>(null)
+	const [sharePosition, setSharePosition] = useState<FuturesPositionTablePositionActive | null>(
+		null
+	)
 
 	let data = useMemo(() => {
-		const positions = accountType === 'cross_margin' ? crossMarginPositions : isolatedPositions
-		return positions
-			.map((position) => {
-				const market = futuresMarkets.find((market) => market.asset === position.asset)
-				const thisPositionHistory = positionHistory.find((ph) => {
-					return ph.isOpen && ph.asset === position.asset
-				})
-				const markPrice = markPrices[market?.marketKey!] ?? ZERO_WEI
-				return {
-					market: market!,
-					remainingMargin: position.remainingMargin,
-					position: position.position!,
-					avgEntryPrice: thisPositionHistory?.avgEntryPrice,
-					stopLoss: position.stopLoss?.targetPrice,
-					takeProfit: position.takeProfit?.targetPrice,
-					share: {
-						asset: position.asset,
-						position: position.position!,
-						positionHistory: thisPositionHistory!,
-						marketPrice: markPrice,
-					},
-				}
-			})
-			.filter(({ position, market }) => !!position && !!market)
-			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
-	}, [
-		accountType,
-		crossMarginPositions,
-		isolatedPositions,
-		futuresMarkets,
-		positionHistory,
-		markPrices,
-		currentMarket,
-	])
+		const positions =
+			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
+		return positions.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
+	}, [accountType, smartMarginPositions, crossMarginPositions, currentMarket])
 
 	const handleOpenPositionCloseModal = useCallback(
 		(marketKey: FuturesMarketKey) => () => {
 			dispatch(
 				setShowPositionModal({
-					type: 'futures_close_position',
+					type: 'smart_margin_close_position',
 					marketKey,
 				})
 			)
@@ -97,7 +59,7 @@ const PositionsTab = () => {
 		[dispatch]
 	)
 
-	const handleOpenShareModal = useCallback((share: SharePositionParams) => {
+	const handleOpenShareModal = useCallback((share: FuturesPositionTablePositionActive) => {
 		setSharePosition(share)
 		setShowShareModal((s) => !s)
 	}, [])
@@ -119,7 +81,7 @@ const PositionsTab = () => {
 				data.map((row) => (
 					<PositionItem key={row.market.asset}>
 						<PositionMeta
-							$side={row.position.side}
+							$side={row.activePosition.side}
 							onClick={() => Router.push(ROUTES.Markets.MarketPair(row.market.asset, accountType))}
 						>
 							<FlexDiv>
@@ -127,7 +89,9 @@ const PositionsTab = () => {
 								<div>
 									<Body>{row.market.marketName}</Body>
 									<Body capitalized color="secondary">
-										{accountType === 'isolated_margin' ? 'Isolated Margin' : 'Smart Margin'}
+										{accountType === FuturesMarginType.CROSS_MARGIN
+											? 'Cross Margin'
+											: 'Smart Margin'}
 									</Body>
 								</div>
 							</FlexDiv>
@@ -135,7 +99,7 @@ const PositionsTab = () => {
 								<Pill size="medium" onClick={handleOpenPositionCloseModal(row.market.marketKey)}>
 									Close
 								</Pill>
-								<Pill size="medium" onClick={() => handleOpenShareModal(row.share)}>
+								<Pill size="medium" onClick={() => handleOpenShareModal(row)}>
 									<FlexDivRowCentered>Share</FlexDivRowCentered>
 								</Pill>
 							</FlexDivRowCentered>
@@ -145,8 +109,11 @@ const PositionsTab = () => {
 								<Body color="secondary">Size</Body>
 								<div>
 									<FlexDivRow justifyContent="start">
-										<Currency.Price price={row.position.size} currencyKey={row.market.asset} />
-										{accountType === 'cross_margin' && (
+										<Currency.Price
+											price={row.activePosition.size}
+											currencyKey={row.market.asset}
+										/>
+										{accountType === FuturesMarginType.SMART_MARGIN && (
 											<>
 												<Spacer width={5} />
 												<EditPositionButton
@@ -158,7 +125,7 @@ const PositionsTab = () => {
 									</FlexDivRow>
 									<Spacer width={5} />
 									<Currency.Price
-										price={row.position.notionalValue}
+										price={row.activePosition.notionalValue}
 										formatOptions={{ truncateOver: 1e6 }}
 										colorType="secondary"
 									/>
@@ -167,16 +134,16 @@ const PositionsTab = () => {
 							<PositionCell>
 								<Body color="secondary">Side</Body>
 								<FlexDivRow>
-									<PositionType side={row.position.side} />
+									<PositionType side={row.activePosition.side} />
 								</FlexDivRow>
 							</PositionCell>
 							<PositionCell>
 								<Body color="secondary">Avg. Entry</Body>
-								{row.avgEntryPrice === undefined ? (
+								{row.activePosition?.details?.avgEntryPrice === undefined ? (
 									<Body>{NO_VALUE}</Body>
 								) : (
 									<Currency.Price
-										price={row.avgEntryPrice}
+										price={row.activePosition?.details.avgEntryPrice}
 										formatOptions={{ suggestDecimals: true }}
 									/>
 								)}
@@ -185,7 +152,7 @@ const PositionsTab = () => {
 								<Body color="secondary">Market Margin</Body>
 								<FlexDivRow justifyContent="start">
 									<NumericValue value={row.remainingMargin} />
-									{accountType === 'cross_margin' && (
+									{accountType === FuturesMarginType.SMART_MARGIN && (
 										<>
 											<Spacer width={5} />
 											<EditPositionButton
@@ -199,20 +166,20 @@ const PositionsTab = () => {
 							<PositionCell>
 								<Body color="secondary">Leverage</Body>
 								<FlexDivRowCentered>
-									<NumericValue value={row.position.leverage} suffix="x" />
+									<NumericValue value={row.activePosition.leverage} suffix="x" />
 								</FlexDivRowCentered>
 							</PositionCell>
 							<PositionCell>
 								<Body color="secondary">Liquidation</Body>
 								<Currency.Price
-									price={row.position.liquidationPrice}
+									price={row.activePosition.liquidationPrice}
 									formatOptions={{ suggestDecimals: true }}
 									colorType="preview"
 								/>
 							</PositionCell>
 							<PositionCell>
 								<Body color="secondary">Unrealized PnL</Body>
-								<Currency.Price price={row.position.pnl} colored />
+								<Currency.Price price={row.activePosition.pnl} colored />
 							</PositionCell>
 							<PositionCell>
 								<Body color="secondary">TP/SL</Body>
@@ -228,7 +195,7 @@ const PositionsTab = () => {
 									) : (
 										<Currency.Price price={row.stopLoss} colorType="secondary" />
 									)}
-									{accountType === 'cross_margin' && (
+									{accountType === FuturesMarginType.SMART_MARGIN && (
 										<>
 											<Spacer width={5} />
 											<EditPositionButton
@@ -241,7 +208,7 @@ const PositionsTab = () => {
 							</PositionCell>
 							<PositionCell>
 								<Body color="secondary">Funding</Body>
-								<Currency.Price price={row.position.accruedFunding} colored />
+								<Currency.Price price={row.activePosition.accruedFunding} colored />
 							</PositionCell>
 						</PositionRow>
 					</PositionItem>

@@ -1,8 +1,9 @@
-import { FuturesFilledPosition, FuturesMarket, PositionSide } from '@kwenta/sdk/types'
+import { PositionSide } from '@kwenta/sdk/types'
 import { getMarketName, MarketKeyByAsset, formatNumber } from '@kwenta/sdk/utils'
-import Wei, { wei } from '@synthetixio/wei'
+import { wei } from '@synthetixio/wei'
 import { memo, FC } from 'react'
 import styled, { css } from 'styled-components'
+import { FuturesPositionTablePositionActive } from 'types/futures'
 
 import { border } from 'components/Button'
 import ChangePercent from 'components/ChangePercent'
@@ -13,31 +14,33 @@ import { useAppSelector } from 'state/hooks'
 import { isDecimalFour } from 'utils/futures'
 
 type MobilePositionRowProps = {
-	row: {
-		market?: FuturesMarket
-		position: FuturesFilledPosition | null
-		avgEntryPrice?: Wei
-	}
+	position: FuturesPositionTablePositionActive
 	onClick(): void
 }
 
-const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) => {
+const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ position, onClick }) => {
 	const prices = useAppSelector(selectMarkPrices)
-	const marketPrice = !!row.market ? prices[MarketKeyByAsset[row.market.asset]] ?? wei(0) : wei(0)
-	return !!row.position && !!row.market ? (
-		<OpenPositionContainer side={row.position?.side} key={row.market?.asset} onClick={onClick}>
+	const marketPrice = position.market
+		? prices[MarketKeyByAsset[position.market.asset]] ?? wei(0)
+		: wei(0)
+	return !!position && !!position.market ? (
+		<OpenPositionContainer
+			side={position?.activePosition.side}
+			key={position.market?.asset}
+			onClick={onClick}
+		>
 			<CurrencyDetailsContainer>
-				<StyledCurrencyIcon currencyKey={row.market?.marketKey} />
+				<StyledCurrencyIcon currencyKey={position.market?.marketKey} />
 				<div>
 					<OpenPositionSize>
-						{formatNumber(row.position?.size ?? 0)}
-						<OpenPositionMarketName>{getMarketName(row.market?.asset)}</OpenPositionMarketName>
+						{formatNumber(position?.activePosition.size ?? 0)}
+						<OpenPositionMarketName>{getMarketName(position.market?.asset)}</OpenPositionMarketName>
 					</OpenPositionSize>
-					<OpenPositionSide side={row.position?.side ?? PositionSide.LONG}>
-						<span className="side">{row.position?.side ?? PositionSide.LONG}</span>{' '}
+					<OpenPositionSide side={position?.activePosition.side ?? PositionSide.LONG}>
+						<span className="side">{position?.activePosition.side ?? PositionSide.LONG}</span>{' '}
 						<span className="at">@</span>{' '}
 						<span className="leverage">
-							{formatNumber(row.position?.leverage ?? 0, { maxDecimals: 1 })}x
+							{formatNumber(position?.activePosition.leverage ?? 0, { maxDecimals: 1 })}x
 						</span>
 					</OpenPositionSide>
 				</div>
@@ -48,25 +51,27 @@ const MobilePositionRow: FC<MobilePositionRowProps> = memo(({ row, onClick }) =>
 						<Currency.Price
 							price={marketPrice}
 							formatOptions={
-								isDecimalFour(row.market.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
+								isDecimalFour(position.market.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
 							}
 						/>
 					</div>
 					<EntryPrice>
-						{row.avgEntryPrice && (
+						{position.activePosition.details?.avgEntryPrice && (
 							<Currency.Price
-								price={row.avgEntryPrice}
+								price={position.activePosition.details?.avgEntryPrice}
 								formatOptions={
-									isDecimalFour(row.market.asset) ? { minDecimals: DEFAULT_CRYPTO_DECIMALS } : {}
+									isDecimalFour(position.market.asset)
+										? { minDecimals: DEFAULT_CRYPTO_DECIMALS }
+										: {}
 								}
 							/>
 						)}
 					</EntryPrice>
 				</div>
 				<div>
-					<ChangePercent value={row.position.pnlPct ?? 0} />
+					<ChangePercent value={position.activePosition.pnlPct ?? 0} />
 					<div>
-						<Currency.Price price={row.position.pnl ?? 0} />
+						<Currency.Price price={position.activePosition.pnl ?? 0} />
 					</div>
 				</div>
 			</RightColumnsContainer>

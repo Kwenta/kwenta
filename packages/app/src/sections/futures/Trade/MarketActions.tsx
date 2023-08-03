@@ -11,7 +11,7 @@ import { selectShowModal } from 'state/app/selectors'
 import { selectMarketInfo, selectPosition } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
-import TransferIsolatedMarginModal from './TransferIsolatedMarginModal'
+import DepositWithdrawCrossMarginModal from './DepositWithdrawCrossMargin'
 
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation()
@@ -29,7 +29,7 @@ const MarketActions: React.FC = () => {
 				<MarketActionButton
 					data-testid="futures-market-trade-button-deposit"
 					disabled={marketInfo?.isSuspended || !isL2 || !walletAddress}
-					onClick={() => dispatch(setOpenModal('futures_isolated_transfer'))}
+					onClick={() => dispatch(setOpenModal('futures_deposit_withdraw_cross_margin'))}
 					noOutline
 				>
 					{t('futures.market.trade.button.deposit')}
@@ -42,21 +42,21 @@ const MarketActions: React.FC = () => {
 						!isL2 ||
 						!walletAddress
 					}
-					onClick={() => dispatch(setOpenModal('futures_isolated_transfer'))}
+					onClick={() => dispatch(setOpenModal('futures_deposit_withdraw_cross_margin'))}
 					noOutline
 				>
 					{t('futures.market.trade.button.withdraw')}
 				</MarketActionButton>
 			</MarketActionsContainer>
-			{openModal === 'futures_isolated_transfer' && (
-				<TransferIsolatedMarginModal
+			{openModal === 'futures_deposit_withdraw_cross_margin' && (
+				<DepositWithdrawCrossMarginModal
 					defaultTab="deposit"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>
 			)}
 
-			{openModal === 'futures_isolated_transfer' && (
-				<TransferIsolatedMarginModal
+			{openModal === 'futures_deposit_withdraw_cross_margin' && (
+				<DepositWithdrawCrossMarginModal
 					defaultTab="withdraw"
 					onDismiss={() => dispatch(setOpenModal(null))}
 				/>

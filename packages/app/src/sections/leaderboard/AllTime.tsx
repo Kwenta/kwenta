@@ -6,14 +6,11 @@ import styled from 'styled-components'
 
 import Currency from 'components/Currency'
 import { MobileHiddenView, MobileOnlyView } from 'components/Media'
-import Table, { TableHeader } from 'components/Table'
+import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { TableCell } from 'components/Table/TableBodyRow'
-import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement'
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults'
-import { selectShowBanner } from 'state/app/selectors'
 import { useAppSelector } from 'state/hooks'
 import { selectWallet } from 'state/wallet/selectors'
-import { FOOTER_HEIGHT } from 'styles/common'
 import media from 'styles/media'
 
 import TraderCell from './TraderCell'
@@ -37,7 +34,6 @@ const AllTime: FC<AllTimeProps> = ({
 }) => {
 	const { t } = useTranslation()
 	const walletAddress = useAppSelector(selectWallet)
-	const showBanner = useAppSelector(selectShowBanner)
 
 	if (compact) {
 		const ownPosition = stats.findIndex((i) => {
@@ -57,17 +53,11 @@ const AllTime: FC<AllTimeProps> = ({
 		return [...pinRow, ...stats]
 	}, [stats, pinRow])
 
-	const tableHeight = useMemo(
-		() => window.innerHeight - FOOTER_HEIGHT - 161 - Number(showBanner) * BANNER_HEIGHT_DESKTOP,
-		[showBanner]
-	)
-
 	return (
 		<>
 			<MobileHiddenView>
 				<StyledTable
 					// @ts-ignore
-					height={tableHeight}
 					compact={compact}
 					showPagination
 					isLoading={isLoading}
@@ -81,7 +71,13 @@ const AllTime: FC<AllTimeProps> = ({
 						totalVolume: !compact,
 						pnl: !compact,
 					}}
+					compactPagination={true}
 					columnsDeps={[activeTab]}
+					noResultsMessage={
+						data?.length === 0 && (
+							<TableNoResults>{t('leaderboard.leaderboard.table.no-result')}</TableNoResults>
+						)
+					}
 					columns={[
 						{
 							header: () => (

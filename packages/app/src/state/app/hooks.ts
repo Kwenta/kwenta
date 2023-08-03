@@ -3,12 +3,10 @@ import { useEffect } from 'react'
 import { fetchBalances } from 'state/balances/actions'
 import { fetchEarnTokenPrices } from 'state/earn/actions'
 import { selectMarkets } from 'state/futures/selectors'
-import { useAppDispatch, useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
+import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks'
 import { fetchPreviousDayPrices, updatePrices } from 'state/prices/actions'
 import { setConnectionError } from 'state/prices/reducer'
 import sdk from 'state/sdk'
-import { fetchClaimableRewards } from 'state/staking/actions'
-import { selectTradingRewardsSupportedNetwork } from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 import { serializePrices } from 'utils/futures'
 
@@ -19,17 +17,11 @@ export function useAppData(ready: boolean) {
 	const wallet = useAppSelector(selectWallet)
 	const markets = useAppSelector(selectMarkets)
 	const network = useAppSelector(selectNetwork)
-	const networkSupportsTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	usePollAction('fetchEarnTokenPrices', fetchEarnTokenPrices, {
 		intervalTime: 60000 * 10,
 		dependencies: [wallet],
 		disabled: !wallet,
-	})
-
-	useFetchAction(fetchClaimableRewards, {
-		dependencies: [network, wallet],
-		disabled: !wallet || !networkSupportsTradingRewards,
 	})
 
 	usePollAction('fetchBalances', fetchBalances, { dependencies: [wallet, network] })

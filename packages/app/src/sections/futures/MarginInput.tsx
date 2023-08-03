@@ -9,13 +9,12 @@ import NumericInput from 'components/Input/NumericInput'
 import { FlexDivRow } from 'components/layout/flex'
 import SelectorButtons from 'components/SelectorButtons'
 import { Body } from 'components/Text'
-import { editCrossMarginTradeMarginDelta } from 'state/futures/actions'
+import { selectSelectedInputDenomination, selectPosition } from 'state/futures/selectors'
+import { editSmartMarginTradeMarginDelta } from 'state/futures/smartMargin/actions'
 import {
-	selectSelectedInputDenomination,
+	selectTotalAvailableMargin,
 	selectMarginDeltaInputValue,
-	selectIdleMargin,
-	selectPosition,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 const PERCENT_OPTIONS = ['10%', '25%', '50%', '100%']
@@ -27,21 +26,21 @@ type MarginInputProps = {
 const MarginInput: React.FC<MarginInputProps> = memo(({ isMobile }) => {
 	const dispatch = useAppDispatch()
 
-	const idleMargin = useAppSelector(selectIdleMargin)
+	const idleMargin = useAppSelector(selectTotalAvailableMargin)
 	const assetInputType = useAppSelector(selectSelectedInputDenomination)
 	const marginDeltaInputValue = useAppSelector(selectMarginDeltaInputValue)
-	const maxMargin = useAppSelector(selectIdleMargin)
+	const maxMargin = useAppSelector(selectTotalAvailableMargin)
 	const position = useAppSelector(selectPosition)
 
 	const onChangeValue = (_: ChangeEvent<HTMLInputElement>, v: string) => {
-		dispatch(editCrossMarginTradeMarginDelta(v))
+		dispatch(editSmartMarginTradeMarginDelta(v))
 	}
 
 	const onSelectPercent = (index: number) => {
 		const percent = PERCENT_OPTIONS[index].replace('%', '')
 		const margin = idleMargin.div(100).mul(percent)
 
-		dispatch(editCrossMarginTradeMarginDelta(floorNumber(margin).toString()))
+		dispatch(editSmartMarginTradeMarginDelta(floorNumber(margin).toString()))
 	}
 
 	const belowMinMargin = useMemo(

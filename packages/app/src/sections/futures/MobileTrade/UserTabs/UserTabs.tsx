@@ -2,11 +2,11 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import TabButton from 'components/Button/TabButton'
+import { selectPendingOrdersCount } from 'state/futures/selectors'
 import {
-	selectActiveSmartPositionsCount,
+	selectActiveSmartMarginPositionsCount,
 	selectAllConditionalOrders,
-	selectOpenDelayedOrders,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import ConditionalOrdersTab from './ConditionalOrdersTab'
@@ -16,9 +16,9 @@ import TradesTab from './TradesTab'
 
 const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0)
-	const openOrders = useAppSelector(selectOpenDelayedOrders)
+	const pendingOrdersCount = useAppSelector(selectPendingOrdersCount)
 	const conditionalOrders = useAppSelector(selectAllConditionalOrders)
-	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount)
+	const smartPositionsCount = useAppSelector(selectActiveSmartMarginPositionsCount)
 
 	const TABS = useMemo(() => {
 		return [
@@ -30,7 +30,7 @@ const UserTabs: React.FC = () => {
 			{
 				title: 'Pending',
 				component: <OrdersTab />,
-				badge: openOrders.length,
+				badge: pendingOrdersCount,
 			},
 			{
 				title: 'Orders',
@@ -42,7 +42,7 @@ const UserTabs: React.FC = () => {
 				component: <TradesTab />,
 			},
 		]
-	}, [conditionalOrders.length, openOrders.length, smartPositionsCount])
+	}, [conditionalOrders.length, pendingOrdersCount, smartPositionsCount])
 
 	return (
 		<Container>

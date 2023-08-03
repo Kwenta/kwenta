@@ -4,8 +4,8 @@ import { format } from 'date-fns'
 import { useLayoutEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { FuturesPositionTablePosition } from 'types/futures'
 
-import { SharePositionParams } from 'state/futures/types'
 import media from 'styles/media'
 import getLocale from 'utils/formatters/getLocale'
 
@@ -80,12 +80,12 @@ function getFontFamily(props: any) {
 	}
 }
 
-const PositionMetadata: React.FC<SharePositionParams> = ({ positionHistory, marketPrice }) => {
+const PositionMetadata: React.FC<{ position: FuturesPositionTablePosition }> = ({ position }) => {
 	const { t } = useTranslation()
 	const [currentTimestamp, setCurrentTimestamp] = useState(0)
 
-	const avgEntryPrice = positionHistory?.avgEntryPrice.toNumber().toString() ?? ''
-	const openTimestamp = positionHistory?.openTimestamp ?? 0
+	const avgEntryPrice = position?.activePosition?.details?.avgEntryPrice.toNumber().toString() ?? ''
+	const openTimestamp = position?.activePosition?.details?.openTimestamp ?? 0
 
 	useLayoutEffect(() => {
 		const now = new Date().getTime()
@@ -128,7 +128,7 @@ const PositionMetadata: React.FC<SharePositionParams> = ({ positionHistory, mark
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
 				<ContainerText className="date-or-price">
-					{formatNumber(marketPrice ?? ZERO_WEI)}
+					{formatNumber(position?.activePosition?.lastPrice ?? ZERO_WEI)}
 				</ContainerText>
 			</BottomRightContainer>
 		</>

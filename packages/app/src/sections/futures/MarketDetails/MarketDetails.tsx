@@ -10,10 +10,9 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import useWindowSize from 'hooks/useWindowSize'
+import { selectMarketAsset, selectMarketPriceInfo } from 'state/futures/common/selectors'
 import {
-	selectMarketAsset,
 	selectMarketInfo,
-	selectMarketPriceInfo,
 	selectSelectedInputHours,
 	selectSkewAdjustedPriceInfo,
 } from 'state/futures/selectors'

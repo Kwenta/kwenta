@@ -13,13 +13,13 @@ export const ZERO_CM_FEES = {
 export const ZERO_STATE_ISOLATED_ACCOUNT = {
 	position: undefined,
 	trades: [],
-	marginTransfers: [],
+	marketMarginTransfers: [],
 	positions: [],
 	delayedOrders: [],
 	positionHistory: [],
 }
 
-export const ZERO_STATE_CM_ACCOUNT = {
+export const ZERO_STATE_ACCOUNT = {
 	position: undefined,
 	balanceInfo: {
 		freeMargin: '0',
@@ -29,10 +29,17 @@ export const ZERO_STATE_CM_ACCOUNT = {
 	},
 	trades: [],
 	positions: [],
-	idleTransfers: [],
+	accountTransfers: [],
 	delayedOrders: [],
 	conditionalOrders: [],
 	positionHistory: [],
+}
+
+export const ZERO_STATE_CM_ACCOUNT = {
+	...ZERO_STATE_ACCOUNT,
+	balances: {},
+	availableMargin: '0',
+	asyncOrders: [],
 }
 
 export const DEFAULT_QUERY_STATUS = {
@@ -54,3 +61,5 @@ export const DEFAULT_MAP_BY_NETWORK = {
 	420: {},
 	10: {},
 }
+
+export const EST_KEEPER_GAS_FEE = 0.002

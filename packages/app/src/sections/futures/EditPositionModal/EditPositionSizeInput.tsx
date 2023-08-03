@@ -13,8 +13,11 @@ import { getStep } from 'components/Slider/Slider'
 import StyledSlider from 'components/Slider/StyledSlider'
 import Spacer from 'components/Spacer'
 import { selectShowPositionModal } from 'state/app/selectors'
-import { editCrossMarginPositionSize } from 'state/futures/actions'
-import { selectEditPositionInputs, selectEditPositionModalInfo } from 'state/futures/selectors'
+import { editCrossMarginPositionSize } from 'state/futures/smartMargin/actions'
+import {
+	selectEditPositionModalInfo,
+	selectSmartMarginEditPosInputs,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 type OrderSizingProps = {
@@ -28,7 +31,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 	({ isMobile, type, maxNativeValue, minNativeValue }) => {
 		const dispatch = useAppDispatch()
 
-		const { nativeSizeDelta } = useAppSelector(selectEditPositionInputs)
+		const { nativeSizeDelta } = useAppSelector(selectSmartMarginEditPosInputs)
 
 		const { position } = useAppSelector(selectEditPositionModalInfo)
 		const modal = useAppSelector(selectShowPositionModal)
@@ -36,7 +39,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 		const onSizeChange = useCallback(
 			(value: string) => {
 				if (modal) {
-					const side = position?.position?.side
+					const side = position?.activePosition.side
 					const sizeDelta =
 						(side === PositionSide.LONG && type === 'decrease') ||
 						(side === PositionSide.SHORT && type === 'increase')
@@ -45,7 +48,7 @@ const EditPositionSizeInput: React.FC<OrderSizingProps> = memo(
 					dispatch(editCrossMarginPositionSize(modal.marketKey, sizeDelta))
 				}
 			},
-			[dispatch, type, modal, position?.position?.side]
+			[dispatch, type, modal, position?.activePosition.side]
 		)
 
 		const handleSetMax = useCallback(() => {

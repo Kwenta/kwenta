@@ -4,14 +4,13 @@ import styled, { css } from 'styled-components'
 
 import { FlexDiv } from 'components/layout/flex'
 import TVChart from 'components/TVChart'
+import { selectMarketIndexPrice } from 'state/futures/common/selectors'
+import { selectPosition, selectSelectedMarketPositionHistory } from 'state/futures/selectors'
 import {
 	selectConditionalOrdersForMarket,
-	selectMarketIndexPrice,
-	selectPosition,
 	selectPositionPreviewData,
-	selectSelectedMarketPositionHistory,
 	selectTradePreview,
-} from 'state/futures/selectors'
+} from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 type PositionChartProps = {
@@ -32,16 +31,16 @@ export default function PositionChart({ display = true }: PositionChartProps) {
 	const modifiedAverage = positionPreview?.avgEntryPrice ?? ZERO_WEI
 
 	const activePosition = useMemo(() => {
-		if (!position?.position) {
+		if (!position) {
 			return null
 		}
 
 		return {
 			// As there's often a delay in subgraph sync we use the contract last
 			// price until we get average price to keep it snappy on opening a position
-			price: subgraphPosition?.avgEntryPrice ?? position.position.lastPrice,
-			size: position.position.size,
-			liqPrice: position.position?.liquidationPrice,
+			price: subgraphPosition?.avgEntryPrice ?? position.activePosition.lastPrice,
+			size: position.activePosition.size,
+			liqPrice: position.activePosition.liquidationPrice,
 		}
 	}, [subgraphPosition, position])
 

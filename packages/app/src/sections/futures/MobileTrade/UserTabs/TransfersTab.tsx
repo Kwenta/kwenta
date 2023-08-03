@@ -1,3 +1,4 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars } from '@kwenta/sdk/utils'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,12 +9,9 @@ import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
-import {
-	selectFuturesType,
-	selectIdleMarginTransfers,
-	selectMarketMarginTransfers,
-	selectQueryStatuses,
-} from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors'
+import { selectAccountMarginTransfers } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { timePresentation } from 'utils/formatters/date'
@@ -25,7 +23,7 @@ const TransfersTab: React.FC = () => {
 	const isL2 = useIsL2()
 	const accountType = useAppSelector(selectFuturesType)
 	const marketMarginTransfers = useAppSelector(selectMarketMarginTransfers)
-	const idleMarginTransfers = useAppSelector(selectIdleMarginTransfers)
+	const idleMarginTransfers = useAppSelector(selectAccountMarginTransfers)
 
 	const {
 		marginTransfers: { status: marginTransfersStatus },
@@ -36,8 +34,11 @@ const TransfersTab: React.FC = () => {
 		[marketMarginTransfers, idleMarginTransfers, marginTransfersStatus]
 	)
 
+	// TODO: Move to selector
 	const marginTransfers = useMemo(() => {
-		return accountType === 'isolated_margin' ? marketMarginTransfers : idleMarginTransfers
+		return accountType === FuturesMarginType.CROSS_MARGIN
+			? marketMarginTransfers
+			: idleMarginTransfers
 	}, [accountType, idleMarginTransfers, marketMarginTransfers])
 
 	return (

@@ -1,7 +1,7 @@
 import { FuturesPositionHistory, PositionSide } from '@kwenta/sdk/types'
 import { useMemo } from 'react'
 
-import { selectTradePreview } from 'state/futures/selectors'
+import { selectTradePreview } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 // Used to calculate the new average entry price of a modified position

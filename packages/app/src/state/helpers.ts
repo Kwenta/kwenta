@@ -1,4 +1,4 @@
-import { FuturesAccountType } from '@kwenta/sdk/types'
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import Wei, { wei } from '@synthetixio/wei'
 
 // Redux recommends that values stored in state are serializable
@@ -48,5 +48,5 @@ export const deserializeWeiObject = (object: object, keys: Set<string>, prefix?:
 	}, {} as any)
 }
 
-export const accountType = (type: FuturesAccountType) =>
-	type === 'cross_margin' || type === 'smart_margin' ? 'crossMargin' : 'isolatedMargin'
+export const accountType = (type: FuturesMarginType) =>
+	type === FuturesMarginType.CROSS_MARGIN ? 'crossMargin' : 'smartMargin'

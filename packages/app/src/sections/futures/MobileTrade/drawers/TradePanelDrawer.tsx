@@ -1,21 +1,30 @@
+import { FuturesMarginType } from '@kwenta/sdk/types'
 import { FC } from 'react'
 import styled from 'styled-components'
 
 import FullScreenModal from 'components/FullScreenModal'
 import { zIndex } from 'constants/ui'
-import TradeIsolatedMargin from 'sections/futures/Trade/TradePanel'
+import TradePanelCrossMargin from 'sections/futures/Trade/TradePanelCrossMargin'
+import TradePanelSmartMargin from 'sections/futures/Trade/TradePanelSmartMargin'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import { useAppSelector } from 'state/hooks'
 
 type TradePanelDrawerProps = {
 	open: boolean
 	closeDrawer(): void
 }
 const TradePanelDrawer: FC<TradePanelDrawerProps> = ({ open, closeDrawer }) => {
+	const type = useAppSelector(selectFuturesType)
 	return (
 		<StyledModal isOpen={open} onDismiss={closeDrawer}>
 			<Background>
 				<Closer onClick={closeDrawer} />
 				<Foreground>
-					<TradeIsolatedMargin mobile closeDrawer={closeDrawer} />
+					{type === FuturesMarginType.CROSS_MARGIN ? (
+						<TradePanelCrossMargin mobile closeDrawer={closeDrawer} />
+					) : (
+						<TradePanelSmartMargin mobile closeDrawer={closeDrawer} />
+					)}
 				</Foreground>
 			</Background>
 		</StyledModal>

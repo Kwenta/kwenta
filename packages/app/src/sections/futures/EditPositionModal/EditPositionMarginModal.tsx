@@ -17,21 +17,21 @@ import Spacer from 'components/Spacer'
 import { Body } from 'components/Text'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectShowPositionModal, selectTransaction } from 'state/app/selectors'
+import { clearTradeInputs } from 'state/futures/actions'
+import { selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
-	approveCrossMargin,
-	clearTradeInputs,
-	editCrossMarginPositionMargin,
-	submitCrossMarginAdjustMargin,
-} from 'state/futures/actions'
+	approveSmartMargin,
+	editSmartMarginPositionMargin,
+	submitSmartMarginAdjustMargin,
+} from 'state/futures/smartMargin/actions'
 import {
 	selectEditMarginAllowanceValid,
-	selectEditPositionInputs,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
-	selectIdleMargin,
+	selectTotalAvailableMargin,
 	selectIsFetchingTradePreview,
-	selectSubmittingFuturesTx,
-} from 'state/futures/selectors'
+	selectSmartMarginEditPosInputs,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import EditPositionMarginInput from './EditPositionMarginInput'
@@ -44,8 +44,8 @@ export default function EditPositionMarginModal() {
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx)
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview)
 	const preview = useAppSelector(selectEditPositionPreview)
-	const { marginDelta } = useAppSelector(selectEditPositionInputs)
-	const idleMargin = useAppSelector(selectIdleMargin)
+	const { marginDelta } = useAppSelector(selectSmartMarginEditPosInputs)
+	const idleMargin = useAppSelector(selectTotalAvailableMargin)
 	const modal = useAppSelector(selectShowPositionModal)
 	const { market, position } = useAppSelector(selectEditPositionModalInfo)
 	const allowanceValid = useAppSelector(selectEditMarginAllowanceValid)
@@ -62,18 +62,18 @@ export default function EditPositionMarginModal() {
 	)
 
 	const maxWithdraw = useMemo(() => {
-		const maxSize = position?.remainingMargin.mul(market?.appMaxLeverage ?? 1)
-		const currentSize = position?.position?.notionalValue
+		const maxSize = position?.remainingMargin?.mul(market?.appMaxLeverage ?? 1)
+		const currentSize = position?.activePosition.notionalValue
 		const max = maxSize?.sub(currentSize).div(market?.appMaxLeverage ?? 1) ?? wei(0)
-		const resultingMarginMax = position?.remainingMargin.sub(max) ?? wei(0)
-		const remainingMarginMax = position?.remainingMargin.sub(MIN_MARGIN_AMOUNT) ?? wei(0)
+		const resultingMarginMax = position?.remainingMargin?.sub(max) ?? wei(0)
+		const remainingMarginMax = position?.remainingMargin?.sub(MIN_MARGIN_AMOUNT) ?? wei(0)
 
 		return max.lt(0) || remainingMarginMax.lt(0)
 			? ZERO_WEI
 			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
 			? max
 			: remainingMarginMax
-	}, [position?.remainingMargin, position?.position?.notionalValue, market?.appMaxLeverage])
+	}, [position?.remainingMargin, position?.activePosition.notionalValue, market?.appMaxLeverage])
 
 	const maxUsdInputAmount = useMemo(
 		() => (transferType === 0 ? idleMargin : maxWithdraw),
@@ -88,8 +88,8 @@ export default function EditPositionMarginModal() {
 	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount])
 
 	const maxLeverageExceeded = useMemo(
-		() => transferType === 1 && position?.position?.leverage.gt(market?.appMaxLeverage ?? 1),
-		[transferType, position?.position?.leverage, market?.appMaxLeverage]
+		() => transferType === 1 && position?.activePosition.leverage?.gt(market?.appMaxLeverage ?? 1),
+		[transferType, position?.activePosition.leverage, market?.appMaxLeverage]
 	)
 
 	const previewError = useMemo(() => {
@@ -112,18 +112,18 @@ export default function EditPositionMarginModal() {
 	}
 
 	const submitMarginChange = useCallback(() => {
-		dispatch(submitCrossMarginAdjustMargin())
+		dispatch(submitSmartMarginAdjustMargin())
 	}, [dispatch])
 
 	const onClose = () => {
 		if (modal?.marketKey) {
-			dispatch(editCrossMarginPositionMargin(modal.marketKey, ''))
+			dispatch(editSmartMarginPositionMargin(modal.marketKey, ''))
 		}
 		dispatch(setShowPositionModal(null))
 	}
 
 	const handleApproveSmartMargin = useCallback(async () => {
-		dispatch(approveCrossMargin())
+		dispatch(approveSmartMargin())
 	}, [dispatch])
 
 	const depositButtonText = allowanceValid
@@ -164,7 +164,7 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					textValue={position?.position?.leverage.toString(2) + 'x'}
+					textValue={position?.activePosition.leverage?.toString(2) + 'x'}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -188,7 +188,7 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					textValue={formatDollars(position?.position?.liquidationPrice || 0)}
+					textValue={formatDollars(position?.activePosition.liquidationPrice || 0)}
 				/>
 			</InfoBoxContainer>
 			<Spacer height={20} />
