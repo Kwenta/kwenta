@@ -1,4 +1,4 @@
-import { ZERO_WEI } from '@kwenta/sdk/dist/constants'
+import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesMarginType } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatPercent } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
