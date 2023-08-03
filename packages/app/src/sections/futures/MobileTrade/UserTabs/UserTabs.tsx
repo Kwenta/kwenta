@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import TabButton from 'components/Button/TabButton'
 import { selectPendingOrdersCount } from 'state/futures/selectors'
 import {
-	selectActiveSmartPositionsCount,
+	selectActiveSmartMarginPositionsCount,
 	selectAllConditionalOrders,
 } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
@@ -18,7 +18,7 @@ const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0)
 	const pendingOrdersCount = useAppSelector(selectPendingOrdersCount)
 	const conditionalOrders = useAppSelector(selectAllConditionalOrders)
-	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount)
+	const smartPositionsCount = useAppSelector(selectActiveSmartMarginPositionsCount)
 
 	const TABS = useMemo(() => {
 		return [

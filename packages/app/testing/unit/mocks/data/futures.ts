@@ -18,8 +18,8 @@ export const mockSmartMarginAccount = (freeMargin: string = '1000', keeperEthBal
 	account: '0xe1ba3B0A962FbC525a9f9503AEE3310940Bb2a6F',
 	positionHistory: [],
 	trades: [],
-	marginTransfers: [],
-	idleTransfers: [],
+	marketMarginTransfers: [],
+	accountTransfers: [],
 	balanceInfo: {
 		freeMargin: freeMargin,
 		keeperEthBal: keeperEthBal,

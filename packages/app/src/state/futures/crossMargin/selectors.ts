@@ -7,7 +7,7 @@ import {
 } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
-import { FuturesPositionTablePosition } from 'types/futures'
+import { FuturesPositionTablePosition, FuturesPositionTablePositionActive } from 'types/futures'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER } from 'constants/defaults'
 import { selectSynthV3Balances } from 'state/balances/selectors'
@@ -165,7 +165,7 @@ export const selectCrossMarginMarginTransfers = createSelector(
 	(wallet, network, futures) => {
 		if (!wallet) return []
 		const account = futures.accounts[network]?.[wallet]
-		return account?.marginTransfers ?? []
+		return account?.marketMarginTransfers ?? []
 	}
 )
 
@@ -217,18 +217,22 @@ export const selectCrossMarginPositions = createSelector(
 				const markPrice = markPrices[market?.marketKey!] ?? wei(0)
 
 				acc.push({
-					...position,
 					market: market,
-					notionalValue: position.size.mul(markPrice),
-					lastPrice: markPrice,
-					initialMargin: wei(0),
-					leverage: wei(0),
-					marginRatio: wei(0),
-					avgEntryPrice: wei(0),
-
-					// TODO: Liquidation state
-					canLiquidatePosition: false,
-					liquidationPrice: wei(0),
+					activePosition: {
+						...position,
+						// TODO: Liquidation state
+						canLiquidatePosition: false,
+						liquidationPrice: wei(0),
+						notionalValue: position.size.mul(markPrice),
+						lastPrice: markPrice,
+						initialMargin: wei(0),
+						leverage: wei(0),
+						marginRatio: wei(0),
+						fundingIndex: 0,
+						initialLeverage: wei(0),
+						// TODO: Map position history from subgraph ata
+						details: undefined,
+					},
 				})
 			}
 			return acc
@@ -236,8 +240,15 @@ export const selectCrossMarginPositions = createSelector(
 	}
 )
 
-export const selectCrossMarginPosition = createSelector(
+export const selectCrossMarginActivePositions = createSelector(
 	selectCrossMarginPositions,
+	(positions) => {
+		return positions.filter((p) => !!p.activePosition) as FuturesPositionTablePositionActive[]
+	}
+)
+
+export const selectSelectedCrossMarginPosition = createSelector(
+	selectCrossMarginActivePositions,
 	selectV3MarketInfo,
 	(positions, market) => {
 		const position = positions.find((p) => p.market.marketKey === market?.marketKey)
@@ -328,7 +339,7 @@ export const selectEditCMPositionModalMarketId = (state: RootState) =>
 
 export const selectCloseCMPositionModalInfo = createSelector(
 	selectEditCMPositionModalMarketId,
-	selectCrossMarginPositions,
+	selectCrossMarginActivePositions,
 	selectV3Markets,
 	selectPrices,
 	(marketKey, crossPositions, markets, prices) => {
@@ -359,7 +370,7 @@ export const selectCloseCMPositionPreview = createSelector(
 		if (unserialized) {
 			const priceImpact = getDefaultPriceImpact('market')
 			const desiredFillPrice = calculateDesiredFillPrice(
-				position?.side === PositionSide.LONG ? wei(-1) : wei(1),
+				position?.activePosition.side === PositionSide.LONG ? wei(-1) : wei(1),
 				marketPrice,
 				priceImpact
 			)

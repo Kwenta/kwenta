@@ -20,12 +20,12 @@ import { IPerpsV2MarketConsolidated } from '../contracts/types/PerpsV2Market'
 import { IPerpsV2MarketSettings, PerpsV2MarketData } from '../contracts/types/PerpsV2MarketData'
 import {
 	querySmartMarginAccounts,
-	querySmartMarginTransfers,
 	queryFuturesTrades,
 	queryIsolatedMarginTransfers,
 	queryPositionHistory,
 	queryTrades,
 	queryFundingRateHistory,
+	querySmartMarginAccountTransfers,
 } from '../queries/futures'
 import { NetworkId, NetworkOverrideOptions } from '../types/common'
 import {
@@ -421,19 +421,17 @@ export default class FuturesService {
 	}
 
 	/**
-	 * @desc Get isolated margin transfer history for a given wallet address
+	 * @desc Get market margin transfer history for a given wallet address
 	 * @param walletAddress Wallet address
-	 * @returns Array of past isolated margin transfers for the given wallet address
+	 * @returns Array of past margin trensfers between perps markets for the given wallet address
 	 * @example
 	 * ```ts
 	 * const sdk = new KwentaSDK()
-	 * const transfers = await sdk.futures.getIsolatedMarginTransfers()
+	 * const transfers = await sdk.futures.getMarketMarginTransfers()
 	 * console.log(transfers)
 	 * ```
 	 */
-	public async getIsolatedMarginTransfers(
-		walletAddress?: string | null
-	): Promise<MarginTransfer[]> {
+	public async getMarketMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress
 		return queryIsolatedMarginTransfers(this.sdk, address)
 	}
@@ -441,17 +439,19 @@ export default class FuturesService {
 	/**
 	 * @desc Get smart margin transfer history for a given wallet address
 	 * @param walletAddress Wallet address
-	 * @returns Array of past smart margin transfers for the given wallet address
+	 * @returns Array of past smart margin account deposits and withdrawals for the given wallet address
 	 * @example
 	 * ```ts
 	 * const sdk = new KwentaSDK()
-	 * const transfers = await sdk.futures.getSmartMarginTransfers()
+	 * const transfers = await sdk.futures.getSmartMarginAccountTransfers()
 	 * console.log(transfers)
 	 * ```
 	 */
-	public async getSmartMarginTransfers(walletAddress?: string | null): Promise<MarginTransfer[]> {
+	public async getSmartMarginAccountTransfers(
+		walletAddress?: string | null
+	): Promise<MarginTransfer[]> {
 		const address = walletAddress ?? this.sdk.context.walletAddress
-		return querySmartMarginTransfers(this.sdk, address)
+		return querySmartMarginAccountTransfers(this.sdk, address)
 	}
 
 	/**

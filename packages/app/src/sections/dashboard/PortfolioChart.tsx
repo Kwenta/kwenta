@@ -23,7 +23,6 @@ import {
 	selectSelectedPortfolioTimeframe,
 	selectTotalUnrealizedPnl,
 } from 'state/futures/selectors'
-import { selectBuyingPower } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 
 import { Timeframe } from './Timeframe'
@@ -137,7 +136,6 @@ const PortfolioChart: FC = () => {
 	const { cross_margin: crossPortfolioData, smart_margin: smartPortfolioData } =
 		useAppSelector(selectPortfolioChartData)
 
-	const buyingPower = useAppSelector(selectBuyingPower)
 	const upnl = useAppSelector(selectTotalUnrealizedPnl)
 
 	const [hoverValue, setHoverValue] = useState<number | null>(null)
@@ -192,12 +190,6 @@ const PortfolioChart: FC = () => {
 						<NumericValue colored value={upnl ?? ZERO_WEI}>
 							{upnl.gt(ZERO_WEI) ? '+' : ''}
 							{formatDollars(upnl, { suggestDecimals: true })}
-						</NumericValue>
-					</GridBox>
-					<GridBox>
-						<PortfolioTitle>{t('dashboard.overview.portfolio-chart.buying-power')}</PortfolioTitle>
-						<NumericValue value={buyingPower ?? ZERO_WEI}>
-							{formatDollars(buyingPower, { suggestDecimals: true })}
 						</NumericValue>
 					</GridBox>
 					{!!total && portfolioData.length >= 2 ? (
@@ -279,6 +271,7 @@ const GridBox = styled.div`
 	flex-direction: column;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 16px;
+	justify-content: center;
 `
 
 const TimeframeOverlay = styled.div`
@@ -314,7 +307,7 @@ const MobileChartGrid = styled.div`
 const ChartGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 3fr;
-	grid-template-rows: 1fr 1fr 1fr;
+	grid-template-rows: 2fr 1fr;
 	grid-auto-flow: column;
 	width: 100%;
 	border: ${(props) => props.theme.colors.selectedTheme.border};

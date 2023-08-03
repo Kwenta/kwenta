@@ -28,7 +28,7 @@ import {
 	selectEditMarginAllowanceValid,
 	selectEditPositionModalInfo,
 	selectEditPositionPreview,
-	selectIdleMargin,
+	selectTotalAvailableMargin,
 	selectIsFetchingTradePreview,
 	selectSmartMarginEditPosInputs,
 } from 'state/futures/smartMargin/selectors'
@@ -45,7 +45,7 @@ export default function EditPositionMarginModal() {
 	const isFetchingPreview = useAppSelector(selectIsFetchingTradePreview)
 	const preview = useAppSelector(selectEditPositionPreview)
 	const { marginDelta } = useAppSelector(selectSmartMarginEditPosInputs)
-	const idleMargin = useAppSelector(selectIdleMargin)
+	const idleMargin = useAppSelector(selectTotalAvailableMargin)
 	const modal = useAppSelector(selectShowPositionModal)
 	const { market, position } = useAppSelector(selectEditPositionModalInfo)
 	const allowanceValid = useAppSelector(selectEditMarginAllowanceValid)
@@ -63,7 +63,7 @@ export default function EditPositionMarginModal() {
 
 	const maxWithdraw = useMemo(() => {
 		const maxSize = position?.remainingMargin?.mul(market?.appMaxLeverage ?? 1)
-		const currentSize = position?.notionalValue
+		const currentSize = position?.activePosition.notionalValue
 		const max = maxSize?.sub(currentSize).div(market?.appMaxLeverage ?? 1) ?? wei(0)
 		const resultingMarginMax = position?.remainingMargin?.sub(max) ?? wei(0)
 		const remainingMarginMax = position?.remainingMargin?.sub(MIN_MARGIN_AMOUNT) ?? wei(0)
@@ -73,7 +73,7 @@ export default function EditPositionMarginModal() {
 			: resultingMarginMax.gte(MIN_MARGIN_AMOUNT)
 			? max
 			: remainingMarginMax
-	}, [position?.remainingMargin, position?.notionalValue, market?.appMaxLeverage])
+	}, [position?.remainingMargin, position?.activePosition.notionalValue, market?.appMaxLeverage])
 
 	const maxUsdInputAmount = useMemo(
 		() => (transferType === 0 ? idleMargin : maxWithdraw),
@@ -88,8 +88,8 @@ export default function EditPositionMarginModal() {
 	const invalid = useMemo(() => marginWei.gt(maxUsdInputAmount), [marginWei, maxUsdInputAmount])
 
 	const maxLeverageExceeded = useMemo(
-		() => transferType === 1 && position?.leverage?.gt(market?.appMaxLeverage ?? 1),
-		[transferType, position?.leverage, market?.appMaxLeverage]
+		() => transferType === 1 && position?.activePosition.leverage?.gt(market?.appMaxLeverage ?? 1),
+		[transferType, position?.activePosition.leverage, market?.appMaxLeverage]
 	)
 
 	const previewError = useMemo(() => {
@@ -164,7 +164,7 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					textValue={position?.leverage?.toString(2) + 'x'}
+					textValue={position?.activePosition.leverage?.toString(2) + 'x'}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -188,7 +188,7 @@ export default function EditPositionMarginModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					textValue={formatDollars(position?.liquidationPrice || 0)}
+					textValue={formatDollars(position?.activePosition.liquidationPrice || 0)}
 				/>
 			</InfoBoxContainer>
 			<Spacer height={20} />

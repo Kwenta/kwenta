@@ -4,7 +4,7 @@ import React, { memo } from 'react'
 import { InfoBoxRow } from 'components/InfoBox'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
-import { selectSNXUSDBalance } from 'state/balances/selectors'
+import { selectSusdBalance } from 'state/balances/selectors'
 import {
 	selectAvailableMarginInMarkets,
 	selectSmartMarginBalanceInfo,
@@ -22,7 +22,7 @@ function SmartMarginInfoBox() {
 	const openModal = useAppSelector(selectShowModal)
 	const { freeMargin } = useAppSelector(selectSmartMarginBalanceInfo)
 	const idleMarginInMarkets = useAppSelector(selectAvailableMarginInMarkets)
-	const walletBal = useAppSelector(selectSNXUSDBalance)
+	const walletBal = useAppSelector(selectSusdBalance)
 
 	return (
 		<>

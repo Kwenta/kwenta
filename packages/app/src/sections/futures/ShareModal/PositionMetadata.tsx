@@ -84,8 +84,8 @@ const PositionMetadata: React.FC<{ position: FuturesPositionTablePosition }> = (
 	const { t } = useTranslation()
 	const [currentTimestamp, setCurrentTimestamp] = useState(0)
 
-	const avgEntryPrice = position?.history?.avgEntryPrice.toNumber().toString() ?? ''
-	const openTimestamp = position?.history?.openTimestamp ?? 0
+	const avgEntryPrice = position?.activePosition?.details?.avgEntryPrice.toNumber().toString() ?? ''
+	const openTimestamp = position?.activePosition?.details?.openTimestamp ?? 0
 
 	useLayoutEffect(() => {
 		const now = new Date().getTime()
@@ -128,7 +128,7 @@ const PositionMetadata: React.FC<{ position: FuturesPositionTablePosition }> = (
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
 				<ContainerText className="date-or-price">
-					{formatNumber(position?.lastPrice ?? ZERO_WEI)}
+					{formatNumber(position?.activePosition?.lastPrice ?? ZERO_WEI)}
 				</ContainerText>
 			</BottomRightContainer>
 		</>

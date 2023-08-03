@@ -15,7 +15,7 @@ import {
 } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import Wei, { wei } from '@synthetixio/wei'
-import { FuturesPositionTablePosition } from 'types/futures'
+import { FuturesPositionTablePosition, FuturesPositionTablePositionActive } from 'types/futures'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER } from 'constants/defaults'
 import { selectSusdBalance } from 'state/balances/selectors'
@@ -294,7 +294,7 @@ export const selectSelectedMarketPositionHistory = createSelector(
 	}
 )
 
-export const selectSmartMarginPositions = createSelector(
+export const selectAllSmartMarginPositions = createSelector(
 	selectSmartMarginAccountData,
 	selectAllConditionalOrders,
 	selectMarkPricesV2,
@@ -308,7 +308,7 @@ export const selectSmartMarginPositions = createSelector(
 				const history = positionHistory.find((ph) => {
 					return ph.isOpen && ph.asset === pos.asset
 				})
-				if (market && pos.position) {
+				if (market) {
 					const stopLoss = orders.find((o) => {
 						return (
 							o.marketKey === market.marketKey &&
@@ -326,11 +326,15 @@ export const selectSmartMarginPositions = createSelector(
 					)
 
 					const position: FuturesPositionTablePosition = {
-						...pos.position,
+						activePosition: pos.position
+							? {
+									...pos.position,
+									details: history,
+							  }
+							: null,
 						remainingMargin: pos.remainingMargin,
 						stopLoss: stopLoss,
 						takeProfit: takeProfit,
-						avgEntryPrice: history?.avgEntryPrice ?? ZERO_WEI,
 						market,
 					}
 					acc.push(position)
@@ -341,25 +345,26 @@ export const selectSmartMarginPositions = createSelector(
 	}
 )
 
+export const selectSmartMarginActivePositions = createSelector(
+	selectAllSmartMarginPositions,
+	(positions) => positions.filter((p) => !!p.activePosition) as FuturesPositionTablePositionActive[]
+)
+
 export const selectActiveSmartMarginPositionsCount = createSelector(
-	selectSmartMarginPositions,
+	selectSmartMarginActivePositions,
 	(positions) => {
 		return positions.length
 	}
 )
 
-export const selectActiveSmartPositionsCount = createSelector(
-	selectSmartMarginPositions,
+export const selectTotalUnrealizedPnl = createSelector(
+	selectSmartMarginActivePositions,
 	(positions) => {
-		return positions.length
+		return positions.reduce((acc, p) => {
+			return acc.add(p.activePosition.pnl ?? ZERO_WEI)
+		}, ZERO_WEI)
 	}
 )
-
-export const selectTotalUnrealizedPnl = createSelector(selectSmartMarginPositions, (positions) => {
-	return positions.reduce((acc, p) => {
-		return acc.add(p.pnl ?? ZERO_WEI)
-	}, ZERO_WEI)
-})
 
 export const selectSubmittingFuturesTx = createSelector(
 	(state: RootState) => state.app,
@@ -457,8 +462,8 @@ export const selectIsMarketCapReached = createSelector(
 	}
 )
 
-export const selectSmartMarginPosition = createSelector(
-	selectSmartMarginPositions,
+export const selectSelectedSmartMarginPosition = createSelector(
+	selectSmartMarginActivePositions,
 	selectV2MarketInfo,
 	(positions, market) => {
 		const position = positions.find((p) => p.market.marketKey === market?.marketKey)
@@ -480,9 +485,9 @@ export const selectSmartMarginMaxLeverage = createSelector(selectV2MarketInfo, (
 
 export const selectAboveMaxLeverage = createSelector(
 	selectSmartMarginMaxLeverage,
-	selectSmartMarginPosition,
+	selectSelectedSmartMarginPosition,
 	(maxLeverage, position) => {
-		return position?.leverage && maxLeverage.lt(position.leverage)
+		return position?.activePosition.leverage && maxLeverage.lt(position.activePosition.leverage)
 	}
 )
 
@@ -508,12 +513,12 @@ export const selectSmartMarginDepositApproved = createSelector(
 )
 
 export const selectMarginInMarkets = (isSuspended: boolean = false) =>
-	createSelector(selectSmartMarginPositions, (positions) => {
+	createSelector(selectAllSmartMarginPositions, (positions) => {
 		const idleInMarkets = positions
 			.filter((p) => {
 				return p.market && p.market.isSuspended === isSuspended
 			})
-			.filter((p) => !p?.size.abs().gt(0) && p.remainingMargin?.gt(0))
+			.filter((p) => !p?.activePosition?.size.abs().gt(0) && p.remainingMargin?.gt(0))
 			.reduce((acc, p) => acc.add(p.remainingMargin), wei(0))
 		return idleInMarkets
 	})
@@ -522,7 +527,16 @@ export const selectAvailableMarginInMarkets = selectMarginInMarkets()
 
 export const selectLockedMarginInMarkets = selectMarginInMarkets(true)
 
-export const selectIdleMargin = createSelector(
+export const selectIdleAccountMargin = createSelector(
+	selectAvailableMarginInMarkets,
+	selectLockedMarginInMarkets,
+	selectSmartMarginBalanceInfo,
+	(lockedMargin, availableInMarkets, { freeMargin }) => {
+		return lockedMargin.add(availableInMarkets).add(freeMargin)
+	}
+)
+
+export const selectTotalAvailableMargin = createSelector(
 	selectAvailableMarginInMarkets,
 	selectSmartMarginBalanceInfo,
 	selectSusdBalance,
@@ -618,7 +632,7 @@ export const selectKeeperDepositExceedsBal = createSelector(
 
 export const selectEditPositionModalInfo = createSelector(
 	selectEditPositionModalMarket,
-	selectSmartMarginPositions,
+	selectSmartMarginActivePositions,
 	selectV2Markets,
 	selectPrices,
 	(modalMarketKey, smartPositions, markets, prices) => {
@@ -780,7 +794,7 @@ export const selectClosePositionPreview = createSelector(
 			let orderPrice =
 				(orderType === 'market' ? unserialized.price : wei(price?.value || 0)) ?? wei(0)
 			const desiredFillPrice = calculateDesiredFillPrice(
-				position?.side === PositionSide.LONG ? wei(-1) : wei(1),
+				position?.activePosition?.side === PositionSide.LONG ? wei(-1) : wei(1),
 				orderPrice,
 				priceImpact
 			)
@@ -798,7 +812,7 @@ export const selectClosePositionPreview = createSelector(
 )
 
 export const selectSmartMarginLeverage = createSelector(
-	selectSmartMarginPosition,
+	selectSelectedSmartMarginPosition,
 	selectSmartMarginTradeInputs,
 	(position, { susdSize }) => {
 		const remainingMargin = position?.remainingMargin
@@ -810,18 +824,15 @@ export const selectSmartMarginLeverage = createSelector(
 export const selectSmartMarginTransfers = createSelector(
 	selectSmartMarginAccountData,
 	(account) => {
-		return account?.marginTransfers ?? []
+		return account?.marketMarginTransfers ?? []
 	}
 )
 
-export const selectIdleMarginTransfers = createSelector(
-	selectWallet,
-	selectNetwork,
-	(state: RootState) => state.smartMargin,
-	(wallet, network, smartMargin) => {
-		if (!wallet) return []
-		const account = smartMargin.accounts[network]?.[wallet]
-		return account?.idleTransfers ?? []
+export const selectAccountMarginTransfers = createSelector(
+	selectSmartMarginAccountData,
+	(account) => {
+		if (!account) return []
+		return account?.accountTransfers ?? []
 	}
 )
 
@@ -1074,7 +1085,7 @@ type PositionPreviewData = {
 
 export const selectPositionPreviewData = createSelector(
 	selectTradePreview,
-	selectSmartMarginPosition,
+	selectSelectedSmartMarginPosition,
 	selectAverageEntryPrice,
 	(tradePreview, position, modifiedAverage) => {
 		if (!position || tradePreview === null) {
@@ -1131,7 +1142,7 @@ export const selectSmartMarginPreviewCount = (state: RootState) =>
 	state.smartMargin.previewDebounceCount
 
 export const selectBuyingPower = createSelector(
-	selectSmartMarginPositions,
+	selectSmartMarginActivePositions,
 	selectSmartMarginMaxLeverage,
 	(positions, maxLeverage) => {
 		const totalMargin = positions.reduce((acc, p) => {
@@ -1153,7 +1164,7 @@ export const selectFuturesFeesForAccount = (state: RootState) =>
 	state.smartMargin.futuresFeesForAccount
 
 export const selectPlaceOrderTranslationKey = createSelector(
-	selectSmartMarginPosition,
+	selectSelectedSmartMarginPosition,
 	selectSmartMarginMarginDelta,
 	selectSmartMarginBalanceInfo,
 	(state: RootState) => state.smartMargin.orderType,

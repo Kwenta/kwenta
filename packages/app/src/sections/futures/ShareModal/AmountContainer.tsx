@@ -18,7 +18,7 @@ const AmountContainer: FC<Props> = ({ position }) => {
 	const defaultAsset = useAppSelector(selectMarketAsset)
 	const marketAsset = position?.market.asset ?? defaultAsset
 	const marketName = getMarketName(marketAsset)
-	const positionDetails = position ?? null
+	const positionDetails = position?.activePosition ?? null
 	const leverage = formatNumber(positionDetails?.leverage ?? ZERO_WEI) + 'x'
 	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT
 	const pnlPct = positionDetails?.pnlPct.mul(100)

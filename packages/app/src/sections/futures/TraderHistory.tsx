@@ -45,7 +45,9 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						? positions.find((p) => p.market.marketKey === stat.marketKey)
 						: null
 
-					const funding = stat.netFunding.add(thisPosition?.accruedFunding ?? ZERO_WEI)
+					const funding = stat.netFunding.add(
+						thisPosition?.activePosition?.accruedFunding ?? ZERO_WEI
+					)
 					const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
 
 					return {

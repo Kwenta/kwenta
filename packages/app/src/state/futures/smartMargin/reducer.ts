@@ -312,10 +312,10 @@ const smartMarginSlice = createSlice({
 		builder.addCase(fetchMarginTransfersV2.fulfilled, (smartMargin, { payload }) => {
 			smartMargin.queryStatuses.marginTransfers = SUCCESS_STATUS
 			if (payload) {
-				const { context, marginTransfers, idleTransfers } = payload
+				const { context, marketMarginTransfers, accountTransfers } = payload
 				const newAccountData = {
-					marginTransfers,
-					idleTransfers,
+					marketMarginTransfers,
+					accountTransfers,
 				}
 				updateSmartMarginAccount(smartMargin, context.network, context.wallet, newAccountData)
 			}

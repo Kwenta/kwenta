@@ -12,7 +12,7 @@ import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import { selectFuturesType } from 'state/futures/common/selectors'
 import { selectMarketMarginTransfers, selectQueryStatuses } from 'state/futures/selectors'
-import { selectIdleMarginTransfers } from 'state/futures/smartMargin/selectors'
+import { selectAccountMarginTransfers } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink } from 'styles/common'
@@ -25,7 +25,7 @@ const Transfers: FC = () => {
 	const isL2 = useIsL2()
 	const accountType = useAppSelector(selectFuturesType)
 	const marketMarginTransfers = useAppSelector(selectMarketMarginTransfers)
-	const idleMarginTransfers = useAppSelector(selectIdleMarginTransfers)
+	const idleMarginTransfers = useAppSelector(selectAccountMarginTransfers)
 
 	const {
 		marginTransfers: { status: marginTransfersStatus },

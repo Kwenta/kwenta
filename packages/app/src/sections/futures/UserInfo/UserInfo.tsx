@@ -17,7 +17,7 @@ import { selectActiveCrossMarginPositionsCount } from 'state/futures/crossMargin
 import { selectPosition, selectPendingOrdersCount } from 'state/futures/selectors'
 import { fetchAllV2TradesForAccount } from 'state/futures/smartMargin/actions'
 import {
-	selectActiveSmartPositionsCount,
+	selectActiveSmartMarginPositionsCount,
 	selectAllConditionalOrders,
 } from 'state/futures/smartMargin/selectors'
 import { useAppSelector, useFetchAction, useAppDispatch } from 'state/hooks'
@@ -48,7 +48,7 @@ const UserInfo: React.FC = memo(() => {
 
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const position = useAppSelector(selectPosition)
-	const smartPositionsCount = useAppSelector(selectActiveSmartPositionsCount)
+	const smartPositionsCount = useAppSelector(selectActiveSmartMarginPositionsCount)
 	const crossPositionsCount = useAppSelector(selectActiveCrossMarginPositionsCount)
 	const walletAddress = useAppSelector(selectWallet)
 
@@ -57,7 +57,7 @@ const UserInfo: React.FC = memo(() => {
 	const accountType = useAppSelector(selectFuturesType)
 
 	useFetchAction(fetchAllV2TradesForAccount, {
-		dependencies: [walletAddress, accountType, position?.size.toString()],
+		dependencies: [walletAddress, accountType, position?.activePosition.size.toString()],
 		disabled: !walletAddress,
 	})
 

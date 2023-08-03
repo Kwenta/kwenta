@@ -59,7 +59,11 @@ const CrossMarginOrderConfirmationModal: FC = () => {
 	const settlementStrategy = marketInfo?.settlementStrategies[0]
 
 	const positionSize = useMemo(() => {
-		return position ? position.size.mul(position.side === PositionSide.LONG ? 1 : -1) : ZERO_WEI
+		return position?.activePosition
+			? position.activePosition.size.mul(
+					position.activePosition.side === PositionSide.LONG ? 1 : -1
+			  )
+			: ZERO_WEI
 	}, [position])
 
 	const orderDetails = useMemo(() => {

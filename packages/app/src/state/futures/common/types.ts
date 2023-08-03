@@ -17,7 +17,7 @@ export type AppFuturesMarginType = Exclude<FuturesMarginType, excludedOptions>
 
 export type FuturesAccountData = {
 	trades?: FuturesTrade<string>[]
-	marginTransfers?: MarginTransfer[]
+	marketMarginTransfers?: MarginTransfer[]
 }
 
 export type DelayedOrderWithDetails<T = Wei> = {
