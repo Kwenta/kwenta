@@ -47,7 +47,6 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = memo(
 						suggestDecimals: true,
 						sign: currencyKey === 'sUSD' ? '$' : sign,
 						currencyKey: showCurrencyKey ? currencyKey : undefined,
-						maxDecimals: 4,
 						...formatOptions,
 					})}
 				</NumericValue>
