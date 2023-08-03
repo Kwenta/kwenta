@@ -34,19 +34,21 @@ const SmallToggle = <T extends string>({
 
 	return (
 		<ToggleContainer open={open}>
-			<ToggleTable>
-				<ToggleTableHeader style={{ borderBottomWidth: open ? '1px' : '0' }} onClick={toggleOpen}>
+			<ToggleTable $open={open}>
+				<ToggleTableHeader onClick={toggleOpen}>
 					{iconMap?.[value]}
 					{getLabelByValue?.(value) ?? value}
 					<StyledCaretDownIcon width={12} $flip={open} style={{ marginLeft: 2 }} />
 				</ToggleTableHeader>
 				{open && (
 					<ToggleTableRows>
-						{options.map((option) => (
-							<ToggleTableRow key={option} onClick={handleOptionClick(option)}>
-								{option}
-							</ToggleTableRow>
-						))}
+						{options
+							.filter((o) => o !== value)
+							.map((option) => (
+								<ToggleTableRow key={option} onClick={handleOptionClick(option)}>
+									{option}
+								</ToggleTableRow>
+							))}
 					</ToggleTableRows>
 				)}
 			</ToggleTable>
@@ -76,10 +78,9 @@ const ToggleTableRow = styled.div`
 `
 
 const ToggleTableRows = styled.div`
-	> div:not(:last-child) {
-		border-bottom: 1px solid
-			${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
-	}
+	width: 100%;
+	position: absolute;
+	top: 20px;
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
 	z-index: ${zIndex.HEADER};
 `
@@ -88,31 +89,25 @@ const ToggleTableHeader = styled.div`
 	display: flex;
 	justify-content: space-evenly;
 	align-items: center;
-	border-bottom-style: solid;
-	border-bottom-color: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
 	padding: 3px 5px;
 	font-size: 12px;
 `
 
-const ToggleTable = styled.div`
+const ToggleTable = styled.div<{ $open?: boolean }>`
 	display: flex;
 	flex-direction: column;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].background};
 	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
-	:first-child {
-		border: 1px solid ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
-	}
 	border-radius: 9px;
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
+	${(props) => props.$open && `border-radius: 9px 9px 0px 0px;`}
 `
 
 const ToggleContainer = styled.div<{ open: boolean }>`
 	margin-left: 8px;
 	cursor: pointer;
-
-	position: absolute;
-	z-index: ${zIndex.HEADER};
+	position: relative;
 `
 
 export default SmallToggle

@@ -101,7 +101,9 @@ export const InfoBoxContainer = styled.div`
 	padding: 12px 14px;
 `
 
-const InfoBoxKeyContainer = styled(FlexDivRow)``
+const InfoBoxKeyContainer = styled(FlexDivRow)`
+	align-items: center;
+`
 
 const InfoBoxKey = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.text.label};
