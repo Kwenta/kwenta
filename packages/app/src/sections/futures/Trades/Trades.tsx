@@ -189,21 +189,6 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					),
 					enableSorting: true,
 				},
-				{
-					header: () => (
-						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
-							{t('futures.market.user.trades.table.fees')}
-						</TableHeader>
-					),
-					sortingFn: 'basic',
-					accessorKey: 'margin',
-					cell: (cellProps) => (
-						<div style={{ width: '80%', textAlign: 'right' }}>
-							<Currency.Price price={cellProps.getValue()} />
-						</div>
-					),
-					enableSorting: true,
-				},
 			]}
 			columnsDeps={columnsDeps}
 			data={historyData}
@@ -359,21 +344,6 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 					sortingFn: 'basic',
 					cell: (cellProps) => <>{cellProps.getValue()}</>,
 					size: 60,
-				},
-				{
-					header: () => (
-						<TableHeader style={{ width: '80%', textAlign: 'right' }}>
-							{t('futures.market.user.trades.table.fees')}
-						</TableHeader>
-					),
-					sortingFn: 'basic',
-					accessorKey: 'margin',
-					cell: (cellProps) => (
-						<div style={{ width: '80%', textAlign: 'right' }}>
-							<Currency.Price price={cellProps.getValue()} />
-						</div>
-					),
-					enableSorting: true,
 				},
 			]}
 			columnsDeps={columnsDeps}
