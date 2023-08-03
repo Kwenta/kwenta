@@ -1,3 +1,4 @@
+import { ZERO_WEI } from '@kwenta/sdk/dist/constants'
 import { FuturesMarginType } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatPercent } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
@@ -22,6 +23,7 @@ import PositionType from 'sections/futures/PositionType'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/selectors'
+import { selectMarkPrices } from 'state/futures/selectors'
 import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FOOTER_HEIGHT } from 'styles/common'
@@ -47,6 +49,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 	const isL2 = useIsL2()
 
 	const currentMarket = useAppSelector(selectMarketAsset)
+	const markPrices = useAppSelector(selectMarkPrices)
 	const accountType = useAppSelector(selectFuturesType)
 	const [showShareModal, setShowShareModal] = useState(false)
 	const [sharePosition, setSharePosition] = useState<FuturesPositionTablePositionActive | null>(
@@ -54,8 +57,10 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 	)
 
 	let data = useMemo(() => {
-		return positions.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
-	}, [positions, currentMarket])
+		return positions
+			.map((p) => ({ ...p, marketPrice: markPrices[p.market.marketKey] ?? ZERO_WEI }))
+			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
+	}, [positions, markPrices, currentMarket])
 
 	const handleOpenShareModal = useCallback((share: FuturesPositionTablePositionActive) => {
 		setSharePosition(share)
@@ -112,7 +117,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 								<TableMarketDetails
 									marketName={getDisplayAsset(row.market.asset) ?? ''}
 									marketKey={row.market.marketKey}
-									price={row.share.marketPrice}
+									price={row.marketPrice}
 								/>
 							</MarketDetailsContainer>
 						</PositionCell>
