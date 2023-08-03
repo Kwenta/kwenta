@@ -8,16 +8,12 @@ import Currency from 'components/Currency'
 import { MobileHiddenView, MobileOnlyView } from 'components/Media'
 import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { TableCell } from 'components/Table/TableBodyRow'
-import { BANNER_HEIGHT_DESKTOP } from 'constants/announcement'
 import { DEFAULT_LEADERBOARD_ROWS } from 'constants/defaults'
-import { selectShowBanner } from 'state/app/selectors'
 import { useAppSelector } from 'state/hooks'
 import { selectWallet } from 'state/wallet/selectors'
-import { FOOTER_HEIGHT } from 'styles/common'
 import media from 'styles/media'
 
 import TraderCell from './TraderCell'
-import Loader from 'components/Loader'
 
 type AllTimeProps = {
 	stats: AccountStat<Wei, number>[]
@@ -79,9 +75,7 @@ const AllTime: FC<AllTimeProps> = ({
 					columnsDeps={[activeTab]}
 					noResultsMessage={
 						data?.length === 0 && (
-							<TableNoResults>
-								{isLoading ? <Loader /> : t('dashboard.history.positions-history-table.no-result')}
-							</TableNoResults>
+							<TableNoResults>{t('leaderboard.leaderboard.table.no-result')}</TableNoResults>
 						)
 					}
 					columns={[
