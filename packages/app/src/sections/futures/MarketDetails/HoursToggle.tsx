@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useReducer } from 'react'
 import styled from 'styled-components'
 
 import { StyledCaretDownIcon } from 'components/Select'
@@ -17,19 +17,15 @@ const getLabelByValue = (value: number) => FUNDING_RATE_PERIODS[value] ?? '1H'
 const HoursToggle: React.FC = () => {
 	const dispatch = useAppDispatch()
 	const fundingHours = useAppSelector(selectSelectedInputHours)
-	const [open, setOpen] = useState(false)
+	const [open, toggleOpen] = useReducer((o) => !o, false)
 
 	const updatePeriod = useCallback(
 		(v: number) => {
 			dispatch(setSelectedInputFundingRateHour(v))
-			setOpen((o) => !o)
+			toggleOpen()
 		},
 		[dispatch]
 	)
-
-	const toggleOpen = useCallback(() => {
-		setOpen((o) => !o)
-	}, [])
 
 	return (
 		<ToggleContainer open={open}>

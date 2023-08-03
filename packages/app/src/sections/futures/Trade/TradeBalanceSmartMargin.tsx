@@ -7,8 +7,6 @@ import styled from 'styled-components'
 import HelpIcon from 'assets/svg/app/question-mark.svg'
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
-import Pill from 'components/Pill'
-import { StyledCaretDownIcon } from 'components/Select'
 import { Body, NumericValue } from 'components/Text'
 import Tooltip from 'components/Tooltip/Tooltip'
 import useWindowSize from 'hooks/useWindowSize'
@@ -25,31 +23,20 @@ import SmartMarginOnboardModal from './SmartMarginOnboardModal'
 
 type BrdigeAndWithdrawButtonProps = {
 	modalType: ModalType
-	onPillClick: () => void
-	expanded: boolean
 }
 
-const BrdigeAndWithdrawButton: FC<BrdigeAndWithdrawButtonProps> = ({
-	modalType,
-	onPillClick,
-	expanded,
-}) => {
+const BrdigeAndWithdrawButton: FC<BrdigeAndWithdrawButtonProps> = ({ modalType }) => {
 	const dispatch = useAppDispatch()
 
 	return (
-		<FlexDivRowCentered columnGap="15px">
-			<PencilButton
-				width={16}
-				height={16}
-				onClick={(e) => {
-					e.stopPropagation()
-					dispatch(setOpenModal(modalType))
-				}}
-			/>
-			<Pill roundedCorner={false} onClick={onPillClick}>
-				<StyledCaretDownIcon $flip={expanded} style={{ marginTop: '1.5px' }} />
-			</Pill>
-		</FlexDivRowCentered>
+		<PencilButton
+			width={11}
+			height={11}
+			onClick={(e) => {
+				e.stopPropagation()
+				dispatch(setOpenModal(modalType))
+			}}
+		/>
 	)
 }
 
@@ -62,8 +49,6 @@ const TradeBalance = memo(() => {
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
 	const openModal = useAppSelector(selectShowModal)
 
-	// const [expanded, setExpanded] = useState(false)
-
 	const { isMobile, size } = useMemo(() => {
 		const isMobile = deviceType === 'mobile'
 		const size: 'small' | 'medium' = isMobile ? 'small' : 'medium'
@@ -73,10 +58,6 @@ const TradeBalance = memo(() => {
 	const isDepositRequired = useMemo(() => {
 		return accountMargin.lt(MIN_MARGIN_AMOUNT) && lockedMargin.eq(0)
 	}, [accountMargin, lockedMargin])
-
-	const onClickContainer = useCallback(() => {
-		// setExpanded(!expanded)
-	}, [])
 
 	const dismissModal = useCallback(() => {
 		dispatch(setOpenModal(null))
@@ -114,11 +95,7 @@ const TradeBalance = memo(() => {
 								{t('header.balance.get-susd')}
 							</Button>
 						) : (
-							<BrdigeAndWithdrawButton
-								modalType="futures_deposit_withdraw_smart_margin"
-								onPillClick={onClickContainer}
-								expanded
-							/>
+							<BrdigeAndWithdrawButton modalType="futures_deposit_withdraw_smart_margin" />
 						)}
 					</DepositContainer>
 				) : (
@@ -126,20 +103,20 @@ const TradeBalance = memo(() => {
 						{isMobile ? (
 							<DepositContainer>
 								<FlexDivRow style={{ width: '170px' }}>
-									<Body size={'medium'} color="secondary">
+									<Body size="medium" color="secondary">
 										{t('futures.market.trade.trade-balance.available-margin')}:
 									</Body>
-									<NumericValue size={'medium'} weight="bold">
+									<NumericValue size="medium" weight="bold">
 										{formatDollars(accountMargin)}
 									</NumericValue>
 								</FlexDivRow>
 								{lockedMargin.gt(0) && (
 									<FlexDivRow style={{ width: '170px' }}>
-										<Body size={'medium'} color="secondary">
+										<Body size="medium" color="secondary">
 											{t('futures.market.trade.trade-balance.locked-margin')}:
 										</Body>
 										<FlexDivRowCentered columnGap="5px">
-											<NumericValue size={'medium'} weight="bold" color="secondary">
+											<NumericValue size="medium" weight="bold" color="secondary">
 												{formatDollars(lockedMargin)}
 											</NumericValue>
 											<Tooltip
@@ -152,26 +129,19 @@ const TradeBalance = memo(() => {
 										</FlexDivRowCentered>
 									</FlexDivRow>
 								)}
-								<BrdigeAndWithdrawButton
-									modalType={'futures_deposit_withdraw_smart_margin'}
-									onPillClick={onClickContainer}
-									expanded
-								/>
+								<BrdigeAndWithdrawButton modalType={'futures_deposit_withdraw_smart_margin'} />
 							</DepositContainer>
 						) : (
 							<DepositContainer>
 								<FlexDivCol>
-									<Body size={'medium'} color="secondary">
+									<Body size="medium" color="secondary">
 										{t('futures.market.trade.trade-balance.available-margin')}
 									</Body>
-									<NumericValue size={'large'} weight="bold">
-										{formatDollars(accountMargin)}
-									</NumericValue>
 								</FlexDivCol>
 								{lockedMargin.gt(0) && (
 									<StyledFlexDivCol>
 										<FlexDivRowCentered columnGap="5px">
-											<Body size={'medium'} color="secondary">
+											<Body size="medium" color="secondary">
 												{t('futures.market.trade.trade-balance.locked-margin')}
 											</Body>
 											<Tooltip
@@ -182,16 +152,17 @@ const TradeBalance = memo(() => {
 												<HelpIcon />
 											</Tooltip>
 										</FlexDivRowCentered>
-										<NumericValue size={'large'} weight="bold" color="secondary">
+										<NumericValue size="large" weight="bold" color="secondary">
 											{formatDollars(lockedMargin)}
 										</NumericValue>
 									</StyledFlexDivCol>
 								)}
-								<BrdigeAndWithdrawButton
-									modalType={'futures_deposit_withdraw_smart_margin'}
-									onPillClick={onClickContainer}
-									expanded
-								/>
+								<FlexDivRow>
+									<NumericValue size="large" weight="bold">
+										{formatDollars(accountMargin)}
+									</NumericValue>
+									<BrdigeAndWithdrawButton modalType="futures_deposit_withdraw_smart_margin" />{' '}
+								</FlexDivRow>
 							</DepositContainer>
 						)}
 					</>
@@ -230,7 +201,7 @@ const BalanceContainer = styled(FlexDivRowCentered)<{ clickable: boolean }>`
 `
 
 const DetailsContainer = styled.div`
-	margin-top: 15px;
+	margin-top: 7.5px;
 `
 
 export default TradeBalance
