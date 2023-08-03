@@ -271,6 +271,7 @@ const GridBox = styled.div`
 	flex-direction: column;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 16px;
+	justify-content: center;
 `
 
 const TimeframeOverlay = styled.div`
@@ -306,7 +307,7 @@ const MobileChartGrid = styled.div`
 const ChartGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 3fr;
-	grid-template-rows: 1fr 1fr;
+	grid-template-rows: 2fr 1fr;
 	grid-auto-flow: column;
 	width: 100%;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
