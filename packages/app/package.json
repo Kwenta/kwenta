@@ -21,7 +21,7 @@
 		"@ethersproject/providers": "^5.7.2",
 		"@kwenta/sdk": "workspace:*",
 		"@material-ui/core": "^4.12.4",
-		"@pythnetwork/pyth-evm-js": "1.17.0",
+		"@pythnetwork/pyth-evm-js": "1.20.1",
 		"@rainbow-me/rainbowkit": "0.12.16",
 		"@reach/dialog": "0.18.0",
 		"@reduxjs/toolkit": "^1.9.5",

@@ -56,7 +56,7 @@
 		"@ethersproject/providers": "^5.7.2",
 		"@ethersproject/strings": "^5.7.0",
 		"@kwenta/synthswap": "^1.0.3",
-		"@pythnetwork/pyth-evm-js": "^1.17.0",
+		"@pythnetwork/pyth-evm-js": "^1.20.1",
 		"@synthetixio/wei": "^2.74.4",
 		"axios": "0.27.2",
 		"bn.js": "^5.2.1",
