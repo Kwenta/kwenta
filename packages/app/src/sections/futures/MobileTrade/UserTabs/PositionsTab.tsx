@@ -96,11 +96,6 @@ const PositionsTab = () => {
 									<Body>
 										<Currency.Price price={row.marketPrice} colorType="preview" />
 									</Body>
-									<Body capitalized color="secondary">
-										{accountType === FuturesMarginType.CROSS_MARGIN
-											? 'Cross Margin'
-											: 'Smart Margin'}
-									</Body>
 								</div>
 							</FlexDiv>
 							<FlexDivRowCentered style={{ columnGap: '5px' }}>
