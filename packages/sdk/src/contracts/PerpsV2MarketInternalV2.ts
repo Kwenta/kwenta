@@ -201,8 +201,10 @@ class FuturesMarketInternal {
 		const minInitialMargin = await this._getSetting('minInitialMargin')
 
 		const positionDecreasing =
-			oldPos.size.gte(ZERO_BIG_NUM) === newPos.size.gte(ZERO_BIG_NUM) &&
-			newPos.size.abs().lt(oldPos.size.abs())
+			newPos.size.eq(ZERO_BIG_NUM) ||
+			(oldPos.size.gte(ZERO_BIG_NUM) === newPos.size.gte(ZERO_BIG_NUM) &&
+				newPos.size.abs().lt(oldPos.size.abs()))
+
 		if (!positionDecreasing) {
 			if (newPos.margin.add(fee).lt(minInitialMargin)) {
 				return {
