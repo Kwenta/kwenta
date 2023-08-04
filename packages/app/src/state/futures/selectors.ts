@@ -9,7 +9,6 @@ import { truncateTimestamp } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
 
-import { selectSNXUSDBalance, selectSusdBalance } from 'state/balances/selectors'
 import {
 	selectAllCrossMarginTrades,
 	selectCrossMarginAccountData,
@@ -366,7 +365,7 @@ export const selectTradePrice = createSelector(
 	selectSmartMarginOrderPrice,
 	selectMarketIndexPrice,
 	(type, orderPrice, indexPrice) => {
-		return type === FuturesMarginType.CROSS_MARGIN ? indexPrice : wei(orderPrice || 0)
+		return type === FuturesMarginType.CROSS_MARGIN ? indexPrice : wei(orderPrice || indexPrice)
 	}
 )
 

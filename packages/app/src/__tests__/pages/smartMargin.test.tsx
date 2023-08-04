@@ -149,10 +149,15 @@ describe('Futures market page - smart margin', () => {
 		// Update the mock to return some different data
 		sdk.futures.getMarkets = () =>
 			Promise.resolve([{ ...SDK_MARKETS[1], marketLimitUsd: wei(100000) } as PerpsMarketV2])
+		sdk.futures.getSmartMarginBalanceInfo = () =>
+			Promise.resolve({
+				freeMargin: wei('100000'),
+				keeperEthBal: wei('0.1'),
+				walletEthBal: wei('1'),
+				allowance: wei('1000'),
+			})
 
-		const store = setupStore(
-			preloadedStateWithSmartMarginAccount(mockSmartMarginAccount('1000000'))
-		)
+		const store = setupStore(preloadedStateWithSmartMarginAccount(mockSmartMarginAccount('100000')))
 		const { findByTestId, findByText } = render(
 			<MockProviders route="market/?accountType=smart_margin&asset=sETH" store={store}>
 				<Market />

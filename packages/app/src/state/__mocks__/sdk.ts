@@ -17,34 +17,9 @@ export const mockFuturesService = () => ({
 	getTradesForMarkets: () => [],
 	getAllTrades: () => [],
 	getConditionalOrders: () => [],
-	getIsolatedMarginTransfers: () => [],
+	getMarketMarginTransfers: () => [],
 	getDelayedOrders: () => [],
-	getSmartMarginTransfers: () => [],
-	getSmartMarginBalanceInfo: () => ({
-		freeMargin: wei('1000'),
-		keeperEthBal: wei('0.1'),
-		walletEthBal: wei('1'),
-		allowance: wei('1000'),
-	}),
-	getMarkets: () => {
-		return [...SDK_MARKETS]
-	},
-	submitCrossMarginOrder: mockSubmitCrossMarginOrder,
-})
-
-export const mockPerpsService = () => ({
-	getSmartMarginAccounts: () => ['0x7bCe4eF9d95129011528E502357C7772'],
-	getPreviousDayPrices: () => [],
-	getSmartMarginTradePreview: () => {
-		return { ...MOCK_TRADE_PREVIEW }
-	},
-	getFuturesPositions: () => [],
-	getTradesForMarkets: () => [],
-	getAllTrades: () => [],
-	getConditionalOrders: () => [],
-	getIsolatedMarginTransfers: () => [],
-	getDelayedOrders: () => [],
-	getSmartMarginTransfers: () => [],
+	getSmartMarginAccountTransfers: () => [],
 	getSmartMarginBalanceInfo: () => ({
 		freeMargin: wei('1000'),
 		keeperEthBal: wei('0.1'),
