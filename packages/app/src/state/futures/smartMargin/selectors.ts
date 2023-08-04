@@ -332,6 +332,7 @@ export const selectSmartMarginPositions = createSelector(
 						takeProfit: takeProfit,
 						avgEntryPrice: history?.avgEntryPrice ?? ZERO_WEI,
 						market,
+						history,
 					}
 					acc.push(position)
 				}
