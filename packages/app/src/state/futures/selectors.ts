@@ -365,7 +365,7 @@ export const selectTradePrice = createSelector(
 	selectSmartMarginOrderPrice,
 	selectMarketIndexPrice,
 	(type, orderPrice, indexPrice) => {
-		return type === FuturesMarginType.CROSS_MARGIN ? indexPrice : wei(orderPrice || 0)
+		return type === FuturesMarginType.CROSS_MARGIN ? indexPrice : wei(orderPrice || indexPrice)
 	}
 )
 
