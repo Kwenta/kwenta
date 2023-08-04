@@ -1,3 +1,4 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesMarginType, FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import Router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
@@ -21,6 +22,7 @@ import EditPositionButton from 'sections/futures/UserInfo/EditPositionButton'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/selectors'
+import { selectMarkPrices } from 'state/futures/selectors'
 import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import media from 'styles/media'
@@ -35,6 +37,7 @@ const PositionsTab = () => {
 	const crossMarginPositions = useAppSelector(selectCrossMarginActivePositions)
 	const smartMarginPositions = useAppSelector(selectSmartMarginActivePositions)
 	const currentMarket = useAppSelector(selectMarketAsset)
+	const markPrices = useAppSelector(selectMarkPrices)
 	const accountType = useAppSelector(selectFuturesType)
 	const [showShareModal, setShowShareModal] = useState(false)
 	const [sharePosition, setSharePosition] = useState<FuturesPositionTablePositionActive | null>(
@@ -44,8 +47,10 @@ const PositionsTab = () => {
 	let data = useMemo(() => {
 		const positions =
 			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
-		return positions.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
-	}, [accountType, smartMarginPositions, crossMarginPositions, currentMarket])
+		return positions
+			.map((p) => ({ ...p, marketPrice: markPrices[p.market.marketKey] ?? ZERO_WEI }))
+			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
+	}, [accountType, smartMarginPositions, crossMarginPositions, markPrices, currentMarket])
 
 	const handleOpenPositionCloseModal = useCallback(
 		(marketKey: FuturesMarketKey) => () => {
@@ -88,6 +93,9 @@ const PositionsTab = () => {
 								<div className="position-side-bar" />
 								<div>
 									<Body>{row.market.marketName}</Body>
+									<Body>
+										<Currency.Price price={row.marketPrice} colorType="preview" />
+									</Body>
 									<Body capitalized color="secondary">
 										{accountType === FuturesMarginType.CROSS_MARGIN
 											? 'Cross Margin'

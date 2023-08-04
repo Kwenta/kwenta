@@ -69,19 +69,19 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 
 	if (!isL2)
 		return (
-			<TableContainer>
+			<EmptyTableContainer>
 				<TableNoResults>
 					{t('common.l2-cta')}
 					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 				</TableNoResults>
-			</TableContainer>
+			</EmptyTableContainer>
 		)
 
 	if (!data.length)
 		return (
-			<TableContainer>
+			<EmptyTableContainer>
 				<TableNoResults>{t('dashboard.overview.futures-positions-table.no-result')}</TableNoResults>
-			</TableContainer>
+			</EmptyTableContainer>
 		)
 
 	if (lessThanWidth('xl')) {
@@ -167,13 +167,6 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 									/>
 								</FlexDivCol>
 							)}
-						</PositionCell>
-						<PositionCell>
-							<Currency.Price
-								price={row.activePosition.liquidationPrice}
-								formatOptions={{ suggestDecimals: true }}
-								colorType="preview"
-							/>
 						</PositionCell>
 						<PositionCell>
 							<FlexDivCol>
@@ -288,6 +281,13 @@ const SelectedPositionsTable = memo(() => {
 })
 
 export default SelectedPositionsTable
+
+const EmptyTableContainer = styled.div`
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`
 
 const TableContainer = styled.div`
 	overflow: auto;
