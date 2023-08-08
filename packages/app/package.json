@@ -25,7 +25,7 @@
 		"@rainbow-me/rainbowkit": "0.12.16",
 		"@reach/dialog": "0.18.0",
 		"@reduxjs/toolkit": "^1.9.5",
-		"@sentry/browser": "7.60.0",
+		"@sentry/browser": "7.61.1",
 		"@sentry/tracing": "7.60.0",
 		"@socket.tech/plugin": "1.2.0",
 		"@synthetixio/optimism-networks": "2.74.6",
