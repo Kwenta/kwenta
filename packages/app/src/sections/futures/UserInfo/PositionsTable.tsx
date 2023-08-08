@@ -26,6 +26,7 @@ import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/sele
 import { selectMarkPrices } from 'state/futures/selectors'
 import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { selectOffchainPricesInfo } from 'state/prices/selectors'
 import { FOOTER_HEIGHT } from 'styles/common'
 import media from 'styles/media'
 
@@ -50,6 +51,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 
 	const currentMarket = useAppSelector(selectMarketAsset)
 	const markPrices = useAppSelector(selectMarkPrices)
+	const pricesInfo = useAppSelector(selectOffchainPricesInfo)
 	const accountType = useAppSelector(selectFuturesType)
 	const [showShareModal, setShowShareModal] = useState(false)
 	const [sharePosition, setSharePosition] = useState<FuturesPositionTablePositionActive | null>(
@@ -58,9 +60,13 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 
 	let data = useMemo(() => {
 		return positions
-			.map((p) => ({ ...p, marketPrice: markPrices[p.market.marketKey] ?? ZERO_WEI }))
+			.map((p) => ({
+				...p,
+				marketPrice: markPrices[p.market.marketKey] ?? ZERO_WEI,
+				priceInfo: pricesInfo[p.market.asset],
+			}))
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
-	}, [positions, markPrices, currentMarket])
+	}, [positions, markPrices, pricesInfo, currentMarket])
 
 	const handleOpenShareModal = useCallback((share: FuturesPositionTablePositionActive) => {
 		setSharePosition(share)
@@ -118,6 +124,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 									marketName={getDisplayAsset(row.market.asset) ?? ''}
 									marketKey={row.market.marketKey}
 									price={row.marketPrice}
+									priceInfo={row.priceInfo}
 								/>
 							</MarketDetailsContainer>
 						</PositionCell>

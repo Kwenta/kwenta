@@ -1,5 +1,6 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesMarginType } from '@kwenta/sdk/types'
+import { formatDollars } from '@kwenta/sdk/utils'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
@@ -7,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ChangePercent from 'components/ChangePercent'
+import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import MarketBadge from 'components/MarketBadge'
@@ -23,6 +25,7 @@ import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/sele
 import { selectMarkPrices } from 'state/futures/selectors'
 import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
+import { selectOffchainPricesInfo } from 'state/prices/selectors'
 import { getSynthDescription } from 'utils/futures'
 
 import MobilePositionRow from './MobilePositionRow'
@@ -46,6 +49,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const crossMarginPositions = useAppSelector(selectCrossMarginActivePositions)
 	const smartMarginPositions = useAppSelector(selectSmartMarginActivePositions)
+	const pricesInfo = useAppSelector(selectOffchainPricesInfo)
 	const markPrices = useAppSelector(selectMarkPrices)
 
 	let data = useMemo(() => {
@@ -53,15 +57,16 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
 		return positions.map((position) => {
 			const description = getSynthDescription(position.market.asset, t)
-
-			const marketPrice = markPrices[position.market.marketKey!] ?? ZERO_WEI
+			const priceInfo = pricesInfo[position.market.asset]
+			const marketPrice = markPrices[position.market.marketKey] ?? ZERO_WEI
 			return {
 				...position,
 				description,
 				marketPrice,
+				priceInfo,
 			}
 		})
-	}, [accountType, crossMarginPositions, markPrices, smartMarginPositions, t])
+	}, [accountType, crossMarginPositions, markPrices, pricesInfo, smartMarginPositions, t])
 
 	return (
 		<>
@@ -116,7 +121,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 													/>
 												</StyledText>
 												<StyledValue>
-													<Currency.Price price={cellProps.row.original.marketPrice} colored />
+													<ColoredPrice priceChange={cellProps.row.original.priceInfo?.change}>
+														{formatDollars(cellProps.row.original.marketPrice, {
+															suggestDecimals: true,
+														})}
+													</ColoredPrice>
 												</StyledValue>
 											</CellContainer>
 										</MarketContainer>

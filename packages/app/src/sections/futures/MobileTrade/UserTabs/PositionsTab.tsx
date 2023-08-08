@@ -1,11 +1,13 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesMarginType, FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
+import { formatDollars } from '@kwenta/sdk/utils'
 import Router from 'next/router'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { FuturesPositionTablePositionActive } from 'types/futures'
 
+import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
 import { FlexDiv, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import Pill from 'components/Pill'
@@ -25,6 +27,7 @@ import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/sele
 import { selectMarkPrices } from 'state/futures/selectors'
 import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { selectOffchainPricesInfo } from 'state/prices/selectors'
 import media from 'styles/media'
 
 const PositionsTab = () => {
@@ -38,6 +41,7 @@ const PositionsTab = () => {
 	const smartMarginPositions = useAppSelector(selectSmartMarginActivePositions)
 	const currentMarket = useAppSelector(selectMarketAsset)
 	const markPrices = useAppSelector(selectMarkPrices)
+	const pricesInfo = useAppSelector(selectOffchainPricesInfo)
 	const accountType = useAppSelector(selectFuturesType)
 	const [showShareModal, setShowShareModal] = useState(false)
 	const [sharePosition, setSharePosition] = useState<FuturesPositionTablePositionActive | null>(
@@ -48,9 +52,20 @@ const PositionsTab = () => {
 		const positions =
 			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
 		return positions
-			.map((p) => ({ ...p, marketPrice: markPrices[p.market.marketKey] ?? ZERO_WEI }))
+			.map((p) => ({
+				...p,
+				marketPrice: markPrices[p.market.marketKey] ?? ZERO_WEI,
+				priceInfo: pricesInfo[p.market.asset],
+			}))
 			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
-	}, [accountType, smartMarginPositions, crossMarginPositions, markPrices, currentMarket])
+	}, [
+		accountType,
+		smartMarginPositions,
+		crossMarginPositions,
+		markPrices,
+		pricesInfo,
+		currentMarket,
+	])
 
 	const handleOpenPositionCloseModal = useCallback(
 		(marketKey: FuturesMarketKey) => () => {
@@ -94,7 +109,11 @@ const PositionsTab = () => {
 								<div>
 									<Body>{row.market.marketName}</Body>
 									<Body>
-										<Currency.Price price={row.marketPrice} colorType="preview" />
+										<ColoredPrice priceChange={row.priceInfo?.change}>
+											{formatDollars(row.marketPrice, {
+												suggestDecimals: true,
+											})}
+										</ColoredPrice>
 									</Body>
 								</div>
 							</FlexDiv>
