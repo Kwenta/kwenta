@@ -9,7 +9,6 @@ import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg'
 import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg'
 import MobileIcon from 'assets/svg/features/mobile.svg'
 import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg'
-import ZeroSlippageIcon from 'assets/svg/features/zero-slippage.svg'
 import AelinIcon from 'assets/svg/partners/aelin.svg'
 import ChainLinkIcon from 'assets/svg/partners/chainlink.svg'
 import GraphIcon from 'assets/svg/partners/graph.svg'
@@ -61,12 +60,6 @@ const FEATURES = [
 		copy: 'homepage.features.easy-ramping.copy',
 		image: <EasyRampingIcon />,
 		comingSoon: true,
-	},
-	{
-		key: 'zero-slippage',
-		title: 'homepage.features.zero-slippage.title',
-		copy: 'homepage.features.zero-slippage.copy',
-		image: <ZeroSlippageIcon />,
 	},
 ]
 
