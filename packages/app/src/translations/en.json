@@ -447,12 +447,11 @@
 			"futures-positions-table": {
 				"market": "Market",
 				"side": "Side",
-				"avg-entry": "Avg. Entry Price",
+				"avg-entry": "Avg. Entry/Liq. Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
 				"pnl": "uP&L",
 				"notionalValue": "Size",
-				"liquidationPrice": "Liq. Price",
 				"no-result": "You have no open positions",
 				"legacy-link": "Missing a position? Check the legacy app",
 				"mobile": {

@@ -1,3 +1,4 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesMarginType } from '@kwenta/sdk/types'
 import { getDisplayAsset, formatPercent } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
@@ -22,8 +23,10 @@ import PositionType from 'sections/futures/PositionType'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
 import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/selectors'
+import { selectMarkPrices } from 'state/futures/selectors'
 import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { selectOffchainPricesInfo } from 'state/prices/selectors'
 import { FOOTER_HEIGHT } from 'styles/common'
 import media from 'styles/media'
 
@@ -47,6 +50,8 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 	const isL2 = useIsL2()
 
 	const currentMarket = useAppSelector(selectMarketAsset)
+	const markPrices = useAppSelector(selectMarkPrices)
+	const pricesInfo = useAppSelector(selectOffchainPricesInfo)
 	const accountType = useAppSelector(selectFuturesType)
 	const [showShareModal, setShowShareModal] = useState(false)
 	const [sharePosition, setSharePosition] = useState<FuturesPositionTablePositionActive | null>(
@@ -54,8 +59,14 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 	)
 
 	let data = useMemo(() => {
-		return positions.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
-	}, [positions, currentMarket])
+		return positions
+			.map((p) => ({
+				...p,
+				marketPrice: markPrices[p.market.marketKey] ?? ZERO_WEI,
+				priceInfo: pricesInfo[p.market.asset],
+			}))
+			.sort((a) => (a.market.asset === currentMarket ? -1 : 1))
+	}, [positions, markPrices, pricesInfo, currentMarket])
 
 	const handleOpenShareModal = useCallback((share: FuturesPositionTablePositionActive) => {
 		setSharePosition(share)
@@ -64,19 +75,19 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 
 	if (!isL2)
 		return (
-			<TableContainer>
+			<EmptyTableContainer>
 				<TableNoResults>
 					{t('common.l2-cta')}
 					<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 				</TableNoResults>
-			</TableContainer>
+			</EmptyTableContainer>
 		)
 
 	if (!data.length)
 		return (
-			<TableContainer>
+			<EmptyTableContainer>
 				<TableNoResults>{t('dashboard.overview.futures-positions-table.no-result')}</TableNoResults>
-			</TableContainer>
+			</EmptyTableContainer>
 		)
 
 	if (lessThanWidth('xl')) {
@@ -89,20 +100,18 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 
 	return (
 		<>
-			<HeadersRow>
-				<div>Market</div>
-				<div>Side</div>
-				<div>Size</div>
-				<div>Avg. Entry</div>
-				<div>Liq. Price</div>
-				<div>Market Margin</div>
-				<div>uP&L</div>
-				<div>Funding</div>
-				<div>TP/SL</div>
-				<div>Actions</div>
-			</HeadersRow>
-
 			<TableContainer>
+				<HeadersRow>
+					<div>Market</div>
+					<div>Side</div>
+					<div>Size</div>
+					<div>Avg. Entry/Liq. Price</div>
+					<div>Market Margin</div>
+					<div>uP&L</div>
+					<div>Funding</div>
+					<div>TP/SL</div>
+					<div>Actions</div>
+				</HeadersRow>
 				{data.map((row) => (
 					<PositionRowDesktop key={row.market.asset}>
 						<PositionCell>
@@ -114,6 +123,8 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 								<TableMarketDetails
 									marketName={getDisplayAsset(row.market.asset) ?? ''}
 									marketKey={row.market.marketKey}
+									price={row.marketPrice}
+									priceInfo={row.priceInfo}
 								/>
 							</MarketDetailsContainer>
 						</PositionCell>
@@ -151,18 +162,18 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 							{!row.activePosition.details?.avgEntryPrice ? (
 								<Body>{NO_VALUE}</Body>
 							) : (
-								<Currency.Price
-									price={row.activePosition.details.avgEntryPrice}
-									formatOptions={{ suggestDecimals: true }}
-								/>
+								<FlexDivCol>
+									<Currency.Price
+										price={row.activePosition.details.avgEntryPrice}
+										formatOptions={{ suggestDecimals: true }}
+									/>
+									<Currency.Price
+										price={row.activePosition.liquidationPrice}
+										formatOptions={{ suggestDecimals: true }}
+										colorType="preview"
+									/>
+								</FlexDivCol>
 							)}
-						</PositionCell>
-						<PositionCell>
-							<Currency.Price
-								price={row.activePosition.liquidationPrice}
-								formatOptions={{ suggestDecimals: true }}
-								colorType="preview"
-							/>
 						</PositionCell>
 						<PositionCell>
 							<FlexDivCol>
@@ -278,6 +289,14 @@ const SelectedPositionsTable = memo(() => {
 
 export default SelectedPositionsTable
 
+const EmptyTableContainer = styled.div`
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
+`
+
 const TableContainer = styled.div`
 	overflow: auto;
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
@@ -285,36 +304,36 @@ const TableContainer = styled.div`
 	${media.lessThan('xl')`
 		height: 100%;
 	`}
-`
-
-const PositionRowDesktop = styled.div`
 	display: grid;
-	grid-template-columns: 75px 60px minmax(130px, 1fr) 1fr 1fr 1.3fr 1fr 1fr 1fr 64px;
-	grid-gap: 10px;
-	height: 54px;
-	padding: 0 10px;
-	&:nth-child(even) {
-		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
-	}
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-`
-
-const HeadersRow = styled(PositionRowDesktop)`
-	height: ${FOOTER_HEIGHT}px;
-	padding: 7px 10px 0 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
-	border-top: ${(props) => props.theme.colors.selectedTheme.border};
-	:not(:last-child) {
-		border-bottom: 0;
-	}
-	&:first-child {
-		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
-	}
+	grid-template-columns: 2fr 1fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr;
+	align-content: flex-start;
 `
 
 const PositionCell = styled.div`
 	display: flex;
 	align-items: center;
+	height: 54px;
+	padding: 0 10px;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+`
+
+const PositionRowDesktop = styled.div`
+	display: contents;
+	&:nth-child(even) > ${PositionCell} {
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
+	}
+`
+
+const HeadersRow = styled.div`
+	display: contents;
+	& > div {
+		display: flex;
+		align-items: center;
+		padding: 0 10px;
+		height: ${FOOTER_HEIGHT}px;
+		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.secondary};
+		border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+	}
 `
 
 const PnlContainer = styled.div`
