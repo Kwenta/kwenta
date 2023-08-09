@@ -294,6 +294,7 @@ const EmptyTableContainer = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 `
 
 const TableContainer = styled.div`
