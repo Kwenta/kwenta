@@ -215,7 +215,7 @@ export const fetchEstimatedRewards = createAsyncThunk<EstimatedRewards, void, Th
 export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
 	'staking/fetchMigrateData',
 	async (_, { dispatch }) => {
-		await dispatch(fetchStakingData())
+		dispatch(fetchStakingData())
 		dispatch(fetchStakingV2Data())
 		dispatch(fetchEscrowData())
 		dispatch(fetchEscrowV2Data())
