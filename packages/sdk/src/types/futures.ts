@@ -135,6 +135,7 @@ export enum FuturesMarketKey {
 	sMKRPERP = 'sMKRPERP',
 	sRPLPERP = 'sRPLPERP',
 	sWLDPERP = 'sWLDPERP',
+	sUSDTPERP = 'sUSDTPERP',
 }
 
 export enum FuturesMarketAsset {
@@ -189,6 +190,7 @@ export enum FuturesMarketAsset {
 	MKR = 'MKR',
 	RPL = 'RPL',
 	WLD = 'WLD',
+	USDT = 'USDT',
 }
 
 export interface FuturesMarketConfig {

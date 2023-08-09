@@ -585,6 +585,16 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0x69c5297fa967a51372d56174fcf7225b21263559bfbdb5cf03eff4af6c2212ea',
 		},
 	},
+	[FuturesMarketKey.sUSDTPERP]: {
+		key: FuturesMarketKey.sUSDTPERP,
+		asset: FuturesMarketAsset.USDT,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b',
+			testnet: '0x1fc18861232290221461220bd4e2acd1dcdfbc89c84092c93c18bdc7756c1588',
+		},
+	},
 }
 
 export const MARKET_ASSETS_BY_PYTH_ID = Object.values(MARKETS)
