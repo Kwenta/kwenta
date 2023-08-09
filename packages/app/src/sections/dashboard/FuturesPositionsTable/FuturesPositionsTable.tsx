@@ -1,4 +1,6 @@
+import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { FuturesMarginType } from '@kwenta/sdk/types'
+import { formatDollars } from '@kwenta/sdk/utils'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FC, useMemo } from 'react'
@@ -6,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ChangePercent from 'components/ChangePercent'
+import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
 import { FlexDivRowCentered } from 'components/layout/flex'
 import MarketBadge from 'components/MarketBadge'
@@ -19,8 +22,10 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import PositionType from 'sections/futures/PositionType'
 import { AppFuturesMarginType } from 'state/futures/common/types'
 import { selectCrossMarginActivePositions } from 'state/futures/crossMargin/selectors'
+import { selectMarkPrices } from 'state/futures/selectors'
 import { selectSmartMarginActivePositions } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
+import { selectOffchainPricesInfo } from 'state/prices/selectors'
 import { getSynthDescription } from 'utils/futures'
 
 import MobilePositionRow from './MobilePositionRow'
@@ -44,19 +49,24 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const crossMarginPositions = useAppSelector(selectCrossMarginActivePositions)
 	const smartMarginPositions = useAppSelector(selectSmartMarginActivePositions)
+	const pricesInfo = useAppSelector(selectOffchainPricesInfo)
+	const markPrices = useAppSelector(selectMarkPrices)
 
 	let data = useMemo(() => {
 		const positions =
 			accountType === FuturesMarginType.SMART_MARGIN ? smartMarginPositions : crossMarginPositions
 		return positions.map((position) => {
 			const description = getSynthDescription(position.market.asset, t)
-
+			const priceInfo = pricesInfo[position.market.asset]
+			const marketPrice = markPrices[position.market.marketKey] ?? ZERO_WEI
 			return {
 				...position,
 				description,
+				marketPrice,
+				priceInfo,
 			}
 		})
-	}, [accountType, crossMarginPositions, smartMarginPositions, t])
+	}, [accountType, crossMarginPositions, markPrices, pricesInfo, smartMarginPositions, t])
 
 	return (
 		<>
@@ -101,15 +111,23 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											<IconContainer>
 												<StyledCurrencyIcon currencyKey={cellProps.row.original.market.marketKey} />
 											</IconContainer>
-											<StyledText>
-												{cellProps.row.original.market.marketName}
-												<MarketBadge
-													currencyKey={cellProps.row.original.market.marketKey}
-													isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
-													futuresClosureReason={cellProps.row.original.market.marketClosureReason}
-												/>
-											</StyledText>
-											<StyledValue>{cellProps.row.original.description}</StyledValue>
+											<CellContainer>
+												<StyledText>
+													{cellProps.row.original.market.marketName}
+													<MarketBadge
+														currencyKey={cellProps.row.original.market.marketKey}
+														isFuturesMarketClosed={cellProps.row.original.market.isSuspended}
+														futuresClosureReason={cellProps.row.original.market.marketClosureReason}
+													/>
+												</StyledText>
+												<StyledValue>
+													<ColoredPrice priceChange={cellProps.row.original.priceInfo?.change}>
+														{formatDollars(cellProps.row.original.marketPrice, {
+															suggestDecimals: true,
+														})}
+													</ColoredPrice>
+												</StyledValue>
+											</CellContainer>
 										</MarketContainer>
 									)
 								},
@@ -154,30 +172,20 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										undefined ? (
 										<Body>{NO_VALUE}</Body>
 									) : (
-										<Currency.Price
-											price={cellProps.row.original.activePosition.details?.avgEntryPrice}
-											formatOptions={{ suggestDecimals: true }}
-										/>
+										<CellContainer>
+											<Currency.Price
+												price={cellProps.row.original.activePosition.details?.avgEntryPrice}
+												formatOptions={{ suggestDecimals: true }}
+											/>
+											<Currency.Price
+												price={cellProps.row.original.activePosition.liquidationPrice}
+												formatOptions={{ suggestDecimals: true }}
+												colorType="preview"
+											/>
+										</CellContainer>
 									)
 								},
 								size: 125,
-							},
-							{
-								header: () => (
-									<TableHeader>
-										{t('dashboard.overview.futures-positions-table.liquidationPrice')}
-									</TableHeader>
-								),
-								accessorKey: 'liquidationPrice',
-								cell: (cellProps) => {
-									return (
-										<Currency.Price
-											price={cellProps.row.original.activePosition.liquidationPrice}
-											formatOptions={{ suggestDecimals: true }}
-										/>
-									)
-								},
-								size: 115,
 							},
 							{
 								header: () => (
@@ -186,12 +194,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								accessorKey: 'pnl',
 								cell: (cellProps) => {
 									return (
-										<PnlContainer>
+										<CellContainer>
 											<ChangePercent value={cellProps.row.original.activePosition.pnlPct} />
 											<div>
 												<Currency.Price price={cellProps.row.original.activePosition.pnl} colored />
 											</div>
-										</PnlContainer>
+										</CellContainer>
 									)
 								},
 								size: 125,
@@ -290,9 +298,15 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	)
 }
 
-const PnlContainer = styled.div`
+const MarketContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+`
+
+const CellContainer = styled.div`
 	display: flex;
 	flex-direction: column;
+	row-gap: 4px;
 `
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
@@ -326,13 +340,6 @@ const StyledText = styled.div`
 	margin-bottom: -4px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	font-family: ${(props) => props.theme.fonts.bold};
-`
-
-const MarketContainer = styled.div`
-	display: grid;
-	grid-template-rows: auto auto;
-	grid-template-columns: auto auto;
-	align-items: center;
 `
 
 const OpenPositionsHeader = styled.div`
