@@ -49,8 +49,8 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const [assetSearch, setAssetSearch] = useState('')
 	const [page, setPage] = useState(1)
 
-	// Only available on Optimism mainnet
-	const oneInchEnabled = network === 10
+	// Disable 1inch for now
+	const oneInchEnabled = false
 
 	const allSynths = useMemo(() => getSynthsListForNetwork(network as NetworkId), [network])
 

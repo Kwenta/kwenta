@@ -3,7 +3,7 @@
 		"en": "English"
 	},
 	"meta": {
-		"description": "Gain exposure to cryptocurrencies, forex and commodities on Ethereum with zero slippage",
+		"description": "Gain exposure to a variety of assets with up to 50x leverage and deep liquidity",
 		"og": {
 			"title": "Kwenta",
 			"site-name": "Kwenta"
@@ -49,7 +49,7 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Kwenta | Derivatives Trading with Infinite Liquidity",
+		"page-title": "Kwenta | Derivatives Trading with Deep Liquidity",
 		"nav": {
 			"start-trade": "Start Trading",
 			"trade-now": "Trade now",
@@ -119,10 +119,6 @@
 			"title": "Learn More",
 			"coming-soon": "Coming Soon",
 			"description": "Explore The Endless Possibilities Of Kwenta",
-			"how-to-trade": {
-				"title": "Learn How to Trade on Kwenta",
-				"copy": "Learn about the many features of Kwenta; 25x leverage, instant transactions, deep liquidity, synthetic assets, and more."
-			},
 			"how-to-stake": {
 				"title": "Learn how to start earning with Kwenta",
 				"copy": "Earn $KWENTA with trading incentives and staking."
@@ -165,10 +161,6 @@
 				"title": "Easy Ramping",
 				"copy": "Deposit or withdraw assets freely"
 			},
-			"zero-slippage": {
-				"title": "Zero slippage",
-				"copy": "Trade with no slippage on any market"
-			},
 			"partners": {
 				"title": "Partners",
 				"copy": "Collaborating with industry leaders to deliver the best trading experience in DeFi."
@@ -176,7 +168,6 @@
 		},
 		"l2": {
 			"title": "Now on Optimism layer 2",
-			"copy": "Kwenta can now be used on Optimism's layer 2 solution for <0>low gas fees</0> and <0>fast transactions</0>. Trade like an elite.",
 			"transaction-cost": "Lower gas fees*",
 			"transaction-speed": "Transactions speed*",
 			"disclaimer": "* These statistics are approximations. User experience will vary.",
@@ -188,79 +179,6 @@
 			"markets": {
 				"title": "Live markets",
 				"copy": "Start trading now on Optimism layer 2"
-			}
-		},
-		"benefits": {
-			"title": "Without the limits of a centralised exchange",
-			"peer-to-contract": {
-				"title": "Peer-to-contract (P2C) trading",
-				"copy": "All trades are executed against the Synthetix smart contracts, so traders don’t have to worry about the limitations of the peer-to-peer trading model, such as liquidity, slippage, or orderbooks."
-			},
-			"trading-pair": {
-				"title": "No trading pair restrictions",
-				"copy": "Any Synth can be traded instantly into any other Synth so you’re not restricted to whichever trading pairs the exchange offers, which is a necessary restriction of the centralised exchange model."
-			},
-			"permissionless": {
-				"title": "Permissionless and non-custodial",
-				"copy": "Kwenta is a dApp that leverages the Synthetix protocol, which means no creating an account, no deposits or withdrawals, and no surrendering custody of your funds."
-			}
-		},
-		"steps": {
-			"title": "Start trading in just 3 steps",
-			"one": {
-				"title": "You’ll need a web3 wallet with ETH for gas",
-				"subtitle": "Step One",
-				"copy": "Kwenta is on the Ethereum blockchain, so like all other dApps on Ethereum you’ll need a web3 wallet with ETH in it as gas to pay for transactions to be processed. Popular cryptocurrency wallet categories include hardware wallets, browser extension wallets, and mobile wallets."
-			},
-			"two": {
-				"title": "Acquire sUSD (or any other Synth)",
-				"subtitle": "Step Two",
-				"copy": "To start trading, you’ll need a synthetic asset derivative supported by Kwenta, known as Synths. The most accessible Synth is sUSD, which can be purchased on dApps such as Uniswap, Curve, or 1inch."
-			},
-			"three": {
-				"title": "Use Kwenta to trade the full range of Synths",
-				"subtitle": "Step Three",
-				"copy": "Once you’ve got sUSD or any other Synth, you can trade between the entire range of Synths to craft a diverse portfolio of assets, all on-chain and without surrendering custody to an exchange!"
-			}
-		},
-		"faq": {
-			"title": "Frequently Asked Questions",
-			"tabs": {
-				"explainer-video": "Explainer video",
-				"getting-started": {
-					"title": "Getting started",
-					"items": {
-						"qna1": {
-							"question": "What is Ethereum?",
-							"answer": "Ethereum enables the creation of infrastructure that can exist entirely online, managed and run by a vast network of people, meaning that no-one controls it and it would be extremely difficult (if not impossible) to shut down. This puts it out of the reach of governments or other authorities.  Ethereum was created by a team of Bitcoin enthusiasts, who wanted to expand on its design of decentralized money to build out other decentralized use cases (‘decentralized’ means it’s not controlled by a central authority). There is a huge ecosystem of projects on the Ethereum blockchain, all of which can interact with each other."
-						},
-						"qna2": {
-							"question": "What is DeFi?",
-							"answer": "DeFi stands for decentralised finance, and represents an ecosystem of open financial tools, products, and protocols on Ethereum. Both Kwenta and the Synthetix protocol that it’s built on are part of the DeFi ecosystem. DeFi runs on smart contracts, which are a key feature of the Ethereum blockchain. Smart contracts are programs or protocols that execute or control certain events and actions according to however they’re coded. They allow for the creation of decentralised infrastructure that carries out certain tasks: for example, a smart contract that enables lending and borrowing will have smart contracts that lock funds that are deposited as collateral and enable users to borrow other assets against their own collateral."
-						},
-						"qna3": {
-							"question": "What’s a dApp?",
-							"answer": "dApp stands for decentralised application. dApps are frontend interfaces providing access to open-source protocols on the blockchain. If the underlying protocol is openly accessible, then there can be multiple dApps providing different interfaces for the same protocol/s. dApps allow people to use their cryptocurrency wallets to interact directly with smart contracts, meaning there’s no need to create accounts or make deposits or withdrawals, as users never need to surrender custody of their assets."
-						}
-					}
-				},
-				"trading-on-kwenta": {
-					"title": "Trading on Kwenta",
-					"items": {
-						"qna1": {
-							"question": "Where does the liquidity come from?",
-							"answer": "Kwenta is built on the Synthetix protocol, so the Synth liquidity traders can access on Kwenta is entirely created by SNX stakers on Synthetix."
-						},
-						"qna2": {
-							"question": "How does trading work if there are no counterparties?",
-							"answer": "There are no direct counterparties for each trade in the Synthetix protocol, but it does use a counterparty-like model in which SNX stakers assume a proportion of the Synthetix debt pool when they mint sUSD. For more details, see the Synthetix <0>litepaper</0>."
-						},
-						"qna3": {
-							"question": "How are the gas costs calculated?",
-							"answer": "Transactions cost a certain amount proportional to how much processing power is required for Ethereum miners to process it. Kwenta uses the Synthetix protocol, which is far more complex than the majority of other Ethereum projects, so its transactions require more gas to be executed."
-						}
-					}
-				}
 			}
 		},
 		"footer": {
@@ -504,7 +422,7 @@
 			},
 			"portfolio-chart": {
 				"welcome": "Welcome to Kwenta",
-				"hero": "Gain exposure to a variety of assets with up to 25x leverage and deep liquidity",
+				"hero": "Gain exposure to a variety of assets with up to 50x leverage and deep liquidity",
 				"portfolio-value": "Portfolio Value",
 				"buying-power": "Total Buying Power",
 				"upnl": "Unrealized PnL"

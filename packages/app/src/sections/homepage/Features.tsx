@@ -9,14 +9,12 @@ import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg'
 import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg'
 import MobileIcon from 'assets/svg/features/mobile.svg'
 import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg'
-import AelinIcon from 'assets/svg/partners/aelin.svg'
 import ChainLinkIcon from 'assets/svg/partners/chainlink.svg'
 import GraphIcon from 'assets/svg/partners/graph.svg'
 import HopIcon from 'assets/svg/partners/hop.svg'
 import LyraIcon from 'assets/svg/partners/lyra.svg'
 import OptimismIcon from 'assets/svg/partners/optimism.svg'
 import SynthetixIcon from 'assets/svg/partners/synthetix.svg'
-import ThalesIcon from 'assets/svg/partners/thales.svg'
 import { FlexDivCentered, FlexDivCol, FlexDivColCentered, FlexDivRow } from 'components/layout/flex'
 import { GridDivCentered } from 'components/layout/grid'
 import { Copy, Title } from 'sections/homepage/text'
@@ -71,14 +69,6 @@ const PARTNERS = [
 	{
 		key: 'lyra',
 		image: <LyraIcon />,
-	},
-	{
-		key: 'aelin',
-		image: <AelinIcon />,
-	},
-	{
-		key: 'thales',
-		image: <ThalesIcon />,
 	},
 	{
 		key: 'optimism',
@@ -203,7 +193,7 @@ const IconGridContainer = styled(GridDivCentered)`
 	place-items: center;
 	justify-content: center;
 	grid-template-rows: 150px 150px;
-	grid-template-columns: repeat(4, 200px);
+	grid-template-columns: repeat(3, 200px);
 	gap: 20px 20px;
 	margin-top: 40px;
 
@@ -216,17 +206,6 @@ const IconGridContainer = styled(GridDivCentered)`
 	.synthetix {
 		svg {
 			width: 120px;
-		}
-	}
-	.aelin {
-		svg {
-			width: 95px;
-		}
-	}
-
-	.thales {
-		svg {
-			width: 95px;
 		}
 	}
 
@@ -262,19 +241,9 @@ const IconGridContainer = styled(GridDivCentered)`
 				width: 80px;
 			}
 		}
-		.aelin {
-			svg {
-				width: 80px;
-			}
-		}
 		.synthetix {
 			svg {
 				width: 85px;
-			}
-		}
-		.thales {
-			svg {
-				width: 80px;
 			}
 		}
 		.chainlink {
