@@ -67,10 +67,11 @@ const useGetFuturesTrades = (
 			getNextPageParam: (lastPage) => {
 				return notNill(lastPage) && lastPage?.length > 0
 					? {
-							minTs: 0,
 							maxTs: lastPage[lastPage.length - 1].timestamp,
 					  }
-					: null
+					: {
+							maxTs: 0,
+					  }
 			},
 			getPreviousPageParam: (firstPage) => {
 				return notNill(firstPage) && firstPage?.length > 0
