@@ -284,13 +284,13 @@ export default class ExchangeService {
 					? contractFunc.uniswapSwapInto(
 							symbolBytes,
 							fromToken.address,
-							params.fromTokenAmount,
+							synthAmountEth,
 							formattedData.data
 					  )
 					: this.sdk.transactions.createContractTxn(SynthSwap, 'uniswapSwapInto', [
 							symbolBytes,
 							fromToken.address,
-							params.fromTokenAmount,
+							synthAmountEth,
 							formattedData.data,
 					  ])
 			}
@@ -930,7 +930,9 @@ export default class ExchangeService {
 	}
 
 	private get oneInchApiUrl() {
-		return `https://api.1inch.io/v5.0/${this.sdk.context.isL2 ? 10 : 1}/`
+		return `${process.env.NEXT_PUBLIC_ONE_INCH_COINGECKO_PROXY}/1inch/swap/v5.2/${
+			this.sdk.context.isL2 ? 10 : 1
+		}/`
 	}
 
 	private getOneInchQuoteSwapParams(
@@ -969,6 +971,7 @@ export default class ExchangeService {
 				PROTOCOLS,
 				referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				disableEstimate: true,
+				includeTokenInfo: true,
 			},
 		})
 
@@ -993,13 +996,13 @@ export default class ExchangeService {
 				fromTokenAddress: params.fromTokenAddress,
 				toTokenAddress: params.toTokenAddress,
 				amount: params.amount,
-				disableEstimate: true,
 				PROTOCOLS,
+				includeTokensInfo: true,
 			},
 		})
 
 		return ethers.utils
-			.formatUnits(response.data.toTokenAmount, response.data.toToken.decimals)
+			.formatUnits(response.data.toAmount, response.data.toToken.decimals)
 			.toString()
 	}
 

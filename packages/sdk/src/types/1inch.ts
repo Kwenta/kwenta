@@ -4,13 +4,13 @@ type Token = {
 	address: string
 	decimals: number
 	logoURI: string
+	tags: string[]
 }
 
 export type OneInchQuoteResponse = {
+	toAmount: string
 	fromToken: Token
 	toToken: Token
-	toTokenAmount: string
-	fromTokenAmount: string
 }
 
 export type OneInchSwapResponse = OneInchQuoteResponse & {

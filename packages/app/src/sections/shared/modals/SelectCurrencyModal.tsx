@@ -50,7 +50,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const [page, setPage] = useState(1)
 
 	// Disable 1inch for now
-	const oneInchEnabled = false
+	const oneInchEnabled = network === 10
 
 	const allSynths = useMemo(() => getSynthsListForNetwork(network as NetworkId), [network])
 
