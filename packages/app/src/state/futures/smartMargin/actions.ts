@@ -126,6 +126,7 @@ import {
 	selectSmartMarginDelayedOrders,
 	selectV2SkewAdjustedPrice,
 	selectRequiredEthForPendingOrders,
+	selectAllSmartMarginPositions,
 } from './selectors'
 import { SmartMarginBalanceInfo } from './types'
 
@@ -351,7 +352,7 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 	async (params, { dispatch, getState, extra: { sdk } }) => {
 		const account = selectSmartMarginAccount(getState())
 		const freeMargin = selectTotalAvailableMargin(getState())
-		const positions = selectSmartMarginActivePositions(getState())
+		const positions = selectAllSmartMarginPositions(getState())
 		const position = positions.find((p) => p.market.marketKey === params.market.key)
 
 		const marketMargin = position?.remainingMargin ?? wei(0)
@@ -367,7 +368,7 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 		// If this is a trade with no existsing position size then we need to subtract
 		// remaining idle market margin to get an accurate preview
 		const marginDelta =
-			(!position || position.activePosition.size.abs().eq(0)) &&
+			(!position?.activePosition || position.activePosition?.size.abs().eq(0)) &&
 			marketMargin.gt(0) &&
 			params.action === 'trade'
 				? params.marginDelta.sub(marketMargin)
