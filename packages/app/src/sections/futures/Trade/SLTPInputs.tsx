@@ -58,7 +58,6 @@ export default function SLTPInputs() {
 
 	const onSelectStopLossPercent = useCallback(
 		(index: number) => {
-			if (slValidity.disabled) return
 			const option = SL_OPTIONS[index]
 			const percent = Math.abs(Number(option.replace('%', ''))) / 100
 			const relativePercent = wei(percent).div(leverageWei)
@@ -69,7 +68,7 @@ export default function SLTPInputs() {
 			const dp = suggestedDecimals(stopLoss)
 			dispatch(setSmartMarginTradeStopLoss(stopLoss.toString(dp)))
 		},
-		[currentPrice, dispatch, leverageSide, leverageWei, slValidity.disabled]
+		[currentPrice, dispatch, leverageSide, leverageWei]
 	)
 
 	const onSelectTakeProfit = useCallback(
@@ -141,8 +140,6 @@ export default function SLTPInputs() {
 						/>
 
 						<SLTPInputField
-							disabled={!!slValidity.disabled}
-							disabledReason={slValidity.disabled ? 'Leverage Too High' : undefined}
 							invalid={slValidity.invalid}
 							value={stopLossPrice}
 							type={'stop-loss'}

@@ -147,7 +147,6 @@ export default function EditStopLossAndTakeProfitModal() {
 
 	const onSelectStopLossPercent = useCallback(
 		(index: number) => {
-			if (slValidity.disabled) return
 			const option = SL_OPTIONS[index]
 			if (option === 'none') {
 				dispatch(setSLTPModalStopLoss(''))
@@ -162,7 +161,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				dispatch(setSLTPModalStopLoss(stopLoss.toString(dp)))
 			}
 		},
-		[marketPrice, dispatch, position?.activePosition.side, leverageWei, slValidity.disabled]
+		[marketPrice, dispatch, position?.activePosition.side, leverageWei]
 	)
 
 	const onSelectTakeProfit = useCallback(
@@ -246,8 +245,6 @@ export default function EditStopLossAndTakeProfitModal() {
 
 					<EditStopLossAndTakeProfitInput
 						type={'stop-loss'}
-						disabled={!!slValidity.disabled}
-						disabledReason={slValidity.disabled ? 'Leverage Too High' : undefined}
 						positionSide={position?.activePosition.side || PositionSide.LONG}
 						leverage={position?.activePosition.leverage || wei(1)}
 						invalid={slValidity.invalid}
@@ -258,7 +255,6 @@ export default function EditStopLossAndTakeProfitModal() {
 					/>
 
 					<SelectorButtons
-						disabled={slValidity.disabled}
 						onSelect={onSelectStopLossPercent}
 						options={SL_OPTIONS}
 						type={'pill-button-large'}

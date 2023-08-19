@@ -518,8 +518,8 @@ export const unserializeCrossMarginTradePreview = (
 	notionalValue: wei(preview.notionalValue),
 	priceImpact: wei(preview.priceImpact),
 })
-// Disable stop loss when it is within 3% of the liquidation price
-const SL_LIQ_DISABLED_PERCENT = 0.03
+// Disable stop loss when it is within 0% of the liquidation price
+const SL_LIQ_DISABLED_PERCENT = 0
 
 // Warn users when their stop loss is within 7.5% of their liquidation price
 const SL_LIQ_PERCENT_WARN = 0.075
@@ -538,19 +538,14 @@ export const stopLossValidity = (
 ) => {
 	const minMaxStopPrice = minMaxSLPrice(liqPrice, side)
 
-	const disabled =
-		(side === PositionSide.LONG && minMaxStopPrice?.gt(currentPrice || 0)) ||
-		(side === PositionSide.SHORT && minMaxStopPrice?.lt(currentPrice || 0))
-
 	if (stopLossPrice === '' || stopLossPrice === undefined)
 		return {
 			invalid: false,
-			disabled: disabled,
 			minMaxStopPrice,
 		}
 
 	if (!minMaxStopPrice || !liqPrice || liqPrice.eq(0))
-		return { invalid: false, disabled, minMaxStopPrice, invalidReason: 'no_liquidation_price' }
+		return { invalid: false, minMaxStopPrice, invalidReason: 'no_liquidation_price' }
 
 	let invalid = false
 	if (side === 'long') {
@@ -569,7 +564,6 @@ export const stopLossValidity = (
 	return {
 		invalid,
 		minMaxStopPrice,
-		disabled,
 		invalidReason: invalid ? 'exceeds_max_stop' : undefined,
 		showWarning: percent.lt(SL_LIQ_PERCENT_WARN),
 	}
