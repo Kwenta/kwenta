@@ -97,7 +97,7 @@ const GasPriceRow = () => {
 
 	const gasPriceItem = isL2
 		? formattedTransactionFee
-		: `${formatNumber(+customGasPrice, { minDecimals: 2 })} Gwei`
+		: `${formatNumber(wei(customGasPrice.maxFeePerGas), { minDecimals: 2 })} Gwei`
 
 	return (
 		<InfoBoxRow
