@@ -1048,6 +1048,7 @@
 						"fees": "fees",
 						"price": "price",
 						"side": "side",
+						"market": "market",
 						"side-type": "Side/Type",
 						"market-side": "Market/Side",
 						"price-type": "Price/Type",

@@ -8,9 +8,10 @@ import getLocale from 'utils/formatters/getLocale'
 type TimeDisplayProps = {
 	value: any
 	horizontal?: boolean
+	shortDate?: boolean
 }
 
-const TimeDisplay: FC<TimeDisplayProps> = memo(({ value, horizontal }) => {
+const TimeDisplay: FC<TimeDisplayProps> = memo(({ value, horizontal, shortDate = false }) => {
 	const [show12hr, setShow12h] = useState(false)
 
 	const handleOnClick = useCallback(() => {
@@ -20,13 +21,20 @@ const TimeDisplay: FC<TimeDisplayProps> = memo(({ value, horizontal }) => {
 	const locale = useMemo(() => getLocale(), [])
 
 	const date = useMemo(
-		() => format(new Date(value), locale.formatLong?.date({ width: 'short' }) ?? 'MM/dd/yy'),
-		[value, locale]
+		() =>
+			format(
+				new Date(value),
+				shortDate ? 'MM/dd' : locale.formatLong?.date({ width: 'short' }) ?? 'MM/dd/yy'
+			),
+		[value, shortDate, locale.formatLong]
 	)
 
 	const time12hr = useMemo(() => new Date(value).toLocaleTimeString(locale.code), [value, locale])
 
-	const time24hr = useMemo(() => format(new Date(value), 'HH:mm:ss', { locale }), [value, locale])
+	const time24hr = useMemo(
+		() => format(new Date(value), shortDate ? 'HH:mm' : 'HH:mm:ss', { locale }),
+		[value, shortDate, locale]
+	)
 
 	return (
 		<TimeDisplayContainer horizontal={horizontal} onClick={handleOnClick}>
@@ -43,9 +51,7 @@ const TimeDisplayContainer = styled.div<{ horizontal?: boolean }>`
 		props.horizontal &&
 		css`
 			display: flex;
-			div:first-child {
-				margin-right: 5px;
-			}
+			column-gap: 5px;
 			div:last-child {
 				color: ${props.theme.colors.common.secondaryGray};
 			}
