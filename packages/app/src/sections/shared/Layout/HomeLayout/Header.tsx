@@ -10,7 +10,7 @@ import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg'
 import DiscordLogo from 'assets/svg/social/discord.svg'
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { GridDivCenteredCol } from 'components/layout/grid'
-import { MobileHiddenView, MobileOnlyView } from 'components/Media'
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import { Body } from 'components/Text'
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
 import { EXTERNAL_LINKS } from 'constants/links'
@@ -93,7 +93,7 @@ const Header = memo(() => {
 
 	return (
 		<>
-			<MobileHiddenView>
+			<DesktopOnlyView>
 				<Container>
 					<div onClick={() => router.push(ROUTES.Home.Root)}>
 						<Logo />
@@ -131,15 +131,15 @@ const Header = memo(() => {
 						</Link>
 					</MenuContainer>
 				</Container>
-			</MobileHiddenView>
-			<MobileOnlyView>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
 				<MobileContainer>
 					<div onClick={() => router.push(ROUTES.Dashboard.Markets)}>
 						<Logo />
 					</div>
 					<MobileUserMenu />
 				</MobileContainer>
-			</MobileOnlyView>
+			</MobileOrTabletView>
 		</>
 	)
 })

@@ -18,6 +18,7 @@ export const media = generateMedia({
 	md: `${BREAKPOINTS.md}px`,
 	mdUp: `${BREAKPOINTS.md + 1}px`,
 	lg: `${BREAKPOINTS.lg}px`,
+	lgUp: `${BREAKPOINTS.lg + 1}px`,
 	xl: `${BREAKPOINTS.xl}px`,
 	xxl: `${BREAKPOINTS.xxl}px`,
 })

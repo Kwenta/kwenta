@@ -238,6 +238,11 @@ const StatsCardContainer = styled(FlexDivRow)`
 	justify-content: center;
 	column-gap: 20px;
 
+	${media.lessThan('lgUp')`
+		flex-wrap: wrap;
+		row-gap: 20px;
+	`}
+
 	${media.lessThan('sm')`
 		flex-direction: column;
 		margin: auto;
@@ -287,6 +292,11 @@ const StyledTable = styled(Table)`
 	font-size: 15px;
 	width: 1160px;
 	background: #131212;
+
+	${media.lessThan('lgUp')`
+		width: 720px;
+	`}
+
 	${media.lessThan('sm')`
 		width: 345px;
 		& > .table-body >.table-body-row >.table-body-cell {

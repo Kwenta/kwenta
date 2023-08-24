@@ -88,7 +88,7 @@ export const FullScreenContainer = styled.div`
 	width: 100%;
 	height: 100%;
 
-	${media.lessThan('sm')`
+	${media.lessThan('lgUp')`
 		padding: 20px 15px 0;
 	`};
 `

@@ -61,7 +61,7 @@ const Header = styled(Text.Body).attrs({ weight: 'bold', mono: true })`
 	text-align: center;
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.common.primaryYellow};
-	${media.lessThan('sm')`
+	${media.lessThan('mdUp')`
 		font-size: 40px;
 		width: 346px;
 		padding-top: 10px;
@@ -75,7 +75,7 @@ const ProductDescription = styled(Text.Body)`
 	text-align: center;
 	color: #bdbdbd;
 	padding-top: 16px;
-	${media.lessThan('sm')`
+	${media.lessThan('mdUp')`
 		font-size: 16px;
 		width: 346px;
 	`}
@@ -88,14 +88,14 @@ const HeroImageContainer = styled(GridDiv)`
 	justify-content: center;
 	margin-top: 97px;
 	margin-bottom: 150px;
-	${media.lessThan('sm')`
+	${media.lessThan('mdUp')`
 		margin-bottom: 101px;
 	`}
 `
 
 const HeroImage = styled.img`
 	width: 1060px;
-	${media.lessThan('md')`
+	${media.lessThan('mdUp')`
 		width: 785px;
 	`}
 	${media.lessThan('sm')`
@@ -107,7 +107,7 @@ const HeroImage = styled.img`
 
 const SynthetixContainer = styled.div`
 	margin: 25px 0px 0px 0;
-	${media.lessThan('sm')`
+	${media.lessThan('mdUp')`
 		display: none;
 	`}
 `

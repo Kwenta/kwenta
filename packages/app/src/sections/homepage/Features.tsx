@@ -140,8 +140,12 @@ const FeatureCopy = styled(Copy)`
 	letter-spacing: -0.2px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 250px;
-	${media.lessThan('sm')`
+
+	${media.lessThan('mdUp')`
 		width: 183px;
+		line-height: 120%;
+		letter-spacing: 0px;
+		padding-right: 5px; 
 	`}
 `
 
@@ -164,6 +168,10 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	flex-wrap: wrap;
 	justify-content: center;
 
+	${media.lessThan('lgUp')`
+		width: 720px;
+	`}
+
 	${media.lessThan('sm')`
 		flex-direction: column;
 		width: 305px;
@@ -180,6 +188,13 @@ const FeatureCard = styled(FlexDivRow)`
 	:hover {
 		background-color: #202020;
 	}
+
+	${media.lessThan('mdUp')`
+		width: 290px;
+		min-height: 150px;
+		align-items: center; 
+		padding: 20px;
+	`}
 
 	${media.lessThan('sm')`
 		width: 305px;
@@ -298,6 +313,13 @@ const FeatureContentContainer = styled(FlexDivCol)`
 	margin-left: 20px;
 	justify-content: center;
 
+	${media.lessThan('mdUp')`
+		margin-left: 10px;
+		width: 305px;
+		height: auto;
+		padding-top: 0px;
+	`}
+
 	${media.lessThan('sm')`
 		margin-left: 10px;
 		width: 305px;
@@ -310,6 +332,11 @@ const FeatureContentTitle = styled(FlexDivRow)`
 	padding-bottom: 5px;
 	justify-content: flex-start;
 	align-items: center;
+
+	${media.lessThan('mdUp')`
+		flex-direction: column;
+		align-items: flex-start;
+	`}
 
 	${media.lessThan('sm')`
 		justify-content: space-between;
@@ -328,7 +355,7 @@ const ComingSoonTag = styled(FlexDivCentered)`
 	cursor: default;
 	font-variant: all-small-caps;
 
-	${media.lessThan('sm')`
+	${media.lessThan('mdUp')`
 		margin-left: 0px;
 		padding: 2px 5px;
 	`}
