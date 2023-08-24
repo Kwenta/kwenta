@@ -7,7 +7,7 @@ export const BANNER_ENABLED = false
 export const BANNER_LINK_URL =
 	'https://mirror.xyz/kwenta.eth/xFomD0VE0H7o2sQ9zGeLyYPwCmtp8tLMXNTGtWy2UOQ'
 // Sets the text displayed on the home page banner
-export const BANNER_TEXT = 'Staking V2 - Reverse Migration'
+export const BANNER_TEXT = 'Important: Staking V2 Migration Coming Soon. Read More  ↗'
 // Sets the height of the banner component on desktop
 export const BANNER_HEIGHT_DESKTOP = 50
 // Sets the height of the banner component on mobile
