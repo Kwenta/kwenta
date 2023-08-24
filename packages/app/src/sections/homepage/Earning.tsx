@@ -139,6 +139,11 @@ const StyledFlexContainer = styled(FlexDivRow)`
 	justify-content: center;
 	gap: 20px;
 	margin-top: 40px;
+
+	${media.lessThan('lgUp')`
+		width: 100%;
+		flex-wrap: wrap;
+	`}
 `
 
 const FeatureCard = styled(FlexDivCol)`

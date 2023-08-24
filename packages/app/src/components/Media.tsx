@@ -12,7 +12,7 @@ const MediaQuery = dynamic(() => import('react-responsive'), {
 })
 
 export const DesktopOnlyView: FC<MediaProps> = memo(({ children }) => (
-	<MediaQuery minWidth={BREAKPOINTS.md}>{children}</MediaQuery>
+	<MediaQuery minWidth={BREAKPOINTS.lg + 1}>{children}</MediaQuery>
 ))
 
 export const DesktopLargeOnlyView: FC<MediaProps> = memo(({ children }) => (
@@ -30,7 +30,7 @@ export const TabletOnlyView: FC<MediaProps> = memo(({ children }) => (
 ))
 
 export const MobileOrTabletView: FC<MediaProps> = memo(({ children }) => (
-	<MediaQuery maxWidth={BREAKPOINTS.md - 1}>{children}</MediaQuery>
+	<MediaQuery maxWidth={BREAKPOINTS.lg}>{children}</MediaQuery>
 ))
 
 export const MobileHiddenView: FC<MediaProps> = memo(({ children }) => (

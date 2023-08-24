@@ -3,7 +3,7 @@ import { SynthSymbol } from '@kwenta/sdk/data'
 import { FuturesMarginType } from '@kwenta/sdk/types'
 import { formatDollars, toWei } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { ExchangeTokens } from 'types/synths'
@@ -59,6 +59,7 @@ const Overview: FC = () => {
 
 	const [exchangeTokens, setExchangeTokens] = useState<ExchangeTokens>([])
 	const [search, setSearch] = useState('')
+	const onClearSearch = useCallback(() => setSearch(''), [setSearch])
 
 	useFetchAction(fetchTokenList, { dependencies: [network] })
 
@@ -174,7 +175,13 @@ const Overview: FC = () => {
 				</TabPanel>
 				<SubHeading>{t('dashboard.overview.markets-tabs.futures')}</SubHeading>
 				<SearchBarContainer>
-					<Search autoFocus value={search} onChange={setSearch} disabled={false} />
+					<Search
+						autoFocus
+						value={search}
+						onChange={setSearch}
+						disabled={false}
+						onClear={onClearSearch}
+					/>
 				</SearchBarContainer>
 				<FuturesMarketsTable search={search} />
 			</DesktopOnlyView>

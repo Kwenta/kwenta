@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -17,6 +17,8 @@ const MarketsPage: MarketsProps = () => {
 	const { t } = useTranslation()
 	const network = useAppSelector(selectNetwork)
 	const [search, setSearch] = useState('')
+	const onClearSearch = useCallback(() => setSearch(''), [setSearch])
+
 	usePollAction('fetchMarkets', fetchMarkets, { dependencies: [network] })
 
 	return (
@@ -26,7 +28,13 @@ const MarketsPage: MarketsProps = () => {
 			</Head>
 			<Spacer height={15} />
 			<SearchBarContainer>
-				<Search autoFocus value={search} onChange={setSearch} disabled={false} />
+				<Search
+					autoFocus
+					value={search}
+					onChange={setSearch}
+					disabled={false}
+					onClear={onClearSearch}
+				/>
 			</SearchBarContainer>
 			<FuturesMarketsTable search={search} />
 		</>

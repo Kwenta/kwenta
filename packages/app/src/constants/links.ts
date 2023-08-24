@@ -48,6 +48,7 @@ export const EXTERNAL_LINKS = {
 		Staking: 'https://docs.kwenta.io/using-kwenta/staking-kwenta',
 		TradingRewardsV2: 'https://mirror.xyz/kwenta.eth/7k-5UYXXcCNJ_DRRWvYBsK5zDm5UA945My4QrInhxoI',
 		RewardsGuide: 'https://mirror.xyz/kwenta.eth/8KyrISnjOcuAX_VW-GxVqxpcbWukB_RlP5XWWMz-UGk',
+		StakingV2Migration: 'https://docs.kwenta.io/kwenta-token/v2-migration',
 	},
 	Optimism: {
 		Home: 'https://optimism.io/',

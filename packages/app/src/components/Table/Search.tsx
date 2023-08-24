@@ -1,6 +1,7 @@
-import { memo, ChangeEvent, FC, useCallback } from 'react'
+import { memo, ChangeEvent, FC, useCallback, useRef } from 'react'
 import styled from 'styled-components'
 
+import CrossIcon from 'assets/svg/app/close.svg'
 import SearchIconPath from 'assets/svg/app/search.svg'
 import Input from 'components/Input/Input'
 import media from 'styles/media'
@@ -11,31 +12,63 @@ type SearchProps = {
 	border?: boolean
 	autoFocus?: boolean
 	onChange: (text: string) => void
+	onClear?: () => void
 }
 
-const Search: FC<SearchProps> = memo(({ value, disabled, border = true, autoFocus, onChange }) => {
-	const handleOnChange = useCallback(
-		(event: ChangeEvent<HTMLInputElement>) => {
-			onChange(event.target.value)
-		},
-		[onChange]
-	)
+const Search: FC<SearchProps> = memo(
+	({ value, disabled, border = true, autoFocus, onChange, onClear }) => {
+		const inputRef = useRef<HTMLInputElement>(null!)
 
-	return (
-		<SearchBar border={border}>
-			<SearchIconPath />
-			<SearchInput
-				autoFocus={autoFocus}
-				border={border}
-				value={value}
-				onChange={handleOnChange}
-				placeholder="Search..."
-				disabled={disabled}
-			/>
-		</SearchBar>
-	)
-})
+		const handleOnChange = useCallback(
+			(event: ChangeEvent<HTMLInputElement>) => {
+				onChange(event.target.value)
+			},
+			[onChange]
+		)
 
+		const onKeyClear = useCallback(
+			(event: React.KeyboardEvent<HTMLInputElement>) => {
+				if (event.key === 'Escape') {
+					onClear?.()
+				}
+			},
+			[onClear]
+		)
+
+		return (
+			<SearchBar border={border}>
+				<SearchIconPath />
+				<SearchInput
+					autoFocus={autoFocus}
+					border={border}
+					value={value}
+					onChange={handleOnChange}
+					placeholder="Search..."
+					disabled={disabled}
+					onKeyDown={onKeyClear}
+					ref={inputRef}
+				/>
+				<IconContainer
+					onClick={() => {
+						onClear?.()
+						inputRef.current?.focus()
+					}}
+				>
+					<CrossIcon width={10} height={10} />
+				</IconContainer>
+			</SearchBar>
+		)
+	}
+)
+
+const IconContainer = styled.div`
+	padding-right: 20px;
+	padding-top: 2px;
+	cursor: pointer;
+	:hover {
+		opacity: 0.5;
+	}
+`
 const SearchInput = styled(Input)<{ border: boolean }>`
 	position: relative;
 	height: 38px;

@@ -75,6 +75,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const router = useRouter()
 	const { t } = useTranslation()
 
+	const onClearSearch = useCallback(() => setSearch(''), [setSearch])
+
 	const onSelectFav = useCallback(
 		(asset: string) => {
 			const index = favMarkets.indexOf(asset)
@@ -203,7 +205,13 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 			{open && (
 				<MarketsList mobile={mobile} height={tableHeight}>
 					<SearchBarContainer>
-						<Search autoFocus onChange={setSearch} value={search} border={false} />
+						<Search
+							autoFocus
+							onChange={setSearch}
+							value={search}
+							border={false}
+							onClear={onClearSearch}
+						/>
 					</SearchBarContainer>
 					<TableContainer>
 						<StyledTable

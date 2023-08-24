@@ -430,6 +430,10 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	flex-wrap: wrap;
 	justify-content: center;
 
+	${media.lessThan('lgUp')`
+		width: 100%;
+	`}
+
 	${media.lessThan('sm')`
 		flex-wrap: nowrap;
 		overflow-x: hidden;

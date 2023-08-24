@@ -177,6 +177,10 @@ const PowerContainer = styled.div`
 	padding-top: 45px;
 	border-top: 1px solid #3d3c3c;
 	margin-bottom: 50px;
+	${media.lessThan('lgUp')`
+		width: 720px;
+		margin-bottom: 120px;
+	`}
 	${media.lessThan('sm')`
 		width: 355px;
 		padding-left: 10px;
@@ -196,6 +200,18 @@ const MultiListContainer = styled.div`
 	column-gap: calc(100vw / 3 - 350px);
 	margin-top: 80px;
 	margin-bottom: 42.5px;
+	${media.lessThan('lgUp')`
+		width: 100%;
+		padding-left: 10px;
+		padding-right: 10px;
+		gap: 20px 80px;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		padding-top: 60px;
+		border-top: 1px solid #3d3c3c;
+		margin-top: 45px;
+		margin-bottom: 60px;
+	`};
 	${media.lessThan('sm')`
 		width: 355px;
 		padding-left: 10px;
