@@ -28,8 +28,10 @@ export const selectPrices = createSelector(
 	}
 )
 
-export const selectOffchainPricesInfo = (state: RootState) =>
-	deserializePricesInfo(state.prices.offChainPrices)
+export const selectOffchainPricesInfo = createSelector(
+	(state: RootState) => state.prices.offChainPrices,
+	(offChainPrices) => deserializePricesInfo(offChainPrices)
+)
 
 export const selectOnChainPricesInfo = (state: RootState) =>
 	deserializePricesInfo(state.prices.onChainPrices)

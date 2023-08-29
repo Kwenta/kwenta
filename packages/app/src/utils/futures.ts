@@ -547,8 +547,8 @@ export const takeProfitValidity = (
 
 	const invalid =
 		side === 'long'
-			? !!takeProfitPrice && wei(takeProfitPrice || 0).lt(closestPrice)
-			: !!takeProfitPrice && wei(takeProfitPrice || 0).gt(closestPrice)
+			? takeProfitPrice !== '' && wei(takeProfitPrice || 0).lt(closestPrice)
+			: takeProfitPrice !== '' && wei(takeProfitPrice || 0).gt(closestPrice)
 
 	const minMaxLabel = side === 'long' ? 'Min: ' : 'Max: '
 
@@ -594,14 +594,14 @@ export const stopLossValidity = (
 		if (wei(stopLossPrice || 0).lt(furthestPrice || 0)) {
 			invalidLabel = 'Min: ' + formattedFurthest
 		}
-		if (wei(stopLossPrice || 0).gt(closestPrice) || wei(stopLossPrice || 0).gt(closestPrice)) {
+		if (wei(stopLossPrice || 0).gt(closestPrice)) {
 			invalidLabel = 'Max: ' + formattedClosest
 		}
 	} else {
 		if (wei(stopLossPrice || 0).gt(furthestPrice || 0)) {
 			invalidLabel = 'Max: ' + formattedFurthest
 		}
-		if (wei(stopLossPrice || 0).lt(closestPrice) || wei(stopLossPrice || 0).lt(closestPrice)) {
+		if (wei(stopLossPrice || 0).lt(closestPrice)) {
 			invalidLabel = 'Min: ' + formattedClosest
 		}
 	}

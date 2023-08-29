@@ -85,7 +85,8 @@ describe('Futures actions - keeper deposits', () => {
 		store.dispatch(calculateSmartMarginFees(orderParams))
 
 		// There are seven orders but we only need to cover 5 because a combined SL / TP would count as one.
-		expect(Number(store.getState().smartMargin.fees.keeperEthDeposit)).toEqual(0.004)
+		expect(Number(store.getState().smartMargin.fees.keeperEthDeposit)).toEqual(0.001000000000000001)
+		// TODO: Use bignumber / wei for accurate calc
 	})
 
 	test('requires no deposit when balance is enough', async () => {

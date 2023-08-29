@@ -254,14 +254,11 @@ describe('Futures market page - stop loss validation', () => {
 		const expandButton = await findByTestId('expand-sl-tp-button')
 		fireEvent.click(expandButton)
 
-		const approveButton = await findByTestId('sl-tp-ack-proceed')
-		fireEvent.click(approveButton)
-
 		const stopLossInput = await findByTestId('trade-panel-stop-loss-input')
 		fireEvent.change(stopLossInput, { target: { value: '1700' } })
 
 		// Min / Max SL is shown when invalid
-		const slMinMaxLabel = await findByText('Max: 2,172.47')
+		const slMinMaxLabel = await findByText('Min: 1,810.50')
 		expect(slMinMaxLabel).toBeTruthy()
 
 		fireEvent.change(stopLossInput, { target: { value: '2090' } })

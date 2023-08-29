@@ -37,7 +37,6 @@ import PositionType from '../PositionType'
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement'
 
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput'
-import { sl } from 'date-fns/locale'
 
 const TP_OPTIONS = ['none', '5%', '10%', '25%', '50%', '100%']
 const SL_OPTIONS = ['none', '2%', '5%', '10%', '20%', '50%']
