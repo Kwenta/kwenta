@@ -28,6 +28,15 @@ export const selectMarketIndexPrice = createSelector(
 	}
 )
 
+export const selectMarketOnchainPrice = createSelector(
+	selectMarketAsset,
+	selectPrices,
+	(marketAsset, prices) => {
+		const price = prices[marketAsset]
+		return price?.onChain ?? wei(0)
+	}
+)
+
 export const selectMarketPriceInfo = createSelector(
 	selectMarketAsset,
 	selectOffchainPricesInfo,

@@ -637,10 +637,15 @@ export const selectEditPositionModalInfo = createSelector(
 	(modalMarketKey, smartPositions, prices) => {
 		const position = smartPositions.find((p) => p.market.marketKey === modalMarketKey)
 		if (!position || position.market.version === 3)
-			return { position: null, market: null, marketPrice: wei(0) }
+			return { position: null, market: null, marketPrice: wei(0), onChainPrice: wei(0) }
 		const price = prices[position.market.asset]
 		// Note this assumes the order type is always delayed off chain
-		return { position, market: position.market, marketPrice: price.offChain || wei(0) }
+		return {
+			position,
+			market: position.market,
+			marketPrice: price.offChain || wei(0),
+			onChainPrice: price.onChain ?? wei(0),
+		}
 	}
 )
 

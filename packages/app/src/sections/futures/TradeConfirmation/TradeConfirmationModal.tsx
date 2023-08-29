@@ -26,7 +26,7 @@ import {
 	selectLeverageSide,
 	selectPosition,
 	selectLeverageInput,
-	selectTradePanelSLValidity,
+	selectTradePanelSLTPValidity,
 } from 'state/futures/selectors'
 import { refetchTradePreview, submitSmartMarginOrder } from 'state/futures/smartMargin/actions'
 import {
@@ -78,7 +78,7 @@ export default function TradeConfirmationModal({
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
 	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs)
 	const hasSlTp = useAppSelector(selectNewTradeHasSlTp)
-	const slValidity = useAppSelector(selectTradePanelSLValidity)
+	const sltpValidity = useAppSelector(selectTradePanelSLTPValidity)
 
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
 	const [acceptedSLRisk, setAcceptedSLRisk] = useState(false)
@@ -275,7 +275,7 @@ export default function TradeConfirmationModal({
 					onChangeChecked={(checked) => setOverridePriceProtection(checked)}
 				/>
 			)}
-			{slValidity.showWarning && (
+			{sltpValidity.stopLoss.showWarning && (
 				<AcceptWarningView
 					id="sl-risk-warning"
 					style={{ margin: '10px 0 0 0' }}
@@ -293,7 +293,7 @@ export default function TradeConfirmationModal({
 					!positionDetails ||
 					isSubmitting ||
 					!!disabledReason ||
-					(slValidity.showWarning && !acceptedSLRisk)
+					(sltpValidity.stopLoss.showWarning && !acceptedSLRisk)
 				}
 			>
 				{isSubmitting ? <ButtonLoader /> : disabledReason || buttonText}

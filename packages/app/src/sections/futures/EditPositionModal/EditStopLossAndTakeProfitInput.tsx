@@ -26,7 +26,7 @@ const EditStopLossAndTakeProfitInput: React.FC<SLTPInputFieldProps> = memo(
 
 				<SLTPInputField
 					{...props}
-					type={'stop-loss'}
+					type={type}
 					currentPrice={currentPrice}
 					dataTestId={'trade-panel-stop-loss-input'}
 				/>
