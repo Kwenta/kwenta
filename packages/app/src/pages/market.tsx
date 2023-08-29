@@ -55,7 +55,7 @@ const Market: MarketComponent = () => {
 	const router = useRouter()
 	const { walletAddress } = Connector.useContainer()
 	const dispatch = useAppDispatch()
-	const { lessThanWidth } = useWindowSize()
+	const { greaterThanWidth } = useWindowSize()
 	usePollMarketFuturesData()
 
 	const routerMarketAsset = router.query.asset as FuturesMarketAsset
@@ -110,7 +110,15 @@ const Market: MarketComponent = () => {
 			<SmartMarginOnboard isOpen={showOnboard} />
 			<CreatePerpsV3AccountModal isOpen={showCrossMarginOnboard} />
 			<DesktopOnlyView>
-				{lessThanWidth('lg') ? (
+				<PageContent>
+					<StyledFullHeightContainer>
+						<TradePanelDesktop />
+						<MarketInfo />
+					</StyledFullHeightContainer>
+				</PageContent>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				{greaterThanWidth('md') ? (
 					<PageContent>
 						<TabletContainer>
 							<TradePanelDesktop />
@@ -120,16 +128,8 @@ const Market: MarketComponent = () => {
 						</TabletContainer>
 					</PageContent>
 				) : (
-					<PageContent>
-						<StyledFullHeightContainer>
-							<TradePanelDesktop />
-							<MarketInfo />
-						</StyledFullHeightContainer>
-					</PageContent>
+					<MobileTrade />
 				)}
-			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<MobileTrade />
 			</MobileOrTabletView>
 			{showPositionModal?.type === 'smart_margin_close_position' && <ClosePositionModal />}
 			{showPositionModal?.type === 'cross_margin_close_position' && (

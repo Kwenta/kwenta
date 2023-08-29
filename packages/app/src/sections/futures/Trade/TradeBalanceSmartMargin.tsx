@@ -125,33 +125,35 @@ const TradeBalance = memo(() => {
 					<>
 						{isMobile ? (
 							<DepositContainer>
-								<FlexDivRow style={{ width: '170px' }}>
-									<Body size={'medium'} color="secondary">
-										{t('futures.market.trade.trade-balance.available-margin')}:
-									</Body>
-									<NumericValue size={'medium'} weight="bold">
-										{formatDollars(accountMargin)}
-									</NumericValue>
-								</FlexDivRow>
-								{lockedMargin.gt(0) && (
-									<FlexDivRow style={{ width: '170px' }}>
+								<FlexDivRowCentered columnGap="20px">
+									<FlexDivRowCentered columnGap="5px">
 										<Body size={'medium'} color="secondary">
-											{t('futures.market.trade.trade-balance.locked-margin')}:
+											{t('futures.market.trade.trade-balance.available-margin')}:
 										</Body>
+										<NumericValue size={'medium'} weight="bold">
+											{formatDollars(accountMargin)}
+										</NumericValue>
+									</FlexDivRowCentered>
+									{lockedMargin.gt(0) && (
 										<FlexDivRowCentered columnGap="5px">
-											<NumericValue size={'medium'} weight="bold" color="secondary">
-												{formatDollars(lockedMargin)}
-											</NumericValue>
-											<Tooltip
-												position="fixed"
-												content={t('futures.market.trade.trade-balance.tooltip')}
-												width="200px !important"
-											>
-												<HelpIcon />
-											</Tooltip>
+											<Body size={'medium'} color="secondary">
+												{t('futures.market.trade.trade-balance.locked-margin')}:
+											</Body>
+											<FlexDivRowCentered columnGap="5px">
+												<NumericValue size={'medium'} weight="bold" color="secondary">
+													{formatDollars(lockedMargin)}
+												</NumericValue>
+												<Tooltip
+													position="fixed"
+													content={t('futures.market.trade.trade-balance.tooltip')}
+													width="200px !important"
+												>
+													<HelpIcon />
+												</Tooltip>
+											</FlexDivRowCentered>
 										</FlexDivRowCentered>
-									</FlexDivRow>
-								)}
+									)}
+								</FlexDivRowCentered>
 								<BrdigeAndWithdrawButton
 									modalType={'futures_deposit_withdraw_smart_margin'}
 									onPillClick={onClickContainer}

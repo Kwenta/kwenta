@@ -303,6 +303,7 @@ const TableContainer = styled.div`
 	height: calc(100% - ${FOOTER_HEIGHT}px);
 	${media.lessThan('xl')`
 		height: 100%;
+		grid-template-columns: initial;
 	`}
 	display: grid;
 	grid-template-columns: 2fr 1fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr;
