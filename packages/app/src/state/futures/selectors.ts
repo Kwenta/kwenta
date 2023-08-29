@@ -37,6 +37,7 @@ import {
 	unserializePositionHistory,
 	unserializeTrades,
 	stopLossValidity,
+	takeProfitValidity,
 } from 'utils/futures'
 
 import {
@@ -44,6 +45,7 @@ import {
 	selectFuturesType,
 	selectMarketAsset,
 	selectMarketIndexPrice,
+	selectMarketOnchainPrice,
 } from './common/selectors'
 import { CrossPerpsPortfolio } from './crossMargin/types'
 import {
@@ -803,26 +805,50 @@ export const selectMarketSuspended = createSelector(
 export const selectHistoricalFundingRatePeriod = (state: RootState) =>
 	state.futures.historicalFundingRatePeriod
 
-export const selectTradePanelSLValidity = createSelector(
+export const selectTradePanelSLTPValidity = createSelector(
 	selectSlTpTradeInputs,
 	selectTradePreview,
 	selectMarketIndexPrice,
+	selectMarketOnchainPrice,
 	selectLeverageSide,
-	({ stopLossPrice }, preview, currentPrice, leverageSide) => {
-		return stopLossValidity(stopLossPrice, preview?.liqPrice, leverageSide, currentPrice)
+	({ stopLossPrice, takeProfitPrice }, preview, currentPrice, onChainPrice, leverageSide) => {
+		const tpValidity = takeProfitValidity(takeProfitPrice, leverageSide, onChainPrice, currentPrice)
+		const slValidity = stopLossValidity(
+			stopLossPrice,
+			preview?.liqPrice || wei(0),
+			leverageSide,
+			onChainPrice,
+			currentPrice
+		)
+		return {
+			takeProfit: tpValidity,
+			stopLoss: slValidity,
+		}
 	}
 )
 
-export const selectModalSLValidity = createSelector(
+export const selectModalSLTPValidity = createSelector(
 	selectSlTpModalInputs,
 	selectEditPositionModalInfo,
-	({ stopLossPrice }, { position, marketPrice }) => {
-		return stopLossValidity(
+	({ takeProfitPrice, stopLossPrice }, { position, marketPrice, onChainPrice }) => {
+		const tpValidity = takeProfitValidity(
+			takeProfitPrice,
+			position?.activePosition?.side || PositionSide.LONG,
+			onChainPrice,
+			marketPrice
+		)
+		const slValidity = stopLossValidity(
 			stopLossPrice,
 			position?.activePosition?.liquidationPrice,
 			position?.activePosition?.side || PositionSide.LONG,
+			onChainPrice,
 			marketPrice
 		)
+
+		return {
+			takeProfit: tpValidity,
+			stopLoss: slValidity,
+		}
 	}
 )
 

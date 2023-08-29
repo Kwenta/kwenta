@@ -36,6 +36,7 @@ export const DEFAULT_DELAYED_EXECUTION_BUFFER = 15
 export const DEFAULT_DELAYED_CANCEL_BUFFER = 10
 
 export const CROSS_MARGIN_ENABLED = process.env.NODE_ENV !== 'production'
+export const ORDERS_WARNING_DISABLED = true
 
 export const DEFAULT_FUTURES_MARGIN_TYPE = FuturesMarginType.SMART_MARGIN
 

@@ -17,7 +17,7 @@ import { Body } from 'components/Text'
 import { setShowPositionModal } from 'state/app/reducer'
 import { selectAckedOrdersWarning, selectTransaction } from 'state/app/selectors'
 import { clearTradeInputs } from 'state/futures/actions'
-import { selectModalSLValidity, selectSubmittingFuturesTx } from 'state/futures/selectors'
+import { selectModalSLTPValidity, selectSubmittingFuturesTx } from 'state/futures/selectors'
 import {
 	calculateKeeperDeposit,
 	updateStopLossAndTakeProfit,
@@ -37,6 +37,7 @@ import PositionType from '../PositionType'
 import OrderAcknowledgement from '../Trade/OrderAcknowledgement'
 
 import EditStopLossAndTakeProfitInput from './EditStopLossAndTakeProfitInput'
+import { sl } from 'date-fns/locale'
 
 const TP_OPTIONS = ['none', '5%', '10%', '25%', '50%', '100%']
 const SL_OPTIONS = ['none', '2%', '5%', '10%', '20%', '50%']
@@ -52,7 +53,7 @@ export default function EditStopLossAndTakeProfitModal() {
 	const keeperDeposit = useAppSelector(selectSmartMarginKeeperDeposit)
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
 	const hideOrderWarning = useAppSelector(selectAckedOrdersWarning)
-	const slValidity = useAppSelector(selectModalSLValidity)
+	const sltpValidity = useAppSelector(selectModalSLTPValidity)
 
 	const [acceptedSLRisk, setAcceptedSLRisk] = useState(false)
 
@@ -85,23 +86,15 @@ export default function EditStopLossAndTakeProfitModal() {
 		return hasOrders && (tpOrderPrice !== takeProfitPrice || slOrderPrice !== stopLossPrice)
 	}, [hasOrders, stopLoss?.targetPrice, stopLossPrice, takeProfit?.targetPrice, takeProfitPrice])
 
-	const tpInvalid = useMemo(() => {
-		if (position?.activePosition.side === 'long') {
-			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(marketPrice)
-		} else {
-			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(marketPrice)
-		}
-	}, [takeProfitPrice, marketPrice, position?.activePosition.side])
-
 	const ethBalWarningMessage = ethBalanceExceeded
 		? t('futures.market.trade.confirmation.modal.eth-bal-warning')
 		: null
 
 	const isActive = useMemo(
 		() =>
-			!(slValidity.showWarning && !acceptedSLRisk) &&
-			!slValidity.invalid &&
-			!tpInvalid &&
+			!(sltpValidity.stopLoss.showWarning && !acceptedSLRisk) &&
+			!sltpValidity.stopLoss.invalidLabel &&
+			!sltpValidity.takeProfit.invalidLabel &&
 			!ethBalanceExceeded &&
 			(hasOrders
 				? hasInputValues
@@ -116,9 +109,9 @@ export default function EditStopLossAndTakeProfitModal() {
 			hasOrders,
 			stopLossPrice,
 			takeProfitPrice,
-			slValidity.showWarning,
-			slValidity.invalid,
-			tpInvalid,
+			sltpValidity.stopLoss.showWarning,
+			sltpValidity.stopLoss.invalidLabel,
+			sltpValidity.takeProfit.invalidLabel,
 		]
 	)
 
@@ -227,7 +220,7 @@ export default function EditStopLossAndTakeProfitModal() {
 				<>
 					<EditStopLossAndTakeProfitInput
 						type={'take-profit'}
-						invalid={tpInvalid}
+						invalidLabel={sltpValidity.takeProfit.invalidLabel}
 						currentPrice={marketPrice}
 						value={takeProfitPrice}
 						positionSide={position?.activePosition.side || PositionSide.LONG}
@@ -247,9 +240,8 @@ export default function EditStopLossAndTakeProfitModal() {
 						type={'stop-loss'}
 						positionSide={position?.activePosition.side || PositionSide.LONG}
 						leverage={position?.activePosition.leverage || wei(1)}
-						invalid={slValidity.invalid}
+						invalidLabel={sltpValidity.stopLoss.invalidLabel}
 						currentPrice={marketPrice}
-						minMaxPrice={slValidity.minMaxStopPrice}
 						value={stopLossPrice}
 						onChange={onChangeStopLoss}
 					/>
@@ -268,7 +260,7 @@ export default function EditStopLossAndTakeProfitModal() {
 					/>
 
 					<Spacer height={4} />
-					{slValidity.showWarning && (
+					{sltpValidity.stopLoss.showWarning && (
 						<AcceptWarningView
 							id="sl-risk-warning"
 							style={{ margin: '0 0 20px 0' }}

@@ -1,3 +1,4 @@
+import { ORDERS_WARNING_DISABLED } from 'constants/defaults'
 import { RootState } from 'state/store'
 
 import { unserializeGasPrice } from './helpers'
@@ -11,6 +12,8 @@ export const selectGasPrice = (state: RootState) => unserializeGasPrice(state.ap
 
 export const selectTransaction = (state: RootState) => state.app.transaction
 
-export const selectAckedOrdersWarning = (state: RootState) => state.app.acknowledgedOrdersWarning
+export const selectAckedOrdersWarning = (state: RootState) => {
+	return ORDERS_WARNING_DISABLED || state.app.acknowledgedOrdersWarning
+}
 
 export const selectShowBanner = (state: RootState) => state.app.showBanner

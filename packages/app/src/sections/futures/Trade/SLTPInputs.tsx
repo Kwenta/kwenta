@@ -16,7 +16,7 @@ import { selectMarketIndexPrice } from 'state/futures/common/selectors'
 import {
 	selectLeverageInput,
 	selectLeverageSide,
-	selectTradePanelSLValidity,
+	selectTradePanelSLTPValidity,
 } from 'state/futures/selectors'
 import {
 	setSmartMarginTradeStopLoss,
@@ -38,7 +38,7 @@ export default function SLTPInputs() {
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const leverage = useAppSelector(selectLeverageInput)
 	const hideWarning = useAppSelector(selectAckedOrdersWarning)
-	const slValidity = useSelector(selectTradePanelSLValidity)
+	const sltpValidity = useSelector(selectTradePanelSLTPValidity)
 
 	const [showInputs, setShowInputs] = useState(false)
 	const [showOrderWarning, setShowOrderWarning] = useState(false)
@@ -100,18 +100,10 @@ export default function SLTPInputs() {
 		[dispatch]
 	)
 
-	const tpInvalid = useMemo(() => {
-		if (leverageSide === 'long') {
-			return !!takeProfitPrice && wei(takeProfitPrice || 0).lt(currentPrice)
-		} else {
-			return !!takeProfitPrice && wei(takeProfitPrice || 0).gt(currentPrice)
-		}
-	}, [takeProfitPrice, currentPrice, leverageSide])
-
 	return (
 		<Container>
 			<ExpandRow onClick={() => setShowInputs(!showInputs)}>
-				<InputTitle margin="1px 0 0 0">Stop Loss / Take Profit</InputTitle>
+				<InputTitle margin="1px 0 0 0">Take Profit / Stop Loss</InputTitle>
 				<Button
 					data-testid="expand-sl-tp-button"
 					style={{
@@ -133,33 +125,12 @@ export default function SLTPInputs() {
 						<Spacer height={6} />
 
 						<InputHeaderRow
-							label="SL"
-							rightElement={
-								<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
-							}
-						/>
-
-						<SLTPInputField
-							invalid={slValidity.invalid}
-							value={stopLossPrice}
-							type={'stop-loss'}
-							minMaxPrice={slValidity.minMaxStopPrice}
-							currentPrice={currentPrice}
-							positionSide={leverageSide}
-							leverage={leverageWei}
-							dataTestId={'trade-panel-stop-loss-input'}
-							onChange={onChangeStopLoss}
-						/>
-
-						<Spacer height={12} />
-
-						<InputHeaderRow
 							label="TP"
 							rightElement={<SelectorButtons options={TP_OPTIONS} onSelect={onSelectTakeProfit} />}
 						/>
 
 						<SLTPInputField
-							invalid={tpInvalid}
+							invalidLabel={sltpValidity.takeProfit.invalidLabel}
 							value={takeProfitPrice}
 							type={'take-profit'}
 							currentPrice={currentPrice}
@@ -167,6 +138,26 @@ export default function SLTPInputs() {
 							leverage={leverageWei}
 							dataTestId={'trade-panel-take-profit-input'}
 							onChange={onChangeTakeProfit}
+						/>
+
+						<Spacer height={12} />
+
+						<InputHeaderRow
+							label="SL"
+							rightElement={
+								<SelectorButtons options={SL_OPTIONS} onSelect={onSelectStopLossPercent} />
+							}
+						/>
+
+						<SLTPInputField
+							invalidLabel={sltpValidity.stopLoss.invalidLabel}
+							value={stopLossPrice}
+							type={'stop-loss'}
+							currentPrice={currentPrice}
+							positionSide={leverageSide}
+							leverage={leverageWei}
+							dataTestId={'trade-panel-stop-loss-input'}
+							onChange={onChangeStopLoss}
 						/>
 					</InputsContainer>
 				)

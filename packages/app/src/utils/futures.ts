@@ -524,36 +524,86 @@ const SL_LIQ_DISABLED_PERCENT = 0
 // Warn users when their stop loss is within 7.5% of their liquidation price
 const SL_LIQ_PERCENT_WARN = 0.075
 
-export const minMaxSLPrice = (liqPrice: Wei | undefined, leverageSide: PositionSide) => {
+export const furthestSLPrice = (liqPrice: Wei | undefined, leverageSide: PositionSide) => {
 	return leverageSide === PositionSide.LONG
 		? liqPrice?.mul(1 + SL_LIQ_DISABLED_PERCENT)
 		: liqPrice?.mul(1 - SL_LIQ_DISABLED_PERCENT)
+}
+
+export const takeProfitValidity = (
+	takeProfitPrice: string,
+	side: PositionSide,
+	onChainPrice: Wei,
+	offchainPrice: Wei
+) => {
+	const closestPrice =
+		side === 'long'
+			? onChainPrice.gt(offchainPrice)
+				? onChainPrice
+				: offchainPrice
+			: onChainPrice.lt(offchainPrice)
+			? onChainPrice
+			: offchainPrice
+
+	const invalid =
+		side === 'long'
+			? !!takeProfitPrice && wei(takeProfitPrice || 0).lt(closestPrice)
+			: !!takeProfitPrice && wei(takeProfitPrice || 0).gt(closestPrice)
+
+	const minMaxLabel = side === 'long' ? 'Min: ' : 'Max: '
+
+	return {
+		invalidLabel: invalid
+			? minMaxLabel + formatNumber(closestPrice, { suggestDecimals: true })
+			: undefined,
+		closestPrice,
+	}
 }
 
 export const stopLossValidity = (
 	stopLossPrice: string,
 	liqPrice: Wei | undefined,
 	side: PositionSide,
-	currentPrice: Wei
+	onChainPrice: Wei,
+	offchainPrice: Wei
 ) => {
-	const minMaxStopPrice = minMaxSLPrice(liqPrice, side)
+	const furthestPrice = furthestSLPrice(liqPrice, side)
+	const closestPrice =
+		side === 'long'
+			? onChainPrice.lt(offchainPrice)
+				? onChainPrice
+				: offchainPrice
+			: onChainPrice.gt(offchainPrice)
+			? onChainPrice
+			: offchainPrice
 
 	if (stopLossPrice === '' || stopLossPrice === undefined)
 		return {
-			invalid: false,
-			minMaxStopPrice,
+			invalidLabel: undefined,
+			minMaxStopPrice: furthestPrice,
 		}
 
-	if (!minMaxStopPrice || !liqPrice || liqPrice.eq(0))
-		return { invalid: false, minMaxStopPrice, invalidReason: 'no_liquidation_price' }
+	if (!furthestPrice || !liqPrice || liqPrice.eq(0))
+		return { furthestPrice, closestPrice, invalidLabel: 'No position data' }
 
-	let invalid = false
+	const formattedClosest = formatNumber(closestPrice, { suggestDecimals: true })
+	const formattedFurthest = formatNumber(furthestPrice, { suggestDecimals: true })
+
+	let invalidLabel: string | undefined = undefined
 	if (side === 'long') {
-		invalid =
-			wei(stopLossPrice || 0).gt(currentPrice) || wei(stopLossPrice || 0).lt(minMaxStopPrice || 0)
+		if (wei(stopLossPrice || 0).lt(furthestPrice || 0)) {
+			invalidLabel = 'Min: ' + formattedFurthest
+		}
+		if (wei(stopLossPrice || 0).gt(closestPrice) || wei(stopLossPrice || 0).gt(closestPrice)) {
+			invalidLabel = 'Max: ' + formattedClosest
+		}
 	} else {
-		invalid =
-			wei(stopLossPrice || 0).lt(currentPrice) || wei(stopLossPrice || 0).gt(minMaxStopPrice || 0)
+		if (wei(stopLossPrice || 0).gt(furthestPrice || 0)) {
+			invalidLabel = 'Max: ' + formattedFurthest
+		}
+		if (wei(stopLossPrice || 0).lt(closestPrice) || wei(stopLossPrice || 0).lt(closestPrice)) {
+			invalidLabel = 'Min: ' + formattedClosest
+		}
 	}
 
 	const percent = wei(stopLossPrice || 0)
@@ -562,9 +612,9 @@ export const stopLossValidity = (
 		.abs()
 
 	return {
-		invalid,
-		minMaxStopPrice,
-		invalidReason: invalid ? 'exceeds_max_stop' : undefined,
+		invalidLabel,
+		furthestPrice,
+		closestPrice,
 		showWarning: percent.lt(SL_LIQ_PERCENT_WARN),
 	}
 }
