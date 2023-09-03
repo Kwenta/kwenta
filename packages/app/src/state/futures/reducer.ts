@@ -35,6 +35,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	queryStatuses: {
 		selectedTraderPositionHistory: DEFAULT_QUERY_STATUS,
 	},
+	csvExport: '',
 }
 
 const futuresSlice = createSlice({
@@ -70,6 +71,9 @@ const futuresSlice = createSlice({
 		},
 		setHistoricalFundingRatePeriod: (state, action: PayloadAction<Period>) => {
 			state.historicalFundingRatePeriod = action.payload
+		},
+		setCsvExportData: (state, action: PayloadAction<string>) => {
+			state.csvExport = action.payload
 		},
 	},
 
@@ -107,4 +111,5 @@ export const {
 	toggleShowTradeHistory,
 	setSelectedChart,
 	setHistoricalFundingRatePeriod,
+	setCsvExportData,
 } = futuresSlice.actions

@@ -859,3 +859,5 @@ export const selectPendingOrdersCount = createSelector(
 	(asyncCount, delayedOrders, type) =>
 		type === FuturesMarginType.CROSS_MARGIN ? asyncCount : delayedOrders.length
 )
+
+export const selectCsvExport = (state: RootState) => state.futures.csvExport

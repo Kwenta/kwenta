@@ -650,7 +650,10 @@
 		"page-title": "Markets | Kwenta"
 	},
 	"dashboard-history": {
-		"page-title": "Trade History | Kwenta"
+		"page-title": "Trade History | Kwenta",
+		"main-title": "Trade History",
+		"subtitle": "History of all past trades on Kwenta",
+		"export-btn": "Export"
 	},
 	"dashboard-stake": {
 		"page-title": "Staking | Kwenta"
