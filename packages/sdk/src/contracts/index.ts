@@ -23,6 +23,7 @@ import RewardEscrowV2ABI from './abis/RewardEscrowV2.json'
 import StakingRewardsABI from './abis/StakingRewards.json'
 import SupplyScheduleABI from './abis/SupplySchedule.json'
 import SynthRedeemerABI from './abis/SynthRedeemer.json'
+import SynthUtilABI from './abis/SynthUtil.json'
 import SystemStatusABI from './abis/SystemStatus.json'
 import PerpsV3AccountProxyABI from './abis/PerpsV3AccountProxy.json'
 import { ADDRESSES } from './constants'
@@ -198,6 +199,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 	return {
 		SynthRedeemer: ADDRESSES.SynthRedeemer[networkId]
 			? new EthCallContract(ADDRESSES.SynthRedeemer[networkId], SynthRedeemerABI)
+			: undefined,
+		SynthUtil: ADDRESSES.SynthUtil[networkId]
+			? new EthCallContract(ADDRESSES.SynthUtil[networkId], SynthUtilABI)
 			: undefined,
 		ExchangeRates: ADDRESSES.ExchangeRates[networkId]
 			? new EthCallContract(ADDRESSES.ExchangeRates[networkId], ExchangeRatesABI)
