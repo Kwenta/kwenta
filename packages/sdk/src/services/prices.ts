@@ -9,16 +9,10 @@ import KwentaSDK from '..'
 import * as sdkErrors from '../common/errors'
 import { MARKETS, MARKET_ASSETS_BY_PYTH_ID } from '../constants/futures'
 import { PERIOD_IN_SECONDS } from '../constants/period'
-import { ADDITIONAL_SYNTHS, PRICE_UPDATE_THROTTLE, PYTH_IDS } from '../constants/prices'
+import { PRICE_UPDATE_THROTTLE, PYTH_IDS } from '../constants/prices'
 import { NetworkId, PriceServer } from '../types/common'
 import { FuturesMarketKey } from '../types/futures'
-import {
-	CurrencyPrice,
-	SynthPrice,
-	PricesListener,
-	PricesMap,
-	SynthPricesTuple,
-} from '../types/prices'
+import { SynthPrice, PricesListener, PricesMap, SynthPricesTuple } from '../types/prices'
 import {
 	getDisplayAsset,
 	getPythNetworkUrl,
@@ -28,6 +22,7 @@ import {
 import { startInterval } from '../utils/interval'
 import { scale } from '../utils/number'
 import { getRatesEndpoint } from '../utils/prices'
+import { PerpsV2MarketData } from '../contracts/types'
 
 const DEBUG_WS = false
 const LOG_WS = process.env.NODE_ENV !== 'production' && DEBUG_WS
@@ -128,28 +123,37 @@ export default class PricesService {
 	}
 
 	public async getOnChainPrices() {
-		if (!this.sdk.context.contracts.SynthUtil || !this.sdk.context.contracts.ExchangeRates) {
+		if (
+			!this.sdk.context.multicallContracts.SynthUtil ||
+			!this.sdk.context.multicallContracts.PerpsV2MarketData
+		) {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 
 		const synthPrices: Record<string, Wei> = {}
 
-		const [synthsRates, ratesForCurrencies] = (await Promise.all([
-			this.sdk.context.contracts.SynthUtil.synthsRates(),
-			this.sdk.context.contracts.ExchangeRates.ratesForCurrencies(ADDITIONAL_SYNTHS),
-		])) as [SynthPricesTuple, CurrencyPrice[]]
+		const [synthsRates, perpsMarkets] = (await this.sdk.context.multicallProvider.all([
+			this.sdk.context.multicallContracts.SynthUtil.synthsRates(),
+			this.sdk.context.multicallContracts.PerpsV2MarketData.allProxiedMarketSummaries(),
+		])) as [SynthPricesTuple, PerpsV2MarketData.MarketSummaryStructOutput[]]
 
-		const synths = [...synthsRates[0], ...ADDITIONAL_SYNTHS]
-		const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyPrice[]
+		const synths = synthsRates[0]
+		const synthRates = synthsRates[1]
 
 		synths.forEach((currencyKeyBytes32, i) => {
 			const currencyKey = parseBytes32String(currencyKeyBytes32)
 			const marketAsset = MarketAssetByKey[currencyKey as FuturesMarketKey]
 
-			const rate = Number(formatEther(rates[i]))
+			const rate = Number(formatEther(synthRates[i]))
 			const price = wei(rate)
 
 			synthPrices[currencyKey] = price
+			if (marketAsset) synthPrices[marketAsset] = price
+		})
+
+		perpsMarkets.forEach((market) => {
+			const marketAsset = parseBytes32String(market.asset)
+			const price = wei(market.price)
 			if (marketAsset) synthPrices[marketAsset] = price
 		})
 

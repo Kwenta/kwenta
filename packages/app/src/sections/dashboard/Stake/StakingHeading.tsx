@@ -67,4 +67,6 @@ const BannerContainer = styled(FlexDivCentered)`
 	cursor: pointer;
 	border-radius: 8px;
 	white-space: pre-wrap;
+	text-align: center;
+	padding: 0px 5px;
 `
