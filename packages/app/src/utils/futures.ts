@@ -85,7 +85,7 @@ export const updatePositionUpnl = (
 			.sub(offChainPrice)
 			.mul(position.side === PositionSide.LONG ? -1 : 1)
 	)
-	const pnlPct = pnl.div(position.initialMargin.add(thisPositionHistory.netTransfers))
+	const pnlPct = pnl.div(thisPositionHistory.initialMargin.add(thisPositionHistory.netTransfers))
 	const accruedFunding = position.accruedFunding.add(thisPositionHistory.netFunding)
 
 	return {
