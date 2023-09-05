@@ -4,11 +4,19 @@ import {
 	PositionSide,
 	FuturesMarginType,
 	FuturesMarket,
+	FuturesPositionHistory,
 } from '@kwenta/sdk/types'
-import { truncateTimestamp } from '@kwenta/sdk/utils'
+import {
+	truncateTimestamp,
+	getDisplayAsset,
+	MarketKeyByAsset,
+	getMarketName,
+} from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
+import { FuturesPositionTablePosition } from 'types/futures'
 
+import { TradeStatus } from 'sections/futures/types'
 import {
 	selectAllCrossMarginTrades,
 	selectCrossMarginAccountData,
@@ -860,4 +868,107 @@ export const selectPendingOrdersCount = createSelector(
 		type === FuturesMarginType.CROSS_MARGIN ? asyncCount : delayedOrders.length
 )
 
-export const selectCsvExport = (state: RootState) => state.futures.csvExport
+function formatPosition(
+	positions: FuturesPositionTablePosition[],
+	history: FuturesPositionHistory[]
+) {
+	return history
+		.sort((a, b) => b.timestamp - a.timestamp)
+		.map((stat, i) => {
+			const totalDeposit = stat.initialMargin.add(stat.totalDeposits)
+			const thisPosition = stat.isOpen
+				? positions.find((p) => p.market.marketKey === stat.marketKey)
+				: null
+
+			const funding = stat.netFunding.add(thisPosition?.activePosition?.accruedFunding ?? ZERO_WEI)
+			const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
+
+			return {
+				...stat,
+				rank: i + 1,
+				currencyIconKey: MarketKeyByAsset[stat.asset],
+				marketShortName: getMarketName(stat.asset),
+				status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
+				funding,
+				pnl: pnlWithFeesPaid,
+				pnlPct: totalDeposit.gt(0)
+					? `(${pnlWithFeesPaid
+							.div(stat.initialMargin.add(stat.totalDeposits))
+							.mul(100)
+							.toNumber()
+							.toFixed(2)}%)`
+					: '0%',
+			}
+		})
+}
+
+export const selectLeaderBoardTableData = createSelector(
+	selectFuturesPositions,
+	selectPositionHistoryForSelectedTrader,
+	(positions, history) => formatPosition(positions, history)
+)
+
+export const selectPositionsHistoryTableData = createSelector(
+	selectFuturesPositions,
+	selectUsersPositionHistory,
+	(positions, history) => formatPosition(positions, history)
+)
+
+export const selectPositionsCsvData = createSelector(selectPositionsHistoryTableData, (data) => {
+	let csvData =
+		'Date/Time,Market,Status,Trades,Total Volume,Realized P&L USD,Realized P&L %,Funding,Tx Hash\n'
+	data.forEach(
+		(row: (typeof data)[number]) =>
+			(csvData += `${new Date(row.timestamp).toISOString()},${row.marketShortName},${row.status},${
+				row.trades
+			},${row.totalVolume.toNumber()},${row.pnl.toNumber()},${row.pnlPct.slice(
+				1,
+				-2
+			)},${row.funding.toNumber()},${row.transactionHash}\n`)
+	)
+	return csvData
+})
+
+export const selectTradesHistoryTableData = createSelector(
+	selectMarketAsset,
+	selectAllTradesForAccountType,
+	(marketAsset, history) => {
+		return history.map((trade) => {
+			const pnl = trade?.pnl
+			const feesPaid = trade?.feesPaid
+			const netPnl = pnl.sub(feesPaid)
+
+			return {
+				...trade,
+				pnl,
+				feesPaid,
+				netPnl,
+				notionalValue: trade?.price.mul(trade?.size.abs()),
+				value: Number(trade?.price),
+				funding: Number(trade?.fundingAccrued),
+				amount: trade?.size.abs(),
+				time: trade?.timestamp * 1000,
+				id: trade?.txnHash,
+				asset: marketAsset,
+				displayAsset: getDisplayAsset(trade?.asset),
+				type: trade?.orderType,
+				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+			}
+		})
+	}
+)
+
+export const selectTradesCsvData = createSelector(selectTradesHistoryTableData, (data) => {
+	let csvData = 'Market,Side,Date/Time,Asset Price,Type,Amount,Value,PnL USD,Fees,Tx Hash\n'
+	data.forEach(
+		(row: (typeof data)[number]) =>
+			(csvData += `${row.displayAsset},${row.side},${new Date(
+				row.time
+			).toISOString()},${row.price.toNumber()},${
+				row.orderType
+			},${row.amount.toNumber()},${row.notionalValue.toNumber()},${row.netPnl.toNumber()},${row.feesPaid.toNumber()},${
+				row.id
+			}\n`)
+	)
+	return csvData
+})

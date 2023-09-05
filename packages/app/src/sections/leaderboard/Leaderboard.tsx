@@ -13,10 +13,7 @@ import useENS from 'hooks/useENS'
 import { CompetitionBanner } from 'sections/shared/components/CompetitionBanner'
 import { fetchPositionHistoryForTrader } from 'state/futures/actions'
 import { setSelectedTrader } from 'state/futures/reducer'
-import {
-	selectPositionHistoryForSelectedTrader,
-	selectSelectedTrader,
-} from 'state/futures/selectors'
+import { selectLeaderBoardTableData, selectSelectedTrader } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
 import { fetchLeaderboard } from 'state/stats/actions'
 import { setLeaderboardSearchTerm } from 'state/stats/reducer'
@@ -57,7 +54,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, mobile }) => {
 	const [searchAddress, setSearchAddress] = useState('')
 	const wallet = useAppSelector(selectWallet)
 	const selectedTrader = useAppSelector(selectSelectedTrader)
-	const positionHistory = useAppSelector(selectPositionHistoryForSelectedTrader)
+	const positionHistory = useAppSelector(selectLeaderBoardTableData)
 	const searchEns = useENS(searchTerm)
 
 	const leaderboardLoading = useAppSelector(selectLeaderboardLoading)

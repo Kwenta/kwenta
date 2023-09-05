@@ -1,7 +1,5 @@
-import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { FuturesPositionHistory } from '@kwenta/sdk/dist/types'
-import { getMarketName, MarketKeyByAsset } from '@kwenta/sdk/utils'
-import { wei, WeiSource } from '@synthetixio/wei'
+import { FuturesMarketKey, FuturesPositionHistory } from '@kwenta/sdk/dist/types'
+import Wei, { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
 import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -15,17 +13,26 @@ import Table, { TableHeader, TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import ROUTES from 'constants/routes'
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
-import { setCsvExportData } from 'state/futures/reducer'
-import { selectFuturesPositions, selectQueryStatuses } from 'state/futures/selectors'
-import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { selectQueryStatuses } from 'state/futures/selectors'
+import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 import { ExternalLink } from 'styles/common'
 import media from 'styles/media'
 
+type PositionData = FuturesPositionHistory & {
+	rank: number
+	currencyIconKey: FuturesMarketKey
+	marketShortName: string
+	status: string
+	funding: Wei
+	pnl: Wei
+	pnlPct: string
+}
+
 type TraderHistoryProps = {
 	trader: string
 	traderEns?: string | null
-	positionHistory: FuturesPositionHistory[]
+	positionHistory: PositionData[]
 	resetSelection: () => void
 	compact?: boolean
 	searchTerm?: string | undefined
@@ -34,64 +41,16 @@ type TraderHistoryProps = {
 const TraderHistory: FC<TraderHistoryProps> = memo(
 	({ trader, traderEns, positionHistory, resetSelection, compact, searchTerm }) => {
 		const { t } = useTranslation()
-		const dispatch = useAppDispatch()
-		const positions = useAppSelector(selectFuturesPositions)
 		const { selectedTraderPositionHistory: queryStatus } = useAppSelector(selectQueryStatuses)
 
 		let data = useMemo(() => {
-			const result = positionHistory
-				.sort((a, b) => b.timestamp - a.timestamp)
-				.map((stat, i) => {
-					const totalDeposit = stat.initialMargin.add(stat.totalDeposits)
-					const thisPosition = stat.isOpen
-						? positions.find((p) => p.market.marketKey === stat.marketKey)
-						: null
-
-					const funding = stat.netFunding.add(
-						thisPosition?.activePosition?.accruedFunding ?? ZERO_WEI
-					)
-					const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
-
-					return {
-						...stat,
-						rank: i + 1,
-						currencyIconKey: MarketKeyByAsset[stat.asset],
-						marketShortName: getMarketName(stat.asset),
-						status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
-						funding,
-						pnl: pnlWithFeesPaid,
-						pnlPct: totalDeposit.gt(0)
-							? `(${pnlWithFeesPaid
-									.div(stat.initialMargin.add(stat.totalDeposits))
-									.mul(100)
-									.toNumber()
-									.toFixed(2)}%)`
-							: '0%',
-					}
-				})
-				.filter((i) =>
-					searchTerm?.length
-						? i.marketShortName.toLowerCase().includes(searchTerm) ||
-						  i.status.toLowerCase().includes(searchTerm)
-						: true
-				)
-
-			// export data to CSV
-			let csvData =
-				'Date/Time,Market,Status,Trades,Total Volume,Realized P&L USD,Realized P&L %,Funding,Tx Hash\n'
-			result.forEach(
-				(row: (typeof result)[number]) =>
-					(csvData += `${new Date(row.timestamp).toISOString()},${row.marketShortName},${
-						row.status
-					},${row.trades},${row.totalVolume.toNumber()},${row.pnl.toNumber()},${row.pnlPct.slice(
-						1,
-						-2
-					)},${row.funding.toNumber()},${row.transactionHash}\n`)
+			return positionHistory.filter((i) =>
+				searchTerm?.length
+					? i.marketShortName.toLowerCase().includes(searchTerm) ||
+					  i.status.toLowerCase().includes(searchTerm)
+					: true
 			)
-			dispatch(setCsvExportData(csvData))
-
-			return result
-		}, [dispatch, positionHistory, positions, searchTerm])
+		}, [positionHistory, searchTerm])
 
 		return (
 			<>

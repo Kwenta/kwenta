@@ -77,7 +77,6 @@ export type FuturesState = {
 	queryStatuses: {
 		selectedTraderPositionHistory: QueryStatus
 	}
-	csvExport: string
 }
 
 export type ExecuteDelayedOrderInputs = {
