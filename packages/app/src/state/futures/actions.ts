@@ -138,7 +138,12 @@ export const cancelDelayedOrder = createAsyncThunk<void, string, ThunkConfig>(
 					hash: null,
 				})
 			)
-			const tx = await sdk.futures.cancelDelayedOrder(marketAddress, account, true)
+
+			const tx = await sdk.futures.cancelDelayedOrder({
+				marketAddress,
+				account,
+				isOffchain: true,
+			})
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchSmartMarginOpenOrders())
 		} catch (err) {
