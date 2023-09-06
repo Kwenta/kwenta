@@ -4,17 +4,10 @@ import {
 	PositionSide,
 	FuturesMarginType,
 	FuturesMarket,
-	FuturesPositionHistory,
 } from '@kwenta/sdk/types'
-import {
-	truncateTimestamp,
-	getDisplayAsset,
-	MarketKeyByAsset,
-	getMarketName,
-} from '@kwenta/sdk/utils'
+import { truncateTimestamp, getDisplayAsset } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
-import { FuturesPositionTablePosition } from 'types/futures'
 
 import { TradeStatus } from 'sections/futures/types'
 import {
@@ -46,6 +39,7 @@ import {
 	unserializeTrades,
 	stopLossValidity,
 	takeProfitValidity,
+	formatPositionForTable,
 } from 'utils/futures'
 
 import {
@@ -868,64 +862,46 @@ export const selectPendingOrdersCount = createSelector(
 		type === FuturesMarginType.CROSS_MARGIN ? asyncCount : delayedOrders.length
 )
 
-function formatPosition(
-	positions: FuturesPositionTablePosition[],
-	history: FuturesPositionHistory[]
-) {
-	return history
-		.sort((a, b) => b.timestamp - a.timestamp)
-		.map((stat, i) => {
-			const totalDeposit = stat.initialMargin.add(stat.totalDeposits)
-			const thisPosition = stat.isOpen
-				? positions.find((p) => p.market.marketKey === stat.marketKey)
-				: null
-
-			const funding = stat.netFunding.add(thisPosition?.activePosition?.accruedFunding ?? ZERO_WEI)
-			const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
-
-			return {
-				...stat,
-				rank: i + 1,
-				currencyIconKey: MarketKeyByAsset[stat.asset],
-				marketShortName: getMarketName(stat.asset),
-				status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
-				funding,
-				pnl: pnlWithFeesPaid,
-				pnlPct: totalDeposit.gt(0)
-					? `(${pnlWithFeesPaid
-							.div(stat.initialMargin.add(stat.totalDeposits))
-							.mul(100)
-							.toNumber()
-							.toFixed(2)}%)`
-					: '0%',
-			}
-		})
-}
-
 export const selectLeaderBoardTableData = createSelector(
 	selectFuturesPositions,
 	selectPositionHistoryForSelectedTrader,
-	(positions, history) => formatPosition(positions, history)
+	(positions, history) => formatPositionForTable(positions, history)
 )
 
 export const selectPositionsHistoryTableData = createSelector(
 	selectFuturesPositions,
 	selectUsersPositionHistory,
-	(positions, history) => formatPosition(positions, history)
+	(positions, history) => formatPositionForTable(positions, history)
 )
 
 export const selectPositionsCsvData = createSelector(selectPositionsHistoryTableData, (data) => {
-	let csvData =
-		'Date/Time,Market,Status,Trades,Total Volume,Realized P&L USD,Realized P&L %,Funding,Tx Hash\n'
-	data.forEach(
-		(row: (typeof data)[number]) =>
-			(csvData += `${new Date(row.timestamp).toISOString()},${row.marketShortName},${row.status},${
-				row.trades
-			},${row.totalVolume.toNumber()},${row.pnl.toNumber()},${row.pnlPct.slice(
-				1,
-				-2
-			)},${row.funding.toNumber()},${row.transactionHash}\n`)
-	)
+	const csvCols = [
+		'Date/Time',
+		'Market',
+		'Status',
+		'Trades',
+		'Total Volume',
+		'Realized P&L USD',
+		'Realized P&L %',
+		'Funding',
+		'Tx Hash',
+	]
+	let csvData = csvCols.join(',') + '\n'
+
+	data.forEach((row: (typeof data)[number]) => {
+		const rowItems = [
+			new Date(row.timestamp).toISOString(),
+			row.marketShortName,
+			row.status,
+			row.trades,
+			row.totalVolume.toNumber(),
+			row.pnl.toNumber(),
+			row.pnlPct.slice(1, -2),
+			row.funding.toNumber(),
+			row.transactionHash,
+		]
+		csvData += rowItems.join(',') + '\n'
+	})
 	return csvData
 })
 
@@ -959,16 +935,34 @@ export const selectTradesHistoryTableData = createSelector(
 )
 
 export const selectTradesCsvData = createSelector(selectTradesHistoryTableData, (data) => {
-	let csvData = 'Market,Side,Date/Time,Asset Price,Type,Amount,Value,PnL USD,Fees,Tx Hash\n'
-	data.forEach(
-		(row: (typeof data)[number]) =>
-			(csvData += `${row.displayAsset},${row.side},${new Date(
-				row.time
-			).toISOString()},${row.price.toNumber()},${
-				row.orderType
-			},${row.amount.toNumber()},${row.notionalValue.toNumber()},${row.netPnl.toNumber()},${row.feesPaid.toNumber()},${
-				row.id
-			}\n`)
-	)
+	const csvCols = [
+		'Market',
+		'Side',
+		'Date/Time',
+		'Asset Price',
+		'Type',
+		'Amount',
+		'Value',
+		'PnL USD',
+		'Fees',
+		'Tx Hash',
+	]
+	let csvData = csvCols.join(',') + '\n'
+
+	data.forEach((row: (typeof data)[number]) => {
+		const rowItems = [
+			row.displayAsset,
+			row.side,
+			new Date(row.time).toISOString(),
+			row.price.toNumber(),
+			row.orderType,
+			row.amount.toNumber(),
+			row.notionalValue.toNumber(),
+			row.netPnl.toNumber(),
+			row.feesPaid.toNumber(),
+			row.id,
+		]
+		csvData += rowItems.join(',') + '\n'
+	})
 	return csvData
 })

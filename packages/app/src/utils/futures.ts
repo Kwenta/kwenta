@@ -1,3 +1,4 @@
+import { ZERO_WEI } from '@kwenta/sdk/dist/constants'
 import {
 	DelayedOrder,
 	FuturesMarket,
@@ -24,6 +25,7 @@ import {
 } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
 import { TFunction } from 'i18next'
+import { FuturesPositionTablePosition } from 'types/futures'
 
 import { DelayedOrderWithDetails, TradeSizeInputs } from 'state/futures/common/types'
 import { SmartMarginBalanceInfo } from 'state/futures/smartMargin/types'
@@ -617,4 +619,38 @@ export const stopLossValidity = (
 		closestPrice,
 		showWarning: percent.lt(SL_LIQ_PERCENT_WARN),
 	}
+}
+
+export function formatPositionForTable(
+	positions: FuturesPositionTablePosition[],
+	history: FuturesPositionHistory[]
+) {
+	return history
+		.sort((a, b) => b.timestamp - a.timestamp)
+		.map((stat, i) => {
+			const totalDeposit = stat.initialMargin.add(stat.totalDeposits)
+			const thisPosition = stat.isOpen
+				? positions.find((p) => p.market.marketKey === stat.marketKey)
+				: null
+
+			const funding = stat.netFunding.add(thisPosition?.activePosition?.accruedFunding ?? ZERO_WEI)
+			const pnlWithFeesPaid = stat.pnl.sub(stat.feesPaid).add(funding)
+
+			return {
+				...stat,
+				rank: i + 1,
+				currencyIconKey: MarketKeyByAsset[stat.asset],
+				marketShortName: getMarketName(stat.asset),
+				status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
+				funding,
+				pnl: pnlWithFeesPaid,
+				pnlPct: totalDeposit.gt(0)
+					? `(${pnlWithFeesPaid
+							.div(stat.initialMargin.add(stat.totalDeposits))
+							.mul(100)
+							.toNumber()
+							.toFixed(2)}%)`
+					: '0%',
+			}
+		})
 }
