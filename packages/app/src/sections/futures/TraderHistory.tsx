@@ -1,4 +1,4 @@
-import { FuturesMarketKey, FuturesPositionHistory } from '@kwenta/sdk/dist/types'
+import { FuturesMarketKey, FuturesPositionHistory } from '@kwenta/sdk/types'
 import Wei, { wei, WeiSource } from '@synthetixio/wei'
 import router from 'next/router'
 import { FC, memo, useMemo } from 'react'
