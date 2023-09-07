@@ -1,4 +1,4 @@
-import { ZERO_WEI } from '@kwenta/sdk/dist/constants'
+import { ZERO_WEI } from '@kwenta/sdk/constants'
 import {
 	DelayedOrder,
 	FuturesMarket,
