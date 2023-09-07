@@ -376,12 +376,14 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 
 		try {
 			const leverageSide = selectSmartMarginLeverageSide(getState())
-			const preview = await sdk.futures.getSmartMarginTradePreview(
-				account || ZERO_ADDRESS,
-				params.market.key,
-				params.market.address,
-				{ ...params, leverageSide, marginDelta }
-			)
+			const preview = await sdk.futures.getSmartMarginTradePreview({
+				account: account || ZERO_ADDRESS,
+				market: {
+					marketAddress: params.market.address,
+					marketKey: params.market.key,
+				},
+				tradeParams: { ...params, leverageSide, marginDelta },
+			})
 
 			// Check the preview hasn't been cleared before query resolves
 			const count = selectSmartMarginPreviewCount(getState())
@@ -958,8 +960,8 @@ export const withdrawSmartMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 export const approveSmartMargin = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/approveSmartMargin',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const account = selectSmartMarginAccount(getState())
-		if (!account) throw new Error('No smart margin account')
+		const address = selectSmartMarginAccount(getState())
+		if (!address) throw new Error('No smart margin account')
 		try {
 			dispatch(
 				setTransaction({
@@ -968,7 +970,7 @@ export const approveSmartMargin = createAsyncThunk<void, void, ThunkConfig>(
 					hash: null,
 				})
 			)
-			const tx = await sdk.futures.approveSmartMarginDeposit(account)
+			const tx = await sdk.futures.approveSmartMarginDeposit({ address })
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchSmartMarginBalanceInfo())
 		} catch (err) {
@@ -1072,13 +1074,13 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 				(o) => o.isStale && o.market.marketKey === marketInfo.marketKey
 			)
 
-			const tx = await sdk.futures.submitSmartMarginOrder(
-				{ address: marketInfo.marketAddress, key: marketInfo.marketKey },
-				wallet,
-				account,
-				orderInputs,
-				{ cancelPendingReduceOrders: isClosing, cancelExpiredDelayedOrders: !!staleOrder }
-			)
+			const tx = await sdk.futures.submitSmartMarginOrder({
+				market: marketInfo,
+				walletAddress: wallet,
+				smAddress: account,
+				order: orderInputs,
+				options: { cancelPendingReduceOrders: isClosing, cancelExpiredDelayedOrders: !!staleOrder },
+			})
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchSmartMarginOpenOrders())
 			dispatch(setOpenModal(null))
@@ -1111,11 +1113,11 @@ export const submitSmartMarginAdjustMargin = createAsyncThunk<void, void, ThunkC
 				})
 			)
 
-			const tx = await sdk.futures.modifySmartMarginMarketMargin(
-				account,
-				market.marketAddress,
-				wei(marginDelta)
-			)
+			const tx = await sdk.futures.modifySmartMarginMarketMargin({
+				address: account,
+				market: market.marketAddress,
+				marginDelta: wei(marginDelta),
+			})
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(setOpenModal(null))
 			dispatch(refetchSmartMarginPosition())
@@ -1158,16 +1160,13 @@ export const submitSmartMarginAdjustPositionSize = createAsyncThunk<void, boolea
 				position?.activePosition.side === PositionSide.SHORT ? existingSize.neg() : existingSize
 			const isClosing = existingSize.add(nativeSizeDelta).eq(0)
 
-			const tx = await sdk.futures.modifySmartMarginPositionSize(
-				account,
-				{
-					key: market.marketKey,
-					address: market.marketAddress,
-				},
-				wei(nativeSizeDelta),
-				preview.desiredFillPrice,
-				isClosing
-			)
+			const tx = await sdk.futures.modifySmartMarginPositionSize({
+				address: account,
+				market,
+				sizeDelta: wei(nativeSizeDelta),
+				desiredFillPrice: preview.desiredFillPrice,
+				cancelPendingReduceOrders: isClosing,
+			})
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(setShowPositionModal(null))
 			dispatch(fetchBalances())
@@ -1231,18 +1230,18 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 
 			const tx =
 				isClosing && orderType === 'market'
-					? await sdk.futures.closeSmartMarginPosition(
-							{ address: market.marketAddress, key: market.marketKey },
-							account,
-							preview.desiredFillPrice
-					  )
-					: await sdk.futures.submitSmartMarginOrder(
-							{ address: market.marketAddress, key: market.marketKey },
-							wallet,
-							account,
-							orderInputs,
-							{ cancelPendingReduceOrders: isClosing }
-					  )
+					? await sdk.futures.closeSmartMarginPosition({
+							market,
+							address: account,
+							desiredFillPrice: preview.desiredFillPrice,
+					  })
+					: await sdk.futures.submitSmartMarginOrder({
+							market,
+							walletAddress: wallet,
+							smAddress: account,
+							order: orderInputs,
+							options: { cancelPendingReduceOrders: isClosing },
+					  })
 
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(setOpenModal(null))
@@ -1258,10 +1257,10 @@ export const submitSmartMarginReducePositionOrder = createAsyncThunk<void, boole
 
 export const cancelConditionalOrder = createAsyncThunk<void, number, ThunkConfig>(
 	'futures/cancelConditionalOrder',
-	async (contractOrderId, { getState, dispatch, extra: { sdk } }) => {
-		const crossMarginAccount = selectSmartMarginAccount(getState())
+	async (orderId, { getState, dispatch, extra: { sdk } }) => {
+		const account = selectSmartMarginAccount(getState())
 		try {
-			if (!crossMarginAccount) throw new Error('No smart margin account')
+			if (!account) throw new Error('No smart margin account')
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1272,8 +1271,11 @@ export const cancelConditionalOrder = createAsyncThunk<void, number, ThunkConfig
 
 			// Handle contract id or subgraph id
 
-			dispatch(setSmartMarginOrderCancelling(contractOrderId))
-			const tx = await sdk.futures.cancelConditionalOrder(crossMarginAccount, contractOrderId)
+			dispatch(setSmartMarginOrderCancelling(orderId))
+			const tx = await sdk.futures.cancelConditionalOrder({
+				account,
+				orderId,
+			})
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(setSmartMarginOrderCancelling(undefined))
 			dispatch(setOpenModal(null))
@@ -1289,9 +1291,9 @@ export const cancelConditionalOrder = createAsyncThunk<void, number, ThunkConfig
 export const withdrawAccountKeeperBalance = createAsyncThunk<void, Wei, ThunkConfig>(
 	'futures/withdrawAccountKeeperBalance',
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
-		const crossMarginAccount = selectSmartMarginAccount(getState())
+		const address = selectSmartMarginAccount(getState())
 		try {
-			if (!crossMarginAccount) throw new Error('No smart margin account')
+			if (!address) throw new Error('No smart margin account')
 			dispatch(
 				setTransaction({
 					status: TransactionStatus.AwaitingExecution,
@@ -1300,7 +1302,10 @@ export const withdrawAccountKeeperBalance = createAsyncThunk<void, Wei, ThunkCon
 				})
 			)
 
-			const tx = await sdk.futures.withdrawAccountKeeperBalance(crossMarginAccount, amount)
+			const tx = await sdk.futures.withdrawAccountKeeperBalance({
+				address,
+				amount,
+			})
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(setOpenModal(null))
 			dispatch(fetchSmartMarginBalanceInfo())
@@ -1324,7 +1329,11 @@ export const executeDelayedOrder = createAsyncThunk<void, ExecuteDelayedOrderInp
 					hash: null,
 				})
 			)
-			const tx = await sdk.futures.executeDelayedOffchainOrder(marketKey, marketAddress, account)
+			const tx = await sdk.futures.executeDelayedOffchainOrder({
+				marketKey,
+				marketAddress,
+				account,
+			})
 			dispatch(updateTransactionHash(tx.hash))
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchSmartMarginOpenOrders())
@@ -1341,7 +1350,7 @@ const submitSMTransferTransaction = async (
 	dispatch: AppDispatch,
 	sdk: KwentaSDK,
 	type: 'withdraw_smart_margin' | 'deposit_smart_margin',
-	account: string,
+	address: string,
 	amount: Wei
 ) => {
 	dispatch(
@@ -1353,10 +1362,11 @@ const submitSMTransferTransaction = async (
 	)
 
 	try {
+		const isPrepareOnly = false
 		const tx =
 			type === 'deposit_smart_margin'
-				? await sdk.futures.depositSmartMarginAccount(account, amount)
-				: await sdk.futures.withdrawSmartMarginAccount(account, amount)
+				? await sdk.futures.depositSmartMarginAccount({ address, amount, isPrepareOnly })
+				: await sdk.futures.withdrawSmartMarginAccount({ address, amount, isPrepareOnly })
 		await monitorAndAwaitTransaction(dispatch, tx)
 		dispatch(fetchSmartMarginBalanceInfo())
 		dispatch(setOpenModal(null))
@@ -1446,7 +1456,11 @@ export const updateStopLossAndTakeProfit = createAsyncThunk<void, void, ThunkCon
 					})
 				)
 
-				const tx = await sdk.futures.updateStopLossAndTakeProfit(market.marketKey, account, params)
+				const tx = await sdk.futures.updateStopLossAndTakeProfit({
+					marketKey: market.marketKey,
+					account,
+					params,
+				})
 				await monitorAndAwaitTransaction(dispatch, tx)
 				dispatch(setShowPositionModal(null))
 			}

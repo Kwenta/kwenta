@@ -1,3 +1,4 @@
+import { TransactionRequest, TransactionResponse } from '@ethersproject/providers'
 import { ethers } from 'ethers'
 
 export type PriceServer = 'KWENTA' | 'PYTH'
@@ -37,3 +38,7 @@ export const NetworkNameById = {
 } as const
 
 export type CurrencyKey = string
+
+export type TxReturn<PrepareOnly extends boolean | undefined> = Promise<
+	PrepareOnly extends true ? TransactionRequest : TransactionResponse
+>

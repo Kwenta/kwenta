@@ -518,9 +518,12 @@ export type MarginTransfer = {
 	asset?: FuturesMarketAsset
 }
 
-export type MarketWithIdleMargin = {
+export type Market = {
 	marketAddress: string
 	marketKey: FuturesMarketKey
+}
+
+export type MarketWithIdleMargin = Market & {
 	position: PerpsV2Position
 }
 
@@ -581,4 +584,110 @@ export type PerpsV3SubgraphMarket = {
 	lockedOiPercent: string
 	makerFee: string
 	takerFee: string
+}
+
+export type PrepareTxParams<T extends boolean | undefined> = {
+	isPrepareOnly?: T
+}
+
+export type ApproveSmartMarginDepositParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	address: string
+	amount?: BigNumber
+}
+
+export type ChangeMarketBalanceParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	address: string
+	amount: Wei
+}
+
+export type ModifyMarketMarginParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	address: string
+	market: string
+	marginDelta: Wei
+}
+
+export type ModifySmartMarginPositionParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	address: string
+	market: Market
+	sizeDelta: Wei
+	desiredFillPrice: Wei
+	cancelPendingReduceOrders?: boolean
+}
+
+export type CloseIsolatedPositionParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	marketAddress: string
+	priceImpactDelta: Wei
+}
+
+export type SubmitIsolatedMarginOrdersParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	marketAddress: string
+	sizeDelta: Wei
+	priceImpactDelta: Wei
+}
+
+export type CancelDelayedOrderParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	marketAddress: string
+	account: string
+	isOffchain: boolean
+}
+
+export type ExecuteDelayedOrderParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	marketAddress: string
+	account: string
+}
+
+export type ExecuteDelayedOffchainOrderParams<T extends boolean | undefined> = PrepareTxParams<T> &
+	Market & {
+		account: string
+	}
+
+export type SubmitSmartMarginOrderParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	market: Market
+	walletAddress: string
+	smAddress: string
+	order: SmartMarginOrderInputs
+	options?: {
+		cancelPendingReduceOrders?: boolean
+		cancelExpiredDelayedOrders?: boolean
+	}
+}
+
+export type CloseSmartMarginPositionParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	market: Market
+	address: string
+	desiredFillPrice: Wei
+}
+
+export type CancelConditionalOrderParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	account: string
+	orderId: number
+}
+
+export type UpdateConditionalOrderParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	marketKey: FuturesMarketKey
+	account: string
+	params: SLTPOrderInputs
+}
+
+export type GetSkewAdjustedPriceParams = Market & {
+	price: Wei
+}
+
+export type GetIsolatedMarginTradePreviewParams = {
+	market: Market
+	orderType: ContractOrderType
+	sizeDelta: Wei
+	price: Wei
+	leverageSide: PositionSide
+}
+
+export type GetSmartMarginTradePreviewParams = {
+	market: Market
+	account: string
+	tradeParams: {
+		sizeDelta: Wei
+		marginDelta: Wei
+		orderPrice: Wei
+		leverageSide: PositionSide
+	}
 }

@@ -12,6 +12,7 @@ import { ContractName } from '../contracts'
 import { NetworkIdByName } from '../types/common'
 import { Emitter } from '../types/transactions'
 import { createEmitter, getRevertReason } from '../utils/transactions'
+import { TransactionRequest } from '@ethersproject/providers'
 
 const OVMGasPriceOracle = getContractFactory('OVM_GasPriceOracle').attach(
 	predeploys.OVM_GasPriceOracle
@@ -90,6 +91,20 @@ export default class TransactionsService {
 		}
 
 		return this.createEVMTxn(txn, options)
+	}
+
+	public prepareContractTxn(
+		contract: ethers.Contract,
+		method: string,
+		args: any[],
+		txnOptions: Partial<ethers.providers.TransactionRequest> = {}
+	): TransactionRequest {
+		return {
+			to: contract.address,
+			data: contract.interface.encodeFunctionData(method, args),
+			value: BigNumber.from(0),
+			...txnOptions,
+		}
 	}
 
 	public async createEVMTxn(txn: ethers.providers.TransactionRequest, options?: any) {
