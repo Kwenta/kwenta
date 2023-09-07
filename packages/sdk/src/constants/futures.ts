@@ -595,6 +595,226 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 			testnet: '0x1fc18861232290221461220bd4e2acd1dcdfbc89c84092c93c18bdc7756c1588',
 		},
 	},
+	[FuturesMarketKey.sSEIPERP]: {
+		key: FuturesMarketKey.sSEIPERP,
+		asset: FuturesMarketAsset.SEI,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x53614f1cb0c031d4af66c04cb9c756234adad0e1cee85303795091499a4084eb',
+			testnet: '0x95f1aef92c74670d40f1f37ee6fb158ffd6a0f8913b07b9e61087f9b7273b11c',
+		},
+	},
+	[FuturesMarketKey.sRUNEPERP]: {
+		key: FuturesMarketKey.sRUNEPERP,
+		asset: FuturesMarketAsset.RUNE,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x5fcf71143bb70d41af4fa9aa1287e2efd3c5911cee59f909f915c9f61baacb1e',
+			testnet: '0xad0f7fb0bdefc9ec569499a1382b8404153deeff7f9e2fa1c7210dc245877160',
+		},
+	},
+	[FuturesMarketKey.sSUSHIPERP]: {
+		key: FuturesMarketKey.sSUSHIPERP,
+		asset: FuturesMarketAsset.SUSHI,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x26e4f737fde0263a9eea10ae63ac36dcedab2aaf629261a994e1eeb6ee0afe53',
+			testnet: '0x2167ece6ee3201b7b61f4cdc17bf2e874ca6ad850c390ba2c5a76d703a1b8cd2',
+		},
+	},
+	[FuturesMarketKey.sZECPERP]: {
+		key: FuturesMarketKey.sZECPERP,
+		asset: FuturesMarketAsset.ZEC,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xbe9b59d178f0d6a97ab4c343bff2aa69caa1eaae3e9048a65788c529b125bb24',
+			testnet: '0x683832447e2920e3d85ab52609be9822ad0da95de656b8acd9a8f0e3a3717895',
+		},
+	},
+	[FuturesMarketKey.sXTZPERP]: {
+		key: FuturesMarketKey.sXTZPERP,
+		asset: FuturesMarketAsset.XTZ,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x0affd4b8ad136a21d79bc82450a325ee12ff55a235abc242666e423b8bcffd03',
+			testnet: '0x7bb0f9786aaf74adc35b9d38f255c87cffb41362ff6a44c7d6795dfacbe7f5e8',
+		},
+	},
+	[FuturesMarketKey.sUMAPERP]: {
+		key: FuturesMarketKey.sUMAPERP,
+		asset: FuturesMarketAsset.UMA,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x4b78d251770732f6304b1f41e9bebaabc3b256985ef18988f6de8d6562dd254c',
+			testnet: '0xd34659f792d16725786fe9852f80a88dc7b38c338babb60c8519e12a86a15f62',
+		},
+	},
+	[FuturesMarketKey.sENJPERP]: {
+		key: FuturesMarketKey.sENJPERP,
+		asset: FuturesMarketAsset.ENJ,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x5cc254b7cb9532df39952aee2a6d5497b42ec2d2330c7b76147f695138dbd9f3',
+			testnet: '0xe974bc2bee67685ba3e58fc38b1d61578a1ce7703a1f3eb66bd304f8dce89147',
+		},
+	},
+	[FuturesMarketKey.sICPPERP]: {
+		key: FuturesMarketKey.sICPPERP,
+		asset: FuturesMarketAsset.ICP,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xc9907d786c5821547777780a1e4f89484f3417cb14dd244f2b0a34ea7a554d67',
+			testnet: '0xda0be66c19400cdfce7944ab8def8734cb3858c3f6b34b044deb95929b47c3ab',
+		},
+	},
+	[FuturesMarketKey.sXLMPERP]: {
+		key: FuturesMarketKey.sXLMPERP,
+		asset: FuturesMarketAsset.XLM,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xb7a8eba68a997cd0210c2e1e4ee811ad2d174b3611c22d9ebf16f4cb7e9ba850',
+			testnet: '0xae5645a4463f4b9656694576fe6096b9bce4d37a3bb2c5287ee3d149f1a16767',
+		},
+	},
+	[FuturesMarketKey.s1INCHPERP]: {
+		key: FuturesMarketKey.s1INCHPERP,
+		asset: FuturesMarketAsset.ONEINCH,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x63f341689d98a12ef60a5cff1d7f85c70a9e17bf1575f0e7c0b2512d48b1c8b3',
+			testnet: '0x19786f31e85d3598cecdab810b2787de0fc22c2cf98b4f16fb1e5bf567a0a431',
+		},
+	},
+	[FuturesMarketKey.sEOSPERP]: {
+		key: FuturesMarketKey.sEOSPERP,
+		asset: FuturesMarketAsset.EOS,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x06ade621dbc31ed0fc9255caaab984a468abe84164fb2ccc76f02a4636d97e31',
+			testnet: '0x5212f4bb90c861ed88a2024a435463ab41cacf6f5deeed7b085dca90b1f5cfa5',
+		},
+	},
+	[FuturesMarketKey.sCELOPERP]: {
+		key: FuturesMarketKey.sCELOPERP,
+		asset: FuturesMarketAsset.CELO,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x7d669ddcdd23d9ef1fa9a9cc022ba055ec900e91c4cb960f3c20429d4447a411',
+			testnet: '0xe75bf4f2cf9e9f6a91d3c3cfc00136e3ba7eaeb162084fdad818c68133dc8a24',
+		},
+	},
+	[FuturesMarketKey.sALGOPERP]: {
+		key: FuturesMarketKey.sALGOPERP,
+		asset: FuturesMarketAsset.ALGO,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xfa17ceaf30d19ba51112fdcc750cc83454776f47fb0112e4af07f15f4bb1ebc0',
+			testnet: '0x08f781a893bc9340140c5f89c8a96f438bcfae4d1474cc0f688e3a52892c7318',
+		},
+	},
+	[FuturesMarketKey.sZRXPERP]: {
+		key: FuturesMarketKey.sZRXPERP,
+		asset: FuturesMarketAsset.ZRX,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x7d17b9fe4ea7103be16b6836984fabbc889386d700ca5e5b3d34b7f92e449268',
+			testnet: '0x27b9bf666178e240712ec592884bf7654b12a9c98e6b70417c922c91370b262d',
+		},
+	},
+	[FuturesMarketKey.sBALPERP]: {
+		key: FuturesMarketKey.sBALPERP,
+		asset: FuturesMarketAsset.BAL,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x07ad7b4a7662d19a6bc675f6b467172d2f3947fa653ca97555a9b20236406628',
+			testnet: '0xf3295ef1efc8cb94518faade282e294e718dc65a03aa3b7912b894e61e0a6634',
+		},
+	},
+	[FuturesMarketKey.sFXSPERP]: {
+		key: FuturesMarketKey.sFXSPERP,
+		asset: FuturesMarketAsset.FXS,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x735f591e4fed988cd38df74d8fcedecf2fe8d9111664e0fd500db9aa78b316b1',
+			testnet: '0xac27da9472e28969d829c27312afb08c5f1866336384f0dbdf9a48af97cf28a0',
+		},
+	},
+	[FuturesMarketKey.sKNCPERP]: {
+		key: FuturesMarketKey.sKNCPERP,
+		asset: FuturesMarketAsset.KNC,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xb9ccc817bfeded3926af791f09f76c5ffbc9b789cac6e9699ec333a79cacbe2a',
+			testnet: '0x5befcdb06599c4126afeb0b20d751d6360a28a880c23222be2ee40be38c1fb26',
+		},
+	},
+	[FuturesMarketKey.sRNDRPERP]: {
+		key: FuturesMarketKey.sRNDRPERP,
+		asset: FuturesMarketAsset.RNDR,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xab7347771135fc733f8f38db462ba085ed3309955f42554a14fa13e855ac0e2f',
+			testnet: '0xa3cd2f847362125e84d0aebce2d341957b5941dcc07760dbf2782d6300f90128',
+		},
+	},
+	[FuturesMarketKey.sONEPERP]: {
+		key: FuturesMarketKey.sONEPERP,
+		asset: FuturesMarketAsset.ONE,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0xc572690504b42b57a3f7aed6bd4aae08cbeeebdadcf130646a692fe73ec1e009',
+			testnet: '0x9b245faf19d2f3306b58821ef60b194d7b67eb5250635059d8eaae4a36337b28',
+		},
+	},
+	[FuturesMarketKey.sPERPPERP]: {
+		key: FuturesMarketKey.sPERPPERP,
+		asset: FuturesMarketAsset.PERP,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x944f2f908c5166e0732ea5b610599116cd8e1c41f47452697c1e84138b7184d6',
+			testnet: '0xf26cf0b5c71699e81f59384824c71b8cdcc29ce409f3e6934c8c18abe652a04f',
+		},
+	},
+	[FuturesMarketKey.sZILPERP]: {
+		key: FuturesMarketKey.sZILPERP,
+		asset: FuturesMarketAsset.ZIL,
+		supports: 'both',
+		version: 2,
+		pythIds: {
+			mainnet: '0x609722f3b6dc10fee07907fe86781d55eb9121cd0705b480954c00695d78f0cb',
+			testnet: '0x2206debd84882bbb4852896580279c34f4b5dff225301bf218380828a193a10e',
+		},
+	},
+	[FuturesMarketKey.sSTETHETHPERP]: {
+		key: FuturesMarketKey.sSTETHETHPERP,
+		asset: FuturesMarketAsset.STETHETH,
+		supports: 'testnet',
+		version: 2,
+		pythIds: {
+			mainnet: '0x3af6a3098c56f58ff47cc46dee4a5b1910e5c157f7f0b665952445867470d61f',
+			testnet: '0x51fa95fac7bb8a4790f5733e8b2040937e88e6d8ea8fe172cea56b204b059bc2',
+		},
+	},
 }
 
 export const MARKET_ASSETS_BY_PYTH_ID = Object.values(MARKETS)
