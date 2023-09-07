@@ -59,6 +59,12 @@ export const migrations = {
 			prices: PRICES_INITIAL_STATE,
 		}
 	},
+	37: (state: any) => {
+		return {
+			...state,
+			stats: STATS_INITIAL_STATE,
+		}
+	},
 }
 
 export default migrations
