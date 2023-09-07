@@ -17,6 +17,7 @@ import Wei, { wei } from '@synthetixio/wei'
 import { debounce } from 'lodash'
 
 import { notifyError } from 'components/ErrorNotifier'
+import { CROSS_MARGIN_ENABLED } from 'constants/defaults'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import {
 	handleTransactionError,
@@ -84,7 +85,7 @@ export const fetchV3Markets = createAsyncThunk<
 >('futures/fetchV3Markets', async (_, { getState, extra: { sdk } }) => {
 	const supportedNetwork = selectCrossMarginSupportedNetwork(getState())
 	const networkId = selectNetwork(getState())
-	if (!supportedNetwork) return
+	if (!supportedNetwork || !CROSS_MARGIN_ENABLED) return
 	try {
 		const v3Markets = await sdk.perpsV3.getMarkets()
 

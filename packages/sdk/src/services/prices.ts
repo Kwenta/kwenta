@@ -170,9 +170,10 @@ export default class PricesService {
 		const minTimestamp = Math.floor((Date.now() - PERIOD_IN_SECONDS.ONE_DAY * 1000) / 1000)
 
 		const rateUpdateQueries = marketAssets.map((asset) => {
+			const graphqlSafeAssetName = /^\d/.test(asset) ? `_${asset}` : asset
 			return gql`
 			# last before timestamp
-			${asset}: rateUpdates(
+			${graphqlSafeAssetName}: rateUpdates(
 				first: 1
 				where: { synth: "${getDisplayAsset(asset)?.toUpperCase() ?? asset}", timestamp_gte: $minTimestamp }
 				orderBy: timestamp
