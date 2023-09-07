@@ -1,4 +1,4 @@
-import { formatDollars, formatNumber, getDisplayAsset } from '@kwenta/sdk/utils'
+import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
 import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,13 +14,15 @@ import { blockExplorer } from 'containers/Connector/Connector'
 import useIsL2 from 'hooks/useIsL2'
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher'
 import useWindowSize from 'hooks/useWindowSize'
-import { selectFuturesType, selectMarketAsset } from 'state/futures/common/selectors'
-import { selectAllTradesForAccountType } from 'state/futures/selectors'
+import { selectFuturesType } from 'state/futures/common/selectors'
+import {
+	selectAllTradesForAccountType,
+	selectTradesHistoryTableData,
+} from 'state/futures/selectors'
 import { selectSmartMarginQueryStatuses } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 
-import { TradeStatus } from '../types'
 import TableMarketDetails from '../UserInfo/TableMarketDetails'
 
 import TimeDisplay from './TimeDisplay'
@@ -34,40 +36,15 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 	const { switchToL2 } = useNetworkSwitcher()
 	const router = useRouter()
 	const { lessThanWidth } = useWindowSize()
-	const marketAsset = useAppSelector(selectMarketAsset)
 	const accountType = useAppSelector(selectFuturesType)
 	const history = useAppSelector(selectAllTradesForAccountType)
+	const historyData = useAppSelector(selectTradesHistoryTableData)
 	const { trades } = useAppSelector(selectSmartMarginQueryStatuses)
 
 	const isLoading = !history.length && trades.status === FetchStatus.Loading
 	const isLoaded = trades.status === FetchStatus.Success
 
 	const isL2 = useIsL2()
-
-	const historyData = useMemo(() => {
-		return history.map((trade) => {
-			const pnl = trade?.pnl
-			const feesPaid = trade?.feesPaid
-			const netPnl = pnl.sub(feesPaid)
-
-			return {
-				...trade,
-				pnl,
-				feesPaid,
-				netPnl,
-				notionalValue: trade?.price.mul(trade?.size.abs()),
-				value: Number(trade?.price),
-				funding: Number(trade?.fundingAccrued),
-				amount: trade?.size.abs(),
-				time: trade?.timestamp * 1000,
-				id: trade?.txnHash,
-				asset: marketAsset,
-				displayAsset: getDisplayAsset(trade?.asset),
-				type: trade?.orderType,
-				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-			}
-		})
-	}, [history, marketAsset])
 
 	const columnsDeps = useMemo(() => [historyData], [historyData])
 
