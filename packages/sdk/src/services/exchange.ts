@@ -930,7 +930,7 @@ export default class ExchangeService {
 	}
 
 	private get oneInchApiUrl() {
-		return `${process.env.NEXT_PUBLIC_ONE_INCH_COINGECKO_PROXY}/1inch/swap/v5.2/${
+		return `${process.env.NEXT_PUBLIC_SERVICES_PROXY}/1inch/swap/v5.2/${
 			this.sdk.context.isL2 ? 10 : 1
 		}/`
 	}
