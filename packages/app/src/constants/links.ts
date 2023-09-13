@@ -49,6 +49,7 @@ export const EXTERNAL_LINKS = {
 		TradingRewardsV2: 'https://mirror.xyz/kwenta.eth/7k-5UYXXcCNJ_DRRWvYBsK5zDm5UA945My4QrInhxoI',
 		RewardsGuide: 'https://mirror.xyz/kwenta.eth/8KyrISnjOcuAX_VW-GxVqxpcbWukB_RlP5XWWMz-UGk',
 		StakingV2Migration: 'https://docs.kwenta.io/kwenta-token/v2-migration',
+		Referrals: 'https://docs.kwenta.io/using-kwenta/referral',
 	},
 	Optimism: {
 		Home: 'https://optimism.io/',
@@ -64,5 +65,8 @@ export const EXTERNAL_LINKS = {
 	},
 	Competition: {
 		LearnMore: 'https://mirror.xyz/kwenta.eth/s_PO64SxvuwDHz9fdHebsYeQAOOc73D3bL2q4nC6LvU',
+	},
+	Referrals: {
+		BoostNFT: 'https://opensea.io/assets/optimism/0xD3B8876073949D790AB718CAD21d9326a3adA60f',
 	},
 }

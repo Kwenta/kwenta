@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export { BatchClaimer__factory } from "./BatchClaimer__factory";
+export { BoostNFT__factory } from "./BoostNFT__factory";
 export { DappMaintenance__factory } from "./DappMaintenance__factory";
 export { ERC20__factory } from "./ERC20__factory";
 export { ExchangeRates__factory } from "./ExchangeRates__factory";

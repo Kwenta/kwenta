@@ -26,6 +26,7 @@ import SynthRedeemerABI from './abis/SynthRedeemer.json'
 import SynthUtilABI from './abis/SynthUtil.json'
 import SystemStatusABI from './abis/SystemStatus.json'
 import PerpsV3AccountProxyABI from './abis/PerpsV3AccountProxy.json'
+import BoostNftABI from './abis/BoostNFT.json'
 import { ADDRESSES } from './constants'
 import {
 	SmartMarginAccountFactory__factory,
@@ -56,6 +57,7 @@ import {
 	RewardEscrowV2__factory,
 	KwentaStakingRewardsV2__factory,
 	PerpsV3AccountProxy__factory,
+	BoostNFT__factory,
 } from './types'
 import { PerpsV2MarketData__factory } from './types/factories/PerpsV2MarketData__factory'
 import { PerpsV2MarketSettings__factory } from './types/factories/PerpsV2MarketSettings__factory'
@@ -192,6 +194,9 @@ export const getContractsByNetwork = (
 		perpsV3AccountProxy: ADDRESSES.PerpsV3AccountProxy[networkId]
 			? PerpsV3AccountProxy__factory.connect(ADDRESSES.PerpsV3AccountProxy[networkId], provider)
 			: undefined,
+		BoostNft: ADDRESSES.BoostNft[networkId]
+			? BoostNFT__factory.connect(ADDRESSES.BoostNft[networkId], provider)
+			: undefined,
 	}
 }
 
@@ -277,6 +282,9 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		perpsV3AccountProxy: ADDRESSES.PerpsV3AccountProxy[networkId]
 			? new EthCallContract(ADDRESSES.PerpsV3AccountProxy[networkId], PerpsV3AccountProxyABI)
+			: undefined,
+		BoostNft: ADDRESSES.BoostNft[networkId]
+			? new EthCallContract(ADDRESSES.BoostNft[networkId], BoostNftABI)
 			: undefined,
 	}
 }

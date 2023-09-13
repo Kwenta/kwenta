@@ -103,6 +103,7 @@ export const MobileScreenContainer = styled.div`
 export const FullHeightContainer = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
+	overflow: auto;
 	flex-grow: 1;
 	gap: 10px;
 `

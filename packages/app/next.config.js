@@ -78,6 +78,12 @@ const baseConfig = {
 				destination: '/exchange/?quote=:quote&base=:base',
 				permanent: true,
 			},
+			{
+				source: '/',
+				has: [{ type: 'query', key: 'ref' }],
+				destination: '/market/?ref=:ref',
+				permanent: true,
+			},
 		]
 	},
 	productionBrowserSourceMaps: true,

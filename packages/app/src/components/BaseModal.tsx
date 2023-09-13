@@ -17,6 +17,7 @@ type BaseModalProps = {
 	showCross?: boolean
 	lowercase?: boolean
 	rndProps?: Props
+	headerBackground?: ReactNode
 }
 
 type ModalContentWrapperProps = {
@@ -41,12 +42,14 @@ export const BaseModal: FC<BaseModalProps> = memo(
 		showCross = true,
 		lowercase,
 		rndProps = { disableDragging: true, enableResizing: false },
+		headerBackground,
 		...rest
 	}) => (
 		<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
 			<StyledDialogContent aria-label="modal">
 				<ModalContentWrapper rndProps={rndProps}>
 					<StyledCard className="card">
+						{headerBackground}
 						<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
 							{title}
 							{showCross && (
@@ -106,7 +109,14 @@ const StyledCard = styled(Card)`
 			width: 100%;
 			border-radius: 10px 10px 0 0;
 		}
+		svg.bg {
+			margin-left: -16px;
+		}
 	`}
+	overflow: hidden;
+	svg.bg {
+		margin-bottom: -120px;
+	}
 `
 
 const StyledCardHeader = styled(CardHeader)`

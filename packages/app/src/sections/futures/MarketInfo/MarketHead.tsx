@@ -9,7 +9,6 @@ import { useAppSelector } from 'state/hooks'
 
 const MarketHead: FC = () => {
 	const { t } = useTranslation()
-
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const latestPrice = useAppSelector(selectSkewAdjustedPrice)
 	const marketName = getDisplayAsset(marketAsset)

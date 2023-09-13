@@ -6,6 +6,7 @@ import { FUTURES_INITIAL_STATE } from './futures/reducer'
 import { HOME_INITIAL_STATE } from './home/reducer'
 import { PREFERENCES_INITIAL_STATE } from './preferences/reducer'
 import { PRICES_INITIAL_STATE } from './prices/reducer'
+import { REFERRALS_INITIAL_STATE } from './referrals/reducer'
 import { STAKING_INITIAL_STATE } from './staking/reducer'
 import { STATS_INITIAL_STATE } from './stats/reducer'
 import { WALLET_INITIAL_STATE } from './wallet/reducer'
@@ -63,6 +64,12 @@ export const migrations = {
 		return {
 			...state,
 			stats: STATS_INITIAL_STATE,
+		}
+	},
+	38: (state: any) => {
+		return {
+			...state,
+			referral: REFERRALS_INITIAL_STATE,
 		}
 	},
 }

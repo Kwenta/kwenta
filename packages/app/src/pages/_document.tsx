@@ -5,7 +5,6 @@ export default class MyDocument extends Document {
 	static async getInitialProps(ctx: any) {
 		const styledComponentsSheet = new ServerStyleSheet()
 		const originalRenderPage = ctx.renderPage
-
 		try {
 			ctx.renderPage = () =>
 				originalRenderPage({

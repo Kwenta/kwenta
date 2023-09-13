@@ -12,8 +12,17 @@ import {
 	selectCrossMarginSupportedNetwork,
 } from 'state/futures/crossMargin/selectors'
 import { useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
+import {
+	fetchAllReferralData,
+	fetchBoostNftForAccount,
+	fetchBoostNftMinted,
+} from 'state/referrals/action'
 import { fetchStakeMigrateData } from 'state/staking/actions'
-import { selectSelectedEpoch, selectStakingSupportedNetwork } from 'state/staking/selectors'
+import {
+	selectSelectedEpoch,
+	selectStakingSupportedNetwork,
+	selectTradingRewardsSupportedNetwork,
+} from 'state/staking/selectors'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
 
 import { fetchFuturesPositionHistory, fetchMarginTransfers } from './actions'
@@ -34,7 +43,6 @@ import {
 } from './smartMargin/selectors'
 
 // TODO: Optimise polling and queries
-
 export const usePollMarketFuturesData = () => {
 	const networkId = useAppSelector(selectNetwork)
 	const markets = useAppSelector(selectMarkets)
@@ -45,6 +53,17 @@ export const usePollMarketFuturesData = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const networkSupportsSmartMargin = useAppSelector(selectSmartMarginSupportedNetwork)
 	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork)
+	const networkSupportTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
+
+	useFetchAction(fetchBoostNftMinted, {
+		dependencies: [wallet],
+		disabled: !networkSupportTradingRewards,
+	})
+
+	useFetchAction(fetchBoostNftForAccount, {
+		dependencies: [wallet],
+		disabled: !networkSupportTradingRewards,
+	})
 
 	useFetchAction(fetchSmartMarginAccount, {
 		dependencies: [networkId, wallet, selectedAccountType],
@@ -189,5 +208,16 @@ export const useFetchStakeMigrateData = () => {
 	useFetchAction(() => fetchFuturesFeesForAccount({ start, end }), {
 		dependencies: [networkId, wallet, start, end],
 		disabled: !wallet || !networkSupportsStaking,
+	})
+}
+
+export const useFetchReferralData = () => {
+	const networkId = useAppSelector(selectNetwork)
+	const wallet = useAppSelector(selectWallet)
+	const networkSupportTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
+
+	useFetchAction(fetchAllReferralData, {
+		dependencies: [networkId, wallet],
+		disabled: !networkSupportTradingRewards,
 	})
 }

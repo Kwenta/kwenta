@@ -1,6 +1,7 @@
 import { TransactionStatus, FuturesMarketKey, KwentaStatus, GasPrice } from '@kwenta/sdk/types'
 
 import { FuturesTransactionType } from 'state/futures/common/types'
+import { ReferralTransactionType } from 'state/referrals/types'
 
 export type ModalType =
 	| 'futures_deposit_withdraw_smart_margin'
@@ -11,6 +12,8 @@ export type ModalType =
 	| 'futures_smart_margin_onboard'
 	| 'futures_cross_margin_onboard'
 	| 'futures_smart_margin_socket'
+	| 'referrals_create_referral_code'
+	| 'referrals_mint_boost_nft'
 	| null
 
 export type FuturesPositionModalType =
@@ -22,7 +25,7 @@ export type FuturesPositionModalType =
 
 export type GasSpeed = 'average' | 'fast' | 'fastest'
 
-export type TransactionType = FuturesTransactionType // TODO: Support all types
+export type TransactionType = FuturesTransactionType | ReferralTransactionType // TODO: Support all types
 
 export type Transaction = {
 	type: TransactionType

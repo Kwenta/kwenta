@@ -4,8 +4,10 @@
 	},
 	"meta": {
 		"description": "Gain exposure to a variety of assets with up to 50x leverage and deep liquidity",
+		"ref-description": "Receive a 15% boost on trading rewards!",
 		"og": {
 			"title": "Kwenta",
+			"ref-title": "You are invited to Kwenta",
 			"site-name": "Kwenta"
 		}
 	},
@@ -21,6 +23,7 @@
 				"vaults": "vaults",
 				"rewards": "rewards"
 			},
+			"referrals": "referrals",
 			"isolated-margin": "Legacy Futures",
 			"cross-margin": "Smart Margin",
 			"leaderboard-alltime": "All Time",
@@ -199,6 +202,7 @@
 				"perps": "Perpetual Futures",
 				"spot": "Spot Trading",
 				"legacy": "Legacy Exchange",
+				"referrals": "Referral Program",
 				"perps-v1": "Legacy Perpetuals"
 			},
 			"community": {
@@ -1164,6 +1168,104 @@
 			"table": {
 				"table-updates": "Table data updates daily",
 				"no-results": "No competition standings available"
+			}
+		}
+	},
+	"referrals": {
+		"page-title": "Referrals | Kwenta",
+		"title": "Referral Program",
+		"copy": "Earn boosted rewards from trading, or become an affiliate to earn even more.",
+		"docs": "Docs →",
+		"table": {
+			"no-results-table": "No rewards distribution history yet.",
+			"switch-to-optimism-prompt": "Switch to Optimism to view your rewards distribution history.",
+			"history": {
+				"title": "Boosted Rewards History",
+				"copy": "Track your weekly boosted trading rewards."
+			},
+			"codes": {
+				"title": "Referral Codes",
+				"copy": "Earn a portion of the $KWENTA rewards earned by traders using your referral codes",
+				"create-code-button": "Create Code"
+			},
+			"header": {
+				"referral-code": "Referral Code",
+				"total-volume": "Total Volume",
+				"traders-referred": "Traders Referred",
+				"kwenta-earned": "$KWENTA Earned",
+				"epoch": "Epoch"
+			}
+		},
+		"traders": {
+			"title": "traders",
+			"rewards-boost": "Rewards Boost",
+			"total-volume": "Total Trading Volume",
+			"kwenta-earned": "Total $KWENTA Earned",
+			"claim": "Claim",
+			"level-up": "Level Up",
+			"dashboard": {
+				"rewards-boost": "Rewards Boost",
+				"total-volume": "Total Volume",
+				"kwenta-earned": "$KWENTA Earned"
+			}
+		},
+		"affiliates": {
+			"title": "affiliates",
+			"dashboard": {
+				"traders-referred": "Total Traders Referred",
+				"trading-volume": "Total Trading Volume",
+				"kwenta-earned": "Total $KWENTA Earned",
+				"unlocked-nft": "You Have Unlocked"
+			},
+			"nft": {
+				"bronze": "Bronze",
+				"silver": "Silver",
+				"gold": "Gold",
+				"boost": "Boost",
+				"preview": "Preview"
+			}, 
+			"view-all-rates": "View Tier Details →",
+			"rates": "Rates →",
+			"modal": {
+				"create-referral-code": {
+					"title": "Create Referral Code",
+					"label": "Referral Code",
+					"input-placeholder": "Enter Code",
+					"create-referral-button": "Create Referral"
+				},
+				"nft-preview": {
+					"tier-1": "Tier 1",
+					"tier-level": "Tier",
+					"nft-tier": "NFT Tier",
+					"view-button": "View on OpenSea"
+				},
+				"referrer": {
+					"title": "Referrer",
+					"welcome-message": "You are invited to Kwenta",
+					"badge-copy": "Receive a <0>{{boost}}</0> boost on trading rewards",
+					"boost-button": "Mint Boost",
+					"learn-more": "Learn more about the Kwenta",
+					"referral-program": " <0>Referral program</0>",
+					"low-fees": {
+						"title": "Low fees",
+						"copy": "Trade with fees as low as 0.015% with up to 50x leverage on a variety assets."
+					},
+					"deep-liquidity": {
+						"title": "Deep Liquidity",
+						"copy": "Enjoy deep liquidity powered by the Synthetix protocol."
+					},
+					"trading-rewards": {
+						"title": "Trading Rewards",
+						"copy": "Earn $KWENTA rewards on every trade."
+					},
+					"get-started-button": "Get Started",
+					"no-self-referred": "You cannot refer yourself.",
+					"congratulations": "Congratulations!",
+					"mint-message": "You minted a <0>{{tier}}</0> Rewards Boost.",
+					"earn-boost": "You're earning a <0>{{boost}}</0> boost on trading rewards.",
+					"stake-more": "Stake <0>$KWENTA</0> to earn even more.",
+					"trade-now-button": "Trade Now"
+				}
 			}
 		}
 	},

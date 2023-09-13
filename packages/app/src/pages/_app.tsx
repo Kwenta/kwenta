@@ -94,7 +94,6 @@ const InnerApp: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
 
 const App: FC<AppProps> = (props) => {
 	const { t } = useTranslation()
-
 	return (
 		<>
 			<Head>
@@ -103,12 +102,13 @@ const App: FC<AppProps> = (props) => {
 					name="viewport"
 					content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"
 				/>
+				<meta name="title" content={t('meta.og.title')} />
 				<meta name="description" content={t('meta.description')} />
 				{/* open graph */}
-				<meta property="og:url" content="https://kwenta.eth.limo/" />
-				<meta property="og:type" content="website" />
 				<meta property="og:title" content={t('meta.og.title')} />
 				<meta property="og:description" content={t('meta.description')} />
+				<meta property="og:url" content="https://kwenta.eth.limo/" />
+				<meta property="og:type" content="website" />
 				<meta property="og:image" content="/images/kwenta-facebook.jpg" />
 				<meta property="og:image:alt" content={t('meta.og.title')} />
 				<meta property="og:site_name" content={t('meta.og.site-name')} />

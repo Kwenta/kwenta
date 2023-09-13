@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { BatchClaimer } from "./BatchClaimer";
+export type { BoostNFT } from "./BoostNFT";
 export type { DappMaintenance } from "./DappMaintenance";
 export type { ERC20 } from "./ERC20";
 export type { ExchangeRates } from "./ExchangeRates";
@@ -40,6 +41,7 @@ export type { VKwentaRedeemer } from "./VKwentaRedeemer";
 export type { VeKwentaRedeemer } from "./VeKwentaRedeemer";
 export * as factories from "./factories";
 export { BatchClaimer__factory } from "./factories/BatchClaimer__factory";
+export { BoostNFT__factory } from "./factories/BoostNFT__factory";
 export { DappMaintenance__factory } from "./factories/DappMaintenance__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
 export { Exchanger__factory } from "./factories/Exchanger__factory";

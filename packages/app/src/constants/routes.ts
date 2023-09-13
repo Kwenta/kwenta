@@ -61,6 +61,10 @@ export const ROUTES = {
 		Trader: (trader: string) => `/leaderboard/?trader=${trader}`,
 		Competition: (round: string) => `/leaderboard/?competitionRound=${round}`,
 	},
+	Referrals: {
+		Home: '/referrals',
+		nftMint: (asset: FuturesMarketAsset, ref: string) => formatUrl('/market', { asset, ref }),
+	},
 	Earn: {
 		Home: '/earn',
 	},

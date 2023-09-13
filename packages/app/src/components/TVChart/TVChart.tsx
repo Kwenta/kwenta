@@ -83,7 +83,7 @@ export function TVChart({
 	}
 
 	const [marketAsset, marketAssetLoaded] = useMemo(() => {
-		return router.query.asset ? [router.query.asset, true] : [null, false]
+		return router.query.asset ? [router.query.asset, true] : ['sETH', false]
 	}, [router.query.asset])
 
 	const clearOrderLines = () => {
