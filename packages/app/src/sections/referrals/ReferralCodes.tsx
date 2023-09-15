@@ -10,7 +10,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media'
 import Table from 'components/Table'
 import { TableHeader } from 'components/Table'
 import { Body } from 'components/Text'
-import { PROD_HOSTNAME } from 'constants/links'
+import { PROD_REFFERAL_URL } from 'constants/links'
 import useIsL2 from 'hooks/useIsL2'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal } from 'state/app/selectors'
@@ -62,7 +62,7 @@ const ReferralCodes: FC<ReferralCodesProps> = memo(({ data }) => {
 		const y = event.clientY
 		const { protocol, hostname, port } = window.location
 		const fullUrl = `${protocol}//${
-			process.env.NEXT_PUBLIC_REF_URL_OVERRIDE === 'true' ? PROD_HOSTNAME : hostname
+			process.env.NEXT_PUBLIC_REF_URL_OVERRIDE === 'true' ? PROD_REFFERAL_URL : hostname
 		}${port ? `:${port}` : ``}/?ref=${text}`
 
 		navigator.clipboard.writeText(fullUrl).then(() => {
