@@ -32,7 +32,8 @@ const CreateReferralCodeModal: FC<Props> = memo(({ onDismiss }) => {
 	const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value), [])
 
 	const handleCreateReferralCode = useCallback(() => {
-		dispatch(createNewReferralCode(value))
+		const lowerCaseCode = value.toLowerCase()
+		dispatch(createNewReferralCode(lowerCaseCode))
 	}, [dispatch, value])
 
 	return (
