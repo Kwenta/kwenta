@@ -1,7 +1,7 @@
 import { FuturesMarginType, FuturesMarketAsset } from '@kwenta/sdk/types'
 import { MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { useRouter } from 'next/router'
-import { useEffect, FC, ReactNode, useMemo } from 'react'
+import { useEffect, FC, ReactNode, useMemo, useCallback, useLayoutEffect } from 'react'
 import styled from 'styled-components'
 
 import Loader from 'components/Loader'
@@ -28,6 +28,7 @@ import TradePanelSmartMargin from 'sections/futures/Trade/TradePanelSmartMargin'
 import TransferSmartMarginModal from 'sections/futures/Trade/TransferSmartMarginModal'
 import DelayedOrderConfirmationModal from 'sections/futures/TradeConfirmation/CrossMarginOrderConfirmation'
 import TradeConfirmationModalCrossMargin from 'sections/futures/TradeConfirmation/TradeConfirmationModalCrossMargin'
+import BaseReferralModal from 'sections/referrals/ReferralModal/BaseReferralModal'
 import AppLayout from 'sections/shared/Layout/AppLayout'
 import { setOpenModal } from 'state/app/reducer'
 import { selectShowModal, selectShowPositionModal } from 'state/app/selectors'
@@ -45,6 +46,8 @@ import {
 	selectSmartMarginAccountQueryStatus,
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { fetchUnmintedBoostNftForCode } from 'state/referrals/action'
+import { selectIsReferralCodeValid } from 'state/referrals/selectors'
 import { FetchStatus } from 'state/types'
 import { PageContent } from 'styles/common'
 import media from 'styles/media'
@@ -57,9 +60,7 @@ const Market: MarketComponent = () => {
 	const dispatch = useAppDispatch()
 	const { greaterThanWidth } = useWindowSize()
 	usePollMarketFuturesData()
-
-	const routerMarketAsset = router.query.asset as FuturesMarketAsset
-
+	const routerMarketAsset = (router.query.asset || 'sETH') as FuturesMarketAsset
 	const setCurrentMarket = useAppSelector(selectMarketAsset)
 	const showOnboard = useAppSelector(selectShowSmartMarginOnboard)
 	const showCrossMarginOnboard = useAppSelector(selectShowCrossMarginOnboard)
@@ -68,6 +69,8 @@ const Market: MarketComponent = () => {
 	const accountType = useAppSelector(selectFuturesType)
 	const selectedMarketAsset = useAppSelector(selectMarketAsset)
 	const crossMarginSupportedNetwork = useAppSelector(selectCrossMarginSupportedNetwork)
+	const routerReferralCode = (router.query.ref as string)?.toLowerCase()
+	const isReferralCodeValid = useAppSelector(selectIsReferralCodeValid)
 
 	const routerAccountType = useMemo(() => {
 		if (
@@ -104,6 +107,21 @@ const Market: MarketComponent = () => {
 		}
 	}, [router, setCurrentMarket, dispatch, routerMarketAsset, selectedMarketAsset])
 
+	useLayoutEffect(() => {
+		if (router.isReady && routerReferralCode) {
+			dispatch(fetchUnmintedBoostNftForCode(routerReferralCode))
+		}
+	}, [dispatch, router.isReady, routerReferralCode])
+
+	useLayoutEffect(() => {
+		if (isReferralCodeValid) {
+			dispatch(setOpenModal('referrals_mint_boost_nft'))
+		}
+	}, [dispatch, isReferralCodeValid])
+
+	const onDismiss = useCallback(() => {
+		dispatch(setOpenModal(null))
+	}, [dispatch])
 	return (
 		<>
 			<MarketHead />
@@ -141,20 +159,17 @@ const Market: MarketComponent = () => {
 			{showPositionModal?.type === 'futures_edit_position_size' && <EditPositionSizeModal />}
 			{showPositionModal?.type === 'futures_edit_position_margin' && <EditPositionMarginModal />}
 			{openModal === 'futures_deposit_withdraw_cross_margin' && (
-				<DepositWithdrawCrossMarginModal
-					defaultTab="deposit"
-					onDismiss={() => dispatch(setOpenModal(null))}
-				/>
+				<DepositWithdrawCrossMarginModal defaultTab="deposit" onDismiss={onDismiss} />
 			)}
 			{openModal === 'futures_deposit_withdraw_smart_margin' && (
-				<TransferSmartMarginModal
-					defaultTab="withdraw"
-					onDismiss={() => dispatch(setOpenModal(null))}
-				/>
+				<TransferSmartMarginModal defaultTab="withdraw" onDismiss={onDismiss} />
 			)}
 
 			{openModal === 'futures_confirm_smart_margin_trade' && <TradeConfirmationModalCrossMargin />}
 			{openModal === 'futures_confirm_cross_margin_trade' && <DelayedOrderConfirmationModal />}
+			{openModal === 'referrals_mint_boost_nft' && routerReferralCode && isReferralCodeValid && (
+				<BaseReferralModal onDismiss={onDismiss} referralCode={routerReferralCode} />
+			)}
 		</>
 	)
 }

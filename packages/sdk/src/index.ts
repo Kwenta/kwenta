@@ -10,6 +10,7 @@ import SynthsService from './services/synths'
 import SystemService from './services/system'
 import TransactionsService from './services/transactions'
 import StatsService from './services/stats'
+import ReferralsService from './services/referrals'
 
 export default class KwentaSDK {
 	public context: Context
@@ -22,6 +23,7 @@ export default class KwentaSDK {
 	public kwentaToken: KwentaTokenService
 	public prices: PricesService
 	public stats: StatsService
+	public referrals: ReferralsService
 	public system: SystemService
 
 	constructor(context: IContext) {
@@ -35,6 +37,7 @@ export default class KwentaSDK {
 		this.stats = new StatsService(this)
 		this.system = new SystemService(this)
 		this.perpsV3 = new PerpsV3(this)
+		this.referrals = new ReferralsService(this)
 	}
 
 	public setProvider(provider: ethers.providers.Provider) {

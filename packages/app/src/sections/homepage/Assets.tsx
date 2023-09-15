@@ -1,5 +1,5 @@
 import { SECONDS_PER_DAY } from '@kwenta/sdk/constants'
-import { getDisplayAsset, MarketKeyByAsset } from '@kwenta/sdk/utils'
+import { getDisplayAsset, hoursToMilliseconds, MarketKeyByAsset } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts'
 import router from 'next/router'
@@ -133,31 +133,35 @@ const Assets = () => {
 	const pastRates = useAppSelector(selectPreviousDayPrices)
 	const futuresVolumes = useAppSelector(selectMarketVolumes)
 	usePollAction('fetchOptimismMarkets', () => fetchOptimismMarkets(l2Provider), {
-		intervalTime: 600,
+		intervalTime: hoursToMilliseconds(1),
 	})
 
-	const PERPS = useMemo(() => {
-		return futuresMarkets.map((market) => {
-			const marketPrice = prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0)
-			const description = getSynthDescription(market.asset, t)
-			const volume = futuresVolumes[market.marketKey]?.volume?.toNumber() ?? 0
-			const pastPrice = pastRates.find(
-				(price) => price.synth === market.asset || price.synth === market.asset.slice(1)
-			)
-			return {
-				key: market.asset,
-				name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
-				description: description.split(' ')[0],
-				price: marketPrice.toNumber(),
-				volume,
-				priceChange:
-					!!marketPrice && !marketPrice.eq(0) && !!pastPrice?.rate
-						? marketPrice.sub(pastPrice.rate).div(marketPrice)
-						: 0,
-				image: <PriceChart asset={market.asset} />,
-				icon: <StyledCurrencyIcon currencyKey={MarketKeyByAsset[market.asset]} />,
-			}
-		})
+	const perps = useMemo(() => {
+		return futuresMarkets
+			.map((market) => {
+				const marketPrice =
+					prices[market.asset]?.offChain ?? prices[market.asset]?.onChain ?? wei(0)
+				const description = getSynthDescription(market.asset, t)
+				const volume = futuresVolumes[market.marketKey]?.volume?.toNumber() ?? 0
+				const pastPrice = pastRates.find(
+					(price) => price.synth === market.asset || price.synth === market.asset.slice(1)
+				)
+				return {
+					key: market.asset,
+					name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
+					description: description.split(' ')[0],
+					price: marketPrice.toNumber(),
+					volume,
+					priceChange:
+						!!marketPrice && !marketPrice.eq(0) && !!pastPrice?.rate
+							? marketPrice.sub(pastPrice.rate).div(marketPrice)
+							: 0,
+					image: <PriceChart asset={market.asset} />,
+					icon: <StyledCurrencyIcon currencyKey={MarketKeyByAsset[market.asset]} />,
+				}
+			})
+			.sort((a, b) => b.volume - a.volume)
+			.slice(0, 16)
 	}, [futuresMarkets, pastRates, futuresVolumes, t, prices])
 
 	const title = (
@@ -188,7 +192,7 @@ const Assets = () => {
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<SliderContainer>
 						<StyledSlider {...settings}>
-							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
+							{perps.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
 								<StatsCardContainer key={key} className={key}>
 									<StatsCard
 										noOutline
@@ -240,7 +244,7 @@ const Assets = () => {
 					{title}
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
-							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
+							{perps.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
 								<StatsCardContainer key={key}>
 									<StatsCard
 										className={key}

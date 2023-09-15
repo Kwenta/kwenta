@@ -648,7 +648,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sUMAPERP]: {
 		key: FuturesMarketKey.sUMAPERP,
 		asset: FuturesMarketAsset.UMA,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x4b78d251770732f6304b1f41e9bebaabc3b256985ef18988f6de8d6562dd254c',
@@ -728,7 +728,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sZRXPERP]: {
 		key: FuturesMarketKey.sZRXPERP,
 		asset: FuturesMarketAsset.ZRX,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x7d17b9fe4ea7103be16b6836984fabbc889386d700ca5e5b3d34b7f92e449268',

@@ -6,9 +6,9 @@ import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg'
 import LeftArrowIcon from 'assets/svg/app/caret-left.svg'
 import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg'
 import RightArrowIcon from 'assets/svg/app/caret-right.svg'
+import { FlexDivRow } from 'components/layout/flex'
 import { GridDivCenteredCol } from 'components/layout/grid'
 import { resetButtonCSS } from 'styles/common'
-import media from 'styles/media'
 
 export type PaginationProps = {
 	pageIndex: number
@@ -42,14 +42,14 @@ const Pagination: FC<PaginationProps> = React.memo(
 		return (
 			<>
 				<PaginationContainer $compact={compact} $bottomBorder={!!extra}>
-					<ArrowButtonContainer>
+					<FlexDivRow columnGap="5px">
 						<ArrowButton onClick={firstPage} disabled={!canPreviousPage}>
 							<LeftEndArrowIcon />
 						</ArrowButton>
 						<ArrowButton onClick={previousPage} disabled={!canPreviousPage}>
 							<LeftArrowIcon />
 						</ArrowButton>
-					</ArrowButtonContainer>
+					</FlexDivRow>
 					<PageInfo>
 						{t('common.pagination.page')}{' '}
 						{t('common.pagination.page-of-total-pages', {
@@ -57,28 +57,20 @@ const Pagination: FC<PaginationProps> = React.memo(
 							totalPages: pageCount,
 						})}
 					</PageInfo>
-					<ArrowButtonContainer>
+					<FlexDivRow columnGap="5px">
 						<ArrowButton onClick={nextPage} disabled={!canNextPage}>
 							<RightArrowIcon />
 						</ArrowButton>
 						<ArrowButton onClick={toLastPage} disabled={!canNextPage}>
 							<RightEndArrowIcon />
 						</ArrowButton>
-					</ArrowButtonContainer>
+					</FlexDivRow>
 				</PaginationContainer>
 				{extra}
 			</>
 		)
 	}
 )
-
-const ArrowButtonContainer = styled.div`
-	${media.lessThan('lg')`
-		display: flex;
-		felx-direction: row;
-		column-gap: 5px;
-	`}
-`
 
 const PageInfo = styled.span`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
@@ -96,10 +88,7 @@ const PaginationContainer = styled(GridDivCenteredCol)<{
 	border-top: ${(props) => props.theme.colors.selectedTheme.border};
 	border-bottom: ${(props) =>
 		props.$bottomBorder ? props.theme.colors.selectedTheme.border : 'none'};
-
-	${media.lessThan('lg')`
-		border-radius: 0px;
-	`}
+	border-radius: 0px;
 `
 
 const ArrowButton = styled.button`
@@ -110,24 +99,15 @@ const ArrowButton = styled.button`
 		opacity: 0.5;
 	}
 	svg {
-		width: 14px;
-		height: 14px;
+		width: 9px;
+		height: 9px;
 		fill: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	}
 
-	${media.lessThan('lg')`
-		border: none;
-		border-radius: 100px;
-		padding: 4px;
-		width: 24px;
-		height: 24px;
-		background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
-
-		svg {
-			width: 9px;
-			height: 9px;
-		}
-	`}
+	width: 24px;
+	height: 24px;
+	background: ${(props) => props.theme.colors.selectedTheme.newTheme.button.default.background};
+	border-radius: 100px;
 `
 
 export default Pagination

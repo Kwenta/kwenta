@@ -52,13 +52,14 @@ const { chains, provider } = configureChains(Object.values(chain), [
 	}),
 	jsonRpcProvider({
 		rpc: (networkChain) => ({
-			http: process.env.NEXT_PUBLIC_DEVNET_ENABLED
-				? process.env.NEXT_PUBLIC_DEVNET_RPC_URL!
-				: !BLAST_NETWORK_LOOKUP[networkChain.id]
-				? networkChain.rpcUrls.default.http[0]
-				: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
-						process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
-				  }`,
+			http:
+				process.env.NEXT_PUBLIC_DEVNET_ENABLED === 'true'
+					? process.env.NEXT_PUBLIC_DEVNET_RPC_URL!
+					: !BLAST_NETWORK_LOOKUP[networkChain.id]
+					? networkChain.rpcUrls.default.http[0]
+					: `https://${BLAST_NETWORK_LOOKUP[networkChain.id]}.blastapi.io/${
+							process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID
+					  }`,
 		}),
 		stallTimeout: STALL_TIMEOUT,
 		priority: process.env.NEXT_PUBLIC_DEVNET_ENABLED ? 0 : 2,

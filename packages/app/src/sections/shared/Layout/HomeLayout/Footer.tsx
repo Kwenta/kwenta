@@ -9,6 +9,7 @@ import { FlexDivCentered } from 'components/layout/flex'
 import PoweredBySynthetix from 'components/PoweredBySynthetix'
 import { Body } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
+import ROUTES from 'constants/routes'
 import { GridContainer } from 'sections/homepage/section'
 import { ExternalLink } from 'styles/common'
 import media from 'styles/media'
@@ -60,9 +61,9 @@ const Footer = memo(() => {
 					link: EXTERNAL_LINKS.Trade.Spot,
 				},
 				{
-					key: 'legacy',
-					title: t('homepage.footer.use-kwenta.legacy'),
-					link: EXTERNAL_LINKS.Trading.Legacy,
+					key: 'referrals',
+					title: t('homepage.footer.use-kwenta.referrals'),
+					link: ROUTES.Referrals.Home,
 				},
 				{
 					key: 'perps-v1',

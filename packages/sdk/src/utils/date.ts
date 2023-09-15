@@ -75,3 +75,5 @@ export const getNextSunday = (date: Date) => {
 	nextSunday.setHours(0, 0, 0, 0)
 	return nextSunday
 }
+
+export const hoursToMilliseconds = (hours: number) => hours * 60 * 60 * 1000

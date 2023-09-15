@@ -4,6 +4,9 @@ const newTheme = {
 	containers: {
 		primary: {
 			background: common.palette.neutral.n1000,
+			overlay: {
+				background: common.palette.alpha.gray60,
+			},
 		},
 		secondary: {
 			background: common.palette.neutral.n900,
@@ -88,6 +91,15 @@ const newTheme = {
 			dark: {
 				background: common.palette.yellow.y1000,
 				text: common.palette.yellow.y500,
+				border: common.palette.alpha.white10,
+			},
+		},
+		primary: {
+			text: common.palette.neutral.n900,
+			background: common.palette.yellow.y500,
+			dark: {
+				background: common.palette.yellow.y1000,
+				text: common.palette.neutral.n0,
 				border: common.palette.alpha.white10,
 			},
 		},

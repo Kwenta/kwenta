@@ -53,6 +53,11 @@ function calculatePageSize(
 	return showShortList ? pageSize ?? SHORT_PAGE_SIZE : MAX_TOTAL_ROWS
 }
 
+export type GridLayoutStyles = {
+	row?: string
+	cell?: string
+}
+
 type TableProps<T> = {
 	data: T[]
 	columns: ColumnDef<T, any>[]
@@ -76,6 +81,7 @@ type TableProps<T> = {
 	autoResetPageIndex?: boolean
 	paginationExtra?: React.ReactNode
 	CustomPagination?: FC<PaginationProps>
+	gridLayout?: GridLayoutStyles
 }
 
 const Table = <T,>({
@@ -100,6 +106,7 @@ const Table = <T,>({
 	columnsDeps = [],
 	paginationExtra,
 	CustomPagination,
+	gridLayout = {},
 }: TableProps<T>) => {
 	const [sorting, setSorting] = useState<SortingState>(sortBy)
 	const [pagination, setPagination] = useState<PaginationState>({
@@ -130,7 +137,7 @@ const Table = <T,>({
 	const defaultRef = useRef(null)
 
 	const shouldShowPagination = useMemo(
-		() => showPagination && !showShortList && data.length > table.getState().pagination.pageSize,
+		() => showPagination || (!showShortList && data.length > table.getState().pagination.pageSize),
 		[data.length, showPagination, showShortList, table]
 	)
 
@@ -201,7 +208,8 @@ const Table = <T,>({
 										localRef={localRef}
 										highlightRowsOnHover={highlightRowsOnHover}
 										row={row}
-										onClick={handleRowClick(row)}
+										onClick={onTableRowClick ? handleRowClick(row) : undefined}
+										gridLayout={gridLayout}
 									/>
 								)
 							})}
@@ -211,7 +219,7 @@ const Table = <T,>({
 						<Pagination
 							compact={compactPagination}
 							pageIndex={table.getState().pagination.pageIndex}
-							pageCount={table.getPageCount()}
+							pageCount={table.getPageCount() === 0 ? 1 : table.getPageCount()}
 							canNextPage={table.getCanNextPage()}
 							canPreviousPage={table.getCanPreviousPage()}
 							setPage={table.setPageIndex}
@@ -264,6 +272,10 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean; $canSort:
 		css`
 			cursor: pointer;
 		`}
+	
+	${media.lessThan('lg')`
+		padding-left: 0px;
+	`}
 `
 
 const NoResultsContainer = styled(Body)`

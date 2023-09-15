@@ -156,4 +156,7 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	PerpsV3AccountProxy: {
 		420: '0x01C2f64ABd46AF20950736f3C3e1a9cfc5c36c82',
 	},
+	BoostNft: {
+		10: '0xD3B8876073949D790AB718CAD21d9326a3adA60f',
+	},
 }

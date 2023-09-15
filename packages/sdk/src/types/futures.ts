@@ -630,6 +630,13 @@ export type PerpsV3SubgraphMarket = {
 	takerFee: string
 }
 
+export interface FuturesTradeByReferral {
+	timestamp: string
+	account: string
+	size: string
+	price: string
+}
+
 export type PrepareTxParams<T extends boolean | undefined> = {
 	isPrepareOnly?: T
 }
