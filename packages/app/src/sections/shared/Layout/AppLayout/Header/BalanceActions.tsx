@@ -89,6 +89,7 @@ const BalanceActions: FC = () => {
 			rewards: opRewards,
 			onClick: handleClaimOp,
 			isDisabled: claimDisabledOp,
+			rewardsDisabled: opRewards.eq(0),
 		},
 		{
 			key: 'snx-rewards',
@@ -129,7 +130,7 @@ const BalanceActions: FC = () => {
 			{open && (
 				<RewardsTabContainer ref={ref}>
 					<CardsContainer>
-						{REWARDS.map((reward) => (
+						{REWARDS.filter((r) => !r.rewardsDisabled).map((reward) => (
 							<CardGrid key={reward.key}>
 								<Body size="medium" color="primary" weight="bold">
 									{reward.title}

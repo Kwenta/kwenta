@@ -33,4 +33,5 @@ export type RewardsInfo = {
 	copy: string
 	labels: RewardsCard[]
 	info: RewardsCard[]
+	disabled?: boolean
 }
