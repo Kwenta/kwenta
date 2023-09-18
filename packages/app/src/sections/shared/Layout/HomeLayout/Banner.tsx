@@ -7,11 +7,11 @@ import { Body } from 'components/Text'
 import {
 	BANNER_ENABLED,
 	BANNER_HEIGHT_DESKTOP,
-	BANNER_HEIGHT_MOBILE,
 	BANNER_LINK_URL,
 	BANNER_TEXT,
 	BANNER_WAITING_TIME,
 } from 'constants/announcement'
+import useWindowSize from 'hooks/useWindowSize'
 import { MARKET_SELECTOR_HEIGHT_MOBILE } from 'sections/futures/Trade/MarketsDropdownSelector'
 import CloseIconWithHover from 'sections/shared/components/CloseIconWithHover'
 import { setShowBanner } from 'state/app/reducer'
@@ -29,15 +29,22 @@ type BannerViewProps = {
 const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) => {
 	const router = useRouter()
 	const isMobile = mode === 'mobile'
+	const { lessThanWidth } = useWindowSize()
 	const closeIconStyle = isMobile ? { flex: '0.08', marginTop: '5px' } : { flex: '0.1' }
 	const closeIconProps = isMobile ? { width: 12, height: 12 } : {}
 	const linkSize = isMobile ? 'small' : 'medium'
+	const marginTop =
+		router.pathname.includes('market') &&
+		lessThanWidth('md') &&
+		!router.pathname.includes('dashboard')
+			? `${MARKET_SELECTOR_HEIGHT_MOBILE}px`
+			: '0px'
 
 	return (
 		<FuturesBannerContainer
 			onClick={onDetails}
 			$hasDetails={!!BANNER_LINK_URL}
-			$compact={!router.pathname.includes('market')}
+			$marginTop={marginTop}
 		>
 			<FuturesBannerLinkWrapper>
 				<FuturesLink size={linkSize}>
@@ -105,7 +112,7 @@ const FuturesLink = styled(Body)`
 	`};
 `
 
-const FuturesBannerContainer = styled.div<{ $hasDetails?: boolean; $compact?: boolean }>`
+const FuturesBannerContainer = styled.div<{ $hasDetails?: boolean; $marginTop: string }>`
 	height: ${BANNER_HEIGHT_DESKTOP}px;
 	width: 100%;
 	display: flex;
@@ -113,6 +120,7 @@ const FuturesBannerContainer = styled.div<{ $hasDetails?: boolean; $compact?: bo
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.background};
 	margin-bottom: 15px;
 	cursor: ${(props) => (props.$hasDetails ? 'pointer' : 'auto')};
+	margin-top: ${(props) => props.$marginTop || '0px'};
 
 	${media.lessThan('md')`
 		position: relative;
@@ -124,10 +132,7 @@ const FuturesBannerContainer = styled.div<{ $hasDetails?: boolean; $compact?: bo
 		padding: 12px 10px;
 		border-radius: 0px;
 		gap: 5px;
-		height: ${BANNER_HEIGHT_MOBILE}px;
 	`}
-
-	margin-top: ${(props) => (props.$compact ? 0 : MARKET_SELECTOR_HEIGHT_MOBILE)}px;
 `
 
 const FuturesBannerLinkWrapper = styled.div`
