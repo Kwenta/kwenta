@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from 'components/Button'
-import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
-import { Body, Heading } from 'components/Text'
-import { BANNER_TEXT } from 'constants/announcement'
+import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
+import { Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
 
 interface StakingHeadingProps {
@@ -17,13 +16,6 @@ export const StakingHeading: FC<StakingHeadingProps> = memo(({ title }) => {
 
 	return (
 		<FlexDivCol>
-			<BannerContainer
-				onClick={() =>
-					window.open(EXTERNAL_LINKS.Docs.StakingV2Migration, '_blank', 'noopener noreferrer')
-				}
-			>
-				<FuturesLink>{BANNER_TEXT}</FuturesLink>
-			</BannerContainer>
 			<TitleContainer>
 				<FlexDivCol rowGap="5px">
 					<StyledHeading variant="h4">{title}</StyledHeading>
@@ -52,21 +44,4 @@ const StyledButton = styled(Button)`
 
 const StyledHeading = styled(Heading)`
 	font-weight: 400;
-`
-
-const FuturesLink = styled(Body)`
-	color: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.text};
-	padding: 20px 0px;
-`
-
-const BannerContainer = styled(FlexDivCentered)`
-	width: 100%;
-	justify-content: center;
-	background: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.background};
-	margin-bottom: 30px;
-	cursor: pointer;
-	border-radius: 8px;
-	white-space: pre-wrap;
-	text-align: center;
-	padding: 0px 5px;
 `

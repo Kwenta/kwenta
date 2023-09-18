@@ -60,6 +60,7 @@ Required:
 - `NEXT_PUBLIC_SATSUMA_API_KEY` - API key for Satsuma subgraph queries
 - `NEXT_PUBLIC_THEGRAPH_API_KEY` - API key for The Graph's decentralized service
 - `NEXT_PUBLIC_DEFAULT_PRICE_SERVICE` - Specifies the default price server, options are `KWENTA` or `PYTH`
+- `NEXT_PUBLIC_SERVICES_PROXY` - Specify Kwenta proxy server
 
 ### Run
 

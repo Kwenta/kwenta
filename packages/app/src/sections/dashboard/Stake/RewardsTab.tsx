@@ -143,6 +143,7 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 						value: formatNumber(estimatedOpRewards, { minDecimals: 4 }),
 					},
 				],
+				disabled: opRewards.eq(0),
 			},
 			{
 				key: 'snx-rewards',
@@ -211,46 +212,48 @@ const RewardsTab: FC<TradingRewardProps> = ({ period = 0 }) => {
 				/>
 			</HeaderContainer>
 			<CardsContainer>
-				{rewardsInfo.map(({ key, title, copy, labels, info }) => (
-					<CardGrid key={key}>
-						<div>
-							<Body size="large" color="primary">
-								{title}
-							</Body>
-							<Body color="secondary">{copy}</Body>
-						</div>
-						<RewardsContainer>
-							<FlexDivRow justifyContent="flex-start" columnGap="15px">
-								{labels.map(({ label, value, labelIcon, valueIcon }) => (
-									<FlexDivCol rowGap="5px">
-										<IconContainer color="secondary">
-											{label}
-											{labelIcon}
-										</IconContainer>
-										<IconContainer size="large" color="preview">
-											{value}
-											{valueIcon}
-										</IconContainer>
-									</FlexDivCol>
-								))}
-							</FlexDivRow>
-							<FlexDivRow justifyContent="flex-start" columnGap="15px">
-								{info.map(({ label, labelIcon, value, valueIcon }) => (
-									<FlexDivCol rowGap="5px">
-										<IconContainer color="secondary">
-											{label}
-											{labelIcon}
-										</IconContainer>
-										<IconContainer size="large" color="primary">
-											{value}
-											{valueIcon}
-										</IconContainer>
-									</FlexDivCol>
-								))}
-							</FlexDivRow>
-						</RewardsContainer>
-					</CardGrid>
-				))}
+				{rewardsInfo
+					.filter((r) => !r.disabled)
+					.map(({ key, title, copy, labels, info }) => (
+						<CardGrid key={key}>
+							<div>
+								<Body size="large" color="primary">
+									{title}
+								</Body>
+								<Body color="secondary">{copy}</Body>
+							</div>
+							<RewardsContainer>
+								<FlexDivRow justifyContent="flex-start" columnGap="15px">
+									{labels.map(({ label, value, labelIcon, valueIcon }) => (
+										<FlexDivCol rowGap="5px">
+											<IconContainer color="secondary">
+												{label}
+												{labelIcon}
+											</IconContainer>
+											<IconContainer size="large" color="preview">
+												{value}
+												{valueIcon}
+											</IconContainer>
+										</FlexDivCol>
+									))}
+								</FlexDivRow>
+								<FlexDivRow justifyContent="flex-start" columnGap="15px">
+									{info.map(({ label, labelIcon, value, valueIcon }) => (
+										<FlexDivCol rowGap="5px">
+											<IconContainer color="secondary">
+												{label}
+												{labelIcon}
+											</IconContainer>
+											<IconContainer size="large" color="primary">
+												{value}
+												{valueIcon}
+											</IconContainer>
+										</FlexDivCol>
+									))}
+								</FlexDivRow>
+							</RewardsContainer>
+						</CardGrid>
+					))}
 				<ButtonContainer>
 					<Button
 						variant="yellow"
