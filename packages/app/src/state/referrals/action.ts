@@ -17,7 +17,7 @@ import { ThunkConfig } from 'state/types'
 import { selectWallet } from 'state/wallet/selectors'
 import logError from 'utils/logError'
 
-import { setMintedBoostNft, setStartOnboarding } from './reducer'
+import { setMintedBoostNft } from './reducer'
 
 export const mintBoostNft = createAsyncThunk<void, string, ThunkConfig>(
 	'referrals/mintBoostNft',
@@ -44,7 +44,6 @@ export const mintBoostNft = createAsyncThunk<void, string, ThunkConfig>(
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchBoostNftForAccount())
 			dispatch(setMintedBoostNft(true))
-			dispatch(setStartOnboarding(false))
 		} catch (err) {
 			logError(err)
 			dispatch(handleTransactionError(err.message))
