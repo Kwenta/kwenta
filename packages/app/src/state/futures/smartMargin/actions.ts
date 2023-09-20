@@ -25,6 +25,7 @@ import {
 	NetworkId,
 	TransactionStatus,
 	FuturesMarginType,
+	SwapDepositToken,
 } from '@kwenta/sdk/types'
 import {
 	calculateDesiredFillPrice,
@@ -38,6 +39,7 @@ import Wei, { wei } from '@synthetixio/wei'
 import { debounce } from 'lodash'
 
 import { notifyError } from 'components/ErrorNotifier'
+import { SWAP_QUOTE_BUFFER } from 'constants/defaults'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import {
 	handleTransactionError,
@@ -97,6 +99,13 @@ import {
 	setKeeperDeposit,
 } from './reducer'
 import {
+	selectIdleAccountMargin,
+	selectSelectedSwapDepositToken,
+	selectSwapDepositBalance,
+	selectSwapDepositBalanceQuote,
+	selectTradeSwapDepositQuote,
+} from './selectors'
+import {
 	selectSmartMarginAccount,
 	selectSmartMarginMarginDelta,
 	selectSmartMarginOrderPrice,
@@ -116,7 +125,6 @@ import {
 	selectSmartMarginPreviewCount,
 	selectTradePreview,
 	selectCloseSMPositionOrderInputs,
-	selectSmartMarginActivePositions,
 	selectEditPositionModalInfo,
 	selectSlTpModalInputs,
 	selectSmartMarginKeeperDeposit,
@@ -419,6 +427,64 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 		}
 	}
 )
+
+export const calculateTradeSwapDeposit = createAsyncThunk<
+	| {
+			token: SwapDepositToken
+			amountIn: string
+			amountOut: string
+			quoteInvalidReason?: `insufficient-${'balance' | 'quote'}`
+	  }
+	| undefined,
+	void,
+	ThunkConfig
+>('futures/calculateTradeSwapDeposit', async (_, { getState }) => {
+	const state = getState()
+	const wallet = selectWallet(state)
+	const marketInfo = selectV2MarketInfo(state)
+	const swapDepositToken = selectSelectedSwapDepositToken(state)
+	const marginDelta = selectSmartMarginMarginDelta(state)
+	const idleMargin = selectIdleAccountMargin(state)
+	const swapDepositBalance = selectSwapDepositBalance(state)
+	const balanceQuote = selectSwapDepositBalanceQuote(state)
+
+	if (!wallet || !marketInfo || !swapDepositToken || swapDepositToken === SwapDepositToken.SUSD)
+		return
+
+	try {
+		const requiredSwapDeposit = marginDelta.sub(idleMargin)
+
+		if (requiredSwapDeposit.lte(0)) {
+			return
+		}
+
+		// Add some buffer to account for price change since quote
+		// but keeping within the bounds of original balance quote
+
+		const depositWithBuffer = requiredSwapDeposit.add(
+			requiredSwapDeposit.mul(SWAP_QUOTE_BUFFER).div(100)
+		)
+
+		const tokenInAmount = depositWithBuffer.div(balanceQuote?.rate || 0)
+
+		let quoteInvalidReason: `insufficient-${'balance' | 'quote'}` | undefined = undefined
+
+		if (tokenInAmount.gt(swapDepositBalance)) {
+			quoteInvalidReason = 'insufficient-balance'
+		}
+
+		return {
+			token: swapDepositToken,
+			amountIn: tokenInAmount.toString(),
+			amountOut: requiredSwapDeposit.toString(),
+			quoteInvalidReason,
+		}
+	} catch (err) {
+		logError(err)
+		notifyError('Failed to calculate swap deposit', err)
+		throw err
+	}
+})
 
 export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/clearTradeInputs',
@@ -945,6 +1011,21 @@ export const createSmartMarginAccount = createAsyncThunk<
 	}
 )
 
+export const depositSmartMargin = createAsyncThunk<void, Wei, ThunkConfig>(
+	'futures/depositSmartMargin',
+	async (amount, { getState, dispatch, extra: { sdk } }) => {
+		const state = getState()
+		const account = selectSmartMarginAccount(state)
+		const token = selectSelectedSwapDepositToken(state)
+
+		if (!account) {
+			notifyError('No smart margin account')
+			return
+		}
+		await submitSMTransferTransaction(dispatch, sdk, 'deposit_smart_margin', account, amount, token)
+	}
+)
+
 export const withdrawSmartMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 	'futures/withdrawSmartMargin',
 	async (amount, { getState, dispatch, extra: { sdk } }) => {
@@ -960,8 +1041,10 @@ export const withdrawSmartMargin = createAsyncThunk<void, Wei, ThunkConfig>(
 export const approveSmartMargin = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/approveSmartMargin',
 	async (_, { getState, dispatch, extra: { sdk } }) => {
-		const address = selectSmartMarginAccount(getState())
-		if (!address) throw new Error('No smart margin account')
+		const state = getState()
+		const account = selectSmartMarginAccount(state)
+		const token = selectSelectedSwapDepositToken(state)
+		if (!account) throw new Error('No smart margin account')
 		try {
 			dispatch(
 				setTransaction({
@@ -970,7 +1053,7 @@ export const approveSmartMargin = createAsyncThunk<void, void, ThunkConfig>(
 					hash: null,
 				})
 			)
-			const tx = await sdk.futures.approveSmartMarginDeposit({ address })
+			const tx = await sdk.futures.approveSmartMarginDeposit({ address: account, token })
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchSmartMarginBalanceInfo())
 		} catch (err) {
@@ -983,19 +1066,21 @@ export const approveSmartMargin = createAsyncThunk<void, void, ThunkConfig>(
 export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfig>(
 	'futures/submitSmartMarginOrder',
 	async (overridePriceProtection, { getState, dispatch, extra: { sdk } }) => {
-		const marketInfo = selectV2MarketInfo(getState())
-		const account = selectSmartMarginAccount(getState())
-		const tradeInputs = selectSmartMarginTradeInputs(getState())
-		const marginDelta = selectSmartMarginMarginDelta(getState())
-		const feeCap = selectOrderFeeCap(getState())
-		const orderType = selectOrderType(getState())
-		const orderPrice = selectSmartMarginOrderPrice(getState())
-		const preview = selectTradePreview(getState())
-		const keeperEthDeposit = selectSmartMarginKeeperDeposit(getState())
-		const wallet = selectWallet(getState())
-		const position = selectSelectedSmartMarginPosition(getState())
-		const openDelayedOrders = selectSmartMarginDelayedOrders(getState())
-		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(getState())
+		const state = getState()
+		const marketInfo = selectV2MarketInfo(state)
+		const account = selectSmartMarginAccount(state)
+		const tradeInputs = selectSmartMarginTradeInputs(state)
+		const marginDelta = selectSmartMarginMarginDelta(state)
+		const feeCap = selectOrderFeeCap(state)
+		const orderType = selectOrderType(state)
+		const orderPrice = selectSmartMarginOrderPrice(state)
+		const preview = selectTradePreview(state)
+		const keeperEthDeposit = selectSmartMarginKeeperDeposit(state)
+		const wallet = selectWallet(state)
+		const position = selectSelectedSmartMarginPosition(state)
+		const openDelayedOrders = selectSmartMarginDelayedOrders(state)
+		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(state)
+		const swapQuote = selectTradeSwapDepositQuote(state)
 
 		try {
 			if (!marketInfo) throw new Error('Market info not found')
@@ -1075,17 +1160,28 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 			)
 
 			const tx = await sdk.futures.submitSmartMarginOrder({
-				market: marketInfo,
+				market: { marketAddress: marketInfo.marketAddress, marketKey: marketInfo.marketKey },
 				walletAddress: wallet,
 				smAddress: account,
 				order: orderInputs,
-				options: { cancelPendingReduceOrders: isClosing, cancelExpiredDelayedOrders: !!staleOrder },
+				options: {
+					cancelPendingReduceOrders: isClosing,
+					cancelExpiredDelayedOrders: !!staleOrder,
+					swapDeposit: swapQuote
+						? {
+								...swapQuote,
+								amountOutMin: swapQuote.amountOut,
+								amountIn: swapQuote.amountIn,
+						  }
+						: undefined,
+				},
 			})
 			await monitorAndAwaitTransaction(dispatch, tx)
 			dispatch(fetchSmartMarginOpenOrders())
 			dispatch(setOpenModal(null))
 			dispatch(fetchBalances())
 			dispatch(clearTradeInputs())
+			dispatch(fetchSwapDepositBalanceQuote())
 		} catch (err) {
 			dispatch(handleTransactionError(err.message))
 			throw err
@@ -1350,8 +1446,9 @@ const submitSMTransferTransaction = async (
 	dispatch: AppDispatch,
 	sdk: KwentaSDK,
 	type: 'withdraw_smart_margin' | 'deposit_smart_margin',
-	address: string,
-	amount: Wei
+	account: string,
+	amount: Wei,
+	token = SwapDepositToken.SUSD
 ) => {
 	dispatch(
 		setTransaction({
@@ -1365,8 +1462,17 @@ const submitSMTransferTransaction = async (
 		const isPrepareOnly = false
 		const tx =
 			type === 'deposit_smart_margin'
-				? await sdk.futures.depositSmartMarginAccount({ address, amount, isPrepareOnly })
-				: await sdk.futures.withdrawSmartMarginAccount({ address, amount, isPrepareOnly })
+				? await sdk.futures.depositSmartMarginAccount({
+						address: account,
+						amount,
+						token,
+						isPrepareOnly,
+				  })
+				: await sdk.futures.withdrawSmartMarginAccount({
+						address: account,
+						amount,
+						isPrepareOnly,
+				  })
 		await monitorAndAwaitTransaction(dispatch, tx)
 		dispatch(fetchSmartMarginBalanceInfo())
 		dispatch(setOpenModal(null))
@@ -1491,3 +1597,29 @@ const getMarketDetailsByKey = (getState: () => RootState, key: FuturesMarketKey)
 		key: market.marketKey,
 	}
 }
+
+export const fetchSwapDepositBalanceQuote = createAsyncThunk<
+	{
+		rate: string
+		susdQuote: string
+	},
+	void,
+	ThunkConfig
+>('futures/fetchSwapDepositBalanceQuote', async (_, { getState, extra: { sdk } }) => {
+	const state = getState()
+	const token = selectSelectedSwapDepositToken(state)
+	const balance = selectSwapDepositBalance(state)
+	if (token === SwapDepositToken.SUSD || balance.eq(0))
+		return {
+			rate: '1',
+			susdQuote: balance.toString(),
+		}
+
+	const susdQuote = await sdk.futures.getSwapDepositQuote(token, balance)
+	const rate = susdQuote.div(balance)
+
+	return {
+		rate: rate.toString(),
+		susdQuote: susdQuote.sub(susdQuote.mul(SWAP_QUOTE_BUFFER).div(100)).toString(),
+	}
+})

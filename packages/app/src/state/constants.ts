@@ -26,6 +26,8 @@ export const ZERO_STATE_ACCOUNT = {
 		allowance: '0',
 		keeperEthBal: '0',
 		walletEthBal: '0',
+		balances: { SUSD: '0', USDC: '0', DAI: '0' },
+		allowances: { SUSD: '0', USDC: '0', DAI: '0' },
 	},
 	trades: [],
 	positions: [],

@@ -41,3 +41,5 @@ export const ORDERS_WARNING_DISABLED = true
 export const DEFAULT_FUTURES_MARGIN_TYPE = FuturesMarginType.SMART_MARGIN
 
 export const DEFAULT_LEVERAGE = '1'
+
+export const SWAP_QUOTE_BUFFER = 0.2

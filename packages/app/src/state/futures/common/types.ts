@@ -62,6 +62,9 @@ export type FuturesQueryStatuses = {
 
 export type SmartMarginQueryStatuses = FuturesQueryStatuses & {
 	smartMarginBalanceInfo: QueryStatus
+	swapDepositBalanceQuote: QueryStatus
+	swapDepositQuote: QueryStatus
+	tradeSwapDepositQuote: QueryStatus
 }
 
 export type TradeSizeInputs<T = Wei> = {

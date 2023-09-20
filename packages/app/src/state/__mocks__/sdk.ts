@@ -25,6 +25,20 @@ export const mockFuturesService = () => ({
 		keeperEthBal: wei('0.1'),
 		walletEthBal: wei('1'),
 		allowance: wei('1000'),
+		balances: {
+			SUSD: wei('1000'),
+			USDC: wei('1000'),
+			// USDT: wei('1000'),
+			DAI: wei('1000'),
+			// LUSD: wei('1000'),
+		},
+		allowances: {
+			SUSD: wei('1000'),
+			USDC: wei('1000'),
+			// USDT: wei('1000'),
+			DAI: wei('1000'),
+			// LUSD: wei('1000'),
+		},
 	}),
 	getMarkets: () => {
 		return [...SDK_MARKETS]

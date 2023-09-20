@@ -3,6 +3,7 @@ import { BALANCES_INITIAL_STATE } from './balances/reducer'
 import { EARN_INITIAL_STATE } from './earn/reducer'
 import { EXCHANGES_INITIAL_STATE } from './exchange/reducer'
 import { FUTURES_INITIAL_STATE } from './futures/reducer'
+import { SMART_MARGIN_INITIAL_STATE } from './futures/smartMargin/reducer'
 import { HOME_INITIAL_STATE } from './home/reducer'
 import { PREFERENCES_INITIAL_STATE } from './preferences/reducer'
 import { PRICES_INITIAL_STATE } from './prices/reducer'
@@ -70,6 +71,13 @@ export const migrations = {
 		return {
 			...state,
 			referral: REFERRALS_INITIAL_STATE,
+		}
+	},
+	39: (state: any) => {
+		return {
+			...state,
+			futures: FUTURES_INITIAL_STATE,
+			smartMargin: SMART_MARGIN_INITIAL_STATE,
 		}
 	},
 }

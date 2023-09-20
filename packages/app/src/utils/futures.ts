@@ -16,6 +16,7 @@ import {
 	PerpsMarketV2,
 	PerpsMarketV3,
 	PerpsV3Position,
+	SwapDepositToken,
 } from '@kwenta/sdk/types'
 import {
 	AssetDisplayByAsset,
@@ -252,6 +253,20 @@ export const serializeCmBalanceInfo = (
 		keeperEthBal: overview.keeperEthBal.toString(),
 		walletEthBal: overview.walletEthBal.toString(),
 		allowance: overview.allowance.toString(),
+		balances: {
+			[SwapDepositToken.SUSD]: overview.balances[SwapDepositToken.SUSD].toString(),
+			[SwapDepositToken.USDC]: overview.balances[SwapDepositToken.USDC].toString(),
+			// [SwapDepositToken.USDT]: overview.balances[SwapDepositToken.USDT].toString(),
+			[SwapDepositToken.DAI]: overview.balances[SwapDepositToken.DAI].toString(),
+			// [SwapDepositToken.LUSD]: overview.balances[SwapDepositToken.LUSD].toString(),
+		},
+		allowances: {
+			[SwapDepositToken.SUSD]: overview.allowances[SwapDepositToken.SUSD].toString(),
+			[SwapDepositToken.USDC]: overview.allowances[SwapDepositToken.USDC].toString(),
+			// [SwapDepositToken.USDT]: overview.allowances[SwapDepositToken.USDT].toString(),
+			[SwapDepositToken.DAI]: overview.allowances[SwapDepositToken.DAI].toString(),
+			// [SwapDepositToken.LUSD]: overview.allowances[SwapDepositToken.LUSD].toString(),
+		},
 	}
 }
 
@@ -263,6 +278,20 @@ export const unserializeCmBalanceInfo = (
 		keeperEthBal: wei(balanceInfo.keeperEthBal),
 		walletEthBal: wei(balanceInfo.walletEthBal),
 		allowance: wei(balanceInfo.allowance),
+		balances: {
+			[SwapDepositToken.SUSD]: wei(balanceInfo.balances[SwapDepositToken.SUSD]),
+			[SwapDepositToken.USDC]: wei(balanceInfo.balances[SwapDepositToken.USDC]),
+			// [SwapDepositToken.USDT]: wei(balanceInfo.balances[SwapDepositToken.USDT]),
+			[SwapDepositToken.DAI]: wei(balanceInfo.balances[SwapDepositToken.DAI]),
+			// [SwapDepositToken.LUSD]: wei(balanceInfo.balances[SwapDepositToken.LUSD]),
+		},
+		allowances: {
+			[SwapDepositToken.SUSD]: wei(balanceInfo.allowances[SwapDepositToken.SUSD]),
+			[SwapDepositToken.USDC]: wei(balanceInfo.allowances[SwapDepositToken.USDC]),
+			// [SwapDepositToken.USDT]: wei(balanceInfo.allowances[SwapDepositToken.USDT]),
+			[SwapDepositToken.DAI]: wei(balanceInfo.allowances[SwapDepositToken.DAI]),
+			// [SwapDepositToken.LUSD]: wei(balanceInfo.allowances[SwapDepositToken.LUSD]),
+		},
 	}
 }
 

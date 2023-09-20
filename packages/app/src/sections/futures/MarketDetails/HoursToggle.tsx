@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useReducer } from 'react'
 import styled from 'styled-components'
 
 import { StyledCaretDownIcon } from 'components/Select'
@@ -9,25 +9,28 @@ import { selectSelectedInputHours } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import media from 'styles/media'
 
+// TODO: This component should be standardized and moved to the components folder.
+// We should also consider using react-select for this.
+
+const getLabelByValue = (value: number) => FUNDING_RATE_PERIODS[value] ?? '1H'
+
 const HoursToggle: React.FC = () => {
 	const dispatch = useAppDispatch()
 	const fundingHours = useAppSelector(selectSelectedInputHours)
-	const [open, setOpen] = useState(false)
-	const getLabelByValue = (value: number): string => FUNDING_RATE_PERIODS[value] ?? '1H'
+	const [open, toggleOpen] = useReducer((o) => !o, false)
+
 	const updatePeriod = useCallback(
 		(v: number) => {
 			dispatch(setSelectedInputFundingRateHour(v))
-			setOpen(!open)
+			toggleOpen()
 		},
-		[dispatch, open]
+		[dispatch]
 	)
+
 	return (
 		<ToggleContainer open={open}>
 			<ToggleTable>
-				<ToggleTableHeader
-					style={{ borderBottomWidth: open ? '1px' : '0' }}
-					onClick={() => setOpen(!open)}
-				>
+				<ToggleTableHeader style={{ borderBottomWidth: open ? '1px' : '0' }} onClick={toggleOpen}>
 					{getLabelByValue(fundingHours)}
 					<StyledCaretDownIcon width={12} $flip={open} />
 				</ToggleTableHeader>
@@ -44,7 +47,7 @@ const HoursToggle: React.FC = () => {
 		</ToggleContainer>
 	)
 }
-//  solid ${(props) => props.theme.colors.selectedTheme.newTheme.pill['gray'].border};
+
 const ToggleTableRow = styled.div`
 	margin: auto;
 	padding: 1.5px 6px;
@@ -55,6 +58,7 @@ const ToggleTableRow = styled.div`
 	:last-child {
 		border-radius: 0px 0px 9px 9px;
 	}
+
 	:hover {
 		color: ${(props) => props.theme.colors.selectedTheme.newTheme.text.primary};
 		background: ${(props) =>

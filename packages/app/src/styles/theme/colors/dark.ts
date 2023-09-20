@@ -27,7 +27,7 @@ const newTheme = {
 			background: common.palette.neutral.n800,
 			color: common.palette.neutral.n0,
 			hover: {
-				background: common.palette.neutral.n800,
+				background: common.palette.neutral.n700,
 			},
 		},
 		tab: {
@@ -229,6 +229,10 @@ const newTheme = {
 		ratioSelect: {
 			background: common.palette.neutral.n700,
 		},
+	},
+	disclaimer: {
+		background: common.palette.yellow.y1000,
+		color: common.palette.yellow.y500,
 	},
 }
 

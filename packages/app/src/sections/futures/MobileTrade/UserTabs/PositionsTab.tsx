@@ -108,13 +108,11 @@ const PositionsTab = () => {
 								<div className="position-side-bar" />
 								<div>
 									<Body>{row.market.marketName}</Body>
-									<Body>
-										<ColoredPrice priceChange={row.priceInfo?.change}>
-											{formatDollars(row.marketPrice, {
-												suggestDecimals: true,
-											})}
-										</ColoredPrice>
-									</Body>
+									<ColoredPrice priceChange={row.priceInfo?.change}>
+										{formatDollars(row.marketPrice, {
+											suggestDecimals: true,
+										})}
+									</ColoredPrice>
 								</div>
 							</FlexDiv>
 							<FlexDivRowCentered style={{ columnGap: '5px' }}>

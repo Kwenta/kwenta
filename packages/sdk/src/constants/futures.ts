@@ -8,6 +8,7 @@ import {
 	FuturesMarketKey,
 	SmartMarginOrderType,
 	FuturesOrderType,
+	SwapDepositToken,
 } from '../types/futures'
 import { weiFromWei } from '../utils/number'
 
@@ -848,6 +849,12 @@ export const DEFAULT_DESIRED_TIMEDELTA = 0
 
 export const AGGREGATE_ASSET_KEY = '0x'
 
+export const LOW_FEE_TIER = 500
+
+export const LOW_FEE_TIER_BYTES = '0x0001f4'
+
+export const AMOUNT_OUT_MIN = 1
+
 // subgraph fragments
 export const ISOLATED_MARGIN_FRAGMENT = gql`
 	query userFuturesMarginTransfers($walletAddress: String!) {
@@ -884,3 +891,11 @@ export const SMART_MARGIN_FRAGMENT = gql`
 		}
 	}
 `
+
+export const SWAP_DEPOSIT_TOKENS = [
+	SwapDepositToken.SUSD,
+	SwapDepositToken.USDC,
+	// SwapDepositToken.USDT,
+	SwapDepositToken.DAI,
+	// SwapDepositToken.LUSD,
+]

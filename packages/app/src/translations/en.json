@@ -45,7 +45,7 @@
 			"optimism-testnet": "OP Goerli"
 		},
 		"balance": {
-			"get-susd": "Get sUSD",
+			"get-susd": "Deposit Funds",
 			"get-more-susd": "Get more sUSD",
 			"total-margin-label": "Total Margin:",
 			"no-accessible-margin": "You have no accessible margin"
@@ -568,7 +568,7 @@
 					"total": "Total",
 					"fee": "Fee",
 					"vest-v1": "VEST V1",
-					"vest-v2": "VEST V2",					
+					"vest-v2": "VEST V2",
 					"transfer": "TRANSFER",
 					"delegate": "DELEGATE",
 					"no-entries": "You have no escrowed entries.",
@@ -816,7 +816,9 @@
 					"place-delayed-order": "Place Order",
 					"place-limit-order": "Place Limit Order",
 					"place-stop-order": "Place Stop Market Order",
-					"connect-wallet": "Connect Wallet"
+					"connect-wallet": "Connect Wallet",
+					"create-account": "Create Account",
+					"deposit-funds": "Deposit Funds"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -830,19 +832,21 @@
 						"gas-fee": "Gas Fee",
 						"max": "Max",
 						"deposit": {
+							"amount": "Amount",
 							"title": "Deposit",
 							"button": "Deposit Margin",
 							"approve-button": "Approve sUSD",
 							"disclaimer": "A $50 margin minimum is required to open a position.",
 							"min-deposit": "$50 minimum margin to open a position",
 							"min-margin-error": "Position size too small, minimum market margin of $50 required",
-							"exceeds-balance": "Amount exceeds balance"
+							"exceeds-balance": "Amount exceeds balance",
+							"max-slippage": "Max Slippage"
 						},
 						"withdraw": {
 							"title": "Withdraw",
 							"button": "Withdraw Margin"
 						},
-						"title": "Edit margin",
+						"title": "Manage Account Balances",
 						"actions": {
 							"withdraw": "Withdraw",
 							"deposit": "Deposit"
@@ -851,6 +855,12 @@
 							"title": "Bridge & Swap",
 							"low-balance": "Your sUSD balance is low. You can bridge more assets from another network below.",
 							"no-balance": "To get started, you need sUSD to trade on Kwenta. You can bridge assets from another network into sUSD below."
+						},
+						"buttons": {
+							"deposit": "Deposit Margin",
+							"approve": "Approve Permit",
+							"approving": "Approving Permit...",
+							"withdraw": "Withdraw Margin"
 						}
 					}
 				},
@@ -875,11 +885,18 @@
 					"only-available-margin": "Only {{balance}} available margin",
 					"min-margin": "Min. $50 sUSD required to trade",
 					"tooltip": "Margin currently locked in closed markets. It will become available once the market reopens.",
-					"deposit": "Deposit"
+					"deposit": "Deposit",
+					"manage-button": "Manage",
+					"no-wallet-connected": "No wallet connected",
+					"no-wallet-connected-detail": "Connect wallet to deposit margin",
+					"connect-wallet-button": "Connect wallet",
+					"no-smart-account": "No account",
+					"no-smart-account-detail": "Create account to start trading",
+					"create-account-button": "Create account"
 				},
 				"confirmation": {
 					"modal": {
-						"approve-order": "Step 1: Approve sUSD spend",
+						"approve-order": "Step 1: Approve {{asset}} spend",
 						"confirm-order": {
 							"long": "Confirm Long order",
 							"short": "Confirm Short order"
@@ -889,10 +906,15 @@
 						"disabled-min-margin": "Minimum market margin of $50 required",
 						"disabled-eth-bal": "Min ETH {{depositAmount}} balance required",
 						"disabled-exceeds-price-protection": "Price protection exceeded ",
+						"disabled-quote-invalid": "Invalid swap quote",
+						"disabled-quote-loading": "Loading quote...",
 						"eth-bal-warning": "Conditional orders require a small ETH deposit to use for gas when executing",
 						"delayed-disclaimer": "The fee amount will be deposited to cover trade and automated execution fees. If an order is cancelled or not executed, the deposit will be forfeited to the Synthetix debt pool.",
 						"stop-loss-warning": "Stop loss is close to the liquidation price and cannot be guaranteed to execute before you get liquidated, proceed anyway?",
-						"slippage-warning": "This trade incurs high slippage, proceed anyway?"
+						"slippage-warning": "This trade incurs high slippage, proceed anyway?",
+						"quote-invalid-error": "This trade quote is no longer valid, please adjust the margin delta.",
+						"quote-invalid-error-insufficient-balance": "The token balance in insufficient to execute this trade, please adjust the margin delta.",
+						"quote-invalid-error-insufficient-quote": "The quoted amount is insufficient to cover the required deposit amount."
 					}
 				},
 				"leverage": {
@@ -1120,9 +1142,10 @@
 				"sm-title": "Smart Margin",
 				"cm-title": "Cross Margin",
 				"cm-intro": "Start by creating your cross margin account",
+				"sm-intro": "Start by creating your smart margin account",
 				"step1-intro": "Start by creating your smart margin account",
 				"step2-intro": "Now, approve the contract to spend sUSD",
-				"step3-intro": "Lastly, deposit sUSD to begin trading",
+				"step3-intro": "Lastly, deposit funds to begin trading",
 				"step3-complete": "Your smart margin account has been successfully created!",
 				"faq1": "What is smart margin?",
 				"faq2": "Is smart margin better than isolated margin?",

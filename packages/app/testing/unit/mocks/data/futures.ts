@@ -25,6 +25,8 @@ export const mockSmartMarginAccount = (freeMargin: string = '1000', keeperEthBal
 		keeperEthBal: keeperEthBal,
 		allowance: freeMargin,
 		walletEthBal: '1',
+		balances: { SUSD: '0', USDC: '0', USDT: '0', DAI: '0' },
+		allowances: { SUSD: '0', USDC: '0', USDT: '0', DAI: '0' },
 	},
 	delayedOrders: [],
 	conditionalOrders: [],

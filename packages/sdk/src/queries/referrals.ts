@@ -58,17 +58,37 @@ export const queryCodesByReferrer = async (
 }
 
 export const queryTradersByCode = async (sdk: KwentaSDK, code: string): Promise<BoostHolder[]> => {
-	const response: { boostHolders: BoostHolder[] } = await request(
-		sdk.referrals.referralsGqlEndpoint,
-		gql`
-			query boostHolders($code: String!) {
-				boostHolders(where: { code: $code }) {
-					id
-					lastMintedAt
+	let queryResponseCount = 0
+	const currentTimeInSeconds = Math.floor(new Date().getTime() / 1000)
+	const boostHolders: BoostHolder[] = []
+	let maxTimestamp = currentTimeInSeconds
+
+	do {
+		const response: { boostHolders: BoostHolder[] } = await request(
+			sdk.referrals.referralsGqlEndpoint,
+			gql`
+				query boostHolders($code: String!, $maxTimestamp: BigInt!) {
+					boostHolders(
+						where: { lastMintedAt_lte: $maxTimestamp, code: $code }
+						orderBy: lastMintedAt
+						orderDirection: desc
+						first: 1000
+					) {
+						id
+						lastMintedAt
+					}
 				}
-			}
-		`,
-		{ code: formatBytes32String(code) }
-	)
-	return response?.boostHolders || []
+			`,
+			{ code: formatBytes32String(code), maxTimestamp }
+		)
+
+		queryResponseCount = response.boostHolders.length
+
+		if (queryResponseCount > 0) {
+			maxTimestamp = Number(response.boostHolders[queryResponseCount - 1].lastMintedAt)
+			boostHolders.push(...response.boostHolders)
+		}
+	} while (queryResponseCount === 1000)
+
+	return boostHolders
 }

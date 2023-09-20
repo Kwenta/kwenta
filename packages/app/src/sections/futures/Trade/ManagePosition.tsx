@@ -1,6 +1,8 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { MIN_MARGIN_AMOUNT } from '@kwenta/sdk/constants'
 import { FuturesMarginType } from '@kwenta/sdk/types'
 import { isZero } from '@kwenta/sdk/utils'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { wei } from '@synthetixio/wei'
 import React, { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,6 +11,7 @@ import styled from 'styled-components'
 import Button from 'components/Button'
 import { ERROR_MESSAGES } from 'components/ErrorNotifier'
 import Error from 'components/ErrorView'
+import Connector from 'containers/Connector'
 import { previewErrorI18n } from 'queries/futures/constants'
 import { setOpenModal } from 'state/app/reducer'
 import {
@@ -26,6 +29,7 @@ import {
 } from 'state/futures/selectors'
 import {
 	selectIsMarketCapReached,
+	selectLockedMarginInMarkets,
 	selectOrderType,
 	selectPlaceOrderTranslationKey,
 	selectSelectedSmartMarginPosition,
@@ -33,6 +37,7 @@ import {
 	selectSmartMarginLeverage,
 	selectSmartMarginOrderPrice,
 	selectSmartMarginTradeInputs,
+	selectTotalAvailableMargin,
 	selectTradePreview,
 	selectTradePreviewError,
 	selectTradePreviewStatus,
@@ -45,6 +50,8 @@ import { orderPriceInvalidLabel } from 'utils/futures'
 const ManagePosition: React.FC = () => {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
+	const { isWalletConnected } = Connector.useContainer()
+	const { openConnectModal } = useConnectModal()
 
 	const { susdSize } = useAppSelector(selectSmartMarginTradeInputs)
 	const maxLeverageValue = useAppSelector(selectMaxLeverage)
@@ -66,6 +73,8 @@ const ManagePosition: React.FC = () => {
 	const smartMarginAccount = useAppSelector(selectSmartMarginAccount)
 	const position = useAppSelector(selectSelectedSmartMarginPosition)
 	const sltpValidity = useAppSelector(selectTradePanelSLTPValidity)
+	const accountMargin = useAppSelector(selectTotalAvailableMargin)
+	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
 
 	const orderError = useMemo(() => {
 		if (previewError) return t(previewErrorI18n(previewError))
@@ -91,6 +100,27 @@ const ManagePosition: React.FC = () => {
 			)
 		)
 	}, [selectedAccountType, smartMarginAccount, dispatch])
+
+	const isDepositRequired = useMemo(() => {
+		return accountMargin.lt(MIN_MARGIN_AMOUNT) && lockedMargin.eq(0)
+	}, [accountMargin, lockedMargin])
+
+	const otherReason = useMemo(() => {
+		if (!isWalletConnected) {
+			return { key: 'futures.market.trade.button.connect-wallet', action: openConnectModal }
+		} else if (!smartMarginAccount) {
+			return {
+				key: 'futures.market.trade.button.create-account',
+				action: () => dispatch(setOpenModal('futures_smart_margin_onboard')),
+			}
+		} else if (isDepositRequired) {
+			return {
+				key: 'futures.market.trade.button.deposit-funds',
+				action: () => () => dispatch(setOpenModal('futures_deposit_withdraw_smart_margin')),
+			}
+		}
+		return undefined
+	}, [isWalletConnected, smartMarginAccount, isDepositRequired, dispatch, openConnectModal])
 
 	const placeOrderDisabledReason = useMemo<{
 		message: string
@@ -207,16 +237,16 @@ const ManagePosition: React.FC = () => {
 						noOutline
 						fullWidth
 						loading={previewStatus.status === FetchStatus.Loading}
-						variant={leverageSide}
-						disabled={!!placeOrderDisabledReason}
-						onClick={onSubmit}
+						variant={otherReason ? 'yellow' : leverageSide}
+						disabled={!otherReason && !!placeOrderDisabledReason}
+						onClick={otherReason?.action ?? onSubmit}
 					>
-						{t(placeOrderTranslationKey)}
+						{t(otherReason?.key ?? placeOrderTranslationKey)}
 					</PlaceOrderButton>
 				</ManagePositionContainer>
 			</div>
 
-			{placeOrderDisabledReason?.show ? (
+			{!otherReason && placeOrderDisabledReason?.show ? (
 				<Error
 					message={placeOrderDisabledReason.message}
 					messageType={placeOrderDisabledReason.show}
