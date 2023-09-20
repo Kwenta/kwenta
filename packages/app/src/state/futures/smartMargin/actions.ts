@@ -137,6 +137,7 @@ import {
 	selectAllSmartMarginPositions,
 } from './selectors'
 import { SmartMarginBalanceInfo } from './types'
+import { selectSelectedEpoch } from 'state/staking/selectors'
 
 export const fetchMarketsV2 = createAsyncThunk<
 	{ markets: PerpsMarketV2<string>[]; networkId: NetworkId } | undefined,
@@ -931,12 +932,11 @@ export const fetchFuturesFees = createAsyncThunk<
 	{
 		totalFuturesFeePaid: string
 	},
-	{
-		start: number
-		end: number
-	},
+	void,
 	ThunkConfig
->('futures/fetchFuturesFees', async ({ start, end }, { extra: { sdk } }) => {
+>('futures/fetchFuturesFees', async (_, { getState, extra: { sdk } }) => {
+	const { start, end } = selectSelectedEpoch(getState())
+
 	try {
 		const totalFuturesFeePaid = await sdk.kwentaToken.getFuturesFee(start, end)
 		return { totalFuturesFeePaid: totalFuturesFeePaid.toString() }
@@ -950,12 +950,11 @@ export const fetchFuturesFeesForAccount = createAsyncThunk<
 	{
 		futuresFeePaid: string
 	},
-	{
-		start: number
-		end: number
-	},
+	void,
 	ThunkConfig
->('futures/fetchFuturesFeesForAccount', async ({ start, end }, { getState, extra: { sdk } }) => {
+>('futures/fetchFuturesFeesForAccount', async (_, { getState, extra: { sdk } }) => {
+	const { start, end } = selectSelectedEpoch(getState())
+
 	try {
 		const wallet = selectWallet(getState())
 		const futuresFeePaid = await sdk.kwentaToken.getFuturesFeeForAccount(wallet!, start, end)
