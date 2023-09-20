@@ -232,7 +232,7 @@ export const queryVolumeByTrader = async (
 	mintedTime: string
 ): Promise<FuturesTradeByReferral[]> => {
 	let queryResponseCount = 0
-	let lastMintedAtInSeconds = Math.floor(Number(mintedTime) / 1000)
+	let lastMintedAtInSeconds = Math.floor(Number(mintedTime))
 	const currentTimeInSeconds = Math.floor(new Date().getTime() / 1000)
 	const futuresTrades: FuturesTradeByReferral[] = []
 
