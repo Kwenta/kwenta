@@ -1,4 +1,5 @@
 import { Period } from '@kwenta/sdk/constants'
+import { SwapDepositToken } from '@kwenta/sdk/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { DEFAULT_FUTURES_MARGIN_TYPE } from 'constants/defaults'
@@ -20,6 +21,7 @@ export const FUTURES_INITIAL_STATE: FuturesState = {
 	selectedInputDenomination: 'usd',
 	selectedInputHours: 1,
 	selectedChart: 'price',
+	selectedSwapDepositToken: SwapDepositToken.SUSD,
 	preferences: {
 		showHistory: true,
 	},
@@ -71,6 +73,9 @@ const futuresSlice = createSlice({
 		setHistoricalFundingRatePeriod: (state, action: PayloadAction<Period>) => {
 			state.historicalFundingRatePeriod = action.payload
 		},
+		setSelectedSwapDepositToken: (state, action: PayloadAction<SwapDepositToken>) => {
+			state.selectedSwapDepositToken = action.payload
+		},
 	},
 
 	extraReducers(builder) {
@@ -107,4 +112,5 @@ export const {
 	toggleShowTradeHistory,
 	setSelectedChart,
 	setHistoricalFundingRatePeriod,
+	setSelectedSwapDepositToken,
 } = futuresSlice.actions

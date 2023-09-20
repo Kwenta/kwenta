@@ -51,11 +51,7 @@ const TradePanelSmartMargin: FC<Props> = memo(({ mobile, closeDrawer }) => {
 
 	useEffect(() => {
 		if (hideOrderWarning) return
-		if (orderType !== 'market') {
-			setShowOrderWarning(true)
-		} else {
-			setShowOrderWarning(false)
-		}
+		setShowOrderWarning(orderType !== 'market')
 	}, [orderType, hideOrderWarning])
 
 	return (

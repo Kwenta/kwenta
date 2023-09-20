@@ -100,5 +100,5 @@ export const useFetchAction = (
 			dispatch(action())
 		}
 		// eslint-disable-next-line
-	}, [providerReady, options?.disabled, ...(options?.dependencies || [])])
+	}, [dispatch, action, providerReady, options?.disabled, ...(options?.dependencies || [])])
 }

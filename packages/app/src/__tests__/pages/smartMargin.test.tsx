@@ -155,6 +155,18 @@ describe('Futures market page - smart margin', () => {
 				keeperEthBal: wei('0.1'),
 				walletEthBal: wei('1'),
 				allowance: wei('1000'),
+				balances: {
+					SUSD: wei('100000'),
+					USDC: wei('100000'),
+					DAI: wei('100000'),
+					// LUSD: wei('100000'),
+				},
+				allowances: {
+					SUSD: wei('100000'),
+					USDC: wei('100000'),
+					DAI: wei('100000'),
+					// LUSD: wei('100000'),
+				},
 			})
 
 		const store = setupStore(preloadedStateWithSmartMarginAccount(mockSmartMarginAccount('100000')))

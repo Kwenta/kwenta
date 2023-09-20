@@ -9,7 +9,12 @@ import { orderBy } from 'lodash'
 
 import KwentaSDK from '..'
 import { UNSUPPORTED_NETWORK } from '../common/errors'
-import { KWENTA_TRACKING_CODE, ORDERS_FETCH_SIZE, SL_TP_MAX_SIZE } from '../constants/futures'
+import {
+	KWENTA_TRACKING_CODE,
+	LOW_FEE_TIER_BYTES,
+	ORDERS_FETCH_SIZE,
+	SL_TP_MAX_SIZE,
+} from '../constants/futures'
 import { Period, PERIOD_IN_HOURS, PERIOD_IN_SECONDS } from '../constants/period'
 import { getContractsByNetwork, getPerpsV2MarketMulticall } from '../contracts'
 import PerpsMarketABI from '../contracts/abis/PerpsV2Market.json'
@@ -54,6 +59,7 @@ import {
 	Market,
 	MarketClosureReason,
 	MarketWithIdleMargin,
+	SwapDepositToken,
 	ModifyMarketMarginParams,
 	ModifySmartMarginPositionParams,
 	PerpsMarketV2,
@@ -61,6 +67,7 @@ import {
 	SubmitIsolatedMarginOrdersParams,
 	SubmitSmartMarginOrderParams,
 	UpdateConditionalOrderParams,
+	DepositSmartMarginParams,
 } from '../types/futures'
 import { PricesMap } from '../types/prices'
 import { calculateTimestampForPeriod } from '../utils/date'
@@ -72,7 +79,6 @@ import {
 	encodeConditionalOrderParams,
 	encodeModidyMarketMarginParams,
 	encodeSubmitOffchainOrderParams,
-	formatPerpsV2Market,
 	formatPotentialTrade,
 	formatV2DelayedOrder,
 	getFuturesEndpoint,
@@ -81,11 +87,16 @@ import {
 	mapFuturesPositions,
 	mapTrades,
 	marginTypeToSubgraphType,
+	formatPerpsV2Market,
+	getQuote,
+	getDecimalsForSwapDepositToken,
 	MarketKeyByAsset,
 	marketsForNetwork,
 } from '../utils/futures'
 import { getFuturesAggregateStats } from '../utils/subgraph'
 import { getReasonFromCode } from '../utils/synths'
+import { getPermit2Amount, getPermit2TypedData } from '../utils/permit2'
+import { PERMIT2_ADDRESS, PERMIT_STRUCT } from '../constants/permit2'
 
 export default class FuturesService {
 	private sdk: KwentaSDK
@@ -505,15 +516,39 @@ export default class FuturesService {
 			smartMarginAddress,
 			this.sdk.context.provider
 		)
-		const { SUSD } = this.sdk.context.contracts
-		if (!SUSD) throw new Error(UNSUPPORTED_NETWORK)
+		const { SUSD, USDC, USDT, DAI, LUSD } = this.sdk.context.contracts
+
+		if (!SUSD || !USDC || !USDT || !DAI || !LUSD) throw new Error(UNSUPPORTED_NETWORK)
 
 		// TODO: EthCall
-		const [freeMargin, keeperEthBal, walletEthBal, allowance] = await Promise.all([
+		const [
+			freeMargin,
+			keeperEthBal,
+			walletEthBal,
+			susdBalance,
+			allowance,
+			usdcBalance,
+			usdcAllowance,
+			// usdtBalance,
+			// usdtAllowance,
+			daiBalance,
+			daiAllowance,
+			// lusdBalance,
+			// lusdAllowance,
+		] = await Promise.all([
 			smartMarginAccountContract.freeMargin(),
 			this.sdk.context.provider.getBalance(smartMarginAddress),
 			this.sdk.context.provider.getBalance(walletAddress),
+			SUSD.balanceOf(walletAddress),
 			SUSD.allowance(walletAddress, smartMarginAccountContract.address),
+			USDC.balanceOf(walletAddress),
+			USDC.allowance(walletAddress, PERMIT2_ADDRESS),
+			// USDT.balanceOf(walletAddress),
+			// USDT.allowance(walletAddress, PERMIT2_ADDRESS),
+			DAI.balanceOf(walletAddress),
+			DAI.allowance(walletAddress, PERMIT2_ADDRESS),
+			// LUSD.balanceOf(walletAddress),
+			// LUSD.allowance(walletAddress, PERMIT2_ADDRESS),
 		])
 
 		return {
@@ -521,6 +556,20 @@ export default class FuturesService {
 			keeperEthBal: wei(keeperEthBal),
 			walletEthBal: wei(walletEthBal),
 			allowance: wei(allowance),
+			balances: {
+				[SwapDepositToken.SUSD]: wei(susdBalance),
+				[SwapDepositToken.USDC]: wei(usdcBalance, 6),
+				// [SwapDepositToken.USDT]: wei(usdtBalance, 6),
+				[SwapDepositToken.DAI]: wei(daiBalance),
+				// [SwapDepositToken.LUSD]: wei(lusdBalance),
+			},
+			allowances: {
+				[SwapDepositToken.SUSD]: wei(allowance),
+				[SwapDepositToken.USDC]: wei(usdcAllowance, 6),
+				// [SwapDepositToken.USDT]: wei(usdtAllowance, 6),
+				[SwapDepositToken.DAI]: wei(daiAllowance),
+				// [SwapDepositToken.LUSD]: wei(lusdAllowance),
+			},
 		}
 	}
 
@@ -897,20 +946,24 @@ export default class FuturesService {
 	/**
 	 * @desc Approve a smart margin account deposit
 	 * @param smartMarginAddress Smart margin account address
+	 * @param token Swap deposit token
 	 * @param amount Amount to approve
 	 * @returns ethers.js TransactionResponse object
 	 */
 	public async approveSmartMarginDeposit<T extends boolean | undefined = false>({
 		address,
+		token = SwapDepositToken.SUSD,
 		amount = BigNumber.from(ethers.constants.MaxUint256),
 		isPrepareOnly,
 	}: ApproveSmartMarginDepositParams<T>): TxReturn<T> {
-		if (!this.sdk.context.contracts.SUSD) throw new Error(UNSUPPORTED_NETWORK)
-		const txn = this.sdk.transactions.prepareContractTxn(
-			this.sdk.context.contracts.SUSD,
-			'approve',
-			[address, amount]
-		)
+		const tokenContract = this.sdk.context.contracts[token]
+
+		if (!tokenContract) throw new Error(UNSUPPORTED_NETWORK)
+
+		const txn = this.sdk.transactions.prepareContractTxn(tokenContract, 'approve', [
+			token === SwapDepositToken.SUSD ? address : PERMIT2_ADDRESS,
+			amount,
+		])
 		if (isPrepareOnly) {
 			return txn as TxReturn<T>
 		} else {
@@ -922,21 +975,76 @@ export default class FuturesService {
 	 * @desc Deposit sUSD into a smart margin account
 	 * @param smartMarginAddress Smart margin account address
 	 * @param amount Amount to deposit
+	 * @param token Swap deposit token
+	 * @param slippage Slippage tolerance for the swap deposit
 	 * @returns ethers.js TransactionResponse object
 	 */
 	public async depositSmartMarginAccount<T extends boolean | undefined = false>({
 		address,
 		amount,
+		token = SwapDepositToken.SUSD,
+		slippage = 0.15,
 		isPrepareOnly,
-	}: ChangeMarketBalanceParams<T>): TxReturn<T> {
+	}: DepositSmartMarginParams<T>): TxReturn<T> {
+		const tokenContract = this.sdk.context.contracts[token]
+		const { SUSD } = this.sdk.context.contracts
+
+		if (!tokenContract || !SUSD) throw new Error(UNSUPPORTED_NETWORK)
+
+		const walletAddress = await this.sdk.context.signer.getAddress()
+
 		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
 			address,
 			this.sdk.context.signer
 		)
 
+		const commands: AccountExecuteFunctions[] = []
+		const inputs: string[] = []
+
+		let amountOutMin = amount
+
+		if (token !== SwapDepositToken.SUSD) {
+			const permitAmount = await getPermit2Amount(
+				this.sdk.context.provider,
+				walletAddress,
+				tokenContract.address,
+				address
+			)
+
+			if (amount.toBN().gt(permitAmount)) {
+				const { command, input } = await this.signPermit(address, tokenContract.address)
+
+				commands.push(command)
+				inputs.push(input)
+			}
+
+			const quote = await getQuote(token, amount)
+
+			// TODO: Consider passing slippage into getQuote function
+
+			amountOutMin = quote.sub(quote.mul(slippage).div(100))
+
+			if (!amountOutMin) {
+				throw new Error('Deposit failed: Could not get quote for swap deposit')
+			}
+
+			const path = tokenContract.address + LOW_FEE_TIER_BYTES.slice(2) + SUSD.address.slice(2)
+
+			commands.push(AccountExecuteFunctions.UNISWAP_V3_SWAP)
+			inputs.push(
+				defaultAbiCoder.encode(
+					['uint256', 'uint256', 'bytes'],
+					[wei(amount, getDecimalsForSwapDepositToken(token)).toBN(), amountOutMin.toBN(), path]
+				)
+			)
+		} else {
+			commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN)
+			inputs.push(defaultAbiCoder.encode(['int256'], [amountOutMin.toBN()]))
+		}
+
 		const txn = this.sdk.transactions.prepareContractTxn(smartMarginAccountContract, 'execute', [
-			[AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN],
-			[defaultAbiCoder.encode(['int256'], [amount.toBN()])],
+			commands,
+			inputs,
 		])
 
 		if (isPrepareOnly) {
@@ -975,6 +1083,20 @@ export default class FuturesService {
 		} else {
 			return this.sdk.transactions.createEVMTxn(txn) as TxReturn<T>
 		}
+	}
+
+	public async getSwapDepositQuote(token: SwapDepositToken, amount: Wei) {
+		if (token === SwapDepositToken.SUSD) {
+			return amount
+		}
+
+		const quote = await getQuote(token, amount)
+
+		if (!quote) {
+			throw new Error('Could not get Uniswap quote for swap deposit token balance')
+		}
+
+		return quote
 	}
 
 	/**
@@ -1399,9 +1521,11 @@ export default class FuturesService {
 
 		if (order.marginDelta.gt(0)) {
 			const totalFreeMargin = freeMargin.add(idleMargin.marketsTotal)
-			const depositAmount = order.marginDelta.gt(totalFreeMargin)
+
+			let depositAmount = order.marginDelta.gt(totalFreeMargin)
 				? order.marginDelta.sub(totalFreeMargin).abs()
 				: wei(0)
+
 			if (depositAmount.gt(0)) {
 				// If there's not enough idle margin to cover the margin delta we pull it from the wallet
 				commands.push(AccountExecuteFunctions.ACCOUNT_MODIFY_MARGIN)
@@ -1832,5 +1956,25 @@ export default class FuturesService {
 		}
 
 		return { commands, inputs, idleMargin }
+	}
+
+	private async signPermit(smartMarginAddress: string, tokenAddress: string) {
+		// If we don't have enough from idle market margin then we pull from the wallet
+		const walletAddress = await this.sdk.context.signer.getAddress()
+
+		// Skip amount, we will use the permit to approve the max amount
+		const data = await getPermit2TypedData(
+			this.sdk.context.provider,
+			tokenAddress,
+			walletAddress,
+			smartMarginAddress
+		)
+
+		const signedMessage = await this.sdk.transactions.signTypedData(data)
+
+		return {
+			command: AccountExecuteFunctions.PERMIT2_PERMIT,
+			input: defaultAbiCoder.encode([PERMIT_STRUCT, 'bytes'], [data.values, signedMessage]),
+		}
 	}
 }

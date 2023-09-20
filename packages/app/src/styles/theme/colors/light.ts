@@ -231,6 +231,10 @@ const newTheme = {
 			background: common.palette.neutral.n30,
 		},
 	},
+	disclaimer: {
+		background: common.palette.yellow.y300,
+		color: common.palette.yellow.y1000,
+	},
 }
 
 const lightTheme = {

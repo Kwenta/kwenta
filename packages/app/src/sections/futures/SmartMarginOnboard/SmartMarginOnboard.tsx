@@ -21,6 +21,8 @@ import {
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
 
+import { DepositTab } from '../Trade/TransferSmartMarginModal'
+
 import SmartMarginFAQ from './SmartMarginFAQ'
 
 type Props = {
@@ -106,39 +108,18 @@ export default function SmartMarginOnboard({ isOpen }: Props) {
 			)
 		}
 
-		// TODO: Replace with bridge option
-
-		// if (crossMarginAccount) {
-		// 	return (
-		// 		<>
-		// 			<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
-		// 			<InputBalanceLabel
-		// 				balance={susdBal || ZERO_WEI}
-		// 				currencyKey="sUSD"
-		// 				onSetAmount={setDepositAmount}
-		// 			/>
-		// 			<NumericInput placeholder="0.00" value={depositAmount} onChange={onEditAmount} />
-		// 			{renderProgress(3)}
-		// 			{isDepositDisabled && (
-		// 				<MinimumAmountDisclaimer>
-		// 					{t('futures.market.trade.margin.modal.deposit.disclaimer')}
-		// 				</MinimumAmountDisclaimer>
-		// 			)}
-		// 			<StyledButton
-		// 				disabled={isDepositDisabled || txProcessing}
-		// 				variant="flat"
-		// 				textTransform="none"
-		// 				onClick={depositToAccount}
-		// 			>
-		// 				{txProcessing ? <Loader /> : 'Deposit sUSD'}
-		// 			</StyledButton>
-		// 		</>
-		// 	);
-		// }
+		if (smartMarginAccount) {
+			return (
+				<>
+					<Intro>{t('futures.modals.onboard.step3-intro')}</Intro>
+					<DepositTab extra={renderProgress(3)} />
+				</>
+			)
+		}
 
 		return (
 			<>
-				<Intro>{t('futures.modals.onboard.cm-intro')}</Intro>
+				<Intro>{t('futures.modals.onboard.sm-intro')}</Intro>
 				<div>
 					<FAQHeader>FAQ:</FAQHeader>
 					<SmartMarginFAQ />
@@ -155,7 +136,7 @@ export default function SmartMarginOnboard({ isOpen }: Props) {
 		<StyledBaseModal
 			onDismiss={onClose}
 			isOpen={isOpen}
-			title={t('futures.modals.onboard.cm-title')}
+			title={t('futures.modals.onboard.sm-title')}
 		>
 			{renderContent()}
 		</StyledBaseModal>

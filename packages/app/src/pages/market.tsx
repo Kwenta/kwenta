@@ -41,6 +41,7 @@ import { usePollMarketFuturesData } from 'state/futures/hooks'
 import { setFuturesAccountType } from 'state/futures/reducer'
 import { setMarketAsset } from 'state/futures/smartMargin/reducer'
 import {
+	selectMaxTokenBalance,
 	selectShowSmartMarginOnboard,
 	selectSmartMarginAccount,
 	selectSmartMarginAccountQueryStatus,
@@ -69,6 +70,7 @@ const Market: MarketComponent = () => {
 	const accountType = useAppSelector(selectFuturesType)
 	const selectedMarketAsset = useAppSelector(selectMarketAsset)
 	const crossMarginSupportedNetwork = useAppSelector(selectCrossMarginSupportedNetwork)
+	const maxTokenBalance = useAppSelector(selectMaxTokenBalance)
 	const routerReferralCode = (router.query.ref as string)?.toLowerCase()
 	const isReferralCodeValid = useAppSelector(selectIsReferralCodeValid)
 
@@ -87,14 +89,12 @@ const Market: MarketComponent = () => {
 		if (router.isReady && accountType !== routerAccountType) {
 			dispatch(setFuturesAccountType(routerAccountType))
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.isReady, routerAccountType])
+	}, [dispatch, accountType, router.isReady, routerAccountType])
 
 	useEffect(() => {
 		dispatch(clearTradeInputs())
 		// Clear trade state when switching address
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [walletAddress])
+	}, [dispatch, walletAddress])
 
 	useEffect(() => {
 		if (
@@ -162,7 +162,10 @@ const Market: MarketComponent = () => {
 				<DepositWithdrawCrossMarginModal defaultTab="deposit" onDismiss={onDismiss} />
 			)}
 			{openModal === 'futures_deposit_withdraw_smart_margin' && (
-				<TransferSmartMarginModal defaultTab="withdraw" onDismiss={onDismiss} />
+				<TransferSmartMarginModal
+					defaultTab={maxTokenBalance.eq(0) ? 2 : 0}
+					onDismiss={onDismiss}
+				/>
 			)}
 
 			{openModal === 'futures_confirm_smart_margin_trade' && <TradeConfirmationModalCrossMargin />}

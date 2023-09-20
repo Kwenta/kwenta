@@ -4,6 +4,7 @@ import {
 	ConditionalOrderTypeEnum,
 	PositionSide,
 	FuturesMarketKey,
+	SwapDepositToken,
 } from '@kwenta/sdk/types'
 import {
 	calculateDesiredFillPrice,
@@ -18,6 +19,7 @@ import Wei, { wei } from '@synthetixio/wei'
 import { FuturesPositionTablePosition, FuturesPositionTablePositionActive } from 'types/futures'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER } from 'constants/defaults'
+import { SWAP_DEPOSIT_TRADE_ENABLED } from 'constants/ui'
 import { selectSusdBalance } from 'state/balances/selectors'
 import { EST_KEEPER_GAS_FEE } from 'state/constants'
 import {
@@ -500,8 +502,24 @@ export const selectSmartMarginBalanceInfo = createSelector(
 					freeMargin: wei(0),
 					keeperEthBal: wei(0),
 					allowance: wei(0),
+					balances: { SUSD: wei(0), USDC: wei(0), DAI: wei(0) },
+					allowances: { SUSD: wei(0), USDC: wei(0), DAI: wei(0) },
 			  }
 	}
+)
+
+export const selectMaxSwapToken = createSelector(selectSmartMarginBalanceInfo, ({ balances }) => {
+	const maxToken = Object.keys(balances).reduce((a, b) =>
+		balances[a as SwapDepositToken].gt(balances[b as SwapDepositToken]) ? a : b
+	)
+
+	return maxToken as SwapDepositToken
+})
+
+export const selectMaxTokenBalance = createSelector(
+	selectSmartMarginBalanceInfo,
+	selectMaxSwapToken,
+	(balanceInfo, maxToken) => balanceInfo.balances[maxToken]
 )
 
 export const selectSmartMarginDepositApproved = createSelector(
@@ -527,11 +545,44 @@ export const selectAvailableMarginInMarkets = selectIdleMarginInMarkets()
 
 export const selectLockedMarginInMarkets = selectIdleMarginInMarkets(true)
 
+export const selectSwapDepositBalanceQuote = createSelector(
+	(state: RootState) => state.smartMargin.swapDepositBalanceQuote,
+	(quote) => {
+		return quote
+			? {
+					susdQuote: wei(quote.susdQuote),
+					rate: wei(quote.rate),
+			  }
+			: undefined
+	}
+)
+
+export const selectSelectedSwapDepositToken = (state: RootState) =>
+	state.futures.selectedSwapDepositToken
+
+export const selectSwapDepositBalance = createSelector(
+	selectSmartMarginBalanceInfo,
+	selectSelectedSwapDepositToken,
+	(smartMarginBalanceInfo, swapDepositToken) => smartMarginBalanceInfo.balances[swapDepositToken]
+)
+
+export const selectSwapDepositAllowance = createSelector(
+	selectSmartMarginBalanceInfo,
+	selectSelectedSwapDepositToken,
+	(smartMarginBalanceInfo, swapDepositToken) => smartMarginBalanceInfo.allowances[swapDepositToken]
+)
+
+export const selectApprovingSwapDeposit = createSelector(
+	selectSubmittingFuturesTx,
+	(state: RootState) => state.app.transaction,
+	(submitting, transaction) => submitting && transaction?.type === 'approve_cross_margin'
+)
+
 export const selectIdleAccountMargin = createSelector(
 	selectAvailableMarginInMarkets,
 	selectLockedMarginInMarkets,
 	selectSmartMarginBalanceInfo,
-	(lockedMargin, availableInMarkets, { freeMargin }) => {
+	(availableInMarkets, lockedMargin, { freeMargin }) => {
 		return lockedMargin.add(availableInMarkets).add(freeMargin)
 	}
 )
@@ -540,24 +591,35 @@ export const selectTotalAvailableMargin = createSelector(
 	selectAvailableMarginInMarkets,
 	selectSmartMarginBalanceInfo,
 	selectSusdBalance,
-	(idleInMarkets, { freeMargin }, balance) => {
-		return balance.add(idleInMarkets).add(freeMargin)
+	selectSwapDepositBalanceQuote,
+	selectSelectedSwapDepositToken,
+	(idleInMarkets, { freeMargin }, susdBalance, balanceQuote, selectedToken) => {
+		const walletBalance =
+			!SWAP_DEPOSIT_TRADE_ENABLED || selectedToken === SwapDepositToken.SUSD
+				? susdBalance
+				: balanceQuote?.susdQuote ?? wei(0)
+		return walletBalance.add(idleInMarkets).add(freeMargin)
 	}
 )
 
 export const selectSmartMarginAllowanceValid = createSelector(
-	selectSmartMarginAccountData,
 	selectSmartMarginBalanceInfo,
 	selectAvailableMarginInMarkets,
 	selectSmartMarginMarginDelta,
-	(account, { freeMargin }, idleInMarkets, marginDelta) => {
+	selectSwapDepositAllowance,
+	({ freeMargin }, idleInMarkets, marginDelta, allowance) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets)
-		if (!account) return false
 		const marginDeposit = marginDelta.sub(totalIdleMargin)
-		return (
-			totalIdleMargin.gte(marginDelta) || wei(account.balanceInfo.allowance || 0).gte(marginDeposit)
-		)
+		return totalIdleMargin.gte(marginDelta) || wei(allowance || 0).gte(marginDeposit)
 	}
+)
+
+export const selectQuoteInvalidReason = (state: RootState) =>
+	state.smartMargin.tradeSwapDepositQuote?.quoteInvalidReason
+
+export const selectSwapDepositQuoteLoading = createSelector(
+	(state: RootState) => state.smartMargin.queryStatuses.tradeSwapDepositQuote,
+	({ status }) => status === FetchStatus.Loading
 )
 
 export const selectWithdrawableSmartMargin = createSelector(
@@ -1181,5 +1243,27 @@ export const selectPlaceOrderTranslationKey = createSelector(
 		if (orderType === 'stop_market') return 'futures.market.trade.button.place-stop-order'
 		if (!!position) return 'futures.market.trade.button.modify-position'
 		return 'futures.market.trade.button.open-position'
+	}
+)
+
+export const selectSwapDepositCustomSlippage = (state: RootState) =>
+	state.smartMargin.swapDepositCustomSlippage
+
+export const selectSwapDepositSlippage = createSelector(
+	selectSwapDepositCustomSlippage,
+	(state: RootState) => state.smartMargin.swapDepositSlippage,
+	(customSlippage, slippage) => (customSlippage ? Number(customSlippage) : slippage ?? 0)
+)
+
+export const selectTradeSwapDepositQuote = createSelector(
+	(state: RootState) => state.smartMargin.tradeSwapDepositQuote,
+	(quote) => {
+		return quote
+			? {
+					token: quote.token,
+					amountIn: wei(quote.amountIn),
+					amountOut: wei(quote.amountOut),
+			  }
+			: null
 	}
 )

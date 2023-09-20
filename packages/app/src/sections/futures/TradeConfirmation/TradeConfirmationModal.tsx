@@ -1,5 +1,5 @@
 import { MIN_MARGIN_AMOUNT, ZERO_WEI } from '@kwenta/sdk/constants'
-import { PositionSide } from '@kwenta/sdk/types'
+import { PositionSide, SwapDepositToken } from '@kwenta/sdk/types'
 import {
 	OrderNameByType,
 	formatCurrency,
@@ -9,7 +9,7 @@ import {
 	stripZeros,
 } from '@kwenta/sdk/utils'
 import Wei, { wei } from '@synthetixio/wei'
-import { useCallback, useMemo, useState } from 'react'
+import { FC, useCallback, useMemo, useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -17,10 +17,13 @@ import HelpIcon from 'assets/svg/app/question-mark.svg'
 import BaseModal from 'components/BaseModal'
 import Button from 'components/Button'
 import ErrorView from 'components/ErrorView'
-import { ButtonLoader } from 'components/Loader'
+import { FlexDivRowCentered } from 'components/layout/flex'
+import { ButtonLoader, MiniLoader } from 'components/Loader'
+import { StyledCaretDownIcon } from 'components/Select'
 import Spacer from 'components/Spacer'
 import Tooltip from 'components/Tooltip/Tooltip'
 import { NO_VALUE } from 'constants/placeholder'
+import { SWAP_DEPOSIT_TRADE_ENABLED } from 'constants/ui'
 import { selectMarketAsset } from 'state/futures/common/selectors'
 import {
 	selectLeverageSide,
@@ -28,16 +31,27 @@ import {
 	selectLeverageInput,
 	selectTradePanelSLTPValidity,
 } from 'state/futures/selectors'
-import { refetchTradePreview, submitSmartMarginOrder } from 'state/futures/smartMargin/actions'
+import {
+	calculateTradeSwapDeposit,
+	refetchTradePreview,
+	submitSmartMarginOrder,
+} from 'state/futures/smartMargin/actions'
+import { clearTradeSwapDepositQuote } from 'state/futures/smartMargin/reducer'
 import {
 	selectKeeperDepositExceedsBal,
 	selectNewTradeHasSlTp,
 	selectOrderType,
 	selectSlTpTradeInputs,
+	selectSelectedSwapDepositToken,
 	selectSmartMarginOrderPrice,
 	selectTradePreview,
+	selectSmartMarginQueryStatuses,
+	selectTradeSwapDepositQuote,
+	selectSwapDepositQuoteLoading,
+	selectQuoteInvalidReason,
 } from 'state/futures/smartMargin/selectors'
-import { useAppDispatch, useAppSelector, usePollAction } from 'state/hooks'
+import { useAppDispatch, useAppSelector, useFetchAction, usePollAction } from 'state/hooks'
+import { FetchStatus } from 'state/types'
 
 import AcceptWarningView from '../../../components/AcceptWarningView'
 
@@ -71,14 +85,16 @@ export default function TradeConfirmationModal({
 	const marketAsset = useAppSelector(selectMarketAsset)
 	const potentialTradeDetails = useAppSelector(selectTradePreview)
 	const orderType = useAppSelector(selectOrderType)
-	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 	const position = useAppSelector(selectPosition)
 	const leverageSide = useAppSelector(selectLeverageSide)
 	const leverageInput = useAppSelector(selectLeverageInput)
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
-	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs)
 	const hasSlTp = useAppSelector(selectNewTradeHasSlTp)
 	const sltpValidity = useAppSelector(selectTradePanelSLTPValidity)
+	const quoteInvalidReason = useAppSelector(selectQuoteInvalidReason)
+	const quote = useAppSelector(selectTradeSwapDepositQuote)
+	const quoteLoading = useAppSelector(selectSwapDepositQuoteLoading)
+	const swapToken = useAppSelector(selectSelectedSwapDepositToken)
 
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
 	const [acceptedSLRisk, setAcceptedSLRisk] = useState(false)
@@ -87,10 +103,9 @@ export default function TradeConfirmationModal({
 
 	const onConfirmOrder = useCallback(() => dispatch(submitSmartMarginOrder(true)), [dispatch])
 
-	const totalFee = useMemo(
-		() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee,
-		[potentialTradeDetails?.fee, executionFee]
-	)
+	useFetchAction(calculateTradeSwapDeposit, {
+		dependencies: [potentialTradeDetails?.margin.toString()],
+	})
 
 	const positionSide = useMemo(() => {
 		if (potentialTradeDetails?.size.eq(ZERO_WEI)) {
@@ -116,81 +131,6 @@ export default function TradeConfirmationModal({
 			: null
 	}, [potentialTradeDetails, positionSide])
 
-	const dataRows = useMemo(
-		() => [
-			{
-				label: 'stop loss',
-				value: stopLossPrice ? formatDollars(stopLossPrice, { suggestDecimals: true }) : NO_VALUE,
-			},
-			{
-				label: 'take profit',
-				value: takeProfitPrice
-					? formatDollars(takeProfitPrice, { suggestDecimals: true })
-					: NO_VALUE,
-			},
-			{
-				label: 'liquidation price',
-				color: 'red',
-				value: formatDollars(positionDetails?.liqPrice ?? ZERO_WEI, { suggestDecimals: true }),
-			},
-			{
-				label: 'resulting leverage',
-				value: `${formatNumber(positionDetails?.leverage ?? ZERO_WEI)}x`,
-			},
-			{
-				label: 'resulting margin',
-				value: formatDollars(positionDetails?.margin ?? ZERO_WEI),
-			},
-			orderType === 'limit' || orderType === 'stop_market'
-				? {
-						label: OrderNameByType[orderType] + ' order price',
-						value: formatDollars(orderPrice, { suggestDecimals: true }),
-				  }
-				: {
-						label: 'Est. fill price',
-						value: formatDollars(positionDetails?.price ?? ZERO_WEI, { suggestDecimals: true }),
-				  },
-
-			{
-				label: 'price impact',
-				tooltipContent: t('futures.market.trade.delayed-order.description'),
-				value: `${formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI, {
-					suggestDecimals: true,
-					maxDecimals: 4,
-				})}`,
-				color: positionDetails?.exceedsPriceProtection ? 'red' : '',
-			},
-			{
-				label: 'total fee',
-				value: formatDollars(totalFee),
-			},
-			keeperFee
-				? {
-						label: 'Keeper ETH deposit',
-						value: formatCurrency('ETH', keeperFee, { currencyKey: 'ETH' }),
-				  }
-				: null,
-			gasFee && gasFee.gt(0)
-				? {
-						label: 'network gas fee',
-						value: formatDollars(gasFee),
-				  }
-				: null,
-		],
-		[
-			t,
-			positionDetails,
-			keeperFee,
-			gasFee,
-			totalFee,
-			orderType,
-			orderPrice,
-			potentialTradeDetails,
-			stopLossPrice,
-			takeProfitPrice,
-		]
-	)
-
 	const showEthBalWarning = useMemo(() => {
 		return ethBalanceExceeded && (orderType !== 'market' || hasSlTp)
 	}, [ethBalanceExceeded, orderType, hasSlTp])
@@ -199,7 +139,19 @@ export default function TradeConfirmationModal({
 		? t('futures.market.trade.confirmation.modal.eth-bal-warning')
 		: null
 
+	const quoteInvalidError = useMemo(() => {
+		return !!quoteInvalidReason
+			? t(`futures.market.trade.confirmation.modal.quote-invalid-error-${quoteInvalidReason}`)
+			: null
+	}, [quoteInvalidReason, t])
+
 	const disabledReason = useMemo(() => {
+		if (!!quoteInvalidReason) {
+			return t('futures.market.trade.confirmation.modal.disabled-quote-invalid')
+		}
+		if (!quote && quoteLoading) {
+			return t('futures.market.trade.confirmation.modal.disabled-quote-loading')
+		}
 		if (showEthBalWarning) {
 			return t('futures.market.trade.confirmation.modal.disabled-eth-bal', {
 				depositAmount: formatNumber(stripZeros(keeperFee?.toString()), { suggestDecimals: true }),
@@ -217,15 +169,23 @@ export default function TradeConfirmationModal({
 		keeperFee,
 		overridePriceProtection,
 		positionDetails?.exceedsPriceProtection,
+		quoteInvalidReason,
+		quote,
+		quoteLoading,
 	])
+
+	const handleDismiss = useCallback(() => {
+		dispatch(clearTradeSwapDepositQuote())
+		onDismiss()
+	}, [dispatch, onDismiss])
 
 	const buttonText = allowanceValid
 		? t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
-		: t(`futures.market.trade.confirmation.modal.approve-order`)
+		: t(`futures.market.trade.confirmation.modal.approve-order`, { asset: swapToken })
 
 	return (
 		<StyledBaseModal
-			onDismiss={onDismiss}
+			onDismiss={handleDismiss}
 			isOpen
 			title={t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)}
 		>
@@ -238,33 +198,20 @@ export default function TradeConfirmationModal({
 				leverage={wei(leverageInput || '0')}
 			/>
 			<RowsContainer>
-				{dataRows.map((row, i) => {
-					if (!row) return null
-					return (
-						<TradeConfirmationRow key={`datarow-${i}`}>
-							{row.tooltipContent ? (
-								<Tooltip
-									height="auto"
-									preset="bottom"
-									width="300px"
-									content={row.tooltipContent}
-									style={{ padding: 10, textTransform: 'none', left: '80%' }}
-								>
-									<Label>
-										{row.label}
-										<StyledHelpIcon />
-									</Label>
-								</Tooltip>
-							) : (
-								<Label>{row.label}</Label>
-							)}
-
-							<Value>
-								<span className={row.color ? `value ${row.color}` : ''}>{row.value}</span>
-							</Value>
-						</TradeConfirmationRow>
-					)
-				})}
+				<SLTPRows />
+				<LiquidationPriceRow />
+				<ResultingLeverageRow />
+				<ResultingMarginRow />
+				{orderType === 'limit' || orderType === 'stop_market' ? (
+					<OrderPriceRow />
+				) : (
+					<EstimatedFillPriceRow />
+				)}
+				<PriceImpactRow />
+				<TotalFeeRow executionFee={executionFee} />
+				<KeeperFeeRow keeperFee={keeperFee} />
+				<GasFeeRow gasFee={gasFee} />
+				{SWAP_DEPOSIT_TRADE_ENABLED && <SwapRow />}
 			</RowsContainer>
 			{positionDetails?.exceedsPriceProtection && (
 				<AcceptWarningView
@@ -301,11 +248,249 @@ export default function TradeConfirmationModal({
 			{(errorMessage || ethBalWarningMessage) && (
 				<ErrorView
 					messageType={ethBalWarningMessage ? 'warn' : 'error'}
-					message={errorMessage ?? ethBalWarningMessage}
+					message={errorMessage ?? ethBalWarningMessage ?? quoteInvalidError}
 					containerStyle={{ margin: '16px 0 0 0' }}
 				/>
 			)}
 		</StyledBaseModal>
+	)
+}
+
+type DataRowProps = {
+	label: string
+	value: React.ReactNode
+	tooltipContent?: string
+	color?: string
+	expanded?: boolean
+	children?: React.ReactNode
+	onToggleExpand?: () => void
+}
+
+const DataRow: FC<DataRowProps> = ({
+	label,
+	value,
+	tooltipContent,
+	color,
+	expanded,
+	children,
+	onToggleExpand,
+}) => {
+	return (
+		<>
+			<TradeConfirmationRow>
+				{tooltipContent ? (
+					<Tooltip
+						height="auto"
+						preset="bottom"
+						width="300px"
+						content={tooltipContent}
+						style={{ padding: 10, textTransform: 'none', left: '80%' }}
+					>
+						<Label>
+							{label}
+							<StyledHelpIcon />
+						</Label>
+					</Tooltip>
+				) : (
+					<FlexDivRowCentered columnGap="5px" onClick={onToggleExpand}>
+						<Label>{label}</Label>
+						{onToggleExpand ? <StyledCaretDownIcon width={9} $flip={expanded} /> : null}
+					</FlexDivRowCentered>
+				)}
+
+				<Value>
+					<span className={color ? `value ${color}` : ''}>{value}</span>
+				</Value>
+			</TradeConfirmationRow>
+			{expanded ? children : null}
+		</>
+	)
+}
+
+const SLTPRows = () => {
+	const { stopLossPrice, takeProfitPrice } = useAppSelector(selectSlTpTradeInputs)
+
+	return (
+		<>
+			<DataRow
+				label="stop loss"
+				value={stopLossPrice ? formatDollars(stopLossPrice, { suggestDecimals: true }) : NO_VALUE}
+			/>
+
+			<DataRow
+				label="take profit"
+				value={
+					takeProfitPrice ? formatDollars(takeProfitPrice, { suggestDecimals: true }) : NO_VALUE
+				}
+			/>
+		</>
+	)
+}
+
+const LiquidationPriceRow = () => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+
+	return (
+		<DataRow
+			label="liquidation price"
+			color="red"
+			value={formatDollars(potentialTradeDetails?.liqPrice ?? ZERO_WEI, { suggestDecimals: true })}
+		/>
+	)
+}
+
+const ResultingLeverageRow = () => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+
+	const leverage = potentialTradeDetails
+		? potentialTradeDetails.margin.eq(ZERO_WEI)
+			? ZERO_WEI
+			: potentialTradeDetails.size
+					.mul(potentialTradeDetails.price)
+					.div(potentialTradeDetails.margin)
+					.abs()
+		: null
+
+	return <DataRow label="resulting leverage" value={`${formatNumber(leverage ?? ZERO_WEI)}x`} />
+}
+
+const ResultingMarginRow = () => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+
+	return (
+		<DataRow
+			label="resulting margin"
+			value={formatDollars(potentialTradeDetails?.margin ?? ZERO_WEI)}
+		/>
+	)
+}
+
+const OrderPriceRow = () => {
+	const orderType = useAppSelector(selectOrderType)
+	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
+
+	return (
+		<DataRow
+			label={OrderNameByType[orderType] + ' order price'}
+			value={formatDollars(orderPrice, { suggestDecimals: true })}
+		/>
+	)
+}
+
+const EstimatedFillPriceRow = () => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+
+	return (
+		<DataRow
+			label="Est. fill price"
+			value={formatDollars(potentialTradeDetails?.price ?? ZERO_WEI, { suggestDecimals: true })}
+		/>
+	)
+}
+
+const PriceImpactRow = () => {
+	const { t } = useTranslation()
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+
+	return (
+		<DataRow
+			label="price impact"
+			tooltipContent={t('futures.market.trade.delayed-order.description')}
+			value={formatPercent(potentialTradeDetails?.priceImpact ?? ZERO_WEI, {
+				suggestDecimals: true,
+				maxDecimals: 4,
+			})}
+			color={potentialTradeDetails?.exceedsPriceProtection ? 'red' : ''}
+		/>
+	)
+}
+
+type TotalFeeRowProps = {
+	executionFee: Wei
+}
+
+const TotalFeeRow: FC<TotalFeeRowProps> = ({ executionFee }) => {
+	const potentialTradeDetails = useAppSelector(selectTradePreview)
+
+	const totalFee = useMemo(
+		() => potentialTradeDetails?.fee.add(executionFee) ?? executionFee,
+		[potentialTradeDetails?.fee, executionFee]
+	)
+
+	return <DataRow label="total fee" value={formatDollars(totalFee)} />
+}
+
+type KeeperFeeRowProps = {
+	keeperFee?: Wei | null
+}
+
+const KeeperFeeRow: FC<KeeperFeeRowProps> = ({ keeperFee }) => {
+	if (!keeperFee) return null
+
+	return (
+		<DataRow
+			label="Keeper ETH deposit"
+			value={formatCurrency('ETH', keeperFee, { currencyKey: 'ETH' })}
+		/>
+	)
+}
+
+type GasFeeRowProps = {
+	gasFee?: Wei | null
+}
+
+const GasFeeRow: FC<GasFeeRowProps> = ({ gasFee }) => {
+	if (gasFee?.gt(0)) {
+		return <DataRow label="network gas fee" value={formatDollars(gasFee)} />
+	}
+
+	return null
+}
+
+const SwapRow = () => {
+	const swapDepositToken = useAppSelector(selectSelectedSwapDepositToken)
+	const [expanded, toggleExpanded] = useReducer((e) => !e, false)
+
+	const { tradeSwapDepositQuote } = useAppSelector(selectSmartMarginQueryStatuses)
+	const quote = useAppSelector(selectTradeSwapDepositQuote)
+
+	if (swapDepositToken === SwapDepositToken.SUSD) return null
+
+	return (
+		<DataRow
+			expanded={expanded}
+			onToggleExpand={toggleExpanded}
+			label="Swap"
+			value={
+				tradeSwapDepositQuote.status === FetchStatus.Loading ? (
+					<MiniLoader />
+				) : quote ? (
+					`${formatNumber(quote?.amountIn ?? 0, { suggestDecimals: true })} ${
+						quote?.token
+					} -> ${formatNumber(quote?.amountOut ?? 0, { suggestDecimals: true })} sUSD`
+				) : (
+					'-'
+				)
+			}
+		>
+			<ExchangeRateRow />
+		</DataRow>
+	)
+}
+
+const ExchangeRateRow = () => {
+	const swapDepositToken = useAppSelector(selectSelectedSwapDepositToken)
+	const quote = useAppSelector(selectTradeSwapDepositQuote)
+	const price = useMemo(() => {
+		if (!quote) return 0
+		return quote.amountOut.div(quote.amountIn)
+	}, [quote])
+
+	return (
+		<DataRow
+			label="Exchange Rate"
+			value={`1 ${swapDepositToken} = ${formatNumber(price, { suggestDecimals: true })} sUSD`}
+		/>
 	)
 }
 

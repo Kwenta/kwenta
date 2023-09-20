@@ -60,6 +60,21 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 		10: '0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9',
 		420: '0xebaeaad9236615542844adc5c149f86c36ad1136',
 	},
+	USDC: {
+		1: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+		10: '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
+	},
+	USDT: {
+		1: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+		10: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
+	},
+	DAI: {
+		1: '0x6b175474e89094c44da98b954eedeac495271d0f',
+		10: '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
+	},
+	LUSD: {
+		10: '0xc40F949F8a4e094D1b49a23ea9241D289B7b2819',
+	},
 	SNXUSD: {
 		420: '0xe487Ad4291019b33e2230F8E2FB1fb6490325260',
 	},

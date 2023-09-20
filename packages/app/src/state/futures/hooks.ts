@@ -1,5 +1,6 @@
 import { FuturesMarginType } from '@kwenta/sdk/types'
 
+import { SWAP_DEPOSIT_TRADE_ENABLED } from 'constants/ui'
 import {
 	fetchCrossMarginAccountData,
 	fetchCrossMarginMarketData,
@@ -36,10 +37,12 @@ import {
 	fetchSmartMarginAccountData,
 	fetchSmartMarginMarketData,
 	fetchSmartMarginOpenOrders,
+	fetchSwapDepositBalanceQuote,
 } from './smartMargin/actions'
 import {
 	selectSmartMarginAccount,
 	selectSmartMarginSupportedNetwork,
+	selectSelectedSwapDepositToken,
 } from './smartMargin/selectors'
 
 // TODO: Optimise polling and queries
@@ -53,6 +56,7 @@ export const usePollMarketFuturesData = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const networkSupportsSmartMargin = useAppSelector(selectSmartMarginSupportedNetwork)
 	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork)
+	const swapDepositToken = useAppSelector(selectSelectedSwapDepositToken)
 	const networkSupportTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	useFetchAction(fetchBoostNftMinted, {
@@ -137,6 +141,12 @@ export const usePollMarketFuturesData = () => {
 		dependencies: [networkId, wallet, smartMarginAddress, selectedAccountType],
 		intervalTime: 30000,
 		disabled: !wallet,
+	})
+
+	usePollAction('fetchSwapDepositBalanceQuote', fetchSwapDepositBalanceQuote, {
+		dependencies: [swapDepositToken, wallet],
+		intervalTime: 10 * 60 * 1000,
+		disabled: !wallet || !swapDepositToken || !SWAP_DEPOSIT_TRADE_ENABLED,
 	})
 }
 

@@ -550,6 +550,8 @@ export enum AccountExecuteFunctions {
 	PERPS_V2_CANCEL_OFFCHAIN_DELAYED_ORDER = 11,
 	GELATO_PLACE_CONDITIONAL_ORDER = 12,
 	GELATO_CANCEL_CONDITIONAL_ORDER = 13,
+	UNISWAP_V3_SWAP = 14,
+	PERMIT2_PERMIT = 15,
 }
 
 export type MarginTransfer = {
@@ -630,6 +632,14 @@ export type PerpsV3SubgraphMarket = {
 	takerFee: string
 }
 
+export enum SwapDepositToken {
+	SUSD = 'SUSD',
+	USDC = 'USDC',
+	// USDT = 'USDT',
+	DAI = 'DAI',
+	// LUSD = 'LUSD',
+}
+
 export interface FuturesTradeByReferral {
 	timestamp: string
 	account: string
@@ -643,7 +653,15 @@ export type PrepareTxParams<T extends boolean | undefined> = {
 
 export type ApproveSmartMarginDepositParams<T extends boolean | undefined> = PrepareTxParams<T> & {
 	address: string
+	token: SwapDepositToken
 	amount?: BigNumber
+}
+
+export type DepositSmartMarginParams<T extends boolean | undefined> = PrepareTxParams<T> & {
+	address: string
+	amount: Wei
+	token: SwapDepositToken
+	slippage?: number
 }
 
 export type ChangeMarketBalanceParams<T extends boolean | undefined> = PrepareTxParams<T> & {
@@ -700,6 +718,11 @@ export type SubmitSmartMarginOrderParams<T extends boolean | undefined> = Prepar
 	options?: {
 		cancelPendingReduceOrders?: boolean
 		cancelExpiredDelayedOrders?: boolean
+		swapDeposit?: {
+			token: SwapDepositToken
+			amountIn: Wei
+			amountOutMin: Wei
+		}
 	}
 }
 

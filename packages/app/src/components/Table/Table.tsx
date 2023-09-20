@@ -282,7 +282,7 @@ const NoResultsContainer = styled(Body)`
 	padding: 50px 0;
 `
 
-const LoadingContainer = styled(Body)`
+const LoadingContainer = styled.div`
 	padding: 100px 0;
 `
 

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React, { ReactNode } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import LinkIconLight from 'assets/svg/app/link-light.svg'
 import { FlexDivRowCentered } from 'components/layout/flex'
@@ -31,17 +31,15 @@ const NavButton: React.FC<NavButtonProps> = ({ title, href, external, disabled, 
 					</FlexDivRowCentered>
 				</StyledLink>
 			) : (
-				<Link href={href} passHref>
-					<StyledLink className={disabled ? 'disabled' : undefined} {...props}>
-						{title}
-					</StyledLink>
-				</Link>
+				<StyledLink href={href} {...props}>
+					{title}
+				</StyledLink>
 			)}
 		</div>
 	)
 }
 
-const StyledLink = styled.a<{ isActive: boolean; disabled?: boolean }>`
+const StyledLink = styled(Link)<{ isActive: boolean; disabled?: boolean }>`
 	${linkCSS};
 	display: inline-block;
 	padding: 10px 14px;
@@ -60,11 +58,13 @@ const StyledLink = styled.a<{ isActive: boolean; disabled?: boolean }>`
 		background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 	}
 
-	&.disabled {
-		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
-		background: transparent;
-		pointer-events: none;
-	}
+	${(props) =>
+		props.disabled &&
+		css`
+			color: ${props.theme.colors.selectedTheme.button.disabled.text};
+			background: transparent;
+			pointer-events: none;
+		`}
 `
 
 export default NavButton

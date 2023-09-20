@@ -2,6 +2,7 @@ import { FC, memo, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 
 import Spacer from 'components/Spacer'
+import { isInvalidNumber } from 'utils/input'
 
 type NumericInputProps = Omit<
 	React.InputHTMLAttributes<HTMLInputElement>,
@@ -21,10 +22,6 @@ type NumericInputProps = Omit<
 	roundedCorner?: boolean
 	noShadow?: boolean
 }
-
-const INVALID_CHARS = ['-', '+', 'e']
-
-const isInvalid = (key: string) => INVALID_CHARS.includes(key)
 
 const NumericInput: FC<NumericInputProps> = memo(
 	({
@@ -86,7 +83,7 @@ const NumericInput: FC<NumericInputProps> = memo(
 					inputMode="decimal"
 					onChange={handleChange}
 					onKeyDown={(e) => {
-						if (isInvalid(e.key)) {
+						if (isInvalidNumber(e.key)) {
 							e.preventDefault()
 						}
 					}}

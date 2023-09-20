@@ -49,6 +49,7 @@ import {
 	PerpsV3SettlementStrategy,
 	SettlementSubgraphType,
 	PerpsMarketV2,
+	SwapDepositToken,
 } from '../types/futures'
 import { formatCurrency, formatDollars, weiFromWei } from '../utils/number'
 import {
@@ -63,6 +64,9 @@ import {
 import { PerpsV2MarketData } from '../contracts/types'
 import { IPerpsV2MarketSettings } from '../contracts/types/PerpsV2MarketData'
 import { AsyncOrder } from '../contracts/types/PerpsV3MarketProxy'
+import { ethers } from 'ethers'
+import { ADDRESSES } from '../constants'
+import axios from 'axios'
 
 export const getFuturesEndpoint = (networkId: number) => {
 	return FUTURES_ENDPOINTS[networkId] || FUTURES_ENDPOINTS[10]
@@ -1060,3 +1064,66 @@ export const formatPerpsV2Market = (
 export const sameSide = (a: Wei, b: Wei) => {
 	return a.gt(wei(0)) === b.gt(wei(0))
 }
+
+export const getDecimalsForSwapDepositToken = (token: SwapDepositToken) => {
+	return ['USDT', 'USDC'].includes(token) ? 6 : 18
+}
+
+const SUSD_ADDRESS = ADDRESSES.SUSD['10']
+
+export const getQuote = async (token: SwapDepositToken, amountIn: Wei) => {
+	const tokenAddress = ADDRESSES[token]['10']
+	const decimals = getDecimalsForSwapDepositToken(token)
+	const amountString = wei(amountIn, decimals).toString(0, true)
+
+	const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVICES_PROXY}/0x/swap/v1/quote`, {
+		headers: {
+			accept: 'application/json',
+		},
+		params: {
+			buyToken: SUSD_ADDRESS,
+			sellToken: tokenAddress,
+			sellAmount: amountString,
+			excludedSources: EXCLUDED_SOURCES.join(','),
+		},
+	})
+
+	return wei(ethers.utils.formatUnits(response.data.buyAmount, 18).toString())
+}
+
+const EXCLUDED_SOURCES = [
+	'Native',
+	'Uniswap',
+	'Uniswap_V2',
+	'Eth2Dai',
+	'Kyber',
+	'Curve',
+	'LiquidityProvider',
+	'MultiBridge',
+	'Balancer',
+	'Balancer_V2',
+	'CREAM',
+	'Bancor',
+	'MakerPsm',
+	'mStable',
+	'Mooniswap',
+	'MultiHop',
+	'Shell',
+	'Swerve',
+	'SnowSwap',
+	'SushiSwap',
+	'DODO',
+	'DODO_V2',
+	'CryptoCom',
+	'Linkswap',
+	'KyberDMM',
+	'Smoothy',
+	'Component',
+	'Saddle',
+	'xSigma',
+	// 'Uniswap_V3',
+	'Curve_V2',
+	'Lido',
+	'ShibaSwap',
+	'Clipper',
+]

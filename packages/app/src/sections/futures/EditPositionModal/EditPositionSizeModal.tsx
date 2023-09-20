@@ -49,7 +49,7 @@ export default function EditPositionSizeModal() {
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
 	const [editType, setEditType] = useState(0)
 
-	const activePostiion = useMemo(() => position?.activePosition, [position?.activePosition])
+	const activePosition = useMemo(() => position?.activePosition, [position?.activePosition])
 
 	useEffect(() => {
 		dispatch(clearTradeInputs())
@@ -87,14 +87,14 @@ export default function EditPositionSizeModal() {
 	const maxNativeIncreaseValue = useMemo(() => {
 		if (!marketPrice || marketPrice.eq(0)) return ZERO_WEI
 		const totalMax = position?.remainingMargin?.mul(maxLeverage) ?? ZERO_WEI
-		let max = totalMax.sub(activePostiion?.notionalValue ?? 0)
+		let max = totalMax.sub(activePosition?.notionalValue ?? 0)
 		max = max.gt(0) ? max : ZERO_WEI
 		return max.div(marketPrice)
-	}, [marketPrice, position?.remainingMargin, activePostiion?.notionalValue, maxLeverage])
+	}, [marketPrice, position?.remainingMargin, activePosition?.notionalValue, maxLeverage])
 
 	const maxNativeValue = useMemo(() => {
-		return editType === 0 ? maxNativeIncreaseValue : activePostiion?.size ?? ZERO_WEI
-	}, [editType, maxNativeIncreaseValue, activePostiion?.size])
+		return editType === 0 ? maxNativeIncreaseValue : activePosition?.size ?? ZERO_WEI
+	}, [editType, maxNativeIncreaseValue, activePosition?.size])
 
 	const minNativeValue = useMemo(() => {
 		if (editType === 0) return ZERO_WEI
@@ -119,10 +119,10 @@ export default function EditPositionSizeModal() {
 
 	const maxLeverageExceeded = useMemo(() => {
 		return (
-			(editType === 0 && activePostiion?.leverage?.gt(maxLeverage)) ||
+			(editType === 0 && activePosition?.leverage?.gt(maxLeverage)) ||
 			(editType === 1 && resultingLeverage?.gt(maxLeverage))
 		)
-	}, [editType, activePostiion?.leverage, maxLeverage, resultingLeverage])
+	}, [editType, activePosition?.leverage, maxLeverage, resultingLeverage])
 
 	const invalid = useMemo(
 		() => sizeWei.abs().gt(maxNativeValueWithBuffer),
@@ -193,7 +193,7 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.leverage-change')}
-					textValue={activePostiion?.leverage ? activePostiion.leverage.toString(2) + 'x' : '-'}
+					textValue={activePosition?.leverage ? activePosition.leverage.toString(2) + 'x' : '-'}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -206,7 +206,7 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.position-size')}
-					textValue={formatNumber(activePostiion?.size || 0, { suggestDecimals: true })}
+					textValue={formatNumber(activePosition?.size || 0, { suggestDecimals: true })}
 				/>
 				<InfoBoxRow
 					textValueIcon={
@@ -217,7 +217,7 @@ export default function EditPositionSizeModal() {
 						)
 					}
 					title={t('futures.market.trade.edit-position.liquidation')}
-					textValue={formatDollars(activePostiion?.liquidationPrice || 0, {
+					textValue={formatDollars(activePosition?.liquidationPrice || 0, {
 						suggestDecimals: true,
 					})}
 				/>
