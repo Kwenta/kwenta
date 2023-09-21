@@ -10,12 +10,13 @@ import { Body, Heading } from 'components/Text'
 import { STAKING_DISABLED } from 'constants/ui'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { claimStakingRewards } from 'state/staking/actions'
+import { claimStakingRewards, claimStakingRewardsV2 } from 'state/staking/actions'
 import {
 	selectApy,
 	selectClaimableBalance,
 	selectIsGettingReward,
 	selectStakedKwentaBalance,
+	selectStakingV1,
 } from 'state/staking/selectors'
 import media from 'styles/media'
 
@@ -29,11 +30,16 @@ const StakingTab = () => {
 	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const isClaimingReward = useAppSelector(selectIsGettingReward)
+	const stakingV1 = useAppSelector(selectStakingV1)
 	const apy = useAppSelector(selectApy)
 
 	const handleGetReward = useCallback(() => {
-		dispatch(claimStakingRewards())
-	}, [dispatch])
+		if (stakingV1) {
+			dispatch(claimStakingRewards())
+		} else {
+			dispatch(claimStakingRewardsV2())
+		}
+	}, [dispatch, stakingV1])
 
 	const stakingAndRewardsInfo: StakingCards[] = useMemo(
 		() => [
