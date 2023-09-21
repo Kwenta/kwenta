@@ -604,7 +604,7 @@
 					"migrate": {
 						"title" : "Migrate",
 						"copy": "Migrate V1 Escrow",
-						"countdown": "You migration window closes in <0>{{ time }}</0>. If you don't complete the process before the deadline you will lose your escrow.",
+						"countdown": "Your migration window closes in <0>{{ time }}</0>. If you don't complete the process before the deadline you will lose your escrow.",
 						"closed": "Your migration window is closed but you can unstake your v1 liquid $KWENTA. Contact us if you need any help.",
 						"completed": "Your migration is complete.",
 						"go-to-staking": "Go to Staking & Rewards Page and <0>stake your $KWENTA</0> to earn rewards.",
