@@ -63,6 +63,10 @@ const DASHBOARD_LINKS = [
 		link: ROUTES.Dashboard.Stake,
 		i18nLabel: 'dashboard.tabs.staking',
 	},
+	{
+		link: ROUTES.Dashboard.Migrate,
+		i18nLabel: 'dashboard.tabs.migrate',
+	},
 ]
 
 export const getMenuLinks = (isMobile: boolean): MenuLinks => [

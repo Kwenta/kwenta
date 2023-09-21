@@ -5,7 +5,6 @@ import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/fl
 import { Body } from 'components/Text'
 import media from 'styles/media'
 
-import MigrationSteps from './MigrationSteps'
 import { StakingHeading } from './StakingHeading'
 import { StakingCards } from './types'
 
@@ -17,39 +16,35 @@ export enum StakeTab {
 type StakingPortfolioProps = {
 	title: string
 	cardsInfo: StakingCards[]
-	isRollbackRequired?: boolean
 }
 
-const StakingPortfolio: FC<StakingPortfolioProps> = memo(
-	({ title, cardsInfo, isRollbackRequired = false }) => {
-		return (
-			<StakingPortfolioContainer>
-				<StakingHeading title={title} />
-				{isRollbackRequired && <MigrationSteps />}
-				<CardsContainer>
-					{cardsInfo.map(({ category, card, onClick, icon }, i) => (
-						<StyledFlexDivCol rowGap="15px" key={i} onClick={onClick}>
-							<LabelContainer size="large">
-								{category}
-								{icon}
-							</LabelContainer>
-							<FlexDivRow columnGap="15px" justifyContent="flex-start">
-								{card.map(({ key, title, value, onClick }) => (
-									<FlexDivCol key={key} onClick={onClick} rowGap="5px">
-										<Body color="secondary">{title}</Body>
-										<Body size="large" color="preview">
-											{value}
-										</Body>
-									</FlexDivCol>
-								))}
-							</FlexDivRow>
-						</StyledFlexDivCol>
-					))}
-				</CardsContainer>
-			</StakingPortfolioContainer>
-		)
-	}
-)
+const StakingPortfolio: FC<StakingPortfolioProps> = memo(({ title, cardsInfo }) => {
+	return (
+		<StakingPortfolioContainer>
+			<StakingHeading title={title} />
+			<CardsContainer>
+				{cardsInfo.map(({ key, category, card, onClick, icon }) => (
+					<StyledFlexDivCol key={key} rowGap="15px" onClick={onClick}>
+						<LabelContainer size="large">
+							{category}
+							{icon}
+						</LabelContainer>
+						<FlexDivRow columnGap="15px" justifyContent="flex-start">
+							{card.map(({ key, title, value, onClick }) => (
+								<FlexDivCol key={key} onClick={onClick} rowGap="5px">
+									<Body color="secondary">{title}</Body>
+									<Body size="large" color="preview">
+										{value}
+									</Body>
+								</FlexDivCol>
+							))}
+						</FlexDivRow>
+					</StyledFlexDivCol>
+				))}
+			</CardsContainer>
+		</StakingPortfolioContainer>
+	)
+})
 
 const LabelContainer = styled(Body)`
 	display: flex;
@@ -70,12 +65,10 @@ const StyledFlexDivCol = styled(FlexDivCol)`
 `
 
 const StakingPortfolioContainer = styled.div`
-	${media.lessThan('mdUp')`
-		padding: 15px;
+	${media.lessThan('lg')`
+		padding: 0px 15px;
 	`}
-	${media.greaterThan('lg')`
-		margin-top: 20px;
-	`}
+	margin-top: 20px;
 `
 
 const CardsContainer = styled(FlexDivRowCentered)`

@@ -5,7 +5,13 @@ import { useTranslation } from 'react-i18next'
 
 import StakeCard from 'components/StakeCard'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { approveKwentaToken, stakeKwenta, unstakeKwenta } from 'state/staking/actions'
+import {
+	approveKwentaToken,
+	stakeKwenta,
+	stakeKwentaV2,
+	unstakeKwenta,
+	unstakeKwentaV2,
+} from 'state/staking/actions'
 import {
 	selectCanStakeKwenta,
 	selectCanUnstakeKwenta,
@@ -17,6 +23,7 @@ import {
 	selectIsUnstakingKwenta,
 	selectKwentaBalance,
 	selectStakedKwentaBalance,
+	selectStakingV1,
 } from 'state/staking/selectors'
 
 const StakeInputCard: FC = () => {
@@ -33,23 +40,24 @@ const StakeInputCard: FC = () => {
 	const isUnstakingKwenta = useAppSelector(selectIsUnstakingKwenta)
 	const isStakingKwenta = useAppSelector(selectIsStakingKwenta)
 	const isApprovingKwenta = useAppSelector(selectIsApprovingKwenta)
+	const stakingV1 = useAppSelector(selectStakingV1)
 
 	const handleApprove = useCallback(() => {
-		dispatch(approveKwentaToken('kwenta'))
-	}, [dispatch])
+		dispatch(approveKwentaToken(stakingV1 ? 'kwenta' : 'kwentaStakingV2'))
+	}, [dispatch, stakingV1])
 
 	const handleStakeKwenta = useCallback(
 		(amount: string) => {
-			dispatch(stakeKwenta(wei(amount).toBN()))
+			dispatch(stakingV1 ? stakeKwenta(wei(amount).toBN()) : stakeKwentaV2(wei(amount).toBN()))
 		},
-		[dispatch]
+		[dispatch, stakingV1]
 	)
 
 	const handleUnstakeKwenta = useCallback(
 		(amount: string) => {
-			dispatch(unstakeKwenta(wei(amount).toBN()))
+			dispatch(stakingV1 ? unstakeKwenta(wei(amount).toBN()) : unstakeKwentaV2(wei(amount).toBN()))
 		},
-		[dispatch]
+		[dispatch, stakingV1]
 	)
 
 	return (

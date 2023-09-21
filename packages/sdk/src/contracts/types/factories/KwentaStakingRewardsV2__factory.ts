@@ -11,7 +11,23 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "_kwenta",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_rewardEscrow",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_rewardsNotifier",
+        type: "address",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "constructor",
   },
@@ -53,7 +69,13 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "availableBalance",
+        type: "uint256",
+      },
+    ],
     name: "InsufficientBalance",
     type: "error",
   },
@@ -91,7 +113,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "OnlySupplySchedule",
+    name: "OnlyRewardsNotifier",
     type: "error",
   },
   {
@@ -102,6 +124,11 @@ const _abi = [
   {
     inputs: [],
     name: "RewardsPeriodNotComplete",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroAddress",
     type: "error",
   },
   {
@@ -223,6 +250,25 @@ const _abi = [
       },
     ],
     name: "OperatorApproved",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferStarted",
     type: "event",
   },
   {
@@ -412,56 +458,10 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "_operatorApprovals",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "_totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "ts",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "blk",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
+    inputs: [],
+    name: "acceptOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -538,22 +538,22 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "balances",
+    name: "balancesCheckpoints",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint64",
         name: "ts",
-        type: "uint256",
+        type: "uint64",
       },
       {
-        internalType: "uint256",
+        internalType: "uint64",
         name: "blk",
-        type: "uint256",
+        type: "uint64",
       },
       {
-        internalType: "uint256",
+        internalType: "uint128",
         name: "value",
-        type: "uint256",
+        type: "uint128",
       },
     ],
     stateMutability: "view",
@@ -567,7 +567,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "balancesLength",
+    name: "balancesCheckpointsLength",
     outputs: [
       {
         internalType: "uint256",
@@ -637,6 +637,30 @@ const _abi = [
         name: "_account",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "_timestamp",
+        type: "uint256",
+      },
+    ],
+    name: "escrowedBalanceAtTime",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_account",
+        type: "address",
+      },
     ],
     name: "escrowedBalanceOf",
     outputs: [
@@ -662,22 +686,22 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "escrowedBalances",
+    name: "escrowedBalancesCheckpoints",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint64",
         name: "ts",
-        type: "uint256",
+        type: "uint64",
       },
       {
-        internalType: "uint256",
+        internalType: "uint64",
         name: "blk",
-        type: "uint256",
+        type: "uint64",
       },
       {
-        internalType: "uint256",
+        internalType: "uint128",
         name: "value",
-        type: "uint256",
+        type: "uint128",
       },
     ],
     stateMutability: "view",
@@ -691,31 +715,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "escrowedBalancesLength",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_timestamp",
-        type: "uint256",
-      },
-    ],
-    name: "escrowedbalanceAtTime",
+    name: "escrowedBalancesCheckpointsLength",
     outputs: [
       {
         internalType: "uint256",
@@ -768,26 +768,6 @@ const _abi = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "_kwenta",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_rewardEscrow",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_supplySchedule",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_stakingRewardsV1",
-        type: "address",
-      },
       {
         internalType: "address",
         name: "_contractOwner",
@@ -871,6 +851,30 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "operatorApprovals",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "owner",
     outputs: [
@@ -898,6 +902,19 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "pendingOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -1039,6 +1056,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "rewardsNotifier",
+    outputs: [
+      {
+        internalType: "contract IStakingRewardsNotifier",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -1110,32 +1140,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "stakingRewardsV1",
-    outputs: [
-      {
-        internalType: "contract IStakingRewards",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "supplySchedule",
-    outputs: [
-      {
-        internalType: "contract ISupplySchedule",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "totalSupply",
     outputs: [
       {
@@ -1167,8 +1171,37 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "totalSupplyCheckpoints",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "ts",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "blk",
+        type: "uint64",
+      },
+      {
+        internalType: "uint128",
+        name: "value",
+        type: "uint128",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
-    name: "totalSupplyLength",
+    name: "totalSupplyCheckpointsLength",
     outputs: [
       {
         internalType: "uint256",
@@ -1321,38 +1354,6 @@ const _abi = [
       },
     ],
     name: "userRewardPerTokenPaid",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_account",
-        type: "address",
-      },
-    ],
-    name: "v1BalanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "v1TotalSupply",
     outputs: [
       {
         internalType: "uint256",

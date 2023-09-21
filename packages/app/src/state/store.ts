@@ -29,6 +29,7 @@ import pricesReducer from './prices/reducer'
 import referralsReducer from './referrals/reducer'
 import sdk from './sdk'
 import stakingReducer from './staking/reducer'
+import stakingMigrationReducer from './stakingMigration/reducer'
 import statsReducer from './stats/reducer'
 import walletReducer from './wallet/reducer'
 
@@ -37,7 +38,7 @@ const LOG_REDUX = false
 const persistConfig = {
 	key: 'root1',
 	storage,
-	version: 39,
+	version: 40,
 	blacklist: ['app', 'wallet'],
 	migrate: createMigrate(migrations, { debug: true }),
 }
@@ -56,6 +57,7 @@ const combinedReducers = combineReducers({
 	preferenes: preferencesReducer,
 	prices: pricesReducer,
 	stats: statsReducer,
+	stakingMigration: stakingMigrationReducer,
 	referrals: referralsReducer,
 })
 

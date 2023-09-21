@@ -4,7 +4,13 @@ import { useTranslation } from 'react-i18next'
 
 import StakeCard from 'components/StakeCard'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { approveKwentaToken, stakeEscrow, unstakeEscrow } from 'state/staking/actions'
+import {
+	approveKwentaToken,
+	stakeEscrow,
+	stakeEscrowV2,
+	unstakeEscrow,
+	unstakeEscrowV2,
+} from 'state/staking/actions'
 import {
 	selectCanStakeEscrowedKwenta,
 	selectCanUnstakeEscrowedKwenta,
@@ -15,6 +21,7 @@ import {
 	selectIsUnstakedEscrowedKwenta,
 	selectIsUnstakingEscrowedKwenta,
 	selectStakedEscrowedKwentaBalance,
+	selectStakingV1,
 	selectUnstakedEscrowedKwentaBalance,
 } from 'state/staking/selectors'
 
@@ -32,23 +39,24 @@ const EscrowInputCard: FC = () => {
 	const isUnstakingEscrowedKwenta = useAppSelector(selectIsUnstakingEscrowedKwenta)
 	const isStakingEscrowedKwenta = useAppSelector(selectIsStakingEscrowedKwenta)
 	const isApprovingKwenta = useAppSelector(selectIsApprovingKwenta)
+	const stakingV1 = useAppSelector(selectStakingV1)
 
 	const handleApprove = useCallback(() => {
-		dispatch(approveKwentaToken('kwenta'))
-	}, [dispatch])
+		dispatch(approveKwentaToken(stakingV1 ? 'kwenta' : 'kwentaStakingV2'))
+	}, [dispatch, stakingV1])
 
 	const handleStakeEscrow = useCallback(
 		(amount: string) => {
-			dispatch(stakeEscrow(wei(amount).toBN()))
+			dispatch(stakingV1 ? stakeEscrow(wei(amount).toBN()) : stakeEscrowV2(wei(amount).toBN()))
 		},
-		[dispatch]
+		[dispatch, stakingV1]
 	)
 
 	const handleUnstakeEscrow = useCallback(
 		(amount: string) => {
-			dispatch(unstakeEscrow(wei(amount).toBN()))
+			dispatch(stakingV1 ? unstakeEscrow(wei(amount).toBN()) : unstakeEscrowV2(wei(amount).toBN()))
 		},
-		[dispatch]
+		[dispatch, stakingV1]
 	)
 
 	return (

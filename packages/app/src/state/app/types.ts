@@ -2,6 +2,7 @@ import { TransactionStatus, FuturesMarketKey, KwentaStatus, GasPrice } from '@kw
 
 import { FuturesTransactionType } from 'state/futures/common/types'
 import { ReferralTransactionType } from 'state/referrals/types'
+import { StakingMigrationTransactionType } from 'state/stakingMigration/types'
 
 export type ModalType =
 	| 'futures_deposit_withdraw_smart_margin'
@@ -25,7 +26,10 @@ export type FuturesPositionModalType =
 
 export type GasSpeed = 'average' | 'fast' | 'fastest'
 
-export type TransactionType = FuturesTransactionType | ReferralTransactionType // TODO: Support all types
+export type TransactionType =
+	| FuturesTransactionType
+	| ReferralTransactionType
+	| StakingMigrationTransactionType // TODO: Support all types
 
 export type Transaction = {
 	type: TransactionType
