@@ -31,34 +31,35 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
   functions: {
     "MAX_COOLDOWN_PERIOD()": FunctionFragment;
     "MIN_COOLDOWN_PERIOD()": FunctionFragment;
-    "_operatorApprovals(address,address)": FunctionFragment;
-    "_totalSupply(uint256)": FunctionFragment;
+    "acceptOwnership()": FunctionFragment;
     "approveOperator(address,bool)": FunctionFragment;
     "balanceAtTime(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "balances(address,uint256)": FunctionFragment;
-    "balancesLength(address)": FunctionFragment;
+    "balancesCheckpoints(address,uint256)": FunctionFragment;
+    "balancesCheckpointsLength(address)": FunctionFragment;
     "compound()": FunctionFragment;
     "compoundOnBehalf(address)": FunctionFragment;
     "cooldownPeriod()": FunctionFragment;
     "earned(address)": FunctionFragment;
+    "escrowedBalanceAtTime(address,uint256)": FunctionFragment;
     "escrowedBalanceOf(address)": FunctionFragment;
-    "escrowedBalances(address,uint256)": FunctionFragment;
-    "escrowedBalancesLength(address)": FunctionFragment;
-    "escrowedbalanceAtTime(address,uint256)": FunctionFragment;
+    "escrowedBalancesCheckpoints(address,uint256)": FunctionFragment;
+    "escrowedBalancesCheckpointsLength(address)": FunctionFragment;
     "exit()": FunctionFragment;
     "getReward()": FunctionFragment;
     "getRewardForDuration()": FunctionFragment;
     "getRewardOnBehalf(address)": FunctionFragment;
-    "initialize(address,address,address,address,address)": FunctionFragment;
+    "initialize(address)": FunctionFragment;
     "kwenta()": FunctionFragment;
     "lastTimeRewardApplicable()": FunctionFragment;
     "lastUpdateTime()": FunctionFragment;
     "nonEscrowedBalanceOf(address)": FunctionFragment;
     "notifyRewardAmount(uint256)": FunctionFragment;
+    "operatorApprovals(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "pauseStakingRewards()": FunctionFragment;
     "paused()": FunctionFragment;
+    "pendingOwner()": FunctionFragment;
     "periodFinish()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "recoverERC20(address,uint256)": FunctionFragment;
@@ -69,16 +70,16 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     "rewardRate()": FunctionFragment;
     "rewards(address)": FunctionFragment;
     "rewardsDuration()": FunctionFragment;
+    "rewardsNotifier()": FunctionFragment;
     "setCooldownPeriod(uint256)": FunctionFragment;
     "setRewardsDuration(uint256)": FunctionFragment;
     "stake(uint256)": FunctionFragment;
     "stakeEscrow(uint256)": FunctionFragment;
     "stakeEscrowOnBehalf(address,uint256)": FunctionFragment;
-    "stakingRewardsV1()": FunctionFragment;
-    "supplySchedule()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "totalSupplyAtTime(uint256)": FunctionFragment;
-    "totalSupplyLength()": FunctionFragment;
+    "totalSupplyCheckpoints(uint256)": FunctionFragment;
+    "totalSupplyCheckpointsLength()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unpauseStakingRewards()": FunctionFragment;
     "unstake(uint256)": FunctionFragment;
@@ -89,29 +90,26 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "userLastStakeTime(address)": FunctionFragment;
     "userRewardPerTokenPaid(address)": FunctionFragment;
-    "v1BalanceOf(address)": FunctionFragment;
-    "v1TotalSupply()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "MAX_COOLDOWN_PERIOD"
       | "MIN_COOLDOWN_PERIOD"
-      | "_operatorApprovals"
-      | "_totalSupply"
+      | "acceptOwnership"
       | "approveOperator"
       | "balanceAtTime"
       | "balanceOf"
-      | "balances"
-      | "balancesLength"
+      | "balancesCheckpoints"
+      | "balancesCheckpointsLength"
       | "compound"
       | "compoundOnBehalf"
       | "cooldownPeriod"
       | "earned"
+      | "escrowedBalanceAtTime"
       | "escrowedBalanceOf"
-      | "escrowedBalances"
-      | "escrowedBalancesLength"
-      | "escrowedbalanceAtTime"
+      | "escrowedBalancesCheckpoints"
+      | "escrowedBalancesCheckpointsLength"
       | "exit"
       | "getReward"
       | "getRewardForDuration"
@@ -122,9 +120,11 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
       | "lastUpdateTime"
       | "nonEscrowedBalanceOf"
       | "notifyRewardAmount"
+      | "operatorApprovals"
       | "owner"
       | "pauseStakingRewards"
       | "paused"
+      | "pendingOwner"
       | "periodFinish"
       | "proxiableUUID"
       | "recoverERC20"
@@ -135,16 +135,16 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
       | "rewardRate"
       | "rewards"
       | "rewardsDuration"
+      | "rewardsNotifier"
       | "setCooldownPeriod"
       | "setRewardsDuration"
       | "stake"
       | "stakeEscrow"
       | "stakeEscrowOnBehalf"
-      | "stakingRewardsV1"
-      | "supplySchedule"
       | "totalSupply"
       | "totalSupplyAtTime"
-      | "totalSupplyLength"
+      | "totalSupplyCheckpoints"
+      | "totalSupplyCheckpointsLength"
       | "transferOwnership"
       | "unpauseStakingRewards"
       | "unstake"
@@ -155,8 +155,6 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
       | "upgradeToAndCall"
       | "userLastStakeTime"
       | "userRewardPerTokenPaid"
-      | "v1BalanceOf"
-      | "v1TotalSupply"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -168,12 +166,8 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "_operatorApprovals",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_totalSupply",
-    values: [BigNumberish]
+    functionFragment: "acceptOwnership",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "approveOperator",
@@ -185,11 +179,11 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "balances",
+    functionFragment: "balancesCheckpoints",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "balancesLength",
+    functionFragment: "balancesCheckpointsLength",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "compound", values?: undefined): string;
@@ -203,20 +197,20 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "earned", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "escrowedBalanceAtTime",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "escrowedBalanceOf",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "escrowedBalances",
+    functionFragment: "escrowedBalancesCheckpoints",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "escrowedBalancesLength",
+    functionFragment: "escrowedBalancesCheckpointsLength",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "escrowedbalanceAtTime",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "exit", values?: undefined): string;
   encodeFunctionData(functionFragment: "getReward", values?: undefined): string;
@@ -228,10 +222,7 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     functionFragment: "getRewardOnBehalf",
     values: [string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string, string, string, string]
-  ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(functionFragment: "kwenta", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "lastTimeRewardApplicable",
@@ -249,12 +240,20 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     functionFragment: "notifyRewardAmount",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "operatorApprovals",
+    values: [string, string]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "pauseStakingRewards",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "pendingOwner",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "periodFinish",
     values?: undefined
@@ -293,6 +292,10 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "rewardsNotifier",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setCooldownPeriod",
     values: [BigNumberish]
   ): string;
@@ -310,14 +313,6 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "stakingRewardsV1",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supplySchedule",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
   ): string;
@@ -326,7 +321,11 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalSupplyLength",
+    functionFragment: "totalSupplyCheckpoints",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalSupplyCheckpointsLength",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -366,11 +365,6 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     functionFragment: "userRewardPerTokenPaid",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "v1BalanceOf", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "v1TotalSupply",
-    values?: undefined
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "MAX_COOLDOWN_PERIOD",
@@ -381,11 +375,7 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_operatorApprovals",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_totalSupply",
+    functionFragment: "acceptOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -397,9 +387,12 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balancesLength",
+    functionFragment: "balancesCheckpoints",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "balancesCheckpointsLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "compound", data: BytesLike): Result;
@@ -413,19 +406,19 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "earned", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "escrowedBalanceAtTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "escrowedBalanceOf",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "escrowedBalances",
+    functionFragment: "escrowedBalancesCheckpoints",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "escrowedBalancesLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "escrowedbalanceAtTime",
+    functionFragment: "escrowedBalancesCheckpointsLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "exit", data: BytesLike): Result;
@@ -456,12 +449,20 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     functionFragment: "notifyRewardAmount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "operatorApprovals",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "pauseStakingRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingOwner",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "periodFinish",
     data: BytesLike
@@ -497,6 +498,10 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "rewardsNotifier",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setCooldownPeriod",
     data: BytesLike
   ): Result;
@@ -514,14 +519,6 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "stakingRewardsV1",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "supplySchedule",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
@@ -530,7 +527,11 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalSupplyLength",
+    functionFragment: "totalSupplyCheckpoints",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupplyCheckpointsLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -567,14 +568,6 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     functionFragment: "userRewardPerTokenPaid",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "v1BalanceOf",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "v1TotalSupply",
-    data: BytesLike
-  ): Result;
 
   events: {
     "AdminChanged(address,address)": EventFragment;
@@ -584,6 +577,7 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
     "EscrowUnstaked(address,uint256)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "OperatorApproved(address,address,bool)": EventFragment;
+    "OwnershipTransferStarted(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
@@ -603,6 +597,7 @@ export interface KwentaStakingRewardsV2Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "EscrowUnstaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OperatorApproved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
@@ -688,6 +683,18 @@ export type OperatorApprovedEvent = TypedEvent<
 
 export type OperatorApprovedEventFilter =
   TypedEventFilter<OperatorApprovedEvent>;
+
+export interface OwnershipTransferStartedEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferStartedEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferStartedEventObject
+>;
+
+export type OwnershipTransferStartedEventFilter =
+  TypedEventFilter<OwnershipTransferStartedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -812,22 +819,9 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _operatorApprovals(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _totalSupply(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        ts: BigNumber;
-        blk: BigNumber;
-        value: BigNumber;
-      }
-    >;
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     approveOperator(
       _operator: string,
@@ -846,7 +840,7 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    balances(
+    balancesCheckpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -858,7 +852,7 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       }
     >;
 
-    balancesLength(
+    balancesCheckpointsLength(
       _account: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -876,12 +870,18 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     earned(_account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    escrowedBalanceAtTime(
+      _account: string,
+      _timestamp: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     escrowedBalanceOf(
       _account: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    escrowedBalances(
+    escrowedBalancesCheckpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -893,14 +893,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       }
     >;
 
-    escrowedBalancesLength(
+    escrowedBalancesCheckpointsLength(
       _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    escrowedbalanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -920,10 +914,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initialize(
-      _kwenta: string,
-      _rewardEscrow: string,
-      _supplySchedule: string,
-      _stakingRewardsV1: string,
       _contractOwner: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
@@ -944,6 +934,12 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
+    operatorApprovals(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pauseStakingRewards(
@@ -951,6 +947,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
 
     periodFinish(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -978,6 +976,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     rewardsDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    rewardsNotifier(overrides?: CallOverrides): Promise<[string]>;
+
     setCooldownPeriod(
       _cooldownPeriod: BigNumberish,
       overrides?: Overrides & { from?: string }
@@ -1004,10 +1004,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    stakingRewardsV1(overrides?: CallOverrides): Promise<[string]>;
-
-    supplySchedule(overrides?: CallOverrides): Promise<[string]>;
-
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     totalSupplyAtTime(
@@ -1015,7 +1011,20 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    totalSupplyLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalSupplyCheckpoints(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        ts: BigNumber;
+        blk: BigNumber;
+        value: BigNumber;
+      }
+    >;
+
+    totalSupplyCheckpointsLength(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     transferOwnership(
       newOwner: string,
@@ -1067,35 +1076,15 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    v1BalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    v1TotalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
 
   MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
 
-  _operatorApprovals(
-    arg0: string,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _totalSupply(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      ts: BigNumber;
-      blk: BigNumber;
-      value: BigNumber;
-    }
-  >;
+  acceptOwnership(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   approveOperator(
     _operator: string,
@@ -1111,7 +1100,7 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
   balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  balances(
+  balancesCheckpoints(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
@@ -1123,7 +1112,7 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     }
   >;
 
-  balancesLength(
+  balancesCheckpointsLength(
     _account: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -1141,12 +1130,18 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
   earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  escrowedBalanceAtTime(
+    _account: string,
+    _timestamp: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   escrowedBalanceOf(
     _account: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  escrowedBalances(
+  escrowedBalancesCheckpoints(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
@@ -1158,14 +1153,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     }
   >;
 
-  escrowedBalancesLength(
+  escrowedBalancesCheckpointsLength(
     _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  escrowedbalanceAtTime(
-    _account: string,
-    _timestamp: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1183,10 +1172,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initialize(
-    _kwenta: string,
-    _rewardEscrow: string,
-    _supplySchedule: string,
-    _stakingRewardsV1: string,
     _contractOwner: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
@@ -1207,6 +1192,12 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
+  operatorApprovals(
+    arg0: string,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   pauseStakingRewards(
@@ -1214,6 +1205,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   paused(overrides?: CallOverrides): Promise<boolean>;
+
+  pendingOwner(overrides?: CallOverrides): Promise<string>;
 
   periodFinish(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1241,6 +1234,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
   rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
+  rewardsNotifier(overrides?: CallOverrides): Promise<string>;
+
   setCooldownPeriod(
     _cooldownPeriod: BigNumberish,
     overrides?: Overrides & { from?: string }
@@ -1267,10 +1262,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
-  stakingRewardsV1(overrides?: CallOverrides): Promise<string>;
-
-  supplySchedule(overrides?: CallOverrides): Promise<string>;
-
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   totalSupplyAtTime(
@@ -1278,7 +1269,18 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  totalSupplyLength(overrides?: CallOverrides): Promise<BigNumber>;
+  totalSupplyCheckpoints(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      ts: BigNumber;
+      blk: BigNumber;
+      value: BigNumber;
+    }
+  >;
+
+  totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: string,
@@ -1331,31 +1333,12 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  v1BalanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  v1TotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
   callStatic: {
     MAX_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
 
     MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
 
-    _operatorApprovals(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _totalSupply(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        ts: BigNumber;
-        blk: BigNumber;
-        value: BigNumber;
-      }
-    >;
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
 
     approveOperator(
       _operator: string,
@@ -1371,7 +1354,7 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    balances(
+    balancesCheckpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1383,7 +1366,7 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       }
     >;
 
-    balancesLength(
+    balancesCheckpointsLength(
       _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1399,12 +1382,18 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    escrowedBalanceAtTime(
+      _account: string,
+      _timestamp: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     escrowedBalanceOf(
       _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    escrowedBalances(
+    escrowedBalancesCheckpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
@@ -1416,14 +1405,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       }
     >;
 
-    escrowedBalancesLength(
+    escrowedBalancesCheckpointsLength(
       _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    escrowedbalanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1439,10 +1422,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     ): Promise<void>;
 
     initialize(
-      _kwenta: string,
-      _rewardEscrow: string,
-      _supplySchedule: string,
-      _stakingRewardsV1: string,
       _contractOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1463,11 +1442,19 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    operatorApprovals(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     pauseStakingRewards(overrides?: CallOverrides): Promise<void>;
 
     paused(overrides?: CallOverrides): Promise<boolean>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<string>;
 
     periodFinish(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1493,6 +1480,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
+    rewardsNotifier(overrides?: CallOverrides): Promise<string>;
+
     setCooldownPeriod(
       _cooldownPeriod: BigNumberish,
       overrides?: CallOverrides
@@ -1516,10 +1505,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    stakingRewardsV1(overrides?: CallOverrides): Promise<string>;
-
-    supplySchedule(overrides?: CallOverrides): Promise<string>;
-
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupplyAtTime(
@@ -1527,7 +1512,18 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    totalSupplyLength(overrides?: CallOverrides): Promise<BigNumber>;
+    totalSupplyCheckpoints(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        ts: BigNumber;
+        blk: BigNumber;
+        value: BigNumber;
+      }
+    >;
+
+    totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -1574,13 +1570,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    v1BalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    v1TotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
@@ -1630,6 +1619,15 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       operator?: null,
       approved?: null
     ): OperatorApprovedEventFilter;
+
+    "OwnershipTransferStarted(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+    OwnershipTransferStarted(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -1689,15 +1687,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     MIN_COOLDOWN_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
 
-    _operatorApprovals(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _totalSupply(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     approveOperator(
@@ -1714,13 +1705,13 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     balanceOf(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    balances(
+    balancesCheckpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    balancesLength(
+    balancesCheckpointsLength(
       _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1736,25 +1727,25 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     earned(_account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    escrowedBalanceAtTime(
+      _account: string,
+      _timestamp: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     escrowedBalanceOf(
       _account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    escrowedBalances(
+    escrowedBalancesCheckpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    escrowedBalancesLength(
+    escrowedBalancesCheckpointsLength(
       _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    escrowedbalanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1770,10 +1761,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      _kwenta: string,
-      _rewardEscrow: string,
-      _supplySchedule: string,
-      _stakingRewardsV1: string,
       _contractOwner: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
@@ -1794,6 +1781,12 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
+    operatorApprovals(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pauseStakingRewards(
@@ -1801,6 +1794,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     ): Promise<BigNumber>;
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
     periodFinish(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1828,6 +1823,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     rewardsDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
+    rewardsNotifier(overrides?: CallOverrides): Promise<BigNumber>;
+
     setCooldownPeriod(
       _cooldownPeriod: BigNumberish,
       overrides?: Overrides & { from?: string }
@@ -1854,10 +1851,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
-    stakingRewardsV1(overrides?: CallOverrides): Promise<BigNumber>;
-
-    supplySchedule(overrides?: CallOverrides): Promise<BigNumber>;
-
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupplyAtTime(
@@ -1865,7 +1858,12 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    totalSupplyLength(overrides?: CallOverrides): Promise<BigNumber>;
+    totalSupplyCheckpoints(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    totalSupplyCheckpointsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
@@ -1917,13 +1915,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    v1BalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    v1TotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1935,15 +1926,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _operatorApprovals(
-      arg0: string,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _totalSupply(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     approveOperator(
@@ -1963,13 +1947,13 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    balances(
+    balancesCheckpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    balancesLength(
+    balancesCheckpointsLength(
       _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1990,25 +1974,25 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    escrowedBalanceAtTime(
+      _account: string,
+      _timestamp: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     escrowedBalanceOf(
       _account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    escrowedBalances(
+    escrowedBalancesCheckpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    escrowedBalancesLength(
+    escrowedBalancesCheckpointsLength(
       _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    escrowedbalanceAtTime(
-      _account: string,
-      _timestamp: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2030,10 +2014,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _kwenta: string,
-      _rewardEscrow: string,
-      _supplySchedule: string,
-      _stakingRewardsV1: string,
       _contractOwner: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
@@ -2056,6 +2036,12 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
+    operatorApprovals(
+      arg0: string,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pauseStakingRewards(
@@ -2063,6 +2049,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     periodFinish(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2095,6 +2083,8 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
 
     rewardsDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    rewardsNotifier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     setCooldownPeriod(
       _cooldownPeriod: BigNumberish,
       overrides?: Overrides & { from?: string }
@@ -2121,10 +2111,6 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
-    stakingRewardsV1(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    supplySchedule(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupplyAtTime(
@@ -2132,7 +2118,14 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    totalSupplyLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    totalSupplyCheckpoints(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    totalSupplyCheckpointsLength(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,
@@ -2184,12 +2177,5 @@ export interface KwentaStakingRewardsV2 extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    v1BalanceOf(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    v1TotalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

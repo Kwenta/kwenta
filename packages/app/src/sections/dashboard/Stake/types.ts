@@ -3,14 +3,17 @@ type StakingCard = {
 	title: string
 	value: string
 	onClick?: () => void
+	hidden?: boolean
 }
 
 export type StakingCards = {
+	key: string
 	category: string
 	card: StakingCard[]
 	onClick?: () => void
 	icon?: React.ReactNode
 	flex?: number
+	hidden?: boolean
 }
 
 type RewardsCard = {

@@ -26,6 +26,12 @@ export const SplitContainer = styled.div`
 	${media.greaterThan('lg')`
 		grid-template-columns: 1fr 1fr;
 	`}
+
+	${media.lessThan('lg')`
+		display: flex;
+		flex-direction: column-reverse;
+		row-gap: 25px;
+	`}
 `
 
 export const ContainerRowMixin = css`

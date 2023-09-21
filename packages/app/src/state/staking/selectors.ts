@@ -1,42 +1,134 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
-import { EscrowData } from '@kwenta/sdk/types'
 import { toWei } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
 
 import { STAKING_DISABLED } from 'constants/ui'
 import { getApy, getEpochDetails, parseEpochData } from 'queries/staking/utils'
+import {
+	selectInMigrationPeriod,
+	selectIsMigrationPeriodStarted,
+	selectNeedEscrowMigratorApproval,
+	selectNumberOfRegisteredEntries,
+	selectNumberOfUnmigratedRegisteredEntries,
+	selectNumberOfUnregisteredEntries,
+	selectNumberOfUnvestedRegisteredEntries,
+	selectStartMigration,
+} from 'state/stakingMigration/selectors'
 import { RootState } from 'state/store'
 import { FetchStatus } from 'state/types'
+
+export const selectClaimableBalanceV1 = createSelector(
+	(state: RootState) => state.staking.v1.claimableBalance,
+	toWei
+)
+
+const selectClaimableBalanceV2 = createSelector(
+	(state: RootState) => state.staking.v2.claimableBalance,
+	toWei
+)
+
+export const selectStakedKwentaBalanceV1 = createSelector(
+	(state: RootState) => state.staking.v1.stakedKwentaBalance,
+	toWei
+)
+
+const selectStakedKwentaBalanceV2 = createSelector(
+	(state: RootState) => state.staking.v2.stakedKwentaBalance,
+	toWei
+)
+
+const selectEscrowedKwentaBalanceV1 = createSelector(
+	(state: RootState) => state.staking.v1.escrowedKwentaBalance,
+	toWei
+)
+
+const selectEscrowedKwentaBalanceV2 = createSelector(
+	(state: RootState) => state.staking.v2.escrowedKwentaBalance,
+	toWei
+)
+
+const selectStakedEscrowedKwentaBalanceV1 = createSelector(
+	(state: RootState) => state.staking.v1.stakedEscrowedKwentaBalance,
+	toWei
+)
+
+const selectStakedEscrowedKwentaBalanceV2 = createSelector(
+	(state: RootState) => state.staking.v2.stakedEscrowedKwentaBalance,
+	toWei
+)
+
+export const selectTotalVestableV1 = createSelector(
+	(state: RootState) => state.staking.v1.totalVestable,
+	wei
+)
+
+const selectTotalVestableV2 = createSelector(
+	(state: RootState) => state.staking.v2.totalVestable,
+	wei
+)
+
+export const selectStakingMigrationRequired = createSelector(
+	selectClaimableBalanceV1,
+	selectStakedKwentaBalanceV1,
+	selectTotalVestableV1,
+	(claimableBalanceV1, stakedKwentaBalanceV1, totalVestableV1) =>
+		claimableBalanceV1.gt(ZERO_WEI) ||
+		stakedKwentaBalanceV1.gt(ZERO_WEI) ||
+		totalVestableV1.gt(ZERO_WEI)
+)
+
+export const selectStakingV1 = createSelector(
+	selectStakingMigrationRequired,
+	selectStartMigration,
+	selectIsMigrationPeriodStarted,
+	selectInMigrationPeriod,
+	(stakingMigrationRequired, startMigration, isMigrationPeriodStarted, inMigrationPeriod) =>
+		(stakingMigrationRequired || startMigration) && (isMigrationPeriodStarted || !inMigrationPeriod)
+)
 
 export const selectKwentaBalance = createSelector(
 	(state: RootState) => state.staking.kwentaBalance,
 	toWei
 )
 
-export const selectEscrowedKwentaBalance = createSelector(
-	(state: RootState) => state.staking.v1.escrowedKwentaBalance,
-	toWei
-)
-
-export const selectEscrowedKwentaBalanceV2 = createSelector(
-	(state: RootState) => state.staking.v2.escrowedKwentaBalance,
-	toWei
-)
-
-export const selectStakedEscrowedKwentaBalance = createSelector(
-	(state: RootState) => state.staking.v1.stakedEscrowedKwentaBalance,
-	toWei
-)
-
-export const selectStakedEscrowedKwentaBalanceV2 = createSelector(
-	(state: RootState) => state.staking.v2.stakedEscrowedKwentaBalance,
-	toWei
+export const selectClaimableBalance = createSelector(
+	selectClaimableBalanceV1,
+	selectClaimableBalanceV2,
+	selectStakingV1,
+	(claimableBalanceV1, claimableBalanceV2, stakingV1) =>
+		stakingV1 ? claimableBalanceV1 : claimableBalanceV2
 )
 
 export const selectStakedKwentaBalance = createSelector(
-	(state: RootState) => state.staking.v1.stakedKwentaBalance,
-	toWei
+	selectStakedKwentaBalanceV1,
+	selectStakedKwentaBalanceV2,
+	selectStakingV1,
+	(stakedKwentaBalanceV1, stakedKwentaBalanceV2, stakingV1) =>
+		stakingV1 ? stakedKwentaBalanceV1 : stakedKwentaBalanceV2
+)
+
+export const selectEscrowedKwentaBalance = createSelector(
+	selectEscrowedKwentaBalanceV1,
+	selectEscrowedKwentaBalanceV2,
+	selectStakingV1,
+	(escrowedKwentaBalanceV1, escrowedKwentaBalanceV2, stakingV1) =>
+		stakingV1 ? escrowedKwentaBalanceV1 : escrowedKwentaBalanceV2
+)
+
+export const selectStakedEscrowedKwentaBalance = createSelector(
+	selectStakedEscrowedKwentaBalanceV1,
+	selectStakedEscrowedKwentaBalanceV2,
+	selectStakingV1,
+	(stakedEscrowedKwentaBalanceV1, stakedEscrowedKwentaBalanceV2, stakingV1) =>
+		stakingV1 ? stakedEscrowedKwentaBalanceV1 : stakedEscrowedKwentaBalanceV2
+)
+
+export const selectTotalVestable = createSelector(
+	selectTotalVestableV1,
+	selectTotalVestableV2,
+	selectStakingV1,
+	(totalVestableV1, totalVestableV2, stakingV1) => (stakingV1 ? totalVestableV1 : totalVestableV2)
 )
 
 export const selectUnstakedEscrowedKwentaBalance = createSelector(
@@ -47,65 +139,23 @@ export const selectUnstakedEscrowedKwentaBalance = createSelector(
 	}
 )
 
-export const selectUnstakedEscrowedKwentaBalanceV2 = createSelector(
-	selectEscrowedKwentaBalanceV2,
-	selectStakedEscrowedKwentaBalanceV2,
-	(escrowedKwentaBalance, stakedEscrowedKwentaBalance) => {
-		return escrowedKwentaBalance.sub(stakedEscrowedKwentaBalance)
-	}
-)
-
-export const selectClaimableBalance = createSelector(
-	(state: RootState) => state.staking.v1.claimableBalance,
-	toWei
-)
-
-export const selectStakedKwentaBalanceV2 = createSelector(
-	(state: RootState) => state.staking.v2.stakedKwentaBalance,
-	toWei
-)
-
-export const selectClaimableBalanceV2 = createSelector(
-	(state: RootState) => state.staking.v2.claimableBalance,
-	toWei
-)
-
-export const selectIsKwentaTokenApproved = createSelector(
+const selectIsKwentaTokenApprovedV1 = createSelector(
 	selectKwentaBalance,
 	(state: RootState) => state.staking.kwentaAllowance,
 	(kwentaBalance, kwentaAllowance) => kwentaBalance.lte(kwentaAllowance)
 )
-
-export const selectIsKwentaTokenApprovedV2 = createSelector(
+const selectIsKwentaTokenApprovedV2 = createSelector(
 	selectKwentaBalance,
 	(state: RootState) => state.staking.kwentaStakingV2Allowance,
 	(kwentaBalance, kwentaAllowance) => kwentaBalance.lte(kwentaAllowance)
 )
 
-export const selectResetTime = createSelector(
-	(state: RootState) => state.wallet.networkId,
-	(state: RootState) => state.staking.epochPeriod,
-	(networkId, epochPeriod) => {
-		const { epochEnd } = getEpochDetails(networkId ?? 10, epochPeriod)
-		return epochEnd
-	}
-)
-
-export const selectStakedResetTime = (state: RootState) => state.staking.stakedResetTime
-
-export const selectEpochData = createSelector(
-	(state: RootState) => state.staking.epochPeriod,
-	(state: RootState) => state.wallet.networkId,
-	(epochPeriod, networkId) => {
-		return Array.from(new Array(epochPeriod + 1), (_, i) => parseEpochData(i, networkId))
-	}
-)
-
-export const selectSelectedEpoch = createSelector(
-	(state: RootState) => state.staking.selectedEpoch,
-	(state: RootState) => state.staking.epochPeriod,
-	(state: RootState) => state.wallet.networkId,
-	(selectedEpoch, epochPeriod, networkId) => parseEpochData(selectedEpoch ?? epochPeriod, networkId)
+export const selectIsKwentaTokenApproved = createSelector(
+	selectIsKwentaTokenApprovedV1,
+	selectIsKwentaTokenApprovedV2,
+	selectStakingV1,
+	(isKwentaTokenApprovedV1, isKwentaTokenApprovedV2, stakingV1) =>
+		stakingV1 ? isKwentaTokenApprovedV1 : isKwentaTokenApprovedV2
 )
 
 export const selectIsStakingKwenta = createSelector(
@@ -196,14 +246,30 @@ export const selectEstimatedOpRewards = createSelector(
 	wei
 )
 
-export const selectTotalVestable = createSelector(
-	(state: RootState) => state.staking.v1.totalVestable,
-	wei
+export const selectResetTime = createSelector(
+	(state: RootState) => state.wallet.networkId,
+	(state: RootState) => state.staking.epochPeriod,
+	(networkId, epochPeriod) => {
+		const { epochEnd } = getEpochDetails(networkId ?? 10, epochPeriod)
+		return epochEnd
+	}
 )
 
-export const selectTotalVestableV2 = createSelector(
-	(state: RootState) => state.staking.v2.totalVestable,
-	wei
+export const selectStakedResetTime = (state: RootState) => state.staking.stakedResetTime
+
+export const selectEpochData = createSelector(
+	(state: RootState) => state.staking.epochPeriod,
+	(state: RootState) => state.wallet.networkId,
+	(epochPeriod, networkId) => {
+		return Array.from(new Array(epochPeriod + 1), (_, i) => parseEpochData(i, networkId))
+	}
+)
+
+export const selectSelectedEpoch = createSelector(
+	(state: RootState) => state.staking.selectedEpoch,
+	(state: RootState) => state.staking.epochPeriod,
+	(state: RootState) => state.wallet.networkId,
+	(selectedEpoch, epochPeriod, networkId) => parseEpochData(selectedEpoch ?? epochPeriod, networkId)
 )
 
 export const selectIsTimeLeftInCooldown = createSelector(
@@ -217,7 +283,14 @@ export const selectCanStakeKwenta = createSelector(
 	(kwentaBalance, isStakingKwenta) => kwentaBalance.gt(0) && !isStakingKwenta && !STAKING_DISABLED
 )
 
-export const selectCanUnstakeKwentaV2 = createSelector(
+const selectCanUnstakeKwentaV1 = createSelector(
+	selectStakedKwentaBalanceV1,
+	selectIsUnstakingKwenta,
+	(stakedKwentaBalance, isUnstakingKwenta) =>
+		stakedKwentaBalance.gt(0) && !isUnstakingKwenta && !STAKING_DISABLED
+)
+
+const selectCanUnstakeKwentaV2 = createSelector(
 	selectStakedKwentaBalanceV2,
 	selectIsUnstakingKwenta,
 	selectIsTimeLeftInCooldown,
@@ -226,21 +299,14 @@ export const selectCanUnstakeKwentaV2 = createSelector(
 )
 
 export const selectCanUnstakeKwenta = createSelector(
-	selectStakedKwentaBalance,
-	selectIsUnstakingKwenta,
-	(stakedKwentaBalance, isUnstakingKwenta) =>
-		stakedKwentaBalance.gt(0) && !isUnstakingKwenta && !STAKING_DISABLED
+	selectCanUnstakeKwentaV1,
+	selectCanUnstakeKwentaV2,
+	selectStakingV1,
+	(canUnstakeKwentaV1, canUnstakeKwentaV2, stakingV1) =>
+		stakingV1 ? canUnstakeKwentaV1 : canUnstakeKwentaV2
 )
 
-export const selectCanStakeEscrowedKwenta = createSelector(
-	selectUnstakedEscrowedKwentaBalance,
-	selectIsStakingEscrowedKwenta,
-	(unstakedEscrowedKwentaBalance, isStakingEscrowedKwenta) => {
-		return unstakedEscrowedKwentaBalance.gt(0) && !isStakingEscrowedKwenta && !STAKING_DISABLED
-	}
-)
-
-export const selectCanUnstakeEscrowedKwenta = createSelector(
+const selectCanUnstakeEscrowedKwentaV1 = createSelector(
 	selectStakedEscrowedKwentaBalance,
 	selectIsUnstakingEscrowedKwenta,
 	(stakedEscrowedKwentaBalance, isUnstakingEscrowedKwenta) => {
@@ -248,7 +314,7 @@ export const selectCanUnstakeEscrowedKwenta = createSelector(
 	}
 )
 
-export const selectCanUnstakeEscrowedKwentaV2 = createSelector(
+const selectCanUnstakeEscrowedKwentaV2 = createSelector(
 	selectStakedEscrowedKwentaBalanceV2,
 	selectIsUnstakingEscrowedKwenta,
 	selectIsTimeLeftInCooldown,
@@ -262,12 +328,28 @@ export const selectCanUnstakeEscrowedKwentaV2 = createSelector(
 	}
 )
 
+export const selectCanUnstakeEscrowedKwenta = createSelector(
+	selectCanUnstakeEscrowedKwentaV1,
+	selectCanUnstakeEscrowedKwentaV2,
+	selectStakingV1,
+	(canUnstakeEscrowedKwentaV1, canUnstakeEscrowedKwentaV2, stakingV1) =>
+		stakingV1 ? canUnstakeEscrowedKwentaV1 : canUnstakeEscrowedKwentaV2
+)
+
+export const selectCanStakeEscrowedKwenta = createSelector(
+	selectUnstakedEscrowedKwentaBalance,
+	selectIsStakingEscrowedKwenta,
+	(unstakedEscrowedKwentaBalance, isStakingEscrowedKwenta) => {
+		return unstakedEscrowedKwentaBalance.gt(0) && !isStakingEscrowedKwenta && !STAKING_DISABLED
+	}
+)
+
 export const selectEpochPeriod = createSelector(
 	(state: RootState) => state.staking.epochPeriod,
 	wei
 )
 
-export const selectAPY = createSelector(
+const selectApyV1 = createSelector(
 	(state: RootState) => state.staking.v1.totalStakedBalance,
 	(state: RootState) => state.staking.weekCounter,
 	(totalStakedBalance, weekCounter) => {
@@ -275,48 +357,41 @@ export const selectAPY = createSelector(
 	}
 )
 
-export const selectAPYV2 = createSelector(
+const selectApyV2 = createSelector(
 	(state: RootState) => state.staking.v2.totalStakedBalance,
-	(state: RootState) => state.staking.v1.totalStakedBalance,
 	(state: RootState) => state.staking.weekCounter,
-	(totalStakedBalance, totalStakedBalanceV1, weekCounter) => {
-		return getApy(Number(totalStakedBalance) + Number(totalStakedBalanceV1), weekCounter)
+	(totalStakedBalance, weekCounter) => {
+		return getApy(Number(totalStakedBalance), weekCounter)
 	}
 )
 
-export const selectEscrowData = (state: RootState) => state.staking.v1.escrowData ?? []
-
-export const selectEscrowV2Data = (state: RootState) => state.staking.v2.escrowData ?? []
-
-export const selectVestEscrowV2Entries = createSelector(selectEscrowV2Data, (escrowData) =>
-	escrowData.map((entry: EscrowData<string>) => entry.id)
+export const selectApy = createSelector(
+	selectApyV1,
+	selectApyV2,
+	selectStakingV1,
+	(apyV1, apyV2, stakingV1) => (stakingV1 ? apyV1 : apyV2)
 )
 
-export const selectStakingRollbackRequired = createSelector(
-	selectStakedKwentaBalanceV2,
-	selectTotalVestableV2,
-	(stakedKwentaBalance, totalVestable) =>
-		stakedKwentaBalance.gt(ZERO_WEI) || totalVestable.gt(ZERO_WEI)
+const selectEscrowEntriesV1 = (state: RootState) => state.staking.v1.escrowData ?? []
+
+const selectEscrowEntriesV2 = (state: RootState) => state.staking.v2.escrowData ?? []
+
+export const selectEscrowEntries = createSelector(
+	selectEscrowEntriesV1,
+	selectEscrowEntriesV2,
+	selectStakingV1,
+	(escrowEntriesV1, escrowEntriesV2, stakingV1) => (stakingV1 ? escrowEntriesV1 : escrowEntriesV2)
 )
 
-export const selectStakingMigrationCompleted = (state: RootState) =>
-	state.staking.stakingMigrationCompleted
-
-export const selectStakingMigrationRequired = createSelector(
-	selectClaimableBalance,
-	selectStakedKwentaBalance,
-	(claimableBalanceV1, stakedKwentaBalanceV1) =>
-		claimableBalanceV1.gt(ZERO_WEI) || stakedKwentaBalanceV1.gt(ZERO_WEI)
+export const selectIsClaimingAllRewards = createSelector(
+	(state: RootState) => state.staking.claimAllRewardsStatus,
+	(claimAllRewardsStatus) => claimAllRewardsStatus === FetchStatus.Loading
 )
 
-export const selectSelectedEscrowVersion = (state: RootState) =>
-	state.staking.selectedEscrowVersion ?? 1
-
-export const selectCombinedEscrowData = createSelector(
-	selectEscrowData,
-	selectEscrowV2Data,
-	selectSelectedEscrowVersion,
-	(escrowDataV1, escrowDataV2, escrowVersion) => (escrowVersion === 1 ? escrowDataV1 : escrowDataV2)
+export const selectCanVestBeforeMigration = createSelector(
+	selectNumberOfRegisteredEntries,
+	selectStakingV1,
+	(numberOfRegisteredEntries, stakingV1) => stakingV1 && numberOfRegisteredEntries === 0
 )
 
 export const selectTradingRewardsSupportedNetwork = (state: RootState) =>
@@ -325,7 +400,77 @@ export const selectTradingRewardsSupportedNetwork = (state: RootState) =>
 export const selectStakingSupportedNetwork = (state: RootState) =>
 	state.wallet.networkId === 10 || state.wallet.networkId === 420
 
-export const selectIsClaimingAllRewards = createSelector(
-	(state: RootState) => state.staking.claimAllRewardsStatus,
-	(claimAllRewardsStatus) => claimAllRewardsStatus === FetchStatus.Loading
+export const selectStepClaimActive = createSelector(selectClaimableBalanceV1, (claimableBalance) =>
+	claimableBalance.gt(0)
+)
+
+export const selectStepClaimTradingActive = createSelector(
+	selectStepClaimActive,
+	selectKwentaRewards,
+	(stepClaimActive, kwentaRewards) => !stepClaimActive && kwentaRewards.gt(0)
+)
+
+export const selectStepClaimFlowActive = createSelector(
+	selectStepClaimActive,
+	selectStepClaimTradingActive,
+	(stepClaim, stepClaimTrading) => stepClaim || stepClaimTrading
+)
+
+export const selectStepRegisterActive = createSelector(
+	selectNumberOfUnregisteredEntries,
+	(numberOfUnregisteredEntries) => numberOfUnregisteredEntries > 0
+)
+
+export const selectStepVestActive = createSelector(
+	selectStepRegisterActive,
+	selectNumberOfUnvestedRegisteredEntries,
+	(stepRegisterActive, numberOfUnvestedEntries) =>
+		!stepRegisterActive && numberOfUnvestedEntries > 0
+)
+
+export const selectStepApproveActive = createSelector(
+	selectStepRegisterActive,
+	selectStepVestActive,
+	selectNeedEscrowMigratorApproval,
+	(stepRegisterActive, stepVestActive, needApproval) =>
+		!stepRegisterActive && !stepVestActive && needApproval
+)
+
+export const selectStepMigrateActive = createSelector(
+	selectStepRegisterActive,
+	selectStepVestActive,
+	selectStepApproveActive,
+	selectNumberOfUnmigratedRegisteredEntries,
+	(stepRegisterActive, stepVestActive, stepApproveActive, numberOfUnmigratedEntries) =>
+		!stepRegisterActive && !stepVestActive && !stepApproveActive && numberOfUnmigratedEntries > 0
+)
+
+export const selectStepMigrateFlowActive = createSelector(
+	selectStepClaimFlowActive,
+	selectStepRegisterActive,
+	selectStepVestActive,
+	selectStepApproveActive,
+	selectStepMigrateActive,
+	selectIsMigrationPeriodStarted,
+	selectInMigrationPeriod,
+	(
+		stepClaimFlowActive,
+		stepRegisterActive,
+		stepVestActive,
+		stepApproveActive,
+		selectStepMigrateActive,
+		isMigrationPeriodStarted,
+		inMigrationPeriod
+	) =>
+		!stepClaimFlowActive &&
+		(stepRegisterActive || stepVestActive || stepApproveActive || selectStepMigrateActive) &&
+		(!isMigrationPeriodStarted || inMigrationPeriod)
+)
+
+export const selectStepUnstakeActive = createSelector(
+	selectStepClaimFlowActive,
+	selectStepMigrateFlowActive,
+	selectStakedKwentaBalanceV1,
+	(stepClaimFlowActive, stepMigrateFlowActive, stakedKwentaBalance) =>
+		!stepClaimFlowActive && !stepMigrateFlowActive && stakedKwentaBalance.gt(0)
 )

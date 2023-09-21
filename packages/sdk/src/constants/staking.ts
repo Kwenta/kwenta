@@ -9,6 +9,7 @@ export const EPOCH_START: Record<number, number> = {
 }
 
 export const WEEK = 604800
+export const VESTING_ENTRY_PAGE_SIZE = 999999
 export const DECAY_RATE = 0.0205
 export const INITIAL_WEEKLY_SUPPLY = BigNumber.from('14463369230769230769230')
 export const STAKING_REWARDS_RATIO = 0.6

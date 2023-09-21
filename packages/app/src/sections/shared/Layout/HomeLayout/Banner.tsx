@@ -39,12 +39,15 @@ const BannerView: React.FC<BannerViewProps> = ({ mode, onDismiss, onDetails }) =
 		!router.pathname.includes('dashboard')
 			? `${MARKET_SELECTOR_HEIGHT_MOBILE}px`
 			: '0px'
+	const marginBottom =
+		router.pathname.includes('market') && !router.pathname.includes('dashboard') ? `0px` : '15px'
 
 	return (
 		<FuturesBannerContainer
 			onClick={onDetails}
 			$hasDetails={!!BANNER_LINK_URL}
 			$marginTop={marginTop}
+			$marginBottom={marginBottom}
 		>
 			<FuturesBannerLinkWrapper>
 				<FuturesLink size={linkSize}>
@@ -112,13 +115,17 @@ const FuturesLink = styled(Body)`
 	`};
 `
 
-const FuturesBannerContainer = styled.div<{ $hasDetails?: boolean; $marginTop: string }>`
+const FuturesBannerContainer = styled.div<{
+	$hasDetails?: boolean
+	$marginTop: string
+	$marginBottom: string
+}>`
 	height: ${BANNER_HEIGHT_DESKTOP}px;
 	width: 100%;
 	display: flex;
 	align-items: center;
 	background: ${(props) => props.theme.colors.selectedTheme.newTheme.banner.yellow.background};
-	margin-bottom: 15px;
+	margin-bottom: ${(props) => props.$marginBottom || '15px'};
 	cursor: ${(props) => (props.$hasDetails ? 'pointer' : 'auto')};
 	margin-top: ${(props) => props.$marginTop || '0px'};
 

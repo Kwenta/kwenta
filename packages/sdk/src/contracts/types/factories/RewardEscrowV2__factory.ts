@@ -11,9 +11,25 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "_kwenta",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_rewardsNotifier",
+        type: "address",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "constructor",
+  },
+  {
+    inputs: [],
+    name: "CannotTransferToSelf",
+    type: "error",
   },
   {
     inputs: [],
@@ -23,11 +39,6 @@ const _abi = [
   {
     inputs: [],
     name: "EarlyVestingFeeTooLow",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InsufficientBalance",
     type: "error",
   },
   {
@@ -49,6 +60,11 @@ const _abi = [
   {
     inputs: [],
     name: "InvalidDuration",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "OnlyEscrowMigrator",
     type: "error",
   },
   {
@@ -158,12 +174,63 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "uint256",
+        name: "amountToTreasury",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amountToNotifier",
+        type: "uint256",
+      },
+    ],
+    name: "EarlyVestFeeSent",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "escrowMigrator",
+        type: "address",
+      },
+    ],
+    name: "EscrowMigratorSet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint8",
         name: "version",
         type: "uint8",
       },
     ],
     name: "Initialized",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferStarted",
     type: "event",
   },
   {
@@ -397,6 +464,13 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "acceptOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -404,9 +478,9 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256",
+        internalType: "uint144",
         name: "_quantity",
-        type: "uint256",
+        type: "uint144",
       },
     ],
     name: "appendVestingEntry",
@@ -482,14 +556,14 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256",
+        internalType: "uint144",
         name: "_deposit",
-        type: "uint256",
+        type: "uint144",
       },
       {
-        internalType: "uint256",
+        internalType: "uint40",
         name: "_duration",
-        type: "uint256",
+        type: "uint40",
       },
       {
         internalType: "uint8",
@@ -500,6 +574,19 @@ const _abi = [
     name: "createEscrowEntry",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "escrowMigrator",
+    outputs: [
+      {
+        internalType: "contract IEscrowMigrator",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -702,7 +789,7 @@ const _abi = [
             type: "uint64",
           },
         ],
-        internalType: "struct VestingEntries.VestingEntryWithID[]",
+        internalType: "struct IRewardEscrowV2.VestingEntryWithID[]",
         name: "",
         type: "tuple[]",
       },
@@ -714,12 +801,47 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_contractOwner",
+        name: "_account",
         type: "address",
       },
       {
+        components: [
+          {
+            internalType: "uint144",
+            name: "escrowAmount",
+            type: "uint144",
+          },
+          {
+            internalType: "uint40",
+            name: "duration",
+            type: "uint40",
+          },
+          {
+            internalType: "uint64",
+            name: "endTime",
+            type: "uint64",
+          },
+          {
+            internalType: "uint8",
+            name: "earlyVestingFee",
+            type: "uint8",
+          },
+        ],
+        internalType: "struct IRewardEscrowV2.VestingEntry",
+        name: "_entry",
+        type: "tuple",
+      },
+    ],
+    name: "importEscrowEntry",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
-        name: "_kwenta",
+        name: "_contractOwner",
         type: "address",
       },
     ],
@@ -845,6 +967,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "pendingOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "proxiableUUID",
     outputs: [
       {
@@ -861,6 +996,19 @@ const _abi = [
     name: "renounceOwnership",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rewardsNotifier",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -928,6 +1076,19 @@ const _abi = [
       },
     ],
     name: "setApprovalForAll",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_escrowMigrator",
+        type: "address",
+      },
+    ],
+    name: "setEscrowMigrator",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1259,14 +1420,14 @@ const _abi = [
     name: "vestingSchedules",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint144",
         name: "escrowAmount",
-        type: "uint256",
+        type: "uint144",
       },
       {
-        internalType: "uint256",
+        internalType: "uint40",
         name: "duration",
-        type: "uint256",
+        type: "uint40",
       },
       {
         internalType: "uint64",

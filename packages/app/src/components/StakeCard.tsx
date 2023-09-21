@@ -10,8 +10,11 @@ import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
 import { StakingCard } from 'sections/dashboard/Stake/card'
+import { useAppSelector } from 'state/hooks'
+import { selectStakingV1 } from 'state/staking/selectors'
 import media from 'styles/media'
 
+import ErrorView from './ErrorView'
 import { Body, NumericValue } from './Text'
 
 type StakeCardProps = {
@@ -51,6 +54,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 		const { t } = useTranslation()
 		const [amount, setAmount] = useState('')
 		const [activeTab, setActiveTab] = useState(0)
+		const stakingV1 = useAppSelector(selectStakingV1)
 
 		const balance = useMemo(() => {
 			return activeTab === 0 ? stakeBalance : unstakeBalance
@@ -136,20 +140,33 @@ const StakeCard: FC<StakeCardProps> = memo(
 						</StakeInputHeader>
 						<NumericInput value={amount} onChange={handleChange} bold />
 					</FlexDivCol>
-					<Button
-						fullWidth
-						variant="flat"
-						size="small"
-						disabled={isDisabled}
-						loading={isLoading}
-						onClick={handleSubmit}
-					>
-						{activeTab === 0
-							? isApproved
-								? t('dashboard.stake.tabs.stake-table.stake')
-								: t('dashboard.stake.tabs.stake-table.approve')
-							: t('dashboard.stake.tabs.stake-table.unstake')}
-					</Button>
+					<FlexDivCol>
+						<Button
+							fullWidth
+							variant="flat"
+							size="small"
+							disabled={isDisabled}
+							loading={isLoading}
+							onClick={handleSubmit}
+						>
+							{activeTab === 0
+								? isApproved
+									? t('dashboard.stake.tabs.stake-table.stake')
+									: t('dashboard.stake.tabs.stake-table.approve')
+								: t('dashboard.stake.tabs.stake-table.unstake')}
+						</Button>
+						{!stakingV1 && (
+							<ErrorView
+								messageType="warn"
+								message={t('dashboard.stake.portfolio.cooldown.warning')}
+								containerStyle={{
+									margin: '0',
+									marginTop: '25px',
+									padding: '10px 0',
+								}}
+							/>
+						)}
+					</FlexDivCol>
 				</FlexDivCol>
 			</CardGridContainer>
 		)

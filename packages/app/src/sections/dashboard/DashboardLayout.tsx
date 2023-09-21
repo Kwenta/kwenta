@@ -9,6 +9,13 @@ import { TabList, TabPanel } from 'components/Tab'
 import { EXTERNAL_LINKS } from 'constants/links'
 import ROUTES from 'constants/routes'
 import AppLayout from 'sections/shared/Layout/AppLayout'
+import { useAppSelector } from 'state/hooks'
+import { selectStakingMigrationRequired } from 'state/staking/selectors'
+import {
+	selectInMigrationPeriod,
+	selectIsMigrationPeriodStarted,
+	selectStartMigration,
+} from 'state/stakingMigration/selectors'
 import { LeftSideContent, PageContent } from 'styles/common'
 
 import Links from './Links'
@@ -19,6 +26,7 @@ enum Tab {
 	Markets = 'markets',
 	Governance = 'governance',
 	Stake = 'staking',
+	Migrate = 'migrate',
 }
 
 const Tabs = Object.values(Tab)
@@ -26,6 +34,10 @@ const Tabs = Object.values(Tab)
 const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 	const { t } = useTranslation()
 	const router = useRouter()
+	const stakngMigrationRequired = useAppSelector(selectStakingMigrationRequired)
+	const startMigration = useAppSelector(selectStartMigration)
+	const isMigrationPeriodStarted = useAppSelector(selectIsMigrationPeriodStarted)
+	const inMigrationPeriod = useAppSelector(selectInMigrationPeriod)
 
 	const tabQuery = useMemo(() => {
 		if (router.pathname) {
@@ -64,6 +76,17 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
 				href: ROUTES.Dashboard.Stake,
+				hidden:
+					(stakngMigrationRequired || startMigration) &&
+					isMigrationPeriodStarted &&
+					inMigrationPeriod,
+			},
+			{
+				name: Tab.Migrate,
+				label: t('dashboard.tabs.migrate'),
+				active: activeTab === Tab.Migrate,
+				href: ROUTES.Dashboard.Migrate,
+				hidden: !stakngMigrationRequired,
 			},
 			{
 				name: Tab.Governance,
@@ -73,8 +96,17 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				external: true,
 			},
 		],
-		[t, activeTab]
+		[
+			t,
+			activeTab,
+			stakngMigrationRequired,
+			startMigration,
+			isMigrationPeriodStarted,
+			inMigrationPeriod,
+		]
 	)
+
+	const visibleTabs = TABS.filter(({ hidden }) => !hidden)
 
 	return (
 		<AppLayout>
@@ -84,12 +116,12 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 						<StyledLeftSideContent>
 							<StyledTabList>
 								<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
-								{TABS.slice(0, 3).map(({ name, label, active, ...rest }) => (
+								{visibleTabs.slice(0, 3).map(({ name, label, active, ...rest }) => (
 									<NavLink key={name} title={label} isActive={active} {...rest} />
 								))}
 
 								<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
-								{TABS.slice(3).map(({ name, label, active, ...rest }) => (
+								{visibleTabs.slice(3).map(({ name, label, active, ...rest }) => (
 									<NavLink key={name} title={label} isActive={active} {...rest} />
 								))}
 							</StyledTabList>

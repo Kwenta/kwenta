@@ -62,7 +62,7 @@ const StakingTabsHeader = styled.div`
 	margin-top: 30px;
 	margin-bottom: 30px;
 
-	${media.lessThan('md')`
+	${media.lessThan('lg')`
 		flex-direction: column;
 		row-gap: 10px;
 		margin-bottom: 25px;
@@ -71,8 +71,9 @@ const StakingTabsHeader = styled.div`
 `
 
 const StakingTabsContainer = styled.div`
-	${media.lessThan('md')`
-		padding: 15px;
+	${media.lessThan('lg')`
+		padding: 0 15px;
+		margin-top: 25px;
 	`}
 `
 

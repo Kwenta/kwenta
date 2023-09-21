@@ -26,22 +26,10 @@ export const getReferralStatisticsByAccount = async (
 		codes.map(async (code) => {
 			const traders = await queryTradersByCode(sdk, code)
 
-			const totalVolumeByTrader = await limitConcurrency(
-				traders,
-				async ({ id, lastMintedAt }) => {
-					const trades = await queryVolumeByTrader(sdk, id, lastMintedAt)
-					if (!trades.length) return 0
-					return calculateTraderVolume(trades)
-				},
-				200
-			)
-
-			const totalVolume = totalVolumeByTrader.reduce((acc, curr) => acc + curr, 0)
-
 			return {
 				code,
 				referredCount: traders.length.toString(),
-				referralVolume: totalVolume.toString(),
+				referralVolume: '0',
 				earnedRewards: '0',
 			}
 		})

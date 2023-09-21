@@ -9,6 +9,7 @@ import { PREFERENCES_INITIAL_STATE } from './preferences/reducer'
 import { PRICES_INITIAL_STATE } from './prices/reducer'
 import { REFERRALS_INITIAL_STATE } from './referrals/reducer'
 import { STAKING_INITIAL_STATE } from './staking/reducer'
+import { STAKING_MIGRATION_INITIAL_STATE } from './stakingMigration/reducer'
 import { STATS_INITIAL_STATE } from './stats/reducer'
 import { WALLET_INITIAL_STATE } from './wallet/reducer'
 
@@ -78,6 +79,12 @@ export const migrations = {
 			...state,
 			futures: FUTURES_INITIAL_STATE,
 			smartMargin: SMART_MARGIN_INITIAL_STATE,
+		}
+	},
+	40: (state: any) => {
+		return {
+			...state,
+			stakingMigration: STAKING_MIGRATION_INITIAL_STATE,
 		}
 	},
 }

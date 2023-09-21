@@ -5,6 +5,7 @@ export { BatchClaimer__factory } from "./BatchClaimer__factory";
 export { BoostNFT__factory } from "./BoostNFT__factory";
 export { DappMaintenance__factory } from "./DappMaintenance__factory";
 export { ERC20__factory } from "./ERC20__factory";
+export { EscrowMigrator__factory } from "./EscrowMigrator__factory";
 export { ExchangeRates__factory } from "./ExchangeRates__factory";
 export { Exchanger__factory } from "./Exchanger__factory";
 export { FuturesMarket__factory } from "./FuturesMarket__factory";

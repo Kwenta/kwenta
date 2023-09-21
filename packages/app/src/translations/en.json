@@ -363,7 +363,9 @@
 			"markets": "Markets",
 			"governance": "Governance",
 			"staking": "Staking & Rewards",
-			"earn": "Earn"
+			"earn": "Earn",
+			"migrate": "Migrate to V2",
+			"v1-staking": "V1 Staking"
 		},
 		"overview": {
 			"futures-positions-table": {
@@ -475,10 +477,12 @@
 		"stake": {
 			"docs": "Docs →",
 			"portfolio": {
-				"title": "Staking V1",
+				"title": "Staking V2",
+				"title-v1": "Staking V1",
 				"balance": {
 					"title": "Balance",
 					"liquid": "Liquid",
+					"escrow": "Escrow",
 					"staked": "Staked",
 					"staked-v1": "Staked V1",
 					"staked-v2": "Staked V2"
@@ -567,6 +571,7 @@
 					"status": "Status",
 					"total": "Total",
 					"fee": "Fee",
+					"vest": "VEST",
 					"vest-v1": "VEST V1",
 					"vest-v2": "VEST V2",
 					"transfer": "TRANSFER",
@@ -584,18 +589,57 @@
 				},
 				"migrate": {
 					"title": "Migrate to Staking V2",
-					"copy": "Lorem ipsum dolor sit amet consectetur. Ut in nisl ut quam condimentum lacus.",
-					"step-1-copy": "Claim any remaining rewards",
-					"step-2-copy": "Unstake V1 liquid balance",
-					"step-3-copy": "Stake liquid balance on v2",
-					"rewards": "Rewards",
-					"staked": "Staked",
-					"claim": "Claim",
-					"unstake": "Unstake",
-					"stake": "Stake",
-					"approve": "Approve",
-					"step": "Step <0>{{index}}</0>",
-					"visit-v2": "Visit Staking V2"
+					"copy": "Continue earning $KWENTA rewards by migrating your stake & escrow entries now.",
+					"claim": {
+						"title" : "Claim",
+						"copy": "Claim any remaining staking rewards",
+						"rewards": "Rewards",
+						"button": "Claim",
+						"trading": {
+							"title": "Trading",
+							"copy": "Claim any remaining trading rewards",
+							"button": "Claim"
+						}
+					},
+					"migrate": {
+						"title" : "Migrate",
+						"copy": "Migrate V1 Escrow",
+						"countdown": "Your migration window closes in <0>{{ time }}</0>. If you don't complete the process before the deadline you will lose your escrow.",
+						"closed": "Your migration window is closed but you can unstake your v1 liquid $KWENTA. Contact us if you need any help.",
+						"completed": "Your migration is complete.",
+						"go-to-staking": "Go to Staking & Rewards Page and <0>stake your $KWENTA</0> to earn rewards.",
+						"remaining": "Remaining",
+						"register": {
+							"title": "Register",
+							"copy": "Register V1 Entries",
+							"button": "Register"
+						},
+						"vest": {
+							"title": "Vest",
+							"copy": "Vest V1 Entries",
+							"button": "Vest"
+						},
+						"approve": {
+							"title": "Approve",
+							"copy": "Approve Contract",
+							"button": "Approve"
+						},
+						"migrate": {
+							"title": "Migrate",
+							"copy": "Migrate all entries",
+							"button": "Migrate"
+						}
+					},
+					"unstake": {
+						"title": "Unstake",
+						"copy": "Migrate V1 Escrow",
+						"unstake-v1": {
+							"title": "Unstake V1",
+							"copy": "Liquid $KWENTA",
+							"kwenta-token": "$KWENTA",
+							"button": "Unstake"
+						}
+					}
 				},
 				"revert": {
 					"title": "Revert to Staking V1",
@@ -661,6 +705,9 @@
 	},
 	"dashboard-stake": {
 		"page-title": "Staking | Kwenta"
+	},
+	"dashboard-stakev1": {
+		"page-title": "V1 Staking | Kwenta"
 	},
 	"dashboard-rewards": {
 		"page-title": "Rewards | Kwenta"

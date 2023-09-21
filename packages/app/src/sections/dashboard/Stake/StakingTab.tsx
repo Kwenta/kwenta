@@ -3,19 +3,16 @@ import { useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import HelpIcon from 'assets/svg/app/question-mark.svg'
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { SplitContainer } from 'components/layout/grid'
 import { Body, Heading } from 'components/Text'
-import Tooltip from 'components/Tooltip/Tooltip'
-import { NO_VALUE } from 'constants/placeholder'
 import { STAKING_DISABLED } from 'constants/ui'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { claimStakingRewards } from 'state/staking/actions'
 import {
-	selectAPY,
+	selectApy,
 	selectClaimableBalance,
 	selectIsGettingReward,
 	selectStakedKwentaBalance,
@@ -32,7 +29,7 @@ const StakingTab = () => {
 	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const isClaimingReward = useAppSelector(selectIsGettingReward)
-	const apy = useAppSelector(selectAPY)
+	const apy = useAppSelector(selectApy)
 
 	const handleGetReward = useCallback(() => {
 		dispatch(claimStakingRewards())
@@ -41,6 +38,7 @@ const StakingTab = () => {
 	const stakingAndRewardsInfo: StakingCards[] = useMemo(
 		() => [
 			{
+				key: 'staking',
 				category: t('dashboard.stake.tabs.staking.title'),
 				card: [
 					{
@@ -57,6 +55,7 @@ const StakingTab = () => {
 				flex: 1,
 			},
 			{
+				key: 'rewards',
 				category: t('dashboard.stake.portfolio.rewards.title'),
 				card: [
 					{
@@ -66,33 +65,6 @@ const StakingTab = () => {
 					},
 				],
 				flex: 0.5,
-			},
-			{
-				category: t('dashboard.stake.portfolio.early-vest-rewards.title'),
-				icon: (
-					<CustomStyledTooltip
-						width="260px"
-						height="auto"
-						content={t('dashboard.stake.portfolio.early-vest-rewards.early-vest-rewards-tooltip')}
-					>
-						<WithCursor cursor="help">
-							<HelpIcon />
-						</WithCursor>
-					</CustomStyledTooltip>
-				),
-				card: [
-					{
-						key: 'early-vest-rewards-claimable',
-						title: t('dashboard.stake.portfolio.early-vest-rewards.claimable'),
-						value: NO_VALUE,
-					},
-					{
-						key: 'early-vest-rewards-epoch',
-						title: t('dashboard.stake.portfolio.early-vest-rewards.epoch'),
-						value: NO_VALUE,
-					},
-				],
-				flex: 1,
 			},
 		],
 		[apy, claimableBalance, stakedKwentaBalance, t]
@@ -106,23 +78,25 @@ const StakingTab = () => {
 					{t('dashboard.stake.tabs.staking.staking-rewards.title')}
 				</StyledHeading>
 				<CardsContainer>
-					{stakingAndRewardsInfo.map(({ category, card, flex, icon }, i) => (
-						<FlexDivCol rowGap="15px" key={i}>
-							<LabelContainer size="large">
-								{category} {icon}
-							</LabelContainer>
-							<FlexDivRow columnGap="25px" justifyContent="flex-start" style={{ flex }}>
-								{card.map(({ key, title, value }) => (
-									<FlexDivCol rowGap="5px" key={key}>
-										<Body color="secondary">{title}</Body>
-										<Body size="large" color="preview">
-											{value}
-										</Body>
-									</FlexDivCol>
-								))}
-							</FlexDivRow>
-						</FlexDivCol>
-					))}
+					{stakingAndRewardsInfo
+						.filter((info) => !info.hidden)
+						.map(({ key, category, card, flex, icon }) => (
+							<FlexDivCol rowGap="15px" key={key}>
+								<LabelContainer size="large">
+									{category} {icon}
+								</LabelContainer>
+								<FlexDivRow columnGap="25px" justifyContent="flex-start" style={{ flex }}>
+									{card.map(({ key, title, value }) => (
+										<FlexDivCol rowGap="5px" key={key}>
+											<Body color="secondary">{title}</Body>
+											<Body size="large" color="preview">
+												{value}
+											</Body>
+										</FlexDivCol>
+									))}
+								</FlexDivRow>
+							</FlexDivCol>
+						))}
 				</CardsContainer>
 				<FlexDivRow justifyContent="flex-start" columnGap="10px">
 					<Button
@@ -141,22 +115,6 @@ const StakingTab = () => {
 		</SplitContainer>
 	)
 }
-
-const CustomStyledTooltip = styled(Tooltip)`
-	padding: 10px;
-	white-space: normal;
-	top: -120px;
-	left: -200px;
-	${media.lessThan('md')`
-		width: 200px;
-		left: -120px;
-		top: -130px;
-	`}
-`
-
-const WithCursor = styled.div<{ cursor: 'help' }>`
-	cursor: ${(props) => props.cursor};
-`
 
 const LabelContainer = styled(Body)`
 	display: flex;

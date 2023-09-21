@@ -27,7 +27,7 @@ import type {
   OnEvent,
 } from "./common";
 
-export declare namespace VestingEntries {
+export declare namespace IRewardEscrowV2 {
   export type VestingEntryWithIDStruct = {
     escrowAmount: BigNumberish;
     entryID: BigNumberish;
@@ -39,6 +39,25 @@ export declare namespace VestingEntries {
     BigNumber,
     BigNumber
   ] & { escrowAmount: BigNumber; entryID: BigNumber; endTime: BigNumber };
+
+  export type VestingEntryStruct = {
+    escrowAmount: BigNumberish;
+    duration: BigNumberish;
+    endTime: BigNumberish;
+    earlyVestingFee: BigNumberish;
+  };
+
+  export type VestingEntryStructOutput = [
+    BigNumber,
+    number,
+    BigNumber,
+    number
+  ] & {
+    escrowAmount: BigNumber;
+    duration: number;
+    endTime: BigNumber;
+    earlyVestingFee: number;
+  };
 }
 
 export interface RewardEscrowV2Interface extends utils.Interface {
@@ -48,11 +67,13 @@ export interface RewardEscrowV2Interface extends utils.Interface {
     "MAXIMUM_EARLY_VESTING_FEE()": FunctionFragment;
     "MAX_DURATION()": FunctionFragment;
     "MINIMUM_EARLY_VESTING_FEE()": FunctionFragment;
-    "appendVestingEntry(address,uint256)": FunctionFragment;
+    "acceptOwnership()": FunctionFragment;
+    "appendVestingEntry(address,uint144)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "bulkTransferFrom(address,address,uint256[])": FunctionFragment;
-    "createEscrowEntry(address,uint256,uint256,uint8)": FunctionFragment;
+    "createEscrowEntry(address,uint144,uint40,uint8)": FunctionFragment;
+    "escrowMigrator()": FunctionFragment;
     "escrowedBalanceOf(address)": FunctionFragment;
     "getAccountVestingEntryIDs(address,uint256,uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
@@ -61,7 +82,8 @@ export interface RewardEscrowV2Interface extends utils.Interface {
     "getVestingEntryClaimable(uint256)": FunctionFragment;
     "getVestingQuantity(uint256[])": FunctionFragment;
     "getVestingSchedules(address,uint256,uint256)": FunctionFragment;
-    "initialize(address,address)": FunctionFragment;
+    "importEscrowEntry(address,(uint144,uint40,uint64,uint8))": FunctionFragment;
+    "initialize(address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "kwenta()": FunctionFragment;
     "name()": FunctionFragment;
@@ -70,11 +92,14 @@ export interface RewardEscrowV2Interface extends utils.Interface {
     "ownerOf(uint256)": FunctionFragment;
     "pauseRewardEscrow()": FunctionFragment;
     "paused()": FunctionFragment;
+    "pendingOwner()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "rewardsNotifier()": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setEscrowMigrator(address)": FunctionFragment;
     "setStakingRewards(address)": FunctionFragment;
     "setTreasuryDAO(address)": FunctionFragment;
     "stakingRewards()": FunctionFragment;
@@ -105,11 +130,13 @@ export interface RewardEscrowV2Interface extends utils.Interface {
       | "MAXIMUM_EARLY_VESTING_FEE"
       | "MAX_DURATION"
       | "MINIMUM_EARLY_VESTING_FEE"
+      | "acceptOwnership"
       | "appendVestingEntry"
       | "approve"
       | "balanceOf"
       | "bulkTransferFrom"
       | "createEscrowEntry"
+      | "escrowMigrator"
       | "escrowedBalanceOf"
       | "getAccountVestingEntryIDs"
       | "getApproved"
@@ -118,6 +145,7 @@ export interface RewardEscrowV2Interface extends utils.Interface {
       | "getVestingEntryClaimable"
       | "getVestingQuantity"
       | "getVestingSchedules"
+      | "importEscrowEntry"
       | "initialize"
       | "isApprovedForAll"
       | "kwenta"
@@ -127,11 +155,14 @@ export interface RewardEscrowV2Interface extends utils.Interface {
       | "ownerOf"
       | "pauseRewardEscrow"
       | "paused"
+      | "pendingOwner"
       | "proxiableUUID"
       | "renounceOwnership"
+      | "rewardsNotifier"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
+      | "setEscrowMigrator"
       | "setStakingRewards"
       | "setTreasuryDAO"
       | "stakingRewards"
@@ -176,6 +207,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "acceptOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "appendVestingEntry",
     values: [string, BigNumberish]
   ): string;
@@ -191,6 +226,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "createEscrowEntry",
     values: [string, BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "escrowMigrator",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "escrowedBalanceOf",
@@ -225,9 +264,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string]
+    functionFragment: "importEscrowEntry",
+    values: [string, IRewardEscrowV2.VestingEntryStruct]
   ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
@@ -249,11 +289,19 @@ export interface RewardEscrowV2Interface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "pendingOwner",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rewardsNotifier",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -267,6 +315,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setEscrowMigrator",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setStakingRewards",
@@ -368,6 +420,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "acceptOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "appendVestingEntry",
     data: BytesLike
   ): Result;
@@ -379,6 +435,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "createEscrowEntry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "escrowMigrator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -413,6 +473,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
     functionFragment: "getVestingSchedules",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "importEscrowEntry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
@@ -432,11 +496,19 @@ export interface RewardEscrowV2Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "pendingOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "rewardsNotifier",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -449,6 +521,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setEscrowMigrator",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -529,7 +605,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "EarlyVestFeeSent(uint256,uint256)": EventFragment;
+    "EscrowMigratorSet(address)": EventFragment;
     "Initialized(uint8)": EventFragment;
+    "OwnershipTransferStarted(address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "StakingRewardsSet(address)": EventFragment;
@@ -545,7 +624,10 @@ export interface RewardEscrowV2Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EarlyVestFeeSent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EscrowMigratorSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StakingRewardsSet"): EventFragment;
@@ -602,12 +684,47 @@ export type BeaconUpgradedEvent = TypedEvent<
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 
+export interface EarlyVestFeeSentEventObject {
+  amountToTreasury: BigNumber;
+  amountToNotifier: BigNumber;
+}
+export type EarlyVestFeeSentEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  EarlyVestFeeSentEventObject
+>;
+
+export type EarlyVestFeeSentEventFilter =
+  TypedEventFilter<EarlyVestFeeSentEvent>;
+
+export interface EscrowMigratorSetEventObject {
+  escrowMigrator: string;
+}
+export type EscrowMigratorSetEvent = TypedEvent<
+  [string],
+  EscrowMigratorSetEventObject
+>;
+
+export type EscrowMigratorSetEventFilter =
+  TypedEventFilter<EscrowMigratorSetEvent>;
+
 export interface InitializedEventObject {
   version: number;
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+
+export interface OwnershipTransferStartedEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferStartedEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferStartedEventObject
+>;
+
+export type OwnershipTransferStartedEventFilter =
+  TypedEventFilter<OwnershipTransferStartedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -735,6 +852,10 @@ export interface RewardEscrowV2 extends BaseContract {
 
     MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<[number]>;
 
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     appendVestingEntry(
       _account: string,
       _quantity: BigNumberish,
@@ -763,6 +884,8 @@ export interface RewardEscrowV2 extends BaseContract {
       _earlyVestingFee: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    escrowMigrator(overrides?: CallOverrides): Promise<[string]>;
 
     escrowedBalanceOf(
       _account: string,
@@ -814,11 +937,16 @@ export interface RewardEscrowV2 extends BaseContract {
       _index: BigNumberish,
       _pageSize: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[VestingEntries.VestingEntryWithIDStructOutput[]]>;
+    ): Promise<[IRewardEscrowV2.VestingEntryWithIDStructOutput[]]>;
+
+    importEscrowEntry(
+      _account: string,
+      _entry: IRewardEscrowV2.VestingEntryStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
     initialize(
       _contractOwner: string,
-      _kwenta: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -847,11 +975,15 @@ export interface RewardEscrowV2 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
+    pendingOwner(overrides?: CallOverrides): Promise<[string]>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    rewardsNotifier(overrides?: CallOverrides): Promise<[string]>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -871,6 +1003,11 @@ export interface RewardEscrowV2 extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setEscrowMigrator(
+      _escrowMigrator: string,
       overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
@@ -966,9 +1103,9 @@ export interface RewardEscrowV2 extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, number] & {
+      [BigNumber, number, BigNumber, number] & {
         escrowAmount: BigNumber;
-        duration: BigNumber;
+        duration: number;
         endTime: BigNumber;
         earlyVestingFee: number;
       }
@@ -984,6 +1121,10 @@ export interface RewardEscrowV2 extends BaseContract {
   MAX_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
   MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>;
+
+  acceptOwnership(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   appendVestingEntry(
     _account: string,
@@ -1013,6 +1154,8 @@ export interface RewardEscrowV2 extends BaseContract {
     _earlyVestingFee: BigNumberish,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  escrowMigrator(overrides?: CallOverrides): Promise<string>;
 
   escrowedBalanceOf(
     _account: string,
@@ -1062,11 +1205,16 @@ export interface RewardEscrowV2 extends BaseContract {
     _index: BigNumberish,
     _pageSize: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<VestingEntries.VestingEntryWithIDStructOutput[]>;
+  ): Promise<IRewardEscrowV2.VestingEntryWithIDStructOutput[]>;
+
+  importEscrowEntry(
+    _account: string,
+    _entry: IRewardEscrowV2.VestingEntryStruct,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   initialize(
     _contractOwner: string,
-    _kwenta: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1092,11 +1240,15 @@ export interface RewardEscrowV2 extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
+  pendingOwner(overrides?: CallOverrides): Promise<string>;
+
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  rewardsNotifier(overrides?: CallOverrides): Promise<string>;
 
   "safeTransferFrom(address,address,uint256)"(
     from: string,
@@ -1116,6 +1268,11 @@ export interface RewardEscrowV2 extends BaseContract {
   setApprovalForAll(
     operator: string,
     approved: boolean,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setEscrowMigrator(
+    _escrowMigrator: string,
     overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
@@ -1208,9 +1365,9 @@ export interface RewardEscrowV2 extends BaseContract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, number] & {
+    [BigNumber, number, BigNumber, number] & {
       escrowAmount: BigNumber;
-      duration: BigNumber;
+      duration: number;
       endTime: BigNumber;
       earlyVestingFee: number;
     }
@@ -1226,6 +1383,8 @@ export interface RewardEscrowV2 extends BaseContract {
     MAX_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
     MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<number>;
+
+    acceptOwnership(overrides?: CallOverrides): Promise<void>;
 
     appendVestingEntry(
       _account: string,
@@ -1255,6 +1414,8 @@ export interface RewardEscrowV2 extends BaseContract {
       _earlyVestingFee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    escrowMigrator(overrides?: CallOverrides): Promise<string>;
 
     escrowedBalanceOf(
       _account: string,
@@ -1306,11 +1467,16 @@ export interface RewardEscrowV2 extends BaseContract {
       _index: BigNumberish,
       _pageSize: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<VestingEntries.VestingEntryWithIDStructOutput[]>;
+    ): Promise<IRewardEscrowV2.VestingEntryWithIDStructOutput[]>;
+
+    importEscrowEntry(
+      _account: string,
+      _entry: IRewardEscrowV2.VestingEntryStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     initialize(
       _contractOwner: string,
-      _kwenta: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1334,9 +1500,13 @@ export interface RewardEscrowV2 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
+    pendingOwner(overrides?: CallOverrides): Promise<string>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    rewardsNotifier(overrides?: CallOverrides): Promise<string>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -1356,6 +1526,11 @@ export interface RewardEscrowV2 extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setEscrowMigrator(
+      _escrowMigrator: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1443,9 +1618,9 @@ export interface RewardEscrowV2 extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, number] & {
+      [BigNumber, number, BigNumber, number] & {
         escrowAmount: BigNumber;
-        duration: BigNumber;
+        duration: number;
         endTime: BigNumber;
         earlyVestingFee: number;
       }
@@ -1489,8 +1664,31 @@ export interface RewardEscrowV2 extends BaseContract {
     ): BeaconUpgradedEventFilter;
     BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
+    "EarlyVestFeeSent(uint256,uint256)"(
+      amountToTreasury?: null,
+      amountToNotifier?: null
+    ): EarlyVestFeeSentEventFilter;
+    EarlyVestFeeSent(
+      amountToTreasury?: null,
+      amountToNotifier?: null
+    ): EarlyVestFeeSentEventFilter;
+
+    "EscrowMigratorSet(address)"(
+      escrowMigrator?: null
+    ): EscrowMigratorSetEventFilter;
+    EscrowMigratorSet(escrowMigrator?: null): EscrowMigratorSetEventFilter;
+
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
+
+    "OwnershipTransferStarted(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
+    OwnershipTransferStarted(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferStartedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -1562,6 +1760,10 @@ export interface RewardEscrowV2 extends BaseContract {
 
     MINIMUM_EARLY_VESTING_FEE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     appendVestingEntry(
       _account: string,
       _quantity: BigNumberish,
@@ -1590,6 +1792,8 @@ export interface RewardEscrowV2 extends BaseContract {
       _earlyVestingFee: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
+
+    escrowMigrator(overrides?: CallOverrides): Promise<BigNumber>;
 
     escrowedBalanceOf(
       _account: string,
@@ -1632,9 +1836,14 @@ export interface RewardEscrowV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    importEscrowEntry(
+      _account: string,
+      _entry: IRewardEscrowV2.VestingEntryStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
     initialize(
       _contractOwner: string,
-      _kwenta: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1663,11 +1872,15 @@ export interface RewardEscrowV2 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
+    pendingOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
+
+    rewardsNotifier(overrides?: CallOverrides): Promise<BigNumber>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -1687,6 +1900,11 @@ export interface RewardEscrowV2 extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setEscrowMigrator(
+      _escrowMigrator: string,
       overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
@@ -1801,6 +2019,10 @@ export interface RewardEscrowV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    acceptOwnership(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     appendVestingEntry(
       _account: string,
       _quantity: BigNumberish,
@@ -1832,6 +2054,8 @@ export interface RewardEscrowV2 extends BaseContract {
       _earlyVestingFee: BigNumberish,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
+
+    escrowMigrator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     escrowedBalanceOf(
       _account: string,
@@ -1874,9 +2098,14 @@ export interface RewardEscrowV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    importEscrowEntry(
+      _account: string,
+      _entry: IRewardEscrowV2.VestingEntryStruct,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     initialize(
       _contractOwner: string,
-      _kwenta: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
@@ -1905,11 +2134,15 @@ export interface RewardEscrowV2 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    pendingOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
+
+    rewardsNotifier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -1929,6 +2162,11 @@ export interface RewardEscrowV2 extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setEscrowMigrator(
+      _escrowMigrator: string,
       overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 

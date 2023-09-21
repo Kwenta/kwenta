@@ -7,6 +7,16 @@ import {
 	selectStakingSupportedNetwork,
 	selectTradingRewardsSupportedNetwork,
 } from 'state/staking/selectors'
+import {
+	fetchEscrowMigratorAllowance,
+	fetchMigrationDeadline,
+	fetchRegisteredVestingEntryIDs,
+	fetchToPay,
+	fetchTotalEscrowUnmigrated,
+	fetchUnmigratedRegisteredEntryIDs,
+	fetchUnregisteredVestingEntryIDs,
+	fetchUnvestedRegisteredEntryIDs,
+} from 'state/stakingMigration/actions'
 import { FetchStatus, ThunkConfig } from 'state/types'
 import { selectWallet } from 'state/wallet/selectors'
 import logError from 'utils/logError'
@@ -221,6 +231,24 @@ export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
 		dispatch(fetchEscrowV2Data())
 		dispatch(fetchEstimatedRewards())
 		dispatch(fetchClaimableRewards())
+		dispatch(fetchMigrationDetails())
+	}
+)
+
+export const fetchMigrationDetails = createAsyncThunk<void, void, ThunkConfig>(
+	'staking/fetchMigrationDetails',
+	async (_, { dispatch, getState }) => {
+		const wallet = selectWallet(getState())
+		const supportedNetwork = selectStakingSupportedNetwork(getState())
+		if (!wallet || !supportedNetwork) return
+		dispatch(fetchMigrationDeadline())
+		dispatch(fetchTotalEscrowUnmigrated())
+		dispatch(fetchRegisteredVestingEntryIDs())
+		dispatch(fetchUnregisteredVestingEntryIDs())
+		dispatch(fetchUnvestedRegisteredEntryIDs())
+		dispatch(fetchToPay())
+		dispatch(fetchEscrowMigratorAllowance())
+		dispatch(fetchUnmigratedRegisteredEntryIDs())
 	}
 )
 

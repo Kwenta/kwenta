@@ -10,6 +10,7 @@ import SynthsService from './services/synths'
 import SystemService from './services/system'
 import TransactionsService from './services/transactions'
 import StatsService from './services/stats'
+import StakingMigrationService from './services/stakingMigration'
 import ReferralsService from './services/referrals'
 
 export default class KwentaSDK {
@@ -25,6 +26,7 @@ export default class KwentaSDK {
 	public stats: StatsService
 	public referrals: ReferralsService
 	public system: SystemService
+	public stakingMigration: StakingMigrationService
 
 	constructor(context: IContext) {
 		this.context = new Context(context)
@@ -37,6 +39,7 @@ export default class KwentaSDK {
 		this.stats = new StatsService(this)
 		this.system = new SystemService(this)
 		this.perpsV3 = new PerpsV3(this)
+		this.stakingMigration = new StakingMigrationService(this)
 		this.referrals = new ReferralsService(this)
 	}
 

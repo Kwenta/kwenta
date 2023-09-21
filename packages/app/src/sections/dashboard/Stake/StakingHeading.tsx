@@ -4,14 +4,15 @@ import styled from 'styled-components'
 
 import Button from 'components/Button'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
-import { Heading } from 'components/Text'
+import { Body, Heading } from 'components/Text'
 import { EXTERNAL_LINKS } from 'constants/links'
 
 interface StakingHeadingProps {
 	title: string
+	copy?: string
 }
 
-export const StakingHeading: FC<StakingHeadingProps> = memo(({ title }) => {
+export const StakingHeading: FC<StakingHeadingProps> = memo(({ title, copy }) => {
 	const { t } = useTranslation()
 
 	return (
@@ -19,6 +20,7 @@ export const StakingHeading: FC<StakingHeadingProps> = memo(({ title }) => {
 			<TitleContainer>
 				<FlexDivCol rowGap="5px">
 					<StyledHeading variant="h4">{title}</StyledHeading>
+					{copy && <Body color="secondary">{copy}</Body>}
 				</FlexDivCol>
 				<StyledButton
 					size="xsmall"
@@ -35,6 +37,7 @@ export const StakingHeading: FC<StakingHeadingProps> = memo(({ title }) => {
 
 const TitleContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 30px;
+	column-gap: 10%;
 `
 
 const StyledButton = styled(Button)`
