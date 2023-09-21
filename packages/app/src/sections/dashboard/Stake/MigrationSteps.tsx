@@ -60,9 +60,9 @@ import media from 'styles/media'
 
 import { StakingHeading } from './StakingHeading'
 
-const REGISTER_BATCH_SIZE = 500
-const VEST_BATCH_SIZE = 2000
-const MIGRATE_BATCH_SIZE = 175
+const REGISTER_BATCH_SIZE = 250
+const VEST_BATCH_SIZE = 1000
+const MIGRATE_BATCH_SIZE = 90
 
 const MigrationSteps = memo(() => {
 	const { t } = useTranslation()
