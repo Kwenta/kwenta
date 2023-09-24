@@ -614,14 +614,6 @@ export const selectSmartMarginAllowanceValid = createSelector(
 	}
 )
 
-export const selectQuoteInvalidReason = (state: RootState) =>
-	state.smartMargin.tradeSwapDepositQuote?.quoteInvalidReason
-
-export const selectSwapDepositQuoteLoading = createSelector(
-	(state: RootState) => state.smartMargin.queryStatuses.tradeSwapDepositQuote,
-	({ status }) => status === FetchStatus.Loading
-)
-
 export const selectWithdrawableSmartMargin = createSelector(
 	selectAvailableMarginInMarkets,
 	selectSmartMarginBalanceInfo,
@@ -1253,17 +1245,4 @@ export const selectSwapDepositSlippage = createSelector(
 	selectSwapDepositCustomSlippage,
 	(state: RootState) => state.smartMargin.swapDepositSlippage,
 	(customSlippage, slippage) => (customSlippage ? Number(customSlippage) : slippage ?? 0)
-)
-
-export const selectTradeSwapDepositQuote = createSelector(
-	(state: RootState) => state.smartMargin.tradeSwapDepositQuote,
-	(quote) => {
-		return quote
-			? {
-					token: quote.token,
-					amountIn: wei(quote.amountIn),
-					amountOut: wei(quote.amountOut),
-			  }
-			: null
-	}
 )

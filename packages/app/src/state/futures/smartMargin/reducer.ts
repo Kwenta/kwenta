@@ -40,7 +40,6 @@ import {
 	fetchFuturesFees,
 	fetchFuturesFeesForAccount,
 	fetchSwapDepositBalanceQuote,
-	calculateTradeSwapDeposit,
 } from './actions'
 import {
 	SmartMarginAccountData,
@@ -73,7 +72,6 @@ export const SMART_MARGIN_INITIAL_STATE: SmartMarginState = {
 		futuresFeesForAccount: DEFAULT_QUERY_STATUS,
 		swapDepositBalanceQuote: DEFAULT_QUERY_STATUS,
 		swapDepositQuote: DEFAULT_QUERY_STATUS,
-		tradeSwapDepositQuote: DEFAULT_QUERY_STATUS,
 	},
 	accounts: DEFAULT_MAP_BY_NETWORK,
 	selectedMarketAsset: FuturesMarketAsset.sETH,
@@ -264,9 +262,6 @@ const smartMarginSlice = createSlice({
 		},
 		setSwapDepositCustomSlippage: (smartMargin, action) => {
 			smartMargin.swapDepositCustomSlippage = action.payload
-		},
-		clearTradeSwapDepositQuote: (smartMargin) => {
-			smartMargin.tradeSwapDepositQuote = undefined
 		},
 	},
 	extraReducers: (builder) => {
@@ -549,20 +544,6 @@ const smartMarginSlice = createSlice({
 				error: 'Failed to fetch quote for the swap deposit token',
 			}
 		})
-
-		builder.addCase(calculateTradeSwapDeposit.pending, (futuresState) => {
-			futuresState.queryStatuses.tradeSwapDepositQuote = LOADING_STATUS
-		})
-		builder.addCase(calculateTradeSwapDeposit.fulfilled, (futuresState, action) => {
-			futuresState.queryStatuses.tradeSwapDepositQuote = SUCCESS_STATUS
-			futuresState.tradeSwapDepositQuote = action.payload
-		})
-		builder.addCase(calculateTradeSwapDeposit.rejected, (futuresState) => {
-			futuresState.queryStatuses.tradeSwapDepositQuote = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch quote for the swap deposit',
-			}
-		})
 	},
 })
 
@@ -596,7 +577,6 @@ export const {
 	setSLTPModalTakeProfit,
 	setSwapDepositSlippage,
 	setSwapDepositCustomSlippage,
-	clearTradeSwapDepositQuote,
 } = smartMarginSlice.actions
 
 const findWalletForAccount = (

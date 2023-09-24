@@ -51,6 +51,7 @@ import {
 import { fetchBalances } from 'state/balances/actions'
 import { EST_KEEPER_GAS_FEE, ZERO_CM_FEES, ZERO_STATE_TRADE_INPUTS } from 'state/constants'
 import { serializeWeiObject } from 'state/helpers'
+import { selectSelectedEpoch } from 'state/staking/selectors'
 import { AppDispatch, AppThunk, RootState } from 'state/store'
 import { ThunkConfig } from 'state/types'
 import { selectNetwork, selectWallet } from 'state/wallet/selectors'
@@ -98,13 +99,7 @@ import {
 	clearSmartMarginTradePreviews,
 	setKeeperDeposit,
 } from './reducer'
-import {
-	selectIdleAccountMargin,
-	selectSelectedSwapDepositToken,
-	selectSwapDepositBalance,
-	selectSwapDepositBalanceQuote,
-	selectTradeSwapDepositQuote,
-} from './selectors'
+import { selectSelectedSwapDepositToken, selectSwapDepositBalance } from './selectors'
 import {
 	selectSmartMarginAccount,
 	selectSmartMarginMarginDelta,
@@ -137,7 +132,6 @@ import {
 	selectAllSmartMarginPositions,
 } from './selectors'
 import { SmartMarginBalanceInfo } from './types'
-import { selectSelectedEpoch } from 'state/staking/selectors'
 
 export const fetchMarketsV2 = createAsyncThunk<
 	{ markets: PerpsMarketV2<string>[]; networkId: NetworkId } | undefined,
@@ -428,64 +422,6 @@ export const fetchSmartMarginTradePreview = createAsyncThunk<
 		}
 	}
 )
-
-export const calculateTradeSwapDeposit = createAsyncThunk<
-	| {
-			token: SwapDepositToken
-			amountIn: string
-			amountOut: string
-			quoteInvalidReason?: `insufficient-${'balance' | 'quote'}`
-	  }
-	| undefined,
-	void,
-	ThunkConfig
->('futures/calculateTradeSwapDeposit', async (_, { getState }) => {
-	const state = getState()
-	const wallet = selectWallet(state)
-	const marketInfo = selectV2MarketInfo(state)
-	const swapDepositToken = selectSelectedSwapDepositToken(state)
-	const marginDelta = selectSmartMarginMarginDelta(state)
-	const idleMargin = selectIdleAccountMargin(state)
-	const swapDepositBalance = selectSwapDepositBalance(state)
-	const balanceQuote = selectSwapDepositBalanceQuote(state)
-
-	if (!wallet || !marketInfo || !swapDepositToken || swapDepositToken === SwapDepositToken.SUSD)
-		return
-
-	try {
-		const requiredSwapDeposit = marginDelta.sub(idleMargin)
-
-		if (requiredSwapDeposit.lte(0)) {
-			return
-		}
-
-		// Add some buffer to account for price change since quote
-		// but keeping within the bounds of original balance quote
-
-		const depositWithBuffer = requiredSwapDeposit.add(
-			requiredSwapDeposit.mul(SWAP_QUOTE_BUFFER).div(100)
-		)
-
-		const tokenInAmount = depositWithBuffer.div(balanceQuote?.rate || 0)
-
-		let quoteInvalidReason: `insufficient-${'balance' | 'quote'}` | undefined = undefined
-
-		if (tokenInAmount.gt(swapDepositBalance)) {
-			quoteInvalidReason = 'insufficient-balance'
-		}
-
-		return {
-			token: swapDepositToken,
-			amountIn: tokenInAmount.toString(),
-			amountOut: requiredSwapDeposit.toString(),
-			quoteInvalidReason,
-		}
-	} catch (err) {
-		logError(err)
-		notifyError('Failed to calculate swap deposit', err)
-		throw err
-	}
-})
 
 export const clearTradeInputs = createAsyncThunk<void, void, ThunkConfig>(
 	'futures/clearTradeInputs',
@@ -1079,7 +1015,6 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 		const position = selectSelectedSmartMarginPosition(state)
 		const openDelayedOrders = selectSmartMarginDelayedOrders(state)
 		const { stopLossPrice, takeProfitPrice } = selectSlTpTradeInputs(state)
-		const swapQuote = selectTradeSwapDepositQuote(state)
 
 		try {
 			if (!marketInfo) throw new Error('Market info not found')
@@ -1166,13 +1101,6 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 				options: {
 					cancelPendingReduceOrders: isClosing,
 					cancelExpiredDelayedOrders: !!staleOrder,
-					swapDeposit: swapQuote
-						? {
-								...swapQuote,
-								amountOutMin: swapQuote.amountOut,
-								amountIn: swapQuote.amountIn,
-						  }
-						: undefined,
 				},
 			})
 			await monitorAndAwaitTransaction(dispatch, tx)
