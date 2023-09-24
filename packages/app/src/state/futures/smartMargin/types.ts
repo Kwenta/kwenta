@@ -161,10 +161,4 @@ export type SmartMarginState = {
 	}
 	swapDepositSlippage: number
 	swapDepositCustomSlippage: string
-	tradeSwapDepositQuote?: {
-		token: SwapDepositToken
-		amountIn: string
-		amountOut: string
-		quoteInvalidReason?: `insufficient-${'balance' | 'quote'}`
-	}
 }
