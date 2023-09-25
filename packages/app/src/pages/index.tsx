@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { FC } from 'react'
+import { useRouter } from 'next/router'
+import { FC, useCallback, useLayoutEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -9,7 +10,13 @@ import Features from 'sections/homepage/Features'
 import Hero from 'sections/homepage/Hero'
 import ShortList from 'sections/homepage/ShortList'
 import TradeNow from 'sections/homepage/TradeNow'
+import BaseReferralModal from 'sections/referrals/ReferralModal/BaseReferralModal'
 import HomeLayout from 'sections/shared/Layout/HomeLayout'
+import { setOpenModal } from 'state/app/reducer'
+import { selectShowModal } from 'state/app/selectors'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { fetchUnmintedBoostNftForCode } from 'state/referrals/action'
+import { selectIsReferralCodeValid } from 'state/referrals/selectors'
 import media from 'styles/media'
 
 type AppLayoutProps = {
@@ -18,12 +25,34 @@ type AppLayoutProps = {
 
 type HomePageComponent = FC & { layout?: FC<AppLayoutProps> }
 
+const Assets = dynamic(() => import('../sections/homepage/Assets'), {
+	ssr: false,
+})
+
 const HomePage: HomePageComponent = () => {
 	const { t } = useTranslation()
+	const dispatch = useAppDispatch()
+	const router = useRouter()
+	const routerReferralCode = (router.query.ref as string)?.toLowerCase()
+	const isReferralCodeValid = useAppSelector(selectIsReferralCodeValid)
+	const openModal = useAppSelector(selectShowModal)
 
-	const Assets = dynamic(() => import('../sections/homepage/Assets'), {
-		ssr: false,
-	})
+	useLayoutEffect(() => {
+		if (router.isReady && routerReferralCode) {
+			dispatch(fetchUnmintedBoostNftForCode(routerReferralCode))
+		}
+	}, [dispatch, router.isReady, routerReferralCode])
+
+	useLayoutEffect(() => {
+		if (isReferralCodeValid) {
+			dispatch(setOpenModal('referrals_mint_boost_nft'))
+		}
+	}, [dispatch, isReferralCodeValid])
+
+	const onDismiss = useCallback(() => {
+		dispatch(setOpenModal(null))
+	}, [dispatch])
+
 	return (
 		<>
 			<Head>
@@ -39,6 +68,9 @@ const HomePage: HomePageComponent = () => {
 					<TradeNow />
 				</Container>
 			</HomeLayout>
+			{openModal === 'referrals_mint_boost_nft' && routerReferralCode && isReferralCodeValid && (
+				<BaseReferralModal onDismiss={onDismiss} referralCode={routerReferralCode} />
+			)}
 		</>
 	)
 }

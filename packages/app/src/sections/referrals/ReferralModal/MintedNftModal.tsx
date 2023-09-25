@@ -1,5 +1,6 @@
 import { formatPercent } from '@kwenta/sdk/utils'
-import { FC, memo } from 'react'
+import { useRouter } from 'next/router'
+import { FC, memo, useCallback } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -20,7 +21,13 @@ type Props = {
 
 export const MintedNftModal: FC<Props> = memo(({ onDismiss, boostNftTier }) => {
 	const { t } = useTranslation()
+	const router = useRouter()
 	const { tier, boost } = REFFERAL_TIERS[boostNftTier]
+
+	const handleTradeNow = useCallback(() => {
+		router.push('/market')
+		onDismiss()
+	}, [onDismiss, router])
 
 	return (
 		<FlexDivColCentered>
@@ -69,7 +76,7 @@ export const MintedNftModal: FC<Props> = memo(({ onDismiss, boostNftTier }) => {
 				loading={false}
 				textTransform="none"
 				fullWidth
-				onClick={onDismiss}
+				onClick={handleTradeNow}
 			>
 				<FlexDivRow columnGap="10px">
 					{t('referrals.affiliates.modal.referrer.trade-now-button')}
