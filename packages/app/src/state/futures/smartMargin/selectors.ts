@@ -606,8 +606,7 @@ export const selectSmartMarginAllowanceValid = createSelector(
 	selectSmartMarginBalanceInfo,
 	selectAvailableMarginInMarkets,
 	selectSmartMarginMarginDelta,
-	selectSwapDepositAllowance,
-	({ freeMargin }, idleInMarkets, marginDelta, allowance) => {
+	({ freeMargin, allowance }, idleInMarkets, marginDelta) => {
 		const totalIdleMargin = freeMargin.add(idleInMarkets)
 		const marginDeposit = marginDelta.sub(totalIdleMargin)
 		return totalIdleMargin.gte(marginDelta) || wei(allowance || 0).gte(marginDeposit)
