@@ -80,7 +80,6 @@ export default function TradeConfirmationModal({
 	const ethBalanceExceeded = useAppSelector(selectKeeperDepositExceedsBal)
 	const hasSlTp = useAppSelector(selectNewTradeHasSlTp)
 	const sltpValidity = useAppSelector(selectTradePanelSLTPValidity)
-	const swapToken = useAppSelector(selectSelectedSwapDepositToken)
 
 	const [overridePriceProtection, setOverridePriceProtection] = useState(false)
 	const [acceptedSLRisk, setAcceptedSLRisk] = useState(false)
@@ -147,7 +146,7 @@ export default function TradeConfirmationModal({
 
 	const buttonText = allowanceValid
 		? t(`futures.market.trade.confirmation.modal.confirm-order.${leverageSide}`)
-		: t(`futures.market.trade.confirmation.modal.approve-order`, { asset: swapToken })
+		: t(`futures.market.trade.confirmation.modal.approve-order`, { asset: 'sUSD' })
 
 	return (
 		<StyledBaseModal
