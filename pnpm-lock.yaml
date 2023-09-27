@@ -37,7 +37,7 @@ importers:
         version: 6.7.1(eslint@8.47.0)
       eslint-plugin-prettier:
         specifier: 4.2.1
-        version: 4.2.1(eslint-config-prettier@8.10.0)(eslint@8.47.0)(prettier@2.8.8)
+        version: 4.2.1(eslint-config-prettier@8.10.0)(eslint@8.47.0)(prettier@3.0.3)
       eslint-plugin-react:
         specifier: 7.33.2
         version: 7.33.2(eslint@8.47.0)
@@ -57,8 +57,8 @@ importers:
         specifier: 13.2.3
         version: 13.2.3
       prettier:
-        specifier: 2.8.8
-        version: 2.8.8
+        specifier: 3.0.3
+        version: 3.0.3
       typescript:
         specifier: 5.1.6
         version: 5.1.6
@@ -337,8 +337,8 @@ importers:
         specifier: 8.4.30
         version: 8.4.30
       prettier:
-        specifier: 2.8.8
-        version: 2.8.8
+        specifier: 3.0.3
+        version: 3.0.3
       react-test-renderer:
         specifier: 17.0.1
         version: 17.0.1(react@18.2.0)
@@ -12070,8 +12070,8 @@ packages:
       '@babel/plugin-transform-react-jsx': ^7.14.9
       eslint: ^8.1.0
     dependencies:
-      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.5)
-      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.5)
+      '@babel/plugin-syntax-flow': 7.22.5(@babel/core@7.22.9)
+      '@babel/plugin-transform-react-jsx': 7.22.5(@babel/core@7.22.9)
       eslint: 8.47.0
       lodash: 4.17.21
       string-natural-compare: 3.0.1
@@ -12191,7 +12191,7 @@ packages:
       object.fromentries: 2.0.6
       semver: 6.3.1
 
-  /eslint-plugin-prettier@4.2.1(eslint-config-prettier@8.10.0)(eslint@8.47.0)(prettier@2.8.8):
+  /eslint-plugin-prettier@4.2.1(eslint-config-prettier@8.10.0)(eslint@8.47.0)(prettier@3.0.3):
     resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -12204,7 +12204,7 @@ packages:
     dependencies:
       eslint: 8.47.0
       eslint-config-prettier: 8.10.0(eslint@8.47.0)
-      prettier: 2.8.8
+      prettier: 3.0.3
       prettier-linter-helpers: 1.0.0
     dev: true
 
@@ -16477,6 +16477,12 @@ packages:
   /prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
+
+  /prettier@3.0.3:
+    resolution: {integrity: sha512-L/4pUDMxcNa8R/EthV08Zt42WBO4h1rarVtK0K+QJG0X187OLo7l699jWw0GKuwzkPQ//jMFA/8Xm6Fh3J/DAg==}
+    engines: {node: '>=14'}
     hasBin: true
     dev: true
 
