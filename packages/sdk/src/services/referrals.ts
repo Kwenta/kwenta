@@ -1,7 +1,12 @@
 import { formatBytes32String } from '@ethersproject/strings'
 import KwentaSDK from '..'
 import * as sdkErrors from '../common/errors'
-import { getReferralStatisticsByAccount, getReferralsGqlEndpoint } from '../utils/referrals'
+import {
+	getReferralStatisticsByAccount,
+	getReferralStatisticsByAccountAndEpoch,
+	getReferralStatisticsByAccountAndEpochTime,
+	getReferralsGqlEndpoint,
+} from '../utils/referrals'
 import {
 	queryBoostNftTierByHolder,
 	queryCodesByReferrer,
@@ -167,5 +172,32 @@ export default class ReferralsService {
 			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
 		}
 		return getReferralStatisticsByAccount(this.sdk, account)
+	}
+
+	/**
+	 * Retrieve the cumulative statistics for a given referrer.
+	 * @param account - The account of the referrer.
+	 * @param period - The epoch period.
+	 * @returns Object containing total referrerd account and total referral volumes per code
+	 */
+	public getCumulativeStatsByReferrerAndEpoch(account: string, period: number) {
+		if (!this.sdk.context.contracts.BoostNft) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+		return getReferralStatisticsByAccountAndEpoch(this.sdk, account, period)
+	}
+
+	/**
+	 * Retrieve the cumulative statistics for a given referrer.
+	 * @param account - The account of the referrer.
+	 * @param start - The start epoch timestamp.
+	 * @param end - The end epoch timestamp.
+	 * @returns Object containing total referrerd account and total referral volumes per code
+	 */
+	public getCumulativeStatsByReferrerAndEpochTime(account: string, start: number, end: number) {
+		if (!this.sdk.context.contracts.BoostNft) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+		return getReferralStatisticsByAccountAndEpochTime(this.sdk, account, start, end)
 	}
 }

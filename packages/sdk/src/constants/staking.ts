@@ -18,5 +18,6 @@ export const STAKING_HIGH_GAS_LIMIT = BigNumber.from('400000')
 export const STAKING_LOW_GAS_LIMIT = BigNumber.from('200000')
 export const TRADING_REWARDS_CUTOFF_EPOCH = 13
 export const OP_REWARDS_CUTOFF_EPOCH = 22
+export const REFERRAL_PROGRAM_START_EPOCH = 44
 
 export const SUPPLY_RATE = wei(1).sub(wei(DECAY_RATE))

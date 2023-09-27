@@ -1,3 +1,4 @@
+import { REFERRAL_PROGRAM_START_EPOCH } from '@kwenta/sdk/constants'
 import { TransactionStatus } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
@@ -12,7 +13,11 @@ import {
 import { calculateTotal } from 'sections/referrals/utils'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import { handleTransactionError, setOpenModal, setTransaction } from 'state/app/reducer'
-import { selectTradingRewardsSupportedNetwork } from 'state/staking/selectors'
+import {
+	selectEpochData,
+	selectEpochPeriod,
+	selectTradingRewardsSupportedNetwork,
+} from 'state/staking/selectors'
 import { ThunkConfig } from 'state/types'
 import { selectWallet } from 'state/wallet/selectors'
 import logError from 'utils/logError'
@@ -146,27 +151,40 @@ export const fetchBoostNftMinted = createAsyncThunk<boolean, void, ThunkConfig>(
 	}
 )
 
-//TODO: Need to calculate by epoch
 export const fetchReferralEpoch = createAsyncThunk<ReferralsRewardsPerEpoch[], void, ThunkConfig>(
 	'referrals/fetchReferralEpoch',
 	async (_, { getState, extra: { sdk } }) => {
 		try {
 			const wallet = selectWallet(getState())
 			if (!wallet) return []
-			const { epochPeriod: currentEpoch } = await sdk.kwentaToken.getStakingData()
-			const referralEpoch = await sdk.referrals.getCumulativeStatsByReferrer(wallet)
-			const referralVolume = calculateTotal(referralEpoch, 'referralVolume')
-			const referredCount = calculateTotal(referralEpoch, 'referredCount')
-			return referralEpoch.length > 0
-				? [
-						{
-							epoch: currentEpoch.toString(),
-							referralVolume: referralVolume.toString(),
-							referredCount: referredCount.toString(),
-							earnedRewards: '0',
-						},
-				  ]
-				: []
+			const epochData = selectEpochData(getState())
+			if (!epochData) return []
+			const epochPeriod = selectEpochPeriod(getState())
+			const statsPerEpoch: ReferralsRewardsPerEpoch[] = await Promise.all(
+				epochData.slice(REFERRAL_PROGRAM_START_EPOCH).map(async ({ period, start, end }) => {
+					const referralEpoch = await sdk.referrals.getCumulativeStatsByReferrerAndEpochTime(
+						wallet,
+						start,
+						end
+					)
+
+					const kwentaRewards =
+						period !== Number(epochPeriod)
+							? await sdk.kwentaToken.getKwentaRewardsByEpoch(period)
+							: wei(0)
+					const referralVolume = calculateTotal(referralEpoch, 'referralVolume')
+					const referredCount = calculateTotal(referralEpoch, 'referredCount')
+
+					return {
+						epoch: period.toString(),
+						referralVolume: referralVolume.toString(),
+						referredCount: referredCount.toString(),
+						earnedRewards: kwentaRewards.toString(),
+					}
+				})
+			)
+
+			return statsPerEpoch
 		} catch (err) {
 			logError(err)
 			notifyError('Failed to fetch referral rewards per epoch', err)
@@ -213,8 +231,9 @@ export const fetchReferralCodes = createAsyncThunk<ReferralsRewardsPerCode[], vo
 	async (_, { getState, extra: { sdk } }) => {
 		try {
 			const wallet = selectWallet(getState())
-			if (!wallet) return []
-			return await sdk.referrals.getCumulativeStatsByReferrer(wallet)
+			const period = Number(selectEpochPeriod(getState()))
+			if (!wallet || !period) return []
+			return await sdk.referrals.getCumulativeStatsByReferrerAndEpoch(wallet, period)
 		} catch (err) {
 			logError(err)
 			notifyError('Failed to fetch cumulative stats by referral codes', err)

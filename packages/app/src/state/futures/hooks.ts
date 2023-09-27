@@ -20,6 +20,7 @@ import {
 } from 'state/referrals/action'
 import { fetchStakeMigrateData } from 'state/staking/actions'
 import {
+	selectEpochPeriod,
 	selectSelectedEpoch,
 	selectStakingSupportedNetwork,
 	selectTradingRewardsSupportedNetwork,
@@ -224,10 +225,11 @@ export const useFetchStakeMigrateData = () => {
 export const useFetchReferralData = () => {
 	const networkId = useAppSelector(selectNetwork)
 	const wallet = useAppSelector(selectWallet)
+	const period = useAppSelector(selectEpochPeriod)
 	const networkSupportTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	useFetchAction(fetchAllReferralData, {
-		dependencies: [networkId, wallet],
-		disabled: !networkSupportTradingRewards,
+		dependencies: [networkId, wallet, period],
+		disabled: !networkSupportTradingRewards || !wallet || !period,
 	})
 }

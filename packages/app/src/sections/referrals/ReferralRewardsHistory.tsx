@@ -59,7 +59,9 @@ const ReferralRewardsHistory: FC<ReferralRewardsHistoryProps> = memo(({ data }) 
 										<TableHeader>{t('referrals.table.header.total-volume')}</TableHeader>
 									),
 									cell: (cellProps) => (
-										<TableCell>{formatDollars(cellProps.getValue(), { maxDecimals: 2 })}</TableCell>
+										<TableCell>
+											{formatDollars(Number(cellProps.getValue()), { maxDecimals: 2 })}
+										</TableCell>
 									),
 									accessorKey: 'referralVolume',
 								},
