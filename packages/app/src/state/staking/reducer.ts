@@ -80,6 +80,7 @@ export const ZERO_CLAIMABLE_REWARDS = {
 	opRewards: '0',
 	snxOpRewards: '0',
 	claimableKwentaRewards: [],
+	claimableKwentaRewardsV2: [],
 	claimableOpRewards: [],
 	claimableSnxOpRewards: [],
 }
@@ -200,6 +201,7 @@ const stakingSlice = createSlice({
 		})
 		builder.addCase(fetchClaimableRewards.fulfilled, (state, action) => {
 			state.claimableKwentaRewards = action.payload.claimableKwentaRewards
+			state.claimableKwentaRewardsV2 = action.payload.claimableKwentaRewardsV2
 			state.claimableOpRewards = action.payload.claimableOpRewards
 			state.claimableSnxOpRewards = action.payload.claimableSnxOpRewards
 			state.kwentaRewards = action.payload.kwentaRewards

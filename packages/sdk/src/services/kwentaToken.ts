@@ -13,6 +13,7 @@ import {
 	DEFAULT_NUMBER_OF_FUTURES_FEE,
 	EPOCH_START,
 	OP_REWARDS_CUTOFF_EPOCH,
+	STAKING_V2_REWARDS_CUTOFF_EPOCH,
 	TRADING_REWARDS_CUTOFF_EPOCH,
 	REFERRAL_PROGRAM_START_EPOCH,
 	WEEK,
@@ -584,12 +585,14 @@ export default class KwentaTokenService {
 
 	public async getClaimableAllRewards(
 		epochPeriod: number,
+		isStakingV2: boolean = false,
 		isOp: boolean = false,
 		isSnx: boolean = false,
 		cutoffPeriod: number = 0
 	) {
 		const {
 			MultipleMerkleDistributorPerpsV2,
+			MultipleMerkleDistributorStakingV2,
 			MultipleMerkleDistributorOp,
 			MultipleMerkleDistributorSnxOp,
 		} = this.sdk.context.multicallContracts
@@ -597,6 +600,7 @@ export default class KwentaTokenService {
 
 		if (
 			!MultipleMerkleDistributorPerpsV2 ||
+			!MultipleMerkleDistributorStakingV2 ||
 			!MultipleMerkleDistributorOp ||
 			!MultipleMerkleDistributorSnxOp
 		) {
@@ -607,7 +611,9 @@ export default class KwentaTokenService {
 
 		const adjustedPeriods = isOp
 			? periods.slice(OP_REWARDS_CUTOFF_EPOCH)
-			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH)
+			: isStakingV2
+			? periods.slice(STAKING_V2_REWARDS_CUTOFF_EPOCH)
+			: periods.slice(TRADING_REWARDS_CUTOFF_EPOCH, STAKING_V2_REWARDS_CUTOFF_EPOCH)
 
 		const fileNames = adjustedPeriods.map(
 			(i) =>
@@ -625,6 +631,8 @@ export default class KwentaTokenService {
 						? isSnx
 							? index
 							: index + OP_REWARDS_CUTOFF_EPOCH
+						: isStakingV2
+						? index + STAKING_V2_REWARDS_CUTOFF_EPOCH
 						: index + TRADING_REWARDS_CUTOFF_EPOCH
 					return { ...response.data, period }
 				} catch (err) {
@@ -638,11 +646,9 @@ export default class KwentaTokenService {
 			.filter(Boolean)
 			.map((d) => {
 				const reward = d.claims[walletAddress]
-
 				if (reward) {
 					return [reward.index, walletAddress, reward.amount, reward.proof, d.period]
 				}
-
 				return null
 			})
 			.filter((x): x is ClaimParams => !!x)
@@ -653,6 +659,8 @@ export default class KwentaTokenService {
 					? isSnx
 						? MultipleMerkleDistributorSnxOp.isClaimed(reward[0], reward[4])
 						: MultipleMerkleDistributorOp.isClaimed(reward[0], reward[4])
+					: isStakingV2
+					? MultipleMerkleDistributorStakingV2.isClaimed(reward[0], reward[4])
 					: MultipleMerkleDistributorPerpsV2.isClaimed(reward[0], reward[4])
 			)
 		)
@@ -749,6 +757,7 @@ export default class KwentaTokenService {
 		const {
 			BatchClaimer,
 			MultipleMerkleDistributorPerpsV2,
+			MultipleMerkleDistributorStakingV2,
 			MultipleMerkleDistributorOp,
 			MultipleMerkleDistributorSnxOp,
 		} = this.sdk.context.contracts
@@ -756,6 +765,7 @@ export default class KwentaTokenService {
 		if (
 			!BatchClaimer ||
 			!MultipleMerkleDistributorPerpsV2 ||
+			!MultipleMerkleDistributorStakingV2 ||
 			!MultipleMerkleDistributorOp ||
 			!MultipleMerkleDistributorSnxOp
 		) {
@@ -765,6 +775,7 @@ export default class KwentaTokenService {
 		return this.sdk.transactions.createContractTxn(BatchClaimer, 'claimMultiple', [
 			[
 				MultipleMerkleDistributorPerpsV2.address,
+				MultipleMerkleDistributorStakingV2.address,
 				MultipleMerkleDistributorOp.address,
 				MultipleMerkleDistributorSnxOp.address,
 			],

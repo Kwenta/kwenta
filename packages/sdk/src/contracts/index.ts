@@ -172,6 +172,12 @@ export const getContractsByNetwork = (
 					provider
 			  )
 			: undefined,
+		MultipleMerkleDistributorStakingV2: ADDRESSES.TradingRewardsStakingV2[networkId]
+			? MultipleMerkleDistributorPerpsV2__factory.connect(
+					ADDRESSES.TradingRewardsStakingV2[networkId],
+					provider
+			  )
+			: undefined,
 		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
 			? MultipleMerkleDistributorOp__factory.connect(ADDRESSES.OpRewards[networkId], provider)
 			: undefined,
@@ -261,6 +267,12 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 		MultipleMerkleDistributorPerpsV2: ADDRESSES.TradingRewardsPerpsV2[networkId]
 			? new EthCallContract(
 					ADDRESSES.TradingRewardsPerpsV2[networkId],
+					MultipleMerkleDistributorPerpsV2ABI
+			  )
+			: undefined,
+		MultipleMerkleDistributorStakingV2: ADDRESSES.TradingRewardsStakingV2[networkId]
+			? new EthCallContract(
+					ADDRESSES.TradingRewardsStakingV2[networkId],
 					MultipleMerkleDistributorPerpsV2ABI
 			  )
 			: undefined,

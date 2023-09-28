@@ -357,19 +357,23 @@ export const fetchClaimableRewards = createAsyncThunk<ClaimableRewards, void, Th
 			const { epochPeriod } = await sdk.kwentaToken.getStakingData()
 
 			const { claimableRewards: claimableKwentaRewards, totalRewards: kwentaRewards } =
-				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, 9)
+				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, false, false, 20)
+
+			const { claimableRewards: claimableKwentaRewardsV2, totalRewards: kwentaRewardsV2 } =
+				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, false, false)
 
 			const { claimableRewards: claimableOpRewards, totalRewards: opRewards } =
-				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, false)
+				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, false, 11)
 
 			const { claimableRewards: claimableSnxOpRewards, totalRewards: snxOpRewards } =
-				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, true, true)
+				await sdk.kwentaToken.getClaimableAllRewards(epochPeriod, false, true, true, 11)
 
 			return {
 				claimableKwentaRewards,
+				claimableKwentaRewardsV2,
 				claimableOpRewards,
 				claimableSnxOpRewards,
-				kwentaRewards: kwentaRewards.toString(),
+				kwentaRewards: kwentaRewards.add(kwentaRewardsV2).toString(),
 				opRewards: opRewards.toString(),
 				snxOpRewards: snxOpRewards.toString(),
 			}
@@ -385,11 +389,17 @@ export const claimMultipleAllRewards = createAsyncThunk<void, void, ThunkConfig>
 	'staking/claimMultipleAllRewards',
 	async (_, { dispatch, getState, extra: { sdk } }) => {
 		const {
-			staking: { claimableKwentaRewards, claimableOpRewards, claimableSnxOpRewards },
+			staking: {
+				claimableKwentaRewards,
+				claimableKwentaRewardsV2,
+				claimableOpRewards,
+				claimableSnxOpRewards,
+			},
 		} = getState()
 
 		const { hash } = await sdk.kwentaToken.claimMultipleAllRewards([
 			claimableKwentaRewards,
+			claimableKwentaRewardsV2,
 			claimableOpRewards,
 			claimableSnxOpRewards,
 		])
