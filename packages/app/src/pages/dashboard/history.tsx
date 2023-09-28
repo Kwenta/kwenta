@@ -5,15 +5,13 @@ import styled from 'styled-components'
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
-import { MobileHiddenView, MobileOnlyView } from 'components/Media'
-import Spacer from 'components/Spacer'
 import { Body, Heading } from 'components/Text'
 import DashboardLayout from 'sections/dashboard/DashboardLayout'
 import HistoryTabs, { HistoryTab } from 'sections/dashboard/HistoryTabs'
-import TradesTab from 'sections/futures/MobileTrade/UserTabs/TradesTab'
 import { usePollDashboardFuturesData } from 'state/futures/hooks'
 import { selectPositionsCsvData, selectTradesCsvData } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
+import media from 'styles/media'
 
 type HistoryPageProps = React.FC & { getLayout: (page: ReactNode) => JSX.Element }
 
@@ -46,32 +44,35 @@ const HistoryPage: HistoryPageProps = () => {
 	)
 
 	return (
-		<>
+		<TitleContainer>
 			<Head>
 				<title>{t('dashboard-history.page-title')}</title>
 			</Head>
-			<MobileHiddenView>
-				<Spacer height={15} />
-				<FlexDivRowCentered>
-					<FlexDivCol>
-						<Heading variant="h3">{t('dashboard-history.main-title')}</Heading>
-						<Body color={'secondary'}>{t('dashboard-history.subtitle')}</Body>
-					</FlexDivCol>
-					<ExportButton href={file} download={fileName}>
-						<span>{t('dashboard-history.export-btn')}</span>
-						<UploadIcon width={8} style={{ 'margin-bottom': '2px' }} />
-					</ExportButton>
-				</FlexDivRowCentered>
-				<Spacer height={30} />
-				<HistoryTabs onChangeTab={handleChangeTab} currentTab={currentTab} />
-				<Spacer height={50} />
-			</MobileHiddenView>
-			<MobileOnlyView>
-				<TradesTab />
-			</MobileOnlyView>
-		</>
+
+			<FlexDivRowCentered style={{ marginBottom: '30px' }}>
+				<FlexDivCol>
+					<Heading variant="h3">{t('dashboard-history.main-title')}</Heading>
+					<Body color={'secondary'}>{t('dashboard-history.subtitle')}</Body>
+				</FlexDivCol>
+				<ExportButton href={file} download={fileName}>
+					<span>{t('dashboard-history.export-btn')}</span>
+					<UploadIcon width={8} style={{ 'margin-bottom': '2px' }} />
+				</ExportButton>
+			</FlexDivRowCentered>
+
+			<HistoryTabs onChangeTab={handleChangeTab} currentTab={currentTab} />
+		</TitleContainer>
 	)
 }
+
+const TitleContainer = styled.div`
+	${media.lessThan('lg')`
+		margin: 15px 15px 0 15px;
+	`}
+	${media.lessThan('sm')`
+		margin: 130px 15px 0 15px;
+	`}
+`
 
 const ExportButton = styled.a`
 	gap: 8px;

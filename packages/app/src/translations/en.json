@@ -1147,6 +1147,16 @@
 							"liquidated": "liquidated",
 							"entry": "entry"
 						}
+					},
+					"mobile-table": {
+						"market": "Market",
+						"price": "Price",
+						"side": "Side",
+						"fees": "Fees",
+						"date": "Date",
+						"type": "Order Type",
+						"size": "Size",
+						"pnl": "PnL"
 					}
 				},
 				"transfers": {
@@ -1241,6 +1251,14 @@
 				"total-volume": "Total Volume",
 				"total-pnl": "Realized P&L",
 				"funding": "Funding"
+			},
+			"mobile-table": {
+				"market": "Market",
+				"volume": "Volume",
+				"status": "Status",
+				"funding": "Funding",
+				"pnl": "PnL",
+				"timestamp": "Date"
 			}
 		},
 		"competition": {
