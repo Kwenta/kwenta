@@ -516,39 +516,43 @@ export default class FuturesService {
 			smartMarginAddress,
 			this.sdk.context.provider
 		)
-		const { SUSD, USDC, USDT, DAI, LUSD } = this.sdk.context.contracts
+
+		const { SUSD, USDC, USDT, DAI, LUSD } = this.sdk.context.multicallContracts
 
 		if (!SUSD || !USDC || !USDT || !DAI || !LUSD) throw new Error(UNSUPPORTED_NETWORK)
 
-		// TODO: EthCall
 		const [
 			freeMargin,
-			keeperEthBal,
-			walletEthBal,
-			susdBalance,
-			allowance,
-			usdcBalance,
-			usdcAllowance,
-			// usdtBalance,
-			// usdtAllowance,
-			daiBalance,
-			daiAllowance,
-			// lusdBalance,
-			// lusdAllowance,
+			[
+				keeperEthBal,
+				walletEthBal,
+				susdBalance,
+				allowance,
+				usdcBalance,
+				usdcAllowance,
+				// usdtBalance,
+				// usdtAllowance,
+				daiBalance,
+				daiAllowance,
+				// lusdBalance,
+				// lusdAllowance,
+			],
 		] = await Promise.all([
 			smartMarginAccountContract.freeMargin(),
-			this.sdk.context.provider.getBalance(smartMarginAddress),
-			this.sdk.context.provider.getBalance(walletAddress),
-			SUSD.balanceOf(walletAddress),
-			SUSD.allowance(walletAddress, smartMarginAccountContract.address),
-			USDC.balanceOf(walletAddress),
-			USDC.allowance(walletAddress, PERMIT2_ADDRESS),
-			// USDT.balanceOf(walletAddress),
-			// USDT.allowance(walletAddress, PERMIT2_ADDRESS),
-			DAI.balanceOf(walletAddress),
-			DAI.allowance(walletAddress, PERMIT2_ADDRESS),
-			// LUSD.balanceOf(walletAddress),
-			// LUSD.allowance(walletAddress, PERMIT2_ADDRESS),
+			this.sdk.context.multicallProvider.all([
+				this.sdk.context.multicallProvider.getEthBalance(smartMarginAddress),
+				this.sdk.context.multicallProvider.getEthBalance(walletAddress),
+				SUSD.balanceOf(walletAddress),
+				SUSD.allowance(walletAddress, smartMarginAccountContract.address),
+				USDC.balanceOf(walletAddress),
+				USDC.allowance(walletAddress, PERMIT2_ADDRESS),
+				// USDT.balanceOf(walletAddress),
+				// USDT.allowance(walletAddress, PERMIT2_ADDRESS),
+				DAI.balanceOf(walletAddress),
+				DAI.allowance(walletAddress, PERMIT2_ADDRESS),
+				// LUSD.balanceOf(walletAddress),
+				// LUSD.allowance(walletAddress, PERMIT2_ADDRESS),
+			]),
 		])
 
 		return {

@@ -306,6 +306,21 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 		BoostNft: ADDRESSES.BoostNft[networkId]
 			? new EthCallContract(ADDRESSES.BoostNft[networkId], BoostNftABI)
 			: undefined,
+		SUSD: ADDRESSES.SUSD[networkId]
+			? new EthCallContract(ADDRESSES.SUSD[networkId], ERC20ABI)
+			: undefined,
+		USDC: ADDRESSES.USDC[networkId]
+			? new EthCallContract(ADDRESSES.USDC[networkId], ERC20ABI)
+			: undefined,
+		USDT: ADDRESSES.USDT[networkId]
+			? new EthCallContract(ADDRESSES.USDT[networkId], ERC20ABI)
+			: undefined,
+		DAI: ADDRESSES.DAI[networkId]
+			? new EthCallContract(ADDRESSES.DAI[networkId], ERC20ABI)
+			: undefined,
+		LUSD: ADDRESSES.LUSD[networkId]
+			? new EthCallContract(ADDRESSES.LUSD[networkId], ERC20ABI)
+			: undefined,
 	}
 }
 

@@ -39,7 +39,6 @@ import {
 	fetchFundingRatesHistory,
 	fetchFuturesFees,
 	fetchFuturesFeesForAccount,
-	fetchSwapDepositBalanceQuote,
 } from './actions'
 import {
 	SmartMarginAccountData,
@@ -115,7 +114,6 @@ export const SMART_MARGIN_INITIAL_STATE: SmartMarginState = {
 	},
 	futuresFees: '0',
 	futuresFeesForAccount: '0',
-	swapDepositBalanceQuote: undefined,
 	swapDepositSlippage: 0.15,
 	swapDepositCustomSlippage: '',
 }
@@ -527,21 +525,6 @@ const smartMarginSlice = createSlice({
 			futuresState.queryStatuses.futuresFeesForAccount = {
 				status: FetchStatus.Error,
 				error: 'Failed to fetch fee data for the account',
-			}
-		})
-
-		builder.addCase(fetchSwapDepositBalanceQuote.pending, (futuresState) => {
-			futuresState.queryStatuses.swapDepositBalanceQuote = LOADING_STATUS
-		})
-		builder.addCase(fetchSwapDepositBalanceQuote.fulfilled, (futuresState, action) => {
-			futuresState.queryStatuses.swapDepositBalanceQuote = SUCCESS_STATUS
-			futuresState.swapDepositBalanceQuote = action.payload
-		})
-		builder.addCase(fetchSwapDepositBalanceQuote.rejected, (futuresState) => {
-			futuresState.swapDepositBalanceQuote = undefined
-			futuresState.queryStatuses.swapDepositBalanceQuote = {
-				status: FetchStatus.Error,
-				error: 'Failed to fetch quote for the swap deposit token',
 			}
 		})
 	},

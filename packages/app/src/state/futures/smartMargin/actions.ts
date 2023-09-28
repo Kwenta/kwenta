@@ -39,7 +39,6 @@ import Wei, { wei } from '@synthetixio/wei'
 import { debounce } from 'lodash'
 
 import { notifyError } from 'components/ErrorNotifier'
-import { SWAP_QUOTE_BUFFER } from 'constants/defaults'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
 import {
 	handleTransactionError,
@@ -99,7 +98,7 @@ import {
 	clearSmartMarginTradePreviews,
 	setKeeperDeposit,
 } from './reducer'
-import { selectSelectedSwapDepositToken, selectSwapDepositBalance } from './selectors'
+import { selectSelectedSwapDepositToken } from './selectors'
 import {
 	selectSmartMarginAccount,
 	selectSmartMarginMarginDelta,
@@ -1108,7 +1107,6 @@ export const submitSmartMarginOrder = createAsyncThunk<void, boolean, ThunkConfi
 			dispatch(setOpenModal(null))
 			dispatch(fetchBalances())
 			dispatch(clearTradeInputs())
-			dispatch(fetchSwapDepositBalanceQuote())
 		} catch (err) {
 			dispatch(handleTransactionError(err.message))
 			throw err
@@ -1524,29 +1522,3 @@ const getMarketDetailsByKey = (getState: () => RootState, key: FuturesMarketKey)
 		key: market.marketKey,
 	}
 }
-
-export const fetchSwapDepositBalanceQuote = createAsyncThunk<
-	{
-		rate: string
-		susdQuote: string
-	},
-	void,
-	ThunkConfig
->('futures/fetchSwapDepositBalanceQuote', async (_, { getState, extra: { sdk } }) => {
-	const state = getState()
-	const token = selectSelectedSwapDepositToken(state)
-	const balance = selectSwapDepositBalance(state)
-	if (token === SwapDepositToken.SUSD || balance.eq(0))
-		return {
-			rate: '1',
-			susdQuote: balance.toString(),
-		}
-
-	const susdQuote = await sdk.futures.getSwapDepositQuote(token, balance)
-	const rate = susdQuote.div(balance)
-
-	return {
-		rate: rate.toString(),
-		susdQuote: susdQuote.sub(susdQuote.mul(SWAP_QUOTE_BUFFER).div(100)).toString(),
-	}
-})
