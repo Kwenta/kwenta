@@ -26,7 +26,7 @@ import {
 	selectStakingV1,
 	selectTotalVestable,
 } from 'state/staking/selectors'
-import { selectRedirectToMigration } from 'state/stakingMigration/selectors'
+import { selectStartMigration } from 'state/stakingMigration/selectors'
 import media from 'styles/media'
 
 import MigratePage from './migrate'
@@ -45,7 +45,7 @@ const StakingPage: StakingComponent = () => {
 	const kwentaRewards = useAppSelector(selectKwentaRewards)
 	const stakedResetTime = useAppSelector(selectStakedResetTime)
 	const stakingV1 = useAppSelector(selectStakingV1)
-	const redirectToMigration = useAppSelector(selectRedirectToMigration)
+	const startMigration = useAppSelector(selectStartMigration)
 
 	useFetchStakeMigrateData()
 
@@ -70,8 +70,8 @@ const StakingPage: StakingComponent = () => {
 
 	const timeLeft = useMemo(
 		() =>
-			stakedResetTime > new Date().getTime() / 1000
-				? formatTruncatedDuration(stakedResetTime - new Date().getTime() / 1000)
+			stakedResetTime > Date.now() / 1000
+				? formatTruncatedDuration(stakedResetTime - Date.now() / 1000)
 				: NO_VALUE,
 		[stakedResetTime]
 	)
@@ -200,7 +200,7 @@ const StakingPage: StakingComponent = () => {
 			  }
 	}, [currentTab, handleChangeTab, stakingInfo, stakingV1, t])
 
-	return redirectToMigration ? (
+	return startMigration ? (
 		<MigratePage />
 	) : (
 		<>

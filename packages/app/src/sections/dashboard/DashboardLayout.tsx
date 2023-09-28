@@ -11,11 +11,7 @@ import ROUTES from 'constants/routes'
 import AppLayout from 'sections/shared/Layout/AppLayout'
 import { useAppSelector } from 'state/hooks'
 import { selectStakingMigrationRequired } from 'state/staking/selectors'
-import {
-	selectInMigrationPeriod,
-	selectIsMigrationPeriodStarted,
-	selectStartMigration,
-} from 'state/stakingMigration/selectors'
+import { selectStartMigration } from 'state/stakingMigration/selectors'
 import { LeftSideContent, PageContent } from 'styles/common'
 
 import Links from './Links'
@@ -34,10 +30,8 @@ const Tabs = Object.values(Tab)
 const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 	const { t } = useTranslation()
 	const router = useRouter()
-	const stakngMigrationRequired = useAppSelector(selectStakingMigrationRequired)
+	const stakingMigrationRequired = useAppSelector(selectStakingMigrationRequired)
 	const startMigration = useAppSelector(selectStartMigration)
-	const isMigrationPeriodStarted = useAppSelector(selectIsMigrationPeriodStarted)
-	const inMigrationPeriod = useAppSelector(selectInMigrationPeriod)
 
 	const tabQuery = useMemo(() => {
 		if (router.pathname) {
@@ -76,17 +70,14 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Stake,
 				href: ROUTES.Dashboard.Stake,
-				hidden:
-					(stakngMigrationRequired || startMigration) &&
-					isMigrationPeriodStarted &&
-					inMigrationPeriod,
+				hidden: startMigration,
 			},
 			{
 				name: Tab.Migrate,
 				label: t('dashboard.tabs.migrate'),
 				active: activeTab === Tab.Migrate,
 				href: ROUTES.Dashboard.Migrate,
-				hidden: !stakngMigrationRequired,
+				hidden: !stakingMigrationRequired && !startMigration,
 			},
 			{
 				name: Tab.Governance,
@@ -96,14 +87,7 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				external: true,
 			},
 		],
-		[
-			t,
-			activeTab,
-			stakngMigrationRequired,
-			startMigration,
-			isMigrationPeriodStarted,
-			inMigrationPeriod,
-		]
+		[t, activeTab, startMigration, stakingMigrationRequired]
 	)
 
 	const visibleTabs = TABS.filter(({ hidden }) => !hidden)
