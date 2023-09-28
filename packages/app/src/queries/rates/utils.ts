@@ -31,6 +31,7 @@ export const mapPythCandles = (candleData: PythResponse): Candle[] => {
 
 export const formatPythSymbol = (asset: string): string => {
 	if (asset === 'ETHBTC') return 'Crypto.ETH/BTC'
+	if (asset === 'STETH/ETH') return 'Crypto.STETH/ETH'
 	const prefix =
 		Object.keys(NON_CRYPTO_ASSET_TYPES).find((type) =>
 			NON_CRYPTO_ASSET_TYPES[type].includes(asset)

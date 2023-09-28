@@ -12,6 +12,7 @@ import {
 } from '../constants/number'
 
 import { isFiatCurrency } from './exchange'
+import { FuturesMarketAsset } from '../types'
 
 export type TruncateUnits = 1e3 | 1e6 | 1e9 | 1e12
 
@@ -40,6 +41,7 @@ export type FormatNumberOptions = {
 	prefix?: string
 	suffix?: string
 	suggestDecimals?: boolean
+	suggestDecimalsForAsset?: FuturesMarketAsset
 } & TruncatedOptions
 
 export type FormatCurrencyOptions = {
@@ -48,6 +50,7 @@ export type FormatCurrencyOptions = {
 	sign?: string
 	currencyKey?: string
 	suggestDecimals?: boolean
+	suggestDecimalsForAsset?: FuturesMarketAsset
 } & TruncatedOptions
 
 export const SHORT_CRYPTO_CURRENCY_DECIMALS = 4
@@ -61,6 +64,10 @@ export const truncateNumbers = (value: WeiSource, maxDecimalDigits: number) => {
 		return parts[0] + '.' + parts[1].slice(0, maxDecimalDigits)
 	}
 	return value.toString()
+}
+
+const DecimalsForAsset: Partial<Record<FuturesMarketAsset, number>> = {
+	[FuturesMarketAsset.STETHETH]: 8,
 }
 
 /**
@@ -86,11 +93,20 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 	return formatted
 }
 
+const getDecimalsForFormatting = (value: Wei, options?: FormatNumberOptions) => {
+	if (options?.truncation) return options?.truncation.decimals
+	if (options?.suggestDecimalsForAsset) {
+		const decimals = DecimalsForAsset[options.suggestDecimalsForAsset]
+		return decimals ?? suggestedDecimals(value)
+	}
+	if (options?.suggestDecimals) return suggestedDecimals(value)
+	return options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
+}
+
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix
 	const suffix = options?.suffix
 	const truncateThreshold = options?.truncateOver ?? 0
-	const suggestDecimals = options?.suggestDecimals
 	let truncation = options?.truncation
 
 	let weiValue = wei(0)
@@ -120,11 +136,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 	const weiBeforeAsString = truncation ? weiValue.abs().div(truncation.divisor) : weiValue.abs()
 
-	const defaultDecimals = truncation
-		? truncation.decimals
-		: suggestDecimals
-		? suggestedDecimals(weiBeforeAsString)
-		: options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
+	const defaultDecimals = getDecimalsForFormatting(weiBeforeAsString, { ...options, truncation })
 
 	const decimals = options?.maxDecimals
 		? Math.min(defaultDecimals, options.maxDecimals)
@@ -150,8 +162,7 @@ export const formatCryptoCurrency = (value: WeiSource, options?: FormatCurrencyO
 		prefix: options?.sign,
 		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_CRYPTO_DECIMALS,
-		maxDecimals: options?.maxDecimals,
-		suggestDecimals: options?.suggestDecimals,
+		...options,
 	})
 
 export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOptions) =>

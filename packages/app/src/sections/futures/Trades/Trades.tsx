@@ -72,6 +72,7 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 							>
 								{cellProps.row.original.market ? (
 									<TableMarketDetails
+										marketAsset={cellProps.row.original.market?.asset}
 										marketName={cellProps.row.original.displayAsset!}
 										marketKey={cellProps.row.original.market?.marketKey}
 										side={cellProps.row.original.side}
@@ -208,6 +209,7 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 							>
 								{cellProps.row.original.market ? (
 									<TableMarketDetails
+										marketAsset={cellProps.row.original.market?.asset}
 										marketName={cellProps.row.original.market?.marketName}
 										marketKey={cellProps.row.original.market?.marketKey}
 										side={cellProps.row.original.side}

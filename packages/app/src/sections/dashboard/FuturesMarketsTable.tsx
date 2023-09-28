@@ -92,7 +92,6 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 				<TableContainer>
 					<StyledTable
 						data={data}
-						showPagination
 						onTableRowClick={(row) => {
 							router.push(ROUTES.Markets.MarketPair(row.original.asset, accountType))
 						}}
@@ -138,7 +137,9 @@ const FuturesMarketsTable: React.FC<FuturesMarketsTableProps> = ({ search }) => 
 								cell: (cellProps) => {
 									return (
 										<ColoredPrice priceChange={cellProps.row.original.priceInfo?.change}>
-											{formatDollars(cellProps.row.original.price, { suggestDecimals: true })}
+											{formatDollars(cellProps.row.original.price, {
+												suggestDecimalsForAsset: cellProps.row.original.asset,
+											})}
 										</ColoredPrice>
 									)
 								},

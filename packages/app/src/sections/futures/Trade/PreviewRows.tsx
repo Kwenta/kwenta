@@ -1,3 +1,4 @@
+import { FuturesMarketAsset } from '@kwenta/sdk/dist/types'
 import { formatDollars, formatPercent } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { memo } from 'react'
@@ -24,11 +25,15 @@ export const PriceImpactRow = memo(({ priceImpact }: { priceImpact: Wei | undefi
 	)
 })
 
-export const FillPriceRow = memo(({ fillPrice }: { fillPrice: Wei | undefined }) => {
-	return (
-		<InfoBoxRow
-			title="Fill Price"
-			textValue={fillPrice ? formatDollars(fillPrice, { suggestDecimals: true }) : NO_VALUE}
-		/>
-	)
-})
+export const FillPriceRow = memo(
+	({ fillPrice, asset }: { fillPrice: Wei | undefined; asset?: FuturesMarketAsset }) => {
+		return (
+			<InfoBoxRow
+				title="Fill Price"
+				textValue={
+					fillPrice ? formatDollars(fillPrice, { suggestDecimalsForAsset: asset }) : NO_VALUE
+				}
+			/>
+		)
+	}
+)

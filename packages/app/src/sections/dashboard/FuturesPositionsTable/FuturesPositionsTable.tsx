@@ -123,7 +123,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 												<StyledValue>
 													<ColoredPrice priceChange={cellProps.row.original.priceInfo?.change}>
 														{formatDollars(cellProps.row.original.marketPrice, {
-															suggestDecimals: true,
+															suggestDecimalsForAsset: cellProps.row.original.market.asset,
 														})}
 													</ColoredPrice>
 												</StyledValue>

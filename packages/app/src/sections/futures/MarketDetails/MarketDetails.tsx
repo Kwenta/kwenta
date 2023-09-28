@@ -79,12 +79,15 @@ const MarketDetails: React.FC<MarketDetailsProps> = () => {
 
 const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const markPrice = useAppSelector(selectSkewAdjustedPriceInfo)
+	const asset = useAppSelector(selectMarketAsset)
 
 	return (
 		<MarketDetail
 			mobile={mobile}
 			color={getColorFromPriceChange(markPrice?.change)}
-			value={markPrice ? formatDollars(markPrice.price, { suggestDecimals: true }) : NO_VALUE}
+			value={
+				markPrice ? formatDollars(markPrice.price, { suggestDecimalsForAsset: asset }) : NO_VALUE
+			}
 			dataKey={MarketDataKey.marketPrice}
 		/>
 	)
@@ -92,12 +95,15 @@ const MarketPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 
 const IndexPriceDetail: React.FC<MarketDetailsProps> = memo(({ mobile }) => {
 	const indexPrice = useAppSelector(selectMarketPriceInfo)
+	const asset = useAppSelector(selectMarketAsset)
 
 	return (
 		<MarketDetail
 			mobile={mobile}
 			dataKey={MarketDataKey.indexPrice}
-			value={indexPrice ? formatDollars(indexPrice.price, { suggestDecimals: true }) : NO_VALUE}
+			value={
+				indexPrice ? formatDollars(indexPrice.price, { suggestDecimalsForAsset: asset }) : NO_VALUE
+			}
 		/>
 	)
 })
