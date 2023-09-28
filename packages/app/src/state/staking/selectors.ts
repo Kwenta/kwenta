@@ -9,7 +9,6 @@ import {
 	selectInMigrationPeriod,
 	selectIsMigrationPeriodStarted,
 	selectNeedEscrowMigratorApproval,
-	selectNumberOfRegisteredEntries,
 	selectNumberOfUnmigratedRegisteredEntries,
 	selectNumberOfUnregisteredEntries,
 	selectNumberOfUnvestedRegisteredEntries,
@@ -81,10 +80,7 @@ export const selectStakingMigrationRequired = createSelector(
 export const selectStakingV1 = createSelector(
 	selectStakingMigrationRequired,
 	selectStartMigration,
-	selectIsMigrationPeriodStarted,
-	selectInMigrationPeriod,
-	(stakingMigrationRequired, startMigration, isMigrationPeriodStarted, inMigrationPeriod) =>
-		(stakingMigrationRequired || startMigration) && (isMigrationPeriodStarted || !inMigrationPeriod)
+	(stakingMigrationRequired, startMigration) => stakingMigrationRequired || startMigration
 )
 
 export const selectKwentaBalance = createSelector(
@@ -274,7 +270,7 @@ export const selectSelectedEpoch = createSelector(
 
 export const selectIsTimeLeftInCooldown = createSelector(
 	selectStakedResetTime,
-	(stakedResetTime) => stakedResetTime > new Date().getTime() / 1000
+	(stakedResetTime) => stakedResetTime > Date.now() / 1000
 )
 
 export const selectCanStakeKwenta = createSelector(
@@ -389,9 +385,9 @@ export const selectIsClaimingAllRewards = createSelector(
 )
 
 export const selectCanVestBeforeMigration = createSelector(
-	selectNumberOfRegisteredEntries,
 	selectStakingV1,
-	(numberOfRegisteredEntries, stakingV1) => stakingV1 && numberOfRegisteredEntries === 0
+	selectStartMigration,
+	(stakingV1, startMigration) => stakingV1 && !startMigration
 )
 
 export const selectTradingRewardsSupportedNetwork = (state: RootState) =>

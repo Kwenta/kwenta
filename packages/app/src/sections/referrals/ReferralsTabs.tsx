@@ -1,10 +1,12 @@
 import { formatDollars, formatNumber, formatPercent } from '@kwenta/sdk/utils'
-import { FC, memo, useMemo } from 'react'
+import { useRouter } from 'next/router'
+import { FC, memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import TabButton from 'components/Button/TabButton'
 import { TabPanel } from 'components/Tab'
+import ROUTES from 'constants/routes'
 import { useAppSelector } from 'state/hooks'
 import {
 	selectBoostNft,
@@ -22,6 +24,7 @@ import ReferralRewardsHistory from './ReferralRewardsHistory'
 import { ReferralsHeading } from './ReferralsHeading'
 import ReferrersDashboard from './ReferrersDashboard'
 import { ReferralsTab } from './types'
+import { calculateTotal } from './utils'
 
 type ReferralsTabsProp = {
 	currentTab: ReferralsTab
@@ -30,13 +33,17 @@ type ReferralsTabsProp = {
 
 const ReferralsTabs: FC<ReferralsTabsProp> = memo(({ currentTab, onChangeTab }) => {
 	const { t } = useTranslation()
+	const router = useRouter()
 	const referralsCodes = useAppSelector(selectReferralCodes)
 	const referralsEpoch = useAppSelector(selectReferralEpoch)
-	const { totalVolume, totalRewards, totalTraders } = useAppSelector(selectCumulativeStatsByCode)
+	const { totalVolume, totalTraders } = useAppSelector(selectCumulativeStatsByCode)
+	const totalRewards = calculateTotal(referralsEpoch, 'earnedRewards')
 	const hasMinted = useAppSelector(selectMintedBoostNft)
 	const boostNftTier = useAppSelector(selectBoostNft)
 
 	const { boost, icon } = REFFERAL_TIERS[boostNftTier]
+
+	const goToRewardsTab = useCallback(() => router.push(ROUTES.Dashboard.TradingRewards), [router])
 
 	const tradersMetrics = useMemo(
 		() => [
@@ -57,13 +64,11 @@ const ReferralsTabs: FC<ReferralsTabsProp> = memo(({ currentTab, onChangeTab }) 
 				key: 'kwenta-earned',
 				label: t('referrals.traders.dashboard.kwenta-earned'),
 				value: formatNumber(totalRewards, { suggestDecimals: true }),
-				buttonLabel: t('referrals.traders.claim'),
-				onClick: () => {},
-				active: false,
-				loading: false,
+				buttonLabel: t('referrals.traders.staking'),
+				onClick: goToRewardsTab,
 			},
 		],
-		[boost, hasMinted, icon, t, totalRewards, totalVolume]
+		[boost, goToRewardsTab, hasMinted, icon, t, totalRewards, totalVolume]
 	)
 
 	const affiliatesMetrics = useMemo(

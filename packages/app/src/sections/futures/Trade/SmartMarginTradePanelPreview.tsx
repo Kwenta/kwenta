@@ -10,6 +10,7 @@ import { InfoBoxRow } from 'components/InfoBox'
 import { FlexDivRow, FlexDivRowCentered } from 'components/layout/flex'
 import { Body } from 'components/Text'
 import ROUTES from 'constants/routes'
+import { selectMarketAsset } from 'state/futures/common/selectors'
 import { selectTradePreview } from 'state/futures/smartMargin/selectors'
 import { useAppSelector } from 'state/hooks'
 import {
@@ -24,12 +25,13 @@ import { FillPriceRow, LiquidationRow, PriceImpactRow } from './PreviewRows'
 
 export const SmartMarginTradePanelPreview = memo(() => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview)
+	const asset = useAppSelector(selectMarketAsset)
 
 	return (
 		<FeeInfoBoxContainer>
 			<SmartMarginTradeFees />
 			<LiquidationRow liqPrice={potentialTradeDetails?.liqPrice} />
-			<FillPriceRow fillPrice={potentialTradeDetails?.price} />
+			<FillPriceRow fillPrice={potentialTradeDetails?.price} asset={asset} />
 			<PriceImpactRow priceImpact={potentialTradeDetails?.priceImpact} />
 			<TradingRewardRow />
 		</FeeInfoBoxContainer>

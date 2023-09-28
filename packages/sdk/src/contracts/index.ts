@@ -172,6 +172,12 @@ export const getContractsByNetwork = (
 					provider
 			  )
 			: undefined,
+		MultipleMerkleDistributorStakingV2: ADDRESSES.TradingRewardsStakingV2[networkId]
+			? MultipleMerkleDistributorPerpsV2__factory.connect(
+					ADDRESSES.TradingRewardsStakingV2[networkId],
+					provider
+			  )
+			: undefined,
 		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
 			? MultipleMerkleDistributorOp__factory.connect(ADDRESSES.OpRewards[networkId], provider)
 			: undefined,
@@ -264,6 +270,12 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 					MultipleMerkleDistributorPerpsV2ABI
 			  )
 			: undefined,
+		MultipleMerkleDistributorStakingV2: ADDRESSES.TradingRewardsStakingV2[networkId]
+			? new EthCallContract(
+					ADDRESSES.TradingRewardsStakingV2[networkId],
+					MultipleMerkleDistributorPerpsV2ABI
+			  )
+			: undefined,
 		MultipleMerkleDistributorOp: ADDRESSES.OpRewards[networkId]
 			? new EthCallContract(ADDRESSES.OpRewards[networkId], MultipleMerkleDistributorOpABI)
 			: undefined,
@@ -305,6 +317,21 @@ export const getMulticallContractsByNetwork = (networkId: NetworkId) => {
 			: undefined,
 		BoostNft: ADDRESSES.BoostNft[networkId]
 			? new EthCallContract(ADDRESSES.BoostNft[networkId], BoostNftABI)
+			: undefined,
+		SUSD: ADDRESSES.SUSD[networkId]
+			? new EthCallContract(ADDRESSES.SUSD[networkId], ERC20ABI)
+			: undefined,
+		USDC: ADDRESSES.USDC[networkId]
+			? new EthCallContract(ADDRESSES.USDC[networkId], ERC20ABI)
+			: undefined,
+		USDT: ADDRESSES.USDT[networkId]
+			? new EthCallContract(ADDRESSES.USDT[networkId], ERC20ABI)
+			: undefined,
+		DAI: ADDRESSES.DAI[networkId]
+			? new EthCallContract(ADDRESSES.DAI[networkId], ERC20ABI)
+			: undefined,
+		LUSD: ADDRESSES.LUSD[networkId]
+			? new EthCallContract(ADDRESSES.LUSD[networkId], ERC20ABI)
 			: undefined,
 	}
 }

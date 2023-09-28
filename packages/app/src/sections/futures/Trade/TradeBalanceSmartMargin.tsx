@@ -20,6 +20,7 @@ import {
 	selectTotalAvailableMargin,
 	selectLockedMarginInMarkets,
 	selectSmartMarginAccount,
+	selectKeeperEthBalance,
 } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
@@ -55,6 +56,7 @@ const TradeBalance = memo(() => {
 	const { deviceType } = useWindowSize()
 	const accountMargin = useAppSelector(selectTotalAvailableMargin)
 	const lockedMargin = useAppSelector(selectLockedMarginInMarkets)
+	const ethBal = useAppSelector(selectKeeperEthBalance)
 	const openModal = useAppSelector(selectShowModal)
 	const { isWalletConnected } = Connector.useContainer()
 	const { openConnectModal } = useConnectModal()
@@ -67,8 +69,8 @@ const TradeBalance = memo(() => {
 	}, [deviceType])
 
 	const isDepositRequired = useMemo(() => {
-		return accountMargin.lt(MIN_MARGIN_AMOUNT) && lockedMargin.eq(0)
-	}, [accountMargin, lockedMargin])
+		return accountMargin.lt(MIN_MARGIN_AMOUNT) && lockedMargin.eq(0) && ethBal.eq(0)
+	}, [accountMargin, lockedMargin, ethBal])
 
 	const dismissModal = useCallback(() => {
 		dispatch(setOpenModal(null))
@@ -144,81 +146,46 @@ const TradeBalance = memo(() => {
 					</DepositContainer>
 				) : (
 					<>
-						{isMobile ? (
-							<DepositContainer>
-								<FlexDivRowCentered columnGap="20px">
+						<DepositContainer>
+							<FlexDivRow columnGap="5px" onClick={toggleExpanded} style={{ cursor: 'pointer' }}>
+								<FlexDivCol rowGap="2px">
+									<Body size={size} color="secondary">
+										{t('futures.market.trade.trade-balance.available-margin')}
+									</Body>
+									<NumericValue size="large" weight="bold">
+										{formatDollars(accountMargin)}
+									</NumericValue>
+								</FlexDivCol>
+								<StyledCaretDownIcon $flip={expanded} />
+							</FlexDivRow>
+							{lockedMargin.gt(0) && (
+								<StyledFlexDivCol>
 									<FlexDivRowCentered columnGap="5px">
-										<Body size="medium" color="secondary" weight="bold">
-											{t('futures.market.trade.trade-balance.available-margin')}:
+										<Body size="medium" color="secondary">
+											{t('futures.market.trade.trade-balance.locked-margin')}
 										</Body>
-										<NumericValue size={'medium'} weight="bold">
-											{formatDollars(accountMargin)}
-										</NumericValue>
+										<Tooltip
+											position="fixed"
+											content={t('futures.market.trade.trade-balance.tooltip')}
+											width="280px"
+										>
+											<HelpIcon />
+										</Tooltip>
 									</FlexDivRowCentered>
-									{lockedMargin.gt(0) && (
-										<FlexDivRowCentered columnGap="5px">
-											<Body size="medium" color="secondary">
-												{t('futures.market.trade.trade-balance.locked-margin')}:
-											</Body>
-											<FlexDivRowCentered columnGap="5px">
-												<NumericValue size="medium" weight="bold" color="secondary">
-													{formatDollars(lockedMargin)}
-												</NumericValue>
-												<Tooltip
-													position="fixed"
-													content={t('futures.market.trade.trade-balance.tooltip')}
-													width="200px !important"
-												>
-													<HelpIcon />
-												</Tooltip>
-											</FlexDivRowCentered>
-										</FlexDivRowCentered>
-									)}
-								</FlexDivRowCentered>
-								<BridgeAndWithdrawButton modalType="futures_deposit_withdraw_smart_margin" />
-							</DepositContainer>
-						) : (
-							<DepositContainer>
-								<FlexDivRow columnGap="5px" onClick={toggleExpanded} style={{ cursor: 'pointer' }}>
-									<FlexDivCol rowGap="2px">
-										<Body size={size} color="secondary">
-											{t('futures.market.trade.trade-balance.available-margin')}
-										</Body>
-										<NumericValue size="large" weight="bold">
-											{formatDollars(accountMargin)}
-										</NumericValue>
-									</FlexDivCol>
-									<StyledCaretDownIcon $flip={expanded} />
-								</FlexDivRow>
-								{lockedMargin.gt(0) && (
-									<StyledFlexDivCol>
-										<FlexDivRowCentered columnGap="5px">
-											<Body size="medium" color="secondary">
-												{t('futures.market.trade.trade-balance.locked-margin')}
-											</Body>
-											<Tooltip
-												position="fixed"
-												content={t('futures.market.trade.trade-balance.tooltip')}
-												width="280px"
-											>
-												<HelpIcon />
-											</Tooltip>
-										</FlexDivRowCentered>
-										<NumericValue size="large" weight="bold" color="secondary">
-											{formatDollars(lockedMargin)}
-										</NumericValue>
-									</StyledFlexDivCol>
-								)}
-								<Button
-									variant="yellow"
-									size="xsmall"
-									textTransform="none"
-									onClick={() => dispatch(setOpenModal('futures_deposit_withdraw_smart_margin'))}
-								>
-									{t('futures.market.trade.trade-balance.manage-button')}
-								</Button>
-							</DepositContainer>
-						)}
+									<NumericValue size="large" weight="bold" color="secondary">
+										{formatDollars(lockedMargin)}
+									</NumericValue>
+								</StyledFlexDivCol>
+							)}
+							<Button
+								variant="yellow"
+								size="xsmall"
+								textTransform="none"
+								onClick={() => dispatch(setOpenModal('futures_deposit_withdraw_smart_margin'))}
+							>
+								{t('futures.market.trade.trade-balance.manage-button')}
+							</Button>
+						</DepositContainer>
 					</>
 				)}
 			</BalanceContainer>

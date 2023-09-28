@@ -1,4 +1,4 @@
-import { FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
+import { FuturesMarketAsset, FuturesMarketKey, PositionSide } from '@kwenta/sdk/types'
 import { formatDollars } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { memo, ReactElement } from 'react'
@@ -12,6 +12,7 @@ import PositionType from '../PositionType'
 
 type Props = {
 	marketKey: FuturesMarketKey
+	marketAsset?: FuturesMarketAsset
 	marketName: string
 	side?: PositionSide
 	infoLabel?: string
@@ -21,7 +22,7 @@ type Props = {
 }
 
 const TableMarketDetails = memo(
-	({ marketKey, marketName, side, infoLabel, badge, price, priceInfo }: Props) => {
+	({ marketKey, marketName, marketAsset, side, infoLabel, badge, price, priceInfo }: Props) => {
 		return (
 			<MarketContainer>
 				<StyledCurrencyIcon currencyKey={marketKey} />
@@ -36,6 +37,7 @@ const TableMarketDetails = memo(
 						<ColoredPrice priceChange={priceInfo.change}>
 							{formatDollars(price, {
 								suggestDecimals: true,
+								suggestDecimalsForAsset: marketAsset,
 							})}
 						</ColoredPrice>
 					)}

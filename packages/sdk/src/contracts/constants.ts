@@ -152,6 +152,9 @@ export const ADDRESSES: Record<string, Record<number, string>> = {
 	TradingRewardsPerpsV2: {
 		10: '0x2787CC20e5ECb4BF1bfB79eAE284201027683179',
 	},
+	TradingRewardsStakingV2: {
+		10: '0x195f6F7ca2268e1DEC03352786C350Eb61aBa307',
+	},
 	OpRewards: {
 		10: '0x1964cF9d0c5c268DcF5a5d37F13600483237f6F5',
 	},

@@ -7,7 +7,7 @@ import {
 	ISOLATED_MARGIN_FRAGMENT,
 	DEFAULT_NUMBER_OF_TRADES,
 } from '../constants/futures'
-import { FuturesMarketAsset, FuturesMarketKey, FuturesTradeByReferral } from '../types/futures'
+import { FuturesMarketAsset, FuturesMarketKey } from '../types/futures'
 import { mapMarginTransfers, mapSmartMarginTransfers } from '../utils/futures'
 import { FuturesAccountType, getFuturesPositions, getFuturesTrades } from '../utils/subgraph'
 
@@ -224,54 +224,4 @@ export const queryFundingRateHistory = async (
 		timestamp: Number(x.timestamp) * 1000,
 		fundingRate: Number(x.fundingRate),
 	}))
-}
-
-export const queryVolumeByTrader = async (
-	sdk: KwentaSDK,
-	trader: string,
-	mintedTime: string
-): Promise<FuturesTradeByReferral[]> => {
-	let queryResponseCount = 0
-	let lastMintedAtInSeconds = Math.floor(Number(mintedTime))
-	const currentTimeInSeconds = Math.floor(new Date().getTime() / 1000)
-	const futuresTrades: FuturesTradeByReferral[] = []
-
-	do {
-		const response: { futuresTrades: FuturesTradeByReferral[] } = await request(
-			sdk.futures.futuresGqlEndpoint,
-			gql`
-				query futuresTrades($minTimestamp: BigInt!, $maxTimestamp: BigInt!, $account: String!) {
-					futuresTrades(
-						where: {
-							timestamp_gt: $minTimestamp
-							timestamp_lte: $maxTimestamp
-							trackingCode: "0x4b57454e54410000000000000000000000000000000000000000000000000000"
-							account: $account
-						}
-						orderBy: timestamp
-						orderDirection: asc
-						first: 1000
-					) {
-						timestamp
-						account
-						size
-						price
-					}
-				}
-			`,
-			{
-				minTimestamp: lastMintedAtInSeconds,
-				maxTimestamp: currentTimeInSeconds,
-				account: trader,
-			}
-		)
-
-		queryResponseCount = response.futuresTrades.length
-		if (queryResponseCount > 0) {
-			lastMintedAtInSeconds = Number(response.futuresTrades[queryResponseCount - 1].timestamp)
-			futuresTrades.push(...response.futuresTrades)
-		}
-	} while (queryResponseCount === 1000)
-
-	return futuresTrades
 }

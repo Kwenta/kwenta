@@ -19,7 +19,6 @@ import Wei, { wei } from '@synthetixio/wei'
 import { FuturesPositionTablePosition, FuturesPositionTablePositionActive } from 'types/futures'
 
 import { DEFAULT_DELAYED_CANCEL_BUFFER } from 'constants/defaults'
-import { SWAP_DEPOSIT_TRADE_ENABLED } from 'constants/ui'
 import { selectSusdBalance } from 'state/balances/selectors'
 import { EST_KEEPER_GAS_FEE } from 'state/constants'
 import {
@@ -545,18 +544,6 @@ export const selectAvailableMarginInMarkets = selectIdleMarginInMarkets()
 
 export const selectLockedMarginInMarkets = selectIdleMarginInMarkets(true)
 
-export const selectSwapDepositBalanceQuote = createSelector(
-	(state: RootState) => state.smartMargin.swapDepositBalanceQuote,
-	(quote) => {
-		return quote
-			? {
-					susdQuote: wei(quote.susdQuote),
-					rate: wei(quote.rate),
-			  }
-			: undefined
-	}
-)
-
 export const selectSelectedSwapDepositToken = (state: RootState) =>
 	state.futures.selectedSwapDepositToken
 
@@ -591,14 +578,8 @@ export const selectTotalAvailableMargin = createSelector(
 	selectAvailableMarginInMarkets,
 	selectSmartMarginBalanceInfo,
 	selectSusdBalance,
-	selectSwapDepositBalanceQuote,
-	selectSelectedSwapDepositToken,
-	(idleInMarkets, { freeMargin }, susdBalance, balanceQuote, selectedToken) => {
-		const walletBalance =
-			!SWAP_DEPOSIT_TRADE_ENABLED || selectedToken === SwapDepositToken.SUSD
-				? susdBalance
-				: balanceQuote?.susdQuote ?? wei(0)
-		return walletBalance.add(idleInMarkets).add(freeMargin)
+	(idleInMarkets, { freeMargin }, susdBalance) => {
+		return susdBalance.add(idleInMarkets).add(freeMargin)
 	}
 )
 

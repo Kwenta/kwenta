@@ -10,10 +10,11 @@ import { Body, Heading } from 'components/Text'
 import { STAKING_DISABLED } from 'constants/ui'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
-import { claimStakingRewards, claimStakingRewardsV2 } from 'state/staking/actions'
+import { claimStakingRewards, claimStakingRewardsV2, compoundRewards } from 'state/staking/actions'
 import {
 	selectApy,
 	selectClaimableBalance,
+	selectIsCompoundingRewards,
 	selectIsGettingReward,
 	selectStakedKwentaBalance,
 	selectStakingV1,
@@ -30,6 +31,7 @@ const StakingTab = () => {
 	const claimableBalance = useAppSelector(selectClaimableBalance)
 	const stakedKwentaBalance = useAppSelector(selectStakedKwentaBalance)
 	const isClaimingReward = useAppSelector(selectIsGettingReward)
+	const isCompoundingRewards = useAppSelector(selectIsCompoundingRewards)
 	const stakingV1 = useAppSelector(selectStakingV1)
 	const apy = useAppSelector(selectApy)
 
@@ -40,6 +42,10 @@ const StakingTab = () => {
 			dispatch(claimStakingRewardsV2())
 		}
 	}, [dispatch, stakingV1])
+
+	const handleCompoundReward = useCallback(() => {
+		dispatch(compoundRewards())
+	}, [dispatch])
 
 	const stakingAndRewardsInfo: StakingCards[] = useMemo(
 		() => [
@@ -116,6 +122,19 @@ const StakingTab = () => {
 					>
 						{t('dashboard.stake.tabs.staking.claim')}
 					</Button>
+					{!stakingV1 && (
+						<Button
+							variant="flat"
+							size="small"
+							textTransform="uppercase"
+							isRounded
+							loading={isCompoundingRewards}
+							disabled={claimableBalance.eq(0) || isCompoundingRewards || STAKING_DISABLED}
+							onClick={handleCompoundReward}
+						>
+							{t('dashboard.stake.tabs.staking.compound')}
+						</Button>
+					)}
 				</FlexDivRow>
 			</CardGridContainer>
 		</SplitContainer>

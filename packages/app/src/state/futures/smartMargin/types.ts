@@ -155,10 +155,6 @@ export type SmartMarginState = {
 	}
 	futuresFees: string
 	futuresFeesForAccount: string
-	swapDepositBalanceQuote?: {
-		susdQuote: string
-		rate: string
-	}
 	swapDepositSlippage: number
 	swapDepositCustomSlippage: string
 }

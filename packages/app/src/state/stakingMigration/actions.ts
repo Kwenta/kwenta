@@ -83,7 +83,7 @@ export const migrateEntries = createAsyncThunk<void, number[], ThunkConfig>(
 		const supportedNetwork = selectStakingSupportedNetwork(getState())
 		if (!supportedNetwork)
 			throw new Error(
-				'Registering entries is unsupported on this network. Please switch to Optimism.'
+				'Migrating entries is unsupported on this network. Please switch to Optimism.'
 			)
 
 		try {

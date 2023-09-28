@@ -809,7 +809,7 @@ export const MARKETS: Record<FuturesMarketKey, FuturesMarketConfig> = {
 	[FuturesMarketKey.sSTETHETHPERP]: {
 		key: FuturesMarketKey.sSTETHETHPERP,
 		asset: FuturesMarketAsset.STETHETH,
-		supports: 'testnet',
+		supports: 'both',
 		version: 2,
 		pythIds: {
 			mainnet: '0x3af6a3098c56f58ff47cc46dee4a5b1910e5c157f7f0b665952445867470d61f',

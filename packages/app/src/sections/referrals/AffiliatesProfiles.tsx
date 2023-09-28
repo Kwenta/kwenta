@@ -27,8 +27,8 @@ import ReferralTiersProgressBar from './ReferralTiersProgressBar'
 const AffiliatesProfiles = memo(() => {
 	const { t } = useTranslation()
 	const tier = useAppSelector(selectReferralNft)
-	const mockReferralsRewards = useAppSelector(selectReferralCodes)
-	const referredCount = mockReferralsRewards.reduce(
+	const referralsRewards = useAppSelector(selectReferralCodes)
+	const referredCount = referralsRewards.reduce(
 		(acc, { referredCount }) => acc + Number(referredCount),
 		0
 	)

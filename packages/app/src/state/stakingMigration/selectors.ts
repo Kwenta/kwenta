@@ -101,18 +101,13 @@ export const selectMigrationSecondsLeft = createSelector(
 	selectMigrationStartTime,
 	selectMigrationDeadline,
 	(migrationStartTime, migrationDeadline) => {
-		return migrationStartTime > 0 ? Math.ceil(migrationDeadline - new Date().getTime() / 1000) : 0
+		return migrationStartTime > 0 ? Math.ceil(migrationDeadline - Date.now() / 1000) : 0
 	}
 )
 
 export const selectInMigrationPeriod = createSelector(
 	selectMigrationSecondsLeft,
 	(migrationSecondsLeft) => migrationSecondsLeft > 0
-)
-
-export const selectStartMigration = createSelector(
-	selectNumberOfUnmigratedRegisteredEntries,
-	(numberOfUnmigratedEntries) => numberOfUnmigratedEntries > 0
 )
 
 const selectRegisteredVestingEntryIDs = createSelector(
@@ -172,7 +167,7 @@ export const selectTotalEscrowUnmigrated = createSelector(
 	}
 )
 
-export const selectRedirectToMigration = createSelector(
+export const selectStartMigration = createSelector(
 	selectTotalEscrowUnmigrated,
 	selectInMigrationPeriod,
 	(totalEscrowUnmigrated, inMigrationPeriod) => totalEscrowUnmigrated.gt(0) && inMigrationPeriod

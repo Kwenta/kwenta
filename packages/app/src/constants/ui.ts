@@ -17,6 +17,3 @@ export enum zIndex {
 }
 
 export const STAKING_DISABLED = false
-
-// This flag controls the one-click swap-deposit-trade feature
-export const SWAP_DEPOSIT_TRADE_ENABLED = false

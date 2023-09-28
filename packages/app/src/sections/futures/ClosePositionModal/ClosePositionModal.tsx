@@ -242,7 +242,9 @@ export default function ClosePositionModal() {
 				/>
 				<InfoBoxRow
 					title={t('futures.market.trade.edit-position.fill-price')}
-					textValue={formatDollars(previewTrade?.price || 0, { suggestDecimals: true })}
+					textValue={formatDollars(previewTrade?.price || 0, {
+						suggestDecimalsForAsset: market?.asset,
+					})}
 				/>
 			</InfoBoxContainer>
 			{previewTrade?.exceedsPriceProtection && (

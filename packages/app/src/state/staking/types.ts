@@ -32,6 +32,7 @@ export type ClaimableRewards = {
 	opRewards: string
 	snxOpRewards: string
 	claimableKwentaRewards: ClaimParams[]
+	claimableKwentaRewardsV2: ClaimParams[]
 	claimableOpRewards: ClaimParams[]
 	claimableSnxOpRewards: ClaimParams[]
 }

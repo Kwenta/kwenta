@@ -30,14 +30,16 @@ const StakingPortfolio: FC<StakingPortfolioProps> = memo(({ title, cardsInfo }) 
 							{icon}
 						</LabelContainer>
 						<FlexDivRow columnGap="15px" justifyContent="flex-start">
-							{card.map(({ key, title, value, onClick }) => (
-								<FlexDivCol key={key} onClick={onClick} rowGap="5px">
-									<Body color="secondary">{title}</Body>
-									<Body size="large" color="preview">
-										{value}
-									</Body>
-								</FlexDivCol>
-							))}
+							{card
+								.filter((info) => !info.hidden)
+								.map(({ key, title, value, onClick }) => (
+									<FlexDivCol key={key} onClick={onClick} rowGap="5px">
+										<Body color="secondary">{title}</Body>
+										<Body size="large" color="preview">
+											{value}
+										</Body>
+									</FlexDivCol>
+								))}
 						</FlexDivRow>
 					</StyledFlexDivCol>
 				))}

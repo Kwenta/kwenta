@@ -162,7 +162,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				key: market.marketKey,
 				description: getSynthDescription(market.asset, t),
 				priceNum: basePriceRate?.price.toNumber() ?? 0,
-				price: formatDollars(basePriceRate?.price ?? '0', { suggestDecimals: true }),
+				price: formatDollars(basePriceRate?.price ?? '0', {
+					suggestDecimalsForAsset: market.asset,
+				}),
 				change: change.toNumber(),
 				priceDirection: basePriceRate?.change ?? null,
 				isMarketClosed: market.isSuspended,
@@ -243,7 +245,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 											)}
 										</div>
 									),
-									size: 30,
+									size: 21,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.market')}</TableHeader>,
@@ -254,10 +256,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 										<FlexDivRowCentered>
 											<CurrencyIcon currencyKey={row.original.key} width={18} height={18} />
 											<Spacer width={10} />
-											<Body>{getDisplayAsset(row.original.asset)}</Body>
+											<Body size="small">{getDisplayAsset(row.original.asset)}</Body>
 										</FlexDivRowCentered>
 									),
-									size: 65,
+									size: 75,
 								},
 								{
 									header: () => <TableHeader>{t('futures.markets-drop-down.price')}</TableHeader>,
@@ -267,13 +269,16 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									cell: (cellProps) => {
 										return (
 											<div>
-												<ColoredPrice priceChange={cellProps.row.original.priceDirection}>
+												<ColoredPrice
+													size="small"
+													priceChange={cellProps.row.original.priceDirection}
+												>
 													{cellProps.row.original.price}
 												</ColoredPrice>
 											</div>
 										)
 									},
-									size: 100,
+									size: 90,
 								},
 								{
 									header: () => (
@@ -290,6 +295,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 													futuresClosureReason={row.original.closureReason}
 													fallbackComponent={
 														<NumericValue
+															size="small"
 															suffix="%"
 															colored
 															value={floorNumber(
@@ -305,7 +311,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 									accessorKey: 'change',
 									sortingFn: 'basic',
 									enableSorting: true,
-									size: 60,
+									size: 45,
 								},
 							]}
 							data={options}

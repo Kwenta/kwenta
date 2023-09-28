@@ -121,6 +121,7 @@ const PositionsTable: FC<Props> = memo(({ positions }: Props) => {
 								}
 							>
 								<TableMarketDetails
+									marketAsset={row.market.asset}
 									marketName={getDisplayAsset(row.market.asset) ?? ''}
 									marketKey={row.market.marketKey}
 									price={row.marketPrice}

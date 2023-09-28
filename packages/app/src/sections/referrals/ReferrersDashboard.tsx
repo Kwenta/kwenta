@@ -17,7 +17,7 @@ type ReferrersDashboardProps = {
 const ReferrersDashboard: FC<ReferrersDashboardProps> = memo(({ data }) => {
 	return (
 		<Container columnGap="15px">
-			{data.map(({ key, label, value, buttonLabel, icon, active, onClick, loading }) => (
+			{data.map(({ key, label, value, buttonLabel, icon, onClick }) => (
 				<StyledCard key={key}>
 					<FlexDivRowCentered columnGap="25px">
 						{icon}
@@ -30,15 +30,7 @@ const ReferrersDashboard: FC<ReferrersDashboardProps> = memo(({ data }) => {
 						</FlexDivCol>
 					</FlexDivRowCentered>
 					{buttonLabel && (
-						<Button
-							variant="yellow"
-							size="xsmall"
-							textTransform="uppercase"
-							isRounded
-							disabled={!active || loading}
-							loading={loading}
-							onClick={onClick}
-						>
+						<Button size="xsmall" textTransform="uppercase" onClick={onClick}>
 							{buttonLabel}
 						</Button>
 					)}

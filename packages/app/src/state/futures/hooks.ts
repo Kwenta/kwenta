@@ -1,6 +1,5 @@
 import { FuturesMarginType } from '@kwenta/sdk/types'
 
-import { SWAP_DEPOSIT_TRADE_ENABLED } from 'constants/ui'
 import {
 	fetchCrossMarginAccountData,
 	fetchCrossMarginMarketData,
@@ -20,6 +19,7 @@ import {
 } from 'state/referrals/action'
 import { fetchStakeMigrateData } from 'state/staking/actions'
 import {
+	selectEpochPeriod,
 	selectSelectedEpoch,
 	selectStakingSupportedNetwork,
 	selectTradingRewardsSupportedNetwork,
@@ -37,12 +37,10 @@ import {
 	fetchSmartMarginAccountData,
 	fetchSmartMarginMarketData,
 	fetchSmartMarginOpenOrders,
-	fetchSwapDepositBalanceQuote,
 } from './smartMargin/actions'
 import {
 	selectSmartMarginAccount,
 	selectSmartMarginSupportedNetwork,
-	selectSelectedSwapDepositToken,
 } from './smartMargin/selectors'
 
 // TODO: Optimise polling and queries
@@ -56,7 +54,6 @@ export const usePollMarketFuturesData = () => {
 	const selectedAccountType = useAppSelector(selectFuturesType)
 	const networkSupportsSmartMargin = useAppSelector(selectSmartMarginSupportedNetwork)
 	const networkSupportsCrossMargin = useAppSelector(selectCrossMarginSupportedNetwork)
-	const swapDepositToken = useAppSelector(selectSelectedSwapDepositToken)
 	const networkSupportTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	useFetchAction(fetchBoostNftMinted, {
@@ -142,12 +139,6 @@ export const usePollMarketFuturesData = () => {
 		intervalTime: 30000,
 		disabled: !wallet,
 	})
-
-	usePollAction('fetchSwapDepositBalanceQuote', fetchSwapDepositBalanceQuote, {
-		dependencies: [swapDepositToken, wallet],
-		intervalTime: 10 * 60 * 1000,
-		disabled: !wallet || !swapDepositToken || !SWAP_DEPOSIT_TRADE_ENABLED,
-	})
 }
 
 export const usePollDashboardFuturesData = () => {
@@ -224,10 +215,11 @@ export const useFetchStakeMigrateData = () => {
 export const useFetchReferralData = () => {
 	const networkId = useAppSelector(selectNetwork)
 	const wallet = useAppSelector(selectWallet)
+	const period = useAppSelector(selectEpochPeriod)
 	const networkSupportTradingRewards = useAppSelector(selectTradingRewardsSupportedNetwork)
 
 	useFetchAction(fetchAllReferralData, {
-		dependencies: [networkId, wallet],
-		disabled: !networkSupportTradingRewards,
+		dependencies: [networkId, wallet, period],
+		disabled: !networkSupportTradingRewards || !wallet || !period,
 	})
 }

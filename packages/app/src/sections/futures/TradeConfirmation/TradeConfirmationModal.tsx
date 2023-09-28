@@ -343,11 +343,14 @@ const OrderPriceRow = () => {
 
 const EstimatedFillPriceRow = () => {
 	const potentialTradeDetails = useAppSelector(selectTradePreview)
+	const marketAsset = useAppSelector(selectMarketAsset)
 
 	return (
 		<DataRow
 			label="Est. fill price"
-			value={formatDollars(potentialTradeDetails?.price ?? ZERO_WEI, { suggestDecimals: true })}
+			value={formatDollars(potentialTradeDetails?.price ?? ZERO_WEI, {
+				suggestDecimalsForAsset: marketAsset,
+			})}
 		/>
 	)
 }
