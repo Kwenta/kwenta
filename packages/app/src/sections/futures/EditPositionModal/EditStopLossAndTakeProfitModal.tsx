@@ -45,7 +45,7 @@ export default function EditStopLossAndTakeProfitModal() {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 	const transactionState = useAppSelector(selectTransaction)
-	const { market, marketPrice, position } = useAppSelector(selectEditPositionModalInfo)
+	const { market, position } = useAppSelector(selectEditPositionModalInfo)
 	const exsistingSLTPOrders = useAppSelector(selectAllSLTPOrders)
 	const isSubmitting = useAppSelector(selectSubmittingFuturesTx)
 	const { takeProfitPrice, stopLossPrice } = useAppSelector(selectSlTpModalInputs)
@@ -114,6 +114,18 @@ export default function EditStopLossAndTakeProfitModal() {
 		]
 	)
 
+	const entryPriceWei = useMemo(() => {
+		return position?.activePosition?.details?.entryPrice ?? wei(0)
+	}, [position?.activePosition?.details?.entryPrice])
+
+	const calculateSizeWei = useMemo(() => {
+		if (!position?.activePosition.size || !entryPriceWei) {
+			return wei(0)
+		}
+
+		return position.activePosition.size.mul(entryPriceWei)
+	}, [position?.activePosition.size, entryPriceWei])
+
 	useEffect(() => {
 		const existingSL = exsistingSLTPOrders.find(
 			(o) => o.marketKey === market?.marketKey && o.orderType === ConditionalOrderTypeEnum.STOP
@@ -147,13 +159,13 @@ export default function EditStopLossAndTakeProfitModal() {
 				const relativePercent = wei(percent).div(leverageWei)
 				const stopLoss =
 					position?.activePosition.side === 'short'
-						? marketPrice.add(marketPrice.mul(relativePercent))
-						: marketPrice.sub(marketPrice.mul(relativePercent))
+						? entryPriceWei.add(entryPriceWei.mul(relativePercent))
+						: entryPriceWei.sub(entryPriceWei.mul(relativePercent))
 				const dp = suggestedDecimals(stopLoss)
 				dispatch(setSLTPModalStopLoss(stopLoss.toString(dp)))
 			}
 		},
-		[marketPrice, dispatch, position?.activePosition.side, leverageWei]
+		[entryPriceWei, dispatch, position?.activePosition.side, leverageWei]
 	)
 
 	const onSelectTakeProfit = useCallback(
@@ -166,13 +178,13 @@ export default function EditStopLossAndTakeProfitModal() {
 				const relativePercent = wei(percent).div(leverageWei)
 				const takeProfit =
 					position?.activePosition.side === 'short'
-						? marketPrice.sub(marketPrice.mul(relativePercent))
-						: marketPrice.add(marketPrice.mul(relativePercent))
+						? entryPriceWei.sub(entryPriceWei.mul(relativePercent))
+						: entryPriceWei.add(entryPriceWei.mul(relativePercent))
 				const dp = suggestedDecimals(takeProfit)
 				dispatch(setSLTPModalTakeProfit(takeProfit.toString(dp)))
 			}
 		},
-		[marketPrice, dispatch, position?.activePosition.side, leverageWei]
+		[entryPriceWei, dispatch, position?.activePosition.side, leverageWei]
 	)
 
 	const onChangeStopLoss = useCallback(
@@ -220,10 +232,11 @@ export default function EditStopLossAndTakeProfitModal() {
 					<EditStopLossAndTakeProfitInput
 						type={'take-profit'}
 						invalidLabel={sltpValidity.takeProfit.invalidLabel}
-						currentPrice={marketPrice}
+						price={entryPriceWei}
 						value={takeProfitPrice}
 						positionSide={position?.activePosition.side || PositionSide.LONG}
 						leverage={position?.activePosition.leverage || wei(1)}
+						size={calculateSizeWei}
 						onChange={onChangeTakeProfit}
 					/>
 
@@ -240,8 +253,9 @@ export default function EditStopLossAndTakeProfitModal() {
 						positionSide={position?.activePosition.side || PositionSide.LONG}
 						leverage={position?.activePosition.leverage || wei(1)}
 						invalidLabel={sltpValidity.stopLoss.invalidLabel}
-						currentPrice={marketPrice}
+						price={entryPriceWei}
 						value={stopLossPrice}
+						size={calculateSizeWei}
 						onChange={onChangeStopLoss}
 					/>
 

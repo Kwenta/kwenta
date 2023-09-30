@@ -9,7 +9,7 @@ import InputTitle from 'components/Input/InputTitle'
 import SLTPInputField, { SLTPInputFieldProps } from '../Trade/SLTPInputField'
 
 const EditStopLossAndTakeProfitInput: React.FC<SLTPInputFieldProps> = memo(
-	({ type, currentPrice, ...props }) => {
+	({ type, price, ...props }) => {
 		const { t } = useTranslation()
 
 		return (
@@ -18,8 +18,7 @@ const EditStopLossAndTakeProfitInput: React.FC<SLTPInputFieldProps> = memo(
 					label={type === 'take-profit' ? 'Take Profit' : 'Stop Loss'}
 					rightElement={
 						<StyledInputTitle>
-							{t('futures.market.trade.edit-sl-tp.last-price')}:{' '}
-							<span>{formatDollars(currentPrice)}</span>
+							{t('futures.market.trade.edit-sl-tp.last-price')}: <span>{formatDollars(price)}</span>
 						</StyledInputTitle>
 					}
 				/>
@@ -27,7 +26,7 @@ const EditStopLossAndTakeProfitInput: React.FC<SLTPInputFieldProps> = memo(
 				<SLTPInputField
 					{...props}
 					type={type}
-					currentPrice={currentPrice}
+					price={price}
 					dataTestId={'trade-panel-stop-loss-input'}
 				/>
 			</div>

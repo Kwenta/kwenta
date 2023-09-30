@@ -12,8 +12,9 @@ export type SLTPInputFieldProps = {
 	type: 'take-profit' | 'stop-loss'
 	value: string
 	invalidLabel: string | undefined
-	currentPrice: Wei
+	price: Wei
 	leverage: Wei
+	size: Wei
 	minMaxPrice?: Wei
 	dataTestId?: string
 	positionSide: PositionSide
@@ -27,9 +28,10 @@ const SLTPInputField: React.FC<SLTPInputFieldProps> = memo(
 		type,
 		value,
 		invalidLabel,
-		currentPrice,
+		price,
 		positionSide,
 		leverage,
+		size,
 		dataTestId,
 		disabledReason,
 		disabled,
@@ -59,9 +61,10 @@ const SLTPInputField: React.FC<SLTPInputFieldProps> = memo(
 							<ShowPercentage
 								targetPrice={value}
 								isStopLoss={type === 'stop-loss'}
-								currentPrice={currentPrice}
+								price={price}
 								leverageSide={positionSide}
 								leverageWei={leverage}
+								sizeWei={size}
 							/>
 						)
 					}
