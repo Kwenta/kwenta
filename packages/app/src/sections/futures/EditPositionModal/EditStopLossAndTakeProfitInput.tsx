@@ -18,7 +18,8 @@ const EditStopLossAndTakeProfitInput: React.FC<SLTPInputFieldProps> = memo(
 					label={type === 'take-profit' ? 'Take Profit' : 'Stop Loss'}
 					rightElement={
 						<StyledInputTitle>
-							{t('futures.market.trade.edit-sl-tp.last-price')}: <span>{formatDollars(price)}</span>
+							{t('futures.market.trade.edit-sl-tp.entry-price')}:{' '}
+							<span>{formatDollars(price)}</span>
 						</StyledInputTitle>
 					}
 				/>
