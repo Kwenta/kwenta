@@ -52,7 +52,10 @@ const ShowPercentage: React.FC<ShowPercentageProps> = ({
 
 const ProfitLoss = styled.span<{ isStopLoss: boolean }>`
 	margin-right: 0.7rem;
-	color: ${({ theme, isStopLoss }) => (isStopLoss ? theme.colors.red : theme.colors.green)};
+	color: ${({ theme, isStopLoss }) =>
+		isStopLoss
+			? theme.colors.selectedTheme.newTheme.text.negative
+			: theme.colors.selectedTheme.newTheme.text.positive};
 `
 
 export default ShowPercentage
