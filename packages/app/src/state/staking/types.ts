@@ -1,4 +1,4 @@
-import { EscrowData, ClaimParams } from '@kwenta/sdk/types'
+import { EscrowData, ClaimParams, TransactionStatus } from '@kwenta/sdk/types'
 
 import { FetchStatus } from 'state/types'
 
@@ -53,6 +53,7 @@ export type StakingState = StakingMiscInfo &
 		selectedEscrowVersion: 1 | 2
 		selectedEpoch?: number
 		stakingMigrationCompleted: boolean
+		approvedOperators: string[]
 		stakeStatus: FetchStatus
 		unstakeStatus: FetchStatus
 		stakeEscrowedStatus: FetchStatus
@@ -70,3 +71,12 @@ export type StakingState = StakingMiscInfo &
 export type StakingAction = StakeBalance & StakingMiscInfo
 
 export type StakingActionV2 = StakeBalance & StakingMiscInfoV2
+
+export type StakingTransactionType = 'approve_operator'
+
+export type StakingTransaction = {
+	type: StakingTransactionType
+	status: TransactionStatus
+	error?: string
+	hash: string | null
+}

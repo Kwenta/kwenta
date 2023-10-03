@@ -24,14 +24,20 @@ import { formatTruncatedDuration } from '../utils/date'
 import { awsClient } from '../utils/files'
 import { weiFromWei } from '../utils/number'
 import { getFuturesAggregateStats, getFuturesTrades } from '../utils/subgraph'
-import { calculateFeesForAccount, calculateTotalFees } from '../utils'
+import { calculateFeesForAccount, calculateTotalFees, getStakingGqlEndpoint } from '../utils'
 import { ADDRESSES } from '../constants'
+import { queryOperatorsByOwner } from '../queries/staking'
 
 export default class KwentaTokenService {
 	private sdk: KwentaSDK
 
 	constructor(sdk: KwentaSDK) {
 		this.sdk = sdk
+	}
+
+	get stakingGqlEndpoint() {
+		const { networkId } = this.sdk.context
+		return getStakingGqlEndpoint(networkId)
 	}
 
 	public changePoolTokens(amount: string, action: 'stake' | 'withdraw') {
@@ -871,5 +877,27 @@ export default class KwentaTokenService {
 			`${action}${options?.escrow ? 'Escrow' : ''}`,
 			[amount]
 		)
+	}
+
+	public approveOperator(delegatedAddress: string, isApproval: boolean) {
+		const { KwentaStakingRewardsV2 } = this.sdk.context.contracts
+
+		if (!KwentaStakingRewardsV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		return this.sdk.transactions.createContractTxn(KwentaStakingRewardsV2, 'approveOperator', [
+			delegatedAddress,
+			isApproval,
+		])
+	}
+
+	public async getApprovedOperators() {
+		if (!this.sdk.context.contracts.KwentaStakingRewardsV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+		const { walletAddress } = this.sdk.context
+
+		return queryOperatorsByOwner(this.sdk, walletAddress)
 	}
 }

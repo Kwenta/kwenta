@@ -1,8 +1,11 @@
+import { TransactionStatus } from '@kwenta/sdk/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { BigNumber } from 'ethers'
 
 import { notifyError } from 'components/ErrorNotifier'
 import { monitorTransaction } from 'contexts/RelayerContext'
+import { monitorAndAwaitTransaction } from 'state/app/helpers'
+import { handleTransactionError, setTransaction } from 'state/app/reducer'
 import {
 	selectStakingSupportedNetwork,
 	selectTradingRewardsSupportedNetwork,
@@ -232,6 +235,7 @@ export const fetchStakeMigrateData = createAsyncThunk<void, void, ThunkConfig>(
 		dispatch(fetchEstimatedRewards())
 		dispatch(fetchClaimableRewards())
 		dispatch(fetchMigrationDetails())
+		dispatch(fetchApprovedOperators())
 	}
 )
 
@@ -628,5 +632,69 @@ export const unstakeKwentaV2 = createAsyncThunk<void, BigNumber, ThunkConfig>(
 				dispatch({ type: 'staking/setUnstakeStatus', payload: FetchStatus.Error })
 			},
 		})
+	}
+)
+
+export const approveOperator = createAsyncThunk<
+	void,
+	{ delegatedAddress: string; isApproval: boolean },
+	ThunkConfig
+>(
+	'staking/approveOperator',
+	async ({ delegatedAddress, isApproval }, { dispatch, getState, extra: { sdk } }) => {
+		const wallet = selectWallet(getState())
+		if (!wallet) throw new Error('Wallet not connected')
+
+		const supportedNetwork = selectStakingSupportedNetwork(getState())
+		if (!supportedNetwork)
+			throw new Error(
+				'Approving Operator is unsupported on this network. Please switch to Optimism.'
+			)
+
+		try {
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'approve_operator',
+					hash: null,
+				})
+			)
+
+			const tx = await sdk.kwentaToken.approveOperator(delegatedAddress, isApproval)
+			await monitorAndAwaitTransaction(dispatch, tx)
+			dispatch(fetchApprovedOperators())
+		} catch (err) {
+			logError(err)
+			dispatch(handleTransactionError(err.message))
+			throw err
+		}
+	}
+)
+
+export const fetchApprovedOperators = createAsyncThunk<{ operators: string[] }, void, ThunkConfig>(
+	'staking/fetchApprovedOperators',
+	async (_, { getState, extra: { sdk } }) => {
+		try {
+			const wallet = selectWallet(getState())
+			if (!wallet) return { operators: [] }
+			const operatorsApprovalTxns = await sdk.kwentaToken.getApprovedOperators()
+			const operatorStatus: { [key: string]: boolean } = {}
+			for (const txn of operatorsApprovalTxns) {
+				if (operatorStatus[txn.operator] === undefined) {
+					operatorStatus[txn.operator] = txn.approved
+				}
+			}
+			const operators = Object.keys(operatorStatus)
+				.filter((operator) => operatorStatus[operator])
+				.map((operator) => operator.toLowerCase())
+
+			return {
+				operators,
+			}
+		} catch (err) {
+			logError(err)
+			notifyError('Failed to fetch approved operators', err)
+			throw err
+		}
 	}
 )

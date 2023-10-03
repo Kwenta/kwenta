@@ -23,7 +23,6 @@ const ReferralRewardsHistory: FC<ReferralRewardsHistoryProps> = memo(({ data }) 
 	const rewardsHistoryTableProps = useMemo(
 		() => ({
 			data,
-			compactPagination: true,
 			pageSize: 4,
 			showPagination: true,
 			noResultsMessage: <ReferralTableNoResults />,
@@ -36,6 +35,7 @@ const ReferralRewardsHistory: FC<ReferralRewardsHistoryProps> = memo(({ data }) 
 			<DesktopOnlyView>
 				<StyledTable
 					{...rewardsHistoryTableProps}
+					paginationSize="sm"
 					columns={[
 						{
 							header: () => (
@@ -93,6 +93,7 @@ const ReferralRewardsHistory: FC<ReferralRewardsHistoryProps> = memo(({ data }) 
 			<MobileOrTabletView>
 				<StyledTable
 					{...rewardsHistoryTableProps}
+					paginationSize="sm"
 					gridLayout={referralGridLayoutTable}
 					columns={[
 						{

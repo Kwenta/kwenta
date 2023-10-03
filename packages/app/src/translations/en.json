@@ -664,6 +664,16 @@
 					"vkwenta-token": "vKwenta",
 					"approve": "Approve",
 					"balance": "Balance:"
+				},
+				"delegate": {
+					"title": "Delegate",
+					"copy": "Allow other addresses to collect and stake rewards on your behalf",
+					"manage": "Manage",
+					"manage-copy": "Manage delegated addresses",
+					"address": "Address",
+					"revoke": "Revoke",
+					"no-result": "You have no delegated addresses",
+					"warning": "Coming soon"
 				}
 			}
 		},

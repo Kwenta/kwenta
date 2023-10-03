@@ -38,3 +38,9 @@ export type RewardsInfo = {
 	info: RewardsCard[]
 	disabled?: boolean
 }
+
+export enum StakeTab {
+	Staking = 'staking',
+	Escrow = 'escrow',
+	Delegate = 'delegate',
+}

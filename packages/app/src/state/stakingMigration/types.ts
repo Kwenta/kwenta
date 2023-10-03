@@ -35,7 +35,7 @@ export type StakingMigrationTransactionType =
 	| 'approve_escrow_migrator'
 	| 'migrate_entries'
 
-export type StakingMigrationlTransaction = {
+export type StakingMigrationTransaction = {
 	type: StakingMigrationTransactionType
 	status: TransactionStatus
 	error?: string

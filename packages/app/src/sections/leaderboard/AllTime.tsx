@@ -71,7 +71,7 @@ const AllTime: FC<AllTimeProps> = ({
 						totalVolume: !compact,
 						pnl: !compact,
 					}}
-					compactPagination={true}
+					paginationSize={'sm'}
 					columnsDeps={[activeTab]}
 					noResultsMessage={
 						data?.length === 0 && (
