@@ -119,7 +119,7 @@ export default function EditStopLossAndTakeProfitModal() {
 	}, [position?.activePosition?.details?.entryPrice])
 
 	const calculateSizeWei = useMemo(() => {
-		if (!position?.activePosition.size || !entryPriceWei) {
+		if (!position?.activePosition.size) {
 			return wei(0)
 		}
 
