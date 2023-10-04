@@ -27,6 +27,7 @@ import {
 	claimStakingRewardsV2,
 	approveKwentaToken,
 	compoundRewards,
+	fetchApprovedOperators,
 } from './actions'
 import { StakingState } from './types'
 
@@ -98,6 +99,7 @@ export const STAKING_INITIAL_STATE: StakingState = {
 	...ZERO_CLAIMABLE_REWARDS,
 	selectedEscrowVersion: 1,
 	stakingMigrationCompleted: true,
+	approvedOperators: [],
 	stakeStatus: FetchStatus.Idle,
 	unstakeStatus: FetchStatus.Idle,
 	stakeEscrowedStatus: FetchStatus.Idle,
@@ -215,6 +217,9 @@ const stakingSlice = createSlice({
 		builder.addCase(fetchEstimatedRewards.fulfilled, (state, action) => {
 			state.estimatedKwentaRewards = action.payload.estimatedKwentaRewards
 			state.estimatedOpRewards = action.payload.estimatedOpRewards
+		})
+		builder.addCase(fetchApprovedOperators.fulfilled, (state, action) => {
+			state.approvedOperators = action.payload.operators
 		})
 		builder.addCase(approveKwentaToken.pending, (state) => {
 			state.approveKwentaStatus = FetchStatus.Loading

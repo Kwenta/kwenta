@@ -664,6 +664,16 @@
 					"vkwenta-token": "vKwenta",
 					"approve": "Approve",
 					"balance": "Balance:"
+				},
+				"delegate": {
+					"title": "Delegate",
+					"copy": "Allow other addresses to collect and stake rewards on your behalf",
+					"manage": "Manage",
+					"manage-copy": "Manage delegated addresses",
+					"address": "Address",
+					"revoke": "Revoke",
+					"no-result": "You have no delegated addresses",
+					"warning": "Coming soon"
 				}
 			}
 		},
@@ -1023,7 +1033,7 @@
 					"no-tp": "No TP",
 					"no-sl": "No SL",
 					"stop-loss": "Stop Loss",
-					"last-price": "Last Price",
+					"entry-price": "Entry Price",
 					"estimated-profit": "Estimated Profit",
 					"estimated-loss": "Estimated Loss",
 					"warning": "This setting applies to the entire position."

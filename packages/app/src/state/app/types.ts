@@ -2,6 +2,7 @@ import { TransactionStatus, FuturesMarketKey, KwentaStatus, GasPrice } from '@kw
 
 import { FuturesTransactionType } from 'state/futures/common/types'
 import { ReferralTransactionType } from 'state/referrals/types'
+import { StakingTransactionType } from 'state/staking/types'
 import { StakingMigrationTransactionType } from 'state/stakingMigration/types'
 
 export type ModalType =
@@ -29,7 +30,8 @@ export type GasSpeed = 'average' | 'fast' | 'fastest'
 export type TransactionType =
 	| FuturesTransactionType
 	| ReferralTransactionType
-	| StakingMigrationTransactionType // TODO: Support all types
+	| StakingMigrationTransactionType
+	| StakingTransactionType // TODO: Support all types
 
 export type Transaction = {
 	type: TransactionType

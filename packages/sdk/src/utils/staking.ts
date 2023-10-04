@@ -5,6 +5,7 @@ import {
 	DECAY_RATE,
 	EPOCH_START,
 	INITIAL_WEEKLY_SUPPLY,
+	STAKING_ENDPOINTS,
 	STAKING_REWARDS_RATIO,
 	SUPPLY_RATE,
 	WEEK,
@@ -35,4 +36,8 @@ export const parseEpochData = (index: number, networkId?: NetworkId) => {
 	const endDate = formatShortDate(new Date(toJSTimestamp(epochEnd)))
 	const label = `Epoch ${index}: ${startDate} - ${endDate}`
 	return { period: index, start: epochStart, end: epochEnd, label }
+}
+
+export const getStakingGqlEndpoint = (networkId: number) => {
+	return STAKING_ENDPOINTS[networkId] || STAKING_ENDPOINTS[10]
 }

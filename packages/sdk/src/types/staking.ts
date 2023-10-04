@@ -19,3 +19,9 @@ export type FuturesFeeProps = {
 	timestamp: string
 	feesKwenta: BigNumber
 }
+
+export interface OperatorApprovals {
+	operator: string
+	blockTimestamp: number
+	approved: boolean
+}

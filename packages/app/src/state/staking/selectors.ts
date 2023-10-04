@@ -1,4 +1,5 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
+import { TransactionStatus } from '@kwenta/sdk/types'
 import { toWei } from '@kwenta/sdk/utils'
 import { createSelector } from '@reduxjs/toolkit'
 import { wei } from '@synthetixio/wei'
@@ -16,6 +17,16 @@ import {
 } from 'state/stakingMigration/selectors'
 import { RootState } from 'state/store'
 import { FetchStatus } from 'state/types'
+
+export const selectSubmittingStakingTx = createSelector(
+	(state: RootState) => state.app,
+	(app) => {
+		return (
+			app.transaction?.status === TransactionStatus.AwaitingExecution ||
+			app.transaction?.status === TransactionStatus.Executed
+		)
+	}
+)
 
 export const selectClaimableBalanceV1 = createSelector(
 	(state: RootState) => state.staking.v1.claimableBalance,
@@ -469,4 +480,15 @@ export const selectStepUnstakeActive = createSelector(
 	selectStakedKwentaBalanceV1,
 	(stepClaimFlowActive, stepMigrateFlowActive, stakedKwentaBalance) =>
 		!stepClaimFlowActive && !stepMigrateFlowActive && stakedKwentaBalance.gt(0)
+)
+
+export const selectApprovedOperators = createSelector(
+	(state: RootState) => state.staking.approvedOperators,
+	(approvedOperators) => approvedOperators.map((operator) => ({ address: operator }))
+)
+
+export const selectIsApprovingOperator = createSelector(
+	selectSubmittingStakingTx,
+	(state: RootState) => state.app,
+	(submitting, app) => submitting && app.transaction?.type === 'approve_operator'
 )

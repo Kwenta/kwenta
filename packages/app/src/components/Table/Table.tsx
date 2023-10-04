@@ -73,7 +73,8 @@ type TableProps<T> = {
 	sortBy?: SortingState
 	showShortList?: boolean
 	lastRef?: any
-	compactPagination?: boolean
+	paginationSize?: 'xs' | 'sm' | 'md'
+	noResultsContainerPadding?: string
 	rounded?: boolean
 	noBottom?: boolean
 	columnVisibility?: VisibilityState
@@ -98,7 +99,8 @@ const Table = <T,>({
 	showShortList,
 	sortBy = [],
 	lastRef = null,
-	compactPagination = false,
+	paginationSize = 'md',
+	noResultsContainerPadding = '',
 	rounded = true,
 	noBottom = false,
 	columnVisibility,
@@ -196,7 +198,9 @@ const Table = <T,>({
 							<Loader />
 						</LoadingContainer>
 					) : !!noResultsMessage && data.length === 0 ? (
-						<NoResultsContainer>{noResultsMessage}</NoResultsContainer>
+						<NoResultsContainer $padding={noResultsContainerPadding}>
+							{noResultsMessage}
+						</NoResultsContainer>
 					) : (
 						<TableBody className="table-body">
 							{table.getRowModel().rows.map((row, i) => {
@@ -217,7 +221,7 @@ const Table = <T,>({
 					)}
 					{(shouldShowPagination || paginationExtra) && !CustomPagination ? (
 						<Pagination
-							compact={compactPagination}
+							size={paginationSize}
 							pageIndex={table.getState().pagination.pageIndex}
 							pageCount={table.getPageCount() === 0 ? 1 : table.getPageCount()}
 							canNextPage={table.getCanNextPage()}
@@ -232,7 +236,7 @@ const Table = <T,>({
 			</TableContainer>
 			{CustomPagination && (
 				<CustomPagination
-					compact={compactPagination}
+					size={paginationSize}
 					pageIndex={table.getState().pagination.pageIndex}
 					pageCount={table.getPageCount()}
 					canNextPage={table.getCanNextPage()}
@@ -278,8 +282,8 @@ export const TableCellHead = styled(TableCell)<{ hideHeaders: boolean; $canSort:
 	`}
 `
 
-const NoResultsContainer = styled(Body)`
-	padding: 50px 0;
+const NoResultsContainer = styled(Body)<{ $padding?: string }>`
+	padding: ${(props) => (props.$padding ? props.$padding : '50px')} 0;
 `
 
 const LoadingContainer = styled.div`

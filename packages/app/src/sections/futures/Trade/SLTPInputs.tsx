@@ -17,12 +17,17 @@ import {
 	selectLeverageInput,
 	selectLeverageSide,
 	selectTradePanelSLTPValidity,
+	selectTradeSizeInputs,
 } from 'state/futures/selectors'
 import {
 	setSmartMarginTradeStopLoss,
 	setSmartMarginTradeTakeProfit,
 } from 'state/futures/smartMargin/reducer'
-import { selectSlTpTradeInputs } from 'state/futures/smartMargin/selectors'
+import {
+	selectOrderType,
+	selectSlTpTradeInputs,
+	selectSmartMarginOrderPrice,
+} from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import OrderAcknowledgement from './OrderAcknowledgement'
@@ -39,6 +44,9 @@ export default function SLTPInputs() {
 	const leverage = useAppSelector(selectLeverageInput)
 	const hideWarning = useAppSelector(selectAckedOrdersWarning)
 	const sltpValidity = useSelector(selectTradePanelSLTPValidity)
+	const { susdSize } = useAppSelector(selectTradeSizeInputs)
+	const orderType = useAppSelector(selectOrderType)
+	const orderPrice = useAppSelector(selectSmartMarginOrderPrice)
 
 	const [showInputs, setShowInputs] = useState(false)
 	const [showOrderWarning, setShowOrderWarning] = useState(false)
@@ -56,6 +64,18 @@ export default function SLTPInputs() {
 		return leverage && Number(leverage) > 0 ? wei(leverage) : wei(1)
 	}, [leverage])
 
+	const price = useMemo(() => {
+		switch (orderType) {
+			case 'market':
+				return currentPrice
+			case 'limit':
+			case 'stop_market':
+				return orderPrice ? wei(orderPrice) : currentPrice
+			default:
+				return currentPrice
+		}
+	}, [orderPrice, orderType, currentPrice])
+
 	const onSelectStopLossPercent = useCallback(
 		(index: number) => {
 			const option = SL_OPTIONS[index]
@@ -63,12 +83,12 @@ export default function SLTPInputs() {
 			const relativePercent = wei(percent).div(leverageWei)
 			const stopLoss =
 				leverageSide === 'short'
-					? currentPrice.add(currentPrice.mul(relativePercent))
-					: currentPrice.sub(currentPrice.mul(relativePercent))
+					? price.add(price.mul(relativePercent))
+					: price.sub(price.mul(relativePercent))
 			const dp = suggestedDecimals(stopLoss)
 			dispatch(setSmartMarginTradeStopLoss(stopLoss.toString(dp)))
 		},
-		[currentPrice, dispatch, leverageSide, leverageWei]
+		[dispatch, leverageSide, leverageWei, price]
 	)
 
 	const onSelectTakeProfit = useCallback(
@@ -78,12 +98,12 @@ export default function SLTPInputs() {
 			const relativePercent = wei(percent).div(leverageWei)
 			const takeProfit =
 				leverageSide === 'short'
-					? currentPrice.sub(currentPrice.mul(relativePercent))
-					: currentPrice.add(currentPrice.mul(relativePercent))
+					? price.sub(price.mul(relativePercent))
+					: price.add(price.mul(relativePercent))
 			const dp = suggestedDecimals(takeProfit)
 			dispatch(setSmartMarginTradeTakeProfit(takeProfit.toString(dp)))
 		},
-		[currentPrice, dispatch, leverageSide, leverageWei]
+		[dispatch, leverageSide, leverageWei, price]
 	)
 
 	const onChangeStopLoss = useCallback(
@@ -133,11 +153,12 @@ export default function SLTPInputs() {
 							invalidLabel={sltpValidity.takeProfit.invalidLabel}
 							value={takeProfitPrice}
 							type={'take-profit'}
-							currentPrice={currentPrice}
+							price={price}
 							positionSide={leverageSide}
 							leverage={leverageWei}
 							dataTestId={'trade-panel-take-profit-input'}
 							onChange={onChangeTakeProfit}
+							size={susdSize}
 						/>
 
 						<Spacer height={12} />
@@ -153,11 +174,12 @@ export default function SLTPInputs() {
 							invalidLabel={sltpValidity.stopLoss.invalidLabel}
 							value={stopLossPrice}
 							type={'stop-loss'}
-							currentPrice={currentPrice}
+							price={price}
 							positionSide={leverageSide}
 							leverage={leverageWei}
 							dataTestId={'trade-panel-stop-loss-input'}
 							onChange={onChangeStopLoss}
+							size={susdSize}
 						/>
 					</InputsContainer>
 				)

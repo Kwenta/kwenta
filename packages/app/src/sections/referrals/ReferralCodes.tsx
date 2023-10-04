@@ -40,8 +40,6 @@ const ReferralCodes: FC<ReferralCodesProps> = memo(({ data }) => {
 	const referralCodesTableProps = useMemo(
 		() => ({
 			data,
-			compactPagination: true,
-			pageSize: 4,
 			showPagination: true,
 			columnsDeps: [wallet, isCreatingCode, isL2],
 			noResultsMessage: <ReferralTableNoResults />,
@@ -81,6 +79,7 @@ const ReferralCodes: FC<ReferralCodesProps> = memo(({ data }) => {
 			<DesktopOnlyView>
 				<StyledTable
 					{...referralCodesTableProps}
+					paginationSize="sm"
 					columns={[
 						{
 							header: () => (
@@ -163,6 +162,7 @@ const ReferralCodes: FC<ReferralCodesProps> = memo(({ data }) => {
 			<MobileOrTabletView>
 				<StyledTable
 					{...referralCodesTableProps}
+					paginationSize="sm"
 					gridLayout={referralGridLayoutTable}
 					columns={[
 						{

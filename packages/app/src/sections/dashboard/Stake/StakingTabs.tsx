@@ -7,10 +7,11 @@ import { useAppSelector } from 'state/hooks'
 import { selectSelectedEpoch } from 'state/staking/selectors'
 import media from 'styles/media'
 
+import DelegationTab from './DelegationTab'
 import EscrowTab from './EscrowTab'
 import RewardsTab from './RewardsTab'
-import { StakeTab } from './StakingPortfolio'
 import StakingTab from './StakingTab'
+import { StakeTab } from './types'
 
 type StakingTabsProp = {
 	currentTab: StakeTab
@@ -37,6 +38,12 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 						onClick={onChangeTab(StakeTab.Escrow)}
 						active={currentTab === StakeTab.Escrow}
 					/>
+					<TabButton
+						variant="noOutline"
+						title={t('dashboard.stake.tabs.delegate.title')}
+						onClick={onChangeTab(StakeTab.Delegate)}
+						active={currentTab === StakeTab.Delegate}
+					/>
 				</TabButtons>
 			</StakingTabsHeader>
 			<div>
@@ -50,6 +57,9 @@ const StakingTabs: React.FC<StakingTabsProp> = ({ currentTab, onChangeTab }) => 
 				</TabPanel>
 				<TabPanel name={StakeTab.Escrow} activeTab={currentTab}>
 					<EscrowTab />
+				</TabPanel>
+				<TabPanel name={StakeTab.Delegate} activeTab={currentTab}>
+					<DelegationTab />
 				</TabPanel>
 			</div>
 		</StakingTabsContainer>

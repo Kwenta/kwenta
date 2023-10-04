@@ -512,47 +512,78 @@ export default class FuturesService {
 	 * ```
 	 */
 	public async getSmartMarginBalanceInfo(walletAddress: string, smartMarginAddress: string) {
-		const smartMarginAccountContract = SmartMarginAccount__factory.connect(
+		const smartMarginAccountContract = new EthCallContract(
 			smartMarginAddress,
-			this.sdk.context.provider
+			SmartMarginAccountABI
 		)
 
 		const { SUSD, USDC, USDT, DAI, LUSD } = this.sdk.context.multicallContracts
+
+		// Cover testnet case
+		if (!this.sdk.context.isMainnet) {
+			if (!SUSD) throw new Error(UNSUPPORTED_NETWORK)
+
+			const [freeMargin, keeperEthBal, walletEthBal, susdBalance, allowance] =
+				await this.sdk.context.multicallProvider.all([
+					smartMarginAccountContract.freeMargin(),
+					this.sdk.context.multicallProvider.getEthBalance(smartMarginAddress),
+					this.sdk.context.multicallProvider.getEthBalance(walletAddress),
+					SUSD.balanceOf(walletAddress),
+					SUSD.allowance(walletAddress, smartMarginAddress),
+				])
+
+			return {
+				freeMargin: wei(freeMargin),
+				keeperEthBal: wei(keeperEthBal),
+				walletEthBal: wei(walletEthBal),
+				allowance: wei(allowance),
+				balances: {
+					[SwapDepositToken.SUSD]: wei(susdBalance),
+					[SwapDepositToken.USDC]: wei(0, 6),
+					// [SwapDepositToken.USDT]: wei(usdtBalance, 6),
+					[SwapDepositToken.DAI]: wei(0),
+					// [SwapDepositToken.LUSD]: wei(lusdBalance),
+				},
+				allowances: {
+					[SwapDepositToken.SUSD]: wei(allowance),
+					[SwapDepositToken.USDC]: wei(0, 6),
+					// [SwapDepositToken.USDT]: wei(usdtAllowance, 6),
+					[SwapDepositToken.DAI]: wei(0),
+					// [SwapDepositToken.LUSD]: wei(lusdAllowance),
+				},
+			}
+		}
 
 		if (!SUSD || !USDC || !USDT || !DAI || !LUSD) throw new Error(UNSUPPORTED_NETWORK)
 
 		const [
 			freeMargin,
-			[
-				keeperEthBal,
-				walletEthBal,
-				susdBalance,
-				allowance,
-				usdcBalance,
-				usdcAllowance,
-				// usdtBalance,
-				// usdtAllowance,
-				daiBalance,
-				daiAllowance,
-				// lusdBalance,
-				// lusdAllowance,
-			],
-		] = await Promise.all([
+			keeperEthBal,
+			walletEthBal,
+			susdBalance,
+			allowance,
+			usdcBalance,
+			usdcAllowance,
+			// usdtBalance,
+			// usdtAllowance,
+			daiBalance,
+			daiAllowance,
+			// lusdBalance,
+			// lusdAllowance,
+		] = await this.sdk.context.multicallProvider.all([
 			smartMarginAccountContract.freeMargin(),
-			this.sdk.context.multicallProvider.all([
-				this.sdk.context.multicallProvider.getEthBalance(smartMarginAddress),
-				this.sdk.context.multicallProvider.getEthBalance(walletAddress),
-				SUSD.balanceOf(walletAddress),
-				SUSD.allowance(walletAddress, smartMarginAccountContract.address),
-				USDC.balanceOf(walletAddress),
-				USDC.allowance(walletAddress, PERMIT2_ADDRESS),
-				// USDT.balanceOf(walletAddress),
-				// USDT.allowance(walletAddress, PERMIT2_ADDRESS),
-				DAI.balanceOf(walletAddress),
-				DAI.allowance(walletAddress, PERMIT2_ADDRESS),
-				// LUSD.balanceOf(walletAddress),
-				// LUSD.allowance(walletAddress, PERMIT2_ADDRESS),
-			]),
+			this.sdk.context.multicallProvider.getEthBalance(smartMarginAddress),
+			this.sdk.context.multicallProvider.getEthBalance(walletAddress),
+			SUSD.balanceOf(walletAddress),
+			SUSD.allowance(walletAddress, smartMarginAddress),
+			USDC.balanceOf(walletAddress),
+			USDC.allowance(walletAddress, PERMIT2_ADDRESS),
+			// USDT.balanceOf(walletAddress),
+			// USDT.allowance(walletAddress, PERMIT2_ADDRESS),
+			DAI.balanceOf(walletAddress),
+			DAI.allowance(walletAddress, PERMIT2_ADDRESS),
+			// LUSD.balanceOf(walletAddress),
+			// LUSD.allowance(walletAddress, PERMIT2_ADDRESS),
 		])
 
 		return {
