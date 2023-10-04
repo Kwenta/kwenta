@@ -1033,7 +1033,7 @@
 					"no-tp": "No TP",
 					"no-sl": "No SL",
 					"stop-loss": "Stop Loss",
-					"last-price": "Last Price",
+					"entry-price": "Entry Price",
 					"estimated-profit": "Estimated Profit",
 					"estimated-loss": "Estimated Loss",
 					"warning": "This setting applies to the entire position."
