@@ -529,7 +529,7 @@ export default class FuturesService {
 					this.sdk.context.multicallProvider.getEthBalance(smartMarginAddress),
 					this.sdk.context.multicallProvider.getEthBalance(walletAddress),
 					SUSD.balanceOf(walletAddress),
-					SUSD.allowance(walletAddress, smartMarginAccountContract.address),
+					SUSD.allowance(walletAddress, smartMarginAddress),
 				])
 
 			return {
@@ -575,7 +575,7 @@ export default class FuturesService {
 			this.sdk.context.multicallProvider.getEthBalance(smartMarginAddress),
 			this.sdk.context.multicallProvider.getEthBalance(walletAddress),
 			SUSD.balanceOf(walletAddress),
-			SUSD.allowance(walletAddress, smartMarginAccountContract.address),
+			SUSD.allowance(walletAddress, smartMarginAddress),
 			USDC.balanceOf(walletAddress),
 			USDC.allowance(walletAddress, PERMIT2_ADDRESS),
 			// USDT.balanceOf(walletAddress),
