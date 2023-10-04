@@ -60,23 +60,32 @@ const getCumulativeStatsByCode = async (
 				})
 			)
 
-			const response: Record<string, FuturesTradeByReferral[]> = await request(
-				sdk.futures.futuresGqlEndpoint,
-				gql`
-					query totalFuturesTrades {
-						${traderVolumeQueries.join('')}
-					}
-				`
-			)
+			if (traderVolumeQueries.length > 0) {
+				const response: Record<string, FuturesTradeByReferral[]> = await request(
+					sdk.futures.futuresGqlEndpoint,
+					gql`
+						query totalFuturesTrades {
+							${traderVolumeQueries.join('')}
+						}
+					`
+				)
 
-			const totalTrades = response ? Object.values(response).flat() : []
-			const totalVolume = calculateTraderVolume(totalTrades)
+				const totalTrades = response ? Object.values(response).flat() : []
+				const totalVolume = calculateTraderVolume(totalTrades)
 
-			return {
-				code,
-				referredCount: traders.length.toString(),
-				referralVolume: totalVolume.toString(),
-				earnedRewards: totalRewards.toString(),
+				return {
+					code,
+					referredCount: traders.length.toString(),
+					referralVolume: totalVolume.toString(),
+					earnedRewards: totalRewards.toString(),
+				}
+			} else {
+				return {
+					code,
+					referredCount: '0',
+					referralVolume: '0',
+					earnedRewards: totalRewards.toString(),
+				}
 			}
 		})
 	)
