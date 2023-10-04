@@ -24,7 +24,7 @@ export const REFERRAL_PROGRAM_START_EPOCH = 44
 export const SUPPLY_RATE = wei(1).sub(wei(DECAY_RATE))
 
 export const STAKING_ENDPOINT_OP_MAINNET =
-	'https://api.studio.thegraph.com/query/7302/staking-v2/version/latest'
+	'https://subgraph.satsuma-prod.com/05943208e921/kwenta/staking-v2/api'
 
 export const STAKING_ENDPOINTS: Record<number, string> = {
 	10: STAKING_ENDPOINT_OP_MAINNET,
