@@ -2,6 +2,7 @@ export type ReferralRewardsInfo = {
 	earnedRewards: string
 	referralVolume: string
 	referredCount: string
+	tradesCount: string
 }
 
 export type ReferralsRewardsPerCode = ReferralRewardsInfo & {

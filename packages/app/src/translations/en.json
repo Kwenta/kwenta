@@ -1272,6 +1272,7 @@
 				"referral-code": "Referral Code",
 				"total-volume": "Total Volume",
 				"traders-referred": "Traders Referred",
+				"trades-referred": "Trades Referred",
 				"kwenta-earned": "$KWENTA Earned",
 				"epoch": "Epoch"
 			}

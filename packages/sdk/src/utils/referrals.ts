@@ -78,6 +78,7 @@ const getCumulativeStatsByCode = async (
 					referredCount: traders.length.toString(),
 					referralVolume: totalVolume.toString(),
 					earnedRewards: totalRewards.toString(),
+					tradesCount: totalTrades.length.toString(),
 				}
 			} else {
 				return {
@@ -85,6 +86,7 @@ const getCumulativeStatsByCode = async (
 					referredCount: '0',
 					referralVolume: '0',
 					earnedRewards: totalRewards.toString(),
+					tradesCount: '0',
 				}
 			}
 		})

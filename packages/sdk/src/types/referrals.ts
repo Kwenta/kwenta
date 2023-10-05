@@ -19,4 +19,5 @@ export type ReferralCumulativeStats = {
 	referralVolume: string
 	referredCount: string
 	earnedRewards: string
+	tradesCount: string
 }
