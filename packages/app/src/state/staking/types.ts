@@ -72,11 +72,24 @@ export type StakingAction = StakeBalance & StakingMiscInfo
 
 export type StakingActionV2 = StakeBalance & StakingMiscInfoV2
 
-export type StakingTransactionType = 'approve_operator'
+export type StakingTransactionType =
+	| 'approve_operator'
+	| 'transfer_escrow_entries'
+	| 'transfer_escrow_entry'
 
 export type StakingTransaction = {
 	type: StakingTransactionType
 	status: TransactionStatus
 	error?: string
 	hash: string | null
+}
+
+export type TransferEscrowEntriesInput = {
+	recipient: string
+	entries: number[]
+}
+
+export type TransferEscrowEntryInput = {
+	recipient: string
+	entry: number
 }

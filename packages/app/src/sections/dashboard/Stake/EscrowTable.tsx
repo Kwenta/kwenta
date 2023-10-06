@@ -1,7 +1,7 @@
 import { ZERO_WEI } from '@kwenta/sdk/constants'
 import { formatNumber, formatPercent } from '@kwenta/sdk/utils'
 import { wei } from '@synthetixio/wei'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -16,17 +16,23 @@ import { TableCellHead, TableHeader } from 'components/Table'
 import StakingPagination from 'components/Table/StakingPagination'
 import { Body } from 'components/Text'
 import { STAKING_DISABLED } from 'constants/ui'
+import { setOpenModal } from 'state/app/reducer'
+import { selectShowModal } from 'state/app/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { vestEscrowedRewards, vestEscrowedRewardsV2 } from 'state/staking/actions'
 import {
 	selectCanVestBeforeMigration,
 	selectEscrowEntries,
 	selectStakingV1,
+	selectUnstakedEscrowedKwentaBalance,
 } from 'state/staking/selectors'
 import media from 'styles/media'
 import common from 'styles/theme/colors/common'
 
+import TransferInputModal from './TransferInputModal'
 import VestConfirmationModal from './VestConfirmationModal'
+
+const TRANSFER_BATCH_SIZE = 200
 
 const EscrowTable = () => {
 	const { t } = useTranslation()
@@ -34,15 +40,22 @@ const EscrowTable = () => {
 	const stakingV1 = useAppSelector(selectStakingV1)
 	const canVestBeforeMigration = useAppSelector(selectCanVestBeforeMigration)
 	const escrowData = useAppSelector(selectEscrowEntries)
+	const unstakedEscrowedKwentaBalance = useAppSelector(selectUnstakedEscrowedKwentaBalance)
+	const openModal = useAppSelector(selectShowModal)
 
 	const [checkedState, setCheckedState] = useState(escrowData.map((_) => false))
 	const [checkAllState, setCheckAllState] = useState(false)
-	const [isConfirmModalOpen, setConfirmModalOpen] = useState(false)
+
+	useEffect(() => {
+		setCheckedState(escrowData.map((_) => false))
+		setCheckAllState(false)
+	}, [escrowData])
 
 	const handleOnChange = useCallback(
 		(position: number) => {
-			checkedState[position] = !checkedState[position]
-			setCheckedState([...checkedState])
+			const newCheckedState = [...checkedState]
+			newCheckedState[position] = !newCheckedState[position]
+			setCheckedState(newCheckedState)
 		},
 		[checkedState]
 	)
@@ -63,7 +76,7 @@ const EscrowTable = () => {
 		() =>
 			checkedState.reduce(
 				(acc, current, index) => {
-					if (current) {
+					if (current && escrowData[index]) {
 						acc.totalVestable = acc.totalVestable.add(escrowData[index].vestable)
 						acc.totalFee = acc.totalFee.add(escrowData[index].fee)
 					}
@@ -75,12 +88,48 @@ const EscrowTable = () => {
 		[checkedState, escrowData]
 	)
 
-	const { ids, vestEnabled } = useMemo(() => {
+	const { totalTransferAmount } = useMemo(
+		() =>
+			checkedState.reduce(
+				(acc, current, index) => {
+					if (acc.totalCount >= TRANSFER_BATCH_SIZE) {
+						return acc
+					}
+
+					if (current && escrowData[index]) {
+						acc.totalTransferAmount = acc.totalTransferAmount.add(escrowData[index].amount)
+						acc.totalCount++
+					}
+
+					return acc
+				},
+				{ totalTransferAmount: ZERO_WEI, totalCount: 0 }
+			),
+		[checkedState, escrowData]
+	)
+	const { ids, vestEnabled, transferEnabled } = useMemo(() => {
 		const ids = escrowData.filter((_, i) => !!checkedState[i]).map((d) => d.id)
 		const vestEnabled = ids.length > 0 && !STAKING_DISABLED
+		const transferEnabled =
+			ids.length > 0 &&
+			!STAKING_DISABLED &&
+			!stakingV1 &&
+			unstakedEscrowedKwentaBalance.gte(totalTransferAmount)
 
-		return { ids, vestEnabled }
-	}, [escrowData, checkedState])
+		return { ids, vestEnabled, transferEnabled }
+	}, [escrowData, stakingV1, unstakedEscrowedKwentaBalance, totalTransferAmount, checkedState])
+
+	const handleOpenVestModal = useCallback(() => {
+		dispatch(setOpenModal('vest_escrow_entries'))
+	}, [dispatch])
+
+	const handleOpenTransferModal = useCallback(() => {
+		dispatch(setOpenModal('transfer_escrow_entries'))
+	}, [dispatch])
+
+	const handleDismissModal = useCallback(() => {
+		dispatch(setOpenModal(null))
+	}, [dispatch])
 
 	const handleVest = useCallback(async () => {
 		if (vestEnabled) {
@@ -93,15 +142,8 @@ const EscrowTable = () => {
 			} else {
 				await dispatch(vestEscrowedRewardsV2(ids))
 			}
-			setCheckedState(escrowData.map((_) => false))
-			setCheckAllState(false)
 		}
-
-		setConfirmModalOpen(false)
-	}, [canVestBeforeMigration, dispatch, escrowData, ids, stakingV1, vestEnabled])
-
-	const openConfirmModal = useCallback(() => setConfirmModalOpen(true), [])
-	const closeConfirmModal = useCallback(() => setConfirmModalOpen(false), [])
+	}, [canVestBeforeMigration, dispatch, ids, stakingV1, vestEnabled])
 
 	const EscrowStatsContainer = () => (
 		<StatsContainer columnGap="25px" justifyContent="flex-end">
@@ -117,15 +159,28 @@ const EscrowTable = () => {
 					</LabelContainer>
 				</LabelContainers>
 			</Container>
-			<StyledButton
-				variant="yellow"
-				size="xsmall"
-				isRounded
-				disabled={!vestEnabled}
-				onClick={openConfirmModal}
-			>
-				{t('dashboard.stake.tabs.escrow.vest')}
-			</StyledButton>
+			<ButtonContainer>
+				{!stakingV1 && (
+					<StyledButton
+						variant="flat"
+						size="xsmall"
+						isRounded
+						disabled={!transferEnabled}
+						onClick={handleOpenTransferModal}
+					>
+						{t('dashboard.stake.tabs.escrow.transfer')}
+					</StyledButton>
+				)}
+				<StyledButton
+					variant="yellow"
+					size="xsmall"
+					isRounded
+					disabled={!vestEnabled}
+					onClick={handleOpenVestModal}
+				>
+					{t('dashboard.stake.tabs.escrow.vest')}
+				</StyledButton>
+			</ButtonContainer>
 		</StatsContainer>
 	)
 
@@ -337,16 +392,31 @@ const EscrowTable = () => {
 					]}
 				/>
 			</DesktopSmallOnlyView>
-			{isConfirmModalOpen && (
+			{openModal === 'vest_escrow_entries' && (
 				<VestConfirmationModal
 					totalFee={totalFee}
-					onDismiss={closeConfirmModal}
+					onDismiss={handleDismissModal}
 					handleVest={handleVest}
+				/>
+			)}
+			{openModal === 'transfer_escrow_entries' && (
+				<TransferInputModal
+					onDismiss={handleDismissModal}
+					totalAmount={totalTransferAmount}
+					totalEntries={ids.slice(0, TRANSFER_BATCH_SIZE)}
 				/>
 			)}
 		</EscrowTableContainer>
 	)
 }
+
+const ButtonContainer = styled(FlexDivRowCentered)`
+	column-gap: 25px;
+	${media.lessThan('lg')`
+		width: 100%;
+		column-gap: 15px;
+	`}
+`
 
 const StyledButton = styled(Button)`
 	padding: 10px 20px;
@@ -387,9 +457,6 @@ const LabelContainers = styled(FlexDivRow)`
 
 const StatsContainer = styled(FlexDivRowCentered)`
 	${media.lessThan('lg')`
-		padding: 15px 15px;
-	`}
-	${media.lessThan('md')`
 		flex-direction: column;
 		row-gap: 25px;
 		padding: 15px 15px;

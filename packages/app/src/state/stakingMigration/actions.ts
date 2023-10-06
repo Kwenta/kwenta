@@ -127,7 +127,7 @@ export const fetchUnregisteredVestingEntryIDs = createAsyncThunk<
 		}
 	} catch (err) {
 		logError(err)
-		notifyError('Failed to fetch registered vesting entry ids', err)
+		notifyError('Failed to fetch unregistered vesting entry ids', err)
 		throw err
 	}
 })
@@ -174,7 +174,7 @@ export const fetchUnvestedRegisteredEntryIDs = createAsyncThunk<
 		}
 	} catch (err) {
 		logError(err)
-		notifyError('Failed to fetch registered vesting entry ids', err)
+		notifyError('Failed to fetch unvested registered entry ids', err)
 		throw err
 	}
 })
@@ -198,7 +198,7 @@ export const fetchUnmigratedRegisteredEntryIDs = createAsyncThunk<
 		}
 	} catch (err) {
 		logError(err)
-		notifyError('Failed to fetch registered vesting entry ids', err)
+		notifyError('Failed to fetch unmigrated registered vesting entry ids', err)
 		throw err
 	}
 })
@@ -221,7 +221,7 @@ export const fetchMigrationDeadline = createAsyncThunk<
 		}
 	} catch (err) {
 		logError(err)
-		notifyError('Failed to fetch registered vesting entry ids', err)
+		notifyError('Failed to fetch migration deadline', err)
 		throw err
 	}
 })

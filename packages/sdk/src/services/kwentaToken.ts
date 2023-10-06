@@ -900,4 +900,28 @@ export default class KwentaTokenService {
 
 		return queryOperatorsByOwner(this.sdk, walletAddress)
 	}
+
+	public transferFrom(from: string, to: string, id: number) {
+		const { RewardEscrowV2 } = this.sdk.context.contracts
+
+		if (!RewardEscrowV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		return this.sdk.transactions.createContractTxn(RewardEscrowV2, 'transferFrom', [from, to, id])
+	}
+
+	public bulkTransferFrom(from: string, to: string, ids: number[]) {
+		const { RewardEscrowV2 } = this.sdk.context.contracts
+
+		if (!RewardEscrowV2) {
+			throw new Error(sdkErrors.UNSUPPORTED_NETWORK)
+		}
+
+		return this.sdk.transactions.createContractTxn(RewardEscrowV2, 'bulkTransferFrom', [
+			from,
+			to,
+			ids,
+		])
+	}
 }

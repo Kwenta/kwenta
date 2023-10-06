@@ -16,6 +16,8 @@ export type ModalType =
 	| 'futures_smart_margin_socket'
 	| 'referrals_create_referral_code'
 	| 'referrals_mint_boost_nft'
+	| 'transfer_escrow_entries'
+	| 'vest_escrow_entries'
 	| null
 
 export type FuturesPositionModalType =
