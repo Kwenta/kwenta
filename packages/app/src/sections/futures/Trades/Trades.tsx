@@ -146,7 +146,7 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 							sortingFn: 'basic',
 							cell: (cellProps) => {
 								return cellProps.getValue().eq(0) ? (
-									'--'
+									'-'
 								) : (
 									<ColoredPrice
 										priceChange={cellProps.getValue().gt(0) ? 'up' : 'down'}

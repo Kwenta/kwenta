@@ -36,7 +36,6 @@ import {
 	selectNewTradeHasSlTp,
 	selectOrderType,
 	selectSlTpTradeInputs,
-	selectSelectedSwapDepositToken,
 	selectSmartMarginOrderPrice,
 	selectTradePreview,
 } from 'state/futures/smartMargin/selectors'
