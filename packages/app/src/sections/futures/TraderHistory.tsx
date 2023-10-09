@@ -15,7 +15,6 @@ import TimeDisplay from 'sections/futures/Trades/TimeDisplay'
 import { selectQueryStatuses } from 'state/futures/selectors'
 import { useAppSelector } from 'state/hooks'
 import { FetchStatus } from 'state/types'
-import { ExternalLink } from 'styles/common'
 import media from 'styles/media'
 
 type PositionData = FuturesPositionHistory & {
@@ -67,117 +66,97 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 						columns={[
 							{
 								header: () => (
-									<TableTitle>
-										<TitleText onClick={resetSelection}>
-											{t('leaderboard.trader-history.table.back')}
-										</TitleText>
-										<TitleSeparator>&gt;</TitleSeparator>
-										<ExternalLink
-											href={`https://optimistic.etherscan.io/address/${trader}`}
-											hoverUnderline
-										>
-											{traderEns ?? trader}
-										</ExternalLink>
-									</TableTitle>
+									<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
 								),
-								accessorKey: 'title',
-								enableSorting: false,
-								columns: [
-									{
-										header: () => (
-											<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
-										),
-										accessorKey: 'openTimestamp',
-										cell: (cellProps) => {
-											return (
-												<StyledCell>
-													<TimeDisplay value={cellProps.row.original.openTimestamp} />
-												</StyledCell>
-											)
-										},
-										size: 100,
-									},
-									{
-										header: () => (
-											<TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>
-										),
-										accessorKey: 'asset',
-										cell: (cellProps) => (
-											<CurrencyInfo>
-												<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
-												<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
-											</CurrencyInfo>
-										),
-										size: 150,
-									},
-									{
-										header: () => (
-											<TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>
-										),
-										accessorKey: 'status',
-										cell: (cellProps) => {
-											return <Body color="primary">{cellProps.row.original.status}</Body>
-										},
-										size: 30,
-									},
-									{
-										header: () => (
-											<RightAlignedTableHeader>
-												{t('leaderboard.trader-history.table.total-trades')}
-											</RightAlignedTableHeader>
-										),
-										accessorKey: 'trades',
-										cell: (cellProps) => (
-											<RightAlignedContainer>{cellProps.getValue()}</RightAlignedContainer>
-										),
-										size: 130,
-									},
-									{
-										header: () => (
-											<RightAlignedTableHeader>
-												{t('leaderboard.trader-history.table.total-volume')}
-											</RightAlignedTableHeader>
-										),
-										accessorKey: 'totalVolume',
-										cell: (cellProps) => (
-											<RightAlignedContainer>
-												<Currency.Price price={cellProps.getValue()} />
-											</RightAlignedContainer>
-										),
-										size: 130,
-									},
-									{
-										header: () => (
-											<RightAlignedTableHeader>
-												{t('leaderboard.trader-history.table.total-pnl')}
-											</RightAlignedTableHeader>
-										),
-										accessorKey: 'pnl',
-										cell: (cellProps) => (
-											<RightAlignedContainer>
-												<Currency.Price price={cellProps.row.original.pnl} colored />
-												<StyledValue $value={cellProps.row.original.pnl}>
-													{cellProps.row.original.pnlPct}
-												</StyledValue>
-											</RightAlignedContainer>
-										),
-										size: 130,
-									},
-									{
-										header: () => (
-											<RightAlignedTableHeader>
-												{t('leaderboard.trader-history.table.funding')}
-											</RightAlignedTableHeader>
-										),
-										accessorKey: 'funding',
-										cell: (cellProps) => (
-											<RightAlignedContainer>
-												<Currency.Price price={cellProps.getValue()} colored />
-											</RightAlignedContainer>
-										),
-										size: 130,
-									},
-								],
+								accessorKey: 'openTimestamp',
+								cell: (cellProps) => {
+									return (
+										<StyledCell>
+											<TimeDisplay value={cellProps.row.original.openTimestamp} />
+										</StyledCell>
+									)
+								},
+								size: 100,
+							},
+							{
+								header: () => (
+									<TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>
+								),
+								accessorKey: 'asset',
+								cell: (cellProps) => (
+									<CurrencyInfo>
+										<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
+										<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
+									</CurrencyInfo>
+								),
+								size: 150,
+							},
+							{
+								header: () => (
+									<TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>
+								),
+								accessorKey: 'status',
+								cell: (cellProps) => {
+									return <Body color="primary">{cellProps.row.original.status}</Body>
+								},
+								size: 30,
+							},
+							{
+								header: () => (
+									<RightAlignedTableHeader>
+										{t('leaderboard.trader-history.table.total-trades')}
+									</RightAlignedTableHeader>
+								),
+								accessorKey: 'trades',
+								cell: (cellProps) => (
+									<RightAlignedContainer>{cellProps.getValue()}</RightAlignedContainer>
+								),
+								size: 130,
+							},
+							{
+								header: () => (
+									<RightAlignedTableHeader>
+										{t('leaderboard.trader-history.table.total-volume')}
+									</RightAlignedTableHeader>
+								),
+								accessorKey: 'totalVolume',
+								cell: (cellProps) => (
+									<RightAlignedContainer>
+										<Currency.Price price={cellProps.getValue()} />
+									</RightAlignedContainer>
+								),
+								size: 130,
+							},
+							{
+								header: () => (
+									<RightAlignedTableHeader>
+										{t('leaderboard.trader-history.table.total-pnl')}
+									</RightAlignedTableHeader>
+								),
+								accessorKey: 'pnl',
+								cell: (cellProps) => (
+									<RightAlignedContainer>
+										<Currency.Price price={cellProps.row.original.pnl} colored />
+										<StyledValue $value={cellProps.row.original.pnl}>
+											{cellProps.row.original.pnlPct}
+										</StyledValue>
+									</RightAlignedContainer>
+								),
+								size: 130,
+							},
+							{
+								header: () => (
+									<RightAlignedTableHeader>
+										{t('leaderboard.trader-history.table.funding')}
+									</RightAlignedTableHeader>
+								),
+								accessorKey: 'funding',
+								cell: (cellProps) => (
+									<RightAlignedContainer>
+										<Currency.Price price={cellProps.getValue()} colored />
+									</RightAlignedContainer>
+								),
+								size: 130,
 							},
 						]}
 						noResultsMessage={
@@ -251,7 +230,7 @@ const TraderHistory: FC<TraderHistoryProps> = memo(
 								cell: (cellProps) => (
 									<>
 										<TableHeader>{t('leaderboard.trader-history.mobile-table.pnl')}</TableHeader>
-										<FlexDivCol>
+										<FlexDivCol style={{ textAlign: 'right' }}>
 											<Currency.Price price={cellProps.row.original.pnl} colored />
 											<StyledValue $value={cellProps.row.original.pnl}>
 												{cellProps.row.original.pnlPct}
@@ -302,7 +281,7 @@ const StyledTable = styled(Table)<{ compact?: boolean; height?: number }>`
 	`}
 
 	${media.lessThan('md')`
-		margin-bottom: 150px;
+		margin-bottom: 15px;
 	`}
 ` as typeof Table
 

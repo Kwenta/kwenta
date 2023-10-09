@@ -70,7 +70,7 @@ const TitleContainer = styled.div`
 		margin: 15px 15px 0 15px;
 	`}
 	${media.lessThan('sm')`
-		margin: 130px 15px 0 15px;
+		margin: 15px 15px 0 15px;
 	`}
 `
 

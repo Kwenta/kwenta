@@ -1,9 +1,8 @@
 import { formatDollars, formatNumber } from '@kwenta/sdk/utils'
-import { wei, WeiSource } from '@synthetixio/wei'
 import { useRouter } from 'next/router'
 import { FC, memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import ColoredPrice from 'components/ColoredPrice'
 import Currency from 'components/Currency'
@@ -283,9 +282,6 @@ const Trades: FC<TradesProps> = memo(({ rounded = false, noBottom = true }) => {
 									<TableHeader>{t('futures.market.user.trades.mobile-table.pnl')}</TableHeader>
 									<FlexDivCol style={{ textAlign: 'right' }}>
 										<Currency.Price price={cellProps.row.original.pnl} colored />
-										<StyledValue $value={cellProps.row.original.pnlPct}>
-											{formatNumber(cellProps.row.original.pnlPct)}%
-										</StyledValue>
 									</FlexDivCol>
 								</>
 							),
@@ -359,20 +355,4 @@ const MobileCurrencyIcon = styled(CurrencyIcon)`
 const StyledSubtitle = styled(Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text.primary};
 	text-transform: capitalize;
-`
-
-const valueColor = css<{ $value: WeiSource }>`
-	color: ${(props) =>
-		wei(props.$value).gt(0)
-			? props.theme.colors.selectedTheme.green
-			: wei(props.$value).lt(0)
-			? props.theme.colors.selectedTheme.red
-			: props.theme.colors.selectedTheme.button.text.primary};
-`
-
-const StyledValue = styled.div<{ $value: WeiSource }>`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
-	margin: 0;
-	${valueColor}
 `
