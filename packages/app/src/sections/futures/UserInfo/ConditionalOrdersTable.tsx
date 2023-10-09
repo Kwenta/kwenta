@@ -24,7 +24,6 @@ import { useAppDispatch, useAppSelector } from 'state/hooks'
 
 import PositionType from '../PositionType'
 
-import ConditionalOrdersWarning from './ConditionalOrdersWarning'
 import TableMarketDetails from './TableMarketDetails'
 
 export default function ConditionalOrdersTable() {
@@ -57,7 +56,6 @@ export default function ConditionalOrdersTable() {
 
 	return (
 		<Container>
-			<ConditionalOrdersWarning />
 			<Table
 				data={rows}
 				highlightRowsOnHover

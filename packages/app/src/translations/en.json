@@ -579,12 +579,20 @@
 					"no-entries": "You have no escrowed entries.",
 					"v1": "V1",
 					"v2": "V2",
-					"modal": {
+					"vest-modal": {
 						"title": "Early Vesting Fee",
 						"confirm-button": "Confirm",
 						"warning": "Vesting tokens will result in the loss of locked funds as they will be returned to the Kwenta treasury. ",
 						"more-info": "<0>More information here</0>.",
 						"confirm-text": "You will currently forfeit <0>{{totalFee}}</0> in KWENTA by vesting. Do you still wish to proceed?"
+					},
+					"transfer-modal": {
+						"title": "Transfer",
+						"copy": "Indicate the wallet address to which you would like to transfer your selected unstaked escrow entries.",
+						"recipient-address": "Recipient address",
+						"entries-total": "Entries Total",
+						"amount-total": "Amount Total",
+						"transfer-escrowed-kwenta": "Transfer Escrowed $KWENTA"
 					}
 				},
 				"migrate": {
@@ -1147,6 +1155,16 @@
 							"liquidated": "liquidated",
 							"entry": "entry"
 						}
+					},
+					"mobile-table": {
+						"market": "Market",
+						"price": "Price",
+						"side": "Side",
+						"fees": "Fees",
+						"date": "Date",
+						"type": "Order Type",
+						"size": "Size",
+						"pnl": "PnL"
 					}
 				},
 				"transfers": {
@@ -1241,6 +1259,14 @@
 				"total-volume": "Total Volume",
 				"total-pnl": "Realized P&L",
 				"funding": "Funding"
+			},
+			"mobile-table": {
+				"market": "Market",
+				"volume": "Volume",
+				"status": "Status",
+				"funding": "Funding",
+				"pnl": "PnL",
+				"timestamp": "Date"
 			}
 		},
 		"competition": {
@@ -1272,6 +1298,7 @@
 				"referral-code": "Referral Code",
 				"total-volume": "Total Volume",
 				"traders-referred": "Traders Referred",
+				"trades-referred": "Trades Referred",
 				"kwenta-earned": "$KWENTA Earned",
 				"epoch": "Epoch"
 			}

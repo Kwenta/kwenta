@@ -22,7 +22,7 @@ const ReferralRewardsHistory: FC<ReferralRewardsHistoryProps> = memo(({ data }) 
 
 	const rewardsHistoryTableProps = useMemo(
 		() => ({
-			data,
+			data: data,
 			pageSize: 4,
 			showPagination: true,
 			noResultsMessage: <ReferralTableNoResults />,
@@ -67,12 +67,12 @@ const ReferralRewardsHistory: FC<ReferralRewardsHistoryProps> = memo(({ data }) 
 								},
 								{
 									header: () => (
-										<TableHeader>{t('referrals.table.header.traders-referred')}</TableHeader>
+										<TableHeader>{t('referrals.table.header.trades-referred')}</TableHeader>
 									),
 									cell: (cellProps) => (
-										<TableCell paddingLeft="4px">{cellProps.getValue()}</TableCell>
+										<TableCell paddingLeft="2px">{cellProps.getValue()}</TableCell>
 									),
-									accessorKey: 'referredCount',
+									accessorKey: 'tradesCount',
 								},
 								{
 									header: () => (
@@ -129,11 +129,11 @@ const ReferralRewardsHistory: FC<ReferralRewardsHistoryProps> = memo(({ data }) 
 									header: () => null,
 									cell: (cellProps) => (
 										<TableCell>
-											<Body color="secondary">{t('referrals.table.header.traders-referred')}</Body>
+											<Body color="secondary">{t('referrals.table.header.trades-referred')}</Body>
 											<Body>{cellProps.getValue()}</Body>
 										</TableCell>
 									),
-									accessorKey: 'referredCount',
+									accessorKey: 'tradesCount',
 								},
 								{
 									header: () => null,

@@ -12,7 +12,6 @@ import { TableNoResults } from 'components/Table'
 import { Body } from 'components/Text'
 import { NO_VALUE } from 'constants/placeholder'
 import PositionType from 'sections/futures/PositionType'
-import ConditionalOrdersWarning from 'sections/futures/UserInfo/ConditionalOrdersWarning'
 import { selectMarketAsset } from 'state/futures/common/selectors'
 import { cancelConditionalOrder } from 'state/futures/smartMargin/actions'
 import {
@@ -53,7 +52,6 @@ const ConditionalOrdersTab: React.FC = () => {
 
 	return (
 		<div>
-			<ConditionalOrdersWarning mobile />
 			<Spacer height={15} />
 			{rows.length === 0 ? (
 				<TableNoResults>You have no open orders</TableNoResults>

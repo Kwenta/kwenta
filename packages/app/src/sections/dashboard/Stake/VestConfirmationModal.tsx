@@ -1,6 +1,6 @@
 import { formatNumber } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
-import React from 'react'
+import { FC } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -25,23 +25,26 @@ const LinkText = () => {
 
 	return (
 		<ExternalLink href={EXTERNAL_LINKS.Docs.Staking}>
-			<b>{t('dashboard.stake.tabs.escrow.modal.more-info')}</b>
+			<b>{t('dashboard.stake.tabs.escrow.vest-modal.more-info')}</b>
 		</ExternalLink>
 	)
 }
 
-const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVest }) => {
+const VestConfirmationModal: FC<Props> = ({ onDismiss, totalFee, handleVest }) => {
 	const { t } = useTranslation()
 	const isVestingEscrowedRewards = useAppSelector(selectIsVestingEscrowedRewards)
 
 	return (
 		<StyledBaseModal
-			title={t('dashboard.stake.tabs.escrow.modal.title')}
+			title={t('dashboard.stake.tabs.escrow.vest-modal.title')}
 			isOpen
 			onDismiss={onDismiss}
 		>
 			<MinimumAmountDisclaimer>
-				<Trans i18nKey="dashboard.stake.tabs.escrow.modal.warning" components={[<LinkText />]} />
+				<Trans
+					i18nKey="dashboard.stake.tabs.escrow.vest-modal.warning"
+					components={[<LinkText />]}
+				/>
 			</MinimumAmountDisclaimer>
 
 			<Spacer height={5} />
@@ -49,7 +52,7 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 			<BalanceContainer>
 				<BalanceText>
 					<Trans
-						i18nKey="dashboard.stake.tabs.escrow.modal.confirm-text"
+						i18nKey="dashboard.stake.tabs.escrow.vest-modal.confirm-text"
 						values={{ totalFee: formatNumber(totalFee, { suggestDecimals: true }) }}
 						components={[<b />]}
 					/>
@@ -59,14 +62,13 @@ const VestConfirmationModal: React.FC<Props> = ({ onDismiss, totalFee, handleVes
 			<Spacer height={20} />
 
 			<VestConfirmButton
-				data-testid="dashboard.stake.tabs.escrow.modal.confirm-button"
 				variant="flat"
 				disabled={false}
 				loading={isVestingEscrowedRewards}
 				fullWidth
 				onClick={handleVest}
 			>
-				{t('dashboard.stake.tabs.escrow.modal.confirm-button')}
+				{t('dashboard.stake.tabs.escrow.vest-modal.confirm-button')}
 			</VestConfirmButton>
 		</StyledBaseModal>
 	)

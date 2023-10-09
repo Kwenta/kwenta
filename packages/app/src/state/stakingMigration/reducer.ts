@@ -55,6 +55,9 @@ export const stakingMigrationSlice = createSlice({
 		})
 		builder.addCase(fetchRegisteredVestingEntryIDs.fulfilled, (state, { payload }) => {
 			state.fetchRegisteredVestingEntryIDsStatus = SUCCESS_STATUS
+			if (!state.selectedUserMigrationInfo[payload.wallet]) {
+				state.selectedUserMigrationInfo[payload.wallet] = DEFAULT_MIGRATION_INFO
+			}
 			state.selectedUserMigrationInfo[payload.wallet].registeredVestingEntryIDs =
 				payload.registeredVestingEntryIDs
 		})
@@ -69,6 +72,9 @@ export const stakingMigrationSlice = createSlice({
 		})
 		builder.addCase(fetchUnregisteredVestingEntryIDs.fulfilled, (state, { payload }) => {
 			state.fetchUnregisteredVestingEntryIDsStatus = SUCCESS_STATUS
+			if (!state.selectedUserMigrationInfo[payload.wallet]) {
+				state.selectedUserMigrationInfo[payload.wallet] = DEFAULT_MIGRATION_INFO
+			}
 			state.selectedUserMigrationInfo[payload.wallet].unregisteredVestingEntryIDs =
 				payload.unregisteredVestingEntryIDs
 		})
@@ -83,6 +89,9 @@ export const stakingMigrationSlice = createSlice({
 		})
 		builder.addCase(fetchUnvestedRegisteredEntryIDs.fulfilled, (state, { payload }) => {
 			state.fetchUnvestedRegisteredEntryIDsStatus = SUCCESS_STATUS
+			if (!state.selectedUserMigrationInfo[payload.wallet]) {
+				state.selectedUserMigrationInfo[payload.wallet] = DEFAULT_MIGRATION_INFO
+			}
 			state.selectedUserMigrationInfo[payload.wallet].unvestedRegisteredEntryIDs =
 				payload.unvestedRegisteredEntryIDs
 		})
@@ -97,6 +106,9 @@ export const stakingMigrationSlice = createSlice({
 		})
 		builder.addCase(fetchUnmigratedRegisteredEntryIDs.fulfilled, (state, { payload }) => {
 			state.fetchUnmigratedRegisteredEntryIDsStatus = SUCCESS_STATUS
+			if (!state.selectedUserMigrationInfo[payload.wallet]) {
+				state.selectedUserMigrationInfo[payload.wallet] = DEFAULT_MIGRATION_INFO
+			}
 			state.selectedUserMigrationInfo[payload.wallet].unmigratedRegisteredEntryIDs =
 				payload.unmigratedRegisteredEntryIDs
 		})
@@ -111,6 +123,9 @@ export const stakingMigrationSlice = createSlice({
 		})
 		builder.addCase(fetchToPay.fulfilled, (state, { payload }) => {
 			state.fetchToPayStatus = SUCCESS_STATUS
+			if (!state.selectedUserMigrationInfo[payload.wallet]) {
+				state.selectedUserMigrationInfo[payload.wallet] = DEFAULT_MIGRATION_INFO
+			}
 			state.selectedUserMigrationInfo[payload.wallet].toPay = payload.toPay
 		})
 		builder.addCase(fetchToPay.rejected, (state) => {
@@ -124,6 +139,9 @@ export const stakingMigrationSlice = createSlice({
 		})
 		builder.addCase(fetchEscrowMigratorAllowance.fulfilled, (state, { payload }) => {
 			state.fetchEscrowMigratorAllowanceStatus = SUCCESS_STATUS
+			if (!state.selectedUserMigrationInfo[payload.wallet]) {
+				state.selectedUserMigrationInfo[payload.wallet] = DEFAULT_MIGRATION_INFO
+			}
 			state.selectedUserMigrationInfo[payload.wallet].escrowMigratorAllowance =
 				payload.escrowMigratorAllowance
 		})
@@ -138,6 +156,9 @@ export const stakingMigrationSlice = createSlice({
 		})
 		builder.addCase(fetchMigrationDeadline.fulfilled, (state, { payload }) => {
 			state.fetchMigrationDeadlineStatus = SUCCESS_STATUS
+			if (!state.selectedUserMigrationInfo[payload.wallet]) {
+				state.selectedUserMigrationInfo[payload.wallet] = DEFAULT_MIGRATION_INFO
+			}
 			state.selectedUserMigrationInfo[payload.wallet].migrationPeriod = payload.migrationPeriod
 		})
 		builder.addCase(fetchMigrationDeadline.rejected, (state) => {
@@ -151,6 +172,9 @@ export const stakingMigrationSlice = createSlice({
 		})
 		builder.addCase(fetchTotalEscrowUnmigrated.fulfilled, (state, { payload }) => {
 			state.fetchTotalEscrowUnmigratedStatus = SUCCESS_STATUS
+			if (!state.selectedUserMigrationInfo[payload.wallet]) {
+				state.selectedUserMigrationInfo[payload.wallet] = DEFAULT_MIGRATION_INFO
+			}
 			state.selectedUserMigrationInfo[payload.wallet].totalEscrowUnmigrated =
 				payload.totalEscrowUnmigrated
 		})

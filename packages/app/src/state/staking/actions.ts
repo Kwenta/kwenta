@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers'
 import { notifyError } from 'components/ErrorNotifier'
 import { monitorTransaction } from 'contexts/RelayerContext'
 import { monitorAndAwaitTransaction } from 'state/app/helpers'
-import { handleTransactionError, setTransaction } from 'state/app/reducer'
+import { handleTransactionError, setOpenModal, setTransaction } from 'state/app/reducer'
 import {
 	selectStakingSupportedNetwork,
 	selectTradingRewardsSupportedNetwork,
@@ -37,6 +37,8 @@ import {
 	EstimatedRewards,
 	StakingAction,
 	StakingActionV2,
+	TransferEscrowEntriesInput,
+	TransferEscrowEntryInput,
 } from './types'
 
 export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfig>(
@@ -267,6 +269,7 @@ export const vestEscrowedRewards = createAsyncThunk<void, number[], ThunkConfig>
 				onTxConfirmed: () => {
 					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Success })
 					dispatch(fetchStakeMigrateData())
+					dispatch(setOpenModal(null))
 				},
 				onTxFailed: () => {
 					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Error })
@@ -286,7 +289,9 @@ export const vestEscrowedRewardsV2 = createAsyncThunk<void, number[], ThunkConfi
 				txHash: hash,
 				onTxConfirmed: () => {
 					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Success })
-					dispatch(fetchStakeMigrateData())
+					dispatch(fetchStakingV2Data())
+					dispatch(fetchEscrowV2Data())
+					dispatch(setOpenModal(null))
 				},
 				onTxFailed: () => {
 					dispatch({ type: 'staking/setVestEscrowedRewardsStatus', payload: FetchStatus.Error })
@@ -347,6 +352,77 @@ export const compoundRewards = createAsyncThunk<void, void, ThunkConfig>(
 				dispatch({ type: 'staking/setCompoundRewardsStatus', payload: FetchStatus.Error })
 			},
 		})
+	}
+)
+
+export const bulkTransferEscrowEntries = createAsyncThunk<
+	void,
+	TransferEscrowEntriesInput,
+	ThunkConfig
+>(
+	'staking/bulkTransferEscrowEntries',
+	async ({ entries, recipient }, { dispatch, getState, extra: { sdk } }) => {
+		const wallet = selectWallet(getState())
+		const supportedNetwork = selectStakingSupportedNetwork(getState())
+
+		try {
+			if (!wallet) throw new Error('Wallet not connected')
+			if (!supportedNetwork)
+				throw new Error(
+					'Transferring entries is unsupported on this network. Please switch to Optimism.'
+				)
+
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'transfer_escrow_entries',
+					hash: null,
+				})
+			)
+			const tx = await sdk.kwentaToken.bulkTransferFrom(wallet, recipient, entries)
+			await monitorAndAwaitTransaction(dispatch, tx)
+			dispatch(fetchStakingV2Data())
+			dispatch(fetchEscrowV2Data())
+			dispatch(setOpenModal(null))
+		} catch (err) {
+			logError(err)
+			dispatch(handleTransactionError(err.message))
+			throw err
+		}
+	}
+)
+
+export const transferEscrowEntry = createAsyncThunk<void, TransferEscrowEntryInput, ThunkConfig>(
+	'staking/transferEscrowEntry',
+	async ({ entry, recipient }, { dispatch, getState, extra: { sdk } }) => {
+		const wallet = selectWallet(getState())
+		const supportedNetwork = selectStakingSupportedNetwork(getState())
+
+		try {
+			if (!wallet) throw new Error('Wallet not connected')
+			if (!supportedNetwork)
+				throw new Error(
+					'Transferring entry is unsupported on this network. Please switch to Optimism.'
+				)
+
+			dispatch(
+				setTransaction({
+					status: TransactionStatus.AwaitingExecution,
+					type: 'transfer_escrow_entry',
+					hash: null,
+				})
+			)
+
+			const tx = await sdk.kwentaToken.transferFrom(wallet, recipient, entry)
+			await monitorAndAwaitTransaction(dispatch, tx)
+			dispatch(fetchStakingV2Data())
+			dispatch(fetchEscrowV2Data())
+			dispatch(setOpenModal(null))
+		} catch (err) {
+			logError(err)
+			dispatch(handleTransactionError(err.message))
+			throw err
+		}
 	}
 )
 

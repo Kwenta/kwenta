@@ -161,27 +161,32 @@ export const fetchReferralEpoch = createAsyncThunk<ReferralsRewardsPerEpoch[], v
 			if (!epochData) return []
 			const epochPeriod = selectEpochPeriod(getState())
 			const statsPerEpoch: ReferralsRewardsPerEpoch[] = await Promise.all(
-				epochData.slice(REFERRAL_PROGRAM_START_EPOCH).map(async ({ period, start, end }) => {
-					const referralEpoch = await sdk.referrals.getCumulativeStatsByReferrerAndEpochTime(
-						wallet,
-						start,
-						end
-					)
+				epochData
+					.slice(REFERRAL_PROGRAM_START_EPOCH)
+					.sort((a, b) => Number(b.period) - Number(a.period))
+					.map(async ({ period, start, end }) => {
+						const referralEpoch = await sdk.referrals.getCumulativeStatsByReferrerAndEpochTime(
+							wallet,
+							start,
+							end
+						)
 
-					const kwentaRewards =
-						period !== Number(epochPeriod)
-							? await sdk.kwentaToken.getKwentaRewardsByEpoch(period)
-							: wei(0)
-					const referralVolume = calculateTotal(referralEpoch, 'referralVolume')
-					const referredCount = calculateTotal(referralEpoch, 'referredCount')
+						const kwentaRewards =
+							period !== Number(epochPeriod)
+								? await sdk.kwentaToken.getKwentaRewardsByEpoch(period)
+								: wei(0)
+						const referralVolume = calculateTotal(referralEpoch, 'referralVolume')
+						const referredCount = calculateTotal(referralEpoch, 'referredCount')
+						const tradesCount = calculateTotal(referralEpoch, 'tradesCount')
 
-					return {
-						epoch: period.toString(),
-						referralVolume: referralVolume.toString(),
-						referredCount: referredCount.toString(),
-						earnedRewards: kwentaRewards.toString(),
-					}
-				})
+						return {
+							epoch: period.toString(),
+							referralVolume: referralVolume.toString(),
+							referredCount: referredCount.toString(),
+							earnedRewards: kwentaRewards.toString(),
+							tradesCount: tradesCount.toString(),
+						}
+					})
 			)
 
 			return statsPerEpoch

@@ -492,3 +492,12 @@ export const selectIsApprovingOperator = createSelector(
 	(state: RootState) => state.app,
 	(submitting, app) => submitting && app.transaction?.type === 'approve_operator'
 )
+
+export const selectIsTransferring = createSelector(
+	selectSubmittingStakingTx,
+	(state: RootState) => state.app,
+	(submitting, app) =>
+		submitting &&
+		(app.transaction?.type === 'transfer_escrow_entries' ||
+			app.transaction?.type === 'transfer_escrow_entry')
+)
