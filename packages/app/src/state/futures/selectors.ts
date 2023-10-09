@@ -913,13 +913,15 @@ export const selectTradesHistoryTableData = createSelector(
 			const pnl = trade?.pnl
 			const feesPaid = trade?.feesPaid
 			const netPnl = pnl.sub(feesPaid)
+			const notionalValue = trade?.price.mul(trade?.size.abs())
 
 			return {
 				...trade,
 				pnl,
+				pnlPct: netPnl.div(notionalValue),
 				feesPaid,
 				netPnl,
-				notionalValue: trade?.price.mul(trade?.size.abs()),
+				notionalValue,
 				value: Number(trade?.price),
 				funding: Number(trade?.fundingAccrued),
 				amount: trade?.size.abs(),

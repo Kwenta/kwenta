@@ -10,7 +10,6 @@ import { fetchPositionHistoryForTrader } from 'state/futures/actions'
 import { selectPositionsHistoryTableData } from 'state/futures/selectors'
 import { useAppDispatch, useAppSelector } from 'state/hooks'
 import { selectWallet } from 'state/wallet/selectors'
-import media from 'styles/media'
 
 export enum HistoryTab {
 	Positions = 'positions',
@@ -33,23 +32,21 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 	}, [dispatch, walletAddress])
 
 	return (
-		<HistoryTabsContainer>
-			<HistoryTabsHeader>
-				<TabButtons>
-					<TabButton
-						variant="noOutline"
-						title={t('dashboard.history.tabs.positions')}
-						onClick={onChangeTab(HistoryTab.Positions)}
-						active={currentTab === HistoryTab.Positions}
-					/>
-					<TabButton
-						variant="noOutline"
-						title={t('dashboard.history.tabs.trades')}
-						onClick={onChangeTab(HistoryTab.Trades)}
-						active={currentTab === HistoryTab.Trades}
-					/>
-				</TabButtons>
-			</HistoryTabsHeader>
+		<>
+			<TabButtons>
+				<TabButton
+					variant="noOutline"
+					title={t('dashboard.history.tabs.positions')}
+					onClick={onChangeTab(HistoryTab.Positions)}
+					active={currentTab === HistoryTab.Positions}
+				/>
+				<TabButton
+					variant="noOutline"
+					title={t('dashboard.history.tabs.trades')}
+					onClick={onChangeTab(HistoryTab.Trades)}
+					active={currentTab === HistoryTab.Trades}
+				/>
+			</TabButtons>
 			<div>
 				<TabPanel name={HistoryTab.Positions} activeTab={currentTab}>
 					<TraderHistory
@@ -63,39 +60,14 @@ const HistoryTabs: React.FC<HistoryTabsProp> = ({ currentTab, onChangeTab }) => 
 					<Trades rounded={true} noBottom={false} />
 				</TabPanel>
 			</div>
-		</HistoryTabsContainer>
+		</>
 	)
 }
 
-const HistoryTabsHeader = styled.div`
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 15px;
-
-	${media.lessThan('md')`
-		flex-direction: column;
-		row-gap: 10px;
-		margin-bottom: 25px;
-		margin-top: 0px;
-	`}
-`
-
-const HistoryTabsContainer = styled.div`
-	${media.lessThan('md')`
-		padding: 15px;
-	`}
-`
-
 const TabButtons = styled.div`
 	display: flex;
-
-	& > button:not(:last-of-type) {
-		margin-right: 25px;
-	}
-
-	${media.lessThan('md')`
-		justify-content: flex-start;
-	`}
+	gap: 25px;
+	margin-bottom: 25px;
 `
 
 export default HistoryTabs
