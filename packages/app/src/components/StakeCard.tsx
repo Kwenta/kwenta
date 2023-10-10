@@ -1,4 +1,4 @@
-import { formatNumber, toWei, truncateNumbers } from '@kwenta/sdk/utils'
+import { toWei, truncateNumbers } from '@kwenta/sdk/utils'
 import Wei from '@synthetixio/wei'
 import { FC, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,7 +8,7 @@ import Button from 'components/Button'
 import NumericInput from 'components/Input/NumericInput'
 import { FlexDivCol, FlexDivRowCentered } from 'components/layout/flex'
 import SegmentedControl from 'components/SegmentedControl'
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
+import { DEFAULT_CRYPTO_DECIMALS, DEFAULT_TOKEN_DECIMALS } from 'constants/defaults'
 import { StakingCard } from 'sections/dashboard/Stake/card'
 import { useAppSelector } from 'state/hooks'
 import { selectStakingV1 } from 'state/staking/selectors'
@@ -77,7 +77,7 @@ const StakeCard: FC<StakeCardProps> = memo(
 		}, [activeTab, isStakeEnabled, isUnstakeEnabled])
 
 		const balanceString = useMemo(() => {
-			return formatNumber(balance, { suggestDecimals: true })
+			return truncateNumbers(balance, DEFAULT_CRYPTO_DECIMALS)
 		}, [balance])
 
 		const isLoading = useMemo(() => {
