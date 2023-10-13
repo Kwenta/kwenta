@@ -583,8 +583,7 @@ export const editClosePositionPrice =
 	(marketKey: FuturesMarketKey, price: string): AppThunk =>
 	(dispatch, getState) => {
 		const { nativeSizeDelta, orderType } = selectCloseSMPositionOrderInputs(getState())
-		const marketPrice = selectMarketIndexPrice(getState())
-		const { position } = selectEditPositionModalInfo(getState())
+		const { position, marketPrice } = selectEditPositionModalInfo(getState())
 		const closeTradeSide =
 			position?.activePosition.side === PositionSide.SHORT ? PositionSide.LONG : PositionSide.SHORT
 		const invalidLabel = orderPriceInvalidLabel(
