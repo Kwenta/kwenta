@@ -17,9 +17,6 @@ export const EXTERNAL_LINKS = {
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
 		OptimismTokenBridge: 'https://gateway.optimism.io',
 	},
-	Options: {
-		Trade: 'https://options.kwenta.eth.limo/#/trade',
-	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',
 		Litepaper: 'https://docs.synthetix.io/litepaper/',

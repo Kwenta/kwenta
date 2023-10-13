@@ -107,10 +107,6 @@ export const getMenuLinks = (isMobile: boolean): MenuLinks => [
 		i18nLabel: 'header.nav.referrals',
 		link: ROUTES.Referrals.Home,
 	},
-	{
-		i18nLabel: 'header.nav.options.title',
-		link: EXTERNAL_LINKS.Options.Trade,
-	},
 ]
 
 export const DESKTOP_NAV_LINKS = getMenuLinks(false).filter((m) => !m.hidden)
