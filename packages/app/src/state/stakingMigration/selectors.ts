@@ -172,3 +172,9 @@ export const selectStartMigration = createSelector(
 	selectInMigrationPeriod,
 	(totalEscrowUnmigrated, inMigrationPeriod) => totalEscrowUnmigrated.gt(0) && inMigrationPeriod
 )
+
+export const selectDisableRedeemEscrowKwenta = createSelector(
+	selectIsMigrationPeriodStarted,
+	selectInMigrationPeriod,
+	(isMigrationPeriodStarted, inMigrationPeriod) => isMigrationPeriodStarted && !inMigrationPeriod
+)

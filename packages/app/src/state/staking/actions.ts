@@ -57,8 +57,12 @@ export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfi
 				kwentaBalance,
 				weekCounter,
 				totalStakedBalance,
+				vKwentaBalance,
+				vKwentaAllowance,
 				kwentaAllowance,
 				epochPeriod,
+				veKwentaBalance,
+				veKwentaAllowance,
 			} = await sdk.kwentaToken.getStakingData()
 
 			return {
@@ -69,8 +73,12 @@ export const fetchStakingData = createAsyncThunk<StakingAction, void, ThunkConfi
 				kwentaBalance: kwentaBalance.toString(),
 				weekCounter,
 				totalStakedBalance: totalStakedBalance.toString(),
+				vKwentaBalance: vKwentaBalance.toString(),
+				vKwentaAllowance: vKwentaAllowance.toString(),
 				kwentaAllowance: kwentaAllowance.toString(),
 				epochPeriod,
+				veKwentaBalance: veKwentaBalance.toString(),
+				veKwentaAllowance: veKwentaAllowance.toString(),
 			}
 		} catch (err) {
 			logError(err)

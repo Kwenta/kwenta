@@ -501,3 +501,31 @@ export const selectIsTransferring = createSelector(
 		(app.transaction?.type === 'transfer_escrow_entries' ||
 			app.transaction?.type === 'transfer_escrow_entry')
 )
+
+export const selectVKwentaBalance = createSelector(
+	(state: RootState) => state.staking.vKwentaBalance,
+	toWei
+)
+
+export const selectVeKwentaBalance = createSelector(
+	(state: RootState) => state.staking.veKwentaBalance,
+	toWei
+)
+
+export const selectRedemptionRequired = createSelector(
+	selectVKwentaBalance,
+	selectVeKwentaBalance,
+	(vKwentaBalance, veKwentaBalance) => vKwentaBalance.gt(0) || veKwentaBalance.gt(0)
+)
+
+export const selectIsVKwentaTokenApproved = createSelector(
+	selectVKwentaBalance,
+	(state: RootState) => state.staking.vKwentaAllowance,
+	(vKwentaBalance, vKwentaAllowance) => vKwentaBalance.lte(vKwentaAllowance)
+)
+
+export const selectIsVeKwentaTokenApproved = createSelector(
+	selectVeKwentaBalance,
+	(state: RootState) => state.staking.veKwentaAllowance,
+	(veKwentaBalance, veKwentaAllowance) => veKwentaBalance.lte(veKwentaAllowance)
+)

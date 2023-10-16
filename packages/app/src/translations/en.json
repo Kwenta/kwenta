@@ -365,6 +365,7 @@
 			"staking": "Staking & Rewards",
 			"earn": "Earn",
 			"migrate": "Migrate to V2",
+			"redeem": "Redeem",
 			"v1-staking": "V1 Staking"
 		},
 		"overview": {
@@ -659,7 +660,8 @@
 					"reclaimable": "Reclaimable"
 				},
 				"redeem": {
-					"title": "Redeem"
+					"title": "Redeem",
+					"warning": "You migration window is closed. Please use an unmigrated wallet to redeem your escrowed $KWENTA."
 				},
 				"stake-table": {
 					"stake": "Stake",
@@ -729,6 +731,9 @@
 	},
 	"dashboard-rewards": {
 		"page-title": "Rewards | Kwenta"
+	},
+	"dashboard-redeem": {
+		"page-title": "Redemption | Kwenta"
 	},
 	"futures": {
 		"page-title": "Kwenta Futures",

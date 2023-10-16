@@ -23,6 +23,15 @@ const ShowPercentage: React.FC<ShowPercentageProps> = ({
 	leverageWei,
 	sizeWei,
 }) => {
+	const isLoss = useMemo(() => {
+		if (!targetPrice || !price || !leverageSide) return false
+
+		const targetPriceWei = wei(targetPrice)
+		const positiveDiff = targetPriceWei.gt(price)
+
+		return leverageSide === 'short' ? positiveDiff : !positiveDiff
+	}, [price, targetPrice, leverageSide])
+
 	const [calculatePercentage, calculatePL] = useMemo(() => {
 		if (!targetPrice || !price || !leverageSide || !sizeWei) return ''
 		const priceWei = wei(targetPrice)
@@ -39,21 +48,24 @@ const ShowPercentage: React.FC<ShowPercentageProps> = ({
 		const percentage = diff.div(price).mul(leverageWei)
 		const profitLoss = sizeWei.mul(percentage.div(leverageWei)).mul(isStopLoss ? -1 : 1)
 
-		return [formatPercent(percentage), formatDollars(profitLoss, { sign: isStopLoss ? '' : '+' })]
+		return [
+			formatPercent(percentage),
+			formatDollars(profitLoss, { sign: profitLoss.lt(0) ? '' : '+' }),
+		]
 	}, [price, isStopLoss, leverageSide, leverageWei, targetPrice, sizeWei])
 
 	return (
 		<Body size="large" mono>
-			<ProfitLoss isStopLoss={isStopLoss}>{calculatePL}</ProfitLoss>
+			<ProfitLoss isLoss={isLoss}>{calculatePL}</ProfitLoss>
 			{calculatePercentage}
 		</Body>
 	)
 }
 
-const ProfitLoss = styled.span<{ isStopLoss: boolean }>`
+const ProfitLoss = styled.span<{ isLoss: boolean }>`
 	margin-right: 0.7rem;
-	color: ${({ theme, isStopLoss }) =>
-		isStopLoss
+	color: ${({ theme, isLoss }) =>
+		isLoss
 			? theme.colors.selectedTheme.newTheme.text.negative
 			: theme.colors.selectedTheme.newTheme.text.positive};
 `
