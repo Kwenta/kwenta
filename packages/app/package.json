@@ -1,6 +1,6 @@
 {
 	"name": "@kwenta/app",
-	"version": "7.9.8",
+	"version": "7.9.9",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
