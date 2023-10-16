@@ -12,9 +12,13 @@ type StakeBalance = {
 
 type StakingMiscInfo = {
 	kwentaBalance: string
+	vKwentaBalance: string
+	veKwentaBalance: string
 	kwentaAllowance: string
 	epochPeriod: number
 	weekCounter: number
+	vKwentaAllowance: string
+	veKwentaAllowance: string
 }
 
 type StakingMiscInfoV2 = {

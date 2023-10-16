@@ -10,7 +10,7 @@ import { EXTERNAL_LINKS } from 'constants/links'
 import ROUTES from 'constants/routes'
 import AppLayout from 'sections/shared/Layout/AppLayout'
 import { useAppSelector } from 'state/hooks'
-import { selectStakingMigrationRequired } from 'state/staking/selectors'
+import { selectRedemptionRequired, selectStakingMigrationRequired } from 'state/staking/selectors'
 import { selectStartMigration } from 'state/stakingMigration/selectors'
 import { LeftSideContent, PageContent } from 'styles/common'
 
@@ -23,6 +23,7 @@ enum Tab {
 	Governance = 'governance',
 	Stake = 'staking',
 	Migrate = 'migrate',
+	Redeem = 'redeem',
 }
 
 const Tabs = Object.values(Tab)
@@ -32,6 +33,7 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 	const router = useRouter()
 	const stakingMigrationRequired = useAppSelector(selectStakingMigrationRequired)
 	const startMigration = useAppSelector(selectStartMigration)
+	const redemptionRequired = useAppSelector(selectRedemptionRequired)
 
 	const tabQuery = useMemo(() => {
 		if (router.pathname) {
@@ -80,6 +82,13 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				hidden: !stakingMigrationRequired && !startMigration,
 			},
 			{
+				name: Tab.Redeem,
+				label: t('dashboard.tabs.redeem'),
+				active: activeTab === Tab.Redeem,
+				href: ROUTES.Dashboard.Redeem,
+				hidden: !redemptionRequired,
+			},
+			{
 				name: Tab.Governance,
 				label: t('dashboard.tabs.governance'),
 				active: activeTab === Tab.Governance,
@@ -87,7 +96,7 @@ const DashboardLayout: FC<{ children?: ReactNode }> = ({ children }) => {
 				external: true,
 			},
 		],
-		[t, activeTab, startMigration, stakingMigrationRequired]
+		[t, activeTab, startMigration, stakingMigrationRequired, redemptionRequired]
 	)
 
 	const visibleTabs = TABS.filter(({ hidden }) => !hidden)

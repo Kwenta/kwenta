@@ -51,7 +51,11 @@ const ZERO_VERSIONED_STAKE_DATA = {
 
 const INITIAL_STAKE_INFO = {
 	kwentaBalance: '0',
+	vKwentaBalance: '0',
+	veKwentaBalance: '0',
 	kwentaAllowance: '0',
+	vKwentaAllowance: '0',
+	veKwentaAllowance: '0',
 	epochPeriod: 0,
 	weekCounter: 1,
 }
@@ -173,8 +177,12 @@ const stakingSlice = createSlice({
 			state.v1.totalStakedBalance = action.payload.totalStakedBalance
 			state.kwentaBalance = action.payload.kwentaBalance
 			state.weekCounter = action.payload.weekCounter
+			state.vKwentaBalance = action.payload.vKwentaBalance
+			state.vKwentaAllowance = action.payload.vKwentaAllowance
 			state.kwentaAllowance = action.payload.kwentaAllowance
 			state.epochPeriod = action.payload.epochPeriod
+			state.veKwentaBalance = action.payload.veKwentaBalance
+			state.veKwentaAllowance = action.payload.veKwentaAllowance
 			state.stakeStatus = FetchStatus.Idle
 			state.unstakeStatus = FetchStatus.Idle
 			state.stakeEscrowedStatus = FetchStatus.Idle
