@@ -146,6 +146,7 @@ export const getMarketName = (asset: FuturesMarketAsset | null) => {
 
 export const getDisplayAsset = (asset: string | null) => {
 	if (!asset) return null
+	if (asset === 'ETHBTC') return 'ETH/BTC'
 	if (asset === 'STETH') return 'stETH'
 	if (asset === 'STETHETH') return 'stETH/ETH'
 	return asset[0] === 's' ? asset.slice(1) : asset
