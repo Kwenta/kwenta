@@ -76,7 +76,7 @@
 		"@next/eslint-plugin-next": "13.4.13",
 		"@storybook/addon-actions": "7.0.27",
 		"@storybook/addon-essentials": "7.0.27",
-		"@storybook/addon-links": "7.0.27",
+		"@storybook/addon-links": "7.5.3",
 		"@storybook/nextjs": "7.0.27",
 		"@storybook/react": "7.0.27",
 		"@svgr/core": "5.5.0",
