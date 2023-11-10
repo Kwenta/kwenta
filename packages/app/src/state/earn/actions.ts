@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import { monitorTransaction } from 'contexts/RelayerContext'
 import { ThunkConfig } from 'state/types'
+import proxy from 'utils/proxy'
 
 export const approveLPToken = createAsyncThunk<void, void, ThunkConfig>(
 	'earn/approveLPToken',
@@ -69,7 +70,7 @@ export const claimRewards = createAsyncThunk<void, void, ThunkConfig>(
 
 export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkConfig>(
 	'earn/getEarnDetails',
-	async (_, { dispatch, extra: { sdk } }) => {
+	async (_, { dispatch }) => {
 		const {
 			balance,
 			endDate,
@@ -79,7 +80,7 @@ export const getEarnDetails = createAsyncThunk<void, string | undefined, ThunkCo
 			wethAmount,
 			kwentaAmount,
 			lpTotalSupply,
-		} = await sdk.kwentaToken.getEarnDetails()
+		} = await proxy.get('kwenta-token/earn-details').then((response) => response.data)
 
 		dispatch({
 			type: 'earn/setEarnDetails',
@@ -107,8 +108,10 @@ export const fetchEarnTokenPrices = createAsyncThunk<
 	},
 	void,
 	ThunkConfig
->('earn/fetchEarnTokenPrices', async (_, { extra: { sdk } }) => {
-	const { kwentaPrice, wethPrice, opPrice } = await sdk.kwentaToken.getEarnTokenPrices()
+>('earn/fetchEarnTokenPrices', async () => {
+	const { kwentaPrice, wethPrice, opPrice } = await proxy
+		.get('kwenta-token/earn-token-prices')
+		.then((response) => response.data)
 
 	return {
 		kwentaPrice: kwentaPrice.toString(),

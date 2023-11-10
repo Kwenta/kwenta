@@ -9,6 +9,7 @@ import { Rates } from 'queries/rates/types'
 import { fetchBalances } from 'state/balances/actions'
 import { AppThunk } from 'state/store'
 import { FetchStatus, ThunkConfig } from 'state/types'
+import proxy from 'utils/proxy'
 
 import {
 	selectBaseBalanceWei,
@@ -38,8 +39,25 @@ export const fetchTransactionFee = createAsyncThunk<
 
 	if (baseCurrencyKey && quoteCurrencyKey) {
 		const [transactionFee, feeCost] = await Promise.all([
-			sdk.exchange.getTransactionFee(quoteCurrencyKey, baseCurrencyKey, quoteAmount, baseAmount),
-			sdk.exchange.getFeeCost(quoteCurrencyKey, baseCurrencyKey, quoteAmount),
+			proxy
+				.get('exchange/transaction-fee', {
+					params: {
+						fromCurrencyKey: quoteCurrencyKey,
+						toCurrencyKey: baseCurrencyKey,
+						fromAmount: quoteAmount,
+						toAmount: baseAmount,
+					},
+				})
+				.then((response) => response.data),
+			proxy
+				.get('exchange/fee-cost', {
+					params: {
+						fromCurrencyKey: quoteCurrencyKey,
+						toCurrencyKey: baseCurrencyKey,
+						fromAmount: quoteAmount,
+					},
+				})
+				.then((response) => response.data),
 		])
 
 		return {

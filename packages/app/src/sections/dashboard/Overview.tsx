@@ -21,9 +21,9 @@ import { setFuturesAccountType } from 'state/futures/reducer'
 import { selectFuturesPortfolio } from 'state/futures/selectors'
 import { selectActiveSmartMarginPositionsCount } from 'state/futures/smartMargin/selectors'
 import { useAppDispatch, useAppSelector, useFetchAction } from 'state/hooks'
-import sdk from 'state/sdk'
 import { selectSynthsMap } from 'state/wallet/selectors'
 import logError from 'utils/logError'
+import proxy from 'utils/proxy'
 
 import FuturesMarketsTable from './FuturesMarketsTable'
 import FuturesPositionsTable from './FuturesPositionsTable'
@@ -82,7 +82,12 @@ const Overview: FC = () => {
 					? [...Object.values(tokenBalances).map((value) => value.token.address.toLowerCase())]
 					: []
 
-				const coinGeckoPrices = await sdk.exchange.batchGetCoingeckoPrices(tokenAddresses, true)
+				const { data: coinGeckoPrices } = await proxy.get('exchange/batch-coingecko-prices', {
+					params: {
+						tokenAddresses,
+						'24hrChange': true,
+					},
+				})
 
 				const _exchangeTokens = exchangeBalances.map((exchangeToken) => {
 					const { name, currencyKey, balance, address } = exchangeToken
