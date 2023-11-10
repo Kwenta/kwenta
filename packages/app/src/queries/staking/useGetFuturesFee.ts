@@ -1,14 +1,10 @@
-import {
-	AGGREGATE_ASSET_KEY,
-	FUTURES_ENDPOINT_OP_MAINNET,
-	SECONDS_PER_DAY,
-} from '@kwenta/sdk/constants'
-import { getFuturesAggregateStats } from '@kwenta/sdk/utils'
+import { AGGREGATE_ASSET_KEY, SECONDS_PER_DAY } from '@kwenta/sdk/constants'
 import { useQuery, UseQueryOptions } from 'react-query'
 
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults'
 import QUERY_KEYS from 'constants/queryKeys'
 import useIsL2 from 'hooks/useIsL2'
+import proxy from 'utils/proxy'
 
 const useGetFuturesFee = (
 	start: number,
@@ -20,9 +16,9 @@ const useGetFuturesFee = (
 	return useQuery<any>(
 		QUERY_KEYS.Staking.TotalFuturesFee(start, end),
 		async () => {
-			const response = await getFuturesAggregateStats(
-				FUTURES_ENDPOINT_OP_MAINNET,
-				{
+			const { data } = await proxy.post('futures/aggregate-stats', {
+				chain: 1,
+				options: {
 					first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 					where: {
 						asset: AGGREGATE_ASSET_KEY,
@@ -33,12 +29,13 @@ const useGetFuturesFee = (
 					orderDirection: 'desc',
 					orderBy: 'timestamp',
 				},
-				{
+				args: {
 					timestamp: true,
 					feesKwenta: true,
-				}
-			)
-			return response
+				},
+			})
+
+			return data
 		},
 		{ enabled: isL2, ...options }
 	)

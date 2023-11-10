@@ -1,7 +1,7 @@
 import { isAddress } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 
-import { staticMainnetProvider } from 'utils/network'
+import proxy from 'utils/proxy'
 
 type ENSAccount = { ensAddress: string | null; ensName: string | null; ensAvatar: string | null }
 
@@ -17,16 +17,17 @@ const useENS = (addressOrName: string): ENSAccount => {
 			let newEnsName = null
 			if (isAddress(addressOrName)) {
 				setENSAddress(addressOrName)
-				newEnsName = await staticMainnetProvider.lookupAddress(addressOrName)
+				const { data: newEnsName } = await proxy.get(`lookup-address/${addressOrName}`)
 				setENSName(newEnsName)
 			} else if (addressOrName.endsWith('.eth')) {
-				newEnsName = await staticMainnetProvider.resolveName(addressOrName)
+				const { data: newEnsName } = await proxy.get(`resolve-name/${addressOrName}`)
 				setENSAddress(newEnsName)
 				setENSName(addressOrName)
 			}
 
 			if (newEnsName && mounted) {
-				setENSAvatar(await staticMainnetProvider.getAvatar(newEnsName))
+				const { data: avatar } = await proxy.get(`avatar/${newEnsName}`)
+				setENSAvatar(avatar)
 			}
 		})()
 

@@ -98,7 +98,7 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 					const last = bars[bars.length - 1]?.close ?? 0
 					positive = last - first >= 0
 				}
-				const results = bars.map((b) => ({
+				const results = bars.map((b: any) => ({
 					value: b.close,
 					time: b.timestamp as UTCTimestamp,
 				}))

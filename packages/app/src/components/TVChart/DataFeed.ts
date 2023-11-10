@@ -179,7 +179,7 @@ const DataFeedFactory = (
 
 			try {
 				fetchCombinedCandles(base, from, to, _resolution, networkId).then((bars) => {
-					const chartBars = bars.map((b) => {
+					const chartBars = bars.map((b: any) => {
 						return {
 							high: b.high,
 							low: b.low,

@@ -1,9 +1,9 @@
-import { FUTURES_ENDPOINT_OP_MAINNET, KWENTA_TRACKING_CODE } from '@kwenta/sdk/constants'
-import { getFuturesTrades } from '@kwenta/sdk/utils'
+import { KWENTA_TRACKING_CODE } from '@kwenta/sdk/constants'
 import { useQuery, UseQueryOptions } from 'react-query'
 
 import { DEFAULT_NUMBER_OF_FUTURES_FEE } from 'constants/defaults'
 import QUERY_KEYS from 'constants/queryKeys'
+import proxy from 'utils/proxy'
 
 const useGetFuturesFeeForAccount = (
 	account: string,
@@ -16,9 +16,9 @@ const useGetFuturesFeeForAccount = (
 		async () => {
 			if (!account) return null
 
-			const response = await getFuturesTrades(
-				FUTURES_ENDPOINT_OP_MAINNET,
-				{
+			const { data } = await proxy.post('futures/trades', {
+				chain: 1,
+				options: {
 					first: DEFAULT_NUMBER_OF_FUTURES_FEE,
 					where: {
 						account: account,
@@ -29,16 +29,17 @@ const useGetFuturesFeeForAccount = (
 					orderDirection: 'desc',
 					orderBy: 'timestamp',
 				},
-				{
+				args: {
 					timestamp: true,
 					account: true,
 					abstractAccount: true,
 					accountType: true,
 					feesPaid: true,
 					keeperFeesPaid: true,
-				}
-			)
-			return response
+				},
+			})
+
+			return data
 		},
 		{ enabled: !!account, ...options }
 	)

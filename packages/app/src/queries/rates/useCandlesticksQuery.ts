@@ -1,13 +1,13 @@
 import { NetworkId } from '@kwenta/sdk/types'
-import { getRatesEndpoint, getCandles } from '@kwenta/sdk/utils'
 import axios from 'axios'
 
 import { getSupportedResolution } from 'components/TVChart/utils'
 import { DEFAULT_NETWORK_ID } from 'constants/defaults'
 import logError from 'utils/logError'
+import proxy from 'utils/proxy'
 
 import { DEFAULT_PYTH_TV_ENDPOINT } from './constants'
-import { formatPythSymbol, mapCandles, mapPythCandles } from './utils'
+import { formatPythSymbol, mapPythCandles } from './utils'
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
@@ -16,7 +16,6 @@ export const requestCandlesticks = async (
 	period: number,
 	networkId: NetworkId = DEFAULT_NETWORK_ID
 ) => {
-	const ratesEndpoint = getRatesEndpoint(networkId)
 	const pythTvEndpoint = DEFAULT_PYTH_TV_ENDPOINT
 
 	if (period <= 3600) {
@@ -39,9 +38,9 @@ export const requestCandlesticks = async (
 
 		return response
 	} else {
-		const response = await getCandles(
-			ratesEndpoint,
-			{
+		const { data } = await proxy.post('candles', {
+			chain: networkId,
+			options: {
 				first: 999999,
 				where: {
 					synth: `${currencyKey}`,
@@ -52,7 +51,7 @@ export const requestCandlesticks = async (
 				orderBy: 'timestamp',
 				orderDirection: 'asc',
 			},
-			{
+			args: {
 				id: true,
 				synth: true,
 				open: true,
@@ -63,10 +62,9 @@ export const requestCandlesticks = async (
 				average: true,
 				period: true,
 				aggregatedPrices: true,
-			}
-		).then((response) => {
-			return mapCandles(response)
+			},
 		})
-		return response
+
+		return data
 	}
 }

@@ -29,6 +29,7 @@ import {
 	BalanceText,
 	MaxButton,
 } from '../Trade/DepositWithdrawCrossMargin'
+import proxy from 'utils/proxy'
 
 type TransferType = 'deposit' | 'withdraw'
 
@@ -41,7 +42,7 @@ const DEPOSIT_ENABLED = false
 export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
-	const { provider, walletAddress } = Connector.useContainer()
+	const { walletAddress, network } = Connector.useContainer()
 
 	const { keeperEthBal } = useAppSelector(selectSmartMarginBalanceInfo)
 	const openOrders = useAppSelector(selectConditionalOrdersForMarket)
@@ -55,13 +56,19 @@ export default function ManageKeeperBalanceModal({ defaultType }: Props) {
 	const getUserEthBal = useCallback(async () => {
 		if (!walletAddress) return
 		try {
-			const bal = await provider.getBalance(walletAddress)
+			const { data: bal } = await proxy.get('balance', {
+				params: {
+					chain: network.id,
+					address: walletAddress,
+				},
+			})
+
 			setUserEthBal(wei(bal))
 		} catch (err) {
 			notifyError('Failed to read ETH balance', err)
 			logError(err)
 		}
-	}, [walletAddress, provider])
+	}, [walletAddress, network])
 
 	useEffect(() => {
 		getUserEthBal()
