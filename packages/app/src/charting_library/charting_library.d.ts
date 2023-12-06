@@ -866,7 +866,7 @@ export interface BrokerConfigFlags {
 	supportOnlyPairPositionBrackets?: boolean
 	supportCryptoExchangeOrderTicket?: boolean
 	supportConfirmations?: boolean
-	/** Does broker need to display position's PL in instrument's currency */
+	/** Does the broker need to display position's PL in instrument's currency */
 	positionPLInInstrumentCurrency?: boolean
 	/** Does broker support partial position closing */
 	supportPartialClosePosition?: boolean
@@ -1049,7 +1049,7 @@ export interface ContextMenuPosition {
 	attachToXBy?: 'left' | 'right'
 	/**
 	 * Tells what side of the context menu widget should be used to "attach" to a provided y coordinate:
-	 * - `'auto'` means similar to `'top'` but the menu could be expanded above the coordinate if needed (if there is no enough space to place it below)
+	 * - `'auto'` means similar to `'top'` but the menu could be expanded above the coordinate if needed (if there is not enough space to place it below)
 	 * - `'auto-strict'` means `'top'` if the whole menu fits the space below the coordinate and `'bottom'` otherwise (see {@link boxHeight})
 	 * - `'top'` means that the menu should be placed to the bottom of y coordinate (the menu should be attached by its bottom to y coordinate)
 	 * - `'bottom'` means that the menu should be placed above y coordinate (the menu should be attached by its top to y coordinate)
