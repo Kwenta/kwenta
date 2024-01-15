@@ -108,7 +108,7 @@
 		"next-router-mock": "0.9.7",
 		"pinst": "3.0.0",
 		"postcss": "8.4.30",
-		"prettier": "2.8.8",
+		"prettier": "3.2.2",
 		"react-test-renderer": "17.0.1",
 		"storybook": "7.0.27",
 		"typechain": "8.1.1",
